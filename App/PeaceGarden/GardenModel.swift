@@ -120,9 +120,11 @@ final class GardenModel {
 
     // MARK: - Seeds by link
 
-    /// Where a seed link points. The host has to serve an
-    /// apple-app-site-association file and carry the App Clip experience;
-    /// see docs/SEEDS-ON-THE-WIND.md.
+    /// Where a seed link points.
+    ///
+    /// The host has to serve the apple-app-site-association file in `Server/`
+    /// and carry the App Clip experience before a link will open the app rather
+    /// than a web page. See Server/README.md.
     static let linkHost = "peacegarden.app"
 
     enum Incoming: Equatable {

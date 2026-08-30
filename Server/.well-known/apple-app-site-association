@@ -1,0 +1,18 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["TEAMID.com.peacegarden.app"],
+        "components": [
+          {
+            "/": "/s*",
+            "comment": "Seed links. Everything the app needs is in the fragment, which never reaches this server."
+          }
+        ]
+      }
+    ]
+  },
+  "appclips": {
+    "apps": ["TEAMID.com.peacegarden.app.Clip"]
+  }
+}

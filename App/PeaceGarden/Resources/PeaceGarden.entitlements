@@ -2,9 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- Seed links. Both entries need the matching apple-app-site-association
-	     file served from https://peacegarden.app/.well-known/, and the domain
-	     has to be one you actually control. See docs/SEEDS-ON-THE-WIND.md. -->
+	<!-- Seed links. Both entries need the apple-app-site-association file in
+	     Server/ to be live at https://peacegarden.app/.well-known/ before iOS
+	     will honour them. See Server/README.md. -->
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:peacegarden.app</string>

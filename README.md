@@ -193,6 +193,8 @@ colour appears at its base, flip the row order in
 │   ├── SEEDS-ON-THE-WIND.md    Passing a seed to a phone without the app
 │   ├── PHASES.md               What phase 2 has to answer
 │   └── images/                 Previews rendered by tools/preview
+├── Server/                     What peacegarden.app has to serve
+│   └── .well-known/            apple-app-site-association
 ├── tools/
 │   ├── reference/              Executable spec for the derivation
 │   └── preview/                Python port + renderer, to see plants anywhere

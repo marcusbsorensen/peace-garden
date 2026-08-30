@@ -86,9 +86,10 @@ already in their garden.
 
 **What it costs to set up**, none of which can be done from here:
 
-1. A domain you control — `peacegarden.app` in the entitlement is a placeholder.
-2. An `apple-app-site-association` file served from
-   `https://<domain>/.well-known/`, listing both the app and the clip.
+1. A domain you control — `peacegarden.app`, registered for this.
+2. The `apple-app-site-association` file in `Server/` served from
+   `https://peacegarden.app/.well-known/`, listing both the app and the clip.
+   The rules iOS enforces, and how to check it, are in `Server/README.md`.
 3. An App Clip target in the project, and an App Clip Experience registered in
    App Store Connect against the URL prefix.
 4. Staying under Apple's App Clip size limit. It is small — in the low tens of
