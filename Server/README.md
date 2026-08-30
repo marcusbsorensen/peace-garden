@@ -11,14 +11,11 @@ peacegarden.app/
     └── apple-app-site-association     ← no file extension
 ```
 
-## Before it will work
+## Already filled in
 
-Replace `TEAMID` in `apple-app-site-association` with your Apple Developer Team
-ID — ten characters, found in the Apple Developer portal under Membership, or in
-Xcode under Signing & Capabilities next to the team name.
-
-The result should read `ABCDE12345.com.peacegarden.app`. If the bundle
-identifier in `project.yml` ever changes, it changes here too.
+The Team ID (`R94VDZ56RY`) and bundle identifier (`app.peacegarden`) are in the
+file. If either changes in `project.yml`, it changes here too — they have to
+agree or iOS silently declines to associate the domain.
 
 The `appclips` entry names the clip's bundle ID, which by convention is the
 app's with `.Clip` appended. It is harmless to serve before the App Clip target

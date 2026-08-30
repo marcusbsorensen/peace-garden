@@ -2,7 +2,7 @@
   "applinks": {
     "details": [
       {
-        "appIDs": ["TEAMID.com.peacegarden.app"],
+        "appIDs": ["R94VDZ56RY.app.peacegarden"],
         "components": [
           {
             "/": "/s*",
@@ -13,6 +13,6 @@
     ]
   },
   "appclips": {
-    "apps": ["TEAMID.com.peacegarden.app.Clip"]
+    "apps": ["R94VDZ56RY.app.peacegarden.Clip"]
   }
 }

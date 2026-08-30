@@ -6,7 +6,7 @@
 # output, and it is the single worst file in an iOS repository to merge.
 name: PeaceGarden
 options:
-  bundleIdPrefix: com.peacegarden
+  bundleIdPrefix: app
   deploymentTarget:
     iOS: "17.0"
   createIntermediateGroups: true
@@ -21,14 +21,24 @@ targets:
     type: application
     platform: iOS
     sources:
+      # `Info.plist` is the target's manifest and the entitlements file is an
+      # input to signing. Neither is a resource to copy into the bundle beside
+      # itself, and both would be without these exclusions.
       - path: App/PeaceGarden
+        excludes:
+          - Resources/Info.plist
+          - Resources/PeaceGarden.entitlements
     dependencies:
       - package: SeedCore
         product: SeedCore
     settings:
       base:
         PRODUCT_NAME: PeaceGarden
-        PRODUCT_BUNDLE_IDENTIFIER: com.peacegarden.app
+        # Reverse-DNS of the domain the app actually owns, matching the house
+        # pattern (uncubed.app -> app.uncubed). A bundle identifier is permanent
+        # once a build reaches App Store Connect, so it is worth being the right
+        # one before the first upload rather than after.
+        PRODUCT_BUNDLE_IDENTIFIER: app.peacegarden
         INFOPLIST_FILE: App/PeaceGarden/Resources/Info.plist
         CODE_SIGN_ENTITLEMENTS: App/PeaceGarden/Resources/PeaceGarden.entitlements
         CURRENT_PROJECT_VERSION: 1
@@ -37,8 +47,20 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"  # iPhone and iPad
         ENABLE_USER_SCRIPT_SANDBOXING: YES
         SWIFT_STRICT_CONCURRENCY: minimal
-        DEVELOPMENT_TEAM: ""
+        DEVELOPMENT_TEAM: R94VDZ56RY
         CODE_SIGN_STYLE: Automatic
+        # Export compliance, answered here rather than retyped at every upload.
+        #
+        # The claim is that the app uses no *non-exempt* encryption, and it is
+        # the easy true answer: the only cryptography is SHA-256 through
+        # CryptoKit, which is hashing and not encryption at all, and the
+        # encrypted transport in an exchange is MultipeerConnectivity's own.
+        # Both are platform-standard. The app makes no network request of its
+        # own — there is no server — so there is nothing else to declare.
+        #
+        # If anything here ever encrypts what it stores or sends, this is the
+        # line that has to change with it.
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
 
 schemes:
   PeaceGarden:
