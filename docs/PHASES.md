@@ -10,6 +10,9 @@ Built:
 - Growth in real time, over days, including opening by day or by night.
 - 3-D rendering in full colour, standing in a soft pool of light on black,
   turned by dragging, with controls that appear on a tap and see themselves out.
+- iPhone and iPad, in any orientation on iPad and in Split View: the plant is
+  re-framed to the shape of the viewport rather than to a fixed assumption
+  about it.
 - A face-to-face exchange between two iPhones: find each other, tap the phones
   together, cross the seeds, agree on the result, and grow a hybrid that
   descends visibly from both parents.

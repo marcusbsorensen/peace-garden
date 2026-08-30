@@ -31,6 +31,7 @@ struct FirstLightView: View {
                     .lineSpacing(5)
             }
             .padding(.horizontal, 40)
+            .frame(maxWidth: Chrome.readableWidth)
             .opacity(revealed ? 1 : 0)
 
             Spacer()
@@ -54,6 +55,7 @@ struct FirstLightView: View {
                 Hairline()
                     .padding(.horizontal, 60)
             }
+            .frame(maxWidth: Chrome.readableWidth)
             .opacity(revealed ? 1 : 0)
 
             Spacer()

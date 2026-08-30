@@ -11,7 +11,9 @@ struct GardenView: View {
 
     @State private var selected: PlantRecord?
 
-    private let columns = [GridItem(.adaptive(minimum: 132), spacing: 18)]
+    // A maximum as well as a minimum: without it an iPad shows either a great
+    // many small tiles or a few enormous ones.
+    private let columns = [GridItem(.adaptive(minimum: 150, maximum: 210), spacing: 18)]
 
     var body: some View {
         ZStack {
@@ -71,6 +73,7 @@ struct GardenView: View {
                 .foregroundStyle(Chrome.muted)
                 .lineSpacing(5)
         }
+        .frame(maxWidth: Chrome.readableWidth, alignment: .leading)
         .padding(.top, 40)
     }
 

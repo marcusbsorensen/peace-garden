@@ -92,6 +92,8 @@ struct ExchangeView: View {
             Spacer()
         }
         .padding(.horizontal, 46)
+        .frame(maxWidth: Chrome.readableWidth)
+        .frame(maxWidth: .infinity)
     }
 
     private func grown(_ outcome: ExchangeOutcome) -> some View {
@@ -118,6 +120,8 @@ struct ExchangeView: View {
             Spacer()
         }
         .padding(.horizontal, 46)
+        .frame(maxWidth: Chrome.readableWidth)
+        .frame(maxWidth: .infinity)
     }
 
 }

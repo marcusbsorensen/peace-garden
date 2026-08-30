@@ -34,9 +34,19 @@
 		<string>arm64</string>
 		<string>accelerometer</string>
 	</array>
+	<!-- A phone is held one way; the composition assumes it. An iPad gets
+	     picked up from whichever side is nearest, and supporting every
+	     orientation is also what lets it be used in Split View. -->
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIStatusBarHidden</key>
 	<true/>

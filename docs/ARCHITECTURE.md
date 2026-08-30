@@ -109,6 +109,23 @@ screen in a dark room.
 The scene's ambient fill is tinted to the same colour, so the plant reads as
 standing in that light rather than cut out and pasted onto it.
 
+## Why the camera is told the shape of the screen
+
+`PlantSceneBuilder.framing` takes the viewport's aspect ratio and fits the plant
+to *both* dimensions, taking whichever distance is greater.
+
+The naive version — fit the largest extent and hope — works on a phone held
+upright, where a tall plant is always limited by the height. It fails the moment
+an iPad turns sideways: the same plant is now limited by the height much sooner,
+and its top is cropped. The camera's `projectionDirection` is pinned to
+`.vertical` for the same reason; left on `.automatic`, SceneKit switches to a
+horizontal field of view on a wide screen and the framing maths would no longer
+describe what is on screen.
+
+Because an iPad can be resized as well as rotated — Split View, Stage Manager —
+the scene view reports its own `layoutSubviews`, and the framing is recomputed
+from the size rather than from anything SwiftUI happens to re-run.
+
 ## Why growth is a function of time, not a state machine
 
 There is no "grow" step to run, nothing to catch up on after the app has been

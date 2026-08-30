@@ -86,6 +86,7 @@ struct PlantDetailView: View {
                     }
                 }
                 .padding(.horizontal, 40)
+                .frame(maxWidth: Chrome.readableWidth)
                 .padding(.bottom, 18)
             }
 

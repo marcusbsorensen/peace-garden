@@ -19,7 +19,10 @@ struct PlantSceneView: UIViewRepresentable {
     }
 
     func makeUIView(context: Context) -> SCNView {
-        let view = SCNView()
+        let view = ResizingSceneView()
+        view.onLayout = { [weak coordinator = context.coordinator] size in
+            coordinator?.viewSizeChanged(to: size)
+        }
         view.scene = PlantSceneBuilder.makeScene(palette: genome.palette)
         // Transparent: `StageBackdrop` behind this view paints the ground.
         view.backgroundColor = .clear
@@ -57,6 +60,18 @@ struct PlantSceneView: UIViewRepresentable {
         coordinator.plantPivot.removeAllActions()
     }
 
+    /// Reports its own size changes. An iPad rotating, or being resized in
+    /// Split View, changes the shape of the viewport without anything in
+    /// SwiftUI necessarily re-running, and the plant has to be re-framed.
+    final class ResizingSceneView: SCNView {
+        var onLayout: ((CGSize) -> Void)?
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            onLayout?(bounds.size)
+        }
+    }
+
     final class Coordinator: NSObject {
         let plantPivot = SCNNode()
         let cameraRig = SCNNode()
@@ -67,6 +82,8 @@ struct PlantSceneView: UIViewRepresentable {
         private var genome: Genome
         private var currentKey: String = ""
         private var plantNode: SCNNode?
+        private var meshBounds: (min: SIMD3<Float>, max: SIMD3<Float>)?
+        private var viewSize: CGSize = .zero
         private var yaw: Float = 0
         private var pitch: Float = 0
         private var autoRotating = false
@@ -92,16 +109,30 @@ struct PlantSceneView: UIViewRepresentable {
 
             let mesh = PlantBuilder(genome: genome).mesh(growth: growth)
             let node = PlantSceneBuilder.node(for: mesh, palette: genome.palette)
-            let framing = PlantSceneBuilder.framing(for: mesh)
-
-            // Offset the plant so it turns about its own middle rather than
-            // swinging around the origin at its base.
-            node.position = SCNVector3(-framing.target.x, -framing.target.y, -framing.target.z)
 
             plantNode?.removeFromParentNode()
             plantPivot.addChildNode(node)
             plantNode = node
+            meshBounds = (mesh.minBounds, mesh.maxBounds)
+            applyFraming()
+        }
 
+        func viewSizeChanged(to size: CGSize) {
+            guard size.width > 1, size.height > 1, size != viewSize else { return }
+            viewSize = size
+            applyFraming()
+        }
+
+        private func applyFraming() {
+            guard let meshBounds, let plantNode, viewSize.height > 1 else { return }
+            let framing = PlantSceneBuilder.framing(
+                min: meshBounds.min,
+                max: meshBounds.max,
+                aspect: Float(viewSize.width / viewSize.height)
+            )
+            // Offset the plant so it turns about its own middle rather than
+            // swinging around the origin at its base.
+            plantNode.position = SCNVector3(-framing.target.x, -framing.target.y, -framing.target.z)
             plantPivot.position = framing.target
             cameraRig.position = framing.target
             cameraNode.position = SCNVector3(0, 0, framing.distance)

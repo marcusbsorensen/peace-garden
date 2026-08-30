@@ -12,6 +12,11 @@ enum Chrome {
     static let faint = Color.white.opacity(0.28)
     static let hairline = Color.white.opacity(0.16)
 
+    /// Text stops being readable somewhere past this. On an iPad a paragraph
+    /// set to the full width of the screen is a wall; the plant is allowed the
+    /// whole screen, the words are not.
+    static let readableWidth: CGFloat = 440
+
     static let fadeIn = Animation.easeInOut(duration: 0.55)
     static let controlsIdleTimeout: Duration = .seconds(6)
 }

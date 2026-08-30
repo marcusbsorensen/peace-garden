@@ -26,6 +26,8 @@ struct SeedView: View {
                     }
                     .padding(.horizontal, 30)
                     .padding(.vertical, 34)
+                    .frame(maxWidth: Chrome.readableWidth)
+                    .frame(maxWidth: .infinity)
                 }
             }
         }

@@ -62,7 +62,7 @@ final class ThumbnailRenderer {
 
         let mesh = PlantBuilder(genome: genome).mesh(growth: growth)
         let plant = PlantSceneBuilder.node(for: mesh, palette: genome.palette)
-        let framing = PlantSceneBuilder.framing(for: mesh)
+        let framing = PlantSceneBuilder.framing(min: mesh.minBounds, max: mesh.maxBounds, aspect: 1)
         plant.position = SCNVector3(-framing.target.x, -framing.target.y, -framing.target.z)
 
         let pivot = SCNNode()

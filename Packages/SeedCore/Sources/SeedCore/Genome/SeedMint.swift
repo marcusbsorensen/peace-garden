@@ -21,7 +21,7 @@ public enum SeedMint {
         public var vendorIdentifier: String
         public var localeIdentifier: String
         public var timeZoneIdentifier: String
-        public var screenDescription: String
+        public var hardwareDescription: String
 
         public init(
             randomBytes: Data,
@@ -31,7 +31,7 @@ public enum SeedMint {
             vendorIdentifier: String,
             localeIdentifier: String,
             timeZoneIdentifier: String,
-            screenDescription: String
+            hardwareDescription: String
         ) {
             self.randomBytes = randomBytes
             self.wallClock = wallClock
@@ -40,7 +40,7 @@ public enum SeedMint {
             self.vendorIdentifier = vendorIdentifier
             self.localeIdentifier = localeIdentifier
             self.timeZoneIdentifier = timeZoneIdentifier
-            self.screenDescription = screenDescription
+            self.hardwareDescription = hardwareDescription
         }
 
         var entropyBlob: Data {
@@ -52,7 +52,7 @@ public enum SeedMint {
             blob.append(Data(vendorIdentifier.utf8))
             blob.append(Data(localeIdentifier.utf8))
             blob.append(Data(timeZoneIdentifier.utf8))
-            blob.append(Data(screenDescription.utf8))
+            blob.append(Data(hardwareDescription.utf8))
             return blob
         }
     }
@@ -82,11 +82,14 @@ public enum SeedMint {
         let device = UIDevice.current
         let model = "\(device.model)/\(device.systemName) \(device.systemVersion)"
         let vendor = device.identifierForVendor?.uuidString ?? UUID().uuidString
-        let screen = "\(UIScreen.main.bounds.size)@\(UIScreen.main.scale)"
+        // Not the screen: `UIScreen.main` is deprecated, and on an iPad running
+        // two windows it does not describe anything in particular. The
+        // randomness is what makes a seed unique regardless.
+        let hardware = "\(ProcessInfo.processInfo.processorCount)x\(ProcessInfo.processInfo.physicalMemory)"
         #else
         let model = ProcessInfo.processInfo.operatingSystemVersionString
         let vendor = UUID().uuidString
-        let screen = "headless"
+        let hardware = "headless"
         #endif
 
         return Ingredients(
@@ -97,7 +100,7 @@ public enum SeedMint {
             vendorIdentifier: vendor,
             localeIdentifier: Locale.current.identifier,
             timeZoneIdentifier: TimeZone.current.identifier,
-            screenDescription: screen
+            hardwareDescription: hardware
         )
     }
 }

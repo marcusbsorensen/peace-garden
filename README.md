@@ -1,7 +1,7 @@
 # Peace Garden
 
-An iPhone app in which a plant is grown from a seed drawn once, on one phone,
-for one person — and where two people who meet in person can cross their seeds
+An iPhone and iPad app in which a plant is grown from a seed drawn once, on one
+device, for one person — and where two people who meet in person can cross their seeds
 by touching their phones together, growing a plant that neither could have grown
 alone.
 
@@ -79,12 +79,18 @@ open PeaceGarden.xcodeproj
 Set your team under Signing & Capabilities, then run. `.xcodeproj` is generated
 rather than checked in — it is the worst file in an iOS repository to merge.
 
-**You need two physical iPhones.** The Simulator has no accelerometer to feel
+**You need two physical devices.** The Simulator has no accelerometer to feel
 the tap and no radio for Multipeer, so the exchange can only be exercised on
-hardware. Everything else — minting, growth, rendering, the garden — runs in the
-Simulator.
+hardware — any mix of iPhone and iPad. Everything else — minting, growth,
+rendering, the garden — runs in the Simulator.
 
-Requires iOS 17 (SwiftUI `@Observable`), Xcode 15 or later.
+Universal, and not by stretching a phone layout: the plant is re-framed to the
+shape of the viewport, so it fills the same proportion of the screen on a phone
+held upright, an iPad turned sideways, or a narrow Split View column. Text is
+held to a readable measure rather than run the width of an iPad.
+
+Requires iOS/iPadOS 17 (SwiftUI `@Observable`), Xcode 15 or later. Portrait on
+iPhone; any orientation on iPad, which is also what allows Split View.
 
 ### Running the tests
 

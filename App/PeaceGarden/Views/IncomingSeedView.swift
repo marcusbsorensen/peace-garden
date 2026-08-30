@@ -83,6 +83,8 @@ struct IncomingSeedView: View {
             }
             Spacer()
         }
+        .frame(maxWidth: Chrome.readableWidth)
+        .frame(maxWidth: .infinity)
     }
 
     private func finish() {

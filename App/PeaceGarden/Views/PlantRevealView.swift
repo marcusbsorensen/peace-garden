@@ -40,6 +40,8 @@ struct PlantRevealView: View {
             .multilineTextAlignment(.center)
             .padding(.horizontal, 34)
             .padding(.bottom, 40)
+            .frame(maxWidth: Chrome.readableWidth)
+            .frame(maxWidth: .infinity)
         }
     }
 

@@ -122,9 +122,15 @@ enum PlantSceneBuilder {
         return scene
     }
 
+    /// The vertical field of view. Pinned to vertical rather than left on
+    /// `.automatic`, which switches to a horizontal angle on a wide screen and
+    /// would crop the top off a tall plant the moment an iPad turned sideways.
+    static let fieldOfView: CGFloat = 36
+
     static func makeCameraNode() -> SCNNode {
         let camera = SCNCamera()
-        camera.fieldOfView = 36
+        camera.fieldOfView = fieldOfView
+        camera.projectionDirection = .vertical
         camera.zNear = 0.01
         camera.zFar = 40
         camera.wantsHDR = true
@@ -138,13 +144,32 @@ enum PlantSceneBuilder {
         return node
     }
 
-    /// Frames the plant so it fills the same proportion of the screen at every
-    /// size, from a seedling to a plant in full bloom.
-    static func framing(for mesh: PlantMesh) -> (target: SCNVector3, distance: Float) {
-        let centre = mesh.centre
-        let extent = mesh.maxBounds - mesh.minBounds
-        let radius = max(0.06, max(extent.y, max(extent.x, extent.z)) * 0.5)
-        let distance = radius / tan(Float(36 * Double.pi / 180) / 2) * 1.5
-        return (SCNVector3(centre.x, centre.y, centre.z), distance)
+    /// Frames the plant so it fills the same proportion of the view at every
+    /// size — a seedling or a plant in full bloom, an iPhone held upright or an
+    /// iPad turned on its side.
+    ///
+    /// Both dimensions are fitted rather than the larger one guessed at: a tall
+    /// plant is limited by the height on a phone and by the width on nothing,
+    /// but the same plant in a short, wide window is limited by the height much
+    /// sooner. Taking the greater of the two distances covers every shape.
+    static func framing(
+        min minBounds: SIMD3<Float>,
+        max maxBounds: SIMD3<Float>,
+        aspect: Float
+    ) -> (target: SCNVector3, distance: Float) {
+        let centre = (minBounds + maxBounds) * 0.5
+        let extent = maxBounds - minBounds
+        let halfHeight = Swift.max(0.03, extent.y * 0.5)
+        // The plant turns, so its silhouette can be as wide as its deepest axis.
+        let halfWidth = Swift.max(0.03, Swift.max(extent.x, extent.z) * 0.5)
+
+        let verticalHalfAngle = Float(fieldOfView * .pi / 180) / 2
+        let horizontalHalfAngle = atan(tan(verticalHalfAngle) * Swift.max(0.2, aspect))
+
+        let distance = Swift.max(
+            halfHeight / tan(verticalHalfAngle),
+            halfWidth / tan(horizontalHalfAngle)
+        )
+        return (SCNVector3(centre.x, centre.y, centre.z), distance * 1.25)
     }
 }

@@ -63,6 +63,8 @@ struct SeedOfferView: View {
                     .padding(.horizontal, 44)
                     .padding(.bottom, 34)
             }
+            .frame(maxWidth: Chrome.readableWidth)
+            .frame(maxWidth: .infinity)
         }
         .overlay(alignment: .topTrailing) {
             QuietButton(title: "Close") { dismiss() }
