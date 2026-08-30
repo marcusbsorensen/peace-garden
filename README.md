@@ -152,10 +152,12 @@ its name from both:
 
 ### Status, honestly
 
-**SeedCore compiles and its 52 tests pass.** The package builds off Apple's
-platforms too — against swift-crypto and the small compatibility layer in
-`Sources/SeedCore/Compatibility/` — which is what lets CI run the whole suite on
-every push. That covers the derivation, the genome, growth, the geometry, the
+**SeedCore compiles and its 52 tests pass on macOS and on Linux.** On Apple's
+platforms it builds against CryptoKit and `simd`; off them, against swift-crypto
+and the small compatibility layer in `Sources/SeedCore/Compatibility/`, which is
+what lets CI run the whole suite on every push. Both paths give identical
+results — so the compatibility layer is demonstrably equivalent to Apple's
+`simd`, rotations included, rather than merely close. That covers the derivation, the genome, growth, the geometry, the
 colour model, seed links and persistence.
 
 **The 17 files in `App/` have never been compiled.** SwiftUI, SceneKit and UIKit

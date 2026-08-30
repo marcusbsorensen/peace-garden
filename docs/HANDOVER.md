@@ -20,7 +20,7 @@ could not run it.
 
 | | |
 | --- | --- |
-| **SeedCore** | Compiles. 52 tests pass. Swift 6.0.3 on Linux. |
+| **SeedCore** | Compiles and passes its 52 tests on **both** platforms: macOS/arm64 against CryptoKit and Apple's `simd`, and Linux against swift-crypto and the compatibility layer. The two agree, which is what proves the compatibility layer is equivalent rather than merely plausible. |
 | **The derivation** | Independently implemented in Python (`tools/reference/`) and executed. Its outputs are pinned into `DerivationVectorTests`. Both implementations agree. |
 | **The geometry** | Ported to Python (`tools/preview/`) and run over 120 genomes at seven ages, then *rendered and looked at*. That caught six real defects that no test would have. |
 | **Camera framing** | Checked across six viewport shapes, iPhone portrait to a 320pt Split View column. |
