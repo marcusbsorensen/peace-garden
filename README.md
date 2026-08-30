@@ -1,5 +1,7 @@
 # Peace Garden
 
+[![Tests](https://github.com/marcusbsorensen/peace-garden/actions/workflows/tests.yml/badge.svg)](https://github.com/marcusbsorensen/peace-garden/actions/workflows/tests.yml)
+
 An iPhone and iPad app in which a plant is grown from a seed drawn once, on one
 device, for one person — and where two people who meet in person can cross their seeds
 by touching their phones together, growing a plant that neither could have grown
@@ -95,11 +97,12 @@ iPhone; any orientation on iPad, which is also what allows Split View.
 ### Running the tests
 
 ```sh
-cd Packages/SeedCore
-swift test
+swift test --package-path Packages/SeedCore
 ```
 
-or open the package in Xcode and test the `SeedCore` scheme. The tests cover the
+Runs on macOS or Linux, and on every push through
+[`.github/workflows/tests.yml`](.github/workflows/tests.yml). Or open the
+package in Xcode and test the `SeedCore` scheme. The tests cover the
 parts that are expensive to get wrong: the derivation vectors, commutativity of
 the cross, trait ranges across hundreds of genomes, growth monotonicity, and
 120 genomes × 7 ages of generated geometry checked for non-finite vertices and
@@ -147,9 +150,15 @@ its name from both:
 
 ### Status, honestly
 
-This was written on Linux, where there is no Swift toolchain and no Xcode, so
-**none of the Swift has been compiled or run.** Expect to fix build errors on
-first open.
+**SeedCore compiles and its 52 tests pass.** The package builds off Apple's
+platforms too — against swift-crypto and the small compatibility layer in
+`Sources/SeedCore/Compatibility/` — which is what lets CI run the whole suite on
+every push. That covers the derivation, the genome, growth, the geometry, the
+colour model, seed links and persistence.
+
+**The 17 files in `App/` have never been compiled.** SwiftUI, SceneKit and UIKit
+need the macOS SDK, so Xcode is the only place they build. Expect to fix errors
+there on first open.
 
 What has actually been executed, rather than believed:
 
@@ -165,6 +174,11 @@ What has actually been executed, rather than believed:
   the foliage, seedlings had full-thickness stems and full-size leaves, and the
   seed husk vanished in a single frame instead of shrinking away.
 
+- **The whole of SeedCore**, by a Swift compiler and its own test suite. One
+  function is the exception: `GrowthModel.State.summary()` uses
+  `DateComponentsFormatter`, which swift-corelibs-foundation does not have, so
+  it compiles only on Apple's platforms.
+
 What has *not* been seen is the SceneKit rendering — the lighting rig, the
 materials, the bloom. The one thing to check first there: if a petal's tip
 colour appears at its base, flip the row order in
@@ -176,6 +190,7 @@ colour appears at its base, flip the row order in
 .
 ├── Packages/SeedCore/          Pure Swift. Plants, not pixels.
 │   ├── Sources/SeedCore/
+│   │   ├── Compatibility/      simd, where Apple's simd is not
 │   │   ├── Determinism/        Hashing, seeds, deterministic noise
 │   │   ├── Genome/             Minting, traits, archetypes, names, crossing
 │   │   ├── Growth/             Time to appearance
