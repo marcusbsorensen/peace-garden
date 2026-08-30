@@ -30,6 +30,7 @@ targets:
         PRODUCT_NAME: PeaceGarden
         PRODUCT_BUNDLE_IDENTIFIER: com.peacegarden.app
         INFOPLIST_FILE: App/PeaceGarden/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: App/PeaceGarden/Resources/PeaceGarden.entitlements
         CURRENT_PROJECT_VERSION: 1
         MARKETING_VERSION: "0.1"
         SWIFT_VERSION: "5.9"

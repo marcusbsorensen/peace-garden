@@ -21,6 +21,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "reference"))
 from derivation_reference import (  # noqa: E402
     DOMAIN_TRAIT,
+    gene_u64,
     INHERIT_BLEND,
     INHERIT_P0,
     INHERIT_P1,
@@ -151,6 +152,125 @@ def profile_for(archetype):
     return profile
 
 
+# ------------------------------------------------------------- colour model
+
+COLOUR_SCHEMES = ["monochrome", "analogous", "complementary", "split", "bicolour", "ombre"]
+
+FOLIAGE_TONES = {
+    "green":    ((0.25, 0.36), (0.42, 0.82), (0.34, 0.72)),
+    "olive":    ((0.16, 0.24), (0.38, 0.66), (0.36, 0.66)),
+    "burgundy": ((0.96, 1.00), (0.45, 0.75), (0.30, 0.55)),
+    "plum":     ((0.76, 0.86), (0.30, 0.58), (0.32, 0.56)),
+    "silver":   ((0.40, 0.52), (0.08, 0.22), (0.52, 0.80)),
+    "bronze":   ((0.06, 0.11), (0.35, 0.60), (0.34, 0.58)),
+}
+
+FOLIAGE_WEIGHTED = (["green"] * 7 + ["olive"] * 3 + ["burgundy"] * 2
+                    + ["plum", "silver", "bronze"])
+
+VARIEGATION_WEIGHTED = ["none"] * 7 + ["margin"] * 2 + ["midrib", "speckled"]
+
+
+def flower_hue(unit, allow_green):
+    """Mirror of flowerHue: flowers mostly skip the green the leaves occupy."""
+    if allow_green:
+        return unit
+    band_start, band_width = 0.26, 0.14
+    scaled = unit * (1 - band_width)
+    return scaled if scaled < band_start else scaled + band_width
+
+
+def speckle(u, v, seed, frequency):
+    cell_u = int(math.floor(u * frequency))
+    cell_v = int(math.floor(v * frequency * 2))
+    h = mix64(seed ^ ((cell_u * 0x9E3779B9) & MASK64))
+    h = mix64(h ^ ((cell_v * 0x85EBCA6B) & MASK64))
+    return (h >> 11) * (2.0 ** -53)
+
+
+def derive_palette(source, seed):
+    """Mirror of Genome.Palette.derive."""
+    scheme = source.pick("palette.scheme", COLOUR_SCHEMES)
+    base_hue = flower_hue(source.unit("palette.petalHue"),
+                          source.chance("palette.greenFlower", 0.08))
+    base_sat = source.value("palette.petalSaturation", 0.18, 0.95)
+    base_bri = source.value("palette.petalBrightness", 0.55, 1.0)
+    direction = 1 if source.chance("palette.hueDirection", 0.5) else -1
+
+    tip_hue, tip_sat, tip_bri = base_hue, base_sat, base_bri
+    if scheme == "monochrome":
+        tip_sat = base_sat * source.value("palette.tipSaturation", 0.45, 1.1)
+        tip_bri = base_bri * source.value("palette.tipBrightness", 1.0, 1.35)
+    elif scheme == "analogous":
+        tip_hue = base_hue + direction * source.value("palette.tipShift", 0.04, 0.11)
+        tip_sat = base_sat * source.value("palette.tipSaturation", 0.7, 1.1)
+        tip_bri = base_bri * source.value("palette.tipBrightness", 0.95, 1.25)
+    elif scheme == "complementary":
+        tip_hue = base_hue + 0.5
+        tip_sat = base_sat * source.value("palette.tipSaturation", 0.35, 0.7)
+        tip_bri = base_bri * source.value("palette.tipBrightness", 1.0, 1.3)
+    elif scheme == "split":
+        tip_hue = base_hue + 0.5 + direction * source.value("palette.tipShift", 0.06, 0.16)
+        tip_sat = base_sat * source.value("palette.tipSaturation", 0.4, 0.8)
+        tip_bri = base_bri * source.value("palette.tipBrightness", 1.0, 1.3)
+    elif scheme == "bicolour":
+        tip_hue = base_hue + direction * source.value("palette.tipShift", 0.22, 0.42)
+        tip_sat = base_sat * source.value("palette.tipSaturation", 0.75, 1.15)
+        tip_bri = base_bri * source.value("palette.tipBrightness", 0.9, 1.25)
+    else:  # ombre
+        tip_sat = base_sat * source.value("palette.tipSaturation", 0.08, 0.35)
+        tip_bri = min(1.0, base_bri * source.value("palette.tipBrightness", 1.15, 1.5))
+
+    petal_base = (wrapped_unit(base_hue), clamp(base_sat, 0, 1), clamp(base_bri * 0.82, 0, 1))
+    petal_tip = (wrapped_unit(tip_hue), clamp(tip_sat, 0, 1), clamp(tip_bri, 0, 1))
+
+    toward_complement = scheme in ("complementary", "split")
+    throat_hue = (base_hue + 0.5 + source.signed("palette.throatShift") * 0.06
+                  if toward_complement
+                  else base_hue + source.signed("palette.throatShift") * 0.08)
+    petal_throat = (wrapped_unit(throat_hue),
+                    min(1, base_sat * source.value("palette.throatSaturation", 0.9, 1.5) + 0.1),
+                    clamp(base_bri * source.value("palette.throatBrightness", 0.5, 0.95), 0, 1))
+
+    petal_vein = (wrapped_unit(base_hue + source.signed("palette.veinShift") * 0.05),
+                  min(1, base_sat * 1.25 + 0.08),
+                  clamp(base_bri * source.value("palette.veinBrightness", 0.35, 0.7), 0, 1))
+    veining = source.bell("palette.veining", 0.15, 0.75) if source.chance("palette.hasVeins", 0.45) else 0.0
+
+    picotee = None
+    if source.chance("palette.hasPicotee", 0.18):
+        picotee = (wrapped_unit(base_hue + 0.5 + source.signed("palette.picoteeShift") * 0.1),
+                   source.value("palette.picoteeSaturation", 0.5, 1.0),
+                   source.value("palette.picoteeBrightness", 0.35, 0.9))
+
+    tone = source.pick("palette.foliageTone", FOLIAGE_WEIGHTED)
+    hue_range, sat_range, bri_range = FOLIAGE_TONES[tone]
+    leaf = (source.value("palette.leafHue", *hue_range),
+            source.value("palette.leafSaturation", *sat_range),
+            source.value("palette.leafBrightness", *bri_range))
+
+    variegation = source.pick("palette.variegation", VARIEGATION_WEIGHTED)
+    leaf_accent = (wrapped_unit(leaf[0] + source.signed("palette.accentShift") * 0.12),
+                   leaf[1] * source.value("palette.accentSaturation", 0.1, 0.6),
+                   min(1, leaf[2] * source.value("palette.accentBrightness", 1.3, 2.1)))
+
+    stem = (wrapped_unit(leaf[0] + source.signed("palette.stemShift") * 0.06),
+            clamp(leaf[1] * source.value("palette.stemSaturation", 0.6, 1.1), 0, 1),
+            clamp(leaf[2] * source.value("palette.stemBrightness", 0.62, 1.0), 0, 1))
+
+    centre = (source.unit("palette.centreHue"),
+              source.value("palette.centreSaturation", 0.3, 1.0),
+              source.value("palette.centreBrightness", 0.6, 1.0))
+
+    return dict(scheme=scheme, petalBase=petal_base, petalTip=petal_tip,
+                petalThroat=petal_throat, petalVein=petal_vein, picotee=picotee,
+                veining=veining, foliageTone=tone, leaf=leaf, variegation=variegation,
+                leafAccent=leaf_accent, stem=stem, centre=centre,
+                glow=source.bell("palette.glow", 0, 1),
+                sheen=source.value("palette.sheen", 0.05, 0.65),
+                speckleSeed=gene_u64(seed, "palette.speckleSeed"))
+
+
 # -------------------------------------------------------------------- genome
 
 class Genome:
@@ -186,6 +306,9 @@ class Genome:
         self.leafPitch = source.value("foliage.pitch", 0.35, 1.25)
         self.divergence = 2.399963 + source.signed("foliage.divergence") * 0.22
         self.serration = source.bell("foliage.serration", 0, 1)
+        self.teeth = source.integer("foliage.teeth", 5, 17)
+        self.veinCount = source.integer("foliage.veinCount", 3, 9)
+        self.veinDepth = source.bell("foliage.veinDepth", 0.2, 1.0) if source.chance("foliage.hasVeins", 0.72) else 0.0
         self.leafTipSharpness = source.value("foliage.tipSharpness", 0.7, 2.1)
 
         petal_base = source.integer("bloom.petalCount", 3, 13)
@@ -200,31 +323,15 @@ class Genome:
         self.headPitch = clamp(source.bell("bloom.headPitch", 0, 0.9) + profile["headPitchBias"], 0, 1.9)
         self.centreRadius = source.value("bloom.centreRadius", 0.1, 0.32) * profile["centreScale"]
         self.stamenCount = source.integer("bloom.stamenCount", 0, 9)
+        self.notch = source.value("bloom.notch", 0.35, 1.0) if source.chance("bloom.hasNotch", 0.3) else 0.0
+        self.sepalCount = source.integer("bloom.sepalCount", 3, 6) if source.chance("bloom.hasSepals", 0.7) else 0
+        self.hasPistil = source.chance("bloom.hasPistil", 0.75)
         self.bloomsAtNodes = profile["bloomsAtNodes"]
         self.bloomPresent = source.unit("bloom.present") < profile["bloomPresence"]
 
-        petal_hue = source.unit("palette.petalHue")
-        hue_shift = source.signed("palette.petalTipShift") * 0.09
-        petal_saturation = source.value("palette.petalSaturation", 0.15, 0.95)
-        petal_brightness = source.value("palette.petalBrightness", 0.55, 1.0)
-        leaf_hue = 0.22 + source.unit("palette.leafHue") * 0.16
-        self.palette = dict(
-            petalBase=(petal_hue, petal_saturation, petal_brightness * 0.82),
-            petalTip=(wrapped_unit(petal_hue + hue_shift),
-                      clamp(petal_saturation * source.value("palette.tipSaturation", 0.45, 1.15), 0, 1),
-                      min(1.0, petal_brightness * source.value("palette.tipBrightness", 0.95, 1.35))),
-            leaf=(leaf_hue,
-                  source.value("palette.leafSaturation", 0.34, 0.82),
-                  source.value("palette.leafBrightness", 0.34, 0.72)),
-            stem=(wrapped_unit(leaf_hue + source.signed("palette.stemShift") * 0.05),
-                  source.value("palette.stemSaturation", 0.2, 0.7),
-                  source.value("palette.stemBrightness", 0.24, 0.54)),
-            centre=(source.unit("palette.centreHue"),
-                    source.value("palette.centreSaturation", 0.3, 1.0),
-                    source.value("palette.centreBrightness", 0.6, 1.0)),
-        )
-        self.glow = source.bell("palette.glow", 0, 1)
-        self.sheen = source.value("palette.sheen", 0.05, 0.65)
+        self.palette = derive_palette(source, seed)
+        self.glow = self.palette["glow"]
+        self.sheen = self.palette["sheen"]
 
         self.germinationHours = source.value("tempo.germinationHours", 3, 20)
         self.seedlingDays = source.value("tempo.seedlingDays", 0.6, 2.4)
@@ -494,12 +601,14 @@ def build_skeleton(genome, height_scale, segments=28):
     return dict(stem=samples, nodes=nodes, apex=samples[-1])
 
 
-def blade_profile(s, sharpness, serration, ripples):
+def blade_profile(s, sharpness, serration, teeth):
     base = math.sin(math.pi * (clamp(s, 0, 1) ** 0.7))
     shaped = max(0.0, base) ** max(0.3, sharpness)
-    if serration <= 0 or ripples <= 0:
+    if serration <= 0 or teeth <= 0:
         return shaped
-    return shaped * (1 + serration * 0.1 * math.sin(s * math.pi * ripples))
+    phase = s * teeth
+    sawtooth = phase - math.floor(phase)
+    return shaped * (1 - serration * 0.22 * (sawtooth ** 1.5))
 
 
 def build_mesh(genome, growth):
@@ -554,13 +663,15 @@ def _add_leaves(builder, genome, skeleton, growth):
 
         def point(u, v, origin=origin, forward=forward, up=up, side=side,
                   length=length, half_width=half_width):
-            profile = blade_profile(v, genome.leafTipSharpness, genome.serration, 9)
+            profile = blade_profile(v, genome.leafTipSharpness, genome.serration, genome.teeth)
             across = (u - 0.5) * 2 * half_width * profile
             sag = -genome.leafDroop * length * v * v * 0.8
             crease = genome.leafFold * half_width * profile * (abs(u - 0.5) * 2) ** 2
-            return origin + forward * (v * length) + up * (sag + crease) + side * across
+            vein = (genome.veinDepth * half_width * 0.14
+                    * math.sin(v * math.pi * 2 * genome.veinCount) * (abs(u - 0.5) * 2))
+            return origin + forward * (v * length) + up * (sag + crease + vein) + side * across
 
-        builder.add_surface("leaf", 11, 7, point)
+        builder.add_surface("leaf", 19, 9, point)
 
 
 def _add_blooms(builder, genome, skeleton, growth):
@@ -619,6 +730,49 @@ def _add_bloom(builder, genome, sample, scale, growth, index):
         _add_stamens(builder, genome, origin, axis, ref_a, ref_b, centre_radius,
                      petal_length * 0.42 * growth["bloomOpen"])
 
+    if genome.hasPistil and growth["bloomOpen"] > 0.25:
+        _add_pistil(builder, genome, origin, axis, ref_a, centre_radius,
+                    petal_length * 0.55 * growth["bloomOpen"])
+
+    if genome.sepalCount > 0:
+        _add_sepals(builder, genome, sample["position"], axis, ref_a, ref_b,
+                    petal_length * 0.5, petal_length * 0.2)
+
+
+def _add_sepals(builder, genome, origin, axis, ref_a, ref_b, length, width):
+    if length <= 0.002:
+        return
+    for index in range(genome.sepalCount):
+        jitter = SplitMix64(genome.seed, f"sepal.{index}")
+        azimuth = 2 * math.pi * index / genome.sepalCount + jitter.value(-0.1, 0.1)
+        radial = normalize(ref_a * math.cos(azimuth) + ref_b * math.sin(azimuth))
+        pitch = jitter.value(1.75, 2.25)
+        forward = normalize(radial * math.sin(pitch) + axis * math.cos(pitch))
+        side = normalize(np.cross(axis, radial))
+        up = normalize(np.cross(forward, side))
+        half_width = width * 0.5
+
+        def point(u, v, origin=origin, forward=forward, up=up, side=side,
+                  length=length, half_width=half_width):
+            profile = blade_profile(v, 1.3, 0, 0)
+            across = (u - 0.5) * 2 * half_width * profile
+            curve = -0.25 * length * v * v
+            return origin + forward * (v * length) + up * curve + side * across
+
+        builder.add_surface("leaf", 7, 5, point)
+
+
+def _add_pistil(builder, genome, origin, axis, side, radius, length):
+    if length <= 0.002:
+        return
+    stalk = max(0.0008, length * 0.055)
+    base = origin + axis * radius * 0.3
+    tip = origin + axis * (radius * 0.4 + length)
+    samples = transport_frames([base, (base + tip) * 0.5, tip],
+                               [stalk, stalk * 0.9, stalk * 0.75], 0)
+    builder.add_tube("stamen", samples, 5)
+    builder.add_dome("stamen", tip, axis, side, stalk * 2.2, flatten=1.0, rows=5, columns=10)
+
 
 def _add_petal(builder, genome, origin, axis, ref_a, ref_b, azimuth, openness, length, bloom_open):
     radial = normalize(ref_a * math.cos(azimuth) + ref_b * math.sin(azimuth))
@@ -635,9 +789,10 @@ def _add_petal(builder, genome, origin, axis, ref_a, ref_b, azimuth, openness, l
         twist_angle = genome.bloomTwist * v
         local_side = side * math.cos(twist_angle) + up * math.sin(twist_angle)
         local_up = up * math.cos(twist_angle) - side * math.sin(twist_angle)
-        return origin + forward * (v * length) + local_side * across + local_up * bend
+        cleft = genome.notch * length * 0.2 * math.exp(-((u - 0.5) * 5) ** 2) * (v ** 6)
+        return origin + forward * (v * length - cleft) + local_side * across + local_up * bend
 
-    builder.add_surface("petal", 9, 7, point)
+    builder.add_surface("petal", 13, 9, point)
 
 
 def _add_stamens(builder, genome, origin, axis, ref_a, ref_b, radius, length):
@@ -660,27 +815,64 @@ def _add_stamens(builder, genome, origin, axis, ref_a, ref_b, radius, length):
 
 # ------------------------------------------------------------------- colours
 
-def ramp_colour(role, t, palette):
-    def interpolate(a, b, t):
-        delta = b[0] - a[0]
-        if delta > 0.5:
-            delta -= 1
-        if delta < -0.5:
-            delta += 1
-        return (wrapped_unit(a[0] + delta * t),
-                a[1] + (b[1] - a[1]) * t,
-                a[2] + (b[2] - a[2]) * t)
-
+def hsb_interpolate(a, b, t):
     t = clamp(t, 0, 1)
+    delta = b[0] - a[0]
+    if delta > 0.5:
+        delta -= 1
+    if delta < -0.5:
+        delta += 1
+    return (wrapped_unit(a[0] + delta * t),
+            a[1] + (b[1] - a[1]) * t,
+            a[2] + (b[2] - a[2]) * t)
+
+
+def smoothstep(t):
+    x = clamp(t, 0, 1)
+    return x * x * (3 - 2 * x)
+
+
+def ramp_colour(role, u, v, palette):
+    """Mirror of PaletteRamp.colour."""
+    u, v = clamp(u, 0, 1), clamp(v, 0, 1)
+
     if role == "petal":
-        return interpolate(palette["petalBase"], palette["petalTip"], t)
+        colour = hsb_interpolate(palette["petalBase"], palette["petalTip"], smoothstep(v))
+        throat = max(0.0, 1 - v / 0.34) ** 1.6
+        colour = hsb_interpolate(colour, palette["petalThroat"], throat * 0.9)
+        if palette["veining"] > 0:
+            ridges = abs(math.sin(u * math.pi * 5))
+            vein = (ridges ** 7) * palette["veining"] * (1 - v * 0.45)
+            colour = hsb_interpolate(colour, palette["petalVein"], vein)
+        if palette["picotee"] is not None:
+            side = 1 - min(u, 1 - u) / 0.16
+            tip = (v - 0.86) / 0.14
+            edge = clamp(max(side, tip), 0, 1)
+            colour = hsb_interpolate(colour, palette["picotee"], edge ** 1.4)
+        return colour
+
     if role == "leaf":
         leaf = palette["leaf"]
-        return interpolate(leaf, (leaf[0], leaf[1], min(1, leaf[2] * 1.18)), t)
+        tip = (leaf[0], leaf[1], min(1, leaf[2] * 1.16))
+        colour = hsb_interpolate(leaf, tip, v)
+        style = palette["variegation"]
+        if style == "margin":
+            edge = clamp(1 - min(u, 1 - u) / 0.18, 0, 1)
+            colour = hsb_interpolate(colour, palette["leafAccent"], (edge ** 1.6) * 0.95)
+        elif style == "midrib":
+            centre = clamp(1 - abs(u - 0.5) / 0.22, 0, 1)
+            colour = hsb_interpolate(colour, palette["leafAccent"], (centre ** 1.8) * 0.9)
+        elif style == "speckled":
+            if speckle(u, v, palette["speckleSeed"], 4.5) > 0.78:
+                colour = hsb_interpolate(colour, palette["leafAccent"], 0.6)
+        return colour
+
     if role == "stem":
         stem = palette["stem"]
-        return interpolate(stem, (stem[0], stem[1], min(1, stem[2] * 1.25)), t)
+        return hsb_interpolate(stem, (stem[0], stem[1], min(1, stem[2] * 1.25)), v)
+
     if role == "centre":
         centre = palette["centre"]
-        return interpolate(centre, (centre[0], centre[1], max(0, centre[2] * 0.7)), t)
-    return interpolate(palette["centre"], palette["petalTip"], t)
+        return hsb_interpolate(centre, (centre[0], centre[1], max(0, centre[2] * 0.7)), v)
+
+    return hsb_interpolate(palette["centre"], palette["petalTip"], v)

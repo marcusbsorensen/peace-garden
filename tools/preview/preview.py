@@ -133,16 +133,17 @@ def render(genome, growth, size=(420, 620), yaw=0.55, pitch=0.08, supersample=2)
                                height * 0.5 - p[1] * focal / -p[2]))
             depth = sum(p[2] for p in camera_points) / 3.0
             normal = rotate_normal(normalize(sum(np.array(normals[i]) for i in (a, b, c)) / 3.0))
+            u = sum(uvs[i][0] for i in (a, b, c)) / 3.0
             v = sum(uvs[i][1] for i in (a, b, c)) / 3.0
-            triangles.append((depth, role, screen, normal, v))
+            triangles.append((depth, role, screen, normal, u, v))
 
     triangles.sort(key=lambda item: item[0])
 
     image = Image.new("RGB", (width, height), (0, 0, 0))
     draw_backdrop(image, genome.palette)
     draw = ImageDraw.Draw(image)
-    for _, role, screen, normal, v in triangles:
-        colour = shade(role, ramp_colour(role, v, genome.palette), normal, genome.glow)
+    for _, role, screen, normal, u, v in triangles:
+        colour = shade(role, ramp_colour(role, u, v, genome.palette), normal, genome.glow)
         draw.polygon(screen, fill=tuple(int(c * 255) for c in colour))
 
     return image.resize(size, Image.LANCZOS)

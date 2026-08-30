@@ -22,8 +22,15 @@ other people's plots and guest books is phase 2, sketched in
   meet someone.
 - **A plant derived entirely from that seed.** Twelve archetypes (spire, umbel,
   fern, orchid, lotus, thistle, vine, bell, star, poppy, succulent, plume),
-  around sixty inherited traits, procedural geometry, a colour palette, and a
-  binomial name.
+  around eighty inherited traits, procedural geometry, and a binomial name.
+- **Colour with a reason behind it.** Six harmony schemes — monochrome,
+  analogous, complementary, split, bicolour, ombré — decide how a flower's two
+  colours relate, rather than drawing both at random and hoping. Flowers mostly
+  skip the green that leaves wear, so they read as flowers.
+- **Markings and foliage.** Throats, veining, and the occasional contrasting
+  picotee rim. Foliage in green, olive, burgundy, plum, silver or bronze, plain
+  or margined or striped or speckled. Toothed leaf margins, ribbed blades,
+  cleft petal tips, sepals under the flower and a pistil at its centre.
 - **A stage, not a void.** Black ground, a soft radial glow behind the plant
   falling away to nothing at the edges, tinted a few percent toward the plant's
   own colour so each person's stage is quietly theirs.
@@ -35,6 +42,12 @@ other people's plots and guest books is phase 2, sketched in
   before either one shows it.
 - **Keeping it.** The hybrid, with the date and time if you want them, a place,
   and a line about the meeting. Then it grows, from the moment you met.
+- **Seeds on the wind.** If the other person doesn't have the app, your phone
+  can still hand them a seed — as a code held up to their camera, or an AirDrop,
+  or a message. It takes root where it lands: their phone draws a seed of its
+  own and crosses it with yours. A reply code brings it back so you both end up
+  with the same plant. See
+  [docs/SEEDS-ON-THE-WIND.md](docs/SEEDS-ON-THE-WIND.md).
 
 ## Where the tap really happens
 
@@ -47,6 +60,11 @@ seconds of each other.
 
 The full reasoning, the handshake and the derivation are in
 [docs/EXCHANGE-PROTOCOL.md](docs/EXCHANGE-PROTOCOL.md).
+
+The same constraint is why a phone cannot hand the *app* to a phone that lacks
+it — but it can hand over the seed, and an App Clip can grow it without the
+receiver ever opening the App Store. That is
+[docs/SEEDS-ON-THE-WIND.md](docs/SEEDS-ON-THE-WIND.md).
 
 ## Building it
 
@@ -166,6 +184,7 @@ colour appears at its base, flip the row order in
 ├── docs/
 │   ├── ARCHITECTURE.md         Why a plant is a seed plus a birthday
 │   ├── EXCHANGE-PROTOCOL.md    The handshake, and why not NFC
+│   ├── SEEDS-ON-THE-WIND.md    Passing a seed to a phone without the app
 │   ├── PHASES.md               What phase 2 has to answer
 │   └── images/                 Previews rendered by tools/preview
 ├── tools/

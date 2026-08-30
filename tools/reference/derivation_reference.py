@@ -116,6 +116,42 @@ def sorted_parents(seed_a: bytes, seed_b: bytes):
     return tuple(sorted([seed_a, seed_b]))
 
 
+# ---------------------------------------------------------------- seed links
+
+DOMAIN_LINK = "peacegarden.link.v1"
+
+
+def b64url(raw: bytes) -> str:
+    import base64
+    return base64.urlsafe_b64encode(raw).decode().rstrip("=")
+
+
+def link_body(kind, seed, nonce, birth_seconds, display_name, plant_name,
+              echo=None, check=None) -> str:
+    return ".".join([
+        "1",
+        kind,
+        b64url(seed),
+        b64url(nonce),
+        str(birth_seconds),
+        b64url(display_name.encode("utf-8")),
+        b64url(plant_name.encode("utf-8")),
+        b64url(echo) if echo else "",
+        b64url(check) if check else "",
+    ])
+
+
+def link_checksum(body: str) -> str:
+    """Catches a link a messaging app has mangled. Not a signature."""
+    return b64url(digest(DOMAIN_LINK, body.encode("utf-8"))[:6])
+
+
+def link_fragment(kind, seed, nonce, birth_seconds, display_name, plant_name,
+                  echo=None, check=None) -> str:
+    body = link_body(kind, seed, nonce, birth_seconds, display_name, plant_name, echo, check)
+    return body + "." + link_checksum(body)
+
+
 # ------------------------------------------------------------------ vectors
 
 def hexs(b: bytes) -> str:
@@ -167,6 +203,10 @@ def main() -> None:
     kids = {cross(seed_a, seed_b, encounter_id(seed_a, seed_b, bytes([i] * 16), nonce_b))
             for i in range(256)}
     print(f'distinct children from 256 encounters = {len(kids)}')
+
+    fragment = link_fragment("o", seed_a, nonce_a, 1_700_000_000, "Marcus", "Aurelia nocturna")
+    print(f'link fragment = {fragment}')
+    print()
 
     # Inheritance mix over many labels, to confirm the thresholds behave.
     from collections import Counter

@@ -106,14 +106,23 @@ public struct PlantBuilder {
         let sharpness = Float(foliage.tipSharpness)
         let serration = Float(foliage.serration)
 
-        builder.addSurface(role: .leaf, rows: 11, columns: 7) { u, v in
+        let teeth = genome.foliage.teeth
+        let veinCount = Float(genome.foliage.veinCount)
+        let veinDepth = Float(genome.foliage.veinDepth)
+
+        // More rows than the blade strictly needs, so the teeth and the veins
+        // have something to be cut into.
+        builder.addSurface(role: .leaf, rows: 19, columns: 9) { u, v in
             let s = v
-            let profile = Self.bladeProfile(s, sharpness: sharpness, serration: serration, ripples: 9)
+            let profile = Self.bladeProfile(s, sharpness: sharpness, serration: serration, teeth: teeth)
             let across = (u - 0.5) * 2 * halfWidth * profile
             // The blade sags under its own length, and folds into a shallow V.
             let sag = -droop * length * s * s * 0.8
             let crease = fold * halfWidth * profile * pow(abs(u - 0.5) * 2, 2)
-            return origin + forward * (s * length) + up * (sag + crease) + side * across
+            // Ribs running out from the midrib, deepening toward the margin.
+            let vein = veinDepth * halfWidth * 0.14
+                * sin(s * .pi * 2 * veinCount) * (abs(u - 0.5) * 2)
+            return origin + forward * (s * length) + up * (sag + crease + vein) + side * across
         }
     }
 
@@ -222,6 +231,96 @@ public struct PlantBuilder {
                 length: petalLength * 0.42 * Float(growth.bloomOpen)
             )
         }
+
+        if bloom.hasPistil, growth.bloomOpen > 0.25 {
+            addPistil(
+                &builder,
+                origin: origin,
+                axis: axis,
+                side: refA,
+                radius: centreRadius,
+                length: petalLength * 0.55 * Float(growth.bloomOpen)
+            )
+        }
+
+        // The green collar under the flower, present from the bud onward — it
+        // is what wrapped the petals before they opened.
+        if bloom.sepalCount > 0 {
+            addSepals(
+                &builder,
+                origin: sample.position,
+                axis: axis,
+                refA: refA,
+                refB: refB,
+                length: petalLength * 0.5,
+                width: petalLength * 0.2
+            )
+        }
+    }
+
+    /// A whorl of short green blades, swept back beneath the petals.
+    private func addSepals(
+        _ builder: inout MeshBuilder,
+        origin: SIMD3<Float>,
+        axis: SIMD3<Float>,
+        refA: SIMD3<Float>,
+        refB: SIMD3<Float>,
+        length: Float,
+        width: Float
+    ) {
+        guard length > 0.002 else { return }
+        let count = genome.bloom.sepalCount
+
+        for index in 0..<count {
+            var jitter = SplitMix64(seed: genome.seed, label: "sepal.\(index)")
+            let azimuth = 2 * .pi * Float(index) / Float(count) + Float(jitter.value(in: -0.1...0.1))
+            let radial = simd_normalize(refA * cos(azimuth) + refB * sin(azimuth))
+            // Past a right angle to the axis, so they fold back down the stem.
+            let pitch = Float(jitter.value(in: 1.75...2.25))
+            let forward = simd_normalize(radial * sin(pitch) + axis * cos(pitch))
+            let side = simd_normalize(cross(axis, radial))
+            let up = simd_normalize(cross(forward, side))
+            let halfWidth = width * 0.5
+
+            builder.addSurface(role: .leaf, rows: 7, columns: 5) { u, v in
+                let profile = Self.bladeProfile(v, sharpness: 1.3, serration: 0, teeth: 0)
+                let across = (u - 0.5) * 2 * halfWidth * profile
+                let curve = -0.25 * length * v * v
+                return origin + forward * (v * length) + up * curve + side * across
+            }
+        }
+    }
+
+    /// The column at the flower's centre, standing above the stamens.
+    private func addPistil(
+        _ builder: inout MeshBuilder,
+        origin: SIMD3<Float>,
+        axis: SIMD3<Float>,
+        side: SIMD3<Float>,
+        radius: Float,
+        length: Float
+    ) {
+        guard length > 0.002 else { return }
+        let stalkRadius = max(0.0008, length * 0.055)
+        let tip = origin + axis * (radius * 0.4 + length)
+        let base = origin + axis * radius * 0.3
+
+        let samples = SkeletonBuilder.transportFrames(
+            positions: [base, (base + tip) * 0.5, tip],
+            radii: [stalkRadius, stalkRadius * 0.9, stalkRadius * 0.75],
+            twist: 0
+        )
+        builder.addTube(role: .stamen, path: samples, sides: 5)
+        builder.addDome(
+            role: .stamen,
+            centre: tip,
+            axis: axis,
+            side: side,
+            radius: stalkRadius * 2.2,
+            flatten: 1.0,
+            rows: 5,
+            columns: 10
+        )
     }
 
     private func addPetal(
@@ -248,15 +347,19 @@ public struct PlantBuilder {
         let twist = Float(bloom.twist)
         let sharpness = Float(bloom.tipSharpness)
 
-        builder.addSurface(role: .petal, rows: 9, columns: 7) { u, v in
+        let notch = Float(bloom.notch)
+
+        builder.addSurface(role: .petal, rows: 13, columns: 9) { u, v in
             let s = v
-            let profile = Self.bladeProfile(s, sharpness: sharpness, serration: 0, ripples: 0)
+            let profile = Self.bladeProfile(s, sharpness: sharpness, serration: 0, teeth: 0)
             let across = (u - 0.5) * 2 * halfWidth * profile
             let bend = curl * length * s * s * 0.75
             let twistAngle = twist * s
             let localSide = side * cos(twistAngle) + up * sin(twistAngle)
             let localUp = up * cos(twistAngle) - side * sin(twistAngle)
-            return origin + forward * (s * length) + localSide * across + localUp * bend
+            // A cleft cut into the very tip, dying away toward the base.
+            let cleft = notch * length * 0.2 * exp(-pow((u - 0.5) * 5, 2)) * pow(s, 6)
+            return origin + forward * (s * length - cleft) + localSide * across + localUp * bend
         }
     }
 
@@ -305,12 +408,16 @@ public struct PlantBuilder {
 
     /// Width of a blade at `s` along its length, `0` at both ends.
     ///
-    /// `sharpness` above 1 pulls the widest point down and draws the tip out;
-    /// `serration` adds the shallow ripple that reads as a toothed edge.
-    static func bladeProfile(_ s: Float, sharpness: Float, serration: Float, ripples: Int) -> Float {
+    /// `sharpness` above 1 pulls the widest point down and draws the tip out.
+    /// `serration` cuts the margin into `teeth` — a sawtooth rather than a
+    /// sine, because a leaf's teeth lean toward the tip instead of scalloping
+    /// evenly in and out.
+    static func bladeProfile(_ s: Float, sharpness: Float, serration: Float, teeth: Int) -> Float {
         let base = sin(.pi * pow(max(0, min(1, s)), 0.7))
         let shaped = pow(max(0, base), max(0.3, sharpness))
-        guard serration > 0, ripples > 0 else { return shaped }
-        return shaped * (1 + serration * 0.1 * sin(s * .pi * Float(ripples)))
+        guard serration > 0, teeth > 0 else { return shaped }
+        let phase = s * Float(teeth)
+        let sawtooth = phase - floor(phase)
+        return shaped * (1 - serration * 0.22 * pow(sawtooth, 1.5))
     }
 }

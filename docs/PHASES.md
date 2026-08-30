@@ -15,6 +15,9 @@ Built:
   descends visibly from both parents.
 - Keeping the plant with a note about the meeting — the date and time if wanted,
   a place, a line of text.
+- Seeds by link, for meeting someone whose phone has never heard of the app: a
+  QR code or an AirDrop carrying the seed, and a reply that brings theirs back
+  so both people end up with the same plant.
 - A local garden of everything grown from meetings.
 
 Not built, deliberately:
@@ -22,13 +25,21 @@ Not built, deliberately:
 - Anything that leaves the phone. There is no server, no account, no sync.
 - The shared peace garden and its guest books — phase 2, below.
 
-## Phase 1.5 — refinements that need hardware
+## Phase 1.5 — refinements that need hardware or a domain
 
+- **An App Clip.** The single biggest change to how the app spreads: a seed
+  scanned by someone who has never installed anything, growing on their phone
+  seconds later. It needs a domain, an App Store Connect experience and a
+  published app — see docs/SEEDS-ON-THE-WIND.md — none of which is code.
+- **A seed on a physical tag.** An NFC sticker on a bench or in a café, holding
+  a seed anyone passing can pick up. Different social object from a seed handed
+  to one person; worth thinking about before building.
 - **Nearby Interaction as a second gate.** On iPhones with a U1/U2 chip, require
   the two phones to be within a few centimetres as well as tapped. One extra
   message in the handshake; needs two such devices in a room to develop against.
-- **A closed-bud state worth looking at.** The bud is currently the flower's
-  petals held shut. It could be its own geometry, with sepals.
+- **A closed-bud state worth looking at.** The bud is the flower's own petals
+  held shut, now wrapped in sepals. Real bud geometry — overlapping scales,
+  a swelling that splits — would be better.
 - **Wind.** A slow vertex displacement along the stem would do more for the
   feeling of a living plant than any amount of extra polygons.
 

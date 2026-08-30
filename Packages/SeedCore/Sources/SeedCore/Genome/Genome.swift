@@ -59,6 +59,11 @@ public struct Genome: Equatable, Sendable {
         public var pitch: Double
         public var divergence: Double
         public var serration: Double
+        /// How many teeth the margin is cut into.
+        public var teeth: Int
+        /// Ribs running from the midrib out to the margin.
+        public var veinCount: Int
+        public var veinDepth: Double
         public var tipSharpness: Double
     }
 
@@ -73,18 +78,42 @@ public struct Genome: Equatable, Sendable {
         public var headPitch: Double
         public var centreRadius: Double
         public var stamenCount: Int
+        /// A cleft in the tip of each petal, as a pink or a campion has.
+        public var notch: Double
+        /// The green collar beneath the flower.
+        public var sepalCount: Int
+        public var hasPistil: Bool
         public var atNodes: Bool
         public var present: Bool
     }
 
     public struct Palette: Equatable, Sendable {
+        /// How the two petal colours relate. Kept on the palette because it is
+        /// worth telling someone what their flower is doing.
+        public var scheme: ColourScheme
+        /// The colour at the base of a petal, nearest the flower's centre.
         public var petalBase: HSB
+        /// The colour at the petal's tip.
         public var petalTip: HSB
+        /// The mark in the flower's throat, where the petals meet.
+        public var petalThroat: HSB
+        public var petalVein: HSB
+        /// A contrasting rim, as a picotee carnation has. Usually absent.
+        public var picotee: HSB?
+        public var veining: Double
+
+        public var foliageTone: FoliageTone
         public var leaf: HSB
+        public var variegation: Variegation
+        /// The second leaf colour, used according to `variegation`.
+        public var leafAccent: HSB
+
         public var stem: HSB
         public var centre: HSB
         public var glow: Double
         public var sheen: Double
+        /// Seeds the patch pattern on speckled leaves.
+        public var speckleSeed: UInt64
     }
 
     /// How the plant unfolds in real time. Days are real days: the plant a
@@ -166,6 +195,11 @@ public struct Genome: Equatable, Sendable {
             // Phyllotaxis: the golden angle, jittered a little per plant.
             divergence: 2.399963 + source.signed("foliage.divergence") * 0.22,
             serration: source.bell("foliage.serration", 0...1),
+            teeth: source.integer("foliage.teeth", 5...17),
+            veinCount: source.integer("foliage.veinCount", 3...9),
+            veinDepth: source.chance("foliage.hasVeins", 0.72)
+                ? source.bell("foliage.veinDepth", 0.2...1.0)
+                : 0,
             tipSharpness: source.value("foliage.tipSharpness", 0.7...2.1)
         )
 
@@ -187,47 +221,18 @@ public struct Genome: Equatable, Sendable {
             headPitch: (source.bell("bloom.headPitch", 0...0.9) + profile.headPitchBias).clamped(to: 0...1.9),
             centreRadius: source.value("bloom.centreRadius", 0.1...0.32) * profile.centreScale,
             stamenCount: source.integer("bloom.stamenCount", 0...9),
+            notch: source.chance("bloom.hasNotch", 0.3)
+                ? source.value("bloom.notch", 0.35...1.0)
+                : 0,
+            sepalCount: source.chance("bloom.hasSepals", 0.7)
+                ? source.integer("bloom.sepalCount", 3...6)
+                : 0,
+            hasPistil: source.chance("bloom.hasPistil", 0.75),
             atNodes: profile.bloomsAtNodes,
             present: source.unit("bloom.present") < profile.bloomPresence
         )
 
-        // Petal colour is drawn as a base plus a *shift* to the tip, so hybrids
-        // that inherit one parent's base and the other's shift still land on a
-        // coherent gradient rather than two unrelated colours.
-        let petalHue = source.unit("palette.petalHue")
-        let hueShift = source.signed("palette.petalTipShift") * 0.09
-        let petalSaturation = source.value("palette.petalSaturation", 0.15...0.95)
-        let petalBrightness = source.value("palette.petalBrightness", 0.55...1.0)
-        let leafHue = 0.22 + source.unit("palette.leafHue") * 0.16
-        palette = Palette(
-            petalBase: HSB(
-                hue: petalHue,
-                saturation: petalSaturation,
-                brightness: petalBrightness * 0.82
-            ),
-            petalTip: HSB(
-                hue: (petalHue + hueShift).wrappedUnit,
-                saturation: (petalSaturation * source.value("palette.tipSaturation", 0.45...1.15)).clamped(to: 0...1),
-                brightness: min(1.0, petalBrightness * source.value("palette.tipBrightness", 0.95...1.35))
-            ),
-            leaf: HSB(
-                hue: leafHue,
-                saturation: source.value("palette.leafSaturation", 0.34...0.82),
-                brightness: source.value("palette.leafBrightness", 0.34...0.72)
-            ),
-            stem: HSB(
-                hue: (leafHue + source.signed("palette.stemShift") * 0.05).wrappedUnit,
-                saturation: source.value("palette.stemSaturation", 0.2...0.7),
-                brightness: source.value("palette.stemBrightness", 0.24...0.54)
-            ),
-            centre: HSB(
-                hue: source.unit("palette.centreHue"),
-                saturation: source.value("palette.centreSaturation", 0.3...1.0),
-                brightness: source.value("palette.centreBrightness", 0.6...1.0)
-            ),
-            glow: source.bell("palette.glow", 0...1),
-            sheen: source.value("palette.sheen", 0.05...0.65)
-        )
+        palette = Palette.derive(from: source, seed: seed)
 
         tempo = Tempo(
             germinationHours: source.value("tempo.germinationHours", 3...20),

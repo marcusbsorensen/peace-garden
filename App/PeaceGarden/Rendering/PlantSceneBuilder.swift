@@ -46,7 +46,10 @@ enum PlantSceneBuilder {
     static func material(for role: MeshRole, palette: Genome.Palette) -> SCNMaterial {
         let material = SCNMaterial()
         material.lightingModel = .physicallyBased
+        // Falls back to a flat colour if the texture could not be made, rather
+        // than leaving the material white.
         material.diffuse.contents = GradientTexture.image(for: role, palette: palette)
+            ?? GradientTexture.colour(PaletteRamp.colour(for: role, u: 0.5, v: 0.5, palette: palette))
         material.diffuse.wrapS = .clamp
         material.diffuse.wrapT = .clamp
         material.metalness.contents = NSNumber(value: 0.0)

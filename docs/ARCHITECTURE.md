@@ -44,7 +44,7 @@ derivation be tested without a device.
 | `Genome` | Minting, trait derivation, archetypes, naming, cross pollination |
 | `Growth` | Elapsed time to stage, height, unfurling, bloom, day/night rhythm |
 | `Morphology` | Skeleton, parametric surfaces, mesh assembly, colour ramps |
-| `Exchange` | Wire format and the cross-pollination result |
+| `Exchange` | Wire format, seed links, and the cross-pollination result |
 | `Persistence` | The garden file |
 
 ### App

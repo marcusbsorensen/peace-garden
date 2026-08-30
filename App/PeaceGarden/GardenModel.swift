@@ -66,6 +66,11 @@ final class GardenModel {
             displayName: name.isEmpty ? "Gardener" : name
         )
         persist()
+
+        if let pendingLink {
+            self.pendingLink = nil
+            try? accept(pendingLink)
+        }
     }
 
     func rename(to displayName: String) {
@@ -111,6 +116,91 @@ final class GardenModel {
     /// Keep growing this plant.
     func contains(seed: SeedID) -> Bool {
         garden.plants.contains { $0.seed == seed }
+    }
+
+    // MARK: - Seeds by link
+
+    /// Where a seed link points. The host has to serve an
+    /// apple-app-site-association file and carry the App Clip experience;
+    /// see docs/SEEDS-ON-THE-WIND.md.
+    static let linkHost = "peacegarden.app"
+
+    enum Incoming: Equatable {
+        case none
+        /// A seed arrived before this person had one of their own; it is held
+        /// until they have drawn theirs.
+        case waitingForIdentity
+        case arrived(ExchangeOutcome, reply: URL?)
+        case failed(String)
+    }
+
+    private(set) var incoming: Incoming = .none
+    private var pendingLink: PollenLink?
+
+    /// A link offering this person's seed, with a fresh nonce each time so two
+    /// people who do this twice grow two different plants.
+    func makeOffer() -> URL? {
+        guard let identity else { return nil }
+        let link = PollenLink(
+            kind: .offer,
+            seed: identity.seed,
+            nonce: Pollination.makeNonce(byteCount: ExchangeProtocol.nonceByteCount),
+            displayName: identity.displayName,
+            plantName: identity.genome.name.full,
+            birth: identity.birth
+        )
+        return link.url(host: Self.linkHost)
+    }
+
+    /// Handles a seed that arrived by link, from wherever.
+    func receive(url: URL) {
+        do {
+            try accept(PollenLink.parse(url))
+        } catch {
+            incoming = .failed(error.localizedDescription)
+        }
+    }
+
+    private func accept(_ link: PollenLink) throws {
+        guard let identity else {
+            // Someone opened a seed before they had one. Hold it until they
+            // have drawn their own, rather than minting one behind their back.
+            pendingLink = link
+            incoming = .waitingForIdentity
+            return
+        }
+
+        let localNonce = Pollination.makeNonce(byteCount: ExchangeProtocol.nonceByteCount)
+        guard let result = link.cross(withLocalSeed: identity.seed, localNonce: localNonce) else {
+            incoming = .failed("That seed and this one would grow different plants on each phone, so nothing was planted.")
+            return
+        }
+
+        let outcome = ExchangeOutcome(
+            result: result,
+            peerDisplayName: link.displayName,
+            peerPlantName: link.plantName,
+            happenedAt: Date()
+        )
+
+        // Only an offer needs answering: a reply is the end of the exchange.
+        let reply: URL? = link.kind == .offer
+            ? PollenLink.reply(
+                to: link,
+                seed: identity.seed,
+                nonce: localNonce,
+                displayName: identity.displayName,
+                plantName: identity.genome.name.full,
+                birth: identity.birth,
+                result: result
+              ).url(host: Self.linkHost)
+            : nil
+
+        incoming = .arrived(outcome, reply: reply)
+    }
+
+    func clearIncoming() {
+        incoming = .none
     }
 
     // MARK: - Plumbing

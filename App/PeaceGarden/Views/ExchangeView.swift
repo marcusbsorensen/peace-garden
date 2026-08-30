@@ -11,6 +11,7 @@ struct ExchangeView: View {
 
     @State private var service = PollenExchangeService()
     @State private var noteOutcome: ExchangeOutcome?
+    @State private var showingOffer = false
 
     var body: some View {
         ZStack {
@@ -18,10 +19,16 @@ struct ExchangeView: View {
 
             switch service.phase {
             case .idle, .searching:
-                waiting(
-                    title: "Looking for someone nearby",
-                    detail: "Ask them to open Meet on their phone too."
-                )
+                VStack(spacing: 0) {
+                    waiting(
+                        title: "Looking for someone nearby",
+                        detail: "Ask them to open Meet on their phone too."
+                    )
+                    QuietButton(title: "They don't have the app") {
+                        showingOffer = true
+                    }
+                    .padding(.bottom, 40)
+                }
             case .awaitingTouch(let peerName):
                 waiting(
                     title: service.hasFeltLocalTouch ? "Waiting for \(peerName)" : "Touch the tops of your phones together",
@@ -49,6 +56,9 @@ struct ExchangeView: View {
                 dismiss()
             }
             .presentationBackground(.black)
+        }
+        .fullScreenCover(isPresented: $showingOffer) {
+            SeedOfferView().environment(model)
         }
         .onAppear {
             guard let identity = model.identity else { return }
@@ -85,36 +95,8 @@ struct ExchangeView: View {
     }
 
     private func grown(_ outcome: ExchangeOutcome) -> some View {
-        let genome = outcome.result.genome
-        // Shown as it will be in bloom. A plant born a second ago is a speck,
-        // and the point of this moment is to see what the two of you made.
-        let preview = Self.bloomPreview(for: genome)
-
-        return VStack(spacing: 0) {
-            PlantSceneView(genome: genome, growth: preview, autoRotates: true)
-                .background(StageBackdrop(palette: genome.palette))
-                .ignoresSafeArea(edges: .top)
-
-            VStack(spacing: 10) {
-                Text(genome.name.full)
-                    .plantName(size: 24)
-                    .foregroundStyle(Chrome.ink)
-                Text("Your plant and \(outcome.peerPlantName), together")
-                    .font(.system(size: 13, weight: .light))
-                    .foregroundStyle(Chrome.muted)
-                Text("It will open like this in \(Int(genome.tempo.daysToBloom.rounded())) days")
-                    .chromeLabel()
-                    .foregroundStyle(Chrome.faint)
-                    .padding(.top, 2)
-
-                QuietButton(title: "Keep this plant", isProminent: true) {
-                    noteOutcome = outcome
-                }
-                .padding(.top, 10)
-            }
-            .multilineTextAlignment(.center)
-            .padding(.horizontal, 34)
-            .padding(.bottom, 40)
+        PlantRevealView(outcome: outcome) {
+            noteOutcome = outcome
         }
     }
 
@@ -138,17 +120,4 @@ struct ExchangeView: View {
         .padding(.horizontal, 46)
     }
 
-    static func bloomPreview(for genome: Genome) -> GrowthModel.State {
-        let birth = Date(timeIntervalSince1970: 0)
-        let atBloom = birth.addingTimeInterval(
-            (genome.tempo.daysToBloom + genome.tempo.bloomDays * 0.45) * 86_400
-        )
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = TimeZone(identifier: "UTC") ?? .current
-        // Pinned to the hour this genome opens widest, so the preview is the
-        // plant at its best rather than whatever time it happens to be.
-        let hour = genome.tempo.opensByDay ? 13 : 1
-        let pinned = calendar.date(bySettingHour: hour, minute: 0, second: 0, of: atBloom) ?? atBloom
-        return GrowthModel(genome: genome).state(birth: birth, now: pinned, calendar: calendar)
-    }
 }
