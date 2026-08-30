@@ -1,5 +1,11 @@
 import Foundation
+#if canImport(CryptoKit)
 import CryptoKit
+#else
+// swift-crypto is Apple's own implementation of the same API, and produces the
+// same digests. It is only pulled in off-platform, so a phone links CryptoKit.
+import Crypto
+#endif
 
 /// Domain tags for every derivation in the system.
 ///

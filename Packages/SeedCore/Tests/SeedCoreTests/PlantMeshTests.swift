@@ -1,5 +1,7 @@
 import XCTest
+#if canImport(simd)
 import simd
+#endif
 @testable import SeedCore
 
 final class PlantMeshTests: XCTestCase {

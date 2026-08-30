@@ -1,5 +1,7 @@
 import Foundation
+#if canImport(simd)
 import simd
+#endif
 
 /// Which material a run of triangles belongs to.
 public enum MeshRole: String, CaseIterable, Sendable {

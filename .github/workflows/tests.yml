@@ -1,0 +1,53 @@
+name: Tests
+
+# The parts that must not drift are the derivation and the geometry, and they
+# are exactly the parts that need no device to test. Everything above them —
+# SwiftUI, SceneKit — needs Xcode on a Mac and is not run here.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  seedcore:
+    name: SeedCore (Linux)
+    runs-on: ubuntu-latest
+    container: swift:6.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache SwiftPM
+        uses: actions/cache@v4
+        with:
+          path: Packages/SeedCore/.build
+          key: swiftpm-${{ runner.os }}-${{ hashFiles('Packages/SeedCore/Package.swift') }}
+          restore-keys: swiftpm-${{ runner.os }}-
+
+      - name: Build
+        run: swift build --package-path Packages/SeedCore
+
+      - name: Test
+        run: swift test --package-path Packages/SeedCore
+
+  derivation-reference:
+    name: Derivation reference (Python)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # The reference asserts its own invariants — that a cross is commutative
+      # and that distinct encounters give distinct children — and prints the
+      # vectors pinned into DerivationVectorTests. If the two implementations
+      # ever disagree, one job goes red and the other stays green, which says
+      # which one moved.
+      - name: Run the reference implementation
+        run: python3 tools/reference/derivation_reference.py

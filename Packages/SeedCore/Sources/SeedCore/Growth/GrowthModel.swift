@@ -160,6 +160,10 @@ public struct GrowthModel {
     }
 }
 
+// `DateComponentsFormatter` does not exist in swift-corelibs-foundation, so the
+// human phrasing of a growth stage is Apple-only. Nothing off-platform needs it:
+// it is for the overlay, and the overlay only runs on a device.
+#if canImport(Darwin)
 public extension GrowthModel.State {
     /// Short human phrasing for the overlay, e.g. "in bud · 2 days to bloom".
     func summary(formatter: DateComponentsFormatter = .growthDefault) -> String {
@@ -180,3 +184,4 @@ public extension DateComponentsFormatter {
         return formatter
     }()
 }
+#endif

@@ -1,5 +1,7 @@
 import Foundation
+#if canImport(simd)
 import simd
+#endif
 
 /// One station along a swept path: where it is, which way it points, and how
 /// thick the plant is there.

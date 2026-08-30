@@ -1,5 +1,7 @@
 import Foundation
+#if canImport(simd)
 import simd
+#endif
 
 /// Turns a genome plus a moment in its life into geometry.
 ///
