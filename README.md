@@ -5,9 +5,10 @@ for one person — and where two people who meet in person can cross their seeds
 by touching their phones together, growing a plant that neither could have grown
 alone.
 
-The plant is the only thing on screen. Black background, full-colour 3-D plant
-you can turn with a finger, and controls that appear when you tap and see
-themselves out again.
+The plant is the only thing on screen. It stands in a soft pool of cool light
+on black — the way a botanical model kit is photographed for its box — in full
+colour and full focus, turned with a finger, with controls that appear when you
+tap and see themselves out again.
 
 **This is phase 1: the seed, and the meeting.** The shared peace garden with
 other people's plots and guest books is phase 2, sketched in
@@ -23,6 +24,9 @@ other people's plots and guest books is phase 2, sketched in
   fern, orchid, lotus, thistle, vine, bell, star, poppy, succulent, plume),
   around sixty inherited traits, procedural geometry, a colour palette, and a
   binomial name.
+- **A stage, not a void.** Black ground, a soft radial glow behind the plant
+  falling away to nothing at the edges, tinted a few percent toward the plant's
+  own colour so each person's stage is quietly theirs.
 - **Real-time growth.** Germinating, seedling, growing, in bud, in bloom,
   mature, over days — plus a day/night rhythm, so a flower that opens by day is
   closed at two in the morning.

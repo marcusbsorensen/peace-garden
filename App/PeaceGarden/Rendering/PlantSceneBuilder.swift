@@ -78,17 +78,23 @@ enum PlantSceneBuilder {
 
     // MARK: - Scene
 
-    /// The stage: black, a warm key, a cool rim, and just enough fill that the
+    /// The lighting: a warm key, a cool rim, and just enough fill that the
     /// shadow side is dark rather than absent.
-    static func makeScene() -> SCNScene {
+    ///
+    /// The scene deliberately has no background of its own. The view behind it
+    /// is transparent, and `StageBackdrop` paints the pool of light — a
+    /// gradient is far cheaper and far more controllable in SwiftUI than as a
+    /// SceneKit environment, which would also swing around as the plant turns.
+    static func makeScene(palette: Genome.Palette) -> SCNScene {
         let scene = SCNScene()
-        scene.background.contents = UIColor.black
 
         let key = SCNNode()
         key.light = SCNLight()
         key.light?.type = .directional
         key.light?.color = UIColor(white: 1.0, alpha: 1)
-        key.light?.intensity = 900
+        // The plant is the brightest thing on screen by a wide margin; the
+        // backdrop only gives it somewhere to stand.
+        key.light?.intensity = 1050
         key.light?.castsShadow = false
         key.eulerAngles = SCNVector3(-0.6, 0.7, 0)
         scene.rootNode.addChildNode(key)
@@ -101,11 +107,13 @@ enum PlantSceneBuilder {
         rim.eulerAngles = SCNVector3(-0.2, 3.5, 0)
         scene.rootNode.addChildNode(rim)
 
+        // The fill is tinted to the backdrop's own colour, so the plant reads
+        // as standing in that light rather than cut out and pasted onto it.
         let fill = SCNNode()
         fill.light = SCNLight()
         fill.light?.type = .ambient
-        fill.light?.color = UIColor(red: 0.16, green: 0.18, blue: 0.24, alpha: 1)
-        fill.light?.intensity = 260
+        fill.light?.color = StageBackdrop.glowColour(for: palette)
+        fill.light?.intensity = 300
         scene.rootNode.addChildNode(fill)
 
         return scene

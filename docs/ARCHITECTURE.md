@@ -52,7 +52,7 @@ derivation be tested without a device.
 | Area | What it does |
 | --- | --- |
 | `GardenModel` | The observable state: identity, kept plants, and a slow clock |
-| `Rendering` | `PlantMesh` to SceneKit; the lighting rig; thumbnails |
+| `Rendering` | `PlantMesh` to SceneKit; the lighting rig; the stage; thumbnails |
 | `Exchange` | Multipeer session, the touch detector, the protocol state machine |
 | `Views` | Black screens with controls that appear on a tap |
 
@@ -93,6 +93,21 @@ Every surface in the plant is a parametric grid evaluated through one function,
 A tube, a leaf blade, a petal and a dome are the same code with different
 `point(u, v)`. One place to get the winding and the normals right instead of
 five.
+
+## Why the backdrop is SwiftUI and not the scene
+
+The pool of light behind the plant is a `RadialGradient` in SwiftUI, painted
+behind a transparent `SCNView`, rather than a SceneKit background.
+
+A single image handed to `scene.background.contents` is treated as a spherical
+environment map: it would distort, and it would swing around as the plant turns
+— exactly what a backdrop must not do. Screen-space is where a photographic
+backdrop belongs, it costs nothing to draw, and the falloff can be spelled out
+stop by stop, which is what keeps a near-black gradient from banding on an OLED
+screen in a dark room.
+
+The scene's ambient fill is tinted to the same colour, so the plant reads as
+standing in that light rather than cut out and pasted onto it.
 
 ## Why growth is a function of time, not a state machine
 

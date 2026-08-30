@@ -13,7 +13,8 @@ struct PlantDetailView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            StageBackdrop(palette: record.genome.palette)
+                .ignoresSafeArea()
 
             PlantSceneView(
                 genome: record.genome,

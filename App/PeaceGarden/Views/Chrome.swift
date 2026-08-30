@@ -2,9 +2,10 @@ import SwiftUI
 
 /// The app's whole visual vocabulary, in one place.
 ///
-/// Everything is thin, letterspaced and slightly transparent, sitting on black
-/// so the plant is the only saturated thing on screen. Controls are quiet
-/// enough to disappear and be forgotten between taps.
+/// Everything is thin, letterspaced and slightly transparent, sitting on the
+/// near-black of `StageBackdrop` so the plant is the only saturated thing on
+/// screen. Controls are quiet enough to disappear and be forgotten between
+/// taps.
 enum Chrome {
     static let ink = Color.white
     static let muted = Color.white.opacity(0.55)

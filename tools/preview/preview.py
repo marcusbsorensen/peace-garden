@@ -48,6 +48,42 @@ def shade(role, colour_hsb, normal, glow):
     return np.clip(lit, 0, 1)
 
 
+# The stage: a black ground with a soft, cool pool of light behind the plant,
+# falling off to pure black at the edges. Mirrors StageBackdrop.swift.
+BACKDROP_BASE_HUE = 0.60
+BACKDROP_TINT = 0.12
+BACKDROP_SATURATION = 0.30
+BACKDROP_BRIGHTNESS = 0.26
+BACKDROP_CENTRE = (0.5, 0.46)
+BACKDROP_RADIUS = 0.85
+BACKDROP_FALLOFF = 2.0
+
+
+def backdrop_hue(palette):
+    """Cool slate, nudged toward the plant's own colour so each stage is its own."""
+    base, petal = BACKDROP_BASE_HUE, palette["petalBase"][0]
+    delta = petal - base
+    if delta > 0.5:
+        delta -= 1
+    if delta < -0.5:
+        delta += 1
+    return (base + delta * BACKDROP_TINT) % 1.0
+
+
+def draw_backdrop(image, palette):
+    width, height = image.size
+    glow = np.array(colorsys.hsv_to_rgb(backdrop_hue(palette),
+                                        BACKDROP_SATURATION, BACKDROP_BRIGHTNESS))
+    radius = max(width, height) * BACKDROP_RADIUS
+    cx, cy = width * BACKDROP_CENTRE[0], height * BACKDROP_CENTRE[1]
+
+    ys, xs = np.mgrid[0:height, 0:width]
+    distance = np.sqrt((xs - cx) ** 2 + (ys - cy) ** 2) / radius
+    falloff = np.clip(1.0 - distance, 0.0, 1.0) ** BACKDROP_FALLOFF
+    pixels = (falloff[:, :, None] * glow[None, None, :] * 255).astype(np.uint8)
+    image.paste(Image.fromarray(pixels, "RGB"), (0, 0))
+
+
 def render(genome, growth, size=(420, 620), yaw=0.55, pitch=0.08, supersample=2):
     parts = build_mesh(genome, growth)
     if not parts:
@@ -103,6 +139,7 @@ def render(genome, growth, size=(420, 620), yaw=0.55, pitch=0.08, supersample=2)
     triangles.sort(key=lambda item: item[0])
 
     image = Image.new("RGB", (width, height), (0, 0, 0))
+    draw_backdrop(image, genome.palette)
     draw = ImageDraw.Draw(image)
     for _, role, screen, normal, v in triangles:
         colour = shade(role, ramp_colour(role, v, genome.palette), normal, genome.glow)

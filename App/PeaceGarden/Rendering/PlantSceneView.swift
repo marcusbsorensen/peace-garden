@@ -20,8 +20,10 @@ struct PlantSceneView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> SCNView {
         let view = SCNView()
-        view.scene = PlantSceneBuilder.makeScene()
-        view.backgroundColor = .black
+        view.scene = PlantSceneBuilder.makeScene(palette: genome.palette)
+        // Transparent: `StageBackdrop` behind this view paints the ground.
+        view.backgroundColor = .clear
+        view.isOpaque = false
         view.antialiasingMode = .multisampling4X
         view.preferredFramesPerSecond = 60
         view.rendersContinuously = false

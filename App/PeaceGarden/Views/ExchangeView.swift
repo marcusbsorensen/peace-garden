@@ -92,6 +92,7 @@ struct ExchangeView: View {
 
         return VStack(spacing: 0) {
             PlantSceneView(genome: genome, growth: preview, autoRotates: true)
+                .background(StageBackdrop(palette: genome.palette))
                 .ignoresSafeArea(edges: .top)
 
             VStack(spacing: 10) {

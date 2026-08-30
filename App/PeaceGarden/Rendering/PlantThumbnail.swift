@@ -16,7 +16,7 @@ struct PlantThumbnail: View {
 
     var body: some View {
         ZStack {
-            Color.black
+            StageBackdrop(palette: genome.palette)
             if let image {
                 Image(uiImage: image)
                     .resizable()
@@ -52,8 +52,12 @@ final class ThumbnailRenderer {
         if let cached = cache.object(forKey: key) { return cached }
 
         let view = SCNView(frame: CGRect(x: 0, y: 0, width: size, height: size))
-        view.scene = PlantSceneBuilder.makeScene()
-        view.backgroundColor = .black
+        view.scene = PlantSceneBuilder.makeScene(palette: genome.palette)
+        // Snapshotted with transparency so the tile's own backdrop shows
+        // through. If a thumbnail ever comes back as a black square, this is
+        // the pair of lines that did it.
+        view.backgroundColor = .clear
+        view.isOpaque = false
         view.antialiasingMode = .multisampling4X
 
         let mesh = PlantBuilder(genome: genome).mesh(growth: growth)

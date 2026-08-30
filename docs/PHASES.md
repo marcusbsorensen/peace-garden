@@ -8,8 +8,8 @@ Built:
   of the moment it was drawn.
 - A plant derived from that seed: shape, colour, name, pace, all of it.
 - Growth in real time, over days, including opening by day or by night.
-- 3-D rendering in full colour on black, turned by dragging, with controls that
-  appear on a tap and see themselves out.
+- 3-D rendering in full colour, standing in a soft pool of light on black,
+  turned by dragging, with controls that appear on a tap and see themselves out.
 - A face-to-face exchange between two iPhones: find each other, tap the phones
   together, cross the seeds, agree on the result, and grow a hybrid that
   descends visibly from both parents.
