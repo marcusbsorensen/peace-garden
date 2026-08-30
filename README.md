@@ -12,6 +12,8 @@ on black — the way a botanical model kit is photographed for its box — in fu
 colour and full focus, turned with a finger, with controls that appear when you
 tap and see themselves out again.
 
+Picking this up cold? Start with [docs/HANDOVER.md](docs/HANDOVER.md).
+
 **This is phase 1: the seed, and the meeting.** The shared peace garden with
 other people's plots and guest books is phase 2, sketched in
 [docs/PHASES.md](docs/PHASES.md).
@@ -203,6 +205,7 @@ colour appears at its base, flip the row order in
 │   ├── Exchange/               Multipeer, touch detection, state machine
 │   └── Views/
 ├── docs/
+│   ├── HANDOVER.md             State, open items, and what not to relitigate
 │   ├── ARCHITECTURE.md         Why a plant is a seed plus a birthday
 │   ├── EXCHANGE-PROTOCOL.md    The handshake, and why not NFC
 │   ├── SEEDS-ON-THE-WIND.md    Passing a seed to a phone without the app
