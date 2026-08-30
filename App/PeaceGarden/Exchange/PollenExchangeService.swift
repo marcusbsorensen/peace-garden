@@ -1,0 +1,395 @@
+import Foundation
+import MultipeerConnectivity
+import Observation
+import SeedCore
+
+/// Runs one face-to-face exchange, from finding the other phone to agreeing on
+/// the plant that grew out of it.
+///
+/// Nothing is saved and nothing is shown until both phones have computed the
+/// same offspring seed and proved it to each other with a checksum. If they
+/// disagree — different app versions, a dropped connection — the exchange is
+/// abandoned rather than leaving two people holding two different plants and
+/// believing they are the same one.
+/// What an exchange produced.
+///
+/// Declared outside the service rather than nested inside it: the service is
+/// main-actor isolated, and a type nested in it would carry that isolation into
+/// `Identifiable` conformance, which has to be free of it.
+struct ExchangeOutcome: Equatable, Identifiable {
+    var result: CrossPollinationResult
+    var peerDisplayName: String
+    var peerPlantName: String
+    var happenedAt: Date
+
+    var id: String { result.childSeed.hex }
+}
+
+@Observable
+@MainActor
+final class PollenExchangeService: NSObject {
+
+    enum Phase: Equatable {
+        case idle
+        case searching
+        /// Connected, waiting for the two phones to be touched together.
+        case awaitingTouch(peerName: String)
+        /// Both touches seen; seeds crossing.
+        case crossing(peerName: String)
+        case grown(ExchangeOutcome)
+        case failed(String)
+
+        var peerName: String? {
+            switch self {
+            case .awaitingTouch(let name), .crossing(let name): return name
+            case .grown(let outcome): return outcome.peerDisplayName
+            default: return nil
+            }
+        }
+    }
+
+    private(set) var phase: Phase = .idle
+    /// True once this phone has felt its own tap, so the UI can say it is
+    /// waiting on the other person rather than on the gesture.
+    private(set) var hasFeltLocalTouch = false
+
+    private let touchDetector = TouchDetector()
+    /// Decides which side sends the invitation, so the two phones do not invite
+    /// each other at the same moment and drop both connections.
+    private let sessionToken = UUID().uuidString
+
+    private var session: MCSession?
+    private var advertiser: MCNearbyServiceAdvertiser?
+    private var browser: MCNearbyServiceBrowser?
+    private var localPeerID: MCPeerID?
+    private var connectedPeerName: String?
+
+    private var card: PollenCard?
+    private var localNonce: Data?
+    private var remoteCard: PollenCard?
+    private var remoteNonce: Data?
+    private var localTouchAt: Date?
+    private var remoteTouchAt: Date?
+    private var localResult: CrossPollinationResult?
+    private var remoteChecksum: Data?
+    private var searchTimeout: Task<Void, Never>?
+
+    private static let searchTimeoutSeconds: UInt64 = 90
+
+    // MARK: - Lifecycle
+
+    func start(identity: Identity) {
+        stop()
+        phase = .searching
+
+        let card = PollenCard(
+            seed: identity.seed,
+            displayName: identity.displayName,
+            plantName: identity.genome.name.full,
+            birth: identity.birth
+        )
+        self.card = card
+
+        let peerID = MCPeerID(displayName: Self.peerDisplayName(from: identity.displayName))
+        localPeerID = peerID
+
+        let session = MCSession(peer: peerID, securityIdentity: nil, encryptionPreference: .required)
+        session.delegate = self
+        self.session = session
+
+        let advertiser = MCNearbyServiceAdvertiser(
+            peer: peerID,
+            discoveryInfo: ["token": sessionToken, "v": String(ExchangeProtocol.version)],
+            serviceType: ExchangeProtocol.serviceType
+        )
+        advertiser.delegate = self
+        advertiser.startAdvertisingPeer()
+        self.advertiser = advertiser
+
+        let browser = MCNearbyServiceBrowser(peer: peerID, serviceType: ExchangeProtocol.serviceType)
+        browser.delegate = self
+        browser.startBrowsingForPeers()
+        self.browser = browser
+
+        touchDetector.start { [weak self] in
+            self?.registerLocalTouch()
+        }
+
+        searchTimeout = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(Self.searchTimeoutSeconds))
+            guard !Task.isCancelled else { return }
+            guard let self, case .searching = self.phase else { return }
+            self.fail("No one nearby. Both phones need this screen open.")
+        }
+    }
+
+    func stop() {
+        searchTimeout?.cancel()
+        searchTimeout = nil
+        touchDetector.stop()
+        advertiser?.stopAdvertisingPeer()
+        advertiser?.delegate = nil
+        browser?.stopBrowsingForPeers()
+        browser?.delegate = nil
+        session?.disconnect()
+        session?.delegate = nil
+        advertiser = nil
+        browser = nil
+        session = nil
+        localPeerID = nil
+        connectedPeerName = nil
+        card = nil
+        localNonce = nil
+        remoteCard = nil
+        remoteNonce = nil
+        localTouchAt = nil
+        remoteTouchAt = nil
+        localResult = nil
+        remoteChecksum = nil
+        hasFeltLocalTouch = false
+    }
+
+    func reset() {
+        stop()
+        phase = .idle
+    }
+
+    // MARK: - The exchange, step by step
+
+    private func registerLocalTouch() {
+        guard case .awaitingTouch = phase else { return }
+        localTouchAt = Date()
+        hasFeltLocalTouch = true
+        send(.touch())
+        advanceIfBothTouched()
+    }
+
+    private func registerRemoteTouch() {
+        guard case .awaitingTouch = phase else { return }
+        // Recorded against this phone's clock, on receipt. The two devices
+        // never compare clocks with each other, only elapsed time on their own.
+        remoteTouchAt = Date()
+        advanceIfBothTouched()
+    }
+
+    private func advanceIfBothTouched() {
+        guard let localTouchAt, let remoteTouchAt, let peerName = connectedPeerName else { return }
+        guard abs(localTouchAt.timeIntervalSince(remoteTouchAt)) <= ExchangeProtocol.touchWindow else { return }
+        guard let card else { return }
+
+        phase = .crossing(peerName: peerName)
+        touchDetector.stop()
+
+        let nonce = Pollination.makeNonce(byteCount: ExchangeProtocol.nonceByteCount)
+        localNonce = nonce
+        send(.hello(card: card, nonce: nonce))
+        crossIfReady()
+    }
+
+    private func handle(_ envelope: ExchangeEnvelope) {
+        guard envelope.protocolVersion == ExchangeProtocol.version else {
+            send(.abort(reason: "protocol version mismatch"))
+            fail("The other phone is running a different version of Peace Garden.")
+            return
+        }
+
+        switch envelope.kind {
+        case .touch:
+            registerRemoteTouch()
+        case .hello:
+            guard let card = envelope.card, let nonce = envelope.nonce else {
+                fail("The other phone sent an incomplete greeting.")
+                return
+            }
+            remoteCard = card
+            remoteNonce = nonce
+            crossIfReady()
+        case .confirm:
+            remoteChecksum = envelope.checksum
+            finishIfAgreed()
+        case .abort:
+            fail(envelope.reason.map { "The other phone stopped: \($0)." } ?? "The other phone stopped.")
+        case .unknown:
+            send(.abort(reason: "unrecognised message"))
+            fail("The other phone sent something this version does not understand.")
+        }
+    }
+
+    /// Both halves have to be in hand before the cross can be computed: this
+    /// phone's nonce and the other's seed and nonce.
+    private func crossIfReady() {
+        guard localResult == nil,
+              let card,
+              let localNonce,
+              let remoteCard,
+              let remoteNonce else { return }
+
+        guard remoteCard.seed != card.seed else {
+            send(.abort(reason: "same seed"))
+            fail("Both phones are carrying the same seed.")
+            return
+        }
+
+        let result = CrossPollinationResult(
+            localSeed: card.seed,
+            remoteSeed: remoteCard.seed,
+            localNonce: localNonce,
+            remoteNonce: remoteNonce
+        )
+        localResult = result
+        send(.confirm(checksum: result.checksum))
+        finishIfAgreed()
+    }
+
+    private func finishIfAgreed() {
+        guard let localResult, let remoteChecksum, let remoteCard else { return }
+        guard remoteChecksum == localResult.checksum else {
+            send(.abort(reason: "checksum mismatch"))
+            fail("The two phones grew different plants, so nothing was saved. Please try again.")
+            return
+        }
+
+        searchTimeout?.cancel()
+        phase = .grown(
+            ExchangeOutcome(
+                result: localResult,
+                peerDisplayName: remoteCard.displayName,
+                peerPlantName: remoteCard.plantName,
+                happenedAt: Date()
+            )
+        )
+        // Hold the connection open briefly so the other side's confirm is not
+        // cut off mid-flight, then let it go.
+        Task { [weak self] in
+            try? await Task.sleep(for: .seconds(2))
+            self?.session?.disconnect()
+        }
+    }
+
+    private func fail(_ message: String) {
+        // A finished exchange is not undone by a late disconnect.
+        if case .grown = phase { return }
+        phase = .failed(message)
+        touchDetector.stop()
+        searchTimeout?.cancel()
+    }
+
+    private func send(_ envelope: ExchangeEnvelope) {
+        guard let session, let peer = session.connectedPeers.first else { return }
+        do {
+            try session.send(envelope.encoded(), toPeers: [peer], with: .reliable)
+        } catch {
+            fail("The connection dropped: \(error.localizedDescription)")
+        }
+    }
+
+    /// `MCPeerID` display names are limited to 63 bytes of UTF-8.
+    private static func peerDisplayName(from name: String) -> String {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let fallback = trimmed.isEmpty ? "Gardener" : trimmed
+        var result = fallback
+        while result.utf8.count > 63 {
+            result = String(result.dropLast())
+        }
+        return result
+    }
+}
+
+// MARK: - MCSessionDelegate
+
+extension PollenExchangeService: MCSessionDelegate {
+    nonisolated func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
+        let name = peerID.displayName
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            switch state {
+            case .connected:
+                self.searchTimeout?.cancel()
+                self.connectedPeerName = name
+                if case .searching = self.phase {
+                    self.phase = .awaitingTouch(peerName: name)
+                }
+            case .notConnected:
+                guard self.connectedPeerName == name else { return }
+                self.connectedPeerName = nil
+                switch self.phase {
+                case .grown, .failed, .idle:
+                    break
+                default:
+                    self.fail("\(name) moved out of range before the plant took.")
+                }
+            case .connecting:
+                break
+            @unknown default:
+                break
+            }
+        }
+    }
+
+    nonisolated func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                self.handle(try ExchangeEnvelope.decode(data))
+            } catch {
+                self.fail("The other phone sent something unreadable.")
+            }
+        }
+    }
+
+    nonisolated func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {}
+
+    nonisolated func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {}
+
+    nonisolated func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {}
+}
+
+// MARK: - Discovery
+
+extension PollenExchangeService: MCNearbyServiceBrowserDelegate {
+    nonisolated func browser(
+        _ browser: MCNearbyServiceBrowser,
+        foundPeer peerID: MCPeerID,
+        withDiscoveryInfo info: [String: String]?
+    ) {
+        let peerToken = info?["token"]
+        Task { @MainActor [weak self] in
+            guard let self, let session = self.session else { return }
+            guard session.connectedPeers.isEmpty else { return }
+            // Exactly one side invites; the lower token wins the toss.
+            guard let peerToken, self.sessionToken < peerToken else { return }
+            browser.invitePeer(peerID, to: session, withContext: nil, timeout: 20)
+        }
+    }
+
+    nonisolated func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {}
+
+    nonisolated func browser(_ browser: MCNearbyServiceBrowser, didNotStartBrowsingForPeers error: Error) {
+        Task { @MainActor [weak self] in
+            self?.fail("Could not look for nearby phones: \(error.localizedDescription)")
+        }
+    }
+}
+
+extension PollenExchangeService: MCNearbyServiceAdvertiserDelegate {
+    nonisolated func advertiser(
+        _ advertiser: MCNearbyServiceAdvertiser,
+        didReceiveInvitationFromPeer peerID: MCPeerID,
+        withContext context: Data?,
+        invitationHandler: @escaping (Bool, MCSession?) -> Void
+    ) {
+        Task { @MainActor [weak self] in
+            guard let self, let session = self.session, session.connectedPeers.isEmpty else {
+                invitationHandler(false, nil)
+                return
+            }
+            invitationHandler(true, session)
+        }
+    }
+
+    nonisolated func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didNotStartAdvertisingPeer error: Error) {
+        Task { @MainActor [weak self] in
+            self?.fail("Could not make this phone visible: \(error.localizedDescription)")
+        }
+    }
+}
