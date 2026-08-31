@@ -24,7 +24,7 @@ could not run it.
 | **The derivation** | Independently implemented in Python (`tools/reference/`) and executed. Its outputs are pinned into `DerivationVectorTests`. Both implementations agree. |
 | **The geometry** | Ported to Python (`tools/preview/`) and run over 120 genomes at seven ages, then *rendered and looked at*. That caught six real defects that no test would have. |
 | **Camera framing** | Checked across six viewport shapes, iPhone portrait to a 320pt Split View column. |
-| **Everything in `App/`** | **Never compiled.** 17 files. SwiftUI, SceneKit and UIKit need the macOS SDK. |
+| **Everything in `App/`** | Builds, installs and runs, on a device and in the simulator. It needed no source changes to compile — the `@MainActor` and `nonisolated` guesses below were both wrong. |
 
 One function in SeedCore is also uncompiled: `GrowthModel.State.summary()`, which
 uses `DateComponentsFormatter` — absent from swift-corelibs-foundation, fine on
@@ -32,9 +32,8 @@ iOS.
 
 ## Open, in the order I would do it
 
-1. **Build `App/` in Xcode.** The only real unknown. `xcodegen generate`, open,
-   build. My guesses at where it breaks: the `@MainActor` `GardenModel` and the
-   `nonisolated` Multipeer delegates in `PollenExchangeService`.
+1. ~~**Build `App/` in Xcode.**~~ Done. It compiled unchanged and ran first
+   time — and what it drew was a mushroom. See *The mushroom* below.
 2. **Activate the free SSL on peacegarden.app.** My20i → Manage Hosting →
    Options ▸ Manage → Security → SSL/TLS → Activate Free SSL. Up to 30 minutes.
    The domain is registered, DNS is correct and the site answers on port 80;
@@ -51,8 +50,14 @@ iOS.
 5. **Delete `claude/plant-seed-exchange-app-8gagec` on `marcusbsorensen/cc-queue`.**
    Superseded; its content is all here. The session that made it could not
    delete it — its git relay refuses a zero-object push.
-6. **There is no app icon.** No asset catalogue at all. Fine on a device,
-   blocking for upload.
+6. ~~**There is no app icon.**~~ Done, and to the Interfulgent suite system —
+   the app is a sixth alongside FreqShift, UnCubed, Pfish, DashLit Diner and
+   FlagFans. `tools/icon/make_icon.py` draws it; the outputs are generated, so
+   change the script and never touch them. [BRAND.md](BRAND.md) records the
+   construction, the measured colour, and **three things the suite document has
+   to decide that this app cannot** — chiefly whether Peace Garden is a peer of
+   the other five or only wears their system, which bears on the trade mark
+   filing. Checked on a home screen beside Pfish, down to 40 points.
 7. **Raise the bar to Swift 6 and `SWIFT_STRICT_CONCURRENCY: complete`**, which
    is the house standard in UnCubed. Deliberately *after* the first green build,
    not before: turning both up on never-compiled code buries real errors under
@@ -79,6 +84,34 @@ reasoning is written down. Don't redo them by accident.
   the house pattern. Permanent once App Store Connect sees a build.
 - **SceneKit, not RealityKit.** The core emits plain vertex buffers, so moving
   is a rewrite of `PlantSceneBuilder.swift` and nothing else.
+
+## The mushroom
+
+The first plant ever drawn on a phone came out as a wide brown dome sitting on a
+stub. Three things, none of them the port:
+
+- **The husk was sized from the mature stem.** `PlantBuilder.addStem` took
+  `genome.stem.baseRadius * 2.4`, but `SkeletonBuilder` draws a young stem at
+  `0.4 + 0.6 * heightScale` of that radius. On the day a seed is sown those
+  differ five-fold, so the seed case came out three times wider than the whole
+  plant was tall and swallowed it. It is now measured against the shoot as it
+  is, and capped against the shoot's length so it can never be the tallest thing
+  on the plant.
+- **`heightScale` had a floor of 0.02.** The ramp under it is measured in days,
+  so across the germination *hours* it barely moves: whatever the floor is, that
+  is the plant its owner meets. Now 0.055.
+- **`PlantSceneBuilder.framing` floored the plant's *extent* at 3cm.** Meant as a
+  guard against a degenerate mesh, it silently asserted every plant is at least
+  a handspan across — true of a mature one, false of every seedling, which was
+  then pushed away and drawn as a speck. The guard is on the distance now.
+
+**How it survived.** `tools/preview` renders the whole life and was looked at,
+but its stage row started at day 0.2, by which point the shoot has grown out of
+the husk. The one frame nobody had ever rendered was the one every person sees
+first. The row now starts at day 0, and
+`testAFreshlySownSeedLooksLikeAShootAndNotAMushroom` covers the first six hours
+across 120 genomes. Worth remembering that the gap was in *which* moments were
+checked, not in how carefully any of them were.
 
 ## Traps
 

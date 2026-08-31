@@ -34,6 +34,9 @@ targets:
     settings:
       base:
         PRODUCT_NAME: PeaceGarden
+        # The catalogue is generated: `python3 tools/icon/make_icon.py` redraws
+        # all three variants. Edit the script, never the PNGs.
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         # Reverse-DNS of the domain the app actually owns, matching the house
         # pattern (uncubed.app -> app.uncubed). A bundle identifier is permanent
         # once a build reaches App Store Connect, so it is worth being the right
