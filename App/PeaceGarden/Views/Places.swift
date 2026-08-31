@@ -71,4 +71,28 @@ enum Places {
         precondition(!all.isEmpty, "the places must never be empty")
         return all[Int(deterministicFold(childSeed.bytes) % UInt64(all.count))]
     }
+
+    /// The key behind a standing preference for one of these.
+    ///
+    /// Somebody who always wants "On the winds" can say so once. It changes
+    /// only what the Where field arrives holding, and it stays on this phone
+    /// like everything else about a note.
+    static let preferredKey = "place.figurative.preferred.v1"
+
+    /// The place this person would rather be offered, if they have chosen one.
+    ///
+    /// Read through `UserDefaults` rather than passed in, because it is a
+    /// preference and not a property of the meeting — and because the drawn
+    /// place has to stay available as the answer when nobody has chosen.
+    static var preferred: String? {
+        let stored = UserDefaults.standard.string(forKey: preferredKey)
+        guard let stored, all.contains(stored) else { return nil }
+        return stored
+    }
+
+    /// What the Where field arrives holding: the standing choice if there is
+    /// one, and otherwise the place this particular seed travelled through.
+    static func offered(for childSeed: SeedID) -> String {
+        preferred ?? place(for: childSeed)
+    }
 }

@@ -11,6 +11,7 @@ struct SeedView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var editingName = false
     @State private var draftName = ""
+    @State private var showingSettings = false
 
     var body: some View {
         ZStack {
@@ -26,7 +27,10 @@ struct SeedView: View {
                         privacyNote
                     }
                     .padding(.horizontal, 30)
-                    .padding(.vertical, 34)
+                    // Clear of the Settings and Close buttons, which sit in
+                    // their own band across the top rather than in the scroll.
+                    .padding(.top, 68)
+                    .padding(.bottom, 34)
                     .frame(maxWidth: Chrome.readableWidth)
                     .frame(maxWidth: .infinity)
                 }
@@ -36,6 +40,19 @@ struct SeedView: View {
             QuietButton(title: "Close") { dismiss() }
                 .padding(.trailing, 12)
                 .padding(.top, 8)
+        }
+        // Opposite Close, so the two things you can do from here sit at the two
+        // ends of the same line rather than one hiding inside the paragraphs.
+        .overlay(alignment: .topLeading) {
+            QuietButton(title: "Settings") { showingSettings = true }
+                .padding(.leading, 12)
+                .padding(.top, 8)
+        }
+        .sheet(isPresented: $showingSettings) {
+            SettingsView()
+                .environment(model)
+                .environment(place)
+                .presentationBackground(.black)
         }
     }
 

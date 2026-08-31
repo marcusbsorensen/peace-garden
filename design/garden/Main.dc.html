@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; }
+    a { color: #DCDC06; } a:hover { color: #55F306; }
+    .label { font-size: 11px; font-weight: 300; letter-spacing: 2.4px; text-transform: uppercase; color: rgba(255,255,255,0.28); }
+    .name { font-size: 20px; font-weight: 300; font-style: italic; font-family: ui-serif, Georgia, "Times New Roman", serif; color: #FFFFFF; }
+    .body { font-size: 14px; font-weight: 300; line-height: 1.6; color: rgba(255,255,255,0.55); }
+    .rule { height: 1px; background: rgba(255,255,255,0.16); }
+  </style>
+</helmet>
+
+<div style="width: 390px; height: 844px; background: #0D0D1F; font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; position: relative; overflow: hidden;">
+
+  <!-- The pool of light the whole app stands in -->
+  <div style="position: absolute; left: -80px; right: -80px; top: 180px; height: 520px; background: radial-gradient(ellipse at 50% 60%, rgba(86,140,120,0.20), rgba(13,13,31,0) 68%);"></div>
+
+  <div style="position: absolute; top: 0; left: 0; right: 0; padding: 26px 24px 0; display: flex; flex-direction: column; gap: 6px;">
+    <div class="label">The peace garden</div>
+    <div style="font-size: 20px; font-weight: 300; letter-spacing: 2.8px; text-transform: uppercase; color: #FFFFFF; line-height: 1.4;">Four thousand plants</div>
+  </div>
+
+  <!-- The meadow itself: three depths, drifting at different rates -->
+  <div style="position: absolute; left: 0; right: 0; top: 300px; height: 400px;">
+
+    <!-- far -->
+    <svg viewBox="0 0 780 200" style="position: absolute; left: 0; bottom: 148px; width: 780px; height: 96px; opacity: 0.22;">
+      <g stroke="#7FA98A" stroke-width="2" fill="none" stroke-linecap="round">
+        <path d="M20 200 C22 150 18 120 22 84"/><path d="M70 200 C68 156 74 128 70 96"/>
+        <path d="M124 200 C126 150 120 118 124 78"/><path d="M178 200 C176 160 182 132 178 100"/>
+        <path d="M232 200 C234 148 228 116 232 74"/><path d="M286 200 C284 158 290 130 286 94"/>
+        <path d="M340 200 C342 152 336 122 340 82"/><path d="M394 200 C392 162 398 134 394 102"/>
+        <path d="M448 200 C450 148 444 118 448 76"/><path d="M502 200 C500 156 506 128 502 92"/>
+        <path d="M556 200 C558 150 552 120 556 80"/><path d="M610 200 C608 160 614 132 610 98"/>
+        <path d="M664 200 C666 148 660 116 664 72"/><path d="M718 200 C716 158 722 130 718 96"/>
+      </g>
+      <g fill="#9FC4A8">
+        <circle cx="22" cy="80" r="5"/><circle cx="70" cy="92" r="4"/><circle cx="124" cy="74" r="5"/>
+        <circle cx="178" cy="96" r="4"/><circle cx="232" cy="70" r="5"/><circle cx="286" cy="90" r="4"/>
+        <circle cx="340" cy="78" r="5"/><circle cx="394" cy="98" r="4"/><circle cx="448" cy="72" r="5"/>
+        <circle cx="502" cy="88" r="4"/><circle cx="556" cy="76" r="5"/><circle cx="610" cy="94" r="4"/>
+        <circle cx="664" cy="68" r="5"/><circle cx="718" cy="92" r="4"/>
+      </g>
+    </svg>
+
+    <!-- middle -->
+    <svg viewBox="0 0 620 240" style="position: absolute; left: -40px; bottom: 74px; width: 620px; height: 150px; opacity: 0.5;">
+      <g stroke="#6E9B78" stroke-width="3" fill="none" stroke-linecap="round">
+        <path d="M40 240 C44 180 36 140 42 96"/><path d="M130 240 C126 186 134 148 128 104"/>
+        <path d="M220 240 C224 176 216 136 222 88"/><path d="M310 240 C306 190 314 152 308 110"/>
+        <path d="M400 240 C404 178 396 138 402 92"/><path d="M490 240 C486 188 494 150 488 106"/>
+        <path d="M580 240 C584 180 576 140 582 96"/>
+      </g>
+      <g fill="#4E7D58">
+        <path d="M42 172 C22 166 12 152 10 138 C30 140 40 154 42 170 Z"/>
+        <path d="M128 180 C148 174 158 160 160 146 C140 148 130 162 128 178 Z"/>
+        <path d="M222 164 C202 158 192 144 190 130 C210 132 220 146 222 162 Z"/>
+        <path d="M308 186 C328 180 338 166 340 152 C320 154 310 168 308 184 Z"/>
+        <path d="M402 168 C382 162 372 148 370 134 C390 136 400 150 402 166 Z"/>
+        <path d="M488 182 C508 176 518 162 520 148 C500 150 490 164 488 180 Z"/>
+      </g>
+      <g>
+        <circle cx="42" cy="92" r="9" fill="#C77FA6"/><circle cx="128" cy="100" r="8" fill="#D9C468"/>
+        <circle cx="222" cy="84" r="9" fill="#8FB3D9"/><circle cx="308" cy="106" r="8" fill="#C77FA6"/>
+        <circle cx="402" cy="88" r="9" fill="#D08C6A"/><circle cx="488" cy="102" r="8" fill="#9E8FD9"/>
+        <circle cx="582" cy="92" r="9" fill="#D9C468"/>
+      </g>
+    </svg>
+
+    <!-- near: three plants you could actually reach -->
+    <svg viewBox="0 0 420 300" style="position: absolute; left: -10px; bottom: -46px; width: 420px; height: 300px;">
+      <g stroke="#5C8A66" stroke-width="4.5" fill="none" stroke-linecap="round">
+        <path d="M70 300 C76 220 64 160 74 96"/>
+        <path d="M210 300 C204 226 216 168 206 108"/>
+        <path d="M348 300 C354 214 342 156 352 88"/>
+      </g>
+      <g fill="#3F6B4C">
+        <path d="M74 210 C42 200 22 176 18 150 C52 156 70 180 74 208 Z"/>
+        <path d="M74 170 C106 160 126 138 130 114 C96 120 78 142 74 168 Z"/>
+        <path d="M206 226 C238 216 258 194 262 168 C228 174 210 198 206 224 Z"/>
+        <path d="M206 182 C174 172 154 150 150 124 C184 130 202 154 206 180 Z"/>
+        <path d="M352 200 C384 190 404 168 408 142 C374 148 356 172 352 198 Z"/>
+        <path d="M352 158 C320 148 300 126 296 100 C330 106 348 130 352 156 Z"/>
+      </g>
+      <!-- blooms -->
+      <g transform="translate(74,92)">
+        <g fill="#C77FA6" opacity="0.95">
+          <ellipse rx="6" ry="19" transform="rotate(0)"/><ellipse rx="6" ry="19" transform="rotate(51)"/>
+          <ellipse rx="6" ry="19" transform="rotate(102)"/><ellipse rx="6" ry="19" transform="rotate(153)"/>
+          <ellipse rx="6" ry="19" transform="rotate(204)"/><ellipse rx="6" ry="19" transform="rotate(255)"/>
+          <ellipse rx="6" ry="19" transform="rotate(306)"/>
+        </g>
+        <circle r="6" fill="#DCDC06"/>
+      </g>
+      <g transform="translate(206,104)">
+        <g fill="#8FB3D9" opacity="0.95">
+          <ellipse rx="5" ry="16" transform="rotate(22)"/><ellipse rx="5" ry="16" transform="rotate(82)"/>
+          <ellipse rx="5" ry="16" transform="rotate(142)"/><ellipse rx="5" ry="16" transform="rotate(202)"/>
+          <ellipse rx="5" ry="16" transform="rotate(262)"/><ellipse rx="5" ry="16" transform="rotate(322)"/>
+        </g>
+        <circle r="5" fill="#DCDC06"/>
+      </g>
+      <g transform="translate(352,84)">
+        <g fill="#D9C468" opacity="0.95">
+          <ellipse rx="6" ry="20" transform="rotate(10)"/><ellipse rx="6" ry="20" transform="rotate(55)"/>
+          <ellipse rx="6" ry="20" transform="rotate(100)"/><ellipse rx="6" ry="20" transform="rotate(145)"/>
+          <ellipse rx="6" ry="20" transform="rotate(190)"/><ellipse rx="6" ry="20" transform="rotate(235)"/>
+          <ellipse rx="6" ry="20" transform="rotate(280)"/><ellipse rx="6" ry="20" transform="rotate(325)"/>
+        </g>
+        <circle r="6" fill="#06F556"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- What the plant under your thumb is -->
+  <div style="position: absolute; left: 0; right: 0; bottom: 96px; padding: 0 24px; display: flex; flex-direction: column; gap: 10px;">
+    <div class="rule"></div>
+    <div style="display: flex; flex-direction: column; gap: 5px; padding-top: 4px;">
+      <div class="name">Ithora solaria</div>
+      <div class="body">Grown by Ada and Marcus, eleven days old.<br>Standing in Ada&rsquo;s plot.</div>
+    </div>
+  </div>
+
+  <!-- Drift, rather than a scrollbar -->
+  <div style="position: absolute; left: 24px; right: 24px; bottom: 58px; display: flex; align-items: center; gap: 10px;">
+    <div style="flex-grow: 1; height: 1px; background: rgba(255,255,255,0.16);"></div>
+    <div class="label" style="letter-spacing: 2.4px;">Drift</div>
+    <div style="flex-grow: 1; height: 1px; background: rgba(255,255,255,0.16);"></div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

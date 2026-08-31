@@ -1,0 +1,34 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 390, "h": 844, "title": "A · The meadow" },
+    { "file": "Lineage.dc.html", "x": 500, "y": 0, "w": 390, "h": 844, "title": "B · The lineage" },
+    { "file": "Herbarium.dc.html", "x": 1000, "y": 0, "w": 390, "h": 844, "title": "C · The herbarium" },
+    { "file": "Path.dc.html", "x": 1500, "y": 0, "w": 390, "h": 844, "title": "D · The path" },
+    { "file": "Plot.dc.html", "x": 2000, "y": 0, "w": 390, "h": 844, "title": "E · A plot, and its guest book" },
+    { "file": "Web.dc.html", "x": 0, "y": 1080, "w": 1440, "h": 900, "title": "The web port — peacegarden.app" }
+  ],
+  "annotations": [
+    {
+      "id": "brief",
+      "x": 0,
+      "y": -190,
+      "w": 700,
+      "text": "Five organising principles for the phase-2 shared garden, not five layouts.\nEach answers \"what is a garden of four thousand plants FOR\" differently.\nVocabulary lifted from Chrome.swift, docs/BRAND.md and design/*.dc.html: ground #0D0D1F, white at 100/55/28/16%, 11px tracked-2.4 uppercase labels, italic serif plant names, hairline rules.\nPlants are hand-drawn stand-ins — the real screen derives geometry from the seed on the viewer's own device."
+    },
+    {
+      "id": "tradeoffs",
+      "x": 760,
+      "y": -190,
+      "w": 700,
+      "text": "A · Meadow — density and place. Best wonder, worst findability. Hard on the web without WebGL.\nB · Lineage — says what the app IS: a record of meetings. Ports natively to a wide screen. Weak when your own plant has no descendants yet.\nC · Herbarium — findable, sortable, archival. The one that survives four thousand plants. Least feeling.\nD · Path — the existing stage screen, made continuous. Truest to the app's register. One plant at a time is slow at scale.\nE · Plot — the actual social surface, and the one that brings reporting, blocking and moderation with it."
+    },
+    {
+      "id": "web-note",
+      "x": 0,
+      "y": 2030,
+      "w": 700,
+      "text": "The web port is C's data with D's hero. A public plant page is what gets shared into a group chat, so it has to carry the whole story above the fold — name, passage, both gardeners, place, generation.\nOne open question: whether a public page shows both names, or only the one who chose to share."
+    }
+  ],
+  "launch": { "view": "canvas" }
+}

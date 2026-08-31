@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; }
+    a { color: #DCDC06; } a:hover { color: #55F306; }
+    .label { font-size: 11px; font-weight: 300; letter-spacing: 2.4px; text-transform: uppercase; color: rgba(255,255,255,0.28); }
+    .name { font-size: 15px; font-weight: 300; font-style: italic; font-family: ui-serif, Georgia, "Times New Roman", serif; color: #FFFFFF; }
+    .meta { font-size: 11px; font-weight: 300; line-height: 1.5; color: rgba(255,255,255,0.28); font-variant-numeric: tabular-nums; }
+    .cell { border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.02); display: flex; flex-direction: column; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; height: 900px; background: #0D0D1F; font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; position: relative; overflow: hidden;">
+
+  <!-- Masthead, carrying the suite mark -->
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 26px 48px;">
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <svg viewBox="0 0 40 40" style="width: 28px; height: 28px;">
+        <defs>
+          <linearGradient id="suite" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0" stop-color="#06F556"/><stop offset="0.55" stop-color="#55F306"/><stop offset="1" stop-color="#DCDC06"/>
+          </linearGradient>
+        </defs>
+        <path d="M20 26 C13 26 11 20 14 17 C18 13 25 16 25 22 C25 29 17 33 11 29" stroke="url(#suite)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+        <path d="M25 21 C29 15 33 12 37 11 C35 17 31 21 26 23 Z" fill="url(#suite)"/>
+        <path d="M28 19 C30 17 32 15 34 14" stroke="#FFFFFF" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div style="font-size: 13px; font-weight: 300; letter-spacing: 2.8px; text-transform: uppercase; color: #FFFFFF;">Peace Garden</div>
+    </div>
+    <div style="display: flex; gap: 30px;">
+      <div class="label">The garden</div>
+      <div class="label">Lineage</div>
+      <div class="label">Get the app</div>
+    </div>
+  </div>
+
+  <div style="height: 1px; background: rgba(255,255,255,0.16); margin: 0 48px;"></div>
+
+  <!-- The hero: one plant, the thing worth looking at -->
+  <div style="display: flex; gap: 56px; padding: 46px 48px 0;">
+
+    <div style="width: 420px; height: 400px; position: relative; flex-shrink: 0;">
+      <div style="position: absolute; inset: -40px; background: radial-gradient(ellipse at 50% 56%, rgba(140,110,150,0.20), rgba(13,13,31,0) 66%);"></div>
+      <svg viewBox="0 0 420 400" style="position: relative; width: 420px; height: 400px;">
+        <path d="M210 400 C216 300 202 216 212 118" stroke="#5C8A66" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path d="M212 314 C160 300 124 262 116 220 C170 232 202 272 212 310 Z" fill="#3F6B4C"/>
+        <path d="M212 254 C264 240 300 202 308 160 C254 172 222 212 212 250 Z" fill="#41704E"/>
+        <g transform="translate(212,112)">
+          <g fill="#C986B4">
+            <ellipse rx="11" ry="38" transform="rotate(0)"/><ellipse rx="11" ry="38" transform="rotate(40)"/>
+            <ellipse rx="11" ry="38" transform="rotate(80)"/><ellipse rx="11" ry="38" transform="rotate(120)"/>
+            <ellipse rx="11" ry="38" transform="rotate(160)"/><ellipse rx="11" ry="38" transform="rotate(200)"/>
+            <ellipse rx="11" ry="38" transform="rotate(240)"/><ellipse rx="11" ry="38" transform="rotate(280)"/>
+            <ellipse rx="11" ry="38" transform="rotate(320)"/>
+          </g>
+          <circle r="12" fill="#DCDC06" opacity="0.9"/><circle r="6" fill="#55F306" opacity="0.7"/>
+        </g>
+      </svg>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 22px; padding-top: 34px; max-width: 520px;">
+      <div style="font-size: 40px; font-weight: 300; font-style: italic; font-family: ui-serif, Georgia, 'Times New Roman', serif; color: #FFFFFF; line-height: 1.15;">Ithora solaria</div>
+      <div style="width: 56px; height: 1px; background: rgba(255,255,255,0.16);"></div>
+      <div style="font-size: 17px; font-weight: 300; line-height: 1.65; color: rgba(255,255,255,0.55); text-wrap: pretty;">Two people stood on the same stretch of shingle and agreed to remember it. Eleven days ago, and still opening.</div>
+      <div style="display: flex; gap: 44px; padding-top: 6px;">
+        <div style="display: flex; flex-direction: column; gap: 6px;"><div class="label">Grown by</div><div style="font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.55);">Ada and Marcus</div></div>
+        <div style="display: flex; flex-direction: column; gap: 6px;"><div class="label">Where</div><div style="font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.55);">Margate</div></div>
+        <div style="display: flex; flex-direction: column; gap: 6px;"><div class="label">Generation</div><div style="font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.55);">Four</div></div>
+      </div>
+      <div style="display: flex; gap: 12px; padding-top: 12px;">
+        <div style="padding: 13px 24px; border: 1px solid rgba(255,255,255,0.32); border-radius: 999px;"><span style="font-size: 11px; font-weight: 300; letter-spacing: 2.4px; text-transform: uppercase; color: #FFFFFF;">Grow one of your own</span></div>
+        <div style="padding: 13px 24px; border: 1px solid rgba(255,255,255,0.16); border-radius: 999px;"><span class="label">See its ancestors</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- A strip of the wider garden, which is what makes a visitor scroll -->
+  <div style="position: absolute; left: 48px; right: 48px; bottom: 40px; display: flex; flex-direction: column; gap: 18px;">
+    <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+    <div class="label">Shared this week</div>
+    <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px;">
+      <div class="cell"><div style="height: 96px; background: radial-gradient(ellipse at 50% 74%, rgba(143,179,217,0.14), rgba(13,13,31,0) 70%); display: flex; align-items: flex-end; justify-content: center;"><svg viewBox="0 0 70 96" style="width: 70px; height: 96px;"><path d="M35 96 C37 70 33 50 36 30" stroke="#5C8A66" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M36 68 C22 63 14 52 12 42 C26 45 34 56 36 66 Z" fill="#3F6B4C"/><g transform="translate(36,28)" fill="#8FB3D9"><ellipse rx="3.4" ry="11" transform="rotate(0)"/><ellipse rx="3.4" ry="11" transform="rotate(72)"/><ellipse rx="3.4" ry="11" transform="rotate(144)"/><ellipse rx="3.4" ry="11" transform="rotate(216)"/><ellipse rx="3.4" ry="11" transform="rotate(288)"/></g><circle cx="36" cy="28" r="3" fill="#DCDC06"/></svg></div><div style="padding: 9px 10px 11px;"><div class="name" style="font-size: 13px;">Nyra pelagia</div><div class="meta">Jo &amp; Sam</div></div></div>
+      <div class="cell"><div style="height: 96px; background: radial-gradient(ellipse at 50% 74%, rgba(217,196,104,0.14), rgba(13,13,31,0) 70%); display: flex; align-items: flex-end; justify-content: center;"><svg viewBox="0 0 70 96" style="width: 70px; height: 96px;"><path d="M35 96 C33 68 37 46 34 26" stroke="#5C8A66" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M34 64 C48 59 56 48 58 38 C44 41 36 52 34 62 Z" fill="#3F6B4C"/><g transform="translate(34,24)" fill="#D9C468"><ellipse rx="3.4" ry="11" transform="rotate(20)"/><ellipse rx="3.4" ry="11" transform="rotate(92)"/><ellipse rx="3.4" ry="11" transform="rotate(164)"/><ellipse rx="3.4" ry="11" transform="rotate(236)"/><ellipse rx="3.4" ry="11" transform="rotate(308)"/></g><circle cx="34" cy="24" r="3" fill="#06F556"/></svg></div><div style="padding: 9px 10px 11px;"><div class="name" style="font-size: 13px;">Callora vespertina</div><div class="meta">Ada &amp; Ren</div></div></div>
+      <div class="cell"><div style="height: 96px; background: radial-gradient(ellipse at 50% 74%, rgba(208,140,106,0.14), rgba(13,13,31,0) 70%); display: flex; align-items: flex-end; justify-content: center;"><svg viewBox="0 0 70 96" style="width: 70px; height: 96px;"><path d="M35 96 C37 72 33 52 36 34" stroke="#5C8A66" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M36 72 C22 67 14 56 12 46 C26 49 34 60 36 70 Z" fill="#3F6B4C"/><g transform="translate(36,32)" fill="#D08C6A"><ellipse rx="3.4" ry="11" transform="rotate(36)"/><ellipse rx="3.4" ry="11" transform="rotate(108)"/><ellipse rx="3.4" ry="11" transform="rotate(180)"/><ellipse rx="3.4" ry="11" transform="rotate(252)"/><ellipse rx="3.4" ry="11" transform="rotate(324)"/></g><circle cx="36" cy="32" r="3" fill="#DCDC06"/></svg></div><div style="padding: 9px 10px 11px;"><div class="name" style="font-size: 13px;">Pellea auranthe</div><div class="meta">Ren &amp; Kit</div></div></div>
+      <div class="cell"><div style="height: 96px; background: radial-gradient(ellipse at 50% 74%, rgba(199,127,166,0.14), rgba(13,13,31,0) 70%); display: flex; align-items: flex-end; justify-content: center;"><svg viewBox="0 0 70 96" style="width: 70px; height: 96px;"><path d="M35 96 C33 70 37 48 34 28" stroke="#5C8A66" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M34 66 C48 61 56 50 58 40 C44 43 36 54 34 64 Z" fill="#3F6B4C"/><g transform="translate(34,26)" fill="#C77FA6"><ellipse rx="3.4" ry="11" transform="rotate(8)"/><ellipse rx="3.4" ry="11" transform="rotate(80)"/><ellipse rx="3.4" ry="11" transform="rotate(152)"/><ellipse rx="3.4" ry="11" transform="rotate(224)"/><ellipse rx="3.4" ry="11" transform="rotate(296)"/></g><circle cx="34" cy="26" r="3" fill="#55F306"/></svg></div><div style="padding: 9px 10px 11px;"><div class="name" style="font-size: 13px;">Sylva minuta</div><div class="meta">Kit &amp; Jo</div></div></div>
+      <div class="cell"><div style="height: 96px; background: radial-gradient(ellipse at 50% 74%, rgba(126,177,138,0.14), rgba(13,13,31,0) 70%); display: flex; align-items: flex-end; justify-content: center;"><svg viewBox="0 0 70 96" style="width: 70px; height: 96px;"><path d="M35 96 C37 66 33 44 36 22" stroke="#5C8A66" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M36 60 C22 55 14 44 12 34 C26 37 34 48 36 58 Z" fill="#3F6B4C"/><g transform="translate(36,20)" fill="#7EB18A"><ellipse rx="3.4" ry="11" transform="rotate(24)"/><ellipse rx="3.4" ry="11" transform="rotate(96)"/><ellipse rx="3.4" ry="11" transform="rotate(168)"/><ellipse rx="3.4" ry="11" transform="rotate(240)"/><ellipse rx="3.4" ry="11" transform="rotate(312)"/></g><circle cx="36" cy="20" r="3" fill="#DCDC06"/></svg></div><div style="padding: 9px 10px 11px;"><div class="name" style="font-size: 13px;">Ferna quieta</div><div class="meta">Sam &amp; Ada</div></div></div>
+      <div class="cell" style="align-items: center; justify-content: center;"><div class="label" style="text-align: center; padding: 0 10px;">3,981 more</div></div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

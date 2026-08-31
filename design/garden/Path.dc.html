@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; }
+    a { color: #DCDC06; } a:hover { color: #55F306; }
+    .label { font-size: 11px; font-weight: 300; letter-spacing: 2.4px; text-transform: uppercase; color: rgba(255,255,255,0.28); }
+    .name { font-size: 26px; font-weight: 300; font-style: italic; font-family: ui-serif, Georgia, "Times New Roman", serif; color: #FFFFFF; }
+    .body { font-size: 16px; font-weight: 300; line-height: 1.6; color: rgba(255,255,255,0.55); }
+  </style>
+</helmet>
+
+<div style="width: 390px; height: 844px; background: #0D0D1F; font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; position: relative; overflow: hidden;">
+
+  <!-- One plant, the whole screen, exactly as the stage screen already does it -->
+  <div style="position: absolute; left: -100px; right: -100px; top: 120px; height: 560px; background: radial-gradient(ellipse at 50% 52%, rgba(140,110,150,0.22), rgba(13,13,31,0) 66%);"></div>
+
+  <svg viewBox="0 0 390 520" style="position: absolute; left: 0; top: 150px; width: 390px; height: 520px;">
+    <path d="M196 520 C202 380 188 280 198 150" stroke="#5C8A66" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M198 400 C140 384 100 342 92 296 C152 310 188 352 198 396 Z" fill="#3F6B4C"/>
+    <path d="M198 330 C256 314 296 272 304 226 C244 240 208 282 198 326 Z" fill="#41704E"/>
+    <path d="M198 268 C146 254 112 218 104 178 C154 190 186 226 198 264 Z" fill="#3A6446"/>
+    <g transform="translate(198,142)">
+      <g fill="#C986B4">
+        <ellipse rx="13" ry="46" transform="rotate(0)"/><ellipse rx="13" ry="46" transform="rotate(40)"/>
+        <ellipse rx="13" ry="46" transform="rotate(80)"/><ellipse rx="13" ry="46" transform="rotate(120)"/>
+        <ellipse rx="13" ry="46" transform="rotate(160)"/><ellipse rx="13" ry="46" transform="rotate(200)"/>
+        <ellipse rx="13" ry="46" transform="rotate(240)"/><ellipse rx="13" ry="46" transform="rotate(280)"/>
+        <ellipse rx="13" ry="46" transform="rotate(320)"/>
+      </g>
+      <circle r="15" fill="#DCDC06" opacity="0.9"/>
+      <circle r="8" fill="#55F306" opacity="0.7"/>
+    </g>
+  </svg>
+
+  <div style="position: absolute; left: 0; right: 0; top: 56px; padding: 0 28px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+    <div class="name">Ithora solaria</div>
+    <div class="label">Eleven days old</div>
+  </div>
+
+  <!-- The passage, which is the whole reason to stop here -->
+  <div style="position: absolute; left: 0; right: 0; bottom: 128px; padding: 0 34px; display: flex; flex-direction: column; align-items: center; gap: 18px;">
+    <div style="width: 46px; height: 1px; background: rgba(255,255,255,0.16);"></div>
+    <div class="body" style="text-align: center; text-wrap: pretty;">Two people stood on the same stretch of shingle and agreed to remember it.</div>
+    <div class="label" style="text-align: center;">Ada and Marcus &middot; Margate</div>
+  </div>
+
+  <!-- The next plant, arriving from below -->
+  <div style="position: absolute; left: 0; right: 0; bottom: 34px; display: flex; flex-direction: column; align-items: center; gap: 9px;">
+    <svg viewBox="0 0 24 14" style="width: 24px; height: 14px;">
+      <path d="M4 3 L12 11 L20 3" stroke="rgba(255,255,255,0.28)" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    </svg>
+    <div class="label">Three thousand more</div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

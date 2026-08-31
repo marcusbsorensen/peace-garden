@@ -28,7 +28,7 @@ struct EncounterNoteView: View {
     /// keeps it: a seed that came on the wind did come on the wind, and that is
     /// a better answer than a blank. Typing over it is the point — see `Places`.
     private var suggestedPlace: String {
-        Places.place(for: outcome.result.childSeed)
+        Places.offered(for: outcome.result.childSeed)
     }
 
     var body: some View {

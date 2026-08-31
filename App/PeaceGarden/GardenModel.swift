@@ -182,6 +182,56 @@ final class GardenModel {
         garden.plants.contains { $0.seed == seed }
     }
 
+    // MARK: - Starting again
+
+    /// Draws a new seed, and keeps the garden.
+    ///
+    /// The plant standing on the first screen is replaced by one drawn fresh.
+    /// Everything grown with somebody else stays exactly where it is: those
+    /// plants carry their own seeds and their own birthdays, and none of them
+    /// is reachable from this one.
+    ///
+    /// What the other person holds is untouched by this, and unreachable from
+    /// here. A hybrid was derived on their phone from a child seed; it does not
+    /// point back at the parent seed, and nothing this device does can reach
+    /// into a garden it has no address for.
+    ///
+    /// The arrival runs again, because a seed opening is what a new seed does.
+    func resetSeed() {
+        garden.identity = Identity(
+            seed: SeedMint.mintOnThisDevice(),
+            birth: Date(),
+            // The name is a setting rather than a property of the seed: it is
+            // how somebody is seen, and drawing a new plant is not a decision
+            // to become anonymous again.
+            displayName: garden.identity?.displayName ?? ""
+        )
+        isArriving = true
+        persist()
+    }
+
+    /// Empties this phone.
+    ///
+    /// The seed, the garden and everything kept about every meeting. Plants
+    /// other people grew with this person stay in their gardens, where they have
+    /// always lived.
+    ///
+    /// Leaves no identity behind, so the app returns to first light and the
+    /// next seed is minted the way the first one was.
+    func resetEverything() {
+        garden = Garden()
+        incoming = .none
+        pendingLink = nil
+        isArriving = false
+        persist()
+    }
+
+    /// Forgets every plant grown with somebody, and keeps this person's seed.
+    func forgetPlants() {
+        garden.plants.removeAll()
+        persist()
+    }
+
     // MARK: - Seeds by link
 
     /// Where a seed link points.

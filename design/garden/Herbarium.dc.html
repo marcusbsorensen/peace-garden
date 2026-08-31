@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; }
+    a { color: #DCDC06; } a:hover { color: #55F306; }
+    .label { font-size: 11px; font-weight: 300; letter-spacing: 2.4px; text-transform: uppercase; color: rgba(255,255,255,0.28); }
+    .name { font-size: 15px; font-weight: 300; font-style: italic; font-family: ui-serif, Georgia, "Times New Roman", serif; color: #FFFFFF; }
+    .meta { font-size: 11px; font-weight: 300; line-height: 1.5; color: rgba(255,255,255,0.28); font-variant-numeric: tabular-nums; }
+    .card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.16); display: flex; flex-direction: column; }
+  </style>
+</helmet>
+
+<div style="width: 390px; height: 844px; background: #0D0D1F; font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; position: relative; overflow: hidden;">
+
+  <div style="padding: 26px 20px 0; display: flex; flex-direction: column; gap: 6px;">
+    <div class="label">The peace garden</div>
+    <div style="font-size: 20px; font-weight: 300; letter-spacing: 2.8px; text-transform: uppercase; color: #FFFFFF; line-height: 1.4;">Specimens</div>
+  </div>
+
+  <!-- Sorting: the thing a grid is actually for -->
+  <div style="display: flex; gap: 8px; padding: 18px 20px 0;">
+    <div style="padding: 7px 13px; border: 1px solid rgba(255,255,255,0.32); border-radius: 999px;"><span style="font-size: 11px; font-weight: 300; letter-spacing: 2.4px; text-transform: uppercase; color: #FFFFFF;">Newest</span></div>
+    <div style="padding: 7px 13px; border: 1px solid rgba(255,255,255,0.16); border-radius: 999px;"><span class="label">Oldest</span></div>
+    <div style="padding: 7px 13px; border: 1px solid rgba(255,255,255,0.16); border-radius: 999px;"><span class="label">Rarest</span></div>
+  </div>
+
+  <!-- Two columns of specimen sheets -->
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding: 20px;">
+
+    <div class="card">
+      <div style="height: 128px; background: radial-gradient(ellipse at 50% 78%, rgba(199,127,166,0.14), rgba(13,13,31,0) 70%); display: flex; align-items: flex-end; justify-content: center;">
+        <svg viewBox="0 0 90 128" style="width: 90px; height: 128px;">
+          <path d="M45 128 C48 92 42 66 46 40" stroke="#5C8A66" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M46 92 C28 86 18 72 16 58 C34 62 44 76 46 90 Z" fill="#3F6B4C"/>
+          <path d="M46 70 C64 64 74 50 76 36 C58 40 48 54 46 68 Z" fill="#3F6B4C"/>
+          <g transform="translate(46,36)" fill="#C77FA6"><ellipse rx="4.6" ry="15" transform="rotate(0)"/><ellipse rx="4.6" ry="15" transform="rotate(51)"/><ellipse rx="4.6" ry="15" transform="rotate(102)"/><ellipse rx="4.6" ry="15" transform="rotate(153)"/><ellipse rx="4.6" ry="15" transform="rotate(204)"/><ellipse rx="4.6" ry="15" transform="rotate(255)"/><ellipse rx="4.6" ry="15" transform="rotate(306)"/></g>
+          <circle cx="46" cy="36" r="4.4" fill="#DCDC06"/>
+        </svg>
+      </div>
+      <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+      <div style="padding: 11px 12px 13px; display: flex; flex-direction: column; gap: 5px;">
+        <div class="name">Ithora solaria</div>
+        <div class="meta">Ada &amp; Marcus &middot; 11 days<br>Margate</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="height: 128px; background: radial-gradient(ellipse at 50% 78%, rgba(143,179,217,0.14), rgba(13,13,31,0) 70%); display: flex; align-items: flex-end; justify-content: center;">
+        <svg viewBox="0 0 90 128" style="width: 90px; height: 128px;">
+          <path d="M45 128 C42 96 48 68 44 44" stroke="#5C8A66" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M44 98 C62 92 72 78 74 64 C56 68 46 82 44 96 Z" fill="#3F6B4C"/>
+          <path d="M44 76 C26 70 16 56 14 42 C32 46 42 60 44 74 Z" fill="#3F6B4C"/>
+          <g transform="translate(44,40)" fill="#8FB3D9"><ellipse rx="4.2" ry="14" transform="rotate(22)"/><ellipse rx="4.2" ry="14" transform="rotate(82)"/><ellipse rx="4.2" ry="14" transform="rotate(142)"/><ellipse rx="4.2" ry="14" transform="rotate(202)"/><ellipse rx="4.2" ry="14" transform="rotate(262)"/><ellipse rx="4.2" ry="14" transform="rotate(322)"/></g>
+          <circle cx="44" cy="40" r="4" fill="#06F556"/>
+        </svg>
+      </div>
+      <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+      <div style="padding: 11px 12px 13px; display: flex; flex-direction: column; gap: 5px;">
+        <div class="name">Nyra pelagia</div>
+        <div class="meta">Jo &amp; Sam &middot; 3 days<br>By the long water</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="height: 128px; background: radial-gradient(ellipse at 50% 78%, rgba(217,196,104,0.14), rgba(13,13,31,0) 70%); display: flex; align-items: flex-end; justify-content: center;">
+        <svg viewBox="0 0 90 128" style="width: 90px; height: 128px;">
+          <path d="M45 128 C47 94 43 64 46 34" stroke="#5C8A66" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M46 88 C64 82 74 68 76 54 C58 58 48 72 46 86 Z" fill="#3F6B4C"/>
+          <path d="M46 64 C28 58 18 44 16 30 C34 34 44 48 46 62 Z" fill="#3F6B4C"/>
+          <g transform="translate(46,30)" fill="#D9C468"><ellipse rx="4.6" ry="15" transform="rotate(10)"/><ellipse rx="4.6" ry="15" transform="rotate(55)"/><ellipse rx="4.6" ry="15" transform="rotate(100)"/><ellipse rx="4.6" ry="15" transform="rotate(145)"/><ellipse rx="4.6" ry="15" transform="rotate(190)"/><ellipse rx="4.6" ry="15" transform="rotate(235)"/><ellipse rx="4.6" ry="15" transform="rotate(280)"/><ellipse rx="4.6" ry="15" transform="rotate(325)"/></g>
+          <circle cx="46" cy="30" r="4.4" fill="#55F306"/>
+        </svg>
+      </div>
+      <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+      <div style="padding: 11px 12px 13px; display: flex; flex-direction: column; gap: 5px;">
+        <div class="name">Callora vespertina</div>
+        <div class="meta">Ada &amp; Ren &middot; 41 days<br>A place nobody named</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="height: 128px; background: radial-gradient(ellipse at 50% 78%, rgba(208,140,106,0.14), rgba(13,13,31,0) 70%); display: flex; align-items: flex-end; justify-content: center;">
+        <svg viewBox="0 0 90 128" style="width: 90px; height: 128px;">
+          <path d="M45 128 C43 98 47 70 44 48" stroke="#5C8A66" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M44 102 C26 96 16 82 14 68 C32 72 42 86 44 100 Z" fill="#3F6B4C"/>
+          <path d="M44 82 C62 76 72 62 74 48 C56 52 46 66 44 80 Z" fill="#3F6B4C"/>
+          <g transform="translate(44,44)" fill="#D08C6A"><ellipse rx="4.2" ry="13" transform="rotate(18)"/><ellipse rx="4.2" ry="13" transform="rotate(78)"/><ellipse rx="4.2" ry="13" transform="rotate(138)"/><ellipse rx="4.2" ry="13" transform="rotate(198)"/><ellipse rx="4.2" ry="13" transform="rotate(258)"/><ellipse rx="4.2" ry="13" transform="rotate(318)"/></g>
+          <circle cx="44" cy="44" r="4" fill="#DCDC06"/>
+        </svg>
+      </div>
+      <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+      <div style="padding: 11px 12px 13px; display: flex; flex-direction: column; gap: 5px;">
+        <div class="name">Pellea auranthe</div>
+        <div class="meta">Ren &amp; Kit &middot; 96 days<br>Under the bridge</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="position: absolute; left: 20px; right: 20px; bottom: 44px; display: flex; flex-direction: column; gap: 12px;">
+    <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+    <div class="label">3,981 more</div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>
