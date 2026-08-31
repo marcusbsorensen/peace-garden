@@ -37,8 +37,28 @@ These are the ones that quietly break associated domains:
 
 ## On 20i
 
-Upload to the document root of `peacegarden.app` — the directory serving the
-site, usually `public_html`.
+```sh
+tools/deploy-aasa.sh
+```
+
+That uploads both files and then checks what is actually served — status,
+content type, and whether the Team ID in the file still matches `project.yml`.
+
+It needs the `peacegarden` host in `~/.ssh/config`, which is written, and its
+key registered in **My20i → peacegarden.app → Security → SSH Access**. Paste
+the contents of `~/.ssh/peacegarden_app.pub` there under a handle such as
+`peacegarden-deploy`.
+
+The two failure modes read very differently, and it is worth knowing which is
+which before diagnosing the wrong one:
+
+| What ssh says | What it means |
+| --- | --- |
+| `Permission denied (publickey)` | The key is not registered yet. The host and the SSH user are fine. |
+| Connection reset at the handshake | The **IP allowlist** on that same page. It gates SSH before authentication, so it reads like a network fault rather than a permissions one. |
+
+Failing all of that, upload by hand to the document root of `peacegarden.app` —
+the directory serving the site, usually `public_html`.
 
 `.well-known` starts with a dot, so 20i's file manager may hide it. Turn on
 "show hidden files", or create it over SFTP. If the folder cannot be created
