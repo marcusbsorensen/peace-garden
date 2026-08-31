@@ -13,13 +13,24 @@ handover and still current for everything this session did not touch.
 
 ## State
 
-Tree clean, `main` at `f2316a4`, **four commits unpushed**.
+Tree clean. Pushed through `d9de83e`; six commits since then are local — the
+rendering work, the settings screen and the shared-garden mock-ups.
 
 Verified by tooling: **63 SeedCore tests**, the app builds at Swift 6 with
 complete concurrency, `tools/reference/passage_reference.py` passes and now runs
 in CI, full build is 14 seconds.
 
-Built and **never seen running**: all of it. The passage bank, the themed draw,
+The plants no longer look like placeholder geometry. Leaves have venation and
+relief, surfaces carry normal and roughness maps, a spike tapers and flowers in
+a gradient, petals can break their colour, and everything wears its own age.
+Every one of those was tuned against renders on a simulator rather than against
+judgement, and each one had at least one confident guess proved wrong by
+looking. See the commits from `478f453` onward.
+
+`design/garden/` holds five mock-ups for the phase-2 shared garden, published
+as a canvas.
+
+Built and **never seen running**: the exchange screens. The passage bank, the themed draw,
 the figurative places, and the whole location feature. Also still unseen from
 last session: the name field's underline and three serif headings.
 
@@ -77,14 +88,29 @@ which of them it already answers.
 
 ## Next step
 
-Push the four commits, then reach Exchange **by hand on a device** and watch a
-real crossing: the passage, its provenance line, the suggested place, and the
-place offer. Everything else is blocked behind that.
+Reach Exchange and watch a real crossing: the passage, its provenance line, the
+suggested place, and the place offer. This is reachable from the harness — see
+Traps — so it no longer needs a second physical device to make progress on the
+screen itself, only on the tap-to-meet handshake.
+
+Two open questions worth answering before more is built on them:
+
+- A public plant page belongs to two people. Does it name both gardeners, or
+  only the one who chose to share it? `PHASES.md` says the encounter note is
+  each person's own, which points at the latter.
+- Self-shadowing does not work while every blade is a single double-sided
+  surface with no thickness. Worth revisiting only alongside giving blades a
+  thickness — see the comment in `PlantSceneBuilder.makeScene`.
 
 ## Traps
 
-- **Injected taps on the `SEED · MEET · GARDEN` row open nothing**, though they
-  register as gesture actions. Coordinates are right; do not re-derive them.
+- **The `SEED · MEET · GARDEN` row works. It always did.** Two sessions recorded
+  it as a blocker and it was screenshot timing: the sheet animates in and a
+  screenshot taken straight after the tap catches the screen before it. Proved
+  by printing from the button action and from the sheet's content builder —
+  both fire, and a screenshot a moment later shows the sheet. Nothing about
+  reaching Exchange is blocked. **Wait about a second after any tap that
+  presents something before believing a screenshot.**
 - **New files need `xcodegen generate`** before they build. The `.xcodeproj` is
   gitignored and generated.
 - **Screenshot round trips take seconds**, so a settled screen after a tap does
