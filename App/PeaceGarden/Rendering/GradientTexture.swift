@@ -193,7 +193,7 @@ enum GradientTexture {
         // reads as convincing in the abstract reads as corrugated iron on a
         // blade the size of a thumb, and the failure is not subtle: the leaves
         // came out as pleated card and the flower centres as woven basket.
-        case .leaf: return 20
+        case .leaf: return 14
         case .petal: return 10
         case .stem: return 9
         case .centre: return 8

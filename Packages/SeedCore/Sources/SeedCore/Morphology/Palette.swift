@@ -137,7 +137,11 @@ public enum PaletteRamp {
         colour = interpolate(colour, rim, pow(fromMidrib, 3.5) * 0.5)
 
         if palette.leafVeining > 0 {
-            colour = interpolate(colour, palette.leafVein, venation(u: u, v: v, palette: palette) * palette.leafVeining)
+            // Held to well under a full swap even at the top of the gene's
+            // range. A vein darker than the blade is a vein; a vein that
+            // replaces the blade is a stripe.
+            let strength = venation(u: u, v: v, palette: palette) * palette.leafVeining * 0.6
+            colour = interpolate(colour, palette.leafVein, strength)
         }
 
         switch palette.variegation {
@@ -188,7 +192,11 @@ public enum PaletteRamp {
         // cross it, and out at the margin where a real vein has thinned away.
         let root = min(1, fromMidrib / 0.14)
         let margin = 1 - pow(fromMidrib, 4)
-        let secondary = pow(ridges, 9) * root * margin * 0.85
+        // The exponent is what decides whether these are lines or bands, and
+        // bands are what a corrugated roof is made of. A strongly veined genome
+        // sat at the top of the range and came out as pleated metal; the veins
+        // have to stay thin however far the gene is pushed.
+        let secondary = pow(ridges, 16) * root * margin * 0.6
 
         return min(1, max(midrib, secondary))
     }
@@ -212,7 +220,7 @@ public enum PaletteRamp {
             // Veins stand proud of the blade, and the blade sinks between them.
             let veins = venation(u: u, v: v, palette: palette)
             let quilt = quilting(u: u, v: v, palette: palette) * palette.leafQuilting
-            return (0.45 + veins * 0.55 - quilt * 0.3).clamped(to: 0...1)
+            return (0.45 + veins * 0.4 - quilt * 0.16).clamped(to: 0...1)
         case .petal:
             // Much softer. A petal that reads as quilted reads as crumpled.
             let ridges = abs(sin(u * .pi * 5))

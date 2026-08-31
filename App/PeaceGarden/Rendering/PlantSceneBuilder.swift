@@ -131,8 +131,21 @@ enum PlantSceneBuilder {
         // The plant is the brightest thing on screen by a wide margin; the
         // backdrop only gives it somewhere to stand.
         key.light?.intensity = 1050
-        key.light?.castsShadow = false
         key.eulerAngles = SCNVector3(-0.6, 0.7, 0)
+
+        // Self-shadowing was tried here and abandoned. Both `.forward` and
+        // `.deferred` were driven on a device with the light stood off along
+        // its own direction and the orthographic box sized to a plant rather
+        // than to the metre-scale default, and neither put a leaf's shadow on
+        // the leaf beneath it. The likeliest reason is that every leaf and
+        // petal is `isDoubleSided` — a single surface with no thickness, which
+        // is lit from both faces precisely so it does not vanish when it turns
+        // away, and which correspondingly has no back to cast from.
+        //
+        // Worth another look only alongside giving blades a thickness. Written
+        // down so the next reader spends the afternoon on the geometry rather
+        // than on the shadow settings, which are not the problem.
+        key.light?.castsShadow = false
         scene.rootNode.addChildNode(key)
 
         let rim = SCNNode()
