@@ -120,6 +120,78 @@ public enum Variegation: String, CaseIterable, Codable, Sendable {
     ]
 }
 
+/// How a petal's pigment breaks up across the blade.
+///
+/// The reference is the broken tulip: a flower whose pigment fails in bands and
+/// feathers, so the ground colour shows through in flames running out from the
+/// base. They were the most valuable flowers in Europe for a while, and they are
+/// still the reason anyone looks twice at a tulip.
+///
+/// Weighted hard toward plain, for the same reason `FoliageTone` is weighted
+/// toward green: a marking that every flower has is not a marking, it is the
+/// flower. This is meant to be a thing somebody notices they have.
+public enum Marbling: String, CaseIterable, Codable, Sendable {
+    case none
+    /// Flames running from the base toward the tip, feathering as they go.
+    case flamed
+    /// Swirls, with no direction to them, the way stone is marbled.
+    case marbled
+    /// Fine streaks along the petal, as though brushed.
+    case brushed
+
+    public var displayName: String {
+        switch self {
+        case .none: return "Plain"
+        case .flamed: return "Flamed"
+        case .marbled: return "Marbled"
+        case .brushed: return "Brushed"
+        }
+    }
+
+    static let weighted: [Marbling] = [
+        .none, .none, .none, .none, .none, .none, .none, .none, .none,
+        .flamed, .flamed,
+        .marbled,
+        .brushed
+    ]
+}
+
+/// Smooth value noise on a grid, in 0...1.
+///
+/// Deterministic from a seed and a pair of coordinates, with no state and no
+/// table to keep — the same point always gives the same value, on any device.
+/// `speckle` hashes a cell and stops there, which is right for hard-edged
+/// patches and wrong for anything that has to flow.
+func valueNoise(x: Double, y: Double, seed: UInt64) -> Double {
+    func corner(_ cx: Double, _ cy: Double) -> Double {
+        var hash = seed
+        hash = mix64(hash ^ (UInt64(bitPattern: Int64(cx)) &* 0x9E37_79B9_7F4A_7C15))
+        hash = mix64(hash ^ (UInt64(bitPattern: Int64(cy)) &* 0xBF58_476D_1CE4_E5B9))
+        return Double(hash >> 11) * 0x1.0p-53
+    }
+    let xi = x.rounded(.down), yi = y.rounded(.down)
+    let xf = x - xi, yf = y - yi
+    // Smoothstep on both axes, so the grid the noise is built on stays hidden.
+    let sx = xf * xf * (3 - 2 * xf)
+    let sy = yf * yf * (3 - 2 * yf)
+
+    let top = corner(xi, yi) + (corner(xi + 1, yi) - corner(xi, yi)) * sx
+    let bottom = corner(xi, yi + 1) + (corner(xi + 1, yi + 1) - corner(xi, yi + 1)) * sx
+    return top + (bottom - top) * sy
+}
+
+/// Value noise at several scales at once.
+func fbm(x: Double, y: Double, seed: UInt64, octaves: Int = 4) -> Double {
+    var total = 0.0, amplitude = 0.5, frequency = 1.0, normalisation = 0.0
+    for octave in 0..<max(1, octaves) {
+        total += valueNoise(x: x * frequency, y: y * frequency, seed: seed &+ UInt64(octave) &* 7919) * amplitude
+        normalisation += amplitude
+        amplitude *= 0.5
+        frequency *= 2.07
+    }
+    return total / max(0.0001, normalisation)
+}
+
 /// Moves a uniform draw off the band of green that leaves occupy.
 ///
 /// A flower the same green as the foliage around it reads as another leaf. Real
@@ -237,6 +309,17 @@ public extension Genome.Palette {
               )
             : nil
 
+        // The ground the broken pigment shows through to. A flame is nearly
+        // always paler than the flower it breaks — pigment failing, not pigment
+        // added — so this drains saturation and lifts brightness rather than
+        // reaching for a new hue that would only fight the scheme.
+        let marbling = source.pick("palette.marbling", from: Marbling.weighted)
+        let marble = HSB(
+            hue: (baseHue + source.signed("palette.marbleShift") * 0.05).wrappedUnit,
+            saturation: baseSaturation * source.value("palette.marbleSaturation", 0.05...0.3),
+            brightness: min(1, baseBrightness * source.value("palette.marbleBrightness", 1.15...1.5))
+        )
+
         let tone = source.pick("palette.foliageTone", from: FoliageTone.weighted)
         let leaf = HSB(
             hue: source.value("palette.leafHue", tone.hueRange),
@@ -285,6 +368,10 @@ public extension Genome.Palette {
             petalVein: petalVein,
             picotee: picotee,
             veining: veining,
+            marbling: marbling,
+            marble: marble,
+            marbleScale: source.value("palette.marbleScale", 2.2...6.5),
+            marbleSeed: GeneSource.rawUInt64(seed, "palette.marbleSeed"),
             foliageTone: tone,
             leaf: leaf,
             variegation: variegation,

@@ -101,6 +101,16 @@ public struct Genome: Equatable, Sendable {
         /// A contrasting rim, as a picotee carnation has. Usually absent.
         public var picotee: HSB?
         public var veining: Double
+        /// How the petal's pigment breaks up. Usually it does not.
+        public var marbling: Marbling
+        /// The colour showing through where the pigment has broken.
+        public var marble: HSB
+        /// The scale of the pattern: low is a few broad flames, high is a fine
+        /// feathering.
+        public var marbleScale: Double
+        /// Seeds the pattern, so two flowers marbled the same way are still
+        /// marbled differently.
+        public var marbleSeed: UInt64
 
         public var foliageTone: FoliageTone
         public var leaf: HSB

@@ -53,6 +53,14 @@ public enum PaletteRamp {
             colour = interpolate(colour, palette.petalVein, vein)
         }
 
+        // Broken pigment, where a flower has it. Laid over the veins and under
+        // the rim: a flame runs through the vein pattern rather than round it,
+        // and a picotee edge survives the break, which is what keeps a marbled
+        // flower looking like one flower rather than two patterns arguing.
+        if palette.marbling != .none {
+            colour = interpolate(colour, palette.marble, breaking(u: u, v: v, palette: palette))
+        }
+
         // A picotee rim follows the whole edge of the petal, sides and tip.
         if let picotee = palette.picotee {
             let side = 1 - min(u, 1 - u) / 0.16
@@ -62,6 +70,50 @@ public enum PaletteRamp {
         }
 
         return colour
+    }
+
+    /// How far the pigment has broken at a point on a petal, 0 to 1.
+    ///
+    /// All three patterns are the same noise read through a different
+    /// coordinate, which is what keeps them relatives rather than three
+    /// unrelated effects: flames stretch it along the petal, brushing stretches
+    /// it much further, and marbling warps the coordinate by more noise before
+    /// reading it — the warp is the whole trick, and it is the difference
+    /// between clouds and swirls.
+    ///
+    /// The result is pushed toward its ends, because pigment that has half
+    /// broken everywhere is a wash. A break wants an edge.
+    public static func breaking(u: Double, v: Double, palette: Genome.Palette) -> Double {
+        let scale = palette.marbleScale
+        let seed = palette.marbleSeed
+
+        var field: Double
+        switch palette.marbling {
+        case .none:
+            return 0
+        case .flamed:
+            // Stretched along the petal, so the pattern runs base to tip.
+            field = fbm(x: u * scale * 2.4, y: v * scale * 0.5, seed: seed)
+        case .brushed:
+            field = fbm(x: u * scale * 4.5, y: v * scale * 0.22, seed: seed, octaves: 3)
+        case .marbled:
+            // Domain warp: read the noise at a point the noise itself moved.
+            let warpX = fbm(x: u * scale, y: v * scale, seed: seed &+ 101)
+            let warpY = fbm(x: u * scale, y: v * scale, seed: seed &+ 202)
+            field = fbm(
+                x: u * scale + (warpX - 0.5) * 2.6,
+                y: v * scale + (warpY - 0.5) * 2.6,
+                seed: seed
+            )
+        }
+
+        // Harden the edge. Smoothstep across a narrow band around the middle
+        // turns a cloud into a flame with a boundary you can see.
+        let contrast = smoothstep((field - 0.42) / 0.26 + 0.5)
+
+        // A flower breaks from the base outward, and the tip is the last to go.
+        let fromBase = palette.marbling == .flamed ? (1 - pow(v, 1.7) * 0.55) : 1
+        return (contrast * fromBase).clamped(to: 0...1)
     }
 
     // MARK: - Leaves

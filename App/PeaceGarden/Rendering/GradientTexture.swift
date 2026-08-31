@@ -297,7 +297,8 @@ enum GradientTexture {
         let swatches = [
             palette.petalBase, palette.petalTip, palette.petalThroat,
             palette.petalVein, palette.picotee, palette.leaf,
-            palette.leafAccent, palette.leafVein, palette.stem, palette.centre
+            palette.leafAccent, palette.leafVein, palette.stem, palette.centre,
+            palette.marble
         ].map(swatch).joined(separator: "|")
         return [
             role.rawValue,
@@ -307,6 +308,9 @@ enum GradientTexture {
             String(format: "%.3f", palette.leafQuilting),
             String(format: "%.3f", palette.sheen),
             palette.variegation.rawValue,
+            palette.marbling.rawValue,
+            String(format: "%.3f", palette.marbleScale),
+            String(palette.marbleSeed),
             String(palette.speckleSeed)
         ].joined(separator: "#")
     }
