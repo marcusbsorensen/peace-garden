@@ -1,0 +1,20 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 900, "h": 1200, "title": "Direction" },
+    { "file": "Palette.dc.html", "x": 1020, "y": 0, "w": 900, "h": 1200, "title": "Palette" },
+    { "file": "Type.dc.html", "x": 2040, "y": 0, "w": 900, "h": 1200, "title": "Type" },
+    { "file": "Voice.dc.html", "x": 0, "y": 1400, "w": 900, "h": 1200, "title": "Voice" },
+    { "file": "Motion.dc.html", "x": 1020, "y": 1400, "w": 900, "h": 1200, "title": "Motion" },
+    { "file": "Marks.dc.html", "x": 2040, "y": 1400, "w": 900, "h": 1200, "title": "Marks and imagery" }
+  ],
+  "annotations": [
+    {
+      "id": "scope",
+      "x": 0,
+      "y": -150,
+      "w": 620,
+      "text": "Read from the app as it stands: Chrome.swift, the icon generator and docs/BRAND.md.\nThe suite owns the ground, the stroke treatment, the gradient and the hue span — see suite-brand.md in the UnCubed repo."
+    }
+  ],
+  "launch": { "view": "canvas" }
+}

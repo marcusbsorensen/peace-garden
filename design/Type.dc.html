@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; }
+    a { color: #55F306; } a:hover { color: #DCDC06; }
+    .head { font-size: 11px; letter-spacing: 2.4px; text-transform: uppercase; font-weight: 300; color: rgba(255,255,255,0.28); }
+    .spec { font-size: 12px; font-weight: 300; color: rgba(255,255,255,0.28); font-variant-numeric: tabular-nums; }
+    .use { font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.55); line-height: 1.55; }
+    .row { display: flex; flex-direction: column; gap: 9px; }
+  </style>
+</helmet>
+<div style="width: 900px; height: 1200px; background: #0D0D1F; color: #FFFFFF; padding: 72px 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 34px;">
+
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+    <div style="font-size: 26px; font-weight: 200; letter-spacing: 2.8px; text-transform: uppercase;">Type</div>
+    <div class="use" style="max-width: 660px;">One face, set light and given room. The system face is used throughout, so the app inherits Dynamic Type and every language the device already has.</div>
+  </div>
+
+  <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+
+  <div class="row">
+    <div class="head">Heading &middot; the three moments the app explains itself</div>
+    <div style="font-size: 20px; font-weight: 300; letter-spacing: 2.8px; text-transform: uppercase; line-height: 1.4;">A unique seed for you is taking form.</div>
+    <div class="spec">20 / light / tracking 2.8 / uppercase &nbsp;&middot;&nbsp; <span style="color: rgba(255,255,255,0.55);">chromeHeading</span></div>
+    <div class="use">Uppercase and wide-tracked, so the first screen, the planted seed and the first meeting read as one sequence rather than three unrelated screens.</div>
+  </div>
+
+  <div class="row">
+    <div class="head">Body</div>
+    <div style="font-size: 16px; font-weight: 300; line-height: 1.6; color: rgba(255,255,255,0.55); max-width: 560px;">The imprints swirling together: the coordinates of this moment, in this specific digital space, and mutations of the random.</div>
+    <div class="spec">16 / light / line spacing 6&ndash;7 / muted &nbsp;&middot;&nbsp; measure capped at 440 pt</div>
+    <div class="use">A paragraph set to the full width of an iPad is a wall. The plant is allowed the whole screen; the words are not.</div>
+  </div>
+
+  <div class="row">
+    <div class="head">Label</div>
+    <div style="font-size: 11px; font-weight: 300; letter-spacing: 2.4px; text-transform: uppercase; color: rgba(255,255,255,0.28);">What people see when you meet</div>
+    <div class="spec">11 / light / tracking 2.4 / uppercase / faint &nbsp;&middot;&nbsp; <span style="color: rgba(255,255,255,0.55);">chromeLabel</span></div>
+    <div class="use">Field labels, growth stage, and the controls — which are set in the label voice rather than drawn as buttons.</div>
+  </div>
+
+  <div class="row">
+    <div class="head">Control</div>
+    <div style="font-size: 11px; font-weight: 300; letter-spacing: 2.4px; text-transform: uppercase; color: #FFFFFF;">Plant it now</div>
+    <div class="spec">The label voice at full ink. One prominent control per screen; the rest sit at muted.</div>
+    <div class="use">A control that reads as a line of text rather than a button. It appears on a tap and sees itself out again.</div>
+  </div>
+
+  <div class="row">
+    <div class="head">Plant name &middot; the one serif</div>
+    <div style="font-size: 26px; font-weight: 300; font-style: italic; font-family: ui-serif, Georgia, "Times New Roman", serif;">Ithora solaria</div>
+    <div class="spec">26 / light / italic serif &nbsp;&middot;&nbsp; <span style="color: rgba(255,255,255,0.55);">plantName</span></div>
+    <div class="use">Reserved for the binomial a plant is given. An italic serif for a species name is the convention botany already has, and it is the only place a serif belongs. Interface headings take the sans.</div>
+  </div>
+
+  <div style="flex-grow: 1;"></div>
+
+  <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px;">
+    <div class="row">
+      <div class="head">Holds</div>
+      <div class="use">Light weights throughout. Wide tracking on anything uppercase. Centred text on the single-purpose screens; ranged left wherever there is a list to read.</div>
+    </div>
+    <div class="row">
+      <div class="head">Give way to</div>
+      <div class="use">Dynamic Type — the sizes above are the default step, and every screen reflows. Where a size and legibility disagree, legibility takes it.</div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

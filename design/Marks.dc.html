@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; }
+    a { color: #55F306; } a:hover { color: #DCDC06; }
+    .head { font-size: 11px; letter-spacing: 2.4px; text-transform: uppercase; font-weight: 300; color: rgba(255,255,255,0.28); }
+    .use { font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.55); line-height: 1.6; }
+    .yes { font-size: 14px; font-weight: 400; color: #06F556; }
+    .no { font-size: 14px; font-weight: 400; color: rgba(255,255,255,0.28); }
+  </style>
+</helmet>
+<div style="width: 900px; height: 1200px; background: #0D0D1F; color: #FFFFFF; padding: 72px 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 30px;">
+
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+    <div style="font-size: 26px; font-weight: 200; letter-spacing: 2.8px; text-transform: uppercase;">Marks and imagery</div>
+    <div class="use" style="max-width: 660px;">Line, not fill. Everything drawn in this app is a stroke of even weight with round free ends, which is what lets a tendril, a rule and the app icon read as one hand.</div>
+  </div>
+
+  <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+
+  <div style="display: flex; gap: 44px; align-items: center;">
+    <svg width="200" height="200" viewBox="0 0 1024 1024" style="flex-shrink: 0;">
+      <defs>
+        <linearGradient id="sweep" gradientUnits="userSpaceOnUse" x1="190" y1="834" x2="834" y2="190">
+          <stop offset="0" stop-color="#06F556"/>
+          <stop offset="0.5" stop-color="#55F306"/>
+          <stop offset="1" stop-color="#DCDC06"/>
+        </linearGradient>
+      </defs>
+      <rect width="1024" height="1024" fill="#0D0D1F"/>
+      <path d="M 556 470 A 86 86 0 1 1 470 384 A 172 172 0 1 0 642 556 A 344 344 0 1 1 298 212"
+            fill="none" stroke="url(#sweep)" stroke-width="42" stroke-linecap="round"
+            transform="translate(60,120) scale(0.86)"/>
+      <path d="M 700 300 q 60 -110 6 -190" fill="none" stroke="url(#sweep)" stroke-width="42" stroke-linecap="round"/>
+      <ellipse cx="716" cy="196" rx="20" ry="46" fill="#FFFFFF" transform="rotate(-16 716 196)"/>
+    </svg>
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div class="head">The mark</div>
+      <div class="use">An unwinding logarithmic spiral carrying a peace lily's spathe, with the spadix inside it. One continuous stroke; the spathe leaves on the tangent the spiral ends on, so the whole thing is one gesture.</div>
+      <div class="use" style="color: rgba(255,255,255,0.28);">Sketched here. The drawn mark comes from <span style="color: rgba(255,255,255,0.55);">tools/icon/make_icon.py</span>, which is the only place it may be changed.</div>
+    </div>
+  </div>
+
+  <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+
+  <div style="display: flex; flex-direction: column; gap: 14px;">
+    <div class="head">What may be depicted</div>
+    <div class="use" style="max-width: 720px;">A mark may show what the app <span style="color: #FFFFFF;">gives</span> you. Showing what the app is <span style="color: #FFFFFF;">about</span> is the case the suite forbids, in the way that a flag is a flag. The spiral is safe either way: it depicts unfolding over time, which is the medium rather than the subject.</div>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 40px; margin-top: 6px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div class="yes">Holds</div>
+        <div class="use">Monoline strokes. Round free ends, square joins where a stroke meets another. One gradient along the stroke, bottom-left to top-right. Flat ground.</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div class="no">Stays out</div>
+        <div class="use">Gradients on the ground, shadows, bevels, a drawn squircle, arbitrary filled shapes, and any stroke whose weight varies without the suite's terms being met.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+
+  <div style="display: flex; flex-direction: column; gap: 14px;">
+    <div class="head">Imagery in the app</div>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 14px; font-weight: 400; color: #55F306;">The plant</div>
+        <div class="use">Rendered geometry, derived from the seed. The one saturated thing on screen, and the only photograph-like object the app has.</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 14px; font-weight: 400; color: #55F306;">Drawn line</div>
+        <div class="use">Tendrils, rules, the mark. Hairline or faint, one weight, always in service of something rather than as ornament on its own.</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 14px; font-weight: 400; color: #55F306;">Light</div>
+        <div class="use">A pool of it, tinted to the plant's own palette, giving the plant somewhere to stand. It is the only background the app has.</div>
+      </div>
+    </div>
+    <div class="use" style="max-width: 720px; margin-top: 4px;">Photographs, stock illustration and icon sets all stay out: the app draws one living thing and everything else is a line.</div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

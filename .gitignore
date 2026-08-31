@@ -14,3 +14,12 @@ xcuserdata/
 # Preview output
 tools/preview/*.png
 __pycache__/
+
+# Agent worktrees
+.claude/worktrees/
+
+# Seeded design canvas — generated from the .dc.html sources beside it
+design/*.html
+!design/*.dc.html
+
+.DS_Store

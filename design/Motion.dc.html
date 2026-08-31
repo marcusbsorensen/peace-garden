@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; }
+    a { color: #55F306; } a:hover { color: #DCDC06; }
+    .head { font-size: 11px; letter-spacing: 2.4px; text-transform: uppercase; font-weight: 300; color: rgba(255,255,255,0.28); }
+    .use { font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.55); line-height: 1.6; }
+    .num { font-size: 13px; font-weight: 400; font-variant-numeric: tabular-nums; color: #55F306; }
+    @keyframes breathe { 0%, 100% { transform: scale(0.55); opacity: 0.3; } 50% { transform: scale(1); opacity: 0.9; } }
+    @keyframes arrive { 0% { opacity: 0; } 100% { opacity: 1; } }
+  </style>
+</helmet>
+<div style="width: 900px; height: 1200px; background: #0D0D1F; color: #FFFFFF; padding: 72px 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 32px;">
+
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+    <div style="font-size: 26px; font-weight: 200; letter-spacing: 2.8px; text-transform: uppercase;">Motion</div>
+    <div class="use" style="max-width: 660px;">One gesture, at three scales: a line unfolding over seconds, a tendril over minutes, a plant over weeks. Everything in the app is a version of something opening.</div>
+  </div>
+
+  <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    <div class="head">Unfolding, not appearing</div>
+    <div style="display: flex; flex-direction: column; gap: 9px; padding: 26px 30px; background: rgba(255,255,255,0.03); border-radius: 4px;">
+      <div style="font-size: 15px; font-weight: 300; color: rgba(255,255,255,0.55); animation: arrive 1.2s ease-in-out 0.2s both;">The imprints swirling together:</div>
+      <div style="font-size: 15px; font-weight: 300; color: rgba(255,255,255,0.55); animation: arrive 1.2s ease-in-out 1.6s both;">the coordinates of this moment,</div>
+      <div style="font-size: 15px; font-weight: 300; color: rgba(255,255,255,0.55); animation: arrive 1.2s ease-in-out 3.2s both;">in this specific digital space,</div>
+      <div style="font-size: 15px; font-weight: 300; color: rgba(255,255,255,0.55); animation: arrive 1.2s ease-in-out 4.8s both;">and mutations of the random.</div>
+    </div>
+    <div class="use" style="max-width: 700px;">Each line waits for the one before it to have been read. The gap comes from the word count — <span class="num">0.5s + 0.22s per word</span> — so a longer line is given longer, and the cadence matches a reader rather than a metronome.</div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    <div class="head">The durations that exist</div>
+    <div style="display: grid; grid-template-columns: 120px 1fr; gap: 12px 24px; align-items: baseline;">
+      <div class="num">1.2s</div>
+      <div class="use">A line, a heading or a control arriving. Ease in and out.</div>
+      <div class="num">1.7s</div>
+      <div class="use">The breathing dot, repeating, while a seed is being formed.</div>
+      <div class="num">6s</div>
+      <div class="use">A tendril opening and closing again at the ends of a rule.</div>
+      <div class="num">0.55s</div>
+      <div class="use">Controls fading in on a tap, and out again when left alone.</div>
+      <div class="num">6s</div>
+      <div class="use">How long controls wait before seeing themselves out.</div>
+      <div class="num">90s</div>
+      <div class="use">One full turn of the plant on its own axis.</div>
+      <div class="num">days</div>
+      <div class="use">The growth itself, in real time, as a pure function of elapsed days.</div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 14px;">
+    <div class="head">The breath</div>
+    <div style="display: flex; align-items: center; gap: 24px;">
+      <div style="width: 10px; height: 10px; border-radius: 50%; background: #FFFFFF; animation: breathe 1.7s ease-in-out infinite;"></div>
+      <div class="use" style="max-width: 620px;">Used on the screens that are waiting on something. It is the app's one piece of perpetual motion, and it earns that by standing in for a heartbeat.</div>
+    </div>
+  </div>
+
+  <div style="flex-grow: 1;"></div>
+
+  <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 40px;">
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <div style="font-size: 14px; font-weight: 400; color: #DCDC06;">Reduce Motion</div>
+      <div class="use">Holds a composed state rather than freezing mid-cycle: a tendril rests half open, the waiting stops, the fades stay. The objection is to being made to wait through choreography, not to a crossfade.</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <div style="font-size: 14px; font-weight: 400; color: #DCDC06;">Where a coil relaxes</div>
+      <div class="use">A tendril opens by its curvature falling away, which is how a fiddlehead does it. Trimming a fixed spiral reads as a line being drawn on, and is a duller gesture for it.</div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; }
+    a { color: #55F306; } a:hover { color: #DCDC06; }
+    .sw { display: flex; align-items: center; gap: 16px; }
+    .chip { width: 76px; height: 52px; border-radius: 3px; flex-shrink: 0; }
+    .hex { font-size: 13px; font-weight: 400; font-variant-numeric: tabular-nums; }
+    .use { font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.55); line-height: 1.55; }
+    .head { font-size: 11px; letter-spacing: 2.4px; text-transform: uppercase; font-weight: 300; color: rgba(255,255,255,0.28); }
+  </style>
+</helmet>
+<div style="width: 900px; height: 1200px; background: #0D0D1F; color: #FFFFFF; padding: 72px 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 38px;">
+
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+    <div style="font-size: 26px; font-weight: 200; letter-spacing: 2.8px; text-transform: uppercase;">Palette</div>
+    <div class="use" style="max-width: 640px;">Two families. The base is where everything lives; the highlight belongs to the mark and to the moments the app is being celebratory. The plant's own colours are derived per seed and sit outside both.</div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 18px;">
+    <div class="head">Base — the ground and the chrome</div>
+
+    <div class="sw">
+      <div class="chip" style="background: #0D0D1F; border: 1px solid rgba(255,255,255,0.16);"></div>
+      <div style="display: flex; flex-direction: column; gap: 3px;">
+        <div class="hex">#0D0D1F &nbsp;<span style="color: rgba(255,255,255,0.28); font-weight: 300;">Ground</span></div>
+        <div class="use">The suite ground, flat, in every appearance. Cool rather than warm: red minus blue is &minus;18.</div>
+      </div>
+    </div>
+
+    <div class="sw">
+      <div class="chip" style="background: #FFFFFF;"></div>
+      <div style="display: flex; flex-direction: column; gap: 3px;">
+        <div class="hex">Ink &nbsp;<span style="color: rgba(255,255,255,0.28); font-weight: 300;">white</span></div>
+        <div class="use">Headings, the name a person is typing, the one prominent control on a screen.</div>
+      </div>
+    </div>
+
+    <div class="sw">
+      <div class="chip" style="background: rgba(255,255,255,0.55);"></div>
+      <div style="display: flex; flex-direction: column; gap: 3px;">
+        <div class="hex">Muted &nbsp;<span style="color: rgba(255,255,255,0.28); font-weight: 300;">white 55%</span></div>
+        <div class="use">Body copy, and every hint that explains the app to someone meeting it.</div>
+      </div>
+    </div>
+
+    <div class="sw">
+      <div class="chip" style="background: rgba(255,255,255,0.28);"></div>
+      <div style="display: flex; flex-direction: column; gap: 3px;">
+        <div class="hex">Faint &nbsp;<span style="color: rgba(255,255,255,0.28); font-weight: 300;">white 28%</span></div>
+        <div class="use">Labels, field prompts, the growth stage under a plant, tendrils.</div>
+      </div>
+    </div>
+
+    <div class="sw">
+      <div class="chip" style="background: rgba(255,255,255,0.16);"></div>
+      <div style="display: flex; flex-direction: column; gap: 3px;">
+        <div class="hex">Hairline &nbsp;<span style="color: rgba(255,255,255,0.28); font-weight: 300;">white 16%</span></div>
+        <div class="use">Rules, and nothing else. Used sparingly enough to stay a punctuation mark.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+
+  <div style="display: flex; flex-direction: column; gap: 18px;">
+    <div class="head">Highlight — the app's hue span, 140&deg; to 60&deg;</div>
+
+    <div style="display: flex; gap: 0; border-radius: 3px; overflow: hidden;">
+      <div style="flex-grow: 1; height: 64px; background: linear-gradient(90deg, #06F556 0%, #55F306 50%, #DCDC06 100%);"></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px;">
+      <div style="display: flex; flex-direction: column; gap: 5px;">
+        <div class="hex" style="color: #06F556;">#06F556</div>
+        <div class="use">140&deg; &middot; forest green<br>13.00 : 1 on ground</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px;">
+        <div class="hex" style="color: #55F306;">#55F306</div>
+        <div class="use">100&deg; &middot; lime<br>13.00 : 1 on ground</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px;">
+        <div class="hex" style="color: #DCDC06;">#DCDC06</div>
+        <div class="use">60&deg; &middot; yellow<br>13.00 : 1 on ground</div>
+      </div>
+    </div>
+
+    <div class="use" style="max-width: 700px;">All three stops sit at one luminance — spread 0.000% — because a triad that drifts in value becomes a staircase in greyscale. Lightness is solved per hue against a luminance target rather than chosen: yellow is the extreme case, and eyeballing it is how the sweep goes wrong.</div>
+  </div>
+
+  <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+
+  <div style="display: flex; flex-direction: column; gap: 12px;">
+    <div class="head">Where the highlight belongs</div>
+    <div class="use" style="max-width: 700px;">The app icon's stroke, and the rare celebratory moment. It stays off ordinary chrome: a control tinted with it competes with the plant, which is the one thing on screen allowed to be saturated. The spadix inside the icon's bract is flat <span style="color: #FFFFFF;">#FFFFFF</span> and takes no part in the gradient.</div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

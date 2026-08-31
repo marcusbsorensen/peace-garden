@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; }
+    a { color: #55F306; } a:hover { color: #DCDC06; }
+    .head { font-size: 11px; letter-spacing: 2.4px; text-transform: uppercase; font-weight: 300; color: rgba(255,255,255,0.28); }
+    .use { font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.55); line-height: 1.6; }
+    .say { font-size: 15px; font-weight: 300; color: #FFFFFF; line-height: 1.55; }
+    .instead { font-size: 15px; font-weight: 300; color: rgba(255,255,255,0.28); line-height: 1.55; text-decoration: line-through; text-decoration-color: rgba(255,255,255,0.2); }
+    .pair { display: flex; flex-direction: column; gap: 8px; padding-left: 16px; border-left: 1px solid rgba(255,255,255,0.16); }
+  </style>
+</helmet>
+<div style="width: 900px; height: 1200px; background: #0D0D1F; color: #FFFFFF; padding: 72px 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 34px;">
+
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+    <div style="font-size: 26px; font-weight: 200; letter-spacing: 2.8px; text-transform: uppercase;">Voice</div>
+    <div class="use" style="max-width: 660px;">Plain, warm and unhurried. The app is doing something quietly extraordinary and says so without raising its voice.</div>
+  </div>
+
+  <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    <div class="head">The rule that governs the rest</div>
+    <div style="font-size: 22px; font-weight: 200; line-height: 1.45; color: #DCDC06;">Say what a thing is, does, and will do.</div>
+    <div class="use" style="max-width: 700px;">Defining something by what it is not leaves everything else standing as an open question, and a reader has to infer the shape from the hole. A negative also reads as a warning even when it was meant as a reassurance.</div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 22px;">
+    <div class="pair">
+      <div class="say">It stays on this phone.</div>
+      <div class="instead">It never leaves the phone.</div>
+    </div>
+    <div class="pair">
+      <div class="say">Drawn once, and yours.</div>
+      <div class="instead">It cannot be drawn again.</div>
+    </div>
+    <div class="pair">
+      <div class="say">A brand new and unique seed will be formed every time.</div>
+      <div class="instead">No two seeds are ever the same.</div>
+    </div>
+    <div class="pair">
+      <div class="say">Your plant can meet others if you tap their device.</div>
+      <div class="instead">Plants will not grow unless you meet someone.</div>
+    </div>
+  </div>
+
+  <div style="height: 1px; background: rgba(255,255,255,0.16);"></div>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 40px;">
+
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <div style="font-size: 14px; font-weight: 400; color: #06F556;">Short, and set large</div>
+      <div class="use">Sixteen words at 16 pt reach a reader that twenty-seven at 14 pt do not. Cut until each line carries one idea.</div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <div style="font-size: 14px; font-weight: 400; color: #06F556;">Second person, present tense</div>
+      <div class="use">Your plant, this moment, this phone. The app talks about what is happening now rather than what the software supports.</div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <div style="font-size: 14px; font-weight: 400; color: #55F306;">Explain a function where it is met</div>
+      <div class="use">Each thing is described at the point someone first arrives at it, and retires once they have used it.</div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <div style="font-size: 14px; font-weight: 400; color: #55F306;">Concrete over abstract</div>
+      <div class="use">The coordinates of this moment. Tap their device. Weeks. Names for things a person can picture.</div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <div style="font-size: 14px; font-weight: 400; color: #DCDC06;">British English</div>
+      <div class="use">Colour, neighbour, realise. Sentence case in body copy; the headings are uppercased by the type style rather than by the writing.</div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <div style="font-size: 14px; font-weight: 400; color: #DCDC06;">Quiet punctuation</div>
+      <div class="use">Full stops and the occasional colon. The app has no exclamation marks in it and wants none.</div>
+    </div>
+
+  </div>
+
+  <div style="flex-grow: 1;"></div>
+
+  <div class="use" style="max-width: 720px;">The passages shown when two plants make a seed follow the same rule: they hold something positive for the meeting, and each carries its source in brief beneath it.</div>
+
+</div>
+</x-dc>
+</body>
+</html>
