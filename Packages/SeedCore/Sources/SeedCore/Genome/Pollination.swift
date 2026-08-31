@@ -41,6 +41,17 @@ public enum Pollination {
         return seedDigest(SeedDomain.pair, low.bytes, high.bytes)
     }
 
+    /// A named draw in `[0, 1)` that belongs to a pair.
+    ///
+    /// The pair's answer to `GeneSource.unit`: same shape, same by-name
+    /// discipline, but rolled from `pairID`, so it is settled the first time two
+    /// people meet and never moves again. What varies between their meetings has
+    /// to come from the child seed instead.
+    public static func pairUnit(seedA: SeedID, seedB: SeedID, label: String) -> Double {
+        let digest = seedDigest(SeedDomain.pair, pairID(seedA: seedA, seedB: seedB), Data(label.utf8))
+        return Double(mix64(digest.leadingUInt64) >> 11) * 0x1.0p-53
+    }
+
     /// The offspring seed for one encounter.
     public static func cross(seedA: SeedID, seedB: SeedID, encounterID: Data) -> SeedID {
         let (low, high) = ordered(seedA, seedB)

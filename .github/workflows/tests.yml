@@ -51,3 +51,11 @@ jobs:
       # which one moved.
       - name: Run the reference implementation
         run: python3 tools/reference/derivation_reference.py
+
+      # Quotes lives in App/, which has no test target, so the Swift suite never
+      # reaches the passage draw. This reads the themes and the bank straight out
+      # of Quotes.swift and checks the rules hold — that no theme is empty or
+      # unreachable, that a pair's theme does not move between meetings, and that
+      # every passage can actually come up.
+      - name: Check the passage draw
+        run: python3 tools/reference/passage_reference.py

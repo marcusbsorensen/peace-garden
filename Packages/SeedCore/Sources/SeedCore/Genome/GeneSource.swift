@@ -32,9 +32,13 @@ public struct GeneSource: Sendable {
     /// Cumulative thresholds over `[0, 1)`: first parent, second parent, blend
     /// of the two, then a rare novel value. Tuned so a hybrid reads as clearly
     /// descended from both plants while still holding a surprise.
-    static let inheritFirstParent = 0.36
-    static let inheritSecondParent = 0.72
-    static let inheritBlend = 0.94
+    ///
+    /// Public because inheritance happens outside this type as well — the app's
+    /// passage themes descend on the same ladder — and two copies of these
+    /// numbers would drift apart the first time anyone tuned one of them.
+    public static let inheritFirstParent = 0.36
+    public static let inheritSecondParent = 0.72
+    public static let inheritBlend = 0.94
 
     /// Uniform in `[0, 1)` for the named trait.
     public func unit(_ label: String) -> Double {

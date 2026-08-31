@@ -48,10 +48,10 @@ struct PlantRevealView: View {
                         .padding(.bottom, 4)
                 }
 
-                // Drawn from the pair rather than the child, so it is the line
-                // that belongs to these two people: the same one every time they
-                // meet, and a fresh draw with anybody new.
-                let passage = Quotes.passage(for: outcome.result.pairID)
+                // The theme is the pair's and holds; the line inside it is this
+                // meeting's. So two people keep the same character between them
+                // and never get the same words twice.
+                let passage = Quotes.passage(for: outcome.result)
                 Text(passage.text)
                     .font(.system(size: 17, weight: .light))
                     .foregroundStyle(Chrome.ink.opacity(0.84))
