@@ -17,6 +17,10 @@ struct ExchangeView: View {
         ZStack {
             Color.black.ignoresSafeArea()
 
+            // The counterpart to first light: two fronds opening rather than
+            // one, for the screen where a seed is being made with someone else.
+            UnfurlingBackdrop(.pair)
+
             switch service.phase {
             case .idle, .searching:
                 VStack(spacing: 0) {

@@ -94,6 +94,7 @@ struct FirstLightView: View {
             }
             .padding(.bottom, 48)
         }
+        .background(UnfurlingBackdrop(.single))
     }
 
     private func plant() {
