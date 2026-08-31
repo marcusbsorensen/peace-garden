@@ -17,15 +17,27 @@ struct RootView: View {
         ZStack {
             Color.black.ignoresSafeArea()
 
-            if model.hasIdentity {
-                PlantStageView()
-                    .transition(.opacity)
+            if let identity = model.identity {
+                if model.isArriving {
+                    // The seed coming up out of its husk. It runs once, on the
+                    // day the seed is sown, and then this branch is dead for
+                    // the life of the app on this phone.
+                    GerminationView(identity: identity) { model.arrivalWatched() }
+                        .transition(.opacity)
+                } else {
+                    PlantStageView()
+                        .transition(.opacity)
+                }
             } else {
                 FirstLightView()
                     .transition(.opacity)
             }
         }
         .animation(.easeInOut(duration: 0.9), value: model.hasIdentity)
+        // Slower than the crossfade into the app, because what is on both sides
+        // of it is the same plant at the same size: a quick cut would read as a
+        // jump rather than as the performance ending.
+        .animation(.easeInOut(duration: 1.3), value: model.isArriving)
         .fullScreenCover(isPresented: incomingBinding) {
             if case let .arrived(outcome, reply) = model.incoming {
                 IncomingSeedView(outcome: outcome, reply: reply)

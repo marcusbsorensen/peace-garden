@@ -23,6 +23,16 @@ enum PlantSceneBuilder {
     }
 
     static func geometry(for part: PlantMesh.Part, palette: Genome.Palette) -> SCNGeometry {
+        let geometry = geometry(for: part)
+        geometry.firstMaterial = material(for: part.role, palette: palette)
+        return geometry
+    }
+
+    /// The buffers alone, with whatever material SceneKit defaults to. Split out
+    /// so that geometry which is not part of the plant — the seed case it comes
+    /// out of — can be built by the same code without borrowing a plant's
+    /// material for a surface that is not made of plant.
+    static func geometry(for part: PlantMesh.Part) -> SCNGeometry {
         let vertices = part.positions.map { SCNVector3($0.x, $0.y, $0.z) }
         let normals = part.normals.map { SCNVector3($0.x, $0.y, $0.z) }
         let coordinates = part.uvs.map { CGPoint(x: CGFloat($0.x), y: CGFloat($0.y)) }
@@ -39,7 +49,6 @@ enum PlantSceneBuilder {
             ],
             elements: [element]
         )
-        geometry.firstMaterial = material(for: part.role, palette: palette)
         return geometry
     }
 
@@ -127,6 +136,10 @@ enum PlantSceneBuilder {
     /// would crop the top off a tall plant the moment an iPad turned sideways.
     static let fieldOfView: CGFloat = 36
 
+    /// Half the vertical field of view, in radians. Everything that works out
+    /// how far away to stand needs it.
+    static var verticalHalfAngle: Float { Float(fieldOfView * .pi / 180) / 2 }
+
     static func makeCameraNode() -> SCNNode {
         let camera = SCNCamera()
         camera.fieldOfView = fieldOfView
@@ -192,7 +205,6 @@ enum PlantSceneBuilder {
         // The plant turns, so its silhouette can be as wide as its deepest axis.
         let halfWidth = Swift.max(extent.x, extent.z) * 0.5
 
-        let verticalHalfAngle = Float(fieldOfView * .pi / 180) / 2
         let horizontalHalfAngle = atan(tan(verticalHalfAngle) * Swift.max(0.2, aspect))
 
         let distance = Swift.max(
@@ -206,5 +218,21 @@ enum PlantSceneBuilder {
         // rendered as a speck. This only catches a degenerate mesh, and it
         // stays clear of the camera's `zNear`.
         return (SCNVector3(centre.x, centre.y, centre.z), Swift.max(0.04, distance * 1.25))
+    }
+
+    /// How far to stand off the closed seed at the start of an arrival.
+    ///
+    /// Given as a fraction of half the screen's height, so the closed seed
+    /// stands about a sixth of the screen tall.
+    ///
+    /// At twice this it read as a boulder: something huge being looked at from
+    /// close up, rather than something small being looked at closely. The
+    /// difference between those two is entirely how much dark is left around
+    /// it. Much below this and it is a speck being stared at, which is the
+    /// thing the camera came in to avoid.
+    static let seedHeightOnScreen: Float = 0.16
+
+    static func seedDistance(halfHeight: Float) -> Float {
+        Swift.max(0.05, halfHeight / (tan(verticalHalfAngle) * seedHeightOnScreen))
     }
 }

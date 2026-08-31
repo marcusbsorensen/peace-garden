@@ -12,6 +12,21 @@ import SeedCore
 struct StageBackdrop: View {
     let palette: Genome.Palette
 
+    /// How much of the stage the plant is taking up, `0...1`, where `1` is the
+    /// plant it will grow into. The pool of light is sized from this, so the
+    /// light lands on the plant rather than on the screen.
+    ///
+    /// Fixed, the glow said the same thing about a seedling as about a plant in
+    /// full bloom: an even wash across a phone-width of screen, with something
+    /// very small in the middle of it. Since the camera holds every age at the
+    /// same distance — that is what makes a seedling look like a seedling —
+    /// the backdrop was the one thing on screen quietly insisting the plant was
+    /// the same size all along.
+    ///
+    /// `GrowthModel.State.heightScale` is exactly this number and costs
+    /// nothing, so nothing needs measuring to get it.
+    var presence: Double = 1
+
     /// The cool slate of a photographic backdrop.
     static let baseHue = 0.60
     /// How far the glow moves toward the plant's own colour. Kept deliberately
@@ -20,9 +35,23 @@ struct StageBackdrop: View {
     static let tint = 0.12
     static let saturation = 0.30
     static let brightness = 0.26
-    /// Sits a little above centre, where the mass of a plant usually is.
-    static let centre = UnitPoint(x: 0.5, y: 0.46)
-    static let radiusFraction = 0.85
+    /// Where a grown plant carries its mass — a little above centre. A young
+    /// one is a few centimetres of shoot sitting on the middle of the screen,
+    /// so the pool starts centred on it and drifts up as the plant fills out.
+    static let grownCentre = UnitPoint(x: 0.5, y: 0.46)
+    static let youngCentre = UnitPoint(x: 0.5, y: 0.5)
+
+    /// The pool at its widest, which is the plant in full bloom. Unchanged:
+    /// a mature plant stands in exactly the light it always did.
+    static let grownRadius = 0.85
+    /// What is left of the pool around a seed. Small enough to read as light
+    /// falling on one thing, wide enough that the screen has not become a
+    /// vignette with a spotlight in it.
+    static let seedRadius = 0.14
+    /// Below `1`, so most of the widening happens over the early weeks when
+    /// the plant is changing fastest and there is most to notice.
+    static let growthCurve = 0.7
+
     static let falloff = 2.0
     static let stopCount = 12
 
@@ -33,13 +62,30 @@ struct StageBackdrop: View {
                 Color.black
                 RadialGradient(
                     gradient: Gradient(stops: Self.stops(for: palette)),
-                    center: Self.centre,
+                    center: Self.centre(presence: presence),
                     startRadius: 0,
-                    endRadius: span * Self.radiusFraction
+                    endRadius: span * Self.radius(presence: presence)
                 )
             }
         }
+        // Deliberately not animated. Growth moves this by a hair every twenty
+        // seconds, and the arrival drives it every frame — an implicit
+        // animation would have nothing to smooth in the first case and would
+        // lag a frame behind the camera in the second.
         .ignoresSafeArea()
+    }
+
+    static func radius(presence: Double) -> Double {
+        let t = pow(min(max(presence, 0), 1), growthCurve)
+        return seedRadius + (grownRadius - seedRadius) * t
+    }
+
+    static func centre(presence: Double) -> UnitPoint {
+        let t = pow(min(max(presence, 0), 1), growthCurve)
+        return UnitPoint(
+            x: 0.5,
+            y: youngCentre.y + (grownCentre.y - youngCentre.y) * t
+        )
     }
 
     /// The falloff is spelled out over a dozen stops rather than left to a

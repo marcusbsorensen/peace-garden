@@ -1,15 +1,12 @@
 import SwiftUI
 
-/// First launch: a seed is minted, and the person chooses the name others will
-/// see when they meet.
+/// First launch: a seed is minted, and nothing is asked for.
 ///
 /// The screen arrives a line at a time rather than all at once. The app is
 /// about something unfolding slowly enough to watch, and a screen that appears
 /// whole quietly says the opposite before a word of it has been read.
 struct FirstLightView: View {
     @Environment(GardenModel.self) private var model
-    @State private var name: String = ""
-    @FocusState private var nameFocused: Bool
 
     private static let imprints = [
         "The imprints swirling together:",
@@ -60,30 +57,15 @@ struct FirstLightView: View {
             .padding(.horizontal, 40)
             .frame(maxWidth: Chrome.readableWidth)
 
-            // The name and the button wait for the description to finish. Asking
-            // for something while the explanation is still arriving is what turns
-            // a first screen into a form.
+            // The rule closes the description off, and waits for it to finish.
+            // There is nothing to fill in here: this screen has one thing to
+            // say and one thing to press, and a field in the middle of it turns
+            // it into a form. The name is asked for at the first meeting, where
+            // there is at last somebody for it to be for.
             Unfolding(after: Self.settled) {
-                VStack(spacing: 16) {
-                    Text("What people see when you meet")
-                        .chromeLabel()
-                        .foregroundStyle(Chrome.faint)
-
-                    TextField("", text: $name, prompt: Text("Gardener").foregroundStyle(Chrome.faint))
-                        .font(.system(size: 24, weight: .light))
-                        .foregroundStyle(Chrome.ink)
-                        .multilineTextAlignment(.center)
-                        .textInputAutocapitalization(.words)
-                        .autocorrectionDisabled()
-                        .focused($nameFocused)
-                        .submitLabel(.done)
-                        .onSubmit(plant)
-                        .padding(.horizontal, 40)
-
-                    SproutingRule()
-                        .padding(.horizontal, 60)
-                }
-                .frame(maxWidth: Chrome.readableWidth)
+                SproutingRule()
+                    .padding(.horizontal, 60)
+                    .frame(maxWidth: Chrome.readableWidth)
             }
             .padding(.top, 78)
 
@@ -98,7 +80,6 @@ struct FirstLightView: View {
     }
 
     private func plant() {
-        nameFocused = false
-        model.mintIdentity(displayName: name)
+        model.mintIdentity()
     }
 }

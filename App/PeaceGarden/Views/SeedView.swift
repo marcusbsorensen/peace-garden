@@ -65,7 +65,7 @@ struct SeedView: View {
                     draftName = identity.displayName
                     editingName = true
                 } label: {
-                    Text("Seen as \(identity.displayName)")
+                    Text("Seen as \(model.shownName)")
                         .font(.system(size: 15, weight: .light))
                         .foregroundStyle(Chrome.muted)
                 }

@@ -56,22 +56,50 @@ final class GardenModel {
 
     // MARK: - Identity
 
+    /// Whether the seed is in the middle of coming up out of its husk.
+    ///
+    /// Deliberately not persisted. It happens once, it takes six seconds, and
+    /// an app closed halfway through should come back to a plant rather than to
+    /// a seed waiting to start again.
+    private(set) var isArriving = false
+
     /// Mints this person's seed. Called once, on first launch.
-    func mintIdentity(displayName: String) {
+    ///
+    /// No name is taken here. A name is for somebody else, and on the first
+    /// screen there is nobody else yet — it is asked for at the first meeting,
+    /// which is the moment it first does anything.
+    func mintIdentity() {
         guard garden.identity == nil else { return }
-        let name = displayName.trimmingCharacters(in: .whitespacesAndNewlines)
         garden.identity = Identity(
             seed: SeedMint.mintOnThisDevice(),
             birth: Date(),
-            displayName: name.isEmpty ? "Gardener" : name
+            displayName: ""
         )
+        isArriving = true
         persist()
+    }
 
+    /// The arrival has been watched, or waved past.
+    func arrivalWatched() {
+        isArriving = false
+        // A seed that was already waiting waited a few seconds longer. Letting
+        // it through during the arrival would put a full-screen cover over the
+        // one moment the app has, which is the app talking over itself.
         if let pendingLink {
             self.pendingLink = nil
             try? accept(pendingLink)
         }
     }
+
+    /// What the other person sees. Falls back until they have been asked.
+    var shownName: String {
+        let name = identity?.displayName ?? ""
+        return name.isEmpty ? "Gardener" : name
+    }
+
+    /// Whether this person has chosen how they are seen. Asked at the first
+    /// meeting; false until then.
+    var hasChosenName: Bool { !(identity?.displayName ?? "").isEmpty }
 
     func rename(to displayName: String) {
         guard var identity = garden.identity else { return }
@@ -147,7 +175,7 @@ final class GardenModel {
             kind: .offer,
             seed: identity.seed,
             nonce: Pollination.makeNonce(byteCount: ExchangeProtocol.nonceByteCount),
-            displayName: identity.displayName,
+            displayName: shownName,
             plantName: identity.genome.name.full,
             birth: identity.birth
         )
@@ -191,7 +219,7 @@ final class GardenModel {
                 to: link,
                 seed: identity.seed,
                 nonce: localNonce,
-                displayName: identity.displayName,
+                displayName: shownName,
                 plantName: identity.genome.name.full,
                 birth: identity.birth,
                 result: result

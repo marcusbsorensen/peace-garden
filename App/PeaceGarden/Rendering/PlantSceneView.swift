@@ -8,10 +8,24 @@ import SeedCore
 /// every side of the flower is lit the way the front is. Vertical drags tilt
 /// the camera instead, within a range that keeps the plant upright.
 struct PlantSceneView: UIViewRepresentable {
+    /// The one arrival: a seed opening, and the camera drawing back off it.
+    ///
+    /// Passing this puts the view under someone else's direction for a few
+    /// seconds — the camera stops framing the plant and is told where to be
+    /// instead. Passing `nil` hands it back.
+    struct Arrival: Equatable {
+        /// `0` holds the camera in tight on the closed seed. `1` is the plant's
+        /// own framing, which is where it stays for the rest of its life.
+        var pullBack: Double
+        /// `0` is a closed seed. `1` is two halves laid back and gone.
+        var huskOpen: Double
+    }
+
     let genome: Genome
     let growth: GrowthModel.State
     var isInteractive: Bool = true
     var autoRotates: Bool = true
+    var arrival: Arrival?
     var onTap: (() -> Void)?
 
     func makeCoordinator() -> Coordinator {
@@ -46,6 +60,7 @@ struct PlantSceneView: UIViewRepresentable {
         }
 
         coordinator.rebuildIfNeeded(genome: genome, growth: growth)
+        coordinator.setArrival(arrival)
         coordinator.setAutoRotation(autoRotates)
         return view
     }
@@ -53,6 +68,7 @@ struct PlantSceneView: UIViewRepresentable {
     func updateUIView(_ uiView: SCNView, context: Context) {
         context.coordinator.onTap = onTap
         context.coordinator.rebuildIfNeeded(genome: genome, growth: growth)
+        context.coordinator.setArrival(arrival)
         context.coordinator.setAutoRotation(autoRotates)
     }
 
@@ -88,6 +104,10 @@ struct PlantSceneView: UIViewRepresentable {
         /// The plant as it is now. Sets what the camera aims at.
         private var meshBounds: (min: SIMD3<Float>, max: SIMD3<Float>)?
         private var viewSize: CGSize = .zero
+        /// Set only while the seed is opening. `nil` the rest of the time, and
+        /// the rest of the time is all but six seconds of the app's life.
+        private var arrival: PlantSceneView.Arrival?
+        private var husk: SeedHusk?
         private var yaw: Float = 0
         private var pitch: Float = 0
         private var autoRotating = false
@@ -95,6 +115,9 @@ struct PlantSceneView: UIViewRepresentable {
 
         private static let autoRotationKey = "turntable"
         private static let maximumPitch: Float = 0.55
+        /// How far the husk has to have opened before there is a gap to see
+        /// anything through.
+        private static let seamOpens = 0.05
 
         init(genome: Genome, onTap: (() -> Void)?) {
             self.genome = genome
@@ -129,6 +152,38 @@ struct PlantSceneView: UIViewRepresentable {
             applyFraming()
         }
 
+        /// The husk hangs off the turntable rather than the scene root, so it
+        /// turns with the plant that is coming out of it. Two things opening in
+        /// the same place have to be one object or the seam shows.
+        func setArrival(_ arrival: PlantSceneView.Arrival?) {
+            guard arrival != self.arrival else { return }
+            self.arrival = arrival
+
+            if let arrival {
+                let husk = self.husk ?? {
+                    let made = SeedHusk(genome: genome)
+                    plantPivot.addChildNode(made.node)
+                    self.husk = made
+                    return made
+                }()
+                husk.apply(open: arrival.huskOpen)
+            } else {
+                husk?.node.removeFromParentNode()
+                husk = nil
+            }
+            // Kept out of sight until the seam has opened, rather than trusted
+            // to be hidden inside the seed. `SkeletonBuilder` floors a stem at
+            // a centimetre however far the arrival winds its height back, and a
+            // genome is free to be tall and thin — for those the floored shoot
+            // stood a few millimetres proud of a seed sized off the stem's
+            // thickness, and a closed seed had a spike out of the top of it.
+            // Sizing round that is arithmetic against two unrelated traits;
+            // this is the same thing said once.
+            plantNode?.isHidden = (arrival?.huskOpen ?? 1) < Self.seamOpens
+
+            applyFraming()
+        }
+
         func viewSizeChanged(to size: CGSize) {
             guard size.width > 1, size.height > 1, size != viewSize else { return }
             viewSize = size
@@ -159,8 +214,38 @@ struct PlantSceneView: UIViewRepresentable {
             // Aimed along the stem axis rather than at the mesh's own centre:
             // the plant turns about that axis, and a leaning plant whose centre
             // is off it would swing the whole frame round as the turntable went.
-            cameraRig.position = SCNVector3(0, (here.min.y + here.max.y) * 0.5, 0)
-            cameraNode.position = SCNVector3(0, 0, framing.distance * 1.12)
+            let aim = (here.min.y + here.max.y) * 0.5
+            let distance = framing.distance * 1.12
+
+            guard let arrival else {
+                cameraRig.position = SCNVector3(0, aim, 0)
+                cameraNode.position = SCNVector3(0, 0, distance)
+                return
+            }
+
+            // The seed sits on the plant's own origin, so the camera aims at
+            // nothing and travels up to the plant's middle as the shoot rises.
+            let seedDistance = PlantSceneBuilder.seedDistance(
+                halfHeight: SeedHusk.halfHeight(for: genome)
+            )
+            let t = Float(Self.easeInOut(arrival.pullBack))
+
+            // Interpolated in ratio rather than in metres. The camera has five
+            // times as far to travel at the end as at the start, and a straight
+            // lerp spends the first half of the move covering ground the eye
+            // reads as barely moving, then lurches. A constant *rate of zoom*
+            // is what reads as one steady draw back.
+            cameraNode.position = SCNVector3(
+                0, 0, seedDistance * pow(distance / seedDistance, t)
+            )
+            cameraRig.position = SCNVector3(0, aim * t, 0)
+        }
+
+        /// Smoothstep. The scene's own easing, kept here because SeedCore's is
+        /// internal to it and this is the only place in the app that needs one.
+        static func easeInOut(_ t: Double) -> Double {
+            let x = min(max(t, 0), 1)
+            return x * x * (3 - 2 * x)
         }
 
         func setAutoRotation(_ enabled: Bool) {

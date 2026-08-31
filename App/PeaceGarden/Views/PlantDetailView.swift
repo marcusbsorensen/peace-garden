@@ -13,7 +13,10 @@ struct PlantDetailView: View {
 
     var body: some View {
         ZStack {
-            StageBackdrop(palette: record.genome.palette)
+            StageBackdrop(
+                palette: record.genome.palette,
+                presence: record.growth(now: model.now).heightScale
+            )
                 .ignoresSafeArea()
 
             PlantSceneView(
