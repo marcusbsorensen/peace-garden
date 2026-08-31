@@ -585,7 +585,11 @@ enum Quotes {
             theme: .kinship
         ),
 
-        // MARK: Peace — 5 today
+        // MARK: Peace
+        //
+        // Five strands, so that thirty passages are not thirty versions of one
+        // thought: quiet held inwardly, the day letting go, shelter, peace made
+        // between two parties, and the particular hush of green places.
 
         Passage(
             text: "Annihilating all that's made to a green thought in a green shade.",
@@ -610,6 +614,131 @@ enum Quotes {
         Passage(
             text: "Peace is Latin pax, kin to pangere, to fasten. A peace was something two sides made fast between them.",
             source: "Latin",
+            theme: .peace
+        ),
+        Passage(
+            text: "For nowhere either with more quiet or more freedom from trouble does a man retire than into his own soul.",
+            source: "Marcus Aurelius, tr. George Long",
+            theme: .peace
+        ),
+        Passage(
+            text: "Tranquillity is nothing else than the good ordering of the mind.",
+            source: "Marcus Aurelius, tr. George Long",
+            theme: .peace
+        ),
+        Passage(
+            text: "Climb the mountains and get their good tidings. Nature's peace will flow into you as sunshine flows into trees.",
+            source: "John Muir, Our National Parks, 1901",
+            theme: .peace
+        ),
+        Passage(
+            text: "Study to be quiet.",
+            source: "Izaak Walton's closing words, 1653",
+            theme: .peace
+        ),
+        Passage(
+            text: "All shall be well, and all shall be well, and all manner of thing shall be well.",
+            source: "Julian of Norwich, c. 1395",
+            theme: .peace
+        ),
+        Passage(
+            text: "He leadeth me beside the still waters.",
+            source: "Psalm 23, King James Bible, 1611",
+            theme: .peace
+        ),
+        Passage(
+            text: "I loafe and invite my soul.",
+            source: "Walt Whitman, 1855",
+            theme: .peace
+        ),
+        Passage(
+            text: "Calm of mind, all passion spent.",
+            source: "John Milton, Samson Agonistes, 1671",
+            theme: .peace
+        ),
+        Passage(
+            text: "That inward eye which is the bliss of solitude.",
+            source: "William Wordsworth, 1807",
+            theme: .peace
+        ),
+        Passage(
+            text: "Hygge: warmth and ease in company, put together on purpose out of small and ordinary things.",
+            source: "Danish",
+            theme: .peace
+        ),
+        Passage(
+            text: "Niksen: doing nothing, and doing it deliberately rather than by accident.",
+            source: "Dutch",
+            theme: .peace
+        ),
+        Passage(
+            text: "Sobremesa: the time still spent at the table after the meal has ended, because nobody wants to be the one who gets up.",
+            source: "Spanish",
+            theme: .peace
+        ),
+        Passage(
+            text: "Meriggiare: to pass the midday hours resting in the shade.",
+            source: "Italian",
+            theme: .peace
+        ),
+        Passage(
+            text: "Lagom: just the right amount — not too little and not too much, and no need to say which.",
+            source: "Swedish",
+            theme: .peace
+        ),
+        Passage(
+            text: "Shinrin-yoku: forest bathing, which asks nothing of you but to be among trees with your senses open.",
+            source: "Japanese, coined 1982",
+            theme: .peace
+        ),
+        Passage(
+            text: "Crown shyness: the gap neighbouring trees leave between their canopies, so that a forest roof is a mosaic with daylight in the seams.",
+            source: "Botany",
+            theme: .peace
+        ),
+        Passage(
+            text: "Serene is Latin serenus, said first of weather: a clear sky with no wind in it.",
+            source: "Latin",
+            theme: .peace
+        ),
+        Passage(
+            text: "Calm reaches English from Greek kauma, the heat of the day — the hour when it is too hot to work and everything stops.",
+            source: "Greek",
+            theme: .peace
+        ),
+        Passage(
+            text: "Quiet and quit are one word: Latin quietus, at rest, which later became the receipt for a debt discharged.",
+            source: "Latin",
+            theme: .peace
+        ),
+        Passage(
+            text: "Rest is Old English ræst, whose Germanic kin also meant a stage of a journey — the distance between one stopping place and the next.",
+            source: "Old English",
+            theme: .peace
+        ),
+        Passage(
+            text: "A truce is a plural: Middle English trewes, pledges, kin to true. It was a promise before it was a pause.",
+            source: "Middle English",
+            theme: .peace
+        ),
+        Passage(
+            text: "Sabbath comes from Hebrew shabbath, to cease. The word names the stopping rather than the day.",
+            source: "Hebrew",
+            theme: .peace
+        ),
+        Passage(
+            text: "Fresh snow is full of air and absorbs the high notes out of any sound, which is why a snowed-in landscape is not merely quiet but muffled.",
+            source: "Acoustics of snow",
+            theme: .peace
+        ),
+        Passage(
+            text: "In an anechoic chamber there is nothing left to hear but yourself, and people who sit in one report the sound of their own blood.",
+            source: "Anechoic chambers",
+            theme: .peace
+        ),
+        Passage(
+            text: "Horas non numero nisi serenas — I count only the serene hours. A sundial can say it honestly, having no choice.",
+            source: "Sundial motto, Latin",
             theme: .peace
         ),
     ]
