@@ -16,6 +16,15 @@ struct EncounterNoteView: View {
     @State private var note = ""
     @FocusState private var noteFocused: Bool
 
+    /// The figurative place this meeting is offered, drawn from the child seed.
+    ///
+    /// Filled in rather than shown as a prompt, so that leaving the field alone
+    /// keeps it: a seed that came on the wind did come on the wind, and that is
+    /// a better answer than a blank. Typing over it is the point — see `Places`.
+    private var suggestedPlace: String {
+        Places.place(for: outcome.result.childSeed)
+    }
+
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
@@ -85,6 +94,11 @@ struct EncounterNoteView: View {
                 .frame(maxWidth: .infinity)
             }
             .scrollDismissesKeyboard(.interactively)
+        }
+        .onAppear {
+            // Guarded, so reopening the sheet does not overwrite something the
+            // person has already written.
+            if place.isEmpty { place = suggestedPlace }
         }
     }
 

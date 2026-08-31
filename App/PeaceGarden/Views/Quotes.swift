@@ -816,29 +816,12 @@ enum Quotes {
 
     /// The passage a theme gives to one particular meeting.
     ///
-    /// This has to be a pure function of the theme and those 32 bytes and of
-    /// nothing else: both phones compute it independently, and the same meeting
-    /// must give the same line on a different device, on a later OS, and years
-    /// from now. That rules out `Hasher`, whose seed is randomised per process,
-    /// so the fold below is spelled out here instead.
+    /// A pure function of the theme and those 32 bytes and of nothing else, by
+    /// way of `deterministicFold`, which is where the reasons live.
     static func passage(theme: Theme, childSeed: SeedID) -> Passage {
         guard let pool = byTheme[theme], !pool.isEmpty else {
             preconditionFailure("every theme must carry at least one passage: \(theme)")
         }
-        return pool[Int(fold(childSeed.bytes) % UInt64(pool.count))]
-    }
-
-    /// FNV-1a over the whole digest.
-    ///
-    /// Every byte is folded rather than a prefix taken, so the draw depends on
-    /// the whole of what it is given. Wrapping arithmetic is the point of the
-    /// algorithm rather than an accident, which is why it is written with `&*`.
-    private static func fold(_ bytes: Data) -> UInt64 {
-        var hash: UInt64 = 0xCBF2_9CE4_8422_2325
-        for byte in bytes {
-            hash ^= UInt64(byte)
-            hash = hash &* 0x0000_0100_0000_01B3
-        }
-        return hash
+        return pool[Int(deterministicFold(childSeed.bytes) % UInt64(pool.count))]
     }
 }
