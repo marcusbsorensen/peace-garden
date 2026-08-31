@@ -20,29 +20,31 @@ struct FirstLightView: View {
                     .padding(.bottom, 8)
 
                 Text("A seed is about to be drawn for you")
-                    .font(.system(size: 19, weight: .light, design: .serif))
+                    .font(.system(size: 28, weight: .light))
                     .foregroundStyle(Chrome.ink)
                     .multilineTextAlignment(.center)
+                    .lineSpacing(4)
 
-                Text("It is made from this moment and this phone, and it is yours alone. It cannot be drawn again, and it never leaves the phone until you choose to meet someone.")
-                    .font(.system(size: 14, weight: .light))
+                // Three claims — unrepeatable, once only, private — in sixteen
+                // words rather than twenty-seven. The long version said all of
+                // this twice and set it small enough that nobody read it once.
+                Text("Made from this moment, on this phone. It cannot be drawn again, and it never leaves.")
+                    .font(.system(size: 16, weight: .light))
                     .foregroundStyle(Chrome.muted)
                     .multilineTextAlignment(.center)
-                    .lineSpacing(5)
+                    .lineSpacing(6)
             }
             .padding(.horizontal, 40)
             .frame(maxWidth: Chrome.readableWidth)
             .opacity(revealed ? 1 : 0)
 
-            Spacer()
-
             VStack(spacing: 16) {
-                Text("What should people see when you meet?")
+                Text("What people see when you meet")
                     .chromeLabel()
                     .foregroundStyle(Chrome.faint)
 
                 TextField("", text: $name, prompt: Text("Gardener").foregroundStyle(Chrome.faint))
-                    .font(.system(size: 22, weight: .light, design: .serif))
+                    .font(.system(size: 24, weight: .light))
                     .foregroundStyle(Chrome.ink)
                     .multilineTextAlignment(.center)
                     .textInputAutocapitalization(.words)
@@ -52,10 +54,11 @@ struct FirstLightView: View {
                     .onSubmit(plant)
                     .padding(.horizontal, 40)
 
-                Hairline()
+                SproutingRule()
                     .padding(.horizontal, 60)
             }
             .frame(maxWidth: Chrome.readableWidth)
+            .padding(.top, 78)
             .opacity(revealed ? 1 : 0)
 
             Spacer()

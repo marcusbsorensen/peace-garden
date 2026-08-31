@@ -79,3 +79,80 @@ struct Hairline: View {
             .frame(height: 1)
     }
 }
+
+/// A tendril, part way through opening.
+///
+/// The coil *relaxes* rather than the line being drawn on: curvature is highest
+/// at the tip and falls as `unfurl` rises, which is how a fiddlehead actually
+/// opens. Trimming a fixed spiral would read as a line growing, which is a
+/// different gesture and a duller one.
+struct Tendril: Shape {
+    /// `0` is furled tight, `1` is nearly open.
+    var unfurl: Double
+
+    var animatableData: Double {
+        get { unfurl }
+        set { unfurl = newValue }
+    }
+
+    func path(in rect: CGRect) -> Path {
+        let steps = 80
+        // Arc length is constant, so the tendril does not grow and shrink as it
+        // opens — only its coil changes. The tip travels because the coil lets go.
+        let length = rect.width * 1.7
+        let step = length / Double(steps)
+        let turn = Double.pi * (0.6 + 5.2 * (1 - unfurl))
+
+        // Leaves from the middle of its own height, so it meets the rule it grows
+        // out of rather than hanging below it.
+        var point = CGPoint(x: rect.minX, y: rect.midY)
+        var path = Path()
+        path.move(to: point)
+        for index in 1...steps {
+            let s = Double(index) / Double(steps)
+            // The turn accumulates toward the tip, so the tendril leaves its
+            // base almost straight and keeps the curl at the far end.
+            let angle = -turn * pow(s, 1.7)
+            point.x += cos(angle) * step
+            point.y += sin(angle) * step
+            path.addLine(to: point)
+        }
+        return path
+    }
+}
+
+/// The rule under the name, with a tendril opening from each end.
+///
+/// The pair are mirrored, so whatever one does the other does — the line reads
+/// as one thing sprouting rather than two decorations that happen to match.
+struct SproutingRule: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var open = false
+
+    // Never fully open: past about 0.7 the coil has let go entirely, and what is
+    // left reads as a stray hook on the end of the line rather than as a tendril.
+    private var unfurl: Double { reduceMotion ? 0.5 : (open ? 0.66 : 0.12) }
+
+    var body: some View {
+        HStack(spacing: 0) {
+            tendril.scaleEffect(x: -1, y: 1)
+            Hairline()
+            tendril
+        }
+        .animation(
+            reduceMotion ? nil
+                : .easeInOut(duration: 6).repeatForever(autoreverses: true),
+            value: open
+        )
+        .onAppear { open = true }
+    }
+
+    // A shade brighter than the rule it grows from, and large enough that the
+    // opening is perceptible: at hairline weight and 30pt the motion measured
+    // 41 levels of change against the ground, which is real but invisible.
+    private var tendril: some View {
+        Tendril(unfurl: unfurl)
+            .stroke(Chrome.faint, style: StrokeStyle(lineWidth: 1.2, lineCap: .round))
+            .frame(width: 40, height: 46)
+    }
+}
