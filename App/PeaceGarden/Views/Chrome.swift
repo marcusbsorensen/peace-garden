@@ -46,6 +46,39 @@ extension View {
     }
 }
 
+/// Fades its content in after a wait.
+///
+/// The app arrives a piece at a time, at about the pace the piece is taken in.
+/// A screen that appears whole is a screen to be scanned; a screen that unfolds
+/// is one to be read, and unfolding is the gesture the whole app is built on.
+struct Unfolding<Content: View>: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    let after: Double
+    @ViewBuilder var content: () -> Content
+
+    @State private var shown = false
+
+    var body: some View {
+        content()
+            .opacity(shown ? 1 : 0)
+            .animation(.easeInOut(duration: 1.2), value: shown)
+            .task {
+                // Reduce Motion still gets the fade, and gets it at once: the
+                // objection is to being made to wait through choreography, not
+                // to a crossfade.
+                if !reduceMotion, after > 0 {
+                    try? await Task.sleep(for: .seconds(after))
+                }
+                shown = true
+            }
+    }
+}
+
+/// How long a line takes to read, near enough to set a cadence by.
+func readingBeat(_ line: String) -> Double {
+    0.5 + Double(line.split(separator: " ").count) * 0.22
+}
+
 /// A control that reads as a line of text rather than a button.
 struct QuietButton: View {
     let title: String

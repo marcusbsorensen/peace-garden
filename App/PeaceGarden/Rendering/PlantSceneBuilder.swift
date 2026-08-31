@@ -144,6 +144,35 @@ enum PlantSceneBuilder {
         return node
     }
 
+    /// The plant as it will be when it is grown.
+    ///
+    /// Pinned to the hour this genome opens widest, so it is the plant at its
+    /// best rather than whatever time it happens to be.
+    static func bloomPreview(for genome: Genome) -> GrowthModel.State {
+        let birth = Date(timeIntervalSince1970: 0)
+        let atBloom = birth.addingTimeInterval(
+            (genome.tempo.daysToBloom + genome.tempo.bloomDays * 0.45) * 86_400
+        )
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC") ?? .current
+        let hour = genome.tempo.opensByDay ? 13 : 1
+        let pinned = calendar.date(bySettingHour: hour, minute: 0, second: 0, of: atBloom) ?? atBloom
+        return GrowthModel(genome: genome).state(birth: birth, now: pinned, calendar: calendar)
+    }
+
+    /// The space this plant will eventually fill.
+    ///
+    /// The stage frames against these rather than against the plant as it is
+    /// now. Framing each moment to fill the screen made every stage the same
+    /// size on screen, which is the one thing a growing plant is not: a sprout
+    /// arrived looking like a mature plant drawn badly. Held against what it
+    /// will become, a seedling is small in a large space and spends weeks
+    /// growing into it, which is the whole of what there is to watch.
+    static func matureBounds(for genome: Genome) -> (min: SIMD3<Float>, max: SIMD3<Float>) {
+        let mesh = PlantBuilder(genome: genome).mesh(growth: bloomPreview(for: genome))
+        return (mesh.minBounds, mesh.maxBounds)
+    }
+
     /// Frames the plant so it fills the same proportion of the view at every
     /// size — a seedling or a plant in full bloom, an iPhone held upright or an
     /// iPad turned on its side.

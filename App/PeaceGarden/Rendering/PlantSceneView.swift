@@ -82,7 +82,9 @@ struct PlantSceneView: UIViewRepresentable {
         private var genome: Genome
         private var currentKey: String = ""
         private var plantNode: SCNNode?
-        private var meshBounds: (min: SIMD3<Float>, max: SIMD3<Float>)?
+        /// What the plant will grow into, and what the camera is set against.
+        private var reference: (min: SIMD3<Float>, max: SIMD3<Float>)?
+        private var referenceSeed: SeedID?
         private var viewSize: CGSize = .zero
         private var yaw: Float = 0
         private var pitch: Float = 0
@@ -113,7 +115,14 @@ struct PlantSceneView: UIViewRepresentable {
             plantNode?.removeFromParentNode()
             plantPivot.addChildNode(node)
             plantNode = node
-            meshBounds = (mesh.minBounds, mesh.maxBounds)
+
+            // Recomputed only when the plant itself changes, not on every
+            // growth tick: it is one extra mesh, and it is the same mesh for
+            // the whole life of that seed.
+            if referenceSeed != genome.seed {
+                reference = PlantSceneBuilder.matureBounds(for: genome)
+                referenceSeed = genome.seed
+            }
             applyFraming()
         }
 
@@ -124,18 +133,31 @@ struct PlantSceneView: UIViewRepresentable {
         }
 
         private func applyFraming() {
-            guard let meshBounds, let plantNode, viewSize.height > 1 else { return }
+            guard let reference, let plantNode, viewSize.height > 1 else { return }
             let framing = PlantSceneBuilder.framing(
-                min: meshBounds.min,
-                max: meshBounds.max,
+                min: reference.min,
+                max: reference.max,
                 aspect: Float(viewSize.width / viewSize.height)
             )
-            // Offset the plant so it turns about its own middle rather than
-            // swinging around the origin at its base.
-            plantNode.position = SCNVector3(-framing.target.x, -framing.target.y, -framing.target.z)
-            plantPivot.position = framing.target
-            cameraRig.position = framing.target
-            cameraNode.position = SCNVector3(0, 0, framing.distance)
+            // The plant stands on its own origin and turns about its stem,
+            // which is what a plant does. Offsetting it to spin about the middle
+            // of its bounding box swings a seedling in a wide circle around a
+            // point somewhere above its own head.
+            plantNode.position = SCNVector3Zero
+            plantPivot.position = SCNVector3Zero
+
+            // Looking at the middle of the grown plant would sit its base on the
+            // very bottom edge, which is where a seedling then lives — behind
+            // the hint, and half off the screen. Dropping the look-at point
+            // lifts the whole plant, and the extra distance buys back the
+            // headroom that costs the grown one.
+            let grownHeight = reference.max.y - reference.min.y
+            cameraRig.position = SCNVector3(
+                framing.target.x,
+                reference.min.y + grownHeight * 0.40,
+                framing.target.z
+            )
+            cameraNode.position = SCNVector3(0, 0, framing.distance * 1.18)
         }
 
         func setAutoRotation(_ enabled: Bool) {
