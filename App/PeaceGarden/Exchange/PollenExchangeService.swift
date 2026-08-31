@@ -56,6 +56,11 @@ final class PollenExchangeService: NSObject {
     /// waiting on the other person rather than on the gesture.
     private(set) var hasFeltLocalTouch = false
 
+    /// Whether this device can feel the knock at all. False only on a
+    /// simulator, which has no accelerometer — every iPhone and iPad has one.
+    /// The UI reads this to offer a stand-in there; see `standInForTouch()`.
+    var canFeelTouch: Bool { touchDetector.isAvailable }
+
     private let touchDetector = TouchDetector()
     /// Decides which side sends the invitation, so the two phones do not invite
     /// each other at the same moment and drop both connections.
@@ -176,6 +181,20 @@ final class PollenExchangeService: NSObject {
         stop()
         phase = .idle
     }
+
+#if targetEnvironment(simulator)
+    /// Stands in for the knock where there is no accelerometer to feel it.
+    ///
+    /// A simulator can do everything else in a meeting — advertise, browse,
+    /// connect, cross — and then stops dead at the one gesture it has no
+    /// hardware for, which left the crossing and the passage after it
+    /// unwatchable for three sessions. This is compiled out of every build
+    /// that runs on a real device, so the shipping app still holds the line
+    /// that the tap is a gesture and not a button.
+    func standInForTouch() {
+        registerLocalTouch()
+    }
+#endif
 
     // MARK: - The exchange, step by step
 

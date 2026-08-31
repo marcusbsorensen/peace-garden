@@ -84,12 +84,7 @@ struct ExchangeView: View {
                     .padding(.bottom, 40)
                 }
             case .awaitingTouch(let peerName):
-                waiting(
-                    title: service.hasFeltLocalTouch ? "Waiting for \(peerName)" : "Touch the tops of your phones together",
-                    detail: service.hasFeltLocalTouch
-                        ? "Felt that. They need to tap theirs too."
-                        : "\(peerName) is here. A light tap, top to top."
-                )
+                awaitingTouch(peerName: peerName)
             case .crossing(let peerName):
                 waiting(title: "Crossing", detail: "Your seed and \(peerName)'s.")
             case .grown(let outcome):
@@ -223,6 +218,42 @@ struct ExchangeView: View {
     }
 
     // MARK: - Phases
+
+    /// The moment before the crossing, where the gesture is waited for.
+    ///
+    /// On a simulator there is no accelerometer to feel the knock, so the
+    /// waiting view takes a tap instead and says so. On a device the stand-in
+    /// does not exist and `canFeelTouch` is always true, so this is exactly
+    /// the screen it always was.
+    @ViewBuilder
+    private func awaitingTouch(peerName: String) -> some View {
+        let felt = service.hasFeltLocalTouch
+#if targetEnvironment(simulator)
+        if !service.canFeelTouch {
+            waiting(
+                title: felt ? "Waiting for \(peerName)" : "Stand in for the knock",
+                detail: felt
+                    ? "Felt that. They need to tap theirs too."
+                    : "\(peerName) is here. This simulator has no accelerometer, so tap anywhere to stand in for touching the phones together."
+            )
+            .contentShape(Rectangle())
+            .onTapGesture { service.standInForTouch() }
+        } else {
+            knockWaiting(peerName: peerName, felt: felt)
+        }
+#else
+        knockWaiting(peerName: peerName, felt: felt)
+#endif
+    }
+
+    private func knockWaiting(peerName: String, felt: Bool) -> some View {
+        waiting(
+            title: felt ? "Waiting for \(peerName)" : "Touch the tops of your phones together",
+            detail: felt
+                ? "Felt that. They need to tap theirs too."
+                : "\(peerName) is here. A light tap, top to top."
+        )
+    }
 
     private func waiting(title: String, detail: String) -> some View {
         VStack(spacing: 22) {
