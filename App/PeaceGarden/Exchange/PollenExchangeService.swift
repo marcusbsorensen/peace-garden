@@ -214,9 +214,34 @@ final class PollenExchangeService: NSObject {
         advanceIfBothTouched()
     }
 
+    /// Whether two touches count as one knock.
+    ///
+    /// On a device this is the whole point. Two phones tapped together are
+    /// within a moment of each other, and two touches further apart than that
+    /// are two separate gestures rather than one meeting.
+    ///
+    /// A simulator has no knock to time. The stand-in is driven by hand or by
+    /// a tool, seconds apart, so the window can only ever reject a meeting
+    /// somebody meant to make. `ExchangeProtocol.touchWindow` itself is left
+    /// alone: it is protocol vocabulary, it compiles on Linux, and changing it
+    /// would change what the constant means everywhere. Only this side's
+    /// acceptance is relaxed, and only where there is no accelerometer.
+    ///
+    /// One consequence, for whoever meets it: a simulator paired with a real
+    /// phone will disagree about a slow pair of taps, because the simulator
+    /// accepts what the phone rejects. Cross two simulators or two phones,
+    /// rather than one of each.
+    private func touchesCountAsOneKnock(_ local: Date, _ remote: Date) -> Bool {
+#if targetEnvironment(simulator)
+        return true
+#else
+        return abs(local.timeIntervalSince(remote)) <= ExchangeProtocol.touchWindow
+#endif
+    }
+
     private func advanceIfBothTouched() {
         guard let localTouchAt, let remoteTouchAt, let peerName = connectedPeerName else { return }
-        guard abs(localTouchAt.timeIntervalSince(remoteTouchAt)) <= ExchangeProtocol.touchWindow else { return }
+        guard touchesCountAsOneKnock(localTouchAt, remoteTouchAt) else { return }
         guard let card else { return }
 
         phase = .crossing(peerName: peerName)

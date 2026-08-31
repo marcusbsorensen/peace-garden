@@ -8,7 +8,19 @@ import SeedCore
 struct PlantStageView: View {
     @Environment(GardenModel.self) private var model
 
+    /// On a device the row is hidden until the plant is tapped, so that a
+    /// plant is the only thing on screen until somebody asks for more.
+    ///
+    /// On a simulator it is shown from the start and never hides. The reveal
+    /// is a `UITapGestureRecognizer` on the SceneKit view, and injected taps
+    /// do not reach it — SpringBoard and SwiftUI buttons take them, that
+    /// recogniser does not — so the row is unreachable there and Exchange
+    /// with it. Compiled out of every build that runs on a phone.
+#if targetEnvironment(simulator)
+    @State private var controlsVisible = true
+#else
     @State private var controlsVisible = false
+#endif
     @State private var hideTask: Task<Void, Never>?
     @State private var showingExchange = false
     @State private var showingGarden = false
@@ -128,11 +140,18 @@ struct PlantStageView: View {
 
     /// Controls appear on a tap and see themselves out again.
     private func revealControls() {
+#if targetEnvironment(simulator)
+        controlsVisible = true
+#else
         controlsVisible.toggle()
+#endif
         scheduleHide()
     }
 
     private func scheduleHide() {
+#if targetEnvironment(simulator)
+        return
+#else
         hideTask?.cancel()
         guard controlsVisible else { return }
         hideTask = Task {
@@ -140,6 +159,7 @@ struct PlantStageView: View {
             guard !Task.isCancelled else { return }
             controlsVisible = false
         }
+#endif
     }
 
     private func present(_ action: () -> Void) {
