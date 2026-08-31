@@ -13,6 +13,10 @@ struct PlantStageView: View {
     @State private var showingExchange = false
     @State private var showingGarden = false
     @State private var showingSeed = false
+    /// Closing the panel is a decision, so it is kept. It belongs in defaults
+    /// rather than in the garden: the garden holds seeds and birthdays, and
+    /// this is only a note about what one person has already read.
+    @AppStorage("meetPanelClosed") private var meetPanelClosed = false
 
     var body: some View {
         ZStack {
@@ -37,10 +41,11 @@ struct PlantStageView: View {
                 // The second thing the app explains, and it explains it
                 // once. There is no flag to keep: the hint is for someone
                 // who has never crossed a seed, so crossing one retires it.
-                if model.hybrids.isEmpty {
-                    meetHint
+                if model.hybrids.isEmpty, !meetPanelClosed {
+                    meetPanel
                         .opacity(controlsVisible ? 0 : 1)
                         .animation(Chrome.fadeIn, value: controlsVisible)
+                        .transition(.opacity)
                 }
             }
         }
@@ -61,33 +66,39 @@ struct PlantStageView: View {
         .onAppear { model.refreshNow() }
     }
 
-    /// Sits under the plant until the first exchange has happened.
-    private var meetHint: some View {
+    /// The second beat of the walk-through, as a panel someone can close.
+    ///
+    /// It retires itself on the first exchange, so closing it is only for
+    /// someone who has read it and wants their plant back.
+    private var meetPanel: some View {
         VStack {
             Spacer()
-            Text("Your plant can meet others if you tap their device.\nA brand new and unique seed will be formed every time.")
-                .font(.system(size: 14, weight: .light))
-                .foregroundStyle(Chrome.muted)
-                .multilineTextAlignment(.center)
-                .lineSpacing(5)
-                .padding(.horizontal, 34)
-                .frame(maxWidth: Chrome.readableWidth)
-                .padding(.top, 52)
-                .padding(.bottom, 54)
-                .frame(maxWidth: .infinity)
-                // The plant is framed to fill the screen, so a seedling
-                // reaches the bottom of it and the hint would otherwise be
-                // set over its own stem. The foot gives the words a ground.
-                .background(
-                    LinearGradient(
-                        colors: [.clear, .black.opacity(0.72), .black.opacity(0.9)],
-                        startPoint: .top,
-                        endPoint: .bottom
+            VStack(spacing: 16) {
+                Text("Your plant can meet others if you tap their device. A brand new and unique seed will be formed every time.")
+                    .font(.system(size: 17, weight: .light))
+                    .foregroundStyle(Chrome.ink.opacity(0.84))
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(6)
+
+                QuietButton(title: "Close") {
+                    withAnimation(Chrome.fadeIn) { meetPanelClosed = true }
+                }
+            }
+            .padding(.horizontal, 26)
+            .padding(.top, 26)
+            .padding(.bottom, 10)
+            .frame(maxWidth: Chrome.readableWidth)
+            .background(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(Color.black.opacity(0.66))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .strokeBorder(Chrome.hairline, lineWidth: 1)
                     )
-                )
+            )
+            .padding(.horizontal, 20)
+            .padding(.bottom, 28)
         }
-        .ignoresSafeArea(edges: .bottom)
-        .allowsHitTesting(false)
     }
 
     @ViewBuilder

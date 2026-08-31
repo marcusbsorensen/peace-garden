@@ -82,9 +82,11 @@ struct PlantSceneView: UIViewRepresentable {
         private var genome: Genome
         private var currentKey: String = ""
         private var plantNode: SCNNode?
-        /// What the plant will grow into, and what the camera is set against.
+        /// What the plant will grow into. Sets how far away the camera stands.
         private var reference: (min: SIMD3<Float>, max: SIMD3<Float>)?
         private var referenceSeed: SeedID?
+        /// The plant as it is now. Sets what the camera aims at.
+        private var meshBounds: (min: SIMD3<Float>, max: SIMD3<Float>)?
         private var viewSize: CGSize = .zero
         private var yaw: Float = 0
         private var pitch: Float = 0
@@ -115,6 +117,7 @@ struct PlantSceneView: UIViewRepresentable {
             plantNode?.removeFromParentNode()
             plantPivot.addChildNode(node)
             plantNode = node
+            meshBounds = (mesh.minBounds, mesh.maxBounds)
 
             // Recomputed only when the plant itself changes, not on every
             // growth tick: it is one extra mesh, and it is the same mesh for
@@ -133,7 +136,7 @@ struct PlantSceneView: UIViewRepresentable {
         }
 
         private func applyFraming() {
-            guard let reference, let plantNode, viewSize.height > 1 else { return }
+            guard let reference, let plantNode, let here = meshBounds, viewSize.height > 1 else { return }
             let framing = PlantSceneBuilder.framing(
                 min: reference.min,
                 max: reference.max,
@@ -146,18 +149,18 @@ struct PlantSceneView: UIViewRepresentable {
             plantNode.position = SCNVector3Zero
             plantPivot.position = SCNVector3Zero
 
-            // Looking at the middle of the grown plant would sit its base on the
-            // very bottom edge, which is where a seedling then lives — behind
-            // the hint, and half off the screen. Dropping the look-at point
-            // lifts the whole plant, and the extra distance buys back the
-            // headroom that costs the grown one.
-            let grownHeight = reference.max.y - reference.min.y
-            cameraRig.position = SCNVector3(
-                framing.target.x,
-                reference.min.y + grownHeight * 0.40,
-                framing.target.z
-            )
-            cameraNode.position = SCNVector3(0, 0, framing.distance * 1.18)
+            // Two different plants decide the two halves of this. The DISTANCE
+            // comes from the grown plant, which is what keeps a seedling small
+            // in a large space instead of filling the screen. The AIM comes
+            // from the plant as it is now, so its middle sits at the middle of
+            // the screen and it opens outward in every direction from there as
+            // it grows, rather than climbing the frame from the bottom.
+            //
+            // Aimed along the stem axis rather than at the mesh's own centre:
+            // the plant turns about that axis, and a leaning plant whose centre
+            // is off it would swing the whole frame round as the turntable went.
+            cameraRig.position = SCNVector3(0, (here.min.y + here.max.y) * 0.5, 0)
+            cameraNode.position = SCNVector3(0, 0, framing.distance * 1.12)
         }
 
         func setAutoRotation(_ enabled: Bool) {

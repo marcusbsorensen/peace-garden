@@ -36,10 +36,14 @@ struct PlantRevealView: View {
                         .foregroundStyle(Chrome.ink)
                         .padding(.bottom, 4)
 
-                    Text(Quotes.line(for: outcome.result.childSeed))
-                        .font(.system(size: 15, weight: .light))
-                        .foregroundStyle(Chrome.muted)
-                        .lineSpacing(5)
+                    let passage = Quotes.passage(for: outcome.result.childSeed)
+                    Text(passage.text)
+                        .font(.system(size: 17, weight: .light))
+                        .foregroundStyle(Chrome.ink.opacity(0.84))
+                        .lineSpacing(6)
+                    Text(passage.source)
+                        .chromeLabel()
+                        .foregroundStyle(Chrome.faint)
                         .padding(.bottom, 6)
                 } else {
                     Text(genome.name.full)
