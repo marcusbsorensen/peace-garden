@@ -22,6 +22,25 @@ public enum Pollination {
         return seedDigest(SeedDomain.encounter, lowSeed.bytes, highSeed.bytes, lowNonce, highNonce)
     }
 
+    /// Identifies two seeds as a pair, for as long as both exist.
+    ///
+    /// The deliberate opposite of `encounterID`: no nonce, so it is the same
+    /// every time these two meet, and different for every other pairing. That
+    /// makes it the handle for anything that should belong to *the two of them*
+    /// rather than to one meeting — the passage shown when they cross is the
+    /// first such thing.
+    ///
+    /// Not steerable, though it has no nonce to prevent it: choosing the pair
+    /// digest would mean choosing your seed, and a seed is drawn once and cannot
+    /// be drawn again. There is nothing to grind.
+    ///
+    /// Derives from the two parents alone, so both phones reach it without
+    /// sending anything, and it survives a phone being replaced.
+    public static func pairID(seedA: SeedID, seedB: SeedID) -> Data {
+        let (low, high) = ordered(seedA, seedB)
+        return seedDigest(SeedDomain.pair, low.bytes, high.bytes)
+    }
+
     /// The offspring seed for one encounter.
     public static func cross(seedA: SeedID, seedB: SeedID, encounterID: Data) -> SeedID {
         let (low, high) = ordered(seedA, seedB)

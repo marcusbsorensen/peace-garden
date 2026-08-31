@@ -18,6 +18,7 @@ public enum SeedDomain {
     public static let cross = "peacegarden.cross.v1"
     public static let trait = "peacegarden.trait.v1"
     public static let checksum = "peacegarden.checksum.v1"
+    public static let pair = "peacegarden.pair.v1"
 }
 
 /// SHA-256 over a domain tag followed by length-prefixed parts.

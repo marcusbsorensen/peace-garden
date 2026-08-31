@@ -62,6 +62,58 @@ final class PollinationTests: XCTestCase {
         XCTAssertEqual(onMyPhone.genome.name.full, onTheirPhone.genome.name.full)
     }
 
+    func testThePairSurvivesEveryMeetingTheyHave() {
+        // The counterpart to the test above, and the reason both exist: the
+        // plant is new each time, the pair is not. Anything that should belong
+        // to two people rather than to one meeting hangs off this.
+        let a = seed("a")
+        let b = seed("b")
+        let expected = Pollination.pairID(seedA: a, seedB: b)
+
+        for index in 0..<250 {
+            let result = CrossPollinationResult(
+                localSeed: a,
+                remoteSeed: b,
+                localNonce: Data(repeating: UInt8(index), count: 16),
+                remoteNonce: Data(repeating: 3, count: 16)
+            )
+            XCTAssertEqual(result.pairID, expected)
+        }
+    }
+
+    func testThePairDoesNotDependOnWhosePhoneAsks() {
+        let a = seed("a")
+        let b = seed("b")
+        XCTAssertEqual(
+            Pollination.pairID(seedA: a, seedB: b),
+            Pollination.pairID(seedA: b, seedB: a)
+        )
+    }
+
+    func testEveryPairingIsItsOwn() {
+        // 40 people, every pair among them, all distinct — so a pair digest can
+        // stand in for "these two" without two different pairs colliding.
+        let people = (0..<40).map { seed("person\($0)") }
+        var pairs = Set<Data>()
+        for (index, one) in people.enumerated() {
+            for other in people[(index + 1)...] {
+                pairs.insert(Pollination.pairID(seedA: one, seedB: other))
+            }
+        }
+        XCTAssertEqual(pairs.count, 780)
+    }
+
+    func testThePairIsNotTheEncounter() {
+        // Different derivations must not be substitutable for one another, or a
+        // later change to either would silently move the other.
+        let a = seed("a")
+        let b = seed("b")
+        let encounter = Pollination.encounterID(
+            seedA: a, seedB: b, nonceA: Data(repeating: 1, count: 16), nonceB: Data(repeating: 2, count: 16)
+        )
+        XCTAssertNotEqual(Pollination.pairID(seedA: a, seedB: b), encounter)
+    }
+
     func testChecksumCatchesAMismatch() {
         let a = seed("a")
         let b = seed("b")

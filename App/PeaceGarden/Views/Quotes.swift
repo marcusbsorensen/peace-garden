@@ -1,5 +1,4 @@
 import Foundation
-import SeedCore
 
 /// A short passage and where it came from.
 ///
@@ -12,10 +11,22 @@ struct Passage: Equatable, Sendable {
 
 /// The bank of passages, and the one function that picks from it.
 ///
-/// A passage is shown once, at the moment two people cross their plants, and it
-/// is chosen from the seed those two plants just made. That makes the pairing
-/// permanent and shared: both phones compute it, neither sends it, and it will
-/// be the same passage if either of them looks again in ten years.
+/// A passage is shown at the moment two people cross their plants, and it is
+/// chosen from `pairID` — the two parent seeds, with no nonce. So it is the
+/// same passage every time those two meet, and a fresh draw for every new
+/// person. Both phones compute it, neither sends it, and it will be the same
+/// passage if either of them looks again in ten years.
+///
+/// Drawing from the *child* seed would have given the opposite behaviour, and
+/// did until this was changed: a child carries a per-encounter nonce so that
+/// meeting the same person twice grows two different plants. That is right for
+/// the plant and wrong for the passage. The line belongs to the two people; the
+/// plants they grow are new each time.
+///
+/// Two different pairs can still draw the same passage, and no bank size fixes
+/// that — with a stateless shared draw, collisions are the price of both phones
+/// agreeing without sending anything. Treated as a coincidence rather than a
+/// fault, which is the register the bank is written in anyway.
 ///
 /// The intent is divinatory rather than instructive. A passage is offered as
 /// something that might happen to fit this meeting, which is why the bank mixes
@@ -451,24 +462,25 @@ enum Quotes {
         )
     ]
 
-    /// The passage that belongs to a seed.
+    /// The passage that belongs to two people.
     ///
-    /// This has to be a pure function of the 32 bytes and of nothing else: both
-    /// phones in an encounter compute it independently, and the same seed must
-    /// give the same passage on a different device, on a later OS, and years
-    /// from now. That rules out `Hasher`, whose seed is randomised per process,
-    /// so the fold below is spelled out here instead.
-    static func passage(for seed: SeedID) -> Passage {
+    /// Takes a `pairID` — `Pollination.pairID`, a digest of the two parent
+    /// seeds. This has to be a pure function of those bytes and of nothing else:
+    /// both phones compute it independently, and the same pair must give the
+    /// same passage on a different device, on a later OS, and years from now.
+    /// That rules out `Hasher`, whose seed is randomised per process, so the
+    /// fold below is spelled out here instead.
+    static func passage(for pairID: Data) -> Passage {
         precondition(!all.isEmpty, "the passage bank must never be empty")
-        let index = Int(fold(seed.bytes) % UInt64(all.count))
+        let index = Int(fold(pairID) % UInt64(all.count))
         return all[index]
     }
 
-    /// FNV-1a over the whole seed.
+    /// FNV-1a over the whole digest.
     ///
-    /// All 32 bytes are folded rather than a prefix taken, so a passage depends
-    /// on the entire seed. Wrapping arithmetic is the point of the algorithm
-    /// rather than an accident, which is why it is written with `&*`.
+    /// Every byte is folded rather than a prefix taken, so a passage depends on
+    /// the whole of what it is given. Wrapping arithmetic is the point of the
+    /// algorithm rather than an accident, which is why it is written with `&*`.
     private static func fold(_ bytes: Data) -> UInt64 {
         var hash: UInt64 = 0xCBF2_9CE4_8422_2325
         for byte in bytes {

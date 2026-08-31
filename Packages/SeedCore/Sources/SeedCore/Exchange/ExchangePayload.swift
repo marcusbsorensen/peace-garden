@@ -128,6 +128,12 @@ public struct CrossPollinationResult: Equatable, Sendable {
         .crossed(parentA: parentA, parentB: parentB, encounterID: encounterID)
     }
 
+    /// These two people, rather than this meeting. Constant across every
+    /// crossing the same pair ever make. See `Pollination.pairID`.
+    public var pairID: Data {
+        Pollination.pairID(seedA: parentA, seedB: parentB)
+    }
+
     public init(localSeed: SeedID, remoteSeed: SeedID, localNonce: Data, remoteNonce: Data) {
         let encounterID = Pollination.encounterID(
             seedA: localSeed,
