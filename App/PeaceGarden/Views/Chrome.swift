@@ -79,7 +79,8 @@ func readingBeat(_ line: String) -> Double {
     0.5 + Double(line.split(separator: " ").count) * 0.22
 }
 
-/// A control that reads as a line of text rather than a button.
+/// A control that reads as a line of text — with an edge, so it also reads as
+/// a control.
 struct QuietButton: View {
     let title: String
     var isProminent: Bool = false
@@ -90,11 +91,58 @@ struct QuietButton: View {
             Text(title)
                 .chromeLabel()
                 .foregroundStyle(isProminent ? Chrome.ink : Chrome.muted)
-                .padding(.horizontal, 18)
-                .padding(.vertical, 12)
-                .contentShape(Rectangle())
+                .pressable(isProminent: isProminent)
         }
         .buttonStyle(.plain)
+    }
+}
+
+extension View {
+    /// The edge that tells a line of text it can be pressed.
+    ///
+    /// Everything in this app is thin, letterspaced and half-transparent, which
+    /// is the point — and it left the buttons indistinguishable from the labels
+    /// standing next to them. A hairline capsule is the least that can be added
+    /// and still answer the question, without the screen growing a chrome.
+    ///
+    /// Anything that is a button wears this, including the ones that are not
+    /// `QuietButton`: a `ShareLink` styled to match, and the rename affordance
+    /// in Seed, which was the worst of them — a sentence that happened to be
+    /// tappable.
+    /// Lays a `SproutingRule` along the bottom edge of this view, so the rule's
+    /// *line* — not the box its tendrils curl in — sits exactly where the view
+    /// ends.
+    ///
+    /// For a text field this makes the rule the thing the name is written on,
+    /// with a tendril turning at either end of it. Set below the field with
+    /// ordinary spacing it read as a separate ornament that happened to follow,
+    /// and the name floated above nothing.
+    func underlining() -> some View {
+        overlay(alignment: .bottom) {
+            SproutingRule()
+                .alignmentGuide(.bottom) { _ in SproutingRule.height / 2 }
+        }
+        // Room for the half of the rule that now hangs below this view.
+        .padding(.bottom, SproutingRule.height / 2)
+    }
+
+    func pressable(isProminent: Bool = false) -> some View {
+        padding(.horizontal, 18)
+            .padding(.vertical, 12)
+            .overlay(
+                Capsule().strokeBorder(
+                    // The prominent one is brighter, so the hierarchy survives
+                    // now that both have an outline. Well under the text it
+                    // surrounds either way: an edge that competes with its own
+                    // label has stopped being an edge.
+                    isProminent ? Chrome.ink.opacity(0.32) : Chrome.hairline,
+                    lineWidth: 1
+                )
+            )
+            // Rectangular on purpose, though it is drawn as a capsule. These
+            // are small targets and the corners are worth having; a tap just
+            // outside the outline is a tap meant for the button.
+            .contentShape(Rectangle())
     }
 }
 
@@ -171,6 +219,14 @@ struct Tendril: Shape {
 struct SproutingRule: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var open = false
+
+    /// The tendrils need room to curl, so the rule is drawn in a box this tall
+    /// with the line itself across the middle of it.
+    ///
+    /// Anything wanting the *line* somewhere precise — under a text field, say,
+    /// so that a name sits on it — has to allow for that half. See
+    /// `underlining()`.
+    static let height: CGFloat = 46
 
     // Never fully open: past about 0.7 the coil has let go entirely, and what is
     // left reads as a stray hook on the end of the line rather than as a tendril.

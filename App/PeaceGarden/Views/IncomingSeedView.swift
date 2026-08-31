@@ -78,8 +78,7 @@ struct IncomingSeedView: View {
                 Text("Send it")
                     .chromeLabel()
                     .foregroundStyle(Chrome.ink)
-                    .padding(.horizontal, 18)
-                    .padding(.vertical, 12)
+                    .pressable(isProminent: true)
             }
             Spacer()
         }

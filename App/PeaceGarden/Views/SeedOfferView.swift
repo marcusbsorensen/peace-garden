@@ -20,8 +20,12 @@ struct SeedOfferView: View {
             VStack(spacing: 26) {
                 Spacer()
 
+                // The heading voice, not the serif one. `plantName` is italic
+                // serif and its own documentation says it is for plant names;
+                // this is a screen title, and a title in the name voice claims
+                // that "A seed on the wind" is something's name.
                 Text("A seed on the wind")
-                    .plantName(size: 23)
+                    .chromeHeading(size: 17)
                     .foregroundStyle(Chrome.ink)
 
                 if let offer, let code = Self.code(for: offer) {
@@ -45,8 +49,7 @@ struct SeedOfferView: View {
                         Text("Send it instead")
                             .chromeLabel()
                             .foregroundStyle(Chrome.muted)
-                            .padding(.horizontal, 18)
-                            .padding(.vertical, 12)
+                            .pressable()
                     }
                 } else {
                     Text("This seed could not be prepared.")

@@ -65,9 +65,13 @@ struct SeedView: View {
                     draftName = identity.displayName
                     editingName = true
                 } label: {
+                    // The worst offender of the lot before it got an edge: a
+                    // sentence in the middle of a paragraph that happened to be
+                    // the only way to change your name.
                     Text("Seen as \(model.shownName)")
                         .font(.system(size: 15, weight: .light))
                         .foregroundStyle(Chrome.muted)
+                        .pressable()
                 }
                 .buttonStyle(.plain)
             }

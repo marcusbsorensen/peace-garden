@@ -132,9 +132,7 @@ struct ExchangeView: View {
                 .submitLabel(.done)
                 .onSubmit(acceptName)
                 .padding(.top, 6)
-
-            SproutingRule()
-                .padding(.horizontal, 60)
+                .underlining()
 
             // One button, whichever way they go. Leaving the field alone is a
             // choice with a name on it rather than a step that was skipped.
