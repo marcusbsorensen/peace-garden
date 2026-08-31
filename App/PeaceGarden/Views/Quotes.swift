@@ -103,7 +103,7 @@ enum Quotes {
 
     static let all: [Passage] = [
 
-        // MARK: Beginnings — 10 today
+        // MARK: Beginnings
 
         Passage(
             text: "The tree which fills the arms grew from the tiniest sprout.",
@@ -156,7 +156,7 @@ enum Quotes {
             theme: .beginnings
         ),
 
-        // MARK: Waiting — 11 today
+        // MARK: Waiting
 
         Passage(
             text: "Let it first blossom, then bear fruit, then ripen.",
@@ -214,7 +214,7 @@ enum Quotes {
             theme: .waiting
         ),
 
-        // MARK: Renewal — 7 today
+        // MARK: Renewal
 
         Passage(
             text: "The flowers appear on the earth; the time of the singing of birds is come.",
@@ -252,7 +252,7 @@ enum Quotes {
             theme: .renewal
         ),
 
-        // MARK: Light — 9 today
+        // MARK: Light
 
         Passage(
             text: "I saw Eternity the other night, like a great ring of pure and endless light.",
@@ -300,7 +300,7 @@ enum Quotes {
             theme: .light
         ),
 
-        // MARK: Pattern — 7 today
+        // MARK: Pattern
 
         Passage(
             text: "It is interesting to contemplate an entangled bank, clothed with many plants of many kinds.",
@@ -338,7 +338,7 @@ enum Quotes {
             theme: .pattern
         ),
 
-        // MARK: Ground — 13 today
+        // MARK: Ground
 
         Passage(
             text: "If you have a garden in your library, nothing will be wanting.",
@@ -371,12 +371,12 @@ enum Quotes {
             theme: .ground
         ),
         Passage(
-            text: "Smultronställe: a wild-strawberry place — a small, treasured spot you go back to on your own.",
+            text: "Smultronställe: a wild-strawberry place, a small treasured spot you go back to on your own.",
             source: "Swedish",
             theme: .ground
         ),
         Passage(
-            text: "Paradise began as a walled garden — Old Persian pairidaeza, an enclosure planted for pleasure.",
+            text: "Paradise began as a walled garden: Old Persian pairidaeza, an enclosure planted for pleasure.",
             source: "Old Persian",
             theme: .ground
         ),
@@ -406,7 +406,7 @@ enum Quotes {
             theme: .ground
         ),
 
-        // MARK: Travel — 9 today
+        // MARK: Travel
 
         Passage(
             text: "Good company in a journey makes the way to seem the shorter.",
@@ -454,8 +454,13 @@ enum Quotes {
             theme: .travel
         ),
 
-        // MARK: Meeting — 10 today
+        // MARK: Meeting
 
+        Passage(
+            text: "Interfulgence: a shining between things rather than upon them. Johnson listed the word in 1755, and the Oxford English Dictionary has found three uses of it in all.",
+            source: "English, rare",
+            theme: .meeting
+        ),
         Passage(
             text: "The world puts off its mask of vastness to its lover. It becomes small as one song, as one kiss of the eternal.",
             source: "Rabindranath Tagore, Stray Birds, 1916",
@@ -472,7 +477,7 @@ enum Quotes {
             theme: .meeting
         ),
         Passage(
-            text: "Kairos: the opening in time when a thing can be done — the right moment, as distinct from the hour on the clock.",
+            text: "Kairos: the opening in time when a thing can be done. The right moment, as distinct from the hour on the clock.",
             source: "Ancient Greek",
             theme: .meeting
         ),
@@ -487,7 +492,7 @@ enum Quotes {
             theme: .meeting
         ),
         Passage(
-            text: "Encounter reaches English from Latin in contra — to come face to face with whatever stands opposite.",
+            text: "Encounter reaches English from Latin in contra, to come face to face with whatever stands opposite.",
             source: "Old French",
             theme: .meeting
         ),
@@ -507,7 +512,7 @@ enum Quotes {
             theme: .meeting
         ),
 
-        // MARK: Kinship — 15 today
+        // MARK: Kinship
 
         Passage(
             text: "Men exist for the sake of one another.",
@@ -682,7 +687,7 @@ enum Quotes {
             theme: .peace
         ),
         Passage(
-            text: "Lagom: just the right amount — not too little and not too much, and no need to say which.",
+            text: "Lagom: just the right amount, neither too little nor too much, and no need to say which.",
             source: "Swedish",
             theme: .peace
         ),
@@ -702,7 +707,7 @@ enum Quotes {
             theme: .peace
         ),
         Passage(
-            text: "Calm reaches English from Greek kauma, the heat of the day — the hour when it is too hot to work and everything stops.",
+            text: "Calm reaches English from Greek kauma, the heat of the day: the hour when it is too hot to work and everything stops.",
             source: "Greek",
             theme: .peace
         ),
@@ -712,7 +717,7 @@ enum Quotes {
             theme: .peace
         ),
         Passage(
-            text: "Rest is Old English ræst, whose Germanic kin also meant a stage of a journey — the distance between one stopping place and the next.",
+            text: "Rest is Old English ræst, whose Germanic kin also meant a stage of a journey: the distance between one stopping place and the next.",
             source: "Old English",
             theme: .peace
         ),
@@ -737,7 +742,7 @@ enum Quotes {
             theme: .peace
         ),
         Passage(
-            text: "Horas non numero nisi serenas — I count only the serene hours. A sundial can say it honestly, having no choice.",
+            text: "Horas non numero nisi serenas, cut on old sundials: I count only the serene hours. Serenus meant cloudless, so a dial that needs sun to count at all is only describing itself.",
             source: "Sundial motto, Latin",
             theme: .peace
         ),
