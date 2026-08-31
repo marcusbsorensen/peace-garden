@@ -6,22 +6,25 @@ import Foundation
 /// a nonce cross the air, and nothing else unless both people ask for it: there
 /// is no account, no server and nothing that identifies the device.
 ///
-/// **Consent travels a round ahead of what it permits.** `hello` carries only a
-/// flag saying whether this person is willing to record where the meeting
-/// happened. Coordinates ride on `confirm`, which is sent after both hellos have
-/// arrived, so neither phone can disclose a location before it knows the other
-/// side agreed. Putting the coordinate next to the flag would mean whoever spoke
-/// first had already given it away.
+/// **A coordinate never crosses the air.** Only a flag does, saying whether this
+/// person is willing for the meeting to be recorded with a location at all. Each
+/// phone then stamps its own reading, so the measurement stays on the device
+/// that took it and there is nothing to intercept, mishandle or send too early.
 ///
-/// Both or neither, with no middle setting, and that is a privacy rule rather
-/// than a simplification: two people at one meeting are standing in the same
-/// place, so one person's coordinate is also the other's. Recording mine while
-/// you decline would publish exactly what you refused. See docs/PLACE.md.
+/// Consent is still needed from both, and that is the part worth understanding.
+/// Two people at one meeting are standing in the same place, so recording where
+/// *I* was records where *you* were. Stamping mine while you decline publishes
+/// exactly what you refused. Both or neither, with no middle setting, is a
+/// privacy rule rather than a simplification. See docs/PLACE.md.
+///
+/// An earlier draft sent the coordinate on `confirm`, a round behind the flag,
+/// so that nobody disclosed before knowing the answer. That worked, and then it
+/// turned out that nobody has to disclose at all.
 public enum ExchangeProtocol {
     /// Bumped whenever the wire format changes. Peers on different versions
     /// abort cleanly rather than growing two different plants.
     ///
-    /// 2 added the place flag to `PollenCard` and the coordinate to `confirm`.
+    /// 2 added the place flag to `PollenCard`.
     public static let version = 2
 
     /// Bonjour service type. Must also appear in the app's `NSBonjourServices`.
@@ -43,12 +46,13 @@ public struct PollenCard: Codable, Equatable, Sendable {
     public var displayName: String
     public var plantName: String
     public var birth: Date
-    /// Whether this person is willing for the meeting to carry a coordinate.
+    /// Whether this person is willing for the meeting to be recorded with a
+    /// location.
     ///
-    /// A statement of willingness and nothing more. The coordinate itself comes
-    /// later, and only if this was true on both cards. Optional so that a card
-    /// written by an older version decodes as a refusal, which is the safe way
-    /// for the field to be missing.
+    /// A statement of willingness and nothing more; no coordinate follows it
+    /// across the air, because each phone stamps its own. Optional so that a
+    /// card written by an older version decodes as a refusal, which is the safe
+    /// way for the field to be missing.
     public var sharesPlace: Bool?
 
     public init(
@@ -65,10 +69,11 @@ public struct PollenCard: Codable, Equatable, Sendable {
         self.sharesPlace = sharesPlace
     }
 
-    /// Whether these two cards permit a coordinate to be exchanged at all.
+    /// Whether these two people have both agreed that this meeting may be
+    /// recorded with a location.
     ///
-    /// The only place this question is answered. Anything sending a coordinate
-    /// asks here first, so that the rule lives in one spot rather than being
+    /// The only place the question is answered. Anything about to stamp a
+    /// coordinate asks here, so the rule lives in one spot rather than being
     /// restated at each call site and eventually restated wrongly.
     public static func permitPlace(_ one: PollenCard, _ other: PollenCard) -> Bool {
         one.sharesPlace == true && other.sharesPlace == true
@@ -96,8 +101,6 @@ public struct ExchangeEnvelope: Codable, Sendable {
     public var card: PollenCard?
     public var nonce: Data?
     public var checksum: Data?
-    /// Only ever set on `confirm`, and only when both cards said yes.
-    public var coordinate: Coordinate?
     public var reason: String?
 
     public init(
@@ -106,7 +109,6 @@ public struct ExchangeEnvelope: Codable, Sendable {
         card: PollenCard? = nil,
         nonce: Data? = nil,
         checksum: Data? = nil,
-        coordinate: Coordinate? = nil,
         reason: String? = nil
     ) {
         self.protocolVersion = protocolVersion
@@ -114,7 +116,6 @@ public struct ExchangeEnvelope: Codable, Sendable {
         self.card = card
         self.nonce = nonce
         self.checksum = checksum
-        self.coordinate = coordinate
         self.reason = reason
     }
 
@@ -128,25 +129,6 @@ public struct ExchangeEnvelope: Codable, Sendable {
 
     public static func confirm(checksum: Data) -> ExchangeEnvelope {
         ExchangeEnvelope(kind: .confirm, checksum: checksum)
-    }
-
-    /// A confirm that may carry where the meeting happened.
-    ///
-    /// Both cards are required rather than a `Bool`, so that the rule is applied
-    /// here instead of being remembered at each call site. A coordinate passed
-    /// in without the other person's agreement is dropped, quietly and always:
-    /// the failure mode of this method is to send less than asked, never more.
-    public static func confirm(
-        checksum: Data,
-        coordinate: Coordinate?,
-        mine: PollenCard,
-        theirs: PollenCard
-    ) -> ExchangeEnvelope {
-        ExchangeEnvelope(
-            kind: .confirm,
-            checksum: checksum,
-            coordinate: PollenCard.permitPlace(mine, theirs) ? coordinate : nil
-        )
     }
 
     public static func abort(reason: String) -> ExchangeEnvelope {
