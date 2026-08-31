@@ -107,6 +107,20 @@ public struct Genome: Equatable, Sendable {
         public var variegation: Variegation
         /// The second leaf colour, used according to `variegation`.
         public var leafAccent: HSB
+        /// The colour of a leaf's midrib and the veins branching off it.
+        ///
+        /// Petals have had veins from the start and leaves have not, which is
+        /// backwards: venation is most of what tells the eye a green shape is a
+        /// leaf rather than a painted panel.
+        public var leafVein: HSB
+        /// How strongly the venation shows, 0 for a leaf that hides it.
+        public var leafVeining: Double
+        /// How far the blade is quilted between its veins, 0 for a flat leaf.
+        ///
+        /// Read as relief rather than as colour: it is what the normal map is
+        /// built from, so a high value catches the light in ridges without
+        /// changing the leaf's colour at all.
+        public var leafQuilting: Double
 
         public var stem: HSB
         public var centre: HSB

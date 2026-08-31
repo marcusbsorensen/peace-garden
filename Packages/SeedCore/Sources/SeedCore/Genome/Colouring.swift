@@ -251,6 +251,20 @@ public extension Genome.Palette {
             brightness: min(1, leaf.brightness * source.value("palette.accentBrightness", 1.3...2.1))
         )
 
+        // Veins are the leaf's own colour taken darker and a little deeper,
+        // never a separate hue: a leaf whose veins disagree with its blade
+        // reads as printed on rather than grown.
+        let leafVein = HSB(
+            hue: (leaf.hue + source.signed("palette.leafVeinShift") * 0.04).wrappedUnit,
+            saturation: min(1, leaf.saturation * source.value("palette.leafVeinSaturation", 1.05...1.45)),
+            brightness: (leaf.brightness * source.value("palette.leafVeinBrightness", 0.52...0.86)).clamped(to: 0...1)
+        )
+        // Nearly every leaf shows some venation, because nearly every real leaf
+        // does. The gene decides how much, not whether.
+        let leafVeining = source.chance("palette.hasLeafVeins", 0.88)
+            ? source.bell("palette.leafVeining", 0.25...0.9)
+            : 0
+
         let stem = HSB(
             hue: (leaf.hue + source.signed("palette.stemShift") * 0.06).wrappedUnit,
             saturation: (leaf.saturation * source.value("palette.stemSaturation", 0.6...1.1)).clamped(to: 0...1),
@@ -275,6 +289,9 @@ public extension Genome.Palette {
             leaf: leaf,
             variegation: variegation,
             leafAccent: leafAccent,
+            leafVein: leafVein,
+            leafVeining: leafVeining,
+            leafQuilting: source.bell("palette.leafQuilting", 0.1...0.85),
             stem: stem,
             centre: centre,
             glow: source.bell("palette.glow", 0...1),

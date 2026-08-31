@@ -67,9 +67,26 @@ public enum PaletteRamp {
     // MARK: - Leaves
 
     private static func leaf(u: Double, v: Double, palette: Genome.Palette) -> HSB {
+        // A real leaf is oldest and darkest where it joins the stem and
+        // youngest at the tip. Sixteen percent of brightness was not enough of
+        // a journey to see across a blade that fills a third of the screen.
         var tip = palette.leaf
-        tip.brightness = min(1, palette.leaf.brightness * 1.16)
-        var colour = interpolate(palette.leaf, tip, v)
+        tip.brightness = min(1, palette.leaf.brightness * 1.42)
+        tip.saturation = palette.leaf.saturation * 0.86
+        var base = palette.leaf
+        base.brightness = palette.leaf.brightness * 0.72
+        var colour = interpolate(base, tip, smoothstep(v))
+
+        // The margin catches the light and runs slightly paler, which is what
+        // gives a blade an edge instead of ending at a silhouette.
+        let fromMidrib = abs(u - 0.5) * 2
+        var rim = colour
+        rim.brightness = min(1, colour.brightness * 1.18)
+        colour = interpolate(colour, rim, pow(fromMidrib, 3.5) * 0.5)
+
+        if palette.leafVeining > 0 {
+            colour = interpolate(colour, palette.leafVein, venation(u: u, v: v, palette: palette) * palette.leafVeining)
+        }
 
         switch palette.variegation {
         case .none:
@@ -91,6 +108,97 @@ public enum PaletteRamp {
         }
 
         return colour
+    }
+
+    /// How strongly a leaf's veins show at a point, 0 to 1.
+    ///
+    /// Pinnate venation: one midrib the length of the blade, and secondaries
+    /// leaving it at an angle and running out toward the margin. The angle is
+    /// what matters — veins drawn straight across read as a grille, and veins
+    /// drawn straight up read as celery. Sweeping them back toward the base as
+    /// they travel outward is the shape almost every broad leaf actually has.
+    ///
+    /// Shared with `relief`, so the ridges the light catches sit exactly where
+    /// the darker colour is rather than a fraction beside it.
+    public static func venation(u: Double, v: Double, palette: Genome.Palette) -> Double {
+        let fromMidrib = abs(u - 0.5) * 2
+
+        // The midrib itself: narrow, and tapering away before the tip so the
+        // blade closes rather than ending on a stripe.
+        let midrib = pow(max(0, 1 - fromMidrib / 0.11), 1.4) * (1 - pow(v, 6))
+
+        // Secondaries. The count rides on the same gene as the strength, so a
+        // strongly veined leaf is also a finely veined one.
+        let count = 5.0 + palette.leafVeining * 7
+        let swept = v - fromMidrib * 0.42
+        let ridges = abs(sin(swept * .pi * count))
+        // Fade them into the midrib, so they appear to leave it rather than
+        // cross it, and out at the margin where a real vein has thinned away.
+        let root = min(1, fromMidrib / 0.14)
+        let margin = 1 - pow(fromMidrib, 4)
+        let secondary = pow(ridges, 9) * root * margin * 0.85
+
+        return min(1, max(midrib, secondary))
+    }
+
+    /// The height of a surface above its own plane at a point, 0 to 1.
+    ///
+    /// This is not colour. The renderer differentiates it to build a normal
+    /// map, which is the whole of why a leaf stops reading as a painted panel:
+    /// a blade quilted between its veins catches the light in a hundred places
+    /// that flat geometry has no way to show. It costs one more texture and no
+    /// triangles at all.
+    ///
+    /// Kept beside `colour` on purpose. The two are sampled at the same `(u, v)`
+    /// from the same genes, so relief and marking can never drift apart.
+    public static func relief(for role: MeshRole, u: Double, v: Double, palette: Genome.Palette) -> Double {
+        let u = u.clamped(to: 0...1)
+        let v = v.clamped(to: 0...1)
+
+        switch role {
+        case .leaf:
+            // Veins stand proud of the blade, and the blade sinks between them.
+            let veins = venation(u: u, v: v, palette: palette)
+            let quilt = quilting(u: u, v: v, palette: palette) * palette.leafQuilting
+            return (0.45 + veins * 0.55 - quilt * 0.3).clamped(to: 0...1)
+        case .petal:
+            // Much softer. A petal that reads as quilted reads as crumpled.
+            let ridges = abs(sin(u * .pi * 5))
+            let veins = pow(ridges, 7) * palette.veining * (1 - v * 0.45)
+            return (0.5 + veins * 0.22).clamped(to: 0...1)
+        case .stem:
+            // Longitudinal ribbing, the way a stem carries its vascular bundles.
+            let ribs = abs(sin(u * .pi * 6))
+            return (0.5 + pow(ribs, 3) * 0.16).clamped(to: 0...1)
+        case .centre:
+            // The packed florets of a composite head.
+            //
+            // The frequency is low on purpose. `speckle` hashes a cell, so its
+            // edges are hard by design — which is right for a marking on a leaf
+            // and wrong here, where at a fine grain it aliased into something
+            // woven. Big soft cells read as florets; small hard ones read as
+            // burlap.
+            let bumps = speckle(u: u, v: v, seed: palette.speckleSeed &+ 977, frequency: 8)
+            return (0.42 + bumps * 0.4).clamped(to: 0...1)
+        case .stamen:
+            return 0.5
+        }
+    }
+
+    /// The puckering of a blade between its veins.
+    ///
+    /// Two frequencies rather than one: a single sine is a corrugated roof.
+    private static func quilting(u: Double, v: Double, palette: Genome.Palette) -> Double {
+        let fromMidrib = abs(u - 0.5) * 2
+        let count = 5.0 + palette.leafVeining * 7
+        let swept = v - fromMidrib * 0.42
+        let coarse = sin(swept * .pi * count) * 0.5 + 0.5
+        // The second frequency follows the veins too. Running it off `u` alone
+        // laid ribs down the length of the blade regardless of where the veins
+        // were, and a leaf ribbed lengthwise is corduroy: the puckering has to
+        // belong to the vein structure or it fights it.
+        let fine = sin(swept * .pi * count * 2.3 + fromMidrib * 4.1) * 0.5 + 0.5
+        return (coarse * 0.72 + fine * 0.28) * (1 - pow(fromMidrib, 3))
     }
 
     // MARK: - Helpers

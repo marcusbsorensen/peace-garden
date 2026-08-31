@@ -59,33 +59,57 @@ enum PlantSceneBuilder {
         // than leaving the material white.
         material.diffuse.contents = GradientTexture.image(for: role, palette: palette)
             ?? GradientTexture.colour(PaletteRamp.colour(for: role, u: 0.5, v: 0.5, palette: palette))
-        material.diffuse.wrapS = .clamp
-        material.diffuse.wrapT = .clamp
         material.metalness.contents = NSNumber(value: 0.0)
+
+        // Relief and gloss, from the same bake as the colour. Between them they
+        // are what stops a surface reading as a moulded panel: the normal map
+        // gives the light something to travel over, and the roughness map means
+        // a vein can shine while the tissue beside it stays matte.
+        //
+        // Both fall back to the scalar the material used before them, so a
+        // texture that could not be built costs the detail and nothing else.
+        material.normal.contents = GradientTexture.normalImage(for: role, palette: palette)
+        material.roughness.contents = GradientTexture.roughnessImage(for: role, palette: palette)
+            ?? NSNumber(value: scalarRoughness(for: role, palette: palette))
+
+        // Clamping matters on every channel, not only the colour: a normal map
+        // that repeats puts a seam of inverted lighting down the edge of a blade.
+        for property in [material.diffuse, material.normal, material.roughness] {
+            property.wrapS = .clamp
+            property.wrapT = .clamp
+        }
 
         switch role {
         case .stem:
-            material.roughness.contents = NSNumber(value: 0.75)
+            break
         case .leaf:
             // Leaves and petals are single surfaces with no thickness, so they
             // have to be lit from both sides or they vanish when they turn away.
-            material.roughness.contents = NSNumber(value: 0.62 - palette.sheen * 0.3)
             material.isDoubleSided = true
         case .petal:
-            material.roughness.contents = NSNumber(value: 0.45 - palette.sheen * 0.3)
             material.isDoubleSided = true
             material.emission.contents = GradientTexture.colour(palette.petalTip, alpha: 1)
             material.emission.intensity = CGFloat(palette.glow * 0.16)
         case .centre:
-            material.roughness.contents = NSNumber(value: 0.55)
             material.emission.contents = GradientTexture.colour(palette.centre, alpha: 1)
             material.emission.intensity = CGFloat(0.1 + palette.glow * 0.35)
         case .stamen:
-            material.roughness.contents = NSNumber(value: 0.4)
             material.emission.contents = GradientTexture.colour(palette.centre, alpha: 1)
             material.emission.intensity = CGFloat(0.15 + palette.glow * 0.3)
         }
         return material
+    }
+
+    /// What a role's roughness was before it became a texture, kept as the
+    /// fallback so a failed bake degrades to the old look rather than to white.
+    private static func scalarRoughness(for role: MeshRole, palette: Genome.Palette) -> Double {
+        switch role {
+        case .stem: return 0.75
+        case .leaf: return 0.62 - palette.sheen * 0.3
+        case .petal: return 0.45 - palette.sheen * 0.3
+        case .centre: return 0.55
+        case .stamen: return 0.4
+        }
     }
 
     // MARK: - Scene
@@ -119,13 +143,29 @@ enum PlantSceneBuilder {
         rim.eulerAngles = SCNVector3(-0.2, 3.5, 0)
         scene.rootNode.addChildNode(rim)
 
+        // A bounce, from low and in front, standing in for the light a plant
+        // gets back off the ground it is standing on.
+        //
+        // Without it every surface turned away from the key fell to the ambient
+        // alone, and the ambient is tinted to a near-black backdrop — so a leaf
+        // that happened to face the wrong way went out completely and read as a
+        // hole cut in the plant rather than as a leaf in shade. Shade wants to
+        // be the darker side of a surface, not the absence of one.
+        let bounce = SCNNode()
+        bounce.light = SCNLight()
+        bounce.light?.type = .directional
+        bounce.light?.color = UIColor(red: 0.86, green: 0.92, blue: 0.88, alpha: 1)
+        bounce.light?.intensity = 260
+        bounce.eulerAngles = SCNVector3(0.85, -0.4, 0)
+        scene.rootNode.addChildNode(bounce)
+
         // The fill is tinted to the backdrop's own colour, so the plant reads
         // as standing in that light rather than cut out and pasted onto it.
         let fill = SCNNode()
         fill.light = SCNLight()
         fill.light?.type = .ambient
         fill.light?.color = StageBackdrop.glowColour(for: palette)
-        fill.light?.intensity = 300
+        fill.light?.intensity = 420
         scene.rootNode.addChildNode(fill)
 
         return scene
