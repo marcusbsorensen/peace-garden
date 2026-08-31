@@ -23,6 +23,17 @@ public struct PlantMesh: Sendable {
         public var positions: [SIMD3<Float>]
         public var normals: [SIMD3<Float>]
         public var uvs: [SIMD2<Float>]
+        /// How far along its own development this vertex's surface is, 0 to 1.
+        ///
+        /// Per vertex rather than per part, because every leaf on a plant is one
+        /// part and they are not the same age: a leaf at the frontier is days
+        /// old and the one at the base has been there for weeks. A texture is
+        /// shared by the whole part and so cannot say this; the renderer reads
+        /// it as a vertex attribute and tints from it.
+        ///
+        /// Blooms carry their own openness here, so a spike can hold a flower
+        /// and a bud and colour them differently.
+        public var maturity: [Float]
         public var indices: [UInt32]
 
         public var triangleCount: Int { indices.count / 3 }

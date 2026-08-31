@@ -94,7 +94,21 @@ public struct PlantBuilder {
                 * Float(jitter.value(in: 0.86...1.14))
                 * Self.leafTaper(at: node.t, jitter: &shape)
 
-            addLeaf(&builder, node: node, azimuth: azimuth, scale: scale, jitter: &jitter)
+            // A leaf's age is its own unfurling, held under a ceiling set by
+            // how high it sits.
+            //
+            // The unfurling alone was spent within days: it runs through the
+            // leaves fast, so on any plant worth looking at every leaf had
+            // reached full maturity and the colour difference had nowhere to
+            // show. A plant that is still growing always carries its youngest
+            // tissue at the apex — that is where the new leaves come from — so
+            // the gradient belongs to position as well as to time, and only
+            // then does it survive the plant growing up.
+            let ceiling = 1 - 0.6 * min(1, max(0, (node.t - 0.35) / 0.65))
+            addLeaf(
+                &builder, node: node, azimuth: azimuth,
+                scale: scale, maturity: min(openness, ceiling), jitter: &jitter
+            )
         }
     }
 
@@ -122,6 +136,7 @@ public struct PlantBuilder {
         node: PathSample,
         azimuth: Float,
         scale: Float,
+        maturity: Float,
         jitter: inout SplitMix64
     ) {
         let foliage = genome.foliage
@@ -150,7 +165,7 @@ public struct PlantBuilder {
 
         // More rows than the blade strictly needs, so the teeth and the veins
         // have something to be cut into.
-        builder.addSurface(role: .leaf, rows: 19, columns: 9) { u, v in
+        builder.addSurface(role: .leaf, rows: 19, columns: 9, maturity: maturity) { u, v in
             let s = v
             let profile = Self.bladeProfile(s, sharpness: sharpness, serration: serration, teeth: teeth)
             let across = (u - 0.5) * 2 * halfWidth * profile
@@ -173,16 +188,29 @@ public struct PlantBuilder {
 
         guard genome.bloom.atNodes else { return }
         for (offset, node) in skeleton.nodes.enumerated() where node.t > 0.35 {
-            // Lower flowers on a spike open later than the crown.
+            // Lower flowers on a spike open later than the crown, and go on
+            // being behind it.
+            //
+            // The lag used to be spent: it delayed a flower during the opening
+            // window and then every flower reached fully open and stayed there,
+            // so a mature spike was a column of identical faces. A spike that
+            // keeps producing at its tip is never uniform — that is what an
+            // indeterminate inflorescence is — so the lag has to survive
+            // maturity, and `ceiling` is what makes it.
             let lag = Double(1 - node.t) * 0.5
+            // How far open this flower ever gets. The crown reaches full and
+            // the lowest on the spike stay half-shut buds for good, which is
+            // both what a spike looks like and what makes the smaller flowers
+            // read as younger rather than merely scaled down.
+            let ceiling = 0.45 + 0.55 * Double(node.t)
             let localGrowth = GrowthModel.State(
                 stage: growth.stage,
                 stageProgress: growth.stageProgress,
                 overall: growth.overall,
                 heightScale: growth.heightScale,
                 leafUnfurl: growth.leafUnfurl,
-                budSwell: max(0, growth.budSwell - lag) / max(0.01, 1 - lag),
-                bloomOpen: max(0, growth.bloomOpen - lag) / max(0.01, 1 - lag),
+                budSwell: min(ceiling, max(0, growth.budSwell - lag) / max(0.01, 1 - lag)),
+                bloomOpen: min(ceiling, max(0, growth.bloomOpen - lag) / max(0.01, 1 - lag)),
                 age: growth.age,
                 timeToNextStage: growth.timeToNextStage
             )
@@ -269,7 +297,8 @@ public struct PlantBuilder {
             radius: centreRadius,
             flatten: 0.55 + Float(jitter.unit()) * 0.4,
             rows: 8,
-            columns: 14
+            columns: 14,
+            maturity: Float(growth.bloomOpen)
         )
 
         if growth.bloomOpen > 0.3, bloom.stamenCount > 0 {
@@ -401,7 +430,7 @@ public struct PlantBuilder {
 
         let notch = Float(bloom.notch)
 
-        builder.addSurface(role: .petal, rows: 13, columns: 9) { u, v in
+        builder.addSurface(role: .petal, rows: 13, columns: 9, maturity: bloomOpen) { u, v in
             let s = v
             let profile = Self.bladeProfile(s, sharpness: sharpness, serration: 0, teeth: 0)
             let across = (u - 0.5) * 2 * halfWidth * profile

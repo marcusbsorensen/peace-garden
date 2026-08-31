@@ -23,11 +23,17 @@ public struct MeshBuilder {
     ///   - point: evaluated at `(u, v)`, both in `0...1`. `u` runs across the
     ///     columns, `v` along the rows.
     ///   - flipWinding: reverses triangle order for surfaces built inside-out.
+    ///   - maturity: how far along its development this whole surface is, 0 to
+    ///     1. One value for the surface rather than one per vertex, because a
+    ///     leaf unfurls as a leaf: the age belongs to the blade, not to points
+    ///     on it. It reaches the renderer as a vertex attribute because that is
+    ///     the only channel that survives every leaf sharing one material.
     public mutating func addSurface(
         role: MeshRole,
         rows: Int,
         columns: Int,
         flipWinding: Bool = false,
+        maturity: Float = 1,
         point: (Float, Float) -> SIMD3<Float>
     ) {
         guard rows >= 2, columns >= 2 else { return }
@@ -99,18 +105,26 @@ public struct MeshBuilder {
             }
         }
 
-        append(role: role, positions: positions, normals: normals, uvs: uvs, indices: indices)
+        append(
+            role: role,
+            positions: positions,
+            normals: normals,
+            uvs: uvs,
+            maturity: [Float](repeating: maturity, count: positions.count),
+            indices: indices
+        )
     }
 
     /// A tapered tube swept along a path. Used for stems, stalks and filaments.
     public mutating func addTube(
         role: MeshRole,
         path: [PathSample],
-        sides: Int
+        sides: Int,
+        maturity: Float = 1
     ) {
         guard path.count >= 2, sides >= 3 else { return }
         let columns = sides + 1  // last column repeats the first, for clean UVs
-        addSurface(role: role, rows: path.count, columns: columns) { u, v in
+        addSurface(role: role, rows: path.count, columns: columns, maturity: maturity) { u, v in
             let position = v * Float(path.count - 1)
             let index = min(path.count - 1, Int(position.rounded()))
             let sample = path[index]
@@ -129,13 +143,14 @@ public struct MeshBuilder {
         radius: Float,
         flatten: Float = 0.65,
         rows: Int = 10,
-        columns: Int = 16
+        columns: Int = 16,
+        maturity: Float = 1
     ) {
         guard radius > 0 else { return }
         let up = simd_normalize(axis)
         let right = simd_normalize(side - up * dot(side, up))
         let forward = cross(up, right)
-        addSurface(role: role, rows: rows, columns: columns + 1) { u, v in
+        addSurface(role: role, rows: rows, columns: columns + 1, maturity: maturity) { u, v in
             let polar = v * (.pi / 2)
             let azimuth = u * 2 * .pi
             let ring = sin(polar) * radius
@@ -152,14 +167,20 @@ public struct MeshBuilder {
         positions: [SIMD3<Float>],
         normals: [SIMD3<Float>],
         uvs: [SIMD2<Float>],
+        maturity: [Float]? = nil,
         indices: [UInt32]
     ) {
         guard !positions.isEmpty, !indices.isEmpty else { return }
-        var part = parts[role] ?? PlantMesh.Part(role: role, positions: [], normals: [], uvs: [], indices: [])
+        var part = parts[role] ?? PlantMesh.Part(
+            role: role, positions: [], normals: [], uvs: [], maturity: [], indices: []
+        )
         let offset = UInt32(part.positions.count)
         part.positions.append(contentsOf: positions)
         part.normals.append(contentsOf: normals)
         part.uvs.append(contentsOf: uvs)
+        // Anything appended without an age is grown. The default keeps every
+        // existing caller drawing exactly what it drew before.
+        part.maturity.append(contentsOf: maturity ?? [Float](repeating: 1, count: positions.count))
         part.indices.append(contentsOf: indices.map { $0 + offset })
         parts[role] = part
 

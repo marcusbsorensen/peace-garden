@@ -41,15 +41,45 @@ enum PlantSceneBuilder {
             indices: part.indices.map { Int32($0) },
             primitiveType: .triangles
         )
-        let geometry = SCNGeometry(
-            sources: [
-                SCNGeometrySource(vertices: vertices),
-                SCNGeometrySource(normals: normals),
-                SCNGeometrySource(textureCoordinates: coordinates)
-            ],
-            elements: [element]
+        var sources = [
+            SCNGeometrySource(vertices: vertices),
+            SCNGeometrySource(normals: normals),
+            SCNGeometrySource(textureCoordinates: coordinates)
+        ]
+        if let age = maturitySource(part.maturity, vertexCount: vertices.count) {
+            sources.append(age)
+        }
+        return SCNGeometry(sources: sources, elements: [element])
+    }
+
+    /// Every vertex's own age, carried as a second set of texture coordinates.
+    ///
+    /// Not a texture coordinate and not sampled by anything — it is simply the
+    /// one per-vertex channel that reaches a shader modifier untouched. The
+    /// colour semantic was tried first and is wrong: SceneKit multiplies vertex
+    /// colour into the diffuse on its own, before any modifier runs, so a value
+    /// meaning *age* in the red channel painted the whole plant red, stem
+    /// included. Nothing consumes a spare texcoord set uninvited.
+    ///
+    /// Only `x` carries anything; the pair is what the semantic wants.
+    private static func maturitySource(_ maturity: [Float], vertexCount: Int) -> SCNGeometrySource? {
+        guard maturity.count == vertexCount, vertexCount > 0 else { return nil }
+        var packed = [SIMD2<Float>]()
+        packed.reserveCapacity(vertexCount)
+        for value in maturity {
+            packed.append(SIMD2<Float>(min(1, max(0, value)), 0))
+        }
+        let data = packed.withUnsafeBufferPointer { Data(buffer: $0) }
+        return SCNGeometrySource(
+            data: data,
+            semantic: .texcoord,
+            vectorCount: vertexCount,
+            usesFloatComponents: true,
+            componentsPerVector: 2,
+            bytesPerComponent: MemoryLayout<Float>.size,
+            dataOffset: 0,
+            dataStride: MemoryLayout<SIMD2<Float>>.stride
         )
-        return geometry
     }
 
     static func material(for role: MeshRole, palette: Genome.Palette) -> SCNMaterial {
@@ -79,6 +109,8 @@ enum PlantSceneBuilder {
             property.wrapT = .clamp
         }
 
+        material.shaderModifiers = agingModifier(for: role)
+
         switch role {
         case .stem:
             break
@@ -98,6 +130,65 @@ enum PlantSceneBuilder {
             material.emission.intensity = CGFloat(0.15 + palette.glow * 0.3)
         }
         return material
+    }
+
+    /// Tints a surface toward the colour it was when it was younger.
+    ///
+    /// A texture is shared by every leaf on a plant, so the age difference
+    /// between a leaf at the frontier and one at the base cannot live in it.
+    /// The mesh carries each vertex's own maturity instead and this reads it.
+    ///
+    /// What it does is the pigment story, not a fade: a new leaf has not
+    /// finished laying down chlorophyll, so it is paler, yellower and much less
+    /// saturated than the same leaf a fortnight later; a petal in bud is
+    /// greener and duller at the back, and its colour arrives as it opens. Both
+    /// are a move toward the young end rather than a change of hue.
+    ///
+    /// Two entry points, because a vertex attribute has to be carried across
+    /// into the fragment stage by hand.
+    private static func agingModifier(for role: MeshRole) -> [SCNShaderModifierEntryPoint: String]? {
+        guard let tint = youngTint(for: role) else { return nil }
+        let geometry = """
+        #pragma varyings
+        float plantAge;
+        #pragma body
+        out.plantAge = _geometry.texcoords[1].x;
+        """
+        // `1 - age` so a brand new surface is fully tinted and a grown one is
+        // untouched. Eased, because tissue colours up quickly at first and then
+        // spends a long time finishing.
+        let surface = """
+        #pragma varyings
+        float plantAge;
+        #pragma body
+        float young = 1.0 - clamp(in.plantAge, 0.0, 1.0);
+        young = young * young * (3.0 - 2.0 * young);
+        float3 youngColour = float3(\(tint.red), \(tint.green), \(tint.blue));
+        _surface.diffuse.rgb = mix(_surface.diffuse.rgb, youngColour, young * \(tint.strength));
+        """
+        return [.geometry: geometry, .surface: surface]
+    }
+
+    /// Where a surface's colour starts out, before it has finished becoming
+    /// itself, and how far toward it a brand new one goes.
+    private static func youngTint(
+        for role: MeshRole
+    ) -> (red: Float, green: Float, blue: Float, strength: Float)? {
+        switch role {
+        case .leaf:
+            // Pale yellow-green: chlorophyll is the last thing a new leaf
+            // finishes, and until it does the carotenoids underneath show.
+            return (0.78, 0.85, 0.46, 0.72)
+        case .petal:
+            // A petal in bud is the calyx's colour and only becomes the
+            // flower's as it opens.
+            return (0.55, 0.66, 0.42, 0.85)
+        case .centre, .stamen:
+            // Pollen arrives late. A closed flower's centre is pale and dry.
+            return (0.72, 0.72, 0.58, 0.6)
+        case .stem:
+            return nil
+        }
     }
 
     /// What a role's roughness was before it became a texture, kept as the
