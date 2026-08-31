@@ -106,6 +106,106 @@ enum Quotes {
         // MARK: Beginnings
 
         Passage(
+            text: "The beginning is the most important part of the work.",
+            source: "Plato, Republic, tr. Benjamin Jowett",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "The child is father of the man.",
+            source: "William Wordsworth, 1802",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "Well begun is half done.",
+            source: "Proverb",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "The beginning is half of the whole.",
+            source: "Greek proverb",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "Fortune favours the bold.",
+            source: "Virgil, Aeneid, rendered plainly",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "Germination: the moment a seed stops being a store and starts being a plant. It cannot be undone.",
+            source: "Botany",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "Imbibition: the first act of a germinating seed, which is simply to drink. Nothing grows until water has got in.",
+            source: "Botany",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "Radicle: the first root, and the first part to leave the seed. Something goes down before anything goes up.",
+            source: "Botany",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "Cotyledon: the seed leaf, packed away before there was any light to need, and often nothing like the leaves that follow it.",
+            source: "Botany",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "Meristem: the small region where a plant's cells are still dividing. Everything it will ever be comes out of a few of these.",
+            source: "Botany",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "Origin is Latin oriri, to rise. The same word gives orient, named for the direction the sun comes up from.",
+            source: "Latin",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "Seminal, seminar and disseminate all descend from Latin semen, a seed. A seminar was a seed bed.",
+            source: "Latin",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "Inaugurate comes from the augur, who read the flight of birds. Nothing began until the omens had been taken.",
+            source: "Latin",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "Nature is Latin natura, from nasci, to be born. The word for everything is built on the word for beginning.",
+            source: "Latin",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "Prime and primrose share Latin primus, first. A primrose is named for when it arrives rather than for what it is.",
+            source: "Latin",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "An acorn buried by a jay is likelier to become an oak than one that simply falls, because the jay carries it away from the parent tree and then forgets a good number of them.",
+            source: "Garrulus glandarius",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "The heaviest seed is the coco de mer, at up to twenty-five kilograms. The lightest are orchid seeds, of which a million weigh about a gram.",
+            source: "Extremes of seed size",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "Wheat found in Egyptian tombs has never once grown. The stories are old, the tests are many, and every one of them has failed.",
+            source: "Mummy wheat",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "A bamboo shoot can put on the better part of a metre in a day, using cells laid down before it ever broke the ground.",
+            source: "Phyllostachys",
+            theme: .beginnings
+        ),
+        Passage(
+            text: "A seedling settles which way is up and which way is down before it has met the surface, one part following the light and the other following gravity.",
+            source: "Tropisms",
+            theme: .beginnings
+        ),
+        Passage(
             text: "The tree which fills the arms grew from the tiniest sprout.",
             source: "Laozi, tr. James Legge",
             theme: .beginnings
@@ -158,6 +258,101 @@ enum Quotes {
 
         // MARK: Waiting
 
+        Passage(
+            text: "They also serve who only stand and wait.",
+            source: "John Milton, 1673",
+            theme: .waiting
+        ),
+        Passage(
+            text: "The two most powerful warriors are patience and time.",
+            source: "Leo Tolstoy, War and Peace, 1869",
+            theme: .waiting
+        ),
+        Passage(
+            text: "How poor are they that have not patience.",
+            source: "William Shakespeare, Othello",
+            theme: .waiting
+        ),
+        Passage(
+            text: "Everything comes to him who waits.",
+            source: "English proverb",
+            theme: .waiting
+        ),
+        Passage(
+            text: "However long the night, the dawn will break.",
+            source: "African proverb",
+            theme: .waiting
+        ),
+        Passage(
+            text: "Dormancy: a seed refusing to grow although the conditions are right, held back from the inside until something changes.",
+            source: "Botany",
+            theme: .waiting
+        ),
+        Passage(
+            text: "Quiescence: a seed entirely ready to grow and simply waiting on the world. Not the same thing as dormancy, and often mistaken for it.",
+            source: "Botany",
+            theme: .waiting
+        ),
+        Passage(
+            text: "Stratification: the weeks of cold a seed must pass through before it will start, which gardeners counterfeit with a fridge.",
+            source: "Botany",
+            theme: .waiting
+        ),
+        Passage(
+            text: "Scarification: wearing through a seed coat so that water can get in, done in the wild by a gut, a fire, or a winter of grit.",
+            source: "Botany",
+            theme: .waiting
+        ),
+        Passage(
+            text: "Marcescence: dead leaves a tree holds onto all winter and lets go only when the new buds push them off.",
+            source: "Botany",
+            theme: .waiting
+        ),
+        Passage(
+            text: "Patient is Latin patiens, bearing. A patient in a hospital and patience in a queue are the same word doing the same work.",
+            source: "Latin",
+            theme: .waiting
+        ),
+        Passage(
+            text: "Abide and abode are one word. Where you waited became where you lived.",
+            source: "Old English",
+            theme: .waiting
+        ),
+        Passage(
+            text: "Wait reaches English from a Germanic root meaning to watch. It was a kind of looking before it was a kind of staying.",
+            source: "Old French",
+            theme: .waiting
+        ),
+        Passage(
+            text: "Harvest is the old English name for the season itself, haerfest. Autumn was named for the work, and the word for the work outlived it.",
+            source: "Old English",
+            theme: .waiting
+        ),
+        Passage(
+            text: "Expect is Latin exspectare, to look out for. To expect a thing is to be watching the road.",
+            source: "Latin",
+            theme: .waiting
+        ),
+        Passage(
+            text: "A titan arum may store for seven years or more before it flowers, and the flower is over in about two days.",
+            source: "Amorphophallus titanum",
+            theme: .waiting
+        ),
+        Passage(
+            text: "The century plant is misnamed but not by much: it grows for decades, flowers once on a stalk taller than a house, and dies.",
+            source: "Agave americana",
+            theme: .waiting
+        ),
+        Passage(
+            text: "Periodical cicadas spend thirteen or seventeen years underground and come up all together. Both numbers are prime, which makes them very hard to keep time with.",
+            source: "Magicicada",
+            theme: .waiting
+        ),
+        Passage(
+            text: "Some desert seeds carry a chemical on the coat that has to be washed off by a certain depth of rain, so that a light shower cannot trick them into starting.",
+            source: "Germination inhibitors",
+            theme: .waiting
+        ),
         Passage(
             text: "Let it first blossom, then bear fruit, then ripen.",
             source: "Epictetus, tr. George Long",
@@ -370,6 +565,111 @@ enum Quotes {
         // MARK: Light
 
         Passage(
+            text: "Let there be light.",
+            source: "Genesis, King James Bible, 1611",
+            theme: .light
+        ),
+        Passage(
+            text: "The sun is but a morning star.",
+            source: "Henry David Thoreau, Walden, 1854",
+            theme: .light
+        ),
+        Passage(
+            text: "Trailing clouds of glory do we come.",
+            source: "William Wordsworth, 1807",
+            theme: .light
+        ),
+        Passage(
+            text: "The darkest hour is just before the dawn.",
+            source: "English proverb",
+            theme: .light
+        ),
+        Passage(
+            text: "More light.",
+            source: "Reported as Goethe's last words, 1832",
+            theme: .light
+        ),
+        Passage(
+            text: "Crepuscular: at home in the light of dusk and dawn, which belongs to neither day nor night.",
+            source: "Latin",
+            theme: .light
+        ),
+        Passage(
+            text: "Gloaming: the last of the light, when things can still be seen but their colours cannot.",
+            source: "Scots",
+            theme: .light
+        ),
+        Passage(
+            text: "Alpenglow: the red left on a mountain after the sun has gone from everything below it.",
+            source: "German",
+            theme: .light
+        ),
+        Passage(
+            text: "Photoperiodism: a plant deciding when to flower by measuring the length of the night. It counts the dark rather than the light.",
+            source: "Botany",
+            theme: .light
+        ),
+        Passage(
+            text: "Etiolation: the pale, stretched growth of a plant kept in the dark, reaching for a light that is not there.",
+            source: "Botany",
+            theme: .light
+        ),
+        Passage(
+            text: "Penumbra: the ring around a shadow where the light is only partly blocked, which is why an edge is soft.",
+            source: "Latin",
+            theme: .light
+        ),
+        Passage(
+            text: "Window is Old Norse vindauga, wind eye. It was a hole for the weather before it was a hole for the light.",
+            source: "Old Norse",
+            theme: .light
+        ),
+        Passage(
+            text: "Lucid, elucidate and Lucifer share Latin lux. To make a thing clear is to bring light to it.",
+            source: "Latin",
+            theme: .light
+        ),
+        Passage(
+            text: "Solstice is Latin sol and sistere, the sun standing still: for a few days at midsummer it rises in nearly the same place.",
+            source: "Latin",
+            theme: .light
+        ),
+        Passage(
+            text: "Phosphorus is Greek for light-bearer. It named the morning star long before it named the element that glows in the dark.",
+            source: "Greek",
+            theme: .light
+        ),
+        Passage(
+            text: "Twilight is usually read as two-light, the Old English prefix meaning two: the light belonging to neither side of the day.",
+            source: "Old English",
+            theme: .light
+        ),
+        Passage(
+            text: "Leaves are green because chlorophyll uses the red and blue of daylight and reflects the green it cannot use. A plant is the colour of the light it has no use for.",
+            source: "Chlorophyll",
+            theme: .light
+        ),
+        Passage(
+            text: "Some flowers carry ultraviolet markings that run to the middle like a landing strip. A bee can see them and we cannot.",
+            source: "Nectar guides",
+            theme: .light
+        ),
+        Passage(
+            text: "A full moon is roughly four hundred thousand times fainter than the sun, and the eye adjusts so completely that it does not feel like it.",
+            source: "Lunar illumination",
+            theme: .light
+        ),
+        Passage(
+            text: "Only a few per cent of the light falling on a wood reaches its floor, which is why so much woodland flowering is finished before the trees come into leaf.",
+            source: "Woodland canopy",
+            theme: .light
+        ),
+        Passage(
+            text: "Light crosses from the sun to a leaf in about eight minutes, having spent tens of thousands of years getting from the sun's core to its surface.",
+            source: "Solar physics",
+            theme: .light
+        ),
+        Passage(
             text: "I saw Eternity the other night, like a great ring of pure and endless light.",
             source: "Henry Vaughan (1621–1695)",
             theme: .light
@@ -418,6 +718,121 @@ enum Quotes {
         // MARK: Pattern
 
         Passage(
+            text: "The universe is written in the language of mathematics, and its characters are triangles, circles and other figures.",
+            source: "Galileo, Il Saggiatore, 1623",
+            theme: .pattern
+        ),
+        Passage(
+            text: "The form of an object is a diagram of forces.",
+            source: "D'Arcy Thompson, On Growth and Form, 1917",
+            theme: .pattern
+        ),
+        Passage(
+            text: "What immortal hand or eye could frame thy fearful symmetry?",
+            source: "William Blake, 1794",
+            theme: .pattern
+        ),
+        Passage(
+            text: "The universe is represented in every one of its particles.",
+            source: "Ralph Waldo Emerson, Compensation, 1841",
+            theme: .pattern
+        ),
+        Passage(
+            text: "God ever geometrises.",
+            source: "Attributed to Plato by Plutarch",
+            theme: .pattern
+        ),
+        Passage(
+            text: "As above, so below.",
+            source: "Hermetic maxim",
+            theme: .pattern
+        ),
+        Passage(
+            text: "Quincunx: five set as on a die, four at the corners and one in the middle. Orchards are still planted this way because it fits the most trees into the ground.",
+            source: "Latin",
+            theme: .pattern
+        ),
+        Passage(
+            text: "Tessellation: shapes meeting edge to edge with nothing left over, which is what a honeycomb is.",
+            source: "Geometry",
+            theme: .pattern
+        ),
+        Passage(
+            text: "Fractal: a shape that keeps its character at every scale, so that a piece of a fern frond looks like the fern.",
+            source: "Geometry",
+            theme: .pattern
+        ),
+        Passage(
+            text: "Decussate: leaves in pairs, each pair turned a right angle from the pair below, so that no leaf sits directly over another.",
+            source: "Botany",
+            theme: .pattern
+        ),
+        Passage(
+            text: "Radial and bilateral: a daisy faces every direction at once, an orchid faces you. Almost every flower is one or the other.",
+            source: "Floral symmetry",
+            theme: .pattern
+        ),
+        Passage(
+            text: "Umbel: a flower head where every stalk springs from one point and rises to the same height, as cow parsley does.",
+            source: "Botany",
+            theme: .pattern
+        ),
+        Passage(
+            text: "Pattern and patron are one word, from Latin patronus. A pattern was the model a thing was made to, as a patron was the model to follow.",
+            source: "Latin",
+            theme: .pattern
+        ),
+        Passage(
+            text: "Symmetry is Greek for measured together: syn, with, and metron, a measure.",
+            source: "Greek",
+            theme: .pattern
+        ),
+        Passage(
+            text: "Rhythm comes from Greek rhein, to flow. A rhythm is a flowing, measured out.",
+            source: "Greek",
+            theme: .pattern
+        ),
+        Passage(
+            text: "Cosmos is Greek kosmos, order and ornament in one word. The same root gives cosmetic: to call the universe a cosmos was to call it well arranged.",
+            source: "Greek",
+            theme: .pattern
+        ),
+        Passage(
+            text: "Calculate is Latin calculus, a pebble. Counting was done with stones long before it was done with signs.",
+            source: "Latin",
+            theme: .pattern
+        ),
+        Passage(
+            text: "Order is Latin ordo, thought to begin with the row of threads on a loom. The word for arrangement started at the weaver's frame.",
+            source: "Latin",
+            theme: .pattern
+        ),
+        Passage(
+            text: "Every bird in a murmuration watches only its six or seven nearest neighbours, whatever the distance between them. Nothing more is needed to make the shape of the flock.",
+            source: "Flocking, 2008",
+            theme: .pattern
+        ),
+        Passage(
+            text: "Honeybee cells begin round and settle into hexagons as the wax warms. A hexagon holds the most floor for the least wall.",
+            source: "Apis mellifera",
+            theme: .pattern
+        ),
+        Passage(
+            text: "A snowflake's six arms match because they grew in the same air at the same instant, not because any arm can see another.",
+            source: "Crystal growth",
+            theme: .pattern
+        ),
+        Passage(
+            text: "Zebra stripes, leopard spots and the markings on a fish can all come from two chemicals spreading and reacting at different rates, a mechanism Alan Turing set out in 1952.",
+            source: "Turing patterns",
+            theme: .pattern
+        ),
+        Passage(
+            text: "Pine cones, pineapples and daisy heads count their spirals in Fibonacci numbers because each new part is set in the largest gap the ones before it left.",
+            source: "Phyllotaxis",
+            theme: .pattern
+        ),
+        Passage(
             text: "It is interesting to contemplate an entangled bank, clothed with many plants of many kinds.",
             source: "Charles Darwin, 1859",
             theme: .pattern
@@ -455,6 +870,91 @@ enum Quotes {
 
         // MARK: Ground
 
+        Passage(
+            text: "There is nothing like staying at home for real comfort.",
+            source: "Jane Austen, Emma, 1815",
+            theme: .ground
+        ),
+        Passage(
+            text: "We must cultivate our garden.",
+            source: "Voltaire, Candide, 1759, rendered plainly",
+            theme: .ground
+        ),
+        Passage(
+            text: "God made the country, and man made the town.",
+            source: "William Cowper, 1785",
+            theme: .ground
+        ),
+        Passage(
+            text: "How fortunate the farmers are, if only they knew it.",
+            source: "Virgil, Georgics, rendered plainly",
+            theme: .ground
+        ),
+        Passage(
+            text: "East, west, home's best.",
+            source: "English proverb",
+            theme: .ground
+        ),
+        Passage(
+            text: "Terroir: everything about a place that gets into what grows there, and none of which can be moved along with the plant.",
+            source: "French",
+            theme: .ground
+        ),
+        Passage(
+            text: "Rhizosphere: the few millimetres of soil around a root, unlike any other soil on earth because the root has been at work on it.",
+            source: "Botany",
+            theme: .ground
+        ),
+        Passage(
+            text: "Topophilia: love of one particular place, which is a different feeling from a love of places.",
+            source: "Greek",
+            theme: .ground
+        ),
+        Passage(
+            text: "Heimat: the place you are from, carrying rather more than the English word home can hold.",
+            source: "German",
+            theme: .ground
+        ),
+        Passage(
+            text: "An acre was the ground a yoke of oxen could plough in a day, which is why it is such an odd number of square yards.",
+            source: "Old English",
+            theme: .ground
+        ),
+        Passage(
+            text: "Country is Latin contra, opposite: the land lying over against you when you stand and look out.",
+            source: "Latin",
+            theme: .ground
+        ),
+        Passage(
+            text: "Territory is Latin terra, earth, though Roman writers liked to tie it to terrere, to frighten. Land held by keeping others off it.",
+            source: "Latin",
+            theme: .ground
+        ),
+        Passage(
+            text: "Meadow and mow come from one root. A meadow is a place that gets cut.",
+            source: "Old English",
+            theme: .ground
+        ),
+        Passage(
+            text: "A teaspoon of healthy soil holds more living organisms than there are people on earth.",
+            source: "Soil biology",
+            theme: .ground
+        ),
+        Passage(
+            text: "It can take several hundred years to build a centimetre of topsoil, and one storm on bare ground to take it away.",
+            source: "Soil formation",
+            theme: .ground
+        ),
+        Passage(
+            text: "Chalk downland can carry forty species of plant in a single square metre, precisely because the soil is too poor for any one of them to take over.",
+            source: "Chalk grassland",
+            theme: .ground
+        ),
+        Passage(
+            text: "Earthworms pass the whole topsoil of a field through their bodies every few years. Darwin spent forty years working this out and made it his last book.",
+            source: "Darwin on worms, 1881",
+            theme: .ground
+        ),
         Passage(
             text: "If you have a garden in your library, nothing will be wanting.",
             source: "Cicero, letter to Varro, 46 BC",
@@ -524,6 +1024,111 @@ enum Quotes {
         // MARK: Travel
 
         Passage(
+            text: "The journey of a thousand li commenced with a single step.",
+            source: "Laozi, tr. James Legge",
+            theme: .travel
+        ),
+        Passage(
+            text: "He travels the fastest who travels alone.",
+            source: "Rudyard Kipling, 1890",
+            theme: .travel
+        ),
+        Passage(
+            text: "Afoot and light-hearted I take to the open road.",
+            source: "Walt Whitman, 1856",
+            theme: .travel
+        ),
+        Passage(
+            text: "There is no frigate like a book to take us lands away.",
+            source: "Emily Dickinson (1830-1886)",
+            theme: .travel
+        ),
+        Passage(
+            text: "All roads lead to Rome.",
+            source: "Medieval proverb",
+            theme: .travel
+        ),
+        Passage(
+            text: "Myrmecochory: travel by ant. The seed carries an oil body the ants want, so they take the whole thing home, eat that part and leave the rest on the refuse heap.",
+            source: "Botany",
+            theme: .travel
+        ),
+        Passage(
+            text: "Ballochory: seeds thrown by the plant itself, which spends the dry weeks building tension and then lets go.",
+            source: "Botany",
+            theme: .travel
+        ),
+        Passage(
+            text: "Zoochory: travel by animal, where a seed makes its whole journey inside or attached to something that walks.",
+            source: "Botany",
+            theme: .travel
+        ),
+        Passage(
+            text: "Fernweh: an ache for far-off places, and the exact opposite number to homesickness.",
+            source: "German",
+            theme: .travel
+        ),
+        Passage(
+            text: "Vagary: a wandering. It meant a stray journey long before it meant a stray notion.",
+            source: "Latin",
+            theme: .travel
+        ),
+        Passage(
+            text: "Tramontane: from beyond the mountains. Said of a wind, and of a stranger.",
+            source: "Italian",
+            theme: .travel
+        ),
+        Passage(
+            text: "Travel and travail are one word, descended from the name of an instrument of torture. To travel was to suffer, and the road saw to the rest.",
+            source: "Old French",
+            theme: .travel
+        ),
+        Passage(
+            text: "Arrive is Latin ad ripam, to the shore. Every arrival was a landing before it was anything else.",
+            source: "Latin",
+            theme: .travel
+        ),
+        Passage(
+            text: "A journey is a day: Old French journee, the ground a person could cover between one dawn and the next.",
+            source: "Old French",
+            theme: .travel
+        ),
+        Passage(
+            text: "Pilgrim is Latin peregrinus, one from beyond the fields, which is to say a foreigner. The holy part came later.",
+            source: "Latin",
+            theme: .travel
+        ),
+        Passage(
+            text: "Nomad is Greek nomas, one who moves for pasture, from nemein, to graze. The word is about grass before it is about restlessness.",
+            source: "Greek",
+            theme: .travel
+        ),
+        Passage(
+            text: "A sandbox tree pod dries until it bursts with a crack, throwing its seeds at something like two hundred and fifty kilometres an hour.",
+            source: "Hura crepitans",
+            theme: .travel
+        ),
+        Passage(
+            text: "Mistletoe arrives glued to a branch because a bird cannot easily let the seed go, and wipes its beak clean on the bark.",
+            source: "Viscum album",
+            theme: .travel
+        ),
+        Passage(
+            text: "Sea beans from the Caribbean wash up on Scottish beaches, carried by the Gulf Stream, and were once kept as charms by people who had no idea where they came from.",
+            source: "Entada gigas",
+            theme: .travel
+        ),
+        Passage(
+            text: "Krakatoa was sterilised in 1883. Seeds arrived by sea and by bird, and a forest stood there again within fifty years.",
+            source: "Krakatoa, after 1883",
+            theme: .travel
+        ),
+        Passage(
+            text: "Swallows were once believed to spend the winter in the mud at the bottom of ponds, because nobody could credit that they went as far as they do.",
+            source: "Pre-Victorian natural history",
+            theme: .travel
+        ),
+        Passage(
             text: "Good company in a journey makes the way to seem the shorter.",
             source: "Izaak Walton, after an Italian saying, 1653",
             theme: .travel
@@ -571,6 +1176,101 @@ enum Quotes {
 
         // MARK: Meeting
 
+        Passage(
+            text: "Journeys end in lovers meeting.",
+            source: "William Shakespeare, Twelfth Night",
+            theme: .meeting
+        ),
+        Passage(
+            text: "Ships that pass in the night, and speak each other in passing.",
+            source: "Henry Wadsworth Longfellow, 1863",
+            theme: .meeting
+        ),
+        Passage(
+            text: "Chance favours only the prepared mind.",
+            source: "Louis Pasteur, 1854, rendered plainly",
+            theme: .meeting
+        ),
+        Passage(
+            text: "No one ever steps into the same river twice.",
+            source: "Attributed to Heraclitus",
+            theme: .meeting
+        ),
+        Passage(
+            text: "Anagnorisis: the turn in a story where one person recognises who another has been all along.",
+            source: "Greek",
+            theme: .meeting
+        ),
+        Passage(
+            text: "Xenia: the old Greek obligation between a host and a stranger, binding on both of them, and enforced by Zeus.",
+            source: "Greek",
+            theme: .meeting
+        ),
+        Passage(
+            text: "Rendezvous: a French imperative meaning present yourselves. The word was an instruction before it was a place.",
+            source: "French",
+            theme: .meeting
+        ),
+        Passage(
+            text: "Liminal: on the threshold. From Latin limen, the stone laid under a door.",
+            source: "Latin",
+            theme: .meeting
+        ),
+        Passage(
+            text: "Protandry: a flower shedding its pollen before its own stigma is ready, so that it cannot meet itself.",
+            source: "Botany",
+            theme: .meeting
+        ),
+        Passage(
+            text: "Flower constancy: a bee that has found one kind of bloom keeps returning to that kind, which is the whole reason it is any use to the flower.",
+            source: "Pollination",
+            theme: .meeting
+        ),
+        Passage(
+            text: "Introduce is Latin introducere, to lead inside. An introduction is a door being held open.",
+            source: "Latin",
+            theme: .meeting
+        ),
+        Passage(
+            text: "Coincide is Latin co and incidere, to fall together. It is the same falling as in chance.",
+            source: "Latin",
+            theme: .meeting
+        ),
+        Passage(
+            text: "Acquaint comes through Old French from Latin accognoscere, to come to know. The word describes a beginning rather than a state.",
+            source: "Latin",
+            theme: .meeting
+        ),
+        Passage(
+            text: "Random is Old French randon, a headlong rush. It meant speed for centuries before it meant chance.",
+            source: "Old French",
+            theme: .meeting
+        ),
+        Passage(
+            text: "Threshold is Old English therscwold, from threshing: the board at the door that kept the beaten grain inside.",
+            source: "Old English",
+            theme: .meeting
+        ),
+        Passage(
+            text: "Nearly every fig has its own species of wasp, and neither can reproduce without the other. The wasp enters through a hole so tight that it loses its wings getting in.",
+            source: "Ficus and Agaonidae",
+            theme: .meeting
+        ),
+        Passage(
+            text: "Vanilla is pollinated by hand nearly everywhere it is grown, because the bee that does the job lives only in Mexico.",
+            source: "Vanilla planifolia",
+            theme: .meeting
+        ),
+        Passage(
+            text: "Some orchids look and smell enough like a female wasp that the males try to mate with them, and carry the pollen away without ever meeting a wasp.",
+            source: "Ophrys",
+            theme: .meeting
+        ),
+        Passage(
+            text: "A yucca moth packs pollen into the flower deliberately and lays its eggs in the ovary. A plant given too many eggs drops the whole flower, which keeps the bargain honest.",
+            source: "Yucca and Tegeticula",
+            theme: .meeting
+        ),
         Passage(
             text: "Interfulgence: a shining between things rather than upon them. Johnson listed the word in 1755, and the Oxford English Dictionary has found three uses of it in all.",
             source: "English, rare",
@@ -629,6 +1329,81 @@ enum Quotes {
 
         // MARK: Kinship
 
+        Passage(
+            text: "No man is an island, entire of itself.",
+            source: "John Donne, 1624",
+            theme: .kinship
+        ),
+        Passage(
+            text: "Two are better than one; because they have a good reward for their labour.",
+            source: "Ecclesiastes, King James Bible, 1611",
+            theme: .kinship
+        ),
+        Passage(
+            text: "The children of Adam are limbs of one body.",
+            source: "Sa'di, Gulistan, 1258",
+            theme: .kinship
+        ),
+        Passage(
+            text: "Friendship makes prosperity brighter, and lightens adversity by dividing it.",
+            source: "Cicero, On Friendship, rendered plainly",
+            theme: .kinship
+        ),
+        Passage(
+            text: "A friend in need is a friend indeed.",
+            source: "English proverb",
+            theme: .kinship
+        ),
+        Passage(
+            text: "Anastomosis: two separate channels joining into one. Said of rivers, of blood vessels, and of the veins in a leaf.",
+            source: "Greek",
+            theme: .kinship
+        ),
+        Passage(
+            text: "Mutualism: both partners better off, and neither able to leave without paying for it.",
+            source: "Ecology",
+            theme: .kinship
+        ),
+        Passage(
+            text: "Commensalism: one partner gains and the other is untroubled either way. A quieter arrangement than symbiosis, and far more common.",
+            source: "Ecology",
+            theme: .kinship
+        ),
+        Passage(
+            text: "Holobiont: an organism counted together with everything living in and on it, on the grounds that none of them manage alone.",
+            source: "Biology",
+            theme: .kinship
+        ),
+        Passage(
+            text: "Sibling is Old English sibb, a word meaning peace and kinship at once. To be at peace with someone and to be related to them were the same thing.",
+            source: "Old English",
+            theme: .kinship
+        ),
+        Passage(
+            text: "Gossip is God-sib, a godparent. The word for a spiritual relative became the word for what relatives do.",
+            source: "Old English",
+            theme: .kinship
+        ),
+        Passage(
+            text: "Cousin is Latin consobrinus, the child of your mother's sister. English kept widening it until it meant very nearly any relative at all.",
+            source: "Latin",
+            theme: .kinship
+        ),
+        Passage(
+            text: "A stand of aspen can be one organism sharing a single root system. The largest known covers more than forty hectares and is counted as one tree.",
+            source: "Populus tremuloides",
+            theme: .kinship
+        ),
+        Passage(
+            text: "A lichen is a fungus farming an alga, and the partnership is so complete that it was described as a single species for a century before anyone noticed it was two.",
+            source: "Lichenology",
+            theme: .kinship
+        ),
+        Passage(
+            text: "A graft joins two plants so completely that they share sap for life, while each keeps its own genes. One trunk can carry five varieties of apple.",
+            source: "Grafting",
+            theme: .kinship
+        ),
         Passage(
             text: "Men exist for the sake of one another.",
             source: "Marcus Aurelius, tr. George Long",
