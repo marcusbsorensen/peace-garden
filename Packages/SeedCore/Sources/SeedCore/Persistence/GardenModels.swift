@@ -17,18 +17,47 @@ public struct Identity: Codable, Equatable, Sendable {
     public var genome: Genome { Genome(seed: seed, lineage: .minted) }
 }
 
+/// Where on earth a meeting happened, when both people asked for it to be kept.
+///
+/// Plain numbers rather than `CLLocationCoordinate2D`, because `SeedCore` builds
+/// on Linux and is tested there. Rounded to five decimal places, which is about
+/// a metre: enough to find the spot again, and short of pretending to a
+/// precision that a phone in a street does not have.
+///
+/// No place name is stored and none is looked up. Naming a spot means a request
+/// to somebody's geocoder, and the app makes no network request at all; a
+/// coordinate is also the honest record of what was actually measured. It is
+/// shown as numbers, and opens in a map only if the person taps it.
+public struct Coordinate: Codable, Equatable, Sendable {
+    public var latitude: Double
+    public var longitude: Double
+
+    public init(latitude: Double, longitude: Double) {
+        self.latitude = (latitude * 100_000).rounded() / 100_000
+        self.longitude = (longitude * 100_000).rounded() / 100_000
+    }
+}
+
 /// What a person chose to remember about the meeting that made a plant.
 ///
-/// Everything except the other person's display name is optional and entered
-/// by hand: no location permission, no automatic capture. A meeting is theirs
-/// to describe or leave blank.
+/// Everything here is optional except the other person's name, and all of it is
+/// theirs to change afterwards. A meeting can be described, left blank, or told
+/// differently later, in the way a parent tells a child more of the story as
+/// they grow.
+///
+/// The place is typed by hand or taken from the figurative set. A coordinate
+/// appears only where both people asked for one at that meeting, which is a
+/// deliberate reversal of the rule this type used to state. See docs/PLACE.md.
 public struct EncounterNote: Codable, Equatable, Sendable {
     public var peerDisplayName: String
     public var happenedAt: Date
     /// Whether to show the date and time alongside the plant.
     public var showsDateTime: Bool
-    /// A place, if they typed one. Never derived from the device's location.
+    /// What they called the place. Typed by hand, or the figurative one the app
+    /// offered. Independent of `coordinate`, and of what the other person wrote.
     public var place: String?
+    /// Where the meeting was, if both people asked for it to be kept.
+    public var coordinate: Coordinate?
     /// A short line about the encounter.
     public var note: String?
 
@@ -39,12 +68,14 @@ public struct EncounterNote: Codable, Equatable, Sendable {
         happenedAt: Date,
         showsDateTime: Bool = true,
         place: String? = nil,
+        coordinate: Coordinate? = nil,
         note: String? = nil
     ) {
         self.peerDisplayName = peerDisplayName
         self.happenedAt = happenedAt
         self.showsDateTime = showsDateTime
         self.place = place
+        self.coordinate = coordinate
         self.note = note.map { String($0.prefix(Self.noteCharacterLimit)) }
     }
 }
