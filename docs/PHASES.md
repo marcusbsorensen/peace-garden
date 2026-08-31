@@ -71,11 +71,62 @@ in their plot. If one of them deletes it, the other's copy stays — but the
 encounter note is each person's own, written on their own phone, and is not
 shared unless they show it.
 
+**A shared page names whoever agreed to be named.** Settled, because it is the
+question everything else about sharing hangs from.
+
+A plant belongs to two people, so one of them publishing it is one of them
+speaking. The page therefore carries **the gardener who shared it, and nobody
+else** — no second name, no placeholder, no "and one other". Until the other
+person says yes, the page must not indicate that a second person exists at all:
+a greyed-out slot is a disclosure, and the whole point is that it is theirs to
+make.
+
+**The invitation.** When A shares, B is told: the plant you made with A is in
+the peace garden, and would you like your name on it too. Accepting adds B to
+the page. Declining, or ignoring it, leaves the page exactly as it was.
+
+This is the best growth mechanism the app has, and it is worth seeing why: it
+travels along a relationship that already exists rather than asking anybody to
+invite strangers. B is not being recruited — B is being told about a thing that
+is already half theirs.
+
+What it costs, and none of it is optional:
+
+- **A delivery channel.** Phase 1 has no server, no account and no push. The
+  cheap version is the right one to start with: B finds out **next time they
+  open the app**, by asking the plot service whether anything of theirs has been
+  shared. No push permission, no device token, no notification infrastructure,
+  and it suits an app nobody needs to be interrupted by. Push is an upgrade,
+  not a prerequisite.
+- **A way to say no, standing.** A switch in Settings — already built, see
+  `SettingsView`, though it has nothing to act on yet. On by default: B and A
+  have met in person and made a plant together, which is a stronger tie than
+  anything an app usually leans on. Anybody who would rather not hear about it
+  turns it off once.
+- **A rate limit, and a block.** Left unguarded, re-sharing is a channel A can
+  use to reach B over and over. One invitation per plant, and B can block A.
+- **Withdrawal, either way and independently.** A can un-share, which takes B's
+  name with it. B can remove their name at any time without A being involved
+  and without asking. Neither needs the other's agreement to stop.
+
+**Whose note shows on a shared page** is the one part of this still open. The
+encounter note is each person's own by an earlier decision, so a page with two
+names may carry two accounts of the same meeting. Showing both, attributed, is
+probably right and is certainly the most honest; showing only the sharer's is
+simpler. Worth deciding before the page is built rather than after.
+
 **Identity.** Phase 1 has no accounts on purpose. A shared garden needs
 *something* — enough to prove a plot is yours across a reinstall, and no more
 than that. Sign in with Apple, or a device-held key that signs plot updates,
 would both work. The seed must not become the login: it is handed to strangers
 by design.
+
+The invitation above needs a little more than a plot needs: A's device has to be
+able to name B as somebody the service can reach, without A learning anything
+about B they did not already have. The obvious shape is that the two phones
+exchange an opaque contact token at the meeting, alongside the seed — one more
+field in `ExchangePayload`, decided once, and impossible to add retrospectively
+to meetings that have already happened.
 
 **What must not change.** The derivation. Every plant already growing on
 someone's phone has to keep growing the same way. Phase 2 adds a transport for

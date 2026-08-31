@@ -20,6 +20,7 @@ struct SettingsView: View {
     @State private var editingName = false
     @State private var confirming: Reset?
     @AppStorage(Places.preferredKey) private var preferredPlace = ""
+    @AppStorage(Sharing.invitationsKey) private var wantsInvitations = Sharing.invitationsDefault
 
     /// The two irreversible ones, and the one that only forgets plants.
     private enum Reset: String, Identifiable {
@@ -45,6 +46,8 @@ struct SettingsView: View {
                     places
                     Hairline()
                     whereYouMeet
+                    Hairline()
+                    beingTold
                     Hairline()
                     startingAgain
                 }
@@ -181,6 +184,38 @@ struct SettingsView: View {
             get: { place.isEnabled },
             set: { $0 ? place.enable() : place.disable() }
         )
+    }
+
+    // MARK: - Being told about a share
+
+    /// The one thing the shared garden will ever ask of somebody who is not
+    /// using it.
+    ///
+    /// A plant belongs to two people, so one of them putting it in the peace
+    /// garden is one of them speaking, and the page carries that person's name
+    /// alone. This is the offer to be named alongside them — and the offer is
+    /// all it is, because until somebody accepts, the page says nothing about
+    /// them at all.
+    ///
+    /// The switch does nothing today: phase 1 makes no network request, so
+    /// there is nothing that could tell this phone a plant was shared. It is
+    /// here because it is a decision about what somebody agrees to be told, and
+    /// that belongs beside their other decisions rather than arriving with the
+    /// feature. See docs/PHASES.md.
+    private var beingTold: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Toggle(isOn: $wantsInvitations) {
+                Text("Tell me when a plant we made is shared")
+                    .font(.system(size: 15, weight: .light))
+                    .foregroundStyle(Chrome.ink)
+            }
+            .tint(Chrome.muted)
+
+            Text("When somebody puts a plant the two of you grew into the peace garden, it carries their name. You will be asked whether you would like yours on it as well, and the page waits for your answer before it says anything about you. Turning this off leaves their share exactly as it is.")
+                .font(.system(size: 13, weight: .light))
+                .foregroundStyle(Chrome.muted)
+                .lineSpacing(4)
+        }
     }
 
     // MARK: - Starting again
