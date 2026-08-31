@@ -33,7 +33,7 @@ Real coordinates, when both people want them.
   meeting. Any other combination falls back to the figurative place, with the
   free-text field as it is now.
 
-## Location is told, not inherited
+## Told, not inherited
 
 The governing idea, and the thing that keeps this small: a seed cannot be
 stamped. A seed is thirty-two bytes derived from two parents and two nonces, and
@@ -43,6 +43,31 @@ provenance is not part of what a plant inherits.
 It is part of what its parents chose to say about it. That puts it exactly where
 the note, the date and the typed place already live, in `EncounterNote`, which
 is local, optional, and never transmitted. Nothing in `SeedCore` changes.
+
+### The name is the precedent
+
+This is not a new category, only a second member of one. A display name is
+already told rather than inherited: a father may give a different name to each
+mother of his offspring, and his name is nowhere in his DNA. The app has always
+behaved that way without saying so. `peerDisplayName` is stored on the note, not
+the plant, so two meetings may hold two different names for the same person, and
+every use of it is display: the caption in Garden, "with X" in the detail, "Met
+X" on the note. Nothing matches, dedupes or identifies on a name.
+
+Two things follow, and both are worth keeping.
+
+**A name is a claim.** It is the only field in the exchange that is asserted
+rather than derived, and therefore the only one that cannot be checked. Treating
+it as decoration is correct, and anything later tempted to treat it as identity
+should use the parent seeds instead.
+
+**A theme survives a rename.** The passage theme hangs off `pairID`, which comes
+from the two parent seeds, so someone who introduces themselves differently next
+time still shares the same theme with you. Those five mothers would each hold a
+different name for one man, and every plant of theirs would draw from one theme.
+That was not designed in; it falls out of putting the theme on the inherited side
+and the name on the told side, which is the best evidence available that the line
+is drawn in the right place.
 
 ## What it reverses
 
