@@ -10,7 +10,7 @@ two people who meet can cross their seeds by touching phones, and grow a plant
 neither could have grown alone. Phase 1 is local plus the exchange. The shared
 peace garden is phase 2 and is not started — see [PHASES.md](PHASES.md).
 
-Seven commits on `main`. Read [ARCHITECTURE.md](ARCHITECTURE.md) first; it is
+Ten commits on `main`. Read [ARCHITECTURE.md](ARCHITECTURE.md) first; it is
 short and it explains the one idea everything else follows from.
 
 ## What has actually been verified, and how
@@ -20,17 +20,69 @@ could not run it.
 
 | | |
 | --- | --- |
-| **SeedCore** | Compiles and passes its 52 tests on **both** platforms: macOS/arm64 against CryptoKit and Apple's `simd`, and Linux against swift-crypto and the compatibility layer. The two agree, which is what proves the compatibility layer is equivalent rather than merely plausible. |
+| **SeedCore** | Compiles and passes its 53 tests on **both** platforms, at Swift 6 language mode: macOS/arm64 against CryptoKit and Apple's `simd`, and Linux against swift-crypto and the compatibility layer. The two agree, which is what proves the compatibility layer is equivalent rather than merely plausible. |
 | **The derivation** | Independently implemented in Python (`tools/reference/`) and executed. Its outputs are pinned into `DerivationVectorTests`. Both implementations agree. |
 | **The geometry** | Ported to Python (`tools/preview/`) and run over 120 genomes at seven ages, then *rendered and looked at*. That caught six real defects that no test would have. |
 | **Camera framing** | Checked across six viewport shapes, iPhone portrait to a 320pt Split View column. |
-| **Everything in `App/`** | Builds, installs and runs, on a device and in the simulator. It needed no source changes to compile — the `@MainActor` and `nonisolated` guesses below were both wrong. |
+| **Everything in `App/`** | Builds, installs and runs, on a device and in the simulator, at Swift 6 with complete concurrency checking. |
+| **The arrival** | Recorded off the simulator and stepped through frame by frame, five times. That is what shaped it; see below. |
 
 One function in SeedCore is also uncompiled: `GrowthModel.State.summary()`, which
 uses `DateComponentsFormatter` — absent from swift-corelibs-foundation, fine on
 iOS.
 
-## Where the 31 August session left off
+## Where the second 31 August session left off
+
+Two commits, both driven and watched on an iPhone 17 Pro Max simulator.
+
+- **The seed is seen opening, once.** Six seconds on the day a seed is sown:
+  the case splits along a horizontal seam, the lid tips and rides up on the
+  shoot and goes, the cup stays and fades, and the camera draws back from the
+  seed to the plant's own framing. `GerminationView` drives it, `SeedHusk`
+  draws it, and `RootView` runs it between first light and the stage. It says
+  nothing, it can be tapped past, and Reduce Motion skips it.
+- **The pool of light follows the plant.** `StageBackdrop` takes a `presence`
+  — `heightScale`, which is already exactly that number — and sizes its glow
+  from it. A seedling stands in a small close pool and grows into a wide one.
+  A mature plant is unchanged.
+- **The name is asked for at the first meeting**, on the way into Exchange,
+  where there is at last somebody for it to be for. First light asks for
+  nothing. `GardenModel.shownName` falls back to Gardener until then.
+- **Swift 6 and `SWIFT_STRICT_CONCURRENCY: complete`**, app and core. 53 tests
+  still pass.
+
+### What the renders caught, and what they cost
+
+The husk went through five passes on the simulator before it read as
+germination. Worth knowing which, because each one is a thing a test would
+have called correct:
+
+1. SeedCore's own husk cannot do this. It is measured against the shoot — the
+   mushroom fix — so it shrinks with the shoot and there is never a seed
+   sitting there. Rendering the range in `tools/preview` settled that in one
+   look. `SeedHusk` is a seed with a size of its own.
+2. A pale seed at that size is a boulder. The coat is held to absolute values,
+   tinted by the plant rather than scaled off it.
+3. Two halves opening equally is a locket. The lid does nearly all the moving.
+4. The lid wants both sides lit and the cup wants one. Culled, a tipped lid is
+   a wire crescent; double-sided, the cup shows its far wall as stripes.
+5. `SkeletonBuilder` floors a stem at a centimetre however far the arrival
+   winds it back, and a genome may be tall and thin — those had a spike out of
+   the top of a closed seed. The plant is kept hidden until the seam opens,
+   which is one rule instead of arithmetic against two unrelated traits.
+
+### Not verified, and why
+
+**The exchange screen was never reached.** Injected taps on the Seed / Meet /
+Garden row register as gesture actions in the log and cancel the controls'
+hide task — so the buttons *are* being pressed — but the `fullScreenCover`
+does not present. That wiring is untouched since `1fda816`, so it is not a
+regression from this work, but it does mean three things went unlooked-at:
+the naming step, `UnfurlingBackdrop(.pair)` over the exchange screen's own
+content, and the first-meeting passage. Worth reproducing by hand on a device
+before assuming it is only the harness.
+
+## Where the first 31 August session left off
 
 The app builds, runs and has been driven on an iPhone 17 Pro Max simulator
 throughout. `main` carries eight commits from that session. What is live:
@@ -52,41 +104,43 @@ throughout. `main` carries eight commits from that session. What is live:
 
 ### Open, and worth doing next
 
-1. **The seed sprouting out of its husk, with a focus-in.** Asked for and not
-   started. The scale work above is its foundation — the plant is now small
-   enough for an arrival to be worth watching.
-2. **The pool of light and the plant have come apart.** `StageBackdrop` paints
-   its glow at the middle of the screen; the plant is centred on its own middle,
-   which is a different point at most ages. Either the light follows the plant
-   or the plant grows up into the light — a decision, not a bug.
+1. ~~**The seed sprouting out of its husk, with a focus-in.**~~ Done.
+2. ~~**The pool of light and the plant have come apart.**~~ Done: the light
+   follows the plant.
 3. **`UnfurlingBackdrop(.pair)` has not been seen over the exchange screen's own
    content.** It was measured thoroughly in isolation; nobody has looked at it
-   in place.
+   in place. Blocked on reaching that screen — see *Not verified* above.
 4. **`suite-brand.md` is edited and uncommitted in `uncubed-integration`**, which
    sits on `drawings-by-identity` with unrelated work in flight. It adds Peace
    Garden to §1, §2, §3.4 and §3.5.
-5. **The name field is still on the first screen**, and the copy no longer
-   mentions it. Deferring it to the first meeting would suit the walk-through.
+5. ~~**The name field is still on the first screen.**~~ Done: it is asked for
+   at the first meeting.
 6. **The passages are placed but the screen is not tuned** — the first-meeting
-   reveal has not been seen with a real exchange behind it.
+   reveal has not been seen with a real exchange behind it. Same blocker as 3.
+7. **First light has a large gap under the sprouting rule** now that the name
+   field has left it. The rule and the button bracket a third of a screen of
+   nothing. It may want the button closer, or it may want the space.
 
 ## Open, in the order I would do it
 
 1. ~~**Build `App/` in Xcode.**~~ Done. It compiled unchanged and ran first
    time — and what it drew was a mushroom. See *The mushroom* below.
-2. **Activate the free SSL on peacegarden.app.** My20i → Manage Hosting →
-   Options ▸ Manage → Security → SSL/TLS → Activate Free SSL. Up to 30 minutes.
-   The domain is registered, DNS is correct and the site answers on port 80;
-   only the certificate is missing. Nothing about seed links works until it is
-   there, and `.app` is HSTS-preloaded so browsers will not fall back to HTTP.
-3. **Upload `Server/.well-known/apple-app-site-association`.** It is written and
+2. ~~**Activate the free SSL on peacegarden.app.**~~ Done, and verified:
+   `https://peacegarden.app/` presents a certificate that validates. The site
+   answers 403 to a bare GET, which is the host's default for a directory with
+   nothing in it and not a TLS problem.
+3. **Upload `Server/.well-known/apple-app-site-association`.** Still 404, and
+   now the only thing between here and working seed links. It is written and
    filled in. `Server/README.md` has the command and the rules that quietly
    break associated domains.
-4. **GitHub Actions will not allocate a runner.** Both runs died in three
-   seconds with `runner_id: 0` and no logs; a re-run did the same. That is
-   billing or Actions being disabled, not the workflow — the tests pass locally
-   on the same toolchain the workflow uses. Check Settings → Actions → General
-   and the account's billing. Public repositories get unlimited minutes.
+4. **GitHub Actions will not allocate a runner** — and it is not the setting.
+   `/actions/permissions` reports `enabled: true, allowed_actions: all`, and
+   every job comes back `runner_id: 0` with an empty `steps` array, meaning no
+   runner was ever handed out. The repository is **private**, so it draws on
+   the account's included minutes; exhausted minutes with no spending limit
+   set produce exactly this. Checking that needs the `user` scope, which the
+   local `gh` token does not carry. Two ways out, both yours to pick: raise
+   the spending limit, or make the repository public, which is unlimited.
 5. **Delete `claude/plant-seed-exchange-app-8gagec` on `marcusbsorensen/cc-queue`.**
    Superseded; its content is all here. The session that made it could not
    delete it — its git relay refuses a zero-object push.
@@ -98,10 +152,12 @@ throughout. `main` carries eight commits from that session. What is live:
    to decide that this app cannot** — chiefly whether Peace Garden is a peer of
    the other five or only wears their system, which bears on the trade mark
    filing. Checked on a home screen beside Pfish, down to 40 points.
-7. **Raise the bar to Swift 6 and `SWIFT_STRICT_CONCURRENCY: complete`**, which
-   is the house standard in UnCubed. Deliberately *after* the first green build,
-   not before: turning both up on never-compiled code buries real errors under
-   concurrency diagnostics.
+7. ~~**Raise the bar to Swift 6 and `SWIFT_STRICT_CONCURRENCY: complete`.**~~
+   Done, app and core. Three diagnostics, all the same one: `NSCache` and
+   Multipeer's types are documented thread-safe and simply predate `Sendable`.
+   They are marked `nonisolated(unsafe)` with a note saying why, which leaves
+   the next reader looking at the real question — whether the hop to the main
+   actor is deliberate. It is, in each case.
 
 ## Decisions that are settled
 
@@ -172,7 +228,7 @@ checked, not in how carefully any of them were.
 ## How to check things
 
 ```sh
-swift test --package-path Packages/SeedCore     # 52 tests, macOS or Linux
+swift test --package-path Packages/SeedCore     # 53 tests, macOS or Linux
 python3 tools/reference/derivation_reference.py # the derivation, independently
 
 cd tools/preview && pip install numpy pillow

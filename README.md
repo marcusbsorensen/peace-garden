@@ -152,17 +152,18 @@ its name from both:
 
 ### Status, honestly
 
-**SeedCore compiles and its 52 tests pass on macOS and on Linux.** On Apple's
-platforms it builds against CryptoKit and `simd`; off them, against swift-crypto
-and the small compatibility layer in `Sources/SeedCore/Compatibility/`, which is
-what lets CI run the whole suite on every push. Both paths give identical
-results — so the compatibility layer is demonstrably equivalent to Apple's
-`simd`, rotations included, rather than merely close. That covers the derivation, the genome, growth, the geometry, the
+**SeedCore compiles and its 53 tests pass on macOS and on Linux**, at Swift 6
+language mode. On Apple's platforms it builds against CryptoKit and `simd`; off
+them, against swift-crypto and the small compatibility layer in
+`Sources/SeedCore/Compatibility/`, which is what lets CI run the whole suite on
+every push. Both paths give identical results — so the compatibility layer is
+demonstrably equivalent to Apple's `simd`, rotations included, rather than
+merely close. That covers the derivation, the genome, growth, the geometry, the
 colour model, seed links and persistence.
 
-**The 17 files in `App/` have never been compiled.** SwiftUI, SceneKit and UIKit
-need the macOS SDK, so Xcode is the only place they build. Expect to fix errors
-there on first open.
+**`App/` builds, installs and runs**, on a device and on the simulator, at Swift
+6 with `SWIFT_STRICT_CONCURRENCY: complete`. It has been driven by hand from
+first launch through the seed opening to the plant on its stage.
 
 What has actually been executed, rather than believed:
 
@@ -183,10 +184,17 @@ What has actually been executed, rather than believed:
   `DateComponentsFormatter`, which swift-corelibs-foundation does not have, so
   it compiles only on Apple's platforms.
 
-What has *not* been seen is the SceneKit rendering — the lighting rig, the
-materials, the bloom. The one thing to check first there: if a petal's tip
-colour appears at its base, flip the row order in
-`GradientTexture.image(for:palette:)`, where the comment says so.
+- **The SceneKit rendering**, on a simulator: the lighting rig, the materials,
+  the bloom, and the six-second arrival where a seed splits and the shoot comes
+  up out of it. The arrival was recorded and stepped through frame by frame,
+  which is the only reason it reads as germination rather than as a locket
+  opening — [docs/HANDOVER.md](docs/HANDOVER.md) lists what each pass caught.
+
+What has *not* been seen is the exchange: two phones in a room, the naming step
+on the way into a meeting, and the passage a first crossing shows. One thing to
+know if a plant comes out wrong: if a petal's tip colour appears at its base,
+flip the row order in `GradientTexture.image(for:palette:)`, where the comment
+says so.
 
 ## Layout
 
