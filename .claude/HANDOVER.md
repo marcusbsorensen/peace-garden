@@ -13,7 +13,7 @@ everything this session did not touch.
 
 ## State
 
-Tree clean, `main` at `e4d5544`, **unpushed**. 63 SeedCore tests pass; the app
+Tree clean, `main` at `849f537`, **unpushed**. 63 SeedCore tests pass; the app
 builds at Swift 6 with complete concurrency.
 
 **Verified by looking, on an iPhone 17 Pro Max simulator:** plants across six
@@ -111,26 +111,34 @@ phone. Neither changes what the app does; they only make it reachable.
   once: the sheet does present, but the row that opens it could not be
   summoned. On a simulator the row is shown from the start and never hides.
 
-## Open, found by looking
+## The garden grid, found by looking
 
-**A newborn plant is a mushroom in the garden grid.** The stage frames a plant
-against `PlantSceneBuilder.matureBounds(for: genome)` — what it will grow into,
-so a seedling is small and centred and opens outward for weeks. `ThumbnailRenderer`
-frames against the current `mesh.minBounds/maxBounds` instead, so a tile zooms
-tight on whatever is there, and a day-zero plant filling its frame reads as a
-green dome on a stub. The geometry is correct; the framing decision never
-travelled from the stage to the garden.
+`ThumbnailRenderer` framed each tile on the mesh in front of it, so a tile
+zoomed all the way in on whatever was there and a newborn hybrid filled its
+square as a wide dome on a stub — the mushroom again, made by the camera rather
+than by the geometry. The stage has framed against
+`PlantSceneBuilder.matureBounds(for:)` since the first mushroom was chased out;
+that decision had never travelled to the grid.
 
-The plant you just made with somebody is therefore the worst-looking thing in
-your garden, on the screen where you go to admire it. The fix is to pass the
-mature bounds to `framing` in `ThumbnailRenderer.image` and leave the mesh
-alone. Worth checking the whole grid afterwards, because every tile moves.
+Framing strictly on the mature bounds swaps one failure for its opposite: a
+stage is nine hundred points tall and a tile is a hundred and fifty, so the
+proportion that makes a seedling small and hopeful full-screen makes it a speck
+low in an empty square. Both cases land on the plant you just grew with
+somebody. So `referenceBounds` draws the mature box in toward the plant while
+the plant would fill less than `smallestShareOfATile` (0.28) of its tile, and
+leaves it alone above that. Scaling about the origin brings the camera's aim
+down too, which is what stops a seedling sitting on the floor of its frame.
+
+Checked across six plants aged 0, 1, 3, 7, 15 and 40 days: the newborn reads as
+a shoot with room above it, and every older tile is unchanged.
 
 ## Next step
 
-Frame the garden thumbnails against the mature bounds, and look at the grid.
-After that the long-form handover's own next step stands: an App Clip, because
-it changes how the app spreads rather than what it does.
+An App Clip, which the long-form handover calls the cheapest real improvement,
+because it changes how the app spreads rather than what it does: a seed scanned
+by somebody who has never installed anything, growing on their phone seconds
+later. The AASA groundwork is done and verified, and Apple's CDN already holds
+the file.
 
 ## Traps
 
@@ -139,6 +147,9 @@ it changes how the app spreads rather than what it does.
   the "taps open nothing" blocker and was only half of it — the other half, and
   the part that actually stopped three sessions, is that the controls row could
   not be summoned at all. See *What it took to drive it*.
+- **To look at a garden across a whole life**, clone the record in `plants`
+  with fresh `seed` values and `birth` backdated by 0, 1, 3, 7, 15 and 40 days.
+  That is what caught the tile framing, and no single-plant garden would have.
 - **To look at a mature plant**, edit `garden.json` in the app container
   (`xcrun simctl get_app_container <udid> app.peacegarden data`, then
   `Library/Application Support/PeaceGarden/`): backdate `birth` and swap `seed`
