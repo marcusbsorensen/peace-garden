@@ -353,6 +353,15 @@ extension PollenExchangeService: MCNearbyServiceBrowserDelegate {
         withDiscoveryInfo info: [String: String]?
     ) {
         let peerToken = info?["token"]
+        // Multipeer's own types predate `Sendable` and have never been
+        // annotated, so handing one to the main actor reads as a data race to
+        // the compiler. `MCPeerID` is immutable, and the browser is documented
+        // as callable from any thread; the decision below genuinely does need
+        // main-actor state to make, so the hop is the point rather than an
+        // accident. Saying that here is more honest than an actor around a
+        // framework object this file does not own.
+        nonisolated(unsafe) let browser = browser
+        nonisolated(unsafe) let peerID = peerID
         Task { @MainActor [weak self] in
             guard let self, let session = self.session else { return }
             guard session.connectedPeers.isEmpty else { return }
@@ -378,6 +387,9 @@ extension PollenExchangeService: MCNearbyServiceAdvertiserDelegate {
         withContext context: Data?,
         invitationHandler: @escaping (Bool, MCSession?) -> Void
     ) {
+        // As above: the answer depends on main-actor state, and the handler is
+        // a plain framework callback with no `Sendable` annotation on it.
+        nonisolated(unsafe) let invitationHandler = invitationHandler
         Task { @MainActor [weak self] in
             guard let self, let session = self.session, session.connectedPeers.isEmpty else {
                 invitationHandler(false, nil)

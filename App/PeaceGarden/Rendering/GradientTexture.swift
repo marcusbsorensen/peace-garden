@@ -8,7 +8,11 @@ import SeedCore
 /// letting the GPU sample it is what gives petals a throat, veins and a rim,
 /// and leaves a margin or a stripe, at no cost in geometry.
 enum GradientTexture {
-    private static let cache = NSCache<NSString, UIImage>()
+    /// `NSCache` is documented as safe to use from several threads at once, and
+    /// has been since it was introduced — it simply predates `Sendable` and has
+    /// never been annotated. `nonisolated(unsafe)` says that out loud rather
+    /// than putting an actor around a class that already does its own locking.
+    private nonisolated(unsafe) static let cache = NSCache<NSString, UIImage>()
     private static let resolution = 64
 
     static func image(for role: MeshRole, palette: Genome.Palette) -> UIImage? {

@@ -1,4 +1,4 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 6.0
 import PackageDescription
 
 // SeedCore builds on Apple's platforms against CryptoKit and simd, and off them
@@ -26,7 +26,11 @@ let package = Package(
                     condition: .when(platforms: [.linux, .windows, .android])
                 )
             ],
-            path: "Sources/SeedCore"
+            path: "Sources/SeedCore",
+            // The app builds at this bar too. The core is pure value types and
+            // free functions, so it costs nothing here — which is the argument
+            // for turning it on before anything in it needs shared state.
+            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .testTarget(name: "SeedCoreTests", dependencies: ["SeedCore"], path: "Tests/SeedCoreTests")
     ]
