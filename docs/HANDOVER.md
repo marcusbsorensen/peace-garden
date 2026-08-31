@@ -132,13 +132,15 @@ throughout. `main` carries eight commits from that session. What is live:
    now the only thing between here and working seed links. It is written and
    filled in. `Server/README.md` has the command and the rules that quietly
    break associated domains.
-4. **GitHub Actions would not allocate a runner** — and it was not the
-   setting. `/actions/permissions` read `enabled: true, allowed_actions: all`
+4. ~~**GitHub Actions will not allocate a runner.**~~ Fixed, and it was not
+   the setting. `/actions/permissions` read `enabled: true, allowed_actions: all`
    while every job came back `runner_id: 0` with an empty `steps` array, which
    is what a private repository out of included minutes looks like. **The
-   repository is public now**, which is unlimited. Nothing has been pushed
-   since, so the next push is the test of it — if a runner still refuses to
-   start, it is not billing after all.
+   repository is public now**, which is unlimited, and the next push proved
+   it: a runner started, both jobs ran, and CI is green for the first time —
+   `SeedCore (Linux)` and `Derivation reference (Python)`, two minutes
+   thirteen. The two implementations of the derivation can no longer drift
+   apart without somebody being told.
 5. ~~**Delete `claude/plant-seed-exchange-app-8gagec` on
    `marcusbsorensen/cc-queue`.**~~ Done, via the API rather than a push.
 6. ~~**There is no app icon.**~~ Done, and to the Interfulgent suite system —
