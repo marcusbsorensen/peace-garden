@@ -1,64 +1,92 @@
 # Peace Garden — handover 31 August 2026
 
+Longer than it should be, because the session covered four unrelated things: a
+typography finding, the passage architecture, 204 passages, and the whole
+location feature. The reasoning lives in the two design documents rather than
+here.
+
 ## Goal
 
 Phase 1 of an iPhone/iPad app: a plant grown from a seed drawn once, and two
-people crossing seeds by touching phones. Working the open list in
-`docs/HANDOVER.md` — the long-form handover, current, worth reading for depth.
+people crossing seeds by touching phones. `docs/HANDOVER.md` is the long-form
+handover and still current for everything this session did not touch.
 
 ## State
 
-Eleven commits, all pushed, tree clean, `main` at `69708e8`.
+Tree clean, `main` at `f2316a4`, **four commits unpushed**.
 
-Seen and right: the **seed opening** (six seconds on the day a seed is sown),
-the **pool of light following the plant**, **first light** with its name field
-gone, the **button edges**. Marcus confirmed the **exchange screen and its
-fronds** himself. Checked by tooling: **Swift 6 + complete concurrency**, 53
-tests, **CI green**, and the **AASA file live** — direct 200,
-`application/json`, no redirect hops, already on Apple's CDN.
+Verified by tooling: **63 SeedCore tests**, the app builds at Swift 6 with
+complete concurrency, `tools/reference/passage_reference.py` passes and now runs
+in CI, full build is 14 seconds.
 
-Built but **never seen**: the name field's new **underline**, and the three
-**serif headings** just changed (`IncomingSeedView`, `GardenView`,
-`EncounterNoteView`). They compile; nobody has looked at them.
+Built and **never seen running**: all of it. The passage bank, the themed draw,
+the figurative places, and the whole location feature. Also still unseen from
+last session: the name field's underline and three serif headings.
+
+- **Passage bank complete at 300**, thirty per theme. A pair's theme is fixed
+  forever; the line within it is new every meeting.
+- **Location feature complete.** Standing switch in Seed, one-time offer on Meet,
+  consent flag on the card, coordinates shown as numbers and tappable to a map,
+  and "Tell it differently" for editing a kept plant afterwards.
+- **`docs/TYPE.md`** holds the second-serif-voice finding, parked until it can be
+  checked against the brand guidelines below.
+
+## Reference
+
+**The design document**, from Claude Design:
+https://claude.ai/design/p/c162a8a5-fb14-40ae-8234-bdc2a12f9512?via=share
+
+Open it in a browser; it returns 403 to a plain fetch, so a session cannot read
+it without Marcus. It is the counterpart to `docs/BRAND.md` (the mark and its
+construction) and `design/*.dc.html` (the visual language canvas). `docs/TYPE.md`
+ends with five explicit questions, and the first job with this document is to see
+which of them it already answers.
 
 ## Files
 
-- `App/PeaceGarden/Views/Chrome.swift` — `pressable()` (the button edge),
-  `underlining()` (the rule as a field's underline), `SproutingRule.height`.
-- `App/PeaceGarden/Rendering/SeedHusk.swift` — the seed that opens, and
-  `App/PeaceGarden/Views/GerminationView.swift`, which drives it. Both new.
-- `App/PeaceGarden/Rendering/PlantSceneView.swift:11` — `Arrival`, and the
-  camera override in `applyFraming()`. `StageBackdrop.swift` — `presence`
-  sizes the glow.
+- `App/PeaceGarden/Views/Quotes.swift` — the 300 passages, the ten themes and
+  their four-dimensional positions, and the two-stage draw.
+- `App/PeaceGarden/Views/Places.swift` — forty figurative places. `Draw.swift` —
+  the shared fold both use.
+- `App/PeaceGarden/Exchange/PlaceKeeping.swift` — the location switch, permission
+  and single reading. `PollenExchangeService.swift:89` starts it, `:285` is the
+  one gate that discards a reading the other person did not agree to.
+- `Packages/SeedCore/Sources/SeedCore/Genome/Pollination.swift` — `pairID` and
+  `pairUnit`, the counterpart to `encounterID`.
+- `tools/reference/passage_reference.py` — the test target `App/` does not have.
+- `docs/PLACE.md`, `docs/TYPE.md` — the reasoning, written down.
 
 ## Decisions made
 
-- **The arrival's husk is app-side, not in SeedCore.** The core's husk is
-  measured against the shoot — the mushroom fix — so it shrinks with it and
-  never reads as a seed. Do not "fix" the core to suit the arrival.
-- **The camera interpolates in ratio, not metres.** A straight lerp lurches.
-- **`heightScale` is the plant's presence.** Nothing needs measuring.
-- **`plantName` is for `genome.name.full` alone.** Four views wear it; grep
-  before adding a fifth. **The repository is public**, which gives CI a runner.
+- **Told versus inherited.** A seed is never stamped. Location and display name
+  are things the parents chose to say, so they live on `EncounterNote` and are
+  editable forever; the seed, lineage and birthday are not reachable from any
+  editing screen. Do not move either onto the genome.
+- **A coordinate never crosses the air.** Only a consent flag does. Each phone
+  stamps its own reading. Both-or-neither is a privacy rule, not a simplification:
+  two people at one meeting stand in the same place, so recording mine records
+  yours. An earlier build sent it on `confirm` and was replaced.
+- **Themes are not a list or a ring.** Ten points in four dimensions, and each
+  pair settles which single dimension defines them. Matching on all four at once
+  was tried and gave 150 of 400 pairings the same central theme.
+- **Thirty per theme, flat, not weighted by popularity.** A pair's repeat odds
+  depend only on their own theme's size.
+- **The bank stays in Swift.** The compile-time argument for a JSON resource was
+  measured and is wrong.
+- **No reverse geocoding**, because the app makes no network request at all.
 
 ## Next step
 
-Marcus has Claude Design pulling the brand guidelines together from
-`docs/BRAND.md`, `design/*.dc.html` and `Chrome.swift`. Hand it this finding: a
-**second serif voice nobody has written down** — serif *non-italic*, inline
-rather than a named style, on screen headings (`ExchangeView.swift:175,200`)
-and every field typed into (`EncounterNoteView.swift:53,90`,
-`SeedView.swift:54`), plus `PlantDetailView.swift:68`. Settle those, then apply.
+Push the four commits, then reach Exchange **by hand on a device** and watch a
+real crossing: the passage, its provenance line, the suggested place, and the
+place offer. Everything else is blocked behind that.
 
 ## Traps
 
 - **Injected taps on the `SEED · MEET · GARDEN` row open nothing**, though they
-  register as gesture actions. The app is fine — Marcus reached that screen by
-  hand — and the coordinates are right, so do not re-derive them. Anything
-  behind that row has to be checked by asking him.
-- **Screenshot round trips take seconds**, so a settled screen straight after a
-  tap does not mean an animation was skipped — I "fixed" a non-existent bug on
-  that basis. Record and profile instead.
-- **`recordVideo` timelines are not real time** and outlast the wait; profile
-  to find the moment. **Controls toggle**, so a reveal tap on a visible row
-  turns it off. `timeout` is not installed here.
+  register as gesture actions. Coordinates are right; do not re-derive them.
+- **New files need `xcodegen generate`** before they build. The `.xcodeproj` is
+  gitignored and generated.
+- **Screenshot round trips take seconds**, so a settled screen after a tap does
+  not mean an animation was skipped. `recordVideo` timelines are not real time.
+  `timeout` is not installed here.
