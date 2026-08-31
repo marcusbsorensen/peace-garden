@@ -117,9 +117,8 @@ throughout. `main` carries eight commits from that session. What is live:
    at the first meeting.
 6. **The passages are placed but the screen is not tuned** — the first-meeting
    reveal has not been seen with a real exchange behind it. Same blocker as 3.
-7. **First light has a large gap under the sprouting rule** now that the name
-   field has left it. The rule and the button bracket a third of a screen of
-   nothing. It may want the button closer, or it may want the space.
+7. ~~**First light has a large gap under the sprouting rule.**~~ Done: the
+   words, the rule and the button are one column between two spacers.
 
 ## Open, in the order I would do it
 
@@ -133,17 +132,15 @@ throughout. `main` carries eight commits from that session. What is live:
    now the only thing between here and working seed links. It is written and
    filled in. `Server/README.md` has the command and the rules that quietly
    break associated domains.
-4. **GitHub Actions will not allocate a runner** — and it is not the setting.
-   `/actions/permissions` reports `enabled: true, allowed_actions: all`, and
-   every job comes back `runner_id: 0` with an empty `steps` array, meaning no
-   runner was ever handed out. The repository is **private**, so it draws on
-   the account's included minutes; exhausted minutes with no spending limit
-   set produce exactly this. Checking that needs the `user` scope, which the
-   local `gh` token does not carry. Two ways out, both yours to pick: raise
-   the spending limit, or make the repository public, which is unlimited.
-5. **Delete `claude/plant-seed-exchange-app-8gagec` on `marcusbsorensen/cc-queue`.**
-   Superseded; its content is all here. The session that made it could not
-   delete it — its git relay refuses a zero-object push.
+4. **GitHub Actions would not allocate a runner** — and it was not the
+   setting. `/actions/permissions` read `enabled: true, allowed_actions: all`
+   while every job came back `runner_id: 0` with an empty `steps` array, which
+   is what a private repository out of included minutes looks like. **The
+   repository is public now**, which is unlimited. Nothing has been pushed
+   since, so the next push is the test of it — if a runner still refuses to
+   start, it is not billing after all.
+5. ~~**Delete `claude/plant-seed-exchange-app-8gagec` on
+   `marcusbsorensen/cc-queue`.**~~ Done, via the API rather than a push.
 6. ~~**There is no app icon.**~~ Done, and to the Interfulgent suite system —
    the app is a sixth alongside FreqShift, UnCubed, Pfish, DashLit Diner and
    FlagFans. `tools/icon/make_icon.py` draws it; the outputs are generated, so
