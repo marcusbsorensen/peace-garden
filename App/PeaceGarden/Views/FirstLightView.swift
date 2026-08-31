@@ -19,20 +19,20 @@ struct FirstLightView: View {
                 BreathingDot(diameter: 10)
                     .padding(.bottom, 8)
 
-                Text("A seed is about to be drawn for you")
-                    .font(.system(size: 28, weight: .light))
+                Text("A unique seed for you is taking form.")
+                    .chromeHeading()
                     .foregroundStyle(Chrome.ink)
                     .multilineTextAlignment(.center)
-                    .lineSpacing(4)
+                    .lineSpacing(6)
 
-                // Three claims — unrepeatable, once only, private — in sixteen
-                // words rather than twenty-seven. The long version said all of
-                // this twice and set it small enough that nobody read it once.
-                Text("Made from this moment, on this phone. It cannot be drawn again, and it never leaves.")
+                // The breaks are the cadence, and are set rather than left
+                // to the wrap: the three imprints are a list, and a list
+                // that reflows stops reading as one.
+                Text("The imprints swirling together:\nthe coordinates of this moment,\nin this specific digital space,\nand mutations of the random.")
                     .font(.system(size: 16, weight: .light))
                     .foregroundStyle(Chrome.muted)
                     .multilineTextAlignment(.center)
-                    .lineSpacing(6)
+                    .lineSpacing(7)
             }
             .padding(.horizontal, 40)
             .frame(maxWidth: Chrome.readableWidth)
@@ -63,7 +63,7 @@ struct FirstLightView: View {
 
             Spacer()
 
-            QuietButton(title: "Draw my seed", isProminent: true, action: plant)
+            QuietButton(title: "Plant it now", isProminent: true, action: plant)
                 .padding(.bottom, 48)
                 .opacity(revealed ? 1 : 0)
         }

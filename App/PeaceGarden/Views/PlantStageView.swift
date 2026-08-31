@@ -33,6 +33,15 @@ struct PlantStageView: View {
                     .opacity(controlsVisible ? 1 : 0)
                     .allowsHitTesting(controlsVisible)
                     .animation(Chrome.fadeIn, value: controlsVisible)
+
+                // The second thing the app explains, and it explains it
+                // once. There is no flag to keep: the hint is for someone
+                // who has never crossed a seed, so crossing one retires it.
+                if model.hybrids.isEmpty {
+                    meetHint
+                        .opacity(controlsVisible ? 0 : 1)
+                        .animation(Chrome.fadeIn, value: controlsVisible)
+                }
             }
         }
         // The model is passed in explicitly rather than left to propagate:
@@ -50,6 +59,35 @@ struct PlantStageView: View {
                 .presentationBackground(.black)
         }
         .onAppear { model.refreshNow() }
+    }
+
+    /// Sits under the plant until the first exchange has happened.
+    private var meetHint: some View {
+        VStack {
+            Spacer()
+            Text("Your plant can meet others if you tap their device.\nA brand new and unique seed will be formed every time.")
+                .font(.system(size: 14, weight: .light))
+                .foregroundStyle(Chrome.muted)
+                .multilineTextAlignment(.center)
+                .lineSpacing(5)
+                .padding(.horizontal, 34)
+                .frame(maxWidth: Chrome.readableWidth)
+                .padding(.top, 52)
+                .padding(.bottom, 54)
+                .frame(maxWidth: .infinity)
+                // The plant is framed to fill the screen, so a seedling
+                // reaches the bottom of it and the hint would otherwise be
+                // set over its own stem. The foot gives the words a ground.
+                .background(
+                    LinearGradient(
+                        colors: [.clear, .black.opacity(0.72), .black.opacity(0.9)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+        }
+        .ignoresSafeArea(edges: .bottom)
+        .allowsHitTesting(false)
     }
 
     @ViewBuilder

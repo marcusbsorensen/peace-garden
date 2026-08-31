@@ -29,6 +29,16 @@ extension View {
             .textCase(.uppercase)
     }
 
+    /// The heading voice: uppercase and wide-tracked, like the label voice but
+    /// at size. It is what marks the three moments the app explains itself —
+    /// the seed forming, the seed planted, two seeds meeting — as one sequence
+    /// rather than three unrelated screens.
+    func chromeHeading(size: CGFloat = 20) -> some View {
+        font(.system(size: size, weight: .light, design: .default))
+            .tracking(2.8)
+            .textCase(.uppercase)
+    }
+
     /// The serif voice, used only for plant names.
     func plantName(size: CGFloat = 26) -> some View {
         font(.system(size: size, weight: .light, design: .serif))
