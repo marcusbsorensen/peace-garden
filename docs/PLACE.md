@@ -144,8 +144,16 @@ spot again, and short of claiming an accuracy a phone in a street does not have.
   lineage and the birthday are unreachable from that screen, so nothing anybody
   writes changes what grows.
 
+- **A published note carries the named place and never the coordinate.** Both
+  gardeners' notes now appear on a shared plant page, attributed — see PHASES.md.
+  The consent that put a coordinate on a note was *both of us agree to keep
+  this*, given about two phones that make no network request. It was never
+  consent to publish the spot, and reading it as such would be the worst thing
+  this app could do with the most careful thing in it. Publishing the coordinate
+  is a separate question, asked separately, or not asked at all.
+
 ## Still open
 
-- **The shared garden.** Plants submitted to it should carry only what their
-  owner released, which means the submission has to read the record rather than
-  the exchange, and has to re-ask rather than assume. Phase 2, see PHASES.md.
+- **Whether the coordinate is ever publishable.** The safe answer above is that
+  it is not, and nothing yet needs it to be. If it ever is, it is a new consent
+  with its own screen and its own withdrawal, not a checkbox on this one.

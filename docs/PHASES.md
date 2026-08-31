@@ -109,11 +109,35 @@ What it costs, and none of it is optional:
   name with it. B can remove their name at any time without A being involved
   and without asking. Neither needs the other's agreement to stop.
 
-**Whose note shows on a shared page** is the one part of this still open. The
-encounter note is each person's own by an earlier decision, so a page with two
-names may carry two accounts of the same meeting. Showing both, attributed, is
-probably right and is certainly the most honest; showing only the sharer's is
-simpler. Worth deciding before the page is built rather than after.
+**A page with two names shows both notes, attributed.** Settled.
+
+The encounter note is each person's own, written on their own phone and never
+sent to the other, so two accounts of one meeting can disagree — one says
+Margate and the other says on the winds, one keeps the date and the other does
+not. That is the honest record of what happened, and reconciling it would be
+inventing a version neither person wrote. The page presents two voices, in the
+sharer's order: their share is what made the page.
+
+Three things follow, and the third is the one that bites.
+
+- **Accepting is publishing.** B is not agreeing to a name on a page, B is
+  agreeing to publish a note they wrote for themselves. So the invitation has
+  to show B their own note as it will appear, let them edit it there — the
+  machinery exists, it is "Tell it differently" — and let them accept with
+  their name and no note at all. An invitation that publishes prose somebody
+  wrote privately, on a yes they gave to a question about their name, is a
+  trick.
+- **A note becomes user-generated content shown to strangers.** It joins the
+  guest books in needing reporting, blocking and deletion. Two surfaces, not
+  one, and the note is the surface people will have written most freely on,
+  because until now nobody could read it.
+- **The coordinate must not go up with it.** `EncounterNote` can carry one, and
+  the consent that put it there was *both of us agree to keep this*, on two
+  phones that make no network request — see docs/PLACE.md. That is not consent
+  to publish the spot to the internet, and treating it as such would be the
+  single worst thing this app could do with the most careful thing in it. A
+  published note carries the place as it was *named* and never the coordinate,
+  unless somebody is asked that question separately and answers it.
 
 **Identity.** Phase 1 has no accounts on purpose. A shared garden needs
 *something* — enough to prove a plot is yours across a reinstall, and no more
