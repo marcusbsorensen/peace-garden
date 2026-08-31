@@ -217,6 +217,121 @@ enum Quotes {
         // MARK: Renewal
 
         Passage(
+            text: "If Winter comes, can Spring be far behind?",
+            source: "Percy Bysshe Shelley, 1820",
+            theme: .renewal
+        ),
+        Passage(
+            text: "There lives the dearest freshness deep down things.",
+            source: "Gerard Manley Hopkins, 1877",
+            theme: .renewal
+        ),
+        Passage(
+            text: "To every thing there is a season, and a time to every purpose under the heaven.",
+            source: "Ecclesiastes, King James Bible, 1611",
+            theme: .renewal
+        ),
+        Passage(
+            text: "Into each life some rain must fall.",
+            source: "Henry Wadsworth Longfellow, 1842",
+            theme: .renewal
+        ),
+        Passage(
+            text: "Fall down seven times, stand up eight.",
+            source: "Japanese proverb",
+            theme: .renewal
+        ),
+        Passage(
+            text: "The nature of the Universe loves nothing so much as to change the things which are, and to make new things like them.",
+            source: "Marcus Aurelius, tr. George Long",
+            theme: .renewal
+        ),
+        Passage(
+            text: "The year's at the spring, and day's at the morn.",
+            source: "Robert Browning, 1841",
+            theme: .renewal
+        ),
+        Passage(
+            text: "Kintsugi: mending broken pottery with gold, so that the repair becomes the most visible thing about the bowl.",
+            source: "Japanese",
+            theme: .renewal
+        ),
+        Passage(
+            text: "Coppicing: cutting a tree to the ground on a cycle, which does not end it but starts it again. A stool can be kept alive for centuries this way.",
+            source: "Forestry",
+            theme: .renewal
+        ),
+        Passage(
+            text: "Serotiny: seed held inside a cone sealed with resin, which opens only in the heat of a fire.",
+            source: "Botany",
+            theme: .renewal
+        ),
+        Passage(
+            text: "Epicormic: growth from buds that have waited years under the bark, and wake when the crown above them is lost.",
+            source: "Botany",
+            theme: .renewal
+        ),
+        Passage(
+            text: "Resurgam: I shall rise again. Common on gravestones, where it is written as a statement rather than a hope.",
+            source: "Latin",
+            theme: .renewal
+        ),
+        Passage(
+            text: "Anastasis: a standing up again. Biologists borrowed it for cells that begin to die and then recover.",
+            source: "Greek",
+            theme: .renewal
+        ),
+        Passage(
+            text: "Recover is Latin recuperare, to get back. It was about retrieving a thing long before it was about health.",
+            source: "Latin",
+            theme: .renewal
+        ),
+        Passage(
+            text: "Spring names the season for what water does. It is the same word as a spring in the ground, from Old English springan, to leap up.",
+            source: "Old English",
+            theme: .renewal
+        ),
+        Passage(
+            text: "Revive is Latin revivere, to live again. Vivid, survive and victuals grow from that root: to live, to outlive, and what you live on.",
+            source: "Latin",
+            theme: .renewal
+        ),
+        Passage(
+            text: "Phoenix reaches English through Latin from Greek phoinix, which also named the date palm and the colour crimson.",
+            source: "Greek",
+            theme: .renewal
+        ),
+        Passage(
+            text: "Renaissance is Latin renasci, to be born again. The name of the age was borrowed from what happens to a plant.",
+            source: "Latin",
+            theme: .renewal
+        ),
+        Passage(
+            text: "Convalesce is Latin convalescere, to grow strong. The con is there for emphasis rather than company, though mending together is not a bad thing to hear in it.",
+            source: "Latin",
+            theme: .renewal
+        ),
+        Passage(
+            text: "A coppiced lime stool in an English wood can be older than the church beside it. The tree is cut back every fifteen years or so, and the roots have never once stopped.",
+            source: "Coppice woodland",
+            theme: .renewal
+        ),
+        Passage(
+            text: "Deciduous trees withdraw the nitrogen and phosphorus from their leaves before letting them go, so autumn colour is what is left once the valuable part has been taken back.",
+            source: "Leaf senescence",
+            theme: .renewal
+        ),
+        Passage(
+            text: "After Mount St Helens erupted in 1980, the first plants back were not colonists arriving but survivors that had been underground or under snow when it happened.",
+            source: "Mount St Helens, 1980",
+            theme: .renewal
+        ),
+        Passage(
+            text: "Grasses grow from the base rather than the tip, which is why mowing does not kill a lawn and does kill most of what tries to share it.",
+            source: "Poaceae",
+            theme: .renewal
+        ),
+        Passage(
             text: "The flowers appear on the earth; the time of the singing of birds is come.",
             source: "Song of Solomon, King James Bible, 1611",
             theme: .renewal
