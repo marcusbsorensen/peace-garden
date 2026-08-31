@@ -73,16 +73,23 @@ have called correct:
 
 ### Not verified, and why
 
-**The exchange screen has never been watched running.** Three things are built
-and have gone unlooked-at: the naming step, `UnfurlingBackdrop(.pair)` over the
-exchange screen's own content, and the first-meeting passage.
+**The exchange screen has now been watched running** — 31 August, on a pair of
+simulators, a whole meeting end to end including the passage and the note. See
+`.claude/HANDOVER.md`. What follows is why it took three sessions to get there.
 
-Two sessions recorded this as a *blocker* — taps on the Seed / Meet / Garden row
-that registered in the log but never presented the `fullScreenCover`. **That was
-never real.** It was screenshot timing: the button fires and the sheet presents,
-but a screenshot taken immediately after the tap catches the screen before the
-animation. Proved in `33a41f3` by printing from both the action and the sheet's
-content builder. Nothing is in the way; nobody has simply gone and looked.
+Two sessions recorded this as a blocker — taps on the Seed / Meet / Garden row
+that registered in the log but never presented the `fullScreenCover`. It was
+then recorded as *not* a blocker, screenshot timing only, proved in `33a41f3` by
+printing from both the action and the sheet's content builder.
+
+Both halves were right and neither was the whole. The sheet does present, and a
+screenshot straight after a tap does catch the screen before it. But the row
+that opens the sheet is revealed by a `UITapGestureRecognizer` on the SceneKit
+view, and **injected taps never reach that recogniser** — SpringBoard takes
+them, SwiftUI buttons take them, that one does not. So the row could not be
+summoned and Exchange could not be reached, whatever the screenshot showed.
+
+The simulator now holds the row open, and the meeting has been watched.
 
 ## Where the first 31 August session left off
 
@@ -109,17 +116,19 @@ throughout. `main` carries eight commits from that session. What is live:
 1. ~~**The seed sprouting out of its husk, with a focus-in.**~~ Done.
 2. ~~**The pool of light and the plant have come apart.**~~ Done: the light
    follows the plant.
-3. **`UnfurlingBackdrop(.pair)` has not been seen over the exchange screen's own
-   content.** It was measured thoroughly in isolation; nobody has looked at it
-   in place. Not blocked — see *Not verified* above.
+3. ~~**`UnfurlingBackdrop(.pair)` has not been seen over the exchange screen's
+   own content.**~~ Done, 31 August. It works, and the pair reads as a pair.
+   One note: while it unfurls, the left crozier crosses the naming screen's
+   headline and the line under it, worse on a 17 Pro than a Pro Max. It is
+   clear by the time the unfurl settles.
 4. **`suite-brand.md` is edited and uncommitted in `uncubed-integration`**, which
    sits on `drawings-by-identity` with unrelated work in flight. It adds Peace
    Garden to §1, §2, §3.4 and §3.5.
 5. ~~**The name field is still on the first screen.**~~ Done: it is asked for
    at the first meeting.
-6. **The passages are placed but the screen is not tuned** — the first-meeting
-   reveal has not been seen with a real exchange behind it. Same as 3: unlooked
-   at, not blocked.
+6. ~~**The passages are placed but the screen is not tuned**~~ — seen with a
+   real exchange behind it, 31 August. Both phones showed the same passage and
+   the same provenance line, derived separately.
 7. ~~**First light has a large gap under the sprouting rule.**~~ Done: the
    words, the rule and the button are one column between two spacers.
 

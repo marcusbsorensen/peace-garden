@@ -13,7 +13,7 @@ everything this session did not touch.
 
 ## State
 
-Tree clean, `main` at `5466873`, **unpushed**. 63 SeedCore tests pass; the app
+Tree clean, `main` at `e4d5544`, **unpushed**. 63 SeedCore tests pass; the app
 builds at Swift 6 with complete concurrency.
 
 **Verified by looking, on an iPhone 17 Pro Max simulator:** plants across six
@@ -25,7 +25,7 @@ brushed); every part wears its own age. The settings screen, including the
 reset alert and its cancel.
 
 **The Exchange screens have now been driven**, on a pair of simulators (17 Pro
-Max and 17 Pro), and most of the meeting has been watched:
+Max and 17 Pro), and a whole meeting has been watched. On the way in:
 
 - The naming step. The button rewrites itself from MEET AS GARDENER to
   THAT'S ME the moment a name lands.
@@ -37,9 +37,13 @@ Max and 17 Pro), and most of the meeting has been watched:
 - The knock stand-in, and the peer being told: *Waiting for Ada. Felt that.
   They need to tap theirs too.*
 
-**Still unwatched:** the last three seconds. Both phones touched, the crossing,
-`PlantRevealView`, the passage with its provenance line, and the encounter
-note. Nothing is wrong with it — see *The three-second window* below.
+**And the meeting has been watched end to end.** Both phones knocked, the
+crossing, the child, the passage — *Cosmos is Greek kosmos, order and ornament
+in one word* — its provenance line, and its seven days to bloom. Both phones
+showed the same passage and the same child, computed separately with no server
+between them, which is the claim the whole design rests on. Then the note: the
+place suggested and already filled in, the coordinates kept because both had
+asked for them, and the child landing in the garden attributed to Ada.
 
 ## Files
 
@@ -59,6 +63,10 @@ note. Nothing is wrong with it — see *The three-second window* below.
   `standInForTouch()`, the simulator's substitute for the knock.
 - `App/PeaceGarden/Views/ExchangeView.swift` — `awaitingTouch(peerName:)` picks
   between the stand-in and the real thing.
+- `App/PeaceGarden/Views/PlantStageView.swift` — why the controls row is held
+  open on a simulator.
+- `App/PeaceGarden/Rendering/PlantThumbnail.swift` — `ThumbnailRenderer`, and
+  the framing bug below.
 - `docs/PHASES.md`, `docs/PLACE.md` — the sharing decisions below.
 - `design/garden/` — five shared-garden mock-ups; the seeded `.html` is
   generated and gitignored.
@@ -84,29 +92,53 @@ note. Nothing is wrong with it — see *The three-second window* below.
   A device always has an accelerometer, so `canFeelTouch` is true there and the
   screen is unchanged.
 
-## The three-second window
+## What it took to drive it
 
-`ExchangeProtocol.touchWindow` is 3.0 seconds, and both phones must be tapped
-inside it. Two people touching phones together clear that easily. Driving two
-simulators through a tool does not: a round trip is two to four seconds, so
-the second stand-in tap regularly lands late and the crossing never advances.
+Two simulator-only affordances, both compiled out of any build that runs on a
+phone. Neither changes what the app does; they only make it reachable.
 
-That is what stopped the last three seconds being watched, rather than
-anything wrong with the exchange. Worth deciding, next time: either widen the
-window under `#if targetEnvironment(simulator)`, or arm the stand-in so a tap
-counts from the moment the peer appears rather than from the tap itself.
+- **The three-second window.** `ExchangeProtocol.touchWindow` is 3.0 seconds
+  and a tool round trip is two to four, so the second stand-in tap always
+  landed late. `touchesCountAsOneKnock` relaxes this side's acceptance on a
+  simulator. The constant is untouched — it is protocol vocabulary and it
+  compiles on Linux. One consequence: a simulator paired with a real phone
+  will disagree about a slow pair of taps. Cross two of a kind.
+- **The controls row.** It is revealed by a `UITapGestureRecognizer` on the
+  SceneKit view, and injected taps do not reach that recogniser at all —
+  SpringBoard takes them, SwiftUI buttons take them, that one does not. So the
+  row was unreachable and Exchange with it. **This is the real root of the
+  "taps open nothing" story**, which has now been diagnosed twice and wrongly
+  once: the sheet does present, but the row that opens it could not be
+  summoned. On a simulator the row is shown from the start and never hides.
+
+## Open, found by looking
+
+**A newborn plant is a mushroom in the garden grid.** The stage frames a plant
+against `PlantSceneBuilder.matureBounds(for: genome)` — what it will grow into,
+so a seedling is small and centred and opens outward for weeks. `ThumbnailRenderer`
+frames against the current `mesh.minBounds/maxBounds` instead, so a tile zooms
+tight on whatever is there, and a day-zero plant filling its frame reads as a
+green dome on a stub. The geometry is correct; the framing decision never
+travelled from the stage to the garden.
+
+The plant you just made with somebody is therefore the worst-looking thing in
+your garden, on the screen where you go to admire it. The fix is to pass the
+mature bounds to `framing` in `ThumbnailRenderer.image` and leave the mesh
+alone. Worth checking the whole grid afterwards, because every tile moves.
 
 ## Next step
 
-Watch the last three seconds: both phones touched, the crossing,
-`PlantRevealView`, the passage with its provenance line, and the encounter
-note. Decide the window question above first, or it will not be reachable.
+Frame the garden thumbnails against the mature bounds, and look at the grid.
+After that the long-form handover's own next step stands: an App Clip, because
+it changes how the app spreads rather than what it does.
 
 ## Traps
 
 - **A screenshot straight after a tap catches the screen before the sheet.**
-  This cost two sessions, recorded as a phantom "taps open nothing" blocker.
-  Wait about a second, or print from the action to be sure.
+  Wait about a second, or print from the action to be sure. This was blamed for
+  the "taps open nothing" blocker and was only half of it — the other half, and
+  the part that actually stopped three sessions, is that the controls row could
+  not be summoned at all. See *What it took to drive it*.
 - **To look at a mature plant**, edit `garden.json` in the app container
   (`xcrun simctl get_app_container <udid> app.peacegarden data`, then
   `Library/Application Support/PeaceGarden/`): backdate `birth` and swap `seed`
