@@ -87,10 +87,34 @@ public struct PlantBuilder {
 
             var jitter = SplitMix64(seed: genome.seed, label: "leaf.\(index)")
             let azimuth = divergence * Float(index) + Float(jitter.value(in: -0.12...0.12))
-            let scale = openness * vigour * Float(jitter.value(in: 0.86...1.14))
+            // A separate stream, so the taper can be added without shifting the
+            // azimuth and scale already drawn above it.
+            var shape = SplitMix64(seed: genome.seed, label: "leaf.taper.\(index)")
+            let scale = openness * vigour
+                * Float(jitter.value(in: 0.86...1.14))
+                * Self.leafTaper(at: node.t, jitter: &shape)
 
             addLeaf(&builder, node: node, azimuth: azimuth, scale: scale, jitter: &jitter)
         }
+    }
+
+    /// How large a leaf is for its height up the stem.
+    ///
+    /// Every leaf being the same size was the loudest thing about a plant. It
+    /// is not how anything grows: a stem carries its largest leaves low, where
+    /// they have had longest to expand and most light to reach for, and tapers
+    /// to small ones under the crown. Even spacing the eye forgives; identical
+    /// size at every height it reads immediately as a repeated part.
+    ///
+    /// The very lowest leaves come back down again, because the first pair a
+    /// seedling put out are small and stay small.
+    ///
+    /// A per-leaf draw on top, wide enough to break the rhythm rather than to
+    /// look damaged.
+    static func leafTaper(at t: Float, jitter: inout SplitMix64) -> Float {
+        let rise = min(1, max(0, t / 0.22))
+        let fall = 1 - 0.62 * min(1, max(0, (t - 0.2) / 0.8))
+        return rise * fall * Float(jitter.value(in: 0.82...1.2))
     }
 
     private func addLeaf(
@@ -163,7 +187,14 @@ public struct PlantBuilder {
                 timeToNextStage: growth.timeToNextStage
             )
             guard localGrowth.budSwell > 0.02 else { continue }
-            addBloom(&builder, at: node, scale: 0.62, growth: localGrowth, index: offset + 1)
+            // Every lateral flower was drawn at exactly 0.62, which gave a
+            // spire nine identical heads at even spacing — the single strongest
+            // tell that a plant had been generated rather than grown. A real
+            // spike swells toward its crown and thins away below it.
+            var size = SplitMix64(seed: genome.seed, label: "bloom.size.\(offset)")
+            let up = min(1, max(0, (Float(node.t) - 0.35) / 0.65))
+            let scale = (0.4 + 0.34 * up) * Float(size.value(in: 0.88...1.12))
+            addBloom(&builder, at: node, scale: scale, growth: localGrowth, index: offset + 1)
         }
     }
 
@@ -178,9 +209,16 @@ public struct PlantBuilder {
         var jitter = SplitMix64(seed: genome.seed, label: "bloom.\(index)")
 
         // A nodding head tips away from the stem's axis.
+        //
+        // The pitch is a genome-wide trait, so before this every head on a
+        // spike tipped by exactly the same angle in exactly the same plane and
+        // the whole spike leaned as one object. Its own stream, so the existing
+        // draws below keep their order.
+        var lean = SplitMix64(seed: genome.seed, label: "bloom.lean.\(index)")
         let nodAxis = simd_normalize(cross(sample.tangent, sample.normal))
+        let pitch = Float(bloom.headPitch) + Float(lean.value(in: -0.22...0.22))
         let axis = simd_normalize(
-            SkeletonBuilder.rotate(sample.tangent, axis: nodAxis, angle: Float(bloom.headPitch))
+            SkeletonBuilder.rotate(sample.tangent, axis: nodAxis, angle: pitch)
         )
         // The bloom is radially symmetric, so any perpendicular pair will do;
         // per-petal jitter supplies the variation, not the starting phase.
