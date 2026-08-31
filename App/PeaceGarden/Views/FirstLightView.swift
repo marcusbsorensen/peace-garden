@@ -69,12 +69,18 @@ struct FirstLightView: View {
             }
             .padding(.top, 78)
 
-            Spacer()
-
+            // The button belongs to the rule, not to the bottom of the screen.
+            // Pinned down there it left a third of a screen of nothing in the
+            // middle of a composition that is otherwise one column, and the
+            // reader had to cross it to answer a sentence they had just read.
+            // The whole group sits between two spacers instead, so the empty
+            // space is above and below it rather than through it.
             Unfolding(after: Self.settled + 0.7) {
                 QuietButton(title: "Plant it now", isProminent: true, action: plant)
             }
-            .padding(.bottom, 48)
+            .padding(.top, 34)
+
+            Spacer()
         }
         .background(UnfurlingBackdrop(.single))
     }
