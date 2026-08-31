@@ -101,6 +101,13 @@ public struct GrowthModel {
         let overall = (age / fullBloomAt).clamped(to: 0...1)
 
         // Height runs ahead of the bloom and eases off as the plant tops out.
+        //
+        // The floor is what a seed looks like the moment it is sown, and it is
+        // deliberately not a hair above zero: the ramp below is measured in
+        // days, so across the germination *hours* it barely moves, and whatever
+        // the floor is, that is the plant its owner meets first. At 0.02 that
+        // was a two-centimetre stub. A sprout wants to be taller than the husk
+        // it came out of.
         let heightSpan = marks[2].end
         let height = Self.easeOut((age / heightSpan).clamped(to: 0...1))
 
@@ -127,7 +134,7 @@ public struct GrowthModel {
             stage: stage,
             stageProgress: stageProgress,
             overall: overall,
-            heightScale: max(0.02, height),
+            heightScale: max(0.055, height),
             leafUnfurl: leafUnfurl,
             budSwell: budSwell,
             bloomOpen: bloomOpen,

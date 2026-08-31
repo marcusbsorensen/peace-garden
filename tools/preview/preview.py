@@ -166,7 +166,10 @@ def contact_sheet(seeds, columns=4, cell=(300, 430), age_days=None):
 
 def stage_row(label, cell=(300, 430)):
     genome = Genome(mint_seed(label.encode()))
-    marks = [0.2, 1.0, genome.daysToBloom * 0.5, genome.daysToBloom * 0.85,
+    # Day zero first, and not by accident: the row used to start at 0.2, and the
+    # plant a person actually meets — the one drawn seconds ago — was the single
+    # frame nobody had ever looked at. It was a mushroom for months.
+    marks = [0.0, 0.2, 1.0, genome.daysToBloom * 0.5, genome.daysToBloom * 0.85,
              genome.daysToBloom + 0.4, genome.daysToBloom + genome.bloomDays * 0.5]
     sheet = Image.new("RGB", (len(marks) * cell[0], cell[1]), (0, 0, 0))
     for index, days in enumerate(marks):

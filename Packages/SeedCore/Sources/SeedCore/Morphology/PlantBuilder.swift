@@ -37,12 +37,24 @@ public struct PlantBuilder {
         // over rather than vanishing between one frame and the next.
         let husk = Float(((0.25 - growth.heightScale) / 0.23).clamped(to: 0...1))
         if husk > 0.01 {
+            // Measured against the shoot as it is now, not against the stem the
+            // plant will one day have. `SkeletonBuilder` draws a young stem at a
+            // fraction of its final radius, so taking `genome.stem.baseRadius`
+            // here made the husk five times the shoot's thickness on the day it
+            // was sown — a dome wider than the plant was tall, with the whole
+            // sprout hidden inside it.
+            let shootRadius = skeleton.stem[0].radius
+            let shootLength = Float(genome.stem.height) * Float(growth.heightScale)
+            // A seed case sits at the foot of its shoot. Capping it against the
+            // shoot's length is what guarantees that, at every age: the husk can
+            // never be the tallest thing on the plant.
+            let radius = min(shootRadius * 2.4, shootLength * 0.45) * husk
             builder.addDome(
                 role: .stem,
-                centre: SIMD3<Float>(0, Float(genome.stem.baseRadius) * 0.4, 0),
+                centre: SIMD3<Float>(0, shootRadius * 0.4, 0),
                 axis: SIMD3<Float>(0, 1, 0),
                 side: SIMD3<Float>(1, 0, 0),
-                radius: Float(genome.stem.baseRadius) * 2.4 * husk,
+                radius: radius,
                 flatten: 0.8,
                 rows: 8,
                 columns: 12

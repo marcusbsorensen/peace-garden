@@ -77,9 +77,12 @@ final class PlantMeshTests: XCTestCase {
             XCTAssertGreaterThan(sequence.last!.vertexCount, sequence.first!.vertexCount,
                                  "plant \(index) never filled out")
 
-            // Height is deliberately not monotonic. The seed husk is wider than
-            // the shoot that replaces it, and a flower opening outward lowers
-            // the crown it was standing in. Both are correct; a collapse is not.
+            // Height is deliberately not monotonic: a flower opening outward
+            // lowers the crown it was standing in. That is correct; a collapse
+            // is not. This used to also say the husk was wider than the shoot
+            // it replaced, which was not a fact about plants but the bug in
+            // `testAFreshlySownSeedLooksLikeAShootAndNotAMushroom`, written
+            // down as though it were intended.
             for (earlier, later) in zip(sequence, sequence.dropFirst()) {
                 XCTAssertGreaterThan(later.height, earlier.height * 0.5,
                                      "plant \(index) collapsed between stages")
@@ -106,6 +109,70 @@ final class PlantMeshTests: XCTestCase {
         let roles = Set(PlantBuilder(genome: genome).mesh(growth: peak).parts.map(\.role))
         XCTAssertTrue(roles.isSuperset(of: [.stem, .leaf, .petal, .centre, .stamen]),
                       "missing parts: \(Set(MeshRole.allCases).subtracting(roles))")
+    }
+
+    func testAFreshlySownSeedLooksLikeAShootAndNotAMushroom() {
+        // The plant a person meets first is the one drawn seconds ago, and for
+        // a long time it was the one frame nobody had ever rendered: the husk
+        // was sized from `stem.baseRadius` — the radius of the *mature* stem —
+        // while the shoot beside it was drawn at a fraction of that, so the
+        // seed case came out three times wider than the whole plant was tall
+        // and swallowed it. The camera frames whatever it is given, so what
+        // arrived on the phone was a mushroom.
+        for index in 0..<120 {
+            let genome = genome(index)
+            let model = GrowthModel(genome: genome)
+            let birth = Date(timeIntervalSince1970: 1_700_000_000)
+
+            // The first hours, where the height ramp — measured in days — has
+            // barely moved and the husk is at its fullest.
+            for hours in [0.0, 0.5, 2.0, 6.0] {
+                let state = model.state(birth: birth, now: birth.addingTimeInterval(hours * 3600))
+                let mesh = PlantBuilder(genome: genome).mesh(growth: state)
+                // The stem part is the tube and the husk and nothing else, so
+                // measuring it against the skeleton isolates the husk's own
+                // contribution. Early leaves belong to the plant, not the husk.
+                guard let stem = mesh.parts.first(where: { $0.role == .stem }) else {
+                    return XCTFail("genome \(index) at \(hours)h has no stem")
+                }
+                var stemMin = SIMD3<Float>(repeating: .greatestFiniteMagnitude)
+                var stemMax = SIMD3<Float>(repeating: -.greatestFiniteMagnitude)
+                for position in stem.positions {
+                    stemMin = simd_min(stemMin, position)
+                    stemMax = simd_max(stemMax, position)
+                }
+
+                // What the shoot alone fills: its path, fattened by its radius.
+                // The assertions are about what the husk *adds* to that, which
+                // is the thing that went wrong; a succulent's shoot is a stubby
+                // barrel and a spire's is a thread, and both are correct.
+                let skeleton = SkeletonBuilder.stem(genome: genome, heightScale: Float(state.heightScale))
+                var shootMin = SIMD3<Float>(repeating: .greatestFiniteMagnitude)
+                var shootMax = SIMD3<Float>(repeating: -.greatestFiniteMagnitude)
+                for sample in skeleton.stem {
+                    shootMin = simd_min(shootMin, sample.position - SIMD3(repeating: sample.radius))
+                    shootMax = simd_max(shootMax, sample.position + SIMD3(repeating: sample.radius))
+                }
+
+                // The sharp one: a seed case sits at the shoot's foot. The
+                // moment it is the tallest thing on the plant, what the phone
+                // draws is a mushroom.
+                XCTAssertLessThanOrEqual(
+                    stemMax.y, shootMax.y + 1e-5,
+                    "genome \(index) at \(hours)h: the husk stands above the shoot"
+                )
+
+                // And it may be wider than the thread it wraps — a seed is —
+                // but not by the five-fold it once was.
+                let shootExtent = shootMax - shootMin
+                let width = Swift.max(stemMax.x - stemMin.x, stemMax.z - stemMin.z)
+                let shootWidth = Swift.max(shootExtent.x, shootExtent.z)
+                XCTAssertLessThanOrEqual(
+                    width, shootWidth * 2.5,
+                    "genome \(index) at \(hours)h: the husk is \(width / shootWidth)x the shoot's width"
+                )
+            }
+        }
     }
 
     func testGeometryStaysWithinAReasonableBudget() {

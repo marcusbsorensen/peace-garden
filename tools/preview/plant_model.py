@@ -434,7 +434,7 @@ def growth_state(genome, age_seconds, hour_of_day=13.0):
     bloom_open *= 0.34 + 0.66 * ease_in_out(1.0 - delta / 12.0)
 
     return dict(stage=stage, stageProgress=stage_progress, overall=overall,
-                heightScale=max(0.02, height), leafUnfurl=leaf_unfurl,
+                heightScale=max(0.055, height), leafUnfurl=leaf_unfurl,
                 budSwell=bud_swell, bloomOpen=bloom_open, age=age)
 
 
@@ -619,9 +619,15 @@ def build_mesh(genome, growth):
 
     husk = clamp((0.25 - growth["heightScale"]) / 0.23, 0, 1)
     if husk > 0.01:
-        builder.add_dome("stem", np.array([0.0, genome.baseRadius * 0.4, 0.0]),
+        # Measured against the shoot as it is now, not against the stem the
+        # plant will one day have, and capped so the husk can never be the
+        # tallest thing on the plant. See the same note in PlantBuilder.swift.
+        shoot_radius = skeleton["stem"][0]["radius"]
+        shoot_length = genome.height * growth["heightScale"]
+        radius = min(shoot_radius * 2.4, shoot_length * 0.45) * husk
+        builder.add_dome("stem", np.array([0.0, shoot_radius * 0.4, 0.0]),
                          np.array([0.0, 1.0, 0.0]), np.array([1.0, 0.0, 0.0]),
-                         genome.baseRadius * 2.4 * husk, flatten=0.8, rows=8, columns=12)
+                         radius, flatten=0.8, rows=8, columns=12)
 
     _add_leaves(builder, genome, skeleton, growth)
     _add_blooms(builder, genome, skeleton, growth)

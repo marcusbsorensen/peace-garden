@@ -159,9 +159,9 @@ enum PlantSceneBuilder {
     ) -> (target: SCNVector3, distance: Float) {
         let centre = (minBounds + maxBounds) * 0.5
         let extent = maxBounds - minBounds
-        let halfHeight = Swift.max(0.03, extent.y * 0.5)
+        let halfHeight = extent.y * 0.5
         // The plant turns, so its silhouette can be as wide as its deepest axis.
-        let halfWidth = Swift.max(0.03, Swift.max(extent.x, extent.z) * 0.5)
+        let halfWidth = Swift.max(extent.x, extent.z) * 0.5
 
         let verticalHalfAngle = Float(fieldOfView * .pi / 180) / 2
         let horizontalHalfAngle = atan(tan(verticalHalfAngle) * Swift.max(0.2, aspect))
@@ -170,6 +170,12 @@ enum PlantSceneBuilder {
             halfHeight / tan(verticalHalfAngle),
             halfWidth / tan(horizontalHalfAngle)
         )
-        return (SCNVector3(centre.x, centre.y, centre.z), distance * 1.25)
+        // The guard belongs on the distance, not on the plant's measurements. A
+        // floor on the extent silently pretends every plant is at least a
+        // handspan across, which is true of a mature one and false of every
+        // seedling — and it is the seedling that then gets pushed away and
+        // rendered as a speck. This only catches a degenerate mesh, and it
+        // stays clear of the camera's `zNear`.
+        return (SCNVector3(centre.x, centre.y, centre.z), Swift.max(0.04, distance * 1.25))
     }
 }
