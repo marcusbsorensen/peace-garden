@@ -10,6 +10,7 @@ struct PlantDetailView: View {
 
     @State private var detailsVisible = false
     @State private var confirmingDelete = false
+    @State private var editing = false
 
     var body: some View {
         ZStack {
@@ -44,6 +45,17 @@ struct PlantDetailView: View {
             Button("Keep it", role: .cancel) {}
         } message: {
             Text("This cannot be undone. The plant cannot be grown again.")
+        }
+        .sheet(isPresented: $editing) {
+            EncounterEditView(record: record) { name, place, keepsCoordinate in
+                model.updateEncounter(
+                    of: record,
+                    peerDisplayName: name,
+                    place: .some(place),
+                    keepsCoordinate: keepsCoordinate
+                )
+            }
+            .presentationBackground(.black)
         }
     }
 
@@ -86,7 +98,28 @@ struct PlantDetailView: View {
                                 .chromeLabel(size: 10)
                                 .foregroundStyle(Chrome.faint)
                         }
+                        // Numbers rather than a place name, and a tap to let a
+                        // map say the name if anybody wants it. See
+                        // `CoordinateDisplay`.
+                        if let coordinate = encounter.coordinate {
+                            if let url = coordinate.mapURL {
+                                Link(destination: url) {
+                                    Text(coordinate.written)
+                                        .chromeLabel(size: 10)
+                                        .foregroundStyle(Chrome.muted)
+                                        .pressable()
+                                }
+                                .padding(.top, 4)
+                            } else {
+                                Text(coordinate.written)
+                                    .chromeLabel(size: 10)
+                                    .foregroundStyle(Chrome.faint)
+                            }
+                        }
                     }
+
+                    QuietButton(title: "Tell it differently") { editing = true }
+                        .padding(.top, 4)
                 }
                 .padding(.horizontal, 40)
                 .frame(maxWidth: Chrome.readableWidth)

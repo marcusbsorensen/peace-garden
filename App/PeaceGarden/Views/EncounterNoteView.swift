@@ -3,9 +3,15 @@ import SeedCore
 
 /// What to remember about the meeting.
 ///
-/// All of it is optional and typed by hand. The date and time are offered
-/// because they were part of the meeting, not captured because they were
-/// available — and the place is a text field, not the device's location.
+/// All of it is optional, and all of it can be changed afterwards. The date and
+/// time are offered because they were part of the meeting rather than because
+/// they were available.
+///
+/// Two different things are called place here and they stay separate. What
+/// someone types is theirs, stays on this phone, and need not match what the
+/// other person wrote. A coordinate appears only where both people asked for one
+/// at this meeting, and it is shown here before anything is saved, so that what
+/// is being kept is visible at the moment of keeping it.
 struct EncounterNoteView: View {
     let outcome: ExchangeOutcome
     let onKeep: (EncounterNote) -> Void
@@ -55,6 +61,17 @@ struct EncounterNoteView: View {
                     .tint(Chrome.muted)
 
                     field(label: "Where", text: $place, prompt: "A place, if you like")
+
+                    if let coordinate = outcome.coordinate {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Kept with this meeting")
+                                .chromeLabel()
+                                .foregroundStyle(Chrome.faint)
+                            Text(coordinate.written)
+                                .font(.system(size: 15, weight: .light).monospacedDigit())
+                                .foregroundStyle(Chrome.muted)
+                        }
+                    }
 
                     VStack(alignment: .leading, spacing: 10) {
                         Text("About this meeting")
@@ -123,6 +140,7 @@ struct EncounterNoteView: View {
                 happenedAt: outcome.happenedAt,
                 showsDateTime: showsDateTime,
                 place: place.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : place,
+                coordinate: outcome.coordinate,
                 note: note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : note
             )
         )

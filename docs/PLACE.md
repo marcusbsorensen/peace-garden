@@ -1,9 +1,9 @@
 # Where a meeting happened
 
-A specification, not yet built. Written 31 August 2026. The figurative half is
-live; the geographic half is described here because it reverses a decision
-recorded in three places and falsifies a sentence currently on screen, and
-neither should happen by accident.
+Written 31 August 2026 as a specification, and now a record of what was built.
+Both halves are live. It is kept because the geographic half reverses a decision
+recorded in three places and rewrote a sentence that was on screen, and the
+reasoning should outlast the memory of it.
 
 ## What is live
 
@@ -19,7 +19,7 @@ It asks for no permission, sends nothing, and needs no change to any promise. It
 is also the only kind of place a seed arriving by link can have, there being no
 shared moment to locate.
 
-## What is proposed
+## What the geographic half does
 
 Real coordinates, when both people want them.
 
@@ -93,11 +93,13 @@ what travels, rather than what does not.
 
 ## Two properties that are easy to get wrong
 
-**Both-or-neither cannot be done by sending consent alongside coordinates.**
-Whoever transmits first has already disclosed. Consent has to be exchanged and
-agreed in its own round, and coordinates sent only after both phones hold both
-answers. `ExchangeProtocol` already runs in rounds, so this is an extra beat
-rather than a new shape.
+**A coordinate never crosses the air.** The first build sent it on `confirm`, a
+round behind the consent flag, so that nobody disclosed before knowing the
+answer. That was correct and it was more machinery than the problem needs: each
+phone can stamp its own reading, and then there is nothing to send at all. The
+wire has no field for a location, which is a stronger guarantee than a rule
+about when to fill one in, and it is tested by encoding every message kind and
+looking for the words.
 
 **One person's consent would disclose the other's location.** Two people at a
 face-to-face meeting are standing in the same spot, so my coordinates are also
@@ -108,26 +110,42 @@ coarsened real one: the fallback is not a lesser feature, it is the only answer
 that does not spend somebody else's privacy. The rule of both-or-neither happens
 to be the privacy-correct rule as well as the simple one.
 
-## What has to be built
+## What was built
 
-1. `NSLocationWhenInUseUsageDescription` in `project.yml`, and the string that
-   goes in it, which is user-facing copy and should be written as such.
-2. A standing switch in Seed, off by default, and the dialogue on Meet that
-   offers it the first time.
-3. A consent round in `ExchangeProtocol`, before any coordinates move.
-4. Coordinates on `EncounterNote`, optional, alongside `place`.
-5. The rewritten paragraph on the Seed screen.
-6. A decision on precision. Coordinates taken at full resolution record a
-   doorstep. There is a case for rounding to something that names a place without
-   naming an address, and it should be made deliberately rather than defaulting
-   to whatever `CLLocation` hands over.
+1. `NSLocationWhenInUseUsageDescription`, written as the user-facing copy it is.
+2. `PlaceKeeping`: the standing switch, off until turned on, and the only place
+   the system prompt can be raised. It follows what iOS actually permits, so a
+   permission revoked in Settings turns the switch off rather than leaving it
+   claiming something it cannot do.
+3. The offer on Meet, between the name and the search, shown once. Declining is
+   remembered, because an offer repeated at every meeting is not an offer.
+4. `sharesPlace` on `PollenCard`, optional so that a card from version 1 decodes
+   as a refusal. `PollenCard.permitPlace` is the one place the rule is stated.
+5. `Coordinate` on `EncounterNote`, beside the typed place and independent of it.
+6. The rewritten paragraph on Seed, next to the switch that changes it, so that
+   turning it on and reading what it means are one glance.
+7. `EncounterEditView`, and `GardenModel.updateEncounter`, which reach only the
+   told half.
 
-## Open
+**Precision is five decimal places**, about a metre, applied in `Coordinate`'s
+initialiser so nothing can store more by forgetting to round. Enough to find the
+spot again, and short of claiming an accuracy a phone in a street does not have.
 
-- **What is shown, once coordinates exist.** A place name asks for reverse
-  geocoding, which is a network request, and the app currently makes none. Naming
-  the spot from the device alone means showing coordinates, which reads as
-  telemetry rather than memory.
-- **Whether a kept plant can be edited later**, to add a place or remove one. The
-  note can already be written once; consent that cannot be withdrawn is weaker
-  than it looks.
+## Settled, having been open
+
+- **Coordinates are shown as numbers and never as a place name.** Naming a spot
+  means a request to somebody's geocoder, and this app makes no network request
+  at all. The numbers are also the honest record of what was measured, where "the
+  Old Quay" is a guess laid over it. A tap opens them in a map, which is where a
+  name belongs, and only if the person asks for it.
+- **A kept plant can be told differently later.** The name, the place, and
+  whether the coordinate is still held. Removing it deletes it rather than hiding
+  it, because consent that cannot be withdrawn is not worth much. The seed, the
+  lineage and the birthday are unreachable from that screen, so nothing anybody
+  writes changes what grows.
+
+## Still open
+
+- **The shared garden.** Plants submitted to it should carry only what their
+  owner released, which means the submission has to read the record rather than
+  the exchange, and has to re-ask rather than assume. Phase 2, see PHASES.md.

@@ -21,6 +21,9 @@ struct ExchangeOutcome: Equatable, Identifiable {
     var peerDisplayName: String
     var peerPlantName: String
     var happenedAt: Date
+    /// Where this phone was, if both people agreed the meeting could carry it.
+    /// Measured here and never received from the other side.
+    var coordinate: Coordinate?
 
     var id: String { result.childSeed.hex }
 }
@@ -73,22 +76,39 @@ final class PollenExchangeService: NSObject {
     private var localResult: CrossPollinationResult?
     private var remoteChecksum: Data?
     private var searchTimeout: Task<Void, Never>?
+    /// This phone's own reading, taken while the exchange is being set up rather
+    /// than at the moment of the crossing, because the fix takes a moment and
+    /// the two people are standing in the same spot the whole time.
+    private var placeReading: Coordinate?
+    private var placeTask: Task<Void, Never>?
 
     private static let searchTimeoutSeconds: UInt64 = 90
 
     // MARK: - Lifecycle
 
-    func start(identity: Identity) {
+    func start(identity: Identity, place: PlaceKeeping? = nil) {
         stop()
         phase = .searching
 
+        // `canProvide` rather than the standing switch, so the card promises
+        // only what this phone can actually do. iOS can revoke the permission
+        // from Settings without the app being told at a convenient moment.
+        let willing = place?.canProvide == true
         let card = PollenCard(
             seed: identity.seed,
             displayName: identity.displayName,
             plantName: identity.genome.name.full,
-            birth: identity.birth
+            birth: identity.birth,
+            sharesPlace: willing
         )
         self.card = card
+
+        if willing, let place {
+            placeTask = Task { [weak self] in
+                let reading = await place.reading()
+                self?.placeReading = reading
+            }
+        }
 
         let peerID = MCPeerID(displayName: Self.peerDisplayName(from: identity.displayName))
         localPeerID = peerID
@@ -141,6 +161,9 @@ final class PollenExchangeService: NSObject {
         card = nil
         localNonce = nil
         remoteCard = nil
+        placeTask?.cancel()
+        placeTask = nil
+        placeReading = nil
         remoteNonce = nil
         localTouchAt = nil
         remoteTouchAt = nil
@@ -250,12 +273,16 @@ final class PollenExchangeService: NSObject {
         }
 
         searchTimeout?.cancel()
+        // The one gate. A reading taken on this phone is still discarded unless
+        // the other person agreed, because they were standing here too.
+        let agreed = card.map { PollenCard.permitPlace($0, remoteCard) } ?? false
         phase = .grown(
             ExchangeOutcome(
                 result: localResult,
                 peerDisplayName: remoteCard.displayName,
                 peerPlantName: remoteCard.plantName,
-                happenedAt: Date()
+                happenedAt: Date(),
+                coordinate: agreed ? placeReading : nil
             )
         )
         // Hold the connection open briefly so the other side's confirm is not

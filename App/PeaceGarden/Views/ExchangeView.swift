@@ -7,6 +7,7 @@ import SeedCore
 /// are looking at each other, not at it.
 struct ExchangeView: View {
     @Environment(GardenModel.self) private var model
+    @Environment(PlaceKeeping.self) private var place
     @Environment(\.dismiss) private var dismiss
 
     @State private var service = PollenExchangeService()
@@ -17,6 +18,9 @@ struct ExchangeView: View {
     /// for — with somebody to answer for, rather than on a first screen where
     /// there was nobody yet.
     @State private var naming = false
+    /// Offered once, on the way in, and never again if it is declined. An offer
+    /// repeated at every meeting has stopped being an offer.
+    @State private var offeringPlace = false
     @State private var draftName = ""
     @FocusState private var nameFocused: Bool
 
@@ -30,6 +34,8 @@ struct ExchangeView: View {
 
             if naming {
                 nameYourself
+            } else if offeringPlace {
+                offerPlace
             } else {
                 phases
             }
@@ -52,7 +58,7 @@ struct ExchangeView: View {
         }
         .onAppear {
             if model.hasChosenName {
-                startSearching()
+                beginAfterNaming()
             } else {
                 naming = true
             }
@@ -99,9 +105,62 @@ struct ExchangeView: View {
         return "Cancel"
     }
 
+    /// The place offer sits between the name and the search, so that the only
+    /// system permission prompt this app can raise happens while somebody is
+    /// reading about it, rather than in the middle of meeting a person.
+    private func beginAfterNaming() {
+        if place.shouldOffer {
+            offeringPlace = true
+        } else {
+            startSearching()
+        }
+    }
+
     private func startSearching() {
+        offeringPlace = false
         guard let identity = model.identity else { return }
-        service.start(identity: identity)
+        service.start(identity: identity, place: place)
+    }
+
+    // MARK: - Where you meet
+
+    private var offerPlace: some View {
+        VStack(spacing: 20) {
+            Spacer()
+
+            Text("Where you meet")
+                .chromeHeading(size: 17)
+                .foregroundStyle(Chrome.ink)
+
+            Text("A meeting can keep the coordinates of the spot it happened in, shown as numbers you can open in a map. They stay on this phone.")
+                .font(.system(size: 14, weight: .light))
+                .foregroundStyle(Chrome.muted)
+                .multilineTextAlignment(.center)
+                .lineSpacing(4)
+
+            Text("A meeting keeps them when both of you have asked for it, and you choose again every time.")
+                .font(.system(size: 14, weight: .light))
+                .foregroundStyle(Chrome.muted)
+                .multilineTextAlignment(.center)
+                .lineSpacing(4)
+
+            HStack(spacing: 14) {
+                QuietButton(title: "Not now") {
+                    place.declineOffer()
+                    startSearching()
+                }
+                QuietButton(title: "Keep places", isProminent: true) {
+                    place.enable()
+                    startSearching()
+                }
+            }
+            .padding(.top, 6)
+
+            Spacer()
+        }
+        .padding(.horizontal, 40)
+        .frame(maxWidth: Chrome.readableWidth)
+        .frame(maxWidth: .infinity)
     }
 
     // MARK: - A name, once
@@ -160,7 +219,7 @@ struct ExchangeView: View {
         // "Gardener" stays the fallback rather than becoming somebody's name.
         model.rename(to: trimmedName)
         naming = false
-        startSearching()
+        beginAfterNaming()
     }
 
     // MARK: - Phases
@@ -204,7 +263,7 @@ struct ExchangeView: View {
                 .lineSpacing(4)
             QuietButton(title: "Try again", isProminent: true) {
                 guard let identity = model.identity else { return }
-                service.start(identity: identity)
+                service.start(identity: identity, place: place)
             }
             Spacer()
         }

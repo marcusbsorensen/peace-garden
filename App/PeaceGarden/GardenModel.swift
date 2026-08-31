@@ -135,6 +135,42 @@ final class GardenModel {
         return record
     }
 
+    /// Change what a kept plant says about its meeting.
+    ///
+    /// The name, the place, and whether the coordinate is still held. Only the
+    /// told half of a plant: the seed, the lineage and the birthday stay exactly
+    /// as they were, so what grows never moves. A parent may tell a child more
+    /// of the story, or correct a part of it, without altering whose child it is.
+    ///
+    /// Dropping the coordinate is a real deletion rather than a hidden flag,
+    /// because consent that cannot be withdrawn is not worth much.
+    func updateEncounter(
+        of record: PlantRecord,
+        peerDisplayName: String? = nil,
+        place: String?? = nil,
+        keepsCoordinate: Bool? = nil
+    ) {
+        guard let index = garden.plants.firstIndex(where: { $0.id == record.id }),
+              var encounter = garden.plants[index].encounter else { return }
+
+        if let peerDisplayName {
+            let trimmed = peerDisplayName.trimmingCharacters(in: .whitespacesAndNewlines)
+            // An empty name would leave the plant saying "with" and nothing
+            // else, so a blank is treated as no change rather than as an erasure.
+            if !trimmed.isEmpty { encounter.peerDisplayName = trimmed }
+        }
+        if let place {
+            let trimmed = place?.trimmingCharacters(in: .whitespacesAndNewlines)
+            encounter.place = (trimmed?.isEmpty ?? true) ? nil : trimmed
+        }
+        if keepsCoordinate == false {
+            encounter.coordinate = nil
+        }
+
+        garden.plants[index].encounter = encounter
+        persist()
+    }
+
     func delete(_ record: PlantRecord) {
         garden.plants.removeAll { $0.id == record.id }
         persist()

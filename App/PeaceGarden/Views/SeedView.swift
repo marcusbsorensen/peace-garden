@@ -7,6 +7,7 @@ import SeedCore
 /// strangers; they are owed a plain account of what it is.
 struct SeedView: View {
     @Environment(GardenModel.self) private var model
+    @Environment(PlaceKeeping.self) private var place
     @Environment(\.dismiss) private var dismiss
     @State private var editingName = false
     @State private var draftName = ""
@@ -91,16 +92,48 @@ struct SeedView: View {
         }
     }
 
+    /// The standing choice about places, and the paragraph it changes.
+    ///
+    /// Kept together on purpose. A switch that alters what leaves the phone
+    /// belongs beside the sentence saying what leaves the phone, so that turning
+    /// it on and reading what it means are the same glance.
     private var privacyNote: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("What is shared")
-                .chromeLabel()
-                .foregroundStyle(Chrome.faint)
-            Text("When you meet someone, your phones exchange this seed, the name above, and a random number for that meeting. Nothing else: no account, no contacts, no location, and nothing is sent to a server. The seed cannot be turned back into anything about you or your phone.")
-                .font(.system(size: 13, weight: .light))
-                .foregroundStyle(Chrome.muted)
-                .lineSpacing(4)
+        VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("What is shared")
+                    .chromeLabel()
+                    .foregroundStyle(Chrome.faint)
+                Text("When you meet someone, your phones exchange this seed, the name above, and a random number for that meeting. That is everything that crosses between you, and it goes directly from phone to phone. The seed cannot be turned back into anything about you or your phone.")
+                    .font(.system(size: 13, weight: .light))
+                    .foregroundStyle(Chrome.muted)
+                    .lineSpacing(4)
+            }
+
+            Hairline()
+
+            VStack(alignment: .leading, spacing: 10) {
+                Toggle(isOn: placeBinding) {
+                    Text("Keep where you meet")
+                        .font(.system(size: 15, weight: .light))
+                        .foregroundStyle(Chrome.ink)
+                }
+                .tint(Chrome.muted)
+
+                Text("With this on, a meeting can keep the coordinates of the spot it happened in. Each phone measures its own and holds it there. A meeting keeps them when both of you have asked for it, and you choose again every time.")
+                    .font(.system(size: 13, weight: .light))
+                    .foregroundStyle(Chrome.muted)
+                    .lineSpacing(4)
+            }
         }
+    }
+
+    /// Writes through the one object that owns this, so that the switch, the
+    /// system permission and what the exchange promises cannot drift apart.
+    private var placeBinding: Binding<Bool> {
+        Binding(
+            get: { place.isEnabled },
+            set: { $0 ? place.enable() : place.disable() }
+        )
     }
 
     private func row(_ label: String, _ value: String) -> some View {

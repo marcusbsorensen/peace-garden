@@ -3,11 +3,13 @@ import SwiftUI
 @main
 struct PeaceGardenApp: App {
     @State private var model = GardenModel()
+    @State private var place = PlaceKeeping()
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environment(model)
+                .environment(place)
                 .preferredColorScheme(.dark)
                 .statusBarHidden()
                 // A seed can arrive from anywhere: a scanned code, a message,
