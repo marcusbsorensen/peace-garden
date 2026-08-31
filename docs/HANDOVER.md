@@ -128,10 +128,17 @@ throughout. `main` carries eight commits from that session. What is live:
    `https://peacegarden.app/` presents a certificate that validates. The site
    answers 403 to a bare GET, which is the host's default for a directory with
    nothing in it and not a TLS problem.
-3. **Upload `Server/.well-known/apple-app-site-association`.** Still 404, and
-   now the only thing between here and working seed links. It is written and
-   filled in. `Server/README.md` has the command and the rules that quietly
-   break associated domains.
+3. ~~**Upload `Server/.well-known/apple-app-site-association`.**~~ Done, by
+   `tools/deploy-aasa.sh`, and checked end to end: a direct 200 with no
+   redirect hops, `content-type: application/json`, byte-identical to the copy
+   in this repo, and its Team ID and bundle identifier both still agreeing
+   with `project.yml`. The `www` host serves it too.
+
+   **Apple's CDN already has it** — `app-site-association.cdn-apple.com/a/v1/
+   peacegarden.app` returns the right file — so the usual day of waiting does
+   not apply and seed links can be tested now. Keep the caution in mind for
+   any *later* edit, though: once the CDN has a copy it holds it, and the
+   twenty-four hours bites on the second version rather than the first.
 4. ~~**GitHub Actions will not allocate a runner.**~~ Fixed, and it was not
    the setting. `/actions/permissions` read `enabled: true, allowed_actions: all`
    while every job came back `runner_id: 0` with an empty `steps` array, which
