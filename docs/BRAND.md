@@ -79,8 +79,8 @@ than a voice.
 |---|---|
 | Turns | **2.0** |
 | Start radius | **48** (construction units) |
-| Growth per turn | **× 2.3** — logarithmic, not Archimedean |
-| Stroke | **67.65** rendered |
+| Growth per turn | **× 2.55** — logarithmic, not Archimedean |
+| Stroke | **41.47** rendered |
 | End bearing | **45°**, up and to the right |
 | Spathe length | **0.92** of the spiral's final radius |
 | Spathe turn | **0.30 rad**, continuing the spiral's sense |
@@ -93,6 +93,36 @@ than a voice.
 **The spiral is logarithmic on purpose.** An Archimedean one holds the same gap the
 whole way out, which reads as evenly wound rather than as growing, and it cannot be
 tight at the centre and open at the rim at the same time.
+
+### Clearances, which are the thing that fails first
+
+A spiral is the one mark shape that packs its own stroke against itself, so what
+limits it at small sizes is not weight but the gap between consecutive turns. The
+generator measures and prints these; they are not eyeballed off a downsample.
+
+| | On the tile | At 40 pt · 3× | At 40 px |
+|---|---|---|---|
+| Between turns | 22.8 u | **2.67 px** | 0.89 px |
+| Bract to coil | 72.3 u | 8.47 px | 2.82 px |
+| Spadix in bract | 24.3 u | 2.85 px | 0.95 px |
+
+**The tightest gap is always the innermost pair of turns**, because the radial gain
+per turn grows with the radius and the stroke does not — so it is
+`START_RADIUS × (GROWTH_PER_TURN − 1) − STROKE`, and no other pair can be worse.
+
+> **What this cost, recorded because the first answer was wrong.** The mark was
+> drawn at a stroke of 58 with a growth of ×2.3, which left **0.53 px between the
+> innermost turns at 40 pt** — they merged into a solid core, and the centre of the
+> spiral stopped existing. Thinning the stroke alone reaches 2.5 px only at about
+> 42, which is spindly. Opening the spiral slightly does the rest of the work, so
+> the fix is both: **stroke 58 → 48, growth ×2.3 → ×2.55.**
+
+**On weight against the rest of the suite.** Rendered at **41.47**, which is
+UnCubed's letter weight (42.46) almost exactly, and lighter than Pfish's ~55 —
+measured off the shipped PNG at the 10th percentile of scanline runs, which
+approximates a perpendicular crossing where the median does not. The suite has no
+shared stroke weight and never claimed one; §3.2 asks for even weight *within* a
+mark. A spiral has a reason to sit at the lighter end that a fish outline does not.
 
 Two constraints are asserted in the generator rather than left as lore, because
 both were discovered by drawing them wrong:

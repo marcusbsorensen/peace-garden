@@ -68,7 +68,7 @@ STOP_COUNT = 3
 
 # The stroke. One weight — the mark is monoline, so §3.2a's modulation terms and
 # the recorded contrast ratio they require do not apply and must not be reached for.
-STROKE = 58.0
+STROKE = 48.0
 
 # The spiral is logarithmic, so it is genuinely tighter at the centre and opens as
 # it turns. An Archimedean one holds the same gap the whole way out and reads as
@@ -82,7 +82,7 @@ STROKE = 58.0
 # at the smallest size, which is the one that matters most.
 TURNS = 2.0
 START_RADIUS = 48.0
-GROWTH_PER_TURN = 2.3
+GROWTH_PER_TURN = 2.55
 # Where the outer end points, measured anticlockwise from east. 45° puts it up and
 # to the right, so the mark's own reading order runs the same way as the gradient —
 # the argument §10.4 makes for `un³`.
@@ -410,6 +410,39 @@ CONTENTS = {
 }
 
 
+def clearances(points, spike, stroke):
+    """
+    The tightest gaps in the mark, in tile units.
+
+    A mark that merges at small sizes does it at one specific place, and it is
+    cheaper to measure that place than to squint at a downsample. Reported at the
+    sizes the icon is actually seen at rather than on the 1024 grid, because a
+    gap is legible or not in device pixels.
+    """
+    scale = stroke / STROKE
+
+    # Consecutive turns. The innermost pair is always the tightest: the radial
+    # gain per turn grows with the radius, and the stroke does not.
+    turns = (START_RADIUS * (GROWTH_PER_TURN - 1) - STROKE) * scale
+
+    # The bract against the coil it rises from. The junction is skipped at both
+    # ends — they meet there on purpose, and a measurement across a join is not a
+    # clearance.
+    coil = np.array(points[:400])
+    bract = np.array(points[560:])
+    gaps = np.linalg.norm(bract[:, None, :] - coil[None, :, :], axis=2)
+    bract_to_coil = float(gaps.min()) - stroke
+
+    # The spike inside the bract.
+    spine = np.array(spike)
+    edge = np.array(points[513:])
+    inner = np.linalg.norm(spine[:, None, :] - edge[None, :, :], axis=2)
+    spadix = float(inner.min()) - stroke / 2 - stroke * SPADIX_WEIGHT / 2
+
+    return {"between turns": turns, "bract to coil": bract_to_coil,
+            "spadix in bract": spadix}
+
+
 def main():
     stops = ramp()
     points, spike, stroke = fitted()
@@ -431,6 +464,11 @@ def main():
               f"contrast {contrast(rgb, ground):.2f}:1  luminance {luminances[-1]:.4f}")
     spread = (max(luminances) - min(luminances)) / max(luminances) * 100
     print(f"  isoluminance spread {spread:.3f}%")
+
+    print("clearances, as drawn on the tile and as rendered:")
+    for name, gap in clearances(points, spike, stroke).items():
+        print(f"  {name:>16}  {gap:6.1f} u   "
+              f"{gap * 120 / TILE:4.2f} px @40pt·3x   {gap * 40 / TILE:4.2f} px @40px")
 
 
 if __name__ == "__main__":
