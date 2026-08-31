@@ -30,6 +30,46 @@ One function in SeedCore is also uncompiled: `GrowthModel.State.summary()`, whic
 uses `DateComponentsFormatter` — absent from swift-corelibs-foundation, fine on
 iOS.
 
+## Where the 31 August session left off
+
+The app builds, runs and has been driven on an iPhone 17 Pro Max simulator
+throughout. `main` carries eight commits from that session. What is live:
+
+- **The mushroom is gone** — the husk was sized from the mature stem's radius
+  while the shoot is drawn at a fraction of it. See *The mushroom* below.
+- **The app icon** is drawn to the Interfulgent suite system. [BRAND.md](BRAND.md).
+- **A three-beat walk-through** — a seed taking form, a plant that can meet
+  others, two plants making a seed — each retiring itself once its function has
+  been used, off `model.hybrids.isEmpty` rather than a stored flag.
+- **The first screen unfolds a line at a time**, each waiting on the one before
+  it to be read; `readingBeat` sets the gap from the word count.
+- **The plant is framed against what it will grow into**, and aimed at its own
+  middle, so a seedling is small and centred and opens outward for weeks.
+- **A gold frond unfurls** behind first light, and a pair behind the exchange.
+- **96 passages** with provenance, chosen from the child seed.
+- A [visual language canvas](https://claude.ai/code/artifact/cae29da5-67e8-49a9-b275-b28df64fb54f)
+  covering direction, palette, type, voice, motion and marks.
+
+### Open, and worth doing next
+
+1. **The seed sprouting out of its husk, with a focus-in.** Asked for and not
+   started. The scale work above is its foundation — the plant is now small
+   enough for an arrival to be worth watching.
+2. **The pool of light and the plant have come apart.** `StageBackdrop` paints
+   its glow at the middle of the screen; the plant is centred on its own middle,
+   which is a different point at most ages. Either the light follows the plant
+   or the plant grows up into the light — a decision, not a bug.
+3. **`UnfurlingBackdrop(.pair)` has not been seen over the exchange screen's own
+   content.** It was measured thoroughly in isolation; nobody has looked at it
+   in place.
+4. **`suite-brand.md` is edited and uncommitted in `uncubed-integration`**, which
+   sits on `drawings-by-identity` with unrelated work in flight. It adds Peace
+   Garden to §1, §2, §3.4 and §3.5.
+5. **The name field is still on the first screen**, and the copy no longer
+   mentions it. Deferring it to the first meeting would suit the walk-through.
+6. **The passages are placed but the screen is not tuned** — the first-meeting
+   reveal has not been seen with a real exchange behind it.
+
 ## Open, in the order I would do it
 
 1. ~~**Build `App/` in Xcode.**~~ Done. It compiled unchanged and ran first
