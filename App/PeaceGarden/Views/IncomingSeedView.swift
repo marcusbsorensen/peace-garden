@@ -53,7 +53,7 @@ struct IncomingSeedView: View {
         VStack(spacing: 24) {
             Spacer()
             Text("Send one back")
-                .plantName(size: 23)
+                .chromeHeading(size: 17)
                 .foregroundStyle(Chrome.ink)
 
             if let code = SeedOfferView.code(for: reply) {

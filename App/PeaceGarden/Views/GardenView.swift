@@ -55,7 +55,7 @@ struct GardenView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Peace garden")
-                .plantName(size: 26)
+                .chromeHeading(size: 18)
                 .foregroundStyle(Chrome.ink)
             Text(model.hybrids.isEmpty
                  ? "Nothing has been crossed yet"
@@ -85,8 +85,7 @@ struct GardenView: View {
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(record.genome.name.full)
-                    .font(.system(size: 13, weight: .light, design: .serif))
-                    .italic()
+                    .plantName(size: 13)
                     .foregroundStyle(Chrome.ink)
                     .lineLimit(1)
                 if let encounter = record.encounter {

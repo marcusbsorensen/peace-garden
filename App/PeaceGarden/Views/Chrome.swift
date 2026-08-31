@@ -40,6 +40,11 @@ extension View {
     }
 
     /// The serif voice, used only for plant names.
+    ///
+    /// "Only" is meant literally, and for a while it was not true: four screen
+    /// titles were wearing it, which claims that "A seed on the wind" and
+    /// "Peace garden" are things something is *called*. It is now on four
+    /// views, all of them a `genome.name.full`. Grep before adding a fifth.
     func plantName(size: CGFloat = 26) -> some View {
         font(.system(size: size, weight: .light, design: .serif))
             .italic()

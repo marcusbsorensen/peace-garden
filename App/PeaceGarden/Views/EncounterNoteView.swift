@@ -23,8 +23,13 @@ struct EncounterNoteView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 26) {
                     VStack(alignment: .leading, spacing: 8) {
+                        // The heading voice uppercases, so this shouts a
+                        // person's name back at whoever just met them. Left
+                        // that way for now because the alternative — a heading
+                        // that opts out of the heading voice — is worse, but it
+                        // is the one place the rule chafes.
                         Text("Met \(outcome.peerDisplayName)")
-                            .plantName(size: 24)
+                            .chromeHeading(size: 17)
                             .foregroundStyle(Chrome.ink)
                         Text(outcome.happenedAt.formatted(date: .complete, time: .shortened))
                             .font(.system(size: 13, weight: .light))
