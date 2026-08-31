@@ -73,14 +73,16 @@ have called correct:
 
 ### Not verified, and why
 
-**The exchange screen was never reached.** Injected taps on the Seed / Meet /
-Garden row register as gesture actions in the log and cancel the controls'
-hide task — so the buttons *are* being pressed — but the `fullScreenCover`
-does not present. That wiring is untouched since `1fda816`, so it is not a
-regression from this work, but it does mean three things went unlooked-at:
-the naming step, `UnfurlingBackdrop(.pair)` over the exchange screen's own
-content, and the first-meeting passage. Worth reproducing by hand on a device
-before assuming it is only the harness.
+**The exchange screen has never been watched running.** Three things are built
+and have gone unlooked-at: the naming step, `UnfurlingBackdrop(.pair)` over the
+exchange screen's own content, and the first-meeting passage.
+
+Two sessions recorded this as a *blocker* — taps on the Seed / Meet / Garden row
+that registered in the log but never presented the `fullScreenCover`. **That was
+never real.** It was screenshot timing: the button fires and the sheet presents,
+but a screenshot taken immediately after the tap catches the screen before the
+animation. Proved in `33a41f3` by printing from both the action and the sheet's
+content builder. Nothing is in the way; nobody has simply gone and looked.
 
 ## Where the first 31 August session left off
 
@@ -109,14 +111,15 @@ throughout. `main` carries eight commits from that session. What is live:
    follows the plant.
 3. **`UnfurlingBackdrop(.pair)` has not been seen over the exchange screen's own
    content.** It was measured thoroughly in isolation; nobody has looked at it
-   in place. Blocked on reaching that screen — see *Not verified* above.
+   in place. Not blocked — see *Not verified* above.
 4. **`suite-brand.md` is edited and uncommitted in `uncubed-integration`**, which
    sits on `drawings-by-identity` with unrelated work in flight. It adds Peace
    Garden to §1, §2, §3.4 and §3.5.
 5. ~~**The name field is still on the first screen.**~~ Done: it is asked for
    at the first meeting.
 6. **The passages are placed but the screen is not tuned** — the first-meeting
-   reveal has not been seen with a real exchange behind it. Same blocker as 3.
+   reveal has not been seen with a real exchange behind it. Same as 3: unlooked
+   at, not blocked.
 7. ~~**First light has a large gap under the sprouting rule.**~~ Done: the
    words, the rule and the button are one column between two spacers.
 
@@ -217,6 +220,11 @@ checked, not in how carefully any of them were.
 
 ## Traps
 
+- **A screenshot straight after a tap catches the screen before the sheet.**
+  Wait about a second, or print from the action to be sure. This cost two
+  sessions, recorded both times as a phantom "taps open nothing" blocker on the
+  exchange screen. Do not trust a settled-looking screenshot taken immediately
+  after an injected tap.
 - **The trait label strings are the file format.** Renaming `"stem.height"` is a
   breaking change to every plant that exists. Same for the domain tags in
   `SeedDomain` — add a `.v2`, never edit a `.v1`.
