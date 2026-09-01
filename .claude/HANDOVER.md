@@ -13,7 +13,7 @@ specified and none is started.
 
 ## State
 
-Tree clean, `main` at `a41aa1e`, pushed. 63 SeedCore tests pass; builds at
+Tree clean, `main` at `5b0076a`, pushed. 63 SeedCore tests pass; builds at
 Swift 6 with complete concurrency.
 
 **Watched end to end on two simulators:** a whole meeting — discovery, the
@@ -49,8 +49,12 @@ provisioning expires after seven days, then reinstall.
   is the guarantee the whole link design was built around.
 - **Keep becomes log.** *Keep* can mean keep away, and this is the one control
   where a wrong guess is not undoable.
-- **Settings explains once.** Reset rows lose their detail lines: the alert
-  says the same thing at the moment somebody decides.
+- **Settings explains once.** The reset rows are held for three seconds rather
+  than tapped, the alert goes, and each consequence appears only while its
+  button is filling — about as long as the sentence takes to read. A hold
+  cannot be done by reflex and can be abandoned by letting go.
+- **Colour enters the chrome only where something is lost** — crimson, ochre
+  and pink-gold on the three resets. It stays rare so it keeps meaning.
 - **The garden map is derived, not invented.** `Quotes.Theme` already places ten
   themes in a four-dimensional space; project it rather than drawing by feel.
 - **A published note never carries the coordinate.**
