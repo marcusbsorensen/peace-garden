@@ -244,6 +244,18 @@ struct PlantStageView: View {
             showingSettings = false
             settingsExpanded = false
         }
+#if DEBUG
+        // Meet an imaginary gardener, asked for on the screen that is now
+        // sliding away. Presenting a full-screen cover over a layer still in
+        // motion drops the transition, so this waits for the panel to be gone.
+        // `ExchangeView` reads the flag itself; this only opens the door.
+        if Developer.shared.wantsImaginaryMeeting {
+            Task {
+                try? await Task.sleep(for: .milliseconds(380))
+                showingExchange = true
+            }
+        }
+#endif
     }
 
     /// Controls appear on a tap and see themselves out again.

@@ -57,6 +57,11 @@ struct SettingsView: View {
                     beingTold
                     Hairline()
                     startingAgain
+#if DEBUG
+                    Hairline()
+                    DeveloperSection(close: close)
+                        .environment(model)
+#endif
                 }
                 .padding(.horizontal, 30)
                 .padding(.top, 34)

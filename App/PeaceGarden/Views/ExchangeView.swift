@@ -114,6 +114,16 @@ struct ExchangeView: View {
     private func startSearching() {
         offeringPlace = false
         guard let identity = model.identity else { return }
+#if DEBUG
+        // Asked for on the settings screen, three presentations away, and
+        // consumed here so that leaving and reopening Meet finds it looking for
+        // a real phone again.
+        if Developer.shared.wantsImaginaryMeeting {
+            Developer.shared.wantsImaginaryMeeting = false
+            service.meetAnImaginaryGardener(as: identity, place: place)
+            return
+        }
+#endif
         service.start(identity: identity, place: place)
     }
 

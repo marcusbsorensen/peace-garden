@@ -89,6 +89,23 @@ final class PollenExchangeService: NSObject {
 
     private static let searchTimeoutSeconds: UInt64 = 90
 
+#if DEBUG
+    /// Whether the other side of this meeting is nobody. See
+    /// `meetAnImaginaryGardener(as:place:)`.
+    private var isImaginary = false
+#endif
+
+    /// Real time, except in a debug build where the garden's clock may have
+    /// been wound forward. A plant made now should be a seedling now, whenever
+    /// now has been set to.
+    private static var now: Date {
+#if DEBUG
+        Developer.now
+#else
+        Date()
+#endif
+    }
+
     // MARK: - Lifecycle
 
     func start(identity: Identity, place: PlaceKeeping? = nil) {
@@ -175,6 +192,9 @@ final class PollenExchangeService: NSObject {
         localResult = nil
         remoteChecksum = nil
         hasFeltLocalTouch = false
+#if DEBUG
+        isImaginary = false
+#endif
     }
 
     func reset() {
@@ -196,12 +216,85 @@ final class PollenExchangeService: NSObject {
     }
 #endif
 
+#if DEBUG
+    /// Meets somebody who is not there.
+    ///
+    /// A meeting needs two phones, which makes everything after the knock —
+    /// the crossing, the child, the passage both sides derive without speaking
+    /// — the part of this app that is hardest to look at. This stands a second
+    /// phone in without pretending to be one.
+    ///
+    /// **Only the transport is imaginary.** There is no fake result and no
+    /// short cut through the crossing: a seed is minted the way any seed is
+    /// minted, a nonce is drawn the way any nonce is drawn, and both go through
+    /// `CrossPollinationResult` exactly as they would if they had arrived over
+    /// the air. What grows is a plant that a real meeting could have produced,
+    /// which is the only kind worth looking at.
+    ///
+    /// **The knock is real too.** This goes to `awaitingTouch` and waits, so a
+    /// phone still has to be knocked and the accelerometer still has to feel
+    /// it; the imaginary gardener simply knocks at the same instant, which is
+    /// what the touch window is there to insist on. On a simulator the existing
+    /// stand-in serves, since there is nothing to feel it with.
+    ///
+    /// Debug builds only, so a shipped app has no idea this exists.
+    func meetAnImaginaryGardener(as identity: Identity, place: PlaceKeeping? = nil) {
+        stop()
+        isImaginary = true
+
+        let willing = place?.canProvide == true
+        let card = PollenCard(
+            seed: identity.seed,
+            displayName: identity.displayName,
+            plantName: identity.genome.name.full,
+            birth: identity.birth,
+            sharesPlace: willing
+        )
+        self.card = card
+
+        if willing, let place {
+            placeTask = Task { [weak self] in
+                let reading = await place.reading()
+                self?.placeReading = reading
+            }
+        }
+
+        let strangerSeed = SeedMint.mintOnThisDevice()
+        let stranger = PollenCard(
+            seed: strangerSeed,
+            displayName: Self.imaginaryNames.randomElement() ?? "Gardener",
+            plantName: Genome(seed: strangerSeed, lineage: .minted).name.full,
+            birth: Self.imaginaryBirth(),
+            // Willing, so the place half of a meeting can be watched too. This
+            // phone's own switch still decides whether a reading is taken at
+            // all, and the gate in `finishIfAgreed` is unchanged.
+            sharesPlace: true
+        )
+        remoteCard = stranger
+        remoteNonce = Pollination.makeNonce(byteCount: ExchangeProtocol.nonceByteCount)
+        connectedPeerName = stranger.displayName
+
+        // Straight to the knock. There is nobody to find, and a search that
+        // always succeeds after a contrived pause teaches nothing about the
+        // screen that does the finding.
+        touchDetector.start { [weak self] in
+            self?.registerLocalTouch()
+        }
+        phase = .awaitingTouch(peerName: stranger.displayName)
+    }
+#endif
+
     // MARK: - The exchange, step by step
 
     private func registerLocalTouch() {
         guard case .awaitingTouch = phase else { return }
         localTouchAt = Date()
         hasFeltLocalTouch = true
+#if DEBUG
+        // An imaginary gardener knocks at exactly the moment you do, so the
+        // touch window is satisfied by the gesture rather than around it.
+        if isImaginary { remoteTouchAt = localTouchAt }
+#endif
         send(.touch())
         advanceIfBothTouched()
     }
@@ -305,6 +398,12 @@ final class PollenExchangeService: NSObject {
         )
         localResult = result
         send(.confirm(checksum: result.checksum))
+#if DEBUG
+        // The other side would send back a checksum over the same four values,
+        // so it can only be this one. Computing it rather than asserting it
+        // keeps the comparison below doing its real work.
+        if isImaginary { remoteChecksum = result.checksum }
+#endif
         finishIfAgreed()
     }
 
@@ -325,7 +424,7 @@ final class PollenExchangeService: NSObject {
                 result: localResult,
                 peerDisplayName: remoteCard.displayName,
                 peerPlantName: remoteCard.plantName,
-                happenedAt: Date(),
+                happenedAt: Self.now,
                 coordinate: agreed ? placeReading : nil
             )
         )

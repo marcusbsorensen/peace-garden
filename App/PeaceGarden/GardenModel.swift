@@ -29,7 +29,22 @@ final class GardenModel {
             garden = Garden()
             loadError = error.localizedDescription
         }
+        now = Self.currentDate()
         startClock()
+    }
+
+    /// The wall clock, and in a debug build the developer clock over the top of
+    /// it. Every date this app writes down or measures against goes through
+    /// here, so winding the garden on moves all of it together rather than
+    /// leaving a plant sown after the shift instantly middle-aged.
+    ///
+    /// In a Release build `Developer` does not exist and this is `Date()`.
+    static func currentDate() -> Date {
+#if DEBUG
+        Developer.now
+#else
+        Date()
+#endif
     }
 
     convenience init() {
@@ -72,7 +87,7 @@ final class GardenModel {
         guard garden.identity == nil else { return }
         garden.identity = Identity(
             seed: SeedMint.mintOnThisDevice(),
-            birth: Date(),
+            birth: Self.currentDate(),
             displayName: ""
         )
         isArriving = true
@@ -127,7 +142,7 @@ final class GardenModel {
             seed: outcome.result.childSeed,
             lineage: outcome.result.lineage,
             birth: outcome.happenedAt,
-            savedAt: Date(),
+            savedAt: Self.currentDate(),
             encounter: note
         )
         garden.plants.append(record)
@@ -200,7 +215,7 @@ final class GardenModel {
     func resetSeed() {
         garden.identity = Identity(
             seed: SeedMint.mintOnThisDevice(),
-            birth: Date(),
+            birth: Self.currentDate(),
             // The name is a setting rather than a property of the seed: it is
             // how somebody is seen, and drawing a new plant is not a decision
             // to become anonymous again.
@@ -336,12 +351,12 @@ final class GardenModel {
             while !Task.isCancelled {
                 try? await Task.sleep(for: Self.tickInterval)
                 guard let self else { return }
-                self.now = Date()
+                self.now = Self.currentDate()
             }
         }
     }
 
     func refreshNow() {
-        now = Date()
+        now = Self.currentDate()
     }
 }
