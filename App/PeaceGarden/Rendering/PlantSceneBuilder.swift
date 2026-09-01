@@ -338,10 +338,22 @@ enum PlantSceneBuilder {
     /// plant is limited by the height on a phone and by the width on nothing,
     /// but the same plant in a short, wide window is limited by the height much
     /// sooner. Taking the greater of the two distances covers every shape.
+    ///
+    /// `topInset` is the fraction of the view's height the chrome has spoken
+    /// for — the plant's name and what it is doing, in their band across the
+    /// top. The plant is fitted into what is left rather than into the whole
+    /// screen, so a tall one cannot grow up through its own name.
+    ///
+    /// Reserved whether or not the chrome is on screen. The band comes and goes
+    /// on a tap, and re-framing with it would pull the plant a little smaller
+    /// every time somebody asked for the controls and push it back when they
+    /// stopped — motion nobody asked for, in the one part of the app that is
+    /// meant to hold still.
     static func framing(
         min minBounds: SIMD3<Float>,
         max maxBounds: SIMD3<Float>,
-        aspect: Float
+        aspect: Float,
+        topInset: Float = 0
     ) -> (target: SCNVector3, distance: Float) {
         let centre = (minBounds + maxBounds) * 0.5
         let extent = maxBounds - minBounds
@@ -351,8 +363,12 @@ enum PlantSceneBuilder {
 
         let horizontalHalfAngle = atan(tan(verticalHalfAngle) * Swift.max(0.2, aspect))
 
+        // The floor is a guard against a chrome band that has somehow eaten the
+        // screen, not a design value: at a third of the view the plant would
+        // already be too far off to read.
+        let usable = Swift.max(0.35, 1 - topInset)
         let distance = Swift.max(
-            halfHeight / tan(verticalHalfAngle),
+            halfHeight / (tan(verticalHalfAngle) * usable),
             halfWidth / tan(horizontalHalfAngle)
         )
         // The guard belongs on the distance, not on the plant's measurements. A

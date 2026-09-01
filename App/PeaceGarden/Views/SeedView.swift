@@ -11,7 +11,6 @@ struct SeedView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var editingName = false
     @State private var draftName = ""
-    @State private var showingSettings = false
 
     var body: some View {
         ZStack {
@@ -27,8 +26,8 @@ struct SeedView: View {
                         privacyNote
                     }
                     .padding(.horizontal, 30)
-                    // Clear of the Settings and Close buttons, which sit in
-                    // their own band across the top rather than in the scroll.
+                    // Clear of Close, which sits in its own band across the top
+                    // rather than in the scroll.
                     .padding(.top, 68)
                     .padding(.bottom, 34)
                     .frame(maxWidth: Chrome.readableWidth)
@@ -40,19 +39,6 @@ struct SeedView: View {
             QuietButton(title: "Close") { dismiss() }
                 .padding(.trailing, 12)
                 .padding(.top, 8)
-        }
-        // Opposite Close, so the two things you can do from here sit at the two
-        // ends of the same line rather than one hiding inside the paragraphs.
-        .overlay(alignment: .topLeading) {
-            QuietButton(title: "Settings") { showingSettings = true }
-                .padding(.leading, 12)
-                .padding(.top, 8)
-        }
-        .sheet(isPresented: $showingSettings) {
-            SettingsView()
-                .environment(model)
-                .environment(place)
-                .presentationBackground(.black)
         }
     }
 
@@ -130,13 +116,13 @@ struct SeedView: View {
 
             VStack(alignment: .leading, spacing: 10) {
                 Toggle(isOn: placeBinding) {
-                    Text("Keep where you meet")
+                    Text("Log where you meet")
                         .font(.system(size: 15, weight: .light))
                         .foregroundStyle(Chrome.ink)
                 }
                 .tint(Chrome.muted)
 
-                Text("With this on, a meeting can keep the coordinates of the spot it happened in. Each phone measures its own and holds it there. A meeting keeps them when both of you have asked for it, and you choose again every time.")
+                Text("With this on, a meeting can log the coordinates of the spot it happened in. Each phone measures its own and holds it there. A meeting logs them when both of you have asked for it, and you choose again every time.")
                     .font(.system(size: 13, weight: .light))
                     .foregroundStyle(Chrome.muted)
                     .lineSpacing(4)

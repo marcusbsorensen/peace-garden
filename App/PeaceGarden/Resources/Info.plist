@@ -56,7 +56,7 @@
 	     local-network prompt, and the service list must name the Bonjour
 	     service in ExchangeProtocol.serviceType or discovery silently fails. -->
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Peace Garden can record the coordinates of a spot where you met someone, so a plant remembers where it came from. The coordinates stay on this phone, and a meeting keeps them only when both of you have asked for it.</string>
+	<string>Peace Garden can log the coordinates of a spot where you met someone, so a plant remembers where it came from. The coordinates stay on this phone, and a meeting logs them only when both of you have asked for it.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Peace Garden uses the local network to find the phone you are meeting, so your two seeds can be crossed directly between your devices. Nothing is sent to a server.</string>
 	<key>NSBonjourServices</key>

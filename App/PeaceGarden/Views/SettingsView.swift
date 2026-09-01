@@ -1,23 +1,30 @@
 import SwiftUI
 import SeedCore
 
-/// The standing choices, and the two ways to start again.
+/// The standing choices, and the three ways to start again.
 ///
 /// Everything here is a preference rather than a fact about a plant. The seed,
 /// the lineage and the birthday are not reachable from this screen and are not
 /// meant to be: they are what a plant *is*, and the only thing anybody can do
 /// to a seed is draw a different one.
 ///
-/// The two resets are the reason this screen exists at all. Both are worded for
-/// what survives them rather than for what they take, because the thing people
-/// need to know before tapping is what they still have afterwards.
+/// **The screen says what each control does, and earns a line underneath only
+/// where something would otherwise surprise somebody.** It carried a paragraph
+/// under every control once — around three hundred words for five decisions,
+/// each of them repeating what the confirmation alert then said again. Three of
+/// the five sections need no line at all, and the three that take something
+/// away say their piece at the moment somebody is deciding rather than while
+/// they are reading.
 struct SettingsView: View {
     @Environment(GardenModel.self) private var model
     @Environment(PlaceKeeping.self) private var place
-    @Environment(\.dismiss) private var dismiss
+    /// Closing is the caller's to do, because this screen is not presented:
+    /// it is a layer `PlantStageView` slides down over the stage, so there is
+    /// no sheet for `dismiss` to reach.
+    let close: () -> Void
 
     @State private var draftName = ""
-    @State private var editingName = false
+    @FocusState private var editingName: Bool
     @State private var confirming: Reset?
     @AppStorage(Places.preferredKey) private var preferredPlace = ""
     @AppStorage(Sharing.invitationsKey) private var wantsInvitations = Sharing.invitationsDefault
@@ -57,18 +64,26 @@ struct SettingsView: View {
                 .frame(maxWidth: Chrome.readableWidth)
                 .frame(maxWidth: .infinity)
             }
+            // The field is on the rule near the top of a scroll view, so the
+            // keyboard has never covered it — but a name typed and then
+            // scrolled away from should still be kept, which is what losing
+            // focus does below.
+            .scrollDismissesKeyboard(.interactively)
         }
         .overlay(alignment: .topTrailing) {
-            QuietButton(title: "Close") { dismiss() }
+            QuietButton(title: "Close") { close() }
                 .padding(.trailing, 12)
                 .padding(.top, 8)
         }
-        // An alert rather than a confirmation dialog. The dialog rendered its
-        // destructive button and dropped the cancel entirely on a sheet with a
-        // black presentation background, which leaves an irreversible action
-        // with no visible way out of it. An alert shows both, every time.
+        .onAppear { draftName = model.identity?.displayName ?? "" }
+        // The alert is the assisted path only: `HoldToConfirm` asks for it when
+        // a sustained press is not available. An alert rather than a
+        // confirmation dialog, because the dialog rendered its destructive
+        // button and dropped the cancel entirely on a sheet with a black
+        // presentation background, which leaves an irreversible action with no
+        // visible way out of it.
         .alert(
-            confirming.map(title) ?? "",
+            confirming.map { "\(label($0))?" } ?? "",
             isPresented: confirmingBinding,
             presenting: confirming
         ) { reset in
@@ -81,42 +96,70 @@ struct SettingsView: View {
 
     // MARK: - The name
 
+    /// One layout, always.
+    ///
+    /// It used to swap a `Button` for a `TextField` when editing began, which
+    /// put two different layouts in one slot and landed the `SproutingRule` on
+    /// top of the field's own baseline. The field is a field from the moment
+    /// the screen opens, the rule is its underline throughout, and there is
+    /// nothing left to collide.
     private var name: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("What people see when you meet")
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Your Peace Garden username")
                 .chromeLabel()
-                .foregroundStyle(Chrome.faint)
+                .foregroundStyle(Chrome.sectionLabel)
+                .padding(.bottom, 10)
 
-            if editingName {
-                TextField("", text: $draftName)
-                    .font(.system(size: 17, weight: .light, design: .serif))
-                    .foregroundStyle(Chrome.ink)
-                    .textInputAutocapitalization(.words)
-                    .autocorrectionDisabled()
-                    .submitLabel(.done)
-                    .underlining()
-                    .onSubmit {
-                        model.rename(to: draftName)
-                        editingName = false
-                    }
-            } else {
-                Button {
-                    draftName = model.identity?.displayName ?? ""
-                    editingName = true
-                } label: {
-                    Text(model.shownName)
-                        .font(.system(size: 17, weight: .light, design: .serif))
-                        .foregroundStyle(Chrome.ink)
-                        .pressable()
+            // "Gardener" is the prompt rather than the text. It is what the
+            // other phone shows until a name is chosen, so it belongs on
+            // screen — but writing it into the field would let a stray commit
+            // turn the fallback into an actual choice.
+            TextField("Gardener", text: $draftName)
+                .font(.system(size: 17, weight: .light, design: .serif))
+                .foregroundStyle(Chrome.ink)
+                // Centred on the rule rather than tucked against its leading
+                // end, where a short name looked like it had fallen off.
+                .multilineTextAlignment(.center)
+                .textInputAutocapitalization(.words)
+                .autocorrectionDisabled()
+                .submitLabel(.done)
+                .focused($editingName)
+                .onSubmit { commitName() }
+                // The pencil is laid over the trailing end rather than set
+                // beside the field, so the field keeps the full width of the
+                // rule and its centre is the rule's centre.
+                .padding(.horizontal, 26)
+                .overlay(alignment: .trailing) {
+                    PencilShape()
+                        .stroke(Chrome.faint, style: Chrome.monoline)
+                        .frame(width: 14, height: 14)
                 }
-                .buttonStyle(.plain)
-            }
+                // A rule under a value is the oldest signal in print that the
+                // value is yours to fill in. Curling down because the tendrils
+                // open upward into the line of type otherwise.
+                .underlining(curlingDown: true)
+                // The pencil is an affordance rather than a button: anywhere on
+                // the row the field does not already take focuses the field.
+                .contentShape(Rectangle())
+                .onTapGesture { editingName = true }
 
-            Text("Sent to the other phone during a meeting, and to nowhere else. Change it whenever; plants already grown keep the name you had at the time, because that is who they met.")
+            Text("Plants grown under this name will keep it.")
                 .font(.system(size: 13, weight: .light))
                 .foregroundStyle(Chrome.muted)
                 .lineSpacing(4)
+                .padding(.top, 6)
         }
+        // Committed on losing focus as well as on submit, so a name typed and
+        // then dismissed is kept rather than silently dropped.
+        .onChange(of: editingName) { _, focused in
+            if !focused { commitName() }
+        }
+    }
+
+    /// `rename` keeps an empty name out of the garden on its own, so a field
+    /// cleared and left is the same as one never touched.
+    private func commitName() {
+        model.rename(to: draftName)
     }
 
     // MARK: - The place a note arrives holding
@@ -128,9 +171,9 @@ struct SettingsView: View {
     /// time instead, which suits somebody who meets people in one place.
     private var places: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Where a meeting starts out saying")
+            Text("Default seed planting location")
                 .chromeLabel()
-                .foregroundStyle(Chrome.faint)
+                .foregroundStyle(Chrome.sectionLabel)
 
             Menu {
                 Button("Wherever the seed travelled") { preferredPlace = "" }
@@ -149,11 +192,6 @@ struct SettingsView: View {
                 }
                 .pressable()
             }
-
-            Text("The Where field arrives already filled, and typing over it is always the point. What you write stays on this phone: two people at one meeting can remember it by different names.")
-                .font(.system(size: 13, weight: .light))
-                .foregroundStyle(Chrome.muted)
-                .lineSpacing(4)
         }
     }
 
@@ -163,16 +201,21 @@ struct SettingsView: View {
     /// owner. It appears twice because it answers two different questions —
     /// "what leaves my phone" over there, and "what is turned on" here — and
     /// `PlaceKeeping` is the single thing either one sets.
+    ///
+    /// *Log*, not *keep*. Keep can mean hold on to and it can mean keep away,
+    /// keep back, keep out, and on a privacy control that second reading points
+    /// in exactly the wrong direction. Log says what happens: a coordinate is
+    /// written down.
     private var whereYouMeet: some View {
         VStack(alignment: .leading, spacing: 10) {
             Toggle(isOn: placeBinding) {
-                Text("Keep where you meet")
+                Text("Log where new seeds are planted")
                     .font(.system(size: 15, weight: .light))
                     .foregroundStyle(Chrome.ink)
             }
             .tint(Chrome.muted)
 
-            Text("With this on, a meeting can keep the coordinates of the spot it happened in. Each phone measures its own and holds it there. A meeting keeps them when both of you have asked for it, and you choose again every time.")
+            Text("By default, only you see this.")
                 .font(.system(size: 13, weight: .light))
                 .foregroundStyle(Chrome.muted)
                 .lineSpacing(4)
@@ -205,13 +248,13 @@ struct SettingsView: View {
     private var beingTold: some View {
         VStack(alignment: .leading, spacing: 10) {
             Toggle(isOn: $wantsInvitations) {
-                Text("Tell me when a plant we made is shared")
+                Text("Alert me when a joint seed is shared")
                     .font(.system(size: 15, weight: .light))
                     .foregroundStyle(Chrome.ink)
             }
             .tint(Chrome.muted)
 
-            Text("When somebody puts a plant the two of you grew into the peace garden, it carries their name. You will be asked whether you would like yours on it as well, and the page waits for your answer before it says anything about you. Turning this off leaves their share exactly as it is.")
+            Text("Your username will only show publicly if you approve.")
                 .font(.system(size: 13, weight: .light))
                 .foregroundStyle(Chrome.muted)
                 .lineSpacing(4)
@@ -220,57 +263,75 @@ struct SettingsView: View {
 
     // MARK: - Starting again
 
+    /// Three rows that are held rather than tapped — see `HoldToConfirm` for
+    /// why. Their consequences are gone from the screen and come back under
+    /// whichever row is being held, which is the only moment those words were
+    /// ever for.
     private var startingAgain: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Starting again")
                 .chromeLabel()
-                .foregroundStyle(Chrome.faint)
+                .foregroundStyle(Chrome.sectionLabel)
 
-            resetRow(
-                .seed,
-                title: "Draw a new seed",
-                detail: "A seed is drawn once, and this draws another. Your garden keeps every plant you have grown with somebody."
-            )
+            row(.seed)
 
             if !model.hybrids.isEmpty {
-                resetRow(
-                    .plants,
-                    title: "Empty the garden",
-                    detail: "Your own seed and the plant it grows stay. The \(model.hybrids.count) grown with other people leave this phone."
-                )
+                row(.plants)
             }
 
-            resetRow(
-                .everything,
-                title: "Start from nothing",
-                detail: "This phone keeps nothing, and the app opens on first light the way it did the day you installed it."
-            )
-
-            // The reassurance that actually matters, said once, at the bottom,
-            // in terms of what stays rather than what cannot happen.
-            Text("Plants other people grew with you stay in their gardens. Those were derived on their phones the moment you met, from a seed of their own.")
-                .font(.system(size: 13, weight: .light))
-                .foregroundStyle(Chrome.muted)
-                .lineSpacing(4)
+            row(.everything)
         }
     }
 
-    private func resetRow(_ reset: Reset, title: String, detail: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Button {
-                confirming = reset
-            } label: {
-                Text(title)
-                    .font(.system(size: 15, weight: .light))
-                    .foregroundStyle(Chrome.ink)
-                    .pressable()
-            }
-            .buttonStyle(.plain)
+    private func row(_ reset: Reset) -> some View {
+        HoldToConfirm(
+            title: label(reset),
+            consequence: consequence(reset),
+            glyph: glyph(reset),
+            tint: tint(reset),
+            filledForeground: filledForeground(reset),
+            action: { perform(reset) },
+            askInstead: { confirming = reset }
+        )
+    }
 
-            Text(detail)
-                .font(.system(size: 13, weight: .light))
-                .foregroundStyle(Chrome.muted)
-                .lineSpacing(4)
+    // MARK: - What each row is
+
+    private func label(_ reset: Reset) -> String {
+        switch reset {
+        case .seed: return "Get a new seed"
+        case .plants: return "Empty the garden"
+        case .everything: return "Reset everything"
+        }
+    }
+
+    /// Monoline and round-ended, per BRAND.md §3.2 — the same hand as the cog
+    /// that opened this screen.
+    private func glyph(_ reset: Reset) -> AnyShape {
+        switch reset {
+        case .seed: return AnyShape(SeedGlyph())
+        case .plants: return AnyShape(GardenGlyph())
+        case .everything: return AnyShape(CycleGlyph())
+        }
+    }
+
+    /// The middle one is inferred rather than specified: a row with no colour
+    /// sitting between two that have it reads as unfinished rather than as
+    /// restraint. Ochre sits between the other two because its consequence
+    /// does — your seed and its plant stay, and only what you grew with other
+    /// people goes.
+    private func tint(_ reset: Reset) -> Color {
+        switch reset {
+        case .seed: return Chrome.pinkGold
+        case .plants: return Chrome.ochre
+        case .everything: return Chrome.crimson
+        }
+    }
+
+    private func filledForeground(_ reset: Reset) -> Color {
+        switch reset {
+        case .seed, .plants: return Chrome.nearBlack
+        case .everything: return Chrome.ink
         }
     }
 
@@ -283,22 +344,20 @@ struct SettingsView: View {
         )
     }
 
-    private func title(_ reset: Reset) -> String {
-        switch reset {
-        case .seed: return "Draw a new seed?"
-        case .plants: return "Empty the garden?"
-        case .everything: return "Start from nothing?"
-        }
-    }
-
     private func confirmLabel(_ reset: Reset) -> String {
         switch reset {
-        case .seed: return "Draw a new seed"
+        case .seed: return "Get a new seed"
         case .plants: return "Empty it"
-        case .everything: return "Start from nothing"
+        case .everything: return "Reset everything"
         }
     }
 
+    /// Said under a row while it is held, and in the alert on the assisted
+    /// path. Each is worded for what survives rather than for what goes,
+    /// because what people need before deciding is what they still have
+    /// afterwards — including the reassurance about other people's gardens,
+    /// which used to stand at the foot of the screen for everybody and now
+    /// arrives inside the two sentences that need it.
     private func consequence(_ reset: Reset) -> String {
         switch reset {
         case .seed:
@@ -317,6 +376,6 @@ struct SettingsView: View {
         case .everything: model.resetEverything()
         }
         confirming = nil
-        dismiss()
+        close()
     }
 }

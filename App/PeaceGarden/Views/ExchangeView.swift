@@ -127,13 +127,10 @@ struct ExchangeView: View {
                 .chromeHeading(size: 17)
                 .foregroundStyle(Chrome.ink)
 
-            Text("A meeting can keep the coordinates of the spot it happened in, shown as numbers you can open in a map. They stay on this phone.")
-                .font(.system(size: 14, weight: .light))
-                .foregroundStyle(Chrome.muted)
-                .multilineTextAlignment(.center)
-                .lineSpacing(4)
-
-            Text("A meeting keeps them when both of you have asked for it, and you choose again every time.")
+            // Log, not keep: keep can mean hold on to and it can mean keep
+            // away, and this is the one control on either screen where a wrong
+            // guess about what it does cannot be undone.
+            Text("A meeting can log the coordinates of the spot it happened in. They stay on this phone, and a meeting logs them only when both of you have asked.")
                 .font(.system(size: 14, weight: .light))
                 .foregroundStyle(Chrome.muted)
                 .multilineTextAlignment(.center)
@@ -144,7 +141,7 @@ struct ExchangeView: View {
                     place.declineOffer()
                     startSearching()
                 }
-                QuietButton(title: "Keep places", isProminent: true) {
+                QuietButton(title: "Log places", isProminent: true) {
                     place.enable()
                     startSearching()
                 }
