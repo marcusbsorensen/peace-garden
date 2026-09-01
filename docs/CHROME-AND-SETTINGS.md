@@ -74,20 +74,101 @@ need no line at all.
 | Preferred place | Label `WHERE A MEETING STARTS OUT SAYING`, menu | none |
 | Location | Toggle **Log where you meet** | *Kept on this phone. Both of you have to ask, every time.* |
 | Being told | Toggle **Tell me when a plant we made is shared** | *The page waits for your answer before it names you.* |
-| Starting again | Three rows: **Draw a new seed**, **Empty the garden**, **Start from nothing** | none |
+| Starting again | Three rows, held rather than tapped — see below | revealed while held |
 
 That is around forty words against roughly three hundred.
 
 Two notes on what has gone:
 
-- **The reset rows lose their detail lines.** Every one of them is a
-  destructive action behind a confirmation alert, and the alert already states
-  the consequence in `consequence(_:)`. Saying it twice made the screen long
-  and made the alert feel like a formality. The row is now a verb and the alert
-  is where the explaining happens — which is also the moment somebody is
-  actually deciding.
+- **The reset rows lose their standing detail lines**, and get them back at the
+  moment they matter. Each consequence fades in under its row as the hold
+  begins and fades out if the hold is abandoned. The screen stays short when
+  you are reading it and explains itself when you are deciding, which is the
+  only moment the words were ever for.
 - **The closing paragraph about other people's gardens has gone from the
   screen** and belongs in the two alerts that need it, which already carry it.
+
+## Starting again: held, not tapped
+
+The three resets stop being buttons with an alert behind them and become buttons
+you hold. **The hold is the confirmation**; the alert goes.
+
+An alert is a reflex — the hand taps *Start from nothing*, the eye reads
+nothing, the thumb finds the rightmost button. Three seconds of deliberate
+pressure cannot be done by reflex, and unlike an alert it can be abandoned
+halfway through by simply letting go, which is the gentlest possible way out of
+a decision somebody has started making by accident.
+
+- **Three seconds, filling left to right** inside the existing capsule.
+- **Its consequence fades in beneath it as the hold begins.** This is the whole
+  reason the hold is long: three seconds is roughly how long the sentence takes
+  to read, so the words and the fill finish together.
+- **Letting go early drains the fill** back to nothing in about a third of a
+  second, faster than it filled, so abandoning reads as a release rather than a
+  rewind. Nothing happens and nothing is said about it.
+- **The action fires the moment the fill completes.** No further confirmation.
+- **Haptics**: a light tick as the hold takes, and a heavier one on completion.
+
+### The label as the fill passes under it
+
+Draw the label twice and mask the second copy to the fill's leading edge, so the
+words wipe from one colour to the other exactly as the fill reaches them. One
+mechanism, all three rows, and it makes the fill feel like it is passing *through*
+the button rather than sliding behind it.
+
+### Colour
+
+Colour has been the plants' alone until now — all chrome is white at four
+opacities against black. These three rows are the exception, and they earn it
+because they are the only places in the app where something is lost. Keeping
+colour rare is what will make it mean anything here.
+
+| Row | Fill | Label once filled |
+| --- | --- | --- |
+| Draw a new seed | Pink-gold, light and warm — around `#D9A88C` | Near-black |
+| Empty the garden | Between the two, an ochre — around `#B07A4A` | Near-black |
+| Start from nothing | Crimson, deep and sobering — around `#7E1D28` | Stays `Chrome.ink` |
+
+Add them as `Chrome.pinkGold`, `Chrome.ochre`, `Chrome.crimson`.
+
+The middle row is inferred: only the outer two were specified, and a row with no
+colour sitting between two that have it reads as unfinished rather than as
+restraint. It sits between them because its consequence does — your seed and its
+plant stay, and only what you grew with other people goes.
+
+**Check the contrast on a device before settling the values.** Near-black on
+pink-gold is comfortable; white on that crimson needs looking at, and the
+crimson should go darker rather than the text lighter if it is close.
+
+### The icons
+
+Monoline, round free ends, no filled shapes — [BRAND.md](BRAND.md) §3.2, the
+same rule the app icon is drawn to, and the same stroke weight as the cog.
+Around 15pt, in the row's own colour, to the left of the label.
+
+- **A seed**, on *Draw a new seed*. Echo the silhouette `SeedHusk` draws: an
+  ovoid with the horizontal seam across it, because the seam is the meaningful
+  part — it is where the thing opens. One stroke for the body, one for the seam.
+- **A recycling turn**, on *Start from nothing*. Three arrows in a triangle is a
+  corporate glyph and this app has no right angles; draw it instead as three
+  curved fronds chasing one another round, each unwinding into the next, which
+  is the app's own spiral repeated three times. The meaning is worth having —
+  *recycling* says the material returns rather than that it is destroyed, which
+  is true here and is the kinder and more accurate word for it.
+- **The middle row** takes a small grid of three ovoids, the garden emptied to
+  its outlines.
+
+### Reach
+
+A three-second hold is a motor task, and some people cannot make one.
+
+- **With VoiceOver, Switch Control or AssistiveTouch running**, the row is an
+  ordinary button again and the confirmation alert comes back. `consequence(_:)`
+  already holds the words; keep it.
+- **The fill is information, not decoration**, so Reduce Motion keeps it. It is
+  the only thing telling somebody how much longer to hold.
+- **The consequence must be announced** when it appears, not left to the
+  fill's progress to imply.
 
 ## Keep becomes log
 
@@ -111,8 +192,9 @@ The place offer inside Exchange shortens to match:
 
 - `App/PeaceGarden/Views/PlantStageView.swift` — the cog, top right, on
   `controlsVisible`.
-- `App/PeaceGarden/Views/Chrome.swift` — the cog `Shape`, the pencil, and a
-  `ChromeIconLabel` pairing a glyph with a `chromeLabel()` word.
+- `App/PeaceGarden/Views/Chrome.swift` — the cog, pencil, seed, recycling and
+  garden `Shape`s; the three colours; `ChromeIconLabel`; and `HoldToConfirm`,
+  which owns the fill, the mask, the drain and the haptics.
 - `App/PeaceGarden/Views/SeedView.swift` — loses Settings.
 - `App/PeaceGarden/Views/SettingsView.swift` — the name row, and the copy.
 - `App/PeaceGarden/Views/ExchangeView.swift` — the place offer's wording.
