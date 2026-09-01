@@ -33,6 +33,29 @@ public struct PlantBuilder {
     private func addStem(_ builder: inout MeshBuilder, skeleton: PlantSkeleton, growth: GrowthModel.State) {
         builder.addTube(role: .stem, path: skeleton.stem, sides: genome.stem.sides)
 
+        // The foot of the stem, closed.
+        //
+        // `addTube` closes neither end, and the material is double-sided, so an
+        // open end shows its own lit inside wall and reads as a flat cut. The
+        // apex closes itself now — `SkeletonBuilder.apexPoint` runs the radius
+        // out to nothing — but the base cannot: a stem is thickest where it
+        // meets the ground, so it needs a lid rather than a point.
+        //
+        // A shallow dome rather than a flat disc, because there is no soil in
+        // this scene to bury the join in. It reads as the stem rounding over
+        // into ground we are not drawing.
+        let foot = skeleton.stem[0]
+        builder.addDome(
+            role: .stem,
+            centre: foot.position,
+            axis: -foot.tangent,
+            side: foot.normal,
+            radius: foot.radius,
+            flatten: 0.45,
+            rows: 5,
+            columns: max(6, genome.stem.sides)
+        )
+
         // The husk the plant came out of. It shrinks away as the shoot takes
         // over rather than vanishing between one frame and the next.
         let husk = Float(((0.25 - growth.heightScale) / 0.23).clamped(to: 0...1))

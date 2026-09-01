@@ -37,6 +37,12 @@ public enum SkeletonBuilder {
         // final value makes a seedling look like a cut-off post.
         let baseRadius = Float(genome.stem.baseRadius) * (0.4 + 0.6 * heightScale)
         let taper = Float(genome.stem.taper)
+        let coilTurn = crozierTurn(heightScale: heightScale)
+        // A growing point is a few stem-diameters long. Measured as a fraction
+        // of the stem instead, it grows with the plant — and on a spire, whose
+        // profile is 1.35 times everything else's, a fifth of the stem is a
+        // whisker standing well above the leaves.
+        let pointSpan = min(0.16, max(0.045, baseRadius * 5 / length))
 
         var positions: [SIMD3<Float>] = [.zero]
         var radii: [Float] = [baseRadius]
@@ -48,12 +54,16 @@ public enum SkeletonBuilder {
             // Lean tips the whole stem one way; sway waves it back and forth.
             let lean = leanPerStep * (0.6 + 0.8 * t)
             let sway = swayAmplitude * cos(t * .pi * 2.2) / Float(segments)
-            direction = rotate(direction, axis: SIMD3<Float>(0, 0, 1), angle: lean)
+            // The crozier bends about the same axis as the lean, so a leaning
+            // stem relaxes *into* its lean rather than fighting it: one
+            // continuous bend from base to growing point.
+            direction = rotate(direction, axis: SIMD3<Float>(0, 0, 1),
+                               angle: lean + coilStep(at: t, turn: coilTurn, segments: segments))
             direction = rotate(direction, axis: SIMD3<Float>(1, 0, 0), angle: sway)
             direction = simd_normalize(direction)
             position += direction * step
             positions.append(position)
-            radii.append(baseRadius * (1 - (1 - taper) * t))
+            radii.append(baseRadius * (1 - (1 - taper) * t) * apexPoint(t, span: pointSpan))
         }
 
         let samples = transportFrames(
@@ -74,6 +84,85 @@ public enum SkeletonBuilder {
         }
 
         return PlantSkeleton(stem: samples, nodes: nodes, apex: samples[samples.count - 1])
+    }
+
+    // MARK: - The growing point
+
+    /// How much of its full thickness the stem still has at `t`.
+    ///
+    /// `genome.stem.taper` is drawn from `0.28...0.72`, so on its own it leaves
+    /// the apex somewhere between a quarter and three quarters of the base
+    /// width — a cylinder that gets a little narrower and then stops. Since
+    /// `MeshBuilder.addTube` closes neither end and the plant material is
+    /// double-sided, what that showed was the lit inside wall of the tube seen
+    /// through its own opening, which shades exactly like a flat disc.
+    ///
+    /// A shoot apex is the finest tissue on the plant — it is the meristem,
+    /// where the growing happens — so the last stretch runs out to nothing.
+    /// That closes the tube as well: the final ring collapses to a point, and
+    /// there is no hole left to look into.
+    ///
+    /// An ogive rather than a cone, because a growing point is drawn out rather
+    /// than chamfered: the profile leaves the stem tangentially and only turns
+    /// in at the very end.
+    ///
+    /// `span` is how much of the stem the point takes, and the caller sizes it
+    /// against the stem's *thickness* rather than its length. A fixed fraction
+    /// looks right on one plant and wrong on the next: the same fifth-of-a-stem
+    /// that is a tidy point on a lotus is a whisker on a spire.
+    static func apexPoint(_ t: Float, span: Float) -> Float {
+        let start = 1 - span
+        guard t > start else { return 1 }
+        let s = (t - start) / span
+        // Clamped before the root, because `1 - (1 - span)` does not round back
+        // to `span`. At the last sample `t` is exactly 1, so `s` comes out a few
+        // parts in ten million over it, `1 - s * s` goes negative, and the
+        // square root of that is a NaN in the one vertex at the very tip of
+        // every plant in the garden. `PlantMeshTests` caught it; it is invisible
+        // on screen until something downstream divides by a normal.
+        return max(0, 1 - s * s).squareRoot()
+    }
+
+    /// The total turn a young shoot's coiled tip carries, in radians.
+    ///
+    /// A shoot comes up with its growing point curled over and opens as it
+    /// grows into it. It is also the gesture the rest of the app is drawn
+    /// with — `Tendril` under a plant's name is a fiddlehead relaxing, and the
+    /// app mark is an unwinding spiral — so the plant itself arrives carrying
+    /// it.
+    ///
+    /// Gone by the time the plant is half its height, which is the point: the
+    /// coil belongs to the moment somebody meets their plant, and a grown one
+    /// is exactly as it was before this existed.
+    static func crozierTurn(heightScale: Float) -> Float {
+        // `heightScale` floors at 0.055 the moment a seed is sown and eases out
+        // to 1, so the window is measured from there rather than from zero.
+        let unfurl = smoothstep(0.06, 0.5, heightScale)
+        // A little under a full turn at its tightest. Past this the tip begins
+        // to curl back into the stem it grew from.
+        return 1.6 * .pi * (1 - unfurl)
+    }
+
+    /// The coil's share of one integration step.
+    ///
+    /// The turn accumulates as `s^1.7` toward the tip — the same easing
+    /// `Tendril` uses — so the shoot leaves the ground almost straight and
+    /// keeps the curl at the growing end. This is its derivative, which is what
+    /// a step-by-step integration needs.
+    private static func coilStep(at t: Float, turn: Float, segments: Int) -> Float {
+        // The bottom third stays upright, or the shoot has nothing to stand on.
+        let start: Float = 0.35
+        guard turn > 0, t > start else { return 0 }
+        let span = 1 - start
+        let s = (t - start) / span
+        return turn * 1.7 * pow(s, 0.7) / (Float(segments) * span)
+    }
+
+    private static func smoothstep(_ edge0: Float, _ edge1: Float, _ x: Float) -> Float {
+        // `clamped(to:)` in this package is a `Double` helper, and reaching for
+        // it here silently resolves to `Duration`'s.
+        let t = min(1, max(0, (x - edge0) / (edge1 - edge0)))
+        return t * t * (3 - 2 * t)
     }
 
     /// Rotation-minimising frames.
