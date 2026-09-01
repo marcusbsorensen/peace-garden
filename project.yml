@@ -68,12 +68,36 @@ targets:
         # line that has to change with it.
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
 
+  # The app's own tests. SeedCore has carried all the testing until now, which
+  # was right while everything worth proving lived there — but the map from a
+  # genus syllable to a passage theme lives in the app, and it is exactly the
+  # kind of hand-written table that goes wrong silently.
+  PeaceGardenTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: App/PeaceGardenTests
+    dependencies:
+      - target: PeaceGarden
+      - package: SeedCore
+        product: SeedCore
+    settings:
+      base:
+        SWIFT_VERSION: "6.0"
+        SWIFT_STRICT_CONCURRENCY: complete
+        GENERATE_INFOPLIST_FILE: YES
+        DEVELOPMENT_TEAM: R94VDZ56RY
+        CODE_SIGN_STYLE: Automatic
+
 schemes:
   PeaceGarden:
     build:
       targets:
         PeaceGarden: all
+        PeaceGardenTests: [test]
     run:
       config: Debug
     test:
       config: Debug
+      targets:
+        - PeaceGardenTests
