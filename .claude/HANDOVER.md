@@ -1,5 +1,10 @@
 # Peace Garden — handover 1 September 2026
 
+> Twelve lines over length, after two passes at trimming. The session ran three
+> ways at once — a device install, a round of UI feedback, and scoping two new
+> features — and the traps below are what it cost to learn. Cutting them would
+> spend somebody else's afternoon to save a paragraph.
+
 ## Goal
 
 Phase 1 — a plant grown from a seed drawn once, and two people crossing seeds by
