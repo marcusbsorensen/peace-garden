@@ -31,8 +31,9 @@ struct PlantStageView: View {
     @State private var showingGarden = false
     @State private var showingSeed = false
     @State private var showingSettings = false
-    /// Whether the cog has unrolled into the full control. See `tapSettings`.
-    @State private var settingsExpanded = false
+    /// Whether the marks at the top have unrolled into their full controls.
+    /// See `tapTopChrome`.
+    @State private var topChromeExpanded = false
     /// How far down the screen the top chrome reaches, in points. The plant is
     /// framed clear of it.
     @State private var topChromeHeight: CGFloat = 0
@@ -142,23 +143,42 @@ struct PlantStageView: View {
     @ViewBuilder
     private func controls(identity: Identity, growth: GrowthModel.State) -> some View {
         VStack(spacing: 0) {
-            // Settings is a screen about your preferences, and the seed modal
-            // is a screen about your seed. Neither is a sub-topic of the other,
-            // so this sits in the stage chrome and appears and hides with the
-            // row along the bottom — the plant is still the only thing on
-            // screen until somebody asks.
+            // Settings is a screen about your preferences and the seed modal
+            // is a screen about your seed; neither is a sub-topic of the other.
+            // The garden is here for a different reason: it was only ever
+            // reachable from the row along the bottom, beside SEED and MEET,
+            // and somebody looking for plants they already have does not
+            // necessarily read that row as the place to find them. A mark of
+            // its own says the garden is a place rather than an errand.
             //
-            // In its own band above the name rather than laid over it, so
-            // however long a plant is called the two never collide.
-            HStack {
+            // Both sit in the stage chrome and appear and hide with that row,
+            // so the plant is still the only thing on screen until somebody
+            // asks — and in their own band above the name rather than laid
+            // over it, so however long a plant is called the two never collide.
+            //
+            // Two marks, one unrolling. The first touch on either opens both
+            // into their words and the second opens whichever was touched, so
+            // the band behaves as one thing rather than as two controls that
+            // happen to sit together and each want learning separately.
+            HStack(spacing: 6) {
                 Spacer()
-                Button { tapSettings() } label: {
+                Button { tapTopChrome { showingGarden = true } } label: {
+                    ChromeIconLabel(
+                        glyph: AnyShape(GardenGlyph()),
+                        title: "Garden",
+                        showsTitle: topChromeExpanded
+                    )
+                    .pressable(horizontal: topChromeExpanded ? 18 : 12)
+                }
+                .buttonStyle(.plain)
+
+                Button { tapTopChrome { openSettings() } } label: {
                     ChromeIconLabel(
                         glyph: AnyShape(CogShape()),
                         title: "Settings",
-                        showsTitle: settingsExpanded
+                        showsTitle: topChromeExpanded
                     )
-                    .pressable(horizontal: settingsExpanded ? 18 : 12)
+                    .pressable(horizontal: topChromeExpanded ? 18 : 12)
                 }
                 .buttonStyle(.plain)
             }
@@ -211,23 +231,24 @@ struct PlantStageView: View {
         reduceMotion ? .opacity : .move(edge: .top)
     }
 
-    /// The cog stands on its own until it is touched, and unrolls into the
-    /// full control before it will open anything.
+    /// The marks stand on their own until one is touched, and the band unrolls
+    /// into words before it will open anything.
     ///
     /// It is the same bargain the rest of the stage makes — a plant and
-    /// nothing else until somebody asks — held one step further for the one
-    /// control that is not about the plant at all. The word is what the first
-    /// touch buys: you find out what the mark does before you commit to it.
+    /// nothing else until somebody asks — held one step further for the two
+    /// controls that are not about the plant at all. The words are what the
+    /// first touch buys: you find out what the marks do before you commit to
+    /// either of them.
     ///
-    /// With VoiceOver the two steps collapse into one. The word is already
+    /// With VoiceOver the two steps collapse into one. The words are already
     /// being read aloud, so the first touch would buy nothing and cost an
     /// activation.
-    private func tapSettings() {
+    private func tapTopChrome(_ open: () -> Void) {
         hideTask?.cancel()
-        if settingsExpanded || voiceOver {
-            openSettings()
+        if topChromeExpanded || voiceOver {
+            open()
         } else {
-            withAnimation(.easeInOut(duration: 0.28)) { settingsExpanded = true }
+            withAnimation(.easeInOut(duration: 0.28)) { topChromeExpanded = true }
             scheduleHide()
         }
     }
@@ -242,7 +263,7 @@ struct PlantStageView: View {
     private func closeSettings() {
         withAnimation(.easeInOut(duration: 0.36)) {
             showingSettings = false
-            settingsExpanded = false
+            topChromeExpanded = false
         }
 #if DEBUG
         // Meet an imaginary gardener, asked for on the screen that is now
@@ -278,9 +299,9 @@ struct PlantStageView: View {
             try? await Task.sleep(for: Chrome.controlsIdleTimeout)
             guard !Task.isCancelled else { return }
             controlsVisible = false
-            // The cog goes back to standing alone with the rest of the chrome,
-            // so the next visit starts where the last one did.
-            settingsExpanded = false
+            // The marks go back to standing alone with the rest of the
+            // chrome, so the next visit starts where the last one did.
+            topChromeExpanded = false
         }
 #endif
     }

@@ -77,24 +77,47 @@ struct GardenView: View {
         .padding(.top, 40)
     }
 
+    /// A plant, its name, and what it is doing.
+    ///
+    /// Centred under the picture rather than ranged left against it. A caption
+    /// set to one edge of a square reads as a label filed beside the thing;
+    /// centred, it reads as belonging to it, which is what a plant and its name
+    /// are to each other.
+    ///
+    /// **The stage joins the gardener on one line.** A garden is somewhere to
+    /// come back to, and what has changed since the last visit is the only
+    /// thing here that moves — a tile that says only who you met says nothing
+    /// about why you would open it today. Both on one line rather than two,
+    /// separated the way `PlantStageView` already separates a stage from an
+    /// age, because a third line under a tile this size is a paragraph.
     private func tile(for record: PlantRecord) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(spacing: 10) {
             PlantThumbnail(genome: record.genome, growth: record.growth(now: model.now), size: 150)
                 .frame(height: 150)
                 .clipShape(RoundedRectangle(cornerRadius: 2))
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(spacing: 4) {
                 Text(record.genome.name.full)
                     .plantName(size: 13)
                     .foregroundStyle(Chrome.ink)
                     .lineLimit(1)
-                if let encounter = record.encounter {
-                    Text(encounter.peerDisplayName)
-                        .chromeLabel(size: 9)
-                        .foregroundStyle(Chrome.faint)
-                        .lineLimit(1)
-                }
+                Text(caption(for: record))
+                    .chromeLabel(size: 9)
+                    .foregroundStyle(Chrome.faint)
+                    .lineLimit(1)
+                    // Shrunk rather than truncated. A tracked-out label is wide
+                    // for its point size, and a long name beside a long stage
+                    // would otherwise lose its ending to an ellipsis — which is
+                    // the half that says what the plant is doing.
+                    .minimumScaleFactor(0.75)
             }
+            .multilineTextAlignment(.center)
         }
+    }
+
+    private func caption(for record: PlantRecord) -> String {
+        let stage = record.growth(now: model.now).stage.displayName
+        guard let name = record.encounter?.peerDisplayName, !name.isEmpty else { return stage }
+        return "\(stage) · \(name)"
     }
 }
