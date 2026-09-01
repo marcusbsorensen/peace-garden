@@ -127,3 +127,116 @@ someone a business card, and nothing about a person can be recovered from it.
 But it does mean a link is a weaker claim about a meeting than a tap is. If the
 peace garden ever shows how a plant came to be, it should be able to say which
 of the two it was.
+
+---
+
+# Sending one across a distance — build spec
+
+Written 1 September 2026. Everything above is the design and it stands. This is
+what remains to be built, and the decisions were taken rather than deferred.
+
+## What already works
+
+More than it looks like. `PollenLink` packs and parses the payload,
+`SeedOfferView` mints an offer and renders it as a QR code **and** hands it to
+`ShareLink`, so iMessage, WhatsApp, Mail and AirDrop already work today.
+`IncomingSeedView` grows the arriving plant, takes a note, and offers the reply
+as a code or a share. The round trip is complete.
+
+## What is actually missing
+
+**It is buried in the wrong place.** The only way to reach it is Meet → *They
+don't have the app*, which is a screen you open when somebody is standing in
+front of you. Sending a seed to somebody a hundred miles away is not a failure
+mode of a meeting; it is its own thing, and it currently has no door.
+
+### 1. Give it a door
+
+`SeedView` gains it. That screen is about your seed, and this is the one thing
+you can do with a seed other than grow it.
+
+> `SEND THIS SEED ON THE WIND`
+
+The Exchange route stays exactly as it is — somebody standing in front of you
+whose phone has no app is still a real case, and *They don't have the app* is
+the right words for it there.
+
+### 2. One offer on the wind at a time
+
+Not a daily cap. A cap invites *why five?*, and at phase 1 there is no server,
+no cost per seed and no abuse to point at, so any number would be arbitrary and
+would read as rationing something that costs nothing.
+
+Instead: **the app shows one live offer, and minting a new one retires the
+previous one from view.** `SeedView` says whether a seed is currently on the
+wind and when it was sent, and offers to send that same one again or to let it
+go and mint another. That keeps an offer meaningful — you know what you have
+out there — without rationing anything.
+
+**This is a display rule and never a cryptographic one.** Retiring an offer
+must not invalidate it. The whole point of the reply echoing the nonce back
+(above) is that a reply arriving three weeks later is self-contained and still
+works, and somebody who replies to the seed you sent in March must still grow
+the plant with you in June. Anything that rejects a reply because a newer offer
+exists breaks the guarantee this design was built around. Retire it from the
+screen; honour it forever.
+
+### 3. Say something when you send it
+
+`ShareLink(item:)` posts a bare URL, which in a message thread looks like
+somebody sent you a stray link. Use the subject and message so it arrives as an
+offer:
+
+> I've sent you a seed. Open it and a plant grows on your phone — from mine,
+> and from one drawn for you.
+
+Then the link. Written so it is true whether or not they have the app.
+
+### 4. The page a seed lands on
+
+Today `peacegarden.app/s` answers 403, so a link opened by somebody without the
+app leads nowhere. **This is the largest real gap**, and the App Clip does not
+close it: a clip needs the app to be on the App Store first.
+
+Build the page to draw the plant in the browser.
+
+The seed is 32 bytes in the fragment, the fragment never reaches a server, and
+the geometry has already been ported once — `tools/preview/` is a working
+Python implementation of the genome and the mesh. A JavaScript port renders the
+plant client-side, from the fragment, with no request and nothing to log. The
+person sees the actual plant their seed made, in a browser, seconds after
+tapping a message, with nothing installed.
+
+That is very nearly what the App Clip was for, without needing to be on the
+App Store to do it, and it doubles as the renderer the peace garden website
+needs — see [BOTANICAL-GARDEN.md](BOTANICAL-GARDEN.md). Build it once.
+
+The page then offers the app, and once the app exists on the App Store the
+App Clip slots in ahead of it for people whose phones offer it.
+
+**Watch the drift.** `tools/preview/` is already documented as a port that will
+drift, with `SeedCore` authoritative. A third implementation makes that worse,
+not better. Either the web renderer is generated from `SeedCore` (Swift
+compiled to WebAssembly is the honest option) or it earns the same treatment
+`tools/reference/` gets: a CI job that renders the same seeds through both and
+fails when they disagree. Do not add a third hand-maintained copy of the
+geometry without one of those.
+
+### 5. Keep the trust distinction
+
+The closing section above is already the decision: a link is a weaker claim
+about a meeting than a tap. The exchange payload should carry which of the two
+it was, so the peace garden can tell them apart later. Add it now while the
+format is young — the same reasoning as the opaque contact token in
+`.claude/HANDOVER.md`, and for the same reason: it cannot be added to meetings
+already made.
+
+## Order to build it
+
+1. The door in `SeedView`, and the live-offer state. Small, and it makes the
+   feature real for anybody who already has the app.
+2. The share message. Smaller still.
+3. The landing page with the browser renderer. The big one, and the one that
+   decides whether a seed sent to somebody without the app is a delight or a
+   dead link.
+4. The App Clip, once the app is on the App Store.
