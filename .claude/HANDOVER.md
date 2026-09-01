@@ -2,14 +2,14 @@
 
 ## Goal
 
-Phase 1: a plant grown from a seed drawn once, and two people crossing seeds by
-touching phones. Phase 1 is built and has been watched working. Three
-workstreams are now specified and none is started.
+Phase 1 — a plant grown from a seed drawn once, and two people crossing seeds by
+touching phones — is built and has been watched working. Three workstreams are
+specified and none is started.
 
 ## State
 
-Tree clean, `main` at `66c9e81`, everything pushed. 63 SeedCore tests pass; the
-app builds at Swift 6 with complete concurrency.
+Tree clean, `main` at `a41aa1e`, pushed. 63 SeedCore tests pass; builds at
+Swift 6 with complete concurrency.
 
 **Watched end to end on two simulators:** a whole meeting — discovery, the
 knock, the crossing, both phones deriving the same child and the same passage
@@ -20,8 +20,7 @@ gardener. Also the garden grid across six ages.
 **Running on Marcus's iPhone 17 Pro**, device build of `e18e28f`. Dev
 provisioning expires after seven days, then reinstall.
 
-**Specified, not started:** the three workstreams below. The specs carry the
-shipping copy and the reasoning, and are meant to be built from directly.
+**Specified, not started:** the three workstreams below.
 
 ## Files
 
@@ -32,7 +31,7 @@ shipping copy and the reasoning, and are meant to be built from directly.
   cog; `Views/SeedView.swift` loses Settings and gains the wind door;
   `Views/Chrome.swift` holds `chromeLabel` and `SproutingRule`.
 - `Views/SeedOfferView.swift`, `Views/IncomingSeedView.swift` — the wind round
-  trip, QR and share. Already working; only needs a door.
+  trip. Already working; only needs a door.
 
 ## Decisions made
 
