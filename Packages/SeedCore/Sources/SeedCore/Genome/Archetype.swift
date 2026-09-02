@@ -38,6 +38,39 @@ public enum Archetype: String, CaseIterable, Codable, Sendable {
     }
 }
 
+/// How a plant carries its flowers, and therefore what shape it is.
+///
+/// Until this existed every archetype was one unbranched stem at different
+/// proportions, which is why three plants side by side read as the same plant
+/// three times — and why they all read as too tall. A tower spends its whole
+/// budget on height because there is nowhere else to spend it.
+///
+/// Named `Inflorescence` rather than `Form`, which is what the build spec
+/// called it, for two reasons. `Genome.Form` already exists and a bare `Form`
+/// inside `Genome` would resolve to that one. And these three cases *are*
+/// inflorescence types in the botany the rest of this file borrows its
+/// vocabulary from, so the precise word costs nothing and says more.
+public enum Inflorescence: String, CaseIterable, Sendable {
+    /// Blooms on the axis: a single stem, flowers at the tip or up the nodes.
+    ///
+    /// What every plant was before the other two existed, unchanged, and still
+    /// the commonest. It is named so that the other two read as choices rather
+    /// than as exceptions.
+    case raceme
+    /// Stalks off the upper stem, a bloom on each.
+    ///
+    /// `branchSpread` carries the whole range between a flat-topped cluster and
+    /// a feathery spray, which is worth having as a number rather than as two
+    /// more cases — the two ends are the same construction differently tuned.
+    case head
+    /// A bare stem and one much larger bloom.
+    ///
+    /// Fewer blooms is what buys the size. A spire carries a dozen small
+    /// flowers and cannot afford a large one; a poppy carries one and can
+    /// afford nothing else. The plants should look like they cost the same.
+    case solitary
+}
+
 /// Multipliers and overrides an archetype applies to the seed's raw draws.
 public struct ArchetypeProfile: Sendable {
     public var heightScale: Double = 1
@@ -54,10 +87,21 @@ public struct ArchetypeProfile: Sendable {
     public var headPitchBias: Double = 0
     public var centreScale: Double = 1
     /// Flowers open at every node rather than only at the tip.
+    ///
+    /// Meaningful for `.raceme` alone. The other two forms decide where their
+    /// flowers go from the form itself, and their profiles leave this be.
     public var bloomsAtNodes: Bool = false
     /// Fraction of blooms present at all — a fern gets almost none.
     public var bloomPresence: Double = 1
     public var swayScale: Double = 1
+
+    public var inflorescence: Inflorescence = .raceme
+    /// How large every bloom is drawn, against a raceme's.
+    public var bloomScale: Double = 1
+    /// Flat-topped at 0, an open spray at 1. `.head` only.
+    public var branchSpread: Double = 0
+    /// Before the seed's own draw scales it. `.head` only.
+    public var branchCount: Int = 5
 
     public static func profile(for archetype: Archetype) -> ArchetypeProfile {
         var profile = ArchetypeProfile()
@@ -70,11 +114,14 @@ public struct ArchetypeProfile: Sendable {
             profile.bloomsAtNodes = true
             profile.leafLengthScale = 0.8
         case .umbel:
-            profile.heightScale = 1.1
+            profile.inflorescence = .head
+            profile.branchSpread = 0
+            profile.branchCount = 5
+            profile.bloomScale = 0.8
+            profile.heightScale = 0.9
             profile.petalLengthScale = 0.45
             profile.petalCountScale = 1.4
             profile.centreScale = 0.6
-            profile.bloomsAtNodes = true
             profile.leafDroop = 1.2
         case .fern:
             profile.heightScale = 0.8
@@ -85,25 +132,32 @@ public struct ArchetypeProfile: Sendable {
             profile.bloomPresence = 0.05
             profile.swayScale = 1.3
         case .orchid:
-            profile.heightScale = 1.0
+            profile.inflorescence = .solitary
+            profile.bloomScale = 1.7
+            profile.heightScale = 0.85
             profile.stemThickness = 0.8
             profile.nodeScale = 0.6
             profile.petalCountScale = 0.35
-            profile.petalLengthScale = 1.5
+            profile.petalLengthScale = 1.0
             profile.petalWidthScale = 1.3
             profile.petalCurlBias = 0.25
             profile.headPitchBias = 0.5
             profile.leafLengthScale = 1.2
         case .lotus:
-            profile.heightScale = 0.85
+            profile.inflorescence = .solitary
+            profile.bloomScale = 1.7
+            profile.heightScale = 0.7
             profile.stemThickness = 1.4
-            profile.petalLengthScale = 1.4
+            profile.petalLengthScale = 1.0
             profile.petalWidthScale = 1.5
             profile.petalCurlBias = -0.55
             profile.centreScale = 1.7
             profile.nodeScale = 0.5
         case .thistle:
-            profile.heightScale = 1.15
+            profile.inflorescence = .solitary
+            profile.bloomScale = 2.4
+            profile.heightScale = 0.9
+            profile.nodeScale = 0.55
             profile.stemThickness = 1.2
             profile.petalCountScale = 2.2
             profile.petalLengthScale = 0.4
@@ -131,10 +185,13 @@ public struct ArchetypeProfile: Sendable {
             profile.centreScale = 0.7
             profile.petalCountScale = 0.9
         case .poppy:
+            profile.inflorescence = .solitary
+            profile.bloomScale = 1.7
+            profile.heightScale = 0.75
             profile.nodeScale = 0.35
             profile.leafLengthScale = 0.7
             profile.petalCountScale = 0.3
-            profile.petalLengthScale = 1.6
+            profile.petalLengthScale = 1.0
             profile.petalWidthScale = 1.6
             profile.petalCurlBias = -0.35
             profile.headPitchBias = 0.35
@@ -149,14 +206,17 @@ public struct ArchetypeProfile: Sendable {
             profile.petalLengthScale = 0.5
             profile.bloomPresence = 0.6
         case .plume:
-            profile.heightScale = 1.25
+            profile.inflorescence = .head
+            profile.branchSpread = 1
+            profile.branchCount = 7
+            profile.bloomScale = 0.8
+            profile.heightScale = 1.05
             profile.nodeScale = 1.8
             profile.petalCountScale = 1.8
             profile.petalLengthScale = 0.35
             profile.petalWidthScale = 0.35
             profile.leafLengthScale = 0.6
             profile.leafWidthScale = 0.4
-            profile.bloomsAtNodes = true
         }
         return profile
     }

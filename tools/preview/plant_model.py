@@ -114,21 +114,24 @@ DEFAULT_PROFILE = dict(
     leafWidthScale=1.0, leafDroop=1.0, petalCountScale=1.0, petalLengthScale=1.0,
     petalWidthScale=1.0, petalCurlBias=0.0, headPitchBias=0.0, centreScale=1.0,
     bloomsAtNodes=False, bloomPresence=1.0, swayScale=1.0,
+    inflorescence="raceme", bloomScale=1.0, branchSpread=0.0, branchCount=5,
 )
 
 PROFILE_OVERRIDES = {
     "spire": dict(heightScale=1.35, nodeScale=1.6, petalLengthScale=0.55,
                   petalCountScale=0.7, bloomsAtNodes=True, leafLengthScale=0.8),
-    "umbel": dict(heightScale=1.1, petalLengthScale=0.45, petalCountScale=1.4,
-                  centreScale=0.6, bloomsAtNodes=True, leafDroop=1.2),
+    "umbel": dict(inflorescence="head", branchSpread=0.0, branchCount=5, bloomScale=0.8,
+                  heightScale=0.9, petalLengthScale=0.45, petalCountScale=1.4,
+                  centreScale=0.6, leafDroop=1.2),
     "fern": dict(heightScale=0.8, nodeScale=1.9, leafLengthScale=1.5, leafWidthScale=0.7,
                  leafDroop=1.5, bloomPresence=0.05, swayScale=1.3),
-    "orchid": dict(heightScale=1.0, stemThickness=0.8, nodeScale=0.6, petalCountScale=0.35,
-                   petalLengthScale=1.5, petalWidthScale=1.3, petalCurlBias=0.25,
+    "orchid": dict(inflorescence="solitary", bloomScale=1.7, heightScale=0.85, stemThickness=0.8, nodeScale=0.6, petalCountScale=0.35,
+                   petalLengthScale=1.0, petalWidthScale=1.3, petalCurlBias=0.25,
                    headPitchBias=0.5, leafLengthScale=1.2),
-    "lotus": dict(heightScale=0.85, stemThickness=1.4, petalLengthScale=1.4,
+    "lotus": dict(inflorescence="solitary", bloomScale=1.7, heightScale=0.7, stemThickness=1.4, petalLengthScale=1.0,
                   petalWidthScale=1.5, petalCurlBias=-0.55, centreScale=1.7, nodeScale=0.5),
-    "thistle": dict(heightScale=1.15, stemThickness=1.2, petalCountScale=2.2,
+    "thistle": dict(inflorescence="solitary", bloomScale=2.4, heightScale=0.9, nodeScale=0.55,
+                    stemThickness=1.2, petalCountScale=2.2,
                     petalLengthScale=0.4, petalWidthScale=0.3, petalCurlBias=-0.3,
                     centreScale=1.3),
     "vine": dict(heightScale=1.45, stemThickness=0.6, nodeScale=1.7, leafLengthScale=0.65,
@@ -136,13 +139,15 @@ PROFILE_OVERRIDES = {
     "bell": dict(petalCurlBias=-0.75, petalLengthScale=1.1, headPitchBias=1.0,
                  petalCountScale=0.55, bloomsAtNodes=True),
     "star": dict(petalCurlBias=0.35, petalWidthScale=0.6, centreScale=0.7, petalCountScale=0.9),
-    "poppy": dict(nodeScale=0.35, leafLengthScale=0.7, petalCountScale=0.3,
-                  petalLengthScale=1.6, petalWidthScale=1.6, petalCurlBias=-0.35,
+    "poppy": dict(inflorescence="solitary", bloomScale=1.7, heightScale=0.75,
+                  nodeScale=0.35, leafLengthScale=0.7, petalCountScale=0.3,
+                  petalLengthScale=1.0, petalWidthScale=1.6, petalCurlBias=-0.35,
                   headPitchBias=0.35, swayScale=1.4),
     "succulent": dict(heightScale=0.45, stemThickness=1.9, nodeScale=2.1, leafLengthScale=0.55,
                       leafWidthScale=1.6, leafDroop=0.3, petalLengthScale=0.5, bloomPresence=0.6),
-    "plume": dict(heightScale=1.25, nodeScale=1.8, petalCountScale=1.8, petalLengthScale=0.35,
-                  petalWidthScale=0.35, leafLengthScale=0.6, leafWidthScale=0.4, bloomsAtNodes=True),
+    "plume": dict(inflorescence="head", branchSpread=1.0, branchCount=7, bloomScale=0.8,
+                  heightScale=1.05, nodeScale=1.8, petalCountScale=1.8, petalLengthScale=0.35,
+                  petalWidthScale=0.35, leafLengthScale=0.6, leafWidthScale=0.4),
 }
 
 
@@ -288,6 +293,14 @@ class Genome:
 
         self.symmetry = source.integer("form.symmetry", 3, 9)
         self.vigour = source.bell("form.vigour", 0.82, 1.22)
+
+        self.inflorescence = profile["inflorescence"]
+        self.bloomScale = profile["bloomScale"]
+        self.branchCount = max(3, min(7, round(
+            profile["branchCount"] * source.value("stem.branch.count", 0.72, 1.34))))
+        self.branchSpread = clamp(
+            profile["branchSpread"] + source.signed("stem.branch.spread") * 0.14, 0, 1)
+        self.branchAngle = source.value("stem.branch.angle", 1.0, 1.35)
 
         self.height = source.value("stem.height", 0.55, 1.25) * profile["heightScale"] * self.vigour
         self.baseRadius = source.value("stem.baseRadius", 0.008, 0.019) * profile["stemThickness"]
@@ -598,7 +611,85 @@ def build_skeleton(genome, height_scale, segments=28):
     for index in range(genome.nodeCount):
         fraction = 0.55 if genome.nodeCount == 1 else 0.16 + 0.74 * index / (genome.nodeCount - 1)
         nodes.append(samples[min(len(samples) - 1, int(round(fraction * (len(samples) - 1))))])
-    return dict(stem=samples, nodes=nodes, apex=samples[-1])
+    return dict(stem=samples, nodes=nodes, apex=samples[-1],
+                branches=build_branches(genome, samples, height_scale, length))
+
+
+def build_branches(genome, samples, height_scale, stem_length):
+    """Mirror of SkeletonBuilder.branches in PlantSkeleton.swift."""
+    if genome.inflorescence != "head" or genome.branchCount <= 0 or len(samples) < 2:
+        return []
+
+    vigour = smoothstep((height_scale - 0.25) / (0.7 - 0.25))
+    if vigour <= 0.001:
+        return []
+
+    spread = genome.branchSpread
+    apex = samples[-1]
+    zone_start = 0.78 - 0.33 * spread
+    zone_end = 0.95
+
+    branches = []
+    for index in range(genome.branchCount):
+        fraction = 0.5 if genome.branchCount == 1 else index / (genome.branchCount - 1)
+        t = zone_start + (zone_end - zone_start) * fraction
+        origin = samples[min(len(samples) - 1, int(round(t * (len(samples) - 1))))]
+
+        jitter = SplitMix64(genome.seed, f"branch.{index}")
+        azimuth = genome.divergence * index
+        radial = normalize(origin["normal"] * math.cos(azimuth)
+                           + origin["binormal"] * math.sin(azimuth))
+        angle = (genome.branchAngle
+                 + jitter.value(-0.3, 0.3) * (0.2 + 0.8 * spread)) * vigour
+
+        climb = max(0.0, apex["position"][1] - origin["position"][1])
+        target_y = apex["position"][1] + spread * climb * jitter.value(-0.5, 0.5)
+        reach = min(stem_length * 0.7, climb * 2.4 + stem_length * 0.2) * vigour
+        if reach <= stem_length * 0.002:
+            continue
+
+        path = _sweep_branch(origin, radial, angle, target_y, reach,
+                             0.85 * (1 - 0.55 * spread), genome.taper)
+        if len(path) < 3:
+            continue
+        branches.append(dict(origin=origin, path=path))
+    return branches
+
+
+def _sweep_branch(origin, radial, angle, target_y, reach, levelling, taper):
+    segments = 14
+    step = reach / segments
+    minimum = reach * 0.34
+    up = np.array([0.0, 1.0, 0.0])
+    start = normalize(origin["tangent"] * math.cos(angle) + radial * math.sin(angle))
+
+    position = origin["position"] + radial * origin["radius"] * 0.6
+    positions = [position]
+    travelled = 0.0
+
+    for index in range(1, segments + 1):
+        s = index / segments
+        turn = levelling * (s ** 1.45)
+        direction = normalize(start * (1 - turn) + up * turn)
+        previous = position
+        position = position + direction * step
+        travelled += step
+        positions.append(position)
+        if travelled < minimum or position[1] < target_y:
+            continue
+        # Stop at the crossing rather than at the sample after it. See the
+        # note in PlantSkeleton.swift: landing on a step quantises the tip.
+        rise = position[1] - previous[1]
+        if rise > 1e-6:
+            crossing = clamp((target_y - previous[1]) / rise, 0, 1)
+            positions[-1] = previous + (position - previous) * crossing
+            travelled -= step * (1 - crossing)
+        break
+
+    base = origin["radius"] * 0.45
+    last = len(positions) - 1
+    radii = [base * (1 - (1 - taper) * (i / last)) for i in range(len(positions))]
+    return transport_frames(positions, radii, 0.0)
 
 
 def blade_profile(s, sharpness, serration, teeth):
@@ -616,6 +707,8 @@ def build_mesh(genome, growth):
     builder = MeshBuilder()
     skeleton = build_skeleton(genome, growth["heightScale"])
     builder.add_tube("stem", skeleton["stem"], genome.sides)
+    for branch in skeleton.get("branches", []):
+        builder.add_tube("stem", branch["path"], max(4, genome.sides - 2))
 
     husk = clamp((0.25 - growth["heightScale"]) / 0.23, 0, 1)
     if husk > 0.01:
@@ -683,7 +776,13 @@ def _add_leaves(builder, genome, skeleton, growth):
 def _add_blooms(builder, genome, skeleton, growth):
     if not genome.bloomPresent or growth["budSwell"] <= 0.02:
         return
-    _add_bloom(builder, genome, skeleton["apex"], 1.0, growth, 0)
+    _add_bloom(builder, genome, skeleton["apex"], genome.bloomScale, growth, 0)
+
+    for offset, branch in enumerate(skeleton.get("branches", [])):
+        size = SplitMix64(genome.seed, f"bloom.size.branch.{offset}")
+        _add_bloom(builder, genome, branch["path"][-1],
+                   genome.bloomScale * size.value(0.86, 1.1), growth, offset + 1)
+
     if not genome.bloomsAtNodes:
         return
     for offset, node in enumerate(skeleton["nodes"]):

@@ -33,6 +33,28 @@ public struct PlantBuilder {
     private func addStem(_ builder: inout MeshBuilder, skeleton: PlantSkeleton, growth: GrowthModel.State) {
         builder.addTube(role: .stem, path: skeleton.stem, sides: genome.stem.sides)
 
+        // The stalks of a head, each domed where it leaves the stem.
+        //
+        // A branch needs the same treatment the foot of the stem gets and for
+        // the same reason: `addTube` closes neither end, the material is
+        // double-sided, and an open end shows its own lit inside wall. On a
+        // join that is worse than on the foot, because there is a stem right
+        // there to be seen through the gap.
+        for branch in skeleton.branches {
+            let base = branch.path[0]
+            builder.addTube(role: .stem, path: branch.path, sides: max(4, genome.stem.sides - 2))
+            builder.addDome(
+                role: .stem,
+                centre: base.position,
+                axis: -base.tangent,
+                side: base.normal,
+                radius: base.radius,
+                flatten: 0.5,
+                rows: 4,
+                columns: max(5, genome.stem.sides - 2)
+            )
+        }
+
         // The foot of the stem, closed.
         //
         // `addTube` closes neither end, and the material is double-sided, so an
@@ -207,7 +229,25 @@ public struct PlantBuilder {
     private func addBlooms(_ builder: inout MeshBuilder, skeleton: PlantSkeleton, growth: GrowthModel.State) {
         guard genome.bloom.present, growth.budSwell > 0.02 else { return }
 
-        addBloom(&builder, at: skeleton.apex, scale: 1.0, growth: growth, index: 0)
+        let bloomScale = Float(genome.branching.bloomScale)
+        addBloom(&builder, at: skeleton.apex, scale: bloomScale, growth: growth, index: 0)
+
+        // One bloom at the tip of each stalk.
+        //
+        // The terminal flower above stays: before the plant is tall enough to
+        // divide there are no stalks, so it is the only flower a young head
+        // has, and it goes on being the one at the middle of the cluster.
+        for (offset, branch) in skeleton.branches.enumerated() {
+            guard let tip = branch.path.last else { continue }
+            var size = SplitMix64(seed: genome.seed, label: "bloom.size.branch.\(offset)")
+            addBloom(
+                &builder,
+                at: tip,
+                scale: bloomScale * Float(size.value(in: 0.86...1.1)),
+                growth: growth,
+                index: offset + 1
+            )
+        }
 
         guard genome.bloom.atNodes else { return }
         for (offset, node) in skeleton.nodes.enumerated() where node.t > 0.35 {

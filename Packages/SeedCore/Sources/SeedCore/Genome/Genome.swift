@@ -39,6 +39,25 @@ public struct Genome: Equatable, Sendable {
         public var vigour: Double
     }
 
+    /// How this plant carries its flowers, and the stalks that follow from it.
+    ///
+    /// Derived from the archetype, which is itself drawn from the seed — so a
+    /// hybrid's form comes free with the archetype its own seed picks, and
+    /// nothing new has to cross. Two phones reach the same head from the same
+    /// seed without sending anything, which is the guarantee the whole exchange
+    /// rests on.
+    public struct Branching: Equatable, Sendable {
+        public var inflorescence: Inflorescence
+        /// Stalks given off the upper stem. `.head` only.
+        public var count: Int
+        /// Flat-topped at 0, an open spray at 1. `.head` only.
+        public var spread: Double
+        /// How far off the stem's own line a stalk leaves it, in radians.
+        public var angle: Double
+        /// How large every bloom is drawn, against a raceme's.
+        public var bloomScale: Double
+    }
+
     public struct Stem: Equatable, Sendable {
         public var height: Double
         public var baseRadius: Double
@@ -158,6 +177,7 @@ public struct Genome: Equatable, Sendable {
     public let seed: SeedID
     public let lineage: Lineage
     public let form: Form
+    public let branching: Branching
     public let stem: Stem
     public let foliage: Foliage
     public let bloom: Bloom
@@ -194,6 +214,22 @@ public struct Genome: Equatable, Sendable {
             archetype: archetype,
             symmetry: source.integer("form.symmetry", 3...9),
             vigour: source.bell("form.vigour", 0.82...1.22)
+        )
+
+        // New keys only, and every existing one left exactly as it was.
+        // `GeneSource` draws by name rather than by position in a stream, so
+        // adding these cannot shift a trait already growing on somebody's
+        // phone — which is the only property here that could not be fixed
+        // later.
+        branching = Branching(
+            inflorescence: profile.inflorescence,
+            count: max(3, min(7, Int(
+                (Double(profile.branchCount) * source.value("stem.branch.count", 0.72...1.34)).rounded()
+            ))),
+            spread: (profile.branchSpread + source.signed("stem.branch.spread") * 0.14)
+                .clamped(to: 0...1),
+            angle: source.value("stem.branch.angle", 1.0...1.35),
+            bloomScale: profile.bloomScale
         )
 
         let height = source.value("stem.height", 0.55...1.25) * profile.heightScale * form.vigour

@@ -15,11 +15,24 @@ public struct PathSample: Sendable {
     public var t: Float
 }
 
-/// The stem, its leaf nodes, and its tip.
+/// A stalk given off the main stem, carrying one bloom at its tip.
+public struct Branch: Sendable {
+    /// Where it leaves the main stem.
+    public var origin: PathSample
+    /// Its own swept path, base to tip.
+    public var path: [PathSample]
+}
+
+/// The stem, its leaf nodes, its tip, and any stalks it gives off.
 public struct PlantSkeleton: Sendable {
     public var stem: [PathSample]
     public var nodes: [PathSample]
     public var apex: PathSample
+    /// Empty for `.raceme` and `.solitary`.
+    ///
+    /// Empty rather than optional, so every consumer walks the same list and
+    /// the two unbranched forms need no special case.
+    public var branches: [Branch] = []
 }
 
 public enum SkeletonBuilder {
@@ -83,7 +96,184 @@ public enum SkeletonBuilder {
             nodes.append(samples[sampleIndex])
         }
 
-        return PlantSkeleton(stem: samples, nodes: nodes, apex: samples[samples.count - 1])
+        return PlantSkeleton(
+            stem: samples,
+            nodes: nodes,
+            apex: samples[samples.count - 1],
+            branches: branches(
+                genome: genome,
+                stem: samples,
+                heightScale: heightScale,
+                stemLength: length,
+                taper: taper
+            )
+        )
+    }
+
+    // MARK: - Branches
+
+    /// The stalks a `.head` gives off its upper stem, each ending in a bloom.
+    ///
+    /// Every stalk is integrated step by step, the way the stem itself is, so
+    /// that its curve accumulates. The alternative — drawing one path and
+    /// scaling it per stalk — changes a stalk's curvature with its length, and
+    /// a head stops looking flat the moment that happens.
+    static func branches(
+        genome: Genome,
+        stem samples: [PathSample],
+        heightScale: Float,
+        stemLength: Float,
+        taper: Float
+    ) -> [Branch] {
+        let branching = genome.branching
+        guard branching.inflorescence == .head, branching.count > 0, samples.count >= 2 else {
+            return []
+        }
+
+        // A head opens outward as the plant grows into it. Below this there is
+        // no upper stem to give stalks off, and a young `.head` plant is drawn
+        // as a raceme that has not divided yet — which is what one is.
+        let vigour = smoothstep(0.25, 0.7, heightScale)
+        guard vigour > 0.001 else { return [] }
+
+        let spread = Float(branching.spread)
+        let apex = samples[samples.count - 1]
+        // Where along the stem the stalks leave it. A flat-topped head gives
+        // them all off within a short stretch near the top; a spray gives them
+        // off over half the stem, and that alone is most of what separates the
+        // two silhouettes.
+        let zoneStart = 0.78 - 0.33 * spread
+        let zoneEnd: Float = 0.95
+        let divergence = Float(genome.foliage.divergence)
+        let baseAngle = Float(branching.angle)
+
+        var branches: [Branch] = []
+        branches.reserveCapacity(branching.count)
+
+        for index in 0..<branching.count {
+            let fraction: Float = branching.count == 1
+                ? 0.5
+                : Float(index) / Float(branching.count - 1)
+            let t = zoneStart + (zoneEnd - zoneStart) * fraction
+            let sampleIndex = min(samples.count - 1, Int((t * Float(samples.count - 1)).rounded()))
+            let origin = samples[sampleIndex]
+
+            var jitter = SplitMix64(seed: genome.seed, label: "branch.\(index)")
+            // Stalks are set out on the same golden-angle divergence the leaves
+            // use, so they spiral round the stem rather than lining up in a
+            // plane and reading as a fan seen edge-on.
+            let azimuth = divergence * Float(index)
+            let radial = simd_normalize(
+                origin.normal * cos(azimuth) + origin.binormal * sin(azimuth)
+            )
+
+            // How far the stalk leans off the stem. The jitter widens with
+            // spread: a flat-topped head is uniform, and a spray is not.
+            let angle = (baseAngle + Float(jitter.value(in: -0.3...0.3)) * (0.2 + 0.8 * spread))
+                * vigour
+
+            // The height the tip is aiming for.
+            //
+            // At spread 0 every tip aims at the same height, and that levelling
+            // is the whole reason a flat-topped head reads as flat rather than
+            // as a bundle: a stalk leaving the stem lower down simply has
+            // further to climb and comes out longer. Scatter the target and the
+            // same rule gives a spray — still longer stalks low down, but no
+            // table across the top.
+            let climb = max(0, apex.position.y - origin.position.y)
+            let targetY = apex.position.y
+                + spread * climb * Float(jitter.value(in: -0.5...0.5))
+
+            // The `stemLength` term is what keeps the topmost stalk from
+            // vanishing: it has almost no height to climb, so without a floor
+            // it would terminate the moment it left the stem.
+            let reach = min(stemLength * 0.7, climb * 2.4 + stemLength * 0.2) * vigour
+            guard reach > stemLength * 0.002 else { continue }
+
+            let path = sweep(
+                from: origin,
+                radial: radial,
+                angle: angle,
+                targetY: targetY,
+                reach: reach,
+                levelling: 0.85 * (1 - 0.55 * spread),
+                taper: taper
+            )
+            guard path.count >= 3 else { continue }
+            branches.append(Branch(origin: origin, path: path))
+        }
+        return branches
+    }
+
+    /// One stalk, integrated out and up until its tip reaches `targetY`.
+    ///
+    /// The direction turns from its outward start toward vertical along the
+    /// stalk, and the position accumulates from it a step at a time. Where the
+    /// stalk *stops* is solved rather than drawn: it runs until it crosses the
+    /// target height, so its length is whatever reaching that height costs from
+    /// where it started.
+    private static func sweep(
+        from origin: PathSample,
+        radial: SIMD3<Float>,
+        angle: Float,
+        targetY: Float,
+        reach: Float,
+        levelling: Float,
+        taper: Float
+    ) -> [PathSample] {
+        let segments = 14
+        let step = reach / Float(segments)
+        // A third of its reach before the target can stop it, so a stalk is
+        // never a stub — and so every stalk has enough samples to sweep a tube.
+        let minimum = reach * 0.34
+        let up = SIMD3<Float>(0, 1, 0)
+        let start = simd_normalize(origin.tangent * cos(angle) + radial * sin(angle))
+
+        var position = origin.position + radial * origin.radius * 0.6
+        var positions: [SIMD3<Float>] = [position]
+        var travelled: Float = 0
+
+        for index in 1...segments {
+            let s = Float(index) / Float(segments)
+            // Turning from the initial direction rather than from the previous
+            // one, so a stalk that has been cut short by the target height has
+            // the same curvature as the stretch of a longer one beside it.
+            let turn = levelling * pow(s, 1.45)
+            let direction = simd_normalize(start * (1 - turn) + up * turn)
+            let previous = position
+            position += direction * step
+            travelled += step
+            positions.append(position)
+            guard travelled >= minimum, position.y >= targetY else { continue }
+            // Stop *at* the crossing rather than at the sample after it.
+            //
+            // Landing on an integration step quantises the tip: as the stalk
+            // lengthens with the plant, the step it stops on jumps from one to
+            // the next and the whole head snaps outward by a step. It is a
+            // couple of per cent of the plant, it happens while somebody is
+            // watching the head open, and `testAHeadDividesGradually…` is what
+            // found it — no render at any single age could have.
+            let rise = position.y - previous.y
+            if rise > 1e-6 {
+                let crossing = (targetY - previous.y) / rise
+                positions[positions.count - 1] = previous
+                    + (position - previous) * min(1, max(0, crossing))
+                travelled -= step * (1 - min(1, max(0, crossing)))
+            }
+            break
+        }
+
+        // A stalk is a stem, and ends like one: it leaves the axis at a
+        // fraction of its thickness and runs out to a point through the same
+        // ogive the stem's own tip uses.
+        let base = origin.radius * 0.45
+        let span = min(0.2, max(0.06, base * 5 / max(0.0001, travelled)))
+        let last = Float(positions.count - 1)
+        let radii = positions.indices.map { index -> Float in
+            let s = Float(index) / last
+            return base * (1 - (1 - taper) * s) * apexPoint(s, span: span)
+        }
+        return transportFrames(positions: positions, radii: radii, twist: 0)
     }
 
     // MARK: - The growing point
