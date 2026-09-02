@@ -25,7 +25,7 @@ struct EncounterEditView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Chrome.ground.ignoresSafeArea()
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 26) {

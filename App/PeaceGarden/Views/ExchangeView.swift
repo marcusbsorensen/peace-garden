@@ -32,7 +32,7 @@ struct ExchangeView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Chrome.ground.ignoresSafeArea()
 
             // The counterpart to first light: two fronds opening rather than
             // one, for the screen where a seed is being made with someone else.
@@ -57,7 +57,7 @@ struct ExchangeView: View {
                 noteOutcome = nil
                 dismiss()
             }
-            .presentationBackground(.black)
+            .presentationBackground(Chrome.ground)
         }
         .fullScreenCover(isPresented: $showingOffer) {
             SeedOfferView().environment(model)

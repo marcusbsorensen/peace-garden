@@ -22,6 +22,42 @@ enum PlantSceneBuilder {
         return node
     }
 
+    /// Draws an already-built plant a different way.
+    ///
+    /// A pass over the finished node rather than a branch inside `material(for:
+    /// palette:)`, so the real material stays the one thing that knows how a
+    /// plant is supposed to look and the two alternatives are visibly
+    /// departures from it. The node is rebuilt whenever the style changes, so
+    /// nothing here has to be undoable.
+    static func restyle(_ node: SCNNode, as style: StagePlantStyle, tint: UIColor) {
+        guard style != .full else { return }
+        node.enumerateHierarchy { child, _ in
+            for material in child.geometry?.materials ?? [] {
+                material.emission.contents = nil
+                material.emission.intensity = 0
+                material.diffuse.contents = tint
+
+                switch style {
+                case .full:
+                    break
+                case .monochrome:
+                    // The normal and roughness maps stay. Losing them too would
+                    // give a silhouette, and the point of one colour is that
+                    // the form survives the colour going.
+                    break
+                case .wireframe:
+                    material.fillMode = .lines
+                    // Unlit, or half the mesh is a dark line on a dark ground.
+                    // A wireframe is a diagram; diagrams are not lit.
+                    material.lightingModel = .constant
+                    material.normal.contents = nil
+                    material.roughness.contents = nil
+                    material.isDoubleSided = true
+                }
+            }
+        }
+    }
+
     static func geometry(for part: PlantMesh.Part, palette: Genome.Palette) -> SCNGeometry {
         let geometry = geometry(for: part)
         geometry.firstMaterial = material(for: part.role, palette: palette)

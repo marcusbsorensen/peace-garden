@@ -14,7 +14,7 @@ struct IncomingSeedView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Chrome.ground.ignoresSafeArea()
 
             if kept, let reply {
                 sendItBack(reply)
@@ -41,7 +41,7 @@ struct IncomingSeedView: View {
                     kept = true
                 }
             }
-            .presentationBackground(.black)
+            .presentationBackground(Chrome.ground)
         }
         .overlay(alignment: .topTrailing) {
             QuietButton(title: kept ? "Done" : "Not this time") { finish() }

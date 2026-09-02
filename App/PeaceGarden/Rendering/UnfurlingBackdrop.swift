@@ -316,7 +316,7 @@ struct Frond: Shape {
 
 #Preview("single") {
     ZStack {
-        Color.black
+        Chrome.ground
         UnfurlingBackdrop(.single)
         // Verbatim: a preview is compiled into Debug builds only, and a literal
         // that comes and goes with the configuration is a catalogue entry that
@@ -332,7 +332,7 @@ struct Frond: Shape {
 
 #Preview("pair") {
     ZStack {
-        Color.black
+        Chrome.ground
         UnfurlingBackdrop(.pair)
         Text(verbatim: "Touch the tops of your phones together")
             .font(.system(size: 20, weight: .light, design: .serif))

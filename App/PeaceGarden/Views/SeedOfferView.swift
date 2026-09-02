@@ -19,7 +19,7 @@ struct SeedOfferView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Chrome.ground.ignoresSafeArea()
 
             VStack(spacing: 22) {
                 Spacer()

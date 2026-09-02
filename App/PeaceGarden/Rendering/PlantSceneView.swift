@@ -26,9 +26,10 @@ struct PlantSceneView: UIViewRepresentable {
     var isInteractive: Bool = true
     var autoRotates: Bool = true
     var arrival: Arrival?
-    /// Points across the foot of this view that the chrome has spoken for, and
-    /// that the plant is therefore kept out of. See `PlantSceneBuilder.framing`.
-    var bottomInset: CGFloat = 0
+    /// How the plant is drawn. See `StagePlantStyle`.
+    var style: StagePlantStyle = .full
+    /// The colour a monochrome or wireframe plant is drawn in.
+    var tint: Color = .white
     var onTap: (() -> Void)?
 
     func makeCoordinator() -> Coordinator {
@@ -62,7 +63,7 @@ struct PlantSceneView: UIViewRepresentable {
             view.addGestureRecognizer(tap)
         }
 
-        coordinator.setBottomInset(bottomInset)
+        coordinator.setStyle(style, tint: tint)
         coordinator.rebuildIfNeeded(genome: genome, growth: growth)
         coordinator.setArrival(arrival)
         coordinator.setAutoRotation(autoRotates)
@@ -71,7 +72,7 @@ struct PlantSceneView: UIViewRepresentable {
 
     func updateUIView(_ uiView: SCNView, context: Context) {
         context.coordinator.onTap = onTap
-        context.coordinator.setBottomInset(bottomInset)
+        context.coordinator.setStyle(style, tint: tint)
         context.coordinator.rebuildIfNeeded(genome: genome, growth: growth)
         context.coordinator.setArrival(arrival)
         context.coordinator.setAutoRotation(autoRotates)
@@ -109,7 +110,16 @@ struct PlantSceneView: UIViewRepresentable {
         /// The plant as it is now. Sets what the camera aims at.
         private var meshBounds: (min: SIMD3<Float>, max: SIMD3<Float>)?
         private var viewSize: CGSize = .zero
-        private var bottomInset: CGFloat = 0
+        private var style: StagePlantStyle = .full
+        private var tint: UIColor = .white
+        /// How far below the middle of the screen the plant settles, as a
+        /// fraction of half the visible world height.
+        ///
+        /// About four per cent of the screen's height. Enough that the eye
+        /// reads it as standing rather than floating, and not so much that a
+        /// mature plant's crown runs off the top.
+        static let settle: Float = 0.08
+
         /// Set only while the seed is opening. `nil` the rest of the time, and
         /// the rest of the time is all but six seconds of the app's life.
         private var arrival: PlantSceneView.Arrival?
@@ -142,6 +152,7 @@ struct PlantSceneView: UIViewRepresentable {
 
             let mesh = PlantBuilder(genome: genome).mesh(growth: growth)
             let node = PlantSceneBuilder.node(for: mesh, palette: genome.palette)
+            PlantSceneBuilder.restyle(node, as: style, tint: tint)
 
             plantNode?.removeFromParentNode()
             plantPivot.addChildNode(node)
@@ -190,10 +201,14 @@ struct PlantSceneView: UIViewRepresentable {
             applyFraming()
         }
 
-        func setBottomInset(_ points: CGFloat) {
-            guard abs(points - bottomInset) > 0.5 else { return }
-            bottomInset = points
-            applyFraming()
+        /// Changing how the plant is drawn rebuilds it, because `restyle` is a
+        /// one-way pass over the materials rather than something to undo.
+        func setStyle(_ style: StagePlantStyle, tint: Color) {
+            let colour = UIColor(tint)
+            guard style != self.style || !colour.isEqual(self.tint) else { return }
+            self.style = style
+            self.tint = colour
+            currentKey = ""
         }
 
         func viewSizeChanged(to size: CGSize) {
@@ -204,12 +219,15 @@ struct PlantSceneView: UIViewRepresentable {
 
         private func applyFraming() {
             guard let reference, let plantNode, let here = meshBounds, viewSize.height > 1 else { return }
-            let inset = Float(min(0.45, max(0, bottomInset / viewSize.height)))
+            // Framed into the whole view rather than into the part of it the
+            // chrome leaves. The band is hidden most of the time, and a plant
+            // sized to clear a band that is not there is a plant drawn small
+            // for no reason. When the band *is* up, the foot of the stem passes
+            // behind it, which is what growing out of it looks like.
             let framing = PlantSceneBuilder.framing(
                 min: reference.min,
                 max: reference.max,
-                aspect: Float(viewSize.width / viewSize.height),
-                reserved: inset
+                aspect: Float(viewSize.width / viewSize.height)
             )
             // The plant stands on its own origin and turns about its stem,
             // which is what a plant does. Offsetting it to spin about the middle
@@ -229,17 +247,25 @@ struct PlantSceneView: UIViewRepresentable {
             // the plant turns about that axis, and a leaning plant whose centre
             // is off it would swing the whole frame round as the turntable went.
             let distance = framing.distance * 1.12
-            // Lowering the aim by the reserved band's share of the half-height
-            // slides the whole picture up the screen by exactly that band, so
-            // the plant is centred in what is left of the view rather than in
-            // the view. The distance above already made room for it; this is
-            // what puts the room in the right place.
+            // Centred on the screen, and then a little below its middle.
             //
-            // Lowered rather than raised, because the band is at the foot of
-            // the screen now: the name, the stage and the row of marks all sit
-            // under the plant, and the plant stands on them.
+            // It used to be centred on *what was left of* the screen once the
+            // band at the foot had taken its share — the aim was lowered by the
+            // band's height, which slides the picture up by exactly that much.
+            // That is the right answer to the wrong question. **The band is
+            // hidden most of the time**: it fades out after six seconds and
+            // stays gone until somebody touches the screen, so the state it was
+            // being composed for is the rarer one, and in the common state the
+            // plant simply sat too high.
+            //
+            // Composed for the bare screen instead, and biased a little *down*
+            // from its middle, because a subject placed at the exact centre of
+            // a tall frame reads as high — and because this one is supposed to
+            // be growing out of the foot of the screen, where its name and its
+            // marks are, rather than hanging in the middle of it. Raising the
+            // aim is what lowers the picture.
             let halfWorldHeight = distance * tan(PlantSceneBuilder.verticalHalfAngle)
-            let aim = (here.min.y + here.max.y) * 0.5 - inset * halfWorldHeight
+            let aim = (here.min.y + here.max.y) * 0.5 + Self.settle * halfWorldHeight
 
             guard let arrival else {
                 cameraRig.position = SCNVector3(0, aim, 0)

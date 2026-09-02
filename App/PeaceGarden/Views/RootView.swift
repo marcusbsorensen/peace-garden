@@ -2,6 +2,7 @@ import SwiftUI
 import SeedCore
 
 struct RootView: View {
+
     @Environment(GardenModel.self) private var model
 
     /// Only a fully grown arrival takes over the screen. A seed that turned up
@@ -15,7 +16,7 @@ struct RootView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Chrome.ground.ignoresSafeArea()
 
             if let identity = model.identity {
                 if model.isArriving {

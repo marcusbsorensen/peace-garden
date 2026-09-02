@@ -26,12 +26,31 @@ enum Chrome {
     // hierarchy is narrower than it was and now leans on size, weight and
     // letterspacing to carry the difference — which is the right way round,
     // since those survive sunlight and a low opacity does not.
-    static let ink = Color.white
-    static let muted = Color.white.opacity(0.72)
-    static let faint = Color.white.opacity(0.56)
+    // Each resolves against the appearance the app is running in, so a light
+    // garden is the same hierarchy read the other way up rather than a second
+    // set of colours somebody has to keep in step. The alphas are not mirrored:
+    // dark type on a light ground reads heavier at the same opacity, so the
+    // light values are pulled back a little to keep the three levels apart.
+    static let ink = adaptive(dark: .white, light: UIColor(white: 0.07, alpha: 1))
+    static let muted = adaptive(dark: UIColor(white: 1, alpha: 0.72),
+                                light: UIColor(white: 0.07, alpha: 0.70))
+    static let faint = adaptive(dark: UIColor(white: 1, alpha: 0.56),
+                                light: UIColor(white: 0.07, alpha: 0.52))
     /// Rules and borders, never text. Lifted only enough that a capsule's edge
     /// is visible outdoors.
-    static let hairline = Color.white.opacity(0.24)
+    static let hairline = adaptive(dark: UIColor(white: 1, alpha: 0.24),
+                                   light: UIColor(white: 0.07, alpha: 0.20))
+
+    /// What every screen in the app is painted on.
+    ///
+    /// Near-black rather than black in the dark, and a warm near-white rather
+    /// than white in the light: both give the plant somewhere to sit without
+    /// the ground itself becoming the brightest or darkest thing on screen.
+    static let ground = adaptive(dark: .black, light: UIColor(white: 0.965, alpha: 1))
+
+    private static func adaptive(dark: UIColor, light: UIColor) -> Color {
+        Color(uiColor: UIColor { $0.userInterfaceStyle == .light ? light : dark })
+    }
 
     /// For the small uppercase labels that head a section.
     ///
@@ -40,7 +59,8 @@ enum Chrome {
     /// meant to read on the way past. Letterspacing thins a line of type as
     /// surely as a lighter weight does, so wide-tracked small caps need more of
     /// the ground back than ordinary text of the same size would.
-    static let sectionLabel = Color.white.opacity(0.80)
+    static let sectionLabel = adaptive(dark: UIColor(white: 1, alpha: 0.80),
+                                       light: UIColor(white: 0.07, alpha: 0.78))
 
     /// What a label becomes once a warm fill has passed under it.
     static let nearBlack = Color(white: 0.05)
@@ -65,14 +85,164 @@ enum Chrome {
     /// whole screen, the words are not.
     static let readableWidth: CGFloat = 440
 
-    /// Whether the plant's name and stage are drawn under it on the stage.
-    ///
-    /// Read in two places — the stage that draws them and the switch that sets
-    /// them — so the key lives here rather than in either.
+    // What the stage draws, and how long it stays.
+    //
+    // Each is read in two places — the stage that obeys it and the switch that
+    // sets it — so the keys live here rather than in either. Versioned, because
+    // a default whose meaning changes has to be able to leave the old one
+    // behind rather than inherit a value that now means something else.
+
+    /// Whether the plant's binomial is drawn under it.
     static let namesPlantKey = "stage.namesPlant.v1"
+    /// Whether the growth stage is drawn under the name.
+    ///
+    /// Separate from the name because they answer different questions. The name
+    /// is what this plant *is* and does not change; the stage is what it is
+    /// doing this week, and somebody who has learnt to read the plant does not
+    /// need to be told.
+    static let showsStageKey = "stage.showsStage.v1"
+    /// How much of the row along the foot is on screen, and for how long.
+    static let menuStyleKey = "stage.menuStyle.v1"
+    /// Which way up the app is drawn. See `StageAppearance`.
+    static let appearanceKey = "stage.appearance.v1"
+    /// How a seed says where it was planted. See `PlantingLocationMode`.
+    static let placeModeKey = "places.mode.v1"
+    /// What a gardener wrote, when the mode is `.custom`.
+    static let placeCustomKey = "places.custom.v1"
+    /// How the plant is drawn. See `StagePlantStyle`.
+    static let plantStyleKey = "stage.plantStyle.v1"
+    /// The colour a monochrome or wireframe plant is drawn in, as `RRGGBB`.
+    static let plantTintKey = "stage.plantTint.v1"
+    /// A warm bone, which is what a botanical plate is printed in and what a
+    /// single colour on black wants to be before anybody chooses otherwise.
+    static let plantTintDefault = "D9C9B0"
+
+    /// Whether the plant turns on its own.
+    ///
+    /// It is a turntable rather than an animation of the plant: the plant does
+    /// nothing, the stage under it moves. Somebody who would rather turn it
+    /// themselves, or who finds the drift distracting, can stop it — and it is
+    /// a real saving on a phone left on a desk with the app open.
+    static let turntableKey = "stage.turntable.v1"
 
     static let fadeIn = Animation.easeInOut(duration: 0.55)
     static let controlsIdleTimeout: Duration = .seconds(6)
+}
+
+/// How much of the row along the foot of the stage is showing.
+///
+/// Three points on one line — how far you are from the thing you want — rather
+/// than three unrelated preferences. Each step trades a tap for a piece of the
+/// screen, and there is no right answer: somebody who opens the garden twenty
+/// times a day and somebody who wants a plant alone on black are both right.
+enum StageMenuStyle: String, CaseIterable, Sendable {
+    /// Nothing until the screen is touched, and gone again six seconds later.
+    /// Two taps to the row, three to a screen. The bare plant, which is what
+    /// this app was for.
+    case hidden
+    /// The marks, always. One tap unrolls a mark's word, a second opens it.
+    case mini
+    /// The marks and their words, always. One tap opens anything.
+    case full
+
+    var label: LocalizedStringResource {
+        switch self {
+        case .hidden: return "Hidden"
+        case .mini: return "Marks only"
+        case .full: return "Marks and words"
+        }
+    }
+
+    /// Whether the row is drawn without being asked for.
+    var isAlwaysOnScreen: Bool { self != .hidden }
+    /// Whether every mark carries its word, which is what removes the first tap.
+    var namesEveryMark: Bool { self == .full }
+}
+
+/// Which way up the app is drawn.
+///
+/// The garden was black from the first screen, and for a reason: it is the one
+/// ground that lets a plant be the only saturated thing in front of somebody.
+/// A light garden gives that up, and it is worth having anyway — a phone in
+/// sunlight is a different instrument from a phone at night, and so is a person
+/// who finds a black screen at breakfast unfriendly.
+/// How a seed says where it was planted.
+///
+/// Three answers to one question, and only one of them can be the answer — so
+/// it is one control with three states rather than a menu and a switch that can
+/// disagree with each other, which is what it was.
+enum PlantingLocationMode: String, CaseIterable, Sendable {
+    /// One of the app's own figurative places: *after the storm*, and the rest.
+    /// The default, because it is the only one that says something true without
+    /// saying anything a stranger could use.
+    case abstract
+    /// The point on the earth the phone measured, to five decimal places.
+    case geographic
+    /// Whatever the gardener would rather it said.
+    case custom
+
+    var label: LocalizedStringResource {
+        switch self {
+        case .abstract: return "One of the places"
+        case .geographic: return "Where you actually are"
+        case .custom: return "Something you write"
+        }
+    }
+}
+
+enum StageAppearance: String, CaseIterable, Sendable {
+    case dark
+    case light
+    /// Whatever the phone is doing, which is what most people mean by not
+    /// having an opinion.
+    case system
+
+    var label: LocalizedStringResource {
+        switch self {
+        case .dark: return "Dark"
+        case .light: return "Light"
+        case .system: return "Follow the phone"
+        }
+    }
+
+    var colorScheme: ColorScheme? {
+        switch self {
+        case .dark: return .dark
+        case .light: return .light
+        case .system: return nil
+        }
+    }
+}
+
+/// How the plant itself is drawn.
+///
+/// Colour has always been the plants' alone in this app — every piece of chrome
+/// is white at four opacities on black, precisely so that the one saturated
+/// thing on screen is the thing you grew. These two alternatives give that up
+/// on purpose, and each is a different reason for wanting to.
+enum StagePlantStyle: String, CaseIterable, Sendable {
+    /// The plant as its seed drew it: its own palette, lit and shaded.
+    case full
+    /// One colour, still lit. The normal and roughness maps stay, so the form
+    /// is all there and only the hue is gone — which is a botanical plate
+    /// rather than a silhouette.
+    case monochrome
+    /// The mesh itself, unlit. What the plant is made of rather than what it
+    /// looks like, and the only view in the app that admits there is geometry
+    /// underneath.
+    case wireframe
+
+    var label: LocalizedStringResource {
+        switch self {
+        case .full: return "Full colour"
+        case .monochrome: return "One colour"
+        case .wireframe: return "Wireframe"
+        }
+    }
+
+    /// Whether the tint is the plant's whole colour, and therefore worth
+    /// letting somebody choose.
+    var isTinted: Bool { self != .full }
 }
 
 extension Chrome {
@@ -113,6 +283,30 @@ private struct ChromeLetterCase: ViewModifier {
 
     func body(content: Content) -> some View {
         content.textCase(Chrome.letterCase(in: locale))
+    }
+}
+
+extension Color {
+    /// From `RRGGBB`, falling back to white rather than to nothing.
+    init(hex: String) {
+        let digits = hex.trimmingCharacters(in: CharacterSet(charactersIn: "#"))
+        let value = UInt64(digits, radix: 16) ?? 0xFFFFFF
+        self.init(
+            red: Double((value >> 16) & 0xFF) / 255,
+            green: Double((value >> 8) & 0xFF) / 255,
+            blue: Double(value & 0xFF) / 255
+        )
+    }
+
+    /// `RRGGBB`, for a default somebody chose with a colour picker.
+    var hex: String {
+        let components = UIColor(self).cgColor.components ?? [1, 1, 1]
+        let channels = components.count >= 3
+            ? Array(components.prefix(3))
+            : [components[0], components[0], components[0]]
+        return channels
+            .map { String(format: "%02X", Int((max(0, min(1, $0)) * 255).rounded())) }
+            .joined()
     }
 }
 
@@ -331,8 +525,15 @@ struct Tendril: Shape {
 
 /// The rule under the name, with a tendril opening from each end.
 ///
-/// The pair are mirrored, so whatever one does the other does — the line reads
-/// as one thing sprouting rather than two decorations that happen to match.
+/// The pair are mirrored in direction, so the line reads as one thing sprouting
+/// rather than two decorations that happen to match — but **they are not at the
+/// same stage of opening**. They were, and a rule with two identical coils is a
+/// bracket: the eye reads it as a container with the name inside it, which is
+/// the opposite of a thing growing.
+///
+/// The left is held tighter and the right runs looser, so the pair reads as one
+/// gesture caught partway rather than as a matched set. Both still move, and
+/// both still stay short of letting go entirely.
 struct SproutingRule: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var open = false
@@ -349,11 +550,19 @@ struct SproutingRule: View {
     // left reads as a stray hook on the end of the line rather than as a tendril.
     private var unfurl: Double { reduceMotion ? 0.5 : (open ? 0.66 : 0.12) }
 
+    /// The near end, still wound. Roughly half the other one's opening, which is
+    /// enough to read as a difference at 40 points and not so much that the coil
+    /// becomes a blot.
+    private var tighter: Double { unfurl * 0.5 }
+    /// The far end, well on its way — and stopped short of 0.72, past which
+    /// there is no coil left to see.
+    private var looser: Double { min(0.72, unfurl + 0.18) }
+
     var body: some View {
         HStack(spacing: 0) {
-            tendril.scaleEffect(x: -1, y: 1)
+            tendril(tighter).scaleEffect(x: -1, y: 1)
             Hairline()
-            tendril
+            tendril(looser)
         }
         .animation(
             reduceMotion ? nil
@@ -366,7 +575,7 @@ struct SproutingRule: View {
     // A shade brighter than the rule it grows from, and large enough that the
     // opening is perceptible: at hairline weight and 30pt the motion measured
     // 41 levels of change against the ground, which is real but invisible.
-    private var tendril: some View {
+    private func tendril(_ unfurl: Double) -> some View {
         Tendril(unfurl: unfurl)
             .stroke(Chrome.faint, style: StrokeStyle(lineWidth: 1.2, lineCap: .round))
             .frame(width: 40, height: 46)
@@ -469,62 +678,123 @@ struct PencilShape: Shape {
 /// made every seam necessary in the first place — it says nothing, so something
 /// has to be added to it. A shape that is round at one end and pointed at the
 /// other is already a seed, and needs no second stroke to say so.
+/// Round at the foot, drawn to a point at the crown, and leaning.
+///
+/// **Upright, it was a specimen.** A seed standing exactly vertical on a screen
+/// full of curves is the one mark in the set that looks placed rather than
+/// grown — nothing else in this app sits square to the frame, and the eye finds
+/// the odd one out immediately. Twenty degrees clockwise is enough to say the
+/// seed is lying where it fell.
+///
+/// The weight moved with it. It was widest above the middle, which kept it from
+/// reading as a falling drop; now the bottom is fuller and rounder and the top
+/// is drawn out, which is the actual shape of most seeds and is also what makes
+/// the lean read as resting rather than toppling.
 struct SeedGlyph: Shape {
+    /// Clockwise, in degrees.
+    var tilt: Double = 20
+
     func path(in rect: CGRect) -> Path {
         // Taller than it is wide, near enough `SeedHusk.elongation`. Width is
         // what makes something look heavy, and a seed is not heavy.
-        let width = min(rect.width, rect.height / 1.45)
+        let width = min(rect.width, rect.height / 1.5)
         let body = CGRect(x: rect.midX - width / 2, y: rect.minY,
                           width: width, height: rect.height)
             .insetBy(dx: 0.6, dy: 0.6)
+        let w = body.width, h = body.height
 
+        let foot = CGPoint(x: body.midX, y: body.maxY)
         let crown = CGPoint(x: body.midX, y: body.minY)
-        let tip = CGPoint(x: body.midX, y: body.maxY)
-        // The widest point sits above the middle, which is what stops the mark
-        // reading as a falling drop.
-        let shoulder = body.midY - body.height * 0.36
-        let flank = body.midY + body.height * 0.20
 
         var path = Path()
-        path.move(to: tip)
+        // **The two halves are drawn to different rules.** Below the waist the
+        // flanks leave the foot almost horizontally and the outline is close to
+        // a circle; above it they run most of the height in to a single point.
+        // A shape that is merely *wider* below the middle still reads as an
+        // oval — what says seed is that one end is turned and the other is not.
+        path.move(to: foot)
         path.addCurve(to: crown,
-                      control1: CGPoint(x: body.maxX, y: flank),
-                      control2: CGPoint(x: body.maxX, y: shoulder))
-        path.addCurve(to: tip,
-                      control1: CGPoint(x: body.minX, y: shoulder),
-                      control2: CGPoint(x: body.minX, y: flank))
+                      control1: CGPoint(x: body.maxX, y: body.maxY - h * 0.10),
+                      control2: CGPoint(x: body.midX + w * 0.16, y: body.minY + h * 0.34))
+        path.addCurve(to: foot,
+                      control1: CGPoint(x: body.midX - w * 0.16, y: body.minY + h * 0.34),
+                      control2: CGPoint(x: body.minX, y: body.maxY - h * 0.10))
         path.closeSubpath()
-        return path
+
+        return path.applying(
+            CGAffineTransform(translationX: rect.midX, y: rect.midY)
+                .rotated(by: tilt * .pi / 180)
+                .translatedBy(x: -rect.midX, y: -rect.midY)
+        )
     }
 }
 
-/// The garden, emptied to its outlines: three ovoids standing on the ground.
+/// Three plants on a bed, and no two of them the same plant.
 ///
-/// The ground line is the whole glyph. Two arrangements were drawn without it —
-/// a two-over-one cluster and a plain row — and neither said garden: fifteen
-/// points cannot hold two rows of anything taller than it is wide, so the
-/// cluster's ovoids came out round and read as punctuation, and the row without
-/// a line under it reads as three zeros. A line under them turns the same three
-/// outlines into a bed with things planted in it.
+/// It was three identical ovoids on a ground line, and the ground line was
+/// doing all the work: the ovoids said nothing except *three of something*, so
+/// the mark was the weakest in the set beside a seed that is a shape and a
+/// meeting that is a gesture. A garden is not three of anything. It is the
+/// place where the things you grew turn out to have grown differently.
+///
+/// So the three are three different plants, at three heights, and they are the
+/// app's own forms rather than generic flowers — a cup, a spire, and a nodding
+/// bell, which are three of the twelve archetypes a seed can draw. Somebody who
+/// has looked at their own garden has seen all three.
+///
+/// **Height is what makes them read as grown**, more than the heads do. Three
+/// stems of one length is a fence however you finish them.
 struct GardenGlyph: Shape {
     func path(in rect: CGRect) -> Path {
-        let count = 3
-        let gap = rect.width * 0.13
-        let width = (rect.width - gap * CGFloat(count - 1)) / CGFloat(count)
-        let height = width * 1.75
-        // Half the stroke in from the frame, so the line is not shaved off.
-        let ground = rect.maxY - 0.6
-
-        var path = Path()
-        for index in 0..<count {
-            // Sitting just clear of the line rather than crossing it.
-            path.addEllipse(in: CGRect(x: rect.minX + (width + gap) * CGFloat(index) + 0.6,
-                                       y: ground - height,
-                                       width: width - 1.2,
-                                       height: height - 1.2))
+        let body = rect.insetBy(dx: 0.6, dy: 0.6)
+        func at(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+            CGPoint(x: body.minX + body.width * x, y: body.minY + body.height * y)
         }
-        path.move(to: CGPoint(x: rect.minX, y: ground))
-        path.addLine(to: CGPoint(x: rect.maxX, y: ground))
+        var path = Path()
+
+        // **Three upright stems on a full-width line is a colonnade.** That was
+        // the first attempt, and at fifteen points it read as a pavilion: even
+        // spacing, equal weight, a floor under it, and three finials on top. A
+        // garden is none of those things.
+        //
+        // What fixes it is that no two of these stand the same way. One leans
+        // out, one is upright, one bends over; the heads are three different
+        // heads at three different heights; and the ground is a short line
+        // under their feet rather than a floor the width of the mark.
+
+        // Left, shortest: a round head, leaning out of the bed.
+        path.move(to: at(0.18, 1.0))
+        path.addQuadCurve(to: at(0.08, 0.50), control: at(0.18, 0.74))
+        path.addEllipse(in: CGRect(x: body.minX, y: body.minY + body.height * 0.26,
+                                   width: body.width * 0.17,
+                                   height: body.width * 0.17))
+
+        // Middle, tallest: a spire, its flowers as ticks up the stem. The one
+        // head that is not a head, which is what a spire is. The ticks are kept
+        // short — long ones close the gap to its neighbours and the three heads
+        // become one silhouette.
+        path.move(to: at(0.48, 1.0))
+        path.addQuadCurve(to: at(0.50, 0.10), control: at(0.45, 0.55))
+        for (y, side) in [(0.42, 1.0), (0.31, -1.0), (0.21, 1.0)] {
+            path.move(to: at(0.49, CGFloat(y)))
+            path.addLine(to: at(0.49 + 0.09 * CGFloat(side), CGFloat(y) - 0.05))
+        }
+
+        // Right: a bell, nodding. The stem bends over and the flower hangs off
+        // the bend, which is the whole of what nodding means.
+        //
+        // **Narrow and deep.** Drawn wide and shallow it was a bowl, and a bowl
+        // at one end of a line with a ball at the other closes the whole mark
+        // into a basket — which is what the second attempt read as.
+        path.move(to: at(0.84, 1.0))
+        path.addCurve(to: at(0.82, 0.36), control1: at(0.92, 0.76), control2: at(0.94, 0.46))
+        path.move(to: at(0.74, 0.37))
+        path.addQuadCurve(to: at(0.90, 0.37), control: at(0.82, 0.66))
+
+        // The bed: under their feet, not the width of the frame.
+        path.move(to: at(0.06, 1.0))
+        path.addLine(to: at(0.94, 1.0))
+
         return path
     }
 }
@@ -575,29 +845,63 @@ struct ChromeIconLabel: View {
     /// Two points over the thirteen the spec asked for. Eight teeth on a ring
     /// at the hairline weight do not survive thirteen: see `CogShape`.
     var glyphSize: CGFloat = 15
+    /// How far the word stands off the mark once it unrolls.
+    ///
+    /// Seven suits a mark whose ink stops short of its own box. A mark that
+    /// fills its width — `MeetGlyph`'s two stems part at the top corners — puts
+    /// a stroke right against the first letter and reads as crowded at the same
+    /// number. It is a property of the drawing, not of the row, so it is set
+    /// per mark rather than raised for all four.
+    var titleSpacing: CGFloat = 7
     var showsTitle: Bool = true
+    /// Beside the mark, or under it.
+    ///
+    /// Under it is how four words fit at once. Side by side they do not: the
+    /// four-up row measures 449 points in English and 533 in Italian against a
+    /// phone's 402, which is what `mark(_:_:_:)` on the stage was built to
+    /// avoid by unrolling one word at a time. Stacked, each word has its own
+    /// quarter of the screen and only has to fit a hundred of them.
+    var axis: Axis = .horizontal
 
     var body: some View {
-        HStack(spacing: showsTitle ? 7 : 0) {
-            glyph
-                .stroke(tint, style: Chrome.monoline)
-                .frame(width: glyphSize, height: glyphSize)
-                // Uppercase text carries descender room it never uses, so its
-                // box centres below the letters. A point up puts the glyph on
-                // the cap height rather than on the line.
-                .offset(y: -1)
-            if showsTitle {
-                Text(title)
-                    .chromeLabel()
-                    .foregroundStyle(tint)
-                    // Never wrapped or truncated as the control unrolls: the
-                    // word arrives at its full width and fades.
-                    .fixedSize()
-                    .transition(.opacity)
+        Group {
+            if axis == .horizontal {
+                HStack(spacing: showsTitle ? titleSpacing : 0) { mark; word }
+            } else {
+                VStack(spacing: 5) { mark; word }
             }
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(title))
+    }
+
+    private var mark: some View {
+        glyph
+            .stroke(tint, style: Chrome.monoline)
+            .frame(width: glyphSize, height: glyphSize)
+            // Uppercase text carries descender room it never uses, so its box
+            // centres below the letters. A point up puts the glyph on the cap
+            // height rather than on the line.
+            .offset(y: axis == .horizontal ? -1 : 0)
+    }
+
+    @ViewBuilder
+    private var word: some View {
+        if showsTitle {
+            Text(title)
+                .chromeLabel(size: axis == .horizontal ? 11 : 9)
+                .foregroundStyle(tint)
+                // Beside the mark it arrives at its full width and fades, and
+                // is never wrapped or truncated. Stacked, it has a hundred
+                // points and the longest word in the catalogue is Swedish
+                // INSTÄLLNINGAR — so it is allowed to shrink a little rather
+                // than clip, which is the one place in the chrome where type
+                // is not a fixed size.
+                .lineLimit(1)
+                .minimumScaleFactor(axis == .horizontal ? 1 : 0.75)
+                .fixedSize(horizontal: axis == .horizontal, vertical: true)
+                .transition(.opacity)
+        }
     }
 }
 

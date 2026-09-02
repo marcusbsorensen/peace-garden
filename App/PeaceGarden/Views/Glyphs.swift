@@ -7,25 +7,49 @@ import SwiftUI
 // because there are now enough of them that they were burying the colours and
 // the type in there.
 
-/// Two things overlapping: a meeting.
+/// Two stems crossing: a meeting.
 ///
 /// Deliberately not two phones. A rectangle is the one shape this app has none
 /// of, and the tap has always been a gesture rather than a device — what the
-/// screen is about is two people, not two handsets. Two circles that overlap
-/// say that at fifteen points and say nothing else.
+/// screen is about is two people, not two handsets.
+///
+/// It was two overlapping circles before this, which said *two things overlap*
+/// and said it in the vocabulary of a Venn diagram rather than of a garden.
+/// **The screen it opens already draws the right thing**: `UnfurlingBackdrop`
+/// puts a pair of fronds behind the exchange, and a mark that is the small
+/// version of what you are about to see is worth more than a mark that is
+/// merely correct.
+///
+/// So: two stems rising from the foot, leaning through one another and parting
+/// again at the top, each ending in the coil `Tendril` and the app mark are
+/// drawn with. They cross once, low, which is what makes it a meeting rather
+/// than a plait.
 struct MeetGlyph: Shape {
     func path(in rect: CGRect) -> Path {
-        let radius = min(rect.width, rect.height) / 2 - 0.6
-        // Overlapping by rather more than a third of a radius. Touching exactly
-        // reads as a figure of eight; much further apart and they are two
-        // separate marks that happen to be near each other.
-        let offset = radius * 0.62
-        var path = Path()
-        for direction in [-1.0, 1.0] {
-            let centre = CGPoint(x: rect.midX + offset * direction, y: rect.midY)
-            path.addEllipse(in: CGRect(x: centre.x - radius, y: centre.y - radius,
-                                       width: radius * 2, height: radius * 2))
+        let body = rect.insetBy(dx: 0.6, dy: 0.6)
+        func at(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+            CGPoint(x: body.minX + body.width * x, y: body.minY + body.height * y)
         }
+        var path = Path()
+
+        // **They are deliberately unequal.** Drawn as a mirrored pair they came
+        // out an hourglass — a symmetrical X reads as a letter or an instrument
+        // before it reads as anything that grew, and at fifteen points the eye
+        // takes the symmetry first. Two plants are never the same height and
+        // never lean the same way, and saying so is what turns the mark from a
+        // symbol back into a pair of stems.
+
+        // The taller one: leaves the foot left of centre, crosses to the right,
+        // and its growing point turns back over the other.
+        path.move(to: at(0.34, 1.0))
+        path.addCurve(to: at(0.76, 0.22), control1: at(0.40, 0.70), control2: at(0.84, 0.50))
+        path.addQuadCurve(to: at(0.56, 0.13), control: at(0.74, 0.05))
+
+        // The shorter one, crossing under it and turning the other way.
+        path.move(to: at(0.66, 1.0))
+        path.addCurve(to: at(0.22, 0.40), control1: at(0.60, 0.78), control2: at(0.15, 0.64))
+        path.addQuadCurve(to: at(0.42, 0.32), control: at(0.26, 0.23))
+
         return path
     }
 }

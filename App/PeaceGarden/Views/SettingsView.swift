@@ -29,6 +29,27 @@ struct SettingsView: View {
     @AppStorage(Places.preferredKey) private var preferredPlace = ""
     @AppStorage(Sharing.invitationsKey) private var wantsInvitations = Sharing.invitationsDefault
     @AppStorage(Chrome.namesPlantKey) private var namesPlant = true
+    @AppStorage(Chrome.showsStageKey) private var showsStage = true
+    @AppStorage(Chrome.turntableKey) private var turntable = true
+    @AppStorage(Chrome.menuStyleKey) private var menuStyleRaw = StageMenuStyle.hidden.rawValue
+    @AppStorage(Chrome.appearanceKey) private var appearanceRaw = StageAppearance.dark.rawValue
+    @AppStorage(Chrome.plantStyleKey) private var plantStyleRaw = StagePlantStyle.full.rawValue
+    @AppStorage(Chrome.plantTintKey) private var plantTint = Chrome.plantTintDefault
+    @AppStorage(Chrome.placeModeKey) private var placeModeRaw = PlantingLocationMode.abstract.rawValue
+    @AppStorage(Chrome.placeCustomKey) private var customPlace = ""
+
+    private var menuStyle: StageMenuStyle {
+        StageMenuStyle(rawValue: menuStyleRaw) ?? .hidden
+    }
+    private var appearance: StageAppearance {
+        StageAppearance(rawValue: appearanceRaw) ?? .dark
+    }
+    private var plantStyle: StagePlantStyle {
+        StagePlantStyle(rawValue: plantStyleRaw) ?? .full
+    }
+    private var placeMode: PlantingLocationMode {
+        PlantingLocationMode(rawValue: placeModeRaw) ?? .abstract
+    }
 
     /// The two irreversible ones, and the one that only forgets plants.
     private enum Reset: String, Identifiable {
@@ -41,7 +62,7 @@ struct SettingsView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Chrome.ground.ignoresSafeArea()
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 30) {
@@ -49,15 +70,17 @@ struct SettingsView: View {
                         .chromeHeading()
                         .foregroundStyle(Chrome.ink)
 
-                    name
+                    // Grouped by the question each answers rather than by the
+                    // order they were built in. Four headings, and the one
+                    // thing that moved between them is the username: it is not
+                    // a display choice, it is what the other phone is told you
+                    // are called, so it belongs with the rest of what crosses
+                    // between two people.
+                    section("Display") { display }
                     Hairline()
-                    plantScreen
+                    section("Seed planting location") { plantingLocation }
                     Hairline()
-                    places
-                    Hairline()
-                    whereYouMeet
-                    Hairline()
-                    beingTold
+                    section("Joint seeds") { jointSeeds }
                     Hairline()
                     startingAgain
 #if DEBUG
@@ -109,7 +132,283 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - The name
+    // MARK: - The shape of a section
+
+    /// A heading and the settings under it.
+    ///
+    /// The screen was a flat list of six things with a rule between each, which
+    /// is fine at six and stops being fine the moment there are ten. A heading
+    /// says which question the switches under it are answering, and that is
+    /// what lets somebody find the one they came for without reading the rest.
+    @ViewBuilder
+    private func section(
+        _ title: LocalizedStringKey,
+        @ViewBuilder content: () -> some View
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 22) {
+            // The heading voice rather than the label voice. At twelve points
+            // in the label voice it was the same object as the labels under it
+            // — same case, same tracking, a point of size and a shade of grey
+            // between them — and a hierarchy the reader has to measure is not
+            // one. Wider tracking is what separates them without shouting.
+            Text(title)
+                .chromeHeading(size: 13)
+                .foregroundStyle(Chrome.ink)
+            content()
+        }
+    }
+
+    /// A switch, and the sentence under it if it needs one.
+    ///
+    /// Most do not. A line of explanation under a switch whose label already
+    /// says what it does is a line somebody has to read to discover it was not
+    /// worth reading.
+    @ViewBuilder
+    private func switchRow(
+        _ title: LocalizedStringKey,
+        note: LocalizedStringKey? = nil,
+        isOn: Binding<Bool>
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Toggle(isOn: isOn) {
+                Text(title)
+                    .font(.system(size: 15, weight: .light))
+                    .foregroundStyle(Chrome.ink)
+            }
+            .tint(Chrome.muted)
+
+            if let note {
+                Text(note)
+                    .font(.system(size: 13, weight: .light))
+                    .foregroundStyle(Chrome.muted)
+                    .lineSpacing(4)
+            }
+        }
+    }
+
+    /// A label, and a menu of answers under it.
+    @ViewBuilder
+    private func chooser(
+        _ title: LocalizedStringKey,
+        current: Text,
+        note: LocalizedStringKey? = nil,
+        @ViewBuilder options: () -> some View
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(title)
+                .chromeLabel()
+                .foregroundStyle(Chrome.sectionLabel)
+
+            Menu {
+                options()
+            } label: {
+                HStack(spacing: 10) {
+                    current
+                        .font(.system(size: 15, weight: .light))
+                        .foregroundStyle(Chrome.ink)
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 11, weight: .light))
+                        .foregroundStyle(Chrome.faint)
+                }
+                .pressable()
+            }
+
+            if let note {
+                Text(note)
+                    .font(.system(size: 13, weight: .light))
+                    .foregroundStyle(Chrome.muted)
+                    .lineSpacing(4)
+            }
+        }
+    }
+
+    // MARK: - Display
+
+    /// What is on the stage besides the plant.
+    ///
+    /// Every one of these can be turned off, and with all of them off the stage
+    /// is the plant and the light it stands in and nothing else — which is
+    /// worth having for its own sake, and is also the only state of this app
+    /// that is already in every language.
+    private var display: some View {
+        VStack(alignment: .leading, spacing: 22) {
+            switchRow("Show plant name", isOn: $namesPlant)
+            switchRow("Show growth stage", isOn: $showsStage)
+
+            chooser(
+                "Menu bar",
+                current: Text(menuStyle.label),
+                note: "Hidden keeps the plant alone until you touch the screen. Marks and words is one tap to anything."
+            ) {
+                ForEach(StageMenuStyle.allCases, id: \.self) { style in
+                    Button { menuStyleRaw = style.rawValue } label: { Text(style.label) }
+                }
+            }
+
+            switchRow(
+                "Let the plant turn",
+                note: "Off, it stays where you leave it and turns only when you drag it.",
+                isOn: $turntable
+            )
+
+            chooser("How the plant is drawn", current: Text(plantStyle.label)) {
+                ForEach(StagePlantStyle.allCases, id: \.self) { style in
+                    Button { plantStyleRaw = style.rawValue } label: { Text(style.label) }
+                }
+            }
+
+            // Only where it is the plant's whole colour. Offering a tint for a
+            // plant that is already wearing its own is offering a control that
+            // does nothing.
+            if plantStyle.isTinted {
+                ColorPicker(selection: tintBinding, supportsOpacity: false) {
+                    Text("Its colour")
+                        .font(.system(size: 15, weight: .light))
+                        .foregroundStyle(Chrome.ink)
+                }
+            }
+
+            chooser(
+                "Appearance",
+                current: Text(appearance.label),
+                note: "The garden was black from the first screen, so a plant would be the only colour in front of you. Light gives that up for a phone in sunlight."
+            ) {
+                ForEach(StageAppearance.allCases, id: \.self) { option in
+                    Button { appearanceRaw = option.rawValue } label: { Text(option.label) }
+                }
+            }
+        }
+    }
+
+    /// The picker speaks `Color`; the default is six hex digits, because a
+    /// colour that has to survive a reinstall has to be something a plist can
+    /// hold.
+    private var tintBinding: Binding<Color> {
+        Binding(
+            get: { Color(hex: plantTint) },
+            set: { plantTint = $0.hex }
+        )
+    }
+
+    // MARK: - Seed planting location
+
+    /// Where a seed says it was planted, and in which of the two languages the
+    /// app has for saying it.
+    ///
+    /// These were two settings a screen apart — a menu of figurative places and
+    /// a switch that wrote down a coordinate — and they answer the same
+    /// question. Only one of them can be the answer, so they are one control
+    /// with two states rather than two controls that can disagree.
+    private var plantingLocation: some View {
+        VStack(alignment: .leading, spacing: 22) {
+            chooser("How the place is said", current: Text(placeMode.label)) {
+                ForEach(PlantingLocationMode.allCases, id: \.self) { mode in
+                    Button { choose(mode) } label: { Text(mode.label) }
+                }
+            }
+
+            switch placeMode {
+            case .abstract:
+                // What is *stored* is the English phrase, which is also the
+                // catalogue key — so a standing choice made in one language is
+                // still the same place after the phone is switched to another.
+                // Storing what was on screen would have made the preference
+                // stop matching the list the moment the language changed.
+                chooser(
+                    "Which one",
+                    current: Places.stored(preferredPlace).map(Text.init)
+                        ?? Text("Wherever the seed travelled"),
+                    note: "Shown when a seed is exchanged with another, as the place where the seed is planted."
+                ) {
+                    Button("Wherever the seed travelled") { preferredPlace = "" }
+                    Divider()
+                    ForEach(Places.all, id: \.key) { option in
+                        Button { preferredPlace = option.key } label: { Text(option) }
+                    }
+                }
+
+            case .geographic:
+                VStack(alignment: .leading, spacing: 8) {
+                    if !place.isEnabled {
+                        // Choosing the mode is not the same as granting the
+                        // permission, and the phone will ask separately. Say so
+                        // rather than leaving somebody looking at a setting
+                        // that has quietly not taken.
+                        Text("Waiting for you to allow location.")
+                            .chromeLabel()
+                            .foregroundStyle(Chrome.sectionLabel)
+                    }
+                    Text("A seed planted while this is on carries the coordinates the phone measured, to five decimal places. Nothing is looked up and no place is named — the numbers are the honest record, and a map can say the rest.")
+                        .font(.system(size: 13, weight: .light))
+                        .foregroundStyle(Chrome.muted)
+                        .lineSpacing(4)
+                }
+
+            case .custom:
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("What it says")
+                        .chromeLabel()
+                        .foregroundStyle(Chrome.sectionLabel)
+                        .padding(.bottom, 10)
+
+                    TextField("Where you were", text: $customPlace)
+                        .font(.system(size: 17, weight: .light, design: .serif))
+                        .foregroundStyle(Chrome.ink)
+                        .multilineTextAlignment(.center)
+                        .autocorrectionDisabled()
+                        .submitLabel(.done)
+                        .padding(.horizontal, 26)
+                        .underlining()
+
+                    Text("Whatever you write goes to the other phone as it stands. It is the one place in this app where a seed carries a sentence somebody chose rather than one the app offered.")
+                        .font(.system(size: 13, weight: .light))
+                        .foregroundStyle(Chrome.muted)
+                        .lineSpacing(4)
+                        .padding(.top, 6)
+                }
+            }
+
+            // The plainest account this app gives of what leaves the phone, and
+            // it stays whichever of the three is chosen.
+            Text("When you meet someone, your phones exchange your seed, your name, and a random number for that meeting. That is everything that crosses between you, and it goes directly from phone to phone. A seed cannot be turned back into anything about you or your phone.")
+                .font(.system(size: 13, weight: .light))
+                .foregroundStyle(Chrome.muted)
+                .lineSpacing(4)
+        }
+    }
+
+    /// Choosing the mode is what turns location on and off.
+    ///
+    /// `PlaceKeeping` is still the single thing that owns the permission — this
+    /// only tells it which way the choice went, so there is no state in which
+    /// the mode says one thing and the switch says another.
+    private func choose(_ mode: PlantingLocationMode) {
+        placeModeRaw = mode.rawValue
+        if mode == .geographic {
+            place.enable()
+        } else if place.isEnabled {
+            place.disable()
+        }
+    }
+
+    // MARK: - Joint seeds
+
+    /// What the other phone is told, and what this one is told back.
+    ///
+    /// The username lives here rather than under Display because it is not
+    /// something you look at — it is what somebody else sees when your seeds
+    /// cross, which is the same question the switch under it answers.
+    private var jointSeeds: some View {
+        VStack(alignment: .leading, spacing: 22) {
+            username
+
+            switchRow(
+                "Alert me when a joint seed is shared",
+                note: "Your username will only show publicly if you approve.",
+                isOn: $wantsInvitations
+            )
+        }
+    }
 
     /// One layout, always.
     ///
@@ -118,9 +417,9 @@ struct SettingsView: View {
     /// top of the field's own baseline. The field is a field from the moment
     /// the screen opens, the rule is its underline throughout, and there is
     /// nothing left to collide.
-    private var name: some View {
+    private var username: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Your Peace Garden username")
+            Text("Gardener username")
                 .chromeLabel()
                 .foregroundStyle(Chrome.sectionLabel)
                 .padding(.bottom, 10)
@@ -150,9 +449,9 @@ struct SettingsView: View {
                         .frame(width: 14, height: 14)
                 }
                 // A rule under a value is the oldest signal in print that the
-                // value is yours to fill in. Curling down because the tendrils
-                // open upward into the line of type otherwise.
-                .underlining(curlingDown: true)
+                // value is yours to fill in. The tendrils open upward out of
+                // it, which is the way everything else in this app opens.
+                .underlining()
                 // The pencil is an affordance rather than a button: anywhere on
                 // the row the field does not already take focuses the field.
                 .contentShape(Rectangle())
@@ -171,157 +470,8 @@ struct SettingsView: View {
         }
     }
 
-    /// `rename` keeps an empty name out of the garden on its own, so a field
-    /// cleared and left is the same as one never touched.
     private func commitName() {
         model.rename(to: draftName)
-    }
-
-    // MARK: - What the stage says
-
-    /// Whether the plant is captioned.
-    ///
-    /// Off leaves the plant, the light it stands in, and a row of marks — and
-    /// not one word on screen. That is worth having for its own sake, and it
-    /// is also the only state of this app that is already in every language,
-    /// which is why the line underneath says so plainly rather than selling it
-    /// as a preference about clutter.
-    private var plantScreen: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Toggle(isOn: $namesPlant) {
-                Text("Name the plant on screen")
-                    .font(.system(size: 15, weight: .light))
-                    .foregroundStyle(Chrome.ink)
-            }
-            .tint(Chrome.muted)
-
-            Text("Off, the stage is the plant and the marks along the foot, in no language at all.")
-                .font(.system(size: 13, weight: .light))
-                .foregroundStyle(Chrome.muted)
-                .lineSpacing(4)
-        }
-    }
-
-    // MARK: - The place a note arrives holding
-
-    /// A standing answer for the Where field.
-    ///
-    /// Left alone, each meeting is offered the place its own seed travelled
-    /// through — see `Places`. Choosing one here says the same thing every
-    /// time instead, which suits somebody who meets people in one place.
-    private var places: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Default seed planting location")
-                .chromeLabel()
-                .foregroundStyle(Chrome.sectionLabel)
-
-            // What is *stored* is the English phrase, which is also the
-            // catalogue key — so a standing choice made in one language is
-            // still the same place after the phone is switched to another.
-            // Storing what was on screen would have made the preference stop
-            // matching the list the moment the language changed.
-            Menu {
-                Button("Wherever the seed travelled") { preferredPlace = "" }
-                Divider()
-                ForEach(Places.all, id: \.key) { option in
-                    Button { preferredPlace = option.key } label: { Text(option) }
-                }
-            } label: {
-                HStack(spacing: 10) {
-                    Group {
-                        if let chosen = Places.stored(preferredPlace) {
-                            Text(chosen)
-                        } else {
-                            Text("Wherever the seed travelled")
-                        }
-                    }
-                        .font(.system(size: 15, weight: .light))
-                        .foregroundStyle(Chrome.ink)
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 11, weight: .light))
-                        .foregroundStyle(Chrome.faint)
-                }
-                .pressable()
-            }
-        }
-    }
-
-    // MARK: - Places on the earth
-
-    /// The same switch as the one on the seed screen, writing through the same
-    /// owner. It appears twice because it answers two different questions —
-    /// "what leaves my phone" over there, and "what is turned on" here — and
-    /// `PlaceKeeping` is the single thing either one sets.
-    ///
-    /// *Log*, not *keep*. Keep can mean hold on to and it can mean keep away,
-    /// keep back, keep out, and on a privacy control that second reading points
-    /// in exactly the wrong direction. Log says what happens: a coordinate is
-    /// written down.
-    private var whereYouMeet: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Toggle(isOn: placeBinding) {
-                Text("Log where new seeds are planted")
-                    .font(.system(size: 15, weight: .light))
-                    .foregroundStyle(Chrome.ink)
-            }
-            .tint(Chrome.muted)
-
-            Text("By default, only you see this.")
-                .font(.system(size: 13, weight: .light))
-                .foregroundStyle(Chrome.muted)
-                .lineSpacing(4)
-
-            // Moved here from the seed screen, which was carrying a switch and
-            // a paragraph that both belonged with the other standing choices.
-            // The paragraph came with the switch rather than being dropped: it
-            // is the plainest account this app gives of what leaves the phone,
-            // and losing it to a tidy-up would have been the tidy-up costing
-            // more than it saved.
-            Text("When you meet someone, your phones exchange your seed, your name, and a random number for that meeting. That is everything that crosses between you, and it goes directly from phone to phone. A seed cannot be turned back into anything about you or your phone.")
-                .font(.system(size: 13, weight: .light))
-                .foregroundStyle(Chrome.muted)
-                .lineSpacing(4)
-                .padding(.top, 2)
-        }
-    }
-
-    private var placeBinding: Binding<Bool> {
-        Binding(
-            get: { place.isEnabled },
-            set: { $0 ? place.enable() : place.disable() }
-        )
-    }
-
-    // MARK: - Being told about a share
-
-    /// The one thing the shared garden will ever ask of somebody who is not
-    /// using it.
-    ///
-    /// A plant belongs to two people, so one of them putting it in the peace
-    /// garden is one of them speaking, and the page carries that person's name
-    /// alone. This is the offer to be named alongside them — and the offer is
-    /// all it is, because until somebody accepts, the page says nothing about
-    /// them at all.
-    ///
-    /// The switch does nothing today: phase 1 makes no network request, so
-    /// there is nothing that could tell this phone a plant was shared. It is
-    /// here because it is a decision about what somebody agrees to be told, and
-    /// that belongs beside their other decisions rather than arriving with the
-    /// feature. See docs/PHASES.md.
-    private var beingTold: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Toggle(isOn: $wantsInvitations) {
-                Text("Alert me when a joint seed is shared")
-                    .font(.system(size: 15, weight: .light))
-                    .foregroundStyle(Chrome.ink)
-            }
-            .tint(Chrome.muted)
-
-            Text("Your username will only show publicly if you approve.")
-                .font(.system(size: 13, weight: .light))
-                .foregroundStyle(Chrome.muted)
-                .lineSpacing(4)
-        }
     }
 
     // MARK: - Starting again
@@ -333,8 +483,8 @@ struct SettingsView: View {
     private var startingAgain: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Starting again")
-                .chromeLabel()
-                .foregroundStyle(Chrome.sectionLabel)
+                .chromeHeading(size: 13)
+                .foregroundStyle(Chrome.ink)
 
             row(.seed)
 

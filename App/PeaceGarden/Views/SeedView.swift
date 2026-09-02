@@ -8,12 +8,10 @@ import SeedCore
 struct SeedView: View {
     @Environment(GardenModel.self) private var model
     @Environment(\.dismiss) private var dismiss
-    @State private var editingName = false
-    @State private var draftName = ""
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Chrome.ground.ignoresSafeArea()
 
             if let identity = model.identity {
                 ScrollView {
@@ -50,38 +48,6 @@ struct SeedView: View {
                 .chromeLabel()
                 .foregroundStyle(Chrome.faint)
 
-            if editingName {
-                // The field's own label is the one VoiceOver reads, and it was
-                // an empty string — which extraction dutifully turned into an
-                // empty entry in the catalogue for somebody to translate. It
-                // says what the field is for instead, and stays out of the way
-                // because the prompt is what is drawn.
-                TextField("Your name", text: $draftName, prompt: Text("Gardener"))
-                    .labelsHidden()
-                    .font(.system(size: 17, weight: .light, design: .serif))
-                    .foregroundStyle(Chrome.ink)
-                    .textInputAutocapitalization(.words)
-                    .autocorrectionDisabled()
-                    .submitLabel(.done)
-                    .onSubmit {
-                        model.rename(to: draftName)
-                        editingName = false
-                    }
-            } else {
-                Button {
-                    draftName = identity.displayName
-                    editingName = true
-                } label: {
-                    // The worst offender of the lot before it got an edge: a
-                    // sentence in the middle of a paragraph that happened to be
-                    // the only way to change your name.
-                    Text("Seen as \(model.shownName)")
-                        .font(.system(size: 15, weight: .light))
-                        .foregroundStyle(Chrome.muted)
-                        .pressable()
-                }
-                .buttonStyle(.plain)
-            }
         }
     }
 

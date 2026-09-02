@@ -55,13 +55,18 @@ struct StageBackdrop: View {
     static let falloff = 2.0
     static let stopCount = 12
 
+    @Environment(\.colorScheme) private var scheme
+
     var body: some View {
         GeometryReader { proxy in
             let span = max(proxy.size.width, proxy.size.height)
             ZStack {
-                Color.black
+                Chrome.ground
                 RadialGradient(
-                    gradient: Gradient(stops: Self.stops(for: palette)),
+                    gradient: Gradient(stops: Self.stops(
+                        for: palette,
+                        strength: scheme == .light ? 0.30 : 1
+                    )),
                     center: Self.centre(presence: presence),
                     startRadius: 0,
                     endRadius: span * Self.radius(presence: presence)
@@ -92,13 +97,25 @@ struct StageBackdrop: View {
     /// two-colour interpolation. A straight ramp between two near-black colours
     /// bands visibly on an OLED screen in a dark room, which is exactly where
     /// this app is going to be looked at.
-    static func stops(for palette: Genome.Palette) -> [Gradient.Stop] {
+    /// The pool of light, as a wash over the ground rather than a disc of paint.
+    ///
+    /// **It used to fade to black rather than to nothing.** The stops ran the
+    /// brightness down to zero, which on a black ground is the same picture and
+    /// on any other ground is an opaque black circle covering the screen — so
+    /// the first light appearance came out entirely dark and the ground under
+    /// it was never visible at all. Fading the *opacity* instead leaves the
+    /// same glow on black and lets the ground through everywhere else.
+    ///
+    /// `strength` pulls the whole thing back on a light ground, where a
+    /// saturated glow is a stain rather than a pool.
+    static func stops(for palette: Genome.Palette, strength: Double) -> [Gradient.Stop] {
         let hue = glowHue(for: palette)
         return (0...stopCount).map { index in
             let t = Double(index) / Double(stopCount)
             let level = pow(1 - t, falloff)
             return Gradient.Stop(
-                color: Color(hue: hue, saturation: saturation, brightness: brightness * level),
+                color: Color(hue: hue, saturation: saturation, brightness: brightness)
+                    .opacity(level * strength),
                 location: t
             )
         }

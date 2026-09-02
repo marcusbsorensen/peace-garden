@@ -39,9 +39,6 @@ struct PlantStageView: View {
     /// translated, since a piece of state compared against a literal is a piece
     /// of state that stops matching the moment the literal is looked up.
     @State private var expandedMark: String?
-    /// How far up the screen the chrome at the foot reaches, in points. The
-    /// plant is framed clear of it and stands on it.
-    @State private var bottomChromeHeight: CGFloat = 0
     /// Closing the panel is a decision, so it is kept. It belongs in defaults
     /// rather than in the garden: the garden holds seeds and birthdays, and
     /// this is only a note about what one person has already read.
@@ -50,6 +47,22 @@ struct PlantStageView: View {
     /// plant, the light it stands in, and a row of marks — and nothing on
     /// screen in any language. See `Chrome.namesPlantKey`.
     @AppStorage(Chrome.namesPlantKey) private var namesPlant = true
+    /// Whether the growth stage is drawn under the name.
+    @AppStorage(Chrome.showsStageKey) private var showsStage = true
+    /// How much of the row along the foot is on screen. See `StageMenuStyle`.
+    @AppStorage(Chrome.menuStyleKey) private var menuStyleRaw = StageMenuStyle.hidden.rawValue
+    private var menuStyle: StageMenuStyle {
+        StageMenuStyle(rawValue: menuStyleRaw) ?? .hidden
+    }
+    /// Whether the stage turns on its own.
+    @AppStorage(Chrome.turntableKey) private var turntable = true
+    /// How the plant is drawn. See `StagePlantStyle`.
+    @AppStorage(Chrome.plantStyleKey) private var plantStyleRaw = StagePlantStyle.full.rawValue
+    /// The colour it is drawn in, where that is its whole colour.
+    @AppStorage(Chrome.plantTintKey) private var plantTint = Chrome.plantTintDefault
+    private var plantStyle: StagePlantStyle {
+        StagePlantStyle(rawValue: plantStyleRaw) ?? .full
+    }
 
     var body: some View {
         ZStack {
@@ -62,20 +75,25 @@ struct PlantStageView: View {
                 PlantSceneView(
                     genome: identity.genome,
                     growth: growth,
-                    bottomInset: bottomChromeHeight,
+                    autoRotates: turntable,
+                    style: plantStyle,
+                    tint: Color(hex: plantTint),
                     onTap: { revealControls() }
                 )
                 .ignoresSafeArea()
 
+                // Asked for once in Settings rather than every time on the
+                // stage: a row set to stay is a row that stays.
+                let rowIsUp = controlsVisible || menuStyle.isAlwaysOnScreen
                 controls(identity: identity, growth: growth)
-                    .opacity(controlsVisible ? 1 : 0)
-                    .allowsHitTesting(controlsVisible)
-                    .animation(Chrome.fadeIn, value: controlsVisible)
+                    .opacity(rowIsUp ? 1 : 0)
+                    .allowsHitTesting(rowIsUp)
+                    .animation(Chrome.fadeIn, value: rowIsUp)
 
                 // The second thing the app explains, and it explains it
                 // once. There is no flag to keep: the hint is for someone
                 // who has never crossed a seed, so crossing one retires it.
-                if model.hybrids.isEmpty, !meetPanelClosed {
+                if model.hybrids.isEmpty, !meetPanelClosed, !menuStyle.isAlwaysOnScreen {
                     meetPanel
                         .opacity(controlsVisible ? 0 : 1)
                         .animation(Chrome.fadeIn, value: controlsVisible)
@@ -108,7 +126,7 @@ struct PlantStageView: View {
                 .environment(model)
                 .environment(place)
                 .presentationDetents([.medium, .large])
-                .presentationBackground(.black)
+                .presentationBackground(Chrome.ground)
         }
         .onAppear { model.refreshNow() }
 #if DEBUG
@@ -151,7 +169,7 @@ struct PlantStageView: View {
             .frame(maxWidth: Chrome.readableWidth)
             .background(
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(Color.black.opacity(0.66))
+                    .fill(Chrome.ground.opacity(0.66))
                     .overlay(
                         RoundedRectangle(cornerRadius: 20, style: .continuous)
                             .strokeBorder(Chrome.hairline, lineWidth: 1)
@@ -177,17 +195,21 @@ struct PlantStageView: View {
             // than as floating above a caption. And every control is under a
             // thumb, which the cog in the far top corner never was.
             VStack(spacing: 0) {
-                if namesPlant {
+                if namesPlant || showsStage {
                     VStack(spacing: 5) {
                         // Smaller than it was. At twenty-six points an italic
                         // serif binomial was the loudest thing on a screen
                         // whose subject is a plant, and it is a caption.
-                        Text(identity.genome.name.full)
-                            .plantName(size: 20)
-                            .foregroundStyle(Chrome.ink)
-                        Text(verbatim: growth.caption())
-                            .chromeLabel(size: 10)
-                            .foregroundStyle(Chrome.faint)
+                        if namesPlant {
+                            Text(identity.genome.name.full)
+                                .plantName(size: 20)
+                                .foregroundStyle(Chrome.ink)
+                        }
+                        if showsStage {
+                            Text(verbatim: growth.caption())
+                                .chromeLabel(size: 10)
+                                .foregroundStyle(Chrome.faint)
+                        }
                     }
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 16)
@@ -196,30 +218,17 @@ struct PlantStageView: View {
 
                 HStack(spacing: 6) {
                     mark(SeedGlyph(), "seed", "Seed") { showingSeed = true }
-                    mark(MeetGlyph(), "meet", "Meet", isProminent: true) { showingExchange = true }
+                    // Wider than the others: the stems reach the top corners of
+                    // the mark, so the word needs the extra three points that a
+                    // seed or a cog does not.
+                    mark(MeetGlyph(), "meet", "Meet",
+                         isProminent: true, titleSpacing: 10) { showingExchange = true }
                     mark(GardenGlyph(), "garden", "Garden") { showingGarden = true }
                     mark(CogShape(), "settings", "Settings") { openSettings() }
                 }
                 .animation(.easeInOut(duration: 0.26), value: expandedMark)
             }
             .padding(.bottom, 30)
-            // How far up the screen the band reaches, handed to the scene so
-            // the plant is framed into what is left rather than into the whole
-            // view. Measured rather than assumed: a long binomial wraps onto a
-            // second line, and the row itself changes height when it unrolls.
-            //
-            // Read from the band even while the chrome is hidden — it is laid
-            // out either way, only its opacity changes — so the reserved height
-            // is the same whether or not anybody is looking at it.
-            .background {
-                GeometryReader { proxy in
-                    Color.clear
-                        .onAppear { bottomChromeHeight = proxy.size.height }
-                        .onChange(of: proxy.size.height) { _, new in
-                            bottomChromeHeight = new
-                        }
-                }
-            }
         }
     }
 
@@ -260,16 +269,23 @@ struct PlantStageView: View {
         _ name: String,
         _ title: LocalizedStringKey,
         isProminent: Bool = false,
+        titleSpacing: CGFloat = 7,
         open: @escaping () -> Void
     ) -> some View {
-        let showsTitle = expandedMark == name
+        let showsTitle = menuStyle.namesEveryMark || expandedMark == name
         return ChromeIconLabel(
             glyph: AnyShape(glyph),
             title: title,
             tint: isProminent ? Chrome.ink : Chrome.muted,
-            showsTitle: showsTitle
+            titleSpacing: titleSpacing,
+            showsTitle: showsTitle,
+            axis: menuStyle.namesEveryMark ? .vertical : .horizontal
         )
-        .pressable(isProminent: isProminent, horizontal: showsTitle ? 16 : 13)
+        .frame(maxWidth: menuStyle.namesEveryMark ? .infinity : nil)
+        .pressable(
+            isProminent: isProminent,
+            horizontal: menuStyle.namesEveryMark ? 4 : (showsTitle ? 16 : 13)
+        )
         .contentShape(Capsule())
         .onTapGesture {
             hideTask?.cancel()
@@ -333,7 +349,13 @@ struct PlantStageView: View {
         return
 #else
         hideTask?.cancel()
-        guard controlsVisible else { return }
+        // Asked for, and then kept. Somebody who has turned the row on has said
+        // they would rather have it than the bare plant, and taking it away
+        // again six seconds later is answering a question they did not ask.
+        // Asked for, and then kept. Somebody who has set the row to stay has
+        // said they would rather have it than the bare plant, and taking it
+        // away six seconds later answers a question they did not ask.
+        guard controlsVisible, !menuStyle.isAlwaysOnScreen else { return }
         hideTask = Task {
             try? await Task.sleep(for: Chrome.controlsIdleTimeout)
             guard !Task.isCancelled else { return }

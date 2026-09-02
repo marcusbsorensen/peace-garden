@@ -55,7 +55,7 @@ struct PlantDetailView: View {
                     keepsCoordinate: keepsCoordinate
                 )
             }
-            .presentationBackground(.black)
+            .presentationBackground(Chrome.ground)
         }
     }
 
