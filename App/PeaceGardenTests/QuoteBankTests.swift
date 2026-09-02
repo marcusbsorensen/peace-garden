@@ -177,6 +177,7 @@ final class QuoteBankTests: XCTestCase {
         XCTAssertEqual(QuoteBank.bank(for: "no"), .norwegian)
         XCTAssertEqual(QuoteBank.bank(for: "nb-NO"), .norwegian)
         XCTAssertEqual(QuoteBank.bank(for: "en-GB"), .english)
+        XCTAssertEqual(QuoteBank.bank(for: "es-419"), .spanish)
     }
 
     /// A language with an interface and no bank of its own reads English, and
@@ -184,10 +185,6 @@ final class QuoteBankTests: XCTestCase {
     func testALanguageWithNoBankBorrowsAndSaysSo() {
         XCTAssertNil(QuoteBank.bank(for: "de-DE"))
         XCTAssertNil(QuoteBank.bank(for: "pl"))
-        // Spanish has an interface and no bank yet, which is the live case
-        // rather than a hypothetical one. `PlantRevealView` says "in English"
-        // under the passage for exactly this.
-        XCTAssertNil(QuoteBank.bank(for: "es-ES"))
     }
 
     // MARK: - The draw

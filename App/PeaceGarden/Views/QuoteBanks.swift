@@ -25,18 +25,19 @@ import Foundation
 /// So what a pair holds in common is the character of the passage rather than
 /// its words, which is what the split was always for.
 ///
-/// ## Spanish is deliberately absent
+/// ## A language arrives with an interface first and a bank later
 ///
-/// Its interface is localised and its bank was still being written, so a Spanish
-/// phone reads English lines and is told so. That is `isBorrowed`, and it is why
-/// the mechanism exists before the twenty-five languages of round two need it —
-/// a language arrives with an interface first and a bank later, every time.
-/// Adding one is a case here and a line in `passages`.
+/// Every time. Spanish shipped for a while with a localised interface and no
+/// bank of its own, reading English lines and saying so under the passage —
+/// which is `isBorrowed`, and why that mechanism exists before the twenty-five
+/// languages of round two need it. Adding a bank is a case here and a line in
+/// `passages`.
 enum QuoteBank: String, CaseIterable, Sendable {
     case english = "en"
     case dutch = "nl"
     case danish = "da"
     case french = "fr"
+    case spanish = "es"
     case norwegian = "nb"
     case swedish = "sv"
     case italian = "it"
@@ -47,6 +48,7 @@ enum QuoteBank: String, CaseIterable, Sendable {
         case .dutch: return Quotes.dutch
         case .danish: return Quotes.danish
         case .french: return Quotes.french
+        case .spanish: return Quotes.spanish
         case .norwegian: return Quotes.norwegian
         case .swedish: return Quotes.swedish
         case .italian: return Quotes.italian
