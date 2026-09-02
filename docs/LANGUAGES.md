@@ -545,6 +545,34 @@ are clear, but *Sinnattugaq*, the first Greenlandic novel, does not clear until
 2027 — so its bank leans on oral tradition and word-building, and its brief has
 to say so.
 
+### The waves
+
+Twenty-five banks is fifty agents, so they go out in waves rather than at once —
+enough to read a wave and correct the brief before the next commits to it.
+
+**Wave one: German, Portuguese, Polish, Turkish.** Chosen to stress the brief in
+four directions rather than by size: Germanic, Romance, Slavic, Turkic. Polish is
+the first Slavic bank, so its etymologies are new territory rather than
+variations on the six that came before. **Turkish is the first bank outside
+Indo-European**, which makes it the real test of whether the thirty subthemes are
+about the world or about the languages that named them.
+
+Two words worth watching for in what comes back, because either could change how
+a subtheme is understood:
+
+- **Turkish *barış*** is built on *barışmak*, to make peace *with one another*.
+  Turkish names peace as a reciprocal act between two people rather than a state
+  or an absence — which is what this app is about, arrived at from outside the
+  family that named the subtheme.
+- **Polish *pokój*** is one word for peace and for a room: the state, and the
+  space you are standing in.
+
+Later waves, roughly by size and by how much material each has to draw on:
+Czech, Hungarian, Romanian, Catalan, Finnish; then Croatian, Slovak, Slovene,
+Lithuanian, Latvian, Estonian; then Welsh, Irish, Basque, Galician, Albanian,
+Icelandic; then the thin-corpus four — Faroese, Luxembourgish, Maltese,
+Greenlandic — which need a brief of their own saying so.
+
 ### What round one learned, for the round-two brief
 
 - **Cut the reading down, then split the writing.** Spanish failed three times
