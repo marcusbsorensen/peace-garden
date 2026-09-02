@@ -185,9 +185,31 @@ final class QuoteBankTests: XCTestCase {
 
     /// A language with an interface and no bank of its own reads English, and
     /// is told so.
+    ///
+    /// **Named languages graduate.** This asserted `cs` and `hu` until wave two
+    /// wrote those two banks, at which point the test failed and the app was
+    /// fine — the failure was the test naming something that was always going to
+    /// change. Thirteen of the twenty-five in `docs/LANGUAGES.md` are still to
+    /// come, so hard-coding any of them buys thirteen more of these.
+    ///
+    /// So the example is *whichever planned language has not arrived yet*, and
+    /// the assertion is that one exists and reads English. The day the list is
+    /// empty this test says so in its own message rather than by failing
+    /// obscurely, and that is the day to retire it.
     func testALanguageWithNoBankBorrowsAndSaysSo() {
-        XCTAssertNil(QuoteBank.bank(for: "cs"))
-        XCTAssertNil(QuoteBank.bank(for: "hu-HU"))
+        let planned = ["cy", "ga", "eu", "gl", "sq", "is", "fo", "lb", "mt",
+                       "kl", "lt", "lv", "et", "sk", "sl", "hr"]
+        let waiting = planned.filter { QuoteBank(rawValue: $0) == nil }
+        XCTAssertFalse(waiting.isEmpty,
+                       "every planned language now has a bank — retire this test")
+        for code in waiting {
+            XCTAssertNil(QuoteBank.bank(for: code), "\(code) should have no bank yet")
+        }
+
+        // And the mechanism on its own, which cannot graduate: `zxx` is the ISO
+        // code for no linguistic content, so nothing will ever write it a bank.
+        XCTAssertNil(QuoteBank.bank(for: "zxx"))
+        XCTAssertNil(QuoteBank.bank(for: "zxx-ZZ"))
     }
 
     // MARK: - The draw

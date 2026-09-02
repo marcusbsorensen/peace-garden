@@ -1,0 +1,452 @@
+import Foundation
+
+/// The Hungarian passages.
+///
+/// Written rather than translated: about sixty of the English passages
+/// are etymologies of English words and are simply false in any other
+/// language, so this bank comes from its own word histories, its own
+/// literature and its own proverbs.
+///
+/// Uralic, and the second bank outside Indo-European after Turkish. Its answer to whether the thirty subthemes are about the world came out of the grammar rather than around it: vowel harmony settles every suffix from the first vowel, and illeszkedes, the grammar's own name for it, means fitting.
+extension Quotes {
+    static let hungarian: [Passage] = [
+        // MARK: - Beginnings
+
+        // MARK: The first act
+        Passage( text: "A kel ige egymaga mondja, hogy felkel a nap, megkel a tészta, kikel a mag és kikel a csibe. Négyféle indulás, egyetlen szó.", source: "magyar nyelv", theme: .beginnings, subtheme: .theFirstAct ),
+        Passage( text: "Kertész leszek, fát nevelek, kelő nappal én is kelek.", source: "József Attila, Kertész leszek", theme: .beginnings, subtheme: .theFirstAct ),
+        Passage( text: "Csírázás: elsőnek a gyököcske hasítja fel a maghéjat, és mindig lefelé indul, bárhogyan fekszik a szem a földben.", source: "növénytan", theme: .beginnings, subtheme: .theFirstAct ),
+        Passage( text: "Luca napján tányérba vetett búza karácsonyra kizöldül. A háznál ebből olvasták ki, milyen lesz a jövő évi termés.", source: "magyar népszokás", theme: .beginnings, subtheme: .theFirstAct ),
+        Passage( text: "Aki korán kel, aranyat lel.", source: "magyar közmondás", theme: .beginnings, subtheme: .theFirstAct ),
+        Passage( text: "Rügyfakadás: a pikkelyek hónapokon át zárva tartják a levelet, és egyetlen enyhe hét elég ahhoz, hogy elengedjék.", source: "növénytan", theme: .beginnings, subtheme: .theFirstAct ),
+        Passage( text: "A semmiből egy új, más világot teremtettem.", source: "Bolyai János, levél az apjának, 1823", theme: .beginnings, subtheme: .theFirstAct ),
+        Passage( text: "A hóvirág levélhegye megkeményedik, azzal töri át a fagyos talajt, és februárban nyílik, amikor rajta kívül semmi más.", source: "Galanthus nivalis", theme: .beginnings, subtheme: .theFirstAct ),
+        Passage( text: "Fakad a forrás, fakad a rügy, és kacagásra fakad az ember. Mindháromnál belülről nyílik ki valami, amit kívülről nem lehetne.", source: "magyar nyelv", theme: .beginnings, subtheme: .theFirstAct ),
+        Passage( text: "A vetés egyszerre a munka és az eredménye: vetés az, amit reggel a barázdába szórnak, és vetés az is, ami tavasszal zölden áll.", source: "magyar nyelv", theme: .beginnings, subtheme: .theFirstAct ),
+        Passage( text: "Az első kapavágás a kezdet neve nálunk: nem a tervé és nem az átadásé, hanem azé a percé, amikor a szerszám megérinti a talajt.", source: "magyar szólás", theme: .beginnings, subtheme: .theFirstAct ),
+        Passage( text: "Zsendül: a gabona és a gyümölcs érésnek indulása. Külön ige áll készen arra a néhány napra, amikor valami épp beérni kezd.", source: "magyar nyelv", theme: .beginnings, subtheme: .theFirstAct ),
+
+        // MARK: Small to large
+        Passage( text: "Kicsi a bors, de erős.", source: "magyar közmondás", theme: .beginnings, subtheme: .smallToLarge ),
+        Passage( text: "Sok lúd disznót győz.", source: "magyar közmondás", theme: .beginnings, subtheme: .smallToLarge ),
+        Passage( text: "Lassú víz partot mos.", source: "magyar közmondás", theme: .beginnings, subtheme: .smallToLarge ),
+        Passage( text: "Reszket a bokor, mert madárka szállott rá.", source: "Petőfi Sándor, Reszket a bokor", theme: .beginnings, subtheme: .smallToLarge ),
+        Passage( text: "A kocsányos tölgy makkja egyetlen nyáron megnő, de a fa csak negyven-ötven évesen terem először, és azután még évszázadokig.", source: "Quercus robur", theme: .beginnings, subtheme: .smallToLarge ),
+        Passage( text: "A -ka és a -ke nem mindig kisebbít. A kertecske valóban kisebb a kertnél, de a Katika nem kisebb Katánál, csupán közelebb van.", source: "magyar nyelv", theme: .beginnings, subtheme: .smallToLarge ),
+        Passage( text: "A paprika csípőssége nem a húsában ül, hanem a magházat tartó fehér erekben. Onnan terjed szét az egész termésre.", source: "Capsicum annuum", theme: .beginnings, subtheme: .smallToLarge ),
+        Passage( text: "Egyetlen mákgubó több ezer szemet érlel be, és ezer szem együtt sem nyom fél grammot.", source: "Papaver somniferum", theme: .beginnings, subtheme: .smallToLarge ),
+        Passage( text: "Irinyi János 1836-ban Pesten készítette el a zajtalan gyufát: addig a szál durranva gyulladt meg, utána már csak sercent.", source: "Irinyi János, 1836", theme: .beginnings, subtheme: .smallToLarge ),
+        Passage( text: "Egy elvetett búzaszem három-négy szárat is nevel maga körül, és minden kalászba harminc-ötven mag kerül bele.", source: "Triticum aestivum", theme: .beginnings, subtheme: .smallToLarge ),
+        Passage( text: "Egy kiló akácmézhez a méhek milliószámra járják be a fürtöket, és a hazai erdőknek nagyjából a negyede akácos.", source: "Robinia pseudoacacia", theme: .beginnings, subtheme: .smallToLarge ),
+        Passage( text: "A szem a búzáé, a szőlőé, a láncé és az emberé is. Amiből egy darab alig valami, abból sok darab már termés, fürt vagy lánc.", source: "magyar nyelv", theme: .beginnings, subtheme: .smallToLarge ),
+
+        // MARK: What a start settles
+        Passage( text: "Ki mint veti ágyát, úgy alussza álmát.", source: "magyar közmondás", theme: .beginnings, subtheme: .whatAStartSettles ),
+        Passage( text: "Nem esik messze az alma a fájától.", source: "magyar közmondás", theme: .beginnings, subtheme: .whatAStartSettles ),
+        Passage( text: "Egy fecske nem csinál nyarat.", source: "magyar közmondás", theme: .beginnings, subtheme: .whatAStartSettles ),
+        Passage( text: "Amilyen a mosdó, olyan a törülköző.", source: "magyar közmondás", theme: .beginnings, subtheme: .whatAStartSettles ),
+        Passage( text: "A szó első magánhangzója dönti el az utána jövő toldalékok hangzását: kertben, de házban. A kezdés a szó végéig elhallatszik.", source: "magyar nyelv", theme: .beginnings, subtheme: .whatAStartSettles ),
+        Passage( text: "A hangsúly mindig az első szótagon ül, akármeddig nyúlik a szó. Húsz betű után is ott marad a legerősebb hely, ahol elindult.", source: "magyar nyelv", theme: .beginnings, subtheme: .whatAStartSettles ),
+        Passage( text: "Egyszer volt, hol nem volt. A mese azzal nyit, hogy megtörtént is meg nem is, és ettől fogva bármit el lehet hinni benne.", source: "magyar népmesei kezdőformula", theme: .beginnings, subtheme: .whatAStartSettles ),
+        Passage( text: "A tölgycsemete az első nyarán mélyebbre küldi a karógyökerét, mint amennyire fölfelé nő. Ekkor dől el, mennyi vizet ér majd el.", source: "erdészet", theme: .beginnings, subtheme: .whatAStartSettles ),
+        Passage( text: "A hazai szőlő nagy része amerikai alanyra oltva él: a gyökér és a fürt más-más fajtáé, és ezt telepítéskor határozzák meg, egyszer.", source: "szőlészet", theme: .beginnings, subtheme: .whatAStartSettles ),
+        Passage( text: "A kovász mindig az előző kenyérből marad vissza. Egy maréknyi félretett tésztán múlik, milyen ízű lesz a következő cipó.", source: "magyar konyha", theme: .beginnings, subtheme: .whatAStartSettles ),
+        Passage( text: "Nálunk minden naptári naphoz tartozik névnap, így a köszöntés ideje a névvel együtt megvan, jóval azelőtt, hogy bárki ismerné az illetőt.", source: "magyar népszokás", theme: .beginnings, subtheme: .whatAStartSettles ),
+        Passage( text: "A magyar szórend nem a nyelvtani szerepet mutatja, hanem a súlyt: az ige elé az kerül, amit ki akarunk emelni a mondatból.", source: "magyar nyelvtan", theme: .beginnings, subtheme: .whatAStartSettles ),
+
+        // MARK: - Waiting
+
+        // MARK: Held back
+        Passage( text: "Türelem rózsát terem.", source: "magyar közmondás", theme: .waiting, subtheme: .heldBack ),
+        Passage( text: "Lassan készül, mint a Luca széke.", source: "magyar közmondás", theme: .waiting, subtheme: .heldBack ),
+        Passage( text: "Jobb ma egy veréb, mint holnap egy túzok.", source: "magyar közmondás", theme: .waiting, subtheme: .heldBack ),
+        Passage( text: "Pató Pál úr mindenre azt felelte: ej, ráérünk arra még. A neve azóta annak a szava, aki holnapra teszi, amihez ma nem fog hozzá.", source: "magyar szólás, Petőfi nyomán", theme: .waiting, subtheme: .heldBack ),
+        Passage( text: "Nyugalmi állapot: a mag akkor sem indul meg, ha megvan hozzá a víz, a meleg és a levegő. Belülről fogja vissza magát, amíg a hideg le nem telik.", source: "növénytan", theme: .waiting, subtheme: .heldBack ),
+        Passage( text: "A várás háromfelé válik: megvárom, amíg megjön, bevárom, amíg utolér, kivárom, amíg elmúlik. Egyetlen ige, három igekötő.", source: "magyar nyelv", theme: .waiting, subtheme: .heldBack ),
+        Passage( text: "A váratlan szó fosztóképzővel épül a várásból. Ami meglep, az nyelvtanilag az, aminek a várása elmaradt.", source: "magyar nyelv", theme: .waiting, subtheme: .heldBack ),
+        Passage( text: "Pongrác, Szervác és Bonifác, május közepének fagyos napjai. Addig a kertész nem ülteti ki a palántát, mert a késői dér rendszerint ekkor jön.", source: "magyar népi kalendárium", theme: .waiting, subtheme: .heldBack ),
+        Passage( text: "A pipacs magja évtizedekig elfekszik a talajban, és akkor kel ki, ha felszántják fölötte a földet. Fényre vár, nem melegre.", source: "Papaver rhoeas", theme: .waiting, subtheme: .heldBack ),
+        Passage( text: "Rianás: a befagyott Balaton jegének hosszú repedése, és a hang, amivel jár. A tábla addig feszül, míg egyszer csak enged.", source: "magyar nyelv", theme: .waiting, subtheme: .heldBack ),
+        Passage( text: "Az őszi búzát ősszel vetik, mert kalászt csak akkor hoz, ha átfagyott rajta a tél. Enélkül nyáron is zölden marad.", source: "növénytermesztés", theme: .waiting, subtheme: .heldBack ),
+        Passage( text: "A jövő időnek nincs saját igealakja: a fog segédigével vagy egyszerűen a jelennel mondjuk, hogy majd. A nyelv nem siet elébe.", source: "magyar nyelvtan", theme: .waiting, subtheme: .heldBack ),
+
+        // MARK: The long count
+        Passage( text: "Lassan járj, tovább érsz.", source: "magyar közmondás", theme: .waiting, subtheme: .theLongCount ),
+        Passage( text: "Nem egy nap alatt épült Buda vára.", source: "magyar közmondás", theme: .waiting, subtheme: .theLongCount ),
+        Passage( text: "A tiszavirág lárvája három évet tölt a folyó agyagos partfalában, azután néhány órát repül. A kirajzást nálunk tiszavirágzásnak hívják.", source: "Palingenia longicauda", theme: .waiting, subtheme: .theLongCount ),
+        Passage( text: "Az aszúszemeket egyenként szedik le a fürtről, amikor már összetöppedtek, és a bor utána éveken át érlelődik a hegybe vájt pincékben.", source: "tokaji borvidék", theme: .waiting, subtheme: .theLongCount ),
+        Passage( text: "A hónap szó a hó és a nap összetétele, csakhogy a hó itt nem a havat jelenti, hanem a holdat.", source: "magyar nyelvtörténet", theme: .waiting, subtheme: .theLongCount ),
+        Passage( text: "Az évre két szavunk van: az év a rövidebb, az esztendő az ünnepélyesebb. Boldog új esztendőt szokás kívánni, boldog új évet nem.", source: "magyar nyelv", theme: .waiting, subtheme: .theLongCount ),
+        Passage( text: "A hazai kocsányos tölgyek közt akad négyszáz esztendőnél öregebb is, és a legvastagabbak törzsét két ember karja sem éri körül.", source: "erdészet", theme: .waiting, subtheme: .theLongCount ),
+        Passage( text: "Az ezer szót a vándorlás idején vette át a magyar egy iráni nyelvből, jóval az írásbeliség előtt. A tehén és a híd is onnan való.", source: "magyar nyelvtörténet", theme: .waiting, subtheme: .theLongCount ),
+        Passage( text: "A Tisza esése olyan csekély, hogy a szabályozás előtt a víz hetekig elállt a réteken. A kanyarok átvágásával a meder több mint négyszáz kilométerrel rövidült.", source: "vízrajz", theme: .waiting, subtheme: .theLongCount ),
+        Passage( text: "A Baradla cseppkövei nagyjából egy évszázad alatt nőnek egy centimétert, és a legnagyobbak több emeletnyire emelkednek a barlang aljzatáról.", source: "Aggteleki-karszt", theme: .waiting, subtheme: .theLongCount ),
+        Passage( text: "A tokaji pincék falát fekete penészbevonat borítja, amelyik a bor párájából él. A bársonyos réteg nemzedékek alatt nő össze.", source: "Cladosporium cellare", theme: .waiting, subtheme: .theLongCount ),
+        Passage( text: "A magyar és a finn körülbelül háromezer éve vált külön, de a legrégibb szavak máig felismerhetők egymásban: kéz és käsi, víz és vesi, méz és mesi.", source: "finnugor nyelvrokonság", theme: .waiting, subtheme: .theLongCount ),
+
+        // MARK: Standing and watching
+        Passage( text: "Nem látja a fától az erdőt.", source: "magyar szólás", theme: .waiting, subtheme: .standingAndWatching ),
+        Passage( text: "Több szem többet lát.", source: "magyar közmondás", theme: .waiting, subtheme: .standingAndWatching ),
+        Passage( text: "Nyári napnak alkonyulatánál megállék a kanyargó Tiszánál.", source: "Petőfi Sándor, A Tisza", theme: .waiting, subtheme: .standingAndWatching ),
+        Passage( text: "A gémeskút ágasa messzire ellátszik a pusztán, mert rajta kívül semmi sem áll ki a síkból. A nevét a madárról kapta, amelyikre hasonlít.", source: "magyar néprajz", theme: .waiting, subtheme: .standingAndWatching ),
+        Passage( text: "A kunhalmok az Alföld évezredes földhalmai. Szántóföldek közepén állnak, és messziről annyi látszik belőlük, hogy a lapály valahol megemelkedik.", source: "régészet", theme: .waiting, subtheme: .standingAndWatching ),
+        Passage( text: "A les egyszerre a mozdulatlan figyelés és az a hely, ahonnan figyelnek. Lesben az áll, aki azért nem mozdul, hogy jobban lásson.", source: "magyar nyelv", theme: .waiting, subtheme: .standingAndWatching ),
+        Passage( text: "A túzok Európa legnehezebb repülő madara, és a legerősebb állománya magyar pusztákon költ. Fűben állva alig venni észre, pedig egy kakas tizenhat kilót is nyom.", source: "Otis tarda", theme: .waiting, subtheme: .standingAndWatching ),
+        Passage( text: "A virraszt ige a virradatból való: nem az alvás elmaradását nevezi meg, hanem a hajnalig kitartó ébrenlétet.", source: "magyar nyelvtörténet", theme: .waiting, subtheme: .standingAndWatching ),
+        Passage( text: "Ősszel több tízezer daru gyülekezik a Hortobágyon, és éjszakára sekély vízbe állnak be. Ott bármi közelít, hallani, ahogyan lép.", source: "Grus grus", theme: .waiting, subtheme: .standingAndWatching ),
+        Passage( text: "A csősz dolga az volt, hogy aratásig senki ne nyúljon a határhoz. Egész nyáron a táblák szélén lakott, kunyhóban, egymagában.", source: "magyar néprajz", theme: .waiting, subtheme: .standingAndWatching ),
+        Passage( text: "A fehér gólya ugyanarra a kéményre tér haza évről évre, és a faluban számon tartják a fészkét. Márciusban az érkezése maga a naptár.", source: "Ciconia ciconia", theme: .waiting, subtheme: .standingAndWatching ),
+        Passage( text: "A madárgyűrűzés a huszadik század elején indult meg nálunk. A gyűrű nem irányítja a madarat, csupán megőrzi, hogy egyszer már itt járt.", source: "madártan", theme: .waiting, subtheme: .standingAndWatching ),
+
+        // MARK: - Renewal
+
+        // MARK: Cut and come again
+        Passage( text: "Új seprű jól seper.", source: "magyar közmondás", theme: .renewal, subtheme: .cutAndComeAgain ),
+        Passage( text: "A sarjerdő a tövéről újul: a kivágott fa csonkjából egyszerre több vessző indul. Ugyanaz a szó áll az ember gyermekére is.", source: "erdészet", theme: .renewal, subtheme: .cutAndComeAgain ),
+        Passage( text: "Ha a csúcsrügyet lecsípik, az alatta ülő rügyek mind megindulnak. Addig a legfelső hormonja tartotta őket visszafogva.", source: "növénytan", theme: .renewal, subtheme: .cutAndComeAgain ),
+        Passage( text: "A szőlőt minden télen két-három rügyre metszik vissza, mert a fürtöt csak az idei vessző hozza, az idei vessző pedig a tavalyi fából nő ki.", source: "szőlészet", theme: .renewal, subtheme: .cutAndComeAgain ),
+        Passage( text: "A füzet fejre csonkolják: a törzs tetején az összes ág egy időben hajt ki, és a kosárfonó évente egyszer szedi le róla a hajlós vesszőt.", source: "magyar néprajz", theme: .renewal, subtheme: .cutAndComeAgain ),
+        Passage( text: "A sarjú a kaszálás utáni második fű, és külön neve van, mert nem ugyanolyan, mint az első: rövidebb, puhább, és a szénája is másféle.", source: "magyar nyelv", theme: .renewal, subtheme: .cutAndComeAgain ),
+        Passage( text: "Az akácost nagyjából húszévente vágják tarra, és a tuskó még abban az évben kihajt. Ugyanaz a gyökérzet adja a következő erdőt.", source: "erdészet", theme: .renewal, subtheme: .cutAndComeAgain ),
+        Passage( text: "A nádat télen aratják, a jégen állva, mert a tő csak akkor éli túl. A következő nyárra a nádas ugyanolyan sűrűn zár be.", source: "Phragmites australis", theme: .renewal, subtheme: .cutAndComeAgain ),
+        Passage( text: "A megújul és a megújít egy tőről valók, csakhogy az egyikhez nem kell senki. Az -ul képző azt mondja meg, hogy magától történik.", source: "magyar nyelvtan", theme: .renewal, subtheme: .cutAndComeAgain ),
+        Passage( text: "A hajtás a friss vessző a tövön, és az a mozdulat is, amivel valamit előre űznek. Hajt a fa, és hajt a kocsis.", source: "magyar nyelv", theme: .renewal, subtheme: .cutAndComeAgain ),
+        Passage( text: "Zöld ágra vergődik: hosszú küzdelem után végre boldogul. A zöldellő ágban méri a nyelv, hogy valaki rendbe jött.", source: "magyar szólás", theme: .renewal, subtheme: .cutAndComeAgain ),
+        Passage( text: "Az évente lekaszált rét ötven-hatvan növényfajt is eltart, míg a kaszálatlan tíz esztendő alatt néhány erősebb pázsitfűre szűkül.", source: "gyepgazdálkodás", theme: .renewal, subtheme: .cutAndComeAgain ),
+
+        // MARK: The turning year
+        Passage( text: "Itt van az ősz, itt van újra, s szép, mint mindig, énnekem.", source: "Petőfi Sándor, Itt van az ősz, itt van újra", theme: .renewal, subtheme: .theTurningYear ),
+        Passage( text: "Sándor, József, Benedek, zsákban hozzák a meleget.", source: "magyar időjárási regula", theme: .renewal, subtheme: .theTurningYear ),
+        Passage( text: "Tavaszi szél vizet áraszt, virágom, virágom.", source: "magyar népdal", theme: .renewal, subtheme: .theTurningYear ),
+        Passage( text: "Ha Katalin kopog, karácsony locsog; ha Katalin locsog, karácsony kopog.", source: "magyar időjárási regula", theme: .renewal, subtheme: .theTurningYear ),
+        Passage( text: "A vénasszonyok nyara az ősz visszatérő melege, amikor a pókfonál átszáll a tarlón. Azt a szálat ökörnyálnak hívják.", source: "magyar néprajz", theme: .renewal, subtheme: .theTurningYear ),
+        Passage( text: "Két külön szó jár a betakarításra: aratás a gabonáé nyár derekán, szüret a szőlőé ősszel. Ugyanaz a mozdulat, másik évszak.", source: "magyar nyelv", theme: .renewal, subtheme: .theTurningYear ),
+        Passage( text: "Márton napján, november tizenegyedikén libát esznek, és úgy tartják, hogy ha Márton fehér lovon érkezik, enyhébb tél következik.", source: "magyar népi kalendárium", theme: .renewal, subtheme: .theTurningYear ),
+        Passage( text: "Az őszi kikerics ősszel nyílik, a levelét és a termését pedig a rá következő tavasszal hozza. Virágzása és érése két különböző évbe esik.", source: "Colchicum autumnale", theme: .renewal, subtheme: .theTurningYear ),
+        Passage( text: "A füstifecske áprilisban ér ide, és ugyanabba az istállóba tér meg, ahol tavaly költött. A gazda az érkezését vette a tavasz kezdetének.", source: "Hirundo rustica", theme: .renewal, subtheme: .theTurningYear ),
+        Passage( text: "Szent György napkor hajtották ki a jószágot a legelőre, Szent Mihálykor pedig haza. A gazdasági esztendő e két nap közé esett.", source: "magyar néprajz", theme: .renewal, subtheme: .theTurningYear ),
+        Passage( text: "Medárd napján, június nyolcadikán, ha esik, a regula szerint negyven napig tart az eső. A szőlősgazda ezt figyelte a legjobban.", source: "magyar népi kalendárium", theme: .renewal, subtheme: .theTurningYear ),
+        Passage( text: "A vadgesztenye már júliusban elkészíti a jövő tavaszi rügyeit, és télen át kész virágzattal áll. A következő év a fán van, mielőtt ez letelne.", source: "Aesculus hippocastanum", theme: .renewal, subtheme: .theTurningYear ),
+
+        // MARK: Made whole
+        Passage( text: "Kutyaharapást szőrével.", source: "magyar közmondás", theme: .renewal, subtheme: .madeWhole ),
+        Passage( text: "Az egészség szó az egészből képződik: aki egészséges, az magyarul egyben van. A pohárköszöntő is ugyanezt kívánja, egészségedre.", source: "magyar nyelv", theme: .renewal, subtheme: .madeWhole ),
+        Passage( text: "Az épít ige az ép szóból való, vagyis építeni annyi, mint épséget csinálni. Az épület a nyelv szerint egésszé tett dolog.", source: "magyar nyelvtörténet", theme: .renewal, subtheme: .madeWhole ),
+        Passage( text: "A törött csont összeforr, és ugyanez az ige áll a vasra a kovácsműhelyben. A gyógyulást a két darab találkozása nevezi meg.", source: "magyar nyelv", theme: .renewal, subtheme: .madeWhole ),
+        Passage( text: "Beheged a seb, és a heg marad utána: a bőr nem lesz újra ugyanolyan, hanem másféle, erősebb szövetből záródik össze.", source: "bőrgyógyászat", theme: .renewal, subtheme: .madeWhole ),
+        Passage( text: "A magyar népmesében a fűszál forrasztja vissza, ami elszakadt, és a fűszálat mindig a kígyó hozza elő. Az orvosság kívülről, az állattól érkezik.", source: "magyar népmese", theme: .renewal, subtheme: .madeWhole ),
+        Passage( text: "A repedt cserépedényt régen dróttal fogták körbe. A drótostót faluról falura járt, és az edény a javítás után is vizet tartott.", source: "magyar néprajz", theme: .renewal, subtheme: .madeWhole ),
+        Passage( text: "A gyógyul és a gyógyít egy tőről valók: az egyiket a beteg teszi, a másikat vele teszik. Egyetlen képzőnyi a különbség.", source: "magyar nyelvtan", theme: .renewal, subtheme: .madeWhole ),
+        Passage( text: "Az oltvány akkor ered meg, ha a két háncs pontosan egymáshoz ér. A kambium a metszés szélén nő egybe, és onnantól egyetlen fa.", source: "kertészet", theme: .renewal, subtheme: .madeWhole ),
+        Passage( text: "A megsebzett fa nem javítja ki a sérült részt, hanem körülnöveszti. A törzsben ott marad a régi nyom, kívül pedig ép a kéreg.", source: "faanatómia", theme: .renewal, subtheme: .madeWhole ),
+        Passage( text: "A teljes és a tele egy tőről valók. Ami teljes, az a nyelv szerint nem hibátlan, hanem megtelt.", source: "magyar nyelvtörténet", theme: .renewal, subtheme: .madeWhole ),
+        Passage( text: "A budai hévizek a Duna törésvonala mentén törnek fel, és a fürdőket a rómaiak óta ugyanoda építik. A víz melegét a mélység adja, nem a nap.", source: "hidrogeológia", theme: .renewal, subtheme: .madeWhole ),
+
+        // MARK: - Light
+
+        // MARK: The edges of the day
+        Passage( text: "Nyugtával dicsérd a napot.", source: "magyar közmondás", theme: .light, subtheme: .theEdgesOfTheDay ),
+        Passage( text: "Lehunyja kék szemét az ég.", source: "József Attila, Altató", theme: .light, subtheme: .theEdgesOfTheDay ),
+        Passage( text: "Este van, este van: ki-ki nyugalomba!", source: "Arany János, Családi kör", theme: .light, subtheme: .theEdgesOfTheDay ),
+        Passage( text: "A kelet a kel igéből, a nyugat a nyugszik igéből lett. Az égtájak neve azt mondja meg, hol indul a nap, és hol tér nyugovóra.", source: "magyar nyelvtörténet", theme: .light, subtheme: .theEdgesOfTheDay ),
+        Passage( text: "A dél egyszerre a tizenkét óra és az égtáj, mert onnan süt a nap, amikor a legmagasabban jár. Egyetlen szó a napszakra és az irányra.", source: "magyar nyelv", theme: .light, subtheme: .theEdgesOfTheDay ),
+        Passage( text: "A hajnalra több ige jut: hajnalodik, virrad, pirkad, pitymallik, dereng. Mindegyik ugyanannak a fél órának egy-egy fokozata.", source: "magyar nyelv", theme: .light, subtheme: .theEdgesOfTheDay ),
+        Passage( text: "A pirkad a pir szóval rokon, ami a pirosat jelenti. Nem a világosságról nevezte el a magyar a napfelkeltét, hanem a színéről.", source: "magyar nyelvtörténet", theme: .light, subtheme: .theEdgesOfTheDay ),
+        Passage( text: "Szürkület: a szürke színről kapta a nevét, mert a színek ilyenkor egyetlen tompa árnyalatba húzódnak vissza, mielőtt a sötét megjön.", source: "magyar nyelv", theme: .light, subtheme: .theEdgesOfTheDay ),
+        Passage( text: "Az esti harmat akkor jelenik meg, amikor a fűszál hidegebbre hűl a levegő harmatpontjánál. A harmat nem hullik, hanem a helyén válik ki.", source: "meteorológia", theme: .light, subtheme: .theEdgesOfTheDay ),
+        Passage( text: "A madarak hajnali kórusa a napfelkelte előtti félórában a leghangosabb, mert a hűvös, mozdulatlan levegőben a hang messzebbre ér el.", source: "madártan", theme: .light, subtheme: .theEdgesOfTheDay ),
+        Passage( text: "Az esthajnalcsillag reggel és este ugyanaz a bolygó, a Vénusz, csak a nappal két végén látható. A magyar név egyetlen szóban tartja mindkettőt.", source: "csillagászat", theme: .light, subtheme: .theEdgesOfTheDay ),
+        Passage( text: "A hajnal hasad, az est pedig leszáll. Az egyiket repedésnek mondja a nyelv, a másikat ereszkedésnek, és mindkettő ugyanannyi ideig tart.", source: "magyar szólás", theme: .light, subtheme: .theEdgesOfTheDay ),
+
+        // MARK: Reading the light
+        Passage( text: "Ha Vince fénylik, a bor bőven telik.", source: "magyar időjárási regula", theme: .light, subtheme: .readingTheLight ),
+        Passage( text: "A délibáb az Alföld déli óráinak tüneménye: a felforrósodott talaj fölött a levegő megtöri a fényt, és a távoli fasort a föld fölé emeli.", source: "légköroptika", theme: .light, subtheme: .readingTheLight ),
+        Passage( text: "A napraforgó csak fiatalon fordul a nappal, és éjjel visszafordul keletnek. Amint kinyílik a tányérja, kelet felé rögzül, és ott is marad.", source: "Helianthus annuus", theme: .light, subtheme: .readingTheLight ),
+        Passage( text: "Az őszi dér derült, szélcsendes éjjelen jön, mert olyankor a talaj akadálytalanul sugározza vissza a nappali meleget. Felhő alatt nem fagy.", source: "meteorológia", theme: .light, subtheme: .readingTheLight ),
+        Passage( text: "A krizantém akkor bontja ki a virágát, ha az éjszaka elér egy bizonyos hosszúságot. Egyetlen égve hagyott lámpa az ablakban elhalasztja.", source: "kertészet", theme: .light, subtheme: .readingTheLight ),
+        Passage( text: "A kalász akkor hajlik le, amikor a szem megérett benne. A gazda a színéből és a hajlásából dönti el, mikor kezdjen hozzá.", source: "növénytermesztés", theme: .light, subtheme: .readingTheLight ),
+        Passage( text: "Verőfény: az a napsütés, amelyik nekiverődik valaminek. A magyar nem esésnek mondja itt a fényt, hanem ütközésnek.", source: "magyar nyelv", theme: .light, subtheme: .readingTheLight ),
+        Passage( text: "Az árnyék délben a legrövidebb, és a nap két oldalán egyforma hosszú. Aki ezt figyeli, óra nélkül is megtalálja a delet.", source: "gnomonika", theme: .light, subtheme: .readingTheLight ),
+        Passage( text: "Holdvilágnál a színek elszürkülnek, mert a szem csapjai már nem dolgoznak. A telihold elég a járáshoz, de a pirosat nem mutatja meg.", source: "látástan", theme: .light, subtheme: .readingTheLight ),
+        Passage( text: "Ha a holdnak udvara van, esőt várnak. A gyűrűt magasban úszó jégfelhők rajzolják ki, és azok gyakran front előtt érkeznek.", source: "magyar időjárási regula", theme: .light, subtheme: .readingTheLight ),
+        Passage( text: "A Hortobágy fölött alig ég mesterséges lámpa, ezért ott a legsötétebb az égbolt az országban, és a Tejút szabad szemmel átér rajta.", source: "csillagászat", theme: .light, subtheme: .readingTheLight ),
+        Passage( text: "A mag a föld alatt is méri a fényt: a vörös és a mélyvörös arányából tudja meg, hogy idegen levél takarja-e, vagy szabad fölötte az ég.", source: "növényélettan", theme: .light, subtheme: .readingTheLight ),
+
+        // MARK: Light itself
+        Passage( text: "Süss fel, nap, fényes nap, kertek alatt a ludaim megfagynak.", source: "magyar gyermekmondóka", theme: .light, subtheme: .lightItself ),
+        Passage( text: "Ég a napmelegtől a kopár szík sarja.", source: "Arany János, Toldi", theme: .light, subtheme: .lightItself ),
+        Passage( text: "A világ és a világos egy tőről valók, és a virág is odatartozik. Ami süt, ami nyílik és ami körülvesz minket, egyetlen szóból nőtt ki.", source: "magyar nyelvtörténet", theme: .light, subtheme: .lightItself ),
+        Passage( text: "Ragyog, csillog, villog, fénylik, pislákol, dereng: hat külön ige mondja meg, milyen erős és mennyire állandó egy fényforrás.", source: "magyar nyelv", theme: .light, subtheme: .lightItself ),
+        Passage( text: "A csillag neve a csillog igével rokon. Nem a helyéről kapta a nevét az égitest, hanem arról, amit csinál.", source: "magyar nyelvtörténet", theme: .light, subtheme: .lightItself ),
+        Passage( text: "A szentjánosbogár hideg fényt ad: a benne lezajló folyamat szinte teljes egészében világítássá alakul, és hő alig marad belőle.", source: "Lampyris noctiluca", theme: .light, subtheme: .lightItself ),
+        Passage( text: "A fény az, ami valahonnan jön, a világosság az, ami valahol van. Az egyiknek forrása van, a másiknak kiterjedése.", source: "magyar nyelv", theme: .light, subtheme: .lightItself ),
+        Passage( text: "A Balaton színe óránként más, mert a sekély víz a fenékről és a lebegő mészszemcsékről is visszaad valamennyit, nem csupán a felszínéről.", source: "limnológia", theme: .light, subtheme: .lightItself ),
+        Passage( text: "Szeged a legnaposabb magyar város: évente több mint kétezer órán át süt rá a nap, és ezért hívják a napfény városának.", source: "éghajlattan", theme: .light, subtheme: .lightItself ),
+        Passage( text: "Az aranyos ma kedveskedő jelző, eredetileg viszont azt jelentette, ami aranytól ragyog. A fényből lett a gyöngédség neve.", source: "magyar nyelvtörténet", theme: .light, subtheme: .lightItself ),
+        Passage( text: "Fényes az is, ami maga világít, és az is, ami visszaver. A fényes cipő semmit nem ad hozzá, csak visszaadja, amit kapott.", source: "magyar nyelv", theme: .light, subtheme: .lightItself ),
+        Passage( text: "A hold fénye a napé, visszaverve. A felszíne közben olyan sötét, mint az aszfalt, mégis ez a legerősebb világosság az éjszakai égbolton.", source: "csillagászat", theme: .light, subtheme: .lightItself ),
+
+        // MARK: - Pattern
+
+        // MARK: Counted
+        Passage( text: "Ahány ház, annyi szokás.", source: "magyar közmondás", theme: .pattern, subtheme: .counted ),
+        Passage( text: "Szám után a főnév egyes számban marad: két alma, öt ház, száz ember. Ha megmondtuk, hányan vannak, a többes jel már fölösleges.", source: "magyar nyelvtan", theme: .pattern, subtheme: .counted ),
+        Passage( text: "A kesztyűből egy darab magyarul fél kesztyű, a cipőből fél cipő. Ami párban jár, azt a nyelv egynek számolja, és a darabja a fele.", source: "magyar nyelv", theme: .pattern, subtheme: .counted ),
+        Passage( text: "A feleség szó a fél szóból való. Aki mellett valaki teljessé lesz, azt a magyar a felének nevezi el.", source: "magyar nyelvtörténet", theme: .pattern, subtheme: .counted ),
+        Passage( text: "A hét egyszerre a hetes szám és a hét napból álló időszak neve. Ugyanazzal a szóval számolunk és mérünk időt.", source: "magyar nyelv", theme: .pattern, subtheme: .counted ),
+        Passage( text: "A hétfő a hét feje, a kedd pedig a kettőből lett. Az első két nap neve idehaza számolás, a többié máshonnan érkezett.", source: "magyar nyelvtörténet", theme: .pattern, subtheme: .counted ),
+        Passage( text: "A vasárnap a vásár napja volt. Egyetlen olyan napunk van, amelyiknek a piac adta a nevét, és éppen az, amelyiken nem dolgoztak.", source: "magyar nyelvtörténet", theme: .pattern, subtheme: .counted ),
+        Passage( text: "Negyed öt nálunk négy óra tizenöt percet jelent. Az óra nem a letelt időt mondja meg, hanem azt, mennyi készült el a következőből.", source: "magyar nyelvhasználat", theme: .pattern, subtheme: .counted ),
+        Passage( text: "A páros és a páratlan a pár köré épül. Nem az oszthatóság a kérdés bennük, hanem az, jut-e mindenkinek társ.", source: "magyar nyelv", theme: .pattern, subtheme: .counted ),
+        Passage( text: "A tokaji bor édességét puttonyban mérték: három, négy, öt vagy hat puttonynyi töppedt szem jutott egy hordóra.", source: "tokaji borvidék", theme: .pattern, subtheme: .counted ),
+        Passage( text: "Ecc, pecc, kimehetsz. A kiolvasó nem azért számol, hogy megtudja, hányan vannak, hanem hogy eldöntse, kire essen a választás.", source: "magyar gyermekmondóka", theme: .pattern, subtheme: .counted ),
+        Passage( text: "A régi stílusú magyar népdal öt hangból építkezik, és félhang nincs benne. A gyűjtők ezt találták a legalsó rétegben.", source: "magyar népzenekutatás", theme: .pattern, subtheme: .counted ),
+
+        // MARK: Fitted together
+        Passage( text: "Fa leszek, ha fának vagy virága.", source: "Petőfi Sándor, Fa leszek, ha fának vagy virága", theme: .pattern, subtheme: .fittedTogether ),
+        Passage( text: "A magánhangzó-harmóniát a magyar nyelvtan illeszkedésnek hívja. A toldalék úgy szól, ahogyan a szó, amelyikhez hozzáér: asztalhoz, kerthez, tükörhöz.", source: "magyar nyelvtan", theme: .pattern, subtheme: .fittedTogether ),
+        Passage( text: "Az illik ige egyszerre mondja, hogy valami a helyére kerül, és hogy valami helyénvaló. Ami összeillik, az illendő is.", source: "magyar nyelv", theme: .pattern, subtheme: .fittedTogether ),
+        Passage( text: "A kapcsolat szó a kapocsból ered. Két ember viszonyát arról a fémdarabról nevezte el a nyelv, amelyik két szélt összefog.", source: "magyar nyelvtörténet", theme: .pattern, subtheme: .fittedTogether ),
+        Passage( text: "A szövetség a szövésből való. Aki szövetkezik valakivel, az a szó szerint egyetlen szövetbe fonja vele a szálát.", source: "magyar nyelvtörténet", theme: .pattern, subtheme: .fittedTogether ),
+        Passage( text: "A -val és a -vel v hangja hozzáidomul az előtte álló mássalhangzóhoz: a kés így késsel lesz. A rag felveszi annak a végét, amihez járul.", source: "magyar nyelvtan", theme: .pattern, subtheme: .fittedTogether ),
+        Passage( text: "A régi dallamok második fele az elsőt ismétli meg egy kvinttel lejjebb. A két rész pontosan egymásra fekszik, csak más magasságban.", source: "magyar népzene", theme: .pattern, subtheme: .fittedTogether ),
+        Passage( text: "A fonott kalács három ágból készül, és fonás közben egyik ág sem nyúlik meg jobban a többinél. A hurkok egymást tartják a helyükön.", source: "magyar konyha", theme: .pattern, subtheme: .fittedTogether ),
+        Passage( text: "A székely kapuban nincsen vasszeg: a gerendákat csapolással illesztik egymáshoz, és a fa dagadása szorítja meg a kötést.", source: "magyar népi építészet", theme: .pattern, subtheme: .fittedTogether ),
+        Passage( text: "A matyó hímzés rajza nem ér véget a szélén. A virágok egymás szárából nőnek ki, és a minta körbezárul a vásznon.", source: "magyar népművészet", theme: .pattern, subtheme: .fittedTogether ),
+        Passage( text: "Amit más nyelv mondattal mond el, azt a magyar egyetlen szóba építi: a házaimban négy elem egymás után, és a sorrendjükön nem lehet változtatni.", source: "magyar nyelvtan", theme: .pattern, subtheme: .fittedTogether ),
+        Passage( text: "A Rubik-kocka huszonhat eleme egyetlen belső kereszten forog. Bármelyik lapot fordítják el, a többi ott marad, ahol volt.", source: "Rubik-kocka, Budapest, 1974", theme: .pattern, subtheme: .fittedTogether ),
+
+        // MARK: Order named
+        Passage( text: "A magyar név a nagyobbal kezdődik: elöl a család, utána az ember. Bartók Béla és Arany János így áll a saját nyelvén.", source: "magyar névhasználat", theme: .pattern, subtheme: .orderNamed ),
+        Passage( text: "A dátum is kívülről befelé halad: év, hónap, nap. A postai cím ugyanígy, az irányítószámtól a házszámig.", source: "magyar helyesírás", theme: .pattern, subtheme: .orderNamed ),
+        Passage( text: "A rendes szó egyszerre jelenti azt, hogy szabályos, és azt, hogy tisztességes. Aki rendes ember, az a nyelv szerint a helyén van.", source: "magyar nyelv", theme: .pattern, subtheme: .orderNamed ),
+        Passage( text: "A sor egyben rend és várakozás is: sorba állunk, és sorra kerülünk. Akire sor kerül, az az időben is a maga pontján áll.", source: "magyar nyelv", theme: .pattern, subtheme: .orderNamed ),
+        Passage( text: "A régi magyar rovásírást jobbról balra rótták, botra vagy fába, és a betűk alakját a vésés iránya formálta meg.", source: "magyar írástörténet", theme: .pattern, subtheme: .orderNamed ),
+        Passage( text: "Egyetlen szó, az ő, áll a férfira és a nőre. Amíg meg nem nevezzük, a mondatból nem derül ki, kiről esik szó.", source: "magyar nyelvtan", theme: .pattern, subtheme: .orderNamed ),
+        Passage( text: "Az ige más alakot vesz fel, ha a tárgya meghatározott: látok valamit, de látom azt. A ragozás mondja meg, ismerős-e már a dolog.", source: "magyar nyelvtan", theme: .pattern, subtheme: .orderNamed ),
+        Passage( text: "A birtoklásra nincs külön igénk. Van egy kertem, mondjuk, vagyis a kert az, ami létezik, és a toldalék mondja meg, kihez tartozik.", source: "magyar nyelvtan", theme: .pattern, subtheme: .orderNamed ),
+        Passage( text: "A Göncölszekeret másutt medvének vagy merőkanálnak látják. A magyar égen szekér áll belőle, négy kerékkel és három lóval.", source: "magyar csillagnevek", theme: .pattern, subtheme: .orderNamed ),
+        Passage( text: "A Fiastyúk a Plejádok itthoni neve: a csillagcsoport a néphagyományban tyúk a csibéivel. Szabad szemmel hatot szokás kivenni belőle.", source: "magyar csillagnevek", theme: .pattern, subtheme: .orderNamed ),
+        Passage( text: "A magyar növénynevek megmondják, mire hasonlít a növény vagy mire való: gyöngyvirág, kakukkfű, körömvirág, harangláb. A név maga a leírás.", source: "népi növénynevek", theme: .pattern, subtheme: .orderNamed ),
+        Passage( text: "Bolyai János olyan geometriát írt le, amelyikben a párhuzamosokra más törvény áll. Kiderült, hogy a megszokott rendszer csak az egyik lehetséges.", source: "Bolyai János, Appendix, 1832", theme: .pattern, subtheme: .orderNamed ),
+        // MARK: - Ground
+
+        // MARK: The soil itself
+        Passage( text: "Az ugar és a parlag nem ugyanaz: az ugart szándékosan hagyják vetetlen egy évre, hogy erőt gyűjtsön, a parlag pedig az a föld, amelyről az ember elfeledkezett.", source: "Magyar szókincs", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "A szik az Alföld szürke, sós talaja: esőben ragadós, szárazságban kőkeményre repedezik. Ami megél rajta, az másutt ritkán terem meg, például a lilán virágzó sóvirág.", source: "Talajtan", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "Ég a napmelegtől a kopár szík sarja, / Tikkadt szöcskenyájak legelésznek rajta.", source: "Arany János, Toldi", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "A Mezőföld löszét a szél hordta oda a jégkorszakok végén, finom porként, rétegről rétegre. Az ország legjobb szántói ezen a hordalékon fekszenek.", source: "Földtan", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "Televény az a sötét, morzsalékos réteg, amelyet nem a kőzet ad, hanem a rajta elkorhadt növényzet. Egy centiméternyi belőle emberöltőknél is tovább készül.", source: "Talajtan", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "A talaj szó fiatal: a nyelvújítás adta a magyarnak. Addig mindenre a föld járta, és ugyanaz a hangsor jelentette a bolygót, az országot meg a kerti ágyást.", source: "Nyelvújítás", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "Ki mint vet, úgy arat. A szólás a szántóföldé, és ott a legpontosabb: a vetés mélysége meg a napja augusztusban is meglátszik a táblán.", source: "magyar közmondás", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "A földigiliszta a szemcséket a bélén át forgatja meg, és minden évben a maga súlyának sokszorosát ereszti vissza a felszínre. A neve megmondja, mit eszik.", source: "Állattan", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "A rög egy marék száraz göröngy, a hant a kiszakított gyeptégla, a barázda a kettő közti mélyedés. Egyetlen ekemenetre három külön szava van a nyelvnek.", source: "Magyar nyelv", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "A Duna és a Tisza közén valaha járó homok volt: a szél buckákat tolt előre, amíg a szőlő meg az akác gyökere meg nem kötötte. A homoki bor innen való.", source: "Földrajz", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "Az eke, a búza, az árpa és a tarló mind török jövevényszó, és egyszerre került a nyelvbe, még a honfoglalás előtt. A földművelés szókészlete egy tanulóidő emléke.", source: "Török jövevényszavak", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "A világ legtermékenyebb fekete földjét orosz szóval csernozjomnak hívják, magyarul mezőségi talajnak. Az ország keleti felén ez van a talp alatt.", source: "Talajtan", theme: .ground, subtheme: .theSoilItself ),
+
+        // MARK: A place you are from
+        Passage( text: "Az itthon és az otthon ugyanaz a hely, de a beszélő nem áll ugyanott: itthon azé, aki éppen ott van, otthon azé, aki máshonnan beszél róla.", source: "Magyar nyelvtan", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "Az otthon két darabból áll: ott meg hon. A hon régi szó a szülőföldre, és a mai beszédben már jóformán csak összetételekben él tovább.", source: "Magyar szófejtés", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "A haza a ház szóból nőtt ki, egy régi irányraggal a végén: eredetileg annyit tett, hogy a ház felé. Az ország neve tulajdonképpen egy irány.", source: "Magyar szófejtés", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "Lenn az alföld tengersík vidékin / Ott vagyok honn, ott az én világom.", source: "Petőfi Sándor, Az alföld", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "Szülőföldem szép határa! / Meglátlak-e valahára?", source: "Kisfaludy Károly, Szülőföldem szép határa", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "Föl-földobott kő, földedre hullva, / Kicsi országom, újra meg újra / Hazajön a fiad.", source: "Ady Endre, A föl-földobott kő", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "A városnevek kétfélék: Budapesten és Szegeden a rag azt mondja, rajta, Debrecenben és Sopronban azt, benne. Szabály nincs rá; aki odavaló, hallásból tudja.", source: "Magyar nyelvtan", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "A Szegedi, az Erdélyi és a Somogyi családnevekben egy -i képző dolgozik, amely a származás helyét jelöli. Ezek a nevek nem azt mondják meg, hol lakik valaki.", source: "Névtan", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "A térkép tele van birtokos alakokkal: Pálfalva, Mikóháza, Apátfalva. A település máig azé, aki nevet adott neki, akkor is, ha nyolcszáz éve nem járt erre.", source: "Helynévtan", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "Mindenütt jó, de legjobb otthon. A közmondás nem az épületről szól, hanem arról a néhány utcáról, ahol az ember fejből tudja, melyik kapu nyikorog.", source: "magyar közmondás", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "Minden madár szereti a maga fészkét. A gólya rá is szolgál: ugyanarra a kéményre tér vissza tavaszról tavaszra, és a fészket évről évre magasabbra rakja.", source: "magyar közmondás", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "A tanya a mezőn álló magányos ház a hozzá tartozó földdel; lakója a mezővárosban is bejelentett polgár volt. Kétfelé lakott egyszerre, és mindkettőhöz volt kulcsa.", source: "Néprajz", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+
+        // MARK: A kept place
+        Passage( text: "A kert a kerít igével egy tőről való, és onnan a kerek meg a kerítés is. Kertnek az számít, ami körül valaki egyszer végigment.", source: "Magyar szófejtés", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "Kertész leszek, fát nevelek, / kelő nap is rám nevet.", source: "József Attila, Kertész leszek", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "A gazdag szó a gazdából lett, egy képzővel. A bőség neve a magyarban nem a vagyonról szól, hanem arról, aki gondot visel valamire.", source: "Magyar szófejtés", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "A veteményes az, ahol enni való nő, a virágoskert az, ahol nem. Az utcára néző kiskert a járókelőké is: azért ültetik előre, hogy kívülről látszódjék.", source: "Néprajz", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "A szőlőt nem lehet egy évre magára hagyni: metszés, kötözés és kapálás nélkül két nyáron visszavadul. A gondozottság nem állapot, hanem szokás.", source: "Kertészet", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "A gémeskút ágasa és gémje egy hosszú kar meg egy ellensúly. Víz addig áll benne, ameddig valaki minden nyáron leereszkedik és kimeri az iszapot.", source: "Néprajz", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "A fejelt fűz a magyar patakpartok fája: néhány évente visszavágják a törzs fejére, mire sűrű vesszőt hajt, és abból lesz a kosár meg a fonott sövény.", source: "Erdészet", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "A kapálás nemcsak a gyom miatt van: a megbontott felszín megtöri a hajszálcsöveket, és a nedvesség lejjebb marad, ahol a gyökér eléri.", source: "Kertészet", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "Az almafa magról nem hozza a fajtáját. Minden termesztett alma oltvány, és a fajta úgy marad fenn, hogy nemzedékenként valaki átvisz egy vesszőt másik törzsre.", source: "Növénytan", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "Az eleven sövény kerítés és élőhely egyszerre: galagonyából, kökényből meg somból nevelik, és minél többször nyírják, annál áthatolhatatlanabb.", source: "Kertészet", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "A régi falusi telek hosszan nyúlik hátra: az utcára a tiszta szoba néz, mögötte a lakószoba meg a konyha sorakozik, a veteményes pedig leghátul kezdődik.", source: "Építészet", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "A komposzt nem rothad, hanem ég: a halom belseje hatvan fokig is fölmelegszik, és a gazda a kezével méri meg, mikor kell megforgatni.", source: "Kertészet", theme: .ground, subtheme: .aKeptPlace ),
+
+        // MARK: - Travel
+
+        // MARK: How a seed goes
+        Passage( text: "Az ördögszekér ősszel elszakad a saját gyökerétől, gömbbé szárad, és a szél végiggörgeti a pusztán. Amerre bukdácsol, ott hullatja el, amit hozott.", source: "Növénytan", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "A szerbtövis nevében benne van, merről érkezett. Horgas tüskéi a birkagyapjúba akadnak, és a nyáj a legelő egyik végéből a másikba viszi át.", source: "Növénytan", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "A fagyöngy magját a madár nem tudja csak úgy letenni: a bogyó nyálkája a csőréhez tapad, és az ághoz kell törölnie. A növény ezért mindig fönt köt ki.", source: "Növénytan", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "Az akác Észak-Amerikából való, és alig háromszáz éve telepítették ide. Mára ez a leggyakoribb hazai fa, mert megfogta a homokot, ahol más nem eredt meg.", source: "Erdészet", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "A paprika Amerikából jött, de nem nyugat felől: a Balkánon át érkezett, és onnan hozta a nevét is. Szegeden meg Kalocsán lett belőle az, ami.", source: "Növénytörténet", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "A krumpli neve a bajor Grundbirn, azaz földi körte; a burgonya alakot a nyelvújítás tette mellé. Egyetlen jövevény növény, két útlevéllel.", source: "Jövevényszavak", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "Az ártéri fűzek magja néhány napig marad csírázóképes. A tavaszi árhullám épp ennyi idő alatt teszi le a friss iszapra, ahová a fa magától sosem jutna el.", source: "Növénytan", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "A hóvirág magján olajos függelék ül. A hangya hazacipeli, lerágja róla a falatot, a maradékot pedig kihordja a boly szemétdombjára, néhány méterrel odébb.", source: "Rovartan", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "A vadgesztenye termése nehéz, és magától csak legurulni tud. Európán az ember hordta végig, fasornak, mert árnyékot ad és semmit nem kér cserébe.", source: "Erdészet", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "A fehér nyár pelyhes magja májusban úgy sodródik a városi utcán, mintha havazna. Egyetlen idős fa több milliót ereszt útnak egyetlen héten.", source: "Növénytan", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "A vízimadár lábára tapadt sárban magok utaznak. Két szikes tó között így kerül át egy növényfaj, olyan távolságon, amit gyalog senki nem tenne meg érte.", source: "Madártan", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "Nem esik messze az alma a fájától. A mondás a magra is áll, csak fordítva: magról nevelt csemete épp hogy nem üt az anyjára, ezért találták föl az oltást.", source: "magyar közmondás", theme: .travel, subtheme: .howASeedGoes ),
+
+        // MARK: The road
+        Passage( text: "A kocsi egy Komárom megyei falu, Kocs nevéből lett, ahol a rugózott szekeret készítették. Innen való az angol coach, a német Kutsche és a spanyol coche is.", source: "Magyar szófejtés", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "Az útitárs összetett szó, és a sorrend a fontos benne: előbb van az út, és csak azután derül ki, ki jön rajta veled.", source: "Magyar szókincs", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "A -felé alak megengedi, hogy valaki elinduljon anélkül, hogy megérkezne. Hazafelé és Szeged felé egyaránt mondható arról, aki még sehol nincs.", source: "Magyar nyelvtan", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "A csárda a lakott helyektől távol épült, két határ találkozásánál, ahol egyik bírónak sem volt dolga vele. Azért állt ott, hogy legyen hol megszállni.", source: "Néprajz", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "Lassan járj, tovább érsz. A gyalogos mondása, és a lóé is: a fogat napi szakasza attól függött, hol lehetett itatni, nem attól, ki mennyire sietett.", source: "magyar közmondás", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "Járt utat a járatlanért el ne hagyj. Sík vidéken ez gyakorlati tanács volt: a kerékvágás megmutatta, hol bírja el a talaj a terhet esőzés után is.", source: "magyar közmondás", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "A helyragok hármasával járnak: -ba, -ban, -ból; -ra, -on, -ról; -hoz, -nál, -tól. Minden viszonyhoz tartozik egy odaérkezés, egy ottlét meg egy elindulás.", source: "Magyar nyelvtan", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "Hazamegy, aki innen indul, hazajön, akit odaát várnak, és hazatér, aki sokáig volt távol. Ugyanaz a kapu, három ige, aszerint hogy honnan nézik.", source: "Magyar nyelv", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "A borostyánkő útja a Balti-tengertől Aquileiáig vezetett, és Savarián, a mai Szombathelyen haladt keresztül. Egy fényűzési cikk rajzolta meg Európa első térképét.", source: "Régészet", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "Az ösvény attól ösvény, hogy járják; a dűlőút a táblák közt megy, az országút a városok között. Ezek a szavak nem a burkolatot mondják meg, hanem a forgalmat.", source: "Magyar szókincs", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "Nyári napnak alkonyúlatánál / Megállék a kanyargó Tiszánál.", source: "Petőfi Sándor, A Tisza", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "A vándor a német wandern szóból való, és a magyarban előbb jelentett mesterlegényt, mint turistát: a céh vándorévet kívánt, mielőtt valakit mesterré fogadott.", source: "Jövevényszavak", theme: .travel, subtheme: .theRoad ),
+
+        // MARK: Far off
+        Passage( text: "A délibáb nem képzelgés: a fölforrósodott levegő alsó rétege megtöri a fényt, és a Hortobágy fölött a látóhatár mögötti dolgokat emeli a szem elé.", source: "Fénytan", theme: .travel, subtheme: .farOff ),
+        Passage( text: "A magyar nyelv legközelebbi rokonait az Ob folyó mellett beszélik, több ezer kilométerre innen. Az odavezető utat nyelvészek rakták ki, szóról szóra.", source: "Nyelvtudomány", theme: .travel, subtheme: .farOff ),
+        Passage( text: "Messziről, messzire, messze: a nyelv három alakkal mondja meg, hogy valami onnan jön, oda tart vagy ott áll. A távolság önmagában nem elég adat.", source: "Magyar nyelvtan", theme: .travel, subtheme: .farOff ),
+        Passage( text: "A gólya ősszel Afrikáig repül, és a szárazföldi kerülőt választja, mert a tenger fölött nem száll föl meleg levegő, amelyen vitorlázhatna.", source: "Madártan", theme: .travel, subtheme: .farOff ),
+        Passage( text: "Kőrösi Csoma Sándor gyalog indult el Erdélyből, hogy megkeresse a keleti rokonokat, és Tibetig jutott. Ott írta meg az első tibeti-angol szótárt.", source: "Kőrösi Csoma Sándor", theme: .travel, subtheme: .farOff ),
+        Passage( text: "Julianus barát 1235-ben kelt útra kelet felé, és a Volga mellett olyan emberekre akadt, akikkel szót értett. A jelentése egyetlen bekezdésben számol be erről.", source: "Julianus barát", theme: .travel, subtheme: .farOff ),
+        Passage( text: "A mesehős útját nem kilométerben mérik, hanem akadályban: hetedhét országon és az üveghegyen túl. A távolság ilyenkor annyi, amennyit ki kell bírni.", source: "magyar népmese", theme: .travel, subtheme: .farOff ),
+        Passage( text: "Az Óperenciás-tenger neve a német ob der Enns kifejezésből kopott ilyenné, ami annyit tesz, az Enns folyón túl. A mesék határa egy osztrák vámhatár volt.", source: "Magyar szófejtés", theme: .travel, subtheme: .farOff ),
+        Passage( text: "A Balatont magyar tengernek szokás hívni. Hetvenhét kilométer hosszú, és párás időben a túlsó partja csakugyan hiányzik a látóhatárról.", source: "Földrajz", theme: .travel, subtheme: .farOff ),
+        Passage( text: "Sík vidéken az álló ember szeme mintegy öt kilométerre látja a horizontot, mert a bolygó elgörbül alatta. A torony ezt a néhány kilométert toldja meg.", source: "Csillagászat", theme: .travel, subtheme: .farOff ),
+        Passage( text: "A messzelátó a nyelvújítás szava a távcsőre. A használatból a rövidebb alak maradt meg, pedig a hosszabbik pontosabban írja le, mit csinál a szerkezet.", source: "Nyelvújítás", theme: .travel, subtheme: .farOff ),
+        Passage( text: "A közelséget testtel méri a nyelv: kőhajításnyira, karnyújtásnyira, egy ugrásra. A nagy távolságra ilyen szó nincsen, arra már csak szám van.", source: "Magyar szókincs", theme: .travel, subtheme: .farOff ),
+
+        // MARK: - Meeting
+
+        // MARK: The moment
+        Passage( text: "A találkozik ige a talál igéből képződött, kölcsönös raggal. Aki magyarul találkozik valakivel, az nyelvtanilag megtalálta, és őt is megtalálták.", source: "Magyar szófejtés", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "Toldi írójához elküldöm lelkemet / Meleg kézfogásra, forró ölelésre!", source: "Petőfi Sándor, Arany Jánoshoz", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "Zavarva lelkem, mint a bomlott cimbalom.", source: "Arany János, Válasz Petőfinek", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "Reszket a bokor, mert / Madárka szállott rá.", source: "Petőfi Sándor, Reszket a bokor, mert", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "Összefut, összeakad, összetalálkozik: az össze- igekötő mindhárom esetben azt jelenti, hogy senki nem tervezte el. Két útvonal keresztezésére van külön szava a nyelvnek.", source: "Magyar nyelvtan", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "Aki magyarul fél hétre hív, nem hétkor vár. A negyed, a fél és a háromnegyed mind a következő óra felé számol, tehát a megbeszélt idő az, ami még nincs itt.", source: "Magyar nyelv", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "A pillanat a pillant igéből lett a nyelvújítás idején. Az idő legkisebb magyar egysége egy szemhéj mozdulata, és éppen annyi ideig tart.", source: "Nyelvújítás", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "A véletlen szó a vél igéből épült, fosztóképzővel: ami véletlen, azt előre senki nem gondolta el. A magyar a szerencsét gondolathiánynak nevezi.", source: "Magyar szófejtés", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "A Tisza Titelnél ömlik a Dunába, de a két víz jó darabon külön látszik: eltérő hordalékuk más színt ad nekik, és az elkeveredés csak lejjebb történik meg.", source: "Vízrajz", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "A kézfogó magyarul nemcsak kézfogást jelent, hanem az eljegyzést is. Egy mozdulat neve lett egy egész szertartásé, és a mozdulat maradt benne a szóban.", source: "Magyar szókincs", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "Két bolygó akkor kerül együttállásba, amikor a Földről nézve egy irányban látszik. Térben ilyenkor is több százmillió kilométer marad közöttük.", source: "Csillagászat", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "A szentjánosbogár nősténye nem repül: a fűben ül és világít, a hím pedig fentről keresi. Az egész dolog egyetlen fénypont megpillantásán múlik.", source: "Rovartan", theme: .meeting, subtheme: .theMoment ),
+
+        // MARK: Two that need each other
+        Passage( text: "Az egymás szó két darabja az egy meg a más, és ragot is kap: egymásnak, egymásról, egymásért. Egyetlen szóban benne áll mind a kettő, felváltva.", source: "Magyar nyelvtan", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "Egyik kéz mossa a másikat. A mosdótál mellett született mondat, ahol tényleg nem megy másképp: egy tenyér magában nem tud tisztára jönni.", source: "magyar közmondás", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "A lóhere gyökerén apró gumók ülnek, bennük baktérium. A növény cukrot ad, a lakó pedig nitrogént köt meg a levegőből. Külön egyikük sem boldogul a homokon.", source: "Növénytan", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "A szarvasgomba a tölgy gyökerével él együtt, és a föld alatt terem. Spórája csak úgy jut tovább, ha valaki kiássa: a vaddisznó vagy a rá tanított kutya.", source: "Gombatan", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "A fél szó nem csak felezést jelent: fél kéz, fél szem, fél cipő. Ami párban jár, annak a magyarban egy darabja is fél, akkor is, ha egész.", source: "Magyar szókincs", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "A kaláka fizetség nélküli közös munka volt: a falu együtt húzta föl valakinek a házfalát, aztán a következőét. Számadás nem készült róla, mégis mindenki tudta az állását.", source: "Néprajz", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "A járomba fogott ökröket nem cserélgették: a megszokott pár együtt tanulta meg a barázdát, és külön-külön mindkettő rosszabbul húzott.", source: "Néprajz", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "A fűzfa kétlaki: a barka vagy porzós, vagy termős, sohasem mindkettő. Egy magányos fűz akármilyen jó évben is csak virágot hoz, magot nem.", source: "Növénytan", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "A házban, de a kertben; a hídhoz, de a székhez. A toldalék hangzói ahhoz igazodnak, amihez hozzáteszik. A nyelvtan megköveteli, hogy a hozzátett rész úgy szóljon, mint a gazdája.", source: "Magyar nyelvtan", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "Olvasok egy könyvet, de olvasom a könyvet: a magyar igén meglátszik, hogy a tárgya határozott-e. A cselekvés alakja attól függ, mire irányul.", source: "Magyar nyelv", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "Az akác két hétig virágzik. A vándorméhész ezalatt délről észak felé költözteti a kaptárait, mindig a nyíló virágzat után menve, hogy a két hétből öt legyen.", source: "Méhészet", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "A komondor nem tereli a nyájat, hanem benne él: a bárányok között nő fel, és azért marad velük, mert a magáénak tekinti őket.", source: "Állattenyésztés", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+
+        // MARK: The manners of it
+        Passage( text: "A szervusz a latin servus szóból való, amely szolgát jelent: a legfesztelenebb magyar üdvözlés valaha alázatos formula volt. A szia ennek a rövidülése.", source: "Jövevényszavak", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "Az ön névmást Széchenyi István javasolta a hivatalos érintkezésre, mert hiányzott egy semleges alak a távolságtartásra. Máig hűvösebb, mint a maga.", source: "Nyelvújítás", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "Ahány ház, annyi szokás. A mondás nem a világ népeiről szól, hanem az utca két oldaláról: a szomszédban is másképp terítenek, mint nálunk.", source: "magyar közmondás", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "A tegeződést fel szokás ajánlani, és az ajánlás joga az idősebbé. Amíg el nem hangzik, két ember magázódik, akármilyen régóta ismeri egymást.", source: "Néprajz", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "A teljes köszönésben ige is van: jó napot kívánok. Aki csak a felét mondja ki, befejezetlen mondatot hagy maga után, és a fül ezt kurtának hallja.", source: "Magyar nyelv", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "A kezét csókolom hajdan a férfi udvariassága volt a nő felé; ma leginkább gyerek mondja felnőttnek. A formula megmaradt, a mozdulat elmaradt mellőle.", source: "Néprajz", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "Az egészségedre kétféle alkalomra jár: koccintáskor és tüsszentés után. Ugyanaz a jókívánság szolgál ki az örömöt meg a huzatot.", source: "Magyar szókincs", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "A vendég jövevényszó, és belőle képződött a vendéglő meg a vendégség. A magyar a fogadóst arról nevezte el, akit befogad, nem arról, amit kimér.", source: "Magyar szófejtés", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "Az érkezőt fogadó régi formula így hangzik: Isten hozott. Nyelvtanilag tehát nem a házigazda hívta a látogatót, hanem küldték hozzá.", source: "Magyar nyelv", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "A tegezés és a magázás mellett van egy harmadik fokozat, a tetszikelés. A gyerek nem azt kérdezi, tudod-e, hanem azt, hogy tetszik-e tudni.", source: "Magyar nyelvtan", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "A bocsánat a bocsát igéből való, tehát elengedést jelent. Az elnézés fiatalabb kép, és szó szerint arra kéri a másikat, hogy nézzen el a dolog fölött.", source: "Magyar szófejtés", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "Ugyanaz a tő adja a köszönést és a köszönetet: köszönök, amikor belépek, és köszönöm, amit kaptam. A hála meg az üdvözlés egy szóból ágazik szét.", source: "Magyar szókincs", theme: .meeting, subtheme: .theMannersOfIt ),
+
+        // MARK: - Kinship
+
+        // MARK: Grown together
+        Passage( text: "A magyar hal és a finn kala ugyanaz a szó: a szókezdő k a magyarban h-vá vált, a finnben megmaradt. Kimondva semmi közös nincs bennük, és mégis egy tőről valók.", source: "Nyelvtudomány", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "Ahol a rokon nyelvekben p áll, ott a magyarban f: a puu mellett fa, a pesä mellett fészek. A megfelelés olyan következetes, hogy szavakra rá lehet ismerni.", source: "Nyelvtudomány", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "A nyelvcsalád nem vérségi dolog. A magyar nyelv az Urál mellől érkezett, a mai lakosság génjeinek java része viszont a környező népekével közös.", source: "Néprajz", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "Az oltás akkor fogan meg, ha az alany és az oltóvessző kambiuma pontosan összeér. A két növény ettől kezdve egy törzsön él, de nem lesz belőlük egyetlen példány.", source: "Kertészet", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "Két egymáshoz szoruló ág kérge a súrlódástól lekopik, a fatestük összeforr, és onnantól közös a nedvkeringésük. Ilyet az erdész ritkán vág szét.", source: "Erdészet", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "A -stul rag annyit tesz, hogy az egészével együtt: családostul, ruhástul, mindenestül. Egyetlen szótag hozza magával azt is, ami a dologhoz hozzátartozik.", source: "Magyar nyelvtan", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "Az össze- igekötő egész családot tart el: összenő, összeszokik, összetartozik. Az utolsó a legerősebb közülük, mert nem cselekvést mond, hanem állapotot.", source: "Magyar nyelv", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "A rezgő nyár gyökérről sarjad: egy ligetnyi fa lehet egyetlen növény, és a levelük ősszel egyszerre sárgul, mert ugyanaz az óra jár bennük.", source: "Növénytan", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "A nádas gyöktörzsről terjed, a víz alatt. A szomszédos szálak egyazon növény részei, és a jég szorításában is azért maradnak állva, mert lent összefüggnek.", source: "Botanika", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "A sarj szó a növényre meg az emberre egyformán jár: a tuskóról induló hajtás és a család fiatalja ugyanaz a hangsor. A kettő közé a nyelv nem tett határt.", source: "Magyar szókincs", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "A családfa magyarul is fa: töve van meg ága, és arról esik szó, ki melyik ágról való. A hasonlat olyan régi, hogy már nem is hasonlatnak hallatszik.", source: "Magyar nyelv", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "A koma nem vér szerint való rokon: a gyerek szülei és keresztszülei lettek egymás komái. A komaság egy életre szólt, és a falu számon tartotta.", source: "Néprajz", theme: .kinship, subtheme: .grownTogether ),
+
+        // MARK: The words for it
+        Passage( text: "A testvér két szóból áll: test meg vér. Aki magyarul testvér, az ugyanabból az anyagból van, és a kifejezés ezt mondja ki, nem a jogviszonyt.", source: "Magyar szófejtés", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "Kor nélkül nincs rá szó: a báty idősebb fiú, az öcs fiatalabb, a néne idősebb lány, a húg fiatalabb. Aki megszólít valakit, egyben be is sorolja.", source: "Magyar szókincs", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "A feleség a fél szóból képződött: aki feleség, az valakinek a fele. A férj ezzel szemben a férfi rokona, tehát nem a párjáról kapta a nevét.", source: "Magyar szófejtés", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "A barát szláv jövevény, a brat alakból, amely fivért jelent. Aki magyarul barátot mond, egy másik nyelv testvér szavát ejti ki.", source: "Szláv jövevényszavak", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "Az asszony alán eredetű, és valaha fejedelmi nőt jelölt. A cím idővel mindenkié lett, a hangalak pedig alig változott közben.", source: "Magyar szófejtés", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "Az atyafi is összetétel: atya meg fi. A régi nyelvben nem csupán a fiútestvért jelentette, hanem bárkit, akivel egy famíliába tartozott az ember.", source: "Magyar szókincs", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "A Kovácsék egyetlen raggal csinál a névből háznépet. Nem többes szám: azt jelenti, ő és akik hozzá tartoznak, névsor nélkül.", source: "Magyar nyelvtan", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "A magyar a nagyobbtól halad a kisebb felé: előbb a családnév, aztán a keresztnév, előbb az év, aztán a hónap. A bemutatkozás a család nevével kezdődik.", source: "Magyar nyelv", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "A rokon szó nem csak emberre áll: rokon nyelvek, rokon értelmű szavak, rokonszenv. Ugyanaz a hangsor mondja a családot meg a hasonlóságot.", source: "Magyar szókincs", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "Az anya- előtag azt jelöli, amiből valaki való: anyanyelv, anyaföld, anyakönyv, anyaország. Az apa- ilyen összetételekben jóval ritkábban áll.", source: "Magyar nyelv", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "Vér nem válik vízzé. A közmondás folyadéknak nézi a rokonságot: felhígulhat, elszíntelenedhet, de más anyag nem lesz belőle.", source: "magyar közmondás", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "Száll a madár, ágrul ágra, / Száll az ének, szájrul szájra.", source: "Arany János, Rege a csodaszarvasról", theme: .kinship, subtheme: .theWordsForIt ),
+
+        // MARK: Two people
+        Passage( text: "A szeretlek egyetlen szó, és két embert tartalmaz: a -lak rag annyit tesz, én téged. A magyarban ehhez nem kell külön kimondani, ki kicsoda.", source: "Magyar nyelvtan", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "Az ő egyformán áll férfira és nőre, mert a magyar névmás nem foglal állást. Valakinek az egész története elmondható anélkül, hogy a neme kiderülne.", source: "Magyar nyelv", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "A ketten nem szám, hanem állapot: a kettő megszámol, a ketten pedig együtt van. Csak emberre mondható, tárgyakra nem.", source: "Magyar szókincs", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "Már vénülő kezemmel / Fogom meg a kezedet, / Már vénülő szememmel / Őrizem a szemedet.", source: "Ady Endre, Őrizem a szemed", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "Madarat tolláról, embert barátjáról. A madarász csakugyan a tollazatról ismeri föl a fajt, olykor egyetlen elhullajtott pehelyről is.", source: "magyar közmondás", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "Több szem többet lát. A mondás öregebb a nyomtatásnál, és a korrektúrán máig igaz: a saját hibáját az ember nem veszi észre a papíron.", source: "magyar közmondás", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "Számnév után egyes szám áll: két ember, száz év, sok virág. Ha egyszer kiderült, hányan vannak, a főnévnek ezt már nem kell megismételnie.", source: "Magyar nyelvtan", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "A -val és a -vel a társat jelöli, és odasimul ahhoz, amihez járul: baráttal, késsel, kutyával. A rag v hangja átveszi az előtte álló mássalhangzót.", source: "Magyar nyelv", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "Egy pár cipő kettő, egypár nap három vagy négy. Ugyanaz a hangsor jelent összetartozó kettőt meg bizonytalan néhányat, és csak az írásmód különíti el őket.", source: "Magyar szókincs", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "A társ magában ritkán áll meg: útitárs, élettárs, munkatárs, játszótárs. Előbb derül ki, miben tartozik valaki valakihez, mint az, hogy odatartozik.", source: "Magyar szófejtés", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "A szomszéd szláv jövevényszó, és az eredetiben azt jelenti, aki együtt ül valakivel. A közelség neve tehát nem a faltól való, hanem a leüléstől.", source: "Szláv jövevényszavak", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "A becézés birtokos raggal jár: szívem, kedvesem, drágám. A megszólítás nyelvtanilag azt állítja, hogy az enyém, még mielőtt bármit mondana.", source: "Magyar nyelvtan", theme: .kinship, subtheme: .twoPeople ),
+
+        // MARK: - Peace
+
+        // MARK: Quiet as a sound
+        Passage( text: "Ugyanaz az ige mondja, hogy valaki nem szól, és hogy valaki figyel: hallgat. Zenét hallgat, aki odafordul, és hallgat az is, aki egy szót sem ejt ki.", source: "Magyar nyelv", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "A csend és a csönd egyformán helyes, az egyik e-vel, a másik ö-vel; vidéke válogatja. A nyelv két hangalakot enged meg annak, aminek semmi hangja nincs.", source: "Magyar nyelvjárások", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "A halk a hangra áll, a csendes a helyre: halk beszéd hallatszik egy csendes szobában. Az elsőt meg lehet mérni, a második körülmény.", source: "Magyar szókincs", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "A nesz a legkisebb hallható dolog neve, és képzőt is kap: nesztelen az, ami ennyit sem ad ki magából. A küszöb alá is jutott egy szó.", source: "Magyar szófejtés", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "Nem zörög a haraszt, ha a szél nem fújja. A haraszt a lehullott száraz avar: ősszel a legapróbb mozgás is meghallható rajta, hó alatt viszont semmi.", source: "magyar közmondás", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "A Csendes-óceánt a legtöbb nyelv békésnek hívja, a magyar hangtalannak. Magellán nyugodt vízen kelt át rajta, és a név azt a néhány hetet őrzi.", source: "Földrajz", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "A magyar szó hangsúlya kivétel nélkül az első szótagon ül. Ettől kopogós a beszéd üteme, és ezért halkul minden szó a vége felé.", source: "Hangtan", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "A hosszú magánhangzó külön betű: az a és az á nem ugyanaz. A különbség pusztán időtartam, mégis jelentést választ el jelentéstől, mint a kor meg a kór.", source: "Hangtan", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "A friss hó elnyeli a zajt: a pelyhek közötti levegő lefogja a magas frekvenciákat, és ezért olyan tompa egy havazás utáni reggel.", source: "Akusztika", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "A nádas télen zörög, nyáron susog. Ugyanaz a szél és ugyanaz a tábla; a száraz szár meg a zöld levél nem egyféle hangot ad.", source: "Természetrajz", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "A gyöngybagoly szárnytollának pereme fésűs, így a levegő nem örvénylik rajta. A röpte az emberi fül számára szó szerint hangtalan.", source: "Madártan", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "A társasházi házirend a csendes pihenő idejét órában adja meg, nem decibelben. Van olyan időszak, amikor a lárma nem attól tilos, hogy hangos.", source: "Lakásjog", theme: .peace, subtheme: .quietAsASound ),
+
+        // MARK: The words for stopping
+        Passage( text: "A béke a szókészlet régi rétegéből való, és magában áll: a latin pax, a szláv mir és a német Friede közül egyik sem rokona. Az ország mindhárom irányból vett át szavakat, ezt nem.", source: "Magyar szófejtés", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "A békél, a kibékül, a megbékél és a békít egy tőről nőtt. Az első kettő két félről szól, a harmadik egyetlenegyről, a negyedik pedig arról, aki közéjük áll.", source: "Magyar szókincs", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "Jobb a sovány egyezség, mint a kövér per. A mondás a törvénykezés lassúságát ismeri: a megnyert ügy is elfogy, mire ítéletig jut.", source: "magyar közmondás", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "Jobb a békesség. A rövidebb szólások egyike, és nem indokol semmit; a mérleg egyik serpenyőjét sem tölti meg érvvel.", source: "magyar közmondás", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "A szünet a szűnik igéből lett: ami szünetel, az egy időre megszűnt. Ugyanez a szó áll az iskolai óraközre meg a kottában a hallgató ütemre.", source: "Magyar szófejtés", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "Az abbahagy két darabból áll: abba meg hagy. Aki abbahagyja, ott hagyja a dolgot abban az állapotban, ameddig eljutott vele.", source: "Magyar nyelv", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "A meg- igekötő befejezetté teszi a cselekvést: aki ír, még csinálja, aki megírta, elkészült vele. Egyetlen szótag jelenti be, hogy kész.", source: "Magyar nyelvtan", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "A megállapodás a megáll igéből ered: a felek akkor egyeznek ki, amikor mindkettő megáll. A kifejezés testtartásról beszél, nem tartalomról.", source: "Magyar szófejtés", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "Az áldomás a régi alku lezárása volt: amíg a felek meg nem itták rá, az egyezség nem számított késznek. A megegyezést ital hitelesítette.", source: "Néprajz", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "A parola az olasz parola átvétele, amely szót jelent. Magyarul a kézfogás neve lett, azé, amelyik alkut zár le: az adott szó tenyérbe költözött.", source: "Jövevényszavak", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "A nyugta és a nyugalom egy tőről valók. A papír, amely lezárja az ügyet, arról kapta a nevét, hogy utána nyugton lehet maradni.", source: "Magyar szókincs", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "A felfüggeszt képe pontos: a dolgot nem fejezik be, hanem fölakasztják egy szögre, ahonnan bármikor le lehet emelni.", source: "Magyar nyelv", theme: .peace, subtheme: .theWordsForStopping ),
+
+        // MARK: At ease
+        Passage( text: "Lehunyja kék szemét az ég, / lehunyja sok szemét a ház, / dunna alatt alszik a rét.", source: "József Attila, Altató", theme: .peace, subtheme: .atEase ),
+        Passage( text: "Este van, este van: kiki nyugalomba!", source: "Arany János, Családi kör", theme: .peace, subtheme: .atEase ),
+        Passage( text: "Partra szállottam. Levonom vitorlám.", source: "Berzsenyi Dániel, Osztályrészem", theme: .peace, subtheme: .atEase ),
+        Passage( text: "Van már kenyerem, borom is van, / van gyermekem és feleségem.", source: "Kosztolányi Dezső, Boldog, szomorú dal", theme: .peace, subtheme: .atEase ),
+        Passage( text: "A delel ige a napra és a jószágra egyformán áll: delel a nap, ha a legmagasabban jár, és delel a nyáj, ha a hőség elől behúzódik. Ugyanaz az óra mind a kettő.", source: "Magyar szókincs", theme: .peace, subtheme: .atEase ),
+        Passage( text: "A nyugat onnan kapta a nevét, hogy arrafelé nyugszik le a nap. Ugyanez a tő van a nyugalomban meg a nyugágyban: a pihenés és a világtáj egy szóból nőtt ki.", source: "Magyar szófejtés", theme: .peace, subtheme: .atEase ),
+        Passage( text: "Nyugtával dicsérd a napot. A nyugta itt a naplemente, nem a papír; a mondás a nappal végéről beszél, és nem a türelemről.", source: "magyar közmondás", theme: .peace, subtheme: .atEase ),
+        Passage( text: "A pihen a munka utáni megállás, a hever a fekvés, a henyélés pedig az, aminek mások nevezik ugyanezt.", source: "Magyar nyelv", theme: .peace, subtheme: .atEase ),
+        Passage( text: "A sut a kemence melletti zug, a parasztház legmelegebb pontja. Ez a hely az öregeké volt meg a macskáé, és télen mindenki más is odahúzódott egy időre.", source: "Néprajz", theme: .peace, subtheme: .atEase ),
+        Passage( text: "Az álom szó egyszerre jelenti az alvást és azt, amit közben lát az ember. Jó álmot kívánunk, és álmot látunk: a kettőt a nyelv nem választja szét.", source: "Magyar szókincs", theme: .peace, subtheme: .atEase ),
+        Passage( text: "A csendélet a német Stilleben fordítása. A képen semmi nem történik, és a magyar név mégsem a mozdulatlanságot mondja, hanem azt, hogy nem hallatszik semmi.", source: "Művészettörténet", theme: .peace, subtheme: .atEase ),
+        Passage( text: "A ló és a gólya ízülete úgy záródik, hogy állva is elernyedhet az izom. A pihenéshez nem kell lefeküdniük, elég a súlyt áttenni egyik lábról a másikra.", source: "Állattan", theme: .peace, subtheme: .atEase ),
+    ]
+}
