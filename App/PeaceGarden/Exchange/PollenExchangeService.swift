@@ -121,7 +121,12 @@ final class PollenExchangeService: NSObject {
             displayName: identity.displayName,
             plantName: identity.genome.name.full,
             birth: identity.birth,
-            sharesPlace: willing
+            sharesPlace: willing,
+            // Minted here, per meeting, and never kept: nothing in this app
+            // holds a token after the exchange it belonged to. See
+            // `PollenCard.contactToken`.
+            contactToken: PollenCard.makeContactToken(),
+            arrival: .met
         )
         self.card = card
 
@@ -255,7 +260,12 @@ final class PollenExchangeService: NSObject {
             displayName: identity.displayName,
             plantName: identity.genome.name.full,
             birth: identity.birth,
-            sharesPlace: willing
+            sharesPlace: willing,
+            // Minted here, per meeting, and never kept: nothing in this app
+            // holds a token after the exchange it belonged to. See
+            // `PollenCard.contactToken`.
+            contactToken: PollenCard.makeContactToken(),
+            arrival: .met
         )
         self.card = card
 

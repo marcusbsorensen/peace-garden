@@ -25,7 +25,8 @@ public enum ExchangeProtocol {
     /// abort cleanly rather than growing two different plants.
     ///
     /// 2 added the place flag to `PollenCard`.
-    public static let version = 2
+    /// 3 added the contact token and how the seed arrived.
+    public static let version = 3
 
     /// Bonjour service type. Must also appear in the app's `NSBonjourServices`.
     /// Max 15 characters, lowercase, per Apple's rules for the field.
@@ -55,18 +56,67 @@ public struct PollenCard: Codable, Equatable, Sendable {
     /// way for the field to be missing.
     public var sharesPlace: Bool?
 
+    /// Sixteen bytes this person will answer to **about this meeting**, and
+    /// about no other.
+    ///
+    /// **Here because it cannot be added later.** The shared garden of phase 2
+    /// works by one person putting a plant somewhere and the other being
+    /// offered their name on it — and the offer has to reach a phone that gave
+    /// no account of itself. A token minted per meeting is the smallest thing
+    /// that can carry an invitation: the service ends up holding a bag of
+    /// pending offers keyed by opaque bytes and no directory of people at all.
+    /// Every plant already grown is a meeting that can never be invited if this
+    /// is not in the card now.
+    ///
+    /// **Per meeting, not per person.** A stable per-person identifier is a
+    /// directory however it is spelled — two people who meet twice would be
+    /// linkable by anybody holding both cards. Fresh bytes each time cost
+    /// nothing and mean the tokens say only *somebody was at this meeting*.
+    ///
+    /// Optional, so a card from an older phone decodes as *no invitation
+    /// possible*, which is the safe way for it to be missing. See
+    /// docs/WEBSITE.md.
+    public var contactToken: Data?
+
+    /// Whether the two of you were in the same room.
+    ///
+    /// A seed that arrived by link travelled through somebody's messages and
+    /// may have been forwarded; a seed that arrived by a knock was handed over
+    /// by a person standing there. The difference matters to anything phase 2
+    /// decides to trust, and it is unrecoverable afterwards — by the time the
+    /// plant exists, how it got there is gone.
+    public var arrival: Arrival?
+
+    /// How a seed reached the other phone.
+    public enum Arrival: String, Codable, Sendable {
+        /// Two phones knocked together, over Multipeer.
+        case met
+        /// A link, which is to say a seed on the wind. See
+        /// docs/SEEDS-ON-THE-WIND.md.
+        case sent
+    }
+
     public init(
         seed: SeedID,
         displayName: String,
         plantName: String,
         birth: Date,
-        sharesPlace: Bool = false
+        sharesPlace: Bool = false,
+        contactToken: Data? = nil,
+        arrival: Arrival? = nil
     ) {
         self.seed = seed
         self.displayName = displayName
         self.plantName = plantName
         self.birth = birth
         self.sharesPlace = sharesPlace
+        self.contactToken = contactToken
+        self.arrival = arrival
+    }
+
+    /// Fresh bytes for one meeting.
+    public static func makeContactToken(byteCount: Int = 16) -> Data {
+        Data((0..<byteCount).map { _ in UInt8.random(in: .min ... .max) })
     }
 
     /// Whether these two people have both agreed that this meeting may be

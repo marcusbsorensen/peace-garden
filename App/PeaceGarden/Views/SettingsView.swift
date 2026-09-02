@@ -370,7 +370,11 @@ struct SettingsView: View {
 
             // The plainest account this app gives of what leaves the phone, and
             // it stays whichever of the three is chosen.
-            Text("When you meet someone, your phones exchange your seed, your name, and a random number for that meeting. That is everything that crosses between you, and it goes directly from phone to phone. A seed cannot be turned back into anything about you or your phone.")
+            // Rewritten in the commit that added `PollenCard.contactToken`,
+            // because that field made the old sentence untrue. "That is
+            // everything that crosses between you" was a promise, and a promise
+            // that quietly stops being true is worse than never having made it.
+            Text("When you meet someone, your phones exchange your seed, your name, and two random numbers for that meeting: one that makes the new seed, and one this phone will answer to if the other person later shares the plant with you. That is everything that crosses between you, and it goes directly from phone to phone. None of it can be turned back into anything about you or your phone, and neither number is kept after the meeting.")
                 .font(.system(size: 13, weight: .light))
                 .foregroundStyle(Chrome.muted)
                 .lineSpacing(4)

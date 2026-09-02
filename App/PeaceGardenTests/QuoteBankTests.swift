@@ -180,12 +180,14 @@ final class QuoteBankTests: XCTestCase {
         XCTAssertEqual(QuoteBank.bank(for: "es-419"), .spanish)
         XCTAssertEqual(QuoteBank.bank(for: "de-AT"), .german)
         XCTAssertEqual(QuoteBank.bank(for: "pt-BR"), .portuguese)
+        XCTAssertEqual(QuoteBank.bank(for: "pl-PL"), .polish)
     }
 
     /// A language with an interface and no bank of its own reads English, and
     /// is told so.
     func testALanguageWithNoBankBorrowsAndSaysSo() {
-        XCTAssertNil(QuoteBank.bank(for: "pl"))
+        XCTAssertNil(QuoteBank.bank(for: "cs"))
+        XCTAssertNil(QuoteBank.bank(for: "hu-HU"))
     }
 
     // MARK: - The draw

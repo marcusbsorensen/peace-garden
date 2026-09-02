@@ -217,8 +217,16 @@ public struct PollenLink: Equatable, Sendable {
     }
 
     /// The card the other side would hand over in a face-to-face exchange.
+    ///
+    /// Marked `.sent` rather than `.met`, and carrying no contact token. A link
+    /// went through somebody's messages and may have been forwarded, so there
+    /// is nobody on the other end of it to invite — the token is minted by a
+    /// phone that was present, and this one was not.
     public var card: PollenCard {
-        PollenCard(seed: seed, displayName: displayName, plantName: plantName, birth: birth)
+        PollenCard(
+            seed: seed, displayName: displayName, plantName: plantName, birth: birth,
+            arrival: .sent
+        )
     }
 }
 
