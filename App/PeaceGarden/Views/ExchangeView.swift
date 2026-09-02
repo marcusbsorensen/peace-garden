@@ -22,6 +22,12 @@ struct ExchangeView: View {
     /// repeated at every meeting has stopped being an offer.
     @State private var offeringPlace = false
     @State private var draftName = ""
+#if DEBUG
+    /// Whether this whole visit to Meet is against a gardener who is not there.
+    /// Claimed once, on appearance, so that leaving and reopening Meet finds it
+    /// looking for a real phone again. See `startSearching`.
+    @State private var isImaginary = false
+#endif
     @FocusState private var nameFocused: Bool
 
     var body: some View {
@@ -57,6 +63,12 @@ struct ExchangeView: View {
             SeedOfferView().environment(model)
         }
         .onAppear {
+#if DEBUG
+            if Developer.shared.wantsImaginaryMeeting {
+                Developer.shared.wantsImaginaryMeeting = false
+                isImaginary = true
+            }
+#endif
             if model.hasChosenName {
                 beginAfterNaming()
             } else {
@@ -115,11 +127,19 @@ struct ExchangeView: View {
         offeringPlace = false
         guard let identity = model.identity else { return }
 #if DEBUG
-        // Asked for on the settings screen, three presentations away, and
-        // consumed here so that leaving and reopening Meet finds it looking for
-        // a real phone again.
-        if Developer.shared.wantsImaginaryMeeting {
-            Developer.shared.wantsImaginaryMeeting = false
+        // Asked for on the settings screen, three presentations away.
+        //
+        // **Read once on appearance, held here, and used every time.** It used
+        // to be read *and cleared* right at this point, which worked exactly
+        // once per screen and then stopped: `startSearching` is called from
+        // three places — straight after naming, and from either button on the
+        // place offer — and SwiftUI is free to call `onAppear` again when a
+        // full-screen cover settles. Whichever call came second found the flag
+        // already spent, ran the real `service.start`, and that begins by
+        // calling `stop()`, which wipes the imaginary gardener and lands on
+        // "Looking for someone nearby" with nothing to find. Which is exactly
+        // what it did on a phone.
+        if isImaginary {
             service.meetAnImaginaryGardener(as: identity, place: place)
             return
         }
@@ -250,6 +270,14 @@ struct ExchangeView: View {
         }
 #else
         knockWaiting(peerName: peerName, felt: felt)
+#if DEBUG
+            // A phone can feel a knock, so it gets the real gesture — but a
+            // developer control must never strand anybody, and a knock firm
+            // enough to register while looking at the screen is a knack. Tap
+            // to stand in, on this path only.
+            .contentShape(Rectangle())
+            .onTapGesture { if isImaginary { service.standInForTouch() } }
+#endif
 #endif
     }
 
