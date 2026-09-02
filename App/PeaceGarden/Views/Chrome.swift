@@ -8,21 +8,39 @@ import UIKit
 /// screen. Controls are quiet enough to disappear and be forgotten between
 /// taps.
 enum Chrome {
+    // MARK: - The greys
+    //
+    // Raised across the board after a round on a real phone in real light. The
+    // old set was drawn on a bright screen in a dark room, which is the one
+    // condition under which 0.28 white on black is legible; anywhere else the
+    // growth stage under a plant's name was a smudge. Contrast against black,
+    // computed rather than eyeballed, at the sizes each is actually used:
+    //
+    // | | old | new | contrast |
+    // | --- | --- | --- | --- |
+    // | `muted` | 0.55 | **0.72** | 10.5:1 |
+    // | `faint` | 0.28 | **0.56** | 6.5:1 |
+    // | `sectionLabel` | 0.72 | **0.80** | 13.1:1 |
+    //
+    // All three clear WCAG AA for small text, which 0.28 missed by half. The
+    // hierarchy is narrower than it was and now leans on size, weight and
+    // letterspacing to carry the difference — which is the right way round,
+    // since those survive sunlight and a low opacity does not.
     static let ink = Color.white
-    static let muted = Color.white.opacity(0.55)
-    static let faint = Color.white.opacity(0.28)
-    static let hairline = Color.white.opacity(0.16)
+    static let muted = Color.white.opacity(0.72)
+    static let faint = Color.white.opacity(0.56)
+    /// Rules and borders, never text. Lifted only enough that a capsule's edge
+    /// is visible outdoors.
+    static let hairline = Color.white.opacity(0.24)
 
     /// For the small uppercase labels that head a section.
     ///
     /// `faint` is right for a label standing beside a value it is explaining,
     /// where the value should win. It is not right for a heading somebody is
-    /// meant to read on the way past: at eleven points, light, and tracked out
-    /// to 2.4, a section heading at 0.28 all but vanished on the settings
-    /// screen. Letterspacing thins a line of type as surely as a lighter
-    /// weight does, so wide-tracked small caps need more of the ground back
-    /// than ordinary text of the same size would.
-    static let sectionLabel = Color.white.opacity(0.72)
+    /// meant to read on the way past. Letterspacing thins a line of type as
+    /// surely as a lighter weight does, so wide-tracked small caps need more of
+    /// the ground back than ordinary text of the same size would.
+    static let sectionLabel = Color.white.opacity(0.80)
 
     /// What a label becomes once a warm fill has passed under it.
     static let nearBlack = Color(white: 0.05)
@@ -46,6 +64,12 @@ enum Chrome {
     /// set to the full width of the screen is a wall; the plant is allowed the
     /// whole screen, the words are not.
     static let readableWidth: CGFloat = 440
+
+    /// Whether the plant's name and stage are drawn under it on the stage.
+    ///
+    /// Read in two places — the stage that draws them and the switch that sets
+    /// them — so the key lives here rather than in either.
+    static let namesPlantKey = "stage.namesPlant.v1"
 
     static let fadeIn = Animation.easeInOut(duration: 0.55)
     static let controlsIdleTimeout: Duration = .seconds(6)
