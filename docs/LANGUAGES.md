@@ -398,10 +398,20 @@ scratch against the rules at the top of `Quotes.swift` by somebody working only
 in that language.
 
 They are not translations of each other and they share almost nothing. Measured
-across the six that had landed when this was written: **zero lines in common
-with the English bank**, none of them. That is
-`testNoBankIsTheEnglishOneTranslated`, and it is the one number that says the
-commission was a commission rather than a translation job with a better brief.
+across the seven that landed: **zero lines in common with the English bank**,
+none of them. That is `testNoBankIsTheEnglishOneTranslated`, and it is the one
+number that says the commission was a commission rather than a translation job
+with a better brief.
+
+**Spanish is the one that is not wired.** It was commissioned with the rest and
+failed three times — twice on an API output content filter, once on a stall —
+and its second half is written while its first is not. `QuoteBank` therefore has
+no `.spanish` case, and a Spanish phone reads English lines and is told so under
+the passage. That is not a workaround: it is the state every one of round two's
+twenty-five languages will pass through, since an interface is a fortnight and a
+bank is a commission. Keeping it live and visible is worth more than hiding it.
+Adding the bank is a case in `QuoteBank`, a line in `passages`, and moving
+`"es-ES"` between two tests.
 
 What each one found is in its own file's doc comment. The pattern across them is
 worth recording, because it is an argument about the subthemes rather than about
