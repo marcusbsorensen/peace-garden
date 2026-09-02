@@ -318,7 +318,7 @@ struct Frond: Shape {
     ZStack {
         Color.black
         UnfurlingBackdrop(.single)
-        Text("A seed is about to be drawn for you")
+        Text("A seed is about to be created for you")
             .font(.system(size: 28, weight: .light))
             .foregroundStyle(Chrome.ink)
             .multilineTextAlignment(.center)

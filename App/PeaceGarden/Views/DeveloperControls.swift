@@ -174,7 +174,7 @@ struct DeveloperSection: View {
             .foregroundStyle(Chrome.ink)
             .pressable(isProminent: true)
 
-            Text("Opens Meet against a seed drawn on the spot. Knock the phone as usual — everything from there is the real crossing.")
+            Text("Opens Meet against a seed created on the spot. Knock the phone as usual — everything from there is the real crossing.")
                 .font(.system(size: 13, weight: .light))
                 .foregroundStyle(Chrome.muted)
                 .lineSpacing(4)

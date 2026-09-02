@@ -406,7 +406,7 @@ struct SettingsView: View {
     private func consequence(_ reset: Reset) -> String {
         switch reset {
         case .seed:
-            return "The plant you have now was drawn once and this draws another. Your garden keeps every plant you have grown with somebody, and so do they."
+            return "The plant you have now was created once and this creates another. Your garden keeps every plant you have grown with somebody, and so do they."
         case .plants:
             return "Your own seed and its plant stay. The people you grew those plants with keep theirs."
         case .everything:

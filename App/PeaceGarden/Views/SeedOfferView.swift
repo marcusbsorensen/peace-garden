@@ -57,7 +57,7 @@ struct SeedOfferView: View {
                     // is about the code rather than about the screen. At the
                     // foot it was a colophon nobody read, in a grey nobody
                     // could read it in.
-                    Text("This code is unique to this exchange. Make a new one for every new person you meet and unique plants will grow.")
+                    Text("This seed code is unique to this exchange. A unique plant will grow from every time seeds are exchanged, even with the same person.")
                         .font(.system(size: 13, weight: .light))
                         .foregroundStyle(Chrome.muted)
                         .multilineTextAlignment(.center)
@@ -164,7 +164,7 @@ struct SeedOfferView: View {
                 offer = model.makeOffer()
                 copied = 0
             } label: {
-                Text("Draw a new one")
+                Text("Create a new one")
                     .chromeLabel(size: 10)
                     .foregroundStyle(Chrome.faint)
                     .pressable(horizontal: 14)

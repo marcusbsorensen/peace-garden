@@ -63,7 +63,7 @@ struct RootView: View {
     private var incomingNotice: some View {
         switch model.incoming {
         case .waitingForIdentity:
-            Text("A seed is waiting for you. Draw your own first.")
+            Text("A seed is waiting for you. Create your own first.")
                 .chromeLabel()
                 .foregroundStyle(Chrome.muted)
                 .multilineTextAlignment(.center)
