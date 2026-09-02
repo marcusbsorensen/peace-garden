@@ -28,6 +28,7 @@ struct SettingsView: View {
     @State private var confirming: Reset?
     @AppStorage(Places.preferredKey) private var preferredPlace = ""
     @AppStorage(Sharing.invitationsKey) private var wantsInvitations = Sharing.invitationsDefault
+    @AppStorage(Chrome.namesPlantKey) private var namesPlant = true
 
     /// The two irreversible ones, and the one that only forgets plants.
     private enum Reset: String, Identifiable {
@@ -49,6 +50,8 @@ struct SettingsView: View {
                         .foregroundStyle(Chrome.ink)
 
                     name
+                    Hairline()
+                    plantScreen
                     Hairline()
                     places
                     Hairline()
@@ -167,6 +170,31 @@ struct SettingsView: View {
         model.rename(to: draftName)
     }
 
+    // MARK: - What the stage says
+
+    /// Whether the plant is captioned.
+    ///
+    /// Off leaves the plant, the light it stands in, and a row of marks — and
+    /// not one word on screen. That is worth having for its own sake, and it
+    /// is also the only state of this app that is already in every language,
+    /// which is why the line underneath says so plainly rather than selling it
+    /// as a preference about clutter.
+    private var plantScreen: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Toggle(isOn: $namesPlant) {
+                Text("Name the plant on screen")
+                    .font(.system(size: 15, weight: .light))
+                    .foregroundStyle(Chrome.ink)
+            }
+            .tint(Chrome.muted)
+
+            Text("Off, the stage is the plant and the marks along the foot, in no language at all.")
+                .font(.system(size: 13, weight: .light))
+                .foregroundStyle(Chrome.muted)
+                .lineSpacing(4)
+        }
+    }
+
     // MARK: - The place a note arrives holding
 
     /// A standing answer for the Where field.
@@ -224,6 +252,18 @@ struct SettingsView: View {
                 .font(.system(size: 13, weight: .light))
                 .foregroundStyle(Chrome.muted)
                 .lineSpacing(4)
+
+            // Moved here from the seed screen, which was carrying a switch and
+            // a paragraph that both belonged with the other standing choices.
+            // The paragraph came with the switch rather than being dropped: it
+            // is the plainest account this app gives of what leaves the phone,
+            // and losing it to a tidy-up would have been the tidy-up costing
+            // more than it saved.
+            Text("When you meet someone, your phones exchange your seed, your name, and a random number for that meeting. That is everything that crosses between you, and it goes directly from phone to phone. A seed cannot be turned back into anything about you or your phone.")
+                .font(.system(size: 13, weight: .light))
+                .foregroundStyle(Chrome.muted)
+                .lineSpacing(4)
+                .padding(.top, 2)
         }
     }
 

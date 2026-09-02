@@ -21,7 +21,7 @@ struct SeedOfferView: View {
         ZStack {
             Color.black.ignoresSafeArea()
 
-            VStack(spacing: 26) {
+            VStack(spacing: 22) {
                 Spacer()
 
                 // The heading voice, not the serif one. `plantName` is italic
@@ -37,41 +37,45 @@ struct SeedOfferView: View {
                     // the thing it is about is a caption — read after the fact,
                     // if at all — and this one is the whole of what to do next.
                     // Said before the code, it is a sentence somebody acts on.
-                    //
-                    // At `ink` rather than `muted`, too. Thirteen-point light
-                    // grey at 0.55 on black is at the edge of legible, and this
-                    // is the one line on the screen that has to be read.
-                    Text("Have them point their camera at this. A plant grows on their phone from your seed and one drawn for them.")
+                    Text("If they scan this QR code, a plant will grow on both of your phones. It is a mix of the unique seeds on them.")
                         .font(.system(size: 15, weight: .light))
-                        .foregroundStyle(Chrome.ink.opacity(0.84))
+                        .foregroundStyle(Chrome.ink.opacity(0.88))
                         .multilineTextAlignment(.center)
                         .lineSpacing(5)
-                        .padding(.horizontal, 34)
+                        .padding(.horizontal, 30)
 
                     Image(uiImage: code)
                         .interpolation(.none)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 220, height: 220)
-                        .padding(18)
+                        .frame(width: 210, height: 210)
+                        .padding(16)
                         .background(Color.white)
                         .clipShape(RoundedRectangle(cornerRadius: 4))
 
-                    sending(offer: offer, code: code)
+                    // Between the code and the ways of sending it, because it
+                    // is about the code rather than about the screen. At the
+                    // foot it was a colophon nobody read, in a grey nobody
+                    // could read it in.
+                    Text("This code is unique to this exchange. Make a new one for every new person you meet and unique plants will grow.")
+                        .font(.system(size: 13, weight: .light))
+                        .foregroundStyle(Chrome.muted)
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(4)
+                        .padding(.horizontal, 30)
+
+                    // The row sits at the foot, level with the marks on the
+                    // stage, rather than floating under the code. Every screen
+                    // in the app now puts what you can do in the same band.
+                    Spacer()
+                    sending(link: offer, code: code)
+                        .padding(.bottom, 30)
                 } else {
                     Text("This seed could not be prepared.")
                         .font(.system(size: 14, weight: .light))
                         .foregroundStyle(Chrome.muted)
+                    Spacer()
                 }
-
-                Spacer()
-
-                Text("Each code is for one meeting. Make a new one next time and a different plant grows.")
-                    .chromeLabel(size: 10)
-                    .foregroundStyle(Chrome.faint)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 44)
-                    .padding(.bottom, 34)
             }
             .frame(maxWidth: Chrome.readableWidth)
             .frame(maxWidth: .infinity)
@@ -109,25 +113,25 @@ struct SeedOfferView: View {
     /// eats URLs — but it cannot be tapped, so it is offered beside the link
     /// and never instead of it.
     @ViewBuilder
-    private func sending(offer: URL, code: UIImage) -> some View {
+    private func sending(link: URL, code: UIImage) -> some View {
         VStack(spacing: 12) {
             Button { sharing = true } label: {
-                Text("Send the link")
+                Text("Send link")
                     .chromeLabel()
                     .foregroundStyle(Chrome.ink)
                     .pressable(isProminent: true)
             }
             .buttonStyle(.plain)
             .sheet(isPresented: $sharing) {
-                ActivitySheet(items: [SeedInvitation(url: offer, code: code)])
+                ActivitySheet(items: [SeedInvitation(url: link, code: code)])
             }
 
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
                 Button {
-                    UIPasteboard.general.string = offer.absoluteString
+                    UIPasteboard.general.string = link.absoluteString
                     copied += 1
                 } label: {
-                    Text(copied > 0 ? "Link copied" : "Copy the link")
+                    Text(copied > 0 ? "Link copied" : "Copy link")
                         .chromeLabel()
                         .foregroundStyle(copied > 0 ? Chrome.pinkGold : Chrome.muted)
                         .pressable()
@@ -141,12 +145,32 @@ struct SeedOfferView: View {
                     item: Image(uiImage: code),
                     preview: SharePreview(SeedInvitation.subject, image: Image(uiImage: code))
                 ) {
-                    Text("Send the code")
+                    Text("Send QR code")
                         .chromeLabel()
                         .foregroundStyle(Chrome.muted)
                         .pressable()
                 }
             }
+
+            // A fresh code without leaving the screen.
+            //
+            // The screen already draws a new nonce every time it opens, so
+            // somebody standing with three people could get three different
+            // codes by closing and reopening it three times. Nobody would
+            // guess that, and nobody should have to: the sentence above says
+            // to make a new one for every person, so the screen has to offer
+            // one.
+            Button {
+                offer = model.makeOffer()
+                copied = 0
+            } label: {
+                Text("Draw a new one")
+                    .chromeLabel(size: 10)
+                    .foregroundStyle(Chrome.faint)
+                    .pressable(horizontal: 14)
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 2)
         }
     }
 
