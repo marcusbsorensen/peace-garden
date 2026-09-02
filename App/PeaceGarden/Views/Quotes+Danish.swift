@@ -1,0 +1,2262 @@
+import Foundation
+
+/// The Danish bank, which is not the English one said in Danish.
+///
+/// It keeps the same rules and the same thirty subthemes, and almost none of
+/// the same lines. The etymologies had to be rebuilt from the ground: that
+/// quiet and quit are one word is a fact about English and says nothing here,
+/// where the word histories worth having are fred and fri, bog and bøg, fælle
+/// and félag, tale and tælle. The quotations are Danish wherever a Danish poet
+/// said the thing better — Kingo, Ingemann, Blicher, Thøger Larsen, Andersen,
+/// Grundtvig — and are rendered plainly, and said to be, where the author wrote
+/// in another language and no public-domain Danish translation could be
+/// established. Facts travel, so they are here, written from scratch rather
+/// than translated; and where a Danish fact does the same work — Grenen, Møns
+/// Klint, the eel and the Sargasso Sea — it is used instead.
+///
+/// The shipping rules bind exactly as they do next door: every named author
+/// long out of copyright, every definition and etymology written rather than
+/// lifted, sayings that cannot be pinned to a person credited as ordsprog, and
+/// nothing included that could not be established. It speaks du, because the
+/// app is talking to one person about their own plant.
+extension Quotes {
+    static let danish: [Passage] = [
+
+        // MARK: Beginnings
+
+        Passage(
+            text: "Spiring: det øjeblik hvor et frø holder op med at være et forråd og bliver en plante. Det kan ikke tages tilbage.",
+            source: "Botanik",
+            theme: .beginnings,
+            subtheme: .theFirstAct
+        ),
+        Passage(
+            text: "Det første, et frø gør, er at drikke. Intet vokser, før vandet er kommet ind.",
+            source: "Botanik",
+            theme: .beginnings,
+            subtheme: .theFirstAct
+        ),
+        Passage(
+            text: "Kimrod: den første rod, og den første del der forlader frøet. Noget går nedad, før noget går opad.",
+            source: "Botanik",
+            theme: .beginnings,
+            subtheme: .theFirstAct
+        ),
+        Passage(
+            text: "Kimblad: bladet der blev pakket ned, længe før der var lys at bruge det til, og som ofte slet ikke ligner dem, der følger efter.",
+            source: "Botanik",
+            theme: .beginnings,
+            subtheme: .theFirstAct
+        ),
+        Passage(
+            text: "Frøhvide: madpakken omkring kimen. Mel, gryn og brød er for det meste frøhvide, vi har taget fra en anden begyndelse.",
+            source: "Botanik",
+            theme: .beginnings,
+            subtheme: .theFirstAct
+        ),
+        Passage(
+            text: "Vækstpunkt: den lille plet, hvor cellerne stadig deler sig. Alt hvad planten nogensinde bliver, kommer ud af nogle få af dem.",
+            source: "Botanik",
+            theme: .beginnings,
+            subtheme: .theFirstAct
+        ),
+        Passage(
+            text: "En kimplante afgør, hvad der er op og ned, før den har mødt overfladen. Den ene ende følger lyset, den anden følger tyngden.",
+            source: "Tropismer",
+            theme: .beginnings,
+            subtheme: .theFirstAct
+        ),
+        Passage(
+            text: "En blomsterplante befrugtes to gange på én gang: den ene kerne bliver til kimen, den anden til det forråd, der pakkes omkring den.",
+            source: "Dobbelt befrugtning",
+            theme: .beginnings,
+            subtheme: .theFirstAct
+        ),
+        Passage(
+            text: "Spirekraft: hvor stor en del af et parti frø der stadig kan spire. Den kan kun måles ved at prøve at få dem til det.",
+            source: "Botanik",
+            theme: .beginnings,
+            subtheme: .theFirstAct
+        ),
+        Passage(
+            text: "Erantis og vintergæk blomstrer, mens jorden endnu er frossen, på mad de lagde til side sidste sommer. Blomsten er betalt, længe før den ses.",
+            source: "Eranthis og Galanthus",
+            theme: .beginnings,
+            subtheme: .theFirstAct
+        ),
+        Passage(
+            text: "Udspring er både det sted, hvor en å begynder, og det bøgen gør i maj. Dansk bruger ét ord om en kilde og om et blad, der folder sig ud.",
+            source: "Dansk",
+            theme: .beginnings,
+            subtheme: .theFirstAct
+        ),
+
+        Passage(
+            text: "Mange bække små gør en stor å.",
+            source: "Ordsprog",
+            theme: .beginnings,
+            subtheme: .smallToLarge
+        ),
+        Passage(
+            text: "Det gør ikke noget, at man er født i andegården, når man kun har ligget i et svaneæg.",
+            source: "H.C. Andersen, Den grimme ælling, 1843",
+            theme: .beginnings,
+            subtheme: .smallToLarge
+        ),
+        Passage(
+            text: "Det tungeste frø i verden er Seychellernes kokosnød, op mod femogtyve kilo. De letteste er orkidéfrø, hvor en million af dem vejer omkring et gram.",
+            source: "Frøstørrelser",
+            theme: .beginnings,
+            subtheme: .smallToLarge
+        ),
+        Passage(
+            text: "Orkidéfrø er fint som støv og har næsten ingen mad med. Hvert korn venter på en svamp, der vil made det ind i livet.",
+            source: "Orchidaceae",
+            theme: .beginnings,
+            subtheme: .smallToLarge
+        ),
+        Passage(
+            text: "En skovskade graver agern ned og glemmer en god del af dem. Derfor har det agern, en skade har båret væk, bedre udsigter end det, der bare falder.",
+            source: "Garrulus glandarius",
+            theme: .beginnings,
+            subtheme: .smallToLarge
+        ),
+        Passage(
+            text: "Et bambusskud kan lægge op mod en meter på et døgn, med celler der blev lagt, før det brød jorden.",
+            source: "Phyllostachys",
+            theme: .beginnings,
+            subtheme: .smallToLarge
+        ),
+        Passage(
+            text: "Møns Klint er hundrede meter kalk, bygget af skaller fra encellede alger. Hver skal er tusindedele af en millimeter.",
+            source: "Møns Klint",
+            theme: .beginnings,
+            subtheme: .smallToLarge
+        ),
+        Passage(
+            text: "En enkelt kornvalmue kan sætte tyve tusind frø, og de kan vente i jorden i årtier på, at nogen vender den om.",
+            source: "Papaver rhoeas",
+            theme: .beginnings,
+            subtheme: .smallToLarge
+        ),
+        Passage(
+            text: "At se en verden i et gran sand og en himmel i en vild blomst.",
+            source: "William Blake (1757–1827), gengivet enkelt",
+            theme: .beginnings,
+            subtheme: .smallToLarge
+        ),
+        Passage(
+            text: "En enkelt rugplante blev en gang målt op. Rødderne lagt efter hinanden nåede flere hundrede kilometer, og med rodhårene mange gange mere.",
+            source: "Rodmålinger, 1937",
+            theme: .beginnings,
+            subtheme: .smallToLarge
+        ),
+        Passage(
+            text: "Et spadestik tørv kan rumme pollenkorn nok til at læse en hel skovs historie. Hvert korn er en tyvendedel af en millimeter.",
+            source: "Pollenanalyse",
+            theme: .beginnings,
+            subtheme: .smallToLarge
+        ),
+
+        Passage(
+            text: "Enhver er sin egen lykkes smed.",
+            source: "Ordsprog",
+            theme: .beginnings,
+            subtheme: .whatAStartSettles
+        ),
+        Passage(
+            text: "Æblet falder ikke langt fra stammen.",
+            source: "Ordsprog",
+            theme: .beginnings,
+            subtheme: .whatAStartSettles
+        ),
+        Passage(
+            text: "Godt begyndt er halvt fuldendt.",
+            source: "Ordsprog",
+            theme: .beginnings,
+            subtheme: .whatAStartSettles
+        ),
+        Passage(
+            text: "Al begyndelse er svær.",
+            source: "Ordsprog",
+            theme: .beginnings,
+            subtheme: .whatAStartSettles
+        ),
+        Passage(
+            text: "Hvo intet vover, intet vinder.",
+            source: "Ordsprog",
+            theme: .beginnings,
+            subtheme: .whatAStartSettles
+        ),
+        Passage(
+            text: "Livet må forstås baglæns, men det må leves forlæns.",
+            source: "Søren Kierkegaard, journaloptegnelse, 1843",
+            theme: .beginnings,
+            subtheme: .whatAStartSettles
+        ),
+        Passage(
+            text: "Mit liv er et smukt eventyr, så rigt og lyksaligt.",
+            source: "H.C. Andersen, Mit Livs Eventyr, 1855",
+            theme: .beginnings,
+            subtheme: .whatAStartSettles
+        ),
+        Passage(
+            text: "Sår du en kerne fra et æble, kommer der en helt ny sort op. Derfor rejser navngivne æbler som podekviste og ikke som frø.",
+            source: "Malus domestica",
+            theme: .beginnings,
+            subtheme: .whatAStartSettles
+        ),
+        Passage(
+            text: "Æblesorten Filippa kom af en kerne, en kvinde på Sydfyn såede i sin have i 1880erne. Hvert Filippa-æble siden er en gren af det ene træ.",
+            source: "Filippa, Fyn",
+            theme: .beginnings,
+            subtheme: .whatAStartSettles
+        ),
+        Passage(
+            text: "De første bønder ses i pollendiagrammerne som et fald i elmens pollen og en stigning i vejbred. Et helt landskabsskifte, læst af støv i en mose.",
+            source: "Landnam, pollenanalyse",
+            theme: .beginnings,
+            subtheme: .whatAStartSettles
+        ),
+        Passage(
+            text: "Stevns Klint har en fingertyk stribe fiskeler. Under den er en verden, over den en anden, og laget blev lagt på ganske få år.",
+            source: "Stevns Klint",
+            theme: .beginnings,
+            subtheme: .whatAStartSettles
+        ),
+        Passage(
+            text: "Oprindelse er op og rinde: det sted, hvor noget rinder op af jorden, som en kilde gør i en eng.",
+            source: "Dansk",
+            theme: .beginnings,
+            subtheme: .whatAStartSettles
+        ),
+        Passage(
+            text: "Latin oriri, at stå op, giver både orient og original. Verdenshjørnet har navn efter det, solen gør der.",
+            source: "Latin",
+            theme: .beginnings,
+            subtheme: .whatAStartSettles
+        ),
+        Passage(
+            text: "Sæd er både det, der sås, og det man plejer at gøre. To gamle ord, der er faldet sammen til ét.",
+            source: "Dansk",
+            theme: .beginnings,
+            subtheme: .whatAStartSettles
+        ),
+        // MARK: Waiting
+
+        Passage(
+            text: "Spirehvile: et frø, der nægter at spire, selv om alt udenom er i orden. Det holdes tilbage indefra, indtil noget skifter.",
+            source: "Botanik",
+            theme: .waiting,
+            subtheme: .heldBack
+        ),
+        Passage(
+            text: "Et frø kan være helt klar og bare mangle vand og varme. Det er ikke spirehvile, og de to ting forveksles hele tiden.",
+            source: "Botanik",
+            theme: .waiting,
+            subtheme: .heldBack
+        ),
+        Passage(
+            text: "Stratificering: de uger med kulde, et frø skal igennem, før det vil begynde. Gartnere snyder det med en køleskabsskuffe.",
+            source: "Botanik",
+            theme: .waiting,
+            subtheme: .heldBack
+        ),
+        Passage(
+            text: "Skarificering: at slide hul på frøskallen, så vandet kan komme ind. Ude i det fri klarer en vinters frost, en brand eller en tarm det arbejde.",
+            source: "Botanik",
+            theme: .waiting,
+            subtheme: .heldBack
+        ),
+        Passage(
+            text: "Vernalisering: den lange kulde, en plante skal igennem, før foråret kan flytte den. Vinterhvede sået om foråret sætter aldrig aks.",
+            source: "Botanik",
+            theme: .waiting,
+            subtheme: .heldBack
+        ),
+        Passage(
+            text: "En ung bøg holder på sine døde blade hele vinteren og slipper dem først, når de nye knopper skubber dem af.",
+            source: "Marcescens",
+            theme: .waiting,
+            subtheme: .heldBack
+        ),
+        Passage(
+            text: "Nogle ørkenfrø bærer et stof på skallen, som en bestemt mængde regn skal vaske af. En let byge kan ikke narre dem i gang.",
+            source: "Spiringshæmmere",
+            theme: .waiting,
+            subtheme: .heldBack
+        ),
+        Passage(
+            text: "Kornvalmuens frø kan ligge i jorden i årtier. De spirer, når nogen graver, så en valmuemark er et sted, hvor jorden er blevet vendt.",
+            source: "Papaver rhoeas",
+            theme: .waiting,
+            subtheme: .heldBack
+        ),
+        Passage(
+            text: "Knopperne bliver gjort færdige om sommeren og sidder vinteren over med næste års blade pakket ned. Foråret pakker kun ud.",
+            source: "Knopanlæg",
+            theme: .waiting,
+            subtheme: .heldBack
+        ),
+        Passage(
+            text: "Bøgen springer ud, når den har fået kulde nok først. Uden en ordentlig vinter kommer foråret senere, ikke tidligere.",
+            source: "Fagus sylvatica",
+            theme: .waiting,
+            subtheme: .heldBack
+        ),
+        Passage(
+            text: "Længsel er lang. At længes er at mærke tiden blive lang, og ordet siger ikke andet.",
+            source: "Dansk",
+            theme: .waiting,
+            subtheme: .heldBack
+        ),
+
+        Passage(
+            text: "Et daddelfrø fra Masada, omkring to tusind år gammelt, blev sået i 2005 og spirede. Træet hedder Metusalem.",
+            source: "Phoenix dactylifera, Israel",
+            theme: .waiting,
+            subtheme: .theLongCount
+        ),
+        Passage(
+            text: "Jordegern gravede frugter ned i Sibirien for omkring toogtredive tusind år siden. I 2012 blev vævet inde i dem dyrket op til hele blomstrende planter.",
+            source: "Silene stenophylla, 2012",
+            theme: .waiting,
+            subtheme: .theLongCount
+        ),
+        Passage(
+            text: "Et lotusfrø fra en gammel søbund i Liaoning spirede efter omkring tretten hundrede år, og planten står der endnu.",
+            source: "Nelumbo nucifera",
+            theme: .waiting,
+            subtheme: .theLongCount
+        ),
+        Passage(
+            text: "Frø blev lagt i flasker og gravet ned i 1879. En flaske åbnet i 2021 rummede stadig frø, der vågnede og voksede.",
+            source: "Beals forsøg, Michigan",
+            theme: .waiting,
+            subtheme: .theLongCount
+        ),
+        Passage(
+            text: "Rav på vestkysten er harpiks fra skove, der stod for omkring fyrre millioner år siden. Et insekt, der satte sig fast i en dråbe, ligger der stadig.",
+            source: "Rav",
+            theme: .waiting,
+            subtheme: .theLongCount
+        ),
+        Passage(
+            text: "En titanarum kan samle kræfter i syv år eller mere, og blomsten er forbi på to dage.",
+            source: "Amorphophallus titanum",
+            theme: .waiting,
+            subtheme: .theLongCount
+        ),
+        Passage(
+            text: "Nogle bambusarter blomstrer én gang, alle sammen, over hele verden, efter mere end hundrede år. Planter fra samme stok holder samme ur.",
+            source: "Phyllostachys bambusoides",
+            theme: .waiting,
+            subtheme: .theLongCount
+        ),
+        Passage(
+            text: "Kongeegen i Nordskoven anslås at være over tusind år gammel. Den var voksen, længe før der stod en kirke i sognet.",
+            source: "Kongeegen, Jægerspris",
+            theme: .waiting,
+            subtheme: .theLongCount
+        ),
+        Passage(
+            text: "Døgnfluens larve lever et år eller mere under vandet. Det voksne dyr, som det hele handler om, har et døgn.",
+            source: "Ephemeroptera",
+            theme: .waiting,
+            subtheme: .theLongCount
+        ),
+        Passage(
+            text: "Egtvedpigens kiste blev lukket en sommerdag for over tre tusind år siden. Der lå en røllike i den, og blomsten er det, der fortæller os årstiden.",
+            source: "Egtvedpigen",
+            theme: .waiting,
+            subtheme: .theLongCount
+        ),
+        Passage(
+            text: "Tollundmanden lå i mosen i omkring to tusind fire hundrede år. Hans sidste måltid var grød af korn og markens frø, og frøene kan stadig artsbestemmes.",
+            source: "Tollundmanden",
+            theme: .waiting,
+            subtheme: .theLongCount
+        ),
+        Passage(
+            text: "Cikader i Nordamerika bliver tretten eller sytten år under jorden og kommer op på én gang. Begge tal er primtal, og det gør dem meget svære at følge.",
+            source: "Magicicada",
+            theme: .waiting,
+            subtheme: .theLongCount
+        ),
+
+        Passage(
+            text: "Den, der venter på noget godt, venter aldrig for længe.",
+            source: "Ordsprog",
+            theme: .waiting,
+            subtheme: .standingAndWatching
+        ),
+        Passage(
+            text: "Hastværk er lastværk.",
+            source: "Ordsprog",
+            theme: .waiting,
+            subtheme: .standingAndWatching
+        ),
+        Passage(
+            text: "Man skal ikke sælge skindet, før bjørnen er skudt.",
+            source: "Ordsprog",
+            theme: .waiting,
+            subtheme: .standingAndWatching
+        ),
+        Passage(
+            text: "En svale gør ingen sommer.",
+            source: "Ordsprog",
+            theme: .waiting,
+            subtheme: .standingAndWatching
+        ),
+        Passage(
+            text: "Ros dagen, når det er aften.",
+            source: "Hávamál, gengivet enkelt",
+            theme: .waiting,
+            subtheme: .standingAndWatching
+        ),
+        Passage(
+            text: "Sig nærmer tiden, da jeg må væk, jeg hører vinterens stemme.",
+            source: "Steen Steensen Blicher, Trækfuglene, 1838",
+            theme: .waiting,
+            subtheme: .standingAndWatching
+        ),
+        Passage(
+            text: "Den kedsom vinter gik sin gang, den dag så kort, den nat så lang.",
+            source: "Ambrosius Stub (1705–1758)",
+            theme: .waiting,
+            subtheme: .standingAndWatching
+        ),
+        Passage(
+            text: "Marken er mejet, og høet er høstet.",
+            source: "Mads Hansen (1834–1880)",
+            theme: .waiting,
+            subtheme: .standingAndWatching
+        ),
+        Passage(
+            text: "Kyndelmisse slår sin knude, overmåde hvas og hård.",
+            source: "Dansk vejrrim",
+            theme: .waiting,
+            subtheme: .standingAndWatching
+        ),
+        Passage(
+            text: "Høst betød engang selve årstiden, og på svensk og norsk gør ordet det stadig. Dansk kaldte årstiden efterår og lod arbejdet beholde navnet.",
+            source: "Dansk",
+            theme: .waiting,
+            subtheme: .standingAndWatching
+        ),
+        Passage(
+            text: "Patient kommer af latin pati, at bære og at tåle. Den, der venter, og den, der er syg, bærer det samme ord.",
+            source: "Latin",
+            theme: .waiting,
+            subtheme: .standingAndWatching
+        ),
+        Passage(
+            text: "Gartnerens skygge er den bedste gødning.",
+            source: "Gartnerordsprog",
+            theme: .waiting,
+            subtheme: .standingAndWatching
+        ),
+        Passage(
+            text: "Én slægt planter træerne, en anden får skyggen.",
+            source: "Kinesisk ordsprog",
+            theme: .waiting,
+            subtheme: .standingAndWatching
+        ),
+        // MARK: Renewal
+
+        Passage(
+            text: "Stævning: at skære et træ helt ned med jævne mellemrum, hvilket ikke gør en ende på det, men begynder det igen. En stub kan holdes i live i århundreder.",
+            source: "Skovbrug",
+            theme: .renewal,
+            subtheme: .cutAndComeAgain
+        ),
+        Passage(
+            text: "En stævnet lind i en gammel skov kan være ældre end kirken ved siden af. Træet skæres ned hvert tiende år, og rødderne har aldrig holdt pause.",
+            source: "Stævningsskov",
+            theme: .renewal,
+            subtheme: .cutAndComeAgain
+        ),
+        Passage(
+            text: "Serotini: frø, der holdes inde i en kogle lukket med harpiks, og som kun åbner sig i varmen fra en brand.",
+            source: "Botanik",
+            theme: .renewal,
+            subtheme: .cutAndComeAgain
+        ),
+        Passage(
+            text: "Epikormiske skud kommer fra knopper, der har ventet i årevis under barken og vågner, når kronen over dem er væk.",
+            source: "Botanik",
+            theme: .renewal,
+            subtheme: .cutAndComeAgain
+        ),
+        Passage(
+            text: "Græsser vokser fra bunden og ikke fra spidsen. Derfor slår en le ikke en eng ihjel, men holder den åben.",
+            source: "Poaceae",
+            theme: .renewal,
+            subtheme: .cutAndComeAgain
+        ),
+        Passage(
+            text: "Hedelyng bliver tredive-fyrre år og så træet og tynd. Brænder eller skrælles den af, kommer den igen fra frø, der har ligget og ventet under den.",
+            source: "Calluna vulgaris",
+            theme: .renewal,
+            subtheme: .cutAndComeAgain
+        ),
+        Passage(
+            text: "En pil skåret ned til stubben skyder igen fra siden. En stynet pil ved et dige kan være ældre end huset, den hører til.",
+            source: "Salix",
+            theme: .renewal,
+            subtheme: .cutAndComeAgain
+        ),
+        Passage(
+            text: "Skovmærke dufter først, når den er skåret og ved at tørre. Duften er noget, planten laver på vej ud.",
+            source: "Galium odoratum",
+            theme: .renewal,
+            subtheme: .cutAndComeAgain
+        ),
+        Passage(
+            text: "Efter udbruddet på Mount St Helens i 1980 var de første planter ikke nogen, der kom til, men nogen der var under jorden eller under sneen, da det skete.",
+            source: "Mount St Helens, 1980",
+            theme: .renewal,
+            subtheme: .cutAndComeAgain
+        ),
+        Passage(
+            text: "Seks ginkgotræer inden for to kilometer af sprængningen over Hiroshima kom igennem den, satte blade igen og lever i dag.",
+            source: "Hibakujumoku, Hiroshima",
+            theme: .renewal,
+            subtheme: .cutAndComeAgain
+        ),
+        Passage(
+            text: "Hyldemor skal spørges om lov, før man skærer i hylden. Man tager hatten af og siger det højt.",
+            source: "Dansk folketro",
+            theme: .renewal,
+            subtheme: .cutAndComeAgain
+        ),
+
+        Passage(
+            text: "Nu falmer skoven trindt om land.",
+            source: "B.S. Ingemann (1789–1862)",
+            theme: .renewal,
+            subtheme: .theTurningYear
+        ),
+        Passage(
+            text: "I sne står urt og busk i skjul.",
+            source: "B.S. Ingemann (1789–1862)",
+            theme: .renewal,
+            subtheme: .theTurningYear
+        ),
+        Passage(
+            text: "Du danske sommer, jeg elsker dig, skønt du så ofte har sveget mig.",
+            source: "Thøger Larsen (1875–1928)",
+            theme: .renewal,
+            subtheme: .theTurningYear
+        ),
+        Passage(
+            text: "Det haver så nyligen regnet, det har stormet og pisket i vor lund.",
+            source: "Johan Ottosen, 1890",
+            theme: .renewal,
+            subtheme: .theTurningYear
+        ),
+        Passage(
+            text: "Alting har sin tid, og hver ting under himlen sin stund.",
+            source: "Prædikerens Bog, gengivet enkelt",
+            theme: .renewal,
+            subtheme: .theTurningYear
+        ),
+        Passage(
+            text: "Kodriveren har navn efter arbejdet. Den blomstrer, når køerne drives på græs.",
+            source: "Primula veris",
+            theme: .renewal,
+            subtheme: .theTurningYear
+        ),
+        Passage(
+            text: "Vintergækken er den, der gækker vinteren. Den blomstrer, mens der endnu kan komme sne oven på den.",
+            source: "Galanthus nivalis",
+            theme: .renewal,
+            subtheme: .theTurningYear
+        ),
+        Passage(
+            text: "Løvfald er ikke noget, bladet taber. Træet henter kvælstoffet og fosforen hjem først, og efterårsfarven er det, der er tilbage bagefter.",
+            source: "Bladvisning",
+            theme: .renewal,
+            subtheme: .theTurningYear
+        ),
+        Passage(
+            text: "Solhverv er solens vending. Latin siger solstitium, at solen står stille: samme dage, to helt forskellige billeder.",
+            source: "Dansk og latin",
+            theme: .renewal,
+            subtheme: .theTurningYear
+        ),
+        Passage(
+            text: "Jævndøgn: den dag, hvor lys og mørke deles lige. Dansk har ét ord for et helt døgn, som mange sprog må sige med to.",
+            source: "Dansk",
+            theme: .renewal,
+            subtheme: .theTurningYear
+        ),
+        Passage(
+            text: "De gamle danske månedsnavne fulgte arbejdet snarere end kalenderen: blidemåned, høstmåned, slagtemåned, julemåned.",
+            source: "Gamle månedsnavne",
+            theme: .renewal,
+            subtheme: .theTurningYear
+        ),
+        Passage(
+            text: "Forår er årets forende og efterår dets bagende. Vår, det gamle nordiske ord for foråret, lever endnu i vårbrud og i digte.",
+            source: "Dansk",
+            theme: .renewal,
+            subtheme: .theTurningYear
+        ),
+
+        Passage(
+            text: "Hel, helbred, helse og hellig er ét ord: det ubeskadigede.",
+            source: "Dansk",
+            theme: .renewal,
+            subtheme: .madeWhole
+        ),
+        Passage(
+            text: "At hilse er at ønske nogen hel. Hilsenen er den ældste måde at ville nogen det godt på.",
+            source: "Dansk",
+            theme: .renewal,
+            subtheme: .madeWhole
+        ),
+        Passage(
+            text: "Halt kan ride, enhåndet kan vogte hjord, den døve kan kæmpe og du. Der er brug for enhver, der er til.",
+            source: "Hávamál, gengivet enkelt",
+            theme: .renewal,
+            subtheme: .madeWhole
+        ),
+        Passage(
+            text: "Kintsugi: at lime knust keramik med guld, så reparationen bliver det mest synlige ved skålen.",
+            source: "Japansk",
+            theme: .renewal,
+            subtheme: .madeWhole
+        ),
+        Passage(
+            text: "Efter regn kommer solskin.",
+            source: "Ordsprog",
+            theme: .renewal,
+            subtheme: .madeWhole
+        ),
+        Passage(
+            text: "Fald syv gange, rejs dig otte.",
+            source: "Japansk ordsprog",
+            theme: .renewal,
+            subtheme: .madeWhole
+        ),
+        Passage(
+            text: "Sorrig og glæde de vandre til hobe.",
+            source: "Thomas Kingo, 1681",
+            theme: .renewal,
+            subtheme: .madeWhole
+        ),
+        Passage(
+            text: "Hvad udad tabes, det må indad vindes.",
+            source: "H.P. Holst, 1872",
+            theme: .renewal,
+            subtheme: .madeWhole
+        ),
+        Passage(
+            text: "Resurgam: jeg skal stå op igen. Skrevet på gravsten som en påstand og ikke som et håb.",
+            source: "Latin",
+            theme: .renewal,
+            subtheme: .madeWhole
+        ),
+        Passage(
+            text: "Anastasis: en oprejsning. Biologer har lånt ordet om celler, der begynder at dø og så kommer sig igen.",
+            source: "Græsk",
+            theme: .renewal,
+            subtheme: .madeWhole
+        ),
+        Passage(
+            text: "Renæssance er latin renasci, at fødes igen. En hel tidsalder blev opkaldt efter det, en plante gør.",
+            source: "Latin",
+            theme: .renewal,
+            subtheme: .madeWhole
+        ),
+        Passage(
+            text: "Storken var så godt som væk fra landet. Nogle få par kommer igen, til reder folk har holdt ved lige i årtier uden at vide, om nogen ville lande.",
+            source: "Ciconia ciconia",
+            theme: .renewal,
+            subtheme: .madeWhole
+        ),
+        // MARK: Light
+
+        Passage(
+            text: "Morgenstund har guld i mund.",
+            source: "Ordsprog",
+            theme: .light,
+            subtheme: .theEdgesOfTheDay
+        ),
+        Passage(
+            text: "Nu rinder solen op af østerlide.",
+            source: "Thomas Kingo, 1674",
+            theme: .light,
+            subtheme: .theEdgesOfTheDay
+        ),
+        Passage(
+            text: "Danmark, nu blunder den lyse nat bag ved din seng, når du sover.",
+            source: "Thøger Larsen, 1914",
+            theme: .light,
+            subtheme: .theEdgesOfTheDay
+        ),
+        Passage(
+            text: "Mosekonen brygger, siger man, når tågen står lavt over engen ved solnedgang.",
+            source: "Dansk folketro",
+            theme: .light,
+            subtheme: .theEdgesOfTheDay
+        ),
+        Passage(
+            text: "I mange danske kirker ringes solen ned, så klokken flytter sig en smule hver eneste dag året igennem.",
+            source: "Solnedgangsringning",
+            theme: .light,
+            subtheme: .theEdgesOfTheDay
+        ),
+        Passage(
+            text: "Sankthansnat er årets korteste. På Skagen går solen ned lidt over ti, og himlen bliver aldrig helt mørk.",
+            source: "Midsommer",
+            theme: .light,
+            subtheme: .theEdgesOfTheDay
+        ),
+        Passage(
+            text: "Skumring: den halve time, hvor ting stadig kan ses, men deres farver ikke kan.",
+            source: "Dansk",
+            theme: .light,
+            subtheme: .theEdgesOfTheDay
+        ),
+        Passage(
+            text: "Tusmørke: lyset mellem dag og nat, som hverken hører til den ene eller den anden.",
+            source: "Dansk",
+            theme: .light,
+            subtheme: .theEdgesOfTheDay
+        ),
+        Passage(
+            text: "Daggry: at gry er at lysne. Ordet gør ikke andet end at beskrive, hvad dagen selv laver.",
+            source: "Dansk",
+            theme: .light,
+            subtheme: .theEdgesOfTheDay
+        ),
+        Passage(
+            text: "Krepuskulær: hjemme i lyset ved skumring og gry, som hverken er dag eller nat.",
+            source: "Latin",
+            theme: .light,
+            subtheme: .theEdgesOfTheDay
+        ),
+        Passage(
+            text: "Alpenglød: det røde, der bliver tilbage på et bjerg, når solen er gået fra alt nedenunder.",
+            source: "Tysk",
+            theme: .light,
+            subtheme: .theEdgesOfTheDay
+        ),
+
+        Passage(
+            text: "Fotoperiodisme: en plante bestemmer sin blomstring ved at måle nattens længde. Den tæller mørket og ikke lyset.",
+            source: "Botanik",
+            theme: .light,
+            subtheme: .readingTheLight
+        ),
+        Passage(
+            text: "Etiolering: den blege, strakte vækst hos en plante i mørke, som strækker sig efter et lys, der ikke er der.",
+            source: "Botanik",
+            theme: .light,
+            subtheme: .readingTheLight
+        ),
+        Passage(
+            text: "Heliotropisme: at dreje med gennem dagen, så ansigtet bliver ved med at vende mod solen.",
+            source: "Botanik",
+            theme: .light,
+            subtheme: .readingTheLight
+        ),
+        Passage(
+            text: "Nyktinasti: blade og kroner, der lukker sig i skumringen og åbner igen med lyset.",
+            source: "Botanik",
+            theme: .light,
+            subtheme: .readingTheLight
+        ),
+        Passage(
+            text: "Antese: den tid, en blomst står åben, fra den folder sig ud til den er forbi.",
+            source: "Botanik",
+            theme: .light,
+            subtheme: .readingTheLight
+        ),
+        Passage(
+            text: "Blade er grønne, fordi klorofyl bruger dagslysets røde og blå og kaster det grønne tilbage. En plante har farve af det lys, den ikke kan bruge.",
+            source: "Klorofyl",
+            theme: .light,
+            subtheme: .readingTheLight
+        ),
+        Passage(
+            text: "Nogle blomster har mønstre i ultraviolet, der løber ind mod midten som en landingsbane. En bi ser dem, vi gør ikke.",
+            source: "Honninganvisere",
+            theme: .light,
+            subtheme: .readingTheLight
+        ),
+        Passage(
+            text: "Kun nogle få procent af lyset over en bøgeskov når bunden. Derfor er anemonerne færdige, før bøgen springer ud.",
+            source: "Skovbund",
+            theme: .light,
+            subtheme: .readingTheLight
+        ),
+        Passage(
+            text: "Unge solsikker følger solen mod vest og drejer tilbage mod øst om natten. De udvoksede står stille mod øst, hvor morgenvarmen henter bierne tidligere.",
+            source: "Science, 2016",
+            theme: .light,
+            subtheme: .readingTheLight
+        ),
+        Passage(
+            text: "Natviolen dufter først, når det bliver mørkt. Den er ikke ude efter bier, men efter natsværmere.",
+            source: "Platanthera bifolia",
+            theme: .light,
+            subtheme: .readingTheLight
+        ),
+        Passage(
+            text: "Tusindfryd: tusind glæder i én lille blomst. Den lukker sig om aftenen og åbner igen, når lyset kommer tilbage.",
+            source: "Bellis perennis",
+            theme: .light,
+            subtheme: .readingTheLight
+        ),
+        Passage(
+            text: "Solsorten synger stærkest i den halve time før solopgang og den halve time efter solnedgang.",
+            source: "Turdus merula",
+            theme: .light,
+            subtheme: .readingTheLight
+        ),
+
+        Passage(
+            text: "Ole Rømer regnede i 1676 lysets fart ud ved at se på, hvornår Jupiters måner forsvandt. Han fandt, at lys tager tid, og det havde ingen troet før.",
+            source: "Ole Rømer, 1676",
+            theme: .light,
+            subtheme: .lightItself
+        ),
+        Passage(
+            text: "Solvognen fra Trundholm er kun forgyldt på den ene side. Den side er dagens, og den anden er vejen tilbage gennem natten.",
+            source: "Solvognen",
+            theme: .light,
+            subtheme: .lightItself
+        ),
+        Passage(
+            text: "Tycho Brahe så i 1572 en stjerne, der ikke havde været der. Himlen skulle være uforanderlig, og det var den så ikke.",
+            source: "Tycho Brahe, 1572",
+            theme: .light,
+            subtheme: .lightItself
+        ),
+        Passage(
+            text: "Lyset er otte minutter om at nå fra solen til et blad, efter at have brugt titusinder af år på at komme fra solens indre ud til dens overflade.",
+            source: "Solfysik",
+            theme: .light,
+            subtheme: .lightItself
+        ),
+        Passage(
+            text: "En fuldmåne er omkring fire hundrede tusind gange svagere end solen, og øjet stiller så grundigt om, at det slet ikke føles sådan.",
+            source: "Månelys",
+            theme: .light,
+            subtheme: .lightItself
+        ),
+        Passage(
+            text: "Nordlys ses fra Danmark nogle få gange om året. Det, man ser, er luften, der lyser, og ikke lyset selv.",
+            source: "Nordlys",
+            theme: .light,
+            subtheme: .lightItself
+        ),
+        Passage(
+            text: "Hvad solskin er for det sorte muld, er sand oplysning for muldets frænde.",
+            source: "N.F.S. Grundtvig (1783–1872)",
+            theme: .light,
+            subtheme: .lightItself
+        ),
+        Passage(
+            text: "Det er i dag et vejr, et solskinsvejr.",
+            source: "Ludvig Holstein, 1895",
+            theme: .light,
+            subtheme: .lightItself
+        ),
+        Passage(
+            text: "Dejlig er jorden, prægtig er Guds himmel.",
+            source: "B.S. Ingemann, 1850",
+            theme: .light,
+            subtheme: .lightItself
+        ),
+        Passage(
+            text: "Måned og måne er samme ord. Månederne begyndte som det, månen gjorde.",
+            source: "Dansk",
+            theme: .light,
+            subtheme: .lightItself
+        ),
+        Passage(
+            text: "Vindue er oldnordisk vindauga, vindøje. Det var et hul for vejret, før det blev et hul for lyset.",
+            source: "Oldnordisk",
+            theme: .light,
+            subtheme: .lightItself
+        ),
+        Passage(
+            text: "Latin lux ligger under lucid og under Lucifer, lysbæreren. At gøre noget klart er stadig at kaste lys på det.",
+            source: "Latin",
+            theme: .light,
+            subtheme: .lightItself
+        ),
+        Passage(
+            text: "Fosforos er græsk for lysbærer. Det var morgenstjernens navn, længe før det blev et grundstofs.",
+            source: "Græsk",
+            theme: .light,
+            subtheme: .lightItself
+        ),
+        // MARK: Pattern
+
+        Passage(
+            text: "Tale, tal og tælle er ét ord. At fortælle noget er at tælle det op.",
+            source: "Dansk",
+            theme: .pattern,
+            subtheme: .counted
+        ),
+        Passage(
+            text: "En snes er tyve, og ordet var oprindelig den pind, man trak tyve ting på for at kunne holde styr på dem.",
+            source: "Dansk",
+            theme: .pattern,
+            subtheme: .counted
+        ),
+        Passage(
+            text: "Halvtreds er halvtredsindstyve: to og en halv gang tyve. De danske tal over fyrre tæller stadig i snese.",
+            source: "Dansk",
+            theme: .pattern,
+            subtheme: .counted
+        ),
+        Passage(
+            text: "Halv tre er halvvejs til tre og ikke halvvejs efter to. Dansk regner opad mod den time, der kommer.",
+            source: "Dansk",
+            theme: .pattern,
+            subtheme: .counted
+        ),
+        Passage(
+            text: "En dansk mil var 7.532 meter helt frem til 1907, hvor metersystemet fik det sidste ord.",
+            source: "Dansk mål",
+            theme: .pattern,
+            subtheme: .counted
+        ),
+        Passage(
+            text: "En tønde land var den jord, der kunne sås med en tønde korn. Målet siger, hvad marken skal bruges til, snarere end hvor stor den er.",
+            source: "Dansk mål",
+            theme: .pattern,
+            subtheme: .counted
+        ),
+        Passage(
+            text: "En favn er, hvad to arme kan nå om. Alen, tomme og fod er også kroppen, brugt som målestok.",
+            source: "Dansk mål",
+            theme: .pattern,
+            subtheme: .counted
+        ),
+        Passage(
+            text: "Nye blade sættes omkring 137,5 grader fra det forrige, den ene vinkel hvor hvert blad beholder sin del af lyset.",
+            source: "Bladstilling, den gyldne vinkel",
+            theme: .pattern,
+            subtheme: .counted
+        ),
+        Passage(
+            text: "Tæl spiralerne i en solsikke hver vej, og du lander næsten altid på to nabotal i Fibonaccis række, for eksempel 34 og 55.",
+            source: "Helianthus annuus",
+            theme: .pattern,
+            subtheme: .counted
+        ),
+        Passage(
+            text: "Kogler, ananas og solsikker tæller i Fibonaccital, fordi hvert nyt anlæg sættes i det største hul, de foregående har efterladt.",
+            source: "Bladstilling",
+            theme: .pattern,
+            subtheme: .counted
+        ),
+        Passage(
+            text: "Hver fugl i en sort sol holder øje med sine seks-syv nærmeste og ikke med flokken. Mere skal der ikke til for at lave figuren.",
+            source: "Sort sol, Tøndermarsken",
+            theme: .pattern,
+            subtheme: .counted
+        ),
+        Passage(
+            text: "Ugedagene er guder: tirsdag er Tyrs, onsdag Odins, torsdag Thors og fredag Friggs.",
+            source: "Nordisk",
+            theme: .pattern,
+            subtheme: .counted
+        ),
+
+        Passage(
+            text: "Tessellering: former, der mødes kant mod kant uden at der bliver noget til overs. En bikube er den enkleste måde at gøre det på.",
+            source: "Geometri",
+            theme: .pattern,
+            subtheme: .fittedTogether
+        ),
+        Passage(
+            text: "Fraktal: en form, der beholder sit præg i enhver målestok, så et stykke af en bregne ligner bregnen.",
+            source: "Geometri",
+            theme: .pattern,
+            subtheme: .fittedTogether
+        ),
+        Passage(
+            text: "Dekusseret: blade parvis, hvor hvert par er drejet en ret vinkel fra parret nedenunder, så intet blad står lige over et andet.",
+            source: "Botanik",
+            theme: .pattern,
+            subtheme: .fittedTogether
+        ),
+        Passage(
+            text: "Skærm: et blomsterhoved, hvor alle stilke går ud fra ét punkt og ender i samme højde, som kørvel og skvalderkål gør det.",
+            source: "Botanik",
+            theme: .pattern,
+            subtheme: .fittedTogether
+        ),
+        Passage(
+            text: "En tusindfryd vender alle veje på én gang, en gøgeurt vender mod dig. Næsten enhver blomst er den ene eller den anden slags.",
+            source: "Blomstersymmetri",
+            theme: .pattern,
+            subtheme: .fittedTogether
+        ),
+        Passage(
+            text: "Voksceller begynder runde og falder på plads som sekskanter, når voksen bliver varm. En sekskant giver mest gulv for mindst væg.",
+            source: "Apis mellifera",
+            theme: .pattern,
+            subtheme: .fittedTogether
+        ),
+        Passage(
+            text: "Et snefnugs seks arme ligner hinanden, fordi de voksede i den samme luft i det samme øjeblik, ikke fordi den ene kan se den anden.",
+            source: "Krystalvækst",
+            theme: .pattern,
+            subtheme: .fittedTogether
+        ),
+        Passage(
+            text: "Zebrastriber, leopardpletter og tegningen på en fisk kan alle komme af to stoffer, der spreder sig og reagerer i hver sit tempo. Alan Turing skrev mekanismen op i 1952.",
+            source: "Turingmønstre",
+            theme: .pattern,
+            subtheme: .fittedTogether
+        ),
+        Passage(
+            text: "Vikingetidens ringborge er slået op efter samme mål og er runde til en brøkdel af en procent. Husene står i fire lige store kvarterer.",
+            source: "Trelleborg",
+            theme: .pattern,
+            subtheme: .fittedTogether
+        ),
+        Passage(
+            text: "Ved stjerneudskiftningen i 1780erne blev jorden delt i kiler, der strålede ud fra landsbyen, så hver gård fik lige langt hjem til sin mark.",
+            source: "Udskiftningen",
+            theme: .pattern,
+            subtheme: .fittedTogether
+        ),
+        Passage(
+            text: "Pollen bærer en skulpteret skal af sporopollenin, så sej at kornene beholder deres mønster i tørv i tusinder af år og stadig kan artsbestemmes.",
+            source: "Palynologi",
+            theme: .pattern,
+            subtheme: .fittedTogether
+        ),
+        Passage(
+            text: "Flint er kisel fra svampe, der levede i kridthavet, samlet i knolde. En flintesten er et helt lille samfund, presset til ét stykke.",
+            source: "Flint",
+            theme: .pattern,
+            subtheme: .fittedTogether
+        ),
+
+        Passage(
+            text: "Bog og bøg er samme ord, og et bogstav er en stav af bøg. Skriften har navn efter det træ, den blev skåret i.",
+            source: "Dansk",
+            theme: .pattern,
+            subtheme: .orderNamed
+        ),
+        Passage(
+            text: "Rune betyder hemmelighed. At riste runer var at skrive noget ned, der ikke skulle siges højt.",
+            source: "Oldnordisk",
+            theme: .pattern,
+            subtheme: .orderNamed
+        ),
+        Passage(
+            text: "På den store Jellingsten står ordet tanmaurk. Det er første gang, Danmark er skrevet ned.",
+            source: "Jelling, 900-tallet",
+            theme: .pattern,
+            subtheme: .orderNamed
+        ),
+        Passage(
+            text: "H.C. Ørsted lavede ordene ilt og brint, så dansk kunne sige kemien selv. Ilt kommer af ild.",
+            source: "H.C. Ørsted (1777–1851)",
+            theme: .pattern,
+            subtheme: .orderNamed
+        ),
+        Passage(
+            text: "Rasmus Rask fandt i 1818 de regler, lydene følger, når et ord vandrer fra sprog til sprog. Sprogforandring viste sig at have en orden.",
+            source: "Rasmus Rask, 1818",
+            theme: .pattern,
+            subtheme: .orderNamed
+        ),
+        Passage(
+            text: "Linné gav i 1753 hver plante to navne, slægten og arten. Alle haver i verden kunne pludselig tale sammen.",
+            source: "Carl von Linné, 1753",
+            theme: .pattern,
+            subtheme: .orderNamed
+        ),
+        Passage(
+            text: "En sten kan ikke flyve. Mor Nille kan ikke flyve. Altså er mor Nille en sten.",
+            source: "Ludvig Holberg, Erasmus Montanus, 1731",
+            theme: .pattern,
+            subtheme: .orderNamed
+        ),
+        Passage(
+            text: "Kosmos er græsk og betyder både orden og pryd. Samme rod giver kosmetik: at kalde verden et kosmos var at kalde den velordnet.",
+            source: "Græsk",
+            theme: .pattern,
+            subtheme: .orderNamed
+        ),
+        Passage(
+            text: "Rytme kommer af græsk rhein, at flyde. En rytme er en strømmen, målt op.",
+            source: "Græsk",
+            theme: .pattern,
+            subtheme: .orderNamed
+        ),
+        Passage(
+            text: "Symmetri er græsk for målt sammen: syn, med, og metron, et mål.",
+            source: "Græsk",
+            theme: .pattern,
+            subtheme: .orderNamed
+        ),
+        Passage(
+            text: "Kalkule kommer af latin calculus, en småsten. Man regnede med sten, længe før man regnede med tegn.",
+            source: "Latin",
+            theme: .pattern,
+            subtheme: .orderNamed
+        ),
+        Passage(
+            text: "Orden er latin ordo, som man mener begynder ved rækken af tråde i en væv. Ordet for alt det ordnede starter ved væven.",
+            source: "Latin",
+            theme: .pattern,
+            subtheme: .orderNamed
+        ),
+        Passage(
+            text: "Antologi er græsk for en samling blomster: anthos, blomst, og legein, at samle op.",
+            source: "Græsk",
+            theme: .pattern,
+            subtheme: .orderNamed
+        ),
+        // MARK: Ground
+
+        Passage(
+            text: "Muld hænger sammen med at male og med mel: det knuste. Jorden har navn efter, at noget er blevet malet småt.",
+            source: "Dansk",
+            theme: .ground,
+            subtheme: .theSoilItself
+        ),
+        Passage(
+            text: "Muldvarpen er den, der kaster muld. Varp er et gammelt ord for kast.",
+            source: "Dansk",
+            theme: .ground,
+            subtheme: .theSoilItself
+        ),
+        Passage(
+            text: "En teskefuld sund jord rummer flere levende væsener, end der er mennesker på jorden.",
+            source: "Jordbundsbiologi",
+            theme: .ground,
+            subtheme: .theSoilItself
+        ),
+        Passage(
+            text: "Der går flere hundrede år på at lave en centimeter muldjord og én storm på bar mark at tage den.",
+            source: "Jorddannelse",
+            theme: .ground,
+            subtheme: .theSoilItself
+        ),
+        Passage(
+            text: "Regnorme fører hele markens muldlag gennem sig i løbet af nogle få år. Darwin brugte fyrre år på at regne det ud og gjorde det til sin sidste bog.",
+            source: "Darwin om orme, 1881",
+            theme: .ground,
+            subtheme: .theSoilItself
+        ),
+        Passage(
+            text: "Rodzonen: de få millimeter jord omkring en rod, som ikke ligner nogen anden jord, fordi roden har været i gang med den.",
+            source: "Botanik",
+            theme: .ground,
+            subtheme: .theSoilItself
+        ),
+        Passage(
+            text: "Isen standsede på en linje ned gennem Jylland. Vest for den er landskabet gammelt og fladt, øst for den ungt og bakket.",
+            source: "Hovedstilstandslinjen",
+            theme: .ground,
+            subtheme: .theSoilItself
+        ),
+        Passage(
+            text: "Vandreblokke på danske marker er slæbt hertil fra Sverige og Norge af isen. Stenen i markskellet er en tilflytter.",
+            source: "Vandreblokke",
+            theme: .ground,
+            subtheme: .theSoilItself
+        ),
+        Passage(
+            text: "Fossile søpindsvin fra kridtet blev kaldt tordensten og lagt i vindueskarmen, fordi de skulle holde lynet fra huset.",
+            source: "Dansk folketro",
+            theme: .ground,
+            subtheme: .theSoilItself
+        ),
+        Passage(
+            text: "Et overdrev, der aldrig er blevet pløjet, kan bære fyrre plantearter på en kvadratmeter, netop fordi jorden er for mager til, at én af dem kan tage over.",
+            source: "Overdrev",
+            theme: .ground,
+            subtheme: .theSoilItself
+        ),
+        Passage(
+            text: "Terroir: alt ved et sted, der kommer med ind i det, som vokser der, og som ikke kan flyttes sammen med planten.",
+            source: "Fransk",
+            theme: .ground,
+            subtheme: .theSoilItself
+        ),
+        Passage(
+            text: "Menneske, ydmyg og humus er samme latinske rod: jorden selv.",
+            source: "Latin",
+            theme: .ground,
+            subtheme: .theSoilItself
+        ),
+
+        Passage(
+            text: "Ude godt, men hjemme bedst.",
+            source: "Ordsprog",
+            theme: .ground,
+            subtheme: .aPlaceYouAreFrom
+        ),
+        Passage(
+            text: "I Danmark er jeg født, der har jeg hjemme, der har jeg rod, derfra min verden går.",
+            source: "H.C. Andersen, 1850",
+            theme: .ground,
+            subtheme: .aPlaceYouAreFrom
+        ),
+        Passage(
+            text: "Der er et yndigt land, det står med brede bøge nær salten østerstrand.",
+            source: "Adam Oehlenschläger, 1819",
+            theme: .ground,
+            subtheme: .aPlaceYouAreFrom
+        ),
+        Passage(
+            text: "Det var så dejligt ude på landet. Det var sommer, kornet stod gult.",
+            source: "H.C. Andersen, Den grimme ælling, 1843",
+            theme: .ground,
+            subtheme: .aPlaceYouAreFrom
+        ),
+        Passage(
+            text: "Eget hus er bedst, om det så kun er en hytte. Hjemme er man herre.",
+            source: "Hávamál, gengivet enkelt",
+            theme: .ground,
+            subtheme: .aPlaceYouAreFrom
+        ),
+        Passage(
+            text: "Mark betød først grænse. Danmark er danernes markland, kanten hvor deres land holdt op.",
+            source: "Dansk",
+            theme: .ground,
+            subtheme: .aPlaceYouAreFrom
+        ),
+        Passage(
+            text: "Endelserne -rup og -strup er torp: en udflytterbebyggelse fra en ældre landsby. Navnet siger, at nogen flyttede ud herfra.",
+            source: "Danske stednavne",
+            theme: .ground,
+            subtheme: .aPlaceYouAreFrom
+        ),
+        Passage(
+            text: "Navne på -lev er blandt de ældste i landet og betyder noget, der er givet videre i arv.",
+            source: "Danske stednavne",
+            theme: .ground,
+            subtheme: .aPlaceYouAreFrom
+        ),
+        Passage(
+            text: "Nabo er nær-bo: den, der bor nær ved.",
+            source: "Dansk",
+            theme: .ground,
+            subtheme: .aPlaceYouAreFrom
+        ),
+        Passage(
+            text: "Bonde er den, der bor. Bo, bolig og nabo er alle det samme ord om at blive et sted.",
+            source: "Dansk",
+            theme: .ground,
+            subtheme: .aPlaceYouAreFrom
+        ),
+        Passage(
+            text: "Ingen i Danmark bor mere end tooghalvtreds kilometer fra havet.",
+            source: "Dansk geografi",
+            theme: .ground,
+            subtheme: .aPlaceYouAreFrom
+        ),
+        Passage(
+            text: "Landets højeste punkt er Møllehøj, 170,86 meter. De tre højeste ligger så tæt, at rækkefølgen var til diskussion i årtier.",
+            source: "Dansk geografi",
+            theme: .ground,
+            subtheme: .aPlaceYouAreFrom
+        ),
+        Passage(
+            text: "Hjemve: at være syg af at savne ét bestemt sted.",
+            source: "Dansk",
+            theme: .ground,
+            subtheme: .aPlaceYouAreFrom
+        ),
+
+        Passage(
+            text: "Vi må dyrke vores have.",
+            source: "Voltaire, Candide, 1759, gengivet enkelt",
+            theme: .ground,
+            subtheme: .aKeptPlace
+        ),
+        Passage(
+            text: "Et jævnt og muntert, virksomt liv på jord.",
+            source: "N.F.S. Grundtvig (1783–1872)",
+            theme: .ground,
+            subtheme: .aKeptPlace
+        ),
+        Passage(
+            text: "Have og hegn hører sammen. En have er først og fremmest et sted, der er hegnet ind.",
+            source: "Dansk",
+            theme: .ground,
+            subtheme: .aKeptPlace
+        ),
+        Passage(
+            text: "Gård og gærde er samme ord. Det, der er gærdet ind, er gården.",
+            source: "Dansk",
+            theme: .ground,
+            subtheme: .aKeptPlace
+        ),
+        Passage(
+            text: "Fælled er fælles jord, og fælles kommer af oldnordisk félag: at lægge sit fæ sammen. Fæ var kvæg, og kvæg var formue.",
+            source: "Oldnordisk",
+            theme: .ground,
+            subtheme: .aKeptPlace
+        ),
+        Passage(
+            text: "Paradis begynder som en have med mur om: oldpersisk pairidaeza, en indhegning plantet til fornøjelse.",
+            source: "Oldpersisk",
+            theme: .ground,
+            subtheme: .aKeptPlace
+        ),
+        Passage(
+            text: "Fredskov: jord, der er sat af til at være skov for altid. Pligten følger jorden og ikke ejeren, og den blev lagt fast i 1805.",
+            source: "Fredskovspligt",
+            theme: .ground,
+            subtheme: .aKeptPlace
+        ),
+        Passage(
+            text: "At frede noget er at slutte fred med det. Det danske ord for at beskytte natur er det samme ord som våbenhvile.",
+            source: "Dansk",
+            theme: .ground,
+            subtheme: .aKeptPlace
+        ),
+        Passage(
+            text: "Kolonihaverne kom i 1880erne: et stykke jord uden for byen til folk, der ingen havde. De fleste af dem er der endnu.",
+            source: "Kolonihaver",
+            theme: .ground,
+            subtheme: .aKeptPlace
+        ),
+        Passage(
+            text: "På Læsø blev tagene tækket med ålegræs, fordi der ikke var strå nok. Et tanghus kan stå i flere hundrede år.",
+            source: "Læsø tangtage",
+            theme: .ground,
+            subtheme: .aKeptPlace
+        ),
+        Passage(
+            text: "En eng bliver slået og ikke pløjet. Det er et sted, der bliver høstet og ellers ladt i fred.",
+            source: "Dansk landskab",
+            theme: .ground,
+            subtheme: .aKeptPlace
+        ),
+        Passage(
+            text: "Kongens Have i København blev anlagt i 1606 og har været åben for hvem som helst i århundreder.",
+            source: "Kongens Have",
+            theme: .ground,
+            subtheme: .aKeptPlace
+        ),
+        Passage(
+            text: "Kultur og at dyrke er samme latinske ord, colere: at pløje jorden, at passe den og at holde den i ære.",
+            source: "Latin",
+            theme: .ground,
+            subtheme: .aKeptPlace
+        ),
+        // MARK: Travel
+
+        Passage(
+            text: "Myrespredning: frøet bærer en fedtklump, myrerne vil have. De slæber det hele hjem, spiser den del og lægger resten på affaldsbunken.",
+            source: "Botanik",
+            theme: .travel,
+            subtheme: .howASeedGoes
+        ),
+        Passage(
+            text: "Vindspredning: et frø, der klarer hele rejsen på luft i bevægelse.",
+            source: "Botanik",
+            theme: .travel,
+            subtheme: .howASeedGoes
+        ),
+        Passage(
+            text: "Dyrespredning: et frø, der rejser inde i eller hængende på noget, som går.",
+            source: "Botanik",
+            theme: .travel,
+            subtheme: .howASeedGoes
+        ),
+        Passage(
+            text: "Slyngfrugter kaster frøene selv, efter uger med at bygge spænding op og så give slip på én gang.",
+            source: "Botanik",
+            theme: .travel,
+            subtheme: .howASeedGoes
+        ),
+        Passage(
+            text: "Mistelten kommer til verden limet fast til en gren, fordi fuglen ikke uden videre kan slippe frøet og tørrer næbbet af på barken.",
+            source: "Viscum album",
+            theme: .travel,
+            subtheme: .howASeedGoes
+        ),
+        Passage(
+            text: "En mælkebøttes faldskærm holder en ring af luft i ro lige over sig, og den hvirvel er det, der bærer frøet en kilometer hjemmefra.",
+            source: "Nature, 2018",
+            theme: .travel,
+            subtheme: .howASeedGoes
+        ),
+        Passage(
+            text: "Burrer satte sig i en hunds pels i 1941. Ingeniøren lagde krogene under mikroskop, og resultatet blev velcro.",
+            source: "Arctium og George de Mestral",
+            theme: .travel,
+            subtheme: .howASeedGoes
+        ),
+        Passage(
+            text: "En kokosnød kan flyde i måneder over åbent hav og slå rod, hvor den kommer i land. Hele øers plantevækst er kommet den vej.",
+            source: "Cocos nucifera",
+            theme: .travel,
+            subtheme: .howASeedGoes
+        ),
+        Passage(
+            text: "Vejbred vokser, hvor folk går. Frøene bliver klistrede i regn og følger med skosålen videre.",
+            source: "Plantago major",
+            theme: .travel,
+            subtheme: .howASeedGoes
+        ),
+        Passage(
+            text: "Krakatau blev steriliseret i 1883. Frø kom med havet og med fugle, og der stod skov igen inden for halvtreds år.",
+            source: "Krakatau, efter 1883",
+            theme: .travel,
+            subtheme: .howASeedGoes
+        ),
+        Passage(
+            text: "Danmark er blandt verdens største producenter af græs- og kløverfrø. En stor del af det græs, der sås i Europa, har stået på en dansk mark først.",
+            source: "Frøavl",
+            theme: .travel,
+            subtheme: .howASeedGoes
+        ),
+        Passage(
+            text: "Selvsået: en plante, der kommer af sig selv og vokser i jord, en anden lod ligge bar.",
+            source: "Gartnerord",
+            theme: .travel,
+            subtheme: .howASeedGoes
+        ),
+
+        Passage(
+            text: "At rejse er at leve.",
+            source: "H.C. Andersen (1805–1875)",
+            theme: .travel,
+            subtheme: .theRoad
+        ),
+        Passage(
+            text: "Tab frem for alt ikke lysten til at gå. Jeg går mig hver dag det daglige velbefindende til og går fra enhver sygdom.",
+            source: "Søren Kierkegaard, brev, 1847",
+            theme: .travel,
+            subtheme: .theRoad
+        ),
+        Passage(
+            text: "Der kom en soldat marcherende hen ad landevejen: én, to, én, to.",
+            source: "H.C. Andersen, Fyrtøjet, 1835",
+            theme: .travel,
+            subtheme: .theRoad
+        ),
+        Passage(
+            text: "Jeg gik mig over sø og land.",
+            source: "Folkevise",
+            theme: .travel,
+            subtheme: .theRoad
+        ),
+        Passage(
+            text: "Vejen til en dårlig ven er lang, selv om han bor ved vejen. Til en god ven går der genveje, selv om han bor langt væk.",
+            source: "Hávamál, gengivet enkelt",
+            theme: .travel,
+            subtheme: .theRoad
+        ),
+        Passage(
+            text: "Råbjerg Mile vandrer omkring femten meter mod nordøst om året og har gjort det, siden den kom ind fra kysten.",
+            source: "Råbjerg Mile",
+            theme: .travel,
+            subtheme: .theRoad
+        ),
+        Passage(
+            text: "Rubjerg Knude Fyr blev i 2019 sat på skinner og kørt halvfjerds meter ind i landet, væk fra kanten. Klinten æder sig stadig indad.",
+            source: "Rubjerg Knude",
+            theme: .travel,
+            subtheme: .theRoad
+        ),
+        Passage(
+            text: "Sandet vandrede hen over kirken ved Skagen, og i 1795 opgav man den. Kun tårnet står nu op af klitten.",
+            source: "Den Tilsandede Kirke",
+            theme: .travel,
+            subtheme: .theRoad
+        ),
+        Passage(
+            text: "At rejse sig og at rejse bort er samme ord. På dansk begynder en rejse med at komme op at stå.",
+            source: "Dansk",
+            theme: .travel,
+            subtheme: .theRoad
+        ),
+        Passage(
+            text: "Ankomme er latin ad ripam, til bredden. Enhver ankomst var en landing, før den blev noget andet.",
+            source: "Latin",
+            theme: .travel,
+            subtheme: .theRoad
+        ),
+        Passage(
+            text: "En dagsrejse er en dag: fransk journée, det stykke vej man kunne komme mellem to daggry.",
+            source: "Oldfransk",
+            theme: .travel,
+            subtheme: .theRoad
+        ),
+        Passage(
+            text: "Alle veje fører til Rom.",
+            source: "Ordsprog",
+            theme: .travel,
+            subtheme: .theRoad
+        ),
+        Passage(
+            text: "Godt selskab forkorter vejen.",
+            source: "Ordsprog",
+            theme: .travel,
+            subtheme: .theRoad
+        ),
+
+        Passage(
+            text: "Udlængsel: trangen ud, som er hjemves modsætning og lige så stærk.",
+            source: "Dansk",
+            theme: .travel,
+            subtheme: .farOff
+        ),
+        Passage(
+            text: "Ålen gyder i Sargassohavet. Johannes Schmidt fulgte stadig mindre yngel i tyve år og fandt gydepladsen i 1920erne.",
+            source: "Johannes Schmidt",
+            theme: .travel,
+            subtheme: .farOff
+        ),
+        Passage(
+            text: "Bramgåsen yngler ved Ishavet og overvintrer i Vadehavet. Man mente engang, at den blev født af rurer på drivtømmer, fordi ingen kunne finde reden.",
+            source: "Branta leucopsis",
+            theme: .travel,
+            subtheme: .farOff
+        ),
+        Passage(
+            text: "Vadehavet er tankstation for millioner af trækfugle. De spiser sig tunge her og flyver videre til Afrika.",
+            source: "Vadehavet",
+            theme: .travel,
+            subtheme: .farOff
+        ),
+        Passage(
+            text: "Man troede engang, at svalerne overvintrede i mudderet på bunden af søerne, fordi ingen kunne tro, at de fløj så langt, som de gør.",
+            source: "Ældre naturhistorie",
+            theme: .travel,
+            subtheme: .farOff
+        ),
+        Passage(
+            text: "Valnød er den fremmede nød. Val- er det gamle ord for romansk og udenlandsk.",
+            source: "Dansk",
+            theme: .travel,
+            subtheme: .farOff
+        ),
+        Passage(
+            text: "Appelsin er æblet fra Kina, kommet til dansk gennem hollandsk.",
+            source: "Dansk",
+            theme: .travel,
+            subtheme: .farOff
+        ),
+        Passage(
+            text: "Kartoffel kommer af italiensk tartufolo, en trøffel. Knolden fik navn efter noget helt andet, der også voksede under jorden.",
+            source: "Italiensk",
+            theme: .travel,
+            subtheme: .farOff
+        ),
+        Passage(
+            text: "Havbønner fra Caribien skyller op på nordeuropæiske strande med Golfstrømmen og blev gemt som lykkesten af folk, der ikke anede, hvor de kom fra.",
+            source: "Entada gigas",
+            theme: .travel,
+            subtheme: .farOff
+        ),
+        Passage(
+            text: "Vitus Bering sejlede fra Horsens til Kamtjatka og videre, og strædet mellem to verdensdele bærer nu hans navn.",
+            source: "Vitus Bering (1681–1741)",
+            theme: .travel,
+            subtheme: .farOff
+        ),
+        Passage(
+            text: "Knud Rasmussen kørte med hundeslæde fra Grønland til Stillehavet mellem 1921 og 1924 og skrev det ned undervejs.",
+            source: "Femte Thuleekspedition",
+            theme: .travel,
+            subtheme: .farOff
+        ),
+        Passage(
+            text: "Pilgrim er latin peregrinus, en der er ude over markerne, altså en fremmed. Det hellige kom til senere.",
+            source: "Latin",
+            theme: .travel,
+            subtheme: .farOff
+        ),
+        Passage(
+            text: "Nomade er græsk nomas, en der flytter efter græsning, af nemein, at græsse. Ordet handler om græs, før det handler om rastløshed.",
+            source: "Græsk",
+            theme: .travel,
+            subtheme: .farOff
+        ),
+        // MARK: Meeting
+
+        Passage(
+            text: "Ved Grenen mødes to have, og man kan stå med en fod i hver. Odden vokser omkring ti meter mod nordøst om året, så mødestedet er aldrig helt det samme.",
+            source: "Grenen, Skagen",
+            theme: .meeting,
+            subtheme: .theMoment
+        ),
+        Passage(
+            text: "Guldhornene blev fundet med næsten hundrede års mellemrum på den samme mark ved Gallehus, det første af en pige i 1639 og det andet af en bonde i 1734.",
+            source: "Guldhornene",
+            theme: .meeting,
+            subtheme: .theMoment
+        ),
+        Passage(
+            text: "Ingen går ned i den samme flod to gange.",
+            source: "Tilskrevet Heraklit",
+            theme: .meeting,
+            subtheme: .theMoment
+        ),
+        Passage(
+            text: "Kairos: åbningen i tiden, hvor noget kan gøres. Det rette øjeblik, som er noget andet end klokkeslættet.",
+            source: "Græsk",
+            theme: .meeting,
+            subtheme: .theMoment
+        ),
+        Passage(
+            text: "Klinamen: den svage afvigelse, hvorved faldende atomer kommer til at møde hinanden og dermed laver en verden.",
+            source: "Lukrets, 1. årh. f.Kr.",
+            theme: .meeting,
+            subtheme: .theMoment
+        ),
+        Passage(
+            text: "Anagnorisis: vendingen i en fortælling, hvor én genkender, hvem en anden har været hele tiden.",
+            source: "Græsk",
+            theme: .meeting,
+            subtheme: .theMoment
+        ),
+        Passage(
+            text: "Tilfælde er det, der falder til. Latin cadere, at falde, ligger under både tilfældet og den måde, tingene faldt ud på.",
+            source: "Dansk og latin",
+            theme: .meeting,
+            subtheme: .theMoment
+        ),
+        Passage(
+            text: "Møde og imod er samme ord. At møde nogen er at gå dem i møde.",
+            source: "Dansk",
+            theme: .meeting,
+            subtheme: .theMoment
+        ),
+        Passage(
+            text: "At træffe nogen var først at ramme noget. Man rammer stadig hinanden, når man mødes.",
+            source: "Dansk",
+            theme: .meeting,
+            subtheme: .theMoment
+        ),
+        Passage(
+            text: "Lige børn leger bedst.",
+            source: "Ordsprog",
+            theme: .meeting,
+            subtheme: .theMoment
+        ),
+        Passage(
+            text: "Der er en trolddom på din læbe.",
+            source: "Emil Aarestrup (1800–1856)",
+            theme: .meeting,
+            subtheme: .theMoment
+        ),
+        Passage(
+            text: "Ichigo ichie: ét møde, én gang. Denne sammenkomst er den eneste af sin slags, så mød den hel.",
+            source: "Japansk, fra teens vej",
+            theme: .meeting,
+            subtheme: .theMoment
+        ),
+
+        Passage(
+            text: "Rug kan ikke bestøve sig selv. Hvert rugbrød begynder med, at to planter på marken har hjulpet hinanden.",
+            source: "Secale cereale",
+            theme: .meeting,
+            subtheme: .twoThatNeedEachOther
+        ),
+        Passage(
+            text: "Surdej er to slags liv, der arbejder sammen: gæren giver luften, mælkesyrebakterierne giver smagen. Ingen af dem laver et brød alene.",
+            source: "Surdej",
+            theme: .meeting,
+            subtheme: .twoThatNeedEachOther
+        ),
+        Passage(
+            text: "Næsten hver figenart har sin egen hveps, og ingen af dem kan formere sig uden den anden. Hvepsen kommer ind gennem et hul, der er så snævert, at den mister vingerne på vejen.",
+            source: "Ficus og Agaonidae",
+            theme: .meeting,
+            subtheme: .twoThatNeedEachOther
+        ),
+        Passage(
+            text: "Vanilje bestøves med hånden næsten overalt, hvor den dyrkes, fordi bien, der kan gøre det, kun lever i Mexico.",
+            source: "Vanilla planifolia",
+            theme: .meeting,
+            subtheme: .twoThatNeedEachOther
+        ),
+        Passage(
+            text: "Nogle orkidéer ligner og dufter nok som en hunhveps til, at hannerne prøver at parre sig med dem og bærer pollen videre uden nogensinde at have mødt en hveps.",
+            source: "Ophrys",
+            theme: .meeting,
+            subtheme: .twoThatNeedEachOther
+        ),
+        Passage(
+            text: "Et yuccamøl pakker med vilje pollen ind i blomsten og lægger sine æg i frugtknuden. Får en blomst for mange æg, kaster planten den, og handlen holdes ærlig.",
+            source: "Yucca og Tegeticula",
+            theme: .meeting,
+            subtheme: .twoThatNeedEachOther
+        ),
+        Passage(
+            text: "Gøgeurternes frø har ingen madpakke med og kan kun spire, hvis den rette svamp i jorden vil made dem. Derfor lader de sig ikke flytte.",
+            source: "Orchidaceae",
+            theme: .meeting,
+            subtheme: .twoThatNeedEachOther
+        ),
+        Passage(
+            text: "Blomstertroskab: en bi, der har fundet én slags blomst, bliver ved med den slags, og netop det gør den til nogen nytte for blomsten.",
+            source: "Bestøvning",
+            theme: .meeting,
+            subtheme: .twoThatNeedEachOther
+        ),
+        Passage(
+            text: "Protandri: en blomst, der smider sit pollen, før dens eget ar er klar, så den ikke kan møde sig selv.",
+            source: "Botanik",
+            theme: .meeting,
+            subtheme: .twoThatNeedEachOther
+        ),
+        Passage(
+            text: "Mange planter læser det pollen, der lander, og åbner vej for et fremmed korn, så næste slægtled kommer af to.",
+            source: "Selvuforenelighed",
+            theme: .meeting,
+            subtheme: .twoThatNeedEachOther
+        ),
+        Passage(
+            text: "Blomster bærer en svag elektrisk ladning. En humlebi kan mærke den og læse på den, hvilke blomster en anden bi lige har tømt.",
+            source: "Science, 2013",
+            theme: .meeting,
+            subtheme: .twoThatNeedEachOther
+        ),
+        Passage(
+            text: "Tigmotropisme: vækst styret af berøring, som når en ranke snor sig om det, den tilfældigvis møder.",
+            source: "Botanik",
+            theme: .meeting,
+            subtheme: .twoThatNeedEachOther
+        ),
+
+        Passage(
+            text: "Tak for sidst: det, man siger til en, man sidst så ved en bestemt lejlighed. Sætningen findes ikke på ret mange andre sprog.",
+            source: "Dansk",
+            theme: .meeting,
+            subtheme: .theMannersOfIt
+        ),
+        Passage(
+            text: "Et gækkebrev sendes uden navn, kun med prikker for bogstaverne og en vintergæk i. Gætter modtageren rigtigt, skylder afsenderen et påskeæg.",
+            source: "Dansk skik",
+            theme: .meeting,
+            subtheme: .theMannersOfIt
+        ),
+        Passage(
+            text: "Danskerne holdt op med at sige De til hinanden i løbet af ganske få år omkring 1970. Et helt sprog lagde en høflighed fra sig næsten på én gang.",
+            source: "Du-reformen",
+            theme: .meeting,
+            subtheme: .theMannersOfIt
+        ),
+        Passage(
+            text: "Skål er skålen: karret, der blev sendt rundt og drukket af på skift.",
+            source: "Dansk",
+            theme: .meeting,
+            subtheme: .theMannersOfIt
+        ),
+        Passage(
+            text: "Velkommen er vel-kommen: den, hvis komme er god.",
+            source: "Dansk",
+            theme: .meeting,
+            subtheme: .theMannersOfIt
+        ),
+        Passage(
+            text: "Hils hjemme: en dansk afsked, hvor hilsenen sendes videre til nogen, man ikke selv har set.",
+            source: "Dansk",
+            theme: .meeting,
+            subtheme: .theMannersOfIt
+        ),
+        Passage(
+            text: "Farvel er far vel, rejs godt. Afskeden er et ønske om, at det går den anden godt undervejs.",
+            source: "Dansk",
+            theme: .meeting,
+            subtheme: .theMannersOfIt
+        ),
+        Passage(
+            text: "Dørtærsklen er brættet, der holdt det tærskede korn inde i stuen. Grænsen mellem ude og inde havde en ganske praktisk grund.",
+            source: "Dansk",
+            theme: .meeting,
+            subtheme: .theMannersOfIt
+        ),
+        Passage(
+            text: "Gæst og latin hostis er samme rod. Den fremmede kunne blive begge dele, og derfor blev gæstfrihed noget, man lovede hinanden.",
+            source: "Latin og germansk",
+            theme: .meeting,
+            subtheme: .theMannersOfIt
+        ),
+        Passage(
+            text: "Xenia: den gamle græske forpligtelse mellem vært og fremmed, bindende for dem begge og håndhævet af Zeus.",
+            source: "Græsk",
+            theme: .meeting,
+            subtheme: .theMannersOfIt
+        ),
+        Passage(
+            text: "Liminal: på tærsklen. Af latin limen, stenen der ligger under en dør.",
+            source: "Latin",
+            theme: .meeting,
+            subtheme: .theMannersOfIt
+        ),
+        Passage(
+            text: "Rendezvous er en fransk befaling: mød op. Ordet var en besked, før det blev et sted.",
+            source: "Fransk",
+            theme: .meeting,
+            subtheme: .theMannersOfIt
+        ),
+        // MARK: Kinship
+
+        Passage(
+            text: "Sammenvoksning: to træer, der står mod hinanden længe nok til at gro sammen og derefter deler bark og saft.",
+            source: "Botanik",
+            theme: .kinship,
+            subtheme: .grownTogether
+        ),
+        Passage(
+            text: "En bevoksning af bævreasp kan være ét væsen med ét rodnet. Den største kendte dækker mere end fyrre hektar og tælles som ét træ.",
+            source: "Populus tremuloides",
+            theme: .kinship,
+            subtheme: .grownTogether
+        ),
+        Passage(
+            text: "En lav er en svamp, der driver landbrug med en alge. Samarbejdet er så fuldstændigt, at det blev regnet for én art i hundrede år.",
+            source: "Lavbiologi",
+            theme: .kinship,
+            subtheme: .grownTogether
+        ),
+        Passage(
+            text: "En podning binder to planter så tæt, at de deler saft resten af livet, mens hver beholder sine egne gener. Én stamme kan bære fem slags æbler.",
+            source: "Podning",
+            theme: .kinship,
+            subtheme: .grownTogether
+        ),
+        Passage(
+            text: "De fleste landplanter bytter sukker for fosfor med svampe, der er trådt gennem jorden. Ordningen er omkring fire hundrede millioner år gammel.",
+            source: "Mykorrhiza",
+            theme: .kinship,
+            subtheme: .grownTogether
+        ),
+        Passage(
+            text: "Hvert grønt blad kører på en bakterie, som en anden celle tog ind for over en milliard år siden. De to har været ét lige siden.",
+            source: "Endosymbiose",
+            theme: .kinship,
+            subtheme: .grownTogether
+        ),
+        Passage(
+            text: "Hos de fleste blomsterplanter går grønkornene videre gennem frøet alene, så en del af den ene forælder rejser med uden at blive blandet.",
+            source: "Plastidnedarvning",
+            theme: .kinship,
+            subtheme: .grownTogether
+        ),
+        Passage(
+            text: "Den brune bi er fredet på Læsø. Øen er et sted, hvor en bistamme har fået lov at blive ved med at være sig selv.",
+            source: "Apis mellifera mellifera, Læsø",
+            theme: .kinship,
+            subtheme: .grownTogether
+        ),
+        Passage(
+            text: "Anastomose: to adskilte løb, der bliver til ét. Siges om åer, om blodkar og om ribberne i et blad.",
+            source: "Græsk",
+            theme: .kinship,
+            subtheme: .grownTogether
+        ),
+        Passage(
+            text: "Mutualisme: begge er bedre stillet, og ingen af dem kan gå fra det uden at betale for det.",
+            source: "Økologi",
+            theme: .kinship,
+            subtheme: .grownTogether
+        ),
+        Passage(
+            text: "Kommensalisme: den ene har gavn, den anden hverken det ene eller det andet. En stilfærdigere ordning end symbiose og langt mere almindelig.",
+            source: "Økologi",
+            theme: .kinship,
+            subtheme: .grownTogether
+        ),
+        Passage(
+            text: "Holobiont: et væsen talt sammen med alt det, der lever i og på det, fordi ingen af dem klarer sig alene.",
+            source: "Biologi",
+            theme: .kinship,
+            subtheme: .grownTogether
+        ),
+
+        Passage(
+            text: "Frænde er egentlig en, der holder af: ordet er en gammel tillægsform af at elske.",
+            source: "Oldnordisk",
+            theme: .kinship,
+            subtheme: .theWordsForIt
+        ),
+        Passage(
+            text: "Fred, fri og ven kommer af samme rod, der betød at holde af og at skåne. Den, man havde fred med, var den, man holdt af.",
+            source: "Germansk",
+            theme: .kinship,
+            subtheme: .theWordsForIt
+        ),
+        Passage(
+            text: "Fælle og fællesskab kommer af oldnordisk félag: at lægge sit fæ sammen med en andens.",
+            source: "Oldnordisk",
+            theme: .kinship,
+            subtheme: .theWordsForIt
+        ),
+        Passage(
+            text: "Søskende er lavet af søster, og brødrene er talt med i det ord.",
+            source: "Dansk",
+            theme: .kinship,
+            subtheme: .theWordsForIt
+        ),
+        Passage(
+            text: "Dansk siger farmor og mormor og lader ordet fortælle, hvilken vej i slægten hun kommer. Mange sprog har kun ét ord til dem begge.",
+            source: "Dansk",
+            theme: .kinship,
+            subtheme: .theWordsForIt
+        ),
+        Passage(
+            text: "Tro, trofast og træ hænger sammen i den samme gamle rod: det faste, som en stamme er fast.",
+            source: "Germansk",
+            theme: .kinship,
+            subtheme: .theWordsForIt
+        ),
+        Passage(
+            text: "Kammerat kommer af fransk camarade, af chambre: en, man deler kammer med.",
+            source: "Fransk",
+            theme: .kinship,
+            subtheme: .theWordsForIt
+        ),
+        Passage(
+            text: "Kompagnon og kompagni er latin com og panis: dem, man deler brød med.",
+            source: "Latin",
+            theme: .kinship,
+            subtheme: .theWordsForIt
+        ),
+        Passage(
+            text: "Ven er i familie med latin venus, attrå. Ordet begynder i at ville nogen.",
+            source: "Indoeuropæisk",
+            theme: .kinship,
+            subtheme: .theWordsForIt
+        ),
+        Passage(
+            text: "Rivaler var engang folk, der delte en å: latin rivalis, af rivus, en bæk.",
+            source: "Latin",
+            theme: .kinship,
+            subtheme: .theWordsForIt
+        ),
+        Passage(
+            text: "Symbiose er græsk for at leve sammen. Ordet blev lavet i 1870erne til laver, som er en svamp og en alge i ét.",
+            source: "Græsk",
+            theme: .kinship,
+            subtheme: .theWordsForIt
+        ),
+        Passage(
+            text: "Kvæg dør, frænder dør, selv dør du på samme vis. Men eftermælet dør aldrig for den, der vandt sig et godt et.",
+            source: "Hávamál, gengivet enkelt",
+            theme: .kinship,
+            subtheme: .theWordsForIt
+        ),
+
+        Passage(
+            text: "Ung var jeg engang og gik alene, og så for jeg vild på vejen. Rig følte jeg mig, da jeg fandt en anden: menneske er menneskes glæde.",
+            source: "Hávamál, gengivet enkelt",
+            theme: .kinship,
+            subtheme: .twoPeople
+        ),
+        Passage(
+            text: "Menneske først og kristen så.",
+            source: "N.F.S. Grundtvig, 1838",
+            theme: .kinship,
+            subtheme: .twoPeople
+        ),
+        Passage(
+            text: "Venner kendes i nøden.",
+            source: "Ordsprog",
+            theme: .kinship,
+            subtheme: .twoPeople
+        ),
+        Passage(
+            text: "Enhver fugl synger med sit næb.",
+            source: "Ordsprog",
+            theme: .kinship,
+            subtheme: .twoPeople
+        ),
+        Passage(
+            text: "Blod er tykkere end vand.",
+            source: "Ordsprog",
+            theme: .kinship,
+            subtheme: .twoPeople
+        ),
+        Passage(
+            text: "Intet menneske er en ø, hel i sig selv.",
+            source: "John Donne, 1624, gengivet enkelt",
+            theme: .kinship,
+            subtheme: .twoPeople
+        ),
+        Passage(
+            text: "To er bedre end én, for de har god løn for deres møje.",
+            source: "Prædikerens Bog, gengivet enkelt",
+            theme: .kinship,
+            subtheme: .twoPeople
+        ),
+        Passage(
+            text: "En ven er én sjæl i to kroppe.",
+            source: "Aristoteles, gengivet efter Diogenes Laertios",
+            theme: .kinship,
+            subtheme: .twoPeople
+        ),
+        Passage(
+            text: "Fordi det var ham, fordi det var mig.",
+            source: "Montaigne om venskab, gengivet enkelt",
+            theme: .kinship,
+            subtheme: .twoPeople
+        ),
+        Passage(
+            text: "Adams børn er lemmer på ét legeme.",
+            source: "Sadi, Gulistan, 1258, gengivet enkelt",
+            theme: .kinship,
+            subtheme: .twoPeople
+        ),
+        Passage(
+            text: "Mennesker er til for hinandens skyld.",
+            source: "Marcus Aurelius, gengivet enkelt",
+            theme: .kinship,
+            subtheme: .twoPeople
+        ),
+        Passage(
+            text: "Ubuntu: et menneske bliver menneske gennem andre mennesker, og det menneskelige viser sig i det, der går imellem os.",
+            source: "Nguni-bantu",
+            theme: .kinship,
+            subtheme: .twoPeople
+        ),
+        // MARK: Peace
+
+        Passage(
+            text: "Stilhed er, at der ikke lyder noget. Tavshed er, at nogen lader være med at sige noget.",
+            source: "Dansk",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "Stille vand har dyb grund.",
+            source: "Ordsprog",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "Tale er sølv, tavshed er guld.",
+            source: "Ordsprog",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "Nyfalden sne er fuld af luft og sluger de høje toner ud af enhver lyd. Derfor er et snelandskab ikke bare stille, men dæmpet.",
+            source: "Sneens akustik",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "I et lyddødt rum er der ikke andet tilbage at høre end en selv. Folk, der sidder i et, fortæller, at de kan høre deres eget blod.",
+            source: "Lyddøde rum",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "Ugler flyver lydløst, fordi fjerkanterne er flossede og bryder luften i mange små hvirvler i stedet for én stor.",
+            source: "Strigiformes",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "En knopsvane er næsten tavs. Den lyder mest af sine vinger, og den lyd kan høres langt hen over vandet.",
+            source: "Cygnus olor",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "Fuglene synger stærkest i de timer, hvor lyset skifter. Midt på dagen er skoven næsten stille.",
+            source: "Fuglesang",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "Nogle træer lader et mellemrum stå mellem deres kroner, så skovens tag bliver en mosaik med dagslys i sømmene.",
+            source: "Kronegenerthed",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "Psithurisme: lyden af vind, der går gennem løv.",
+            source: "Græsk",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "Ro er ikke, at der ingen lyd er, men at ingen af lydene vil noget med en.",
+            source: "Dansk",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "Læg dig efter at være stille.",
+            source: "Izaak Walton, 1653, gengivet enkelt",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+
+        Passage(
+            text: "Fredag er ikke fredens dag, men Friggs. De to ord ligner hinanden helt tilfældigt.",
+            source: "Dansk",
+            theme: .peace,
+            subtheme: .theWordsForStopping
+        ),
+        Passage(
+            text: "Stille er en form af at stå. At stille noget er at få det til at stå, og ro er noget, der bliver bragt til at holde op.",
+            source: "Dansk",
+            theme: .peace,
+            subtheme: .theWordsForStopping
+        ),
+        Passage(
+            text: "At slutte er både at holde op og at slutte sig til nogen. Samme ord lukker og samler.",
+            source: "Dansk",
+            theme: .peace,
+            subtheme: .theWordsForStopping
+        ),
+        Passage(
+            text: "Våbenhvile er et ophold og ikke en afslutning. Ordet lover kun, at der bliver holdt pause.",
+            source: "Dansk",
+            theme: .peace,
+            subtheme: .theWordsForStopping
+        ),
+        Passage(
+            text: "Sindsro: ro i sindet, hvilket er noget andet end at der er stille omkring en.",
+            source: "Dansk",
+            theme: .peace,
+            subtheme: .theWordsForStopping
+        ),
+        Passage(
+            text: "Alting har en ende, kun pølsen har to.",
+            source: "Ordsprog",
+            theme: .peace,
+            subtheme: .theWordsForStopping
+        ),
+        Passage(
+            text: "Fred og ingen fare.",
+            source: "Ordsprog",
+            theme: .peace,
+            subtheme: .theWordsForStopping
+        ),
+        Passage(
+            text: "Latin pax hænger sammen med pangere, at gøre fast. En fred var noget, to sider slog fast mellem sig.",
+            source: "Latin",
+            theme: .peace,
+            subtheme: .theWordsForStopping
+        ),
+        Passage(
+            text: "Serenus er latin og blev først sagt om vejret: en klar himmel uden vind i.",
+            source: "Latin",
+            theme: .peace,
+            subtheme: .theWordsForStopping
+        ),
+        Passage(
+            text: "Græsk kauma, dagens hede, ligger under de romanske ord for havblik og ro. Stilheden fik navn efter den time, hvor det var for varmt at arbejde.",
+            source: "Græsk",
+            theme: .peace,
+            subtheme: .theWordsForStopping
+        ),
+        Passage(
+            text: "Sabbat kommer af hebraisk shabbath, at holde op. Ordet navngiver standsningen og ikke dagen.",
+            source: "Hebraisk",
+            theme: .peace,
+            subtheme: .theWordsForStopping
+        ),
+        Passage(
+            text: "Horas non numero nisi serenas står på gamle solure: jeg tæller kun de klare timer. Et ur, der skal bruge sol for at tælle, siger egentlig kun noget om sig selv.",
+            source: "Solurindskrift, latin",
+            theme: .peace,
+            subtheme: .theWordsForStopping
+        ),
+
+        Passage(
+            text: "Hygge kommer af oldnordisk hugga, at trøste, af hugr, sind. At hygge sig er i grunden at gøre noget godt for sit sind.",
+            source: "Oldnordisk",
+            theme: .peace,
+            subtheme: .atEase
+        ),
+        Passage(
+            text: "Hygge: varme og ro i selskab, sat sammen med vilje af små og ganske almindelige ting.",
+            source: "Dansk",
+            theme: .peace,
+            subtheme: .atEase
+        ),
+        Passage(
+            text: "Overskud: det, der er tilbage, når dagen er betalt. Bruges både om regnskaber og om mennesker.",
+            source: "Dansk",
+            theme: .peace,
+            subtheme: .atEase
+        ),
+        Passage(
+            text: "At hvile i sig selv: at være et sted i sig selv, hvor der ikke skal gøres mere ved det.",
+            source: "Dansk",
+            theme: .peace,
+            subtheme: .atEase
+        ),
+        Passage(
+            text: "Frokost betyder tidligt måltid, og på norsk er det stadig morgenmaden. Middag betyder midt på dagen, og den spiser danskerne om aftenen.",
+            source: "Dansk",
+            theme: .peace,
+            subtheme: .atEase
+        ),
+        Passage(
+            text: "H.C. Andersen tilbragte sine sidste uger i et hus uden for København, der hed Rolighed.",
+            source: "Rolighed, 1875",
+            theme: .peace,
+            subtheme: .atEase
+        ),
+        Passage(
+            text: "Hjertets renhed er at ville ét.",
+            source: "Søren Kierkegaard, 1847",
+            theme: .peace,
+            subtheme: .atEase
+        ),
+        Passage(
+            text: "Han fører mig til de stille vande.",
+            source: "Salme 23, gengivet enkelt",
+            theme: .peace,
+            subtheme: .atEase
+        ),
+        Passage(
+            text: "Alt skal blive godt, og alle slags ting skal blive godt.",
+            source: "Julian af Norwich, ca. 1395, gengivet enkelt",
+            theme: .peace,
+            subtheme: .atEase
+        ),
+        Passage(
+            text: "Skovbadning: at være blandt træer med sanserne åbne, og ikke andet.",
+            source: "Japansk, ordet fra 1982",
+            theme: .peace,
+            subtheme: .atEase
+        ),
+        Passage(
+            text: "Sobremesa: tiden man bliver siddende ved bordet, efter at måltidet er forbi, fordi ingen har lyst til at være den, der rejser sig.",
+            source: "Spansk",
+            theme: .peace,
+            subtheme: .atEase
+        ),
+        Passage(
+            text: "Lagom: tilpas, hverken for lidt eller for meget, og ingen behøver sige hvilket.",
+            source: "Svensk",
+            theme: .peace,
+            subtheme: .atEase
+        ),
+        Passage(
+            text: "Niksen: at lave ingenting, og at gøre det med vilje.",
+            source: "Hollandsk",
+            theme: .peace,
+            subtheme: .atEase
+        ),
+        Passage(
+            text: "Meriggiare: at tilbringe middagstimerne i skyggen.",
+            source: "Italiensk",
+            theme: .peace,
+            subtheme: .atEase
+        ),
+    ]
+}
