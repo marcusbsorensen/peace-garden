@@ -1,0 +1,141 @@
+<!doctype html>
+<!--
+  The page a seed lands on.
+
+  Every seed link minted so far points here. With a seed in the fragment this is
+  the invitation to grow it; with nothing there it is the page that says what
+  Peace Garden is, which is why it is one page rather than two.
+
+  An iPhone with the app installed never sees this: the association file claims
+  `/s*`, so iOS opens the app instead. The page therefore addresses a stranger,
+  always, and never has to branch on whether the reader already has it.
+
+  Static, and staying that way. No server-side rendering, no analytics, no font
+  CDN, no third-party anything. Everything it draws, it draws from the fragment
+  and from two files on this origin.
+
+  SEAM — the App Clip. Once the clip target exists, the Safari route to a clip
+  card is a `<meta name="apple-itunes-app">` tag on this page. It goes in the
+  head below. The association file does not change for it; what changes is the
+  App Clip Experience registered against the `/s` prefix in App Store Connect.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Peace Garden</title>
+    <meta
+      name="description"
+      content="Peace Garden makes a plant out of two people meeting. A seed travels in a link, and this is where one lands."
+    />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <link rel="icon" href="/assets/mark.svg" type="image/svg+xml" />
+  </head>
+
+  <body>
+    <!--
+      The stage, not a web page: the plant stands in a soft pool of light drawn
+      in screen space, behind everything, exactly as `StageBackdrop` draws it.
+    -->
+    <div class="pool" aria-hidden="true"></div>
+
+    <main class="page" id="page">
+      <header class="masthead">
+        <img class="mark" src="/assets/mark.svg" alt="" width="44" height="44" />
+        <p class="wordmark heading">Peace Garden</p>
+      </header>
+
+      <!-- A seed arrived. -->
+      <section class="seed" id="seed" hidden>
+        <h1 class="heading" data-s="seedTitle"></h1>
+
+        <div class="stage">
+          <!--
+            SEAM — the plant.
+
+            This box is where the plant is drawn, at the proportions it is drawn
+            at. What fills it is `SeedCore` compiled to WebAssembly, handing a
+            WebGL renderer the same buffers `PlantSceneBuilder` gets from
+            `PlantBuilder` — positions, normals, UVs and indices grouped by
+            material role — so the JavaScript is a renderer and nothing else.
+            The open question is bundle size on a phone on mobile data, and the
+            fallback if it is too heavy is a JavaScript port of the geometry
+            with a CI gate. A third hand-maintained copy with nothing checking
+            it is the one option that is off the table. docs/WEBSITE.md §"What
+            renders the plant".
+
+            Until then the stage is lit and the ground line is drawn, and the
+            plant's name stands where the app puts it.
+          -->
+          <div class="stage__plant" data-seam="renderer"></div>
+          <div class="stage__ground" aria-hidden="true"></div>
+        </div>
+
+        <p class="plant-name" id="plant-name"></p>
+        <p class="label" id="sent-by"></p>
+        <p class="label" id="planted"></p>
+
+        <blockquote class="passage" id="passage">
+          <p id="passage-text"></p>
+          <footer class="label" id="passage-source"></footer>
+        </blockquote>
+
+        <section class="invitation">
+          <h2 class="label" data-s="growTitle"></h2>
+          <p class="body" data-s="growBody"></p>
+          <p class="body quiet" data-s="appNote"></p>
+        </section>
+      </section>
+
+      <!--
+        A link that arrived broken, said in the body voice rather than the
+        label voice: a whole sentence tracked out in capitals is a shout, and
+        this one is already the least welcome thing on the page.
+      -->
+      <p class="notice body" id="notice" hidden></p>
+
+      <!-- No seed: what this is. -->
+      <section class="about" id="about" hidden>
+        <h1 class="plant-name tagline" data-s="tagline"></h1>
+        <p class="body" data-s="about1"></p>
+        <p class="body" data-s="about2"></p>
+        <p class="body quiet" data-s="about3"></p>
+      </section>
+
+      <footer class="foot">
+        <label class="chooser">
+          <span class="label" id="language-label"></span>
+          <span class="chooser__field">
+            <select id="language" class="chooser__select"></select>
+            <!-- Monoline, even weight, round free ends, per BRAND.md §3.2. -->
+            <svg
+              class="chooser__mark"
+              viewBox="0 0 16 16"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                d="M4 6.5 L8 10.5 L12 6.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.25"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+        </label>
+      </footer>
+    </main>
+
+    <noscript>
+      <p class="body noscript">
+        This page reads the seed in your link with JavaScript, in your browser,
+        because that is where the seed stays.
+      </p>
+    </noscript>
+
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

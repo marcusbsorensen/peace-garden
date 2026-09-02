@@ -1,15 +1,90 @@
 # Serving peacegarden.app
 
-Two files, one job: convince iOS that this app owns this domain, so a seed link
-opens the app instead of a web page.
+Two jobs. Convince iOS that this app owns this domain, so a seed link opens the
+app instead of a web page — and answer everybody else, on `/s`, with the page a
+seed lands on.
 
 ## What goes where
 
 ```
 peacegarden.app/
-└── .well-known/
-    └── apple-app-site-association     ← no file extension
+├── .well-known/
+│   └── apple-app-site-association     ← no file extension
+├── .htaccess                          ← serves `s` as text/html
+├── s                                  ← the page, no file extension either
+├── languages.json                     ← generated: tools/site/export.py
+├── passages/<code>.json               ← generated: one bank per language
+├── strings/<code>.json                ← the site's own words, per language
+└── assets/
+    ├── site.css
+    ├── mark.svg                       ← a copy of tools/icon/icon.svg
+    └── js/
+        ├── page.js                    ← the /s page
+        ├── link.js                    ← reads the fragment
+        ├── languages.js               ← negotiation and the chooser
+        ├── strings.js                 ← the catalogue, English written
+        └── passages.js                ← theme, subtheme, and the draw
 ```
+
+Everything is a file. No build step, no framework, no npm, and nothing to run
+on the host: `git` is not needed on the server and neither is anything else.
+Upload the contents of this directory to the document root.
+
+**`s` has no file extension on purpose.** It is the path every seed link
+already points at and the path the association file claims, so it cannot grow a
+`.html`. `.htaccess` serves it as `text/html`, the same way `.well-known` forces
+`application/json` — see that file for what it can and cannot promise.
+
+**`mark.svg` is a copy.** `tools/icon/make_icon.py` writes the canonical
+drawing at `tools/icon/icon.svg`; this is that file, copied. Change the dials
+and re-run the generator, then copy it here again. Do not hand-edit either one.
+**SEAM:** a deploy script that re-copies it is what would keep the two from
+drifting, and there is not one yet.
+
+**Two deploy steps that are settings rather than files:**
+
+- **Request logging on `/s`.** docs/WEBSITE.md asks for none, or the shortest
+  the host permits. That is a 20i control-panel setting. Nothing on the page
+  claims more than what is actually switched off, and nothing should.
+- **The root.** `peacegarden.app/` still answers 403. `/s` with no seed in it is
+  the page that says what Peace Garden is, so what the root should do is the
+  open question in docs/WEBSITE.md about whether there is a marketing page at
+  all — deliberately left alone rather than answered with a redirect.
+
+## What the next page reuses
+
+`/p/…`, the shared plant page, is phase 2 and is not here. What is here is the
+half of it that has nothing to do with a service, and it is deliberately in
+modules of its own rather than inside the `/s` page:
+
+| | |
+| --- | --- |
+| `languages.js` | negotiation, the chooser, the written-case list |
+| `strings.js` | the catalogue and the silent English fallback |
+| `passages.js` | theme and subtheme off a name, and the draw |
+
+A plant page reads the same manifest and picks its passage the same way. What
+it adds is a plot service — **same-origin on 20i, decided 2 September**, so a
+plant page fetches `/api/…` on this host rather than reaching another domain.
+That is worth writing down where somebody will look for it: it means the page
+has no cross-origin story to design, and it means a request to the service is a
+request to the same log as everything else. The fragment property that `/s`
+depends on is a property of `/s` alone, because `/p` publishes its payload on
+purpose.
+
+## Checking the page
+
+```sh
+curl -sSI https://peacegarden.app/s
+```
+
+Wanted: `HTTP/2 200` and `content-type: text/html`. `text/plain` means
+`.htaccess` is not being read, and the page will show as source.
+
+The fragment is the payload and never reaches the server, so a seed can only be
+tested in a browser. Any link the app mints will do; `assets/js/link.js` also
+carries `PINNED`, the same fragment `PollenLinkTests` and `tools/reference/`
+both agree on, which is a valid offer from *Marcus* of *Aurelia nocturna*.
 
 ## Already filled in
 

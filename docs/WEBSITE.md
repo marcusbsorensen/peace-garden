@@ -23,7 +23,7 @@ and it is the only one of the four that is not yet agreed to be built at all.
 | The association file | Deployed, served as `application/json` with no redirect, and **already in Apple's CDN**. It claims `/s*` for the app and names `app.peacegarden.Clip` for a clip that does not exist yet. |
 | The link format | `PollenLink`, version 1, payload in the fragment, six-byte checksum, base64url fields so a full stop in a name is never a separator. `PollenLink.path` is `/s` and the host is passed in rather than baked in. |
 | The renderers | `SeedCore` is authoritative. `tools/reference/` is a second implementation of the derivation, gated by CI. `tools/preview/` is a Python port of the geometry that has drifted twice and is for judging shape. |
-| The languages | The app speaks **eight** — English, Dutch, Danish, French, Spanish, Norwegian Bokmål, Swedish, Italian — with seven passage banks and Spanish borrowing English until its own lands. **Twenty-five more are written down** in [LANGUAGES.md](LANGUAGES.md) under *Round two*. A language arrives as an interface first and a bank later, every time, and `QuoteBank.isBorrowed` is the mechanism that says so. |
+| The languages | The app's interface speaks **eight** — English, Dutch, Danish, French, Spanish, Norwegian Bokmål, Swedish, Italian — and **seventeen have passage banks** as of 2 September, wave two included. **Eight more are written down** in [LANGUAGES.md](LANGUAGES.md) under *Round two*. A language arrives as an interface first and a bank later, every time, and `QuoteBank.isBorrowed` is the mechanism that says so. |
 
 Two consequences of that AASA entry that shape everything on the web side.
 
@@ -133,9 +133,34 @@ leaves a screen already in every language.
 
 So **the site's own string catalogue should be in the low tens, not the low
 hundreds** — a target rather than an observation, and it should be defended when
-somebody wants to add a paragraph. Thirty strings across thirty-three languages
+somebody wants to add a paragraph. The catalogue came in at **seventeen strings**,
+because the age and the date are `Intl` rather than entries — which is worth
+defending as hard as the count. Seventeen strings across thirty-three languages
 is a commission that can ride alongside one round-two wave. Three hundred is a
 second localisation project, and it would be the reason the site fell behind.
+
+### The theme does not fall out of the lineage, and a page cannot compute it
+
+**Found while building `/s`, 2 September, and it is a correction to the section
+above.** That section says the theme falls out of the lineage and the subtheme
+out of the genus ending, and that neither needs a field. Half of it is right.
+
+`Quotes.theme(of:)` reads a theme off a plant's **genus head**, which a page can
+do, because the head is in the binomial it already prints. A **pair's** theme is
+`sharedTheme(parentA:parentB:)` and comes from both parent seeds, which a page
+does not have and must not be given: publishing both parents publishes the other
+gardener's seed, and the seed is the one thing this design has kept.
+
+So for `/s` there is no problem — an offer link carries a seed, and the head
+reading is the right one. **For a shared plant page in phase 2 there is**, and
+the answer is nearly forced: **the plot record carries the derived theme**, one
+small language-neutral value, and never the parents.
+
+It is worth saying plainly that this is *not* the contact-token case. The token
+had to be decided before any meeting happened, because it rides in the exchange
+payload. A theme is written when somebody shares, into a record that does not
+exist yet, so it can be added the day the plot service is built. What it cannot
+be is assumed to be free, which is how it was written down here.
 
 ### The passage: one page, two readers
 
@@ -232,7 +257,7 @@ with two different answers. This is the app's own rule restated for a site.
 
 | Behind on | Answer |
 | --- | --- |
-| **The site's own thirty strings** | Fall back to English silently. A label is short, and a fallback in a label is not the conspicuous case. |
+| **The site's own strings** | Fall back to English silently. A label is short, and a fallback in a label is not the conspicuous case. |
 | **A passage bank** | Fall back to English **and say so under the passage**, which is `isBorrowed` on the web. The passage is the one moment the site speaks at length, so it is the one place a borrowed language has to be named. |
 
 A language with an interface and no bank is the normal state, not the exception:
@@ -251,7 +276,7 @@ told.
   produce two different Dutch banks, which is the passage version of exactly the
   drift the renderer section is about. **This is the whole answer to "the site has
   fewer languages than the app": generated banks mean it never has fewer.** What
-  it can be behind on is thirty strings, which is a much smaller sentence.
+  it can be behind on is seventeen strings, which is a much smaller sentence.
 - **A manifest, generated.** `Server/languages.json`, written by a tool beside
   `tools/strings/sync.sh`, listing every language code with whether the app has an
   interface for it and whether it has a bank. The site reads the manifest to
@@ -692,7 +717,7 @@ stay the same list rather than two lists that agree for a while.
 
 Both are `tools/site/export.py`, because they read the same two files and
 disagreeing about which banks exist was the failure they were built to prevent.
-`--check` is the CI step, *The site's languages are the app's*. It writes twelve
+`--check` is the CI step, *The site's languages are the app's*. It writes seventeen
 banks and the manifest; the manifest also carries each language's **endonym**,
 since a chooser is read by somebody looking for their own word for their own
 language, and a static site cannot fetch that.
@@ -729,13 +754,25 @@ handed a decision they cannot review.
 - **Whether the coordinate is ever publishable.** The answer today is no and
   nothing needs it to be. If it ever is, it is a new consent with its own screen
   and its own withdrawal.
-- **The wasm bundle size**, which decides whether the recommended renderer
-  survives contact with a phone on mobile data.
+- ~~**The wasm bundle size**, which decides whether the recommended renderer
+  survives contact with a phone on mobile data.~~ Deferred rather than answered,
+  2 September: **the first pass draws no plant at all**, only a marked space of
+  the right proportions. Everything else on a page — the language, the passage,
+  the names, the invitation — can be built and looked at without it, and the
+  measurement that settles wasm against a JavaScript port is worth taking
+  against a real page rather than against a guess.
 - **Whether the fragment reaches an App Clip on every invocation route.**
-- **How many languages the site's own thirty strings ship in on the first day.**
-  English alone is defensible and honest; eight matches the app; thirty-three
-  matches the ambition. It is a commission of a known size, which is unusual for
-  a question on this list.
+- ~~**How many languages the site's own thirty strings ship in on the first
+  day.**~~ **All seventeen that have banks**, decided 2 September. The argument
+  that carried it: the site should never speak English chrome to somebody whose
+  passage is already in Finnish, and the passage is the part that took a
+  commission each. Thirty strings against seventeen languages is small beside
+  seventeen banks of three hundred and sixty.
+
+  It also turns the low-tens target from a preference into a constraint with a
+  multiplier on it. Every string added is seventeen strings, and will be
+  twenty-five, and then thirty-three. **That is the number to quote at whoever
+  wants to add a paragraph.**
 - **Whether the passage line says, every time, that it was drawn for the reader.**
   It has to be said somewhere. Saying it on every page may be one sentence more
   than the page can carry, and the alternative — saying it only where the reader's
@@ -746,10 +783,12 @@ handed a decision they cannot review.
   per-meeting one — a decision that also cannot be made retrospectively.
 - **Who answers a report.** There is one person and no rota, and that is a fact
   about the service rather than a gap in the spec.
-- **Where the plot service runs.** 20i shared hosting serves a static file well;
-  a plot service is a database, an API, backups and a restore somebody has
-  actually tried. Not decided, and it is the only part of this that has a monthly
-  bill.
+- ~~**Where the plot service runs.**~~ **20i, with a database added there**,
+  decided 2 September. One host, one bill, one place to look — and the API is
+  same-origin with the pages, which removes a whole class of question about
+  where a request goes and what it carries. What the decision does not remove is
+  the part that was never about hosting: backups, and a restore somebody has
+  actually tried.
 - **Whether `peacegarden.app` is also the app's marketing page.** The position
   here is that `/s` with no seed in it is already that page, and that a separate
   one earns its place only when there is an App Store listing to point at.

@@ -1,0 +1,375 @@
+/*
+  The look of it, which BRAND.md and the app already decide.
+
+  Colour belongs to the plants. Chrome is white at four opacities on black, and
+  the same hierarchy read the other way up on a light ground — the alphas are
+  not mirrored, because dark type on a light ground reads heavier at the same
+  opacity. Both sets are lifted from `Chrome.swift` rather than picked again.
+
+  The app offers dark, light, and follow-the-phone. A web page has no settings
+  screen, so it follows the reader: `prefers-color-scheme` is the whole of it.
+
+  Nothing here assumes left to right. No round-two language is right to left, so
+  logical properties cost nothing now and mean the pass does not have to be
+  earned twice.
+*/
+
+:root {
+  /* The greys, from `Chrome.swift`. Contrast computed rather than eyeballed:
+     muted 10.5:1, faint 6.5:1, section labels 13.1:1 on black. */
+  --ground: #000000;
+  --ink: #ffffff;
+  --muted: rgba(255, 255, 255, 0.72);
+  --faint: rgba(255, 255, 255, 0.56);
+  --section: rgba(255, 255, 255, 0.8);
+  --hairline: rgba(255, 255, 255, 0.24);
+  --passage-ink: rgba(255, 255, 255, 0.84);
+
+  /* The stage. `StageBackdrop`: a cool slate at hue 0.60, saturation 0.30,
+     brightness 0.26, a little above centre, falling away to nothing rather
+     than to black. */
+  --pool: radial-gradient(
+    circle 85vmax at 50% 46%,
+    rgba(46, 54, 66, 1) 0%,
+    rgba(46, 54, 66, 0.8403) 8.33%,
+    rgba(46, 54, 66, 0.6944) 16.67%,
+    rgba(46, 54, 66, 0.5625) 25%,
+    rgba(46, 54, 66, 0.4444) 33.33%,
+    rgba(46, 54, 66, 0.3403) 41.67%,
+    rgba(46, 54, 66, 0.25) 50%,
+    rgba(46, 54, 66, 0.1736) 58.33%,
+    rgba(46, 54, 66, 0.1111) 66.67%,
+    rgba(46, 54, 66, 0.0625) 75%,
+    rgba(46, 54, 66, 0.0278) 83.33%,
+    rgba(46, 54, 66, 0.0069) 91.67%,
+    rgba(46, 54, 66, 0) 100%
+  );
+
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue",
+    sans-serif;
+  --serif: ui-serif, "New York", Georgia, "Times New Roman", serif;
+
+  /* `Chrome.readableWidth`. A paragraph set to the full width of a screen is a
+     wall; the plant is allowed the whole screen, the words are not. */
+  --measure: 440px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    /* A warm near-white rather than white, so the ground is never the
+       brightest thing on screen. */
+    --ground: #f6f6f6;
+    --ink: #121212;
+    --muted: rgba(18, 18, 18, 0.7);
+    --faint: rgba(18, 18, 18, 0.52);
+    --section: rgba(18, 18, 18, 0.78);
+    --hairline: rgba(18, 18, 18, 0.2);
+    --passage-ink: rgba(18, 18, 18, 0.84);
+
+    /* Pulled back to a third on a light ground, where a saturated glow is a
+       stain rather than a pool. */
+    --pool: radial-gradient(
+      circle 85vmax at 50% 46%,
+      rgba(46, 54, 66, 0.3) 0%,
+      rgba(46, 54, 66, 0.2521) 8.33%,
+      rgba(46, 54, 66, 0.2083) 16.67%,
+      rgba(46, 54, 66, 0.1687) 25%,
+      rgba(46, 54, 66, 0.1333) 33.33%,
+      rgba(46, 54, 66, 0.1021) 41.67%,
+      rgba(46, 54, 66, 0.075) 50%,
+      rgba(46, 54, 66, 0.0521) 58.33%,
+      rgba(46, 54, 66, 0.0333) 66.67%,
+      rgba(46, 54, 66, 0.0187) 75%,
+      rgba(46, 54, 66, 0.0083) 83.33%,
+      rgba(46, 54, 66, 0.0021) 91.67%,
+      rgba(46, 54, 66, 0) 100%
+    );
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* A class that sets `display` outranks the browser's own rule for `hidden`, so
+   the sections this page shows one at a time need saying twice. */
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100svh;
+}
+
+/* Screen space, behind everything, as the app draws it. */
+.pool {
+  position: fixed;
+  inset: 0;
+  background: var(--pool);
+  pointer-events: none;
+}
+
+.page {
+  position: relative;
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding-inline: 28px;
+  padding-block: max(32px, env(safe-area-inset-top)) 40px;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+  text-align: center;
+}
+
+/* The three voices, from `Chrome.swift` and `design/Type.dc.html`. */
+
+.label {
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.218em; /* tracking 2.4 at 11 */
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0;
+}
+
+.heading {
+  font-size: 20px;
+  font-weight: 300;
+  letter-spacing: 0.14em; /* tracking 2.8 at 20 */
+  text-transform: uppercase;
+  color: var(--section);
+  margin: 0;
+}
+
+/* Turkish, Azerbaijani, Greek and Irish keep the case they were written in.
+   `Chrome.keepsWrittenCase`, and Turkish is in the chooser today. */
+[data-keeps-case] .label,
+[data-keeps-case] .heading {
+  text-transform: none;
+}
+
+.body {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.45;
+  color: var(--muted);
+  margin: 0;
+  max-width: var(--measure);
+}
+
+.quiet {
+  color: var(--faint);
+}
+
+.value {
+  text-transform: none;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+/* The one serif: the binomial a plant is given. An italic serif for a species
+   name is the convention botany already has. */
+.plant-name {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.tagline {
+  font-size: 24px;
+  color: var(--section);
+}
+
+.masthead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-block-end: 6px;
+}
+
+/* The ground travels with the mark, so there is no light and dark pair. It is
+   an app icon and is drawn as one. */
+.mark {
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: 22%;
+  display: block;
+}
+
+.wordmark {
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  color: var(--section);
+}
+
+.seed,
+.about {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  inline-size: 100%;
+}
+
+/* The stage. The plant is drawn here, at these proportions. */
+.stage {
+  inline-size: min(100%, 300px);
+  aspect-ratio: 4 / 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  margin-block: 4px;
+}
+
+.stage__plant {
+  flex: 1;
+  inline-size: 100%;
+}
+
+/* Where the plant stands. Monoline, even weight, round ends. */
+.stage__ground {
+  inline-size: 64px;
+  block-size: 1px;
+  border-radius: 1px;
+  background: var(--hairline);
+}
+
+.passage {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  max-width: var(--measure);
+}
+
+.passage p {
+  font-size: 17px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--passage-ink);
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.passage footer {
+  color: var(--faint);
+}
+
+.invitation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-block-start: 22px;
+  border-block-start: 1px solid var(--hairline);
+  inline-size: 100%;
+}
+
+.invitation h2 {
+  color: var(--section);
+}
+
+.notice {
+  color: var(--muted);
+  max-width: var(--measure);
+  line-height: 1.6;
+}
+
+.foot {
+  margin-block-start: auto;
+  padding-block-start: 34px;
+}
+
+/* A control that reads as a line of text rather than a button. */
+.chooser {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--faint);
+}
+
+.chooser__field {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.chooser__select {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-block-end: 1px solid var(--hairline);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  padding-block: 3px;
+  padding-inline: 2px 22px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.chooser__select:focus-visible {
+  outline: 1px solid var(--hairline);
+  outline-offset: 4px;
+}
+
+.chooser__mark {
+  position: absolute;
+  inset-inline-end: 2px;
+  inline-size: 16px;
+  block-size: 16px;
+  color: var(--faint);
+  pointer-events: none;
+}
+
+.noscript {
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding-inline: 28px;
+  padding-block-end: 32px;
+  text-align: center;
+}
+
+/* The app arrives a piece at a time, at about the pace the piece is taken in.
+   One step of that here: the page settles rather than snapping into place.
+
+   The hiding is keyed to an attribute the script sets for itself, so a script
+   that never arrives leaves a visible page rather than an invisible one. */
+.page {
+  transition: opacity 420ms ease-out;
+}
+
+body[data-loading]:not([data-ready]) .page {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page {
+    transition: none;
+  }
+
+  body[data-loading]:not([data-ready]) .page {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,24 @@
+{
+ "language": "Spanish",
+ "endonym": "Español",
+ "awaiting": "Every value below awaits a commission. The English these are written from is in assets/js/strings.js, which is also the fallback: any value left null is drawn in English, silently, one key at a time.",
+ "strings": {
+  "tagline": null,
+  "about1": null,
+  "about2": null,
+  "about3": null,
+  "seedTitle": null,
+  "replyTitle": null,
+  "sentBy": null,
+  "gardener": null,
+  "planted": null,
+  "growTitle": null,
+  "growBody": null,
+  "appNote": null,
+  "inEnglish": null,
+  "language": null,
+  "damaged": null,
+  "notASeed": null,
+  "newerVersion": null
+ }
+}
