@@ -1,247 +1,149 @@
 # Plant forms: getting off the tower
 
-Written 1 September 2026, from looking at three plants side by side and finding
-they were the same plant three times. This is a build spec: every decision is
-made. Nothing here is started.
+Written 1 September 2026 as a build spec, from looking at three plants side by
+side and finding they were the same plant three times. **Built 2 September.**
+This is the record now rather than the plan; where the two differ, the
+difference and the reason for it are below.
 
-## What is wrong today
+## What is live
 
-**Every plant is one unbranched stem.** `PlantSkeleton` is `stem`, `nodes` and
-`apex` — a single swept path, leaves at the nodes, blooms either at the tip or
-at every node. There is no other topology in `SeedCore`, and no way to express
-one.
-
-**`ArchetypeProfile` is fifteen scalar multipliers over that one shape.**
-Height, thickness, node scale, leaf length and width and droop, petal count and
-length and width and curl, head pitch, centre scale, bloom presence, sway, and a
-single `bloomsAtNodes` flag. Twelve archetypes, all of them the same silhouette
-at different proportions.
-
-**So four of the twelve names are not true.** They are the app's own words, in
-[Archetype.swift](../Packages/SeedCore/Sources/SeedCore/Genome/Archetype.swift):
-
-| Archetype | Says it is | Actually is |
-| --- | --- | --- |
-| `plume` | *"feathery many-branched inflorescence"* | a raceme with narrow petals |
-| `umbel` | *"flat-topped cluster on fine stalks"* | a raceme with small ones |
-| `poppy` | *"single crumpled bloom on a bare stem"* | blooms all the way up |
-| `orchid` | *"few, large, asymmetric blooms"* | few large blooms, up a stalk |
-
-The vocabulary is already in the code. Only the geometry is missing.
-
-**And it is why a plant reads as too tall.** A tower spends its whole budget on
-height because there is nowhere else to spend it. A plant that branches is
-shorter and wider for the same amount of plant, which is the real answer to a
-stem that runs up into its own name — the framing fix that keeps it out of the
-chrome treats the symptom.
-
-## Three forms
-
-One new enum, `Form`, on the archetype rather than on the genome. Three cases,
-and every archetype claims one.
+`Inflorescence` is a property of the archetype, and every archetype claims one.
 
 ### `.raceme` — blooms on the axis
 
-What exists today, unchanged, and it stays the commonest. A single stem with
-blooms at the tip or up the nodes. Six archetypes: **spire, star, bell, vine,
-succulent, fern.**
-
-Nothing to build. It is named so that the other two are choices rather than
-exceptions.
+What every plant was before this, unchanged, and still the commonest. Six
+archetypes: **spire, star, bell, vine, succulent, fern.** It is named so that
+the other two read as choices rather than as exceptions.
 
 ### `.head` — stalks off the upper stem, a bloom on each
 
-The upper stretch of the stem gives off between three and seven stalks, each
-sweeping out and up and ending in a bloom. Two archetypes: **umbel, plume.**
+**umbel** and **plume**, separated by one number, `branchSpread`.
 
-One parameter separates the flat cluster from the feathery spray, and it is
-worth having as a number rather than as two more cases:
+- **At 0 — a flat-topped head.** The stalks leave over a short stretch near the
+  top, and every tip aims at the same height, so a stalk from lower down simply
+  has further to climb and comes out longer. Measured on the umbel that ships:
+  five tips within 2.4mm of each other on a 63cm plant, and a head 49cm across.
+  That levelling is the whole reason a corymb reads as a table; without it the
+  head is a bundle sitting on the tip, which is what the first attempt looked
+  like.
+- **At 1 — an open spray.** The stalks leave over half the stem, their angles
+  vary far more, and their targets are scattered rather than levelled. Measured
+  on the plume: tips spread over 16cm, a head 77cm across. Still longer stalks
+  low down, because the same climb rule is doing the work — just no table.
 
-- **`spread` at 0 — a flat-topped head.** Every stalk leaves the stem within a
-  short stretch near the top, and **the tips all reach the same height**, so a
-  stalk from lower down is a longer stalk. That levelling is the whole reason a
-  corymb reads as flat-topped rather than as a bundle; without it the head is a
-  fan. This is `umbel`.
-- **`spread` at 1 — an open spray.** The stalks leave over a much longer stretch
-  of stem, at wider angles, and their tips are *not* levelled. This is `plume`,
-  and it is the feathery many-branched thing the enum has been promising.
-
-Stalks are set out on the same golden-angle divergence the leaves use
-(`genome.foliage.divergence`), so they spiral round the stem rather than lining
-up in a plane. A stalk starts at 45% of the main stem's radius where it leaves
-it and runs out to a point through `apexPoint`, the same way the stem's own tip
-does — a stalk is a stem, and should end like one.
+Stalks are set out on the golden-angle divergence the leaves use, so they
+spiral rather than lining up in a plane. A stalk starts at 45% of the stem's
+radius where it leaves it and runs out to a point through `apexPoint`, the same
+way the stem's own tip does: a stalk is a stem and should end like one.
 
 ### `.solitary` — a bare stem, one much larger bloom
 
-No branching, few leaves, and everything the plant has goes into a single
-terminal flower at around **2.2× the bloom scale of a raceme's**. Four
-archetypes: **poppy, orchid, lotus, thistle.**
+**poppy, orchid, lotus, thistle.** No branching, few leaves, everything in one
+terminal flower. Fewer blooms is what buys the size, and the plants should look
+like they cost the same.
 
-This is the form that most changes what the garden looks like, because it is the
-one that is not a spike of anything. It is also the cheapest to build — it is
-the existing apex bloom, larger, with `bloomsAtNodes` off and `nodeScale` down.
+## Where the build departed from the spec
 
-**Fewer blooms is what buys the size.** A spire carries a dozen small flowers
-and cannot afford a large one; a poppy carries one and can afford nothing else.
-The scale is not decoration, it is the same budget spent differently, and the
-plants should look like they cost the same.
+Three places. Each was a decision the spec had made, and each is recorded here
+rather than quietly changed.
 
-## Height comes down with it
+### The enum is `Inflorescence`, not `Form`
 
-`.solitary` and `.head` archetypes drop their `heightScale`, because a plant
-that has somewhere else to put its growth stops putting it all upward:
+`Genome.Form` already exists — archetype, symmetry, vigour — and a bare `Form`
+inside `Genome` resolves to that one, which is where the new field has to live.
+`Inflorescence` has no collision, and `.raceme`, `.head` and `.solitary` are
+inflorescence types in the botany the file already borrows from, so the precise
+word costs nothing.
 
-| Archetype | Form | Height now | Height after |
-| --- | --- | --- | --- |
-| `poppy` | solitary | 1.0 | **0.75** |
-| `orchid` | solitary | 1.0 | **0.85** |
-| `lotus` | solitary | 0.85 | **0.7** |
-| `thistle` | solitary | 1.15 | **0.9** |
-| `umbel` | head | 1.1 | **0.9** |
-| `plume` | head | 1.25 | **1.05** |
+### `bloomScale` is 1.7, not 2.2, and three petal scales came down with it
 
-Six of twelve plants get visibly shorter and wider. The other six are towers on
-purpose, and a spire that is a spire among poppies is a different thing from a
-spire among spires.
+The spec put a solitary's bloom at "around 2.2× the bloom scale of a raceme's"
+and flagged it as the number most likely to be wrong first time. It was, but not
+by being too large — **by compounding.** Poppy, orchid and lotus already carried
+`petalLengthScale` of 1.6, 1.5 and 1.4, which is how a large flower was got when
+inflating the petal was the only lever. At 2.2 on top, a poppy came out about
+three and a half times a spire's, and what it drew was a satellite dish: the
+centre dome is sized off the petal, so the widest, flattest part of the flower
+grew fastest of all.
 
-## What the geometry needs
+Those three `petalLengthScale`s are 1.0 now — `bloomScale` says the thing they
+were saying — and the scale is **1.7**. Thistle is the exception at **2.4**,
+because its petals are bracts at 0.4 and stay that way; its head is made of many
+small ones, so it needs more of the form's scale to reach the same size.
 
-### `PlantSkeleton` becomes a tree
+### Thistle's `nodeScale` came down to 0.55
 
-```swift
-public struct Branch: Sendable {
-    /// Where it leaves the main stem.
-    public var origin: PathSample
-    /// Its own swept path, base to tip.
-    public var path: [PathSample]
-}
+The spec said a solitary is the existing apex bloom "with `bloomsAtNodes` off and
+`nodeScale` down". All four solitary archetypes already had `bloomsAtNodes` off —
+the spec's table says poppy "blooms all the way up" and that was never true — so
+the only part left to do was thistle's node count, which was still at 1.
 
-public struct PlantSkeleton: Sendable {
-    public var stem: [PathSample]
-    public var nodes: [PathSample]
-    public var apex: PathSample
-    /// Empty for `.raceme` and `.solitary`.
-    public var branches: [Branch]
-}
-```
+## Two defects the tests caught that no render would have
 
-Empty rather than optional: every consumer then walks the same list and the two
-unbranched forms need no special case.
+Both are in `testAHeadDividesGraduallyRatherThanAllAtOnce`, which walks
+`heightScale` in four hundred steps and asks whether any one of them stands out
+from the rest. Neither is visible in a render at any single age, because both
+are about the transition between ages.
 
-### `SkeletonBuilder`
+1. **The tip was quantised to an integration step.** A stalk stopped at the
+   sample *after* it crossed its target height, so as the plant grew and the
+   stalk lengthened, the step it stopped on jumped from one to the next and the
+   whole head snapped outward — about two and a half per cent of the plant, in
+   one frame, while somebody is watching the head open. It stops at the
+   crossing now, interpolated.
+2. **A head's first stalk arrived four millimetres long.** Two guards in a row —
+   `vigour > 0.02` and `reach > stemLength * 0.02` — and the coarse one bit
+   first, so stalks appeared at a visible length instead of growing out of the
+   stem. The reach guard is the only one that binds now, at a thousandth of the
+   stem, and it exists solely against degenerate geometry.
 
-`stem(genome:heightScale:segments:)` gains the form and emits the branches. Each
-branch is integrated the same way the main stem is — step by step, so its curve
-accumulates — rather than evaluated from a formula, for the reason already
-recorded on `stem`: it is how a real one gets its shape.
+Worth noting what made the test able to find them: it asks whether the largest
+step is out of line with the typical step, rather than comparing against a fixed
+threshold. A fixed number is either looser than a pop or tighter than the growth
+itself, and the first two attempts at it were each in turn.
 
-**The levelling is the part to get right.** For `spread` near 0, a branch's
-length is whatever reaches the target height from where it started, so it must
-be solved for rather than drawn. Solve it by integrating the branch until it
-crosses the target height and stopping there, not by scaling a fixed path — a
-scaled path changes its curvature and the head stops looking flat.
+## How it was checked
 
-**Branches grow with the plant.** A branch's length scales with `heightScale`
-like everything else, so a head opens outward as the plant grows rather than
-arriving whole. Before the plant is tall enough to have an upper stem there are
-no branches at all, and a young `.head` plant is a raceme that has not divided
-yet — which is what one is.
+| | |
+| --- | --- |
+| **72 SeedCore tests** | Up from 63. Nine new in `PlantFormTests`. |
+| **Determinism** | `testAFixedSeedAlwaysDrawsTheSameMesh` pins vertex count and bounds for three fixed seeds, which between them happen to cover all three forms. It is what would notice a renamed `GeneSource` key rather than an added one. |
+| **The twelve, side by side** | `tools/preview/archetypes.py`, written for this. The acceptance test the spec asked for: if two tiles share a silhouette, the forms are not carrying enough. |
+| **A head over its life** | `archetypes.py --archetype umbel --stages`, plus the continuity test above. |
+| **In the app, on a simulator** | All four cases looked at on an iPhone 17 Pro: a raceme (unchanged), a solitary, a flat-topped head, a spray. The joins where a stalk leaves the stem are domed like the foot of the stem and read closed. |
+| **Device build** | `generic/platform=iOS`, clean. |
+| **The derivation reference** | Still agrees. The new keys are new, so CI's second implementation is untouched. |
 
-### `PlantBuilder`
-
-- `addStem` adds a tube per branch, and each branch takes the same base dome
-  treatment as the main stem where it joins. A branch leaving a stem is a join
-  that will show if it is left open.
-- `addBlooms` gains the three cases: raceme as today; head places one bloom at
-  each branch tip; solitary places one at the apex at `bloomScale`.
-- Leaves stay on the main stem's nodes in all three forms. Leaves on the
-  branches of a head is a fourth thing to tune and it buys very little — the
-  branches of an umbel are bare in life.
-
-### `ArchetypeProfile`
-
-Two new fields, and one existing one becomes redundant:
-
-```swift
-public var form: Form = .raceme
-public var bloomScale: Double = 1
-public var branchSpread: Double = 0
-public var branchCount: Int = 5      // before the seed's own draw scales it
-```
-
-`bloomsAtNodes` stays and keeps its meaning for `.raceme`. For the other two
-forms it is ignored, and the profile should not set it.
+To plant a chosen form on a simulator, write the seed into
+`Library/Application Support/PeaceGarden/garden.json` in the app's data
+container and relaunch; `defaults write app.peacegarden developer.clockShift
+-float 3456000` winds it to maturity. Far quicker than reinstalling until the
+draw obliges.
 
 ## Nothing new has to cross
 
-Worth stating plainly, because it looks like a gap and is not.
+`Pollination` is untouched, and this was true as written. The archetype is drawn
+from the seed, a crossed seed is a new seed derived from both parents, and the
+form comes free with the archetype the child draws. Every new per-plant trait is
+drawn the same way against the child seed, so both phones reach the same head
+having sent each other nothing.
 
-The archetype is drawn from the seed —
-`source.pick("form.archetype", from: Archetype.allCases)` in
-[Genome.swift:190](../Packages/SeedCore/Sources/SeedCore/Genome/Genome.swift) —
-and a crossed seed is a new seed derived from both parents. A hybrid's archetype
-is therefore drawn afresh from the child's own seed rather than blended from its
-parents', and **the form comes free with it.**
+`testBothSidesOfAMeetingGrowTheSameForm` says so over sixty meetings.
 
-Every new per-plant trait — branch count, spread jitter, branch angle, stalk
-length variation — is drawn the same way, `source.value(...)` and
-`source.integer(...)` against the child seed. So:
+The new keys are `stem.branch.count`, `stem.branch.spread` and
+`stem.branch.angle`. **Nothing already there was renamed**, which is the only
+property here that could not have been repaired afterwards.
 
-- `Pollination` needs no change at all.
-- Both phones derive the same form from the same seed without sending anything,
-  which is the guarantee the whole exchange is built on.
-- Two plants of the same archetype still differ, because their branch draws
-  differ.
+## What is left
 
-**Name the new draws carefully.** `GeneSource` keys are the compatibility
-surface: a seed drawn today and a seed drawn after this lands must grow the same
-plant, and they will only do so if the existing keys keep their names and their
-ranges. Add `stem.branch.*` keys; change nothing that is already there.
-
-## Framing
-
-`PlantSceneBuilder.framing` already takes the greater of the height and width
-constraints and already measures width as the larger of the x and z extents,
-because the plant turns. A wide head is therefore framed correctly with no
-change. Two things to look at rather than assume:
-
-- **A flat-topped head is wide and short**, which is the case the width
-  constraint was written for and has never actually been exercised.
-- **`matureBounds` builds a whole extra mesh** to decide the camera distance. It
-  will now build a branched one. Same cost, once per seed, but it is the first
-  time that mesh has been the expensive one.
-
-## Files this touches
-
-- `Packages/SeedCore/Sources/SeedCore/Genome/Archetype.swift` — `Form`, the four
-  new profile fields, the per-archetype assignments, the height changes.
-- `Packages/SeedCore/Sources/SeedCore/Morphology/PlantSkeleton.swift` —
-  `Branch`, the branch list, and the integration that solves for a levelled tip.
-- `Packages/SeedCore/Sources/SeedCore/Morphology/PlantBuilder.swift` — branch
-  tubes and their joins, and the three bloom cases.
-- `Packages/SeedCore/Sources/SeedCore/Genome/Genome.swift` — the `stem.branch.*`
-  draws.
-- `Packages/SeedCore/Tests/SeedCoreTests/` — see below.
-
-## How to know it is right
-
-**Determinism first, because it is the one thing that cannot be fixed later.**
-A seed drawn before this change must grow the same plant after it. The existing
-tests cover a fixed seed's genome; extend them so a fixed seed's *mesh* is
-covered too — vertex count and bounds are enough to catch a silent change, and
-they are what would have caught a renamed `GeneSource` key.
-
-Then: **one plant of each of the twelve archetypes, side by side, at full
-bloom.** The whole point of this work is that a stranger can tell them apart. If
-two of them are still the same silhouette, the forms are not carrying enough.
-
-Then the growth sequence for a `.head` plant, which is the one with a new
-behaviour over time: it should be a plain shoot, then a shoot that divides, then
-an opening head — and the division should not appear between one frame and the
-next.
-
-Then a `.solitary` plant against a `.raceme` one on the same screen, to see
-whether the bloom scale reads as *a large flower* or as *a flower drawn too
-big*. That is a judgement, and it is the one number here most likely to be wrong
-on the first attempt.
+- **The centre dome of a large solitary bloom has a hard bright rim.** Visible
+  on the poppy and the lotus in the preview sheet, less so in the app. It is the
+  existing centre treatment scaled up rather than anything new, and it is a
+  shading question rather than a geometry one.
+- **Leaves stay on the main stem's nodes in all three forms.** As specified —
+  the branches of an umbel are bare in life, and leaves on them would be a
+  fourth thing to tune.
+- **`tools/preview` has drifted further.** The branch code in it is a faithful
+  mirror written alongside the Swift, but the stems there still lack
+  `apexPoint`, the bloom lag and the foot dome. `SeedCore` is authoritative;
+  the preview is for judging shape.
