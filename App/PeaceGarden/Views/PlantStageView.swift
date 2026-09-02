@@ -31,16 +31,19 @@ struct PlantStageView: View {
     @State private var showingGarden = false
     @State private var showingSeed = false
     @State private var showingSettings = false
-    /// Whether the marks at the top have unrolled into their full controls.
-    /// See `tapTopChrome`.
-    @State private var topChromeExpanded = false
-    /// How far down the screen the top chrome reaches, in points. The plant is
-    /// framed clear of it.
-    @State private var topChromeHeight: CGFloat = 0
+    /// Which mark has unrolled into its word, if any. See `mark(_:_:isProminent:open:)`.
+    @State private var expandedMark: String?
+    /// How far up the screen the chrome at the foot reaches, in points. The
+    /// plant is framed clear of it and stands on it.
+    @State private var bottomChromeHeight: CGFloat = 0
     /// Closing the panel is a decision, so it is kept. It belongs in defaults
     /// rather than in the garden: the garden holds seeds and birthdays, and
     /// this is only a note about what one person has already read.
     @AppStorage("meetPanelClosed") private var meetPanelClosed = false
+    /// Whether the plant's name and stage are drawn under it. Off leaves the
+    /// plant, the light it stands in, and a row of marks — and nothing on
+    /// screen in any language. See `Chrome.namesPlantKey`.
+    @AppStorage(Chrome.namesPlantKey) private var namesPlant = true
 
     var body: some View {
         ZStack {
@@ -53,7 +56,7 @@ struct PlantStageView: View {
                 PlantSceneView(
                     genome: identity.genome,
                     growth: growth,
-                    topInset: topChromeHeight,
+                    bottomInset: bottomChromeHeight,
                     onTap: { revealControls() }
                 )
                 .ignoresSafeArea()
@@ -74,11 +77,10 @@ struct PlantStageView: View {
                 }
             }
 
-            // Settings arrives from the top, because that is where the cog
-            // that opens it is. A sheet rises from the bottom of the screen
-            // whatever opened it, which reads as the panel coming from the
-            // wrong end — so this is a layer over the stage rather than a
-            // presented screen, and it moves the way the eye expects.
+            // Settings rises from the foot, because that is where the cog
+            // that opens it now is. A layer over the stage rather than a
+            // presented screen: a sheet would leave the plant visible behind a
+            // rounded card and this is a whole screen, not a card.
             if showingSettings {
                 SettingsView(close: { closeSettings() })
                     .environment(model)
@@ -143,114 +145,122 @@ struct PlantStageView: View {
     @ViewBuilder
     private func controls(identity: Identity, growth: GrowthModel.State) -> some View {
         VStack(spacing: 0) {
-            // Settings is a screen about your preferences and the seed modal
-            // is a screen about your seed; neither is a sub-topic of the other.
-            // The garden is here for a different reason: it was only ever
-            // reachable from the row along the bottom, beside SEED and MEET,
-            // and somebody looking for plants they already have does not
-            // necessarily read that row as the place to find them. A mark of
-            // its own says the garden is a place rather than an errand.
-            //
-            // Both sit in the stage chrome and appear and hide with that row,
-            // so the plant is still the only thing on screen until somebody
-            // asks — and in their own band above the name rather than laid
-            // over it, so however long a plant is called the two never collide.
-            //
-            // Two marks, one unrolling. The first touch on either opens both
-            // into their words and the second opens whichever was touched, so
-            // the band behaves as one thing rather than as two controls that
-            // happen to sit together and each want learning separately.
-            HStack(spacing: 6) {
-                Spacer()
-                Button { tapTopChrome { showingGarden = true } } label: {
-                    ChromeIconLabel(
-                        glyph: AnyShape(GardenGlyph()),
-                        title: "Garden",
-                        showsTitle: topChromeExpanded
-                    )
-                    .pressable(horizontal: topChromeExpanded ? 18 : 12)
-                }
-                .buttonStyle(.plain)
+            Spacer()
 
-                Button { tapTopChrome { openSettings() } } label: {
-                    ChromeIconLabel(
-                        glyph: AnyShape(CogShape()),
-                        title: "Settings",
-                        showsTitle: topChromeExpanded
-                    )
-                    .pressable(horizontal: topChromeExpanded ? 18 : 12)
+            // Everything the chrome has to say is at the foot of the screen
+            // now, in one band: what the plant is called, what it is doing, and
+            // the four places to go.
+            //
+            // Three things come of that. The whole top of the screen is the
+            // plant and the light it stands in, which is the only part worth
+            // looking at. The plant reads as growing *out of* the band rather
+            // than as floating above a caption. And every control is under a
+            // thumb, which the cog in the far top corner never was.
+            VStack(spacing: 0) {
+                if namesPlant {
+                    VStack(spacing: 5) {
+                        // Smaller than it was. At twenty-six points an italic
+                        // serif binomial was the loudest thing on a screen
+                        // whose subject is a plant, and it is a caption.
+                        Text(identity.genome.name.full)
+                            .plantName(size: 20)
+                            .foregroundStyle(Chrome.ink)
+                        Text(growth.summary())
+                            .chromeLabel(size: 10)
+                            .foregroundStyle(Chrome.faint)
+                    }
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 16)
+                    .transition(.opacity)
                 }
-                .buttonStyle(.plain)
-            }
-            .padding(.trailing, 12)
-            .padding(.top, 10)
 
-            VStack(spacing: 8) {
-                Text(identity.genome.name.full)
-                    .plantName()
-                    .foregroundStyle(Chrome.ink)
-                Text(growth.summary())
-                    .chromeLabel()
-                    .foregroundStyle(Chrome.faint)
+                HStack(spacing: 6) {
+                    mark(SeedGlyph(), "Seed") { showingSeed = true }
+                    mark(MeetGlyph(), "Meet", isProminent: true) { showingExchange = true }
+                    mark(GardenGlyph(), "Garden") { showingGarden = true }
+                    mark(CogShape(), "Settings") { openSettings() }
+                }
+                .animation(.easeInOut(duration: 0.26), value: expandedMark)
             }
-            .padding(.top, 22)
-            .padding(.bottom, 14)
-            .multilineTextAlignment(.center)
-            // How far down the screen the words reach, handed to the scene so
+            .padding(.bottom, 30)
+            // How far up the screen the band reaches, handed to the scene so
             // the plant is framed into what is left rather than into the whole
-            // view. Measured rather than assumed, because a long binomial wraps
-            // onto a second line and takes another thirty points with it.
+            // view. Measured rather than assumed: a long binomial wraps onto a
+            // second line, and the row itself changes height when it unrolls.
             //
-            // Read from the row even while the chrome is hidden — it is laid
-            // out either way, only its opacity changes — so the reserved band
+            // Read from the band even while the chrome is hidden — it is laid
+            // out either way, only its opacity changes — so the reserved height
             // is the same whether or not anybody is looking at it.
             .background {
                 GeometryReader { proxy in
                     Color.clear
-                        .onAppear { topChromeHeight = proxy.frame(in: .global).maxY }
-                        .onChange(of: proxy.frame(in: .global).maxY) { _, new in
-                            topChromeHeight = new
+                        .onAppear { bottomChromeHeight = proxy.size.height }
+                        .onChange(of: proxy.size.height) { _, new in
+                            bottomChromeHeight = new
                         }
                 }
             }
+        }
+    }
 
-            Spacer()
-
-            HStack(spacing: 4) {
-                QuietButton(title: "Seed") { present { showingSeed = true } }
-                QuietButton(title: "Meet", isProminent: true) { present { showingExchange = true } }
-                QuietButton(title: "Garden") { present { showingGarden = true } }
+    /// One mark in the row along the foot.
+    ///
+    /// **A mark, and its word only once asked for.** The row used to be three
+    /// words in three capsules, which is a menu bar; four of them would have
+    /// been a menu bar that no longer fitted. Marks are the same bargain the
+    /// rest of the stage already makes — nothing on screen until somebody asks
+    /// — and they are the same bargain in any language, which words are not.
+    ///
+    /// **One word at a time, and only the one you touched.** All four unrolled
+    /// together first, and four tracked-out words with their marks come to
+    /// about 440 points against a phone's 402: SEED was cut off at one end and
+    /// SETTINGS at the other. Shrinking the type would have bought the forty
+    /// points and spent them again on the next screen size. One word is a
+    /// quarter of the width and a better sentence besides — you asked what
+    /// *this* mark is, and it answered.
+    ///
+    /// **Tap unrolls, tap the same one again to open; a long press opens
+    /// straight away.** Two taps to reach the garden is one more than the row
+    /// used to cost, and the press gives that back to anybody who has learnt
+    /// the marks. A press and a tap are distinct gestures, so neither steals
+    /// the other: a long press never fires the tap on release.
+    ///
+    /// With VoiceOver the unrolling collapses: the word is already being read
+    /// aloud, so the first touch would buy nothing and cost an activation.
+    private func mark(
+        _ glyph: some Shape,
+        _ title: String,
+        isProminent: Bool = false,
+        open: @escaping () -> Void
+    ) -> some View {
+        let showsTitle = expandedMark == title
+        return ChromeIconLabel(
+            glyph: AnyShape(glyph),
+            title: title,
+            tint: isProminent ? Chrome.ink : Chrome.muted,
+            showsTitle: showsTitle
+        )
+        .pressable(isProminent: isProminent, horizontal: showsTitle ? 16 : 13)
+        .contentShape(Capsule())
+        .onTapGesture {
+            hideTask?.cancel()
+            if showsTitle || voiceOver {
+                present(open)
+            } else {
+                expandedMark = title
+                scheduleHide()
             }
-            .padding(.bottom, 34)
         }
+        .onLongPressGesture(minimumDuration: 0.32) { present(open) }
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction { present(open) }
     }
 
-    /// Sliding down is the point, so Reduce Motion gets a crossfade rather
-    /// than nothing: the panel still has to arrive.
+    /// Rising is the point — the cog is at the foot of the screen now, so the
+    /// panel comes from where the mark that opened it is. Reduce Motion gets a
+    /// crossfade rather than nothing: the panel still has to arrive.
     private var settingsTransition: AnyTransition {
-        reduceMotion ? .opacity : .move(edge: .top)
-    }
-
-    /// The marks stand on their own until one is touched, and the band unrolls
-    /// into words before it will open anything.
-    ///
-    /// It is the same bargain the rest of the stage makes — a plant and
-    /// nothing else until somebody asks — held one step further for the two
-    /// controls that are not about the plant at all. The words are what the
-    /// first touch buys: you find out what the marks do before you commit to
-    /// either of them.
-    ///
-    /// With VoiceOver the two steps collapse into one. The words are already
-    /// being read aloud, so the first touch would buy nothing and cost an
-    /// activation.
-    private func tapTopChrome(_ open: () -> Void) {
-        hideTask?.cancel()
-        if topChromeExpanded || voiceOver {
-            open()
-        } else {
-            withAnimation(.easeInOut(duration: 0.28)) { topChromeExpanded = true }
-            scheduleHide()
-        }
+        reduceMotion ? .opacity : .move(edge: .bottom)
     }
 
     private func openSettings() {
@@ -263,7 +273,7 @@ struct PlantStageView: View {
     private func closeSettings() {
         withAnimation(.easeInOut(duration: 0.36)) {
             showingSettings = false
-            topChromeExpanded = false
+            expandedMark = nil
         }
 #if DEBUG
         // Meet an imaginary gardener, asked for on the screen that is now
@@ -301,7 +311,7 @@ struct PlantStageView: View {
             controlsVisible = false
             // The marks go back to standing alone with the rest of the
             // chrome, so the next visit starts where the last one did.
-            topChromeExpanded = false
+            expandedMark = nil
         }
 #endif
     }

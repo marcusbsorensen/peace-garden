@@ -339,10 +339,15 @@ enum PlantSceneBuilder {
     /// but the same plant in a short, wide window is limited by the height much
     /// sooner. Taking the greater of the two distances covers every shape.
     ///
-    /// `topInset` is the fraction of the view's height the chrome has spoken
-    /// for — the plant's name and what it is doing, in their band across the
-    /// top. The plant is fitted into what is left rather than into the whole
-    /// screen, so a tall one cannot grow up through its own name.
+    /// `reserved` is the fraction of the view's height the chrome has spoken
+    /// for — the plant's name, what it is doing, and the row of marks, in their
+    /// band across the foot of the screen. The plant is fitted into what is
+    /// left rather than into the whole view, so it stands on that band rather
+    /// than growing down through it.
+    ///
+    /// Which end the band is at does not matter here: reserving height costs
+    /// the same distance either way. Only the aim differs, and that is the
+    /// caller's — see `PlantSceneView.applyFraming`.
     ///
     /// Reserved whether or not the chrome is on screen. The band comes and goes
     /// on a tap, and re-framing with it would pull the plant a little smaller
@@ -353,7 +358,7 @@ enum PlantSceneBuilder {
         min minBounds: SIMD3<Float>,
         max maxBounds: SIMD3<Float>,
         aspect: Float,
-        topInset: Float = 0
+        reserved: Float = 0
     ) -> (target: SCNVector3, distance: Float) {
         let centre = (minBounds + maxBounds) * 0.5
         let extent = maxBounds - minBounds
@@ -366,7 +371,7 @@ enum PlantSceneBuilder {
         // The floor is a guard against a chrome band that has somehow eaten the
         // screen, not a design value: at a third of the view the plant would
         // already be too far off to read.
-        let usable = Swift.max(0.35, 1 - topInset)
+        let usable = Swift.max(0.35, 1 - reserved)
         let distance = Swift.max(
             halfHeight / (tan(verticalHalfAngle) * usable),
             halfWidth / tan(horizontalHalfAngle)
