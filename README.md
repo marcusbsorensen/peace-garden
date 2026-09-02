@@ -180,9 +180,10 @@ What has actually been executed, rather than believed:
   seed husk vanished in a single frame instead of shrinking away.
 
 - **The whole of SeedCore**, by a Swift compiler and its own test suite. One
-  function is the exception: `GrowthModel.State.summary()` uses
-  `DateComponentsFormatter`, which swift-corelibs-foundation does not have, so
-  it compiles only on Apple's platforms.
+  extension is the exception: `DateComponentsFormatter.growthDefault`, which
+  swift-corelibs-foundation does not have, so it compiles only on Apple's
+  platforms. The caption it used to build lives in the app now, because it is
+  made of words somebody reads — see [docs/LANGUAGES.md](docs/LANGUAGES.md).
 
 - **The SceneKit rendering**, on a simulator: the lighting rig, the materials,
   the bloom, and the six-second arrival where a seed splits and the shoot comes

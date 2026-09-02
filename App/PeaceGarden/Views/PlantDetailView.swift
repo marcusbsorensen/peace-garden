@@ -65,7 +65,7 @@ struct PlantDetailView: View {
                 Text(record.genome.name.full)
                     .plantName()
                     .foregroundStyle(Chrome.ink)
-                Text(record.growth(now: model.now).summary())
+                Text(verbatim: record.growth(now: model.now).caption())
                     .chromeLabel()
                     .foregroundStyle(Chrome.faint)
             }
@@ -76,7 +76,8 @@ struct PlantDetailView: View {
             if let encounter = record.encounter {
                 VStack(spacing: 12) {
                     if let note = encounter.note {
-                        Text(note)
+                        // Somebody's own sentence about their own meeting.
+                        Text(verbatim: note)
                             .font(.system(size: 16, weight: .light, design: .serif))
                             .italic()
                             .foregroundStyle(Chrome.ink)
@@ -89,7 +90,10 @@ struct PlantDetailView: View {
                             .font(.system(size: 13, weight: .light))
                             .foregroundStyle(Chrome.muted)
                         if let place = encounter.place {
-                            Text(place)
+                            // Typed, or accepted from what `Places` offered —
+                            // either way it was already in this person's
+                            // language when it was written down.
+                            Text(verbatim: place)
                                 .chromeLabel(size: 10)
                                 .foregroundStyle(Chrome.faint)
                         }
@@ -104,14 +108,14 @@ struct PlantDetailView: View {
                         if let coordinate = encounter.coordinate {
                             if let url = coordinate.mapURL {
                                 Link(destination: url) {
-                                    Text(coordinate.written)
+                                    Text(verbatim: coordinate.written)
                                         .chromeLabel(size: 10)
                                         .foregroundStyle(Chrome.muted)
                                         .pressable()
                                 }
                                 .padding(.top, 4)
                             } else {
-                                Text(coordinate.written)
+                                Text(verbatim: coordinate.written)
                                     .chromeLabel(size: 10)
                                     .foregroundStyle(Chrome.faint)
                             }

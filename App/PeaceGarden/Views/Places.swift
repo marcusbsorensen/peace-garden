@@ -19,8 +19,18 @@ import SeedCore
 ///
 /// The register is the seed's journey rather than the earth's geography: these
 /// are the places a seed passes through on the way to the ground.
+/// **On being a list of resources rather than a list of strings.** Every phrase
+/// here is a phrase somebody reads, so all forty are translated — and the way
+/// to have the compiler extract forty of them is to declare them as
+/// `LocalizedStringResource` literals. A table looked up by a runtime string
+/// extracts nothing at all, and would have left this the one part of the
+/// interface a translator never saw.
+///
+/// A resource carries its English phrase as its `key`, which is what makes the
+/// stored preference and the exchange behave: the key is what goes into
+/// `UserDefaults`, and `String(localized:)` is what goes on screen.
 enum Places {
-    static let all: [String] = [
+    static let all: [LocalizedStringResource] = [
         "In the aether",
         "On the winds",
         "After the storm",
@@ -69,7 +79,7 @@ enum Places {
     /// and it does not move if the note is opened again later.
     static func place(for childSeed: SeedID) -> String {
         precondition(!all.isEmpty, "the places must never be empty")
-        return all[Int(deterministicFold(childSeed.bytes) % UInt64(all.count))]
+        return String(localized: all[Int(deterministicFold(childSeed.bytes) % UInt64(all.count))])
     }
 
     /// The key behind a standing preference for one of these.
@@ -85,9 +95,20 @@ enum Places {
     /// preference and not a property of the meeting — and because the drawn
     /// place has to stay available as the answer when nobody has chosen.
     static var preferred: String? {
-        let stored = UserDefaults.standard.string(forKey: preferredKey)
-        guard let stored, all.contains(stored) else { return nil }
-        return stored
+        guard let resource = stored(UserDefaults.standard.string(forKey: preferredKey)) else {
+            return nil
+        }
+        return String(localized: resource)
+    }
+
+    /// The place a stored preference names, if it still names one.
+    ///
+    /// Takes the English phrase that was written to `UserDefaults` and gives
+    /// back the resource, so the caller can draw it in whatever language the
+    /// phone is in now.
+    static func stored(_ key: String?) -> LocalizedStringResource? {
+        guard let key, !key.isEmpty else { return nil }
+        return all.first { $0.key == key }
     }
 
     /// What the Where field arrives holding: the standing choice if there is

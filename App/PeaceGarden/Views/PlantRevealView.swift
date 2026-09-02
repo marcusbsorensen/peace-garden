@@ -9,6 +9,8 @@ import SeedCore
 struct PlantRevealView: View {
     @Environment(GardenModel.self) private var model
     let outcome: ExchangeOutcome
+    /// Already looked up by whoever passes it, because it is built out of two
+    /// names — see `IncomingSeedView`.
     var subtitle: String?
     let onKeep: () -> Void
 
@@ -42,7 +44,13 @@ struct PlantRevealView: View {
                     Text(genome.name.full)
                         .plantName(size: 24)
                         .foregroundStyle(Chrome.ink)
-                    Text(subtitle ?? "Your plant and \(outcome.peerPlantName), together")
+                    Group {
+                        if let subtitle {
+                            Text(verbatim: subtitle)
+                        } else {
+                            Text("Your plant and \(outcome.peerPlantName), together")
+                        }
+                    }
                         .font(.system(size: 13, weight: .light))
                         .foregroundStyle(Chrome.muted)
                         .padding(.bottom, 4)
@@ -51,12 +59,15 @@ struct PlantRevealView: View {
                 // The theme is the pair's and holds; the line inside it is this
                 // meeting's. So two people keep the same character between them
                 // and never get the same words twice.
+                // The passage bank is not part of the interface and is not
+                // translated with it — see docs/LANGUAGES.md, "The passages".
+                // Both lines are drawn as they stand.
                 let passage = Quotes.passage(for: outcome.result)
-                Text(passage.text)
+                Text(verbatim: passage.text)
                     .font(.system(size: 17, weight: .light))
                     .foregroundStyle(Chrome.ink.opacity(0.84))
                     .lineSpacing(6)
-                Text(passage.source)
+                Text(verbatim: passage.source)
                     .chromeLabel()
                     .foregroundStyle(Chrome.faint)
                     .padding(.bottom, 6)

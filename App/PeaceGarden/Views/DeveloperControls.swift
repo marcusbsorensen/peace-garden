@@ -47,8 +47,35 @@ final class Developer {
     /// shipping code that the `#if` could not take back out.
     var wantsImaginaryMeeting = false
 
+    /// One of the four screens behind a mark, opened as the stage appears.
+    ///
+    ///     xcrun simctl launch <device> app.peacegarden -pgOpen settings
+    ///
+    /// **The marks at the foot of the stage answer a tap gesture rather than a
+    /// button, and an injected tap does not reach a gesture recogniser** — the
+    /// same reason the whole row is drawn from the start on a simulator instead
+    /// of waiting to be revealed. So the seed, the garden and the settings are
+    /// behind a control that nothing but a thumb can press, which is fine until
+    /// somebody has to take the same four screenshots in eight languages. That
+    /// is what a language costs each time one is added, and this is how it is
+    /// paid.
+    ///
+    /// A launch argument rather than a control, because it has to happen before
+    /// anything is on screen. `UserDefaults` parses `-key value` off the command
+    /// line for free, which is the same mechanism `-AppleLanguages` uses.
+    enum Screen: String {
+        case seed, meet, garden, settings
+    }
+
+    /// Read once, at launch, and cleared the first time it is acted on.
+    /// Reopening the same screen every time the stage came back would make the
+    /// panel impossible to close.
+    var openOnLaunch: Screen?
+
     private init() {
         clockShift = UserDefaults.standard.double(forKey: Self.shiftKey)
+        openOnLaunch = UserDefaults.standard.string(forKey: "pgOpen")
+            .flatMap(Screen.init(rawValue:))
     }
 
     /// The app's idea of now, wherever the developer clock has been wound to.
@@ -73,6 +100,13 @@ final class Developer {
 /// this is written for whoever is building it. Keeping the register obviously
 /// different is the cheapest guard against a developer row being mistaken for a
 /// real one in a screenshot.
+///
+/// **Every word here is verbatim, so none of it is extracted.** Not because
+/// developers read English, but because this whole file is inside `#if DEBUG`:
+/// a Release build cannot see these literals, so a catalogue synced from one
+/// would mark them stale and a catalogue synced from a Debug build would bring
+/// them back. Leaving them out of the catalogue makes the two builds agree, and
+/// spares a translator seven translations of *Wind the garden on*.
 struct DeveloperSection: View {
     @Environment(GardenModel.self) private var model
     /// Closing is the caller's, the same way it is for every other row here.
@@ -92,7 +126,7 @@ struct DeveloperSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Testing")
+            Text(verbatim: "Testing")
                 .chromeLabel()
                 .foregroundStyle(Chrome.sectionLabel)
 
@@ -105,7 +139,7 @@ struct DeveloperSection: View {
 
     private var clock: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Wind the garden on")
+            Text(verbatim: "Wind the garden on")
                 .font(.system(size: 15, weight: .light))
                 .foregroundStyle(Chrome.ink)
 
@@ -126,14 +160,16 @@ struct DeveloperSection: View {
             }
 
             HStack(spacing: 12) {
-                Text(standing)
+                Text(verbatim: standing)
                     .font(.system(size: 13, weight: .light))
                     .foregroundStyle(Chrome.muted)
 
                 if developer.clockShift > 0 {
-                    Button("Back to now") {
+                    Button {
                         developer.backToNow()
                         model.refreshNow()
+                    } label: {
+                        Text(verbatim: "Back to now")
                     }
                     .buttonStyle(.plain)
                     .font(.system(size: 13, weight: .light))
@@ -165,16 +201,18 @@ struct DeveloperSection: View {
 
     private var meeting: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Button("Meet an imaginary gardener") {
+            Button {
                 developer.wantsImaginaryMeeting = true
                 close()
+            } label: {
+                Text(verbatim: "Meet an imaginary gardener")
             }
             .buttonStyle(.plain)
             .font(.system(size: 15, weight: .light))
             .foregroundStyle(Chrome.ink)
             .pressable(isProminent: true)
 
-            Text("Opens Meet against a seed created on the spot. Knock the phone as usual — everything from there is the real crossing.")
+            Text(verbatim: "Opens Meet against a seed created on the spot. Knock the phone as usual — everything from there is the real crossing.")
                 .font(.system(size: 13, weight: .light))
                 .foregroundStyle(Chrome.muted)
                 .lineSpacing(4)

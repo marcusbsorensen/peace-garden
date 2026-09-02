@@ -98,7 +98,7 @@ struct ExchangeView: View {
             case .awaitingTouch(let peerName):
                 awaitingTouch(peerName: peerName)
             case .crossing(let peerName):
-                waiting(title: "Crossing", detail: "Your seed and \(peerName)'s.")
+                waiting(title: "Crossing", detail: "Your seed and \(peerName)’s.")
             case .grown(let outcome):
                 grown(outcome)
             case .failed(let message):
@@ -107,7 +107,7 @@ struct ExchangeView: View {
         }
     }
 
-    private var closeTitle: String {
+    private var closeTitle: LocalizedStringKey {
         if case .grown = service.phase { return "Not this time" }
         return "Cancel"
     }
@@ -166,15 +166,16 @@ struct ExchangeView: View {
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
 
-            HStack(spacing: 14) {
-                QuietButton(title: "Not now") {
-                    place.declineOffer()
-                    startSearching()
-                }
-                QuietButton(title: "Log places", isProminent: true) {
-                    place.enable()
-                    startSearching()
-                }
+            // Side by side while the two words fit, and stacked when they do
+            // not. This is the tightest row in the app: inside 40pt margins
+            // there are about 250 points for a pair of tracked-out capsules,
+            // and `tools/type/measure.swift` puts the Dutch pair within five
+            // points of it. The words were shortened to clear that — and a row
+            // whose only defence is a short translation is a row that clips the
+            // first time somebody writes a long one.
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 14) { placeButtons }
+                VStack(spacing: 12) { placeButtons }
             }
             .padding(.top, 6)
 
@@ -183,6 +184,18 @@ struct ExchangeView: View {
         .padding(.horizontal, 40)
         .frame(maxWidth: Chrome.readableWidth)
         .frame(maxWidth: .infinity)
+    }
+
+    @ViewBuilder
+    private var placeButtons: some View {
+        QuietButton(title: "Not now") {
+            place.declineOffer()
+            startSearching()
+        }
+        QuietButton(title: "Log places", isProminent: true) {
+            place.enable()
+            startSearching()
+        }
     }
 
     // MARK: - A name, once
@@ -203,7 +216,12 @@ struct ExchangeView: View {
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
 
-            TextField("", text: $draftName, prompt: Text("Gardener").foregroundStyle(Chrome.faint))
+            TextField(
+                "Your name",
+                text: $draftName,
+                prompt: Text("Gardener").foregroundStyle(Chrome.faint)
+            )
+                .labelsHidden()
                 .font(.system(size: 24, weight: .light))
                 .foregroundStyle(Chrome.ink)
                 .multilineTextAlignment(.center)
@@ -257,10 +275,17 @@ struct ExchangeView: View {
         let felt = service.hasFeltLocalTouch
 #if targetEnvironment(simulator)
         if !service.canFeelTouch {
-            waiting(
-                title: felt ? "Waiting for \(peerName)" : "Stand in for the knock",
+            // Said verbatim rather than looked up. This screen only exists on a
+            // simulator, so extracting it would put two strings in the
+            // catalogue that a device build cannot see — which the sync then
+            // marks stale on every device build and un-stale on every simulator
+            // build. Nobody reads it who is not building the app.
+            waitingVerbatim(
+                title: felt
+                    ? String(localized: "Waiting for \(peerName)")
+                    : "Stand in for the knock",
                 detail: felt
-                    ? "Felt that. They need to tap theirs too."
+                    ? String(localized: "Felt that. They need to tap theirs too.")
                     : "\(peerName) is here. This simulator has no accelerometer, so tap anywhere to stand in for touching the phones together."
             )
             .contentShape(Rectangle())
@@ -290,15 +315,25 @@ struct ExchangeView: View {
         )
     }
 
-    private func waiting(title: String, detail: String) -> some View {
+    private func waiting(title: LocalizedStringKey, detail: LocalizedStringKey) -> some View {
+        layout(title: Text(title), detail: Text(detail))
+    }
+
+    /// The same screen, for the two lines that are built rather than looked up.
+    /// See `awaitingTouch`.
+    private func waitingVerbatim(title: String, detail: String) -> some View {
+        layout(title: Text(verbatim: title), detail: Text(verbatim: detail))
+    }
+
+    private func layout(title: Text, detail: Text) -> some View {
         VStack(spacing: 22) {
             Spacer()
             BreathingDot(diameter: 9)
-            Text(title)
+            title
                 .font(.system(size: 20, weight: .light, design: .serif))
                 .foregroundStyle(Chrome.ink)
                 .multilineTextAlignment(.center)
-            Text(detail)
+            detail
                 .font(.system(size: 14, weight: .light))
                 .foregroundStyle(Chrome.muted)
                 .multilineTextAlignment(.center)
@@ -322,7 +357,10 @@ struct ExchangeView: View {
             Text("Nothing took")
                 .font(.system(size: 20, weight: .light, design: .serif))
                 .foregroundStyle(Chrome.ink)
-            Text(message)
+            // Already in this phone's language: `PollenExchangeService` looks
+            // its failures up as it makes them, because half of them carry a
+            // system error whose own text is localised too.
+            Text(verbatim: message)
                 .font(.system(size: 14, weight: .light))
                 .foregroundStyle(Chrome.muted)
                 .multilineTextAlignment(.center)

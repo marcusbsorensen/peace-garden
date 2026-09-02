@@ -8,24 +8,32 @@ import SwiftUI
 struct FirstLightView: View {
     @Environment(GardenModel.self) private var model
 
-    private static let imprints = [
+    /// Resources rather than strings, so the compiler extracts all four. As
+    /// plain `String`s they went to `Text` verbatim, which is the quiet way for
+    /// a screen to stay in one language while the rest of the app changes.
+    private static let imprints: [LocalizedStringResource] = [
         "The imprints swirling together:",
         "the coordinates of this moment,",
         "in this specific digital space,",
         "and mutations of the random.",
     ]
 
+    /// The same four, in this phone's language — which is what the cadence
+    /// below has to be measured against, since a translated line is a different
+    /// number of words and takes a different length of time to read.
+    private static let lines: [String] = imprints.map { String(localized: $0) }
+
     /// When each line arrives: once the line before it has had time to be read.
     private static let beats: [Double] = {
         var running = 1.9
-        return imprints.map { line in
+        return lines.map { line in
             defer { running += readingBeat(line) }
             return running
         }
     }()
 
     /// The point at which the description has finished arriving.
-    private static var settled: Double { (beats.last ?? 0) + readingBeat(imprints.last ?? "") + 0.8 }
+    private static var settled: Double { (beats.last ?? 0) + readingBeat(lines.last ?? "") + 0.8 }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -44,9 +52,9 @@ struct FirstLightView: View {
                 }
 
                 VStack(spacing: 7) {
-                    ForEach(Array(Self.imprints.enumerated()), id: \.offset) { index, line in
+                    ForEach(Array(Self.lines.enumerated()), id: \.offset) { index, line in
                         Unfolding(after: Self.beats[index]) {
-                            Text(line)
+                            Text(verbatim: line)
                                 .font(.system(size: 16, weight: .light))
                                 .foregroundStyle(Chrome.muted)
                                 .multilineTextAlignment(.center)

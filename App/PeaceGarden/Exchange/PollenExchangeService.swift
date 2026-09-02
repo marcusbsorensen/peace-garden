@@ -375,6 +375,10 @@ final class PollenExchangeService: NSObject {
             remoteChecksum = envelope.checksum
             finishIfAgreed()
         case .abort:
+            // The reason is a wire token — "same seed", "checksum mismatch" —
+            // and stays English on purpose: it is for whoever is reading a bug
+            // report, and inventing a translation for each would put seven
+            // versions of a diagnostic into the catalogue.
             fail(envelope.reason.map { "The other phone stopped: \($0)." } ?? "The other phone stopped.")
         case .unknown:
             send(.abort(reason: "unrecognised message"))
@@ -443,10 +447,14 @@ final class PollenExchangeService: NSObject {
         }
     }
 
-    private func fail(_ message: String) {
+    /// Every way this can go wrong, in one place, and looked up here rather
+    /// than at the screen that shows it — several of these end on a system
+    /// error whose own text arrives already translated, so the phrase around it
+    /// has to be resolved at the same moment.
+    private func fail(_ message: LocalizedStringResource) {
         // A finished exchange is not undone by a late disconnect.
         if case .grown = phase { return }
-        phase = .failed(message)
+        phase = .failed(String(localized: message))
         touchDetector.stop()
         searchTimeout?.cancel()
     }
@@ -463,7 +471,7 @@ final class PollenExchangeService: NSObject {
     /// `MCPeerID` display names are limited to 63 bytes of UTF-8.
     private static func peerDisplayName(from name: String) -> String {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        let fallback = trimmed.isEmpty ? "Gardener" : trimmed
+        let fallback = trimmed.isEmpty ? String(localized: "Gardener") : trimmed
         var result = fallback
         while result.utf8.count > 63 {
             result = String(result.dropLast())

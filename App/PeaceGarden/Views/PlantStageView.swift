@@ -31,7 +31,13 @@ struct PlantStageView: View {
     @State private var showingGarden = false
     @State private var showingSeed = false
     @State private var showingSettings = false
-    /// Which mark has unrolled into its word, if any. See `mark(_:_:isProminent:open:)`.
+    /// Which mark has unrolled into its word, if any. See
+    /// `mark(_:_:_:isProminent:open:)`.
+    ///
+    /// A mark's own name rather than its word. It used to be the word — which
+    /// worked while the word was English and could not survive the word being
+    /// translated, since a piece of state compared against a literal is a piece
+    /// of state that stops matching the moment the literal is looked up.
     @State private var expandedMark: String?
     /// How far up the screen the chrome at the foot reaches, in points. The
     /// plant is framed clear of it and stands on it.
@@ -105,6 +111,20 @@ struct PlantStageView: View {
                 .presentationBackground(.black)
         }
         .onAppear { model.refreshNow() }
+#if DEBUG
+        // A screen named on the command line, opened once. See
+        // `Developer.openOnLaunch`.
+        .task {
+            switch Developer.shared.openOnLaunch {
+            case .seed: showingSeed = true
+            case .meet: showingExchange = true
+            case .garden: showingGarden = true
+            case .settings: openSettings()
+            case nil: break
+            }
+            Developer.shared.openOnLaunch = nil
+        }
+#endif
     }
 
     /// The second beat of the walk-through, as a panel someone can close.
@@ -165,7 +185,7 @@ struct PlantStageView: View {
                         Text(identity.genome.name.full)
                             .plantName(size: 20)
                             .foregroundStyle(Chrome.ink)
-                        Text(growth.summary())
+                        Text(verbatim: growth.caption())
                             .chromeLabel(size: 10)
                             .foregroundStyle(Chrome.faint)
                     }
@@ -175,10 +195,10 @@ struct PlantStageView: View {
                 }
 
                 HStack(spacing: 6) {
-                    mark(SeedGlyph(), "Seed") { showingSeed = true }
-                    mark(MeetGlyph(), "Meet", isProminent: true) { showingExchange = true }
-                    mark(GardenGlyph(), "Garden") { showingGarden = true }
-                    mark(CogShape(), "Settings") { openSettings() }
+                    mark(SeedGlyph(), "seed", "Seed") { showingSeed = true }
+                    mark(MeetGlyph(), "meet", "Meet", isProminent: true) { showingExchange = true }
+                    mark(GardenGlyph(), "garden", "Garden") { showingGarden = true }
+                    mark(CogShape(), "settings", "Settings") { openSettings() }
                 }
                 .animation(.easeInOut(duration: 0.26), value: expandedMark)
             }
@@ -219,6 +239,14 @@ struct PlantStageView: View {
     /// quarter of the width and a better sentence besides — you asked what
     /// *this* mark is, and it answered.
     ///
+    /// **Translation turned that from a good decision into a necessary one.**
+    /// `tools/type/measure.swift` puts the four-at-once row at 449 points in
+    /// English, 460 in Danish and Norwegian, 505 in Swedish, 508 in Dutch, 509
+    /// in Spanish, 516 in French and 533 in Italian — a third over the screen,
+    /// with no size of phone that would have taken it. One at a time leaves
+    /// 207 points for a word, and the widest of the thirty-two is Swedish
+    /// INSTÄLLNINGAR at 119.
+    ///
     /// **Tap unrolls, tap the same one again to open; a long press opens
     /// straight away.** Two taps to reach the garden is one more than the row
     /// used to cost, and the press gives that back to anybody who has learnt
@@ -229,11 +257,12 @@ struct PlantStageView: View {
     /// aloud, so the first touch would buy nothing and cost an activation.
     private func mark(
         _ glyph: some Shape,
-        _ title: String,
+        _ name: String,
+        _ title: LocalizedStringKey,
         isProminent: Bool = false,
         open: @escaping () -> Void
     ) -> some View {
-        let showsTitle = expandedMark == title
+        let showsTitle = expandedMark == name
         return ChromeIconLabel(
             glyph: AnyShape(glyph),
             title: title,
@@ -247,7 +276,7 @@ struct PlantStageView: View {
             if showsTitle || voiceOver {
                 present(open)
             } else {
-                expandedMark = title
+                expandedMark = name
                 scheduleHide()
             }
         }

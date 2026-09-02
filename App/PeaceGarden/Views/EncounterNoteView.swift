@@ -46,7 +46,7 @@ struct EncounterNoteView: View {
                         Text("Met \(outcome.peerDisplayName)")
                             .chromeHeading(size: 17)
                             .foregroundStyle(Chrome.ink)
-                        Text(outcome.happenedAt.formatted(date: .complete, time: .shortened))
+                        Text(verbatim: outcome.happenedAt.formatted(date: .complete, time: .shortened))
                             .font(.system(size: 13, weight: .light))
                             .foregroundStyle(Chrome.faint)
                     }
@@ -67,7 +67,7 @@ struct EncounterNoteView: View {
                             Text("Kept with this meeting")
                                 .chromeLabel()
                                 .foregroundStyle(Chrome.faint)
-                            Text(coordinate.written)
+                            Text(verbatim: coordinate.written)
                                 .font(.system(size: 15, weight: .light).monospacedDigit())
                                 .foregroundStyle(Chrome.muted)
                         }
@@ -78,11 +78,12 @@ struct EncounterNoteView: View {
                             .chromeLabel()
                             .foregroundStyle(Chrome.faint)
                         TextField(
-                            "",
+                            "About this meeting",
                             text: $note,
                             prompt: Text("A line to remember it by").foregroundStyle(Chrome.faint),
                             axis: .vertical
                         )
+                        .labelsHidden()
                         .font(.system(size: 16, weight: .light, design: .serif))
                         .foregroundStyle(Chrome.ink)
                         .lineLimit(3...6)
@@ -119,12 +120,17 @@ struct EncounterNoteView: View {
         }
     }
 
-    private func field(label: String, text: Binding<String>, prompt: String) -> some View {
+    private func field(
+        label: LocalizedStringKey,
+        text: Binding<String>,
+        prompt: LocalizedStringKey
+    ) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(label)
                 .chromeLabel()
                 .foregroundStyle(Chrome.faint)
-            TextField("", text: text, prompt: Text(prompt).foregroundStyle(Chrome.faint))
+            TextField(label, text: text, prompt: Text(prompt).foregroundStyle(Chrome.faint))
+                .labelsHidden()
                 .font(.system(size: 16, weight: .light, design: .serif))
                 .foregroundStyle(Chrome.ink)
                 .autocorrectionDisabled()

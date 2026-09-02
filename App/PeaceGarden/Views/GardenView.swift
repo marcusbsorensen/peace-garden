@@ -57,6 +57,11 @@ struct GardenView: View {
             Text("Peace garden")
                 .chromeHeading(size: 18)
                 .foregroundStyle(Chrome.ink)
+            // The count carries a plural, so it is a catalogue entry with two
+            // variations rather than one string with a number pushed into it.
+            // English needs that at one — *1 grown from meetings* is wrong —
+            // and every other language needs it at a different set of numbers
+            // again.
             Text(model.hybrids.isEmpty
                  ? "Nothing has been crossed yet"
                  : "\(model.hybrids.count) grown from meetings")
@@ -101,7 +106,7 @@ struct GardenView: View {
                     .plantName(size: 13)
                     .foregroundStyle(Chrome.ink)
                     .lineLimit(1)
-                Text(caption(for: record))
+                Text(verbatim: caption(for: record))
                     .chromeLabel(size: 9)
                     .foregroundStyle(Chrome.faint)
                     .lineLimit(1)
@@ -115,9 +120,22 @@ struct GardenView: View {
         }
     }
 
+    /// A format string with two arguments rather than two values joined by a
+    /// separator, so a translator can put the person first if their language
+    /// would.
+    ///
+    /// It has a key of its own rather than being written as `%1$@ · %2$@`,
+    /// because the caption under a plant on the stage has exactly that shape
+    /// and means something else — a stage and an interval, where this is a
+    /// stage and a person. Two entries that read the same and are translated
+    /// differently cannot share a key.
     private func caption(for record: PlantRecord) -> String {
-        let stage = record.growth(now: model.now).stage.displayName
+        let stage = String(localized: record.growth(now: model.now).stage.label)
         guard let name = record.encounter?.peerDisplayName, !name.isEmpty else { return stage }
-        return "\(stage) · \(name)"
+        return String(
+            localized: "tile.caption",
+            defaultValue: "\(stage) · \(name)",
+            comment: "Under a plant in the garden. First what the plant is doing, then who it was grown with."
+        )
     }
 }
