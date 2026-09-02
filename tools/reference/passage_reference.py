@@ -55,13 +55,38 @@ def load_quotes():
     if not themes:
         sys.exit("found the Theme enum but no cases in it")
 
+    # **Bounded to `var position`'s own body**, and the bound is the whole fix.
+    #
+    # This read `case .x: return [...]` across the entire file, which was true of
+    # exactly one property when it was written. `heads` was added afterwards, in
+    # the same shape and four lines below — `case .beginnings: return ["Thal",
+    # "Lir", "Ver"]` — and the tool then tried to read a genus syllable as a
+    # coordinate and died on it. CI has been red since, saying only that "Thal"
+    # is not a float.
+    #
+    # Requiring numbers as well as bounding the region, because a second
+    # numeric property under `Theme` would otherwise reintroduce this quietly.
+    try:
+        body = source[source.index("var position"):]
+        body = body[:body.index("\n        }") + 1]
+    except ValueError:
+        sys.exit("could not find the body of `var position` in Quotes.swift")
+
     positions = {}
     for name, values in re.findall(
-        r"case \.(\w+):\s*return \[([^\]]+)\]", source
+        r"case \.(\w+):\s*return \[([\d.,\s]+)\]", body
     ):
         positions[name] = [float(v) for v in values.split(",")]
+    if not positions:
+        sys.exit("found `var position` and no coordinates in it")
 
-    bank = collections.Counter(re.findall(r"theme: \.(\w+)", source))
+    # `subtheme: .theFirstAct` ends in `theme: .theFirstAct`, so without the
+    # lookbehind every passage is counted twice — once under its theme and once
+    # under a subtheme name that is not a theme at all. It reported 738 passages
+    # for a bank of 369 and failed *every passage's theme is a real theme*,
+    # which is the one line in this output that sounds like a content problem
+    # and was a regex.
+    bank = collections.Counter(re.findall(r"(?<!sub)theme: \.(\w+)", source))
     return themes, positions, bank
 
 
