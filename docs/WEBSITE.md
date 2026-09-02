@@ -171,6 +171,60 @@ roughly what language the reader has, which is worth recording here rather than
 letting somebody find it: **the fragment still never arrives, and the bank
 request is one more thing the request itself reveals.**
 
+### The garden, walked in one language at a time
+
+**Decided 2 September, by Marcus, and it settles the first of the open
+questions**: the garden is a place you can walk, guests from anywhere can visit
+it, and what they read there are the attributed passages. The consequences for
+listing and consent are in *Unlisted* and *What this asks of the app*; this is
+the language half, because that is where the interesting design is.
+
+**The passage is drawn in the reader's language, in the garden exactly as on a
+plant page.** That is not a second rule, it is the same one: the passage is not a
+property of the plant. A plant carries a theme and a subtheme, both derived, both
+language-neutral, and **the reader's own bank supplies the words**. Two phones in
+a pair already work this way and deliberately disagree about the line.
+
+So *parts of the garden in each language* resolves to **one garden read in one
+language at a time**, and not to a garden partitioned by language. Both readings
+are available and only one of them is buildable without publishing something new:
+
+| | Partition it | Read it |
+| --- | --- | --- |
+| What a language is | a property of the plant, filed under Finnish or Catalan | a property of the visitor |
+| What it publishes | **the sharer's language**, which this design has never published and does not need to | nothing new |
+| A Dane and a Catalan who met | belongs to one part, or to neither | is in the garden, like everything else |
+| What changes between parts | which plants you can see | what they say |
+
+A language is close to an identity, and for a speaker of a small one it is closer
+than a name. Filing a plant under a language would be the first fact this app
+published about somebody that they never chose to state — and it would do it to
+the people least able to be anonymous in a crowd.
+
+**What reading it buys is better than what partitioning it would have.** In the
+app you only ever have one phone, so the rule that two people hold the character
+of a passage in common and not its words is something you are told rather than
+something you see. In a garden you can switch. The same plant, on the same
+subtheme, offers a line from the *Kalevala* and then a *refrany català* — and
+they are not translations of each other, because no bank is a translation. **The
+argument the app has been making since `QuoteBanks.swift` becomes visible for the
+first time**, on the one surface where a person can hold two languages at once.
+
+Three things fall out of it:
+
+- **The chooser is the manifest.** `Server/languages.json` says which languages
+  have a bank, and those are the readings the garden offers. `?l=` overrides
+  negotiation, as it already does for a plant page.
+- **The borrowed-language path goes live on day one.** In the app it is dormant:
+  every language with an interface also has a bank, so `isBorrowed` has never
+  been true for anybody. A browser can be set to anything at all, so on the web
+  it is the ordinary case, and the line under the passage naming the borrowed
+  language is load-bearing rather than defensive.
+- **A walked garden makes more bank requests than a plant page does**, and the
+  fetch is the one thing that tells the origin roughly what language a reader
+  has. The fragment still never arrives. Recorded here for the same reason it is
+  recorded above: so it is a known cost rather than a discovery.
+
 ### When the site is behind the app
 
 It will be, for most of its life, and there are two different ways to be behind
@@ -302,6 +356,36 @@ again rather than shipped. Which is the strongest argument available for buildin
 the unlisted page first: it lets every interesting decision in phase 2 be built,
 used and corrected before the question of whether there is a public garden at all
 has to be answered.
+
+#### And it has been answered, before anything was published
+
+**Marcus, 2 September: the garden is walkable, and guests from anywhere can visit
+it.** Taken now rather than later, which is the cheap moment to take it — there
+are no pages yet, so nothing is being relisted and nobody is being re-asked.
+**The consent asked at share time is simply the right consent the first time.**
+That is worth more than the flexibility that was being preserved.
+
+Three things it changes, and one it does not:
+
+- **The question on the share screen is a bigger question**, and its words have
+  to be the bigger question. *Show in the peace garden* under an unlisted model
+  meant *give me a link I can send*. Under a walkable one it means **anyone can
+  come across this**. The same applies to the invitation B receives: B is being
+  asked to be findable, not merely to be on a page somebody already has.
+- **The garden shows plants, not people.** A grid of names is a directory of
+  people, which is the thing the unlisted argument was protecting against and
+  which staying unlisted is no longer doing. A grid of plants is a garden. Names
+  live on a plant's own page, reached by walking to it, one at a time — the same
+  shape as a real garden, where you read the label by standing in front of it.
+- **`noindex` stays.** *Walkable* and *indexed* are different properties and only
+  one of them was asked for. Guests visiting is what a garden is for; a person's
+  first name beside a line about an evening turning up in a search for their name
+  is the harm the unlisted model was actually preventing, and it is prevented by
+  `noindex` rather than by unlisting. **Visiting is not searching.** The day
+  anybody wants the garden indexed, that is its own decision with its own screen.
+- **What does not change: the plant page is still built first, and still as a
+  capability URL.** Every reason for that was about sequencing rather than about
+  listing. A page reachable by its own URL is what a garden entry links *to*.
 
 ## Identity, and no more than that
 
@@ -560,6 +644,14 @@ share*, and the local behaviour is left to the note screens that own it.
 | **Delete my peace garden account** | A fourth row under *Starting again*, held rather than tapped, crimson | — | Your plot, its pages and your name on other people's pages all go. **Your local garden stays**, which is the sentence that has to be on screen, because every other row on that screen takes something local away |
 | **Show in the peace garden** | On the plant, in Garden — **not** in Settings | Per plant | A plant is on the web because you put it there, one at a time. It is not a preference, and a standing switch that published future plants automatically would be a consent given once for things that do not exist yet |
 
+**The garden being walkable makes that third row a larger question, so it has to
+ask a larger question.** *Show in the peace garden* is not *give me a link I can
+send*; it is **anyone can come across this**. The words on the screen are the
+whole of the difference between a consent and a formality, and the same holds for
+the invitation B receives — B is being asked to be findable, not to be on a page
+somebody already has the address of. Neither screen may lean on the old, smaller
+sentence.
+
 **`Reset everything` needs a line about the plot.** Today it is local, and it says
 so. Once a plot exists, a reset that leaves it standing is the orphaned-plot
 failure by another route — so either it takes the plot too and says so, or it says
@@ -584,7 +676,11 @@ before any of this existed. So the share flow shows A their own note as it will
 appear, lets them edit it there with the machinery that already exists, and lets
 them share with their name and no note at all.
 
-### Two build steps, in the app's repository
+**Carried back into PHASES.md, 2 September**, where the asymmetry started, so the
+rule is stated once and for both of them: *nothing publishes prose on a yes given
+to a different question.*
+
+### Two build steps, in the app's repository — **done, 2 September**
 
 Neither is a setting, and both are the reason the site's languages and the app's
 stay the same list rather than two lists that agree for a while.
@@ -593,6 +689,16 @@ stay the same list rather than two lists that agree for a while.
 | --- | --- | --- |
 | **A bank exporter**, beside `tools/strings/sync.sh` | `/passages/<code>.json` for every bank in `QuoteBank` | CI fails on a diff, so a bank added to the app is a bank the site has |
 | **A language manifest** | `Server/languages.json` — every code, whether the app has an interface, whether it has a bank | The same job |
+
+Both are `tools/site/export.py`, because they read the same two files and
+disagreeing about which banks exist was the failure they were built to prevent.
+`--check` is the CI step, *The site's languages are the app's*. It writes twelve
+banks and the manifest; the manifest also carries each language's **endonym**,
+since a chooser is read by somebody looking for their own word for their own
+language, and a static site cannot fetch that.
+
+The first run found nothing wrong, which is the point of building it before there
+is a site rather than after there is a discrepancy.
 
 The site adds no language of its own and commissions no bank of its own. If it
 ever needs to, that is a decision to take deliberately rather than a file
@@ -607,9 +713,11 @@ handed a decision they cannot review.
 
 ## Still open
 
-- **Whether the garden is a place you can walk.** Everything above is written so
-  that this can be answered late. Answering it *yes* relists every existing page,
-  which is a fresh consent rather than a release.
+- ~~**Whether the garden is a place you can walk.**~~ Answered *yes*, 2
+  September, and answered while there was nothing published to relist — see
+  *And it has been answered, before anything was published*. What it leaves
+  behind is a smaller question: whether the garden is ever **indexed**, which is
+  a separate property and is not asked for.
 - **One place, or many.** PHASES.md's question, unchanged. One place is the idea
   and one place is where every moderation problem lives.
 - **Whether a plant grown alone can be shared.** BOTANICAL-GARDEN.md's third

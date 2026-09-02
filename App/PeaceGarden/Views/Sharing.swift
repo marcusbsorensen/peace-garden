@@ -25,6 +25,19 @@ enum Sharing {
     /// discovery.
     static var invitationsDefault: Bool { true }
 
+    /// **Off has to mean no request**, not a suppressed banner.
+    ///
+    /// Written down here rather than in `docs/WEBSITE.md` alone, because this is
+    /// the property the first line of networking code will quietly break. On,
+    /// the app asks the service — once, when it opens — whether anything has
+    /// been shared against any of the contact tokens in its garden. Off, it does
+    /// not ask, and the service is therefore never told this phone exists.
+    ///
+    /// A switch that only hid the answer while the question was still being
+    /// asked would be the one kind of untruth this project has been careful
+    /// about everywhere else: the sentence on the exchange screen listing what
+    /// crosses between two phones was rewritten the same day the contact token
+    /// made it incomplete, rather than left standing because it was nearly true.
     static var wantsInvitations: Bool {
         UserDefaults.standard.object(forKey: invitationsKey) as? Bool ?? invitationsDefault
     }

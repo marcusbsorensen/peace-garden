@@ -5677,49 +5677,49 @@
         }
       }
     },
-    "Plants grown under this name will keep it." : {
-      "comment" : "Under the name field. Changing the name later leaves the plants already grown saying the old one.",
+    "Plants you have already grown keep the name they were grown under." : {
+      "comment" : "Under the name field. Said about the plants already in the garden rather than about the name, because a shared plant page reads the name live.",
       "localizations" : {
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planter, der er groet frem under dette navn, beholder det."
+            "value" : "Planter, du allerede har groet frem, beholder det navn, de blev groet under."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las plantas cultivadas con este nombre lo conservan."
+            "value" : "Las plantas que ya has cultivado conservan el nombre con el que crecieron."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les plantes poussées sous ce nom le gardent."
+            "value" : "Les plantes que vous avez déjà fait pousser gardent le nom sous lequel elles ont poussé."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le piante cresciute con questo nome lo conservano."
+            "value" : "Le piante che hai già coltivato conservano il nome con cui sono cresciute."
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planter som er vokst fram under dette navnet, beholder det."
+            "value" : "Planter du allerede har dyrket fram, beholder navnet de vokste under."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planten die onder deze naam zijn gegroeid, houden hem."
+            "value" : "Planten die je al hebt laten groeien, houden de naam waaronder ze zijn gegroeid."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Växter som vuxit under det här namnet behåller det."
+            "value" : "Växter du redan har odlat behåller namnet de växte under."
           }
         }
       }

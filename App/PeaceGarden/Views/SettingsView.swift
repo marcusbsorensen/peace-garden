@@ -461,7 +461,18 @@ struct SettingsView: View {
                 .contentShape(Rectangle())
                 .onTapGesture { editingName = true }
 
-            Text("Plants grown under this name will keep it.")
+            // **Said about the plants rather than about the name**, which is a
+            // smaller claim and the only one that is actually true.
+            //
+            // It read *Plants grown under this name will keep it*, which
+            // describes the frozen name on a local encounter note correctly and
+            // is heard as something else: that a name, once used, is fixed.
+            // `docs/WEBSITE.md` is where that becomes a real problem — a shared
+            // plant page reads the name live at page load, so the moment
+            // anything is published this sentence sits under a field it is
+            // wrong about. Naming the plants already in the garden keeps the
+            // true half and leaves the web to the screen that owns it.
+            Text("Plants you have already grown keep the name they were grown under.")
                 .font(.system(size: 13, weight: .light))
                 .foregroundStyle(Chrome.muted)
                 .lineSpacing(4)

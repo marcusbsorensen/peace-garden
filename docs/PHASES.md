@@ -127,6 +127,15 @@ Three things follow, and the third is the one that bites.
   their name and no note at all. An invitation that publishes prose somebody
   wrote privately, on a yes they gave to a question about their name, is a
   trick.
+
+  **A needs the same screen, and this said only B for a long time.** The
+  asymmetry was never argued for; it came from writing the invitation down and
+  not the share. A wrote that note for themselves too, before any of this
+  existed, and *share this plant* is a question about a plant. So the share flow
+  shows A their own note as it will appear, lets them edit it there with the
+  same machinery, and lets them share with their name and no note at all. The
+  test is one sentence and it applies to both of them: **nothing publishes prose
+  on a yes given to a different question.**
 - **A note becomes user-generated content shown to strangers.** It joins the
   guest books in needing reporting, blocking and deletion. Two surfaces, not
   one, and the note is the surface people will have written most freely on,
