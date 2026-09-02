@@ -24,3 +24,6 @@ design/*.html
 
 .DS_Store
 design/garden/peace-garden-shared-garden.html
+manus-output/
+out/
+build/
