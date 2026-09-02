@@ -7,48 +7,71 @@ import SwiftUI
 // because there are now enough of them that they were burying the colours and
 // the type in there.
 
-/// Two stems crossing: a meeting.
+/// Two stems crossing twice: a meeting.
 ///
 /// Deliberately not two phones. A rectangle is the one shape this app has none
 /// of, and the tap has always been a gesture rather than a device — what the
 /// screen is about is two people, not two handsets.
 ///
-/// It was two overlapping circles before this, which said *two things overlap*
-/// and said it in the vocabulary of a Venn diagram rather than of a garden.
-/// **The screen it opens already draws the right thing**: `UnfurlingBackdrop`
-/// puts a pair of fronds behind the exchange, and a mark that is the small
-/// version of what you are about to see is worth more than a mark that is
-/// merely correct.
+/// **Twice is what makes it a meeting rather than a junction.** One crossing is
+/// an X, and an X is read as a letter before it is read as anything that grew.
+/// Two is two things that took root near one another, leant through, and came
+/// back — which costs no more ink and is the whole difference. Four drawings
+/// were needed to find that, and each failure is worth naming because each one
+/// looked correct while it was being drawn:
 ///
-/// So: two stems rising from the foot, leaning through one another and parting
-/// again at the top, each ending in the coil `Tendril` and the app mark are
-/// drawn with. They cross once, low, which is what makes it a meeting rather
-/// than a plait.
+/// - **Mirrored, with the tips curling inward**, the two crooks close a heart
+///   across the top. On the one screen in this app that is about two people
+///   meeting, that is the worst available reading.
+/// - **Two equal arcs bowing apart** make a vesica and read as a fish.
+/// - **One straight stem beside one bowed stem** is a walking figure.
+/// - **Arching over into a hanging leaf** is a wilt. The eye takes the
+///   direction of a tip before it takes anything else, so a tip that points
+///   down says the plant is failing however healthy the rest of it looks.
+///
+/// So: unequal, both bowing toward one another, crossing twice, and both ending
+/// in a coil that winds *inward* — a stem still going rather than one giving
+/// up. The lens between the crossings is given room deliberately; drawn tight,
+/// the two strokes read at fifteen points as one thick line with a nick in it.
 struct MeetGlyph: Shape {
     func path(in rect: CGRect) -> Path {
-        let body = rect.insetBy(dx: 0.6, dy: 0.6)
-        func at(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
-            CGPoint(x: body.minX + body.width * x, y: body.minY + body.height * y)
+        let box = markBox(rect, 0.88).insetBy(dx: 0.9, dy: 0.9)
+        func at(_ u: CGFloat, _ v: CGFloat) -> CGPoint {
+            CGPoint(x: box.minX + box.width * u, y: box.minY + box.height * v)
         }
+        let w = box.width, h = box.height
+
+        /// A logarithmic coil, wound from its open end inward — the same curve
+        /// the app mark and `SproutingRule`'s finials are drawn with. An even
+        /// gain reads as wound rather than as growing.
+        func coil(_ centre: CGPoint, _ radius: CGFloat,
+                  gain: Double, from start: Double, sweep: Double) -> [CGPoint] {
+            (0...20).reversed().map { step in
+                let along = Double(step) / 20
+                let r = (radius / CGFloat(gain)) * CGFloat(pow(gain, along))
+                let bearing = start + sweep * along
+                return CGPoint(x: centre.x + r * CGFloat(cos(bearing)),
+                               y: centre.y + r * CGFloat(sin(bearing)))
+            }
+        }
+
         var path = Path()
 
-        // **They are deliberately unequal.** Drawn as a mirrored pair they came
-        // out an hourglass — a symmetrical X reads as a letter or an instrument
-        // before it reads as anything that grew, and at fifteen points the eye
-        // takes the symmetry first. Two plants are never the same height and
-        // never lean the same way, and saying so is what turns the mark from a
-        // symbol back into a pair of stems.
+        // The taller: from left of centre, bowing right through both crossings,
+        // and curling in at the top.
+        let left = coil(at(0.315, 0.150), w * 0.105, gain: 3.4, from: 1.15, sweep: 3.5)
+        path.move(to: at(0.24, 1.00))
+        path.addCurve(to: at(0.50, 0.20), control1: at(0.72, 0.78), control2: at(0.74, 0.40))
+        path.addCurve(to: left[0],
+                      control1: at(0.44, 0.14),
+                      control2: CGPoint(x: left[0].x + w * 0.03, y: left[0].y + h * 0.03))
+        for point in left.dropFirst() { path.addLine(to: point) }
 
-        // The taller one: leaves the foot left of centre, crosses to the right,
-        // and its growing point turns back over the other.
-        path.move(to: at(0.34, 1.0))
-        path.addCurve(to: at(0.76, 0.22), control1: at(0.40, 0.70), control2: at(0.84, 0.50))
-        path.addQuadCurve(to: at(0.56, 0.13), control: at(0.74, 0.05))
-
-        // The shorter one, crossing under it and turning the other way.
-        path.move(to: at(0.66, 1.0))
-        path.addCurve(to: at(0.22, 0.40), control1: at(0.60, 0.78), control2: at(0.15, 0.64))
-        path.addQuadCurve(to: at(0.42, 0.32), control: at(0.26, 0.23))
+        // The shorter, bowing the other way and coiling wider.
+        let right = coil(at(0.640, 0.150), w * 0.125, gain: 3.6, from: 2.1, sweep: 3.6)
+        path.move(to: at(0.76, 1.00))
+        path.addCurve(to: at(0.56, 0.24), control1: at(0.28, 0.78), control2: at(0.26, 0.42))
+        for point in right { path.addLine(to: point) }
 
         return path
     }

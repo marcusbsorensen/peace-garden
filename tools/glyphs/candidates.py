@@ -1,17 +1,23 @@
-"""The four stage-row marks, transcribed from Swift into SVG path data.
+"""Candidate marks, drawn rather than generated.
 
-`SeedGlyph`, `GardenGlyph` and `CogShape` live in `App/PeaceGarden/Views/Chrome.swift`;
-`MeetGlyph` is in `Views/Glyphs.swift`. **Swift is authoritative.** This is a
-mirror, kept so the marks can be rendered and looked at without a simulator —
-the same bargain `tools/preview` makes for the plant, and it will drift the same
-way.
+Three rounds with an image model produced compositional information and no
+usable line: everything came back bulbous and literal, in a register closer to
+an app-store icon than to the mark on the front of this app. So these are
+constructed, where the geometry can be held to the decimal and looked at at
+fifteen points after every change.
 
-Everything is emitted in a 15 x 15 box, because fifteen points is the size the
-row actually draws them at, and every failure any of them has had has been a
-failure at that size rather than at any other. The four are **not** one size
-within that box: `SCALE` mirrors `markBox` in `Chrome.swift`.
+    python3 tools/glyphs/candidates.py out/candidates.png
 
-    python3 tools/glyphs/sheet.py --out out/marks.png
+**The art direction, from Marcus, after the first attempt at these:**
+
+- The seed is not a drop of water. It is close to an oval — one end a little
+  more pointed than the other, and that is the whole of it.
+- Meet is two plants crossing **twice**, in gentle arcs. Sharp bends and coiled
+  tips made it two broken walking sticks.
+- The garden is not sticks in the ground. One stem carries a leaf, one a simple
+  arrangement of petals, one a small tendril sprout.
+- The cog is a normal system settings cog. Recognition beats house style on the
+  one mark whose whole job is to be found without being read.
 """
 
 import math
@@ -101,9 +107,9 @@ def meet(side=SIDE):
     two strokes read as one thick line with a nick in it at fifteen points; open,
     the eye sees two stems and the space they make between them.
 
-    Both ends coil inward, the way the app mark and `Tendril` coil. An arch
-    over into a hanging leaf was a wilt: the eye takes the direction of a tip
-    before it takes anything else.
+    They end differently because two plants do: the left one arches over and
+    puts out a leaf, the right one runs on into a young tendril, coiled the way
+    the app mark and `Tendril` coil.
     """
     x, y, w, h = _box(side)
 

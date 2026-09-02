@@ -592,50 +592,75 @@ extension Chrome {
     static let monoline = StrokeStyle(lineWidth: 1.2, lineCap: .round, lineJoin: .round)
 }
 
+/// The box a mark draws in, which is not the box it is given.
+///
+/// **The four marks in the stage row are not one size.** A cog fills its square
+/// corner to corner and a seed is a small closed shape, so drawn at equal frames
+/// the cog swamps everything beside it. Each takes a centred share of its frame
+/// instead, sized by how much it has to say: the garden is two whole plants and
+/// takes all of it, the meeting and the cog sit between, and the seed is the
+/// smallest thing in this app and now looks it.
+///
+/// **The stroke does not scale with them.** `Chrome.monoline` is one width, so a
+/// smaller mark is a lighter mark as well as a shorter one, and that is half of
+/// why this works at all. It is also why the share is set here rather than by
+/// giving each mark its own `glyphSize`, which would have moved the tap target
+/// and the baseline along with the drawing.
+func markBox(_ rect: CGRect, _ share: CGFloat) -> CGRect {
+    let side = min(rect.width, rect.height) * share
+    return CGRect(x: rect.midX - side / 2, y: rect.midY - side / 2,
+                  width: side, height: side)
+}
+
 private func polar(_ centre: CGPoint, _ radius: CGFloat, _ angle: Double) -> CGPoint {
     CGPoint(x: centre.x + radius * cos(angle), y: centre.y + radius * sin(angle))
 }
 
-/// A cog, drawn rather than borrowed.
+/// A cog, and deliberately the ordinary one.
 ///
-/// `gearshape` at any weight is a chunky, mechanical, right-angled thing, and
-/// this app has no other right angles in it. Eight teeth on a thin ring, all of
-/// it at the hairline weight, reads as an instrument instead — closer to the
-/// spiral finials on `SproutingRule` than to a settings icon.
+/// Three drawings before this, and every one of them was a sun. A ring with
+/// things radiating off it is a sun, a star, a gear or a loading spinner, and
+/// which of those a reader lands on is not something proportion can settle —
+/// long rays gave the brightness glyph, short detached ticks gave a spinner,
+/// and the ring with teeth grown straight out of it gave a wheel with bumps.
+///
+/// So this one stops trying to be a house-style instrument and is a gear.
+/// **Recognition wins on the one mark whose whole job is to be found without
+/// being read**, and there is no right angle anywhere in it: the tooth profile
+/// is a flattened cosine, which gives square-ish tops and roots with quick
+/// flanks and no corner at any point along it.
+///
+/// **Seven teeth, phased from twelve o'clock.** The profile used to be measured
+/// from the x axis while the mark is drawn from the top, which put the top of
+/// the cog halfway up a flank — arbitrary, and it looked it. Measured from the
+/// top, a spoke stands vertically; and because seven is odd, that forces a
+/// notch exactly opposite it at the foot and leaves the mark no mirror line.
 struct CogShape: Shape {
-    var teeth: Int = 8
+    var teeth: Int = 7
+    /// Points per tooth. Fifteen is smooth at any size the app draws this at.
+    var resolution: Int = 15
 
     func path(in rect: CGRect) -> Path {
-        let centre = CGPoint(x: rect.midX, y: rect.midY)
-        let half = min(rect.width, rect.height) / 2
-        // A large ring with short teeth just clear of it. Three proportions
-        // were drawn at true size before this one, and the two failures are
-        // worth recording because both look plausible on paper:
-        //
-        // - **Teeth drawn as outlines merge into blobs.** At fifteen points and
-        //   the hairline weight a tooth is about as wide as it is long, so its
-        //   two flanks and the arc across the top fill in and the mark reads as
-        //   a washer with bumps. There is no room to outline eight of anything
-        //   at this size.
-        // - **A small ring with long teeth is a sun.** Rays radiating from a
-        //   disc is the brightness glyph, and it arrives before the cog does.
-        //
-        // What works is the opposite emphasis: the ring carries the mark and
-        // the teeth are notches on it. That reads as an instrument — a
-        // graduated dial — rather than as machinery, which is what this screen
-        // wants.
-        let ring = half * 0.70
-        let tip = half * 0.94
-        let pitch = 2 * Double.pi / Double(teeth)
+        let box = markBox(rect, 0.84)
+        let centre = CGPoint(x: box.midX, y: box.midY)
+        let half = box.width / 2 - 0.9
+        let tip = half, root = half * 0.70
+        let mid = (tip + root) / 2, amplitude = (tip - root) / 2
 
         var path = Path()
-        path.addEllipse(in: CGRect(x: centre.x - ring, y: centre.y - ring,
-                                   width: ring * 2, height: ring * 2))
-        for index in 0..<teeth {
-            let bearing = Double(index) * pitch - .pi / 2
-            path.move(to: polar(centre, ring, bearing))
-            path.addLine(to: polar(centre, tip, bearing))
+        let steps = teeth * resolution
+        for step in 0...steps {
+            let phase = 2 * Double.pi * Double(step) / Double(steps)
+            let bearing = phase - .pi / 2
+            let radius = mid + amplitude * CGFloat(tanh(2.6 * cos(Double(teeth) * phase)))
+            let point = polar(centre, radius, bearing)
+            if step == 0 { path.move(to: point) } else { path.addLine(to: point) }
         }
+        path.closeSubpath()
+
+        let bore = root * 0.52
+        path.addEllipse(in: CGRect(x: centre.x - bore, y: centre.y - bore,
+                                   width: bore * 2, height: bore * 2))
         return path
     }
 }
@@ -661,140 +686,142 @@ struct PencilShape: Shape {
     }
 }
 
-/// A seed: broad at the crown, tapering to a point.
+/// A seed: nearly an oval, one end a little drawn and the other a little fuller.
 ///
-/// **The seam had to go, and it is worth saying why**, because the spec asked
-/// for it and it is the meaningful part of a seed — it is where the thing
-/// opens. Four ways of drawing it were rendered at fifteen points and none of
-/// them survived:
+/// **The taper was the whole fault, for a long time.** Run the point over most
+/// of the height and the mark is a water drop, or a flame, or a leaf — anything
+/// except a seed. A real seed is barely pointed. So the crown's controls sit a
+/// sixth of the way down and well out from the axis, which *turns* the tip
+/// rather than drawing it out, and the foot's leave horizontally, which is what
+/// keeps the foot round rather than making a second point.
 ///
-/// - a bar across an oval is a Greek theta, and shortening it or dropping it
-///   below centre does not shake that off;
-/// - a shallow curve instead turns the whole mark into a face;
-/// - the two halves drawn slightly apart is an O with a nick in each side;
-/// - far enough apart to read as parted, they stop being one seed.
-///
-/// So the silhouette carries the meaning on its own. A neutral oval is what
-/// made every seam necessary in the first place — it says nothing, so something
-/// has to be added to it. A shape that is round at one end and pointed at the
-/// other is already a seed, and needs no second stroke to say so.
-/// Round at the foot, drawn to a point at the crown, and leaning.
-///
-/// **Upright, it was a specimen.** A seed standing exactly vertical on a screen
-/// full of curves is the one mark in the set that looks placed rather than
-/// grown — nothing else in this app sits square to the frame, and the eye finds
-/// the odd one out immediately. Twenty degrees clockwise is enough to say the
+/// **Upright, it was a specimen.** Nothing else in this app sits square to the
+/// frame, and the eye finds the odd one out at once. Twenty degrees says the
 /// seed is lying where it fell.
 ///
-/// The weight moved with it. It was widest above the middle, which kept it from
-/// reading as a falling drop; now the bottom is fuller and rounder and the top
-/// is drawn out, which is the actual shape of most seeds and is also what makes
-/// the lean read as resting rather than toppling.
+/// **The shade line is computed, not placed.** It samples the flank it sits
+/// under and steps in along that curve's own normal, so the gap between the two
+/// is constant. Drawn by hand it was a chord across the corner — close to the
+/// outline at one end and far from it at the other — which reads as a crack
+/// rather than as a surface turning away. Of the two normals it takes whichever
+/// lands nearer the middle of the shape: guessing the sign from which flank
+/// this is fails at the foot, where the curve turns through the vertical and
+/// the flanks swap over.
 struct SeedGlyph: Shape {
     /// Clockwise, in degrees.
     var tilt: Double = 20
 
     func path(in rect: CGRect) -> Path {
-        // Taller than it is wide, near enough `SeedHusk.elongation`. Width is
-        // what makes something look heavy, and a seed is not heavy.
-        let width = min(rect.width, rect.height / 1.5)
-        let body = CGRect(x: rect.midX - width / 2, y: rect.minY,
-                          width: width, height: rect.height)
-            .insetBy(dx: 0.6, dy: 0.6)
-        let w = body.width, h = body.height
-
-        let foot = CGPoint(x: body.midX, y: body.maxY)
-        let crown = CGPoint(x: body.midX, y: body.minY)
+        let box = markBox(rect, 0.70)
+        let side = box.width
+        // Taller than it is wide. Width is what makes something look heavy, and
+        // a seed is not heavy.
+        var w = min(side, side / 1.30)
+        let x = box.minX + side / 2 - w / 2 + 0.9
+        let y = box.minY + 0.9
+        let h = side - 1.8
+        w -= 1.8
+        let mid = x + w / 2, top = y, bot = y + h
 
         var path = Path()
-        // **The two halves are drawn to different rules.** Below the waist the
-        // flanks leave the foot almost horizontally and the outline is close to
-        // a circle; above it they run most of the height in to a single point.
-        // A shape that is merely *wider* below the middle still reads as an
-        // oval — what says seed is that one end is turned and the other is not.
-        path.move(to: foot)
-        path.addCurve(to: crown,
-                      control1: CGPoint(x: body.maxX, y: body.maxY - h * 0.10),
-                      control2: CGPoint(x: body.midX + w * 0.16, y: body.minY + h * 0.34))
-        path.addCurve(to: foot,
-                      control1: CGPoint(x: body.midX - w * 0.16, y: body.minY + h * 0.34),
-                      control2: CGPoint(x: body.minX, y: body.maxY - h * 0.10))
+        path.move(to: CGPoint(x: mid, y: bot))
+        path.addCurve(to: CGPoint(x: mid, y: top),
+                      control1: CGPoint(x: x + w * 1.16, y: bot),
+                      control2: CGPoint(x: mid + w * 0.34, y: y + h * 0.17))
+        path.addCurve(to: CGPoint(x: mid, y: bot),
+                      control1: CGPoint(x: mid - w * 0.34, y: y + h * 0.17),
+                      control2: CGPoint(x: x - w * 0.16, y: bot))
         path.closeSubpath()
 
+        // The left flank, crown to foot, exactly as the outline above draws it.
+        let start = CGPoint(x: mid, y: top)
+        let handleA = CGPoint(x: mid - w * 0.34, y: y + h * 0.17)
+        let handleB = CGPoint(x: x - w * 0.16, y: bot)
+        let finish = CGPoint(x: mid, y: bot)
+        func flank(_ t: CGFloat) -> CGPoint {
+            let u = 1 - t
+            return CGPoint(
+                x: u * u * u * start.x + 3 * u * u * t * handleA.x
+                    + 3 * u * t * t * handleB.x + t * t * t * finish.x,
+                y: u * u * u * start.y + 3 * u * u * t * handleA.y
+                    + 3 * u * t * t * handleB.y + t * t * t * finish.y)
+        }
+
+        let inset = w * 0.135
+        let heart = CGPoint(x: mid, y: y + h * 0.55)
+        for step in 0...8 {
+            let t = 0.54 + 0.22 * CGFloat(step) / 8
+            let here = flank(t), ahead = flank(t + 0.006)
+            let run = max(hypot(ahead.x - here.x, ahead.y - here.y), 0.0001)
+            let nx = -(ahead.y - here.y) / run, ny = (ahead.x - here.x) / run
+            let outward = CGPoint(x: here.x + nx * inset, y: here.y + ny * inset)
+            let inward = CGPoint(x: here.x - nx * inset, y: here.y - ny * inset)
+            let nearer = hypot(outward.x - heart.x, outward.y - heart.y)
+                < hypot(inward.x - heart.x, inward.y - heart.y) ? outward : inward
+            if step == 0 { path.move(to: nearer) } else { path.addLine(to: nearer) }
+        }
+
         return path.applying(
-            CGAffineTransform(translationX: rect.midX, y: rect.midY)
+            CGAffineTransform(translationX: box.midX, y: box.midY)
                 .rotated(by: tilt * .pi / 180)
-                .translatedBy(x: -rect.midX, y: -rect.midY)
+                .translatedBy(x: -box.midX, y: -box.midY)
         )
     }
 }
 
-/// Three plants on a bed, and no two of them the same plant.
+/// A garden: a flower, and grass gone to seed beside it.
 ///
-/// It was three identical ovoids on a ground line, and the ground line was
-/// doing all the work: the ovoids said nothing except *three of something*, so
-/// the mark was the weakest in the set beside a seed that is a shape and a
-/// meeting that is a gesture. A garden is not three of anything. It is the
-/// place where the things you grew turn out to have grown differently.
+/// It was three stems on a bed line with a different thing on each head, and it
+/// read as three squiggles. Before that it was three identical ovoids, and
+/// before that three upright stems on a full-width line, which is a colonnade.
+/// **Two plants a reader can name is worth more than three that read as marks**,
+/// and at fifteen points two is what there is room for.
 ///
-/// So the three are three different plants, at three heights, and they are the
-/// app's own forms rather than generic flowers — a cup, a spire, and a nodding
-/// bell, which are three of the twelve archetypes a seed can draw. Somebody who
-/// has looked at their own garden has seen all three.
+/// **The flower is one closed outline of five lobes**, not five petals radiating
+/// from a centre. Radiating strokes at this size are a sun however few of them
+/// there are — the same trap the cog fell into three times.
 ///
-/// **Height is what makes them read as grown**, more than the heads do. Three
-/// stems of one length is a fence however you finish them.
+/// **The grass is a narrow, high zigzag**, which is the one shape in the set
+/// that is nothing but a repeated turn. Drawn as wide as it was tall it was a
+/// drill bit; narrow, it is a seed head.
 struct GardenGlyph: Shape {
     func path(in rect: CGRect) -> Path {
-        let body = rect.insetBy(dx: 0.6, dy: 0.6)
-        func at(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
-            CGPoint(x: body.minX + body.width * x, y: body.minY + body.height * y)
+        let box = markBox(rect, 1.0).insetBy(dx: 0.9, dy: 0.9)
+        func at(_ u: CGFloat, _ v: CGFloat) -> CGPoint {
+            CGPoint(x: box.minX + box.width * u, y: box.minY + box.height * v)
         }
+        let w = box.width
         var path = Path()
 
-        // **Three upright stems on a full-width line is a colonnade.** That was
-        // the first attempt, and at fifteen points it read as a pavilion: even
-        // spacing, equal weight, a floor under it, and three finials on top. A
-        // garden is none of those things.
-        //
-        // What fixes it is that no two of these stand the same way. One leans
-        // out, one is upright, one bends over; the heads are three different
-        // heads at three different heights; and the ground is a short line
-        // under their feet rather than a floor the width of the mark.
+        // The flower: five lobes on one closed outline, and a stem under it.
+        let heart = at(0.33, 0.30)
+        let tip = w * 0.20, valley = w * 0.075, lift = tip * 1.42
+        for petal in 0..<5 {
+            let a0 = -Double.pi / 2 + Double(petal) * 2 * .pi / 5
+            let a1 = a0 + 2 * .pi / 5
+            let from = polar(heart, valley, a0 - .pi / 5)
+            let to = polar(heart, valley, a1 - .pi / 5)
+            if petal == 0 { path.move(to: from) }
+            path.addCurve(to: to,
+                          control1: polar(heart, lift, a0 - 0.40),
+                          control2: polar(heart, lift, a0 + 0.40))
+        }
+        path.closeSubpath()
+        path.move(to: at(0.37, 1.00))
+        path.addCurve(to: at(0.33, 0.50), control1: at(0.36, 0.76), control2: at(0.32, 0.66))
 
-        // Left, shortest: a round head, leaning out of the bed.
-        path.move(to: at(0.18, 1.0))
-        path.addQuadCurve(to: at(0.08, 0.50), control: at(0.18, 0.74))
-        path.addEllipse(in: CGRect(x: body.minX, y: body.minY + body.height * 0.26,
-                                   width: body.width * 0.17,
-                                   height: body.width * 0.17))
-
-        // Middle, tallest: a spire, its flowers as ticks up the stem. The one
-        // head that is not a head, which is what a spire is. The ticks are kept
-        // short — long ones close the gap to its neighbours and the three heads
-        // become one silhouette.
-        path.move(to: at(0.48, 1.0))
-        path.addQuadCurve(to: at(0.50, 0.10), control: at(0.45, 0.55))
-        for (y, side) in [(0.42, 1.0), (0.31, -1.0), (0.21, 1.0)] {
-            path.move(to: at(0.49, CGFloat(y)))
-            path.addLine(to: at(0.49 + 0.09 * CGFloat(side), CGFloat(y) - 0.05))
+        // The grass: a taller stem, and a narrow high zigzag where it seeds.
+        path.move(to: at(0.67, 1.00))
+        path.addCurve(to: at(0.71, 0.58), control1: at(0.69, 0.84), control2: at(0.72, 0.74))
+        for turn in 0..<13 {
+            let v = 0.58 - CGFloat(turn + 1) * 0.0415
+            let u = 0.71 + (turn.isMultiple(of: 2) ? 0.027 : -0.027)
+            path.addLine(to: at(u, v))
         }
 
-        // Right: a bell, nodding. The stem bends over and the flower hangs off
-        // the bend, which is the whole of what nodding means.
-        //
-        // **Narrow and deep.** Drawn wide and shallow it was a bowl, and a bowl
-        // at one end of a line with a ball at the other closes the whole mark
-        // into a basket — which is what the second attempt read as.
-        path.move(to: at(0.84, 1.0))
-        path.addCurve(to: at(0.82, 0.36), control1: at(0.92, 0.76), control2: at(0.94, 0.46))
-        path.move(to: at(0.74, 0.37))
-        path.addQuadCurve(to: at(0.90, 0.37), control: at(0.82, 0.66))
-
         // The bed: under their feet, not the width of the frame.
-        path.move(to: at(0.06, 1.0))
-        path.addLine(to: at(0.94, 1.0))
-
+        path.move(to: at(0.25, 1.00))
+        path.addLine(to: at(0.79, 1.00))
         return path
     }
 }
