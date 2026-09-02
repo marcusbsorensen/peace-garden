@@ -392,9 +392,10 @@ credited, nothing lifted from a reference book's wording.
 
 The scope recommended option 1 now and option 3 — a bank per language — for the
 two or three languages that earned it. **Eight banks were commissioned in one
-round**: English as it stood, plus Dutch, Danish, French, Spanish, Norwegian
-Bokmål, Swedish and Italian, each written from scratch against the rules at the
-top of `Quotes.swift` by somebody working only in that language.
+round**: English, which was then filled out to match, plus Dutch, Danish,
+French, Spanish, Norwegian Bokmål, Swedish and Italian, each written from
+scratch against the rules at the top of `Quotes.swift` by somebody working only
+in that language.
 
 They are not translations of each other and they share almost nothing. Measured
 across the six that had landed when this was written: **zero lines in common
@@ -536,9 +537,14 @@ to say so.
 
 ### What round one learned, for the round-two brief
 
-- **Send the bank in pieces.** Spanish failed twice on an API output content
-  filter when asked to produce the whole file at once, and only landed when told
-  to append a theme at a time. Put that in every brief.
+- **Cut the reading down, then split the writing.** Spanish failed three times
+  — twice on an API output content filter, once on a ten-minute stall — and
+  every one died partway through reading `Quotes.swift`, which is now 2,000+
+  lines and grows with each bank added to it. What worked: a 228-line brief
+  holding the struct, the rules, the two enums and one sample passage per
+  subtheme, and two agents splitting the ten themes five and five. Half the
+  reading, half the writing, and the brief stays the same size however many
+  banks exist. Every round-two brief should start there.
 - **Name the thin-corpus languages as thin.** Faroese, Luxembourgish and
   Greenlandic will not reach 300 passages from quotation. Say so, or an agent
   pads — or worse, invents an attribution.

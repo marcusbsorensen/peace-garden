@@ -8,37 +8,30 @@ work grew from "one language, passages left in English" to eight banks and a
 plan for twenty-five more.
 
 ## State
-`main` at `c905c04`, plus uncommitted wiring — see **In flight** below.
+`main` clean. **72 SeedCore tests and 22 app tests pass** (was 63 and 12).
+Device build clean for `generic/platform=iOS`.
 
-- **72 SeedCore tests** (was 63) and **12 app tests** pass. Device build clean
-  for `generic/platform=iOS`.
 - **Plant forms are live and were looked at on a simulator**: a raceme
   unchanged, a solitary orchid, a flat-topped corymb and a plume, all
-  unmistakably different plants.
-- **The interface localisation is merged** — eight languages, 191 strings, every
-  one with a translator's comment.
-- **Six passage banks are committed**; the seventh and the English fill-out were
-  still running when this was written.
+  unmistakably different plants. Then the corymb again with the chrome in Dutch,
+  which is the two halves of this session in one screen.
+- **The interface speaks eight languages** — 191 strings, every one with a
+  translator's comment.
+- **Seven passage banks**, 349 to 380 passages each, every subtheme at ten or
+  more. The English bank was filled from 300 to 369 to meet the same floor.
+- **Spanish is the one that is not there.** Its interface is localised; its bank
+  failed three times and was still being written. A Spanish phone therefore
+  reads English lines and is told so, which is the `isBorrowed` path and is
+  worth keeping working — every round-two language arrives that way.
 
-### In flight when this was written
-Two background agents, and the tree does not build until the first lands:
-
-1. **Spanish bank** → `App/PeaceGarden/Views/Quotes+Spanish.swift`.
-   `QuoteBanks.swift` already refers to `Quotes.spanish`, so the app target does
-   not compile until that file exists. Spanish failed twice on an API output
-   content filter before being told to append a theme at a time.
-2. **English bank fill-out** → editing `Quotes.swift` in place, adding 69
-   passages to bring every subtheme to twelve.
-
-Uncommitted and finished: `QuoteBanks.swift`, `QuoteBankTests.swift`, the
-`bySubtheme` change and `passage(subtheme:childSeed:from:)` in `Quotes.swift`,
-the borrowed-language line in `PlantRevealView.swift`, and the round-two section
-of `docs/LANGUAGES.md`.
-
-**To finish**: wait for both, `xcodegen generate`, build for the simulator *and*
-`generic/platform=iOS`, run both test suites, then commit. `QuoteBankTests`
-holds English at a floor of 5 as a recorded exception — **remove that exception
-once the fill-out lands** and give English the same floor as everything else.
+### To add Spanish when it lands
+The two halves are being written to
+`…/scratchpad/spanish-a.swift` and `spanish-b.swift` as bare `Passage(...)`
+lines. Wrap them in the same `extension Quotes { static let spanish: [Passage] = [ … ] }`
+shape the other six use, then: a `case spanish = "es"` in `QuoteBank`, a line in
+`passages`, move `"es-ES"` from `testALanguageWithNoBankBorrowsAndSaysSo` back
+to `testFlemishReadsTheDutchBankAndNynorskTheNorwegianOne`, `xcodegen generate`,
+and build. The tests will tell you the rest.
 
 ## Files
 - `docs/PLANT-FORMS.md` — now the record rather than the spec, including three
@@ -67,7 +60,7 @@ once the fill-out lands** and give English the same floor as everything else.
   language-neutral — so a pair holds the character of the passage in common
   rather than its words. `QuoteBank`'s doc comment is the argument.
 - **A bank is a commission, not a translation**, and the measure of whether that
-  happened is overlap with the English bank. All six landed at **zero**.
+  happened is overlap with the English bank. All seven landed at **zero**.
 - **Flemish reads the Dutch bank**, matched on language alone. It is a variety of
   Dutch, not a peer. Nynorsk reads the Norwegian bank for the same reason.
 - **Informal address in all seven interfaces**, and Spanish avoids the
@@ -76,11 +69,19 @@ once the fill-out lands** and give English the same floor as everything else.
   `docs/LANGUAGES.md`, "Round two", for all three reasons.
 
 ## What this session found that nobody was looking for
-- **The English bank is the thinnest of the eight.** It has 300 passages,
-  thirteen subthemes under the floor of ten that its own scope set, and
-  `quietAsASound` at five. Every commissioned bank came in at 349–380 with a
-  floor of eleven. Marcus asked for it to be filled next, and that is the agent
-  running now.
+- **The English bank was the thinnest of the eight**, with thirteen subthemes
+  under the floor of ten its own scope set and `quietAsASound` at five. Filled to
+  369, twelve everywhere. One of the new entries is the argument for having done
+  all eight at once: *Danish keeps two words where English has one — stilhed is
+  no sound at all, and tavshed is nobody speaking.* The Danish bank found that
+  writing its own subtheme; English gained a passage about what it lacks.
+- **The subtheme draw is 30/30/40 and was never written down.** Ten genus tails
+  band 3/3/4, so a theme's third subtheme comes up 40% of the time. How often a
+  reader meets a line twice is the draw probability over the number of lines, so
+  a third subtheme wants about a third more passages than a first. Peace's
+  `quietAsASound` was the worst case — five lines *and* a 30% draw — and its
+  lines came round more than twice as often as anywhere else in the bank. It is
+  a doc comment on `subtheme(of:in:)` now.
 - **131 of the 191 interface strings were never extractable.** Every chrome
   helper took a `String`, so a literal handed to `QuietButton(title:)` was drawn
   as written and looked up nowhere. `xcodebuild` writes `.stringsdata` and stops
@@ -108,8 +109,16 @@ Everything in the previous handover still applies. Added this session:
   app's data container and relaunch; `xcrun simctl spawn <sim> defaults write
   app.peacegarden developer.clockShift -float 3456000` winds it to maturity.
   Reinstalling until the draw obliges takes twenty times as long.
-- **A long single-shot generation can trip an API output content filter.** It
-  killed Spanish twice with no useful error. Appending in pieces fixed it.
+- **The Spanish bank failed three times, and the cause was reading, not
+  writing.** Twice on an API output content filter, once on a 600-second stall,
+  and every one of them died partway through `Quotes.swift` — which is 2,000+
+  lines and grows with every bank. The fix is
+  `tools/quotes/brief.py`-style extraction: pull the struct, the rules doc
+  comment, the two enums and one sample passage per subtheme into a 228-line
+  brief, tell the agent to read only that, and split the bank in half by theme
+  so each agent writes 180 entries rather than 360. **Do this for all
+  twenty-five round-two banks from the start** rather than discovering it
+  again.
 - **`tools/preview` has drifted further.** Its branch code is a faithful mirror,
   but its stems still lack `apexPoint`, the bloom lag and the foot dome.
   `SeedCore` is authoritative; the preview is for judging shape.

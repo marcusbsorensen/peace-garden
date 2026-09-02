@@ -80,11 +80,24 @@ final class ThemeMappingTests: XCTestCase {
         }
     }
 
+    /// No theme is thin enough to repeat itself against the others.
+    ///
+    /// This used to pin the bank at exactly 300 and every theme at exactly 30,
+    /// which was true while the bank was laid out by hand to be that. Filling it
+    /// to twelve in every subtheme took it to 369 across 36 to 39, so the test
+    /// now asks the thing it was always for: that the themes stay level with
+    /// each other. A theme is chosen by the pair and holds for as long as they
+    /// keep meeting, so a thin theme is not a thin tenth of the bank — it is
+    /// everything two particular people will ever be handed.
     func testTheBankIsStillEvenAcrossThemes() {
         let counts = Dictionary(grouping: Quotes.all, by: \.theme).mapValues(\.count)
-        XCTAssertEqual(Quotes.all.count, 300)
+        let mean = Double(Quotes.all.count) / Double(Quotes.Theme.allCases.count)
         for theme in Quotes.Theme.allCases {
-            XCTAssertEqual(counts[theme], 30, "\(theme)")
+            let count = Double(counts[theme] ?? 0)
+            XCTAssertLessThan(
+                abs(count - mean) / mean, 0.15,
+                "\(theme) has \(Int(count)) against a mean of \(Int(mean))"
+            )
         }
     }
 

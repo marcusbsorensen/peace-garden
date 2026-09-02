@@ -59,18 +59,30 @@ struct PlantRevealView: View {
                 // The theme is the pair's and holds; the line inside it is this
                 // meeting's. So two people keep the same character between them
                 // and never get the same words twice.
-                // The passage bank is not part of the interface and is not
-                // translated with it — see docs/LANGUAGES.md, "The passages".
-                // Both lines are drawn as they stand.
+                // The passage is drawn as it stands, from whichever bank this
+                // phone reads. A bank is written in its own language rather
+                // than translated from the English one — see `QuoteBank` for
+                // what two people on different banks still hold in common, and
+                // docs/LANGUAGES.md for why it had to be that way.
                 let passage = Quotes.passage(for: outcome.result)
                 Text(verbatim: passage.text)
                     .font(.system(size: 17, weight: .light))
                     .foregroundStyle(Chrome.ink.opacity(0.84))
                     .lineSpacing(6)
-                Text(verbatim: passage.source)
-                    .chromeLabel()
-                    .foregroundStyle(Chrome.faint)
-                    .padding(.bottom, 6)
+                Group {
+                    if QuoteBank.isBorrowed {
+                        // This screen is the one moment the app speaks at
+                        // length, so it is where a borrowed language is most
+                        // conspicuous. Saying which one it is in is what makes
+                        // showing it defensible rather than careless.
+                        Text("\(passage.source) · in English")
+                    } else {
+                        Text(verbatim: passage.source)
+                    }
+                }
+                .chromeLabel()
+                .foregroundStyle(Chrome.faint)
+                .padding(.bottom, 6)
 
                 Text("It will open like this in \(Int(genome.tempo.daysToBloom.rounded())) days")
                     .chromeLabel()

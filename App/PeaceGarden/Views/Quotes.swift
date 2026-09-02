@@ -130,8 +130,8 @@ enum Quotes {
 
     /// The thirty subthemes: three under each theme.
     ///
-    /// They were not invented and then filled. Every theme's thirty passages
-    /// were laid out and read, and these are the three heaps they fell into —
+    /// They were not invented and then filled. Every theme's passages were laid
+    /// out and read, and these are the three heaps they fell into —
     /// which is why the three are uneven, and why the shape differs from theme
     /// to theme. Most themes turn out to divide into *the mechanism*, *the
     /// instances*, and *the words and sayings*, but not all of them do, and
@@ -378,8 +378,50 @@ enum Quotes {
             subtheme: .smallToLarge
         ),
         Passage(
+            text: "A giant sequoia seed weighs about five milligrams, roughly a flake of oatmeal, and the tree that comes of it is among the largest living things on earth.",
+            source: "Sequoiadendron giganteum",
+            theme: .beginnings,
+            subtheme: .smallToLarge
+        ),
+        Passage(
+            text: "Large streams from little fountains flow.",
+            source: "David Everett, 1791",
+            theme: .beginnings,
+            subtheme: .smallToLarge
+        ),
+        Passage(
             text: "A flowering plant is fertilised twice at once: one sperm makes the embryo, the other makes the store of food packed around it.",
             source: "Double fertilisation",
+            theme: .beginnings,
+            subtheme: .theFirstAct
+        ),
+        Passage(
+            text: "Plumule: the shoot already inside the seed, its first leaves folded and waiting while the root goes down ahead of it.",
+            source: "Botany",
+            theme: .beginnings,
+            subtheme: .theFirstAct
+        ),
+        Passage(
+            text: "Hypocotyl: the stem between root and seed leaves. In many seedlings it comes up bent double, so the soil is pushed aside by a shoulder and the growing tip arrives unscratched.",
+            source: "Botany",
+            theme: .beginnings,
+            subtheme: .theFirstAct
+        ),
+        Passage(
+            text: "Initial and initiate come from Latin initium, an entrance, from in-ire, to go in. A beginning is a going in.",
+            source: "Latin",
+            theme: .beginnings,
+            subtheme: .theFirstAct
+        ),
+        Passage(
+            text: "Debut is French débuter, to play the first stroke in a game, from but, the mark being aimed at. The word starts at the target rather than at the player.",
+            source: "French",
+            theme: .beginnings,
+            subtheme: .theFirstAct
+        ),
+        Passage(
+            text: "A mistletoe seedling grows away from the light rather than towards it, because the thing it needs is the shaded side of the branch it has landed on.",
+            source: "Viscum album",
             theme: .beginnings,
             subtheme: .theFirstAct
         ),
@@ -531,6 +573,36 @@ enum Quotes {
             subtheme: .heldBack
         ),
         Passage(
+            text: "After-ripening: the weeks of dry keeping some seeds need before the embryo inside them is finished. A seed can look complete and not yet be.",
+            source: "Botany",
+            theme: .waiting,
+            subtheme: .heldBack
+        ),
+        Passage(
+            text: "Seed bank: the seeds already lying in the soil of any field or wood, a good many of them older than the plants standing over them, waiting for the ground to be opened.",
+            source: "Ecology",
+            theme: .waiting,
+            subtheme: .heldBack
+        ),
+        Passage(
+            text: "Latent is Latin latere, to lie hidden. A latent thing is not absent, only unnoticed.",
+            source: "Latin",
+            theme: .waiting,
+            subtheme: .heldBack
+        ),
+        Passage(
+            text: "Some Australian seeds will not start for heat alone. What wakes them is a chemical from the smoke of burnt plants, carried into the ground by the first rain after a fire.",
+            source: "Karrikins",
+            theme: .waiting,
+            subtheme: .heldBack
+        ),
+        Passage(
+            text: "Diapause: a pause an insect's development takes on purpose, entered before the hard season arrives rather than in answer to it.",
+            source: "Entomology",
+            theme: .waiting,
+            subtheme: .heldBack
+        ),
+        Passage(
             text: "A season is a sowing. The word descends from Latin satio, the time at which seed goes into the ground.",
             source: "Latin",
             theme: .waiting,
@@ -563,6 +635,30 @@ enum Quotes {
         Passage(
             text: "Some bamboos flower once, all together, all over the world, after more than a century. Plants from one stock keep the same clock.",
             source: "Phyllostachys bambusoides",
+            theme: .waiting,
+            subtheme: .theLongCount
+        ),
+        Passage(
+            text: "Century is Latin centuria, a hundred of anything: it counted men in a legion long before it counted years.",
+            source: "Latin",
+            theme: .waiting,
+            subtheme: .theLongCount
+        ),
+        Passage(
+            text: "A bristlecone pine in the White Mountains of California has been alive for more than four and a half thousand years, and is still making cones.",
+            source: "Pinus longaeva",
+            theme: .waiting,
+            subtheme: .theLongCount
+        ),
+        Passage(
+            text: "An ocean quahog dredged off Iceland was found to carry five hundred and seven growth lines in its shell, one laid down for every year it had been alive.",
+            source: "Arctica islandica",
+            theme: .waiting,
+            subtheme: .theLongCount
+        ),
+        Passage(
+            text: "With time and patience the mulberry leaf becomes a silk gown.",
+            source: "Chinese proverb",
             theme: .waiting,
             subtheme: .theLongCount
         ),
@@ -744,8 +840,50 @@ enum Quotes {
             subtheme: .theTurningYear
         ),
         Passage(
+            text: "The equinox is not quite the day of equal light. Air bends the sun's image upward, so it seems to rise a little before it is up and to set a little after it has gone.",
+            source: "Equinox and equilux",
+            theme: .renewal,
+            subtheme: .theTurningYear
+        ),
+        Passage(
+            text: "Phenology: the keeping of dates for when things happen — first frog, first swift, first blackthorn. People kept the record for centuries before it was given a name.",
+            source: "Phenology",
+            theme: .renewal,
+            subtheme: .theTurningYear
+        ),
+        Passage(
             text: "Six ginkgos standing within two kilometres of the Hiroshima blast came through it, put out leaves again, and are alive today.",
             source: "Hibakujumoku, Hiroshima",
+            theme: .renewal,
+            subtheme: .cutAndComeAgain
+        ),
+        Passage(
+            text: "Pollarding: cutting a tree back above the height a cow or a deer can reach, so that the crop comes again and the ground beneath it can still be grazed.",
+            source: "Forestry",
+            theme: .renewal,
+            subtheme: .cutAndComeAgain
+        ),
+        Passage(
+            text: "Cut-and-come-again: a sowing picked by the leaf rather than by the plant, so that one short row can be gone over for months.",
+            source: "Gardener's term",
+            theme: .renewal,
+            subtheme: .cutAndComeAgain
+        ),
+        Passage(
+            text: "Rosebay willowherb is called fireweed for what it does after a burn: often the first colour back on cleared ground, and its spike opens from the bottom upward.",
+            source: "Chamaenerion angustifolium",
+            theme: .renewal,
+            subtheme: .cutAndComeAgain
+        ),
+        Passage(
+            text: "Regenerate is Latin regenerare, to bring forth again, from generare — the same root as genus and generous, all of it about stock and increase.",
+            source: "Latin",
+            theme: .renewal,
+            subtheme: .cutAndComeAgain
+        ),
+        Passage(
+            text: "A willow cutting pushed into wet ground roots from the bare stick. Gardeners soaked willow twigs to make a water for starting other cuttings long before anyone knew what was in it.",
+            source: "Salix",
             theme: .renewal,
             subtheme: .cutAndComeAgain
         ),
@@ -885,6 +1023,12 @@ enum Quotes {
             subtheme: .lightItself
         ),
         Passage(
+            text: "The sky is blue because air scatters the short waves of daylight in every direction at once. Seen through far more air at the end of the day, the same scattering leaves red.",
+            source: "Rayleigh scattering",
+            theme: .light,
+            subtheme: .lightItself
+        ),
+        Passage(
             text: "Now I see the secret of the making of the best persons: it is to grow in the open air.",
             source: "Walt Whitman, 1856",
             theme: .light,
@@ -921,6 +1065,30 @@ enum Quotes {
             subtheme: .theEdgesOfTheDay
         ),
         Passage(
+            text: "Dusk is measured in three depths: civil, while you can still read outdoors; nautical, while the horizon can still be told from the sea; and astronomical, after which the sky gets no darker.",
+            source: "Twilight, by degrees",
+            theme: .light,
+            subtheme: .theEdgesOfTheDay
+        ),
+        Passage(
+            text: "The green flash: on a clear horizon the last speck of the setting sun can turn green for a second, because the air bends each colour by a slightly different amount.",
+            source: "Atmospheric refraction",
+            theme: .light,
+            subtheme: .theEdgesOfTheDay
+        ),
+        Passage(
+            text: "Dayspring: an old name for daybreak, built on spring in its first sense, which is a rising — the way water rises in a spring.",
+            source: "English",
+            theme: .light,
+            subtheme: .theEdgesOfTheDay
+        ),
+        Passage(
+            text: "Evening is Old English æfnung, from a verb meaning to draw on towards night. Eve, even and evensong are the same word underneath.",
+            source: "Old English",
+            theme: .light,
+            subtheme: .theEdgesOfTheDay
+        ),
+        Passage(
             text: "Daisy is the day's eye, named for a flower that opens with the light and closes again at dusk.",
             source: "Old English",
             theme: .light,
@@ -929,6 +1097,12 @@ enum Quotes {
         Passage(
             text: "Young sunflowers follow the sun west and swing back east overnight. Grown ones settle facing east, where morning warmth brings the bees earlier.",
             source: "Science, 2016",
+            theme: .light,
+            subtheme: .readingTheLight
+        ),
+        Passage(
+            text: "Phytochrome: the pigment a plant reads light with, switched one way by red and back again by far-red, which is how a seed can tell it is lying in somebody else's shade.",
+            source: "Botany",
             theme: .light,
             subtheme: .readingTheLight
         ),
@@ -1110,8 +1284,50 @@ enum Quotes {
             subtheme: .fittedTogether
         ),
         Passage(
+            text: "A daisy is a crowd rather than a flower. The yellow middle is hundreds of small blooms packed together, and every white ray around the edge is one more.",
+            source: "Asteraceae",
+            theme: .pattern,
+            subtheme: .fittedTogether
+        ),
+        Passage(
+            text: "Aestivation: the way petals are folded against one another inside the bud — overlapped like roof tiles, or twisted like a furled umbrella. Each family folds its own way.",
+            source: "Botany",
+            theme: .pattern,
+            subtheme: .fittedTogether
+        ),
+        Passage(
+            text: "Cooling basalt cracks into columns and drying mud cracks into plates for one reason: where three cracks meet, the work is shared most evenly at a hundred and twenty degrees.",
+            source: "Columnar jointing",
+            theme: .pattern,
+            subtheme: .fittedTogether
+        ),
+        Passage(
             text: "A returning honeybee dances the angle of the flowers against the sun, and the length of her waggle tells the others how far to fly.",
             source: "Karl von Frisch",
+            theme: .pattern,
+            subtheme: .counted
+        ),
+        Passage(
+            text: "Tally is Latin talea, a rod or a cutting: a stick notched across and then split, so that two people each went away holding half of one count.",
+            source: "Latin",
+            theme: .pattern,
+            subtheme: .counted
+        ),
+        Passage(
+            text: "Clover comes in threes so reliably that a fourth leaf is worth the looking: roughly one stem in five thousand carries one.",
+            source: "Trifolium repens",
+            theme: .pattern,
+            subtheme: .counted
+        ),
+        Passage(
+            text: "Whorl: leaves or petals set three or more to a ring at one height on the stem, so that the count is read around rather than along.",
+            source: "Botany",
+            theme: .pattern,
+            subtheme: .counted
+        ),
+        Passage(
+            text: "God made the whole numbers; all the rest is the work of man.",
+            source: "Leopold Kronecker (1823–1891), as reported",
             theme: .pattern,
             subtheme: .counted
         ),
@@ -1281,6 +1497,24 @@ enum Quotes {
             subtheme: .aPlaceYouAreFrom
         ),
         Passage(
+            text: "Hiraeth: a Welsh longing for a place, which can be felt as readily for somewhere you are standing in as for somewhere you have left.",
+            source: "Welsh",
+            theme: .ground,
+            subtheme: .aPlaceYouAreFrom
+        ),
+        Passage(
+            text: "Home is Old English ham, which meant a village as readily as a house. It is still on the map in every place name ending in -ham.",
+            source: "Old English",
+            theme: .ground,
+            subtheme: .aPlaceYouAreFrom
+        ),
+        Passage(
+            text: "A salmon finds the river it hatched in by its smell, having learned that water as a young fish and carried it for years at sea.",
+            source: "Salmo salar",
+            theme: .ground,
+            subtheme: .aPlaceYouAreFrom
+        ),
+        Passage(
             text: "Human, humble and humus grow from a single Latin root: the ground itself.",
             source: "Latin",
             theme: .ground,
@@ -1295,6 +1529,24 @@ enum Quotes {
         Passage(
             text: "One seagrass in the Mediterranean has spread sideways for perhaps a hundred thousand years, and the whole meadow counts as a single plant.",
             source: "Posidonia oceanica",
+            theme: .ground,
+            subtheme: .theSoilItself
+        ),
+        Passage(
+            text: "Loam: sand, silt and clay in something near equal measure, which is what lets a soil take up water and let go of it in the same afternoon.",
+            source: "Soil science",
+            theme: .ground,
+            subtheme: .theSoilItself
+        ),
+        Passage(
+            text: "Chernozem, podzol and gley came into English from Russian, where soils were first described and mapped as things in their own right. The names travelled with the science.",
+            source: "Russian",
+            theme: .ground,
+            subtheme: .theSoilItself
+        ),
+        Passage(
+            text: "Most of the weight of a tree came out of the air. The carbon in the wood was carbon dioxide, and the ground supplied the water and the smaller part of the rest.",
+            source: "Photosynthesis",
             theme: .ground,
             subtheme: .theSoilItself
         ),
@@ -1321,7 +1573,7 @@ enum Quotes {
         ),
         Passage(
             text: "There is no frigate like a book to take us lands away.",
-            source: "Emily Dickinson (1830-1886)",
+            source: "Emily Dickinson (1830–1886)",
             theme: .travel,
             subtheme: .farOff
         ),
@@ -1446,6 +1698,18 @@ enum Quotes {
             subtheme: .theRoad
         ),
         Passage(
+            text: "A road is a riding: Old English rad, from ridan, to ride. The word named the going before it named the ground gone over.",
+            source: "Old English",
+            theme: .travel,
+            subtheme: .theRoad
+        ),
+        Passage(
+            text: "The Ridgeway keeps to the chalk because the high ground stayed passable in the months when the clay below it did not. People have walked that line for some five thousand years.",
+            source: "The Ridgeway",
+            theme: .travel,
+            subtheme: .theRoad
+        ),
+        Passage(
             text: "Anemochory: travel by wind, where a seed makes its entire journey on moving air.",
             source: "Botany",
             theme: .travel,
@@ -1464,6 +1728,24 @@ enum Quotes {
             subtheme: .farOff
         ),
         Passage(
+            text: "The Arctic tern keeps to summer at both ends of the earth, and over a long life will fly something like the distance to the moon and back three times.",
+            source: "Sterna paradisaea",
+            theme: .travel,
+            subtheme: .farOff
+        ),
+        Passage(
+            text: "Ultramarine is blue from over the sea: Latin ultra marinus. The stone it was ground from came by ship from a single valley in Afghanistan.",
+            source: "Latin, and lapis lazuli",
+            theme: .travel,
+            subtheme: .farOff
+        ),
+        Passage(
+            text: "Come, my friends, 'tis not too late to seek a newer world.",
+            source: "Alfred Tennyson, Ulysses, 1842",
+            theme: .travel,
+            subtheme: .farOff
+        ),
+        Passage(
             text: "A dandelion's parachute holds a ring of circling air just above itself, and that steady vortex is what carries a seed a mile from home.",
             source: "Nature, 2018",
             theme: .travel,
@@ -1478,6 +1760,12 @@ enum Quotes {
         Passage(
             text: "A coconut can float for months across open ocean and root where it comes ashore. Whole island floras arrived that way.",
             source: "Cocos nucifera",
+            theme: .travel,
+            subtheme: .howASeedGoes
+        ),
+        Passage(
+            text: "Hydrochory: travel by water, where a seed is built to float — an air pocket, a corky coat — and goes wherever the current is already going.",
+            source: "Botany",
             theme: .travel,
             subtheme: .howASeedGoes
         ),
@@ -1647,8 +1935,26 @@ enum Quotes {
             subtheme: .theMannersOfIt
         ),
         Passage(
+            text: "Salute and salutary both come from Latin salus, health. A greeting was a wish for someone's soundness before it was a word.",
+            source: "Latin",
+            theme: .meeting,
+            subtheme: .theMannersOfIt
+        ),
+        Passage(
+            text: "Hongi: the Māori greeting in which two people press nose and forehead together, and one breath is shared between them.",
+            source: "Māori",
+            theme: .meeting,
+            subtheme: .theMannersOfIt
+        ),
+        Passage(
             text: "Chance descends from Latin cadere, to fall. A chance is simply the way things happened to fall out.",
             source: "Latin",
+            theme: .meeting,
+            subtheme: .theMoment
+        ),
+        Passage(
+            text: "Happy and happen are one word: Old Norse happ, chance or luck. To be happy was first of all to be well befallen.",
+            source: "Old Norse",
             theme: .meeting,
             subtheme: .theMoment
         ),
@@ -1661,6 +1967,24 @@ enum Quotes {
         Passage(
             text: "Flowers carry a faint electric charge. A bumblebee can feel it, and read from it which blooms another bee has lately emptied.",
             source: "Science, 2013",
+            theme: .meeting,
+            subtheme: .twoThatNeedEachOther
+        ),
+        Passage(
+            text: "A Brazil nut tree needs a bee strong enough to force its flowers open and an agouti willing to gnaw the pod, and fruits well only where both live. The crop is still gathered wild.",
+            source: "Bertholletia excelsa",
+            theme: .meeting,
+            subtheme: .twoThatNeedEachOther
+        ),
+        Passage(
+            text: "Obligate: said of a partnership neither side can leave. From Latin obligare, to bind, which is the same binding as in obliged.",
+            source: "Latin",
+            theme: .meeting,
+            subtheme: .twoThatNeedEachOther
+        ),
+        Passage(
+            text: "Cleaner wrasse keep a station on the reef, and much larger fish queue at it and hold still with their mouths open to be gone over.",
+            source: "Labroides dimidiatus",
             theme: .meeting,
             subtheme: .twoThatNeedEachOther
         ),
@@ -1794,6 +2118,12 @@ enum Quotes {
             subtheme: .twoPeople
         ),
         Passage(
+            text: "And we'll tak a cup o' kindness yet, for auld lang syne.",
+            source: "Robert Burns, 1788",
+            theme: .kinship,
+            subtheme: .twoPeople
+        ),
+        Passage(
             text: "Inosculation: two trees that grow against one another long enough to fuse, and afterwards share bark and sap.",
             source: "Botany",
             theme: .kinship,
@@ -1830,6 +2160,30 @@ enum Quotes {
             subtheme: .theWordsForIt
         ),
         Passage(
+            text: "Old English kept the mother's brother and the father's brother apart, eam and fædera, and did the same for aunts. French uncle and aunt came in and quietly did away with the distinction.",
+            source: "Old English and Old French",
+            theme: .kinship,
+            subtheme: .theWordsForIt
+        ),
+        Passage(
+            text: "Nephew and nepotism are one word: Latin nepos, a nephew or a grandson, and the popes who found positions for theirs.",
+            source: "Latin",
+            theme: .kinship,
+            subtheme: .theWordsForIt
+        ),
+        Passage(
+            text: "Brother has barely moved in five thousand years: bhrata in Sanskrit, phrater in Greek, frater in Latin, brothor in Old English, all of them the one word.",
+            source: "Indo-European",
+            theme: .kinship,
+            subtheme: .theWordsForIt
+        ),
+        Passage(
+            text: "Milk kinship: in several traditions a child fed at the same breast counts as family ever after, with the same closeness and the same bar on marrying.",
+            source: "Milk kinship",
+            theme: .kinship,
+            subtheme: .theWordsForIt
+        ),
+        Passage(
             text: "Every green leaf runs on a bacterium that another cell took in more than a billion years ago. The two have been one ever since.",
             source: "Endosymbiosis",
             theme: .kinship,
@@ -1847,10 +2201,16 @@ enum Quotes {
             theme: .kinship,
             subtheme: .grownTogether
         ),
+        Passage(
+            text: "Trees of one kind often graft their roots together underground, which is how a cut stump with no leaves of its own can be kept alive for years by the ones standing around it.",
+            source: "Root grafting",
+            theme: .kinship,
+            subtheme: .grownTogether
+        ),
 
         // MARK: Peace
         //
-        // Five strands, so that thirty passages are not thirty versions of one
+        // Five strands, so that a theme's passages are not versions of one
         // thought: quiet held inwardly, the day letting go, shelter, peace made
         // between two parties, and the particular hush of green places.
 
@@ -2029,8 +2389,62 @@ enum Quotes {
             subtheme: .quietAsASound
         ),
         Passage(
+            text: "An owl flies without a sound because the front edge of its wing is combed into a fringe that breaks the air up before it can whistle, and the rest of the feather is soft enough to swallow what is left.",
+            source: "Strigiformes",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "Danish keeps two words where English has one: stilhed is no sound at all, and tavshed is nobody speaking. English says silence and leaves you to work out which.",
+            source: "Danish",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "The quietest sound a person can hear moves the eardrum by less than the width of an atom.",
+            source: "Threshold of hearing",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "A small red stone was laid on a log in the Hoh rain forest to mark one square inch of ground, chosen because a person can sit there a long while and hear nothing that people made.",
+            source: "One Square Inch, Olympic National Park",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "England has been mapped for its quiet as well as for its roads. The survey scored every square kilometre by what could be seen and heard from it, and printed tranquillity as a colour.",
+            source: "CPRE tranquillity mapping, 2006",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "Susurrus: taken whole from Latin, where it was the word for a whispering, a rustle, the murmur of a crowd and the hum of bees.",
+            source: "Latin",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
+            text: "Whist was an interjection meaning hush before it was a card game, and the game is said to be named for the silence it was played in.",
+            source: "English",
+            theme: .peace,
+            subtheme: .quietAsASound
+        ),
+        Passage(
             text: "Horas non numero nisi serenas, cut on old sundials: I count only the serene hours. Serenus meant cloudless, so a dial that needs sun to count at all is only describing itself.",
             source: "Sundial motto, Latin",
+            theme: .peace,
+            subtheme: .theWordsForStopping
+        ),
+        Passage(
+            text: "Armistice is Latin arma and sistere, the arms standing still. It is the same sistere as in solstice, where it is the sun that stands still.",
+            source: "Latin",
+            theme: .peace,
+            subtheme: .theWordsForStopping
+        ),
+        Passage(
+            text: "Respite is Latin respectus, a looking back, and the same word as respect. A respite is time given by somebody who has looked at you again.",
+            source: "Latin",
             theme: .peace,
             subtheme: .theWordsForStopping
         ),
@@ -2038,7 +2452,14 @@ enum Quotes {
 
     /// The passages of one subtheme, grouped once rather than filtered per
     /// draw. Keyed by the subtheme alone, since a subtheme names its theme.
-    private static let bySubtheme: [Subtheme: [Passage]] = Dictionary(grouping: all, by: \.subtheme)
+    ///
+    /// Grouped for the bank this phone reads rather than for the English one.
+    /// Only that bank's array is ever built: the other seven are `static let`s
+    /// nothing touches, so a Danish phone pays for the Danish bank and nothing
+    /// else. See `QuoteBank` for what two phones on different banks still agree
+    /// on, which is the theme and the subtheme and deliberately not the line.
+    private static let bySubtheme: [Subtheme: [Passage]] =
+        Dictionary(grouping: QuoteBank.current.passages, by: \.subtheme)
 
     // MARK: - The draw
 
@@ -2066,6 +2487,20 @@ enum Quotes {
     /// Ten tails over three subthemes, so the split is 3/3/4 rather than even.
     /// That suits the bank: the third heap under most themes is the words and
     /// the sayings, and it is reliably the largest of the three.
+    /// The three subthemes are not drawn equally, and a bank should know it.
+    ///
+    /// There are ten genus tails and they band 3/3/4, so a theme's **third**
+    /// subtheme comes up about 40% of the time and the first two about 30%
+    /// each. How often a reader meets a line twice is therefore the draw
+    /// probability over the number of lines, not the number of lines alone —
+    /// so a third subtheme wants about a third more passages than a first to
+    /// feel equally fresh.
+    ///
+    /// This bit once. Peace's `quietAsASound` sat at five passages against
+    /// `atEase`'s fifteen, and being the *first* subtheme it was drawn 30% of
+    /// the time — so its lines came round more than twice as often as any other
+    /// corner of the bank. Filling English to twelve everywhere closed it: the
+    /// worst ratio across the eight banks is now about 1.3.
     static func subtheme(of genome: Genome, in theme: Theme) -> Subtheme {
         let tails = PlantName.genusTails
         let band: Int
@@ -2143,7 +2578,17 @@ enum Quotes {
     /// A pure function of the subtheme and those 32 bytes and of nothing else,
     /// by way of `deterministicFold`, which is where the reasons live.
     static func passage(subtheme: Subtheme, childSeed: SeedID) -> Passage {
-        guard let pool = bySubtheme[subtheme], !pool.isEmpty else {
+        passage(subtheme: subtheme, childSeed: childSeed, from: bySubtheme)
+    }
+
+    /// The same draw against a bank given explicitly, which is how the tests
+    /// reach the seven banks a given phone is not reading.
+    static func passage(
+        subtheme: Subtheme,
+        childSeed: SeedID,
+        from index: [Subtheme: [Passage]]
+    ) -> Passage {
+        guard let pool = index[subtheme], !pool.isEmpty else {
             preconditionFailure("every subtheme must carry at least one passage: \(subtheme)")
         }
         return pool[Int(deterministicFold(childSeed.bytes) % UInt64(pool.count))]
