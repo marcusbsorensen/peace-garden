@@ -1,81 +1,61 @@
-# Peace Garden — handover 1 September 2026
-
-> Twelve lines over length, after two passes at trimming. The session ran three
-> ways at once — a device install, a round of UI feedback, and scoping two new
-> features — and the traps below are what it cost to learn. Cutting them would
-> spend somebody else's afternoon to save a paragraph.
+# Peace Garden — handover 2 September 2026
 
 ## Goal
-
-Phase 1 — a plant grown from a seed drawn once, and two people crossing seeds by
-touching phones — is built and has been watched working. Three workstreams are
-specified and none is started.
+Phase 1 — a plant grown from a seed created once, and two people crossing seeds
+by touching phones — is built and watched working. This session was a round of
+UI feedback from Marcus's own phone, plus tying the passage bank to plant names.
 
 ## State
+Tree clean, `main` at `660ee7d`, pushed. **63 SeedCore tests and 12 app tests
+pass** (`App/PeaceGardenTests` is new — the app target had none before).
+Debug build of `660ee7d` installed on **MBS iPhone**; dev provisioning lasts
+seven days, then reinstall.
 
-Tree clean, `main` at `5b0076a`, pushed. 63 SeedCore tests pass; builds at
-Swift 6 with complete concurrency.
+Verified on a simulator: the whole stage redesign, the seed and wind screens,
+the imaginary meeting end to end, the garden grid, Settings.
 
-**Watched end to end on two simulators:** a whole meeting — discovery, the
-knock, the crossing, both phones deriving the same child and the same passage
-with no server, the note with the place suggested and coordinates logged
-because both asked, and the child landing in the garden attributed to the other
-gardener. Also the garden grid across six ages.
-
-**Running on Marcus's iPhone 17 Pro**, device build of `e18e28f`. Dev
-provisioning expires after seven days, then reinstall.
-
-**Specified, not started:** the three workstreams below.
+**Not verified, needs a thumb:**
+- The long press on the stage marks. Injected presses are not sustained on a
+  simulator — the same limit that makes `HoldToConfirm` untestable there.
+- Whether Messages/Mail/WhatsApp now list in the share sheet. This simulator has
+  exactly one share extension (Reminders), so it could never show them.
 
 ## Files
-
-- `docs/CHROME-AND-SETTINGS.md` — build spec, with copy. **Start here.**
-- `docs/SEEDS-ON-THE-WIND.md` — design above the rule, build spec below it.
-- `docs/BOTANICAL-GARDEN.md` — phase 2, scope only.
-- `Views/SettingsView.swift` rewritten; `Views/PlantStageView.swift` takes the
-  cog; `Views/SeedView.swift` loses Settings and gains the wind door;
-  `Views/Chrome.swift` holds `chromeLabel` and `SproutingRule`.
-- `Views/SeedOfferView.swift`, `Views/IncomingSeedView.swift` — the wind round
-  trip. Already working; only needs a door.
+- `docs/NAMES-AND-THEMES.md` — genus head ⇄ theme, genus ending ⇄ subtheme. Built.
+- `docs/LANGUAGES.md` — localisation scope. **Nothing built.**
+- `docs/PLANT-FORMS.md` — three plant forms. Build spec, **nothing started.**
+- `docs/CHROME-AND-SETTINGS.md` — built; now the record rather than the spec.
+- `App/PeaceGarden/Views/PlantStageView.swift` — all chrome at the foot now.
+- `App/PeaceGarden/Views/Glyphs.swift` — the seven new marks.
+- `App/PeaceGarden/Views/DeveloperControls.swift` — `#if DEBUG` clock + imaginary gardener.
 
 ## Decisions made
-
-- **The simulator gets affordances the phone never does** — knock stand-in,
-  relaxed touch window, held-open controls row, all
-  `#if targetEnvironment(simulator)`, so the shipping app keeps the line that
-  the tap is a gesture rather than a button.
-- **One offer on the wind at a time, no daily cap.** A display rule and never a
-  cryptographic one: a reply arriving three weeks later must still work, which
-  is the guarantee the whole link design was built around.
-- **Keep becomes log.** *Keep* can mean keep away, and this is the one control
-  where a wrong guess is not undoable.
-- **Settings explains once.** The reset rows are held for three seconds rather
-  than tapped, the alert goes, and each consequence appears only while its
-  button is filling — about as long as the sentence takes to read. A hold
-  cannot be done by reflex and can be abandoned by letting go.
-- **Colour enters the chrome only where something is lost** — crimson, ochre
-  and pink-gold on the three resets. It stays rare so it keeps meaning.
-- **The garden map is derived, not invented.** `Quotes.Theme` already places ten
-  themes in a four-dimensional space; project it rather than drawing by feel.
-- **A published note never carries the coordinate.**
+- **`PlantName.genusHeads` and `genusTails` are frozen.** `GeneSource.pick`
+  indexes by `unit(label) * count`, so a twenty-fifth syllable renames every
+  plant on every phone. Themes were fitted to the 24, not the other way round.
+- **Theme is derived from the name, never the reverse.** A name is stored; a
+  theme is not.
+- Four themes take three heads and six take two, so Beginnings is 12.5% against
+  Peace's 8.3%. Recorded, not corrected — a weighted draw would break the point.
+- **The chrome is one band at the foot**: name, stage, four marks. Only the mark
+  you touched unrolls (four words at once overflow a 402pt phone by ~40).
+- **A short URL is impossible and should be.** The payload rides in the fragment
+  so it never reaches a server; shortening needs one.
+- On screen it is *create*, in the code it is *draw*. Both deliberate.
+- Contrast: `muted` 0.72, `faint` 0.56, `sectionLabel` 0.80, `hairline` 0.24.
 
 ## Next step
-
-Implement `docs/CHROME-AND-SETTINGS.md`. It is self-contained.
+Implement `docs/PLANT-FORMS.md` — every plant is still one unbranched stem, and
+four of the twelve archetype names are not true. It is self-contained.
 
 ## Traps
-
-- **Simulator input dies within a minute or two** of steady driving. `simctl
-  launch` to relaunch the app cures it; re-attach and a full reboot did not.
-  Two simulators at once makes it worse.
-- **Injected taps never reach the SceneKit tap recogniser** that reveals the
-  controls row; SpringBoard and SwiftUI buttons take them. This is the real
-  root of the old "taps open nothing" story, wrongly closed twice. The row is
-  held open on simulators now, so it no longer bites.
-- **A garden of one plant shows nothing.** Clone `plants` in `garden.json` with
-  fresh seeds and births backdated 0/1/3/7/15/40 days. That is what caught the
-  tile framing.
 - **New files need `xcodegen generate`.** The `.xcodeproj` is gitignored.
-- **`tools/preview/` is a port that drifts**, `SeedCore` is authoritative. The
-  web renderer must not become a third hand-maintained copy of the geometry
-  without CI comparing them, the way `tools/reference/` already is.
+- **`simctl install` over a running app does not reload it.** Terminate first,
+  or you will screenshot the old binary and redraw a glyph that was already fine.
+- **Injected taps never reach the SceneKit tap recogniser.** `PlantDetailView`'s
+  details are therefore unreachable on a simulator; the stage row is held open.
+- **Build for `generic/platform=iOS` before claiming a device install works.**
+  A simulator-only `#if` compiled fine and failed on the phone, and the install
+  silently deposited the previous binary.
+- Screenshot→point scale on the iPhone 17 Pro panel is **0.4365**, not 402/921
+  on the height axis. Wrong y sent three taps into empty space.
