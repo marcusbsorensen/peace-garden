@@ -46,12 +46,18 @@ struct SeedView: View {
                 .plantName(size: 28)
                 .foregroundStyle(Chrome.ink)
 
-            Text(identity.genome.form.archetype.displayName)
+            Text(identity.genome.form.archetype.label)
                 .chromeLabel()
                 .foregroundStyle(Chrome.faint)
 
             if editingName {
-                TextField("", text: $draftName)
+                // The field's own label is the one VoiceOver reads, and it was
+                // an empty string — which extraction dutifully turned into an
+                // empty entry in the catalogue for somebody to translate. It
+                // says what the field is for instead, and stays out of the way
+                // because the prompt is what is drawn.
+                TextField("Your name", text: $draftName, prompt: Text("Gardener"))
+                    .labelsHidden()
                     .font(.system(size: 17, weight: .light, design: .serif))
                     .foregroundStyle(Chrome.ink)
                     .textInputAutocapitalization(.words)
@@ -83,19 +89,23 @@ struct SeedView: View {
     private func traits(identity: Identity) -> some View {
         let genome = identity.genome
         VStack(alignment: .leading, spacing: 14) {
-            row(AnyShape(SeedGlyph()), "Seed", identity.seed.short)
+            // The seed itself and the leaf count are numbers, so they are
+            // handed over as drawn rather than looked up. Everything else on
+            // the right of this list is a phrase somebody wrote.
+            row(AnyShape(SeedGlyph()), "Seed", value: Text(verbatim: identity.seed.short))
             row(AnyShape(ClockGlyph()), "Created",
-                identity.birth.formatted(date: .abbreviated, time: .shortened))
-            row(AnyShape(PetalGlyph()), "Petals",
-                genome.bloom.present ? "\(genome.bloom.petalCount) across \(genome.bloom.layers)" : "None")
-            row(AnyShape(LeafGlyph()), "Leaves", "\(genome.leafCount)")
+                value: Text(verbatim: identity.birth.formatted(date: .abbreviated, time: .shortened)))
+            row(AnyShape(PetalGlyph()), "Petals", value: genome.bloom.present
+                ? Text("\(genome.bloom.petalCount) across \(genome.bloom.layers)")
+                : Text("None"))
+            row(AnyShape(LeafGlyph()), "Leaves", value: Text(verbatim: "\(genome.leafCount)"))
             // The mark answers this row rather than repeating its label: a sun
             // for a plant that opens by day, a crescent for one that does not.
             // The only row here whose glyph carries the value.
             row(genome.tempo.opensByDay ? AnyShape(SunGlyph()) : AnyShape(MoonGlyph()),
-                "Opens", genome.tempo.opensByDay ? "By day" : "By night")
+                "Opens", value: Text(genome.tempo.opensByDay ? "By day" : "By night"))
             row(AnyShape(BloomGlyph()), "First bloom",
-                "When \(Int(genome.tempo.daysToBloom.rounded())) days old")
+                value: Text("When \(Int(genome.tempo.daysToBloom.rounded())) days old"))
         }
     }
 
@@ -105,7 +115,11 @@ struct SeedView: View {
     /// list of facts, and a list of facts is read by shape before it is read by
     /// word. They are also the half of each row that survives a language this
     /// app has not been translated into yet.
-    private func row(_ glyph: AnyShape, _ label: String, _ value: String) -> some View {
+    ///
+    /// The value arrives as a `Text` rather than a `String`, because half these
+    /// values are phrases to be looked up and half are numbers to be drawn as
+    /// they are, and the caller is the only place that knows which.
+    private func row(_ glyph: AnyShape, _ label: LocalizedStringKey, value: Text) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 10) {
             glyph
                 .stroke(Chrome.faint, style: Chrome.monoline)
@@ -118,7 +132,7 @@ struct SeedView: View {
                 .chromeLabel()
                 .foregroundStyle(Chrome.faint)
             Spacer()
-            Text(value)
+            value
                 .font(.system(size: 15, weight: .light))
                 .foregroundStyle(Chrome.ink)
         }

@@ -91,12 +91,19 @@ struct SettingsView: View {
         // presentation background, which leaves an irreversible action with no
         // visible way out of it.
         .alert(
-            confirming.map { "\(label($0))?" } ?? "",
+            // A question of its own per row, rather than a row's label with a
+            // question mark stuck on the end. Composing one produced the key
+            // `"%@?"`, which is a format a translator cannot do anything with —
+            // and in a language that puts its question word first there is
+            // nothing for a trailing `?` to be stuck on to.
+            confirming.map { Text(alertTitle($0)) } ?? Text(verbatim: ""),
             isPresented: confirmingBinding,
             presenting: confirming
         ) { reset in
             Button("Leave it", role: .cancel) {}
-            Button(confirmLabel(reset), role: .destructive) { perform(reset) }
+            Button(role: .destructive) { perform(reset) } label: {
+                Text(confirmLabel(reset))
+            }
         } message: { reset in
             Text(consequence(reset))
         }
@@ -208,15 +215,26 @@ struct SettingsView: View {
                 .chromeLabel()
                 .foregroundStyle(Chrome.sectionLabel)
 
+            // What is *stored* is the English phrase, which is also the
+            // catalogue key — so a standing choice made in one language is
+            // still the same place after the phone is switched to another.
+            // Storing what was on screen would have made the preference stop
+            // matching the list the moment the language changed.
             Menu {
                 Button("Wherever the seed travelled") { preferredPlace = "" }
                 Divider()
-                ForEach(Places.all, id: \.self) { option in
-                    Button(option) { preferredPlace = option }
+                ForEach(Places.all, id: \.key) { option in
+                    Button { preferredPlace = option.key } label: { Text(option) }
                 }
             } label: {
                 HStack(spacing: 10) {
-                    Text(preferredPlace.isEmpty ? "Wherever the seed travelled" : preferredPlace)
+                    Group {
+                        if let chosen = Places.stored(preferredPlace) {
+                            Text(chosen)
+                        } else {
+                            Text("Wherever the seed travelled")
+                        }
+                    }
                         .font(.system(size: 15, weight: .light))
                         .foregroundStyle(Chrome.ink)
                     Image(systemName: "chevron.down")
@@ -342,11 +360,21 @@ struct SettingsView: View {
 
     // MARK: - What each row is
 
-    private func label(_ reset: Reset) -> String {
+    private func label(_ reset: Reset) -> LocalizedStringResource {
         switch reset {
         case .seed: return "Get a new seed"
         case .plants: return "Empty the garden"
         case .everything: return "Reset everything"
+        }
+    }
+
+    /// What the alert asks, on the assisted path. One sentence per row rather
+    /// than the row's label turned into a question.
+    private func alertTitle(_ reset: Reset) -> LocalizedStringResource {
+        switch reset {
+        case .seed: return "Get a new seed?"
+        case .plants: return "Empty the garden?"
+        case .everything: return "Reset everything?"
         }
     }
 
@@ -389,7 +417,7 @@ struct SettingsView: View {
         )
     }
 
-    private func confirmLabel(_ reset: Reset) -> String {
+    private func confirmLabel(_ reset: Reset) -> LocalizedStringResource {
         switch reset {
         case .seed: return "Get a new seed"
         case .plants: return "Empty it"
@@ -403,7 +431,7 @@ struct SettingsView: View {
     /// afterwards — including the reassurance about other people's gardens,
     /// which used to stand at the foot of the screen for everybody and now
     /// arrives inside the two sentences that need it.
-    private func consequence(_ reset: Reset) -> String {
+    private func consequence(_ reset: Reset) -> LocalizedStringResource {
         switch reset {
         case .seed:
             return "The plant you have now was created once and this creates another. Your garden keeps every plant you have grown with somebody, and so do they."

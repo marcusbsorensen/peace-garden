@@ -31,7 +31,9 @@ extension Coordinate {
             URLQueryItem(name: "ll", value: "\(latitude),\(longitude)"),
             // Drops a pin rather than offering directions from where the person
             // is standing now, which is a different and unasked-for question.
-            URLQueryItem(name: "q", value: "Where you met")
+            // The pin's label is read in Maps, so it is looked up like anything
+            // else somebody reads.
+            URLQueryItem(name: "q", value: String(localized: "Where you met"))
         ]
         return components.url
     }

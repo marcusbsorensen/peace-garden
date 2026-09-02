@@ -59,7 +59,12 @@ final class GardenModel {
             store = GardenStore(
                 fileURL: FileManager.default.temporaryDirectory.appendingPathComponent("garden.json")
             )
-            failure = "This garden cannot be saved on this device: \(error.localizedDescription)"
+            // Looked up here rather than at the banner that draws it, because
+            // it ends on the system's own account of what went wrong and that
+            // arrives already translated.
+            failure = String(
+                localized: "This garden cannot be saved on this device: \(error.localizedDescription)"
+            )
         }
         self.init(store: store)
         if let failure { loadError = failure }
@@ -109,7 +114,7 @@ final class GardenModel {
     /// What the other person sees. Falls back until they have been asked.
     var shownName: String {
         let name = identity?.displayName ?? ""
-        return name.isEmpty ? "Gardener" : name
+        return name.isEmpty ? String(localized: "Gardener") : name
     }
 
     /// Whether this person has chosen how they are seen. Asked at the first
@@ -288,6 +293,7 @@ final class GardenModel {
         do {
             try accept(PollenLink.parse(url))
         } catch {
+            // The system's own, already in this phone's language.
             incoming = .failed(error.localizedDescription)
         }
     }
@@ -303,7 +309,9 @@ final class GardenModel {
 
         let localNonce = Pollination.makeNonce(byteCount: ExchangeProtocol.nonceByteCount)
         guard let result = link.cross(withLocalSeed: identity.seed, localNonce: localNonce) else {
-            incoming = .failed("That seed and this one would grow different plants on each phone, so nothing was planted.")
+            incoming = .failed(String(
+                localized: "That seed and this one would grow different plants on each phone, so nothing was planted."
+            ))
             return
         }
 

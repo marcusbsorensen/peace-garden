@@ -75,12 +75,53 @@ enum Chrome {
     static let controlsIdleTimeout: Duration = .seconds(6)
 }
 
+extension Chrome {
+    /// The languages that are shown the label voice as it was written, rather
+    /// than uppercased.
+    ///
+    /// Uppercasing is not a formatting choice in every language, it is a
+    /// transformation that can lose or change a letter — so the decision has to
+    /// be made per language rather than applied by one modifier to all of them.
+    /// Four cases, and none of them is a language this app currently ships:
+    ///
+    /// - **Turkish and Azerbaijani** have two letter i's. `i` uppercases to `İ`
+    ///   and `ı` to `I`, and getting it the wrong way round changes the word.
+    ///   Swift's locale-aware `uppercased()` handles it; a reader who then sees
+    ///   `İ` in a tracked-out caption may not.
+    /// - **Greek** drops the accent on an uppercased vowel, except on the
+    ///   disjunctive ή, so uppercasing is not reversible and a screen reader
+    ///   loses the stress.
+    /// - **Irish** keeps the lowercase prefix on an uppercased word — `nAthair`
+    ///   rather than `NATHAIR` — which no general-purpose uppercaser does.
+    ///
+    /// The list is the mechanism rather than a finding: a language added to the
+    /// catalogue gets the app's ordinary capitals unless it is named here, and
+    /// naming it here is a one-line decision rather than a rewrite of the two
+    /// voices below. See docs/LANGUAGES.md §"Type".
+    static let keepsWrittenCase: Set<String> = ["tr", "az", "el", "ga"]
+
+    /// What the label and heading voices do to their letters, in this language.
+    static func letterCase(in locale: Locale) -> Text.Case? {
+        let code = locale.language.languageCode?.identifier ?? ""
+        return keepsWrittenCase.contains(code) ? nil : .uppercase
+    }
+}
+
+/// Uppercases, unless the language would rather it did not.
+private struct ChromeLetterCase: ViewModifier {
+    @Environment(\.locale) private var locale
+
+    func body(content: Content) -> some View {
+        content.textCase(Chrome.letterCase(in: locale))
+    }
+}
+
 extension View {
     /// Small, wide-tracked, uppercase: the app's label voice.
     func chromeLabel(size: CGFloat = 11, weight: Font.Weight = .light) -> some View {
         font(.system(size: size, weight: weight, design: .default))
             .tracking(2.4)
-            .textCase(.uppercase)
+            .modifier(ChromeLetterCase())
     }
 
     /// The heading voice: uppercase and wide-tracked, like the label voice but
@@ -90,7 +131,7 @@ extension View {
     func chromeHeading(size: CGFloat = 20) -> some View {
         font(.system(size: size, weight: .light, design: .default))
             .tracking(2.8)
-            .textCase(.uppercase)
+            .modifier(ChromeLetterCase())
     }
 
     /// The serif voice, used only for plant names.
@@ -141,7 +182,13 @@ func readingBeat(_ line: String) -> Double {
 /// A control that reads as a line of text — with an edge, so it also reads as
 /// a control.
 struct QuietButton: View {
-    let title: String
+    /// A key rather than a `String`, and the distinction is the whole of what
+    /// makes this button translatable. `Text(someString)` is drawn exactly as
+    /// handed over; `Text(someKey)` is looked up in `Localizable.xcstrings`
+    /// first. Every caller passes a literal, so every caller's word is
+    /// extracted and can be translated — which was not true while this said
+    /// `String`.
+    let title: LocalizedStringKey
     var isProminent: Bool = false
     let action: () -> Void
 
@@ -523,7 +570,7 @@ struct CycleGlyph: Shape {
 /// either way, so nothing depends on the word being drawn.
 struct ChromeIconLabel: View {
     let glyph: AnyShape
-    let title: String
+    let title: LocalizedStringKey
     var tint: Color = Chrome.muted
     /// Two points over the thirteen the spec asked for. Eight teeth on a ring
     /// at the hairline weight do not survive thirteen: see `CogShape`.
@@ -550,7 +597,7 @@ struct ChromeIconLabel: View {
             }
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(title)
+        .accessibilityLabel(Text(title))
     }
 }
 
@@ -603,11 +650,15 @@ struct PressReporting: ButtonStyle {
 /// and that a thumb drifting during the hold does not hand the touch to the
 /// scroll view and cancel it.
 struct HoldToConfirm: View {
-    let title: String
+    /// A resource rather than a `LocalizedStringKey`, because the consequence
+    /// below is spoken as well as drawn and `AccessibilityNotification` wants a
+    /// `String`. A resource can be handed to `Text` and resolved to a `String`;
+    /// a key can only be drawn.
+    let title: LocalizedStringResource
     /// Shown beneath the button while it is held, and carried by the alert on
     /// the assisted path. One set of words, said in whichever place is
     /// reachable.
-    let consequence: String
+    let consequence: LocalizedStringResource
     let glyph: AnyShape
     /// The fill, and the glyph's colour before the fill reaches it.
     let tint: Color
@@ -730,7 +781,7 @@ struct HoldToConfirm: View {
             complete()
         }
         // Said aloud as it appears, rather than left to the fill to imply.
-        AccessibilityNotification.Announcement(consequence).post()
+        AccessibilityNotification.Announcement(String(localized: consequence)).post()
     }
 
     private func abandon() {

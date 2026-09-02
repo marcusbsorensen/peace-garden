@@ -1,0 +1,168 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "NSLocalNetworkUsageDescription": {
+      "comment": "The system's own prompt, raised the first time two phones look for each other. 'Peace Garden' is the app's name and stays as it is.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden uses the local network to find the phone you are meeting, so your two seeds can be crossed directly between your devices. Nothing is sent to a server."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden gebruikt het lokale netwerk om de telefoon te vinden die je ontmoet, zodat jullie twee zaadjes rechtstreeks tussen de toestellen gekruist worden. Er gaat niets naar een server."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden bruger det lokale netværk til at finde den telefon, du mødes med, så jeres to frø kan krydses direkte mellem enhederne. Der sendes intet til en server."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden utilise le réseau local pour trouver le téléphone que tu rencontres, afin que vos deux graines soient croisées directement entre les appareils. Rien n’est envoyé à un serveur."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden usa la red local para encontrar el teléfono con el que te encuentras, de modo que las dos semillas se crucen directamente entre los dispositivos. No se envía nada a ningún servidor."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden bruker det lokale nettverket til å finne telefonen du møter, slik at de to frøene kan krysses direkte mellom enhetene. Ingenting sendes til en server."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden använder det lokala nätverket för att hitta telefonen du möter, så att era två frön kan korsas direkt mellan enheterna. Ingenting skickas till en server."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden usa la rete locale per trovare il telefono che stai incontrando, così i vostri due semi possono essere incrociati direttamente tra i dispositivi. Non viene inviato nulla a un server."
+          }
+        }
+      }
+    },
+    "NSLocationWhenInUseUsageDescription": {
+      "comment": "The system's own prompt, the one time this app asks for a permission. Raised from the meeting screen, while somebody is reading the app's own account of the same thing. 'Peace Garden' is the app's name and stays as it is.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden can log the coordinates of a spot where you met someone, so a plant remembers where it came from. The coordinates stay on this phone, and a meeting logs them only when both of you have asked for it."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden kan de coördinaten vastleggen van de plek waar je iemand hebt ontmoet, zodat een plant onthoudt waar hij vandaan komt. De coördinaten blijven op deze telefoon, en een ontmoeting legt ze alleen vast als jullie er allebei om hebben gevraagd."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden kan registrere koordinaterne for det sted, hvor du mødte nogen, så en plante husker, hvor den kom fra. Koordinaterne bliver på denne telefon, og et møde registrerer dem kun, når I begge har bedt om det."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden peut enregistrer les coordonnées de l’endroit où tu as rencontré quelqu’un, pour qu’une plante se souvienne d’où elle vient. Les coordonnées restent sur ce téléphone, et une rencontre ne les enregistre que si vous l’avez demandé tous les deux."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden puede registrar las coordenadas del sitio donde te encontraste con alguien, para que una planta recuerde de dónde viene. Las coordenadas se quedan en este teléfono, y un encuentro solo las registra cuando las dos personas lo han pedido."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden kan registrere koordinatene for stedet der du møtte noen, slik at en plante husker hvor den kom fra. Koordinatene blir på denne telefonen, og et møte registrerer dem bare når dere begge har bedt om det."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden kan registrera koordinaterna för platsen där du mötte någon, så att en växt minns var den kom ifrån. Koordinaterna stannar på den här telefonen, och ett möte registrerar dem bara när ni båda har bett om det."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden può registrare le coordinate del punto in cui hai incontrato qualcuno, così una pianta ricorda da dove viene. Le coordinate restano su questo telefono, e un incontro le registra solo quando entrambi lo avete chiesto."
+          }
+        }
+      }
+    },
+    "NSMotionUsageDescription": {
+      "comment": "The system's own prompt, raised when the meeting screen starts listening for the knock. 'Meet' is the name of a screen — use whatever the mark label 'Meet' was translated as in Localizable.xcstrings.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden feels the moment you tap your phone against someone else's, so a meeting has to be deliberate. Motion is only read while the Meet screen is open."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden voelt het moment waarop je je telefoon tegen die van iemand anders tikt, zodat een ontmoeting bewust gebeurt. Beweging wordt alleen gelezen zolang het scherm Ontmoeten open staat."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden mærker det øjeblik, du banker din telefon mod en andens, så et møde er bevidst. Bevægelse aflæses kun, mens skærmen Møde er åben."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden sent le moment où tu touches ton téléphone contre celui de quelqu’un d’autre, pour qu’une rencontre soit délibérée. Le mouvement n’est lu que pendant que l’écran Rencontre est ouvert."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden nota el momento en que tocas tu teléfono contra el de otra persona, para que un encuentro sea deliberado. El movimiento solo se lee mientras la pantalla Encuentro está abierta."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden kjenner øyeblikket du dunker telefonen din mot en annens, slik at et møte er bevisst. Bevegelse leses bare mens skjermen Møte er åpen."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden känner ögonblicket då du knackar din telefon mot någon annans, så att ett möte är medvetet. Rörelse läses bara medan skärmen Möte är öppen."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden sente il momento in cui tocchi il tuo telefono contro quello di un’altra persona, così un incontro è deliberato. Il movimento viene letto solo mentre la schermata Incontro è aperta."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

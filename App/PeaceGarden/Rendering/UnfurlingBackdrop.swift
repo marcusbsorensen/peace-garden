@@ -318,7 +318,10 @@ struct Frond: Shape {
     ZStack {
         Color.black
         UnfurlingBackdrop(.single)
-        Text("A seed is about to be created for you")
+        // Verbatim: a preview is compiled into Debug builds only, and a literal
+        // that comes and goes with the configuration is a catalogue entry that
+        // is marked stale every other build.
+        Text(verbatim: "A seed is about to be created for you")
             .font(.system(size: 28, weight: .light))
             .foregroundStyle(Chrome.ink)
             .multilineTextAlignment(.center)
@@ -331,7 +334,7 @@ struct Frond: Shape {
     ZStack {
         Color.black
         UnfurlingBackdrop(.pair)
-        Text("Touch the tops of your phones together")
+        Text(verbatim: "Touch the tops of your phones together")
             .font(.system(size: 20, weight: .light, design: .serif))
             .foregroundStyle(Chrome.ink)
             .multilineTextAlignment(.center)

@@ -49,7 +49,10 @@ struct RootView: View {
         }
         .overlay(alignment: .top) {
             if let loadError = model.loadError {
-                Text(loadError)
+                // Looked up where it is made — it ends on the system's own
+                // account of what went wrong, which is already in this phone's
+                // language. See `GardenModel`.
+                Text(verbatim: loadError)
                     .font(.system(size: 12, weight: .light))
                     .foregroundStyle(Chrome.muted)
                     .multilineTextAlignment(.center)
@@ -70,7 +73,7 @@ struct RootView: View {
                 .padding(.horizontal, 40)
                 .padding(.bottom, 24)
         case .failed(let message):
-            Text(message)
+            Text(verbatim: message)
                 .font(.system(size: 12, weight: .light))
                 .foregroundStyle(Chrome.muted)
                 .multilineTextAlignment(.center)

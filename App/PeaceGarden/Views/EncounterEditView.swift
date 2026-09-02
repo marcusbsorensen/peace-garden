@@ -53,7 +53,7 @@ struct EncounterEditView: View {
                             }
                             .tint(Chrome.muted)
 
-                            Text(coordinate.written)
+                            Text(verbatim: coordinate.written)
                                 .font(.system(size: 14, weight: .light).monospacedDigit())
                                 .foregroundStyle(keepsCoordinate ? Chrome.muted : Chrome.faint)
 
@@ -95,12 +95,17 @@ struct EncounterEditView: View {
         }
     }
 
-    private func field(label: String, text: Binding<String>, prompt: String) -> some View {
+    private func field(
+        label: LocalizedStringKey,
+        text: Binding<String>,
+        prompt: LocalizedStringKey
+    ) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(label)
                 .chromeLabel()
                 .foregroundStyle(Chrome.faint)
-            TextField("", text: text, prompt: Text(prompt).foregroundStyle(Chrome.faint))
+            TextField(label, text: text, prompt: Text(prompt).foregroundStyle(Chrome.faint))
+                .labelsHidden()
                 .font(.system(size: 16, weight: .light, design: .serif))
                 .foregroundStyle(Chrome.ink)
                 .autocorrectionDisabled()

@@ -27,9 +27,8 @@ could not run it.
 | **Everything in `App/`** | Builds, installs and runs, on a device and in the simulator, at Swift 6 with complete concurrency checking. |
 | **The arrival** | Recorded off the simulator and stepped through frame by frame, five times. That is what shaped it; see below. |
 
-One function in SeedCore is also uncompiled: `GrowthModel.State.summary()`, which
-uses `DateComponentsFormatter` — absent from swift-corelibs-foundation, fine on
-iOS.
+One extension in SeedCore is also uncompiled: `DateComponentsFormatter.growthDefault`,
+absent from swift-corelibs-foundation — fine on iOS.
 
 ## Where the second 31 August session left off
 

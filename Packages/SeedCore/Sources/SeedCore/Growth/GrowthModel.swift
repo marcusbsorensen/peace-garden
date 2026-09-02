@@ -168,20 +168,17 @@ public struct GrowthModel {
 }
 
 // `DateComponentsFormatter` does not exist in swift-corelibs-foundation, so the
-// human phrasing of a growth stage is Apple-only. Nothing off-platform needs it:
-// it is for the overlay, and the overlay only runs on a device.
+// interval a growth caption ends on is Apple-only. Nothing off-platform needs
+// it: it is for the overlay, and the overlay only runs on a device.
+//
+// **The caption itself has moved to the app**, as `GrowthModel.State.caption()`
+// in `Views/Localised.swift`. It used to be assembled here, out of
+// `stage.displayName.lowercased()` and this formatter, and it could not stay:
+// the stage name is a word somebody reads, so it belongs in the app's string
+// catalogue, and lowercasing an English identifier is not how any other
+// language forms the same caption. `displayName` above is what it always was —
+// an identifier, for a log and for the developer panel.
 #if canImport(Darwin)
-public extension GrowthModel.State {
-    /// Short human phrasing for the overlay, e.g. "in bud · 2 days to bloom".
-    func summary(formatter: DateComponentsFormatter = .growthDefault) -> String {
-        guard let timeToNextStage, stage != .mature else {
-            return stage.displayName.lowercased()
-        }
-        let remaining = formatter.string(from: max(60, timeToNextStage)) ?? ""
-        return "\(stage.displayName.lowercased()) · \(remaining)"
-    }
-}
-
 public extension DateComponentsFormatter {
     static let growthDefault: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()

@@ -11,6 +11,9 @@ options:
     iOS: "17.0"
   createIntermediateGroups: true
   groupSortPosition: top
+  # English is the language the source is written in, and the one every other
+  # language in `Localizable.xcstrings` is translated from.
+  developmentLanguage: en
 
 packages:
   SeedCore:
@@ -37,6 +40,14 @@ targets:
         # The catalogue is generated: `python3 tools/icon/make_icon.py` redraws
         # all three variants. Edit the script, never the PNGs.
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        # "Use Compiler to Extract Swift Strings." Every `Text("…")`, every
+        # `LocalizedStringResource` and every `String(localized:)` in the target
+        # is written into a `.stringsdata` file as the target compiles, and the
+        # build then merges those into
+        # `Resources/Localizable.xcstrings` — which is why the catalogue is
+        # edited rather than authored, and why a string only reaches a
+        # translator once it has been compiled at least once.
+        SWIFT_EMIT_LOC_STRINGS: YES
         # Reverse-DNS of the domain the app actually owns, matching the house
         # pattern (uncubed.app -> app.uncubed). A bundle identifier is permanent
         # once a build reaches App Store Connect, so it is worth being the right

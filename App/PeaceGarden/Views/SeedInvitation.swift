@@ -32,13 +32,21 @@ final class SeedInvitation: NSObject, UIActivityItemSource {
     /// What arrives with the link, so a message is written rather than a URL
     /// dropped into a chat on its own. In the app's voice, because whoever
     /// receives it has never heard of any of this.
-    static let message = """
-        A seed from my peace garden. Open this and a plant grows on your phone \
-        from my seed and one drawn for you — one that neither of us could have \
-        grown alone.
-        """
+    ///
+    /// **Written in the sender's language, and read in the receiver's.** There
+    /// is no way round that: the message is composed on this phone and handed
+    /// to a messaging app, which knows nothing about who is going to open it.
+    /// The link itself carries no words, so the worst case is a sentence
+    /// somebody has to guess at above a link that works anyway.
+    static var message: String {
+        String(localized: """
+            A seed from my peace garden. Open this and a plant grows on your phone \
+            from my seed and one drawn for you — one that neither of us could have \
+            grown alone.
+            """)
+    }
 
-    static let subject = "A seed on the wind"
+    static var subject: String { String(localized: "A seed on the wind") }
 
     init(url: URL, code: UIImage?) {
         self.url = url

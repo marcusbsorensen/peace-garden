@@ -21,7 +21,11 @@ struct IncomingSeedView: View {
             } else {
                 PlantRevealView(
                     outcome: outcome,
-                    subtitle: "From \(outcome.peerDisplayName)'s \(outcome.peerPlantName)"
+                    // Two names in one sentence, so the format carries both and
+                    // a translator can order them the way their language does.
+                    subtitle: String(
+                        localized: "From \(outcome.peerDisplayName)’s \(outcome.peerPlantName)"
+                    )
                 ) {
                     showingNote = true
                 }
