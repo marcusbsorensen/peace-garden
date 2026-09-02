@@ -1,0 +1,2162 @@
+[
+ {
+  "text": "Çimlenmek: bir tohumun kabuğunu ilk kez yarıp dışarı baktığı an, bir daha geri dönmeyen tek adım.",
+  "source": "Botanik",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Tomurcuk açılırken bir eşik geçilir; bir dakika önce kapalıydı, şimdi bir daha kapanmaz.",
+  "source": "Botanik",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Başlamak, Türkçede baş kelimesinden gelir; bir işe başlamak, o işin başına geçmektir.",
+  "source": "Türkçe köken bilgisi",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Bir kelebek kozadan ilk çıktığında kanatları ıslak ve kırışıktır; açılmaları yalnız birkaç saat sürer.",
+  "source": "Böcekbilim",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Civcivler, yumurtayı kırmak için gagalarında taşıdıkları küçük bir dişi kullanır; bu diş doğumdan kısa süre sonra düşer.",
+  "source": "Zooloji",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Bir nehrin adı, çoğu zaman iki derenin birleştiği ilk noktada değişir; oradan sonra artık başka bir sudur.",
+  "source": "Coğrafya",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Doğmak, Türkçede yalnız canlılar için değil, güneşin ufuktan ilk göründüğü an için de kullanılır.",
+  "source": "Türkçe",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Bir volkan adası, önce denizin altında görünmeden yükselir; yüzeyi suyun üstüne ilk kez çıktığı gün bir ada olur.",
+  "source": "Jeoloji",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "İlk kelimesi Türkçede hem sırayı hem tazeliği anlatır: ilk gün, ilk defa, ilkbahar — üçü de aynı kökten.",
+  "source": "Türkçe",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Bir fındık fidanının ilk çiçeği, ilk meyvesinden yıllar önce açar; iki başlangıç aynı anda gelmez.",
+  "source": "Tarım",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Türkçenin bilinen ilk yazılı belgeleri, sekizinci yüzyılda dikilen Orhun Yazıtları'dır.",
+  "source": "Dilbilim tarihi",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Sıfır kelimesi Arapçada boş anlamına gelen bir kökten gelir; Türkçede bir sayının değil, bir başlangıç noktasının adıdır.",
+  "source": "Türkçe köken bilgisi",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Göz kelimesi Türkçede büyür: gözlemek izlemek olur, gözlem bir izlenim olur, gözetmek korumak olur — tek kökten dört kelime.",
+  "source": "Türkçe dilbilgisi",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Bir çınar filizi avuç içine sığar; üç yüz yıl sonra gövdesini beş kişi kucaklayamaz.",
+  "source": "Botanik",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Ekmeklik buğdayın atalarından biri, Güneydoğu Anadolu'da yabani bir ottan başka bir şey değildi.",
+  "source": "Tarım tarihi",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Osmanlı bahçelerindeki bir çiçek, on yedinci yüzyılda Hollanda'ya gitti ve orada bambaşka bir servet oldu.",
+  "source": "Bahçıvanlık tarihi",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Tohum, kendisinden kat kat büyük olacağını bilmeden taşıdığı, bir bitkinin ilk halidir.",
+  "source": "Botanik",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Bir gül fidanı ilk yıl dizden yukarı çıkmaz; on yıl sonra bir duvarı boydan boya sarabilir.",
+  "source": "Bahçıvanlık",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Kapadokya'daki bir peri bacası, tepesindeki küçücük bir sert taşın yumuşak tüfü yıllarca koruması sonucu yükselir.",
+  "source": "Jeoloji",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Büyük ve büyümek aynı kökten gelir; Türkçede bir şeyin büyük olması, önce büyümüş olmasını gerektirir.",
+  "source": "Türkçe köken bilgisi",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Bir karınca kolonisi tek bir döllenmiş kraliçeyle başlar; bazı türlerde bu koloni milyonlarca bireye ulaşır.",
+  "source": "Böcekbilim",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Bereket, küçük bir avuç tohumun bir ambarı dolduracak kadar çoğalmasına verilen eski addır.",
+  "source": "Türkçe",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Bir mercan resifi, tek bir polipin kendini binlerce kez kopyalamasıyla büyür; sonunda kilometrelerce uzanabilir.",
+  "source": "Deniz biyolojisi",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Kök kelimesi hem bir bitkinin toprak altındaki kısmını, hem de bir kelimenin en küçük anlamlı parçasını anlatır.",
+  "source": "Dilbilim",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "İyi başlayan iyi biter.",
+  "source": "Türk atasözü",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Ne ekersen onu biçersin.",
+  "source": "Türk atasözü",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Göbekli Tepe, tarım başlamadan önce yükseltilmiş bir tapınaktı; oraya toplanan eller, yerleşik hayatın da ilk adımlarını attı.",
+  "source": "Arkeoloji",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "1932 dil reformunun izi bugün hâlâ sürüyor: sebep ve neden aynı şeyi, iki ayrı kökten söyler.",
+  "source": "Dil tarihi",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Bir ağacın ilk birkaç yılda nasıl budandığı, elli yıl sonra gövdesinin nasıl duracağını belirler.",
+  "source": "Ormancılık",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Temel, bir yapının görünmeyen ama sonradan hiçbir şeyin değiştiremediği ilk katmanıdır.",
+  "source": "Yapı bilgisi",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Örf, bir topluluğun bir işi ilk nasıl yaptıysa öyle sürdürdüğü âdettir.",
+  "source": "Türkçe",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Bir nehrin yatağı ilk bin yılda nereden akmaya karar verirse, sonraki on bin yılı büyük ölçüde o çizgide akar.",
+  "source": "Coğrafya",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Nüve, bir şeyin en küçük ve en özet hali; sonradan büyüyecek olan her şeyin ilk taslağıdır.",
+  "source": "Türkçe",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Bugün Hollanda lalesi denen çiçek, aslında İstanbul bahçelerinden yola çıktı; adını sonradan aldığı ülke, onu ilk yetiştiren değildi.",
+  "source": "Bahçıvanlık tarihi",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Öncü, önde giden kişidir; bir topluluğun nereye varacağı çoğu zaman onun attığı ilk adımdan bellidir.",
+  "source": "Türkçe",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Bir kitabın ilk cümlesi genellikle en son yazılır; yazar, nereye varacağını bilmeden nereden başlayacağına karar veremez.",
+  "source": "Yazarlık üzerine gözlem",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Bir tohumun uyku hali: koşullar uygun olsa da büyümeyi içeriden erteleyen, kendi kararıyla süren bir bekleyiş.",
+  "source": "Botanik",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Kış uykusu, Türkçede bir hayvanın aylarca yavaşlayıp beklediği döneme verilen ad; uyku kelimesini taşır ama gerçek uykudan çok daha derindir.",
+  "source": "Zooloji",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Kendini tutmak: Türkçede bir şeyi ta içeriden, başka hiçbir el değmeden durdurmanın adı.",
+  "source": "Türkçe",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Bazı çöl tohumları yıllarca toprakta bekler; yalnızca tam doğru miktarda yağmur düştüğünde çimlenir.",
+  "source": "Botanik",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Bazı balık türlerinin yumurtaları, gölet tamamen kurusa bile toprağın içinde canlı kalıp aylarca bekleyebilir.",
+  "source": "Zooloji",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Ketum kelimesi ağzı sıkı, içini dışa vurmayan kişi için kullanılır; kökeninde bir şeyi kendi içinde tutma fikri var.",
+  "source": "Türkçe",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Ayçiçeği tohumu, hasat edildikten sonra bile belirli bir süre ekilse çimlenmez; kendi içinde bir bekleme süresi taşır.",
+  "source": "Tarım",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Saklı kelimesi hem gizlenmiş hem korunmuş anlamına gelir; Türkçede bir şeyi saklamak, onu hem gözden hem zamandan alıkoymaktır.",
+  "source": "Türkçe",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Bir tohum bankasında saklanan tohumlar, bazen doksan yılı aşkın süre canlılığını kaybetmeden bekleyebilir.",
+  "source": "Tarım bilimi",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Kış uykusuna yatan bir ayının kalp atışı dakikada birkaç vuruşa kadar yavaşlayabilir.",
+  "source": "Zooloji",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Bazı orkide tohumları, doğru mantarla karşılaşmadan hiç çimlenmez; beklediği kendi zamanı değil, bir ortağın gelişidir.",
+  "source": "Botanik",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Erteleme, bir şeyi yapmaktan değil, yapma anını seçmekten ibarettir; Türkçede ertesi gün kelimesiyle aynı kökü paylaşır.",
+  "source": "Türkçe",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Bazı ağustosböceği türlerinin larvaları toprağın altında on yedi yıl geçirdikten sonra aynı anda yüzeye çıkar.",
+  "source": "Böcekbilim",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Bazı Akdeniz ardıçları bin yılı aşkın yaşayabilir; her yıl gövdesine yalnızca ince bir halka ekler.",
+  "source": "Botanik",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Nöbet, hem bir bekçinin görev süresini hem de sırayla gelen herhangi bir şeyin dönüşünü anlatır.",
+  "source": "Türkçe",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Ege kıyısındaki bazı zeytin ağaçlarının iki bin yaşına yakın olduğu söylenir; asırlarca meyve vermeyi sürdürürler.",
+  "source": "Tarım",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Nesil, bir bitkinin ya da bir ailenin kaç kuşak sonra neye dönüşeceğini saymanın birimidir.",
+  "source": "Türkçe",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Bazı mağara sarkıtları yüz yılda ancak birkaç santimetre uzar; büyümeleri bir insan ömrü boyunca gözle neredeyse hiç fark edilmez.",
+  "source": "Jeoloji",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Yüzyıl kelimesi, yüz ile yıl kelimelerinin birleşmesinden doğar; büyük süreleri saymanın en eski Türkçe yollarından biridir.",
+  "source": "Türkçe köken bilgisi",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Bazı balina türleri iki yüzyıla yakın yaşayabilir; bilim insanları yaşlarını göz merceğindeki bir proteinin birikiminden anlar.",
+  "source": "Zooloji",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Kapadokya'daki bazı yeraltı şehirleri, yüzyıllar boyunca yalnızca ihtiyaç anında kullanılmak üzere hazır tutulmuştur.",
+  "source": "Arkeoloji",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Beklenti, henüz gerçekleşmemiş ama sürekli hesaba katılan bir şeyin adıdır; ne kadar süreceği çoğu zaman baştan bilinmez.",
+  "source": "Türkçe",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Grönland köpekbalığı cinsel olgunluğa ancak yüz elli yaşından sonra erişir; bilinen en yavaş büyüyen omurgalılardan biridir.",
+  "source": "Zooloji",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Van Gölü'ndeki inci kefali, yumurtlamak için yılın yalnızca birkaç haftasında tatlı su derelerine girer; geri kalan zamanı gölün derinliklerinde beklemekle geçer.",
+  "source": "Zooloji",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Bekçi kelimesi beklemek fiilinden gelir; bir yeri korumanın en eski yolu, orada durup beklemekti.",
+  "source": "Türkçe köken bilgisi",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Gözcü, bir topluluk adına bakmakla görevli kişidir; kelimenin kökünde göz var, ama işi görmekten çok fark etmektir.",
+  "source": "Türkçe",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Türkiye'de her gece bir eczane nöbetçi kalır; kapıdaki listede sırası kime geldiyse, ışığı o gece yanık bırakır.",
+  "source": "Türkiye'de eczacılık geleneği",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Bir çoban köpeği sürüyü izlerken çoğunlukla hiç kıpırdamaz; en ufak bir sapmayı fark etmek için gözünü kırpmadan bekler.",
+  "source": "Zooloji",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Yıldız gözlemcileri, gökyüzünün en net göründüğü saatleri genellikle gece yarısından sonra bekler.",
+  "source": "Gökbilim",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Rasat, Arapçadan gelen ve gözlem anlamına gelen bir kelimedir; gökyüzünü izleyen kişiye rasathanede rastlarsın.",
+  "source": "Türkçe",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Gözlem ve rasat aynı şeyi anlatır; biri Türkçe kökten, biri Arapçadan — ikisi de bir şeyi sabırla izlemek demektir.",
+  "source": "Türkçe",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Kapadokya'daki güvercinlikler, kayaya oyulmuş küçük kapılarıyla, kuşların gidiş gelişinin uzaktan izlenebilmesi için yapılırdı.",
+  "source": "Halk mimarisi",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Deniz fenerindeki bekçi, geceleri usulüne göre birkaç saatte bir ışığı kontrol eder; asıl işi beklemek değil, hep tetikte olmaktır.",
+  "source": "Denizcilik",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Kervansaraylardaki kapıcılar, yolcuların gelişini çoğu zaman ayak sesinden ya da çan sesinden, gün ışığı değişmeden önce anlardı.",
+  "source": "Osmanlı dönemi",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Bazı balıkçı kuşları saatlerce tek bir noktada kıpırdamadan bekleyebilir; enerjilerinin çoğunu beklemeye, çok azını harekete ayırırlar.",
+  "source": "Kuşbilim",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Beklemek ile izlemek arasındaki fark küçüktür: biri zamanı, öbürü gözü öne çıkarır; ama ikisi de aynı sabrı ister.",
+  "source": "Türkçe",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Sürgün, bir bitkinin kesilen ya da budanan yerinden yeniden verdiği taze daldır; kesiğin kendisi yeni büyümeyi tetikleyen şeydir.",
+  "source": "Botanik",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Bir zeytin ağacı budanmazsa zamanla meyve vermeyi azaltır; doğru budama onu her yıl yeniden canlandırır.",
+  "source": "Zeytincilik",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Aşılamak, bir ağacın kesilmiş dalına başka bir ağaçtan alınan bir parçayı birleştirip onu yeniden büyütme sanatıdır.",
+  "source": "Bahçıvanlık",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Bir söğüt dalı toprağa saplansa bile çoğu zaman kök salıp yeni bir ağaca dönüşür.",
+  "source": "Botanik",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Bağcılıkta asmalar her kış neredeyse çıplak kalana kadar budanır; ilkbaharda budanan her göz yeni bir sürgün verir.",
+  "source": "Bağcılık",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Türkçede asma dallarındaki tomurcuğa da göz denir; bitki, kesilen yerden insan gibi yeniden bakmaya başlar.",
+  "source": "Türkçe",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Bir kavak kütüğü toprak seviyesinde kesilse bile kökleri canlı kalır ve gövdeden onlarca yeni filiz birden çıkar.",
+  "source": "Ormancılık",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Budama, bir bitkiden fazlasını değil, gereksizini almaktır; geri kalan, aldığı yerden daha güçlü büyür.",
+  "source": "Bahçıvanlık",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Bir kertenkele kopan kuyruğunu birkaç hafta içinde yeniden büyütebilir; yenisi ilkinden biraz daha kısa olur.",
+  "source": "Zooloji",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Kütükten sürme: kesilen bir ağacın kökü toprakta canlı kalırsa, gövdenin dibinden yeniden filizlenmesi.",
+  "source": "Ormancılık",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Bir maydanoz demeti kesildikten sonra kökü toprakta kalırsa, birkaç hafta içinde yeni yapraklar verir.",
+  "source": "Bahçıvanlık",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Yeniden kelimesi yeni ile den ekinin birleşmesinden oluşur; Türkçede bir şeyi yeniden yapmak, ona yeni bir başlangıç değil, yeni bir hal vermektir.",
+  "source": "Türkçe köken bilgisi",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Nevruz, günle gecenin eşitlendiği güne denk gelen ve yılın yeniden başladığı kabul edilen gündür.",
+  "source": "Türk ve Anadolu geleneği",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Hıdrellez, kışın bittiğine ve doğanın yeniden canlandığına inanılan, her yıl mayısın altısında kutlanan bir gündür.",
+  "source": "Anadolu halk geleneği",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Gün dönümü, günün en uzun ya da en kısa olduğu, güneşin gökyüzündeki yörüngesinin yön değiştirdiği gündür.",
+  "source": "Gökbilim",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Ay kelimesi Türkçede hem gökteki ayı hem de takvimdeki bir ayı anlatır; zaman, gökyüzündeki bir dönüşten adını alır.",
+  "source": "Türkçe",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Bugün kelimesi bu ile gün kelimesinin birleşmesinden doğar; güneş kelimesi de aynı köke, gün ile, yakından bağlıdır.",
+  "source": "Türkçe köken bilgisi",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Leylekler her yıl aynı mevsimde aynı bacaya dönebilir; bazı çiftler yıllar boyunca aynı yuvayı onarıp kullanır.",
+  "source": "Kuşbilim",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Anadolu'da yıl çoğu zaman takvimle değil, buğdayın ekildiği ve biçildiği aylarla hatırlanırdı.",
+  "source": "Tarım geleneği",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Kaz Dağları'ndaki kar, yılın büyük bölümünde zirvelerde kalır ve ancak yaz ortasında tamamen erir.",
+  "source": "Coğrafya",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Dönence, güneşin gökyüzünde bir yıl boyunca ulaşabileceği en uzak iki noktadan birine verilen addır.",
+  "source": "Coğrafya",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "İstanbul Boğazı'nın üzerinden her ilkbahar ve sonbahar yüz binlerce göçmen kuş geçer; kentin üstünden mevsimin döndüğü görülebilir.",
+  "source": "Kuşbilim",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Kırlangıçlar ilkbaharda geri döndüğünde, Anadolu'nun birçok yerinde baharın gerçekten geldiğine ancak o zaman inanılır.",
+  "source": "Halk geleneği",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Sene ve yıl aynı şeyi söyler; biri Arapçadan gelir, biri Türkçe kökten — yılın kendisi bile iki dilde adlandırılmıştır.",
+  "source": "Türkçe",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Bütün ve bütünlemek aynı kökten gelir; Türkçede bir şeyi bütünlemek, ona eksiğini değil, kendisini geri vermektir.",
+  "source": "Türkçe köken bilgisi",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Bir ağaca birden fazla çeşit aşılandığında, tek bir gövde aynı anda birkaç ayrı meyveyi taşıyabilir.",
+  "source": "Bahçıvanlık",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Eski bir bakır tencere zamanla kalayını kaybeder; ustası onu atmak yerine yeniden kalaylayıp mutfağa döndürür.",
+  "source": "Zanaat geleneği",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Tamamlamak, eksik olanı aynısıyla değil, o an elde olanla bütünlemektir; sonuç ilk haliyle özdeş olmasa da bütündür.",
+  "source": "Türkçe",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "İyileşen bir ağaç yarası, çevresindeki kabuğun yıllar içinde üstünü örtmesiyle kapanır; iz kalsa da özsu akışı eskisi gibi sürer.",
+  "source": "Botanik",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Kırılan bir kemik, iyileştikten sonra çoğu zaman kırıldığı noktada eskisinden de sağlam olur.",
+  "source": "Anatomi",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Bozulan bir saat çoğu zaman tek bir küçük dişlinin değişmesiyle yeniden tam olarak eskisi gibi çalışabilir.",
+  "source": "Saatçilik",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Kristalleşen bal, ısıtılınca yeniden eski kıvamına döner; hiçbir şeyini kaybetmemiştir, yalnızca beklemiştir.",
+  "source": "Arıcılık",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Eski dönemlerde kırılan bir çömlek çoğu zaman atılmaz, kenarlarına açılan küçük deliklerden geçirilen metal kenetlerle yeniden bir araya getirilirdi.",
+  "source": "Zanaat tarihi",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Kırılan bir cam parçası yeniden eritilip başka bir kap olarak şekillendirilebilir; ilk hali kaybolur ama malzeme sonsuza kadar yok olmaz.",
+  "source": "Cam sanatı",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Yeniden doğmak deyimi Türkçede dini bir anlam taşımadan da kullanılır: bir şeyin bitmek üzereyken, eskisinden başka ama eksiksiz bir haliyle geri gelmesi.",
+  "source": "Türkçe",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Bir gölün suyu her yıl aynı görünür ama hiçbir zaman aynı su değildir; yağan yağmur ve akan kaynaklar onu sürekli tazeler.",
+  "source": "Coğrafya",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Şafak, gökyüzünün gece ile gündüz arasında aldığı rengin adıdır; ne tam karanlık ne tam aydınlıktır.",
+  "source": "Türkçe",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Tan, gecenin bittiği ama güneşin henüz görünmediği kısa anın adıdır; Türkçede tan yeri ağarıyor denir, sanki bir yer beyazlanıyormuş gibi.",
+  "source": "Türkçe",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Alacakaranlık, alaca yani benekli kelimesinden gelir; ışığın ne tam var ne tam yok olduğu, birbirine karıştığı vakittir.",
+  "source": "Türkçe köken bilgisi",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Gurup Arapçadan, gün batımı Türkçe kökten gelir; ikisi de güneşin ufkun altına indiği aynı anı adlandırır.",
+  "source": "Türkçe",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Seher, gün doğmadan hemen önceki, kuşların henüz ötmeye başladığı vaktin eski adıdır.",
+  "source": "Türkçe",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Kapadokya'da sabahın ilk ışığında yükselen onlarca sıcak hava balonu, gökyüzünü şafak vaktine özgü bir renge boyar.",
+  "source": "Kapadokya geleneği",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Gündoğumu ve günbatımı, güneşin ufukla kurduğu iki karşıt ilişkiyi, doğmak ve batmak fiilleriyle anlatır.",
+  "source": "Türkçe",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "İkindi, günün ışığının eğilmeye başladığı, gölgelerin uzamaya başladığı öğleden sonraki vakte verilen eski addır.",
+  "source": "Türkçe",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Gurup vakti, denizcilikte hâlâ resmi bir zaman ölçüsüdür; günün hangi bölümünde olunduğunu ışığın rengiyle tarif eder.",
+  "source": "Denizcilik",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Alacakaranlıkta göz renkleri değil, yalnızca açık ile koyu tonları ayırt edebilir; bu yüzden o saatte her şey griye çalar.",
+  "source": "Görme bilimi",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Gökyüzü gün batarken kızıla döner çünkü güneş ışığı o saatte atmosferin çok daha kalın bir katmanından geçer.",
+  "source": "Fizik",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Akşam kelimesi Türkçede yalnız günün bir vaktini değil, o vakitte yapılan yemeği de anlatır: akşam yemeği.",
+  "source": "Türkçe",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Ayçiçeği fideleri gün boyunca güneşi izler; sabah doğuya, akşam batıya döner, ama tam olgunlaştığında bu hareketi bırakır.",
+  "source": "Botanik",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Bir güneş saati, gölgenin uzunluğuyla değil, düştüğü açıyla saati okur.",
+  "source": "Gökbilim",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Okumak fiili Türkçede yalnız yazıyı değil, bir işareti ya da bir anlamı çözmeyi de içerir; ışığı okumak da bu geniş anlamdan pay alır.",
+  "source": "Türkçe",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Kutup bölgelerinde yaşayan bazı hayvanlar, hiç batmayan ya da hiç doğmayan güneşe göre iç saatlerini yeniden ayarlar.",
+  "source": "Zooloji",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Bal arıları, güneşin gökyüzündeki konumunu bir pusula gibi kullanarak kovana giden yönü diğer arılara bir dansla anlatır.",
+  "source": "Arıcılık",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Bazı göçmen kuşlar, bulutlu gecelerde yıldızları değil, gökyüzündeki polarize ışığın örüntüsünü izleyerek yönünü bulur.",
+  "source": "Kuşbilim",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Fotoğrafçılar günün ilk ve son saatindeki ışığı altın saat diye adlandırır; gölgeler o saatlerde daha uzun ve daha yumuşak düşer.",
+  "source": "Fotoğrafçılık",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Işık ve ışın aynı kökten gelir; biri kaynağın kendisini, öbürü ondan çıkıp yol alanı anlatır.",
+  "source": "Türkçe köken bilgisi",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Kadim denizciler, ufuktaki ışığın rengine bakarak ertesi günün havasını tahmin ederdi: kızıl bir gün batımı çoğunlukla açık bir günün işaretiydi.",
+  "source": "Denizcilik geleneği",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Kedilerin gözlerinin arkasındaki bir tabaka, karanlıkta ışığı bir kez daha yansıtarak retinaya ikinci bir şans verir.",
+  "source": "Zooloji",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Bakmak ve görmek Türkçede ayrı fiillerdir; bakmak gözü bir yöne çevirmek, görmek ise ışığın taşıdığı bilgiyi almaktır.",
+  "source": "Türkçe",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Bukalemunlar renklerini yalnızca kamuflaj için değil, üstlerine düşen ışığı ve kendi ruh hallerini göstermek için de değiştirir.",
+  "source": "Zooloji",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Yakamoz, ay ışığının ya da hareketli bir ışığın deniz yüzeyinde bıraktığı parıltının adıdır; kelime Rumcadan, Türkçenin sakladığı bir ödünç.",
+  "source": "Türkçe, Rumcadan",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Işık yılı, bir sürenin değil, ışığın bir yılda aldığı yolun adıdır; zamanı mesafeye çeviren bir ölçüdür.",
+  "source": "Fizik",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Güneşten çıkan ışık, Dünya'ya ulaşana kadar sekiz dakikadan biraz fazla yol alır; şu an gördüğün güneş, sekiz dakika önceki güneştir.",
+  "source": "Fizik",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Aydın kelimesi hem ışıklı yer hem de bilgili, görüşü açık kişi anlamına gelir; Türkçede ışık ile anlayış aynı kökten konuşur.",
+  "source": "Türkçe",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Gökkuşağı, ışığın su damlacıklarının içinde kırılıp yansımasıyla oluşur; her damlacık aslında kendi küçük gökkuşağını taşır.",
+  "source": "Fizik",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Fosforesans, bir maddenin üzerine düşen ışığı hemen değil, bir süre sonra geri vermesidir; karanlıkta parlayan oyuncaklar bu yüzden ışığı biriktirir.",
+  "source": "Fizik",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Ateşböceklerinin ışığı neredeyse hiç ısı üretmez; bilinen en verimli ışık kaynaklarından biridir.",
+  "source": "Böcekbilim",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Nur kelimesi Arapçadan gelir ve saf, sıcak bir ışığı anlatır; Türkçede ışık kadar sık kullanılmasa da hâlâ isimlerde yaşar.",
+  "source": "Türkçe",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Beyaz ışık aslında tek bir renk değildir; bir prizmadan geçtiğinde içinde sakladığı bütün renkleri gösterir.",
+  "source": "Fizik",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Bazı derin deniz canlıları kendi ışıklarını üretir; okyanusun bu katmanına güneş ışığı hiç ulaşmaz.",
+  "source": "Deniz biyolojisi",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Kutup ışıkları, Güneş'ten gelen yüklü parçacıkların Dünya'nın manyetik alanına çarpmasıyla oluşur; gökyüzünde yeşil ve kızıl perdeler gibi dalgalanır.",
+  "source": "Fizik",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Gölge, ışığın yokluğu değil, bir cismin onu geçirmemesinin izidir; ışık olmadan gölge de olmaz.",
+  "source": "Fizik",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Beş, Türkçenin en eski sayı kelimelerinden biridir; parmaklarla sayma, dilin belki de en eski matematik dersidir.",
+  "source": "Türkçe",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Osmanlı döneminde tespih taneleri genellikle otuz üç ya da bunun katları olacak şekilde dizilirdi; sayma, elin de katıldığı bir eylemdi.",
+  "source": "Gelenek",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Düzine kelimesi Fransızca douzaine'den gelir, on iki demektir; Türkçe bu sayma birimini de dışarıdan ödünç almıştır.",
+  "source": "Türkçe",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Bir ayçiçeğinin başındaki tohumlar iki yöne kıvrılan sarmallar halinde dizilir; bu sarmalların sayısı çoğu zaman ardışık Fibonacci sayılarındandır.",
+  "source": "Botanik",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Bir papatya türünün çiçekleri, sayıları türden türe değişse de kendi türü içinde şaşırtıcı bir tutarlılıkla hep aynı sayıda yaprağa sahiptir.",
+  "source": "Botanik",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Yüz kelimesi Türkçede hem sayı yüzü hem de insan yüzünü anlatır; iki farklı yüz, tesadüfen aynı sesle söylenir.",
+  "source": "Türkçe",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Bir kilim dokunurken ipliklerin sayısı milimetrik olarak değil, düğüm düğüm sayılarak ilerler; ustanın elinde sayı bir ritme dönüşür.",
+  "source": "El sanatları",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Saymak fiili Türkçede hem rakamları sıralamayı hem birini değerli bulup gözetmeyi anlatır; büyüklerini say demek, onları önemsemek demektir.",
+  "source": "Türkçe",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Eski Türk takviminde on iki hayvanlı bir döngü kullanılırdı; her yıl bir hayvanın adıyla anılır ve on iki yılda bir baştan başlardı.",
+  "source": "Takvim tarihi",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Bir elde çoğunlukla beş parmak bulunur; bu yüzden pek çok dilde sayma sistemi ondalıktır — iki elin toplamı kadar.",
+  "source": "Dilbilim",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Bazı çobanlar sürüdeki koyunları teker teker saymak yerine bir çıta üstünde bıçakla çentikler açardı; her çentik bir koyundu.",
+  "source": "Çobanlık geleneği",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Bir kum saatindeki tanelerin sayısı kesin olarak bilinmez, ama akış hızı hep aynıdır; saymak yerine akışı ölçmek de bir sayma biçimidir.",
+  "source": "Ölçü bilgisi",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Kündekari, ahşap parçaların çivi ya da tutkal kullanmadan, birbirine tam oturacak şekilde oyularak birleştirilmesi sanatıdır.",
+  "source": "Osmanlı ahşap işçiliği",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Bahçıvanlar meyve ağaçlarını genellikle düz sıralar yerine şaşırtmalı dizer; böylece her ağaç komşularından eşit uzaklıkta durur ve toprak daha verimli kullanılır.",
+  "source": "Bahçıvanlık",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "İznik çinilerindeki desenler, tek bir karonun kenarından başlayıp yanındakiyle birleşerek büyük bir örüntüye dönüşecek şekilde tasarlanır.",
+  "source": "Çini sanatı",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Bir kilimde aynı motif yan yana tekrarlandığında, her birinin kenarı komşusununkiyle tam örtüşecek şekilde dokunur; boşluk kilimin tekniğine aykırıdır.",
+  "source": "Dokumacılık",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Duvarcılar bazı eski taş duvarları harç kullanmadan örer; her taş bir sonrakiyle tam oturana kadar defalarca denenip çevrilir.",
+  "source": "Taş işçiliği",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Bazı antik yapılarda taşlar o kadar hassas yontulmuştur ki aralarına bir bıçak ucu bile girmez.",
+  "source": "Arkeoloji",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Zeugma'daki antik mozaiklerde binlerce küçük taş parçası, aralarında neredeyse hiç boşluk kalmadan bir araya getirilmiştir.",
+  "source": "Arkeoloji",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Kapadokya'daki güvercinliklerin iç duvarları, kuşların her birinin kendi yuvasına tam sığacağı küçük oyuklarla kaplıdır.",
+  "source": "Halk mimarisi",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Bir yapboz parçası yalnızca bir yere tam oturur; doğru yer, parçanın kendi kenarlarında zaten yazılıdır.",
+  "source": "Türkçe",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Kapadokya vadilerindeki bazı kaya kiliseleri, doğal kaya çatlaklarının izlediği hatlara göre oyulmuştur; yapı, taşın kendi çizgileriyle uyum içinde ilerler.",
+  "source": "Halk mimarisi",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Bir ahşap sandığın kapağı bazen çivisiz, yalnızca birbirine geçen çentiklerle kapanacak şekilde yapılır; kapanma sesi parçaların tam oturduğunu duyurur.",
+  "source": "Ahşap işçiliği",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Örüntü, tek başına bir şey değildir; parçaların birbirine göre nasıl durduğunun adıdır — bir tek taş örüntü olmaz, ikincisi geldiğinde başlar.",
+  "source": "Türkçe",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Cevap ve yanıt aynı şeyi anlatır; Türkçe iki farklı kökten gelen bu ikiliği bir kurala değil, konuşanın seçimine bırakmıştır.",
+  "source": "Türkçe",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Hayat ve yaşam aynı şeyi anlatır; biri Arapçadan, biri Türkçe kökten — ikisi de konuşanın hangi kuşaktan geldiğini biraz ele verir.",
+  "source": "Türkçe",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Zencerek, mimaride ve dokumada tekrar eden yılankavi bir çizgiye verilen addır; bu adı taşıyan her desen aynı kurala göre döner.",
+  "source": "Süsleme sanatları",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Simetri kelimesi Yunancadan gelir ve ölçünün birlikteliği anlamına gelir; bir desenin bir yanı öbür yanının aynı ölçüyle yankısıdır.",
+  "source": "Türkçe köken bilgisi",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Altın oran, bir bütünün parçalarının belirli bir oranda birbirine bağlı olduğu, çok eski çağlardan beri adlandırılmış bir düzendir.",
+  "source": "Matematik",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Anadolu kilimlerinde her motifin bir adı vardır: koçboynuzu bereketi, kuş motifi haberi, elibelinde ise kadınlığı simgeler.",
+  "source": "Halk sanatı",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Ebru sanatında her desenin bir adı vardır: taraklı, gelgit, battal — her biri suyun üstünde farklı bir aletle çekilen farklı bir düzeni anlatır.",
+  "source": "Ebru sanatı",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Düzen kelimesi düzmek fiilinden gelir; bir şeyi düzenlemek, önce onu bir arada, doğru sırada kurmaktır.",
+  "source": "Türkçe köken bilgisi",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Halı dokumacılığında kullanılan simetrik düğüm türü dünyada Türk düğümü diye bilinir; ipliğin her iki ucu da aynı ilmeğin içinden geçer.",
+  "source": "Halıcılık",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Motif, tek başına bir süs değildir; bir düzenin tekrarlanabilen en küçük birimidir — bir kez adlandırıldığında nereye konursa konsun aynı düzeni taşır.",
+  "source": "Türkçe",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Bir düzenin adı, çoğu zaman düzenin kendisinden çok sonra ortaya çıkar; insanlar önce deseni görür, adını daha sonra bulur.",
+  "source": "Türkçe",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Selçuklu ve Osmanlı mimarisindeki yıldız desenleri sekiz ya da on iki kollu geometrik biçimlere dayanır; her birinin çizim kuralı ustadan çırağa aktarılırdı.",
+  "source": "Mimarlık tarihi",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Kapadokya'nın kayaları, Erciyes ve Hasandağ'ın kül yağmurundan oluşan tüften ibarettir; bu yumuşaklık onları bu kadar kolay oyulabilir kılar.",
+  "source": "Jeoloji",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Göbekli Tepe'yi kuranlar, binlerce yıl önce tapınaklarını kendi elleriyle toprakla örttüler; belki de böyle korudular.",
+  "source": "Arkeoloji, Şanlıurfa",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Ekmeklik buğdayın yabani atalarından biri, bugün hâlâ Anadolu'nun taşlık yamaçlarında kendiliğinden yetişir.",
+  "source": "Botanik",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Anadolu ağızlarında toprağım demek, aynı köyden ya da aynı memleketten olan birine denir.",
+  "source": "Türkçe",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Çukurova'nın kara toprağı, yüzyıllardır pamuğu ve buğdayı aynı tarlada taşır.",
+  "source": "Coğrafya",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Her toprağın kendi otu biter.",
+  "source": "Türk atasözü",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Antik coğrafyacılar Kula ve çevresine Katakekaumene, yani yanık toprak, derlerdi; volkanik kül burada hâlâ tarlayı besler.",
+  "source": "Coğrafya, Manisa",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "İhlara Vadisi'ni Melendiz Irmağı kazmadı, aşındırdı; yumuşak tüf, akan suya yavaş yavaş boyun eğdi.",
+  "source": "Coğrafya, Kapadokya",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Kaz Dağları'nın reçineli çam ormanları, İlyada'da adı geçen İda Dağı'yla aynı topraktır.",
+  "source": "Coğrafya",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Ankara'nın tepelerinde denizden kalma kabuk fosilleri bulunur; bir zamanlar bu topraklar denizin dibiydi.",
+  "source": "Jeoloji",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Toprağa düşmek, Türkçede hem bir tohum hem bir söz için söylenir; ikisi de orada kök salar.",
+  "source": "Türkçe",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Harran'ın kubbeli kerpiç evleri, çevrelerindeki topraktan, başka hiçbir yerden getirilmeden yapılır.",
+  "source": "Şanlıurfa",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Türkçede yurt hem göçebe çadırı hem de vatan demektir; bir halk, taşıdığı evle kalıcı toprağı aynı sözcükte tutar.",
+  "source": "Türkçe",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Sıla, gurbetten sonra dönülen yerdir; oradan ayrılmadan bir kişi sılanın ne demek olduğunu bilemez.",
+  "source": "Türkçe",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Memleket, bir ülkeden çok kendi kasabanı, kendi mahalleni anlatır; sorulduğunda insan önce oraya gider.",
+  "source": "Türkçe",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "İnsan doğduğu yere değil, doyduğu yere gider.",
+  "source": "Türk atasözü",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Hemşehri, şehir sözcüğüne hem eki eklenerek yapılır: aynı şehirden olan, dolayısıyla bir parça tanıdık olan kişi.",
+  "source": "Türkçe",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Türkiye'de yeni tanışan iki kişinin ilk sorularından biri nerelisin'dir; cevap, sohbetin nereden başlayacağını belirler.",
+  "source": "Türk görgü kuralları",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Bazı Anadolu köyleri yazın bütün haneleriyle yaylaya çıkar; o zaman köylünün memleketi ikiye katlanmış olur.",
+  "source": "Coğrafya",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "1934'te herkesin soyadı alması istendiğinde, pek çok kişi doğduğu köyün ya da dağın adını kendi adına kattı.",
+  "source": "Tarih",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Vatan, Arapça bir kökten gelir ve yerleşmek, oturmak anlamını taşır; vatan, önce bir eylemdir, sonra bir yerdir.",
+  "source": "Arapça",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Anadolu köylerinin çoğu adını bulunduğu araziden alır: bir ova, bir dere, bir tepe, köyün adında hâlâ durur.",
+  "source": "Türkçe",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Büyük şehre taşınan hemşehriler bile kendi memleketlerinin adını taşıyan dernekler kurar, orada bir araya gelir.",
+  "source": "Türk toplum hayatı",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Baba ocağı, bir ailenin her zaman dönebileceği evi anlatır; ocak, hem soba hem de bir soyun başlangıcıdır.",
+  "source": "Türkçe",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "İmece, bir köyün ortak işi karşılıksız birlikte yapmasıdır: bugün birinin damı, yarın bir başkasının tarlası.",
+  "source": "Türkçe",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Kapadokya'nın kaya evlerinde oyulmuş güvercinlikler, gübresini bağ ve bahçe için toplamak üzere yüzyıllarca özenle tutuldu.",
+  "source": "Kapadokya",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Bahçe, Farsçadan Türkçeye geçmiştir; bahçıvan da aynı kökten, bahçeyi tutan kişi demektir.",
+  "source": "Farsça",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Osmanlı mahallelerinde çeşmeler bir hayır işi olarak yaptırılır, sonra mahallenin ortak emeğiyle ayakta tutulurdu.",
+  "source": "Osmanlı toplum hayatı",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Vakıf, Arapçada durdurmak kökünden gelir: bir mülk satılamaz, bölünemez hâle getirilip bir amaca sonsuza dek bağlanır.",
+  "source": "Arapça",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "18. yüzyılda İstanbul'un lale bahçeleri, özellikle Emirgan'da, bahçıvanlarca titizlikle yeni çeşitler için tutulurdu.",
+  "source": "Osmanlı tarihi",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Bir Türk apartmanının balkonunda büyüyen saksılar, küçücük de olsa bir bahçe sayılır ve öyle bakılır.",
+  "source": "Türk ev kültürü",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Muhtar, bir mahallenin ya da köyün ortak yerlerinin bakımına da bakan, seçimle gelen kişidir.",
+  "source": "Türk yerel yönetimi",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Osmanlı sarayının bostancı ocağı, Boğaz kıyısındaki bahçeleri kuşaklar boyunca aynı özenle tuttu.",
+  "source": "Osmanlı tarihi",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Kapadokya ve Ege'nin taş duvarlarla çevrili bağ taraçaları, harç kullanılmadan, nesilden nesile aynı elle onarılır.",
+  "source": "Tarım geleneği",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Gülhane Parkı bir zamanlar Topkapı Sarayı'nın bahçesiydi; sahibi değişti, ama bahçe olarak tutulması sürdü.",
+  "source": "İstanbul tarihi",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "İstanbul'un surlarına yaslanan Yedikule bostanları, şehrin içinde yüzyıllardır aynı toprakta sebze yetiştirir.",
+  "source": "İstanbul tarihi",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "İncirin çiçeği meyvenin içindedir; onu sadece incire özgü küçük bir eşek arısı döller, başka hiçbir böcek giremez.",
+  "source": "Ficus carica, Aydın",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Haziranda havada uçuşan beyaz tüyler kavak pamuğu diye bilinir; her biri tek bir kavak tohumunu taşır.",
+  "source": "Populus, halk adı",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Anadolu'nun yabani lalesi, Osmanlı bahçelerinden 16. yüzyılda Viyana'ya, oradan Hollanda'ya taşındı ve öyle tanındı.",
+  "source": "Tulipa, tarih",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Anzer balı, Rize'nin yüksek yaylalarında yalnızca birkaç hafta açan yabani çiçeklerden, arıların taşıdığı polenle yapılır.",
+  "source": "Rize, Kaçkar Dağları",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Kamış tohumları nehir kıyısı boyunca suyla taşınır; yetiştiği sazlıktan kesilen kamış, sonra kalem olurdu.",
+  "source": "Botanik",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Kayısının Latince adı Prunus armeniaca'dır, ama kayısı Ermenistan'dan değil, Orta Asya'dan gelip oradan yalnızca geçmiştir.",
+  "source": "Botanik tarihi",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Ökse, kuş tutmak için kullanılan yapışkan bir maddedir; ökseotu adını, tohumunu tam da bu yapışkanlıkla kuşların gagasına bulaştırmasından alır.",
+  "source": "Viscum album",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Toros ve Kaz Dağları'ndaki bazı çam kozalakları, tohumlarını ancak bir orman yangınının sıcaklığında açar.",
+  "source": "Botanik",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Safranbolu adını, safran çiğdeminin soğanlarının elden ele taşındığı eski ticaret yolundan alır; tohum değil, soğan taşınırdı.",
+  "source": "Safranbolu, tarih",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Karadeniz ormanlarında sincap ve alakarga fındığı saklar; unutulan her fındık, yeni bir fındık fidanı olma ihtimalini taşır.",
+  "source": "Corylus avellana",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Kestane tohumu ağırdır, rüzgârla gitmez; Bursa ve Aydın'ın kestanelikleri, yüzyıllar boyunca elden ele, yol boyunca dikilerek yayıldı.",
+  "source": "Castanea sativa",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Anadolu ormanlarında hâlâ yabani asma bulunur; kuşlar yediği üzümü taşıdığı her yere, yeni bir asmanın tohumunu da bırakır.",
+  "source": "Vitis vinifera sylvestris",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Anadolu'daki kervansaraylar, bir günlük yürüyüş mesafesinde art arda kurulurdu; yolcuya ve hayvanına üç gün karşılıksız barınak verirlerdi.",
+  "source": "Selçuklu-Osmanlı ticaret yolları",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Pers Kral Yolu, Sardes'ten Sus'a, Anadolu'nun içinden geçerek uzanan, bilinen en eski uzun mesafeli yollardan biriydi.",
+  "source": "Antik tarih",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Yolcu yolunda gerek.",
+  "source": "Türk atasözü",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Yoldaş, yol ile daş ekinden gelir: yolu paylaştığın kişi demektir, dost anlamı sonradan buradan doğmuştur.",
+  "source": "Türkçe",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "İpek Yolu, Anadolu'nun içinden geçerken yalnızca ipek değil, dil, yemek ve haber de taşıdı.",
+  "source": "Tarih",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Likya Yolu, Toroslar'ın Akdeniz'e indiği eski patikaları izler; bugün yürüyerek katedilen, ama binlerce yıllık bir güzergâhtır.",
+  "source": "Likya Yolu, Antalya-Muğla",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Roma yollarının kenarına dikilen mil taşları, Anadolu'nun bazı eski yollarında hâlâ yerli yerinde durur.",
+  "source": "Roma dönemi arkeolojisi",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Gülek Boğazı, Toros Dağları'nı yaran tek doğal geçittir; orduların da tüccarların da binlerce yıldır tek yolu buradan geçer.",
+  "source": "Coğrafya, Toroslar",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Yol azığı, yola çıkan kişinin yanına aldığı yiyecektir; hazırlanışı, yolculuğun ne kadar uzun süreceğini de gösterirdi.",
+  "source": "Türkçe",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Kervan develerinin her birinin çanı farklı sesteydi; kervan görünmeden önce, hangi kervan olduğu sesinden anlaşılırdı.",
+  "source": "Kervan geleneği",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Hızır, Anadolu inanışında yolda zor durumda kalana birden çıkıveren bir yardımcıdır; kim olduğu ancak sonradan anlaşılır.",
+  "source": "Anadolu halk inancı",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Osmanlı menzilhaneleri, ulakların dinlenmiş at bulup yola devam etmesi için belirli aralıklarla kurulmuş durak noktalarıydı.",
+  "source": "Osmanlı posta tarihi",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Gurbet, memleketten uzakta olma hâlidir; kelimenin kökü Arapçada batmak, kaybolmak anlamına gelen bir fiile dayanır.",
+  "source": "Arapça",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Evliya Çelebi, kırk yılı aşkın bir sürede imparatorluğun ve ötesinin en uzak köşelerini dolaşıp Seyahatname'sinde anlattı.",
+  "source": "17. yüzyıl, Seyahatname",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Van Gölü'nün hiçbir çıkışı yoktur; suyu o kadar alkalidir ki, yalnızca inci kefali denen bir balık orada yaşamayı öğrenmiştir.",
+  "source": "Van Gölü",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Ufuk, Arapçada kenarlar anlamına gelen bir kökten gelir; hem gökle yerin birleştiği çizgiyi hem de önündeki geniş imkânı anlatır.",
+  "source": "Arapça",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Denizaşırı, tam olarak denizin ötesinde demektir; bir yerin ne kadar uzak sayıldığını, aradaki denizin genişliği belirlerdi.",
+  "source": "Türkçe",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Hasret, gurbetin hâli değil, o hâlin içindeki duygudur: uzaktakini, tam da uzakta olduğu için, daha çok istemek.",
+  "source": "Türkçe",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "1513'te Piri Reis'in çizdiği dünya haritası, henüz çok az Avrupalının bildiği kadarıyla Atlas Okyanusu'nun ötesini de gösteriyordu.",
+  "source": "Piri Reis, 1513",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Dünyanın öbür ucu, Türkçede varılabilecek en uzak yeri anlatmak için kullanılır; nerede olduğu hiç belli değildir.",
+  "source": "Türkçe deyim",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "İpek Yolu'nun Anadolu'daki ucundan Çin'deki ucuna kadar geçen mesafe, o zamanlar kilometreyle değil, ayla ölçülürdü.",
+  "source": "Tarih",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Konak, bir kervanın bir günde alabildiği yoldur; bir yerin ne kadar uzak olduğu eskiden üç konak, beş konak diye anlatılırdı.",
+  "source": "Türkçe",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Gurbetçi, gurbette yaşayan kişiye denir; aynı kökten türese de, bir hâli değil, o hâldeki insanı anlatır.",
+  "source": "Türkçe",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Bugünkü Anadolu'nun dili, kökleri Orta Asya bozkırlarına, Orhun Yazıtları'nın dikildiği topraklara kadar uzanan uzun bir yolun ucundadır.",
+  "source": "Dil tarihi, Orhun Yazıtları",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Tanışmak, tanımak fiiline eklenen -ış ekiyle kurulur; bu ek Türkçede bir işi karşılıklı yapmayı gösterir, tek taraflı tanımaktan ayrı bir şeydir.",
+  "source": "Türkçe",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Karşılaşmak, karşı sözcüğünden gelir: iki kişinin birbirinin karşısına, aynı anda, aynı yere gelmesi.",
+  "source": "Türkçe",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Rastlamak, Farsçada doğru, düz anlamına gelen rast sözcüğünden türer; rastgele de aynı kökten, yolun kendiliğinden getirdiği demektir.",
+  "source": "Farsça",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Nasip, Arapçada birine ayrılan pay demektir; bir karşılaşmanın nasip olması, onun kimseye ait olmadan kendiliğinden düşmesidir.",
+  "source": "Arapça",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Dağ dağa kavuşmaz, insan insana kavuşur.",
+  "source": "Türk atasözü",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "An, Arapçadan gelir ve bölünmeyecek kadar kısa bir zamanı anlatır; bir karşılaşma da tam olarak böyle bir anda başlar.",
+  "source": "Arapça",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Yolları kesişmek, iki kişinin hiç plansız aynı noktadan geçmesini anlatan bir deyimdir; kesişen yollar sonra ayrı da devam edebilir.",
+  "source": "Türkçe deyim",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Tesadüf, Arapçada karşılıklı çarpışmak, denk gelmek anlamına gelen bir kökten gelir; rastlantı, orada bir çarpışma olarak düşünülmüştür.",
+  "source": "Arapça",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Bir bakışta, Türkçede ilk izlenimin ne kadar çabuk oluştuğunu anlatan bir deyimdir; bakış, sözden önce gelir.",
+  "source": "Türkçe deyim",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Eski Anadolu köylerinde çeşme başı, suyunu almaya gelen gençlerin birbiriyle ilk kez karşılaştığı yerlerden biriydi.",
+  "source": "Anadolu köy geleneği",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "İki kişinin anlaşıp kaynaşmasına Türkçede yıldızı barışmak denir; barışmak burada iki yıldız arasında bile geçerlidir.",
+  "source": "Türkçe deyim",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "İlk görüşte, Türkçede bir karşılaşmanın daha ilk anında bırakılan izlenimi anlatmak için kullanılır.",
+  "source": "Türkçe deyim",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Antep fıstığı ağaçları erkek ve dişi olarak ayrıdır; bir bahçe meyve versin diye, dişilerin arasına birkaç erkek ağaç bilerek dikilir.",
+  "source": "Pistacia vera, Gaziantep",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Hurma ağacı da erkek ve dişi olarak ayrılır; Mezopotamya'da binlerce yıl önce insan eliyle, çiçek tozu bir ağaçtan ötekine taşınarak döllenirdi.",
+  "source": "Phoenix dactylifera, tarih",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Eş, Türkçede hem eşit hem de birlikte olunan kişi demektir; bir eş, önce dengi olan, sonra yanında olandır.",
+  "source": "Türkçe",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Gönül gönülden su alır.",
+  "source": "Türk deyimi",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Bir elin nesi var, iki elin sesi var.",
+  "source": "Türk atasözü",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "İki kişinin birbirine tam denk gelmesi Türkçede kilit ile anahtar gibi diye anlatılır; biri olmadan öteki bir işe yaramaz.",
+  "source": "Türkçe deyim",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Kılavuz balık, köpekbalığının önünden yüzer, ona yol gösterir ve artıklarından beslenir; ikisi de birbirinden vazgeçemez.",
+  "source": "Echeneidae",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Karınca, yaprakbitini korur ve taşır; karşılığında yaprakbitinin çıkardığı tatlı özsuyu alır. İkisi de yalnız başına bu kadar iyi beslenemez.",
+  "source": "Biyoloji",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Bazı zeytin çeşitleri kendi çiçek tozuyla meyve vermez; iyi bir hasat için yakınına başka bir çeşit zeytin ağacı dikilmesi gerekir.",
+  "source": "Olea europaea",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Bir kavun bitkisinde erkek ve dişi çiçekler ayrıdır; arı ikisi arasında gidip gelmezse, o çiçekler hiç kavun olamaz.",
+  "source": "Botanik",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Çift, eskiden bir sabana koşulan iki öküzü anlatırdı; birlikte iş gören iki insana da zamanla aynı söz söylenir oldu.",
+  "source": "Türkçe",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Bağ, Türkçede hem bir bağlılığı hem de üzüm yetiştirilen toprağı anlatır; ikisi de emek ister, ikisi de kendi kendine sürmez.",
+  "source": "Türkçe",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Hoş geldin sözü tek başına yarımdır; ancak karşı taraf hoş bulduk deyince tamamlanır, o sözü ancak gelen kişi söyleyebilir.",
+  "source": "Türkçe",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Anadolu'da eve gelen konuk, işi ne olursa olsun önce ağırlanır; ne için geldiği daha sonra, acele edilmeden sorulur.",
+  "source": "Türk misafirperverliği",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Selam, Arapça selamet ile aynı kökten gelir ve barış, esenlik demektir; Türkçede birine selam vermek, ona esenlik dilemektir.",
+  "source": "Arapça",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Bayramlarda büyüklerin eli öpülüp alına götürülür; bu jest, hem bir selamlama hem de bir saygı gösterisidir.",
+  "source": "Türk görgü kuralları",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Türkiye'de eve gelen kimseye ilk sorulacak şeylerden biri çay içip içmeyeceğidir; çoğu zaman soru bile değil, doğrudan getirilir.",
+  "source": "Türk ev geleneği",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "İkram, Arapçada onurlandırmak kökünden gelir; birine bir şey ikram etmek, ona bir hediye değil, bir saygı sunmaktır.",
+  "source": "Arapça",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Misafir umduğunu değil bulduğunu yer.",
+  "source": "Türk atasözü",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Komşu komşunun külüne muhtaçtır.",
+  "source": "Türk atasözü",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Eski Anadolu geleneğinde bir yolcu, üç gün boyunca ne istediği sorulmadan evde ağırlanırdı; soru ancak üçüncü günden sonra gelirdi.",
+  "source": "Anadolu geleneği",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Tanışan iki kişi Türkiye'de çoğunlukla el sıkışır; yakın arkadaşlar arasında buna iki yanaktan öpüşme de eklenir.",
+  "source": "Türk görgü kuralları",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Buyurun, aslında buyurmak yani emretmek fiilinden gelir; zamanla emirden çıkıp, birini içeri ya da bir sohbete kibarca çağıran söze dönüşmüştür.",
+  "source": "Türkçe",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Yemek yiyene afiyet olsun, pişirene ya da servis edene elinize sağlık denir; iki ayrı emek, iki ayrı sözle karşılanır.",
+  "source": "Türkçe",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Kardeş sözcüğü karın kökünden gelir; aynı karından, yani aynı anneden gelen demektir.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Aşı, Türkçede hem bir bitkiyi başka bir bitkiye bağlamayı hem de tıptaki aşıyı anlatır; ikisinde de yabancı bir şey, bünyenin bir parçası olur.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Süt kardeş, aynı kadının sütüyle büyüyen, kan bağı olmayan iki çocuğa denir; Türk geleneğinde bu bağ, kan bağı kadar ciddiye alınır.",
+  "source": "Türk kültürü",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Yan yana büyüyen iki söğüdün dalları birbirine değip zamanla kaynaşabilir; bir süre sonra hangi dalın hangi ağaca ait olduğu belli olmaz.",
+  "source": "Botanik",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Bazen bir kiraz sapında iki kiraz birlikte büyür, birbirine yapışık; ikisi de aynı çekirdekten değildir ama aynı sapı paylaşır.",
+  "source": "Botanik",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Anadolu'da bir çocuk doğduğunda bahçeye bir fidan dikilme geleneği vardır; fidan, çocukla birlikte, aynı yıllarla büyür.",
+  "source": "Anadolu geleneği",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Sarmaşık, tutunduğu ağaçla yıllar içinde öyle iç içe geçer ki, uzaktan bakınca ikisi tek bir yeşillik gibi görünür.",
+  "source": "Botanik",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Eski zeytinliklerde komşu ağaçların kökleri toprağın altında birbirine dolanır; yüzyıllar sonra hangi kökün hangi ağaca ait olduğu bilinemez.",
+  "source": "Olea europaea",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Anadolu bahçelerinde asma, çoğu zaman bir dut ağacının gövdesine sarılarak yetiştirilir; ikisi yıllar içinde tek bir gölge verir.",
+  "source": "Bahçıvanlık geleneği",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Liken denen şey aslında tek bir canlı değildir; bir mantarla bir yosun ya da bakteri, birbirinden ayrılamayacak kadar iç içe büyümüştür.",
+  "source": "Biyoloji",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Yaşıt, aynı yılı, hatta bazen aynı ayı paylaşarak büyüyen kişiler için kullanılır; doğumla başlayan, seçilmemiş bir yakınlıktır.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Birbirine sarmaş dolaş olmak, hem iç içe büyümüş bitkiler için hem de birbirinden ayrılmaz iki yakın insan için söylenir.",
+  "source": "Türkçe deyim",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Türkçede amca babanın erkek kardeşi, dayı annenin erkek kardeşidir; İngilizcedeki tek bir uncle sözcüğü, bu ikisini ayırmaz.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Hala babanın kız kardeşi, teyze annenin kız kardeşidir; hangi taraftan geldiği, Türkçede sözcükle birlikte gelir.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Ağabey, muhtemelen ağa ve bey sözcüklerinin birleşmesinden doğmuştur; iki ayrı saygı unvanı, tek bir kardeşlik sözünde birleşmiştir.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Abla, yalnız öz kız kardeşe değil, yaşça büyük olan hemen her kadına söylenir; kelime, akrabalığın dışına taşıp bir saygı sözü olmuştur.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Elti, iki kardeşin eşleri arasındaki bağı anlatır; bu iki kadın kan bağıyla değil, evlendikleri kardeşler üzerinden akraba olur.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Bacanak, iki kız kardeşle evlenen iki erkek arasındaki bağın adıdır; İngilizcede bunu tek başına karşılayan bir sözcük yoktur.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Görümce, bir kadının kocasının kız kardeşine verdiği addır; akrabalık burada evlilikle, ama yine de adı olan bir bağla kurulur.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Kayın öneki, evlilik yoluyla akraba olunan herkes için kullanılır: kayınvalide, kayınbirader, kayınpeder; kan bağı yerine bağlanma bağı bunları kurar.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Dünür, evlenen iki gencin ebeveynlerinin birbirine verdiği addır; iki aile, çocukları üzerinden birbirinin dünürü olur.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Enişte, bir kadının kocasına, o kadının kardeşleri tarafından verilen addır; aile içine evlilikle giren biri için ayrı bir söz vardır.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Sağdıç, bir düğünde gelin ya da damadın yanında duran kişidir; sözcüğün kökü sağ yanda duran demeye çıkar, ömür boyu süren bir dostluk sözü olmuştur.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Manevi öneki, kan bağı olmayan yakınlıklara da bir akrabalık adı verir: manevi kardeş, manevi evlat; bağ kandan değil, seçimden gelir.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Can dostu, bir kişinin can kadar, yani kendi hayatı kadar değerli bulduğu dostudur; Türkçede en yakın dostluk, cana benzetilir.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Sırdaş, sır sözcüğüne daş ekiyle yapılır: bir sırrı paylaştığın, dolayısıyla ona güvendiğin kişi.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Türkçede -daş eki, bir şeyi paylaşan iki kişiyi anlatır: yoldaş, sırdaş, vatandaş, meslektaş; hepsi ortak bir şeyden doğan bir bağı taşır.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Yalnız taş duvar olmaz.",
+  "source": "Türk atasözü",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Dertleşmek, iki kişinin kendi sıkıntısını karşılıklı anlatmasıdır; Türkçede bu bile tek başına değil, birlikte yapılan bir eylem olarak kurulmuştur.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Konuşmak sözcüğü de aynı karşılıklılık ekini taşır; Türkçede konuşmak, en başından beri tek başına değil, karşılıklı yapılan bir şeydir.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Görüşmek, hem yeniden buluşmayı hem de bir ilişkiyi sürdürmeyi anlatır; görüşürüz sözü, aslında bir sonraki karşılaşmaya verilen bir sözdür.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Ahbap, Arapçada sevilen demek olan habib sözcüğünün çoğulundan gelir; Türkçede sıradanlaşıp günlük bir yakın arkadaş sözü olmuştur.",
+  "source": "Arapça",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Hatır, bir kişiye, aralarındaki bağ yüzünden gösterilen özeni anlatır; birinin hatırını saymak, o bağı hâlâ önemsediğini göstermektir.",
+  "source": "Türkçe",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Emanet, güvenlik anlamına gelen bir Arapça kökten gelir; birine bir şeyi emanet etmek, ona güvendiğini söylemenin başka bir yoludur.",
+  "source": "Arapça",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Muhabbet, kökeninde sevgi demektir, ama Türkçede günlük dilde iki kişi arasındaki sıcak, keyifli sohbeti anlatır olmuştur.",
+  "source": "Arapça",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Dost, Farsçada iyilik dileyen kişi demektir; Türkçeye geçerken bu iyi dilek anlamını hiç kaybetmedi.",
+  "source": "Farsça",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Sessizlik, ses sözcüğüne siz ekinin eklenmesiyle kurulur: ses olmayan hâl. Türkçede yokluk çoğu zaman böyle, bir ekle anlatılır.",
+  "source": "Türkçe",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Sükût, Arapçada durmak, kesilmek anlamına gelen bir kökten gelir; bir yer sessiz değil, konuşan biri sükût eder.",
+  "source": "Arapça",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Uğultu, hiçbir tek sesin ayırt edilemediği, ama yine de bir şeylerin duyulduğu o alçak, sürekli sesi anlatır; tam sessizlik değildir, sessizliğin dokusudur.",
+  "source": "Türkçe",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Hışırtı, en küçük seslerden biridir: bir yaprağın, bir kâğıdın, bir kumaşın kendi kendine çıkardığı ses. Her şey sustuğunda son kalan odur.",
+  "source": "Türkçe",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Baykuşun kanat tüylerinin kenarları saçaklıdır; bu saçaklar havayı öyle yumuşak böler ki, avına neredeyse hiç ses duyurmadan yaklaşır.",
+  "source": "Strigiformes",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Taze yağmış kar, yüksek frekanslı sesleri emer; bu yüzden bir kar yağışından sonra dışarısı, hiçbir şey değişmemiş gibi görünse de, gerçekten daha sessizdir.",
+  "source": "Akustik",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Yankısız bir odada dış ses tamamen kesildiğinde, kişi kendi kalp atışını, hatta kendi kanının dolaşımını duymaya başlar.",
+  "source": "Akustik mühendisliği",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Bazı orman örtülerinde komşu ağaçların tepeleri birbirine değmeyecek şekilde, aralarında ince bir boşluk bırakarak büyür; bu boşluğun tam nedeni hâlâ tartışılır.",
+  "source": "Botanik",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Türkiye'de hastane ve okul çevrelerinde korna çalmak yasaktır; bu bölgeler sessiz bölge tabelalarıyla ayrıca işaretlenir.",
+  "source": "Trafik yönetmeliği",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Pek çok Türk apartmanının yönetim planında öğleni ve geceyi kapsayan sessizlik saatleri yazılıdır; o saatlerde çekiç sesi bile ayıp sayılır.",
+  "source": "Apartman yönetmeliği geleneği",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Bir deniz kabuğunu kulağa götürünce duyulan uğultu, aslında denizin sesi değildir; kabuğun içinde yankılanan, çevredeki sıradan seslerdir.",
+  "source": "Akustik",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Kapadokya'nın Derinkuyu gibi yeraltı şehirleri kalın volkanik kayaya oyulmuştur; bu kalınlık, dışarının sesini neredeyse hiç içeri bırakmaz.",
+  "source": "Kapadokya",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Barış, barışmak fiilinden gelir; Türkçede önce bir eylemdir, birlikte yapılır, tek başına barışamazsın.",
+  "source": "Türkçe",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Barıştılar sözü, kavga eden iki çocuk için de, savaşı bitiren iki ülke için de aynı kelimeyle söylenir; ölçek değişir, kelime değişmez.",
+  "source": "Türkçe",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Sulh, Arapçadan gelen barış anlamındaki bir başka sözcüktür; Türkiye'de küçük anlaşmazlıklara bakan mahkemeye bugün de sulh mahkemesi denir.",
+  "source": "Arapça, Türk hukuku",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Ateşkes, ateş ile kesmek sözcüklerinin birleşmesinden oluşur; Türkçe, bu duraklamayı en açık hâliyle, neredeyse resim gibi anlatır.",
+  "source": "Türkçe",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Susmak, sessiz olmanın hâli değil, sessiz olmaya geçişin kendisidir; biri sessizliktedir, ama biri susar.",
+  "source": "Türkçe",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Durmak, hareketin bitmesini anlatır; durgun da aynı kökten gelir ve dalgasız, kıpırtısız bir suyu anlatmak için kullanılır.",
+  "source": "Türkçe",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Mütareke, Arapçada karşılıklı bırakmak anlamına gelen bir kökten gelir; iki taraf da aynı anda, aynı şeyi bırakmayı kabul eder.",
+  "source": "Arapça",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Vazgeçmek, bir isteği durdurmanın sözüdür; peşinden gidilen bir şeyin artık peşinden gidilmeyeceğini söylemenin en kısa yolu.",
+  "source": "Türkçe",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Yeter, Türkçede bir şeyi durdurmanın en kısa yoludur; yetmek fiilinden gelir, artık yetip taştığını anlatır.",
+  "source": "Türkçe",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Bırakmak, hem elden bir şeyi bırakmak hem de bir kavgayı, bir alışkanlığı sona erdirmek için kullanılır; ikisi de aynı fiille anlatılır.",
+  "source": "Türkçe",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Teskin etmek, sakinleşmekle aynı kökten gelir; öfkeyi, ağrıyı ya da kalabalığı, olduğu yerde durdurup yavaşça yatıştırmak demektir.",
+  "source": "Arapça",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Barışmak iki tarafın kendi kendine yaptığı bir şeydir; barıştırmak ise bir üçüncü kişinin, ikisini bir araya getirerek yaptığı bir şeydir.",
+  "source": "Türkçe",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Huzur, Arapçada bir kişinin huzurunda olmak, yani onun karşısında bulunmak anlamına gelirdi; zamanla bu, kişinin kendi içindeki dinginliğe döndü.",
+  "source": "Arapça",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Dinginlik, dingin sözcüğünden gelir ve dalgasız bir suyun ya da kıpırtısız bir havanın hâlini anlatır; huzurun öz Türkçe karşılığıdır.",
+  "source": "Türkçe",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Gönül rahatlığı, yalnızca bedenin değil, gönlün de dinlenmiş olmasını anlatır; biri rahatsa ama gönlü rahat değilse, bu saymaz.",
+  "source": "Türkçe",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Rahat, Arapçadan Türkçeye geçmiştir ve hem dinlenmişliği hem de bir şeyin hiç zorlanmadan, kolayca oluşunu anlatır.",
+  "source": "Arapça",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Keyif, Osmanlı zamanında kahve, tütün ya da sohbetle gelen o yavaş, aceleye getirilmeyen hoşnutluk hâlini anlatırdı.",
+  "source": "Arapça, Osmanlı kültürü",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Bir fincan Türk kahvesi hızlı içilmek için yapılmaz; telvesinin dibe çökmesi bile zaman ister, sohbet de o kadar sürer.",
+  "source": "Türk kahve kültürü",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Hamama gitmek eskiden bir işten çok bir günün kendisiydi; yıkanmak, ısınmak ve oyalanmak için ayrılan, aceleye getirilmeyen saatlerdi.",
+  "source": "Türk hamam kültürü",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Sakin, Türkçede hem sessiz ve durgun bir kişiyi hem de bir yerde oturan, orada yaşayan kişiyi anlatır; aynı sözcük, huzuru da yerleşikliği de taşır.",
+  "source": "Arapça",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Kanaat, elindekiyle yetinip daha fazlasını istememektir; kanaatkâr biri için huzur, eksiği tamamlamakla değil, olanı kabul etmekle gelir.",
+  "source": "Arapça",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Salınmak, ne rüzgârda yavaşça sallanan bir dal için ne de rahat rahat yürüyen bir insan için farklı bir sözcük ister; ikisi de aynı fiille anlatılır.",
+  "source": "Türkçe",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Ferah, hem geniş, açık bir yeri hem de içi rahatlamış bir insanı anlatır; içim ferahladı demek, içeride bir yer açılmış gibi hissetmektir.",
+  "source": "Arapça",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Ne varlığa sevinirim, ne yokluğa yerinirim.",
+  "source": "Yunus Emre (d. c.1321)",
+  "theme": "peace",
+  "subtheme": "atEase"
+ }
+]

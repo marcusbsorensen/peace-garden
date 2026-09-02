@@ -59,3 +59,11 @@ jobs:
       # every passage can actually come up.
       - name: Check the passage draw
         run: python3 tools/reference/passage_reference.py
+
+      # The site's banks and its language list are generated from the app, so a
+      # bank added to the app is a bank the site has, in the same commit. Without
+      # this the site is behind by however long it takes somebody to remember —
+      # which is the failure tools/preview/ already has and the string catalogue
+      # already had. docs/WEBSITE.md argues it at length.
+      - name: The site's languages are the app's
+        run: python3 tools/site/export.py --check

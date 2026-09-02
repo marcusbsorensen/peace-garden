@@ -1,0 +1,2096 @@
+[
+ {
+  "text": "Groning: ögonblicket då ett frö slutar vara ett förråd och börjar vara en planta. Det går inte att ta tillbaka.",
+  "source": "Botanik",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Vattenupptagning: det första en groddplanta gör är att dricka. Ingenting växer förrän vattnet har kommit in.",
+  "source": "Botanik",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Det första som lämnar fröet är en rot. Något går nedåt innan något går uppåt.",
+  "source": "Botanik",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Hjärtblad: bladet som packades ned långt innan det fanns något ljus att behöva det till, och som sällan liknar bladen som kommer efter.",
+  "source": "Botanik",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Tillväxtpunkt: den lilla fläck där cellerna ännu delar sig. Allt en planta någonsin blir kommer ur några få sådana.",
+  "source": "Botanik",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "En groddplanta avgör vad som är upp och vad som är ner innan den har nått ytan. Den ena delen följer ljuset, den andra följer tyngden.",
+  "source": "Tropismer",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Hos en blomväxt sker befruktningen två gånger på en gång: den ena kärnan blir grodden, den andra blir förrådet som packas omkring den.",
+  "source": "Dubbel befruktning",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Vivipari: när fröet gror redan på moderplantan, så att det som till slut faller till marken redan är en liten planta.",
+  "source": "Botanik",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Gräsen skickar upp en hätta först och låter de mjuka bladen glida ut ur den när den väl har nått ljuset.",
+  "source": "Groddslida",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Många frön gror först när ljuset når dem. De ligger kvar i mörkret och börjar den dag någon vänder på jorden.",
+  "source": "Ljusgroende frön",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Ett frö börjar med att förlora sitt skydd. Skalet som håller ute vattnet måste nötas, sprängas eller frysas sönder först.",
+  "source": "Botanik",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Många bäckar små gör en stor å.",
+  "source": "Svenskt ordspråk",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Droppen urholkar stenen.",
+  "source": "Ordspråk",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Ett orkidéfrö är fint som damm och bär nästan ingenting att leva av. Varje korn väntar på en svamp som kan mata in det i livet.",
+  "source": "Orchidaceae",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Det tyngsta fröet är sjökokosens, upp emot tjugofem kilo. De lättaste är orkidéernas: en miljon av dem väger ungefär ett gram.",
+  "source": "Fröets ytterligheter",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Linnean är ett litet krypande ris med två blommor på varje skaft. Linné tyckte att den liknade honom själv: låg, kortlivad och lätt att gå förbi.",
+  "source": "Linnaea borealis",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Blåbärsriset täcker ungefär en femtedel av all svensk skogsmark, och det mesta av bären blir aldrig plockat.",
+  "source": "Vaccinium myrtillus",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Ett enda hasselhänge släpper miljontals pollenkorn i mars. Det räcker att ett av dem hamnar rätt.",
+  "source": "Corylus avellana",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Ett ekollon som en nötskrika har gömt har större chans att bli ek än ett som bara faller, för fågeln bär bort det från moderträdet och glömmer sedan en hel del av dem.",
+  "source": "Garrulus glandarius",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "En vitsippsmatta kryper vidare några centimeter om året. Lunden som står vit i april kan vara ett fåtal plantor som har haft hundratals år på sig.",
+  "source": "Anemone nemorosa",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Björken är bland de första tillbaka efter en brand, och ett enda träd kan släppa flera miljoner frön på en höst.",
+  "source": "Betula",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Vitmossan växer några millimeter om året och har med den takten byggt myrar som är metervis djupa.",
+  "source": "Sphagnum",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Väl börjat är hälften vunnet.",
+  "source": "Svenskt ordspråk",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Äpplet faller inte långt från trädet.",
+  "source": "Svenskt ordspråk",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Som man sår får man skörda.",
+  "source": "Svenskt ordspråk",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Bättre stämma i bäcken än i ån.",
+  "source": "Svenskt ordspråk",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Nya kvastar sopar bäst.",
+  "source": "Svenskt ordspråk",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Börja hör ihop med bära och börd. En början var något man lyfte upp och tog på sig.",
+  "source": "Fornsvenska",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Ursprung är ur och springa: stället där något springer fram, så som en källa gör ur marken.",
+  "source": "Svenska",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Vår och latinets ver är samma gamla ord för samma årstid. Det har hållit sig nästan oförändrat i några tusen år.",
+  "source": "Latin",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Semester kommer av latinets sex månader, sex mensis: den halvårslånga terminen. Ordet betydde arbetstid innan det betydde ledighet.",
+  "source": "Latin",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Natur kommer av latinets natura, av nasci, att födas. Ordet för allting är byggt på ordet för att börja.",
+  "source": "Latin",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Runstenarna börjar nästan alltid likadant: någon lät resa stenen efter någon annan. Det första som skrevs ned på svenska var vem som saknade vem.",
+  "source": "Runsvenska",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Så en kärna ur vilket äpple som helst och det som kommer upp är en helt ny sort. Därför reser namngivna äpplen som ympkvistar och aldrig som frön.",
+  "source": "Malus domestica",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Äppelsorten Åkerö har odlats sedan sjuttonhundratalet, och varje Åkeröträd är ympat i obruten följd tillbaka till ett enda.",
+  "source": "Åkerö, Södermanland",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Frövila: ett frö som vägrar gro fast allt är som det ska, hållet tillbaka inifrån tills något förändras.",
+  "source": "Botanik",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Groningsvila: ett frö som är helt färdigt och bara väntar på världen. Något annat än frövila, och ständigt förväxlat med den.",
+  "source": "Botanik",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Stratifiering: de veckor av kyla ett frö måste igenom innan det sätter igång. Trädgårdsmästare förfalskar dem med en låda i kylskåpet.",
+  "source": "Botanik",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Skarifiering: att nöta hål på ett fröskal så att vattnet kommer in. I det fria sköts det av en tarm, en brand eller en vinter av grus.",
+  "source": "Botanik",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Vernalisering: den långa kylan ett frö eller en knopp går igenom, och efter vilken våren förmår flytta den.",
+  "source": "Botanik",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Marcescens: torra blad som eken och boken håller kvar hela vintern och släpper först när de nya knopparna trycker av dem.",
+  "source": "Botanik",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Somliga ökenfrön bär ett ämne på skalet som måste sköljas bort av ett visst mått regn, så att en lätt skur inte kan lura dem att börja.",
+  "source": "Groningshämmare",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Nästa sommars blad ligger färdigpackade i knoppen redan i augusti året innan. Ett vinterträd är fullt av sådant som väntar.",
+  "source": "Knoppvila",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Järnnätter: de klara junenätter i norr då frosten kan komma tillbaka och ta det som redan hade vågat sig ut.",
+  "source": "Svenskt väderord",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Renlav växer några millimeter om året. En avbetad lavhed behöver decennier på sig, och alla som lever av den vet det.",
+  "source": "Cladonia",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Vitsippan blommar färdigt innan lövet slår ut. Hela dess år ryms i de veckor då taket ovanför ännu står öppet.",
+  "source": "Anemone nemorosa",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "År 1831 planterades trehundratusen ekar på Visingsö åt flottan. När de var mogna 1975 tackade marinen nej: fartyg byggdes inte längre av trä.",
+  "source": "Ekplanteringarna på Visingsö",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "På Fulufjället står en gran vars rotsystem har daterats till omkring niotusenfemhundra år. Stammen ovanför är ung; den har bara bytts ut många gånger.",
+  "source": "Old Tjikko, Dalarna",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "En tall kan bli sju hundra år och sedan stå kvar som torraka i ett par hundra till. Silverfuran på hygget är ofta äldre än skogen omkring den.",
+  "source": "Pinus sylvestris",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Vid Höga kusten stiger landet ännu ungefär åtta millimeter om året, och har gjort det sedan inlandsisen släppte taget.",
+  "source": "Landhöjningen",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Siljans båge är kanten av en krater som slogs i berget för trehundrasjuttiosju miljoner år sedan. Sjöarna ligger i randen, inte i mitten.",
+  "source": "Siljansringen",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Granen sätter kottar rikligt bara vissa år, och de åren infaller samtidigt över hela landsdelar. Ingen har kommit överens om något.",
+  "source": "Kottår",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "En dadelkärna från Masada, omkring tvåtusen år gammal, såddes 2005 och grodde. Trädet fick heta Metusalem.",
+  "source": "Phoenix dactylifera, Israel",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Smågnagare grävde ned frukter i den sibiriska tundran för omkring trettiotvåtusen år sedan. År 2012 odlades vävnaden inifrån dem vidare till blommande plantor.",
+  "source": "Silene stenophylla",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Ett lotusfrö ur en gammal sjöbotten i Liaoning grodde efter ungefär tretton hundra år, och plantan lever än.",
+  "source": "Nelumbo nucifera",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Frön förseglades i flaskor och grävdes ned 1879. En flaska som öppnades 2021 innehöll ännu kungsljusfrön som vaknade och växte.",
+  "source": "Beals fröförsök, Michigan",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Titanarum kan lagra i sju år eller mer innan den blommar, och blomningen är över på ungefär två dygn.",
+  "source": "Amorphophallus titanum",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Intet är som väntanstider, vårflodsveckor, knoppningstider.",
+  "source": "Erik Axel Karlfeldt, Fridolins visor, 1898",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Jag väntar vid min stockeld medan timmarna skrida, medan stjärnorna vandra och nätterna gå.",
+  "source": "Dan Andersson, Kolvaktarens visor, 1915",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Midvinternattens köld är hård, stjärnorna gnistra och glimma.",
+  "source": "Viktor Rydberg, Tomten, 1881",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Blott en dag, ett ögonblick i sänder.",
+  "source": "Lina Sandell (1832–1903)",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Den som väntar på något gott väntar aldrig för länge.",
+  "source": "Svenskt ordspråk",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Kommer dag, kommer råd.",
+  "source": "Svenskt ordspråk",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "En svala gör ingen sommar.",
+  "source": "Ordspråk",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Man ska inte ropa hej förrän man är över bäcken.",
+  "source": "Svenskt ordspråk",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Östergök är tröstegök, västergök är bästegök, norrgök är sorgegök, södergök är dödergök.",
+  "source": "Svensk folktro om årets första gök",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Vänta hörde en gång ihop med att hoppas. Fornnordiskans ván var förhoppningen, och att vänta var att se fram emot snarare än att stå still.",
+  "source": "Fornnordiska",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Tålamod är tåla och mod. Mod betydde sinne långt innan det betydde tapperhet, så ordet säger vilket sinne man bär något med.",
+  "source": "Fornsvenska",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Allting har sin tid, och vart företag under himmelen har sin stund.",
+  "source": "Predikaren, Bibeln 1917",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Stubbskottsbruk: att hugga ett träd till marken med jämna mellanrum, vilket inte avslutar det utan börjar om det. En stubbe kan hållas vid liv i sekler så.",
+  "source": "Skogsbruk",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Serotini: frön som hålls kvar i en kotte förseglad med kåda, och som kommer ut först i värmen från en brand.",
+  "source": "Botanik",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Sovande knoppar kan ligga år under barken och vakna först när kronan ovanför dem är borta.",
+  "source": "Botanik",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Gräsen växer från basen och inte från spetsen. Därför dödar klippningen inte en gräsmatta, men väl det mesta som försöker dela den.",
+  "source": "Poaceae",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Aspen svarar på att bli fälld med att skjuta hundratals rotskott. Ett avverkat träd blir en dunge.",
+  "source": "Populus tremula",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Efter en skogsbrand är brandnävan bland de första uppe. Fröna har legat i marken och väntat på just den värmen.",
+  "source": "Geranium bohemicum",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Hamling: att skära av grenarna högt på stammen och komma tillbaka vart femte år efter nya. Träden på gamla ängar är formade av det.",
+  "source": "Hamling",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Svedjebruk lämnade sina spår i namnen. Orter på -ryd, -röd och -sved ligger där någon en gång brände marken ren för att kunna så i askan.",
+  "source": "Ortnamn",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Sex ginkgoträd som stod inom två kilometer från sprängpunkten i Hiroshima klarade sig, satte blad igen och lever i dag.",
+  "source": "Hibakujumoku, Hiroshima",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "När Mount St Helens fick sitt utbrott 1980 var de första växterna tillbaka inte nykomlingar utan överlevare som råkat ligga under snö eller jord.",
+  "source": "Mount St Helens, 1980",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "En gammal lindstubbe i en hagmark kan vara äldre än kyrkan intill. Trädet har huggits ned var femtonde år, och rötterna har aldrig slutat.",
+  "source": "Lövängsbruk",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Den blomstertid nu kommer med lust och fägring stor.",
+  "source": "Israel Kolmodin, 1695, i Wallins bearbetning",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "En vänlig grönskas rika dräkt har smyckat dal och ängar.",
+  "source": "Carl David af Wirsén (1842–1912)",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Vårvindar friska leka och viska.",
+  "source": "Julia Nyberg (Euphrosyne), 1785–1854",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Blommorna visa sig på marken, tiden har kommit, då vinträden skäras, och turturduvan låter höra sin röst.",
+  "source": "Höga Visan, Bibeln 1917",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Det som göms i snö kommer upp i tö.",
+  "source": "Svenskt ordspråk",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Efter regn kommer solsken.",
+  "source": "Svenskt ordspråk",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Var sak har sin tid.",
+  "source": "Svenskt ordspråk",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Höst och engelskans harvest är samma ord. Årstiden är uppkallad efter arbetet, och namnet på arbetet överlevde arbetet.",
+  "source": "Fornnordiska",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Höstfärgerna är vad som blir kvar sedan trädet har tagit tillbaka kvävet och fosforn ur bladet. Det vackra är resten.",
+  "source": "Bladens åldrande",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Valborgsmässoafton är kvällen då vintern förklaras slut med eld, oavsett om den är det.",
+  "source": "Valborg, 30 april",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Vassen står kvar hela vintern som torra strån och faller först när de nya skotten kommer underifrån. Det gamla får stå tills det blir avlöst.",
+  "source": "Phragmites australis",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Daggkåpan pressar ut vatten ur bladkanten om natten och samlar en droppe i mitten. Alkemisterna hämtade det vattnet och gav växten dess namn.",
+  "source": "Alchemilla",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Dagg är inte regn. Det är luftens eget vatten som lägger sig ut när marken har hunnit bli kallare än den.",
+  "source": "Meteorologi",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Guttation: droppar som en planta trycker ut ur bladet inifrån, till skillnad från dagg, som kommer utifrån. Två sorters morgonvåt.",
+  "source": "Botanik",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Kintsugi: att laga trasigt porslin med guld, så att lagningen blir det man ser först.",
+  "source": "Japanska",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Läkare och läkedom är samma ord som läka. Den som lagade något hette efter vad han gjorde, inte efter vad han kunde.",
+  "source": "Fornsvenska",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Frisk säger man om en människa, om vatten och om vinden, och det är samma ord varje gång. Att vara frisk är att vara färsk.",
+  "source": "Svenska",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Trivas kommer av fornnordiskans þrífask, att gripa tag om för egen räkning. Att trivas var en gång att ta för sig.",
+  "source": "Fornnordiska",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Renässans är latinets renasci, att födas på nytt. Tidsåldern lånade sitt namn av det som händer med en växt.",
+  "source": "Latin",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Resurgam: jag skall stå upp igen. Vanligt på gravstenar, där det är skrivet som ett konstaterande och inte som en förhoppning.",
+  "source": "Latin",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Anastasis: ett uppståndande. Biologer lånade ordet till celler som börjar dö och sedan hämtar sig igen.",
+  "source": "Grekiska",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Tiden läker alla sår.",
+  "source": "Ordspråk",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Ett träd som har blåst omkull kan leva vidare liggande. Grenarna på ovansidan reser sig och blir stammar, och den gamla stammen blir rot.",
+  "source": "Nedfallna träd",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Gökotta: att gå upp i gryningen och ut för att höra de tidigaste fåglarna. Otta är svenskans gamla namn på timmarna före dagningen.",
+  "source": "Svenska",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Otta lever kvar i ottesång och i gökotta och betyder den mörka delen av morgonen, innan dagen räknas som börjad.",
+  "source": "Fornsvenska",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Skymning kommer av skymma, att stå i vägen för. Ljuset tas inte bort om kvällen, det blir bara skymt.",
+  "source": "Svenska",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Dager är det gamla ordet för dagsljuset självt, till skillnad från dagen, som är en tid. Det finns kvar i att det dagas.",
+  "source": "Fornsvenska",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Morgonstund har guld i mund.",
+  "source": "Svenskt ordspråk",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Blå timmen: stunden efter solnedgången då himlen är mättat blå och ingenting kastar skugga.",
+  "source": "Fotografins term",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "I Kiruna står solen över horisonten från slutet av maj till mitten av juli. Ingen kväll kommer, bara en lägre eftermiddag.",
+  "source": "Norr om polcirkeln",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Polarnatten i Kiruna varar ungefär en månad. Solen kommer inte upp, men himlen gör det ändå och står blå mitt på dagen.",
+  "source": "Norr om polcirkeln",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "I södra Sverige blir juninatten aldrig riktigt mörk. Skymningen möter gryningen utan att natten hinner emellan.",
+  "source": "Astronomisk skymning",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Natten är dagens mor, Kaos är granne med Gud.",
+  "source": "Erik Johan Stagnelius (1793–1823)",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Opp, Amaryllis! Vakna min lilla! Vädret är stilla, luften sval.",
+  "source": "Carl Michael Bellman, Fredmans sång nr 31",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Alpglöd: det röda som blir kvar högst uppe på ett fjäll när solen redan har lämnat allt nedanför.",
+  "source": "Bergsord",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Fotoperiodism: en växt avgör när den ska blomma genom att mäta nattens längd. Den räknar mörkret, inte ljuset.",
+  "source": "Botanik",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Etiolering: den bleka, utdragna växten som blir av en planta i mörker, sträckt efter ett ljus som inte finns.",
+  "source": "Botanik",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Heliotropism: att en planta vrider sig genom dagen och håller ansiktet mot solen.",
+  "source": "Botanik",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Nyktinasti: blad och kronblad som viker ihop sig i skymningen och öppnar sig igen med ljuset.",
+  "source": "Botanik",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Linné ritade ett blomsterur: arter som öppnar och sluter sig vid bestämda timmar, planterade i ordning, så att rabatten kunde läsas som en klocka.",
+  "source": "Horologium florae, 1751",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Linné skrev en avhandling om växternas sömn för att förklara varför klöverbladen fälls ihop när det mörknar.",
+  "source": "Somnus plantarum, 1755",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Blad är gröna för att klorofyllet använder dagsljusets röda och blå och kastar tillbaka det gröna. En växt har färgen av det ljus den inte har någon nytta av.",
+  "source": "Klorofyll",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Många blommor bär ultravioletta märken som löper inåt mot mitten. Ett bi ser dem. Vi gör det inte.",
+  "source": "Nektarmärken",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Bara några procent av ljuset som faller på en skog når marken. Därför är det mesta av lundens blomning över innan träden har slagit ut.",
+  "source": "Krontaket",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Unga solrosor följer solen västerut och vrider sig tillbaka österut under natten. Fullvuxna stannar vända mot öster, där morgonvärmen hämtar bina tidigare.",
+  "source": "Helianthus annuus",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Vitsippan vänder blomman efter solen och sluter den i regn. En stängd sippa är en väderleksrapport.",
+  "source": "Anemone nemorosa",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Tusenskönan är döpt efter tusen skönheter. Engelskan kallar samma blomma dagens öga, efter att den öppnar sig med ljuset. Två språk har sett samma sak och räknat olika.",
+  "source": "Bellis perennis",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Varde ljus.",
+  "source": "Första Mosebok, Bibeln 1917",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Gläns över sjö och strand, stjärna ur fjärran.",
+  "source": "Viktor Rydberg, Betlehems stjärna",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Ljus och latinets lux går tillbaka på samma indoeuropeiska rot. Ordet är äldre än något av de språk som bär det.",
+  "source": "Latin",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Sol heter sol också på latin, och har gjort det sedan innan språken skildes åt.",
+  "source": "Latin",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Måne och månad är samma ord. Månen mätte upp tiden innan något annat gjorde det.",
+  "source": "Fornnordiska",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Solstånd är latinets sol och sistere, solen som står stilla: några dagar kring midsommar går den upp på nästan samma ställe.",
+  "source": "Latin",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Fosfor är grekiska för ljusbärare. Det var morgonstjärnans namn långt innan det blev grundämnets.",
+  "source": "Grekiska",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Norrskenet lyser grönt när solvinden träffar syret på ungefär hundra kilometers höjd. Färgen talar om vilken gas det är och hur högt upp.",
+  "source": "Aurora borealis",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Ljuset från solen når ett blad på åtta minuter, sedan det har använt tiotusentals år på vägen från solens kärna ut till dess yta.",
+  "source": "Solfysik",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Fullmånen är omkring fyrahundratusen gånger svagare än solen, och ögat ställer om sig så fullständigt att det inte känns så.",
+  "source": "Månbelysning",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Mångata: den ljusstig månen lägger ut över vattnet. Den pekar alltid rakt mot den som ser den, och mot ingen annan.",
+  "source": "Svenska",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Anders Celsius satte hundra grader vid vattnets fryspunkt och noll vid kokpunkten. Skalan vändes efter hans död, och Linné var en av dem som vände den.",
+  "source": "Celsiusskalan, 1742",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Nya blad sätts ungefär hundratrettiosju och en halv grad runt från det förra: den enda vinkel där varje blad får behålla en del av ljuset.",
+  "source": "Bladställning, den gyllene vinkeln",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Räkna spiralerna i en solros åt bägge hållen och du landar nästan alltid på två Fibonaccital intill varandra, som 34 och 55.",
+  "source": "Helianthus annuus",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Kottar, ananasar och prästkragar räknar sina spiraler i Fibonaccital, för att varje ny del sätts i den största lucka de föregående har lämnat.",
+  "source": "Bladställning",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Quincunx: fem satta som på en tärning, fyra i hörnen och en i mitten. Fruktträd planteras ännu så, för att det då ryms flest på marken.",
+  "source": "Latin",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Symmetri är grekiska för samman-mätt: syn, med, och metron, ett mått.",
+  "source": "Grekiska",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Kalkyl kommer av latinets calculus, en småsten. Räknandet sköttes med stenar långt innan det sköttes med tecken.",
+  "source": "Latin",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Varje fågel i en stararflock håller ögonen på sina sex eller sju närmaste, hur långt bort de än råkar vara. Mer behövs inte för att flocken ska få sin form.",
+  "source": "Flockbeteende",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Ett bi som kommer hem dansar vinkeln till blommorna räknad mot solen, och längden på vaggningen säger hur långt de andra ska flyga.",
+  "source": "Karl von Frisch",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Klövern räknar tre. Det fyrbladiga är ett fel i räkningen och drabbar ungefär ett blad på tiotusen.",
+  "source": "Trifolium repens",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Sju sorters kakor på bordet, sju sorters blommor under kudden. Talet sju gör i svenska seder samma tjänst som ett runt tal.",
+  "source": "Svensk sed",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Sverige har närmare hundratusen sjöar som är större än en hektar. Ingen har räknat de mindre.",
+  "source": "Sveriges sjöar",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Tessellering: former som möts kant mot kant utan att något blir över, vilket är vad en vaxkaka är.",
+  "source": "Geometri",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Fraktal: en form som behåller sitt sätt i varje skala, så att en bit av ett ormbunksblad ser ut som ormbunken.",
+  "source": "Geometri",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Korsvis bladställning: blad två och två, varje par vridet ett kvarts varv från paret under, så att inget blad står rakt över ett annat.",
+  "source": "Botanik",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Flockblomstriga växter låter varje skaft utgå från en punkt och sluta i samma höjd, så som hundkäxet gör.",
+  "source": "Apiaceae",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Prästkragen vänder sig åt alla håll på en gång, orkidén vänder sig mot dig. Nästan varje blomma är det ena eller det andra.",
+  "source": "Blommans symmetri",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Bicellerna börjar runda och sätter sig till sexhörningar när vaxet värms. En sexhörning ger mest golv för minst vägg.",
+  "source": "Apis mellifera",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "En snöflingas sex armar liknar varandra för att de växte i samma luft i samma ögonblick, inte för att någon arm kan se en annan.",
+  "source": "Kristalltillväxt",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Sebrans ränder, leopardens fläckar och mönstret på en fisk kan alla uppstå ur två ämnen som sprider sig och reagerar olika fort, en mekanism Alan Turing beskrev 1952.",
+  "source": "Turingmönster",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Pollenkorn bär ett skulpterat skal av sporopollenin, tåligt nog att behålla sitt mönster i torv i tusentals år och ändå gå att artbestämma.",
+  "source": "Pollenanalys",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "En gärdsgård hålls ihop utan en enda spik. Stören och vidjan gör allt arbetet, och den kan tas isär och sättas upp igen hur många gånger som helst.",
+  "source": "Gärdsgård",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Raukarna på Gotland är resterna av rev som byggdes av djur i ett varmt hav för drygt fyrahundra miljoner år sedan. Havet har sedan skurit bort allt utom det hårdaste.",
+  "source": "Gotlands raukar",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Linné gav varje art två namn, ett för släktet och ett för arten, och den vanan har hållit sedan 1753.",
+  "source": "Species Plantarum",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Linnés valspråk var att förundras över allt, också över det allra vanligaste.",
+  "source": "Carl von Linné, fritt återgivet",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Före Linné kunde en växts namn vara en hel mening på latin som beskrev den. Efter honom var det två ord som bara pekade.",
+  "source": "Binär nomenklatur",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Linné skickade ut sjutton av sina elever över världen för att samla. Flera av dem kom aldrig hem.",
+  "source": "Linnés lärjungar",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Det dunkelt sagda är det dunkelt tänkta.",
+  "source": "Esaias Tegnér, Lund 1820",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Kosmos är grekiskans ord för ordning och för prydnad på en gång. Samma rot ger kosmetik: att kalla världsalltet kosmos var att kalla det välordnat.",
+  "source": "Grekiska",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Ordning kommer av latinets ordo, som tros ha börjat i raden av trådar på en vävstol. Ordet för uppställning började vid väven.",
+  "source": "Latin",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Rytm kommer av grekiskans rhein, att flyta. En rytm är ett flytande, uppmätt.",
+  "source": "Grekiska",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "En antologi är en blomsterplockning: grekiskans anthos, blomma, och legein, att samla ihop.",
+  "source": "Grekiska",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Prästkrage heter blomman efter den vita veckade krage prästerna bar. Den är uppkallad efter en klädedetalj som ingen längre bär.",
+  "source": "Leucanthemum vulgare",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Varje svenskt landskap har sin egen blomma. Listan gjordes upp i början av nittonhundratalet och är alltså yngre än järnvägen.",
+  "source": "Landskapsblommorna",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Linné skrev sin lappländska resa som dagbok medan han gick, med berg, myggor och trasiga skor i samma spalt.",
+  "source": "Carl von Linné, 1732",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "En tesked frisk jord innehåller fler levande varelser än det finns människor på jorden.",
+  "source": "Markbiologi",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Det tar flera hundra år att bygga en centimeter matjord, och ett oväder på bar mark att ta bort den.",
+  "source": "Jordmånsbildning",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Matjord heter så för att den föder. Ordet säger vad lagret gör och inte var det ligger.",
+  "source": "Svenska",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Mylla och mull är samma ord för den lösa mörka jorden. Att mylla ned något är att lämna tillbaka det.",
+  "source": "Fornsvenska",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "En mosse får allt sitt vatten ur regnet, ett kärr får sitt ur marken. Svenskan skiljer på dem, och växterna gör det också.",
+  "source": "Våtmarkstyper",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Stora alvaret bär dussintals arter på en kvadratmeter, just för att jordlagret över kalkstenen är för tunt för att någon av dem ska kunna ta över.",
+  "source": "Öland",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Daggmaskarna för hela åkerns matjord genom sina kroppar med några års mellanrum. Darwin höll på i fyrtio år med den saken och gjorde den till sin sista bok.",
+  "source": "Darwin om daggmaskar, 1881",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Rotzonen: de få millimetrar jord som ligger närmast en rot, olik all annan jord för att roten har arbetat på den.",
+  "source": "Botanik",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Alen binder kväve ur luften med hjälp av en bakterie i rotknölarna och gödslar därmed den mark den själv står i.",
+  "source": "Alnus",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Torvmossen bevarar. Syret når inte ned, och det som hamnar där ligger kvar med mössan på i tusen år.",
+  "source": "Torv",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Latinets homo, människa, och humus, jord, är ett och samma ord. Ödmjuk är byggt på det också: att hålla sig lågt, nära marken.",
+  "source": "Latin",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Borta bra men hemma bäst.",
+  "source": "Svenskt ordspråk",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Jag längtar hem sen åtta långa år. I själva sömnen har jag längtan känt.",
+  "source": "Verner von Heidenstam, 1888",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Jag minns den ljuva tiden, jag minns den som i går.",
+  "source": "Anna Maria Lenngren, Pojkarne, 1797",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Det är skimmer i molnen och glitter i sjön, det är ljus över stränder och näs.",
+  "source": "Gustaf Fröding, 1896",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Min barndoms träd stå höga i gräset och skaka sina huvuden: vad har det blivit av dig?",
+  "source": "Edith Södergran (1892–1923)",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Granne är samman-hus: ga, tillsammans, och rann, hus. En granne är den som bor i samma länga som du.",
+  "source": "Fornnordiska",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Bygd hör ihop med bygga och med bo. En hembygd är helt enkelt den mark någon har bott på tillräckligt länge.",
+  "source": "Fornsvenska",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Tomten är uppkallad efter tomten: marken huset står på. Gårdens ande var platsens ande, och den flyttade inte med.",
+  "source": "Svensk folktro",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Bonde kommer av att bo. En bonde var först och främst den som stannade kvar.",
+  "source": "Fornnordiska",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Smultronställe: en liten plats man håller för sig själv och går tillbaka till.",
+  "source": "Svenska",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Ortnamn på -torp, -boda och -säter ligger där någon flyttade ut och började om en bit ifrån byn.",
+  "source": "Ortnamn",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Skogen täcker omkring sjuttio procent av Sveriges yta, och nästan nio av tio svenskar bor i en tätort.",
+  "source": "Sverige i siffror",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Trädgård är träd och gård, och gård betydde först stängsel. En trädgård är i grunden det inhägnade, och träden kom med i namnet efteråt.",
+  "source": "Fornsvenska",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Hage hör ihop med hägn och hägna. En hage är en plats som någon har satt ett skydd omkring.",
+  "source": "Fornnordiska",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Odla kommer av odal, den ärvda jorden. Att bruka marken fick namn efter att äga den i led.",
+  "source": "Fornsvenska",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Paradis började som en inhägnad trädgård: fornpersiskans pairidaeza, en mur runt något som planterats för nöjes skull.",
+  "source": "Fornpersiska",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Vårdträd: trädet som planterades vid gården och bar dess lycka. Det fälldes inte, inte ens när det stod i vägen.",
+  "source": "Svensk sed",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Fäbod: platsen i skogen dit boskapen fördes över sommaren, med en stuga, en vall och närmaste granne timmar bort.",
+  "source": "Fäbodbruk",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Kulning bär över kilometer utan förstärkning. Rösten var ett redskap innan den blev en sång.",
+  "source": "Fäbodmusik",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Allemansrätten låter dig gå över annans mark, bada i annans vatten och sova en natt där du står, mot att du lämnar allt som du fann det.",
+  "source": "Svensk sedvanerätt",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Uti vår hage där växa blå bär. Kom hjärtansfröjd!",
+  "source": "Folkvisa",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Har du en trädgård i ditt bibliotek fattas ingenting.",
+  "source": "Cicero, brev till Varro, 46 f.Kr., fritt återgivet",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Linnés trädgård i Uppsala är återställd kvarter för kvarter efter hans egen ritning från 1745.",
+  "source": "Linnéträdgården",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Sveriges första koloniträdgård anlades i Landskrona 1895, för att den som bodde i staden också skulle ha en jordplätt att sköta.",
+  "source": "Koloniträdgårdar",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Sippor och violer sprids av myror. Fröet bär en fet knopp som myran vill åt, så den släpar hem alltihop, äter den delen och lämnar resten på avskrädeshögen.",
+  "source": "Myrspridning",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Vindspridning: hela resan görs på rörlig luft, och fröet är byggt uteslutande för den.",
+  "source": "Botanik",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Djurspridning: fröet gör hela sin resa inuti eller fastklamrat vid något som går.",
+  "source": "Botanik",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Springkornet bygger spänning i kapseln under torra veckor och slungar sina frön så snart något rör vid den.",
+  "source": "Impatiens noli-tangere",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "En maskrosfrukts fallskärm håller en ring av cirklande luft strax ovanför sig, och just den virveln är vad som bär fröet långt hemifrån.",
+  "source": "Nature, 2018",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Kardborrebandet heter efter kardborren, och med rätta. En schweizisk ingenjör såg 1941 vad som satt fast i hundens päls, lade krokarna under mikroskop och byggde efter dem.",
+  "source": "Arctium, och George de Mestral",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Misteln kommer fastlimmad vid en gren, eftersom fågeln inte gärna blir av med fröet och torkar av näbben mot barken.",
+  "source": "Viscum album",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Ett flyttblock kan ha burits hundratals kilometer av inlandsisen och lagts ned där isen tog slut. Stenen mitt på hygget är på besök.",
+  "source": "Istiden",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "En kokosnöt kan flyta i månader över öppet hav och rota där den kommer i land. Hela öfloror har anlänt på det viset.",
+  "source": "Cocos nucifera",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Rönnbär, blåbär och hallon är byggda för att ätas. Kärnan är hård just för att den ska klara resan genom en fågel.",
+  "source": "Bärspridning",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Krakatau steriliserades vid utbrottet 1883. Frön kom med havet och med fåglarna, och femtio år senare stod det skog där igen.",
+  "source": "Krakatau, efter 1883",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Många av åkerns blommor kom till Sverige som föroreningar i utsädet. De har aldrig haft någon annan väg hit än vår.",
+  "source": "Åkerogräs",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Stig hör ihop med stiga. En stig är ett stigande, satt av fötter.",
+  "source": "Fornsvenska",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Led betyder både en väg och att leda. En farled och en vandringsled är uppkallade efter vad någon gör med dem.",
+  "source": "Svenska",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Färd hör till fara och till fart. Att färdas var att fara, och ingenting annat.",
+  "source": "Fornnordiska",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Resa hör ihop med att resa sig. Att ge sig av var först och främst att komma upp.",
+  "source": "Fornnordiska",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Alla vägar bär till Rom.",
+  "source": "Ordspråk",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Vem kan segla förutan vind, vem kan ro utan åror?",
+  "source": "Folkvisa",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Härlig är jorden, härlig är Guds himmel, skön är själarnas pilgrimsgång.",
+  "source": "B. S. Ingemann, svensk text av Cecilia Bååth-Holmberg (1852–1920)",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Man ska inte gå över ån efter vatten.",
+  "source": "Svenskt ordspråk",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Först till kvarn får först mala.",
+  "source": "Svenskt ordspråk",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Kungsleden går drygt fyrtio mil genom fjällen och byggdes upp av Svenska Turistföreningen från början av nittonhundratalet.",
+  "source": "Kungsleden",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "En svensk vandringsled är märkt med en orange klick på ett träd. Systemet håller bara så länge någon går efter och målar om.",
+  "source": "Ledmarkering",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Jag längtar till landet som icke är, ty allting som är, är jag trött att begära.",
+  "source": "Edith Södergran (1892–1923)",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Omkring tiggarn från Luossa satt allt folket i en ring.",
+  "source": "Dan Andersson, Svarta ballader, 1917",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Längta hör till lång. Att längta är att uppleva tiden eller sträckan som utdragen.",
+  "source": "Fornsvenska",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Vemod: en stillsam sorg över något gott som är över. Ve och mod, alltså det sinne man bär saknaden i.",
+  "source": "Svenska",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Fernweh: värken efter fjärran platser, och exakt motstycket till hemlängtan.",
+  "source": "Tyska",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Pilgrim är latinets peregrinus, en som är utanför åkrarna, alltså en främling. Det heliga kom till efteråt.",
+  "source": "Latin",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Nomad är grekiskans nomas, en som flyttar efter betet, av nemein, att beta. Ordet handlar om gräs innan det handlar om rastlöshet.",
+  "source": "Grekiska",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Granen är en sen invandrare i Sverige. Den kom in norrifrån och nådde de södra delarna av landet först för ett par tusen år sedan.",
+  "source": "Picea abies",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Sjöbönor från Karibien flyter i land på nordiska stränder med Golfströmmen, och togs förr tillvara som amuletter av folk som inte hade en aning om varifrån de kom.",
+  "source": "Entada gigas",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Svalorna troddes en gång övervintra i dyn på sjöbottnarna, eftersom ingen kunde tro att de reste så långt som de faktiskt gör.",
+  "source": "Äldre naturalhistoria",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Lövsångaren är Sveriges talrikaste fågel, väger omkring tio gram och tillbringar mindre än halva sitt år i landet. Resten ligger söder om Sahara.",
+  "source": "Phylloscopus trochilus",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Vindarna heter i svenskan efter var de kommer ifrån och inte vart de går. En nordan blåser norrifrån och bort.",
+  "source": "Väderstreck",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Flickan kom ifrån sin älsklings möte, kom med röda händer.",
+  "source": "Johan Ludvig Runeberg (1804–1877)",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Möta hör ihop med mot. Att mötas är att gå emot varandra ända tills det inte går längre.",
+  "source": "Fornsvenska",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Hända hör till hand: att komma i händerna på någon. En händelse är något som kommer i ens väg och stannar där.",
+  "source": "Fornnordiska",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Kairos: öppningen i tiden då något går att göra. Det rätta ögonblicket, till skillnad från klockslaget.",
+  "source": "Grekiska",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Clinamen: den svaga svängning med vilken fallande atomer kommer att möta varandra, och därmed gör en värld.",
+  "source": "Lucretius, första århundradet f.Kr.",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Anagnorisis: vändningen i en berättelse där någon känner igen vem en annan har varit hela tiden.",
+  "source": "Grekiska",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Sju sorters blommor plockade under tystnad på midsommarnatten och lagda under kudden, så att den man ska möta visar sig i drömmen.",
+  "source": "Svensk midsommarsed",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Tranorna samlas vid Hornborgasjön varje april i tiotusental. Vanan började med potatis som blev över vid ett brännvinsbränneri och har hållit i sig långt efter att brännvinet tog slut.",
+  "source": "Hornborgasjön",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Ingen stiger ned i samma flod två gånger.",
+  "source": "Tillskrivet Herakleitos, fritt återgivet",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Ichigo ichie: ett möte, en gång. Den här sammankomsten är den enda av sitt slag, så möt den hel.",
+  "source": "Japanska, ur tebruket",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Kristallen den fina som solen månd' skina, som stjärnorna blänka i skyn.",
+  "source": "Folkvisa",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Hjortronet har han- och honplantor på skilda ställen. En myr utan bägge sorterna blommar hur mycket som helst och bär ingenting.",
+  "source": "Rubus chamaemorus",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Nästan varje fikonart har sin egen stekelart, och ingendera klarar sig utan den andra. Stekeln tar sig in genom ett hål så trångt att den mister vingarna på vägen.",
+  "source": "Ficus och Agaonidae",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Vanilj pollineras för hand nästan överallt där den odlas, eftersom biet som sköter saken bara finns i Mexiko.",
+  "source": "Vanilla planifolia",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Somliga orkidéer ser ut och luktar tillräckligt likt en getinghona för att hanarna ska försöka para sig med dem och bära bort pollenet utan att ha mött någon geting.",
+  "source": "Ophrys",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Blomtrohet: ett bi som har hittat en sorts blomma återvänder till just den sorten, och det är hela skälet till att det är till någon nytta för blomman.",
+  "source": "Pollinering",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Protandri: en blomma släpper sitt pollen innan dess eget märke är moget, så att den inte kan möta sig själv.",
+  "source": "Botanik",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Många blommor läser av pollenet som landar och öppnar vägen bara för ett främmande korn, så att nästa släkte kommer ur två.",
+  "source": "Självinkompatibilitet",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Blommor bär en svag elektrisk laddning. En humla känner den och kan läsa av vilka blommor ett annat bi nyss har tömt.",
+  "source": "Science, 2013",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Tigmotropism: växande som styrs av beröring, som när en klänge lindar sig runt vad den råkar möta.",
+  "source": "Botanik",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Blåsippan blommar innan mycket annat gör det och tar emot de insekter som har vaknat först. Den har få att välja mellan, och de har lika få.",
+  "source": "Hepatica nobilis",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Ett yuccamal packar med avsikt pollen i blomman och lägger sina ägg i fruktämnet. En planta som får för många ägg fäller hela blomman, vilket håller uppgörelsen ärlig.",
+  "source": "Yucca och Tegeticula",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Hälsa på någon och hälsa som i hälsan är samma ord. Att hälsa är att önska någon hel.",
+  "source": "Fornsvenska",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Tack hör till tänka. Ett tack var först en tanke riktad mot någon.",
+  "source": "Fornnordiska",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Skål betyder skål: kärlet som gick laget runt. Ordet är ett föremål innan det är en gest.",
+  "source": "Fornnordiska",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Främmande betyder både obekant och gäst. Att ha främmande är att ha någon på besök.",
+  "source": "Svenska",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Gäst och latinets hostis, fiende, är samma gamla ord. Vem den okände var avgjordes efteråt.",
+  "source": "Latin",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Fram till omkring 1970 var det invecklat att tilltala någon på svenska. Sedan lade nästan alla bort titlarna på en gång och sade du, ända upp till statsministern.",
+  "source": "Du-reformen",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Fika är kaffi baklänges, ett stycke slang från artonhundratalet. Ordet har sedan slutat handla om drycken och börjat handla om pausen.",
+  "source": "Svenska",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Ting var både en sammankomst och det som avgjordes där. Tingshus och tingsrätt bär ordet vidare, och en sak heter ting för att den en gång var något man talade om.",
+  "source": "Fornnordiska",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Xenia: den gamla grekiska förpliktelsen mellan värd och främling, bindande för bägge och bevakad av Zeus.",
+  "source": "Grekiska",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Liminal: på tröskeln. Av latinets limen, stenen som lades under en dörr.",
+  "source": "Latin",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Att introducera är latinets introducere, att leda in. En presentation är en dörr som hålls öppen.",
+  "source": "Latin",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Han talar med bönder på böndernas sätt men med lärde män på latin.",
+  "source": "Erik Axel Karlfeldt, Fridolins visor, 1898",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Där växte uti Hildings gård två plantor under fostrarns vård.",
+  "source": "Esaias Tegnér, Frithiofs saga, 1825",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Sammanväxning: två träd som står mot varandra tillräckligt länge för att växa ihop, och därefter delar bark och sav.",
+  "source": "Botanik",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "En aspdunge kan vara en enda individ med ett gemensamt rotsystem. Varje stam är ett skott, och hela dungen är ett träd.",
+  "source": "Populus tremula",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "En lav är en svamp som odlar en alg, och samarbetet är så fullständigt att den beskrevs som en enda art i hundra år innan någon märkte att den var två.",
+  "source": "Lavar",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "En ymp fogar ihop två plantor så att de delar sav livet ut, medan var och en behåller sina egna gener. En stam kan bära fem äppelsorter.",
+  "source": "Ympning",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Nästan all svensk skog står i förbund med svampar nere i marken: trädet ger socker, svampen ger fosfor, och överenskommelsen är fyrahundra miljoner år gammal.",
+  "source": "Mykorrhiza",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Varje grönt blad går på en bakterie som en annan cell tog in för mer än en miljard år sedan. De två har varit ett sedan dess.",
+  "source": "Endosymbios",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Anastomos: två skilda lopp som går ihop till ett. Sägs om floder, om blodkärl och om nerverna i ett blad.",
+  "source": "Grekiska",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Mutualism: bägge parter har det bättre, och ingendera kan gå därifrån utan att betala för det.",
+  "source": "Ekologi",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Kommensalism: den ena vinner och den andra tar ingen skada. En stillsammare uppgörelse än symbios, och långt vanligare.",
+  "source": "Ekologi",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Holobiont: en organism räknad tillsammans med allt som lever i och på den, av det enkla skälet att ingen av dem klarar sig ensam.",
+  "source": "Biologi",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Hos de flesta blomväxter ärvs kloroplasterna enbart genom fröföräldern, så en del av den ena föräldern reser vidare oblandad.",
+  "source": "Plastidarv",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Frände och engelskans friend är samma ord: en gammal particip av ett verb som betydde att älska. Svenskan behöll det för släkten, engelskan för de utvalda.",
+  "source": "Urgermanska",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Vän hör till samma rot som latinets Venus och som att vinna: att önska, att sträva efter. En vän är någon man har velat ha.",
+  "source": "Urgermanska",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Syskon är ett gammalt samlingsord byggt på syster. Bröderna fick följa med i systrarnas ord.",
+  "source": "Fornsvenska",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Kumpan och kompanjon är den man bryter bröd med: latinets com, tillsammans, och panis, bröd.",
+  "source": "Latin",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Rival betydde en gång den som delar bäck med dig: latinets rivalis, av rivus, en å.",
+  "source": "Latin",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Symbios är grekiska för samlevnad. Ordet myntades på 1870-talet för lavarna, som är en svamp och en alg i ett.",
+  "source": "Grekiska",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Sämja hör till samma: det som är likadant. Att vara sams är att vara lika sinnad.",
+  "source": "Fornsvenska",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Husbonde blev engelskans husband. Ordet reste över havet med vikingarna och stannade kvar där i en snävare betydelse.",
+  "source": "Fornnordiska",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Fadder går tillbaka på latinets pater, far. Den som stod fadder tog på sig ett släktskap som inte fanns i blodet.",
+  "source": "Latin",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Kärt barn har många namn.",
+  "source": "Svenskt ordspråk",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Gammal vänskap rostar aldrig.",
+  "source": "Svenskt ordspråk",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Blod är tjockare än vatten.",
+  "source": "Ordspråk",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Bättre är att vara två än en, ty de två få större vinning av sin möda.",
+  "source": "Predikaren, Bibeln 1917",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Vem kan skiljas från vännen sin utan att fälla tårar?",
+  "source": "Folkvisa",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Jag tyckte mig rik när jag fann en annan: människa är människans glädje.",
+  "source": "Hávamál, fornnordiska, fritt återgivet",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Människan blir människa genom andra människor, och vår mänsklighet visar sig i det som går emellan oss.",
+  "source": "Ubuntu, nguni",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "En vän är en själ i två kroppar.",
+  "source": "Aristoteles enligt Diogenes Laertios, fritt återgivet",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Vänskapen gör medgången ljusare och motgången lättare genom att dela den.",
+  "source": "Cicero, Om vänskapen, fritt återgivet",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Därför att det var han, därför att det var jag.",
+  "source": "Montaigne om vänskapen, fritt återgivet",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Människorna finns till för varandras skull.",
+  "source": "Marcus Aurelius, fritt återgivet",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Ingen är en ö, hel i sig själv.",
+  "source": "John Donne, 1624, fritt återgivet",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Delad glädje är dubbel glädje, delad sorg är halv sorg.",
+  "source": "Svenskt ordspråk",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Man saknar inte kon förrän båset är tomt.",
+  "source": "Svenskt ordspråk",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Tala är silver, tiga är guld.",
+  "source": "Svenskt ordspråk",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Tyst hör till tiga. Tystnaden är uppkallad efter vad någon gör och inte efter vad som saknas.",
+  "source": "Fornsvenska",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Lyssna och lyda är byggda på samma gamla ord för att höra. Att höra efter och att göra som någon säger skildes åt först långt senare.",
+  "source": "Fornnordiska",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "När natten kommer står jag på trappan och lyssnar, stjärnorna svärma i trädgården och jag står i mörkret.",
+  "source": "Edith Södergran (1892–1923)",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Nysnö är full av luft och suger ut de höga tonerna ur allt ljud. Ett insnöat landskap är inte bara tyst utan sordinerat.",
+  "source": "Snöns akustik",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Kronskygghet: springan grannträd lämnar mellan sina kronor, så att ett skogstak blir en mosaik med dagsljus i fogarna.",
+  "source": "Botanik",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "I ett ekofritt rum finns till slut bara du kvar att höra, och de som har suttit i ett sådant berättar om ljudet av sitt eget blod.",
+  "source": "Ekofria rum",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Psithurism: ljudet av vind som går genom löv.",
+  "source": "Grekiska",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Ugglan flyger ljudlöst för att fjäderkanten är fransad och bryter upp luften innan den hinner vissla.",
+  "source": "Strigiformes",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Stiltje är ett eget väderläge och inte bara frånvaro av vind. Vattnet står som en spegel, och ingenting rör sig utom det som rör sig av sig självt.",
+  "source": "Sjömansspråk",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Lugnt säger man om vädret, om havet och om en människa, och det är samma ord varje gång. Bilden är lånad från en vattenyta.",
+  "source": "Svenska",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Fred, frid och fri är ett och samma gamla ord. Att ha fred, att känna frid och att vara fri hörde en gång ihop i språket.",
+  "source": "Urgermanska",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Frälsa är fri och hals: att lösa någons hals ur ringen. Ordet är en beskrivning innan det är en tro.",
+  "source": "Fornnordiska",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Fredag är Friggs dag och har ingenting med freden att göra, hur gärna man än vill.",
+  "source": "Fornnordiska",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Lördag är lögardagen, badets dag. Svenskan gav veckan en tvättdag där andra språk satte en gud.",
+  "source": "Fornnordiska",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Helg och helig är samma ord. Ledigheten är uppkallad efter den heliga dag som den en gång var.",
+  "source": "Fornsvenska",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Rast var ett vägmått innan det blev ett mått på vila: så långt någon går innan hen sätter sig. Sträckan och pausen har samma namn.",
+  "source": "Fornnordiska",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Ledig betydde tom och obesatt. Att vara ledig är alltså att inte vara upptagen, snarare än att vila.",
+  "source": "Fornsvenska",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Lagom är dativ pluralis av lag: efter lagen, så som det ska vara. Att det skulle betyda laget om är en efterhandsförklaring, trevligare än den är sann.",
+  "source": "Fornnordiska",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Ro betyder både stillhet och att ro en båt, och de två orden har ingenting med varandra att göra. Svenskan har låtit dem ligga bredvid varandra ändå.",
+  "source": "Svenska",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Serenus är latin och sades först om vädret: en klar himmel utan vind i.",
+  "source": "Latin",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Sabbat kommer av hebreiskans shabbath, att sluta. Ordet namnger upphörandet och inte dagen.",
+  "source": "Hebreiska",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Horas non numero nisi serenas står ristat på gamla solur: jag räknar bara de klara timmarna. Ett ur som behöver sol för att räkna alls beskriver mest sig självt.",
+  "source": "Solursmotto, latin",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Allt har en ände, utom korven som har två.",
+  "source": "Svenskt ordspråk",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Vila vid denna källa, vår lilla frukost vi framställa.",
+  "source": "Carl Michael Bellman, Fredmans epistel nr 82",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Fjäriln vingad syns på Haga mellan dimmors frost och dun.",
+  "source": "Carl Michael Bellman, Fredmans sång nr 64",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Han låter mig vila på gröna ängar; han för mig till vatten där jag finner ro.",
+  "source": "Psaltaren, Bibeln 1917",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Brittsommar: de stilla varma dagar som kan komma i oktober, uppkallade efter Birgittadagen den sjunde.",
+  "source": "Svenskt väderord",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Lagom är bäst.",
+  "source": "Svenskt ordspråk",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Ingen ko på isen så länge rumpan är i land.",
+  "source": "Svenskt ordspråk",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Hygge: värme och gemenskap, med flit hopsatt av små och vardagliga ting.",
+  "source": "Danska",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Niksen: att göra ingenting, och att göra det med avsikt.",
+  "source": "Nederländska",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Sobremesa: tiden man sitter kvar vid bordet efter måltiden, därför att ingen vill vara den som reser sig.",
+  "source": "Spanska",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Meriggiare: att tillbringa middagstimmarna vilande i skuggan.",
+  "source": "Italienska",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Shinrin-yoku: skogsbad, som inte begär något av dig utom att du är bland träden med sinnena öppna.",
+  "source": "Japanska, myntat 1982",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Ingenstans drar sig en människa tillbaka med mer ro och mindre besvär än in i sin egen själ.",
+  "source": "Marcus Aurelius, fritt återgivet",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Mysa: att göra det behagligt för sig, gärna inomhus, gärna tillsammans med någon. Verbet finns knappt på annat håll.",
+  "source": "Svenska",
+  "theme": "peace",
+  "subtheme": "atEase"
+ }
+]
