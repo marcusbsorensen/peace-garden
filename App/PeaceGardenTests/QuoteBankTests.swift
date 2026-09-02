@@ -80,6 +80,49 @@ final class QuoteBankTests: XCTestCase {
         }
     }
 
+    /// Two passages in one subtheme that are the same passage differently
+    /// worded.
+    ///
+    /// An exact-match check does not find these, and each bank is written in one
+    /// sitting by somebody who cannot hold three hundred lines in their head —
+    /// so a subtheme picks up two entries making the same point about the same
+    /// word, and the reader who draws both is the one who notices. It is worth a
+    /// machine check because round two adds twenty-five more banks and nobody
+    /// will read them all.
+    ///
+    /// Half the interesting words in common is the threshold. Across the banks
+    /// that exist the worst genuine pair sits at about 0.38, so this has room
+    /// before it starts objecting to two passages that merely share a subject.
+    func testNoSubthemeSaysTheSameThingTwice() {
+        func interesting(_ text: String) -> Set<String> {
+            Set(
+                text.lowercased()
+                    .components(separatedBy: CharacterSet.letters.inverted)
+                    .filter { $0.count >= 4 }
+            )
+        }
+
+        for bank in QuoteBank.allCases {
+            for (_, group) in Dictionary(grouping: bank.passages, by: \.subtheme) {
+                let words = group.map { ($0.text, interesting($0.text)) }
+                for i in words.indices {
+                    for j in words.indices where j > i {
+                        let (oneText, one) = words[i]
+                        let (otherText, other) = words[j]
+                        guard !one.isEmpty, !other.isEmpty else { continue }
+                        let overlap =
+                            Double(one.intersection(other).count)
+                            / Double(one.union(other).count)
+                        XCTAssertLessThan(
+                            overlap, 0.5,
+                            "\(bank.rawValue) says the same thing twice:\n  \(oneText)\n  \(otherText)"
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     /// Every passage says where it came from, and says it briefly.
     ///
     /// The provenance is there so a line can be trusted and looked up, not so it
