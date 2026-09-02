@@ -1,0 +1,451 @@
+import Foundation
+
+/// The Catalan passages.
+///
+/// Written rather than translated: about sixty of the English passages
+/// are etymologies of English words and are simply false in any other
+/// language, so this bank comes from its own word histories, its own
+/// literature and its own proverbs.
+///
+/// Not a Spanish bank in another spelling: llavor from laborem, llar from the Lares where Castilian took hogar from focus, and enraonar, an everyday verb whose literal sense is to reason together.
+extension Quotes {
+    static let catalan: [Passage] = [
+        // MARK: - Beginnings
+
+        // MARK: The first act
+        Passage(text: "Les rondalles mallorquines s'obren amb un «això era i no era»: abans de tirar endavant, la història ja admet que va passar i que no va passar.", source: "Rondalla mallorquina", theme: .beginnings, subtheme: .theFirstAct),
+        Passage(text: "Encetar és posar-se a una cosa trencant-la: el pa, una ampolla, una conversa. Mentre ningú no hi ha fet el primer tall, encara és sencera.", source: "Català", theme: .beginnings, subtheme: .theFirstAct),
+        Passage(text: "Un esqueix és el tros que s'estripa d'una branca perquè arreli tot sol. Del mateix verb ve l'esqueixada: el bacallà s'estireganya amb els dits, mai amb ganivet.", source: "Català", theme: .beginnings, subtheme: .theFirstAct),
+        Passage(text: "Aleshores vol dir, literalment, «a les hores», i llavors surt d'aquella mateixa hora: per situar un fet, aquesta llengua assenyala quina hora era.", source: "Etimologia", theme: .beginnings, subtheme: .theFirstAct),
+        Passage(text: "Qui matina fa farina.", source: "Refrany català", theme: .beginnings, subtheme: .theFirstAct),
+        Passage(text: "El text literari més antic conservat en català són unes homilies aparegudes el 1904 dins un armari de la rectoria d'Organyà, escrites cap al 1200.", source: "Homilies d'Organyà", theme: .beginnings, subtheme: .theFirstAct),
+        Passage(text: "La primera pedra de Santa Maria del Mar es va posar el 1329 i l'obra va durar cinquanta-quatre anys, molt poc per a un temple d'aquelles mides. Per això parla tot sencer amb una sola veu.", source: "Santa Maria del Mar", theme: .beginnings, subtheme: .theFirstAct),
+        Passage(text: "Ramon Llull va posar la filosofia en català quan tothom la feia en llatí, i va donar prosa a una parla que fins aquell dia només servia per a comptes i plets.", source: "Ramon Llull", theme: .beginnings, subtheme: .theFirstAct),
+        Passage(text: "Tirant lo Blanc no arrenca a València ni a la mar, sinó en una ermita d'Anglaterra, on un cavaller retirat explica al noi què és l'ofici abans que hi entri.", source: "Joanot Martorell, Tirant lo Blanc", theme: .beginnings, subtheme: .theFirstAct),
+        Passage(text: "El 1901 un capellà de Manacor va enviar una carta oberta demanant a qui la llegís que li fes arribar mots. D'aquella crida en van sortir deu volums.", source: "Antoni M. Alcover", theme: .beginnings, subtheme: .theFirstAct),
+        Passage(text: "La pela d'una surera es fa esperar vint-i-cinc anys, i la primera dona un suro clivellat que no val per a taps. El bo no ve fins a la tercera.", source: "Quercus suber", theme: .beginnings, subtheme: .theFirstAct),
+        Passage(text: "Sembrar a la volada és escampar el gra amb la mà mentre camines. El braç ha d'anar al compàs de la cama, i el sembrat no diu res fins mesos després.", source: "Agricultura", theme: .beginnings, subtheme: .theFirstAct),
+
+        // MARK: Small to large
+        Passage(text: "De mica en mica s'omple la pica.", source: "Refrany català", theme: .beginnings, subtheme: .smallToLarge),
+        Passage(text: "Cargol, treu banya, puja a la muntanya.", source: "Cançó infantil catalana", theme: .beginnings, subtheme: .smallToLarge),
+        Passage(text: "Un planter és el bancal petit on es fan néixer les plantes abans de treure-les al camp. També se'n diu dels jugadors que encara no han jugat.", source: "Català", theme: .beginnings, subtheme: .smallToLarge),
+        Passage(text: "Santa Maria del Mar es va alçar amb carreus que els bastaixos del port van dur a coll des de la pedrera de Montjuïc, un blot cada vegada.", source: "Barcelona, segle XIV", theme: .beginnings, subtheme: .smallToLarge),
+        Passage(text: "El delta de l'Ebre és terra que baixava pel riu en suspensió. Gairebé tota la plana s'ha fet d'ençà del segle XV, partícula per partícula.", source: "Geografia", theme: .beginnings, subtheme: .smallToLarge),
+        Passage(text: "El Rec Comtal portava aigua de Montcada fins a Barcelona per una síquia estreta. D'aquell fil en van viure els molins, els horts i les adoberies durant mil anys.", source: "Rec Comtal", theme: .beginnings, subtheme: .smallToLarge),
+        Passage(text: "L'esmorzaret valencià duu el diminutiu al nom i mai a la taula: entrepà, olives, cacauets i un cremaet. El sufix -et allarga la cosa en lloc d'escurçar-la.", source: "Valencià", theme: .beginnings, subtheme: .smallToLarge),
+        Passage(text: "A la primavera els pins amollen tanta pols groga que els bassals en queden coberts. Cada gra de pol·len fa menys d'una desena part de mil·límetre i porta dues bosses d'aire per volar.", source: "Pinus halepensis", theme: .beginnings, subtheme: .smallToLarge),
+        Passage(text: "A les salines del delta l'aigua marina entra en basses poc fondes i s'evapora fins que només queda el que duia dissolt: tres quilos llargs per cada cent litres.", source: "Salines de la Trinitat", theme: .beginnings, subtheme: .smallToLarge),
+        Passage(text: "L'oreneta basteix el niu amb boletes de fang que porta al bec d'una en una. En calen més de mil viatges per fer-ne un sota un ràfec.", source: "Hirundo rustica", theme: .beginnings, subtheme: .smallToLarge),
+        Passage(text: "La rosella guarda desenes de milers de llavors en una càpsula amb forats a dalt. El vent la sacseja i les va escampant pel camí, com si fos un saler.", source: "Papaver rhoeas", theme: .beginnings, subtheme: .smallToLarge),
+        Passage(text: "Un pi pinyer de vint metres ve d'un pinyó que cabria sota una ungla, i la pinya se'l reté tres anys abans de deixar-lo caure.", source: "Pinus pinea", theme: .beginnings, subtheme: .smallToLarge),
+
+        // MARK: What a start settles
+        Passage(text: "La fil·loxera va arribar el 1879 per Rabós, a l'Empordà, i va obligar a replantar el país sencer. Des d'aleshores cada cep viu damunt d'una arrel americana, empeltat una sola vegada.", source: "Viticultura", theme: .beginnings, subtheme: .whatAStartSettles),
+        Passage(text: "Un castell es comença per la pinya, la gent de baix que no puja enlloc. Quan els altres s'enfilen ja no s'hi pot tocar res: el que aguanti aquella base és tot el que hi cabrà.", source: "Cultura castellera", theme: .beginnings, subtheme: .whatAStartSettles),
+        Passage(text: "En molts pobles la casa dona nom a qui hi viu. En Joan de cal Ferrer ho serà encara que faci de mestre i que el ferrer de debò fos el seu rebesavi.", source: "Costum català", theme: .beginnings, subtheme: .whatAStartSettles),
+        Passage(text: "En una paret de pedra seca les lloses grosses van al fons i el mur s'inclina cap endins des de la filada primera. El que es tria arran de terra és el que aguanta segles.", source: "Ofici de margener", theme: .beginnings, subtheme: .whatAStartSettles),
+        Passage(text: "El 1913 es van publicar unes normes que fixaven com s'escriu aquesta llengua. En una generació les havia adoptat tothom, i encara escrivim damunt d'aquella tria.", source: "Normes ortogràfiques", theme: .beginnings, subtheme: .whatAStartSettles),
+        Passage(text: "Una larva d'abella surt reina o obrera segons què li donin de menjar els primers dies. Passat el termini, ja no hi ha manera de canviar-ho.", source: "Apis mellifera", theme: .beginnings, subtheme: .whatAStartSettles),
+        Passage(text: "L'olivera es forma de jove amb tres o quatre branques mestres, i aquelles branques li fan l'esquelet per als segles que vindran.", source: "Oleicultura", theme: .beginnings, subtheme: .whatAStartSettles),
+        Passage(text: "Un camp d'arròs s'aplana amb una exactitud de pocs centímetres abans de la sembra. Com hagi quedat aquell dia, així hi entrarà l'aigua mentre duri el camp.", source: "Delta de l'Ebre", theme: .beginnings, subtheme: .whatAStartSettles),
+        Passage(text: "Qui no vol pols, que no vagi a l'era.", source: "Refrany català", theme: .beginnings, subtheme: .whatAStartSettles),
+        Passage(text: "Moltes fruiteres compten les hores de fred que han passat a l'hivern. Si no arriben al compte, a la primavera no floreixen per molt de sol que hi toqui.", source: "Fisiologia vegetal", theme: .beginnings, subtheme: .whatAStartSettles),
+        Passage(text: "El cava fa la segona fermentació dins l'ampolla ja closa: el sucre i el llevat que hi entren el dia del tiratge decideixen les bombolles que hi haurà mesos més tard.", source: "Sant Sadurní d'Anoia", theme: .beginnings, subtheme: .whatAStartSettles),
+        Passage(text: "La masia es planta amb la façana a migjorn i l'esquena contra el vent de dalt. Tria el sol una vegada sola, i totes les cambres hi viuran per sempre.", source: "Arquitectura rural", theme: .beginnings, subtheme: .whatAStartSettles),
+
+        // MARK: - Waiting
+
+        // MARK: Held back
+        Passage(text: "Colgar el caliu és tapar les brases amb cendra al vespre perquè al matí el foc encara hi sigui. D'aquell rescoldo ve el verb escalivar, i d'ell l'escalivada.", source: "Català", theme: .waiting, subtheme: .heldBack),
+        Passage(text: "Les pinyes del pi blanc queden anys closes per la resina i només s'obren amb la calor. L'arbre desa la collita fins al dia que li faci falta.", source: "Pinus halepensis", theme: .waiting, subtheme: .heldBack),
+        Passage(text: "A l'estiu els cargols s'enfilen per les tiges de fonoll, es tanquen amb una tapa de calç i s'hi estan sense menjar fins que plou.", source: "Història natural", theme: .waiting, subtheme: .heldBack),
+        Passage(text: "Les anxoves de l'Escala es colguen en sal dins una llauna, amb un pes damunt, i no es destapen en mig any. El peix es fa sol: la feina consisteix a no mirar-lo.", source: "L'Escala, Empordà", theme: .waiting, subtheme: .heldBack),
+        Passage(text: "Estar-se d'una cosa vol dir tenir-la a l'abast i no agafar-la. No és que no n'hi hagi. És que encara no.", source: "Català", theme: .waiting, subtheme: .heldBack),
+        Passage(text: "L'oliva no es pot menjar de la branca estant. Es pica amb un roc i es té en aigua, canviada cada matí durant setmanes, fins que li marxa l'amargor.", source: "Olives trencades", theme: .waiting, subtheme: .heldBack),
+        Passage(text: "La calç viva s'apaga amb aigua dins un clot i s'hi deixa reposar mesos, i millor anys. Com més temps hi passa, més fina lliga quan surt.", source: "Forn de calç", theme: .waiting, subtheme: .heldBack),
+        Passage(text: "Una sitja és un buit excavat i segellat on es desava el blat. Tancada del tot, el gra s'hi aguanta perquè dins s'acaba l'aire i s'atura la vida.", source: "Arqueologia agrària", theme: .waiting, subtheme: .heldBack),
+        Passage(text: "Els ratpenats passen la hivernada dins les coves del Garraf amb el cor gairebé parat i el cos a la mateixa temperatura que la roca.", source: "Quiròpters", theme: .waiting, subtheme: .heldBack),
+        Passage(text: "Les abelles no tapen la mel amb cera mentre encara duu massa humitat. Fins que la bresca no queda operculada, allò no és mel, i elles ho saben abans que ningú.", source: "Apicultura", theme: .waiting, subtheme: .heldBack),
+        Passage(text: "L'esclata-sang, que al Principat en diuen rovelló, viu tot l'any sota terra convertit en un fil blanc i només treu el cap quan ha plogut i ha refrescat.", source: "Lactarius", theme: .waiting, subtheme: .heldBack),
+        Passage(text: "El rent és el tros de pasta que es reserva d'una fornada per llevar la següent. Amb fred s'atura sense morir-se; se li dona farina i torna a treballar.", source: "Rent de pa", theme: .waiting, subtheme: .heldBack),
+
+        // MARK: The long count
+        Passage(text: "Vora el riu Sénia hi ha milers d'oliveres amb el tronc més gruixut que dos homes plegats. Passen dels mil anys i encara donen oli cada tardor.", source: "Oliveres del Sénia", theme: .waiting, subtheme: .theLongCount),
+        Passage(text: "El diccionari que recull alhora el català, el valencià i el balear va trigar seixanta anys a sortir sencer: deu volums, i el darrer és del 1962.", source: "Diccionari català-valencià-balear", theme: .waiting, subtheme: .theLongCount),
+        Passage(text: "L'aigua que brolla al fons de l'estany de Banyoles ve de les muntanyes de la Garrotxa i tarda anys a fer el camí per dins la pedra, a les fosques.", source: "Estany de Banyoles", theme: .waiting, subtheme: .theLongCount),
+        Passage(text: "El garrofer treu la flor a la tardor i el fruit no es cull fins al juliol següent, de manera que l'arbre duu a la vegada la florida nova i la garrofa vella.", source: "Ceratonia siliqua", theme: .waiting, subtheme: .theLongCount),
+        Passage(text: "Les nous per a la ratafia es cullen verdes cap a Sant Joan i s'estan quaranta dies al sol i a la serena. Després passen al rebost i ningú no en parla fins a l'hivern.", source: "Ratafia", theme: .waiting, subtheme: .theLongCount),
+        Passage(text: "El vi ranci es cria en garrafes de vidre deixades a la intempèrie, calor de dia i fresca de nit, temporada rere temporada. En diuen fer-lo de sol i serena.", source: "Vi ranci", theme: .waiting, subtheme: .theLongCount),
+        Passage(text: "El tió es tapa amb una flassada i cada vespre li donen una miqueta de menjar. Les criatures se'l van engreixant tot el desembre per una nit sola.", source: "Tradició catalana", theme: .waiting, subtheme: .theLongCount),
+        Passage(text: "Qui dia passa, any empeny.", source: "Refrany català", theme: .waiting, subtheme: .theLongCount),
+        Passage(text: "A poc a poc i bona lletra.", source: "Refrany català", theme: .waiting, subtheme: .theLongCount),
+        Passage(text: "A les sureres acabades de pelar s'hi marca amb blanc la darrera xifra de l'any. El número diu quan els van llevar l'escorça i quant els queda per tornar-hi.", source: "Boscos de suro", theme: .waiting, subtheme: .theLongCount),
+        Passage(text: "Les obres del temple de la Sagrada Família van arrencar el 1882 i encara duren. Els mestres d'obra s'han anat rellevant i el projecte continua sense ells.", source: "Sagrada Família", theme: .waiting, subtheme: .theLongCount),
+        Passage(text: "Portar el Segre als secans de l'Urgell es va proposar al segle XIV i el rec no va córrer fins al 1862. Mig mil·lenni entre la idea i la primera bassa plena.", source: "Canal d'Urgell", theme: .waiting, subtheme: .theLongCount),
+
+        // MARK: Standing and watching
+        Passage(text: "Al riurau, a la Marina Alta, la pansa s'estenia al sol davant d'una arcada. Quan el cel es tapava, tothom corria a ficar-la a dins abans no caigués l'aigua.", source: "Riuraus de la Marina", theme: .waiting, subtheme: .standingAndWatching),
+        Passage(text: "Per Corpus, en alguns claustres de Barcelona posen un ou buit damunt del raig d'una font. Es passa el dia girant sense caure i la gent hi va per veure si encara balla.", source: "L'ou com balla", theme: .waiting, subtheme: .standingAndWatching),
+        Passage(text: "Fins no fa gaire, en molts carrers un home duia les claus de tots els portals i vetllava de nit. Se'l cridava picant de mans i li deien el sereno, pel temps que cantava.", source: "Costum urbà", theme: .waiting, subtheme: .standingAndWatching),
+        Passage(text: "Les torres del litoral es van bastir cadascuna a la vista de la següent, de manera que un senyal fet en una es podia repetir tot al llarg de la costa.", source: "Torres de defensa", theme: .waiting, subtheme: .standingAndWatching),
+        Passage(text: "Una revetlla és, al peu de la lletra, un tornar a vetllar: la nit que la gent es queda desperta just abans del dia de la festa.", source: "Etimologia", theme: .waiting, subtheme: .standingAndWatching),
+        Passage(text: "Guaitar ve d'una arrel germànica que també ha donat el watch anglès. Qui guaita no fa res més: mira, i mirar ja és l'ofici.", source: "Etimologia", theme: .waiting, subtheme: .standingAndWatching),
+        Passage(text: "L'observatori del Tibidabo anota el temps que fa cada jornada des del 1904. La sèrie no s'ha estroncat mai, i tot el seu valor és que ningú no ha fallat cap matí.", source: "Observatori Fabra", theme: .waiting, subtheme: .standingAndWatching),
+        Passage(text: "El bernat pescaire s'està dret dins l'arrossar una hora sencera sense bellugar el coll. Duu nom de persona i posat de qui espera algú.", source: "Ardea cinerea", theme: .waiting, subtheme: .standingAndWatching),
+        Passage(text: "El xoriguer es planta en l'aire de cara al vent i bat les ales justes per no avançar gens, amb el cap immòbil mentre repassa el rostoll.", source: "Falco tinnunculus", theme: .waiting, subtheme: .standingAndWatching),
+        Passage(text: "El pastor puja el ramat a les pletes del Pirineu al juny i hi fa l'estiu en una cabana de pedra, comptant bèsties de lluny dos cops al dia.", source: "Transhumància", theme: .waiting, subtheme: .standingAndWatching),
+        Passage(text: "Mon cor estima un arbre! Més vell que l'olivera, més poderós que el roure, més verd que el taronger.", source: "Miquel Costa i Llobera, El pi de Formentor", theme: .waiting, subtheme: .standingAndWatching),
+        Passage(text: "Als aiguamolls de l'Empordà hi ha casetes de fusta amb una finestra llarga i estreta. S'hi entra callat, s'hi seu, i s'espera que els ocells s'oblidin que ets a dins.", source: "Aiguamolls de l'Empordà", theme: .waiting, subtheme: .standingAndWatching),
+
+        // MARK: - Renewal
+
+        // MARK: Cut and come again
+        Passage(text: "El calçot és una ceba plantada dues vegades: es cull, es torna a colgar i, a mesura que treu brots, se li va pujant terra al voltant. El nom ve d'aquest calçar.", source: "Valls, Alt Camp", theme: .renewal, subtheme: .cutAndComeAgain),
+        Passage(text: "Una alzina tallada arran no s'acaba: rebrota de la soca. Els carboners en vivien fent llenya del mateix bosc cada vint anys i trobant-lo sempre dret.", source: "Quercus ilex", theme: .renewal, subtheme: .cutAndComeAgain),
+        Passage(text: "L'userda es dalla cinc o sis vegades l'any. Com més sovint se li passa la fulla, més espessa surt de nou.", source: "Medicago sativa", theme: .renewal, subtheme: .cutAndComeAgain),
+        Passage(text: "El cep es poda a l'hivern fins a quedar gairebé pelat, dos ulls per braç. Com menys sarment se li deixa, millor és el raïm que donarà.", source: "Viticultura", theme: .renewal, subtheme: .cutAndComeAgain),
+        Passage(text: "El canyar es sega cada hivern per fer canyissos i aguantar tomaqueres, i s'alça altre cop des de la rel, que per sota és una planta sola i escampada.", source: "Arundo donax", theme: .renewal, subtheme: .cutAndComeAgain),
+        Passage(text: "Les vimeteres es tallen a peu cada any perquè treguin vares llargues i sense nusos. Unes van a parar al cistell i les altres servien per fermar la vinya.", source: "Salix viminalis", theme: .renewal, subtheme: .cutAndComeAgain),
+        Passage(text: "L'ovella es ton al juny i pel novembre ja no se li veu la pell. La llana és l'única collita que la bèstia refà tota sola.", source: "Ramaderia", theme: .renewal, subtheme: .cutAndComeAgain),
+        Passage(text: "Els plàtans dels passeigs s'escapcen cada hivern i queden com un puny tancat. Pel maig ja no es coneix, i és per aquesta feina que duren tants anys arran de casa.", source: "Arbrat urbà", theme: .renewal, subtheme: .cutAndComeAgain),
+        Passage(text: "La sargantana amolla la cua quan l'agafen i se'n fabrica una altra. La nova duu cartílag en lloc d'os, i sempre es nota quina és.", source: "Podarcis", theme: .renewal, subtheme: .cutAndComeAgain),
+        Passage(text: "El cérvol perd les banyes cada hivern i les refà de bell nou a la primavera. Cap os no creix tan de pressa, i cau sol quan ja ha servit.", source: "Cervus elaphus", theme: .renewal, subtheme: .cutAndComeAgain),
+        Passage(text: "Un rebrot és el que puja d'una soca segada. La mata no torna a començar: continua, amb l'arrel que ja tenia feta i la mida que aquella arrel permet.", source: "Català", theme: .renewal, subtheme: .cutAndComeAgain),
+        Passage(text: "Els prats de dall es seguen una sola vegada, pel juliol. Per això mateix hi caben tantes flors: cap herba no té temps d'ofegar les altres.", source: "Prats pirinencs", theme: .renewal, subtheme: .cutAndComeAgain),
+
+        // MARK: The turning year
+        Passage(text: "Si la Candelera plora, l'hivern ja és fora; si la Candelera riu, l'hivern és viu.", source: "Refrany català", theme: .renewal, subtheme: .theTurningYear),
+        Passage(text: "Per Santa Llúcia, un pas de puça; per Nadal, un pas de pardal; per Sant Esteve, un pas de llebre; per Any Nou, un pas de bou.", source: "Refrany català", theme: .renewal, subtheme: .theTurningYear),
+        Passage(text: "Pel maig, cada dia un raig.", source: "Refrany català", theme: .renewal, subtheme: .theTurningYear),
+        Passage(text: "A l'abril, cada gota en val mil.", source: "Refrany català", theme: .renewal, subtheme: .theTurningYear),
+        Passage(text: "L'estiuet de Sant Martí són els dies clars i tebis de mitjan novembre, quan tothom ja havia donat l'hivern per entrat.", source: "Meteorologia popular", theme: .renewal, subtheme: .theTurningYear),
+        Passage(text: "El foc que encén les fogueres de la nit més curta es guarda viu tot l'any a Perpinyà i cada juny torna a pujar al cim del Canigó abans de repartir-se.", source: "Flama del Canigó", theme: .renewal, subtheme: .theTurningYear),
+        Passage(text: "Les herbes collides a la matinada de Sant Joan tenen fama de valer més: espígol, farigola, romaní, berbena i sajolida, lligades en ram i penjades al portal.", source: "Herbes de Sant Joan", theme: .renewal, subtheme: .theTurningYear),
+        Passage(text: "Al febrer els ceps podats deixen caure gotes per la ferida. En diuen el plor de la vinya, i vol dir que la saba ja ha començat a pujar.", source: "Vinya", theme: .renewal, subtheme: .theTurningYear),
+        Passage(text: "Els ametllers de Mallorca treuen flor al gener, quan encara no hi ha ni una fulla enlloc. Floreixen abans que el fred se n'hagi anat, no pas després.", source: "Prunus dulcis", theme: .renewal, subtheme: .theTurningYear),
+        Passage(text: "Els arrossars del delta s'inunden per l'abril i s'assequen al setembre. Mig any allò és una làmina amb el cel a dins, i l'altre mig, terra ferma.", source: "Delta de l'Ebre", theme: .renewal, subtheme: .theTurningYear),
+        Passage(text: "Per Sant Jordi es treuen al carrer parades de llibres i de roses. El llibre és la meitat més jove del costum, i ja fa prop de cent anys que hi és.", source: "Diada de Sant Jordi", theme: .renewal, subtheme: .theTurningYear),
+        Passage(text: "La figuera fa dues collites: la figaflor, que surt de la fusta vella i madura al juny, i la figa de debò, que arriba al capdavall de l'estiu.", source: "Ficus carica", theme: .renewal, subtheme: .theTurningYear),
+
+        // MARK: Made whole
+        Passage(text: "El trencadís cobreix una superfície corba amb rajola esmicolada. Cap peça sencera no s'hi adapta: només els trossos, i el conjunt acaba llis.", source: "Arquitectura catalana", theme: .renewal, subtheme: .madeWhole),
+        Passage(text: "La fageda d'en Jordà creix damunt d'una colada del volcà Croscat. Els faigs hi viuen molt més baix del que els pertocaria perquè aquella pedra els reté la humitat.", source: "La Garrotxa", theme: .renewal, subtheme: .madeWhole),
+        Passage(text: "Els aiguamolls de l'Empordà havien d'acabar en apartaments. El 1983 els van declarar parc, i avui l'aigua torna a passar per on passava.", source: "Alt Empordà", theme: .renewal, subtheme: .madeWhole),
+        Passage(text: "El trencalòs deixa caure els ossos des de l'aire fins que es baden i se'n menja el moll. El nom diu exactament què fa, i ha tornat al Pirineu.", source: "Gypaetus barbatus", theme: .renewal, subtheme: .madeWhole),
+        Passage(text: "Apedaçar és posar un tros nou damunt del forat. Sargir és teixir el forat fins que desapareix, fil a fil, seguint el mateix punt de la roba.", source: "Català", theme: .renewal, subtheme: .madeWhole),
+        Passage(text: "Adobar serveix alhora per a tres feines: arreglar el que s'ha espatllat, amanir les olives i assaonar la pell. Totes tres tornen bona una cosa que no ho era.", source: "Català", theme: .renewal, subtheme: .madeWhole),
+        Passage(text: "L'esmolet avisava que passava pel carrer amb un flabiol de canonets. Per quatre cèntims, un ganivet gastat tallava altra vegada sense ser nou.", source: "Ofici ambulant", theme: .renewal, subtheme: .madeWhole),
+        Passage(text: "La llúdriga havia desaparegut de gairebé tots els rius d'aquesta banda. D'ençà que les aigües van millorar, ha tornat a remuntar el Ter, la Muga i el Segre.", source: "Lutra lutra", theme: .renewal, subtheme: .madeWhole),
+        Passage(text: "Els óssos que avui viuen al Pirineu descendeixen d'unes poques bèsties dutes d'Eslovènia als anys noranta, quan ja gairebé no en quedava cap.", source: "Ursus arctos", theme: .renewal, subtheme: .madeWhole),
+        Passage(text: "El mestre d'aixa canvia una post corcada per una de sana i calafata la juntura. Passats els anys la barca navega igual i ja no en queda gairebé res del principi.", source: "Drassana de ribera", theme: .renewal, subtheme: .madeWhole),
+        Passage(text: "Quan un marge s'esbalça, es refà amb les mateixes lloses escampades pel pendent: es tornen a triar d'una en una i el bancal recupera l'amplada que tenia.", source: "Pedra seca", theme: .renewal, subtheme: .madeWhole),
+        Passage(text: "El pi tanca la seva ferida amb reïna, que raja fins que la clivella queda closa. Aquella mateixa reïna és el que anaven a collir els resiners.", source: "Botànica", theme: .renewal, subtheme: .madeWhole),
+
+        // MARK: - Light
+
+        // MARK: The edges of the day
+        Passage(text: "La matinada no és ni nit ni matí: és el tros que va de la mitjanit a la primera claror. Té nom propi per si algú és despert per veure'l.", source: "Català", theme: .light, subtheme: .theEdgesOfTheDay),
+        Passage(text: "Capvespre vol dir el cap del vespre, la punta per on el dia comença a baixar. A les Illes en diuen horabaixa, que ho explica encara més de pressa.", source: "Català", theme: .light, subtheme: .theEdgesOfTheDay),
+        Passage(text: "Entre dos llums és l'estona en què la de fora ja no basta i la de dins encara no cal. La llengua la compta com un lloc i no pas com una hora.", source: "Locució catalana", theme: .light, subtheme: .theEdgesOfTheDay),
+        Passage(text: "A boqueta nit, diuen al País Valencià per situar el moment que enfosqueix: la nit no hi és tota, tot just ha obert la boca.", source: "Valencià", theme: .light, subtheme: .theEdgesOfTheDay),
+        Passage(text: "El dia no s'obre: es trenca. A trenc d'alba assenyala l'instant que la claror fa la primera escletxa, i trenc és el mateix mot que serveix per a una ferida.", source: "Etimologia", theme: .light, subtheme: .theEdgesOfTheDay),
+        Passage(text: "El cap de Creus és l'extrem oriental de la península. El sol hi toca abans que enlloc, i hi arriba per damunt de l'aigua amb la tramuntana ja feinejant.", source: "Geografia", theme: .light, subtheme: .theEdgesOfTheDay),
+        Passage(text: "L'alba era un gènere de cançó amb regla fixa: es cantava quan clareja i havia de dir que la fosca s'acabava. Els poetes d'aquí les componien en occità.", source: "Poesia trobadoresca", theme: .light, subtheme: .theEdgesOfTheDay),
+        Passage(text: "Les albaes es canten de matinada al mig del carrer, amb dolçaina i tabalet, i el vers es fa allà mateix per a la casa que tens al davant.", source: "Tradició valenciana", theme: .light, subtheme: .theEdgesOfTheDay),
+        Passage(text: "Al Principat, passat migdia ve la tarda; al País Valencià ve la vesprada, i allà el bon dia dura fins que el sol comença a caure.", source: "Variants dialectals", theme: .light, subtheme: .theEdgesOfTheDay),
+        Passage(text: "A Barcelona, pel juny la jornada dura poc més de quinze hores i pel desembre no arriba a nou i mitja. Entre els dos extrems hi ha gairebé sis hores de diferència.", source: "Astronomia", theme: .light, subtheme: .theEdgesOfTheDay),
+        Passage(text: "Anar a jóc és anar-se'n al llit. El jóc és la barra on les gallines s'ajoquen quan enfosqueix, i s'hi enfilen totes alhora.", source: "Català", theme: .light, subtheme: .theEdgesOfTheDay),
+        Passage(text: "Els falciots xisclen pels terrats fins que fosqueja i després pugen amunt a passar la fosca volant. Fora del niu no es posen mai en lloc.", source: "Apus apus", theme: .light, subtheme: .theEdgesOfTheDay),
+
+        // MARK: Reading the light
+        Passage(text: "Cel rogent, pluja o vent.", source: "Refrany català", theme: .light, subtheme: .readingTheLight),
+        Passage(text: "Cel a borreguets, aigua a canterets.", source: "Refrany català", theme: .light, subtheme: .readingTheLight),
+        Passage(text: "El solell i l'obaga són els dos costats d'una mateixa vall. En un hi toca el sol tot l'any i s'hi fa la vinya; a l'altre hi dura la neu i s'hi fa el bosc.", source: "Geografia", theme: .light, subtheme: .readingTheLight),
+        Passage(text: "Mirar una cosa al trasllum és posar-la entre l'ull i la finestra. Així es veia si un ou duia pollet i si un full duia filigrana.", source: "Català", theme: .light, subtheme: .readingTheLight),
+        Passage(text: "Un rellotge de sol i un de paret no coincideixen mai. A Barcelona l'astre arriba al punt més alt passats tres quarts d'una, i a l'estiu encara una hora més tard.", source: "Astronomia", theme: .light, subtheme: .readingTheLight),
+        Passage(text: "A la plana de Vic la boira s'hi està tot l'hivern perquè el fred s'acumula al fons. Cent metres més amunt hi fa sol, i des de dalt la plana sembla un llac.", source: "Meteorologia", theme: .light, subtheme: .readingTheLight),
+        Passage(text: "La marinada entra a mig matí perquè la terra s'escalfa abans que la mar i li xucla l'aire. A l'horta se sap a quina hora ha de venir.", source: "Vents de mar", theme: .light, subtheme: .readingTheLight),
+        Passage(text: "El gira-sol només gira mentre creix. Un cop ha obert la flor es queda encarat a llevant i ja no es tomba per ningú.", source: "Helianthus annuus", theme: .light, subtheme: .readingTheLight),
+        Passage(text: "Quan la mar de la banda d'orient s'infla de fons i encara no bufa res, els pescadors ja compten què ve. La llevantada s'anuncia a l'aigua abans que enlaire.", source: "Costa catalana", theme: .light, subtheme: .readingTheLight),
+        Passage(text: "La fusta per a bigues es tallava amb lluna minvant de gener, quan l'arbre duu menys saba. Ho deien les cases velles i encara ho diuen els fusters.", source: "Costum de bosc", theme: .light, subtheme: .readingTheLight),
+        Passage(text: "Quan la tramuntana ha escombrat, l'aire queda tan net que els cims llunyans semblen a tocar. Aquesta claredat vol dir que encara no ha acabat de bufar.", source: "Empordà", theme: .light, subtheme: .readingTheLight),
+        Passage(text: "L'arc de Sant Martí apareix sempre a la banda contrària d'on és el sol. Si el veus de bon matí, doncs, el tens a ponent, que és per on solen arribar les pluges.", source: "Òptica", theme: .light, subtheme: .readingTheLight),
+
+        // MARK: Light itself
+        Passage(text: "En aquesta llengua la llum és femenina i el llum, masculí. Una és allò que omple l'habitació; l'altre és l'estri que hi ha al sostre. Els separa només l'article.", source: "Català", theme: .light, subtheme: .lightItself),
+        Passage(text: "La cuca de llum és una femella sense ales que s'enfila en una herba i s'encén perquè la trobin. El nom no fa cap imatge: descriu.", source: "Lampyris noctiluca", theme: .light, subtheme: .lightItself),
+        Passage(text: "Estel serveix per al que hi ha al cel de nit i per al paper que les criatures fan volar amb un cordill. Un mateix mot, i totes dues coses demanen mirar amunt.", source: "Català", theme: .light, subtheme: .lightItself),
+        Passage(text: "Una clariana és el forat blau que s'obre entre núvols, i alhora el tros de bosc sense arbres on toca el sol. Un sol nom per als dos buits.", source: "Català", theme: .light, subtheme: .lightItself),
+        Passage(text: "Aquí no es demana que t'il·luminin: es demana que et facin llum. Fes-me llum vol dir agafa-la tu i aguanta-la de manera que jo hi vegi.", source: "Locució catalana", theme: .light, subtheme: .lightItself),
+        Passage(text: "La claror no és ben bé la llum: és el que en queda escampat per l'aire quan ja no pots assenyalar d'on ve. Un dia tapat té claror i no té cap focus.", source: "Distinció catalana", theme: .light, subtheme: .lightItself),
+        Passage(text: "Una lluerna és la finestra oberta al sostre perquè baixi claredat a l'escala. I també és, des de sempre, el cuc que en fa de nit.", source: "Lèxic català", theme: .light, subtheme: .lightItself),
+        Passage(text: "Just quan el sol s'acaba de pondre damunt del mar, de tant en tant l'última punta es veu verda un segon. L'aire aixeca el verd una mica més que el roig.", source: "Òptica", theme: .light, subtheme: .lightItself),
+        Passage(text: "El foc de Sant Elm és una lluïssor blavosa a la punta dels pals quan l'aire va carregat d'electricitat. Els mariners li van posar nom molt abans que ningú l'expliqués.", source: "Fenomen elèctric", theme: .light, subtheme: .lightItself),
+        Passage(text: "La lluna plena fa una claror quatre-centes mil vegades més fluixa que la del migdia, i encara n'hi ha prou per caminar per un camí sense ensopegar.", source: "Astronomia", theme: .light, subtheme: .lightItself),
+        Passage(text: "Al llum d'oli la flama no crema el greix: crema el vapor que el ble va xuclant. El ble fa de camí, i el foc sempre queda una mica més amunt.", source: "Llum de ganxo", theme: .light, subtheme: .lightItself),
+        Passage(text: "Un far no encén gaire més que una bombeta grossa. Tota la feina la fan els anells de vidre, que apleguen el que s'escamparia i en fan un sol raig.", source: "Òptica de far", theme: .light, subtheme: .lightItself),
+
+        // MARK: - Pattern
+
+        // MARK: Counted
+        Passage(text: "Un quart de dues vol dir la una i quart; dos quarts de tres, dos i mitja; tres quarts de quatre, quinze minuts per a les quatre. Es compta cap a l'hora que arriba.", source: "Manera catalana de dir l'hora", theme: .pattern, subtheme: .counted),
+        Passage(text: "Una cobla la fan onze músics amb dotze instruments: el mateix home duu el flabiol en una mà i el tamborí penjat del braç, que toca amb l'altra.", source: "Cobla", theme: .pattern, subtheme: .counted),
+        Passage(text: "Els qui ballen la sardana van comptant per dins mentre ballen. La música no avisa quan s'acaben els curts, i la rotllana els ha de repartir per plegar tots alhora.", source: "Sardana", theme: .pattern, subtheme: .counted),
+        Passage(text: "El Consell de Cent va regir Barcelona des del 1265 i durant més de quatre segles. Cent prohoms triats cada any, i el nombre feia de nom.", source: "Consell de Cent", theme: .pattern, subtheme: .counted),
+        Passage(text: "El Tribunal de les Aigües es reuneix cada dijous al migdia davant d'una porta de la seu de València. Vuit síndics, cap paper escrit, i la resolució es diu en veu alta.", source: "Tribunal de les Aigües", theme: .pattern, subtheme: .counted),
+        Passage(text: "La terra es mesurava pel que s'hi feia en una jornada: el jornal, la mujada, la vessana, la fanecada, la quarterada. Cada comarca tenia la seva i cap no valia igual.", source: "Mesures antigues", theme: .pattern, subtheme: .counted),
+        Passage(text: "D'avui en vuit és d'aquí a una setmana: s'hi compta el dia d'avui i el mateix dia de la setmana entrant, i pel mig només en queden sis.", source: "Locució catalana", theme: .pattern, subtheme: .counted),
+        Passage(text: "Despús-ahir és el dia anterior a ahir, i despús-demà el següent a demà. Dues jornades enfora, en cada direcció, tenen mot d'una sola peça.", source: "Català", theme: .pattern, subtheme: .counted),
+        Passage(text: "Una lliura eren vint sous i un sou dotze diners, així que la lliura sumava dos-cents quaranta diners i es podia partir de moltíssimes maneres.", source: "Moneda antiga", theme: .pattern, subtheme: .counted),
+        Passage(text: "Entre el llampec i el tro es van comptant els segons: cada tres, un quilòmetre. Si venen tots dos junts, la tempesta és a sobre.", source: "Meteorologia", theme: .pattern, subtheme: .counted),
+        Passage(text: "Ramon Llull va reduir tot allò que es pot dir d'una cosa a nou lletres, de la B a la K, i les va encaixar en rodes de paper que giraven per combinar-les.", source: "Ramon Llull, Ars brevis", theme: .pattern, subtheme: .counted),
+        Passage(text: "El dos té forma femenina: dos homes, dues dones. Amb l'u passa igual, i del tres endavant els números ja no distingeixen res.", source: "Gramàtica catalana", theme: .pattern, subtheme: .counted),
+
+        // MARK: Fitted together
+        Passage(text: "La volta catalana es fa amb maons posats de pla i encavalcats amb guix, i s'aguanta tota sola mentre es puja, sense cap cindri a sota.", source: "Volta de maó de pla", theme: .pattern, subtheme: .fittedTogether),
+        Passage(text: "Una paret de pedra seca no duu ni un gram de morter: s'aguanta pel pes i per com casa cada roc amb el del costat. No hi ha plànol, i l'ofici va a les mans.", source: "Pedra seca", theme: .pattern, subtheme: .fittedTogether),
+        Passage(text: "La sardana és la dansa més bella de totes les danses que es fan i es desfan.", source: "Joan Maragall, La sardana", theme: .pattern, subtheme: .fittedTogether),
+        Passage(text: "Encaixar és fer que dues peces vagin juntes sense joc. També és el que fan dues persones que es donen la mà: en diuen una encaixada.", source: "Català", theme: .pattern, subtheme: .fittedTogether),
+        Passage(text: "Montserrat és una muntanya feta de còdols. Els van arrossegar els rius fa milions d'anys i van quedar presos entre ells: les agulles de dalt són grava premsada.", source: "Geologia", theme: .pattern, subtheme: .fittedTogether),
+        Passage(text: "El pont de Besalú fa un colze al bell mig del riu. No és cap caprici: els pilars van on hi havia roca ferma, i el pont es doblega per anar-la a trobar.", source: "Besalú", theme: .pattern, subtheme: .fittedTogether),
+        Passage(text: "L'empelt d'escudet es fa a l'agost, quan l'escorça encara s'aixeca. S'hi fica un ull d'un arbre dins l'obertura d'un altre i, si lliga, ja són el mateix arbre.", source: "Horticultura", theme: .pattern, subtheme: .fittedTogether),
+        Passage(text: "Cerdà va escapçar en angle totes les cantonades de l'Eixample. El xamfrà no és per als edificis: és perquè els dos carrers es vegin abans de trobar-se.", source: "Eixample de Barcelona", theme: .pattern, subtheme: .fittedTogether),
+        Passage(text: "El panot de flor de les voreres fa vint centímetres de costat. El dibuix segueix d'una llosa a la següent fins que tot el passeig duu el mateix motiu.", source: "Panot de Barcelona", theme: .pattern, subtheme: .fittedTogether),
+        Passage(text: "El gòtic d'aquesta banda duu els contraforts endins. El buit que resta entre l'un i l'altre no es llença: s'hi fan les capelles, i l'estructura i les sales són el mateix.", source: "Gòtic català", theme: .pattern, subtheme: .fittedTogether),
+        Passage(text: "Gaudí va penjar cordills amb saquets de perdigons per trobar la forma d'un arc. La corda cau sola com ha de caure, i el model fotografiat del revés dona el sostre.", source: "Colònia Güell", theme: .pattern, subtheme: .fittedTogether),
+        Passage(text: "Un liquen és un fong i una alga que fan vida d'un de sol: el fong posa la casa i l'alga el menjar. Els rodals grocs damunt dels murs vells són això.", source: "Liquens", theme: .pattern, subtheme: .fittedTogether),
+
+        // MARK: Order named
+        Passage(text: "La rosa dels vents duu vuit noms i tothom els fa servir: tramuntana, gregal, llevant, xaloc, migjorn, garbí, ponent i mestral. Cap d'ells no és un punt cardinal: són vents.", source: "Nàutica mediterrània", theme: .pattern, subtheme: .orderNamed),
+        Passage(text: "El gregal arriba de la banda de Grècia, el migjorn del punt del migdia, el garbí de la paraula àrab per a ponent, i el mestral és el mestre. El nom diu la procedència.", source: "Etimologia", theme: .pattern, subtheme: .orderNamed),
+        Passage(text: "L'ela geminada s'escriu amb un punt al bell mig, l·l, perquè no es llegeixi com una ll. El punt volat és una peça que aquesta llengua es va haver de fabricar.", source: "Ortografia", theme: .pattern, subtheme: .orderNamed),
+        Passage(text: "La ç es diu ce trencada: una lletra amb una cueta afegida perquè soni com una essa. El nom no explica el so, explica la forma.", source: "Alfabet català", theme: .pattern, subtheme: .orderNamed),
+        Passage(text: "Al català oriental, la a i la e sense accent cauen en un únic so. Per això pare i para sonen igual, i has de saber què vols dir abans d'escriure-ho.", source: "Fonètica", theme: .pattern, subtheme: .orderNamed),
+        Passage(text: "El llatí nocte va donar nit, i lacte va donar llet. Les llengües veïnes van conservar la vocal del final; aquesta la va deixar caure i acaba en consonant.", source: "Etimologia", theme: .pattern, subtheme: .orderNamed),
+        Passage(text: "L'atles més bonic de l'edat mitjana es va dibuixar a Mallorca el 1375, amb les costes plenes de topònims escrits cap endins i una rosa de vents enmig del mar.", source: "Atles català", theme: .pattern, subtheme: .orderNamed),
+        Passage(text: "Uns grecs van obrir un mercat vora l'aigua i el van anomenar emporion. D'aquell mot en surt Empúries, i de la ciutat en surt com es diu tota la comarca.", source: "Empordà", theme: .pattern, subtheme: .orderNamed),
+        Passage(text: "Puig ve del llatí podium, un lloc enlairat. Per això n'hi ha tants al mapa: cada tossal amb nom propi duu la mateixa paraula al davant.", source: "Toponímia", theme: .pattern, subtheme: .orderNamed),
+        Passage(text: "Sèquia, safareig, garbell, albercoc, carxofa i raval van entrar amb l'àrab i s'hi van quedar. Gairebé totes són coses de regar, de rentar o de menjar.", source: "Manlleus àrabs", theme: .pattern, subtheme: .orderNamed),
+        Passage(text: "Un castell s'anomena amb una fórmula: quatre de nou amb folre vol dir quatre persones per pis, nou pisos, i una segona rotllana de gent al peu de la primera.", source: "Cultura castellera", theme: .pattern, subtheme: .orderNamed),
+        Passage(text: "Els cognoms d'aquesta banda surten de dos llocs: de l'ofici, com Ferrer, Fuster o Teixidor, i del terreny, com Serra, Riera o Camps. Entre l'un i l'altre s'hi posa una i.", source: "Onomàstica", theme: .pattern, subtheme: .orderNamed),
+        // MARK: - Ground
+
+        // MARK: The soil itself
+        Passage( text: "Llicorella: la pissarra negra del Priorat, tan trencadissa que el cep hi baixa deu metres d'arrel avall a buscar l'aigua que la pedra no sap retenir.", source: "Edafologia", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "El Delta de l'Ebre és sòl que ha viatjat. El riu el va anar duent des de l'interior durant segles, gra a gra, fins a fer-ne una comarca sencera.", source: "Geografia", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "Gleva: el terròs sencer que la rella arrenca i tomba d'una peça. Un camp llaurat es mira comptant gleves, i del llatí gleba en ve també el nom del camp mateix.", source: "Agricultura", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "Fang és paraula germànica, no llatina. Va entrar amb els gots i s'hi va quedar, en un lloc on el llatí ja tenia lutum i no li'n calia cap altra.", source: "Germànic", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "Argila arriba del grec argós, que vol dir blanc, tot i que la d'aquí sovint és roja o grisa. El mot recorda quina van veure primer, no pas quina hi ha.", source: "Grec", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "Tapàs: la crosta calcària dura que hi ha sota un pam de bona terra en molts bancals valencians. Es trenca a pic, i quan cedeix, l'arrel hi passa avall.", source: "Valencià", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "A la Garrotxa els camps són cendra vella. El Croscat i els seus veïns van deixar un mantell negre i lleuger, i encara s'hi conrea com si allò no hagués passat.", source: "Vulcanologia", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "Terra franca: la barreja justa de sorra, llim i argila. No té cap virtut pròpia més enllà d'aquesta, no ser del tot cap dels tres, i és la millor que es pot tenir.", source: "Edafologia", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "Terrer és el que en francès en diuen terroir. Un vi de terrer no és el que ve d'un bon celler, sinó el que no sortiria igual dos turons més enllà.", source: "Enologia", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "A l'Empordà es planten fileres de xiprers i canyar de cara a la tramuntana. No és per fer bonic: és perquè el vent no s'endugui la capa de dalt del sembrat.", source: "Empordà", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "Fems ve del llatí fimus, i el català hi ha fet un verb a sobre: femar. Un hort no es cuida, es fema, i la paraula diu exactament què hi poses.", source: "Llatí", theme: .ground, subtheme: .theSoilItself ),
+        Passage( text: "Secà no vol dir pobre. Hi ha vinya, olivera i garrofer que només donen bé allà on mai no ha arribat cap canal de reg, i que en regadiu es tornarien fulla.", source: "Agronomia", theme: .ground, subtheme: .theSoilItself ),
+
+        // MARK: A place you are from
+        Passage( text: "Lo Canigó és una magnòlia immensa que en un rebrot del Pirineu se bada.", source: "Jacint Verdaguer, Canigó", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "Can Sala, Can Pujol, Ca l'Estevet: can és casa d'en, encollit fins a una síl·laba. La casa duu el nom de qui hi vivia, i el conserva quan ja no hi viu ningú d'aquells.", source: "Toponímia", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "A Mallorca les finques grans comencen totes igual: Son Vida, Son Servera, Son Sardina. Son ve de ço d'en, això és d'en tal, i la propietat va quedar dita per sempre.", source: "Mallorca", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "Llar ve dels lars, els déus petits que cada família romana tenia arran de foc. En castellà el mot per aquesta idea surt del foc mateix; aquí surt de qui l'acompanyava.", source: "Llatí", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "Quan es van dibuixar les comarques als anys trenta, part de la feina va ser preguntar a la gent a quin mercat anava. La frontera la va posar el costum de comprar.", source: "Geografia", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "Cornellà, Marçà, Fontanilles: molts pobles acaben en el nom d'un romà que hi tenia terres. Ningú no recorda l'home i tothom repeteix com es deia, cada dia, sense saber-ho.", source: "Toponímia", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "El sufix -enc, el d'eivissenc o d'agostenc, no és llatí sinó germànic, del -ing dels francs. La manera de dir d'on ets ens va arribar de fora.", source: "Germànic", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "Mas ve del llatí mansum, participi de manere, romandre. Una masia és, dita literalment, el lloc on algú es va quedar.", source: "Llatí", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "El que al Principat és una masia, a Mallorca és una possessió, amb clastra i portal rodó. Dues illes de distància basten perquè la mateixa cosa canviï de nom.", source: "Arquitectura popular", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "Hi ha tants pobles que es diuen Vilanova que gairebé cap no es pot dir només així: i la Geltrú, de Bellpuig, del Camí, de Prades. El nom nou ja demana un segon nom.", source: "Toponímia", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "A cada ocell, son niu li sembla bell.", source: "Refrany català", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+        Passage( text: "Els gentilicis no es dedueixen: de Vic, vigatà; de Lleida, lleidatà; de Berga, berguedà; de Reus, reusenc. S'aprenen d'un en un, igual que els noms de les persones.", source: "Gramàtica catalana", theme: .ground, subtheme: .aPlaceYouAreFrom ),
+
+        // MARK: A kept place
+        Passage( text: "Saps on és la fageda d'en Jordà?", source: "Joan Maragall", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "Una barraca de pedra seca està feta de les pedres que molestaven al tros. Traure-les del pas i alçar-hi un sostre amb volta és la mateixa feina feta dues vegades.", source: "Pedra seca", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "Les marjades de la Serra de Tramuntana continuen dempeus perquè encara s'ensenya l'ofici: el Consell de Mallorca manté una escola on s'aprèn a fer de marger.", source: "Mallorca", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "Les feixes d'Eivissa es reguen per galeries excavades sota els bancals, obra andalusina, amb portalets de fusta per on el pagès baixa a mirar si l'aigua passa.", source: "Eivissa", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "El Tribunal de les Aigües de l'Horta es reuneix cada dijous al migdia davant la catedral de València, escolta en valencià, decideix de viva veu i no escriu res.", source: "València", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "La séquia de Manresa es va començar el 1339 i encara duu aigua avui, vint-i-sis quilòmetres amb un desnivell tan just que sembla que no baixi enlloc.", source: "Bages", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "La surera es pela cada nou anys i, tot sovint, al tronc nu s'hi pinta la xifra de l'any. L'arbre porta escrita la data de la propera visita.", source: "Suredes", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "Al voltant del Sénia hi ha milers d'oliveres de més de mil anys que encara donen fruit. No són monuments tancats amb reixa: es cullen cada tardor com les joves.", source: "Territori del Sénia", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "L'era era rodona i s'escombrava abans de batre, perquè tot el gra que hi queia s'havia de poder recollir. Un terra pla i net també és una eina.", source: "Etnografia", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "L'ull de l'amo engreixa el cavall.", source: "Refrany català", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "Els aiguamolls de l'Empordà havien d'acabar en urbanitzacions i van acabar en parc natural, protegits el 1983 després que molta gent hi anés a mirar ocells i s'hi entossudís.", source: "Empordà", theme: .ground, subtheme: .aKeptPlace ),
+        Passage( text: "Fer dissabte vol dir netejar a fons, i es diu igual si és dimarts. El dia de la setmana s'ha convertit en el nom d'una manera de deixar les coses.", source: "Català", theme: .ground, subtheme: .aKeptPlace ),
+
+        // MARK: - Travel
+
+        // MARK: How a seed goes
+        Passage( text: "Llavor ve del llatí laborem, que volia dir el treball i allò que en surt. En aquesta llengua la paraula per començar una planta és, literalment, la feina feta.", source: "Llatí", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "Pels camins ramaders, les ovelles que pugen a l'estiu duen enganxades al velló llavors del pla, i les deixen caure amunt. El ramat sembra sense saber-ho.", source: "Transhumància", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "El gra del vesc va cobert d'una cola que no s'empassa bé: l'ocell se l'espolsa del bec fregant-lo contra una branca, que és exactament on la planta necessitava anar.", source: "Viscum album", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "Les bardisses creixen arrenglerades al llarg dels filferros perquè és allà on els ocells s'aturen. La tanca no atura l'esbarzer: li marca per on ha de passar.", source: "Rubus", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "El pi blanc guarda pinyes closes durant anys i les obre amb la calor. Quan el foc ha passat, el terra és net i la pinyonada cau damunt d'un lloc sense competència.", source: "Pinus halepensis", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "El margalló és l'única palmera nascuda aquí, i qui li escampa el fruit són els toixons i les guineus. Una palmera que depèn del bestiar de nit per anar enlloc.", source: "Chamaerops humilis", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "L'ullastre fa una oliva menuda que els tords s'empassen sencera. El pinyol en surt intacte, ja net de polpa, i aterra ben lluny d'on li tocava.", source: "Olea europaea", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "Un rovelló deixa anar milions d'espores per sota del capell, prou lleugeres perquè un cop d'aire les pugi fins al pi del costat. No se'n veu caure ni una.", source: "Lactarius", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "La llavor del pollancre viu pocs dies i ha de caure sobre sorra molla. Per això els pollancres fan renglera al costat del riu: allà on l'aigua va deixar el llit descobert.", source: "Populus", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "Un quirat és el pes d'un garrofí, que és igual arreu del garrofer. La llavor va acabar a totes les balances de joier del món sense sortir mai de l'arbre.", source: "Ceratonia siliqua", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "El cogombre amarg madura fins que la pressió de dins li fa saltar el peduncle, i escup el contingut a uns quants metres. És l'única planta d'aquí que es llança sola.", source: "Ecballium elaterium", theme: .travel, subtheme: .howASeedGoes ),
+        Passage( text: "Les arestes barbades dels ordis borts es cargolen i s'estiren segons la humitat de la nit, i cada torçada empeny el gra un pèl més endins. Es planta a si mateix.", source: "Hordeum", theme: .travel, subtheme: .howASeedGoes ),
+
+        // MARK: The road
+        Passage( text: "Veles e vents han mos desigs complir.", source: "Ausiàs March", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "El mateix camí de bestiar es diu carrerada al Principat, cabanera al Pirineu, assagador al País Valencià i lligallo cap al Maestrat. Canvia de nom sense canviar de traça.", source: "Ramaderia", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "Els romans travessaven els Pirineus pel coll de Panissars, i encara s'hi veuen els fonaments del monument que hi van deixar. Els que hi passen avui ho fan pel coll del costat.", source: "Via Augusta", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "El camí de ronda de la Costa Brava el van fer els carrabiners per vigilar les cales, arran de penya-segat. Ara el fa servir gent que hi va a mirar exactament el mateix mar.", source: "Costa Brava", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "Ramon Llull escrivia en català, en llatí i en àrab, i va anar a explicar les mateixes idees a Tunis, a París i a Montpeller, amb la mateixa obra sota el braç.", source: "Ramon Llull", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "Drecera ve de dreçar, posar dret. La ruta curta és la que va recta, i per això sol ser també la que puja més: el que s'estalvia en distància es paga en pendent.", source: "Català", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "Un camí de bast fa l'amplada d'una mula carregada i ni un pam més. La mida de l'animal va decidir per on passen encara avui la meitat dels senders de muntanya.", source: "Camins ramaders", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "Les distàncies es comptaven en hores de camí i no en llegües, perquè una hora costa amunt el mateix que costa una hora al pla. La mesura ja duia el desnivell a dins.", source: "Etnografia", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "Palanca vol dir alhora l'eina que fa força i el tauló que travessa un torrent. Una peça llarga posada de través resol dos problemes molt diferents.", source: "Català", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "Llívia és una vila catalana envoltada de França perquè el tractat parlava de cedir pobles i Llívia constava com a vila. S'hi arriba per una carretera declarada neutral.", source: "Cerdanya", theme: .travel, subtheme: .theRoad ),
+        Passage( text: "Camí ral era la via principal, la que anava sota protecció del rei. Molts carrers de pobles encara duen aquest nom tot i que fa segles que no hi passa cap correu.", source: "Toponímia", theme: .travel, subtheme: .theRoad ),
+
+        // MARK: Far off
+        Passage( text: "L'Atles català de 1375 el va dibuixar Cresques Abraham a Mallorca, i hi va pintar el Sàhara amb un camell, un rei assegut i una ruta que ell no havia fet mai.", source: "Cartografia mallorquina", theme: .travel, subtheme: .farOff ),
+        Passage( text: "La pus rica joia qui al món sia.", source: "Pere el Cerimoniós, sobre l'Acròpoli", theme: .travel, subtheme: .farOff ),
+        Passage( text: "El Llibre del Consolat de Mar recollia què es fa quan dos vaixells discrepen, i el van acabar fent servir ports de tot el Mediterrani que no tenien res més a veure entre ells.", source: "Dret marítim", theme: .travel, subtheme: .farOff ),
+        Passage( text: "Rossinyol que vas a França, encomana'm a la mare.", source: "Cançó popular catalana", theme: .travel, subtheme: .farOff ),
+        Passage( text: "La rosa dels vents d'aquí duu noms de països: gregal ve de Grècia, garbí de l'àrab gharb, que és ponent, i xaloc de més enllà del mar. Els mariners orientaven amb topònims forasters.", source: "Nàutica", theme: .travel, subtheme: .farOff ),
+        Passage( text: "A molts pobles del litoral hi ha una palmera plantada davant d'una casa gran. Vol dir que algú d'allà va anar a Cuba, li va anar bé, i va tornar a fer-s'hi vell.", source: "Cases d'indians", theme: .travel, subtheme: .farOff ),
+        Passage( text: "Verdaguer va escriure bona part de L'Atlàntida fent de capellà en vaixells que anaven i venien d'Amèrica. El poema del mar el va compondre damunt del mar.", source: "Jacint Verdaguer", theme: .travel, subtheme: .farOff ),
+        Passage( text: "Paella vol dir paella: la paella de ferro, del llatí patella. El nom de l'atuell ha donat la volta al món mentre l'atuell es quedava penjat a la cuina.", source: "Llatí", theme: .travel, subtheme: .farOff ),
+        Passage( text: "Els flamencs del Delta de l'Ebre i els de la Camarga són els mateixos ocells. Els anells ho van demostrar: fan una temporada aquí i la següent a centenars de quilòmetres.", source: "Phoenicopterus roseus", theme: .travel, subtheme: .farOff ),
+        Passage( text: "Un falciot pot passar-se mesos sense tocar terra, dormint mentre plana. Quan torna al forat del ràfec d'on va sortir, fa un any que no s'ha aturat enlloc.", source: "Apus apus", theme: .travel, subtheme: .farOff ),
+        Passage( text: "A l'Alguer, a Sardenya, encara s'hi parla català perquè al segle catorze hi va anar gent d'aquí a viure-hi. Una llengua es pot quedar sis-cents anys en un port petit.", source: "L'Alguer", theme: .travel, subtheme: .farOff ),
+        Passage( text: "El vaixell de Barcelona a Palma surt de nit i arriba de matí, i sempre ha estat així. La travessia dura just el que dura no veure-hi res.", source: "Mediterrània", theme: .travel, subtheme: .farOff ),
+
+        // MARK: - Meeting
+
+        // MARK: The moment
+        Passage( text: "Trobar vol dir topar amb allò que buscaves, i és el mateix verb que feien servir els trobadors per dir compondre. Trobar una cançó i trobar algú era la mateixa feina.", source: "Occità i català", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "Aquí les mans no es donen: s'encaixen. El verb és el de la fusteria, quan dues peces entren l'una dins l'altra i ja no cal cap clau perquè aguantin.", source: "Català", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "A la sardana la rotllana s'obre per deixar entrar qui arriba i es tanca al seu darrere, i ningú no atura el pas mentre passa. La colla acaba més gran que quan va començar.", source: "Sardana", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "La pinya d'un castell la fa qui vulgui. Gent que no es coneix de res s'hi acosta, empeny amb l'espatlla contra l'espatlla del del davant, i allò ja aguanta.", source: "Castells", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "Qui no s'arrisca, no pisca.", source: "Refrany català", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "A Mallorca encara se saluda dient Déu vos guard. Ningú no hi pensa: la fórmula ha durat més que la creença i ara vol dir només que t'han vist arribar.", source: "Mallorca", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "Els estams de la morera es disparen a mitja velocitat del so. És el moviment més ràpid que s'ha mesurat en una planta, i tot plegat serveix per posar pols a l'aire.", source: "Morus alba", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "Fer petar la xerrada és una conversa que no estava prevista: dues persones s'aturen, i el que sona és el xerric d'una cosa que s'obre. El verb ho diu tot.", source: "Català", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "Quan els gegants de dos pobles es veuen, ballen l'un davant de l'altre abans de res. Fan tres metres, els mou una persona a dins, i tothom mira com se saluden.", source: "Cultura popular", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "La revetlla de Sant Joan és la nit de l'any en què tothom és a fora, i la gent de la mateixa escala que no s'ha parlat mai acaba compartint una coca a la vorera.", source: "Costums", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "Topar serveix per a dues barques que xoquen i per a dues persones que es coneixen sense buscar-ho. La llengua tracta la sorpresa i el cop amb el mateix mot.", source: "Català", theme: .meeting, subtheme: .theMoment ),
+        Passage( text: "Un aplec ve d'aplegar, arreplegar coses escampades. És el nom que es dóna a la gent que puja el mateix dia a la mateixa ermita sense haver-ho parlat entre ella.", source: "Català", theme: .meeting, subtheme: .theMoment ),
+
+        // MARK: Two that need each other
+        Passage( text: "La figuera només la pol·linitza una vespa minúscula que hi neix a dins, i per això es pengen figues bordes a l'arbre bo: perquè l'insecte tingui d'on venir.", source: "Ficus carica", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "Al palmerar d'Elx hi ha palmeres mascle i palmeres femella, i els dàtils no vindrien sols. Algú puja amb una branca florida i la sacseja damunt la que farà fruit.", source: "Elx", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "El garrofer és de peu mascle o de peu femella, i un bosquet tot de femelles no dóna res. Cal deixar-n'hi un d'estèril enmig perquè els altres carreguin.", source: "Ceratonia siliqua", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "Una tòfona necessita tres coses alhora: l'arrel d'una alzina per viure enganxada, terra calcària, i un gos que la pugui olorar sota un pam de fullaraca.", source: "Tuber melanosporum", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "L'allioli no porta res més que all, oli i sal, i tot i així es talla si vas de pressa. La lligada depèn només del ritme amb què s'ajunten dues coses que no es barregen.", source: "Cuina", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "El pa amb tomàquet va néixer de dos problemes: pa de fa tres dies i un fruit vingut d'Amèrica que no se sabia com menjar. Junts resolen el que cap dels dos resolia.", source: "Cuina", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "La pesca a la parella es feia amb dues barques estirant una sola xarxa, cadascuna per un cap. Cap de les dues podia calar res tota sola ni un dia.", source: "Pesca", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "El flabiol es toca amb la mà esquerra sola perquè la dreta ha de picar el tamborí que el mateix músic duu penjat al braç. Dos instruments amb un sol cos.", source: "Cobla", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "El romaní floreix al desembre, quan gairebé res més no ho fa. Les abelles hi troben menjar fora de temporada i ell troba qui li porti el pol·len sense competència.", source: "Rosmarinus officinalis", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "Un gos d'atura entén una dotzena de xiulets diferents i el pastor no sabria menar el ramat sense ells. La llista de senyals se la van inventar entre tots dos.", source: "Gos d'atura", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "Les taques grogues de les parets de pedra seca són líquens: un fong que fa de casa i una alga que fa el menjar. Ni l'un ni l'altra viurien damunt d'aquell granit.", source: "Líquens", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+        Passage( text: "Moltes varietats d'olivera no s'accepten el seu propi pol·len. Un camp d'arbequines vol una altra mena d'arbre a sotavent o carrega la meitat del que podria.", source: "Olivicultura", theme: .meeting, subtheme: .twoThatNeedEachOther ),
+
+        // MARK: The manners of it
+        Passage( text: "Enraonar és el verb de cada dia per parlar, i està fet damunt de raó. Dir que dues persones enraonen és dir que estan raonant juntes, encara que sigui del temps.", source: "Català", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "Seny és el bon criteri assentat i rauxa és l'arrencada sobtada. Cap dels dos mots passa sencer a una altra llengua, i aquí es diuen sempre l'un al costat de l'altre.", source: "Català", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "A la terra on vas, fes el que veuràs.", source: "Refrany català", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "Aquesta llengua encara té tres maneres d'adreçar-se a algú: tu de confiança, vostè de distància, i vós, que és respecte sense fredor. La del mig és la que costa més d'explicar.", source: "Gramàtica catalana", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "Per Sant Jordi es regala un llibre i una rosa, i el costum obliga a totes dues bandes. El carrer s'omple de gent duent objectes destinats a algú altre.", source: "Costums", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "Des del 1498, molts càrrecs de Barcelona es treien a sort d'una bossa amb els noms dels qui hi tenien dret. Insaculació: la manera d'evitar que triar sigui una baralla.", source: "Consell de Cent", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "A les Corts medievals, el rei no feia llei tot sol: l'havia de pactar amb els braços reunits. El costum es va dir pactisme, i era una manera d'entendre qui mana.", source: "Història del dret", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "El mostassaf, mot vingut de l'àrab, era qui anava pel mercat comprovant pesos i mesures. Qualsevol comprador el podia cridar, i el venedor havia de deixar pesar de nou.", source: "Àrab", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "Bon profit es diu a qui està menjant, tant si el coneixes com si no. És una fórmula sense equivalent a mig Europa i no demana cap resposta més que un gest.", source: "Català", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "Pagar a escot vol dir repartir el compte, i escot és un mot franc que també va donar l'anglès scot. La idea de posar-hi cadascú la seva part va arribar del nord.", source: "Franc", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "Al nord, a l'Empordà i al Rosselló, encara es fa servir mercès en lloc de gràcies, com en occità. La cortesia conserva paraules que la resta de la llengua ha deixat.", source: "Occità", theme: .meeting, subtheme: .theMannersOfIt ),
+        Passage( text: "Déu-n'hi-do no té traducció. Serveix per reconèixer que una cosa té mèrit sense exagerar-la gens, i deixa qui l'ha feta content i sense haver de dir res més.", source: "Català", theme: .meeting, subtheme: .theMannersOfIt ),
+
+        // MARK: - Kinship
+
+        // MARK: Grown together
+        Passage( text: "Un ullastre empeltat continua sent ullastre de rel avall i olivera de la ferida amunt. Es queden les arrels dures d'un i el fruit bo de l'altre, i l'arbre no en fa cap escàndol.", source: "Empelt", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "Gairebé tots els ceps d'aquí viuen sobre peu americà, empeltats des de fa cent anys. Cada vinya és dues plantes que van créixer en continents diferents.", source: "Viticultura", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "Entre Eivissa i Formentera hi ha una praderia de posidònia que és un sol individu clonat, quilòmetres de mata amb els mateixos gens i una edat que es compta en mil·lennis.", source: "Posidonia oceanica", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "El corall vermell del cap de Creus no és un animal sinó milers, cadascun amb la boca oberta a l'aigua i tots damunt del mateix esquelet, que puja un mil·límetre l'any.", source: "Corallium rubrum", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "Quan dues branques es freguen prou anys, l'escorça es gasta, la fusta de dins es toca i acaben soldades. Després no es poden separar sense tallar totes dues.", source: "Dendrologia", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "L'heura no xucla res de la paret ni de l'arbre on puja: s'hi agafa amb unes arreletes que només serveixen per subjectar. Tot el que menja el treu del terra, com qualsevol.", source: "Hedera helix", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "Una bardissa vella és arç, esbarzer, aranyoner i roser bord teixits fins que ja no se sap on comença cadascun. Cap d'ells sol no aturaria ni una ovella.", source: "Botànica", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "Un cistell és una vareta de vímet que no aguanta res, repetida seixanta vegades i passada per sobre i per sota. La resistència no és de cap tija: és de com estan posades.", source: "Cistelleria", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "Al mateix tros s'hi posava olivera dalt, cep al mig i cereal a terra. En deien conreu associat, i cada pis feia servir una fondària d'arrel que els altres no tocaven.", source: "Agricultura mediterrània", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "El rovelló surt sempre sota pi perquè el fong viu enganxat a les arrels i hi canvia menjar: minerals amunt, sucre avall. La cistella és el rebut d'un tracte antic.", source: "Micologia", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "Un llevat mare pot passar d'una casa a una altra durant generacions. El que dónes al veí no és pas una recepta: és un tros viu del pa que fas tu.", source: "Fleca", theme: .kinship, subtheme: .grownTogether ),
+        Passage( text: "Una paret mitgera és de tots dos veïns alhora, i cap dels dos la pot enderrocar sol. Hi ha coses que només existeixen mentre dues bandes les sostenen.", source: "Dret civil català", theme: .kinship, subtheme: .grownTogether ),
+
+        // MARK: The words for it
+        Passage( text: "L'hereu s'ho queda tot d'una peça i la pubilla ho és quan no hi ha cap noi. El dret d'aquí va inventar dos noms per no haver de partir mai una casa.", source: "Dret civil català", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "Del germà que no hereta, se'n diu cabaler en unes comarques i fadristern en unes altres. Que tingui nom propi vol dir que era una vida prou freqüent per necessitar-ne.", source: "Etnografia", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "Fadrí, el mot per a qui encara no s'ha casat, ve del llatí fratrinus: germanet. Qui no era el gran de tot es va quedar amb el diminutiu com a estat civil.", source: "Llatí", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "A les Illes i a bona part del Pirineu, padrí i padrina volen dir avi i àvia. La mateixa paraula, cent quilòmetres més enllà, assenyala una altra persona de la família.", source: "Dialectologia", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "Els cognoms van units per una i: Pujol i Serra, Roig i Ferrer. La conjunció manté visibles les dues bandes en lloc de deixar que una segueixi l'altra sense res al mig.", source: "Onomàstica", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "En molts pobles de muntanya la gent es coneix pel nom de la casa i no pel llinatge: en Jaume de Cal Sastre ho serà encara que faci de mestre i visqui a ciutat.", source: "Pallars", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "Quan dues viles es lliguen, aquí no se'n diu bessonatge sinó agermanament. Es fan germanes, i el verb dóna per fet que això és una cosa que es pot decidir.", source: "Català", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "Nissaga vol dir el seguit de gent d'on véns, amb els oficis i les manies incloses. No és sang ni cognom: és tot allò que s'ha anat repetint sense que ningú ho manés.", source: "Català", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "Una colla és la gent amb qui fas una cosa: colla castellera, colla de geganters, colla d'amics. El grup pren nom de l'activitat i no pas del parentiu.", source: "Català", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "Davant d'un nom de persona hi va article: en Pere, la Marta, i a les Illes na Joana. Ve de dominus i domina, i ara només marca que d'aquell algú en parles amb familiaritat.", source: "Gramàtica catalana", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "Els nens són mainada al Principat, al·lots a Mallorca i xiquets al País Valencià i a Ponent. Quatre maneres de dir el mateix segons on t'hagin criat.", source: "Dialectologia", theme: .kinship, subtheme: .theWordsForIt ),
+        Passage( text: "Fillol i fillola són el nen i la nena que t'han encomanat sense ser fills teus. El mot és fill amb un sufix, i el sufix hi posa tota la distància que hi ha.", source: "Català", theme: .kinship, subtheme: .theWordsForIt ),
+
+        // MARK: Two people
+        Passage( text: "Fer safareig vol dir xerrar del que passa al carrer. El safareig era la bassa on s'anava a rentar, i el nom del lloc s'ha quedat com a nom del que s'hi feia mentrestant.", source: "Català", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "Del porró se'n beu a raig i sense tocar-lo amb els llavis, i és exactament per això que pot fer la volta a la taula sencera sense que ningú s'ho hagi de pensar.", source: "Costums", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "A la botifarra es juga per parelles assegudes de cara, i està prohibit fer senyals. Has d'endevinar què duu el company només per l'ordre en què tira les cartes.", source: "Jocs de cartes", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "Ramon Llull va escriure un llibre de tres-centes seixanta-cinc parts, una per dia, on els dos únics personatges no tenen nom: l'amic i l'amat, i prou.", source: "Ramon Llull", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "Qui té bon veí, té bon matí.", source: "Refrany català", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "Els cavallets de mar del Delta viuen aparellats i cada dia es busquen, s'agafen per la cua i fan uns quants tombs junts abans de tornar cadascun a la seva alga.", source: "Hippocampus", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "Prendre la fresca és treure la cadira a la vorera quan cau la calor. No hi ha convit ni hora: seus fora i, al cap d'una estona, hi ha algú més assegut al costat.", source: "Costums", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "Un masover treballava terra d'un altre i es repartien la collita a mitges, sovint durant tres o quatre generacions. Dues famílies lligades per un tracte i cap paper nou.", source: "Masoveria", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "El sereno duia les claus de tots els portals del barri, i per fer-lo venir de nit es picava de mans. Algú a qui podies cridar sense saber on era.", source: "Barcelona", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "Dues abelles es passen menjar de boca a boca, i amb l'aliment hi va també l'olor de la reina i les novetats del rusc. Compartir el dinar és com s'assabenten de tot.", source: "Apis mellifera", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "Al País Valencià encara es canten albades: algú es planta sota una finestra amb una dolçaina i canta una cosa feta per a qui hi ha dins, i que sent tot el carrer.", source: "Música tradicional", theme: .kinship, subtheme: .twoPeople ),
+        Passage( text: "El diccionari més gran d'aquesta llengua es va començar demanant mots a la gent, poble per poble, amb llibreta. Està fet de converses amb persones que no consten enlloc.", source: "Antoni Maria Alcover", theme: .kinship, subtheme: .twoPeople ),
+
+        // MARK: - Peace
+
+        // MARK: Quiet as a sound
+        Passage( text: "A l'est del domini, la a i la e àtones sonen totes dues com una vocal neutra, feta amb la boca en repòs. És el so que surt quan no es fa res per fer-ne cap altre.", source: "Fonètica catalana", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "Calma xitxa és el mar sense ni una arruga i sense gens d'aire. Els mariners hi tenen nom propi perquè no és descans: és una cosa que passa i que se sent.", source: "Nàutica", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "Les cigales callen just on trepitges i tornen a cantar dues passes darrere teu. El silenci és una bombolla de deu metres que et segueix camí avall.", source: "Cicada orni", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "A la cartoixa d'Escaladei cada monjo tenia cel·la i hortet propis i menjava sol, amb una finestreta per rebre el plat. L'edifici sencer estava dissenyat per no coincidir.", source: "Priorat", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "Una remor no és soroll ni és silenci: és el fons continu que fa un riu llunyà o una plaça plena. La llengua li dóna nom perquè es pot sentir i no destorba.", source: "Català", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "Fer xup-xup és el soroll d'una olla que va a foc lent durant hores. És dels pocs sons que volen dir que ningú no ha de fer res durant una bona estona.", source: "Català", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "El pastor escolta el ramat: esquella grossa, picarol petit, i el dring desigual vol dir que pasturen. Quan totes sonen alhora i seguit, alguna cosa les ha fet moure.", source: "Ramaderia", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "La neu acabada de caure s'empassa bona part del so que li arriba, perquè entre floc i floc hi ha aire. Un bosc nevat no està callat: està encoixinat.", source: "Acústica", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "En un alzinar de juliol, l'hora més muda és el migdia. Els ocells deixen de cantar amb la calor i no tornen fins al capvespre, quan comença a fer-se suportable.", source: "Ornitologia", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "Les ordenances municipals fixen a quina hora comença la nit i quants decibels s'hi poden fer. El silenci d'un poble té horari escrit i està signat per algú.", source: "Ordenances", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "Una sardana s'obre amb el flabiol tocant sol quatre compassos, i tothom espera dret. La música comença amb l'instrument més petit de la cobla i amb ningú movent-se.", source: "Sardana", theme: .peace, subtheme: .quietAsASound ),
+        Passage( text: "Quan la tramuntana para després de tres dies, l'Empordà queda amb una quietud que la gent d'allà comenta en veu alta. Has sentit el vent tant que ara el sents marxar.", source: "Empordà", theme: .peace, subtheme: .quietAsASound ),
+
+        // MARK: The words for stopping
+        Passage( text: "Pau ve del llatí pax, però aquí no es fa la pau: es fan les paus, en plural. La llengua dóna per fet que n'hi ha una per banda i que totes dues s'han de dir.", source: "Llatí", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "Treva ve del gòtic triggwa, un pacte, i és parenta de l'anglès true. Aturar-se un temps convingut i fiar-se d'algú duien el mateix nom entre els germànics.", source: "Gòtic", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "Aquí no se surt de la feina: es plega. El verb és el de doblegar un drap, i vol dir recollir l'eina, deixar-la on va i marxar sense que quedi res a mig fer.", source: "Català", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "Prou vol dir suficient i vol dir atura't. Amb una síl·laba es tanca una discussió, i el mateix mot encara serveix per assentir: prou que ho sabia.", source: "Català", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "Deixar-ho córrer no és abandonar-ho: és permetre que allò continuï sense tu. La manera d'acabar una discussió, en aquesta llengua, és un verb de moviment.", source: "Català", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "Guaret: el camp que es deixa un any sencer sense sembrar-hi res. No està abandonat, està guaretant, i el pagès hi passa l'arada precisament per no collir-hi.", source: "Agricultura", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "Una sagrera era el cercle de trenta passes al voltant d'una església on ningú no podia prendre res a ningú. Es va mesurar amb passes i ha quedat com a nom de barri.", source: "Sagrera", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "El 1278 la baralla per Andorra es va tancar decidint que manarien dos senyors alhora, cadascun la meitat. L'acord encara funciona i les valls continuen tenint dos caps.", source: "Pariatge d'Andorra", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "El 1412, per triar qui regnaria, es van reunir nou homes a Casp, tres per cada territori, i van votar. La successió es va resoldre amb una llista de noms i un recompte.", source: "Compromís de Casp", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "Parar vol dir aturar-se i també preparar: pares taula, pares el cotxe. La mateixa arrel serveix per deixar de moure't i per tenir-ho tot a punt per a algú.", source: "Català", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "Fer campana és no anar a escola i passar el matí en un altre lloc. És el primer nom que un aprèn per a la idea d'aturar allò que es dóna per fet.", source: "Català", theme: .peace, subtheme: .theWordsForStopping ),
+        Passage( text: "Enllestir és acabar una cosa fins al punt que ja no la tornaràs a tocar. Ve de llest, a punt, i el que descriu és el moment de deixar-la, no pas el de fer-la.", source: "Català", theme: .peace, subtheme: .theWordsForStopping ),
+
+        // MARK: At ease
+        Passage( text: "Migdiada està feta sobre migdia. On el castellà compta les hores des de l'alba per anomenar aquesta estona, aquí simplement es diu que és el mig del dia.", source: "Català", theme: .peace, subtheme: .atEase ),
+        Passage( text: "Trobar-se a pler vol dir estar bé sense que hi hagi cap motiu concret. Ve de plaer, i s'aplica a una cadira, a una temperatura i a una companyia.", source: "Català", theme: .peace, subtheme: .atEase ),
+        Passage( text: "Becaina ve de bec: el cap que cau i es torna a alçar, com fa un ocell. El nom descriu el moviment de qui s'adorm assegut, no pas el son.", source: "Català", theme: .peace, subtheme: .atEase ),
+        Passage( text: "Un pedrís és el banc de pedra encastat a la façana, al costat del portal. L'obra ja preveia que hi hauria algú assegut mirant passar la tarda.", source: "Arquitectura popular", theme: .peace, subtheme: .atEase ),
+        Passage( text: "El vermut és una hora, no una beguda: la del diumenge abans de dinar, dret, amb olives i sifó. Té final fixat i comença quan la gent surt al carrer.", source: "Costums", theme: .peace, subtheme: .atEase ),
+        Passage( text: "Badar és obrir-se una flor i és també quedar-se encantat mirant una altra cosa. Un sol verb per a la corol·la que cedeix i per a l'atenció que se'n va.", source: "Català", theme: .peace, subtheme: .atEase ),
+        Passage( text: "Una sargantana ha d'arribar als trenta graus abans de poder caçar res, i per això comença el dia immòbil damunt d'un marge. Escalfar-se al sol li és feina.", source: "Podarcis", theme: .peace, subtheme: .atEase ),
+        Passage( text: "A la taula i al llit, al primer crit.", source: "Refrany català", theme: .peace, subtheme: .atEase ),
+        Passage( text: "A les cases velles, la xemeneia era prou ampla per seure-hi a dins, amb bancs a banda i banda del foc. S'entrava a la llar literalment, i s'hi passava el vespre.", source: "Etnografia", theme: .peace, subtheme: .atEase ),
+        Passage( text: "Xalar, al País Valencià i a les Illes, és passar-s'ho bé sense pressa ni motiu. No demana festa grossa: xales igual amb un bany al mar a les set del matí.", source: "Dialectologia", theme: .peace, subtheme: .atEase ),
+        Passage( text: "Una parra damunt del porxo dóna ombra tot l'estiu i, quan perd la fulla, deixa entrar el sol just quan comença a faltar. La teulada canvia sola dues vegades l'any.", source: "Vitis vinifera", theme: .peace, subtheme: .atEase ),
+        Passage( text: "Aquí no es té un dia lliure: es fa festa. El mot de la celebració serveix igual per a una jornada en què no passa absolutament res i ningú no espera que passi.", source: "Català", theme: .peace, subtheme: .atEase ),
+    ]
+}
