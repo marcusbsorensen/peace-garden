@@ -123,4 +123,4 @@ if __name__ == "__main__":
     ap.add_argument("--out", default="out/marks.png")
     ap.add_argument("--paths", help="a directory of SVGs to render instead")
     args = ap.parse_args()
-    sheet(from_directory(args.paths) if args.paths else shapes.MARKS, args.out)
+    sheet(from_directory(args.paths) if args.paths else shapes.CANDIDATES, args.out)
