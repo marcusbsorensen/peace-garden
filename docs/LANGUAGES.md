@@ -388,21 +388,80 @@ somebody with the languages and the reading, against the rules already set out
 at the top of `Quotes.swift` — long-dead authors, public-domain translations
 credited, nothing lifted from a reference book's wording.
 
-### Where that leaves the app today
+### What was done instead: option 3, eight times over
 
-**Option 1 of the three: the interface is localised and the passages are
-English.** They are drawn with `Text(verbatim:)`, so they are visibly outside
-the catalogue rather than accidentally missing from it.
+The scope recommended option 1 now and option 3 — a bank per language — for the
+two or three languages that earned it. **Eight banks were commissioned in one
+round**: English as it stood, plus Dutch, Danish, French, Spanish, Norwegian
+Bokmål, Swedish and Italian, each written from scratch against the rules at the
+top of `Quotes.swift` by somebody working only in that language.
 
-The passage screen is the one moment the app speaks at length, so it is also the
-moment the English is most conspicuous. **The passage does not yet carry a line
-saying which language it is in**, which the scope said would make this
-defensible. That is the smallest remaining piece of this work and it is not
-done.
+They are not translations of each other and they share almost nothing. Measured
+across the six that had landed when this was written: **zero lines in common
+with the English bank**, none of them. That is
+`testNoBankIsTheEnglishOneTranslated`, and it is the one number that says the
+commission was a commission rather than a translation job with a better brief.
 
-Option 2 — hiding the passage where there is no bank — remains the fallback, and
-option 3, a bank per language, remains the right answer for the two or three
-languages that earn it.
+What each one found is in its own file's doc comment. The pattern across them is
+worth recording, because it is an argument about the subthemes rather than about
+any language:
+
+- **Four of the seven independently named `quietAsASound` as their hardest.**
+  Dutch has no coinage like *psithurism* and leans on *ruisen* and the legally
+  designated *stiltegebieden*; French spends *bruissement* on silk, paper and
+  crowds; Swedish and Norwegian both find their quiet-words are weather and
+  water words rather than sound words — *havblikk*, *blikkstille*, *stiltje*.
+  All seven reached ten anyway.
+- **Several subthemes are richer outside English.** Danish separates *stilhed*
+  from *tavshed* where English collapses both into silence. Italian owns the
+  vocabulary the world uses for musical rest — *fermata*, *sordina*,
+  *smorzando*. Norwegian's `theEdgesOfTheDay` is an embarrassment of material in
+  a country where the edges of the day last months.
+- **Some subthemes carve differently and were let to.** French has no word for a
+  sibling at all — *frère ou sœur*, and *fratrie* names only the set — so its
+  `theWordsForIt` is built on chosen closeness rather than blood. Norwegian's
+  *fred* names protection laid over a place (*fredlyse*, a listed building that
+  is literally *fredet*) rather than a cessation. Italian's `aPlaceYouAreFrom`
+  resolves at the bell tower rather than the hearth, and *campanilismo* carries
+  a note of parochialism that "home" does not.
+
+### What two phones agree on now
+
+They cannot agree on the line any more, and should not. A shared line would
+require the banks to be parallel translations, which is the one thing they must
+not be.
+
+**The theme and the subtheme still agree**, and they are the part that was
+always doing the work: the theme is drawn from the pair, the subtheme from the
+child's own genus, and both are language-neutral because a plant's name is a
+synthesised Latinate binomial. Two people meeting across languages draw from the
+same corner of the same theme and each reads it in their own. What a pair holds
+in common is the character of the passage rather than its words.
+
+`QuoteBank` is where that is written down, and
+`testTwoPhonesOnDifferentBanksAgreeOnTheCornerIfNotTheWords` is what holds it.
+
+### The line saying which language
+
+Built. `QuoteBank.isBorrowed` is true when the phone's language has an interface
+and no bank, and `PlantRevealView` then reads *source · in English*. It is
+dormant for all eight, and it exists before the languages that need it because
+round two will need it on the day its interfaces land and its banks have not.
+
+### What this found in the English bank
+
+Nobody expected to learn anything about English by commissioning seven other
+languages. **The English bank does not meet the floor its own scope set.**
+
+`docs/LANGUAGES.md` said ten themes × three subthemes × ten lines was the floor
+for a language. English has 300 passages, **thirteen of its thirty subthemes
+under ten, and `quietAsASound` at five**. Every commissioned bank came in
+between 349 and 380 with a floor of eleven.
+
+It is held in `QuoteBankTests` at its own measured floor rather than at the real
+one — enough that it cannot quietly get thinner, visible enough that somebody
+fills it. Roughly ninety passages would bring it level with the languages that
+were written to describe it.
 
 ## What the map gives away for free
 
@@ -435,11 +494,75 @@ Dutch right is the comment that makes Italian right.
 `tools/type/measure.swift`, and look at four screens.** Nothing in the source has
 to change for it. That is what the fortnight bought.
 
+## Round two
+
+Twenty-five languages, agreed 2 September, held until round one had landed so
+that the brief could carry what round one learned.
+
+**Latin alphabet, which is the fence for now.** Catalan, Polish, Hungarian,
+Romanian, Slovene, Croatian, Slovak, Czech, Welsh, Basque, Turkish, Finnish,
+Irish, Portuguese, German, Lithuanian, Latvian, Estonian, Albanian, Icelandic,
+Galician, Luxembourgish, Faroese, Maltese, Greenlandic.
+
+Three that were asked for and are not on it, each for a different reason:
+
+- **Flemish** is the Belgian variety of Dutch, `nl-BE`, not a peer language.
+  `QuoteBank.bank(for:)` matches on the language alone, so a Flemish phone reads
+  the Dutch bank — which was briefed to carry Gezelle and *Vlaams spreekwoord*
+  for exactly this reason. A `nl-BE` variant bank remains possible later.
+- **Ukrainian** is Cyrillic, so it goes with Greek, Russian, Bulgarian, Serbian,
+  Macedonian and Belarusian in the other-alphabets round.
+- **Sami and Frisian** are out. Both needed disambiguating before they could be
+  briefed at all — "Sami" is a family of about nine languages of which only
+  Northern has much in print, and "Frisian" means West Frisian — and neither is
+  an iOS display language. The effort goes to the larger banks.
+
+**"Gaelic" resolved to Irish.** Irish and Scottish Gaelic are separate
+languages; Irish is an official EU language with far more out-of-copyright
+literature to quote.
+
+**Greenlandic is the interesting one.** Kalaallisut has its own ISO code, its
+own Latin orthography since the 1973 reform, and has been the sole official
+language of Greenland since 2009. The hedge is that the Inuit languages form a
+dialect continuum from Alaska to Greenland, so where you cut it into languages
+is conventional rather than sharp — a Kalaallisut and an Iñupiaq speaker cannot
+understand each other, but every adjacent pair can. It is not related to Danish.
+It is polysynthetic, which is the argument *for* it: a language that builds
+whole sentences into single words is an unusually good seam for the definition
+and etymology kinds. Its constraint is quotation — Rink (1866–71) and Rasmussen
+are clear, but *Sinnattugaq*, the first Greenlandic novel, does not clear until
+2027 — so its bank leans on oral tradition and word-building, and its brief has
+to say so.
+
+### What round one learned, for the round-two brief
+
+- **Send the bank in pieces.** Spanish failed twice on an API output content
+  filter when asked to produce the whole file at once, and only landed when told
+  to append a theme at a time. Put that in every brief.
+- **Name the thin-corpus languages as thin.** Faroese, Luxembourgish and
+  Greenlandic will not reach 300 passages from quotation. Say so, or an agent
+  pads — or worse, invents an attribution.
+- **Tell them what the last round found hard.** Every bank struggled with
+  `quietAsASound` and every bank got there. Naming the kinds of material that
+  worked — acoustic fact, quiet marked in law, the words a language has for it
+  obliquely — saves each one rediscovering it.
+- **Register is a rule, not a preference.** Four banks dropped verified,
+  out-of-copyright, famous lines because they read as a rebuke or an elegy to
+  two people who have just met. That instruction earns its place in the brief.
+- **Say what is already taken.** German is the type-review worst case and its
+  bank doubles as the overflow test. Maltese is Semitic in Latin script, its
+  etymology seam Arabic under a Sicilian-Italian overlay. Basque is an isolate
+  with no cognates to lean on.
+
 ## What is still open
 
-1. **The passage needs a line saying it is in English.** See above; it is the
-   one thing the chosen option depends on and it is not built.
-2. **A native reviewer for each of the seven.** These translations are careful
+1. **The English bank is ninety passages short of its own floor.** Thirteen
+   subthemes under ten, `quietAsASound` at five. It is the thinnest of the
+   eight, and it is the one every other bank was written against.
+2. **A native reviewer for each of the seven interfaces, and now for each of
+   the seven banks.** A bank is harder to review than an interface and matters
+   more: a misattributed quotation ships as a claim about a dead writer.
+3. **A native reviewer for each of the seven.** These translations are careful
    and they are not a native speaker's. The places, the plant forms and the
    fallback name are where an outside eye would earn most.
 3. **The fallback name travels.** A person who never gives a name is called by
