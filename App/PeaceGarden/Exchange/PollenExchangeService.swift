@@ -202,15 +202,22 @@ final class PollenExchangeService: NSObject {
         phase = .idle
     }
 
-#if targetEnvironment(simulator)
-    /// Stands in for the knock where there is no accelerometer to feel it.
+#if DEBUG
+    /// Stands in for the knock.
     ///
     /// A simulator can do everything else in a meeting — advertise, browse,
     /// connect, cross — and then stops dead at the one gesture it has no
     /// hardware for, which left the crossing and the passage after it
-    /// unwatchable for three sessions. This is compiled out of every build
-    /// that runs on a real device, so the shipping app still holds the line
-    /// that the tap is a gesture and not a button.
+    /// unwatchable for three sessions.
+    ///
+    /// **`#if DEBUG` rather than `#if targetEnvironment(simulator)`**, because
+    /// a phone needs it too now, for one path only: an imaginary gardener
+    /// knocks the instant you do, and a knock firm enough to register while
+    /// you are watching the screen is a knack a developer control should not
+    /// require. `ExchangeView` calls this on a device only while the meeting
+    /// is imaginary. Either way it is compiled out of every build that could
+    /// reach the App Store, so the shipping app still holds the line that the
+    /// tap is a gesture and not a button.
     func standInForTouch() {
         registerLocalTouch()
     }
