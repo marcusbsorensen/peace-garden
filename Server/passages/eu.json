@@ -582,7 +582,7 @@
   "subtheme": "madeWhole"
  },
  {
-  "text": "Hezur hautsi bat sendatzean, batuneak hasieran lodiagoa egiten du hezurra. Gero urteetan leuntzen da, harik eta marka joan arte.",
+  "text": "Hezur hautsi bat sendatzean, lodiagoa geratzen da hausturaren tokia hasieran. Urteetan leuntzen da, harik eta marka ia ezabatu arte.",
   "source": "Fisiologia",
   "theme": "renewal",
   "subtheme": "madeWhole"
@@ -594,7 +594,7 @@
   "subtheme": "madeWhole"
  },
  {
-  "text": "Zeramika hautsia berriro josteko, buztin-zulatzailea eta metalezko grapak erabiltzen ziren. Ontziak balio zuen konpontzeko lana adina.",
+  "text": "Ontzi hautsiak grapaz josten ziren: zuloak eginda, metalezko kakoek bi zatiak lotzen zituzten. Konpontzea merkeagoa zen berria erostea baino.",
   "source": "Etnografia",
   "theme": "renewal",
   "subtheme": "madeWhole"
@@ -918,7 +918,7 @@
   "subtheme": "counted"
  },
  {
-  "text": "Bost hitza eskuari lotuta dago, eta bostekoa emateak eskua ematea esan nahi du. Zenbakia eta keinua gauza bera dira.",
+  "text": "Baserrian eguna otorduka zatitzen zen: gosaria, hamaiketakoa, bazkaria, askaria eta afaria. Hamaiketakoak ordua darama izenean.",
   "source": "Euskara",
   "theme": "pattern",
   "subtheme": "counted"
@@ -1104,8 +1104,8 @@
   "subtheme": "theSoilItself"
  },
  {
-  "text": "Basoa ta ibaia auzo, hau ez daben etxea gaixo.",
-  "source": "Refranes y Sentencias, 1596",
+  "text": "Euskal Herriko lurrik emankorrenak ibarretakoak dira, ibaiak mendeetan behera ekarritakoak. Mendiko lurra da behean dagoena.",
+  "source": "Nekazaritza",
   "theme": "ground",
   "subtheme": "theSoilItself"
  },
@@ -1242,7 +1242,7 @@
   "subtheme": "aKeptPlace"
  },
  {
-  "text": "Baratze hitza latinetik dator, eta lorategia baino gehiago jateko baratza esan nahi du euskaraz. Etxearen ondoan egoten zen beti.",
+  "text": "Baratzea jateko landatzen den lekua da euskaraz, eta lorategia beste hitz bat. Etxeari lotuta egoten zen beti baratzea, ez urrun.",
   "source": "Etimologia",
   "theme": "ground",
   "subtheme": "aKeptPlace"
@@ -1260,7 +1260,7 @@
   "subtheme": "aKeptPlace"
  },
  {
-  "text": "Mairubaratzak deitzen zaie Pirinioetako harri-borobilei. Baratza esaten zaie, nahiz eta inork ez dakien zer landatu zen han.",
+  "text": "Mairubaratz esaten zaie Pirinioetako harrizko biribilei: mairuen baratzeak. Hilobiak dira, eta baratzearen izena eman zaie hala ere.",
   "source": "Arkeologia",
   "theme": "ground",
   "subtheme": "aKeptPlace"
@@ -1470,7 +1470,7 @@
   "subtheme": "farOff"
  },
  {
-  "text": "Angulek Sargazoen itsasoan jaiotzen dira, eta hiru urte behar dituzte Bidasoara iristeko. Itzultzen direnean, berriro joaten dira erruteko.",
+  "text": "Angulak Sargazoen itsasoan jaiotzen dira, eta urteak behar dituzte Bidasoaraino iristeko. Handitzean, itsaso berera itzultzen dira erruteko.",
   "source": "Itsas biologia",
   "theme": "travel",
   "subtheme": "farOff"
@@ -1500,7 +1500,7 @@
   "subtheme": "farOff"
  },
  {
-  "text": "Argi bat urrundik ikustean, txikiagoa dirudi baina ez ahulagoa. Itsasargiak hogeita hamar kilometrora ere argi horixe bera bidaltzen du.",
+  "text": "Itsasargi baten irismena ez dago indarrean bakarrik, altueran ere bai. Zenbat eta gorago egon, orduan eta urrunago ikusten da, lurra biribila delako.",
   "source": "Fisika",
   "theme": "travel",
   "subtheme": "farOff"
@@ -1530,7 +1530,7 @@
   "subtheme": "theMoment"
  },
  {
-  "text": "Eklipse batean, ilargiaren itzala hirurogei kilometro zabal da lurrean, eta ordu erdiz pasatzen da. Leku berean berriro ikusteko mendeak dira.",
+  "text": "Eguzki-eklipse oso batean, ilargiaren itzalak zerrenda estu bat marrazten du lurrean, eta puntu batean minutu gutxi batzuk irauten du.",
   "source": "Astronomia",
   "theme": "meeting",
   "subtheme": "theMoment"
@@ -1542,25 +1542,25 @@
   "subtheme": "theMoment"
  },
  {
-  "text": "Bi mendi-tontor artean ahotsak ordu erdi ibiltzen zuen lehen: irrintzi bat botatzen zen, eta besteak erantzuten zuen.",
+  "text": "Irrintzia ibarraren beste aldera iristeko botatzen zen. Zorrotza eta luzea izateak eramaten du urrunera, ozena izateak baino gehiago.",
   "source": "Herri-jakintza",
   "theme": "meeting",
   "subtheme": "theMoment"
  },
  {
-  "text": "Bi uholde-ur elkartzen direnean, batak bestea bultzatzen du eta lokatza erdian geratzen da. Hala jaiotzen dira ibaiko uharteak.",
+  "text": "Ibai batek beste bat hartzen duenean, urak abiadura galtzen du elkargunean eta harea bertan uzten. Ibaiko uharteak horrela hazten dira.",
   "source": "Geografia",
   "theme": "meeting",
   "subtheme": "theMoment"
  },
  {
-  "text": "Aurkitu aditza aurre hitzetik dator: norbaiten aurrean jartzea. Zerbait aurkitzeak begien aurrera etortzea esan nahi du.",
+  "text": "Aurkitu aditzak aurre hitza duela barruan uste da: zerbait aurkitzea begien aurrera ekartzea da, hitzez hitz hartuta.",
   "source": "Etimologia",
   "theme": "meeting",
   "subtheme": "theMoment"
  },
  {
-  "text": "Herriko dantzan bi ilarak elkarrengana hurbiltzen dira eta atzera egiten dute, ukitu gabe. Ukitzea azkeneko konpasean bakarrik gertatzen da.",
+  "text": "Soka-dantzan denak esku emanda doaz, eta katearen buruan doanak erabakitzen du bidea. Azkenak beti ikusten du non hasi den ilara.",
   "source": "Musika",
   "theme": "meeting",
   "subtheme": "theMoment"
@@ -1770,13 +1770,13 @@
   "subtheme": "grownTogether"
  },
  {
-  "text": "Ubide bat eta ibai bat elkartzean, urak nahasten dira baina tenperaturak denbora luzez irauten du bereizita. Marra ikusi egiten da.",
+  "text": "Bi ibai elkartzen direnean, urak kilometro batzuetan bereizita joan daitezke, tenperatura eta kolorea desberdinak badituzte. Marra ikusi egiten da.",
   "source": "Geografia",
   "theme": "kinship",
   "subtheme": "grownTogether"
  },
  {
-  "text": "Ahizpa eta ahizpa arteko soka bat egiteko, hariak alderantziz bihurritzen dira. Bakoitza bere aldera tiraka, eta horrek egiten du soka.",
+  "text": "Soka bat egiteko, hariak alde batera bihurritzen dira eta sokak bestera. Bakoitza bere aldera tiraka dago, eta horrek eusten dio guztiari.",
   "source": "Etnografia",
   "theme": "kinship",
   "subtheme": "grownTogether"
@@ -1788,7 +1788,7 @@
   "subtheme": "grownTogether"
  },
  {
-  "text": "Sagardoaren upel zaharrak ez dira garbitzen barrutik erabat: aurreko urteko legamiak han geratzen dira, hurrengoari hasiera emateko.",
+  "text": "Upel zaharrak baliotsuagoak dira sagardogilearentzat: egurrean geratzen diren legamiek hurrengo urteko hartzidura abiarazten dute.",
   "source": "Euskal ohitura",
   "theme": "kinship",
   "subtheme": "grownTogether"
@@ -1830,13 +1830,13 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Aitona eta amona aita eta ama dira, atzizki gozagarri batekin. Belaunaldi bat gehiago aditzera emateko, hitza leundu egiten da.",
+  "text": "Aitona eta amona aita eta ama dira, on hitza erantsita. Belaunaldi bat gehiago aditzera emateko, ona gehitu zaio hitzari.",
   "source": "Etimologia",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Zahar hitzak adina eta baita ondasuna ere adierazten du: zaharrak dira ohiturak, hitzak eta etxeak. Zahar hitzak, zuhur hitzak.",
+  "text": "Zahar hitzak, zuhur hitzak.",
   "source": "Euskal atsotitza",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
@@ -1866,7 +1866,7 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Lehengusu hitza lehen eta gusu dira: lehen mailako kusia. Bigarrena bigarren lehengusua da, eta hala jarraitzen du kontuak.",
+  "text": "Lehengusu hitzak lehen darama aurrean: lehen mailako ahaidea. Hurrengo mailakoari bigarren lehengusu esaten zaio, eta hala segitzen du kontuak.",
   "source": "Etimologia",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
@@ -1932,7 +1932,7 @@
   "subtheme": "twoPeople"
  },
  {
-  "text": "Erizainak eta artzainak atzizki bera dute: zain, zaintzen duena. Norbaitez arduratzea lanbide-izen bihurtu da euskaraz.",
+  "text": "Laguntzaile, saltzaile, irakasle: euskarak egilearen izena aditzetik ateratzen du. Laguntzaileak, ordea, beti norbait behar du ondoan.",
   "source": "Etimologia",
   "theme": "kinship",
   "subtheme": "twoPeople"
@@ -1986,7 +1986,7 @@
   "subtheme": "quietAsASound"
  },
  {
-  "text": "Txalaparta hitza jotzen den soinutik dator, ustez. Tresnak ez du beste izenik: egiten duen hotsa da.",
+  "text": "Pil-pil olioak eta urak elkartzean egiten duten hotsa da, eta saltsa baten izena ere bai. Hotsak jarri zion izena jakiari.",
   "source": "Musika",
   "theme": "peace",
   "subtheme": "quietAsASound"
@@ -2010,7 +2010,7 @@
   "subtheme": "quietAsASound"
  },
  {
-  "text": "Basoan gauez entzuten den hots gehiena ez da animaliena: egurrak hoztean uzkurtu egiten dira, eta kirrinka egiten dute.",
+  "text": "Gauez basoan entzuten diren kirrinka batzuk ez dira animalienak: egurra hoztean uzkurtu egiten da, eta hotsa ateratzen du.",
   "source": "Basogintza",
   "theme": "peace",
   "subtheme": "quietAsASound"
@@ -2022,7 +2022,7 @@
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Bake hitza latinetik dator, eta jatorriz lotzea esan nahi zuen erroak. Bakea egitea bi alde elkarri lotzea zen.",
+  "text": "Bake hitza latinetik hartu zuen euskarak, eliza eta errege hitzekin batera. Latinezko erroak lotzea esan nahi zuen: bakea bi alde elkarri lotzea zen.",
   "source": "Etimologia",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
@@ -2064,7 +2064,7 @@
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Fazeriak Pirinioetako herrien arteko itunak dira, larreak eta urak partekatzeko. Batzuek bostehun urte dituzte, eta urtero berritzen dira.",
+  "text": "Fazeriak Pirinioetako herrien arteko itunak dira, larreak eta urak elkarrekin erabiltzeko. Batzuk sei mende dituzte, eta urtero berritzen dira egun jakin batean.",
   "source": "Historia",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
@@ -2076,13 +2076,13 @@
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Baraldia eta baraldiaren sustraia bera dira: baratu, gelditu. Baratzea ere handik datorrela uste izan dute batzuek, gelditzeko lekua.",
+  "text": "Geldi hitzak geldirik egotea esaten du, eta gelditu aditzak zerbait bertan behera uztea ere bai. Egotea eta amaitzea hitz berak biltzen ditu.",
   "source": "Etimologia",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Auzitegietan lehen adiskidetzea saiatzen zen epaiketa hasi aurretik, herriko epaile baten aurrean. Bake-epailea deitzen zaio oraindik.",
+  "text": "Herri askotan bake-epailea dago oraindik: auzitara jo aurretik bi aldeak adiskidetzen saiatzen dena. Izenak dio zertarako den.",
   "source": "Historia",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
@@ -2112,13 +2112,13 @@
   "subtheme": "atEase"
  },
  {
-  "text": "Patxada hartzea presarik gabe aritzea da, eta ez geldirik egotea. Patxadaz egindako lana lanik egoskorrena izan daiteke.",
+  "text": "Patxada presarik gabe aritzea da, eta ez geldirik egotea. Patxadaz lan egin daiteke, eta askotan hobeto egiten da hala.",
   "source": "Euskara",
   "theme": "peace",
   "subtheme": "atEase"
  },
  {
-  "text": "Lasai hitzak soka bat askatuta dagoela ere esaten du. Tenkatuta ez dagoena da lasai, eta hortik dator gogoaren lasaitasuna.",
+  "text": "Lasai hitzak soka bat tenkatu gabe dagoela ere esaten du. Arropa lasaia eta gogo lasaia hitz berak izendatzen ditu.",
   "source": "Euskara",
   "theme": "peace",
   "subtheme": "atEase"
@@ -2130,13 +2130,13 @@
   "subtheme": "atEase"
  },
  {
-  "text": "Sukaldeko sua ez zen inoiz erabat itzaltzen baserrian. Gaueko txingarra goizean berpizten zen, eta hori zen etxearen erlojua.",
+  "text": "Sutondoan bazen ordena bat: nagusiak suaren aurrean eta txikienak alboan, XVII. mendeko ohar batek dioenez, eta hala entzuten zuten dena.",
   "source": "Etnografia",
   "theme": "peace",
   "subtheme": "atEase"
  },
  {
-  "text": "Goxo hitzak gozoa eta epela esaten ditu batera. Leku goxo bat ez da azukrez betea: babestua da, eta hori nahikoa.",
+  "text": "Goxo hitzak gozoa eta epela esaten ditu batera. Leku goxo bat ez da gozoa: epela eta babestua da.",
   "source": "Euskara",
   "theme": "peace",
   "subtheme": "atEase"
@@ -2154,7 +2154,7 @@
   "subtheme": "atEase"
  },
  {
-  "text": "Iturri baten ondoan beti dago bi gradu gutxiago udan. Horregatik jartzen ziren bankuak eta harrizko mahaiak iturburuen ondoan.",
+  "text": "Lurpetik ateratzen den urak tenperatura bera izaten du urte osoan. Horregatik dago iturri baten ondoa fresko udan eta epel neguan.",
   "source": "Etnografia",
   "theme": "peace",
   "subtheme": "atEase"

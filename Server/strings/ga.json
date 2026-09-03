@@ -1,0 +1,26 @@
+{
+  "language": "Irish",
+  "endonym": "Gaeilge",
+  "awaiting": "The labels are written. The prose — tagline, about1, about2, about3, growBody, appNote — is still null and still English, on purpose: it is the site's own writing rather than the app's, and it is read in English before it is commissioned in sixteen languages. A null value is drawn in English, silently, one key at a time; the English is in assets/js/strings.js.",
+  "strings": {
+    "tagline": null,
+    "about1": null,
+    "about2": null,
+    "about3": null,
+    "seedTitle": "Tá síol tagtha",
+    "replyTitle": "Tá síol tagtha ar ais",
+    "sentBy": "Seolta ag {name}",
+    "gardener": "garraíodóir",
+    "planted": "Curtha",
+    "growTitle": "É a fhás",
+    "growBody": null,
+    "appNote": null,
+    "inEnglish": "i mBéarla",
+    "language": "Teanga",
+    "keys": "Eochracha",
+    "random": "Áit éigin go randamach",
+    "damaged": "Tháinig an nasc seo damáiste, agus níorbh fhéidir an síol a léamh.",
+    "notASeed": "Ní iompraíonn an nasc sin síol.",
+    "newerVersion": "Tháinig an síol seo ó leagan níos nuaí de Peace Garden."
+  }
+}

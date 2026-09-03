@@ -90,12 +90,20 @@
    "passages": 366
   },
   {
+   "code": "ga",
+   "name": "Irish",
+   "endonym": "Gaeilge",
+   "interface": false,
+   "bank": true,
+   "passages": 360
+  },
+  {
    "code": "gl",
    "name": "Galician",
    "endonym": "Galego",
    "interface": false,
    "bank": true,
-   "passages": 361
+   "passages": 360
   },
   {
    "code": "hu",

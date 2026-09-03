@@ -156,7 +156,7 @@
   "subtheme": "whatAStartSettles"
  },
  {
-  "text": "O Día das Letras Galegas cae o dezasete de maio pola dedicatoria que Rosalía asinou nese día. A data real en que o libro saíu do prelo non se sabe.",
+  "text": "O Día das Letras Galegas cae o dezasete de maio pola dedicatoria que Rosalía asinou nese día. A data en que o libro saíu do prelo non se sabe.",
   "source": "Historia da lingua",
   "theme": "beginnings",
   "subtheme": "whatAStartSettles"
@@ -258,7 +258,7 @@
   "subtheme": "heldBack"
  },
  {
-  "text": "Ao percebe non se baixa cando un quere. Hai que agardar por marea viva e por mar chan, e as dúas cousas non se poñen de acordo a miúdo.",
+  "text": "Ao percebe non se baixa cando un quere. Fai falta marea viva e mar chan, e as dúas cousas non se poñen de acordo a miúdo.",
   "source": "Marisqueo",
   "theme": "waiting",
   "subtheme": "heldBack"
@@ -276,7 +276,7 @@
   "subtheme": "heldBack"
  },
  {
-  "text": "A castaña gárdase soterrada nos seus propios ourizos: as espiñas afastan os animais e a humidade impide que a castaña seque antes de tempo.",
+  "text": "A castaña gárdase soterrada nos seus propios ourizos: as espiñas afastan os animais e a humidade impide que seque antes de tempo.",
   "source": "Etnografía galega",
   "theme": "waiting",
   "subtheme": "heldBack"
@@ -330,7 +330,7 @@
   "subtheme": "theLongCount"
  },
  {
-  "text": "O pergamiño de Codax apareceu en 1914, perdeuse decontado e non se volveu saber del con certeza ata que reapareceu sesenta anos despois.",
+  "text": "O pergamiño de Codax apareceu en 1914, perdeuse decontado e non se soubo del con certeza ata que reapareceu sesenta anos despois.",
   "source": "Pergamiño Vindel",
   "theme": "waiting",
   "subtheme": "theLongCount"
@@ -348,7 +348,7 @@
   "subtheme": "theLongCount"
  },
  {
-  "text": "Dise que unha árbore veceira dá froito un ano e pouco ou ningún ao seguinte. Non está enferma: está a levar a súa conta aparte.",
+  "text": "Dise que unha árbore veceira dá froito un ano e pouco ou ningún ao seguinte. Non está enferma: leva a súa conta aparte.",
   "source": "Fruticultura",
   "theme": "waiting",
   "subtheme": "theLongCount"
@@ -378,7 +378,7 @@
   "subtheme": "standingAndWatching"
  },
  {
-  "text": "Nas atalaias da costa había quen pasaba o día mirando o mar por oficio, e o traballo consistía en que case nunca houbese nada que ver.",
+  "text": "Nos portos había vixías pagados para mirar o mar todo o día. O bo do oficio era que case sempre non houbese nada que ver.",
   "source": "Historia mariñeira",
   "theme": "waiting",
   "subtheme": "standingAndWatching"
@@ -396,13 +396,13 @@
   "subtheme": "standingAndWatching"
  },
  {
-  "text": "O faro non fai nada máis ca estar aceso. Todo o seu traballo é ser visto por alguén que quizais non pase esta noite.",
+  "text": "O faro non fai máis ca estar aceso. Todo o seu traballo consiste en ser visto por alguén que quizais non pase esta noite.",
   "source": "Sinais marítimos",
   "theme": "waiting",
   "subtheme": "standingAndWatching"
  },
  {
-  "text": "Quen fai unha esperada de raposo aprende axiña que o difícil non é o frío, senón non moverse.",
+  "text": "Quen fai unha espera de raposo aprende axiña que o traballo todo está en quedar quieto.",
   "source": "Costume rural",
   "theme": "waiting",
   "subtheme": "standingAndWatching"
@@ -414,19 +414,19 @@
   "subtheme": "standingAndWatching"
  },
  {
-  "text": "As vacas dun lugar mírase todas xuntas, e cada casa lévaas por quenda. O que un fai hoxe fará outro mañá, e a conta lévase de memoria.",
+  "text": "As vacas dun lugar gárdanse todas xuntas e cada casa lévaas pola súa vez. O que un fai hoxe faino outro mañá, e a conta lévase de memoria.",
   "source": "Veceira",
   "theme": "waiting",
   "subtheme": "standingAndWatching"
  },
  {
-  "text": "O que rega por quenda ha de estar á beira da presa cando lle toque, aínda que sexa de noite e aínda que non chova hai semanas.",
+  "text": "Quen rega por quenda ha de estar á beira da presa cando lle toque, aínda que sexa de noite e aínda que leve semanas sen chover.",
   "source": "Rega por quenda",
   "theme": "waiting",
   "subtheme": "standingAndWatching"
  },
  {
-  "text": "Nunha noite de brétema no monte non se ve nada e óese todo, e quen coñece o sitio sabe onde está pola auga que sente correr.",
+  "text": "Nunha noite de brétema no monte ninguén ve nada e óese todo, e quen coñece o sitio sabe onde está pola auga que sente correr.",
   "source": "Costume rural",
   "theme": "waiting",
   "subtheme": "standingAndWatching"
@@ -438,7 +438,7 @@
   "subtheme": "cutAndComeAgain"
  },
  {
-  "text": "Trasmocho: cortar o carballo por riba do alcance do gando e deixalo rebrotar. A árbore queda coxa de figura e viva por séculos.",
+  "text": "Ao carballo que se corta por riba do alcance do gando para que rebrote chámaselle trasmocho. Queda torto de figura e vive séculos.",
   "source": "Silvicultura",
   "theme": "renewal",
   "subtheme": "cutAndComeAgain"
@@ -450,7 +450,7 @@
   "subtheme": "cutAndComeAgain"
  },
  {
-  "text": "O toxo rózase cada poucos anos para estrume, e volve. Levouse séculos cortándoo e segue a ser o que primeiro cobre un monte pelado.",
+  "text": "O toxo rózase cada poucos anos para estrume, e volve. Levouse séculos cortándoo e segue a ser o primeiro que cobre un monte pelado.",
   "source": "Botánica",
   "theme": "renewal",
   "subtheme": "cutAndComeAgain"
@@ -462,37 +462,37 @@
   "subtheme": "cutAndComeAgain"
  },
  {
-  "text": "O castiñeiro que morre pola raíz manda gromos ao redor do toco, e do que era unha árbore fanse cinco.",
+  "text": "O castiñeiro que morre polo pé manda gromos ao redor do toco, e do que era unha árbore fanse cinco.",
   "source": "Botánica",
   "theme": "renewal",
   "subtheme": "cutAndComeAgain"
  },
  {
-  "text": "A lagarta que perde a cola faina outra, algo máis curta e doutra cor, e vive igual de ben con esa.",
+  "text": "A lagartixa que perde a cola faina outra, algo máis curta e doutra cor, e vive igual de ben con esa.",
   "source": "Zooloxía",
   "theme": "renewal",
   "subtheme": "cutAndComeAgain"
  },
  {
-  "text": "O prado de sega dá dous cortes ao ano e leva séculos dando dous. O que non se corta é a raíz.",
+  "text": "O prado de sega dá dous cortes ao ano e leva séculos dando dous. O que nunca se corta é a raíz.",
   "source": "Agricultura",
   "theme": "renewal",
   "subtheme": "cutAndComeAgain"
  },
  {
-  "text": "Ao ameneiro pódeselle cortar o pé cada quince ou vinte anos: rebrota da cepa, e a madeira, metida na auga, endurece en vez de apodrecer.",
+  "text": "Ao ameneiro pódeselle cortar o pé cada quince ou vinte anos: rebrota da cepa, e a súa madeira, metida na auga, endurece.",
   "source": "Silvicultura",
   "theme": "renewal",
   "subtheme": "cutAndComeAgain"
  },
  {
-  "text": "Un souto vello mantense esfollando, limpando e enxertando. Ningunha desas cousas é plantar, e sen elas o souto acábase.",
+  "text": "Un souto vello mantense limpando o pé, podando e enxertando. Ningunha desas cousas é plantar, e sen elas o souto acábase.",
   "source": "Agricultura",
   "theme": "renewal",
   "subtheme": "cutAndComeAgain"
  },
  {
-  "text": "Chámaselle rebrote ao que sae dun toco cortado, e vai máis lixeiro ca unha planta de semente porque xa ten a raíz feita.",
+  "text": "Chámaselle rebrote ao que sae dun toco cortado, e vai máis lixeiro ca unha planta de semente porque xa ten feita a raíz.",
   "source": "Botánica",
   "theme": "renewal",
   "subtheme": "cutAndComeAgain"
@@ -546,19 +546,19 @@
   "subtheme": "theTurningYear"
  },
  {
-  "text": "A camelia florece en Galicia no medio do inverno, que é cando aquí non florece case nada máis.",
+  "text": "A camelia florece aquí no medio do inverno, que é cando en Galicia non florece case nada máis.",
   "source": "Xardinería",
   "theme": "renewal",
   "subtheme": "theTurningYear"
  },
  {
-  "text": "O ano do labrego non empeza en xaneiro senón na sementeira, e a sementeira acaba polo san Martiño.",
+  "text": "O ano do labrego non empeza en xaneiro senón na sementeira, e a sementeira remata polo san Martiño.",
   "source": "Calendario agrícola",
   "theme": "renewal",
   "subtheme": "theTurningYear"
  },
  {
-  "text": "A anduriña volve á mesma casa e moitas veces ao mesmo niño, despois de dous continentes e de non velo durante medio ano.",
+  "text": "A anduriña volve á mesma corte e moitas veces ao mesmo niño, despois de dous continentes e de medio ano sen o ver.",
   "source": "Ornitoloxía",
   "theme": "renewal",
   "subtheme": "theTurningYear"
@@ -570,7 +570,7 @@
   "subtheme": "theTurningYear"
  },
  {
-  "text": "A sardiña engorda no verán e por iso a festa dela cae en xuño. O calendario das romarías é, en boa parte, o calendario do que hai que comer.",
+  "text": "A sardiña está no seu punto polo san Xoán, e por iso a súa festa cae en xuño. O calendario das romarías é en boa parte o do que hai que comer.",
   "source": "Etnografía galega",
   "theme": "renewal",
   "subtheme": "theTurningYear"
@@ -588,7 +588,7 @@
   "subtheme": "madeWhole"
  },
  {
-  "text": "A árbore ferida non tapa o buraco: rodéao cun rodete de madeira nova que vai pechando ano a ano ata que só queda unha cicatriz.",
+  "text": "A árbore ferida non tapa o buraco: rodéao cun rodete de madeira nova que vai pechando ano a ano ata deixar só unha cicatriz.",
   "source": "Botánica",
   "theme": "renewal",
   "subtheme": "madeWhole"
@@ -600,8 +600,8 @@
   "subtheme": "madeWhole"
  },
  {
-  "text": "Enxertar é unir dúas plantas para que sigan como unha. A ferida do enxerto é o que as mantén xuntas.",
-  "source": "Fruticultura",
+  "text": "Ao romper unha pota de barro había quen a grampaba con arames en vez de tirala. Quedaba máis fea e servía igual.",
+  "source": "Oficios",
   "theme": "renewal",
   "subtheme": "madeWhole"
  },
@@ -612,19 +612,19 @@
   "subtheme": "madeWhole"
  },
  {
-  "text": "A pel dun mexillón rota polo mar arránxase soa: o animal segrega fío novo e volve amarrarse á pedra.",
+  "text": "O mexillón agárrase á pedra con fíos que el mesmo fai. Se o mar llos rompe, tece outros e volve amarrar.",
   "source": "Bioloxía mariña",
   "theme": "renewal",
   "subtheme": "madeWhole"
  },
  {
-  "text": "Nun muro de pedra seca, cando cae unha, ponse outra da mesma man. Reparar e construír fanse co mesmo xesto.",
+  "text": "Nun muro de pedra seca, cando cae unha pedra ponse outra no seu sitio. Reparar e construír fanse exactamente co mesmo xesto.",
   "source": "Cantaría",
   "theme": "renewal",
   "subtheme": "madeWhole"
  },
  {
-  "text": "Enxebre chámase ao que está sen mestura e sen falsear. Do galego dise que é enxebre cando ninguén lle tocou.",
+  "text": "Enxebre chámase ao que está sen mestura e sen falsear. Do galego dise que é enxebre cando ninguén llo tocou.",
   "source": "Galego",
   "theme": "renewal",
   "subtheme": "madeWhole"
@@ -636,7 +636,7 @@
   "subtheme": "madeWhole"
  },
  {
-  "text": "Ao cabo do inverno, un salgueiro que parecía morto abre en dez días e non hai xeito de saber, mirándoo, cando decidiu volver.",
+  "text": "Ao cabo do inverno, un salgueiro que parecía morto abre en dez días, e non hai xeito de saber, mirándoo, cando decidiu volver.",
   "source": "Botánica",
   "theme": "renewal",
   "subtheme": "madeWhole"
@@ -654,7 +654,7 @@
   "subtheme": "theEdgesOfTheDay"
  },
  {
-  "text": "Luscofusco chámaselle ao momento entre o día e a noite, e tamén ao momento entre a noite e o día. A mesma palabra serve para os dous lados.",
+  "text": "Luscofusco chámaselle ao momento entre o día e a noite, e tamén ao que vai da noite ao día. A mesma palabra serve para os dous lados.",
   "source": "Galego",
   "theme": "light",
   "subtheme": "theEdgesOfTheDay"
@@ -708,7 +708,7 @@
   "subtheme": "theEdgesOfTheDay"
  },
  {
-  "text": "No solsticio de verán, en Fisterra, entre o primeiro raio e o último pasan preto de dezaseis horas. No de inverno, pouco máis de nove.",
+  "text": "No solsticio de verán, en Fisterra, entre o primeiro raio e o derradeiro pasan máis de quince horas. No de inverno, pouco máis de nove.",
   "source": "Astronomía",
   "theme": "light",
   "subtheme": "theEdgesOfTheDay"
@@ -762,32 +762,32 @@
   "subtheme": "readingTheLight"
  },
  {
-  "text": "As plantas contan a escuridade, non a claridade: florecen cando as noites teñen a duración que lles convén, e por iso non se equivocan.",
-  "source": "Botánica",
+  "text": "Cando ó pescador vénlle a iauga antes que o vento, aferra e mete dentro.",
+  "source": "Refrán galego",
   "theme": "light",
   "subtheme": "readingTheLight"
  },
  {
-  "text": "O que sabe de mar le a cor da auga: verde para un lado, escura para outro, e a liña entre as dúas cores é onde está o peixe.",
-  "source": "Saber mariñeiro",
+  "text": "A cor do ceo ao amencer dise máis de fiar ca a do solpor, porque de mañá a luz atravesa o aire que aínda ha de chegar.",
+  "source": "Meteoroloxía",
   "theme": "light",
   "subtheme": "readingTheLight"
  },
  {
-  "text": "Ao sol posto, a folla do amieiro vólvese branca por baixo cando vén vento do sur, e vese o cambio antes de sentilo na cara.",
-  "source": "Observación popular",
+  "text": "As abellas volven ao cortizo antes de que o ceo mude. Quen ten colmeas mira as abellas e non mira arriba.",
+  "source": "Apicultura",
   "theme": "light",
   "subtheme": "readingTheLight"
  },
  {
-  "text": "Chámaselle mera á néboa que queima as follas. Ten nome distinto da néboa que só molla, porque non fai o mesmo.",
+  "text": "O galego ten brétema, néboa, neboeiro, nebra e calixe para o mesmo aire mollado. Escóllese unha ou outra segundo o que se poida ver.",
   "source": "Galego",
   "theme": "light",
   "subtheme": "readingTheLight"
  },
  {
-  "text": "As abellas volven ao cortizo antes de que o ceo cambie. Quen ten colmeas mira as abellas e non mira o ceo.",
-  "source": "Apicultura",
+  "text": "Canto máis ao norte, máis tarda o sol en baixar de todo por debaixo do horizonte, e por iso aquí o luscofusco é longo.",
+  "source": "Astronomía",
   "theme": "light",
   "subtheme": "readingTheLight"
  },
@@ -804,7 +804,7 @@
   "subtheme": "lightItself"
  },
  {
-  "text": "A Torre de Hércules leva alumeando desde o século primeiro ou o segundo e é o único faro romano que segue en servizo no mundo.",
+  "text": "A Torre de Hércules alumea desde o século primeiro ou o segundo e é o único faro romano que segue en servizo no mundo.",
   "source": "Torre de Hércules, A Coruña",
   "theme": "light",
   "subtheme": "lightItself"
@@ -834,31 +834,31 @@
   "subtheme": "lightItself"
  },
  {
-  "text": "Sobre unha ría con brétema, o sol non desaparece: espállase, e todo queda alumeado por igual e sen sombra ningunha.",
+  "text": "Sobre unha ría con brétema o sol non desaparece: espállase, e todo queda alumeado por igual e sen sombra ningunha.",
   "source": "Óptica",
   "theme": "light",
   "subtheme": "lightItself"
  },
  {
-  "text": "As lentes dun faro son aneis de vidro tallados de xeito que devolven cara a diante a luz que doutro modo se perdería polos lados.",
+  "text": "As lentes dun faro son aneis de vidro tallados de xeito que devolven cara a diante a luz que doutro modo se iría polos lados.",
   "source": "Sinais marítimos",
   "theme": "light",
   "subtheme": "lightItself"
  },
  {
-  "text": "Nun souto pechado chega ao chan menos dun décimo do que cae arriba, e aínda así abonda para que naza todo o que naza.",
+  "text": "Nun souto pechado chega ao chan unha pequena parte do que cae arriba, e aínda así abonda para que naza todo o que naza.",
   "source": "Ecoloxía",
   "theme": "light",
   "subtheme": "lightItself"
  },
  {
-  "text": "Lostrego é o lóstrego e tamén se lle chama así ao que dura moi pouco. A palabra leva dentro a medida do tempo.",
+  "text": "Ao clarón do raio chámaselle lóstrego, e do que dura moi pouco dise que durou o que un lóstrego.",
   "source": "Galego",
   "theme": "light",
   "subtheme": "lightItself"
  },
  {
-  "text": "A auga do mar tráganse os vermellos primeiro e os azuis ao final. Por iso, a dez metros de fondo, todo o que se ve é azul.",
+  "text": "A auga do mar traga primeiro os vermellos e ao final os azuis. Por iso, a dez metros de fondo, xa non queda vermello ningún.",
   "source": "Física",
   "theme": "light",
   "subtheme": "lightItself"
@@ -894,7 +894,7 @@
   "subtheme": "counted"
  },
  {
-  "text": "O hórreo de Carnota apóiase en vinte e dous pares de pés e mide case trinta e cinco metros. Ninguén ergueu outro máis longo.",
+  "text": "O hórreo de Carnota apóiase en vinte e dous pares de pés e mide preto de trinta e cinco metros. É dos máis longos que se ergueron.",
   "source": "Arquitectura popular",
   "theme": "pattern",
   "subtheme": "counted"
@@ -912,13 +912,13 @@
   "subtheme": "counted"
  },
  {
-  "text": "Un ourizo trae dentro dúas ou tres castañas, e as que veñen de tres son máis chatas por un lado porque medraron apertadas.",
+  "text": "Un ourizo trae dentro dúas ou tres castañas, e as que veñen de tres son chatas por un lado porque medraron apertadas.",
   "source": "Botánica",
   "theme": "pattern",
   "subtheme": "counted"
  },
  {
-  "text": "A gaita galega ten un punteiro e, no común, un ronco e un ronquillo. O punteiro leva a melodía e os outros dous non mudan de nota.",
+  "text": "A gaita galega ten un punteiro, un roncón e unha ronqueta. O punteiro leva a melodía e os outros dous soan sempre a mesma nota.",
   "source": "Organoloxía",
   "theme": "pattern",
   "subtheme": "counted"
@@ -930,7 +930,7 @@
   "subtheme": "counted"
  },
  {
-  "text": "Un cesto de vergas empeza sempre por un número impar de radios, porque con par a tecedura non alterna e o cesto non pecha.",
+  "text": "Un cesto de vergas empeza por un número impar de radios, porque con par a tecedura non alterna e o cesto non pecha.",
   "source": "Cestería",
   "theme": "pattern",
   "subtheme": "counted"
@@ -966,7 +966,7 @@
   "subtheme": "fittedTogether"
  },
  {
-  "text": "As escamas dun ourizo do mar están postas en cinco liñas iguais que van do fondo ao alto. O animal enteiro repítese cinco veces.",
+  "text": "A cuncha dun ourizo de mar está feita de placas postas en cinco bandas iguais que van do fondo ao alto. O animal repítese cinco veces.",
   "source": "Bioloxía mariña",
   "theme": "pattern",
   "subtheme": "fittedTogether"
@@ -978,7 +978,7 @@
   "subtheme": "fittedTogether"
  },
  {
-  "text": "Nun leito de río, os cantos rodados acaban postos coa cara chan río abaixo, todos do mesmo xeito, sen que ninguén os coloque.",
+  "text": "Nun leito de río os coios acaban todos inclinados do mesmo xeito, apoiados contra a corrente coma tellas. Ninguén os coloca.",
   "source": "Xeoloxía",
   "theme": "pattern",
   "subtheme": "fittedTogether"
@@ -990,19 +990,19 @@
   "subtheme": "fittedTogether"
  },
  {
-  "text": "As bateas van amarradas en filas coa mesma orientación para que a corrente pase entre elas e lle chegue comida a toda a corda.",
+  "text": "As bateas amárranse en filas coa mesma orientación para que a corrente pase entre elas e lle chegue comida a toda a corda.",
   "source": "Acuicultura",
   "theme": "pattern",
   "subtheme": "fittedTogether"
  },
  {
-  "text": "As follas do carballo van postas de xeito que ningunha lle tape enteira o sol á que ten debaixo. A árbore resólveo torcendo os pecíolos.",
+  "text": "As follas do carballo póñense de xeito que ningunha lle tape enteiro o sol á que ten debaixo. A árbore resólveo torcendo os pecíolos.",
   "source": "Botánica",
   "theme": "pattern",
   "subtheme": "fittedTogether"
  },
  {
-  "text": "Un cruceiro faise de tres pezas que só se soster unhas ás outras polo peso: a base, o fuste e a cruz. Non leva morteiro ningún.",
+  "text": "Un cruceiro faise de pezas que se sosteñen unhas ás outras polo propio peso: a base, o fuste e a cruz. Non leva morteiro ningún.",
   "source": "Cantaría",
   "theme": "pattern",
   "subtheme": "fittedTogether"
@@ -1038,7 +1038,7 @@
   "subtheme": "orderNamed"
  },
  {
-  "text": "Ao ordenar a igrexa os toques, quedou unha gramática: un toque para a misa, outro para o lume, outro para o defunto, e todos distintos.",
+  "text": "Ao ordenar a igrexa os toques quedou unha gramática: un toque para a misa, outro para o lume, outro para o defunto, e todos distintos.",
   "source": "Campás",
   "theme": "pattern",
   "subtheme": "orderNamed"
@@ -1068,13 +1068,13 @@
   "subtheme": "orderNamed"
  },
  {
-  "text": "Ao millo chámaselle o millo, e ao que se sementaba antes de vir o millo aínda se lle chama millo miúdo. A lingua garda a orde da chegada.",
+  "text": "Ao millo chámaselle o millo, e ao cereal que se sementaba antes de vir el aínda se lle chama millo miúdo. A lingua garda a orde da chegada.",
   "source": "Historia agraria",
   "theme": "pattern",
   "subtheme": "orderNamed"
  },
  {
-  "text": "Un banco de percebe divídese en pedras con nome, e cada pedra ábrese e péchase por acordo da confraría, non por decisión de ninguén.",
+  "text": "Un banco de percebe divídese en pedras con nome, e cada pedra ábrese e péchase por acordo da confraría, non por decisión dun só.",
   "source": "Marisqueo",
   "theme": "pattern",
   "subtheme": "orderNamed"
@@ -1098,7 +1098,7 @@
   "subtheme": "theSoilItself"
  },
  {
-  "text": "A terra de Galicia é ácida, e por iso durante séculos se lle botou cal e area de praia. O que aquí medra medra nun chan corrixido a man.",
+  "text": "A terra de Galicia é ácida. Durante séculos corrixiuse con cal, e na costa con argazo tirado polo mar. O que aquí medra medra nun chan emendado.",
   "source": "Edafoloxía",
   "theme": "ground",
   "subtheme": "theSoilItself"
@@ -1116,13 +1116,13 @@
   "subtheme": "theSoilItself"
  },
  {
-  "text": "O granito de Galicia, ao desfacerse, dá un chan areoso que a auga atravesa axiña. Retén pouco e por iso hai que lle devolver moito.",
+  "text": "O granito, ao desfacerse, dá un chan areoso que a auga atravesa axiña. Retén pouco, e por iso hai que lle devolver moito.",
   "source": "Xeoloxía",
   "theme": "ground",
   "subtheme": "theSoilItself"
  },
  {
-  "text": "Un fío de raíz de carballo pode ir a dez metros de fondo buscando auga, e o que se ve por riba non di nada do que hai por baixo.",
+  "text": "Unha raíz de carballo pode baixar varios metros buscando auga, e o que se ve por riba non di nada do que hai por baixo.",
   "source": "Botánica",
   "theme": "ground",
   "subtheme": "theSoilItself"
@@ -1140,7 +1140,7 @@
   "subtheme": "theSoilItself"
  },
  {
-  "text": "Do monte sae o toxo, do toxo o estrume, do estrume o esterco e do esterco o pan. É unha cadea de catro pasos e ningún se pode saltar.",
+  "text": "Do monte sae o toxo, do toxo o estrume, do estrume o esterco e do esterco o pan. Son catro pasos e ningún se pode saltar.",
   "source": "Agricultura",
   "theme": "ground",
   "subtheme": "theSoilItself"
@@ -1218,7 +1218,7 @@
   "subtheme": "aPlaceYouAreFrom"
  },
  {
-  "text": "Nas aldeas dise ir ao lugar polo que noutras partes se diría ir ao pobo. Lugar significa aquí a aldea de un, e non calquera sitio.",
+  "text": "Nas aldeas dise ir ao lugar onde noutras partes se diría ir ao pobo. Lugar significa aquí a aldea de un, e non calquera sitio.",
   "source": "Galego",
   "theme": "ground",
   "subtheme": "aPlaceYouAreFrom"
@@ -1236,7 +1236,7 @@
   "subtheme": "aKeptPlace"
  },
  {
-  "text": "Unha quinta parte de Galicia é monte comunal, unhas seiscentas cincuenta mil hectáreas que non son de ninguén en particular.",
+  "text": "Unha quinta parte de Galicia é monte comunal: unhas seiscentas cincuenta mil hectáreas que non son de ninguén en particular.",
   "source": "Montes veciñais",
   "theme": "ground",
   "subtheme": "aKeptPlace"
@@ -1260,7 +1260,7 @@
   "subtheme": "aKeptPlace"
  },
  {
-  "text": "Un hórreo levántase do chan sobre pés con tornarratos para que nada suba. Todo o edificio é unha resposta a dous problemas: a auga e o rato.",
+  "text": "Un hórreo levántase do chan sobre pés con tornarratos. Todo o edificio é unha resposta a dous problemas: a auga e o rato.",
   "source": "Arquitectura popular",
   "theme": "ground",
   "subtheme": "aKeptPlace"
@@ -1326,7 +1326,7 @@
   "subtheme": "howASeedGoes"
  },
  {
-  "text": "O toxo bota a semente por proxección: a vaíña seca retórcese ao sol, estala e lánzaa uns metros lonxe da planta nai.",
+  "text": "As piñas do piñeiro do país ábrense coa calor e soltan sementes con ás. Por iso, despois dun lume, o que primeiro volve son piñeiros.",
   "source": "Botánica",
   "theme": "travel",
   "subtheme": "howASeedGoes"
@@ -1338,14 +1338,14 @@
   "subtheme": "howASeedGoes"
  },
  {
-  "text": "Hai plantas de dunas cuxa semente flota e aguanta o sal días enteiros. Chega á praia seguinte pola auga, coma calquera outro pasaxeiro.",
+  "text": "Hai plantas de duna cuxa semente flota e aguanta o sal días enteiros. Chega á praia seguinte pola auga, coma calquera outro pasaxeiro.",
   "source": "Botánica",
   "theme": "travel",
   "subtheme": "howASeedGoes"
  },
  {
-  "text": "O bidueiro e o salgueiro chegan primeiro a un terreo novo porque non gardan a semente: fana lixeira e mándana o mesmo ano.",
-  "source": "Ecoloxía",
+  "text": "As sementes do salgueiro teñen pelo e voan coma algodón. Duran vivas poucos días, así que teñen que caer axiña en terra mollada.",
+  "source": "Botánica",
   "theme": "travel",
   "subtheme": "howASeedGoes"
  },
@@ -1416,20 +1416,20 @@
   "subtheme": "theRoad"
  },
  {
-  "text": "Nos camiños vellos había pedras cada certo treito para axudar a subir a carga ao lombo sen a pousar no chan.",
+  "text": "Nos camiños vellos hai pousadoiros: pedras postas á altura xusta para descansar a carga sen a deitar no chan.",
   "source": "Etnografía galega",
   "theme": "travel",
   "subtheme": "theRoad"
  },
  {
-  "text": "Congostra é o paso estreito entre dous muros, tan angosto que dous carros non se cruzan e hai que agardar por quen vén de fronte.",
+  "text": "Congostra é o paso estreito entre dous muros, tan angosto que dous carros non se cruzan e alguén ten que agardar polo outro.",
   "source": "Galego",
   "theme": "travel",
   "subtheme": "theRoad"
  },
  {
-  "text": "Pela ribeira do rio cantando ia la dona virgo d'amor.",
-  "source": "Joan Zorro, cantiga de amigo, séc. XIII",
+  "text": "Pela ribeira do río cantando ía la virgo d'amor.",
+  "source": "Airas Nunez, cantiga, séc. XIII",
   "theme": "travel",
   "subtheme": "theRoad"
  },
@@ -1458,7 +1458,7 @@
   "subtheme": "farOff"
  },
  {
-  "text": "A Buenos Aires foron tantos galegos que durante décadas se dixo que era a cidade galega máis grande, e non era unha broma do todo.",
+  "text": "Dise que Buenos Aires foi durante décadas a cidade con máis galegos do mundo, e non era só unha maneira de falar.",
   "source": "Emigración",
   "theme": "travel",
   "subtheme": "farOff"
@@ -1638,7 +1638,7 @@
   "subtheme": "twoThatNeedEachOther"
  },
  {
-  "text": "As bacterias do nó da raíz do trevo collen o nitróxeno do aire e dánllelo á planta. A planta dálles casa. Fóra unha da outra, ningunha vive.",
+  "text": "As bacterias do nó da raíz do trevo collen o nitróxeno do aire e dánllelo á planta. A planta dálles casa. Por separado non vive ningunha.",
   "source": "Bioloxía",
   "theme": "meeting",
   "subtheme": "twoThatNeedEachOther"
@@ -1650,7 +1650,7 @@
   "subtheme": "twoThatNeedEachOther"
  },
  {
-  "text": "Nunha muiñeira, a parella non se toca en todo o baile e non se pode bailar soa. A distancia é parte da figura.",
+  "text": "Nunha muiñeira a parella baila solta e non se toca, e aínda así ningún dos dous pode bailala só. A distancia é parte da figura.",
   "source": "Danza tradicional",
   "theme": "meeting",
   "subtheme": "twoThatNeedEachOther"
@@ -1668,7 +1668,7 @@
   "subtheme": "theMannersOfIt"
  },
  {
-  "text": "Nas aldeas saúdase a quen se cruza aínda sen o coñecer, e non facelo notaríase máis ca facelo.",
+  "text": "Nas aldeas saúdase a quen se cruza aínda sen o coñecer, e o saúdo notaríase menos ca a súa falta.",
   "source": "Costume rural",
   "theme": "meeting",
   "subtheme": "theMannersOfIt"
@@ -1686,7 +1686,7 @@
   "subtheme": "theMannersOfIt"
  },
  {
-  "text": "Nunha esfolla, a xente xúntase a quitarlle a folla ao millo e queda a contar historias. O traballo é a escusa e todos o saben.",
+  "text": "Nunha esfolla a xente xúntase a quitarlle a folla ao millo e queda a contar historias. O traballo é a escusa e todos o saben.",
   "source": "Etnografía galega",
   "theme": "meeting",
   "subtheme": "theMannersOfIt"
@@ -1698,26 +1698,26 @@
   "subtheme": "theMannersOfIt"
  },
  {
-  "text": "O que come e non convida, leva o demo na barriga.",
+  "text": "O que come e non convida leva o demo na barriga.",
   "source": "Refrán galego",
   "theme": "meeting",
   "subtheme": "theMannersOfIt"
  },
  {
-  "text": "Ás romarías vaise coa comida posta nun pano e cómese no chan, coa xente que cadre ao lado. O sitio non se reserva.",
+  "text": "Ás romarías vaise coa comida nun pano e cómese no chan, coa xente que cadre ao lado. O sitio non se reserva.",
   "source": "Etnografía galega",
   "theme": "meeting",
   "subtheme": "theMannersOfIt"
  },
  {
-  "text": "Á malla acudía todo o lugar, e o dono só poñía o xantar. Ninguén cobraba porque á semana seguinte tocáballe a outro.",
+  "text": "Á malla acudía todo o lugar e o dono só poñía o xantar. Ninguén cobraba, porque á semana seguinte tocáballe a outro.",
   "source": "Costume rural",
   "theme": "meeting",
   "subtheme": "theMannersOfIt"
  },
  {
-  "text": "Cando se entra nunha casa allea dise que veña un ben. Cando se sae dise que quede outro. As dúas fórmulas son desexos, non despedidas.",
-  "source": "Costume rural",
+  "text": "Ademais de ti e de vostede, o galego ten o trato de vós, que se lles daba aos maiores da casa. É respecto sen distancia.",
+  "source": "Galego",
   "theme": "meeting",
   "subtheme": "theMannersOfIt"
  },
@@ -1740,13 +1740,13 @@
   "subtheme": "grownTogether"
  },
  {
-  "text": "Nun souto vello, as raíces de castiñeiros distintos van enlazadas polo mesmo fungo, e o que sobra nunha árbore chega a outra.",
+  "text": "Nun souto vello as raíces de castiñeiros distintos van enlazadas polo mesmo fungo, e o que sobra nunha árbore chega a outra.",
   "source": "Ecoloxía",
   "theme": "kinship",
   "subtheme": "grownTogether"
  },
  {
-  "text": "Acaroar é poñer unha cousa a carón doutra, tan xunta que non quede espazo. Dise das plantas, das leiras e da xente.",
+  "text": "Acaroar é poñer unha cousa a carón doutra, tan xunta que non quede oco. Dise das plantas, das leiras e da xente.",
   "source": "Galego",
   "theme": "kinship",
   "subtheme": "grownTogether"
@@ -1776,13 +1776,13 @@
   "subtheme": "grownTogether"
  },
  {
-  "text": "Nun valo de pedra e terra medran co tempo silvas, fentos e un carballo, e ao cabo o valo xa non se sostén só coa pedra.",
+  "text": "Nun valo de pedra e terra medran co tempo silvas, fentos e mesmo un carballo, e ao cabo o valo xa non se sostén só coa pedra.",
   "source": "Ecoloxía",
   "theme": "kinship",
   "subtheme": "grownTogether"
  },
  {
-  "text": "Nunha aldea, as casas comparten parede e cada unha sostén un pouco da seguinte. Derrubar unha soa non é un asunto seu.",
+  "text": "Nunha aldea as casas comparten parede e cada unha sostén un pouco da seguinte. Derrubar unha soa non é un asunto seu.",
   "source": "Arquitectura popular",
   "theme": "kinship",
   "subtheme": "grownTogether"
@@ -1824,7 +1824,7 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Arrolo é o son co que se adormece un neno e é tamén o son das pombas na carballeira e o vaivén dunha lancha amarrada.",
+  "text": "Arrolo é o son co que se adormece un neno, e é tamén o das pombas na carballeira e o vaivén dunha lancha amarrada.",
   "source": "Galego",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
@@ -1836,19 +1836,19 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Ao padriño e á madriña chámaselles compadre e comadre polos pais do afillado. A palabra fai parentesco onde non había sangue.",
+  "text": "Ao padriño e á madriña chámanlles compadre e comadre os pais do afillado. A palabra fai parentesco onde non había sangue.",
   "source": "Galego",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Señardade é a mesma cousa que soidade e que saudade: a falta doce dalgo que se tivo. O galego ten tres palabras e non sobra ningunha.",
+  "text": "Señardade é o mesmo que soidade e que saudade: a falta doce dalgo que se tivo. O galego ten tres palabras e non lle sobra ningunha.",
   "source": "Galego",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Agarimar é acariñar e é tamén dar abrigo. Nos días de inverno agarimábaos o lume, e a frase quere dicir as dúas cousas á vez.",
+  "text": "Agarimar é acariñar e é tamén dar abrigo. Nos días fríos agarimábaos o lume da lareira, e a frase quere dicir as dúas cousas á vez.",
   "source": "Galego",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
@@ -1926,19 +1926,19 @@
   "subtheme": "twoPeople"
  },
  {
-  "text": "Á beira dunha lareira as cadeiras póñense en círculo e ninguén se senta de costas ao lume nin de costas aos demais.",
+  "text": "Á beira dunha lareira as cadeiras póñense en círculo, de xeito que ninguén queda de costas ao lume nin de costas aos demais.",
   "source": "Etnografía galega",
   "theme": "kinship",
   "subtheme": "twoPeople"
  },
  {
-  "text": "Nas cartas de emigrante era corrente que escribise un veciño porque quen mandaba a carta non sabía. O que dicía sabíano os dous.",
+  "text": "Era corrente que a carta do emigrante a escribise un veciño, porque quen a mandaba non sabía. O que dicía sabíano os dous.",
   "source": "Emigración",
   "theme": "kinship",
   "subtheme": "twoPeople"
  },
  {
-  "text": "O alalá cántase sen compás fixo, e cando o cantan dous, o segundo entra cando o primeiro remata de respirar. Non hai xeito de ensaialo.",
+  "text": "O alalá cántase sen compás fixo, e cando o cantan dous, o segundo entra cando o primeiro acaba de respirar. Non hai xeito de ensaialo.",
   "source": "Música tradicional",
   "theme": "kinship",
   "subtheme": "twoPeople"
@@ -1974,13 +1974,13 @@
   "subtheme": "quietAsASound"
  },
  {
-  "text": "Ás vaíñas do toxo, secas polo sol de agosto, sénteselles estalar unha tras outra. É o son dunha planta a sementar.",
+  "text": "As vaíñas do toxo, secas polo sol de agosto, estalan unha tras outra ao longo do día. É o son dunha planta a sementar.",
   "source": "Botánica",
   "theme": "peace",
   "subtheme": "quietAsASound"
  },
  {
-  "text": "Silandeiro dise do lugar onde hai silencio e da persoa que non fai ruído ao andar. As augas silandeiras dun regueiro tamén o son.",
+  "text": "Silandeiro dise do lugar onde hai silencio e da persoa que anda sen facer ruído. As augas dun regueiro tamén poden ser silandeiras.",
   "source": "Galego",
   "theme": "peace",
   "subtheme": "quietAsASound"
@@ -1992,20 +1992,20 @@
   "subtheme": "quietAsASound"
  },
  {
-  "text": "Nun hórreo o gran seca porque o aire pasa entre as táboas. Óese, e é o único son que esa construción fai.",
+  "text": "O único son que fai un hórreo é o do aire pasando entre as táboas. Iso, e ese aire, é todo canto seca o gran.",
   "source": "Arquitectura popular",
   "theme": "peace",
   "subtheme": "quietAsASound"
  },
  {
-  "text": "Ao mar de fondo chámaselle así porque chega sen vento: son ondas feitas por un temporal a mil millas e o son delas precede o tempo.",
+  "text": "Ao mar de fondo chámaselle así porque chega sen vento: son ondas feitas por un temporal a mil millas, e o son delas vén por diante.",
   "source": "Saber mariñeiro",
   "theme": "peace",
   "subtheme": "quietAsASound"
  },
  {
-  "text": "A herba zunía co aloumiño da gadaña: a mesma palabra que se usa para unha caricia serve para o roce dun fío na herba mollada.",
-  "source": "Galego",
+  "text": "Ao ruxir do vento nos piñeiros chamoulle Pondal queixume, e así titulou en 1886 o libro no que puxo os seus versos.",
+  "source": "Literatura galega",
   "theme": "peace",
   "subtheme": "quietAsASound"
  },
@@ -2040,14 +2040,14 @@
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Facer as paces dise en plural. Unha paz soa non chega: fan falta as de un e as do outro.",
+  "text": "Facer as paces dise en plural. Unha soa non chega: fan falta a de un e a do outro.",
   "source": "Galego",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Avirse é levarse ben con alguén, e do verbo sae avinza. Vén de vir: estar de acordo é chegar ao mesmo sitio.",
-  "source": "Etimoloxía galega",
+  "text": "Cando dous veciños partían unha herdanza, un facía os dous lotes e o outro escollía primeiro. Non facía falta máis regra ca esa.",
+  "source": "Costume rural",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
  },
@@ -2064,32 +2064,26 @@
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Acougar é serenar a alguén e tamén parar de traballar. Quen non ten acougo pode estar intranquilo ou simplemente non ter descansado.",
+  "text": "Acougar é serenar a alguén e é tamén parar de traballar. Quen anda sen acougo pode estar intranquilo ou simplemente non ter descansado.",
   "source": "Galego",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Nos preitos de marcos entre veciños chamábase a dous homes vellos do lugar para dicir onde estaba a raia. O que dicían valía.",
-  "source": "Costume rural",
+  "text": "Para as disputas de lindes chamábase os homes bos do lugar: veciños vellos que sabían onde estaban os marcos e cuxa palabra se aceptaba.",
+  "source": "Dereito consuetudinario",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Deixar en paz quere dicir non molestar, e é a única acepción de paz que se pide a alguén en concreto.",
+  "text": "En galego dise que paz se respira aquí dun sitio onde non hai ruído nin axitación. É a palabra dos tratados, usada para unha tarde.",
   "source": "Galego",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Quen ten a veceira non discute a quenda: xa está dita de antes e por iso non hai nada que falar cando chega o día.",
+  "text": "Quen ten a veceira non discute a quenda: está dita de antes, e por iso o día que lle toca non hai nada que falar.",
   "source": "Costume rural",
-  "theme": "peace",
-  "subtheme": "theWordsForStopping"
- },
- {
-  "text": "Non se pode estar nas campas e na procesión.",
-  "source": "Refrán galego",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
  },
@@ -2112,19 +2106,19 @@
   "subtheme": "atEase"
  },
  {
-  "text": "Nunha ría abrigada, o vento cae ao solpor e a auga queda coma un espello durante media hora. Chámanlle a calmaría da tarde.",
+  "text": "Nunha ría abrigada o vento cae ao solpor e a auga queda coma un espello durante media hora, xusto entre o traballo do día e a noite.",
   "source": "Saber mariñeiro",
   "theme": "peace",
   "subtheme": "atEase"
  },
  {
-  "text": "A sesta de verán no campo non se fai na casa: faise á sombra dun carballo, e por iso hai carballos plantados onde non fan falta.",
+  "text": "A sesta de verán no campo non se fai na casa: faise á sombra dun carballo, e por iso hai carballos plantados onde non fan outra falta.",
   "source": "Costume rural",
   "theme": "peace",
   "subtheme": "atEase"
  },
  {
-  "text": "Folgar é descansar e é tamén pasalo ben sen facer nada de proveito. As dúas cousas teñen o mesmo verbo desde hai oitocentos anos.",
+  "text": "Folgar é descansar e é tamén pasalo ben sen facer nada de proveito. O verbo é vello e nunca separou as dúas cousas.",
   "source": "Galego",
   "theme": "peace",
   "subtheme": "atEase"
@@ -2142,7 +2136,7 @@
   "subtheme": "atEase"
  },
  {
-  "text": "Un magosto faise de noite, arredor dunha fogueira baixa, e as castañas comen se ao ritmo ao que se van asando. Non hai présa posible.",
+  "text": "Un magosto faise de noite arredor dunha fogueira baixa, e as castañas cómense ao ritmo ao que se van asando. Non hai présa posible.",
   "source": "Etnografía galega",
   "theme": "peace",
   "subtheme": "atEase"
@@ -2160,7 +2154,7 @@
   "subtheme": "atEase"
  },
  {
-  "text": "O orballo non molla de golpe: pousa. Un pode estar fóra media hora antes de decatarse de que hai que entrar.",
+  "text": "O orballo non molla de golpe: pousa. Un pode estar fóra media hora antes de se decatar de que xa é hora de entrar.",
   "source": "Meteoroloxía",
   "theme": "peace",
   "subtheme": "atEase"
