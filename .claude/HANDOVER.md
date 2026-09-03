@@ -19,11 +19,12 @@ for partway through and is built.
 of every stem, and the garden mark's unreadable grass. **`round-two` is branched
 from it and not merged.**
 
-**Thirty-one passage banks in the app**, up from seventeen. Landed overnight:
+**Thirty-two passage banks in the app**, up from seventeen. Landed overnight:
 Estonian, Lithuanian, Slovene, Latvian, Ukrainian, Slovak, Welsh, Basque,
-Galician, Serbian, Japanese, Chinese, Icelandic, Irish. Still being written when
-this was filed: Greek, Russian, Bulgarian, Albanian, Croatian, Macedonian,
-Belarusian, Maltese, Greenlandic, Arabic, Hebrew, Korean. Two never got a slot,
+Galician, Serbian, Japanese, Chinese, Icelandic, Irish, Albanian. Still being
+written when this was filed: Greek, Russian, Bulgarian, Croatian, Macedonian,
+Belarusian, Maltese, Greenlandic, Arabic, Hebrew, Korean. **Those agents belong
+to that session — clearing it loses them and the scratchpad both.** Two never got a slot,
 Faroese and Luxembourgish — their notes are in the session scratchpad's
 `QUEUE.md`, and the brief they need is now `tools/quotes/BRIEF.md`.
 
