@@ -149,8 +149,17 @@ async function walk(direction) {
   const { area, plant: id } = state.where;
   if (!area) {
     // On the map, a direction moves between areas rather than between plants.
-    const here = areaFor(state.hover ?? "waiting");
-    const next = neighbouringArea(here?.theme ?? "waiting", direction);
+    //
+    // **The first press picks somewhere; it does not walk from somewhere.**
+    // Starting the cursor at `waiting` implicitly and then immediately stepping
+    // off it means the top-left area is the one place on the map an arrow can
+    // never land you, which is a strange thing to be true of a corner.
+    if (!state.hover) {
+      state.hover = AREAS[0].theme;
+      highlight();
+      return;
+    }
+    const next = neighbouringArea(state.hover, direction);
     if (next) {
       state.hover = next.theme;
       highlight();
