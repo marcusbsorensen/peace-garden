@@ -213,10 +213,18 @@ is a single repeated shape. The theme each root carries is unchanged.
 | **Olaceae** · plume | `Ol` 5 · peace | `Zeph` 10 · travel | *oliva* — the olive's flowers are a small panicle and its leaves are narrow — and *Zephyros*, the west wind |
 
 Every one of the twenty-four heads is used once. No family has both roots in one
-theme, so every area holds two or three distinct kinds of plant. Three of the
-family names land on real ones by the same etymology that named them:
-**Cynaceae** beside Cynareae, the thistle tribe; **Olaceae** beside Oleaceae,
-the olives; **Calaceae** beside Campanulaceae.
+theme, so every area holds two or three distinct kinds of plant.
+
+**One family name lands on a real one by the same root that named it**, which
+was not arranged: **Olaceae** beside Oleaceae, both from *olea*, the olive.
+**Cynaceae** beside Cynareae is likely rather than certain — `Cyn` was taken for
+Gk *kyōn*, the dog, and *Cynara*'s own descent from it is disputed.
+
+**Calaceae was claimed as a third and is not one.** *Campanula* is a diminutive
+of *campana*, a bell; it has nothing to do with *kalos*. The two words share two
+letters and no root. Recorded rather than quietly deleted, because that false
+echo was offered as a reason to keep `Cal` on the bell — and it was the only
+reason, so the question below is now open on its merits.
 
 **One is still worth arguing about.** `Cal` is given to the bell for
 *Campanula*, but *kalos* is the shapely in general and Pattern could as fairly

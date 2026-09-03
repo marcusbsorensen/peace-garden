@@ -28,9 +28,17 @@ public enum Archetype: String, CaseIterable, Codable, Sendable {
     /// disagree with the first. Every root ends in a consonant, so the join is
     /// a join and nothing is elided.
     ///
-    /// Three land on real families by the same etymology that named them, which
-    /// was not arranged: **Cynaceae** beside Cynareae, the thistle tribe;
-    /// **Olaceae** beside Oleaceae; **Calaceae** beside Campanulaceae.
+    /// One lands on a real family by the same root that named it, which was not
+    /// arranged: **Olaceae** beside Oleaceae, both from *olea*, the olive.
+    /// **Cynaceae** beside Cynareae is likely but not certain — `Cyn` was taken
+    /// for Gk *kyōn*, the dog, and *Cynara*'s own descent from it is disputed.
+    ///
+    /// **Calaceae is not a third.** It was claimed as one against
+    /// Campanulaceae, and that is wrong: *Campanula* is a diminutive of
+    /// *campana*, a bell, and has nothing to do with *kalos*. The two words
+    /// share two letters and no root. Corrected here rather than quietly
+    /// dropped, because the claim was used as an argument for which family
+    /// `Cal` belongs to.
     ///
     /// Nothing shows this yet. It is here because the rank is real — it is what
     /// holds a floral plan, and what an area's type specimens are types *of* —
