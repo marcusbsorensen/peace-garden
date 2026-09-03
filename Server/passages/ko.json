@@ -1,0 +1,2186 @@
+[
+ {
+  "text": "싹트기: 씨앗 속에 접혀 있던 것이 처음으로 껍질 밖으로 나오는 일. 그 한 걸음만은 되돌릴 수 없다.",
+  "source": "식물학",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "떡잎은 씨앗 안에 이미 접혀 있던 잎이다. 흙 위로 처음 올라오는 잎은 땅에서 만들어진 것이 아니다.",
+  "source": "식물학",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "목마른 놈이 우물 판다.",
+  "source": "한국 속담",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "첫술에 배부르랴.",
+  "source": "한국 속담",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "부뚜막의 소금도 집어넣어야 짜다.",
+  "source": "한국 속담",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "병아리는 부리 끝에 돋은 작은 돌기로 알을 깨고 나온다. 난치라 부르는 이 돌기는 나온 지 며칠 만에 떨어진다.",
+  "source": "조류학",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "매미는 땅속에서 여러 해를 보낸 뒤 나와 등을 가르고 껍질을 벗는다. 벗어 놓은 껍질은 나뭇가지에 매달린 채 그대로 남는다.",
+  "source": "곤충학",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "고사리는 끝이 돌돌 말린 채 돋아 천천히 펴진다. 한 번 펴진 잎은 다시 말리지 않는다.",
+  "source": "식물학",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "우리말은 처음 있는 일에만 첫을 붙여 따로 이름을 준다. 첫눈, 첫서리, 첫걸음. 두 번째에는 그런 이름이 없다.",
+  "source": "우리말",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "옹달샘은 땅속을 흐르던 물이 처음으로 하늘을 보는 자리다. 거기서부터 그 물을 개울이라 부른다.",
+  "source": "지리",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "누에는 알에서 나온 첫날부터 뽕잎을 갉는다. 그 뒤로 네 번 잠을 자고 네 번 허물을 벗는다.",
+  "source": "잠업",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "아이 발이 첫발이라.",
+  "source": "한국 속담",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "티끌 모아 태산.",
+  "source": "한국 속담",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "가랑비에 옷 젖는 줄 모른다.",
+  "source": "한국 속담",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "낙숫물이 댓돌을 뚫는다.",
+  "source": "한국 속담",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "대나무는 마디마다 자라는 부분을 따로 가지고 있어 여러 마디가 한꺼번에 늘어난다. 그래서 하루에 몇십 센티미터씩 크는 종도 있다.",
+  "source": "식물학",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "한글은 자음 열넷과 모음 열로 짤 수 있는 글자가 만 자를 넘는다. 스물넉 자에서 시작해 그렇게 된다.",
+  "source": "한글",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "버섯은 땅 위로 나온 부분이 전부가 아니다. 땅속 균사는 몇십 미터씩 뻗어 있고, 버섯은 그 끝에 잠깐 맺히는 것이다.",
+  "source": "균학",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "메주 한 덩이에 앉은 곰팡이가 콩을 풀어 간장과 된장을 만든다. 눈에 보이지 않는 것이 한 독을 바꾼다.",
+  "source": "발효",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "감자 한 알을 눈이 붙은 대로 몇 조각으로 잘라 심으면 조각마다 한 포기가 선다.",
+  "source": "농사",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "밀 한 알에서 자란 포기가 이삭을 여럿 올리고, 이삭마다 낟알이 수십 개씩 달린다.",
+  "source": "농학",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "도토리 하나가 참나무가 되기까지는 수십 해가 걸린다. 그때부터 그 나무는 해마다 도토리를 수천 개씩 떨군다.",
+  "source": "임학",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "개울 하나가 다른 개울과 만나면 이름이 바뀐다. 그렇게 여러 번 이름을 바꾸고 나서야 강이 된다.",
+  "source": "지리",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "꿀벌 한 마리가 한살이 동안 모으는 꿀은 찻숟가락 하나에도 못 미친다. 한 통의 꿀은 그런 한살이 수만 개다.",
+  "source": "양봉",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "콩 심은 데 콩 나고 팥 심은 데 팥 난다.",
+  "source": "한국 속담",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "될성부른 나무는 떡잎부터 알아본다.",
+  "source": "한국 속담",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "말이 씨가 된다.",
+  "source": "한국 속담",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "나무가 첫 몇 해에 어떻게 자랐는지는 백 년 뒤 나이테 한가운데에 그대로 남는다.",
+  "source": "임학",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "온돌은 아궁이 자리가 정해지면 방의 따뜻한 쪽과 서늘한 쪽이 함께 정해진다. 아랫목과 윗목은 집을 지을 때 결정된다.",
+  "source": "한옥",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "사람마다 쉽게 익혀 날마다 쓰기에 편안하게 하고자 할 따름이다.",
+  "source": "세종, 《훈민정음》 서문, 1446",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "김장은 소금에 절이는 하루가 겨우내 맛을 정한다. 그다음부터는 기다리는 일뿐이다.",
+  "source": "세시풍속",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "우리말은 이름을 짓는다고 한다. 밥을 짓고 집을 짓듯, 이름도 만드는 것이 아니라 짓는 것이다.",
+  "source": "우리말",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "간장은 담그는 날 소금과 물의 비율이 정해지고, 몇 해를 묵히든 그 비율은 바뀌지 않는다.",
+  "source": "발효",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "접붙이기는 어린 나무의 줄기를 잘라 다른 나무의 가지를 붙이는 일이다. 붙는 그날 그 나무가 무슨 열매를 맺을지가 정해진다.",
+  "source": "원예",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "각궁은 시위를 벗기면 반대쪽으로 되말린다. 얹고 벗기기를 되풀이해도 처음 잡아 준 모양으로 돌아간다.",
+  "source": "국궁",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "볍씨는 물에 담근 첫 며칠 동안 아무 일도 하지 않는 것처럼 보인다. 그사이에 안에서 자랄 준비가 끝난다.",
+  "source": "농사",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "휴면: 조건이 다 맞는데도 씨앗이 싹을 내지 않는 일. 밖이 아니라 안에서 붙잡고 있는 것이다.",
+  "source": "식물학",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "국화야 너는 어이 삼월 동풍 다 보내고 낙목한천에 네 홀로 피었는고.",
+  "source": "이정보 시조",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "진달래는 꽃눈을 지난여름에 이미 만들어 두고 겨울을 난다. 봄에 피는 꽃은 여름에 준비된 것이다.",
+  "source": "식물학",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "어떤 씨앗은 겨울의 추위를 한 번 겪어야만 싹을 낸다. 따뜻한 곳에만 두면 봄이 와도 그대로 있는다.",
+  "source": "식물학",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "곰의 겨울잠은 잠보다 기다림에 가깝다. 심장이 훨씬 느리게 뛰고, 몇 달을 그렇게 지낸다.",
+  "source": "동물학",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "참다는 견디는 일과 기다리는 일을 한 낱말로 묶는다. 참는 사람은 버티는 중이면서 동시에 기다리는 중이다.",
+  "source": "우리말",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "낮은 온도로 갈무리해 두면 어떤 씨앗은 백 년이 지나도 싹틀 힘을 잃지 않는다.",
+  "source": "농학",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "개구리는 언 땅속에서 봄을 기다린다. 경칩은 그 개구리가 나오는 무렵에 붙은 절기 이름이다.",
+  "source": "절기",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "대나무는 수십 년에 한 번 꽃을 피운다. 한 뿌리에서 퍼진 대밭은 그해에 함께 피고 함께 진다.",
+  "source": "식물학",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "삭히다는 그대로 두어 변하게 하는 일이다. 손을 대지 않는 것이 그 일의 방법이다.",
+  "source": "우리말",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "감은 떫어서 그대로는 먹지 못한다. 서리를 맞히거나 며칠 묻어 두면 떫은맛이 저절로 빠진다.",
+  "source": "농사",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "번데기 속에서는 애벌레의 몸이 거의 다 풀어졌다가 다시 짜인다. 그동안 겉은 아무 일도 없는 것처럼 보인다.",
+  "source": "곤충학",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "동짓달 기나긴 밤을 한 허리를 베어 내어 춘풍 이불 아래 서리서리 넣었다가 어론 님 오신 날 밤이거든 굽이굽이 펴리라.",
+  "source": "황진이 시조",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "서당개 삼 년에 풍월한다.",
+  "source": "한국 속담",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "십 년이면 강산도 변한다.",
+  "source": "한국 속담",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "열 번 찍어 안 넘어가는 나무 없다.",
+  "source": "한국 속담",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "은행나무는 심은 사람이 열매를 보기 어렵다. 그래서 공손수, 손자를 보고서야 거두는 나무라는 이름이 붙었다.",
+  "source": "나무 이름",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "오래된 소나무 가운데는 나이테가 오백 줄을 넘는 것이 있다. 한 줄이 한 해다.",
+  "source": "임학",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "우리 달력은 한 해를 스물넷으로 나눈다. 절기 하나가 대략 보름이고, 보름마다 이름이 따로 있다.",
+  "source": "절기",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "씨간장은 해마다 새 간장을 부어 이어 가는 장이다. 한 집에서 몇 대를 두고 이어 온 것도 있다.",
+  "source": "발효",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "고인돌은 삼천 년 안팎 전에 세워졌고, 지금도 그 자리에 그대로 있다.",
+  "source": "고고학",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "감나무 밑에서 홍시 떨어지기 기다린다.",
+  "source": "한국 속담",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "강태공이 세월 낚듯 한다.",
+  "source": "한국 속담",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "한지는 닥나무를 삶고 두드리고 뜨고 말리기까지 아흔아홉 번 손이 간다 하고, 쓰는 사람이 백 번째 손이라 한다.",
+  "source": "한지",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "나는 문간에 서서 기다리리. 지나가는 길손을 눈여겨보며, 그대인가고, 그대인가고.",
+  "source": "김소월 〈나의 집〉",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "마을 어귀 큰 나무 아래는 앉는 자리다. 오가는 사람을 보기에 가장 좋은 자리가 마을에서 가장 그늘진 자리이기도 하다.",
+  "source": "마을",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "원두막은 참외밭 가운데에 다리를 높여 세운 집이다. 밭을 지키려고 지었지만, 하는 일은 앉아서 내다보는 것이 전부다.",
+  "source": "농사",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "봉수는 산꼭대기에서 불을 피워 다음 산에 알리던 자리다. 아무 일이 없는 날에도 불은 하나 올렸다. 무사하다는 뜻이다.",
+  "source": "봉수제",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "왜가리는 물가에 서서 몇십 분을 꼼짝하지 않는다. 그동안 하는 일은 보는 것뿐이다.",
+  "source": "조류학",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "마중은 오는 사람을 맞으러 나가서 기다리는 일이다. 기다림을 집 밖으로 옮겨 놓은 말이다.",
+  "source": "우리말",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "옛 마을에서는 저녁에 굴뚝 연기를 보고 그 집이 밥을 짓는지 알았다.",
+  "source": "민속",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "별똥별을 보는 데는 망원경보다 맨눈이 낫다. 하늘을 넓게 보고 오래 기다리는 것 말고는 방법이 없다.",
+  "source": "천문",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "지켜보다는 지키다와 보다를 붙인 말이다. 보는 일이 곧 지키는 일이 되는 자리가 있다.",
+  "source": "우리말",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "등대지기가 하는 일의 대부분은 불이 켜져 있는지 보는 것이다.",
+  "source": "항로표지",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "제비는 해마다 같은 처마로 돌아온다. 그 처마를 헐지 않고 두는 집이 많은 것은 그래서다.",
+  "source": "조류학",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "모를 낸 논은 며칠 동안 달라지는 것이 없어 보인다. 그동안 농부가 하는 일은 물꼬를 보러 나가는 것이다.",
+  "source": "농사",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "부추는 베어도 뿌리에서 다시 올라온다. 한 해에 여러 번 벤다.",
+  "source": "농사",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "한식 비 갠 후에 국화 움이 반가워라.",
+  "source": "김수장 시조",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "쑥은 캐어도 이듬해 같은 자리에 다시 돋는다. 봄에 뜯는 나물 가운데 가장 먼저 나오는 것도 쑥이다.",
+  "source": "나물",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "참나무는 밑동을 잘라도 그루터기에서 새순이 여럿 올라온다. 숯을 굽던 산이 다시 숲이 된 것은 그래서다.",
+  "source": "임학",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "뽕나무는 잎을 다 따 주어도 여름 안에 다시 무성해진다. 한 해에 두 번 고치를 얻을 수 있는 것은 그 덕분이다.",
+  "source": "잠업",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "김은 바위에 붙은 것을 훑어 내도 같은 바위에서 다시 자란다. 겨울 한 철에 여러 번 걷는다.",
+  "source": "해조류",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "무는 잎을 잘라 낸 밑동을 물에 담가 두면 잘린 데서 새잎이 다시 돋아 오른다.",
+  "source": "채소",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "벼는 베고 난 그루터기에서 다시 순이 나온다. 남쪽 따뜻한 곳에서는 그 순으로 한 번 더 거두기도 한다.",
+  "source": "농학",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "사슴의 뿔은 해마다 떨어지고 해마다 새로 자란다. 뼈 가운데 그렇게 하는 것은 이것뿐이다.",
+  "source": "동물학",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "뱀은 자라는 동안 여러 번 허물을 벗는다. 눈을 덮은 비늘까지 함께 벗겨져 나온다.",
+  "source": "동물학",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "도마뱀은 꼬리를 끊고 달아나고, 그 자리에 새 꼬리가 자란다. 다시 자란 꼬리에는 뼈 대신 연골이 든다.",
+  "source": "동물학",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "고로쇠나무는 이른 봄에 구멍을 뚫어 수액을 받아도 그해 여름에 잎을 다 낸다. 상처는 그사이에 아문다.",
+  "source": "임학",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "산에는 꽃 피네 꽃이 피네 갈 봄 여름 없이 꽃이 피네.",
+  "source": "김소월 〈산유화〉",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "우수 경칩에 대동강 물이 풀린다.",
+  "source": "한국 속담",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "대추 볼 붉은 골에 밤은 어이 뚝뚝 들으며 벼 벤 그루에 게는 어이 내리는고.",
+  "source": "황희 시조",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "대한이 소한의 집에 가서 얼어 죽는다.",
+  "source": "한국 속담",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "봄 조개 가을 낙지.",
+  "source": "한국 속담",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "가을에는 부지깽이도 덤빈다.",
+  "source": "한국 속담",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "곡우는 곡식을 기르는 비라는 뜻이다. 그 무렵 내리는 비를 두고 붙인 이름이라, 절기 이름이 곧 날씨 이야기다.",
+  "source": "절기",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "동지는 밤이 가장 긴 날이고, 그 이튿날부터 낮이 길어진다. 예부터 이날을 작은설이라 했다.",
+  "source": "절기",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "입춘에는 대문에 입춘대길이라 써 붙인다. 아직 추운 날에 붙인다는 것이 이 풍습의 요점이다.",
+  "source": "세시풍속",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "소만은 볕이 가득 차기 시작한다는 뜻이다. 보리가 익고 모내기를 준비하는 때에 붙은 이름이다.",
+  "source": "절기",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "단풍잎 떨어져 나온 자리마다 봄을 마련해 놓고 나뭇가지 위에 하늘이 펼쳐 있다.",
+  "source": "윤동주 〈소년〉, 1939",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "처서가 지나면 모기 입이 비뚤어진다는 말이 있다. 더위가 물러가는 자리에 붙은 절기 이름이다.",
+  "source": "절기",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "비 온 뒤에 땅이 굳어진다.",
+  "source": "한국 속담",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "눈이 녹으면 남은 발자국 자리마다 꽃이 피리니.",
+  "source": "윤동주 〈눈 오는 지도〉, 1941",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "나무는 상처를 지우지 않는다. 그 둘레로 새 살을 겹겹이 둘러 감싸고, 안에는 옹이로 남긴다.",
+  "source": "임학",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "옻칠은 말라서 굳는 것이 아니라 습기를 먹으며 굳는다. 그래서 축축한 곳에 두어야 제대로 마른다.",
+  "source": "칠공예",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "부러진 뼈는 붙은 자리가 한동안 나머지보다 두꺼워진다. 그 자리는 얼마간 처음보다 단단하다.",
+  "source": "의학",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "논흙은 겨우내 얼었다 녹기를 되풀이하며 저절로 부슬부슬해진다. 봄에 갈기 쉬운 것은 겨울이 해 놓은 일이다.",
+  "source": "농학",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "불이 지나간 산에서 가장 먼저 올라오는 것은 고사리와 억새다. 재가 거름이 되어 이듬해 그 자리가 가장 푸르다.",
+  "source": "생태",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "갯벌은 하루에 두 번 물에 잠기고 두 번 드러난다. 밀물이 들 때마다 새 흙과 새 먹이를 함께 받는다.",
+  "source": "해양",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "사람의 몸은 잠든 동안 낮에 쓴 것을 되돌린다. 상처가 아무는 속도도 자는 밤에 가장 빠르다.",
+  "source": "생리학",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "겉절이는 그날 먹고 김치는 익기를 기다린다. 익는 동안 배추는 처음보다 달아진다.",
+  "source": "발효",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "아물다는 상처가 닫히는 일에만 쓰는 말이다. 다른 것이 닫힐 때는 다른 말을 쓴다.",
+  "source": "우리말",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "바싹 마른 이끼는 죽은 것처럼 보이지만, 물이 닿으면 몇 분 만에 다시 푸르러진다.",
+  "source": "식물학",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "샛별 지자 종달새 떴다 호미 메고 사립 나니 긴 수풀 찬 이슬에 베잠방이 다 젖는다.",
+  "source": "이재 시조",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "새벽은 날이 밝기 전의 시간이다. 어둠이 아직 남아 있는 동안에만 쓸 수 있는 말이다.",
+  "source": "우리말",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "어스름은 해가 진 뒤 아주 어두워지기 전까지를 가리킨다. 아침에도 저녁에도 쓴다.",
+  "source": "우리말",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "동트다의 동은 동쪽이다. 하늘이 어디에서부터 밝아지는지를 말 안에 담아 둔 셈이다.",
+  "source": "우리말",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "노을은 해가 낮게 걸릴 때 빛이 공기를 더 길게 지나며 푸른빛을 잃어 생긴다. 아침에도 같은 일이 일어난다.",
+  "source": "대기광학",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "해가 지평선 아래로 내려간 뒤에도 하늘은 한동안 밝다. 이 시간을 박명이라 하고, 위도가 높을수록 길어진다.",
+  "source": "천문",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "초저녁은 저녁의 첫머리다. 우리말은 하루의 끝에도 첫머리를 따로 둔다.",
+  "source": "우리말",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "첫닭이 울면 새벽으로 쳤다. 시계가 없던 마을에서는 그것이 하루가 시작되는 소리였다.",
+  "source": "민속",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "등잔 밑이 어둡다.",
+  "source": "한국 속담",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "아침놀에는 비가 오고 저녁놀에는 날이 갠다는 말이 있다. 날씨가 서쪽에서 오는 곳에서는 자주 맞는다.",
+  "source": "날씨 속설",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "그믐은 달이 보이지 않는 날이고, 그믐밤은 한 달 가운데 가장 어둡다. 별은 그날 가장 잘 보인다.",
+  "source": "천문",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "해가 가장 일찍 뜨는 날은 하지가 아니다. 며칠 어긋나 있고, 가장 늦게 뜨는 날도 동지가 아니다.",
+  "source": "천문",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "초사흘 달은 잰 며느리가 본다.",
+  "source": "한국 속담",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "하늘을 보아야 별도 따지.",
+  "source": "한국 속담",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "국화는 밤이 길어져야 꽃눈을 만든다. 한밤중에 잠깐 불을 켜 두면 그해에는 꽃을 피우지 않는다.",
+  "source": "원예",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "앙부일구는 오목한 그릇처럼 생긴 해시계다. 그림자가 지나는 자리에 시각과 절기를 함께 새겨 두었다.",
+  "source": "앙부일구, 1434",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "어린 해바라기는 낮 동안 해를 따라 고개를 돌리고 밤에 다시 동쪽으로 돌아온다. 다 자라 꽃이 피면 동쪽을 향한 채 멈춘다.",
+  "source": "식물학",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "나무줄기에 이끼가 두껍게 앉은 쪽이 대개 북쪽이다. 볕이 덜 들어 더 오래 젖어 있기 때문이다.",
+  "source": "생태",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "물이 파랗게 보이는 것은 하늘이 비쳐서만은 아니다. 물 자체가 붉은빛을 먼저 삼킨다.",
+  "source": "광학",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "물때는 달을 보고 안다. 보름과 그믐에 물이 가장 많이 들고 가장 많이 빠진다.",
+  "source": "조석",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "창호지를 바른 문은 빛을 들이되 흩어 놓는다. 방 안이 밝으면서도 그림자가 지지 않는 것은 그래서다.",
+  "source": "한옥",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "달 둘레에 둥근 무리가 서면 비가 온다고 한다. 높은 구름의 얼음 알갱이가 빛을 꺾어 생기는 것이라 자주 맞는다.",
+  "source": "기상",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "맨눈으로 보이는 별은 대략 여섯 등급까지다. 불빛이 많은 도시에서는 두세 등급까지밖에 못 본다.",
+  "source": "천문",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "은하수를 우리말로 미리내라 한다. 미르는 용을 뜻하는 옛말이고, 내는 시내다.",
+  "source": "우리말",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "우리말은 빛과 볕을 나눈다. 빛은 보이는 것이고 볕은 쬐는 것이다. 햇빛은 눈으로 받고 햇볕은 등으로 받는다.",
+  "source": "우리말",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "반딧불이의 빛은 열을 거의 내지 않는다. 사람이 만든 어떤 등보다 효율이 높다.",
+  "source": "곤충학",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "여름 밤바다가 파랗게 번지는 것은 물속의 아주 작은 생물이 흔들릴 때 스스로 빛을 내기 때문이다.",
+  "source": "해양생물학",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "해에서 나온 빛이 여기까지 오는 데 팔 분 남짓 걸린다. 지금 보는 해는 팔 분 전의 해다.",
+  "source": "천문",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "무지개는 물방울 안에서 빛이 한 번 꺾이고 한 번 되비치며 갈라져 생긴다. 늘 해를 등지고 서야 보인다.",
+  "source": "광학",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "눈 쌓인 들이 밤에도 훤한 것은 눈이 달빛을 거의 그대로 되돌려 보내는 까닭이다.",
+  "source": "광학",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "촛불의 노란빛은 불꽃 속에서 달구어진 그을음 알갱이가 내는 빛이다. 타고 남을 것이 빛나는 셈이다.",
+  "source": "물리",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "빛은 물속에서 공기 중보다 느리게 간다. 물잔에 담근 젓가락이 꺾여 보이는 까닭이다.",
+  "source": "광학",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "밤하늘에서 가장 먼 별의 빛은 우리에게 닿기까지 몇천 년을 왔다. 그 별을 보는 일은 그만큼 오래된 것을 보는 일이다.",
+  "source": "천문",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "형광은 받은 빛을 곧바로 되돌리고, 인광은 받아 두었다가 천천히 내놓는다. 어둠 속에서 한참 빛나는 것은 인광이다.",
+  "source": "우리말",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "그림자의 가장자리가 흐릿한 것은 해가 점이 아니라 둥근 판이기 때문이다. 빛이 여러 방향에서 오면 경계가 번진다.",
+  "source": "광학",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "달은 스스로 빛을 내지 않는다. 우리가 달빛이라 부르는 것은 달에 부딪혀 되돌아온 햇빛이다.",
+  "source": "천문",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "구슬이 서 말이라도 꿰어야 보배.",
+  "source": "한국 속담",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "하나를 듣고 열을 안다.",
+  "source": "한국 속담",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "길고 짧은 것은 대어 보아야 안다.",
+  "source": "한국 속담",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "백 번 듣는 것이 한 번 보는 것만 못하다.",
+  "source": "한국 속담",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "1441년에 만든 측우기는 빗물을 받아 깊이를 재는 통이다. 같은 크기의 통을 여러 고을에 두어 서로 견줄 수 있게 했다.",
+  "source": "측우기",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "절기 하나는 해가 하늘길을 십오 도 지나는 동안이다. 한 해가 스물넷으로 나뉘는 것은 그래서 꼭 맞아떨어진다.",
+  "source": "역법",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "우리말은 열까지를 두 벌로 센다. 하나 둘 셋과 일 이 삼이 함께 쓰이고, 무엇을 세느냐에 따라 갈린다.",
+  "source": "우리말",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "윷은 네 개를 던져 나오는 앞뒤로 도 개 걸 윷 모를 가른다. 다섯 가지가 나올 확률은 저마다 다르다.",
+  "source": "민속놀이",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "여러 그루의 나이테를 겹쳐 견주면 몇백 년 전의 날씨를 해마다 읽어 낼 수 있다.",
+  "source": "연륜연대학",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "우리말에는 세는 것마다 단위가 따로 있다. 나무는 그루, 물고기는 마리, 종이는 장, 신은 켤레.",
+  "source": "우리말",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "훈민정음이 처음 만들어졌을 때 글자는 스물여덟이었다. 지금 쓰는 것은 스물넷이고, 넷은 쓰이지 않게 되었다.",
+  "source": "한글",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "십장생은 오래 사는 것 열 가지를 한 그림에 묶은 것이다. 해, 산, 물, 돌, 구름, 소나무, 불로초, 거북, 학, 사슴.",
+  "source": "민화",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "거미도 줄을 쳐야 벌레를 잡는다.",
+  "source": "한국 속담",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "벌집의 방은 여섯모다. 같은 넓이를 두르는 데 드는 밀랍이 가장 적은 모양이라 그렇게 된다.",
+  "source": "기하",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "한옥은 주춧돌을 다듬지 않고, 기둥 밑을 돌의 울퉁불퉁한 모양대로 깎아 맞춘다. 이것을 그렝이질이라 한다.",
+  "source": "한옥",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "우리 목수는 못 없이 나무끼리 파고 끼운다. 맞춤은 서로 다른 방향으로 만나는 것, 이음은 같은 방향으로 잇는 것이다.",
+  "source": "목공",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "조각보는 남은 천 조각을 이어 만든 보자기다. 조각의 크기가 제각각이라 같은 것이 하나도 없다.",
+  "source": "규방 공예",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "첨성대는 다듬은 돌을 층층이 쌓아 둥글게 좁아지는 탑이다. 붙이는 것 없이 돌의 무게만으로 천삼백 년이 넘게 서 있다.",
+  "source": "첨성대",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "구들장은 방바닥 아래 돌을 눕혀 불길이 지나는 길을 만든 것이다. 돌 한 장의 두께가 방이 식는 속도를 정한다.",
+  "source": "한옥",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "제주의 돌담은 구멍이 숭숭 뚫린 채로 쌓는다. 바람이 지나갈 자리를 두어서 태풍에도 넘어지지 않는다.",
+  "source": "제주 돌담",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "한글은 낱자를 옆으로 늘어놓지 않고 한 자리에 모아 쓴다. 초성과 중성이 모여야 한 글자가 된다.",
+  "source": "한글",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "가마에 그릇을 재울 때는 그릇 사이에 흙덩이를 물려 서로 붙지 않게 한다. 그 자국이 굽에 남는다.",
+  "source": "도자",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "모내기는 포기 사이를 한 뼘쯤 띄운다. 너무 배면 볕이 안 들고 너무 성기면 땅이 논다.",
+  "source": "농사",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "눈송이는 여섯 갈래로 자란다. 물 알갱이가 붙는 각도가 정해져 있어 어느 눈송이든 여섯이다.",
+  "source": "결정학",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "한글의 ㄱ은 소리를 낼 때 혀뿌리가 목구멍을 막는 모양을 본떠 만든 글자다.",
+  "source": "《훈민정음 해례》, 1446",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "ㅁ은 다문 입의 모양이고, ㅅ은 이의 모양이며, ㅇ은 목구멍의 모양이다.",
+  "source": "《훈민정음 해례》, 1446",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "ㅋ은 ㄱ에 획을 하나 더한 글자다. 소리가 조금 더 세게 나오므로 획을 더한다고 적어 두었다.",
+  "source": "《훈민정음 해례》, 1446",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "모음은 셋에서 나왔다. 둥근 것은 하늘, 평평한 것은 땅, 서 있는 것은 사람이다.",
+  "source": "《훈민정음 해례》, 1446",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "훈민정음은 자음을 어금닛소리, 혓소리, 입술소리, 잇소리, 목구멍소리로 나눈다. 소리가 나는 자리를 그대로 이름으로 삼았다.",
+  "source": "《훈민정음 해례》, 1446",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "한글이라는 이름은 주시경이 붙였다. 그전에는 언문이나 국문 따위로 불렸다.",
+  "source": "국어학사",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "우리말은 빛깔을 두 벌로 나눈다. 검다와 까맣다, 붉다와 빨갛다. 하나는 성질을 말하고 하나는 보이는 대로를 말한다.",
+  "source": "우리말",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "냇가의 ㅅ은 뒤에 오는 소리가 세어진다는 표시다. 두 낱말이 하나로 붙었다는 사실을 글자 하나로 적어 둔 것이다.",
+  "source": "맞춤법",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "동쪽에서 오면 샛바람, 서쪽에서 오면 하늬바람, 남쪽은 마파람, 북쪽은 된바람. 바람마다 이름이 따로 있다.",
+  "source": "우리말",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "가랑비, 이슬비, 보슬비, 소나기, 여우비. 비는 굵기와 오는 모양에 따라 이름이 갈린다.",
+  "source": "우리말",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "물길은 크기에 따라 이름이 다르다. 도랑, 개울, 시내, 내, 강.",
+  "source": "우리말",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "달은 모양마다 이름이 있다. 초승달, 반달, 보름달, 그믐달. 같은 달이 한 달 동안 네 번 이름을 바꾼다.",
+  "source": "우리말",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "헌 삿갓 짧은 도롱이 삽 짚고 호미 메고 논둑에 물 보리라 밭김이 어떠하니.",
+  "source": "조현명 시조",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "흙 한 줌에는 눈에 보이지 않는 것이 수억 마리 산다. 그런 흙을 기름지다고 한다.",
+  "source": "토양학",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "부엽토는 낙엽이 몇 해 동안 삭아 만들어진 흙이다. 숲의 흙이 검은 것은 여러 해의 잎이 거기 들어 있어서다.",
+  "source": "토양학",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "지렁이는 흙을 먹고 흙을 낸다. 그렇게 지나간 흙은 지나기 전보다 물을 잘 머금는다.",
+  "source": "토양학",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "논흙과 밭흙은 다르게 다룬다. 논은 물이 새지 않게 다지고, 밭은 물이 빠지게 부슬부슬하게 한다.",
+  "source": "농학",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "두엄은 짚과 거름을 쌓아 삭힌 것이다. 쌓은 더미 속은 겨울에도 김이 오를 만큼 따뜻하다.",
+  "source": "농사",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "갯벌의 진흙은 알갱이가 아주 곱다. 발이 빠지는 것은 알갱이 사이의 물이 빠져나갈 틈이 없어서다.",
+  "source": "지질",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "황토가 붉은 것은 그 안의 쇠 때문이다. 옛집의 벽과 방바닥은 이 흙을 이겨 발라 만들었다.",
+  "source": "흙",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "제주의 흙은 검고 가볍다. 화산재가 삭아 만들어진 흙이라 비가 와도 물이 금세 빠진다.",
+  "source": "지질",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "땅심은 땅이 곡식을 길러 내는 힘을 가리키는 우리말이다. 힘이라고 부르는 것이 이 말의 요점이다.",
+  "source": "우리말",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "언 땅에서 흙 알갱이 사이의 물이 올라와 얼면 가는 얼음 기둥이 선다. 이것을 서릿발이라 하고, 밟으면 부스러진다.",
+  "source": "지질",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "이랑은 흙을 돋운 자리이고 고랑은 그 사이 파인 자리다. 심는 곳과 물이 지나는 곳을 한 밭 안에서 나눈 것이다.",
+  "source": "농사",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "엄마야 누나야 강변 살자, 뜰에는 반짝는 금모래빛, 뒷문 밖에는 갈잎의 노래.",
+  "source": "김소월 〈엄마야 누나야〉, 1922",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "고기도 저 놀던 물이 좋다.",
+  "source": "한국 속담",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "고향은 태어난 곳을 가리키지만 오래 산 곳에도 쓴다. 제이의 고향이라는 말이 그래서 성립한다.",
+  "source": "우리말",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "우리 성에는 본관이 함께 붙는다. 김해 김씨, 전주 이씨. 성 앞에 놓이는 것은 사람 이름이 아니라 땅 이름이다.",
+  "source": "성씨",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "연어는 태어난 냇물의 냄새를 기억한다. 바다에서 몇 해를 지내고도 그 냄새를 찾아 돌아온다.",
+  "source": "어류학",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "마을 어귀의 큰 나무를 당산나무라 하고 함부로 베지 않는다. 마을보다 그 나무가 오래된 경우가 많다.",
+  "source": "민속",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "마을에 우물이 하나면 그 우물이 마을의 가운데다. 집이 어디에 서는지는 물이 어디 있는지가 정한다.",
+  "source": "마을",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "같은 말이 고을마다 다르게 들린다. 부산의 억양과 광주의 억양은 끝을 올리고 내리는 자리부터 다르다.",
+  "source": "방언",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "김치는 남쪽으로 갈수록 젓갈이 많고 짜다. 겨울이 짧은 곳에서는 더 짜게 담가야 견디기 때문이다.",
+  "source": "음식",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "땅 이름에는 옛말이 그대로 남아 있다. 대전의 본디 이름 한밭은 큰 밭이라는 뜻이다.",
+  "source": "지명",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "민들레는 어디서나 자라지만 한 자리에 뿌리를 내리면 그 뿌리가 한 자 넘게 곧게 들어간다.",
+  "source": "식물학",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "터를 잡다라는 말은 집을 지을 자리를 고르는 일에 쓴다. 집보다 자리가 먼저다.",
+  "source": "우리말",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "십 년을 경영하여 초려 삼간 지어 내니 나 한 칸 달 한 칸에 청풍 한 칸 맡겨 두고 강산은 들일 데 없으니 둘러 두고 보리라.",
+  "source": "송순 시조",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "유벽을 찾아가니 구름 속에 집이로다 산나물에 맛 들이니 세상 맛을 잊겠구나.",
+  "source": "조욱 시조",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "장독대는 볕이 잘 들고 바람이 통하는 자리에 둔다. 집에서 가장 좋은 자리를 장에게 내주는 셈이다.",
+  "source": "한옥",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "한옥의 마당에는 나무를 심지 않고 비워 둔다. 볕이 마당에 반사되어 방 안까지 들어오게 하려는 것이다.",
+  "source": "한옥",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "툇마루는 방도 마당도 아닌 자리다. 신을 신은 채 걸터앉을 수 있어서 오가던 사람이 잠깐 앉는다.",
+  "source": "한옥",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "텃밭은 집에 딸린 작은 밭이다. 팔려고 짓는 것이 아니라 그날 먹을 것을 뜯으러 나가는 밭이다.",
+  "source": "우리말",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "돌담은 흙을 쓰지 않고 돌만 어긋물려 쌓는다. 무너지면 그 자리의 돌을 다시 주워 쌓는다.",
+  "source": "돌담",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "가꾸다는 밭에도 쓰고 사람에게도 쓴다. 심어 놓고 손을 계속 대는 일이면 무엇이든 가꾼다고 한다.",
+  "source": "우리말",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "김매기는 심은 것을 돌보는 일이 아니라 심지 않은 것을 뽑는 일이다. 농사일의 절반이 그것이다.",
+  "source": "농사",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "뜰은 집에 딸린 빈 땅이고, 뜨락은 그 뜰을 정겹게 이르는 말이다.",
+  "source": "우리말",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "서낭당은 고갯마루의 돌무더기다. 지나던 사람이 돌 하나씩을 얹어 놓아 여러 해에 걸쳐 쌓인 것이다.",
+  "source": "민속",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "대청은 마루를 넓게 깔고 여름에 문을 다 떼어 낼 수 있게 만든 방이다. 여름에는 벽이 없는 방이 된다.",
+  "source": "한옥",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "도깨비바늘 씨앗은 끝에 갈고리가 달려 지나가는 짐승의 털이나 사람의 바짓단에 붙는다. 씨는 붙은 채로 옮겨진다.",
+  "source": "식물학",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "민들레 씨는 낙하산 같은 갓털을 달고 난다. 바람이 없는 날에는 어미 옆에 그대로 떨어지도록 되어 있다.",
+  "source": "식물학",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "물봉선은 열매가 익으면 손끝만 스쳐도 터지면서 씨를 튕겨 낸다. 짐승도 바람도 필요 없다.",
+  "source": "식물학",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "청설모는 잣을 물어다 여러 곳에 나누어 묻는다. 한곳에 모아 두지 않는 버릇이 잣나무를 산 위쪽으로 옮긴다.",
+  "source": "생태",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "얼레지 씨에는 개미가 좋아하는 기름덩이가 붙어 있다. 개미집까지 실려 간 씨는 그 둘레에서 싹튼다.",
+  "source": "식물학",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "겨우살이 열매는 끈끈해서 새의 부리에 붙는다. 새가 부리를 나뭇가지에 문질러 닦으면 씨가 그 가지에 남는다.",
+  "source": "식물학",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "연밥은 물에 떠서 옮겨 다닌다. 씨껍질이 두꺼워 몇백 년 뒤에 건져 심어도 싹이 트는 일이 있다.",
+  "source": "식물학",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "논에서 자라는 벼는 사람이 옮기지 않으면 거의 퍼지지 않는다. 낟알이 이삭에 그대로 붙어 있도록 길러졌기 때문이다.",
+  "source": "농학",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "솔방울은 마르면 벌어져 씨를 내보내고, 비가 오면 다시 오므라든다. 씨가 젖은 날에 떠나지 않도록 하는 장치다.",
+  "source": "식물학",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "물가의 씨앗은 물에 떠서 하류로 간다. 그래서 강가의 풀은 대개 위에서 아래로만 퍼진다.",
+  "source": "생태",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "산딸기 씨는 새의 배 속을 지나야 껍질이 얇아져 잘 싹튼다. 먹히는 것이 씨앗에게는 손해가 아니다.",
+  "source": "생태",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "장에 나온 씨앗 한 봉지가 한 고을의 밭을 바꾸기도 한다. 고추도 감자도 그렇게 들어와 퍼졌다.",
+  "source": "작물사",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "내를 건너서 숲으로 고개를 넘어서 마을로. 어제도 가고 오늘도 갈 나의 길 새로운 길.",
+  "source": "윤동주 〈새로운 길〉, 1938",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "나비야 청산 가자 범나비 너도 가자 가다가 저물거든 꽃에 들어 자고 가자.",
+  "source": "시조, 작자 미상",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "천 리 길도 한 걸음부터.",
+  "source": "한국 속담",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "아는 길도 물어 가랬다.",
+  "source": "한국 속담",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "돌다리도 두들겨 보고 건너라.",
+  "source": "한국 속담",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "친구 따라 강남 간다.",
+  "source": "한국 속담",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "산에 가야 꿩을 잡고 바다에 가야 고기를 잡는다.",
+  "source": "한국 속담",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "고갯마루는 올라가는 길과 내려가는 길이 만나는 자리다. 그 자리에 쉼터가 서고 주막이 섰다.",
+  "source": "지리",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "옛길에는 삼십 리마다 역이 있었다. 하루에 갈 만한 거리를 나누어 놓은 것이다.",
+  "source": "역참",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "길가에 세운 장승에는 다음 고을까지의 거리를 새겼다. 얼굴을 조각한 기둥이 이정표를 겸했다.",
+  "source": "민속",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "나그네는 길 위에 있는 사람을 가리키는 말이다. 어디서 왔는지도 어디로 가는지도 묻지 않는 말이다.",
+  "source": "우리말",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "길들다는 짐승이 순해지는 일에도 물건이 손에 익는 일에도 쓴다. 길이라는 말이 그 안에 들어 있다.",
+  "source": "우리말",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "바람이 어디로부터 불어와 어디로 불려 가는 것일까.",
+  "source": "윤동주 〈바람이 불어〉, 1941",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "청산에 옛 길 찾아 흰 구름 깊은 곳에 들어가니 학 울음 나는 곳에 두세 집이 보인다.",
+  "source": "안민영 시조",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "주렴을 반만 걷고 맑은 강을 굽어보니 십 리 물빛이 먼 하늘과 한 빛이로다.",
+  "source": "홍춘경 시조",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "기러기는 가을에 북쪽에서 와서 봄에 돌아간다. 같은 무리가 해마다 같은 논에 내려앉는다.",
+  "source": "조류학",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "제비는 봄에 와서 가을에 간다. 겨울을 나는 곳은 여기서 수천 킬로미터 남쪽이다.",
+  "source": "조류학",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "뻐꾸기 울음은 산 하나를 넘어서도 들린다. 낮고 단순한 소리일수록 멀리 간다.",
+  "source": "음향",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "바닷가에 서서 보이는 수평선까지는 오 킬로미터쯤이다. 높이 오를수록 그 거리는 멀어진다.",
+  "source": "지리",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "남십자성은 우리나라에서 보이지 않는다. 하늘의 어느 부분은 여기서 영영 지평선 아래다.",
+  "source": "천문",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "신라의 무덤에서 로마 쪽에서 온 유리그릇이 나왔다. 물건은 사람보다 멀리 갔다.",
+  "source": "고고학",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "번개가 번쩍한 뒤 소리가 오기까지 삼 초면 대략 일 킬로미터다. 세어 보면 얼마나 먼지 알 수 있다.",
+  "source": "음향",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "하늬바람은 서쪽에서 오는 바람이다. 뱃사람은 바람 이름만 듣고도 어느 쪽 바다에서 왔는지 알았다.",
+  "source": "우리말",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "멀다는 거리에도 시간에도 사이에도 쓴다. 먼 길, 먼 훗날, 먼 사이.",
+  "source": "우리말",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "철새는 밤에도 난다. 별자리와 땅의 자기를 함께 읽어 방향을 잡는다는 것이 알려져 있다.",
+  "source": "조류학",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "꽃은 밤비에 피고 빚은 술 다 익었다 거문고 가진 벗이 달과 함께 오마더니 아이야 처마에 달 올랐다 손 오는가 보아라.",
+  "source": "시조, 《청구영언》",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "가는 날이 장날.",
+  "source": "한국 속담",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "호랑이도 제 말 하면 온다.",
+  "source": "한국 속담",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "반갑다는 사람을 만났을 때만 쓰는 말이다. 좋다도 기쁘다도 아닌, 만남에만 쓰는 낱말이 따로 있다.",
+  "source": "우리말",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "마주치다는 눈에도 쓰고 사람에게도 쓴다. 서로가 동시에 해야 성립하는 몇 안 되는 우리말 움직씨다.",
+  "source": "우리말",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "달이 해를 온전히 가리는 자리는 땅 위에서 폭 백 킬로미터 안팎의 좁은 띠뿐이다. 그 띠 안에 서 있어야 볼 수 있다.",
+  "source": "천문",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "강이 바다로 드는 자리에서 밀물과 강물이 만난다. 그 자리의 물은 하루에 두 번 방향을 바꾼다.",
+  "source": "지리",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "꽃이 피어 있는 며칠과 벌이 나는 며칠이 겹쳐야 열매가 된다. 사나흘만 어긋나도 그해 열매는 없다.",
+  "source": "생태",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "우리말은 처음 만난 사람에게 하는 인사와 오랜만에 만난 사람에게 하는 인사를 서로 다른 말로 한다.",
+  "source": "우리말",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "장은 닷새마다 선다. 이웃 고을과 날이 어긋나 있어, 장꾼은 날마다 다른 고을에서 같은 사람들을 만난다.",
+  "source": "오일장",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "칠월 칠석에 까치가 다리를 놓아 준다는 이야기가 있다. 그 무렵 까치 머리가 벗어지는 것은 다리를 놓느라 그렇다고 했다.",
+  "source": "민속",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "갯벌에서는 물이 빠진 동안에만 걸어서 섬에 갈 수 있다. 하루에 두 번, 몇 시간뿐이다.",
+  "source": "조석",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "바늘 가는 데 실 간다.",
+  "source": "한국 속담",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "은행나무도 마주 서야 연다.",
+  "source": "한국 속담",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "실이 와야 바늘이 가지.",
+  "source": "한국 속담",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "은행나무는 암나무와 수나무가 따로 있다. 열매가 열리는 것은 암나무뿐이고, 가까이에 수나무가 있어야 한다.",
+  "source": "식물학",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "무화과 속의 꽃은 밖에서 보이지 않는다. 아주 작은 벌만 그 안에 들어갈 수 있고, 그 벌은 무화과 밖에서 살지 못한다.",
+  "source": "생태",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "바위에 붙은 지의류는 곰팡이와 조류가 함께 사는 것이다. 둘 가운데 하나만으로는 그 바위에서 살지 못한다.",
+  "source": "생물학",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "콩 뿌리의 혹 속에는 세균이 산다. 세균은 공기 속 질소를 붙잡아 주고, 콩은 그 대가로 먹을 것을 준다.",
+  "source": "식물학",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "송이버섯은 살아 있는 소나무 뿌리에 붙어야 자란다. 사람이 심어 기를 수 없는 것은 그래서다.",
+  "source": "균학",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "맷돌은 위짝과 아래짝이 다 있어야 한 짝이다. 하나만 남으면 쓸 데가 없다.",
+  "source": "살림",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "짝은 둘이 모여 하나가 되는 것을 가리킨다. 신 한 짝, 젓가락 한 짝. 하나만으로는 이름이 성립하지 않는다.",
+  "source": "우리말",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "품앗이는 내 일을 도와준 사람의 일을 내가 가서 돕는 것이다. 셈은 돈이 아니라 하루로 한다.",
+  "source": "마을",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "벼는 논에 물을 대야 자라지만 이삭이 팰 무렵에는 물을 빼 준다. 물이 필요한 때와 필요 없는 때가 정해져 있다.",
+  "source": "농학",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "꾀꼬리 고운 노래 나비 춤을 시기 마라 네 곁에서 다정하다 이를 것은 나비의 춤인가 하노라.",
+  "source": "안민영 시조",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "우리 인사말은 안녕하냐고 묻는다. 안녕은 편안하고 고요하다는 뜻이니, 만날 때마다 평안한지를 묻는 셈이다.",
+  "source": "우리말",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "가는 말이 고와야 오는 말도 곱다.",
+  "source": "한국 속담",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "찬물도 위아래가 있다.",
+  "source": "한국 속담",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "금강산도 식후경.",
+  "source": "한국 속담",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "밥 먹을 때는 개도 안 때린다.",
+  "source": "한국 속담",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "물은 건너 보아야 알고 사람은 지내보아야 안다.",
+  "source": "한국 속담",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "마중은 오는 사람을 맞으러 나가는 일이고 배웅은 가는 사람을 따라 나가는 일이다. 둘 다 문밖에서 하는 일이다.",
+  "source": "우리말",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "겸상은 한 상에 둘이 마주 앉는 것이다. 누구와 겸상하느냐가 곧 사이를 말했다.",
+  "source": "음식 예절",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "우리말은 손님을 그냥 손이라고도 한다. 손이 오셨다는 말은 사람이 왔다는 뜻이다.",
+  "source": "우리말",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "술은 제 잔을 제가 채우지 않는다. 옆 사람의 잔이 비었는지 보는 것이 그 자리에 앉은 사람의 일이다.",
+  "source": "술자리 예절",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "마루에 오를 때는 신을 벗고, 벗은 신은 코가 밖을 향하게 돌려 둔다. 나갈 때 신기 좋으라는 것이다.",
+  "source": "예절",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "새도 가지를 가려서 앉는다.",
+  "source": "한국 속담",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "사람 속은 소금 서 말을 같이 먹어 보아야 안다.",
+  "source": "한국 속담",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "두 나무의 가지가 오래 맞닿아 있으면 껍질이 헐고 속이 붙어 한 가지가 된다. 이것을 연리지라 한다.",
+  "source": "임학",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "같은 종의 나무는 땅속에서 뿌리끼리 붙기도 한다. 그렇게 붙은 나무들은 물과 양분을 나눈다.",
+  "source": "임학",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "접붙인 자리는 몇 해가 지나면 굵어져 거의 보이지 않는다. 두 나무였다는 표시가 그 굵기뿐이다.",
+  "source": "원예",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "대밭의 대나무는 땅속줄기로 다 이어져 있다. 한 밭이 사실은 한 그루인 경우가 많다.",
+  "source": "식물학",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "두 강이 만나는 자리에서는 한동안 물빛이 갈라져 보인다. 몇 킬로미터를 흐르고 나서야 하나가 된다.",
+  "source": "지리",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "한 독의 김치는 위와 아래가 다르게 익는다. 몇 달이 지나면 그 차이가 없어진다.",
+  "source": "발효",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "담쟁이는 빨판 같은 것을 벽에 붙여 오른다. 떼어 내도 붙었던 자국은 벽에 그대로 남는다.",
+  "source": "식물학",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "정들다는 시간이 지나야 되는 일이다. 좋아하는 것과 달리 정은 들이는 것이 아니라 드는 것이다.",
+  "source": "우리말",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "어울리다는 여럿이 섞여 하나가 되는 일이다. 어우르다와 아우르다가 같은 뿌리에서 나왔다.",
+  "source": "우리말",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "손에 자주 닿는 자리에 굳은살이 앉는다. 그 자리를 보면 그 사람이 무슨 일을 하는지 알 수 있다.",
+  "source": "생리",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "홑청은 뜯어 빨고 다시 꿰맨다. 한 이불을 여러 해 쓰는 동안 시침한 자리가 겹겹이 남는다.",
+  "source": "살림",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "우리말은 내 집도 우리 집이라 하고 내 어머니도 우리 어머니라 한다. 혼자 있을 때에도 우리라고 한다.",
+  "source": "우리말",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "정은 좋아함도 사랑도 아니다. 오래 같이 지낸 사이에 저절로 생기는 것이고, 미운 사람에게도 든다.",
+  "source": "우리말",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "식구는 함께 밥을 먹는 사람이라는 뜻이다. 핏줄이 아니라 한솥밥이 기준이다.",
+  "source": "우리말",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "드는 정은 몰라도 나는 정은 안다.",
+  "source": "한국 속담",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "같은 말이라도 아 다르고 어 다르다.",
+  "source": "한국 속담",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "이웃이 사촌보다 낫다.",
+  "source": "한국 속담",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "한솥밥을 먹는다는 말은 같이 산다는 뜻으로 쓴다. 솥이 하나면 한 집이다.",
+  "source": "우리말",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "우리말은 손위 형제를 부르는 말이 넷이다. 부르는 사람이 남자냐 여자냐에 따라 갈린다.",
+  "source": "우리말",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "사이는 두 사람 사이의 거리이면서 두 사람의 관계다. 사이가 좋다는 말이 그래서 성립한다.",
+  "source": "우리말",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "살갑다는 사람을 대하는 태도가 부드럽고 정답다는 뜻이다. 본디는 집이나 그릇이 겉보기보다 속이 넓다는 말이었다.",
+  "source": "우리말",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "오순도순은 여럿이 정답게 지내는 모양을 이르는 말이다. 흉내 낸 말인데, 무슨 소리를 흉내 낸 것인지는 분명하지 않다.",
+  "source": "우리말",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "도란도란은 여럿이 나직한 목소리로 정답게 이야기하는 모양이다. 시끄러움과 조용함 사이에 이 말이 놓인다.",
+  "source": "우리말",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "곡구롱 우는 소리에 낮잠 깨어 일어나 보니 작은아들 글 읽고 며느리 베 짜는데 어린 손자는 꽃놀이한다.",
+  "source": "오경화 시조",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "내 벗이 몇이나 하니 수석과 송죽이라 동산에 달 오르니 그 더욱 반갑고야 두어라 이 다섯 밖에 또 더하여 무엇하리.",
+  "source": "윤선도 〈오우가〉, 1642",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "묏버들 가려 꺾어 보내노라 임에게 주무시는 창밖에 심어 두고 보소서 밤비에 새잎 나거든 나인가 여기소서.",
+  "source": "홍랑 시조",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "백지장도 맞들면 낫다.",
+  "source": "한국 속담",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "가는 정이 있어야 오는 정이 있다.",
+  "source": "한국 속담",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "열 손가락 깨물어 안 아픈 손가락이 없다.",
+  "source": "한국 속담",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "검은 머리 파뿌리 되도록.",
+  "source": "한국 속담",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "한날한시에 난 손가락도 길고 짧다.",
+  "source": "한국 속담",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "두레는 마을 사람이 함께 논일을 하던 조직이다. 순서를 정해 온 마을의 논을 차례로 돌았다.",
+  "source": "마을",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "혼례 때 나무로 깎은 기러기를 상에 올린다. 기러기가 한번 맺은 짝을 바꾸지 않는다고 여겼기 때문이다.",
+  "source": "혼례",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "맞들다는 둘이 마주 서서 함께 드는 일이다. 혼자 드는 것과는 다른 낱말을 따로 두었다.",
+  "source": "우리말",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "개도 주인을 알아본다.",
+  "source": "한국 속담",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "낮말은 새가 듣고 밤말은 쥐가 듣는다.",
+  "source": "한국 속담",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "가랑잎이 솔잎더러 바스락거린다고 한다.",
+  "source": "한국 속담",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "청강에 비 듣는 소리 그 무엇이 우습기에 온 산의 붉고 푸른 것이 휘두르며 웃는구나.",
+  "source": "효종 시조",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "소쩍새라는 이름은 그 울음소리에서 왔다. 밤에만 울고, 소리가 골짜기를 건너간다.",
+  "source": "조류학",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "함박눈이 내릴 때 바깥이 유난히 조용한 것은 쌓인 눈이 소리를 삼키기 때문이다. 눈 알갱이 사이의 빈틈이 소리를 가둔다.",
+  "source": "음향학",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "우리말은 작은 소리를 크기와 결에 따라 갈라 부른다. 소곤소곤, 두런두런, 소근대다가 다 다른 소리다.",
+  "source": "우리말",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "사부작사부작은 별 소리 없이 가볍게 움직이는 모양을 이르는 말이다. 흉내 낸 말인데 흉내 낼 소리가 거의 없다.",
+  "source": "우리말",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "고요는 소리가 없는 상태이면서 마음이 가라앉은 상태다. 우리말은 그 둘을 한 낱말로 쓴다.",
+  "source": "우리말",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "벽에도 귀가 있다.",
+  "source": "한국 속담",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "구렁이 담 넘어가듯.",
+  "source": "한국 속담",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "풍경은 절 처마 끝에 다는 작은 종이다. 바람이 불 때만 울리므로, 소리가 난다는 것은 곧 바람이 분다는 뜻이다.",
+  "source": "절 건축",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "가만히 눈을 감으면 마음속으로 흐르는 소리.",
+  "source": "윤동주 〈돌아와 보는 밤〉, 1941",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "잘 새는 날아들고 새 달이 돋아 온다 외나무다리로 홀로 가는 저 스님아 네 절이 얼마나 하기에 먼 종소리 들리나니.",
+  "source": "시조, 《가곡원류》",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "말 한마디에 천 냥 빚도 갚는다.",
+  "source": "한국 속담",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "부부 싸움은 칼로 물 베기.",
+  "source": "한국 속담",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "웃는 낯에 침 뱉으랴.",
+  "source": "한국 속담",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "미운 놈 떡 하나 더 준다.",
+  "source": "한국 속담",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "참을 인 자 셋이면 살인도 피한다.",
+  "source": "한국 속담",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "싸움은 말리고 흥정은 붙이랬다.",
+  "source": "한국 속담",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "화해의 화는 어울린다는 뜻이고 해는 푼다는 뜻이다. 다시 어울리려면 먼저 매듭을 풀어야 한다는 순서가 낱말에 들어 있다.",
+  "source": "한자",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "안녕은 편안할 안에 편안할 녕을 겹쳐 놓은 말이다. 같은 뜻의 글자를 둘 포갠 것이 우리 인사말이 되었다.",
+  "source": "한자",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "평화의 평은 고르다는 뜻이고 화는 어울린다는 뜻이다. 같아지는 것이 아니라 고르게 어울리는 것이다.",
+  "source": "한자",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "그만은 그만큼이면 되었다는 뜻이다. 그만두다, 그만하다. 멈춤을 크기로 말하는 셈이다.",
+  "source": "우리말",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "우리말은 매듭도 풀고 화도 풀고 오해도 푼다. 언 것이 녹는 일도 풀린다고 한다.",
+  "source": "우리말",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "삭이다는 먹은 것을 삭이는 일에도 화를 가라앉히는 일에도 쓴다. 둘 다 시간이 하는 일이다.",
+  "source": "우리말",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "쉬다는 일을 멈추는 일이면서 숨을 들이는 일이다. 숨 쉬다와 쉬어 가다가 같은 낱말이다.",
+  "source": "우리말",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "보리밥 풋나물을 알맞게 먹은 후에 바위 끝 물가에 실컷 노니노라.",
+  "source": "윤선도 〈만흥〉, 1642",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "바람 분다 지게 닫아라 밤 들었다 불 꺼라 베개에 기대어 실컷 쉬어 보자.",
+  "source": "윤선도 〈야심요〉, 1642",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "손님 흩어져 문 닫고 바람 잔잔코 달 질 때 술동이를 다시 열고 시구를 흩부르니.",
+  "source": "하위지 시조",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "초암이 적료한데 벗 없이 혼자 앉아 평조 한 가락에 흰 구름이 절로 존다.",
+  "source": "김수장 시조",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "굿이나 보고 떡이나 먹지.",
+  "source": "한국 속담",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "누울 자리 봐 가며 발을 뻗어라.",
+  "source": "한국 속담",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "우뚝우뚝한 드높은 나무, 잘새도 깃들어라.",
+  "source": "김소월 〈저녁때〉",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "산에서 우는 작은 새요 꽃이 좋아 산에서 사노라네.",
+  "source": "김소월 〈산유화〉",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "평상은 마당에 내놓고 앉거나 눕는 나무 마루다. 여름에는 그 위에서 밥을 먹고 잠도 잤다.",
+  "source": "살림",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "아랫목은 아궁이에 가까워 가장 따뜻한 자리다. 그 자리는 대개 집에서 가장 나이 많은 사람에게 돌아간다.",
+  "source": "한옥",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "한갓지다는 한가하고 조용하다는 뜻이다. 사람이 적어 마음이 놓이는 자리를 두고 쓴다.",
+  "source": "우리말",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "이제 사상이 능금처럼 저절로 익어 가옵니다.",
+  "source": "윤동주 〈돌아와 보는 밤〉, 1941",
+  "theme": "peace",
+  "subtheme": "atEase"
+ }
+]

@@ -1,0 +1,26 @@
+{
+  "language": "Korean",
+  "endonym": "한국어",
+  "awaiting": "The labels are written. The prose — tagline, about1, about2, about3, growBody, appNote — is still null and still English, on purpose: it is the site's own writing rather than the app's, and it is read in English before it is commissioned in sixteen languages. A null value is drawn in English, silently, one key at a time; the English is in assets/js/strings.js.",
+  "strings": {
+    "tagline": null,
+    "about1": null,
+    "about2": null,
+    "about3": null,
+    "seedTitle": "씨앗이 도착했습니다",
+    "replyTitle": "씨앗이 돌아왔습니다",
+    "sentBy": "{name} 님이 보냄",
+    "gardener": "정원사",
+    "planted": "심은 날",
+    "growTitle": "기르기",
+    "growBody": null,
+    "appNote": null,
+    "inEnglish": "영어로",
+    "language": "언어",
+    "keys": "키",
+    "random": "아무 데나",
+    "damaged": "이 링크는 손상된 채로 도착해 씨앗을 읽을 수 없었습니다.",
+    "notASeed": "그 링크에는 씨앗이 없습니다.",
+    "newerVersion": "이 씨앗은 더 새로운 버전의 Peace Garden에서 왔습니다."
+  }
+}

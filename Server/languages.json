@@ -138,6 +138,14 @@
    "passages": 360
   },
   {
+   "code": "ko",
+   "name": "Korean",
+   "endonym": "한국어",
+   "interface": false,
+   "bank": true,
+   "passages": 364
+  },
+  {
    "code": "lt",
    "name": "Lithuanian",
    "endonym": "Lietuvių",
