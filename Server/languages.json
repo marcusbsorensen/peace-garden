@@ -226,6 +226,14 @@
    "passages": 358
   },
   {
+   "code": "ru",
+   "name": "Russian",
+   "endonym": "Русский",
+   "interface": false,
+   "bank": true,
+   "passages": 360
+  },
+  {
    "code": "sk",
    "name": "Slovak",
    "endonym": "Slovenčina",
