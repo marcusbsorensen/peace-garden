@@ -148,11 +148,21 @@ public struct Epithet: Equatable, Sendable {
     /// leaves `0.45...0.82` and veining never passes `0.65`, so *pallida*,
     /// *obscura* and *venosa* could not be said of any plant in the garden. A
     /// vocabulary with dead words in it is a vocabulary nobody has checked.
+    ///
+    /// **`leafy` moved on 3 September 2026**, from 0.240, and it is the proof
+    /// that the guard was worth writing. Widening the vegetative half took
+    /// `stem.nodeCount` from `2...7` to `2...9`; a third of the garden now
+    /// carries fifteen leaves where a quarter did, so *foliosa* went from a
+    /// character worth naming to one about as ordinary as *variegata*. Nothing
+    /// about that is visible in a name — every plant still reads perfectly
+    /// well — and it is the same silent failure the rest of this table exists
+    /// to catch. The seven colour rates are untouched, because no colour range
+    /// moved.
     enum Rate {
         static let variegation = 0.367
         static let marbling = 0.315
+        static let leafy = 0.330
         static let night = 0.297
-        static let leafy = 0.240
         static let picotee = 0.182
         static let blue = 0.147
         static let vivid = 0.091

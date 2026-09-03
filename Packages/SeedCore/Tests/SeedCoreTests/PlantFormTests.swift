@@ -61,6 +61,21 @@ final class PlantFormTests: XCTestCase {
     /// one simulator. **It was the last moment it was free**, and it does not
     /// become free again. From these numbers the test is back to doing its
     /// actual job, which is catching the same move made by accident.
+    ///
+    /// **They moved a second time on 3 September 2026**, in the other half of
+    /// the same change: the flower having been held to a count per genus,
+    /// docs/TAXONOMY.md §"What the archetype profiles constrain" widened the
+    /// vegetative ranges — height, stem thickness, node count, leaf length and
+    /// width, droop, pitch, fold, teeth, veins, sway, lean, twist and vigour.
+    /// Every one of those feeds the mesh, so all three plants changed shape.
+    /// `vector-a` grew 342 vertices on two more nodes; `vector-b` lost ten
+    /// centimetres of height, which is the widened `stem.height` landing lower
+    /// for that seed than the old range could reach.
+    ///
+    /// Recorded rather than done quietly, on the same practice as the first
+    /// move: these numbers are only worth having if a change to them is always
+    /// a decision somebody wrote down. A third move with no paragraph under it
+    /// should be read as an accident.
     func testAFixedSeedAlwaysDrawsTheSameMesh() {
         // Seed label: vertices, then the mature plant's width and height in
         // centimetres. The three cover one inflorescence each — `vector-a` is
@@ -68,9 +83,9 @@ final class PlantFormTests: XCTestCase {
         // rather than design, but it is worth keeping if these are ever
         // renumbered.
         let expected: [String: (vertices: Int, width: Int, height: Int)] = [
-            "vector-a": (9460, 50, 77),
-            "vector-b": (3409, 48, 86),
-            "vector-c": (4168, 24, 50)
+            "vector-a": (9802, 48, 73),
+            "vector-b": (3409, 49, 76),
+            "vector-c": (4168, 27, 48)
         ]
 
         for (label, want) in expected.sorted(by: { $0.key < $1.key }) {

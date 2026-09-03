@@ -123,7 +123,7 @@ PROFILE_OVERRIDES = {
     "umbel": dict(petals=(5, 8), inflorescence="head", branchSpread=0.0, branchCount=5, bloomScale=0.8,
                   heightScale=0.9, petalLengthScale=0.45, centreScale=0.6, leafDroop=1.2),
     "fern": dict(petals=(3, 5), heightScale=0.8, nodeScale=1.9, leafLengthScale=1.5, leafWidthScale=0.7,
-                 leafDroop=1.5, bloomPresence=0.05, swayScale=1.3),
+                 leafDroop=1.3, bloomPresence=0.05, swayScale=1.3),
     "orchid": dict(petals=(3, 6), inflorescence="solitary", bloomScale=1.7, heightScale=0.85, stemThickness=0.8, nodeScale=0.6, petalLengthScale=1.0, petalWidthScale=1.3, petalCurlBias=0.25,
                    headPitchBias=0.5, leafLengthScale=1.2),
     "lotus": dict(petals=(8, 14), inflorescence="solitary", bloomScale=1.7, heightScale=0.7, stemThickness=1.4, petalLengthScale=1.0,
@@ -288,7 +288,7 @@ class Genome:
         self.profile = profile
 
         self.merosity = "many" if source.chance("bloom.merosity", 0.5) else "few"
-        self.vigour = source.bell("form.vigour", 0.82, 1.22)
+        self.vigour = source.bell("form.vigour", 0.74, 1.30)
 
         self.inflorescence = profile["inflorescence"]
         self.bloomScale = profile["bloomScale"]
@@ -298,27 +298,27 @@ class Genome:
             profile["branchSpread"] + source.signed("stem.branch.spread") * 0.14, 0, 1)
         self.branchAngle = source.value("stem.branch.angle", 1.0, 1.35)
 
-        self.height = source.value("stem.height", 0.55, 1.25) * profile["heightScale"] * self.vigour
-        self.baseRadius = source.value("stem.baseRadius", 0.008, 0.019) * profile["stemThickness"]
-        self.taper = source.value("stem.taper", 0.28, 0.72)
-        self.lean = source.signed("stem.lean") * 0.55
-        self.sway = source.bell("stem.sway", 0, 1) * profile["swayScale"]
-        self.twist = source.signed("stem.twist") * 0.7
-        self.nodeCount = max(1, round(source.integer("stem.nodeCount", 2, 7) * profile["nodeScale"]))
+        self.height = source.value("stem.height", 0.44, 1.42) * profile["heightScale"] * self.vigour
+        self.baseRadius = source.value("stem.baseRadius", 0.006, 0.022) * profile["stemThickness"]
+        self.taper = source.value("stem.taper", 0.16, 0.86)
+        self.lean = source.signed("stem.lean") * 0.75
+        self.sway = source.bell("stem.sway", 0, 1.25) * profile["swayScale"]
+        self.twist = source.signed("stem.twist") * 0.95
+        self.nodeCount = max(1, round(source.integer("stem.nodeCount", 2, 9) * profile["nodeScale"]))
         self.sides = source.integer("stem.sides", 6, 9)
 
         self.leavesPerNode = source.integer("foliage.leavesPerNode", 1, 3)
-        self.leafLength = source.value("foliage.length", 0.09, 0.26) * profile["leafLengthScale"] * self.vigour
-        self.leafWidthRatio = source.value("foliage.widthRatio", 0.22, 0.78) * profile["leafWidthScale"]
-        self.leafDroop = source.bell("foliage.droop", 0, 1) * profile["leafDroop"]
-        self.leafFold = source.value("foliage.fold", 0.05, 0.55)
-        self.leafPitch = source.value("foliage.pitch", 0.35, 1.25)
+        self.leafLength = source.value("foliage.length", 0.055, 0.28) * profile["leafLengthScale"] * self.vigour
+        self.leafWidthRatio = source.value("foliage.widthRatio", 0.13, 0.88) * profile["leafWidthScale"]
+        self.leafDroop = source.bell("foliage.droop", 0, 1.15) * profile["leafDroop"]
+        self.leafFold = source.value("foliage.fold", 0.02, 0.62)
+        self.leafPitch = source.value("foliage.pitch", 0.24, 1.45)
         self.divergence = 2.399963 + source.signed("foliage.divergence") * 0.22
-        self.serration = source.bell("foliage.serration", 0, 1)
-        self.teeth = source.integer("foliage.teeth", 5, 17)
-        self.veinCount = source.integer("foliage.veinCount", 3, 9)
+        self.serration = source.bell("foliage.serration", 0, 1.3)
+        self.teeth = source.integer("foliage.teeth", 3, 17)
+        self.veinCount = source.integer("foliage.veinCount", 2, 9)
         self.veinDepth = source.bell("foliage.veinDepth", 0.2, 1.0) if source.chance("foliage.hasVeins", 0.72) else 0.0
-        self.leafTipSharpness = source.value("foliage.tipSharpness", 0.7, 2.1)
+        self.leafTipSharpness = source.value("foliage.tipSharpness", 0.5, 2.4)
 
         # The genus has a petal count; the plant does not draw one. See
         # SeedCore's Genome.swift and docs/TAXONOMY.md §1.

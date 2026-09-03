@@ -115,6 +115,16 @@ public enum Merosity: String, CaseIterable, Sendable {
 }
 
 /// Multipliers and overrides an archetype applies to the seed's raw draws.
+///
+/// **The vegetative multipliers here and the vegetative ranges in `Genome` do
+/// two different jobs, and it is worth saying which.** A multiplier moves where
+/// a family's centre sits — it is what makes a succulent squat and a vine lax,
+/// and it is between-family difference. A range decides how far one plant may
+/// stand from its own relatives, which is what docs/TAXONOMY.md
+/// §"What the archetype profiles constrain" means by widening the vegetative
+/// half. So that widening went into the ranges and left these alone: pushing a
+/// multiplier further from 1 would have made the twelve kinds more unlike each
+/// other without making any two plants of one kind any less alike.
 public struct ArchetypeProfile: Sendable {
     public var heightScale: Double = 1
     public var stemThickness: Double = 1
@@ -182,7 +192,19 @@ public struct ArchetypeProfile: Sendable {
             profile.nodeScale = 1.9
             profile.leafLengthScale = 1.5
             profile.leafWidthScale = 0.7
-            profile.leafDroop = 1.5
+            // **The one vegetative multiplier that came down**, from 1.5, and
+            // it buys the widening for the other eleven families. `Genome`'s
+            // droop range went from `0...1` to `0...1.15`, and 1.15 times 1.5
+            // is past where a frond stops reading — `addLeaf` sags a blade
+            // along its own frame, so on a leaf held close to the stem the sag
+            // goes sideways and the blade kinks back over itself. Drawn at a
+            // ladder of droops, the fern was the only family that could reach
+            // that, because its multiplier was the largest on this table.
+            //
+            // 1.15 times 1.3 is 1.495, so **a fern's droop ceiling is where it
+            // already was** and its worst-looking individual is the same one
+            // the garden already had. Nothing was lost to buy the rest.
+            profile.leafDroop = 1.3
             profile.bloomPresence = 0.05
             profile.swayScale = 1.3
         case .orchid:

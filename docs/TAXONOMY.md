@@ -333,6 +333,164 @@ each, because serration and droop are drawn with `bell` and a centre-weighted
 trait reaches its tails seldom. That is correct rather than a defect: a plant
 whose leaves droop that far really is unusual, and the name should be.
 
+## The vegetative half, widened
+
+*3 September. The other half of §"What the archetype profiles constrain", and
+the last of the design. The flower is held to a count per genus; this is the
+room given back.*
+
+Seventeen ranges, all of them vegetative, none of them floral. What went where:
+
+| Trait | Was | Is | Spread |
+| --- | --- | --- | --- |
+| `foliage.length` | `0.09...0.26` | `0.055...0.28` | ×2.9 → ×5.1 |
+| `stem.height` | `0.55...1.25` | `0.44...1.42` | ×2.3 → ×3.2 |
+| `stem.baseRadius` | `0.008...0.019` | `0.006...0.022` | ×2.4 → ×3.7 |
+| `foliage.widthRatio` | `0.22...0.78` | `0.13...0.88` | ×3.5 → ×6.8 |
+| `stem.taper` | `0.28...0.72` | `0.16...0.86` | ×2.6 → ×5.4 |
+| `foliage.pitch` | `0.35...1.25` | `0.24...1.45` | 0.90 → 1.21 rad |
+| `stem.nodeCount` | `2...7` | `2...9` | 6 → 8 counts |
+| `foliage.fold` | `0.05...0.55` | `0.02...0.62` | ×11 → ×31 |
+| `foliage.tipSharpness` | `0.7...2.1` | `0.5...2.4` | ×3.0 → ×4.8 |
+| `form.vigour` | `0.82...1.22` | `0.74...1.30` | ×1.5 → ×1.8 |
+| `stem.lean` | `±0.55` | `±0.75` | 28° → 39° of bend |
+| `stem.twist` | `±0.7` | `±0.95` | +36% |
+| `stem.sway`, `foliage.serration` | `0...1` | `0...1.25`, `0...1.3` | +25%, +30% |
+| `foliage.droop` | `0...1` | `0...1.15` | +15% |
+| `foliage.teeth` | `5...17` | `3...17` | downward only |
+| `foliage.veinCount` | `3...9` | `2...9` | downward only |
+
+**The ranges widened and the multipliers did not, and that distinction is the
+whole of it.** A multiplier moves where a family's centre sits — it is what
+makes a succulent squat and a vine lax — and pushing one further from 1 makes
+the twelve kinds more unlike each other without making any two plants of one
+kind less alike. A range is the other thing: how far one plant may stand from
+its own relatives. Only one multiplier moved, and only downward; see below.
+
+### What the renders showed
+
+Two sheets, before and after, on the same seeds — `tools/preview/archetypes.py`
+for the twelve silhouettes, and six plants of one genus side by side for the
+thing this change is actually about.
+
+**The twelve silhouettes stay distinct**, which is the standing acceptance test
+and the reason not to widen further.
+
+**Within a genus, the gain is real and it is mostly in proportion rather than in
+size.** Both the app and the preview frame a plant to fill the view — nobody
+ever sees one next to a ruler — so what reads is a plant against its own
+thickness, its own leaves and its own node spacing. Six spires went from 5–11
+nodes to 5–14, and from a leaf spread of ×1.8 to ×2.3: the sparse one now reads
+as a sparse plant rather than the same plant with fewer parts. Six stars went
+from ×3.1 to ×5.5 in leaf length, which is the difference between a leafy
+rosette and a near-leafless scape carrying the same five-merous flower. Six
+bells now include one with two nodes and a bare stem beside one with eight and a
+column of leaves. In every row the petal count holds: spire 3–4, fern 3–4, bell
+4–5, star 5–6, orchid 3, lotus 8–9, thistle 12–13. That is the design in a
+picture — the flower constant, everything else various.
+
+**Three ugly plants in the after sheet were in the before sheet too**: a dark
+succulent that reads as a log rather than a plant, a vine so bare it is a wire,
+and a pale succulent whose leaves are wider than they are long. All three are
+pre-existing and none is worse for this change. They are recorded here because
+the next person to widen anything will find them and wonder.
+
+### The one thing that had to come down
+
+**A fern's droop could not follow the rest, and only a render said so.** Drawn
+at a ladder of values, a fern stops reading as a plant somewhere past a droop of
+about 1.3 on a leaf held near-upright and long against its own plant: it
+collapses into a starburst mat with the stem lost inside it.
+
+The cause is worth writing down because it is not what it looks like.
+`PlantBuilder.addLeaf` builds the blade's frame from `forward = radial·sin(pitch)
++ axis·cos(pitch)` and then sags it along **that frame's own up-vector**. For a
+leaf held out horizontally that vector points at the ground and droop reads as
+droop. For a leaf held close to the stem it points sideways, so droop kinks the
+blade out and back over itself instead of bending it down. Droop is therefore
+only droop for a flat leaf, and the failure needs three things at once: a high
+droop, a low `pitch`, and a leaf long against its plant. Widening all three at
+once is exactly what this change was doing.
+
+Two consequences. `foliage.pitch`'s floor was set at 0.24 rather than the 0.18
+first tried, because a leaf pressed flat against the stem is where the kink
+lives and is not a look worth much. And the fern's `leafDroop` came down from
+1.5 to 1.3 — the only multiplier on the table to move. 1.15 × 1.3 is 1.495, so
+**a fern's droop ceiling is where it already was** and its worst individual is
+the same worst individual the garden already had, while the other eleven
+families gain 15%. Nothing was lost to buy that.
+
+Over 30,000 seeds the fern is the only family that can reach the kink at all.
+The first attempt — `0...1.3` droop, pitch floor 0.18, leaf to 0.30, height from
+0.40 — reached it five times, about one fern in five hundred. Before the change
+and after it, none. **Every test passed at all three.**
+
+The first metric tried was wrong and is worth recording, because it was
+plausible and it would have cost the widening. Reasoning from the formula,
+`sag = droop × length × 0.8`, said the failure was the leaf out-sagging its own
+plant — and by that measure the first attempt took ferns from 0.3% to 6%, which
+looked like a change that could not ship. Drawn as a ladder, plants at a
+sag of 1.4 times their own height turned out to read perfectly well: as an
+agave, a bromeliad, a spreading rosette. The ratio was not the failure. It only
+correlated with it, because both rise with droop.
+
+### What was tried and rejected
+
+- **Raising `foliage.teeth` and `foliage.veinCount`.** Both are sampled along
+  the nineteen rows `addSurface` gives a blade, and at their existing ceilings of
+  17 and 9 they are already at or past what nineteen rows can resolve. Raising
+  either draws a *coarser* leaf, not a finer one. Both were widened downward
+  instead, which costs nothing and gives a three-lobed margin and a two-ribbed
+  blade — neither of which the garden had.
+- **Widening the vegetative multipliers.** See above: wrong rank. They set
+  between-family difference, and this change is about within-genus variation.
+- **Colour, deliberately left alone.** The coupling is real and the payoff is
+  not: `Epithet`'s three petal thresholds and its thirteen `Rate` measurements
+  were taken against the current palette, so any widening means re-measuring all
+  sixteen to hold each character at its present share. Against that, colour is
+  already the most various thing in a genus — the six-plant sheets have red,
+  blue, green and yellow spires side by side — so it is the one place where
+  more range buys the least. It stays as it is.
+- **Fixing the sag.** A drooping leaf should *arch*: the tip curves down while
+  the blade keeps its own length. The model displaces a straight blade instead,
+  so a drooping leaf silently grows — at a droop of 1.7 its arc is nearly twice
+  its nominal length. Arc-length-preserving droop is the right answer and it is
+  a change to every leaf in the garden, which is a bigger move than widening a
+  range and wants its own pass.
+
+### What it cost
+
+**`Epithet.Rate.leafy` moved, from 0.240 to 0.330, and that was not foreseen.**
+The warning written for this work was about colour; `leafy` is a *count* rate —
+`leafCount >= 15` — and taking `stem.nodeCount` from `2...7` to `2...9` moved it.
+*foliosa* went from a character worth naming to one about as ordinary as
+*variegata*. Nothing about that is visible in a name, which is the whole reason
+`testTheDeclaredRatesAreTheRealOnes` exists, and it earned its keep on the first
+change after it was written.
+
+`EpithetTests` carries the same coupling in two literals: a *longifolia* had to
+have leaves over 0.21 m and a *brevifolia* under 0.13 m, both measured against
+the old `foliage.length`. They are 0.185 and 0.11 now, set just inside what the
+range permits rather than at the tightest value a sample happens to show, so
+they survive somebody changing the seed count. *brevifolia*'s is the tighter
+claim it used to be: a short leaf is now genuinely shorter.
+
+The three meshes `PlantFormTests` pins moved for the second time, and the note
+under that test says so. Every trait widened here feeds the mesh, so all three
+plants changed shape.
+
+Two hard bounds were respected by construction rather than by luck, both of them
+`GenomeTests`': height cannot exceed 1.42 × 1.45 (the vine) × 1.30 = 2.68 m
+against a declared ceiling of 3, and node count cannot exceed 9 × 2.1 (the
+succulent) = 19 against a declared ceiling of 20. Those two multipliers are what
+set the tops of those two ranges.
+
+`tools/preview/plant_model.py` was ported alongside, as it has to be — it is not
+covered by CI, and the third time that has mattered. The port was checked line
+by line against the Swift afterwards, all 27 ranges and 84 multipliers, and it
+reproduces the failing `EpithetTests` figure to five decimal places, which is
+the evidence that the renders above are of the plants the app will draw.
+
 ## What is Marcus's to decide
 
 *Marcus settled these on 3 September: the pairings are trusted as proposed, the

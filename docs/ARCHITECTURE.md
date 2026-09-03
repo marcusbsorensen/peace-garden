@@ -59,7 +59,7 @@ derivation be tested without a device.
 ## Why traits are drawn by name
 
 ```swift
-source.value("stem.height", 0.55...1.25)
+source.value("stem.height", 0.44...1.42)
 ```
 
 not

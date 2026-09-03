@@ -25,6 +25,20 @@ final class EpithetTests: XCTestCase {
     /// would be circular if it were only that — so each one also asserts the
     /// *finished trait* sits on the right side of its genus, which is the thing
     /// a person looking at the plant would check.
+    ///
+    /// **The two leaf-length figures moved on 3 September 2026**, from 0.21 and
+    /// 0.13, because widening the vegetative half took `foliage.length` from
+    /// `0.09...0.26` to `0.055...0.28`. They are absolute measurements against
+    /// a trait whose range moved under them, which is the same coupling
+    /// `Epithet.Rate` carries — and this test failing was how it was noticed.
+    ///
+    /// They are set just inside what the range now permits rather than at the
+    /// tightest value the sample happens to show: at the floor a *longifolia*
+    /// cannot be shorter than `0.253` times the least vigour, and a
+    /// *brevifolia* cannot exceed `0.082` times the most. Written that way they
+    /// survive somebody changing the seed count, and they still catch an
+    /// epithet that has come unhooked. `brevifolia`'s is the tighter claim it
+    /// used to be — a short leaf is now genuinely shorter.
     func testAFoliageEpithetIsTrueOfTheLeaves() {
         var checked = 0
         for genome in plants(6_000) {
@@ -34,11 +48,11 @@ final class EpithetTests: XCTestCase {
             case "longifolia", "longifolius":
                 XCTAssertGreaterThanOrEqual(source.position("foliage.length"), 1 - Epithet.floor)
                 // Long against its own genus, which is what the name claims.
-                XCTAssertGreaterThan(genome.foliage.length, 0.21 * profile.leafLengthScale)
+                XCTAssertGreaterThan(genome.foliage.length, 0.185 * profile.leafLengthScale)
                 checked += 1
             case "brevifolia", "brevifolius":
                 XCTAssertLessThanOrEqual(source.position("foliage.length"), Epithet.floor)
-                XCTAssertLessThan(genome.foliage.length, 0.13 * profile.leafLengthScale)
+                XCTAssertLessThan(genome.foliage.length, 0.11 * profile.leafLengthScale)
                 checked += 1
             case "angustifolia", "angustifolius":
                 XCTAssertLessThan(genome.foliage.widthRatio, 0.30 * profile.leafWidthScale)

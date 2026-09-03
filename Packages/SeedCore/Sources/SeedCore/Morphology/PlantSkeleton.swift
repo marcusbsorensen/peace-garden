@@ -280,9 +280,9 @@ public enum SkeletonBuilder {
 
     /// How much of its full thickness the stem still has at `t`.
     ///
-    /// `genome.stem.taper` is drawn from `0.28...0.72`, so on its own it leaves
-    /// the apex somewhere between a quarter and three quarters of the base
-    /// width — a cylinder that gets a little narrower and then stops. Since
+    /// `genome.stem.taper` is drawn from `0.16...0.86`, so on its own it leaves
+    /// the apex somewhere between a sixth and most of the base width — a
+    /// cylinder that gets narrower and then stops. Since
     /// `MeshBuilder.addTube` closes neither end and the plant material is
     /// double-sided, what that showed was the lit inside wall of the tube seen
     /// through its own opening, which shades exactly like a flat disc.
