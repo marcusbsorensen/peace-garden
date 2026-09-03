@@ -106,6 +106,14 @@
    "passages": 360
   },
   {
+   "code": "he",
+   "name": "Hebrew",
+   "endonym": "עברית",
+   "interface": false,
+   "bank": true,
+   "passages": 373
+  },
+  {
    "code": "hu",
    "name": "Hungarian",
    "endonym": "Magyar",

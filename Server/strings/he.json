@@ -1,0 +1,26 @@
+{
+  "language": "Hebrew",
+  "endonym": "עברית",
+  "awaiting": "The labels are written. The prose — tagline, about1, about2, about3, growBody, appNote — is still null and still English, on purpose: it is the site's own writing rather than the app's, and it is read in English before it is commissioned in sixteen languages. A null value is drawn in English, silently, one key at a time; the English is in assets/js/strings.js.",
+  "strings": {
+    "tagline": null,
+    "about1": null,
+    "about2": null,
+    "about3": null,
+    "seedTitle": "הגיע זרע",
+    "replyTitle": "זרע חזר",
+    "sentBy": "נשלח על ידי {name}",
+    "gardener": "גנן",
+    "planted": "נשתל",
+    "growTitle": "לגדל אותו",
+    "growBody": null,
+    "appNote": null,
+    "inEnglish": "באנגלית",
+    "language": "שפה",
+    "keys": "מקשים",
+    "random": "לאנשהו באקראי",
+    "damaged": "הקישור הזה הגיע פגום, ולכן לא ניתן היה לקרוא את הזרע.",
+    "notASeed": "הקישור הזה אינו נושא זרע.",
+    "newerVersion": "הזרע הזה הגיע מגרסה חדשה יותר של Peace Garden."
+  }
+}
