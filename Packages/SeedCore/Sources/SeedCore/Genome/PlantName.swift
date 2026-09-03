@@ -68,15 +68,32 @@ public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
     /// and the reasoning for each is in `docs/TAXONOMY.md` §"The twelve
     /// families" — *Cynara* is the artichoke, which is a thistle; the olive
     /// flowers in a small panicle on narrow leaves, which is a plume.
+    ///
+    /// **`Cal` and `Quin` were swapped on 3 September 2026.** `Cal` began on
+    /// the bell, for *Campanula*, on the strength of Calaceae echoing
+    /// Campanulaceae — and that echo turned out to be false: *Campanula* is a
+    /// diminutive of *campana*, a bell, and owes nothing to *kalos*. With the
+    /// only argument for it gone, two things pointed the other way. An umbel is
+    /// an *arrangement*, which is what Pattern's subthemes are about — the
+    /// golden angle, the quincunx, tessellation — where a bell is a silhouette.
+    /// And *quinque*, five, is worth saying where five can be counted: five
+    /// lobes on one bell, not five petals on each of forty florets.
+    ///
+    /// The cost, which is real: Apiaceae is *the* five-merous family in a
+    /// flora, so `Quin` on the umbel was the most precisely true thing on the
+    /// table, and that resonance is spent. Both roots sit in Pattern and both
+    /// families are 5-merous at the low root, so the swap moved no number and
+    /// broke no constraint — it changed which syllable sits on which family,
+    /// and the two family names traded places with it.
     static let roots: [Archetype: (few: String, many: String)] = [
         .spire:     (few: "Ver",  many: "Cer"),
-        .umbel:     (few: "Quin", many: "Fen"),
+        .umbel:     (few: "Cal",  many: "Fen"),
         .fern:      (few: "Umbr", many: "Dros"),
         .orchid:    (few: "Mel",  many: "Sel"),
         .lotus:     (few: "Lir",  many: "Nyx"),
         .thistle:   (few: "Cyn",  many: "Hal"),
         .vine:      (few: "Wyn",  many: "Ael"),
-        .bell:      (few: "Cal",  many: "Ith"),
+        .bell:      (few: "Quin", many: "Ith"),
         .star:      (few: "El",   many: "Ros"),
         .poppy:     (few: "Bel",  many: "Aur"),
         .succulent: (few: "Pell", many: "Thal"),

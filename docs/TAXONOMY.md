@@ -224,11 +224,22 @@ Gk *kyōn*, the dog, and *Cynara*'s own descent from it is disputed.
 of *campana*, a bell; it has nothing to do with *kalos*. The two words share two
 letters and no root. Recorded rather than quietly deleted, because that false
 echo was offered as a reason to keep `Cal` on the bell — and it was the only
-reason, so the question below is now open on its merits.
+reason.
 
-**One is still worth arguing about.** `Cal` is given to the bell for
-*Campanula*, but *kalos* is the shapely in general and Pattern could as fairly
-claim the umbel's geometry — `Cal` and `Quin` could swap families.
+**So `Cal` and `Quin` were swapped, 3 September.** With the false echo gone, two
+arguments pointed the other way. An umbel is an *arrangement*, which is what
+Pattern's subthemes are about — the golden angle, the quincunx, tessellation —
+where a bell is a silhouette. And *quinque* is worth saying where five can be
+counted: five lobes on one bell, not five petals on each of forty florets.
+
+The cost is real and is recorded rather than argued away. **Apiaceae is *the*
+five-merous family in a flora**, so `Quin` on the umbel was the most precisely
+true thing on this table, and that resonance is spent. It is exactly the kind of
+thing an expert notices in the four seconds this document opens by invoking.
+
+Both roots sit in Pattern and both families are 5-merous at the low root, so the
+swap moved no number and broke no constraint — only which syllable sits on which
+family, and the two family names trading places with it.
 
 ## Built, and what looking at it changed
 
