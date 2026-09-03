@@ -66,6 +66,14 @@
    "passages": 360
   },
   {
+   "code": "eu",
+   "name": "Basque",
+   "endonym": "Euskara",
+   "interface": false,
+   "bank": true,
+   "passages": 362
+  },
+  {
    "code": "fi",
    "name": "Finnish",
    "endonym": "Suomi",
@@ -80,6 +88,14 @@
    "interface": true,
    "bank": true,
    "passages": 366
+  },
+  {
+   "code": "gl",
+   "name": "Galician",
+   "endonym": "Galego",
+   "interface": false,
+   "bank": true,
+   "passages": 361
   },
   {
    "code": "hu",

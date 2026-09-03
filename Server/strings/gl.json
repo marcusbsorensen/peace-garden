@@ -1,0 +1,26 @@
+{
+  "language": "Galician",
+  "endonym": "Galego",
+  "awaiting": "The labels are written. The prose — tagline, about1, about2, about3, growBody, appNote — is still null and still English, on purpose: it is the site's own writing rather than the app's, and it is read in English before it is commissioned in sixteen languages. A null value is drawn in English, silently, one key at a time; the English is in assets/js/strings.js.",
+  "strings": {
+    "tagline": null,
+    "about1": null,
+    "about2": null,
+    "about3": null,
+    "seedTitle": "Chegou unha semente",
+    "replyTitle": "Volveu unha semente",
+    "sentBy": "Enviada por {name}",
+    "gardener": "xardineiro",
+    "planted": "Plantada",
+    "growTitle": "Facela medrar",
+    "growBody": null,
+    "appNote": null,
+    "inEnglish": "en inglés",
+    "language": "Idioma",
+    "keys": "Teclas",
+    "random": "Nalgún sitio ao chou",
+    "damaged": "Esta ligazón chegou danada, así que non se puido ler a semente.",
+    "notASeed": "Esa ligazón non leva ningunha semente.",
+    "newerVersion": "Esta semente vén dunha versión máis recente de Peace Garden."
+  }
+}
