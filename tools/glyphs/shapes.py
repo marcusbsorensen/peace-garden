@@ -147,8 +147,18 @@ def meet(side=SIDE):
 
 # --- Garden -----------------------------------------------------------------
 
+# The three blades, as start, two handles and end, in fractions of the box. The
+# middle one stands; the outer two lean away from it and stop shorter, so the
+# tuft has a silhouette rather than a top edge.
+GRASS = [
+    ((0.70, 1.00), (0.665, 0.76), (0.625, 0.58), (0.585, 0.40)),
+    ((0.70, 1.00), (0.715, 0.72), (0.725, 0.46), (0.715, 0.20)),
+    ((0.70, 1.00), (0.750, 0.76), (0.815, 0.60), (0.865, 0.46)),
+]
+
+
 def garden(side=SIDE):
-    """Two plants: a five-petal flower, and grass gone to seed beside it.
+    """Two plants: a five-petal flower, and a tuft of grass beside it.
 
     Three stems with different things stuck on their ends was three squiggles.
     **Two plants that a reader can name is worth more than three that read as
@@ -156,8 +166,27 @@ def garden(side=SIDE):
 
     The flower is drawn as an outline rather than as petals radiating from a
     centre, because radiating strokes at this size are a sun however few of them
-    there are. The grass is a narrow, tall zigzag — the one shape in the set
-    that is nothing but a repeated turn, which is what a seed head is.
+    there are.
+
+    **The grass is three blades, because a seed head cannot be drawn at this
+    size.** It was a thirteen-turn zigzag, and the arithmetic was never going to
+    work: thirteen turns across the box is 0.55pt a turn, under a stroke 1.2pt
+    wide. A stroke twice the size of the feature it is drawing fills the gaps in,
+    so what came out was a threaded rod — a screw, or a comb, and the one mark in
+    the set whose subject could not be recovered without its word. Five larger
+    turns were tried and read as a lightning bolt; a leaf on a stem merged into a
+    mitten; a closed bud read well but rhymed with the seed mark two places along
+    the row.
+
+    Blades carry no feature smaller than the stroke, which is the whole point.
+    Three rather than two: two splay from one foot and the near one parallels the
+    flower's stem, which puts three uprights side by side and is the colonnade
+    this mark was drawn to get away from.
+
+    It costs ink — 30.6% of the frame against the zigzag's 27.6%, measured at
+    fifteen points, which makes this the heaviest mark in the row ahead of the
+    cog's 28.7%. Separated strokes read lighter than that number suggests, where
+    the zigzag merged into a solid bar and read heavier than its own.
     """
     x, y, w, h = _box(side)
 
@@ -186,15 +215,10 @@ def garden(side=SIDE):
     p.append("M %.3f %.3f C %.3f %.3f, %.3f %.3f, %.3f %.3f" % (
         *at(0.37, 1.00), *at(0.36, 0.76), *at(0.32, 0.66), *at(0.33, 0.50)))
 
-    # The grass: a taller stem, and a narrow high zigzag where it seeds.
-    p.append("M %.3f %.3f C %.3f %.3f, %.3f %.3f, %.3f %.3f" % (
-        *at(0.67, 1.00), *at(0.69, 0.84), *at(0.72, 0.74), *at(0.71, 0.58)))
-    zig = ["M %.3f %.3f" % at(0.71, 0.58)]
-    for k in range(13):
-        v = 0.58 - (k + 1) * 0.0415
-        u = 0.71 + (0.027 if k % 2 == 0 else -0.027)
-        zig.append("L %.3f %.3f" % at(u, v))
-    p.append(" ".join(zig))
+    # The grass: three blades out of one foot, each a single curve.
+    for a, b, c, d in GRASS:
+        p.append("M %.3f %.3f C %.3f %.3f, %.3f %.3f, %.3f %.3f"
+                 % (*at(*a), *at(*b), *at(*c), *at(*d)))
 
     # The bed, under their feet only.
     p.append("M %.3f %.3f L %.3f %.3f" % (*at(0.25, 1.00), *at(0.79, 1.00)))

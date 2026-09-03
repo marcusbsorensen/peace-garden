@@ -769,7 +769,7 @@ struct SeedGlyph: Shape {
     }
 }
 
-/// A garden: a flower, and grass gone to seed beside it.
+/// A garden: a flower, and a tuft of grass beside it.
 ///
 /// It was three stems on a bed line with a different thing on each head, and it
 /// read as three squiggles. Before that it was three identical ovoids, and
@@ -781,10 +781,41 @@ struct SeedGlyph: Shape {
 /// from a centre. Radiating strokes at this size are a sun however few of them
 /// there are — the same trap the cog fell into three times.
 ///
-/// **The grass is a narrow, high zigzag**, which is the one shape in the set
-/// that is nothing but a repeated turn. Drawn as wide as it was tall it was a
-/// drill bit; narrow, it is a seed head.
+/// **The grass is three blades, because a seed head cannot be drawn at this
+/// size.** It was a thirteen-turn zigzag, and the arithmetic was never going to
+/// work: thirteen turns across a 13.2pt box is 0.55pt a turn, under a stroke
+/// 1.2pt wide. A stroke twice the size of the feature it draws fills the gaps
+/// in, so what reached the screen was a threaded rod — a screw, or a comb, and
+/// the one mark in the set whose subject could not be recovered without its
+/// word. This was the first thing the row was ever looked at for on a device,
+/// and it is what the device said.
+///
+/// Five larger turns read as a lightning bolt; a leaf on a stem merged into a
+/// mitten; a closed bud read well but rhymed with `SeedGlyph` two places along
+/// the row. Blades carry no feature smaller than the stroke, which is the point.
+/// Three rather than two: two splay from one foot and the near one parallels the
+/// flower's stem, which is three uprights side by side and the colonnade this
+/// mark was drawn to get away from.
+///
+/// It costs ink. 30.6% of the frame against the zigzag's 27.6%, which makes this
+/// the heaviest mark in the row, ahead of the cog at 28.7% — so the ordering
+/// `markBox` describes is now true of the drawing as well as of the box.
+/// Separated strokes read lighter than that number; the zigzag merged into a
+/// solid bar and read heavier than its own.
 struct GardenGlyph: Shape {
+    /// The three blades: start, two control points and end, in fractions of the
+    /// box. The middle one stands; the outer two lean away and stop shorter, so
+    /// the tuft has a silhouette rather than a top edge. Shared with
+    /// `tools/glyphs/shapes.py`, which is where they were judged.
+    private static let grass: [(CGPoint, CGPoint, CGPoint, CGPoint)] = [
+        (CGPoint(x: 0.70, y: 1.00), CGPoint(x: 0.665, y: 0.76),
+         CGPoint(x: 0.625, y: 0.58), CGPoint(x: 0.585, y: 0.40)),
+        (CGPoint(x: 0.70, y: 1.00), CGPoint(x: 0.715, y: 0.72),
+         CGPoint(x: 0.725, y: 0.46), CGPoint(x: 0.715, y: 0.20)),
+        (CGPoint(x: 0.70, y: 1.00), CGPoint(x: 0.750, y: 0.76),
+         CGPoint(x: 0.815, y: 0.60), CGPoint(x: 0.865, y: 0.46)),
+    ]
+
     func path(in rect: CGRect) -> Path {
         let box = markBox(rect, 1.0).insetBy(dx: 0.9, dy: 0.9)
         func at(_ u: CGFloat, _ v: CGFloat) -> CGPoint {
@@ -810,13 +841,12 @@ struct GardenGlyph: Shape {
         path.move(to: at(0.37, 1.00))
         path.addCurve(to: at(0.33, 0.50), control1: at(0.36, 0.76), control2: at(0.32, 0.66))
 
-        // The grass: a taller stem, and a narrow high zigzag where it seeds.
-        path.move(to: at(0.67, 1.00))
-        path.addCurve(to: at(0.71, 0.58), control1: at(0.69, 0.84), control2: at(0.72, 0.74))
-        for turn in 0..<13 {
-            let v = 0.58 - CGFloat(turn + 1) * 0.0415
-            let u = 0.71 + (turn.isMultiple(of: 2) ? 0.027 : -0.027)
-            path.addLine(to: at(u, v))
+        // The grass: three blades out of one foot, each a single curve.
+        for (from, handleA, handleB, to) in Self.grass {
+            path.move(to: at(from.x, from.y))
+            path.addCurve(to: at(to.x, to.y),
+                          control1: at(handleA.x, handleA.y),
+                          control2: at(handleB.x, handleB.y))
         }
 
         // The bed: under their feet, not the width of the frame.
