@@ -75,6 +75,42 @@ NAMES = {
     "ro": ("Romanian", "Română"),
     "ca": ("Catalan", "Català"),
     "fi": ("Finnish", "Suomi"),
+
+    # Round two. Listed ahead of their banks on purpose: this table is the one
+    # thing between a finished bank and a site that will not build, and a name
+    # is a five-second decision that should not be made at the end of a
+    # commission. A code here with no bank costs nothing — the manifest is
+    # built from the banks that exist, not from this list.
+    "sl": ("Slovene", "Slovenščina"),
+    "hr": ("Croatian", "Hrvatski"),
+    "sk": ("Slovak", "Slovenčina"),
+    "cy": ("Welsh", "Cymraeg"),
+    "eu": ("Basque", "Euskara"),
+    "ga": ("Irish", "Gaeilge"),
+    "lt": ("Lithuanian", "Lietuvių"),
+    "lv": ("Latvian", "Latviešu"),
+    "et": ("Estonian", "Eesti"),
+    "sq": ("Albanian", "Shqip"),
+    "is": ("Icelandic", "Íslenska"),
+    "gl": ("Galician", "Galego"),
+    "lb": ("Luxembourgish", "Lëtzebuergesch"),
+    "fo": ("Faroese", "Føroyskt"),
+    "mt": ("Maltese", "Malti"),
+    "kl": ("Greenlandic", "Kalaallisut"),
+
+    # The other alphabets.
+    "el": ("Greek", "Ελληνικά"),
+    "ru": ("Russian", "Русский"),
+    "uk": ("Ukrainian", "Українська"),
+    "bg": ("Bulgarian", "Български"),
+    "sr": ("Serbian", "Српски"),
+    "mk": ("Macedonian", "Македонски"),
+    "be": ("Belarusian", "Беларуская"),
+    "ar": ("Arabic", "العربية"),
+    "he": ("Hebrew", "עברית"),
+    "ja": ("Japanese", "日本語"),
+    "zh": ("Chinese", "中文"),
+    "ko": ("Korean", "한국어"),
 }
 
 

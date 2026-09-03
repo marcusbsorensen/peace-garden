@@ -50,6 +50,14 @@
    "passages": 360
   },
   {
+   "code": "et",
+   "name": "Estonian",
+   "endonym": "Eesti",
+   "interface": false,
+   "bank": true,
+   "passages": 360
+  },
+  {
    "code": "fi",
    "name": "Finnish",
    "endonym": "Suomi",
