@@ -250,6 +250,92 @@ Three things fall out of it:
   has. The fragment still never arrives. Recorded here for the same reason it is
   recorded above: so it is a known cost rather than a discovery.
 
+### Walking it: a map, a pad, and somewhere at random
+
+Asked for 3 September. The garden was a place you could *visit* — a page you
+arrived at from a link — and this is what makes it a place you can *walk*.
+
+**The map is derived, not decorated.** `Quotes.Theme.position` has given every
+theme a point in four dimensions since the passage banks were written: company,
+motion, duration, register. Projecting those ten points onto their first two
+principal components carries 85% of the variance and hands back a plan of the
+garden that means something. The first axis came out as motion against duration,
+the second as company almost alone, so:
+
+| | | | | |
+| --- | --- | --- | --- | --- |
+| `waiting` | `ground` | `beginnings` | `renewal` | `travel` |
+| `peace` | `kinship` | `pattern` | `light` | `meeting` |
+
+Walking right goes from the still and the long-span toward the moving and the
+momentary. Walking down goes from the solitary toward the shared. `waiting` is
+in one corner and `meeting` in the far one, which is the shape of the whole app
+said as a floor plan. **Two areas are neighbours because the two themes are.**
+
+The assignment is baked into `assets/js/garden.js` rather than computed. A
+browser should not run a singular value decomposition to draw a map, and more
+importantly the map must not move: a garden whose areas rearrange when somebody
+tunes a theme's position is a garden nobody can learn. Retuning a position is
+now a change to the map, and has to be made as one.
+
+**A plant's place inside an area comes from its seed and never moves.** Each
+area is 256 by 256 cells and a plant's cell is two slices of its own seed hex —
+the seed is already a SHA-256 digest, so there is nothing to gain by hashing it
+again and nothing that then has to agree between the app, the site and the
+service. The alternative, sorting an area's plants and laying them out in order,
+reshuffles every plant after the insertion point each time somebody shares one,
+so a place you visited yesterday is somebody else's today.
+
+Two plants can land on one cell. **That is allowed and it is drawn**: resolving a
+collision by probing would make a position depend on who arrived first, which is
+the one property deriving it exists to avoid. A shared cell is more than one
+plant standing together, which is a thing a garden does.
+
+**The pad.** On a plant page, four arrows to the nearest plant in each direction.
+Nearest is measured along the direction of travel first and sideways second,
+within a cone rather than along a ray — a strict ray finds almost nothing on a
+sparse grid, and a plant three cells over and one along is plainly to the right
+to somebody looking at it. Walking off the edge of an area steps into the
+neighbouring one. The map does not wrap: a garden you can walk off the end of has
+an edge, which is a true thing about it and easier to hold than a torus.
+
+**Somewhere at random** is uniform over plants rather than over areas. A garden
+where every area were equally likely would send a visitor to the same four plants
+in `waiting` over and over while `meeting` filled up unvisited.
+
+**What this asks of the plot service.** An index on (theme, x, y), a query for
+the nearest occupied cell in a direction, and a uniform random plant. All three
+are ordinary; none of them needs the fragment, and none of them carries a name.
+
+### Every action on a key
+
+Asked for at the same time and it is the same feature: a garden you walk with
+four arrows is a keyboard interface whether or not it admits it.
+
+`assets/js/keys.js` holds one registry and one listener. A page declares its
+actions there rather than attaching its own handler, and `?` lists what is
+registered — so **there is no way to add a shortcut the sheet does not know
+about**, because the sheet is the registry. Single letters and the arrows, never
+a modifier: a shortcut with a modifier is a shortcut competing with the browser,
+and this site has few enough actions that it does not need to. Nothing fires
+while somebody is typing.
+
+**The sheet costs one string, and this is the interesting part.** Fifteen rows
+with their own wording is fifteen strings, which is 255 commissions to explain a
+keyboard — against a budget this document defends with a multiplier. So the
+sheet has no wording: **each row is labelled by the control it operates**, read
+off that control when the sheet opens, in words already on the reader's screen
+and already in their language. The only addition to the catalogue is the sheet's
+own heading, and the `?` row borrows that too.
+
+It cannot drift, either. Rename a control and its row renames itself; a control
+with no visible name shows as a blank row, which is a bug report rather than a
+translation job.
+
+There is no close button. A ✕ needs an accessible name, the only name for it is
+*close*, and Escape, `?` again and a click outside already cover it — an unnamed
+button would be worse than no button.
+
 ### When the site is behind the app
 
 It will be, for most of its life, and there are two different ways to be behind
