@@ -329,7 +329,17 @@ public struct Genome: Equatable, Sendable {
 
         // Last, and reading what is above it rather than drawing alongside it.
         // docs/TAXONOMY.md §1: you name what you observe.
-        name = PlantName(source: source, archetype: archetype, merosity: merosity)
+        name = PlantName(
+            source: source,
+            archetype: archetype,
+            merosity: merosity,
+            stem: stem,
+            foliage: foliage,
+            branching: branching,
+            palette: palette,
+            tempo: tempo,
+            leafCount: stem.nodeCount * foliage.leavesPerNode
+        )
     }
 }
 

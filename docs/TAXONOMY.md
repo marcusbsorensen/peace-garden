@@ -261,6 +261,70 @@ drawn the old flowers and told us nothing. It is not covered by CI — only
 `tools/reference/` is — so it is a port that has to be kept by hand, and this is
 the second time that has mattered.
 
+## The epithet, built
+
+*3 September. `Epithet.swift`, and nine tests.*
+
+Rules 2 and 3 are built. The epithet is no longer two syllables glued together
+from separate draws; it is a claim about the plant, checked before it is made.
+
+**How a departure is measured, which turned out to be free.** Every continuous
+trait is drawn as a position in its own range — `GeneSource.value` is
+`lower + unit(label) * width` — so `unit(label)` *is* this plant's rank among
+the plants of its genus. Every plant of a genus draws the same labels through
+the same profile, so a position of 0.94 in `foliage.length` means the leaves are
+longer than 94% of the genus, exactly, without anyone working out the genus's
+average. The source is asked again rather than the finished traits measured
+back: same number, one hash, and it cannot drift out of step with `Genome.init`.
+
+**Colour is measured absolutely and deliberately.** `Palette` never consults the
+archetype, so a genus constrains no colour and there is no genus average to
+depart from — and *aurea* means golden however golden its neighbours are.
+
+**The gender question §3 left open is answered.** `-ynth` is masculine, the
+Greek `-ynthos` of *Hyacinthus*; the other nine endings are feminine, `-is` on
+the model of *Arabis*. That makes one genus in ten masculine, which is enough
+for the agreement to be visible in a garden rather than only in a test:
+*Ithora rubra* beside *Verynth ruber*, *Olea paniculata* beside
+*Olynth paniculatus*.
+
+### Two mistakes worth keeping in the record
+
+**Notability had to become rarity.** The first version scored measurements by
+how far into a tail they reached and markings by a number written next to each
+one — two unrelated scales. So *variegata*, which is true of **37%** of plants,
+outranked every measurement and took a third of the garden. The rule now is one
+scale and one sentence: **of the true things, say the one fewest of this plant's
+relatives could have said.** That is what a botanist naming a specimen does, and
+it is the only basis on which a marking and a measurement can be compared at
+all. Extremity survives as a tie-break between characters of equal rarity.
+
+**Three words were dead.** *pallida*, *obscura* and *venosa* asked for petal
+brightness and veining outside the ranges those traits are drawn in — brightness
+never leaves `0.45...0.82` and veining never passes `0.65` — so they could not
+be said of any plant that will ever exist. The thresholds had been guessed.
+They are measured percentiles now, and `Epithet.Rate` is a table of measurements
+with a test that re-measures it, because a rate that goes stale silently
+restores the bug it was written to fix.
+
+Both were caught by tests written before the numbers were tuned, and neither
+would have been visible in a name. That is the point: an epithet that has come
+unhooked from its trait still reads as a perfectly good name.
+
+### Where it landed
+
+Fifty-seven distinct epithets over twenty thousand seeds, the commonest at 6%.
+About one plant in fifty is *vulgaris* — lower than it sounds like it should be,
+and right: twenty-four characters cover a lot of ground, so a plant with nothing
+in any tail and no marking at all is genuinely rare. The floor still does its
+work one character at a time, which is the part that matters — every claim made
+is true of the top eighth.
+
+`serratifolia`, `integrifolia` and `pendula` are rare, at well under a percent
+each, because serration and droop are drawn with `bell` and a centre-weighted
+trait reaches its tails seldom. That is correct rather than a defect: a plant
+whose leaves droop that far really is unusual, and the name should be.
+
 ## What is Marcus's to decide
 
 *Marcus settled these on 3 September: the pairings are trusted as proposed, the

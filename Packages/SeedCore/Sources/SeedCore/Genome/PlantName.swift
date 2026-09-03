@@ -8,7 +8,7 @@ import Foundation
 /// see the descent in the name without being told about it.
 public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
     public let genus: String
-    public let epithet: String
+    public private(set) var epithet: String
 
     /// The syllable the genus was built from, kept rather than recovered.
     ///
@@ -103,16 +103,6 @@ public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
         "ia", "is", "a", "ea", "ina", "ora", "yne", "era", "ula", "ynth"
     ]
 
-    static let epithetHeads = [
-        "noct", "vesper", "lum", "umbr", "sol", "aur", "glaci", "pluvi", "stell",
-        "sylv", "mont", "riv", "cine", "ferr", "pall", "seren", "tacit", "viv"
-    ]
-
-    static let epithetTails = [
-        "urna", "alis", "ata", "ifolia", "escens", "iflora", "ina", "icola",
-        "antha", "aria", "osa", "ula"
-    ]
-
     /// Built from the flower it names.
     ///
     /// **The head is read, not drawn.** `archetype` and `merosity` are the two
@@ -134,9 +124,40 @@ public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
         genusHead = head
         genusTail = tail
 
-        let epithetHead = source.pick("name.epithetHead", from: Self.epithetHeads)
-        let epithetTail = source.pick("name.epithetTail", from: Self.epithetTails)
-        epithet = Self.join(epithetHead, "", epithetTail).lowercased()
+        epithet = ""
+    }
+
+    /// The whole name: a genus read off the flower, and an epithet read off
+    /// everything else.
+    ///
+    /// **The two halves answer different questions**, which is why they are
+    /// measured against different things. The genus says what kind of plant
+    /// this is, so it comes from the floral plan, which every plant of the
+    /// genus shares. The epithet says which one of them this is, so it comes
+    /// from where this plant sits among its own genus — leaves longer than
+    /// nine in ten of them, a stem that leans when its relatives stand up.
+    init(
+        source: GeneSource,
+        archetype: Archetype,
+        merosity: Merosity,
+        stem: Genome.Stem,
+        foliage: Genome.Foliage,
+        branching: Genome.Branching,
+        palette: Genome.Palette,
+        tempo: Genome.Tempo,
+        leafCount: Int
+    ) {
+        self.init(source: source, archetype: archetype, merosity: merosity)
+        epithet = Epithet.describing(
+            source: source,
+            genusTail: genusTail,
+            stem: stem,
+            foliage: foliage,
+            branching: branching,
+            palette: palette,
+            tempo: tempo,
+            leafCount: leafCount
+        ).written
     }
 
     /// For a name written by hand rather than drawn.
