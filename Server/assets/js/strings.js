@@ -54,6 +54,11 @@ export const EN = Object.freeze({
   // words already on the screen. See assets/js/keys.js.
   keys: "Keys",
 
+  // The garden's one control that is not labelled by something already on the
+  // page. The four directions take their names from the pad, and `g` takes its
+  // name from the wordmark, which is a proper noun.
+  random: "Somewhere at random",
+
   // What a link that arrived broken says. The wording is the app's own, from
   // `PollenLink.LinkError`, so the two say the same thing to the same person.
   damaged: "This link arrived damaged, so the seed could not be read.",

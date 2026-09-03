@@ -1,0 +1,84 @@
+<!doctype html>
+<!--
+  The garden, walked.
+
+  Three states on one page, because a walk is one thing and not three: the map
+  of ten areas, one area with its plants in it, and one plant with a pad for
+  stepping to its neighbours. Moving between them is a fragment change, so the
+  back button behaves and a place can be linked to.
+
+  Every area is a theme, and the ten are laid out from `Quotes.Theme.position`
+  rather than arranged by hand — see docs/WEBSITE.md §"Walking it". Walking
+  right goes from the still and long-span toward the moving and momentary,
+  walking down from solitary toward shared.
+
+  **Nothing here is published yet.** The plot service does not exist, so this
+  draws from `plots.js`'s stand-in, and the page says so on the screen in as
+  many words. The point of building it before the service is that the geometry,
+  the pad and the keyboard walk can be argued about while they are still cheap
+  to change.
+
+  Static, like `/s`: no analytics, no font CDN, no third-party anything.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Peace Garden</title>
+    <meta name="description" content="A garden of plants grown from meetings." />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="robots" content="noindex" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <link rel="icon" href="/assets/mark.svg" type="image/svg+xml" />
+  </head>
+
+  <body>
+    <div class="pool" aria-hidden="true"></div>
+
+    <main class="page" id="page">
+      <header class="masthead">
+        <img class="mark" src="/assets/mark.svg" alt="" width="44" height="44" />
+        <span class="wordmark" id="wordmark">Peace Garden</span>
+      </header>
+
+      <!-- Said plainly, and not in small print. -->
+      <p class="notice body" id="invented" hidden>
+        Every plant here is invented. The garden is not open yet.
+      </p>
+
+      <!-- 1. The map: ten areas, five across and two down. -->
+      <section class="garden-map" id="map" aria-label="The garden">
+        <div class="garden-grid" id="map-grid"></div>
+      </section>
+
+      <!-- 2. One area, and what stands in it. -->
+      <section class="garden-area" id="area" hidden>
+        <h1 class="heading" id="area-name"></h1>
+        <div class="area-plot" id="area-plot" role="group"></div>
+      </section>
+
+      <!-- 3. One plant, and the four ways out of it. -->
+      <section class="garden-plant" id="plant" hidden>
+        <p class="plant-name" id="plant-name"></p>
+        <p class="label" id="plant-where"></p>
+        <div class="pad" id="pad" role="group">
+          <button class="pad-key" type="button" data-go="up" aria-label="Up">↑</button>
+          <button class="pad-key" type="button" data-go="left" aria-label="Left">←</button>
+          <button class="pad-key" type="button" data-go="right" aria-label="Right">→</button>
+          <button class="pad-key" type="button" data-go="down" aria-label="Down">↓</button>
+        </div>
+      </section>
+      <!--
+        The one control on this page that needs a word of its own. `g` is
+        labelled by the wordmark above, which is a proper noun and travels; the
+        four directions are labelled by the pad. This is the exception, and it
+        earns a catalogue string rather than a hardcoded label in the script.
+      -->
+      <p class="garden-foot">
+        <button class="quiet-button" type="button" id="random" data-s="random"></button>
+      </p>
+    </main>
+
+    <script type="module" src="/assets/js/walk.js"></script>
+  </body>
+</html>
