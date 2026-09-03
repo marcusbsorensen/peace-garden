@@ -71,6 +71,9 @@ answer about itself. Neither has a bank or an interface yet.
 - `Server/assets/js/garden.js`, `keys.js`, `walk.js`, `plots.js`, `Server/g` —
   the map, the keyboard registry, the walk, and a stand-in for the plot service
   that says on screen that it is one.
+- `docs/TAXONOMY.md` — **the next real piece of work.** Making the binomial a
+  description a botanist could key a plant out from. Designed, not built, and it
+  changes the core derivation.
 - `docs/WORDS.md` — what forty-three languages said about peace, gathered from
   the commissioning reports, and Marcus's proposal to make a section of the app
   out of it. The convergences are the point: a dozen languages independently
@@ -99,7 +102,11 @@ answer about itself. Neither has a bank or an interface yet.
 
 ## Next step
 
-Land the banks that finished after this was filed. For each:
+`docs/TAXONOMY.md`, once Marcus has answered the three questions at its foot. It
+is a change to `PlantName` and `Genome` that renames every plant, and today is
+the cheapest that will ever be.
+
+Before that, land the banks that finished after this was filed. For each:
 `python3 tools/quotes/land.py <Language> <code> <file>`, then its thirteen site
 labels, then `xcodebuild … test`, then one commit per bank. **Then run
 `python3 tools/quotes/refresh.py <banks dir>` until it says nothing moved** —
