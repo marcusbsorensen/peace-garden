@@ -1,24 +1,25 @@
 {
- "language": "French",
- "endonym": "Français",
- "awaiting": "Every value below awaits a commission. The English these are written from is in assets/js/strings.js, which is also the fallback: any value left null is drawn in English, silently, one key at a time.",
- "strings": {
-  "tagline": null,
-  "about1": null,
-  "about2": null,
-  "about3": null,
-  "seedTitle": null,
-  "replyTitle": null,
-  "sentBy": null,
-  "gardener": null,
-  "planted": null,
-  "growTitle": null,
-  "growBody": null,
-  "appNote": null,
-  "inEnglish": null,
-  "language": null,
-  "damaged": null,
-  "notASeed": null,
-  "newerVersion": null
- }
+  "language": "French",
+  "endonym": "Français",
+  "awaiting": "The labels are written. The prose — tagline, about1, about2, about3, growBody, appNote — is still null and still English, on purpose: it is the site's own writing rather than the app's, and it is read in English before it is commissioned in sixteen languages. A null value is drawn in English, silently, one key at a time; the English is in assets/js/strings.js.",
+  "strings": {
+    "tagline": null,
+    "about1": null,
+    "about2": null,
+    "about3": null,
+    "seedTitle": "Une graine est arrivée",
+    "replyTitle": "Une graine est revenue",
+    "sentBy": "Envoyée par {name}",
+    "gardener": "un jardinier",
+    "planted": "Plantée",
+    "growTitle": "La faire pousser",
+    "growBody": null,
+    "appNote": null,
+    "inEnglish": "en anglais",
+    "language": "Langue",
+    "keys": "Touches",
+    "damaged": "Ce lien est arrivé endommagé, la graine n'a pas pu être lue.",
+    "notASeed": "Ce lien ne porte aucune graine.",
+    "newerVersion": "Cette graine vient d'une version plus récente de Peace Garden."
+  }
 }

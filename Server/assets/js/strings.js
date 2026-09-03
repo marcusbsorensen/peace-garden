@@ -49,6 +49,11 @@ export const EN = Object.freeze({
   // The chooser.
   language: "Language",
 
+  // The heading on the sheet under `?`, and the only word the keyboard layer
+  // costs: every row in that sheet is labelled by the control it operates, in
+  // words already on the screen. See assets/js/keys.js.
+  keys: "Keys",
+
   // What a link that arrived broken says. The wording is the app's own, from
   // `PollenLink.LinkError`, so the two say the same thing to the same person.
   damaged: "This link arrived damaged, so the seed could not be read.",

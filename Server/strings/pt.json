@@ -1,24 +1,25 @@
 {
- "language": "Portuguese",
- "endonym": "Português",
- "awaiting": "Every value below awaits a commission. The English these are written from is in assets/js/strings.js, which is also the fallback: any value left null is drawn in English, silently, one key at a time.",
- "strings": {
-  "tagline": null,
-  "about1": null,
-  "about2": null,
-  "about3": null,
-  "seedTitle": null,
-  "replyTitle": null,
-  "sentBy": null,
-  "gardener": null,
-  "planted": null,
-  "growTitle": null,
-  "growBody": null,
-  "appNote": null,
-  "inEnglish": null,
-  "language": null,
-  "damaged": null,
-  "notASeed": null,
-  "newerVersion": null
- }
+  "language": "Portuguese",
+  "endonym": "Português",
+  "awaiting": "The labels are written. The prose — tagline, about1, about2, about3, growBody, appNote — is still null and still English, on purpose: it is the site's own writing rather than the app's, and it is read in English before it is commissioned in sixteen languages. A null value is drawn in English, silently, one key at a time; the English is in assets/js/strings.js.",
+  "strings": {
+    "tagline": null,
+    "about1": null,
+    "about2": null,
+    "about3": null,
+    "seedTitle": "Chegou uma semente",
+    "replyTitle": "Voltou uma semente",
+    "sentBy": "Enviada por {name}",
+    "gardener": "um jardineiro",
+    "planted": "Plantada",
+    "growTitle": "Fazê-la crescer",
+    "growBody": null,
+    "appNote": null,
+    "inEnglish": "em inglês",
+    "language": "Idioma",
+    "keys": "Teclas",
+    "damaged": "Esta ligação chegou danificada, por isso não foi possível ler a semente.",
+    "notASeed": "Essa ligação não traz nenhuma semente.",
+    "newerVersion": "Esta semente vem de uma versão mais recente do Peace Garden."
+  }
 }

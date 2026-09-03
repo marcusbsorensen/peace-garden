@@ -17,6 +17,7 @@ import { manifest, negotiate, readable, remember, uppercases } from "./languages
 import { loadStrings } from "./strings.js";
 import { loadBank, placement, choose } from "./passages.js";
 import { parse } from "./link.js";
+import { register, setSheetTitle } from "./keys.js";
 
 const el = (id) => document.getElementById(id);
 
@@ -99,6 +100,9 @@ async function render() {
     node.textContent = t(node.dataset.s);
   }
   el("language-label").textContent = t("language");
+  // The sheet's own heading, and the only word the keyboard layer needs: every
+  // other row in it is labelled by the control it operates.
+  setSheetTitle(t("keys"));
   buildChooser(state.languages, settled.ui, (code) => {
     state.chosen = code;
     remember(code);
@@ -186,6 +190,27 @@ async function main() {
   document.body.dataset.loading = "1";
   state.languages = await manifest();
   await readFragment();
+
+  // The one action this page has. It is registered rather than wired directly
+  // so that it appears in the sheet under `?` alongside everything a garden
+  // page adds — see keys.js, where the sheet *is* the registry.
+  register({
+    keys: ["l"],
+    target: () => el("language-label"),
+    run: () => {
+      const select = el("language");
+      if (!select || select.hidden) return false;
+      select.focus();
+      // Safari and Firefox ignore `showPicker` on a select they did not open
+      // from a click, and throw rather than no-op. Focus is the part that
+      // matters; opening it is a courtesy where it is allowed.
+      try {
+        select.showPicker?.();
+      } catch {
+        /* focused is enough */
+      }
+    },
+  });
 
   try {
     await render();
