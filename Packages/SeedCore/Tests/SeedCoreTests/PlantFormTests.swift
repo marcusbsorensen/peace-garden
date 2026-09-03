@@ -47,6 +47,20 @@ final class PlantFormTests: XCTestCase {
     ///
     /// Vertex count and bounds together are enough. A renamed key moves almost
     /// every trait, and any trait that matters moves one or the other.
+    ///
+    /// **These numbers were moved once, deliberately, on 3 September 2026**,
+    /// and the paragraph above is why that needs saying rather than doing
+    /// quietly. Making the genus a description of the flower — docs/TAXONOMY.md
+    /// — replaced a per-plant petal draw with a per-genus petal count, so every
+    /// bloom in every garden changed and three pinned meshes with them. The
+    /// umbel lost more than half its vertices, which is the old 3...13 draw
+    /// scaled by 1.4 giving way to five petals or eight.
+    ///
+    /// That cost is the one docs/TAXONOMY.md §"What this costs" accepts: nothing
+    /// has shipped, there is no listing, and the only plants that exist are on
+    /// one simulator. **It was the last moment it was free**, and it does not
+    /// become free again. From these numbers the test is back to doing its
+    /// actual job, which is catching the same move made by accident.
     func testAFixedSeedAlwaysDrawsTheSameMesh() {
         // Seed label: vertices, then the mature plant's width and height in
         // centimetres. The three cover one inflorescence each — `vector-a` is
@@ -54,9 +68,9 @@ final class PlantFormTests: XCTestCase {
         // rather than design, but it is worth keeping if these are ever
         // renumbered.
         let expected: [String: (vertices: Int, width: Int, height: Int)] = [
-            "vector-a": (21628, 50, 77),
-            "vector-b": (3643, 48, 86),
-            "vector-c": (4870, 24, 49)
+            "vector-a": (9460, 50, 77),
+            "vector-b": (3409, 48, 86),
+            "vector-c": (4168, 24, 50)
         ]
 
         for (label, want) in expected.sorted(by: { $0.key < $1.key }) {

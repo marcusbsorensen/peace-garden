@@ -111,42 +111,38 @@ ARCHETYPES = ["spire", "umbel", "fern", "orchid", "lotus", "thistle",
 
 DEFAULT_PROFILE = dict(
     heightScale=1.0, stemThickness=1.0, nodeScale=1.0, leafLengthScale=1.0,
-    leafWidthScale=1.0, leafDroop=1.0, petalCountScale=1.0, petalLengthScale=1.0,
+    leafWidthScale=1.0, leafDroop=1.0, petals=(5, 8), petalLengthScale=1.0,
     petalWidthScale=1.0, petalCurlBias=0.0, headPitchBias=0.0, centreScale=1.0,
     bloomsAtNodes=False, bloomPresence=1.0, swayScale=1.0,
     inflorescence="raceme", bloomScale=1.0, branchSpread=0.0, branchCount=5,
 )
 
 PROFILE_OVERRIDES = {
-    "spire": dict(heightScale=1.35, nodeScale=1.6, petalLengthScale=0.55,
-                  petalCountScale=0.7, bloomsAtNodes=True, leafLengthScale=0.8),
-    "umbel": dict(inflorescence="head", branchSpread=0.0, branchCount=5, bloomScale=0.8,
-                  heightScale=0.9, petalLengthScale=0.45, petalCountScale=1.4,
-                  centreScale=0.6, leafDroop=1.2),
-    "fern": dict(heightScale=0.8, nodeScale=1.9, leafLengthScale=1.5, leafWidthScale=0.7,
+    "spire": dict(petals=(4, 6), heightScale=1.35, nodeScale=1.6, petalLengthScale=0.55,
+                  bloomsAtNodes=True, leafLengthScale=0.8),
+    "umbel": dict(petals=(5, 8), inflorescence="head", branchSpread=0.0, branchCount=5, bloomScale=0.8,
+                  heightScale=0.9, petalLengthScale=0.45, centreScale=0.6, leafDroop=1.2),
+    "fern": dict(petals=(3, 5), heightScale=0.8, nodeScale=1.9, leafLengthScale=1.5, leafWidthScale=0.7,
                  leafDroop=1.5, bloomPresence=0.05, swayScale=1.3),
-    "orchid": dict(inflorescence="solitary", bloomScale=1.7, heightScale=0.85, stemThickness=0.8, nodeScale=0.6, petalCountScale=0.35,
-                   petalLengthScale=1.0, petalWidthScale=1.3, petalCurlBias=0.25,
+    "orchid": dict(petals=(3, 6), inflorescence="solitary", bloomScale=1.7, heightScale=0.85, stemThickness=0.8, nodeScale=0.6, petalLengthScale=1.0, petalWidthScale=1.3, petalCurlBias=0.25,
                    headPitchBias=0.5, leafLengthScale=1.2),
-    "lotus": dict(inflorescence="solitary", bloomScale=1.7, heightScale=0.7, stemThickness=1.4, petalLengthScale=1.0,
+    "lotus": dict(petals=(8, 14), inflorescence="solitary", bloomScale=1.7, heightScale=0.7, stemThickness=1.4, petalLengthScale=1.0,
                   petalWidthScale=1.5, petalCurlBias=-0.55, centreScale=1.7, nodeScale=0.5),
-    "thistle": dict(inflorescence="solitary", bloomScale=2.4, heightScale=0.9, nodeScale=0.55,
-                    stemThickness=1.2, petalCountScale=2.2,
-                    petalLengthScale=0.4, petalWidthScale=0.3, petalCurlBias=-0.3,
+    "thistle": dict(petals=(13, 21), inflorescence="solitary", bloomScale=2.4, heightScale=0.9, nodeScale=0.55,
+                    stemThickness=1.2, petalLengthScale=0.4, petalWidthScale=0.3, petalCurlBias=-0.3,
                     centreScale=1.3),
-    "vine": dict(heightScale=1.45, stemThickness=0.6, nodeScale=1.7, leafLengthScale=0.65,
+    "vine": dict(petals=(4, 6), heightScale=1.45, stemThickness=0.6, nodeScale=1.7, leafLengthScale=0.65,
                  leafWidthScale=1.1, swayScale=1.8, bloomsAtNodes=True, petalLengthScale=0.5),
-    "bell": dict(petalCurlBias=-0.75, petalLengthScale=1.1, headPitchBias=1.0,
-                 petalCountScale=0.55, bloomsAtNodes=True),
-    "star": dict(petalCurlBias=0.35, petalWidthScale=0.6, centreScale=0.7, petalCountScale=0.9),
-    "poppy": dict(inflorescence="solitary", bloomScale=1.7, heightScale=0.75,
-                  nodeScale=0.35, leafLengthScale=0.7, petalCountScale=0.3,
-                  petalLengthScale=1.0, petalWidthScale=1.6, petalCurlBias=-0.35,
+    "bell": dict(petals=(5, 10), petalCurlBias=-0.75, petalLengthScale=1.1, headPitchBias=1.0,
+                 bloomsAtNodes=True),
+    "star": dict(petals=(5, 8), petalCurlBias=0.35, petalWidthScale=0.6, centreScale=0.7, petalCountScale=0.9),
+    "poppy": dict(petals=(4, 6), inflorescence="solitary", bloomScale=1.7, heightScale=0.75,
+                  nodeScale=0.35, leafLengthScale=0.7, petalLengthScale=1.0, petalWidthScale=1.6, petalCurlBias=-0.35,
                   headPitchBias=0.35, swayScale=1.4),
-    "succulent": dict(heightScale=0.45, stemThickness=1.9, nodeScale=2.1, leafLengthScale=0.55,
+    "succulent": dict(petals=(8, 12), heightScale=0.45, stemThickness=1.9, nodeScale=2.1, leafLengthScale=0.55,
                       leafWidthScale=1.6, leafDroop=0.3, petalLengthScale=0.5, bloomPresence=0.6),
-    "plume": dict(inflorescence="head", branchSpread=1.0, branchCount=7, bloomScale=0.8,
-                  heightScale=1.05, nodeScale=1.8, petalCountScale=1.8, petalLengthScale=0.35,
+    "plume": dict(petals=(5, 10), inflorescence="head", branchSpread=1.0, branchCount=7, bloomScale=0.8,
+                  heightScale=1.05, nodeScale=1.8, petalLengthScale=0.35,
                   petalWidthScale=0.35, leafLengthScale=0.6, leafWidthScale=0.4),
 }
 
@@ -291,7 +287,7 @@ class Genome:
         profile = profile_for(self.archetype)
         self.profile = profile
 
-        self.symmetry = source.integer("form.symmetry", 3, 9)
+        self.merosity = "many" if source.chance("bloom.merosity", 0.5) else "few"
         self.vigour = source.bell("form.vigour", 0.82, 1.22)
 
         self.inflorescence = profile["inflorescence"]
@@ -324,8 +320,11 @@ class Genome:
         self.veinDepth = source.bell("foliage.veinDepth", 0.2, 1.0) if source.chance("foliage.hasVeins", 0.72) else 0.0
         self.leafTipSharpness = source.value("foliage.tipSharpness", 0.7, 2.1)
 
-        petal_base = source.integer("bloom.petalCount", 3, 13)
-        self.petalCount = max(3, round(petal_base * profile["petalCountScale"]))
+        # The genus has a petal count; the plant does not draw one. See
+        # SeedCore's Genome.swift and docs/TAXONOMY.md §1.
+        plan = profile["petals"][0 if self.merosity == "few" else 1]
+        variance = source.unit("bloom.petalVariant")
+        self.petalCount = max(3, plan + (-1 if variance < 0.1 else 1 if variance > 0.9 else 0))
         bloom_scale = 0.75 + 0.45 * min(1.6, self.height)
         self.petalLength = source.value("bloom.length", 0.09, 0.24) * profile["petalLengthScale"] * bloom_scale
         self.layers = source.integer("bloom.layers", 1, 3)

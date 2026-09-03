@@ -35,7 +35,17 @@ public struct HSB: Equatable, Codable, Sendable {
 public struct Genome: Equatable, Sendable {
     public struct Form: Equatable, Sendable {
         public var archetype: Archetype
-        public var symmetry: Int
+        /// How many parts the flower is built in, as a class. The count itself
+        /// is `bloom.petalCount`.
+        ///
+        /// **This replaced `symmetry`**, which was drawn into every genome
+        /// from the first commit and read by nothing — not by the geometry, not
+        /// by the name, not by a test. A trait nothing consumes cannot be
+        /// keyed, and a plant that cannot be keyed is what `docs/TAXONOMY.md`
+        /// was written about. Removing it is free: a `Genome` is derived from a
+        /// seed every time and never stored, so no garden on any phone holds a
+        /// field that has gone.
+        public var merosity: Merosity
         public var vigour: Double
     }
 
@@ -210,9 +220,13 @@ public struct Genome: Equatable, Sendable {
         let archetype = source.pick("form.archetype", from: Archetype.allCases)
         let profile = ArchetypeProfile.profile(for: archetype)
 
+        // The two floral facts the name is read from. Everything below is the
+        // plant; these two are also its classification.
+        let merosity: Merosity = source.chance("bloom.merosity", 0.5) ? .many : .few
+
         form = Form(
             archetype: archetype,
-            symmetry: source.integer("form.symmetry", 3...9),
+            merosity: merosity,
             vigour: source.bell("form.vigour", 0.82...1.22)
         )
 
@@ -263,8 +277,18 @@ public struct Genome: Equatable, Sendable {
             tipSharpness: source.value("foliage.tipSharpness", 0.7...2.1)
         )
 
-        let petalBase = source.integer("bloom.petalCount", 3...13)
-        let petalCount = max(3, Int((Double(petalBase) * profile.petalCountScale).rounded()))
+        // **The genus has a petal count; the plant does not draw one.** It used
+        // to be `integer("bloom.petalCount", 3...13)` scaled per archetype,
+        // which is a smear rather than a character — two plants of a genus were
+        // as likely to differ as to agree, so no key could name it.
+        //
+        // A flora reads *petals 5, rarely 4 or 6*, and that is what this is: the
+        // count belongs to the genus, and one plant in five carries the
+        // variant. Without the variant a bed of one genus reads as printed
+        // rather than grown; with more of it the count stops being diagnostic.
+        let plan = merosity == .few ? profile.petals.few : profile.petals.many
+        let variance = source.unit("bloom.petalVariant")
+        let petalCount = max(3, plan + (variance < 0.1 ? -1 : variance > 0.9 ? 1 : 0))
         // Sized against the plant it sits on. A bloom that does not scale with
         // the stem reads as a speck on a tall plant rather than a small flower,
         // and the flower is the thing people are looking at.
@@ -303,7 +327,9 @@ public struct Genome: Equatable, Sendable {
             opensByDay: source.chance("tempo.opensByDay", 0.7)
         )
 
-        name = PlantName(source: source)
+        // Last, and reading what is above it rather than drawing alongside it.
+        // docs/TAXONOMY.md §1: you name what you observe.
+        name = PlantName(source: source, archetype: archetype, merosity: merosity)
     }
 }
 

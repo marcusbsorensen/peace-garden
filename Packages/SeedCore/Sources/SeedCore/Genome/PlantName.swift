@@ -42,6 +42,57 @@ public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
         "Umbr", "Ver", "Wyn", "Zeph"
     ]
 
+    /// Which root a flower is named from: a family, and a merosity.
+    ///
+    /// **The whole of `docs/TAXONOMY.md` §1 is this table.** Before it, the
+    /// genus was `source.pick("name.genusHead", …)` — a draw beside the plant
+    /// rather than a reading of it, so *Melissa* and *Melandra* shared a genus
+    /// and needed have nothing in common. Over four thousand seeds the theme
+    /// explained 0.3% of the variance in stem height and 0.5% in leaf count. A
+    /// genus that groups by nothing is a prefix.
+    ///
+    /// Now it is read off the flower, which is the direction a name actually
+    /// runs: **you name what you observe.** Same root means same floral plan
+    /// and same petal count, which is what makes a key possible.
+    ///
+    /// Twelve families, two roots each, twenty-four roots — the frozen list
+    /// exactly, used once each. `RootTableTests` holds it to that.
+    ///
+    /// **No family takes both its roots from one theme.** Themes are what the
+    /// garden's ten areas are, so a family inside a single theme would be an
+    /// area of one repeated shape. Crossing them means every area holds two or
+    /// three kinds of plant, and it costs nothing: the head → theme map in
+    /// `Quotes.Theme` is untouched by any of this and did not move.
+    ///
+    /// The pairings are judgements about resemblance rather than derivations,
+    /// and the reasoning for each is in `docs/TAXONOMY.md` §"The twelve
+    /// families" — *Cynara* is the artichoke, which is a thistle; the olive
+    /// flowers in a small panicle on narrow leaves, which is a plume.
+    static let roots: [Archetype: (few: String, many: String)] = [
+        .spire:     (few: "Ver",  many: "Cer"),
+        .umbel:     (few: "Quin", many: "Fen"),
+        .fern:      (few: "Umbr", many: "Dros"),
+        .orchid:    (few: "Mel",  many: "Sel"),
+        .lotus:     (few: "Lir",  many: "Nyx"),
+        .thistle:   (few: "Cyn",  many: "Hal"),
+        .vine:      (few: "Wyn",  many: "Ael"),
+        .bell:      (few: "Cal",  many: "Ith"),
+        .star:      (few: "El",   many: "Ros"),
+        .poppy:     (few: "Bel",  many: "Aur"),
+        .succulent: (few: "Pell", many: "Thal"),
+        .plume:     (few: "Ol",   many: "Zeph"),
+    ]
+
+    /// The root a plant of this family and this merosity is named from.
+    public static func genusHead(for archetype: Archetype, _ merosity: Merosity) -> String {
+        // A family missing from the table would rename a twelfth of every
+        // garden in silence, so it is a trap rather than a fallback.
+        guard let pair = roots[archetype] else {
+            preconditionFailure("no genus roots for \(archetype) — see PlantName.roots")
+        }
+        return merosity == .few ? pair.few : pair.many
+    }
+
     static let genusMiddles = [
         "a", "an", "ar", "er", "i", "in", "is", "o", "or", "yr", "ell", "ess", "ol", "un"
     ]
@@ -62,8 +113,19 @@ public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
         "antha", "aria", "osa", "ula"
     ]
 
-    init(source: GeneSource) {
-        let head = source.pick("name.genusHead", from: Self.genusHeads)
+    /// Built from the flower it names.
+    ///
+    /// **The head is read, not drawn.** `archetype` and `merosity` are the two
+    /// floral facts a genus is separated on, and `Self.genusHead(for:_:)` turns
+    /// them into a root. The middle and the ending stay individual variation —
+    /// the ending has to, because `Quotes.Subtheme` is read off it.
+    ///
+    /// So two plants sharing a root share a flower, and two sharing the whole
+    /// written genus are the same genus in the ordinary sense. That is how
+    /// genera in one family are spelled in a real flora: a shared root and
+    /// different endings, as *Helianthus*, *Helianthemum* and *Heliopsis* are.
+    init(source: GeneSource, archetype: Archetype, merosity: Merosity) {
+        let head = Self.genusHead(for: archetype, merosity)
         let middle = source.chance("name.hasMiddle", 0.45)
             ? source.pick("name.genusMiddle", from: Self.genusMiddles)
             : ""

@@ -206,7 +206,7 @@ is a single repeated shape. The theme each root carries is unchanged.
 | **Liraceae** · lotus | `Lir` 8 · beginnings | `Nyx` 14 · waiting | *leirion*, lily — a lotus is a water lily — and *Nyx*, night, for the ones that open in it |
 | **Cynaceae** · thistle | `Cyn` 13 · kinship | `Hal` 21 · travel | *Cynara* is the artichoke, a thistle. *hals*, the salt sea, is sea holly |
 | **Wynaceae** · vine | `Wyn` 4 · kinship | `Ael` 6 · travel | *wynn*, joy, for the honeysuckle; *aellē*, a gust, for a lax stem in wind |
-| **Calaceae** · bell | `Cal` 5 · pattern | `Ith` 6 · meeting | *kalos*, the shapely — Campanula is 5-merous — and Ithaca, the bell rung on arrival |
+| **Calaceae** · bell | `Cal` 5 · pattern | `Ith` 10 · meeting | *kalos*, the shapely — Campanula is 5-merous — and Ithaca, the bell rung on arrival |
 | **Elaceae** · star | `El` 5 · light | `Ros` 8 · renewal | *hēlios*, the sun as a flat radial bloom; *ros*, the dew, on a dog rose's five |
 | **Belaceae** · poppy | `Bel` 4 · peace | `Aur` 6 · light | *bellus*, a clear sky, for remembrance; *aurora* for the poppy that opens at dawn |
 | **Pellaceae** · succulent | `Pell` 8 · ground | `Thal` 12 · beginnings | *pellis*, the earth's skin, for a houseleek; *thallos*, a body with no organs told apart |
@@ -218,13 +218,55 @@ family names land on real ones by the same etymology that named them:
 **Cynaceae** beside Cynareae, the thistle tribe; **Olaceae** beside Oleaceae,
 the olives; **Calaceae** beside Campanulaceae.
 
-**Two are worth arguing about.** `Cal` is given to the bell for *Campanula*, but
-*kalos* is the shapely in general and Pattern could as fairly claim the umbel's
-geometry — `Cal` and `Quin` could swap families. And the bell's 5-against-6 is
-the tightest pair on the table: it is countable, which is the standard the
-design sets, but it is the one pair a reader could not call at a glance.
+**One is still worth arguing about.** `Cal` is given to the bell for
+*Campanula*, but *kalos* is the shapely in general and Pattern could as fairly
+claim the umbel's geometry — `Cal` and `Quin` could swap families.
+
+## Built, and what looking at it changed
+
+*3 September. `RootTableTests`, eight of them, and the whole thing rendered.*
+
+The structure above is built and both suites are green — 80 in SeedCore, 23 in
+the app, `ThemeMappingTests` among them, which is the evidence that head → theme
+did not move.
+
+**The bell's pairing was wrong, and only the render said so.** It was written as
+5 against 6 and flagged in this file as the tightest pair on the table, on the
+argument that six lobes is countable even if it is not obvious. Four plants of
+each, drawn side by side, settled it: the two genera were *not tellable apart*.
+A nodding tube is small and one extra lobe at that size is nothing at all.
+
+It is 5 against 10 now — *Campanula* single, and Campanula 'Flore Pleno'
+doubled. **Twice the parts is the one number that is both legible and true**,
+because doubling is what a garden does to a bell anyway. Drawn again, the
+10-merous plants read as visibly fuller. It is better rather than solved: the
+bell remains the least legible couplet on the table, and a bell may simply be
+the wrong shape to key on a count.
+
+Against it, the orchid's 3 against 6 reads immediately, which is the pair with
+the most botany behind it. That is the shape of the result: where the number is
+real, it shows.
+
+Two things the render also confirmed, both of which were arguments until now:
+
+- **The twelve silhouettes stay distinct**, which is the acceptance test
+  `tools/preview/archetypes.py` exists for.
+- **Plants of one genus vary widely in everything but the flower** — colour,
+  height, leaf, habit — while the bloom holds. That is the whole design in one
+  picture, and it is what the vegetative widening below has still to push
+  further.
+
+`tools/preview/plant_model.py` was ported alongside, or the sheet would have
+drawn the old flowers and told us nothing. It is not covered by CI — only
+`tools/reference/` is — so it is a port that has to be kept by hand, and this is
+the second time that has mattered.
 
 ## What is Marcus's to decide
+
+*Marcus settled these on 3 September: the pairings are trusted as proposed, the
+flower is tightened and the vegetative half widened, and the epithet names the
+notable with a floor. What follows is kept because the reasoning is worth having
+rather than because it is still open.*
 
 1. **Which archetypes pair into which genus, and which genera into which theme.**
    The heads carry meanings that were chosen deliberately — *Ol* and *Bel* for
