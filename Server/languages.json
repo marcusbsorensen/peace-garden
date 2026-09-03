@@ -218,6 +218,14 @@
    "passages": 360
   },
   {
+   "code": "mt",
+   "name": "Maltese",
+   "endonym": "Malti",
+   "interface": false,
+   "bank": true,
+   "passages": 360
+  },
+  {
    "code": "nb",
    "name": "Norwegian Bokmål",
    "endonym": "Norsk bokmål",
