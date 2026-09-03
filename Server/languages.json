@@ -168,6 +168,14 @@
    "interface": false,
    "bank": true,
    "passages": 360
+  },
+  {
+   "code": "uk",
+   "name": "Ukrainian",
+   "endonym": "Українська",
+   "interface": false,
+   "bank": true,
+   "passages": 360
   }
  ]
 }

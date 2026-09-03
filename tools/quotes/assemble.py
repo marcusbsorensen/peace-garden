@@ -33,7 +33,30 @@ MAX_TEXT, MAX_SOURCE, MAX_OVERLAP = 240, 90, 0.5
 
 
 def words(text):
-    return {w for w in re.split(r"[^0-9A-Za-zÀ-ÿ]+", text.lower()) if len(w) >= 4}
+    """The interesting words in a passage, as `QuoteBankTests` counts them.
+
+    **Letters in any script, and no digits**, which is what Swift's
+    `CharacterSet.letters.inverted` gives `testNoSubthemeSaysTheSameThingTwice`.
+    This used to split on `[^0-9A-Za-zÀ-ÿ]+`, and both halves of that were
+    wrong once the banks stopped being Latin:
+
+    - **Cyrillic, Greek, Arabic, Hebrew and CJK all split away to nothing**, so
+      every non-Latin passage produced an empty word set and the duplicate check
+      quietly skipped it. A file could pass here and fail at `xcodebuild`, which
+      is the one thing this module exists to prevent.
+    - **Four-digit years survived**, so in a subtheme where the only surviving
+      tokens were years, two passages mentioning 1861 scored a perfect overlap.
+
+    Found by the agent writing the Ukrainian bank, which checked its own years
+    by hand rather than trusting this.
+
+    A script with no spaces gives one token per run, so for CJK this degrades to
+    catching exact repeats rather than near ones. Swift does the same thing, and
+    matching it is the point: this is a pre-flight check, and a pre-flight check
+    that is stricter or looser than the real one is worse than none.
+    """
+    # A letter is `[^\W\d_]`, so anything else — the split — is `[\W\d_]`.
+    return {w for w in re.split(r"[\W\d_]+", text.lower(), flags=re.UNICODE) if len(w) >= 4}
 
 
 def check(entries, english):

@@ -1,0 +1,26 @@
+{
+  "language": "Ukrainian",
+  "endonym": "Українська",
+  "awaiting": "The labels are written. The prose — tagline, about1, about2, about3, growBody, appNote — is still null and still English, on purpose: it is the site's own writing rather than the app's, and it is read in English before it is commissioned in sixteen languages. A null value is drawn in English, silently, one key at a time; the English is in assets/js/strings.js.",
+  "strings": {
+    "tagline": null,
+    "about1": null,
+    "about2": null,
+    "about3": null,
+    "seedTitle": "Прийшла насінина",
+    "replyTitle": "Насінина повернулася",
+    "sentBy": "Від {name}",
+    "gardener": "садівник",
+    "planted": "Посаджено",
+    "growTitle": "Як її виростити",
+    "growBody": null,
+    "appNote": null,
+    "inEnglish": "англійською",
+    "language": "Мова",
+    "keys": "Клавіші",
+    "random": "Кудись навмання",
+    "damaged": "Це посилання надійшло пошкодженим, тож насінину не вдалося прочитати.",
+    "notASeed": "Це посилання не несе насінини.",
+    "newerVersion": "Ця насінина з новішої версії Peace Garden."
+  }
+}
