@@ -122,6 +122,14 @@
    "passages": 373
   },
   {
+   "code": "hr",
+   "name": "Croatian",
+   "endonym": "Hrvatski",
+   "interface": false,
+   "bank": true,
+   "passages": 360
+  },
+  {
    "code": "hu",
    "name": "Hungarian",
    "endonym": "Magyar",
