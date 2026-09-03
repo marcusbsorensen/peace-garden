@@ -71,6 +71,11 @@ answer about itself. Neither has a bank or an interface yet.
 - `Server/assets/js/garden.js`, `keys.js`, `walk.js`, `plots.js`, `Server/g` —
   the map, the keyboard registry, the walk, and a stand-in for the plot service
   that says on screen that it is one.
+- `docs/WORDS.md` — what forty-three languages said about peace, gathered from
+  the commissioning reports, and Marcus's proposal to make a section of the app
+  out of it. The convergences are the point: a dozen languages independently
+  found that peace is something two people do to each other, that a seed under
+  the soil is *at peace*, and that a meeting is a piece of luck.
 - `docs/FOR-REVIEW.md` — **read this first.** The site's six prose strings and
   ten area names, with the argument and its alternatives, and one command to
   look at the garden while deciding. Nothing in it is live.
