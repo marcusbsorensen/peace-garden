@@ -24,7 +24,7 @@
   "subtheme": "theFirstAct"
  },
  {
-  "text": "Hegazti askok ez dute berotzen hasten habia bete arte, kume guztiak egun berean jaio daitezen.",
+  "text": "Hegazti asko ez dira berotzen hasten habia bete arte, kume guztiak egun berean jaio daitezen.",
   "source": "Ornitologia",
   "theme": "beginnings",
   "subtheme": "theFirstAct"
@@ -54,7 +54,7 @@
   "subtheme": "theFirstAct"
  },
  {
-  "text": "Landare batek haziaren barruan zeramatzan jada bere lehen bi hostoak, eginda. Lurpean irekitzen dira, argirik ikusi baino lehen.",
+  "text": "Landareak bere lehen bi hostoak haziaren barruan ditu jada eginak. Lurpean irekitzen dira, argirik ikusi baino lehen.",
   "source": "Botanika",
   "theme": "beginnings",
   "subtheme": "theFirstAct"
@@ -336,7 +336,7 @@
   "subtheme": "theLongCount"
  },
  {
-  "text": "Ardiaren adina hortzek ematen dute, ez artzainaren oroimenak: bi hortz urtero, lauzpabost urte bete arte.",
+  "text": "Ardiaren adina hortzetan irakurtzen da, ez artzainaren oroimenean: bi hortz urtero, lauzpabost urte bete arte.",
   "source": "Artzaintza",
   "theme": "waiting",
   "subtheme": "theLongCount"
@@ -384,7 +384,7 @@
   "subtheme": "standingAndWatching"
  },
  {
-  "text": "Zaindu aditzak begiratzea eta babestea esaten ditu batera. Artzaina ardi-zaina da, eta atezaina atearena.",
+  "text": "Zaindu aditzak begiratzea eta babestea esan nahi ditu batera. Artzaina ardi-zaina da, eta atezaina atearena.",
   "source": "Euskara",
   "theme": "waiting",
   "subtheme": "standingAndWatching"
@@ -408,7 +408,7 @@
   "subtheme": "standingAndWatching"
  },
  {
-  "text": "Erlauntzaren atean beti dago erle bat edo bi zainduta. Sartzen den bakoitza usainetik ezagutzen dute, banaka.",
+  "text": "Erlauntzaren atean beti dago erle bat edo bi zaintzan. Sartzen den bakoitza usainetik ezagutzen dute, banaka.",
   "source": "Erlezaintza",
   "theme": "waiting",
   "subtheme": "standingAndWatching"
@@ -558,7 +558,7 @@
   "subtheme": "theTurningYear"
  },
  {
-  "text": "Landare batzuek bigarren urtean bakarrik loratzen dute. Lehenengoan sustraia egiten dute soilik, eta itxaron.",
+  "text": "Landare batzuek bigarren urtean bakarrik loratzen dute. Lehenengoan sustraia eta hostoak bakarrik egiten dituzte, eta hurrengoa itxaroten.",
   "source": "Botanika",
   "theme": "renewal",
   "subtheme": "theTurningYear"
@@ -576,7 +576,7 @@
   "subtheme": "theTurningYear"
  },
  {
-  "text": "Leenaren muiñak aldatu beza baratz zaarra baratz berri!",
+  "text": "Ordun baratza leeneratu zan, mugak berriro zabaliz.",
   "source": "Xabier Lizardi, Biotz-begietan, 1932",
   "theme": "renewal",
   "subtheme": "madeWhole"
@@ -600,7 +600,7 @@
   "subtheme": "madeWhole"
  },
  {
-  "text": "Sarea konpontzea arrantzaren parte zen, ez atzerapena. Portuko lehorrean egiten zen, eserita, eta bi eskuk baino gehiagok esku hartzen zuten.",
+  "text": "Sarea konpontzea arrantzaren parte zen, ez atzerapena. Portuko lehorrean egiten zen, eserita, eta askotan lagun batek baino gehiagok hartzen zuen parte.",
   "source": "Itsas historia",
   "theme": "renewal",
   "subtheme": "madeWhole"
@@ -612,7 +612,7 @@
   "subtheme": "madeWhole"
  },
  {
-  "text": "Osatu aditzak sendatzea eta osorik egitea esaten ditu batera. Osasuna ere hortik dator: osoa izatea.",
+  "text": "Osatu aditzak sendatzea eta osorik egitea esan nahi ditu batera. Osasuna ere hortik dator: osoa izatea.",
   "source": "Etimologia",
   "theme": "renewal",
   "subtheme": "madeWhole"
@@ -684,7 +684,7 @@
   "subtheme": "theEdgesOfTheDay"
  },
  {
-  "text": "Gau eta egun berdin diren bi egun daude urtean. Euskaraz ekinozioa esaten zaie, baina baserrian San Jose eta San Migel ziren markak.",
+  "text": "Gaua eta eguna berdin diren bi egun daude urtean. Ekinozioa esaten zaie, eta baserrian San Jose eta San Migel inguruko egunak ziren markak.",
   "source": "Astronomia",
   "theme": "light",
   "subtheme": "theEdgesOfTheDay"
@@ -738,7 +738,7 @@
   "subtheme": "readingTheLight"
  },
  {
-  "text": "Hilarri biribilek eguzki-arrosa bat daramate maiz alde batean, eta gurutzea bestean. Biribila hego aldera begira jartzen zen.",
+  "text": "Hilarri biribilek eguzki-arrosa bat daramate maiz alde batean, eta gurutzea bestean. Bi zeinu, harri berean, eta biak biribilaren barruan.",
   "source": "Etnografia",
   "theme": "light",
   "subtheme": "readingTheLight"
@@ -798,13 +798,13 @@
   "subtheme": "lightItself"
  },
  {
-  "text": "Argi hitzak argia eta argitasuna esaten ditu, eta baita ulertzea ere: zerbait argi ikustea ulertzea da euskaraz.",
+  "text": "Argi hitzak ulermena ere izendatzen du: zerbait argi ikustea ulertzea da euskaraz, eta argibidea azalpen bat.",
   "source": "Euskara",
   "theme": "light",
   "subtheme": "lightItself"
  },
  {
-  "text": "Ilargi hitza argi da, hil hitzarekin batera. Hil hilabetea da euskaraz, eta horrela ilargia hilabetearen argia da.",
+  "text": "Ilargia argi hitzaz egina dago, hil hitzarekin batera. Hil hilabetea da euskaraz, eta hala ilargia hilabetearen argia da.",
   "source": "Etimologia",
   "theme": "light",
   "subtheme": "lightItself"
@@ -852,7 +852,7 @@
   "subtheme": "lightItself"
  },
  {
-  "text": "Ilargiak ez du argirik berea. Ikusten duguna eguzkiarena da, gure gainera itzulia, eta hilabete oso bat behar du itzuli osoa emateko.",
+  "text": "Ilargiak ez du argi propiorik. Ikusten duguna eguzkiarena da, gure gainera islatua, eta hilabete oso bat behar du aldi guztiak igarotzeko.",
   "source": "Astronomia",
   "theme": "light",
   "subtheme": "lightItself"
@@ -919,7 +919,7 @@
  },
  {
   "text": "Baserrian eguna otorduka zatitzen zen: gosaria, hamaiketakoa, bazkaria, askaria eta afaria. Hamaiketakoak ordua darama izenean.",
-  "source": "Euskara",
+  "source": "Etnografia",
   "theme": "pattern",
   "subtheme": "counted"
  },
@@ -948,7 +948,7 @@
   "subtheme": "fittedTogether"
  },
  {
-  "text": "Txalaparta bi lagunek jotzen dute, eta ezin da bakarrik jo. Batak erritmo bat eusten dio, eta besteak tarteak betetzen ditu.",
+  "text": "Txalaparta bi lagunek jotzen dute, eta ezin da bakarrik jo. Batak erritmoari eusten dio, eta besteak tarteak betetzen ditu.",
   "source": "Musika",
   "theme": "pattern",
   "subtheme": "fittedTogether"
@@ -996,7 +996,7 @@
   "subtheme": "fittedTogether"
  },
  {
-  "text": "Upel batek ez du kolarik. Ohol bakoitza alboetakoen kontra estutzen da burdinazko uztaiez, eta egurra hanturik ixten da zirrikitua.",
+  "text": "Upel batek ez du kolarik. Ohol bakoitza alboetakoen kontra estutzen da burdinazko uztaiez, eta egurra hantzen denean ixten da zirrikitua.",
   "source": "Etnografia",
   "theme": "pattern",
   "subtheme": "fittedTogether"
@@ -1044,7 +1044,7 @@
   "subtheme": "orderNamed"
  },
  {
-  "text": "Ergatiboa deitzen zaio euskaraz zerbait egiten duenari eransten zaion -k horri. Aditzak berak esaten du nork, nori eta zer.",
+  "text": "Ergatiboa deitzen zaio egilearen izenari eransten zaion -k horri. Aditzak berak esaten du nork, nori eta zer.",
   "source": "Hizkuntzalaritza",
   "theme": "pattern",
   "subtheme": "orderNamed"
@@ -1104,7 +1104,7 @@
   "subtheme": "theSoilItself"
  },
  {
-  "text": "Euskal Herriko lurrik emankorrenak ibarretakoak dira, ibaiak mendeetan behera ekarritakoak. Mendiko lurra da behean dagoena.",
+  "text": "Ibarreko lurra mendikoa da, behera ekarria. Ibaiek mendeetan eraman dute goitik behera, eta hori da lurrik emankorrena.",
   "source": "Nekazaritza",
   "theme": "ground",
   "subtheme": "theSoilItself"
@@ -1182,7 +1182,7 @@
   "subtheme": "aPlaceYouAreFrom"
  },
  {
-  "text": "Herri hitzak jendea, herrixka eta lurraldea esaten ditu batera. Ez dago bereizterik non amaitzen den bata eta non hasten bestea.",
+  "text": "Herri hitzak jendea, herrixka eta lurraldea biltzen ditu batera. Ez dago bereizterik non amaitzen den bata eta non hasten bestea.",
   "source": "Euskara",
   "theme": "ground",
   "subtheme": "aPlaceYouAreFrom"
@@ -1206,7 +1206,7 @@
   "subtheme": "aPlaceYouAreFrom"
  },
  {
-  "text": "Sortu aditzak jaiotzea eta sortzea esaten ditu, eta sorlekua jaioterria da. Norbait nongoa den galdetzea non sortu zen galdetzea da.",
+  "text": "Sortu aditzak jaiotzea eta sorraraztea biltzen ditu, eta sorlekua jaioterria da. Norbait nongoa den galdetzea non sortu zen galdetzea da.",
   "source": "Euskara",
   "theme": "ground",
   "subtheme": "aPlaceYouAreFrom"
@@ -1243,7 +1243,7 @@
  },
  {
   "text": "Baratzea jateko landatzen den lekua da euskaraz, eta lorategia beste hitz bat. Etxeari lotuta egoten zen beti baratzea, ez urrun.",
-  "source": "Etimologia",
+  "source": "Euskara",
   "theme": "ground",
   "subtheme": "aKeptPlace"
  },
@@ -1302,7 +1302,7 @@
   "subtheme": "howASeedGoes"
  },
  {
-  "text": "Lapa: haziaren kanpoaldeko kako txikiak. Ardiaren ileari itsatsi eta hurrengo mendian jausten dira, artaldeak eramanda.",
+  "text": "Lapa-belarraren haziak kako txikiz inguratuta daude. Ardiaren ileari itsatsi eta hurrengo mendian jausten dira, artaldeak eramanda.",
   "source": "Botanika",
   "theme": "travel",
   "subtheme": "howASeedGoes"
@@ -1314,7 +1314,7 @@
   "subtheme": "howASeedGoes"
  },
  {
-  "text": "Masustaren haziak txoriaren barrutik pasatzen dira osorik, eta hobeto ernetzen dute pasatu ondoren. Bidaia parte da haztea.",
+  "text": "Masustaren haziak txoriaren barrutik osorik pasatzen dira, eta hobeto ernetzen dute gero. Bidaia bera da ereitearen parte.",
   "source": "Botanika",
   "theme": "travel",
   "subtheme": "howASeedGoes"
@@ -1338,7 +1338,7 @@
   "subtheme": "howASeedGoes"
  },
  {
-  "text": "Basurdearen ileari eta ardiaren azpiari begiratuz gero, hamar landare mota bil daitezke. Animaliak berak ez du jakiten zer daraman.",
+  "text": "Basurdearen ilean eta ardiaren larruan hamar landare motaren haziak bil daitezke aldi berean. Animaliak ez daki zer daraman.",
   "source": "Basogintza",
   "theme": "travel",
   "subtheme": "howASeedGoes"
@@ -1362,7 +1362,7 @@
   "subtheme": "howASeedGoes"
  },
  {
-  "text": "Ereintza hitza ereitetik dator, eta erein aditzak eskuz botatzea esan nahi zuen jatorriz: haziak airean, ez zuloan.",
+  "text": "Ereitea eskuz botatzea zen luzaroan: haziak airera botatzen ziren eta goldeak estaltzen zituen gero. Zulo bakoitzean bat jartzea beranduagokoa da.",
   "source": "Euskara",
   "theme": "travel",
   "subtheme": "howASeedGoes"
@@ -1374,7 +1374,7 @@
   "subtheme": "theRoad"
  },
  {
-  "text": "Bide hitzak bidea eta modua esaten ditu: zerbait egiteko bidea eta oinez egiteko bidea hitz berak biltzen ditu.",
+  "text": "Bide hitzak modua ere esan nahi du: zerbait egiteko bidea eta oinez egiteko bidea hitz berak izendatzen ditu.",
   "source": "Euskara",
   "theme": "travel",
   "subtheme": "theRoad"
@@ -1416,7 +1416,7 @@
   "subtheme": "theRoad"
  },
  {
-  "text": "Ibili aditzak joatea eta jardutea esaten ditu: lanean ibili eta mendian ibili gauza bera dira euskaraz.",
+  "text": "Ibili aditzak joatea eta jardutea biltzen ditu: lanean ibili eta mendian ibili aditz berbera dira euskaraz.",
   "source": "Euskara",
   "theme": "travel",
   "subtheme": "theRoad"
@@ -1488,7 +1488,7 @@
   "subtheme": "farOff"
  },
  {
-  "text": "Urruti hitzak distantzia esaten du, eta urrun hitzak ere bai. Bata leku bati begira dago, eta bestea norbaiti.",
+  "text": "Urrun eta urruti bi hitz dira gauza bererako, eta biak erabiltzen dira. Euskalkiak erabakitzen du zein entzungo den.",
   "source": "Euskara",
   "theme": "travel",
   "subtheme": "farOff"
@@ -1518,7 +1518,7 @@
   "subtheme": "theMoment"
  },
  {
-  "text": "Elkar hitza euskarak berariaz duen izenordaina da: bata bestea. Elkar ikusi gabe ezin da esan bi lagun topatu direla.",
+  "text": "Elkar da euskarak elkarrekikoa adierazteko duen izenordaina: bata bestea. Elkar ikusi gabe ezin da esan bi lagun topatu direnik.",
   "source": "Euskara",
   "theme": "meeting",
   "subtheme": "theMoment"
@@ -1536,7 +1536,7 @@
   "subtheme": "theMoment"
  },
  {
-  "text": "Ezti-erlea lorean pausatzen denean, biak aldatzen dira: lorea ernaltzen da, eta erleak hurrengoari nora joan esango dio dantzan.",
+  "text": "Ezti-erlea lorean pausatzen denean, biak aldatzen dira: lorea ernaltzen da, eta erleak besteei esango die dantzan non dagoen lorea.",
   "source": "Erlezaintza",
   "theme": "meeting",
   "subtheme": "theMoment"
@@ -1650,7 +1650,7 @@
   "subtheme": "twoThatNeedEachOther"
  },
  {
-  "text": "Lagun hitzak laguna eta laguntza ematen ditu: lagundu aditzak norbaitekin joatea eta norbaiti eskua ematea esaten ditu batera.",
+  "text": "Lagundu aditzak norbaitekin joatea eta norbaiti eskua ematea esan nahi ditu batera. Laguntza hitza laguna hitzetik dator.",
   "source": "Euskara",
   "theme": "meeting",
   "subtheme": "twoThatNeedEachOther"
@@ -1680,7 +1680,7 @@
   "subtheme": "theMannersOfIt"
  },
  {
-  "text": "Gabon bi gauza dira euskaraz: gau on opa izatea eta Eguberri bezpera. Urteko gau bati gau guztien agurra jarri zaio izen.",
+  "text": "Gabon bi gauza dira euskaraz: gau on opa izatea eta Eguberri bezpera. Urteko gau bati gau guztien agurra jarri zaio izena.",
   "source": "Euskara",
   "theme": "meeting",
   "subtheme": "theMannersOfIt"
@@ -1770,7 +1770,7 @@
   "subtheme": "grownTogether"
  },
  {
-  "text": "Bi ibai elkartzen direnean, urak kilometro batzuetan bereizita joan daitezke, tenperatura eta kolorea desberdinak badituzte. Marra ikusi egiten da.",
+  "text": "Bi ibai elkartzen direnean, urak kilometro batzuetan bereizita joan daitezke, tenperatura eta kolorea desberdinak badira. Marra ikusi egiten da.",
   "source": "Geografia",
   "theme": "kinship",
   "subtheme": "grownTogether"
@@ -1812,7 +1812,7 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Kide atzizkiak lagun egiten du: lankidea lanean, ikaskidea eskolan, auzokidea auzoan. Hitz bakoitzak non elkartu diren esaten du.",
+  "text": "Kide atzizkiak laguna ateratzen du hitzetik: lankidea lanean, ikaskidea eskolan, auzokidea auzoan. Hitzak berak dio non elkartu diren.",
   "source": "Euskara",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
@@ -1848,7 +1848,7 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Ume, haur eta seme-alaba hiru hitz dira eta ez dute gauza bera esaten: azkenak gurasoari begiratzen dio, eta besteek adinari.",
+  "text": "Ume, haur eta seme-alaba hiru hitz dira eta ez dute gauza bera esan nahi: azkenak gurasoari begiratzen dio, eta besteek adinari.",
   "source": "Euskara",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
@@ -1902,7 +1902,7 @@
   "subtheme": "twoPeople"
  },
  {
-  "text": "Erretiroan dauden marinelek portuan biltzen dira oraindik, eguraldiaz hitz egiteko. Portua ez zen lantokia bakarrik.",
+  "text": "Erretiroan dauden marinelak portuan biltzen dira oraindik, eguraldiaz hitz egiteko. Portua ez zen lantokia bakarrik.",
   "source": "Itsas historia",
   "theme": "kinship",
   "subtheme": "twoPeople"
@@ -1938,7 +1938,7 @@
   "subtheme": "twoPeople"
  },
  {
-  "text": "Bi eskuk igitaia hobeto darabilte batek baino, baina belarra biltzeko hiru behar dira: bi mozten eta bat batzen.",
+  "text": "Igitaiaz belarra mozten denean, esku batek moztu eta besteak biltzen du. Horregatik da lan hori arinagoa bikoteka eginda.",
   "source": "Nekazaritza",
   "theme": "kinship",
   "subtheme": "twoPeople"
@@ -1950,13 +1950,13 @@
   "subtheme": "quietAsASound"
  },
  {
-  "text": "Zurrumurrua bi gauza da euskaraz: apal hitz egitearen hotsa eta esaten den hitza bera. Marmarra ere bietarako balio du.",
+  "text": "Zurrumurrua bi gauza da euskaraz: apal hitz egitearen hotsa eta esaten den hitza bera. Marmarrak ere bietarako balio du.",
   "source": "Euskara",
   "theme": "peace",
   "subtheme": "quietAsASound"
  },
  {
-  "text": "Hontzak lumen ertzak orrazi baten antzekoak ditu, eta horrek airea zatitzen du zaratarik egin gabe. Ehiza entzun gabe hurbiltzen zaio.",
+  "text": "Hontzak lumen ertzak orrazi baten antzekoak ditu, eta horrek airea zatitzen du zaratarik egin gabe. Harrapakinak ez du entzuten gainera datorrenik.",
   "source": "Ornitologia",
   "theme": "peace",
   "subtheme": "quietAsASound"
@@ -1987,7 +1987,7 @@
  },
  {
   "text": "Pil-pil olioak eta urak elkartzean egiten duten hotsa da, eta saltsa baten izena ere bai. Hotsak jarri zion izena jakiari.",
-  "source": "Musika",
+  "source": "Sukaldaritza",
   "theme": "peace",
   "subtheme": "quietAsASound"
  },
@@ -1998,7 +1998,7 @@
   "subtheme": "quietAsASound"
  },
  {
-  "text": "Hots egin norbaiti deitzea da euskaraz, eta hots soinua bera. Norbait deitzeko, haren ingurura hotsa botatzen da.",
+  "text": "Hots soinua da euskaraz, eta hots egin norbaiti deitzea. Deitzeko, hotsa botatzen zaio norbaiti.",
   "source": "Euskara",
   "theme": "peace",
   "subtheme": "quietAsASound"
@@ -2034,7 +2034,7 @@
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Hitzarmena hitza eta eman dira: elkarri hitza ematea. Tratu bat sinatu aurretik, ahoz lotzen zen.",
+  "text": "Hitzarmena hitz eta eman hitzez egina dago: elkarri hitza ematea. Tratu bat sinatu aurretik, ahoz lotzen zen.",
   "source": "Etimologia",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
@@ -2052,7 +2052,7 @@
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Etenaldia hitzak eten eta aldi ditu: haustura bat eta denbora-tarte bat. Zerbait gelditzeak berez irauten du.",
+  "text": "Etenaldia eten eta aldi hitzez egina dago: haustura bat eta denbora-tarte bat. Gelditzeak berak irauten du.",
   "source": "Euskara",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
@@ -2076,7 +2076,7 @@
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Geldi hitzak geldirik egotea esaten du, eta gelditu aditzak zerbait bertan behera uztea ere bai. Egotea eta amaitzea hitz berak biltzen ditu.",
+  "text": "Gelditu aditzak bertan geratzea eta zerbait bertan behera uztea esan nahi ditu. Egotea eta amaitzea hitz berak biltzen ditu.",
   "source": "Etimologia",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
@@ -2106,7 +2106,7 @@
   "subtheme": "atEase"
  },
  {
-  "text": "Hasperena ere hats hitzetik dator. Arnasa luze bat botatzea izen bat merezi izan duen gauza da euskaraz.",
+  "text": "Hasperena ere hats hitzetik dator: arnasa luze bat botatzeak bere izena du euskaraz.",
   "source": "Etimologia",
   "theme": "peace",
   "subtheme": "atEase"
@@ -2130,13 +2130,13 @@
   "subtheme": "atEase"
  },
  {
-  "text": "Sutondoan bazen ordena bat: nagusiak suaren aurrean eta txikienak alboan, XVII. mendeko ohar batek dioenez, eta hala entzuten zuten dena.",
-  "source": "Etnografia",
+  "text": "XVII. mendeko ohar batek dio sutondoan bazela ordena bat: etxeko nagusiak suaren aurrean eta txikienak alboan, eta denek entzuten zutela.",
+  "source": "Zalgizeren atsotitzak, XVII. mendea",
   "theme": "peace",
   "subtheme": "atEase"
  },
  {
-  "text": "Goxo hitzak gozoa eta epela esaten ditu batera. Leku goxo bat ez da gozoa: epela eta babestua da.",
+  "text": "Goxo hitzak gozoa eta epela esan nahi ditu batera. Leku goxo bat ez da gozoa: epela eta babestua da.",
   "source": "Euskara",
   "theme": "peace",
   "subtheme": "atEase"
@@ -2148,14 +2148,14 @@
   "subtheme": "atEase"
  },
  {
-  "text": "Ardiak etzan aurretik bira bat ematen du, eta beti norabide berean. Etzatea ez da gelditzea: prestatu egiten da.",
-  "source": "Artzaintza",
+  "text": "Lo hartu aurretik, gorputzaren tenperatura erdi gradu jaisten da. Logura arratsean etortzea horri lotuta dago, eta ez nekeari bakarrik.",
+  "source": "Fisiologia",
   "theme": "peace",
   "subtheme": "atEase"
  },
  {
   "text": "Lurpetik ateratzen den urak tenperatura bera izaten du urte osoan. Horregatik dago iturri baten ondoa fresko udan eta epel neguan.",
-  "source": "Etnografia",
+  "source": "Geologia",
   "theme": "peace",
   "subtheme": "atEase"
  }

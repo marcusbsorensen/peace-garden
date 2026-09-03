@@ -12,7 +12,7 @@
   "subtheme": "theFirstAct"
  },
  {
-  "text": "Is trian den obair tús a chur uirthi.",
+  "text": "Is trian den obair tús a chur.",
   "source": "Seanfhocal",
   "theme": "beginnings",
   "subtheme": "theFirstAct"
@@ -108,7 +108,7 @@
   "subtheme": "smallToLarge"
  },
  {
-  "text": "Is é an dreoilín an t-éan is lú dá bhfuil againn beagnach, agus is airde a ghlór ná glór éan atá deich n-uaire níos troime ná é.",
+  "text": "Is é an dreoilín beagnach an t-éan is lú dá bhfuil againn, agus is airde a ghlór ná glór éan atá deich n-uaire níos troime ná é.",
   "source": "Éaneolaíocht",
   "theme": "beginnings",
   "subtheme": "smallToLarge"
@@ -126,7 +126,7 @@
   "subtheme": "smallToLarge"
  },
  {
-  "text": "Bíonn na céadta míle síol i mbolgán aonair caisearbháin, agus ní theastaíonn ó cheann amháin acu ach scoilt i mballa.",
+  "text": "Bíonn suas le dhá chéad síol in aon bholgán amháin caisearbháin, agus ní theastaíonn ó cheann amháin acu ach scoilt i mballa.",
   "source": "Luibheolaíocht",
   "theme": "beginnings",
   "subtheme": "smallToLarge"
@@ -276,7 +276,7 @@
   "subtheme": "heldBack"
  },
  {
-  "text": "Ní ligeann an t-iora rua dearcán ar bith as a phluais go dtí go mbíonn an sneachta ann. Fágtar cuid mhaith acu gan tochailt.",
+  "text": "Ní chodlaíonn an t-iora rua an geimhreadh ar fad. Dúisíonn sé lá bog i mí Eanáir, itheann sé cuid dá thaisce, agus téann sé a luí arís.",
   "source": "Zó-eolaíocht",
   "theme": "waiting",
   "subtheme": "heldBack"
@@ -288,7 +288,7 @@
   "subtheme": "heldBack"
  },
  {
-  "text": "Aon fhocal amháin, aimsir, atá sa Ghaeilge ar an aimsir atá lasmuigh den fhuinneog agus ar an am atá ag imeacht. Is é an focal céanna a chuireann briathar in aimsir chaite.",
+  "text": "Is é an focal céanna, aimsir, atá ar an rud atá lasmuigh den fhuinneog agus ar an am atá ag imeacht. Agus is é a chuirtear le briathar freisin: an aimsir chaite.",
   "source": "Gaeilge",
   "theme": "waiting",
   "subtheme": "theLongCount"
@@ -372,7 +372,7 @@
   "subtheme": "standingAndWatching"
  },
  {
-  "text": "Trí chomhartha na gaoise: foighne, géarshúil, agus tuiscint ar a bhfuil le teacht.",
+  "text": "Trí chomhartha na gaoise: foighne, discréid, agus tuiscint ar a bhfuil le teacht.",
   "source": "Trecheng Breth Féne, an 9ú haois",
   "theme": "waiting",
   "subtheme": "standingAndWatching"
@@ -420,8 +420,8 @@
   "subtheme": "standingAndWatching"
  },
  {
-  "text": "Bhíodh fear an tí ag faire na tine go déanach san oíche, ní chun í a bheathú ach chun a chinntiú go raibh sí ag dul in éag mar ba cheart.",
-  "source": "Béaloideas",
+  "text": "Bhíodh duine ina shuí tríd an oíche i ngach teach solais amach ón gcósta, á chinntiú go raibh an lasair fós ag casadh. Tá siad uathoibríoch ar fad anois.",
+  "source": "Stair",
   "theme": "waiting",
   "subtheme": "standingAndWatching"
  },
@@ -438,7 +438,7 @@
   "subtheme": "cutAndComeAgain"
  },
  {
-  "text": "Coill mhaoile: an choill a ghearrtar go talamh de réir timthrialla. Ní deireadh don chrann é ach tosú eile, agus maireann an stoc na céadta bliain mar sin.",
+  "text": "Gearrtar coill go talamh de réir timthrialla agus fásann sí aníos arís as an stoc. Ní deireadh don chrann é, agus maireann an stoc na céadta bliain amhlaidh.",
   "source": "Foraoiseacht",
   "theme": "renewal",
   "subtheme": "cutAndComeAgain"
@@ -486,7 +486,7 @@
   "subtheme": "cutAndComeAgain"
  },
  {
-  "text": "Nuair a chailleann portán a chrúb, fásann ceann nua uirthi thar dhá shéasúr. Bíonn sí níos lú ar dtús agus comhardaíonn sí ina dhiaidh sin.",
+  "text": "Nuair a chailleann portán crúb, fásann ceann nua air thar dhá shéasúr. Bíonn an chrúb nua níos lú ar dtús agus tagann sí chuici féin ina dhiaidh sin.",
   "source": "Bitheolaíocht mhara",
   "theme": "renewal",
   "subtheme": "cutAndComeAgain"
@@ -540,7 +540,7 @@
   "subtheme": "theTurningYear"
  },
  {
-  "text": "Líonann an turlach sa gheimhreadh agus bíonn sé ina fhéarach sa samhradh. An t-aon áit in Éirinn a n-ólann bó as loch a bhí ann anuraidh.",
+  "text": "Beathaíonn an turlach eallach sa samhradh san áit a raibh loch sa gheimhreadh. Ní ghlanann aon duine é agus ní líonann aon duine é.",
   "source": "Tíreolaíocht",
   "theme": "renewal",
   "subtheme": "theTurningYear"
@@ -558,7 +558,7 @@
   "subtheme": "theTurningYear"
  },
  {
-  "text": "Tá ceithre fhocal ag an nGaeilge ar an aon rud amháin: earrach, samhradh, fómhar, geimhreadh. Ainm oibre atá ar thrí cinn acu.",
+  "text": "Ciallaíonn fómhar an séasúr agus an bhaint araon. Nuair a deirtear go bhfuil an fómhar istigh, ní faoin bhféilire atá an chaint.",
   "source": "Gaeilge",
   "theme": "renewal",
   "subtheme": "theTurningYear"
@@ -660,7 +660,7 @@
   "subtheme": "theEdgesOfTheDay"
  },
  {
-  "text": "Clapsholas, contráth, coineascar. Trí fhocal ar an aon uair an chloig amháin tráthnóna, agus ceann acu i ngach cúige.",
+  "text": "Clapsholas, contráth, coineascar. Trí fhocal ar an aon uair an chloig amháin tráthnóna, agus níl aon cheann acu níos cirte ná a chéile.",
   "source": "Gaeilge",
   "theme": "light",
   "subtheme": "theEdgesOfTheDay"
@@ -690,13 +690,13 @@
   "subtheme": "theEdgesOfTheDay"
  },
  {
-  "text": "Is é an lon dubh is túisce a labhraíonn ar maidin, uair an chloig go leith roimh éirí gréine amanna, agus is é an gealbhan is déanaí.",
+  "text": "Is é an lon dubh is túisce a labhraíonn ar maidin, beagnach uair an chloig roimh éirí gréine, agus is é an gealbhan is déanaí.",
   "source": "Éaneolaíocht",
   "theme": "light",
   "subtheme": "theEdgesOfTheDay"
  },
  {
-  "text": "Ní luíonn an ghrian ag an nóiméad céanna i nGaillimh agus i mBaile Átha Cliath. Bíonn cúig nóiméad déag idir an dá luí.",
+  "text": "Ní luíonn an ghrian ag an nóiméad céanna i nGaillimh agus i mBaile Átha Cliath. Bíonn tuairim is deich nóiméad idir an dá luí.",
   "source": "Réalteolaíocht",
   "theme": "light",
   "subtheme": "theEdgesOfTheDay"
@@ -732,7 +732,7 @@
   "subtheme": "readingTheLight"
  },
  {
-  "text": "Bán an dath agus geal an lonrú. Bíonn léine bhán ann agus bíonn lá geal ann, agus is é geal a chuirtear le duine atá geanúil ort.",
+  "text": "Bán an dath agus geal an lonrú. Bíonn léine bhán ann agus bíonn lá geal ann, agus is é geal a chuirtear le hainm an duine is ansa leat.",
   "source": "Gaeilge",
   "theme": "light",
   "subtheme": "readingTheLight"
@@ -852,7 +852,7 @@
   "subtheme": "lightItself"
  },
  {
-  "text": "Splanc an focal ar an tintreach agus ar an smaoineamh a thagann gan choinne. Aon fhocal amháin a rinne an dá phost.",
+  "text": "Splanc an focal ar an tintreach agus ar an smaoineamh a thagann gan choinne. Aon fhocal amháin a dhéanann an dá ghnó.",
   "source": "Gaeilge",
   "theme": "light",
   "subtheme": "lightItself"
@@ -882,7 +882,7 @@
   "subtheme": "counted"
  },
  {
-  "text": "Fiche litir atá san ogham, iad ina gceithre dhream de chúigear. Is iad na strócanna a chomhairtear seachas an cruth a aithint.",
+  "text": "Fiche litir atá san ogham, iad ina gceithre aicme de chúig cinn. Is iad na strócanna a chomhairtear seachas an cruth a aithint.",
   "source": "Seandálaíocht",
   "theme": "pattern",
   "subtheme": "counted"
@@ -900,13 +900,13 @@
   "subtheme": "counted"
  },
  {
-  "text": "Seinntear port trí huaire sula n-athraítear é, agus bíonn dhá chuid i ngach port, gach ceann acu á sheinm faoi dhó.",
+  "text": "Seinntear port faoi dhó nó trí huaire sula n-athraítear é, agus bíonn dhá chuid i ngach port, gach ceann acu á sheinm faoi dhó.",
   "source": "Ceol",
   "theme": "pattern",
   "subtheme": "counted"
  },
  {
-  "text": "Tá timpeall daichead míle ráth agus lios fágtha sa tír, agus is annamh a bhíonn ceann acu as amharc ó cheann eile.",
+  "text": "Tá timpeall daichead míle ráth agus lios fágtha sa tír, agus is minic a fheictear ceann acu ó cheann eile.",
   "source": "Seandálaíocht",
   "theme": "pattern",
   "subtheme": "counted"
@@ -972,7 +972,7 @@
   "subtheme": "fittedTogether"
  },
  {
-  "text": "Athraíonn an Ghaeilge tús an fhocail lena fheistiú leis an bhfocal roimhe: bean, an bhean, ár mbean. Ag an tosach a dhéantar an ceangal.",
+  "text": "Athraíonn an Ghaeilge tús an fhocail lena fheistiú leis an bhfocal roimhe: cara, a chara, ár gcara. Ag an tosach a dhéantar an ceangal.",
   "source": "Gaeilge",
   "theme": "pattern",
   "subtheme": "fittedTogether"
@@ -1020,7 +1020,7 @@
   "subtheme": "orderNamed"
  },
  {
-  "text": "Níl focal sa Ghaeilge ar sea ná ar níl. Freagraítear ceist leis an mbriathar a cuireadh inti, rud a fhágann nach féidir freagra a thabhairt gan éisteacht.",
+  "text": "Freagraítear ceist sa Ghaeilge leis an mbriathar a cuireadh inti. Níl aon fhocal ann a fhreagraíonn gach ceist, agus mar sin ní féidir freagra a thabhairt gan éisteacht.",
   "source": "Gaeilge",
   "theme": "pattern",
   "subtheme": "orderNamed"
@@ -1074,7 +1074,7 @@
   "subtheme": "orderNamed"
  },
  {
-  "text": "Trí rud a dhéanann saor: dlúthú gan bhearna, greim a choinneáil gan ghreamachán, agus buille a bheith faoi smacht.",
+  "text": "Trí rud a dhéanann saor adhmaid: dlúthú gan tomhas, adhmad gan lúbadh, agus buille a bheith faoi smacht.",
   "source": "Trecheng Breth Féne, an 9ú haois",
   "theme": "pattern",
   "subtheme": "orderNamed"
@@ -1230,7 +1230,7 @@
   "subtheme": "aKeptPlace"
  },
  {
-  "text": "Trí mhairbh a íoctar le beo: crann úll, coll, agus doire beannaithe. Ba throime an fíneáil astu ná as beithíoch.",
+  "text": "Trí rud mharbha a íoctar le beo: crann úll, coll, agus doire beannaithe. Ba throime an fíneáil astu ná as beithíoch.",
   "source": "Trecheng Breth Féne, an 9ú haois",
   "theme": "ground",
   "subtheme": "aKeptPlace"
@@ -1392,7 +1392,7 @@
   "subtheme": "theRoad"
  },
  {
-  "text": "Leagadh bealach darach trasna portaigh i gContae an Longfoirt sa bhliain ceathracha a hocht roimh Chríost. Insíonn fáinní na gcrann an dáta go beacht.",
+  "text": "Leagadh bealach darach trasna portaigh i gContae an Longfoirt sa bhliain céad daichead a hocht roimh Chríost. Insíonn fáinní na gcrann an dáta go beacht.",
   "source": "Seandálaíocht",
   "theme": "travel",
   "subtheme": "theRoad"
@@ -1422,7 +1422,7 @@
   "subtheme": "theRoad"
  },
  {
-  "text": "Tá seanchosán ó Chruachain siar chun na farraige a mbíodh oilithrigh air. Tochar an t-ainm atá air: an bóthar a leagtar trasna talún bhoig.",
+  "text": "Tá seanbhóthar oilithreachta i Maigh Eo a théann siar chun sléibhe. Tóchar an t-ainm atá air: an bóthar a leagtar trasna talún bhoig.",
   "source": "Béaloideas",
   "theme": "travel",
   "subtheme": "theRoad"
@@ -1530,7 +1530,7 @@
   "subtheme": "theMoment"
  },
  {
-  "text": "Trí eochair a osclaíonn smaointe: deoch, muinín, agus grá.",
+  "text": "Trí eochair a osclaíonn smaointe: meisce, muinín, agus grá.",
   "source": "Trecheng Breth Féne, an 9ú haois",
   "theme": "meeting",
   "subtheme": "theMoment"
@@ -1698,7 +1698,7 @@
   "subtheme": "theMannersOfIt"
  },
  {
-  "text": "Bhí grád dlí ann, an briugu, nach raibh cead aige duine ar bith a eiteach. Trí bhóthar chuig a theach, coire i gcónaí ar an tine, agus solas le feiceáil ón mbóthar.",
+  "text": "Bhí grád dlí ann, an briugu, nach raibh cead aige duine ar bith a eiteach. Bhí air teach a bheith aige ar bhóthar poiblí agus coire nach bhfolmhaítí riamh.",
   "source": "Seandlíthe na hÉireann",
   "theme": "meeting",
   "subtheme": "theMannersOfIt"
@@ -1752,7 +1752,7 @@
   "subtheme": "grownTogether"
  },
  {
-  "text": "Lánamhain a thugtaí ar bheirt a bhí ceangailte le chéile sa dlí, agus ní hé an lánúin phósta amháin a bhí i gceist ach an múinteoir agus an dalta chomh maith.",
+  "text": "Lánúin an focal ar bheirt atá ceangailte le chéile, agus sa tseandlí ní hé an lánúin phósta amháin a bhí i gceist: bhí an múinteoir agus a dhalta ina lánúin freisin.",
   "source": "Seandlíthe na hÉireann",
   "theme": "kinship",
   "subtheme": "grownTogether"
@@ -1770,7 +1770,7 @@
   "subtheme": "grownTogether"
  },
  {
-  "text": "Ní mharaíonn an t-eidhneán an crann a mbíonn sé air. Ní chuireann sé fréamh ar bith isteach ann, agus cuireann sé bia ar fáil don éanlaith nuair nach bhfuil aon rud eile ann.",
+  "text": "Ní mharaíonn an t-eidhneán an crann a mbíonn sé air. Ní tharraingíonn sé bia ar bith as, agus beathaíonn sé an éanlaith nuair nach bhfuil aon rud eile ann.",
   "source": "Luibheolaíocht",
   "theme": "kinship",
   "subtheme": "grownTogether"
@@ -1860,7 +1860,7 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "A rún a thugtar ar dhuine mór le duine. Rún an focal ar an rud nach n-insítear, agus is é an focal céanna atá ar an duine a chloiseann é.",
+  "text": "A rún a thugtar ar dhuine atá geal le duine. Rún an focal ar an rud nach n-insítear, agus is é an focal céanna atá ar an duine a chloisfeadh é.",
   "source": "Gaeilge",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
@@ -1908,7 +1908,7 @@
   "subtheme": "twoPeople"
  },
  {
-  "text": "D'iarr Guaire, rí Chonnacht, ar a dheartháir teacht abhaile ón gcoill, agus dúirt sé go dtabharfadh sé a ríocht ar chuideachta an fhir a bhí sa bhothán.",
+  "text": "Thabharfainn mo ríocht ghlórmhar agus mo chuid den oidhreacht, a dúirt Guaire lena dheartháir, ar a bheith i do chuideachta sa choill.",
   "source": "Marbhán agus Guaire, an 10ú haois",
   "theme": "kinship",
   "subtheme": "twoPeople"
@@ -1992,7 +1992,7 @@
   "subtheme": "quietAsASound"
  },
  {
-  "text": "Fuaim na gaoithe i gcoill ghéagach, scamall liath, easanna abhann, glao na heala. Ceol álainn é sin, a scríobh manach sa deichiú haois.",
+  "text": "Fuaim na gaoithe i gcoill ghéagach faoi spéir ghorm, easanna abhann, agus glao na heala. Ceol álainn é sin, a scríobh manach sa deichiú haois.",
   "source": "Marbhán agus Guaire, an 10ú haois",
   "theme": "peace",
   "subtheme": "quietAsASound"
@@ -2016,13 +2016,13 @@
   "subtheme": "quietAsASound"
  },
  {
-  "text": "Síocháin ón bhfocal síth, agus is é an focal céanna atá ar an gcnoc ina raibh na daoine sí. Fréamh a chiallaíonn suí agus fanacht atá faoin dá cheann.",
+  "text": "Síocháin ón bhfocal síth, agus is é an focal céanna atá ar an gcnoc ina raibh na daoine sí. Rianaítear an dá bhrí siar chuig fréamh a chiallaíonn suí agus fanacht.",
   "source": "Sanasaíocht",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Daoine síthe a thugtaí ar an dream a bhí sa chnoc: daoine na síochána. Ainm cúramach a bhí ann seachas cur síos.",
+  "text": "Daoine sí a thugtar ar an dream a bhí sa chnoc, agus is é an focal ar shíocháin atá ina n-ainm. Ainm cúramach a bhí ann seachas cur síos.",
   "source": "Béaloideas",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
@@ -2046,7 +2046,7 @@
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Trí ghlas a dhúnann rúin: náire, tost, agus dúnáras.",
+  "text": "Trí ghlas a dhúnann rúin: náire, tost, agus rúndacht.",
   "source": "Trecheng Breth Féne, an 9ú haois",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
@@ -2058,7 +2058,7 @@
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Beannacht leat an slán fada. Ní hé an duine a fhágann an bheannacht ach an duine a fhanann.",
+  "text": "Slán agat a deir an té atá ag imeacht, agus slán leat a deir an té atá ag fanacht. Deir an fhoirm cé acu a bhfuil an bóthar roimhe.",
   "source": "Gaeilge",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
@@ -2082,7 +2082,7 @@
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Bhí cairde ann sa dlí Gaelach: tréimhse socraithe nach bhféadfaí éileamh a dhéanamh lena linn. Ní réiteach a bhí ann ach spás roimh réiteach.",
+  "text": "Suaimhneas an focal ar an gciúnas atá istigh i nduine. Is féidir suaimhneas a bheith ort in áit atá lán de ghleo.",
   "source": "Seandlíthe na hÉireann",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
@@ -2094,13 +2094,13 @@
   "subtheme": "atEase"
  },
  {
-  "text": "Is áille liom na giúiseanna a sheinneann ceol dom, agus níor íoc mé pingin riamh astu.",
+  "text": "An bhuíon is fearr ag seinm ceoil dom, agus gan duine acu ar tuarastal ar bith.",
   "source": "Marbhán agus Guaire, an 10ú haois",
   "theme": "peace",
   "subtheme": "atEase"
  },
  {
-  "text": "A bhiolair, a bharrghlasáin, ar bhruach thobar an loin.",
+  "text": "Labhraíonn Suibhne le gach planda as a ainm féin: a bhiolair, a bharrghlasáin, ar bhruach thobar an loin.",
   "source": "Buile Shuibhne, an 12ú haois",
   "theme": "peace",
   "subtheme": "atEase"

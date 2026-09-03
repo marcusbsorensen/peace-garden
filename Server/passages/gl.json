@@ -48,8 +48,8 @@
   "subtheme": "theFirstAct"
  },
  {
-  "text": "Principio queren as cousas.",
-  "source": "Refrán galego",
+  "text": "O primeiro que fai unha semente ao nacer non é subir: é baixar. A raíz sae antes ca o talo, e sae sempre cara ao fondo.",
+  "source": "Botánica",
   "theme": "beginnings",
   "subtheme": "theFirstAct"
  },
@@ -390,7 +390,7 @@
   "subtheme": "standingAndWatching"
  },
  {
-  "text": "Aló pó la mañanciña subo enriba dos outeiros, lixeiriña, lixeiriña, para oir das campaniñas a batalada pirmeira.",
+  "text": "Aló pó la mañanciña subo enriba dos outeiros, lixeiriña, lixeiriña.",
   "source": "Rosalía de Castro, Cantares gallegos, 1863",
   "theme": "waiting",
   "subtheme": "standingAndWatching"
@@ -642,7 +642,7 @@
   "subtheme": "madeWhole"
  },
  {
-  "text": "Misteriosa regadeira, fin' orballo nó chán pousa, remollando na ribeira frol por frol, chousa por chousa.",
+  "text": "Misteriosa regadeira, fin' orballo nó chán pousa con feitiña curbadeira, remollando na ribeira frol por frol, chousa por chousa.",
   "source": "Rosalía de Castro, Cantares gallegos, 1863",
   "theme": "renewal",
   "subtheme": "madeWhole"
@@ -793,7 +793,7 @@
  },
  {
   "text": "Que din os rumorosos na costa verdecente, ao raio transparente do prácido luar?",
-  "source": "Eduardo Pondal, Os pinos, 1890",
+  "source": "Eduardo Pondal, Os pinos, himno galego",
   "theme": "light",
   "subtheme": "lightItself"
  },
@@ -1170,7 +1170,7 @@
   "subtheme": "aPlaceYouAreFrom"
  },
  {
-  "text": "Como chove mihudiño, como mihudiño chove, pó-la banda de Laiño, pó-la banda de Lestrobe.",
+  "text": "Como chove mihudiño, como mihudiño chove, como chove mihudiño, pó-la banda de Laiño, pó-la banda de Lestrobe.",
   "source": "Rosalía de Castro, Cantares gallegos, 1863",
   "theme": "ground",
   "subtheme": "aPlaceYouAreFrom"
@@ -1440,7 +1440,7 @@
   "subtheme": "theRoad"
  },
  {
-  "text": "Airiños, airiños aires, airiños da miña terra, airiños, leváime á ela.",
+  "text": "Airiños, airiños aires, airiños, leváime á ela.",
   "source": "Rosalía de Castro, Cantares gallegos, 1863",
   "theme": "travel",
   "subtheme": "farOff"
@@ -1866,13 +1866,13 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Que os amores xa fuxiron, as soidades viñeron, de pena me consumiron.",
+  "text": "Qu' os amores xa fuxiron, as soidades viñeron, de pena me consumiron.",
   "source": "Rosalía de Castro, Cantares gallegos, 1863",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Como m' ei d' ir queridiña, como m' ei d' ir e deixarte?",
+  "text": "Como m' ei d' ir queridiña, como m' ei d' ir e deixarte.",
   "source": "Rosalía de Castro, Cantares gallegos, 1863",
   "theme": "kinship",
   "subtheme": "twoPeople"
@@ -1945,7 +1945,7 @@
  },
  {
   "text": "Que din as altas copas de escuro arume arpado, co seu ben compasado monótono fungar?",
-  "source": "Eduardo Pondal, Os pinos, 1890",
+  "source": "Eduardo Pondal, Os pinos, himno galego",
   "theme": "peace",
   "subtheme": "quietAsASound"
  },
@@ -2004,7 +2004,7 @@
   "subtheme": "quietAsASound"
  },
  {
-  "text": "Ao ruxir do vento nos piñeiros chamoulle Pondal queixume, e así titulou en 1886 o libro no que puxo os seus versos.",
+  "text": "Ao son do vento nos piñeiros chamoulle Pondal queixume, e así titulou en 1886 o libro dos seus versos: Queixumes dos pinos.",
   "source": "Literatura galega",
   "theme": "peace",
   "subtheme": "quietAsASound"
