@@ -149,7 +149,26 @@ enum PlantSceneBuilder {
 
         switch role {
         case .stem:
-            break
+            // A stem is a closed volume, so its back faces are behind its front
+            // ones and cost nothing to draw — except at an end, where they are
+            // the whole point.
+            //
+            // `PlantBuilder.addStem` closes the foot with a downward dome and
+            // every branch join with one of its own, and those work only for a
+            // viewer who can see them. A dome facing the ground presents its
+            // back to a camera standing above it, which is where this camera
+            // always stands: `PlantSceneView.applyFraming` aims above the
+            // plant's middle. Culled, the lid went with it, and so did the
+            // tube's own far inner wall — leaving a hole straight through the
+            // foot of the stem to the backdrop, on the screen every person
+            // opens the app to, right where the marks are.
+            //
+            // The lid and the joins were reasoned about on the premise that
+            // this material was already double-sided, which it was not. It is
+            // now, so they do the job they were written for. `apexPoint` does
+            // not depend on this — it runs the radius out to nothing, which
+            // closes the tip whichever way the faces point.
+            material.isDoubleSided = true
         case .leaf:
             // Leaves and petals are single surfaces with no thickness, so they
             // have to be lit from both sides or they vanish when they turn away.
