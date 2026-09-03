@@ -49,8 +49,24 @@
         <span class="wordmark" id="wordmark">Peace Garden</span>
       </header>
 
-      <!-- Said plainly, and not in small print. -->
-      <p class="notice body" id="invented" hidden>
+      <!--
+        Said plainly, and not in small print.
+
+        `lang` and `dir` are on it because the sentence is English and the page
+        around it may not be. Under Arabic the document runs right to left, and
+        an unmarked English sentence inside it is reordered by the bidi
+        algorithm at its punctuation: *the garden is not open* / *.yet*, with
+        the full stop at the head of the next line. Marking the element is the
+        fix rather than a wrapper or an override character, because the fact
+        being recorded is that this run is English.
+
+        It is English because it is temporary — it goes when the garden opens —
+        and docs/FOR-REVIEW.md §1 is where the argument about which of the
+        site's own prose gets commissioned is being had. If it is still here
+        when that is settled, it belongs in the catalogue and these two
+        attributes go.
+      -->
+      <p class="notice body" id="invented" lang="en" dir="ltr" hidden>
         Every plant here is invented. The garden is not open yet.
       </p>
 

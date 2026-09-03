@@ -75,13 +75,16 @@ export const KEYS = Object.freeze(Object.keys(EN));
 /// Anything absent, null, or blank is English — silently, and per key rather
 /// than per file, so a language part-way through a commission shows every line
 /// it has and no gaps.
-export function catalogue(values) {
+///
+/// `code` is the language asked for, and the catalogue keeps it so it can say
+/// which keys came back in English instead. See `borrowed` and `dress`.
+export function catalogue(values, code = "en") {
   const merged = { ...EN };
-  if (values) {
-    for (const key of KEYS) {
-      const value = values[key];
-      if (typeof value === "string" && value.trim() !== "") merged[key] = value;
-    }
+  const fellBack = new Set();
+  for (const key of KEYS) {
+    const value = values ? values[key] : undefined;
+    if (typeof value === "string" && value.trim() !== "") merged[key] = value;
+    else if (code !== "en") fellBack.add(key);
   }
   return {
     /// `t("sentBy", { name: "Marcus" })`.
@@ -94,6 +97,48 @@ export function catalogue(values) {
       }
       return text;
     },
+
+    /// Whether this key came back in English on a page that asked for
+    /// something else.
+    ///
+    /// **Silent to the reader, and it stays silent.** Only a missing *bank* is
+    /// announced, under the passage; a missing label says nothing anywhere,
+    /// which is the rule this module opens with. This tells the page what
+    /// language a run of text is in, which is a different question from
+    /// whether to mention it.
+    borrowed(key) {
+      return fellBack.has(key);
+    },
+
+    /// Writes the text of one `[data-s]` element, and says what language it is
+    /// in while doing it.
+    ///
+    /// **This is not decoration; it is the difference between a sentence and a
+    /// scrambled one.** An English sentence inside a right-to-left document is
+    /// reordered by the bidi algorithm at its punctuation — *A plant grown from
+    /// a meeting.* is drawn as *.A plant grown from a meeting*, with the full
+    /// stop at the head of the line. Marking the run as English is the fix, and
+    /// it is the same fix `/g`'s invented-garden notice carries in its markup.
+    ///
+    /// Six of the nineteen strings are `null` in every language on purpose —
+    /// the site's own prose, waiting on docs/FOR-REVIEW.md §1 — so on Arabic
+    /// and Hebrew this is most of the words on the page rather than an edge
+    /// case. It was invisible until there was a way to stand in those two
+    /// languages and look.
+    ///
+    /// The attributes are cleared rather than left when a key stops falling
+    /// back, because a stale `lang="en"` on a commissioned Hebrew string is the
+    /// same bug the other way round.
+    dress(node, key) {
+      if (this.borrowed(key)) {
+        node.lang = "en";
+        node.dir = "ltr";
+      } else {
+        node.removeAttribute("lang");
+        node.removeAttribute("dir");
+      }
+      return node;
+    },
   };
 }
 
@@ -105,15 +150,15 @@ export function catalogue(values) {
 /// step. docs/WEBSITE.md is emphatic that remembering is the option this
 /// repository has already rejected twice.
 export async function loadStrings(code) {
-  if (!code || code === "en") return catalogue(null);
+  if (!code || code === "en") return catalogue(null, "en");
   try {
     const response = await fetch(`/strings/${encodeURIComponent(code)}.json`, {
       cache: "force-cache",
     });
-    if (!response.ok) return catalogue(null);
+    if (!response.ok) return catalogue(null, code);
     const file = await response.json();
-    return catalogue(file && file.strings);
+    return catalogue(file && file.strings, code);
   } catch {
-    return catalogue(null);
+    return catalogue(null, code);
   }
 }

@@ -18,6 +18,7 @@ import { register, setSheetTitle } from "./keys.js";
 import { loadStrings } from "./strings.js";
 import { loadBank, placement, choose } from "./passages.js";
 import { source } from "./plots.js";
+import { drawBar, signIn, signedIn } from "./testers.js";
 
 const el = (id) => document.getElementById(id);
 
@@ -259,6 +260,15 @@ async function wander() {
 /// settles — which language the labels are in, which bank the passage comes
 /// from, which way the page runs, and whether its labels may be tracked.
 async function settle() {
+  // A tester outranks everything, including `?l=`, because standing in one is
+  // an instruction about the whole page rather than a wish about one reading.
+  // It is written into `state.chosen` rather than handed to `negotiate`
+  // separately so that there is still exactly one answer to *what language is
+  // this* — the alternative was a second override that agreed with the first
+  // most of the time.
+  const tester = signedIn();
+  if (tester) state.chosen = tester;
+
   state.settled = negotiate(state.languages, {
     ...(state.chosen ? { override: state.chosen } : {}),
   });
@@ -272,6 +282,8 @@ async function settle() {
 
   for (const node of document.querySelectorAll("[data-s]")) {
     node.textContent = state.strings.t(node.dataset.s);
+    // See strings.js §dress, and the note beside `#invented` in `/g`.
+    state.strings.dress(node, node.dataset.s);
   }
   el("language-label").textContent = state.strings.t("language");
   setSheetTitle(state.strings.t("keys"));
@@ -290,11 +302,27 @@ async function settle() {
     select.addEventListener("change", async () => {
       state.chosen = select.value;
       remember(select.value);
+      // There is exactly one tester per language, so while somebody is standing
+      // in one the chooser *is* the way between them: changing the language and
+      // changing who you are standing in are the same act, and letting them
+      // come apart would leave a bar saying `Test-DA-Gartner` over a page drawn
+      // in Greek.
+      if (signedIn()) signIn(select.value);
       await settle();
+      await drawBar(onLeave);
       await render();
     });
   }
   select.value = state.settled.ui;
+}
+
+/// Leaving a tester hands the page back to the reader's own browser: the
+/// chooser's remembered value, then `navigator.languages`. `state.chosen` has
+/// to be cleared for that, or the language the tester pinned would outlive it.
+async function onLeave() {
+  state.chosen = null;
+  await settle();
+  await render();
 }
 
 // MARK: - Boot
@@ -304,6 +332,9 @@ async function main() {
   el("invented").hidden = !state.plots.invented;
   state.languages = await manifest();
   await settle();
+  // Draws nothing at all when nobody is signed in, which is why it is
+  // unconditional. See `testers.js`.
+  await drawBar(onLeave);
 
   const directions = [
     ["up", ["ArrowUp", "k"]],

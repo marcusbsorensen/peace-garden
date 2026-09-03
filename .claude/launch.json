@@ -5,13 +5,11 @@
       "name": "site",
       "runtimeExecutable": "python3",
       "runtimeArgs": [
-        "-m",
-        "http.server",
-        "8793",
-        "--directory",
-        "/private/tmp/claude-501/-Users-marcus-Projects-peace-garden/f06c3364-d3d4-44c9-b59a-17d0f23d4988/scratchpad/site"
+        "/Users/marcus/Projects/peace-garden/tools/site/serve.py",
+        "--port",
+        "8801"
       ],
-      "port": 8793
+      "port": 8801
     }
   ]
 }

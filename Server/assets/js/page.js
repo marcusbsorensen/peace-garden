@@ -18,6 +18,7 @@ import { loadStrings } from "./strings.js";
 import { loadBank, placement, choose } from "./passages.js";
 import { parse } from "./link.js";
 import { register, setSheetTitle } from "./keys.js";
+import { drawBar, signIn, signedIn } from "./testers.js";
 
 const el = (id) => document.getElementById(id);
 
@@ -84,6 +85,12 @@ let generation = 0;
 
 async function render() {
   const mine = (generation += 1);
+  // A tester outranks everything, `?l=` included. Standing in one is an
+  // instruction about the whole page rather than a wish about one reading, and
+  // a seed link read from inside a tester should be read in that language.
+  // Same rule as walk.js, and the two pages must not disagree about it.
+  const standing = signedIn();
+  if (standing) state.chosen = standing;
   const settled = negotiate(state.languages, {
     ...(state.chosen ? { override: state.chosen } : {}),
   });
@@ -102,6 +109,9 @@ async function render() {
 
   for (const node of document.querySelectorAll("[data-s]")) {
     node.textContent = t(node.dataset.s);
+    // Says what language the run is in, so a label that fell back to English
+    // is not reordered by bidi inside a right-to-left page. See strings.js.
+    strings.dress(node, node.dataset.s);
   }
   el("language-label").textContent = t("language");
   // The sheet's own heading, and the only word the keyboard layer needs: every
@@ -110,6 +120,12 @@ async function render() {
   buildChooser(state.languages, settled.ui, (code) => {
     state.chosen = code;
     remember(code);
+    // One tester per language, so while somebody is standing in one the chooser
+    // is the way between them. See walk.js for the same three lines and the
+    // reason they are not a shared helper: the two pages hold their language in
+    // different places, and the shared thing is the rule rather than the code.
+    if (signedIn()) signIn(code);
+    drawBar(onLeave);
     render();
   });
 
@@ -195,12 +211,20 @@ async function readFragment() {
   }
 }
 
+/// Leaving a tester hands the page back to the reader's own browser.
+async function onLeave() {
+  state.chosen = null;
+  await render();
+}
+
 async function main() {
   // Set by the script for itself: a page whose script never arrives is a
   // visible page rather than an invisible one.
   document.body.dataset.loading = "1";
   state.languages = await manifest();
   await readFragment();
+  // Draws nothing when nobody is signed in, which is why it is unconditional.
+  await drawBar(onLeave);
 
   // The one action this page has. It is registered rather than wired directly
   // so that it appears in the sheet under `?` alongside everything a garden

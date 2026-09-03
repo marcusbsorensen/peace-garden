@@ -696,3 +696,142 @@ body[data-loading]:not([data-ready]) .page {
 .garden-plant .passage {
   margin-block-start: 22px;
 }
+
+/* ── Testers ──────────────────────────────────────────────────────────────
+   The test roster and the bar that says which language you are standing in.
+   See assets/js/testers.js for what a tester is, and for why there are no
+   accounts behind any of this.
+
+   Everything below is chrome about the page rather than part of it, so it is
+   the one place on the site written with physical `left` rather than the
+   logical properties the rest of the CSS uses: the bar must not flip under a
+   right-to-left language, because the page under it flipping is the thing the
+   bar is there to report. `View.drawnHand()` makes the same distinction in the
+   app — layout mirrors, drawn marks do not. */
+
+.tester-bar {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 20;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 10px 16px;
+  background: var(--ground);
+  border-block-end: 1px solid var(--hairline);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 300;
+  direction: ltr;
+  text-align: left;
+}
+
+.tester-bar__who {
+  color: var(--ink);
+  letter-spacing: 0.06em;
+}
+
+.tester-bar__where {
+  color: var(--faint);
+}
+
+.tester-bar__out {
+  margin-left: auto;
+  padding: 3px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition: border-color 200ms ease-out, color 200ms ease-out;
+}
+
+.tester-bar__out:hover,
+.tester-bar__out:focus-visible {
+  border-color: var(--muted);
+  color: var(--ink);
+  outline: none;
+}
+
+/* The door, and the roster behind it. */
+
+.door,
+.roster {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-block-start: 26px;
+  max-width: var(--measure);
+  inline-size: 100%;
+}
+
+.door__field {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-block-end: 1px solid var(--hairline);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  padding-block: 6px;
+  inline-size: 100%;
+}
+
+.door__field:focus-visible {
+  outline: none;
+  border-block-end-color: var(--muted);
+}
+
+.roster__list {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  inline-size: 100%;
+  /* Forty-three rows is a long page and a short scroller. A scroller keeps the
+     filter above it in reach, which is what the list is walked with. */
+  max-block-size: 52vh;
+  overflow-y: auto;
+}
+
+.roster__row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  inline-size: 100%;
+  padding: 9px 4px;
+  border: 0;
+  border-block-end: 1px solid var(--hairline);
+  background: none;
+  color: var(--muted);
+  font-family: var(--sans);
+  text-align: start;
+  cursor: pointer;
+  transition: color 160ms ease-out, background-color 160ms ease-out;
+}
+
+.roster__row:hover,
+.roster__row:focus-visible {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.05);
+  outline: none;
+}
+
+.roster__who {
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+}
+
+.roster__what {
+  font-size: 12px;
+  color: var(--faint);
+}
+
+.roster__empty {
+  padding: 12px 4px;
+}

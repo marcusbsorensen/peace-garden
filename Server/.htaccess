@@ -10,9 +10,17 @@
 # and would cost a redirect from `/s` to `/s/` on every arrival. A fragment
 # survives a redirect, but a redirect on the one path this whole site exists to
 # answer is a moving part that buys nothing.
-<Files "s">
+#
+# `g` and `t` are here for the same reason and were not, which is a bug this
+# file carried from the moment the garden was added: with only `s` named, `/g`
+# arrived as `application/octet-stream` and a browser downloaded it instead of
+# drawing it. Nothing said so — the request is a 200 and the log is clean — and
+# it was found by serving the directory locally the way a host serves it. Any
+# page added here has to be added below, and `tools/site/serve.py` keeps the
+# same list so that what is looked at locally is what is served.
+<FilesMatch "^(s|g|t)$">
     ForceType text/html
-</Files>
+</FilesMatch>
 
 AddDefaultCharset utf-8
 
