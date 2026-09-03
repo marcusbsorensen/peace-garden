@@ -19,11 +19,11 @@ for partway through and is built.
 of every stem, and the garden mark's unreadable grass. **`round-two` is branched
 from it and not merged.**
 
-**Thirty-seven passage banks in the app**, up from seventeen. Landed overnight:
+**Thirty-eight passage banks in the app**, up from seventeen. Landed overnight:
 Estonian, Lithuanian, Slovene, Latvian, Ukrainian, Slovak, Welsh, Basque,
 Galician, Serbian, Japanese, Chinese, Icelandic, Irish, Albanian, Korean,
-Hebrew, Bulgarian, Croatian, Russian. Still being written when this was filed:
-Greek, Macedonian, Belarusian, Maltese, Greenlandic, Arabic. **Those agents belong
+Hebrew, Bulgarian, Croatian, Russian, Arabic. Still being written when this was
+filed: Greek, Macedonian, Belarusian, Maltese, Greenlandic, Arabic. **Those agents belong
 to that session — clearing it loses them and the scratchpad both.** Two never got a slot,
 Faroese and Luxembourgish — their notes are in the session scratchpad's
 `QUEUE.md`, and the brief they need is now `tools/quotes/BRIEF.md`.
@@ -33,20 +33,20 @@ checks. Every bank checked by `assemble.py` and independently for overlap agains
 every bank before it; the Cyrillic ones checked for actually being Cyrillic. The
 stage driven on a simulator in both directions and at five ages. The site driven
 in a browser: the map, an area, the walk, the sheet, the pad at the map's edge,
-`/s` with a real seed link, and a **Ukrainian passage drawn by the app**, reached
-through *Meet an imaginary gardener*.
+`/s` with a real seed link, and Ukrainian, Japanese and **Arabic** passages drawn
+by the app, reached through *Meet an imaginary gardener*. The Arabic one is the
+one that mattered: right-to-left layout, and the source line العربية with its
+joins intact and no letter-spacing. Had `Chrome.neverTracked` or the bank-locale
+fix been wrong it would have come out as a row of disconnected forms.
+
+Forcing RTL needs both `-AppleTextDirection YES` and
+`-NSForceRightToLeftWritingDirection YES`; the first alone does nothing.
 
 **Unverified.** Any bank whose agent had not reported when it was landed — run
 `python3 tools/quotes/refresh.py <banks dir>` and it will say. It reported
 nothing moved at the time of writing, but four commissions were still running.
 
-**A Hebrew reveal has not been seen.** RTL layout and the non-mirroring marks
-were verified under a forced Arabic locale, and Ukrainian and Japanese passages
-have both been drawn — but the two facts have not been put together on one
-screen. `-AppleTextDirection YES` alone did not engage RTL; it needs
-`-NSForceRightToLeftWritingDirection YES` alongside it.
-
-The right-to-left work has also never been *read* by
+The right-to-left work has never been *read* by
 somebody who reads Arabic or Hebrew — the layout is right in the sense that
 nothing is upside down; whether it is good is not a question this repository can
 answer about itself. Neither has a bank or an interface yet.
