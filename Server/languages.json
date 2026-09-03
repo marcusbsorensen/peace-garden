@@ -224,6 +224,14 @@
    "interface": false,
    "bank": true,
    "passages": 360
+  },
+  {
+   "code": "zh",
+   "name": "Chinese",
+   "endonym": "中文",
+   "interface": false,
+   "bank": true,
+   "passages": 360
   }
  ]
 }

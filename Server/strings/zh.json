@@ -1,0 +1,26 @@
+{
+  "language": "Chinese",
+  "endonym": "中文",
+  "awaiting": "The labels are written. The prose — tagline, about1, about2, about3, growBody, appNote — is still null and still English, on purpose: it is the site's own writing rather than the app's, and it is read in English before it is commissioned in sixteen languages. A null value is drawn in English, silently, one key at a time; the English is in assets/js/strings.js.",
+  "strings": {
+    "tagline": null,
+    "about1": null,
+    "about2": null,
+    "about3": null,
+    "seedTitle": "一颗种子到了",
+    "replyTitle": "一颗种子回来了",
+    "sentBy": "由 {name} 发送",
+    "gardener": "园丁",
+    "planted": "种下",
+    "growTitle": "把它养大",
+    "growBody": null,
+    "appNote": null,
+    "inEnglish": "以英文",
+    "language": "语言",
+    "keys": "按键",
+    "random": "随机去一处",
+    "damaged": "这个链接到达时已损坏，因此无法读取种子。",
+    "notASeed": "那个链接没有携带种子。",
+    "newerVersion": "这颗种子来自更新版本的 Peace Garden。"
+  }
+}
