@@ -90,6 +90,14 @@
    "passages": 367
   },
   {
+   "code": "lt",
+   "name": "Lithuanian",
+   "endonym": "Lietuvių",
+   "interface": false,
+   "bank": true,
+   "passages": 360
+  },
+  {
    "code": "nb",
    "name": "Norwegian Bokmål",
    "endonym": "Norsk bokmål",
