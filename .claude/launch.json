@@ -7,11 +7,11 @@
       "runtimeArgs": [
         "-m",
         "http.server",
-        "8791",
+        "8793",
         "--directory",
-        "Server"
+        "/private/tmp/claude-501/-Users-marcus-Projects-peace-garden/f06c3364-d3d4-44c9-b59a-17d0f23d4988/scratchpad/site"
       ],
-      "port": 8791
+      "port": 8793
     }
   ]
 }
