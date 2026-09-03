@@ -18,7 +18,7 @@
   "subtheme": "theFirstAct"
  },
  {
-  "text": "Comezar vén dun latín tardío cominitiare, formado sobre initium, a entrada. Comezar é entrar nunha cousa, non planeala.",
+  "text": "Comezar vén do latín tardío cominitiare, formado sobre initium, a entrada. Comezar é entrar nunha cousa, non planeala.",
   "source": "Etimoloxía galega",
   "theme": "beginnings",
   "subtheme": "theFirstAct"
@@ -126,7 +126,7 @@
   "subtheme": "smallToLarge"
  },
  {
-  "text": "Un gran de millo posto en maio dá en setembro unha espiga enteira, e a espiga garda o inverno todo no hórreo.",
+  "text": "Un gran de millo posto en maio dá en setembro unha espiga enteira, e esa espiga pasa o inverno todo no hórreo.",
   "source": "Agricultura",
   "theme": "beginnings",
   "subtheme": "smallToLarge"
@@ -138,7 +138,7 @@
   "subtheme": "smallToLarge"
  },
  {
-  "text": "A fonte que a tradición lle dá ao Miño está no Pedregal de Irimia, na serra de Meira, e alí non é máis ca un fío de auga entre pedras.",
+  "text": "A tradición ponlle ao Miño a súa fonte no Pedregal de Irimia, na serra de Meira, e alí non é máis ca un fío de auga entre pedras.",
   "source": "Xeografía",
   "theme": "beginnings",
   "subtheme": "smallToLarge"
@@ -186,7 +186,7 @@
   "subtheme": "whatAStartSettles"
  },
  {
-  "text": "Unha ría é un val de río que o mar entrou e ocupou cando subiron as augas. O debuxo é anterior á auga que hoxe o enche.",
+  "text": "Unha ría é un val de río no que o mar entrou cando subiron as augas. O debuxo é anterior á auga que hoxe o enche.",
   "source": "Xeoloxía",
   "theme": "beginnings",
   "subtheme": "whatAStartSettles"
@@ -372,13 +372,13 @@
   "subtheme": "standingAndWatching"
  },
  {
-  "text": "Alindar é estar co gando mentres pace: non se fai nada e non se pode marchar.",
+  "text": "Alindar é gardar o gando mentres pace, e ten verbo propio porque é unha ocupación que leva o día enteiro.",
   "source": "Galego",
   "theme": "waiting",
   "subtheme": "standingAndWatching"
  },
  {
-  "text": "Nos portos había vixías pagados para mirar o mar todo o día. O bo do oficio era que case sempre non houbese nada que ver.",
+  "text": "Nos portos había vixías pagados para mirar o mar todo o día. O oficio consistía case enteiramente en mirar.",
   "source": "Historia mariñeira",
   "theme": "waiting",
   "subtheme": "standingAndWatching"
@@ -396,7 +396,7 @@
   "subtheme": "standingAndWatching"
  },
  {
-  "text": "O faro non fai máis ca estar aceso. Todo o seu traballo consiste en ser visto por alguén que quizais non pase esta noite.",
+  "text": "Un faro fai unha soa cousa: estar aceso. Todo o seu traballo consiste en ser visto por alguén que quizais pase esta noite.",
   "source": "Sinais marítimos",
   "theme": "waiting",
   "subtheme": "standingAndWatching"
@@ -624,7 +624,7 @@
   "subtheme": "madeWhole"
  },
  {
-  "text": "Enxebre chámase ao que está sen mestura e sen falsear. Do galego dise que é enxebre cando ninguén llo tocou.",
+  "text": "Enxebre chámase ao que está sen mestura e sen falsear. Do galego dise que é enxebre cando o falan tal cal o herdaron.",
   "source": "Galego",
   "theme": "renewal",
   "subtheme": "madeWhole"
@@ -852,7 +852,7 @@
   "subtheme": "lightItself"
  },
  {
-  "text": "Ao clarón do raio chámaselle lóstrego, e do que dura moi pouco dise que durou o que un lóstrego.",
+  "text": "Ao clarón do raio chámaselle lóstrego, e do que dura moi pouco dise que durou o que dura un lóstrego.",
   "source": "Galego",
   "theme": "light",
   "subtheme": "lightItself"
@@ -996,7 +996,7 @@
   "subtheme": "fittedTogether"
  },
  {
-  "text": "As follas do carballo póñense de xeito que ningunha lle tape enteiro o sol á que ten debaixo. A árbore resólveo torcendo os pecíolos.",
+  "text": "As follas do carballo póñense de xeito que ningunha lle tape de todo o sol á que ten debaixo. A árbore resólveo torcendo os pecíolos.",
   "source": "Botánica",
   "theme": "pattern",
   "subtheme": "fittedTogether"
@@ -1038,7 +1038,7 @@
   "subtheme": "orderNamed"
  },
  {
-  "text": "Ao ordenar a igrexa os toques quedou unha gramática: un toque para a misa, outro para o lume, outro para o defunto, e todos distintos.",
+  "text": "Os toques de campá teñen unha gramática enteira: un para a misa, outro para o lume, outro para o defunto, e ningún se parece a outro.",
   "source": "Campás",
   "theme": "pattern",
   "subtheme": "orderNamed"
@@ -1068,7 +1068,7 @@
   "subtheme": "orderNamed"
  },
  {
-  "text": "Ao millo chámaselle o millo, e ao cereal que se sementaba antes de vir el aínda se lle chama millo miúdo. A lingua garda a orde da chegada.",
+  "text": "Ao millo chámaselle o millo, e ao cereal que se sementaba antes de el chegar aínda se lle chama millo miúdo. A lingua garda a orde.",
   "source": "Historia agraria",
   "theme": "pattern",
   "subtheme": "orderNamed"
@@ -1098,7 +1098,7 @@
   "subtheme": "theSoilItself"
  },
  {
-  "text": "A terra de Galicia é ácida. Durante séculos corrixiuse con cal, e na costa con argazo tirado polo mar. O que aquí medra medra nun chan emendado.",
+  "text": "A terra de Galicia é ácida. Durante séculos corrixiuse con cal, e na costa con argazo tirado polo mar. O que aquí medra faino nun chan emendado.",
   "source": "Edafoloxía",
   "theme": "ground",
   "subtheme": "theSoilItself"
@@ -1542,7 +1542,7 @@
   "subtheme": "theMoment"
  },
  {
-  "text": "Nunha regueifa dous cantores fanse versos un ao outro, alternándose, e o público decide. Ningún dos dous sabe o que vén.",
+  "text": "Nunha regueifa dous cantores bótanse versos un ao outro, alternándose, e o público decide. Ningún dos dous sabe o que vén.",
   "source": "Etnografía galega",
   "theme": "meeting",
   "subtheme": "theMoment"
@@ -1638,7 +1638,7 @@
   "subtheme": "twoThatNeedEachOther"
  },
  {
-  "text": "As bacterias do nó da raíz do trevo collen o nitróxeno do aire e dánllelo á planta. A planta dálles casa. Por separado non vive ningunha.",
+  "text": "As bacterias do nó da raíz do trevo collen o nitróxeno do aire e danllo á planta. A planta dálles casa. Por separado non vive ningunha.",
   "source": "Bioloxía",
   "theme": "meeting",
   "subtheme": "twoThatNeedEachOther"
@@ -1668,7 +1668,7 @@
   "subtheme": "theMannersOfIt"
  },
  {
-  "text": "Nas aldeas saúdase a quen se cruza aínda sen o coñecer, e o saúdo notaríase menos ca a súa falta.",
+  "text": "Nas aldeas saúdase a quen se cruza, coñecido ou non. O saúdo é o que se dá por suposto.",
   "source": "Costume rural",
   "theme": "meeting",
   "subtheme": "theMannersOfIt"
@@ -1812,7 +1812,7 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Colo é o asento que fan os brazos e o regazo. Levar no colo non é levar en brazos: é ter alguén sentado enriba de un.",
+  "text": "Colo é o asento que forman os brazos e o regazo de quen está sentado. Levar no colo é outra cousa distinta de levar en brazos.",
   "source": "Galego",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
@@ -1860,7 +1860,7 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "O diminutivo en iño non fai as cousas pequenas: faillas de un. Unha casiña non é unha casa pequena, é a casa de quen a nomea.",
+  "text": "O diminutivo en iño non mide: aprecia. Unha casiña non é unha casa pequena, é a casa de quen a nomea.",
   "source": "Galego",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
@@ -2040,7 +2040,7 @@
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Facer as paces dise en plural. Unha soa non chega: fan falta a de un e a do outro.",
+  "text": "Facer as paces dise en plural. Unha soa non chega: fan falta a dun e a do outro.",
   "source": "Galego",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
