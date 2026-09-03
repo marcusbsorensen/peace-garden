@@ -19,11 +19,11 @@ for partway through and is built.
 of every stem, and the garden mark's unreadable grass. **`round-two` is branched
 from it and not merged.**
 
-**Thirty-two passage banks in the app**, up from seventeen. Landed overnight:
+**Thirty-five passage banks in the app**, up from seventeen. Landed overnight:
 Estonian, Lithuanian, Slovene, Latvian, Ukrainian, Slovak, Welsh, Basque,
-Galician, Serbian, Japanese, Chinese, Icelandic, Irish, Albanian. Still being
-written when this was filed: Greek, Russian, Bulgarian, Croatian, Macedonian,
-Belarusian, Maltese, Greenlandic, Arabic, Hebrew, Korean. **Those agents belong
+Galician, Serbian, Japanese, Chinese, Icelandic, Irish, Albanian, Korean,
+Hebrew, Bulgarian. Still being written when this was filed: Greek, Russian,
+Croatian, Macedonian, Belarusian, Maltese, Greenlandic, Arabic. **Those agents belong
 to that session — clearing it loses them and the scratchpad both.** Two never got a slot,
 Faroese and Luxembourgish — their notes are in the session scratchpad's
 `QUEUE.md`, and the brief they need is now `tools/quotes/BRIEF.md`.
@@ -40,7 +40,13 @@ through *Meet an imaginary gardener*.
 `python3 tools/quotes/refresh.py <banks dir>` and it will say. It reported
 nothing moved at the time of writing, but four commissions were still running.
 
-The right-to-left work has been driven but never *read* by
+**A Hebrew reveal has not been seen.** RTL layout and the non-mirroring marks
+were verified under a forced Arabic locale, and Ukrainian and Japanese passages
+have both been drawn — but the two facts have not been put together on one
+screen. `-AppleTextDirection YES` alone did not engage RTL; it needs
+`-NSForceRightToLeftWritingDirection YES` alongside it.
+
+The right-to-left work has also never been *read* by
 somebody who reads Arabic or Hebrew — the layout is right in the sense that
 nothing is upside down; whether it is good is not a question this repository can
 answer about itself. Neither has a bank or an interface yet.
