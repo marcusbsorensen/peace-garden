@@ -13,13 +13,25 @@
 // `aria-label`s rather than being four unnamed arrows.
 
 import { AREAS, areaFor, neighbouringArea, randomPlant, stepWithin } from "./garden.js";
+import { direction, manifest, negotiate, readable, remember, tracks, uppercases } from "./languages.js";
 import { register, setSheetTitle } from "./keys.js";
 import { loadStrings } from "./strings.js";
+import { loadBank, placement, choose } from "./passages.js";
 import { source } from "./plots.js";
 
 const el = (id) => document.getElementById(id);
 
-const state = { plots: null, where: { area: null, plant: null }, cache: new Map() };
+const state = {
+  plots: null,
+  where: { area: null, plant: null },
+  cache: new Map(),
+  languages: [],
+  /// A chooser selection, which outranks `?l=` — it is the most recent thing
+  /// the reader said. Same rule as `/s`.
+  chosen: null,
+  strings: null,
+  settled: null,
+};
 
 /// The area names are English and stay English — see docs/FOR-REVIEW.md §2 for
 /// the argument, which is the one the app already makes about plant names: a
@@ -117,6 +129,7 @@ async function drawPlant(theme, id) {
   if (!plant) return goTo(theme);
   el("plant-name").textContent = plant.name;
   el("plant-where").textContent = AREA_NAMES[theme];
+  await drawPassage(plant);
 
   // A direction with nothing in it is disabled rather than hidden: the pad is a
   // fixed shape, and an arrow that comes and goes is a pad that moves under the
@@ -128,6 +141,46 @@ async function drawPlant(theme, id) {
     key.onclick = () => walk(direction);
   }
   return undefined;
+}
+
+/// A hex seed as the bytes it stands for.
+function bytes(hex) {
+  const out = new Uint8Array(Math.floor(hex.length / 2));
+  for (let i = 0; i < out.length; i += 1) {
+    out[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+  }
+  return out;
+}
+
+/// The line under a plant, in the reader's language and nobody else's.
+///
+/// **This is the argument in docs/WEBSITE.md §"The garden, walked in one
+/// language at a time" becoming visible.** The passage is not a property of the
+/// plant: the plant carries a theme and a subtheme, both derived from its name,
+/// both language-neutral, and the reader's own bank supplies the words. Change
+/// the chooser and the same plant says something else — not a translation of
+/// what it said before, because no bank is a translation of another.
+///
+/// In the app that rule is something you are told. Here it is something you can
+/// do, because a browser can hold two languages one after the other and a phone
+/// only ever has one.
+async function drawPassage(plant) {
+  const block = el("passage");
+  const { theme, subtheme } = placement(plant.name);
+  const bank = await loadBank(state.settled.bank);
+  // `choose` folds bytes, not text. A plot record carries its seed as hex —
+  // which is how `SeedID` encodes itself and how it travels — so it is unpacked
+  // here rather than stored twice.
+  const passage = choose(bank, theme, subtheme, bytes(plant.seed));
+  block.hidden = !passage;
+  if (!passage) return;
+  block.lang = state.settled.bank;
+  // The one element that can disagree with the page it is on.
+  block.dir = direction(state.settled.bank);
+  el("passage-text").textContent = passage.text;
+  el("passage-source").textContent = state.settled.isBorrowed
+    ? `${passage.source} · ${state.strings.t("inEnglish")}`
+    : passage.source;
 }
 
 async function render() {
@@ -200,21 +253,57 @@ async function wander() {
   if (plant) goTo(plant.theme, plant.id);
 }
 
+// MARK: - Language
+
+/// Negotiate, dress the page, and build the chooser. The same four facts `/s`
+/// settles — which language the labels are in, which bank the passage comes
+/// from, which way the page runs, and whether its labels may be tracked.
+async function settle() {
+  state.settled = negotiate(state.languages, {
+    ...(state.chosen ? { override: state.chosen } : {}),
+  });
+  state.strings = await loadStrings(state.settled.ui);
+
+  const root = document.documentElement;
+  root.lang = state.settled.ui;
+  root.toggleAttribute("data-keeps-case", !uppercases(state.settled.ui));
+  root.toggleAttribute("data-untracked", !tracks(state.settled.ui));
+  root.dir = direction(state.settled.ui);
+
+  for (const node of document.querySelectorAll("[data-s]")) {
+    node.textContent = state.strings.t(node.dataset.s);
+  }
+  el("language-label").textContent = state.strings.t("language");
+  setSheetTitle(state.strings.t("keys"));
+
+  const select = el("language");
+  if (!select.options.length) {
+    for (const language of readable(state.languages)) {
+      const option = document.createElement("option");
+      option.value = language.code;
+      // The endonym, because somebody looking for their own language is
+      // looking for their own word for it.
+      option.textContent = language.endonym;
+      option.lang = language.code;
+      select.append(option);
+    }
+    select.addEventListener("change", async () => {
+      state.chosen = select.value;
+      remember(select.value);
+      await settle();
+      await render();
+    });
+  }
+  select.value = state.settled.ui;
+}
+
 // MARK: - Boot
 
 async function main() {
   state.plots = await source();
   el("invented").hidden = !state.plots.invented;
-
-  // SEAM — this page draws no catalogue yet. `/s` negotiates a language and
-  // fills `[data-s]` from it, and this will do the same when the garden is read
-  // one language at a time (docs/WEBSITE.md). Until then the two strings it
-  // needs are the English ones, from the same catalogue `/s` reads.
-  const strings = await loadStrings("en");
-  for (const node of document.querySelectorAll("[data-s]")) {
-    node.textContent = strings.t(node.dataset.s);
-  }
-  setSheetTitle(strings.t("keys"));
+  state.languages = await manifest();
+  await settle();
 
   const directions = [
     ["up", ["ArrowUp", "k"]],

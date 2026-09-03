@@ -690,3 +690,9 @@ body[data-loading]:not([data-ready]) .page {
   color: var(--ink);
   outline: none;
 }
+
+/* The passage on a garden plant, which needs room the seed page gives it with
+   a rule above. Here the area label sits directly over it. */
+.garden-plant .passage {
+  margin-block-start: 22px;
+}

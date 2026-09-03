@@ -61,6 +61,17 @@
       <section class="garden-plant" id="plant" hidden>
         <p class="plant-name" id="plant-name"></p>
         <p class="label" id="plant-where"></p>
+
+        <!--
+          The line under the plant, drawn from the reader's own bank. Change the
+          chooser and it says something else — not a translation, because no bank
+          is a translation of another. docs/WEBSITE.md §"The garden, walked in
+          one language at a time".
+        -->
+        <blockquote class="passage" id="passage" hidden>
+          <p id="passage-text"></p>
+          <footer class="label" id="passage-source"></footer>
+        </blockquote>
         <div class="pad" id="pad" role="group">
           <button class="pad-key" type="button" data-go="up" aria-label="Up">↑</button>
           <button class="pad-key" type="button" data-go="left" aria-label="Left">←</button>
@@ -77,6 +88,31 @@
       <p class="garden-foot">
         <button class="quiet-button" type="button" id="random" data-s="random"></button>
       </p>
+
+      <footer class="foot">
+        <label class="chooser">
+          <span class="label" id="language-label"></span>
+          <span class="chooser__field">
+            <select id="language" class="chooser__select"></select>
+            <!-- Monoline, even weight, round free ends, per BRAND.md §3.2. -->
+            <svg
+              class="chooser__mark"
+              viewBox="0 0 16 16"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                d="M4 6.5 L8 10.5 L12 6.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.25"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+        </label>
+      </footer>
     </main>
 
     <script type="module" src="/assets/js/walk.js"></script>
