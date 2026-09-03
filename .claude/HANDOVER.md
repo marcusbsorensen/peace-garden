@@ -1,71 +1,86 @@
-# Peace Garden — handover 2 September 2026
+# Peace Garden — handover 3 September 2026
 
-*This session ran four threads at once — marks, banks, website, a CI fix. They
-were independent, and it worked, but a fresh session should pick one.*
+*An overnight session, run with Marcus asleep and told to decide, document and
+keep going. Everything it decided alone is in `docs/FOR-REVIEW.md` or named under
+**Decisions made** below, so it can all be overturned in the morning.*
 
 ## Goal
-Finish the three items the previous handover left open: the four stage-row
-marks, wave two of the passage banks, and what `docs/WEBSITE.md` asks of the
-app. All three are done. The website itself was started on top of that.
+
+Three things on `main`, finishing the previous handover's next step; then a
+branch, `round-two`, for the night: wave two of the passage banks, support for
+the other alphabets, the site's settled words in sixteen languages, and the
+website stages that were already specified. Situational navigation — a random
+plant, named areas, a pad for stepping to neighbours, and a key for every action
+— was asked for partway through and is built.
 
 ## State
-`main` at `f80f48b`, clean.
 
-**Verified.** 72 SeedCore tests, 23 app tests, all three CI jobs green — CI was
-red at `e806de4` when this session opened and is fixed. Device and simulator
-builds clean. Seventeen banks, 6,166 passages, every one through `assemble.py`.
-`/s` was driven in a browser by the agent that built it.
+`main` at `0fda1bb`. `round-two` branched from it, **not merged**.
 
-**Unverified.** *Nobody has seen the four marks on a screen.* Their geometry was
-judged at fifteen points in `tools/glyphs` and the Swift is a line-for-line
-transcription, but the stage row has not been looked at. See *Next step*.
+**Verified.** 72 SeedCore tests, 23 app tests, all four CI checks run locally.
+The stage driven on a simulator in both directions and at five ages; the site
+driven in a browser — the map, an area, the walk under arrows and hjkl, the
+sheet, the pad disabling a direction at the map's edge. Every landed bank checked
+by `assemble.py` and independently for overlap against every bank before it.
+
+**Unverified.** *No non-Latin passage has been drawn on a screen.* The route is
+`PlantRevealView`, which needs a completed exchange — reach it with
+`Developer.shared.wantsImaginaryMeeting`, or write a garden with a crossed plant
+in it, which `tools/`-adjacent scratch already does. The scripts were checked
+through `assemble.py` and in CSS; the app has not been asked to draw one.
 
 ## Files
-- `App/PeaceGarden/Views/Chrome.swift` — `markBox`, `SeedGlyph`, `GardenGlyph`,
-  `CogShape`. Every rejected drawing is in the doc comments.
-- `App/PeaceGarden/Views/Glyphs.swift` — `MeetGlyph`.
-- `tools/glyphs/` — `shapes.py` mirrors the Swift, `sheet.py` renders any set of
-  marks large and at fifteen points on both grounds. The real product of the
-  mark work; use it before changing any glyph.
-- `tools/site/export.py` — writes `Server/passages/*.json` and
-  `Server/languages.json` from the app. CI runs `--check`.
-- `Server/` — the site. `s`, `assets/js/*.js`, `strings/*.json` (16 files, every
-  value `null`, awaiting commission).
-- `docs/WEBSITE.md` — phase 2 spec. Read before touching peacegarden.app.
-- `docs/LANGUAGES.md` § *Round two* — the eight banks still to write.
+
+- `Server/assets/js/garden.js` — the map, derived from `Quotes.Theme.position`;
+  cells derived from seeds. `selfTest()` needs no browser.
+- `Server/assets/js/keys.js` — one registry, one listener. **The sheet is the
+  registry**, so a shortcut it does not list cannot exist.
+- `Server/assets/js/walk.js`, `plots.js`, `Server/g` — the walk, and a stand-in
+  for the plot service that says on screen that it is one.
+- `tools/quotes/land.py` — assemble, register, xcodegen, export, in that order.
+  Use it for every remaining bank.
+- `docs/FOR-REVIEW.md` — **read this first.** The site's six prose strings and
+  ten area names, with the argument and its alternatives. Nothing in it is live.
+- `docs/WEBSITE.md` §*Walking it* and §*Every action on a key*;
+  `docs/LANGUAGES.md` §*The other alphabets*.
 
 ## Decisions made
-- **The garden is walkable; guests from anywhere can visit.** Taken while
-  nothing is published, so no page is relisted and nobody re-asked. `noindex`
-  stays — walkable and indexed are different properties. The garden shows
-  plants, not people; a grid of names is a directory.
-- **The passage is drawn in the reader's language, everywhere.** So the garden is
-  read one language at a time, not partitioned by language. Partitioning would
-  publish the sharer's language — the first fact this app stated about somebody
-  that they never chose to state, and hardest on small-language speakers.
-- **The plot record must carry the derived theme.** A page reads a theme off a
-  genus head, but a *pair's* theme needs both parent seeds, and giving a page
-  those publishes the other gardener's seed. `WEBSITE.md` said this was free.
-- **20i with a database on it** for the plot service; **seventeen languages** of
-  site chrome; **the cog is an ordinary cog**, because recognition wins on the
-  one mark whose job is to be found without being read.
+
+- **The garden's map is derived, and must not move.** Ten areas laid out from
+  `Theme.position`'s first two principal components — 85% of its variance, the
+  first axis motion against duration, the second company. Retuning a theme's
+  position is now a change to the map.
+- **A plant's cell comes from its seed and never moves.** Two plants may share a
+  cell, and that is drawn.
+- **Drawn marks never mirror; layout does.** A seed, a flower and a gear have a
+  shape rather than a handedness. `View.drawnHand()`.
+- **Arabic is never letter-spaced.** It is a joined script and tracking severs
+  the joins. `Chrome.neverTracked`, mirrored in the site's CSS.
+- **The shortcut sheet costs one string**, because each row is labelled by the
+  control it operates. Adding a shortcut must not add a commission.
+- **Area names are English proper nouns, provisionally** — the same argument the
+  app already makes about plant binomials. This is the first thing in
+  `FOR-REVIEW.md` and the one most likely to be overturned.
 
 ## Next step
-Look at the stage row on a simulator. First light blocks it and **injected taps
-do not reach the `PLANT IT NOW` button** — `tap` and `touch_path` both, at
-coordinates checked against the screenshot. Go round it the documented way:
-write `Library/Application Support/PeaceGarden/garden.json` in the app's data
-container with a `birth` some weeks past, so the app opens on the stage.
+
+Land the banks that finished after this was written. For each:
+`python3 tools/quotes/land.py <Language> <code> <file>`, then the thirteen site
+labels in `Server/strings/<code>.json`, then commit one bank per commit. The
+files are in the session scratchpad under `banks/`; `QUEUE.md` beside them holds
+the six that never got a slot.
 
 ## Traps
-- **A screenshot right after `simctl launch` catches the zoom animation.** Wait
-  four seconds. Third instance of this shape in this repo, after sheets and taps.
-- **`cd` persists between Bash calls**, and a later `xcodebuild` then fails with
-  *`PeaceGarden.xcodeproj` does not exist*.
-- **`Localizable.xcstrings` is not `json.dumps` round-trippable** — Xcode writes
-  `"key" : {`. Rewriting it reformats all 6,181 lines. Edit textually.
-- **Two agents writing one bank will duplicate three or four lines**, always a
-  proverb or a famous poem. `assemble.py` catches them; each sits in a different
-  subtheme in each half, so the call is which home is better, not which to drop.
-- **A generative image model cannot hold a monoline.** Three rounds went bulbous,
-  then brightness-glyph, then cat. Use it for composition, draw the line here.
+
+- **Twenty concurrent subagents is the ceiling**, and it is not raised by agents
+  finishing quickly. Commission in waves and keep a queue file.
+- **`cd` persists between Bash calls.** It bit again: an `xcodebuild` ran from
+  `Packages/SeedCore` and silently tested nothing.
+- **`GardenStoreTests` fails when the Mac's screen locks.** `GardenStore.guarded`
+  ties readability to the lock, so the suite passes all day and fails overnight;
+  CI never sees it because SeedCore runs on Linux there. Fixed by injecting the
+  write options, but the shape will recur anywhere else protection is used.
+- **A browser caches ES modules by URL.** A changed module can appear missing;
+  moving the dev server to a new port is the quickest way to be sure.
+- **`assemble.py`'s floor is 10 and the brief asks for 12.** Passing the checker
+  is not the same as meeting the brief.
