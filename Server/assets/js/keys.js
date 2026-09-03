@@ -46,6 +46,17 @@ let listening = false;
 export function register({ keys, target = null, label = null, group = "", run, when = null }) {
   if (!Array.isArray(keys) || !keys.length) throw new TypeError("an action needs keys");
   if (typeof run !== "function") throw new TypeError("an action needs something to run");
+
+  // **First match wins, so a second claim on a key is a dead action** — and the
+  // sheet would list it anyway, which is the one thing the sheet must never do.
+  // Said out loud rather than thrown: a page that shadows a key should still
+  // load, and the person who needs to know is whoever is looking at the console
+  // having just pressed it.
+  const taken = keys.filter((key) => actions.some((a) => a.keys.includes(key)));
+  if (taken.length) {
+    console.warn(`keys.js: ${taken.join(", ")} already registered; this action will not fire`);
+  }
+
   actions.push({ keys, target, label, group, run, when });
   listen();
   return () => {

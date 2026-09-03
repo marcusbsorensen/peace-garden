@@ -353,6 +353,30 @@ async function main() {
     run: () => goTo(null),
   });
 
+  // The chooser is on `c`, not on `l`, and `/s` was moved to match.
+  //
+  // `l` is the walk's right hand — hjkl — and registering the chooser there too
+  // shadowed it silently: first match wins, the direction was registered first,
+  // and the sheet cheerfully listed both. The sheet is supposed to be the thing
+  // that cannot lie about the keys, so `keys.js` now says so out loud when two
+  // actions claim the same key.
+  register({
+    keys: ["c"],
+    group: "go",
+    target: () => el("language-label"),
+    run: () => {
+      const select = el("language");
+      if (!select) return false;
+      select.focus();
+      try {
+        select.showPicker?.();
+      } catch {
+        /* focused is enough */
+      }
+      return true;
+    },
+  });
+
   readFragment();
   await render();
   window.addEventListener("hashchange", async () => {

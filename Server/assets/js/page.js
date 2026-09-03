@@ -206,7 +206,9 @@ async function main() {
   // so that it appears in the sheet under `?` alongside everything a garden
   // page adds — see keys.js, where the sheet *is* the registry.
   register({
-    keys: ["l"],
+    // `c`, not `l`: the garden walks with hjkl and the two pages must not
+    // disagree about a letter. See the note in walk.js.
+    keys: ["c"],
     target: () => el("language-label"),
     run: () => {
       const select = el("language");
