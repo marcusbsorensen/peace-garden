@@ -210,6 +210,14 @@
    "passages": 361
   },
   {
+   "code": "mk",
+   "name": "Macedonian",
+   "endonym": "Македонски",
+   "interface": false,
+   "bank": true,
+   "passages": 360
+  },
+  {
    "code": "nb",
    "name": "Norwegian Bokmål",
    "endonym": "Norsk bokmål",

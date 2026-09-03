@@ -73,6 +73,7 @@ enum QuoteBank: String, CaseIterable, Sendable {
     case arabic = "ar"
     case greenlandic = "kl"
     case greek = "el"
+    case macedonian = "mk"
 
     var passages: [Passage] {
         switch self {
@@ -116,6 +117,7 @@ enum QuoteBank: String, CaseIterable, Sendable {
         case .arabic: return Quotes.arabic
         case .greenlandic: return Quotes.greenlandic
         case .greek: return Quotes.greek
+        case .macedonian: return Quotes.macedonian
         }
     }
 

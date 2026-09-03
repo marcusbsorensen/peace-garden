@@ -20,6 +20,7 @@ import itertools
 import pathlib
 import re
 import sys
+import unicodedata
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 VIEWS = ROOT / "App/PeaceGarden/Views"
@@ -82,6 +83,33 @@ def normalise(body):
     return "\n".join(out)
 
 
+def homoglyphs(text):
+    """Latin letters hiding inside a word written in another script.
+
+    **Invisible on screen and wrong in the string.** The Macedonian bank arrived
+    with thirteen of them — ten instances of `сè` typed with Latin `è` (U+00E8)
+    instead of Cyrillic `ѐ` (U+0450), plus a Latin `o` and `e` inside a Cyrillic
+    word that came straight out of the source wikitext as an encoding artefact.
+    Nothing renders differently; the text sorts, searches and compares wrong.
+
+    Its own agent wrote a scanner to find them, which is the sign a check belongs
+    in the tool rather than in each commission. Only mixed *words* are reported:
+    a Latin binomial or a product name standing alone in a Cyrillic sentence is
+    ordinary and deliberate.
+    """
+    suspect = []
+    for word in re.findall(r"[^\W\d_]+", text, flags=re.UNICODE):
+        scripts = set()
+        for character in word:
+            name = unicodedata.name(character, "")
+            for script in ("LATIN", "CYRILLIC", "GREEK", "ARABIC", "HEBREW"):
+                if name.startswith(script):
+                    scripts.add(script)
+        if len(scripts) > 1:
+            suspect.append(word)
+    return suspect
+
+
 def check(entries, english):
     """Everything `QuoteBankTests` will ask, asked here first."""
     problems = []
@@ -94,6 +122,10 @@ def check(entries, english):
             problems.append(f"the source is a citation: {source[:70]}…")
         if not source.strip():
             problems.append(f"no provenance: {text[:70]}…")
+        for field in (text, source):
+            for word in homoglyphs(field):
+                problems.append(
+                    f"two scripts in one word — {word!r} in: {field[:60]}…")
 
     seen = collections.Counter(text for text, _, _, _ in entries)
     problems += [f"carried twice: {t[:70]}…" for t, n in seen.items() if n > 1]
