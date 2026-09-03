@@ -1,0 +1,2162 @@
+[
+ {
+  "text": "Kalitev: trenutek, ko seme neha biti shramba in postane rastlina. Nazaj ne gre.",
+  "source": "Botanika",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Brižinski spomeniki so najstarejše ohranjeno besedilo v slovenščini in prvi slovanski zapis v latinici; nastali so okrog leta tisoč.",
+  "source": "Jezikovna zgodovina",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Leta 1550 sta izšli prvi knjigi v slovenščini, katekizem in abecednik. Do tistega leta jezik ni bil nikoli natisnjen.",
+  "source": "Knjižna zgodovina",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Popek se odpre samo enkrat. Minuto prej je bil zaprt, zdaj se ne bo več zaprl.",
+  "source": "Botanika",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Piščanec si lupino razbije z jajčnim zobom, drobno konico na kljunu, ki kmalu po izvalitvi odpade.",
+  "source": "Zoologija",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Reka pogosto zamenja ime tam, kjer se dva potoka stakneta; od tiste točke naprej je druga voda.",
+  "source": "Geografija",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Vzhajati se reče za testo in za sonce. Oboje se prvič dvigne in nihče tega ne požene.",
+  "source": "Slovenščina",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Metulj ima ob izleganju iz bube mokra in zmečkana krila. Ravna se kakšno uro, in tista ura pride enkrat.",
+  "source": "Entomologija",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "V Divjih babah so našli prebodeno stegnenico jamskega medveda, staro okrog šestdeset tisoč let; mnogi jo imajo za najstarejšo znano piščal.",
+  "source": "Arheologija",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Ptičji mladič, ki prvič zapusti gnezdo, se navadno vanj ne vrne. Gnezdo je bilo za enkrat.",
+  "source": "Ornitologija",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Zapasti: sneg ne samo pade, ampak zapade, in beseda pove, da je obležal.",
+  "source": "Slovenščina",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Otrok navadno shodi med devetim in petnajstim mesecem. Dan, ko shodi, je edini tak dan.",
+  "source": "Razvojna psihologija",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Zrno do zrna pogača, kamen do kamna palača.",
+  "source": "Slovenski pregovor",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Najevska lipa velja za najdebelejšo lipo v Sloveniji; obseg njenega debla meri več kot deset metrov. Začela je kot poganjek.",
+  "source": "Dendrologija",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Mravljišče se začne z eno samo oplojeno kraljico. Pri nekaterih vrstah kolonija pozneje šteje milijone.",
+  "source": "Entomologija",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Kraška vrtača se začne z eno samo razpoko, po kateri voda najde pot v apnenec, in se potem poglablja tisočletja.",
+  "source": "Geologija",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Kapnik v Postojnski jami zraste za približno desetinko milimetra na leto. Briljant, njen najbolj znani steber, je visok kakih pet metrov.",
+  "source": "Jamoslovje",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Iz enega samega popka na stari trti zraste v eni sezoni meter in pol nove rozge.",
+  "source": "Vinogradništvo",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Kal je dvoje: klica v semenu in kraška mlaka, ki napaja živino. Obakrat gre za začetek nečesa živega.",
+  "source": "Slovenščina",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Slovenija meri komaj dvajset tisoč kvadratnih kilometrov, v njej pa raste okrog tri tisoč vrst praprotnic in semenk.",
+  "source": "Rastlinstvo",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Kranjska čebela je doma na Gorenjskem in Dolenjskem, danes pa je ena najbolj razširjenih čebeljih pasem na svetu.",
+  "source": "Čebelarstvo",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Snežni plaz se sproži ob eni sami plasti, ki ne drži več. Vse ostalo je bilo tam že prej.",
+  "source": "Snegoslovje",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Bukev prvič obrodi šele pri kakih petdesetih letih, potem pa vsakih nekaj let naenkrat na tone žira.",
+  "source": "Gozdarstvo",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Pokrajina med Vipavo in Trstom se imenuje Kras. Po njej se danes imenuje vsak tak svet na zemlji.",
+  "source": "Geomorfologija",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Kakor si boš postlal, tako boš spal.",
+  "source": "Slovenski pregovor",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Vsak začetek je težak.",
+  "source": "Slovenski pregovor",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Kar se Janezek nauči, to Janez zna.",
+  "source": "Slovenski pregovor",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Obljuba dela dolg.",
+  "source": "Slovenski pregovor",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Franciscejski kataster je v dvajsetih letih devetnajstega stoletja prvič izmeril vsako parcelo. Marsikje meje še danes tečejo tam, kjer jih je narisal.",
+  "source": "Zgodovina zemljemerstva",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Kakor drevo v prvih letih obrežeš, tako bo stalo čez petdeset let.",
+  "source": "Sadjarstvo",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "V štiridesetih letih devetnajstega stoletja je slovenščina zamenjala črkopis. Odločitev iz tistih let piše še ta stavek.",
+  "source": "Jezikovna zgodovina",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Temelj je edini del hiše, ki ga pozneje ni mogoče popraviti, ne da bi podrl vse nad njim.",
+  "source": "Stavbarstvo",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Ime, ki ga rastlina dobi ob prvem opisu, ji ostane. Blagajev volčin so našli nad Polhovim Gradcem leta 1837 in se po grofu Blagaju imenuje odtlej.",
+  "source": "Botanika",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Slovenska abeceda ima petindvajset črk. Ko so jo sestavljali, so izpustili q, w, x in y, in tako je ostalo.",
+  "source": "Pravopis",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Trta rodi na lanskem lesu. Kar pri zimski rezi pustiš, je vse, kar bo prihodnje leto obrodilo.",
+  "source": "Vinogradništvo",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Ciciban je ime, ki si ga je izmislil Oton Župančič. Pred njim tiste besede ni bilo, zdaj jo pozna vsak otrok.",
+  "source": "Oton Župančič (1878–1949)",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Mirovanje: seme, ki ne kali, čeprav so razmere prave, ker ga nekaj zadržuje od znotraj. Ista beseda pomeni tudi mir.",
+  "source": "Botanika",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Ledeni možje: ljudski koledar svetuje, naj se s sajenjem počaka do sredine maja, ker do takrat še lahko pozebe.",
+  "source": "Ljudski koledar",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Stratifikacija: nekatera semena je treba prezimiti v mrazu, sicer ne vzklijejo. Zima jim ni ovira, ampak pogoj.",
+  "source": "Vrtnarstvo",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Človeška ribica zdrži brez hrane več let. V jamski temi se ji nikamor ne mudi.",
+  "source": "Zoologija",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Če medved na svečnico vidi svojo senco, pravijo, da gre nazaj spat, ker bo zima še dolga.",
+  "source": "Ljudsko izročilo",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Zamolčati je svoj glagol: vedeti in ne povedati. Za to je bila potrebna posebna beseda.",
+  "source": "Slovenščina",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "V hladnem in suhem ostanejo semena kaljiva desetletja. Nekatera so vzklila potem, ko so ležala več kot sto let.",
+  "source": "Semenarstvo",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Jajčeca drobnih rakcev v kraških lužah preživijo, ko luža presahne, in počakajo na naslednji dež.",
+  "source": "Zoologija",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Potrpljenje je božja mast.",
+  "source": "Slovenski pregovor",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Mošta ni dobro prehitro pretočiti. Vino, ki ga ne pustiš pri miru, ostane kalno dlje, kot bi bilo treba.",
+  "source": "Vinarstvo",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Marsikateri cvet se ob dežju zapre in počaka. Odpiranje stane preveč, da bi ga zapravil na napačen dan.",
+  "source": "Botanika",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Zadrževati se pomeni oboje: nekje mirno ostajati in ne pokazati, kar čutiš.",
+  "source": "Slovenščina",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Kralj Matjaž spi pod Peco. Brada mu raste okrog mize, in ko jo bo devetkrat ovila, se bo zbudil.",
+  "source": "Slovensko ljudsko izročilo",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Stara trta v Mariboru rodi že več kot štiristo let in velja za najstarejšo trto na svetu, ki še daje grozdje.",
+  "source": "Vinogradništvo",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Cerkniško jezero se vsako leto napolni in spet izprazni. Valvasor je leta 1689 pojasnil, kako to počne, in ga je Evropa slišala.",
+  "source": "Janez Vajkard Valvasor (1641–1693)",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Človeška ribica lahko doživi krepko čez petdeset let, kar je za dvajset centimetrov dolgo žival nenavadno dolgo.",
+  "source": "Zoologija",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Bukov gozd obilno obrodi le vsakih nekaj let. Vmesna leta niso izpad, ampak del računa.",
+  "source": "Gozdarstvo",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Hrepenenje je beseda, na kateri stoji velik del slovenske proze: dolgo čakanje na nekaj, kar je daleč.",
+  "source": "Slovenščina",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Čakati in dočakati sta dva različna glagola. Drugi pove, da se je čakanje izšlo.",
+  "source": "Slovenščina",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Kdor čaka, dočaka.",
+  "source": "Slovenski pregovor",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Triglavski ledenik merijo vsako leto od 1946. Nekaj ljudi hodi gor z merilnim trakom in zapiše številko.",
+  "source": "Glaciologija",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Sol v Sečoveljskih solinah nastaja od pozne pomladi do konca poletja. Preostali del leta soline samo stojijo.",
+  "source": "Solinarstvo",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Kozolec suši seno tedne. Kar bi na tleh splesnelo, na latah počaka na veter.",
+  "source": "Kmečko stavbarstvo",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Velika pratika Valentina Vodnika iz leta 1795 je bila prvi slovenski koledar: knjiga, ki je vnaprej povedala vse leto.",
+  "source": "Valentin Vodnik (1758–1819)",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Planšar je na Veliki planini pri živini od junija do jeseni. Velik del tega časa samo gleda.",
+  "source": "Planšarstvo",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Sova posluša, ne gleda. Njen obraz je narejen kot lijak, ki zvok vodi k ušesom.",
+  "source": "Ornitologija",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Na Kredarici merijo vreme na višini 2514 metrov vse leto, tudi kadar tam gori ni videti nič.",
+  "source": "Meteorologija",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Gank je lesen hodnik po pročelju kmečke hiše. Z njega se vidi na dvorišče in na pot, po kateri kdo pride.",
+  "source": "Kmečko stavbarstvo",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Čebelar sodi družino po prometu na bradi panja. Panja ne odpre, dokler mu ni treba.",
+  "source": "Čebelarstvo",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Postrv stoji z glavo proti toku in počaka, da ji hrana pride sama. Plavanje bi stalo več, kot bi prineslo.",
+  "source": "Ihtiologija",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Gledati in videti sta dva glagola. Prvi je delo, drugi je izid.",
+  "source": "Slovenščina",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Bela štorklja v Prekmurju stoji na gnezdu na eni nogi in ure dolgo ne stori ničesar. Gnezdo je isto več let zapored.",
+  "source": "Ornitologija",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Bdeti ni isto kot čuvati. Bdeti pomeni ostati buden pri nekom.",
+  "source": "Slovenščina",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Gams na robu ne je, ko jedo drugi. Eden gleda dolino, da lahko čreda pase.",
+  "source": "Zoologija",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Prežati pomeni čakati na mestu, skrit, in gledati. Slovenščina ima za to svoj glagol.",
+  "source": "Slovenščina",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Kmet, ki je čakal dež, je gledal, kam se obrača veter. Z Jadrana in izpod Alp ne prinese istega.",
+  "source": "Vremensko izročilo",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Panjevski gozd: drevo posekaš do tal in se ne konča, ampak začne znova. Panj lahko na ta način živi stoletja.",
+  "source": "Gozdarstvo",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Otava je druga košnja. Trava, ki je padla junija, do avgusta stoji spet do kolen.",
+  "source": "Kmetijstvo",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Steljniki v Beli krajini so brezovi gaji, ki so jih vsako leto pograbili za nastilj. Prav zaradi tega so ostali svetli.",
+  "source": "Kulturna krajina",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Vrba se ukorenini iz palice, ki jo zabodeš v mokro zemljo. Odrezano se prime.",
+  "source": "Botanika",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Trto vsako zimo skrajšajo na nekaj očes. Kdor je ne obreže, dobi les in malo grozdja.",
+  "source": "Vinogradništvo",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Martinček odvrže rep, kadar ga kdo zgrabi zanj. Nov mu zraste, a je drugačen od prvega.",
+  "source": "Zoologija",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Lipa, posekana do panja, požene iz korenin venec novih debel. Iz enega drevesa jih vstane deset.",
+  "source": "Dendrologija",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Regrat pokosiš in v desetih dneh spet cveti. Korenina je globlja od kose.",
+  "source": "Botanika",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Šibe za pletenje košar so eno leto stare, zato jih režejo vsako zimo sproti. Grm je narejen za to, da ga vsako leto vzameš.",
+  "source": "Rokodelstvo",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Pravi kostanj lahko iz starega, votlega debla požene nov poganjek in raste naprej, čeprav je sredica zdavnaj strohnela.",
+  "source": "Dendrologija",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Travnik ohranja kosa. Brez nje bi v petnajstih letih na istem mestu stal gozd.",
+  "source": "Ekologija",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Znova je beseda, zgrajena okrog novega. Kar se ponovi, se v slovenščini zgodi na novo.",
+  "source": "Slovenščina",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Sveti Matija led razbija, če ga ni, ga pa naredi.",
+  "source": "Slovenski pregovor",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Ena lastovka ne prinese pomladi.",
+  "source": "Slovenski pregovor",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Po dežju pride sonce.",
+  "source": "Slovenski pregovor",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Kurentovanje: na Ptuju kurenti v kožuhih in z zvonci hodijo od hiše do hiše, da bi pregnali zimo. Delajo hrup, ker se zima hrupa boji.",
+  "source": "Ljudska šega",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Martinovo, enajstega novembra: tisti dan mošt postane vino. Ljudsko izročilo pravi, da ga sveti Martin krsti.",
+  "source": "Ljudska šega",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Zeleni Jurij: pomladna šega, v kateri gre fant, ovit v zelenje, od hiše do hiše in oznanja, da je zime konec.",
+  "source": "Ljudska šega",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Pomlad je beseda, sestavljena okrog mladosti. Leto se obrne proti mlademu in šele potem se otopli.",
+  "source": "Slovenščina",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Kravji bal v Bohinju: konec poletja se živina vrne s planine v dolino, in dan, ko pride, je praznik.",
+  "source": "Ljudska šega",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Cerkniško jezero je jeseni jezero, poleti pa travnik, po katerem kosijo. Ista zemlja opravlja obe službi.",
+  "source": "Geografija",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Do svetega Duha ne sleci kožuha.",
+  "source": "Slovenski pregovor",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Jesen je ime letnega časa in ime drevesa. Dve besedi, ki zvenita enako in nimata druga z drugo nič.",
+  "source": "Slovenščina",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Lucija, najkrajši dan, najdaljša noč. Rek se je ohranil iz koledarja, ki je veljal pred popravkom, in se ni popravil z njim.",
+  "source": "Ljudsko izročilo",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Zaceliti je narejeno iz besede cel. Ozdraveti pomeni postati spet cel.",
+  "source": "Slovenščina",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Drevo rane ne popravi, ampak jo obraste. Les pod skorjo ostane zaznamovan, obod se zapre.",
+  "source": "Dendrologija",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Pozdraviti pomeni komu vrniti zdravje in tudi reči mu dober dan. Isti glagol opravlja obe stvari.",
+  "source": "Slovenščina",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Kost, ki se zaraste, je na mestu zloma pogosto debelejša kot pred njim.",
+  "source": "Medicina",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Petola je tanka živa preproga na dnu solnega bazena. Vsako pomlad jo obnovijo, in prav ona drži sol čisto.",
+  "source": "Solinarstvo",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Okrevati pomeni priti k sebi, kar ni čisto isto kot ozdraveti. Slovenščina si je privoščila obe besedi.",
+  "source": "Slovenščina",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Suhi zid se popravi tako, da kamne znova zložiš. Malte v njem ni bilo nikoli, zato ni česa zamenjati.",
+  "source": "Kraško stavbarstvo",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Gozd po vetrolomu ne potrebuje sajenja, če je v bližini dovolj starih dreves. Semena so večinoma že v tleh.",
+  "source": "Gozdarstvo",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Sprava pomeni pomiritev, spravilo pa spravljanje pridelka pod streho. Isti koren pove, da gre obakrat za to, da pride nekaj na svoje mesto.",
+  "source": "Slovenščina",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Za ledenikom ostane gola skala. Prvi se je oprimejo lišaji, in šele iz njih čez dolgo nastane prst.",
+  "source": "Ekologija",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Marsikatera rana se zaceli sama. Del zdravljenja je v tem, da se pusti pri miru.",
+  "source": "Medicina",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Reka, ki je poplavila travnik, na njem pusti mulj. Prav ta mulj naslednje leto redi travo.",
+  "source": "Kmetijstvo",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Svit je beseda za tisti del jutra, ko je že svetlo, sonca pa še ni.",
+  "source": "Slovenščina",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Kresna noč je najkrajša v letu. Na hribih so kurili kresove tako, da se je z enega vrha videlo na drugega.",
+  "source": "Ljudska šega",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Kresnica sveti hladno. Skoraj vsa energija gre v svetlobo in skoraj nič v toploto.",
+  "source": "Entomologija",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Dan se v gorski dolini konča prej kot na grebenu nad njo. Senca gre navzgor po pobočju in nazadnje ugasne vrh.",
+  "source": "Geografija",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Prisojno in osojno: pobočje se imenuje po tem, ali sonce nanj pride. Iz tega so nastala imena vasi.",
+  "source": "Zemljepisna imena",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Rana ura, zlata ura.",
+  "source": "Slovenski pregovor",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Škrjanec začne peti, ko je še mrak, in poje med tem, ko se dviga. Petje in vzpon sta pri njem eno.",
+  "source": "Ornitologija",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Mrak ima svoj glagol: mrači se. Dan se ne konča, ampak se dela tema.",
+  "source": "Slovenščina",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Najkrajši dan v Ljubljani traja manj kot devet ur, najdaljši več kot petnajst. Med enim in drugim je pol leta.",
+  "source": "Astronomija",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Danica in večernica sta isti planet. Ljudje so ju dolgo šteli za dve različni zvezdi, ker se nikoli ne pokažeta skupaj.",
+  "source": "Astronomija",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Rosa pade proti jutru, ko se tla ohladijo bolj kot zrak nad njimi.",
+  "source": "Meteorologija",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Petelin zapoje pred zoro po svoji notranji uri. Poje tudi, če ga pustiš v temi in mu ničesar ne poveš.",
+  "source": "Zoologija",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Fotoperiodizem: rastlina se za cvetenje odloči tako, da meri dolžino noči. Šteje temo, ne svetlobe.",
+  "source": "Botanika",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Mlada sončnica z glavo sledi soncu čez dan. Odrasla obstane obrnjena proti vzhodu in se ne obrača več.",
+  "source": "Botanika",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Slovenija je bila med prvimi državami z zakonom proti svetlobnemu onesnaženju. Nočno nebo je s tem postalo nekaj, kar se varuje.",
+  "source": "Varstvo okolja",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Branike v deblu so široke v letih z dovolj vode in ozke v suhih. Drevo v les zapiše vreme, ki ga je preživelo.",
+  "source": "Dendrokronologija",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Ljudje so brali vreme iz barve večerne zarje. Rdeč večer je obetal lep dan, in dovolj pogosto je držalo, da se je rek obdržal.",
+  "source": "Vremensko izročilo",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Ni vse zlato, kar se sveti.",
+  "source": "Slovenski pregovor",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "V jamah alg ni, ker ni svetlobe. Vse zeleno v Postojnski jami je zraslo ob lučeh, ki so jih tja prinesli ljudje.",
+  "source": "Jamoslovje",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Sončna ura kaže sončni čas, ki se od ure na zapestju loči tudi za pol ure. Ura je dogovor, sonce ni.",
+  "source": "Astronomija",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Krošnja bukve prepusti do tal komaj nekaj odstotkov svetlobe. Zato pod staro bukvijo skoraj nič ne raste.",
+  "source": "Gozdarstvo",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Človeška ribica nima delujočih oči, ima pa kožo, ki svetlobo zazna. Vidi s celim telesom ali pa nič.",
+  "source": "Zoologija",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Mah in lišaji so na severni strani debla pogosto gostejši, ker se tam dlje drži vlaga. Hodci so po tem sklepali o smeri.",
+  "source": "Ekologija",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Nebo je modro, ker zrak kratke valovne dolžine razprši močneje kot dolge. Barva ni v zraku, ampak v razmerju.",
+  "source": "Fizika",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Svet in svetloba sta iz istega korena. Beseda, ki danes pomeni ves svet, je nekoč pomenila svetlobo.",
+  "source": "Slovenščina",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Blisk brez groma pomeni, da je nevihta predaleč, da bi se slišala. Svetloba pride sama, zvok zaostane.",
+  "source": "Meteorologija",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Svetloba prepotuje razdaljo od Sonca do Zemlje v dobrih osmih minutah.",
+  "source": "Astronomija",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Sijati in sijaj sta iz istega korena. Iz tega, kar oddaja svetlobo, je nastala beseda za tisto, kar je slovesno.",
+  "source": "Slovenščina",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Kresnica in kresna noč nosita isto besedo kres, ki pomeni ogenj. Žuželka je dobila ime po ognju, ki ga ni.",
+  "source": "Slovenščina",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Mavrica je zvezen prehod barv. Koliko jih naštejemo, je stvar jezika in ne neba.",
+  "source": "Fizika",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "V jami je tema popolna. Oko se nanjo ne privadi, ker ni ničesar, na kar bi se privadilo.",
+  "source": "Jamoslovje",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Sneg odbije skoraj vso svetlobo, ki nanj pade, temna prst skoraj nobene. Zato se spomladi sneg umakne najprej ob deblih.",
+  "source": "Fizika",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Luna ne sveti. Odbija sončno svetlobo, in kar vidimo, je ta odsev.",
+  "source": "Astronomija",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Svetloba nekaterih zvezd potuje do nas tisočletja. Ko jo vidimo, gledamo nazaj.",
+  "source": "Astronomija",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Sveča gori tako, da se vosek stopi in nato upari. Plamen ni na stenju, ampak nad njim.",
+  "source": "Kemija",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Ob mirnih poletnih nočeh se morje ob obali včasih zasveti, ker so drobne alge v njem vznemirjene.",
+  "source": "Morska biologija",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Dvojina: slovenščina ima poleg ednine in množine še obliko za natanko dva. Midva nista mi.",
+  "source": "Slovnica",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Rovaš je palica z zarezami, ki so jo razklali po dolžini. Vsak je držal svojo polovico in obe sta šteli enako.",
+  "source": "Ljudsko računstvo",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Enajst je nastalo iz ena na deset. Vsa števila do devetnajst so zložena po istem receptu.",
+  "source": "Slovnica",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Kozolec se meri v oknih, torej v razmikih med stebri. Kmet je povedal, koliko oken ima, in vsi so vedeli, koliko sena je to.",
+  "source": "Kmečko stavbarstvo",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Sto ljudi, sto čudi.",
+  "source": "Slovenski pregovor",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Šest sklonov krat tri števila je osemnajst oblik za eno samo ime. Slovenščina jih od govorca pričakuje vse.",
+  "source": "Slovnica",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Panjske končnice so poslikane čelne deske panjev. Vsaka je druga, tako da je bil vsak panj v čebelnjaku svoj.",
+  "source": "Ljudska umetnost",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Sonetni venec: petnajst sonetov, zadnji sestavljen iz prvih vrstic prejšnjih štirinajstih, začetnice tega zadnjega pa berejo ime.",
+  "source": "France Prešeren (1800–1849)",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Slovenščina ima sedem narečnih skupin in več deset narečij, vse skupaj na dvajsetih tisočih kvadratnih kilometrih.",
+  "source": "Dialektologija",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Idrijska čipka nastaja iz niti, ki jih klekljarica prepleta med bucikami. Vzorec je narisan na papir, preden se začne.",
+  "source": "Rokodelstvo",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Cerkveni zvon je odbil vsako uro. Kdor je bil na polju, je vedel, koliko je, ne da bi imel kaj pri sebi.",
+  "source": "Ljudska navada",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Pratika je za vsak dan v letu povedala, kaj se dela: kdaj sejati, kdaj striči, kdaj pustiti pri miru.",
+  "source": "Ljudski koledar",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Satovje: šestkotniki se stikajo z robom ob robu in vmes ne ostane nič.",
+  "source": "Geometrija",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Pri suhem zidu se kamen izbere po tem, kam se prilega, in ne po tem, kako je lep. Zid drži sam sebe.",
+  "source": "Kraško stavbarstvo",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Potica se razvalja, namaže in zvije. Ko jo prerežeš, je nadev spirala skozi vso rezino.",
+  "source": "Kuhinja",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Prekmurska gibanica ima štiri nadeve, ki gredo dvakrat drug za drugim med tanke plasti testa. Vrstni red ni poljuben.",
+  "source": "Kuhinja",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Tromostovje v Ljubljani: kjer je bil en most, so jih postavili tri, da tistim, ki gredo drugam, ni treba čez istega.",
+  "source": "Arhitektura",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Toplar sta dva kozolca, postavljena skupaj pod eno streho, s podom vmes. Iz dveh je nastala hiša.",
+  "source": "Kmečko stavbarstvo",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Skodle se na strehi položijo tako, da vsaka pokrije stik dveh pod sabo. Nobena ne dela ničesar sama.",
+  "source": "Rokodelstvo",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Apnenec in dolomit ležita drug na drugem v plasteh, ki so bile vodoravne, dokler se ni gora dvignila.",
+  "source": "Geologija",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Rimski mozaiki v Emoni so sestavljeni iz kamenčkov skoraj enake velikosti. Slika je v razporeditvi, ne v kosih.",
+  "source": "Arheologija",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Klekljanje in tkanje delita eno samo pravilo: nit gre enkrat čez in enkrat pod, in šele iz tega nastane blago.",
+  "source": "Rokodelstvo",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Pri gradnji brez žebljev se les spoji z zarezami. Kar drži, je oblika, ne kovina.",
+  "source": "Tesarstvo",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Sadovnjak, posajen v šahovnico, sprejme več dreves kot tisti v vrstah, ker vsako drevo stoji v vrzeli med drugimi.",
+  "source": "Sadjarstvo",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Šumniki: črke č, š in ž se v slovenščini imenujejo po šumu, ki ga delajo.",
+  "source": "Slovnica",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Svetovna veda o krasu govori slovensko. Dolina, polje, ponor, uvala in vrtača so besede, ki so odšle v druge jezike take, kot so.",
+  "source": "Geomorfologija",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Mestnik je edini sklon, ki nikoli ne stoji brez predloga. Ime pove, čemu je namenjen.",
+  "source": "Slovnica",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Orodnik je sklon za tisto, s čimer nekaj delaš, in za tistega, s katerim si.",
+  "source": "Slovnica",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Rastlina ima v znanosti dve imeni, rodovno in vrstno. Prav zato se je o njej mogoče pogovarjati čez vse jezike.",
+  "source": "Sistematika",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Ljudska imena rastlin povedo, kje rastejo ali čemu služijo. Latinska povedo, s čim so v sorodu. Oboje je red, samo drug.",
+  "source": "Botanika",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Krajevna imena pogosto povedo, kaj je bilo tam prej. Dobrava je bila hrastov gozd, Brezje brezov, Loka travnik ob vodi.",
+  "source": "Zemljepisna imena",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Do sredine devetnajstega stoletja se je šum zapisoval z dvema znakoma. Potem je vsak dobil svojo črko in strešico nad njo.",
+  "source": "Pravopis",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "V delu slovenskih govorov se pomen besede spremeni z višino glasu na zlogu. Zapisano je enako, slišano ni.",
+  "source": "Glasoslovje",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Slovensko ime človeška ribica govori o barvi kože, latinsko pa o tem, da je videti kot kača. Ena žival, dve presoji.",
+  "source": "Sistematika",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Slovnica loči sklanjatev in spregatev: prvo opravljajo imena, drugo glagoli. Vsaka beseda ve, v katero vrsto spada.",
+  "source": "Slovnica",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Vsak del kozolca ima ime: stebri, late, streha, okna. Kdor je stavbo znal poimenovati, jo je znal tudi postaviti.",
+  "source": "Kmečko stavbarstvo",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Kras je apnenec, po katerem voda ne teče, ampak izginja. Zemlje je malo in je rdeča.",
+  "source": "Geologija",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Rdeča prst v kraških vrtačah je ostanek netopnega dela apnenca. Iz metra kamnine ostane nekaj centimetrov zemlje.",
+  "source": "Pedologija",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Prst nastaja stoletje za centimeter, odnese pa jo lahko en sam naliv.",
+  "source": "Pedologija",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Ljubljansko barje je šota: zemlja, nastala iz rastlin, ki niso strohnele, ker je bilo premokro.",
+  "source": "Pedologija",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Deževniki na travniku predelajo v letu več ton zemlje na hektar. Zemlja gre skozi njihova telesa in se vrne na površje.",
+  "source": "Talna biologija",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Ilovica drži vodo, pesek jo spusti. Dobra njiva je mešanica obojega in nič od tega v celoti.",
+  "source": "Pedologija",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Vinograd na strmini so naredili v terase, ker bi dež drugače prst odnesel v dolino. Teraso je bilo treba nositi nazaj gor.",
+  "source": "Vinogradništvo",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Njiva je vsako tretje leto počivala. Praha ni bila lenoba, ampak račun.",
+  "source": "Kmetijstvo",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Kamen so na kraški njivi pobirali z roko in ga zlagali na rob. Iz tega so nastali suhi zidovi in groblje.",
+  "source": "Kulturna krajina",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Prst, tla in zemlja niso isto. Prst drži rastlino, tla so tisto, po čemer hodiš, zemlja je oboje in še ves planet povrhu.",
+  "source": "Slovenščina",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Gnoj so vozili na njivo pozimi, ko je bila zmrznjena in je voz ni pogazil.",
+  "source": "Kmetijstvo",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Apnenec je bil nekoč morsko dno. V kraški skali so lupine školjk, ki so odmrle, preden je bilo tu kopno.",
+  "source": "Geologija",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "O Vrba, srečna, draga vas domača.",
+  "source": "France Prešeren (1800–1849)",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Krasna si, bistra hči planin.",
+  "source": "Simon Gregorčič (1844–1906)",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Ljubo doma, kdor ga ima.",
+  "source": "Slovenski pregovor",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Dom in domovina sta iz iste besede. Domovina je dom, ki je zrasel čez hišo.",
+  "source": "Slovenščina",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Domotožje je sestavljeno iz doma in tožnosti. Beseda ne opisuje kraja, ampak tisto, kar se zgodi, kadar ga ni.",
+  "source": "Slovenščina",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Rojak je iz besede rod: nekdo, ki je istega rodu ali z istega konca.",
+  "source": "Slovenščina",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Geometrično središče Slovenije so izmerili in ga označili pri Vačah nad Savo. Nekje mora biti sredina.",
+  "source": "Geodezija",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Več kot polovica Slovenije je pod gozdom, kar jo uvršča med najbolj gozdnate države v Evropi.",
+  "source": "Gozdarstvo",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Lepa Vida je v ljudski pesmi ženska, ki gre daleč in ji je hudo po domu. Njeno ime se je prijelo tega občutka.",
+  "source": "Slovenska ljudska pesem",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Kmetija je imela hišno ime, ki se ni menjalo z gospodarjem. Človek je bil pri Kovaču, tudi če se je pisal drugače.",
+  "source": "Ljudska navada",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Izseljenci iz slovenskih vasi so si v Clevelandu postavili narodne domove. Ime je povedalo, kaj so pogrešali.",
+  "source": "Zgodovina izseljenstva",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Sosednji gorski dolini govorita drugače. Meja med govoroma je pogosto greben, prek katerega so ljudje redko hodili.",
+  "source": "Dialektologija",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Čebelnjak je hiša za panje, postavljena tako, da je čebelar pri delu na suhem. Drugod stojijo panji kar na prostem.",
+  "source": "Čebelarstvo",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Kozolec ni shramba, ampak sušilnica. Postavljen je prek prevladujočega vetra in ne tja, kjer bi bil lep.",
+  "source": "Kmečko stavbarstvo",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Vrt pred hišo je bil ograjen. Ograja ni ločevala lepega od grdega, ampak vrt od kokoši.",
+  "source": "Vrtnarstvo",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Planinska koča je odprta za vsakogar, ki pride. Kdor v njej prenoči, za sabo pomije.",
+  "source": "Planinska navada",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Aljažev stolp na Triglavu je leta 1895 postavil Jakob Aljaž kot zavetje. V njem lahko nekaj ljudi počaka, da mine vreme.",
+  "source": "Planinska zgodovina",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Sečoveljske soline vzdržujejo ročno. Če bazenov nekaj let nihče ne pograbi, jih morje vzame nazaj.",
+  "source": "Solinarstvo",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Visokodebelni sadovnjak zahteva obrezovanje in košnjo pod drevesi. Brez tega v nekaj desetletjih postane grmovje.",
+  "source": "Sadjarstvo",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Kraški kal je izkopana mlaka, ki je napajala živino. Vaščani so ga vsakih nekaj let očistili, sicer je zarasel.",
+  "source": "Kulturna krajina",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Gozd in pašnik sta bila skupna. Vas se je dogovorila, koliko sme kdo vzeti, in dogovor je bil starejši od vsakega gospodarja.",
+  "source": "Agrarna zgodovina",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Kozolec, ki ga nihče ne uporablja, propade v nekaj desetletjih. Les zdrži toliko časa, kolikor ga kdo popravlja.",
+  "source": "Stavbna dediščina",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Hišo so belili vsako pomlad, ne zaradi lepote. Apno je razkuževalo in šele zraven je bilo tudi belo.",
+  "source": "Ljudska navada",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Ledenica: v kraški jami so pozimi nabrali led, ga pokrili s slamo in ga imeli do poletja.",
+  "source": "Ljudska tehnika",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Repinčeva glavica se z zakrivljenimi trni oprime dlake in gre z živaljo, kamor koli ta gre.",
+  "source": "Botanika",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Mravlje raznašajo semena vijolic in zvončnic. Privlači jih mastni privesek, seme pa odložijo nedotaknjeno.",
+  "source": "Botanika",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Ptica poje bezgovo jagodo in pečko odloži nekaj kilometrov naprej, zavito v gnojilo.",
+  "source": "Ornitologija",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Javorjevo seme ima krilo in se vrti kot propeler. Ne leti daleč, leti pa dovolj daleč od matičnega drevesa.",
+  "source": "Botanika",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Jelševo seme plava. Jelša raste ob vodi in svoja semena spusti v tok, ki jih odnese navzdol.",
+  "source": "Botanika",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Regratova lučka je padalo. En sam veter jo raznese čez ves travnik.",
+  "source": "Botanika",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Ovca prinese v runu semena vseh travnikov, po katerih je hodila. Ob striženju se pokaže, kod je bila.",
+  "source": "Živinoreja",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Po vsaki povodnji se ob bregu pojavijo rastline, ki jih tam prej ni bilo. Reka je pretovor.",
+  "source": "Ekologija",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Ob železniških progah rastejo vrste, ki jih v okoliških travnikih ni. Pripeljale so se z vlaki.",
+  "source": "Ekologija",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Veverica si naredi več skrivališč, kot si jih zapomni. Iz pozabljenih lešnikov zraste leska.",
+  "source": "Zoologija",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Seme, ki potuje v blatu na nogah ptice selivke, je lahko prepotovalo pol Evrope, preden se blato posuši.",
+  "source": "Ekologija",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Ajda je prišla z vzhoda in postala domača jed. Potovala je dlje kot večina ljudi, ki jo jedo.",
+  "source": "Zgodovina poljedelstva",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Počasi se daleč pride.",
+  "source": "Slovenski pregovor",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Kolo z osjo z Ljubljanskega barja je staro kakih pet tisoč dvesto let in velja za najstarejše najdeno leseno kolo na svetu.",
+  "source": "Arheologija",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Valvasor je leta 1689 opisal Bločane, ki so pozimi drveli po snegu na lesenih deskah. To je najstarejši tak opis v tem delu Evrope.",
+  "source": "Janez Vajkard Valvasor (1641–1693)",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Furmani so s konji vozili blago po cesti proti Trstu. Pot je trajala dneve in ob njej so na vsakih nekaj ur stale gostilne.",
+  "source": "Prometna zgodovina",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Ribniški krošnjarji so s košem na hrbtu nosili suho robo po vsej monarhiji. Za to so imeli cesarsko dovoljenje.",
+  "source": "Obrtna zgodovina",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Šavrinke so iz istrskih vasi peš nosile jajca v Trst in se vračale z drugim blagom. Pot so poznale bolje kot kdorkoli.",
+  "source": "Istrsko izročilo",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Med Slovenci velja, da mora biti vsak vsaj enkrat v življenju na Triglavu. Nihče ne ve, kdo je to prvi rekel.",
+  "source": "Planinska navada",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Rimska cesta iz Emone proti Ogleju je šla čez isti prag med gorami, po katerem gre danes avtocesta. Prehodov ni veliko.",
+  "source": "Arheologija",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Pot pomeni tudi način. Iti po svoji poti ni geografska trditev.",
+  "source": "Slovenščina",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Kolovoz je pot, ki jo naredijo kolesa. Nastane iz vožnje in ne iz načrta.",
+  "source": "Slovenščina",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Knafelčeva markacija je rdeč krog z belo piko. Isti znak drži planinske poti po vsej Sloveniji.",
+  "source": "Planinstvo",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Hoditi in iti sta dva glagola. Prvi pove, da se premikaš, drugi, da nekam greš.",
+  "source": "Slovenščina",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "V pravljicah je daljava vedno deveta: za devetimi gorami in devetimi vodami, v deveti deželi.",
+  "source": "Slovensko ljudsko izročilo",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Dober glas seže v deveto vas.",
+  "source": "Slovenski pregovor",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Zlatorog je bel kozorog z zlatimi rogovi, ki živi visoko v Triglavskem pogorju. Kjer je padla njegova kri, je pognala roža.",
+  "source": "Slovensko ljudsko izročilo",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Reka Reka izgine v Škocjanskih jamah in pride na dan blizu morja kot Timav, kakih štirideset kilometrov naprej.",
+  "source": "Hidrologija",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Ljubljanica ima na svoji poti sedem imen. Večkrat gre pod zemljo in vsakič pride ven kot druga voda.",
+  "source": "Hidrologija",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Bela štorklja prezimi v Afriki in se spomladi vrne na isto gnezdo v Prekmurju. Pot je dolga tisoče kilometrov.",
+  "source": "Ornitologija",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Kobilarna v Lipici stoji od leta 1580. Konji iz nje so odšli na dvore po vsej Evropi.",
+  "source": "Konjereja",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Kranjska čebela je danes v panjih na vseh celinah razen na Antarktiki. Odšla je dlje kot ljudje, ki so jo redili.",
+  "source": "Čebelarstvo",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Tujina je beseda za vse, kar ni doma. Ena sama beseda za ves preostali svet.",
+  "source": "Slovenščina",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Postojnska jama ima od leta 1872 svojo železnico. Obiskovalce v notranjost odpeljejo, ker je pot predolga za noge.",
+  "source": "Turistična zgodovina",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Pomorščaki iz Pirana in Izole so pluli po vsem Sredozemlju. Morje jim je bilo pot in ne meja.",
+  "source": "Pomorska zgodovina",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Slovenija je od enega konca do drugega široka manj kot tristo kilometrov. Daljava je tu odvisna od tega, kako hitro se premikaš.",
+  "source": "Geografija",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Srečati in sreča sta iz istega korena. Beseda za srečanje je zgrajena iz besede za srečo.",
+  "source": "Slovenščina",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Naleteti pomeni srečati koga, ne da bi ga iskal. Slovenščina ima za to svoj glagol.",
+  "source": "Slovenščina",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Kjer se Sava Bohinjka in Sava Dolinka združita, je nekaj časa videti, katera voda je katera. Potem ni več.",
+  "source": "Hidrologija",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Sotočje je kraj, kjer se dve vodi stakneta in odtlej naprej nosita eno ime. Katero, se odloči enkrat.",
+  "source": "Geografija",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "V gorah se pozdravi vsakogar, ki gre mimo, tudi če se mudi. Nihče ni določil, od kod naprej to velja.",
+  "source": "Planinska navada",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Opraševanje: cvet in žuželka sta skupaj nekaj sekund, in od tega je odvisna cela letina.",
+  "source": "Botanika",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Trenutek je iz glagola treniti, kar pomeni migniti z očmi. Trenutek traja toliko kot trepalnica.",
+  "source": "Slovenščina",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Kadar se dva srečata na ozki gorski poti, se umakne tisti, ki gre navzdol. Pravilo ni zapisano nikjer in vsi ga poznajo.",
+  "source": "Planinska navada",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Zmenek je iz glagola zmeniti se. Srečanje, o katerem sta se dva prej dogovorila, ima svojo besedo.",
+  "source": "Slovenščina",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Kres na hribu je bil znamenje. Ko so ga zagledali na sosednjem vrhu, so vedeli, da so tudi tam ljudje.",
+  "source": "Ljudska navada",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Ko dve celini trčita, nastane gorovje. Alpe so nastale tako in se še vedno dvigajo.",
+  "source": "Geologija",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Kapljici na šipi, ki se dotakneta, postaneta ena sama in nazaj ne moreta.",
+  "source": "Fizika",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Pri vrbi in hmelju so moški in ženski cvetovi na različnih rastlinah. Brez druge rastline ni semena.",
+  "source": "Botanika",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Lišaj je gliva in alga skupaj. Nobena od njiju sama ne bi zdržala na goli skali.",
+  "source": "Botanika",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Mikoriza: gliva korenini prinese vodo in rudnine, korenina glivi sladkor. Večina dreves brez tega ne bi rasla.",
+  "source": "Botanika",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Ajda cveti pozno poleti, ko drugih paš skoraj ni. Njiva in panj se prav takrat potrebujeta.",
+  "source": "Čebelarstvo",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Gosenice nekaterih metuljev jedo listje ene same rastlinske vrste. Kjer ni tiste rastline, ni tistega metulja.",
+  "source": "Entomologija",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Za rovaš sta bili potrebni dve roki. Vsak je držal svojo polovico, in šele obe skupaj sta bili dokaz.",
+  "source": "Ljudsko računstvo",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Dvoročne žage se ne da vleči samemu. Dva izmenično vlečeta, in nobeden od njiju ne sme potiskati.",
+  "source": "Tesarstvo",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Streha kozolca stoji na dveh vrstah stebrov. Ena sama vrsta bi se ob prvem vetru prevrnila.",
+  "source": "Kmečko stavbarstvo",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Jelka v gorskem gozdu potrebuje senco, dokler je mlada, in bukev ji jo dela. Skupaj rasteta bolje kot vsaka zase.",
+  "source": "Gozdarstvo",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "V grčicah na koreninah detelje živijo bakterije, ki iz zraka delajo dušik. Njiva je po detelji bogatejša, kot je bila.",
+  "source": "Kmetijstvo",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Ključ in ključavnica sta narejena drug za drugega. Nobeden od njiju ni uporaben sam.",
+  "source": "Ključavničarstvo",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Pozdrav pričakuje odzdrav. Kdor pozdravi in ne dobi odgovora, ostane na pol.",
+  "source": "Slovenščina",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Lepa beseda lepo mesto najde.",
+  "source": "Slovenski pregovor",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Zdravljica je iz besede zdrav. Napitnica je želja, da bi bil drugi zdrav, in nič drugega.",
+  "source": "Slovenščina",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Prijatlji, obrodile so trte vince nam sladko.",
+  "source": "France Prešeren, Zdravljica",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Na svidenje pomeni do ponovnega videnja. Slovenski pozdrav ob slovesu poimenuje naslednje srečanje.",
+  "source": "Slovenščina",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Dobrodošel pomeni dobro, da si prišel. Pozdrav sam pove, da prihod ni bil odveč.",
+  "source": "Slovenščina",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Šranga: na poroki vaščani zaprejo cesto in ženin se mora z njimi pogoditi, preden gre naprej. Pogajanje je del veselja.",
+  "source": "Ljudska šega",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Gost se je v starih hišah ustavil na pragu in počakal, da ga povabijo naprej. Vabilo je bilo del vstopa.",
+  "source": "Ljudska navada",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Gostu se je ponudilo, kar je bilo v hiši, tudi če je bilo malo. Odkloniti ni bilo lepo za nobenega od obeh.",
+  "source": "Ljudska navada",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Vikanje in tikanje: slovenščina zahteva, da se že pri prvi besedi odločiš, kako blizu komu si.",
+  "source": "Slovnica",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Srečno je pozdrav rudarjev ob vstopu v jamo. Ista beseda kot sreča in kot srečanje.",
+  "source": "Rudarska navada",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Bog daj je bil pozdrav pri delu na polju, in odgovor je bil ista beseda nazaj.",
+  "source": "Ljudska navada",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Kdor prej pride, prej melje.",
+  "source": "Slovenski pregovor",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Cepljenje: dve rastlini se združita tako, da se kambija obeh dotakneta. Če se zgrešita, se cepič ne prime.",
+  "source": "Sadjarstvo",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Cepiti pomeni oboje: združiti dve rastlini v eno in zaščititi človeka pred boleznijo.",
+  "source": "Slovenščina",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Drevesi, ki se dolgo drgneta drugo ob drugo, se lahko zarasteta skupaj. Skorja se zapre okrog stika in odtlej sta eno.",
+  "source": "Dendrologija",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Skoraj vse evropske trte danes rastejo na ameriških koreninah. Cepljenje je bilo edino, kar je vinograde ohranilo.",
+  "source": "Vinogradništvo",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Bršljan se drevesa oprime s koreninicami, ki ne segajo v les. Nanj se nasloni, ne pa vanj.",
+  "source": "Botanika",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Korenine sosednjih dreves so pogosto povezane z glivnimi nitmi, po katerih potujeta voda in sladkor.",
+  "source": "Gozdarstvo",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Šibe v pletenem košu se ne zvežejo, ampak vpletejo druga v drugo. Kar drži, je prepletanje.",
+  "source": "Rokodelstvo",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Deblo, ki je zraslo okrog ograjne žice, jo je vzelo vase. Drevo je raslo naprej in žico obdržalo v sebi.",
+  "source": "Dendrologija",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Trepetlike v gaju pogosto niso več dreves, ampak eno. Poganjki so pod zemljo povezani in vsi so ista rastlina.",
+  "source": "Botanika",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Prijeti se: rastlina se prime, človek se prime dela, in glagol je isti.",
+  "source": "Slovenščina",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Sožitje je sestavljeno iz skupnega življenja. V biologiji pomeni vrste, ki brez druge druga ne bi zdržale.",
+  "source": "Slovenščina",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Na planini so mleko več kmetij zlili v en kotel. Iz njega je nastal sir, ki ga ni bilo mogoče razdeliti nazaj.",
+  "source": "Sirarstvo",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Družina je iz besede drug, ki pomeni tovariša. Beseda za družino je zgrajena iz besede za družbo.",
+  "source": "Slovenščina",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Prijatelj je iz starega glagola, ki je pomenil biti komu naklonjen. Iz istega korena je nastala angleška beseda friend.",
+  "source": "Jezikoslovje",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Sosed je sestavljen iz so- in sedeti. Sosed je tisti, ki sedi zraven.",
+  "source": "Slovenščina",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Sorodnik je tisti, ki je iz istega rodu. Beseda pove razmerje naravnost in brez ovinka.",
+  "source": "Slovenščina",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Boter ni bil iz družine. Otrok je z njim dobil sorodstvo, ki ga kri ni prinesla.",
+  "source": "Ljudska navada",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Domači so vsi, ki živijo v hiši, ne glede na to, kdo je čigav.",
+  "source": "Slovenščina",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Kri ni voda.",
+  "source": "Slovenski pregovor",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Jabolko ne pade daleč od drevesa.",
+  "source": "Slovenski pregovor",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Tovariš je bil najprej tisti, s katerim si na poti delil tovor.",
+  "source": "Jezikoslovje",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Rod pomeni pleme in tudi letino. Roditi se reče za žensko in za drevo, in glagol je isti.",
+  "source": "Slovenščina",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Svak, tašča, tast, snaha: za vsakega od njih obstaja svoja beseda in nobene, ki bi jih zajela vse.",
+  "source": "Slovenščina",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Lubi Slovenci: tako je Primož Trubar v predgovorih nagovarjal bralce. Ljudi, ki jih ni poznal, je imel za svoje.",
+  "source": "Primož Trubar (1508–1586)",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Dvojina: sva, sta, midva, vidva. Dva nista majhna množina, ampak svoje število.",
+  "source": "Slovnica",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Ljubiva se je stavek, ki ga trije ne morejo izreči.",
+  "source": "Slovnica",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Trniči: pastirji na Veliki planini so sir oblikovali in ga okrasili z lesenimi pisavami. Naredili so ga vedno v paru.",
+  "source": "Ljudska šega",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Par velja za dva čevlja in za dva vola v jarmu. Ena beseda za vse, kar hodi po dvoje.",
+  "source": "Slovenščina",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Vprežena vola sta morala biti enako velika in enako hitra, sicer je bila brazda kriva.",
+  "source": "Kmetijstvo",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Zaupati komu pomeni izročiti mu nekaj, česar potem ne moreš več nadzorovati.",
+  "source": "Slovenščina",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Rokovanje je bilo nekoč pogodba. Kar sta si dva stisnila v roke, je veljalo brez papirja.",
+  "source": "Ljudska navada",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Sopotnik je tisti, ki gre po isti poti ob istem času. Beseda ne pove, ali se poznata.",
+  "source": "Slovenščina",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "S teboj, z njim, z njo: slovenščina ima poseben sklon za osebo, s katero si.",
+  "source": "Slovnica",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Dvojina se je v večini slovanskih jezikov izgubila. Slovenščina jo je obdržala v vsakdanjem govoru.",
+  "source": "Jezikoslovje",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Kadar sta v dvojini moški in ženska, se uporabi moška oblika. Za mešani par jezik svoje nima.",
+  "source": "Slovnica",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Greva, sva bila, se vidiva. Beseda pove, koliko vas je, preden kdo koga prešteje.",
+  "source": "Slovnica",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Polglasnik je najtišji slovenski samoglasnik: pol glasu, ki ga slišimo v besedah pes in megla, zapisujemo pa ga z drugimi črkami.",
+  "source": "Glasoslovje",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Žuborenje je zvok, ki ga dela voda med kamni. Beseda posnema tisto, kar imenuje.",
+  "source": "Slovenščina",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Šumeti se reče za listje, za dež in za reko. Vse troje dela isti zvok in jezik jih ne loči.",
+  "source": "Slovenščina",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Tihotapec je dobesedno tisti, ki tiho tapa. Beseda je sestavljena iz tišine in koraka.",
+  "source": "Slovenščina",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "V velikem tednu zvonovi molčijo in namesto njih po vasi hodijo otroci z lesenimi raglami. Molk ima nadomestni zvok.",
+  "source": "Ljudska šega",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Klopotec je leseno kolesje v vinogradu, ki ga poganja veter in ki ropota, da ptice ne pridejo. Stoji od poletja do martinovega.",
+  "source": "Ljudska tehnika",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Sovino perje ima na prednjem robu glavnik iz drobnih nitk, ki razbije zvok zraka. Zato leti neslišno.",
+  "source": "Ornitologija",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Svež sneg požre zvok. Med kristali je toliko zraka, da se valovi vanj ujamejo, in zato je po sneženju tiho.",
+  "source": "Fizika",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "V jami je kapljanje edini zvok, in prav zato se sliši daleč.",
+  "source": "Jamoslovje",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Tiha voda bregove dere.",
+  "source": "Slovenski pregovor",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Govoriti je srebro, molčati je zlato.",
+  "source": "Slovenski pregovor",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Murni se poleti slišijo ponoči, ker takrat ni drugega. Podnevi so enako glasni.",
+  "source": "Entomologija",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Mir pomeni oboje: mir med ljudmi in mir v sobi. Ena beseda za konec vojne in za tišino zvečer.",
+  "source": "Slovenščina",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Pomiriti se pomeni umiriti se in tudi spraviti se z nekom. Isti glagol opravi oboje.",
+  "source": "Slovenščina",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Premirje je zgrajeno okrog miru: čas, ki stoji pred njim in ni več vojna.",
+  "source": "Slovenščina",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Edinost, sreča, sprava k nam naj nazaj se vrnejo.",
+  "source": "France Prešeren, Zdravljica",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Ne vrag, le sosed bo mejak.",
+  "source": "France Prešeren, Zdravljica",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Da koder sonce hodi, prepir iz sveta bo pregnan.",
+  "source": "France Prešeren, Zdravljica",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Pustiti pri miru je prošnja in ne grožnja. Pomeni, naj se nečesa ne dotikaš, ker je dobro tako, kot je.",
+  "source": "Slovenščina",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Fajront pomeni konec dela in konec točenja. Beseda je prišla iz nemščine in ostala, ker je bila potrebna.",
+  "source": "Pogovorna slovenščina",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Likof je pojedina ob koncu dela. Kar je bilo zgrajeno, ni veljalo za dokončano, dokler ni bilo likofa.",
+  "source": "Ljudska šega",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "In mirna Bosna se reče takrat, kadar je stvar urejena in se o njej ne bo več govorilo.",
+  "source": "Slovenski izraz",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Nehati in prenehati sta dva glagola za isto dejanje. Drugi zveni bolj dokončno, čeprav pomeni enako.",
+  "source": "Slovenščina",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Konec dober, vse dobro.",
+  "source": "Slovenski pregovor",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Praznik je iz besede prazen. Praznični dan je izpraznjen dan: iz njega je bilo delo vzeto ven.",
+  "source": "Slovenščina",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Nedelja je dan, ko se ne dela. Ponedeljek je dan po nedelji in nič drugega.",
+  "source": "Slovenščina",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Počitek in počitnice sta iz istega glagola počivati. Otroci in odrasli počivajo z isto besedo.",
+  "source": "Slovenščina",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Zavetje je kraj, kjer veter ne pride do tebe. Na Krasu so hiše postavljali v zavetrje in ne na razgled.",
+  "source": "Kraško stavbarstvo",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Pod vaško lipo je smel sedeti vsakdo. Drevo je bilo skupno in senca z njim.",
+  "source": "Ljudska navada",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Klop pred hišo je stala tam zato, da se je bilo mogoče usesti, ne da bi šel noter.",
+  "source": "Kmečko stavbarstvo",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Po košnji so kosci sedli in jedli kar na travniku. Obed na pokošenem je bil del dela.",
+  "source": "Kmečka navada",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Odpočiti si: slovenščina pozna glagol, ki počitek vzame nazaj, kakor da bi bil dolg.",
+  "source": "Slovenščina",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Krušna peč je bila tako velika, da se je nanjo dalo leči. Najtoplejši del hiše je bil namenjen spanju.",
+  "source": "Kmečko stavbarstvo",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Voda iz kraškega izvira je poleti hladna ne glede na to, kako vroč je dan. Pod zemljo je vse leto ista temperatura.",
+  "source": "Hidrologija",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Mir se v slovenščini ima. Človek ga ni, ampak ga ima, kakor se ima hiša ali njiva.",
+  "source": "Slovenščina",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Vasovati je pomenilo iti zvečer na obisk v sosednjo hišo in tam ostati, dokler je tekel pogovor.",
+  "source": "Ljudska navada",
+  "theme": "peace",
+  "subtheme": "atEase"
+ }
+]

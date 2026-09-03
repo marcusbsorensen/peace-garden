@@ -1,0 +1,26 @@
+{
+  "language": "Slovene",
+  "endonym": "Slovenščina",
+  "awaiting": "The labels are written. The prose — tagline, about1, about2, about3, growBody, appNote — is still null and still English, on purpose: it is the site's own writing rather than the app's, and it is read in English before it is commissioned in sixteen languages. A null value is drawn in English, silently, one key at a time; the English is in assets/js/strings.js.",
+  "strings": {
+    "tagline": null,
+    "about1": null,
+    "about2": null,
+    "about3": null,
+    "seedTitle": "Prispelo je seme",
+    "replyTitle": "Seme se je vrnilo",
+    "sentBy": "Poslal_a {name}",
+    "gardener": "vrtnar",
+    "planted": "Posajeno",
+    "growTitle": "Kako ga vzgojiti",
+    "growBody": null,
+    "appNote": null,
+    "inEnglish": "v angleščini",
+    "language": "Jezik",
+    "keys": "Tipke",
+    "random": "Nekam naključno",
+    "damaged": "Ta povezava je prispela poškodovana, zato semena ni bilo mogoče prebrati.",
+    "notASeed": "Ta povezava ne nosi semena.",
+    "newerVersion": "To seme prihaja iz novejše različice Peace Garden."
+  }
+}
