@@ -108,7 +108,7 @@
   "subtheme": "smallToLarge"
  },
  {
-  "text": "Aeth y barcud coch yng Nghymru i lawr i ddyrnaid o barau ar lethrau Pumlumon. Poblogaeth heddiw sy'n disgyn o'r llond dwrn hwnnw.",
+  "text": "Aeth y barcud coch yng Nghymru i lawr i ddyrnaid o barau ar lethrau Pumlumon. Mae poblogaeth heddiw i gyd yn disgyn o'r llond dwrn hwnnw.",
   "source": "Milvus milvus",
   "theme": "beginnings",
   "subtheme": "smallToLarge"
@@ -240,7 +240,7 @@
   "subtheme": "heldBack"
  },
  {
-  "text": "Yn y coed y mae hi'n cysgu, yn yr eithin mae hi'n nythu; yn y llwyn tan ddail y bedw, dyna'r fan y bydd hi farw.",
+  "text": "Yn y coed y mae hi'n cysgu, yn yr eithin mae hi'n nythu.",
   "source": "Hen bennill",
   "theme": "waiting",
   "subtheme": "heldBack"
@@ -264,7 +264,7 @@
   "subtheme": "heldBack"
  },
  {
-  "text": "Wrth aeafgysgu, gall calon ystlum arafu o gannoedd o guriadau'r funud i lai nag ugain, a'i gwaed oeri bron at dymheredd yr ogof.",
+  "text": "Wrth aeafgysgu, gall calon ystlum arafu o gannoedd o guriadau'r funud i lai nag ugain, a'i gorff oeri bron at dymheredd yr ogof.",
   "source": "Chiroptera",
   "theme": "waiting",
   "subtheme": "heldBack"
@@ -384,7 +384,7 @@
   "subtheme": "standingAndWatching"
  },
  {
-  "text": "Da gan ddiog yn ei wely glywed sŵn y droell yn nyddu; gwell gennyf finnau glywed sŵn y tannau'n tiwnio.",
+  "text": "Da gan ddiog yn ei wely glywed sŵn y droell yn nyddu; gwell gan innau, dyn a'm helpo, glywed sŵn y tannau'n tiwnio.",
   "source": "Hen bennill",
   "theme": "waiting",
   "subtheme": "standingAndWatching"
@@ -414,7 +414,7 @@
   "subtheme": "standingAndWatching"
  },
  {
-  "text": "Pan fydd haid o wyddau'n pori, mae rhai bob amser â'u pennau i fyny. Po fwyaf yr haid, y lleiaf o amser y mae'n rhaid i bob un ei roi i wylio.",
+  "text": "Pan fydd haid o wyddau'n pori, mae rhai bob amser â'u pennau i fyny. Po fwyaf yr haid, lleiaf o amser sydd raid i bob un ei roi i wylio.",
   "source": "Adareg",
   "theme": "waiting",
   "subtheme": "standingAndWatching"
@@ -468,7 +468,7 @@
   "subtheme": "theTurningYear"
  },
  {
-  "text": "Gaeaf gwyn, ysgubor dyn.",
+  "text": "Gaeaf gwyn, ysgubor dynn.",
   "source": "Dihareb Gymraeg",
   "theme": "renewal",
   "subtheme": "theTurningYear"
@@ -480,13 +480,13 @@
   "subtheme": "theTurningYear"
  },
  {
-  "text": "Y genhinen Bedr yw blodyn Cymru, a chenhinen yw'r llysieuyn. Bu'r ddau symbol yn cydgerdded ers canrifoedd am fod eu henwau bron yr un fath.",
+  "text": "Cenhinen Bedr yw'r Gymraeg am ddaffodil, a chenhinen yw'r llysieuyn a fwyteir. Dau symbol cenedlaethol Cymru, a'u henwau bron yr un fath.",
   "source": "Cymraeg",
   "theme": "renewal",
   "subtheme": "theTurningYear"
  },
  {
-  "text": "Codi'r fedwen: arferai pentrefi ledled Cymru godi bedwen ar ddechrau'r haf a dawnsio o'i chwmpas, ac aeth yr arfer o'r tir yn y bedwaredd ganrif ar bymtheg.",
+  "text": "Codi'r fedwen: arferid codi bedwen ar ddechrau'r haf a dawnsio o'i chwmpas, ac roedd yr arfer yn gyffredin ledled Cymru ar un adeg.",
   "source": "Arfer gwerin",
   "theme": "renewal",
   "subtheme": "theTurningYear"
@@ -516,7 +516,7 @@
   "subtheme": "cutAndComeAgain"
  },
  {
-  "text": "Pori a chadw: mae porfa'r mynydd yn tewhau o gael ei bwyta. Yr hyn a laddai ardd sy'n cadw'r ffridd yn fyw.",
+  "text": "Mae blodau'r ffridd yn dibynnu ar bori. Heb ddafad na cheffyl arni, y glaswellt tal a'r rhedyn sy'n eu tagu o fewn ychydig flynyddoedd.",
   "source": "Amaethyddiaeth",
   "theme": "renewal",
   "subtheme": "cutAndComeAgain"
@@ -564,8 +564,8 @@
   "subtheme": "cutAndComeAgain"
  },
  {
-  "text": "Mae dail bedwen yn dod yn ôl ddwywaith mewn tywydd caled: unwaith yn Ebrill, ac eilwaith os collir y rheiny i rew hwyr.",
-  "source": "Betula pendula",
+  "text": "Os collir dail newydd coeden i rew hwyr, bydd hi'n bwrw ail set ohonynt allan o flagur wrth gefn a gadwyd yn ôl at hynny'n union.",
+  "source": "Coedwigaeth",
   "theme": "renewal",
   "subtheme": "cutAndComeAgain"
  },
@@ -588,7 +588,7 @@
   "subtheme": "madeWhole"
  },
  {
-  "text": "Wrth i asgwrn dorri, mae'r man a fu'n rhydd yn tewhau wrth wella nes bod y darn hwnnw'n gryfach na'r gweddill.",
+  "text": "Wrth i asgwrn dorri ac ailasio, mae'r man a dorrodd yn tewhau nes bod y darn hwnnw'n gryfach na'r gweddill.",
   "source": "Meddygaeth",
   "theme": "renewal",
   "subtheme": "madeWhole"
@@ -606,7 +606,7 @@
   "subtheme": "madeWhole"
  },
  {
-  "text": "Pan lanhawyd afonydd Cymru wedi cau'r gweithfeydd, yr eogiaid a ddaeth yn ôl gyntaf, am mai hwy oedd wedi bod yn dal i geisio dod i mewn drwy'r amser.",
+  "text": "Pan lanhawyd afon Taf wedi cau'r pyllau glo, daeth yr eogiaid yn eu holau iddi. Buont yn dal i geisio dod i mewn ar hyd y blynyddoedd budron.",
   "source": "Salmo salar",
   "theme": "renewal",
   "subtheme": "madeWhole"
@@ -618,7 +618,7 @@
   "subtheme": "madeWhole"
  },
  {
-  "text": "Mae dyfrgi wedi dychwelyd i bob un o afonydd mawr Cymru, a chafodd ei golli o'r rhan fwyaf ohonynt o fewn cof pobl sy'n dal yn fyw.",
+  "text": "Mae'r dyfrgi wedi dychwelyd i bron bob afon o bwys yng Nghymru, ar ôl bod bron â diflannu o fewn cof pobl sy'n dal yn fyw.",
   "source": "Lutra lutra",
   "theme": "renewal",
   "subtheme": "madeWhole"
@@ -678,7 +678,7 @@
   "subtheme": "theEdgesOfTheDay"
  },
  {
-  "text": "Yn gwarando ddechrau dydd y ceiliog bronfraith celfydd.",
+  "text": "Yn gwarando ddechrau dydd y ceiliog bronfraith celfydd, yn canu englyn alathr.",
   "source": "Dafydd ap Gwilym (c. 1315–1350)",
   "theme": "light",
   "subtheme": "theEdgesOfTheDay"
@@ -708,7 +708,7 @@
   "subtheme": "theEdgesOfTheDay"
  },
  {
-  "text": "Mae blodau'r pren gwyddfid yn arogli gryfaf ar ôl machlud, am mai gwyfynod sy'n eu ffrwythloni.",
+  "text": "Mae blodau'r gwyddfid yn arogli gryfaf ar ôl machlud, am mai gwyfynod sy'n eu peillio.",
   "source": "Lonicera periclymenum",
   "theme": "light",
   "subtheme": "theEdgesOfTheDay"
@@ -756,7 +756,7 @@
   "subtheme": "readingTheLight"
  },
  {
-  "text": "Mae'r lliw sy'n dweud wrth blanhigyn faint o nos sydd wedi bod yn newid ei ffurf yn y golau ac yn llacio'n ôl yn araf yn y tywyllwch. Hyd y llacio yw'r mesur.",
+  "text": "Mae gan blanhigyn bigment sy'n newid ei ffurf yn y golau ac yn llacio'n ôl yn araf yn y tywyllwch. Hyd y llacio sy'n dweud wrtho pa mor hir fu'r nos.",
   "source": "Llysieueg",
   "theme": "light",
   "subtheme": "readingTheLight"
@@ -768,7 +768,7 @@
   "subtheme": "readingTheLight"
  },
  {
-  "text": "Ni ellir gweld bwa yn yr awyr oni bai fod yr haul y tu ôl i chi ac yn is na deugain gradd uwchben y gorwel.",
+  "text": "Ni ellir gweld bwa yn yr awyr oni bai fod yr haul y tu ôl i chi ac yn is na thua deugain gradd uwchben y gorwel.",
   "source": "Ffiseg",
   "theme": "light",
   "subtheme": "readingTheLight"
@@ -864,7 +864,7 @@
   "subtheme": "lightItself"
  },
  {
-  "text": "Deunaw: dau naw. Cyfrif fesul ugain a wnâi'r hen Gymraeg, ac mae olion y cyfrif hwnnw ym mhob deunaw a phymtheg sydd ar lafar.",
+  "text": "Deunaw: dau naw. Ugeiniau oedd sylfaen yr hen gyfrif Cymreig, a deugain yw dau ugain, a thrigain yn dri ohonynt.",
   "source": "Cymraeg",
   "theme": "pattern",
   "subtheme": "counted"
@@ -912,19 +912,19 @@
   "subtheme": "counted"
  },
  {
-  "text": "Mae'r dail ar goesyn yn troi'n gyson wrth ddringo, a'r ongl rhwng un ddeilen a'r nesaf bron yr un fath ym mhob planhigyn a fesurwyd.",
+  "text": "Mae'r dail ar goesyn yn troi wrth ddringo, ac mewn llawer o blanhigion yr un ongl yn union sydd rhwng pob deilen a'r nesaf, i fyny'r holl goesyn.",
   "source": "Llysieueg",
   "theme": "pattern",
   "subtheme": "counted"
  },
  {
-  "text": "Gadewid dau gan cwch gwenyn i sefyll dros y gaeaf am mai ychydig ohonynt a fyddai byw. Cyfrif y gwanwyn oedd y cyfrif a gyfrifai.",
-  "source": "Gwenynwriaeth",
+  "text": "Mae gwenynen yn dweud wrth y lleill pa mor bell yw'r bwyd trwy hyd ei dawns. Po hwyaf y rhan syth, pellaf y daith.",
+  "source": "Apis mellifera",
   "theme": "pattern",
   "subtheme": "counted"
  },
  {
-  "text": "Nid oes gan y Gymraeg air am a, an nac unrhyw fannod amhendant. Un ai peth yw'r peth, neu'r peth ydyw.",
+  "text": "Nid oes bannod amhendant yn y Gymraeg. Mae bannod ar gyfer peth penodol, ond ar gyfer peth amhenodol nid oes dim ond yr enw ei hun yn sefyll yno.",
   "source": "Gramadeg",
   "theme": "pattern",
   "subtheme": "counted"
@@ -960,25 +960,25 @@
   "subtheme": "fittedTogether"
  },
  {
-  "text": "Clawdd Cymreig: dwy wyneb o gerrig yn pwyso i mewn tuag at ei gilydd, pridd rhyngddynt, a gwrych ar ei ben. Y pwyso yw'r cyfan o'r cryfder.",
+  "text": "Clawdd Cymreig: dau wyneb o gerrig yn pwyso i mewn tuag at ei gilydd, pridd rhyngddynt, a gwrych ar ei ben. Y pwyso yw'r cyfan o'r cryfder.",
   "source": "Crefft y clawdd",
   "theme": "pattern",
   "subtheme": "fittedTogether"
  },
  {
-  "text": "Ni ddefnyddir morter mewn wal gerrig sych. Pwysau'r cerrig yn erbyn ei gilydd sy'n ei dal, ac fe symud ychydig bob gaeaf heb ddisgyn.",
+  "text": "Ni ddefnyddir morter mewn wal gerrig sych. Pwysau'r cerrig yn erbyn ei gilydd sy'n ei dal, ac mae'n symud ychydig bob gaeaf heb ddisgyn.",
   "source": "Crefft y cerrig",
   "theme": "pattern",
   "subtheme": "fittedTogether"
  },
  {
-  "text": "Mae'r llechen yn hollti'n haenau tenau am fod ei grisialau i gyd wedi eu troi i'r un cyfeiriad gan bwysau'r mynydd uwch ei phen.",
+  "text": "Mae'r llechen yn hollti'n haenau tenau am fod ei chrisialau i gyd wedi eu troi i'r un cyfeiriad gan bwysau'r mynydd uwch ei phen.",
   "source": "Daeareg",
   "theme": "pattern",
   "subtheme": "fittedTogether"
  },
  {
-  "text": "Nid yw dau baladr eira byth yr un fath, ond mae gan bob un ohonynt chwe braich, am mai chwe ochr sydd i'r crisial cyntaf.",
+  "text": "Chwe braich sydd i bluen eira am mai chwe ochr sydd i'r crisial iâ cyntaf. Y tywydd ar y ffordd i lawr sy'n penderfynu ar bopeth arall.",
   "source": "Ffiseg",
   "theme": "pattern",
   "subtheme": "fittedTogether"
@@ -990,13 +990,13 @@
   "subtheme": "fittedTogether"
  },
  {
-  "text": "Mewn to gwellt, y gwellt uchaf sy'n gwarchod yr un oddi tano, a hwnnw'r un nesaf i lawr, nes bod y glaw wedi ei drosglwyddo o un i un at y bondo.",
+  "text": "Mewn to gwellt, mae pob haen yn gwarchod yr un oddi tani, a'r glaw yn cael ei drosglwyddo o un i un nes cyrraedd y bondo.",
   "source": "Crefft y to gwellt",
   "theme": "pattern",
   "subtheme": "fittedTogether"
  },
  {
-  "text": "Mae blaenau tair afon fawr yn cyffwrdd ar Bumlumon, a phob diferyn a ddisgyn yno'n mynd i'r môr mewn tri chyfeiriad gwahanol.",
+  "text": "Mae tarddiad Hafren, Gwy a Rheidol o fewn ychydig filltiroedd i'w gilydd ar Bumlumon, a dwy ohonynt yn troi i'r dwyrain a'r llall i'r gorllewin.",
   "source": "Daearyddiaeth",
   "theme": "pattern",
   "subtheme": "fittedTogether"
@@ -1032,7 +1032,7 @@
   "subtheme": "orderNamed"
  },
  {
-  "text": "Trioedd Ynys Prydain: cofio pethau fesul tri fel y bo modd eu dal ar gof. Mae naw deg a chwech ohonynt wedi goroesi.",
+  "text": "Trioedd Ynys Prydain: cofio pethau fesul tri fel y bo modd eu dal ar gof. Mae naw deg chwech ohonynt wedi goroesi.",
   "source": "Llenyddiaeth Gymraeg",
   "theme": "pattern",
   "subtheme": "orderNamed"
@@ -1056,7 +1056,7 @@
   "subtheme": "orderNamed"
  },
  {
-  "text": "Enwir pob nant a chae a chornel o gae mewn ardal ffermio, ac ni ellir dweud dim am y tir wrth rywun nad yw'n gwybod yr enwau.",
+  "text": "Mae gan bob cae a nant a chornel mewn ardal ffermio ei enw ei hun, ac ni ellir dweud dim am y tir wrth rywun nad yw'n eu gwybod.",
   "source": "Enwau lleoedd",
   "theme": "pattern",
   "subtheme": "orderNamed"
@@ -1068,7 +1068,7 @@
   "subtheme": "orderNamed"
  },
  {
-  "text": "Aber, cymer, rhyd, bont: mae enwau lleoedd Cymru'n dweud wrthych sut i groesi dŵr, ac ym mha drefn y daeth pobl at y broblem.",
+  "text": "Aber, cymer, rhyd a phont: mae enwau lleoedd Cymru'n dweud wrthych sut i groesi dŵr, ac ym mha drefn y daeth pobl at y broblem.",
   "source": "Enwau lleoedd",
   "theme": "pattern",
   "subtheme": "orderNamed"
@@ -1104,13 +1104,13 @@
   "subtheme": "theSoilItself"
  },
  {
-  "text": "Mae blodau lliw haul yn troi'n las ar bridd asid. Nid y planhigyn sy'n newid ond yr hyn y mae'n ei godi o'r ddaear.",
+  "text": "Mae blodau hydrangea'n las ar bridd asid ac yn binc ar bridd calchog. Nid y planhigyn sy'n newid ond yr hyn y mae'n ei godi o'r ddaear.",
   "source": "Hydrangea",
   "theme": "ground",
   "subtheme": "theSoilItself"
  },
  {
-  "text": "O dan lawer o Gymru mae llechen, ac ni ellir cadw dŵr ar ei phen. Dyna pam fod cymaint o gorsydd ar dir uchel sy'n edrych yn sych.",
+  "text": "Nid yw dŵr yn suddo trwy graig galed. Dyna pam fod cymaint o gorsydd ar dir uchel yng Nghymru sy'n edrych yn rhy serth i fod yn wlyb.",
   "source": "Daeareg",
   "theme": "ground",
   "subtheme": "theSoilItself"
@@ -1128,7 +1128,7 @@
   "subtheme": "theSoilItself"
  },
  {
-  "text": "Mae pridd iach yn drwm o fywyd nas gwelir: mwy o greaduriaid mewn llond llaw ohono nag o bobl yng Nghymru.",
+  "text": "Mae pridd iach yn drwm o fywyd nas gwelir. Ceir mwy o greaduriaid byw mewn llond llaw ohono nag sydd o bobl yng Nghymru gyfan.",
   "source": "Pridd-wyddoniaeth",
   "theme": "ground",
   "subtheme": "theSoilItself"
@@ -1146,7 +1146,7 @@
   "subtheme": "theSoilItself"
  },
  {
-  "text": "Mae mwydyn yn troi ei bwysau ei hun o bridd bob dydd, ac yn dod ag ef i'r wyneb. Y ddaear sydd ar y brig heddiw a fu'n ddwfn ryw dro.",
+  "text": "Mae mwydod yn codi pridd i'r wyneb yn ddi-baid. Dros ychydig flynyddoedd gall carreg a osodwyd ar gae suddo o'r golwg heb i neb ei symud.",
   "source": "Lumbricus terrestris",
   "theme": "ground",
   "subtheme": "theSoilItself"
@@ -1182,13 +1182,13 @@
   "subtheme": "aPlaceYouAreFrom"
  },
  {
-  "text": "Ac o'r un gair y daw cynefino, sef dod i arfer â lle nes ei fod yn beidio â bod yn newydd.",
+  "text": "Ac o'r un gair y daw cynefino, sef dod i arfer â lle nes iddo beidio â bod yn newydd.",
   "source": "Cymraeg",
   "theme": "ground",
   "subtheme": "aPlaceYouAreFrom"
  },
  {
-  "text": "Nid oes gwyniad yn unman yn y byd ond yn Llyn Tegid. Y llyn a'i gwnaeth, ac ni all fynd oddi yno.",
+  "text": "Nid oes gwyniad yn unman yn y byd ond yn Llyn Tegid. Cafodd ei wneud yn bysgodyn ar wahân gan y llyn hwnnw, ac nid oes ffordd allan iddo.",
   "source": "Coregonus pennantii",
   "theme": "ground",
   "subtheme": "aPlaceYouAreFrom"
@@ -1212,7 +1212,7 @@
   "subtheme": "aPlaceYouAreFrom"
  },
  {
-  "text": "Y tu draw i Glawdd Offa: y ffordd Gymraeg o ddweud Lloegr. Mae'r clawdd yn wyth canrif oed a'r ymadrodd yn dal ar lafar.",
+  "text": "Y tu draw i Glawdd Offa: y ffordd Gymraeg o ddweud Lloegr. Mae'r clawdd dros fil o flynyddoedd oed a'r ymadrodd yn dal ar lafar.",
   "source": "Cymraeg",
   "theme": "ground",
   "subtheme": "aPlaceYouAreFrom"
@@ -1356,7 +1356,7 @@
   "subtheme": "theRoad"
  },
  {
-  "text": "Pob llwybr mewn ceunant, i'r unffordd y rhedant.",
+  "text": "Pob llwybr mewn ceunant, i'r unffordd a redant.",
   "source": "Dihareb Gymraeg",
   "theme": "travel",
   "subtheme": "theRoad"
@@ -1374,14 +1374,14 @@
   "subtheme": "howASeedGoes"
  },
  {
-  "text": "Mae bacsau cwn a defaid yn cario hadau'n bellach na'r gwynt. Nid oes gan lawer o blanhigion Cymru ffordd well o symud.",
+  "text": "Mae blew ci a chnu dafad yn cario hadau'n bellach na'r gwynt. Nid oes gan lawer o blanhigion Cymru ffordd well o symud.",
   "source": "Ecoleg",
   "theme": "travel",
   "subtheme": "howASeedGoes"
  },
  {
-  "text": "Mae hadau'r gelvinen ddŵr yn nofio ar afon nes taro glan. Dyna pam fod rhes o goed yn tyfu ar hyd un ochr yn unig weithiau.",
-  "source": "Ecoleg",
+  "text": "Mae hadau'r wernen yn nofio ar afon nes taro glan. Dyna pam y ceir rhes o goed ar hyd un ochr yn unig weithiau.",
+  "source": "Alnus glutinosa",
   "theme": "travel",
   "subtheme": "howASeedGoes"
  },
@@ -1392,20 +1392,20 @@
   "subtheme": "howASeedGoes"
  },
  {
-  "text": "Mae'r sgrech y coed yn cuddio miloedd o fes bob hydref ac yn anghofio digon ohonynt i blannu coedwig heb fwriadu dim.",
+  "text": "Mae sgrech y coed yn cuddio miloedd o fes bob hydref ac yn anghofio digon ohonynt i blannu coedwig heb fwriadu dim.",
   "source": "Garrulus glandarius",
   "theme": "travel",
   "subtheme": "howASeedGoes"
  },
  {
-  "text": "Nid yw hadau cywarch y dŵr yn suddo. Aros ar yr wyneb a wnânt, a mynd gyda'r llif nes dod at lonyddwch.",
-  "source": "Llysieueg",
+  "text": "Ffrwydro y mae codau'r banadl ar ddiwrnod poeth. Mae'r ddwy ochr yn sychu ar gyfraddau gwahanol nes bod y goden yn troi'n sydyn a thaflu'r hadau ohoni.",
+  "source": "Cytisus scoparius",
   "theme": "travel",
   "subtheme": "howASeedGoes"
  },
  {
-  "text": "Bachau bychain sydd ar bengaled y cyrs, ac maent yn gafael mewn gwlân dafad am filltiroedd cyn gollwng.",
-  "source": "Llysieueg",
+  "text": "Mae bachau ar bennau'r cyngaf, a hwythau'n gafael mewn gwlân dafad am filltiroedd cyn gollwng.",
+  "source": "Arctium",
   "theme": "travel",
   "subtheme": "howASeedGoes"
  },
@@ -1416,8 +1416,8 @@
   "subtheme": "howASeedGoes"
  },
  {
-  "text": "Aeth had eithin Cymru i Awstralia a Seland Newydd mewn gwlân, ac aeth yn chwyn yno mewn tir na fu'r un ddafad Gymreig ynddo erioed.",
-  "source": "Ecoleg",
+  "text": "Aed ag eithin o Brydain i Seland Newydd i wneud gwrychoedd. Erbyn hyn mae'n chwyn ar filoedd o hectarau yno, ymhell o'r un gwrych a fwriadwyd.",
+  "source": "Ulex europaeus",
   "theme": "travel",
   "subtheme": "howASeedGoes"
  },
@@ -1428,7 +1428,7 @@
   "subtheme": "howASeedGoes"
  },
  {
-  "text": "Codwyd hadau o dywod ar draeth yn Sir Benfro a'u tyfu; roedd rhai ohonynt o blanhigion nad ydynt yn tyfu o fewn milltiroedd.",
+  "text": "Weithiau bydd hadau o goedwigoedd trofannol yn cyrraedd traethau gorllewin Cymru, wedi eu cario ar draws y cefnfor gan y ceryntau.",
   "source": "Ecoleg",
   "theme": "travel",
   "subtheme": "howASeedGoes"
@@ -1452,25 +1452,25 @@
   "subtheme": "farOff"
  },
  {
-  "text": "Saith milltir ar hugain o dir sych oedd rhwng y glanfa a Dyffryn Camwy, a bu'n rhaid cerdded pob un ohonynt.",
+  "text": "Roedd tri deg saith o filltiroedd o dir anial rhwng y glanfa a Dyffryn Camwy, a bu'n rhaid cerdded pob un ohonynt.",
   "source": "Hanes y Wladfa",
   "theme": "travel",
   "subtheme": "farOff"
  },
  {
-  "text": "Alltud: all a tud, sef y sawl sydd mewn gwlad arall. Nid oes yn y gair unrhyw awgrym o fai, dim ond o bellter.",
+  "text": "Alltud: y gair all am arall a'r gair tud am wlad. Nid oes yn y gair unrhyw awgrym o fai, dim ond o bellter.",
   "source": "Geirdarddiad",
   "theme": "travel",
   "subtheme": "farOff"
  },
  {
-  "text": "Hiraeth: hir ac aeth. Nid enw ar dristwch mo'r gair yn ei wraidd ond ar hyd, ac ar hyd sydd wedi mynd yn rhy hir.",
+  "text": "Hiraeth: hir ac aeth. Yn ei wraidd, enw ar hyd yw'r gair, ac ar hyd sydd wedi mynd yn rhy hir.",
   "source": "Geirdarddiad",
   "theme": "travel",
   "subtheme": "farOff"
  },
  {
-  "text": "Mae adar drycin Manaw yn gaeafu oddi ar arfordir Brasil a'r Ariannin, dros ddeng mil o gilomedrau o'r tyllau lle magasant.",
+  "text": "Mae adar drycin Manaw yn gaeafu oddi ar arfordir Brasil a'r Ariannin, dros ddeng mil o gilometrau o'r tyllau lle magasant.",
   "source": "Puffinus puffinus",
   "theme": "travel",
   "subtheme": "farOff"
@@ -1506,7 +1506,7 @@
   "subtheme": "farOff"
  },
  {
-  "text": "Mae tua phum mil o bobl yn siarad Cymraeg yn nhalaith Chubut heddiw, wyth mil o filltiroedd o'r porthladd y cychwynasant ohono.",
+  "text": "Mae tua phum mil o bobl yn siarad Cymraeg yn nhalaith Chubut heddiw, a channoedd wrthi'n ei dysgu.",
   "source": "Hanes y Wladfa",
   "theme": "travel",
   "subtheme": "farOff"
@@ -1518,7 +1518,7 @@
   "subtheme": "theMoment"
  },
  {
-  "text": "Cwrdd: talfyriad o cyhwrdd, o cy- a hwrdd, sef gwth. Yn y gair Cymraeg am gyfarfod mae dau beth yn taro yn erbyn ei gilydd.",
+  "text": "Cwrdd: talfyriad o gyhwrdd, sy'n cynnwys cy- a hwrdd, sef gwth. Yn y gair Cymraeg am gyfarfod mae dau beth yn taro yn erbyn ei gilydd.",
   "source": "Geirdarddiad",
   "theme": "meeting",
   "subtheme": "theMoment"
@@ -1530,13 +1530,13 @@
   "subtheme": "theMoment"
  },
  {
-  "text": "Aber: y man lle mae afon yn cyrraedd dŵr arall. Mae'r gair ar ddechrau enw cant o drefi Cymru, a phob un ohonynt yn enwi cyfarfyddiad.",
+  "text": "Aber: y man lle mae afon yn cyrraedd dŵr arall. Mae'r gair ar ddechrau enwau degau o leoedd yng Nghymru, a phob un ohonynt yn enwi cyfarfyddiad.",
   "source": "Enwau lleoedd",
   "theme": "meeting",
   "subtheme": "theMoment"
  },
  {
-  "text": "Cymer: y gair arall am yr un peth, lle daw dwy afon yn un. Y Cymer, Cymer Abercuawg, Cwmni'r ddwy afon.",
+  "text": "Cymer: y gair arall am yr un peth, sef y man lle daw dwy afon yn un. Ceir Cymer ym Meirionnydd, ac Abercynon lle mae Cynon yn cyrraedd Taf.",
   "source": "Enwau lleoedd",
   "theme": "meeting",
   "subtheme": "theMoment"
@@ -1572,7 +1572,7 @@
   "subtheme": "theMoment"
  },
  {
-  "text": "Ceir eiliad bob mis pan fo'r llanw'n llonydd, na'i fod yn dod i mewn nac yn mynd allan. Y drofa yw'r enw arno, ac ni phery'n hir.",
+  "text": "Rhwng y trai a'r llanw ceir cyfnod byr pan nad yw'r dŵr yn symud i unman. Dŵr llonydd yw'r enw arno, ac fe ddaw ddwywaith bob dydd.",
   "source": "Llanw a thrai",
   "theme": "meeting",
   "subtheme": "theMoment"
@@ -1614,8 +1614,8 @@
   "subtheme": "twoThatNeedEachOther"
  },
  {
-  "text": "Mae gan y ddraenen wen flodau nad ydynt yn gallu ffrwythloni eu hunain o gwbl. Rhaid cael paill o bren arall neu ni cheir criafol.",
-  "source": "Crataegus monogyna",
+  "text": "Ni chaiff celynnen fenyw aeron oni bydd celynnen wryw o fewn cyrraedd gwenyn iddi. Dau bren sydd eu hangen i wneud un gangen goch.",
+  "source": "Ilex aquifolium",
   "theme": "meeting",
   "subtheme": "twoThatNeedEachOther"
  },
@@ -1644,7 +1644,7 @@
   "subtheme": "twoThatNeedEachOther"
  },
  {
-  "text": "Rhaid wrth ddau i wneud englyn cadwynog: y gair olaf yn yr un cyntaf yw'r gair cyntaf yn yr ail, ac felly y clymir hwy.",
+  "text": "Cadwyno englynion: cymryd gair o linell olaf un englyn a'i osod yn llinell gyntaf y nesaf, nes bod y gyfres gyfan ynghlwm wrth ei gilydd.",
   "source": "Cerdd dafod",
   "theme": "meeting",
   "subtheme": "twoThatNeedEachOther"
@@ -1734,13 +1734,13 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Adnabod ac nabod sydd ar bobl; gwybod sydd ar bethau. Nid oes modd dweud yn Gymraeg eich bod yn gwybod rhywun.",
+  "text": "Adnabod a nabod sydd ar bobl; gwybod sydd ar bethau. Nid oes modd dweud yn Gymraeg eich bod yn gwybod rhywun.",
   "source": "Cymraeg",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Cydnabod: yr un gair ag adnabod, a cyd- ar ei flaen. Rhywun rydych yn ei adnabod gyda phobl eraill yw eich cydnabod.",
+  "text": "Cydnabod: yr un gair ag adnabod, a chyd- ar ei flaen. Rhywun rydych yn ei adnabod gyda phobl eraill yw eich cydnabod.",
   "source": "Geirdarddiad",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
@@ -1752,19 +1752,19 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Ap ac ab, o mab: felly y gwneid enw dyn o enw ei dad, a Dafydd ap Gwilym yn golygu Dafydd fab Gwilym, dim mwy na hynny.",
+  "text": "Ap ac ab, o fab: felly y gwneid enw dyn o enw ei dad, a Dafydd ap Gwilym yn golygu Dafydd fab Gwilym, dim mwy na hynny.",
   "source": "Cymraeg",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Nain a taid yn y gogledd, mam-gu a tad-cu yn y de. Nid oes gan y Gymraeg un gair y cytunir arno am rieni rhieni.",
+  "text": "Nain a thaid yn y gogledd, mam-gu a thad-cu yn y de. Nid oes gan y Gymraeg un gair y cytunir arno am rieni rhieni.",
   "source": "Cymraeg",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Cariad: y gair am y peth a'r gair am y person. Yr un sill sy'n dweud y teimlad a'r sawl a'i cafodd.",
+  "text": "Cariad: y gair am y teimlad a'r gair am y person. Un gair sy'n enwi'r serch a'r sawl a'i cafodd.",
   "source": "Cymraeg",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
@@ -1776,7 +1776,7 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Perthyn: benthyciad o'r Lladin pertineo, ac yn Gymraeg mae'n golygu bod yn eiddo i rywun a bod yn perthynas iddo, y ddau ar unwaith.",
+  "text": "Perthyn: benthyciad o'r Lladin pertineo. Yn Gymraeg mae'n golygu bod yn eiddo i rywun a bod yn berthynas iddo, y ddau ar unwaith.",
   "source": "Geirdarddiad",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
@@ -1794,7 +1794,7 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Cyfeillach: yr un gwreiddyn â chyfaill, ac yn golygu'r cadw cwmni ei hun yn hytrach na'r bobl sy'n ei gadw.",
+  "text": "Cyfeillach: yr un gwreiddyn â chyfaill, ond enw ar y cwmnïa ei hun ydyw, ac nid ar y bobl sy'n ei gadw.",
   "source": "Cymraeg",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
@@ -1824,7 +1824,7 @@
   "subtheme": "grownTogether"
  },
  {
-  "text": "Impio: rhoi blaguryn un pren mewn hollt ym mhren arall a'i rwymo nes bod y ddau'n tyfu fel un. Nid oes afal wedi ei enwi nad ydyw'n cael ei ledaenu felly.",
+  "text": "Impio: rhoi blaguryn un pren mewn hollt ym mhren arall a'i rwymo nes bod y ddau'n tyfu fel un. Felly y lledaenir pob math o afal sydd ag enw arno.",
   "source": "Garddwriaeth",
   "theme": "kinship",
   "subtheme": "grownTogether"
@@ -1848,7 +1848,7 @@
   "subtheme": "grownTogether"
  },
  {
-  "text": "Lle crafa'r iâr, yno y piga'r cyw.",
+  "text": "Lle crafa'r iâr y piga'r cyw.",
   "source": "Dihareb Gymraeg",
   "theme": "kinship",
   "subtheme": "grownTogether"
@@ -1860,7 +1860,7 @@
   "subtheme": "grownTogether"
  },
  {
-  "text": "Mae rhedyn yn lledaenu wrth y gwreiddiau'n fwy nag wrth yr had, felly gall llethr cyfan ohono fod yn un planhigyn.",
+  "text": "Mae rhedyn yn lledaenu wrth ei wreiddgyffion yn fwy nag wrth ei sborau, felly gall llethr cyfan ohono fod yn un planhigyn.",
   "source": "Pteridium aquilinum",
   "theme": "kinship",
   "subtheme": "grownTogether"
@@ -1914,7 +1914,7 @@
   "subtheme": "twoPeople"
  },
  {
-  "text": "O, fy anwylyd, tyrd ar gais i wrando llais yr adar, lle mae'r llannerch deca roed, tan gysgod llwyngoed Llangar.",
+  "text": "O, f'anwylyd, tyrd ar gais i wrando llais yr adar.",
   "source": "Hen bennill",
   "theme": "kinship",
   "subtheme": "twoPeople"
@@ -1986,7 +1986,7 @@
   "subtheme": "theWordsForStopping"
  },
  {
-  "text": "Noswylio: rhoi'r gorau i waith y dydd. Nid gair am gysgu mohono ond am ollwng gafael, a daw o noswyl, sef y noson cyn gŵyl.",
+  "text": "Noswylio: gorffen gwaith y dydd a throi am adref. Daw o noswyl, sef y noson cyn gŵyl, fel petai diwedd pob diwrnod yn ŵyl fach.",
   "source": "Cymraeg",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
@@ -2022,7 +2022,7 @@
   "subtheme": "quietAsASound"
  },
  {
-  "text": "Clywed yw'r ferf am glywed sŵn, ond ar lafar mewn rhannau o Gymru fe'i defnyddir am arogli a blasu hefyd. Un gair am bopeth ond gweld.",
+  "text": "Clywed sŵn yw ystyr arferol y ferf, ond ar lafar mewn rhannau o Gymru fe glywir arogl a chlywir blas hefyd. Un gair am bopeth ond gweld.",
   "source": "Cymraeg",
   "theme": "peace",
   "subtheme": "quietAsASound"
@@ -2082,13 +2082,13 @@
   "subtheme": "quietAsASound"
  },
  {
-  "text": "Ni ellir clywed ystlum yn gweiddi. Mae'r sŵn yn uchel iawn ond yn rhy fain i glust ddynol, ac felly'n dawel i ni'n unig.",
+  "text": "Mae galwadau'r rhan fwyaf o ystlumod yn rhy uchel eu traw i glust ddynol. Nid ydynt yn dawel; yn dawel i ni yn unig y maent.",
   "source": "Chiroptera",
   "theme": "peace",
   "subtheme": "quietAsASound"
  },
  {
-  "text": "Lle digrif y bûm heddiw dan fentyll y gwyrddgyll gwiw.",
+  "text": "Lle digrif y bûm heddiw, dan fentyll y gwyrddgyll gwiw.",
   "source": "Dafydd ap Gwilym (c. 1315–1350)",
   "theme": "peace",
   "subtheme": "atEase"

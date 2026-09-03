@@ -71,7 +71,7 @@
    "endonym": "Euskara",
    "interface": false,
    "bank": true,
-   "passages": 362
+   "passages": 360
   },
   {
    "code": "fi",
@@ -112,6 +112,14 @@
    "interface": true,
    "bank": true,
    "passages": 367
+  },
+  {
+   "code": "ja",
+   "name": "Japanese",
+   "endonym": "日本語",
+   "interface": false,
+   "bank": true,
+   "passages": 360
   },
   {
    "code": "lt",

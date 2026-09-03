@@ -282,7 +282,7 @@
   "subtheme": "heldBack"
  },
  {
-  "text": "Iguriki hitza darabilte iparraldean itxaron esateko. Biek zain egotea dute barruan, baina lehenak esperoa ere badakar.",
+  "text": "Iparraldean iguriki erabiltzen da itxaron esateko. Euskarak hitz bat baino gehiago du zain egoteko, eta bakoitzak bere kutsua darama.",
   "source": "Euskara",
   "theme": "waiting",
   "subtheme": "heldBack"
@@ -324,7 +324,7 @@
   "subtheme": "theLongCount"
  },
  {
-  "text": "Akitaniako hilarrietan daude euskal hitzik zaharrenak, izen propioetan gordeta. Bi mila urte joanda ere, andere eta seme ezagun dira.",
+  "text": "Duela bi mila urte harrian idatzitako izen batzuek gaurko euskal hitzak dituzte barruan. Hitz horiek ez dute ia mugitu behar izan ordutik.",
   "source": "Arkeologia",
   "theme": "waiting",
   "subtheme": "theLongCount"
@@ -696,7 +696,7 @@
   "subtheme": "theEdgesOfTheDay"
  },
  {
-  "text": "Mendi-hegal batean, eguzkia bi aldiz sar daiteke: behin gailurraren atzean eta gero, bidea aldatuz gero, berriro zeruertzean.",
+  "text": "Mendiz inguratutako ibar batean, eguzkia gailurraren atzean sartzen da eta ez zeruertzean. Eguna laburragoa da han, eta ilunabarra luzeagoa.",
   "source": "Geografia",
   "theme": "light",
   "subtheme": "theEdgesOfTheDay"
@@ -708,7 +708,7 @@
   "subtheme": "theEdgesOfTheDay"
  },
  {
-  "text": "Ganbara-leihoak ekialdera begira egiten ziren baserri askotan, goizeko lehen argia sartzeko, eta sukaldekoa hegoaldera, beroagatik.",
+  "text": "Baserri gehienak ekialdera edo hego-ekialdera begira daude: goizeko eguzkia hartzen dute aurrez aurre, eta ipar-mendebaldeko haizeari bizkarra ematen.",
   "source": "Etnografia",
   "theme": "light",
   "subtheme": "theEdgesOfTheDay"
@@ -750,7 +750,7 @@
   "subtheme": "readingTheLight"
  },
  {
-  "text": "Elur berriak eguzkiaren argiaren ia dena itzultzen du; belar hezeak ia bat ere ez. Mendi berean bi giro daude aldi berean.",
+  "text": "Elur berriak eguzkiaren argi ia guztia itzultzen du; belar hezeak bostetik bat besterik ez. Mendi berean bi giro daude aldi berean.",
   "source": "Fisika",
   "theme": "light",
   "subtheme": "readingTheLight"
@@ -786,7 +786,7 @@
   "subtheme": "readingTheLight"
  },
  {
-  "text": "Etxeko horma zuriak kare-esnez ematen ziren udaberrian. Zuriak argia barrura botatzen du, eta bero gutxiago hartzen udan.",
+  "text": "Etxeko hormak karez zuritzen ziren udaberrian. Kareak eguzkiaren beroa itzultzen du, eta horrez gain onddoak eta zomorroak uxatzen ditu.",
   "source": "Etnografia",
   "theme": "light",
   "subtheme": "readingTheLight"
@@ -822,7 +822,7 @@
   "subtheme": "lightItself"
  },
  {
-  "text": "Itsas argiak plankton txikiek egiten dute: ukitzen dituzunean pizten dira, eta udako gau epeletan ikusten da hori kostaldean.",
+  "text": "Itsasoko argi urdina plankton txikiek egiten dute: uraren mugimenduak pizten ditu, eta udako gauetan ikus daiteke olatuen ertzean.",
   "source": "Itsas biologia",
   "theme": "light",
   "subtheme": "lightItself"
@@ -840,7 +840,7 @@
   "subtheme": "lightItself"
  },
  {
-  "text": "Zerua urdina da airearen izpiek argi urdina alboetara botatzen dutelako. Gorria zuzen dator, eta horregatik da eguzkia horia.",
+  "text": "Zerua urdina da aireak argi urdina alde guztietara sakabanatzen duelako. Gorria zuzenago dator, eta horregatik ikusten dugu eguzkia horia.",
   "source": "Fisika",
   "theme": "light",
   "subtheme": "lightItself"
@@ -858,7 +858,7 @@
   "subtheme": "lightItself"
  },
  {
-  "text": "Kandela batek gau osoan ematen duen argia sartzen da gaur pizgailu txiki batean; hala ere, kandelaren argia bakarrik da dardartia.",
+  "text": "Kandelaren sugarra beroagoa da ertzetan erdian baino. Horregatik da urdinxka behealdean eta horia goian, gauza bera erretzen ari bada ere.",
   "source": "Fisika",
   "theme": "light",
   "subtheme": "lightItself"
@@ -870,7 +870,7 @@
   "subtheme": "counted"
  },
  {
-  "text": "Euskarak hogeitik kontatzen du: berrogei bi hogei dira, hirurogei hiru, eta laurogei lau. Eskuen eta oinen atzamarrak dira neurria.",
+  "text": "Euskarak hogeitik kontatzen du: berrogei bi hogei dira, hirurogei hiru hogei, eta laurogei lau. Ehunera arte hogeinaka doa kontua.",
   "source": "Euskara",
   "theme": "pattern",
   "subtheme": "counted"
@@ -888,7 +888,7 @@
   "subtheme": "counted"
  },
  {
-  "text": "Asteko izenetan hiru hasten dira aste hitzarekin: astelehena lehena da, asteartea artekoa, eta asteazkena azkena. Gero beste bi datoz.",
+  "text": "Asteko hiru izen aste hitzaz hasten dira: astelehena lehena da, asteartea artekoa eta asteazkena azkena. Gero beste lau datoz, beste erro batzuekin.",
   "source": "Euskara",
   "theme": "pattern",
   "subtheme": "counted"
@@ -906,7 +906,7 @@
   "subtheme": "counted"
  },
  {
-  "text": "Pinaburuaren ezkatak bi noranzkotan biratzen dira aldi berean, eta bi kopuruak segida bereko zenbaki hurrenak izaten dira beti.",
+  "text": "Pinaburuaren ezkatak bi noranzkotan biratzen dira, eta bi espiral kopuruak segida ezagun bateko zenbaki hurrenak izaten dira: bost eta zortzi, edo zortzi eta hamahiru.",
   "source": "Botanika",
   "theme": "pattern",
   "subtheme": "counted"
@@ -930,7 +930,7 @@
   "subtheme": "counted"
  },
  {
-  "text": "Aizkolariak kanaerdiko enborrak zenbatzen ditu, ez minutuak. Neurria enborrean dago, eta denbora ondoren dator.",
+  "text": "Aizkolarien apustuetan enborraren neurria kanatan ematen da, eta enbor kopurua aldez aurretik adosten. Denbora gero neurtzen da, ez lehenago.",
   "source": "Herri kirolak",
   "theme": "pattern",
   "subtheme": "counted"
@@ -996,7 +996,7 @@
   "subtheme": "fittedTogether"
  },
  {
-  "text": "Sagardo-upel baten dolareak ez du kolarik. Ohol bakoitza alboetakoen kontra estutzen da uztaiez, eta ura sartzeak berak ixten du.",
+  "text": "Upel batek ez du kolarik. Ohol bakoitza alboetakoen kontra estutzen da burdinazko uztaiez, eta egurra hanturik ixten da zirrikitua.",
   "source": "Etnografia",
   "theme": "pattern",
   "subtheme": "fittedTogether"
@@ -1050,7 +1050,7 @@
   "subtheme": "orderNamed"
  },
  {
-  "text": "Aizkora hitza latinetik datorrela erakutsi zuten hizkuntzalariek, harria adierazten duen haitz hitzetik ez datorrela. Aitzurra beste kontu bat da.",
+  "text": "Aizkora hitza latinetik datorrela erakutsi zuten hizkuntzalariek, eta ez harria esan nahi duen haitz hitzetik. Aitzurraren kasua ez dago hain garbi.",
   "source": "Etimologia",
   "theme": "pattern",
   "subtheme": "orderNamed"
@@ -1074,7 +1074,7 @@
   "subtheme": "orderNamed"
  },
  {
-  "text": "Hizkuntzalariek ez diote euskarari senide bizirik aurkitu. Familia bakarra da, eta hori bera da hari buruz dakigun daturik sendoena.",
+  "text": "Hizkuntzalariek ez diote euskarari senide bizirik aurkitu. Bere kabuz osatzen du familia oso bat, eta inguruko hizkuntza guztiak beranduago iritsi ziren.",
   "source": "Hizkuntzalaritza",
   "theme": "pattern",
   "subtheme": "orderNamed"
@@ -1208,12 +1208,6 @@
  {
   "text": "Sortu aditzak jaiotzea eta sortzea esaten ditu, eta sorlekua jaioterria da. Norbait nongoa den galdetzea non sortu zen galdetzea da.",
   "source": "Euskara",
-  "theme": "ground",
-  "subtheme": "aPlaceYouAreFrom"
- },
- {
-  "text": "Ardi latxa mendian bakarrik hazten da ondo. Behean jaitsita ere, ilea eta esnea aldatu egiten zaizkio urtebetean.",
-  "source": "Artzaintza",
   "theme": "ground",
   "subtheme": "aPlaceYouAreFrom"
  },
@@ -2132,12 +2126,6 @@
  {
   "text": "Pausa adi! lo egizak, xori maitea bakean.",
   "source": "Jean Baptiste Elizanburu (1828–1891)",
-  "theme": "peace",
-  "subtheme": "atEase"
- },
- {
-  "text": "Katuak eguneko hamasei ordu ematen ditu lotan, eta sutondoa aukeratzen du beti berdin: berotasuna galtzen den lekutik hurbilen.",
-  "source": "Zoologia",
   "theme": "peace",
   "subtheme": "atEase"
  },
