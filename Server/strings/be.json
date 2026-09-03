@@ -1,0 +1,26 @@
+{
+  "language": "Belarusian",
+  "endonym": "Беларуская",
+  "awaiting": "The labels are written. The prose — tagline, about1, about2, about3, growBody, appNote — is still null and still English, on purpose: it is the site's own writing rather than the app's, and it is read in English before it is commissioned in sixteen languages. A null value is drawn in English, silently, one key at a time; the English is in assets/js/strings.js.",
+  "strings": {
+    "tagline": null,
+    "about1": null,
+    "about2": null,
+    "about3": null,
+    "seedTitle": "Прыйшла насенінка",
+    "replyTitle": "Насенінка вярнулася",
+    "sentBy": "Ад {name}",
+    "gardener": "садоўнік",
+    "planted": "Пасаджана",
+    "growTitle": "Вырошчванне",
+    "growBody": null,
+    "appNote": null,
+    "inEnglish": "па-англійску",
+    "language": "Мова",
+    "keys": "Клавішы",
+    "random": "Куды-небудзь наўздагад",
+    "damaged": "Гэтая спасылка прыйшла пашкоджанай, таму насенінку не ўдалося прачытаць.",
+    "notASeed": "Гэтая спасылка не нясе насенінкі.",
+    "newerVersion": "Гэтая насенінка з навейшай версіі Peace Garden."
+  }
+}

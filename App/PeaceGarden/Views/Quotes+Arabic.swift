@@ -377,6 +377,6 @@ extension Quotes {
         Passage(text: "الشجرة لا تنفق طاقةً على الحركة، ولذلك تبلغ من الأعمار ما لا يبلغه متحرّك.", source: "علم النبات", theme: .peace, subtheme: .atEase),
         Passage(text: "الاتّكاء أن تُلقي ثقلك على شيء غيرك؛ وله في العربية فعلٌ مستقل لأنه ليس جلوسًا ولا اضطجاعًا.", source: "العربية", theme: .peace, subtheme: .atEase),
         Passage(text: "أوراق كثير من النباتات تُطبق قليلًا في حرّ الظهيرة لتقلّ المساحة التي تصيبها الشمس، ثم تنبسط في العصر.", source: "علم النبات", theme: .peace, subtheme: .atEase),
-        Passage(text: "الاستراحة من الجذر ر و ح؛ ومن الجذر نفسه الريح والرَّوح والرائحة.", source: "العربية", theme: .peace, subtheme: .atEase)
+        Passage(text: "الاستراحة من الجذر ر و ح؛ ومن الجذر نفسه الريح والرَّوح والرائحة.", source: "العربية", theme: .peace, subtheme: .atEase),
     ]
 }

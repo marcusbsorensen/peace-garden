@@ -10,6 +10,14 @@
    "passages": 360
   },
   {
+   "code": "be",
+   "name": "Belarusian",
+   "endonym": "Беларуская",
+   "interface": false,
+   "bank": true,
+   "passages": 360
+  },
+  {
    "code": "bg",
    "name": "Bulgarian",
    "endonym": "Български",

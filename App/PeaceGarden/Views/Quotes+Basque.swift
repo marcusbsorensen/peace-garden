@@ -386,6 +386,6 @@ extension Quotes {
         Passage(text: "Goxo hitzak gozoa eta epela esan nahi ditu batera. Leku goxo bat ez da gozoa: epela eta babestua da.", source: "Euskara", theme: .peace, subtheme: .atEase),
         Passage(text: "Zer da iustuki bizitzea, bakean eta soseguan bizitzea baizen?", source: "Axular, Gero, 1643", theme: .peace, subtheme: .atEase),
         Passage(text: "Lo hartu aurretik, gorputzaren tenperatura erdi gradu jaisten da. Logura arratsean etortzea horri lotuta dago, eta ez nekeari bakarrik.", source: "Fisiologia", theme: .peace, subtheme: .atEase),
-        Passage(text: "Lurpetik ateratzen den urak tenperatura bera izaten du urte osoan. Horregatik dago iturri baten ondoa fresko udan eta epel neguan.", source: "Geologia", theme: .peace, subtheme: .atEase)
+        Passage(text: "Lurpetik ateratzen den urak tenperatura bera izaten du urte osoan. Horregatik dago iturri baten ondoa fresko udan eta epel neguan.", source: "Geologia", theme: .peace, subtheme: .atEase),
     ]
 }

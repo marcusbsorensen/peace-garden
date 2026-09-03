@@ -19,15 +19,19 @@ for partway through and is built.
 of every stem, and the garden mark's unreadable grass. **`round-two` is branched
 from it and not merged.**
 
-**Forty-two passage banks in the app**, up from seventeen. Landed overnight:
-Estonian, Lithuanian, Slovene, Latvian, Ukrainian, Slovak, Welsh, Basque,
-Galician, Serbian, Japanese, Chinese, Icelandic, Irish, Albanian, Korean,
-Hebrew, Bulgarian, Croatian, Russian, Arabic, Greenlandic, Greek, Macedonian, Maltese. Still being written when this
-was filed: Belarusian, Maltese, Greenlandic, Arabic. **Those agents belong
-to that session — clearing it loses them and the scratchpad both.** Two never got a slot,
-Faroese and Luxembourgish — their notes are in the session scratchpad's
-`QUEUE.md`, and the brief they need is now `tools/quotes/BRIEF.md`.
+**Forty-three passage banks in the app, up from seventeen** — every language
+commissioned overnight landed. Round two's sixteen: Croatian, Slovak, Slovene,
+Lithuanian, Latvian, Estonian, Welsh, Irish, Basque, Galician, Albanian,
+Icelandic, Faroese*, Luxembourgish*, Maltese, Greenlandic. The other alphabets'
+twelve: Greek, Russian, Ukrainian, Bulgarian, Serbian, Macedonian, Belarusian,
+Arabic, Hebrew, Japanese, Chinese, Korean.
 
+*Faroese and Luxembourgish never got an agent slot and are **not** written. Their
+notes are in the session scratchpad's `QUEUE.md`; the brief is
+`tools/quotes/BRIEF.md`. Everything else on both lists is in.
+
+ Belarusian, Maltese, Greenlandic, Arabic. **Those agents belong
+to that session — clearing it loses them and the scratchpad both.** 
 **Verified.** 72 SeedCore tests and 23 app tests after every landing. All four CI
 checks. Every bank checked by `assemble.py` and independently for overlap against
 every bank before it; the Cyrillic ones checked for actually being Cyrillic. The

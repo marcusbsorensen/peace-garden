@@ -377,6 +377,6 @@ extension Quotes {
         Passage(text: "Kôň si ľahne, len keď mu nič nehrozí. Spať postojačky vie, ale hlboko zaspí iba na boku, a to si dovolí zriedka.", source: "Equus caballus", theme: .peace, subtheme: .atEase),
         Passage(text: "Lepší vrabec v hrsti ako holub na streche.", source: "Slovenské príslovie", theme: .peace, subtheme: .atEase),
         Passage(text: "Sviatok je od slova svätý a znamenal deň, v ktorý sa nesmelo robiť. Voľno bolo predpísané, nie zaslúžené.", source: "Etymológia", theme: .peace, subtheme: .atEase),
-        Passage(text: "Kachľová pec zohreje izbu a potom hreje ešte celú noc z toho, čo v nej ostalo. Nikto k nej v noci nemusí vstávať.", source: "Ľudové staviteľstvo", theme: .peace, subtheme: .atEase)
+        Passage(text: "Kachľová pec zohreje izbu a potom hreje ešte celú noc z toho, čo v nej ostalo. Nikto k nej v noci nemusí vstávať.", source: "Ľudové staviteľstvo", theme: .peace, subtheme: .atEase),
     ]
 }
