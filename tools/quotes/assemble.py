@@ -59,6 +59,29 @@ def words(text):
     return {w for w in re.split(r"[\W\d_]+", text.lower(), flags=re.UNICODE) if len(w) >= 4}
 
 
+def normalise(body):
+    """Give every `Passage(...)` line the trailing comma an array literal needs.
+
+    **A missing comma is a compile error this module used to pass straight
+    through.** It promises to refuse anything that would fail `QuoteBankTests`,
+    and it was checking the passages while ignoring the Swift around them — so a
+    bank could be declared clean here and then fail at `xcodebuild` on a syntax
+    error, which is the one outcome this module exists to prevent.
+
+    The Greenlandic bank arrived with ten of them, one at the end of each theme,
+    which is exactly where a writer stops and starts a new section. Adding the
+    comma is safer than reporting it: there is no case where a `Passage(...)`
+    line in one of these files should *not* have one.
+    """
+    out = []
+    for line in body.splitlines():
+        stripped = line.rstrip()
+        if re.match(r"^\s*Passage\(.*\)$", stripped):
+            stripped += ","
+        out.append(stripped)
+    return "\n".join(out)
+
+
 def check(entries, english):
     """Everything `QuoteBankTests` will ask, asked here first."""
     problems = []
@@ -103,7 +126,7 @@ def main():
     if missing:
         sys.exit("not written yet: " + ", ".join(str(m) for m in missing))
 
-    body = "\n".join(h.read_text().rstrip() for h in args.halves)
+    body = normalise("\n".join(h.read_text().rstrip() for h in args.halves))
     entries = ENTRY.findall(body)
     if not entries:
         sys.exit("no passages found — are these the right files?")

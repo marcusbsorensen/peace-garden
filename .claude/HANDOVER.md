@@ -19,11 +19,11 @@ for partway through and is built.
 of every stem, and the garden mark's unreadable grass. **`round-two` is branched
 from it and not merged.**
 
-**Thirty-eight passage banks in the app**, up from seventeen. Landed overnight:
+**Forty passage banks in the app**, up from seventeen. Landed overnight:
 Estonian, Lithuanian, Slovene, Latvian, Ukrainian, Slovak, Welsh, Basque,
 Galician, Serbian, Japanese, Chinese, Icelandic, Irish, Albanian, Korean,
-Hebrew, Bulgarian, Croatian, Russian, Arabic. Still being written when this was
-filed: Greek, Macedonian, Belarusian, Maltese, Greenlandic, Arabic. **Those agents belong
+Hebrew, Bulgarian, Croatian, Russian, Arabic, Greenlandic, Greek. Still being
+written when this was filed: Macedonian, Belarusian, Maltese, Greenlandic, Arabic. **Those agents belong
 to that session — clearing it loses them and the scratchpad both.** Two never got a slot,
 Faroese and Luxembourgish — their notes are in the session scratchpad's
 `QUEUE.md`, and the brief they need is now `tools/quotes/BRIEF.md`.
@@ -45,6 +45,12 @@ Forcing RTL needs both `-AppleTextDirection YES` and
 **Unverified.** Any bank whose agent had not reported when it was landed — run
 `python3 tools/quotes/refresh.py <banks dir>` and it will say. It reported
 nothing moved at the time of writing, but four commissions were still running.
+
+**Greenlandic needs a Kalaallisut reader before it ships.** Its lexical and
+morphological claims are sourced to a grammar its agent read in full, but the
+sentences are composed rather than quoted — original prose built from attested
+stems and affixes. That is a different risk from every other bank and its agent
+said so plainly.
 
 The right-to-left work has never been *read* by
 somebody who reads Arabic or Hebrew — the layout is right in the sense that

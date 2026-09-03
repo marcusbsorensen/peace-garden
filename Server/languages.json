@@ -58,6 +58,14 @@
    "passages": 360
   },
   {
+   "code": "el",
+   "name": "Greek",
+   "endonym": "Ελληνικά",
+   "interface": false,
+   "bank": true,
+   "passages": 360
+  },
+  {
    "code": "en",
    "name": "English",
    "endonym": "English",
@@ -168,6 +176,14 @@
    "interface": false,
    "bank": true,
    "passages": 360
+  },
+  {
+   "code": "kl",
+   "name": "Greenlandic",
+   "endonym": "Kalaallisut",
+   "interface": false,
+   "bank": true,
+   "passages": 366
   },
   {
    "code": "ko",
