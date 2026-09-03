@@ -27,6 +27,14 @@
     <title>Peace Garden</title>
     <meta name="description" content="A garden of plants grown from meetings." />
     <meta name="color-scheme" content="dark light" />
+    <!--
+      `noindex`, where `/s` deliberately carries no robots directive at all.
+      The difference is what each page publishes. `/s` publishes nothing — with
+      a seed in it the content is in the fragment, which a crawler never
+      receives. The garden publishes plants that people put there, and
+      docs/WEBSITE.md settles `noindex` for exactly that. Walkable and indexed
+      are different properties; this is the one that was decided.
+    -->
     <meta name="robots" content="noindex" />
     <link rel="stylesheet" href="/assets/site.css" />
     <link rel="icon" href="/assets/mark.svg" type="image/svg+xml" />
