@@ -7,6 +7,11 @@ one rim — so the shapes and the palettes can be judged without a Mac.
 
   python3 preview.py --seeds 12 --out sheet.png          # a contact sheet
   python3 preview.py --seed hello --stages --out row.png # one plant over time
+  python3 preview.py --seeds 6 --feet --out feet.png     # the foot, close, both ways up
+
+Back faces are culled for the roles the app culls them for, so a hole in the
+mesh comes out as a hole here. It did not always: this drew every triangle
+whichever way it faced, which closes every gap it should have been reporting.
 """
 
 import argparse
@@ -84,7 +89,33 @@ def draw_backdrop(image, palette):
     image.paste(Image.fromarray(pixels, "RGB"), (0, 0))
 
 
-def render(genome, growth, size=(420, 620), yaw=0.55, pitch=0.08, supersample=2):
+# Which materials the app lights from both faces, from `PlantSceneBuilder`'s
+# `material(for:)`. Everything absent from this set is back-face culled there,
+# and has to be culled here too.
+#
+# **This tool drew every triangle for a year, whichever way it faced.** That is
+# a renderer with no hidden surfaces at all, and it cannot show a hole: an open
+# end, a lid facing away, a surface wound inside out all come out looking solid.
+# It is the reason the hole in the foot of every stem lived here undetected —
+# `preview` was rendering the mesh, faithfully, and quietly closing it.
+DOUBLE_SIDED = {"stem", "leaf", "petal"}
+
+
+def render(genome, growth, size=(420, 620), yaw=0.55, pitch=0.08, supersample=2,
+           look=0.5, spread=1.5, on_axis=False):
+    """One plant.
+
+    `look` is where the camera aims, as a fraction of the plant's own height: 0.5
+    is the middle of it and 0 is the foot. `spread` is how much room it is given
+    — 1.5 frames the whole plant, and below 1 it closes in on whatever `look`
+    picked out. Together they are what `--feet` uses to get near the ground,
+    which is the one part of a plant this tool never used to show.
+
+    `on_axis` aims sideways at the plant's own stem at that height rather than at
+    the middle of its bounding box. The two agree on an upright plant and part
+    company on a leaning one, whose box is centred on air a long way from the
+    stem — far enough that a close frame misses the plant altogether.
+    """
     parts = build_mesh(genome, growth)
     if not parts:
         return Image.new("RGB", size, (0, 0, 0))
@@ -93,9 +124,14 @@ def render(genome, growth, size=(420, 620), yaw=0.55, pitch=0.08, supersample=2)
     points = np.array(every)
     low, high = points.min(axis=0), points.max(axis=0)
     centre = (low + high) * 0.5
+    centre[1] = low[1] + (high[1] - low[1]) * look
+    if on_axis:
+        near = points[abs(points[:, 1] - centre[1]) < max(high[1] - low[1], 1e-6) * 0.05]
+        if len(near):
+            centre[0], centre[2] = float(near[:, 0].mean()), float(near[:, 2].mean())
     extent = high - low
     radius = max(0.06, float(max(extent)) * 0.5)
-    distance = radius / math.tan(math.radians(36) / 2) * 1.5
+    distance = radius / math.tan(math.radians(36) / 2) * spread
 
     cos_yaw, sin_yaw = math.cos(yaw), math.sin(yaw)
     cos_pitch, sin_pitch = math.cos(pitch), math.sin(pitch)
@@ -127,6 +163,14 @@ def render(genome, growth, size=(420, 620), yaw=0.55, pitch=0.08, supersample=2)
             camera_points = [to_camera(positions[i]) for i in (a, b, c)]
             if any(p[2] > -0.01 for p in camera_points):
                 continue
+            # Back-face culling, on the same terms the app culls. The camera
+            # looks down -Z, so the way back to it is +Z: a triangle faces us
+            # when its winding normal has a positive z.
+            if role not in DOUBLE_SIDED:
+                edge_a = camera_points[1] - camera_points[0]
+                edge_b = camera_points[2] - camera_points[0]
+                if np.cross(edge_a, edge_b)[2] <= 0:
+                    continue
             screen = []
             for p in camera_points:
                 screen.append((width * 0.5 + p[0] * focal / -p[2],
@@ -180,6 +224,50 @@ def stage_row(label, cell=(300, 430)):
     return sheet
 
 
+def foot_row(labels, cell=(300, 430)):
+    """The foot of each plant, from the angle the app actually looks at it.
+
+    **The one angle this tool never took.** Every other mode centres on the
+    plant's bounding box and stands far enough back to hold all of it, which
+    puts the foot small, low in the frame and seen from above. The app does not
+    stand there: `PlantSceneView.applyFraming` raises its aim above the plant's
+    middle and comes in close, so the foot is large and near the bottom of the
+    screen, a few points under the mark row. That is where a person meets it.
+
+    Two rows. The top one is the app's own angle, slightly down onto the foot,
+    which is where the hole in the stem was visible for a year. The bottom one
+    is from below, because a lid that faces the ground can only be checked by
+    something standing under it — and it is the view that says whether a foot is
+    closed or merely appears closed from above.
+    """
+    sheet = Image.new("RGB", (len(labels) * cell[0], cell[1] * 2), (0, 0, 0))
+    for index, label in enumerate(labels):
+        genome = Genome(mint_seed(label.encode()))
+        days = genome.daysToBloom + genome.bloomDays * 0.45
+        state = growth_state(genome, days * 86400)
+
+        # Framed against the stem's own width, not the plant's. `render` puts
+        # exactly `radius * spread` of world into half the frame, and a foot is
+        # two orders of magnitude narrower than a plant is tall — sized off the
+        # plant, every one of these lands either inside the stem or nowhere near
+        # it, depending on how tall that plant happened to grow.
+        parts = build_mesh(genome, state)
+        points = np.array([p for part in parts.values() for p in part["positions"]])
+        low, high = points.min(axis=0), points.max(axis=0)
+        radius = max(0.06, float(max(high - low)) * 0.5)
+        near_foot = points[points[:, 1] < low[1] + (high[1] - low[1]) * 0.02]
+        width = float(np.hypot(near_foot[:, 0], near_foot[:, 2]).max())
+        spread = max(width, 1e-4) * 7 / radius
+
+        for row, pitch in enumerate((0.22, -0.40)):
+            tile = render(genome, state, size=cell, pitch=pitch,
+                          look=0.012, spread=spread, on_axis=True)
+            sheet.paste(tile, (index * cell[0], row * cell[1]))
+        print(f"{label:>10}  {genome.name:<28} {genome.archetype:<10} "
+              f"foot {width * 1000:5.1f}mm  {state['stage']}")
+    return sheet
+
+
 def cross_row(label_a, label_b, cell=(300, 430)):
     """Two parents and the plant their meeting made, side by side."""
     seed_a = mint_seed(label_a.encode())
@@ -206,6 +294,8 @@ def main():
     parser.add_argument("--seed", type=str)
     parser.add_argument("--prefix", type=str, default="plant")
     parser.add_argument("--stages", action="store_true")
+    parser.add_argument("--feet", action="store_true",
+                        help="the foot of each plant, from above and from below")
     parser.add_argument("--cross", nargs=2, metavar=("A", "B"))
     parser.add_argument("--age-days", type=float)
     parser.add_argument("--out", type=str, default="preview.png")
@@ -213,6 +303,9 @@ def main():
 
     if args.cross:
         image = cross_row(*args.cross)
+    elif args.feet:
+        image = foot_row([args.seed] if args.seed
+                         else [f"{args.prefix}-{i}" for i in range(min(args.seeds, 6))])
     elif args.stages:
         image = stage_row(args.seed or f"{args.prefix}-0")
     else:

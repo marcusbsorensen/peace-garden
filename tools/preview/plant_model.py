@@ -707,8 +707,27 @@ def build_mesh(genome, growth):
     builder = MeshBuilder()
     skeleton = build_skeleton(genome, growth["heightScale"])
     builder.add_tube("stem", skeleton["stem"], genome.sides)
+
+    # The domes that close the tubes. `add_tube` closes neither end, so a branch
+    # join and the foot of the stem each need a lid; the apex closes itself,
+    # because `apex_point` runs the radius out to nothing.
+    #
+    # **These were missing here for as long as this file has existed.** The port
+    # had the tubes and not the lids, which is invisible in every mode that
+    # renders the whole plant from a distance — and became visible the moment
+    # `preview.py --feet` went and looked at a foot. Kept in step with
+    # `PlantBuilder.addStem`, which is where the numbers come from.
     for branch in skeleton.get("branches", []):
+        base = branch["path"][0]
         builder.add_tube("stem", branch["path"], max(4, genome.sides - 2))
+        builder.add_dome("stem", base["position"], -base["tangent"], base["normal"],
+                         base["radius"], flatten=0.5, rows=4,
+                         columns=max(5, genome.sides - 2))
+
+    foot = skeleton["stem"][0]
+    builder.add_dome("stem", foot["position"], -foot["tangent"], foot["normal"],
+                     foot["radius"], flatten=0.45, rows=5,
+                     columns=max(6, genome.sides))
 
     husk = clamp((0.25 - growth["heightScale"]) / 0.23, 0, 1)
     if husk > 0.01:
