@@ -512,14 +512,32 @@ body[data-loading]:not([data-ready]) .page {
   gap: 10px;
 }
 
-@media (max-width: 40rem) {
+/* On a narrow screen the map scrolls sideways rather than wrapping.
+
+   Wrapping to two columns was tried and it is wrong: the ten areas reflow in
+   source order, so `peace` comes to sit beside `travel` — opposite corners of
+   the real map — and the two axes stop meaning anything. Worse, the arrow keys
+   go on following the true map, so Right from `ground` moves the cursor to a
+   cell that is drawn below and to the left. **The picture and the keys have to
+   agree, and the map is the thing that must not bend.**
+
+   So it keeps its five columns at a legible width and the container scrolls.
+   The page itself never scrolls sideways; this one element does. */
+@media (max-width: 46rem) {
+  .garden-map {
+    padding-inline: 0;
+  }
+
   .garden-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(5, minmax(8.5rem, 1fr));
+    overflow-x: auto;
+    padding-inline: 20px;
+    padding-block-end: 6px;
+    scroll-padding-inline: 20px;
   }
 
   .garden-cell {
-    grid-column: auto !important;
-    grid-row: auto !important;
+    scroll-snap-align: start;
   }
 }
 

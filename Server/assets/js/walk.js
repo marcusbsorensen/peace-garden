@@ -159,6 +159,9 @@ async function walk(direction) {
       highlight();
       return;
     }
+    // The map keeps its five columns at every width and scrolls sideways when
+    // it must, so a direction here always means what it means on the map. See
+    // the note beside `.garden-grid` in site.css for why it does not wrap.
     const next = neighbouringArea(state.hover, direction);
     if (next) {
       state.hover = next.theme;
