@@ -210,6 +210,14 @@
    "passages": 360
   },
   {
+   "code": "sq",
+   "name": "Albanian",
+   "endonym": "Shqip",
+   "interface": false,
+   "bank": true,
+   "passages": 360
+  },
+  {
    "code": "sr",
    "name": "Serbian",
    "endonym": "Српски",

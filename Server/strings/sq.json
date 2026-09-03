@@ -1,0 +1,26 @@
+{
+  "language": "Albanian",
+  "endonym": "Shqip",
+  "awaiting": "The labels are written. The prose — tagline, about1, about2, about3, growBody, appNote — is still null and still English, on purpose: it is the site's own writing rather than the app's, and it is read in English before it is commissioned in sixteen languages. A null value is drawn in English, silently, one key at a time; the English is in assets/js/strings.js.",
+  "strings": {
+    "tagline": null,
+    "about1": null,
+    "about2": null,
+    "about3": null,
+    "seedTitle": "Ka mbërritur një farë",
+    "replyTitle": "Një farë u kthye",
+    "sentBy": "Dërguar nga {name}",
+    "gardener": "kopshtar",
+    "planted": "Mbjellë",
+    "growTitle": "Ta rritësh",
+    "growBody": null,
+    "appNote": null,
+    "inEnglish": "në anglisht",
+    "language": "Gjuha",
+    "keys": "Tastet",
+    "random": "Diku rastësisht",
+    "damaged": "Kjo lidhje mbërriti e dëmtuar, prandaj fara nuk u lexua dot.",
+    "notASeed": "Ajo lidhje nuk mbart asnjë farë.",
+    "newerVersion": "Kjo farë vjen nga një version më i ri i Peace Garden."
+  }
+}
