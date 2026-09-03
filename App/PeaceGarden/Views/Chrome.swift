@@ -270,10 +270,65 @@ extension Chrome {
     /// voices below. See docs/LANGUAGES.md §"Type".
     static let keepsWrittenCase: Set<String> = ["tr", "az", "el", "ga"]
 
+    /// Scripts with no capitals at all.
+    ///
+    /// A different fact from `keepsWrittenCase`, which is four languages that
+    /// have capitals and are harmed by them. These have none, so `.uppercase`
+    /// is a no-op — named here rather than left to the no-op, because a label
+    /// voice that says "uppercase" about a script with no case is describing
+    /// itself wrongly, and the next person to read it should not have to work
+    /// out that nothing happens.
+    static let caselessScripts: Set<String> = ["ar", "he", "ja", "zh", "ko", "th", "fa", "ur", "yi"]
+
+    /// Languages the label voice must not letter-space.
+    ///
+    /// **This one breaks something, where the two lists above only undress it.**
+    /// The label voice tracks to 2.4pt, which is a Latin small-caps device. On
+    /// Arabic it is a defect rather than a preference: Arabic is a joined
+    /// script, and space between letters severs the joins and leaves a row of
+    /// disconnected forms for the reader to put back together. Persian and Urdu
+    /// are the same script and the same damage.
+    ///
+    /// CJK is here for a milder reason. Nothing is severed — the glyphs do not
+    /// join — but a Han or Kana line tracked to a Latin caption's rhythm reads
+    /// as badly set, and the device it imitates has no meaning in a script with
+    /// no capitals to space out.
+    ///
+    /// Hebrew is deliberately absent. It is right to left and caseless, and its
+    /// letters do not join, so tracking there is a choice rather than a wound.
+    ///
+    /// Mirrored by `NEVER_TRACKED` in `Server/assets/js/languages.js`.
+    static let neverTracked: Set<String> = ["ar", "fa", "ur", "ja", "zh", "ko"]
+
     /// What the label and heading voices do to their letters, in this language.
     static func letterCase(in locale: Locale) -> Text.Case? {
         let code = locale.language.languageCode?.identifier ?? ""
-        return keepsWrittenCase.contains(code) ? nil : .uppercase
+        if keepsWrittenCase.contains(code) || caselessScripts.contains(code) { return nil }
+        return .uppercase
+    }
+
+    /// How far the label and heading voices may track, in this language.
+    static func tracking(_ amount: CGFloat, in locale: Locale) -> CGFloat {
+        let code = locale.language.languageCode?.identifier ?? ""
+        return neverTracked.contains(code) ? 0 : amount
+    }
+}
+
+/// Tracks out, unless the script would be damaged by it.
+///
+/// A modifier rather than a plain `.tracking()` for the same reason
+/// `ChromeLetterCase` is one: the answer depends on the locale, and the locale
+/// is in the environment.
+private struct ChromeTracking: ViewModifier {
+    @Environment(\.locale) private var locale
+    let amount: CGFloat
+
+    init(_ amount: CGFloat) {
+        self.amount = amount
+    }
+
+    func body(content: Content) -> some View {
+        content.tracking(Chrome.tracking(amount, in: locale))
     }
 }
 
@@ -311,10 +366,33 @@ extension Color {
 }
 
 extension View {
+    /// Pins a drawing to the hand it was drawn with.
+    ///
+    /// **A row of marks mirrors under right-to-left; the marks in it must not.**
+    /// Both were happening. Driven in an Arabic locale the stage row correctly
+    /// reversed — cog, garden, meet, seed — and every glyph reversed with it, so
+    /// the garden's flower stood to the right of its grass, the seed's curl
+    /// turned the other way and the cog came out as its own reflection.
+    ///
+    /// Reversing the row is right: it is a row of controls and reading order
+    /// runs the other way. Reversing the glyphs is not. They are pictures of
+    /// things rather than directional affordances, and a seed, a flower and a
+    /// gear have a shape rather than a handedness — the same rule Apple states
+    /// for imagery that does not indicate direction.
+    ///
+    /// It also keeps the app's hand in one piece. The coil in `Chrome.Tendril`,
+    /// the frond in `UnfurlingBackdrop` and the seed on the reset row are all
+    /// the same gesture, and the plant on the stage is SceneKit and mirrors for
+    /// nobody. Pinning the drawings means an Arabic reader sees the same marks
+    /// as everybody else, in a row laid out their way.
+    func drawnHand() -> some View {
+        environment(\.layoutDirection, .leftToRight)
+    }
+
     /// Small, wide-tracked, uppercase: the app's label voice.
     func chromeLabel(size: CGFloat = 11, weight: Font.Weight = .light) -> some View {
         font(.system(size: size, weight: weight, design: .default))
-            .tracking(2.4)
+            .modifier(ChromeTracking(2.4))
             .modifier(ChromeLetterCase())
     }
 
@@ -324,7 +402,7 @@ extension View {
     /// rather than three unrelated screens.
     func chromeHeading(size: CGFloat = 20) -> some View {
         font(.system(size: size, weight: .light, design: .default))
-            .tracking(2.8)
+            .modifier(ChromeTracking(2.8))
             .modifier(ChromeLetterCase())
     }
 
@@ -936,6 +1014,8 @@ struct ChromeIconLabel: View {
         glyph
             .stroke(tint, style: Chrome.monoline)
             .frame(width: glyphSize, height: glyphSize)
+            // The row reverses under right-to-left; the mark in it does not.
+            .drawnHand()
             // Uppercase text carries descender room it never uses, so its box
             // centres below the letters. A point up puts the glyph on the cap
             // height rather than on the line.

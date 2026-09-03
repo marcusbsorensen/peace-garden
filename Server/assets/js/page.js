@@ -13,7 +13,7 @@
 // page adds is a service, an identity and a moderation surface — see
 // docs/WEBSITE.md — and none of it belongs here.
 
-import { manifest, negotiate, readable, remember, uppercases } from "./languages.js";
+import { direction, manifest, negotiate, readable, remember, tracks, uppercases } from "./languages.js";
 import { loadStrings } from "./strings.js";
 import { loadBank, placement, choose } from "./passages.js";
 import { parse } from "./link.js";
@@ -95,6 +95,10 @@ async function render() {
   // Uppercasing is a transformation that can lose a letter, so it is decided
   // per language rather than applied by one rule to all of them.
   document.documentElement.toggleAttribute("data-keeps-case", !uppercases(settled.ui));
+  // Tracking is a separate question from case and a sharper one: on Arabic,
+  // letter-spacing severs the joins. See languages.js §NEVER_TRACKED.
+  document.documentElement.toggleAttribute("data-untracked", !tracks(settled.ui));
+  document.documentElement.dir = direction(settled.ui);
 
   for (const node of document.querySelectorAll("[data-s]")) {
     node.textContent = t(node.dataset.s);
@@ -157,6 +161,13 @@ async function render() {
   passageBlock.hidden = !passage;
   if (passage) {
     passageBlock.lang = settled.bank;
+    // **The one element on the page that can disagree with the page.** A
+    // borrowed bank means the passage is in a different language from the
+    // chrome around it, and once one of the two is Arabic or Hebrew that is a
+    // different direction as well — a Hebrew reader with no Hebrew bank gets a
+    // right-to-left page with a left-to-right passage in it, and the passage
+    // has to say so or the punctuation lands at the wrong end of the line.
+    passageBlock.dir = direction(settled.bank);
     el("passage-text").textContent = passage.text;
     // A borrowed language is named, and only here. A label that fell back to
     // English says so nowhere — a label is short and a fallback in one is not

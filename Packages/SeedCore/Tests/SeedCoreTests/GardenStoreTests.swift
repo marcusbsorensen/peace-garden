@@ -14,8 +14,19 @@ final class GardenStoreTests: XCTestCase {
         try? FileManager.default.removeItem(at: directory)
     }
 
+    /// Atomic, and deliberately unprotected.
+    ///
+    /// The app writes its garden with `GardenStore.guarded`, which on a Mac ties
+    /// readability to the screen lock — so these tests passed all day and failed
+    /// the moment the machine locked, with *Operation not permitted* coming back
+    /// out of `load()`. Continuous integration never saw it, because SeedCore's
+    /// CI job runs on Linux where the protection class is a no-op.
+    ///
+    /// Nothing here is testing file protection. The round trip is testing that
+    /// what goes in comes out.
     private func makeStore() -> GardenStore {
-        GardenStore(fileURL: directory.appendingPathComponent("garden.json"))
+        GardenStore(fileURL: directory.appendingPathComponent("garden.json"),
+                    writeOptions: [.atomic])
     }
 
     func testAnEmptyStoreReadsAsAnEmptyGarden() throws {

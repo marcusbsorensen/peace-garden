@@ -9,9 +9,12 @@
   The app offers dark, light, and follow-the-phone. A web page has no settings
   screen, so it follows the reader: `prefers-color-scheme` is the whole of it.
 
-  Nothing here assumes left to right. No round-two language is right to left, so
-  logical properties cost nothing now and mean the pass does not have to be
-  earned twice.
+  Nothing here assumes left to right — every inset, margin and border below is a
+  logical property. That was written when no round-two language was right to
+  left, on the argument that the pass should not have to be earned twice. The
+  pass has arrived: Arabic and Hebrew are in scope, `page.js` sets `dir` on the
+  document from the language, and the cost of it here is the one rule at the
+  foot of this file rather than a rewrite.
 */
 
 :root {
@@ -465,3 +468,23 @@ body[data-loading]:not([data-ready]) .page {
   background: var(--hairline);
 }
 
+
+/* Scripts the label voice must not letter-space.
+
+   `data-keeps-case` above undresses the labels; this one is sharper, because on
+   Arabic tracking is not a stylistic choice but a defect. Arabic is a joined
+   script and space between letters severs the joins, leaving a row of
+   disconnected forms for the reader to reassemble. Persian and Urdu are the same
+   script and the same damage. CJK is here for a milder reason: it is not hurt,
+   but a Han or Kana line tracked to a Latin caption's rhythm reads as badly set,
+   and the small-caps device it imitates has no meaning in a script with no
+   capitals.
+
+   See assets/js/languages.js §NEVER_TRACKED, which is where the list lives. */
+[data-untracked] .label,
+[data-untracked] .heading,
+[data-untracked] .plant-name,
+[data-untracked] .chooser__select,
+[data-untracked] .keysheet-panel h2 {
+  letter-spacing: normal;
+}
