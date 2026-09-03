@@ -1,0 +1,26 @@
+{
+  "language": "Icelandic",
+  "endonym": "Íslenska",
+  "awaiting": "The labels are written. The prose — tagline, about1, about2, about3, growBody, appNote — is still null and still English, on purpose: it is the site's own writing rather than the app's, and it is read in English before it is commissioned in sixteen languages. A null value is drawn in English, silently, one key at a time; the English is in assets/js/strings.js.",
+  "strings": {
+    "tagline": null,
+    "about1": null,
+    "about2": null,
+    "about3": null,
+    "seedTitle": "Fræ hefur borist",
+    "replyTitle": "Fræ hefur komið til baka",
+    "sentBy": "Sent af {name}",
+    "gardener": "garðyrkjumaður",
+    "planted": "Gróðursett",
+    "growTitle": "Að rækta það",
+    "growBody": null,
+    "appNote": null,
+    "inEnglish": "á ensku",
+    "language": "Tungumál",
+    "keys": "Lyklar",
+    "random": "Eitthvert af handahófi",
+    "damaged": "Þessi hlekkur barst skemmdur og því var ekki hægt að lesa fræið.",
+    "notASeed": "Sá hlekkur ber ekkert fræ.",
+    "newerVersion": "Þetta fræ kom úr nýrri útgáfu af Peace Garden."
+  }
+}

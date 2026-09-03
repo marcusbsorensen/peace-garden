@@ -62,6 +62,7 @@ enum QuoteBank: String, CaseIterable, Sendable {
     case serbian = "sr"
     case japanese = "ja"
     case chinese = "zh"
+    case icelandic = "is"
 
     var passages: [Passage] {
         switch self {
@@ -94,6 +95,7 @@ enum QuoteBank: String, CaseIterable, Sendable {
         case .serbian: return Quotes.serbian
         case .japanese: return Quotes.japanese
         case .chinese: return Quotes.chinese
+        case .icelandic: return Quotes.icelandic
         }
     }
 
