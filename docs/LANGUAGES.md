@@ -598,6 +598,75 @@ Greenlandic — which need a brief of their own saying so.
   etymology seam Arabic under a Sicilian-Italian overlay. Basque is an isolate
   with no cognates to lean on.
 
+## The other alphabets
+
+Asked for 2 September, in the same breath as the round-two list, and the fence
+came down the following night: Greek and Cyrillic, then right to left, then CJK.
+The banks are commissions like any other. **What was new is that none of the
+typography had ever been asked a question it could not answer in Latin.**
+
+### Three lists, and only one of them breaks anything
+
+`Chrome.keepsWrittenCase` held four languages that have capitals and are hurt by
+them — Turkish and Azerbaijani's two i's, Greek's dropped accents, Irish's
+lowercase prefix. Two lists now sit beside it, and they are different facts.
+
+**`caselessScripts`** is Arabic, Hebrew, CJK, Thai and the rest: scripts with no
+capitals at all, where `.uppercase` is a no-op. Named rather than left to the
+no-op, because a label voice that says *uppercase* about a script with no case is
+describing itself wrongly, and the next reader should not have to work out that
+nothing happens.
+
+**`neverTracked`** is the one that breaks something. The label voice tracks to
+2.4pt, which is a Latin small-caps device. **Arabic is a joined script**, and
+space between letters severs the joins — what comes out is a row of disconnected
+forms for the reader to reassemble. Persian and Urdu are the same script and the
+same damage. CJK is on the list for a milder reason: nothing is severed, but a
+Han or Kana line tracked to a Latin caption's rhythm reads as badly set, and the
+device it imitates has no meaning in a script with no capitals to space out.
+
+Hebrew is deliberately on neither of the last two — right to left and caseless,
+but its letters do not join, so tracking there is a choice rather than a wound.
+
+Cyrillic needed nothing. It has capitals, uppercases cleanly, takes tracking, and
+reads left to right; the seven Cyrillic banks are a commission and not a
+typographic problem. That is worth writing down, because it was assumed to be
+one.
+
+### ~~`UnfurlingBackdrop` mirrors under RTL~~ — answered
+
+The open question was whether the reflected composition is acceptable. It was
+driven in an Arabic locale rather than argued about, and **two different things
+were mirroring, only one of them rightly**.
+
+The stage row reversed to cog, garden, meet, seed. That is correct: it is a row
+of controls and reading order runs the other way.
+
+Every glyph reversed with it. The garden's flower stood to the right of its
+grass, the seed turned the other way, and the cog came out as its own
+reflection. That is not correct. **A seed, a flower and a gear have a shape
+rather than a handedness**, and they are pictures of things rather than
+directional affordances — the same distinction Apple draws for imagery that does
+not indicate direction.
+
+So `View.drawnHand()` pins the drawings and leaves the layout alone, and
+`UnfurlingBackdrop` is pinned with them. The frond is the same gesture as
+`Chrome.Tendril` and the marks along the foot of the stage, and the plant itself
+is SceneKit and mirrors for nobody. **The app has one hand in every language**,
+in a row laid out the reader's way.
+
+### What a right-to-left language still needs before it ships
+
+- **A bank, and an interface.** Neither exists for Arabic or Hebrew yet.
+- **The four screens, in an RTL locale, by somebody who reads one.** The layout
+  is right in the sense that nothing is upside down. Whether it is *good* is a
+  question this repository cannot answer about itself.
+- **The passage carries its own direction.** Done on the web —
+  `passageBlock.dir` — because a Hebrew reader with no Hebrew bank gets a
+  right-to-left page with a left-to-right passage in it, and the punctuation
+  lands at the wrong end of the line otherwise. The app has the same case and it
+  has not been looked at.
+
 ## What is still open
 
 1. **The English bank is ninety passages short of its own floor.** Thirteen
@@ -613,8 +682,9 @@ Greenlandic — which need a brief of their own saying so.
    their own phone's word for it, and that word is what the other phone shows.
    Sending an empty name and letting each phone render its own would be better
    and is a change to the exchange payload.
-4. **`UnfurlingBackdrop` mirrors under RTL.** Decide whether the reflected
-   composition is acceptable before a right-to-left language is added.
+4. ~~**`UnfurlingBackdrop` mirrors under RTL.**~~ Answered 3 September, on a
+   simulator rather than on paper — see *The other alphabets*. The row mirrors,
+   the marks in it do not, and the backdrop is pinned with the marks.
 5. **The iPhone SE has never been looked at.** The deployment target admits it,
    the measurements say two Spanish labels wrap there, and nobody has run the
    app on one.
