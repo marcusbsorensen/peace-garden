@@ -80,8 +80,9 @@ answer about itself. Neither has a bank or an interface yet.
 Land the banks that finished after this was filed. For each:
 `python3 tools/quotes/land.py <Language> <code> <file>`, then its thirteen site
 labels, then `xcodebuild … test`, then one commit per bank. **Then run
-`python3 tools/quotes/refresh.py <banks dir>` over the lot**, because a bank
-landed before its agent reported is very likely stale. Finished files are in the
+`python3 tools/quotes/refresh.py <banks dir>` until it says nothing moved** —
+not once. Agents keep revising after they first reach the count, and it caught
+Galician on three separate passes. Finished files are in the
 session scratchpad under `banks/`; if that is gone, the banks are gone and are
 re-commissioned from `tools/quotes/BRIEF.md`.
 
