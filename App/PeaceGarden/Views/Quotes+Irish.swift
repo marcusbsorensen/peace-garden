@@ -239,7 +239,7 @@ extension Quotes {
         Passage(text: "Giúis a thugtar ar an adhmad dubh a bhaintear as an bportach. Crainn a thit na mílte bliain ó shin agus nár lobh riamh.", source: "Foraoiseacht", theme: .ground, subtheme: .theSoilItself),
         Passage(text: "Ceannbhán an t-ainm ar an bhféar bán ar an bportach. Nuair a fheiceann tú é, tá a fhios agat go bhfuil an talamh fliuch faoi.", source: "Luibheolaíocht", theme: .ground, subtheme: .theSoilItself),
         Passage(text: "Fód an méid cré a bhaintear le haon bhuille amháin de rámhainn, agus is é an focal céanna a chuirtear le háit dhúchais duine.", source: "Gaeilge", theme: .ground, subtheme: .theSoilItself),
-        Passage(text: "Tá níos mó créatúr beo i lán doirn de chré gháirdín ná mar atá de dhaoine ar an domhan, agus níl ainm ar an gcuid is mó díobh go fóill.", source: "Bitheolaíocht", theme: .ground, subtheme: .theSoilItself),
+        Passage(text: "Tá níos mó créatúr beo i lán doirn de chré gairdín ná mar atá de dhaoine ar an domhan, agus níl ainm ar an gcuid is mó díobh go fóill.", source: "Bitheolaíocht", theme: .ground, subtheme: .theSoilItself),
         Passage(text: "Iomairí arda a rinneadh sa talamh bocht: an chré tarraingthe isteach ina líne agus na prátaí curtha sa mhullach. Tá a rian fós ar shleasa sléibhe.", source: "Talmhaíocht", theme: .ground, subtheme: .theSoilItself),
         Passage(text: "Coinníonn an aigéad sa phortach an lobhadh siar, agus sin an fáth a mbíonn dath rua ar gach rud a thagann as: adhmad, olann, leathar.", source: "Ceimic", theme: .ground, subtheme: .theSoilItself),
         Passage(text: "Leathtar feamainn ar an talamh feadh an chósta thiar i ndiaidh stoirmeacha an gheimhridh, agus is í a chothaíonn prátaí an tsamhraidh.", source: "Feirmeoireacht", theme: .ground, subtheme: .theSoilItself),
@@ -251,7 +251,7 @@ extension Quotes {
         Passage(text: "Deirtear i nGaeilge gur as áit atá duine, an réamhfhocal céanna a chuirfeá le rud atá déanta as adhmad nó as cloch.", source: "Gaeilge", theme: .ground, subtheme: .aPlaceYouAreFrom),
         Passage(text: "Filleann an bradán ar an abhainn inar rugadh é tar éis na mílte míle a shnámh, agus aithníonn sé ar bholadh an uisce í.", source: "Iascaireacht", theme: .ground, subtheme: .aPlaceYouAreFrom),
         Passage(text: "Seasann muintir do do theaghlach féin agus do phobal iomlán ceantair araon: muintir an tí agus muintir na háite.", source: "Gaeilge", theme: .ground, subtheme: .aPlaceYouAreFrom),
-        Passage(text: "Thugadh imircigh dorn cré óna ngort féin leo thar sáile agus choinnídís i mbosca í. Ní raibh aon úsáid léi, agus rinneadh é ar aon nós.", source: "Béaloideas", theme: .ground, subtheme: .aPlaceYouAreFrom),
+        Passage(text: "Thugadh imircigh dorn cré óna ngort féin leo thar sáile agus choinnídís i mbosca í. Ní raibh aon úsáid léi, agus rinneadh amhlaidh ar aon nós.", source: "Béaloideas", theme: .ground, subtheme: .aPlaceYouAreFrom),
         Passage(text: "Tosaíonn na céadta logainm le cill, an focal ar shéipéal beag. Tá an tseanchill imithe as an gcuid is mó de na háiteanna agus tá an t-ainm fanta.", source: "Logainmneacha", theme: .ground, subtheme: .aPlaceYouAreFrom),
         Passage(text: "Filleann an gabhlán binne ar an bhfoirgneamh céanna gach bliain, agus deisíonn sé an tseannead in ionad ceann nua a thógáil má tá sí ann fós.", source: "Éaneolaíocht", theme: .ground, subtheme: .aPlaceYouAreFrom),
         Passage(text: "Bíonn blas ar leith ar an mil de réir an bhaile: aiteann i mí Aibreáin, sceach gheal i mBealtaine, fraoch i mí Lúnasa. Tá an paróiste sa phota.", source: "Beachaireacht", theme: .ground, subtheme: .aPlaceYouAreFrom),
@@ -268,21 +268,21 @@ extension Quotes {
         Passage(text: "Iompraíodh cré aníos i gcléibh chuig na leaca ar Sceilg Mhichíl chun gairdín a dhéanamh. Tá an gairdín ann fós agus na daoine imithe leis na cianta.", source: "Seandálaíocht", theme: .ground, subtheme: .aKeptPlace),
         Passage(text: "Fágtar ceirt ar chrann in aice le tobar beannaithe. Ní bhaintear anuas í: fágtar ann í nó go dtiteann sí as a chéile léi féin.", source: "Nós traidisiúnta", theme: .ground, subtheme: .aKeptPlace),
         Passage(text: "Turas a thugtar ar an siúl a dhéantar timpeall tobair, agus is é an focal céanna atá ar aistear fada. Céad slat a shiúltar, agus turas atá ann.", source: "Gaeilge", theme: .ground, subtheme: .aKeptPlace),
-        Passage(text: "Tógtar cró beach isteach i mballa gairdín ó dheas, ionas go mbeidh na beacha as an ngaoth agus faoin ngrian. Balla a dhéantar ina theach.", source: "Beachaireacht", theme: .ground, subtheme: .aKeptPlace),
-        Passage(text: "Ní chuirtear rud ar bith i lár lios ná ní bhaintear rud ar bith as. Sin an chúis go bhfuil an oiread sin de sheanÉirinn fós faoi fhéar.", source: "Seandálaíocht", theme: .ground, subtheme: .aKeptPlace),
+        Passage(text: "Tógtar cró beach isteach i mballa gairdín ó dheas, ionas go mbeidh na beacha as an ngaoth agus faoin ngrian. Cuid den bhalla a bhíonn ina theach acu.", source: "Beachaireacht", theme: .ground, subtheme: .aKeptPlace),
+        Passage(text: "Ní chuirtear rud ar bith i lár lios ná ní bhaintear rud ar bith as. Sin an chúis go bhfuil an oiread sin de shean-Éirinn fós faoi fhéar.", source: "Seandálaíocht", theme: .ground, subtheme: .aKeptPlace),
         Passage(text: "Fágtar cúinne den ghort gan bhaint don éanlaith. Bíonn an chuid sin níos glaise an bhliain dár gcionn ná an chuid a baineadh.", source: "Feirmeoireacht", theme: .ground, subtheme: .aKeptPlace),
 
         // MARK: - Travel
 
         // MARK: How a seed goes
-        Passage(text: "Itheann an lon dubh caor sceiche agus fágann sé an síol fiche míle ón gcrann a d'fhás é. Sin mar a shiúlann sceach.", source: "Éaneolaíocht", theme: .travel, subtheme: .howASeedGoes),
+        Passage(text: "Itheann an lon dubh caor sceiche agus fágann sé an síol cúpla míle ón gcrann a d'fhás é. Sin mar a shiúlann sceach.", source: "Éaneolaíocht", theme: .travel, subtheme: .howASeedGoes),
         Passage(text: "Bíonn ola bheag ar shíol na sailchuaiche a mheallann na seangáin. Tugann siad abhaile é, itheann siad an ola, agus fágann siad an síol ar an gcarn.", source: "Luibheolaíocht", theme: .travel, subtheme: .howASeedGoes),
         Passage(text: "Pléascann faighneog an aitinn sa teas agus cloistear an cnag ó chian. Caitheann sí na síolta cúpla méadar uaithi agus fágann sí ansin iad.", source: "Luibheolaíocht", theme: .travel, subtheme: .howASeedGoes),
         Passage(text: "Casann eochair na fuinseoige mar a bheadh sciathán héileacaptair ann agus í ag titim, agus coinníonn an casadh sin san aer í fada go leor le go n-iompródh an ghaoth í.", source: "Luibheolaíocht", theme: .travel, subtheme: .howASeedGoes),
         Passage(text: "Tagann síolta i dtír ar thránna an iarthair a d'fhás sa Mhuir Chairib. Bíonn siad míonna ar an sruth aduaidh sula sroicheann siad an gaineamh.", source: "Bitheolaíocht mhara", theme: .travel, subtheme: .howASeedGoes),
         Passage(text: "Cuireann an scréachóg dearcáin i bhfolach agus déanann sí dearmad ar chuid mhaith acu. Is dóichí crann a fháil as dearcán a cuireadh amhlaidh ná as ceann a thit.", source: "Éaneolaíocht", theme: .travel, subtheme: .howASeedGoes),
         Passage(text: "Snámhann síol na fearnóige. Sin an fáth a mbíonn línte fearnóg feadh gach abhann agus gan aon cheann suas an cnoc.", source: "Luibheolaíocht", theme: .travel, subtheme: .howASeedGoes),
-        Passage(text: "Greamaíonn síol an leadáin d'olann caorach agus de mhuinchille cóta. Tá crúca beag ar bharr gach dealg, agus scaoiltear é le tarraingt amháin.", source: "Luibheolaíocht", theme: .travel, subtheme: .howASeedGoes),
+        Passage(text: "Greamaíonn ceann an chnádáin d'olann caorach agus de mhuinchille cóta. Tá crúca beag ar bharr gach deilge, agus scaoileann sé le haon tarraingt amháin.", source: "Luibheolaíocht", theme: .travel, subtheme: .howASeedGoes),
         Passage(text: "Fágann éan cladaigh clábar ar a chosa nuair a éiríonn sé, agus bíonn síolta sa chlábar sin. Sin mar a shroicheann planda oileán nár shroich sé riamh cheana.", source: "Éiceolaíocht", theme: .travel, subtheme: .howASeedGoes),
         Passage(text: "Iompraíonn an ghaoth síol an chaisearbháin cúpla céad méadar ar lá ciúin agus na mílte ar lá stoirme. Ní roghnaíonn an planda an lá.", source: "Luibheolaíocht", theme: .travel, subtheme: .howASeedGoes),
         Passage(text: "Tháinig an práta go hÉirinn i mbád, mar a tháinig an fhuinseog choitianta agus an neantóg. Is beag planda sa ghort nach raibh aistear roimhe.", source: "Garraíodóireacht", theme: .travel, subtheme: .howASeedGoes),
@@ -307,11 +307,11 @@ extension Quotes {
         Passage(text: "Bíonn adharca móra ar na ba thar lear.", source: "Seanfhocal", theme: .travel, subtheme: .farOff),
         Passage(text: "Dul chun na Róimhe: mórán stró agus beagán tairbhe. An Rí atá á lorg agat ann, mura dtugann tú leat é, ní bhfaighidh tú ann é.", source: "Nóta imill, an 9ú haois", theme: .travel, subtheme: .farOff),
         Passage(text: "Bealach na Bó Finne an t-ainm Gaeilge ar an mbanda réaltaí a théann trasna na spéire. Bóthar atá ann, agus bó ag siúl air.", source: "Réalteolaíocht", theme: .travel, subtheme: .farOff),
-        Passage(text: "Tá seánra scéalta sa Ghaeilge nach bhfuil iontu ach turas farraige: imram an t-ainm orthu, agus ní bhíonn an t-oileán deireanach mar an gcéanna in aon dá scéal.", source: "Litríocht na Sean-Ghaeilge", theme: .travel, subtheme: .farOff),
+        Passage(text: "Tá seánra scéalta sa tSean-Ghaeilge nach bhfuil ann ach turas farraige. Imram an t-ainm orthu, agus ní bhíonn an t-oileán deireanach mar an gcéanna in aon dá cheann.", source: "Litríocht na Sean-Ghaeilge", theme: .travel, subtheme: .farOff),
         Passage(text: "Deirtear go bhfeictear oileán siar ó chósta na Gaillimhe uair gach seacht mbliana, agus go n-imíonn sé arís sula sroichfí é.", source: "Béaloideas", theme: .travel, subtheme: .farOff),
         Passage(text: "Ní in Éirinn atá na leathanaigh is sine a bhfuil Gaeilge scríofa orthu ach i Sankt Gallen, i Würzburg agus i Milano, san áit ar fhág manaigh siúil iad.", source: "Stair na teanga", theme: .travel, subtheme: .farOff),
         Passage(text: "Eitlíonn an gheabhróg Artach ón Artach go dtí an tAntartach agus ar ais gach bliain. Feiceann sí níos mó de sholas an lae ná aon ainmhí eile.", source: "Éaneolaíocht", theme: .travel, subtheme: .farOff),
-        Passage(text: "Tagann an chadhan go hÉirinn ón Ghraonlainn gach geimhreadh. Cadhan aonair a thugtar ar dhuine atá leis féin, ó bheith ag féachaint ar cheann acu ar an gcladach.", source: "Éaneolaíocht", theme: .travel, subtheme: .farOff),
+        Passage(text: "Tagann an chadhan go hÉirinn ón nGraonlainn gach geimhreadh. Cadhan aonair a thugtar ar dhuine atá leis féin, ó bheith ag féachaint ar cheann acu ar an gcladach.", source: "Éaneolaíocht", theme: .travel, subtheme: .farOff),
         Passage(text: "Deirtear ar an mBlascaod gurb é Meiriceá an chéad pharóiste eile siar.", source: "Béaloideas", theme: .travel, subtheme: .farOff),
         Passage(text: "Nuair a fheiceann tú réalta, is féidir go bhfuil sí imithe. Na céadta bliain a chaith an solas ag teacht, agus ní thugann sé nuacht ar bith leis.", source: "Réalteolaíocht", theme: .travel, subtheme: .farOff),
         Passage(text: "Sheol manaigh Éireannacha soir agus thuaidh sa séú agus sa seachtú haois, agus tá a n-ainmneacha fós ar bhailte san Eilvéis agus san Iodáil.", source: "Stair", theme: .travel, subtheme: .farOff),
@@ -334,17 +334,17 @@ extension Quotes {
 
         // MARK: Two that need each other
         Passage(text: "Ní neart go cur le chéile.", source: "Seanfhocal", theme: .meeting, subtheme: .twoThatNeedEachOther),
-        Passage(text: "Ní bhíonn caora ar gach cuileann. Bíonn crainn fhirinn ann agus crainn bhaininn, agus ní thagann caor ar bith mura mbíonn ceann de gach cineál i ngar dá chéile.", source: "Luibheolaíocht", theme: .meeting, subtheme: .twoThatNeedEachOther),
+        Passage(text: "Ní bhíonn caora ar gach cuileann. Bíonn crainn fhireanna ann agus crainn bhaineanna, agus ní thagann caor ar bith mura mbíonn ceann de gach cineál i ngar dá chéile.", source: "Luibheolaíocht", theme: .meeting, subtheme: .twoThatNeedEachOther),
         Passage(text: "Ní planda amháin é an crotal ar an gcloch ach dhá cheann: fungas a dhéanann an teach agus algaí a dhéanann an bia.", source: "Luibheolaíocht", theme: .meeting, subtheme: .twoThatNeedEachOther),
         Passage(text: "Fásann snáithíní fungais isteach i bhfréamhacha crainn agus tugann siad uisce dó. Faigheann siad siúcra ar ais. Ní mhaireann ceachtar acu go maith gan an ceann eile.", source: "Micealaíocht", theme: .meeting, subtheme: .twoThatNeedEachOther),
         Passage(text: "Tá cnapáin bheaga ar fhréamhacha na fearnóige agus baictéir iontu a bhaineann nítrigin as an aer. Sin an fáth a bhfásann fearnóg i dtalamh nach bhfásann faic eile.", source: "Luibheolaíocht", theme: .meeting, subtheme: .twoThatNeedEachOther),
-        Passage(text: "Tá teanga fhada ag an mbumbóg a shroicheann síos i mbláth na seamróige deirge. Níl aon bheach eile in Éirinn a shroicheann é.", source: "Feithideolaíocht", theme: .meeting, subtheme: .twoThatNeedEachOther),
-        Passage(text: "Cuireann an chuach a hubh i nead na riabhóige, agus tá dath uibhe na riabhóige ag an ubh sin. Dhá éan ceangailte le chéile in ainneoin an bheirt acu.", source: "Éaneolaíocht", theme: .meeting, subtheme: .twoThatNeedEachOther),
+        Passage(text: "Tá teanga fhada ag an mbumbóg a shroicheann síos i mbláth na seamaire deirge. Níl aon bheach eile in Éirinn a shroicheann é.", source: "Feithideolaíocht", theme: .meeting, subtheme: .twoThatNeedEachOther),
+        Passage(text: "Cuireann an chuach a hubh i nead na riabhóige, agus tá dath uibhe na riabhóige ag an ubh sin. Dhá éan atá ceangailte lena chéile cé nár roghnaigh ceachtar acu é.", source: "Éaneolaíocht", theme: .meeting, subtheme: .twoThatNeedEachOther),
         Passage(text: "Bláthaíonn an eidhneán i mí Dheireadh Fómhair nuair nach bhfuil bláth ar bith eile ann, agus is uirthi a mhaireann na feithidí deireanacha den bhliain.", source: "Luibheolaíocht", theme: .meeting, subtheme: .twoThatNeedEachOther),
         Passage(text: "Ní dhéanann aon chloch bhró obair léi féin. Caithfidh dhá cheann a bheith ann, agus caithfidh siad a bheith ag casadh i gcoinne a chéile.", source: "Ceardaíocht", theme: .meeting, subtheme: .twoThatNeedEachOther),
         Passage(text: "Comhar na gcomharsan: an socrú go dtugann tú lá oibre do dhuine eile agus go dtugtar lá ar ais duit. Ní airgead a ríomhtar ach laethanta.", source: "Béaloideas", theme: .meeting, subtheme: .twoThatNeedEachOther),
         Passage(text: "Ní féidir curach a stiúradh le maide amháin. Caithfidh an bheirt tarraingt san am céanna nó casfaidh sí timpeall san áit ina bhfuil sí.", source: "Iascaireacht", theme: .meeting, subtheme: .twoThatNeedEachOther),
-        Passage(text: "Scaoileann an t-iúr firinn scamall pailine amach i mí an Mhárta. Mura bhfuil crann baineann laistigh de chúpla céad méadar de, ní tharlaíonn aon rud.", source: "Luibheolaíocht", theme: .meeting, subtheme: .twoThatNeedEachOther),
+        Passage(text: "Scaoileann an t-iúr fireann scamall pailine amach i mí an Mhárta. Mura bhfuil crann baineann laistigh de chúpla céad méadar de, ní tharlaíonn aon rud.", source: "Luibheolaíocht", theme: .meeting, subtheme: .twoThatNeedEachOther),
 
         // MARK: The manners of it
         Passage(text: "Dia duit an beannú, agus Dia is Muire duit an freagra. Ardaítear an bheannacht san fhreagra i gcónaí.", source: "Gaeilge", theme: .meeting, subtheme: .theMannersOfIt),
@@ -363,7 +363,7 @@ extension Quotes {
         // MARK: - Kinship
 
         // MARK: Grown together
-        Passage(text: "Nuair a bhíonn dhá ghéag ag cuimilt ar a chéile bliain i ndiaidh bliana, caitheann siad an choirt ar shiúl agus fásann an dá adhmad le chéile ina n-aon cheann amháin.", source: "Foraoiseacht", theme: .kinship, subtheme: .grownTogether),
+        Passage(text: "Nuair a bhíonn dhá ghéag ag cuimilt ar a chéile bliain i ndiaidh bliana, caitheann siad an choirt ar shiúl agus fásann an dá adhmad le chéile go dtí nach mbíonn iontu ach aon cheann amháin.", source: "Foraoiseacht", theme: .kinship, subtheme: .grownTogether),
         Passage(text: "Comhalta a thugtaí ar an duine a tógadh sa teach céanna leat cé nach raibh gaol fola agat leis, agus ba threise an ceangal sin ná mórán gaolta eile.", source: "Seandlíthe na hÉireann", theme: .kinship, subtheme: .grownTogether),
         Passage(text: "Nódú: gas de chrann amháin a cheangal le stoc crainn eile go dtí go bhfásann siad ar aon. Tá gach crann úll i ngach úllord déanta amhlaidh.", source: "Garraíodóireacht", theme: .kinship, subtheme: .grownTogether),
         Passage(text: "Is minic gur aon chrann amháin atá i ngarrán crann creathach, na fréamhacha ceangailte faoin talamh agus na gais ag éirí aníos ina gceann is ina gceann.", source: "Foraoiseacht", theme: .kinship, subtheme: .grownTogether),
@@ -373,21 +373,21 @@ extension Quotes {
         Passage(text: "Ní mharaíonn an t-eidhneán an crann a mbíonn sé air. Ní tharraingíonn sé bia ar bith as, agus beathaíonn sé an éanlaith nuair nach bhfuil aon rud eile ann.", source: "Luibheolaíocht", theme: .kinship, subtheme: .grownTogether),
         Passage(text: "Nuair a bhuaileann an tSuca agus an tSionainn le chéile, an tSionainn an t-ainm a bhíonn ar an uisce ó shin amach. Is í an abhainn is faide a choinníonn a hainm.", source: "Tíreolaíocht", theme: .kinship, subtheme: .grownTogether),
         Passage(text: "Bíonn na fréamhacha faoi shraith de sceacha fite ina chéile chomh dlúth sin nach féidir ceann amháin a tharraingt aníos gan an ceann in aice leis a chorraí.", source: "Feirmeoireacht", theme: .kinship, subtheme: .grownTogether),
-        Passage(text: "Tá móinéar seanaimseartha ann nach bhfuil ann ach fréamhacha ceangailte: dhá scór speiceas ag fás fríd a chéile agus gan ceann acu in ann teacht slán leis féin.", source: "Éiceolaíocht", theme: .kinship, subtheme: .grownTogether),
+        Passage(text: "Tá móinéar seanaimseartha ann nach bhfuil ann ach fréamhacha ceangailte: dhá scór speiceas ag fás trína chéile agus gan ceann acu in ann teacht slán leis féin.", source: "Éiceolaíocht", theme: .kinship, subtheme: .grownTogether),
         Passage(text: "Fásann dhá bhrainse den chrann céanna ar aghaidh a chéile agus ní bhuaileann siad riamh. Fágann gach ceann acu bearna don cheann eile ag an mbarr.", source: "Luibheolaíocht", theme: .kinship, subtheme: .grownTogether),
 
         // MARK: The words for it
         Passage(text: "Ní bhíonn duine brónach sa Ghaeilge. Bíonn brón air, mar a bheadh cóta air, agus imeoidh sé lá éigin.", source: "Gaeilge", theme: .kinship, subtheme: .theWordsForIt),
         Passage(text: "Tá grá agam duit. Rud atá agat is ea an grá, agus rud a thugtar do dhuine eile.", source: "Gaeilge", theme: .kinship, subtheme: .theWordsForIt),
         Passage(text: "A chara a chuirtear ag ceann gach litreach, fiú litir chuig strainséir nó chuig oifig stáit. Tosaítear le cairdeas roimh aon rud eile.", source: "Gaeilge", theme: .kinship, subtheme: .theWordsForIt),
-        Passage(text: "Col ceathrair an focal ar chlann do dhearthár nó do dheirféar. Is é atá ann ná an ceathrú céim den chosc pósta: comhaireamh dlí a rinneadh ina ainm ceana.", source: "Gaeilge", theme: .kinship, subtheme: .theWordsForIt),
+        Passage(text: "Col ceathrair a thugtar ar chlann do dhearthár nó do dheirféar. Col an cosc pósta, agus is é an ceathrú céim den chosc sin atá san ainm ceana.", source: "Gaeilge", theme: .kinship, subtheme: .theWordsForIt),
         Passage(text: "A chuisle mo chroí: cuisle an chroí a thugtar ar an duine, an rud a bhuaileann istigh agus nach bhfeictear.", source: "Gaeilge", theme: .kinship, subtheme: .theWordsForIt),
         Passage(text: "A stór agus a thaisce: an dá fhocal ar chiste i bhfolach, agus is le duine a labhraítear iad seachas le rud.", source: "Gaeilge", theme: .kinship, subtheme: .theWordsForIt),
         Passage(text: "Deirtear gur comh-ursa atá i gcomharsa: an té a bhfuil an ursain chéanna aige leat.", source: "Sanasaíocht", theme: .kinship, subtheme: .theWordsForIt),
         Passage(text: "Anamchara: an duine ar leis a insítear gach rud. Ba dhual do gach duine i luath-Éirinn ceann acu a bheith aige.", source: "Gaeilge", theme: .kinship, subtheme: .theWordsForIt),
-        Passage(text: "Clann do pháistí féin agus clann do shleachta go léir, na céadta bliain ina dhiaidh sin. Ní athraíonn an focal.", source: "Gaeilge", theme: .kinship, subtheme: .theWordsForIt),
+        Passage(text: "Ciallaíonn clann do pháistí féin, agus ciallaíonn sí do shliocht go léir na céadta bliain ina dhiaidh sin. Ní athraíonn an focal.", source: "Gaeilge", theme: .kinship, subtheme: .theWordsForIt),
         Passage(text: "Duine muinteartha a thugtar ar dhuine de do ghaolta, agus is é an focal céanna atá ar dhuine atá cineálta le strainséir.", source: "Gaeilge", theme: .kinship, subtheme: .theWordsForIt),
-        Passage(text: "A rún a thugtar ar dhuine atá geal le duine. Rún an focal ar an rud nach n-insítear, agus is é an focal céanna atá ar an duine a chloisfeadh é.", source: "Gaeilge", theme: .kinship, subtheme: .theWordsForIt),
+        Passage(text: "A rún a thugtar ar dhuine mór le duine eile. Rún an focal ar an rud nach n-insítear, agus is é an focal céanna atá ar an duine a d'inseofá dó é.", source: "Gaeilge", theme: .kinship, subtheme: .theWordsForIt),
         Passage(text: "Ní deirtear go bhfuil Gaeilge ar eolas agat sa teanga féin. Deirtear go bhfuil sí agat, ar nós rud a bheadh i do phóca.", source: "Gaeilge", theme: .kinship, subtheme: .theWordsForIt),
 
         // MARK: Two people
@@ -401,7 +401,7 @@ extension Quotes {
         Passage(text: "Fanann péire eala le chéile ó bhliain go bliain, agus filleann siad ar an loch céanna. Aithnítear iad ar an bpatrún dubh agus buí ar an ngob.", source: "Éaneolaíocht", theme: .kinship, subtheme: .twoPeople),
         Passage(text: "Ní thuigeann an sách an seang.", source: "Seanfhocal", theme: .kinship, subtheme: .twoPeople),
         Passage(text: "Tarraingíonn duine amháin an sábh agus scaoileann an duine eile leis. Má tharraingíonn an bheirt in éineacht, ní ghearrfaidh sé rud ar bith.", source: "Ceardaíocht", theme: .kinship, subtheme: .twoPeople),
-        Passage(text: "Dís an seanfhocal ar bheirt a bhíonn le chéile go rialta. Níl sé coitianta anois, ach tá sé sna scéalta i gcónaí.", source: "Gaeilge", theme: .kinship, subtheme: .twoPeople),
+        Passage(text: "Dís a thugtaí ar bheirt a bhíonn le chéile go rialta. Níl an focal coitianta anois, ach tá sé sna scéalta i gcónaí.", source: "Gaeilge", theme: .kinship, subtheme: .twoPeople),
         Passage(text: "Bíonn duine amháin ag caitheamh na móna aníos as an bportach agus duine eile á leagan ina líne. Ní oibríonn ceachtar den bheirt ar an luas céanna leis féin.", source: "Nós traidisiúnta", theme: .kinship, subtheme: .twoPeople),
 
         // MARK: - Peace
@@ -418,7 +418,7 @@ extension Quotes {
         Passage(text: "Fuaim na gaoithe i gcoill ghéagach faoi spéir ghorm, easanna abhann, agus glao na heala. Ceol álainn é sin, a scríobh manach sa deichiú haois.", source: "Marbhán agus Guaire, an 10ú haois", theme: .peace, subtheme: .quietAsASound),
         Passage(text: "Scríobh manach nóta ar imeall a leabhair faoi chlog binn á bhualadh oíche ghaoithe, agus dúirt sé gurbh fhearr leis dul ina araicis ná áit ar bith eile a bheith aige.", source: "Nóta imill, an 9ú haois", theme: .peace, subtheme: .quietAsASound),
         Passage(text: "Ní chloistear an ceann cait ag eitilt. Tá imeall a chleití mionfhiaclach, agus briseann sé an t-aer ina mhíle sruthán beag in ionad é a stialladh.", source: "Éaneolaíocht", theme: .peace, subtheme: .quietAsASound),
-        Passage(text: "Clagarnach an fhearthainn throm ar dhíon, brádán an bháisteach chomh mín sin nach mothaítear í, agus ceobhrán an ceo atá idir eatarthu.", source: "Gaeilge", theme: .peace, subtheme: .quietAsASound),
+        Passage(text: "Clagarnach a thugtar ar fhearthainn throm ar dhíon, brádán ar bháisteach chomh mín sin nach mothaítear í, agus ceobhrán ar an gceo atá eatarthu.", source: "Gaeilge", theme: .peace, subtheme: .quietAsASound),
 
         // MARK: The words for stopping
         Passage(text: "Síocháin ón bhfocal síth, agus is é an focal céanna atá ar an gcnoc ina raibh na daoine sí. Rianaítear an dá bhrí siar chuig fréamh a chiallaíonn suí agus fanacht.", source: "Sanasaíocht", theme: .peace, subtheme: .theWordsForStopping),
@@ -432,17 +432,17 @@ extension Quotes {
         Passage(text: "Scíth a ligean: an focal Gaeilge ar shos a ghlacadh, agus is é an briathar lig atá ann. Rud a scaoiltear seachas rud a dhéantar.", source: "Gaeilge", theme: .peace, subtheme: .theWordsForStopping),
         Passage(text: "Ná bac leis: an chomhairle is coitianta sa Ghaeilge nuair nach fiú rud a leanúint níos faide. Ní hé nach bhfuil sé fíor, ach nach fiú é.", source: "Gaeilge", theme: .peace, subtheme: .theWordsForStopping),
         Passage(text: "Fothain: an chosaint a thugann claí nó carraig nó crann ón ngaoth. Ní chuireann sí stop leis an ngaoth ach fágann sí áit nach bhfuil sí.", source: "Gaeilge", theme: .peace, subtheme: .theWordsForStopping),
-        Passage(text: "Suaimhneas an focal ar an gciúnas atá istigh i nduine. Is féidir suaimhneas a bheith ort in áit atá lán de ghleo.", source: "Seandlíthe na hÉireann", theme: .peace, subtheme: .theWordsForStopping),
+        Passage(text: "Suaimhneas an focal ar an gciúnas atá istigh i nduine. Is féidir suaimhneas a bheith ort in áit atá lán de ghleo.", source: "Gaeilge", theme: .peace, subtheme: .theWordsForStopping),
 
         // MARK: At ease
         Passage(text: "Ar a sháimhín só: an chaoi a ndeirtear go bhfuil duine chomh compordach agus is féidir a bheith, gan aon rud le déanamh aige.", source: "Gaeilge", theme: .peace, subtheme: .atEase),
         Passage(text: "An bhuíon is fearr ag seinm ceoil dom, agus gan duine acu ar tuarastal ar bith.", source: "Marbhán agus Guaire, an 10ú haois", theme: .peace, subtheme: .atEase),
         Passage(text: "Labhraíonn Suibhne le gach planda as a ainm féin: a bhiolair, a bharrghlasáin, ar bhruach thobar an loin.", source: "Buile Shuibhne, an 12ú haois", theme: .peace, subtheme: .atEase),
         Passage(text: "Airneán: an nós dul chuig teach comharsan tar éis an tsuipéir agus fanacht ann go dtí meán oíche gan aon chúis ar leith.", source: "Béaloideas", theme: .peace, subtheme: .atEase),
-        Passage(text: "Suantraí ceann den trí cheol a bhí ag an gcruitire, agus is é an t-aon cheann acu a raibh sé de dhualgas air an lucht éisteachta a chur a chodladh.", source: "Ceol", theme: .peace, subtheme: .atEase),
+        Passage(text: "Suantraí ceann de na trí cheol a bhí ag an gcruitire, agus is é an t-aon cheann acu a raibh sé de dhualgas air an lucht éisteachta a chur a chodladh.", source: "Ceol", theme: .peace, subtheme: .atEase),
         Passage(text: "Luíonn bó síos nuair a bhíonn sí ag cangailt na círe. Comhartha é sin go bhfuil sí ar a suaimhneas, agus ní dhéanann sí é má tá aon rud ag cur isteach uirthi.", source: "Feirmeoireacht", theme: .peace, subtheme: .atEase),
         Passage(text: "Codladh sámh a ghuítear ar dhuine roimh am luí. Sámh an focal ar uisce ciúin chomh maith.", source: "Gaeilge", theme: .peace, subtheme: .atEase),
-        Passage(text: "Tóg go bog é. Bog an focal ar rud atá mín agus ar rud atá mall, agus ar an gcré a shleamhnaíonn faoi do chos.", source: "Gaeilge", theme: .peace, subtheme: .atEase),
+        Passage(text: "Tóg go bog é. Bog an focal ar rud atá mín agus ar rud atá mall, agus ar an talamh nach seasann faoi do chos.", source: "Gaeilge", theme: .peace, subtheme: .atEase),
         Passage(text: "Tagann na rónta amach ar an gcarraig nuair a bhíonn an taoide íseal agus fanann siad ansin gan corraí go dtí go dtagann an t-uisce faoina mbolg.", source: "Zó-eolaíocht", theme: .peace, subtheme: .atEase),
         Passage(text: "Bíonn boladh na móna ar chóta duine ar feadh seachtaine tar éis dó suí in aice tine. Ní féidir é a ní amach agus ní iarrtar é a ní.", source: "Béaloideas", theme: .peace, subtheme: .atEase),
         Passage(text: "Suíonn na fáinleoga ar an tsreang le chéile ar feadh laethanta sula n-imíonn siad, gan aon rud ar bun acu ach fanacht.", source: "Éaneolaíocht", theme: .peace, subtheme: .atEase),

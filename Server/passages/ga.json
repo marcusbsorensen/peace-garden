@@ -1128,7 +1128,7 @@
   "subtheme": "theSoilItself"
  },
  {
-  "text": "Tá níos mó créatúr beo i lán doirn de chré gháirdín ná mar atá de dhaoine ar an domhan, agus níl ainm ar an gcuid is mó díobh go fóill.",
+  "text": "Tá níos mó créatúr beo i lán doirn de chré gairdín ná mar atá de dhaoine ar an domhan, agus níl ainm ar an gcuid is mó díobh go fóill.",
   "source": "Bitheolaíocht",
   "theme": "ground",
   "subtheme": "theSoilItself"
@@ -1188,7 +1188,7 @@
   "subtheme": "aPlaceYouAreFrom"
  },
  {
-  "text": "Thugadh imircigh dorn cré óna ngort féin leo thar sáile agus choinnídís i mbosca í. Ní raibh aon úsáid léi, agus rinneadh é ar aon nós.",
+  "text": "Thugadh imircigh dorn cré óna ngort féin leo thar sáile agus choinnídís i mbosca í. Ní raibh aon úsáid léi, agus rinneadh amhlaidh ar aon nós.",
   "source": "Béaloideas",
   "theme": "ground",
   "subtheme": "aPlaceYouAreFrom"
@@ -1278,13 +1278,13 @@
   "subtheme": "aKeptPlace"
  },
  {
-  "text": "Tógtar cró beach isteach i mballa gairdín ó dheas, ionas go mbeidh na beacha as an ngaoth agus faoin ngrian. Balla a dhéantar ina theach.",
+  "text": "Tógtar cró beach isteach i mballa gairdín ó dheas, ionas go mbeidh na beacha as an ngaoth agus faoin ngrian. Cuid den bhalla a bhíonn ina theach acu.",
   "source": "Beachaireacht",
   "theme": "ground",
   "subtheme": "aKeptPlace"
  },
  {
-  "text": "Ní chuirtear rud ar bith i lár lios ná ní bhaintear rud ar bith as. Sin an chúis go bhfuil an oiread sin de sheanÉirinn fós faoi fhéar.",
+  "text": "Ní chuirtear rud ar bith i lár lios ná ní bhaintear rud ar bith as. Sin an chúis go bhfuil an oiread sin de shean-Éirinn fós faoi fhéar.",
   "source": "Seandálaíocht",
   "theme": "ground",
   "subtheme": "aKeptPlace"
@@ -1296,7 +1296,7 @@
   "subtheme": "aKeptPlace"
  },
  {
-  "text": "Itheann an lon dubh caor sceiche agus fágann sé an síol fiche míle ón gcrann a d'fhás é. Sin mar a shiúlann sceach.",
+  "text": "Itheann an lon dubh caor sceiche agus fágann sé an síol cúpla míle ón gcrann a d'fhás é. Sin mar a shiúlann sceach.",
   "source": "Éaneolaíocht",
   "theme": "travel",
   "subtheme": "howASeedGoes"
@@ -1338,7 +1338,7 @@
   "subtheme": "howASeedGoes"
  },
  {
-  "text": "Greamaíonn síol an leadáin d'olann caorach agus de mhuinchille cóta. Tá crúca beag ar bharr gach dealg, agus scaoiltear é le tarraingt amháin.",
+  "text": "Greamaíonn ceann an chnádáin d'olann caorach agus de mhuinchille cóta. Tá crúca beag ar bharr gach deilge, agus scaoileann sé le haon tarraingt amháin.",
   "source": "Luibheolaíocht",
   "theme": "travel",
   "subtheme": "howASeedGoes"
@@ -1464,7 +1464,7 @@
   "subtheme": "farOff"
  },
  {
-  "text": "Tá seánra scéalta sa Ghaeilge nach bhfuil iontu ach turas farraige: imram an t-ainm orthu, agus ní bhíonn an t-oileán deireanach mar an gcéanna in aon dá scéal.",
+  "text": "Tá seánra scéalta sa tSean-Ghaeilge nach bhfuil ann ach turas farraige. Imram an t-ainm orthu, agus ní bhíonn an t-oileán deireanach mar an gcéanna in aon dá cheann.",
   "source": "Litríocht na Sean-Ghaeilge",
   "theme": "travel",
   "subtheme": "farOff"
@@ -1488,7 +1488,7 @@
   "subtheme": "farOff"
  },
  {
-  "text": "Tagann an chadhan go hÉirinn ón Ghraonlainn gach geimhreadh. Cadhan aonair a thugtar ar dhuine atá leis féin, ó bheith ag féachaint ar cheann acu ar an gcladach.",
+  "text": "Tagann an chadhan go hÉirinn ón nGraonlainn gach geimhreadh. Cadhan aonair a thugtar ar dhuine atá leis féin, ó bheith ag féachaint ar cheann acu ar an gcladach.",
   "source": "Éaneolaíocht",
   "theme": "travel",
   "subtheme": "farOff"
@@ -1590,7 +1590,7 @@
   "subtheme": "twoThatNeedEachOther"
  },
  {
-  "text": "Ní bhíonn caora ar gach cuileann. Bíonn crainn fhirinn ann agus crainn bhaininn, agus ní thagann caor ar bith mura mbíonn ceann de gach cineál i ngar dá chéile.",
+  "text": "Ní bhíonn caora ar gach cuileann. Bíonn crainn fhireanna ann agus crainn bhaineanna, agus ní thagann caor ar bith mura mbíonn ceann de gach cineál i ngar dá chéile.",
   "source": "Luibheolaíocht",
   "theme": "meeting",
   "subtheme": "twoThatNeedEachOther"
@@ -1614,13 +1614,13 @@
   "subtheme": "twoThatNeedEachOther"
  },
  {
-  "text": "Tá teanga fhada ag an mbumbóg a shroicheann síos i mbláth na seamróige deirge. Níl aon bheach eile in Éirinn a shroicheann é.",
+  "text": "Tá teanga fhada ag an mbumbóg a shroicheann síos i mbláth na seamaire deirge. Níl aon bheach eile in Éirinn a shroicheann é.",
   "source": "Feithideolaíocht",
   "theme": "meeting",
   "subtheme": "twoThatNeedEachOther"
  },
  {
-  "text": "Cuireann an chuach a hubh i nead na riabhóige, agus tá dath uibhe na riabhóige ag an ubh sin. Dhá éan ceangailte le chéile in ainneoin an bheirt acu.",
+  "text": "Cuireann an chuach a hubh i nead na riabhóige, agus tá dath uibhe na riabhóige ag an ubh sin. Dhá éan atá ceangailte lena chéile cé nár roghnaigh ceachtar acu é.",
   "source": "Éaneolaíocht",
   "theme": "meeting",
   "subtheme": "twoThatNeedEachOther"
@@ -1650,7 +1650,7 @@
   "subtheme": "twoThatNeedEachOther"
  },
  {
-  "text": "Scaoileann an t-iúr firinn scamall pailine amach i mí an Mhárta. Mura bhfuil crann baineann laistigh de chúpla céad méadar de, ní tharlaíonn aon rud.",
+  "text": "Scaoileann an t-iúr fireann scamall pailine amach i mí an Mhárta. Mura bhfuil crann baineann laistigh de chúpla céad méadar de, ní tharlaíonn aon rud.",
   "source": "Luibheolaíocht",
   "theme": "meeting",
   "subtheme": "twoThatNeedEachOther"
@@ -1728,7 +1728,7 @@
   "subtheme": "theMannersOfIt"
  },
  {
-  "text": "Nuair a bhíonn dhá ghéag ag cuimilt ar a chéile bliain i ndiaidh bliana, caitheann siad an choirt ar shiúl agus fásann an dá adhmad le chéile ina n-aon cheann amháin.",
+  "text": "Nuair a bhíonn dhá ghéag ag cuimilt ar a chéile bliain i ndiaidh bliana, caitheann siad an choirt ar shiúl agus fásann an dá adhmad le chéile go dtí nach mbíonn iontu ach aon cheann amháin.",
   "source": "Foraoiseacht",
   "theme": "kinship",
   "subtheme": "grownTogether"
@@ -1788,7 +1788,7 @@
   "subtheme": "grownTogether"
  },
  {
-  "text": "Tá móinéar seanaimseartha ann nach bhfuil ann ach fréamhacha ceangailte: dhá scór speiceas ag fás fríd a chéile agus gan ceann acu in ann teacht slán leis féin.",
+  "text": "Tá móinéar seanaimseartha ann nach bhfuil ann ach fréamhacha ceangailte: dhá scór speiceas ag fás trína chéile agus gan ceann acu in ann teacht slán leis féin.",
   "source": "Éiceolaíocht",
   "theme": "kinship",
   "subtheme": "grownTogether"
@@ -1818,7 +1818,7 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Col ceathrair an focal ar chlann do dhearthár nó do dheirféar. Is é atá ann ná an ceathrú céim den chosc pósta: comhaireamh dlí a rinneadh ina ainm ceana.",
+  "text": "Col ceathrair a thugtar ar chlann do dhearthár nó do dheirféar. Col an cosc pósta, agus is é an ceathrú céim den chosc sin atá san ainm ceana.",
   "source": "Gaeilge",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
@@ -1848,7 +1848,7 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "Clann do pháistí féin agus clann do shleachta go léir, na céadta bliain ina dhiaidh sin. Ní athraíonn an focal.",
+  "text": "Ciallaíonn clann do pháistí féin, agus ciallaíonn sí do shliocht go léir na céadta bliain ina dhiaidh sin. Ní athraíonn an focal.",
   "source": "Gaeilge",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
@@ -1860,7 +1860,7 @@
   "subtheme": "theWordsForIt"
  },
  {
-  "text": "A rún a thugtar ar dhuine atá geal le duine. Rún an focal ar an rud nach n-insítear, agus is é an focal céanna atá ar an duine a chloisfeadh é.",
+  "text": "A rún a thugtar ar dhuine mór le duine eile. Rún an focal ar an rud nach n-insítear, agus is é an focal céanna atá ar an duine a d'inseofá dó é.",
   "source": "Gaeilge",
   "theme": "kinship",
   "subtheme": "theWordsForIt"
@@ -1932,7 +1932,7 @@
   "subtheme": "twoPeople"
  },
  {
-  "text": "Dís an seanfhocal ar bheirt a bhíonn le chéile go rialta. Níl sé coitianta anois, ach tá sé sna scéalta i gcónaí.",
+  "text": "Dís a thugtaí ar bheirt a bhíonn le chéile go rialta. Níl an focal coitianta anois, ach tá sé sna scéalta i gcónaí.",
   "source": "Gaeilge",
   "theme": "kinship",
   "subtheme": "twoPeople"
@@ -2010,7 +2010,7 @@
   "subtheme": "quietAsASound"
  },
  {
-  "text": "Clagarnach an fhearthainn throm ar dhíon, brádán an bháisteach chomh mín sin nach mothaítear í, agus ceobhrán an ceo atá idir eatarthu.",
+  "text": "Clagarnach a thugtar ar fhearthainn throm ar dhíon, brádán ar bháisteach chomh mín sin nach mothaítear í, agus ceobhrán ar an gceo atá eatarthu.",
   "source": "Gaeilge",
   "theme": "peace",
   "subtheme": "quietAsASound"
@@ -2083,7 +2083,7 @@
  },
  {
   "text": "Suaimhneas an focal ar an gciúnas atá istigh i nduine. Is féidir suaimhneas a bheith ort in áit atá lán de ghleo.",
-  "source": "Seandlíthe na hÉireann",
+  "source": "Gaeilge",
   "theme": "peace",
   "subtheme": "theWordsForStopping"
  },
@@ -2112,7 +2112,7 @@
   "subtheme": "atEase"
  },
  {
-  "text": "Suantraí ceann den trí cheol a bhí ag an gcruitire, agus is é an t-aon cheann acu a raibh sé de dhualgas air an lucht éisteachta a chur a chodladh.",
+  "text": "Suantraí ceann de na trí cheol a bhí ag an gcruitire, agus is é an t-aon cheann acu a raibh sé de dhualgas air an lucht éisteachta a chur a chodladh.",
   "source": "Ceol",
   "theme": "peace",
   "subtheme": "atEase"
@@ -2130,7 +2130,7 @@
   "subtheme": "atEase"
  },
  {
-  "text": "Tóg go bog é. Bog an focal ar rud atá mín agus ar rud atá mall, agus ar an gcré a shleamhnaíonn faoi do chos.",
+  "text": "Tóg go bog é. Bog an focal ar rud atá mín agus ar rud atá mall, agus ar an talamh nach seasann faoi do chos.",
   "source": "Gaeilge",
   "theme": "peace",
   "subtheme": "atEase"
