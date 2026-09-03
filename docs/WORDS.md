@@ -321,6 +321,12 @@ found:
 
 ## What this might become
 
+**Settled 3 September**, and the design is in `docs/WEBSITE.md` §*The ambassador
+plants*. It lives in the shared garden only — never in the app, never touching a
+person's own seed — which removes the objection below about glossing: the subject
+is a fact about another language rather than a passage addressed to somebody.
+What follows is the earlier working-out, kept because the third point still holds.
+
 Marcus's idea, 3 September, and it is a good one:
 
 > a sub-section of each theme where etymologies from languages other than the

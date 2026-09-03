@@ -307,6 +307,71 @@ in `waiting` over and over while `meeting` filled up unvisited.
 the nearest occupied cell in a direction, and a uniform random plant. All three
 are ordinary; none of them needs the fragment, and none of them carries a name.
 
+### The ambassador plants, and what a visitor can learn to see
+
+Asked for 3 September, and it belongs to the garden alone. **Nothing here touches
+a person's own seed, their own garden, or an exchange between two people.** It is
+a property of the shared place, found by a visitor, and the app never mentions it.
+
+Each of the ten areas gets **one mature plant that stands for its theme**, and the
+etymologies in `docs/WORDS.md` introduce the area around it — what other languages
+have found in that theme's idea, explained in the visitor's own language. That
+last point is what makes this work where it would not work in the app: the
+subject is a fact *about* another language rather than a passage addressed to
+somebody, so translating it is right rather than a compromise.
+
+**An ambassador is a real plant, not an illustration.** It grows from a real
+seed, minted once and pinned, whose derived theme is the area's. Nothing is
+special-cased in the renderer, nothing is hand-authored, and the same derivation
+that draws every other plant draws this one. A seed is found by minting until one
+lands on the target theme and keeping the hex.
+
+#### The visual key does not work on the plant, and does work on the name
+
+The proposal was that an ambassador teaches an observant visitor to recognise the
+theme by eye in the plants around it. **Measured over four thousand seeds, it
+cannot**: the theme explains 0.3% of the variance in stem height, 0.3% in petal
+count, 0.5% in leaf count and 0.2% in hue, and the archetype mix is flat — every
+theme's commonest form sits between 9% and 12%, which is eleven archetypes drawn
+without reference to theme at all.
+
+The reason is in the derivation and it is not an oversight. `Quotes.theme(of:)`
+reads the **genus head**, a name syllable; the shape is read off the genome's
+traits. Both come from the same seed by separate draws, so two plants of one
+theme are no more alike than any two plants.
+
+**The key that does work is the name**, and it needs no change to anything.
+There are twenty-four genus heads over ten themes, two or three each — *Ol-* and
+*Bel-* are peace, *Mel-* and *Ith-* are meeting, *Zeph-*, *Ael-* and *Hal-* are
+travel. A visitor who learns twenty-four syllables can read any plant's theme off
+its label. It is language-neutral, because a synthesised Latinate binomial reads
+the same in Amsterdam as in Margate, so the key is learnable by every visitor from
+the same page. **The name is the theme said twice** — see NAMES-AND-THEMES.md —
+and an ambassador called *Melandra* standing in The Crossing says so without a
+sentence of explanation.
+
+That is the version to build. It is cheaper, it is already true, and it teaches
+something a visitor can carry to any plant on the site.
+
+#### If the plant should carry it too
+
+Making the theme shape the plant is possible and it is a **breaking change to
+every plant that exists**. `theme(of:)`'s own doc comment records what moved last
+time the mapping changed: which passage a pair is shown, and nothing else,
+because a plant's appearance never depended on it. Biasing morphology by theme
+would change the appearance of every plant already minted, on every phone.
+
+Worth doing only if the visual family is judged more valuable than that, and it
+is not a decision to take alongside a feature — it is its own decision, and it
+would need `PHASES.md` to say so.
+
+#### What it asks of the plot service
+
+An eleventh kind of row, or a flag on the existing one: ten pinned seeds, each
+with its area, its birthday and its passage set. They are not shared plants —
+nobody put them there, no name attaches to them, no report can be filed against
+them, and they do not appear in anybody's garden.
+
 ### Every action on a key
 
 Asked for at the same time and it is the same feature: a garden you walk with
