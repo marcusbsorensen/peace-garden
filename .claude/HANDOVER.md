@@ -19,12 +19,13 @@ for partway through and is built.
 of every stem, and the garden mark's unreadable grass. **`round-two` is branched
 from it and not merged.**
 
-**Twenty-seven passage banks in the app**, up from seventeen. Landed overnight:
+**Thirty-one passage banks in the app**, up from seventeen. Landed overnight:
 Estonian, Lithuanian, Slovene, Latvian, Ukrainian, Slovak, Welsh, Basque,
-Galician, Serbian. Sixteen more were still being written when this was filed —
-Greek, Russian, Bulgarian, Irish, Icelandic, Albanian, Croatian, Macedonian,
-Belarusian, Maltese, Greenlandic, Arabic, Hebrew, Japanese, Chinese, Korean —
-and two never got a slot, Faroese and Luxembourgish.
+Galician, Serbian, Japanese, Chinese, Icelandic, Irish. Still being written when
+this was filed: Greek, Russian, Bulgarian, Albanian, Croatian, Macedonian,
+Belarusian, Maltese, Greenlandic, Arabic, Hebrew, Korean. Two never got a slot,
+Faroese and Luxembourgish — their notes are in the session scratchpad's
+`QUEUE.md`, and the brief they need is now `tools/quotes/BRIEF.md`.
 
 **Verified.** 72 SeedCore tests and 23 app tests after every landing. All four CI
 checks. Every bank checked by `assemble.py` and independently for overlap against
@@ -34,7 +35,11 @@ in a browser: the map, an area, the walk, the sheet, the pad at the map's edge,
 `/s` with a real seed link, and a **Ukrainian passage drawn by the app**, reached
 through *Meet an imaginary gardener*.
 
-**Unverified.** The right-to-left work has been driven but never *read* by
+**Unverified.** Any bank whose agent had not reported when it was landed — run
+`python3 tools/quotes/refresh.py <banks dir>` and it will say. It reported
+nothing moved at the time of writing, but four commissions were still running.
+
+The right-to-left work has been driven but never *read* by
 somebody who reads Arabic or Hebrew — the layout is right in the sense that
 nothing is upside down; whether it is good is not a question this repository can
 answer about itself. Neither has a bank or an interface yet.
@@ -74,9 +79,11 @@ answer about itself. Neither has a bank or an interface yet.
 
 Land the banks that finished after this was filed. For each:
 `python3 tools/quotes/land.py <Language> <code> <file>`, then its thirteen site
-labels, then `xcodebuild … test`, then one commit per bank. Finished files are in
-the session scratchpad under `banks/`; if that is gone, the banks are gone and
-they are re-commissioned from `tools/quotes/BRIEF.md`.
+labels, then `xcodebuild … test`, then one commit per bank. **Then run
+`python3 tools/quotes/refresh.py <banks dir>` over the lot**, because a bank
+landed before its agent reported is very likely stale. Finished files are in the
+session scratchpad under `banks/`; if that is gone, the banks are gone and are
+re-commissioned from `tools/quotes/BRIEF.md`.
 
 ## Traps
 
@@ -91,6 +98,10 @@ they are re-commissioned from `tools/quotes/BRIEF.md`.
   moving the dev server to a new port is the quickest way to be sure.
 - **`assemble.py`'s floor is 10 and the brief asks for 12.** Passing the checker
   is not meeting the brief.
+- **A file reaching 360 lines is not a finished bank.** Agents keep revising
+  after they first hit the count. Welsh differed in seventy-one passages from
+  the copy landed off its length, and carried real errors — a proverb spelled
+  into nonsense, a non-word, hydrology backwards. `refresh.py` exists for this.
 - **An agent that holds all 360 passages until the end loses all of them.**
   Croatian stalled at ten minutes with nothing written. The brief now says to
   write a theme at a time, into a directory of the agent's own — several reached
