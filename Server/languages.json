@@ -98,6 +98,14 @@
    "passages": 360
   },
   {
+   "code": "lv",
+   "name": "Latvian",
+   "endonym": "Latviešu",
+   "interface": false,
+   "bank": true,
+   "passages": 361
+  },
+  {
    "code": "nb",
    "name": "Norwegian Bokmål",
    "endonym": "Norsk bokmål",
