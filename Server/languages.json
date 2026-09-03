@@ -18,6 +18,14 @@
    "passages": 357
   },
   {
+   "code": "cy",
+   "name": "Welsh",
+   "endonym": "Cymraeg",
+   "interface": false,
+   "bank": true,
+   "passages": 360
+  },
+  {
    "code": "da",
    "name": "Danish",
    "endonym": "Dansk",
@@ -144,6 +152,14 @@
    "interface": false,
    "bank": true,
    "passages": 358
+  },
+  {
+   "code": "sk",
+   "name": "Slovak",
+   "endonym": "Slovenčina",
+   "interface": false,
+   "bank": true,
+   "passages": 360
   },
   {
    "code": "sl",
