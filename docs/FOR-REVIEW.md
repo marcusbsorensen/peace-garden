@@ -10,6 +10,22 @@ Delete this file once it is settled.
 
 ---
 
+## How to look at the garden while you read this
+
+    python3 -m http.server 8791 --directory Server
+
+Then `http://localhost:8791/g`. Every plant in it is invented and the page says
+so. `?` lists every key. Arrows or hjkl walk, `r` goes somewhere at random, `g`
+returns to the map, `c` opens the language chooser.
+
+**The thing worth doing first**: open a plant, then change the language. The
+passage changes and it is not a translation of what it said before — the plant
+carries a theme and a subtheme, both derived from its name, and your bank
+supplies the words. That argument has been in `WEBSITE.md` since it was written
+and this is the first time it has been possible to see it.
+
+---
+
 ## 1. The six prose strings
 
 These are already in `Server/assets/js/strings.js` and already on the page in
