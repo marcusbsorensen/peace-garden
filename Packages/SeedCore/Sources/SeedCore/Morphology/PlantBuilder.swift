@@ -326,6 +326,19 @@ public struct PlantBuilder {
     ///
     /// `position` is the flower's own place in the wave — height up the stem
     /// for a spike, an even share of the cycle for the stalks of a head.
+    ///
+    /// **Looked at in the app on 4 September, and 0.55 is enough.** A mature
+    /// spire sampled at four points around one cycle went from an open star to
+    /// a shut bud and back, and the visible change is larger than the number:
+    /// the factor takes 55% off `bloomOpen`, and a flower closing loses far
+    /// more than 55% of its silhouette. Four times as many petal pixels at the
+    /// peak as at the trough, counted rather than judged by eye.
+    ///
+    /// It has to be looked at **at the plant's own peak hour**, which for a
+    /// night-opening genome is one in the morning. `diurnalFactor` damps a
+    /// night-opener to a third at midday, and a third of a flush trough is a
+    /// plant that appears to be doing nothing at all.
+
     private static func flushFactor(position: Double, growth: GrowthModel.State) -> Double {
         guard growth.flushDepth > 0 else { return 1 }
         let phase = growth.flush - position
