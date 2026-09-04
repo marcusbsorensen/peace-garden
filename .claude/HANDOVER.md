@@ -51,8 +51,10 @@ small-flowered plants; whether to deepen it wants looking at on a simulator.
 - `Packages/SeedCore/Sources/SeedCore/Morphology/PlantBuilder.swift` —
   `flushFactor`, the travelling wave.
 - `docs/TAXONOMY.md` — the design and everything the renders changed.
-- `docs/FOR-REVIEW.md` — **two decisions still waiting on Marcus**: the six
-  prose strings and the ten area names.
+- ~~`docs/FOR-REVIEW.md`~~ — both decisions settled on 4 September and the file
+  retired. The area names live in `WEBSITE.md`, the bidi finding in
+  `LANGUAGES.md`, and each prose string carries its own reasoning in
+  `strings.js`.
 - `Server/assets/js/testers.js`, `Server/t` — the roster. No accounts exist.
 
 ## Decisions made

@@ -1,14 +1,14 @@
 // The site's own words.
 //
 // **The target is the low tens and it is a target to defend.** Every string
-// here is a commission in seventeen languages, so a paragraph added casually is
-// seventeen paragraphs. Most of a page needs no word at all — the plant, its
+// here is a commission in forty-two other languages, so a paragraph added
+// casually is forty-three paragraphs. Most of a page needs no word at all — the plant, its
 // binomial, the marks, the date and the age all say themselves — and the list
 // below is what is left after that. See docs/WEBSITE.md §"Most of a plant page
 // is already in every language".
 //
 // English is written here rather than fetched, because it is the fallback and
-// a fallback that can fail to arrive is not one. The other sixteen live in
+// a fallback that can fail to arrive is not one. The other forty-two live in
 // `/strings/<code>.json`, one file per language, fetched only for the reader
 // who needs it — the same shape as a passage bank.
 //
@@ -25,12 +25,37 @@
 export const EN = Object.freeze({
   // The page with no seed in it: what this is.
   tagline: "A plant grown from a meeting.",
+  // Marcus's wording, 4 September. The similes are the point: *a plant that is
+  // the two of them together* was the abstract version, and a handshake is a
+  // thing a reader has already done.
+  //
+  // **"Combines their features" is a fair account of the cross rather than an
+  // exact one.** A trait comes from one parent, the other, a blend of the two,
+  // or — about six times in a hundred — a mutation belonging to neither. The
+  // reference implementation prints the mix. Saying so here would be true and
+  // would cost the sentence its shape; the exact rule is in `Pollination`.
+  //
+  // The fourth sentence is restored from the paragraph this replaced: it was
+  // the only place the site said a plant takes weeks rather than appearing
+  // finished, which is most of what there is to come back for.
   about1:
-    "Peace Garden makes a plant out of two people meeting. Two phones hand each other a seed, and what grows from the pair is a plant that is the two of them together, opening over real days in its own time.",
+    "Peace Garden makes a plant out of two people meeting. Two phones hand each other a seed. What grows from the two seeds is a plant that combines their features, like a handshake or a joint garden that has some of each person. It opens over real days, in its own time.",
   about2:
     "A seed travels in a link as well as by touch, so it reaches a phone that has never heard of any of this.",
+  // **This block is what somebody sees when there is no seed.** `page.js` sets
+  // `about.hidden = Boolean(state.link)`, so the about section and the seed
+  // section are mutually exclusive: the reader here typed the address, or
+  // followed a link that lost its seed on the way. They have no seed in front
+  // of them, and the question they arrived with is how one would ever reach
+  // them.
+  //
+  // It used to explain that a seed rides after the `#` and stays in the
+  // browser — a mechanism, addressed to a reader whose seed is the one thing
+  // that is not there, and jargon to a gardener besides. The privacy argument
+  // it was making is true and lives in `WEBSITE.md`; the reader it protects is on
+  // the seed path and never sees this block.
   about3:
-    "The seed in a link rides after the # in its address, and that part stays in your browser. This page is a file, and it draws what your own link already holds.",
+    "A seed reaches you from someone you meet in person. Peace Garden is on iPhone and iPad.",
 
   // The page with a seed in it.
   seedTitle: "A seed has arrived",
@@ -39,9 +64,30 @@ export const EN = Object.freeze({
   gardener: "a gardener",
   planted: "Planted",
   growTitle: "Growing it",
+  // **A meeting grows one plant, and this sentence has to say so.** It used to
+  // say the same two seeds always make the same plant, which is the one
+  // property the design deliberately does not have: `Pollination.encounterID`
+  // hashes both seeds *and* both nonces, each side drawing its own, so meeting
+  // the same person again grows a different plant and neither of them can
+  // steer which. A fresh nonce per offer also means this very link, opened
+  // twice, grows two plants — so nothing here may imply that a link reproduces
+  // anything.
+  //
+  // What is true is what the reply code exists to deliver: one meeting, one
+  // plant, held by both of them, and a pure function of its own seed and
+  // birthday from then on. The thing the two seeds alone do derive is
+  // `pairID`, which chooses the passage shown when they cross, not the plant.
   growBody:
-    "Peace Garden crosses this seed with one of your own, and the plant that comes of the pair is yours to keep. The same two seeds always make the same plant, on any phone, for as long as both of you have it.",
-  appNote: "The app is being made for iPhone. This link keeps until it arrives.",
+    "Peace Garden crosses this seed with one of your own, and the plant that comes of the pair is yours to keep. This meeting grows one plant, you both have it, and it stays the same for as long as you do.",
+  // Launched tense, 4 September, and it names both platforms the app ships
+  // for. It used to say the app was *being made for iPhone*, which was a
+  // future tense `about3` no longer agrees with and a platform list the
+  // `Info.plist` no longer agrees with either.
+  //
+  // The second sentence stays because it is the useful half: a link carries
+  // its seed and nothing expires, so somebody who reads this on a bus has
+  // lost nothing by not acting on it.
+  appNote: "Peace Garden is on iPhone and iPad. This link keeps, so there is no hurry.",
 
   // Under the passage, when the reader's language has no bank of its own.
   inEnglish: "in English",
@@ -121,7 +167,7 @@ export function catalogue(values, code = "en") {
     /// it is the same fix `/g`'s invented-garden notice carries in its markup.
     ///
     /// Six of the nineteen strings are `null` in every language on purpose —
-    /// the site's own prose, waiting on docs/FOR-REVIEW.md §1 — so on Arabic
+    /// the site's own prose, `null` in every catalogue — so on Arabic
     /// and Hebrew this is most of the words on the page rather than an edge
     /// case. It was invisible until there was a way to stand in those two
     /// languages and look.

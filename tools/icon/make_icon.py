@@ -37,6 +37,7 @@ from PIL import Image, ImageDraw
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 CATALOGUE = ROOT / "App/PeaceGarden/Resources/Assets.xcassets/AppIcon.appiconset"
+SITE = ROOT / "Server"
 
 TILE = 1024
 SUPERSAMPLE = 3
@@ -100,21 +101,29 @@ SPATHE_LENGTH = 0.92  # against the spiral's final radius
 SPATHE_TURN = 0.30    # radians, continuing the spiral's sense
 SPATHE_WIDTH = 0.28   # half-width, against the spathe's own length
 
-# The spadix: the cream spike a peace lily stands inside its bract. It is the one
-# element that does not take the gradient, which is the suite's own habit — Pfish
-# carries two white bubble rings beside a fish that graduates, at the fish's own
-# weight and in flat #FFFFFF. (UnCubed's white is a different device: its off-white
-# is the gradient's last stop, not a separate element.)
+# **The bract is white, and the coil's colour runs on into it and dies away.**
 #
-# Lighter than the stroke it sits inside, because at full weight it fills the
-# spathe's hollow and the bract stops reading as one. `un³` has the precedent for
-# a secondary element at a reduced weight — its exponent runs at 82% of the
-# letters. The clearance this leaves is asserted, not eyeballed.
-SPADIX = "#FFFFFF"
-SPADIX_WEIGHT = 0.48   # of the main stroke
-SPADIX_FROM = 0.26     # along the spathe's spine
-SPADIX_TO = 0.55
-SPADIX_CLEARANCE = 8.0  # construction units, each side
+# It was the other way round until 4 September: the bract took the sweep and a
+# flat white spadix stood inside it, which is the suite's own habit — Pfish
+# carries two white bubble rings beside a fish that graduates, at the fish's own
+# weight and in flat #FFFFFF. Marcus asked for the inversion, and it says more
+# about the app than the arrangement it replaces: the white is what has opened,
+# and the colour is the unfolding still travelling through it.
+#
+# §3.2 is untouched. The bract is still an outline at the main weight, and the
+# taper is a fill rather than a stroke only because a stroke cannot narrow, and
+# this one has to reach nothing at its point.
+BRACT = "#FFFFFF"
+
+# The taper leaves the coil at exactly the stroke's half-width, so there is no
+# seam at the mouth of the bract, and it reaches nothing well short of the
+# bract's own tip — colour running the whole length would read as a filled leaf
+# rather than as something arriving in an open one.
+TAPER_TO = 0.58        # along the bract's spine
+TAPER_POWER = 1.7      # above 1: full at the mouth, thin early, long in the point
+TAPER_SEAM = 0.20      # below this the taper and the outline share ink, on purpose
+TAPER_CLEARANCE = 8.0  # construction units, each side, past the seam
+TAPER_TURNS_AT = 0.38  # how far along the taper the yellow has fully arrived
 
 MARGIN = 190.0
 
@@ -221,7 +230,8 @@ def spiral():
         ])
         spine.append(spine[-1] + direction * (length / steps))
     spine = np.array(spine)
-    return np.concatenate([line, spathe(spine)]), spadix(spine)
+    blade, room, axis = taper(spine)
+    return line, spathe(spine), blade, room, axis
 
 
 def spathe_half_width(s, length):
@@ -229,22 +239,45 @@ def spathe_half_width(s, length):
     return np.sin(np.pi * s ** 0.62) ** 0.85 * SPATHE_WIDTH * length
 
 
-def spadix(spine):
-    """The spike inside the bract, and the check that it fits inside it."""
-    length = float(np.sum(np.linalg.norm(np.diff(spine, axis=0), axis=1)))
-    lo = int(SPADIX_FROM * (len(spine) - 1))
-    hi = int(SPADIX_TO * (len(spine) - 1))
+def taper_half_width(s):
+    """The taper's half-width at `s` along the bract's spine, reaching nothing."""
+    return np.clip(1 - s / TAPER_TO, 0, 1) ** TAPER_POWER * STROKE / 2
 
-    # The hollow the spadix has to sit in is the bract's half-width less half the
-    # outline's own stroke. Checked at the narrow end of the spadix's run, which
-    # is where it runs out of room first.
-    s = np.linspace(0, 1, len(spine))[lo:hi + 1]
-    hollow = spathe_half_width(s, length).min() - STROKE / 2
-    room = hollow - STROKE * SPADIX_WEIGHT / 2
-    assert room >= SPADIX_CLEARANCE, (
-        f"the spadix leaves {room:.1f} units of clearance, wanted {SPADIX_CLEARANCE}"
+
+def taper(spine):
+    """
+    The coil's colour carried into the bract, as an outline to be filled.
+
+    Built the same way the bract is — out along one edge and back along the
+    other — so the two shapes are the same construction and cannot drift apart.
+
+    Returns the outline and the tightest room it leaves inside the bract, which
+    `main` reports beside the other clearances rather than leaving to be
+    squinted at.
+    """
+    length = float(np.sum(np.linalg.norm(np.diff(spine, axis=0), axis=1)))
+    s = np.linspace(0, 1, len(spine))
+    keep = s <= TAPER_TO
+    spine, s = spine[keep], s[keep]
+
+    tangents = np.gradient(spine, axis=0)
+    tangents /= np.maximum(np.linalg.norm(tangents, axis=1, keepdims=True), 1e-9)
+    normals = np.stack([-tangents[:, 1], tangents[:, 0]], axis=1)
+    width = taper_half_width(s)[:, None]
+
+    # **Past the seam the taper has to sit inside the bract's hollow. At the
+    # mouth the two share ink deliberately** — that shared ink is the whole of
+    # what makes the colour read as running on, rather than as a second mark
+    # that happens to be standing nearby.
+    past = s > TAPER_SEAM
+    room = float((spathe_half_width(s[past], length) - STROKE / 2
+                  - taper_half_width(s[past])).min())
+    assert room >= TAPER_CLEARANCE, (
+        f"the taper leaves {room:.1f} units of clearance, wanted {TAPER_CLEARANCE}"
     )
-    return spine[lo:hi + 1]
+    return (np.concatenate([spine + normals * width,
+                            (spine - normals * width)[::-1]]),
+            room, np.array([spine[0], spine[-1]]))
 
 
 def spathe(spine):
@@ -290,11 +323,11 @@ def fitted():
     The fit is computed from the drawn bounds rather than typed, so changing a
     dial above cannot silently break a relationship somebody set on purpose.
     """
-    points, spike = spiral()
-    # The spadix sits inside the bract, so it cannot extend the bounds — but it is
+    coil, bract, spike, room, axis = spiral()
+    # The taper sits inside the bract, so it cannot extend the bounds — but it is
     # measured with everything else rather than assumed not to.
     min_x, min_y, max_x, max_y = ink_bounds(
-        list(points) + list(spike), STROKE)
+        list(coil) + list(bract) + list(spike), STROKE)
     available = TILE - 2 * MARGIN
     scale = available / max(max_x - min_x, max_y - min_y)
 
@@ -307,17 +340,36 @@ def fitted():
     def place(run):
         return [(x * scale + offset_x, y * scale + offset_y) for x, y in run]
 
-    return place(points), place(spike), STROKE * scale
+    return (place(coil), place(bract), place(spike), place(axis),
+            room * scale, STROKE * scale)
 
 
 # ------------------------------------------------------------------- output
+
+def sweep_at(point, box, stops):
+    """The colour the sweep has reached at `point`, so the taper can join it."""
+    start = np.array([box[0], box[3]])
+    axis = np.array([box[2], box[1]]) - start
+    t = float(np.clip((np.array(point) - start) @ axis / (axis @ axis), 0, 1))
+    position = t * (len(stops) - 1)
+    lower = int(min(max(math.floor(position), 0), len(stops) - 2))
+    blend = position - lower
+    return tuple(stops[lower][1][i] * (1 - blend) + stops[lower + 1][1][i] * blend
+                 for i in range(3))
+
 
 def path_data(points):
     return "M " + " L ".join(f"{x:.2f} {y:.2f}" for x, y in points)
 
 
-def svg(points, spike, stroke, stops):
-    box = ink_bounds(points, stroke)
+def svg(coil, bract, spike, axis, stroke, stops):
+    # **The sweep spans the ink that takes it, which is the coil and the taper —
+    # not the bract.** With the bract white, measuring across it spends the top
+    # of the ramp on ink that is not drawn in it: the yellow landed inside the
+    # leaf's white outline, and the coil was left showing only the green half of
+    # its own gradient. Measured across the coloured run, the spiral goes green
+    # to yellow along its own length and the taper is the yellow end of it.
+    box = ink_bounds(list(coil) + list(spike), stroke)
     # Bottom-left to top-right, across the drawn ink. In SVG's coordinates the
     # bottom is the larger y.
     x1, y1, x2, y2 = box[0], box[3], box[2], box[1]
@@ -325,16 +377,31 @@ def svg(points, spike, stroke, stops):
         f'<stop offset="{index / (len(stops) - 1):.4f}" stop-color="{to_hex(rgb)}"/>'
         for index, (_, rgb) in enumerate(stops)
     )
+    # The bract first, then the coil, then the taper. The order is what puts the
+    # colour over the white where they share ink at the mouth, which is the
+    # junction reading as one stroke running on rather than as two meeting.
+    # **The taper takes the ramp's last stop, and blends to it only at the
+    # mouth.** The sweep is spatial — bottom-left to top-right, per §3.3 — and
+    # the taper sits at the top *middle* of the mark rather than in that corner,
+    # so left on the sweep it comes out mid-ramp green however the box is drawn.
+    # It carries the yellow instead, joining the coil in the colour the coil has
+    # arrived at, so the run still reads as one.
+    (ax, ay), (bx, by) = axis[0], axis[1]
+    hot = (f'<stop offset="0" stop-color="{to_hex(sweep_at(axis[0], box, stops))}"/>'
+           f'<stop offset="{TAPER_TURNS_AT}" stop-color="{to_hex(stops[-1][1])}"/>'
+           f'<stop offset="1" stop-color="{to_hex(stops[-1][1])}"/>')
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{TILE}" height="{TILE}" \
 viewBox="0 0 {TILE} {TILE}">
 <defs><linearGradient id="sweep" gradientUnits="userSpaceOnUse" \
-x1="{x1:.2f}" y1="{y1:.2f}" x2="{x2:.2f}" y2="{y2:.2f}">{marks}</linearGradient></defs>
+x1="{x1:.2f}" y1="{y1:.2f}" x2="{x2:.2f}" y2="{y2:.2f}">{marks}</linearGradient>
+<linearGradient id="point" gradientUnits="userSpaceOnUse" \
+x1="{ax:.2f}" y1="{ay:.2f}" x2="{bx:.2f}" y2="{by:.2f}">{hot}</linearGradient></defs>
 <rect width="{TILE}" height="{TILE}" fill="{GROUND}"/>
-<path d="{path_data(points)}" fill="none" stroke="url(#sweep)" \
+<path d="{path_data(bract)}" fill="none" stroke="{BRACT}" \
 stroke-width="{stroke:.2f}" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="{path_data(spike)}" fill="none" stroke="{SPADIX}" \
-stroke-width="{stroke * SPADIX_WEIGHT:.2f}" stroke-linecap="round" \
-stroke-linejoin="round"/>
+<path d="{path_data(coil)}" fill="none" stroke="url(#sweep)" \
+stroke-width="{stroke:.2f}" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="{path_data(spike)} Z" fill="url(#point)" stroke="none"/>
 </svg>
 """
 
@@ -370,19 +437,27 @@ def stroke_mask(points, stroke):
     return (np.asarray(mask, dtype=np.float32) / 255.0)[..., None]
 
 
-def png(points, spike, stroke, stops):
+def fill_mask(points):
+    """A filled polygon, as a coverage mask. The taper's, and only the taper's."""
     canvas = TILE * SUPERSAMPLE
-    coverage = stroke_mask(points, stroke)
+    mask = Image.new("L", (canvas, canvas), 0)
+    ImageDraw.Draw(mask).polygon(
+        [(x * SUPERSAMPLE, y * SUPERSAMPLE) for x, y in points], fill=255)
+    return (np.asarray(mask, dtype=np.float32) / 255.0)[..., None]
 
-    box = ink_bounds(points, stroke)
+
+def png(coil, bract, spike, spine_axis, stroke, stops):
+    canvas = TILE * SUPERSAMPLE
+
+    box = ink_bounds(list(coil) + list(spike), stroke)   # see `svg`
     start = np.array([box[0], box[3]])          # bottom-left
     axis = np.array([box[2], box[1]]) - start   # to top-right
     ys, xs = np.mgrid[0:canvas, 0:canvas].astype(np.float32) / SUPERSAMPLE
     t = np.clip(((xs - start[0]) * axis[0] + (ys - start[1]) * axis[1])
                 / float(axis @ axis), 0, 1)
 
-    # An even sweep: the mark is one continuous stroke, so §3.3's rule about
-    # putting the transitions in the gaps between elements does not apply.
+    # An even sweep: the coil and the taper are one continuous run of colour, so
+    # §3.3's rule about putting the transitions in the gaps does not apply.
     colours = np.array([rgb for _, rgb in stops], dtype=np.float32)
     position = t * (len(stops) - 1)
     lower = np.clip(np.floor(position), 0, len(stops) - 2).astype(np.int32)
@@ -390,12 +465,30 @@ def png(points, spike, stroke, stops):
     gradient = colours[lower] * (1 - blend) + colours[lower + 1] * blend
 
     image = np.array(from_hex(GROUND), dtype=np.float32) * np.ones_like(gradient)
-    image = image * (1 - coverage) + gradient * coverage
 
-    # The spadix last, and flat: it is the one element outside the sweep.
-    spike_coverage = stroke_mask(spike, stroke * SPADIX_WEIGHT)
-    image = image * (1 - spike_coverage) + np.array(from_hex(SPADIX),
-                                                    dtype=np.float32) * spike_coverage
+    # Bract, coil, taper — the same order the SVG draws them in, for the same
+    # reason. The two have to agree: they come off one flattened polyline and a
+    # difference between them would be a difference nobody is looking for.
+    white = np.array(from_hex(BRACT), dtype=np.float32)
+    bract_coverage = stroke_mask(bract, stroke)
+    image = image * (1 - bract_coverage) + white * bract_coverage
+
+    coil_coverage = stroke_mask(coil, stroke)
+    image = image * (1 - coil_coverage) + gradient * coil_coverage
+
+    # The taper carries the ramp's last stop. See the note in `svg`; the two
+    # renderings have to agree.
+    base = np.array(sweep_at(spine_axis[0], box, stops), dtype=np.float32)
+    tip = np.array(stops[-1][1], dtype=np.float32)
+    run = np.array(spine_axis[1]) - np.array(spine_axis[0])
+    u = np.clip(((xs - spine_axis[0][0]) * run[0]
+                 + (ys - spine_axis[0][1]) * run[1])
+                / float(run @ run), 0, 1)
+    u = np.clip(u / TAPER_TURNS_AT, 0, 1)[..., None]
+    hot = base * (1 - u) + tip * u
+
+    spike_coverage = fill_mask(spike)
+    image = image * (1 - spike_coverage) + hot * spike_coverage
 
     out = Image.fromarray((np.clip(image, 0, 1) * 255).astype(np.uint8), "RGB")
     return out.resize((TILE, TILE), Image.LANCZOS)
@@ -410,7 +503,7 @@ CONTENTS = {
 }
 
 
-def clearances(points, spike, stroke):
+def clearances(coil, bract, room, stroke):
     """
     The tightest gaps in the mark, in tile units.
 
@@ -427,33 +520,48 @@ def clearances(points, spike, stroke):
 
     # The bract against the coil it rises from. The junction is skipped at both
     # ends — they meet there on purpose, and a measurement across a join is not a
-    # clearance.
-    coil = np.array(points[:400])
-    bract = np.array(points[560:])
-    gaps = np.linalg.norm(bract[:, None, :] - coil[None, :, :], axis=2)
+    # clearance. The bract's outline starts and ends at that junction, being one
+    # run out and back, so both of its ends are trimmed.
+    body = np.array(coil[:400])
+    edge = np.array(bract[47:-47])
+    gaps = np.linalg.norm(edge[:, None, :] - body[None, :, :], axis=2)
     bract_to_coil = float(gaps.min()) - stroke
 
-    # The spike inside the bract.
-    spine = np.array(spike)
-    edge = np.array(points[513:])
-    inner = np.linalg.norm(spine[:, None, :] - edge[None, :, :], axis=2)
-    spadix = float(inner.min()) - stroke / 2 - stroke * SPADIX_WEIGHT / 2
-
+    # The taper inside the bract, measured where `taper` measured it: past the
+    # seam, since at the mouth the two share ink on purpose.
     return {"between turns": turns, "bract to coil": bract_to_coil,
-            "spadix in bract": spadix}
+            "taper in bract": room}
 
 
 def main():
     stops = ramp()
-    points, spike, stroke = fitted()
+    coil, bract, spike, axis, room, stroke = fitted()
 
     CATALOGUE.mkdir(parents=True, exist_ok=True)
-    (HERE / "icon.svg").write_text(svg(points, spike, stroke, stops))
+    (HERE / "icon.svg").write_text(svg(coil, bract, spike, axis, stroke, stops))
     # An app icon may not carry an alpha channel. The ground travels with the
     # mark — §10.4's "no light and dark pair" — so one drawing covers every
     # appearance and every size.
-    png(points, spike, stroke, stops).save(CATALOGUE / "icon.png")
+    png(coil, bract, spike, axis, stroke, stops).save(CATALOGUE / "icon.png")
     (CATALOGUE / "Contents.json").write_text(json.dumps(CONTENTS, indent=2) + "\n")
+
+    # **The site's favicon is this drawing, not a second one.** It used to be
+    # `mark.svg`, the wordmark, which is a different job: a favicon is seen at
+    # sixteen pixels beside a title, where letterforms are a smudge and a mark is
+    # a mark. Written from here so the two cannot drift — the same bargain the
+    # SVG and the PNG already strike with each other.
+    #
+    # Three files, because a favicon is three questions. The SVG is what a
+    # current browser takes and the only one that stays sharp. The 180 is what
+    # iOS puts on a home screen, and this is a site people open on a phone. The
+    # .ico is at the root because a browser asks for /favicon.ico whether or not
+    # it has been told to, and a 404 in everybody's console is a thing somebody
+    # will one day spend an afternoon on.
+    tile = png(coil, bract, spike, axis, stroke, stops)
+    (SITE / "assets/icon.svg").write_text(svg(coil, bract, spike, axis, stroke, stops))
+    tile.resize((180, 180), Image.LANCZOS).save(SITE / "assets/icon-180.png")
+    tile.resize((64, 64), Image.LANCZOS).save(
+        SITE / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
 
     ground = from_hex(GROUND)
     print(f"ground {GROUND}   stroke {stroke:.2f}   span {HUE_FROM:.0f}°→{HUE_TO:.0f}°")
@@ -466,7 +574,7 @@ def main():
     print(f"  isoluminance spread {spread:.3f}%")
 
     print("clearances, as drawn on the tile and as rendered:")
-    for name, gap in clearances(points, spike, stroke).items():
+    for name, gap in clearances(coil, bract, room, stroke).items():
         print(f"  {name:>16}  {gap:6.1f} u   "
               f"{gap * 120 / TILE:4.2f} px @40pt·3x   {gap * 40 / TILE:4.2f} px @40px")
 

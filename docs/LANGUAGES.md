@@ -655,6 +655,38 @@ So `View.drawnHand()` pins the drawings and leaves the layout alone, and
 is SceneKit and mirrors for nobody. **The app has one hand in every language**,
 in a row laid out the reader's way.
 
+### English inside a right-to-left page is reordered at its punctuation
+
+Found on 3 September, in the first ten minutes of standing in Arabic and Hebrew
+with the tester roster. Recorded here because it is one bug wearing two faces
+and the shape of it will come back.
+
+The bidi algorithm puts the full stop of an English sentence at the head of the
+line when the paragraph direction is right to left. *A plant grown from a
+meeting.* was drawn as *.A plant grown from a meeting*. It hit two places on the
+site:
+
+- `/g`'s invented-garden notice, which is hardcoded English in the markup.
+- **Every one of the site's own prose strings, on both `/s` and `/g`.** They are
+  `null` in all forty-two catalogues on purpose and fall back to English
+  silently, and that fallback is most of the words on the page. So for the two
+  right-to-left languages the whole of the site's own writing was scrambled.
+
+**The fix is to say what language a run of text is in**: `lang="en" dir="ltr"`
+on the notice, and `strings.dress()` doing the same for any key that fell back.
+The attributes are cleared again when a key stops falling back, because a stale
+`lang="en"` on a commissioned Hebrew string is the same bug facing the other
+way.
+
+**Neither would have been found by reading the code**, and neither shows in any
+of the four CI checks. They needed somebody to stand in Arabic and look, which
+until the roster existed meant editing local storage by hand. That is the whole
+argument for `/t`.
+
+The general rule, for the next surface that grows a fallback: **a string that
+falls back to a language other than the reader's has to carry that language on
+it.** The fallback is invisible in the code and loud on the page.
+
 ### What a right-to-left language still needs before it ships
 
 - **A bank, and an interface.** Neither exists for Arabic or Hebrew yet.
