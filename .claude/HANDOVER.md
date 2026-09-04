@@ -10,11 +10,11 @@ Make the plant names a real classification a botanist could key out
 
 ## State
 
-`round-two` at `5d3a235`, green, **still not merged into `main`** — the branch
+`round-two` at `600d92e`, green, **still not merged into `main`** — the branch
 has diverged a long way and merging is an outstanding decision Marcus has agreed
 to but which has not happened.
 
-**Verified.** 96 SeedCore tests, 23 app tests, all three Python CI checks. Built
+**Verified.** 97 SeedCore tests, 23 app tests, all four Python CI checks. Built
 and driven on an iPhone 17 Pro Max simulator: first light → planting → a mature
 *Wynula latifolia*. Renders looked at for the merosity couplets, the vegetative
 spread, and one full flush cycle.
