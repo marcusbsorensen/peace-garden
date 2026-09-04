@@ -76,3 +76,9 @@ replacing the `null`s. Then:
    with no seed for the four about strings, and a seed link for the other two.
    Two bugs were found in the first ten minutes of somebody doing this in Arabic
    and Hebrew, and neither was visible in the code.
+
+**Then somebody who reads the language has to look**, which is a different job
+and is written up for them in `docs/REVIEWING-A-LANGUAGE.md`.
+`python3 tools/site/mintlink.py --review <code>` prints the links that go with
+it — two of the six strings live only on a page that has a seed in it, so
+without a minted link a third of the commission cannot be seen at all.

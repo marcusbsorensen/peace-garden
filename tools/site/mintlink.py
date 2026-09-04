@@ -76,7 +76,31 @@ def main():
     parser.add_argument("--base", default="http://localhost:8801")
     parser.add_argument("--days", type=int, default=21,
                         help="how long ago the sender's plant was born")
+    parser.add_argument("--review", metavar="CODE",
+                        help="print the whole set of links a reviewer of that "
+                             "language needs, ready to paste into a message")
     args = parser.parse_args()
+
+    if args.review:
+        code = args.review
+        born = time.time() - args.days * 86_400
+        rows = [
+            ("What this is, for somebody with no seed",
+             f"{args.base}/s?l={code}"),
+            ("A seed that has arrived",
+             f"{args.base}/s?l={code}#{mint('o', args.name, args.plant, born)}"),
+            ("The same, from somebody who gave no name",
+             f"{args.base}/s?l={code}#{mint('o', '', args.plant, born)}"),
+            ("A seed that has come back",
+             f"{args.base}/s?l={code}#{mint('r', args.name, args.plant, born)}"),
+            ("A link that arrived broken",
+             f"{args.base}/s?l={code}#1.o.notaseed"),
+            ("The garden",
+             f"{args.base}/g?l={code}"),
+        ]
+        for index, (what, url) in enumerate(rows, 1):
+            print(f"{index}. {what}\n   {url}\n")
+        return
     fragment = mint(args.kind, args.name, args.plant,
                     born=time.time() - args.days * 86_400)
     print(f"{args.base}/s#{fragment}")

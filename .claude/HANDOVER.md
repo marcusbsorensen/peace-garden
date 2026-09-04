@@ -61,27 +61,30 @@ band against 744pt) and every translation, which is machine-made.
 
 ## Next step
 
-**Walk Marcus through English, French, Danish and Spanish — the four he reads —
-in Claude in Chrome**, not the in-app browser, so he is looking at his own
-screen. `python3 tools/site/serve.py` first. Six screens per language, and
-`?l=<code>` sets the language on any of them:
+**The site is not deployed.** `peacegarden.app/s` and `/strings/*.json` both
+answer 404, so nobody can review anything remotely yet. `Server/README.md` says
+what to upload. That is the blocker in front of everything below.
 
-1. `/s` — no fragment. `tagline`, `about1`, `about2`, `about3`.
-2. `/s#<offer>` from `python3 tools/site/mintlink.py`. `seedTitle`, `sentBy`,
-   `planted`, `growTitle`, `growBody`, `appNote`, and the passage.
-3. `/s#<offer>` from `mintlink.py --name ""` — the only way to see `gardener`.
-4. `/s#<reply>` from `mintlink.py --kind r` — `replyTitle` in place of
-   `seedTitle`.
-5. `/s#` plus any mangled fragment — `damaged`, `notASeed`, `newerVersion`.
-6. `/g` — `random`, the ten English area names, the invented-garden notice.
+Then the review: `docs/REVIEWING-A-LANGUAGE.md` is written for a bilingual
+friend rather than a developer, and `python3 tools/site/mintlink.py --review
+<code> --base https://peacegarden.app` prints the six links that go with it.
+Marcus reads English, French, Danish and Spanish and wants to be walked through
+those four in Claude in Chrome, on his own screen. Greenlandic cannot ship until
+a speaker reads it; the other thirty-seven want the same packet.
 
-English is the source, so it is being read for sense; the other three are being
-read against it. **What is actually being checked is the claims, not the
-grammar** — `commission.py <code>` prints what each string must and must not
-say, and `growBody` is the one that was wrong in English for weeks.
+## Still open
 
-Marcus does not read the other thirty-eight. Greenlandic still cannot ship until
-somebody does; the rest want native eyes at `/t`, word `peace`.
+- **The two nobody has looked at**, both in `docs/LANGUAGES.md`: the iPhone SE
+  layout, and the passage's own direction in the app for an RTL reader with no
+  bank. The web solved the second; the app has the same case untouched.
+- **The English passage bank is ninety passages short of its own floor** —
+  thirteen subthemes under ten, `quietAsASound` at five. It is the one every
+  other bank was written against.
+- **App Store screenshots.** `-pgOpen` was built for taking four screens in
+  eight languages and has never been used for it.
+- **Spanish and Portuguese regionality**, if neutral is not wanted.
+- **`appNote` shares its first sentence with `about3`** — a duplicated
+  commission in 42 languages, never seen together on screen.
 
 ## Traps
 
