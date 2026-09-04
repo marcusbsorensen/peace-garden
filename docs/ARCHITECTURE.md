@@ -126,6 +126,23 @@ Because an iPad can be resized as well as rotated — Split View, Stage Manager 
 the scene view reports its own `layoutSubviews`, and the framing is recomputed
 from the size rather than from anything SwiftUI happens to re-run.
 
+It is told where the chrome band begins as well as how big the screen is, and
+the plant is drawn into the space above it and stands on it. The band is
+measured and handed over as a preference rather than counted up from the type
+sizes: two of the four things in it can be turned off in Settings, and the fifth
+is a safe area that is a different height on every device. The plant used to be
+framed into the whole view and the foot of the stem passed behind the band,
+which was meant to read as growing out of it and on a phone read as a stem
+going through the plant's own name.
+
+The band is measured whether or not it is on screen — it is laid out either way
+and only its opacity changes — so asking for the row does not resize the one
+thing on screen that is meant to hold still. The base is what sits on the line,
+rather than the plant's middle sitting at the middle: a seedling then stands
+where a mature plant stands and climbs the frame as it grows, and the distance
+still comes from the grown plant, so it is small in a large space rather than
+filling it.
+
 ## Why growth is a function of time, not a state machine
 
 There is no "grow" step to run, nothing to catch up on after the app has been
