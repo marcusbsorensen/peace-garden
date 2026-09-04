@@ -28,6 +28,13 @@ spread, and one full flush cycle.
   touched.
 - **Flushes**: a wave of open flowers travelling up the stem over 1–4 weeks.
 - **43 test gardeners** at `/t` on the site, word `peace`.
+- **The preview port is under CI**, and names nothing: its naming was three
+  months stale and nothing rendered it, so it was deleted rather than ported.
+
+**Known gap, not closed.** The port computes in `double` where Swift computes
+several values in `Float`. The rounding rule now matches; the precision does
+not. It does not bite on the current 15 vectors, but it is a second way those
+lines could disagree.
 
 **Unverified.** The flush has not been seen *in the app* — only in the Python
 port. Its amplitude (a trough at 45%) is visible on the crown but subtle on
@@ -73,9 +80,12 @@ to read as change. Then merge `round-two` into `main`.
 ## Traps
 
 - **`cd` persists between Bash calls.** Always pass absolute `--package-path`.
-- **`tools/preview/plant_model.py` is a hand-maintained port and is not in CI.**
-  It has silently drifted three times. It was missing the per-node bloom ceiling
-  *and* the bloom taper, so every spike it has ever drawn was wrong.
+- **`tools/preview/plant_model.py` is in CI now** — `check_port.py` against a
+  committed `tools/preview/vectors.json`, which a Swift recorder writes. If
+  SeedCore changes on purpose, re-record with
+  `PEACE_GARDEN_RECORD_VECTORS=1 swift test --package-path … --filter PortVectorTests`,
+  then bring the port along. Older notes in `docs/TAXONOMY.md` still say it is
+  not in CI; they are dated journal entries and were left alone.
 - **Render a night-opening plant at its own peak hour.** At 13:00 the diurnal
   factor damps it to a third and every flower is a shut bud — which looks
   exactly like a feature that is not working.
@@ -83,3 +93,6 @@ to read as change. Then merge `round-two` into `main`.
   raw `xcrun simctl io … screenshot` and divide by 3.
 - **Thresholds against a drawn trait must be measured, not guessed.** Three
   epithets were unreachable because petal brightness never leaves 0.45–0.82.
+- **Swift `.rounded()` is half-away-from-zero; Python `round()` is half-to-even.**
+  They disagreed on `stem.nodeCount` for about one plant in 27. Fixed in five
+  places in the port, with three vectors chosen specifically to cover it.
