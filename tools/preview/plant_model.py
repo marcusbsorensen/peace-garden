@@ -445,9 +445,16 @@ def growth_state(genome, age_seconds, hour_of_day=13.0):
         delta = 24 - delta
     bloom_open *= 0.34 + 0.66 * ease_in_out(1.0 - delta / 12.0)
 
+    # The flowering cycle after maturity. See SeedCore's GrowthModel.
+    cycle = max(DAY, genome.bloomDays * DAY * 2.4)
+    since_mature = max(0.0, age - blooming)
+    flush = (since_mature / cycle) % 1.0
+    flush_depth = ease_in_out(clamp(since_mature / cycle, 0, 1)) if genome.bloomPresent else 0.0
+
     return dict(stage=stage, stageProgress=stage_progress, overall=overall,
                 heightScale=max(0.055, height), leafUnfurl=leaf_unfurl,
-                budSwell=bud_swell, bloomOpen=bloom_open, age=age)
+                budSwell=bud_swell, bloomOpen=bloom_open, age=age,
+                flush=flush, flushDepth=flush_depth)
 
 
 # ------------------------------------------------------------------ geometry
@@ -791,15 +798,38 @@ def _add_leaves(builder, genome, skeleton, growth):
         builder.add_surface("leaf", 19, 9, point)
 
 
+def _flush_factor(position, growth):
+    """The travelling wave. See SeedCore's PlantBuilder.flushFactor."""
+    depth = growth.get("flushDepth", 0.0)
+    if depth <= 0:
+        return 1.0
+    wave = 0.5 + 0.5 * math.cos(2 * math.pi * (growth.get("flush", 0.0) - position))
+    return 1 - depth * 0.55 * (1 - wave)
+
+
+def _flushed(growth, position):
+    factor = _flush_factor(position, growth)
+    if factor >= 1:
+        return growth
+    local = dict(growth)
+    local["budSwell"] *= factor
+    local["bloomOpen"] *= factor
+    return local
+
+
 def _add_blooms(builder, genome, skeleton, growth):
     if not genome.bloomPresent or growth["budSwell"] <= 0.02:
         return
-    _add_bloom(builder, genome, skeleton["apex"], genome.bloomScale, growth, 0)
+    _add_bloom(builder, genome, skeleton["apex"], genome.bloomScale,
+               _flushed(growth, 0.0), 0)
 
-    for offset, branch in enumerate(skeleton.get("branches", [])):
+    branches = skeleton.get("branches", [])
+    for offset, branch in enumerate(branches):
         size = SplitMix64(genome.seed, f"bloom.size.branch.{offset}")
+        position = (offset + 1) / (len(branches) + 1)
         _add_bloom(builder, genome, branch["path"][-1],
-                   genome.bloomScale * size.value(0.86, 1.1), growth, offset + 1)
+                   genome.bloomScale * size.value(0.86, 1.1),
+                   _flushed(growth, position), offset + 1)
 
     if not genome.bloomsAtNodes:
         return
@@ -807,12 +837,21 @@ def _add_blooms(builder, genome, skeleton, growth):
         if node["t"] <= 0.35:
             continue
         lag = (1 - node["t"]) * 0.5
+        # **This port was missing the ceiling and the taper entirely**, so every
+        # spike it drew carried identical fully-open heads at even spacing —
+        # which is precisely the tell SeedCore's own comments record fixing, and
+        # which every render taken from this file has therefore been wrong about.
+        ceiling = 0.45 + 0.55 * node["t"]
+        flush = _flush_factor(node["t"], growth)
         local = dict(growth)
-        local["budSwell"] = max(0.0, growth["budSwell"] - lag) / max(0.01, 1 - lag)
-        local["bloomOpen"] = max(0.0, growth["bloomOpen"] - lag) / max(0.01, 1 - lag)
+        local["budSwell"] = min(ceiling, max(0.0, growth["budSwell"] - lag) / max(0.01, 1 - lag)) * flush
+        local["bloomOpen"] = min(ceiling, max(0.0, growth["bloomOpen"] - lag) / max(0.01, 1 - lag)) * flush
         if local["budSwell"] <= 0.02:
             continue
-        _add_bloom(builder, genome, node, 0.62, local, offset + 1)
+        size = SplitMix64(genome.seed, f"bloom.size.{offset}")
+        up = min(1.0, max(0.0, (node["t"] - 0.35) / 0.65))
+        scale = (0.4 + 0.34 * up) * size.value(0.88, 1.12)
+        _add_bloom(builder, genome, node, scale, local, offset + 1)
 
 
 def _add_bloom(builder, genome, sample, scale, growth, index):

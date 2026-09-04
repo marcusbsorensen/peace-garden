@@ -226,11 +226,66 @@ public struct PlantBuilder {
 
     // MARK: - Blooms
 
+    /// The wave, reachable from a test.
+    ///
+    /// `flushFactor` is the whole of the never-bare promise and the whole of
+    /// what makes the cycle a wave rather than a pulse, and neither property
+    /// can be read back off a finished mesh — a mesh cannot tell a bud from a
+    /// small flower. So it is exposed rather than tested through the geometry.
+    func flushFactorForTesting(position: Double, growth: GrowthModel.State) -> Double {
+        Self.flushFactor(position: position, growth: growth)
+    }
+
+    /// One flower's state, with the cycle applied.
+    ///
+    /// For the flowers that carry no `lag` or `ceiling` of their own — the
+    /// crown, and the tip of each stalk on a head — the cycle is the only thing
+    /// modulating them, so it is applied to the state whole rather than folded
+    /// into an existing expression.
+    private static func flushed(_ growth: GrowthModel.State, position: Double) -> GrowthModel.State {
+        let factor = flushFactor(position: position, growth: growth)
+        guard factor < 1 else { return growth }
+        var flushed = growth
+        flushed.budSwell *= factor
+        flushed.bloomOpen *= factor
+        return flushed
+    }
+
+    /// How far through its own flowering this flower is, `0...1`.
+    ///
+    /// **The wave travels up the stem.** A flower peaks when the cycle's phase
+    /// reaches its own height, so the band of open flowers climbs and new ones
+    /// take over at the crown — which is what an indeterminate inflorescence
+    /// does, and the same argument the `lag` and `ceiling` below already make
+    /// for the first flowering. This carries it on past maturity instead of
+    /// letting it stop there.
+    ///
+    /// **Nothing ever closes completely**, which is a decision about what this
+    /// app means rather than about botany. A real spike goes over and stands
+    /// bare between flushes; a plant here stands for a meeting between two
+    /// people, and one found bare would read as that meeting having faded. So
+    /// the trough is a bud rather than nothing: at full depth a flower out of
+    /// phase sits at 45% of what it would otherwise be, which reads as young or
+    /// spent rather than absent.
+    ///
+    /// `position` is the flower's own place in the wave — height up the stem
+    /// for a spike, an even share of the cycle for the stalks of a head.
+    private static func flushFactor(position: Double, growth: GrowthModel.State) -> Double {
+        guard growth.flushDepth > 0 else { return 1 }
+        let phase = growth.flush - position
+        let wave = 0.5 + 0.5 * cos(2 * Double.pi * phase)
+        // Depth is how much the trough takes away. At 0.55 a flower out of
+        // phase keeps 45%.
+        return 1 - growth.flushDepth * 0.55 * (1 - wave)
+    }
+
     private func addBlooms(_ builder: inout MeshBuilder, skeleton: PlantSkeleton, growth: GrowthModel.State) {
         guard genome.bloom.present, growth.budSwell > 0.02 else { return }
 
         let bloomScale = Float(genome.branching.bloomScale)
-        addBloom(&builder, at: skeleton.apex, scale: bloomScale, growth: growth, index: 0)
+        // The crown leads the cycle, so its position in the wave is zero.
+        addBloom(&builder, at: skeleton.apex, scale: bloomScale,
+                 growth: Self.flushed(growth, position: 0), index: 0)
 
         // One bloom at the tip of each stalk.
         //
@@ -240,11 +295,16 @@ public struct PlantBuilder {
         for (offset, branch) in skeleton.branches.enumerated() {
             guard let tip = branch.path.last else { continue }
             var size = SplitMix64(seed: genome.seed, label: "bloom.size.branch.\(offset)")
+            // A head has no up and down to run a wave along, so its stalks take
+            // an even share of the cycle instead. Without it every floret in an
+            // umbel opens and fades in unison, which is the flat-faced look the
+            // per-node lag was written to remove from spikes.
+            let position = Double(offset + 1) / Double(skeleton.branches.count + 1)
             addBloom(
                 &builder,
                 at: tip,
                 scale: bloomScale * Float(size.value(in: 0.86...1.1)),
-                growth: growth,
+                growth: Self.flushed(growth, position: position),
                 index: offset + 1
             )
         }
@@ -266,16 +326,20 @@ public struct PlantBuilder {
             // both what a spike looks like and what makes the smaller flowers
             // read as younger rather than merely scaled down.
             let ceiling = 0.45 + 0.55 * Double(node.t)
+            // A flower's place in the wave is where it stands on the stem.
+            let flush = Self.flushFactor(position: Double(node.t), growth: growth)
             let localGrowth = GrowthModel.State(
                 stage: growth.stage,
                 stageProgress: growth.stageProgress,
                 overall: growth.overall,
                 heightScale: growth.heightScale,
                 leafUnfurl: growth.leafUnfurl,
-                budSwell: min(ceiling, max(0, growth.budSwell - lag) / max(0.01, 1 - lag)),
-                bloomOpen: min(ceiling, max(0, growth.bloomOpen - lag) / max(0.01, 1 - lag)),
+                budSwell: min(ceiling, max(0, growth.budSwell - lag) / max(0.01, 1 - lag)) * flush,
+                bloomOpen: min(ceiling, max(0, growth.bloomOpen - lag) / max(0.01, 1 - lag)) * flush,
                 age: growth.age,
-                timeToNextStage: growth.timeToNextStage
+                timeToNextStage: growth.timeToNextStage,
+                flush: growth.flush,
+                flushDepth: growth.flushDepth
             )
             guard localGrowth.budSwell > 0.02 else { continue }
             // Every lateral flower was drawn at exactly 0.62, which gave a

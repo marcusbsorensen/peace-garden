@@ -76,16 +76,28 @@ final class PlantFormTests: XCTestCase {
     /// move: these numbers are only worth having if a change to them is always
     /// a decision somebody wrote down. A third move with no paragraph under it
     /// should be read as an accident.
+    /// **What this test means changed on 3 September 2026, and the third
+    /// paragraph above is now only half true.** Flushes make a mature plant a
+    /// function of seed *and time*: the band of open flowers travels up the
+    /// stem on a cycle of one to four weeks, so a plant somebody is already
+    /// growing now changes under them every day, on purpose.
+    ///
+    /// So this no longer pins *the* mesh a seed draws. It pins the mesh a seed
+    /// draws **at exactly four hundred days**, which is one fixed point in that
+    /// cycle and still perfectly deterministic. It catches the same class of
+    /// mistake it always did — a renamed draw key, a shifted range — and it no
+    /// longer says anything about a plant being stable, because a plant is
+    /// deliberately not stable any more. `GrowthTests` holds the flush itself.
     func testAFixedSeedAlwaysDrawsTheSameMesh() {
         // Seed label: vertices, then the mature plant's width and height in
-        // centimetres. The three cover one inflorescence each — `vector-a` is
+        // centimetres, **at the fixed age `mature(_:)` uses**. The three cover one inflorescence each — `vector-a` is
         // an umbel, `vector-b` a lotus, `vector-c` a succulent — which was luck
         // rather than design, but it is worth keeping if these are ever
         // renumbered.
         let expected: [String: (vertices: Int, width: Int, height: Int)] = [
-            "vector-a": (9802, 48, 73),
-            "vector-b": (3409, 49, 76),
-            "vector-c": (4168, 27, 48)
+            "vector-a": (9583, 46, 73),
+            "vector-b": (3409, 46, 75),
+            "vector-c": (3808, 26, 46)
         ]
 
         for (label, want) in expected.sorted(by: { $0.key < $1.key }) {
