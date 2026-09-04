@@ -8,12 +8,13 @@ seed lands on.
 
 ```
 peacegarden.app/
-├── .well-known/
-│   └── apple-app-site-association     ← no file extension
-├── .htaccess                          ← serves s, g and t as text/html
-├── s                                  ← the page, no file extension either
-├── g                                  ← the garden, walked
-├── t                                  ← the test roster
+├── index.php                          ← serves the four paths below
+├── .pages/                            ← nginx refuses a dot-directory
+│   ├── s                              ← the page a seed lands on
+│   ├── g                              ← the garden, walked
+│   ├── t                              ← the test roster
+│   └── apple-app-site-association     ← no file extension, and none is added
+├── .htaccess                          ← for a host that reads one. This is not.
 ├── languages.json                     ← generated: tools/site/export.py
 ├── testers.json                       ← generated: one gardener per language
 ├── passages/<code>.json               ← generated: one bank per language
@@ -34,25 +35,71 @@ peacegarden.app/
         └── passages.js                ← theme, subtheme, and the draw
 ```
 
-Everything is a file. No build step, no framework, no npm, and nothing to run
-on the host: `git` is not needed on the server and neither is anything else.
-Upload the contents of this directory to the document root.
+Almost everything is a file. No build step, no framework, no npm, and one
+twenty-line PHP script whose whole job is to put a `Content-Type` on four
+paths. Deploy with:
+
+    tools/deploy.sh
+
+That uploads this directory and then reads the headers back, which is the half
+that matters — see **Deploying** below.
 
 **`s` has no file extension on purpose.** It is the path every seed link
 already points at and the path the association file claims, so it cannot grow a
-`.html`. `.htaccess` serves it as `text/html`, the same way `.well-known` forces
-`application/json` — see that file for what it can and cannot promise.
+`.html`.
 
-**Every page added here has to be named in `.htaccess`.** `g` and `t` are, and
-`g` was not until it was checked: with only `s` named, the garden arrived as
-`application/octet-stream` and a browser downloaded it rather than drawing it.
-The request is a 200 and the log is clean, so nothing says so. Serve the
-directory locally the way a host serves it before believing a page works:
+**peacegarden.app does not read `.htaccess`.** This was the design's one
+assumption and it is wrong on this host. The 20i vhost is nginx talking
+straight to PHP-FPM: there is no Apache in the chain, and no `.htaccess`
+anywhere under the document root is ever consulted. Checked on 4 September 2026
+by putting a `RewriteRule` to a known-good path and a `Header always set` in
+one, at the document root and one directory down, and watching neither happen.
+
+The symptom is the one this file already warned about in another form: `/s`,
+`/g`, `/t` and the association file all arrived as `application/octet-stream`,
+so a browser saved the page instead of drawing it. Every request was a 200 and
+every log line was clean.
+
+**So `index.php` serves those four**, because the same nginx vhost offers
+exactly that and nothing else:
+
+    location / { try_files $uri $uri/ @dispatch; }
+    location @dispatch { if (-f $document_root/index.php) { rewrite ^ /index.php last; } }
+
+A path with no file behind it reaches `index.php` with `REQUEST_URI` intact.
+Which is why the four live in `.pages/` rather than at the paths they are
+served at: a file at `/s` wins at `try_files` and is served as a download
+again, and `index.php` never sees the request. The leading dot is not
+decoration — nginx's own `location ~ /\.(?!well-known(?:/|$)) { deny all; }`
+makes the directory unreachable from outside, so each page has one address
+rather than two.
+
+**Every page added here has to be added to `ROUTES` in `index.php`** — and to
+`PAGES` in `tools/site/serve.py`, which is the same four rows in Python. `g`
+was missing from the old list once and arrived as a download; nothing said so.
+Serve the directory locally the way the host serves it before believing a page
+works:
 
     python3 tools/site/serve.py
 
 That is the reason it exists rather than `python3 -m http.server`, which types
 a file by its extension and so cannot draw any of the three pages.
+
+**The cost is that four paths now need PHP.** Static files did not. It is the
+trade the host leaves available: `/s` is in every link already minted and
+cannot grow an extension, so either something sets the header or the header is
+wrong. If PHP is ever unavailable, the association file — and only that one —
+can go back to `.well-known/` as a static file and be served with the wrong
+type; Apple's CDN parsed it happily for the four days it was, reporting
+`Apple-Origin-Format: json` while the origin said `application/octet-stream`.
+That is Apple being lenient about a rule Apple documents, and it is a fallback
+rather than a plan.
+
+**Getting `.htaccess` honoured instead** would mean 20i moving this site off
+its nginx-only config, which is a support request rather than anything in this
+repository. It would make `.htaccess` here do the routing — it is written to
+send the same four paths to `index.php` either way, so one mechanism would
+still serve them and the two hosts could not disagree about what `/s` is.
 
 **`/t` is the test roster** — forty-three gardeners, one per language, for
 looking at the site from where a reader of it stands. There are no accounts
@@ -66,15 +113,23 @@ and re-run the generator, then copy it here again. Do not hand-edit either one.
 **SEAM:** a deploy script that re-copies it is what would keep the two from
 drifting, and there is not one yet.
 
+**This README is not uploaded.** `tools/deploy.sh` excludes it and deletes it
+if an earlier upload left one there, which one had. It is addressed to whoever
+is deploying rather than to a reader of the site.
+
 **Two deploy steps that are settings rather than files:**
 
 - **Request logging on `/s`.** docs/WEBSITE.md asks for none, or the shortest
   the host permits. That is a 20i control-panel setting. Nothing on the page
-  claims more than what is actually switched off, and nothing should.
-- **The root.** `peacegarden.app/` still answers 403. `/s` with no seed in it is
-  the page that says what Peace Garden is, so what the root should do is the
-  open question in docs/WEBSITE.md about whether there is a marketing page at
-  all — deliberately left alone rather than answered with a redirect.
+  claims more than what is actually switched off, and nothing should. Note that
+  `/s` is now a PHP request rather than a static one, so it appears in whatever
+  the host logs for PHP as well.
+- **The root.** `peacegarden.app/` still answers 403, and `index.php` returns
+  that 403 deliberately: with an index in place the root would otherwise become
+  whatever the script did next. `/s` with no seed in it is the page that says
+  what Peace Garden is, so what the root should do is the open question in
+  docs/WEBSITE.md about whether there is a marketing page at all — left alone
+  rather than answered with a redirect.
 
 ## What the next page reuses
 
@@ -100,11 +155,19 @@ purpose.
 ## Checking the page
 
 ```sh
-curl -sSI https://peacegarden.app/s
+tools/deploy.sh --check
 ```
 
-Wanted: `HTTP/2 200` and `content-type: text/html`. `text/plain` means
-`.htaccess` is not being read, and the page will show as source.
+That reads the headers on every path that has ever been served with the wrong
+one, and on a sample of the ones nginx types from its own `mime.types`. Wanted
+on `/s`: `HTTP/2 200` and `content-type: text/html`. `application/octet-stream`
+means a file is sitting at that path and nginx is serving it before
+`index.php`, so the page will download rather than draw.
+
+Two of the rows are 404s on purpose, and a 200 on either is the failure:
+`/strings/en.json`, because English is written into `strings.js` and
+`loadStrings` reads the status; and `/README.md`, because this file belongs to
+whoever deploys.
 
 The fragment is the payload and never reaches the server, so a seed can only be
 tested in a browser. Any link the app mints will do; `assets/js/link.js` also
@@ -135,14 +198,23 @@ These are the ones that quietly break associated domains:
 - **Apple's CDN caches it.** A change can take up to 24 hours to reach devices,
   so get it right before testing rather than iterating against it.
 
-## On 20i
+## Deploying
 
 ```sh
-tools/deploy-aasa.sh
+tools/deploy.sh              # upload, then check
+tools/deploy.sh --dry-run    # say what would change, touch nothing
+tools/deploy.sh --check      # check what is live, upload nothing
 ```
 
-That uploads both files and then checks what is actually served — status,
-content type, and whether the Team ID in the file still matches `project.yml`.
+That uploads this directory and then reads back the status and content type of
+every path, plus whether the Team ID in the association file still matches
+`project.yml`.
+
+It uploads with `--delete`, because the failure that prevents is invisible: a
+file left at `/s` by an older upload wins at nginx's `try_files` and is served
+as a download, and `index.php` is never reached. `.well-known/` is the one
+directory left alone — certificate renewal writes an ACME challenge there, and
+nothing of ours lives in it any more.
 
 It needs the `peacegarden` host in `~/.ssh/config`, which is written, and its
 key registered in **My20i → peacegarden.app → Security → SSH Access**. Paste
@@ -158,27 +230,9 @@ which before diagnosing the wrong one:
 | Connection reset at the handshake | The **IP allowlist** on that same page. It gates SSH before authentication, so it reads like a network fault rather than a permissions one. |
 
 Failing all of that, upload by hand to the document root of `peacegarden.app` —
-the directory serving the site, usually `public_html`.
-
-`.well-known` starts with a dot, so 20i's file manager may hide it. Turn on
-"show hidden files", or create it over SFTP. If the folder cannot be created
-through the UI at all, an `.htaccess` alias works:
-
-```apache
-RewriteEngine On
-RewriteRule ^\.well-known/apple-app-site-association$ /aasa.json [L]
-<Files "aasa.json">
-    ForceType application/json
-</Files>
-```
-
-If the extensionless file is served as the wrong type, force it directly:
-
-```apache
-<Files "apple-app-site-association">
-    ForceType application/json
-</Files>
-```
+the directory serving the site, usually `public_html`. `.pages` starts with a
+dot, so 20i's file manager may hide it. Turn on "show hidden files", or use
+SFTP.
 
 ## Checking it
 

@@ -12,8 +12,14 @@ following. `http.server` types a file by its extension and falls back to
 renders. The bare command looks like it works — 200, no error in the log — and
 then the browser saves a file.
 
-So this maps extensionless files to `text/html` and otherwise gets out of the
-way. Two smaller things a real host does that the plain module does not:
+So this serves the four extensionless paths with the types they are, out of
+`Server/.pages/`, which is where they live and is not where they are served
+from. `Server/index.php` says why: peacegarden.app runs nginx with no Apache
+behind it, `.htaccess` is never read there, and a file sitting at `/s` would be
+served as a download before PHP ever saw the request. This is the same table of
+four, in Python, so that what is looked at locally is what is served.
+
+Two smaller things a real host does that the plain module does not:
 
 - **A new port each run is unnecessary.** Modules are served `no-store`, so a
   changed one is fetched rather than remembered. `.claude/HANDOVER.md` records
@@ -32,10 +38,20 @@ import socketserver
 
 ROOT = pathlib.Path(__file__).resolve().parents[2] / "Server"
 
-# The pages, which is also the list of things with no extension. Named rather
-# than inferred from "has no dot", so a stray file cannot start being served as
-# a page by accident.
-PAGES = {"/s", "/g", "/t"}
+# Path served -> file under `.pages/`, and the type it is. The same four rows as
+# `ROUTES` in Server/index.php, and they have to stay the same four: this is the
+# thing that shows a page has stopped being a page before a host does.
+#
+# Named one by one rather than inferred from "has no dot", so a stray file
+# cannot start being served as a page by accident.
+PAGES = {
+    "/s": ("s", "text/html"),
+    "/g": ("g", "text/html"),
+    "/t": ("t", "text/html"),
+    "/.well-known/apple-app-site-association": (
+        "apple-app-site-association", "application/json",
+    ),
+}
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -44,11 +60,21 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         # host would do and not what should be looked at while working.
         if self.path in ("/", ""):
             self.path = "/g"
+        # nginx refuses dot-directories, so `.pages/s` is not a second address
+        # for the seed page on the live host. It should not be one here either.
+        if self.path.startswith("/.pages"):
+            self.send_error(403)
+            return None
+        route = PAGES.get(self.path.split("?", 1)[0])
+        if route is not None:
+            self.path = "/.pages/" + route[0]
         return super().send_head()
 
     def guess_type(self, path):
-        if pathlib.Path(path).name in {page.lstrip("/") for page in PAGES}:
-            return "text/html"
+        name = pathlib.Path(path).name
+        for file, type_ in PAGES.values():
+            if name == file:
+                return type_
         return super().guess_type(path)
 
     def end_headers(self):
