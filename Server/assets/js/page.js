@@ -13,10 +13,12 @@
 // page adds is a service, an identity and a moderation surface — see
 // docs/WEBSITE.md — and none of it belongs here.
 
-import { manifest, negotiate, readable, remember, uppercases } from "./languages.js";
+import { direction, manifest, negotiate, readable, remember, tracks, uppercases } from "./languages.js";
 import { loadStrings } from "./strings.js";
 import { loadBank, placement, choose } from "./passages.js";
 import { parse } from "./link.js";
+import { register, setSheetTitle } from "./keys.js";
+import { drawBar, signIn, signedIn } from "./testers.js";
 
 const el = (id) => document.getElementById(id);
 
@@ -83,6 +85,12 @@ let generation = 0;
 
 async function render() {
   const mine = (generation += 1);
+  // A tester outranks everything, `?l=` included. Standing in one is an
+  // instruction about the whole page rather than a wish about one reading, and
+  // a seed link read from inside a tester should be read in that language.
+  // Same rule as walk.js, and the two pages must not disagree about it.
+  const standing = signedIn();
+  if (standing) state.chosen = standing;
   const settled = negotiate(state.languages, {
     ...(state.chosen ? { override: state.chosen } : {}),
   });
@@ -94,14 +102,30 @@ async function render() {
   // Uppercasing is a transformation that can lose a letter, so it is decided
   // per language rather than applied by one rule to all of them.
   document.documentElement.toggleAttribute("data-keeps-case", !uppercases(settled.ui));
+  // Tracking is a separate question from case and a sharper one: on Arabic,
+  // letter-spacing severs the joins. See languages.js §NEVER_TRACKED.
+  document.documentElement.toggleAttribute("data-untracked", !tracks(settled.ui));
+  document.documentElement.dir = direction(settled.ui);
 
   for (const node of document.querySelectorAll("[data-s]")) {
     node.textContent = t(node.dataset.s);
+    // Says what language the run is in, so a label that fell back to English
+    // is not reordered by bidi inside a right-to-left page. See strings.js.
+    strings.dress(node, node.dataset.s);
   }
   el("language-label").textContent = t("language");
+  // The sheet's own heading, and the only word the keyboard layer needs: every
+  // other row in it is labelled by the control it operates.
+  setSheetTitle(t("keys"));
   buildChooser(state.languages, settled.ui, (code) => {
     state.chosen = code;
     remember(code);
+    // One tester per language, so while somebody is standing in one the chooser
+    // is the way between them. See walk.js for the same three lines and the
+    // reason they are not a shared helper: the two pages hold their language in
+    // different places, and the shared thing is the rule rather than the code.
+    if (signedIn()) signIn(code);
+    drawBar(onLeave);
     render();
   });
 
@@ -153,6 +177,13 @@ async function render() {
   passageBlock.hidden = !passage;
   if (passage) {
     passageBlock.lang = settled.bank;
+    // **The one element on the page that can disagree with the page.** A
+    // borrowed bank means the passage is in a different language from the
+    // chrome around it, and once one of the two is Arabic or Hebrew that is a
+    // different direction as well — a Hebrew reader with no Hebrew bank gets a
+    // right-to-left page with a left-to-right passage in it, and the passage
+    // has to say so or the punctuation lands at the wrong end of the line.
+    passageBlock.dir = direction(settled.bank);
     el("passage-text").textContent = passage.text;
     // A borrowed language is named, and only here. A label that fell back to
     // English says so nowhere — a label is short and a fallback in one is not
@@ -180,12 +211,43 @@ async function readFragment() {
   }
 }
 
+/// Leaving a tester hands the page back to the reader's own browser.
+async function onLeave() {
+  state.chosen = null;
+  await render();
+}
+
 async function main() {
   // Set by the script for itself: a page whose script never arrives is a
   // visible page rather than an invisible one.
   document.body.dataset.loading = "1";
   state.languages = await manifest();
   await readFragment();
+  // Draws nothing when nobody is signed in, which is why it is unconditional.
+  await drawBar(onLeave);
+
+  // The one action this page has. It is registered rather than wired directly
+  // so that it appears in the sheet under `?` alongside everything a garden
+  // page adds — see keys.js, where the sheet *is* the registry.
+  register({
+    // `c`, not `l`: the garden walks with hjkl and the two pages must not
+    // disagree about a letter. See the note in walk.js.
+    keys: ["c"],
+    target: () => el("language-label"),
+    run: () => {
+      const select = el("language");
+      if (!select || select.hidden) return false;
+      select.focus();
+      // Safari and Firefox ignore `showPicker` on a select they did not open
+      // from a click, and throw rather than no-op. Focus is the part that
+      // matters; opening it is a courtesy where it is allowed.
+      try {
+        select.showPicker?.();
+      } catch {
+        /* focused is enough */
+      }
+    },
+  });
 
   try {
     await render();

@@ -81,6 +81,24 @@ struct PlantRevealView: View {
                     }
                 }
                 .chromeLabel()
+                // **The label voice follows the words, not the interface.**
+                //
+                // `chromeLabel` uppercases and tracks according to the
+                // environment's locale, which is the *app's* resolved language —
+                // and a bank exists for languages the interface does not. A
+                // Japanese phone gets English chrome and a Japanese bank, so the
+                // environment says `en`, and this line was letter-spacing a Han
+                // source: 建 築 rather than 建築. On Arabic it would have severed
+                // the joins, which is the thing `Chrome.neverTracked` was added
+                // to prevent.
+                //
+                // Handing it the bank's own locale makes both rules read the
+                // language they are actually about — the same correction the web
+                // makes by setting `dir` on the passage rather than on the page.
+                // Where the bank is borrowed the source really is English, and
+                // `QuoteBank.current` is `.english`, so this says `en` and is
+                // right for the same reason.
+                .environment(\.locale, Locale(identifier: QuoteBank.current.rawValue))
                 .foregroundStyle(Chrome.faint)
                 .padding(.bottom, 6)
 

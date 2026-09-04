@@ -1,71 +1,98 @@
-# Peace Garden — handover 2 September 2026
+# Peace Garden — handover 3 September 2026
 
-*This session ran four threads at once — marks, banks, website, a CI fix. They
-were independent, and it worked, but a fresh session should pick one.*
+*This session ran two unrelated strands: a site test roster, then the whole
+taxonomy build. They did not interfere, but a fresh session should pick one.*
 
 ## Goal
-Finish the three items the previous handover left open: the four stage-row
-marks, wave two of the passage banks, and what `docs/WEBSITE.md` asks of the
-app. All three are done. The website itself was started on top of that.
+
+Make the plant names a real classification a botanist could key out
+(`docs/TAXONOMY.md`), and give a mature plant something to do. Both done.
 
 ## State
-`main` at `f80f48b`, clean.
 
-**Verified.** 72 SeedCore tests, 23 app tests, all three CI jobs green — CI was
-red at `e806de4` when this session opened and is fixed. Device and simulator
-builds clean. Seventeen banks, 6,166 passages, every one through `assemble.py`.
-`/s` was driven in a browser by the agent that built it.
+`round-two` at `600d92e`, green, **still not merged into `main`** — the branch
+has diverged a long way and merging is an outstanding decision Marcus has agreed
+to but which has not happened.
 
-**Unverified.** *Nobody has seen the four marks on a screen.* Their geometry was
-judged at fifteen points in `tools/glyphs` and the Swift is a line-for-line
-transcription, but the stage row has not been looked at. See *Next step*.
+**Verified.** 97 SeedCore tests, 23 app tests, all four Python CI checks. Built
+and driven on an iPhone 17 Pro Max simulator: first light → planting → a mature
+*Wynula latifolia*. Renders looked at for the merosity couplets, the vegetative
+spread, and one full flush cycle.
+
+- **The genus is read off the flower.** 12 families × 2 merosity classes → the
+  24 frozen heads. Same root ⇒ same floral plan and petal count. Head → theme is
+  untouched, so no passage anyone has seen has moved.
+- **The epithet is a checked claim**, with Latin grammar and gender agreement.
+  57 distinct epithets, commonest at 6%, ~1 in 50 *vulgaris*.
+- **Vegetative ranges widened**, floral held tight — 17 ranges, no floral range
+  touched.
+- **Flushes**: a wave of open flowers travelling up the stem over 1–4 weeks.
+- **43 test gardeners** at `/t` on the site, word `peace`.
+- **The preview port is under CI**, and names nothing: its naming was three
+  months stale and nothing rendered it, so it was deleted rather than ported.
+
+**Known gap, not closed.** The port computes in `double` where Swift computes
+several values in `Float`. The rounding rule now matches; the precision does
+not. It does not bite on the current 15 vectors, but it is a second way those
+lines could disagree.
+
+**Unverified.** The flush has not been seen *in the app* — only in the Python
+port. Its amplitude (a trough at 45%) is visible on the crown but subtle on
+small-flowered plants; whether to deepen it wants looking at on a simulator.
 
 ## Files
-- `App/PeaceGarden/Views/Chrome.swift` — `markBox`, `SeedGlyph`, `GardenGlyph`,
-  `CogShape`. Every rejected drawing is in the doc comments.
-- `App/PeaceGarden/Views/Glyphs.swift` — `MeetGlyph`.
-- `tools/glyphs/` — `shapes.py` mirrors the Swift, `sheet.py` renders any set of
-  marks large and at fifteen points on both grounds. The real product of the
-  mark work; use it before changing any glyph.
-- `tools/site/export.py` — writes `Server/passages/*.json` and
-  `Server/languages.json` from the app. CI runs `--check`.
-- `Server/` — the site. `s`, `assets/js/*.js`, `strings/*.json` (16 files, every
-  value `null`, awaiting commission).
-- `docs/WEBSITE.md` — phase 2 spec. Read before touching peacegarden.app.
-- `docs/LANGUAGES.md` § *Round two* — the eight banks still to write.
+
+- `Packages/SeedCore/Sources/SeedCore/Genome/PlantName.swift:60` — the root
+  table. The pairings, and why `Cal`/`Quin` swapped.
+- `Packages/SeedCore/Sources/SeedCore/Genome/Epithet.swift` — the vocabulary,
+  the rarity rule, and `Rate`, a table of **measured** base rates.
+- `Packages/SeedCore/Sources/SeedCore/Growth/GrowthModel.swift` — `flush`,
+  `flushDepth`.
+- `Packages/SeedCore/Sources/SeedCore/Morphology/PlantBuilder.swift` —
+  `flushFactor`, the travelling wave.
+- `docs/TAXONOMY.md` — the design and everything the renders changed.
+- `docs/FOR-REVIEW.md` — **two decisions still waiting on Marcus**: the six
+  prose strings and the ten area names.
+- `Server/assets/js/testers.js`, `Server/t` — the roster. No accounts exist.
 
 ## Decisions made
-- **The garden is walkable; guests from anywhere can visit.** Taken while
-  nothing is published, so no page is relisted and nobody re-asked. `noindex`
-  stays — walkable and indexed are different properties. The garden shows
-  plants, not people; a grid of names is a directory.
-- **The passage is drawn in the reader's language, everywhere.** So the garden is
-  read one language at a time, not partitioned by language. Partitioning would
-  publish the sharer's language — the first fact this app stated about somebody
-  that they never chose to state, and hardest on small-language speakers.
-- **The plot record must carry the derived theme.** A page reads a theme off a
-  genus head, but a *pair's* theme needs both parent seeds, and giving a page
-  those publishes the other gardener's seed. `WEBSITE.md` said this was free.
-- **20i with a database on it** for the plot service; **seventeen languages** of
-  site chrome; **the cog is an ordinary cog**, because recognition wins on the
-  one mark whose job is to be found without being read.
+
+- **The archetype is a family, not a genus.** Genera in a family share a root
+  and differ in their endings (*Helianthus*, *Helianthemum*). This is what let
+  gender attach to the written genus.
+- **Notability is rarity**: of the true things, say the one fewest relatives
+  could have said. Scoring markings and measurements on separate scales gave
+  *variegata* a third of the garden.
+- **A flush never closes completely.** A bare plant would read as a meeting
+  having faded. The trough is a bud at 45%. This is about meaning, not botany.
+- **`-ynth` is masculine, the other nine endings feminine.**
+- **`Cal` and `Quin` swapped**: *Calaceae* is the umbel, *Quinaceae* the bell.
+  The Campanulaceae echo that justified the old arrangement was false —
+  *Campanula* is from *campana*, not *kalos*.
+- **Language codes, not country codes**, in tester names (`Test-DA-Gartner`).
 
 ## Next step
-Look at the stage row on a simulator. First light blocks it and **injected taps
-do not reach the `PLANT IT NOW` button** — `tap` and `touch_path` both, at
-coordinates checked against the screenshot. Go round it the documented way:
-write `Library/Application Support/PeaceGarden/garden.json` in the app's data
-container with a `birth` some weeks past, so the app opens on the stage.
+
+Run the app on a simulator and watch a mature plant across a flush cycle — wind
+the garden on from Settings → Testing. Decide whether the 45% trough is enough
+to read as change. Then merge `round-two` into `main`.
 
 ## Traps
-- **A screenshot right after `simctl launch` catches the zoom animation.** Wait
-  four seconds. Third instance of this shape in this repo, after sheets and taps.
-- **`cd` persists between Bash calls**, and a later `xcodebuild` then fails with
-  *`PeaceGarden.xcodeproj` does not exist*.
-- **`Localizable.xcstrings` is not `json.dumps` round-trippable** — Xcode writes
-  `"key" : {`. Rewriting it reformats all 6,181 lines. Edit textually.
-- **Two agents writing one bank will duplicate three or four lines**, always a
-  proverb or a famous poem. `assemble.py` catches them; each sits in a different
-  subtheme in each half, so the call is which home is better, not which to drop.
-- **A generative image model cannot hold a monoline.** Three rounds went bulbous,
-  then brightness-glyph, then cat. Use it for composition, draw the line here.
+
+- **`cd` persists between Bash calls.** Always pass absolute `--package-path`.
+- **`tools/preview/plant_model.py` is in CI now** — `check_port.py` against a
+  committed `tools/preview/vectors.json`, which a Swift recorder writes. If
+  SeedCore changes on purpose, re-record with
+  `PEACE_GARDEN_RECORD_VECTORS=1 swift test --package-path … --filter PortVectorTests`,
+  then bring the port along. Older notes in `docs/TAXONOMY.md` still say it is
+  not in CI; they are dated journal entries and were left alone.
+- **Render a night-opening plant at its own peak hour.** At 13:00 the diurnal
+  factor damps it to a third and every flower is a shut bud — which looks
+  exactly like a feature that is not working.
+- **Simulator taps need real coordinates.** Screenshots come back scaled; take a
+  raw `xcrun simctl io … screenshot` and divide by 3.
+- **Thresholds against a drawn trait must be measured, not guessed.** Three
+  epithets were unreachable because petal brightness never leaves 0.45–0.82.
+- **Swift `.rounded()` is half-away-from-zero; Python `round()` is half-to-even.**
+  They disagreed on `stem.nodeCount` for about one plant in 27. Fixed in five
+  places in the port, with three vectors chosen specifically to cover it.

@@ -44,6 +44,32 @@ public struct GrowthModel {
         public var age: TimeInterval
         /// Time until the next stage begins, or `nil` once mature.
         public var timeToNextStage: TimeInterval?
+
+        /// Where the plant is in its flowering cycle, `0..<1`, wrapping.
+        ///
+        /// **What a plant does after it has finished growing.** Everything
+        /// above reaches 1 and stays there, so a mature plant used to be fixed
+        /// but for `diurnalFactor` opening and closing it each day. A daily
+        /// rhythm is not much to come back for after the first week.
+        ///
+        /// A flush is the longer rhythm: a wave that travels up the stem, so
+        /// the band of open flowers moves and the plant is visibly different
+        /// from one week to the next. `PlantBuilder` reads it against each
+        /// flower's own height, which is what makes it a wave rather than the
+        /// whole plant breathing in unison.
+        ///
+        /// It is a function of age and the genome and nothing else, so two
+        /// phones still draw the same plant on the same day — the property the
+        /// whole app rests on, and the reason this is a phase rather than
+        /// anything remembered.
+        public var flush: Double
+        /// How strongly the cycle is expressed, `0...1`.
+        ///
+        /// Zero until the plant is mature, then easing to one across its first
+        /// full cycle. **Without the ramp the plant would lurch** the instant it
+        /// matured, dropping flowers that were fully open a second earlier —
+        /// which is the one moment the plant has been building to.
+        public var flushDepth: Double
     }
 
     public let genome: Genome
@@ -130,6 +156,19 @@ public struct GrowthModel {
 
         let timeToNextStage: TimeInterval? = stageEnd.map { $0 - age }
 
+        // The flowering cycle, which only begins once there is nothing left to
+        // grow. Its length is the plant's own: a genome that blooms for three
+        // days cycles in about a week, one that blooms for twelve takes a
+        // month. So two plants side by side are rarely in step, which is most
+        // of what stops a garden looking like one plant repeated.
+        let matureAt = marks[4].end
+        let cycle = max(Self.day, genome.tempo.bloomDays * Self.day * 2.4)
+        let sinceMature = max(0, age - matureAt)
+        let flush = (sinceMature / cycle).truncatingRemainder(dividingBy: 1)
+        let flushDepth = genome.bloom.present
+            ? Self.easeInOut((sinceMature / cycle).clamped(to: 0...1))
+            : 0
+
         return State(
             stage: stage,
             stageProgress: stageProgress,
@@ -139,7 +178,9 @@ public struct GrowthModel {
             budSwell: budSwell,
             bloomOpen: bloomOpen,
             age: age,
-            timeToNextStage: timeToNextStage
+            timeToNextStage: timeToNextStage,
+            flush: flush,
+            flushDepth: flushDepth
         )
     }
 

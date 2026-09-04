@@ -39,6 +39,9 @@ struct PlantStageView: View {
     /// translated, since a piece of state compared against a literal is a piece
     /// of state that stops matching the moment the literal is looked up.
     @State private var expandedMark: String?
+    /// Where the band at the foot begins, once it has been laid out. The plant
+    /// is framed to stand just above it. See `PlantSceneView.bandTop`.
+    @State private var bandTop: CGFloat?
     /// Closing the panel is a decision, so it is kept. It belongs in defaults
     /// rather than in the garden: the garden holds seeds and birthdays, and
     /// this is only a note about what one person has already read.
@@ -78,6 +81,7 @@ struct PlantStageView: View {
                     autoRotates: turntable,
                     style: plantStyle,
                     tint: Color(hex: plantTint),
+                    bandTop: bandTop,
                     onTap: { revealControls() }
                 )
                 .ignoresSafeArea()
@@ -128,6 +132,7 @@ struct PlantStageView: View {
                 .presentationDetents([.medium, .large])
                 .presentationBackground(Chrome.ground)
         }
+        .onPreferenceChange(BandTopKey.self) { bandTop = $0 }
         .onAppear { model.refreshNow() }
 #if DEBUG
         // A screen named on the command line, opened once. See
@@ -228,6 +233,25 @@ struct PlantStageView: View {
                 }
                 .animation(.easeInOut(duration: 0.26), value: expandedMark)
             }
+            // Measured, and handed to the scene so the plant can stand on it.
+            //
+            // Measured rather than counted up from the type sizes and the
+            // paddings, because two of the four things in this band can be
+            // turned off in Settings and the fifth is a safe area that is a
+            // different height on every device.
+            //
+            // Reported whether or not the band is on screen. It is laid out
+            // either way — only its opacity changes — so the plant is framed
+            // the same in both states, and asking for the row does not resize
+            // the one thing on screen that is meant to hold still.
+            .background(
+                GeometryReader { proxy in
+                    Color.clear.preference(
+                        key: BandTopKey.self,
+                        value: proxy.frame(in: .global).minY
+                    )
+                }
+            )
             .padding(.bottom, 30)
         }
     }
@@ -370,5 +394,21 @@ struct PlantStageView: View {
     private func present(_ action: () -> Void) {
         hideTask?.cancel()
         action()
+    }
+}
+
+/// How far down the screen the band at the foot begins.
+///
+/// A preference rather than a measurement taken where it is needed: the band is
+/// laid out at the foot of the stage and the plant is drawn behind the whole of
+/// it, so the view that has the number is not the view that wants it.
+private struct BandTopKey: PreferenceKey {
+    static let defaultValue: CGFloat? = nil
+
+    /// The topmost, which is the only band there is. `nil` comes from a stage
+    /// that has not laid one out yet, and a `nil` never displaces a number.
+    static func reduce(value: inout CGFloat?, nextValue: () -> CGFloat?) {
+        guard let next = nextValue() else { return }
+        value = min(value ?? next, next)
     }
 }

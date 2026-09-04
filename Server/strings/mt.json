@@ -1,0 +1,26 @@
+{
+  "language": "Maltese",
+  "endonym": "Malti",
+  "awaiting": "The labels are written. The prose — tagline, about1, about2, about3, growBody, appNote — is still null and still English, on purpose: it is the site's own writing rather than the app's, and it is read in English before it is commissioned in sixteen languages. A null value is drawn in English, silently, one key at a time; the English is in assets/js/strings.js.",
+  "strings": {
+    "tagline": null,
+    "about1": null,
+    "about2": null,
+    "about3": null,
+    "seedTitle": "Waslet żerriegħa",
+    "replyTitle": "Żerriegħa ġiet lura",
+    "sentBy": "Mibgħuta minn {name}",
+    "gardener": "ġardinar",
+    "planted": "Mħawla",
+    "growTitle": "Kif tkabbarha",
+    "growBody": null,
+    "appNote": null,
+    "inEnglish": "bl-Ingliż",
+    "language": "Lingwa",
+    "keys": "Ċwievet",
+    "random": "X'imkien bl-addoċċ",
+    "damaged": "Din il-link waslet imħassra, u għalhekk iż-żerriegħa ma setgħetx tinqara.",
+    "notASeed": "Dik il-link ma ġġorr l-ebda żerriegħa.",
+    "newerVersion": "Din iż-żerriegħa ġejja minn verżjoni aktar ġdida ta' Peace Garden."
+  }
+}

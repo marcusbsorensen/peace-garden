@@ -9,9 +9,12 @@
   The app offers dark, light, and follow-the-phone. A web page has no settings
   screen, so it follows the reader: `prefers-color-scheme` is the whole of it.
 
-  Nothing here assumes left to right. No round-two language is right to left, so
-  logical properties cost nothing now and mean the pass does not have to be
-  earned twice.
+  Nothing here assumes left to right — every inset, margin and border below is a
+  logical property. That was written when no round-two language was right to
+  left, on the argument that the pass should not have to be earned twice. The
+  pass has arrived: Arabic and Hebrew are in scope, `page.js` sets `dir` on the
+  document from the language, and the cost of it here is the one rule at the
+  foot of this file rather than a rewrite.
 */
 
 :root {
@@ -372,4 +375,463 @@ body[data-loading]:not([data-ready]) .page {
   body[data-loading]:not([data-ready]) .page {
     opacity: 1;
   }
+}
+
+/* The sheet under `?`.
+
+   Every row is labelled by the control it operates, so this is a table of the
+   page's own words against their keys — see assets/js/keys.js for why it holds
+   no wording of its own. It is the only overlay on the site, and it is drawn on
+   the same four opacities as everything else. */
+.keysheet {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.62);
+}
+
+@media (prefers-color-scheme: light) {
+  .keysheet {
+    background: rgba(246, 246, 246, 0.72);
+  }
+}
+
+.keysheet-panel:focus-visible {
+  outline: 1px solid var(--hairline);
+  outline-offset: 3px;
+}
+
+.keysheet-panel {
+  position: relative;
+  max-inline-size: 30rem;
+  inline-size: 100%;
+  max-block-size: 80vh;
+  overflow-y: auto;
+  padding: 22px 24px 24px;
+  background: var(--ground);
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+}
+
+.keysheet-panel h2 {
+  margin: 0 0 14px;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--section);
+}
+
+/* Two columns, keys then what they do. `dt` and `dd` rather than a table
+   because that is what this is: a term and its description. */
+.keysheet-panel dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 9px 16px;
+  margin: 0;
+  align-items: baseline;
+}
+
+.keysheet-panel dt {
+  display: flex;
+  gap: 5px;
+  justify-content: flex-end;
+}
+
+.keysheet-panel dd {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.92rem;
+}
+
+.keysheet-panel kbd {
+  min-inline-size: 1.55em;
+  padding: 2px 6px;
+  border: 1px solid var(--hairline);
+  border-radius: 5px;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+/* A rule between groups, drawn across both columns. */
+.keysheet-rule {
+  grid-column: 1 / -1;
+  block-size: 1px;
+  margin: 5px 0;
+  background: var(--hairline);
+}
+
+
+/* Scripts the label voice must not letter-space.
+
+   `data-keeps-case` above undresses the labels; this one is sharper, because on
+   Arabic tracking is not a stylistic choice but a defect. Arabic is a joined
+   script and space between letters severs the joins, leaving a row of
+   disconnected forms for the reader to reassemble. Persian and Urdu are the same
+   script and the same damage. CJK is here for a milder reason: it is not hurt,
+   but a Han or Kana line tracked to a Latin caption's rhythm reads as badly set,
+   and the small-caps device it imitates has no meaning in a script with no
+   capitals.
+
+   See assets/js/languages.js §NEVER_TRACKED, which is where the list lives. */
+[data-untracked] .label,
+[data-untracked] .heading,
+[data-untracked] .plant-name,
+[data-untracked] .chooser__select,
+[data-untracked] .keysheet-panel h2 {
+  letter-spacing: normal;
+}
+
+/* The garden.
+
+   Three states on one page — the map, an area, one plant — and they share a
+   vocabulary with the rest of the site rather than inventing one: the same four
+   opacities, the same hairline, the same label voice. See assets/js/walk.js. */
+.garden-map,
+.garden-area,
+.garden-plant {
+  inline-size: 100%;
+  max-inline-size: 44rem;
+  margin-inline: auto;
+  padding-inline: 20px;
+}
+
+/* Five across and two down, the layout derived in garden.js. It collapses to
+   two across on a phone, which keeps the reading order — a walk right is still
+   a walk right, it just wraps. */
+.garden-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+/* On a narrow screen the map scrolls sideways rather than wrapping.
+
+   Wrapping to two columns was tried and it is wrong: the ten areas reflow in
+   source order, so `peace` comes to sit beside `travel` — opposite corners of
+   the real map — and the two axes stop meaning anything. Worse, the arrow keys
+   go on following the true map, so Right from `ground` moves the cursor to a
+   cell that is drawn below and to the left. **The picture and the keys have to
+   agree, and the map is the thing that must not bend.**
+
+   So it keeps its five columns at a legible width and the container scrolls.
+   The page itself never scrolls sideways; this one element does. */
+@media (max-width: 46rem) {
+  .garden-map {
+    padding-inline: 0;
+  }
+
+  .garden-grid {
+    grid-template-columns: repeat(5, minmax(8.5rem, 1fr));
+    overflow-x: auto;
+    padding-inline: 20px;
+    padding-block-end: 6px;
+    scroll-padding-inline: 20px;
+  }
+
+  .garden-cell {
+    scroll-snap-align: start;
+  }
+}
+
+.garden-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  min-block-size: 8.5rem;
+  padding: 12px;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  background: none;
+  color: var(--muted);
+  font-family: var(--sans);
+  text-align: start;
+  cursor: pointer;
+  transition: border-color 240ms ease-out, color 240ms ease-out;
+}
+
+.garden-cell:hover,
+.garden-cell:focus-visible,
+.garden-cell.is-hovered {
+  border-color: var(--muted);
+  color: var(--ink);
+  outline: none;
+}
+
+.garden-cell__name {
+  font-size: 0.86rem;
+  line-height: 1.3;
+}
+
+/* How full an area is, as a bar rather than a number — a number would be a
+   string, and this is the same fact in no language at all. The count is on the
+   cell's own aria-label for anybody listening rather than looking. */
+.garden-cell__fill {
+  display: block;
+  block-size: 2px;
+  background: var(--hairline);
+  position: relative;
+  overflow: hidden;
+}
+
+.garden-cell__fill::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: calc(var(--fill, 0) * 100%);
+  background: var(--muted);
+}
+
+/* An area is a field, and a plant's place in it is its place. Square, so the
+   256 x 256 of cells behind it is not stretched into a rectangle. */
+.area-plot {
+  position: relative;
+  aspect-ratio: 1;
+  margin-block-start: 18px;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+}
+
+.plot-plant {
+  position: absolute;
+  inline-size: 9px;
+  block-size: 9px;
+  margin: -4px 0 0 -4px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--faint);
+  cursor: pointer;
+  transition: background-color 200ms ease-out, transform 200ms ease-out;
+}
+
+.plot-plant:hover,
+.plot-plant:focus-visible {
+  background: var(--ink);
+  outline: none;
+  transform: scale(1.5);
+}
+
+/* The pad. Four keys in the shape of the directions they mean, which is the one
+   arrangement nobody has to be told. */
+.pad {
+  display: grid;
+  grid-template-columns: repeat(3, 3rem);
+  grid-template-rows: repeat(2, 3rem);
+  gap: 6px;
+  justify-content: center;
+  margin-block-start: 26px;
+}
+
+.pad-key {
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  background: none;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: border-color 200ms ease-out, color 200ms ease-out;
+}
+
+.pad-key:hover:not(:disabled),
+.pad-key:focus-visible:not(:disabled) {
+  border-color: var(--muted);
+  color: var(--ink);
+  outline: none;
+}
+
+/* A direction with nothing that way is disabled rather than removed: the pad is
+   a fixed shape and must not move under the hand. */
+.pad-key:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.pad-key[data-go="up"] { grid-column: 2; grid-row: 1; }
+.pad-key[data-go="left"] { grid-column: 1; grid-row: 2; }
+.pad-key[data-go="down"] { grid-column: 2; grid-row: 2; }
+.pad-key[data-go="right"] { grid-column: 3; grid-row: 2; }
+
+.garden-plant {
+  text-align: center;
+}
+
+.garden-foot {
+  margin-block-start: 30px;
+  text-align: center;
+}
+
+.quiet-button {
+  padding: 8px 16px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: border-color 200ms ease-out, color 200ms ease-out;
+}
+
+.quiet-button:hover,
+.quiet-button:focus-visible {
+  border-color: var(--muted);
+  color: var(--ink);
+  outline: none;
+}
+
+/* The passage on a garden plant, which needs room the seed page gives it with
+   a rule above. Here the area label sits directly over it. */
+.garden-plant .passage {
+  margin-block-start: 22px;
+}
+
+/* ── Testers ──────────────────────────────────────────────────────────────
+   The test roster and the bar that says which language you are standing in.
+   See assets/js/testers.js for what a tester is, and for why there are no
+   accounts behind any of this.
+
+   Everything below is chrome about the page rather than part of it, so it is
+   the one place on the site written with physical `left` rather than the
+   logical properties the rest of the CSS uses: the bar must not flip under a
+   right-to-left language, because the page under it flipping is the thing the
+   bar is there to report. `View.drawnHand()` makes the same distinction in the
+   app — layout mirrors, drawn marks do not. */
+
+.tester-bar {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 20;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 10px 16px;
+  background: var(--ground);
+  border-block-end: 1px solid var(--hairline);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 300;
+  direction: ltr;
+  text-align: left;
+}
+
+.tester-bar__who {
+  color: var(--ink);
+  letter-spacing: 0.06em;
+}
+
+.tester-bar__where {
+  color: var(--faint);
+}
+
+.tester-bar__out {
+  margin-left: auto;
+  padding: 3px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition: border-color 200ms ease-out, color 200ms ease-out;
+}
+
+.tester-bar__out:hover,
+.tester-bar__out:focus-visible {
+  border-color: var(--muted);
+  color: var(--ink);
+  outline: none;
+}
+
+/* The door, and the roster behind it. */
+
+.door,
+.roster {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-block-start: 26px;
+  max-width: var(--measure);
+  inline-size: 100%;
+}
+
+.door__field {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-block-end: 1px solid var(--hairline);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  padding-block: 6px;
+  inline-size: 100%;
+}
+
+.door__field:focus-visible {
+  outline: none;
+  border-block-end-color: var(--muted);
+}
+
+.roster__list {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  inline-size: 100%;
+  /* Forty-three rows is a long page and a short scroller. A scroller keeps the
+     filter above it in reach, which is what the list is walked with. */
+  max-block-size: 52vh;
+  overflow-y: auto;
+}
+
+.roster__row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  inline-size: 100%;
+  padding: 9px 4px;
+  border: 0;
+  border-block-end: 1px solid var(--hairline);
+  background: none;
+  color: var(--muted);
+  font-family: var(--sans);
+  text-align: start;
+  cursor: pointer;
+  transition: color 160ms ease-out, background-color 160ms ease-out;
+}
+
+.roster__row:hover,
+.roster__row:focus-visible {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.05);
+  outline: none;
+}
+
+.roster__who {
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+}
+
+.roster__what {
+  font-size: 12px;
+  color: var(--faint);
+}
+
+.roster__empty {
+  padding: 12px 4px;
 }

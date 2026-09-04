@@ -10,13 +10,34 @@ It is a sketch, not a second source of truth. `SeedCore` is authoritative for
 everything here except the derivation primitives, which come from
 `tools/reference/derivation_reference.py` and are pinned by test vectors on both
 sides.
+
+**It is geometry, and it names nothing.** A plant's binomial is the one thing
+about it a render cannot show, so a naming implementation here could never be
+checked the way the rest of this file is checked — and when it was tried it fell
+three months behind without anything saying so. `SeedCore` names plants;
+`Genome` here has no `name`, and the note where it used to be derived says why.
+
+**And it is checked.** `check_port.py` holds the genome, the growth state and
+the bloom placements in this file against `vectors.json`, which SeedCore's own
+`PortVectorTests` writes. This file drifted three times before that existed, and
+the last time it was missing the per-node bloom ceiling and the size taper — so
+every spike it ever drew carried identical fully-open heads at even spacing, and
+renders that real decisions were taken from were wrong. See `README.md` here.
 """
 
 import math
 import sys
 from pathlib import Path
 
-import numpy as np
+# **Optional, and that is deliberate.** numpy is the sweep's dependency and
+# nothing else's: the genome, the growth model and the bloom placements are
+# plain floats. `check_port.py` runs in a CI job that installs nothing, so
+# importing this file has to succeed without numpy present and only the geometry
+# below is allowed to want it.
+try:
+    import numpy as np
+except ModuleNotFoundError:  # pragma: no cover — only ever true inside CI
+    np = None
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "reference"))
 from derivation_reference import (  # noqa: E402
@@ -99,6 +120,79 @@ def clamp(value, lo, hi):
     return max(lo, min(hi, value))
 
 
+def rounded(value):
+    """Swift's `.rounded()`: to nearest, and halves away from zero.
+
+    **Use this and never the builtin `round` wherever the Swift says
+    `.rounded()`.** Python's `round` is half-to-even — banker's rounding — and
+    Swift's default rule is half-away-from-zero, so the two disagree on exactly
+    the values that land on a half and agree everywhere else. That is a fault
+    that hides: it is invisible in almost every plant and wrong in the rest.
+
+    It was wrong in `nodeCount` for as long as this file has existed, and that
+    is not a rare corner. `integer("stem.nodeCount", 2...9)` draws a whole
+    number, so the product with `nodeScale` is a small rational and lands
+    exactly on a half far more often than a continuous trait ever would: fern
+    at 9.5, lotus at 1.5, 2.5, 3.5 and 4.5, vine at 8.5, succulent at 10.5.
+
+    Only half of those actually disagree, and which half is worth knowing.
+    Half-to-even goes to the *even* neighbour, which is the same answer as
+    half-away-from-zero whenever the integer part is odd — 1.5, 3.5 and 9.5 all
+    give the same node count either way. The disagreement is exactly the halves
+    with an even integer part: 2.5, 4.5, 8.5, 10.5. Over the four thousand
+    entropies `nodecount-0` … `nodecount-3999` that is 146 seeds, about one in
+    twenty-seven, split lotus 71, vine 40, succulent 35 and no fern at all.
+    Entropy `nodecount-30` is the worked example: a lotus drawing 5 against a
+    `nodeScale` of 0.5, where SeedCore grows three nodes and this grew two.
+
+    Nothing said so for months, because the twelve sampled vectors happened to
+    contain no such seed — a guard can only be green about what it looks at.
+    `vectors.json` now carries `nodecount-30` deliberately, for that reason and
+    no other.
+
+    **Written out, because both of the short ways are wrong**, and each of them
+    was written here first and caught by an exhaustive check against `Decimal`
+    before it got any further.
+
+    `math.floor(value + 0.5)` is the usual trick and it rounds up a number that
+    is below a half: 0.49999999999999994 + 0.5 is exactly 1.0 in double
+    arithmetic, because the true sum is not representable and ties to even.
+
+    Taking `math.floor` and comparing `value - lower` to a half fails on the
+    same number with its sign flipped. -0.49999999999999994 floors to -1, and
+    the true remainder, 0.50000000000000005…, is precisely halfway between 0.5
+    and the next double up — so it ties to even, becomes exactly 0.5, and the
+    tie rule then pushes it away from zero to -1 when the answer is 0.
+
+    `math.trunc` has neither problem, and provably rather than by luck. For any
+    finite double, `value - trunc(value)` is exact: below one the truncation is
+    zero and the subtraction does nothing, and at one or above the two operands
+    are within a factor of two of each other, which is Sterbenz's condition for
+    an exact difference. So the fraction compared below is the real fraction.
+
+    `Decimal(value).quantize(Decimal(1), rounding=ROUND_HALF_UP)` was also
+    tried. It is exactly right and it reads better, and it was still rejected:
+    timed against this, it is about ten times slower, on a call that runs once
+    per row of every swept tube in the sheet.
+
+    The other four places the Swift says `.rounded()` are here too, and all
+    four were checked rather than assumed. `branchCount` multiplies 5 or 7 by a
+    continuous `value(0.72...1.34)`, and over the same four thousand seeds it
+    never lands on a half — but a trait that is one draw away from doing so is
+    not a trait to leave on the wrong rule. `node_indices` takes `0.16 + 0.74 *
+    index / (nodeCount - 1)` times 28, which over every `nodeCount` from 1 to 40
+    lands on a half exactly once, at `nodeCount` 29 — above the 20 that
+    `GenomeTests` declares the ceiling, so unreachable. `build_branches` takes
+    `t * 28` over a thousand-step sweep of `branchSpread` and never lands on
+    one. `add_tube` cannot: its `v` is `r / (rows - 1)` and the product is `r`.
+    """
+    truncated = math.trunc(value)
+    if abs(value - truncated) < 0.5:
+        return truncated
+    # A half or more, so step away from zero: 2.5 to 3, and -2.5 to -3.
+    return truncated + 1 if value > 0 else truncated - 1
+
+
 def wrapped_unit(value):
     value = math.fmod(value, 1.0)
     return value + 1.0 if value < 0 else value
@@ -111,42 +205,38 @@ ARCHETYPES = ["spire", "umbel", "fern", "orchid", "lotus", "thistle",
 
 DEFAULT_PROFILE = dict(
     heightScale=1.0, stemThickness=1.0, nodeScale=1.0, leafLengthScale=1.0,
-    leafWidthScale=1.0, leafDroop=1.0, petalCountScale=1.0, petalLengthScale=1.0,
+    leafWidthScale=1.0, leafDroop=1.0, petals=(5, 8), petalLengthScale=1.0,
     petalWidthScale=1.0, petalCurlBias=0.0, headPitchBias=0.0, centreScale=1.0,
     bloomsAtNodes=False, bloomPresence=1.0, swayScale=1.0,
     inflorescence="raceme", bloomScale=1.0, branchSpread=0.0, branchCount=5,
 )
 
 PROFILE_OVERRIDES = {
-    "spire": dict(heightScale=1.35, nodeScale=1.6, petalLengthScale=0.55,
-                  petalCountScale=0.7, bloomsAtNodes=True, leafLengthScale=0.8),
-    "umbel": dict(inflorescence="head", branchSpread=0.0, branchCount=5, bloomScale=0.8,
-                  heightScale=0.9, petalLengthScale=0.45, petalCountScale=1.4,
-                  centreScale=0.6, leafDroop=1.2),
-    "fern": dict(heightScale=0.8, nodeScale=1.9, leafLengthScale=1.5, leafWidthScale=0.7,
-                 leafDroop=1.5, bloomPresence=0.05, swayScale=1.3),
-    "orchid": dict(inflorescence="solitary", bloomScale=1.7, heightScale=0.85, stemThickness=0.8, nodeScale=0.6, petalCountScale=0.35,
-                   petalLengthScale=1.0, petalWidthScale=1.3, petalCurlBias=0.25,
+    "spire": dict(petals=(4, 6), heightScale=1.35, nodeScale=1.6, petalLengthScale=0.55,
+                  bloomsAtNodes=True, leafLengthScale=0.8),
+    "umbel": dict(petals=(5, 8), inflorescence="head", branchSpread=0.0, branchCount=5, bloomScale=0.8,
+                  heightScale=0.9, petalLengthScale=0.45, centreScale=0.6, leafDroop=1.2),
+    "fern": dict(petals=(3, 5), heightScale=0.8, nodeScale=1.9, leafLengthScale=1.5, leafWidthScale=0.7,
+                 leafDroop=1.3, bloomPresence=0.05, swayScale=1.3),
+    "orchid": dict(petals=(3, 6), inflorescence="solitary", bloomScale=1.7, heightScale=0.85, stemThickness=0.8, nodeScale=0.6, petalLengthScale=1.0, petalWidthScale=1.3, petalCurlBias=0.25,
                    headPitchBias=0.5, leafLengthScale=1.2),
-    "lotus": dict(inflorescence="solitary", bloomScale=1.7, heightScale=0.7, stemThickness=1.4, petalLengthScale=1.0,
+    "lotus": dict(petals=(8, 14), inflorescence="solitary", bloomScale=1.7, heightScale=0.7, stemThickness=1.4, petalLengthScale=1.0,
                   petalWidthScale=1.5, petalCurlBias=-0.55, centreScale=1.7, nodeScale=0.5),
-    "thistle": dict(inflorescence="solitary", bloomScale=2.4, heightScale=0.9, nodeScale=0.55,
-                    stemThickness=1.2, petalCountScale=2.2,
-                    petalLengthScale=0.4, petalWidthScale=0.3, petalCurlBias=-0.3,
+    "thistle": dict(petals=(13, 21), inflorescence="solitary", bloomScale=2.4, heightScale=0.9, nodeScale=0.55,
+                    stemThickness=1.2, petalLengthScale=0.4, petalWidthScale=0.3, petalCurlBias=-0.3,
                     centreScale=1.3),
-    "vine": dict(heightScale=1.45, stemThickness=0.6, nodeScale=1.7, leafLengthScale=0.65,
+    "vine": dict(petals=(4, 6), heightScale=1.45, stemThickness=0.6, nodeScale=1.7, leafLengthScale=0.65,
                  leafWidthScale=1.1, swayScale=1.8, bloomsAtNodes=True, petalLengthScale=0.5),
-    "bell": dict(petalCurlBias=-0.75, petalLengthScale=1.1, headPitchBias=1.0,
-                 petalCountScale=0.55, bloomsAtNodes=True),
-    "star": dict(petalCurlBias=0.35, petalWidthScale=0.6, centreScale=0.7, petalCountScale=0.9),
-    "poppy": dict(inflorescence="solitary", bloomScale=1.7, heightScale=0.75,
-                  nodeScale=0.35, leafLengthScale=0.7, petalCountScale=0.3,
-                  petalLengthScale=1.0, petalWidthScale=1.6, petalCurlBias=-0.35,
+    "bell": dict(petals=(5, 10), petalCurlBias=-0.75, petalLengthScale=1.1, headPitchBias=1.0,
+                 bloomsAtNodes=True),
+    "star": dict(petals=(5, 8), petalCurlBias=0.35, petalWidthScale=0.6, centreScale=0.7, petalCountScale=0.9),
+    "poppy": dict(petals=(4, 6), inflorescence="solitary", bloomScale=1.7, heightScale=0.75,
+                  nodeScale=0.35, leafLengthScale=0.7, petalLengthScale=1.0, petalWidthScale=1.6, petalCurlBias=-0.35,
                   headPitchBias=0.35, swayScale=1.4),
-    "succulent": dict(heightScale=0.45, stemThickness=1.9, nodeScale=2.1, leafLengthScale=0.55,
+    "succulent": dict(petals=(8, 12), heightScale=0.45, stemThickness=1.9, nodeScale=2.1, leafLengthScale=0.55,
                       leafWidthScale=1.6, leafDroop=0.3, petalLengthScale=0.5, bloomPresence=0.6),
-    "plume": dict(inflorescence="head", branchSpread=1.0, branchCount=7, bloomScale=0.8,
-                  heightScale=1.05, nodeScale=1.8, petalCountScale=1.8, petalLengthScale=0.35,
+    "plume": dict(petals=(5, 10), inflorescence="head", branchSpread=1.0, branchCount=7, bloomScale=0.8,
+                  heightScale=1.05, nodeScale=1.8, petalLengthScale=0.35,
                   petalWidthScale=0.35, leafLengthScale=0.6, leafWidthScale=0.4),
 }
 
@@ -291,41 +381,44 @@ class Genome:
         profile = profile_for(self.archetype)
         self.profile = profile
 
-        self.symmetry = source.integer("form.symmetry", 3, 9)
-        self.vigour = source.bell("form.vigour", 0.82, 1.22)
+        self.merosity = "many" if source.chance("bloom.merosity", 0.5) else "few"
+        self.vigour = source.bell("form.vigour", 0.74, 1.30)
 
         self.inflorescence = profile["inflorescence"]
         self.bloomScale = profile["bloomScale"]
-        self.branchCount = max(3, min(7, round(
+        self.branchCount = max(3, min(7, rounded(
             profile["branchCount"] * source.value("stem.branch.count", 0.72, 1.34))))
         self.branchSpread = clamp(
             profile["branchSpread"] + source.signed("stem.branch.spread") * 0.14, 0, 1)
         self.branchAngle = source.value("stem.branch.angle", 1.0, 1.35)
 
-        self.height = source.value("stem.height", 0.55, 1.25) * profile["heightScale"] * self.vigour
-        self.baseRadius = source.value("stem.baseRadius", 0.008, 0.019) * profile["stemThickness"]
-        self.taper = source.value("stem.taper", 0.28, 0.72)
-        self.lean = source.signed("stem.lean") * 0.55
-        self.sway = source.bell("stem.sway", 0, 1) * profile["swayScale"]
-        self.twist = source.signed("stem.twist") * 0.7
-        self.nodeCount = max(1, round(source.integer("stem.nodeCount", 2, 7) * profile["nodeScale"]))
+        self.height = source.value("stem.height", 0.44, 1.42) * profile["heightScale"] * self.vigour
+        self.baseRadius = source.value("stem.baseRadius", 0.006, 0.022) * profile["stemThickness"]
+        self.taper = source.value("stem.taper", 0.16, 0.86)
+        self.lean = source.signed("stem.lean") * 0.75
+        self.sway = source.bell("stem.sway", 0, 1.25) * profile["swayScale"]
+        self.twist = source.signed("stem.twist") * 0.95
+        self.nodeCount = max(1, rounded(source.integer("stem.nodeCount", 2, 9) * profile["nodeScale"]))
         self.sides = source.integer("stem.sides", 6, 9)
 
         self.leavesPerNode = source.integer("foliage.leavesPerNode", 1, 3)
-        self.leafLength = source.value("foliage.length", 0.09, 0.26) * profile["leafLengthScale"] * self.vigour
-        self.leafWidthRatio = source.value("foliage.widthRatio", 0.22, 0.78) * profile["leafWidthScale"]
-        self.leafDroop = source.bell("foliage.droop", 0, 1) * profile["leafDroop"]
-        self.leafFold = source.value("foliage.fold", 0.05, 0.55)
-        self.leafPitch = source.value("foliage.pitch", 0.35, 1.25)
+        self.leafLength = source.value("foliage.length", 0.055, 0.28) * profile["leafLengthScale"] * self.vigour
+        self.leafWidthRatio = source.value("foliage.widthRatio", 0.13, 0.88) * profile["leafWidthScale"]
+        self.leafDroop = source.bell("foliage.droop", 0, 1.15) * profile["leafDroop"]
+        self.leafFold = source.value("foliage.fold", 0.02, 0.62)
+        self.leafPitch = source.value("foliage.pitch", 0.24, 1.45)
         self.divergence = 2.399963 + source.signed("foliage.divergence") * 0.22
-        self.serration = source.bell("foliage.serration", 0, 1)
-        self.teeth = source.integer("foliage.teeth", 5, 17)
-        self.veinCount = source.integer("foliage.veinCount", 3, 9)
+        self.serration = source.bell("foliage.serration", 0, 1.3)
+        self.teeth = source.integer("foliage.teeth", 3, 17)
+        self.veinCount = source.integer("foliage.veinCount", 2, 9)
         self.veinDepth = source.bell("foliage.veinDepth", 0.2, 1.0) if source.chance("foliage.hasVeins", 0.72) else 0.0
-        self.leafTipSharpness = source.value("foliage.tipSharpness", 0.7, 2.1)
+        self.leafTipSharpness = source.value("foliage.tipSharpness", 0.5, 2.4)
 
-        petal_base = source.integer("bloom.petalCount", 3, 13)
-        self.petalCount = max(3, round(petal_base * profile["petalCountScale"]))
+        # The genus has a petal count; the plant does not draw one. See
+        # SeedCore's Genome.swift and docs/TAXONOMY.md §1.
+        plan = profile["petals"][0 if self.merosity == "few" else 1]
+        variance = source.unit("bloom.petalVariant")
+        self.petalCount = max(3, plan + (-1 if variance < 0.1 else 1 if variance > 0.9 else 0))
         bloom_scale = 0.75 + 0.45 * min(1.6, self.height)
         self.petalLength = source.value("bloom.length", 0.09, 0.24) * profile["petalLengthScale"] * bloom_scale
         self.layers = source.integer("bloom.layers", 1, 3)
@@ -353,7 +446,41 @@ class Genome:
         self.bloomDays = source.value("tempo.bloomDays", 3.0, 12.0)
         self.opensByDay = source.chance("tempo.opensByDay", 0.7)
 
-        self.name = plant_name(source)
+        # **There is deliberately no name here.** SeedCore gives every plant a
+        # binomial; this port gives none, and that is a decision rather than an
+        # omission waiting to be filled in.
+        #
+        # This file exists to draw geometry so a plant can be looked at. A name
+        # is the one thing about a plant that no render shows, so a naming
+        # implementation here can never be checked by the means this tool is
+        # checked by — and it was not. It sat three months behind: SeedCore
+        # stopped drawing the genus on 3 September 2026 and started reading it
+        # off the flower (`PlantName.roots` maps a family and a merosity to one
+        # of the twenty-four heads), and replaced the glued two-syllable
+        # epithet with `Epithet`, which says only what has been checked to be
+        # true of the specimen. The port went on gluing `name.epithetHead` to
+        # `name.epithetTail` and printing *pallicola* — "pale-dwelling", which
+        # is not a thing a plant can be — under captions in `preview.py`.
+        #
+        # Porting it rather than deleting it was considered and rejected. It is
+        # not a line: `Epithet` reads `palette.marbling`, one of twelve palette
+        # draws this file does not have, so it is a real piece of work whose
+        # only payoff is a string nothing here displays. A wrong name that
+        # nobody reads costs nothing until somebody wires it up believing it
+        # agrees with the app; the way to make sure that never happens is for
+        # the port to have no opinion about names at all.
+        #
+        # **Removing the draws could not move anything else, and it did not.**
+        # `GeneSource` draws by label — `unit(label)` hashes the seed with the
+        # name of the trait — so there is no stream whose position a missing
+        # draw could shift. That is the same property `Genome.swift` relies on
+        # when it adds new keys. It was proved rather than argued: a SHA-256
+        # over every position, normal, UV and index of twenty-four plants at
+        # sixteen ages each is byte-identical before and after.
+        #
+        # `SeedCore` remains authoritative for the name, `vectors.json` still
+        # records it as a label so a reader can tell which specimen a vector
+        # describes, and `check_port.py` deliberately does not compare it.
 
     @property
     def leafCount(self):
@@ -362,40 +489,6 @@ class Genome:
     @property
     def daysToBloom(self):
         return self.germinationHours / 24.0 + self.seedlingDays + self.vegetativeDays + self.buddingDays
-
-
-GENUS_HEADS = ["Ael", "Aur", "Bel", "Cal", "Cer", "Cyn", "Dros", "El", "Fen", "Hal",
-               "Ith", "Lir", "Mel", "Nyx", "Ol", "Pell", "Quin", "Ros", "Sel", "Thal",
-               "Umbr", "Ver", "Wyn", "Zeph"]
-GENUS_MIDDLES = ["a", "an", "ar", "er", "i", "in", "is", "o", "or", "yr", "ell", "ess", "ol", "un"]
-GENUS_TAILS = ["ia", "is", "a", "ea", "ina", "ora", "yne", "era", "ula", "ynth"]
-EPITHET_HEADS = ["noct", "vesper", "lum", "umbr", "sol", "aur", "glaci", "pluvi", "stell",
-                 "sylv", "mont", "riv", "cine", "ferr", "pall", "seren", "tacit", "viv"]
-EPITHET_TAILS = ["urna", "alis", "ata", "ifolia", "escens", "iflora", "ina", "icola",
-                 "antha", "aria", "osa", "ula"]
-
-VOWELS = set("aeiouyAEIOUY")
-
-
-def _join(parts):
-    result = ""
-    for part in parts:
-        if not part:
-            continue
-        if result and result[-1] in VOWELS and part[0] in VOWELS:
-            result = result[:-1]
-        result += part
-    return result
-
-
-def plant_name(source):
-    head = source.pick("name.genusHead", GENUS_HEADS)
-    middle = source.pick("name.genusMiddle", GENUS_MIDDLES) if source.chance("name.hasMiddle", 0.45) else ""
-    tail = source.pick("name.genusTail", GENUS_TAILS)
-    genus = _join([head, middle, tail])
-    epithet = _join([source.pick("name.epithetHead", EPITHET_HEADS),
-                     source.pick("name.epithetTail", EPITHET_TAILS)]).lower()
-    return f"{genus} {epithet}"
 
 
 # -------------------------------------------------------------------- growth
@@ -446,9 +539,16 @@ def growth_state(genome, age_seconds, hour_of_day=13.0):
         delta = 24 - delta
     bloom_open *= 0.34 + 0.66 * ease_in_out(1.0 - delta / 12.0)
 
+    # The flowering cycle after maturity. See SeedCore's GrowthModel.
+    cycle = max(DAY, genome.bloomDays * DAY * 2.4)
+    since_mature = max(0.0, age - blooming)
+    flush = (since_mature / cycle) % 1.0
+    flush_depth = ease_in_out(clamp(since_mature / cycle, 0, 1)) if genome.bloomPresent else 0.0
+
     return dict(stage=stage, stageProgress=stage_progress, overall=overall,
                 heightScale=max(0.055, height), leafUnfurl=leaf_unfurl,
-                budSwell=bud_swell, bloomOpen=bloom_open, age=age)
+                budSwell=bud_swell, bloomOpen=bloom_open, age=age,
+                flush=flush, flushDepth=flush_depth)
 
 
 # ------------------------------------------------------------------ geometry
@@ -532,7 +632,7 @@ class MeshBuilder:
         columns = sides + 1
 
         def point(u, v):
-            index = min(len(path) - 1, int(round(v * (len(path) - 1))))
+            index = min(len(path) - 1, rounded(v * (len(path) - 1)))
             sample = path[index]
             angle = u * 2 * math.pi
             offset = sample["normal"] * math.cos(angle) + sample["binormal"] * math.sin(angle)
@@ -584,7 +684,46 @@ def transport_frames(positions, radii, twist):
     return samples
 
 
-def build_skeleton(genome, height_scale, segments=28):
+STEM_SEGMENTS = 28
+
+
+def node_indices(node_count, segments=STEM_SEGMENTS):
+    """Which stem samples carry the leaf nodes, as indices into the sweep.
+
+    Split out of `build_skeleton` so a node's place on the stem can be had
+    without sweeping one. The sweep is the only part of this file that wants
+    numpy, and `check_port.py` runs where there is none — but it still needs
+    every node's `t`, because that is what sets a flower's lag, its ceiling and
+    its place in the flush wave. The skeleton builder reads its nodes off this
+    list, so the two cannot come apart.
+
+    A sample's `t` is its index over `segments`, which is what makes this
+    enough on its own: `transport_frames` numbers `positions` from 0 to 1 and
+    the stem always has `segments + 1` of them.
+    """
+    indices = []
+    for index in range(node_count):
+        fraction = 0.55 if node_count == 1 else 0.16 + 0.74 * index / (node_count - 1)
+        indices.append(min(segments, rounded(fraction * segments)))
+    return indices
+
+
+def stalk_count(genome, height_scale):
+    """How many stalks a head gives off at this height.
+
+    The guards at the top of `build_branches` and nothing below them — a stalk
+    can still be dropped for want of reach, but only while `vigour` is under
+    about 0.01, which is a stem a quarter grown. **No flower is ever drawn
+    there**: `budSwell` does not leave zero until the plant has stopped
+    growing, and `heightScale` is 1 by then. So this is exact everywhere a
+    bloom is placed, which is the one thing `check_port.py` asks of it.
+    """
+    if genome.inflorescence != "head" or genome.branchCount <= 0:
+        return 0
+    return genome.branchCount if smoothstep((height_scale - 0.25) / (0.7 - 0.25)) > 0.001 else 0
+
+
+def build_skeleton(genome, height_scale, segments=STEM_SEGMENTS):
     length = max(0.01, genome.height * height_scale)
     step = length / segments
     lean_per_step = genome.lean * 0.9 / segments
@@ -607,33 +746,28 @@ def build_skeleton(genome, height_scale, segments=28):
         radii.append(base_radius * (1 - (1 - genome.taper) * t))
 
     samples = transport_frames(positions, radii, genome.twist)
-    nodes = []
-    for index in range(genome.nodeCount):
-        fraction = 0.55 if genome.nodeCount == 1 else 0.16 + 0.74 * index / (genome.nodeCount - 1)
-        nodes.append(samples[min(len(samples) - 1, int(round(fraction * (len(samples) - 1))))])
+    nodes = [samples[index] for index in node_indices(genome.nodeCount, segments)]
     return dict(stem=samples, nodes=nodes, apex=samples[-1],
                 branches=build_branches(genome, samples, height_scale, length))
 
 
 def build_branches(genome, samples, height_scale, stem_length):
     """Mirror of SkeletonBuilder.branches in PlantSkeleton.swift."""
-    if genome.inflorescence != "head" or genome.branchCount <= 0 or len(samples) < 2:
+    count = stalk_count(genome, height_scale)
+    if count == 0 or len(samples) < 2:
         return []
 
     vigour = smoothstep((height_scale - 0.25) / (0.7 - 0.25))
-    if vigour <= 0.001:
-        return []
-
     spread = genome.branchSpread
     apex = samples[-1]
     zone_start = 0.78 - 0.33 * spread
     zone_end = 0.95
 
     branches = []
-    for index in range(genome.branchCount):
-        fraction = 0.5 if genome.branchCount == 1 else index / (genome.branchCount - 1)
+    for index in range(count):
+        fraction = 0.5 if count == 1 else index / (count - 1)
         t = zone_start + (zone_end - zone_start) * fraction
-        origin = samples[min(len(samples) - 1, int(round(t * (len(samples) - 1))))]
+        origin = samples[min(len(samples) - 1, rounded(t * (len(samples) - 1)))]
 
         jitter = SplitMix64(genome.seed, f"branch.{index}")
         azimuth = genome.divergence * index
@@ -792,28 +926,105 @@ def _add_leaves(builder, genome, skeleton, growth):
         builder.add_surface("leaf", 19, 9, point)
 
 
-def _add_blooms(builder, genome, skeleton, growth):
-    if not genome.bloomPresent or growth["budSwell"] <= 0.02:
-        return
-    _add_bloom(builder, genome, skeleton["apex"], genome.bloomScale, growth, 0)
+def _flush_factor(position, growth):
+    """The travelling wave. See SeedCore's PlantBuilder.flushFactor."""
+    depth = growth.get("flushDepth", 0.0)
+    if depth <= 0:
+        return 1.0
+    wave = 0.5 + 0.5 * math.cos(2 * math.pi * (growth.get("flush", 0.0) - position))
+    return 1 - depth * 0.55 * (1 - wave)
 
-    for offset, branch in enumerate(skeleton.get("branches", [])):
+
+def _flushed(growth, position):
+    factor = _flush_factor(position, growth)
+    if factor >= 1:
+        return growth
+    local = dict(growth)
+    local["budSwell"] *= factor
+    local["bloomOpen"] *= factor
+    return local
+
+
+def bloom_placements(genome, growth, node_ts, stalks):
+    """Every flower this plant carries, in the order they are drawn.
+
+    Mirror of `PlantBuilder.forEachBloom`, and the one part of this file that
+    `check_port.py` reads directly, because it is the part that has actually
+    gone wrong. Nothing here survives into the mesh as anything a reader could
+    recover: `budSwell` and `bloomOpen` become an angle and a length, and
+    `scale` is folded into both. Two flowers half a cycle apart differ by a few
+    hundred vertices in a plant that has thousands, which is how the last drift
+    lasted three revisions.
+
+    Takes the nodes' `t` values and the number of stalks rather than a skeleton,
+    so that it can be called without numpy. `_add_blooms` passes the real ones
+    off the swept skeleton; `check_port.py` gets them from `node_indices` and
+    `stalk_count`.
+
+    `t` is 1 for the crown and for every stalk tip, by construction rather than
+    by assumption: each sits on the last sample of its own path, and
+    `transport_frames` numbers that one 1.
+    """
+    if not genome.bloomPresent or growth["budSwell"] <= 0.02:
+        return []
+
+    # The crown leads the cycle, so its position in the wave is zero.
+    crown = _flushed(growth, 0.0)
+    placements = [dict(kind="crown", index=0, t=1.0,
+                       budSwell=crown["budSwell"], bloomOpen=crown["bloomOpen"],
+                       scale=genome.bloomScale)]
+
+    # A head has no up and down to run a wave along, so its stalks take an even
+    # share of the cycle instead.
+    for offset in range(stalks):
         size = SplitMix64(genome.seed, f"bloom.size.branch.{offset}")
-        _add_bloom(builder, genome, branch["path"][-1],
-                   genome.bloomScale * size.value(0.86, 1.1), growth, offset + 1)
+        local = _flushed(growth, (offset + 1) / (stalks + 1))
+        placements.append(dict(kind="branch", index=offset + 1, t=1.0,
+                               budSwell=local["budSwell"], bloomOpen=local["bloomOpen"],
+                               scale=genome.bloomScale * size.value(0.86, 1.1)))
 
     if not genome.bloomsAtNodes:
-        return
-    for offset, node in enumerate(skeleton["nodes"]):
-        if node["t"] <= 0.35:
+        return placements
+    for offset, t in enumerate(node_ts):
+        if t <= 0.35:
             continue
-        lag = (1 - node["t"]) * 0.5
+        lag = (1 - t) * 0.5
+        # **This port was missing the ceiling and the taper entirely**, so every
+        # spike it drew carried identical fully-open heads at even spacing —
+        # which is precisely the tell SeedCore's own comments record fixing, and
+        # which every render taken from this file has therefore been wrong about.
+        ceiling = 0.45 + 0.55 * t
+        flush = _flush_factor(t, growth)
+        bud = min(ceiling, max(0.0, growth["budSwell"] - lag) / max(0.01, 1 - lag)) * flush
+        openness = min(ceiling, max(0.0, growth["bloomOpen"] - lag) / max(0.01, 1 - lag)) * flush
+        if bud <= 0.02:
+            continue
+        size = SplitMix64(genome.seed, f"bloom.size.{offset}")
+        up = min(1.0, max(0.0, (t - 0.35) / 0.65))
+        placements.append(dict(kind="node", index=offset + 1, t=t,
+                               budSwell=bud, bloomOpen=openness,
+                               scale=(0.4 + 0.34 * up) * size.value(0.88, 1.12)))
+    return placements
+
+
+def _add_blooms(builder, genome, skeleton, growth):
+    branches = skeleton.get("branches", [])
+    placements = bloom_placements(genome, growth,
+                                  [node["t"] for node in skeleton["nodes"]],
+                                  len(branches))
+    for placement in placements:
+        if placement["kind"] == "crown":
+            sample = skeleton["apex"]
+        elif placement["kind"] == "branch":
+            sample = branches[placement["index"] - 1]["path"][-1]
+        else:
+            sample = skeleton["nodes"][placement["index"] - 1]
+        # Only the two the placement carries move; a flower's stage, age and
+        # phase are the plant's own and pass through untouched.
         local = dict(growth)
-        local["budSwell"] = max(0.0, growth["budSwell"] - lag) / max(0.01, 1 - lag)
-        local["bloomOpen"] = max(0.0, growth["bloomOpen"] - lag) / max(0.01, 1 - lag)
-        if local["budSwell"] <= 0.02:
-            continue
-        _add_bloom(builder, genome, node, 0.62, local, offset + 1)
+        local["budSwell"] = placement["budSwell"]
+        local["bloomOpen"] = placement["bloomOpen"]
+        _add_bloom(builder, genome, sample, placement["scale"], local, placement["index"])
 
 
 def _add_bloom(builder, genome, sample, scale, growth, index):

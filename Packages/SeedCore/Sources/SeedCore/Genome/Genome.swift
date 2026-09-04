@@ -35,7 +35,17 @@ public struct HSB: Equatable, Codable, Sendable {
 public struct Genome: Equatable, Sendable {
     public struct Form: Equatable, Sendable {
         public var archetype: Archetype
-        public var symmetry: Int
+        /// How many parts the flower is built in, as a class. The count itself
+        /// is `bloom.petalCount`.
+        ///
+        /// **This replaced `symmetry`**, which was drawn into every genome
+        /// from the first commit and read by nothing — not by the geometry, not
+        /// by the name, not by a test. A trait nothing consumes cannot be
+        /// keyed, and a plant that cannot be keyed is what `docs/TAXONOMY.md`
+        /// was written about. Removing it is free: a `Genome` is derived from a
+        /// seed every time and never stored, so no garden on any phone holds a
+        /// field that has gone.
+        public var merosity: Merosity
         public var vigour: Double
     }
 
@@ -210,10 +220,35 @@ public struct Genome: Equatable, Sendable {
         let archetype = source.pick("form.archetype", from: Archetype.allCases)
         let profile = ArchetypeProfile.profile(for: archetype)
 
+        // The two floral facts the name is read from. Everything below is the
+        // plant; these two are also its classification.
+        let merosity: Merosity = source.chance("bloom.merosity", 0.5) ? .many : .few
+
+        // **The vegetative half is drawn wide on purpose.** Every range from
+        // here to the end of `foliage` is wider than it was before 3 September
+        // 2026, and docs/TAXONOMY.md §"What the archetype profiles constrain"
+        // is why: a family is constant in its flower and various in everything
+        // else, which is precisely how two plants of one family can look
+        // nothing alike and still key the same. The flower above is held to a
+        // count per genus; the stem and the leaves are given room.
+        //
+        // The ranges widened rather than the `ArchetypeProfile` multipliers,
+        // and that distinction is the whole of it. A multiplier moves where a
+        // family's centre sits, which is between-family difference; a range
+        // decides how far one plant may stand from its own relatives, which is
+        // what a genus is allowed to vary in. Only the fern's `leafDroop` moved,
+        // and only downward — see `ArchetypeProfile`.
+        //
+        // Vigour scales height and leaf alike, so it is the one knob that
+        // changes a plant's size without changing its proportions. It is worth
+        // widening anyway, because `baseRadius` and `nodeCount` are drawn
+        // independently of it: a vigorous plant comes out taller on the same
+        // stem thickness with the same number of nodes, which reads as drawn
+        // out rather than merely larger.
         form = Form(
             archetype: archetype,
-            symmetry: source.integer("form.symmetry", 3...9),
-            vigour: source.bell("form.vigour", 0.82...1.22)
+            merosity: merosity,
+            vigour: source.bell("form.vigour", 0.74...1.30)
         )
 
         // New keys only, and every existing one left exactly as it was.
@@ -232,39 +267,81 @@ public struct Genome: Equatable, Sendable {
             bloomScale: profile.bloomScale
         )
 
-        let height = source.value("stem.height", 0.55...1.25) * profile.heightScale * form.vigour
-        let baseRadius = source.value("stem.baseRadius", 0.008...0.019) * profile.stemThickness
+        // Height and radius are drawn independently, so widening both widens
+        // the *ratio* between them — which is what actually reads, because both
+        // the app and `tools/preview` frame a plant to fill the view. Nobody
+        // ever sees a plant next to a ruler; they see it next to its own
+        // thickness and its own leaves. `nodeCount`'s ceiling is set by the
+        // succulent, whose `nodeScale` of 2.1 takes 9 to 19 and no further:
+        // `GenomeTests` declares 20 the limit.
+        let height = source.value("stem.height", 0.44...1.42) * profile.heightScale * form.vigour
+        let baseRadius = source.value("stem.baseRadius", 0.006...0.022) * profile.stemThickness
         stem = Stem(
             height: height,
             baseRadius: baseRadius,
-            taper: source.value("stem.taper", 0.28...0.72),
-            lean: source.signed("stem.lean") * 0.55,
-            sway: source.bell("stem.sway", 0...1) * profile.swayScale,
-            twist: source.signed("stem.twist") * 0.7,
-            nodeCount: max(1, Int((Double(source.integer("stem.nodeCount", 2...7)) * profile.nodeScale).rounded())),
+            taper: source.value("stem.taper", 0.16...0.86),
+            lean: source.signed("stem.lean") * 0.75,
+            sway: source.bell("stem.sway", 0...1.25) * profile.swayScale,
+            twist: source.signed("stem.twist") * 0.95,
+            nodeCount: max(1, Int((Double(source.integer("stem.nodeCount", 2...9)) * profile.nodeScale).rounded())),
             sides: source.integer("stem.sides", 6...9)
         )
 
+        // **Leaf length is the widest of these, and the one that pays most.**
+        // Nearly fivefold, against twofold and a bit before. A leaf is only
+        // ever seen against the plant carrying it, so decoupling its size from
+        // the stem's is what turns one genus into a leafy individual and a bare
+        // one — and the bare end is the more legible of the two, which is why
+        // most of the new range is below the old floor rather than above its
+        // ceiling.
+        //
+        // Two of these widened downward only, and for the same reason.
+        // `addSurface` gives a blade nineteen rows, and both `teeth` and
+        // `veinCount` are sampled along those rows — at their old ceilings of
+        // 17 and 9 they are already at or past what nineteen rows can resolve,
+        // so raising either would draw a coarser leaf rather than a finer one.
+        // Widening them the other way costs nothing and gives a three-lobed
+        // margin and a two-ribbed blade, neither of which the garden had.
         foliage = Foliage(
             leavesPerNode: source.integer("foliage.leavesPerNode", 1...3),
-            length: source.value("foliage.length", 0.09...0.26) * profile.leafLengthScale * form.vigour,
-            widthRatio: source.value("foliage.widthRatio", 0.22...0.78) * profile.leafWidthScale,
-            droop: source.bell("foliage.droop", 0...1) * profile.leafDroop,
-            fold: source.value("foliage.fold", 0.05...0.55),
-            pitch: source.value("foliage.pitch", 0.35...1.25),
+            length: source.value("foliage.length", 0.055...0.28) * profile.leafLengthScale * form.vigour,
+            widthRatio: source.value("foliage.widthRatio", 0.13...0.88) * profile.leafWidthScale,
+            // Held to 1.15 rather than the 1.3 the rest of these took, because
+            // droop is the one vegetative trait with a drawing limit rather
+            // than a botanical one. `PlantBuilder.addLeaf` sags the blade along
+            // its own frame's up-vector, and for a leaf held close to the stem
+            // that vector points sideways — so a high droop on an upright leaf
+            // kinks the blade out and back instead of bending it down. Drawn at
+            // a ladder of values, a fern stops reading as a plant somewhere
+            // past a droop of about 1.3 on a near-upright leaf that is long
+            // against its own plant — all three at once — and the fern is the
+            // only family whose multiplier could reach it.
+            droop: source.bell("foliage.droop", 0...1.15) * profile.leafDroop,
+            fold: source.value("foliage.fold", 0.02...0.62),
+            pitch: source.value("foliage.pitch", 0.24...1.45),
             // Phyllotaxis: the golden angle, jittered a little per plant.
             divergence: 2.399963 + source.signed("foliage.divergence") * 0.22,
-            serration: source.bell("foliage.serration", 0...1),
-            teeth: source.integer("foliage.teeth", 5...17),
-            veinCount: source.integer("foliage.veinCount", 3...9),
+            serration: source.bell("foliage.serration", 0...1.3),
+            teeth: source.integer("foliage.teeth", 3...17),
+            veinCount: source.integer("foliage.veinCount", 2...9),
             veinDepth: source.chance("foliage.hasVeins", 0.72)
                 ? source.bell("foliage.veinDepth", 0.2...1.0)
                 : 0,
-            tipSharpness: source.value("foliage.tipSharpness", 0.7...2.1)
+            tipSharpness: source.value("foliage.tipSharpness", 0.5...2.4)
         )
 
-        let petalBase = source.integer("bloom.petalCount", 3...13)
-        let petalCount = max(3, Int((Double(petalBase) * profile.petalCountScale).rounded()))
+        // **The genus has a petal count; the plant does not draw one.** It used
+        // to be `integer("bloom.petalCount", 3...13)` scaled per archetype,
+        // which is a smear rather than a character — two plants of a genus were
+        // as likely to differ as to agree, so no key could name it.
+        //
+        // A flora reads *petals 5, rarely 4 or 6*, and that is what this is: the
+        // count belongs to the genus, and one plant in five carries the
+        // variant. Without the variant a bed of one genus reads as printed
+        // rather than grown; with more of it the count stops being diagnostic.
+        let plan = merosity == .few ? profile.petals.few : profile.petals.many
+        let variance = source.unit("bloom.petalVariant")
+        let petalCount = max(3, plan + (variance < 0.1 ? -1 : variance > 0.9 ? 1 : 0))
         // Sized against the plant it sits on. A bloom that does not scale with
         // the stem reads as a speck on a tall plant rather than a small flower,
         // and the flower is the thing people are looking at.
@@ -303,7 +380,19 @@ public struct Genome: Equatable, Sendable {
             opensByDay: source.chance("tempo.opensByDay", 0.7)
         )
 
-        name = PlantName(source: source)
+        // Last, and reading what is above it rather than drawing alongside it.
+        // docs/TAXONOMY.md §1: you name what you observe.
+        name = PlantName(
+            source: source,
+            archetype: archetype,
+            merosity: merosity,
+            stem: stem,
+            foliage: foliage,
+            branching: branching,
+            palette: palette,
+            tempo: tempo,
+            leafCount: stem.nodeCount * foliage.leavesPerNode
+        )
     }
 }
 

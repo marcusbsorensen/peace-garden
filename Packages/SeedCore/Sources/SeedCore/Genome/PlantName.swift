@@ -8,7 +8,7 @@ import Foundation
 /// see the descent in the name without being told about it.
 public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
     public let genus: String
-    public let epithet: String
+    public private(set) var epithet: String
 
     /// The syllable the genus was built from, kept rather than recovered.
     ///
@@ -42,6 +42,74 @@ public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
         "Umbr", "Ver", "Wyn", "Zeph"
     ]
 
+    /// Which root a flower is named from: a family, and a merosity.
+    ///
+    /// **The whole of `docs/TAXONOMY.md` §1 is this table.** Before it, the
+    /// genus was `source.pick("name.genusHead", …)` — a draw beside the plant
+    /// rather than a reading of it, so *Melissa* and *Melandra* shared a genus
+    /// and needed have nothing in common. Over four thousand seeds the theme
+    /// explained 0.3% of the variance in stem height and 0.5% in leaf count. A
+    /// genus that groups by nothing is a prefix.
+    ///
+    /// Now it is read off the flower, which is the direction a name actually
+    /// runs: **you name what you observe.** Same root means same floral plan
+    /// and same petal count, which is what makes a key possible.
+    ///
+    /// Twelve families, two roots each, twenty-four roots — the frozen list
+    /// exactly, used once each. `RootTableTests` holds it to that.
+    ///
+    /// **No family takes both its roots from one theme.** Themes are what the
+    /// garden's ten areas are, so a family inside a single theme would be an
+    /// area of one repeated shape. Crossing them means every area holds two or
+    /// three kinds of plant, and it costs nothing: the head → theme map in
+    /// `Quotes.Theme` is untouched by any of this and did not move.
+    ///
+    /// The pairings are judgements about resemblance rather than derivations,
+    /// and the reasoning for each is in `docs/TAXONOMY.md` §"The twelve
+    /// families" — *Cynara* is the artichoke, which is a thistle; the olive
+    /// flowers in a small panicle on narrow leaves, which is a plume.
+    ///
+    /// **`Cal` and `Quin` were swapped on 3 September 2026.** `Cal` began on
+    /// the bell, for *Campanula*, on the strength of Calaceae echoing
+    /// Campanulaceae — and that echo turned out to be false: *Campanula* is a
+    /// diminutive of *campana*, a bell, and owes nothing to *kalos*. With the
+    /// only argument for it gone, two things pointed the other way. An umbel is
+    /// an *arrangement*, which is what Pattern's subthemes are about — the
+    /// golden angle, the quincunx, tessellation — where a bell is a silhouette.
+    /// And *quinque*, five, is worth saying where five can be counted: five
+    /// lobes on one bell, not five petals on each of forty florets.
+    ///
+    /// The cost, which is real: Apiaceae is *the* five-merous family in a
+    /// flora, so `Quin` on the umbel was the most precisely true thing on the
+    /// table, and that resonance is spent. Both roots sit in Pattern and both
+    /// families are 5-merous at the low root, so the swap moved no number and
+    /// broke no constraint — it changed which syllable sits on which family,
+    /// and the two family names traded places with it.
+    static let roots: [Archetype: (few: String, many: String)] = [
+        .spire:     (few: "Ver",  many: "Cer"),
+        .umbel:     (few: "Cal",  many: "Fen"),
+        .fern:      (few: "Umbr", many: "Dros"),
+        .orchid:    (few: "Mel",  many: "Sel"),
+        .lotus:     (few: "Lir",  many: "Nyx"),
+        .thistle:   (few: "Cyn",  many: "Hal"),
+        .vine:      (few: "Wyn",  many: "Ael"),
+        .bell:      (few: "Quin", many: "Ith"),
+        .star:      (few: "El",   many: "Ros"),
+        .poppy:     (few: "Bel",  many: "Aur"),
+        .succulent: (few: "Pell", many: "Thal"),
+        .plume:     (few: "Ol",   many: "Zeph"),
+    ]
+
+    /// The root a plant of this family and this merosity is named from.
+    public static func genusHead(for archetype: Archetype, _ merosity: Merosity) -> String {
+        // A family missing from the table would rename a twelfth of every
+        // garden in silence, so it is a trap rather than a fallback.
+        guard let pair = roots[archetype] else {
+            preconditionFailure("no genus roots for \(archetype) — see PlantName.roots")
+        }
+        return merosity == .few ? pair.few : pair.many
+    }
+
     static let genusMiddles = [
         "a", "an", "ar", "er", "i", "in", "is", "o", "or", "yr", "ell", "ess", "ol", "un"
     ]
@@ -52,18 +120,19 @@ public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
         "ia", "is", "a", "ea", "ina", "ora", "yne", "era", "ula", "ynth"
     ]
 
-    static let epithetHeads = [
-        "noct", "vesper", "lum", "umbr", "sol", "aur", "glaci", "pluvi", "stell",
-        "sylv", "mont", "riv", "cine", "ferr", "pall", "seren", "tacit", "viv"
-    ]
-
-    static let epithetTails = [
-        "urna", "alis", "ata", "ifolia", "escens", "iflora", "ina", "icola",
-        "antha", "aria", "osa", "ula"
-    ]
-
-    init(source: GeneSource) {
-        let head = source.pick("name.genusHead", from: Self.genusHeads)
+    /// Built from the flower it names.
+    ///
+    /// **The head is read, not drawn.** `archetype` and `merosity` are the two
+    /// floral facts a genus is separated on, and `Self.genusHead(for:_:)` turns
+    /// them into a root. The middle and the ending stay individual variation —
+    /// the ending has to, because `Quotes.Subtheme` is read off it.
+    ///
+    /// So two plants sharing a root share a flower, and two sharing the whole
+    /// written genus are the same genus in the ordinary sense. That is how
+    /// genera in one family are spelled in a real flora: a shared root and
+    /// different endings, as *Helianthus*, *Helianthemum* and *Heliopsis* are.
+    init(source: GeneSource, archetype: Archetype, merosity: Merosity) {
+        let head = Self.genusHead(for: archetype, merosity)
         let middle = source.chance("name.hasMiddle", 0.45)
             ? source.pick("name.genusMiddle", from: Self.genusMiddles)
             : ""
@@ -72,9 +141,40 @@ public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
         genusHead = head
         genusTail = tail
 
-        let epithetHead = source.pick("name.epithetHead", from: Self.epithetHeads)
-        let epithetTail = source.pick("name.epithetTail", from: Self.epithetTails)
-        epithet = Self.join(epithetHead, "", epithetTail).lowercased()
+        epithet = ""
+    }
+
+    /// The whole name: a genus read off the flower, and an epithet read off
+    /// everything else.
+    ///
+    /// **The two halves answer different questions**, which is why they are
+    /// measured against different things. The genus says what kind of plant
+    /// this is, so it comes from the floral plan, which every plant of the
+    /// genus shares. The epithet says which one of them this is, so it comes
+    /// from where this plant sits among its own genus — leaves longer than
+    /// nine in ten of them, a stem that leans when its relatives stand up.
+    init(
+        source: GeneSource,
+        archetype: Archetype,
+        merosity: Merosity,
+        stem: Genome.Stem,
+        foliage: Genome.Foliage,
+        branching: Genome.Branching,
+        palette: Genome.Palette,
+        tempo: Genome.Tempo,
+        leafCount: Int
+    ) {
+        self.init(source: source, archetype: archetype, merosity: merosity)
+        epithet = Epithet.describing(
+            source: source,
+            genusTail: genusTail,
+            stem: stem,
+            foliage: foliage,
+            branching: branching,
+            palette: palette,
+            tempo: tempo,
+            leafCount: leafCount
+        ).written
     }
 
     /// For a name written by hand rather than drawn.

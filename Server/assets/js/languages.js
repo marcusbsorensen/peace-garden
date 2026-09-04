@@ -37,6 +37,53 @@ const STORAGE_KEY = "site.language.v1";
 /// one that bites today — it has a bank, so it is in the chooser.
 export const KEEPS_WRITTEN_CASE = new Set(["tr", "az", "el", "ga"]);
 
+/// Scripts with no capitals at all, so there is no uppercasing to do.
+///
+/// Distinct from `KEEPS_WRITTEN_CASE`, which is four languages that *have*
+/// capitals and are harmed by them. These have none: `text-transform:
+/// uppercase` is a no-op on Arabic, Hebrew, Chinese, Japanese and Korean, and
+/// asking for it is a statement about the label voice that the script cannot
+/// carry. Named rather than left to the no-op so the rule reads as a decision.
+export const CASELESS = new Set(["ar", "he", "ja", "zh", "ko", "th", "fa", "ur", "yi"]);
+
+/// Scripts that letter-spacing damages, where `KEEPS_WRITTEN_CASE` only
+/// undresses them.
+///
+/// **This is the one that actually breaks something.** The label voice is
+/// tracked out to 0.218em, which is a Latin small-caps device. On Arabic it is
+/// not a stylistic choice, it is a defect: Arabic is a joined script, and
+/// putting space between letters severs the joins and leaves a row of
+/// disconnected forms that a reader has to reassemble. Persian and Urdu are the
+/// same script and the same damage.
+///
+/// CJK is here for a different reason. It is not damaged — the glyphs do not
+/// join — but a Han or Kana line tracked to a Latin caption's rhythm reads as
+/// badly set, and the device it is imitating has no meaning in a script with no
+/// capitals to space out.
+///
+/// Hebrew is deliberately absent: it is right to left and caseless, and its
+/// letters do not join, so tracking is merely a choice there rather than a
+/// wound.
+export const NEVER_TRACKED = new Set(["ar", "fa", "ur", "ja", "zh", "ko"]);
+
+/// Languages written right to left.
+///
+/// The site was built with logical properties throughout on the argument that
+/// no round-two language is right to left and the pass should not have to be
+/// earned twice. This is that pass arriving, and the CSS is why it is three
+/// lines rather than a rewrite.
+export const RIGHT_TO_LEFT = new Set(["ar", "he", "fa", "ur", "yi"]);
+
+/// `"rtl"` or `"ltr"`, for the document's own `dir`.
+export function direction(code) {
+  return RIGHT_TO_LEFT.has(normalise(code).primary) ? "rtl" : "ltr";
+}
+
+/// Whether the label voice may letter-space this language.
+export function tracks(code) {
+  return !NEVER_TRACKED.has(normalise(code).primary);
+}
+
 /// Tags a browser may send that name a language the manifest files elsewhere.
 ///
 /// Deliberately tiny. `no` is the macrolanguage over Bokmål and Nynorsk and a
@@ -170,6 +217,10 @@ export function negotiate(languages, options = {}) {
 }
 
 /// Whether this language's label voice is uppercased.
+///
+/// Two ways to answer no, and they are not the same fact: a language that has
+/// capitals and is harmed by them, and a script that has none.
 export function uppercases(code) {
-  return !KEEPS_WRITTEN_CASE.has(normalise(code).primary);
+  const { primary } = normalise(code);
+  return !KEEPS_WRITTEN_CASE.has(primary) && !CASELESS.has(primary);
 }

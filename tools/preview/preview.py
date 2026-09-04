@@ -202,7 +202,11 @@ def contact_sheet(seeds, columns=4, cell=(300, 430), age_days=None):
         state = growth_state(genome, days * 86400)
         tile = render(genome, state, size=cell)
         sheet.paste(tile, ((index % columns) * cell[0], (index // columns) * cell[1]))
-        print(f"{label:>10}  {genome.name:<28} {genome.archetype:<10} "
+        # No binomial in the caption, and see `plant_model.Genome.__init__` for
+        # why: the port grows geometry and names nothing. The name it used to
+        # print here was three months behind SeedCore's, which is to say it was
+        # a name no plant in the garden has ever had.
+        print(f"{label:>10}  {genome.archetype:<10} "
               f"petals {genome.petalCount:>3}  leaves {genome.leafCount:>3}  "
               f"{state['stage']} open={state['bloomOpen']:.2f}")
     return sheet
@@ -263,7 +267,7 @@ def foot_row(labels, cell=(300, 430)):
             tile = render(genome, state, size=cell, pitch=pitch,
                           look=0.012, spread=spread, on_axis=True)
             sheet.paste(tile, (index * cell[0], row * cell[1]))
-        print(f"{label:>10}  {genome.name:<28} {genome.archetype:<10} "
+        print(f"{label:>10}  {genome.archetype:<10} "
               f"foot {width * 1000:5.1f}mm  {state['stage']}")
     return sheet
 
@@ -282,7 +286,12 @@ def cross_row(label_a, label_b, cell=(300, 430)):
         state = growth_state(genome, days * 86400)
         sheet.paste(render(genome, state, size=cell), (index * cell[0], 0))
         role = ("parent", "parent", "child")[index]
-        print(f"{role:>7}  {genome.name:<28} {genome.archetype:<10} "
+        # A cross used to be read off the name — one parent's genus with the
+        # other's epithet. It cannot be read here any more, and it should not
+        # be: descent in the name is SeedCore's to show, in the app, where the
+        # name is right. What this row shows is the body, which is the thing a
+        # render can actually be checked against.
+        print(f"{role:>7}  {genome.archetype:<10} "
               f"petals {genome.petalCount:>3}  leaves {genome.leafCount:>3}  "
               f"hue {genome.palette['petalBase'][0]:.2f}")
     return sheet

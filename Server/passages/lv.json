@@ -1,0 +1,2168 @@
+[
+ {
+  "text": "Asns: sēklas pirmais dzinums. Kamēr tas ir čaulā, viss vēl var palikt kā bijis; kad tas izlien ārā, atpakaļceļa nav.",
+  "source": "Botānika",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Sakne parādās pirms lapas. Sēkla vispirms meklē ūdeni un tikai pēc tam gaismu.",
+  "source": "Botānika",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Baltā vizbulīte uzzied, pirms koki sadzen lapas. Tā paspēj visu, kamēr mežs vēl ir caurspīdīgs.",
+  "source": "Anemone nemorosa",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Ziemas rudzi dīgst jau dažus grādus virs nulles. Tāpēc tos sēj rudenī, un tie pārziemo zaļi zem sniega.",
+  "source": "Lauksaimniecība",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Jauns mēness nav redzams. Mēnesi skaita no tās nakts, kurā debesīs vēl nav nekā.",
+  "source": "Astronomija",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Ledus uz ezera pirmoreiz plīst tur, kur ietek strauts. Vaļā vispirms kļūst tā vieta, kur ūdens kustas.",
+  "source": "Hidroloģija",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Latviski jauns nozīmē gan tikko taisītu, gan mazu gados. Pirmā diena un pirmie gadi ir viens un tas pats vārds.",
+  "source": "Latviešu valoda",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Līdums ir meža gabals, ko nolīž un nodedzina, lai tur sētu pirmoreiz. Pelnos pirmā raža sanāk bagātāka nekā jebkura vēlākā.",
+  "source": "Zemkopības vēsture",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Arājs visu lauku mēra pēc pirmās vagas. Ja tā ir līka, līkas būs arī pārējās.",
+  "source": "Zemkopība",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Latviešu valodā ir degt un aizdegt. Priedēklis nemaina darbību, bet saliek to vienā vienīgā brīdī.",
+  "source": "Latviešu valodas gramatika",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Dzērves Latvijā pārnāk agrāk nekā stārķi. Viņu sauciens pār pļavu marta beigās ir pirmā skaņa, pēc kuras zina, ka ziema beigusies.",
+  "source": "Ornitoloģija",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Pirmie Dziesmu svētki notika Rīgā 1873. gadā. Tolaik kopā dziedāja ap tūkstoti cilvēku.",
+  "source": "Dziesmu svētku vēsture",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "Dzintars ir sveķu piliens, kas Latvijas liedagā izskalojas pēc vētras. Tam ir vairāk nekā četrdesmit miljonu gadu.",
+  "source": "Ģeoloģija",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Viens rudzu grauds sver kādus trīsdesmit miligramus. Vienam rupjmaizes kukulim to vajag pāris tūkstošu.",
+  "source": "Lauksaimniecība",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Ozols pirmās zīles nomet tikai kādā četrdesmitajā gadā un pēc tam met tās vēl trīs gadsimtus.",
+  "source": "Quercus robur",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Sfagns aug pa milimetram gadā. No tā Latvijas augstajos purvos ir sanācis kūdras slānis, kas vietām sniedzas septiņus metrus dziļumā.",
+  "source": "Purva ekoloģija",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Bite vienā lidojumā atnes tik nektāra, cik sver graudiņa puse. Kilogramam medus vajag miljoniem ziedu apciemojumu.",
+  "source": "Biškopība",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Krišjāņa Barona dainu skapim ir septiņdesmit atvilktnes un tajās gandrīz 270 000 sīku papīra lapiņu, katrā pa vienai dziesmai.",
+  "source": "Dainu skapis",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Gauja sākas kā strauts, ko var pārkāpt, un ir garākā upe, kas visu savu ceļu — četrus simtus piecdesmit divus kilometrus — notek Latvijā.",
+  "source": "Ģeogrāfija",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Vārdiem sēkla un sēt ir viena sakne. Valoda pati saka, ka sēkla ir tas, ko sēj, nevis tas, kas aug.",
+  "source": "Latviešu valoda",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Viena papardes lapa izbārsta miljoniem sporu. Iesakņojas varbūt viena.",
+  "source": "Botānika",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Zirneklis tīklu sāk ar vienu pavedienu, ko vējš pārnes uz otru pusi. Viss pārējais tiek būvēts uz tā.",
+  "source": "Zooloģija",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Puzuris ir no salmiem siets: mazas telpiskas figūras, saliktas cita citā, līdz virs galda karājas vesela debess.",
+  "source": "Latviešu tautas māksla",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Sīpolam ir slāņi, un katrs no tiem savulaik bija lapa. Sīpols ir vesels augs, saspiests glabāšanai.",
+  "source": "Botānika",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "Dziedot dzimu, dziedot augu, / Dziedot mūžu nodzīvoju.",
+  "source": "Latviešu tautasdziesma",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Kā sēsi, tā pļausi.",
+  "source": "Latviešu sakāmvārds",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Rīts gudrāks par vakaru.",
+  "source": "Latviešu sakāmvārds",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Kā koku loka jaunībā, tā tas aug. Zars, ko nogriež pirmajos gados, izšķir, kur pēc simt gadiem būs vainags.",
+  "source": "Mežkopība",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Reizi gadā no Daugavas iznirst vīrs un jautā, vai Rīga jau gatava. Atbildēt drīkst tikai — vēl nav.",
+  "source": "Rīgas teika",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Pūru sāka pildīt bērnībā. Tas, ko meita bija noaudusi divpadsmit gados, gāja viņai līdzi visu mūžu.",
+  "source": "Latviešu paražas",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Latvijā vārda dienu joprojām svin plašāk nekā dzimšanas dienu. Kalendārā katrai dienai ir savi vārdi, un tie tur stāv jau no bērna dienām.",
+  "source": "Latviešu paražas",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Krišjānis Valdemārs Tērbatā uzrakstīja uz savām durvīm, ka viņš ir latvietis. No tā vienkāršā uzraksta sākās vesela paaudze.",
+  "source": "Krišjānis Valdemārs (1825–1891)",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Upe, kas iztek no purva, visu tālāko ceļu paliek brūna. Ūdens krāsu nosaka tā vieta, kur tas sākas.",
+  "source": "Hidroloģija",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Lieldienās šūpojas, lai visu gadu neko nesāpētu un neviens kukainis nekostu. Ko izdara tajā dienā, tas turas visu gadu.",
+  "source": "Latviešu gadskārtas",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Sniegs, kas uzkrīt uz siltas zemes, izkūst. Ziema sākas tikai no tā snigšanas, zem kura zeme jau ir sasalusi.",
+  "source": "Meteoroloģija",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Bērzu sulas tek tik ilgi, kamēr pumpuri nav plaukuši. Kad koks sāk lapot, tas jau ir izlēmis.",
+  "source": "Botānika",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "Sēklas miera periods: sēkla nedīgst, kaut viss apkārt ir gatavs. Latviski to sauc par mieru — ar to pašu vārdu, ko lieto starp cilvēkiem.",
+  "source": "Botānika",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Daudzām Latvijas koku sēklām vajag pārziemot. Bez sala tās nedīgst nemaz, cik silti tās arī turētu.",
+  "source": "Botānika",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Latviski gaidīt nozīmē arī cerēt. Gaidīt bērniņu nav teikums par laiku, bet par to, kas nāks.",
+  "source": "Latviešu valoda",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Līdaka ziemā aukstā ūdenī gandrīz nekustas. Tai pietiek ar pavisam maz skābekļa, un tā nostāv līdz pavasarim.",
+  "source": "Zooloģija",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Kūdrā koku celmi noguļ tūkstoš gadu nesatrūdējuši, jo tur nav ne skābekļa, ne siltuma, kas tos noārdītu.",
+  "source": "Purva ekoloģija",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Ābelei vajag noteiktu skaitu aukstuma stundu. Ja ziema bijusi par siltu, tā pavasarī neuzzied.",
+  "source": "Dārzkopība",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Sikspārnis ziemo pagrabā vai pilsdrupās. Tobrīd tā sirds pukst dažas reizes minūtē, un tas neēd nemaz.",
+  "source": "Zooloģija",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Kāposti un burkāni pagrabā pārziemo tāpēc, ka tumsā un vēsumā tie nesāk dīgt. Gaisma tos pamodinātu par agru.",
+  "source": "Dārzkopība",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Aizturēt nozīmē turēt ceļā, nevis apturēt pavisam. Elpu aiztur tāpēc, lai to pēc tam atkal atlaistu.",
+  "source": "Latviešu valoda",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Upes vēzis pēc čaulas maiņas ir mīksts un neaizsargāts. Dažas dienas tas neiznāk no akmens apakšas nemaz.",
+  "source": "Zooloģija",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Pumpurs ir nākamā gada zars, jau uztaisīts un aizvērts vasarā. Visu ziemu tas ir gatavs un negrib plaukt.",
+  "source": "Botānika",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Nogaidīt nav tas pats, kas gaidīt. Nogaidīt nozīmē gaidīt līdz galam un ar nodomu.",
+  "source": "Latviešu valoda",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "Krišjānis Barons dainas kārtoja gandrīz četrdesmit gadus. Latvju dainas iznāca sējumu pa sējumam no 1894. līdz 1915. gadam.",
+  "source": "Latvju dainas",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Kaives ozola stumbra apkārtmērs ir vairāk nekā desmit metru. To sauc par resnāko ozolu Latvijā.",
+  "source": "Kaives ozols",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Kūdra krājas apmēram milimetru gadā. Metrs kūdras ir tūkstoš gadu.",
+  "source": "Purva ekoloģija",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Zilie kalni Slīterē nav kalni, bet senkrasts. Tur pirms tūkstošiem gadu beidzās jūra un sākās sauszeme.",
+  "source": "Slīteres nacionālais parks",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Baltijas jūra kopš ledus laikmeta ir bijusi gan saldūdens ezers, gan sāļa jūra, gan atkal ezers. Tagadējā formā tā ir kādus četrus tūkstošus gadu.",
+  "source": "Ģeoloģija",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Grieze Latvijas pļavā pavada tikai trīs mēnešus gadā. Pārējos deviņus tā ir Āfrikā.",
+  "source": "Crex crex",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Zutis ezerā var nodzīvot vairāk nekā divdesmit gadu un tikai vienreiz mūžā dodas nārstot uz okeānu.",
+  "source": "Anguilla anguilla",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Klēts sijās vēl var izlasīt saimnieku iegrieztus gadskaitļus. Daži no tiem ir vecāki par valsti, kurā ēka stāv.",
+  "source": "Latvijas koka arhitektūra",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Rudzi laukā stāv astoņus mēnešus: no septembra sējas līdz jūlija pļaujai. Lielāko daļu tā laika tie neaug nemaz.",
+  "source": "Lauksaimniecība",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Mūžs latviski ir viss laiks no sākuma līdz galam. Mūžīgs ir tas pats vārds, izstiepts bez gala.",
+  "source": "Latviešu valoda",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Dzintarā iesprūdis kukainis ir vecāks par jebkuru kalnu, kas šodien redzams Latvijā. Sveķi to noturēja nemainītu.",
+  "source": "Ģeoloģija",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Egle Latvijas mežā pirmās čiekurus nes ap trīsdesmito gadu un tikai pēc tam sāk skaitīt savus lielos ražas gadus, kas nāk reizi piecos.",
+  "source": "Picea abies",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "Papardes ziedu meklē Jāņu naktī. Paparde nezied nekad — tā vairojas ar sporām. Meklēšana ir svētku daļa, nevis kļūda.",
+  "source": "Latviešu paražas",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Jāņu nakts ir gada gaišākā. Tumsa krīt tikai uz pāris stundām, un ugunskuru tur degošu līdz saullēktam.",
+  "source": "Jāņi",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Tumša nakte, zaļa zāle, / Laukā laižu kumeliņu.",
+  "source": "Latviešu tautasdziesma",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Ganu bērns pļavā nedarīja neko citu kā skatījās. Ganu dziesmas ir dziedātas tāpēc, ka stundas bija garas.",
+  "source": "Latviešu tautasdziesmas",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Katrai bākai Latvijas krastā ir savs mirgas ritms. Pēc gaismas un tumsas garuma kuģis zina, kuru no tām redz.",
+  "source": "Jūrniecība",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Baltais stārķis ligzdā stāv uz vienas kājas pa stundām. Latvijā tas ligzdo gandrīz katrā pagastā.",
+  "source": "Ciconia ciconia",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Skatīties un vērot nav viens un tas pats. Skatās uz kaut ko; vēro to, kas mainās.",
+  "source": "Latviešu valoda",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Pēc vētras liedagā staigā dzintara meklētāji. Viņi neko nerok — tikai skatās, kur jūra ir kaut ko izlikusi.",
+  "source": "Latvijas jūrmala",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Pilsētas torņa sargam senāk bija jāskatās nevis uz laiku, bet uz dūmiem. Viss viņa darbs bija pamanīt uguni pirms citiem.",
+  "source": "Pilsētu vēsture",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Dzeguze kūko no maija līdz Jāņiem un tad apklust. Skaitīt tās kūkošanas ir vecs paradums, kas vēl nav izmiris.",
+  "source": "Cuculus canorus",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Ķemeru purva laipa ved pāri klajumam, kur nav ne koka, ne pagrieziena. Tur var iet stundu un visu laiku redzēt to pašu.",
+  "source": "Ķemeru nacionālais parks",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Pacietība nāk no ciest. Pacietīgs latviski ir tas, kurš spēj izturēt, nevis tas, kuram nav ko darīt.",
+  "source": "Latviešu valoda",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "Kārkls: nogriez zaru, iespraud mitrā zemē, un tas iesakņosies. Grāvmalā veseli krūmi ir cēlušies no vienas nomestas nūjas.",
+  "source": "Salix",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Atāls ir zāle, kas ataug pēc pirmās pļaušanas. Latviešu valodā tai ir savs vārds, jo to pļauj otrreiz.",
+  "source": "Latviešu valoda",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Pļava, ko nopļauj katru gadu, ir bagātāka par to, kuru atstāj. Latvijas dabiskajā pļavā uz kvadrātmetra saskaita vairāk nekā trīsdesmit sugas.",
+  "source": "Pļavu ekoloģija",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Bērzu slotas pirtij griež jūnijā, kad lapa jau pieaugusi, bet vēl mīksta. Kokam no tā nekas nenotiek.",
+  "source": "Pirts tradīcija",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Ozola celms dod atvases. Nocirsts koks mežā bieži atgriežas kā vairāki tievi stumbri no vienas saknes.",
+  "source": "Mežkopība",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Bišu saime pārziemo cieši sarāvusies kamolā un pavasarī sāk no jauna tajās pašās kārēs, ko uzbūvējusi pērn.",
+  "source": "Biškopība",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Dille, ko nogriež pie zemes, atsējas pati. Nākamgad tā uznāk visā dārzā, un to vairs nesēj — tikai atļauj.",
+  "source": "Dārzkopība",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Nātre, ko nopļauj jūnijā, jūlijā ataug mīkstāka nekā bija pirmoreiz.",
+  "source": "Dārzkopība",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Ābeli, kas vairs nenes, apgriež līdz resnajiem zariem. Pēc diviem gadiem tā atkal zied.",
+  "source": "Dārzkopība",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Atjaunot ir at- un jauns: atpakaļ jaunu. Vārds nesola neko citu, tikai to pašu vēlreiz.",
+  "source": "Latviešu valoda",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Zāle zem sniega paliek zaļa un sāk augt tajā pašā dienā, kad sniegs nokūst.",
+  "source": "Botānika",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Niedres ezermalā pļāva ziemā, pa ledu, jumtiem. Nopļauta niedre nākamvasar uznāk biezāka.",
+  "source": "Amatniecība",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "Metenis iezīmē ziemas pagriezienu. Tajā dienā brauc no kalna, un jo tālāk aizbrauc, jo garāki lini.",
+  "source": "Latviešu gadskārtas",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Lieldienas latviski ir lielās dienas: no tā brīža diena ir garāka par nakti, un vārds to pasaka tieši.",
+  "source": "Latviešu valoda",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Jāņos līgo visu nakti, un ugunskuru nedrīkst ļaut izdzist pirms saullēkta.",
+  "source": "Jāņi",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Miķeļos raža ir novākta un lauks atstāts mierā. Pēc Miķeļiem tur vairs neiet.",
+  "source": "Latviešu gadskārtas",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Mārtiņos sākas ķekatu laiks. Maskās staigā no mājas uz māju, un tas turpinās līdz pat Meteņiem.",
+  "source": "Latviešu gadskārtas",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Ziemassvētkos vilka bluķi: to apvilka apkārt sētai, savāca tajā veco gadu un tad sadedzināja.",
+  "source": "Latviešu gadskārtas",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Gadskārta ir gada kārta. Vārds domā gadu kā kaut ko, kas nāk atkal pa apli, nevis kā skaitli.",
+  "source": "Latviešu valoda",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Koki lapas met nevis pēc kalendāra, bet pēc nakts garuma. Salna tikai pabeidz to, kas jau iesākts.",
+  "source": "Botānika",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Baltais stārķis aizlido augusta beigās un pārnāk aprīļa sākumā. Pa vidu tas ir nolidojis vairāk nekā desmit tūkstošus kilometru.",
+  "source": "Ciconia ciconia",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Sniegs noturas kādus trīs mēnešus, bet ne katru gadu. Ziemas ar sniegu un bez tā mijas bez jebkādas kārtas.",
+  "source": "Meteoroloģija",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Latviešu svētki ir sasieti ar sauli, ne ar kalendāru: divi saulgrieži, divas dienas, kad gaisma un tumsa ir vienādas, un lauka darbu gali starp tiem.",
+  "source": "Latviešu gadskārtas",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Jāņu vainagu pēc svētkiem pakar klētī, un nākamgad to iemet ugunskurā. Katrs gads sadedzina iepriekšējo.",
+  "source": "Jāņi",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "Koka brūce aizaug no malām. Koks caurumu nelabo — tas apaudzē tam apkārt jaunu koksni, līdz iekšpuse paliek nostāk.",
+  "source": "Botānika",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Lauzts kauls vispirms saaug ar lieku kaula daudzumu un tikai pēc tam to nolīdzina. Kādu laiku vieta ir resnāka par pārējo.",
+  "source": "Anatomija",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Arheologi ir atraduši māla traukus ar sīkiem izurbtiem caurumiem gar plaisu. Tos ir sašuvuši, lai varētu lietot tālāk.",
+  "source": "Arheoloģija",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Adītam cimdam papēdi noada no jauna, kad tas caurs. Raksts uz virspuses paliek tāds pats.",
+  "source": "Rokdarbi",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Pirtī cilvēku saliek kopā ar karstumu, slotu un aukstu ūdeni. Pēdējais solis vienmēr ir atpūta, ne mazgāšanās.",
+  "source": "Pirts tradīcija",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Potzars saaug ar svešu celmu tā, ka pēc gadiem šuvi vairs nevar atrast.",
+  "source": "Dārzkopība",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Asinszāle: nosaukums augam, ko lika uz brūcēm. Vārds pasaka, kam tas domāts, pirms jebkuras receptes.",
+  "source": "Latviešu augu nosaukumi",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Vecupe, ko upe pametusi, gadu desmitos aizaug un kļūst par pļavu. Upe pati aizlabo to, ko nogriezusi.",
+  "source": "Ģeogrāfija",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Vesels nozīmē gan neslimu, gan nesaplēstu. Vesela maize un vesels cilvēks ir viens vārds.",
+  "source": "Latviešu valoda",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Salabot nāk no labs. Latviski salabot nozīmē padarīt kaut ko atkal labu.",
+  "source": "Latviešu valoda",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Ledus pavasarī nesaskaldās vienādos gabalos. Tas pārlūzt pa vecajām plaisām, kas tur bijušas visu ziemu.",
+  "source": "Hidroloģija",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Pilnīgs nāk no pilns. Latviski pilnīgs nav nevainojams — tas ir tas, kam nekā netrūkst.",
+  "source": "Latviešu valoda",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Pastāvēs, kas pārvērtīsies.",
+  "source": "Rainis, Daugava, 1919",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "Kur, saulīte, tu paliksi / Šo naksniņu vakarā?",
+  "source": "Latviešu tautasdziesma",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Vasaras saulgriežos Rīgā nakts nekļūst pavisam tumša. Rieta blāzma pāriet lēkta blāzmā, nepazūdot nemaz.",
+  "source": "Astronomija",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Ziemas saulgriežos diena Rīgā ir nepilnas septiņas stundas gara, vasarā — gandrīz astoņpadsmit.",
+  "source": "Astronomija",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Krēsla latviski ir gan rīta, gan vakara. Vienam vārdam pieder abas dienas malas.",
+  "source": "Latviešu valoda",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Blāzma ir gaisma bez saules. Tā paliek debesīs pēc rieta un ir tur jau pirms lēkta.",
+  "source": "Latviešu valoda",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Rasa nenokrīt no debesīm. Tā izgulsnējas no gaisa uz zāles tieši pirms saullēkta, kad nakts bijusi visaukstākā.",
+  "source": "Meteoroloģija",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Gaiļu laiks: stundu pirms gaismas senāk nesauca pēc pulksteņa, bet pēc putna.",
+  "source": "Latviešu valoda",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Vasarā putni sāk dziedāt pirms trijiem no rīta. Pirmā parasti ir sarkanrīklīte, kurai pietiek ar pavisam maz gaismas.",
+  "source": "Ornitoloģija",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Vakarā pirmā parādās nevis zvaigzne, bet planēta. Venera ir tik spoža, ka to ierauga, kamēr debesis vēl gaišas.",
+  "source": "Astronomija",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Kurzemes rietumu krasts ir vienīgā vieta Latvijā, kur sauli var redzēt nolaižamies jūrā. Visur citur tā riet aiz zemes.",
+  "source": "Ģeogrāfija",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Decembrī saule pusdienlaikā stāv tikai kādus desmit grādus virs apvāršņa. Ēnas visu dienu ir garas.",
+  "source": "Astronomija",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Mijkrēslis ir krēsla, kurā kaut kas mainās vietām. Vārda pirmā daļa ir tā pati, kas vārdā mija.",
+  "source": "Latviešu valoda",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "Augi laiku mēra pēc nakts garuma, nevis pēc dienas. Tie skaita tumsu.",
+  "source": "Botānika",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Pieneņu ziedi atveras no rīta un aizveras vakarā. Aizveras tie arī pirms lietus.",
+  "source": "Botānika",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Bites redz ultravioleto gaismu. Daudzos ziedos tām ir redzamas svītras, kas ved uz nektāru un ko cilvēks neredz nemaz.",
+  "source": "Biškopība",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Ja no rīta zālē ir rasa, nakts bijusi skaidra. Zem mākoņiem tā nesakrājas.",
+  "source": "Meteoroloģija",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Pēc mizas var minēt debespusi: ziemeļu pusē uz stumbra biežāk aug sūna un ķērpis, jo tur ilgāk turas mitrums.",
+  "source": "Meža zīmes",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Pirms lietus vējš apgriež apšu lapas ar gaišo pusi uz augšu, un koks uz brīdi kļūst sudrabains.",
+  "source": "Laika zīmes",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Sarkana vakara debess nozīmē sausu gaisu rietumos, no kurienes nāk laiks. Tāpēc sarkans vakars sola skaidru rītu.",
+  "source": "Laika zīmes",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Gaisma ūdenī lūst. Nūja, ko iebāž upē, izskatās pārlauzta tieši virsmā, un lauzuma vietā tās nav.",
+  "source": "Fizika",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Decembrī saule Latvijā spīd mazāk nekā trīsdesmit stundas visā mēnesī. Pārējais laiks ir gaišs, bet bez saules.",
+  "source": "Meteoroloģija",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Ziemeļblāzmu Latvijā var redzēt, bet reti — dažas naktis gadā, un tikai tad, kad saule bijusi nemierīga.",
+  "source": "Astronomija",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Skals bija plāna sausa priedes šķēpele, ko iesprauda turētājā un dedzināja istabas gaismai. Viens skals deva kādas desmit minūtes.",
+  "source": "Latviešu sadzīves vēsture",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Gaišreģis latviski ir tas, kurš redz gaiši. Vārds nesola burvestību, tikai labāku redzi.",
+  "source": "Latviešu valoda",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "Kalējs kala debesīs, / Ogles bira Daugavā.",
+  "source": "Latviešu tautasdziesma",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Dainās saule nav debess ķermenis, bet māte. Viņa brien pa rudzu lauku, sēž ozolā, iet gulēt aiz jūras un no rīta ceļas atkal.",
+  "source": "Latviešu tautasdziesmas",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Sauli dainās gandrīz vienmēr sauc par saulīti — arī tad, kad runā par to kā par dievību.",
+  "source": "Latviešu tautasdziesmas",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Auseklis ir rīta zvaigzne un vienlaikus astoņstaru zīme, ko auda cimdos un grieza durvju stenderēs.",
+  "source": "Latviešu zīmes",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Gaisma no saules līdz šejienei nāk astoņas minūtes. Tas, ko ieraugām ausmā, jau ir noticis.",
+  "source": "Astronomija",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Sniegs atstaro gandrīz visu, kas uz to krīt. Ziemas naktī ar sniegu ir gaišāks nekā vasaras naktī bez tā.",
+  "source": "Fizika",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Jāņtārpiņš spīd ar aukstu gaismu: gandrīz visa enerģija paliek gaisma, un siltuma tur nav gandrīz nemaz.",
+  "source": "Lampyris noctiluca",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Baltijas jūras ūdens ir dzeltenīgs no vielām, ko atnes upes. Zem virsmas gaisma tālu netiek.",
+  "source": "Jūras bioloģija",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Sveces liesma ir dzeltena tāpēc, ka tajā kvēl sīkas kvēpu daļiņas. Gaismu dod nevis gāze, bet ogles tajā.",
+  "source": "Fizika",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Gaišs latviski ir arī par cilvēku: gaišs prāts, gaiša seja. Vārds pāriet no debesīm uz seju bez paskaidrojuma.",
+  "source": "Latviešu valoda",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Raiņa pirmais dzejoļu krājums saucās Tālas noskaņas zilā vakarā. Tas iznāca 1903. gadā.",
+  "source": "Rainis (1865–1929)",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Lielo Lāci Latvijā var redzēt visu gadu. Tas nekad nenoriet un nekad neaiziet no debesīm.",
+  "source": "Astronomija",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "Lielākā daļa dainu ir četras rindas garas. Garāku dziesmu neveido — to saliek, liekot četrrindes citu pie citas.",
+  "source": "Latviešu tautasdziesmas",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Lielvārdes josta ir četrarpus metrus gara austa josta ar vairāk nekā divdesmit zīmju rindām, un neviena rinda neatkārtojas blakus.",
+  "source": "Lielvārdes josta",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Deviņi ir dainu skaitlis: deviņas zāles vainagā, deviņi dēli, deviņas dienas. Tas nozīmē nevis skaitu, bet daudz.",
+  "source": "Latviešu tautasdziesmas",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Kāzās līgava izdalīja cimdus visiem, kas bija atnākuši. Dažās kāzās to bija vairāk nekā simts pāru, un visus viņa bija noadījusi pati.",
+  "source": "Latviešu paražas",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Rudzu vārpā ir ap trīsdesmit graudu. Viss lauks ir tas pats skaitlis, pārrakstīts miljoniem reižu.",
+  "source": "Lauksaimniecība",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Gaiziņkalns ir Latvijas augstākā vieta: trīs simti vienpadsmit metri. Tas ir zemāk par daudzām mājām Rīgā.",
+  "source": "Ģeogrāfija",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Latvijā ir vairāk nekā divi tūkstoši ezeru, un aptuveni puse zemes ir mežs.",
+  "source": "Ģeogrāfija",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Egles čiekurā zvīņas ir sakārtotas divās spirālēs, kas iet pretējos virzienos. Abu spirāļu skaits ir blakus stāvoši Fibonači skaitļi.",
+  "source": "Botānika",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Pūra lādē lietas skaitīja: cimdi, zeķes, villaines, dvieļi. Skaits nozīmēja vairāk nekā jebkura no tām atsevišķi.",
+  "source": "Latviešu paražas",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Skaitļa vārds divdesmit ir divas desmitas, saīsināts līdz vienam vārdam. Latviešu skaitļi ir salikti no tā, ko tie skaita.",
+  "source": "Latviešu valoda",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Dziesmu svētku noslēguma koncertā kopkorī dzied vairāk nekā desmit tūkstoši cilvēku, un visi sāk vienā mirklī.",
+  "source": "Dziesmu svētki",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Gadu koka stumbrā skaita pa gaišajām joslām: tumšā daļa ir vasaras beigu koksne, gaišā — pavasara. Viens gads ir viens pāris.",
+  "source": "Mežzinātne",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "Bišu kāre ir sešstūri: no visām formām, kas aizpilda plakni bez atlikuma, sešstūris tērē vismazāk vaska.",
+  "source": "Ģeometrija",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Latviešu koka ēkas cirta bez naglām. Baļķu galos izgrieza robus, un stūris turējās ar paša svaru.",
+  "source": "Koka būvniecība",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Audeklā velku un audu nevar sašķirot pēc svarīguma. Bez viena no tiem otrs ir tikai kaudze diegu.",
+  "source": "Aušana",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Puzurī katrs salms tur nākamo, un nekas nav pielīmēts. Izņem vienu, un izjūk visa figūra.",
+  "source": "Latviešu tautas māksla",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Ledus uz ezera aizsalstot saplaisā daudzstūros, un plaisas gandrīz vienmēr satiekas pa trim.",
+  "source": "Fizika",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Bebra dambī nav neviena naglota savienojuma. Zari tur viens otru, un starpas aizķepē ar dūņām.",
+  "source": "Zooloģija",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Zemenes sēkliņas nav iekšā, bet ārpusē, un tās stāv spirālēs, kas atkārtojas visā ogā.",
+  "source": "Botānika",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Vīta virve tur tāpēc, ka katrs pavediens ir savērpts pretējā virzienā tam, kā vij visu kopu. Pārējo izdara berze.",
+  "source": "Amatniecība",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Niedru jumtu liek tā, ka katra nākamā kārta pārsedz iepriekšējās saites. No ārpuses nav redzama neviena šuve.",
+  "source": "Jumta segšana",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Akmens mūrus laukos krāva bez javas. Katru akmeni grozīja tik ilgi, kamēr atrada vietu, kur tas pats paliek stāvot.",
+  "source": "Amatniecība",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Zosis lido ķīlī, jo katra nākamā izmanto gaisa virpuli, ko taisa priekšā lidojošās spārns. Pirmajai vienmēr ir grūtāk.",
+  "source": "Ornitoloģija",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Vaska kāre ir uzbūvēta no abām pusēm reizē, un pretējo pušu šūnas nesakrīt: katras dibens veido trīs kaimiņu dibenus otrā pusē.",
+  "source": "Biškopība",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "Raksts latviski nozīmē gan uzrakstīto, gan austo. Cimdā un grāmatā ir viens un tas pats vārds.",
+  "source": "Latviešu valoda",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Izrakstīts cimds nav aprakstīts. Rakstīt senāk nozīmēja arī iegriezt zīmi kokā vai ieaust to audumā.",
+  "source": "Latviešu valoda",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Krišjānis Barons dainas sakārtoja nevis pēc alfabēta, bet pēc cilvēka mūža: no dzimšanas caur darbu un kāzām līdz galam.",
+  "source": "Latvju dainas",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Auseklītis, Māras krusts, Jumja zīme, Laimas slotiņa. Latviešu zīmēm ir vārdi, un vārds pasaka, kas tajā zīmēts.",
+  "source": "Latviešu zīmes",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Latviešu valodā ir septiņi locījumi. Galotne pasaka to, kas citās valodās jāpasaka ar atsevišķu vārdu.",
+  "source": "Latviešu valodas gramatika",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Latviešu valodā dzimte ir visam, arī akmenim un debesīm. Saule ir sieviešu dzimtē, mēness — vīriešu, un dainās tie attiecīgi arī uzvedas.",
+  "source": "Latviešu valodas gramatika",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Uzsvars latviešu valodā gandrīz vienmēr krīt uz pirmās zilbes. Vārdu var arī nesaprast, bet vienmēr dzird, kur tas sākas.",
+  "source": "Latviešu valodas gramatika",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Tautas augu vārdi pasaka, kam augs derīgs vai kur tas aug, pirms jebkādas sistēmas: asinszāle, ceļmallapa, māllēpe.",
+  "source": "Latviešu augu nosaukumi",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Vārdadienu kalendārā ir vairāk nekā tūkstotis vārdu, un katram ir sava diena. Tas ir saraksts, kas sakārto cilvēkus pa gadu.",
+  "source": "Latviešu paražas",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Andrejs Pumpurs 1888. gadā salika latviešu teikas vienā garā dzejojumā un nosauca to par Lāčplēsi.",
+  "source": "Andrejs Pumpurs (1841–1902)",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Dainām atskaņu nav nemaz. Rindas tur kopā ritms un rindu garums, ne skaņu sakritība to galos.",
+  "source": "Latviešu tautasdziesmas",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Kurzemes, Vidzemes, Zemgales un Latgales robežas nav vilktas ar lineālu. Lielākoties tās ir upes.",
+  "source": "Ģeogrāfija",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "Latvijas zeme lielākoties ir smilšaina un skāba. Tā ir laba priedēm, mellenēm un kartupeļiem un grūta gandrīz visam citam.",
+  "source": "Augsnes zinātne",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Zemene ir zemes oga. Vārds pasaka, kur to meklē.",
+  "source": "Latviešu valoda",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Zeme latviski ir gan augsne, gan valsts, gan visa planēta. Vienam vārdam pieder visas trīs.",
+  "source": "Latviešu valoda",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Kūdra ir augsne, kas nav sadalījusies. Purvā zeme ir tie paši augi, kas tur auga, tikai nomiruši un nesapuvuši.",
+  "source": "Purva ekoloģija",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Māls Latvijā lielākoties guļ zem smilts. Kur tas iznāk virspusē, tur senāk cēlās podnieku darbnīcas.",
+  "source": "Ģeoloģija",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Sliekas gadā izlaiž caur sevi tonnām augsnes uz hektāru. Pļavas virskārta ir vairākas reizes bijusi slieku iekšpusē.",
+  "source": "Augsnes zinātne",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Dolomīts ir Latvijas pamatiezis: gaišs, mīksts akmens, ko var zāģēt. No tā ir cirsti sliekšņi un celtas baznīcas.",
+  "source": "Ģeoloģija",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Akmeņi Latvijas laukos nav no šejienes. Tos atnesa ledājs no ziemeļiem un nolika tur, kur pats apstājās.",
+  "source": "Ģeoloģija",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Zemgales līdzenumā aug labība, Vidzemē — mežs. Atšķirība nav klimatā, bet tajā, ko ledājs katrai vietai atstāja.",
+  "source": "Ģeogrāfija",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Sūnu segu purvā nevar novilkt nost. Tā ir dzīva virspusē un mirusi apakšā, un starp abām nav robežas.",
+  "source": "Purva ekoloģija",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Zemi kaļķo tāpēc, ka lietus to gadu no gada padara skābāku. Bez tā daudzi augi te vienkārši neaug.",
+  "source": "Lauksaimniecība",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Zemnieks latviski nāk no zemes, nevis no darba. Vārds saka, kam viņš pieder, nevis ko viņš dara.",
+  "source": "Latviešu valoda",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "Rīga dimd, Rīga dimd! / Kas to Rīgu dimdināja?",
+  "source": "Latviešu tautasdziesma",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Mājas latviešu valodā ir daudzskaitlī. Vienā mājā nedzīvo — dzīvo mājās.",
+  "source": "Latviešu valoda",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Dzimtene nāk no dzimt. Tā nav vieta, ko izvēlas, bet tā, kur notika viena konkrēta lieta.",
+  "source": "Latviešu valoda",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Latviešu uzvārdi daudzviet ir māju vārdi. Cilvēku sauca pēc sētas, un sētu bija nosaukuši tie, kas tur dzīvoja pirms.",
+  "source": "Latviešu uzvārdi",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Latgalē ezeru ir vairāk nekā jebkurā citā Latvijas daļā, un lielāko no tiem — Rāznu — sauc par Latgales jūru.",
+  "source": "Ģeogrāfija",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Novadnieks nozīmē vienkārši to, ka esat no vienas puses. Vārds neko vairāk nesola un nekā mazāk arī.",
+  "source": "Latviešu valoda",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Lībiešu ciemi Kurzemes ziemeļu krastā ir divpadsmit, un tie stāv virknē gar jūru, viens aiz otra.",
+  "source": "Lībiešu krasts",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Rīgas vecākā daļa stāv uz smiltīm Daugavas grīvā, uz kāpām, kas tur bija krietni pirms pilsētas.",
+  "source": "Rīgas vēsture",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Latvijas jūras krasts ir gandrīz pieci simti kilometru garš, un teju visā garumā tas ir smilts.",
+  "source": "Ģeogrāfija",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Izloksnes Latvijā atšķiras tik daudz, ka pēc dažiem vārdiem var pateikt, no kuras puses cilvēks nāk.",
+  "source": "Dialektoloģija",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Dzimtā valoda ir tā, kurā piedzima, nevis tā, kuru vislabāk prot. Latviešu valodā abas var arī nesakrist.",
+  "source": "Latviešu valoda",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Latgaliski runā un raksta joprojām, un tai ir sava rakstība. Tā nav izloksne bez vārda, bet valoda ar savu grāmatniecību.",
+  "source": "Latgaliešu rakstu valoda",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "Sēta latviski ir gan žogs, gan viss, kas ir aiz tā. Vienam vārdam pieder robeža un tas, ko tā tur kopā.",
+  "source": "Latviešu valoda",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Kopt lieto par dārzu, par slimnieku, par kapu un par valodu. Viens vārds visam, kas bez rūpēm neizdzīvo.",
+  "source": "Latviešu valoda",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Latviešu sētā katrai ēkai bija sava lieta: rija žāvēšanai, klēts glabāšanai, pirts mazgāšanai. Dzīvojamā māja bija tikai viena no tām.",
+  "source": "Latviešu sēta",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Klēts bija vēsākā ēka sētā. Tur vasarā gulēja meitas, un tur stāvēja pūra lāde.",
+  "source": "Latviešu sēta",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Kapus Latvijā kopj kā dārzu: ravē, apstāda un pļauj. Reizi gadā ir kapusvētki, uz kuriem sabrauc visi.",
+  "source": "Latviešu paražas",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Ozolus bez vajadzības necirta. Tos atstāja stāvam pļavas vidū, un daudzi tur stāv vēl tagad, katrs pats par sevi.",
+  "source": "Dabas aizsardzība",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Rupjmaizi cep uz kļavas vai kāposta lapas, lai apakša nepiedeg. Lapas nospiedums paliek uz gatava kukuļa.",
+  "source": "Maizes cepšana",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Dobe ir tik plata, cik tālu var aizsniegties, tai virsū nekāpjot. Sakņu dārzu Latvijā mēra dobēs, ne kvadrātmetros.",
+  "source": "Dārzkopība",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Akas vietu senāk meklēja ar kārkla rīksti. Ticēja tam vai ne, aku raka tur, kur rīkste noliecās.",
+  "source": "Latviešu paražas",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Dore ir bišu strops, izdobts dzīvā koka stumbrā. Meža malā tādu koku atzīmēja un tas palika saimnieka.",
+  "source": "Biškopība",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Latvijas lauku mājām ir vārdi, nevis numuri, un adresē mājas vārds stāv pirms ciema.",
+  "source": "Latvijas lauki",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Rija bija vienīgā silta ēka sētā ārpus mājas. Tur žāvēja labību, tur kūla, un ziemas vakaros tur sanāca strādāt.",
+  "source": "Latviešu sēta",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "Pienene sēklu palaiž ar sīku lietussargu. Tas atveras tikai sausā gaisā, tāpēc lietū neviena sēkla neaizlido.",
+  "source": "Botānika",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Kļavas sēkla krītot griežas un tāpēc krīt lēni. Vējam tikmēr ir laiks to aiznest projām.",
+  "source": "Botānika",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Pīlādža ogas ziemā apēd strazdi. Sēkla iziet cauri neskarta un nokrīt tālu no koka, jau ar mēslojumu klāt.",
+  "source": "Ornitoloģija",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Vāvere lazdu riekstus paglabā zemē daudzās vietās un daļu vairs neatrod. No neatrastajiem izaug krūmi.",
+  "source": "Zooloģija",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Dadzis ķeras aiz vilnas un aizbrauc tik tālu, cik tālu aiziet aita.",
+  "source": "Botānika",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Baltijas jūrā ūdens riņķo pretēji pulksteņa rādītājam. Gar Latvijas krastu tas nes uz ziemeļiem visu, kas peld.",
+  "source": "Jūras straumes",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Ūdensrozes sēklai ir gaisa maisiņš. Tā peld dažas dienas un nogrimst tur, kur ir aizpeldējusi.",
+  "source": "Botānika",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Kartupelis Latvijā ienāca astoņpadsmitajā gadsimtā un simt gados kļuva par galveno ēdienu. Neviens no tiem laukiem nav vietējs.",
+  "source": "Lauksaimniecības vēsture",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Ceļmallapas sēkla samirkstot kļūst lipīga un pielīp pie zābaka. Tā ceļo ar kāju, nevis ar vēju.",
+  "source": "Botānika",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Sēkla ir vienīgā auga daļa, kas var ceļot. Viss pārējais paliek turpat, kur ir uzdīdzis.",
+  "source": "Botānika",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Bērza sēklas ir tik sīkas, ka vienā gramā to ir tūkstoši. Pamesta lauka mala pēc dažiem gadiem pati kļūst par bērzu birzi.",
+  "source": "Botānika",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Purva sūnas sporas nes tas pats gaiss, kas neko citu nekustina. Tām nevajag ne vēju, ne dzīvnieku.",
+  "source": "Purva ekoloģija",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "Pūt, vējiņi, dzen laiviņu, / Aizdzen mani Kurzemē.",
+  "source": "Latviešu tautasdziesma",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Kur tu teci, kur tu teci, / Gailīti mans?",
+  "source": "Latviešu tautasdziesma",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Ceļmallapa aug tur, kur staigā. Vārds nosauc gan augu, gan vietu, un abi turas kopā.",
+  "source": "Latviešu valoda",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Lēnām brauksi, tālāk tiksi.",
+  "source": "Latviešu sakāmvārds",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Latviešu valodā iet un braukt ir stingri šķirti. Kājām aizbraukt nevar, un ar zirgu aiziet arī ne.",
+  "source": "Latviešu valoda",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Daugava ir vienīgā upe, kas šķērso Latviju visā platumā. Tā sākas tālu ārpus valsts un ietek jūrā tās vidū.",
+  "source": "Ģeogrāfija",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Plostnieki pa Daugavu dzina baļķus līdz Rīgai un pēc tam gāja mājās kājām. Ceļš turp aizņēma dienas, atpakaļ — nedēļas.",
+  "source": "Daugavas plostnieki",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Senais ceļš gar Daugavu veda no jūras uz austrumiem. Pa to aizgāja vasks un dzintars un atnāca sudrabs.",
+  "source": "Tirdzniecības vēsture",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Lauku ceļa krustojumā norāde bieži rāda tikai māju vārdu un virzienu. Cik tālu vēl jāiet, tur nav rakstīts.",
+  "source": "Latvijas lauki",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Kāpas gar Latvijas krastu pārvietojas. Vējš tās nes uz iekšzemi pa dažiem metriem gadā, ja tās netur priedes.",
+  "source": "Ģeoloģija",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Ziemas ceļš pa aizsalušu purvu bija īsāks nekā vasaras ceļš apkārt. Daudzas vietas bija sasniedzamas tikai sala laikā.",
+  "source": "Latvijas ceļu vēsture",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Ceļinieks ir tas, kurš ir ceļā. Vārds neko nesaka par to, kurp viņš iet.",
+  "source": "Latviešu valoda",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "Kur tu skriesi, vanadziņi, / Ar tiem vaska spārniņiem?",
+  "source": "Latviešu tautasdziesma",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Dzeguze aizlido jau jūlijā, pirms tam neredzējusi nevienu no saviem bērniem. Tie atrod ceļu uz dienvidiem paši.",
+  "source": "Cuculus canorus",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Dzintars, ko izskalo Latvijas liedagā, var būt atnācis no jūras dibena simtiem kilometru tālu. Vētra to paceļ, straume atnes.",
+  "source": "Dzintars",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Zutis no Latvijas ezera aizpeld nārstot vairāk nekā piecus tūkstošus kilometru. Mazie zuši pārnāk paši, bez neviena, kas rādītu ceļu.",
+  "source": "Anguilla anguilla",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Tāls latviešu valodā ir gan vieta, gan laiks. Tāla zeme un tāla pagātne ir viens vārds.",
+  "source": "Latviešu valoda",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Rīgas līcī ūdens ir tik mazsāļš, ka jūras zivīm te ir pašā malā, ko tās panes. Dažas upju zivis peld tajā bez raizēm.",
+  "source": "Jūras bioloģija",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Latvieši Sibīrijā, Baškīrijā un Brazīlijā dibināja ciemus jau deviņpadsmitā gadsimta beigās, un daži no tiem stāv vēl tagad.",
+  "source": "Latviešu izceļošana",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Ventspils osta neaizsalst nekad. Tā ir viena no retajām vietām šajā jūras krastā, kur kuģi ienāk arī janvārī.",
+  "source": "Jūrniecība",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Krišjānis Valdemārs ierosināja mācīt latviešu zēnus par jūrniekiem. No mazām krasta sētām iznāca kapteiņi, kas kuģoja uz visām pusēm.",
+  "source": "Krišjānis Valdemārs (1825–1891)",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Ainažos 1864. gadā atvēra jūrskolu, kurā pirmoreiz mācīja arī zemnieku dēlus.",
+  "source": "Ainažu jūrskola",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Svešs latviski nozīmē gan nepazīstamu, gan citam piederošu. Sveša zeme un sveša manta ir viens vārds.",
+  "source": "Latviešu valoda",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Baltijas dzintaru vāca un veda uz dienvidiem jau bronzas laikmetā. To ir atrasts tūkstošiem kilometru tālāk uz dienvidiem.",
+  "source": "Arheoloģija",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "Kolkasrags ir vieta, kur Rīgas līcis satiekas ar atklāto jūru. Viļņi tur nāk no divām pusēm un saskrien viens otram pretī.",
+  "source": "Kolkasrags",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Divas upes satekot kādu gabalu tek blakus, nesajaukdamās. No tilta robežu starp tām var redzēt.",
+  "source": "Hidroloģija",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Latviešu valodā ir gan satikt, gan sastapt. Otrais biežāk nozīmē to, ka nekas tāds nebija plānots.",
+  "source": "Latviešu valoda",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Saskarties nozīmē pieskarties ar malām. Vārds neko nesola par to, cik ilgi tas turpināsies.",
+  "source": "Latviešu valoda",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Jāņu naktī iet no ugunskura uz ugunskuru. Katrā sētā jāiegriežas, un neviens netiek palaists prom neēdis.",
+  "source": "Jāņi",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Ķekatnieki sētā ienāk nesaukti un maskās. Saimniekam tie jāsagaida, jācienā un jāizvada, pirms tie iet tālāk.",
+  "source": "Latviešu gadskārtas",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Tirgus diena mazpilsētā bija nedēļas vienīgā reize, kad visi bija vienā vietā. Pusi darījumu izdarīja, otru pusi izrunāja.",
+  "source": "Latvijas mazpilsētas",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Kad ledus uz upes iet, tas neiet visur reizē. Divi lauki saskrien viens otram virsū, un upe uz brīdi apstājas.",
+  "source": "Hidroloģija",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Kāzu ceļā vārtus aizsprostoja kaimiņi, un tie bija jāizpērk ar dziesmu vai ar naudu, pirms drīkstēja braukt tālāk.",
+  "source": "Latviešu kāzu paražas",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Divas gaisa masas ar dažādu siltumu uzreiz nesajaucas. Tur, kur tās saskaras, rodas viss laiks, kāds mums ir.",
+  "source": "Meteoroloģija",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Katrai bišu saimei ir sava smarža. Pie letes bites pārbauda katru, kas grib iekšā, un pēc smaržas zina, vai tā ir mājās.",
+  "source": "Biškopība",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Rudenī ledus vispirms sastingst gar krastu un tikai pēc tam vidū. Divas ledus malas satiekas pašās beigās.",
+  "source": "Hidroloģija",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "Ķērpis ir divi organismi vienā: sēne un aļģe. Uz kaila akmens atsevišķi neizdzīvotu ne viens, ne otrs.",
+  "source": "Botānika",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Priedes saknes ir savītas ar sēni, un bez tās koks neuzsūc gandrīz neko. Mežs ēd caur svešu ķermeni.",
+  "source": "Botānika",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Melnalksnim saknēs mīt baktērijas, kas savāc slāpekli no gaisa. Tāpēc tas aug tur, kur zeme citiem ir par nabadzīgu.",
+  "source": "Botānika",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Āboliņš atstāj zemē slāpekli, ko labība izņēmusi. Tāpēc laukus mija: gadu viens, gadu otrs.",
+  "source": "Lauksaimniecība",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Ābelei vajag citu ābeli. Savas šķirnes putekšņi tās ziedu neapaugļo, tāpēc dārzā stāda vismaz divas.",
+  "source": "Dārzkopība",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Bites un ābeles ir sasaistītas ar datumu, ne ar vietu. Ja ziedēšana iekrīt aukstā nedēļā, bites neizlido un raža izpaliek.",
+  "source": "Biškopība",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Latvijas pļavu orhidejām sēklā nav nekādu krājumu. Tās sadīgst tikai tad, ja zemē uzreiz atrod pareizo sēni.",
+  "source": "Botānika",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Pirtī slotu pa savu muguru nevar sist. Latviešu pirts ir taisīta diviem, un otrs cilvēks tur ir daļa no darba.",
+  "source": "Pirts tradīcija",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Divvīru zāģi drīkst tikai vilkt. Kas sāk grūst, tas zāģi salauž, un abi to jūt uzreiz.",
+  "source": "Amatniecība",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Rijā ar spriguļiem kūla vairāki reizē. Sitieni gāja pēc kārtas, un, ja kāds sasteidza, sanāca sasitieni.",
+  "source": "Zemkopība",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Bišu saime nav daudz bišu, bet viens ķermenis. Atsevišķa bite ziemu nepārdzīvo pat siltumā.",
+  "source": "Biškopība",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Savstarpējs ir tas, kas notiek abos virzienos vienlaikus. Vienam pašam to izdarīt nevar nekādi.",
+  "source": "Latviešu valoda",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "Sveiks nozīmē vesels. Sasveicinoties latvieši viens otram novēl būt veseliem.",
+  "source": "Latviešu valoda",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Sveicienu latviski nodod, sūta un atdod atpakaļ. Valoda izturas pret to kā pret priekšmetu, ne kā pret vārdu.",
+  "source": "Latviešu valoda",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Ciemos iet nozīmē burtiski iet uz ciemu. Apciemot kādu ir aiziet turp, kur viņš dzīvo.",
+  "source": "Latviešu valoda",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Viesmīlība ir viesa mīlēšana. Vārds neprasa laipnību, bet kaut ko krietni stiprāku.",
+  "source": "Latviešu valoda",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Ciemiņu nelaiž prom neēdinātu. Atteikties no piedāvātā ir gandrīz tikpat neveikli, kā nepiedāvāt.",
+  "source": "Latviešu paražas",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Maize un sāls ir tas, ko ienes jaunā mājā vispirms, pirms jebkuras mēbeles.",
+  "source": "Latviešu paražas",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Apavus mājā novelk. Ciemiņam bieži pasniedz mājas čības, un tas nozīmē, ka viņš paliks ilgāk par brīdi.",
+  "source": "Latviešu paražas",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Godi latviski ir svētki: kāzu godi, kristību godi. Viens vārds nozīmē gan cieņu, gan mielastu.",
+  "source": "Latviešu valoda",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Uz jūs runā ar svešiniekiem un ar vecākiem cilvēkiem. Pāreja uz tu ir atsevišķs solis, un to izrunā skaļi.",
+  "source": "Latviešu valoda",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Kāzas ilga vairākas dienas, un līgavu no vienas sētas otrā pārveda tikai otrajā dienā, ne pirmajā.",
+  "source": "Latviešu kāzu paražas",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Apdziedāšanās ir sadziedāšanās, kurā divas puses viena otru izzobo pantiņos. Beigās abas puses dzied kopā.",
+  "source": "Latviešu tautasdziesmas",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Atnācējam vienmēr jautā par ceļu: kā tika, cik ilgi brauca, kas bija pa vidu. Saruna sākas ar to, kas jau aiz muguras.",
+  "source": "Latviešu paražas",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "Jumis ir divas vārpas uz viena stiebra. Kas to atrod pļaujā, tas to ievij vainagā un paglabā līdz nākamajai sējai.",
+  "source": "Latviešu mitoloģija",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Divi koki, kas auguši cieši blakus, ar laiku saaug. Miza starp tiem nomirst, un koksne savienojas par vienu.",
+  "source": "Mežzinātne",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Apšu birzs bieži ir viens koks. No vienas saknes izdzen daudz stumbru, un tie visi ir viena auga daļas.",
+  "source": "Populus tremula",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Priedei sakne iet dziļumā, eglei tā izplešas plāni tuvu virsai. Tāpēc abas var stāvēt blakus, neatņemot viena otrai.",
+  "source": "Mežzinātne",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Rads, radīt un rasties stāv cieši blakus. Radinieks ir tas, kurš cēlies no tā paša.",
+  "source": "Latviešu valoda",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Bērzu birzī saknes savijas tik cieši, ka vējā koki tur viens otru. Viens pats bērzs klajumā lūzt biežāk.",
+  "source": "Mežzinātne",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Pļavā zāles saknes veido vienu velēnu. To var nogriezt un pārnest kā paklāju, un tā turēs pati sevi kopā.",
+  "source": "Botānika",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Uzsvaru uz pirmās zilbes parasti skaidro ar lībiešu ietekmi. Tā ir pēda, ko atstājuši tie, kuri dzīvoja šeit blakus.",
+  "source": "Valodniecība",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Sēņotājam viena sēne nozīmē, ka tuvumā ir vēl. Zem zemes tās ir viens organisms, izpletusies pa visu mežmalu.",
+  "source": "Mikoloģija",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Apiņi katru vasaru uzvijas pa to pašu koku un katru rudeni atkāpjas līdz saknei. Nākamgad tie sāk no tās pašas vietas.",
+  "source": "Botānika",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Vēlā ābele un agrā ābele vienā dārzā izlīdzina viena otras neražas gadus, jo bites lido starp abām.",
+  "source": "Dārzkopība",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Purva sūnas aug tik blīvi, ka atsevišķu augu no tā paklāja izvilkt nevar. Purvs ir viens augs, izaudzis pāri visam.",
+  "source": "Purva ekoloģija",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "Bāleliņi dainās nav tikai brāļi. Tā sauc visus, kas meitu aizstāv un pie kā viņa var atgriezties.",
+  "source": "Latviešu tautasdziesmas",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Māmuliņa, māsiņa, brālītis. Dainās radus gandrīz vienmēr sauc pamazināmajā formā, arī tad, kad tie sen ir pieauguši.",
+  "source": "Latviešu tautasdziesmas",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Draugs un draudze ir viens vārds, izaudzis divējādi. Draudze ir tie, kas ir draugi vienā vietā.",
+  "source": "Latviešu valoda",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Saime bija visi, kas sētā strādāja un ēda pie viena galda, ne tikai tie, kas bija radi.",
+  "source": "Latviešu sēta",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Krustmāte un krusttēvs paliek radi visu mūžu, arī tad, ja asinsradniecības nav nekādas.",
+  "source": "Latviešu paražas",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Vīramāte, sievasmāte, vīratēvs: katrai radniecībai ir savs atsevišķs vārds, un neviens no tiem nav aizņemts no cita.",
+  "source": "Latviešu valoda",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Tautietis dainās nozīmē svešinieku, kas nāk precēt. Tā pati sakne ir vārdā tauta.",
+  "source": "Latviešu tautasdziesmas",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Kaimiņš ir tas, kurš dzīvo blakus. Latviešu sētās tas nozīmēja arī to, kurš atnāks palīgā.",
+  "source": "Latviešu valoda",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Sirsnīgs nāk no sirds. Latviski sirsnīgs cilvēks nav pieklājīgs — viņš ir tāds, kas to dara no iekšpuses.",
+  "source": "Latviešu valoda",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Mīļš attiecas arī uz lietām un vietām, ne tikai uz cilvēkiem. Mīļā vieta ir tikpat pareizi teikts kā mīļais cilvēks.",
+  "source": "Latviešu valoda",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Tautasdziesma ir tautas dziesma. Neviens no tiem, kas to dziedāja, sevi par autoru nesauca.",
+  "source": "Latviešu tautasdziesmas",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Dziesmu svētkos svešinieki dzied vienā balsī tāpēc, ka visi ir mācījušies to pašu repertuāru skolā.",
+  "source": "Dziesmu svētki",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "Aijā, žūžū, lāča bērni, / Pekainām kājiņām.",
+  "source": "Latviešu tautasdziesma",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Talka ir darbs, ko dara kopā un par ko nemaksā. Samaksa ir ēdiens un tas, ka nākamreiz atnāks pie tevis.",
+  "source": "Latviešu paražas",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Kopkorī neviens nedzied viens. Ja kāds vienā vietā apklust, skaņa nemainās, un tieši tāpēc daudzi tur uzdrošinās dziedāt.",
+  "source": "Dziesmu svētki",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Divi cilvēki, kas nes vienu baļķi, sāk iet soli solī paši no sevis. Ja neiet, baļķis to atgādina uzreiz.",
+  "source": "Amatniecība",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Sienu pļaujot ar izkapti gāja rindā, viens aiz otra, ar soļa atstatumu. Pirmais noteica tempu visiem pārējiem.",
+  "source": "Zemkopība",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Divatā nozīmē to pašu, ko vienatnē, tikai diviem: vieta, kur nav neviena cita un kur ir vēl viens.",
+  "source": "Latviešu valoda",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Divas plaukstas kopā notur siltumu ilgāk nekā katra atsevišķi, jo kopā tām ir mazāka virsma, ar ko to zaudēt.",
+  "source": "Fizika",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Bērnus Latvijā veda pie vecvecākiem uz visu vasaru. Attālums starp paaudzēm bieži bija tieši trīs mēneši gadā.",
+  "source": "Latvijas sadzīve",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Suitu sievas dzied tā, ka viena velk vārdus, bet pārējās tur zem tiem vienu pašu toni. Bez turētājām dziesmas nav.",
+  "source": "Suitu burdona dziedāšana",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Sadzīvot nozīmē dzīvot kopā tā, ka abiem tas ir iespējams. Vārds nesola mīlestību, bet gan kārtību.",
+  "source": "Latviešu valoda",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Rainis un Aspazija rakstīja katrs savu, un abi bija dzejnieki. Viņu vasarnīca Majoros stāv turpat, kur stāvēja.",
+  "source": "Rainis un Aspazija",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Cimdu pāri ada tā, ka abi ir vienādi, bet ne gluži. Otro adītāja jau zina no galvas un tāpēc ada ātrāk.",
+  "source": "Rokdarbi",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "Klusums ir stāvoklis, ne tukšums. Vārds darināts no kluss tāpat kā siltums no silts.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Čaboņa ir skaņa, ko taisa sausas lapas, salmi vai papīrs. Tai ir savs vārds, jo to sadzird tikai tad, kad viss cits klusē.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Šalkas ir tas, ko dara vējš priežu galotnēs. Latviešu valodā mežs nešņāc un nekauc — tas šalc.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Purvā skaņa neatbalsojas. Sūna un ūdens to uzsūc, tāpēc klajuma vidū ir klusāks nekā mežā zem kokiem.",
+  "source": "Akustika",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Ledus uz ezera ziemā skan. Krītot temperatūrai tas plaisā, un skaņa pa ledu aiziet tālāk nekā pa gaisu.",
+  "source": "Akustika",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Lūsis Latvijas mežā staigā tā, ka to gandrīz nekad nedzird. Ķepu apakšas tam ir apaugušas ar biezu spalvu.",
+  "source": "Lynx lynx",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Rīgas Doma baznīcā ērģeļu skaņa turas gaisā vēl vairākas sekundes pēc tam, kad taustiņš jau atlaists.",
+  "source": "Akustika",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Nakts miers Latvijā ir noteikts noteikumos, ne atstāts pieklājībai. Pēc noteikta laika vakarā to drīkst prasīt.",
+  "source": "Sabiedriskās kārtības noteikumi",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Klusiņām ir apstākļa vārds ar pamazināmo galotni. Tas nozīmē klusi, bet mazliet vairāk un ar zināmu maigumu.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Sniegs zem zābaka čīkst tikai tad, kad ir aukstāks par kādiem desmit grādiem. Siltākā salā tas skaņu netaisa.",
+  "source": "Akustika",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Klusēt ir darbības vārds. To dara kāds, tas prasa piepūli, un no tā var arī piekust.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Runāt sudrabs, klusēt zelts.",
+  "source": "Latviešu sakāmvārds",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "Miers latviski ir gan miers starp valstīm, gan miers cilvēkā, gan tas, kurā otru atstāj. Viens vārds visiem trim.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Mierināt ir darināts no miera. Nomierināt kādu nozīmē ienest viņā mieru no ārpuses.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Samierināties nozīmē salīgt ar to, kas ir. Tas pats darbības vārds, tikai vērsts uz iekšu, nevis uz otru cilvēku.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Izlīgt nozīmē salabt, un sakne tam ir tā pati, kas vārdam līgums. Miers latviski ir kaut kas, par ko vienojas.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Saticība nāk no satikt. Vārds sadzīvošanai mierā ir uzbūvēts uz vārda, kas nozīmē satikties.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Rimt nozīmē apstāties pašam no sevis. Vējš rimst, sāpes rimst, un neviens tās neapstādina.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Apklust nozīmē kļūt klusam. Latviešu valodā tas ir atsevišķs vārds no būt klusam, jo tā ir pāreja, ne stāvoklis.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Beigt un pabeigt nav apmaināmi. Pirmais nozīmē pārtraukt, otrais — novest līdz galam.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Pietiek ir viena vārda teikums. Ar to Latvijā apstādina gan strīdu, gan liešanu glāzē.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Pamiers ir miers pa daļai. Vārds pats saka, ka tas nav viss un ka tas ir uz laiku.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Atlaist nozīmē gan palaist vaļā, gan piedot. Latviski parādu atlaiž tāpat kā virvi.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Rāms ir vārds ūdenim bez viļņiem un cilvēkam bez satraukuma. Vājumu tas nenozīmē nemaz.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "Bēdu manu lielu bēdu, / Es par bēdu nebēdāju: / Liku bēdu zem akmeņa, / Pāri gāju dziedādama.",
+  "source": "Latviešu tautasdziesma",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Lēni, lēni Dieviņš brauca / No kalniņa lejiņā: / Netraucēja ievas ziedu, / Ne arāja kumeliņu.",
+  "source": "Latviešu tautasdziesma",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Pēc darba salda dusa.",
+  "source": "Latviešu sakāmvārds",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Pēc pēršanās pirtī apsēžas un dzer tēju, kamēr elpa nomierinās. Tā ir pirts daļa, nevis pārtraukums tajā.",
+  "source": "Pirts tradīcija",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Atpūsties ir darināts no pūst. Latviski atpūta nozīmē atgūt elpu.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Nesteidzīgs nav tas pats, kas lēns. Atšķirība ir tajā, kurš to ir izvēlējies.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Vasaras vakarā gaisma turas tik ilgi, ka darbu var pabeigt un tomēr vēl pasēdēt ārā, pirms kļūst tumšs.",
+  "source": "Latvijas vasara",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Siena laikā pusdienas ēda pļavā, ēnā, un pēc tam apgūlās uz stundu. Tas nebija slinkums, bet dienas kārtība.",
+  "source": "Zemkopība",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Zem liela ozola vasaras pusdienā ir vairākus grādus vēsāks nekā saulē, un gaiss tur ir arī mitrāks.",
+  "source": "Botānika",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Omulīgs nozīmē siltu, mierīgu un mazliet apaļu. To saka par istabu, par vakaru un par cilvēku vienādi labi.",
+  "source": "Latviešu valoda",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Ugunskurā ogles pēc liesmas nodzišanas silda vēl stundām. Tieši tad ap to sasēžas ciešāk.",
+  "source": "Jāņi",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "Kaķis mājā silto vietu atrod pirms cilvēka. Krāsns mūris latviešu mājā bija silts vēl nākamajā rītā.",
+  "source": "Latviešu sēta",
+  "theme": "peace",
+  "subtheme": "atEase"
+ }
+]

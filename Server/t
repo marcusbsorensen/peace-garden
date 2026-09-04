@@ -1,0 +1,96 @@
+<!doctype html>
+<!--
+  The test door.
+
+  Forty-three gardeners, one per language the site knows, so that what a page
+  looks like to a reader of Macedonian can be looked at rather than imagined.
+  Pick one and the garden is drawn in that language, with a bar across the top
+  saying which one you are standing in.
+
+  **There are no accounts here.** `Server/` is static files and this app is
+  built on nothing reaching an origin. A tester is a name and a language kept in
+  this browser, the word below is a latch rather than a lock, and
+  `assets/js/testers.js` says so at length at the top of the file. The roster
+  protects nothing: every name on it is invented and every plant behind it is
+  invented, which the garden already says on its own screen.
+
+  Static, like `/s` and `/g`: no analytics, no font CDN, no third-party
+  anything.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Peace Garden — testers</title>
+    <meta name="description" content="Reading the garden in somebody else's language." />
+    <meta name="color-scheme" content="dark light" />
+    <!-- Not a page for anybody but whoever is building this. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <link rel="icon" href="/assets/mark.svg" type="image/svg+xml" />
+  </head>
+
+  <body>
+    <div class="pool" aria-hidden="true"></div>
+
+    <main class="page" id="page">
+      <header class="masthead">
+        <img class="mark" src="/assets/mark.svg" alt="" width="44" height="44" />
+        <span class="wordmark">Peace Garden</span>
+      </header>
+
+      <!--
+        This whole page is written in English and stays in English. It is the
+        one screen that must not be in the language being tested, or it stops
+        being readable at exactly the moment it is needed. It is never
+        commissioned; see docs/FOR-REVIEW.md §1 for what the site does
+        commission and why the list is defended.
+      -->
+      <h1 class="heading">Testers</h1>
+
+      <p class="body">
+        One gardener per language, for looking at the garden from where a reader
+        of it stands. Picking one draws every label, every passage and the whole
+        page in that language until you leave.
+      </p>
+
+      <!-- 1. The latch. -->
+      <form class="door" id="door">
+        <label class="label" for="word">Word</label>
+        <input
+          class="door__field"
+          id="word"
+          name="word"
+          type="password"
+          autocomplete="off"
+          autocapitalize="none"
+          spellcheck="false"
+        />
+        <button class="quiet-button" type="submit">Open</button>
+        <p class="body quiet" id="door-note" role="status" aria-live="polite"></p>
+      </form>
+
+      <!-- 2. The roster. -->
+      <section class="roster" id="roster" hidden aria-label="Testers">
+        <label class="label" for="filter">Find</label>
+        <input
+          class="door__field"
+          id="filter"
+          type="search"
+          autocomplete="off"
+          autocapitalize="none"
+          spellcheck="false"
+          placeholder="Danish, da, Gartner"
+        />
+        <ul class="roster__list" id="roster-list"></ul>
+      </section>
+
+      <p class="notice body">
+        Every plant in the garden is invented, and so is everybody on this list.
+        Nothing here is stored anywhere but in this browser.
+      </p>
+    </main>
+
+    <script type="module" src="/assets/js/door.js"></script>
+  </body>
+</html>

@@ -52,6 +52,16 @@ struct UnfurlingBackdrop: View {
             }
         }
         .ignoresSafeArea()
+        // The composition is drawn, not laid out: `early` enters low from one
+        // side and `late` high from the other, deliberately not as a mirror
+        // pair, and reflecting the whole thing under right-to-left swaps which
+        // is which. docs/LANGUAGES.md left this open — *decide whether the
+        // reflected composition is acceptable before a right-to-left language
+        // is added* — and the answer is that it is not a composition question at
+        // all. This is the same gesture as `Chrome.Tendril` and the marks along
+        // the foot of the stage, and the app should have one hand in every
+        // language. See `View.drawnHand()`.
+        .drawnHand()
         .allowsHitTesting(false)
         .accessibilityHidden(true)
         .animation(motion, value: phase)

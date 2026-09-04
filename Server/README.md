@@ -10,9 +10,12 @@ seed lands on.
 peacegarden.app/
 ├── .well-known/
 │   └── apple-app-site-association     ← no file extension
-├── .htaccess                          ← serves `s` as text/html
+├── .htaccess                          ← serves s, g and t as text/html
 ├── s                                  ← the page, no file extension either
+├── g                                  ← the garden, walked
+├── t                                  ← the test roster
 ├── languages.json                     ← generated: tools/site/export.py
+├── testers.json                       ← generated: one gardener per language
 ├── passages/<code>.json               ← generated: one bank per language
 ├── strings/<code>.json                ← the site's own words, per language
 └── assets/
@@ -20,9 +23,14 @@ peacegarden.app/
     ├── mark.svg                       ← a copy of tools/icon/icon.svg
     └── js/
         ├── page.js                    ← the /s page
+        ├── walk.js                    ← the /g page
+        ├── door.js                    ← the /t page
         ├── link.js                    ← reads the fragment
         ├── languages.js               ← negotiation and the chooser
         ├── strings.js                 ← the catalogue, English written
+        ├── testers.js                 ← standing in another language
+        ├── garden.js, plots.js        ← the map, and what stands on it
+        ├── keys.js                    ← the keyboard, and the sheet under ?
         └── passages.js                ← theme, subtheme, and the draw
 ```
 
@@ -34,6 +42,23 @@ Upload the contents of this directory to the document root.
 already points at and the path the association file claims, so it cannot grow a
 `.html`. `.htaccess` serves it as `text/html`, the same way `.well-known` forces
 `application/json` — see that file for what it can and cannot promise.
+
+**Every page added here has to be named in `.htaccess`.** `g` and `t` are, and
+`g` was not until it was checked: with only `s` named, the garden arrived as
+`application/octet-stream` and a browser downloaded it rather than drawing it.
+The request is a 200 and the log is clean, so nothing says so. Serve the
+directory locally the way a host serves it before believing a page works:
+
+    python3 tools/site/serve.py
+
+That is the reason it exists rather than `python3 -m http.server`, which types
+a file by its extension and so cannot draw any of the three pages.
+
+**`/t` is the test roster** — forty-three gardeners, one per language, for
+looking at the site from where a reader of it stands. There are no accounts
+behind it: `assets/js/testers.js` opens with what a tester is and why a static
+site has nobody to log in. It is `noindex, nofollow`, it guards nothing, and it
+can ship or be left out of an upload without anything else noticing.
 
 **`mark.svg` is a copy.** `tools/icon/make_icon.py` writes the canonical
 drawing at `tools/icon/icon.svg`; this is that file, copied. Change the dials

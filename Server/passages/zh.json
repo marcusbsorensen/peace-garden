@@ -1,0 +1,2162 @@
+[
+ {
+  "text": "初：从刀从衣，是裁衣服的第一刀。开始这个字里本来有布，也有剪子。",
+  "source": "《说文解字》",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "惊蛰是二月的节气，说的是雷一响，藏在土里的虫被惊醒，动身往外走。",
+  "source": "《月令七十二候集解》",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "种子吸饱了水，胚根顶破种皮的那一刻，它就不再是一颗种子了。",
+  "source": "植物学",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "立春的立，古人解作「建始也」——一个季节从这一天算起。",
+  "source": "《月令七十二候集解》",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "乙字，《说文》说它像春天的草木弯弯曲曲往外顶的样子。",
+  "source": "《说文解字》",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "一根竹笋刚出土时，节数就已经数齐了；往后只是每一节各自伸长，不再添新的。",
+  "source": "植物学",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "蝉的若虫在地下过了好几年，某个夜里爬上树，蜕最后一次壳，从此不再回到土里。",
+  "source": "昆虫学",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "雏鸟的喙尖上长着一枚小小的破卵齿，专为啄开蛋壳；出壳没几天它就脱落了。",
+  "source": "鸟类学",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "万事开头难。",
+  "source": "谚语",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "一条河的名字，常常是从两股水汇合的那一点起算的；再往上，它们各叫各的。",
+  "source": "地理学",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "破土而出：说的不是长了多高，是终于到了地面上。",
+  "source": "成语",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "火山岛在海面下已经长了很久，露出水面的那一天，才第一次有人给它起名字。",
+  "source": "地质学",
+  "theme": "beginnings",
+  "subtheme": "theFirstAct"
+ },
+ {
+  "text": "白日不到处，青春恰自来。苔花如米小，也学牡丹开。",
+  "source": "袁枚《苔》",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "集腋成裘：一件皮衣，要凑上很多张狐狸腋下那一小块白毛才做得成。",
+  "source": "成语",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "聚沙成塔。",
+  "source": "成语",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "毛竹头几年只在地下走鞭，地面上看不出动静；到了某一年的春天，几周之内就能高过屋顶。",
+  "source": "植物学",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "榕树的种子小得像沙，落在别的树杈上发芽，几十年后能自己撑成一片林子。",
+  "source": "植物学",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "苗从地发，树向枝分。",
+  "source": "《增广贤文》",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "一窝蚂蚁从一只蚁后开始，有的种类最后能数到几百万只。",
+  "source": "昆虫学",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "珠穆朗玛峰每年还在长高几毫米，因为下面那两块大陆还在互相顶。",
+  "source": "地质学",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "一叶知秋：不必等整座山黄透，一片落叶就够了。",
+  "source": "成语",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "只要功夫深，铁杵磨成针。",
+  "source": "谚语",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "华北的粟，祖先是路边一种叫狗尾草的野草。",
+  "source": "农业史",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "辽宁泥炭层里挖出的莲子躺了一千多年，把外壳磨薄，泡在清水里几天就发了芽。",
+  "source": "植物学",
+  "theme": "beginnings",
+  "subtheme": "smallToLarge"
+ },
+ {
+  "text": "一年之计在于春，一日之计在于晨。",
+  "source": "《增广贤文》",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "种麻得麻，种豆得豆。",
+  "source": "《增广贤文》",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "有意栽花花不发，无心插柳柳成荫。",
+  "source": "《增广贤文》",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "清明前后，种瓜点豆。",
+  "source": "农谚",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "冬小麦要先挨过一场冬天的冷，来年才肯抽穗。这道手续叫春化，秋天下种的时候就定下了。",
+  "source": "植物学",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "一棵树苗种下去时朝哪边斜，几十年后主干还是那个斜法。",
+  "source": "林学",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "一颗小行星编上号以后，发现它的人只有一次命名的机会，名字定了就跟着它走。",
+  "source": "天文学",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "装窑那天每件坯摆在什么位置，决定了开窑那天它是什么颜色。",
+  "source": "陶瓷工艺",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "一坛酒的味道多半在下曲那天就定了，后面几个月只是让它慢慢走完。",
+  "source": "酿造",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "谷雨，古人解作「雨其谷于水」：这个时候把种子播下去。",
+  "source": "《月令七十二候集解》",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "打地基的那几天最不好看，可房子将来歪不歪，就在那几天。",
+  "source": "建筑",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "写毛笔字讲究起笔：一笔的方向和粗细，在纸上第一次落下的时候就定了。",
+  "source": "书法",
+  "theme": "beginnings",
+  "subtheme": "whatAStartSettles"
+ },
+ {
+  "text": "小满：物至于此小得盈满。麦粒已经有了，还没有满。",
+  "source": "《月令七十二候集解》",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "休眠：条件都对了，种子还是不发芽，是它自己从里面按住了。",
+  "source": "植物学",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "蛰，《说文》只给了两个字：藏也。",
+  "source": "《说文解字》",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "有些种子的壳硬到要经过一场火、一次结冰，或者一趟动物的肠子，才肯松口。",
+  "source": "植物学",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "引而不发：弓拉满了，箭还在弦上。",
+  "source": "成语",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "按兵不动。",
+  "source": "成语",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "厚积薄发：攒得厚，放得慢。",
+  "source": "成语",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "心急吃不了热豆腐。",
+  "source": "谚语",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "好饭不怕晚。",
+  "source": "谚语",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "有些竹子几十年才开一次花，而且一片林子像约好了似的同时开。",
+  "source": "植物学",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "冬眠的蛙埋在泥里，心跳慢到一分钟只有几下，等水暖起来才回到原来的速度。",
+  "source": "动物学",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "茶树的芽在清明之前只肯长那么一点，采茶的人管这几天摘的叫明前。",
+  "source": "茶学",
+  "theme": "waiting",
+  "subtheme": "heldBack"
+ },
+ {
+  "text": "彼采葛兮，一日不见，如三月兮。",
+  "source": "《诗经·王风·采葛》",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "十年磨一剑，霜刃未曾试。",
+  "source": "贾岛《剑客》",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "冰冻三尺，非一日之寒。",
+  "source": "谚语",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "秒，本来是禾苗尖上那根芒。拿它做时间的名字，是很后来的事。",
+  "source": "《说文解字》",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "一夜分五更，打更的人每两个钟头敲一次，从天黑一直数到天亮。",
+  "source": "旧俗",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "银杏从种子到第一次结果常要二十来年，所以老辈人叫它公孙树：公公种下，孙子吃到。",
+  "source": "植物学",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "前人栽树，后人乘凉。",
+  "source": "谚语",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "沉香是在树受伤很多年之后，才在那道伤口里慢慢结出来的。",
+  "source": "植物学",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "玄奘从长安走到天竺又走回来，用了十七年，带回六百多部经。",
+  "source": "历史",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "敦煌的洞窟前后开凿了一千年，一代人只画得完其中几间。",
+  "source": "考古",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "古法酱油要在缸里晒足一个夏天，日晒夜露，翻缸的人一天只动它一次。",
+  "source": "传统工艺",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "板栗从种子长到结果要七八年，嫁接过的三年就结。快的那条路，要先有一棵老树。",
+  "source": "农学",
+  "theme": "waiting",
+  "subtheme": "theLongCount"
+ },
+ {
+  "text": "望：《说文》讲得直白——人出门在外，家里的人望他回来。",
+  "source": "《说文解字》",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "独怜幽草涧边生，上有黄鹂深树鸣。春潮带雨晚来急，野渡无人舟自横。",
+  "source": "韦应物《滁州西涧》",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "守候：守是不走开，候是等一个信儿。节气里的候，本来就是五天。",
+  "source": "汉语词汇",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "静观其变。",
+  "source": "成语",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "守夜的人不点大灯，因为眼睛要将近半个钟头才在暗里完全睁开。",
+  "source": "生理学",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "候鸟动身之前会在一个地方连停几天，只管吃。观鸟的人管那种地方叫停歇地。",
+  "source": "鸟类学",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "圭表就是一根立在地上的杆子。看它正午的影子最长的那一天，就知道冬至到了。",
+  "source": "天文史",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "倚杖柴门外，临风听暮蝉。",
+  "source": "王维《辋川闲居赠裴秀才迪》",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "立春那天，旧时州县的人要到城东去迎春，把一头泥捏的牛摆在那里。",
+  "source": "旧俗",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "苍鹭能在浅水里站上一个钟头不动，等鱼自己游到脚边。",
+  "source": "鸟类学",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "一颗彗星什么时候回来，算得出来，靠的是上一次有人把它经过的日子记了下来。",
+  "source": "天文学",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "潮汐表把每天涨落的时刻都印好了，站在岸上的人还是得等那一刻自己到。",
+  "source": "海洋学",
+  "theme": "waiting",
+  "subtheme": "standingAndWatching"
+ },
+ {
+  "text": "野火烧不尽，春风吹又生。",
+  "source": "白居易《赋得古原草送别》",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "枯木逢春：看着已经干透的那根木头，春天一到又发了芽。",
+  "source": "成语",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "割过的韭菜十来天又能再割一茬，一年里割上好几回都不伤根。",
+  "source": "农学",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "柳树砍到贴地，第二年从桩上冒出来的枝比原来还密。这样养的树桩能活几百年。",
+  "source": "林业",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "蜥蜴断掉的尾巴能长回来，只是里面换成了软骨，不再是原来那根骨头。",
+  "source": "动物学",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "养蚕的桑树每年春天要剪一次枝。剪得狠，第二年的叶子才又大又嫩，蚕吃得动。",
+  "source": "农学",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "草被割过反而更密，因为草的生长点长在底下，不在尖上。",
+  "source": "植物学",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "剪过的葡萄藤第二年结得更多；不剪的越长越野，果子一年比一年小。",
+  "source": "园艺",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "头发剃了会长，指甲剪了会长——身上一直在造新的那几处，恰好都在外面。",
+  "source": "生理学",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "大火之后的桉树直接从树干上冒新叶，那些芽本来就藏在树皮底下。",
+  "source": "植物学",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "除旧布新：旧的撤下去，新的铺开来。",
+  "source": "成语",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "旧纸打成浆再抄一遍，还能当纸用；纤维每循环一回短一点，大约七回到头。",
+  "source": "造纸",
+  "theme": "renewal",
+  "subtheme": "cutAndComeAgain"
+ },
+ {
+  "text": "昔我往矣，杨柳依依。今我来思，雨雪霏霏。",
+  "source": "《诗经·小雅·采薇》",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "麦秋，是夏天里的秋天：于时虽夏，于麦则秋。",
+  "source": "《月令七十二候集解》",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "寒来暑往，秋收冬藏。",
+  "source": "《千字文》",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "二十四番花信风：从小寒到谷雨共二十四候，一候应一种花，头一种是梅，末一种是楝。",
+  "source": "物候",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "半夏这味药的名字来自它出苗的时候——正好在夏天的一半。",
+  "source": "《月令七十二候集解》",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "七月在野，八月在宇，九月在户，十月蟋蟀入我床下。",
+  "source": "《诗经·豳风·七月》",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "瑞雪兆丰年。",
+  "source": "农谚",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "荷尽已无擎雨盖，菊残犹有傲霜枝。一年好景君须记，最是橙黄橘绿时。",
+  "source": "苏轼《赠刘景文》",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "银杏落叶极齐，一棵树常在两三天里落个精光。",
+  "source": "植物学",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "草荣识节和，木衰知风厉。虽无纪历志，四时自成岁。",
+  "source": "陶渊明《桃花源诗》",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "候鸟不看天气，看白天的长短；日照一到某个数，它就动身。",
+  "source": "鸟类学",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "古人给蝉起了两个名字：夏天叫的那种和秋天叫的那种，不算同一件事。",
+  "source": "《月令七十二候集解》",
+  "theme": "renewal",
+  "subtheme": "theTurningYear"
+ },
+ {
+  "text": "雨过天晴。",
+  "source": "成语",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "破镜重圆：一面铜镜掰成两半，两个人各拿一半，很多年之后合上了。",
+  "source": "成语",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "断过的骨头长好之后，接口那一段常常比原来还厚。",
+  "source": "医学",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "锔瓷：碎了的碗不扔，钻上小孔，拿铜钉一枚一枚把碴口锔住，锔好了照样盛水。",
+  "source": "传统手艺",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "苦尽甘来。",
+  "source": "成语",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "冰释前嫌：像冰化开那样，之前那点隔阂就没了。",
+  "source": "成语",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "树皮被划开一道的树会自己把伤口合上，几年之后只剩一条竖着的疤。",
+  "source": "林学",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "修画的人补上同样的纸，再把颜色接过去；接得好的地方，看不出来。",
+  "source": "书画装裱",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "沾衣欲湿杏花雨，吹面不寒杨柳风。",
+  "source": "僧志南《绝句》",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "蚯蚓断了以后，带头的那一段能把尾巴重新长齐，长出来的比原来短一些。",
+  "source": "动物学",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "一片砍过的红树林，只要不再动它，十来年就能自己长回来。",
+  "source": "生态学",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "好雨知时节，当春乃发生。随风潜入夜，润物细无声。",
+  "source": "杜甫《春夜喜雨》",
+  "theme": "renewal",
+  "subtheme": "madeWhole"
+ },
+ {
+  "text": "旦：太阳画在一横上面，那一横是地。",
+  "source": "《说文解字》",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "莫，就是后来的暮：太阳落进了草丛里。",
+  "source": "《说文解字》",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "晨钟暮鼓：旧时城里早上撞钟，晚上擂鼓，一天的两头各有一种声音。",
+  "source": "旧俗",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "日出而作，日入而息。",
+  "source": "《击壤歌》",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "一道残阳铺水中，半江瑟瑟半江红。",
+  "source": "白居易《暮江吟》",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "婚字里的昏，就是天色暗下来的那个昏。《说文》说，古礼里娶亲是在黄昏。",
+  "source": "《说文解字》",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "旦、晨、曙、晓——天亮这件事在汉语里有好几个字，各管一小段。",
+  "source": "汉语词汇",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "民航把日落之后那段还看得见地平线的时间叫民用曙暮光，飞行员靠它决定什么时候开灯。",
+  "source": "航空",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "地球上的晨昏线从太空看得见，是一条移动的圈，在赤道上每小时往西走一千六百多公里。",
+  "source": "天文学",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "牵牛花天亮之前就开，中午前后就谢，一朵只用半天。",
+  "source": "植物学",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "云破月来花弄影。",
+  "source": "张先《天仙子》",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "朝霞不出市，暮霞走千里。",
+  "source": "《田家五行》",
+  "theme": "light",
+  "subtheme": "theEdgesOfTheDay"
+ },
+ {
+  "text": "光合作用不是把光变成糖，是拿光去拆水。放出来的那些氧气是水里的。",
+  "source": "植物学",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "一片叶子是绿的，因为绿光被它退了回来；它留下的是红光和蓝光。",
+  "source": "植物学",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "向日葵只在花盘没开的时候跟着太阳转；开了以后就朝东站着，不再动了。",
+  "source": "植物学",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "短日照的植物靠夜有多长决定开不开花。它数的是黑，不是光。",
+  "source": "植物学",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "月晕主风，日晕主雨。",
+  "source": "《田家五行》",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "虹是日光照在雨点上折回来的。旧书里早有人这么写：云薄漏日，日照雨滴则虹生焉。",
+  "source": "《月令七十二候集解》",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "一场雷雨里先看见闪，后听见雷。中间每隔三秒，雷就在一公里之外。",
+  "source": "气象学",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "泉声咽危石，日色冷青松。",
+  "source": "王维《过香积寺》",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "木头的年轮，宽的那一圈是雨水好的年份，窄的那一圈是天旱的年份。",
+  "source": "树木年代学",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "蜜蜂看得见紫外线。很多花在紫外光下有一圈人眼看不见的纹路，指着蜜的方向。",
+  "source": "昆虫学",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "一天里影子最短的那一刻是正午，可它不一定落在钟表上的十二点。",
+  "source": "天文学",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "轻阴阁小雨，深院昼慵开。坐看苍苔色，欲上人衣来。",
+  "source": "王维《书事》",
+  "theme": "light",
+  "subtheme": "readingTheLight"
+ },
+ {
+  "text": "光：《说文》说它是火在人上——一个人举着火。",
+  "source": "《说文解字》",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "明，古书里写作朙，从月从囧。囧是窗户，说的是月光照进窗子。",
+  "source": "《说文解字》",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "晶：三个日字摞起来，本义就是亮。",
+  "source": "《说文解字》",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "海上生明月，天涯共此时。",
+  "source": "张九龄《望月怀远》",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "萤火虫的光几乎不带热，能量差不多全变成了光，比任何一盏灯都省。",
+  "source": "生物学",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "月亮自己不亮。它把太阳的光弹回来，而且只弹回来一成多一点。",
+  "source": "天文学",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "皓月千里，浮光跃金，静影沉璧。",
+  "source": "范仲淹《岳阳楼记》",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "深林人不知，明月来相照。",
+  "source": "王维《竹里馆》",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "一支蜡烛最亮的地方，是那一层正在烧的碳粒；它被烧到发白，然后就没了。",
+  "source": "化学",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "牖，是在墙上挖开一个洞，用木条交叉起来。《说文》说，牖是为了看见太阳。",
+  "source": "《说文解字》",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "极光是太阳吹来的带电粒子撞在高空的空气上，撞到什么气体就出什么颜色。",
+  "source": "物理学",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "油灯的灯芯要常拨，拨过之后火苗才亮。这个动作古人写作挑灯。",
+  "source": "旧俗",
+  "theme": "light",
+  "subtheme": "lightItself"
+ },
+ {
+  "text": "围棋盘十九道，纵横交出三百六十一个点。古书说这数目取的是周天三百六十，加上正中的天元一点。",
+  "source": "《棋经十三篇》",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "春分的分就是一半：这一天正落在九十天的中间。",
+  "source": "《月令七十二候集解》",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "洛书的九宫格，一到九各占一格，横着竖着斜着加起来都是十五。",
+  "source": "数学",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "祖冲之算出圆周率在三点一四一五九二六和三点一四一五九二七之间，这个精度保持了近千年。",
+  "source": "数学史",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "中国算盘上二下五，一档记得到十五，为的是算十六两一斤的账。",
+  "source": "算学",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "一斤原来是十六两，所以「半斤八两」说的是两边一样重。",
+  "source": "度量衡",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "有板有眼：唱曲子里，板是重的那一拍，眼是轻的；一板三眼，就是四拍。",
+  "source": "戏曲",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "一年二十四气，一气三候，一候五天，合起来七十二候。",
+  "source": "历法",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "二十八宿沿着月亮走的那一圈排开，月亮差不多每天住一宿。",
+  "source": "天文史",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "向日葵盘上的螺旋，顺着数和逆着数，常常是相邻的两个斐波那契数。",
+  "source": "植物学",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "古琴上有十三个徽，标的是弦上泛音的位置。手指按在徽上，音比按实了轻。",
+  "source": "古琴",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "甲骨上记数用的是十进位，三千多年前就有了百、千、万的专字。",
+  "source": "古文字学",
+  "theme": "pattern",
+  "subtheme": "counted"
+ },
+ {
+  "text": "榫卯：一块木头凸出来，另一块凹进去，合上之后不用一根钉子。",
+  "source": "木工",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "天衣无缝：天上的衣裳不用裁，所以找不出一道缝。",
+  "source": "成语",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "鳞次栉比：像鱼鳞一样一片挨一片，像梳齿一样一根挨一根。",
+  "source": "成语",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "斗拱是一层层交叠的木块，把屋檐的分量一级一级转到柱子上。地震来了它会松动，但不散。",
+  "source": "建筑",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "严丝合缝。",
+  "source": "成语",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "律诗八句，中间四句要两两成对：名词对名词，动词对动词，平声对仄声。",
+  "source": "诗律",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "一件碎了的瓷器能拼回去，是因为断口只有一种拼法。",
+  "source": "考古",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "藤的卷须先随便转，碰到东西才收紧，收的时候中间还要反一次方向，才不至于把自己拧断。",
+  "source": "植物学",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "蜂巢的两面不是背对背的：一面的孔底正顶着另一面三个孔的底，一层蜡当两层用。",
+  "source": "几何学",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "刻花的匠人在瓷坯上刻透一层露出下一层的颜色，深浅是提前算好的。",
+  "source": "陶瓷",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "阡陌纵横：东西向的田埂叫陌，南北向的叫阡。",
+  "source": "《说文解字》",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "苏蕙织的璇玑图，纵横各二十九个字，横着念竖着念斜着念反着念都成诗。",
+  "source": "文学史",
+  "theme": "pattern",
+  "subtheme": "fittedTogether"
+ },
+ {
+  "text": "规矩本来是两样工具：规是画圆的圆规，矩是画直角的曲尺。",
+  "source": "汉语词源",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "《说文解字》把九千多个字归进五百四十个部首，是头一回有人给汉字排出次序。",
+  "source": "文字学",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "《康熙字典》把部首减到二百一十四个，今天的字典大多还照这个数。",
+  "source": "文字学",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "经和纬本来是织布的两组线：经是竖着绷住的，纬是横着穿过去的。",
+  "source": "纺织",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "纲举目张：提起网上那根总绳，所有网眼就一起张开了。",
+  "source": "成语",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "井井有条：像井字那样一格一格，一条不乱。",
+  "source": "成语",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "二十四节气在二〇一六年被列入了人类非物质文化遗产名录。",
+  "source": "历法",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "星罗棋布：像星星那样散着，像棋子那样摆着。",
+  "source": "成语",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "甲骨文里的「行」像一个十字路口，四条路交在一处。",
+  "source": "古文字学",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "一副中药分君臣佐使四等。一味药是哪一等，看的是它在这一副里跟别的药做什么。",
+  "source": "中医",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "查字典有三条路：按部首、按笔画、按读音。同一个字，三条路都到得了。",
+  "source": "辞书学",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "旧书里把桐树当历本用：《埤雅》说桐每一枝生十二片叶，闰年生十三片。",
+  "source": "《月令七十二候集解》",
+  "theme": "pattern",
+  "subtheme": "orderNamed"
+ },
+ {
+  "text": "土：《说文》说，土是「地之吐生物者也」——把万物吐出来的那个东西。",
+  "source": "《说文解字》",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "一捧普通泥土里的微生物，比地球上的人还多。",
+  "source": "土壤学",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "黄土高原的土是风一层一层吹来的，最厚的地方有两百米。",
+  "source": "地质学",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "地表的土会从蚯蚓身体里走一趟再回到地面上，出来时更细，也更松。",
+  "source": "土壤学",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "一方水土养一方人。",
+  "source": "谚语",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "靠山吃山，靠水吃水。",
+  "source": "谚语",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "稻田要泡在水里，为的是让土里缺氧、杂草长不动；稻子自己有气腔，能把空气送到根上。",
+  "source": "农学",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "一厘米厚的表土，要几百年才积得起来。",
+  "source": "土壤学",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "田：《说文》说那四个格子是画出来的地，中间那一竖一横，是田埂。",
+  "source": "《说文解字》",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "老法子壅田，是把河底的泥挖上来铺在地里，一冬一次。",
+  "source": "农学",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "种过豆的地第二年种什么都长得好：豆根上那些小疙瘩里住着能把空气变成肥的细菌。",
+  "source": "农学",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "近水知鱼性，近山识鸟音。",
+  "source": "《增广贤文》",
+  "theme": "ground",
+  "subtheme": "theSoilItself"
+ },
+ {
+  "text": "《诗经》里有一句「维桑与梓，必恭敬止」，说的是屋前的桑树和梓树。后来桑梓就是故乡。",
+  "source": "《诗经·小雅·小弁》",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "君自故乡来，应知故乡事。来日绮窗前，寒梅著花未。",
+  "source": "王维《杂诗》",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "金窝银窝，不如自家的草窝。",
+  "source": "谚语",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "里：《说文》说这个字从田从土——有田有土，才住得下人。",
+  "source": "《说文解字》",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "井：《说文》记下的是一个数目——八家一井。一口井供多少人家，古人是算过的。",
+  "source": "《说文解字》",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "落叶归根。",
+  "source": "成语",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "阴阳最早说的是地方：水的南边、山的北边叫阴，反过来叫阳。江阴、淮阴、洛阳都是这么来的。",
+  "source": "《说文解字》",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "结庐在人境，而无车马喧。问君何能尔？心远地自偏。",
+  "source": "陶渊明《饮酒》",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "一个人口音里最难改的是声调。走得再远，调子还带着。",
+  "source": "语言学",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "州：《说文》说，水中间能住人的地方叫州。",
+  "source": "《说文解字》",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "老地名里带口的多是渡口，带屯的多是驻过兵的，带集的多是赶集的地方。",
+  "source": "地名学",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "暧暧远人村，依依墟里烟。",
+  "source": "陶渊明《归园田居》",
+  "theme": "ground",
+  "subtheme": "aPlaceYouAreFrom"
+ },
+ {
+  "text": "园：《说文》说，圈起来种果树的叫园；种菜的那种，叫圃。",
+  "source": "《说文解字》",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "采菊东篱下，悠然见南山。",
+  "source": "陶渊明《饮酒》",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "种豆南山下，草盛豆苗稀。晨兴理荒秽，带月荷锄归。",
+  "source": "陶渊明《归园田居》",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "苔痕上阶绿，草色入帘青。",
+  "source": "刘禹锡《陋室铭》",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "江南园子的窗，位置是照着窗外那几竿竹子定的，不是照着墙定的。",
+  "source": "园林",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "留白：中国画里空着不画的那一块，也算画的一部分。",
+  "source": "绘画",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "巢和窠不是一回事。《说文》说，鸟在树上的叫巢，在洞里的叫窠。",
+  "source": "《说文解字》",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "养盆景的人不是让树长成什么样，是每年拿掉一点不让它长的方向。",
+  "source": "园艺",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "都江堰是两千二百多年前修的，把岷江分成两股，一股灌田一股泄洪，到今天还在用。",
+  "source": "水利史",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "徽州老屋中间开一个天井，雨从四面屋顶流进来，这叫四水归堂。",
+  "source": "建筑",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "园墙上开一排漏窗，为的是让墙那边的景也算这边的。",
+  "source": "园林",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "茶园的树年年修剪到齐腰高，为的是让人站着就能采到。",
+  "source": "茶学",
+  "theme": "ground",
+  "subtheme": "aKeptPlace"
+ },
+ {
+  "text": "苍耳的果实外面全是倒钩，钩住走过的动物的毛。那只动物走多远，它就散多远。",
+  "source": "植物学",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "蒲公英的伞在空气里拖出一个小旋涡，把自己托住。风小的时候，它落得比谁想的都慢。",
+  "source": "植物学",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "蚂蚁搬走的种子上带着一小块油脂。蚂蚁只要那一块，剩下的丢在窝外的土堆上，正好是块好土。",
+  "source": "植物学",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "椰子能在海上漂几个月不死，外面那层壳里全是空气。",
+  "source": "植物学",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "榕树的种子要先过一趟鸟的肚子，落在别的树杈上才发得了芽。",
+  "source": "植物学",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "凤仙花的果荚熟透了一碰就炸，把种子弹出去两三米。",
+  "source": "植物学",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "槭树的翅果落下来时打着转，转得越久，落得越远。",
+  "source": "植物学",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "有些草籽混在泥里粘住牛蹄，跟着走上几公里才掉下来。",
+  "source": "植物学",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "水杉在上世纪四十年代之前只在化石里见过，后来有人在湖北的一个山谷里认出了活的。",
+  "source": "植物学史",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "苹果籽跟着果肉一起被吃掉，能囫囵过去的那些，落地时已经离母树很远了。",
+  "source": "植物学",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "睡莲的种子外面裹着一层气泡，浮几天再沉下去，正好沉在岸边的浅水里。",
+  "source": "植物学",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "稻子跟着人从长江下游走到日本、走到东南亚，一路换了很多名字，还是那一种草。",
+  "source": "农业史",
+  "theme": "travel",
+  "subtheme": "howASeedGoes"
+ },
+ {
+  "text": "道、街、衢，古人分得很细：一条路通到底的叫道，四条路交在一处的叫衢。",
+  "source": "《说文解字》",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "山重水复疑无路，柳暗花明又一村。",
+  "source": "陆游《游山西村》",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "行到水穷处，坐看云起时。",
+  "source": "王维《终南别业》",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "汉代十里设一亭，亭有亭长。那是路上歇脚和过夜的地方。",
+  "source": "历史",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "五里一短亭，十里一长亭。送人送到长亭，就该回头了。",
+  "source": "旧俗",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "送行的时候折一枝柳给他，因为柳听起来像留。",
+  "source": "旧俗",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "借问酒家何处有，牧童遥指杏花村。",
+  "source": "杜牧《清明》",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "送君千里，终须一别。",
+  "source": "《增广贤文》",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "徐霞客走了三十多年的路。他游记里的头一天是五月十九，今天这一天叫中国旅游日。",
+  "source": "历史",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "古时的驿站按一天的脚程摆开，所以数一条路上有几个驿，就知道走完它要几天。",
+  "source": "历史",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "轨：《说文》说，是车轮压出来的那两道痕。同轨的车，才走得了同一条路。",
+  "source": "《说文解字》",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "斑尾塍鹬能一口气飞过太平洋，中间不落地，飞十来天。",
+  "source": "鸟类学",
+  "theme": "travel",
+  "subtheme": "theRoad"
+ },
+ {
+  "text": "江流天地外，山色有无中。",
+  "source": "王维《汉江临眺》",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "白日依山尽，黄河入海流。欲穷千里目，更上一层楼。",
+  "source": "王之涣《登鹳雀楼》",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "鹤鸣于九皋，声闻于野。",
+  "source": "《诗经·小雅·鹤鸣》",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "郑和的船队七次下西洋，最远到了非洲的东岸。",
+  "source": "历史",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "站得多高，就看得多远：站高十米，地平线大约在十一公里之外。",
+  "source": "地理学",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "问余何意栖碧山，笑而不答心自闲。",
+  "source": "李白《山中问答》",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "大漠孤烟直，长河落日圆。",
+  "source": "王维《使至塞上》",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "一只信鸽被带到几百公里外放开，它找得回家：靠太阳，靠地磁，也靠它记得的气味。",
+  "source": "鸟类学",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "汉语里说远的字很多：遥、遐、邈、迥。《说文》给遐的解释只有一个字：远。",
+  "source": "《说文解字》",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "抬头看见北极星，看见的是它四百多年前发出的光。",
+  "source": "天文学",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "万里之外的信，过去要走上好几个月；写信的人写完，还得再等同样久。",
+  "source": "通信史",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "秋山敛余照，飞鸟逐前侣。",
+  "source": "王维《辋川集·木兰柴》",
+  "theme": "travel",
+  "subtheme": "farOff"
+ },
+ {
+  "text": "风雨如晦，鸡鸣不已。既见君子，云胡不喜。",
+  "source": "《诗经·郑风·风雨》",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "野有蔓草，零露漙兮。有美一人，清扬婉兮。邂逅相遇，适我愿兮。",
+  "source": "《诗经·郑风·野有蔓草》",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "不期而遇：没有约，可是碰上了。",
+  "source": "成语",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "众里寻他千百度，蓦然回首，那人却在，灯火阑珊处。",
+  "source": "辛弃疾《青玉案·元夕》",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "至：《说文》说这个字画的是一只鸟从高处落到地上。",
+  "source": "《说文解字》",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "有缘千里来相会，无缘对面不相逢。",
+  "source": "《增广贤文》",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "萍水相逢：浮萍和水碰上了，谁也没约谁。",
+  "source": "成语",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "一见如故：头一回见面，就像已经认识了很久。",
+  "source": "成语",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "遇、逢、遘、遭，《说文》里拿它们互相解释，绕一圈都是「碰上了」。",
+  "source": "《说文解字》",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "期，《说文》解作「会也」，字里用了个月——约在哪一天见面，得看月亮。",
+  "source": "《说文解字》",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "相逢好似初相识，到老终无怨恨心。",
+  "source": "《增广贤文》",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "在街上认出一张脸，大脑用掉的时间大约是五分之一秒，比想起对方叫什么要快得多。",
+  "source": "认知科学",
+  "theme": "meeting",
+  "subtheme": "theMoment"
+ },
+ {
+  "text": "唇亡齿寒：嘴唇没有了，牙齿就该觉得冷了。",
+  "source": "成语",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "相濡以沫：水干了，两条鱼用自己嘴里那一点湿气互相沾着。",
+  "source": "成语",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "无花果的花开在果子里面，只有一种小蜂钻得进去；这种蜂也只在这种果子里产卵。",
+  "source": "植物学",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "地衣是两样东西住在一起：一层真菌搭房子，一层藻类做饭。",
+  "source": "生物学",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "豆科植物的根瘤里住着细菌。植物给糖，细菌给氮，两边都不能单过。",
+  "source": "植物学",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "有些花的雄蕊先熟。等自己的雌蕊能受粉时，花粉早散完了，只好等别的花来。",
+  "source": "植物学",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "有些兰花的种子小得像灰，自己不带养分，非得先遇上一种真菌才发得了芽。",
+  "source": "植物学",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "榫和卯，单拿出来哪一块都不成器。",
+  "source": "木工",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "伐木丁丁，鸟鸣嘤嘤。出自幽谷，迁于乔木。嘤其鸣矣，求其友声。",
+  "source": "《诗经·小雅·伐木》",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "独木不成林。",
+  "source": "谚语",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "一个篱笆三个桩，一个好汉三个帮。",
+  "source": "谚语",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "众人拾柴火焰高。",
+  "source": "谚语",
+  "theme": "meeting",
+  "subtheme": "twoThatNeedEachOther"
+ },
+ {
+  "text": "投我以木瓜，报之以琼琚。匪报也，永以为好也。",
+  "source": "《诗经·卫风·木瓜》",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "宾至如归：客人一进门，就像回到了自己家。",
+  "source": "成语",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "气：《说文》说这个字本来指送给客人的草料和米。先有招待，才有后来那个气。",
+  "source": "《说文解字》",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "客：《说文》只用一个字解它——寄。客人是暂时寄在你这里的人。",
+  "source": "《说文解字》",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "主：《说文》说这个字画的是灯里的那一点火。主人，本来是有灯的那个人。",
+  "source": "《说文解字》",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "倒屣相迎：听说客人到了门口，鞋都穿反了就往外跑。",
+  "source": "成语",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "酒满敬人，茶满欺人：斟酒要斟满，倒茶只倒七分。",
+  "source": "旧俗",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "别人给你斟茶时，用食指和中指在桌上轻叩两下，就算道过谢了。",
+  "source": "旧俗",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "绿蚁新醅酒，红泥小火炉。晚来天欲雪，能饮一杯无。",
+  "source": "白居易《问刘十九》",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "礼尚往来。",
+  "source": "《礼记》",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "入乡随俗。",
+  "source": "谚语",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "千里送鹅毛，礼轻情意重。",
+  "source": "谚语",
+  "theme": "meeting",
+  "subtheme": "theMannersOfIt"
+ },
+ {
+  "text": "连理枝：两棵树长着长着，枝子并到一处，长成了一根。",
+  "source": "成语",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "藕断丝连：藕折了，中间还牵着几根丝。",
+  "source": "成语",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "嫁接：把一根枝条绑在另一棵树的伤口上，两边的形成层对齐了，就长成一棵。",
+  "source": "园艺",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "榕树的气生根落到地上会变成新的干，一棵树最后能站成一片林。",
+  "source": "植物学",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "一片白杨看着是很多棵，地下常常是一株。",
+  "source": "植物学",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "两条河汇合之后有一段各走各的颜色，要往下走好几公里才混匀。",
+  "source": "地理学",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "同气连枝：一根气脉，连着的枝子。",
+  "source": "成语",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "血管在身体里会互相接通。一条堵了，旁边那条会慢慢变粗，把血送过去。",
+  "source": "医学",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "比：《说文》说，两个人一前一后是从，掉过头来并排站着，就是比。",
+  "source": "《说文解字》",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "珊瑚礁看着是一块石头，其实是一只只小虫子一层一层盖上去的房子。",
+  "source": "海洋生物学",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "兄弟姊妹的名字里常共用一个字。那个字是家谱上排好的，一代人共一个。",
+  "source": "民俗",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "爬山虎靠一种小吸盘贴在墙上。贴久了，墙和藤要一起才拆得下来。",
+  "source": "植物学",
+  "theme": "kinship",
+  "subtheme": "grownTogether"
+ },
+ {
+  "text": "父亲的哥哥叫伯，弟弟叫叔，姐妹叫姑；母亲的兄弟叫舅，姐妹叫姨。五个称呼，五种关系。",
+  "source": "亲属称谓",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "堂和表：从父亲这边论的，同住一个堂，是堂；从母亲或者姑姑那边论的，是表。",
+  "source": "亲属称谓",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "友：《说文》说这个字是两只手，朝着同一个方向。",
+  "source": "《说文解字》",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "邻：《说文》给的解释是一个数目——五家为邻。",
+  "source": "《说文解字》",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "知音：伯牙弹琴，钟子期听得出他心里想的是山还是水。这个词就是从那里来的。",
+  "source": "《列子》",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "孚：一只手护在孩子上头，本义是孵蛋。《说文》后面又添一句：一曰信也。",
+  "source": "《说文解字》",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "手足：拿手和脚比兄弟，是因为两样都是自己身上的，少一样就不齐了。",
+  "source": "汉语词汇",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "老乡这个词，只有离了家才用得上。",
+  "source": "汉语词汇",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "家字是屋顶底下一头猪。字形历来没有争议，怎么解释一直有。",
+  "source": "古文字学",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "亲不亲，故乡人。",
+  "source": "《增广贤文》",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "认亲：两家本来不相干，行过一道礼就算亲戚了，称呼跟着改。",
+  "source": "民俗",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "结拜的人要按年岁排大小。排定了，哥哥从此就是哥哥。",
+  "source": "民俗",
+  "theme": "kinship",
+  "subtheme": "theWordsForIt"
+ },
+ {
+  "text": "海内存知己，天涯若比邻。",
+  "source": "王勃《送杜少府之任蜀州》",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "白头如新，倾盖如故：有人认识一辈子还是生的，有人路上停下车说几句话就成了老朋友。",
+  "source": "《史记·鲁仲连邹阳列传》",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "一回生，二回熟。",
+  "source": "谚语",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "路遥知马力，日久见人心。",
+  "source": "《增广贤文》",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "青梅竹马：一个骑着竹竿当马，一个手里拿着青梅子。",
+  "source": "成语",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "远亲不如近邻。",
+  "source": "《增广贤文》",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "何当共剪西窗烛，却话巴山夜雨时。",
+  "source": "李商隐《夜雨寄北》",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "两个人并排走上一段路，脚步会不知不觉走到同一个节拍上。",
+  "source": "行为科学",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "说着说着，两个人的语速和用词会慢慢靠拢。这叫趋同，谁也没打算这么做。",
+  "source": "语言学",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "一家打墙，两家好看。",
+  "source": "《增广贤文》",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "知音说与知音听，不是知音莫与弹。",
+  "source": "《增广贤文》",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "度尽劫波兄弟在，相逢一笑泯恩仇。",
+  "source": "鲁迅《题三义塔》",
+  "theme": "kinship",
+  "subtheme": "twoPeople"
+ },
+ {
+  "text": "蝉噪林逾静，鸟鸣山更幽。",
+  "source": "王籍《入若耶溪》",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "空山不见人，但闻人语响。返景入深林，复照青苔上。",
+  "source": "王维《鹿柴》",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "东船西舫悄无言，唯见江心秋月白。",
+  "source": "白居易《琵琶行》",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "万籁此俱寂，惟闻钟磬音。",
+  "source": "常建《题破山寺后禅院》",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "籁：《说文》说它是一种三个孔的管乐器。「万籁」这个词，是从一支笛子长出来的。",
+  "source": "《说文解字》",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "默：《说文》给它的解释是「犬暂逐人也」——一条狗不出声地追上来。",
+  "source": "《说文解字》",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "谧：《说文》先说「静语也」，再补一句「一曰无声也」。",
+  "source": "《说文解字》",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "猫头鹰翅膀前缘长着一排细齿，把气流打散，所以它从头顶飞过是听不见的。",
+  "source": "鸟类学",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "新雪是松的，里面全是空气，能把声音吸掉。下过雪的早上格外安静，这是真的。",
+  "source": "声学",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "中国的噪声法规把「夜间」定成晚上十点到第二天早晨六点，整整八个小时。",
+  "source": "《噪声污染防治法》",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "高铁上有一节车厢叫静音车厢。买那节车厢票的人，等于自己答应了把声音放小。",
+  "source": "铁路",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "月出惊山鸟，时鸣春涧中。",
+  "source": "王维《鸟鸣涧》",
+  "theme": "peace",
+  "subtheme": "quietAsASound"
+ },
+ {
+  "text": "处暑的处是止的意思：暑气到这里就停下了。",
+  "source": "《月令七十二候集解》",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "休：《说文》说，是一个人靠着一棵树。",
+  "source": "《说文解字》",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "息：《说文》说这个字从心从自，自是鼻子。喘一口气，就叫息。",
+  "source": "《说文解字》",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "楚庄王把武字拆开来看：止戈为武。",
+  "source": "《左传》",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "鸣金收兵：擂鼓是往前，敲锣是回来。",
+  "source": "成语",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "解甲归田：把盔甲解下来，回地里去。",
+  "source": "成语",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "化干戈为玉帛：把兵器换成待客的丝和玉。",
+  "source": "成语",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "偃旗息鼓：旗子放倒，鼓不再敲。",
+  "source": "成语",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "退一步海阔天空。",
+  "source": "谚语",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "当面留一线，过后好相见。",
+  "source": "《增广贤文》",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "秋分三候的头一候是「雷始收声」：旧书说雷到八月就把声音收回地里去了。",
+  "source": "《月令七十二候集解》",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "刀枪入库，马放南山。",
+  "source": "谚语",
+  "theme": "peace",
+  "subtheme": "theWordsForStopping"
+ },
+ {
+  "text": "安：《说文》说是一个女子在屋顶底下，解作「静也」。",
+  "source": "《说文解字》",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "闲，古人写作閒：门缝里透进来的月光。《说文》给它的解释是隙，一道缝。",
+  "source": "《说文解字》",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "云淡风轻近午天，傍花随柳过前川。",
+  "source": "程颢《春日偶成》",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "春和景明，波澜不惊。",
+  "source": "范仲淹《岳阳楼记》",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "松风吹解带，山月照弹琴。",
+  "source": "王维《酬张少府》",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "徐：《说文》两个字，「安行也」——不慌不忙地走。",
+  "source": "《说文解字》",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "随遇而安。",
+  "source": "成语",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "夜：《说文》说，夜是「天下休舍也」——天底下都歇下来的那段时间。",
+  "source": "《说文解字》",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "空山新雨后，天气晚来秋。明月松间照，清泉石上流。",
+  "source": "王维《山居秋暝》",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "泉眼无声惜细流，树阴照水爱晴柔。",
+  "source": "杨万里《小池》",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "猫一天里有一多半时间在睡，醒着的时候大半在找太阳。",
+  "source": "动物学",
+  "theme": "peace",
+  "subtheme": "atEase"
+ },
+ {
+  "text": "舒：《说文》说「伸也」，又说「一曰舒，缓也」。伸开，和慢下来，是同一个字。",
+  "source": "《说文解字》",
+  "theme": "peace",
+  "subtheme": "atEase"
+ }
+]

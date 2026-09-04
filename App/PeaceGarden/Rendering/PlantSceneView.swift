@@ -30,6 +30,13 @@ struct PlantSceneView: UIViewRepresentable {
     var style: StagePlantStyle = .full
     /// The colour a monochrome or wireframe plant is drawn in.
     var tint: Color = .white
+    /// Where the top of the chrome band sits, measured down from the top of the
+    /// view.
+    ///
+    /// Given one, the plant is drawn into the space above it and stands on it.
+    /// `nil` gives the plant the whole view and centres it there, which is what
+    /// a screen with nothing written under the plant wants.
+    var bandTop: CGFloat?
     var onTap: (() -> Void)?
 
     func makeCoordinator() -> Coordinator {
@@ -64,6 +71,7 @@ struct PlantSceneView: UIViewRepresentable {
         }
 
         coordinator.setStyle(style, tint: tint)
+        coordinator.setBandTop(bandTop)
         coordinator.rebuildIfNeeded(genome: genome, growth: growth)
         coordinator.setArrival(arrival)
         coordinator.setAutoRotation(autoRotates)
@@ -73,6 +81,7 @@ struct PlantSceneView: UIViewRepresentable {
     func updateUIView(_ uiView: SCNView, context: Context) {
         context.coordinator.onTap = onTap
         context.coordinator.setStyle(style, tint: tint)
+        context.coordinator.setBandTop(bandTop)
         context.coordinator.rebuildIfNeeded(genome: genome, growth: growth)
         context.coordinator.setArrival(arrival)
         context.coordinator.setAutoRotation(autoRotates)
@@ -112,13 +121,44 @@ struct PlantSceneView: UIViewRepresentable {
         private var viewSize: CGSize = .zero
         private var style: StagePlantStyle = .full
         private var tint: UIColor = .white
+        /// Where the chrome band begins. See `PlantSceneView.bandTop`.
+        private var bandTop: CGFloat?
         /// How far below the middle of the screen the plant settles, as a
         /// fraction of half the visible world height.
         ///
         /// About four per cent of the screen's height. Enough that the eye
         /// reads it as standing rather than floating, and not so much that a
         /// mature plant's crown runs off the top.
+        ///
+        /// Only for a screen with no band under the plant. Where there is one,
+        /// the plant stands on it and the composition follows from that instead.
         static let settle: Float = 0.08
+
+        /// How far above the band the plant stands, in points.
+        ///
+        /// A plant whose base met the top of its own name would read as one
+        /// thing rather than two. This is the gap that keeps them apart, and it
+        /// is small on purpose: the plant is still growing out of the foot of
+        /// the screen, not hanging above it.
+        static let clearance: CGFloat = 14
+
+        /// The height of the screen the plant does not have, as a fraction.
+        ///
+        /// `nil` when nothing is written under the plant, and then the plant is
+        /// framed into the whole view as it always was.
+        private var standingLine: Float? {
+            guard let bandTop, viewSize.height > 1 else { return nil }
+            let foot = (viewSize.height - bandTop + Self.clearance) / viewSize.height
+            // The ceiling is a guard against a band that has somehow eaten the
+            // screen, not a design value.
+            return Float(min(max(foot, 0), 0.5))
+        }
+
+        func setBandTop(_ y: CGFloat?) {
+            guard y != bandTop else { return }
+            bandTop = y
+            applyFraming()
+        }
 
         /// Set only while the seed is opening. `nil` the rest of the time, and
         /// the rest of the time is all but six seconds of the app's life.
@@ -219,15 +259,23 @@ struct PlantSceneView: UIViewRepresentable {
 
         private func applyFraming() {
             guard let reference, let plantNode, let here = meshBounds, viewSize.height > 1 else { return }
-            // Framed into the whole view rather than into the part of it the
-            // chrome leaves. The band is hidden most of the time, and a plant
-            // sized to clear a band that is not there is a plant drawn small
-            // for no reason. When the band *is* up, the foot of the stem passes
-            // behind it, which is what growing out of it looks like.
+            // Framed into the part of the view above the band, and standing on
+            // it. It used to be framed into the whole view, on the argument
+            // that the band is hidden most of the time and a plant sized to
+            // clear a band that is not there is drawn small for no reason —
+            // and the foot of the stem passing behind the band was read as
+            // growing out of it. On a phone it read as a stem going through the
+            // plant's own name, which is not the same thing.
+            //
+            // The band is measured rather than assumed, so this holds for a
+            // name that has been turned off, a stage caption that has, and a
+            // safe area that differs on every device.
+            let standingLine = standingLine
             let framing = PlantSceneBuilder.framing(
                 min: reference.min,
                 max: reference.max,
-                aspect: Float(viewSize.width / viewSize.height)
+                aspect: Float(viewSize.width / viewSize.height),
+                reserved: standingLine ?? 0
             )
             // The plant stands on its own origin and turns about its stem,
             // which is what a plant does. Offsetting it to spin about the middle
@@ -247,25 +295,28 @@ struct PlantSceneView: UIViewRepresentable {
             // the plant turns about that axis, and a leaning plant whose centre
             // is off it would swing the whole frame round as the turntable went.
             let distance = framing.distance * 1.12
-            // Centred on the screen, and then a little below its middle.
-            //
-            // It used to be centred on *what was left of* the screen once the
-            // band at the foot had taken its share — the aim was lowered by the
-            // band's height, which slides the picture up by exactly that much.
-            // That is the right answer to the wrong question. **The band is
-            // hidden most of the time**: it fades out after six seconds and
-            // stays gone until somebody touches the screen, so the state it was
-            // being composed for is the rarer one, and in the common state the
-            // plant simply sat too high.
-            //
-            // Composed for the bare screen instead, and biased a little *down*
-            // from its middle, because a subject placed at the exact centre of
-            // a tall frame reads as high — and because this one is supposed to
-            // be growing out of the foot of the screen, where its name and its
-            // marks are, rather than hanging in the middle of it. Raising the
-            // aim is what lowers the picture.
             let halfWorldHeight = distance * tan(PlantSceneBuilder.verticalHalfAngle)
-            let aim = (here.min.y + here.max.y) * 0.5 + Self.settle * halfWorldHeight
+            // **The base of the plant is put on the standing line**, and the
+            // rest of the composition follows from that. Raising the aim is
+            // what lowers the picture, so the aim is however far above the base
+            // puts the base where it belongs.
+            //
+            // Anchored on the base rather than on the plant's middle, which is
+            // what a plant does: a seedling stands on the same line a mature
+            // plant stands on and climbs the frame as it grows, instead of the
+            // whole picture sliding down around a middle that keeps moving.
+            // The distance still comes from the grown plant, so a seedling is
+            // small in a large space rather than filling it.
+            //
+            // With no band there is no line to stand on, and the plant is
+            // centred and biased a little down — a subject at the exact centre
+            // of a tall frame reads as high.
+            let aim: Float
+            if let standingLine {
+                aim = here.min.y - (2 * standingLine - 1) * halfWorldHeight
+            } else {
+                aim = (here.min.y + here.max.y) * 0.5 + Self.settle * halfWorldHeight
+            }
 
             guard let arrival else {
                 cameraRig.position = SCNVector3(0, aim, 0)

@@ -50,6 +50,32 @@ enum QuoteBank: String, CaseIterable, Sendable {
     case romanian = "ro"
     case finnish = "fi"
     case catalan = "ca"
+    case estonian = "et"
+    case lithuanian = "lt"
+    case slovene = "sl"
+    case latvian = "lv"
+    case ukrainian = "uk"
+    case slovak = "sk"
+    case welsh = "cy"
+    case basque = "eu"
+    case galician = "gl"
+    case serbian = "sr"
+    case japanese = "ja"
+    case chinese = "zh"
+    case icelandic = "is"
+    case irish = "ga"
+    case albanian = "sq"
+    case korean = "ko"
+    case hebrew = "he"
+    case bulgarian = "bg"
+    case croatian = "hr"
+    case russian = "ru"
+    case arabic = "ar"
+    case greenlandic = "kl"
+    case greek = "el"
+    case macedonian = "mk"
+    case maltese = "mt"
+    case belarusian = "be"
 
     var passages: [Passage] {
         switch self {
@@ -70,6 +96,32 @@ enum QuoteBank: String, CaseIterable, Sendable {
         case .romanian: return Quotes.romanian
         case .finnish: return Quotes.finnish
         case .catalan: return Quotes.catalan
+        case .estonian: return Quotes.estonian
+        case .lithuanian: return Quotes.lithuanian
+        case .slovene: return Quotes.slovene
+        case .latvian: return Quotes.latvian
+        case .ukrainian: return Quotes.ukrainian
+        case .slovak: return Quotes.slovak
+        case .welsh: return Quotes.welsh
+        case .basque: return Quotes.basque
+        case .galician: return Quotes.galician
+        case .serbian: return Quotes.serbian
+        case .japanese: return Quotes.japanese
+        case .chinese: return Quotes.chinese
+        case .icelandic: return Quotes.icelandic
+        case .irish: return Quotes.irish
+        case .albanian: return Quotes.albanian
+        case .korean: return Quotes.korean
+        case .hebrew: return Quotes.hebrew
+        case .bulgarian: return Quotes.bulgarian
+        case .croatian: return Quotes.croatian
+        case .russian: return Quotes.russian
+        case .arabic: return Quotes.arabic
+        case .greenlandic: return Quotes.greenlandic
+        case .greek: return Quotes.greek
+        case .macedonian: return Quotes.macedonian
+        case .maltese: return Quotes.maltese
+        case .belarusian: return Quotes.belarusian
         }
     }
 

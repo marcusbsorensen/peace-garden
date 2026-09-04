@@ -47,16 +47,57 @@ final class PlantFormTests: XCTestCase {
     ///
     /// Vertex count and bounds together are enough. A renamed key moves almost
     /// every trait, and any trait that matters moves one or the other.
+    ///
+    /// **These numbers were moved once, deliberately, on 3 September 2026**,
+    /// and the paragraph above is why that needs saying rather than doing
+    /// quietly. Making the genus a description of the flower — docs/TAXONOMY.md
+    /// — replaced a per-plant petal draw with a per-genus petal count, so every
+    /// bloom in every garden changed and three pinned meshes with them. The
+    /// umbel lost more than half its vertices, which is the old 3...13 draw
+    /// scaled by 1.4 giving way to five petals or eight.
+    ///
+    /// That cost is the one docs/TAXONOMY.md §"What this costs" accepts: nothing
+    /// has shipped, there is no listing, and the only plants that exist are on
+    /// one simulator. **It was the last moment it was free**, and it does not
+    /// become free again. From these numbers the test is back to doing its
+    /// actual job, which is catching the same move made by accident.
+    ///
+    /// **They moved a second time on 3 September 2026**, in the other half of
+    /// the same change: the flower having been held to a count per genus,
+    /// docs/TAXONOMY.md §"What the archetype profiles constrain" widened the
+    /// vegetative ranges — height, stem thickness, node count, leaf length and
+    /// width, droop, pitch, fold, teeth, veins, sway, lean, twist and vigour.
+    /// Every one of those feeds the mesh, so all three plants changed shape.
+    /// `vector-a` grew 342 vertices on two more nodes; `vector-b` lost ten
+    /// centimetres of height, which is the widened `stem.height` landing lower
+    /// for that seed than the old range could reach.
+    ///
+    /// Recorded rather than done quietly, on the same practice as the first
+    /// move: these numbers are only worth having if a change to them is always
+    /// a decision somebody wrote down. A third move with no paragraph under it
+    /// should be read as an accident.
+    /// **What this test means changed on 3 September 2026, and the third
+    /// paragraph above is now only half true.** Flushes make a mature plant a
+    /// function of seed *and time*: the band of open flowers travels up the
+    /// stem on a cycle of one to four weeks, so a plant somebody is already
+    /// growing now changes under them every day, on purpose.
+    ///
+    /// So this no longer pins *the* mesh a seed draws. It pins the mesh a seed
+    /// draws **at exactly four hundred days**, which is one fixed point in that
+    /// cycle and still perfectly deterministic. It catches the same class of
+    /// mistake it always did — a renamed draw key, a shifted range — and it no
+    /// longer says anything about a plant being stable, because a plant is
+    /// deliberately not stable any more. `GrowthTests` holds the flush itself.
     func testAFixedSeedAlwaysDrawsTheSameMesh() {
         // Seed label: vertices, then the mature plant's width and height in
-        // centimetres. The three cover one inflorescence each — `vector-a` is
+        // centimetres, **at the fixed age `mature(_:)` uses**. The three cover one inflorescence each — `vector-a` is
         // an umbel, `vector-b` a lotus, `vector-c` a succulent — which was luck
         // rather than design, but it is worth keeping if these are ever
         // renumbered.
         let expected: [String: (vertices: Int, width: Int, height: Int)] = [
-            "vector-a": (21628, 50, 77),
-            "vector-b": (3643, 48, 86),
-            "vector-c": (4870, 24, 49)
+            "vector-a": (9583, 46, 73),
+            "vector-b": (3409, 46, 75),
+            "vector-c": (3808, 26, 46)
         ]
 
         for (label, want) in expected.sorted(by: { $0.key < $1.key }) {

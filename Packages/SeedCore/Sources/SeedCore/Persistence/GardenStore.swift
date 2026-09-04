@@ -26,10 +26,33 @@ public struct GardenStore {
 
     public let fileURL: URL
     private let fileManager: FileManager
+    private let writeOptions: Data.WritingOptions
 
-    public init(fileURL: URL, fileManager: FileManager = .default) {
+    /// How the garden is written.
+    ///
+    /// Atomic so a half-written file never replaces a whole one, and protected
+    /// so it is unreadable while the phone is locked. `unlessOpen` rather than
+    /// plain `complete` because the app may be holding it across a lock.
+    public static let guarded: Data.WritingOptions = [.atomic, .completeFileProtectionUnlessOpen]
+
+    /// - Parameter writeOptions: leave this alone outside tests.
+    ///
+    ///   **On macOS the protection class follows the screen lock**, so a file
+    ///   written with `guarded` stops being readable the moment the Mac locks —
+    ///   `NSPOSIXErrorDomain 1, Operation not permitted` on the way back in.
+    ///   That makes `GardenStoreTests` pass all day and fail overnight, and it
+    ///   is invisible to continuous integration because CI runs SeedCore on
+    ///   Linux, where the option means nothing. A test that writes to a
+    ///   temporary directory is not testing file protection and should not be
+    ///   made flaky by it; the app keeps `guarded` and keeps it by default.
+    public init(
+        fileURL: URL,
+        fileManager: FileManager = .default,
+        writeOptions: Data.WritingOptions = GardenStore.guarded
+    ) {
         self.fileURL = fileURL
         self.fileManager = fileManager
+        self.writeOptions = writeOptions
     }
 
     /// Application Support/PeaceGarden/garden.json
@@ -79,7 +102,7 @@ public struct GardenStore {
             var garden = garden
             garden.schemaVersion = Garden.currentSchemaVersion
             let data = try Self.encoder.encode(garden)
-            try data.write(to: fileURL, options: [.atomic, .completeFileProtectionUnlessOpen])
+            try data.write(to: fileURL, options: writeOptions)
         } catch {
             throw StoreError.unwritable(underlying: error)
         }

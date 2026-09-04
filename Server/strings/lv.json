@@ -1,0 +1,26 @@
+{
+  "language": "Latvian",
+  "endonym": "Latviešu",
+  "awaiting": "The labels are written. The prose — tagline, about1, about2, about3, growBody, appNote — is still null and still English, on purpose: it is the site's own writing rather than the app's, and it is read in English before it is commissioned in sixteen languages. A null value is drawn in English, silently, one key at a time; the English is in assets/js/strings.js.",
+  "strings": {
+    "tagline": null,
+    "about1": null,
+    "about2": null,
+    "about3": null,
+    "seedTitle": "Ir pienākusi sēkla",
+    "replyTitle": "Sēkla ir atgriezusies",
+    "sentBy": "Sūtīja {name}",
+    "gardener": "dārznieks",
+    "planted": "Iestādīts",
+    "growTitle": "Audzēšana",
+    "growBody": null,
+    "appNote": null,
+    "inEnglish": "angliski",
+    "language": "Valoda",
+    "keys": "Taustiņi",
+    "random": "Kaut kur nejauši",
+    "damaged": "Šī saite pienāca bojāta, tāpēc sēklu nevarēja izlasīt.",
+    "notASeed": "Šī saite nenes sēklu.",
+    "newerVersion": "Šī sēkla nāk no jaunākas Peace Garden versijas."
+  }
+}

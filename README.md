@@ -223,10 +223,20 @@ says so.
 │   ├── PHASES.md               What phase 2 has to answer
 │   └── images/                 Previews rendered by tools/preview
 ├── Server/                     What peacegarden.app has to serve
+│   ├── s                       The page a seed lands on
+│   ├── g                       The garden, walked
+│   ├── assets/js/              Modules shared by both pages
+│   ├── passages/               One bank per language, exported from the app
+│   ├── strings/                The site's own words, one file per language
 │   └── .well-known/            apple-app-site-association
 ├── tools/
 │   ├── reference/              Executable spec for the derivation
-│   └── preview/                Python port + renderer, to see plants anywhere
+│   ├── preview/                Python port + renderer, to see plants anywhere
+│   ├── quotes/                 Commission, assemble and land a passage bank
+│   ├── glyphs/                 The stage-row marks, large and at fifteen points
+│   ├── site/                   Export the app's banks and manifest to Server/
+│   ├── type/                   Measure a label in every language
+│   └── icon/                   The app icon
 └── project.yml                 XcodeGen
 ```
 
