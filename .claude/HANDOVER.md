@@ -14,24 +14,22 @@ final, and the work off this machine.
 `main` at `393227f`, **pushed**, CI green on both jobs — the first passing run
 since 2 September, and it now runs five Python checks rather than four.
 
-**Verified.** 97 SeedCore tests, 23 app tests, five Python checks. Framing seen on
-an iPhone 17 Pro and an iPad mini, across mature, five-day seedling and
-name-turned-off; the icon on a home screen; Arabic and Hebrew in a browser.
+**Verified** — 97 SeedCore tests, 23 app tests, five Python checks; the framing on
+an iPhone 17 Pro and iPad mini across mature, seedling and name-off; the icon on
+a home screen; Arabic and Hebrew in a browser.
 
-- **The plant stands above its name**, 14pt clear, framed into the space above
-  the measured band and anchored on its base, so a seedling stands where a
-  mature plant stands. Other screens pass no band and are unchanged.
-- **The flush reads** — open star to shut bud across one cycle, four times the
+- **The plant stands above its name**, 14pt clear, anchored on its base so a
+  seedling stands where a mature plant does. Other screens are unchanged.
+- **The flush reads** — open star to shut bud across a cycle, four times the
   petal pixels at peak against trough. The old worry about 45% is closed.
-- **All six prose strings settled**, two corrected against the code rather than
-  reworded, and `docs/FOR-REVIEW.md` retired with nothing lost.
+- **The six prose strings are settled**, two corrected against the code rather
+  than reworded, and `docs/FOR-REVIEW.md` retired with nothing lost.
 - **41 of 42 languages commissioned**, Greenlandic held deliberately.
 - **The icon is inverted**: white bract, the colour running in and going yellow
   as it tapers. The favicon comes off the same drawing.
 
-**Unverified.** iPad landscape framing — the arithmetic is safe (a fixed ~180pt
-band against 744pt) but the rotation would not drive from here. The translations
-are machine-made and have had no native eyes.
+**Unverified** — iPad landscape framing (the arithmetic is safe: a fixed ~180pt
+band against 744pt) and every translation, which is machine-made.
 
 ## Files
 
@@ -42,6 +40,8 @@ are machine-made and have had no native eyes.
 - `tools/strings/{BRIEF.md,commission.py,terms.py,check.py}` — the commission
   pipeline; `check.py` is in CI.
 - `tools/icon/make_icon.py:103` — the bract and taper constants.
+- `tools/site/mintlink.py` — mints a seed link, which is the only way to reach
+  `growBody` and `appNote` at all.
 - `Server/strings/kl.json` — why Greenlandic is held.
 
 ## Decisions made
@@ -49,21 +49,39 @@ are machine-made and have had no native eyes.
 - **The band is measured, not counted from type sizes** — two of the four things
   in it can be turned off, and the safe area differs per device.
 - **Area names stay English**, once: ten strings would have been 420
-  commissions, and *cold frame* has no clean equivalent in several languages.
+  commissions.
 - **`growBody` may never say the same two seeds make the same plant.**
   `Pollination.encounterID` hashes both seeds *and* both nonces. Marcus caught
   it; it had stood for weeks.
 - **`about3` is read only by somebody with no seed** (`page.js:136`), so it says
   how a seed reaches you rather than how the fragment works.
-- **Greenlandic ships English rather than a confident wrong sentence.**
-- **Spanish, Portuguese and Galician are region-neutral**, `growBody` being the
-  first string to need a second-person plural.
+- **Greenlandic ships English rather than a confident wrong sentence**, and
+  Spanish, Portuguese and Galician are region-neutral — `growBody` is the first
+  string to need a second-person plural.
 
 ## Next step
 
-Get native speakers to `/t` (word: `peace`), starting with Greenlandic, which
-cannot ship until somebody reads it. `python3 tools/site/serve.py`, then
-`http://localhost:8801/t`.
+**Walk Marcus through English, French, Danish and Spanish — the four he reads —
+in Claude in Chrome**, not the in-app browser, so he is looking at his own
+screen. `python3 tools/site/serve.py` first. Six screens per language, and
+`?l=<code>` sets the language on any of them:
+
+1. `/s` — no fragment. `tagline`, `about1`, `about2`, `about3`.
+2. `/s#<offer>` from `python3 tools/site/mintlink.py`. `seedTitle`, `sentBy`,
+   `planted`, `growTitle`, `growBody`, `appNote`, and the passage.
+3. `/s#<offer>` from `mintlink.py --name ""` — the only way to see `gardener`.
+4. `/s#<reply>` from `mintlink.py --kind r` — `replyTitle` in place of
+   `seedTitle`.
+5. `/s#` plus any mangled fragment — `damaged`, `notASeed`, `newerVersion`.
+6. `/g` — `random`, the ten English area names, the invented-garden notice.
+
+English is the source, so it is being read for sense; the other three are being
+read against it. **What is actually being checked is the claims, not the
+grammar** — `commission.py <code>` prints what each string must and must not
+say, and `growBody` is the one that was wrong in English for weeks.
+
+Marcus does not read the other thirty-eight. Greenlandic still cannot ship until
+somebody does; the rest want native eyes at `/t`, word `peace`.
 
 ## Traps
 
