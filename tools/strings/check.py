@@ -95,12 +95,19 @@ def problems_for(code, catalogue, source):
     # worse than a page in English.
     term = TERMS.get(code)
     if term:
+        # Matched on the head of the word rather than the whole of it. Every
+        # language here inflects the ending and none of them inflects the head:
+        # Estonian's genitive is `seemne` against a nominative `seeme`, and a
+        # whole-word match calls that a missing word. Four characters, or the
+        # whole term where it is shorter — Danish `frø`, Japanese `種`.
+        head = term.lower()[:4]
         for key, value in written.items():
-            if "seed" in source[key].lower() and term.lower() not in value.lower():
+            if "seed" in source[key].lower() and head not in value.lower():
                 found.append(
-                    f"{key}: says {term!r} nowhere, which is this language's own "
-                    "word for a seed in the thirteen already shipping. It may be "
-                    "inflected past recognition — worth an eye rather than a fix")
+                    f"{key}: nothing here starts like {term!r}, which is this "
+                    "language's own word for a seed in the thirteen already "
+                    "shipping. Either the paragraph avoids saying seed, or it "
+                    "says it with a different word")
     return found
 
 

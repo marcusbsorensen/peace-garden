@@ -78,3 +78,5 @@ jobs:
       # same garden. It needs no numpy — see tools/preview/README.md.
       - name: The preview port is SeedCore
         run: python3 tools/preview/check_port.py
+      - name: The site's own prose is commissioned, not drifting
+        run: python3 tools/strings/check.py
