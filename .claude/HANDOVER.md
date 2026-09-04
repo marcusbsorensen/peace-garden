@@ -1,81 +1,85 @@
 # Peace Garden — handover 3 September 2026
 
-*A long overnight session that ran four strands at once: passage banks, the
-website, non-Latin typography, and then a taxonomy redesign. They were
-independent and it worked, but a fresh session should pick one — and the one to
-pick is under **Next step**.*
+*This session ran two unrelated strands: a site test roster, then the whole
+taxonomy build. They did not interfere, but a fresh session should pick one.*
 
 ## Goal
 
-Finish round two of the passage banks, support the other alphabets, build the
-website stages already specified, and add the situational navigation Marcus asked
-for. All done. What came out of it is a fifth strand — making the plant names an
-actual classification — which is designed and not built.
+Make the plant names a real classification a botanist could key out
+(`docs/TAXONOMY.md`), and give a mature plant something to do. Both done.
 
 ## State
 
-`main` at `0fda1bb`. **`round-two` is branched from it, green, and not merged.**
+`round-two` at `5d3a235`, green, **still not merged into `main`** — the branch
+has diverged a long way and merging is an outstanding decision Marcus has agreed
+to but which has not happened.
 
-- **43 passage banks**, up from 17. Every language on both round-two lists landed
-  except **Faroese and Luxembourgish**, which never got an agent slot and are not
-  written. The brief for them is `tools/quotes/BRIEF.md`.
-- **The website**: `/g` walks the garden — derived map, nav pad, random, a key for
-  every action — and its plant view draws a passage that changes with the reader's
-  language without being a translation of the last one. Site labels in 16
-  languages; the six prose strings deliberately left in English.
-- **Non-Latin**: case and tracking split into separate rules. Verified on a
-  simulator that Arabic draws right-to-left with its joins intact.
+**Verified.** 96 SeedCore tests, 23 app tests, all three Python CI checks. Built
+and driven on an iPhone 17 Pro Max simulator: first light → planting → a mature
+*Wynula latifolia*. Renders looked at for the merosity couplets, the vegetative
+spread, and one full flush cycle.
 
-**Verified.** 72 SeedCore tests, 23 app tests, all four CI checks, `refresh.py`
-quiet, export writing 44 files.
+- **The genus is read off the flower.** 12 families × 2 merosity classes → the
+  24 frozen heads. Same root ⇒ same floral plan and petal count. Head → theme is
+  untouched, so no passage anyone has seen has moved.
+- **The epithet is a checked claim**, with Latin grammar and gender agreement.
+  57 distinct epithets, commonest at 6%, ~1 in 50 *vulgaris*.
+- **Vegetative ranges widened**, floral held tight — 17 ranges, no floral range
+  touched.
+- **Flushes**: a wave of open flowers travelling up the stem over 1–4 weeks.
+- **43 test gardeners** at `/t` on the site, word `peace`.
 
-**Unverified.** Greenlandic's *sentences* are composed rather than quoted — its
-lexical claims are sourced to a grammar, its syntax is not. It needs a Kalaallisut
-reader before shipping, and its own agent said so unprompted.
+**Unverified.** The flush has not been seen *in the app* — only in the Python
+port. Its amplitude (a trough at 45%) is visible on the crown but subtle on
+small-flowered plants; whether to deepen it wants looking at on a simulator.
 
 ## Files
 
-- `docs/TAXONOMY.md` — the next real work. Read it first.
-- `docs/FOR-REVIEW.md` — two decisions waiting on Marcus: the site's six prose
-  strings, and whether ten area names get commissioned in 43 languages.
-- `docs/WORDS.md` — what 43 languages said about peace, and why the convergences
-  are the finding. Feeds the garden's type-specimen sections.
-- `tools/quotes/land.py`, `refresh.py`, `BRIEF.md` — commission, land and verify
-  a bank. `refresh.py` is not optional; see Traps.
-- `Server/g`, `Server/assets/js/{garden,keys,walk,plots}.js` — the garden walk.
+- `Packages/SeedCore/Sources/SeedCore/Genome/PlantName.swift:60` — the root
+  table. The pairings, and why `Cal`/`Quin` swapped.
+- `Packages/SeedCore/Sources/SeedCore/Genome/Epithet.swift` — the vocabulary,
+  the rarity rule, and `Rate`, a table of **measured** base rates.
+- `Packages/SeedCore/Sources/SeedCore/Growth/GrowthModel.swift` — `flush`,
+  `flushDepth`.
+- `Packages/SeedCore/Sources/SeedCore/Morphology/PlantBuilder.swift` —
+  `flushFactor`, the travelling wave.
+- `docs/TAXONOMY.md` — the design and everything the renders changed.
+- `docs/FOR-REVIEW.md` — **two decisions still waiting on Marcus**: the six
+  prose strings and the ten area names.
+- `Server/assets/js/testers.js`, `Server/t` — the roster. No accounts exist.
 
 ## Decisions made
 
-- **The garden's map is derived from `Theme.position` and must not move.**
-  Retuning a theme's position is now a change to the map.
-- **A plant's cell inside an area comes from its seed and never moves.**
-- **Drawn marks never mirror under RTL; layout does.** `View.drawnHand()`.
-- **Arabic is never letter-spaced** — a joined script. `Chrome.neverTracked`.
-- **The keyboard sheet costs one string**, because every row is labelled by the
-  control it operates. Adding a shortcut must not add a commission.
-- **The type-specimen plants live only in the shared garden** and never touch a
-  person's own seed or their exchanges.
+- **The archetype is a family, not a genus.** Genera in a family share a root
+  and differ in their endings (*Helianthus*, *Helianthemum*). This is what let
+  gender attach to the written genus.
+- **Notability is rarity**: of the true things, say the one fewest relatives
+  could have said. Scoring markings and measurements on separate scales gave
+  *variegata* a third of the garden.
+- **A flush never closes completely.** A bare plant would read as a meeting
+  having faded. The trough is a bud at 45%. This is about meaning, not botany.
+- **`-ynth` is masculine, the other nine endings feminine.**
+- **`Cal` and `Quin` swapped**: *Calaceae* is the umbel, *Quinaceae* the bell.
+  The Campanulaceae echo that justified the old arrangement was false —
+  *Campanula* is from *campana*, not *kalos*.
+- **Language codes, not country codes**, in tester names (`Test-DA-Gartner`).
 
 ## Next step
 
-`docs/TAXONOMY.md`, once Marcus answers the three questions at its foot — the
-first, which archetype belongs to which genus, is the blocker. The concrete first
-move is deriving the genus head from the floral plan instead of drawing it
-alongside: `Genome.swift:210` and `PlantName.swift:66`. It renames every plant,
-and nothing has shipped, so today is the cheapest this will ever be.
+Run the app on a simulator and watch a mature plant across a flush cycle — wind
+the garden on from Settings → Testing. Decide whether the 45% trough is enough
+to read as change. Then merge `round-two` into `main`.
 
 ## Traps
 
-- **`cd` persists between Bash calls.** An `xcodebuild` ran from
-  `Packages/SeedCore` and silently tested nothing. Cost time twice.
-- **A file reaching 360 lines is not a finished bank.** Agents keep revising.
-  Run `python3 tools/quotes/refresh.py <banks dir>` *until it says nothing
-  moved* — it caught Galician on three separate passes.
-- **Twenty concurrent subagents is the ceiling**, and finishing agents do not
-  free slots promptly.
-- **Forcing RTL needs both** `-AppleTextDirection YES` and
-  `-NSForceRightToLeftWritingDirection YES`. The first alone does nothing.
-- **A browser caches ES modules by URL.** A changed module looks missing; move
-  the dev server to a new port to be sure.
-- **`GardenStoreTests` fails when the Mac's screen locks** — the protection class
-  follows it, and CI never sees it because SeedCore runs on Linux there.
+- **`cd` persists between Bash calls.** Always pass absolute `--package-path`.
+- **`tools/preview/plant_model.py` is a hand-maintained port and is not in CI.**
+  It has silently drifted three times. It was missing the per-node bloom ceiling
+  *and* the bloom taper, so every spike it has ever drawn was wrong.
+- **Render a night-opening plant at its own peak hour.** At 13:00 the diurnal
+  factor damps it to a third and every flower is a shut bud — which looks
+  exactly like a feature that is not working.
+- **Simulator taps need real coordinates.** Screenshots come back scaled; take a
+  raw `xcrun simctl io … screenshot` and divide by 3.
+- **Thresholds against a drawn trait must be measured, not guessed.** Three
+  epithets were unreachable because petal brightness never leaves 0.45–0.82.
