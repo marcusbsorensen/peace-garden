@@ -291,6 +291,32 @@ collision by probing would make a position depend on who arrived first, which is
 the one property deriving it exists to avoid. A shared cell is more than one
 plant standing together, which is a thing a garden does.
 
+**The areas are named once, in English, and stay English.** Settled by Marcus on
+4 September. It is the argument the app already makes about a plant's binomial:
+a proper noun travels better than a translation of one, and a synthesised
+Latinate name reads the same in Amsterdam as in Margate. An area name holds the
+same line.
+
+| | | | | |
+| --- | --- | --- | --- | --- |
+| The Cold Frame | The Root Ground | The Seedbed | The Coppice | The Long Walk |
+| The Quiet Garden | The Orchard | The Knot Garden | The Glasshouse | The Crossing |
+
+Every one of them is a real place in a garden — something a gardener could point
+at — rather than ten abstractions dressed up. The cold frame is where a plant is
+held back until it can go out, which is `waiting`'s three subthemes together;
+coppicing is cutting so that it grows back, and `renewal`'s first subtheme is
+`cutAndComeAgain`; an orchard is a family, grafted and propagated and related on
+purpose; the crossing is where paths meet and where two seeds do.
+
+They live in `assets/js/walk.js` as a table rather than in the catalogues, and
+that is the whole cost of the decision: **ten strings would have been four
+hundred and twenty commissions** at a multiplier that was seventeen when
+`WEBSITE.md` first quoted it and is forty-two now. *Cold frame* and *knot
+garden* have no clean equivalent in several of the sixteen and would have come
+back as descriptions rather than as names, so the expensive answer was also the
+worse one.
+
 **The pad.** On a plant page, four arrows to the nearest plant in each direction.
 Nearest is measured along the direction of travel first and sideways second,
 within a cone rather than along a ray — a strict ray finds almost nothing on a

@@ -34,10 +34,18 @@ const state = {
   settled: null,
 };
 
-/// The area names are English and stay English — see docs/FOR-REVIEW.md §2 for
-/// the argument, which is the one the app already makes about plant names: a
-/// proper noun travels better than a translation of one. If Marcus decides
-/// otherwise these become catalogue keys and this table goes away.
+/// The area names are English and stay English. **Settled by Marcus on
+/// 4 September**; the reasoning is in docs/WEBSITE.md, under *Walking it*.
+///
+/// It is the argument the app already makes about a plant's binomial: a proper
+/// noun travels better than a translation of one. So this is a table rather
+/// than ten catalogue keys, and it costs nothing — ten keys would have been
+/// four hundred and twenty commissions at the multiplier as it stands.
+///
+/// Which also means **an area name is the one piece of the site's writing that
+/// is not translated**, so it is not a place to put a sentence. Ten proper
+/// nouns is what was decided; a description here would quietly reintroduce the
+/// cost that choosing them avoided.
 const AREA_NAMES = {
   waiting: "The Cold Frame",
   ground: "The Root Ground",
