@@ -34,8 +34,12 @@ export const EN = Object.freeze({
   // or — about six times in a hundred — a mutation belonging to neither. The
   // reference implementation prints the mix. Saying so here would be true and
   // would cost the sentence its shape; the exact rule is in `Pollination`.
+  //
+  // The fourth sentence is restored from the paragraph this replaced: it was
+  // the only place the site said a plant takes weeks rather than appearing
+  // finished, which is most of what there is to come back for.
   about1:
-    "Peace Garden makes a plant out of two people meeting. Two phones hand each other a seed. What grows from the two seeds is a plant that combines their features, like a handshake or a joint garden that has some of each person.",
+    "Peace Garden makes a plant out of two people meeting. Two phones hand each other a seed. What grows from the two seeds is a plant that combines their features, like a handshake or a joint garden that has some of each person. It opens over real days, in its own time.",
   about2:
     "A seed travels in a link as well as by touch, so it reaches a phone that has never heard of any of this.",
   // **This block is what somebody sees when there is no seed.** `page.js` sets
