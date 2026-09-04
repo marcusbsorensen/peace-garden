@@ -6,6 +6,8 @@ A seed link, so the seed page can be looked at.
     python3 tools/site/mintlink.py --kind r              # a reply
     python3 tools/site/mintlink.py --name Nadia --plant "Wynula latifolia"
     python3 tools/site/mintlink.py --base http://localhost:8801
+    python3 tools/site/mintlink.py --review fr           # one language's six
+    python3 tools/site/mintlink.py --packets out/review  # every language, sendable
 
 **Two of the site's six prose strings only exist on a page that has a seed in
 it**, and the about block hides the moment one parses — so `growBody` and
@@ -25,13 +27,19 @@ the checksum over the first nine.
 import argparse
 import base64
 import hashlib
+import json
 import os
+import pathlib
 import struct
 import time
 
 DOMAIN = b"peacegarden.link.v1"
 SEED_BYTES = 32
 NONCE_BYTES = 16
+
+HERE = pathlib.Path(__file__).resolve().parents[2]
+GUIDE = HERE / "docs" / "REVIEWING-A-LANGUAGE.md"
+TESTERS = HERE / "Server" / "testers.json"
 
 
 def b64(raw):
@@ -67,6 +75,82 @@ def mint(kind="o", name="Nadia", plant="Wynula latifolia", born=None):
     return ".".join(fields + [checksum(".".join(fields))])
 
 
+def review_rows(code, base, name, plant, born):
+    """The six screens a reviewer needs, in the order §2 of the guide names
+    them. Screens 2, 3 and 4 differ only in the fragment, and the fragment never
+    reaches the server — so these are six URLs rather than six pages, and there
+    is nothing on the site to keep in step with them."""
+    return [
+        ("What this is, for somebody with no seed",
+         f"{base}/s?l={code}"),
+        ("A seed that has arrived",
+         f"{base}/s?l={code}#{mint('o', name, plant, born)}"),
+        ("The same, from somebody who gave no name",
+         f"{base}/s?l={code}#{mint('o', '', plant, born)}"),
+        ("A seed that has come back",
+         f"{base}/s?l={code}#{mint('r', name, plant, born)}"),
+        ("A link that arrived broken",
+         f"{base}/s?l={code}#1.o.notaseed"),
+        ("The garden",
+         f"{base}/g?l={code}"),
+    ]
+
+
+def packets(directory, base, name, plant, born):
+    """One file per language: the guide, then that language's six links.
+
+    **A reviewer should need one thing, not two.** The guide is the same for
+    everybody and the links are not, and a message that says "read the attached
+    and also here are six URLs" is a message somebody half-reads. So each file
+    is the whole packet, ready to send as it stands.
+
+    The links are fixtures and are minted fresh on every run, so these are
+    written outside the repository — `out/` is ignored. Two reviewers holding
+    different links is fine: nothing is derived from the bytes and no two of
+    them mean anything to each other.
+    """
+    directory = pathlib.Path(directory)
+    directory.mkdir(parents=True, exist_ok=True)
+    guide = GUIDE.read_text()
+    testers = json.loads(TESTERS.read_text())["testers"]
+
+    written = []
+    for tester in testers:
+        code = tester["code"]
+        rows = review_rows(code, base, name, plant, born)
+        links = "\n".join(
+            f"{index}. **{what}**\n   {url}\n"
+            for index, (what, url) in enumerate(rows, 1)
+        )
+        # The heading names the language in its own script as well as in
+        # English, because the first thing a reviewer checks is that they have
+        # been sent the right one.
+        packet = (
+            f"# {tester['name']} — {tester['endonym']}\n\n"
+            f"{guide.split('\n', 1)[1].lstrip()}\n"
+            f"---\n\n## Your six links\n\n{links}"
+        )
+        path = directory / f"{code}-{tester['name'].replace(' ', '-')}.md"
+        path.write_text(packet)
+        written.append((code, tester["name"], path))
+
+    index = "\n".join(
+        f"| {code} | {language} | `{path.name}` |" for code, language, path in written
+    )
+    (directory / "INDEX.md").write_text(
+        "# Review packets\n\n"
+        f"Minted {time.strftime('%d %B %Y')} against `{base}`. One file per\n"
+        "language, each the whole guide plus that language's six links, ready to\n"
+        "send as it stands.\n\n"
+        "Greenlandic (`kl`) ships English until a speaker reads it — see\n"
+        "`Server/strings/kl.json`. Its packet is here so the speaker who reads it\n"
+        "gets the same one as everybody else.\n\n"
+        "| | Language | Packet |\n| --- | --- | --- |\n" + index + "\n"
+    )
+    print(f"{len(written)} packets in {directory}/")
+    return written
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--kind", choices=("o", "r"), default="o",
@@ -79,31 +163,23 @@ def main():
     parser.add_argument("--review", metavar="CODE",
                         help="print the whole set of links a reviewer of that "
                              "language needs, ready to paste into a message")
+    parser.add_argument("--packets", metavar="DIR",
+                        help="write one sendable packet per language into DIR "
+                             "— the guide and that language's six links")
     args = parser.parse_args()
 
+    born = time.time() - args.days * 86_400
+
+    if args.packets:
+        packets(args.packets, args.base, args.name, args.plant, born)
+        return
+
     if args.review:
-        code = args.review
-        born = time.time() - args.days * 86_400
-        rows = [
-            ("What this is, for somebody with no seed",
-             f"{args.base}/s?l={code}"),
-            ("A seed that has arrived",
-             f"{args.base}/s?l={code}#{mint('o', args.name, args.plant, born)}"),
-            ("The same, from somebody who gave no name",
-             f"{args.base}/s?l={code}#{mint('o', '', args.plant, born)}"),
-            ("A seed that has come back",
-             f"{args.base}/s?l={code}#{mint('r', args.name, args.plant, born)}"),
-            ("A link that arrived broken",
-             f"{args.base}/s?l={code}#1.o.notaseed"),
-            ("The garden",
-             f"{args.base}/g?l={code}"),
-        ]
+        rows = review_rows(args.review, args.base, args.name, args.plant, born)
         for index, (what, url) in enumerate(rows, 1):
             print(f"{index}. {what}\n   {url}\n")
         return
-    fragment = mint(args.kind, args.name, args.plant,
-                    born=time.time() - args.days * 86_400)
-    print(f"{args.base}/s#{fragment}")
+    print(f"{args.base}/s#{mint(args.kind, args.name, args.plant, born)}")
 
 
 if __name__ == "__main__":
