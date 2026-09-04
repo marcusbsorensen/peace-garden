@@ -10,13 +10,28 @@ It is a sketch, not a second source of truth. `SeedCore` is authoritative for
 everything here except the derivation primitives, which come from
 `tools/reference/derivation_reference.py` and are pinned by test vectors on both
 sides.
+
+**And it is checked.** `check_port.py` holds the genome, the growth state and
+the bloom placements in this file against `vectors.json`, which SeedCore's own
+`PortVectorTests` writes. This file drifted three times before that existed, and
+the last time it was missing the per-node bloom ceiling and the size taper — so
+every spike it ever drew carried identical fully-open heads at even spacing, and
+renders that real decisions were taken from were wrong. See `README.md` here.
 """
 
 import math
 import sys
 from pathlib import Path
 
-import numpy as np
+# **Optional, and that is deliberate.** numpy is the sweep's dependency and
+# nothing else's: the genome, the growth model and the bloom placements are
+# plain floats. `check_port.py` runs in a CI job that installs nothing, so
+# importing this file has to succeed without numpy present and only the geometry
+# below is allowed to want it.
+try:
+    import numpy as np
+except ModuleNotFoundError:  # pragma: no cover — only ever true inside CI
+    np = None
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "reference"))
 from derivation_reference import (  # noqa: E402
@@ -590,7 +605,46 @@ def transport_frames(positions, radii, twist):
     return samples
 
 
-def build_skeleton(genome, height_scale, segments=28):
+STEM_SEGMENTS = 28
+
+
+def node_indices(node_count, segments=STEM_SEGMENTS):
+    """Which stem samples carry the leaf nodes, as indices into the sweep.
+
+    Split out of `build_skeleton` so a node's place on the stem can be had
+    without sweeping one. The sweep is the only part of this file that wants
+    numpy, and `check_port.py` runs where there is none — but it still needs
+    every node's `t`, because that is what sets a flower's lag, its ceiling and
+    its place in the flush wave. The skeleton builder reads its nodes off this
+    list, so the two cannot come apart.
+
+    A sample's `t` is its index over `segments`, which is what makes this
+    enough on its own: `transport_frames` numbers `positions` from 0 to 1 and
+    the stem always has `segments + 1` of them.
+    """
+    indices = []
+    for index in range(node_count):
+        fraction = 0.55 if node_count == 1 else 0.16 + 0.74 * index / (node_count - 1)
+        indices.append(min(segments, int(round(fraction * segments))))
+    return indices
+
+
+def stalk_count(genome, height_scale):
+    """How many stalks a head gives off at this height.
+
+    The guards at the top of `build_branches` and nothing below them — a stalk
+    can still be dropped for want of reach, but only while `vigour` is under
+    about 0.01, which is a stem a quarter grown. **No flower is ever drawn
+    there**: `budSwell` does not leave zero until the plant has stopped
+    growing, and `heightScale` is 1 by then. So this is exact everywhere a
+    bloom is placed, which is the one thing `check_port.py` asks of it.
+    """
+    if genome.inflorescence != "head" or genome.branchCount <= 0:
+        return 0
+    return genome.branchCount if smoothstep((height_scale - 0.25) / (0.7 - 0.25)) > 0.001 else 0
+
+
+def build_skeleton(genome, height_scale, segments=STEM_SEGMENTS):
     length = max(0.01, genome.height * height_scale)
     step = length / segments
     lean_per_step = genome.lean * 0.9 / segments
@@ -613,31 +667,26 @@ def build_skeleton(genome, height_scale, segments=28):
         radii.append(base_radius * (1 - (1 - genome.taper) * t))
 
     samples = transport_frames(positions, radii, genome.twist)
-    nodes = []
-    for index in range(genome.nodeCount):
-        fraction = 0.55 if genome.nodeCount == 1 else 0.16 + 0.74 * index / (genome.nodeCount - 1)
-        nodes.append(samples[min(len(samples) - 1, int(round(fraction * (len(samples) - 1))))])
+    nodes = [samples[index] for index in node_indices(genome.nodeCount, segments)]
     return dict(stem=samples, nodes=nodes, apex=samples[-1],
                 branches=build_branches(genome, samples, height_scale, length))
 
 
 def build_branches(genome, samples, height_scale, stem_length):
     """Mirror of SkeletonBuilder.branches in PlantSkeleton.swift."""
-    if genome.inflorescence != "head" or genome.branchCount <= 0 or len(samples) < 2:
+    count = stalk_count(genome, height_scale)
+    if count == 0 or len(samples) < 2:
         return []
 
     vigour = smoothstep((height_scale - 0.25) / (0.7 - 0.25))
-    if vigour <= 0.001:
-        return []
-
     spread = genome.branchSpread
     apex = samples[-1]
     zone_start = 0.78 - 0.33 * spread
     zone_end = 0.95
 
     branches = []
-    for index in range(genome.branchCount):
-        fraction = 0.5 if genome.branchCount == 1 else index / (genome.branchCount - 1)
+    for index in range(count):
+        fraction = 0.5 if count == 1 else index / (count - 1)
         t = zone_start + (zone_end - zone_start) * fraction
         origin = samples[min(len(samples) - 1, int(round(t * (len(samples) - 1))))]
 
@@ -817,41 +866,86 @@ def _flushed(growth, position):
     return local
 
 
-def _add_blooms(builder, genome, skeleton, growth):
-    if not genome.bloomPresent or growth["budSwell"] <= 0.02:
-        return
-    _add_bloom(builder, genome, skeleton["apex"], genome.bloomScale,
-               _flushed(growth, 0.0), 0)
+def bloom_placements(genome, growth, node_ts, stalks):
+    """Every flower this plant carries, in the order they are drawn.
 
-    branches = skeleton.get("branches", [])
-    for offset, branch in enumerate(branches):
+    Mirror of `PlantBuilder.forEachBloom`, and the one part of this file that
+    `check_port.py` reads directly, because it is the part that has actually
+    gone wrong. Nothing here survives into the mesh as anything a reader could
+    recover: `budSwell` and `bloomOpen` become an angle and a length, and
+    `scale` is folded into both. Two flowers half a cycle apart differ by a few
+    hundred vertices in a plant that has thousands, which is how the last drift
+    lasted three revisions.
+
+    Takes the nodes' `t` values and the number of stalks rather than a skeleton,
+    so that it can be called without numpy. `_add_blooms` passes the real ones
+    off the swept skeleton; `check_port.py` gets them from `node_indices` and
+    `stalk_count`.
+
+    `t` is 1 for the crown and for every stalk tip, by construction rather than
+    by assumption: each sits on the last sample of its own path, and
+    `transport_frames` numbers that one 1.
+    """
+    if not genome.bloomPresent or growth["budSwell"] <= 0.02:
+        return []
+
+    # The crown leads the cycle, so its position in the wave is zero.
+    crown = _flushed(growth, 0.0)
+    placements = [dict(kind="crown", index=0, t=1.0,
+                       budSwell=crown["budSwell"], bloomOpen=crown["bloomOpen"],
+                       scale=genome.bloomScale)]
+
+    # A head has no up and down to run a wave along, so its stalks take an even
+    # share of the cycle instead.
+    for offset in range(stalks):
         size = SplitMix64(genome.seed, f"bloom.size.branch.{offset}")
-        position = (offset + 1) / (len(branches) + 1)
-        _add_bloom(builder, genome, branch["path"][-1],
-                   genome.bloomScale * size.value(0.86, 1.1),
-                   _flushed(growth, position), offset + 1)
+        local = _flushed(growth, (offset + 1) / (stalks + 1))
+        placements.append(dict(kind="branch", index=offset + 1, t=1.0,
+                               budSwell=local["budSwell"], bloomOpen=local["bloomOpen"],
+                               scale=genome.bloomScale * size.value(0.86, 1.1)))
 
     if not genome.bloomsAtNodes:
-        return
-    for offset, node in enumerate(skeleton["nodes"]):
-        if node["t"] <= 0.35:
+        return placements
+    for offset, t in enumerate(node_ts):
+        if t <= 0.35:
             continue
-        lag = (1 - node["t"]) * 0.5
+        lag = (1 - t) * 0.5
         # **This port was missing the ceiling and the taper entirely**, so every
         # spike it drew carried identical fully-open heads at even spacing —
         # which is precisely the tell SeedCore's own comments record fixing, and
         # which every render taken from this file has therefore been wrong about.
-        ceiling = 0.45 + 0.55 * node["t"]
-        flush = _flush_factor(node["t"], growth)
-        local = dict(growth)
-        local["budSwell"] = min(ceiling, max(0.0, growth["budSwell"] - lag) / max(0.01, 1 - lag)) * flush
-        local["bloomOpen"] = min(ceiling, max(0.0, growth["bloomOpen"] - lag) / max(0.01, 1 - lag)) * flush
-        if local["budSwell"] <= 0.02:
+        ceiling = 0.45 + 0.55 * t
+        flush = _flush_factor(t, growth)
+        bud = min(ceiling, max(0.0, growth["budSwell"] - lag) / max(0.01, 1 - lag)) * flush
+        openness = min(ceiling, max(0.0, growth["bloomOpen"] - lag) / max(0.01, 1 - lag)) * flush
+        if bud <= 0.02:
             continue
         size = SplitMix64(genome.seed, f"bloom.size.{offset}")
-        up = min(1.0, max(0.0, (node["t"] - 0.35) / 0.65))
-        scale = (0.4 + 0.34 * up) * size.value(0.88, 1.12)
-        _add_bloom(builder, genome, node, scale, local, offset + 1)
+        up = min(1.0, max(0.0, (t - 0.35) / 0.65))
+        placements.append(dict(kind="node", index=offset + 1, t=t,
+                               budSwell=bud, bloomOpen=openness,
+                               scale=(0.4 + 0.34 * up) * size.value(0.88, 1.12)))
+    return placements
+
+
+def _add_blooms(builder, genome, skeleton, growth):
+    branches = skeleton.get("branches", [])
+    placements = bloom_placements(genome, growth,
+                                  [node["t"] for node in skeleton["nodes"]],
+                                  len(branches))
+    for placement in placements:
+        if placement["kind"] == "crown":
+            sample = skeleton["apex"]
+        elif placement["kind"] == "branch":
+            sample = branches[placement["index"] - 1]["path"][-1]
+        else:
+            sample = skeleton["nodes"][placement["index"] - 1]
+        # Only the two the placement carries move; a flower's stage, age and
+        # phase are the plant's own and pass through untouched.
+        local = dict(growth)
+        local["budSwell"] = placement["budSwell"]
+        local["bloomOpen"] = placement["bloomOpen"]
+        _add_bloom(builder, genome, sample, placement["scale"], local, placement["index"])
 
 
 def _add_bloom(builder, genome, sample, scale, growth, index):

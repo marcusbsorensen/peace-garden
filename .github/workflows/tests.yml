@@ -67,3 +67,14 @@ jobs:
       # already had. docs/WEBSITE.md argues it at length.
       - name: The site's languages are the app's
         run: python3 tools/site/export.py --check
+
+      # tools/preview/plant_model.py is a hand-maintained port of SeedCore, and
+      # it is how the garden gets looked at — every defect this repository has
+      # caught by eye was caught in a Python render. It had drifted three times
+      # before this step existed, so a render could be of a plant the app does
+      # not grow. tools/preview/vectors.json is committed; the SeedCore job's
+      # PortVectorTests says the file is what the Swift computes and this says
+      # it is what the port computes. Both have to pass for the two to be the
+      # same garden. It needs no numpy — see tools/preview/README.md.
+      - name: The preview port is SeedCore
+        run: python3 tools/preview/check_port.py

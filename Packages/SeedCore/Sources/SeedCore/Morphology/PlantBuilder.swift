@@ -226,6 +226,42 @@ public struct PlantBuilder {
 
     // MARK: - Blooms
 
+    /// Where one flower sits on the plant, and the state it is drawn in.
+    ///
+    /// Three numbers per flower, and none of them survives into the mesh as
+    /// anything a reader could recover. `budSwell` and `bloomOpen` become an
+    /// angle and a length; `scale` is folded into both. Two flowers a whole
+    /// half-cycle apart differ by a few hundred vertices in a plant that has
+    /// several thousand — which is why the drift this type exists to catch went
+    /// three revisions without anybody noticing.
+    struct BloomPlacement: Equatable, Sendable {
+        /// The three places a plant carries a flower.
+        enum Kind: String, Equatable, Sendable {
+            /// The terminal flower, at the growing point. Every flowering plant
+            /// has one, and on a young `.head` it is the only one.
+            case crown
+            /// One at the tip of each stalk of a `.head`.
+            case branch
+            /// One at each node above `t` 0.35, for the forms that flower up
+            /// the stem rather than only at the tip.
+            case node
+        }
+
+        var kind: Kind
+        /// What keys this flower's own noise. Shared with `addBloom`, so two
+        /// flowers reported with the same index would be drawn identically.
+        var index: Int
+        /// Where it sits along the path carrying it: the stem for a node, the
+        /// stalk for a branch. `1` at a tip, which is where a crown always is.
+        var t: Double
+        /// Its own swelling, after the lag, the ceiling and the wave.
+        var budSwell: Double
+        /// Its own opening, likewise.
+        var bloomOpen: Double
+        /// How large it is drawn, against a raceme's terminal flower.
+        var scale: Double
+    }
+
     /// The wave, reachable from a test.
     ///
     /// `flushFactor` is the whole of the never-bare promise and the whole of
@@ -234,6 +270,26 @@ public struct PlantBuilder {
     /// small flower. So it is exposed rather than tested through the geometry.
     func flushFactorForTesting(position: Double, growth: GrowthModel.State) -> Double {
         Self.flushFactor(position: position, growth: growth)
+    }
+
+    /// Every flower this plant carries, in the order they are drawn.
+    ///
+    /// Same argument as `flushFactorForTesting`, one level up. A mesh cannot be
+    /// asked how open its third flower is, so anything holding the port in
+    /// `tools/preview/plant_model.py` to the same answers has to be given the
+    /// answers directly — see `PortVectorTests` and `tools/preview/check_port.py`.
+    ///
+    /// It goes through `forEachBloom`, which is also what `addBlooms` draws
+    /// from, so this cannot report one placement and the geometry use another.
+    /// A second walk written to be read by a test would be a third
+    /// implementation of the thing that has already drifted three times.
+    func bloomPlacementsForTesting(growth: GrowthModel.State) -> [BloomPlacement] {
+        let skeleton = SkeletonBuilder.stem(genome: genome, heightScale: Float(growth.heightScale))
+        var placements: [BloomPlacement] = []
+        forEachBloom(skeleton: skeleton, growth: growth) { placement, _ in
+            placements.append(placement)
+        }
+        return placements
     }
 
     /// One flower's state, with the cycle applied.
@@ -279,13 +335,30 @@ public struct PlantBuilder {
         return 1 - growth.flushDepth * 0.55 * (1 - wave)
     }
 
-    private func addBlooms(_ builder: inout MeshBuilder, skeleton: PlantSkeleton, growth: GrowthModel.State) {
+    /// Walks the flowers this plant carries, in the order they are drawn.
+    ///
+    /// Split out of `addBlooms` so that the geometry and
+    /// `bloomPlacementsForTesting` read the same walk rather than two walks
+    /// that agree today. `body` is non-escaping, so the drawing side can hand
+    /// its `inout` builder straight through.
+    private func forEachBloom(
+        skeleton: PlantSkeleton,
+        growth: GrowthModel.State,
+        body: (BloomPlacement, PathSample) -> Void
+    ) {
         guard genome.bloom.present, growth.budSwell > 0.02 else { return }
 
         let bloomScale = Float(genome.branching.bloomScale)
         // The crown leads the cycle, so its position in the wave is zero.
-        addBloom(&builder, at: skeleton.apex, scale: bloomScale,
-                 growth: Self.flushed(growth, position: 0), index: 0)
+        let crown = Self.flushed(growth, position: 0)
+        body(
+            BloomPlacement(
+                kind: .crown, index: 0, t: Double(skeleton.apex.t),
+                budSwell: crown.budSwell, bloomOpen: crown.bloomOpen,
+                scale: Double(bloomScale)
+            ),
+            skeleton.apex
+        )
 
         // One bloom at the tip of each stalk.
         //
@@ -300,12 +373,15 @@ public struct PlantBuilder {
             // umbel opens and fades in unison, which is the flat-faced look the
             // per-node lag was written to remove from spikes.
             let position = Double(offset + 1) / Double(skeleton.branches.count + 1)
-            addBloom(
-                &builder,
-                at: tip,
-                scale: bloomScale * Float(size.value(in: 0.86...1.1)),
-                growth: Self.flushed(growth, position: position),
-                index: offset + 1
+            let scale = bloomScale * Float(size.value(in: 0.86...1.1))
+            let local = Self.flushed(growth, position: position)
+            body(
+                BloomPlacement(
+                    kind: .branch, index: offset + 1, t: Double(tip.t),
+                    budSwell: local.budSwell, bloomOpen: local.bloomOpen,
+                    scale: Double(scale)
+                ),
+                tip
             )
         }
 
@@ -328,20 +404,9 @@ public struct PlantBuilder {
             let ceiling = 0.45 + 0.55 * Double(node.t)
             // A flower's place in the wave is where it stands on the stem.
             let flush = Self.flushFactor(position: Double(node.t), growth: growth)
-            let localGrowth = GrowthModel.State(
-                stage: growth.stage,
-                stageProgress: growth.stageProgress,
-                overall: growth.overall,
-                heightScale: growth.heightScale,
-                leafUnfurl: growth.leafUnfurl,
-                budSwell: min(ceiling, max(0, growth.budSwell - lag) / max(0.01, 1 - lag)) * flush,
-                bloomOpen: min(ceiling, max(0, growth.bloomOpen - lag) / max(0.01, 1 - lag)) * flush,
-                age: growth.age,
-                timeToNextStage: growth.timeToNextStage,
-                flush: growth.flush,
-                flushDepth: growth.flushDepth
-            )
-            guard localGrowth.budSwell > 0.02 else { continue }
+            let budSwell = min(ceiling, max(0, growth.budSwell - lag) / max(0.01, 1 - lag)) * flush
+            let bloomOpen = min(ceiling, max(0, growth.bloomOpen - lag) / max(0.01, 1 - lag)) * flush
+            guard budSwell > 0.02 else { continue }
             // Every lateral flower was drawn at exactly 0.62, which gave a
             // spire nine identical heads at even spacing — the single strongest
             // tell that a plant had been generated rather than grown. A real
@@ -349,7 +414,30 @@ public struct PlantBuilder {
             var size = SplitMix64(seed: genome.seed, label: "bloom.size.\(offset)")
             let up = min(1, max(0, (Float(node.t) - 0.35) / 0.65))
             let scale = (0.4 + 0.34 * up) * Float(size.value(in: 0.88...1.12))
-            addBloom(&builder, at: node, scale: scale, growth: localGrowth, index: offset + 1)
+            body(
+                BloomPlacement(
+                    kind: .node, index: offset + 1, t: Double(node.t),
+                    budSwell: budSwell, bloomOpen: bloomOpen, scale: Double(scale)
+                ),
+                node
+            )
+        }
+    }
+
+    private func addBlooms(_ builder: inout MeshBuilder, skeleton: PlantSkeleton, growth: GrowthModel.State) {
+        forEachBloom(skeleton: skeleton, growth: growth) { placement, sample in
+            // Only the two the placement carries move; a flower's stage, age
+            // and phase are the plant's own and are passed through untouched.
+            var local = growth
+            local.budSwell = placement.budSwell
+            local.bloomOpen = placement.bloomOpen
+            addBloom(
+                &builder,
+                at: sample,
+                scale: Float(placement.scale),
+                growth: local,
+                index: placement.index
+            )
         }
     }
 
