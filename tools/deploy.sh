@@ -108,7 +108,7 @@ check_path /.well-known/apple-app-site-association 200 application/json
 # A sample of the static half, which nginx types from its own mime.types.
 check_path /assets/site.css     200 text/css
 check_path /assets/js/page.js   200 application/javascript
-check_path /assets/mark.svg     200 image/svg+xml
+check_path /assets/icon.svg     200 image/svg+xml
 check_path /languages.json      200 application/json
 check_path /strings/fr.json     200 application/json
 check_path /passages/fr.json    200 application/json

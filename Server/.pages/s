@@ -43,7 +43,7 @@
 
     <main class="page" id="page">
       <header class="masthead">
-        <img class="mark" src="/assets/mark.svg" alt="" width="44" height="44" />
+        <img class="mark" src="/assets/icon.svg" alt="" width="44" height="44" />
         <p class="wordmark heading">Peace Garden</p>
       </header>
 

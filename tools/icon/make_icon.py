@@ -545,11 +545,15 @@ def main():
     png(coil, bract, spike, axis, stroke, stops).save(CATALOGUE / "icon.png")
     (CATALOGUE / "Contents.json").write_text(json.dumps(CONTENTS, indent=2) + "\n")
 
-    # **The site's favicon is this drawing, not a second one.** It used to be
-    # `mark.svg`, the wordmark, which is a different job: a favicon is seen at
-    # sixteen pixels beside a title, where letterforms are a smudge and a mark is
-    # a mark. Written from here so the two cannot drift — the same bargain the
-    # SVG and the PNG already strike with each other.
+    # **The site's favicon is this drawing, not a second one** — and neither is
+    # the mark at the head of each page. Both used to point at `mark.svg`, which
+    # was described as a copy of this drawing and kept in step by hand. It was
+    # not: this file inverted the bract on 4 September and the copy stayed as it
+    # was, so `/s`, `/g` and `/t` each showed the old mark in the header and the
+    # new one in the tab, at the same time, and nothing failed. The copy is gone
+    # and the pages point here, which is the only version of "cannot drift" that
+    # does not depend on somebody remembering — the same bargain the SVG and the
+    # PNG already strike with each other.
     #
     # Three files, because a favicon is three questions. The SVG is what a
     # current browser takes and the only one that stays sharp. The 180 is what

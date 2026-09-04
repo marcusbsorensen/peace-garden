@@ -19,9 +19,10 @@ peacegarden.app/
 ├── testers.json                       ← generated: one gardener per language
 ├── passages/<code>.json               ← generated: one bank per language
 ├── strings/<code>.json                ← the site's own words, per language
+├── favicon.ico                        ← generated: tools/icon/make_icon.py
 └── assets/
     ├── site.css
-    ├── mark.svg                       ← a copy of tools/icon/icon.svg
+    ├── icon.svg, icon-180.png         ← generated, from the same drawing
     └── js/
         ├── page.js                    ← the /s page
         ├── walk.js                    ← the /g page
@@ -107,11 +108,17 @@ behind it: `assets/js/testers.js` opens with what a tester is and why a static
 site has nobody to log in. It is `noindex, nofollow`, it guards nothing, and it
 can ship or be left out of an upload without anything else noticing.
 
-**`mark.svg` is a copy.** `tools/icon/make_icon.py` writes the canonical
-drawing at `tools/icon/icon.svg`; this is that file, copied. Change the dials
-and re-run the generator, then copy it here again. Do not hand-edit either one.
-**SEAM:** a deploy script that re-copies it is what would keep the two from
-drifting, and there is not one yet.
+**There is one drawing.** `tools/icon/make_icon.py` writes `assets/icon.svg`,
+`assets/icon-180.png` and `favicon.ico` from the same dials, and the three
+pages point their header `<img>` at that same `icon.svg`. Change the dials and
+re-run the generator; hand-edit none of them.
+
+There used to be a second file, `assets/mark.svg`, described here as a copy of
+the canonical drawing and kept in step by hand. It was not: the icon was
+inverted on 4 September and the copy was not remade, so for two days every page
+carried the old mark in its header and the new one in its tab, on screen
+together, and nothing said so. Deleting the copy is what actually closes that —
+a deploy step that re-copies it would only have made the drift shorter.
 
 **This README is not uploaded.** `tools/deploy.sh` excludes it and deletes it
 if an earlier upload left one there, which one had. It is addressed to whoever
