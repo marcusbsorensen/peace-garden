@@ -1,14 +1,14 @@
 // The site's own words.
 //
 // **The target is the low tens and it is a target to defend.** Every string
-// here is a commission in seventeen languages, so a paragraph added casually is
-// seventeen paragraphs. Most of a page needs no word at all — the plant, its
+// here is a commission in forty-two other languages, so a paragraph added
+// casually is forty-three paragraphs. Most of a page needs no word at all — the plant, its
 // binomial, the marks, the date and the age all say themselves — and the list
 // below is what is left after that. See docs/WEBSITE.md §"Most of a plant page
 // is already in every language".
 //
 // English is written here rather than fetched, because it is the fallback and
-// a fallback that can fail to arrive is not one. The other sixteen live in
+// a fallback that can fail to arrive is not one. The other forty-two live in
 // `/strings/<code>.json`, one file per language, fetched only for the reader
 // who needs it — the same shape as a passage bank.
 //
@@ -25,8 +25,17 @@
 export const EN = Object.freeze({
   // The page with no seed in it: what this is.
   tagline: "A plant grown from a meeting.",
+  // Marcus's wording, 4 September. The similes are the point: *a plant that is
+  // the two of them together* was the abstract version, and a handshake is a
+  // thing a reader has already done.
+  //
+  // **"Combines their features" is a fair account of the cross rather than an
+  // exact one.** A trait comes from one parent, the other, a blend of the two,
+  // or — about six times in a hundred — a mutation belonging to neither. The
+  // reference implementation prints the mix. Saying so here would be true and
+  // would cost the sentence its shape; the exact rule is in `Pollination`.
   about1:
-    "Peace Garden makes a plant out of two people meeting. Two phones hand each other a seed, and what grows from the pair is a plant that is the two of them together, opening over real days in its own time.",
+    "Peace Garden makes a plant out of two people meeting. Two phones hand each other a seed. What grows from the two seeds is a plant that combines their features, like a handshake or a joint garden that has some of each person.",
   about2:
     "A seed travels in a link as well as by touch, so it reaches a phone that has never heard of any of this.",
   // **This block is what somebody sees when there is no seed.** `page.js` sets
@@ -66,7 +75,15 @@ export const EN = Object.freeze({
   // `pairID`, which chooses the passage shown when they cross, not the plant.
   growBody:
     "Peace Garden crosses this seed with one of your own, and the plant that comes of the pair is yours to keep. This meeting grows one plant, you both have it, and it stays the same for as long as you do.",
-  appNote: "The app is being made for iPhone. This link keeps until it arrives.",
+  // Launched tense, 4 September, and it names both platforms the app ships
+  // for. It used to say the app was *being made for iPhone*, which was a
+  // future tense `about3` no longer agrees with and a platform list the
+  // `Info.plist` no longer agrees with either.
+  //
+  // The second sentence stays because it is the useful half: a link carries
+  // its seed and nothing expires, so somebody who reads this on a bus has
+  // lost nothing by not acting on it.
+  appNote: "Peace Garden is on iPhone and iPad. This link keeps, so there is no hurry.",
 
   // Under the passage, when the reader's language has no bank of its own.
   inEnglish: "in English",
@@ -146,7 +163,7 @@ export function catalogue(values, code = "en") {
     /// it is the same fix `/g`'s invented-garden notice carries in its markup.
     ///
     /// Six of the nineteen strings are `null` in every language on purpose —
-    /// the site's own prose, waiting on docs/FOR-REVIEW.md §1 — so on Arabic
+    /// the site's own prose, `null` in every catalogue — so on Arabic
     /// and Hebrew this is most of the words on the page rather than an edge
     /// case. It was invisible until there was a way to stand in those two
     /// languages and look.

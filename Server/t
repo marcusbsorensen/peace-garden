@@ -43,7 +43,7 @@
         This whole page is written in English and stays in English. It is the
         one screen that must not be in the language being tested, or it stops
         being readable at exactly the moment it is needed. It is never
-        commissioned; see docs/FOR-REVIEW.md §1 for what the site does
+        commissioned; see docs/LANGUAGES.md for what the site does
         commission and why the list is defended.
       -->
       <h1 class="heading">Testers</h1>
