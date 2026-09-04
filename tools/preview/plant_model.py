@@ -11,6 +11,12 @@ everything here except the derivation primitives, which come from
 `tools/reference/derivation_reference.py` and are pinned by test vectors on both
 sides.
 
+**It is geometry, and it names nothing.** A plant's binomial is the one thing
+about it a render cannot show, so a naming implementation here could never be
+checked the way the rest of this file is checked — and when it was tried it fell
+three months behind without anything saying so. `SeedCore` names plants;
+`Genome` here has no `name`, and the note where it used to be derived says why.
+
 **And it is checked.** `check_port.py` holds the genome, the growth state and
 the bloom placements in this file against `vectors.json`, which SeedCore's own
 `PortVectorTests` writes. This file drifted three times before that existed, and
@@ -112,6 +118,79 @@ class SplitMix64:
 
 def clamp(value, lo, hi):
     return max(lo, min(hi, value))
+
+
+def rounded(value):
+    """Swift's `.rounded()`: to nearest, and halves away from zero.
+
+    **Use this and never the builtin `round` wherever the Swift says
+    `.rounded()`.** Python's `round` is half-to-even — banker's rounding — and
+    Swift's default rule is half-away-from-zero, so the two disagree on exactly
+    the values that land on a half and agree everywhere else. That is a fault
+    that hides: it is invisible in almost every plant and wrong in the rest.
+
+    It was wrong in `nodeCount` for as long as this file has existed, and that
+    is not a rare corner. `integer("stem.nodeCount", 2...9)` draws a whole
+    number, so the product with `nodeScale` is a small rational and lands
+    exactly on a half far more often than a continuous trait ever would: fern
+    at 9.5, lotus at 1.5, 2.5, 3.5 and 4.5, vine at 8.5, succulent at 10.5.
+
+    Only half of those actually disagree, and which half is worth knowing.
+    Half-to-even goes to the *even* neighbour, which is the same answer as
+    half-away-from-zero whenever the integer part is odd — 1.5, 3.5 and 9.5 all
+    give the same node count either way. The disagreement is exactly the halves
+    with an even integer part: 2.5, 4.5, 8.5, 10.5. Over the four thousand
+    entropies `nodecount-0` … `nodecount-3999` that is 146 seeds, about one in
+    twenty-seven, split lotus 71, vine 40, succulent 35 and no fern at all.
+    Entropy `nodecount-30` is the worked example: a lotus drawing 5 against a
+    `nodeScale` of 0.5, where SeedCore grows three nodes and this grew two.
+
+    Nothing said so for months, because the twelve sampled vectors happened to
+    contain no such seed — a guard can only be green about what it looks at.
+    `vectors.json` now carries `nodecount-30` deliberately, for that reason and
+    no other.
+
+    **Written out, because both of the short ways are wrong**, and each of them
+    was written here first and caught by an exhaustive check against `Decimal`
+    before it got any further.
+
+    `math.floor(value + 0.5)` is the usual trick and it rounds up a number that
+    is below a half: 0.49999999999999994 + 0.5 is exactly 1.0 in double
+    arithmetic, because the true sum is not representable and ties to even.
+
+    Taking `math.floor` and comparing `value - lower` to a half fails on the
+    same number with its sign flipped. -0.49999999999999994 floors to -1, and
+    the true remainder, 0.50000000000000005…, is precisely halfway between 0.5
+    and the next double up — so it ties to even, becomes exactly 0.5, and the
+    tie rule then pushes it away from zero to -1 when the answer is 0.
+
+    `math.trunc` has neither problem, and provably rather than by luck. For any
+    finite double, `value - trunc(value)` is exact: below one the truncation is
+    zero and the subtraction does nothing, and at one or above the two operands
+    are within a factor of two of each other, which is Sterbenz's condition for
+    an exact difference. So the fraction compared below is the real fraction.
+
+    `Decimal(value).quantize(Decimal(1), rounding=ROUND_HALF_UP)` was also
+    tried. It is exactly right and it reads better, and it was still rejected:
+    timed against this, it is about ten times slower, on a call that runs once
+    per row of every swept tube in the sheet.
+
+    The other four places the Swift says `.rounded()` are here too, and all
+    four were checked rather than assumed. `branchCount` multiplies 5 or 7 by a
+    continuous `value(0.72...1.34)`, and over the same four thousand seeds it
+    never lands on a half — but a trait that is one draw away from doing so is
+    not a trait to leave on the wrong rule. `node_indices` takes `0.16 + 0.74 *
+    index / (nodeCount - 1)` times 28, which over every `nodeCount` from 1 to 40
+    lands on a half exactly once, at `nodeCount` 29 — above the 20 that
+    `GenomeTests` declares the ceiling, so unreachable. `build_branches` takes
+    `t * 28` over a thousand-step sweep of `branchSpread` and never lands on
+    one. `add_tube` cannot: its `v` is `r / (rows - 1)` and the product is `r`.
+    """
+    truncated = math.trunc(value)
+    if abs(value - truncated) < 0.5:
+        return truncated
+    # A half or more, so step away from zero: 2.5 to 3, and -2.5 to -3.
+    return truncated + 1 if value > 0 else truncated - 1
 
 
 def wrapped_unit(value):
@@ -307,7 +386,7 @@ class Genome:
 
         self.inflorescence = profile["inflorescence"]
         self.bloomScale = profile["bloomScale"]
-        self.branchCount = max(3, min(7, round(
+        self.branchCount = max(3, min(7, rounded(
             profile["branchCount"] * source.value("stem.branch.count", 0.72, 1.34))))
         self.branchSpread = clamp(
             profile["branchSpread"] + source.signed("stem.branch.spread") * 0.14, 0, 1)
@@ -319,7 +398,7 @@ class Genome:
         self.lean = source.signed("stem.lean") * 0.75
         self.sway = source.bell("stem.sway", 0, 1.25) * profile["swayScale"]
         self.twist = source.signed("stem.twist") * 0.95
-        self.nodeCount = max(1, round(source.integer("stem.nodeCount", 2, 9) * profile["nodeScale"]))
+        self.nodeCount = max(1, rounded(source.integer("stem.nodeCount", 2, 9) * profile["nodeScale"]))
         self.sides = source.integer("stem.sides", 6, 9)
 
         self.leavesPerNode = source.integer("foliage.leavesPerNode", 1, 3)
@@ -367,7 +446,41 @@ class Genome:
         self.bloomDays = source.value("tempo.bloomDays", 3.0, 12.0)
         self.opensByDay = source.chance("tempo.opensByDay", 0.7)
 
-        self.name = plant_name(source)
+        # **There is deliberately no name here.** SeedCore gives every plant a
+        # binomial; this port gives none, and that is a decision rather than an
+        # omission waiting to be filled in.
+        #
+        # This file exists to draw geometry so a plant can be looked at. A name
+        # is the one thing about a plant that no render shows, so a naming
+        # implementation here can never be checked by the means this tool is
+        # checked by — and it was not. It sat three months behind: SeedCore
+        # stopped drawing the genus on 3 September 2026 and started reading it
+        # off the flower (`PlantName.roots` maps a family and a merosity to one
+        # of the twenty-four heads), and replaced the glued two-syllable
+        # epithet with `Epithet`, which says only what has been checked to be
+        # true of the specimen. The port went on gluing `name.epithetHead` to
+        # `name.epithetTail` and printing *pallicola* — "pale-dwelling", which
+        # is not a thing a plant can be — under captions in `preview.py`.
+        #
+        # Porting it rather than deleting it was considered and rejected. It is
+        # not a line: `Epithet` reads `palette.marbling`, one of twelve palette
+        # draws this file does not have, so it is a real piece of work whose
+        # only payoff is a string nothing here displays. A wrong name that
+        # nobody reads costs nothing until somebody wires it up believing it
+        # agrees with the app; the way to make sure that never happens is for
+        # the port to have no opinion about names at all.
+        #
+        # **Removing the draws could not move anything else, and it did not.**
+        # `GeneSource` draws by label — `unit(label)` hashes the seed with the
+        # name of the trait — so there is no stream whose position a missing
+        # draw could shift. That is the same property `Genome.swift` relies on
+        # when it adds new keys. It was proved rather than argued: a SHA-256
+        # over every position, normal, UV and index of twenty-four plants at
+        # sixteen ages each is byte-identical before and after.
+        #
+        # `SeedCore` remains authoritative for the name, `vectors.json` still
+        # records it as a label so a reader can tell which specimen a vector
+        # describes, and `check_port.py` deliberately does not compare it.
 
     @property
     def leafCount(self):
@@ -376,40 +489,6 @@ class Genome:
     @property
     def daysToBloom(self):
         return self.germinationHours / 24.0 + self.seedlingDays + self.vegetativeDays + self.buddingDays
-
-
-GENUS_HEADS = ["Ael", "Aur", "Bel", "Cal", "Cer", "Cyn", "Dros", "El", "Fen", "Hal",
-               "Ith", "Lir", "Mel", "Nyx", "Ol", "Pell", "Quin", "Ros", "Sel", "Thal",
-               "Umbr", "Ver", "Wyn", "Zeph"]
-GENUS_MIDDLES = ["a", "an", "ar", "er", "i", "in", "is", "o", "or", "yr", "ell", "ess", "ol", "un"]
-GENUS_TAILS = ["ia", "is", "a", "ea", "ina", "ora", "yne", "era", "ula", "ynth"]
-EPITHET_HEADS = ["noct", "vesper", "lum", "umbr", "sol", "aur", "glaci", "pluvi", "stell",
-                 "sylv", "mont", "riv", "cine", "ferr", "pall", "seren", "tacit", "viv"]
-EPITHET_TAILS = ["urna", "alis", "ata", "ifolia", "escens", "iflora", "ina", "icola",
-                 "antha", "aria", "osa", "ula"]
-
-VOWELS = set("aeiouyAEIOUY")
-
-
-def _join(parts):
-    result = ""
-    for part in parts:
-        if not part:
-            continue
-        if result and result[-1] in VOWELS and part[0] in VOWELS:
-            result = result[:-1]
-        result += part
-    return result
-
-
-def plant_name(source):
-    head = source.pick("name.genusHead", GENUS_HEADS)
-    middle = source.pick("name.genusMiddle", GENUS_MIDDLES) if source.chance("name.hasMiddle", 0.45) else ""
-    tail = source.pick("name.genusTail", GENUS_TAILS)
-    genus = _join([head, middle, tail])
-    epithet = _join([source.pick("name.epithetHead", EPITHET_HEADS),
-                     source.pick("name.epithetTail", EPITHET_TAILS)]).lower()
-    return f"{genus} {epithet}"
 
 
 # -------------------------------------------------------------------- growth
@@ -553,7 +632,7 @@ class MeshBuilder:
         columns = sides + 1
 
         def point(u, v):
-            index = min(len(path) - 1, int(round(v * (len(path) - 1))))
+            index = min(len(path) - 1, rounded(v * (len(path) - 1)))
             sample = path[index]
             angle = u * 2 * math.pi
             offset = sample["normal"] * math.cos(angle) + sample["binormal"] * math.sin(angle)
@@ -625,7 +704,7 @@ def node_indices(node_count, segments=STEM_SEGMENTS):
     indices = []
     for index in range(node_count):
         fraction = 0.55 if node_count == 1 else 0.16 + 0.74 * index / (node_count - 1)
-        indices.append(min(segments, int(round(fraction * segments))))
+        indices.append(min(segments, rounded(fraction * segments)))
     return indices
 
 
@@ -688,7 +767,7 @@ def build_branches(genome, samples, height_scale, stem_length):
     for index in range(count):
         fraction = 0.5 if count == 1 else index / (count - 1)
         t = zone_start + (zone_end - zone_start) * fraction
-        origin = samples[min(len(samples) - 1, int(round(t * (len(samples) - 1))))]
+        origin = samples[min(len(samples) - 1, rounded(t * (len(samples) - 1)))]
 
         jitter = SplitMix64(genome.seed, f"branch.{index}")
         azimuth = genome.divergence * index

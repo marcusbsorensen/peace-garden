@@ -110,7 +110,10 @@ final class PortVectorTests: XCTestCase {
     /// nodes, and eleven multipliers. Eleven families would leave a twelfth of
     /// the profile table untested, and `ArchetypeProfile` is exactly the kind of
     /// table that gets edited in one place.
-    static func searchedSeeds() -> [(index: Int, seed: SeedID, archetype: Archetype)] {
+    ///
+    /// Then `chosenSeeds` — three plants picked for a reason rather than found
+    /// by the walk. They are not more sample; see the note on that function.
+    static func searchedSeeds() -> [(entropy: String, seed: SeedID, archetype: Archetype)] {
         var found: [Archetype: (Int, SeedID)] = [:]
         var index = 0
         while found.count < Archetype.allCases.count {
@@ -129,9 +132,56 @@ final class PortVectorTests: XCTestCase {
         }
         // Ordered by the enum rather than by the search, so the file reads as a
         // list of families and a family keeps its place when the search moves.
-        return Archetype.allCases.map { archetype in
+        let sample = Archetype.allCases.map { archetype in
             let entry = found[archetype]!
-            return (index: entry.0, seed: entry.1, archetype: archetype)
+            return (entropy: "peace-garden-port-vector-\(entry.0)", seed: entry.1, archetype: archetype)
+        }
+        return sample + chosenSeeds()
+    }
+
+    /// Three plants that are here on purpose rather than by the search.
+    ///
+    /// **A sample can only be green about what it happens to contain.** The
+    /// twelve above are a fair draw across the families and they were, for
+    /// months, quietly green on a live fault: `stem.nodeCount` is
+    /// `(integer(2...9) * nodeScale).rounded()`, Swift rounds a half away from
+    /// zero and Python's `round` rounds a half to even, and the two therefore
+    /// grow a different number of nodes on about one seed in twenty-seven.
+    /// `tools/preview/plant_model.py` was wrong about it for as long as it had
+    /// existed. None of the twelve was such a seed, so nothing said so, and a
+    /// green tick was read as agreement.
+    ///
+    /// So these three are chosen to cover a *class* of fault rather than to be
+    /// another fair sample, and that difference is the whole point of them.
+    /// Only three families can produce the fault, because only three
+    /// `nodeScale`s put an integer's product on a half where the integer part
+    /// is even — a half with an odd integer part rounds to the same number
+    /// under both rules, which is why fern's 9.5 is safe and lotus's 2.5 is
+    /// not. One seed each:
+    ///
+    /// - `nodecount-30`, lotus, 5 × 0.5 = 2.5, three nodes against two;
+    /// - `nodecount-41`, vine, 5 × 1.7 = 8.5, nine against eight — and a vine
+    ///   blooms at its nodes, so the recorded bloom *count* moves with it;
+    /// - `nodecount-363`, succulent, 5 × 2.1 = 10.5, eleven against ten.
+    ///
+    /// All three flower, so their bloom placements are recorded and not merely
+    /// their scalars. They were found by walking `nodecount-0` upward and
+    /// keeping the first blooming seed of each family whose product lands on
+    /// such a half.
+    ///
+    /// Listed rather than searched again here, because a search would have to
+    /// be written as "the seeds where the *other* language would get this
+    /// wrong", and this package should not carry a model of Python's rounding
+    /// in order to record its own arithmetic. A short list with the reason
+    /// beside it says the same thing and stays true if Python changes.
+    ///
+    /// If a future reading makes this class of fault impossible, these three
+    /// stop being interesting and can go. Until then, deleting one to shorten
+    /// the file puts the guard back where it was.
+    static func chosenSeeds() -> [(entropy: String, seed: SeedID, archetype: Archetype)] {
+        ["nodecount-30", "nodecount-41", "nodecount-363"].map { entropy in
+            let seed = SeedMint.mint(fromEntropy: Data(entropy.utf8))
+            return (entropy: entropy, seed: seed, archetype: Genome(seed: seed).form.archetype)
         }
     }
 
@@ -224,7 +274,7 @@ final class PortVectorTests: XCTestCase {
             }
 
             plants.append(.object([
-                ("entropy", .string("peace-garden-port-vector-\(entry.index)")),
+                ("entropy", .string(entry.entropy)),
                 ("seed", .string(entry.seed.hex)),
                 ("genome", genomeJSON(genome)),
                 ("ages", .array(samples))
@@ -237,7 +287,17 @@ final class PortVectorTests: XCTestCase {
                 + "SeedCore is the source; do not edit. "
                 + "Re-record with PEACE_GARDEN_RECORD_VECTORS=1 swift test "
                 + "--package-path Packages/SeedCore --filter PortVectorTests, then run "
-                + "tools/preview/check_port.py."
+                + "tools/preview/check_port.py. "
+                + "The peace-garden-port-vector-N plants are a fair sample, one family "
+                + "each, found by walking that series. The nodecount-N plants are not "
+                + "sample: they are here deliberately to cover a class of bug. "
+                + "stem.nodeCount rounds a half away from zero in Swift and to even in "
+                + "Python, so the two grew different plants on about one seed in "
+                + "twenty-seven and no sampled seed happened to show it. Lotus, vine "
+                + "and succulent are the only families that can. "
+                + "name.full is recorded as a label so a reader can tell which specimen "
+                + "a vector describes; check_port.py does not compare it, because "
+                + "tools/preview/plant_model.py draws geometry and names nothing."
             )),
             ("decimals", .int(decimals)),
             ("plants", .array(plants))

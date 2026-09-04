@@ -28,6 +28,19 @@ first — `PEACE_GARDEN_RECORD_VECTORS=1 swift test --package-path Packages/Seed
 passes. It names every field that differs, so what has to change is on screen
 rather than to be hunted for.
 
+**A sample is green about what it looks at, and nothing else.** Twelve of the
+plants in the file are a fair draw, one family each. Three are not: they are
+`nodecount-30`, `nodecount-41` and `nodecount-363`, and they are in the file
+because `stem.nodeCount` rounds a half away from zero in Swift and to even in
+Python, so the two languages grew a different plant on about one seed in
+twenty-seven and no sampled seed happened to be one of them. This check was
+green on that for months. When a fault is found that a sample could not see, the
+seed that shows it belongs in the file — see `chosenSeeds` in
+`PortVectorTests.swift`.
+
+The file also records each plant's `name.full`, and this deliberately does not
+compare it. See the note in `TRAITS` below.
+
 Nothing here imports numpy or Pillow. Those are the render's dependencies, and
 the CI job that runs this installs nothing — see the note at the top of
 `plant_model.py`, which is why the sweep is the only part of it that wants them.
@@ -116,7 +129,22 @@ TRAITS = {
     "tempo.bloomDays": "bloomDays",
     "tempo.opensByDay": "opensByDay",
 
-    "name.full": "name",
+    # `name.full` is deliberately absent, and it is still in `vectors.json`.
+    #
+    # It stays in the file because it is a genuinely useful label: a reader
+    # scanning the vectors wants to know which specimen a block of numbers
+    # describes, and *Selea vulgaris* says that where a seed hex does not. It is
+    # not compared because the name is Swift's alone. `plant_model.py` grows
+    # geometry so that a plant can be looked at, and a name is the one thing
+    # about a plant no render shows — so a naming implementation there could
+    # never be checked the way everything else in this file is checked, and when
+    # there was one it silently fell three months behind. The port now has no
+    # opinion about names at all, which is the only state in which it cannot be
+    # wrong about them.
+    #
+    # If the port ever grows one — it would mean porting `Epithet`, and
+    # `Epithet` reads `palette.marbling`, which the port also lacks — this line
+    # comes back and the recorded name becomes a compared field again.
 }
 
 GROWTH = ["stage", "heightScale", "leafUnfurl", "budSwell", "bloomOpen", "flush", "flushDepth"]
@@ -205,11 +233,22 @@ def main():
         check(plant, problems)
 
     if not problems:
-        families = ", ".join(p["genome"]["form.archetype"] for p in document["plants"])
-        blooms = sum(len(a["blooms"]) for p in document["plants"] for a in p["ages"])
-        ages = sum(len(p["ages"]) for p in document["plants"])
-        print(f"in step — {len(document['plants'])} plants, {ages} ages, {blooms} blooms")
-        print(f"          {families}")
+        # The tally is split, because the two halves of the file are not the
+        # same kind of thing and a single count reads as though they were. The
+        # first twelve are a fair sample, one family each. The rest are seeds
+        # somebody chose because they trigger a fault a sample cannot see, and
+        # a repeated family in the list is the point of them rather than a sign
+        # the search has gone wrong.
+        plants = document["plants"]
+        sampled = [p for p in plants if p["entropy"].startswith("peace-garden-port-vector-")]
+        chosen = [p for p in plants if p not in sampled]
+        blooms = sum(len(a["blooms"]) for p in plants for a in p["ages"])
+        ages = sum(len(p["ages"]) for p in plants)
+        print(f"in step — {len(plants)} plants, {ages} ages, {blooms} blooms")
+        print(f"  sample  {', '.join(p['genome']['form.archetype'] for p in sampled)}")
+        if chosen:
+            print(f"  chosen  " + ", ".join(
+                f"{p['entropy']} ({p['genome']['form.archetype']})" for p in chosen))
         return
 
     print("The port and SeedCore have come apart:")
