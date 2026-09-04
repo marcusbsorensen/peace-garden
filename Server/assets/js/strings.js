@@ -29,8 +29,20 @@ export const EN = Object.freeze({
     "Peace Garden makes a plant out of two people meeting. Two phones hand each other a seed, and what grows from the pair is a plant that is the two of them together, opening over real days in its own time.",
   about2:
     "A seed travels in a link as well as by touch, so it reaches a phone that has never heard of any of this.",
+  // **This block is what somebody sees when there is no seed.** `page.js` sets
+  // `about.hidden = Boolean(state.link)`, so the about section and the seed
+  // section are mutually exclusive: the reader here typed the address, or
+  // followed a link that lost its seed on the way. They have no seed in front
+  // of them, and the question they arrived with is how one would ever reach
+  // them.
+  //
+  // It used to explain that a seed rides after the `#` and stays in the
+  // browser — a mechanism, addressed to a reader whose seed is the one thing
+  // that is not there, and jargon to a gardener besides. The privacy argument
+  // it was making is true and lives in `WEBSITE.md`; the reader it protects is on
+  // the seed path and never sees this block.
   about3:
-    "The seed in a link rides after the # in its address, and that part stays in your browser. This page is a file, and it draws what your own link already holds.",
+    "A seed reaches you from someone you meet in person. Peace Garden is on iPhone and iPad.",
 
   // The page with a seed in it.
   seedTitle: "A seed has arrived",

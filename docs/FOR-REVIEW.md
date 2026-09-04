@@ -78,11 +78,22 @@ rather than as six entries in a catalogue. **Approve, edit, or replace.**
 > A seed travels in a link as well as by touch, so it reaches a phone that has
 > never heard of any of this.
 
-### `about3` — what the page is doing
+### `about3` — how a seed would reach you
 
-> The seed in a link rides after the # in its address, and that part stays in
-> your browser. This page is a file, and it draws what your own link already
-> holds.
+> A seed reaches you from someone you meet in person. Peace Garden is on iPhone
+> and iPad.
+
+**Rewritten 4 September, and the old one was aimed at the wrong reader.** It
+explained that a seed rides after the `#` and stays in the browser — a mechanism,
+in a block `page.js` only ever shows when `state.link` is empty. Everybody who
+reads this paragraph arrived with no seed: they typed the address, or followed a
+link that lost its seed on the way. It was explaining the handling of the one
+thing that is not there, in vocabulary a gardener has no use for.
+
+So the paragraph now answers what that reader actually arrived wanting to know,
+which is how a seed would ever reach them. **The privacy argument was true and
+is not lost** — it is in `WEBSITE.md`, and the reader it protects is on the seed
+path and never sees this block.
 
 ### `growBody` — under *Growing it*
 
@@ -102,10 +113,12 @@ reading the six as a piece, which is what reading them as a piece is for.
 
 > The app is being made for iPhone. This link keeps until it arrives.
 
-**One note on `about3`.** It is the only string that explains a mechanism, and
-it is doing privacy work: it is where a reader learns the seed never reached the
-server. Worth deciding whether that is the right register for it, or whether the
-sentence should say plainly what it protects rather than describing what it does.
+**`appNote` is now out of step with `about3`, and it is understating the app.**
+It says the app is *being made for iPhone*, while `about3` says Peace Garden is
+on iPhone and iPad. The app is universal — `README` says so and the iPad
+orientations are in the built `Info.plist` — so the platform half is wrong
+either way. Marcus's call: bring `appNote` along to launched tense, or hold both
+until the app is actually out.
 
 ---
 
