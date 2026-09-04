@@ -87,8 +87,16 @@ rather than as six entries in a catalogue. **Approve, edit, or replace.**
 ### `growBody` — under *Growing it*
 
 > Peace Garden crosses this seed with one of your own, and the plant that comes
-> of the pair is yours to keep. The same two seeds always make the same plant,
-> on any phone, for as long as both of you have it.
+> of the pair is yours to keep. This meeting grows one plant, you both have it,
+> and it stays the same for as long as you do.
+
+**Rewritten 4 September, and it was not a matter of taste.** The sentence used
+to end *the same two seeds always make the same plant, on any phone, for as
+long as both of you have it*, which is the one property the design deliberately
+does not have — `Pollination.encounterID` hashes both seeds *and* both nonces,
+so meeting the same person again grows a different plant, and a fresh nonce per
+offer means this very link opened twice grows two. Marcus caught it while
+reading the six as a piece, which is what reading them as a piece is for.
 
 ### `appNote` — the honest one
 

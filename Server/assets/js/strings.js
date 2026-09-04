@@ -39,8 +39,21 @@ export const EN = Object.freeze({
   gardener: "a gardener",
   planted: "Planted",
   growTitle: "Growing it",
+  // **A meeting grows one plant, and this sentence has to say so.** It used to
+  // say the same two seeds always make the same plant, which is the one
+  // property the design deliberately does not have: `Pollination.encounterID`
+  // hashes both seeds *and* both nonces, each side drawing its own, so meeting
+  // the same person again grows a different plant and neither of them can
+  // steer which. A fresh nonce per offer also means this very link, opened
+  // twice, grows two plants — so nothing here may imply that a link reproduces
+  // anything.
+  //
+  // What is true is what the reply code exists to deliver: one meeting, one
+  // plant, held by both of them, and a pure function of its own seed and
+  // birthday from then on. The thing the two seeds alone do derive is
+  // `pairID`, which chooses the passage shown when they cross, not the plant.
   growBody:
-    "Peace Garden crosses this seed with one of your own, and the plant that comes of the pair is yours to keep. The same two seeds always make the same plant, on any phone, for as long as both of you have it.",
+    "Peace Garden crosses this seed with one of your own, and the plant that comes of the pair is yours to keep. This meeting grows one plant, you both have it, and it stays the same for as long as you do.",
   appNote: "The app is being made for iPhone. This link keeps until it arrives.",
 
   // Under the passage, when the reader's language has no bank of its own.
