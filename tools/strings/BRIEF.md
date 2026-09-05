@@ -42,9 +42,16 @@ the English. Go looking for the plainest way your language says this one.
   Which is exactly why it belongs on the numbers being reported and nowhere
   else.
 
-- **The area names stay English.** *The Cold Frame*, *The Seedbed*, *The
-  Crossing*. They are proper nouns, like the plants' binomials. If one appears in
-  your draft, you have gone wrong.
+- **The area names stay English — for now, and this is changing.** *The Cold
+  Frame*, *The Seedbed*, *The Crossing*. They are proper nouns, like the plants'
+  binomials, and if one appears in your draft today you have gone wrong.
+
+  **Marcus reversed this on 5 September 2026**: the ten are to be named in every
+  language. None of the machinery for that exists yet — the names are still a
+  table in `walk.js` rather than catalogue keys — so the rule above is what holds
+  until it does. When the ten arrive they will come as their own commission with
+  their own brief, because naming a place is not the job the six paragraphs are.
+  Do not translate them into a draft in the meantime.
 
 ## The register
 
