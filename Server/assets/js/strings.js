@@ -199,7 +199,21 @@ export async function loadStrings(code) {
   if (!code || code === "en") return catalogue(null, "en");
   try {
     const response = await fetch(`/strings/${encodeURIComponent(code)}.json`, {
-      cache: "force-cache",
+      // **Store it, but ask every time whether it has changed.** This was
+      // `force-cache`, which returns a stored copy fresh or stale and never
+      // asks. The host sends an ETag and no `Cache-Control`, so a reader who
+      // had seen a language once held that catalogue for good: a corrected
+      // sentence would ship, the page would look exactly as it had, and
+      // nothing anywhere would say why. Found on 5 September, with three
+      // corrections live on the origin and the old words still on the screen
+      // in front of the person who had asked for them.
+      //
+      // The cost is one conditional request per page load, answered 304 with
+      // no body. Nothing is paid twice within a load — every module here holds
+      // what it fetched, and this one is behind `loadStrings`. The same change
+      // is in `languages.js`, `testers.js` and `passages.js`, which all read
+      // files a deploy replaces.
+      cache: "no-cache",
     });
     if (!response.ok) return catalogue(null, code);
     const file = await response.json();

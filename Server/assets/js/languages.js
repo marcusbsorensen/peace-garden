@@ -102,7 +102,11 @@ let manifestPromise = null;
 /// second list that agrees for a while. The site adds none of its own.
 export function manifest() {
   if (!manifestPromise) {
-    manifestPromise = fetch("/languages.json", { cache: "force-cache" })
+    manifestPromise = fetch("/languages.json", {
+      // A deploy replaces this file. `force-cache` never asks whether it
+      // has; see the note in `strings.js`.
+      cache: "no-cache",
+    })
       .then((response) => (response.ok ? response.json() : null))
       .then((file) => (file && Array.isArray(file.languages) ? file.languages : []))
       .catch(() => []);

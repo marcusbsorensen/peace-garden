@@ -145,7 +145,12 @@ export function loadBank(code) {
   if (!banks.has(code)) {
     banks.set(
       code,
-      fetch(`/passages/${encodeURIComponent(code)}.json`, { cache: "force-cache" })
+      fetch(`/passages/${encodeURIComponent(code)}.json`, {
+        // A deploy replaces this file. `force-cache` never asks whether it
+        // has; see the note in `strings.js`. A bank is tens of kilobytes and
+        // an unchanged one comes back 304 with none of them.
+        cache: "no-cache",
+      })
         .then((response) => (response.ok ? response.json() : []))
         .catch(() => [])
     );

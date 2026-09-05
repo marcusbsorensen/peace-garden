@@ -48,7 +48,11 @@ let rosterPromise = null;
 /// silence: the site is a garden, not a console.
 export function roster() {
   if (!rosterPromise) {
-    rosterPromise = fetch("/testers.json", { cache: "force-cache" })
+    rosterPromise = fetch("/testers.json", {
+      // A deploy replaces this file. `force-cache` never asks whether it
+      // has; see the note in `strings.js`.
+      cache: "no-cache",
+    })
       .then((response) => (response.ok ? response.json() : null))
       .then((file) => (file && Array.isArray(file.testers) ? file.testers : []))
       .catch(() => []);
