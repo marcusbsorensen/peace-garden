@@ -1,7 +1,8 @@
-# Peace Garden — handover 5 September 2026 (evening)
+# Peace Garden — handover 5 September 2026 (late)
 
-*The site went up, a plant can be let go, and the writing rules changed twice.
-Most of what is open now is naming rather than building.*
+*The naming settled, the machinery for it is built, and 420 names are now
+orderable and unordered. Most of what is open is commissioning rather than
+building.*
 
 ## Goal
 
@@ -10,76 +11,86 @@ final, and the work off this machine.
 
 ## State
 
-`main` at `fa3c0ac`, **pushed**. **peacegarden.app is live.**
+`main` at `66b2271`, **pushed**. **peacegarden.app is live** — and does not yet
+carry this commit; `tools/deploy.sh` has not been run since it landed.
 
-**Verified** — 97 SeedCore tests, 28 app tests, five Python checks; eleven paths
-checked at the far end by `tools/deploy.sh`; `/s` drawing in English, French,
-Danish and Arabic; the release row and *Løssæt den på Vildmarken* on an
-iPhone 17 Pro.
+**Verified** — 97 SeedCore tests, 28 app tests, five Python checks; the ten
+areas walked in the browser in English, Danish and Arabic, including the
+fallback marking and the language switch.
 
-- **The host does not read `.htaccess`.** 20i is nginx straight to PHP-FPM with
-  no Apache, so the content-type design was inert and `/s` arrived as a
-  download. `Server/index.php` serves the four extensionless paths; they live in
-  `Server/.pages/`.
-- **`force-cache` was hiding every correction** on all four generated files. Now
-  `no-cache`.
-- **One drawing.** `mark.svg` was a stale copy of the icon; deleted.
-- **Release to the Wild Fields**, held for 3 seconds, with `ReleaseFlight` for
-  the departure and four tests that render it rather than watch it.
-- **Two gender faults fixed** — `%@ est sorti` and `%@ si è allontanato` guessed
-  masculine for somebody's name.
-
-**Unverified** — the release hold itself (needs a thumb); every translation;
-Italian, Norwegian, Dutch and Swedish throughout.
+**Unverified** — the release hold (needs a thumb); every translation; Italian,
+Norwegian, Dutch and Swedish throughout; **all ten area names in all 42
+languages**, none of which exist.
 
 ## Next step
 
-**The Root Ground needs more thought.** Marcus's note, and it is the first thing
-to settle because 42 languages will be commissioned against these names.
+**Write the Danish ten, and let them test the brief before 41 more are
+ordered.** Marcus wrote the Danish prose himself, so Danish is the one language
+where the namer and the reviewer are the same person and the loop closes in an
+evening.
 
-It is the weakest of the ten in English: not a real garden term the way *The
-Seedbed* and *The Glasshouse* are, and not a coinage that earns itself the way
-*The Crossing* does. It names the `ground` theme — *the rhizosphere, a teaspoon
-of earth, querencia, Heimat, a kept place, pairidaeza, garden as enclosure*. The
-theme is about **soil, and about a place you belong to**, and the name currently
-carries only the first half.
+```sh
+python3 tools/strings/commission.py --areas da
+```
 
-*The Orchard* is worth a second look at the same time: it names `kinship`
-(*inosculation, grafting, lichen, sibb, ubuntu*) by association rather than by
-meaning, and it is the other one a translator will struggle to justify.
+It prints `NAMING.md` plus Danish's own material: each area's theme, the three
+subthemes that theme divides into, and what the English name is doing. Write the
+ten into `Server/strings/da.json`, run `python3 tools/strings/check.py da`, then
+look at `/g` and walk two or three of them.
 
-## The ten, and the decision behind them
+**The point of doing one first is the brief, not the language.** Forty-two
+commissions against an untested brief is the expensive mistake available here.
+Danish will show whether the three-subtheme block is what a namer actually
+needs, whether the *renameable rather than translatable* notes land, and whether
+34 characters is the right cell.
 
-**Marcus reversed the English-only rule on 5 September**: the ten area names are
-to be named in every language. Nothing is built. What that means:
+Watch particularly:
+
+- **`areaRenewal`.** Coppicing has a Danish word — *stævningsskov* — and it is
+  forestry rather than gardening, which is exactly the case the brief says to
+  answer with a description. Does the brief make that feel permitted?
+- **`areaGround`.** *Hjemstavn* is the obvious reach and it is a strong word.
+  Whether it carries the *soil* third as well as the belonging is the question
+  the English name was renamed over.
+- **Two areas landing on the same word.** `beginnings` and `ground` both want a
+  bed of earth in several languages, and `peace` and `ground` both want a quiet
+  enclosure. `check.py` fails on it; Danish is where to find out how close it
+  comes.
+
+## What landed, and the two decisions inside it
+
+**The ten area names are catalogue keys in every language.** Marcus reversed the
+English-only rule on 5 September; this is the machinery, and the reasoning is in
+`docs/WEBSITE.md` §*Walking it*, which now carries the reversal rather than the
+argument it overturned.
 
 | | |
 | --- | --- |
-| `Server/assets/js/walk.js` | `AREA_NAMES` is a table; becomes catalogue keys |
-| `Server/assets/js/strings.js` | ten keys into `EN` — nineteen becomes twenty-nine, against a module whose first line defends the low tens |
-| `Server/strings/*.json` | 42 × 10 = **420 names**. Absent falls back to English silently, so they can arrive language by language |
-| `tools/strings/commission.py` | a second brief. Naming a place is not the job the six paragraphs are |
-| `tools/strings/check.py` | its area rule **fails CI** if a translated string contains an area name. That inverts |
-| `docs/REVIEWING-A-LANGUAGE.md` §4 | tells every reviewer the areas stay English. Reverses |
-| `tools/strings/BRIEF.md` | carries an interim note saying the change is coming and not to act on it yet |
+| `Server/assets/js/strings.js` | ten keys, plus `AREA_KEYS` mapping theme → key |
+| `Server/strings/*.json` | 420 nulls. Absent falls back to English **per name**, so a language ships its map in pieces |
+| `tools/strings/NAMING.md` | the second brief — **new file, and the substantial one** |
+| `tools/strings/commission.py` | `--areas <code>`, and the `AREAS` table it prints from |
+| `tools/strings/check.py` | five checks on the ten, and its old rule kept on its surviving half |
+| `Server/assets/js/walk.js` | `areaName()`, and the `drawMap` fix below |
+| `docs/REVIEWING-A-LANGUAGE.md` | §3 gains the ten; §4's *areas are English* bullet reverses |
 
-Three of the ten cannot be translated, only renamed, and the brief has to say so:
+Two English names were settled at the same time, because 420 names get written
+against them:
 
-- **The Knot Garden** is a Tudor form. French would reach for *parterre de
-  broderie* — its own tradition, which is the right answer and not a translation.
-- **The Coppice** is an English woodland practice. A forestry term at best
-  elsewhere, and absent outside northern Europe.
-- **The Crossing** carries two senses at once — where paths cross, and crossing
-  two plants. *croisement*, *cruce*, *incrocio*, *krydsning* all keep both.
-  Japanese, Korean, Chinese, Arabic, Hebrew, Finnish, Hungarian and Basque must
-  choose, and the brief should tell them to keep the meeting.
+- **The Root Ground became The Home Ground.** The `ground` theme is soil (9), *a
+  place you are from* (9), *a kept place* (12) — two thirds belonging, and the
+  old name carried only the soil.
+- **The Orchard was questioned and kept.** It names `kinship` three times: every
+  tree is a graft (two plants made one — the first subtheme by meaning), every
+  tree was *chosen* rather than happened upon, and it bears over years. Marcus's
+  reading, now in the brief. `WEBSITE.md` had said nearly this since the names
+  were chosen and it had never reached a translator.
 
 ## The numeral rule
 
-**A quantity is a numeral from 2 up; one stays a word.** In `BRIEF.md`. It is
-for numbers the reader is being told — plants in a garden, seconds to hold,
-days until a flower opens. **Prose is not a quantity**: *two people meeting*
-stays words, and so do the forty figurative places like *Where two paths cross*.
+**A quantity is a numeral from 2 up; one stays a word.** In `BRIEF.md`. Prose is
+not a quantity: *two people meeting* stays words, and so do the forty figurative
+places like *Where two paths cross*.
 
 Open, and deliberately left rather than half-done:
 
@@ -92,12 +103,17 @@ Open, and deliberately left rather than half-done:
 
 ## Still open
 
+- **420 area names.** Nothing commissioned. See *Next step*.
 - **Four app strings want native readers** — the release row, its alert, its
   confirm and its consequence, all `needs_review` in it/nb/nl/sv. Marcus wrote
   the Danish and read the French and Spanish.
 - **The language review is 2 screens of 6.** Screens 3 (no name), 4 (come back),
   5 (broken) and 6 (the garden) are unwalked in every language.
-  `out/review/INDEX.md` has 43 sendable packets.
+  `out/review/INDEX.md` has 43 sendable packets — **and screen 6 is now a
+  different job**, since the map is a thing to judge rather than a thing to
+  skip. The packets predate that.
+- **`tools/deploy.sh` has not run since `66b2271`.** The live site still has the
+  English-only map.
 - **The passage banks are not all "its own writers"** — Danish drew Marcus
   Aurelius, Spanish drew a Catalan tradition, where §4 promises otherwise.
 - **Request logging on `/s`** is a 20i control-panel setting, not done.
@@ -107,20 +123,29 @@ Open, and deliberately left rather than half-done:
   reader with no bank — both in `docs/LANGUAGES.md`, both unlooked at.
 - **App Store screenshots.** `-pgOpen` was built for it and has never been used.
 - **`appNote` shares its first sentence with `about3`.**
+- `#area-name` holds stale text on a plant page. It is inside a `hidden`
+  section so nobody sees or hears it; pre-existing, noted while working nearby.
 
 ## Traps
 
+- **`AREA_KEYS` must stay below `export const KEYS` in `strings.js`.**
+  `commission.py` reads the English by slicing between `export const EN` and
+  `export const KEYS` and matching `key: "value"`, so an object of ten string
+  values above that line is parsed as ten more catalogue entries whose English
+  is the word `areaWaiting`. There is a note on the declaration saying so.
 - **A held control cannot be driven by injection.** `HoldToConfirm` reads a press
   through `PressReporting`, and an injected press arrives and is released in the
   same instant. `Chrome.swift` says so. Test it with a thumb.
 - **Never `pkill -f CoreSimulator`.** It wedges the whole simulator subsystem and
   every boot then times out at 60s. Recovery is
   `killall -9 com.apple.CoreSimulator.CoreSimulatorService`, which launchd
-  restarts. Learned the hard way this afternoon.
+  restarts.
 - **`.htaccess` does nothing on peacegarden.app.** A `RewriteRule` that never
   fires looks exactly like a file being served.
 - **A 200 with the wrong `Content-Type` is this site's whole failure mode.** Run
   `tools/deploy.sh --check` rather than trusting an upload.
+- **`/api/count` 404s locally** and the garden says every plant in it is
+  invented. That is the plot service being absent, not a fault.
 - **A plant created under a developer clock shift is born at the shifted now**,
   so wind on again afterwards to age it. `xcrun simctl spawn <udid> defaults
   write app.peacegarden developer.clockShift -float <seconds>`.
