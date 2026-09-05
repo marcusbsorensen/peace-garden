@@ -112,14 +112,14 @@
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ est sorti de portée avant que la plante ne prenne."
+            "state" : "needs_review",
+            "value" : "%@ n’était plus à portée avant que la plante ne prenne."
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ si è allontanato prima che la pianta attecchisse."
+            "state" : "needs_review",
+            "value" : "%@ non era più a portata prima che la pianta attecchisse."
           }
         },
         "nb" : {
@@ -3507,8 +3507,52 @@
         }
       }
     },
-    "It leaves your garden for the wild fields. The person you grew it with keeps theirs, and every other plant here stays where it is." : {
-      "comment" : "Said under the row while it is held, and in the alert on the assisted path. Worded for what survives rather than for what goes, like the three in Settings."
+    "It leaves your garden for the Wild Fields. The person you grew it with keeps theirs, and every other plant here stays where it is." : {
+      "comment" : "Said under the row while it is held, and in the alert on the assisted path. Worded for what survives rather than for what goes, like the three in Settings.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den forlader din have og tager ud på Vildmarken. Den, du groede den sammen med, beholder sin, og alle andre planter bliver her, hvor de er."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Se va de tu jardín a los Campos Silvestres. La persona con la que la cultivaste conserva la suya, y las demás plantas de aquí se quedan donde están."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Elle quitte ton jardin pour les Champs Sauvages. La personne avec qui elle a poussé garde la sienne, et toutes les autres plantes ici restent où elles sont."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lascia il tuo giardino per i Campi Selvatici. La persona con cui è cresciuta conserva la sua, e ogni altra pianta qui resta dov'è."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den forlater hagen din og drar ut på Villmarka. Den du dyrket den fram sammen med, beholder sin, og alle andre planter blir her, der de er."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hij verlaat je tuin voor de Wilde Velden. De plant van de persoon met wie je hem hebt laten groeien blijft, en elke andere plant hier blijft waar hij is."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den lämnar din trädgård och ger sig ut på Vildmarken. Den du odlade den tillsammans med behåller sin, och alla andra växter blir kvar här, där de är."
+          }
+        }
+      }
     },
     "It will open like this in %lld days" : {
       "comment" : "Under a newly made plant, which is shown as it will be in bloom. How many days until it really looks like that.",
@@ -5824,13 +5868,145 @@
       }
     },
     "Release it" : {
-      "comment" : "Confirms the alert above. The row's own words rather than its label with a question mark taken off."
+      "comment" : "Confirms the alert above. The row's own words rather than its label with the question mark taken off.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Løssæt den"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Soltarla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Relâcher"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lasciala andare"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Slipp den ut"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Loslaten"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Släpp ut den"
+          }
+        }
+      }
     },
-    "Release to the wild fields" : {
-      "comment" : "Held rather than tapped, and it lets one plant go. “The wild fields” is where a released plant goes: a name for a place rather than a description, and it stays a place in translation."
+    "Release to the Wild Fields" : {
+      "comment" : "Held rather than tapped, and it lets one plant go. The Wild Fields is a place, named the way the garden's areas are, and each language names it in its own words rather than keeping the English.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Løssæt den på Vildmarken"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Soltarla en los Campos Silvestres"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Relâcher dans les Champs Sauvages"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lasciala andare nei Campi Selvatici"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Slipp den ut på Villmarka"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Loslaten in de Wilde Velden"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Släpp ut den på Vildmarken"
+          }
+        }
+      }
     },
-    "Release to the wild fields?" : {
-      "comment" : "Title of the alert on the assisted path, where a three-second hold is not available."
+    "Release to the Wild Fields?" : {
+      "comment" : "Title of the alert on the assisted path, where a three-second hold is not available.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Løssætte den på Vildmarken?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¿Soltarla en los Campos Silvestres?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Relâcher dans les Champs Sauvages ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lasciarla andare nei Campi Selvatici?"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Slippe den ut på Villmarka?"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Loslaten in de Wilde Velden?"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Släppa ut den på Vildmarken?"
+          }
+        }
+      }
     },
     "Remember the date and time" : {
       "comment" : "A switch on the note kept about a meeting.",

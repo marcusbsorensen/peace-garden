@@ -65,13 +65,13 @@ struct PlantDetailView: View {
         // background drew its destructive button and dropped the cancel, which
         // leaves an irreversible action with no visible way out of it.
         .alert(
-            "Release to the wild fields?",
+            "Release to the Wild Fields?",
             isPresented: $confirming
         ) {
             Button("Leave it", role: .cancel) {}
             Button("Release it", role: .destructive) { release() }
         } message: {
-            Text("It leaves your garden for the wild fields. The person you grew it with keeps theirs, and every other plant here stays where it is.")
+            Text("It leaves your garden for the Wild Fields. The person you grew it with keeps theirs, and every other plant here stays where it is.")
         }
         .sheet(isPresented: $editing) {
             EncounterEditView(record: record) { name, place, keepsCoordinate in
@@ -164,12 +164,12 @@ struct PlantDetailView: View {
             // cannot make one the row becomes a button and the alert below
             // comes back.
             HoldToConfirm(
-                title: "Release to the wild fields",
+                title: "Release to the Wild Fields",
                 // Worded for what survives, the way the three in Settings are.
                 // No name in it: a name would make this a format string for the
                 // sake of a fact the sentence does not need, and the person is
                 // already named twice on the screen above it.
-                consequence: "It leaves your garden for the wild fields. The person you grew it with keeps theirs, and every other plant here stays where it is.",
+                consequence: "It leaves your garden for the Wild Fields. The person you grew it with keeps theirs, and every other plant here stays where it is.",
                 glyph: AnyShape(GardenGlyph()),
                 tint: Chrome.ochre,
                 filledForeground: Chrome.nearBlack,
