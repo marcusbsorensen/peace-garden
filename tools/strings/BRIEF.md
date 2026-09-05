@@ -21,22 +21,26 @@ the English. Go looking for the plainest way your language says this one.
   *gardener*, *planted*, *garden* and the rest, in the thirteen commissioned
   strings. `commission.py` prints them. **Use those words.** A page that calls a
   seed two different things in four paragraphs is worse than a page in English.
-- **Numbers are numerals, from 2 up.** *2 phones*, *3 seconds*, *10 days* —
-  never *two*, *three*, *ten*. **One is the exception** and stays a word in every
-  language. Use whatever digits your language writes with: Eastern Arabic
-  numerals in Arabic, Western ones elsewhere. Decided by Marcus on 5 September
-  2026, and it inverts the usual advice to spell out small numbers.
+- **A quantity is a numeral, from 2 up.** *3 seconds*, *10 days*, *4 plants* —
+  never *three*, *ten*, *four*. **One is the exception** and stays a word.
+  Use whatever digits your language writes with: Eastern Arabic numerals in
+  Arabic, Western ones elsewhere. Decided by Marcus on 5 September 2026.
 
-  Two things follow, and they are the reason the rule is worth having. A digit is
-  the one token on the page that a reader of any of the forty-three languages
-  recognises without it being translated for them — and a digit is read at a
-  glance where a word has to be read. This is a site somebody opens once, on a
-  phone, from a message.
+  A quantity is a number the reader is being *told* — how many plants are in a
+  garden, how long to hold a button, how many days until a flower opens. It is a
+  measurement, and the digit is what is being reported.
 
-  Where the number is grammar rather than a count, the grammar wins: a dual form,
-  an agreement, or an idiom that happens to contain *two* is not a place to put a
-  digit. If your language cannot take a numeral in a particular sentence, say so
-  rather than forcing it.
+  **Prose is not a quantity**, and this rule does not touch it. *Two people
+  meeting*, *two phones hand each other a seed*, *between two gardens* — those
+  are sentences about a pair, not counts of one, and *2 people meeting* turns a
+  line of writing into notation. If you could not put the number in a table, it
+  is prose.
+
+  The reason the rule is worth having is that a digit is the one token on the
+  page that a reader of any of the forty-three languages recognises without it
+  being translated, and it is read at a glance where a word has to be read.
+  Which is exactly why it belongs on the numbers being reported and nowhere
+  else.
 
 - **The area names stay English.** *The Cold Frame*, *The Seedbed*, *The
   Crossing*. They are proper nouns, like the plants' binomials. If one appears in
