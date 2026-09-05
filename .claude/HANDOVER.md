@@ -1,8 +1,7 @@
-# Peace Garden — handover 4 September 2026
+# Peace Garden — handover 5 September 2026
 
-*This session ran four strands: the stage framing, the site's own writing, the
-app icon, and the translation commission. They were sequential rather than
-tangled, but a fresh session should pick one.*
+*The site went up, the host turned out not to be the host the design assumed,
+and the language review started. A fresh session should pick up the review.*
 
 ## Goal
 
@@ -11,93 +10,104 @@ final, and the work off this machine.
 
 ## State
 
-`main` at `393227f`, **pushed**, CI green on both jobs — the first passing run
-since 2 September, and it now runs five Python checks rather than four.
+`main` at `18a2e9f`, **pushed**. **peacegarden.app is live** — `/s`, `/g`, `/t`
+and the association file all answer with the types they are.
 
-**Verified** — 97 SeedCore tests, 23 app tests, five Python checks; the framing on
-an iPhone 17 Pro and iPad mini across mature, seedling and name-off; the icon on
-a home screen; Arabic and Hebrew in a browser.
+**Verified** — 97 SeedCore tests, 28 app tests (five of them new), five Python
+checks; eleven paths checked at the far end by `tools/deploy.sh`; `/s` drawing
+its seed in English, French, Danish and Arabic; the garden falling back to
+invented plants and saying so; the release row in place on an iPhone 17 Pro.
 
-- **The plant stands above its name**, 14pt clear, anchored on its base so a
-  seedling stands where a mature plant does. Other screens are unchanged.
-- **The flush reads** — open star to shut bud across a cycle, four times the
-  petal pixels at peak against trough. The old worry about 45% is closed.
-- **The six prose strings are settled**, two corrected against the code rather
-  than reworded, and `docs/FOR-REVIEW.md` retired with nothing lost.
-- **41 of 42 languages commissioned**, Greenlandic held deliberately.
-- **The icon is inverted**: white bract, the colour running in and going yellow
-  as it tapers. The favicon comes off the same drawing.
+- **The host does not read `.htaccess`.** 20i serves this site from nginx
+  straight to PHP-FPM with no Apache in the chain, so the whole content-type
+  design was inert and `/s` arrived as a download. `Server/index.php` serves the
+  four extensionless paths now; they live in `Server/.pages/`.
+- **`tools/deploy.sh`** uploads and then reads the headers back, which is the
+  half that matters. `--check` alone checks what is live.
+- **`force-cache` was hiding every correction.** All four generated files were
+  fetched that way, so a reader who had seen a language once kept it for good.
+  Now `no-cache`.
+- **One drawing.** `assets/mark.svg` was a stale copy of the icon and the pages
+  carried the old mark in the header beside the new one in the tab. Deleted; the
+  pages point at `assets/icon.svg`.
+- **Three corrections live** — the Danish tagline and `growBody`, the French
+  `about2`.
+- **Release to the wild fields**, held for three seconds, with the departure
+  drawn in `ReleaseFlight`.
 
-**Unverified** — iPad landscape framing (the arithmetic is safe: a fixed ~180pt
-band against 744pt) and every translation, which is machine-made.
+**Unverified** — the release hold itself, which needs a thumb (see Traps); every
+translation, which is machine-made; iPad landscape framing.
 
 ## Files
 
-- `App/PeaceGarden/Rendering/PlantSceneView.swift:115` — `settle`, `clearance`,
-  `standingLine`, and the aim that anchors the base.
-- `App/PeaceGarden/Views/PlantStageView.swift:135` — `BandTopKey`.
-- `Server/assets/js/strings.js` — the six, each with its reasoning above it.
-- `tools/strings/{BRIEF.md,commission.py,terms.py,check.py}` — the commission
-  pipeline; `check.py` is in CI.
-- `tools/icon/make_icon.py:103` — the bract and taper constants.
-- `tools/site/mintlink.py` — mints a seed link, which is the only way to reach
-  `growBody` and `appNote` at all.
-- `Server/strings/kl.json` — why Greenlandic is held.
+- `Server/index.php` — the four paths, and why the host leaves no other way.
+- `tools/deploy.sh` — upload and check. `Server/README.md` is the long version.
+- `Server/assets/js/strings.js:200` — the caching note the other three point at.
+- `App/PeaceGarden/Views/PlantDetailView.swift` — the release row, the alert on
+  the assisted path, and `release()`.
+- `App/PeaceGarden/Rendering/ReleaseFlight.swift` — the departure.
+- `App/PeaceGardenTests/ReleaseFlightTests.swift` — how a 1.7s animation is
+  checked at all. `PG_FLIGHT_FRAMES` writes the frames out to look at.
+- `tools/site/mintlink.py --packets out/review` — 43 sendable review packets.
 
 ## Decisions made
 
-- **The band is measured, not counted from type sizes** — two of the four things
-  in it can be turned off, and the safe area differs per device.
-- **Area names stay English**, once: ten strings would have been 420
-  commissions.
-- **`growBody` may never say the same two seeds make the same plant.**
-  `Pollination.encounterID` hashes both seeds *and* both nonces. Marcus caught
-  it; it had stood for weeks.
-- **`about3` is read only by somebody with no seed** (`page.js:136`), so it says
-  how a seed reaches you rather than how the fragment works.
-- **Greenlandic ships English rather than a confident wrong sentence**, and
-  Spanish, Portuguese and Galician are region-neutral — `growBody` is the first
-  string to need a second-person plural.
+- **`.pages/` rather than the served paths**, because a file at `/s` wins at
+  nginx's `try_files` and `index.php` never sees the request. The leading dot
+  gets nginx's own dot-directory deny, so each page has one address.
+- **The association file goes through PHP too.** Apple's CDN was parsing it
+  happily while the origin said `application/octet-stream`, which is Apple being
+  lenient about a rule Apple documents.
+- **`HoldToConfirm`, not a new control.** This pass wrote one from scratch
+  before finding the app already had a better one. Deleted.
+- **The wild fields are a place in phase 2** — `docs/PHASES.md`. A released
+  plant stands unattributed; releasing is one person's; the other's copy stays.
+- **The release copy says what survives**, not what cannot be undone.
 
 ## Next step
 
-**The site is not deployed.** `peacegarden.app/s` and `/strings/*.json` both
-answer 404, so nobody can review anything remotely yet. `Server/README.md` says
-what to upload. That is the blocker in front of everything below.
+**The language review, screens 3 to 6.** Screens 1 and 2 were walked in English,
+French, Danish and Spanish and produced three corrections. Screens 3 (no name),
+4 (come back), 5 (broken) and 6 (the garden) have not been looked at in any
+language. `out/review/INDEX.md` has the packets; `tools/site/mintlink.py
+--review <code> --base https://peacegarden.app` prints one language's six.
 
-Then the review: `docs/REVIEWING-A-LANGUAGE.md` is written for a bilingual
-friend rather than a developer, and `python3 tools/site/mintlink.py --review
-<code> --base https://peacegarden.app` prints the six links that go with it.
-Marcus reads English, French, Danish and Spanish and wants to be walked through
-those four in Claude in Chrome, on his own screen. Greenlandic cannot ship until
-a speaker reads it; the other thirty-seven want the same packet.
+Then the thirty-seven others, and Greenlandic, which cannot ship until a speaker
+reads it.
 
 ## Still open
 
-- **The two nobody has looked at**, both in `docs/LANGUAGES.md`: the iPhone SE
+- **Four app strings need seven languages each** — the release row, its alert
+  and its consequence. `Localizable.xcstrings`; da/es/fr/it/nb/nl/sv fall back to
+  English in silence until then.
+- **The passage banks are not all "its own writers"** — Danish drew Marcus
+  Aurelius, Spanish drew a Catalan tradition. `docs/REVIEWING-A-LANGUAGE.md` §4
+  promises otherwise. Different job from the strings.
+- **Request logging on `/s`** is a 20i control-panel setting and is not done.
+- The two nobody has looked at, both in `docs/LANGUAGES.md`: the iPhone SE
   layout, and the passage's own direction in the app for an RTL reader with no
-  bank. The web solved the second; the app has the same case untouched.
-- **The English passage bank is ninety passages short of its own floor** —
-  thirteen subthemes under ten, `quietAsASound` at five. It is the one every
-  other bank was written against.
-- **App Store screenshots.** `-pgOpen` was built for taking four screens in
-  eight languages and has never been used for it.
-- **Spanish and Portuguese regionality**, if neutral is not wanted.
-- **`appNote` shares its first sentence with `about3`** — a duplicated
-  commission in 42 languages, never seen together on screen.
+  bank.
+- **App Store screenshots.** `-pgOpen` was built for it and has never been used.
+- **`appNote` shares its first sentence with `about3`.**
 
 ## Traps
 
+- **A held control cannot be driven by injection.** `HoldToConfirm` reads a
+  press through `PressReporting`, and an injected press arrives and is released
+  in the same instant — the hold begins and is abandoned before a frame is
+  drawn. `Chrome.swift` says so. Test it with a thumb.
+- **`.htaccess` does nothing on peacegarden.app.** A `RewriteRule` that never
+  fires looks exactly like a file being served.
+- **A 200 with the wrong `Content-Type` is this site's whole failure mode.** Run
+  `tools/deploy.sh --check` rather than trusting an upload.
 - **`cd` persists between Bash calls.** Always pass absolute `--package-path`.
-- **Render a night-opening plant at its own peak hour.** At 13:00 the diurnal
-  factor damps it to a third and every flower is a shut bud — indistinguishable
-  from a broken feature. Get the tempo from `tools/preview/plant_model.py`.
+- **Render a night-opening plant at its own peak hour.** At 13:00 every flower
+  is a shut bud. Get the tempo from `tools/preview/plant_model.py`.
 - **The developer clock is a `UserDefaults` double**, so `xcrun simctl spawn
   <udid> defaults write app.peacegarden developer.clockShift -float <seconds>`
-  before launch beats tapping +1w, and takes negative values.
+  before launch beats tapping +1w. A plant created under a shift is born at the
+  shifted now, so wind on again afterwards to age it.
 - **The marks at the foot of the stage do not answer injected taps.** Use
   `xcrun simctl launch <udid> app.peacegarden -pgOpen settings`.
-- **A term match must be on the head of a word, not the whole of it.** Estonian's
-  genitive `seemne` against a nominative `seeme` broke this once.
-- **Catalogue keys are nested under `strings`**, not at the top level. Counting
-  them at the top level says every language is untranslated.
+- **A term match must be on the head of a word, not the whole of it.**
+- **Catalogue keys are nested under `strings`**, not at the top level.
