@@ -71,6 +71,32 @@ in their plot. If one of them deletes it, the other's copy stays — but the
 encounter note is each person's own, written on their own phone, and is not
 shared unless they show it.
 
+**The wild fields hold what is released.** Settled 5 September 2026, and it is
+a requirement on the plot service rather than a feature to add afterwards: a
+plot can empty, and what leaves it has somewhere to go.
+
+Phase 1 already lets one plant go — *Release to the wild fields*, held for three
+seconds, in `PlantDetailView`. Today that removes it from the phone and the
+phrase is a name for the action. In phase 2 it becomes a place: a released plant
+stands in a wild area of the shared garden with **no name, no sender and no
+date** — the plant alone, which is the only part of it that was never anybody's
+to disclose.
+
+Two things follow, and both are cheaper to build in than to add:
+
+- **Releasing is one person's.** The other's copy stays where it is, the same
+  rule as deleting above. A plot service that treats a hybrid as one row shared
+  between two people has to let one of them stand down from it without the row
+  going.
+- **A released plant is unattributed for good.** It carries no lineage back to
+  either gardener, so the invitation below can never be offered on it and no
+  later consent can put a name on it. That is the difference between releasing
+  a plant and un-sharing one.
+
+Whether a released plant can be found again by the person who released it is
+open. Everything above works either way, and answering it needs a real garden to
+look at.
+
 **A shared page names whoever agreed to be named.** Settled, because it is the
 question everything else about sharing hangs from.
 

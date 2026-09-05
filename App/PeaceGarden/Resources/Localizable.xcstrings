@@ -3507,6 +3507,9 @@
         }
       }
     },
+    "It leaves your garden for the wild fields. The person you grew it with keeps theirs, and every other plant here stays where it is." : {
+      "comment" : "Said under the row while it is held, and in the alert on the assisted path. Worded for what survives rather than for what goes, like the three in Settings."
+    },
     "It will open like this in %lld days" : {
       "comment" : "Under a newly made plant, which is shown as it will be in bloom. How many days until it really looks like that.",
       "localizations" : {
@@ -3983,7 +3986,8 @@
             "value" : "Släpp den"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "Let this plant go?" : {
       "comment" : "Title of the alert asking to confirm deleting one plant.",
@@ -4030,7 +4034,8 @@
             "value" : "Släppa den här växten?"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "Link copied" : {
       "comment" : "What the same button says once it has been pressed.",
@@ -5818,6 +5823,15 @@
         }
       }
     },
+    "Release it" : {
+      "comment" : "Confirms the alert above. The row's own words rather than its label with a question mark taken off."
+    },
+    "Release to the wild fields" : {
+      "comment" : "Held rather than tapped, and it lets one plant go. “The wild fields” is where a released plant goes: a name for a place rather than a description, and it stays a place in translation."
+    },
+    "Release to the wild fields?" : {
+      "comment" : "Title of the alert on the assisted path, where a three-second hold is not available."
+    },
     "Remember the date and time" : {
       "comment" : "A switch on the note kept about a meeting.",
       "localizations" : {
@@ -7367,7 +7381,8 @@
             "value" : "Det här går inte att ångra. Växten kan inte växa igen."
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "This garden cannot be saved on this device: %@" : {
       "comment" : "A line across the top of the app when its own file could not be opened. %@ is the system's own account of it.",
