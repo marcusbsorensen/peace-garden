@@ -20,6 +20,16 @@
   "random": "Jonnekin sattumalta",
   "damaged": "Tämä linkki saapui vaurioituneena, joten siementä ei voitu lukea.",
   "notASeed": "Tuo linkki ei kanna siementä.",
-  "newerVersion": "Tämä siemen on peräisin uudemmasta Peace Garden -versiosta."
+  "newerVersion": "Tämä siemen on peräisin uudemmasta Peace Garden -versiosta.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

@@ -42,16 +42,17 @@ the English. Go looking for the plainest way your language says this one.
   Which is exactly why it belongs on the numbers being reported and nowhere
   else.
 
-- **The area names stay English — for now, and this is changing.** *The Cold
-  Frame*, *The Seedbed*, *The Crossing*. They are proper nouns, like the plants'
-  binomials, and if one appears in your draft today you have gone wrong.
+- **The ten area names are a separate commission, and not this one.** *The Cold
+  Frame*, *The Seedbed*, *The Crossing*. They are named in every language —
+  Marcus reversed the English-only rule on 5 September 2026 — but by their own
+  brief, `NAMING.md`, and `commission.py --areas <code>`. Naming a place is a
+  different job from translating a paragraph, and the two briefs give opposite
+  instructions on purpose.
 
-  **Marcus reversed this on 5 September 2026**: the ten are to be named in every
-  language. None of the machinery for that exists yet — the names are still a
-  table in `walk.js` rather than catalogue keys — so the rule above is what holds
-  until it does. When the ten arrive they will come as their own commission with
-  their own brief, because naming a place is not the job the six paragraphs are.
-  Do not translate them into a draft in the meantime.
+  For this commission the rule is simply: **none of the six paragraphs mentions
+  an area**, so if one appears in your draft you have gone wrong regardless of
+  which language it is in. `check.py` looks for the English names, which is what
+  a paste leaves behind.
 
 ## The register
 

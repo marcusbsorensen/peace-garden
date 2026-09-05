@@ -20,6 +20,16 @@
   "random": "ランダムにどこかへ",
   "damaged": "このリンクは壊れて届いたため、種を読み取れませんでした。",
   "notASeed": "そのリンクは種を運んでいません。",
-  "newerVersion": "この種は Peace Garden の新しいバージョンのものです。"
+  "newerVersion": "この種は Peace Garden の新しいバージョンのものです。",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

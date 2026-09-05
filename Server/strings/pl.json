@@ -20,6 +20,16 @@
   "random": "Gdzieś losowo",
   "damaged": "Ten link dotarł uszkodzony, więc nie udało się odczytać nasiona.",
   "notASeed": "Ten link nie niesie nasiona.",
-  "newerVersion": "To nasiono pochodzi z nowszej wersji Peace Garden."
+  "newerVersion": "To nasiono pochodzi z nowszej wersji Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

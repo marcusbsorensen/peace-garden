@@ -20,6 +20,16 @@
   "random": "Valahová, találomra",
   "damaged": "Ez a hivatkozás sérülten érkezett, ezért a magot nem lehetett beolvasni.",
   "notASeed": "Ez a hivatkozás nem hordoz magot.",
-  "newerVersion": "Ez a mag a Peace Garden egy újabb változatából származik."
+  "newerVersion": "Ez a mag a Peace Garden egy újabb változatából származik.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

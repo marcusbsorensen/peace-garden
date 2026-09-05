@@ -20,6 +20,16 @@
   "random": "Un lloc a l'atzar",
   "damaged": "Aquest enllaç ha arribat malmès i no s'ha pogut llegir la llavor.",
   "notASeed": "Aquest enllaç no porta cap llavor.",
-  "newerVersion": "Aquesta llavor ve d'una versió més nova de Peace Garden."
+  "newerVersion": "Aquesta llavor ve d'una versió més nova de Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

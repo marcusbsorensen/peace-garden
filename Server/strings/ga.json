@@ -20,6 +20,16 @@
   "random": "Áit éigin go randamach",
   "damaged": "Tháinig an nasc seo damáiste, agus níorbh fhéidir an síol a léamh.",
   "notASeed": "Ní iompraíonn an nasc sin síol.",
-  "newerVersion": "Tháinig an síol seo ó leagan níos nuaí de Peace Garden."
+  "newerVersion": "Tháinig an síol seo ó leagan níos nuaí de Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

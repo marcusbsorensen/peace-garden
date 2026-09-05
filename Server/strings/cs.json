@@ -20,6 +20,16 @@
   "random": "Někam náhodně",
   "damaged": "Tento odkaz přišel poškozený, semínko se nepodařilo přečíst.",
   "notASeed": "Tento odkaz žádné semínko nenese.",
-  "newerVersion": "Toto semínko pochází z novější verze Peace Garden."
+  "newerVersion": "Toto semínko pochází z novější verze Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

@@ -20,6 +20,16 @@
   "random": "Куда-нибудь наугад",
   "damaged": "Эта ссылка пришла повреждённой, поэтому семя не удалось прочитать.",
   "notASeed": "Эта ссылка не несёт семени.",
-  "newerVersion": "Это семя из более новой версии Peace Garden."
+  "newerVersion": "Это семя из более новой версии Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

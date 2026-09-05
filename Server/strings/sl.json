@@ -20,6 +20,16 @@
   "random": "Nekam naključno",
   "damaged": "Ta povezava je prispela poškodovana, zato semena ni bilo mogoče prebrati.",
   "notASeed": "Ta povezava ne nosi semena.",
-  "newerVersion": "To seme prihaja iz novejše različice Peace Garden."
+  "newerVersion": "To seme prihaja iz novejše različice Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

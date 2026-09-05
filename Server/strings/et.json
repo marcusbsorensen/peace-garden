@@ -20,6 +20,16 @@
   "random": "Kuhugi juhuslikult",
   "damaged": "See link saabus vigasena, nii et seemet ei saanud lugeda.",
   "notASeed": "See link ei kanna seemet.",
-  "newerVersion": "See seeme pärineb Peace Gardeni uuemast versioonist."
+  "newerVersion": "See seeme pärineb Peace Gardeni uuemast versioonist.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

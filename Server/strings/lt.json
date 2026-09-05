@@ -20,6 +20,16 @@
   "random": "Kur nors atsitiktinai",
   "damaged": "Ši nuoroda atkeliavo sugadinta, todėl sėklos nepavyko perskaityti.",
   "notASeed": "Ši nuoroda neneša sėklos.",
-  "newerVersion": "Ši sėkla yra iš naujesnės Peace Garden versijos."
+  "newerVersion": "Ši sėkla yra iš naujesnės Peace Garden versijos.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

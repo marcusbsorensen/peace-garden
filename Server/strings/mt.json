@@ -20,6 +20,16 @@
   "random": "X'imkien bl-addoċċ",
   "damaged": "Din il-link waslet imħassra, u għalhekk iż-żerriegħa ma setgħetx tinqara.",
   "notASeed": "Dik il-link ma ġġorr l-ebda żerriegħa.",
-  "newerVersion": "Din iż-żerriegħa ġejja minn verżjoni aktar ġdida ta' Peace Garden."
+  "newerVersion": "Din iż-żerriegħa ġejja minn verżjoni aktar ġdida ta' Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

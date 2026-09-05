@@ -20,6 +20,16 @@
   "random": "Diku rastësisht",
   "damaged": "Kjo lidhje mbërriti e dëmtuar, prandaj fara nuk u lexua dot.",
   "notASeed": "Ajo lidhje nuk mbart asnjë farë.",
-  "newerVersion": "Kjo farë vjen nga një version më i ri i Peace Garden."
+  "newerVersion": "Kjo farë vjen nga një version më i ri i Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

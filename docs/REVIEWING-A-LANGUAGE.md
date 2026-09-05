@@ -44,7 +44,8 @@ is missing that sentence and is falling back.
 4. **A seed that has come back** — the heading changes and nothing else.
 5. **A link that arrived broken** — one sentence saying so. It should sound
    matter-of-fact rather than alarming.
-6. **The garden** — a map. Mostly names that stay in English on purpose; see §4.
+6. **The garden** — a map of ten places, each a real thing in a garden. These
+   are named in your language rather than translated into it; see §3, last.
 
 ## 3. What each sentence has to mean
 
@@ -81,15 +82,45 @@ drifted back into it, that is the single most valuable thing you can find.
 **The last line.** The app is on iPhone and iPad, and the link keeps, so there
 is no hurry. No deadline, no urgency.
 
+**The ten areas of the garden**, on screen 6 — and these are judged differently
+from everything above. The other sentences are translations, and the question is
+whether they say the same thing. **These are names, and the question is whether
+a gardener would use them.**
+
+Each area is a real place: a cold frame, a glasshouse, a seedbed, an orchard.
+Your language's gardeners have handled these things for centuries and have their
+own words for them, and **the right name is that word, not a translation of the
+English one**. Where English says *The Knot Garden* — a Tudor form of low
+interlaced hedging — French should say *parterre de broderie*, which is France's
+own tradition of the same idea and is not a translation of anything.
+
+So the useful questions are:
+
+- **Would a gardener call it that?** Not *is this what the English says*.
+- **If your language has its own tradition for this kind of place, is that what
+  is there?** If it has none — coppicing barely exists outside northern Europe —
+  a plain description is the right answer and is what we asked for.
+- **Are all ten different?** Two areas with one name is the one fault that makes
+  the map unusable, and it is easy to arrive at honestly.
+- **Do any of them read as a sentence rather than a name?**
+
+`The Crossing` is the one to look at hardest. It means two things at once in
+English — where paths cross, and crossing two plants to make a third — and most
+languages have to choose. **The meeting is the half to keep.** It is the area the
+whole app is named for.
+
 ## 4. Things that are meant to look like that
 
 Please do not report these — they are decisions, not mistakes.
 
 - **The plant's name is Latin** and is not translated. It is invented, and it is
   the same in every language on purpose.
-- **The garden's areas are English** — *The Cold Frame*, *The Seedbed*, *The
-  Crossing*. They are proper nouns, like the plant's Latin name.
 - **"Peace Garden" is a name** and stays as it is.
+- **An area name still in English** — *The Cold Frame*, *The Seedbed* — on a
+  page otherwise in your language. The ten are commissioned separately and they
+  arrive separately, so a half-named map is a language part-way through rather
+  than a mistake. It is worth telling us *which* ones you saw in English, and
+  nothing more than that.
 - **The quotation is not a translation** of the English one. Each language has
   its own collection, drawn from its own writers. If a quotation is wrong or
   wrongly attributed, that *is* worth reporting, and it is a different job from

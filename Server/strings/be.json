@@ -20,6 +20,16 @@
   "random": "Куды-небудзь наўздагад",
   "damaged": "Гэтая спасылка прыйшла пашкоджанай, таму насенінку не ўдалося прачытаць.",
   "notASeed": "Гэтая спасылка не нясе насенінкі.",
-  "newerVersion": "Гэтая насенінка з навейшай версіі Peace Garden."
+  "newerVersion": "Гэтая насенінка з навейшай версіі Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

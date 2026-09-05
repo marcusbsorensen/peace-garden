@@ -21,6 +21,16 @@
   "random": "Sumiluunniit",
   "damaged": "Attaveq una ajoquserneqarsimavoq, taamaattumik naammat atuarneqarsinnaanngilaq.",
   "notASeed": "Attaveq taanna naammammik nassartaqanngilaq.",
-  "newerVersion": "Naammat una Peace Garden nutaanerusumeersuuvoq."
+  "newerVersion": "Naammat una Peace Garden nutaanerusumeersuuvoq.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

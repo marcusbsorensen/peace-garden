@@ -20,6 +20,16 @@
   "random": "إلى مكان ما عشوائيًا",
   "damaged": "وصل هذا الرابط تالفًا، فتعذّرت قراءة البذرة.",
   "notASeed": "هذا الرابط لا يحمل بذرة.",
-  "newerVersion": "هذه البذرة من إصدار أحدث من Peace Garden."
+  "newerVersion": "هذه البذرة من إصدار أحدث من Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

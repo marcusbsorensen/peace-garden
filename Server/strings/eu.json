@@ -20,6 +20,16 @@
   "random": "Nonbait ausaz",
   "damaged": "Esteka hau hondatuta iritsi da, eta ezin izan da hazia irakurri.",
   "notASeed": "Esteka horrek ez darama hazirik.",
-  "newerVersion": "Hazi hau Peace Garden bertsio berriago batetik dator."
+  "newerVersion": "Hazi hau Peace Garden bertsio berriago batetik dator.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

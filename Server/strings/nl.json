@@ -20,6 +20,16 @@
   "random": "Ergens willekeurig",
   "damaged": "Deze link kwam beschadigd aan, dus het zaadje kon niet worden gelezen.",
   "notASeed": "Die link draagt geen zaadje.",
-  "newerVersion": "Dit zaadje komt uit een nieuwere versie van Peace Garden."
+  "newerVersion": "Dit zaadje komt uit een nieuwere versie van Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

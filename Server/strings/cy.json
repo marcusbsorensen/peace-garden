@@ -20,6 +20,16 @@
   "random": "Rhywle ar hap",
   "damaged": "Cyrhaeddodd y ddolen hon wedi'i difrodi, felly ni ellid darllen yr hedyn.",
   "notASeed": "Nid yw'r ddolen honno'n cario hedyn.",
-  "newerVersion": "Daeth yr hedyn hwn o fersiwn mwy newydd o Peace Garden."
+  "newerVersion": "Daeth yr hedyn hwn o fersiwn mwy newydd o Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

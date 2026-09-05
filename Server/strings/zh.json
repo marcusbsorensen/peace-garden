@@ -20,6 +20,16 @@
   "random": "随机去一处",
   "damaged": "这个链接到达时已损坏，因此无法读取种子。",
   "notASeed": "那个链接没有携带种子。",
-  "newerVersion": "这颗种子来自更新版本的 Peace Garden。"
+  "newerVersion": "这颗种子来自更新版本的 Peace Garden。",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

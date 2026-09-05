@@ -7,6 +7,16 @@
 // below is what is left after that. See docs/WEBSITE.md §"Most of a plant page
 // is already in every language".
 //
+// **The ten area names at the foot of this file were added against that target
+// on purpose, and they are the only thing here that is not prose.** Marcus
+// reversed the English-only rule on 5 September 2026, which cost four hundred
+// and twenty commissions in one decision. It buys the map: an area is a place
+// somebody stands in, and a reader walking a garden in Greek should not find
+// the ten places in it labelled in English. They are commissioned separately,
+// by `tools/strings/NAMING.md`, because naming a place is a different job from
+// translating a paragraph — and the defence above still holds against the
+// nineteen. A twentieth paragraph is still forty-three paragraphs.
+//
 // English is written here rather than fetched, because it is the fallback and
 // a fallback that can fail to arrive is not one. The other forty-two live in
 // `/strings/<code>.json`, one file per language, fetched only for the reader
@@ -110,11 +120,69 @@ export const EN = Object.freeze({
   damaged: "This link arrived damaged, so the seed could not be read.",
   notASeed: "That link does not carry a seed.",
   newerVersion: "This seed came from a newer version of Peace Garden.",
+
+  // The ten areas of the garden, in the order they are walked: the top row of
+  // the map left to right, then the bottom. Each names one passage theme, and
+  // `docs/NAMES-AND-THEMES.md` has what each theme contains.
+  //
+  // **These are names, not sentences, and they are commissioned apart from the
+  // six paragraphs** — `tools/strings/NAMING.md`, and `commission.py --areas`.
+  // A translator handed the paragraph brief would render *The Knot Garden* as a
+  // description of a knot garden; what is wanted is whatever that language's
+  // own gardening already calls the thing, which for French is *parterre de
+  // broderie* and is not a translation of anything.
+  //
+  // Three of the ten cannot be translated at all, only renamed — the Knot
+  // Garden is Tudor, the Coppice is English woodland practice, and the Crossing
+  // holds two senses that most languages outside Europe have to choose between.
+  // The naming brief says so, area by area.
+  //
+  // They fall back to English one at a time like every other key, so a language
+  // may arrive with four of them. `check.py` asks for the ten together anyway:
+  // a map labelled half in Greek is worse than a map labelled in English.
+  areaWaiting: "The Cold Frame",
+  // Renamed from *The Root Ground*, 5 September 2026. That name carried the
+  // soil and left out the belonging, which is two of the theme's three thirds.
+  areaGround: "The Home Ground",
+  areaBeginnings: "The Seedbed",
+  areaRenewal: "The Coppice",
+  areaTravel: "The Long Walk",
+  areaPeace: "The Quiet Garden",
+  areaKinship: "The Orchard",
+  areaPattern: "The Knot Garden",
+  areaLight: "The Glasshouse",
+  areaMeeting: "The Crossing",
 });
 
 /// Every key, in order. The commission sheet, and what `/strings/<code>.json`
 /// is generated against.
 export const KEYS = Object.freeze(Object.keys(EN));
+
+/// The ten areas, by theme, in map order. `walk.js` reads a name through this.
+///
+/// Kept beside the catalogue rather than in `walk.js` so that the mapping from
+/// a theme to its key is one fact in one place: `check.py` needs the ten keys
+/// as a group, `commission.py` needs them in this order, and the page needs to
+/// go from `area.theme` to a string.
+///
+/// **It has to sit below `KEYS`, and that is load-bearing.** `commission.py`
+/// reads the English out of this file by slicing between `export const EN` and
+/// `export const KEYS` and matching `key: "value"` — so an object of ten string
+/// values placed above that line is read as ten more catalogue entries, whose
+/// English is the word `areaWaiting`. Caught by the assertion in the script
+/// that filled the catalogues, on the first run.
+export const AREA_KEYS = Object.freeze({
+  waiting: "areaWaiting",
+  ground: "areaGround",
+  beginnings: "areaBeginnings",
+  renewal: "areaRenewal",
+  travel: "areaTravel",
+  peace: "areaPeace",
+  kinship: "areaKinship",
+  pattern: "areaPattern",
+  light: "areaLight",
+  meeting: "areaMeeting",
+});
 
 /// A language's words, with English underneath.
 ///

@@ -20,6 +20,16 @@
   "random": "Et tilfeldig sted",
   "damaged": "Denne lenken kom skadet fram, så frøet kunne ikke leses.",
   "notASeed": "Den lenken bærer ikke et frø.",
-  "newerVersion": "Dette frøet kom fra en nyere versjon av Peace Garden."
+  "newerVersion": "Dette frøet kom fra en nyere versjon av Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

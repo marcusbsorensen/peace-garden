@@ -20,6 +20,16 @@
   "random": "Undeva la întâmplare",
   "damaged": "Acest link a ajuns deteriorat, așa că sămânța nu a putut fi citită.",
   "notASeed": "Acel link nu poartă nicio sămânță.",
-  "newerVersion": "Această sămânță vine dintr-o versiune mai nouă a Peace Garden."
+  "newerVersion": "Această sămânță vine dintr-o versiune mai nouă a Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

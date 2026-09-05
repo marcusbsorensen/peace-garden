@@ -20,6 +20,16 @@
   "random": "Någonstans på måfå",
   "damaged": "Den här länken kom fram skadad, så fröet kunde inte läsas.",
   "notASeed": "Den länken bär inget frö.",
-  "newerVersion": "Det här fröet kom från en nyare version av Peace Garden."
+  "newerVersion": "Det här fröet kom från en nyare version av Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

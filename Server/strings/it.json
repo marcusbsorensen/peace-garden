@@ -20,6 +20,16 @@
   "random": "Da qualche parte, a caso",
   "damaged": "Questo link è arrivato danneggiato, quindi il seme non è stato letto.",
   "notASeed": "Quel link non porta alcun seme.",
-  "newerVersion": "Questo seme viene da una versione più recente di Peace Garden."
+  "newerVersion": "Questo seme viene da una versione più recente di Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

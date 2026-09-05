@@ -20,6 +20,16 @@
   "random": "Kaut kur nejauši",
   "damaged": "Šī saite pienāca bojāta, tāpēc sēklu nevarēja izlasīt.",
   "notASeed": "Šī saite nenes sēklu.",
-  "newerVersion": "Šī sēkla nāk no jaunākas Peace Garden versijas."
+  "newerVersion": "Šī sēkla nāk no jaunākas Peace Garden versijas.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

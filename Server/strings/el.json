@@ -20,6 +20,16 @@
   "random": "Κάπου στην τύχη",
   "damaged": "Αυτός ο σύνδεσμος έφτασε κατεστραμμένος, οπότε ο σπόρος δεν διαβάστηκε.",
   "notASeed": "Αυτός ο σύνδεσμος δεν μεταφέρει σπόρο.",
-  "newerVersion": "Αυτός ο σπόρος προέρχεται από νεότερη έκδοση του Peace Garden."
+  "newerVersion": "Αυτός ο σπόρος προέρχεται από νεότερη έκδοση του Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

@@ -20,6 +20,16 @@
   "random": "Rastgele bir yere",
   "damaged": "Bu bağlantı hasarlı geldi, bu yüzden tohum okunamadı.",
   "notASeed": "O bağlantı bir tohum taşımıyor.",
-  "newerVersion": "Bu tohum Peace Garden'ın daha yeni bir sürümünden geliyor."
+  "newerVersion": "Bu tohum Peace Garden'ın daha yeni bir sürümünden geliyor.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

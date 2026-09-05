@@ -20,6 +20,16 @@
   "random": "아무 데나",
   "damaged": "이 링크는 손상된 채로 도착해 씨앗을 읽을 수 없었습니다.",
   "notASeed": "그 링크에는 씨앗이 없습니다.",
-  "newerVersion": "이 씨앗은 더 새로운 버전의 Peace Garden에서 왔습니다."
+  "newerVersion": "이 씨앗은 더 새로운 버전의 Peace Garden에서 왔습니다.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

@@ -20,6 +20,16 @@
   "random": "Негде насумично",
   "damaged": "Ова веза је стигла оштећена, па семе није могло да се прочита.",
   "notASeed": "Та веза не носи семе.",
-  "newerVersion": "Ово семе долази из новије верзије Peace Garden-а."
+  "newerVersion": "Ово семе долази из новије верзије Peace Garden-а.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

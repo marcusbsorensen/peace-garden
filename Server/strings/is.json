@@ -20,6 +20,16 @@
   "random": "Eitthvert af handahófi",
   "damaged": "Þessi hlekkur barst skemmdur og því var ekki hægt að lesa fræið.",
   "notASeed": "Sá hlekkur ber ekkert fræ.",
-  "newerVersion": "Þetta fræ kom úr nýrri útgáfu af Peace Garden."
+  "newerVersion": "Þetta fræ kom úr nýrri útgáfu af Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

@@ -20,6 +20,16 @@
   "random": "Кудись навмання",
   "damaged": "Це посилання надійшло пошкодженим, тож насінину не вдалося прочитати.",
   "notASeed": "Це посилання не несе насінини.",
-  "newerVersion": "Ця насінина з новішої версії Peace Garden."
+  "newerVersion": "Ця насінина з новішої версії Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

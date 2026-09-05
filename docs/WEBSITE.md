@@ -291,15 +291,13 @@ collision by probing would make a position depend on who arrived first, which is
 the one property deriving it exists to avoid. A shared cell is more than one
 plant standing together, which is a thing a garden does.
 
-**The areas are named once, in English, and stay English.** Settled by Marcus on
-4 September. It is the argument the app already makes about a plant's binomial:
-a proper noun travels better than a translation of one, and a synthesised
-Latinate name reads the same in Amsterdam as in Margate. An area name holds the
-same line.
+**The areas are named in every language.** Settled by Marcus on 4 September as
+English-only, **reversed by him on the 5th**, and the reversal is the more
+interesting half.
 
 | | | | | |
 | --- | --- | --- | --- | --- |
-| The Cold Frame | The Root Ground | The Seedbed | The Coppice | The Long Walk |
+| The Cold Frame | The Home Ground | The Seedbed | The Coppice | The Long Walk |
 | The Quiet Garden | The Orchard | The Knot Garden | The Glasshouse | The Crossing |
 
 Every one of them is a real place in a garden — something a gardener could point
@@ -309,13 +307,62 @@ coppicing is cutting so that it grows back, and `renewal`'s first subtheme is
 `cutAndComeAgain`; an orchard is a family, grafted and propagated and related on
 purpose; the crossing is where paths meet and where two seeds do.
 
-They live in `assets/js/walk.js` as a table rather than in the catalogues, and
-that is the whole cost of the decision: **ten strings would have been four
-hundred and twenty commissions** at a multiplier that was seventeen when
-`WEBSITE.md` first quoted it and is forty-two now. *Cold frame* and *knot
-garden* have no clean equivalent in several of the sixteen and would have come
-back as descriptions rather than as names, so the expensive answer was also the
-worse one.
+**And that is exactly why they could not stay English.** The argument for the
+table was the one the app makes about a plant's binomial — a proper noun travels
+better than a translation of one — and it does not survive contact with the list
+above. A binomial is *invented*: `Nyxia lumurna` belongs to no language, so
+there is nothing for Danish to have an opinion about. A cold frame is a real
+object that Danish named centuries ago. Holding the English word for it is not
+declining to translate a proper noun; it is asking a Danish reader to walk ten
+places in somebody else's language, on the one screen of the site that is a
+*place* rather than a page.
+
+The two objections raised for the table both hold and neither is fatal:
+
+- **Ten strings are four hundred and twenty commissions**, at a multiplier that
+  was seventeen when this file first quoted it and is forty-two now. True, and
+  paid: it is the largest single commission the site has ordered. The defence of
+  the low tens in `strings.js` is a defence against *prose*, and it stands — a
+  twentieth paragraph would still be forty-three paragraphs.
+- **Cold frame and knot garden have no clean equivalent in several languages
+  and would come back as descriptions.** Half true, and it turned out to be an
+  argument for a better brief rather than against the commission. French should
+  not describe a knot garden; it should say *parterre de broderie*, its own
+  tradition of the same idea under its own name. The failure being predicted was
+  a translator handed a translation brief — so the ten get a naming brief
+  instead, `tools/strings/NAMING.md`, which opens by saying the two take
+  opposite instructions. Three of the ten are marked there as renameable rather
+  than translatable, with what to preserve in each.
+
+**Two of the ten were renamed in English at the same time**, because the
+commission made the weak ones obvious: 420 names would be written against these,
+and a name that only half covers its theme propagates that gap forty-two times.
+
+- **`ground`: The Root Ground became The Home Ground.** Its three subthemes are
+  the soil, *a place you are from*, and *a kept place* — so two thirds of the
+  theme are belonging and one is dirt, and the old name carried only the dirt.
+  It was also not a garden term the way *The Seedbed* and *The Glasshouse* are,
+  nor a coinage that earns itself the way *The Crossing* does. *Home ground* is
+  both halves at once, and it has the practical virtue that most languages
+  already have the phrase — *terre natale*, *hjemstavn*, *tierra natal* — so a
+  namer reaches rather than hunts.
+- **`kinship`: The Orchard was questioned and kept.** The charge was that it
+  names the theme by association — trees standing together — rather than by
+  meaning. It does not, and the answer is three-legged: every tree in an orchard
+  is a graft, which is *two plants made one* and is the theme's first subtheme
+  exactly; every tree in it was **chosen** and put there, as kin and friends are
+  kept rather than happened upon; and it **bears**, over years, which is what
+  the keeping is for. That reading is Marcus's, and it is now in the brief where
+  a namer can use it. The sentence three paragraphs up — *an orchard is a
+  family, grafted and propagated and related on purpose* — had been in this file
+  since the names were chosen and had never reached a translator, which is most
+  of what went wrong.
+
+The ten live in the catalogues as `areaWaiting` … `areaMeeting`, and
+`AREA_KEYS` in `strings.js` maps a theme to its key. A missing name falls back
+to English per name, so a language ships its map in pieces; `check.py` asks for
+the ten together before it calls a language done, and fails outright on two
+areas sharing a name, which is the one fault that makes a map unusable.
 
 **The pad.** On a plant page, four arrows to the nearest plant in each direction.
 Nearest is measured along the direction of travel first and sideways second,

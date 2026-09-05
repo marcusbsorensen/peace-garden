@@ -20,6 +20,16 @@
   "random": "Nalgún sitio ao chou",
   "damaged": "Esta ligazón chegou danada, así que non se puido ler a semente.",
   "notASeed": "Esa ligazón non leva ningunha semente.",
-  "newerVersion": "Esta semente vén dunha versión máis recente de Peace Garden."
+  "newerVersion": "Esta semente vén dunha versión máis recente de Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

@@ -15,7 +15,7 @@
 import { AREAS, areaFor, neighbouringArea, randomPlant, stepWithin } from "./garden.js";
 import { direction, manifest, negotiate, readable, remember, tracks, uppercases } from "./languages.js";
 import { register, setSheetTitle } from "./keys.js";
-import { loadStrings } from "./strings.js";
+import { AREA_KEYS, loadStrings } from "./strings.js";
 import { loadBank, placement, choose } from "./passages.js";
 import { source } from "./plots.js";
 import { drawBar, signIn, signedIn } from "./testers.js";
@@ -34,30 +34,23 @@ const state = {
   settled: null,
 };
 
-/// The area names are English and stay English. **Settled by Marcus on
-/// 4 September**; the reasoning is in docs/WEBSITE.md, under *Walking it*.
+/// What this area is called, in the language the page is currently in.
 ///
-/// It is the argument the app already makes about a plant's binomial: a proper
-/// noun travels better than a translation of one. So this is a table rather
-/// than ten catalogue keys, and it costs nothing — ten keys would have been
-/// four hundred and twenty commissions at the multiplier as it stands.
+/// **The ten used to be a table in this file**, English and staying English,
+/// settled on 4 September and reversed on the 5th. The argument for the table
+/// was the one the app makes about a plant's binomial — a proper noun travels
+/// better than a translation of one — and it does not hold for a *place*. A
+/// binomial is invented and belongs to no language; a cold frame is a real
+/// object that Danish and Greek have each already named. Reading a garden's ten
+/// places in English while everything around them is in Greek makes the map the
+/// one part of the site a reader is a visitor to.
 ///
-/// Which also means **an area name is the one piece of the site's writing that
-/// is not translated**, so it is not a place to put a sentence. Ten proper
-/// nouns is what was decided; a description here would quietly reintroduce the
-/// cost that choosing them avoided.
-const AREA_NAMES = {
-  waiting: "The Cold Frame",
-  ground: "The Root Ground",
-  beginnings: "The Seedbed",
-  renewal: "The Coppice",
-  travel: "The Long Walk",
-  peace: "The Quiet Garden",
-  kinship: "The Orchard",
-  pattern: "The Knot Garden",
-  light: "The Glasshouse",
-  meeting: "The Crossing",
-};
+/// It falls back to English per name like every other key, so a language part
+/// way through its naming shows a mixed map rather than nothing. See
+/// docs/WEBSITE.md §"Walking it" and tools/strings/NAMING.md.
+function areaName(theme) {
+  return state.strings.t(AREA_KEYS[theme]);
+}
 
 async function plantsIn(theme) {
   if (!state.cache.has(theme)) state.cache.set(theme, await state.plots.area(theme));
@@ -81,38 +74,58 @@ function goTo(area, plant) {
 
 // MARK: - Drawing
 
+/// The map: built once, labelled every time.
+///
+/// **The split is what makes the chooser work on this page.** The whole
+/// function used to return early on `grid.childElementCount`, which was right
+/// while the ten names were an English table — there was nothing a language
+/// change could alter. Now there is. Rebuilding the grid instead would be the
+/// obvious fix and is the wrong one: it drops the focused cell and `is-hovered`
+/// with it, so changing language mid-walk would put a reader back at the top of
+/// a map they were standing in the middle of.
 function drawMap(counts) {
   const grid = el("map-grid");
-  if (grid.childElementCount) return;
-  for (const area of AREAS) {
-    const cell = document.createElement("button");
-    cell.type = "button";
-    cell.className = "garden-cell";
-    cell.style.gridColumn = String(area.x + 1);
-    cell.style.gridRow = String(area.y + 1);
-    cell.dataset.theme = area.theme;
+  if (!grid.childElementCount) {
+    for (const area of AREAS) {
+      const cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = "garden-cell";
+      cell.style.gridColumn = String(area.x + 1);
+      cell.style.gridRow = String(area.y + 1);
+      cell.dataset.theme = area.theme;
 
-    const name = document.createElement("span");
-    name.className = "garden-cell__name";
-    name.textContent = AREA_NAMES[area.theme];
+      const name = document.createElement("span");
+      name.className = "garden-cell__name";
 
-    // How full an area is, drawn rather than counted out in a language. A
-    // number here would be a string; a row of dots is the same fact and travels
-    // everywhere. The count is on the label for anybody listening rather than
-    // looking.
-    const fill = document.createElement("span");
-    fill.className = "garden-cell__fill";
-    fill.style.setProperty("--fill", String(Math.min(1, (counts[area.theme] ?? 0) / 40)));
+      // How full an area is, drawn rather than counted out in a language. A
+      // number here would be a string; a row of dots is the same fact and
+      // travels everywhere. The count is on the label for anybody listening
+      // rather than looking.
+      const fill = document.createElement("span");
+      fill.className = "garden-cell__fill";
+      fill.style.setProperty("--fill", String(Math.min(1, (counts[area.theme] ?? 0) / 40)));
 
-    cell.append(name, fill);
-    cell.setAttribute("aria-label", `${AREA_NAMES[area.theme]}, ${counts[area.theme] ?? 0}`);
-    cell.addEventListener("click", () => goTo(area.theme));
-    grid.append(cell);
+      cell.append(name, fill);
+      cell.addEventListener("click", () => goTo(area.theme));
+      grid.append(cell);
+    }
+  }
+
+  for (const cell of grid.children) {
+    const theme = cell.dataset.theme;
+    const name = cell.querySelector(".garden-cell__name");
+    name.textContent = areaName(theme);
+    // A name still in English on a page that is not: marked as such, so the
+    // bidi algorithm does not reorder it inside an Arabic or Hebrew map. See
+    // strings.js §dress.
+    state.strings.dress(name, AREA_KEYS[theme]);
+    cell.setAttribute("aria-label", `${areaName(theme)}, ${counts[theme] ?? 0}`);
   }
 }
 
 async function drawArea(theme) {
-  el("area-name").textContent = AREA_NAMES[theme];
+  el("area-name").textContent = areaName(theme);
+  state.strings.dress(el("area-name"), AREA_KEYS[theme]);
   const plot = el("area-plot");
   const plants = await plantsIn(theme);
   plot.replaceChildren();
@@ -130,14 +143,15 @@ async function drawArea(theme) {
     dot.addEventListener("click", () => goTo(theme, plant.id));
     plot.append(dot);
   }
-  plot.setAttribute("aria-label", `${AREA_NAMES[theme]}, ${plants.length}`);
+  plot.setAttribute("aria-label", `${areaName(theme)}, ${plants.length}`);
 }
 
 async function drawPlant(theme, id) {
   const plant = (await plantsIn(theme)).find((p) => p.id === id);
   if (!plant) return goTo(theme);
   el("plant-name").textContent = plant.name;
-  el("plant-where").textContent = AREA_NAMES[theme];
+  el("plant-where").textContent = areaName(theme);
+  state.strings.dress(el("plant-where"), AREA_KEYS[theme]);
   await drawPassage(plant);
 
   // A direction with nothing in it is disabled rather than hidden: the pad is a

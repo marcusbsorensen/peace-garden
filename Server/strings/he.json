@@ -20,6 +20,16 @@
   "random": "לאנשהו באקראי",
   "damaged": "הקישור הזה הגיע פגום, ולכן לא ניתן היה לקרוא את הזרע.",
   "notASeed": "הקישור הזה אינו נושא זרע.",
-  "newerVersion": "הזרע הזה הגיע מגרסה חדשה יותר של Peace Garden."
+  "newerVersion": "הזרע הזה הגיע מגרסה חדשה יותר של Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }

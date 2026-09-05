@@ -20,6 +20,16 @@
   "random": "Някъде наслуки",
   "damaged": "Тази връзка пристигна повредена, затова семето не можа да бъде прочетено.",
   "notASeed": "Тази връзка не носи семе.",
-  "newerVersion": "Това семе идва от по-нова версия на Peace Garden."
+  "newerVersion": "Това семе идва от по-нова версия на Peace Garden.",
+  "areaWaiting": null,
+  "areaGround": null,
+  "areaBeginnings": null,
+  "areaRenewal": null,
+  "areaTravel": null,
+  "areaPeace": null,
+  "areaKinship": null,
+  "areaPattern": null,
+  "areaLight": null,
+  "areaMeeting": null
  }
 }
