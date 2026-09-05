@@ -21,6 +21,23 @@ the English. Go looking for the plainest way your language says this one.
   *gardener*, *planted*, *garden* and the rest, in the thirteen commissioned
   strings. `commission.py` prints them. **Use those words.** A page that calls a
   seed two different things in four paragraphs is worse than a page in English.
+- **Numbers are numerals, from 2 up.** *2 phones*, *3 seconds*, *10 days* —
+  never *two*, *three*, *ten*. **One is the exception** and stays a word in every
+  language. Use whatever digits your language writes with: Eastern Arabic
+  numerals in Arabic, Western ones elsewhere. Decided by Marcus on 5 September
+  2026, and it inverts the usual advice to spell out small numbers.
+
+  Two things follow, and they are the reason the rule is worth having. A digit is
+  the one token on the page that a reader of any of the forty-three languages
+  recognises without it being translated for them — and a digit is read at a
+  glance where a word has to be read. This is a site somebody opens once, on a
+  phone, from a message.
+
+  Where the number is grammar rather than a count, the grammar wins: a dual form,
+  an agreement, or an idiom that happens to contain *two* is not a place to put a
+  digit. If your language cannot take a numeral in a particular sentence, say so
+  rather than forcing it.
+
 - **The area names stay English.** *The Cold Frame*, *The Seedbed*, *The
   Crossing*. They are proper nouns, like the plants' binomials. If one appears in
   your draft, you have gone wrong.

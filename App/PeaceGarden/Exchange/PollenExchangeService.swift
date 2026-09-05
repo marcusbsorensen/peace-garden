@@ -432,7 +432,7 @@ final class PollenExchangeService: NSObject {
         guard let localResult, let remoteChecksum, let remoteCard else { return }
         guard remoteChecksum == localResult.checksum else {
             send(.abort(reason: "checksum mismatch"))
-            fail("The two phones grew different plants, so nothing was saved. Please try again.")
+            fail("The 2 phones grew different plants, so nothing was saved. Please try again.")
             return
         }
 

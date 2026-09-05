@@ -1140,7 +1140,7 @@ struct HoldToConfirm: View {
                     .buttonStyle(PressReporting { pressed in
                         pressed ? begin() : abandon()
                     })
-                    .accessibilityHint("Hold for three seconds.")
+                    .accessibilityHint("Hold for 3 seconds.")
             }
 
             if holding {

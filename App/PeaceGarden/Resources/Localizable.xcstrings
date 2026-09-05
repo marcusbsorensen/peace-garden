@@ -2849,49 +2849,49 @@
         }
       }
     },
-    "Hold for three seconds." : {
+    "Hold for 3 seconds." : {
       "comment" : "Accessibility hint on the three rows that are held rather than tapped. Spoken, never drawn.",
       "localizations" : {
         "da" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hold nede i tre sekunder."
+            "state" : "needs_review",
+            "value" : "Hold nede i 3 sekunder."
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mantén pulsado tres segundos."
+            "state" : "needs_review",
+            "value" : "Mantén pulsado 3 segundos."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Maintiens pendant trois secondes."
+            "state" : "needs_review",
+            "value" : "Maintiens pendant 3 secondes."
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tieni premuto per tre secondi."
+            "state" : "needs_review",
+            "value" : "Tieni premuto per 3 secondi."
           }
         },
         "nb" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hold inne i tre sekunder."
+            "state" : "needs_review",
+            "value" : "Hold inne i 3 sekunder."
           }
         },
         "nl" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Drie seconden ingedrukt houden."
+            "state" : "needs_review",
+            "value" : "3 seconden ingedrukt houden."
           }
         },
         "sv" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Håll inne i tre sekunder."
+            "state" : "needs_review",
+            "value" : "Håll inne i 3 sekunder."
           }
         }
       }
@@ -6948,6 +6948,53 @@
         }
       }
     },
+    "The 2 phones grew different plants, so nothing was saved. Please try again." : {
+      "comment" : "A failure: the two phones did not agree on what they had made, so neither kept it.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "De 2 telefoner groede forskellige planter frem, så intet blev gemt. Prøv igen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Los 2 teléfonos hicieron crecer plantas distintas, así que no se guardó nada. Inténtalo otra vez."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Les 2 téléphones ont fait pousser des plantes différentes, donc rien n’a été gardé. Réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "I 2 telefoni hanno fatto crescere piante diverse, quindi non è stato salvato nulla. Riprova."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "De 2 telefonene dyrket fram ulike planter, så ingenting ble lagret. Prøv igjen."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "De 2 telefoons lieten verschillende planten groeien, dus er is niets bewaard. Probeer het opnieuw."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "De 2 telefonerna odlade fram olika växter, så ingenting sparades. Försök igen."
+          }
+        }
+      }
+    },
     "The connection dropped: %@" : {
       "comment" : "A failure. %@ is the system's own account of what went wrong, which arrives already translated.",
       "localizations" : {
@@ -7367,53 +7414,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Växten du har nu skapades en gång, och det här skapar en annan. Din trädgård behåller varje växt du har odlat tillsammans med någon, och det gör de också."
-          }
-        }
-      }
-    },
-    "The two phones grew different plants, so nothing was saved. Please try again." : {
-      "comment" : "A failure: the two phones did not agree on what they had made, so neither kept it.",
-      "localizations" : {
-        "da" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "De to telefoner groede forskellige planter frem, så intet blev gemt. Prøv igen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Los dos teléfonos hicieron crecer plantas distintas, así que no se guardó nada. Inténtalo otra vez."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les deux téléphones ont fait pousser des plantes différentes, donc rien n’a été gardé. Réessaie."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I due telefoni hanno fatto crescere piante diverse, quindi non è stato salvato nulla. Riprova."
-          }
-        },
-        "nb" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "De to telefonene dyrket fram ulike planter, så ingenting ble lagret. Prøv igjen."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "De twee telefoons lieten verschillende planten groeien, dus er is niets bewaard. Probeer het opnieuw."
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "De två telefonerna odlade fram olika växter, så ingenting sparades. Försök igen."
           }
         }
       }
