@@ -1,6 +1,11 @@
 {
  "language": "Danish",
  "endonym": "Dansk",
+ "read": {
+  "by": "Marcus Bach Sorensen",
+  "on": "2026-09-06",
+  "what": "the ten area names. The prose has not been read"
+ },
  "strings": {
   "tagline": "En plante gror fra et møde.",
   "about1": "Peace Garden laver en plante ud af to mennesker, der mødes. To telefoner rækker hinanden et frø. Det, der gror af de to frø, er en plante med træk fra dem begge — som et håndtryk eller en fælles have, der har noget af hver. Den åbner sig over rigtige dage, i sit eget tempo.",

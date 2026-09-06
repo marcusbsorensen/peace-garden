@@ -255,7 +255,7 @@ def distance(a, b):
 def main():
     source = english()
     codes = sys.argv[1:] or sorted(p.stem for p in CATALOGUES.glob("*.json"))
-    total, written, named, private, clean = 0, 0, 0, 0, 0
+    total, written, named, private, clean, been_read = 0, 0, 0, 0, 0, 0
     for code in codes:
         path = CATALOGUES / f"{code}.json"
         if not path.exists():
@@ -272,6 +272,8 @@ def main():
         if all(isinstance(strings.get(k), str) and strings[k].strip()
                for k in PRIVACY):
             private += 1
+        if catalogue.get("read"):
+            been_read += 1
         found = (problems_for(code, catalogue, source)
                  + problems_for(code, catalogue, source, PRIVACY, "privacy page")
                  + area_problems_for(catalogue, source))
@@ -286,6 +288,14 @@ def main():
           f"{f', {awaiting} still awaiting it' if awaiting else ''}. "
           f"{named} have all ten area names. {private} have the privacy "
           f"page. {clean} clean.")
+    # **The count that matters and had nowhere to live.** Everything above is
+    # what a machine can see. This is the one number that says whether anybody
+    # who speaks the language has looked, and until `read` existed the only way
+    # to know was to remember. A catalogue carries `read` with who, when and
+    # what — the same shape as `awaiting`, which is the other note here that is
+    # about the state of a commission rather than about a string.
+    print(f"{been_read} of {total} have been read by somebody who speaks the "
+          f"language.")
     return 0 if clean == total else 1
 
 
