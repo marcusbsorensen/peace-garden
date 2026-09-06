@@ -107,7 +107,7 @@ enum Quotes {
             case .ground:     return ["Cer", "Fen", "Pell"]   // grain, fen, the earth's skin
             case .travel:     return ["Zeph", "Ael", "Hal"]   // west wind, gust, salt sea
             case .meeting:    return ["Mel", "Ith"]           // honey, Ithaca
-            case .kinship:    return ["Wyn", "Cyn"]           // joy, the dog at the door
+            case .kinship:    return ["Vin", "Cyn"]           // a bond, the dog at the door
             case .peace:      return ["Ol", "Bel"]            // the olive, a clear sky
             }
         }

@@ -4,7 +4,7 @@ A seed link, so the seed page can be looked at.
 
     python3 tools/site/mintlink.py                       # an offer
     python3 tools/site/mintlink.py --kind r              # a reply
-    python3 tools/site/mintlink.py --name Nadia --plant "Wynula latifolia"
+    python3 tools/site/mintlink.py --name Nadia --plant "Vinula latifolia"
     python3 tools/site/mintlink.py --base http://localhost:8801
     python3 tools/site/mintlink.py --review fr           # one language's six
     python3 tools/site/mintlink.py --packets out/review  # every language, sendable
@@ -56,7 +56,7 @@ def checksum(body):
     return b64(hashlib.sha256(buffer).digest()[:6])
 
 
-def mint(kind="o", name="Nadia", plant="Wynula latifolia", born=None):
+def mint(kind="o", name="Nadia", plant="Vinula latifolia", born=None):
     fields = [
         "1",
         kind,
@@ -156,7 +156,7 @@ def main():
     parser.add_argument("--kind", choices=("o", "r"), default="o",
                         help="o is an offer, r is a reply that has come back")
     parser.add_argument("--name", default="Nadia")
-    parser.add_argument("--plant", default="Wynula latifolia")
+    parser.add_argument("--plant", default="Vinula latifolia")
     parser.add_argument("--base", default="http://localhost:8801")
     parser.add_argument("--days", type=int, default=21,
                         help="how long ago the sender's plant was born")

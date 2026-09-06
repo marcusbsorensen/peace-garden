@@ -51,7 +51,7 @@ final class PollenLinkTests: XCTestCase {
             seed: seed,
             nonce: nonce,
             displayName: "Ada . Lovelace #1 🌱",
-            plantName: "Wyn ynth · sylvatica",
+            plantName: "Vin ynth · sylvatica",
             birth: Date(timeIntervalSince1970: 1_700_000_000),
             echo: Data(repeating: 9, count: 16),
             check: Data(repeating: 3, count: 8)
@@ -60,7 +60,7 @@ final class PollenLinkTests: XCTestCase {
         // name cannot be mistaken for a field separator.
         let parsed = try PollenLink.parse(fragment: link.fragment)
         XCTAssertEqual(parsed.displayName, "Ada . Lovelace #1 🌱")
-        XCTAssertEqual(parsed.plantName, "Wyn ynth · sylvatica")
+        XCTAssertEqual(parsed.plantName, "Vin ynth · sylvatica")
         XCTAssertEqual(parsed.kind, .reply)
     }
 

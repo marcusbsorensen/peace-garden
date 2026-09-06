@@ -25,7 +25,7 @@
 const GENUS_HEADS = [
   "Ael", "Aur", "Bel", "Cal", "Cer", "Cyn", "Dros", "El", "Fen", "Hal",
   "Ith", "Lir", "Mel", "Nyx", "Ol", "Pell", "Quin", "Ros", "Sel", "Thal",
-  "Umbr", "Ver", "Wyn", "Zeph",
+  "Umbr", "Ver", "Vin", "Zeph",
 ];
 
 /// Mirrored from `PlantName.genusTails`, and read the same way: ten endings
@@ -45,7 +45,7 @@ const THEME_HEADS = {
   ground: ["Cer", "Fen", "Pell"],
   travel: ["Zeph", "Ael", "Hal"],
   meeting: ["Mel", "Ith"],
-  kinship: ["Wyn", "Cyn"],
+  kinship: ["Vin", "Cyn"],
   peace: ["Ol", "Bel"],
 };
 

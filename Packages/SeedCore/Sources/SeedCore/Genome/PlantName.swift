@@ -36,10 +36,39 @@ public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
     /// Each head carries a sense, and `Quotes.Theme` reads it. That mapping
     /// had to be made to fit these twenty-four rather than the other way
     /// round; see docs/NAMES-AND-THEMES.md for which head means what.
+    ///
+    /// **`Wyn` became `Vin` on 6 September 2026, at the same index.** Marcus
+    /// asked what W and Y were doing in names said to be Latin, and the two
+    /// letters have opposite answers. Y is right, and is in fact the letter
+    /// for the job: Latin took Y and Z from Greek in the 1st century BC to
+    /// spell exactly the loanwords `Nyx`, `Cyn` and the `yne` and `ynth`
+    /// endings are made of. W is not — Latin had no W, it is a medieval
+    /// doubling of V — and `Wyn` was also the only one of the twenty-four
+    /// rooted in neither Greek nor Latin, being OE *wynn*, joy.
+    ///
+    /// `Vin` is L *vinculum*, a bond, which sits closer to Kinship's first
+    /// subtheme — inosculation, grafting, mycorrhiza — than joy ever did.
+    /// **Replacing in place is what keeps the other twenty-three boundaries
+    /// where they are**, and it sorts between `Ver` and `Zeph`, so the list
+    /// stays alphabetical and nobody is tempted to re-sort it later. An
+    /// unsorted list here is a landmine: a tidy-up would rename every plant.
+    ///
+    /// **It renames every plant carrying it** — the vine family's 4-merous
+    /// half — and that was the accepted cost. Nothing else about those plants
+    /// moves. The head is read off the flower, so the same seed grows the same
+    /// shape and spells it differently. `tools/preview/vectors.json` was
+    /// re-recorded for it.
+    ///
+    /// One hazard, stated because it will occur to a reader: *vinculum* is
+    /// from *vincire*, to bind, and is **not** the root of *vinum*. That `Vin`
+    /// sits on the vine family is a coincidence of sound, and reading it as
+    /// *vine* would collapse the head system into the family system, which are
+    /// independent on purpose — a head carries a theme, a family carries a
+    /// flower, and no family takes both its roots from one theme.
     public static let genusHeads = [
         "Ael", "Aur", "Bel", "Cal", "Cer", "Cyn", "Dros", "El", "Fen", "Hal",
         "Ith", "Lir", "Mel", "Nyx", "Ol", "Pell", "Quin", "Ros", "Sel", "Thal",
-        "Umbr", "Ver", "Wyn", "Zeph"
+        "Umbr", "Ver", "Vin", "Zeph"
     ]
 
     /// Which root a flower is named from: a family, and a merosity.
@@ -92,7 +121,7 @@ public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
         .orchid:    (few: "Mel",  many: "Sel"),
         .lotus:     (few: "Lir",  many: "Nyx"),
         .thistle:   (few: "Cyn",  many: "Hal"),
-        .vine:      (few: "Wyn",  many: "Ael"),
+        .vine:      (few: "Vin",  many: "Ael"),
         .bell:      (few: "Quin", many: "Ith"),
         .star:      (few: "El",   many: "Ros"),
         .poppy:     (few: "Bel",  many: "Aur"),

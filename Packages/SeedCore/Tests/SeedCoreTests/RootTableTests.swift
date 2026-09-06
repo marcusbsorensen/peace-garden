@@ -175,7 +175,7 @@ final class RootTableTests: XCTestCase {
         "Cer": "ground", "Fen": "ground", "Pell": "ground",
         "Zeph": "travel", "Ael": "travel", "Hal": "travel",
         "Mel": "meeting", "Ith": "meeting",
-        "Wyn": "kinship", "Cyn": "kinship",
+        "Vin": "kinship", "Cyn": "kinship",
         "Ol": "peace", "Bel": "peace",
     ]
 

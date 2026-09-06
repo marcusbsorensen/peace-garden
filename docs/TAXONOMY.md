@@ -205,7 +205,7 @@ is a single repeated shape. The theme each root carries is unchanged.
 | **Melaceae** · orchid | `Mel` 3 · meeting | `Sel` 6 · light | Orchids *are* 3-merous. *meli*, the honey that pays the pollinator; *Selēnē*, the moon orchid |
 | **Liraceae** · lotus | `Lir` 8 · beginnings | `Nyx` 14 · waiting | *leirion*, lily — a lotus is a water lily — and *Nyx*, night, for the ones that open in it |
 | **Cynaceae** · thistle | `Cyn` 13 · kinship | `Hal` 21 · travel | *Cynara* is the artichoke, a thistle. *hals*, the salt sea, is sea holly |
-| **Wynaceae** · vine | `Wyn` 4 · kinship | `Ael` 6 · travel | *wynn*, joy, for the honeysuckle; *aellē*, a gust, for a lax stem in wind |
+| **Vinaceae** · vine | `Vin` 4 · kinship | `Ael` 6 · travel | *vinculum*, a bond, for the honeysuckle’s twining; *aellē*, a gust, for a lax stem in wind |
 | **Calaceae** · bell | `Cal` 5 · pattern | `Ith` 10 · meeting | *kalos*, the shapely — Campanula is 5-merous — and Ithaca, the bell rung on arrival |
 | **Elaceae** · star | `El` 5 · light | `Ros` 8 · renewal | *hēlios*, the sun as a flat radial bloom; *ros*, the dew, on a dog rose's five |
 | **Belaceae** · poppy | `Bel` 4 · peace | `Aur` 6 · light | *bellus*, a clear sky, for remembrance; *aurora* for the poppy that opens at dawn |

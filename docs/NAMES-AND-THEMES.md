@@ -22,7 +22,7 @@ meaning, and always did:
 
 > `Ael`, `Aur`, `Bel`, `Cal`, `Cer`, `Cyn`, `Dros`, `El`, `Fen`, `Hal`, `Ith`,
 > `Lir`, `Mel`, `Nyx`, `Ol`, `Pell`, `Quin`, `Ros`, `Sel`, `Thal`, `Umbr`,
-> `Ver`, `Wyn`, `Zeph`
+> `Ver`, `Vin`, `Zeph`
 
 Night, dew, the west wind, the olive. The vocabulary was in the code. Only the
 connection was missing.
@@ -64,7 +64,7 @@ the same fact said twice.
 | **ground** | `Cer` · `Fen` · `Pell` | L *Ceres*, the grain · fen, low wet ground · L *pellis*, the earth's skin |
 | **travel** | `Zeph` · `Ael` · `Hal` | Gk *Zephyros*, west wind · Gk *aellē*, a gust · Gk *hals*, the salt sea |
 | **meeting** | `Mel` · `Ith` | Gk *meli*, honey · Ithaca, the place arrived at |
-| **kinship** | `Wyn` · `Cyn` | OE *wynn*, joy · Gk *kyōn*, the dog that waits at the door |
+| **kinship** | `Vin` · `Cyn` | L *vinculum*, a bond · Gk *kyōn*, the dog that waits at the door |
 | **peace** | `Ol` · `Bel` | L *oliva*, the olive · L *bellus*, said of weather: a clear sky |
 
 Two of these bent to fit, and are worth naming because a later reader will
@@ -73,6 +73,26 @@ because Meeting needed a second head and an arrival is what a meeting is.
 **`Bel`** has four defensible roots; *bellus* said of weather was taken because
 Peace needed one and *serenus*, a clear sky with no wind in it, is literally in
 the Peace bank.
+
+**`Wyn` became `Vin` on 6 September 2026**, after Marcus asked what W and Y were
+doing in names said to be Latin. The two letters have opposite answers, and both
+are worth writing down because the question will be asked again.
+
+**Y is correct, and is in fact the letter for the job.** Latin took Y and Z from
+Greek in the 1st century BC for one purpose — spelling Greek loanwords — which
+is exactly what `Nyx`, `Cyn` and the `yne` and `ynth` endings are. A Y in a
+binomial *signals* Greek descent; botanical Latin is full of them, from
+*Hyacinthus* to *Nymphaea*.
+
+**W was the anomaly, and it was one syllable.** Latin had no W — it is a
+medieval doubling of V — and `Wyn` was also the only head of the twenty-four
+rooted in neither Greek nor Latin, being OE *wynn*, joy. The letter was the
+symptom; the root was the cause. `Vin` is L *vinculum*, a bond, which is nearer
+to Kinship's *grown together* — inosculation, grafting, mycorrhiza — than joy
+was, and it went in at the same index so that the other twenty-three boundaries
+did not move. It renames the vine family's 4-merous plants and nothing else;
+`PlantName.genusHeads` carries the full reasoning, including why *vinculum* is
+not the root of *vinum* and why that matters.
 
 ## The subthemes
 
