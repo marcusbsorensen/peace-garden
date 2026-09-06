@@ -37,28 +37,26 @@ they are in. Danish is the only one a reader has looked at.
 
 ## Next step
 
-**Getting the maps read.** The naming is finished and it is the half that could
-be done alone; forty of the forty-one have never been seen by somebody who reads
-the language, and they are all live.
+Steps 1 to 3 of the order agreed on 6 September are done. What is left of it:
 
-`docs/REVIEWING-A-LANGUAGE.md` is the job and `out/review/INDEX.md` has 43
-sendable packets — **and they predate the map**, so screen 6 is now a screen to
-judge rather than one to skip. The packets need that section rewritten before
-any of them goes out.
+**4. The iPhone SE layout.** Smallest supported device, never looked at, and it
+has to come before screenshots — a fault found afterwards means retaking them.
+`docs/LANGUAGES.md` carries what to watch.
 
-**On paying for it.** Marcus's idea, 6 September. MTurk is the wrong market for
-this specific job: it pays per task, which rewards speed over judgement, and
-text work there is widely routed through machine translation or an LLM — which
-would be paying to have machine translation checked by machine translation, on a
-brief whose first line is *you are the part that cannot be automated*. Its pool
-is also thin to absent for Danish, Welsh, Basque, Icelandic, Maltese and
-Kalaallisut. **Prolific** costs about the same, prescreens on language fluency
-rather than self-report, pays hourly, and is built for free-text research
-answers. For the small languages, one ProZ translator for a 15-minute read is
-likely cheaper than the MTurk batches that fail.
+**5. App Store screenshots.** `-pgOpen` was built for this and has now been used
+in anger, so the flow is known: `settings` → *Meet an imaginary gardener* →
+*Meet as gardener* → tap for the knock → *Plant in peace garden*. That is a real
+crossing and it leaves a real plant.
 
-**Then the ten Kalaallisut names**, from somebody who has the language. See
-below.
+**6. The app strings marked `needs_review`**, once you know whether that is a
+stale-state clear or four more readers. **The handover was wrong about this and
+the file is the truth**: 37 strings across seven languages — fr 6, it 6, da 5,
+es 5, nb 5, nl 5, sv 5 — including the Danish Marcus wrote and the French and
+Spanish he read. Either the states were never cleared or the reading did not
+cover them. Five minutes to find out.
+
+Running underneath all of it: **the reads**, which is step 2 and is waiting on
+recruiting. `docs/COMMISSIONING-THE-READS.md`.
 
 ## The forty-one that are named, and the one that is not
 
@@ -162,14 +160,17 @@ against them:
 not a quantity: *two people meeting* stays words, and so do the forty figurative
 places like *Where two paths cross*.
 
-Open, and deliberately left rather than half-done:
+**Done, 6 September.** It was four keys and thirty-two strings rather than one,
+and two of the four could never reach one anyway — the shortest tempo is 3.7
+days. French is the reason the two live ones needed different fixes: its `one`
+category covers nought as well, so the note counter chooses its singular in
+Swift while the garden header, which nought cannot reach, carries the word in
+the catalogue.
 
-- **The singular case.** `%lld grown from meetings` prints *1 grown from a
-  meeting* where the rule asks for *One*. Not a find-and-replace: CLDR's `one`
-  category covers 0 and 1 in French and 1, 21, 31 in Russian, so a hard-coded
-  word is wrong in some of the forty-three.
-- **Nothing enforces it.** `check.py` is the place, and it needs each language's
-  number words — the same list a sweep would need.
+**`tools/strings/app_check.py` enforces it**, as the sixth CI check. Not in
+`check.py`, and not needing anybody's number words: the site's forty-two
+catalogues carry no numerals at all, so the whole exposure is the app, where the
+fault is *a plural `one` case that still carries the count specifier*.
 
 ## The Winds, and the counterparty
 
@@ -239,9 +240,6 @@ at the end of a long session.
   reader with no bank — both in `docs/LANGUAGES.md`, both unlooked at.
 - **App Store screenshots.** `-pgOpen` was built for it and has never been used.
 - **`appNote` shares its first sentence with `about3`.**
-- **The singular case is visible in the app**, not just in theory: the garden
-  header reads *1 grown from a meeting* where the numeral rule asks for *One*.
-  Seen on the simulator, 6 September.
 - `#area-name` holds stale text on a plant page. It is inside a `hidden`
   section so nobody sees or hears it; pre-existing, noted while working nearby.
 
