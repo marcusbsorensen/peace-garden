@@ -93,12 +93,21 @@ in the place.
   name for a garden laid out as a deliberate pattern — *parterre de broderie*,
   *giardino all'italiana*, *chahar bagh*. Where there is none, name the pattern
   rather than the hedge.
-- **`areaRenewal` — The Coppice.** An English woodland practice: cutting a tree
-  to the stool so that it grows back stronger. *Taillis*, *Niederwald*,
-  *stævningsskov* are forestry words rather than garden ones, and outside
-  northern Europe the practice is largely absent. Name the place for what happens
-  there — cut, and it comes again. **A description is acceptable here** where it
-  is not elsewhere.
+- **`areaRenewal` — The Coppice. Look for the *stool* before you give up.** An
+  English woodland practice: cutting a tree to the stool so that it grows back
+  stronger. The obvious reach is your language's forestry word — *taillis*,
+  *Niederwald*, *stævningsskov* — and that is a step too far, because forestry
+  is not gardening and this is a garden. **Ask instead whether you have a word
+  for the stool itself**, the cut base a tree comes again from. Danish does:
+  *stub*, giving *Stubhaven*, where this note previously offered
+  *stævningsskoven* and was wrong to. A gardener who prunes hard knows the
+  thing even where the woodland practice is unknown.
+
+  Only if both are absent, name what happens there — cut, and it comes again.
+  **A description is acceptable here** where it is not elsewhere, but it is the
+  third answer rather than the second. Corrected 6 September 2026, by the first
+  language commissioned finding a garden word where this brief had already
+  conceded there was none.
 - **`areaMeeting` — The Crossing.** Two senses in one English word: where paths
   cross, and crossing two plants to make a third. *Croisement*, *cruce*,
   *incrocio*, *krydsning* hold both. **Japanese, Korean, Chinese, Arabic,

@@ -213,12 +213,19 @@ AREAS = {
         "why": "Coppicing is cutting a tree to the stool so that it grows back "
                "stronger. That is the first third exactly, and the rest of the "
                "theme by extension.",
-        "note": "**Cannot be translated, only renamed.** An English woodland "
-                "practice; taillis, Niederwald and stævningsskov are forestry "
-                "words rather than garden ones, and outside northern Europe the "
-                "practice is largely absent. Name the place for what happens "
-                "there — cut, and it comes again. A description is acceptable "
-                "here where it is not elsewhere.",
+        "note": "**Cannot be translated, only renamed — and look for the "
+                "*stool* before you give up.** The obvious reach is your "
+                "language's forestry word, taillis or Niederwald or "
+                "stævningsskov, and that is a step too far: forestry is not "
+                "gardening and this is a garden. Ask instead whether you have a "
+                "word for the stool itself, the cut base a tree comes again "
+                "from. Danish does — stub, giving Stubhaven, where this note "
+                "previously offered stævningsskoven and was wrong to. A "
+                "gardener who prunes hard knows the thing even where the "
+                "woodland practice is unknown. Only if both are absent, name "
+                "what happens there: cut, and it comes again. A description is "
+                "acceptable here where it is not elsewhere, but it is the third "
+                "answer rather than the second.",
     },
     "areaTravel": {
         "theme": "travel",
