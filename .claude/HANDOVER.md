@@ -11,7 +11,7 @@ final, and the work off this machine.
 
 ## State
 
-`main` at `66b2271`, **pushed**. **peacegarden.app is live** — and does not yet
+`main` at `af7b0ec`, **pushed**. **peacegarden.app is live** — and does not yet
 carry this commit; `tools/deploy.sh` has not been run since it landed.
 
 **Verified** — 97 SeedCore tests, 28 app tests, five Python checks; the ten
@@ -19,43 +19,29 @@ areas walked in the browser in English, Danish and Arabic, including the
 fallback marking and the language switch.
 
 **Unverified** — the release hold (needs a thumb); every translation; Italian,
-Norwegian, Dutch and Swedish throughout; **all ten area names in all 42
-languages**, none of which exist.
+Norwegian, Dutch and Swedish throughout; **the ten area names in 41 of the 42
+languages**. Danish has them; nothing else does.
 
 ## Next step
 
-**Write the Danish ten, and let them test the brief before 41 more are
-ordered.** Marcus wrote the Danish prose himself, so Danish is the one language
-where the namer and the reviewer are the same person and the loop closes in an
-evening.
+**Order the next language, and pick one where the cold frame will bite again.**
+Danish is done and it earned its keep: it found a defect in the brief on the
+first pass, which is exactly what piloting one before ordering forty-two was
+for. German is the obvious second — *Frühbeet* is the same forcing trap, so it
+tests whether the corrected note actually works on somebody who is not Marcus.
 
 ```sh
-python3 tools/strings/commission.py --areas da
+python3 tools/strings/commission.py --areas de
 ```
 
-It prints `NAMING.md` plus Danish's own material: each area's theme, the three
-subthemes that theme divides into, and what the English name is doing. Write the
-ten into `Server/strings/da.json`, run `python3 tools/strings/check.py da`, then
-look at `/g` and walk two or three of them.
+Then a language outside the northern-European garden tradition, where three of
+the four hard ones have no local answer at all: Japanese or Arabic. `areaRenewal`
+and `areaMeeting` are the ones to watch there.
 
-**The point of doing one first is the brief, not the language.** Forty-two
-commissions against an untested brief is the expensive mistake available here.
-Danish will show whether the three-subtheme block is what a namer actually
-needs, whether the *renameable rather than translatable* notes land, and whether
-34 characters is the right cell.
-
-Watch particularly:
-
-- **`areaRenewal`.** Coppicing has a Danish word — *stævningsskov* — and it is
-  forestry rather than gardening, which is exactly the case the brief says to
-  answer with a description. Does the brief make that feel permitted?
-- **`areaGround`.** *Hjemstavn* is the obvious reach and it is a strong word.
-  Whether it carries the *soil* third as well as the belonging is the question
-  the English name was renamed over.
-- **Two areas landing on the same word.** `beginnings` and `ground` both want a
-  bed of earth in several languages, and `peace` and `ground` both want a quiet
-  enclosure. `check.py` fails on it; Danish is where to find out how close it
-  comes.
+**A full Danish read is still owed.** Three of the ten were settled with Marcus
+directly — *Hjemstavnen* and *Barokhaven* confirmed, *Dvalebedet* chosen once
+the cold frame came apart. The other seven were drafted and went unchallenged on
+a read-through rather than being separately confirmed.
 
 ## What landed, and the two decisions inside it
 
@@ -86,6 +72,14 @@ against them:
   reading, now in the brief. `WEBSITE.md` had said nearly this since the names
   were chosen and it had never reached a translator.
 
+## Also landed
+
+- **`Wyn` became `Vin` on 6 September.** Marcus asked what W and Y were doing
+  in names called Latin. Y is right — Latin took it from Greek to spell exactly
+  these loanwords. W is not, and `Wyn` was the only head rooted in neither Greek
+  nor Latin. Now L *vinculum*, a bond, at the same index; Wynaceae is Vinaceae.
+  It renamed the vine family's 4-merous plants and moved no geometry.
+
 ## The numeral rule
 
 **A quantity is a numeral from 2 up; one stays a word.** In `BRIEF.md`. Prose is
@@ -103,7 +97,7 @@ Open, and deliberately left rather than half-done:
 
 ## Still open
 
-- **420 area names.** Nothing commissioned. See *Next step*.
+- **410 area names.** Danish is in; 41 languages to go. See *Next step*.
 - **Four app strings want native readers** — the release row, its alert, its
   confirm and its consequence, all `needs_review` in it/nb/nl/sv. Marcus wrote
   the Danish and read the French and Spanish.
