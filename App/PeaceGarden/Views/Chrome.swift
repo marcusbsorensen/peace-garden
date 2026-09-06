@@ -1081,15 +1081,24 @@ struct PressReporting: ButtonStyle {
 /// while it is being read and explains itself while a decision is being made,
 /// which is the only moment those words were ever for.
 ///
-/// **Only a phone can test this.** Injected touches on a simulator are not
-/// sustained however long a path says to hold for: the press arrives and is
-/// released in the same instant, so a hold begins and is abandoned before a
-/// frame is drawn and nothing is ever seen. Each link was proved separately
-/// there — the press registers, the fill animates, its completion fires the
-/// action — but the whole gesture end to end has to be done with a thumb. Two
-/// things to watch when it is: that three seconds is right rather than long,
-/// and that a thumb drifting during the hold does not hand the touch to the
-/// scroll view and cancel it.
+/// **The gesture has now been driven end to end on a simulator, 6 September
+/// 2026**, and this note used to say it could not be. The old claim was that
+/// injected touches are never sustained however long a path says to hold for —
+/// the press arrives and is released in the same instant, a hold begins and is
+/// abandoned before a frame is drawn. That is true of a `simctl` tap and it is
+/// not true of a touch path carrying its own per-sample delays, which holds a
+/// contact down for as long as it is told to. Nobody had tried one.
+///
+/// What was proved: a one-second press on *Release to the Wild Fields* leaves
+/// the plant where it is, and a four-second press releases it, dismisses the
+/// detail and returns a garden reading *nothing has been crossed yet*. So the
+/// mechanism works and an accidental press cannot fire it.
+///
+/// **A thumb is still owed, for the judgement rather than the mechanism.** Two
+/// things a driven touch cannot answer: whether three seconds is right rather
+/// than long, and whether a thumb drifting during the hold hands the touch to
+/// the scroll view and cancels it. A synthesised path holds perfectly still,
+/// which is exactly the case a real hand does not test.
 struct HoldToConfirm: View {
     /// A resource rather than a `LocalizedStringKey`, because the consequence
     /// below is spoken as well as drawn and `AccessibilityNotification` wants a

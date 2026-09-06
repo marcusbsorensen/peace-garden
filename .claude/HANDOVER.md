@@ -17,9 +17,12 @@ Danish names read back off the origin.
 
 **Verified** — 97 SeedCore tests, 28 app tests, five Python checks; the ten
 areas walked in the browser in English, Danish and Arabic, including the
-fallback marking and the language switch; **the live map, on the origin**.
+fallback marking and the language switch; **the live map, on the origin**;
+**the release hold, driven end to end on a simulator** — 1 second leaves the
+plant, 4 seconds releases it and the garden falls back to *nothing has been
+crossed yet*.
 
-**Unverified** — the release hold (needs a thumb); every translation; Italian,
+**Unverified** — every translation; Italian,
 Norwegian, Dutch and Swedish throughout; **the ten area names in 41 of the 42
 languages**. Danish has them; nothing else does.
 
@@ -118,6 +121,9 @@ Open, and deliberately left rather than half-done:
   reader with no bank — both in `docs/LANGUAGES.md`, both unlooked at.
 - **App Store screenshots.** `-pgOpen` was built for it and has never been used.
 - **`appNote` shares its first sentence with `about3`.**
+- **The singular case is visible in the app**, not just in theory: the garden
+  header reads *1 grown from a meeting* where the numeral rule asks for *One*.
+  Seen on the simulator, 6 September.
 - `#area-name` holds stale text on a plant page. It is inside a `hidden`
   section so nobody sees or hears it; pre-existing, noted while working nearby.
 
@@ -128,9 +134,15 @@ Open, and deliberately left rather than half-done:
   `export const KEYS` and matching `key: "value"`, so an object of ten string
   values above that line is parsed as ten more catalogue entries whose English
   is the word `areaWaiting`. There is a note on the declaration saying so.
-- **A held control cannot be driven by injection.** `HoldToConfirm` reads a press
-  through `PressReporting`, and an injected press arrives and is released in the
-  same instant. `Chrome.swift` says so. Test it with a thumb.
+- **A held control *can* be driven, and the old trap here was wrong.** It said
+  an injected press arrives and is released in the same instant. True of a
+  `simctl` tap; false of a touch path with per-sample delays, which holds a
+  contact down as long as it is told to —
+  `mcp__Claude_Code_iOS_Simulator__control` `touch_path`, dt_ms up to 1000 a
+  sample. Proved on the release row, 6 September. **A thumb is still owed for
+  the judgement**: whether 3 seconds is right rather than long, and whether a
+  drifting thumb hands the touch to the scroll view. A synthesised path holds
+  perfectly still, which is the case a hand does not test.
 - **Never `pkill -f CoreSimulator`.** It wedges the whole simulator subsystem and
   every boot then times out at 60s. Recovery is
   `killall -9 com.apple.CoreSimulator.CoreSimulatorService`, which launchd
@@ -144,8 +156,14 @@ Open, and deliberately left rather than half-done:
 - **A plant created under a developer clock shift is born at the shifted now**,
   so wind on again afterwards to age it. `xcrun simctl spawn <udid> defaults
   write app.peacegarden developer.clockShift -float <seconds>`.
-- **The marks at the foot of the stage do not answer injected taps.** Use
-  `xcrun simctl launch <udid> app.peacegarden -pgOpen settings`.
+- **The marks at the foot of the stage do not answer injected taps** — that
+  one still holds, and it is the SceneKit gesture recogniser rather than
+  anything about injection generally: SwiftUI buttons, rows and scroll views on
+  the same screen all answer fine. Use `xcrun simctl launch <udid>
+  app.peacegarden -pgOpen settings|garden|seed|meet`.
+- **A plant page opens with its chrome hidden** when Menu bar is *Hidden*,
+  which is the default. One tap on the background reveals the name, the
+  encounter and the release row; without it the screen is a plant and a Close.
 - **`cd` persists between Bash calls.** Always pass absolute `--package-path`.
 - **Render a night-opening plant at its own peak hour**, or every flower is a
   shut bud. `tools/preview/plant_model.py` has the tempo.
