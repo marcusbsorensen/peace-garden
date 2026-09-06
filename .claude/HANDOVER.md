@@ -11,12 +11,13 @@ final, and the work off this machine.
 
 ## State
 
-`main` at `af7b0ec`, **pushed**. **peacegarden.app is live** — and does not yet
-carry this commit; `tools/deploy.sh` has not been run since it landed.
+`main` at `e2b7c95`, **pushed**. **peacegarden.app is live and carries all of
+it** — deployed 6 September, thirteen paths checked at the far end, and the ten
+Danish names read back off the origin.
 
 **Verified** — 97 SeedCore tests, 28 app tests, five Python checks; the ten
 areas walked in the browser in English, Danish and Arabic, including the
-fallback marking and the language switch.
+fallback marking and the language switch; **the live map, on the origin**.
 
 **Unverified** — the release hold (needs a thumb); every translation; Italian,
 Norwegian, Dutch and Swedish throughout; **the ten area names in 41 of the 42
@@ -40,8 +41,10 @@ and `areaMeeting` are the ones to watch there.
 
 **A full Danish read is still owed.** Three of the ten were settled with Marcus
 directly — *Hjemstavnen* and *Barokhaven* confirmed, *Dvalebedet* chosen once
-the cold frame came apart. The other seven were drafted and went unchallenged on
-a read-through rather than being separately confirmed.
+the cold frame came apart, and *Stubhaven* given for `areaRenewal` — a *stub*
+is the coppice stool itself, which is a garden word where I had reached for the
+forestry one. The other six were drafted and went unchallenged on a
+read-through rather than being separately confirmed.
 
 ## What landed, and the two decisions inside it
 
@@ -106,8 +109,6 @@ Open, and deliberately left rather than half-done:
   `out/review/INDEX.md` has 43 sendable packets — **and screen 6 is now a
   different job**, since the map is a thing to judge rather than a thing to
   skip. The packets predate that.
-- **`tools/deploy.sh` has not run since `66b2271`.** The live site still has the
-  English-only map.
 - **The passage banks are not all "its own writers"** — Danish drew Marcus
   Aurelius, Spanish drew a Catalan tradition, where §4 promises otherwise.
 - **Request logging on `/s`** is a 20i control-panel setting, not done.
