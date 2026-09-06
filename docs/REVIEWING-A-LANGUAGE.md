@@ -116,15 +116,22 @@ Please do not report these — they are decisions, not mistakes.
 - **The plant's name is Latin** and is not translated. It is invented, and it is
   the same in every language on purpose.
 - **"Peace Garden" is a name** and stays as it is.
-- **An area name still in English** — *The Cold Frame*, *The Seedbed* — on a
-  page otherwise in your language. The ten are commissioned separately and they
-  arrive separately, so a half-named map is a language part-way through rather
-  than a mistake. It is worth telling us *which* ones you saw in English, and
-  nothing more than that.
-- **The quotation is not a translation** of the English one. Each language has
-  its own collection, drawn from its own writers. If a quotation is wrong or
-  wrongly attributed, that *is* worth reporting, and it is a different job from
-  this one.
+- **An area name still in English** — *The Cold Frame*, *The Seedbed* — if you
+  are reading Greenlandic. The ten are their own commission and Greenlandic is
+  waiting for somebody who has the language, so its map is English on purpose.
+  **In every other language the ten are there**, and an English name on the map
+  means one has gone missing: tell us which, and nothing more than that.
+- **The quotation is not a translation** of the English one, and that is the
+  whole point of it. A passage that reads as an English line put into your
+  language is worth reporting.
+
+  What each collection draws on is wider than literature, and deliberately so:
+  that language's own writers, its natural history, its own places and
+  practices, and a few figures the whole of Europe inherited — Aristotle,
+  Marcus Aurelius, Laozi — put plainly rather than quoted from somebody's
+  standard translation. The English collection does the same, so a passage from
+  outside your literature is not a mistake. **A passage that is wrong, or
+  wrongly attributed, is** — and that is a different job from this one.
 
 ## 5. Sending it back
 
@@ -134,6 +141,9 @@ anything you would change, the useful shape is:
 > **Screen 2, the "growing it" paragraph.** It says X, which reads as Y. I would
 > say Z.
 
-If you only have five minutes rather than fifteen, do screen 1 and the "growing
-it" paragraph on screen 2. That is four of the six sentences and the one that
-has already been wrong once.
+If you only have five minutes rather than fifteen, do three things: screen 1,
+the "growing it" paragraph on screen 2, and **the ten names on screen 6**. The
+first two are four of the six sentences and the one that has already been wrong
+once. The third takes a minute — you are reading ten words and asking whether a
+gardener would use them — and it is the part of this that nobody who speaks your
+language has ever looked at.

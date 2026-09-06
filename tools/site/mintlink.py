@@ -31,6 +31,7 @@ import json
 import os
 import pathlib
 import struct
+import sys
 import time
 
 DOMAIN = b"peacegarden.link.v1"
@@ -157,7 +158,14 @@ def main():
                         help="o is an offer, r is a reply that has come back")
     parser.add_argument("--name", default="Nadia")
     parser.add_argument("--plant", default="Vinula latifolia")
-    parser.add_argument("--base", default="http://localhost:8801")
+    # **The live site, because a packet that is not sendable is the whole
+    # failure.** This defaulted to localhost, and `--packets` then wrote
+    # forty-three files that were complete, correct, well-formed and could
+    # not be given to anybody — the site's own idiom of failure, in a tool
+    # rather than on a server. The docstring has always shown
+    # `--base http://localhost:8801` as the thing you pass, which only makes
+    # sense against a default that is the real one.
+    parser.add_argument("--base", default="https://peacegarden.app")
     parser.add_argument("--days", type=int, default=21,
                         help="how long ago the sender's plant was born")
     parser.add_argument("--review", metavar="CODE",
@@ -171,6 +179,12 @@ def main():
     born = time.time() - args.days * 86_400
 
     if args.packets:
+        # A packet is defined by being sendable, so a base nobody else can reach
+        # is not a variation on it — it is the one thing it may not be.
+        if "localhost" in args.base or "127.0.0.1" in args.base:
+            sys.exit(f"--packets against {args.base}: every link would be dead "
+                     "in the reader's hands. Drop --base, or mint to a "
+                     "directory you are not going to send from")
         packets(args.packets, args.base, args.name, args.plant, born)
         return
 
