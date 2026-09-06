@@ -1,9 +1,9 @@
 # Peace Garden — handover 6 September 2026 (evening)
 
-*Four of the forty-two maps are named, one of the four is confirmed, and all
-four are live. The brief has now been corrected five times by the commissions it
-produced, which is what piloting them one at a time was for. The pilots are
-spent: what is left is bulk.*
+*Forty-one of the forty-two maps are named and live. One of the forty-one is
+confirmed by somebody who reads the language. **That ratio is now the whole of
+the remaining problem** — the naming is done and the reading has barely
+started.*
 
 ## Goal
 
@@ -13,10 +13,10 @@ final, and the work off this machine.
 ## State
 
 `main` at `HEAD`, **pushed**. **peacegarden.app is live and carries all of
-it** — redeployed 6 September in the evening, forty-six files, thirteen paths
-checked at the far end, and the German, Japanese and Arabic maps read back off
-the origin. The Arabic map was walked live: `dir="rtl"`, the row starting at the
-right, one row height.
+it** — redeployed twice on 6 September, thirteen paths checked at the far end
+each time, and **all forty-one named maps read back off the origin and compared
+key by key against the local catalogues: no mismatches**. The Arabic map was
+walked live: `dir="rtl"`, the row starting at the right, one row height.
 
 **The privacy page went live in that deploy**, for the first time and in English
 for every reader. It is unlinked — nothing on `/g` or `/s` points at it — and it
@@ -31,36 +31,36 @@ plant, 4 seconds releases it and the garden falls back to *nothing has been
 crossed yet*.
 
 **Unverified** — every translation; Italian,
-Norwegian, Dutch and Swedish throughout; **the ten area names in 38 of the 42
-languages**, and the German, Japanese and Arabic thirty, which are drawn,
-walked, live, and unread by anybody who speaks any of the three.
+Norwegian, Dutch and Swedish throughout; and **410 of the 420 area names**,
+which are drawn, walked, live, and unread by anybody who speaks the language
+they are in. Danish is the only one a reader has looked at.
 
 ## Next step
 
-**The remaining thirty-eight, in batches.** The pilots are done and they were
-worth doing — five corrections to the brief, four of them from the three
-languages named today — but the yield has stopped: Arabic produced one
-correction where German and Japanese produced three between them, and it was the
-visual half of a rule that already existed.
+**Getting the maps read.** The naming is finished and it is the half that could
+be done alone; forty of the forty-one have never been seen by somebody who reads
+the language, and they are all live.
 
-```sh
-python3 tools/strings/commission.py --areas <code>
-python3 tools/strings/check.py
-```
+`docs/REVIEWING-A-LANGUAGE.md` is the job and `out/review/INDEX.md` has 43
+sendable packets — **and they predate the map**, so screen 6 is now a screen to
+judge rather than one to skip. The packets need that section rewritten before
+any of them goes out.
 
-**Take a batch that shares a problem rather than an alphabet.** The eight
-languages the `areaMeeting` note names — ko, zh, he, fi, hu, eu, and the two
-done — are one batch, and Japanese has already shown them the way out of it.
-The Romance and Germanic runs are another, and they will mostly write
-themselves. `check.py` runs over all forty-two at once, so there is no reason to
-go singly any more.
+**On paying for it.** Marcus's idea, 6 September. MTurk is the wrong market for
+this specific job: it pays per task, which rewards speed over judgement, and
+text work there is widely routed through machine translation or an LLM — which
+would be paying to have machine translation checked by machine translation, on a
+brief whose first line is *you are the part that cannot be automated*. Its pool
+is also thin to absent for Danish, Welsh, Basque, Icelandic, Maltese and
+Kalaallisut. **Prolific** costs about the same, prescreens on language fluency
+rather than self-report, pays hourly, and is built for free-text research
+answers. For the small languages, one ProZ translator for a 15-minute read is
+likely cheaper than the MTurk batches that fail.
 
-**What has not started at all is getting any of the four read.**
-`docs/REVIEWING-A-LANGUAGE.md` is the job, `out/review/INDEX.md` has 43 sendable
-packets, and they predate the map being a thing to judge — screen 6 is now a
-different screen. Danish is the only language where a reader has looked.
+**Then the ten Kalaallisut names**, from somebody who has the language. See
+below.
 
-## The four that are named, and what each one is for
+## The forty-one that are named, and the one that is not
 
 **Danish is done, and all ten are confirmed by a native reader.** Four were
 settled with Marcus directly — *Hjemstavnen* and *Barokhaven* confirmed,
@@ -68,33 +68,56 @@ settled with Marcus directly — *Hjemstavnen* and *Barokhaven* confirmed,
 `areaRenewal`, a *stub* being the coppice stool itself where I had reached for
 the forestry word. The remaining six he confirmed on 6 September.
 
-So **Danish is the worked example**, and it is worth handing to the next namer
-alongside the brief: it is the only language where the whole loop has run, and
-it produced two of the brief's five corrections rather than merely passing.
+So **Danish is the worked example**, and it is worth handing to a reviewer
+alongside the brief: it is the only language where the whole loop has run.
 
-**German, Japanese and Arabic are drafted and unread.** All three are in
-`NAMING.md` now as worked examples with that said plainly, and the whole of the
-reasoning is in the three commit messages rather than in any file. What each
-was for:
+**German, Japanese and Arabic were the pilots**, ordered one at a time to break
+the brief, and they did — five corrections between them and Danish. All three
+are written up in `NAMING.md` as worked examples with *unread* said plainly, and
+the reasoning is in their three commit messages.
 
-- **German tested the corrected cold frame note on a namer who is not Marcus,
-  and it held.** The note names *Frühbeet* as a forcing device and *Frühbeet*
-  was not reached for. The name went to *Wartebeet*, the holding.
-- **Japanese tested whether the hard four survive outside the northern-European
-  garden**, and they do. It has no knot garden and it has 枯山水, which is the
-  same move French makes with *parterre de broderie*. It was also on the list of
-  eight languages the brief tells to choose a half of `areaMeeting`, and it did
-  not have to: 出会いの辻 carries both.
-- **Arabic tested the case the brief believed it had already solved**, and the
-  brief was wrong twice over. It offered Arabic *chahar bagh*, which is Persian.
-  And المشتى, the first draft for `areaWaiting`, had to go because
-  `areaBeginnings` is المشتل and the two differ in one final letter.
+**The other thirty-seven went in five batches**, grouped by the problem they
+share. Two things came out of that which the brief still does not say:
 
-Between them they corrected the brief four times — the tradition next door, a
-language that compounds rather than choosing, ten different *things*, and ten
-names that do not *look* alike — all written into `NAMING.md` and
-`commission.py`, because they are corrections to *method* rather than claims
-about a language, and a native reader is not the thing that would confirm them.
+- **Three of the four languages told to choose a half of `areaMeeting` did not
+  have to.** Hungarian *kereszteződés*, Greek *διασταύρωση* and Latvian
+  *krustojums* each hold the junction and the plant cross in one word. The
+  note's list of eight is longer than the problem is, and only Korean, Chinese,
+  Hebrew, Finnish and Basque actually had to compound or choose.
+- **`areaWaiting` splits the languages in two.** Dutch *koude bak*, Swedish
+  *kallbänk* and Hungarian *hidegágy* are explicitly the cold member of a
+  cold/warm pair — the thing English is only by accident and Danish and German
+  are not at all. Dutch and Swedish took the object; Hungarian could not,
+  because its seedbed is an *-ágy* too.
+
+**Kalaallisut is deliberately unnamed**, and it is the one thing asked for on
+6 September that was not done. Greenlandic is polysynthetic, and it has no
+orchard, no glasshouse and no knot garden; every name would be a compound built
+from affixes that cannot be checked, and ten invented words would be obvious to
+every one of its readers. The map falls back to English per name, which is what
+that fallback is for.
+
+## The check that came out of it
+
+`check.py` gained the rule the Arabic commission found, and it is the one part
+of today's naming that will still be working in a year.
+
+**Two names can be different words for unrelated things and still be a letter
+apart** — المشتى beside المشتل — and nothing on this site could see it. It is
+measured as **edit distance rather than similarity**, because what matters is
+how much is left to tell two names apart: Bulgarian's *Тихата градина* and
+*Овощната градина* are three quarters identical by ratio and nine characters
+distinguish them.
+
+It also has to be **held against the length**, or it is nonsense in Chinese: a
+name there is two or three characters, so 温室 and 交汇处 — which share nothing —
+are three edits apart and fired on the first draft of the check. At most three
+characters, and at most a third of the shorter name.
+
+It found two faults on its first real run: Hebrew התרדמה beside האדמה, and
+Basque *Negutegia* beside *Berotegia*. Maltese *Il-mixtla* beside *Il-mixja
+twila* was caught by hand and sits under the threshold, which is why `NAMING.md`
+still asks for the ten to be read down a page and looked at.
 
 ## What landed, and the two decisions inside it
 
@@ -189,17 +212,14 @@ at the end of a long session.
 
 ## Still open
 
-- **390 area names.** Danish, German, Japanese and Arabic are in; 38 languages
-  to go, and only Danish has been read. See *Next step*.
-- **Three names want a native reader before anything else does**, and all three
-  are live. `Heimaterde` for German `areaGround` — it carries the soil and the
-  belonging, which is more of the theme than any alternative manages, and it
-  also sits near a register some German readers will hear; Marcus chose to ship
-  it and ask rather than reach for *Muttererde* and lose the belonging.
-  Japanese `冬囲い`, which names a practice where the other nine name places.
-  And Arabic `الخِلْفة`, the least certain of the forty: it is the growth that
-  follows a cutting, it is not a common word in that sense, and it needs its
-  diacritics or it reads as offspring.
+- **The ten Kalaallisut names**, and 410 of the 420 unread. See *Next step*.
+- **Six names to put in front of a reader before the others**, all live. German
+  `Heimaterde`, which carries the soil and the belonging and also sits near a
+  register some German readers will hear — Marcus chose to ship it and ask.
+  Japanese `冬囲い` and Turkish `Kütük sürgünleri`, where *sürgün* is also the
+  word for exile. Arabic `الخِلْفة`, which needs its diacritics or it reads as
+  offspring. Maltese `Il-friegħi ġodda` and Irish `Na buinneáin`, both for
+  `areaRenewal` and both the shakiest of their language's ten.
 - **The privacy page is live in English and null in all 42.** It is a third
   commission, `commission.py --privacy <code>`, and none of it has been ordered.
 - **Four app strings want native readers** — the release row, its alert, its
