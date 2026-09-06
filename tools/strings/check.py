@@ -23,7 +23,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CATALOGUES = ROOT / "Server/strings"
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from commission import AREAS, CLAIMS, english  # noqa: E402
+from commission import AREAS, CLAIMS, PRIVACY, english  # noqa: E402
 
 # How much longer than the English a string may be before the layout is at risk.
 #
@@ -55,20 +55,29 @@ TERMS = json.loads((pathlib.Path(__file__).resolve().parent / "terms.json")
 NAME_LIMIT = 34
 
 
-def problems_for(code, catalogue, source):
+def problems_for(code, catalogue, source, claims=CLAIMS, group="prose"):
+    """One group of commissioned prose.
+
+    **`claims` is a parameter because there are two groups now and they arrive
+    separately.** The six paragraphs and the six on `/privacy` are different
+    commissions; a language may have either without the other, and folding them
+    into one table made 41 of 42 catalogues fail as half-commissioned the
+    moment the privacy keys existed. Same rule as the ten area names.
+    """
     found = []
     strings = catalogue.get("strings", {})
     written = {k: v for k, v in strings.items()
-               if k in CLAIMS and isinstance(v, str) and v.strip()}
+               if k in claims and isinstance(v, str) and v.strip()}
     if not written:
         return []                       # still awaiting, and that is allowed
 
-    missing = [k for k in CLAIMS if k not in written]
+    missing = [k for k in claims if k not in written]
     if missing:
-        found.append(f"half-commissioned: {', '.join(missing)} still null. "
-                     "Six arrive together or the page is two languages at once")
+        found.append(f"half-commissioned {group}: {', '.join(missing)} still "
+                     "null. They arrive together or the page is two languages "
+                     "at once")
 
-    if not missing and catalogue.get("awaiting"):
+    if claims is CLAIMS and not missing and catalogue.get("awaiting"):
         found.append("the `awaiting` note is still there, and it says the prose "
                      "is English on purpose. It is not any more — delete it")
 
@@ -194,7 +203,7 @@ def area_problems_for(catalogue, source):
 def main():
     source = english()
     codes = sys.argv[1:] or sorted(p.stem for p in CATALOGUES.glob("*.json"))
-    total, written, named, clean = 0, 0, 0, 0
+    total, written, named, private, clean = 0, 0, 0, 0, 0
     for code in codes:
         path = CATALOGUES / f"{code}.json"
         if not path.exists():
@@ -208,7 +217,11 @@ def main():
         if all(isinstance(strings.get(k), str) and strings[k].strip()
                for k in AREAS):
             named += 1
+        if all(isinstance(strings.get(k), str) and strings[k].strip()
+               for k in PRIVACY):
+            private += 1
         found = (problems_for(code, catalogue, source)
+                 + problems_for(code, catalogue, source, PRIVACY, "privacy page")
                  + area_problems_for(catalogue, source))
         if found:
             print(f"{code}:")
@@ -219,7 +232,8 @@ def main():
     awaiting = total - written
     print(f"\n{written} of {total} catalogues have the prose"
           f"{f', {awaiting} still awaiting it' if awaiting else ''}. "
-          f"{named} have all ten area names. {clean} clean.")
+          f"{named} have all ten area names. {private} have the privacy "
+          f"page. {clean} clean.")
     return 0 if clean == total else 1
 
 

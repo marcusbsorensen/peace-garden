@@ -49,6 +49,10 @@ const ROUTES = [
     '/s' => ['s', 'text/html; charset=utf-8'],
     '/g' => ['g', 'text/html; charset=utf-8'],
     '/t' => ['t', 'text/html; charset=utf-8'],
+    // A privacy notice is a mandatory App Store listing field, so this path is
+    // load-bearing for the submission rather than decorative. See
+    // Server/.pages/privacy.
+    '/privacy' => ['privacy', 'text/html; charset=utf-8'],
     // No extension, and `application/json` or iOS declines the domain without
     // saying why. Apple's CDN currently parses the file whatever the header
     // says — it reported `Apple-Origin-Format: json` while the origin was still

@@ -1,0 +1,58 @@
+<!doctype html>
+<!--
+  Privacy.
+
+  **A mandatory App Store listing field, and the reason this page exists at
+  all.** It is also the shortest page on the site to write honestly, because
+  the app's design is the policy: no server, no account, no sync, and no
+  network request of the app's own. There is very little to disclose and the
+  page's job is to say so plainly rather than at length.
+
+  Written in the reader's own language like everything else here. Marcus's call,
+  6 September 2026: the reader of this page was handed a link by somebody they
+  met and is wondering whether it is a scam, so it is the one page where falling
+  back to English costs the most.
+
+  Static, like every other page: no analytics, no font CDN, no third-party
+  anything — which this page then says, and would be a poor place to be lying.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Peace Garden — privacy</title>
+    <meta name="description" content="What Peace Garden keeps, and where it keeps it." />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/icon-180.png" />
+  </head>
+
+  <body>
+    <div class="pool" aria-hidden="true"></div>
+
+    <main class="page" id="page">
+      <header class="masthead">
+        <a class="masthead__home" href="/">
+          <img class="mark" src="/assets/icon.svg" alt="" width="44" height="44" />
+          <span class="wordmark">Peace Garden</span>
+        </a>
+      </header>
+
+      <h1 class="heading" data-s="privacyTitle">Privacy</h1>
+
+      <p class="body" data-s="privacy1"></p>
+      <p class="body" data-s="privacy2"></p>
+      <p class="body" data-s="privacy3"></p>
+      <p class="body" data-s="privacy4"></p>
+      <p class="body" data-s="privacy5"></p>
+
+      <footer class="chooser">
+        <label class="label" id="language-label" for="language">Language</label>
+        <select class="chooser__select" id="language"></select>
+      </footer>
+    </main>
+
+    <script type="module" src="/assets/js/plain.js"></script>
+  </body>
+</html>

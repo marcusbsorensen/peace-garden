@@ -48,6 +48,7 @@ PAGES = {
     "/s": ("s", "text/html"),
     "/g": ("g", "text/html"),
     "/t": ("t", "text/html"),
+    "/privacy": ("privacy", "text/html"),
     "/.well-known/apple-app-site-association": (
         "apple-app-site-association", "application/json",
     ),

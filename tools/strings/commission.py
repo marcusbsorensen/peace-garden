@@ -4,6 +4,7 @@ The brief for one language, with that language's own material filled in.
 
     python3 tools/strings/commission.py da            # the six paragraphs
     python3 tools/strings/commission.py --areas da    # the ten area names
+    python3 tools/strings/commission.py --privacy da  # the privacy page
 
 Prints everything needed to write one commission for Danish and nothing else:
 the rules, what each string has to carry, the English, and — the part that
@@ -128,6 +129,93 @@ CLAIMS = {
         "note": "Its first sentence is the same claim as about3's second. The "
                 "two are never on screen together, so they may be worded alike "
                 "or differently as your language prefers.",
+    },
+}
+
+# The privacy page, at `/privacy`.
+#
+# **Its own group, and not part of `CLAIMS`, for the reason the areas are their
+# own group: a language may have one commission and not the other.** Folding
+# these six in with the six paragraphs made every catalogue that already had
+# the prose fail as half-commissioned the moment the keys existed — 41 of 42,
+# on the first run after they were added. A group is what lets a page arrive
+# on its own.
+#
+# The claims themselves matter more here than anywhere else on the site.
+# `privacy2` is the sentence a reviewer is most likely to ask about, and the
+# one where a fluent overstatement — *nothing is sent* — would be both untrue
+# and the most reassuring thing to write.
+PRIVACY = {
+    "privacyTitle": {
+        "seen": "The heading of /privacy.",
+        "must": ["Name the subject of the page in one word or two."],
+        "must not": ["Be a sentence, or promise anything. It is a heading."],
+    },
+    "privacy1": {
+        "seen": "First paragraph of /privacy.",
+        "must": [
+            "What you grow stays on your own phone.",
+            "There is no account and nothing to sign in to.",
+            "No server holds a copy.",
+        ],
+        "must not": [
+            "Say data is 'encrypted' or 'secure'. Neither is the claim. The "
+            "claim is that there is nowhere else for it to be.",
+        ],
+    },
+    "privacy2": {
+        "seen": "Second paragraph of /privacy — **the load-bearing one.**",
+        "must": [
+            "When two phones touch, each hands the other a seed, the shown "
+            "name, and a random number.",
+            "It passes straight between the two phones.",
+            "It reaches nobody else.",
+        ],
+        "must not": [
+            "Say *nothing is sent*. Something is sent, to one other phone, and "
+            "a privacy page that overstates is worse than one that explains. "
+            "**This is the paragraph a reviewer is most likely to ask about** "
+            "and the one where a fluent overstatement does the most damage.",
+            "Imply a server or a service is involved in the meeting.",
+        ],
+        "note": "`SettingsView` says this same thing inside the app, in eight "
+                "languages. If your language is one of them, agree with it.",
+    },
+    "privacy3": {
+        "seen": "Third paragraph of /privacy.",
+        "must": [
+            "Seeds, plants and anything written about a meeting stay in the "
+            "app's own storage on the phone.",
+            "Removing the app removes them.",
+        ],
+        "must not": ["Suggest a backup, an export or a way to recover them."],
+    },
+    "privacy4": {
+        "seen": "Fourth paragraph of /privacy.",
+        "must": [
+            "A seed travels in a link after the # sign.",
+            "That part of a web address is kept by the browser.",
+            "Opening one draws the plant on the reader's own device.",
+        ],
+        "must not": [
+            "Use the word *fragment*, or any other term of art. The reader is "
+            "a gardener who was handed a link.",
+            "Claim the link is private or secret. Anyone holding it can open "
+            "it — that is what a link is, and docs/SEEDS-ON-THE-WIND.md is "
+            "explicit that a link can be forwarded and posted publicly.",
+        ],
+    },
+    "privacy5": {
+        "seen": "Last paragraph of /privacy, about the website rather than "
+                "the app.",
+        "must": [
+            "This site is made of plain files.",
+            "It has no advertising, no analytics and no cookies.",
+        ],
+        "must not": [
+            "Extend the claim to the app, which is a different thing with a "
+            "different answer.",
+        ],
     },
 }
 
@@ -366,10 +454,48 @@ def prose(catalogue, code, source):
     print("Commissioned and shipping. **The six you are about to write have to")
     print("agree with them.**\n")
     settled_words(theirs, source, code,
-                  [k for k in source if k not in CLAIMS and k not in AREAS])
+                  [k for k in source
+                   if k not in CLAIMS and k not in AREAS and k not in PRIVACY])
 
     print("\n## The six\n")
     for key, claim in CLAIMS.items():
+        print(f"### `{key}`\n")
+        print(f"> {source[key]}\n")
+        print(f"*Where it is seen.* {claim['seen']}\n")
+        print("*It must say:*")
+        for line in claim["must"]:
+            print(f"  - {line}")
+        print("\n*It must not:*")
+        for line in claim["must not"]:
+            print(f"  - {line}")
+        if "note" in claim:
+            print(f"\n*Note.* {claim['note']}")
+        print()
+
+
+def privacy(catalogue, code, source):
+    """The six strings on /privacy.
+
+    Same brief as the six paragraphs — this is a translation, and the claims
+    are the specification — so it prints `BRIEF.md` rather than a third one.
+    What it does not share is the group: these arrive on their own.
+    """
+    theirs = catalogue.get("strings", {})
+    print(BRIEF.read_text())
+    print("=" * 78)
+    print(f"\n# {catalogue['language']} — {catalogue['endonym']}  ({code})")
+    print("# The privacy page\n")
+    print(f"Write into `Server/strings/{code}.json`.\n")
+    print("**Six sentences, and they are the most exact on the site.** A privacy")
+    print("notice that overstates is worse than one that explains, so the")
+    print("*must not* lines below matter more here than anywhere else — see")
+    print("`privacy2` in particular, which is the one a reviewer asks about.\n")
+
+    print("## The words this language has already chosen\n")
+    settled_words(theirs, source, code, [k for k in source if k not in PRIVACY])
+
+    print("\n## The six\n")
+    for key, claim in PRIVACY.items():
         print(f"### `{key}`\n")
         print(f"> {source[key]}\n")
         print(f"*Where it is seen.* {claim['seen']}\n")
@@ -424,10 +550,12 @@ def areas(catalogue, code, source):
 
 def main():
     argv = sys.argv[1:]
-    wants_areas = "--areas" in argv
-    rest = [a for a in argv if a != "--areas"]
+    mode = (areas if "--areas" in argv
+            else privacy if "--privacy" in argv
+            else prose)
+    rest = [a for a in argv if not a.startswith("--")]
     if len(rest) != 1:
-        sys.exit(f"usage: {sys.argv[0]} [--areas] <language code>")
+        sys.exit(f"usage: {sys.argv[0]} [--areas|--privacy] <language code>")
     code = rest[0]
     path = CATALOGUES / f"{code}.json"
     if not path.exists():
@@ -435,7 +563,7 @@ def main():
 
     catalogue = json.loads(path.read_text())
     source = english()
-    (areas if wants_areas else prose)(catalogue, code, source)
+    mode(catalogue, code, source)
 
 
 if __name__ == "__main__":

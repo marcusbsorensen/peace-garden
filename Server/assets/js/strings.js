@@ -121,6 +121,35 @@ export const EN = Object.freeze({
   notASeed: "That link does not carry a seed.",
   newerVersion: "This seed came from a newer version of Peace Garden.",
 
+  // The privacy page, at `/privacy`. **A mandatory App Store listing field,
+  // and unusually short to write here because the app's design is the policy.**
+  //
+  // Six keys against a `strings.js` that opens by defending the low tens — paid
+  // deliberately, Marcus's call on 6 September, on the grounds that a page
+  // saying *nothing about you leaves your phone* in English only, to a reader
+  // who was handed a link by a friend and is wondering whether it is a scam, is
+  // the one page where falling back to English costs the most.
+  //
+  // Every sentence says what the app *does*, per the register in
+  // tools/strings/BRIEF.md: *it stays on this phone* rather than *it never
+  // leaves*. A negative reads as a warning even when it was meant as a
+  // reassurance, and this reader is already slightly on guard.
+  privacyTitle: "Privacy",
+  privacy1:
+    "Peace Garden keeps what you grow on your own phone. There is no account, nothing to sign in to, and no server holding a copy.",
+  // The one paragraph a reviewer is most likely to ask about, so it is the most
+  // specific. `SettingsView` says the same thing inside the app, in eight
+  // languages, and the two should agree.
+  privacy2:
+    "When two phones touch, each hands the other a seed, the name you chose to show, and a random number. That passes straight between the two phones and reaches nobody else.",
+  privacy3:
+    "Your seeds, your plants, and anything you write about a meeting stay in the app's own storage on your phone. Removing the app removes them.",
+  // The fragment argument, said without the word fragment.
+  privacy4:
+    "A seed travels in a link after the # sign, which is the part of a web address a browser keeps to itself. Opening one draws the plant on your own device.",
+  privacy5:
+    "This site is made of plain files. It has no advertising, no analytics, and no cookies.",
+
   // The ten areas of the garden, in the order they are walked: the top row of
   // the map left to right, then the bottom. Each names one passage theme, and
   // `docs/NAMES-AND-THEMES.md` has what each theme contains.
