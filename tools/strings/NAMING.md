@@ -70,6 +70,14 @@ the same idea, under its own name, which is not a translation of anything.
 - **The ten have to be ten different names.** Two areas called the same thing is
   the one fault a reader cannot work around: the map is how you know where you
   are. `check.py` fails on it.
+- **And ten different *things*, which is the harder half.** Two names can be
+  different words for one thing a gardener would point at, and no check catches
+  that. Japanese has the cold frame's own word — 冷床, and unlike most languages
+  it is genuinely the cold one — but a 冷床 *is* a 苗床, which `areaBeginnings`
+  had already taken, so the right name was unusable. German dropped
+  *Winterquartier* for the same reason: a Winterquartier is very often the
+  Gewächshaus. **When you have all ten, read them as a list and ask which two
+  you could stand in at once.**
 
 ## Four of the ten cannot be translated, only renamed
 
@@ -103,17 +111,31 @@ in the place.
   *stævningsskoven* and was wrong to. A gardener who prunes hard knows the
   thing even where the woodland practice is unknown.
 
-  Only if both are absent, name what happens there — cut, and it comes again.
-  **A description is acceptable here** where it is not elsewhere, but it is the
-  third answer rather than the second. Corrected 6 September 2026, by the first
-  language commissioned finding a garden word where this brief had already
-  conceded there was none.
+  **Where the stool word exists and will not compound, look at the tradition
+  next door before you describe.** German has the stool — *Stock*, as in *auf
+  den Stock setzen* — and it is also a storey and a walking stick, so the name
+  went to *Kopfweiden*, the pollarded willows along every northern field: a
+  neighbouring practice naming the same act. Japanese has 株 and it will not
+  stand alone as a place, so the name went to ひこばえ, the shoot that comes from
+  a cut stump.
+
+  Only if all of that is absent, name what happens there — cut, and it comes
+  again. **A description is acceptable here** where it is not elsewhere, but it
+  is the last answer rather than the second. Corrected twice on 6 September
+  2026, both times by a commission finding a garden word where this brief had
+  already conceded there was none.
 - **`areaMeeting` — The Crossing.** Two senses in one English word: where paths
   cross, and crossing two plants to make a third. *Croisement*, *cruce*,
   *incrocio*, *krydsning* hold both. **Japanese, Korean, Chinese, Arabic,
-  Hebrew, Finnish, Hungarian and Basque have to choose one.** Keep the meeting.
-  A word that means only the horticultural cross is the wrong half — this is the
-  area the whole app is named for, and what happens there is two people.
+  Hebrew, Finnish, Hungarian and Basque have no single word for both.** Keep the
+  meeting. A word that means only the horticultural cross is the wrong half —
+  this is the area the whole app is named for, and what happens there is two
+  people.
+
+  **Choosing is not the only way out of it.** Japanese is on that list and did
+  not have to choose: 出会いの辻 sets 出会い, the meeting, at a 辻, which is
+  where paths cross. Where no one word holds the two, a short name carrying them
+  side by side is better than half of the meaning.
 
 ## Danish is done, and is worth looking at first
 
@@ -131,6 +153,16 @@ than as evidence of how the two hard cases actually resolve:
 **Both corrections to this brief came out of that one commission**, which is why
 it was done before the other forty-one were ordered. Neither would have been
 found by ordering them all at once.
+
+**German and Japanese are also named, and neither has been read yet.** They are
+drafts by a namer, so treat them as worked examples rather than as answers:
+`Server/strings/de.json` and `ja.json`, with the whole of the reasoning in the
+two commit messages. Between them they are where the three newest paragraphs
+above came from — the tradition next door, the two names for one thing, and the
+language that compounded rather than choosing. Where they are useful is in
+showing that the hard four stay hard outside northern Europe and stay soluble:
+Japanese has no knot garden and has 枯山水, which is the same answer French
+gives with *parterre de broderie*.
 
 ## When you are done
 

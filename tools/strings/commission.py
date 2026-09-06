@@ -310,9 +310,17 @@ AREAS = {
                 "from. Danish does — stub, giving Stubhaven, where this note "
                 "previously offered stævningsskoven and was wrong to. A "
                 "gardener who prunes hard knows the thing even where the "
-                "woodland practice is unknown. Only if both are absent, name "
+                "woodland practice is unknown. **Where the stool word exists "
+                "and will not compound, look at the tradition next door before "
+                "you describe.** German has the stool — Stock, as in auf den "
+                "Stock setzen — and it is also a storey and a walking stick, so "
+                "the name went to Kopfweiden, the pollarded willows that stand "
+                "along every northern field: a neighbouring practice that names "
+                "the same act. Japanese has 株 and it will not stand alone as a "
+                "place, so the name went to ひこばえ, the shoot that comes from "
+                "the cut stump. Only if all of that is absent, name "
                 "what happens there: cut, and it comes again. A description is "
-                "acceptable here where it is not elsewhere, but it is the third "
+                "acceptable here where it is not elsewhere, but it is the last "
                 "answer rather than the second.",
     },
     "areaTravel": {
@@ -406,10 +414,14 @@ AREAS = {
                "the area the whole thing is named for.",
         "note": "**Cannot be translated, only renamed.** Croisement, cruce, "
                 "incrocio and krydsning hold both senses. Japanese, Korean, "
-                "Chinese, Arabic, Hebrew, Finnish, Hungarian and Basque have to "
-                "choose one — **keep the meeting.** A word that means only the "
-                "horticultural cross is the wrong half; what happens here is "
-                "two people.",
+                "Chinese, Arabic, Hebrew, Finnish, Hungarian and Basque have no "
+                "single word for both — **keep the meeting.** A word that means "
+                "only the horticultural cross is the wrong half; what happens "
+                "here is two people. **Choosing is not the only way out of it, "
+                "though.** Japanese was on that list and did not have to choose: "
+                "出会いの辻 sets 出会い, the meeting, at a 辻, which is where "
+                "paths cross. Where no one word holds the two, a short name that "
+                "carries them side by side is better than half.",
     },
 }
 

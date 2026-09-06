@@ -1,8 +1,9 @@
-# Peace Garden — handover 5 September 2026 (late)
+# Peace Garden — handover 6 September 2026 (evening)
 
-*The naming settled, the machinery for it is built, and 420 names are now
-orderable and unordered. Most of what is open is commissioning rather than
-building.*
+*Three of the forty-two maps are named and one of the three is confirmed. The
+brief has now been corrected four times by the commissions it produced, which is
+what piloting them one at a time was for. Most of what is open is commissioning
+rather than building.*
 
 ## Goal
 
@@ -11,9 +12,11 @@ final, and the work off this machine.
 
 ## State
 
-`main` at `e2b7c95`, **pushed**. **peacegarden.app is live and carries all of
+`main` at `HEAD`, **pushed**. **peacegarden.app is live and carries most of
 it** — deployed 6 September, thirteen paths checked at the far end, and the ten
-Danish names read back off the origin.
+Danish names read back off the origin. **German and Japanese are committed and
+not deployed**, so the live map is still Danish-and-English; `tools/deploy.sh`
+is what changes that, and a push does not.
 
 **Verified** — 97 SeedCore tests, 28 app tests, five Python checks; the ten
 areas walked in the browser in English, Danish and Arabic, including the
@@ -23,24 +26,32 @@ plant, 4 seconds releases it and the garden falls back to *nothing has been
 crossed yet*.
 
 **Unverified** — every translation; Italian,
-Norwegian, Dutch and Swedish throughout; **the ten area names in 41 of the 42
-languages**. Danish has them; nothing else does.
+Norwegian, Dutch and Swedish throughout; **the ten area names in 39 of the 42
+languages**, and the German and Japanese ten, which are drawn and walked but
+unread by anybody who speaks either.
 
 ## Next step
 
-**Order the next language, and pick one where the cold frame will bite again.**
-Danish is done and it earned its keep: it found a defect in the brief on the
-first pass, which is exactly what piloting one before ordering forty-two was
-for. German is the obvious second — *Frühbeet* is the same forcing trap, so it
-tests whether the corrected note actually works on somebody who is not Marcus.
+**Arabic, and it is the last of the three that were picked to break the brief.**
 
 ```sh
-python3 tools/strings/commission.py --areas de
+python3 tools/strings/commission.py --areas ar
 ```
 
-Then a language outside the northern-European garden tradition, where three of
-the four hard ones have no local answer at all: Japanese or Arabic. `areaRenewal`
-and `areaMeeting` are the ones to watch there.
+It is worth doing before the bulk for two reasons that have nothing to do with
+each other. `chahar bagh` is already sitting in the brief as the answer for
+`areaPattern` and has never been used, so Arabic is the case the brief thinks it
+has already solved — which is exactly the shape of the two it turned out to have
+got wrong. And **it is the first right-to-left map**, so it tests the layout and
+not only the naming: ten cells, a horizontal scroller, and a row that has to
+start on the other side.
+
+After Arabic the interesting cases are spent and the remaining thirty-eight are
+bulk. **Order them in batches and run `check.py` over the lot**, rather than one
+at a time — the reason for going singly was to correct the brief, and the brief
+has now taken four corrections.
+
+## The three that are named, and what each one is for
 
 **Danish is done, and all ten are confirmed by a native reader.** Four were
 settled with Marcus directly — *Hjemstavnen* and *Barokhaven* confirmed,
@@ -50,7 +61,23 @@ the forestry word. The remaining six he confirmed on 6 September.
 
 So **Danish is the worked example**, and it is worth handing to the next namer
 alongside the brief: it is the only language where the whole loop has run, and
-it produced both of the brief's corrections rather than merely passing.
+it produced two of the brief's four corrections rather than merely passing.
+
+**German and Japanese are drafted and unread.** Both are in `NAMING.md` now as
+worked examples with that said plainly, and the whole of the reasoning is in the
+two commit messages rather than in any file. What they were for:
+
+- **German tested the corrected cold frame note on a namer who is not Marcus,
+  and it held.** The note names *Frühbeet* as a forcing device and *Frühbeet*
+  was not reached for. The name went to *Wartebeet*, the holding.
+- **Japanese tested whether the hard four survive outside the northern-European
+  garden**, and they do. It has no knot garden and it has 枯山水, which is the
+  same move French makes with *parterre de broderie*.
+
+Between them they corrected the brief twice more and turned up a third rank it
+did not have — all three now written into `NAMING.md` and `commission.py`,
+because they are corrections to *method* rather than claims about a language,
+and a native reader is not the thing that would confirm them.
 
 ## What landed, and the two decisions inside it
 
@@ -145,7 +172,14 @@ at the end of a long session.
 
 ## Still open
 
-- **410 area names.** Danish is in; 41 languages to go. See *Next step*.
+- **400 area names.** Danish, German and Japanese are in; 39 languages to go,
+  and only Danish has been read. See *Next step*.
+- **Two names want a native reader before anything else does.** `Heimaterde`
+  for German `areaGround` — it carries the soil and the belonging, which is more
+  of the theme than any alternative manages, and it also sits near a register
+  some German readers will hear; Marcus chose to ship it and ask rather than
+  reach for *Muttererde* and lose the belonging. And Japanese `冬囲い`, which
+  names a practice where the other nine name places.
 - **Four app strings want native readers** — the release row, its alert, its
   confirm and its consequence, all `needs_review` in it/nb/nl/sv. Marcus wrote
   the Danish and read the French and Spanish.
