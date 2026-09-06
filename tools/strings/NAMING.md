@@ -78,6 +78,12 @@ the same idea, under its own name, which is not a translation of anything.
   *Winterquartier* for the same reason: a Winterquartier is very often the
   Gewächshaus. **When you have all ten, read them as a list and ask which two
   you could stand in at once.**
+- **And ten names that do not *look* alike.** The map is read at a glance, in a
+  small cell, and two names a letter apart are two cells a reader cannot tell
+  apart even when they mean quite different things. Arabic lost المشتى, the
+  wintering place, for `areaWaiting`, because `areaBeginnings` is المشتل and the
+  two differ in one final letter. **Read the ten down a page and look at them
+  rather than at what they mean.**
 
 ## Four of the ten cannot be translated, only renamed
 
@@ -99,8 +105,10 @@ in the place.
   vocabulary was available and the meaning was wrong.
 - **`areaPattern` — The Knot Garden.** A Tudor form. Use your own tradition's
   name for a garden laid out as a deliberate pattern — *parterre de broderie*,
-  *giardino all'italiana*, *chahar bagh*. Where there is none, name the pattern
-  rather than the hedge.
+  *giardino all'italiana*, *chahar bagh*. **The tradition may be shared and the
+  word still not be yours**: the fourfold garden runs from Andalusia to Delhi,
+  and *chahar bagh* is Persian, so Arabic names the same garden
+  الحديقة الرباعية. Where there is none, name the pattern rather than the hedge.
 - **`areaRenewal` — The Coppice. Look for the *stool* before you give up.** An
   English woodland practice: cutting a tree to the stool so that it grows back
   stronger. The obvious reach is your language's forestry word — *taillis*,

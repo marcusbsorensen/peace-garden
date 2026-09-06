@@ -384,8 +384,11 @@ AREAS = {
                 "reaches for *parterre de broderie*, which is its own tradition "
                 "under its own name and is the right answer rather than a "
                 "compromise. Use yours — giardino all'italiana, jardín de "
-                "arrayanes, chahar bagh. Where there is none, name the pattern "
-                "rather than the hedge.",
+                "arrayanes, chahar bagh. **The tradition may be shared and the "
+                "word still not be yours**: the fourfold garden runs from "
+                "Andalusia to Delhi, and chahar bagh is Persian, so Arabic "
+                "names the same garden الحديقة الرباعية. Where there is none, "
+                "name the pattern rather than the hedge.",
     },
     "areaLight": {
         "theme": "light",
