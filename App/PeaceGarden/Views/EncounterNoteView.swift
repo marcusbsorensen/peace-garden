@@ -94,7 +94,21 @@ struct EncounterNoteView: View {
                             }
                         }
                         Hairline()
-                        Text("\(EncounterNote.noteCharacterLimit - note.count) left")
+                        // **One is a word, and it cannot be a plural variation
+                        // here.** The numeral rule in `tools/strings/BRIEF.md`
+                        // asks for *One character left* rather than *1*, and
+                        // the obvious way to get it — writing the word into
+                        // the catalogue's `one` case — is wrong in French,
+                        // whose CLDR `one` category covers nought as well as
+                        // one. This counter reaches nought every time somebody
+                        // fills the note, so French would read *Un caractère
+                        // restant* on a full one.
+                        //
+                        // So one is its own string with no number in it, and
+                        // the plural keeps `%lld` for nought and for two up.
+                        Text(EncounterNote.noteCharacterLimit - note.count == 1
+                             ? "One character left"
+                             : "\(EncounterNote.noteCharacterLimit - note.count) left")
                             .chromeLabel(size: 10)
                             .foregroundStyle(Chrome.faint)
                     }

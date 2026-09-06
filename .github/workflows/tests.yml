@@ -80,3 +80,9 @@ jobs:
         run: python3 tools/preview/check_port.py
       - name: The site's own prose is commissioned, not drifting
         run: python3 tools/strings/check.py
+      # The numeral rule, which nothing enforced until 6 September and which
+      # had shipped *1 grown from a meeting* in eight languages by then. It
+      # reads the app's catalogue rather than the site's: the site's
+      # forty-two carry no numerals at all.
+      - name: One stays a word in the app
+        run: python3 tools/strings/app_check.py

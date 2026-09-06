@@ -62,6 +62,14 @@ struct GardenView: View {
             // English needs that at one — *1 grown from meetings* is wrong —
             // and every other language needs it at a different set of numbers
             // again.
+            //
+            // **The `one` case says the word rather than the numeral**, which
+            // the rule asks for and which is only safe here because nought
+            // cannot reach this string: the line below hands nought to
+            // *Nothing has been crossed yet* instead. French's `one` category
+            // is nought and one both, so on a string nought can reach — the
+            // note counter in `EncounterNoteView` — the word has to be chosen
+            // in Swift rather than written into the catalogue.
             Text(model.hybrids.isEmpty
                  ? "Nothing has been crossed yet"
                  : "\(model.hybrids.count) grown from meetings")
