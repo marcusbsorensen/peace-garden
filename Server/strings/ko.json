@@ -27,15 +27,15 @@
   "privacy3": null,
   "privacy4": null,
   "privacy5": null,
-  "areaWaiting": null,
-  "areaGround": null,
-  "areaBeginnings": null,
-  "areaRenewal": null,
-  "areaTravel": null,
-  "areaPeace": null,
-  "areaKinship": null,
-  "areaPattern": null,
-  "areaLight": null,
-  "areaMeeting": null
+  "areaWaiting": "겨울나기",
+  "areaGround": "고향",
+  "areaBeginnings": "모판",
+  "areaRenewal": "그루터기",
+  "areaTravel": "먼 길",
+  "areaPeace": "고요한 뜰",
+  "areaKinship": "과수원",
+  "areaPattern": "화계",
+  "areaLight": "유리온실",
+  "areaMeeting": "만남의 길목"
  }
 }

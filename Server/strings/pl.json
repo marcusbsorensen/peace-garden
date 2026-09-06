@@ -27,15 +27,15 @@
   "privacy3": null,
   "privacy4": null,
   "privacy5": null,
-  "areaWaiting": null,
-  "areaGround": null,
-  "areaBeginnings": null,
-  "areaRenewal": null,
-  "areaTravel": null,
-  "areaPeace": null,
-  "areaKinship": null,
-  "areaPattern": null,
-  "areaLight": null,
-  "areaMeeting": null
+  "areaWaiting": "Zimowisko",
+  "areaGround": "Ziemia rodzinna",
+  "areaBeginnings": "Rozsadnik",
+  "areaRenewal": "Odrośla",
+  "areaTravel": "Długa aleja",
+  "areaPeace": "Cichy ogród",
+  "areaKinship": "Sad",
+  "areaPattern": "Ogród regularny",
+  "areaLight": "Oranżeria",
+  "areaMeeting": "Skrzyżowanie"
  }
 }

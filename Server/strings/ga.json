@@ -27,15 +27,15 @@
   "privacy3": null,
   "privacy4": null,
   "privacy5": null,
-  "areaWaiting": null,
-  "areaGround": null,
-  "areaBeginnings": null,
-  "areaRenewal": null,
-  "areaTravel": null,
-  "areaPeace": null,
-  "areaKinship": null,
-  "areaPattern": null,
-  "areaLight": null,
-  "areaMeeting": null
+  "areaWaiting": "An suan",
+  "areaGround": "An dúchas",
+  "areaBeginnings": "Ceapach na síolta",
+  "areaRenewal": "Na buinneáin",
+  "areaTravel": "An siúlán fada",
+  "areaPeace": "An gairdín ciúin",
+  "areaKinship": "An t-úllord",
+  "areaPattern": "An snaidhm",
+  "areaLight": "An teach gloine",
+  "areaMeeting": "An crosbhealach"
  }
 }

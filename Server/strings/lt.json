@@ -27,15 +27,15 @@
   "privacy3": null,
   "privacy4": null,
   "privacy5": null,
-  "areaWaiting": null,
-  "areaGround": null,
-  "areaBeginnings": null,
-  "areaRenewal": null,
-  "areaTravel": null,
-  "areaPeace": null,
-  "areaKinship": null,
-  "areaPattern": null,
-  "areaLight": null,
-  "areaMeeting": null
+  "areaWaiting": "Žiemavietė",
+  "areaGround": "Gimtoji žemė",
+  "areaBeginnings": "Daigynas",
+  "areaRenewal": "Atžalos",
+  "areaTravel": "Ilgoji alėja",
+  "areaPeace": "Tylusis sodas",
+  "areaKinship": "Vaismedžių sodas",
+  "areaPattern": "Barokinis sodas",
+  "areaLight": "Oranžerija",
+  "areaMeeting": "Sankryža"
  }
 }

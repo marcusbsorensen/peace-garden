@@ -27,15 +27,15 @@
   "privacy3": null,
   "privacy4": null,
   "privacy5": null,
-  "areaWaiting": null,
-  "areaGround": null,
-  "areaBeginnings": null,
-  "areaRenewal": null,
-  "areaTravel": null,
-  "areaPeace": null,
-  "areaKinship": null,
-  "areaPattern": null,
-  "areaLight": null,
-  "areaMeeting": null
+  "areaWaiting": "La latencia",
+  "areaGround": "La tierra natal",
+  "areaBeginnings": "El semillero",
+  "areaRenewal": "Las cepas",
+  "areaTravel": "La alameda",
+  "areaPeace": "El jardín silencioso",
+  "areaKinship": "El vergel",
+  "areaPattern": "El jardín de arrayanes",
+  "areaLight": "El invernadero",
+  "areaMeeting": "El cruce"
  }
 }

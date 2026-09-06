@@ -27,15 +27,15 @@
   "privacy3": null,
   "privacy4": null,
   "privacy5": null,
-  "areaWaiting": null,
-  "areaGround": null,
-  "areaBeginnings": null,
-  "areaRenewal": null,
-  "areaTravel": null,
-  "areaPeace": null,
-  "areaKinship": null,
-  "areaPattern": null,
-  "areaLight": null,
-  "areaMeeting": null
+  "areaWaiting": "越冬圃",
+  "areaGround": "故土",
+  "areaBeginnings": "苗床",
+  "areaRenewal": "老桩",
+  "areaTravel": "林荫道",
+  "areaPeace": "静园",
+  "areaKinship": "果园",
+  "areaPattern": "回纹园",
+  "areaLight": "温室",
+  "areaMeeting": "交汇处"
  }
 }

@@ -27,15 +27,15 @@
   "privacy3": null,
   "privacy4": null,
   "privacy5": null,
-  "areaWaiting": null,
-  "areaGround": null,
-  "areaBeginnings": null,
-  "areaRenewal": null,
-  "areaTravel": null,
-  "areaPeace": null,
-  "areaKinship": null,
-  "areaPattern": null,
-  "areaLight": null,
-  "areaMeeting": null
+  "areaWaiting": "Зимовалиште",
+  "areaGround": "Родна груда",
+  "areaBeginnings": "Расадник",
+  "areaRenewal": "Изданци",
+  "areaTravel": "Дуги дрворед",
+  "areaPeace": "Тиха башта",
+  "areaKinship": "Воћњак",
+  "areaPattern": "Барокна башта",
+  "areaLight": "Стакленик",
+  "areaMeeting": "Укрштање"
  }
 }

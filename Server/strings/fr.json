@@ -27,15 +27,15 @@
   "privacy3": null,
   "privacy4": null,
   "privacy5": null,
-  "areaWaiting": null,
-  "areaGround": null,
-  "areaBeginnings": null,
-  "areaRenewal": null,
-  "areaTravel": null,
-  "areaPeace": null,
-  "areaKinship": null,
-  "areaPattern": null,
-  "areaLight": null,
-  "areaMeeting": null
+  "areaWaiting": "La dormance",
+  "areaGround": "La terre natale",
+  "areaBeginnings": "Le semis",
+  "areaRenewal": "La cépée",
+  "areaTravel": "La grande allée",
+  "areaPeace": "Le jardin silencieux",
+  "areaKinship": "Le verger",
+  "areaPattern": "Le parterre de broderie",
+  "areaLight": "La serre",
+  "areaMeeting": "Le croisement"
  }
 }

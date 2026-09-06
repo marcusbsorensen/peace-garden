@@ -27,15 +27,15 @@
   "privacy3": null,
   "privacy4": null,
   "privacy5": null,
-  "areaWaiting": null,
-  "areaGround": null,
-  "areaBeginnings": null,
-  "areaRenewal": null,
-  "areaTravel": null,
-  "areaPeace": null,
-  "areaKinship": null,
-  "areaPattern": null,
-  "areaLight": null,
-  "areaMeeting": null
+  "areaWaiting": "A dormência",
+  "areaGround": "A terra natal",
+  "areaBeginnings": "A sementeira",
+  "areaRenewal": "A touça",
+  "areaTravel": "A alameda",
+  "areaPeace": "O jardim silencioso",
+  "areaKinship": "O pomar",
+  "areaPattern": "O jardim de buxo",
+  "areaLight": "A estufa",
+  "areaMeeting": "O cruzamento"
  }
 }

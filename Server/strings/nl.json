@@ -27,15 +27,15 @@
   "privacy3": null,
   "privacy4": null,
   "privacy5": null,
-  "areaWaiting": null,
-  "areaGround": null,
-  "areaBeginnings": null,
-  "areaRenewal": null,
-  "areaTravel": null,
-  "areaPeace": null,
-  "areaKinship": null,
-  "areaPattern": null,
-  "areaLight": null,
-  "areaMeeting": null
+  "areaWaiting": "De koude bak",
+  "areaGround": "De geboortegrond",
+  "areaBeginnings": "Het zaaibed",
+  "areaRenewal": "De knotwilgen",
+  "areaTravel": "De lange laan",
+  "areaPeace": "De stille tuin",
+  "areaKinship": "De boomgaard",
+  "areaPattern": "Het parterre",
+  "areaLight": "De kas",
+  "areaMeeting": "De kruising"
  }
 }

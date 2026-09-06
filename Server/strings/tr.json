@@ -27,15 +27,15 @@
   "privacy3": null,
   "privacy4": null,
   "privacy5": null,
-  "areaWaiting": null,
-  "areaGround": null,
-  "areaBeginnings": null,
-  "areaRenewal": null,
-  "areaTravel": null,
-  "areaPeace": null,
-  "areaKinship": null,
-  "areaPattern": null,
-  "areaLight": null,
-  "areaMeeting": null
+  "areaWaiting": "Kışlak",
+  "areaGround": "Ana toprak",
+  "areaBeginnings": "Tohum yastığı",
+  "areaRenewal": "Kütük sürgünleri",
+  "areaTravel": "Uzun yol",
+  "areaPeace": "Sessiz bahçe",
+  "areaKinship": "Meyve bahçesi",
+  "areaPattern": "Girih bahçesi",
+  "areaLight": "Sera",
+  "areaMeeting": "Buluşma kavşağı"
  }
 }

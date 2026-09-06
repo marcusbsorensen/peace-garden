@@ -54,6 +54,11 @@ TERMS = json.loads((pathlib.Path(__file__).resolve().parent / "terms.json")
 # asked for, and descriptions arrive in alphabets.
 NAME_LIMIT = 34
 
+# How near two of the ten may be to each other before a reader glancing at
+# the map cannot tell which cell is which. Characters, not proportion —
+# see `area_problems_for`.
+NAME_DISTANCE = 3
+
 
 def problems_for(code, catalogue, source, claims=CLAIMS, group="prose"):
     """One group of commissioned prose.
@@ -197,7 +202,54 @@ def area_problems_for(catalogue, source):
             found.append(f"{', '.join(keys)}: all called {name!r}. Two areas "
                          "with one name is two cells a reader cannot tell "
                          "apart, and the map is how they know where they are")
+
+    # Two names that are not the same and are not *different enough*. Arabic
+    # drafted المشتى for `areaWaiting` beside المشتل for `areaBeginnings`: two
+    # words meaning quite unrelated things, one letter apart, in cells read at a
+    # glance.
+    #
+    # **Edit distance rather than similarity**, because the thing that matters
+    # is how much is left to tell them apart, not what fraction is shared.
+    # Bulgarian's *Тихата градина* and *Овощната градина* share the word for a
+    # garden and are three quarters identical by ratio; nine characters
+    # distinguish them and nobody will confuse the two. Three characters is the
+    # line, and past it this cannot decide — which is why `NAMING.md` asks for
+    # the ten to be read down a page and looked at.
+    #
+    # **Held against the length as well, or it is nonsense in Chinese.** A name
+    # there is two or three characters, so 温室 and 交汇处 — which share nothing
+    # at all — are three edits apart and would fire on a bare threshold. The
+    # distance has to be small *against what is there*: at most a third of the
+    # shorter name. In an alphabet that changes nothing, and in a logography it
+    # is the whole of the rule.
+    ordered = list(written.items())
+    for i, (key, value) in enumerate(ordered):
+        for other, second in ordered[i + 1:]:
+            apart = distance(value.strip(), second.strip())
+            shorter = min(len(value.strip()), len(second.strip()))
+            if apart <= NAME_DISTANCE and shorter >= apart * 3:
+                found.append(
+                    f"{key}, {other}: {value!r} and {second!r} are "
+                    "near-identical to look at. The map is read at a glance in "
+                    "a small cell, so two names this close are two cells a "
+                    "reader cannot tell apart even where they mean different "
+                    "things")
     return found
+
+
+def distance(a, b):
+    """Levenshtein, on the two names as they are drawn."""
+    if a == b:
+        return 0
+    previous = list(range(len(b) + 1))
+    for i, one in enumerate(a, 1):
+        row = [i]
+        for j, two in enumerate(b, 1):
+            row.append(min(previous[j] + 1,          # a character dropped
+                           row[j - 1] + 1,           # a character added
+                           previous[j - 1] + (one != two)))
+        previous = row
+    return previous[-1]
 
 
 def main():

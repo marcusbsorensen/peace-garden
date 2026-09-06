@@ -27,15 +27,15 @@
   "privacy3": null,
   "privacy4": null,
   "privacy5": null,
-  "areaWaiting": null,
-  "areaGround": null,
-  "areaBeginnings": null,
-  "areaRenewal": null,
-  "areaTravel": null,
-  "areaPeace": null,
-  "areaKinship": null,
-  "areaPattern": null,
-  "areaLight": null,
-  "areaMeeting": null
+  "areaWaiting": "Зімоўка",
+  "areaGround": "Родная зямля",
+  "areaBeginnings": "Расаднік",
+  "areaRenewal": "Параслі",
+  "areaTravel": "Доўгая алея",
+  "areaPeace": "Ціхі сад",
+  "areaKinship": "Пладовы сад",
+  "areaPattern": "Рэгулярны сад",
+  "areaLight": "Аранжарэя",
+  "areaMeeting": "Скрыжаванне"
  }
 }

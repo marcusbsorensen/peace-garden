@@ -27,15 +27,15 @@
   "privacy3": null,
   "privacy4": null,
   "privacy5": null,
-  "areaWaiting": null,
-  "areaGround": null,
-  "areaBeginnings": null,
-  "areaRenewal": null,
-  "areaTravel": null,
-  "areaPeace": null,
-  "areaKinship": null,
-  "areaPattern": null,
-  "areaLight": null,
-  "areaMeeting": null
+  "areaWaiting": "Zimovišče",
+  "areaGround": "Rodna zemlja",
+  "areaBeginnings": "Setvena greda",
+  "areaRenewal": "Poganjki",
+  "areaTravel": "Dolgi drevored",
+  "areaPeace": "Tihi vrt",
+  "areaKinship": "Sadovnjak",
+  "areaPattern": "Baročni vrt",
+  "areaLight": "Rastlinjak",
+  "areaMeeting": "Križišče"
  }
 }

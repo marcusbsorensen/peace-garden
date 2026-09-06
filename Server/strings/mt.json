@@ -27,15 +27,15 @@
   "privacy3": null,
   "privacy4": null,
   "privacy5": null,
-  "areaWaiting": null,
-  "areaGround": null,
-  "areaBeginnings": null,
-  "areaRenewal": null,
-  "areaTravel": null,
-  "areaPeace": null,
-  "areaKinship": null,
-  "areaPattern": null,
-  "areaLight": null,
-  "areaMeeting": null
+  "areaWaiting": "L-istennija",
+  "areaGround": "Art it-twelid",
+  "areaBeginnings": "Il-mixtla",
+  "areaRenewal": "Il-friegħi ġodda",
+  "areaTravel": "Il-vjal twil",
+  "areaPeace": "Il-ġnien kwiet",
+  "areaKinship": "Il-ġnien tal-frott",
+  "areaPattern": "Il-ġnien barokk",
+  "areaLight": "Is-serra",
+  "areaMeeting": "Salib it-toroq"
  }
 }
