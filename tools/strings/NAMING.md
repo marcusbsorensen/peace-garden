@@ -71,12 +71,24 @@ the same idea, under its own name, which is not a translation of anything.
   the one fault a reader cannot work around: the map is how you know where you
   are. `check.py` fails on it.
 
-## Three of the ten cannot be translated, only renamed
+## Four of the ten cannot be translated, only renamed
 
 Each of these names something that exists in English and may not exist where you
-are. **Do not invent a calque.** Reach for your own tradition; where there is
-none, name what happens in the place.
+are — or, worse, exists under a word that means the opposite. **Do not invent a
+calque.** Reach for your own tradition; where there is none, name what happens
+in the place.
 
+- **`areaWaiting` — The Cold Frame. The one that looks safe, and is not.** Your
+  language almost certainly has a word for this object, and it is very likely a
+  *forcing* device — Danish *mistbænk* and *drivbænk*, German *Frühbeet* — for
+  getting a plant going sooner than the season allows, often on the heat of
+  manure. **That is the opposite of this theme.** English gets away with the
+  name only because an unheated cold frame is also where a plant is hardened
+  off, held in a halfway house until it can go out, and that use may not travel
+  with the word where you are. **Keep the holding, not the frame.** Found in
+  Danish on 6 September 2026, on the first language commissioned — this section
+  had three entries until then, and the reason it is now four is that the
+  vocabulary was available and the meaning was wrong.
 - **`areaPattern` — The Knot Garden.** A Tudor form. Use your own tradition's
   name for a garden laid out as a deliberate pattern — *parterre de broderie*,
   *giardino all'italiana*, *chahar bagh*. Where there is none, name the pattern

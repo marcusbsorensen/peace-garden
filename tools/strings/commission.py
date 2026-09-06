@@ -155,10 +155,19 @@ AREAS = {
         "why": "A cold frame is where a plant is kept until it can go out. It "
                "is all three thirds at once: held back, for a long time, under "
                "somebody's eye.",
-        "note": "Several languages have no single word — Frühbeet, koudebak, "
-                "drivbænk are each a compound. If yours has none, name the "
-                "place a gardener would point at rather than describing the "
-                "frame's construction.",
+        "note": "**Cannot be translated, only renamed — and this is the one "
+                "that looks safe.** The nearest word in your language is very "
+                "likely a *forcing* device: Danish mistbænk and drivbænk, "
+                "German Frühbeet, all of them for getting a plant going sooner "
+                "than the season allows, often on the heat of manure. That is "
+                "the opposite of this theme. English gets away with the name "
+                "because an unheated cold frame is also where a plant is "
+                "hardened off — held back in a halfway house until it can go "
+                "out — and that use may not exist under the same word where "
+                "you are. **Keep the holding, not the frame.** Marcus caught "
+                "this in Danish on 6 September 2026, on the first language "
+                "commissioned.",
+        "renameable": True,
     },
     "areaGround": {
         "theme": "ground",
@@ -192,6 +201,7 @@ AREAS = {
                "gardening language has the thing.",
     },
     "areaRenewal": {
+        "renameable": True,
         "theme": "renewal",
         "sense": "Cutting so that it grows back, the turning year, and being "
                  "made whole.",
@@ -257,6 +267,7 @@ AREAS = {
                 "the whole point of the name.",
     },
     "areaPattern": {
+        "renameable": True,
         "theme": "pattern",
         "sense": "The counted, the fitted-together, and order named.",
         "thirds": [
@@ -287,6 +298,7 @@ AREAS = {
                 "house.",
     },
     "areaMeeting": {
+        "renameable": True,
         "theme": "meeting",
         "sense": "The moment, two that need each other, and the manners of it.",
         "thirds": [
@@ -382,6 +394,14 @@ def areas(catalogue, code, source):
     print("\n## The ten\n")
     print("In the order they are walked: the top row of the map left to right,")
     print("then the bottom row. Nothing about the map moves.\n")
+    # Derived rather than written down, so the count in NAMING.md has something
+    # to be checked against. It went from three to four the first time a
+    # language was actually commissioned, and a hand-written number would not
+    # have.
+    hard = [k for k, a in AREAS.items() if a.get("renameable")]
+    print(f"{len(hard)} of them cannot be translated at all, only renamed — "
+          f"{', '.join(f'`{k}`' for k in hard)}.")
+    print("Each says so under its own *Note*, with what to preserve.\n")
     for key, area in AREAS.items():
         print(f"### `{key}`\n")
         print(f"> {source[key]}\n")

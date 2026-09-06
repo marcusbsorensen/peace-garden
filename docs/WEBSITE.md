@@ -331,7 +331,7 @@ The two objections raised for the table both hold and neither is fatal:
   tradition of the same idea under its own name. The failure being predicted was
   a translator handed a translation brief — so the ten get a naming brief
   instead, `tools/strings/NAMING.md`, which opens by saying the two take
-  opposite instructions. Three of the ten are marked there as renameable rather
+  opposite instructions. Four of the ten are marked there as renameable rather
   than translatable, with what to preserve in each.
 
 **Two of the ten were renamed in English at the same time**, because the

@@ -21,15 +21,15 @@
   "damaged": "Dette link ankom beskadiget, så frøet kunne ikke læses.",
   "notASeed": "Det link bærer ikke et frø.",
   "newerVersion": "Dette frø kom fra en nyere version af Peace Garden.",
-  "areaWaiting": null,
-  "areaGround": null,
-  "areaBeginnings": null,
-  "areaRenewal": null,
-  "areaTravel": null,
-  "areaPeace": null,
-  "areaKinship": null,
-  "areaPattern": null,
-  "areaLight": null,
-  "areaMeeting": null
+  "areaWaiting": "Dvalebedet",
+  "areaGround": "Hjemstavnen",
+  "areaBeginnings": "Såbedet",
+  "areaRenewal": "Stævningsskoven",
+  "areaTravel": "Den Lange Allé",
+  "areaPeace": "Den Stille Have",
+  "areaKinship": "Frugthaven",
+  "areaPattern": "Barokhaven",
+  "areaLight": "Drivhuset",
+  "areaMeeting": "Krydsningen"
  }
 }

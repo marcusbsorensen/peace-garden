@@ -132,10 +132,12 @@ export const EN = Object.freeze({
   // own gardening already calls the thing, which for French is *parterre de
   // broderie* and is not a translation of anything.
   //
-  // Three of the ten cannot be translated at all, only renamed — the Knot
-  // Garden is Tudor, the Coppice is English woodland practice, and the Crossing
-  // holds two senses that most languages outside Europe have to choose between.
-  // The naming brief says so, area by area.
+  // Four of the ten cannot be translated at all, only renamed — the Knot
+  // Garden is Tudor, the Coppice is English woodland practice, the Crossing
+  // holds two senses that most languages outside Europe have to choose between,
+  // and the Cold Frame is the one that looks safe: most languages have a word
+  // for the object and it usually means a *forcing* frame, which is the
+  // opposite of what this area is for. The naming brief says so, area by area.
   //
   // They fall back to English one at a time like every other key, so a language
   // may arrive with four of them. `check.py` asks for the ten together anyway:
