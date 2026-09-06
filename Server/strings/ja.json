@@ -27,15 +27,15 @@
   "privacy3": null,
   "privacy4": null,
   "privacy5": null,
-  "areaWaiting": null,
-  "areaGround": null,
-  "areaBeginnings": null,
-  "areaRenewal": null,
-  "areaTravel": null,
-  "areaPeace": null,
-  "areaKinship": null,
-  "areaPattern": null,
-  "areaLight": null,
-  "areaMeeting": null
+  "areaWaiting": "冬囲い",
+  "areaGround": "ふるさと",
+  "areaBeginnings": "苗床",
+  "areaRenewal": "ひこばえ",
+  "areaTravel": "並木道",
+  "areaPeace": "静かな庭",
+  "areaKinship": "果樹園",
+  "areaPattern": "枯山水",
+  "areaLight": "温室",
+  "areaMeeting": "出会いの辻"
  }
 }
