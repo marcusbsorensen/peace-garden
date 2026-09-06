@@ -69,5 +69,19 @@
 	     together. It is only read while the Meet screen is open. -->
 	<key>NSMotionUsageDescription</key>
 	<string>Peace Garden feels the moment you tap your phone against someone else's, so a meeting has to be deliberate. Motion is only read while the Meet screen is open.</string>
+	<!-- Export compliance, and it has to be HERE rather than in project.yml.
+	     `INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO` was set there and was
+	     inert: those settings are merged only when GENERATE_INFOPLIST_FILE is
+	     YES, which in this project is true of the test target and not of the
+	     app, whose plist is this file. The key was absent from every build
+	     produced so far, so every upload would have landed as Missing
+	     Compliance and had to be answered by hand, per build.
+
+	     NO is the right answer. The app's own cryptography is SHA-256 through
+	     CryptoKit — hashing, not encryption. An exchange is encrypted by
+	     Multipeer's own transport, which is a platform facility. The app makes
+	     no network request of its own. -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>

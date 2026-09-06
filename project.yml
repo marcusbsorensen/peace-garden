@@ -77,7 +77,13 @@ targets:
         #
         # If anything here ever encrypts what it stores or sends, this is the
         # line that has to change with it.
-        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+        # **Superseded, and left here as a signpost rather than a setting.**
+        # This line did nothing: INFOPLIST_KEY_* is merged only when
+        # GENERATE_INFOPLIST_FILE is YES, which is true of the test target and
+        # not of the app. The key now lives in Resources/Info.plist, where the
+        # reasoning above is repeated. Do not "tidy" it out of the plist on the
+        # strength of this line.
+        # INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
 
   # The app's own tests. SeedCore has carried all the testing until now, which
   # was right while everything worth proving lived there — but the map from a
