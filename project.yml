@@ -55,8 +55,17 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: app.peacegarden
         INFOPLIST_FILE: App/PeaceGarden/Resources/Info.plist
         CODE_SIGN_ENTITLEMENTS: App/PeaceGarden/Resources/PeaceGarden.entitlements
+        # **The single source for both, and Resources/Info.plist substitutes
+        # them.** The plist used to hard-code 0.1 and 1 while these sat here
+        # looking authoritative, so a bump in one place would have shipped the
+        # other's value and nothing would have said so. Every other plist value
+        # is already a substitution; these two were the anomalies.
+        #
+        # 1.0 because a first public release conventionally is, and App Store
+        # Connect commonly refuses a 0.x first submission. The build number
+        # increments on every upload, including rejected ones.
         CURRENT_PROJECT_VERSION: 1
-        MARKETING_VERSION: "0.1"
+        MARKETING_VERSION: "1.0"
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1,2"  # iPhone and iPad
         ENABLE_USER_SCRIPT_SANDBOXING: YES

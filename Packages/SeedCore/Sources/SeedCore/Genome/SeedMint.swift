@@ -12,11 +12,23 @@ import UIKit
 /// cost nothing to fold in. Nothing here is reversible: the digest is one-way,
 /// and none of these values ever leave the device — only the resulting seed
 /// does, during an exchange.
+///
+/// **`uptime` was dropped on 6 September 2026, and the reason is a privacy
+/// manifest rather than a defect.** `ProcessInfo.systemUptime` is one of
+/// Apple's required-reason APIs, so using it obliges the app to declare
+/// `NSPrivacyAccessedAPICategorySystemBootTime` with one of a fixed list of
+/// reason strings — every one of which is worded for measuring elapsed time
+/// between events inside the app. None of them describes *an entropy
+/// ingredient*, so the declaration would have been a stretch made to fit a
+/// value that was already doing nothing: it sat beside 32 CSPRNG bytes, a wall
+/// clock, a vendor identifier, a locale, a time zone and a hardware string.
+///
+/// **No seed already minted is affected.** A seed is 32 stored bytes and a
+/// birthday; this changes only what goes into the next mint.
 public enum SeedMint {
     public struct Ingredients: Sendable {
         public var randomBytes: Data
         public var wallClock: Date
-        public var uptime: TimeInterval
         public var deviceModel: String
         public var vendorIdentifier: String
         public var localeIdentifier: String
@@ -26,7 +38,6 @@ public enum SeedMint {
         public init(
             randomBytes: Data,
             wallClock: Date,
-            uptime: TimeInterval,
             deviceModel: String,
             vendorIdentifier: String,
             localeIdentifier: String,
@@ -35,7 +46,6 @@ public enum SeedMint {
         ) {
             self.randomBytes = randomBytes
             self.wallClock = wallClock
-            self.uptime = uptime
             self.deviceModel = deviceModel
             self.vendorIdentifier = vendorIdentifier
             self.localeIdentifier = localeIdentifier
@@ -47,7 +57,6 @@ public enum SeedMint {
             var blob = Data()
             blob.append(randomBytes)
             blob.append(Data(String(wallClock.timeIntervalSince1970).utf8))
-            blob.append(Data(String(uptime).utf8))
             blob.append(Data(deviceModel.utf8))
             blob.append(Data(vendorIdentifier.utf8))
             blob.append(Data(localeIdentifier.utf8))
@@ -95,7 +104,6 @@ public enum SeedMint {
         return Ingredients(
             randomBytes: Data(random),
             wallClock: now,
-            uptime: ProcessInfo.processInfo.systemUptime,
             deviceModel: model,
             vendorIdentifier: vendor,
             localeIdentifier: Locale.current.identifier,

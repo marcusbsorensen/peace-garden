@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Peace Garden's privacy manifest.
+
+	     **Three of the four arrays are empty, and that is the whole design
+	     rather than an omission.** A plant is a seed plus a birthday, derived
+	     on the phone that holds it; there is no server, no account and no sync,
+	     and the app makes no network request of its own. docs/PHASES.md is
+	     explicit that anything leaving the phone is deliberately unbuilt.
+
+	     The one thing that does leave a phone is a seed, a name and two nonces,
+	     handed directly to one other phone during a meeting. That is
+	     device-to-device over Multipeer and reaches nobody else — not the
+	     developer, not a partner, not a host. Under Apple's definition
+	     "collect" means transmitting off device in a way that lets you or a
+	     partner access it, and nobody here can. So `NSPrivacyCollectedDataTypes`
+	     is empty, and the App Store Connect answer is Data Not Collected.
+
+	     `identifierForVendor` is read once, in `SeedMint`, and hashed into a
+	     seed. It is never transmitted as an identifier and never used to track
+	     anybody. It is the one line a reviewer might ask about, so it is named
+	     here rather than left to be discovered. -->
+
+	<key>NSPrivacyTracking</key>
+	<false/>
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array/>
+
+	<!-- Required-reason APIs. **One category, and it used to be two.**
+
+	     `ProcessInfo.systemUptime` was an entropy ingredient in `SeedMint` and
+	     would have obliged a `SystemBootTime` declaration whose every published
+	     reason string is worded for measuring elapsed time between events in
+	     the app. None described what it was doing. It was dropped on
+	     6 September 2026 rather than declared under a reason that did not fit —
+	     see the note on `SeedMint`. -->
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<dict>
+			<!-- Eleven `@AppStorage` properties in SettingsView, more in
+			     PlantStageView, Places and Sharing. All of it is this app's own
+			     preferences, read and written by this app alone, which is
+			     exactly what CA92.1 describes. -->
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>
