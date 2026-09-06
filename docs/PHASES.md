@@ -191,6 +191,121 @@ to meetings that have already happened.
 someone's phone has to keep growing the same way. Phase 2 adds a transport for
 seeds; it does not touch what a seed means.
 
+## The Winds — a third kind of meeting
+
+Marcus's, 6 September 2026, and unbuilt. Written down while it is fresh rather
+than built, because it changes what the app claims rather than adding to it.
+
+**The idea.** Somebody who cannot easily meet a person face to face — housebound,
+isolated, or simply not wanting to be seen — sets their seed onto The Winds. It
+waits there. Another seed, set free the same way by somebody else, meets it. The
+plant that comes of the pair stands in its own part of the shared garden, and it
+shows up in both people's apps.
+
+### The sentence that settles it
+
+> **The seeds have met, not the people.**
+
+That is Marcus's, and it is the whole design in six words. The worry it answers
+was that a plant grown by two strangers who never met would make the app's
+central claim false. It does not, because the claim is about a meeting and a
+meeting happened — between two seeds, in a place made for it.
+
+It also produces the taxonomy the app has been missing. **Three kinds of
+meeting**, and the app currently ships one and a half:
+
+| | Who is present | Who is addressed | Built |
+| --- | --- | --- | --- |
+| **The tap** | Two people, one room, phones touched | Each other | Yes |
+| **The link** | One person sending | Somebody they chose | Yes |
+| **The Winds** | One person casting | Nobody | No |
+
+The first two are meetings between people. The third is a meeting between seeds,
+and saying so is what keeps every existing sentence honest instead of quietly
+widening *meeting* until it means nothing.
+
+### What it costs in words
+
+Two strings, and they should be looked at before any code:
+
+- **`tagline` — "A plant grown from a meeting."** Survives untouched. A meeting
+  happened; the sentence never said between whom.
+- **`about1` — "Peace Garden makes a plant out of two people meeting."** Does
+  *not* survive. It is true of the tap and the link and false of The Winds. It
+  needs either a widening or a companion sentence, in forty-three languages.
+
+**The privacy page does not survive either.** `privacy1`, written 6 September,
+says there is *no server holding a copy*. The Winds is a server holding seeds.
+That page is six strings in forty-three languages and it would have to be
+rewritten before The Winds ships, not after.
+
+### The tension worth naming now
+
+It was proposed for people who would rather not share information, and the
+instinct is right — but the axis needs saying out loud, because it would be an
+unpleasant thing to notice later.
+
+The Winds removes **social** exposure: no meeting, no room, no being seen, and
+plausibly no name attached to anything. It increases **technical** exposure: a
+seed sits on a server until it pairs, which is the one thing phase 1 has
+refused to do at all. Those are different axes and both are real. A page
+offering The Winds has to be honest about the second while delivering the
+first.
+
+### Where the plants stand, and what The Winds is not
+
+**Not an eleventh area of the map.** The ten are a projection of the ten themes'
+own positions onto two principal components; an eleventh has no coordinates and
+would break the arrangement the arrow keys walk. The Wild Fields is already the
+precedent — a named place reached from the menu rather than a cell on the grid —
+and wind-grown plants belong somewhere like it.
+
+**The Winds and the Wild Fields are opposites and must not be confused.** The
+Wild Fields is where a plant is *released*, at the end of its life with you.
+The Winds is where a seed is *cast*, before there is a plant at all. One is
+letting go of something grown; the other is offering something ungrown.
+
+**A naming hazard, flagged rather than solved.** `docs/SEEDS-ON-THE-WIND.md`
+already uses that phrase for the *link* path — the second kind of meeting, not
+the third. If The Winds is the name for the third, that document's title now
+points at the wrong one, and a later reader will lose an hour to it.
+
+### What it needs that does not exist
+
+- **A server holding seeds in a queue.** Phase 1 has none, deliberately.
+- **A pairing rule**, which is the whole feel of the thing. Random, or in order
+  of arrival? That is the difference between a lottery and a queue, and people
+  can tell.
+- **A way back.** The plant appears in *both* apps, so either the server reaches
+  out or each app asks. Phase 1 never does either.
+- **An answer for the waiting.** What the app shows between casting and pairing,
+  and whether a seed that never pairs expires or waits forever. A promise the
+  app cannot keep is worse than no promise.
+
+### The part that is cheaper than it looks
+
+PHASES.md says of guest books: *this is user-generated content shown to
+strangers, which brings with it, and none of it is optional: reporting,
+blocking, moderation, a way to delete a book entry and a way to delete an
+account. Budget for that before building the pretty part.*
+
+**The Winds need not carry any of that.** If a wind-meeting is wordless — no
+name, no note, no guest book, nothing either person typed — then there is
+nothing to report and nothing to moderate. Two seeds meet and a plant exists.
+That makes the third kind of meeting potentially the **cheapest** social feature
+in the app, and it is cheap for the same reason it is kind: nobody is on show.
+
+That is an argument for keeping it wordless even when it would be easy to add a
+name, and it should be decided on purpose rather than drifted into.
+
+### Questions before any of it is built
+
+- Can a cast seed be withdrawn, and what happens to a pairing already made?
+- Does the same seed meet more than once, or is casting it spending it?
+- Does either person learn anything about the other at all? If not, what does
+  the plant's *with* line say, in a screen built around naming somebody?
+- Does the app say a seed is still waiting, and for how long is that bearable?
+
 ## Open questions
 
 - Does a plant ever die, or go to seed? A garden that only accumulates loses

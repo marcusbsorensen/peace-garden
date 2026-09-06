@@ -101,6 +101,45 @@ Open, and deliberately left rather than half-done:
 - **Nothing enforces it.** `check.py` is the place, and it needs each language's
   number words — the same list a sweep would need.
 
+## The Winds, and the counterparty
+
+Two ideas from Marcus on 6 September, one written up and one deliberately not
+started.
+
+**The Winds is written up in `docs/PHASES.md`** and nothing is built. A third
+kind of meeting: a seed cast to a place where it meets another cast seed, for
+somebody who cannot easily meet a person. It rests on his sentence — **the
+seeds have met, not the people** — which keeps `tagline` true and makes
+`about1` false, and which produces the taxonomy the app was missing: the tap,
+the link, The Winds. Read that section before touching any of it; the note
+names what it costs in words, in servers, and in the privacy page committed
+the same day.
+
+**The website as a counterparty is NOT link plumbing**, and this was got wrong
+once in conversation before being checked. A reply's ninth field is
+`result.checksum`, and `PollenLink` verifies it — `if let check, check !=
+result.checksum { return nil }` — so the site cannot hand back a reply without
+actually performing the cross. `mintlink.py` fills that field with random bytes
+and gets away with it because its links only need to *parse*.
+
+It is still smaller than the port `docs/WEBSITE.md` rules out: three
+domain-separated SHA-256 digests — `encounterID`, `cross`, `checksum` — and no
+genome, no traits, no geometry. `tools/reference/derivation_reference.py` is an
+independent implementation of exactly those and CI already gates it, so a JS
+port has a reference and a vector.
+
+**The order to build it in**, agreed rather than assumed:
+
+1. The three digests in JS, held against the Python reference and a pinned
+   vector **in CI**, before anything depends on them. This also closes the SEAM
+   `link.js` names in its own header — *nothing gates this yet*.
+2. The encoder, gated by round-tripping `PINNED` through parse-then-re-encode.
+3. The page, which is the easy part and the only part needing 43 languages.
+
+The link format is the one thing here that is permanent once a link has been
+sent to anybody, which is why step 1 comes first and why this was not started
+at the end of a long session.
+
 ## Still open
 
 - **410 area names.** Danish is in; 41 languages to go. See *Next step*.
