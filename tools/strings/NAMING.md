@@ -115,6 +115,23 @@ in the place.
   A word that means only the horticultural cross is the wrong half — this is the
   area the whole app is named for, and what happens there is two people.
 
+## Danish is done, and is worth looking at first
+
+`Server/strings/da.json` carries all ten, confirmed by a native reader on
+6 September 2026. It is the only complete set, and it is useful less as a model
+than as evidence of how the two hard cases actually resolve:
+
+| | | |
+| --- | --- | --- |
+| `areaWaiting` | **Dvalebedet** | No Danish *bænk* would do it — every one of them is a forcing frame. *Dvale* is dormancy, which is the theme's first third, so the name goes to the state rather than to the object |
+| `areaRenewal` | **Stubhaven** | A *stub* is the coppice stool itself and *have* is a garden. The forestry word *stævningsskov* was drafted first and was a step too far |
+| `areaPattern` | **Barokhaven** | Denmark has no knot-garden tradition, so the name goes to the tradition it does have |
+| `areaMeeting` | **Krydsningen** | Holds the intersection and the plant cross at once, so Danish is one of the languages that keeps the meeting rather than choosing |
+
+**Both corrections to this brief came out of that one commission**, which is why
+it was done before the other forty-one were ordered. Neither would have been
+found by ordering them all at once.
+
 ## When you are done
 
 Write your ten values into `Server/strings/<code>.json`, under `strings`,

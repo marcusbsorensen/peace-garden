@@ -42,12 +42,15 @@ Then a language outside the northern-European garden tradition, where three of
 the four hard ones have no local answer at all: Japanese or Arabic. `areaRenewal`
 and `areaMeeting` are the ones to watch there.
 
-**A full Danish read is still owed.** Three of the ten were settled with Marcus
-directly — *Hjemstavnen* and *Barokhaven* confirmed, *Dvalebedet* chosen once
-the cold frame came apart, and *Stubhaven* given for `areaRenewal` — a *stub*
-is the coppice stool itself, which is a garden word where I had reached for the
-forestry one. The other six were drafted and went unchallenged on a
-read-through rather than being separately confirmed.
+**Danish is done, and all ten are confirmed by a native reader.** Four were
+settled with Marcus directly — *Hjemstavnen* and *Barokhaven* confirmed,
+*Dvalebedet* chosen once the cold frame came apart, and *Stubhaven* given for
+`areaRenewal`, a *stub* being the coppice stool itself where I had reached for
+the forestry word. The remaining six he confirmed on 6 September.
+
+So **Danish is the worked example**, and it is worth handing to the next namer
+alongside the brief: it is the only language where the whole loop has run, and
+it produced both of the brief's corrections rather than merely passing.
 
 ## What landed, and the two decisions inside it
 
