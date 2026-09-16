@@ -1,287 +1,149 @@
-# Peace Garden — handover 6 September 2026 (evening)
-
-*Forty-one of the forty-two maps are named and live. One of the forty-one is
-confirmed by somebody who reads the language. **That ratio is now the whole of
-the remaining problem** — the naming is done and the reading has barely
-started.*
+# Peace Garden — handover 16 September 2026
 
 ## Goal
 
-Get the app and site launch-ready. The writing settled and translated, the mark
-final, and the work off this machine.
+Get the app and site launch-ready. Forty-one of the forty-two language maps are
+named and live; the naming is finished and **the reading has barely started**.
+That ratio is the whole of the remaining language problem.
 
 ## State
 
-`main` at `HEAD`, **pushed**. **peacegarden.app is live and carries all of
-it** — redeployed twice on 6 September, thirteen paths checked at the far end
-each time, and **all forty-one named maps read back off the origin and compared
-key by key against the local catalogues: no mismatches**. The Arabic map was
-walked live: `dir="rtl"`, the row starting at the right, one row height.
+`main` at `6971358`, pushed. peacegarden.app carries all of it, last deployed
+6 September: thirteen paths checked at the far end and all forty-one named maps
+read back off the origin key by key, no mismatches.
 
-**The privacy page went live in that deploy**, for the first time and in English
-for every reader. It is unlinked — nothing on `/g` or `/s` points at it — and it
-exists because a privacy URL is a mandatory App Store listing field. `/privacy`
-answers 200 `text/html`.
+**The working tree is not clean**, and holds three separate pieces of work, all
+verified and none committed:
 
-**Verified** — 97 SeedCore tests, 28 app tests, five Python checks; the ten
-areas walked in the browser in English, Danish and Arabic, including the
-fallback marking and the language switch; **the live map, on the origin**;
-**the release hold, driven end to end on a simulator** — 1 second leaves the
-plant, 4 seconds releases it and the garden falls back to *nothing has been
-crossed yet*.
+1. **The marks at the foot of the stage are bigger.** See below.
+2. **Two Danish corrections from a native reader.** `growTitle` and `growBody`
+   in `Server/strings/da.json`, and the seed-on-the-wind share text in
+   `Localizable.xcstrings`. `growBody` had drifted: the English says the plant
+   *stays the same for as long as you do*, a claim about time, and the Danish
+   had become *identisk for begge parter*, a claim about the two of you. The
+   reader's version restores it. *Fredshave* was left standing in all three app
+   keys — the site never translates the name, the app does, and that is a
+   separate decision nobody has taken.
+3. **The receptacle.** The join between a flower and the tip it grows from was
+   never closed; `docs/PLANT-FORMS.md` §"The one join that was never closed"
+   has the whole of it.
 
-**Unverified** — every translation; Italian,
-Norwegian, Dutch and Swedish throughout; and **410 of the 420 area names**,
-which are drawn, walked, live, and unread by anybody who speaks the language
-they are in. Danish is the only one a reader has looked at.
+**The latest build is on MBS iPhone**, installed 16 September from `6971358`.
 
-## Next step
+**Verified** — 97 SeedCore tests, 28 app tests, six Python checks (`app_check.py`
+is new and is the sixth), all re-run against the bigger marks. The numeral rule
+driven on the simulator at all three numbers: *One grown from a meeting*, *2
+grown from meetings*, *One character left* at 239 of 240, *0 characters left* at
+240. One packet link driven end to end on the origin.
 
-Steps 1 to 3 of the order agreed on 6 September are done. What is left of it:
+**The receptacle** — 97 SeedCore tests after raising the three pinned vertex
+counts in `testAFixedSeedAlwaysDrawsTheSameMesh`, whose widths and heights did
+not move; all six Python checks; and the join looked at through
+`tools/preview/preview.py`, which carries the same change so it cannot drift.
 
-**4. The iPhone SE layout.** Smallest supported device, never looked at, and it
-has to come before screenshots — a fault found afterwards means retaking them.
-`docs/LANGUAGES.md` carries what to watch.
+**The bigger marks, verified on an iPhone 17 Pro simulator** — collapsed,
+unrolled, and in *Marks and words*; English and Swedish, the widest language;
+Garden opened on the second tap, so the unroll-then-open path still works at the
+new geometry. `measure.swift` carries the row's real furniture and reports 0
+over at 402 points and at an SE's 375.
 
-**5. App Store screenshots.** `-pgOpen` was built for this and has now been used
-in anger, so the flow is known: `settings` → *Meet an imaginary gardener* →
-*Meet as gardener* → tap for the knock → *Plant in peace garden*. That is a real
-crossing and it leaves a real plant.
+**Unverified** — 410 of the 420 area names, and every translation. Danish is the
+only language anybody has read; `check.py` prints the count on every run.
 
-**6. The app strings marked `needs_review`**, once you know whether that is a
-stale-state clear or four more readers. **The handover was wrong about this and
-the file is the truth**: 37 strings across seven languages — fr 6, it 6, da 5,
-es 5, nb 5, nl 5, sv 5 — including the Danish Marcus wrote and the French and
-Spanish he read. Either the states were never cleared or the reading did not
-cover them. Five minutes to find out.
-
-Running underneath all of it: **the reads**, which is step 2 and is waiting on
-recruiting. `docs/COMMISSIONING-THE-READS.md`.
-
-## The forty-one that are named, and the one that is not
-
-**Danish is done, and all ten are confirmed by a native reader.** Four were
-settled with Marcus directly — *Hjemstavnen* and *Barokhaven* confirmed,
-*Dvalebedet* chosen once the cold frame came apart, and *Stubhaven* given for
-`areaRenewal`, a *stub* being the coppice stool itself where I had reached for
-the forestry word. The remaining six he confirmed on 6 September.
-
-So **Danish is the worked example**, and it is worth handing to a reviewer
-alongside the brief: it is the only language where the whole loop has run.
-
-**German, Japanese and Arabic were the pilots**, ordered one at a time to break
-the brief, and they did — five corrections between them and Danish. All three
-are written up in `NAMING.md` as worked examples with *unread* said plainly, and
-the reasoning is in their three commit messages.
-
-**The other thirty-seven went in five batches**, grouped by the problem they
-share. Two things came out of that which the brief still does not say:
-
-- **Three of the four languages told to choose a half of `areaMeeting` did not
-  have to.** Hungarian *kereszteződés*, Greek *διασταύρωση* and Latvian
-  *krustojums* each hold the junction and the plant cross in one word. The
-  note's list of eight is longer than the problem is, and only Korean, Chinese,
-  Hebrew, Finnish and Basque actually had to compound or choose.
-- **`areaWaiting` splits the languages in two.** Dutch *koude bak*, Swedish
-  *kallbänk* and Hungarian *hidegágy* are explicitly the cold member of a
-  cold/warm pair — the thing English is only by accident and Danish and German
-  are not at all. Dutch and Swedish took the object; Hungarian could not,
-  because its seedbed is an *-ágy* too.
-
-**Kalaallisut is deliberately unnamed**, and it is the one thing asked for on
-6 September that was not done. Greenlandic is polysynthetic, and it has no
-orchard, no glasshouse and no knot garden; every name would be a compound built
-from affixes that cannot be checked, and ten invented words would be obvious to
-every one of its readers. The map falls back to English per name, which is what
-that fallback is for.
-
-## The check that came out of it
-
-`check.py` gained the rule the Arabic commission found, and it is the one part
-of today's naming that will still be working in a year.
-
-**Two names can be different words for unrelated things and still be a letter
-apart** — المشتى beside المشتل — and nothing on this site could see it. It is
-measured as **edit distance rather than similarity**, because what matters is
-how much is left to tell two names apart: Bulgarian's *Тихата градина* and
-*Овощната градина* are three quarters identical by ratio and nine characters
-distinguish them.
-
-It also has to be **held against the length**, or it is nonsense in Chinese: a
-name there is two or three characters, so 温室 and 交汇处 — which share nothing —
-are three edits apart and fired on the first draft of the check. At most three
-characters, and at most a third of the shorter name.
-
-It found two faults on its first real run: Hebrew התרדמה beside האדמה, and
-Basque *Negutegia* beside *Berotegia*. Maltese *Il-mixtla* beside *Il-mixja
-twila* was caught by hand and sits under the threshold, which is why `NAMING.md`
-still asks for the ten to be read down a page and looked at.
-
-## What landed, and the two decisions inside it
-
-**The ten area names are catalogue keys in every language.** Marcus reversed the
-English-only rule on 5 September; this is the machinery, and the reasoning is in
-`docs/WEBSITE.md` §*Walking it*, which now carries the reversal rather than the
-argument it overturned.
+## Files
 
 | | |
 | --- | --- |
-| `Server/assets/js/strings.js` | ten keys, plus `AREA_KEYS` mapping theme → key |
-| `Server/strings/*.json` | 420 nulls. Absent falls back to English **per name**, so a language ships its map in pieces |
-| `tools/strings/NAMING.md` | the second brief — **new file, and the substantial one** |
-| `tools/strings/commission.py` | `--areas <code>`, and the `AREAS` table it prints from |
-| `tools/strings/check.py` | five checks on the ten, and its old rule kept on its surviving half |
-| `Server/assets/js/walk.js` | `areaName()`, and the `drawMap` fix below |
-| `docs/REVIEWING-A-LANGUAGE.md` | §3 gains the ten; §4's *areas are English* bullet reverses |
+| `App/PeaceGarden/Views/PlantStageView.swift` | the stage. `mark()` at :293 builds one foot mark and passes its insets at :316; the row is :224–233; the name/stage block above it ends `.padding(.bottom, 16)` at :220; the band's own `.padding(.bottom, 30)` at :255 |
+| `App/PeaceGarden/Views/Chrome.swift` | `ChromeIconLabel.glyphSize` default **28** at :1013, applied at :1047. `pressable()` at :525 makes the circle — `.padding(.horizontal, h)` and `.padding(.vertical, v)` under a `Capsule()`, both passed in |
+| `tools/type/measure.swift` | the row's furniture, per language, against 402 points or any width passed in |
+| `docs/COMMISSIONING-THE-READS.md` | how the forty-one get read, and why not MTurk |
+| `tools/strings/app_check.py` | the numeral rule, sixth CI check |
+| `tools/strings/NAMING.md` | the brief, now with five corrections its own commissions found |
+| `out/review/` | 43 sendable packets, minted 6 September against the live site |
 
-Two English names were settled at the same time, because 420 names get written
-against them:
+## Decisions made
 
-- **The Root Ground became The Home Ground.** The `ground` theme is soil (9), *a
-  place you are from* (9), *a kept place* (12) — two thirds belonging, and the
-  old name carried only the soil.
-- **The Orchard was questioned and kept.** It names `kinship` three times: every
-  tree is a graft (two plants made one — the first subtheme by meaning), every
-  tree was *chosen* rather than happened upon, and it bears over years. Marcus's
-  reading, now in the brief. `WEBSITE.md` had said nearly this since the names
-  were chosen and it had never reached a translator.
+- **Kalaallisut is deliberately unnamed.** Ten compounds built from affixes that
+  cannot be checked would be obvious to every one of its readers. It falls back
+  to English per name, which is what that fallback is for.
+- **MTurk is the wrong market** for the reads — pays per task, text work widely
+  routed through MT, pool absent for a third of the list. Prolific for the bulk,
+  one translator each for the nine small languages.
+- **`appNote` sharing a sentence with `about3` is not a fault.** They sit in
+  mutually exclusive sections of `/s`; no reader sees both.
+- **Enforcement of the numeral rule is not in `check.py`.** The site's forty-two
+  catalogues carry no numerals at all — the whole exposure is the app.
 
-## Also landed
+## The marks, done
 
-- **`Wyn` became `Vin` on 6 September.** Marcus asked what W and Y were doing
-  in names called Latin. Y is right — Latin took it from Greek to spell exactly
-  these loanwords. W is not, and `Wyn` was the only head rooted in neither Greek
-  nor Latin. Now L *vinculum*, a bond, at the same index; Wynaceae is Vinaceae.
-  It renamed the vine family's 4-merous plants and moved no geometry.
+The four marks at the foot of the stage were a 15-point glyph in a capsule 41 by
+39 — a target under the 44 a target is meant to be, and a drawing under half of
+its own circle, which is why the seed and the cog read as specks. Now **28 in a
+48-point circle**, which was two faults and so was raised as two numbers:
 
-## The numeral rule
+- `ChromeIconLabel.glyphSize` 15 → 28 (`Chrome.swift:1013`). It is used in one
+  place, the stage row, so the default is the row's size.
+- `pressable()` gained a `vertical:` (`Chrome.swift:525`), defaulting to the 12
+  it always had. The other nine callers are buttons inside panels and were left
+  where they were; growing every button in the app was not what the row needed.
+- The stage passes **10 all round** collapsed, and 18 horizontal once a word
+  unrolls (`PlantStageView.swift:316`). Ten and ten is what makes 28 into a
+  round 48; eighteen is because a 48-point capsule's cap curves through 24, so a
+  word set at ten would start inside its own end.
+- `measure.swift`'s furniture follows the real geometry, and `docs/LANGUAGES.md`
+  §Type carries the new per-language worst cases.
 
-**A quantity is a numeral from 2 up; one stays a word.** In `BRIEF.md`. Prose is
-not a quantity: *two people meeting* stays words, and so do the forty figurative
-places like *Where two paths cross*.
+**The gap above the row did not need raising.** `.padding(.bottom, 16)` at
+`PlantStageView.swift:220` is untouched: the capsule grows downward from a fixed
+top edge, so the clearance from the plant name never closed. The band is 9 points
+taller, which the plant gives up — looked at, and the framing holds.
 
-**Done, 6 September.** It was four keys and thirty-two strings rather than one,
-and two of the four could never reach one anyway — the shortest tempo is 3.7
-days. French is the reason the two live ones needed different fixes: its `one`
-category covers nought as well, so the note counter chooses its singular in
-Swift while the garden header, which nought cannot reach, carries the word in
-the catalogue.
+## Next step
 
-**`tools/strings/app_check.py` enforces it**, as the sixth CI check. Not in
-`check.py`, and not needing anybody's number words: the site's forty-two
-catalogues carry no numerals at all, so the whole exposure is the app, where the
-fault is *a plural `one` case that still carries the count specifier*.
+**The reading.** The first prose read of any language has now happened — Danish,
+by a native speaker, two corrections above. `Server/strings/da.json`'s `read`
+block still credits only the ten area names to me on 6 September, so
+`check.py` still says *1 of 42*. **It needs her name and today's date**; I have
+not invented either.
 
-## The Winds, and the counterparty
-
-Two ideas from Marcus on 6 September, one written up and one deliberately not
-started.
-
-**The Winds is written up in `docs/PHASES.md`** and nothing is built. A third
-kind of meeting: a seed cast to a place where it meets another cast seed, for
-somebody who cannot easily meet a person. It rests on his sentence — **the
-seeds have met, not the people** — which keeps `tagline` true and makes
-`about1` false, and which produces the taxonomy the app was missing: the tap,
-the link, The Winds. Read that section before touching any of it; the note
-names what it costs in words, in servers, and in the privacy page committed
-the same day.
-
-**The website as a counterparty is NOT link plumbing**, and this was got wrong
-once in conversation before being checked. A reply's ninth field is
-`result.checksum`, and `PollenLink` verifies it — `if let check, check !=
-result.checksum { return nil }` — so the site cannot hand back a reply without
-actually performing the cross. `mintlink.py` fills that field with random bytes
-and gets away with it because its links only need to *parse*.
-
-It is still smaller than the port `docs/WEBSITE.md` rules out: three
-domain-separated SHA-256 digests — `encounterID`, `cross`, `checksum` — and no
-genome, no traits, no geometry. `tools/reference/derivation_reference.py` is an
-independent implementation of exactly those and CI already gates it, so a JS
-port has a reference and a vector.
-
-**The order to build it in**, agreed rather than assumed:
-
-1. The three digests in JS, held against the Python reference and a pinned
-   vector **in CI**, before anything depends on them. This also closes the SEAM
-   `link.js` names in its own header — *nothing gates this yet*.
-2. The encoder, gated by round-tripping `PINNED` through parse-then-re-encode.
-3. The page, which is the easy part and the only part needing 43 languages.
-
-The link format is the one thing here that is permanent once a link has been
-sent to anybody, which is why step 1 comes first and why this was not started
-at the end of a long session.
-
-## Still open
-
-- **The ten Kalaallisut names**, and 410 of the 420 unread. See *Next step*.
-- **Six names to put in front of a reader before the others**, all live. German
-  `Heimaterde`, which carries the soil and the belonging and also sits near a
-  register some German readers will hear — Marcus chose to ship it and ask.
-  Japanese `冬囲い` and Turkish `Kütük sürgünleri`, where *sürgün* is also the
-  word for exile. Arabic `الخِلْفة`, which needs its diacritics or it reads as
-  offspring. Maltese `Il-friegħi ġodda` and Irish `Na buinneáin`, both for
-  `areaRenewal` and both the shakiest of their language's ten.
-- **The privacy page is live in English and null in all 42.** It is a third
-  commission, `commission.py --privacy <code>`, and none of it has been ordered.
-- **Four app strings want native readers** — the release row, its alert, its
-  confirm and its consequence, all `needs_review` in it/nb/nl/sv. Marcus wrote
-  the Danish and read the French and Spanish.
-- **The language review is 2 screens of 6.** Screens 3 (no name), 4 (come back),
-  5 (broken) and 6 (the garden) are unwalked in every language.
-  `out/review/INDEX.md` has 43 sendable packets — **and screen 6 is now a
-  different job**, since the map is a thing to judge rather than a thing to
-  skip. The packets predate that.
-- **The passage banks are not all "its own writers"** — Danish drew Marcus
-  Aurelius, Spanish drew a Catalan tradition, where §4 promises otherwise.
-- **Request logging on `/s`** is a 20i control-panel setting, not done.
-- **The Wild Fields is phase 2**, reachable from the menu as a named place.
-  `docs/PHASES.md` carries it as a requirement on the plot service.
-- The iPhone SE layout, and the passage's own direction in the app for an RTL
-  reader with no bank — both in `docs/LANGUAGES.md`, both unlooked at.
-- **App Store screenshots.** `-pgOpen` was built for it and has never been used.
-- **`appNote` shares its first sentence with `about3`.**
-- `#area-name` holds stale text on a plant page. It is inside a `hidden`
-  section so nobody sees or hears it; pre-existing, noted while working nearby.
+Forty-one named maps, one read. That ratio is still the whole of the remaining
+language problem and nothing above changes it.
+`docs/COMMISSIONING-THE-READS.md` is the plan: Prolific for the bulk, one
+translator each for the nine small languages, and `out/review/` already holds 43
+sendable packets minted against the live site on 6 September. 410 of the 420
+area names are still unverified.
 
 ## Traps
 
-- **`AREA_KEYS` must stay below `export const KEYS` in `strings.js`.**
-  `commission.py` reads the English by slicing between `export const EN` and
-  `export const KEYS` and matching `key: "value"`, so an object of ten string
-  values above that line is parsed as ten more catalogue entries whose English
-  is the word `areaWaiting`. There is a note on the declaration saying so.
-- **A held control *can* be driven, and the old trap here was wrong.** It said
-  an injected press arrives and is released in the same instant. True of a
-  `simctl` tap; false of a touch path with per-sample delays, which holds a
-  contact down as long as it is told to —
-  `mcp__Claude_Code_iOS_Simulator__control` `touch_path`, dt_ms up to 1000 a
-  sample. Proved on the release row, 6 September. **A thumb is still owed for
-  the judgement**: whether 3 seconds is right rather than long, and whether a
-  drifting thumb hands the touch to the scroll view. A synthesised path holds
-  perfectly still, which is the case a hand does not test.
-- **Never `pkill -f CoreSimulator`.** It wedges the whole simulator subsystem and
-  every boot then times out at 60s. Recovery is
-  `killall -9 com.apple.CoreSimulator.CoreSimulatorService`, which launchd
-  restarts.
-- **`.htaccess` does nothing on peacegarden.app.** A `RewriteRule` that never
-  fires looks exactly like a file being served.
+- **The marks do not answer injected taps** — SceneKit's gesture recogniser, not
+  injection generally. Use `xcrun simctl launch <udid> app.peacegarden -pgOpen
+  settings|garden|seed|meet`.
+- **To get a plant on the simulator**: settings → scroll to the foot → *Meet an
+  imaginary gardener* → *Meet as gardener* → tap for the knock → *Plant in peace
+  garden*. That is a real crossing and leaves a real plant.
+- **A plant page opens with its chrome hidden** when Menu bar is *Hidden*, the
+  default. One tap on the background reveals it.
+- **`xcodebuild` to the phone fails over Wi-Fi** — the developer disk image will
+  not mount. Build `generic/platform=iOS` and install with `xcrun devicectl
+  device install app --device <id> <path>.app`. That works.
+- **Never `pkill -f CoreSimulator`.** Recovery is `killall -9
+  com.apple.CoreSimulator.CoreSimulatorService`.
+- **`mintlink.py --packets` now refuses a localhost base.** It used to obey one
+  and write forty-three unsendable files that looked perfect.
 - **A 200 with the wrong `Content-Type` is this site's whole failure mode.** Run
   `tools/deploy.sh --check` rather than trusting an upload.
-- **`/api/count` 404s locally** and the garden says every plant in it is
-  invented. That is the plot service being absent, not a fault.
-- **A plant created under a developer clock shift is born at the shifted now**,
-  so wind on again afterwards to age it. `xcrun simctl spawn <udid> defaults
-  write app.peacegarden developer.clockShift -float <seconds>`.
-- **The marks at the foot of the stage do not answer injected taps** — that
-  one still holds, and it is the SceneKit gesture recogniser rather than
-  anything about injection generally: SwiftUI buttons, rows and scroll views on
-  the same screen all answer fine. Use `xcrun simctl launch <udid>
-  app.peacegarden -pgOpen settings|garden|seed|meet`.
-- **A plant page opens with its chrome hidden** when Menu bar is *Hidden*,
-  which is the default. One tap on the background reveals the name, the
-  encounter and the release row; without it the screen is a plant and a Close.
-- **`cd` persists between Bash calls.** Always pass absolute `--package-path`.
-- **Render a night-opening plant at its own peak hour**, or every flower is a
-  shut bud. `tools/preview/plant_model.py` has the tempo.
-- **A term match must be on the head of a word, not the whole of it.**
-- **Catalogue keys are nested under `strings`**, not at the top level.
+- **`/api/count` 404s locally** — the plot service being absent, not a fault.
+- **`AREA_KEYS` must stay below `export const KEYS` in `strings.js`**, or
+  `commission.py` parses it as ten catalogue entries.
+- **`cd` persists between Bash calls.** Pass absolute `--package-path`.
+- **The mesh *is* pinned**, and not where you would look for it:
+  `PlantFormTests.testAFixedSeedAlwaysDrawsTheSameMesh`, not `PlantMeshTests`.
+  Any change to the geometry moves three vertex counts. Its own note says it is
+  a change-detector rather than a contract, so raising them is the right answer.
+- **`tools/preview/plant_model.py` is a hand port of SeedCore and has drifted
+  three times.** Change geometry in one and change it in the other in the same
+  breath; its README is emphatic about why.
+- **The shell here is zsh, which does not split an unquoted `$var`.** A loop over
+  `"tools/site/export.py --check"` hands python one filename with a space in it
+  and reports a failing check that passes when it is run on its own.

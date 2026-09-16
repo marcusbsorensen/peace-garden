@@ -490,7 +490,41 @@ public struct PlantBuilder {
         let openAngle = 1.05 + Float(bloom.curl) * 0.35
         let open = closedAngle + (openAngle - closedAngle) * Float(growth.bloomOpen)
 
+        // The flower stands off the tip it grows from, so that a bud is a body
+        // rather than a cone closing on a point.
         let origin = sample.position + axis * petalLength * 0.08
+
+        // The receptacle, which is that stand-off closed.
+        //
+        // Everything the flower is made of is built from `origin`, and the stem
+        // or stalk under it ends at `sample.position`. Nothing was drawn across
+        // the gap. The sepal collar spanned it — those are laid from
+        // `sample.position` for exactly that reason — but `bloom.hasSepals` is
+        // a seven-in-ten chance, so three plants in ten had an open join.
+        //
+        // It went unnoticed because it is usually covered by accident. The
+        // centre's rim is a flat circle several times wider than the stand-off
+        // is tall, so on an upright head it overhangs the tip and the stalk
+        // reads as disappearing behind the flower. A head that nods far enough
+        // carries that rim away sideways and leaves the join in the open.
+        //
+        // The same answer the foot of the stem and the base of every stalk
+        // already take: a shallow dome in the stem's own material. It rises
+        // along `axis` rather than along the stem's tangent, because that is
+        // the line the stand-off was taken along — so it spans the gap at every
+        // angle a head can nod to. Narrower than the centre above it, so it is
+        // inside the flower's own footprint and is never the thing you see.
+        builder.addDome(
+            role: .stem,
+            centre: sample.position,
+            axis: axis,
+            side: refA,
+            radius: petalLength * 0.10,
+            flatten: 0.9,
+            rows: 4,
+            columns: max(5, genome.stem.sides - 2)
+        )
+
         let perLayer = max(3, bloom.petalCount)
 
         for layer in 0..<max(1, bloom.layers) {

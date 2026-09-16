@@ -94,10 +94,17 @@ final class PlantFormTests: XCTestCase {
         // an umbel, `vector-b` a lotus, `vector-c` a succulent — which was luck
         // rather than design, but it is worth keeping if these are ever
         // renumbered.
+        //
+        // **Raised for the receptacle**, the dome that closes the join between
+        // a flower and the tip it grows from. Every bloom gained one, so
+        // `vector-a`'s umbel — which carries eight of them — moved by 192 and
+        // the two solitary heads by 28 and 24. The widths and heights did not
+        // move at all, which is the number worth reading here: the dome sits
+        // inside the flower's own footprint and does not reach past it.
         let expected: [String: (vertices: Int, width: Int, height: Int)] = [
-            "vector-a": (9583, 46, 73),
-            "vector-b": (3409, 46, 75),
-            "vector-c": (3808, 26, 46)
+            "vector-a": (9775, 46, 73),
+            "vector-b": (3437, 46, 75),
+            "vector-c": (3832, 26, 46)
         ]
 
         for (label, want) in expected.sorted(by: { $0.key < $1.key }) {

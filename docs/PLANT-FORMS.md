@@ -102,6 +102,48 @@ step is out of line with the typical step, rather than comparing against a fixed
 threshold. A fixed number is either looser than a pop or tighter than the growth
 itself, and the first two attempts at it were each in turn.
 
+## The one join that was never closed
+
+Three joins on this plant get a lid, and the reasons are written beside each:
+the foot of the stem, the base of every stalk, and the growing point, which
+closes itself by running its radius out to nothing. **The join between a flower
+and the tip it grows from got nothing**, and it is the one join a reader is
+looking straight at.
+
+`addBloom` stands the flower off its tip by eight per cent of a petal —
+`origin = sample.position + axis * petalLength * 0.08` — so that a bud is a body
+rather than a cone closing on a point. Petals and centre are all built from
+`origin`; the stem or stalk ends at `sample.position`; nothing was drawn between
+them. The sepal collar spanned it where there was one, which is why the sepals
+are laid from `sample.position` rather than from `origin` — but
+`chance("bloom.hasSepals", 0.7)` means **three plants in ten had an open join**.
+Across 400 seeds, 108 of the 357 bloom-bearing plants had no collar.
+
+**It survived this long because it is usually covered by accident.** `addDome`
+draws the upper hemisphere only, so the centre's rim is a flat circle at
+`origin`, and that circle is two to six times wider than the stand-off is tall.
+On an upright head it overhangs the tip and the stalk reads as disappearing
+behind the flower rather than stopping short of it. A head that nods far enough
+carries the rim away sideways and leaves the join in the open — seven of those
+108 nod past 1.2 radians.
+
+The gap itself is not small where it does show: a median of 1.45 per cent of the
+plant's height, 3.9 at the ninetieth centile and 7.5 at the worst, which on a
+plant drawn seven hundred points tall is ten points, twenty-seven, and fifty-two.
+
+**The fix is the answer the other three joins already take**: a shallow dome in
+the stem's own material at `sample.position`, drawn for every bloom. It rises
+along the bloom's own `axis` rather than the stem's tangent, because that is the
+line the stand-off was taken along, so it spans the gap at any angle a head can
+nod to; and it is narrower than the centre above it, so it sits inside the
+flower's own footprint. On the seventy per cent that have a collar it is under
+it and is never seen.
+
+`testAFixedSeedAlwaysDrawsTheSameMesh` moved, which is the test doing its job:
+vertex counts up by 192, 28 and 24 — one receptacle per bloom, and `vector-a`'s
+umbel carries eight. **Every width and height was unchanged**, which is the
+number worth reading: the dome reaches nowhere the plant did not already reach.
+
 ## How it was checked
 
 | | |

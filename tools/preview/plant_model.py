@@ -1042,7 +1042,20 @@ def _add_bloom(builder, genome, sample, scale, growth, index):
     closed_angle = 0.08
     open_angle = 1.05 + genome.curl * 0.35
     openness = closed_angle + (open_angle - closed_angle) * growth["bloomOpen"]
+    # The flower stands off the tip it grows from, so that a bud is a body
+    # rather than a cone closing on a point.
     origin = sample["position"] + axis * petal_length * 0.08
+
+    # The receptacle, which is that stand-off closed. Everything the flower is
+    # made of is built from `origin`, and the stem or stalk under it ends at
+    # `sample["position"]`; nothing was drawn across the gap unless the plant
+    # happened to have a sepal collar, which is a seven-in-ten chance. It rises
+    # along `axis` rather than the stem's tangent, because that is the line the
+    # stand-off was taken along, so it spans the gap at any nod.
+    builder.add_dome("stem", sample["position"], axis, ref_a,
+                     petal_length * 0.10, flatten=0.9, rows=4,
+                     columns=max(5, genome.sides - 2))
+
     per_layer = max(3, genome.petalCount)
 
     for layer in range(max(1, genome.layers)):
