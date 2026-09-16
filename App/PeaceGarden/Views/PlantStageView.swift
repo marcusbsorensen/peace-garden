@@ -277,8 +277,10 @@ struct PlantStageView: View {
     /// English, 460 in Danish and Norwegian, 505 in Swedish, 508 in Dutch, 509
     /// in Spanish, 516 in French and 533 in Italian — a third over the screen,
     /// with no size of phone that would have taken it. One at a time leaves
-    /// 207 points for a word, and the widest of the thirty-two is Swedish
-    /// INSTÄLLNINGAR at 119.
+    /// 169 points for a word, and the widest of the thirty-two is Swedish
+    /// INSTÄLLNINGAR at 119. Thirty-eight of the 207 this row used to leave
+    /// went to making the marks bigger; the widest language still clears by
+    /// fifty on a 402-point screen and by twenty-three on an SE's 375.
     ///
     /// **Tap unrolls, tap the same one again to open; a long press opens
     /// straight away.** Two taps to reach the garden is one more than the row
@@ -306,9 +308,15 @@ struct PlantStageView: View {
             axis: menuStyle.namesEveryMark ? .vertical : .horizontal
         )
         .frame(maxWidth: menuStyle.namesEveryMark ? .infinity : nil)
+        // Ten all round puts a 28-point glyph in a circle of 48 — round,
+        // because the two insets are the same, and over the forty-four a target
+        // is meant to be. Eighteen once a word unrolls: the cap of a 48-point
+        // capsule curves through twenty-four, so a word set at ten would start
+        // inside its own end.
         .pressable(
             isProminent: isProminent,
-            horizontal: menuStyle.namesEveryMark ? 4 : (showsTitle ? 16 : 13)
+            horizontal: menuStyle.namesEveryMark ? 4 : (showsTitle ? 18 : 10),
+            vertical: 10
         )
         .contentShape(Capsule())
         .onTapGesture {

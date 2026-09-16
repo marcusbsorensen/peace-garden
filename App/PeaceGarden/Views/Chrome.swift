@@ -515,9 +515,20 @@ extension View {
 
     /// `horizontal` is for a control with nothing but a glyph in it, where the
     /// standing inset makes a wide oval out of something that should be round.
-    func pressable(isProminent: Bool = false, horizontal: CGFloat = 18) -> some View {
+    ///
+    /// `vertical` is for the one row that has to stand taller than a line of
+    /// text in a capsule — the marks along the foot of the stage, which are
+    /// this app's navigation rather than a button inside a panel somebody is
+    /// already reading. It is a parameter rather than a new number here because
+    /// the other nine callers are that second kind, and growing every button in
+    /// the app was not what the row needed.
+    func pressable(
+        isProminent: Bool = false,
+        horizontal: CGFloat = 18,
+        vertical: CGFloat = 12
+    ) -> some View {
         padding(.horizontal, horizontal)
-            .padding(.vertical, 12)
+            .padding(.vertical, vertical)
             .overlay(
                 Capsule().strokeBorder(
                     // The prominent one is brighter, so the hierarchy survives
@@ -977,9 +988,29 @@ struct ChromeIconLabel: View {
     let glyph: AnyShape
     let title: LocalizedStringKey
     var tint: Color = Chrome.muted
-    /// Two points over the thirteen the spec asked for. Eight teeth on a ring
-    /// at the hairline weight do not survive thirteen: see `CogShape`.
-    var glyphSize: CGFloat = 15
+    /// Twenty-eight, and the circle it sits in is forty-eight.
+    ///
+    /// It was fifteen, in a capsule 41 by 39, and every one of those numbers
+    /// was wrong for what this row does. The four marks along the foot of the
+    /// stage are the whole of this app's navigation, and they were smaller than
+    /// the minimum a target is meant to be — under a plant that fills the
+    /// screen, they read as a footnote to it rather than as the way out of it.
+    ///
+    /// **The circle and the drawing in it were raised separately**, because
+    /// they are two faults. Forty-eight is the circle, which is a target. The
+    /// drawing is more than half of it, where fifteen in forty-one was under a
+    /// half and the two smallest marks — a seed at 0.70 of its frame, a cog at
+    /// 0.84 — were a third of theirs, adrift in a ring with nothing to do.
+    /// `markBox` keeps that ordering; this makes it visible.
+    ///
+    /// Fifteen was already two over the thirteen the spec asked for, because
+    /// eight teeth on a ring at the hairline weight do not survive thirteen:
+    /// see `CogShape`. That was a floor, and it was being used as a size.
+    ///
+    /// The stroke does not follow it up. `Chrome.monoline` is one width at
+    /// every size, so the marks are airier than they were as well as bigger,
+    /// which is the weight a row this size wants.
+    var glyphSize: CGFloat = 28
     /// How far the word stands off the mark once it unrolls.
     ///
     /// Seven suits a mark whose ink stops short of its own box. A mark that

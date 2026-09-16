@@ -251,8 +251,12 @@ Everything in this section was specified one way, drawn at true size, found not
 to work, and drawn another. The reasons are recorded because all four sound
 wrong until you see them at fifteen points.
 
-- **The cog is a ring with notches, at 15pt rather than 13.** Teeth drawn as
-  outlines merge into blobs: at this size a tooth is about as wide as it is
+- **The cog is a ring with notches, at 15pt rather than 13.** Fifteen is the
+  floor this drawing had to survive, and it is no longer the size the cog is
+  used at: the marks along the foot of the stage are drawn at 28 now, in a
+  48-point circle — see `ChromeIconLabel.glyphSize`. Fifteen is still live for
+  the seed and the recycling turn, which a Settings row draws at that size.
+  Teeth as outlines merge into blobs: at this size a tooth is about as wide as it is
   long, so its two flanks and the arc across the top fill in and the mark is a
   washer with bumps. Inverting the emphasis — a small ring with long teeth —
   gives the brightness glyph instead, which arrives before the cog does. A

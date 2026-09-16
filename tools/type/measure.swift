@@ -101,19 +101,21 @@ struct Row {
 }
 
 let rows: [Row] = [
-    // PlantStageView: three marks collapsed (15pt glyph + 2×13 padding each),
-    // three 6pt gaps, and one unrolled (15 glyph + 7 gap + 2×16 padding).
+    // PlantStageView: three marks collapsed (28pt glyph + 2×10 padding each),
+    // three 6pt gaps, and one unrolled (28 glyph + 7 gap + 2×18 padding).
     Row(name: "stage · one mark unrolled", available: phone,
-        furniture: 3 * 41 + 3 * 6 + 54, keys: ["Seed"]),
+        furniture: 3 * 48 + 3 * 6 + 71, keys: ["Seed"]),
     Row(name: "stage · one mark unrolled", available: phone,
-        furniture: 3 * 41 + 3 * 6 + 54, keys: ["Meet"]),
+        furniture: 3 * 48 + 3 * 6 + 71, keys: ["Meet"]),
     Row(name: "stage · one mark unrolled", available: phone,
-        furniture: 3 * 41 + 3 * 6 + 54, keys: ["Garden"]),
+        furniture: 3 * 48 + 3 * 6 + 71, keys: ["Garden"]),
     Row(name: "stage · one mark unrolled", available: phone,
-        furniture: 3 * 41 + 3 * 6 + 54, keys: ["Settings"]),
+        furniture: 3 * 48 + 3 * 6 + 71, keys: ["Settings"]),
     // The arrangement that was tried and abandoned, kept as the calibration
-    // point: four unrolled at once measured about 440 on a phone, and the model
-    // here says 449. Everything else below is trusted on the strength of that.
+    // point: four unrolled at once measured about 440 on a phone against a
+    // model of 449 — at the 15pt glyph and 2×16 padding the row wore then, so
+    // this one row keeps the old furniture. Everything else below is trusted on
+    // the strength of that calibration.
     Row(name: "stage · all four unrolled (reference)", available: phone,
         furniture: 4 * 54 + 3 * 6,
         keys: ["Seed", "Meet", "Garden", "Settings"], reference: true),

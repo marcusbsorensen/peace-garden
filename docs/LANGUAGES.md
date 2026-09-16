@@ -244,10 +244,19 @@ of phone that would have taken it:
 | | en | da | nb | sv | nl | es | fr | it |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | four at once | 449 | 460 | 461 | 505 | 508 | 509 | 516 | 533 |
-| one at a time, worst | 269 | 309 | 309 | 314 | 303 | 286 | 286 | 302 |
+| one at a time, worst | 307 | 347 | 347 | 352 | 341 | 324 | 324 | 340 |
 
-One at a time leaves 207 points for a word. The widest of the thirty-two is
+One at a time leaves 169 points for a word. The widest of the thirty-two is
 Swedish INSTÄLLNINGAR at 119. **Nothing in the mark row is close.**
+
+**Thirty-eight of those points were spent on making the marks bigger**, and the
+row was measured again rather than assumed. The glyph went from 15 to 28 and the
+circle round it from 41 by 39 to 48 by 48 — a target that was under the minimum
+and a drawing that was under half of its own circle. The furniture in
+`measure.swift` is the row's real geometry and moves with it, so the numbers in
+the table above are what the row costs now, not what it cost when the marks were
+small. Swedish still clears by fifty on a 402-point screen, and by twenty-three
+on an SE's 375.
 
 **One row overflowed, and it was the tightest thing in the app.** *Not now* and
 *Log places* sit side by side inside 40-point margins, which leaves about 250
