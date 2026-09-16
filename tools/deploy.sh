@@ -100,8 +100,12 @@ check_path() {
 
 # The four with no extension. `application/octet-stream` on any of them means
 # a file is sitting at that path and nginx is serving it before index.php.
+check_path /                                       200 text/html
 check_path /s                                      200 text/html
 check_path /g                                      200 text/html
+check_path /garden                                 200 text/html
+check_path /download                               200 text/html
+check_path /wild                                   200 text/html
 check_path /t                                      200 text/html
 check_path /.well-known/apple-app-site-association 200 application/json
 

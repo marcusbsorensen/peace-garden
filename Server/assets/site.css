@@ -672,6 +672,33 @@ body[data-loading]:not([data-ready]) .page {
   text-align: center;
 }
 
+/* Links, which this site had none of until the front page.
+   Every path here was reached by typing it or by following one minted
+   elsewhere, so an anchor had never been drawn and took the browser's own:
+   underlined, and in a blue belonging to no palette in this project. The rule
+   is the chrome's rule — the ink at two weights and nothing else carrying
+   meaning by colour. A link is distinguished by where it sits and what it
+   says, and underlined only when a reader reaches for it. */
+a {
+  color: var(--ink);
+  text-decoration-color: var(--hairline);
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color 200ms ease-out;
+}
+
+a:hover,
+a:focus-visible {
+  text-decoration-color: currentColor;
+}
+
+/* An anchor wearing the button's capsule is a button to a reader, and a
+   capsule with a line under its word is neither. The underline comes back on
+   hover as it does everywhere else, drawn on the border instead. */
+a.quiet-button {
+  display: inline-block;
+  text-decoration: none;
+}
+
 .quiet-button {
   padding: 8px 16px;
   border: 1px solid var(--hairline);
