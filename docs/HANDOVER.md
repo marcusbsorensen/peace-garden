@@ -195,6 +195,23 @@ reasoning is written down. Don't redo them by accident.
 - **The link payload rides in the URL fragment**, which never reaches a server.
 - **Bundle identifier `app.peacegarden`.** Reverse-DNS of the domain, matching
   the house pattern. Permanent once App Store Connect sees a build.
+- **SKU `app.peacegarden`**, the same string. Apple shows it to nobody; it is
+  the column in your own sales reports that says which app a row belongs to, so
+  the only thing it has to be is recognisable a year later. Permanent too.
+- **App Store name `Peace Garden: Two Seeds Meet`**, with the subtitle *No two
+  plants are alike.* **The name under the icon is still `Peace Garden`** and is
+  not affected: that is `CFBundleDisplayName`, which has no uniqueness rule. The
+  Store name does, and *Peace Garden* alone was taken. A prefix plus a qualifier
+  is the safe form — App Review wants the two names close enough not to confuse
+  anybody, and starting with the real one is as close as it gets.
+  - *Meet* rather than *Cross* because it is the app's own verb, the word on the
+    mark in the stage row. *Meeting* was ruled out: it is the truest word for
+    what this is and in a Store title it reads as calendars and video calls.
+  - Name and subtitle are 28 and 24 of their 30 characters, and both are indexed
+    for search, so the mechanism sits in one and the claim in the other.
+  - `Peace Garden: 2 Seeds, 1 Plant` fits exactly and was rejected on the app's
+    own terms: `tools/strings/app_check.py` exists to stop this app printing a
+    numeral where a word will do, in all forty-two languages.
 - **SceneKit, not RealityKit.** The core emits plain vertex buffers, so moving
   is a rewrite of `PlantSceneBuilder.swift` and nothing else.
 
