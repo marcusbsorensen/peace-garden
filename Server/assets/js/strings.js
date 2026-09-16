@@ -134,6 +134,35 @@ export const EN = Object.freeze({
   // tools/strings/BRIEF.md: *it stays on this phone* rather than *it never
   // leaves*. A negative reads as a warning even when it was meant as a
   // reassurance, and this reader is already slightly on guard.
+  // The front, at `/`, and the two pages it opens onto.
+  //
+  // **Eight keys, and the count was the whole design.** This file opens by
+  // defending the low tens, and a front page is the easiest place in a project
+  // to spend forty of them. So the front says what this is using `tagline` and
+  // `about1`–`about3`, which were written for the seedless `/s` and are already
+  // commissioned in forty-one languages — a reader arriving at the domain and a
+  // reader arriving at a spent link are asking the same question, and it was
+  // already answered. What is left is a heading and a sentence for each of the
+  // three places the front page can send somebody.
+  //
+  // The ten areas are not listed here either. `AREA_KEYS` already names them in
+  // every language the map has, so the front page reads them from there.
+  gardenTitle: "The garden",
+  gardenBody:
+    "Ten areas, each one a theme, laid out as a map you can walk. Every plant standing in the garden was grown from a meeting, and the words under it come from the reader's own language rather than a translation of somebody else's.",
+  downloadTitle: "The app",
+  downloadBody:
+    "Peace Garden is for iPhone and iPad. A seed is drawn once, on one device, and the plant that grows from it is nobody else's.",
+  wildTitle: "The Wild Fields",
+  wildBody:
+    "Somewhere to send a seed when there is nobody in the room. A seed set down here waits for another to arrive, and what grows belongs to whoever was at both ends of it.",
+  // Said once and used on both of the pages that are not built yet, because two
+  // ways of saying *not yet* is one more than a reader needs.
+  notYet: "Not open yet.",
+  // What the front page's three links are called where a link needs a word of
+  // its own rather than the heading above it.
+  goOn: "Go on",
+
   privacyTitle: "Privacy",
   privacy1:
     "Peace Garden keeps what you grow on your own phone. There is no account, nothing to sign in to, and no server holding a copy.",

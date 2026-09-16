@@ -1,6 +1,7 @@
 // A page that is only words.
 //
-// `/privacy` and `/support` have no seed, no plant and no garden — they are
+// `/`, `/download`, `/wild` and `/privacy` have no seed, no plant and no
+// garden — they are
 // prose and a language chooser, which is the smallest thing this site does.
 // `page.js` and `walk.js` both open by settling four facts about a language and
 // then get on with their real work; this module is that opening and nothing
@@ -12,7 +13,7 @@
 // fetching them.
 
 import { direction, manifest, negotiate, readable, remember, tracks, uppercases } from "./languages.js";
-import { loadStrings } from "./strings.js";
+import { AREA_KEYS, loadStrings } from "./strings.js";
 
 const el = (id) => document.getElementById(id);
 
@@ -46,6 +47,19 @@ async function settle() {
     state.strings.dress(node, node.dataset.s);
   }
   el("language-label").textContent = state.strings.t("language");
+
+  // The front page names the ten areas under its garden paragraph. They are
+  // read out of `AREA_KEYS` rather than written into the page, because the map
+  // already carries them in every language that has been named — so this list
+  // is in the reader's own words on the same day the map is, and on no other
+  // day. Absent on the pages that have no such list, which is most of them.
+  const areas = el("areas");
+  if (areas) {
+    const named = Object.values(AREA_KEYS).map((key) => state.strings.t(key));
+    // The reader's own list separator would be a nineteenth commission for a
+    // row of names nobody reads as a sentence. A middle dot is not a word.
+    areas.textContent = named.join(" · ");
+  }
 
   const select = el("language");
   if (!select.options.length) {

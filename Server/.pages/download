@@ -1,0 +1,75 @@
+<!doctype html>
+<!--
+  The app.
+
+  **It cannot be a download page yet, and it says so rather than implying it.**
+  No build has been uploaded to App Store Connect, so there is no App Store URL
+  to link and no released version to name. `notYet` is the whole of the honest
+  answer today, and the version below is the archive that exists rather than an
+  app anybody can install.
+
+  The Android question is answered here because it is the second thing somebody
+  asks and the answer is short. It is deliberately not a promise.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Peace Garden — the app</title>
+    <meta name="description" content="Peace Garden is for iPhone and iPad." />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/icon-180.png" />
+  </head>
+
+  <body>
+    <div class="pool" aria-hidden="true"></div>
+
+    <main class="page" id="page">
+      <header class="masthead">
+        <a href="/"
+          ><img class="mark" src="/assets/icon.svg" alt="" width="44" height="44"
+        /></a>
+        <span class="wordmark">Peace Garden</span>
+      </header>
+
+      <h1 class="heading" data-s="downloadTitle"></h1>
+
+      <section class="about">
+        <p class="body" data-s="downloadBody"></p>
+        <p class="body" data-s="notYet"></p>
+      </section>
+
+      <!--
+        Not a string, and so not a commission: a version is a number in every
+        language. It names the build that exists, which is not the same claim as
+        a version somebody can install, and the paragraph above has already made
+        that difference.
+      -->
+      <p class="notice body">1.0 (1) · iPhone and iPad · iOS 17 and later</p>
+
+      <footer class="foot">
+        <label class="chooser">
+          <span class="label" id="language-label"></span>
+          <span class="chooser__field">
+            <select id="language" class="chooser__select"></select>
+            <!-- Monoline, even weight, round free ends, per BRAND.md §3.2. -->
+            <svg class="chooser__mark" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path
+                d="M4 6.5 L8 10.5 L12 6.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.25"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+        </label>
+      </footer>
+    </main>
+
+    <script type="module" src="/assets/js/plain.js"></script>
+  </body>
+</html>

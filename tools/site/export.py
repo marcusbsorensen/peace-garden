@@ -313,6 +313,34 @@ def rendered():
     return files
 
 
+def route_problems():
+    """Whether the two route tables still say the same thing.
+
+    `Server/index.php` is what the host serves and `tools/site/serve.py` is what
+    a page is looked at through, and each names its paths one by one so that a
+    stray file cannot become a page by accident. The cost of naming them twice
+    is that they can disagree, and a path in one and not the other is a page
+    that works in exactly one of the two places it is meant to — which is worse
+    than one that works in neither, because it is the half that is checked that
+    passes.
+
+    Read out of the source rather than imported: `index.php` is PHP and this is
+    Python, and the only thing they can share is the text.
+    """
+    php = (SERVER / "index.php").read_text()
+    here = (ROOT / "tools/site/serve.py").read_text()
+    in_php = set(re.findall(r"^\s*'(/[^']*)' => \[", php, re.M))
+    in_serve = set(re.findall(r'^\s*"(/[^"]*)": \(', here, re.M))
+    found = []
+    for path in sorted(in_php - in_serve):
+        found.append(f"{path} is served by index.php and not by serve.py — "
+                     f"add it to PAGES in tools/site/serve.py")
+    for path in sorted(in_serve - in_php):
+        found.append(f"{path} is served by serve.py and not by index.php — "
+                     f"add it to ROUTES in Server/index.php")
+    return found
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true",
@@ -325,6 +353,7 @@ def main():
 
     if args.check:
         problems = [f"{path} was never generated" for path in stale]
+        problems += route_problems()
         for relative, text in sorted(files.items()):
             path = SERVER / relative
             if not path.exists():

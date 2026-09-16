@@ -38,15 +38,23 @@ import socketserver
 
 ROOT = pathlib.Path(__file__).resolve().parents[2] / "Server"
 
-# Path served -> file under `.pages/`, and the type it is. The same four rows as
-# `ROUTES` in Server/index.php, and they have to stay the same four: this is the
-# thing that shows a page has stopped being a page before a host does.
+# Path served -> file under `.pages/`, and the type it is. **The same rows as
+# `ROUTES` in Server/index.php, and they have to stay the same rows**: this is
+# the thing that shows a page has stopped being a page before a host does. A row
+# added to one file and not the other is a page that works in exactly one of the
+# two places it is meant to work, which is worse than a page that works in
+# neither — `export.py --check` compares the two so that cannot go unnoticed.
 #
 # Named one by one rather than inferred from "has no dot", so a stray file
 # cannot start being served as a page by accident.
 PAGES = {
+    "/": ("index", "text/html"),
     "/s": ("s", "text/html"),
     "/g": ("g", "text/html"),
+    # The same file as `/g`, under the word rather than the letter.
+    "/garden": ("g", "text/html"),
+    "/download": ("download", "text/html"),
+    "/wild": ("wild", "text/html"),
     "/t": ("t", "text/html"),
     "/privacy": ("privacy", "text/html"),
     "/.well-known/apple-app-site-association": (
@@ -57,10 +65,13 @@ PAGES = {
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def send_head(self):
-        # A directory listing publishes the whole tree, which is not what any
-        # host would do and not what should be looked at while working.
-        if self.path in ("/", ""):
-            self.path = "/g"
+        # An empty path is the root, the same normalisation `index.php` makes.
+        # The root used to be sent to `/g` from here, because it had no page of
+        # its own and a directory listing publishes the whole tree. It has one
+        # now, and it is in `PAGES` below like every other path — a rule written
+        # into the handler is a rule the table cannot be read to find.
+        if self.path == "":
+            self.path = "/"
         # nginx refuses dot-directories, so `.pages/s` is not a second address
         # for the seed page on the live host. It should not be one here either.
         if self.path.startswith("/.pages"):

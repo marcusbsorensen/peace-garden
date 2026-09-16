@@ -1,0 +1,151 @@
+<!doctype html>
+<!--
+  The front.
+
+  This path answered 403 until 16 September 2026 — the host's default for a
+  directory with nothing in it. It was a deliberate open question rather than an
+  oversight (docs/WEBSITE.md), and the answer turned out to be forced from two
+  directions at once: an App Store listing needs a support URL a reviewer can
+  open, and a domain whose whole purpose is carrying links looks broken when the
+  domain itself refuses to load.
+
+  **It is built almost entirely out of words that already existed.** `tagline`
+  and `about1`–`about3` were written for a `/s` with no seed in it, and a reader
+  who types the domain is asking the same question as a reader who opens a spent
+  link. They are commissioned in forty-one languages already; a front page
+  written from scratch would have been a fresh commission in forty-two.
+
+  Static, like every other page here: no analytics, no font CDN, no third-party
+  anything.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Peace Garden</title>
+    <meta name="description" content="A plant grown from a meeting." />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/icon-180.png" />
+  </head>
+
+  <body>
+    <div class="pool" aria-hidden="true"></div>
+
+    <main class="page" id="page">
+      <header class="masthead">
+        <img class="mark" src="/assets/icon.svg" alt="" width="44" height="44" />
+        <span class="wordmark">Peace Garden</span>
+      </header>
+
+      <h1 class="heading" data-s="tagline"></h1>
+
+      <section class="about">
+        <p class="body" data-s="about1"></p>
+        <p class="body" data-s="about2"></p>
+        <p class="body" data-s="about3"></p>
+      </section>
+
+      <!--
+        The three places this page can send somebody, in the order they become
+        true for a reader: the garden is open now, the app is what you would
+        install, and the Wild Fields is not running yet and says so.
+      -->
+      <section class="invitation">
+        <h2 class="label" id="garden-title" data-s="gardenTitle"></h2>
+        <p class="body" data-s="gardenBody"></p>
+        <!--
+          The ten area names are read out of `AREA_KEYS` rather than written
+          here, so the list is in the reader's own language wherever the map
+          already is. `plain.js` fills it.
+        -->
+        <p class="body quiet" id="areas"></p>
+        <p>
+          <!--
+            Three links on this page carry the same word, which is one word rather
+            than three commissions — but three links with the same name and three
+            destinations is a list a screen reader cannot tell apart. The heading
+            above each one is already the difference, so it is named as part of
+            the link rather than written out again.
+          -->
+          <a
+            class="quiet-button"
+            href="/garden"
+            id="garden-go"
+            data-s="goOn"
+            aria-labelledby="garden-go garden-title"
+          ></a>
+        </p>
+      </section>
+
+      <section class="invitation">
+        <h2 class="label" id="download-title" data-s="downloadTitle"></h2>
+        <p class="body" data-s="downloadBody"></p>
+        <p>
+          <!--
+            Three links on this page carry the same word, which is one word rather
+            than three commissions — but three links with the same name and three
+            destinations is a list a screen reader cannot tell apart. The heading
+            above each one is already the difference, so it is named as part of
+            the link rather than written out again.
+          -->
+          <a
+            class="quiet-button"
+            href="/download"
+            id="download-go"
+            data-s="goOn"
+            aria-labelledby="download-go download-title"
+          ></a>
+        </p>
+      </section>
+
+      <section class="invitation">
+        <h2 class="label" id="wild-title" data-s="wildTitle"></h2>
+        <p class="body" data-s="wildBody"></p>
+        <p>
+          <!--
+            Three links on this page carry the same word, which is one word rather
+            than three commissions — but three links with the same name and three
+            destinations is a list a screen reader cannot tell apart. The heading
+            above each one is already the difference, so it is named as part of
+            the link rather than written out again.
+          -->
+          <a
+            class="quiet-button"
+            href="/wild"
+            id="wild-go"
+            data-s="goOn"
+            aria-labelledby="wild-go wild-title"
+          ></a>
+        </p>
+      </section>
+
+      <p class="notice body">
+        <a href="/privacy" data-s="privacyTitle"></a>
+      </p>
+
+      <footer class="foot">
+        <label class="chooser">
+          <span class="label" id="language-label"></span>
+          <span class="chooser__field">
+            <select id="language" class="chooser__select"></select>
+            <!-- Monoline, even weight, round free ends, per BRAND.md §3.2. -->
+            <svg class="chooser__mark" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path
+                d="M4 6.5 L8 10.5 L12 6.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.25"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+        </label>
+      </footer>
+    </main>
+
+    <script type="module" src="/assets/js/plain.js"></script>
+  </body>
+</html>

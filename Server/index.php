@@ -46,8 +46,18 @@ declare(strict_types=1);
  * that directory by accident; four lines of table cannot.
  */
 const ROUTES = [
+    // The front. It answered 403 until 16 September, which was the host's
+    // default for a directory with nothing in it and read as a broken domain
+    // to anybody who typed the name rather than following a link.
+    '/' => ['index', 'text/html; charset=utf-8'],
     '/s' => ['s', 'text/html; charset=utf-8'],
     '/g' => ['g', 'text/html; charset=utf-8'],
+    // The same file as `/g`, under the word rather than the letter. `/g` is in
+    // links already minted and cannot be retired; this is what the front page
+    // points at, because a path somebody may read aloud should be a word.
+    '/garden' => ['g', 'text/html; charset=utf-8'],
+    '/download' => ['download', 'text/html; charset=utf-8'],
+    '/wild' => ['wild', 'text/html; charset=utf-8'],
     '/t' => ['t', 'text/html; charset=utf-8'],
     // A privacy notice is a mandatory App Store listing field, so this path is
     // load-bearing for the submission rather than decorative. See
@@ -66,14 +76,10 @@ const ROUTES = [
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 $path = is_string($path) ? rawurldecode($path) : '/';
 
-// The root answers 403 here because it answered 403 before this file existed,
-// and whether peacegarden.app/ is anything at all is an open question in
-// docs/WEBSITE.md rather than one to settle by accident. Without this, `/`
-// would fall to the index and quietly become whatever this script returns.
-if ($path === '/' || $path === '') {
-    http_response_code(403);
-    header('Content-Type: text/html; charset=utf-8');
-    exit("<!doctype html><title>403</title>\n");
+// An empty path is the root, and the root is a page now. Normalised here
+// rather than given its own entry, so the table stays one path per line.
+if ($path === '') {
+    $path = '/';
 }
 
 if (!isset(ROUTES[$path])) {
