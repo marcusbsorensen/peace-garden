@@ -387,6 +387,50 @@ and crossfaded. That way the hour does two different things to a plant at once,
 both of them real: it moves the light on its leaves, and it opens or closes its
 flower through `GrowthModel.diurnalFactor`.
 
+### What the ground is made of
+
+The first worlds coloured themselves by height alone — a lerp from a low green
+to a high one — which is why they read as tinted relief maps rather than as
+places. **Landscape colour barely follows height.** It follows:
+
+| | |
+| --- | --- |
+| **Slope** | The big one. Steep ground sheds soil, so it is rock and scree; gentle ground holds it, so it is grass. A mountain is grey because it is steep, not because it is high. |
+| **Moisture** | Which follows concavity. Water runs into hollows, so a dish is lush and a ridge is bleached. Read off the heightmap's Laplacian, which costs nothing once the heightmap exists. |
+| **Height** | For the two lines that genuinely are heights: snow, and water. |
+| **Patchiness** | At two scales. A hillside is not a gradient; cover comes in stands and drifts with edges. |
+| **Aspect** | A little. A slope turned away from the light stays damp, and damp is where moss lives. |
+
+So the ground is a mix of named **materials** — grass at three wetnesses, moss,
+heather, bracken, reed, three rocks, scree, two soils, sand, shingle, snow, two
+waters, tarmac, gravel, box — and each world says which it is made of and what
+governs where they sit. Alpine's snow is above the line **and** gentle enough to
+hold it, which is what stops a snowcap looking painted on. The ravine's walls
+carry strata, which is what a gorge actually shows you and half the reason to
+cut one.
+
+**The saturation ceiling is enforced, not trusted.** `Chrome`'s rule is that the
+plant is the only saturated thing on screen, and a lawn in full chroma takes that
+away. Every world's colour passes through one function on the way out that pulls
+anything over the ceiling back to it, so a material added later cannot quietly
+break the rule by being written too bright.
+
+### The night is a night, and the moon is tonight's moon
+
+Stars, fixed rather than drifting — the one thing that would give away that they
+are drawn. They come out as the sun goes down and the plot occludes its own patch
+of sky, because it is drawn over them.
+
+**The moon is in the phase it is actually in**, from one synodic month against a
+known new moon. The lit part of a disc is a semicircle plus a semi-ellipse whose
+x-radius is `R cos(phase)` — *signed*, so it bulges outward for a crescent and
+inward for a gibbous, and the two cases are one piece of arithmetic rather than
+two drawings. Waning is the same shape mirrored. The dark limb keeps a trace of
+earthshine rather than going black.
+
+It ignores the orbit's ellipticity and is a few hours out at worst, which is
+finer than a drawing nineteen pixels across can show.
+
 ### One light model, written once
 
 `orbit.py` defines the light and exports it; the page reads those same numbers.
@@ -461,6 +505,10 @@ Not settled. Recorded so that it has to be settled.
   names.** Terrain and cultivation are different kinds of world and want
   opposite rules.
 - **The light is hemispheric, and there is no pool of light on a world.**
+- **The ground is a mix of named materials, mixed by slope, moisture and
+  patchiness** rather than by height, and the saturation ceiling is enforced in
+  code.
+- **The night has stars, and the moon carries its real phase for the date.**
 - **The sun and moon orbit the plot and cast**, so the ground is shipped as
   height and colour per cell and lit where it is drawn, rather than pre-rendered.
   The plants are rendered at eight points round the clock.
