@@ -297,7 +297,17 @@ kinder, which is the tie-breaker in this app.
 
 The plants are 0.46 to 1.36 metres and that is real: the geometry is SeedCore's.
 Fourteen of them on the one-metre square this started as would be a thicket
-rather than a garden. The mockup's plot is 5.2 metres square, which holds
+rather than a garden.
+
+**That range is the mockup's fourteen crossings and not the range.** Measured
+across a hundred and twenty, the tallest is **2.36 metres** — three quarters of
+a metre above anything this document had seen, and nearly half the width of the
+plot it stands on. It was found by a test written to check that a sprite frame
+was big enough, which is exactly the kind of thing no render would have shown:
+the first fixed frame cut the head off that plant, and a plant with its head cut
+off looks like a tall plant. `PlotTests` now holds both the per-plant frame and
+the headroom the plot reserves against the measured range, so the next time a
+genome grows past it something says so. The mockup's plot is 5.2 metres square, which holds
 fourteen with room to walk between them. Whatever the growth rule turns out to
 be, it is a rule about keeping that relationship as the count rises.
 
@@ -520,14 +530,23 @@ is where they put it, which is the point, and it means a plant that has just com
 into bloom has no way to say so.
 
 This is the design problem the grid was already solving, and it is the one that
-will be dropped without anybody noticing. It needs an answer before the grid is
-replaced rather than after. The cheapest honest one is that the light finds it: a
-plant that has changed since the last visit stands in its own small pool, the way
-a plant on the stage already does, and the pool goes out once it has been looked
-at. That keeps the answer inside the vocabulary the app already has, and adds no
-badge, no count and no red dot.
+would be dropped without anybody noticing.
 
-Not settled. Recorded so that it has to be settled.
+**Settled 17 September: the light finds it.** A plant that has changed since it
+was last opened stands in its own small pool, the way a plant on the stage
+already does, and the pool goes out once the plant has been opened. That keeps
+the answer inside the vocabulary the app already has, and adds no badge, no count
+and no red dot.
+
+Two things it turns on, both in `GardenVisits`:
+
+- **Opened, not merely on screen.** A pool that went out because the garden was
+  looked at is a pool nobody ever saw go out.
+- **Growth only, never the bloom.** `GrowthModel.diurnalFactor` shuts a
+  day-opening flower overnight and opens a night-opening one in its place, so a
+  bucket including `bloomOpen` — which is what a thumbnail's cache key does —
+  would light two thirds of the garden every evening and the other third every
+  morning. A pool that comes on nightly says nothing at all.
 
 ## Settled
 
@@ -558,11 +577,16 @@ Not settled. Recorded so that it has to be settled.
 - **Night falls by the clock, with an override** in Seed.
 - **Templates are pure functions**, and a bed stores only what was moved by hand.
 - **`beds` is optional on `Garden`**, so nothing migrates and no version moves.
+- **What announces a plant that has changed: the light finds it.** Above. It is
+  the one thing the grid did that a free layout does not.
+- **The saturation ceiling is 0.28**, enforced by one function every ground
+  colour passes through. It is a decision rather than a measurement: the
+  generator that held the original number was never committed, and 0.28 sits just
+  under `StageBackdrop.saturation`, which is the most saturated thing the app
+  already puts behind a plant.
 
 ## Still open
 
-- **What announces a plant that has changed**, above. The one thing the grid did
-  that a free layout does not.
 - **Whether a bed can be deleted, and what happens to its hand placements.**
   Deleting the last bed has to be impossible, or has to mean something.
 - **Whether two plants may stand on one spot.** The site allows it and draws it,

@@ -47,6 +47,18 @@ final class Developer {
     /// shipping code that the `#if` could not take back out.
     var wantsImaginaryMeeting = false
 
+    /// Shows the tile grid where the plot would be.
+    ///
+    /// The grid is the only thing there is to judge the plot against, and the
+    /// judgement has to be made on somebody's own garden rather than on a
+    /// screenshot of fourteen invented crossings. Kept in `UserDefaults` so the
+    /// comparison survives the relaunch between one build and the next.
+    var showsTileGrid: Bool {
+        didSet { UserDefaults.standard.set(showsTileGrid, forKey: Self.gridKey) }
+    }
+
+    private static let gridKey = "developer.showsTileGrid"
+
     /// One of the four screens behind a mark, opened as the stage appears.
     ///
     ///     xcrun simctl launch <device> app.peacegarden -pgOpen settings
@@ -74,6 +86,7 @@ final class Developer {
 
     private init() {
         clockShift = UserDefaults.standard.double(forKey: Self.shiftKey)
+        showsTileGrid = UserDefaults.standard.bool(forKey: Self.gridKey)
         openOnLaunch = UserDefaults.standard.string(forKey: "pgOpen")
             .flatMap(Screen.init(rawValue:))
     }
@@ -132,6 +145,7 @@ struct DeveloperSection: View {
 
             clock
             meeting
+            garden
         }
     }
 
@@ -195,6 +209,27 @@ struct DeveloperSection: View {
         }
         let days = Int((shift / Self.day).rounded())
         return days < 14 ? "\(days)d" : "\(days / 7)w"
+    }
+
+    // MARK: The garden
+
+    private var garden: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Button {
+                developer.showsTileGrid.toggle()
+            } label: {
+                Text(verbatim: developer.showsTileGrid ? "Garden: tile grid" : "Garden: plot")
+            }
+            .buttonStyle(.plain)
+            .font(.system(size: 15, weight: .light))
+            .foregroundStyle(Chrome.ink)
+            .pressable(isProminent: true)
+
+            Text(verbatim: "Which screen the garden mark opens. The grid is what the plot replaced; it is kept here so the two can be compared on a real garden.")
+                .font(.system(size: 13, weight: .light))
+                .foregroundStyle(Chrome.muted)
+                .lineSpacing(4)
+        }
     }
 
     // MARK: The meeting

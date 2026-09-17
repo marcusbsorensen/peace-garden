@@ -1,4 +1,4 @@
-# Arranging the Garden screen — handover 17 September 2026
+# The Garden screen — handover 17 September 2026
 
 ## Goal
 
@@ -8,70 +8,144 @@ choice of ground and a sun and moon going round it.
 
 ## State
 
-**Done and verified.** `Spot`, `Template`, `Bed`, `Garden.beds` in SeedCore —
-106 tests, from 97. The five templates in the app — 35 app tests, from 28. Both
-suites green locally; CI green on `eed4ae6`. `main` is pushed and clean.
+**Done and verified, and looked at on a simulator.** The Garden screen is the
+plot. Flat ground, noon light held still, plants standing on it at their real
+relative sizes, and a pool of light under anything that has changed since it was
+last opened. 47 app tests, from 35; SeedCore untouched at 106. `main` is clean
+and **nothing is committed** — the whole change is in the working tree.
 
-**Done, not built into the app.** The whole visual design, as an interactive
-Design canvas: https://claude.ai/artifact/JtRewHDMGQJJTPnKvS5Tru — eight worlds,
-drag a plant, hour slider, orbiting sun and moon with cast shadows, real moon
-phase. Everything drawn there is real: actual crossings, geometry from
-`tools/preview`, names and `opensByDay` from SeedCore. The render scripts are in
-the session scratchpad and are **not in the repo**; rebuilding them is a few
-hours if they are wanted.
+**Done, not built into the app.** Terrain, the orbit, and the gestures. The
+interactive Design canvas remains the reference:
+https://claude.ai/artifact/JtRewHDMGQJJTPnKvS5Tru — eight worlds, drag a plant,
+hour slider, orbiting sun and moon with cast shadows, real moon phase. Its
+numbers are now written down; see *What the mockup actually says* below.
 
-**Not started.** The Garden screen itself. Nothing in `App/PeaceGarden/Views/`
-has changed.
-
-**Unchanged and still outstanding** — the language work from the previous
-handover: 41 named maps, one language read. `Server/strings/da.json`'s `read`
-block still needs the Danish reader's name and date. See
-`docs/COMMISSIONING-THE-READS.md`.
+**Unchanged and still outstanding** — the language work. 41 named maps to place.
+`Server/strings/da.json`'s `read` block is **not** missing, contrary to the
+previous handover: it is filled, by Marcus, 6 September, covering the ten area
+names. What Danish still needs is its *prose*. See
+`docs/COMMISSIONING-THE-READS.md`, which is current.
 
 ## Files
 
 | | |
 | --- | --- |
-| `docs/ARRANGING.md` | The whole design. Read this first; everything below is in it. |
-| `Packages/SeedCore/Sources/SeedCore/Persistence/Arranging.swift` | `Spot`, `Template`, `Bed`, and `Garden.plotSide`. |
-| `Packages/SeedCore/Sources/SeedCore/Persistence/GardenModels.swift:141` | `beds`, optional so nothing migrates. |
-| `App/PeaceGarden/Arranging/Arrangement.swift` | The five templates. `theme(of:)` at :76 is the one that bites. |
-| `App/PeaceGardenTests/ArrangementTests.swift` | Holds every template to placing from the seed, not from a list. |
-| `App/PeaceGarden/Views/GardenView.swift` | The grid being replaced. Its comment at :100 is the open question. |
+| `docs/ARRANGING.md` | The whole design, updated with what was settled and measured today. |
+| `App/PeaceGarden/Arranging/Isometric.swift` | The projection, its inverse, and the fit to a viewport. |
+| `App/PeaceGarden/Rendering/GardenGround.swift` | The plot, the cut, the light, and the saturation ceiling. |
+| `App/PeaceGarden/Rendering/GardenSprites.swift` | Plants as stills at one shared scale. **Not `ThumbnailRenderer`** — see below. |
+| `App/PeaceGarden/Views/PlotView.swift` | The screen. |
+| `App/PeaceGarden/Views/GardenVisits.swift` | What has changed since a plant was last opened. |
+| `App/PeaceGarden/Views/GardenView.swift` | One line: the plot, or the grid behind the developer switch. |
+| `App/PeaceGarden/Views/GardenGridView.swift` | The old grid, kept as the control. |
+| `App/PeaceGardenTests/PlotTests.swift` | 12 tests. Three of them found real faults on the first run. |
 
-## Decisions made
+## What the tests found, which no render would have
 
-- **An arrangement is *told*, not inherited** (`docs/PLACE.md`'s words). Local,
-  never in `ExchangePayload`, cannot reach a seed. So layouts never sync.
-- **A floating square plot in isometric.** A sphere was built and dropped: no
-  edge is the cleanest answer, but it hid half the garden and made every
-  cultivated world fight its surface.
-- **A `Spot` is metres from the centre.** The plot grows as √(hybrid count), so
-  a fraction would spread the garden apart at every new meeting.
-- **`placed` is keyed by `uuidString`** — `JSONEncoder` writes a non-String-keyed
-  dictionary as a flat array, which is unreadable outside Swift.
-- **The worlds are chosen by looking and are never named.** A named world is 42
-  translations; the ten area names already cost 420.
-- **Night and day reads `tempo.opensByDay`, never the genus head.**
-- **The plot pinches to zoom and two-finger rotates**, in ninety-degree steps.
-  Rotation is free for the ground (it is computed) and expensive for the plants
-  (they are sprites from one camera) — that asymmetry is the whole question.
-- **Long press to lift a plant, then drag.** One finger cannot both move a plant
-  and pan the plot; every plant is a meeting, so an accidental nudge is a worse
-  failure than waiting a beat. Haptic on the lift.
+All three looked like a plausible garden.
+
+1. **The tallest plant is 2.36 m, not 1.36 m.** `ARRANGING.md` records the range
+   as 0.46–1.36 m and calls it real, which it is — of the mockup's fourteen
+   crossings. Across a hundred and twenty it goes three quarters of a metre
+   higher. A fixed sprite frame cut that plant's head off, and a plant with its
+   head cut off looks like a tall plant. Frames are per plant now.
+2. **The viewport fit took the plot's vertical span as half what it is.** On a
+   phone the width binds and the height is never asked, so it was invisible; on a
+   landscape iPad the far corner's plant sat 125 points off the top of the screen.
+3. **`.position` makes a view fill its parent**, so a tap attached outside it
+   answers anywhere. The last plant drawn swallowed every tap in the garden,
+   including the ones meant for the plants under it.
+
+## What looking found, which no test would have
+
+1. **A first-opened garden lit every plant.** With nothing remembered, every
+   plant has changed, and a garden where everything is lit says nothing about any
+   of it. `GardenVisits.firstSight` takes the whole garden as seen the first time
+   it is opened, which is also true: nothing has changed since a visit that never
+   happened.
+2. **The pool wanted setting twice.** At 0.26 it was brighter than the plant
+   standing in it; at 0.15 a single announcing plant in a garden of fourteen
+   could be missed entirely, which is the whole job. It is 0.22.
+
+## Decisions made today
+
+- **What announces a plant that has changed: the light finds it.** The last of
+  `ARRANGING.md`'s open questions about replacing the grid. Two things it turns
+  on: *opened*, not merely on screen; and growth only, **never** the bloom —
+  `diurnalFactor` would otherwise light two thirds of the garden every evening.
+- **The saturation ceiling is 0.28.** A decision, not a measurement: the
+  generator that held the original number was never committed. Every ground
+  colour passes through one function, so a material written too bright later
+  cannot quietly take `Chrome`'s rule away.
+- **The grid is kept and reachable from the developer section**, not deleted. It
+  is the only thing there is to judge the plot against, and the judgement has to
+  be made on a real garden. It stays compiled in Release on purpose: `#if DEBUG`
+  would take `tile.caption` out of the catalogue, and a catalogue entry here is
+  forty-two translations.
+
+## What the mockup actually says
+
+Recovered from the canvas and now matched exactly, so a spot placed there lands
+in the same place here.
+
+| | |
+| --- | --- |
+| Projection | `sx = (x - z)·cos30·PPM`, `sy = ((x + z)·sin30 - y)·PPM`. Depth order `x + z`. |
+| Scale | 42 px/m on a 390-wide canvas; the app fits instead, and comes to 41.5. |
+| Plot | 5.2 m, diamond 378 × 218 px. |
+| The cut | `0.40 + 1.70·(1 - r^1.7)^0.85` on the Chebyshev radius. **At the rim that is 0.40 everywhere**, so the visible skirt is a constant 0.40 m and the bulge underneath is never drawn. |
+| Cut soil | `[0.215, 0.185, 0.160]`, shaded with a fixed shadow term of 0.55. |
+| Light | Noon `[-0.332, 0.883, 0.332]`, strength 0.76, sky `[0.40, 0.48, 0.60]`, bounce `[0.27, 0.25, 0.20]`, `pow(key, 0.9)`, `0.18 + 0.82·shadow`. |
 
 ## Next step
 
-Build the Garden screen against `Arrangement.spots(for:template:plotSide:mine:)`,
-starting with the plot and the plants at the right scale — no terrain, no orbit.
-`docs/ARRANGING.md` §*How it is drawn* has the two options; take the sprite one.
-Gestures come after that, not with it — §*Turning it* has the design.
+**The terrain, then the orbit** — in that order, because the orbit is what stops
+the ground being a picture and there has to be a ground first. `GardenGround` is
+written against a height at a place rather than against zero, so a heightmap
+drops in without the drawing changing shape; `nearFaces` already samples along
+the rim for exactly that reason.
+
+Before either, one thing to decide — see below.
+
+## The thing to decide first
+
+**The templates stand plants inside one another.** Measured on fourteen
+crossings at 5.2 m, closest pair in metres and pairs closer than 40 cm:
+
+| | | |
+| --- | --- | --- |
+| Thematic | 0.075 | 5 |
+| Night and day | 0.294 | 3 |
+| Colours | 0.243 | 3 |
+| By meeting | 0.294 | 5 |
+| By kinship | 0.087 | 11 |
+
+Plants are 0.4 to 1 m across, so 7.5 cm is one plant inside another, and on
+screen the default arrangement reads as two clumps and an empty half. Kinship is
+*meant* to group and its number is not a fault; Thematic's is the one to look at.
+
+`ARRANGING.md` lists *whether two plants may stand on one spot* as open, but that
+discussion is about somebody dragging one plant onto another, which is an
+intention. This is the template doing it unasked, which is a different question
+and is not answered anywhere.
 
 ## Traps
 
-- **`Quotes.theme(of:)` is wrong for arranging.** It builds the genome `.minted`;
-  a hybrid's traits come from its parents. All 14 test crossings get a different
-  genus head. Use `Arrangement.theme(of:)`.
+- **`ThumbnailRenderer` is the wrong renderer for a garden.** It frames every
+  plant against its own mature bounds so each fills its tile, which is right for
+  a grid and is the one thing a garden must not do. `GardenSprites` is
+  orthographic and fixed. Do not "simplify" one into the other.
+- **`Arrangement.spots` is keyed by `UUID`; `Bed.placed` is keyed by
+  `uuidString`.** Opposite on purpose — `JSONEncoder` writes a non-String-keyed
+  dictionary as a flat array.
+- **`Garden.arrangements` mints a fresh `UUID` on every access** when `beds` is
+  nil, so it must not be used as SwiftUI identity.
+- **`UserDefaults` written by the app is lost if the simulator process is
+  killed within a few seconds.** Two hours went on a pool of light that was
+  working the whole time. Wind the state in with
+  `xcrun simctl spawn booted defaults write app.peacegarden …` rather than
+  reading back what the app wrote.
+- **`Quotes.theme(of:)` is wrong for arranging.** Use `Arrangement.theme(of:)`.
 - **Anything derived from a plant's index reshuffles the garden** when a plant is
   added. Derive from the seed. `Meetings` is the one exemption.
 - **`swift test --package-path Packages/SeedCore` takes ~150 s.** App tests:
@@ -79,3 +153,13 @@ Gestures come after that, not with it — §*Turning it* has the design.
   'platform=iOS Simulator,name=iPhone 17 Pro'`.
 - Older traps — simulator, deploy, `AREA_KEYS`, the mesh pin — are in
   `docs/HANDOVER.md` and still apply.
+
+## Looking at it yourself
+
+There is a garden fixture — fourteen real crossings against four peers, births
+spread over four months — built by a throwaway SwiftPM tool in the session
+scratchpad. It is **not in the repo**; rebuilding it is twenty minutes, and the
+one thing worth keeping from it is that `GardenStore.defaultStore()` reads
+`$(xcrun simctl get_app_container booted app.peacegarden data)/Library/Application
+Support/PeaceGarden/garden.json`. The garden screen opens directly with
+`xcrun simctl launch booted app.peacegarden -pgOpen garden`.
