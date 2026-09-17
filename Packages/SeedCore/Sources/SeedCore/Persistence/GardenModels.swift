@@ -127,14 +127,25 @@ public struct Garden: Codable, Equatable, Sendable {
     public var identity: Identity?
     public var plants: [PlantRecord]
 
+    /// How the garden is arranged. See `Arranging.swift` and `docs/ARRANGING.md`.
+    ///
+    /// **Optional, so that nothing migrates.** A file written before beds
+    /// existed decodes with this as `nil` and is handed the default by
+    /// `arrangements`; the schema version does not move, and no garden has to be
+    /// rewritten to be read. `PollenCard.sharesPlace` is the precedent — it is
+    /// optional so a card from version 1 decodes as a refusal.
+    public var beds: [Bed]?
+
     public init(
         schemaVersion: Int = Garden.currentSchemaVersion,
         identity: Identity? = nil,
-        plants: [PlantRecord] = []
+        plants: [PlantRecord] = [],
+        beds: [Bed]? = nil
     ) {
         self.schemaVersion = schemaVersion
         self.identity = identity
         self.plants = plants
+        self.beds = beds
     }
 
     public var hybrids: [PlantRecord] {
