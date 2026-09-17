@@ -358,6 +358,57 @@ The sprite version is not throwaway. It answers what this design still has open 
 what a crowded plot feels like, whether the cut reads as depth, what the ground
 choice does to the plants standing on it — and none of that needs a mesh.
 
+## The sun and the moon go round the plot
+
+Settled 17 September. One light, orbiting: the sun up from 06:00 to 18:00,
+rising at one corner of the plot and setting at the opposite one, highest at
+noon; the moon doing the same twelve hours out of phase. At any hour exactly one
+of them is above the horizon, which is why there is one light direction rather
+than two.
+
+It casts. The terrain shadows itself and the plants shadow the ground, and both
+move as the hour does.
+
+### The ground stops being a picture
+
+This is the consequence, and it is the interesting one. Eight worlds times every
+hour is a combinatorial blow-up, and snapping to the nearest of eight renders
+makes the sun jump. So **a world ships as what it actually is** — a height and a
+colour per cell — and the light is applied where it is drawn.
+
+All eight worlds come to 223 KB that way: less than **one** pre-rendered tile,
+because a rendered tile is mostly shading and shading is exactly what is being
+thrown away. Terrain self-shadowing is then a march along the light direction
+over the heightmap, which is a few hundred thousand operations and imperceptible.
+
+The plants stay sprites, because a plant is a mesh nobody wants to rebuild at
+sixty frames a second, but they are rendered at **eight points round the clock**
+and crossfaded. That way the hour does two different things to a plant at once,
+both of them real: it moves the light on its leaves, and it opens or closes its
+flower through `GrowthModel.diurnalFactor`.
+
+### One light model, written once
+
+`orbit.py` defines the light and exports it; the page reads those same numbers.
+Two models that merely look alike is how a plant ends up lit from the left on
+ground lit from the right, with nobody able to say why the picture is wrong.
+
+### The moon was brighter than the dawn
+
+Worth recording because nothing was broken. The first pass had a full moon
+overhead at 0.32 and the sun at the horizon at 0.24, so midnight came out
+brighter than sunrise. Both curves peaked correctly at their own maximum; what
+nobody had done was make them agree with each other.
+
+The moon is about a hundred thousand times weaker than the sun. A fifth is
+already a generous lie so that a night garden can be seen at all — a third was
+simply wrong. Midnight now reads 0.150 against sunrise at 0.240 and noon at
+0.760, and the darkest hour of the day is moonrise at 18:00, which is correct:
+the moon has only just cleared the horizon.
+
+**It is a fault that exists only between two things**, and it only showed up when
+both were put on one slider. No test would have had an opinion about it.
+
 ## The light is rebuilt, not filtered
 
 `StageBackdrop` is a studio, on purpose: one hard key, a cold rim, and an ambient
@@ -410,6 +461,9 @@ Not settled. Recorded so that it has to be settled.
   names.** Terrain and cultivation are different kinds of world and want
   opposite rules.
 - **The light is hemispheric, and there is no pool of light on a world.**
+- **The sun and moon orbit the plot and cast**, so the ground is shipped as
+  height and colour per cell and lit where it is drawn, rather than pre-rendered.
+  The plants are rendered at eight points round the clock.
 - **An arrangement is told, not inherited.** Local, never transmitted, unable to
   reach the seed. No new promise, and no change to the sentence on Seed.
 - **One set of plants, several arrangements of it.** Every plant appears in every
@@ -435,6 +489,9 @@ Not settled. Recorded so that it has to be settled.
 - **Whether an arrangement survives a plant being released to the Wild Fields.**
   Releasing is the end of a plant's life here; a spot pointing at a plant that has
   gone is the kind of thing that decodes fine and draws nothing.
+- **Whether the shadows should be soft, and how soft.** They are drawn hard
+  here, with a blur that widens as the light drops. A real shadow's edge softens
+  with distance from what cast it, which a single blur cannot say.
 - **Whether the plot can be turned.** Isometric has four ninety-degree views and
   they are cheap, but a ravine has a side you cannot see from any one of them.
   Turning is the answer, and whether it is worth the gesture is not settled.
