@@ -46,23 +46,24 @@ public struct Bed: Codable, Equatable, Identifiable, Sendable {
     public var placed: [UUID: Spot]
 }
 
-/// Where a plant stands: a DIRECTION on the world, not a position on it.
+/// Where a plant stands: METRES from the middle of the plot, on the two
+/// ground axes.
 ///
-/// Two angles rather than two metres, because the world grows with the
-/// garden — see below. A direction still means the same place after the
-/// thousandth meeting; a position in metres does not.
+/// Not a fraction of the plot's width, because the plot grows — see below.
+/// Metres keep a plant exactly where it was put and let the new ground
+/// appear at the edge; a fraction would spread the whole garden apart
+/// every time somebody met a stranger.
 public struct Spot: Codable, Equatable, Sendable {
-    /// Radians, `-π...π`.
-    public var lon: Double
-    /// Radians, `-π/2...π/2`.
-    public var lat: Double
+    public var x: Double
+    public var z: Double
 }
 ```
 
-A bed was a flat rectangle when this was first written, and `Spot` held
-`across` and `into`. The world replaced it, and the two numbers stayed two
-numbers — which is why the templates below are unchanged: a template maps
-plants onto a surface, and it does not care what shape the surface is.
+This has been three things. A fraction across a flat rectangle when the garden
+was a bed; two angles when it was briefly a sphere; metres from the centre now
+that it is a growing plot. **Two numbers throughout**, which is why the
+templates below never changed: a template maps plants onto a surface and does
+not care what shape the surface is.
 
 `Garden` gains `beds: [Bed]`, **optional, so there is no migration**.
 `GardenStore` already accepts a file at an older schema and writes it back at the
@@ -227,48 +228,78 @@ than a control on the garden itself. Whatever it is set to, the chrome has to
 stay legible at both ends, which `Chrome` was built for and which is worth
 looking at rather than assuming.
 
-## The garden is a little world
+## The garden is a floating square plot, seen in isometric
 
-Settled 17 September, after the flat bed had been built and looked at. A bed has
-an edge, and an edge asks a question the app then has to answer: what is off the
-side, and what happens when it is full. **A sphere has no edge.**
+Settled 17 September, after three shapes had been built and looked at: a flat
+bed, a sphere, and this.
 
-It also makes the navigation something the app already does. A plant on the stage
-is turned by dragging it — `PlantSceneView` rotates the plant rather than the
-camera, so the light stays put — and a garden turned the same way is one gesture
-in the app rather than two.
+**The sphere was tried and dropped.** It answered the edge question by not
+having one, which is genuinely the cleanest answer available, and it cost two
+things that turned out to matter more. Half the garden was always behind it. And
+every *cultivated* world fought the surface: rings and spokes on a globe make a
+golf ball, latitude bands make a turned cylinder, because latitude bands are not
+rows. On a square plot, rows of raised beds are simply rows and a parterre is
+four quarters. The moment the ground was flat and square, half the worlds stopped
+arguing with it.
 
-**Up is radial.** A plant near the limb leans away from vertical, because its own
-up is the surface under it. That tilt is the single thing that reads as *planet*
-rather than *hill*, and it costs one rotation per plant.
+So the edge comes back, and it is **drawn rather than hidden**: a square plot
+hanging in space, with the soil's depth showing at the cut and rock tapering
+away underneath. That is a different thing from a plane that merely stops, and it
+answers *what is off the side* by showing the answer.
 
-### A spot is a direction, not a position
+### Isometric is a simplification, not only a look
 
-This falls out of the world growing, below, and it is the kind of thing that is
-free to get right now and expensive later. `Spot` holds a **direction** — two
-angles, or a unit vector — and never a position in metres. A direction survives
-the world getting bigger; a position in metres does not, and a garden that
-rearranged itself every time somebody met a stranger would be the worst possible
-answer to the nicest feature here.
+A parallel projection has no perspective divide, so one metre is the same number
+of pixels everywhere on the plot. Three things fall out, and all three are
+subtractions:
 
-### The world grows with the garden
+- **A plant is the same size wherever it stands.** No per-point scale.
+- **Nothing leans.** Up is up, everywhere. The sphere needed a rotation per
+  plant to keep a plant standing on the surface under it.
+- **Depth order is `x + z`.** Not a sort by distance, not a z-buffer.
 
-One more crossing, a little more world. Its size is then a record of how many
-people you have met, with no number anywhere and nothing to read.
+The sphere needed a lean, a per-point metre and a ray-sphere unprojection to put
+a dragged plant under the finger. None of that exists here. The whole placement
+is two lines forward and the same two lines backward.
 
-The two alternatives were a fixed world you fill — which gives the empty state
-something to say — and a fixed world that can get crowded, where running out of
-room makes you choose what to keep. Both are defensible and the growing one is
+### A plant stands on the ground, not over it
+
+A square plot **is** a heightmap, so standing a plant on terrain is a lookup
+rather than a problem — forty samples a side is about thirteen centimetres on a
+five-metre plot, which is finer than a plant's own foot. Drag a plant into the
+ravine and it goes down into it.
+
+This was recorded as an open question while the garden was a sphere, where the
+terrain displacement was ignored and a plant on a peak sank while one in a
+valley hovered. The shape answered it.
+
+The one place it is not free: finding where on the plot a finger is requires
+knowing the ground height there, and the ground height requires knowing where on
+the plot you are. The inverse runs twice — once at ground zero, once with that
+place's own height subtracted — and that is enough.
+
+### The plot grows outward and a plant never moves
+
+One more crossing, a little more ground. Its size is then a record of how many
+people you have met, with no number anywhere.
+
+**This is why a spot is in metres and not a fraction.** New ground appears at
+the rim and everything already planted stays exactly where it was put. The
+oldest plants end up at the heart of the garden and the newest at its edge —
+which is what happens in a real garden, and was not designed in.
+
+The alternatives were a fixed plot you fill, which gives the empty state
+something to say, and a fixed plot that can get crowded, where running out of
+room makes you choose what to keep. Both are defensible; the growing one is
 kinder, which is the tie-breaker in this app.
 
 ### Scale is one decision, not two
 
 The plants are 0.46 to 1.36 metres and that is real: the geometry is SeedCore's.
-Fourteen of them on the one-metre slab this started as would be a thicket rather
-than a garden. The mockup's world is 2.6 metres in radius, so a tall plant is
-about half the radius, and **that ratio is the whole look**: much smaller and it
-is a terrarium, much larger and the plants are moss on a globe. Whatever the
-growth rule turns out to be, it is a rule about keeping that ratio.
+Fourteen of them on the one-metre square this started as would be a thicket
+rather than a garden. The mockup's plot is 5.2 metres square, which holds
+fourteen with room to walk between them. Whatever the growth rule turns out to
+be, it is a rule about keeping that relationship as the count rises.
 
 ## The ground is chosen, and the worlds have no names
 
@@ -283,7 +314,8 @@ Worth separating before the list grows, because they want opposite rules:
 **terrain must never look regular and cultivation should.** You can have an
 alpine meadow; a formal garden is not a landform.
 
-**They are chosen by looking, and the app never says their names.** A row of
+Eight are drawn: Meadow, Hillside, Alpine, Lake, Ravine, Verge, Raised beds and
+Parterre. **They are chosen by looking, and the app never says their names.** A row of
 little worlds, picked the way you pick a plant. That is not only tidier, it is
 what lets the list grow: `docs/WEBSITE.md` records the ten area names becoming
 420 commissions at a multiplier that is now forty-two, and a named world would
@@ -291,35 +323,40 @@ be the same trap on a list Marcus has already described as *landscapes from all
 over the Earth*. Unnamed, the fiftieth world costs a render. Named, it costs
 forty-two translations and a reading that has barely started.
 
-### Two things the renders taught, which no test would have
+### Three things the renders taught, which no test would have
 
 The same lesson the husk taught in August, and `tools/preview/README.md` is
 already emphatic about why looking is not a convenience.
 
 - **Shading by the radial direction draws a mountain range as a painted ball.**
-  Every face takes the sphere's own normal, so the terrain gets no slope shading
-  at all. True face normals, from the quad's diagonals, are the entire difference
-  between the first alpine world and the second.
+  On the sphere, every face took the sphere's own normal and the terrain got no
+  slope shading at all. True face normals, from the quad's diagonals, were the
+  entire difference between the first alpine world and the second.
 - **A feature written as a function of latitude or longitude alone runs the whole
-  way round the world and reads as machined.** The first ravine came out as a
-  clam shell and the first raised beds as a turned cylinder. A place has to have
-  a centre, and a band has to have its pole perpendicular to the view or it hides
-  round the silhouette — which is where the first road went, and it was never
-  seen at all.
+  way round a sphere and reads as machined.** The first ravine came out as a clam
+  shell, the first raised beds as a turned cylinder, and the first road hid round
+  the silhouette and was never seen at all. This is the observation that
+  eventually killed the sphere: the fix is that a place needs a centre, and once
+  every world has a centre, the surface may as well be flat.
+- **A keel that tapers to nothing at the edge is invisible.** The only part of a
+  floating plot's underside you can ever see is the part near the near edges, so
+  a plot whose soil thins to a line at the rim reads as a tile rather than as a
+  piece of ground with a root under it. The cut has to have real depth exactly
+  where it is easiest to economise on.
 
 ## How it is drawn
 
-The stored spot is a direction whichever way the world is drawn, so the renderer
-can change later without touching a single stored garden.
+The stored spot is two metres on the ground whichever way the plot is drawn, so
+the renderer can change later without touching a single stored garden.
 
 | | | |
 | --- | --- | --- |
-| **Sprites on a sphere** | Cached plant stills placed by direction, scaled by depth, rotated to the surface | What the mockup does. `ThumbnailRenderer` already renders to a transparent `UIImage` and caches 120. Cheap, and it carries the tilt, the depth order and the lean. |
-| **One scene** | Every plant a real mesh on a real displaced sphere | Actually a world. Needs level of detail, and a new framing rule: `PlantSceneBuilder.framing` frames one plant against its own mature bounds, and a world has to be framed against the world. |
+| **Sprites on a heightmap** | Cached plant stills placed at `x, z`, standing at the ground's height there | What the mockup does. `ThumbnailRenderer` already renders to a transparent `UIImage` and caches 120, and isometric means one size for all of them. Cheap in a way the sphere never was. |
+| **One scene** | Every plant a real mesh on a real displaced plot | Needs a new framing rule: `PlantSceneBuilder.framing` frames one plant against its own mature bounds, and a plot has to be framed against the plot. An orthographic camera is a one-line change in SceneKit. |
 
-The sprite version is not throwaway. It answers the questions this design still
-has open — whether the lean reads, whether a dragged plant lands under the
-finger, what a crowded world feels like — and none of those need a mesh.
+The sprite version is not throwaway. It answers what this design still has open —
+what a crowded plot feels like, whether the cut reads as depth, what the ground
+choice does to the plants standing on it — and none of that needs a mesh.
 
 ## The light is rebuilt, not filtered
 
@@ -363,8 +400,12 @@ Not settled. Recorded so that it has to be settled.
 
 ## Settled
 
-- **The garden is a little world**, and its size grows with the number of
-  meetings. A spot is a direction on it, never a position in metres.
+- **The garden is a floating square plot, drawn in isometric**, and it grows
+  outward with the number of meetings. A spot is metres from the centre, so a
+  plant never moves and new ground appears at the edge.
+- **A sphere was built and dropped.** It has no edge, which is the cleanest
+  answer to the edge question, and it hid half the garden and made every
+  cultivated world fight its surface.
 - **The ground is chosen from a set of worlds, and the app never says their
   names.** Terrain and cultivation are different kinds of world and want
   opposite rules.
@@ -394,20 +435,20 @@ Not settled. Recorded so that it has to be settled.
 - **Whether an arrangement survives a plant being released to the Wild Fields.**
   Releasing is the end of a plant's life here; a spot pointing at a plant that has
   gone is the kind of thing that decodes fine and draws nothing.
-- **What the world does with the half you cannot see.** Half a sphere is always
-  behind it, which is either the best thing here — a garden with somewhere to go
-  — or a place to lose a plant in. The Ravine world makes this sharpest: it has a
-  bottom you cannot see from anywhere.
+- **Whether the plot can be turned.** Isometric has four ninety-degree views and
+  they are cheap, but a ravine has a side you cannot see from any one of them.
+  Turning is the answer, and whether it is worth the gesture is not settled.
 - **What the growth rule actually is.** A little more world per meeting, at a
   rate that keeps a tall plant at roughly half the radius. Whether that is
   smooth or in steps, and whether a garden of two hundred plants is still one
-  world, are both unanswered.
+  plot, are both unanswered. A plot that grows in square rings has a natural
+  answer to the first and none to the second.
 - **Whether terrain is chosen or drawn from the seed.** Every world in the
   mockup is hand-tuned noise. The gardener's own seed could grow the world, which
   would make it inherited rather than told — and would put it on the wrong side
   of the line this document opens with. Worth deciding on purpose rather than
   drifting into.
-- **Whether a plant sits on the terrain or floats over it.** The mockup places
-  plants on the sphere and ignores the displacement, so a plant on a peak sinks
-  and one in a valley hovers. Real placement needs the height at that direction,
-  which the terrain function already knows.
+- **What happens to a plant standing where the ground changes.** Nothing in the
+  design stops somebody swapping Meadow for Ravine with a plant standing exactly
+  where the gorge is about to be. It should probably keep its `x, z` and simply
+  be lower, but that is a decision rather than an accident waiting to be one.
