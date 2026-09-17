@@ -453,6 +453,42 @@ the moon has only just cleared the horizon.
 **It is a fault that exists only between two things**, and it only showed up when
 both were put on one slider. No test would have had an opinion about it.
 
+## Turning it, and the one gesture conflict
+
+Asked for 17 September: pinch to zoom, two-finger rotate, in the way an iPhone
+has taught everybody to expect. Both are `UIPinchGestureRecognizer` and
+`UIRotationGestureRecognizer`, and neither is interesting on its own.
+
+**What is interesting: rotation is free for the ground and expensive for the
+plants.** The ground is computed rather than pre-rendered, so it draws at any
+angle for nothing. The plants are sprites rendered from one camera, so a turned
+plot either turns them too — four renders per plant at ninety-degree steps, or
+many more for free rotation — or lets them stay billboards facing the viewer,
+which is the usual answer and is a real compromise for a plant with a front and
+a back. That asymmetry, not the gesture, is what decides whether turning is free
+or stepped.
+
+**Ninety-degree steps are the recommendation**, because isometric has four
+natural views and stepping between them keeps the ground's own axes aligned to
+the screen — which is the property that makes an isometric plot legible at all.
+It also answers the ravine, which has a side you cannot see from any one view.
+
+### One finger cannot do two things
+
+Dragging a plant and panning the plot both want a single finger, and this is the
+only real conflict in the design.
+
+| | |
+| --- | --- |
+| **Drag on a plant moves it, drag on the ground pans** | Immediate, no learning. Ambiguous wherever plants are close, and it makes an accidental move one slip away. |
+| **Long press to lift, then drag** | The idiom for rearranging on iOS, with a haptic to say the plant is in hand. Costs a beat before every move. |
+
+**Long press, and the beat is worth paying.** Every plant in this garden is a
+meeting with somebody. Nudging one by accident while trying to look at it is a
+worse failure than waiting a third of a second to pick one up, and the haptic
+makes the difference between looking and moving something the person can feel
+rather than something they have to be careful about.
+
 ## The light is rebuilt, not filtered
 
 `StageBackdrop` is a studio, on purpose: one hard key, a cold rim, and an ambient
@@ -540,9 +576,12 @@ Not settled. Recorded so that it has to be settled.
 - **Whether the shadows should be soft, and how soft.** They are drawn hard
   here, with a blur that widens as the light drops. A real shadow's edge softens
   with distance from what cast it, which a single blur cannot say.
-- **Whether the plot can be turned.** Isometric has four ninety-degree views and
-  they are cheap, but a ravine has a side you cannot see from any one of them.
-  Turning is the answer, and whether it is worth the gesture is not settled.
+- **How the plants are drawn when the plot is turned** — four renders each at
+  ninety-degree steps, or billboards that always face the viewer. Turning itself
+  is settled; this is what it costs.
+- **What zoom is for.** Close enough to read one plant's binomial is a different
+  screen from far enough to see the whole plot, and if zoom reaches the first it
+  overlaps what `PlantDetailView` already does.
 - **What the growth rule actually is.** A little more world per meeting, at a
   rate that keeps a tall plant at roughly half the radius. Whether that is
   smooth or in steps, and whether a garden of two hundred plants is still one
