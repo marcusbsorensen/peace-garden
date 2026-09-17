@@ -217,21 +217,115 @@ than a control on the garden itself. Whatever it is set to, the chrome has to
 stay legible at both ends, which `Chrome` was built for and which is worth
 looking at rather than assuming.
 
-## The renderer is not a fork
+## The garden is a little world
 
-Two numbers per plant per bed, whichever way it is drawn. The rendering can
-change later without touching a single stored garden, so the cheapest version is
-not throwaway work.
+Settled 17 September, after the flat bed had been built and looked at. A bed has
+an edge, and an edge asks a question the app then has to answer: what is off the
+side, and what happens when it is full. **A sphere has no edge.**
+
+It also makes the navigation something the app already does. A plant on the stage
+is turned by dragging it — `PlantSceneView` rotates the plant rather than the
+camera, so the light stays put — and a garden turned the same way is one gesture
+in the app rather than two.
+
+**Up is radial.** A plant near the limb leans away from vertical, because its own
+up is the surface under it. That tilt is the single thing that reads as *planet*
+rather than *hill*, and it costs one rotation per plant.
+
+### A spot is a direction, not a position
+
+This falls out of the world growing, below, and it is the kind of thing that is
+free to get right now and expensive later. `Spot` holds a **direction** — two
+angles, or a unit vector — and never a position in metres. A direction survives
+the world getting bigger; a position in metres does not, and a garden that
+rearranged itself every time somebody met a stranger would be the worst possible
+answer to the nicest feature here.
+
+### The world grows with the garden
+
+One more crossing, a little more world. Its size is then a record of how many
+people you have met, with no number anywhere and nothing to read.
+
+The two alternatives were a fixed world you fill — which gives the empty state
+something to say — and a fixed world that can get crowded, where running out of
+room makes you choose what to keep. Both are defensible and the growing one is
+kinder, which is the tie-breaker in this app.
+
+### Scale is one decision, not two
+
+The plants are 0.46 to 1.36 metres and that is real: the geometry is SeedCore's.
+Fourteen of them on the one-metre slab this started as would be a thicket rather
+than a garden. The mockup's world is 2.6 metres in radius, so a tall plant is
+about half the radius, and **that ratio is the whole look**: much smaller and it
+is a terrarium, much larger and the plants are moss on a globe. Whatever the
+growth rule turns out to be, it is a rule about keeping that ratio.
+
+## The ground is chosen, and the worlds have no names
+
+Eight drawn so far, and they are two kinds of thing:
+
+| | |
+| --- | --- |
+| **Terrain** | Meadow, Hillside, Alpine, Lake, Ravine, Verge — what the ground does |
+| **Cultivation** | Raised beds, Formal garden — what a gardener has done to it |
+
+Worth separating before the list grows, because they want opposite rules:
+**terrain must never look regular and cultivation should.** You can have an
+alpine meadow; a formal garden is not a landform.
+
+**They are chosen by looking, and the app never says their names.** A row of
+little worlds, picked the way you pick a plant. That is not only tidier, it is
+what lets the list grow: `docs/WEBSITE.md` records the ten area names becoming
+420 commissions at a multiplier that is now forty-two, and a named world would
+be the same trap on a list Marcus has already described as *landscapes from all
+over the Earth*. Unnamed, the fiftieth world costs a render. Named, it costs
+forty-two translations and a reading that has barely started.
+
+### Two things the renders taught, which no test would have
+
+The same lesson the husk taught in August, and `tools/preview/README.md` is
+already emphatic about why looking is not a convenience.
+
+- **Shading by the radial direction draws a mountain range as a painted ball.**
+  Every face takes the sphere's own normal, so the terrain gets no slope shading
+  at all. True face normals, from the quad's diagonals, are the entire difference
+  between the first alpine world and the second.
+- **A feature written as a function of latitude or longitude alone runs the whole
+  way round the world and reads as machined.** The first ravine came out as a
+  clam shell and the first raised beds as a turned cylinder. A place has to have
+  a centre, and a band has to have its pole perpendicular to the view or it hides
+  round the silhouette — which is where the first road went, and it was never
+  seen at all.
+
+## How it is drawn
+
+The stored spot is a direction whichever way the world is drawn, so the renderer
+can change later without touching a single stored garden.
 
 | | | |
 | --- | --- | --- |
-| **Plan view** | Thumbnails standing on a plane seen from above | Nearly free. `ThumbnailRenderer` renders to a transparent `UIImage` and caches 120 of them today. Reads as a planting plan, which is a real drawing a gardener makes. It is a board rather than a place. |
-| **Diorama** | The same sprites placed at depth: scaled by distance, fading back into the ground | Roughly the cost of the plan view, and most of the feeling of a bed. `into` becomes depth rather than a second axis on a flat plane. |
-| **One scene** | Every plant a real mesh, camera looking across the bed | Actually a garden. Needs level of detail, and a new framing rule: `PlantSceneBuilder.framing` frames one plant against its own mature bounds, and a bed has to be framed against the bed. |
+| **Sprites on a sphere** | Cached plant stills placed by direction, scaled by depth, rotated to the surface | What the mockup does. `ThumbnailRenderer` already renders to a transparent `UIImage` and caches 120. Cheap, and it carries the tilt, the depth order and the lean. |
+| **One scene** | Every plant a real mesh on a real displaced sphere | Actually a world. Needs level of detail, and a new framing rule: `PlantSceneBuilder.framing` frames one plant against its own mature bounds, and a world has to be framed against the world. |
 
-Build the plan view first and the diorama second, because the diorama is the plan
-view with `into` drawn instead of ignored. The single scene is a project of its
-own and should be decided on its own.
+The sprite version is not throwaway. It answers the questions this design still
+has open — whether the lean reads, whether a dragged plant lands under the
+finger, what a crowded world feels like — and none of those need a mesh.
+
+## The light is rebuilt, not filtered
+
+`StageBackdrop` is a studio, on purpose: one hard key, a cold rim, and an ambient
+of about 0.09, so an unlit face falls to near-black. That is right for a
+botanical model kit photographed for its box, and it is exactly wrong outdoors.
+
+The garden light is **hemispheric** — sky from above, bounce from the ground
+below — so a shadowed leaf is lit by the sky rather than by nothing. Softer sun,
+lower angle, the cold rim cut to a trace. That one change is the whole of the
+difference between stark and outdoors, and no amount of filtering gets there,
+because the information is not in the rendered pixels to recover.
+
+**On a world there is no pool of light at all.** `StageBackdrop`'s glow is a lamp
+behind a subject; a planet is lit by its own sun. The background is space, and it
+darkens with the hour rather than closing in.
 
 ## What the grid did that this loses
 
@@ -259,6 +353,12 @@ Not settled. Recorded so that it has to be settled.
 
 ## Settled
 
+- **The garden is a little world**, and its size grows with the number of
+  meetings. A spot is a direction on it, never a position in metres.
+- **The ground is chosen from a set of worlds, and the app never says their
+  names.** Terrain and cultivation are different kinds of world and want
+  opposite rules.
+- **The light is hemispheric, and there is no pool of light on a world.**
 - **An arrangement is told, not inherited.** Local, never transmitted, unable to
   reach the seed. No new promise, and no change to the sentence on Seed.
 - **One set of plants, several arrangements of it.** Every plant appears in every
@@ -284,5 +384,20 @@ Not settled. Recorded so that it has to be settled.
 - **Whether an arrangement survives a plant being released to the Wild Fields.**
   Releasing is the end of a plant's life here; a spot pointing at a plant that has
   gone is the kind of thing that decodes fine and draws nothing.
-- **Whether the diorama's depth is real or apparent**, which decides whether a
-  plant can stand behind another and be hidden by it.
+- **What the world does with the half you cannot see.** Half a sphere is always
+  behind it, which is either the best thing here — a garden with somewhere to go
+  — or a place to lose a plant in. The Ravine world makes this sharpest: it has a
+  bottom you cannot see from anywhere.
+- **What the growth rule actually is.** A little more world per meeting, at a
+  rate that keeps a tall plant at roughly half the radius. Whether that is
+  smooth or in steps, and whether a garden of two hundred plants is still one
+  world, are both unanswered.
+- **Whether terrain is chosen or drawn from the seed.** Every world in the
+  mockup is hand-tuned noise. The gardener's own seed could grow the world, which
+  would make it inherited rather than told — and would put it on the wrong side
+  of the line this document opens with. Worth deciding on purpose rather than
+  drifting into.
+- **Whether a plant sits on the terrain or floats over it.** The mockup places
+  plants on the sphere and ignores the displacement, so a plant on a peak sinks
+  and one in a valley hovers. Real placement needs the height at that direction,
+  which the terrain function already knows.
