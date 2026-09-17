@@ -46,13 +46,23 @@ public struct Bed: Codable, Equatable, Identifiable, Sendable {
     public var placed: [UUID: Spot]
 }
 
-/// Where a plant stands in a bed. Two numbers, across the bed and into it,
-/// `0...1` each, so a bed can be drawn at any size and on any device.
+/// Where a plant stands: a DIRECTION on the world, not a position on it.
+///
+/// Two angles rather than two metres, because the world grows with the
+/// garden — see below. A direction still means the same place after the
+/// thousandth meeting; a position in metres does not.
 public struct Spot: Codable, Equatable, Sendable {
-    public var across: Double
-    public var into: Double
+    /// Radians, `-π...π`.
+    public var lon: Double
+    /// Radians, `-π/2...π/2`.
+    public var lat: Double
 }
 ```
+
+A bed was a flat rectangle when this was first written, and `Spot` held
+`across` and `into`. The world replaced it, and the two numbers stayed two
+numbers — which is why the templates below are unchanged: a template maps
+plants onto a surface, and it does not care what shape the surface is.
 
 `Garden` gains `beds: [Bed]`, **optional, so there is no migration**.
 `GardenStore` already accepts a file at an older schema and writes it back at the
