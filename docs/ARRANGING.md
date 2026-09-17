@@ -101,34 +101,50 @@ other template is a departure from it.
 
 ### Night and day
 
-**This is already in the names.** The genus heads were fixed in August, and
-`Quotes.Theme.genusHeads` reads:
+**This is not a filter invented over the top of the plants. It is a trait they
+have had since the genome was written.**
 
-| | |
-| --- | --- |
-| `waiting` | **Nyx**, **Umbr** — night, shade |
-| `light` | **El**, **Aur**, **Sel** — sun, dawn, moon |
+`Genome.Tempo.opensByDay` is real
+([`Genome.swift:380`](../Packages/SeedCore/Sources/SeedCore/Genome/Genome.swift#L380)),
+drawn at `chance("tempo.opensByDay", 0.7)`, so about three plants in ten open at
+night rather than by day. `Epithet` already says so out loud where it is the
+rarest true thing about a plant: *noctiflora*, and the comment beside it notes
+that the word was in the vocabulary before it was ever checked
+([`Epithet.swift:297`](../Packages/SeedCore/Sources/SeedCore/Genome/Epithet.swift#L297)).
 
-A plant called *Nyxia* is a night plant by its own name, decided before anybody
-asked for a night garden. So this template is a reading of the genus head rather
-than a filter invented over the top of one.
+So the template reads `opensByDay`, and the bed runs from midnight through dawn
+to noon and back.
 
-It is also the most interesting of the five, because **it cuts across the themes
-rather than along them**. `light` splits three ways — El to full day, Aur to
-dawn, Sel to the moon — so the plants of one theme end up at opposite ends of the
-bed. Thematic and Night-and-day are therefore genuinely different pictures of the
-same garden, where Colours and Kinship are each different again for simpler
-reasons.
+**The genus head is a different axis and must not be used for this.** An earlier
+draft of this document had the template reading the name — Nyx and Umbr for night,
+Sel for the moon — which is wrong. Those syllables carry the passage *theme*: Nyx
+and Umbr mean `waiting`, Sel means `light`, and a theme is a mood rather than a
+behaviour. A *Nyxia* may open at noon and nothing is out of order when it does.
+The genus names what the plant is about; the epithet names what it does. Reading
+the first to arrange a night garden would sort the plants by the wrong fact and
+look almost right, which is the worst way to be wrong.
 
-The bed runs from midnight through dawn to noon and back. Every plant has a place
-on it, because every genus head belongs to exactly one theme and
-`ThemeMappingTests` proves it.
+It is also the template that most changes what the garden *is*, rather than only
+where things stand — see below.
 
 ### Colours
 
 Palette hue, swept into drifts rather than laid round a wheel. Drifts are what a
 planting plan actually does with colour, and a wheel would make the bed a colour
 picker. The palette is on the genome and costs nothing to read.
+
+**It will look more like Kinship than it sounds.** Fourteen real crossings drawn
+for the mockup — one gardener against four peers — came back with the hue
+clustered by peer: all three of Ada's plants at 0.11, Jonas's at 0.01 and 0.18,
+Sofia's at 0.42 and 0.60. Palette is inherited, so plants grown with one person
+already share a parent's colour, and sorting by hue half-sorts by parentage on
+its own.
+
+Neither template is wasted by that — Kinship groups and Colours sweeps, so they
+read differently even where they agree — but anyone deciding which to build
+first should know they are not the two independent pictures the list makes them
+look like. Kinship is the one that says something hue cannot: *which* person,
+rather than only that two plants came from the same one.
 
 ### By meeting
 
@@ -167,10 +183,28 @@ about. That is the same property, drawn instead of described.
 | **Night falling** | The same bed, lit differently, because it is night. A *time of day*. |
 
 The third is the one that makes a garden a place rather than a screen, and it is
-cheaper than it sounds: `StageBackdrop` already takes a single number and turns
-it into a pool of light over a ground
-([`StageBackdrop.swift:28`](../App/PeaceGarden/Rendering/StageBackdrop.swift#L28)).
-A garden-scale version takes a time of day instead of a `presence`.
+much cheaper than it sounds, because **half of it is already running**.
+
+`GrowthModel.diurnalFactor`
+([`GrowthModel.swift:190`](../Packages/SeedCore/Sources/SeedCore/Growth/GrowthModel.swift#L190))
+closes a day-opening flower to about a third overnight and opens a night-opening
+one in its place, off the real clock — `state(birth:now:calendar:)` takes the
+device's calendar and `GardenView` already passes `model.now`. Its own comment
+says why: *a small thing that makes the plant feel like it is living alongside
+you.* The thumbnails do it today; `ThumbnailRenderer.key` buckets `bloomOpen`,
+which is that number.
+
+So the flowers in the garden already close at midnight. **The ground does not.**
+That is the whole of the work: `StageBackdrop` takes a single number and makes a
+pool of light over a ground
+([`StageBackdrop.swift:28`](../App/PeaceGarden/Rendering/StageBackdrop.swift#L28)),
+and a garden-scale version takes an hour instead of a `presence`.
+
+It also means the night bed is not a rearrangement of the same picture. At two in
+the morning the night-openers are the plants in flower and the day-openers are
+shut, so a garden visited at night is genuinely a different garden — and it was
+already that before anybody drew a bed. Nothing in this template makes that
+happen; it only stops the arrangement hiding it.
 
 **Night falls by the clock, with an override.** Settled 17 September. A garden
 that is dark because it is dark outside is a place; a garden that is dark because
