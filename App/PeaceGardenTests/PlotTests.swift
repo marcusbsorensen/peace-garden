@@ -435,4 +435,97 @@ final class PlotTests: XCTestCase {
         XCTAssertLessThan(MoonPhase.fraction(on: new.addingTimeInterval(86_400 * 7)), 0.5)
         XCTAssertGreaterThan(MoonPhase.fraction(on: new.addingTimeInterval(86_400 * 22)), 0.5)
     }
+
+    // MARK: - Turning the plot
+
+    /// Four renders each, settled 18 September against billboards that always
+    /// face the viewer. A plant has a front and a back, and every plant here is
+    /// a meeting with somebody.
+    ///
+    /// The turn is of the **plot's own axes**: the plant and the light rotate
+    /// together, because both are drawn in plot space and the sun goes round the
+    /// plot rather than round the screen.
+    @MainActor
+    func testAPlantTurnsWithThePlotAndComesBackAfterFour() throws {
+        let plant = crossing("Ada", nonce: 2)
+        let growth = plant.growth(now: plant.birth.addingTimeInterval(400 * 86_400))
+
+        var seen: [Data] = []
+        for turn in 0..<GardenSprites.turns {
+            let sprite = try XCTUnwrap(
+                GardenSprites.shared.sprite(genome: plant.genome, growth: growth,
+                                            step: 4, turn: turn)
+            )
+            seen.append(try XCTUnwrap(sprite.image.pngData()))
+        }
+
+        for (a, b) in [(0, 1), (0, 2), (1, 3)] {
+            XCTAssertNotEqual(seen[a], seen[b], "turns \(a) and \(b) drew the same plant")
+        }
+
+        // Four quarters is all the way round, so the key has to come back to
+        // where it started rather than growing without limit.
+        XCTAssertEqual(
+            GardenSprites.key(genome: plant.genome, growth: growth, step: 4, turn: 4),
+            GardenSprites.key(genome: plant.genome, growth: growth, step: 4, turn: 0)
+        )
+        XCTAssertEqual(
+            GardenSprites.key(genome: plant.genome, growth: growth, step: 4, turn: -1),
+            GardenSprites.key(genome: plant.genome, growth: growth, step: 4, turn: 3)
+        )
+    }
+
+    /// The light turns with the plot, and comes back.
+    func testTheSunTurnsWithThePlotRatherThanWithTheScreen() {
+        let noon = GardenGround.Light.at(hour: 12)
+
+        XCTAssertEqual(simd_distance(noon.turned(quarters: 0).direction, noon.direction),
+                       0, accuracy: 1e-12)
+        XCTAssertEqual(simd_distance(noon.turned(quarters: 4).direction, noon.direction),
+                       0, accuracy: 1e-9)
+
+        // A quarter turn swaps the two ground axes, and the height is untouched
+        // because the plot turns about its own middle.
+        let quarter = noon.turned(quarters: 1)
+        XCTAssertEqual(quarter.direction.y, noon.direction.y, accuracy: 1e-12)
+        XCTAssertEqual(quarter.direction.x, noon.direction.z, accuracy: 1e-9)
+        XCTAssertEqual(quarter.direction.z, -noon.direction.x, accuracy: 1e-9)
+        XCTAssertEqual(simd_length(quarter.direction), 1, accuracy: 1e-9)
+
+        // And nothing else about the light is a direction, so nothing else moves.
+        XCTAssertEqual(quarter.strength, noon.strength)
+        XCTAssertEqual(quarter.isDay, noon.isDay)
+    }
+
+    /// The bank under the plot is the only part of the cut anybody ever sees, so
+    /// it has to be soil at the top and rock at the bottom rather than one
+    /// colour — and none of it may break the ceiling.
+    func testTheCutIsSoilAtTheTopAndRockAtTheBottom() {
+        let top = GardenGround.cutColour(down: 0.02, grain: 0.5, stones: 0)
+        let middle = GardenGround.cutColour(down: 0.35, grain: 0.5, stones: 0)
+        let bottom = GardenGround.cutColour(down: 0.95, grain: 0.5, stones: 0)
+
+        func warmth(_ c: SIMD3<Double>) -> Double { c.x - c.z }
+        XCTAssertLessThan(top.x, middle.x, "the humus is not darker than the earth under it")
+        XCTAssertLessThan(warmth(bottom), warmth(middle), "the rock is as brown as the soil")
+
+        for down in stride(from: 0.0, through: 1.0, by: 0.05) {
+            for grain in [0.0, 0.3, 0.7, 1.0] {
+                var saturation: CGFloat = 0
+                UIColor(GardenGround.underCeiling(
+                    GardenGround.cutColour(down: down, grain: grain, stones: grain)
+                )).getHue(nil, saturation: &saturation, brightness: nil, alpha: nil)
+                XCTAssertLessThanOrEqual(Double(saturation),
+                                         GardenGround.saturationCeiling + 1e-6)
+            }
+        }
+    }
+
+    /// The bank is the whole of what *thick* means, because the bulge under the
+    /// middle is never drawn at this angle.
+    func testTheCutIsDeepEnoughToReadAsGround() {
+        XCTAssertGreaterThanOrEqual(GardenGround.rimDepth, 0.9)
+        XCTAssertEqual(GardenGround.cutDepth(x: 2.6, z: 0, plotSide: 5.2),
+                       GardenGround.rimDepth, accuracy: 1e-9)
+    }
 }

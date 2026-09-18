@@ -40,19 +40,36 @@ struct GardenSky: View {
 
     // MARK: The sky itself
 
+    /// **A day sky that reads as sky, and a night that is not a black screen.**
+    ///
+    /// The first pass came off the mockup, where the sky is nearly black at every
+    /// hour: the plot is the picture there, and the page around it is a page. In
+    /// the app it is the whole screen behind a garden, and a noon that is a dark
+    /// navy says the garden is somewhere underground.
+    ///
+    /// So daylight runs to a real blue, deepening away from the sun, and night
+    /// keeps enough in it to be a night sky rather than an absence. It is the one
+    /// place `Chrome`'s rule about the plant being the only saturated thing is
+    /// deliberately relaxed — a sky is not chrome, and a blue behind a garden is
+    /// what tells you the garden is outdoors. It is still held well under the
+    /// plants: the brightest the sky goes is under half, where a petal goes to
+    /// the top of its range.
     private var stops: [Gradient.Stop] {
         let up = light.up
         let near = light.isDay
-            ? Color(hue: 212 / 360, saturation: 0.38, brightness: 0.04 + 0.13 * up)
-            : Color(hue: 224 / 360, saturation: 0.46, brightness: 0.04 + 0.025 * up)
+            ? Color(hue: 205 / 360, saturation: 0.46, brightness: 0.13 + 0.33 * up)
+            : Color(hue: 224 / 360, saturation: 0.44, brightness: 0.085 + 0.055 * up)
         let middle = light.isDay
-            ? Color(hue: 222 / 360, saturation: 0.44, brightness: 0.03 + 0.05 * up)
-            : Color(hue: 222 / 360, saturation: 0.44, brightness: 0.03 + 0.008 * up)
+            ? Color(hue: 214 / 360, saturation: 0.50, brightness: 0.09 + 0.22 * up)
+            : Color(hue: 222 / 360, saturation: 0.46, brightness: 0.062 + 0.030 * up)
+        let far = light.isDay
+            ? Color(hue: 222 / 360, saturation: 0.52, brightness: 0.05 + 0.11 * up)
+            : Color(red: 0.030, green: 0.036, blue: 0.062)
 
         return [
             .init(color: near, location: 0),
-            .init(color: middle, location: 0.6),
-            .init(color: Color(red: 0.012, green: 0.016, blue: 0.031), location: 1)
+            .init(color: middle, location: 0.58),
+            .init(color: far, location: 1)
         ]
     }
 

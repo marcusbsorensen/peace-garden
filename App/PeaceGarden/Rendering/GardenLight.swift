@@ -84,6 +84,27 @@ extension GardenGround.Light {
         )
     }
 
+    /// The same light seen from a plot that has been turned a quarter at a time.
+    ///
+    /// **The plot turns, not the sun.** The sun and moon go round the plot, so
+    /// when somebody turns the plot to look at the ravine's other wall, the
+    /// light's direction in the plot's own axes turns with it. Rotating the
+    /// scene rather than the camera is what keeps the plants' renders and the
+    /// ground's shading in step, because both are drawn in plot space.
+    func turned(quarters: Int) -> GardenGround.Light {
+        let quarter = ((quarters % 4) + 4) % 4
+        guard quarter != 0 else { return self }
+
+        let angle = Double(quarter) * .pi / 2
+        var turned = self
+        turned.direction = SIMD3(
+            direction.x * cos(angle) + direction.z * sin(angle),
+            direction.y,
+            -direction.x * sin(angle) + direction.z * cos(angle)
+        )
+        return turned
+    }
+
     // MARK: Round the clock in eight
 
     /// How many points round the clock anything expensive is drawn at.

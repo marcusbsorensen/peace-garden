@@ -9,19 +9,18 @@ import SwiftUI
 /// with a cut answers it by showing the answer. `docs/ARRANGING.md` §*The garden
 /// is a floating square plot*.
 ///
-/// **There is no terrain here yet.** The ground is flat, which is the first of
-/// the two steps the handover asks for — the plot and the plants at the right
-/// scale, then the worlds. Everything below is written against a height at a
-/// place rather than against zero, so the heightmap drops in without the
-/// drawing changing shape.
+/// The materials and the light live here; `GardenTerrain` does the drawing and
+/// `GardenWorlds` holds the eight grounds. The flat plot below is what is drawn
+/// if the world atlas is ever missing from the bundle, so that a garden without
+/// it is still a place with an edge.
 enum GardenGround {
     // MARK: The cut
 
     /// How deep the soil is under a place on the plot, in metres.
     ///
-    /// The mockup's taper, kept exactly: a floor of 0.40 m everywhere, and a
-    /// bulge of up to 1.70 m more toward the middle, measured on the Chebyshev
-    /// radius so it follows the square rather than a circle inside it.
+    /// The mockup's taper: a floor at the rim everywhere, and a bulge of up to
+    /// 1.70 m more toward the middle, measured on the Chebyshev radius so it
+    /// follows the square rather than a circle inside it.
     ///
     /// **The floor is the whole point.** The only part of a floating plot's
     /// underside anybody ever sees is the part near the near edges, so a plot
@@ -36,9 +35,15 @@ enum GardenGround {
         return rimDepth + 1.70 * bulge
     }
 
-    /// What `cutDepth` comes to at the rim, which is the only depth ever drawn
-    /// while the plot is flat, and the number the camera has to leave room for.
-    static let rimDepth = 0.40
+    /// What `cutDepth` comes to at the rim.
+    ///
+    /// **The rim is the only depth that is ever seen.** Looking down at
+    /// thirty-five degrees, the plot's own surface hides everything under it, so
+    /// the bulge below the middle is never drawn and this number is the whole of
+    /// what *thick* means. It started at the mockup's 0.40 m, which read as a
+    /// tile with a lip; at 0.95 it reads as a piece of ground with a root under
+    /// it, which is the thing the cut is there to say.
+    static let rimDepth = 0.95
 
     // MARK: The light
 
@@ -49,9 +54,9 @@ enum GardenGround {
     /// `StageBackdrop` is a hard key and a near-black ambient on purpose, which
     /// is right for a plant photographed for a box and exactly wrong outdoors.
     ///
-    /// The orbit is not built yet, so this is noon held still. When the sun and
-    /// moon go round, they replace this value and nothing that draws with it has
-    /// to change.
+    /// `GardenLight` is where one of these comes from: the sun and the moon
+    /// going round, read by the ground, the plants, the shadows and the sky
+    /// alike. Nothing here knows what hour it is.
     struct Light: Equatable, Sendable {
         var direction: SIMD3<Double>
         var colour: SIMD3<Double>
@@ -126,6 +131,64 @@ enum GardenGround {
     /// Cut soil, from the mockup. The one material the plot has while there are
     /// no worlds to choose from.
     static let soil = SIMD3<Double>(0.215, 0.185, 0.160)
+
+    /// What a bank of cut earth is made of, top to bottom.
+    ///
+    /// A cut is not one colour. The dark humus is a hand's depth and no more,
+    /// the earth under it holds most of the depth, and rock comes up from the
+    /// bottom — which is why a road cutting reads as ground rather than as a
+    /// painted edge. Drawn in cells rather than as one face so that the bands
+    /// break up, because real strata do.
+    /// **Lighter than the ground they sit under, on purpose.** A cut face is
+    /// vertical, so it is lit by the sky and by almost none of the sun, and
+    /// materials chosen to look right in the hand came out as a black band under
+    /// the plot. These are chosen for how they read once the hemispheric ambient
+    /// has had them, which is the only way they are ever seen.
+    static let humus = SIMD3<Double>(0.205, 0.158, 0.116)
+    static let earth = SIMD3<Double>(0.375, 0.300, 0.232)
+    static let bedrock = SIMD3<Double>(0.340, 0.330, 0.318)
+    static let stone = SIMD3<Double>(0.455, 0.437, 0.415)
+
+    /// The colour of the cut a given fraction of the way down it, before the
+    /// light, with the chunkiness already in it.
+    ///
+    /// `grain` is a number in `0...1` that has to be the same every time for the
+    /// same place, so the bank does not crawl when anything is redrawn.
+    static func cutColour(down: Double, grain: Double, stones: Double) -> SIMD3<Double> {
+        let f = min(max(down, 0), 1)
+
+        var base: SIMD3<Double>
+        if f < 0.16 {
+            base = humus + (earth - humus) * (f / 0.16)
+        } else if f < 0.58 {
+            base = earth
+        } else {
+            base = earth + (bedrock - earth) * ((f - 0.58) / 0.42)
+        }
+
+        // A stone here and there, more of them the deeper it goes, and each one
+        // a little lighter than what it sits in. `stones` is drawn on a coarser
+        // grid than the cells are, so a stone is a stone rather than a speck.
+        let stoniness = 0.12 + 0.62 * f
+        if stones > 1 - stoniness * 0.5 {
+            base = base + (stone - base) * 0.78
+        }
+
+        // And everything else varies a little, so no two cells of a bank are the
+        // same colour.
+        return base * (0.86 + 0.28 * grain)
+    }
+
+    /// A fixed number for a place, so a bank of earth is the same bank every
+    /// time it is drawn. The usual integer hash: cheap, and it does not matter
+    /// that it is not a good one.
+    static func grain(_ a: Int, _ b: Int, _ salt: Int = 0) -> Double {
+        var h = UInt64(bitPattern: Int64(a &* 73_856_093 ^ b &* 19_349_663 ^ salt &* 83_492_791))
+        h ^= h >> 33
+        h = h &* 0xff51_afd7_ed55_8ccd
+        h ^= h >> 29
+        return Double(h % 100_000) / 100_000
+    }
 
     /// The flat plot's surface: a plain turf, deliberately duller than any world
     /// will be. It is a stand-in for a chosen ground and should look like one.

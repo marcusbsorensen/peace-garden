@@ -13,8 +13,8 @@ plot: a floating square plot in isometric, standing on one of eight worlds, with
 the plants at their real relative sizes standing on the terrain, a pool of light
 under anything that has changed since it was last opened, and a row of little
 worlds to choose the ground from, and the sun and moon going round it on the
-real clock. Thematic no longer stands one plant inside another. 56 app tests,
-from 35; SeedCore at 106. Four commits on `main`, not pushed.
+real clock. Thematic no longer stands one plant inside another. 60 app tests,
+from 35; SeedCore at 106. Five commits on `main`, not pushed.
 
 **Done, not built into the app.** The gestures. The
 interactive Design canvas remains the reference:
@@ -167,26 +167,38 @@ rather than computed**, because it is a default argument in `GardenGround.swift`
 while the orbit is an extension in `GardenLight.swift`, and the compiler will not
 reach across for it in that position; a test holds the two to each other.
 
+## What 18 September also settled
+
+- **A turned plot turns its plants: four renders each at ninety degrees**, not
+  billboards. `GardenSprites.sprite(genome:growth:step:turn:)` takes it, and the
+  turn is of the **plot's own axes** — the plant and the light rotate together,
+  because the sun goes round the plot rather than round the screen. Nothing calls
+  it with a turn yet; the gesture is what will.
+- **The cut is a bank of earth, 0.95 m deep**, drawn in coarse cells: humus,
+  earth, rock, stones, and a floor ragged by a few centimetres.
+- **The sky is blue by day and a deep blue by night**, rather than the mockup's
+  near-black at every hour.
+
 ## Next step
 
-The gestures, which is the last part of `docs/ARRANGING.md` that is designed and
-not built: pinch to zoom, two-finger rotate in ninety-degree steps, and **long
-press to lift a plant, then drag**. The design is in §*Turning it* and §*One
-finger cannot do two things*, and the reasoning is settled — every plant is a
-meeting, so an accidental nudge is a worse failure than waiting a beat.
+The gestures — the last part of `docs/ARRANGING.md` that is designed and not
+built: pinch to zoom, two-finger rotate in ninety-degree steps, and **long press
+to lift a plant, then drag**. The reasoning is settled: every plant is a meeting,
+so an accidental nudge is a worse failure than waiting a beat.
 
-What is not settled and has to be before rotation is built: **how the plants are
-drawn when the plot is turned**. Four renders each at ninety-degree steps, or
-billboards that always face the viewer. It now costs four times eight, because a
-sprite is already rendered at eight hours.
-
-`Isometric.ground(at:)` is the inverse the dragging needs, and it is exact on
-flat ground. Over terrain it has to run twice — once at ground zero, once with
-that place's own height subtracted — which `docs/ARRANGING.md` §*A plant stands
-on the ground* sets out and which nothing has needed yet.
+Rotation now has everything it needs on the plant side. What it still needs is
+the **projection's** own turn — `Isometric` maps plot metres to the screen with
+the axes fixed, and turning the plot means turning `x` and `z` before projecting.
+`Isometric.ground(at:)` is the inverse the dragging needs and is exact on flat
+ground; over terrain it has to run twice, once at ground zero and once with that
+place's own height subtracted, which §*A plant stands on the ground* sets out and
+nothing has needed yet.
 
 ## Traps
 
+- **A cut face is vertical, so it is lit by the sky and by almost none of the
+  sun.** Materials for it have to be picked at about half again the brightness
+  they look right at on their own, or the bank comes out black.
 - **A world's colour is stippled, so never point-sample it at a coarse mesh.**
   The grain is the texture; one cell per quad is either the grain or a lattice of
   holes, depending on whether the mesh matches the atlas.

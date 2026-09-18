@@ -395,6 +395,24 @@ already emphatic about why looking is not a convenience.
   piece of ground with a root under it. The cut has to have real depth exactly
   where it is easiest to economise on.
 
+  **And the rim is not merely the part you see most of — it is the only part you
+  see at all.** Looking down at thirty-five degrees, the plot's own surface hides
+  everything under it, so the bulge below the middle is never drawn and the rim
+  depth is the whole of what *thick* means. At the mockup's 0.40 m it reads as a
+  tile with a lip; at 0.95 m it reads as ground with a root. The cut is drawn as
+  a bank in cells rather than as two flat faces — humus for a hand's depth, earth
+  through the middle, rock coming up from the bottom, stones scattered more
+  thickly the deeper it goes, and a floor ragged by a few centimetres. Ground
+  that ends in a ruled line is a tile again.
+
+  Two numbers matter and neither is obvious. The cells have to be **coarse**:
+  drawn at the terrain's own hundred and twenty-eight columns the variation came
+  out as a comb of pinstripes three pixels wide, which reads as moiré rather than
+  as soil. And the materials have to be **lighter than they look right in the
+  hand**: a cut face is vertical, so it is lit by the sky and by almost none of
+  the sun, and colours chosen on their own came out as a black band under the
+  plot.
+
 ## How it is drawn
 
 The stored spot is two metres on the ground whichever way the plot is drawn, so
@@ -628,6 +646,17 @@ Two things it turns on, both in `GardenVisits`:
 - **The sun and moon orbit the plot and cast**, so the ground is shipped as
   height and colour per cell and lit where it is drawn, rather than pre-rendered.
   The plants are rendered at eight points round the clock.
+- **A turned plot turns its plants: four renders each at ninety-degree steps**,
+  not billboards. Settled 18 September. Billboards are the usual answer and are a
+  real compromise for a plant with a front and a back, and every plant here is a
+  meeting with somebody. It costs four times eight, because a sprite is already
+  drawn at eight hours. The turn is of the plot's own axes, so the plant and the
+  light rotate together — the sun goes round the plot, not round the screen.
+- **The sky is the one place the saturation ceiling is relaxed.** A sky is not
+  chrome, and a blue behind a garden is what says the garden is outdoors. The
+  mockup's sky is nearly black at every hour because there the plot is the
+  picture and the page around it is a page; in the app it is the whole screen
+  behind a garden, and a noon that is dark navy says the garden is underground.
 - **An arrangement is told, not inherited.** Local, never transmitted, unable to
   reach the seed. No new promise, and no change to the sentence on Seed.
 - **One set of plants, several arrangements of it.** Every plant appears in every
@@ -674,12 +703,15 @@ Two things it turns on, both in `GardenVisits`:
 - **Whether an arrangement survives a plant being released to the Wild Fields.**
   Releasing is the end of a plant's life here; a spot pointing at a plant that has
   gone is the kind of thing that decodes fine and draws nothing.
+- **Whether the moonrise hour is too dark to open the app in.** The curve is
+  right — 18:00 is the darkest hour of the day because the moon has only just
+  cleared the horizon — and half past six in the evening is also an ordinary time
+  to look at a garden, at which point the plot is very nearly black. The override
+  answers it for anyone who finds the setting; whether the curve should have a
+  floor under it is a different question and is not answered.
 - **Whether the shadows should be soft, and how soft.** They are drawn hard
   here, with a blur that widens as the light drops. A real shadow's edge softens
   with distance from what cast it, which a single blur cannot say.
-- **How the plants are drawn when the plot is turned** — four renders each at
-  ninety-degree steps, or billboards that always face the viewer. Turning itself
-  is settled; this is what it costs.
 - **What zoom is for.** Close enough to read one plant's binomial is a different
   screen from far enough to see the whole plot, and if zoom reaches the first it
   overlaps what `PlantDetailView` already does.

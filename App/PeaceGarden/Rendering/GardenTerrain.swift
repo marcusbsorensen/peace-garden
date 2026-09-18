@@ -99,10 +99,8 @@ actor GardenTerrain {
 
         // The cut first: it hangs behind the surface, and the surface is what
         // closes the top of it.
-        for (path, colour) in cutFaces(world: world, plotSide: plotSide, view: view,
-                                       detail: mesh, light: light) {
-            fill(path, colour, in: context)
-        }
+        drawCut(world: world, plotSide: plotSide, view: view, detail: mesh,
+                light: light, into: context)
 
         // Far to near along the anti-diagonals, which is `x + z` ascending and
         // the same order the plants are drawn in.
@@ -198,41 +196,96 @@ actor GardenTerrain {
         return false
     }
 
-    /// The two faces of the cut that face the viewer, each following the terrain
-    /// along its own rim.
-    private static func cutFaces(
+    /// The two faces of the cut that face the viewer, drawn as a bank of earth
+    /// rather than as two flat quads.
+    ///
+    /// Only two of the four are ever seen: depth runs on `x + z`, so the `+x`
+    /// and `+z` edges are the near ones and the other two are behind the plot's
+    /// own surface. Nor is the bulge under the middle ever seen — looking down at
+    /// thirty-five degrees, the plot's own surface hides everything below it — so
+    /// **the rim is the whole of what the cut has to say**, and it is worth
+    /// spending cells on.
+    ///
+    /// Each face is a grid: along the rim it follows the terrain, and down it
+    /// runs from the dark humus at the top through the earth to rock at the
+    /// bottom, in cells that vary so no two are the same colour. The floor is
+    /// jagged by a few centimetres for the same reason — ground that ends in a
+    /// ruled line is a tile again.
+    private static func drawCut(
         world: Int,
         plotSide: Double,
         view: Isometric,
         detail mesh: Int,
-        light: GardenGround.Light
-    ) -> [(Path, SIMD3<Double>)] {
+        light: GardenGround.Light,
+        into context: CGContext
+    ) {
         let worlds = GardenWorlds.shared
         let half = plotSide / 2
 
-        let faces: [(normal: SIMD3<Double>, along: (Double) -> (x: Double, z: Double))] = [
-            (SIMD3(0, 0, 1), { t in (x: -half + t * plotSide, z: half) }),
-            (SIMD3(1, 0, 0), { t in (x: half, z: half - t * plotSide) })
+        // **Chunks have to be chunky.** Drawn at the terrain's own hundred and
+        // twenty-eight columns, the variation came out as a comb of pinstripes
+        // three pixels wide — texture so fine it reads as a moiré rather than as
+        // soil. A bank wants cells you can see the edges of.
+        let columns = 44
+        let bands = 11
+
+        let faces: [(normal: SIMD3<Double>, sideways: SIMD3<Double>,
+                     along: (Double) -> (x: Double, z: Double))] = [
+            (SIMD3(0, 0, 1), SIMD3(1, 0, 0), { t in (x: -half + t * plotSide, z: half) }),
+            (SIMD3(1, 0, 0), SIMD3(0, 0, -1), { t in (x: half, z: half - t * plotSide) })
         ]
 
-        return faces.map { face in
-            var path = Path()
-            for step in 0...mesh {
-                let at = face.along(Double(step) / Double(mesh))
-                let y = worlds.height(world: world, x: at.x, z: at.z, plotSide: plotSide)
-                let point = view.point(x: at.x, y: y, z: at.z)
-                if step == 0 { path.move(to: point) } else { path.addLine(to: point) }
-            }
-            for step in stride(from: mesh, through: 0, by: -1) {
-                let at = face.along(Double(step) / Double(mesh))
+        for (face, side) in faces.enumerated() {
+            // The rim, and how far under it the ground goes at each column.
+            var top = [Double](repeating: 0, count: columns + 1)
+            var floor = [Double](repeating: 0, count: columns + 1)
+            for column in 0...columns {
+                let at = side.along(Double(column) / Double(columns))
+                top[column] = worlds.height(world: world, x: at.x, z: at.z, plotSide: plotSide)
                 let depth = GardenGround.cutDepth(x: at.x, z: at.z, plotSide: plotSide)
-                path.addLine(to: view.point(x: at.x, y: -depth, z: at.z))
+                let rough = GardenGround.grain(column, -1, face) - 0.5
+                floor[column] = -depth * (1 + rough * 0.20)
             }
-            path.closeSubpath()
 
-            return (path, GardenGround.shaded(
-                base: GardenGround.soil, normal: face.normal, shadow: 0.55, light: light
-            ))
+            for column in 0..<columns {
+                for band in 0..<bands {
+                    let near = Double(band) / Double(bands)
+                    let far = Double(band + 1) / Double(bands)
+
+                    func corner(_ column: Int, _ down: Double) -> CGPoint {
+                        let at = side.along(Double(column) / Double(columns))
+                        let y = top[column] + down * (floor[column] - top[column])
+                        return view.point(x: at.x, y: y, z: at.z)
+                    }
+
+                    let grain = GardenGround.grain(column, band, face)
+                    let colour = GardenGround.cutColour(
+                        down: (near + far) / 2,
+                        grain: grain,
+                        stones: GardenGround.grain(column / 2, band / 2, face + 16)
+                    )
+
+                    // Each cell sits a little differently in the bank, so the
+                    // light finds some of them and not others. That, rather than
+                    // the colour, is most of what reads as chunkiness.
+                    let tilt = (grain - 0.5) * 0.5
+                    let lean = GardenGround.grain(column, band, face + 8) - 0.5
+                    let normal = simd_normalize(
+                        side.normal + side.sideways * tilt + SIMD3(0, lean * 0.4, 0)
+                    )
+
+                    var path = Path()
+                    path.move(to: corner(column, near))
+                    path.addLine(to: corner(column + 1, near))
+                    path.addLine(to: corner(column + 1, far))
+                    path.addLine(to: corner(column, far))
+                    path.closeSubpath()
+
+                    fill(path, GardenGround.shaded(base: colour, normal: normal,
+                                                   shadow: 0.55, light: light),
+                         in: context)
+                }
+            }
         }
     }
 }

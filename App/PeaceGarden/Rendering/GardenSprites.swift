@@ -64,10 +64,25 @@ final class GardenSprites {
 
     /// Bucketed the way a thumbnail is: a sprite does not need to follow growth
     /// any more closely than the eye can see at this size.
-    nonisolated static func key(genome: Genome, growth: GrowthModel.State, step: Int) -> String {
+    nonisolated static func key(genome: Genome, growth: GrowthModel.State,
+                                step: Int, turn: Int = 0) -> String {
         let bucket = Int(growth.overall * 24) * 10 + Int(growth.bloomOpen * 6)
-        return "\(genome.seed.hex)-\(bucket)-\(step)"
+        return "\(genome.seed.hex)-\(bucket)-\(step)-\(((turn % 4) + 4) % 4)"
     }
+
+    /// How many ways round a plant is drawn.
+    ///
+    /// **Four renders each, settled 18 September.** Rotation is free for the
+    /// ground, which is computed, and expensive for the plants, which are
+    /// sprites taken from one camera — so a turned plot either turns them too or
+    /// lets them stay billboards facing the viewer. Billboards are the usual
+    /// answer and are a real compromise for a plant with a front and a back, and
+    /// every plant here is a meeting with somebody. Four it is.
+    ///
+    /// It costs four times eight, because a sprite is already drawn at eight
+    /// points round the clock. The cache is sized for one plot's worth of them,
+    /// not for the whole garden at every angle.
+    nonisolated static let turns = 4
 
     /// The size a sprite draws at on a plot at this scale, foot at the bottom
     /// centre of it.
@@ -128,14 +143,21 @@ final class GardenSprites {
     /// closes its flower through `GrowthModel.diurnalFactor`, which is already
     /// in `growth` before this is called. A garden visited at night is genuinely
     /// a different garden, and was before anybody drew a bed.
-    func sprite(genome: Genome, growth: GrowthModel.State, step: Int) -> Sprite? {
+    /// - Parameter turn: quarter-turns of the **plot's own axes**, not of the
+    ///   camera. The plant and the light are both rotated by it, which is what
+    ///   the ground will do when the plot is turned, so a plant's near side stays
+    ///   its near side and its light stays where the sun is.
+    func sprite(genome: Genome, growth: GrowthModel.State,
+                step: Int, turn: Int = 0) -> Sprite? {
+        let quarter = ((turn % Self.turns) + Self.turns) % Self.turns
         let metres = frameMetres(for: genome)
-        let key = Self.key(genome: genome, growth: growth, step: step) as NSString
+        let key = Self.key(genome: genome, growth: growth, step: step, turn: quarter) as NSString
         if let held = cache.object(forKey: key) { return Sprite(image: held, metres: metres) }
 
         let side = CGFloat(metres) * Self.renderedPointsPerMetre
         let view = SCNView(frame: CGRect(x: 0, y: 0, width: side, height: side))
-        view.scene = Self.makeScene(lit: GardenGround.Light.at(step: step))
+        view.scene = Self.makeScene(lit: GardenGround.Light.at(step: step)
+            .turned(quarters: quarter))
         // Snapshotted with transparency so the ground shows through. If a plant
         // ever comes back as a black square, this is the pair of lines that did
         // it — the same trap `ThumbnailRenderer` records.
@@ -153,6 +175,7 @@ final class GardenSprites {
         // from a position, or every plant in the garden spins when one is added.
         let pivot = SCNNode()
         pivot.eulerAngles.y = Self.turn(for: genome.seed)
+            + Float(quarter) * .pi / 2
         pivot.addChildNode(plant)
         view.scene?.rootNode.addChildNode(pivot)
 
