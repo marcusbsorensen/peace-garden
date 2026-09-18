@@ -62,15 +62,29 @@ public enum LongWalk {
             }
         }
 
-        /// Slots in this tier on one side of one plot. Fewer at the back, where
-        /// the plants are bigger and are spaced wider, as in any border.
-        public var slots: Int {
+        /// Slots in this tier on one side of one plot, in two staggered rows.
+        /// Fewer at the back, where the plants are bigger and are spaced wider,
+        /// as in any border.
+        ///
+        /// **Doubled on 18 September**, from one row of 5, 4 and 3, after the
+        /// walk was looked at with 500 plants in it. One row read as single
+        /// stems standing on turf, about 1.4 plants a square metre; a border is
+        /// planted at three to five, and a drift of one colour only reads as a
+        /// drift when its plants touch. Two rows give about 2.8 and some depth.
+        /// The proportions are unchanged, so the tier cuts still fit.
+        public var slots: Int { 2 * perRow }
+
+        /// Slots in one of a tier's two rows.
+        public var perRow: Int {
             switch self {
             case .edge: return 5
             case .middle: return 4
             case .back: return 3
             }
         }
+
+        /// How far each row stands from the tier's line, in and out.
+        static let rowOffset = 0.13
     }
 
     /// The tier a grown plant belongs in.
@@ -78,7 +92,7 @@ public enum LongWalk {
     /// **Measured, then set to fit the slots.** Across three hundred crossings
     /// of three hundred different pairs of parents, grown heights run 0.21 m to
     /// 2.22 m with thirds at 0.85 m and 1.19 m. A side of a plot has five front
-    /// slots, four middle and three back, so the cuts are at the 42nd and 75th
+    /// slots, four middle and three back a row, so the cuts are at the 42nd and 75th
     /// centiles instead, 0.93 m and 1.28 m: set at the thirds, the back rows
     /// filled first and every plot opened with its front edge half empty.
     ///
@@ -150,13 +164,17 @@ public enum LongWalk {
 
         /// Where the slot is, in metres from the middle of its plot.
         ///
-        /// The three tiers have different numbers of slots, so their rows are
-        /// staggered without anybody staggering them — plants in straight
-        /// ranks down a border read as a nursery, not a garden.
+        /// Even indices are the tier's inner row and odd the outer, staggered
+        /// by half a space so that no plant stands straight behind another. The
+        /// three tiers have different numbers of slots, so they are staggered
+        /// against each other too — plants in straight ranks down a border read
+        /// as a nursery, not a garden.
         public var spot: Spot {
-            let spacing = LongWalk.plantedLength / Double(tier.slots)
-            return Spot(x: Double(side.rawValue) * tier.depth,
-                        z: -LongWalk.plantedLength / 2 + (Double(index) + 0.5) * spacing)
+            let spacing = LongWalk.plantedLength / Double(tier.perRow)
+            let row = index % 2, along = index / 2
+            let depth = tier.depth + (row == 0 ? -Tier.rowOffset : Tier.rowOffset)
+            return Spot(x: Double(side.rawValue) * depth,
+                        z: -LongWalk.plantedLength / 2 + (Double(along) + 0.25 + 0.5 * Double(row)) * spacing)
         }
     }
 
@@ -253,7 +271,7 @@ public enum LongWalk {
         func inOrder(_ height: Double, at slot: Slot, in plot: Int) -> Bool {
             for other in plantings where other.plot == plot
                 && other.slot.side == slot.side
-                && abs(other.slot.spot.z - slot.spot.z) <= Self.driftReach {
+                && abs(other.slot.spot.z - slot.spot.z) <= Self.orderReach {
                 let behind = other.slot.tier.rawValue > slot.tier.rawValue
                 let inFront = other.slot.tier.rawValue < slot.tier.rawValue
                 if behind && other.traits.height < height { return false }
@@ -284,9 +302,16 @@ public enum LongWalk {
 
         // MARK: Choosing among open slots
 
-        /// How near two plants must be to count as one drift: the next slot
-        /// along, or the one staggered behind or in front of it.
-        static let driftReach = 1.3
+        /// How far along the walk "in front of" and "behind" reach, for the
+        /// rule that nothing stands in front of something shorter.
+        static let orderReach = 1.3
+
+        /// How near two plants must be to count as one drift: the plant
+        /// staggered beside it in the other row, or the nearest row of the tier
+        /// behind or in front. Set for two rows a tier; at one row it was 1.3 m
+        /// along and 0.6 m across, and with two it let drifts chain to seven.
+        static let driftReach = 0.85
+        static let driftDepth = 0.3
 
         /// The best open slot for a plant of this colour:
         ///
@@ -296,6 +321,8 @@ public enum LongWalk {
         /// - **Otherwise, away from any of its colour.** A drift that is full
         ///   stays full, and a new one starts somewhere else down the walk —
         ///   which is the repetition.
+        /// - **Never beside a full drift of its colour**, or between drifts that
+        ///   would join past five. Nil if that leaves nothing.
         /// - Ties go down the walk, then left before right.
         func best(of open: [Slot], in plot: Int, for traits: Traits) -> Slot? {
             let here = plantings.filter { $0.plot == plot }
@@ -305,15 +332,22 @@ public enum LongWalk {
                 let near = here.filter {
                     $0.slot.side == slot.side
                         && abs($0.slot.spot.z - slot.spot.z) <= Self.driftReach
-                        && abs($0.slot.spot.x - slot.spot.x) <= 0.6
+                        && abs($0.slot.spot.x - slot.spot.x) <= Self.driftDepth
                 }
                 let kin = near.filter { $0.traits.family == traits.family }
                 let score: Int
                 if kin.isEmpty {
                     score = 0
                 } else {
-                    let drift = driftSize(from: kin[0], in: here)
-                    score = drift < 5 ? 10 + drift : -10
+                    // Every drift it would touch, joined: a slot between two
+                    // short drifts of one colour makes one long one.
+                    var joined: Set<Slot> = []
+                    for neighbour in kin { joined.formUnion(drift(from: neighbour, in: here)) }
+                    // Never past five: a slot that would make a longer drift
+                    // is no slot for this colour, and the rule looks in the
+                    // next tier or plot instead. Another colour will take it.
+                    guard joined.count < 5 else { continue }
+                    score = 10 + joined.count
                 }
                 if score > bestScore {
                     bestScore = score
@@ -326,6 +360,11 @@ public enum LongWalk {
         /// How many plants of one colour are joined, neighbour to neighbour, to
         /// this one.
         func driftSize(from start: Planting, in here: [Planting]) -> Int {
+            drift(from: start, in: here).count
+        }
+
+        /// The slots of the plants in that drift.
+        func drift(from start: Planting, in here: [Planting]) -> Set<Slot> {
             var seen: Set<Slot> = [start.slot]
             var frontier = [start]
             while let next = frontier.popLast() {
@@ -333,12 +372,12 @@ public enum LongWalk {
                     && other.traits.family == start.traits.family
                     && other.slot.side == next.slot.side
                     && abs(other.slot.spot.z - next.slot.spot.z) <= Self.driftReach
-                    && abs(other.slot.spot.x - next.slot.spot.x) <= 0.6 {
+                    && abs(other.slot.spot.x - next.slot.spot.x) <= Self.driftDepth {
                     seen.insert(other.slot)
                     frontier.append(other)
                 }
             }
-            return seen.count
+            return seen
         }
     }
 }

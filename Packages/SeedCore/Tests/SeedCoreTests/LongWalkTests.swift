@@ -96,15 +96,16 @@ final class LongWalkTests: XCTestCase {
         }
     }
 
-    /// **Plots fill before the walk goes on.** Measured at three hundred
-    /// arrivals: every plot but the newest three is full, 24 of 24, and those
-    /// three are the walk's growing end (19, 12 and 5). Filling by row alone
-    /// left eleven plots of the first fifteen at six to nine plants.
+    /// **Plots fill before the walk goes on.** Measured at six hundred
+    /// arrivals, with two rows a tier: every plot but the newest four is full,
+    /// 48 of 48, and those four are the walk's growing end (39, 17, 13 and 3).
+    /// At one row a tier it was the newest three at three hundred. Filling by
+    /// row alone left eleven plots of the first fifteen at six to nine plants.
     func testPlotsFillBeforeTheWalkGoesOn() {
-        let walk = walk(300)
+        let walk = walk(600)
         let perPlot = LongWalk.slots.count
-        XCTAssertEqual(perPlot, 24)
-        let settled = (0..<max(0, walk.plots - 3)).map { walk.plot($0).count }
+        XCTAssertEqual(perPlot, 48)
+        let settled = (0..<max(0, walk.plots - 4)).map { walk.plot($0).count }
         XCTAssertGreaterThan(settled.count, 8)
         for (plot, count) in settled.enumerated() {
             XCTAssertEqual(count, perPlot, "plot \(plot) left with \(count) of \(perPlot)")

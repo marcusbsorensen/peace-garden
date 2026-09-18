@@ -61,7 +61,7 @@
   // What the rule did with each plot: its fill by tier, how many plants stand
   // outside their own tier, and how many colours it holds.
   const tierOf = (height) => (height < 0.93 ? 0 : height < 1.28 ? 1 : 2);
-  const TIERS = ['edge', 'middle', 'back'], SLOTS = [10, 8, 6];
+  const TIERS = ['edge', 'middle', 'back'], SLOTS = [20, 16, 12];
   function summary(plot) {
     const here = describe(e, plot);
     const byTier = [0, 0, 0];
@@ -73,7 +73,7 @@
     }
     const colours = new Set(here.map((p) => p.traits.family)).size;
     const fill = byTier.map((n, i) => `${TIERS[i]} ${n}/${SLOTS[i]}`).join(' · ');
-    return `Plot ${plot + 1}: ${here.length}/24 · ${fill} · ${moved} a tier from their own · ${colours} colours`;
+    return `Plot ${plot + 1}: ${here.length}/48 · ${fill} · ${moved} a tier from their own · ${colours} colours`;
   }
 
   async function show() {

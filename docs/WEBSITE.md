@@ -156,6 +156,17 @@ reading is the right one. **For a shared plant page in phase 2 there is**, and
 the answer is nearly forced: **the plot record carries the derived theme**, one
 small language-neutral value, and never the parents.
 
+**Amended 18 September: the record carries the parents.** A Long Walk plant is
+a hybrid, and a hybrid is grown from its child seed, both parents' seeds and
+the meeting's ID; the browser cannot draw it from less, and storing its
+derived genes instead would store an appearance, which ARCHITECTURE.md rules
+out. So the argument above stands and loses on this one point: sharing a
+hybrid publishes both parents' seeds. **It therefore needs both gardeners'
+consent**, as a place already does (`PollenCard.permitPlace`), and the
+consent screen must say that the other gardener's plant becomes visible too.
+The theme is still derived and carried, so a page reads it without growing
+anything.
+
 It is worth saying plainly that this is *not* the contact-token case. The token
 had to be decided before any meeting happened, because it rides in the exchange
 payload. A theme is written when somebody shares, into a record that does not

@@ -141,9 +141,9 @@ the website and the app can all read it. Built 18 September, with
 `LongWalkTests`.
 
 - **The plot:** a 1.2 m mown path down the middle, a border each side, a hedge
-  from 2.3 m out. Three tiers each side, with five front slots, four middle and
-  three back, so 24 plants a plot. The tiers have different spacings, so their
-  rows stagger by themselves.
+  from 2.3 m out. Three tiers each side, each in two staggered rows of five
+  front slots, four middle and three back, so 48 plants a plot. The tiers have
+  different spacings, so they stagger against each other too.
 - **Tiers from measurement.** Across 300 crossings of 300 different pairs of
   parents, grown heights run 0.21 to 2.22 m, with thirds at 0.85 and 1.19 m. The
   cuts are at 0.93 m and 1.28 m instead, to match the number of slots in each
@@ -154,9 +154,11 @@ the website and the app can all read it. Built 18 September, with
   with room, or else the tier beside it where the heights around it still
   order, or else a new plot. **The test found why.** Filling by row alone, a
   few more tall plants than back slots left eleven of fifteen plots holding
-  six to nine plants. Now every plot but the newest three is full.
+  six to nine plants. Now every plot but the newest four is full.
 - **Drifts of colour, capped at five**, then the same colour starts again
-  further down the walk. Every plant is unique, so a border here cannot repeat
+  further down the walk. The cap is kept by refusing a slot that would join
+  drifts past five, not by scoring it low: at two rows a tier, scoring let a
+  plant between two short drifts make one of six. Every plant is unique, so a border here cannot repeat
   a plant; it repeats a colour.
 - **A developer preview**: `-pgPlotSide 5.2` fixes the app's plot at a web
   plot's size, so a Long Walk plot can be looked at in the app's own renderer
@@ -300,7 +302,13 @@ In order, because each needs the one before:
    is already a file. The sky and orbit are formulas. The plants and figures
    are the WebGL above. Whether a plot is one WebGL scene or sprites laid on a
    canvas the way the app does it is a decision for when (1) runs.
-3. **One area's template**, built and judged at five hundred plants. The Long
+3. **One area's template**, built and judged at five hundred plants. **Done
+   for the Long Walk, 18 September**, in the browser (`tools/wasm/web/walk.html`).
+   The rule held: every plot full but the growing end, 3% of plants a tier from
+   their own. The look did not: one row a tier was about 1.4 plants a square
+   metre and read as single stems on turf, with drifts too far apart to read
+   as colour. Doubled to two staggered rows a tier (48 a plot, about 2.8 a
+   square metre); a partly filled plot is shown as it is. The Long
    Walk is the best first one: its rule is the plainest best practice there is
    (tall at the back, drifts, repetition), and its plots open end to end, so
    the map is a line before it has to be a shape.
