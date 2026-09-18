@@ -16,7 +16,7 @@ The website's shared garden should look and work like the app's Garden screen: f
   - **The double tap is unverified.** Injected taps come too far apart to register; it needs a real thumb.
 - **Long Walk rule** in SeedCore: tiers cut from measured heights, drifts of one colour capped at five, append-only, nothing in front of something shorter. `LongWalkTests`.
 - **Long Walk structures** in the app, developer preview only: a mown path, a tall yew behind the far border, a low hedge in front of the near one, and hedge shadows. Checked by eye at midday and at one quarter-turn. **Not checked at night.**
-- **A plant in a browser (afternoon):** SeedCore builds for WebAssembly and `tools/wasm/web/` draws one plant with WebGL2. The module is **2.5 MB brotli** (3.7 MB gzip, 12.8 MB raw). The whole SeedCore suite passes inside wasm, apart from `GardenStoreTests`. All 15 pinned port seeds grow the same buffers as on the Mac: identical shape, indices, UVs and texels, with positions within 3.2 µm and normals within 3 × 10⁻⁴ (libm rounding). SeedCore 124 tests and the app's 74 pass. Written up in `WEBSITE.md` §*What renders the plant*.
+- **A plant in a browser (afternoon):** SeedCore builds for WebAssembly and `tools/wasm/web/` draws one plant with WebGL2. The module is **2.1 MB brotli** (2.8 MB gzip, 7.9 MB raw) after `wasm-opt -Oz`; the rest is the Swift standard library and FoundationEssentials, not SeedCore (0.3 MB). The whole SeedCore suite passes inside wasm, apart from `GardenStoreTests`. All 15 pinned port seeds grow the same buffers as on the Mac: identical shape, indices, UVs and texels, with positions within 3.2 µm and normals within 3 × 10⁻⁴ (libm rounding). SeedCore 124 tests and the app's 74 pass. Written up in `WEBSITE.md` §*What renders the plant*.
 - **Drawn only with diffuse texture and a plain sun.** Relief and roughness maps, the app's lighting, and a plant's name are still to come.
 - **Not started:** plots in the browser, the plot service, the curator tool and the Wild Fields.
 
@@ -43,16 +43,17 @@ The website's shared garden should look and work like the app's Garden screen: f
 - **Zoom stays capped at 3×.** Its uses are arranging, showing a plant among its neighbours, and tapping the right plant.
 - **Figures are 3D models, not paintings.** Their glow is a second render added over the figure by the square of the lamps' glow.
 
-- **WebAssembly is the renderer.** At 2.5 MB brotli, and matching the phone, the CI-gated JavaScript port stays the fallback only. Marcus has yet to confirm that 2.5 MB is acceptable for a first visit on mobile data.
+- **WebAssembly is the renderer.** Marcus asked for a trim before building on it; it went from 2.5 to 2.1 MB brotli with wasm-opt. Embedded Swift is the next big cut, and a rewrite, so it waits.
 - **On WASI, SeedCore imports `FoundationEssentials` and hashes with `PortableSHA256`.** The full Foundation (through swift-crypto) is 37 MB of ICU data. Use nothing from outside `FoundationEssentials` in SeedCore: `String(format:)` and `replacingOccurrences` were rewritten for this.
 - **SeedCore arithmetic that must wrap uses `Int64`/`UInt64`, never `Int`.** `Int` is 32 bits in wasm; `speckle` was the one case.
 
 ## Next step
-Draw one Long Walk plot in the browser: its placed plants, from `LongWalk`, on the app's floating ground. Before that, add a CI job that builds SeedCore for wasm and runs its tests under Node, so a Foundation-only API or an `Int` wrap cannot creep back.
+Confirm the new `SeedCore (WebAssembly)` CI job goes green on its first run. Then draw one Long Walk plot in the browser: its placed plants, from `LongWalk`, on the app's floating ground.
 
 ## Traps
-- **WebAssembly needs the swift.org toolchain, not Xcode's.** Installed: `~/Library/Developer/Toolchains/swift-6.3.3-RELEASE.xctoolchain` and the SDK `swift-6.3.3-RELEASE_wasm`. Use that toolchain's `swift` explicitly. To run the tests in wasm: `swift build --build-tests --swift-sdk swift-6.3.3-RELEASE_wasm`, then run `SeedCorePackageTests.xctest` with Node's `node:wasi` and a `/` preopen. That takes about 7 minutes.
+- **WebAssembly needs the swift.org toolchain, not Xcode's.** Installed: `~/Library/Developer/Toolchains/swift-6.3.3-RELEASE.xctoolchain` and the SDK `swift-6.3.3-RELEASE_wasm`. Use that toolchain's `swift` explicitly. To run the tests in wasm: `swift build --build-tests --swift-sdk swift-6.3.3-RELEASE_wasm`, then `node tools/wasm/run-wasi.mjs <scratch>/debug/SeedCorePackageTests.xctest`, optionally followed by test class names such as `SeedCoreTests.PortableSHA256Tests`. The whole suite takes about 7 minutes.
 - **Two wasm builds at once in one package race and report nonsense errors.**
+- **`build.sh` wants `wasm-opt`** (`brew install binaryen`). Without it the module is 2.5 MB brotli rather than 2.1.
 - **zsh does not word-split `$VAR`.** Pass lists of seeds as an array.
 - **Simulator `garden.json` is currently Long Walk plot 3.** The earlier fixture backups were in the session scratchpad and may be gone.
 - **Rebuilding a plot fixture:** a throwaway SwiftPM tool that depends on `Packages/SeedCore` by path, plants 300 crossings with `LongWalk.Walk`, and writes `{plants, placed}`. Dates **must** be encoded `.iso8601`. Otherwise the app fails to read the garden, falls to the first-run screen, and may overwrite the file; terminate it at once.

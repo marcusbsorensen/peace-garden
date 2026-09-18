@@ -34,6 +34,38 @@ jobs:
       - name: Test
         run: swift test --package-path Packages/SeedCore
 
+  # The browser grows plants with SeedCore compiled to WebAssembly, where `Int`
+  # is 32 bits and only FoundationEssentials is linked. Either can break the
+  # build or change a plant without touching the other two hosts, so the suite
+  # runs inside wasm too. docs/WEBSITE.md §What renders the plant.
+  seedcore-wasm:
+    name: SeedCore (WebAssembly)
+    runs-on: ubuntu-latest
+    container: swift:6.3.3-noble
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install the WebAssembly SDK
+        run: >
+          swift sdk install
+          https://download.swift.org/swift-6.3.3-release/wasm-sdk/swift-6.3.3-RELEASE/swift-6.3.3-RELEASE_wasm.artifactbundle.tar.gz
+          --checksum cabfa08b73bb8ac783927ecd15fa386e99d0c139c5f232445067bcf58379cae7
+
+      - name: Build the tests
+        run: swift build --package-path Packages/SeedCore --build-tests --swift-sdk swift-6.3.3-RELEASE_wasm --scratch-path .build-wasm
+
+      - name: Test inside WebAssembly
+        run: node tools/wasm/run-wasi.mjs .build-wasm/debug/SeedCorePackageTests.xctest
+
+      - name: Build the browser module
+        run: |
+          swift build --package-path tools/wasm -c release --swift-sdk swift-6.3.3-RELEASE_wasm -Xswiftc -Osize
+          echo "PlantWasm.wasm, unoptimised: $(wc -c < tools/wasm/.build/release/PlantWasm.wasm) bytes" >> "$GITHUB_STEP_SUMMARY"
+
   derivation-reference:
     name: Derivation reference (Python)
     runs-on: ubuntu-latest

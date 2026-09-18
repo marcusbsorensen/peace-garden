@@ -783,7 +783,7 @@ between them.
 | --- | --- |
 | **A third hand-maintained port**, in JavaScript | The thing HANDOVER.md forbids by name. `tools/preview/` has drifted twice, and a plant in the garden that does not match the plant on the phone is the one failure this project cannot survive. |
 | **A JavaScript port with a CI gate** — the `tools/reference/` treatment: render the same seeds through both, fail on disagreement | Honest, and proven: CI already runs a second implementation of the derivation. It is real work to write and real work to keep. |
-| **`SeedCore` compiled to WebAssembly** | One implementation, so drift is impossible by construction rather than by vigilance. 2.5 MB brotli, measured 18 September (below). |
+| **`SeedCore` compiled to WebAssembly** | One implementation, so drift is impossible by construction rather than by vigilance. 2.1 MB brotli, measured 18 September (below). |
 | **Rendered images made somewhere** | Ruled out on principle: it would be the first stored appearance in the project's history, on the one surface where a mismatch is most visible. ARCHITECTURE.md's one idea is that nothing about a plant's appearance is stored, sent or synced. |
 
 **Recommendation: WebAssembly, with the CI-gated port as the fallback if the
@@ -810,9 +810,9 @@ copy of the geometry with nothing checking it is the one option that is off the
 table however convenient it looks.
 
 **Measured, 18 September.** `tools/wasm/` builds SeedCore for the browser and
-`tools/wasm/web/` draws one plant from it with WebGL2. The module is 12.8 MB
-raw, 3.7 MB gzipped and **2.5 MB brotli**. It loads in about 75 ms and grows a
-plant in 20 to 200 ms on a Mac. Three changes got it there from 12.6 MB brotli:
+`tools/wasm/web/` draws one plant from it with WebGL2. The module is 7.9 MB
+raw, 2.8 MB gzipped and **2.1 MB brotli**. It loads in about 40 ms and grows a
+plant in 20 to 100 ms on a Mac. Four changes got it there from 12.6 MB brotli:
 
 - **`FoundationEssentials` on WASI.** The full Foundation brings ICU, a single
   37 MB block of text data SeedCore never reads.
@@ -822,6 +822,15 @@ plant in 20 to 200 ms on a Mac. Three changes got it there from 12.6 MB brotli:
 - **`speckle` multiplies in `Int64`.** `Int` is 32 bits in wasm, so the cell hash
   wrapped at a different width and speckled leaves came out differently. The fix
   gives the same bits as before on the phone.
+- **`wasm-opt -Oz`**, in `build.sh`, takes the last 18%. The optimised module
+  grows all fifteen pinned seeds to the same bytes as the unoptimised one.
+
+What remains is mostly the platform: SeedCore's own code is 0.3 MB. The Swift
+standard library is 4.6 MB, FoundationEssentials 2.6 MB, and the regex
+libraries it brings 1.2 MB, before optimisation. The next large cut would be
+Embedded Swift, which has no Foundation at all. That is a rewrite of every
+`Date`, `Calendar`, `Data` and `Codable` in SeedCore, so it waits until the
+size is shown to cost visitors.
 
 The browser grows the same plant. The whole SeedCore suite passes inside
 WebAssembly under Node's WASI, apart from `GardenStoreTests`: the browser keeps
@@ -1005,7 +1014,7 @@ handed a decision they cannot review.
   nothing needs it to be. If it ever is, it is a new consent with its own screen
   and its own withdrawal.
 - ~~**The wasm bundle size**, which decides whether the recommended renderer
-  survives contact with a phone on mobile data.~~ **2.5 MB brotli**, measured
+  survives contact with a phone on mobile data.~~ **2.1 MB brotli**, measured
   18 September; see *What renders the plant*. Earlier: deferred rather than answered,
   2 September: **the first pass draws no plant at all**, only a marked space of
   the right proportions. Everything else on a page — the language, the passage,
