@@ -1,8 +1,9 @@
 import CoreGraphics
+import SeedCore
 import simd
 import SwiftUI
 
-/// The plot itself: a square of ground hanging in space, with the soil's own
+/// The plot itself: a clod of ground hanging in space, with the soil's own
 /// depth showing at the cut.
 ///
 /// A plane that merely stops leaves *what is off the side* unanswered; a plot
@@ -239,51 +240,50 @@ enum GardenGround {
 
     // MARK: The shapes
 
-    /// The plot's surface, corner to corner.
+    /// The plot's surface: the ground's outline, flat.
     static func topFace(plotSide: Double, in view: Isometric) -> Path {
-        let half = plotSide / 2
-        let corners = [
-            (-half, -half), (half, -half), (half, half), (-half, half)
-        ].map { view.point(x: $0.0, z: $0.1) }
-
-        var path = Path()
-        path.addLines(corners)
-        path.closeSubpath()
-        return path
+        PlotOutline.of(plotSide: plotSide).path(in: view)
     }
 
-    /// The two faces of the cut that face the viewer, far one first.
+    /// The cut under the stretch of the outline that faces the viewer, far to
+    /// near, a piece per step of the outline.
     ///
-    /// Only two of the four are ever seen: depth runs on `x + z`, so the `+x`
-    /// and `+z` edges are the near ones and the other two are behind the plot's
-    /// own surface. Each is sampled along its edge rather than drawn as a single
-    /// quad, so a terrain that lifts or drops the rim will take the top of the
-    /// face with it.
-    static func nearFaces(plotSide: Double, in view: Isometric, samples: Int = 16) -> [(Path, Color)] {
+    /// Only that stretch is ever seen: depth runs on `x + z`, so the rest is
+    /// behind the plot's own surface. Each piece is shaded by the way its own
+    /// step of the rim faces, so the bank turns with the edge as it wanders.
+    /// Fill each with a stroke of its own colour, or the joins show as hairlines.
+    static func nearFaces(plotSide: Double, in view: Isometric) -> [(Path, Color)] {
+        let outline = PlotOutline.of(plotSide: plotSide)
+        let points = outline.points
         let half = plotSide / 2
+        var faces: [(depth: Double, path: Path, colour: Color)] = []
 
-        let faces: [(normal: SIMD3<Double>, along: (Double) -> (x: Double, z: Double))] = [
-            (SIMD3(0, 0, 1), { t in (x: -half + t * plotSide, z: half) }),
-            (SIMD3(1, 0, 0), { t in (x: half, z: half - t * plotSide) })
-        ]
-
-        return faces.map { face in
-            var path = Path()
-            let steps = max(2, samples)
-
-            for step in 0...steps {
-                let place = face.along(Double(step) / Double(steps))
-                let point = view.point(x: place.x, z: place.z)
-                if step == 0 { path.move(to: point) } else { path.addLine(to: point) }
-            }
-            for step in stride(from: steps, through: 0, by: -1) {
-                let place = face.along(Double(step) / Double(steps))
-                let depth = cutDepth(x: place.x, z: place.z, plotSide: plotSide)
-                path.addLine(to: view.point(x: place.x, y: -depth, z: place.z))
-            }
-            path.closeSubpath()
-
-            return (path, shade(base: soil, normal: face.normal, shadow: 0.55))
+        // The depth is read on the square, where the rim is always the rim.
+        func floor(_ spot: Spot) -> Double {
+            let square = max(abs(spot.x), abs(spot.z))
+            let out = square > 0 ? half / square : 1
+            return -cutDepth(x: spot.x * out, z: spot.z * out, plotSide: plotSide)
         }
+
+        for n in points.indices {
+            let a = points[n], b = points[(n + 1) % points.count]
+            let dx = b.x - a.x, dz = b.z - a.z
+            let length = (dx * dx + dz * dz).squareRoot()
+            guard length > 0 else { continue }
+            // Outward is the direction of travel turned a quarter clockwise.
+            let normal = SIMD3(dz / length, 0, -dx / length)
+            let (u, v) = view.facing(x: normal.x, z: normal.z)
+            guard u + v > 0 else { continue }
+
+            var path = Path()
+            path.move(to: view.point(a))
+            path.addLine(to: view.point(b))
+            path.addLine(to: view.point(b, y: floor(b)))
+            path.addLine(to: view.point(a, y: floor(a)))
+            path.closeSubpath()
+            faces.append((view.depth(Spot(x: (a.x + b.x) / 2, z: (a.z + b.z) / 2)), path,
+                          shade(base: soil, normal: normal, shadow: 0.55)))
+        }
+        return faces.sorted { $0.depth < $1.depth }.map { ($0.path, $0.colour) }
     }
 }

@@ -1,11 +1,12 @@
 import CoreGraphics
+import SeedCore
 import simd
 import SwiftUI
 import UIKit
 
 /// The plot drawn as a piece of ground: a mesh of quads standing at the world's
-/// own heights, lit where it is drawn, with the cut hanging under the two near
-/// edges.
+/// own heights, lit where it is drawn, cut to the plot's wandering outline, with
+/// the cut hanging under the stretch of rim that faces the viewer.
 ///
 /// **Drawn once, kept, and drawn somewhere other than the main actor.** Sixteen
 /// thousand quads is about half a second, which as a step inside `body` is half
@@ -99,13 +100,17 @@ actor GardenTerrain {
         let reach = region?.insetBy(dx: -4 * step * view.pointsPerMetre,
                                     dy: -4 * step * view.pointsPerMetre)
 
+        // The grid is laid over the square and its outer part drawn in to the
+        // plot's outline, so the grid's own last row is the wandering rim.
+        let outline = PlotOutline.of(plotSide: plotSide)
         var grid = [SIMD3<Double>]()
         grid.reserveCapacity((mesh + 1) * (mesh + 1))
         for j in 0...mesh {
             let z = -half + Double(j) * step
             for i in 0...mesh {
                 let x = -half + Double(i) * step
-                grid.append(SIMD3(x, worlds.height(world: world, x: x, z: z, plotSide: plotSide), z))
+                let at = outline.warp(x: x, z: z)
+                grid.append(SIMD3(at.x, worlds.height(world: world, x: at.x, z: at.z, plotSide: plotSide), at.z))
             }
         }
         func corner(_ i: Int, _ j: Int) -> SIMD3<Double> { grid[j * (mesh + 1) + i] }
@@ -119,7 +124,7 @@ actor GardenTerrain {
 
         // The cut first: it hangs behind the surface, and the surface is what
         // closes the top of it.
-        drawCut(world: world, plotSide: plotSide, view: view, detail: mesh,
+        drawCut(rim: rim(of: grid, detail: mesh), plotSide: plotSide, view: view,
                 light: light, into: context)
 
         // Far to near along the anti-diagonals **of the view**, not of the plot.
@@ -220,114 +225,142 @@ actor GardenTerrain {
         let step = plotSide / Double(GardenWorlds.cells)
         let travel = simd_normalize(along) * step
         let climb = rise / simd_length(along) * step
-        let half = plotSide / 2
+        let outline = PlotOutline.of(plotSide: plotSide)
 
         var x = place.x, z = place.z, y = place.y + max(0.012, step)
         for _ in 0..<46 {
             x += travel.x; z += travel.y; y += climb
-            if abs(x) > half || abs(z) > half { return false }
+            if !outline.reaches(x: x, z: z) { return false }
             if worlds.height(world: world, x: x, z: z, plotSide: plotSide) > y { return true }
         }
         return false
     }
 
-    /// The two faces of the cut that face the viewer, drawn as a bank of earth
-    /// rather than as two flat quads.
+    /// One place on the rim: where the ground's edge is, and where on the
+    /// square it was drawn in from, which is what the cut's depth is read at.
+    private struct RimPoint {
+        let at: SIMD3<Double>
+        let square: (x: Double, z: Double)
+    }
+
+    /// The grid's outer row, all the way round, anticlockwise from above: the
+    /// `+x` edge from `z-` to `z+` first, the way `Organic.outline` runs.
+    private static func rim(of grid: [SIMD3<Double>], detail mesh: Int) -> [RimPoint] {
+        let row = mesh + 1
+        var walk: [(i: Int, j: Int)] = []
+        for j in 0..<mesh { walk.append((mesh, j)) }
+        for i in stride(from: mesh, to: 0, by: -1) { walk.append((i, mesh)) }
+        for j in stride(from: mesh, to: 0, by: -1) { walk.append((0, j)) }
+        for i in 0..<mesh { walk.append((i, 0)) }
+        return walk.map { cell in
+            let fi = Double(cell.i) / Double(mesh) * 2 - 1
+            let fj = Double(cell.j) / Double(mesh) * 2 - 1
+            return RimPoint(at: grid[cell.j * row + cell.i], square: (x: fi, z: fj))
+        }
+    }
+
+    /// The cut: the bank of earth under the stretch of the rim that faces the
+    /// viewer, drawn as chunks rather than as flat faces.
     ///
-    /// Only two of the four are ever seen: depth runs on `x + z`, so the `+x`
-    /// and `+z` edges are the near ones and the other two are behind the plot's
-    /// own surface. Nor is the bulge under the middle ever seen — looking down at
-    /// thirty-five degrees, the plot's own surface hides everything below it — so
-    /// **the rim is the whole of what the cut has to say**, and it is worth
-    /// spending cells on.
+    /// **It hangs from the ground's own last row**, so its top is the same
+    /// wandering line the surface ends on, and the surface drawn after it closes
+    /// it without a gap. Only the part facing the viewer is drawn: depth runs on
+    /// `x + z`, so the far part is behind the plot's own surface. Nor is the
+    /// bulge under the middle ever seen — looking down at thirty-five degrees,
+    /// the plot's own surface hides everything below it — so **the rim is the
+    /// whole of what the cut has to say**, and it is worth spending cells on.
     ///
-    /// Each face is a grid: along the rim it follows the terrain, and down it
-    /// runs from the dark humus at the top through the earth to rock at the
-    /// bottom, in cells that vary so no two are the same colour. The floor is
-    /// jagged by a few centimetres for the same reason — ground that ends in a
-    /// ruled line is a tile again.
+    /// Each column runs down from the dark humus at the top through the earth to
+    /// rock at the bottom, in cells that vary so no two are the same colour. The
+    /// floor is jagged by a few centimetres for the same reason — ground that
+    /// ends in a ruled line is a tile again.
     private static func drawCut(
-        world: Int,
+        rim: [RimPoint],
         plotSide: Double,
         view: Isometric,
-        detail mesh: Int,
         light: GardenGround.Light,
         into context: CGContext
     ) {
-        let worlds = GardenWorlds.shared
         let half = plotSide / 2
+        let count = rim.count
+        guard count > 8 else { return }
 
-        // **Chunks have to be chunky.** Drawn at the terrain's own hundred and
-        // twenty-eight columns, the variation came out as a comb of pinstripes
-        // three pixels wide — texture so fine it reads as a moiré rather than as
-        // soil. A bank wants cells you can see the edges of.
-        let columns = 44
+        // **Chunks have to be chunky.** Drawn a column per quad of the terrain,
+        // the variation came out as a comb of pinstripes three pixels wide —
+        // texture so fine it reads as a moiré rather than as soil. A bank wants
+        // cells you can see the edges of: three quads of the rim to a column,
+        // about forty-four to a side, as before the rim wandered.
+        let columns = min(count, max(4, Int((Double(count) / 3).rounded(.down))))
         let bands = 11
+        func start(_ column: Int) -> Int { column * count / columns }
 
-        // All four sides of the plot, and only the two that face the viewer at
-        // this turn are drawn. Which two they are is decided by the view, the
-        // same way the draw order is.
-        let faces: [(normal: SIMD3<Double>, sideways: SIMD3<Double>,
-                     along: (Double) -> (x: Double, z: Double))] = [
-            (SIMD3(0, 0, 1), SIMD3(1, 0, 0), { t in (x: -half + t * plotSide, z: half) }),
-            (SIMD3(1, 0, 0), SIMD3(0, 0, -1), { t in (x: half, z: half - t * plotSide) }),
-            (SIMD3(0, 0, -1), SIMD3(-1, 0, 0), { t in (x: half - t * plotSide, z: -half) }),
-            (SIMD3(-1, 0, 0), SIMD3(0, 0, 1), { t in (x: -half, z: -half + t * plotSide) })
-        ]
+        // How far under the rim the ground goes: read on the square, where the
+        // rim is always the rim, and roughened at each column's edge.
+        func floor(_ v: Int, in column: Int) -> Double {
+            let point = rim[v % count]
+            let depth = GardenGround.cutDepth(x: point.square.x * half, z: point.square.z * half,
+                                              plotSide: plotSide)
+            let from = start(column), to = start(column + 1)
+            let into = to > from ? Double(v - from) / Double(to - from) : 0
+            let a = GardenGround.grain(column, -1) - 0.5
+            let b = GardenGround.grain((column + 1) % columns, -1) - 0.5
+            return -depth * (1 + (a + (b - a) * into) * 0.20)
+        }
 
-        for (face, side) in faces.enumerated() {
-            let (a, b) = view.facing(x: side.normal.x, z: side.normal.z)
+        struct Column { let index: Int; let normal: SIMD3<Double>; let sideways: SIMD3<Double>; let depth: Double }
+        var seen: [Column] = []
+        for column in 0..<columns {
+            let first = rim[start(column)].at
+            let last = rim[start(column + 1) % count].at
+            let along = SIMD3(last.x - first.x, 0, last.z - first.z)
+            guard simd_length(along) > 1e-9 else { continue }
+            let sideways = simd_normalize(along)
+            // Outward is the direction of travel turned a quarter clockwise.
+            let normal = SIMD3(sideways.z, 0, -sideways.x)
+            let (a, b) = view.facing(x: normal.x, z: normal.z)
             guard a + b > 0 else { continue }
+            let middle = view.depth(Spot(x: (first.x + last.x) / 2, z: (first.z + last.z) / 2))
+            seen.append(Column(index: column, normal: normal, sideways: sideways, depth: middle))
+        }
+        seen.sort { $0.depth < $1.depth }
 
-            // The rim, and how far under it the ground goes at each column.
-            var top = [Double](repeating: 0, count: columns + 1)
-            var floor = [Double](repeating: 0, count: columns + 1)
-            for column in 0...columns {
-                let at = side.along(Double(column) / Double(columns))
-                top[column] = worlds.height(world: world, x: at.x, z: at.z, plotSide: plotSide)
-                let depth = GardenGround.cutDepth(x: at.x, z: at.z, plotSide: plotSide)
-                let rough = GardenGround.grain(column, -1, face) - 0.5
-                floor[column] = -depth * (1 + rough * 0.20)
-            }
+        for column in seen {
+            let vertices = Array(start(column.index)...start(column.index + 1))
+            for band in 0..<bands {
+                let near = Double(band) / Double(bands)
+                let far = Double(band + 1) / Double(bands)
 
-            for column in 0..<columns {
-                for band in 0..<bands {
-                    let near = Double(band) / Double(bands)
-                    let far = Double(band + 1) / Double(bands)
-
-                    func corner(_ column: Int, _ down: Double) -> CGPoint {
-                        let at = side.along(Double(column) / Double(columns))
-                        let y = top[column] + down * (floor[column] - top[column])
-                        return view.point(x: at.x, y: y, z: at.z)
-                    }
-
-                    let grain = GardenGround.grain(column, band, face)
-                    let colour = GardenGround.cutColour(
-                        down: (near + far) / 2,
-                        grain: grain,
-                        stones: GardenGround.grain(column / 2, band / 2, face + 16)
-                    )
-
-                    // Each cell sits a little differently in the bank, so the
-                    // light finds some of them and not others. That, rather than
-                    // the colour, is most of what reads as chunkiness.
-                    let tilt = (grain - 0.5) * 0.5
-                    let lean = GardenGround.grain(column, band, face + 8) - 0.5
-                    let normal = simd_normalize(
-                        side.normal + side.sideways * tilt + SIMD3(0, lean * 0.4, 0)
-                    )
-
-                    var path = Path()
-                    path.move(to: corner(column, near))
-                    path.addLine(to: corner(column + 1, near))
-                    path.addLine(to: corner(column + 1, far))
-                    path.addLine(to: corner(column, far))
-                    path.closeSubpath()
-
-                    fill(path, GardenGround.shaded(base: colour, normal: normal,
-                                                   shadow: 0.55, light: light),
-                         in: context)
+                func corner(_ v: Int, _ down: Double) -> CGPoint {
+                    let top = rim[v % count].at
+                    let y = top.y + down * (floor(v, in: column.index) - top.y)
+                    return view.point(x: top.x, y: y, z: top.z)
                 }
+
+                let grain = GardenGround.grain(column.index, band)
+                let colour = GardenGround.cutColour(
+                    down: (near + far) / 2,
+                    grain: grain,
+                    stones: GardenGround.grain(column.index / 2, band / 2, 16)
+                )
+
+                // Each cell sits a little differently in the bank, so the
+                // light finds some of them and not others. That, rather than
+                // the colour, is most of what reads as chunkiness.
+                let tilt = (grain - 0.5) * 0.5
+                let lean = GardenGround.grain(column.index, band, 8) - 0.5
+                let normal = simd_normalize(
+                    column.normal + column.sideways * tilt + SIMD3(0, lean * 0.4, 0)
+                )
+
+                var path = Path()
+                path.move(to: corner(vertices[0], near))
+                for v in vertices.dropFirst() { path.addLine(to: corner(v, near)) }
+                for v in vertices.reversed() { path.addLine(to: corner(v, far)) }
+                path.closeSubpath()
+
+                fill(path, GardenGround.shaded(base: colour, normal: normal,
+                                               shadow: 0.55, light: light),
+                     in: context)
             }
         }
     }

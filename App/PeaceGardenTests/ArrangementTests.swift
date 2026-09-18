@@ -168,7 +168,10 @@ final class ArrangementTests: XCTestCase {
                 let spots = Arrangement.spots(for: plants, template: template,
                                               plotSide: side, mine: mine)
                 XCTAssertEqual(spots.count, plants.count, "\(template) lost a plant")
+                let outline = PlotOutline.of(plotSide: side)
                 for (_, spot) in spots {
+                    XCTAssertTrue(outline.contains(x: spot.x, z: spot.z),
+                                  "\(template) put a plant off the drawn ground at \(side) m")
                     XCTAssertLessThanOrEqual(abs(spot.x), side / 2,
                                              "\(template) put a plant off the edge at \(side) m")
                     XCTAssertLessThanOrEqual(abs(spot.z), side / 2,

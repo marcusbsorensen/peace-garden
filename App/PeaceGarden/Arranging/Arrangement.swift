@@ -89,13 +89,20 @@ enum Arrangement {
         // The plants are laid out inside a margin, so nothing the template
         // places ever sits on the cut edge.
         let usable = plotSide * 0.88
+        let laidOut: [UUID: Spot]
         switch template {
-        case .thematic:   return thematic(plants, usable)
-        case .nightAndDay: return nightAndDay(plants, usable)
-        case .colours:    return colours(plants, usable)
-        case .meetings:   return meetings(plants, usable)
-        case .kinship:    return kinship(plants, usable, mine: mine)
+        case .thematic:   laidOut = thematic(plants, usable)
+        case .nightAndDay: laidOut = nightAndDay(plants, usable)
+        case .colours:    laidOut = colours(plants, usable)
+        case .meetings:   laidOut = meetings(plants, usable)
+        case .kinship:    laidOut = kinship(plants, usable, mine: mine)
         }
+        // **And on the ground as drawn.** The margin is a square's, and the
+        // ground's edge wanders in from the square and wears its corners
+        // round, most on a small plot; the odd plant laid out past it is drawn
+        // in until it stands on earth. Everything else stays where it was.
+        let outline = PlotOutline.of(plotSide: plotSide)
+        return laidOut.mapValues { outline.keepOn($0) }
     }
 
     /// The site's map, with each area's plants **ranked down its long axis**.

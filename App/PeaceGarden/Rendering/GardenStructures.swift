@@ -7,11 +7,12 @@ import UIKit
 /// hedges and its mown path. `docs/WEB-GARDENS.md` §*Structures need drawing
 /// properly*.
 ///
-/// **A clipped hedge is a geometric form**, which is why it can be modelled as
-/// one: a yew hedge is a box with rounded shoulders, in real life as here. What
-/// stops it being a green rectangle is the grain of the leaves on it and the
-/// garden's own light across it, so it is rendered like a figure — by the
-/// plants' camera, under the plants' light, at eight hours and four turns.
+/// **A hedge cut by hand is a loaf, not a box**: soft-shouldered, bulging where
+/// it has grown, its top an undulating line and its ends rounded. The shape is
+/// SeedCore's `Organic.hedge`, so the website's hedge is the same hedge; the
+/// grain of the leaves on it and the garden's own light across it are here, and
+/// it is rendered like a figure — by the plants' camera, under the plants'
+/// light, at eight hours and four turns.
 @MainActor
 final class GardenStructures {
     static let shared = GardenStructures()
@@ -19,7 +20,7 @@ final class GardenStructures {
     private let cache = NSCache<NSString, UIImage>()
 
     private init() {
-        cache.countLimit = 96
+        cache.countLimit = 160
     }
 
     // MARK: Hedges
@@ -27,10 +28,10 @@ final class GardenStructures {
     /// A hedge is drawn as a run of short pieces, each sorted into the garden
     /// by its own depth like a plant. A hedge the length of the plot is in front
     /// of some plants and behind others, and one picture cannot be both.
-    static let pieceLength = 0.4
+    nonisolated static let pieceLength = 0.4
 
     /// Through the hedge, across the walk.
-    static let thickness = 0.36
+    nonisolated static let thickness = 0.36
 
     /// A 2 m yew backdrop behind the far border, and a 0.7 m hedge in front of
     /// the near one, swapped as the plot turns. Settled by Marcus, 18 September:
@@ -45,16 +46,41 @@ final class GardenStructures {
         return GardenCreatures.Figure(metres: metres, lift: 0.3 / metres, glow: .zero)
     }
 
-    static func key(height: Double, step: Int, turn: Int) -> String {
-        "hedge-\(Int(height * 100))-\(step)-\(((turn % 4) + 4) % 4)"
+    private var lines: [String: HedgeLine] = [:]
+
+    /// One hedge, on side `-1` or `+1` of the path, built once for a plot and
+    /// a ground and kept.
+    func line(side: Int, height: Double, plotSide: Double, world: Int) -> HedgeLine {
+        let key = "\(side)-\(Int(height * 100))-\(Int(plotSide * 100))-\(world)"
+        if let held = lines[key] { return held }
+        let built = HedgeLine(side: side, height: height, plotSide: plotSide, key: key) { x, z in
+            GardenWorlds.shared.height(world: world, x: x, z: z, plotSide: plotSide)
+        }
+        if lines.count > 16 { lines.removeAll() }
+        lines[key] = built
+        return built
     }
 
-    func hedge(height: Double, step: Int, turn: Int) -> UIImage? {
-        let quarter = ((turn % 4) + 4) % 4
-        let key = Self.key(height: height, step: step, turn: quarter) as NSString
-        if let held = cache.object(forKey: key) { return held }
+    static func key(line: HedgeLine, piece: Int, step: Int, turn: Int) -> String {
+        "hedge-\(line.key)-\(piece)-\(step)-\(((turn % 4) + 4) % 4)"
+    }
 
-        let figure = Self.figure(height: height)
+    /// One piece of a hedge, photographed standing on its own ground.
+    ///
+    /// **Cut from the one mesh, not built on its own.** Each piece is a run of
+    /// the hedge's rings, and neighbours share the ring they meet at — and one
+    /// more either side, so a piece overlaps the next by a ring and the joint
+    /// is the same surface drawn twice rather than two edges meeting. The
+    /// square-ended boxes this replaces were square-ended because pieces with
+    /// rounded ends each drew a dark seam at every joint; a piece of a
+    /// continuous mesh has no end of its own to draw.
+    func hedge(_ line: HedgeLine, piece index: Int, step: Int, turn: Int) -> UIImage? {
+        let quarter = ((turn % 4) + 4) % 4
+        let key = Self.key(line: line, piece: index, step: step, turn: quarter) as NSString
+        if let held = cache.object(forKey: key) { return held }
+        guard line.pieces.indices.contains(index) else { return nil }
+
+        let figure = Self.figure(height: line.height)
         let side = CGFloat(figure.metres) * GardenCreatures.renderedPointsPerMetre / 2
         let view = SCNView(frame: CGRect(x: 0, y: 0, width: side, height: side))
         view.scene = GardenSprites.makeScene(lit: GardenGround.Light.at(step: step).turned(quarters: quarter))
@@ -62,15 +88,8 @@ final class GardenStructures {
         view.isOpaque = false
         view.antialiasingMode = .multisampling4X
 
-        // A little longer than a piece, so neighbours overlap and no light
-        // shows between them. **Square-ended**: with rounded shoulders every
-        // piece's rounded ends drew a dark seam at each joint, and the hedge
-        // came out as a row of posts.
-        let box = SCNBox(width: Self.thickness, height: height,
-                         length: Self.pieceLength + 0.03, chamferRadius: 0)
-        box.materials = [Self.yew]
-        let node = SCNNode(geometry: box)
-        node.position = SCNVector3(0, Float(height / 2), 0)
+        let node = SCNNode(geometry: line.geometry(piece: line.pieces[index]))
+        node.geometry?.materials = [Self.yew]
 
         let pivot = SCNNode()
         pivot.eulerAngles.y = Float(quarter) * .pi / 2
@@ -120,12 +139,202 @@ final class GardenStructures {
     }()
 }
 
+// MARK: - A hedge
+
+/// One of the Long Walk's hedges: a single `Organic.hedge` mesh set down on the
+/// plot, and the pieces it is drawn in.
+///
+/// **It stands on the ground, not on the air past the rim.** The walk puts a
+/// hedge's inner face at `LongWalk.hedgeFrom`, which leaves its outer face a
+/// little past the square and well past the plot's wandering outline, so the
+/// hedge's line is drawn in wherever the outline comes in: its outer foot is
+/// kept five centimetres inside the ground's edge, eased so the line bends
+/// rather than kinks. It ends where following the edge round a corner would
+/// take it more than thirty centimetres in, so both rounded ends sit on earth.
+/// Each ring then stands on the ground under the middle of it, so the hedge
+/// rides the ground's rises in one piece.
+struct HedgeLine {
+    struct Piece {
+        let index: Int
+        /// The rings it is cut from, one more either side of its own.
+        let rings: ClosedRange<Int>
+        /// Where it stands, for the depth sort and the picture's foot.
+        let spot: Spot
+        /// The ground's height there, which its picture is taken relative to.
+        let ground: Double
+    }
+
+    let side: Int
+    let height: Double
+    let key: String
+    let rings: Int
+    /// On the plot: `x` and `z` where each vertex stands, `y` its height above
+    /// the plot's `y = 0`, ground included.
+    let positions: [SIMD3<Float>]
+    let normals: [SIMD3<Float>]
+    /// Whether SeedCore's triangles are wound the way SceneKit takes as the
+    /// back, which culls every face seen from outside.
+    let flipped: Bool
+    let pieces: [Piece]
+    /// Each ring's two feet on the ground, and how far its top stands above it,
+    /// for the shadow.
+    let feet: [(outer: Spot, inner: Spot, tall: Double)]
+
+    static let around = 20
+
+    init(side: Int, height: Double, plotSide: Double, key: String,
+         ground: (Double, Double) -> Double) {
+        self.side = side
+        self.height = height
+        self.key = key
+        let outline = PlotOutline.of(plotSide: plotSide)
+        let thickness = GardenStructures.thickness
+        let nominal = LongWalk.hedgeFrom + thickness / 2
+        let half = plotSide / 2
+
+        // How far out the hedge's middle may stand at each place along it, on
+        // a two-centimetre lattice: eroded then averaged over the same reach,
+        // which smooths the line and never lets it past where it may stand.
+        let step = 0.02
+        let count = Int((plotSide / step).rounded())
+        let allowed = (0...count).map { n -> Double in
+            let z = -half + Double(n) * step
+            guard let edge = outline.extent(z: z, side: side) else { return -1 }
+            return edge - 0.05 - thickness / 2
+        }
+        let window = 10
+        let eroded = allowed.indices.map { n in
+            allowed[max(0, n - window)...min(count, n + window)].min() ?? -1
+        }
+        let eased = eroded.indices.map { n in
+            let run = eroded[max(0, n - window)...min(count, n + window)]
+            return run.reduce(0, +) / Double(run.count)
+        }
+        func out(_ z: Double) -> Double {
+            let f = min(max((z + half) / step, 0), Double(count))
+            let n = min(Int(f), count - 1), t = f - Double(n)
+            return min(nominal, eased[n] + (eased[n + 1] - eased[n]) * t)
+        }
+
+        // Its length: as far each way as the line can go without bending in
+        // more than thirty centimetres, the shorter of the two, less a little.
+        func reach(_ direction: Double) -> Double {
+            var z = 0.0
+            while abs(z) < half, out(z) >= nominal - 0.3 { z += direction * step }
+            return abs(z) - 0.04
+        }
+        let length = max(0.6, 2 * min(reach(1), reach(-1)))
+
+        let mesh = Organic.hedge(length: length, height: height, thickness: thickness,
+                                 seed: PlotOutline.hedgeSeed(side: side))
+        let stride = Self.around + 1
+        rings = mesh.positions.count / stride - 1
+
+        var positions = mesh.positions
+        var centres: [Spot] = []
+        var grounds: [Double] = []
+        for r in 0...rings {
+            let z = Double(mesh.positions[r * stride].z)
+            let x = Double(side) * out(z)
+            let under = ground(x, z)
+            centres.append(Spot(x: x, z: z))
+            grounds.append(under)
+            for a in 0..<stride {
+                let n = r * stride + a
+                positions[n].x += Float(x)
+                positions[n].y += Float(under)
+            }
+        }
+        self.positions = positions
+
+        // Normals worked out here, on the hedge as it stands, and turned
+        // outward whichever way the triangles are wound: the top of the middle
+        // ring has to face the sky.
+        var normals = Self.normals(positions, mesh.indices)
+        let top = (rings / 2) * stride + Self.around / 2
+        flipped = normals[top].y < 0
+        if flipped { normals = normals.map { -$0 } }
+        self.normals = normals
+
+        feet = (0...rings).map { r in
+            let a = positions[r * stride], b = positions[r * stride + Self.around]
+            let ring = positions[(r * stride)..<(r * stride + stride)]
+            let highest = Double(ring.map(\.y).max() ?? 0)
+            let (outer, inner) = Double(a.x) * Double(side) > Double(b.x) * Double(side) ? (a, b) : (b, a)
+            return (Spot(x: Double(outer.x), z: Double(outer.z)),
+                    Spot(x: Double(inner.x), z: Double(inner.z)),
+                    max(0, highest - grounds[r]))
+        }
+
+        let pieceCount = max(1, Int((length / GardenStructures.pieceLength).rounded()))
+        let rings = self.rings
+        pieces = (0..<pieceCount).map { p in
+            let from = p * rings / pieceCount, to = (p + 1) * rings / pieceCount
+            let middle = (from + to) / 2
+            return Piece(index: p, rings: max(0, from - 1)...min(rings, to + 1),
+                         spot: centres[middle], ground: grounds[middle])
+        }
+    }
+
+    /// A piece as SceneKit geometry, standing on its own foot: the plot's
+    /// coordinates less the piece's spot and ground.
+    func geometry(piece: Piece) -> SCNGeometry {
+        let stride = Self.around + 1
+        let first = piece.rings.lowerBound * stride
+        let last = (piece.rings.upperBound + 1) * stride
+        let origin = SIMD3<Float>(Float(piece.spot.x), Float(piece.ground), Float(piece.spot.z))
+        let local = positions[first..<last].map { p -> SCNVector3 in
+            let q = p - origin
+            return SCNVector3(q.x, q.y, q.z)
+        }
+        let turned = normals[first..<last].map { SCNVector3($0.x, $0.y, $0.z) }
+
+        // The leaf grain runs on in metres along the hedge and round it, so it
+        // carries across a joint, at the density the boxes had it.
+        let section = Float(2 * height + GardenStructures.thickness)
+        var grain: [CGPoint] = []
+        for n in first..<last {
+            let a = n % stride
+            grain.append(CGPoint(x: CGFloat(positions[n].z / 0.4),
+                                 y: CGFloat(Float(a) / Float(Self.around) * section / 0.4)))
+        }
+
+        var indices: [UInt32] = []
+        let spans = piece.rings.count - 1
+        for r in 0..<spans {
+            for a in 0..<Self.around {
+                let i = UInt32(r * stride + a), j = UInt32((r + 1) * stride + a)
+                indices += flipped ? [i, i + 1, j, i + 1, j + 1, j] : [i, j, i + 1, i + 1, j, j + 1]
+            }
+        }
+        return SCNGeometry(
+            sources: [SCNGeometrySource(vertices: local), SCNGeometrySource(normals: turned),
+                      SCNGeometrySource(textureCoordinates: grain)],
+            elements: [SCNGeometryElement(indices: indices, primitiveType: .triangles)]
+        )
+    }
+
+    /// Smooth normals, each the sum of the faces round the vertex.
+    private static func normals(_ positions: [SIMD3<Float>], _ indices: [UInt32]) -> [SIMD3<Float>] {
+        var sums = [SIMD3<Float>](repeating: .zero, count: positions.count)
+        var t = 0
+        while t + 2 < indices.count {
+            let a = Int(indices[t]), b = Int(indices[t + 1]), c = Int(indices[t + 2])
+            let n = simd_cross(positions[b] - positions[a], positions[c] - positions[a])
+            sums[a] += n; sums[b] += n; sums[c] += n
+            t += 3
+        }
+        return sums.map { simd_length($0) > 0 ? simd_normalize($0) : SIMD3(0, 1, 0) }
+    }
+}
+
 // MARK: - Drawing them
 
 /// One piece of hedge standing on the plot, crossfaded round the clock the way
 /// a plant is. Its shadow is `HedgeShadow`'s, for the whole hedge at once.
 struct HedgePiece: View {
-    let height: Double
+    let line: HedgeLine
+    let index: Int
     let pointsPerMetre: Double
     let hour: Double
     let turn: Int
@@ -138,7 +347,7 @@ struct HedgePiece: View {
     }
 
     var body: some View {
-        let figure = GardenStructures.figure(height: height)
+        let figure = GardenStructures.figure(height: line.height)
         let side = figure.metres * pointsPerMetre
 
         ZStack {
@@ -147,11 +356,11 @@ struct HedgePiece: View {
         }
         .frame(width: side, height: side)
         .offset(y: figure.lift * side)
-        .task(id: GardenStructures.key(height: height, step: between.before, turn: turn)) {
-            before = GardenStructures.shared.hedge(height: height, step: between.before, turn: turn)
+        .task(id: GardenStructures.key(line: line, piece: index, step: between.before, turn: turn)) {
+            before = GardenStructures.shared.hedge(line, piece: index, step: between.before, turn: turn)
         }
-        .task(id: GardenStructures.key(height: height, step: between.after, turn: turn)) {
-            after = GardenStructures.shared.hedge(height: height, step: between.after, turn: turn)
+        .task(id: GardenStructures.key(line: line, piece: index, step: between.after, turn: turn)) {
+            after = GardenStructures.shared.hedge(line, piece: index, step: between.after, turn: turn)
         }
     }
 }
@@ -196,6 +405,10 @@ struct FootShadow: View {
 /// pass lays the grass one way and the next lays it back, so the light catches
 /// alternate bands. **Along the path, not across it**: a mower goes up and down
 /// a path's length, and stripes across it read as paving slabs.
+///
+/// **Cut by eye.** Its verges wander a hand's width either way over a few paces
+/// (`Organic.verge`), the lines between the passes wander a third as much, and
+/// it runs out where the ground does, so its ends are the plot's own edge.
 struct MownPath: View {
     let view: Isometric
     let light: GardenGround.Light
@@ -205,20 +418,36 @@ struct MownPath: View {
     /// Lighter and flatter than the turf beside it: mown short, and walked.
     static let grass = SIMD3<Double>(0.285, 0.320, 0.225)
 
+    /// Where the line between two passes stands at `z`, for boundary `0...bands`
+    /// counted from the `-x` verge. The seeds are `PlotOutline`'s.
+    static func boundary(_ n: Int, of bands: Int, at z: Double) -> Double {
+        let width = LongWalk.pathHalfWidth
+        let straight = -width + Double(n) * 2 * width / Double(bands)
+        if n == 0 { return straight - Organic.verge(z, side: -1, seed: PlotOutline.pathSeed) }
+        if n == bands { return straight + Organic.verge(z, side: 1, seed: PlotOutline.pathSeed) }
+        return straight + 0.03 * Organic.wobble(z, wavelength: 1.3,
+                                                seed: mix64(PlotOutline.pathSeed &+ UInt64(n)))
+    }
+
     var body: some View {
         Canvas { context, _ in
             let half = plotSide / 2
-            let width = LongWalk.pathHalfWidth
             let bands = 3
-            let across = 2 * width / Double(bands)
+            // Walked down its length in five-centimetre steps, so the verges
+            // wander at the scale they were cut at and the path follows the
+            // ground's rises instead of cutting straight through them.
+            let steps = max(26, Int((plotSide / 0.05).rounded()))
+            context.clip(to: PlotOutline.of(plotSide: plotSide).path(in: view, height: height))
             for band in 0..<bands {
-                let x0 = -width + Double(band) * across
-                let x1 = x0 + across
-                // Walked down its length in short steps, so the path follows
-                // the ground's rises instead of cutting straight through them.
                 var edge: [Spot] = []
-                for step in 0...26 { edge.append(Spot(x: x0, z: -half + Double(step) / 26 * plotSide)) }
-                for step in (0...26).reversed() { edge.append(Spot(x: x1, z: -half + Double(step) / 26 * plotSide)) }
+                for step in 0...steps {
+                    let z = -half + Double(step) / Double(steps) * plotSide
+                    edge.append(Spot(x: Self.boundary(band, of: bands, at: z), z: z))
+                }
+                for step in (0...steps).reversed() {
+                    let z = -half + Double(step) / Double(steps) * plotSide
+                    edge.append(Spot(x: Self.boundary(band + 1, of: bands, at: z), z: z))
+                }
                 var path = Path()
                 for (n, corner) in edge.enumerated() {
                     let point = view.point(corner, y: height(corner) + 0.005)
@@ -241,40 +470,45 @@ struct MownPath: View {
 /// light's slope, and everything between. Sheared per piece like a plant's,
 /// each of twenty-odd pieces cast its own line, and near noon — when a sheared
 /// shadow has no height on screen — the garden was ruled with hairlines.
+///
+/// **From the hedge's own feet**, ring by ring: each short stretch of hedge
+/// casts the hull of its two rings' feet and those feet moved away by the
+/// height of its top there, so the shadow's edges wander with the hedge's
+/// footing and rise and fall with its top.
 struct HedgeShadow: View {
     let view: Isometric
     let light: GardenGround.Light
     let plotSide: Double
-    /// Each hedge: how far out from the path its middle stands, and how tall.
-    let hedges: [(x: Double, height: Double)]
+    let hedges: [HedgeLine]
     let height: (Spot) -> Double
 
     var body: some View {
         Canvas { context, _ in
             let rise = max(0.12, light.direction.y)
-            let half = plotSide / 2
-            let thick = GardenStructures.thickness / 2
+            let outline = PlotOutline.of(plotSide: plotSide)
             var shadow = Path()
             for hedge in hedges {
-                let away = Spot(x: -light.direction.x / rise * hedge.height,
-                                z: -light.direction.z / rise * hedge.height)
-                let foot = [Spot(x: hedge.x - thick, z: -half), Spot(x: hedge.x + thick, z: -half),
-                            Spot(x: hedge.x + thick, z: half), Spot(x: hedge.x - thick, z: half)]
-                let cast = foot.map { Spot(x: $0.x + away.x, z: $0.z + away.z) }
-                // The footprint and its cast, and the band each edge sweeps
-                // between them: their union is the shadow, whichever way the
-                // light falls.
-                var quads: [[Spot]] = [foot, cast]
-                for i in 0..<4 {
-                    let next = (i + 1) % 4
-                    quads.append([foot[i], foot[next], cast[next], cast[i]])
-                }
-                for quad in quads {
+                let feet = hedge.feet
+                // Every other ring is plenty: six centimetres of hedge is a
+                // point or two on screen.
+                for r in Swift.stride(from: 0, to: feet.count - 1, by: 2) {
+                    let next = min(feet.count - 1, r + 2)
+                    var corners: [Spot] = []
+                    for ring in [feet[r], feet[next]] {
+                        let away = Spot(x: -light.direction.x / rise * ring.tall,
+                                        z: -light.direction.z / rise * ring.tall)
+                        for foot in [ring.outer, ring.inner] {
+                            corners.append(foot)
+                            corners.append(Spot(x: foot.x + away.x, z: foot.z + away.z))
+                        }
+                    }
+                    let hull = Self.hull(corners)
+                    guard hull.count > 2 else { continue }
                     var piece = Path()
-                    for (n, corner) in quad.enumerated() {
-                        let clamped = Spot(x: min(max(corner.x, -half), half),
-                                           z: min(max(corner.z, -half), half))
-                        let point = view.point(corner, y: height(clamped))
+                    for (n, corner) in hull.enumerated() {
+                        // The ground's heights are clamped to the square, so
+                        // a corner cast off the plot reads the rim's.
+                        let point = view.point(corner, y: height(corner))
                         if n == 0 { piece.move(to: point) } else { piece.addLine(to: point) }
                     }
                     piece.closeSubpath()
@@ -282,9 +516,28 @@ struct HedgeShadow: View {
                 }
             }
             // Only on the plot: a shadow off the edge would fall on the sky.
-            context.clip(to: GardenGround.topFace(plotSide: plotSide, in: view))
+            context.clip(to: outline.path(in: view, height: height))
             context.fill(shadow, with: .color(.black.opacity(max(0.10, 0.42 * light.strength / 0.76))))
         }
         .allowsHitTesting(false)
+    }
+
+    /// The convex hull of a handful of places, anticlockwise.
+    static func hull(_ spots: [Spot]) -> [Spot] {
+        let sorted = spots.sorted { $0.x == $1.x ? $0.z < $1.z : $0.x < $1.x }
+        guard sorted.count > 2 else { return sorted }
+        func turn(_ o: Spot, _ a: Spot, _ b: Spot) -> Double {
+            (a.x - o.x) * (b.z - o.z) - (a.z - o.z) * (b.x - o.x)
+        }
+        var lower: [Spot] = [], upper: [Spot] = []
+        for p in sorted {
+            while lower.count >= 2, turn(lower[lower.count - 2], lower[lower.count - 1], p) <= 0 { lower.removeLast() }
+            lower.append(p)
+        }
+        for p in sorted.reversed() {
+            while upper.count >= 2, turn(upper[upper.count - 2], upper[upper.count - 1], p) <= 0 { upper.removeLast() }
+            upper.append(p)
+        }
+        return Array(lower.dropLast() + upper.dropLast())
     }
 }

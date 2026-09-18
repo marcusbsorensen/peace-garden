@@ -43,7 +43,8 @@ The website's shared garden should look and work like the app's Garden screen: f
 - **Placement is assigned once on arrival and stored.** A plant never moves. This supersedes the seed-derived grid in `WEBSITE.md` (marked there).
 - **The rule is "nothing stands in front of something shorter", not rows.** Filling row by row left 11 of the first 15 plots half empty.
 - **Measure tiers on 300 different parent pairs.** A sample crossed with one parent skews tall and is half bells.
-- **Hedges:** tall behind the far border, low in front of the near one, swapped as the plot turns. Clipped boxes, square-ended, cut to one top line.
+- **Hedges:** tall behind the far border, low in front of the near one, swapped as the plot turns. Grown, not built: organic, from `Organic.hedge` (18 September; they were clipped boxes).
+- **No straight line anywhere in the garden** (Marcus, 18 September): ground outline and sides, path, hedges, shadows. Shapes from SeedCore's `Organic`, shared by app and web; placement tests against the outline.
 - **Worn paths in the Wild Fields are accepted,** as counts per ground cell only: no cookie, no identifier, no address. The privacy page must say so before they go live.
 - **Zoom stays capped at 3×.** Its uses are arranging, showing a plant among its neighbours, and tapping the right plant.
 - **Figures are 3D models, not paintings.** Their glow is a second render added over the figure by the square of the lamps' glow.
@@ -66,7 +67,7 @@ Ask Marcus which first.
 - **Two wasm builds at once in one package race and report nonsense errors.**
 - **`build.sh` wants `wasm-opt`** (`brew install binaryen`). Without it the module is 2.5 MB brotli rather than 2.1.
 - **zsh does not word-split `$VAR`.** Pass lists of seeds as an array.
-- **Simulator `garden.json` is currently Long Walk plot 3, placed by the one-row rule**, so it no longer matches the two-row layout; rebuild it before judging the app's preview. The earlier fixture backups were in the session scratchpad and may be gone.
+- **The simulator's garden was emptied on 18 September** (its container came back fresh after a test run). A Long Walk fixture under the two-row rule is in the session scratchpad (`fixture/`) if it survives; otherwise rebuild one as below. The earlier fixture backups were in the session scratchpad and may be gone.
 - **Rebuilding a plot fixture:** a throwaway SwiftPM tool that depends on `Packages/SeedCore` by path, plants 300 crossings with `LongWalk.Walk`, and writes `{plants, placed}`. Dates **must** be encoded `.iso8601`. Otherwise the app fails to read the garden, falls to the first-run screen, and may overwrite the file; terminate it at once.
 - **Preview command:** `xcrun simctl launch booted app.peacegarden -pgOpen garden -pgPlotSide 5.2 -pgArea longWalk`. For night, add `-developer.clockShift 43200`.
 - **A figure's foot is `lift` up its picture, not on the bottom edge.** Anything that places, shadows or hit-tests a figure or hedge piece must allow for it.

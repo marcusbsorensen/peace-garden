@@ -60,6 +60,13 @@ final class OrganicTests: XCTestCase {
             tops.append(mesh.positions[ring * stride ..< ring * stride + stride].map(\.y).max()!)
         }
         XCTAssertGreaterThan(tops.max()! - tops.min()!, 0.05, "the hedge's top is level")
+        // Its faces point outward: the top of the middle ring faces the sky.
+        let middle = (mesh.positions.count / stride / 2) * stride + stride / 2
+        XCTAssertGreaterThan(mesh.normals[middle].y, 0.5, "the hedge's normals point inward")
+        // Its ends fall away: a quarter of the way into the end's shoulder, the
+        // top is already well below the hedge's height.
+        let nearEnd = mesh.positions.filter { $0.z > 2.6 - 0.25 }.map(\.y).max()!
+        XCTAssertLessThan(nearEnd, 1.6, "the hedge's end is a cut face")
     }
 
     /// Pinned, so the browser's build is held to the phone's: a host whose

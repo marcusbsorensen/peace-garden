@@ -150,24 +150,25 @@ public enum Organic {
                              seed: UInt64) -> StructureMesh {
         let rings = max(4, Int((length / 0.06).rounded()))
         let around = 20
-        let endRound = min(max(thickness, height * 0.3), length / 2)
+        // The ends: narrowing over about a hedge's thickness, and the top
+        // rounding down over half its height, so an end is a long shoulder
+        // falling to the ground rather than a cut face with a rounded corner.
+        let endWide = min(thickness * 0.8, length / 2)
+        let endHigh = min(max(thickness, height * 0.5), length / 2)
         var mesh = StructureMesh()
 
         for r in 0...rings {
             let along = -length / 2 + Double(r) / Double(rings) * length
-            // Rounded ends: the section shrinks toward each end like a quarter circle.
             let fromEnd = min(along + length / 2, length / 2 - along)
-            let end = fromEnd >= endRound ? 1.0 : squareRoot(max(0, 1 - pow2(1 - fromEnd / endRound)))
+            let wide = fromEnd >= endWide ? 1.0 : squareRoot(max(0, 1 - pow2(1 - fromEnd / endWide)))
+            let high = fromEnd >= endHigh ? 1.0 : squareRoot(max(0, 1 - pow2(1 - fromEnd / endHigh)))
             let top = height * (1 + 0.08 * wobble(along, wavelength: 0.7, seed: mix64(seed &+ 3)))
             for a in 0...around {
                 let angle = Double(a) / Double(around)          // 0 at the ground on one face, round over the top, to 1 at the ground on the other
                 let (sx, sy, nx, ny) = section(angle, halfWidth: thickness / 2, height: top)
                 let bump = 0.035 * wobble(along, angle * 3.2, wavelength: 0.35, seed: seed)
-                let shrink = end
-                let x = (sx + nx * bump) * shrink
-                // The end domes down to the ground as well as in, so it reads as a
-                // rounded end from every side rather than a cut face.
-                let y = sy == 0 ? 0 : (sy + ny * bump) * squareRoot(shrink)
+                let x = (sx + nx * bump) * wide
+                let y = sy == 0 ? 0 : (sy + ny * bump) * high
                 mesh.positions.append(SIMD3<Float>(Float(x), Float(y), Float(along)))
             }
         }
@@ -176,7 +177,8 @@ public enum Organic {
             for a in 0..<around {
                 let i = UInt32(r * stride + a)
                 let j = UInt32((r + 1) * stride + a)
-                mesh.indices.append(contentsOf: [i, j, i + 1, i + 1, j, j + 1])
+                // Wound so the faces, and the normals made from them, point outward.
+                mesh.indices.append(contentsOf: [i, i + 1, j, i + 1, j + 1, j])
             }
         }
         mesh.computeNormals()

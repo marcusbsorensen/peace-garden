@@ -155,10 +155,11 @@ struct Isometric: Equatable {
     /// on the screen: a light carried off is gone, and a plant carried off goes
     /// home to where its arrangement puts it. A little way over the rim is still
     /// the rim — somebody aiming for the edge overshoots — so only a clear
-    /// fifteen centimetres beyond it counts as leaving.
+    /// fifteen centimetres beyond it counts as leaving. The rim is the drawn
+    /// one, `PlotOutline`'s, which wanders in from the square and wears its
+    /// corners round.
     static func isOff(_ spot: Spot, plotSide: Double) -> Bool {
-        let beyond = plotSide / 2 + 0.15
-        return abs(spot.x) > beyond || abs(spot.z) > beyond
+        PlotOutline.of(plotSide: plotSide).isOff(spot, beyond: 0.15)
     }
 
     /// Far to near. Everything on the plot is drawn in this order and nothing

@@ -136,7 +136,7 @@ struct PlotView: View {
                                 standsAt(spot, world: world, side: side)
                             }
                             HedgeShadow(view: view, light: light, plotSide: side,
-                                        hedges: hedgeLines(in: view)) { spot in
+                                        hedges: hedgeLines(plotSide: side, world: world, in: view)) { spot in
                                 standsAt(spot, world: world, side: side)
                             }
                         }
@@ -353,8 +353,12 @@ struct PlotView: View {
             mine: model.identity?.seed
         )
 
+        // A hand placement made before the rim wandered may be past it; it is
+        // shown on the ground, and kept as it was until it is moved again.
+        let outline = PlotOutline.of(plotSide: plotSide)
         return plants.compactMap { record -> Standing? in
-            guard let spot = bed?.spot(for: record) ?? laidOut[record.id] else { return nil }
+            guard let spot = bed?.spot(for: record).map({ outline.keepOn($0) }) ?? laidOut[record.id]
+            else { return nil }
             let growth = record.growth(now: model.now)
             return Standing(
                 record: record,
@@ -398,54 +402,42 @@ struct PlotView: View {
     private struct Hedge {
         let id: UUID
         let spot: Spot
-        let height: Double
+        let line: HedgeLine
+        let index: Int
     }
 
-    /// The Long Walk's two hedges, in pieces: tall behind the far border and low
-    /// in front of the near one, which is decided by the view and so swaps as
-    /// the plot turns.
-    /// Where each hedge stands, out from the path, and how tall it is.
-    private func hedgeLines(in view: Isometric) -> [(x: Double, height: Double)] {
-        let out = LongWalk.hedgeFrom + GardenStructures.thickness / 2
-        let farSide: Double = view.depth(Spot(x: out, z: 0)) < view.depth(Spot(x: -out, z: 0)) ? 1 : -1
-        return [-1.0, 1.0].map { side in
-            (x: side * out, height: side == farSide ? GardenStructures.tall : GardenStructures.low)
-        }
-    }
-
-    /// **Cut to one line along the top.** Each piece stands on the ground under
-    /// it, and a clipped hedge is cut level whatever the ground does, so each is
-    /// as tall as it takes to reach the hedge's own top line: the ground's mean
-    /// along the hedge, plus the hedge's height. Standing each piece at the
-    /// hedge's height from its own ground stepped the top at every joint.
-    ///
-    /// Rounded to two centimetres, so the handful of heights a gentle slope
-    /// asks for share their renders.
-    private func hedges(plotSide: Double, world: Int, in view: Isometric) -> [Hedge] {
+    /// The Long Walk's two hedges: tall behind the far border and low in front
+    /// of the near one, which is decided by the view and so swaps as the plot
+    /// turns. Each is one mesh, built once for its side and height.
+    private func hedgeLines(plotSide: Double, world: Int, in view: Isometric) -> [HedgeLine] {
         guard isLongWalk else { return [] }
-        let pieces = Int((plotSide / GardenStructures.pieceLength).rounded(.down))
-        let start = -Double(pieces) * GardenStructures.pieceLength / 2
-        var all: [Hedge] = []
-        for line in hedgeLines(in: view) {
-            let spots = (0..<pieces).map {
-                Spot(x: line.x, z: start + (Double($0) + 0.5) * GardenStructures.pieceLength)
-            }
-            let grounds = spots.map { standsAt($0, world: world, side: plotSide) }
-            let top = grounds.reduce(0, +) / Double(max(1, grounds.count)) + line.height
-            for (n, spot) in spots.enumerated() {
-                let id = UUID(uuidString: String(format: "00000000-0000-4000-8000-%012d",
-                                                 (line.x > 0 ? 1_000 : 0) + n))!
-                let cut = ((top - grounds[n]) / 0.02).rounded() * 0.02
-                all.append(Hedge(id: id, spot: spot, height: max(0.3, cut)))
+        let out = LongWalk.hedgeFrom + GardenStructures.thickness / 2
+        let farSide = view.depth(Spot(x: out, z: 0)) < view.depth(Spot(x: -out, z: 0)) ? 1 : -1
+        return [-1, 1].map { side in
+            GardenStructures.shared.line(side: side,
+                                         height: side == farSide ? GardenStructures.tall : GardenStructures.low,
+                                         plotSide: plotSide, world: world)
+        }
+    }
+
+    /// The hedges in the pieces they are drawn in, each sorted among the plants
+    /// by its own depth. **The top is the hedge's own**: an undulating line set
+    /// by its seed and carried over the ground's rises, rather than one level
+    /// cut, because a level line is a ruled one.
+    private func hedges(plotSide: Double, world: Int, in view: Isometric) -> [Hedge] {
+        hedgeLines(plotSide: plotSide, world: world, in: view).flatMap { line in
+            line.pieces.map { piece in
+                Hedge(id: UUID(uuidString: String(format: "00000000-0000-4000-8000-%012d",
+                                                  (line.side > 0 ? 1_000 : 0) + piece.index))!,
+                      spot: piece.spot, line: line, index: piece.index)
             }
         }
-        return all
     }
 
     private func hedge(_ piece: Hedge, world: Int, side: Double, in view: Isometric) -> some View {
-        let foot = view.point(piece.spot, y: standsAt(piece.spot, world: world, side: side))
-        let size = GardenStructures.figure(height: piece.height).metres * view.pointsPerMetre
-        return HedgePiece(height: piece.height, pointsPerMetre: view.pointsPerMetre,
+        let foot = view.point(piece.spot, y: piece.line.pieces[piece.index].ground)
+        let size = GardenStructures.figure(height: piece.line.height).metres * view.pointsPerMetre
+        return HedgePiece(line: piece.line, index: piece.index, pointsPerMetre: view.pointsPerMetre,
                           hour: hour, turn: turn)
             .allowsHitTesting(false)
             .position(x: foot.x, y: foot.y - size / 2)
@@ -533,8 +525,9 @@ struct PlotView: View {
 
     /// Where a dropped plant lands, and keeping it on the plot.
     ///
-    /// Clamped inside the rim rather than refused, because a plant dropped just
-    /// over the edge was meant to be at the edge. The finger is where the *foot*
+    /// Drawn in inside the rim rather than refused, because a plant dropped just
+    /// over the edge was meant to be at the edge. The rim is the wandering one
+    /// that is drawn, so a plant is never left standing on the air beside it. The finger is where the *foot*
     /// is, so the ground has to be found with that place's own height put back —
     /// the inverse runs twice, and on the steepest wall of the ravine twice is
     /// enough.
@@ -554,8 +547,7 @@ struct PlotView: View {
         let found = view.ground(at: foot, height: { spot in
             standsAt(spot, world: world, side: side)
         }, between: relief.low, and: relief.high)
-        let edge = side / 2 * 0.96
-        let spot = Spot(x: min(max(found.x, -edge), edge), z: min(max(found.z, -edge), edge))
+        let spot = PlotOutline.of(plotSide: side).keepOn(found)
 
         withAnimation(.spring(duration: 0.3)) {
             model.place(plant, at: spot)
@@ -646,7 +638,6 @@ struct PlotView: View {
                 let foot = heldLamp?.foot
                     ?? CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
                 let found = view.ground(at: foot)
-                let half = side / 2
 
                 withAnimation(.spring(duration: 0.3)) {
                     if Isometric.isOff(found, plotSide: side) {
@@ -656,9 +647,7 @@ struct PlotView: View {
                         let landed = view.ground(at: foot, height: { spot in
                             standsAt(spot, world: world, side: side)
                         }, between: relief.low, and: relief.high)
-                        let edge = half * 0.96
-                        model.moveLamp(lamp.id, to: Spot(x: min(max(landed.x, -edge), edge),
-                                                         z: min(max(landed.z, -edge), edge)))
+                        model.moveLamp(lamp.id, to: PlotOutline.of(plotSide: side).keepOn(landed))
                     }
                     heldLamp = nil
                 }
@@ -1079,6 +1068,7 @@ private struct GardenGroundView: View {
                 Canvas { context, _ in
                     for (path, colour) in GardenGround.nearFaces(plotSide: plotSide, in: view) {
                         context.fill(path, with: .color(colour))
+                        context.stroke(path, with: .color(colour), lineWidth: 0.7)
                     }
                     context.fill(
                         GardenGround.topFace(plotSide: plotSide, in: view),

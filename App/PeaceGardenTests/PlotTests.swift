@@ -688,12 +688,77 @@ final class PlotTests: XCTestCase {
     /// home to where its arrangement puts it; a light carried off is gone. A
     /// little over the rim is still the rim, because somebody aiming for the
     /// edge overshoots, and only a clear fifteen centimetres beyond it counts.
+    /// The rim is the drawn one, which wanders and wears its corners round.
     func testALittleOverTheRimIsStillTheRimAndFurtherIsOff() {
         let side = 5.2
-        XCTAssertFalse(Isometric.isOff(Spot(x: 2.6, z: 0), plotSide: side))
-        XCTAssertFalse(Isometric.isOff(Spot(x: 2.7, z: -2.7), plotSide: side))
-        XCTAssertTrue(Isometric.isOff(Spot(x: 2.8, z: 0), plotSide: side))
+        let outline = PlotOutline.of(plotSide: side)
+        for spot in outline.points {
+            let r = (spot.x * spot.x + spot.z * spot.z).squareRoot()
+            func out(_ by: Double) -> Spot { Spot(x: spot.x * (r + by) / r, z: spot.z * (r + by) / r) }
+            XCTAssertFalse(Isometric.isOff(out(0.08), plotSide: side))
+            XCTAssertTrue(Isometric.isOff(out(0.3), plotSide: side))
+        }
+        XCTAssertFalse(Isometric.isOff(Spot(x: 0, z: 0), plotSide: side))
         XCTAssertTrue(Isometric.isOff(Spot(x: 0, z: -3.2), plotSide: side))
+        // The square's corner is well past the worn one.
+        XCTAssertTrue(Isometric.isOff(Spot(x: 2.7, z: -2.7), plotSide: side))
+    }
+
+    /// Anything dropped over the edge is drawn in onto the ground, a margin
+    /// inside it, and anything already on it stays put.
+    func testADropOverTheWanderingRimLandsOnTheGround() {
+        for side in [2.2, 5.2, 9.0] {
+            let outline = PlotOutline.of(plotSide: side)
+            for n in 0..<72 {
+                let angle = Double(n) / 72 * 2 * .pi
+                let far = Spot(x: cos(angle) * side, z: sin(angle) * side)
+                let kept = outline.keepOn(far)
+                XCTAssertTrue(outline.contains(x: kept.x, z: kept.z), "\(far) at \(side) m")
+            }
+            XCTAssertEqual(outline.keepOn(Spot(x: 0.3, z: -0.2)), Spot(x: 0.3, z: -0.2))
+        }
+    }
+
+    /// The ground's grid is drawn in so its last row is the outline: every rim
+    /// point of the warped square lies on the ground, within a centimetre of
+    /// its edge.
+    func testTheGroundsRimIsTheOutline() {
+        let side = 5.2, half = side / 2
+        let outline = PlotOutline.of(plotSide: side)
+        for n in 0...128 {
+            let t = -half + Double(n) / 128 * side
+            for corner in [(half, t), (t, half), (-half, t), (t, -half)] {
+                let at = outline.warp(x: corner.0, z: corner.1)
+                let r = (at.x * at.x + at.z * at.z).squareRoot()
+                XCTAssertTrue(outline.contains(x: at.x * (r - 0.01) / r, z: at.z * (r - 0.01) / r))
+                XCTAssertFalse(outline.contains(x: at.x * (r + 0.01) / r, z: at.z * (r + 0.01) / r))
+            }
+        }
+        // The middle is not moved at all.
+        XCTAssertEqual(outline.warp(x: 1.2, z: -0.7).x, 1.2)
+    }
+
+    /// A hedge stands on the ground it is drawn on, faces outward, and is cut
+    /// into pieces that share the rings they meet at.
+    func testAHedgeStandsInsideTheRimInPiecesThatMeet() {
+        let side = 5.2
+        let outline = PlotOutline.of(plotSide: side)
+        for hedgeSide in [-1, 1] {
+            let line = HedgeLine(side: hedgeSide, height: 2.0, plotSide: side, key: "test") { _, _ in 0 }
+            XCTAssertFalse(line.flipped && line.normals.isEmpty)
+            let top = (line.rings / 2) * (HedgeLine.around + 1) + HedgeLine.around / 2
+            XCTAssertGreaterThan(line.normals[top].y, 0.5, "the top faces the ground")
+            for foot in line.feet {
+                XCTAssertTrue(outline.contains(x: foot.outer.x, z: foot.outer.z), "a foot on the air at \(foot.outer)")
+                XCTAssertTrue(outline.contains(x: foot.inner.x, z: foot.inner.z))
+            }
+            XCTAssertGreaterThan(line.pieces.count, 6)
+            for (a, b) in zip(line.pieces, line.pieces.dropFirst()) {
+                XCTAssertGreaterThanOrEqual(a.rings.upperBound, b.rings.lowerBound + 1, "a gap between pieces")
+            }
+            XCTAssertEqual(line.pieces.first?.rings.lowerBound, 0)
+            XCTAssertEqual(line.pieces.last?.rings.upperBound, line.rings)
+        }
     }
 
     /// Putting a plant back is forgetting where it was put, so it stands where
