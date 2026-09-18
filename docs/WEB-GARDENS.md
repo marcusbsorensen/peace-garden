@@ -176,20 +176,29 @@ not dressing; they are how a visitor can see the rule.
   Looking down from one side, a 2 m hedge on the near side hid the whole border
   behind it. It isn't how a real garden is built; it is how this one is best
   seen.
-- **A hedge is modelled as a clipped box** with a leaf-grain texture, which is
-  what a clipped yew is. It is drawn in 0.4 m pieces, each sorted by its own
-  depth, because one picture cannot be in front of some plants and behind
-  others. The pieces are square-ended: with rounded shoulders, every joint drew
-  a seam and the hedge came out as a row of posts.
+- **No straight line anywhere in the garden** (Marcus, 18 September). Ruled
+  edges round delicate flowers are jarring, so the ground's outline and sides,
+  the path's verges and ends, and the hedges all wander. The shapes are
+  SeedCore's `Organic` (`Morphology/Organic.swift`), so the app and the website
+  draw the same ones, pinned in `OrganicTests`. The wander only goes inward
+  from the plot's square, up to 0.16 m, so placement tests a point against the
+  outline, not the square. Chrome outside the scene is not covered.
+- **A hedge is grown, not built**: a loaf section, soft-shouldered, bulging and
+  dipping along its length, its top undulating and its ends domed to the
+  ground, with a leaf-grain texture. **Replaced 18 September**: it was a clipped
+  box, square-ended. It is still drawn in pieces, each sorted by its own depth,
+  because one picture cannot be in front of some plants and behind others; the
+  pieces are cut from one continuous mesh and share their boundary rings, which
+  is what the square ends were for (rounded pieces drew a seam at every joint).
 - **A hedge's shadow is one shape on the ground**: its footprint, moved away
   from the light by its height over the light's slope. Sheared per piece like a
   plant's shadow, near noon each piece cast a hairline across the garden.
 - **The path is mown in stripes along its length**, as a mower goes. Striped
   across, it read as paving slabs.
-- **A hedge is cut to one top line.** Each piece stands on its own ground and
-  is as tall as it takes to reach the hedge's mean ground plus its height.
-  Standing each piece at the hedge's height from its own ground stepped the
-  top at every joint.
+- **A hedge's top wanders** by up to 8% of its height over about 0.7 m, one
+  line along the whole hedge. **Replaced 18 September**: it was cut level.
+  Standing each piece at the hedge's height from its own ground still steps
+  the top at every joint, so the top follows the one hedge's line.
 - **Yew is picked brighter than yew**, the rule the bank of earth under the plot
   already follows: a vertical face gets the sky and little of the sun, and at
   yew's own darkness the face towards the path was black at midday. Brighter

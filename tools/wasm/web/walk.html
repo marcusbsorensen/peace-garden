@@ -50,11 +50,10 @@
   const note = document.getElementById('note');
   const list = document.getElementById('plots');
   const report = (text) => { note.textContent = text; };
-  const stage = makeWalkStage(document.getElementById('stage'), span);
+  const e = await loadModule('PlantWasm.wasm');
+  const stage = makeWalkStage(document.getElementById('stage'), span, e);
   document.getElementById('left').addEventListener('click', () => stage.turnBy(-1));
   document.getElementById('right').addEventListener('click', () => stage.turnBy(1));
-
-  const e = await loadModule('PlantWasm.wasm');
 
   if (query.get('source') === 'service') {
     const { plots: opened } = await (await fetch('/api/walk')).json();

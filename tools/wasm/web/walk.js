@@ -13,7 +13,7 @@ const SIDE = 5.2;           // LongWalk.plotSide
 const PATH_HALF = 0.6;      // LongWalk.pathHalfWidth
 const HEDGE_FROM = 2.3;     // LongWalk.hedgeFrom
 const RIM_DEPTH = 0.95;     // GardenGround.rimDepth
-const HEDGE = { thickness: 0.36, tall: 2.0, low: 0.7, piece: 0.4, overlap: 0.03 };
+const HEDGE = { thickness: 0.36, tall: 2.0, low: 0.7 };
 
 const COLOUR = {
   turf: [0.235, 0.265, 0.190],
@@ -75,7 +75,7 @@ void main() {
   outColour = vec4(shade(texture(colour, vUV).rgb, n), 1.0);
 }`;
 
-export function makeWalkStage(canvas, span = 1) {
+export function makeWalkStage(canvas, span, e) {
   const gl = canvas.getContext('webgl2', { antialias: true, alpha: true, premultipliedAlpha: true });
   if (!gl) throw new Error('This browser has no WebGL2.');
   const ground = program(gl, GROUND_VERTEX, GROUND_FRAGMENT, ['position', 'normal', 'colour'], ['offset']);
@@ -96,7 +96,7 @@ export function makeWalkStage(canvas, span = 1) {
     if (groundMesh) groundMesh.release();
     // The tall hedge goes on whichever side is further from the viewer.
     const farSide = eye()[0] > 0 ? -1 : 1;
-    groundMesh = upload(gl, ground, buildGround(farSide, span));
+    groundMesh = upload(gl, ground, buildGround(farSide, span, e));
   }
 
   function draw() {
@@ -256,56 +256,104 @@ const frame = () => new Promise((resolve) => requestAnimationFrame(() => resolve
 
 // MARK: - The ground
 
-function buildGround(farSide, span) {
-  const positions = [], normals = [], colours = [];
-  const quad = (a, b, c, d, n, ca, cb = ca, cc = cb, cd = ca) => {
-    for (const [p, col] of [[a, ca], [b, cb], [c, cc], [a, ca], [c, cc], [d, cd]]) {
-      positions.push(...p); normals.push(...n); colours.push(...col);
-    }
-  };
-  const box = (x0, x1, y0, y1, z0, z1, colour) => {
-    quad([x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1], [0, 1, 0], colour);
-    quad([x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1], [0, 0, 1], colour);
-    quad([x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0], [0, 0, -1], colour);
-    quad([x1, y0, z0], [x1, y0, z1], [x1, y1, z1], [x1, y1, z0], [1, 0, 0], colour);
-    quad([x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0], [-1, 0, 0], colour);
-  };
-  const h = SIDE / 2, L = (SIDE * span) / 2;
+// Seeds for the walk's dressing, so it is the same shape on every visit.
+const SEED = { ground: 2026, verge: 7, floor: 5, hedge: { '-1': 31, '1': 32 } };
 
-  // The slab: turf on top, strata down its sides.
-  quad([-h, 0, -L], [h, 0, -L], [h, 0, L], [-h, 0, L], [0, 1, 0], COLOUR.turf);
+// No straight line anywhere in the garden: the ground's outline, its sides,
+// the path's verges and the hedges all come from SeedCore's `Organic`, the
+// shapes the app draws, through the module.
+function buildGround(farSide, span, e) {
+  const positions = [], normals = [], colours = [];
+  const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
+  const tri = (a, b, c, n, ca, cb = ca, cc = ca) => { vertex(a, n, ca); vertex(b, n, cb); vertex(c, n, cc); };
+  const quad = (a, b, c, d, n, ca, cb = ca, cc = cb, cd = ca) => { tri(a, b, c, n, ca, cb, cc); tri(a, c, d, n, ca, cc, cd); };
+  const length = SIDE * span;
+  const wander = (along, side, seed) => e.pg_verge(along, side, seed) / 0.09; // -1…1
+
+  // The slab's top: its worn, wandering outline, filled from the middle.
+  const outline = readOutline(e, SIDE, length, SEED.ground);
+  const n = outline.length;
+  for (let i = 0; i < n; i++) {
+    const a = outline[i], b = outline[(i + 1) % n];
+    tri([0, 0, 0], [a[0], 0, a[1]], [b[0], 0, b[1]], [0, 1, 0], COLOUR.turf);
+  }
+
+  // Its sides hang from that outline, down to a floor as rough as a clod's,
+  // in the app's strata: humus, earth, then bedrock.
   const strata = [[0, COLOUR.humus], [0.16, COLOUR.earth], [0.58, COLOUR.earth], [1, COLOUR.bedrock]];
-  for (let i = 0; i < strata.length - 1; i++) {
-    const [f0, c0] = strata[i], [f1, c1] = strata[i + 1];
-    const y0 = -f0 * RIM_DEPTH, y1 = -f1 * RIM_DEPTH;
-    for (const s of [-1, 1]) {
-      quad([-h, y1, s * L], [h, y1, s * L], [h, y0, s * L], [-h, y0, s * L], [0, 0, s], c1, c1, c0, c0);
-      quad([s * h, y1, -L], [s * h, y1, L], [s * h, y0, L], [s * h, y0, -L], [s, 0, 0], c1, c1, c0, c0);
+  let around = 0;
+  const floor = outline.map((p, i) => {
+    if (i > 0) around += Math.hypot(p[0] - outline[i - 1][0], p[1] - outline[i - 1][1]);
+    return RIM_DEPTH * (1 + 0.22 * wander(around, 1, SEED.floor));
+  });
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n, a = outline[i], b = outline[j];
+    const dx = b[0] - a[0], dz = b[1] - a[1], l = Math.hypot(dx, dz);
+    const normal = [dz / l, 0, -dx / l];
+    for (let k = 0; k < strata.length - 1; k++) {
+      const [f0, c0] = strata[k], [f1, c1] = strata[k + 1];
+      quad([a[0], -f0 * floor[i], a[1]], [b[0], -f0 * floor[j], b[1]],
+           [b[0], -f1 * floor[j], b[1]], [a[0], -f1 * floor[i], a[1]], normal, c0, c0, c1, c1);
     }
   }
 
-  // The mown path, in three stripes along it.
-  const band = (2 * PATH_HALF) / 3;
-  [1.07, 0.95, 1.07].forEach((k, i) => {
-    const x0 = -PATH_HALF + i * band, x1 = x0 + band;
-    const c = COLOUR.grass.map((v) => v * k);
-    quad([x0, 0.005, -L], [x1, 0.005, -L], [x1, 0.005, L], [x0, 0.005, L], [0, 1, 0], c);
-  });
+  // The mown path: verges cut by eye, stripes that follow them, and ends that
+  // wander across as well as along.
+  const step = 0.1, start = -length / 2 + 0.32, end = length / 2 - 0.32;
+  const rows = Math.round((end - start) / step);
+  const across = (z) => {
+    const left = -PATH_HALF + e.pg_verge(z, -1, SEED.verge);
+    const right = PATH_HALF + e.pg_verge(z, 1, SEED.verge);
+    const width = right - left;
+    return [left, left + width / 3 + 0.02 * wander(z, 2, SEED.verge),
+            left + 2 * width / 3 + 0.02 * wander(z, 3, SEED.verge), right];
+  };
+  const endShift = (x, side) => 0.07 * wander(x * 3 + side * 17, 4, SEED.verge);
+  for (let r = 0; r < rows; r++) {
+    const z0 = start + r * step, z1 = z0 + step;
+    const b0 = across(z0), b1 = across(z1);
+    [1.07, 0.95, 1.07].forEach((k, s) => {
+      const c = COLOUR.grass.map((v) => v * k);
+      const za = (x) => (r === 0 ? z0 + endShift(x, -1) : z0);
+      const zb = (x) => (r === rows - 1 ? z1 + endShift(x, 1) : z1);
+      quad([b0[s], 0.005, za(b0[s])], [b0[s + 1], 0.005, za(b0[s + 1])],
+           [b1[s + 1], 0.005, zb(b1[s + 1])], [b1[s], 0.005, zb(b1[s])], [0, 1, 0], c);
+    });
+  }
 
-  // The hedges, clipped boxes along each border, cut to one top line.
-  const pieces = Math.floor(SIDE / HEDGE.piece);
-  for (let k = 0; k < span; k++) for (const side of [-1, 1]) {
-    const start = (k - (span - 1) / 2) * SIDE - (pieces * HEDGE.piece) / 2;
+  // The hedges: one length each side, grown rather than built, the tall yew on
+  // whichever side is further from the viewer.
+  for (const side of [-1, 1]) {
     const height = side === farSide ? HEDGE.tall : HEDGE.low;
-    const centre = side * (HEDGE_FROM + HEDGE.thickness / 2);
-    for (let i = 0; i < pieces; i++) {
-      const z0 = start + i * HEDGE.piece - HEDGE.overlap / 2;
-      const z1 = z0 + HEDGE.piece + HEDGE.overlap;
-      const tone = 0.94 + 0.12 * hash((k * pieces + i) * 7 + (side > 0 ? 3 : 0));
-      box(centre - HEDGE.thickness / 2, centre + HEDGE.thickness / 2, 0, height, z0, z1, COLOUR.yew.map((v) => v * tone));
+    const mesh = readHedge(e, length - 0.9, height, HEDGE.thickness, SEED.hedge[side]);
+    const x = side * (HEDGE_FROM + HEDGE.thickness / 2);
+    for (let t = 0; t < mesh.indices.length; t += 3) {
+      const corners = [0, 1, 2].map((k) => mesh.indices[t + k]);
+      for (const v of corners) {
+        const p = [mesh.positions[v * 3] + x, mesh.positions[v * 3 + 1], mesh.positions[v * 3 + 2]];
+        const tone = 0.9 + 0.2 * hash(Math.round(p[1] * 37) * 131 + Math.round(p[2] * 29));
+        vertex(p, [mesh.normals[v * 3], mesh.normals[v * 3 + 1], mesh.normals[v * 3 + 2]], COLOUR.yew.map((c) => c * tone));
+      }
     }
   }
   return { positions: new Float32Array(positions), normals: new Float32Array(normals), colours: new Float32Array(colours) };
+}
+
+function readOutline(e, width, length, seed) {
+  const bytes = takeResult(e, e.pg_outline(width, length, seed));
+  const count = new DataView(bytes).getUint32(0, true);
+  const xz = new Float32Array(bytes.slice(4, 4 + count * 8));
+  return Array.from({ length: count }, (_, i) => [xz[i * 2], xz[i * 2 + 1]]);
+}
+
+function readHedge(e, length, height, thickness, seed) {
+  const bytes = takeResult(e, e.pg_hedge(length, height, thickness, seed));
+  const view = new DataView(bytes);
+  const vertices = view.getUint32(0, true), indices = view.getUint32(4, true);
+  let at = 8;
+  const positions = new Float32Array(bytes.slice(at, at + vertices * 12)); at += vertices * 12;
+  const normals = new Float32Array(bytes.slice(at, at + vertices * 12)); at += vertices * 12;
+  return { positions, normals, indices: new Uint32Array(bytes.slice(at, at + indices * 4)) };
 }
 
 function hash(n) {
