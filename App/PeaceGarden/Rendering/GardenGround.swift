@@ -70,6 +70,10 @@ enum GardenGround {
         var up: Double = 1
         /// Which body is up. Exactly one of them ever is.
         var isDay: Bool = true
+        /// Light from far above that is there at every hour: the Milky Way.
+        ///
+        /// See `GardenLight.galaxy`. Zero at noon, because the sky outshines it.
+        var galaxy = SIMD3<Double>(repeating: 0)
 
         /// The sun at its highest, spelled out.
         ///
@@ -118,9 +122,15 @@ enum GardenGround {
         let key = max(0, simd_dot(normal, light.direction))
         let lit = pow(key, 0.9) * light.strength * (0.18 + 0.82 * shadow)
 
+        // The galaxy is straight overhead, so it falls on what faces up and
+        // hardly at all on a bank that faces sideways — the same hemispheric rule
+        // as the sky, weighted harder toward the top.
+        let overhead = hemi * hemi
+
         var out = SIMD3<Double>()
         for channel in 0..<3 {
             let ambient = light.sky[channel] * hemi + light.bounce[channel] * (1 - hemi)
+                + light.galaxy[channel] * overhead
             out[channel] = min(1, max(0, base[channel] * (ambient + light.colour[channel] * lit)))
         }
         return ceilinged(out)

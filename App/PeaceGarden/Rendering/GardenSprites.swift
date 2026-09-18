@@ -1,4 +1,5 @@
 import SceneKit
+import simd
 import SeedCore
 import UIKit
 
@@ -227,6 +228,20 @@ final class GardenSprites {
                                    blue: light.sky.z, alpha: 1)
         sky.light?.intensity = 700
         scene.rootNode.addChildNode(sky)
+
+        // The galaxy, from straight overhead. Directional rather than ambient,
+        // so it lights the tops of leaves and leaves their undersides to the
+        // bounce — the same weighting the ground gives it.
+        if simd_length(light.galaxy) > 0.001 {
+            let galaxy = SCNNode()
+            galaxy.light = SCNLight()
+            galaxy.light?.type = .directional
+            galaxy.light?.color = UIColor(red: light.galaxy.x, green: light.galaxy.y,
+                                          blue: light.galaxy.z, alpha: 1)
+            galaxy.light?.intensity = 1300
+            galaxy.eulerAngles = SCNVector3(-Float.pi / 2, 0, 0)
+            scene.rootNode.addChildNode(galaxy)
+        }
 
         // The light a plant gets back off the ground it is standing on. Without
         // it a leaf facing away from the sun falls to the ambient alone and

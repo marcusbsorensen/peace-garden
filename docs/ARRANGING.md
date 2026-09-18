@@ -652,6 +652,14 @@ Two things it turns on, both in `GardenVisits`:
   meeting with somebody. It costs four times eight, because a sprite is already
   drawn at eight hours. The turn is of the plot's own axes, so the plant and the
   light rotate together — the sun goes round the plot, not round the screen.
+- **The Milky Way is a second light, from far above, at every hour.** Settled 18
+  September: the garden has to be somewhat visible at the lowest natural light.
+  The moon's curve did not change and is still pinned — 18:00 is still the
+  darkest hour of the day. What changed is that there is now light from
+  overhead that fades with the sun's strength, adds nothing at noon because the
+  sky outshines it, and is only noticed once the sun is gone, which is true of
+  the real one. It falls on what faces up, so a bank of earth stays darker than
+  the lawn above it.
 - **The sky is the one place the saturation ceiling is relaxed.** A sky is not
   chrome, and a blue behind a garden is what says the garden is outdoors. The
   mockup's sky is nearly black at every hour because there the plot is the
@@ -703,12 +711,6 @@ Two things it turns on, both in `GardenVisits`:
 - **Whether an arrangement survives a plant being released to the Wild Fields.**
   Releasing is the end of a plant's life here; a spot pointing at a plant that has
   gone is the kind of thing that decodes fine and draws nothing.
-- **Whether the moonrise hour is too dark to open the app in.** The curve is
-  right — 18:00 is the darkest hour of the day because the moon has only just
-  cleared the horizon — and half past six in the evening is also an ordinary time
-  to look at a garden, at which point the plot is very nearly black. The override
-  answers it for anyone who finds the setting; whether the curve should have a
-  floor under it is a different question and is not answered.
 - **Whether the shadows should be soft, and how soft.** They are drawn hard
   here, with a blur that widens as the light drops. A real shadow's edge softens
   with distance from what cast it, which a single blur cannot say.

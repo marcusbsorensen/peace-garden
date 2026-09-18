@@ -17,6 +17,26 @@ extension GardenGround.Light {
     /// How high either body climbs at its peak: sixty-two degrees.
     static let peak = 1.082_104_136_236_484_3
 
+    /// The Milky Way at its fullest: cool, faint, and straight overhead.
+    ///
+    /// **Added 18 September, because a garden you cannot see is not a garden.**
+    /// The orbit is right that 18:00 is the darkest hour of the day — the moon has
+    /// only just cleared the horizon — and it is also an ordinary time to open the
+    /// app, at which point the plot was very nearly black.
+    ///
+    /// The moon's curve is not what changed, and it is still pinned by its values:
+    /// the moon is still a fifth of the sun at best. This is a second light, from
+    /// far above, that is there at every hour and is only *noticed* when the sun
+    /// is not up — which is true of the real one. So it fades with the sun's
+    /// strength rather than switching on at dusk, and at noon it adds nothing,
+    /// because the sky outshines it.
+    static let galaxyAtFullest = SIMD3<Double>(0.30, 0.34, 0.46)
+
+    /// How much of the galaxy is seen at a given strength of sun or moon.
+    static func galaxy(strength: Double) -> SIMD3<Double> {
+        galaxyAtFullest * max(0, 1 - strength / 0.5)
+    }
+
     static let skyByDay = SIMD3<Double>(0.40, 0.48, 0.60)
     static let skyByNight = SIMD3<Double>(0.10, 0.13, 0.22)
     static let bounceByDay = SIMD3<Double>(0.27, 0.25, 0.20)
@@ -68,7 +88,8 @@ extension GardenGround.Light {
                 sky: skyByNight + (skyByDay - skyByNight) * warmth,
                 bounce: bounceByNight + (bounceByDay - bounceByNight) * warmth,
                 up: up,
-                isDay: true
+                isDay: true,
+                galaxy: galaxy(strength: 0.24 + 0.52 * up)
             )
         }
 
@@ -80,7 +101,8 @@ extension GardenGround.Light {
             sky: skyByNight * cool,
             bounce: bounceByNight * cool,
             up: up,
-            isDay: false
+            isDay: false,
+            galaxy: galaxy(strength: 0.035 + 0.115 * up)
         )
     }
 

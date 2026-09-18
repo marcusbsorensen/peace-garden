@@ -528,4 +528,24 @@ final class PlotTests: XCTestCase {
         XCTAssertEqual(GardenGround.cutDepth(x: 2.6, z: 0, plotSide: 5.2),
                        GardenGround.rimDepth, accuracy: 1e-9)
     }
+
+    /// **A garden you cannot see is not a garden.** The moon's curve is right
+    /// and is still pinned above — 18:00 is the darkest hour of the day — and the
+    /// Milky Way is what keeps that hour from being a black screen. Held as a
+    /// floor on the ground's own brightness at every quarter-hour, and as nothing
+    /// at all at noon, because the sky outshines it.
+    func testTheGardenCanBeSeenAtTheDarkestHour() {
+        let up = SIMD3<Double>(0, 1, 0)
+
+        for quarter in 0..<96 {
+            let light = GardenGround.Light.at(hour: Double(quarter) / 4)
+            let lit = GardenGround.shaded(base: GardenGround.turf, normal: up, light: light)
+            let luminance = 0.2126 * lit.x + 0.7152 * lit.y + 0.0722 * lit.z
+            XCTAssertGreaterThan(luminance, 0.06,
+                                 "the ground is black at \(Double(quarter) / 4):00")
+        }
+
+        XCTAssertEqual(simd_length(GardenGround.Light.at(hour: 12).galaxy), 0, accuracy: 1e-9)
+        XCTAssertGreaterThan(simd_length(GardenGround.Light.at(hour: 18).galaxy), 0.4)
+    }
 }
