@@ -15,7 +15,7 @@ under anything that has changed since it was last opened, and a row of little
 worlds to choose the ground from, and the sun and moon going round it on the
 real clock, the Milky Way overhead, lights to put out, and the gestures to
 arrange all of it, and glow-in-the-dark figures. 74 app tests, from 35; SeedCore 110, from 106. Pushed to
-`origin/main` at `7417653`; three commits after it, not pushed.
+`origin/main`, all of it.
 
 **Done, not built into the app.** Nothing from the mockup is left. The
 interactive Design canvas remains the reference:
