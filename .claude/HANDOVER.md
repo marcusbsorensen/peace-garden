@@ -14,7 +14,7 @@ the plants at their real relative sizes standing on the terrain, a pool of light
 under anything that has changed since it was last opened, and a row of little
 worlds to choose the ground from, and the sun and moon going round it on the
 real clock, the Milky Way overhead, lights to put out, and the gestures to
-arrange all of it. 70 app tests, from 35; SeedCore 110, from 106. Pushed to
+arrange all of it, and glow-in-the-dark figures. 73 app tests, from 35; SeedCore 110, from 106. Pushed to
 `origin/main` at `7417653`; one commit after it.
 
 **Done, not built into the app.** Nothing from the mockup is left. The
@@ -41,6 +41,7 @@ names. What Danish still needs is its *prose*. See
 | `App/PeaceGarden/Rendering/GardenLight.swift` | The orbit, and tonight's moon. Read by everything. |
 | `App/PeaceGarden/Rendering/GardenSky.swift` | Space, the stars, and whichever body is up. |
 | `App/PeaceGarden/Rendering/GardenLamps.swift` | The lights people put out: how each looks, reaches, and lifts a plant. |
+| `App/PeaceGarden/Rendering/GardenCreatures.swift` | The glow-in-the-dark figures: modelled, lit, and their glow. |
 | `App/PeaceGarden/Resources/Worlds/` | The two textures, 276 KB, straight from the mockup. |
 | `App/PeaceGarden/Rendering/GardenSprites.swift` | Plants as stills at one shared scale. **Not `ThumbnailRenderer`** — see below. |
 | `App/PeaceGarden/Views/PlotView.swift` | The screen. |
@@ -199,19 +200,26 @@ reach across for it in that position; a test holds the two to each other.
 
 ## Next step
 
-**Glow-in-the-dark animals**, which were asked for and left for an art pass:
-they need drawing properly to stand beside plants grown from a genome. The
-mechanism is ready for them — a new `LampKind`, a figure, a colour, a reach, a
-pool strength — and nothing about storage changes, because a kind is a string.
+**Glow-in-the-dark animals: done.** A hare, a fox asleep, a moth on a stake and
+a snail, modelled in SceneKit and rendered like the plants — `GardenCreatures`,
+and `ARRANGING.md` §*The glow-in-the-dark figures*. Four new `LampKind`s, added
+at the end. Pale figures by day; the paint glows as the garden goes dark. Looked
+at on a simulator by day and by night. `CreatureTests` checks that no figure is
+clipped by its frame at any facing. It found the snail's feelers going off the
+side at two facings.
 
 **Put it back is done**: carry a hand-placed plant off the edge of the plot and
 it goes home to where its arrangement puts it — the same gesture that takes a
-light away, so off the edge always means *give this up*. A clear fifteen
-centimetres past the rim counts; less than that is still the rim. While held
-off the plot, a plant or a light fades, so it says what letting go will do.
+light away, so off the edge always means *give this up*.
 
-**What zoom is for** is still unanswered; 3× is the cap until it is, and at 3×
-the ground's cells begin to show.
+**Still open:**
+
+- **What zoom is for** is still unanswered; 3× is the cap until it is, and at 3×
+  the ground's cells begin to show. The figures are rendered at 260 points a
+  metre, so they hold up at 3× better than the plants do.
+- **The figures' light on the plants is the lamps' lift**, which is a tint added
+  over the plant. It is faint, set by `pool` and `reach`. Nobody has yet judged
+  whether a hare beside a white flower should show on the flower at all.
 
 ## Traps
 
@@ -229,6 +237,11 @@ the ground's cells begin to show.
 - **The meadow hides terrain faults.** It has almost no relief and no stipple, so
   it draws correctly under arithmetic that is wrong. Check a new world drawing
   against the ravine or the alpine, never against the meadow.
+- **A figure's foot is `lift` up its picture, not on the bottom edge.** Anything
+  that places, shadows or hit-tests a figure has to use it. The frames are sized
+  by `CreatureTests`, which fails with the edge that is cut; change a model, run it.
+- **Launch at night with** `xcrun simctl launch booted app.peacegarden -pgOpen
+  garden -developer.clockShift 43200` — the developer clock, twelve hours on.
 - **`ThumbnailRenderer` is the wrong renderer for a garden.** It frames every
   plant against its own mature bounds so each fills its tile, which is right for
   a grid and is the one thing a garden must not do. `GardenSprites` is

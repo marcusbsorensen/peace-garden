@@ -69,5 +69,9 @@ final class LampTests: XCTestCase {
         XCTAssertEqual(LampKind.lantern.rawValue, "lantern")
         XCTAssertEqual(LampKind.paperLamp.rawValue, "paperLamp")
         XCTAssertEqual(LampKind.fireflies.rawValue, "fireflies")
+        XCTAssertEqual(LampKind.hare.rawValue, "hare")
+        XCTAssertEqual(LampKind.fox.rawValue, "fox")
+        XCTAssertEqual(LampKind.moth.rawValue, "moth")
+        XCTAssertEqual(LampKind.snail.rawValue, "snail")
     }
 }

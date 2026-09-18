@@ -37,6 +37,8 @@ enum GardenLamps {
         case .lantern: return SIMD3(1.00, 0.74, 0.40)
         case .paperLamp: return SIMD3(1.00, 0.55, 0.32)
         case .fireflies: return SIMD3(0.80, 1.00, 0.48)
+        case .hare, .fox, .moth, .snail:
+            return GardenCreatures.figure(of: kind)?.glow ?? SIMD3(repeating: 1)
         }
     }
 
@@ -46,6 +48,9 @@ enum GardenLamps {
         case .lantern: return 1.5
         case .paperLamp: return 1.35
         case .fireflies: return 0.95
+        case .hare, .fox: return 0.7
+        case .moth: return 0.6
+        case .snail: return 0.45
         }
     }
 
@@ -60,6 +65,11 @@ enum GardenLamps {
         case .lantern: return 1.0
         case .paperLamp: return 0.85
         case .fireflies: return 0.28
+        // Paint that has held the day's light gives back very little of it: a
+        // figure is enough to see a flower beside it by, and no more.
+        case .hare, .fox: return 0.3
+        case .moth: return 0.24
+        case .snail: return 0.18
         }
     }
 
@@ -69,6 +79,36 @@ enum GardenLamps {
         case .lantern: return 0.30
         case .paperLamp: return 0.86
         case .fireflies: return 0.45
+        case .hare: return 0.22
+        case .fox: return 0.09
+        case .moth: return 0.32
+        case .snail: return 0.07
+        }
+    }
+
+    /// The halo in the air round the light itself: its radius in metres, and
+    /// how bright its middle is.
+    ///
+    /// A figure's is small and faint. Glow-in-the-dark paint lights the air
+    /// round it hardly at all, and a lantern's metre-wide halo round a snail
+    /// read as a snail with a lantern in it.
+    static func halo(of kind: LampKind) -> (radius: Double, strength: Double) {
+        switch kind {
+        case .lantern, .paperLamp, .fireflies: return (0.42, 0.55)
+        case .hare, .fox, .moth: return (0.22, 0.22)
+        case .snail: return (0.12, 0.22)
+        }
+    }
+
+    /// The part of a light that answers a finger, in metres: across it, and up
+    /// from its foot.
+    static func grip(of kind: LampKind) -> (width: Double, height: Double) {
+        switch kind {
+        case .lantern, .paperLamp, .fireflies: return (0.32, height(of: kind) + 0.14)
+        case .hare: return (0.3, 0.5)
+        case .fox: return (0.42, 0.24)
+        case .moth: return (0.3, 0.4)
+        case .snail: return (0.24, 0.18)
         }
     }
 
@@ -114,30 +154,40 @@ struct LampFigure: View {
     let glow: Double
     let pointsPerMetre: Double
     /// A seed for anything that should differ between two lights of one kind —
-    /// only the fireflies use it, so two drifts do not move in step.
+    /// the fireflies, so two drifts do not move in step, and the figures, so two
+    /// hares do not face the same way.
     let seed: Int
+    /// The hour and the plot's turn, which only the figures need: they are lit
+    /// by the garden, where a lamp is lit by itself.
+    var hour: Double = 12
+    var turn: Int = 0
 
     var body: some View {
         let colour = GardenLamps.swiftUIColour(GardenLamps.colour(of: kind))
         let metre = pointsPerMetre
         let lightAt = GardenLamps.height(of: kind) * metre
 
+        let halo = GardenLamps.halo(of: kind)
+
         ZStack(alignment: .bottom) {
             // The halo round the light itself, added rather than laid over, so
             // it brightens what is behind it instead of fogging it.
             Circle()
                 .fill(RadialGradient(
-                    colors: [colour.opacity(0.55 * glow), colour.opacity(0)],
-                    center: .center, startRadius: 0, endRadius: 0.42 * metre
+                    colors: [colour.opacity(halo.strength * glow), colour.opacity(0)],
+                    center: .center, startRadius: 0, endRadius: halo.radius * metre
                 ))
-                .frame(width: 0.84 * metre, height: 0.84 * metre)
-                .offset(y: -lightAt + 0.42 * metre)
+                .frame(width: 2 * halo.radius * metre, height: 2 * halo.radius * metre)
+                .offset(y: -lightAt + halo.radius * metre)
                 .blendMode(.plusLighter)
 
             switch kind {
             case .lantern: lantern(colour: colour, metre: metre)
             case .paperLamp: paperLamp(colour: colour, metre: metre)
             case .fireflies: Fireflies(colour: colour, glow: glow, metre: metre, seed: seed)
+            case .hare, .fox, .moth, .snail:
+                CreatureFigure(kind: kind, glow: glow, pointsPerMetre: metre,
+                               hour: hour, turn: turn, seed: seed)
             }
         }
         .frame(width: 1.0 * metre, height: 1.2 * metre, alignment: .bottom)

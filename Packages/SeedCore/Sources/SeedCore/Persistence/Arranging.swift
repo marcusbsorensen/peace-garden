@@ -264,5 +264,13 @@ public enum LampKind: String, CaseIterable, Sendable {
     case paperLamp
     /// A drift of fireflies, which is a light that moves.
     case fireflies
+    /// A hare sitting up, ears raised, in glow-in-the-dark paint.
+    case hare
+    /// A fox curled asleep in its own tail, in glow-in-the-dark paint.
+    case fox
+    /// A moth at rest on a thin stake, wings open, in glow-in-the-dark paint.
+    case moth
+    /// A snail, shell and all, in glow-in-the-dark paint.
+    case snail
 }
 

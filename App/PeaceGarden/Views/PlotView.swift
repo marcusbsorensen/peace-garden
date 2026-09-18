@@ -420,15 +420,16 @@ struct PlotView: View {
             let foot = inHand ? (heldLamp?.foot ?? resting) : resting
             let seed = Int(lamp.id.uuid.0) << 8 | Int(lamp.id.uuid.1)
 
-            LampFigure(kind: kind, glow: glow, pointsPerMetre: metre, seed: seed)
+            LampFigure(kind: kind, glow: glow, pointsPerMetre: metre, seed: seed,
+                       hour: hour, turn: turn)
                 .allowsHitTesting(false)
                 // Only the light itself answers a finger, not the whole metre of
                 // air its frame takes up, or a lantern would steal every touch
                 // meant for the plant behind it.
                 .overlay(alignment: .bottom) {
                     Color.clear
-                        .frame(width: 0.32 * metre,
-                               height: (GardenLamps.height(of: kind) + 0.14) * metre)
+                        .frame(width: GardenLamps.grip(of: kind).width * metre,
+                               height: GardenLamps.grip(of: kind).height * metre)
                         .contentShape(Rectangle())
                         .gesture(carrying(lamp, from: resting, world: world, side: side, in: view))
                 }
@@ -546,6 +547,26 @@ struct PlotView: View {
     /// `docs/WEBSITE.md` has already recorded the ten area names becoming 420
     /// commissions at a multiplier that is now forty-two. Unnamed, the fiftieth
     /// world costs a render.
+    /// How much bigger a figure is drawn in the row than on the plot. A lantern
+    /// fills its button at forty points a metre; a snail at that scale is eight
+    /// points of nothing.
+    private func trayScale(of kind: LampKind) -> Double {
+        switch kind {
+        case .lantern, .paperLamp, .fireflies: return 1
+        case .hare: return 1.5
+        case .fox: return 1.25
+        case .moth: return 1.6
+        case .snail: return 2.1
+        }
+    }
+
+    /// How far a figure is raised in the row, so the part of it drawn below its
+    /// foot is inside the button rather than clipped off.
+    private func trayLift(of kind: LampKind) -> Double {
+        guard let figure = GardenCreatures.figure(of: kind) else { return 0 }
+        return 0.6 * figure.lift * figure.metres * 40 * trayScale(of: kind)
+    }
+
     @ViewBuilder
     private var grounds: some View {
         if GardenWorlds.shared.isLoaded {
@@ -562,8 +583,15 @@ struct PlotView: View {
                                 model.addLamp(kind, at: freshSpot(side: model.garden.plotSide))
                             }
                         } label: {
-                            LampFigure(kind: kind, glow: 1, pointsPerMetre: 40, seed: 7)
-                                .frame(width: 40, height: 48)
+                            // The figures a little below full glow: at full
+                            // they are a white shape with no form in it.
+                            LampFigure(kind: kind, glow: GardenCreatures.isCreature(kind) ? 0.7 : 1,
+                                       pointsPerMetre: 40 * trayScale(of: kind),
+                                       // The fox side-on: facing out of the
+                                       // row it is a ball with a face.
+                                       seed: kind == .fox ? 1 : 7)
+                                .offset(y: -trayLift(of: kind))
+                                .frame(width: 40, height: 48, alignment: .bottom)
                                 .clipped()
                         }
                         .buttonStyle(.plain)

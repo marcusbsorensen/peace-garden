@@ -600,9 +600,8 @@ Settled and built 18 September. The Milky Way keeps the garden **visible** at
 every hour; that is not the same as a flower being **enjoyed** after dark. So a
 person can put lights out — a small iron lantern on a post, a paper lamp hung
 from a bent cane, a drift of fireflies — and carry them to the flowers they want
-to see at night. Glow-in-the-dark animals were asked for too and are left for an
-art pass of their own: they need drawing properly to stand beside plants grown
-from a genome, and a hare drawn in code would be clip art beside them.
+to see at night. Glow-in-the-dark animals were asked for too, and are figures
+modelled in SceneKit rather than drawn: see *The glow-in-the-dark figures* below.
 
 - **A pool on the ground and a lift on the plants, not a light in their
   renders.** A lantern lighting leaves from its own side would mean re-rendering
@@ -646,6 +645,41 @@ from a genome, and a hare drawn in code would be clip art beside them.
   a lantern took every touch meant for it. A plant now answers only inside the
   box its leaves actually occupy, measured once from the pixels when it is
   rendered.
+
+### The glow-in-the-dark figures
+
+Built 18 September: a hare sitting up, a fox asleep, a moth on a stake and a
+snail. `GardenCreatures`. They were left for an art pass because a hare drawn
+in SwiftUI shapes would be clip art beside plants grown from a genome.
+
+- **Modelled and rendered, like a plant.** Each is a SceneKit figure of
+  ellipsoids, cones and extruded wings, taken by the plants' own camera under
+  the plants' own light, at the eight points round the clock and the four turns
+  of the plot. A painted still would neither turn with the plot nor take the
+  sun, and would have been the pasted-on look the plants had until they took
+  the garden's light.
+- **Figures, not animals.** Glow-in-the-dark paint on a garden figure, pale by
+  day. That is what lets a moth be found on a plot five metres across: a real one
+  would be four points wide.
+- **Two pictures.** The figure lit by the garden, and its glow alone, added over
+  it by the square of the lamps' glow. Squared because at the lamps' own curve
+  the hare shone at ten in the morning.
+- **A figure's foot is not on its frame's bottom edge.** An animal lies along
+  the ground, and what is nearer the camera than its foot is drawn below it; a
+  fox with its foot on the edge loses its nose. Each frame reaches below the
+  foot by a set fraction, and the shadow shears about the foot rather than the
+  edge.
+- **Painted accents, unlit.** Eyes, noses, the fox's ear tips, the moth's
+  eyespots. They are black in the glow picture, so they hide the glow behind
+  them. A white fox with no face was a cushion.
+- **They are lights.** A new `LampKind` each, with a small pool and a faint lift
+  on nearby plants. Paint that has held the day's light gives back very little.
+  Put out, carried and taken away exactly as a lantern is.
+
+What looking found: the fox's head sank into its body at full height and it
+read as a dome, so the body is lower and the head rests above it. What the test
+found: the snail's feelers went off the side of its frame at two facings of
+eight, which looked like a snail with short feelers.
 
 ## The light is rebuilt, not filtered
 
