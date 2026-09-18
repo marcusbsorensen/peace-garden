@@ -11,8 +11,8 @@ choice of ground and a sun and moon going round it.
 **Done and verified, and looked at on a simulator.** The Garden screen is the
 plot. Flat ground, noon light held still, plants standing on it at their real
 relative sizes, and a pool of light under anything that has changed since it was
-last opened. 47 app tests, from 35; SeedCore untouched at 106. `main` is clean
-and **nothing is committed** — the whole change is in the working tree.
+last opened. Thematic no longer stands one plant inside another. 49 app tests,
+from 35; SeedCore untouched at 106. Two commits on `main`, not pushed.
 
 **Done, not built into the app.** Terrain, the orbit, and the gestures. The
 interactive Design canvas remains the reference:
@@ -105,29 +105,25 @@ written against a height at a place rather than against zero, so a heightmap
 drops in without the drawing changing shape; `nearFaces` already samples along
 the rim for exactly that reason.
 
-Before either, one thing to decide — see below.
+## Thematic crowding: done
 
-## The thing to decide first
+Settled and built, 18 September. An area is 0.92 m wide and a plant is up to a
+metre across, so scattering plants inside an area stood them inside one another —
+7.5 cm apart on the first garden drawn. Spreading cannot fix it: over forty
+gardens of fourteen, independent scatter leaves 82 pairs under 20 cm and a cloud
+2.9 m across still leaves 37, because two seeds know nothing about each other.
 
-**The templates stand plants inside one another.** Measured on fourteen
-crossings at 5.2 m, closest pair in metres and pairs closer than 40 cm:
+An area's members are now ranked by seed hex and laid down its depth. Closest
+pair 0.217 m, pairs under 20 cm none. It costs the one thing: a plant joining an
+area re-spaces that area — about three plants in fourteen, by at most 0.43 m.
+Nothing outside the area moves, and no spot anywhere depends on arrival order,
+which is the trap the old rule was actually guarding.
 
-| | | |
-| --- | --- | --- |
-| Thematic | 0.075 | 5 |
-| Night and day | 0.294 | 3 |
-| Colours | 0.243 | 3 |
-| By meeting | 0.294 | 5 |
-| By kinship | 0.087 | 11 |
-
-Plants are 0.4 to 1 m across, so 7.5 cm is one plant inside another, and on
-screen the default arrangement reads as two clumps and an empty half. Kinship is
-*meant* to group and its number is not a fault; Thematic's is the one to look at.
-
-`ARRANGING.md` lists *whether two plants may stand on one spot* as open, but that
-discussion is about somebody dragging one plant onto another, which is an
-intention. This is the template doing it unasked, which is a different question
-and is not answered anywhere.
+`testAddingAPlantDoesNotMoveTheOnesAlreadyThere` now exempts Thematic alongside
+Meetings, and two tests hold what replaced it:
+`testAPlantJoiningAnAreaDisturbsOnlyThatArea` and
+`testThematicNeverStandsOnePlantInsideAnother`, the second over forty gardens
+because one garden is what let the fault through the first time.
 
 ## Traps
 

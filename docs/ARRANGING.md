@@ -110,6 +110,29 @@ That agreement is free, and it is the only place the two gardens are allowed to
 be the same — the app's default arrangement is the site's arrangement, and every
 other template is a departure from it.
 
+**An area is one plant wide, and that changed how its plants are placed.**
+Settled 18 September, on a real garden. Five columns across a 5.2 m plot makes an
+area 0.92 m wide; a plant is up to a metre across. Scattering each plant from its
+own seed therefore stood plants inside one another — the closest pair on the
+first garden drawn was 7.5 cm apart — and the cause is the shape of the map
+rather than bad luck.
+
+Spreading was measured and does not fix it. Over forty gardens of fourteen,
+independent scatter left 82 pairs closer than 20 cm; widening it into a cloud
+2.9 m across — by which point the left-to-right gradient the map exists for is
+mush — still left 37. **Any position drawn from one plant's seed alone has that
+tail, because two seeds know nothing about each other.**
+
+So an area's members are ranked by their own seed hex and laid evenly down its
+depth. The closest pair goes to 0.217 m and the pairs under 20 cm go to none.
+
+This is the one template whose spot depends on the other plants, and the
+exemption is narrow. **It is not the index trap**: the rank is over seed hexes,
+so it is identical on every device and unchanged by the order anything arrived
+in. What it costs is that a plant joining an area re-spaces that area — about
+three plants in fourteen move, by at most 0.43 m — and nothing outside that area
+moves at all, which is what `ArrangementTests` holds it to.
+
 ### Night and day
 
 **This is not a filter invented over the top of the plants. It is a trait they
@@ -577,6 +600,9 @@ Two things it turns on, both in `GardenVisits`:
 - **Night falls by the clock, with an override** in Seed.
 - **Templates are pure functions**, and a bed stores only what was moved by hand.
 - **`beds` is optional on `Garden`**, so nothing migrates and no version moves.
+- **Thematic ranks an area's plants down its depth** rather than scattering them
+  in it, because an area is one plant wide. The only template whose spot depends
+  on the other plants, and it still depends on no arrival order.
 - **What announces a plant that has changed: the light finds it.** Above. It is
   the one thing the grid did that a free layout does not.
 - **The saturation ceiling is 0.28**, enforced by one function every ground

@@ -72,12 +72,20 @@ final class ArrangementTests: XCTestCase {
     /// seed, so growing the garden leaves every existing plant exactly where it
     /// was. Meetings is exempt, since an order is the point of it — but even
     /// there the new plant is the newest and goes on the end.
+    ///
+    /// **Thematic is exempt too, since 18 September, and the exemption is
+    /// narrow.** An area is one plant wide, so two plants scattered in it stood
+    /// inside one another; its members are ranked down its depth instead, which
+    /// re-spaces that one area when a plant joins it. Everywhere else is
+    /// untouched, and that is what `testAPlantJoiningAnAreaDisturbsOnlyThatArea`
+    /// holds. What has *not* changed is the thing this test is really about: no
+    /// spot anywhere comes from a plant's place in the order the plants arrived.
     func testAddingAPlantDoesNotMoveTheOnesAlreadyThere() {
         let before = garden(9)
         let after = before + [crossing("Ada", nonce: 99,
                                        birth: Date(timeIntervalSince1970: 1_800_000_000))]
 
-        for template in Template.allCases where template != .meetings {
+        for template in Template.allCases where template != .meetings && template != .thematic {
             let a = Arrangement.spots(for: before, template: template, plotSide: 5.2, mine: mine)
             let b = Arrangement.spots(for: after, template: template, plotSide: 5.2, mine: mine)
             for plant in before {
@@ -92,6 +100,53 @@ final class ArrangementTests: XCTestCase {
         let b = Arrangement.spots(for: after, template: .meetings, plotSide: 5.2, mine: mine)
         XCTAssertNotEqual(a[before[0].id], b[before[0].id],
                           "Meetings re-flows by design; this records that it does")
+    }
+
+    /// Thematic's whole exemption, and the limit of it. A plant arriving in The
+    /// Crossing re-spaces The Crossing; it must not touch the other nine areas,
+    /// and it must not move anything out of the area it belongs to.
+    func testAPlantJoiningAnAreaDisturbsOnlyThatArea() {
+        let before = garden(13)
+        let arrival = crossing("Ada", nonce: 99,
+                               birth: Date(timeIntervalSince1970: 1_800_000_000))
+        let joined = Arrangement.areas[Arrangement.theme(of: arrival)] ?? (column: 2, row: 0)
+
+        let a = Arrangement.spots(for: before, template: .thematic, plotSide: 5.2, mine: mine)
+        let b = Arrangement.spots(for: before + [arrival], template: .thematic,
+                                  plotSide: 5.2, mine: mine)
+
+        for plant in before {
+            let area = Arrangement.areas[Arrangement.theme(of: plant)] ?? (column: 2, row: 0)
+            guard area != joined else { continue }
+            XCTAssertEqual(a[plant.id], b[plant.id],
+                           "a plant in another area moved when somebody new arrived")
+        }
+    }
+
+    /// The crowding this replaced: on a real garden two plants stood 7.5 cm
+    /// apart, which for plants 0.4 to 1 m across is one plant inside another.
+    /// Held as a distribution rather than as one case, because a single garden
+    /// is what let it through the first time.
+    func testThematicNeverStandsOnePlantInsideAnother() {
+        let peers = ["Ada", "Rune", "Sofia", "Jonas", "Ines", "Tobias", "Leyla", "Rowan"]
+
+        for round in 0..<40 {
+            let plants = (0..<14).map {
+                crossing(peers[($0 + round) % peers.count], nonce: $0 + round * 97,
+                         birth: Date(timeIntervalSince1970: 1_700_000_000 + Double($0) * 86_400))
+            }
+            let spots = Arrangement.spots(for: plants, template: .thematic,
+                                          plotSide: 5.2, mine: mine)
+            let list = plants.compactMap { spots[$0.id] }
+
+            for i in 0..<list.count {
+                for j in (i + 1)..<list.count {
+                    let apart = hypot(list[i].x - list[j].x, list[i].z - list[j].z)
+                    XCTAssertGreaterThan(apart, 0.20,
+                                         "two plants stand \(String(format: "%.3f", apart)) m apart")
+                }
+            }
+        }
     }
 
     func testTheOrderThePlantsArriveInChangesNothing() {

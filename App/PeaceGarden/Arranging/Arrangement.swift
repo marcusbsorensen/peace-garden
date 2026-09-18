@@ -98,17 +98,63 @@ enum Arrangement {
         }
     }
 
+    /// The site's map, with each area's plants **ranked down its long axis**.
+    ///
+    /// It scattered them from their own seeds until it was drawn on a real
+    /// garden, where it stood plants inside one another. The cause is structural
+    /// rather than unlucky: five columns across a 5.2 m plot makes an area 0.92 m
+    /// wide, and a plant is up to a metre across, so **an area is one plant
+    /// wide** and two plants in it have only its depth to be apart in.
+    ///
+    /// Spreading was measured and cannot fix it. Over forty gardens of fourteen,
+    /// scattering each plant independently left 82 pairs standing closer than
+    /// 20 cm; widening the scatter into a cloud 2.9 m across — by which point
+    /// the left-to-right gradient the map exists for is mush — still left 37.
+    /// Any position drawn from one plant's seed alone has that tail, because two
+    /// seeds know nothing about each other.
+    ///
+    /// So an area's members are ranked by their own seed hex and laid evenly
+    /// down its depth. Closest pair goes from 0.006 m to 0.217 m and the pairs
+    /// under 20 cm go to none.
+    ///
+    /// **This is not the trap.** The trap is deriving a spot from a plant's
+    /// *index* — its place in the order the plants arrived — which makes the
+    /// sixth plant's position depend on there having been five before it, and
+    /// makes two phones disagree. The rank here is over seed hexes, so it is the
+    /// same on every device and unchanged by the order anything arrived in.
+    ///
+    /// What it does cost: a new plant joining an area re-spaces that area. About
+    /// three plants in fourteen move, by at most 0.43 m, and nothing outside that
+    /// one area moves at all — which is what `ArrangementTests` now holds it to.
     private static func thematic(_ plants: [PlantRecord], _ side: Double) -> [UUID: Spot] {
-        var out: [UUID: Spot] = [:]
         let cellWidth = side / Double(columns)
         let cellDepth = side / Double(rows)
+
+        var byArea: [Int: [PlantRecord]] = [:]
         for plant in plants {
             let cell = areas[theme(of: plant)] ?? (column: 2, row: 0)
-            let (jx, jz) = scatter(plant, salt: 1)
-            out[plant.id] = Spot(
-                x: -side / 2 + (Double(cell.column) + 0.18 + 0.64 * jx) * cellWidth,
-                z: -side / 2 + (Double(cell.row) + 0.20 + 0.60 * jz) * cellDepth
-            )
+            byArea[cell.row * columns + cell.column, default: []].append(plant)
+        }
+
+        var out: [UUID: Spot] = [:]
+        for (area, members) in byArea {
+            let column = Double(area % columns)
+            let row = Double(area / columns)
+            let ranked = members.sorted { $0.seed.hex < $1.seed.hex }
+            let count = Double(ranked.count)
+
+            for (place, plant) in ranked.enumerated() {
+                // The wobble keeps a rank from reading as a row of soldiers. It
+                // is small: a third of an area's width is all there is, and the
+                // separation is the ranking's job rather than the wobble's.
+                let (wobble, _) = scatter(plant, salt: 1)
+                let along = (Double(place) + 0.5) / count
+
+                out[plant.id] = Spot(
+                    x: -side / 2 + (column + 0.5) * cellWidth + (wobble - 0.5) * cellWidth * 0.34,
+                    z: -side / 2 + (row + 0.12 + 0.76 * along) * cellDepth
+                )
+            }
         }
         return out
     }
