@@ -150,7 +150,7 @@ struct PlotView: View {
                         // Far to near, and nothing else decides what covers
                         // what — except something in hand, which is above
                         // everything until it is put down.
-                        ForEach(things(plotSide: side, lamps: lamps, in: view)) { thing in
+                        ForEach(things(plotSide: side, world: world, lamps: lamps, in: view)) { thing in
                             switch thing {
                             case .plant(let standing):
                                 pool(for: standing, world: world, side: side, in: view)
@@ -413,20 +413,30 @@ struct PlotView: View {
         }
     }
 
-    private func hedges(plotSide: Double, in view: Isometric) -> [Hedge] {
+    /// **Cut to one line along the top.** Each piece stands on the ground under
+    /// it, and a clipped hedge is cut level whatever the ground does, so each is
+    /// as tall as it takes to reach the hedge's own top line: the ground's mean
+    /// along the hedge, plus the hedge's height. Standing each piece at the
+    /// hedge's height from its own ground stepped the top at every joint.
+    ///
+    /// Rounded to two centimetres, so the handful of heights a gentle slope
+    /// asks for share their renders.
+    private func hedges(plotSide: Double, world: Int, in view: Isometric) -> [Hedge] {
         guard isLongWalk else { return [] }
-        let lines = hedgeLines(in: view)
         let pieces = Int((plotSide / GardenStructures.pieceLength).rounded(.down))
         let start = -Double(pieces) * GardenStructures.pieceLength / 2
         var all: [Hedge] = []
-        for line in lines {
-            for n in 0..<pieces {
+        for line in hedgeLines(in: view) {
+            let spots = (0..<pieces).map {
+                Spot(x: line.x, z: start + (Double($0) + 0.5) * GardenStructures.pieceLength)
+            }
+            let grounds = spots.map { standsAt($0, world: world, side: plotSide) }
+            let top = grounds.reduce(0, +) / Double(max(1, grounds.count)) + line.height
+            for (n, spot) in spots.enumerated() {
                 let id = UUID(uuidString: String(format: "00000000-0000-4000-8000-%012d",
                                                  (line.x > 0 ? 1_000 : 0) + n))!
-                all.append(Hedge(id: id,
-                                 spot: Spot(x: line.x,
-                                            z: start + (Double(n) + 0.5) * GardenStructures.pieceLength),
-                                 height: line.height))
+                let cut = ((top - grounds[n]) / 0.02).rounded() * 0.02
+                all.append(Hedge(id: id, spot: spot, height: max(0.3, cut)))
             }
         }
         return all
@@ -441,11 +451,11 @@ struct PlotView: View {
             .position(x: foot.x, y: foot.y - size / 2)
     }
 
-    private func things(plotSide: Double, lamps: [Lamp], in view: Isometric) -> [Thing] {
+    private func things(plotSide: Double, world: Int, lamps: [Lamp], in view: Isometric) -> [Thing] {
         let inHand: Set<UUID> = Set([held?.id, heldLamp?.id].compactMap { $0 })
         let all = standing(plotSide: plotSide, in: view).map(Thing.plant)
             + lamps.filter { $0.known != nil }.map(Thing.lamp)
-            + hedges(plotSide: plotSide, in: view).map(Thing.hedge)
+            + hedges(plotSide: plotSide, world: world, in: view).map(Thing.hedge)
 
         return all.sorted { a, b in
             if inHand.contains(a.id) { return false }

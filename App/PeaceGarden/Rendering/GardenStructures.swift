@@ -84,8 +84,13 @@ final class GardenStructures {
         return snapshot
     }
 
-    /// Clipped yew: very dark, matte, and grained with the small leaves a
-    /// clipped face is made of — a speckle of lighter and darker greens.
+    /// Clipped yew: dark, matte, and grained with the small leaves a clipped
+    /// face is made of — a speckle of lighter and darker greens.
+    ///
+    /// **Picked half again brighter than yew looks on its own**, the rule the
+    /// bank of earth under the plot already follows: a hedge's face is vertical,
+    /// so it is lit by the sky and by little of the sun, and at yew's own
+    /// darkness the face towards the path was black at midday.
     private static let yew: SCNMaterial = {
         let material = SCNMaterial()
         material.lightingModel = .physicallyBased
@@ -102,13 +107,13 @@ final class GardenStructures {
         let side = 128
         var random = SplitMix64(seed: 0x7EE5)
         return UIGraphicsImageRenderer(size: CGSize(width: side, height: side)).image { context in
-            UIColor(red: 0.14, green: 0.25, blue: 0.12, alpha: 1).setFill()
+            UIColor(red: 0.27, green: 0.39, blue: 0.27, alpha: 1).setFill()
             context.fill(CGRect(x: 0, y: 0, width: side, height: side))
             for _ in 0..<900 {
                 let x = Double(random.next() % UInt64(side)), y = Double(random.next() % UInt64(side))
                 let r = 1 + Double(random.next() % 3)
                 let lift = Double(random.next() % 100) / 100 * 0.16 - 0.07
-                UIColor(red: 0.14 + lift * 0.6, green: 0.26 + lift, blue: 0.12 + lift * 0.5, alpha: 1).setFill()
+                UIColor(red: 0.27 + lift * 0.7, green: 0.40 + lift, blue: 0.27 + lift * 0.7, alpha: 1).setFill()
                 context.cgContext.fillEllipse(in: CGRect(x: x, y: y, width: r, height: r * 0.7))
             }
         }

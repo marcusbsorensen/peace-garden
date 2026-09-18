@@ -184,6 +184,14 @@ not dressing; they are how a visitor can see the rule.
   plant's shadow, near noon each piece cast a hairline across the garden.
 - **The path is mown in stripes along its length**, as a mower goes. Striped
   across, it read as paving slabs.
+- **A hedge is cut to one top line.** Each piece stands on its own ground and
+  is as tall as it takes to reach the hedge's mean ground plus its height.
+  Standing each piece at the hedge's height from its own ground stepped the
+  top at every joint.
+- **Yew is picked brighter than yew**, the rule the bank of earth under the plot
+  already follows: a vertical face gets the sky and little of the sun, and at
+  yew's own darkness the face towards the path was black at midday. Brighter
+  alone made it toy-green in the sun, so it is also greyed towards blue.
 
 ## The dressing: what we place by hand
 
