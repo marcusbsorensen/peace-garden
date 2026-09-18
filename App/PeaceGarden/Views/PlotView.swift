@@ -325,6 +325,8 @@ struct PlotView: View {
             hour: hour,
             turn: turn,
             isHeld: inHand,
+            isLeaving: inHand && Isometric.isOff(view.ground(at: held?.foot ?? resting),
+                                                 plotSide: side),
             lamplight: GardenLamps.lift(at: standing.spot, from: lamps),
             glow: glow,
             onTap: {
@@ -354,6 +356,16 @@ struct PlotView: View {
     /// enough.
     private func put(_ plant: PlantRecord, at foot: CGPoint, world: Int, side: Double,
                      in view: Isometric) {
+        // Carried off the plot, it goes home: the hand placement is forgotten
+        // and the plant walks back to where its arrangement puts it.
+        if Isometric.isOff(view.ground(at: foot), plotSide: side) {
+            withAnimation(.spring(duration: 0.45)) {
+                model.putBack(plant)
+                held = nil
+            }
+            return
+        }
+
         let relief = GardenWorlds.shared.relief(world: world, plotSide: side)
         let found = view.ground(at: foot, height: { spot in
             standsAt(spot, world: world, side: side)
@@ -422,6 +434,7 @@ struct PlotView: View {
                 }
                 .scaleEffect(inHand ? 1.06 : 1, anchor: .bottom)
                 .offset(y: inHand ? -8 : 0)
+                .opacity(inHand && Isometric.isOff(view.ground(at: foot), plotSide: side) ? 0.4 : 1)
                 .position(x: foot.x, y: foot.y - 0.6 * metre)
         }
     }
@@ -448,7 +461,7 @@ struct PlotView: View {
                 let half = side / 2
 
                 withAnimation(.spring(duration: 0.3)) {
-                    if abs(found.x) > half + 0.15 || abs(found.z) > half + 0.15 {
+                    if Isometric.isOff(found, plotSide: side) {
                         model.removeLamp(lamp.id)
                     } else {
                         let relief = GardenWorlds.shared.relief(world: world, plotSide: side)
@@ -602,6 +615,9 @@ private struct GardenPlantSprite: View {
     let hour: Double
     let turn: Int
     let isHeld: Bool
+    /// Held off the edge of the plot, where letting go sends it home. Faded, so
+    /// the plant says what letting go will do before it is done.
+    let isLeaving: Bool
     /// How much the lights nearby lift this plant, and in what colour.
     let lamplight: (amount: Double, colour: SIMD3<Double>)
     let glow: Double
@@ -651,6 +667,8 @@ private struct GardenPlantSprite: View {
                 // shadow stays down, which is what says it has been picked up.
                 .scaleEffect(isHeld ? 1.05 : 1, anchor: .bottom)
                 .offset(y: isHeld ? -10 : 0)
+                .opacity(isLeaving ? 0.45 : 1)
+                .animation(.easeOut(duration: 0.15), value: isLeaving)
                 // **The gestures go on the plant and not on its frame.**
                 // `position` makes a view take all the space it is offered, so a
                 // gesture attached after it answered anywhere on screen; and a

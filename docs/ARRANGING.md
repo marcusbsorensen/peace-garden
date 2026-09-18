@@ -623,6 +623,12 @@ from a genome, and a hare drawn in code would be clip art beside them.
   Put out near the middle, each a little round from the last; carried like a
   plant, by a long press; **taken away by being carried off the edge**, which is
   the physical answer and needs no word on the screen.
+- **A plant carried off the edge goes home.** *Put it back* is the same gesture:
+  off the edge means *give this up*, which for a light is to take it away and
+  for a plant is to forget where it was put, so it walks back to wherever its
+  arrangement puts it now. A clear fifteen centimetres past the rim counts, and
+  less is still the rim, because somebody aiming for the edge overshoots. Held
+  off the plot, either one fades, so it says what letting go will do.
 - **They come up as the garden goes down**, on the galaxy's own curve, and never
   to nothing — a lantern that vanished at noon would be one nobody could find.
 - **Fireflies barely light the ground.** At a lantern's strength their pool was

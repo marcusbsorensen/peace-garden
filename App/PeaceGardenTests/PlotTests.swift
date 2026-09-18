@@ -680,4 +680,35 @@ final class PlotTests: XCTestCase {
         XCTAssertLessThan(midnight, dusk + 1e-9)
         XCTAssertGreaterThan(dusk, 0.9)
     }
+
+    // MARK: - Putting it back
+
+    /// **Off the edge is how a thing is given up.** A plant carried off goes
+    /// home to where its arrangement puts it; a light carried off is gone. A
+    /// little over the rim is still the rim, because somebody aiming for the
+    /// edge overshoots, and only a clear fifteen centimetres beyond it counts.
+    func testALittleOverTheRimIsStillTheRimAndFurtherIsOff() {
+        let side = 5.2
+        XCTAssertFalse(Isometric.isOff(Spot(x: 2.6, z: 0), plotSide: side))
+        XCTAssertFalse(Isometric.isOff(Spot(x: 2.7, z: -2.7), plotSide: side))
+        XCTAssertTrue(Isometric.isOff(Spot(x: 2.8, z: 0), plotSide: side))
+        XCTAssertTrue(Isometric.isOff(Spot(x: 0, z: -3.2), plotSide: side))
+    }
+
+    /// Putting a plant back is forgetting where it was put, so it stands where
+    /// its template says — and where the template says *now*, not where it said
+    /// when the plant was moved.
+    func testAPlantPutBackStandsWhereItsArrangementPutsIt() {
+        let plants = (0..<6).map { crossing(["Ada", "Rune"][$0 % 2], nonce: $0) }
+        let template = Arrangement.spots(for: plants, template: .thematic,
+                                         plotSide: 5.2, mine: mine)
+        var bed = Bed(name: "")
+
+        bed.place(plants[2], at: Spot(x: -2, z: 2))
+        XCTAssertEqual(bed.spot(for: plants[2]), Spot(x: -2, z: 2))
+
+        bed.putBack(plants[2])
+        XCTAssertNil(bed.spot(for: plants[2]))
+        XCTAssertEqual(bed.spot(for: plants[2]) ?? template[plants[2].id], template[plants[2].id])
+    }
 }

@@ -148,6 +148,19 @@ struct Isometric: Equatable {
         return ground(at: point)
     }
 
+    /// Whether something let go of here has been carried off the plot, rather
+    /// than dropped at its edge.
+    ///
+    /// **Off the edge is how a thing is given up**, and the answer needs no word
+    /// on the screen: a light carried off is gone, and a plant carried off goes
+    /// home to where its arrangement puts it. A little way over the rim is still
+    /// the rim — somebody aiming for the edge overshoots — so only a clear
+    /// fifteen centimetres beyond it counts as leaving.
+    static func isOff(_ spot: Spot, plotSide: Double) -> Bool {
+        let beyond = plotSide / 2 + 0.15
+        return abs(spot.x) > beyond || abs(spot.z) > beyond
+    }
+
     /// Far to near. Everything on the plot is drawn in this order and nothing
     /// else decides what covers what. It turns with the plot, because *near* is
     /// a fact about the screen rather than about the ground.

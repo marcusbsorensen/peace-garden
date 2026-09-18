@@ -374,6 +374,18 @@ final class GardenModel {
         persist()
     }
 
+    /// Let a plant go back to where its template puts it.
+    ///
+    /// Deleting its entry rather than recomputing one: `placed` records only
+    /// what somebody moved, so a plant with no entry is exactly a plant nobody
+    /// has moved, and it stands wherever the arrangement says — including
+    /// wherever that has become since.
+    func putBack(_ plant: PlantRecord) {
+        guard garden.beds?.isEmpty == false else { return }
+        garden.beds?[0].putBack(plant)
+        persist()
+    }
+
     // MARK: Lights
 
     /// The bed being looked at, made real if it was only the default. Every

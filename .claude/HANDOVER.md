@@ -14,8 +14,8 @@ the plants at their real relative sizes standing on the terrain, a pool of light
 under anything that has changed since it was last opened, and a row of little
 worlds to choose the ground from, and the sun and moon going round it on the
 real clock, the Milky Way overhead, lights to put out, and the gestures to
-arrange all of it. 68 app tests, from 35; SeedCore 110, from 106. Eight commits
-on `main`, not pushed.
+arrange all of it. 70 app tests, from 35; SeedCore 110, from 106. Pushed to
+`origin/main` at `7417653`; one commit after it.
 
 **Done, not built into the app.** Nothing from the mockup is left. The
 interactive Design canvas remains the reference:
@@ -204,10 +204,14 @@ they need drawing properly to stand beside plants grown from a genome. The
 mechanism is ready for them — a new `LampKind`, a figure, a colour, a reach, a
 pool strength — and nothing about storage changes, because a kind is a string.
 
-Two smaller things are open. **Put it back**: a hand-placed plant can be moved
-but not returned to where its template put it; `Bed.putBack` exists and nothing
-calls it. And **what zoom is for** is still unanswered; 3× is the cap until it
-is, and at 3× the ground's cells begin to show.
+**Put it back is done**: carry a hand-placed plant off the edge of the plot and
+it goes home to where its arrangement puts it — the same gesture that takes a
+light away, so off the edge always means *give this up*. A clear fifteen
+centimetres past the rim counts; less than that is still the rim. While held
+off the plot, a plant or a light fades, so it says what letting go will do.
+
+**What zoom is for** is still unanswered; 3× is the cap until it is, and at 3×
+the ground's cells begin to show.
 
 ## Traps
 
