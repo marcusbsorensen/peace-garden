@@ -275,3 +275,28 @@ and tap it. It should open the app. If it opens Safari instead:
 3. Delete and reinstall — associated domains are fetched at install time.
 4. On a development build, `applinks:peacegarden.app?mode=developer` in the
    entitlement makes iOS bypass its CDN and fetch from your server directly.
+
+## The plot service (`/api/`)
+
+`index.php` hands every path under `/api/` to `.api/router.php`. The dot keeps
+the service's own files unreachable, as it does `.pages/`.
+
+- `GET /api/walk` — plots opened. `GET /api/walk/plot/{n}` — a plot's plantings:
+  seed, both parents, the meeting, and the spot to stand it on.
+- `POST /api/walk/plant` — **answers 403** until sharing has sign-in and both
+  gardeners' consent. A local copy opens it in `.api/config.php` (copy
+  `config.example.php`; git ignores it and `deploy.sh` leaves the server's alone).
+- The rule is `.api/LongWalk.php`, a port of SeedCore's, checked in CI by
+  `tools/reference/check_long_walk.php`. The service refuses a seed that is not
+  the cross of the parents it names.
+- Storage defaults to SQLite **beside** `public_html` (`../peacegarden-data/`),
+  never inside it. The 20i database goes in `config.php` once it exists.
+
+Locally, with the browser pages beside it:
+`php -S localhost:8803 -t tools/wasm/web tools/wasm/dev-router.php`, then
+`node tools/wasm/send-arrivals.mjs http://localhost:8803 120` to stand in for
+phones, and open `/walk.html?source=service`.
+
+**After the first deploy, check** that `/.api/router.php` answers 403 from
+nginx's dot rule, not 200 from PHP-FPM: the order of nginx's regex locations
+decides it, and only the live host can say.

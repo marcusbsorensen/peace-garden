@@ -22,6 +22,18 @@
         "/Users/marcus/Projects/peace-garden/tools/wasm/web"
       ],
       "port": 8802
+    },
+    {
+      "name": "walk-service",
+      "runtimeExecutable": "php",
+      "runtimeArgs": [
+        "-S",
+        "localhost:8803",
+        "-t",
+        "/Users/marcus/Projects/peace-garden/tools/wasm/web",
+        "/Users/marcus/Projects/peace-garden/tools/wasm/dev-router.php"
+      ],
+      "port": 8803
     }
   ]
 }

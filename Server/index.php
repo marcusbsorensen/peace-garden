@@ -82,6 +82,12 @@ if ($path === '') {
     $path = '/';
 }
 
+// The plot service has its own router; everything under /api/ is its.
+if (str_starts_with($path, '/api/')) {
+    require __DIR__ . '/.api/router.php';
+    exit;
+}
+
 if (!isset(ROUTES[$path])) {
     // A miss is a miss, including `/strings/en.json`, which is fetched for
     // every language except the one written into `strings.js` and is *meant*

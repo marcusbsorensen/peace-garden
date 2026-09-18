@@ -38,9 +38,10 @@
 </main>
 <script type="module">
   import { loadModule } from './plant.js';
-  import { makeWalkStage, plantArrivals, growPlots, describe } from './walk.js';
+  import { makeWalkStage, plantArrivals, growPlots, growFromService, describe } from './walk.js';
 
   // ?arrivals=500&from=0&span=3 — how many plants have arrived, and which plots to look at.
+  // ?source=service — draw what the plot service holds instead of planting here.
   const query = new URLSearchParams(location.search);
   const number = (name, fallback) => Math.max(0, parseInt(query.get(name) ?? '', 10) || fallback);
   const arrivals = number('arrivals', 500), span = Math.max(1, number('span', 3));
@@ -54,6 +55,21 @@
   document.getElementById('right').addEventListener('click', () => stage.turnBy(1));
 
   const e = await loadModule('PlantWasm.wasm');
+
+  if (query.get('source') === 'service') {
+    const { plots: opened } = await (await fetch('/api/walk')).json();
+    const walkTo = async () => {
+      document.getElementById('back').disabled = from === 0;
+      document.getElementById('on').disabled = from + span >= opened;
+      const shown = Math.max(0, Math.min(span, opened - from));
+      const counts = await growFromService(e, stage, from, shown, report);
+      list.replaceChildren(...counts.map((n, k) => Object.assign(document.createElement('li'), { textContent: `Plot ${from + k + 1}: ${n}/48, from the plot service` })));
+      report(`The plot service's Long Walk: ${opened} plots · showing ${from + 1}–${from + shown}; the walk runs towards you`);
+    };
+    document.getElementById('back').addEventListener('click', () => { from = Math.max(0, from - span); walkTo(); });
+    document.getElementById('on').addEventListener('click', () => { from = Math.min(opened - 1, from + span); walkTo(); });
+    await walkTo();
+  } else {
   const started = performance.now();
   const plots = await plantArrivals(e, arrivals, report);
   const planted = ((performance.now() - started) / 1000).toFixed(1);
@@ -89,6 +105,7 @@
   document.getElementById('back').addEventListener('click', () => { from = Math.max(0, from - span); show(); });
   document.getElementById('on').addEventListener('click', () => { from = Math.min(plots - 1, from + span); show(); });
   await show();
+  }
 </script>
 </body>
 </html>

@@ -22,7 +22,8 @@ The website's shared garden should look and work like the app's Garden screen: f
 - **The Long Walk judged at 500 plants (late evening):** `walk.html?arrivals=500&from=0&span=3` plants 500 and shows plots end to end with each plot's fill. The rule held; the look was too sparse (1.4 plants a m², drifts unreadable). **Marcus chose to double it**: two staggered rows a tier, 48 a plot. Drifts are kept to five by refusing a slot that would join drifts past five (a latent bug the density exposed). Every plot but the newest four is full at 600 arrivals. A partly filled plot is shown as it is. SeedCore 124/124, app 74 pass.
 - **The walk is a fixed demonstration sequence** (`tools/wasm/Sources/PlantWasm/Walk.swift`), the same on every reload. The plot service will supply real plantings and their lineage instead.
 - **Differences from the app:** no hedge or plant shadows, no albedo atlas on the turf, a flat slab rather than the bulged one, and no night.
-- **Not started:** the plot service, the curator tool and the Wild Fields.
+- **The plot service (night):** `Server/.api/`. The Long Walk rule ported to PHP (`LongWalk.php`), held to 600 pinned Swift placements by `tools/reference/check_long_walk.php` in CI (three deliberate breakages each caught); the cross check (`Seeds.php`, matches the pinned child); an append-only store (`WalkStore.php`, SQLite or MySQL through PDO, arrivals serialised by a lock row); `/api/walk`, `/api/walk/plot/{n}`, and `POST /api/walk/plant`, which answers 403 unless a local config opens it. End to end locally: `tools/wasm/send-arrivals.mjs` sends 120 real crossings, the service places all 120 where the Swift rule does (worst 1.1e-7 m, float32 in the module), and `walk.html?source=service` draws them. `Server/README.md` § The plot service.
+- **Not started:** deploying the service, sign-in, consent, the phone's upload, the curator tool and the Wild Fields.
 
 ## Files
 - `docs/WEB-GARDENS.md`: the design: ten areas, plots, dressing, the curator tool, the Wild Fields, worn paths, build order. Current.
@@ -54,7 +55,11 @@ The website's shared garden should look and work like the app's Garden screen: f
 - **Plot service decisions (Marcus, 18 September):** a shared plant's record carries the child seed, **both parents' seeds** and the meeting ID, with both gardeners' consent (WEBSITE.md amended). The placement rule runs in **PHP, as a port checked in CI** against placements pinned from the Swift; the phone sends height and colour family, which only a grown plant can give.
 
 ## Next step
-The plot service, in PHP under `Server/`: pin placement vectors from `LongWalk` in a Swift test; port the rule to PHP and check it against them in CI; store plantings append-only (SQLite locally, the 20i database once Marcus creates it); `GET /api/walk/plot/{n}`; a write route that verifies the child seed is the cross of its parents (SHA-256 in PHP), left disabled until sign-in and consent exist.
+The plot service is built and runs locally end to end; it is not deployed. Before it can take a real plant it needs:
+1. **The 20i database** (Marcus creates it in the control panel), its DSN in `Server/.api/config.php` on the server, then a deploy and the dot-rule check in `Server/README.md`.
+2. **Sign-in** (Sign in with Apple for a gardener's plot, WEBSITE.md) and **both gardeners' consent** on the phone, with copy saying the other gardener's plant becomes visible.
+3. **The phone's side**: Release (today it only deletes, `PlantDetailView.release()`) sends seed, parents, meeting, height and family to `POST /api/walk/plant`.
+Ask Marcus which first; (1) is his to do.
 
 ## Traps
 - **WebAssembly needs the swift.org toolchain, not Xcode's.** Installed: `~/Library/Developer/Toolchains/swift-6.3.3-RELEASE.xctoolchain` and the SDK `swift-6.3.3-RELEASE_wasm`. Use that toolchain's `swift` explicitly. To run the tests in wasm: `swift build --build-tests --swift-sdk swift-6.3.3-RELEASE_wasm`, then `node tools/wasm/run-wasi.mjs <scratch>/debug/SeedCorePackageTests.xctest`, optionally followed by test class names such as `SeedCoreTests.PortableSHA256Tests`. The whole suite takes about 7 minutes.

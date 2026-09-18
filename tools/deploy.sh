@@ -53,10 +53,15 @@ if [ "$upload" = yes ]; then
     # the far end from `--delete` as well as skipping it here, so an earlier
     # upload's copy would sit there being served for as long as the exclude
     # existed. It did, and this check caught it.
+    #
+    # `.api/config.php` is the plot service's database credentials, written on
+    # the server and never in git, so it is the reverse case: a plain exclude,
+    # to skip it here and keep `--delete` from removing the server's copy.
     rsync -a $dry --delete --stats \
         --exclude='.DS_Store' \
         --filter='-s /README.md' \
         --exclude='/.well-known/' \
+        --exclude='/.api/config.php' \
         -e "ssh -o ConnectTimeout=20" \
         "$HERE/Server/" "$HOST:$ROOT/" | sed -n '/^deleting/p; /Number of files transferred/p'
 
