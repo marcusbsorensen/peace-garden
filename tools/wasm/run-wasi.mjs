@@ -6,8 +6,12 @@
 import { readFile } from 'node:fs/promises';
 import { WASI } from 'node:wasi';
 import { argv, env, exit } from 'node:process';
+import { resolve } from 'node:path';
 
-const [file, ...args] = argv.slice(2);
+// Absolute, because Foundation's `Bundle.main` finds itself from argv[0] and
+// WASI has no working directory to resolve a relative path against.
+const [given, ...args] = argv.slice(2);
+const file = resolve(given);
 const wasi = new WASI({ version: 'preview1', args: [file, ...args], env, preopens: { '/': '/' }, returnOnExit: true });
 const module = await WebAssembly.compile(await readFile(file));
 const instance = await WebAssembly.instantiate(module, wasi.getImportObject());
