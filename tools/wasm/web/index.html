@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One plant</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; color: rgb(255 255 255 / 0.85);
+    font: 15px/1.4 Georgia, serif; }
+  main { position: fixed; inset: 0; }
+  .pool { position: absolute; inset: 0;
+    background: radial-gradient(ellipse 45% 55% at 50% 60%, rgb(255 255 255 / 0.10), transparent 70%); }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+  form { position: absolute; inset-inline: 16px; inset-block-end: 16px; display: flex; gap: 8px; }
+  input { flex: 1; min-width: 0; background: transparent; color: inherit; font: 12px ui-monospace, monospace;
+    border: 1px solid rgb(255 255 255 / 0.25); border-radius: 6px; padding: 8px; }
+  button { background: transparent; color: inherit; border: 1px solid rgb(255 255 255 / 0.4);
+    border-radius: 6px; padding: 8px 14px; font: 11px/1 system-ui, sans-serif;
+    letter-spacing: 0.14em; text-transform: uppercase; }
+  #note { position: absolute; inset-inline: 16px; inset-block-start: 16px; margin: 0;
+    font: 11px/1.5 system-ui, sans-serif; letter-spacing: 0.08em; color: rgb(255 255 255 / 0.5); }
+</style>
+</head>
+<body>
+<main>
+  <div class="pool"></div>
+  <canvas id="stage" aria-label="A plant grown from its seed"></canvas>
+  <p id="note">Growing…</p>
+  <form id="choose">
+    <input id="seed" spellcheck="false" autocomplete="off" aria-label="Seed">
+    <button>Grow</button>
+  </form>
+</main>
+<script type="module">
+  import { loadGrower, makeStage } from './plant.js';
+
+  // A pinned port vector, so the first plant is one the tests already know.
+  const first = '3734da9881088da86a12c203b5d6bd000c5b86e222992061d515aa706cf57e9e';
+  const note = document.getElementById('note');
+  const field = document.getElementById('seed');
+  const stage = makeStage(document.getElementById('stage'));
+
+  const started = performance.now();
+  const grow = await loadGrower('PlantWasm.wasm');
+  const loaded = performance.now() - started;
+
+  function plant(seed) {
+    const grown = grow(seed);
+    if (!grown) { note.textContent = 'That is not a seed: it wants 64 hex characters.'; return; }
+    stage.show(grown);
+    const triangles = grown.parts.reduce((n, p) => n + p.indices.length / 3, 0);
+    note.textContent = `Module ready in ${Math.round(loaded)} ms · grown in ${Math.round(grown.took)} ms · ${triangles} triangles`;
+    history.replaceState(null, '', '#' + seed);
+  }
+
+  field.value = location.hash.slice(1) || first;
+  plant(field.value);
+  document.getElementById('choose').addEventListener('submit', (e) => { e.preventDefault(); plant(field.value); });
+</script>
+</body>
+</html>

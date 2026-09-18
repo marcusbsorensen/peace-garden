@@ -783,7 +783,7 @@ between them.
 | --- | --- |
 | **A third hand-maintained port**, in JavaScript | The thing HANDOVER.md forbids by name. `tools/preview/` has drifted twice, and a plant in the garden that does not match the plant on the phone is the one failure this project cannot survive. |
 | **A JavaScript port with a CI gate** — the `tools/reference/` treatment: render the same seeds through both, fail on disagreement | Honest, and proven: CI already runs a second implementation of the derivation. It is real work to write and real work to keep. |
-| **`SeedCore` compiled to WebAssembly** | One implementation, so drift is impossible by construction rather than by vigilance. Unknown bundle size. |
+| **`SeedCore` compiled to WebAssembly** | One implementation, so drift is impossible by construction rather than by vigilance. 2.5 MB brotli, measured 18 September (below). |
 | **Rendered images made somewhere** | Ruled out on principle: it would be the first stored appearance in the project's history, on the one surface where a mismatch is most visible. ARCHITECTURE.md's one idea is that nothing about a plant's appearance is stored, sent or synced. |
 
 **Recommendation: WebAssembly, with the CI-gated port as the fallback if the
@@ -808,6 +808,28 @@ app. Measure it before committing. If it is too heavy, the fallback is the
 CI-gated JavaScript port, and the gate is not negotiable — a third hand-maintained
 copy of the geometry with nothing checking it is the one option that is off the
 table however convenient it looks.
+
+**Measured, 18 September.** `tools/wasm/` builds SeedCore for the browser and
+`tools/wasm/web/` draws one plant from it with WebGL2. The module is 12.8 MB
+raw, 3.7 MB gzipped and **2.5 MB brotli**. It loads in about 75 ms and grows a
+plant in 20 to 200 ms on a Mac. Three changes got it there from 12.6 MB brotli:
+
+- **`FoundationEssentials` on WASI.** The full Foundation brings ICU, a single
+  37 MB block of text data SeedCore never reads.
+- **`PortableSHA256` on WASI.** swift-crypto imports the full Foundation in 65
+  files, and SHA-256 is all SeedCore uses it for. `PortableSHA256Tests` holds it
+  to FIPS 180-4's vectors.
+- **`speckle` multiplies in `Int64`.** `Int` is 32 bits in wasm, so the cell hash
+  wrapped at a different width and speckled leaves came out differently. The fix
+  gives the same bits as before on the phone.
+
+The browser grows the same plant. The whole SeedCore suite passes inside
+WebAssembly under Node's WASI, apart from `GardenStoreTests`: the browser keeps
+no garden file. For all fifteen pinned port seeds, the plant buffer from the
+browser and from the Mac match exactly in shape, indices, UVs and every texel.
+Positions agree to 3.2 µm and normals to 3 × 10⁻⁴. That residue is
+`sin` and `cos` rounding differently in WASI's maths library and Apple's, the
+same residue the Linux CI run already lives with.
 
 A split is available if wasm is heavy and the gate is expensive: the derivation is
 small, stable and already has pinned vectors, so a JavaScript derivation is cheap
@@ -983,7 +1005,8 @@ handed a decision they cannot review.
   nothing needs it to be. If it ever is, it is a new consent with its own screen
   and its own withdrawal.
 - ~~**The wasm bundle size**, which decides whether the recommended renderer
-  survives contact with a phone on mobile data.~~ Deferred rather than answered,
+  survives contact with a phone on mobile data.~~ **2.5 MB brotli**, measured
+  18 September; see *What renders the plant*. Earlier: deferred rather than answered,
   2 September: **the first pass draws no plant at all**, only a marked space of
   the right proportions. Everything else on a page — the language, the passage,
   the names, the invitation — can be built and looked at without it, and the

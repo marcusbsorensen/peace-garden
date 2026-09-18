@@ -10,6 +10,18 @@
         "8801"
       ],
       "port": 8801
+    },
+    {
+      "name": "plant-wasm",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8802",
+        "--directory",
+        "/Users/marcus/Projects/peace-garden/tools/wasm/web"
+      ],
+      "port": 8802
     }
   ]
 }
