@@ -110,6 +110,11 @@ jobs:
       # same garden. It needs no numpy — see tools/preview/README.md.
       - name: The preview port is SeedCore
         run: python3 tools/preview/check_port.py
+      # The plot service places Long Walk arrivals in PHP, a port of
+      # SeedCore's LongWalk. LongWalkVectorTests holds the pinned placements
+      # to the Swift; this holds the PHP to them. The runner has PHP already.
+      - name: The plot service's rule is SeedCore's
+        run: php tools/reference/check_long_walk.php
       - name: The site's own prose is commissioned, not drifting
         run: python3 tools/strings/check.py
       # The numeral rule, which nothing enforced until 6 September and which
