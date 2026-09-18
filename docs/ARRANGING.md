@@ -594,6 +594,53 @@ worse failure than waiting a third of a second to pick one up, and the haptic
 makes the difference between looking and moving something the person can feel
 rather than something they have to be careful about.
 
+## Lights somebody puts out
+
+Settled and built 18 September. The Milky Way keeps the garden **visible** at
+every hour; that is not the same as a flower being **enjoyed** after dark. So a
+person can put lights out — a small iron lantern on a post, a paper lamp hung
+from a bent cane, a drift of fireflies — and carry them to the flowers they want
+to see at night. Glow-in-the-dark animals were asked for too and are left for an
+art pass of their own: they need drawing properly to stand beside plants grown
+from a genome, and a hare drawn in code would be clip art beside them.
+
+- **A pool on the ground and a lift on the plants, not a light in their
+  renders.** A lantern lighting leaves from its own side would mean re-rendering
+  every plant near it at eight hours and four turns whenever it moved. Instead
+  the ground under a light gets a warm pool, and a plant standing in it is drawn
+  again over itself, tinted by the light and added — which brightens it in
+  proportion to its own colour, the way light does, so a pale petal comes up
+  more than a dark leaf. It is the vocabulary the garden already had.
+- **On the bed, like a hand placement.** A lantern set beside a plant in Thematic
+  is set beside that plant; in Colours the same spot is next to something else.
+  `Bed.lamps`, optional, so nothing migrates.
+- **A light's kind is stored as the string it was written as**, not as an enum.
+  A garden written by a later build with a light this one has never heard of has
+  to open here, and a Swift enum that meets an unknown raw value throws — taking
+  every plant in the garden down with it. An unknown light decodes, and is not
+  drawn.
+- **Unnamed, like the worlds**: chosen from a row where each is drawn as itself.
+  Put out near the middle, each a little round from the last; carried like a
+  plant, by a long press; **taken away by being carried off the edge**, which is
+  the physical answer and needs no word on the screen.
+- **They come up as the garden goes down**, on the galaxy's own curve, and never
+  to nothing — a lantern that vanished at noon would be one nobody could find.
+- **Fireflies barely light the ground.** At a lantern's strength their pool was
+  a green spotlight on the grass; a handful of very small lights is enough to
+  see a flower by and does not paint the lawn.
+
+### What looking at them found
+
+- **Pools were hard-edged discs.** A circular gradient inside a flattened
+  ellipse is cut off at the ellipse's short sides while still bright. Every pool
+  on the plot — the lights' and the one that announces a changed plant — now
+  fades elliptically to nothing at every edge.
+- **A lantern could be seen and not picked up.** A plant answered a finger over
+  its whole square frame, which is mostly air, so any plant standing in front of
+  a lantern took every touch meant for it. A plant now answers only inside the
+  box its leaves actually occupy, measured once from the pixels when it is
+  rendered.
+
 ## The light is rebuilt, not filtered
 
 `StageBackdrop` is a studio, on purpose: one hard key, a cold rim, and an ambient

@@ -57,7 +57,7 @@ final class GardenSprites {
     /// orthographic scale that puts the foot exactly on the bottom edge.
     nonisolated static let elevationCosine = 0.816_496_580_927_726
 
-    private let cache = NSCache<NSString, UIImage>()
+    private let cache = NSCache<NSString, Rendered>()
 
     private init() {
         cache.countLimit = 120
@@ -97,6 +97,58 @@ final class GardenSprites {
     struct Sprite {
         let image: UIImage
         let metres: Double
+        /// Where the plant actually is inside its frame, as fractions of it.
+        ///
+        /// **A frame is mostly air.** It is square and sized for the plant's
+        /// mature height or spread, whichever is more, so a slim plant fills a
+        /// strip of it and a seedling a corner. Answering a finger across the
+        /// whole frame meant a plant standing in front of a lantern took every
+        /// touch meant for the lantern — the lantern could be seen and not
+        /// picked up. So a plant answers only where it has leaves.
+        let opaque: CGRect
+    }
+
+    /// What the cache holds: the picture and where the plant is in it, measured
+    /// once when it is rendered rather than every time it is drawn.
+    private final class Rendered {
+        let image: UIImage
+        let opaque: CGRect
+        init(image: UIImage, opaque: CGRect) {
+            self.image = image
+            self.opaque = opaque
+        }
+    }
+
+    /// The box round everything in a picture that is not transparent, as
+    /// fractions of the picture. Padded a little, because a leaf a finger's
+    /// width from where it was aimed is still the leaf that was meant.
+    private static func opaqueBounds(of image: UIImage) -> CGRect {
+        guard let cg = image.cgImage else { return CGRect(x: 0, y: 0, width: 1, height: 1) }
+        let width = cg.width, height = cg.height
+        var pixels = [UInt8](repeating: 0, count: width * height * 4)
+        guard let context = CGContext(
+            data: &pixels, width: width, height: height,
+            bitsPerComponent: 8, bytesPerRow: width * 4,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else { return CGRect(x: 0, y: 0, width: 1, height: 1) }
+        context.draw(cg, in: CGRect(x: 0, y: 0, width: width, height: height))
+
+        var minX = width, minY = height, maxX = -1, maxY = -1
+        for y in stride(from: 0, to: height, by: 2) {
+            for x in stride(from: 0, to: width, by: 2) where pixels[(y * width + x) * 4 + 3] > 24 {
+                minX = min(minX, x); maxX = max(maxX, x)
+                minY = min(minY, y); maxY = max(maxY, y)
+            }
+        }
+        guard maxX >= minX, maxY >= minY else { return .zero }
+
+        let pad = 0.03
+        let x0 = max(0, Double(minX) / Double(width) - pad)
+        let y0 = max(0, Double(minY) / Double(height) - pad)
+        let x1 = min(1, Double(maxX + 1) / Double(width) + pad)
+        let y1 = min(1, Double(maxY + 1) / Double(height) + pad)
+        return CGRect(x: x0, y: y0, width: x1 - x0, height: y1 - y0)
     }
 
     /// `matureBounds` builds a whole second mesh and gives the same answer for
@@ -153,7 +205,9 @@ final class GardenSprites {
         let quarter = ((turn % Self.turns) + Self.turns) % Self.turns
         let metres = frameMetres(for: genome)
         let key = Self.key(genome: genome, growth: growth, step: step, turn: quarter) as NSString
-        if let held = cache.object(forKey: key) { return Sprite(image: held, metres: metres) }
+        if let held = cache.object(forKey: key) {
+            return Sprite(image: held.image, metres: metres, opaque: held.opaque)
+        }
 
         let side = CGFloat(metres) * Self.renderedPointsPerMetre
         let view = SCNView(frame: CGRect(x: 0, y: 0, width: side, height: side))
@@ -184,8 +238,9 @@ final class GardenSprites {
 
         let snapshot = view.snapshot()
         guard snapshot.size.width > 0 else { return nil }
-        cache.setObject(snapshot, forKey: key)
-        return Sprite(image: snapshot, metres: metres)
+        let opaque = Self.opaqueBounds(of: snapshot)
+        cache.setObject(Rendered(image: snapshot, opaque: opaque), forKey: key)
+        return Sprite(image: snapshot, metres: metres, opaque: opaque)
     }
 
     /// A plant standing outdoors, under the same light as the ground it stands on.

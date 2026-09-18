@@ -101,18 +101,49 @@ public struct Bed: Codable, Equatable, Identifiable, Sendable {
     /// no choice, and no choice is the first world.
     public var world: Int?
 
+    /// The lights somebody has put out in this bed.
+    ///
+    /// **On the bed, like a hand placement, and for the same reason.** A lantern
+    /// set beside a plant in Thematic is set beside *that plant*; in Colours the
+    /// same spot is next to something else, so a lantern that followed the garden
+    /// rather than the bed would end up lighting a stranger. Told, local, never
+    /// sent — the same promise as the arrangement it stands in.
+    ///
+    /// Optional so that nothing migrates.
+    public var lamps: [Lamp]?
+
     public init(
         id: UUID = UUID(),
         name: String,
         template: Template = .thematic,
         placed: [String: Spot] = [:],
-        world: Int? = nil
+        world: Int? = nil,
+        lamps: [Lamp]? = nil
     ) {
         self.id = id
         self.name = name
         self.template = template
         self.placed = placed
         self.world = world
+        self.lamps = lamps
+    }
+
+    // MARK: Lights
+
+    public var allLamps: [Lamp] { lamps ?? [] }
+
+    public mutating func add(_ lamp: Lamp) {
+        lamps = allLamps + [lamp]
+    }
+
+    public mutating func move(lamp id: UUID, to spot: Spot) {
+        guard var all = lamps, let index = all.firstIndex(where: { $0.id == id }) else { return }
+        all[index].spot = spot
+        lamps = all
+    }
+
+    public mutating func remove(lamp id: UUID) {
+        lamps = allLamps.filter { $0.id != id }
     }
 
     public func spot(for plant: PlantRecord) -> Spot? {
@@ -188,3 +219,50 @@ extension Garden {
         return abs(spot.x) <= half && abs(spot.z) <= half
     }
 }
+
+/// A light somebody has put out in the garden.
+///
+/// So that a flower can be enjoyed after dark. The garden is lit by the sun and
+/// the moon going round it and by the Milky Way at every hour, which keeps it
+/// visible — and visible is not the same as enjoyed. A lantern beside a plant is
+/// somebody deciding which flower they want to see at night.
+public struct Lamp: Codable, Equatable, Identifiable, Sendable {
+    public var id: UUID
+
+    /// What sort of light it is, **as the string it is stored as**.
+    ///
+    /// Not an enum in the file, on purpose. A garden written by a later build
+    /// with a light this one has never heard of has to open here, not fail to
+    /// decode — and a Swift enum that meets an unknown raw value throws, taking
+    /// the whole garden with it. So the kind is kept as written and read through
+    /// `known`, and a light this build cannot draw is simply not drawn.
+    public var kind: String
+
+    /// Where it stands: metres from the middle of the plot, like a `Spot` for a
+    /// plant, so it stays where it was put as the plot grows.
+    public var spot: Spot
+
+    public init(id: UUID = UUID(), kind: LampKind, spot: Spot) {
+        self.id = id
+        self.kind = kind.rawValue
+        self.spot = spot
+    }
+
+    public var known: LampKind? { LampKind(rawValue: kind) }
+}
+
+/// The lights there are to put out.
+///
+/// **The raw values are the file format**, as the trait labels are: a kind may be
+/// added, and none may be renamed. They are never shown to anybody — a light is
+/// chosen by looking, the way a world is, because a named light is forty-two
+/// translations.
+public enum LampKind: String, CaseIterable, Sendable {
+    /// A small iron lantern on a short post, warm and steady.
+    case lantern
+    /// A paper lamp hung from a bamboo cane, glowing through its paper.
+    case paperLamp
+    /// A drift of fireflies, which is a light that moves.
+    case fireflies
+}
+

@@ -44,6 +44,9 @@ struct PlotView: View {
         var foot: CGPoint
     }
     @State private var held: Held?
+
+    /// A light in hand, the same way.
+    @State private var heldLamp: Held?
     /// Counted rather than flagged, so every lift is its own tap of feedback.
     @State private var lifts = 0
 
@@ -91,18 +94,33 @@ struct PlotView: View {
                 )
                 let _ = (view.turn = turn)
 
+                let lamps = model.garden.arrangements.first?.allLamps ?? []
+                let glow = GardenLamps.glow(in: light)
+
                 ZStack(alignment: .topLeading) {
                     GardenSky(light: light, date: model.now, view: view)
 
                     ZStack(alignment: .topLeading) {
                         plot(world: world, side: side, in: view, size: proxy.size, light: light)
 
+                        // The lights' pools, under everything that stands, so
+                        // a plant stands *in* the light rather than behind it.
+                        ForEach(lamps) { lamp in
+                            lampPool(lamp, world: world, side: side, in: view, glow: glow)
+                        }
+
                         // Far to near, and nothing else decides what covers
-                        // what — except a plant in hand, which is above
+                        // what — except something in hand, which is above
                         // everything until it is put down.
-                        ForEach(standing(plotSide: side, in: view)) { standing in
-                            pool(for: standing, world: world, side: side, in: view)
-                            plant(standing, world: world, side: side, in: view, light: light)
+                        ForEach(things(plotSide: side, lamps: lamps, in: view)) { thing in
+                            switch thing {
+                            case .plant(let standing):
+                                pool(for: standing, world: world, side: side, in: view)
+                                plant(standing, world: world, side: side, in: view,
+                                      light: light, lamps: lamps, glow: glow)
+                            case .lamp(let lamp):
+                                self.lamp(lamp, world: world, side: side, in: view, glow: glow)
+                            }
                         }
                     }
                     .coordinateSpace(name: "plot")
@@ -238,6 +256,39 @@ struct PlotView: View {
         }
     }
 
+    /// Anything standing on the plot, so plants and lights can be drawn in one
+    /// far-to-near order. A lantern behind a plant is behind it.
+    private enum Thing: Identifiable {
+        case plant(Standing)
+        case lamp(Lamp)
+
+        var id: UUID {
+            switch self {
+            case .plant(let standing): return standing.id
+            case .lamp(let lamp): return lamp.id
+            }
+        }
+
+        var spot: Spot {
+            switch self {
+            case .plant(let standing): return standing.spot
+            case .lamp(let lamp): return lamp.spot
+            }
+        }
+    }
+
+    private func things(plotSide: Double, lamps: [Lamp], in view: Isometric) -> [Thing] {
+        let inHand: Set<UUID> = Set([held?.id, heldLamp?.id].compactMap { $0 })
+        let all = standing(plotSide: plotSide, in: view).map(Thing.plant)
+            + lamps.filter { $0.known != nil }.map(Thing.lamp)
+
+        return all.sorted { a, b in
+            if inHand.contains(a.id) { return false }
+            if inHand.contains(b.id) { return true }
+            return view.depth(a.spot) < view.depth(b.spot)
+        }
+    }
+
     // MARK: The ground
 
     /// The ground, drawn once and kept.
@@ -259,7 +310,8 @@ struct PlotView: View {
     // MARK: The plants
 
     private func plant(_ standing: Standing, world: Int, side: Double,
-                       in view: Isometric, light: GardenGround.Light) -> some View {
+                       in view: Isometric, light: GardenGround.Light,
+                       lamps: [Lamp], glow: Double) -> some View {
         let resting = view.point(standing.spot,
                                  y: standsAt(standing.spot, world: world, side: side))
         let inHand = held?.id == standing.id
@@ -273,6 +325,8 @@ struct PlotView: View {
             hour: hour,
             turn: turn,
             isHeld: inHand,
+            lamplight: GardenLamps.lift(at: standing.spot, from: lamps),
+            glow: glow,
             onTap: {
                 visits.seen(standing.record, growth: standing.growth)
                 selected = standing.record
@@ -313,6 +367,114 @@ struct PlotView: View {
         }
     }
 
+    // MARK: The lights
+
+    /// A light's own pool on the ground, following it while it is in hand.
+    @ViewBuilder
+    private func lampPool(_ lamp: Lamp, world: Int, side: Double, in view: Isometric,
+                          glow: Double) -> some View {
+        if let kind = lamp.known {
+            let colour = GardenLamps.swiftUIColour(GardenLamps.colour(of: kind))
+            let resting = view.point(lamp.spot, y: standsAt(lamp.spot, world: world, side: side))
+            let centre = heldLamp?.id == lamp.id ? (heldLamp?.foot ?? resting) : resting
+            let axes = view.ellipse(radius: GardenLamps.reach(of: kind) * 0.72)
+
+            // **Elliptical, not radial.** A pool lies flat on the ground, so it
+            // is drawn as an ellipse; a circular gradient inside a flattened
+            // ellipse is cut off at the ellipse's short sides while still bright,
+            // and came out as a hard-edged coloured disc on the grass.
+            Ellipse()
+                .fill(EllipticalGradient(
+                    colors: [colour.opacity(0.34 * glow * GardenLamps.pool(of: kind)),
+                             colour.opacity(0)],
+                    center: .center, startRadiusFraction: 0, endRadiusFraction: 0.5
+                ))
+                .frame(width: axes.width * 2, height: axes.height * 2)
+                .position(centre)
+                .blendMode(.plusLighter)
+                .allowsHitTesting(false)
+        }
+    }
+
+    /// A light standing on the plot. Lifted and carried the same way a plant is;
+    /// carried off the edge of the plot, it is gone.
+    @ViewBuilder
+    private func lamp(_ lamp: Lamp, world: Int, side: Double, in view: Isometric,
+                      glow: Double) -> some View {
+        if let kind = lamp.known {
+            let metre = view.pointsPerMetre
+            let resting = view.point(lamp.spot, y: standsAt(lamp.spot, world: world, side: side))
+            let inHand = heldLamp?.id == lamp.id
+            let foot = inHand ? (heldLamp?.foot ?? resting) : resting
+            let seed = Int(lamp.id.uuid.0) << 8 | Int(lamp.id.uuid.1)
+
+            LampFigure(kind: kind, glow: glow, pointsPerMetre: metre, seed: seed)
+                .allowsHitTesting(false)
+                // Only the light itself answers a finger, not the whole metre of
+                // air its frame takes up, or a lantern would steal every touch
+                // meant for the plant behind it.
+                .overlay(alignment: .bottom) {
+                    Color.clear
+                        .frame(width: 0.32 * metre,
+                               height: (GardenLamps.height(of: kind) + 0.14) * metre)
+                        .contentShape(Rectangle())
+                        .gesture(carrying(lamp, from: resting, world: world, side: side, in: view))
+                }
+                .scaleEffect(inHand ? 1.06 : 1, anchor: .bottom)
+                .offset(y: inHand ? -8 : 0)
+                .position(x: foot.x, y: foot.y - 0.6 * metre)
+        }
+    }
+
+    private func carrying(_ lamp: Lamp, from resting: CGPoint, world: Int, side: Double,
+                          in view: Isometric) -> some Gesture {
+        LongPressGesture(minimumDuration: 0.33)
+            .sequenced(before: DragGesture(minimumDistance: 0, coordinateSpace: .named("plot")))
+            .onChanged { value in
+                guard case .second(true, let drag) = value else { return }
+                let travel = drag?.translation ?? .zero
+                if heldLamp?.id != lamp.id { lifts += 1 }
+                heldLamp = Held(id: lamp.id, foot: CGPoint(x: resting.x + travel.width,
+                                                           y: resting.y + travel.height))
+            }
+            .onEnded { value in
+                guard case .second(true, let drag) = value else {
+                    heldLamp = nil
+                    return
+                }
+                let travel = drag?.translation ?? .zero
+                let foot = CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
+                let found = view.ground(at: foot)
+                let half = side / 2
+
+                withAnimation(.spring(duration: 0.3)) {
+                    if abs(found.x) > half + 0.15 || abs(found.z) > half + 0.15 {
+                        model.removeLamp(lamp.id)
+                    } else {
+                        let relief = GardenWorlds.shared.relief(world: world, plotSide: side)
+                        let landed = view.ground(at: foot, height: { spot in
+                            standsAt(spot, world: world, side: side)
+                        }, between: relief.low, and: relief.high)
+                        let edge = half * 0.96
+                        model.moveLamp(lamp.id, to: Spot(x: min(max(landed.x, -edge), edge),
+                                                         z: min(max(landed.z, -edge), edge)))
+                    }
+                    heldLamp = nil
+                }
+            }
+    }
+
+    /// Where a new light is put down: near the middle, each one a little round
+    /// from the last on a golden-angle spiral, so a second lantern does not land
+    /// on top of the first and nothing about it depends on anything but how
+    /// many are out already.
+    private func freshSpot(side: Double) -> Spot {
+        let count = Double(model.garden.arrangements.first?.allLamps.count ?? 0)
+        let angle = count * 2.399_963
+        let radius = min(0.35 + 0.2 * count.squareRoot(), side / 2 * 0.8)
+        return Spot(x: cos(angle) * radius, z: sin(angle) * radius)
+    }
+
     /// The light finding a plant that has changed since it was last opened.
     ///
     /// A pool on the ground rather than a mark beside the plant, because the
@@ -328,17 +490,18 @@ struct PlotView: View {
 
             Ellipse()
                 .fill(
-                    RadialGradient(
+                    EllipticalGradient(
                         // Set by looking, twice. At 0.26 — which is what it was
                         // when every plant in a first-opened garden announced
                         // itself — the pools were brighter than the plants
                         // standing in them. At 0.15 a single announcing plant in
                         // a garden of fourteen could be missed entirely, which
-                        // is the whole job.
+                        // is the whole job. Elliptical so it fades to nothing at
+                        // every edge, rather than being cut off at the short ones.
                         colors: [Chrome.pinkGold.opacity(0.22), Chrome.pinkGold.opacity(0)],
                         center: .center,
-                        startRadius: 0,
-                        endRadius: axes.width
+                        startRadiusFraction: 0,
+                        endRadiusFraction: 0.5
                     )
                 )
                 .frame(width: axes.width * 2, height: axes.height * 2)
@@ -377,6 +540,26 @@ struct PlotView: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
+                    // The lights to put out, first, and unnamed like the worlds:
+                    // each is drawn as itself and added where it can be seen,
+                    // then carried to where it is wanted.
+                    ForEach(LampKind.allCases, id: \.self) { kind in
+                        Button {
+                            withAnimation(.spring(duration: 0.3)) {
+                                model.addLamp(kind, at: freshSpot(side: model.garden.plotSide))
+                            }
+                        } label: {
+                            LampFigure(kind: kind, glow: 1, pointsPerMetre: 40, seed: 7)
+                                .frame(width: 40, height: 48)
+                                .clipped()
+                        }
+                        .buttonStyle(.plain)
+                    }
+
+                    Hairline()
+                        .frame(width: 1, height: 32)
+                        .opacity(0.5)
+
                     ForEach(0..<GardenWorlds.shared.count, id: \.self) { world in
                         Button {
                             model.choose(world: world)
@@ -419,6 +602,9 @@ private struct GardenPlantSprite: View {
     let hour: Double
     let turn: Int
     let isHeld: Bool
+    /// How much the lights nearby lift this plant, and in what colour.
+    let lamplight: (amount: Double, colour: SIMD3<Double>)
+    let glow: Double
     let onTap: () -> Void
     let onLift: () -> Void
     let onMove: (CGSize) -> Void
@@ -446,17 +632,36 @@ private struct GardenPlantSprite: View {
                 ZStack(alignment: .topLeading) {
                     picture(before, size: size, opacity: 1)
                     picture(after, size: size, opacity: between.blend)
+
+                    // Lit by the lights near it: the plant again, tinted by
+                    // their colour and *added*, so it brightens in proportion to
+                    // its own colour the way light does — a pale petal comes up
+                    // more than a dark leaf — rather than being washed over.
+                    if lamplight.amount > 0.01, let lit = before ?? after {
+                        Image(uiImage: lit.image)
+                            .resizable()
+                            .frame(width: size.width, height: size.height)
+                            .colorMultiply(GardenLamps.swiftUIColour(lamplight.colour))
+                            .blendMode(.plusLighter)
+                            .opacity(lamplight.amount * glow * 0.9)
+                    }
                 }
                 .frame(width: size.width, height: size.height)
                 // In hand, the plant rises off the ground a little and its
                 // shadow stays down, which is what says it has been picked up.
                 .scaleEffect(isHeld ? 1.05 : 1, anchor: .bottom)
                 .offset(y: isHeld ? -10 : 0)
-                // **The gestures go on the picture and not outside it.**
+                // **The gestures go on the plant and not on its frame.**
                 // `position` makes a view take all the space it is offered, so a
-                // gesture attached after it answers anywhere on screen and the
-                // last plant drawn quietly swallows every touch in the garden.
-                .contentShape(Rectangle())
+                // gesture attached after it answered anywhere on screen; and a
+                // frame is mostly air, so a gesture on the whole frame let a
+                // plant take every touch meant for whatever stood behind it.
+                .contentShape(Rectangle().path(in: CGRect(
+                    x: sprite.opaque.minX * size.width,
+                    y: sprite.opaque.minY * size.height,
+                    width: sprite.opaque.width * size.width,
+                    height: sprite.opaque.height * size.height
+                )))
                 .onTapGesture(perform: onTap)
                 .gesture(lift)
                 .position(x: foot.x, y: foot.y - size.height / 2)

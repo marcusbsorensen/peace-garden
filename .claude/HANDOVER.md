@@ -13,10 +13,11 @@ plot: a floating square plot in isometric, standing on one of eight worlds, with
 the plants at their real relative sizes standing on the terrain, a pool of light
 under anything that has changed since it was last opened, and a row of little
 worlds to choose the ground from, and the sun and moon going round it on the
-real clock. Thematic no longer stands one plant inside another. 60 app tests,
-from 35; SeedCore at 106. Five commits on `main`, not pushed.
+real clock, the Milky Way overhead, lights to put out, and the gestures to
+arrange all of it. 68 app tests, from 35; SeedCore 110, from 106. Eight commits
+on `main`, not pushed.
 
-**Done, not built into the app.** The gestures. The
+**Done, not built into the app.** Nothing from the mockup is left. The
 interactive Design canvas remains the reference:
 https://claude.ai/artifact/JtRewHDMGQJJTPnKvS5Tru — eight worlds, drag a plant,
 hour slider, orbiting sun and moon with cast shadows, real moon phase. Its
@@ -39,6 +40,7 @@ names. What Danish still needs is its *prose*. See
 | `App/PeaceGarden/Rendering/GardenTerrain.swift` | The plot drawn as a mesh, off the main actor and kept. |
 | `App/PeaceGarden/Rendering/GardenLight.swift` | The orbit, and tonight's moon. Read by everything. |
 | `App/PeaceGarden/Rendering/GardenSky.swift` | Space, the stars, and whichever body is up. |
+| `App/PeaceGarden/Rendering/GardenLamps.swift` | The lights people put out: how each looks, reaches, and lifts a plant. |
 | `App/PeaceGarden/Resources/Worlds/` | The two textures, 276 KB, straight from the mockup. |
 | `App/PeaceGarden/Rendering/GardenSprites.swift` | Plants as stills at one shared scale. **Not `ThumbnailRenderer`** — see below. |
 | `App/PeaceGarden/Views/PlotView.swift` | The screen. |
@@ -179,23 +181,41 @@ reach across for it in that position; a test holds the two to each other.
 - **The sky is blue by day and a deep blue by night**, rather than the mockup's
   near-black at every hour.
 
+## Also done 18 September
+
+- **The Milky Way**: a cool light from straight overhead at every hour, fading
+  with the sun and noticed only after dark. The moon's curve is unchanged and
+  still pinned; the garden is now visible at 18:00, the darkest hour.
+- **The gestures**, driven on a simulator with injected touches: long press to
+  lift a plant (a third of a second, a tap of feedback), quarter-turns with two
+  fingers, pinch to 3×, pan once zoomed. The inverse under a finger is a march
+  down the sight line, not the two passes `ARRANGING.md` said were enough — on a
+  steep peak two ground places sit under one screen point, and a fixed-point
+  search found the hidden one.
+- **Lights**: lanterns, paper lamps and fireflies, put out from the row at the
+  bottom, carried by a long press, taken away by being carried off the edge.
+  Pools on the ground, a lift on nearby plants. On `Bed.lamps`, with the kind
+  stored as a string so a garden from a later build still opens.
+
 ## Next step
 
-The gestures — the last part of `docs/ARRANGING.md` that is designed and not
-built: pinch to zoom, two-finger rotate in ninety-degree steps, and **long press
-to lift a plant, then drag**. The reasoning is settled: every plant is a meeting,
-so an accidental nudge is a worse failure than waiting a beat.
+**Glow-in-the-dark animals**, which were asked for and left for an art pass:
+they need drawing properly to stand beside plants grown from a genome. The
+mechanism is ready for them — a new `LampKind`, a figure, a colour, a reach, a
+pool strength — and nothing about storage changes, because a kind is a string.
 
-Rotation now has everything it needs on the plant side. What it still needs is
-the **projection's** own turn — `Isometric` maps plot metres to the screen with
-the axes fixed, and turning the plot means turning `x` and `z` before projecting.
-`Isometric.ground(at:)` is the inverse the dragging needs and is exact on flat
-ground; over terrain it has to run twice, once at ground zero and once with that
-place's own height subtracted, which §*A plant stands on the ground* sets out and
-nothing has needed yet.
+Two smaller things are open. **Put it back**: a hand-placed plant can be moved
+but not returned to where its template put it; `Bed.putBack` exists and nothing
+calls it. And **what zoom is for** is still unanswered; 3× is the cap until it
+is, and at 3× the ground's cells begin to show.
 
 ## Traps
 
+- **A plant's frame is mostly air.** Anything that answers a touch across the
+  whole frame steals touches from whatever stands behind it. `Sprite.opaque` is
+  the box the leaves actually occupy; use it.
+- **A circular gradient in a flattened ellipse is a hard-edged disc.** Anything
+  lying on the ground fades with `EllipticalGradient`.
 - **A cut face is vertical, so it is lit by the sky and by almost none of the
   sun.** Materials for it have to be picked at about half again the brightness
   they look right at on their own, or the bank comes out black.

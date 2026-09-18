@@ -374,6 +374,37 @@ final class GardenModel {
         persist()
     }
 
+    // MARK: Lights
+
+    /// The bed being looked at, made real if it was only the default. Every
+    /// change to a bed goes through here so a garden that has never had one gets
+    /// exactly one, rather than a fresh one per change.
+    private func touchBed() {
+        if garden.beds?.isEmpty ?? true {
+            garden.beds = [Bed(name: "", template: .thematic)]
+        }
+    }
+
+    func addLamp(_ kind: LampKind, at spot: Spot) {
+        touchBed()
+        garden.beds?[0].add(Lamp(kind: kind, spot: spot))
+        persist()
+    }
+
+    func moveLamp(_ id: UUID, to spot: Spot) {
+        touchBed()
+        garden.beds?[0].move(lamp: id, to: spot)
+        persist()
+    }
+
+    /// Taken out of the garden by being carried off the edge of it — the
+    /// physical answer, and one that needs no word on the screen.
+    func removeLamp(_ id: UUID) {
+        touchBed()
+        garden.beds?[0].remove(lamp: id)
+        persist()
+    }
+
     private func persist() {
         do {
             try store.save(garden)

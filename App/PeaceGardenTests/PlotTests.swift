@@ -636,4 +636,48 @@ final class PlotTests: XCTestCase {
         // the spot exactly. The rest landed on the face in front of it.
         XCTAssertGreaterThan(landedOnTheSpot, 60)
     }
+
+    // MARK: - The lights
+
+    /// A plant at a lantern's foot is lit, one at the edge of its reach is barely
+    /// touched, and one beyond it is not touched at all. The fall-off is
+    /// squared: a linear one lit a whole bed evenly, which reads as the garden
+    /// being brighter rather than as a lantern standing in it.
+    func testALanternLightsWhatIsNearItAndNotWhatIsFar() {
+        let lantern = Lamp(kind: .lantern, spot: Spot(x: 0, z: 0))
+        let reach = GardenLamps.reach(of: .lantern)
+
+        let atItsFoot = GardenLamps.lift(at: Spot(x: 0.05, z: 0), from: [lantern])
+        let halfway = GardenLamps.lift(at: Spot(x: reach / 2, z: 0), from: [lantern])
+        let beyond = GardenLamps.lift(at: Spot(x: reach + 0.1, z: 0), from: [lantern])
+
+        XCTAssertGreaterThan(atItsFoot.amount, 0.9)
+        XCTAssertEqual(halfway.amount, 0.25, accuracy: 1e-9, "not a squared fall-off")
+        XCTAssertEqual(beyond.amount, 0)
+
+        let warm = GardenLamps.colour(of: .lantern)
+        XCTAssertEqual(simd_distance(atItsFoot.colour, warm), 0, accuracy: 1e-9)
+    }
+
+    /// A light this build cannot draw lights nothing, rather than lighting with
+    /// a colour nobody chose.
+    func testALightFromTheFutureLightsNothing() throws {
+        let json = #"{"id":"22222222-0000-4000-8000-000000000002","kind":"glowworm","spot":{"x":0,"z":0}}"#
+        let unknown = try JSONDecoder().decode(Lamp.self, from: Data(json.utf8))
+        XCTAssertEqual(GardenLamps.lift(at: Spot(x: 0, z: 0), from: [unknown]).amount, 0)
+    }
+
+    /// The lights come up as the garden goes down, on the galaxy's own curve —
+    /// and never to nothing, because a lantern that vanished at noon would be a
+    /// lantern nobody could find to move.
+    func testTheLightsComeUpAsTheGardenGoesDown() {
+        let noon = GardenLamps.glow(in: GardenGround.Light.at(hour: 12))
+        let dusk = GardenLamps.glow(in: GardenGround.Light.at(hour: 18))
+        let midnight = GardenLamps.glow(in: GardenGround.Light.at(hour: 0))
+
+        XCTAssertGreaterThan(noon, 0.1)
+        XCTAssertLessThan(noon, midnight)
+        XCTAssertLessThan(midnight, dusk + 1e-9)
+        XCTAssertGreaterThan(dusk, 0.9)
+    }
 }
