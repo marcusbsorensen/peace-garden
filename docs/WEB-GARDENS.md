@@ -166,6 +166,25 @@ the website and the app can all read it. Built 18 September, with
 scatter of plants on grass. The rule is right and invisible. The structures are
 not dressing; they are how a visitor can see the rule.
 
+**The structures, built the same day** (`GardenStructures.swift`, shown by
+`-pgArea longWalk`):
+
+- **The hedges: tall yew behind the far border and low in front of the near
+  one**, decided by the view, so they swap as the plot turns. Settled by Marcus.
+  Looking down from one side, a 2 m hedge on the near side hid the whole border
+  behind it. It isn't how a real garden is built; it is how this one is best
+  seen.
+- **A hedge is modelled as a clipped box** with a leaf-grain texture, which is
+  what a clipped yew is. It is drawn in 0.4 m pieces, each sorted by its own
+  depth, because one picture cannot be in front of some plants and behind
+  others. The pieces are square-ended: with rounded shoulders, every joint drew
+  a seam and the hedge came out as a row of posts.
+- **A hedge's shadow is one shape on the ground**: its footprint, moved away
+  from the light by its height over the light's slope. Sheared per piece like a
+  plant's shadow, near noon each piece cast a hairline across the garden.
+- **The path is mown in stripes along its length**, as a mower goes. Striped
+  across, it read as paving slabs.
+
 ## The dressing: what we place by hand
 
 The rules place the plants. What we choose by hand is everything else, per plot:

@@ -85,6 +85,16 @@ struct PlotView: View {
 
     /// The plot's side: the garden's own, unless a developer has fixed it to
     /// look at a web plot.
+    /// Whether the plot is being looked at as a Long Walk plot, path and hedges
+    /// and all. Developer-only until the web gardens have a plot of their own.
+    private var isLongWalk: Bool {
+        #if DEBUG
+        return Developer.shared.previewArea == "longWalk"
+        #else
+        return false
+        #endif
+    }
+
     private var plotSide: Double {
         #if DEBUG
         if let fixed = Developer.shared.fixedPlotSide { return fixed }
@@ -121,6 +131,16 @@ struct PlotView: View {
                     ZStack(alignment: .topLeading) {
                         plot(world: world, side: side, in: view, size: proxy.size, light: light)
 
+                        if isLongWalk {
+                            MownPath(view: view, light: light, plotSide: side) { spot in
+                                standsAt(spot, world: world, side: side)
+                            }
+                            HedgeShadow(view: view, light: light, plotSide: side,
+                                        hedges: hedgeLines(in: view)) { spot in
+                                standsAt(spot, world: world, side: side)
+                            }
+                        }
+
                         // The lights' pools, under everything that stands, so
                         // a plant stands *in* the light rather than behind it.
                         ForEach(lamps) { lamp in
@@ -138,6 +158,8 @@ struct PlotView: View {
                                       light: light, lamps: lamps, glow: glow)
                             case .lamp(let lamp):
                                 self.lamp(lamp, world: world, side: side, in: view, glow: glow)
+                            case .hedge(let piece):
+                                hedge(piece, world: world, side: side, in: view)
                             }
                         }
                     }
@@ -353,11 +375,13 @@ struct PlotView: View {
     private enum Thing: Identifiable {
         case plant(Standing)
         case lamp(Lamp)
+        case hedge(Hedge)
 
         var id: UUID {
             switch self {
             case .plant(let standing): return standing.id
             case .lamp(let lamp): return lamp.id
+            case .hedge(let piece): return piece.id
             }
         }
 
@@ -365,14 +389,63 @@ struct PlotView: View {
             switch self {
             case .plant(let standing): return standing.spot
             case .lamp(let lamp): return lamp.spot
+            case .hedge(let piece): return piece.spot
             }
         }
+    }
+
+    /// One piece of a Long Walk hedge.
+    private struct Hedge {
+        let id: UUID
+        let spot: Spot
+        let height: Double
+    }
+
+    /// The Long Walk's two hedges, in pieces: tall behind the far border and low
+    /// in front of the near one, which is decided by the view and so swaps as
+    /// the plot turns.
+    /// Where each hedge stands, out from the path, and how tall it is.
+    private func hedgeLines(in view: Isometric) -> [(x: Double, height: Double)] {
+        let out = LongWalk.hedgeFrom + GardenStructures.thickness / 2
+        let farSide: Double = view.depth(Spot(x: out, z: 0)) < view.depth(Spot(x: -out, z: 0)) ? 1 : -1
+        return [-1.0, 1.0].map { side in
+            (x: side * out, height: side == farSide ? GardenStructures.tall : GardenStructures.low)
+        }
+    }
+
+    private func hedges(plotSide: Double, in view: Isometric) -> [Hedge] {
+        guard isLongWalk else { return [] }
+        let lines = hedgeLines(in: view)
+        let pieces = Int((plotSide / GardenStructures.pieceLength).rounded(.down))
+        let start = -Double(pieces) * GardenStructures.pieceLength / 2
+        var all: [Hedge] = []
+        for line in lines {
+            for n in 0..<pieces {
+                let id = UUID(uuidString: String(format: "00000000-0000-4000-8000-%012d",
+                                                 (line.x > 0 ? 1_000 : 0) + n))!
+                all.append(Hedge(id: id,
+                                 spot: Spot(x: line.x,
+                                            z: start + (Double(n) + 0.5) * GardenStructures.pieceLength),
+                                 height: line.height))
+            }
+        }
+        return all
+    }
+
+    private func hedge(_ piece: Hedge, world: Int, side: Double, in view: Isometric) -> some View {
+        let foot = view.point(piece.spot, y: standsAt(piece.spot, world: world, side: side))
+        let size = GardenStructures.figure(height: piece.height).metres * view.pointsPerMetre
+        return HedgePiece(height: piece.height, pointsPerMetre: view.pointsPerMetre,
+                          hour: hour, turn: turn)
+            .allowsHitTesting(false)
+            .position(x: foot.x, y: foot.y - size / 2)
     }
 
     private func things(plotSide: Double, lamps: [Lamp], in view: Isometric) -> [Thing] {
         let inHand: Set<UUID> = Set([held?.id, heldLamp?.id].compactMap { $0 })
         let all = standing(plotSide: plotSide, in: view).map(Thing.plant)
             + lamps.filter { $0.known != nil }.map(Thing.lamp)
+            + hedges(plotSide: plotSide, in: view).map(Thing.hedge)
 
         return all.sorted { a, b in
             if inHand.contains(a.id) { return false }

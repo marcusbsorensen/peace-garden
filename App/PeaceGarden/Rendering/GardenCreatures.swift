@@ -131,7 +131,7 @@ final class GardenCreatures {
     /// how far the foot should sit above the bottom edge — which is the one
     /// number that says it, where an aim point in the world would have to be
     /// worked back through the elevation.
-    private static func camera(for figure: Figure) -> SCNNode {
+    static func camera(for figure: Figure) -> SCNNode {
         let camera = SCNCamera()
         camera.usesOrthographicProjection = true
         let half = figure.metres * GardenSprites.elevationCosine / 2
@@ -515,7 +515,9 @@ struct CreatureFigure: View {
             let colour = GardenLamps.swiftUIColour(figure.glow)
 
             ZStack {
-                if let before { shadow(of: before, side: side, lift: figure.lift) }
+                if let before {
+                    FootShadow(image: before, side: side, lift: figure.lift, hour: hour, turn: turn)
+                }
                 if let before { Image(uiImage: before).resizable() }
                 if let after { Image(uiImage: after).resizable().opacity(between.blend) }
                 if let shine {
@@ -559,33 +561,5 @@ struct CreatureFigure: View {
                 shine = GardenCreatures.shared.picture(kind, step: nil, turn: turn, facing: facing)
             }
         }
-    }
-
-    /// The shadow a plant casts, sheared about the foot rather than the bottom
-    /// edge. By day a figure without one stood on the grass like a sticker on
-    /// it, beside plants that each had theirs.
-    ///
-    /// The shear is `GardenPlantSprite`'s, with the foot line moved up to where
-    /// a figure's foot is. What lies nearer than the foot shears the wrong way
-    /// by a little, which on something lying on the ground is under it anyway.
-    private func shadow(of image: UIImage, side: Double, lift: Double) -> some View {
-        let light = GardenGround.Light.at(hour: hour)
-        let seen = light.turned(quarters: turn).direction
-        let rise = max(0.12, seen.y)
-        let across = -(seen.x - seen.z) * Isometric.cosThirty / rise
-        let down = -(seen.x + seen.z) * Isometric.sinThirty / rise
-        let foot = side * (1 - lift)
-
-        return Image(uiImage: image)
-            .resizable()
-            .renderingMode(.template)
-            .foregroundStyle(.black)
-            .blur(radius: 0.30 + 0.34 * (1 - light.up))
-            .opacity(max(0.10, 0.42 * light.strength / 0.76))
-            .transformEffect(CGAffineTransform(
-                a: 1, b: 0,
-                c: -across, d: -down,
-                tx: across * foot, ty: foot * (1 + down)
-            ))
     }
 }

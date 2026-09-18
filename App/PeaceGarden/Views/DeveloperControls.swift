@@ -91,6 +91,10 @@ final class Developer {
     /// For looking at a web garden's plot in the app's own renderer: a web plot
     /// is 5.2 m however many plants it has, and a garden's grows with them.
     /// `docs/WEB-GARDENS.md`.
+    /// Draw a web garden area's structures on the plot, for looking at one:
+    /// `-pgArea longWalk`, with `-pgPlotSide 5.2`.
+    let previewArea: String? = UserDefaults.standard.string(forKey: "pgArea")
+
     let fixedPlotSide: Double? = {
         let side = UserDefaults.standard.double(forKey: "pgPlotSide")
         return side > 0 ? side : nil
