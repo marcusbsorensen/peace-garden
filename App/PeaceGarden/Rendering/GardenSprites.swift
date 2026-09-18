@@ -64,9 +64,9 @@ final class GardenSprites {
 
     /// Bucketed the way a thumbnail is: a sprite does not need to follow growth
     /// any more closely than the eye can see at this size.
-    nonisolated static func key(genome: Genome, growth: GrowthModel.State) -> String {
+    nonisolated static func key(genome: Genome, growth: GrowthModel.State, step: Int) -> String {
         let bucket = Int(growth.overall * 24) * 10 + Int(growth.bloomOpen * 6)
-        return "\(genome.seed.hex)-\(bucket)"
+        return "\(genome.seed.hex)-\(bucket)-\(step)"
     }
 
     /// The size a sprite draws at on a plot at this scale, foot at the bottom
@@ -121,14 +121,21 @@ final class GardenSprites {
         return max(height, spread / (elevationCosine / Isometric.cosThirty))
     }
 
-    func sprite(genome: Genome, growth: GrowthModel.State) -> Sprite? {
+    /// A plant at one of the eight points round the clock.
+    ///
+    /// **The hour does two different things to a plant at once, and both are
+    /// real.** It moves the light on its leaves, which is this; and it opens or
+    /// closes its flower through `GrowthModel.diurnalFactor`, which is already
+    /// in `growth` before this is called. A garden visited at night is genuinely
+    /// a different garden, and was before anybody drew a bed.
+    func sprite(genome: Genome, growth: GrowthModel.State, step: Int) -> Sprite? {
         let metres = frameMetres(for: genome)
-        let key = Self.key(genome: genome, growth: growth) as NSString
+        let key = Self.key(genome: genome, growth: growth, step: step) as NSString
         if let held = cache.object(forKey: key) { return Sprite(image: held, metres: metres) }
 
         let side = CGFloat(metres) * Self.renderedPointsPerMetre
         let view = SCNView(frame: CGRect(x: 0, y: 0, width: side, height: side))
-        view.scene = PlantSceneBuilder.makeScene(palette: genome.palette)
+        view.scene = Self.makeScene(lit: GardenGround.Light.at(step: step))
         // Snapshotted with transparency so the ground shows through. If a plant
         // ever comes back as a black square, this is the pair of lines that did
         // it — the same trap `ThumbnailRenderer` records.
@@ -155,6 +162,62 @@ final class GardenSprites {
         guard snapshot.size.width > 0 else { return nil }
         cache.setObject(snapshot, forKey: key)
         return Sprite(image: snapshot, metres: metres)
+    }
+
+    /// A plant standing outdoors, under the same light as the ground it stands on.
+    ///
+    /// **`PlantSceneBuilder.makeScene` is a studio and is exactly wrong here.**
+    /// One hard key, a cold rim and an ambient of about 0.09, so an unlit face
+    /// falls to near-black: right for a botanical model kit photographed for its
+    /// box, and wrong for a plant standing in a garden at four in the afternoon.
+    /// The garden light is hemispheric — sky from above, bounce from the ground
+    /// below — so a shadowed leaf is lit by the sky rather than by nothing. No
+    /// amount of filtering the studio render gets there, because the information
+    /// is not in the rendered pixels to recover.
+    ///
+    /// The numbers are the same ones the ground is shaded with, read from the
+    /// same function, so the plant and the ground can never be lit from
+    /// different hours.
+    static func makeScene(lit light: GardenGround.Light) -> SCNScene {
+        let scene = SCNScene()
+
+        let sun = SCNNode()
+        sun.light = SCNLight()
+        sun.light?.type = .directional
+        sun.light?.color = UIColor(red: light.colour.x, green: light.colour.y,
+                                   blue: light.colour.z, alpha: 1)
+        sun.light?.intensity = 1400 * light.strength
+        sun.light?.castsShadow = false
+        // A directional light shines down its own negative z, so the node stands
+        // off along the direction the light comes *from* and looks back at the
+        // plant.
+        sun.position = SCNVector3(Float(light.direction.x) * 10,
+                                  Float(light.direction.y) * 10,
+                                  Float(light.direction.z) * 10)
+        sun.look(at: SCNVector3Zero, up: SCNVector3(0, 1, 0), localFront: SCNVector3(0, 0, -1))
+        scene.rootNode.addChildNode(sun)
+
+        let sky = SCNNode()
+        sky.light = SCNLight()
+        sky.light?.type = .ambient
+        sky.light?.color = UIColor(red: light.sky.x, green: light.sky.y,
+                                   blue: light.sky.z, alpha: 1)
+        sky.light?.intensity = 700
+        scene.rootNode.addChildNode(sky)
+
+        // The light a plant gets back off the ground it is standing on. Without
+        // it a leaf facing away from the sun falls to the ambient alone and
+        // reads as a hole cut in the plant rather than as a leaf in shade.
+        let bounce = SCNNode()
+        bounce.light = SCNLight()
+        bounce.light?.type = .directional
+        bounce.light?.color = UIColor(red: light.bounce.x, green: light.bounce.y,
+                                      blue: light.bounce.z, alpha: 1)
+        bounce.light?.intensity = 500
+        bounce.eulerAngles = SCNVector3(0.9, -0.4, 0)
+        scene.rootNode.addChildNode(bounce)
+
+        return scene
     }
 
     /// Which way a plant faces, in radians, from two bytes of its own seed.

@@ -1,3 +1,4 @@
+import simd
 import SwiftUI
 import XCTest
 import SeedCore
@@ -261,7 +262,7 @@ final class PlotTests: XCTestCase {
             let plant = crossing(["Ada", "Rune", "Sofia", "Jonas"][nonce % 4], nonce: nonce)
             let growth = plant.growth(now: plant.birth.addingTimeInterval(400 * 86_400))
             let sprite = try XCTUnwrap(
-                GardenSprites.shared.sprite(genome: plant.genome, growth: growth)
+                GardenSprites.shared.sprite(genome: plant.genome, growth: growth, step: 4)
             )
 
             let image = try XCTUnwrap(sprite.image.cgImage)
@@ -339,5 +340,99 @@ final class PlotTests: XCTestCase {
         let onThePeak = worlds.height(world: 2, x: 0, z: 0, plotSide: GardenWorlds.drawnForSide)
         XCTAssertGreaterThanOrEqual(onThePeak, small.low)
         XCTAssertLessThanOrEqual(onThePeak, small.high)
+    }
+
+    // MARK: - The orbit
+
+    /// **The curve is pinned by its values, not by its shape.** The first pass
+    /// had a full moon overhead at 0.32 against a sun on the horizon at 0.24, so
+    /// midnight came out brighter than sunrise — and nothing was broken: both
+    /// curves peaked correctly at their own maximum, and what nobody had done was
+    /// make them agree with each other. A fault that exists only between two
+    /// things shows up only when both are put on one slider, so the slider is
+    /// what this holds.
+    func testTheMoonIsNotBrighterThanTheDawn() {
+        let expected: [(hour: Double, strength: Double)] = [
+            (0, 0.150), (3, 0.1163), (6, 0.240), (9, 0.6077),
+            (12, 0.760), (15, 0.6077), (18, 0.035), (21, 0.1163)
+        ]
+
+        for (hour, strength) in expected {
+            XCTAssertEqual(GardenGround.Light.at(hour: hour).strength, strength,
+                           accuracy: 0.001, "the light at \(hour):00")
+        }
+
+        // And the two ends of the day are in the right order against each other.
+        let midnight = GardenGround.Light.at(hour: 0).strength
+        let sunrise = GardenGround.Light.at(hour: 6).strength
+        let noon = GardenGround.Light.at(hour: 12).strength
+        XCTAssertLessThan(midnight, sunrise)
+        XCTAssertLessThan(sunrise, noon)
+
+        // The darkest hour of the day is moonrise, not midnight, which is
+        // correct: the moon has only just cleared the horizon.
+        let everyHour = stride(from: 0.0, to: 24.0, by: 0.25)
+            .map { (hour: $0, strength: GardenGround.Light.at(hour: $0).strength) }
+        let darkest = everyHour.min { $0.strength < $1.strength }!
+        XCTAssertEqual(darkest.hour, 18, accuracy: 0.26)
+    }
+
+    /// One light, because exactly one body is above the horizon at any hour.
+    func testExactlyOneOfThemIsUpAtAnyHour() {
+        for quarter in 0..<96 {
+            let hour = Double(quarter) / 4
+            let light = GardenGround.Light.at(hour: hour)
+
+            XCTAssertEqual(light.isDay, hour >= 6 && hour < 18, "at \(hour):00")
+            XCTAssertGreaterThan(light.direction.y, 0, "the light came from below the ground")
+            XCTAssertEqual(simd_length(light.direction), 1, accuracy: 1e-9)
+        }
+    }
+
+    /// It rises at one corner of the plot and sets at the opposite one, so the
+    /// two ends of a day point the same way and the middle points across.
+    func testItRisesAtOneCornerAndSetsAtTheOpposite() {
+        let sunrise = GardenGround.Light.at(hour: 6).direction
+        let sunset = GardenGround.Light.at(hour: 17.999).direction
+
+        XCTAssertEqual(sunrise.x, -0.70584, accuracy: 0.002)
+        XCTAssertEqual(sunrise.z, -0.70584, accuracy: 0.002)
+        XCTAssertEqual(sunset.x, -sunrise.z, accuracy: 0.002)
+        XCTAssertEqual(sunset.z, -sunrise.x, accuracy: 0.002)
+    }
+
+    /// `noon` is written out because it is a default argument in a file the
+    /// orbit is not in. This is what stops the two drifting apart.
+    func testNoonIsTheSameLightWhicheverWayItIsAskedFor() {
+        let spelled = GardenGround.Light.noon
+        let computed = GardenGround.Light.at(hour: 12)
+
+        // A hair of slack, because `sin(.pi / 2)` is not exactly one and the
+        // ambient is mixed by it. Anything that has actually drifted is orders
+        // of magnitude larger than this.
+        XCTAssertEqual(spelled.strength, computed.strength, accuracy: 1e-5)
+        XCTAssertEqual(spelled.up, computed.up, accuracy: 1e-5)
+        XCTAssertEqual(simd_distance(spelled.direction, computed.direction), 0, accuracy: 1e-5)
+        XCTAssertEqual(simd_distance(spelled.sky, computed.sky), 0, accuracy: 1e-5)
+        XCTAssertEqual(simd_distance(spelled.bounce, computed.bounce), 0, accuracy: 1e-5)
+    }
+
+    /// The moon carries its real phase for the date, from one synodic month
+    /// against a known new moon. Held to itself rather than to an almanac: what
+    /// this catches is the month drifting or running backwards.
+    func testTheMoonGoesRoundInOneMonthAndTheRightWay() {
+        let new = MoonPhase.knownNew
+        XCTAssertEqual(MoonPhase.lit(on: new), 0, accuracy: 0.001)
+
+        let full = new.addingTimeInterval(MoonPhase.synodicDays / 2 * 86_400)
+        XCTAssertEqual(MoonPhase.lit(on: full), 1, accuracy: 0.001)
+
+        let monthLater = new.addingTimeInterval(MoonPhase.synodicDays * 86_400)
+        XCTAssertEqual(MoonPhase.fraction(on: monthLater), 0, accuracy: 0.001)
+
+        // Waxing before full, waning after: the first quarter is lit on the
+        // opposite limb from the last.
+        XCTAssertLessThan(MoonPhase.fraction(on: new.addingTimeInterval(86_400 * 7)), 0.5)
+        XCTAssertGreaterThan(MoonPhase.fraction(on: new.addingTimeInterval(86_400 * 22)), 0.5)
     }
 }

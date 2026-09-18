@@ -240,7 +240,11 @@ shut, so a garden visited at night is genuinely a different garden — and it wa
 already that before anybody drew a bed. Nothing in this template makes that
 happen; it only stops the arrangement hiding it.
 
-**Night falls by the clock, with an override.** Settled 17 September. A garden
+**Night falls by the clock, with an override.** Settled 17 September, built 18
+September as `GardenDaylight` — *Follows the hour* or *Always daylight*, in Seed
+with the other standing choices. It changes the light and nothing else: a
+night-opening flower is still open at two in the morning under a noon sun,
+because when a flower opens is a fact about the plant and not about the lamp. A garden
 that is dark because it is dark outside is a place; a garden that is dark because
 somebody pressed a button is a theme picker. The override exists because this app
 is used at two in the morning by people who will want to see their garden in
@@ -483,6 +487,26 @@ finer than a drawing nineteen pixels across can show.
 `orbit.py` defines the light and exports it; the page reads those same numbers.
 Two models that merely look alike is how a plant ends up lit from the left on
 ground lit from the right, with nobody able to say why the picture is wrong.
+
+**Built 18 September, and that warning turned out to be about the app rather
+than about the page.** The plants were already lit by `PlantSceneBuilder`'s
+studio — one hard key, a cold rim, an ambient of about 0.09 — standing on ground
+lit hemispherically at noon. Nothing looked broken; the plants simply looked
+pasted on. The sprites are now lit by the same function the ground is shaded
+with, which is what makes them look like they are standing outside.
+
+### Two things building it taught
+
+- **The shadow goes flat twice a day.** At noon and at midnight the body sits at
+  the azimuth where a shadow runs exactly along the screen's horizontal, and a
+  shadow with no screen height is a line. That is not a fault — it is what an
+  isometric view of that moment is — but it is worth knowing before somebody
+  goes looking for the bug. The blur is what keeps it from reading as a drawn
+  rule.
+- **The override is not a nicety.** Drawn at half past six in the evening the
+  garden is very nearly black, which is correct — moonrise is the darkest hour
+  of the day — and it is also a garden you cannot look at. Seeing that is what
+  settles the argument the override was already written down to win.
 
 ### The moon was brighter than the dawn
 

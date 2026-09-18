@@ -125,6 +125,9 @@ enum Chrome {
     /// a real saving on a phone left on a desk with the app open.
     static let turntableKey = "stage.turntable.v1"
 
+    /// Whether the garden follows the clock. See `GardenDaylight`.
+    static let daylightKey = "garden.daylight.v1"
+
     static let fadeIn = Animation.easeInOut(duration: 0.55)
     static let controlsIdleTimeout: Duration = .seconds(6)
 }
@@ -210,6 +213,40 @@ enum StageAppearance: String, CaseIterable, Sendable {
         case .dark: return .dark
         case .light: return .light
         case .system: return nil
+        }
+    }
+}
+
+/// Whether the garden's own sky follows the clock.
+///
+/// **Night falls by the clock, and there is an override.** A garden that is dark
+/// because it is dark outside is a place; a garden that is dark because somebody
+/// pressed a button is a theme picker. So the clock is the default and the sun
+/// and moon go round on their own.
+///
+/// The override exists because this app is used at two in the morning by people
+/// who will want to see their garden in daylight, and refusing them that would
+/// be purity at somebody else's expense. It is a standing choice rather than a
+/// control on the garden itself, for the same reason: a switch on the screen
+/// would make the hour a thing you set.
+enum GardenDaylight: String, CaseIterable, Sendable {
+    /// The sun up from six to six, the moon the other twelve hours.
+    case byTheClock
+    /// Noon, whatever the hour is.
+    case always
+
+    var label: LocalizedStringResource {
+        switch self {
+        case .byTheClock: return "Follows the hour"
+        case .always: return "Always daylight"
+        }
+    }
+
+    /// The hour to draw the garden at, given the hour it actually is.
+    func hour(when actual: Double) -> Double {
+        switch self {
+        case .byTheClock: return actual
+        case .always: return 12
         }
     }
 }

@@ -12,11 +12,11 @@ choice of ground and a sun and moon going round it.
 plot: a floating square plot in isometric, standing on one of eight worlds, with
 the plants at their real relative sizes standing on the terrain, a pool of light
 under anything that has changed since it was last opened, and a row of little
-worlds to choose the ground from. Thematic no longer stands one plant inside
-another. 51 app tests, from 35; SeedCore at 106. Three commits on `main`, not
-pushed.
+worlds to choose the ground from, and the sun and moon going round it on the
+real clock. Thematic no longer stands one plant inside another. 56 app tests,
+from 35; SeedCore at 106. Four commits on `main`, not pushed.
 
-**Done, not built into the app.** The orbit and the gestures. The
+**Done, not built into the app.** The gestures. The
 interactive Design canvas remains the reference:
 https://claude.ai/artifact/JtRewHDMGQJJTPnKvS5Tru — eight worlds, drag a plant,
 hour slider, orbiting sun and moon with cast shadows, real moon phase. Its
@@ -37,6 +37,8 @@ names. What Danish still needs is its *prose*. See
 | `App/PeaceGarden/Rendering/GardenGround.swift` | The cut, the light, the saturation ceiling, and the flat plot that is the fallback. |
 | `App/PeaceGarden/Rendering/GardenWorlds.swift` | The eight grounds, as height and colour per cell. |
 | `App/PeaceGarden/Rendering/GardenTerrain.swift` | The plot drawn as a mesh, off the main actor and kept. |
+| `App/PeaceGarden/Rendering/GardenLight.swift` | The orbit, and tonight's moon. Read by everything. |
+| `App/PeaceGarden/Rendering/GardenSky.swift` | Space, the stars, and whichever body is up. |
 | `App/PeaceGarden/Resources/Worlds/` | The two textures, 276 KB, straight from the mockup. |
 | `App/PeaceGarden/Rendering/GardenSprites.swift` | Plants as stills at one shared scale. **Not `ThumbnailRenderer`** — see below. |
 | `App/PeaceGarden/Views/PlotView.swift` | The screen. |
@@ -132,40 +134,56 @@ Drawing sixteen thousand quads is about half a second, which inside `body` is
 half a second of frozen phone. `GardenTerrain` is an actor: the screen appears at
 once and the ground arrives a beat later.
 
+## The orbit: done
+
+One light, because exactly one body is above the horizon at any hour: the sun up
+from 06:00 to 18:00, the moon the other twelve, each rising at one corner of the
+plot and setting at the opposite one. `GardenGround.Light.at(hour:)` is the whole
+model, and the ground, the plants, the shadows and the sky all read it — which is
+what stops a plant being lit from a different hour than the ground it stands on.
+
+- **The ground** is re-shaded at the hour, cached on the light as well as the
+  size. The terrain shadows itself along the light direction.
+- **The plants** are rendered at eight points round the clock and crossfaded
+  between the two the hour falls between. **They were studio-lit until now** —
+  `PlantSceneBuilder.makeScene` is one hard key, a cold rim and a near-black
+  ambient, which is right for a plant photographed for a box and is why the
+  plants looked pasted onto the ground. They take the garden's own light now.
+- **The shadows** are a shear of the sprite, blackened: a point `v` points up the
+  picture is `v / pointsPerMetre` metres up the plant, and its shadow lands that
+  height over the light's slope away across the ground. One affine transform, no
+  second drawing.
+- **The sky** darkens with the hour, the stars come out and are fixed rather than
+  drifting, and the moon carries its real phase for the date.
+- **Night falls by the clock, with an override** — `GardenDaylight` in Seed. It
+  changes the light and nothing else, so a night-opening flower is still open at
+  two in the morning under a noon sun.
+
+Two things worth knowing. **The shadow goes flat twice a day**: at noon and
+midnight the body is at the azimuth where a shadow runs along the screen's
+horizontal, and a shadow with no screen height is a line. It is what an
+isometric view of that moment is, not a bug. And **`Light.noon` is spelled out
+rather than computed**, because it is a default argument in `GardenGround.swift`
+while the orbit is an extension in `GardenLight.swift`, and the compiler will not
+reach across for it in that position; a test holds the two to each other.
+
 ## Next step
 
-**The orbit.** The sun up from 06:00 to 18:00, the moon the other twelve hours,
-one light because exactly one of them is above the horizon at any hour. The
-numbers are in *What the mockup actually says* below, and the shape of the work
-is already in place: `GardenGround.Light` is a value with noon in it,
-`GardenTerrain` takes one and keys its cache on nothing else, and the plants are
-already rendered per growth bucket and cached the same way. What it needs is the
-light as a function of the hour, the eight points round the clock to render at,
-and the crossfade between them.
+The gestures, which is the last part of `docs/ARRANGING.md` that is designed and
+not built: pinch to zoom, two-finger rotate in ninety-degree steps, and **long
+press to lift a plant, then drag**. The design is in §*Turning it* and §*One
+finger cannot do two things*, and the reasoning is settled — every plant is a
+meeting, so an accidental nudge is a worse failure than waiting a beat.
 
-`GardenVisits` is the thing to be careful of: night falling must not make the
-whole garden announce itself. It reads growth and never the bloom for exactly
-that reason, and there is a test.
+What is not settled and has to be before rotation is built: **how the plants are
+drawn when the plot is turned**. Four renders each at ninety-degree steps, or
+billboards that always face the viewer. It now costs four times eight, because a
+sprite is already rendered at eight hours.
 
-## Thematic crowding: done
-
-Settled and built, 18 September. An area is 0.92 m wide and a plant is up to a
-metre across, so scattering plants inside an area stood them inside one another —
-7.5 cm apart on the first garden drawn. Spreading cannot fix it: over forty
-gardens of fourteen, independent scatter leaves 82 pairs under 20 cm and a cloud
-2.9 m across still leaves 37, because two seeds know nothing about each other.
-
-An area's members are now ranked by seed hex and laid down its depth. Closest
-pair 0.217 m, pairs under 20 cm none. It costs the one thing: a plant joining an
-area re-spaces that area — about three plants in fourteen, by at most 0.43 m.
-Nothing outside the area moves, and no spot anywhere depends on arrival order,
-which is the trap the old rule was actually guarding.
-
-`testAddingAPlantDoesNotMoveTheOnesAlreadyThere` now exempts Thematic alongside
-Meetings, and two tests hold what replaced it:
-`testAPlantJoiningAnAreaDisturbsOnlyThatArea` and
-`testThematicNeverStandsOnePlantInsideAnother`, the second over forty gardens
-because one garden is what let the fault through the first time.
+`Isometric.ground(at:)` is the inverse the dragging needs, and it is exact on
+flat ground. Over terrain it has to run twice — once at ground zero, once with
+that place's own height subtracted — which `docs/ARRANGING.md` §*A plant stands
+on the ground* sets out and which nothing has needed yet.
 
 ## Traps
 

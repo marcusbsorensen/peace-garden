@@ -42,8 +42,13 @@ actor GardenTerrain {
         let worlds = GardenWorlds.shared
         guard worlds.isLoaded, size.width > 1, size.height > 1 else { return nil }
 
+        // The light is part of what a drawing is, so it is part of the key. Six
+        // minutes of clock is finer than the eye can tell on a hillside and
+        // coarse enough that a garden looked at for a while is drawn once.
         let key = "\(world)-\(Int(size.width))x\(Int(size.height))"
             + "-\(Int(plotSide * 100))-\(Int(view.pointsPerMetre * 10))-\(detail)"
+            + "-\(Int(light.strength * 1000))-\(Int(light.direction.x * 100))"
+            + "-\(Int(light.direction.z * 100))"
         if let held = cache[key] { return held }
 
         let format = UIGraphicsImageRendererFormat.preferred()

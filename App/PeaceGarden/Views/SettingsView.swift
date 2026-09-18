@@ -33,6 +33,7 @@ struct SettingsView: View {
     @AppStorage(Chrome.turntableKey) private var turntable = true
     @AppStorage(Chrome.menuStyleKey) private var menuStyleRaw = StageMenuStyle.hidden.rawValue
     @AppStorage(Chrome.appearanceKey) private var appearanceRaw = StageAppearance.dark.rawValue
+    @AppStorage(Chrome.daylightKey) private var daylightRaw = GardenDaylight.byTheClock.rawValue
     @AppStorage(Chrome.plantStyleKey) private var plantStyleRaw = StagePlantStyle.full.rawValue
     @AppStorage(Chrome.plantTintKey) private var plantTint = Chrome.plantTintDefault
     @AppStorage(Chrome.placeModeKey) private var placeModeRaw = PlantingLocationMode.abstract.rawValue
@@ -43,6 +44,10 @@ struct SettingsView: View {
     }
     private var appearance: StageAppearance {
         StageAppearance(rawValue: appearanceRaw) ?? .dark
+    }
+
+    private var daylight: GardenDaylight {
+        GardenDaylight(rawValue: daylightRaw) ?? .byTheClock
     }
     private var plantStyle: StagePlantStyle {
         StagePlantStyle(rawValue: plantStyleRaw) ?? .full
@@ -275,6 +280,16 @@ struct SettingsView: View {
             ) {
                 ForEach(StageAppearance.allCases, id: \.self) { option in
                     Button { appearanceRaw = option.rawValue } label: { Text(option.label) }
+                }
+            }
+
+            chooser(
+                "The garden's light",
+                current: Text(daylight.label),
+                note: "The sun and the moon go round the garden on the real clock, so a garden visited at night is a night garden. Choose daylight to see it lit whatever the hour is."
+            ) {
+                ForEach(GardenDaylight.allCases, id: \.self) { option in
+                    Button { daylightRaw = option.rawValue } label: { Text(option.label) }
                 }
             }
         }

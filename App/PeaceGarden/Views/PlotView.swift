@@ -14,6 +14,8 @@ struct PlotView: View {
 
     @State private var selected: PlantRecord?
 
+    @AppStorage(Chrome.daylightKey) private var daylightRaw = GardenDaylight.byTheClock.rawValue
+
     private var visits: GardenVisits { .shared }
 
     /// A plant, where it stands, and whether it has anything to say.
@@ -26,11 +28,24 @@ struct PlotView: View {
         var id: UUID { record.id }
     }
 
+    /// The hour the garden is being looked at, as a fraction.
+    ///
+    /// **Night falls by the clock.** A garden that is dark because it is dark
+    /// outside is a place; a garden that is dark because somebody pressed a
+    /// button is a theme picker. It reads `model.now`, so the developer clock
+    /// winds the sun round with everything else.
+    private var hour: Double {
+        let parts = Calendar.current.dateComponents([.hour, .minute], from: model.now)
+        let actual = Double(parts.hour ?? 12) + Double(parts.minute ?? 0) / 60
+        return (GardenDaylight(rawValue: daylightRaw) ?? .byTheClock).hour(when: actual)
+    }
+
     var body: some View {
         ZStack {
             Chrome.ground.ignoresSafeArea()
 
             GeometryReader { proxy in
+                let light = GardenGround.Light.at(hour: hour)
                 let side = model.garden.plotSide
                 let world = GardenWorlds.shared.resolve(model.garden.arrangements.first?.world)
                 // A hill lifts a plant above the far corner and a ravine hangs
@@ -45,12 +60,14 @@ struct PlotView: View {
                 )
 
                 ZStack(alignment: .topLeading) {
-                    plot(world: world, side: side, in: view, size: proxy.size)
+                    GardenSky(light: light, date: model.now, view: view)
+
+                    plot(world: world, side: side, in: view, size: proxy.size, light: light)
 
                     // Far to near, and nothing else decides what covers what.
                     ForEach(standing(plotSide: side)) { standing in
                         pool(for: standing, world: world, side: side, in: view)
-                        plant(standing, world: world, side: side, in: view)
+                        plant(standing, world: world, side: side, in: view, light: light)
                     }
                 }
                 .frame(width: proxy.size.width, height: proxy.size.height)
@@ -118,8 +135,9 @@ struct PlotView: View {
     /// The flat plot underneath is the fallback rather than dead code: if the
     /// world atlas is missing from the bundle the garden is still a place with
     /// an edge, instead of fourteen plants standing in the dark.
-    private func plot(world: Int, side: Double, in view: Isometric, size: CGSize) -> some View {
-        GardenGroundView(world: world, plotSide: side, view: view, size: size)
+    private func plot(world: Int, side: Double, in view: Isometric, size: CGSize,
+                      light: GardenGround.Light) -> some View {
+        GardenGroundView(world: world, plotSide: side, view: view, size: size, light: light)
             .allowsHitTesting(false)
     }
 
@@ -135,12 +153,14 @@ struct PlotView: View {
     // MARK: The plants
 
     private func plant(_ standing: Standing, world: Int, side: Double,
-                       in view: Isometric) -> some View {
+                       in view: Isometric, light: GardenGround.Light) -> some View {
         GardenPlantSprite(
             genome: standing.record.genome,
             growth: standing.growth,
             foot: view.point(standing.spot, y: standsAt(standing.spot, world: world, side: side)),
-            pointsPerMetre: view.pointsPerMetre
+            pointsPerMetre: view.pointsPerMetre,
+            light: light,
+            hour: hour
         ) {
             visits.seen(standing.record, growth: standing.growth)
             selected = standing.record
@@ -247,40 +267,99 @@ private struct GardenPlantSprite: View {
     let growth: GrowthModel.State
     let foot: CGPoint
     let pointsPerMetre: Double
+    let light: GardenGround.Light
+    let hour: Double
     let onTap: () -> Void
 
-    @State private var sprite: GardenSprites.Sprite?
+    @State private var before: GardenSprites.Sprite?
+    @State private var after: GardenSprites.Sprite?
+
+    private var between: (before: Int, after: Int, blend: Double) {
+        GardenGround.Light.steps(at: hour)
+    }
 
     var body: some View {
-        Group {
-            if let sprite {
-                let size = GardenSprites.drawnSize(
-                    metres: sprite.metres,
-                    pointsPerMetre: pointsPerMetre
-                )
-                Image(uiImage: sprite.image)
-                    .resizable()
-                    .interpolation(.high)
-                    .frame(width: size.width, height: size.height)
-                    // **The gesture goes on the picture and not outside it.**
-                    // `position` makes a view take all the space it is offered,
-                    // so a tap attached after it answers anywhere on screen and
-                    // the last plant drawn quietly swallows every tap in the
-                    // garden — including the ones meant for the plants under it.
-                    .contentShape(Rectangle())
-                    .onTapGesture(perform: onTap)
-                    // A sprite is anchored at the bottom centre of its frame,
-                    // which is where the plant's foot was rendered, so the
-                    // position is the foot raised by half the frame.
-                    .position(x: foot.x, y: foot.y - size.height / 2)
-                    .transition(.opacity)
-            } else {
-                Color.clear
+        ZStack(alignment: .topLeading) {
+            if let sprite = before ?? after {
+                let size = GardenSprites.drawnSize(metres: sprite.metres,
+                                                   pointsPerMetre: pointsPerMetre)
+                shadow(of: sprite, size: size)
+
+                // Two renders crossfaded rather than one snapped to. The plants
+                // are meshes nobody wants to rebuild at sixty frames a second,
+                // so they are drawn at eight points round the clock; stepping
+                // between them without the fade is what makes the sun jump.
+                picture(before, size: size, opacity: 1)
+                picture(after, size: size, opacity: between.blend)
             }
         }
-        .task(id: GardenSprites.key(genome: genome, growth: growth)) {
-            sprite = GardenSprites.shared.sprite(genome: genome, growth: growth)
+        .task(id: "\(GardenSprites.key(genome: genome, growth: growth, step: between.before))") {
+            before = GardenSprites.shared.sprite(genome: genome, growth: growth,
+                                                 step: between.before)
         }
+        .task(id: "\(GardenSprites.key(genome: genome, growth: growth, step: between.after))") {
+            after = GardenSprites.shared.sprite(genome: genome, growth: growth,
+                                                step: between.after)
+        }
+    }
+
+    @ViewBuilder
+    private func picture(_ sprite: GardenSprites.Sprite?, size: CGSize,
+                         opacity: Double) -> some View {
+        if let sprite {
+            Image(uiImage: sprite.image)
+                .resizable()
+                .interpolation(.high)
+                .frame(width: size.width, height: size.height)
+                .opacity(opacity)
+                // **The gesture goes on the picture and not outside it.**
+                // `position` makes a view take all the space it is offered, so a
+                // tap attached after it answers anywhere on screen and the last
+                // plant drawn quietly swallows every tap in the garden —
+                // including the ones meant for the plants under it.
+                .contentShape(Rectangle())
+                .onTapGesture(perform: onTap)
+                // A sprite is anchored at the bottom centre of its frame, which
+                // is where the plant's foot was rendered, so the position is the
+                // foot raised by half the frame.
+                .position(x: foot.x, y: foot.y - size.height / 2)
+        }
+    }
+
+    /// The plant's own shadow, laid on the ground.
+    ///
+    /// **A shear of the picture, not a second drawing.** A point standing `v`
+    /// points up the sprite is a point `v / pointsPerMetre` metres up the plant,
+    /// and its shadow lands that height over the light's own slope away across
+    /// the ground — which the projection turns back into a screen offset. So the
+    /// whole shadow is one affine transform of the sprite, blackened.
+    ///
+    /// It goes flat twice a day. At noon and at midnight the body is at the
+    /// azimuth where the shadow runs exactly along the screen's horizontal, and
+    /// a shadow with no screen height is a line. That is not a fault — it is
+    /// what an isometric view of that moment is — and the blur is what keeps it
+    /// from reading as a drawn rule.
+    @ViewBuilder
+    private func shadow(of sprite: GardenSprites.Sprite, size: CGSize) -> some View {
+        let rise = max(0.12, light.direction.y)
+        let across = -(light.direction.x - light.direction.z) * Isometric.cosThirty / rise
+        let down = -(light.direction.x + light.direction.z) * Isometric.sinThirty / rise
+        let height = size.height
+
+        Image(uiImage: sprite.image)
+            .resizable()
+            .renderingMode(.template)
+            .frame(width: size.width, height: size.height)
+            .foregroundStyle(.black)
+            .blur(radius: 0.30 + 0.34 * (1 - light.up))
+            .opacity(max(0.10, 0.42 * light.strength / 0.76))
+            .transformEffect(CGAffineTransform(
+                a: 1, b: 0,
+                c: -across, d: -down,
+                tx: across * height, ty: height * (1 + down)
+            ))
+            .position(x: foot.x, y: foot.y - height / 2)
+            .allowsHitTesting(false)
     }
 }
 
@@ -295,6 +374,7 @@ private struct GardenGroundView: View {
     let plotSide: Double
     let view: Isometric
     let size: CGSize
+    let light: GardenGround.Light
 
     @State private var ground: UIImage?
 
@@ -319,9 +399,10 @@ private struct GardenGroundView: View {
                 Color.clear
             }
         }
-        .task(id: "\(world)-\(Int(plotSide * 100))-\(Int(size.width))x\(Int(size.height))") {
+        .task(id: "\(world)-\(Int(plotSide * 100))-\(Int(size.width))x\(Int(size.height))"
+              + "-\(Int(light.strength * 1000))-\(Int(light.direction.x * 100))") {
             ground = await GardenTerrain.shared.image(
-                world: world, plotSide: plotSide, view: view, size: size
+                world: world, plotSide: plotSide, view: view, size: size, light: light
             )
         }
     }

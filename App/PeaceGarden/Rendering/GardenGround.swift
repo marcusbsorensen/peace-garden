@@ -52,19 +52,36 @@ enum GardenGround {
     /// The orbit is not built yet, so this is noon held still. When the sun and
     /// moon go round, they replace this value and nothing that draws with it has
     /// to change.
-    struct Light {
+    struct Light: Equatable, Sendable {
         var direction: SIMD3<Double>
         var colour: SIMD3<Double>
         var strength: Double
         var sky: SIMD3<Double>
         var bounce: SIMD3<Double>
+        /// How high the body in the sky is, `0` at the horizon and `1` at its
+        /// own peak. The sky, the stars and the softness of a shadow are all
+        /// read off this rather than off the hour, so they agree with the light
+        /// rather than merely with the clock.
+        var up: Double = 1
+        /// Which body is up. Exactly one of them ever is.
+        var isDay: Bool = true
 
+        /// The sun at its highest, spelled out.
+        ///
+        /// It is `at(hour: 12)`, and `PlotTests` holds the two to each other. It
+        /// is written out rather than computed because it is a default argument
+        /// in this file while the orbit is an extension in another, and the
+        /// compiler will not reach across for it in that position.
         static let noon = Light(
-            direction: SIMD3(-0.331_97, 0.882_95, 0.331_97),
+            direction: SIMD3(-0.331_965_483_940_478_6,
+                             0.882_947_592_858_926_9,
+                             0.331_965_483_940_478_6),
             colour: SIMD3(1.00, 0.96, 0.88),
             strength: 0.76,
             sky: SIMD3(0.40, 0.48, 0.60),
-            bounce: SIMD3(0.27, 0.25, 0.20)
+            bounce: SIMD3(0.27, 0.25, 0.20),
+            up: 1,
+            isDay: true
         )
     }
 
