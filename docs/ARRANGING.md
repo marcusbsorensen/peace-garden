@@ -249,6 +249,9 @@ that is dark because it is dark outside is a place; a garden that is dark becaus
 somebody pressed a button is a theme picker. The override exists because this app
 is used at two in the morning by people who will want to see their garden in
 daylight, and refusing them that would be purity at somebody else's expense.
+**Amended 18 September: and *Always night*** (Marcus). The same argument runs
+the other way: the night garden, moonlit with its lamps and glowing figures, is
+what some people come for, and should be theirs at noon too.
 
 The override is a standing choice and belongs in Seed with the others, rather
 than a control on the garden itself. Whatever it is set to, the chrome has to

@@ -229,16 +229,35 @@ enum StageAppearance: String, CaseIterable, Sendable {
 /// be purity at somebody else's expense. It is a standing choice rather than a
 /// control on the garden itself, for the same reason: a switch on the screen
 /// would make the hour a thing you set.
+///
+/// The cases are declared in the order Settings lays them out — day, the clock,
+/// night — so the control is `allCases` and nothing has to keep a second list
+/// in step with it.
 enum GardenDaylight: String, CaseIterable, Sendable {
+    /// Noon, whatever the hour is. Stored as `always`, its name before night
+    /// had a choice of its own, so a garden already set to daylight stays so.
+    case always
     /// The sun up from six to six, the moon the other twelve hours.
     case byTheClock
-    /// Noon, whatever the hour is.
-    case always
+    /// Midnight, whatever the hour is: the moon up, the lamps lit, the figures
+    /// glowing. For anyone who comes to the garden for its night.
+    case alwaysNight
 
     var label: LocalizedStringResource {
         switch self {
+        case .always: return "Always day"
         case .byTheClock: return "Follows the hour"
-        case .always: return "Always daylight"
+        case .alwaysNight: return "Always night"
+        }
+    }
+
+    /// The mark each answer wears in Settings: the sun, the two together, the
+    /// moon.
+    var glyph: AnyShape {
+        switch self {
+        case .always: return AnyShape(SunGlyph())
+        case .byTheClock: return AnyShape(SunAndMoonGlyph())
+        case .alwaysNight: return AnyShape(MoonGlyph())
         }
     }
 
@@ -247,6 +266,7 @@ enum GardenDaylight: String, CaseIterable, Sendable {
         switch self {
         case .byTheClock: return actual
         case .always: return 12
+        case .alwaysNight: return 0
         }
     }
 }

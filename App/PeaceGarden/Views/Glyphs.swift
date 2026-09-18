@@ -198,6 +198,63 @@ struct MoonGlyph: Shape {
     }
 }
 
+/// The sun and the moon together, for a garden that follows the hour.
+///
+/// A small sun up and to the leading side, partly behind a crescent whose lit
+/// limb faces it. The sun is drawn *around* the moon's disc rather than under
+/// it — the monoline has no fills to hide a line behind, so the overlap is a
+/// gap in the sun's stroke where the moon stands in front of it.
+struct SunAndMoonGlyph: Shape {
+    func path(in rect: CGRect) -> Path {
+        let box = markBox(rect, 1)
+        func at(_ u: CGFloat, _ v: CGFloat) -> CGPoint {
+            CGPoint(x: box.minX + box.width * u, y: box.minY + box.height * v)
+        }
+        let side = box.width
+        let moonCentre = at(0.66, 0.66)
+        let moonRadius = side * 0.32
+        // Clear air around the moon, so the sun's broken stroke reads as
+        // passing behind rather than as touching it.
+        let keepOff = moonRadius + side * 0.08
+
+        let sunCentre = at(0.32, 0.32)
+        let disc = side * 0.16
+        let inner = side * 0.245
+        let outer = side * 0.335
+
+        var path = Path()
+
+        /// A polyline, lifted wherever it passes behind the moon.
+        func draw(_ points: [CGPoint]) {
+            var drawing = false
+            for point in points {
+                let clear = hypot(point.x - moonCentre.x, point.y - moonCentre.y) > keepOff
+                if clear {
+                    if drawing { path.addLine(to: point) } else { path.move(to: point) }
+                }
+                drawing = clear
+            }
+        }
+
+        draw((0...72).map { step in
+            let angle = Double(step) / 72 * 2 * .pi
+            return CGPoint(x: sunCentre.x + disc * cos(angle), y: sunCentre.y + disc * sin(angle))
+        })
+        for index in 0..<8 {
+            let bearing = Double(index) * .pi / 4 - .pi / 2
+            draw((0...8).map { step in
+                let r = inner + (outer - inner) * CGFloat(step) / 8
+                return CGPoint(x: sunCentre.x + r * cos(bearing), y: sunCentre.y + r * sin(bearing))
+            })
+        }
+
+        let moonBox = CGRect(x: moonCentre.x - moonRadius - 0.6, y: moonCentre.y - moonRadius - 0.6,
+                             width: (moonRadius + 0.6) * 2, height: (moonRadius + 0.6) * 2)
+        path.addPath(MoonGlyph().path(in: moonBox))
+        return path
+    }
+}
+
 /// A bloom: the closed silhouette of a flower on a stem.
 ///
 /// Three drawings before this one, and the two failures are the same failure

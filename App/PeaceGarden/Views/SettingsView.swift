@@ -283,14 +283,18 @@ struct SettingsView: View {
                 }
             }
 
-            chooser(
-                "The garden's light",
-                current: Text(daylight.label),
-                note: "The sun and the moon go round the garden on the real clock, so a garden visited at night is a night garden. Choose daylight to see it lit whatever the hour is."
-            ) {
-                ForEach(GardenDaylight.allCases, id: \.self) { option in
-                    Button { daylightRaw = option.rawValue } label: { Text(option.label) }
-                }
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Light")
+                    .chromeLabel()
+                    .foregroundStyle(Chrome.sectionLabel)
+                    .accessibilityHidden(true)
+
+                LightToggle(selection: daylight) { daylightRaw = $0.rawValue }
+
+                Text("In the middle, the sun and moon go round on the real clock, so a garden visited at night is a night garden. Either side holds it at day or night whatever the hour.")
+                    .font(.system(size: 13, weight: .light))
+                    .foregroundStyle(Chrome.muted)
+                    .lineSpacing(4)
             }
         }
     }
@@ -630,5 +634,60 @@ struct SettingsView: View {
         }
         confirming = nil
         close()
+    }
+}
+
+/// Day, the clock, night: three marks in one capsule.
+///
+/// A menu of three sentences asked somebody to read to choose between a sun
+/// and a moon. Three marks in a row are the choice at a glance, and the middle
+/// one — both together — is the default because it sits between the other two
+/// in meaning as well as on the screen.
+///
+/// **The chosen mark is the one with a capsule of its own.** A faint wash
+/// inside a brighter edge, the same edge `pressable(isProminent:)` gives the
+/// prominent button, and the glyph lifts from `faint` to `ink`. The wash is
+/// chrome rather than drawing: the marks themselves stay monoline.
+private struct LightToggle: View {
+    let selection: GardenDaylight
+    let choose: (GardenDaylight) -> Void
+
+    @Namespace private var wash
+    @ScaledMetric(relativeTo: .body) private var glyphSize: CGFloat = 22
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(GardenDaylight.allCases, id: \.self) { option in
+                segment(option)
+            }
+        }
+        .padding(3)
+        .overlay(Capsule().strokeBorder(Chrome.hairline, lineWidth: 1))
+        .animation(.easeInOut(duration: 0.22), value: selection)
+        .sensoryFeedback(.selection, trigger: selection)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(Text("Light"))
+    }
+
+    private func segment(_ option: GardenDaylight) -> some View {
+        let chosen = option == selection
+        return Button { choose(option) } label: {
+            option.glyph
+                .stroke(chosen ? Chrome.ink : Chrome.faint, style: Chrome.monoline)
+                .frame(width: glyphSize, height: glyphSize)
+                .frame(minWidth: 58, minHeight: 44)
+                .background {
+                    if chosen {
+                        Capsule()
+                            .fill(Chrome.ink.opacity(0.10))
+                            .overlay(Capsule().strokeBorder(Chrome.ink.opacity(0.32), lineWidth: 1))
+                            .matchedGeometryEffect(id: "wash", in: wash)
+                    }
+                }
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text(option.label))
+        .accessibilityAddTraits(chosen ? .isSelected : [])
     }
 }
