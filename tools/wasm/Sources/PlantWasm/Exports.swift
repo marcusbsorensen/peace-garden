@@ -24,6 +24,10 @@ import SeedCore
 
 nonisolated(unsafe) private var result: [UInt8] = []
 
+func setResult(_ bytes: [UInt8]) {
+    result = bytes
+}
+
 @_expose(wasm, "pg_alloc")
 @_cdecl("pg_alloc")
 public func pgAlloc(_ count: Int32) -> UnsafeMutableRawPointer? {

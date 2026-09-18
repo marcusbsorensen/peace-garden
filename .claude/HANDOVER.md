@@ -18,7 +18,10 @@ The website's shared garden should look and work like the app's Garden screen: f
 - **Long Walk structures** in the app, developer preview only: a mown path, a tall yew behind the far border, a low hedge in front of the near one, and hedge shadows. Checked by eye at midday and at one quarter-turn. **Not checked at night.**
 - **A plant in a browser (afternoon):** SeedCore builds for WebAssembly and `tools/wasm/web/` draws one plant with WebGL2. The module is **2.1 MB brotli** (2.8 MB gzip, 7.9 MB raw) after `wasm-opt -Oz`; the rest is the Swift standard library and FoundationEssentials, not SeedCore (0.3 MB). The whole SeedCore suite passes inside wasm, apart from `GardenStoreTests`. All 15 pinned port seeds grow the same buffers as on the Mac: identical shape, indices, UVs and texels, with positions within 3.2 µm and normals within 3 × 10⁻⁴ (libm rounding). SeedCore 124 tests and the app's 74 pass. Written up in `WEBSITE.md` §*What renders the plant*.
 - **Drawn only with diffuse texture and a plain sun.** Relief and roughness maps, the app's lighting, and a plant's name are still to come.
-- **Not started:** plots in the browser, the plot service, the curator tool and the Wild Fields.
+- **A Long Walk plot in the browser (evening):** `tools/wasm/web/walk.html` (`?plot=N` for others). The module plants real crossings of two parents by `LongWalk.Walk.plant`, then grows each planting from its lineage. The page draws the app's plot: true isometric, the 0.95 m slab with strata, the three-stripe mown path, a 2.0 m yew on the far side and a 0.7 m hedge on the near, swapped as it turns in quarter turns, lit by the app's midday light and shading formula. Plot 1 is 24 plants from 29 arrivals, planted and grown in 0.4 s. Checked by eye at all four turns and at phone width.
+- **The walk is a fixed demonstration sequence** (`tools/wasm/Sources/PlantWasm/Walk.swift`), the same on every reload. The plot service will supply real plantings and their lineage instead.
+- **Differences from the app:** no hedge or plant shadows, no albedo atlas on the turf, a flat slab rather than the bulged one, and no night.
+- **Not started:** the plot service, the curator tool and the Wild Fields.
 
 ## Files
 - `docs/WEB-GARDENS.md`: the design: ten areas, plots, dressing, the curator tool, the Wild Fields, worn paths, build order. Current.
@@ -48,7 +51,7 @@ The website's shared garden should look and work like the app's Garden screen: f
 - **SeedCore arithmetic that must wrap uses `Int64`/`UInt64`, never `Int`.** `Int` is 32 bits in wasm; `speckle` was the one case.
 
 ## Next step
-Confirm the new `SeedCore (WebAssembly)` CI job goes green on its first run. Then draw one Long Walk plot in the browser: its placed plants, from `LongWalk`, on the app's floating ground.
+The plot service: store each Long Walk planting with its lineage, append-only, and serve a plot's plantings to the page in place of the demonstration sequence. Worth deciding first whether the page grows plants on arrival or the service keeps traits (it must, per `LongWalk.Traits`, so a slot is never worked out again).
 
 ## Traps
 - **WebAssembly needs the swift.org toolchain, not Xcode's.** Installed: `~/Library/Developer/Toolchains/swift-6.3.3-RELEASE.xctoolchain` and the SDK `swift-6.3.3-RELEASE_wasm`. Use that toolchain's `swift` explicitly. To run the tests in wasm: `swift build --build-tests --swift-sdk swift-6.3.3-RELEASE_wasm`, then `node tools/wasm/run-wasi.mjs <scratch>/debug/SeedCorePackageTests.xctest`, optionally followed by test class names such as `SeedCoreTests.PortableSHA256Tests`. The whole suite takes about 7 minutes.

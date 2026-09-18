@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Long Walk</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; color: rgb(255 255 255 / 0.85);
+    font: 15px/1.4 Georgia, serif; }
+  main { position: fixed; inset: 0; }
+  .pool { position: absolute; inset: 0;
+    background: radial-gradient(ellipse 50% 45% at 50% 55%, rgb(255 255 255 / 0.08), transparent 70%); }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #note { position: absolute; inset-inline: 16px; inset-block-start: 16px; margin: 0;
+    font: 11px/1.5 system-ui, sans-serif; letter-spacing: 0.08em; color: rgb(255 255 255 / 0.5); }
+  nav { position: absolute; inset-inline: 16px; inset-block-end: 16px; display: flex; gap: 8px; justify-content: center; }
+  button { background: transparent; color: inherit; border: 1px solid rgb(255 255 255 / 0.4);
+    border-radius: 6px; padding: 8px 14px; font: 11px/1 system-ui, sans-serif;
+    letter-spacing: 0.14em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<main>
+  <div class="pool"></div>
+  <canvas id="stage" aria-label="One plot of the Long Walk"></canvas>
+  <p id="note">Loading…</p>
+  <nav>
+    <button id="left" aria-label="Turn the plot left">Turn left</button>
+    <button id="right" aria-label="Turn the plot right">Turn right</button>
+  </nav>
+</main>
+<script type="module">
+  import { loadModule } from './plant.js';
+  import { makeWalkStage, plantPlot } from './walk.js';
+
+  const note = document.getElementById('note');
+  const plot = Math.max(0, parseInt(new URLSearchParams(location.search).get('plot') ?? '0', 10) || 0);
+  const stage = makeWalkStage(document.getElementById('stage'));
+  document.getElementById('left').addEventListener('click', () => stage.turnBy(-1));
+  document.getElementById('right').addEventListener('click', () => stage.turnBy(1));
+
+  const e = await loadModule('PlantWasm.wasm');
+  const started = performance.now();
+  const { arrivals, count } = await plantPlot(e, stage, plot, (text) => { note.textContent = text; });
+  const seconds = ((performance.now() - started) / 1000).toFixed(1);
+  note.textContent = `Long Walk, plot ${plot + 1} · ${count} plants from ${arrivals} arrivals · ${seconds} s`;
+</script>
+</body>
+</html>

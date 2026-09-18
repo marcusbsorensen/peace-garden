@@ -4,7 +4,7 @@
 // That is the point of the arrangement: there is one implementation of the
 // plant, and it is the one on the phone.
 
-const ROLES = ['stem', 'leaf', 'petal', 'centre', 'stamen'];
+export const ROLES = ['stem', 'leaf', 'petal', 'centre', 'stamen'];
 
 // The module asks WASI for a clock, some randomness and somewhere to print.
 // Nothing else it imports is ever called while growing a plant, so everything
@@ -45,13 +45,23 @@ function wasiShim(memoryRef) {
   return new Proxy(known, { get: (target, name) => target[name] ?? (() => ENOSYS) });
 }
 
-export async function loadGrower(url) {
+export async function loadModule(url) {
   const memoryRef = {};
   const { instance } = await WebAssembly.instantiateStreaming(fetch(url), {
     wasi_snapshot_preview1: wasiShim(memoryRef),
   });
   memoryRef.memory = instance.exports.memory;
   instance.exports._initialize();
+  return instance.exports;
+}
+
+/// The module's last result, copied out, because the next call reuses it.
+export function takeResult(e, length) {
+  return new Uint8Array(e.memory.buffer, e.pg_result(), length).slice().buffer;
+}
+
+export async function loadGrower(url) {
+  const instance = { exports: await loadModule(url) };
 
   return function grow(seedHex) {
     const e = instance.exports;
@@ -69,7 +79,7 @@ export async function loadGrower(url) {
   };
 }
 
-function decode(buffer) {
+export function decode(buffer) {
   const data = new DataView(buffer);
   let at = 0;
   const u32 = () => { const v = data.getUint32(at, true); at += 4; return v; };
@@ -225,7 +235,7 @@ export function makeStage(canvas) {
   return { show };
 }
 
-function attribute(gl, location, values, size) {
+export function attribute(gl, location, values, size) {
   const buffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   gl.bufferData(gl.ARRAY_BUFFER, values, gl.STATIC_DRAW);
@@ -239,7 +249,7 @@ function release(gl, plant) {
   Object.values(plant.textures).forEach((t) => gl.deleteTexture(t));
 }
 
-function link(gl, vertexSource, fragmentSource) {
+export function link(gl, vertexSource, fragmentSource) {
   const program = gl.createProgram();
   for (const [type, source] of [[gl.VERTEX_SHADER, vertexSource], [gl.FRAGMENT_SHADER, fragmentSource]]) {
     const shader = gl.createShader(type);
@@ -267,11 +277,11 @@ function lookAt(eye, target) {
   return [x[0], y[0], z[0], 0, x[1], y[1], z[1], 0, x[2], y[2], z[2], 0, -dot(x), -dot(y), -dot(z), 1];
 }
 
-function multiply(a, b) {
+export function multiply(a, b) {
   const out = new Array(16).fill(0);
   for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) for (let k = 0; k < 4; k++) out[c * 4 + r] += a[k * 4 + r] * b[c * 4 + k];
   return out;
 }
 
 function cross(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
-function normalise(v) { const l = Math.hypot(...v); return v.map((x) => x / l); }
+export function normalise(v) { const l = Math.hypot(...v); return v.map((x) => x / l); }
