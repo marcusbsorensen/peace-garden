@@ -48,7 +48,7 @@ actor GardenTerrain {
         let key = "\(world)-\(Int(size.width))x\(Int(size.height))"
             + "-\(Int(plotSide * 100))-\(Int(view.pointsPerMetre * 10))-\(detail)"
             + "-\(Int(light.strength * 1000))-\(Int(light.direction.x * 100))"
-            + "-\(Int(light.direction.z * 100))"
+            + "-\(Int(light.direction.z * 100))-t\(((view.turn % 4) + 4) % 4)"
         if let held = cache[key] { return held }
 
         let format = UIGraphicsImageRendererFormat.preferred()
@@ -102,11 +102,25 @@ actor GardenTerrain {
         drawCut(world: world, plotSide: plotSide, view: view, detail: mesh,
                 light: light, into: context)
 
-        // Far to near along the anti-diagonals, which is `x + z` ascending and
-        // the same order the plants are drawn in.
-        for diagonal in 0...(2 * (mesh - 1)) {
-            for i in max(0, diagonal - (mesh - 1))...min(mesh - 1, diagonal) {
-                let j = diagonal - i
+        // Far to near along the anti-diagonals **of the view**, not of the plot.
+        // Near is a fact about the screen: once the plot has been turned, the
+        // cell that was at the back is at the front, and painting in the plot's
+        // own order would lay the far hillside over the near one. `(u, v)` walk
+        // the view's grid; `cell` says which of the plot's cells stands there.
+        let last = mesh - 1
+        let quarter = ((view.turn % 4) + 4) % 4
+        func cell(_ u: Int, _ v: Int) -> (i: Int, j: Int) {
+            switch quarter {
+            case 1: return (last - v, u)
+            case 2: return (last - u, last - v)
+            case 3: return (v, last - u)
+            default: return (u, v)
+            }
+        }
+
+        for diagonal in 0...(2 * last) {
+            for u in max(0, diagonal - last)...min(last, diagonal) {
+                let (i, j) = cell(u, diagonal - u)
                 let p00 = corner(i, j), p10 = corner(i + 1, j)
                 let p01 = corner(i, j + 1), p11 = corner(i + 1, j + 1)
 
@@ -229,13 +243,21 @@ actor GardenTerrain {
         let columns = 44
         let bands = 11
 
+        // All four sides of the plot, and only the two that face the viewer at
+        // this turn are drawn. Which two they are is decided by the view, the
+        // same way the draw order is.
         let faces: [(normal: SIMD3<Double>, sideways: SIMD3<Double>,
                      along: (Double) -> (x: Double, z: Double))] = [
             (SIMD3(0, 0, 1), SIMD3(1, 0, 0), { t in (x: -half + t * plotSide, z: half) }),
-            (SIMD3(1, 0, 0), SIMD3(0, 0, -1), { t in (x: half, z: half - t * plotSide) })
+            (SIMD3(1, 0, 0), SIMD3(0, 0, -1), { t in (x: half, z: half - t * plotSide) }),
+            (SIMD3(0, 0, -1), SIMD3(-1, 0, 0), { t in (x: half - t * plotSide, z: -half) }),
+            (SIMD3(-1, 0, 0), SIMD3(0, 0, 1), { t in (x: -half, z: -half + t * plotSide) })
         ]
 
         for (face, side) in faces.enumerated() {
+            let (a, b) = view.facing(x: side.normal.x, z: side.normal.z)
+            guard a + b > 0 else { continue }
+
             // The rim, and how far under it the ground goes at each column.
             var top = [Double](repeating: 0, count: columns + 1)
             var floor = [Double](repeating: 0, count: columns + 1)

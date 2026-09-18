@@ -360,6 +360,20 @@ final class GardenModel {
         persist()
     }
 
+    /// Put a plant somewhere by hand, in the bed being looked at.
+    ///
+    /// Only what somebody has moved is kept — the rest of the garden stays where
+    /// its template puts it, so a plant grown tomorrow still appears without
+    /// anybody having to place it. A hand placement is an opinion about one
+    /// arrangement, not about the plant.
+    func place(_ plant: PlantRecord, at spot: Spot) {
+        if garden.beds?.isEmpty ?? true {
+            garden.beds = [Bed(name: "", template: .thematic)]
+        }
+        garden.beds?[0].place(plant, at: spot)
+        persist()
+    }
+
     private func persist() {
         do {
             try store.save(garden)

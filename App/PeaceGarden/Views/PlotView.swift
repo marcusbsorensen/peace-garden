@@ -1,13 +1,17 @@
 import SeedCore
 import SwiftUI
 
-/// The garden as a place: a floating square plot in isometric, with the plants
-/// standing on it where the arrangement puts them.
+/// The garden as a place: a floating square plot in isometric, standing on a
+/// chosen ground, lit by the sun and moon going round it, with the plants
+/// standing where the arrangement puts them — or where somebody has put them.
 ///
-/// This is the first of the two steps `docs/ARRANGING.md` sets out — the plot
-/// and the plants at the right scale. **No terrain and no orbit yet**: the
-/// ground is flat and the light is noon held still. Gestures come after this,
-/// not with it.
+/// **Four gestures, and one conflict between them.** Pinch zooms, two fingers
+/// turn the plot a quarter at a time, one finger pans — and one finger is also
+/// what moves a plant. So a plant is lifted by a long press before it can be
+/// dragged, with a tap of feedback to say it is in hand. Every plant here is a
+/// meeting with somebody, and nudging one by accident while trying to look at it
+/// is a worse failure than waiting a third of a second to pick it up.
+/// `docs/ARRANGING.md` §*One finger cannot do two things*.
 struct PlotView: View {
     @Environment(GardenModel.self) private var model
     @Environment(\.dismiss) private var dismiss
@@ -15,6 +19,33 @@ struct PlotView: View {
     @State private var selected: PlantRecord?
 
     @AppStorage(Chrome.daylightKey) private var daylightRaw = GardenDaylight.byTheClock.rawValue
+
+    // MARK: Looking at it
+
+    /// Quarter-turns of the plot. Stepped rather than free, because isometric
+    /// has four natural views and between them the ground's own axes stop being
+    /// aligned to the screen, which is what makes it legible.
+    @State private var turn = 0
+    /// How far the plot is turned while two fingers are still on it. Shown as a
+    /// slight lean so the gesture is felt, then snapped to a quarter on release.
+    @State private var turning: Angle = .zero
+
+    @State private var zoom: CGFloat = 1
+    @GestureState private var pinching: CGFloat = 1
+    @State private var pan: CGSize = .zero
+    @GestureState private var panning: CGSize = .zero
+
+    // MARK: Moving a plant
+
+    /// A plant in hand: which one, and where its foot is being held, in the
+    /// plot's own unzoomed coordinates.
+    private struct Held: Equatable {
+        let id: UUID
+        var foot: CGPoint
+    }
+    @State private var held: Held?
+    /// Counted rather than flagged, so every lift is its own tap of feedback.
+    @State private var lifts = 0
 
     private var visits: GardenVisits { .shared }
 
@@ -52,25 +83,37 @@ struct PlotView: View {
                 // the cut below the near one, so the camera has to leave room
                 // for the ground as well as for what stands on it.
                 let relief = GardenWorlds.shared.relief(world: world, plotSide: side)
-                let view = Isometric.fitting(
+                var view = Isometric.fitting(
                     plotSide: side,
                     in: proxy.size,
                     headroom: GardenSprites.tallestExpected + relief.high,
                     soilDepth: GardenGround.rimDepth - relief.low
                 )
+                let _ = (view.turn = turn)
 
                 ZStack(alignment: .topLeading) {
                     GardenSky(light: light, date: model.now, view: view)
 
-                    plot(world: world, side: side, in: view, size: proxy.size, light: light)
+                    ZStack(alignment: .topLeading) {
+                        plot(world: world, side: side, in: view, size: proxy.size, light: light)
 
-                    // Far to near, and nothing else decides what covers what.
-                    ForEach(standing(plotSide: side)) { standing in
-                        pool(for: standing, world: world, side: side, in: view)
-                        plant(standing, world: world, side: side, in: view, light: light)
+                        // Far to near, and nothing else decides what covers
+                        // what — except a plant in hand, which is above
+                        // everything until it is put down.
+                        ForEach(standing(plotSide: side, in: view)) { standing in
+                            pool(for: standing, world: world, side: side, in: view)
+                            plant(standing, world: world, side: side, in: view, light: light)
+                        }
                     }
+                    .coordinateSpace(name: "plot")
+                    .scaleEffect(zoom * pinching)
+                    .offset(x: pan.width + panning.width, y: pan.height + panning.height)
+                    .rotationEffect(turning)
                 }
                 .frame(width: proxy.size.width, height: proxy.size.height)
+                .contentShape(Rectangle())
+                .gesture(looking(in: proxy.size))
+                .simultaneousGesture(panGesture(in: proxy.size))
             }
             .ignoresSafeArea()
 
@@ -82,12 +125,15 @@ struct PlotView: View {
             }
             .padding(.horizontal, 26)
             .frame(maxWidth: .infinity, alignment: .leading)
+            .allowsHitTesting(true)
         }
         .overlay(alignment: .topTrailing) {
             QuietButton(title: "Close") { dismiss() }
                 .padding(.trailing, 12)
                 .padding(.top, 12)
         }
+        .sensoryFeedback(.impact(weight: .medium), trigger: lifts)
+        .sensoryFeedback(.selection, trigger: turn)
         .fullScreenCover(item: $selected) { record in
             PlantDetailView(record: record).environment(model)
         }
@@ -95,6 +141,66 @@ struct PlotView: View {
             visits.forget(absentFrom: model.hybrids)
             visits.firstSight(of: model.hybrids, now: model.now)
         }
+    }
+
+    // MARK: The gestures
+
+    /// Pinch and turn, together, because two fingers do both at once and people
+    /// expect them to.
+    private func looking(in size: CGSize) -> some Gesture {
+        let pinch = MagnifyGesture()
+            .updating($pinching) { value, state, _ in
+                state = min(max(value.magnification, 1 / zoom), 3 / zoom)
+            }
+            .onEnded { value in
+                withAnimation(.easeOut(duration: 0.25)) {
+                    zoom = min(max(zoom * value.magnification, 1), 3)
+                    if zoom <= 1.001 { pan = .zero }
+                    pan = clamped(pan, in: size)
+                }
+            }
+
+        // A lean while the fingers are down, capped so it reads as intent and
+        // not as the plot spinning; a quarter-turn once they lift, if the lean
+        // went far enough to mean it. Clockwise on the glass turns the plot
+        // clockwise as it is seen, which is a negative turn about `+y`.
+        let rotate = RotateGesture()
+            .onChanged { value in
+                let degrees = min(max(value.rotation.degrees, -24), 24)
+                turning = .degrees(degrees)
+            }
+            .onEnded { value in
+                let degrees = value.rotation.degrees
+                withAnimation(.easeOut(duration: 0.2)) { turning = .zero }
+                if degrees > 28 { turn -= 1 } else if degrees < -28 { turn += 1 }
+            }
+
+        return pinch.simultaneously(with: rotate)
+    }
+
+    /// One finger on the ground moves the view, once there is somewhere to move
+    /// it to. At the fitted size the whole plot is already on screen, so there
+    /// is nothing to pan and a stray swipe does nothing.
+    private func panGesture(in size: CGSize) -> some Gesture {
+        DragGesture(minimumDistance: 12)
+            .updating($panning) { value, state, _ in
+                guard zoom > 1.001, held == nil else { return }
+                state = value.translation
+            }
+            .onEnded { value in
+                guard zoom > 1.001, held == nil else { return }
+                pan = clamped(CGSize(width: pan.width + value.translation.width,
+                                     height: pan.height + value.translation.height),
+                              in: size)
+            }
+    }
+
+    /// Far enough to reach any corner of the plot at this zoom, and no further.
+    private func clamped(_ offset: CGSize, in size: CGSize) -> CGSize {
+        let reachX = size.width * (zoom - 1) / 2
+        let reachY = size.height * (zoom - 1) / 2
+        return CGSize(width: min(max(offset.width, -reachX), reachX),
+                      height: min(max(offset.height, -reachY), reachY))
     }
 
     // MARK: Where everything stands
@@ -105,7 +211,7 @@ struct PlotView: View {
     /// way to the screen and stored nowhere. Only the hand placements are kept,
     /// and they are sparse: a plant grown tomorrow appears where the template
     /// says without anybody having placed it.
-    private func standing(plotSide: Double) -> [Standing] {
+    private func standing(plotSide: Double, in view: Isometric) -> [Standing] {
         let plants = model.hybrids
         let bed = model.garden.arrangements.first
         let laidOut = Arrangement.spots(
@@ -125,16 +231,16 @@ struct PlotView: View {
                 announces: visits.announces(record, growth: growth)
             )
         }
-        .sorted { Isometric.depth($0.spot) < Isometric.depth($1.spot) }
+        .sorted { a, b in
+            if a.id == held?.id { return false }
+            if b.id == held?.id { return true }
+            return view.depth(a.spot) < view.depth(b.spot)
+        }
     }
 
     // MARK: The ground
 
     /// The ground, drawn once and kept.
-    ///
-    /// The flat plot underneath is the fallback rather than dead code: if the
-    /// world atlas is missing from the bundle the garden is still a place with
-    /// an edge, instead of fourteen plants standing in the dark.
     private func plot(world: Int, side: Double, in view: Isometric, size: CGSize,
                       light: GardenGround.Light) -> some View {
         GardenGroundView(world: world, plotSide: side, view: view, size: size, light: light)
@@ -154,16 +260,56 @@ struct PlotView: View {
 
     private func plant(_ standing: Standing, world: Int, side: Double,
                        in view: Isometric, light: GardenGround.Light) -> some View {
-        GardenPlantSprite(
+        let resting = view.point(standing.spot,
+                                 y: standsAt(standing.spot, world: world, side: side))
+        let inHand = held?.id == standing.id
+
+        return GardenPlantSprite(
             genome: standing.record.genome,
             growth: standing.growth,
-            foot: view.point(standing.spot, y: standsAt(standing.spot, world: world, side: side)),
+            foot: inHand ? (held?.foot ?? resting) : resting,
             pointsPerMetre: view.pointsPerMetre,
             light: light,
-            hour: hour
-        ) {
-            visits.seen(standing.record, growth: standing.growth)
-            selected = standing.record
+            hour: hour,
+            turn: turn,
+            isHeld: inHand,
+            onTap: {
+                visits.seen(standing.record, growth: standing.growth)
+                selected = standing.record
+            },
+            onLift: {
+                held = Held(id: standing.id, foot: resting)
+                lifts += 1
+            },
+            onMove: { travel in
+                held?.foot = CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
+            },
+            onDrop: { travel in
+                let foot = CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
+                put(standing.record, at: foot, world: world, side: side, in: view)
+            }
+        )
+    }
+
+    /// Where a dropped plant lands, and keeping it on the plot.
+    ///
+    /// Clamped inside the rim rather than refused, because a plant dropped just
+    /// over the edge was meant to be at the edge. The finger is where the *foot*
+    /// is, so the ground has to be found with that place's own height put back —
+    /// the inverse runs twice, and on the steepest wall of the ravine twice is
+    /// enough.
+    private func put(_ plant: PlantRecord, at foot: CGPoint, world: Int, side: Double,
+                     in view: Isometric) {
+        let relief = GardenWorlds.shared.relief(world: world, plotSide: side)
+        let found = view.ground(at: foot, height: { spot in
+            standsAt(spot, world: world, side: side)
+        }, between: relief.low, and: relief.high)
+        let edge = side / 2 * 0.96
+        let spot = Spot(x: min(max(found.x, -edge), edge), z: min(max(found.z, -edge), edge))
+
+        withAnimation(.spring(duration: 0.3)) {
+            model.place(plant, at: spot)
+            held = nil
         }
     }
 
@@ -175,7 +321,7 @@ struct PlotView: View {
     @ViewBuilder
     private func pool(for standing: Standing, world: Int, side: Double,
                       in view: Isometric) -> some View {
-        if standing.announces {
+        if standing.announces, held?.id != standing.id {
             let centre = view.point(standing.spot,
                                     y: standsAt(standing.spot, world: world, side: side))
             let axes = view.ellipse(radius: 0.38)
@@ -215,6 +361,7 @@ struct PlotView: View {
                 .foregroundStyle(Chrome.faint)
         }
         .padding(.top, 44)
+        .allowsHitTesting(false)
     }
 
     /// The grounds, picked the way you pick a plant.
@@ -254,6 +401,7 @@ struct PlotView: View {
             .lineSpacing(5)
             .frame(maxWidth: Chrome.readableWidth, alignment: .leading)
             .padding(.top, 20)
+            .allowsHitTesting(false)
     }
 }
 
@@ -269,10 +417,16 @@ private struct GardenPlantSprite: View {
     let pointsPerMetre: Double
     let light: GardenGround.Light
     let hour: Double
+    let turn: Int
+    let isHeld: Bool
     let onTap: () -> Void
+    let onLift: () -> Void
+    let onMove: (CGSize) -> Void
+    let onDrop: (CGSize) -> Void
 
     @State private var before: GardenSprites.Sprite?
     @State private var after: GardenSprites.Sprite?
+    @State private var lifting = false
 
     private var between: (before: Int, after: Int, blend: Double) {
         GardenGround.Light.steps(at: hour)
@@ -289,18 +443,59 @@ private struct GardenPlantSprite: View {
                 // are meshes nobody wants to rebuild at sixty frames a second,
                 // so they are drawn at eight points round the clock; stepping
                 // between them without the fade is what makes the sun jump.
-                picture(before, size: size, opacity: 1)
-                picture(after, size: size, opacity: between.blend)
+                ZStack(alignment: .topLeading) {
+                    picture(before, size: size, opacity: 1)
+                    picture(after, size: size, opacity: between.blend)
+                }
+                .frame(width: size.width, height: size.height)
+                // In hand, the plant rises off the ground a little and its
+                // shadow stays down, which is what says it has been picked up.
+                .scaleEffect(isHeld ? 1.05 : 1, anchor: .bottom)
+                .offset(y: isHeld ? -10 : 0)
+                // **The gestures go on the picture and not outside it.**
+                // `position` makes a view take all the space it is offered, so a
+                // gesture attached after it answers anywhere on screen and the
+                // last plant drawn quietly swallows every touch in the garden.
+                .contentShape(Rectangle())
+                .onTapGesture(perform: onTap)
+                .gesture(lift)
+                .position(x: foot.x, y: foot.y - size.height / 2)
             }
         }
-        .task(id: "\(GardenSprites.key(genome: genome, growth: growth, step: between.before))") {
+        .task(id: GardenSprites.key(genome: genome, growth: growth,
+                                    step: between.before, turn: turn)) {
             before = GardenSprites.shared.sprite(genome: genome, growth: growth,
-                                                 step: between.before)
+                                                 step: between.before, turn: turn)
         }
-        .task(id: "\(GardenSprites.key(genome: genome, growth: growth, step: between.after))") {
+        .task(id: GardenSprites.key(genome: genome, growth: growth,
+                                    step: between.after, turn: turn)) {
             after = GardenSprites.shared.sprite(genome: genome, growth: growth,
-                                                step: between.after)
+                                                step: between.after, turn: turn)
         }
+    }
+
+    /// Long press to lift, then drag.
+    ///
+    /// A third of a second, which is long enough that looking at a plant never
+    /// picks it up and short enough that picking one up does not feel like
+    /// waiting. The drag is measured in the plot's own unzoomed coordinates, so
+    /// a plant follows the finger at any zoom.
+    private var lift: some Gesture {
+        LongPressGesture(minimumDuration: 0.33)
+            .sequenced(before: DragGesture(minimumDistance: 0, coordinateSpace: .named("plot")))
+            .onChanged { value in
+                guard case .second(true, let drag) = value else { return }
+                if !lifting {
+                    lifting = true
+                    onLift()
+                }
+                onMove(drag?.translation ?? .zero)
+            }
+            .onEnded { value in
+                defer { lifting = false }
+                guard case .second(true, let drag) = value else { return }
+                onDrop(drag?.translation ?? .zero)
+            }
     }
 
     @ViewBuilder
@@ -312,17 +507,6 @@ private struct GardenPlantSprite: View {
                 .interpolation(.high)
                 .frame(width: size.width, height: size.height)
                 .opacity(opacity)
-                // **The gesture goes on the picture and not outside it.**
-                // `position` makes a view take all the space it is offered, so a
-                // tap attached after it answers anywhere on screen and the last
-                // plant drawn quietly swallows every tap in the garden —
-                // including the ones meant for the plants under it.
-                .contentShape(Rectangle())
-                .onTapGesture(perform: onTap)
-                // A sprite is anchored at the bottom centre of its frame, which
-                // is where the plant's foot was rendered, so the position is the
-                // foot raised by half the frame.
-                .position(x: foot.x, y: foot.y - size.height / 2)
         }
     }
 
@@ -334,6 +518,9 @@ private struct GardenPlantSprite: View {
     /// the ground — which the projection turns back into a screen offset. So the
     /// whole shadow is one affine transform of the sprite, blackened.
     ///
+    /// The light is in the plot's own axes, so it is turned with the plot before
+    /// the shear is worked out: the sun goes round the plot, not the screen.
+    ///
     /// It goes flat twice a day. At noon and at midnight the body is at the
     /// azimuth where the shadow runs exactly along the screen's horizontal, and
     /// a shadow with no screen height is a line. That is not a fault — it is
@@ -341,9 +528,10 @@ private struct GardenPlantSprite: View {
     /// from reading as a drawn rule.
     @ViewBuilder
     private func shadow(of sprite: GardenSprites.Sprite, size: CGSize) -> some View {
-        let rise = max(0.12, light.direction.y)
-        let across = -(light.direction.x - light.direction.z) * Isometric.cosThirty / rise
-        let down = -(light.direction.x + light.direction.z) * Isometric.sinThirty / rise
+        let seen = light.turned(quarters: turn).direction
+        let rise = max(0.12, seen.y)
+        let across = -(seen.x - seen.z) * Isometric.cosThirty / rise
+        let down = -(seen.x + seen.z) * Isometric.sinThirty / rise
         let height = size.height
 
         Image(uiImage: sprite.image)

@@ -70,7 +70,7 @@ final class PlotTests: XCTestCase {
         let far = Spot(x: -1, z: -1)
         let near = Spot(x: 1, z: 1)
 
-        XCTAssertLessThan(Isometric.depth(far), Isometric.depth(near))
+        XCTAssertLessThan(view.depth(far), view.depth(near))
         XCTAssertLessThan(view.point(far).y, view.point(near).y)
     }
 
@@ -547,5 +547,93 @@ final class PlotTests: XCTestCase {
 
         XCTAssertEqual(simd_length(GardenGround.Light.at(hour: 12).galaxy), 0, accuracy: 1e-9)
         XCTAssertGreaterThan(simd_length(GardenGround.Light.at(hour: 18).galaxy), 0.4)
+    }
+
+    // MARK: - Gestures
+
+    /// Putting a plant down under a finger is the inverse of drawing it, at every
+    /// quarter the plot can be turned to. A turn that the forward projection
+    /// knows and the inverse does not would drop every plant in the mirror image
+    /// of where it was put — and on the first turn only, which is the one nobody
+    /// tests.
+    func testAPlaceSurvivesBeingDrawnAndReadBackAtEveryTurn() {
+        for turn in 0..<4 {
+            var turned = view
+            turned.turn = turn
+            for spot in [Spot(x: 1.2, z: -0.4), Spot(x: -2.1, z: 2.3), Spot(x: 0, z: 0)] {
+                let back = turned.ground(at: turned.point(spot))
+                XCTAssertEqual(back.x, spot.x, accuracy: 1e-9, "turn \(turn)")
+                XCTAssertEqual(back.z, spot.z, accuracy: 1e-9, "turn \(turn)")
+            }
+        }
+    }
+
+    /// **The ground and the plants have to be turned the same way.** The plot is
+    /// projected through `Isometric.facing`; a plant and its light are rendered
+    /// through `Light.turned`. If those two disagree about which way is a
+    /// quarter-turn, every plant on a turned plot is lit and faced as if the plot
+    /// had gone the other way — plausible, and wrong.
+    func testThePlotAndItsPlantsTurnTheSameWay() {
+        let direction = GardenGround.Light.at(hour: 9).direction
+        for turn in 0..<4 {
+            var turned = view
+            turned.turn = turn
+            let plot = turned.facing(x: direction.x, z: direction.z)
+            let plant = GardenGround.Light.at(hour: 9).turned(quarters: turn).direction
+            XCTAssertEqual(plot.x, plant.x, accuracy: 1e-9, "turn \(turn)")
+            XCTAssertEqual(plot.z, plant.z, accuracy: 1e-9, "turn \(turn)")
+        }
+    }
+
+    /// Near is a fact about the screen. Once the plot is turned half way round,
+    /// what was at the back is at the front.
+    func testWhatIsNearTurnsWithThePlot() {
+        let back = Spot(x: -2, z: -2), front = Spot(x: 2, z: 2)
+        var turned = view
+        XCTAssertLessThan(turned.depth(back), turned.depth(front))
+        turned.turn = 2
+        XCTAssertGreaterThan(turned.depth(back), turned.depth(front))
+    }
+
+    /// **Finding the place needs the height, and the height needs the place** —
+    /// and on a steep peak there are two places under one point of the screen,
+    /// the face you can see and one behind it. Two passes of a fixed-point search
+    /// dropped a plant eight centimetres from the finger on the alpine world, and
+    /// more passes did not help, because it had found the hidden one.
+    ///
+    /// Held three ways: what is found draws exactly under the finger; it is never
+    /// behind the place that was aimed at, since behind is out of sight; and where
+    /// the place aimed at is the visible one, it is found to within a centimetre.
+    func testAPlantDroppedOnAHillLandsOnTheGroundYouCanSee() throws {
+        let worlds = GardenWorlds.shared
+        try XCTSkipUnless(worlds.isLoaded, "the world atlas is not in this bundle")
+
+        let side = GardenWorlds.drawnForSide
+        let relief = worlds.relief(world: 2, plotSide: side)
+        func height(_ spot: Spot) -> Double {
+            worlds.height(world: 2, x: spot.x, z: spot.z, plotSide: side)
+        }
+
+        var landedOnTheSpot = 0
+        for x in stride(from: -2.2, through: 2.2, by: 0.55) {
+            for z in stride(from: -2.2, through: 2.2, by: 0.55) {
+                let spot = Spot(x: x, z: z)
+                let finger = view.point(spot, y: height(spot))
+                let found = view.ground(at: finger, height: height,
+                                        between: relief.low, and: relief.high)
+
+                let drawn = view.point(found, y: height(found))
+                XCTAssertLessThan(hypot(drawn.x - finger.x, drawn.y - finger.y), 0.5,
+                                  "what was found is not under the finger")
+                XCTAssertGreaterThanOrEqual(view.depth(found), view.depth(spot) - 1e-4,
+                                            "it found a place hidden behind the one aimed at")
+
+                if hypot(found.x - spot.x, found.z - spot.z) < 0.01 { landedOnTheSpot += 1 }
+            }
+        }
+
+        // Most of the plot is not hidden behind anything, so most drops land on
+        // the spot exactly. The rest landed on the face in front of it.
+        XCTAssertGreaterThan(landedOnTheSpot, 60)
     }
 }

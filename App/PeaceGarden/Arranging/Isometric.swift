@@ -28,6 +28,42 @@ struct Isometric: Equatable {
     /// Where the middle of the plot's surface — `(0, 0, 0)` — lands on screen.
     var centre: CGPoint
 
+    /// Quarter-turns of the plot's own axes, as the person has turned it.
+    ///
+    /// **Ninety-degree steps, because isometric has four natural views** and
+    /// stepping between them keeps the ground's own axes aligned to the screen,
+    /// which is the property that makes an isometric plot legible at all. It
+    /// also answers the ravine, which has a side you cannot see from any one
+    /// view.
+    ///
+    /// The rotation is the same one `GardenSprites` turns a plant and its light
+    /// by, and `PlotTests` holds the two to each other: a plant rendered for a
+    /// turn has to be the plant you would see standing on a plot at that turn.
+    var turn: Int = 0
+
+    private var quarter: Int { ((turn % 4) + 4) % 4 }
+
+    /// The plot's axes as they face the screen at this turn. The same matrix as
+    /// a rotation about `+y` by `turn × 90°`.
+    func facing(x: Double, z: Double) -> (x: Double, z: Double) {
+        switch quarter {
+        case 1: return (z, -x)
+        case 2: return (-x, -z)
+        case 3: return (-z, x)
+        default: return (x, z)
+        }
+    }
+
+    /// And back again.
+    func unfacing(x: Double, z: Double) -> (x: Double, z: Double) {
+        switch quarter {
+        case 1: return (-z, x)
+        case 2: return (-x, -z)
+        case 3: return (z, -x)
+        default: return (x, z)
+        }
+    }
+
     /// The ground axes leave the origin thirty degrees either side of the
     /// horizontal, which is what stands the plot's corners at the compass
     /// points of a diamond and keeps its own axes legible.
@@ -41,9 +77,10 @@ struct Isometric: Equatable {
     /// plant nearer the viewer stands lower on the screen, which is also why
     /// `depth` sorts on the same sum.
     func point(x: Double, y: Double = 0, z: Double) -> CGPoint {
-        CGPoint(
-            x: centre.x + (x - z) * Self.cosThirty * pointsPerMetre,
-            y: centre.y + ((x + z) * Self.sinThirty - y) * pointsPerMetre
+        let (a, b) = facing(x: x, z: z)
+        return CGPoint(
+            x: centre.x + (a - b) * Self.cosThirty * pointsPerMetre,
+            y: centre.y + ((a + b) * Self.sinThirty - y) * pointsPerMetre
         )
     }
 
@@ -60,12 +97,64 @@ struct Isometric: Equatable {
     func ground(at point: CGPoint) -> Spot {
         let across = (point.x - centre.x) / (Self.cosThirty * pointsPerMetre)
         let down = (point.y - centre.y) / (Self.sinThirty * pointsPerMetre)
-        return Spot(x: (down + across) / 2, z: (down - across) / 2)
+        let (x, z) = unfacing(x: (down + across) / 2, z: (down - across) / 2)
+        return Spot(x: x, z: z)
+    }
+
+    /// Where on the ground a finger is, when the ground is not flat.
+    ///
+    /// **Finding the place needs the height, and the height needs the place.**
+    /// A foot standing `h` metres up is drawn `h` metres higher on the screen, so
+    /// every height has its own answer: the ground under the finger at height
+    /// `h` is the flat answer for a point `h` metres lower down the screen.
+    ///
+    /// `docs/ARRANGING.md` said the inverse runs twice and that twice is enough.
+    /// **Twice is not enough on a mountain, and no number of times is.** Measured
+    /// on the alpine world, it dropped a plant eight centimetres from the finger,
+    /// and iterating further did not move it — because on a steep peak there are
+    /// two places on the ground under one point of the screen, the face you can
+    /// see and one behind it, and a fixed-point search is as happy with either.
+    ///
+    /// So this marches the finger's own sight line in from the viewer's side —
+    /// from above the highest the ground goes, downward, which on this screen is
+    /// from near to far — and takes the first place it meets the ground. That is
+    /// the place you can see, which is the only place a finger can be on.
+    func ground(at point: CGPoint, height: (Spot) -> Double,
+                between low: Double, and high: Double) -> Spot {
+        func under(_ y: Double) -> Spot {
+            ground(at: CGPoint(x: point.x, y: point.y + y * pointsPerMetre))
+        }
+
+        let top = high + 0.05, bottom = low - 0.05
+        let steps = 240
+        var previous = top
+
+        for step in 1...steps {
+            let y = top - (top - bottom) * Double(step) / Double(steps)
+            guard height(under(y)) >= y else {
+                previous = y
+                continue
+            }
+
+            // Somewhere between the last height above the ground and this one
+            // below it; a few halvings is finer than any finger.
+            var above = previous, below = y
+            for _ in 0..<12 {
+                let middle = (above + below) / 2
+                if height(under(middle)) >= middle { below = middle } else { above = middle }
+            }
+            return under((above + below) / 2)
+        }
+        return ground(at: point)
     }
 
     /// Far to near. Everything on the plot is drawn in this order and nothing
-    /// else decides what covers what.
-    static func depth(_ spot: Spot) -> Double { spot.x + spot.z }
+    /// else decides what covers what. It turns with the plot, because *near* is
+    /// a fact about the screen rather than about the ground.
+    func depth(_ spot: Spot) -> Double {
+        let (a, b) = facing(x: spot.x, z: spot.z)
+        return a + b
+    }
 
     /// A circle of `radius` metres lying on the ground, as the ellipse it draws.
     ///

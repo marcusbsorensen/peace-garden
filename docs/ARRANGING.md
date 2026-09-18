@@ -302,8 +302,17 @@ valley hovered. The shape answered it.
 
 The one place it is not free: finding where on the plot a finger is requires
 knowing the ground height there, and the ground height requires knowing where on
-the plot you are. The inverse runs twice — once at ground zero, once with that
-place's own height subtracted — and that is enough.
+the plot you are. ~~The inverse runs twice — once at ground zero, once with that
+place's own height subtracted — and that is enough.~~
+
+**It is not enough, and no number of passes is.** Measured on the alpine world
+on 18 September, two passes dropped a plant eight centimetres from the finger,
+and iterating further did not move it — because on a steep peak there are two
+places on the ground under one point of the screen, the face you can see and one
+behind it, and a fixed-point search is as content with either. What a finger is
+on is the first place its sight line meets the ground coming in from the
+viewer's side, so that is what `Isometric.ground(at:height:between:and:)` does:
+it marches down from above the highest the world goes and takes the first hit.
 
 ### The plot grows outward and a plant never moves
 
@@ -572,6 +581,13 @@ only real conflict in the design.
 | **Drag on a plant moves it, drag on the ground pans** | Immediate, no learning. Ambiguous wherever plants are close, and it makes an accidental move one slip away. |
 | **Long press to lift, then drag** | The idiom for rearranging on iOS, with a haptic to say the plant is in hand. Costs a beat before every move. |
 
+**Built 18 September**, and driven on a simulator with injected touches: a long
+press of a third of a second lifts a plant with a tap of feedback, it rises off
+the ground while its shadow stays down, and it lands where the finger lets go.
+Two fingers turn the plot a quarter at a time — a slight lean while they are
+down, a snap on release, clockwise on the glass turning it clockwise as seen.
+Pinch goes to 3×, and one finger pans once there is somewhere to pan to.
+
 **Long press, and the beat is worth paying.** Every plant in this garden is a
 meeting with somebody. Nudging one by accident while trying to look at it is a
 worse failure than waiting a third of a second to pick one up, and the haptic
@@ -716,7 +732,10 @@ Two things it turns on, both in `GardenVisits`:
   with distance from what cast it, which a single blur cannot say.
 - **What zoom is for.** Close enough to read one plant's binomial is a different
   screen from far enough to see the whole plot, and if zoom reaches the first it
-  overlaps what `PlantDetailView` already does.
+  overlaps what `PlantDetailView` already does. Built 18 September as far as 3×
+  and no further, which is close enough to see a plant's leaves and stops well
+  short of a binomial — so the question is still open, and the cap is the
+  answer until it is settled. At 3× the ground's cells begin to show.
 - **What the growth rule actually is.** A little more world per meeting, at a
   rate that keeps a tall plant at roughly half the radius. Whether that is
   smooth or in steps, and whether a garden of two hundred plants is still one
