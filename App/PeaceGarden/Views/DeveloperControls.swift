@@ -84,6 +84,18 @@ final class Developer {
     /// panel impossible to close.
     var openOnLaunch: Screen?
 
+    /// A plot of a fixed size, in metres, whatever the garden holds.
+    ///
+    ///     xcrun simctl launch <device> app.peacegarden -pgPlotSide 5.2
+    ///
+    /// For looking at a web garden's plot in the app's own renderer: a web plot
+    /// is 5.2 m however many plants it has, and a garden's grows with them.
+    /// `docs/WEB-GARDENS.md`.
+    let fixedPlotSide: Double? = {
+        let side = UserDefaults.standard.double(forKey: "pgPlotSide")
+        return side > 0 ? side : nil
+    }()
+
     private init() {
         clockShift = UserDefaults.standard.double(forKey: Self.shiftKey)
         showsTileGrid = UserDefaults.standard.bool(forKey: Self.gridKey)

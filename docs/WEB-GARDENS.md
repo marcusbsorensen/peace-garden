@@ -83,7 +83,7 @@ There is no season to lay out by. A plant's bloom follows the day
 flowering through the summer has nothing to act on.
 
 **Best practice is mostly a rule about height and repetition.** Tall at the back,
-low at the edge, and the same plant repeated so the eye travels: every border
+low at the edge, and the same colour repeated so the eye travels: every border
 book says it and every template below is a version of it. A plant that fits no
 open slot in the newest plot takes the nearest slot that fits in the next one,
 not a wrong slot in this one. A gap in a bed is a gap a later plant will fill;
@@ -103,7 +103,7 @@ a border with a knot garden's name.
 | **The Home Ground** | ground | The kitchen garden: rectangular beds 1.2 m wide, so no soil is ever stood on, paths between, crops in rows across each bed. | Flat, dark soil | Bed edging, paths |
 | **The Seedbed** | beginnings | Straight parallel drills, a label at the end of each row. One plant repeated along a drill, not mixed. | Fine tilth, flat | Row labels |
 | **The Coppice** | renewal | Stools in blocks, each block cut in its year of the rotation, so every stage stands at once, from cut stumps to full poles. Woodland flowers in the light between. | Woodland floor, gentle relief | Stools, the cut and the uncut |
-| **The Long Walk** | travel | A double border either side of a path: tall at the back, graded to the front, drifts of three and five, the same plant repeated down its length for rhythm. The walk goes on; plots open end to end. | Level, a mown path | The path, a hedge behind each border |
+| **The Long Walk** | travel | A double border either side of a path: tall at the back, graded to the front, drifts of three and five, the same colour repeated down its length for rhythm. The walk goes on; plots open end to end. | Level, a mown path | The path, a hedge behind each border |
 | **The Quiet Garden** | peace | An enclosure: hedged, one tree, one bench, and more lawn than planting. **The fewest plants per plot of any area, by rule.** Room is what it is for. | Lawn | A hedge round, a bench |
 | **The Orchard** | kinship | Trees on a quincunx, meadow beneath, plants grouped round each tree as its guild. The shrubs and flowers under a tree are chosen to go with it. | Meadow | Tree positions |
 | **The Knot Garden** | pattern | Low clipped hedging in an interlaced geometric pattern, each compartment filled with one colour. Symmetrical: a plant's slot has a mirror, and a compartment fills with one colour family. | Flat, gravel | The hedging pattern |
@@ -133,6 +133,38 @@ hedge drawn as a green rectangle is clip art beside plants grown from a genome.
 So they are modelled and lit the way the figures are, by the garden's own light
 at its hour, and drawn once per turn of the plot. They are also **unnamed**, as
 the worlds and the lights are: a named structure is forty-two translations.
+
+## The Long Walk, built
+
+The rule is in `SeedCore` (`WebGardens/LongWalk.swift`), where the plot service,
+the website and the app can all read it. Built 18 September, with
+`LongWalkTests`.
+
+- **The plot:** a 1.2 m mown path down the middle, a border each side, a hedge
+  from 2.3 m out. Three tiers each side, with five front slots, four middle and
+  three back, so 24 plants a plot. The tiers have different spacings, so their
+  rows stagger by themselves.
+- **Tiers from measurement.** Across 300 crossings of 300 different pairs of
+  parents, grown heights run 0.21 to 2.22 m, with thirds at 0.85 and 1.19 m. The
+  cuts are at 0.93 m and 1.28 m instead, to match the number of slots in each
+  tier. Crossings of one person with forty others ran taller and were half
+  bells, so a sample from one gardener is the wrong sample.
+- **The rule is that nothing stands in front of something shorter**, not
+  "tall ones in the back row". A plant goes to its own tier in the oldest plot
+  with room, or else the tier beside it where the heights around it still
+  order, or else a new plot. **The test found why.** Filling by row alone, a
+  few more tall plants than back slots left eleven of fifteen plots holding
+  six to nine plants. Now every plot but the newest three is full.
+- **Drifts of colour, capped at five**, then the same colour starts again
+  further down the walk. Every plant is unique, so a border here cannot repeat
+  a plant; it repeats a colour.
+- **A developer preview**: `-pgPlotSide 5.2` fixes the app's plot at a web
+  plot's size, so a Long Walk plot can be looked at in the app's own renderer
+  before the website can draw one.
+
+**What looking found:** without the path and the hedges, a Long Walk plot is a
+scatter of plants on grass. The rule is right and invisible. The structures are
+not dressing; they are how a visitor can see the rule.
 
 ## The dressing: what we place by hand
 
@@ -186,6 +218,38 @@ The opposite of the gardens, and it should look like it.
 - **A plant stands where it stands.** Collisions are allowed and drawn, as they
   were in the old garden: two released plants in one place are two plants
   growing together, which is a thing a field does.
+
+### Paths that visitors wear
+
+Proposed by Marcus, 18 September: **paths through the Wild Fields grow more
+marked the more visitors take a route, and fade as fewer do**, the way a path
+through a wild place stays only while people keep walking it and is otherwise
+taken back.
+
+It is the right shape for the wild. Nobody curates it, and yet it is not
+featureless: its only paths are made by everybody walking, and nobody made any
+one of them. A desire line is the one thing in a landscape that is authored by a
+crowd.
+
+- **Wear, per ground cell, that decays.** Each cell crossed adds a little wear;
+  every cell loses a fixed fraction a day. A half-life of about a month means a
+  route walked all summer is a clear path in autumn, and one abandoned in autumn
+  is grass again by spring. Drawn as the ground's own colour trodden paler and
+  flatter, never as a line on top: a path is where the grass gave up, not
+  something laid.
+- **Walking is moving, not looking.** Wear comes from the view crossing ground
+  while a visitor pans, not from where it rests. Somebody standing to look at a
+  plant wears nothing, which is also true of grass.
+- **Capped per cell per day**, so one visitor panning back and forth, or a
+  script, cannot carve a road. A path is many people, or it is nothing.
+
+**This is the first thing on the site that learns where people go**, and
+`WEBSITE.md` says the site has no analytics. The wear can be made to hold
+nothing about anyone: the browser sends only which cells were crossed, in
+batches, with no cookie, no identifier and no address logged, and the service
+keeps a number per cell and nothing else. That is aggregate footfall and not
+tracking. **Accepted by Marcus, 18 September, on exactly those terms**: counts
+per cell and nothing else, and the privacy page says so before it runs.
 
 ### What has to be fixed before it opens
 

@@ -361,15 +361,7 @@ enum PlantSceneBuilder {
     /// Pinned to the hour this genome opens widest, so it is the plant at its
     /// best rather than whatever time it happens to be.
     static func bloomPreview(for genome: Genome) -> GrowthModel.State {
-        let birth = Date(timeIntervalSince1970: 0)
-        let atBloom = birth.addingTimeInterval(
-            (genome.tempo.daysToBloom + genome.tempo.bloomDays * 0.45) * 86_400
-        )
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = TimeZone(identifier: "UTC") ?? .current
-        let hour = genome.tempo.opensByDay ? 13 : 1
-        let pinned = calendar.date(bySettingHour: hour, minute: 0, second: 0, of: atBloom) ?? atBloom
-        return GrowthModel(genome: genome).state(birth: birth, now: pinned, calendar: calendar)
+        Maturity.bloomPreview(for: genome)
     }
 
     /// The space this plant will eventually fill.
@@ -381,8 +373,7 @@ enum PlantSceneBuilder {
     /// will become, a seedling is small in a large space and spends weeks
     /// growing into it, which is the whole of what there is to watch.
     static func matureBounds(for genome: Genome) -> (min: SIMD3<Float>, max: SIMD3<Float>) {
-        let mesh = PlantBuilder(genome: genome).mesh(growth: bloomPreview(for: genome))
-        return (mesh.minBounds, mesh.maxBounds)
+        Maturity.bounds(for: genome)
     }
 
     /// Frames the plant so it fills the same proportion of the view at every

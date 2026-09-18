@@ -83,13 +83,22 @@ struct PlotView: View {
         return (GardenDaylight(rawValue: daylightRaw) ?? .byTheClock).hour(when: actual)
     }
 
+    /// The plot's side: the garden's own, unless a developer has fixed it to
+    /// look at a web plot.
+    private var plotSide: Double {
+        #if DEBUG
+        if let fixed = Developer.shared.fixedPlotSide { return fixed }
+        #endif
+        return model.garden.plotSide
+    }
+
     var body: some View {
         ZStack {
             Chrome.ground.ignoresSafeArea()
 
             GeometryReader { proxy in
                 let light = GardenGround.Light.at(hour: hour)
-                let side = model.garden.plotSide
+                let side = plotSide
                 let world = GardenWorlds.shared.resolve(model.garden.arrangements.first?.world)
                 // A hill lifts a plant above the far corner and a ravine hangs
                 // the cut below the near one, so the camera has to leave room
@@ -675,7 +684,7 @@ struct PlotView: View {
                     ForEach(LampKind.allCases, id: \.self) { kind in
                         Button {
                             withAnimation(.spring(duration: 0.3)) {
-                                model.addLamp(kind, at: freshSpot(side: model.garden.plotSide))
+                                model.addLamp(kind, at: freshSpot(side: plotSide))
                             }
                         } label: {
                             // The figures a little below full glow: at full
@@ -701,7 +710,7 @@ struct PlotView: View {
                             model.choose(world: world)
                         } label: {
                             GroundMark(world: world,
-                                       plotSide: model.garden.plotSide,
+                                       plotSide: plotSide,
                                        isChosen: world == chosen)
                         }
                         .buttonStyle(.plain)
