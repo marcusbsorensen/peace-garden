@@ -297,6 +297,7 @@ Locally, with the browser pages beside it:
 `node tools/wasm/send-arrivals.mjs http://localhost:8803 120` to stand in for
 phones, and open `/walk.html?source=service`.
 
-**After the first deploy, check** that `/.api/router.php` answers 403 from
-nginx's dot rule, not 200 from PHP-FPM: the order of nginx's regex locations
-decides it, and only the live host can say.
+**Checked on the first deploy, 18 September:** `/.api/router.php`,
+`/.api/config.php` and the rest answer 403 from nginx's dot rule, so PHP-FPM
+never runs a service file directly. The service runs on the 20i MySQL database
+named in the server's `config.php`.
