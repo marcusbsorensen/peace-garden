@@ -102,6 +102,10 @@ struct PlotView: View {
         return model.garden.plotSide
     }
 
+    /// Where the heading and Close are on the screen, so the sun and moon keep off them.
+    @State private var headingFrame: CGRect = .null
+    @State private var closeFrame: CGRect = .null
+
     var body: some View {
         ZStack {
             Chrome.ground.ignoresSafeArea()
@@ -126,7 +130,8 @@ struct PlotView: View {
                 let glow = GardenLamps.glow(in: light)
 
                 ZStack(alignment: .topLeading) {
-                    GardenSky(light: light, date: model.now, view: view)
+                    GardenSky(light: light, date: model.now, view: view,
+                              keepClear: [headingFrame, closeFrame])
 
                     ZStack(alignment: .topLeading) {
                         plot(world: world, side: side, in: view, size: proxy.size, light: light)
@@ -179,6 +184,9 @@ struct PlotView: View {
 
             VStack(alignment: .leading, spacing: 0) {
                 header
+                    // Measured on the screen, which is the sky's space too: the
+                    // sky ignores the safe area and fills the glass from its corner.
+                    .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { headingFrame = $0 }
                 if model.hybrids.isEmpty { empty }
                 Spacer(minLength: 0)
                 grounds
@@ -189,6 +197,7 @@ struct PlotView: View {
         }
         .overlay(alignment: .topTrailing) {
             QuietButton(title: "Close") { dismiss() }
+                .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { closeFrame = $0 }
                 .padding(.trailing, 12)
                 .padding(.top, 12)
         }

@@ -71,7 +71,7 @@ public enum Organic {
     /// to it. Points run anticlockwise seen from above (x+ face first, going
     /// z- to z+), about `spacing` apart, and the loop closes without a seam.
     public static func outline(width: Double, length: Double, seed: UInt64,
-                               reach: Double = 0.16, spacing: Double = 0.08) -> [Spot] {
+                               reach: Double = 0.22, spacing: Double = 0.08) -> [Spot] {
         let r = min(0.35, min(width, length) * 0.12)
         let hx = width / 2 - reach, hz = length / 2 - reach
         let w = hx - r, l = hz - r
@@ -109,7 +109,7 @@ public enum Organic {
                 p -= arc
             }
             let inward = reach * 0.5 * (1 + seamless(Double(k) / Double(count) * perimeter,
-                                                     perimeter: perimeter, wavelength: 0.75, seed: seed))
+                                                     perimeter: perimeter, wavelength: 0.95, seed: seed))
             points.append(Spot(x: base.x - base.nx * inward + base.nx * reach,
                                z: base.z - base.nz * inward + base.nz * reach))
         }
@@ -136,7 +136,7 @@ public enum Organic {
     /// metres down it, for one side. A mown path is cut by eye, so it wanders
     /// up to a hand's width either way over a few paces.
     public static func verge(_ along: Double, side: Int, seed: UInt64) -> Double {
-        0.09 * wobble(along, wavelength: 0.9, seed: mix64(seed &+ UInt64(bitPattern: Int64(side)) &+ 11))
+        0.14 * wobble(along, wavelength: 1.2, seed: mix64(seed &+ UInt64(bitPattern: Int64(side)) &+ 11))
     }
 
     // MARK: A hedge

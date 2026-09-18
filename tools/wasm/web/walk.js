@@ -268,7 +268,7 @@ function buildGround(farSide, span, e) {
   const tri = (a, b, c, n, ca, cb = ca, cc = ca) => { vertex(a, n, ca); vertex(b, n, cb); vertex(c, n, cc); };
   const quad = (a, b, c, d, n, ca, cb = ca, cc = cb, cd = ca) => { tri(a, b, c, n, ca, cb, cc); tri(a, c, d, n, ca, cc, cd); };
   const length = SIDE * span;
-  const wander = (along, side, seed) => e.pg_verge(along, side, seed) / 0.09; // -1…1
+  const wander = (along, side, seed) => e.pg_verge(along, side, seed) / 0.14; // -1…1
 
   // The slab's top: its worn, wandering outline, filled from the middle.
   const outline = readOutline(e, SIDE, length, SEED.ground);

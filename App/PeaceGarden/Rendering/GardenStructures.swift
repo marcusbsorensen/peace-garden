@@ -144,15 +144,15 @@ final class GardenStructures {
 /// One of the Long Walk's hedges: a single `Organic.hedge` mesh set down on the
 /// plot, and the pieces it is drawn in.
 ///
-/// **It stands on the ground, not on the air past the rim.** The walk puts a
-/// hedge's inner face at `LongWalk.hedgeFrom`, which leaves its outer face a
-/// little past the square and well past the plot's wandering outline, so the
-/// hedge's line is drawn in wherever the outline comes in: its outer foot is
-/// kept five centimetres inside the ground's edge, eased so the line bends
-/// rather than kinks. It ends where following the edge round a corner would
-/// take it more than thirty centimetres in, so both rounded ends sit on earth.
-/// Each ring then stands on the ground under the middle of it, so the hedge
-/// rides the ground's rises in one piece.
+/// **Its line is the walk's, and it may spill over the rim.** The hedge's
+/// middle is where the website puts it, `LongWalk.hedgeFrom` plus half a
+/// thickness out, all along its length (Marcus, 18 September): pulled in to
+/// keep its outer foot on the worn ground, it stood in the back row of the
+/// border, so its outer foot overhangs the edge of the clod instead, as a hedge
+/// grown out over it would. It runs as far each way as its inner foot has
+/// ground under it, and each end is the mesh's own rounded shoulder. Each ring
+/// stands on the ground under the middle of it, so the hedge rides the
+/// ground's rises in one piece.
 struct HedgeLine {
     struct Piece {
         let index: Int
@@ -175,6 +175,9 @@ struct HedgeLine {
     /// Whether SeedCore's triangles are wound the way SceneKit takes as the
     /// back, which culls every face seen from outside.
     let flipped: Bool
+    /// The first quad's six indices as SeedCore wrote them, so a piece is
+    /// wound exactly as the whole mesh is, whichever way that is.
+    private let quad: [UInt32]
     let pieces: [Piece]
     /// Each ring's two feet on the ground, and how far its top stands above it,
     /// for the shadow.
@@ -192,38 +195,20 @@ struct HedgeLine {
         let nominal = LongWalk.hedgeFrom + thickness / 2
         let half = plotSide / 2
 
-        // How far out the hedge's middle may stand at each place along it, on
-        // a two-centimetre lattice: eroded then averaged over the same reach,
-        // which smooths the line and never lets it past where it may stand.
-        let step = 0.02
-        let count = Int((plotSide / step).rounded())
-        let allowed = (0...count).map { n -> Double in
-            let z = -half + Double(n) * step
-            guard let edge = outline.extent(z: z, side: side) else { return -1 }
-            return edge - 0.05 - thickness / 2
-        }
-        let window = 10
-        let eroded = allowed.indices.map { n in
-            allowed[max(0, n - window)...min(count, n + window)].min() ?? -1
-        }
-        let eased = eroded.indices.map { n in
-            let run = eroded[max(0, n - window)...min(count, n + window)]
-            return run.reduce(0, +) / Double(run.count)
-        }
-        func out(_ z: Double) -> Double {
-            let f = min(max((z + half) / step, 0), Double(count))
-            let n = min(Int(f), count - 1), t = f - Double(n)
-            return min(nominal, eased[n] + (eased[n + 1] - eased[n]) * t)
-        }
-
-        // Its length: as far each way as the line can go without bending in
-        // more than thirty centimetres, the shorter of the two, less a little.
+        // Its length: as far each way as its inner foot has ground under it,
+        // five centimetres on, the shorter of the two, so each rounded end
+        // comes round on the clod rather than out over the corner. The same
+        // length both ways, centred on the plot's middle.
         func reach(_ direction: Double) -> Double {
-            var z = 0.0
-            while abs(z) < half, out(z) >= nominal - 0.3 { z += direction * step }
-            return abs(z) - 0.04
+            var z = half
+            while z > 0.3 {
+                let x = Double(side) * (nominal - thickness / 2)
+                if outline.contains(x: x, z: direction * (z + 0.05)) { return z }
+                z -= 0.02
+            }
+            return 0.3
         }
-        let length = max(0.6, 2 * min(reach(1), reach(-1)))
+        let length = 2 * min(reach(1), reach(-1))
 
         let mesh = Organic.hedge(length: length, height: height, thickness: thickness,
                                  seed: PlotOutline.hedgeSeed(side: side))
@@ -235,7 +220,7 @@ struct HedgeLine {
         var grounds: [Double] = []
         for r in 0...rings {
             let z = Double(mesh.positions[r * stride].z)
-            let x = Double(side) * out(z)
+            let x = Double(side) * nominal
             let under = ground(x, z)
             centres.append(Spot(x: x, z: z))
             grounds.append(under)
@@ -254,6 +239,8 @@ struct HedgeLine {
         let top = (rings / 2) * stride + Self.around / 2
         flipped = normals[top].y < 0
         if flipped { normals = normals.map { -$0 } }
+        let first = Array(mesh.indices.prefix(6))
+        quad = flipped ? [first[0], first[2], first[1], first[3], first[5], first[4]] : first
         self.normals = normals
 
         feet = (0...rings).map { r in
@@ -303,8 +290,8 @@ struct HedgeLine {
         let spans = piece.rings.count - 1
         for r in 0..<spans {
             for a in 0..<Self.around {
-                let i = UInt32(r * stride + a), j = UInt32((r + 1) * stride + a)
-                indices += flipped ? [i, i + 1, j, i + 1, j + 1, j] : [i, j, i + 1, i + 1, j, j + 1]
+                let offset = UInt32(r * stride + a)
+                indices += quad.map { $0 + offset }
             }
         }
         return SCNGeometry(

@@ -738,19 +738,42 @@ final class PlotTests: XCTestCase {
         XCTAssertEqual(outline.warp(x: 1.2, z: -0.7).x, 1.2)
     }
 
-    /// A hedge stands on the ground it is drawn on, faces outward, and is cut
-    /// into pieces that share the rings they meet at.
-    func testAHedgeStandsInsideTheRimInPiecesThatMeet() {
+    /// A hedge stands on the walk's line, clear of the border, faces outward,
+    /// and is cut into pieces that share the rings they meet at.
+    func testAHedgeKeepsTheWalksLineInPiecesThatMeet() {
         let side = 5.2
         let outline = PlotOutline.of(plotSide: side)
         for hedgeSide in [-1, 1] {
             let line = HedgeLine(side: hedgeSide, height: 2.0, plotSide: side, key: "test") { _, _ in 0 }
-            XCTAssertFalse(line.flipped && line.normals.isEmpty)
+            XCTAssertFalse(line.flipped, "SeedCore winds its faces outward")
             let top = (line.rings / 2) * (HedgeLine.around + 1) + HedgeLine.around / 2
-            XCTAssertGreaterThan(line.normals[top].y, 0.5, "the top faces the ground")
+            XCTAssertGreaterThan(line.normals[top].y, 0.5, "the top faces the sky")
+            // A piece's triangles are wound the way its normals face: the top
+            // triangle's own normal, by the right hand, points up.
+            let piece = line.geometry(piece: line.pieces[line.pieces.count / 2])
+            let element = piece.elements[0]
+            let stride = HedgeLine.around + 1
+            let faces = element.data.withUnsafeBytes { Array($0.bindMemory(to: UInt32.self)) }
+            let positions = line.positions
+            let base = line.pieces[line.pieces.count / 2].rings.lowerBound * stride
+            let t = (HedgeLine.around / 2) * 6
+            let a = positions[base + Int(faces[t])], b = positions[base + Int(faces[t + 1])], c = positions[base + Int(faces[t + 2])]
+            XCTAssertGreaterThan(simd_cross(b - a, c - a).y, 0, "a piece is wound inside out")
+            // Its centre line is the walk's, where the website puts it, all along.
+            let nominal = LongWalk.hedgeFrom + GardenStructures.thickness / 2
             for foot in line.feet {
-                XCTAssertTrue(outline.contains(x: foot.outer.x, z: foot.outer.z), "a foot on the air at \(foot.outer)")
-                XCTAssertTrue(outline.contains(x: foot.inner.x, z: foot.inner.z))
+                XCTAssertEqual((foot.outer.x + foot.inner.x) / 2, Double(hedgeSide) * nominal, accuracy: 0.04)
+            }
+            let zs = line.feet.map(\.outer.z)
+            XCTAssertGreaterThan(zs.max()! - zs.min()!, 3.0, "the hedge is a stub")
+            // Each end comes round on the clod: ground under its inner foot.
+            for z in [zs.min()!, zs.max()!] {
+                XCTAssertTrue(outline.contains(x: Double(hedgeSide) * LongWalk.hedgeFrom, z: z))
+            }
+            // And it never reaches into the back row: a back-row plant stands at
+            // most 1.95 + 0.13 + 0.1 m out.
+            for foot in line.feet {
+                XCTAssertGreaterThan(abs(foot.inner.x), 2.18 + 0.05, "the hedge in the back row at \(foot.inner)")
             }
             XCTAssertGreaterThan(line.pieces.count, 6)
             for (a, b) in zip(line.pieces, line.pieces.dropFirst()) {

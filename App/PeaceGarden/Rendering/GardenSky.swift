@@ -12,6 +12,9 @@ struct GardenSky: View {
     let date: Date
     /// The plot's own projection, so the body stands where the light comes from.
     let view: Isometric
+    /// Where the screen's words are — the heading, the count under it, Close —
+    /// in this canvas's coordinates. The sun and moon stand clear of them.
+    var keepClear: [CGRect] = []
 
     var body: some View {
         Canvas { context, size in
@@ -114,12 +117,13 @@ struct GardenSky: View {
         guard span > 0.001 else { return }
 
         let far = 340 * view.pointsPerMetre / 42
-        let centre = CGPoint(
+        let placed = CGPoint(
             x: view.centre.x + away.dx / span * far,
             y: view.centre.y + away.dy / span * far
         )
         let radius = light.isDay ? 13.0 : 9.5
         let glow = light.isDay ? 0.22 : 0.10
+        let centre = Self.clear(placed, of: keepClear, by: radius * 2.6, within: size)
 
         context.fill(
             Path(ellipseIn: CGRect(x: centre.x - radius * 2.6, y: centre.y - radius * 2.6,
@@ -142,6 +146,30 @@ struct GardenSky: View {
             context.fill(MoonDisc(fraction: MoonPhase.fraction(on: date)).path(in: disc),
                          with: .color(tint))
         }
+    }
+
+    /// **The sun never sits on the words.** Placed by the light alone, the sun
+    /// rose through the heading in the morning and the moon set through Close.
+    /// A body that would overlap one of them is moved just outside it, below or
+    /// to the side, whichever is the shorter move, so it still stands nearly
+    /// where the light says and slides round the words rather than jumping.
+    /// `reach` covers the disc and the whole of its glow, so not even the halo
+    /// lies over a letter.
+    static func clear(_ point: CGPoint, of rects: [CGRect], by reach: CGFloat,
+                      within size: CGSize) -> CGPoint {
+        var point = point
+        for rect in rects where !rect.isNull && !rect.isEmpty {
+            let zone = rect.insetBy(dx: -reach, dy: -reach)
+            guard zone.contains(point) else { continue }
+            // Never above: the words are at the top, and above them is off the screen.
+            var moves: [CGPoint] = [CGPoint(x: point.x, y: zone.maxY)]
+            if zone.minX > reach { moves.append(CGPoint(x: zone.minX, y: point.y)) }
+            if zone.maxX < size.width - reach { moves.append(CGPoint(x: zone.maxX, y: point.y)) }
+            point = moves.min { a, b in
+                hypot(a.x - point.x, a.y - point.y) < hypot(b.x - point.x, b.y - point.y)
+            }!
+        }
+        return point
     }
 
     private var tint: Color {

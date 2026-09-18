@@ -22,7 +22,7 @@ final class OrganicTests: XCTestCase {
         // Not a ruled line: along the straight stretches the edge moves in and out.
         let straights = outline.filter { abs($0.z) < 1.5 && $0.x > 0 }.map(\.x)
         XCTAssertGreaterThan(straights.max()! - straights.min()!, 0.04, "the x+ side is nearly straight")
-        XCTAssertGreaterThan(furthest, side / 2 - 0.03)
+        XCTAssertGreaterThan(furthest, side / 2 - 0.05)
     }
 
     /// The loop meets itself without a step.
@@ -73,14 +73,14 @@ final class OrganicTests: XCTestCase {
     /// arithmetic drew a different edge would fail here, in the wasm run too.
     func testTheEdgesArePinned() {
         let outline = Organic.outline(width: 5.2, length: 5.2, seed: 1)
-        XCTAssertEqual(outline.count, 236)
+        XCTAssertEqual(outline.count, 230)
         XCTAssertEqual(outline[37].x, Self.pinnedX, accuracy: 0)
         XCTAssertEqual(Organic.verge(1.25, side: -1, seed: 9), Self.pinnedVerge, accuracy: 0)
     }
 
     // Recorded from the Mac on 18 September.
-    static let pinnedX = 2.5520523177413876
-    static let pinnedVerge = -0.04130876521794288
+    static let pinnedX = 2.5134835866491474
+    static let pinnedVerge = -0.03701313226545083
 
     private func stride_(from: Int, to: Int) -> [Int] { from < to ? Array(from..<to) : [] }
 }
