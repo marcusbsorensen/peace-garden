@@ -1,4 +1,9 @@
+#if os(WASI)
+import FoundationEssentials
+import WASILibc
+#else
 import Foundation
+#endif
 
 /// A 32-byte seed: the whole of a person's plant, and the only thing that ever
 /// crosses between two phones.

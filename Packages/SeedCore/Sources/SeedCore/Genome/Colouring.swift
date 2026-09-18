@@ -1,4 +1,9 @@
+#if os(WASI)
+import FoundationEssentials
+import WASILibc
+#else
 import Foundation
+#endif
 
 /// How a plant's two petal colours relate to each other.
 ///
@@ -212,11 +217,13 @@ func flowerHue(_ unit: Double, allowGreen: Bool) -> Double {
 /// A hash of the cell rather than a gradient noise: the patches want hard
 /// edges, like the markings on a leaf, not a soft cloud.
 func speckle(u: Double, v: Double, seed: UInt64, frequency: Double) -> Double {
-    let cellU = Int((u * frequency).rounded(.down))
-    let cellV = Int((v * frequency * 2).rounded(.down))
+    // Int64, not Int: the multiply must wrap at 64 bits on every host, and
+    // `Int` is 32 bits in the browser's WebAssembly build.
+    let cellU = Int64((u * frequency).rounded(.down))
+    let cellV = Int64((v * frequency * 2).rounded(.down))
     var hash = seed
-    hash = mix64(hash ^ UInt64(bitPattern: Int64(cellU &* 0x9E37_79B9)))
-    hash = mix64(hash ^ UInt64(bitPattern: Int64(cellV &* 0x85EB_CA6B)))
+    hash = mix64(hash ^ UInt64(bitPattern: cellU &* 0x9E37_79B9))
+    hash = mix64(hash ^ UInt64(bitPattern: cellV &* 0x85EB_CA6B))
     return Double(hash >> 11) * 0x1.0p-53
 }
 

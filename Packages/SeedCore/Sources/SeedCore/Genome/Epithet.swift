@@ -1,4 +1,9 @@
+#if os(WASI)
+import FoundationEssentials
+import WASILibc
+#else
 import Foundation
+#endif
 
 /// The second half of a binomial: one true statement about this specimen.
 ///

@@ -1,4 +1,9 @@
+#if os(WASI)
+import FoundationEssentials
+import WASILibc
+#else
 import Foundation
+#endif
 
 /// Turns "how long has this plant been alive" into "what does it look like".
 ///

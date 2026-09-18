@@ -1,4 +1,9 @@
+#if os(WASI)
+import FoundationEssentials
+import WASILibc
+#else
 import Foundation
+#endif
 
 /// A binomial name for a plant, built from the same gene draws as its body.
 ///

@@ -1,6 +1,13 @@
+#if os(WASI)
+import FoundationEssentials
+import WASILibc
+#else
 import Foundation
+#endif
 #if canImport(CryptoKit)
 import CryptoKit
+#elseif os(WASI)
+// SHA256 is `PortableSHA256.swift`.
 #else
 // swift-crypto is Apple's own implementation of the same API, and produces the
 // same digests. It is only pulled in off-platform, so a phone links CryptoKit.
@@ -40,6 +47,15 @@ public func seedDigest(_ domain: String, _ parts: Data...) -> Data {
     seedDigest(domain, parts)
 }
 
+/// Plain SHA-256 over pieces fed in order, for `PortableSHA256Tests`: the
+/// tests reach the hash through here so they run the same code `seedDigest`
+/// does on whichever host they run on.
+func sha256(_ pieces: [Data]) -> Data {
+    var hasher = SHA256()
+    for piece in pieces { hasher.update(data: piece) }
+    return Data(hasher.finalize())
+}
+
 extension Data {
     init(bigEndian value: UInt32) {
         self.init([
@@ -61,7 +77,16 @@ extension Data {
     }
 
     var hexString: String {
-        map { String(format: "%02x", $0) }.joined()
+        // Spelled out rather than `String(format:)`, which the browser build's
+        // FoundationEssentials does not have.
+        let digits = Array("0123456789abcdef".utf8)
+        var text: [UInt8] = []
+        text.reserveCapacity(count * 2)
+        for byte in self {
+            text.append(digits[Int(byte >> 4)])
+            text.append(digits[Int(byte & 0x0f)])
+        }
+        return String(decoding: text, as: UTF8.self)
     }
 
     init?(hexString: String) {

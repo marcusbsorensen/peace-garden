@@ -1,4 +1,9 @@
+#if os(WASI)
+import FoundationEssentials
+import WASILibc
+#else
 import Foundation
+#endif
 
 /// Where a plant came from.
 public enum Lineage: Equatable, Codable, Sendable {

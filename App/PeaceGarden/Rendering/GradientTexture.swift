@@ -230,33 +230,10 @@ enum GradientTexture {
 
     // MARK: - Colour
 
-    /// HSB to RGB as arithmetic.
-    ///
-    /// This was `UIColor.getRed(_:green:blue:alpha:)`, which is correct and
-    /// allocates an object per texel. At 64 square nobody noticed; at 256 it is
-    /// the difference between a texture that bakes in milliseconds and one that
-    /// visibly stalls the first frame of a plant.
+    /// HSB to RGB. The conversion lives in SeedCore, which the website shares.
     static func rgb(of hsb: HSB) -> (UInt8, UInt8, UInt8) {
-        let saturation = clamp(hsb.saturation, 0, 1)
-        let brightness = clamp(hsb.brightness, 0, 1)
-        var hue = hsb.hue.truncatingRemainder(dividingBy: 1)
-        if hue < 0 { hue += 1 }
-
-        let sector = hue * 6
-        let chroma = brightness * saturation
-        let second = chroma * (1 - abs(sector.truncatingRemainder(dividingBy: 2) - 1))
-        let floor = brightness - chroma
-
-        let (red, green, blue): (Double, Double, Double)
-        switch Int(sector) % 6 {
-        case 0: (red, green, blue) = (chroma, second, 0)
-        case 1: (red, green, blue) = (second, chroma, 0)
-        case 2: (red, green, blue) = (0, chroma, second)
-        case 3: (red, green, blue) = (0, second, chroma)
-        case 4: (red, green, blue) = (second, 0, chroma)
-        default: (red, green, blue) = (chroma, 0, second)
-        }
-        return (byte(red + floor), byte(green + floor), byte(blue + floor))
+        let colour = hsb.rgb8
+        return (colour.red, colour.green, colour.blue)
     }
 
     private static func clamp(_ value: Double, _ low: Double, _ high: Double) -> Double {

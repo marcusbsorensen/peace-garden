@@ -1,5 +1,10 @@
 #if !canImport(simd)
+#if os(WASI)
+import FoundationEssentials
+import WASILibc
+#else
 import Foundation
+#endif
 
 // Apple's `simd` module does not exist outside Apple's platforms, but
 // `SIMD3<Float>` itself is in the Swift standard library and so is its

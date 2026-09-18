@@ -1,4 +1,9 @@
+#if os(WASI)
+import FoundationEssentials
+import WASILibc
+#else
 import Foundation
+#endif
 
 /// The Long Walk: a double herbaceous border either side of a mown path, one of
 /// the ten areas of the shared garden on the website. `docs/WEB-GARDENS.md`.

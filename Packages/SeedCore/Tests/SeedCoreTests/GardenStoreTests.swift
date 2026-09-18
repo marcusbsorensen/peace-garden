@@ -1,6 +1,9 @@
 import XCTest
 @testable import SeedCore
 
+// GardenStore is not built for WASI; see its source.
+#if !os(WASI)
+
 final class GardenStoreTests: XCTestCase {
     private var directory: URL!
 
@@ -121,3 +124,4 @@ final class GardenStoreTests: XCTestCase {
         XCTAssertEqual(decoded.protocolVersion, 99)
     }
 }
+#endif

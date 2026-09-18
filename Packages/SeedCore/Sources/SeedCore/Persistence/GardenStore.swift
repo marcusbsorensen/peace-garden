@@ -1,4 +1,12 @@
+#if os(WASI)
+import FoundationEssentials
+import WASILibc
+#else
 import Foundation
+#endif
+
+// The browser keeps no garden file, and WASI cannot write one atomically.
+#if !os(WASI)
 
 /// Reads and writes the garden as a single JSON file.
 ///
@@ -108,3 +116,4 @@ public struct GardenStore {
         }
     }
 }
+#endif

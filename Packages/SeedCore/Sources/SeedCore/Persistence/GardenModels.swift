@@ -1,4 +1,9 @@
+#if os(WASI)
+import FoundationEssentials
+import WASILibc
+#else
 import Foundation
+#endif
 
 /// The person's own seed, minted once on first launch and kept for good.
 public struct Identity: Codable, Equatable, Sendable {

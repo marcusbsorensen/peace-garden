@@ -1,4 +1,9 @@
+#if os(WASI)
+import FoundationEssentials
+import WASILibc
+#else
 import Foundation
+#endif
 
 /// A seed packed into a link, so it can travel by any means at all.
 ///
@@ -233,16 +238,26 @@ public struct PollenLink: Equatable, Sendable {
 extension Data {
     /// Base64 without the characters that need escaping in a URL.
     var base64URLEncoded: String {
-        base64EncodedString()
-            .replacingOccurrences(of: "+", with: "-")
-            .replacingOccurrences(of: "/", with: "_")
-            .replacingOccurrences(of: "=", with: "")
+        // Character by character rather than `replacingOccurrences`, which
+        // the browser build's FoundationEssentials does not have.
+        String(base64EncodedString().compactMap { character -> Character? in
+            switch character {
+            case "+": return "-"
+            case "/": return "_"
+            case "=": return nil
+            default: return character
+            }
+        })
     }
 
     init?(base64URLEncoded string: String) {
-        var padded = string
-            .replacingOccurrences(of: "-", with: "+")
-            .replacingOccurrences(of: "_", with: "/")
+        var padded = String(string.map { character -> Character in
+            switch character {
+            case "-": return "+"
+            case "_": return "/"
+            default: return character
+            }
+        })
         while padded.count % 4 != 0 { padded += "=" }
         guard let data = Data(base64Encoded: padded) else { return nil }
         self = data
