@@ -16,6 +16,9 @@ import SeedCore
 //   pg_walk_count(plot)   plantings in a plot so far
 //   pg_walk_grow(plot, i) grows the i-th planting of a plot into the result:
 //                         spot x, spot z (f32 each), then a plant buffer
+//   pg_walk_plots()       plots opened so far
+//   pg_walk_describe(p)   a plot's plantings as JSON into the result: slot and
+//                         traits, for judging how the rule fills a border
 //
 // The same sequence of arrivals every time, so a plot looks the same on every
 // reload, the way a real one would.
@@ -58,4 +61,18 @@ public func pgWalkGrow(_ plot: Int32, _ index: Int32) -> Int32 {
     out.append(contentsOf: PlantBuffer.encode(genome))
     setResult(out)
     return Int32(out.count)
+}
+
+@_expose(wasm, "pg_walk_plots")
+@_cdecl("pg_walk_plots")
+public func pgWalkPlots() -> Int32 {
+    Int32(walk.plots)
+}
+
+@_expose(wasm, "pg_walk_describe")
+@_cdecl("pg_walk_describe")
+public func pgWalkDescribe(_ plot: Int32) -> Int32 {
+    guard let json = try? JSONEncoder().encode(walk.plot(Int(plot))) else { return 0 }
+    setResult(Array(json))
+    return Int32(json.count)
 }

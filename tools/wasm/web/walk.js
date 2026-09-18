@@ -1,4 +1,4 @@
-// One plot of the Long Walk, drawn the way the app draws a plot: a floating
+// Plots of the Long Walk, drawn the way the app draws a plot: a floating
 // slab of ground seen in true isometric, a mown path down the middle, a tall
 // yew behind the far border and a low hedge in front of the near one.
 //
@@ -75,7 +75,7 @@ void main() {
   outColour = vec4(shade(texture(colour, vUV).rgb, n), 1.0);
 }`;
 
-export function makeWalkStage(canvas) {
+export function makeWalkStage(canvas, span = 1) {
   const gl = canvas.getContext('webgl2', { antialias: true, alpha: true, premultipliedAlpha: true });
   if (!gl) throw new Error('This browser has no WebGL2.');
   const ground = program(gl, GROUND_VERTEX, GROUND_FRAGMENT, ['position', 'normal', 'colour'], ['offset']);
@@ -96,7 +96,7 @@ export function makeWalkStage(canvas) {
     if (groundMesh) groundMesh.release();
     // The tall hedge goes on whichever side is further from the viewer.
     const farSide = eye()[0] > 0 ? -1 : 1;
-    groundMesh = upload(gl, ground, buildGround(farSide));
+    groundMesh = upload(gl, ground, buildGround(farSide, span));
   }
 
   function draw() {
@@ -110,7 +110,7 @@ export function makeWalkStage(canvas) {
     gl.disable(gl.CULL_FACE);
 
     const view = lookAlong(eye());
-    const projection = fit(view, width / height);
+    const projection = fit(view, width / height, span);
     const viewProjection = multiply(projection, view);
 
     for (const [p, extra] of [[ground, null], [plantProgram, null]]) {
@@ -156,16 +156,29 @@ export function makeWalkStage(canvas) {
     const parts = grown.parts.map((part) => {
       const vao = gl.createVertexArray();
       gl.bindVertexArray(vao);
-      attribute(gl, plantProgram.at.position, part.positions, 3);
-      attribute(gl, plantProgram.at.normal, part.normals, 3);
-      attribute(gl, plantProgram.at.uv, part.uvs, 2);
+      const buffers = [
+        attribute(gl, plantProgram.at.position, part.positions, 3),
+        attribute(gl, plantProgram.at.normal, part.normals, 3),
+        attribute(gl, plantProgram.at.uv, part.uvs, 2),
+      ];
       const indexBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
       gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, part.indices, gl.STATIC_DRAW);
-      return { vao, count: part.indices.length, role: part.role };
+      buffers.push(indexBuffer);
+      return { vao, buffers, count: part.indices.length, role: part.role };
     });
     gl.bindVertexArray(null);
     plants.push({ x, z, parts, textures });
+    draw();
+  }
+
+  // Takes every plant off the stage, for moving along the walk.
+  function clear() {
+    for (const plant of plants) {
+      for (const part of plant.parts) { part.buffers.forEach((b) => gl.deleteBuffer(b)); gl.deleteVertexArray(part.vao); }
+      Object.values(plant.textures).forEach((t) => gl.deleteTexture(t));
+    }
+    plants.length = 0;
     draw();
   }
 
@@ -177,38 +190,48 @@ export function makeWalkStage(canvas) {
 
   rebuildGround();
   new ResizeObserver(draw).observe(canvas);
-  return { add, turnBy, draw };
+  return { add, clear, turnBy, draw };
 }
 
-// Plants every arrival up to the plot asked for, then grows that plot's plants
-// one at a time, so the page shows the border filling rather than a long wait.
-export async function plantPlot(e, stage, plot, report) {
-  const full = 24; // 2 sides × (5 + 4 + 3) slots, LongWalk.Tier.slots
-  let arrivals = 0;
-  const cap = 60 * (plot + 1);
-  while (arrivals < cap && !(e.pg_walk_count(plot) === full)) {
-    const landed = e.pg_walk_arrive();
-    arrivals += 1;
-    if (landed > plot && e.pg_walk_count(plot) === full) break;
-    if (arrivals % 4 === 0) { report(`Planting by the rule: ${arrivals} arrived, ${e.pg_walk_count(plot)} in this plot`); await frame(); }
+// Plants arrivals by the rule until there are `total`, reporting as it goes.
+export async function plantArrivals(e, total, report) {
+  let arrived = 0;
+  while (arrived < total) {
+    e.pg_walk_arrive();
+    arrived += 1;
+    if (arrived % 10 === 0) { report(`Planting by the rule: ${arrived} of ${total} arrived`); await frame(); }
   }
-  const count = e.pg_walk_count(plot);
-  for (let i = 0; i < count; i++) {
-    const length = e.pg_walk_grow(plot, i);
-    const buffer = takeResult(e, length);
-    const spot = new Float32Array(buffer.slice(0, 8));
-    stage.add(spot[0], spot[1], decode(buffer.slice(8)));
-    report(`Growing ${i + 1} of ${count}`);
-    await frame();
+  return e.pg_walk_plots();
+}
+
+// A plot's plantings, as the rule placed them: slot and traits.
+export function describe(e, plot) {
+  const length = e.pg_walk_describe(plot);
+  return JSON.parse(new TextDecoder().decode(takeResult(e, length)));
+}
+
+// Grows `span` plots from `first`, laid end to end down the walk, one plant at a time.
+export async function growPlots(e, stage, first, span, report) {
+  stage.clear();
+  for (let k = 0; k < span; k++) {
+    const plot = first + k;
+    const along = (k - (span - 1) / 2) * SIDE;
+    const count = e.pg_walk_count(plot);
+    for (let i = 0; i < count; i++) {
+      const length = e.pg_walk_grow(plot, i);
+      const buffer = takeResult(e, length);
+      const spot = new Float32Array(buffer.slice(0, 8));
+      stage.add(spot[0], spot[1] + along, decode(buffer.slice(8)));
+      if (i % 4 === 3) { report(`Growing plot ${plot + 1}: ${i + 1} of ${count}`); await frame(); }
+    }
   }
-  return { arrivals, count };
 }
 
 const frame = () => new Promise((resolve) => requestAnimationFrame(() => resolve()));
 
 // MARK: - The ground
 
-function buildGround(farSide) {
+function buildGround(farSide, span) {
   const positions = [], normals = [], colours = [];
   const quad = (a, b, c, d, n, ca, cb = ca, cc = cb, cd = ca) => {
     for (const [p, col] of [[a, ca], [b, cb], [c, cc], [a, ca], [c, cc], [d, cd]]) {
@@ -222,17 +245,17 @@ function buildGround(farSide) {
     quad([x1, y0, z0], [x1, y0, z1], [x1, y1, z1], [x1, y1, z0], [1, 0, 0], colour);
     quad([x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0], [-1, 0, 0], colour);
   };
-  const h = SIDE / 2;
+  const h = SIDE / 2, L = (SIDE * span) / 2;
 
   // The slab: turf on top, strata down its sides.
-  quad([-h, 0, -h], [h, 0, -h], [h, 0, h], [-h, 0, h], [0, 1, 0], COLOUR.turf);
+  quad([-h, 0, -L], [h, 0, -L], [h, 0, L], [-h, 0, L], [0, 1, 0], COLOUR.turf);
   const strata = [[0, COLOUR.humus], [0.16, COLOUR.earth], [0.58, COLOUR.earth], [1, COLOUR.bedrock]];
   for (let i = 0; i < strata.length - 1; i++) {
     const [f0, c0] = strata[i], [f1, c1] = strata[i + 1];
     const y0 = -f0 * RIM_DEPTH, y1 = -f1 * RIM_DEPTH;
     for (const s of [-1, 1]) {
-      quad([-h, y1, s * h], [h, y1, s * h], [h, y0, s * h], [-h, y0, s * h], [0, 0, s], c1, c1, c0, c0);
-      quad([s * h, y1, -h], [s * h, y1, h], [s * h, y0, h], [s * h, y0, -h], [s, 0, 0], c1, c1, c0, c0);
+      quad([-h, y1, s * L], [h, y1, s * L], [h, y0, s * L], [-h, y0, s * L], [0, 0, s], c1, c1, c0, c0);
+      quad([s * h, y1, -L], [s * h, y1, L], [s * h, y0, L], [s * h, y0, -L], [s, 0, 0], c1, c1, c0, c0);
     }
   }
 
@@ -241,20 +264,20 @@ function buildGround(farSide) {
   [1.07, 0.95, 1.07].forEach((k, i) => {
     const x0 = -PATH_HALF + i * band, x1 = x0 + band;
     const c = COLOUR.grass.map((v) => v * k);
-    quad([x0, 0.005, -h], [x1, 0.005, -h], [x1, 0.005, h], [x0, 0.005, h], [0, 1, 0], c);
+    quad([x0, 0.005, -L], [x1, 0.005, -L], [x1, 0.005, L], [x0, 0.005, L], [0, 1, 0], c);
   });
 
   // The hedges, clipped boxes along each border, cut to one top line.
   const pieces = Math.floor(SIDE / HEDGE.piece);
-  const start = -(pieces * HEDGE.piece) / 2;
-  for (const side of [-1, 1]) {
+  for (let k = 0; k < span; k++) for (const side of [-1, 1]) {
+    const start = (k - (span - 1) / 2) * SIDE - (pieces * HEDGE.piece) / 2;
     const height = side === farSide ? HEDGE.tall : HEDGE.low;
     const centre = side * (HEDGE_FROM + HEDGE.thickness / 2);
     for (let i = 0; i < pieces; i++) {
       const z0 = start + i * HEDGE.piece - HEDGE.overlap / 2;
       const z1 = z0 + HEDGE.piece + HEDGE.overlap;
-      const k = 0.94 + 0.12 * hash(i * 7 + (side > 0 ? 3 : 0));
-      box(centre - HEDGE.thickness / 2, centre + HEDGE.thickness / 2, 0, height, z0, z1, COLOUR.yew.map((v) => v * k));
+      const tone = 0.94 + 0.12 * hash((k * pieces + i) * 7 + (side > 0 ? 3 : 0));
+      box(centre - HEDGE.thickness / 2, centre + HEDGE.thickness / 2, 0, height, z0, z1, COLOUR.yew.map((v) => v * tone));
     }
   }
   return { positions: new Float32Array(positions), normals: new Float32Array(normals), colours: new Float32Array(colours) };
@@ -303,10 +326,10 @@ function lookAlong(direction) {
 
 // Orthographic, fitted to the plot, its hedges and its tallest plants, as the
 // app frames a plot with headroom above and the slab's depth below.
-function fit(view, aspect) {
-  const h = SIDE / 2;
+function fit(view, aspect, span) {
+  const h = SIDE / 2, L = (SIDE * span) / 2;
   let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-  for (const x of [-h, h]) for (const y of [-RIM_DEPTH, 2.3]) for (const z of [-h, h]) {
+  for (const x of [-h, h]) for (const y of [-RIM_DEPTH, 2.3]) for (const z of [-L, L]) {
     const vx = view[0] * x + view[4] * y + view[8] * z;
     const vy = view[1] * x + view[5] * y + view[9] * z;
     minX = Math.min(minX, vx); maxX = Math.max(maxX, vx);

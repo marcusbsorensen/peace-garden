@@ -11,39 +11,84 @@
   .pool { position: absolute; inset: 0;
     background: radial-gradient(ellipse 50% 45% at 50% 55%, rgb(255 255 255 / 0.08), transparent 70%); }
   canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-  #note { position: absolute; inset-inline: 16px; inset-block-start: 16px; margin: 0;
-    font: 11px/1.5 system-ui, sans-serif; letter-spacing: 0.08em; color: rgb(255 255 255 / 0.5); }
-  nav { position: absolute; inset-inline: 16px; inset-block-end: 16px; display: flex; gap: 8px; justify-content: center; }
+  #note, #plots { position: absolute; inset-inline-start: 16px; margin: 0;
+    font: 11px/1.6 system-ui, sans-serif; letter-spacing: 0.06em; color: rgb(255 255 255 / 0.5); }
+  #note { inset-block-start: 16px; inset-inline-end: 16px; }
+  #plots { inset-block-start: 40px; padding: 0; list-style: none; font-variant-numeric: tabular-nums; }
+  nav { position: absolute; inset-inline: 16px; inset-block-end: 16px; display: flex; flex-wrap: wrap;
+    gap: 8px; justify-content: center; }
   button { background: transparent; color: inherit; border: 1px solid rgb(255 255 255 / 0.4);
     border-radius: 6px; padding: 8px 14px; font: 11px/1 system-ui, sans-serif;
     letter-spacing: 0.14em; text-transform: uppercase; }
+  button:disabled { opacity: 0.3; }
 </style>
 </head>
 <body>
 <main>
   <div class="pool"></div>
-  <canvas id="stage" aria-label="One plot of the Long Walk"></canvas>
+  <canvas id="stage" aria-label="Plots of the Long Walk"></canvas>
   <p id="note">Loading…</p>
+  <ul id="plots"></ul>
   <nav>
-    <button id="left" aria-label="Turn the plot left">Turn left</button>
-    <button id="right" aria-label="Turn the plot right">Turn right</button>
+    <button id="back" aria-label="Back down the walk">Back</button>
+    <button id="left" aria-label="Turn left">Turn left</button>
+    <button id="right" aria-label="Turn right">Turn right</button>
+    <button id="on" aria-label="On down the walk">On</button>
   </nav>
 </main>
 <script type="module">
   import { loadModule } from './plant.js';
-  import { makeWalkStage, plantPlot } from './walk.js';
+  import { makeWalkStage, plantArrivals, growPlots, describe } from './walk.js';
+
+  // ?arrivals=500&from=0&span=3 — how many plants have arrived, and which plots to look at.
+  const query = new URLSearchParams(location.search);
+  const number = (name, fallback) => Math.max(0, parseInt(query.get(name) ?? '', 10) || fallback);
+  const arrivals = number('arrivals', 500), span = Math.max(1, number('span', 3));
+  let from = number('from', 0);
 
   const note = document.getElementById('note');
-  const plot = Math.max(0, parseInt(new URLSearchParams(location.search).get('plot') ?? '0', 10) || 0);
-  const stage = makeWalkStage(document.getElementById('stage'));
+  const list = document.getElementById('plots');
+  const report = (text) => { note.textContent = text; };
+  const stage = makeWalkStage(document.getElementById('stage'), span);
   document.getElementById('left').addEventListener('click', () => stage.turnBy(-1));
   document.getElementById('right').addEventListener('click', () => stage.turnBy(1));
 
   const e = await loadModule('PlantWasm.wasm');
   const started = performance.now();
-  const { arrivals, count } = await plantPlot(e, stage, plot, (text) => { note.textContent = text; });
-  const seconds = ((performance.now() - started) / 1000).toFixed(1);
-  note.textContent = `Long Walk, plot ${plot + 1} · ${count} plants from ${arrivals} arrivals · ${seconds} s`;
+  const plots = await plantArrivals(e, arrivals, report);
+  const planted = ((performance.now() - started) / 1000).toFixed(1);
+
+  // What the rule did with each plot: its fill by tier, how many plants stand
+  // outside their own tier, and how many colours it holds.
+  const tierOf = (height) => (height < 0.93 ? 0 : height < 1.28 ? 1 : 2);
+  const TIERS = ['edge', 'middle', 'back'], SLOTS = [10, 8, 6];
+  function summary(plot) {
+    const here = describe(e, plot);
+    const byTier = [0, 0, 0];
+    let moved = 0;
+    for (const p of here) {
+      const tier = TIERS.indexOf(p.slot.tier) >= 0 ? TIERS.indexOf(p.slot.tier) : p.slot.tier;
+      byTier[tier] += 1;
+      if (tierOf(p.traits.height) !== tier) moved += 1;
+    }
+    const colours = new Set(here.map((p) => p.traits.family)).size;
+    const fill = byTier.map((n, i) => `${TIERS[i]} ${n}/${SLOTS[i]}`).join(' · ');
+    return `Plot ${plot + 1}: ${here.length}/24 · ${fill} · ${moved} a tier from their own · ${colours} colours`;
+  }
+
+  async function show() {
+    document.getElementById('back').disabled = from === 0;
+    document.getElementById('on').disabled = from + span >= plots;
+    const shown = [];
+    for (let k = 0; k < span && from + k < plots; k++) shown.push(from + k);
+    list.replaceChildren(...shown.map((plot) => Object.assign(document.createElement('li'), { textContent: summary(plot) })));
+    await growPlots(e, stage, from, shown.length, report);
+    report(`${arrivals} arrivals in ${plots} plots, planted in ${planted} s · showing plots ${from + 1}–${from + shown.length}; the walk runs towards you`);
+  }
+
+  document.getElementById('back').addEventListener('click', () => { from = Math.max(0, from - span); show(); });
+  document.getElementById('on').addEventListener('click', () => { from = Math.min(plots - 1, from + span); show(); });
+  await show();
 </script>
 </body>
 </html>
