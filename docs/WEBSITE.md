@@ -278,6 +278,10 @@ importantly the map must not move: a garden whose areas rearrange when somebody
 tunes a theme's position is a garden nobody can learn. Retuning a position is
 now a change to the map, and has to be made as one.
 
+> **Superseded for the gardens, 18 September**: a plant's place is now assigned
+> on arrival by its area's template, and still never moves. Derived-from-seed
+> survives in the Wild Fields. See `WEB-GARDENS.md`.
+
 **A plant's place inside an area comes from its seed and never moves.** Each
 area is 256 by 256 cells and a plant's cell is two slices of its own seed hex —
 the seed is already a SHA-256 digest, so there is nothing to gain by hashing it
