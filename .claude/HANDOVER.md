@@ -14,8 +14,8 @@ the plants at their real relative sizes standing on the terrain, a pool of light
 under anything that has changed since it was last opened, and a row of little
 worlds to choose the ground from, and the sun and moon going round it on the
 real clock, the Milky Way overhead, lights to put out, and the gestures to
-arrange all of it, and glow-in-the-dark figures. 73 app tests, from 35; SeedCore 110, from 106. Pushed to
-`origin/main` at `7417653`; one commit after it.
+arrange all of it, and glow-in-the-dark figures. 74 app tests, from 35; SeedCore 110, from 106. Pushed to
+`origin/main` at `7417653`; three commits after it, not pushed.
 
 **Done, not built into the app.** Nothing from the mockup is left. The
 interactive Design canvas remains the reference:
@@ -214,9 +214,12 @@ light away, so off the edge always means *give this up*.
 
 **Still open:**
 
-- **What zoom is for** is still unanswered; 3× is the cap until it is, and at 3×
-  the ground's cells begin to show. The figures are rendered at 260 points a
-  metre, so they hold up at 3× better than the plants do.
+- **What zoom is for: answered by Marcus.** Careful arranging, showing a plant
+  among its neighbours, and being sure of the plant tapped. The 3× cap stays.
+  All four pieces it asked for are built: pixel-true taps, pan while carrying,
+  double tap to come in (2.4×), and the ground redrawn close. See `ARRANGING.md`
+  §*What zoom is for*. The double tap has not been driven on a simulator, because
+  injected taps arrive too far apart to count as one; it wants a thumb.
 - **The figures' light on the plants is the lamps' lift**, which is a tint added
   over the plant. It is faint, set by `pool` and `reach`. Nobody has yet judged
   whether a hare beside a white flower should show on the flower at all.

@@ -50,6 +50,15 @@ struct PlotView: View {
     /// Counted rather than flagged, so every lift is its own tap of feedback.
     @State private var lifts = 0
 
+    /// Which way, and how fast, the plot is being panned under something held
+    /// near the edge of the screen, in points a second.
+    @State private var edgePush: CGSize = .zero
+    @State private var edgeTask: Task<Void, Never>?
+    /// The size the plot is shown at, for the arithmetic that has to happen
+    /// outside the `GeometryReader`: where a finger is on the glass, and how
+    /// far the plot can pan.
+    @State private var screen: CGSize = .zero
+
     private var visits: GardenVisits { .shared }
 
     /// A plant, where it stands, and whether it has anything to say.
@@ -129,6 +138,8 @@ struct PlotView: View {
                     .rotationEffect(turning)
                 }
                 .frame(width: proxy.size.width, height: proxy.size.height)
+                .onAppear { screen = proxy.size }
+                .onChange(of: proxy.size) { _, size in screen = size }
                 .contentShape(Rectangle())
                 .gesture(looking(in: proxy.size))
                 .simultaneousGesture(panGesture(in: proxy.size))
@@ -221,6 +232,78 @@ struct PlotView: View {
                       height: min(max(offset.height, -reachY), reachY))
     }
 
+    // MARK: Zoom, for what it is for
+
+    /// How far in a double tap comes. Close enough to show a plant off, with
+    /// its neighbours still round it.
+    private static let comingIn: CGFloat = 2.4
+
+    /// Come in on a point of the plot, or back out if already in.
+    ///
+    /// For showing a plant to somebody in its setting: `ARRANGING.md` §*What
+    /// zoom is for*. A plant alone, large, is its sheet's job, so this stops
+    /// well short of the cap.
+    private func comeIn(on point: CGPoint) {
+        withAnimation(.easeInOut(duration: 0.35)) {
+            guard zoom <= 1.001 else {
+                zoom = 1
+                pan = .zero
+                return
+            }
+            zoom = Self.comingIn
+            // `scaleEffect` scales about the middle, so a point lands at
+            // `middle + (point - middle) * zoom + pan`; the pan that puts it in
+            // the middle is the rest of that, turned round.
+            let middle = CGPoint(x: screen.width / 2, y: screen.height / 2)
+            pan = clamped(CGSize(width: -(point.x - middle.x) * zoom,
+                                 height: -(point.y - middle.y) * zoom), in: screen)
+        }
+    }
+
+    /// Something in hand near the edge of the screen pans the plot under it,
+    /// so a plant can be carried anywhere on a plot zoomed past the screen.
+    ///
+    /// Harder the nearer the edge. It keeps going while the finger is still,
+    /// because a finger held at the edge is somebody waiting to be taken there.
+    private func nudge(finger: CGPoint) {
+        guard zoom > 1.001, screen.width > 0 else {
+            edgePush = .zero
+            return
+        }
+        let middle = CGPoint(x: screen.width / 2, y: screen.height / 2)
+        let on = CGPoint(x: middle.x + (finger.x - middle.x) * zoom + pan.width,
+                         y: middle.y + (finger.y - middle.y) * zoom + pan.height)
+
+        let margin: CGFloat = 56, fastest: CGFloat = 420
+        func push(_ at: CGFloat, _ length: CGFloat) -> CGFloat {
+            if at < margin { return -min(1, (margin - at) / margin) * fastest }
+            if at > length - margin { return min(1, (at - (length - margin)) / margin) * fastest }
+            return 0
+        }
+        edgePush = CGSize(width: push(on.x, screen.width), height: push(on.y, screen.height))
+
+        guard edgePush != .zero, edgeTask == nil else { return }
+        edgeTask = Task { @MainActor in
+            defer { edgeTask = nil }
+            let tick = 1.0 / 60
+            while !Task.isCancelled, edgePush != .zero, held != nil || heldLamp != nil {
+                try? await Task.sleep(for: .seconds(tick))
+                let before = pan
+                pan = clamped(CGSize(width: pan.width - edgePush.width * tick,
+                                     height: pan.height - edgePush.height * tick), in: screen)
+                // The finger has not moved on the glass, so the plot under it
+                // has: what is held moves with the finger, against the pan.
+                let shift = CGSize(width: -(pan.width - before.width) / zoom,
+                                   height: -(pan.height - before.height) / zoom)
+                if shift == .zero { continue }
+                held?.foot.x += shift.width
+                held?.foot.y += shift.height
+                heldLamp?.foot.x += shift.width
+                heldLamp?.foot.y += shift.height
+            }
+        }
+    }
+
     // MARK: Where everything stands
 
     /// The arrangement, with anything moved by hand standing where it was put.
@@ -294,7 +377,8 @@ struct PlotView: View {
     /// The ground, drawn once and kept.
     private func plot(world: Int, side: Double, in view: Isometric, size: CGSize,
                       light: GardenGround.Light) -> some View {
-        GardenGroundView(world: world, plotSide: side, view: view, size: size, light: light)
+        GardenGroundView(world: world, plotSide: side, view: view, size: size, light: light,
+                         zoom: zoom, pan: pan)
             .allowsHitTesting(false)
     }
 
@@ -337,11 +421,19 @@ struct PlotView: View {
                 held = Held(id: standing.id, foot: resting)
                 lifts += 1
             },
-            onMove: { travel in
+            onDoubleTap: {
+                comeIn(on: CGPoint(x: resting.x, y: resting.y - 0.45 * view.pointsPerMetre))
+            },
+            onMove: { travel, finger in
                 held?.foot = CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
+                if let finger { nudge(finger: finger) }
             },
             onDrop: { travel in
-                let foot = CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
+                edgePush = .zero
+                // Where it is held, not where the last drag said: the plot may
+                // have panned under a finger that has not moved since.
+                let foot = held?.foot
+                    ?? CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
                 put(standing.record, at: foot, world: world, side: side, in: view)
             }
         )
@@ -450,14 +542,17 @@ struct PlotView: View {
                 if heldLamp?.id != lamp.id { lifts += 1 }
                 heldLamp = Held(id: lamp.id, foot: CGPoint(x: resting.x + travel.width,
                                                            y: resting.y + travel.height))
+                if let finger = drag?.location { nudge(finger: finger) }
             }
             .onEnded { value in
+                edgePush = .zero
                 guard case .second(true, let drag) = value else {
                     heldLamp = nil
                     return
                 }
                 let travel = drag?.translation ?? .zero
-                let foot = CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
+                let foot = heldLamp?.foot
+                    ?? CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
                 let found = view.ground(at: foot)
                 let half = side / 2
 
@@ -651,7 +746,10 @@ private struct GardenPlantSprite: View {
     let glow: Double
     let onTap: () -> Void
     let onLift: () -> Void
-    let onMove: (CGSize) -> Void
+    let onDoubleTap: () -> Void
+    /// How far it has travelled, and where the finger is, both in the plot's
+    /// own unzoomed coordinates.
+    let onMove: (CGSize, CGPoint?) -> Void
     let onDrop: (CGSize) -> Void
 
     @State private var before: GardenSprites.Sprite?
@@ -702,12 +800,10 @@ private struct GardenPlantSprite: View {
                 // gesture attached after it answered anywhere on screen; and a
                 // frame is mostly air, so a gesture on the whole frame let a
                 // plant take every touch meant for whatever stood behind it.
-                .contentShape(Rectangle().path(in: CGRect(
-                    x: sprite.opaque.minX * size.width,
-                    y: sprite.opaque.minY * size.height,
-                    width: sprite.opaque.width * size.width,
-                    height: sprite.opaque.height * size.height
-                )))
+                .contentShape(sprite.leaves(in: size))
+                // The double tap first, so a single tap waits a moment to be
+                // sure it is one; that moment is the price of coming in.
+                .onTapGesture(count: 2, perform: onDoubleTap)
                 .onTapGesture(perform: onTap)
                 .gesture(lift)
                 .position(x: foot.x, y: foot.y - size.height / 2)
@@ -740,7 +836,7 @@ private struct GardenPlantSprite: View {
                     lifting = true
                     onLift()
                 }
-                onMove(drag?.translation ?? .zero)
+                onMove(drag?.translation ?? .zero, drag?.location)
             }
             .onEnded { value in
                 defer { lifting = false }
@@ -814,10 +910,74 @@ private struct GardenGroundView: View {
     let view: Isometric
     let size: CGSize
     let light: GardenGround.Light
+    /// The zoom and pan once they have settled — not while fingers are down.
+    let zoom: CGFloat
+    let pan: CGSize
 
     @State private var ground: UIImage?
+    /// The part of the ground on screen, drawn again at the zoom it is seen at.
+    @State private var close: (image: UIImage, region: CGRect)?
+
+    /// What is on screen, in the plot's own unzoomed coordinates, a little
+    /// wider so a short pan does not uncover the stretched drawing beneath,
+    /// and rounded so a pan of a point does not draw it all again.
+    ///
+    /// **Why this is here at all.** The ground is drawn once, at the size of
+    /// the screen, and zooming stretched it: at 3x each quad was a blurred
+    /// patch, and zoom is partly for showing a plant off in its setting
+    /// (`ARRANGING.md` §*What zoom is for*). The quads themselves are the grain
+    /// and stay; what is fixed is the drawing being enlarged. Only what is on
+    /// screen is drawn, because the whole plot at three times the screen's
+    /// resolution is over a hundred megabytes.
+    private var seen: CGRect? {
+        guard zoom > 1.3 else { return nil }
+        let middle = CGPoint(x: size.width / 2, y: size.height / 2)
+        let width = size.width / zoom * 1.2, height = size.height / zoom * 1.2
+        let x = middle.x - pan.width / zoom - width / 2
+        let y = middle.y - pan.height / zoom - height / 2
+        let grain: CGFloat = 16
+        return CGRect(x: (x / grain).rounded(.down) * grain, y: (y / grain).rounded(.down) * grain,
+                      width: (width / grain).rounded(.up) * grain,
+                      height: (height / grain).rounded(.up) * grain)
+    }
+
+    private var sharpness: CGFloat { min(3, (zoom * 2).rounded(.up) / 2) }
 
     var body: some View {
+        ZStack(alignment: .topLeading) {
+            base
+            if let close {
+                Image(uiImage: close.image)
+                    .resizable()
+                    .frame(width: close.region.width, height: close.region.height)
+                    .offset(x: close.region.minX, y: close.region.minY)
+            }
+        }
+        .frame(width: size.width, height: size.height, alignment: .topLeading)
+        .task(id: "\(baseKey)-t\(view.turn)-\(seen.map { "\($0)" } ?? "far")-\(sharpness)") {
+            guard let region = seen else {
+                close = nil
+                return
+            }
+            // A beat first, so a pan under a carried plant is not redrawn at
+            // every step of it.
+            try? await Task.sleep(for: .milliseconds(250))
+            if Task.isCancelled { return }
+            if let image = await GardenTerrain.shared.image(
+                world: world, plotSide: plotSide, view: view, size: size, light: light,
+                region: region, sharpness: sharpness
+            ), !Task.isCancelled {
+                close = (image, region)
+            }
+        }
+    }
+
+    private var baseKey: String {
+        "\(world)-\(Int(plotSide * 100))-\(Int(size.width))x\(Int(size.height))"
+            + "-\(Int(light.strength * 1000))-\(Int(light.direction.x * 100))"
+    }
+
+    private var base: some View {
         Group {
             if let ground {
                 Image(uiImage: ground)
@@ -838,8 +998,7 @@ private struct GardenGroundView: View {
                 Color.clear
             }
         }
-        .task(id: "\(world)-\(Int(plotSide * 100))-\(Int(size.width))x\(Int(size.height))"
-              + "-\(Int(light.strength * 1000))-\(Int(light.direction.x * 100))") {
+        .task(id: baseKey) {
             ground = await GardenTerrain.shared.image(
                 world: world, plotSide: plotSide, view: view, size: size, light: light
             )

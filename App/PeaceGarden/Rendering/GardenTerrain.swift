@@ -37,7 +37,9 @@ actor GardenTerrain {
         view: Isometric,
         size: CGSize,
         detail: Int = mesh,
-        light: GardenGround.Light = .noon
+        light: GardenGround.Light = .noon,
+        region: CGRect? = nil,
+        sharpness: CGFloat = 1
     ) -> UIImage? {
         let worlds = GardenWorlds.shared
         guard worlds.isLoaded, size.width > 1, size.height > 1 else { return nil }
@@ -49,17 +51,26 @@ actor GardenTerrain {
             + "-\(Int(plotSide * 100))-\(Int(view.pointsPerMetre * 10))-\(detail)"
             + "-\(Int(light.strength * 1000))-\(Int(light.direction.x * 100))"
             + "-\(Int(light.direction.z * 100))-t\(((view.turn % 4) + 4) % 4)"
+            + (region.map { "-r\(Int($0.minX)),\(Int($0.minY)),\(Int($0.width)),\(Int($0.height))" } ?? "")
+            + "-s\(Int(sharpness * 10))"
         if let held = cache[key] { return held }
 
         let format = UIGraphicsImageRendererFormat.preferred()
         format.opaque = false
-        let image = UIGraphicsImageRenderer(size: size, format: format).image { context in
+        format.scale *= sharpness
+        let canvas = region?.size ?? size
+        let image = UIGraphicsImageRenderer(size: canvas, format: format).image { context in
+            if let region { context.cgContext.translateBy(x: -region.minX, y: -region.minY) }
             Self.draw(world: world, plotSide: plotSide, view: view, detail: max(4, detail),
-                      light: light, into: context.cgContext)
+                      light: light, region: region, into: context.cgContext)
         }
 
         // A handful is enough: one for the plot and eight small ones for the row
         // of worlds to choose from.
+        // A close drawing is the screen's worth of pixels at up to three times
+        // the resolution, and the view holds the one it is showing; kept here
+        // as well, two dozen of them would be hundreds of megabytes.
+        guard region == nil else { return image }
         if cache.count > 24 { cache.removeAll() }
         cache[key] = image
         return image
@@ -77,11 +88,16 @@ actor GardenTerrain {
         view: Isometric,
         detail mesh: Int,
         light: GardenGround.Light,
+        region: CGRect? = nil,
         into context: CGContext
     ) {
         let worlds = GardenWorlds.shared
         let half = plotSide / 2
         let step = plotSide / Double(mesh)
+        // A quad well outside the region is skipped before its shadow is
+        // marched, which is most of what a quad costs.
+        let reach = region?.insetBy(dx: -4 * step * view.pointsPerMetre,
+                                    dy: -4 * step * view.pointsPerMetre)
 
         var grid = [SIMD3<Double>]()
         grid.reserveCapacity((mesh + 1) * (mesh + 1))
@@ -94,7 +110,11 @@ actor GardenTerrain {
         }
         func corner(_ i: Int, _ j: Int) -> SIMD3<Double> { grid[j * (mesh + 1) + i] }
 
-        context.setShouldAntialias(false)
+        // Off at the fitted size, where an edge is a pixel and antialiasing it
+        // is what opens the seams. On for a close drawing, where the skyline
+        // otherwise came out as a staircase; the stroke in `fill` still closes
+        // the seams.
+        context.setShouldAntialias(region != nil)
         context.setLineJoin(.miter)
 
         // The cut first: it hangs behind the surface, and the surface is what
@@ -123,6 +143,7 @@ actor GardenTerrain {
                 let (i, j) = cell(u, diagonal - u)
                 let p00 = corner(i, j), p10 = corner(i + 1, j)
                 let p01 = corner(i, j + 1), p11 = corner(i + 1, j + 1)
+                if let reach, !reach.contains(view.point(x: p00.x, y: p00.y, z: p00.z)) { continue }
 
                 // **From the quad's own diagonals, not from anything it sits on.**
                 // The sphere took the sphere's normal for every face and the

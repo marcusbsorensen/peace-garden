@@ -1,5 +1,6 @@
 import simd
 import SwiftUI
+import UIKit
 import XCTest
 import SeedCore
 @testable import PeaceGarden
@@ -710,5 +711,35 @@ final class PlotTests: XCTestCase {
         bed.putBack(plants[2])
         XCTAssertNil(bed.spot(for: plants[2]))
         XCTAssertEqual(bed.spot(for: plants[2]) ?? template[plants[2].id], template[plants[2].id])
+    }
+}
+
+/// What a finger has to land on to reach a plant.
+@MainActor
+final class LeafTapTests: XCTestCase {
+
+    /// **A plant answers where its leaves are, and not in the air beside them.**
+    /// A box round the leaves let a near plant take taps meant for the far plant
+    /// whose leaves showed through its air, and opened the wrong sheet. A leaf
+    /// a cell away still counts, because a finger is not a point.
+    func testAPlantAnswersOnItsLeavesAndNotBesideThem() {
+        // A picture with one leaf in it: a small square left of middle, and a
+        // thin stem running down from it, the rest air.
+        let side = 96
+        let image = UIGraphicsImageRenderer(size: CGSize(width: side, height: side)).image { context in
+            UIColor.green.setFill()
+            context.fill(CGRect(x: 20, y: 30, width: 16, height: 16))
+            context.fill(CGRect(x: 27, y: 46, width: 2, height: 50))
+        }
+        let leaves = GardenSprites.leafPath(of: image)
+        func hits(_ x: Double, _ y: Double) -> Bool {
+            leaves.contains(CGPoint(x: x / Double(side), y: y / Double(side)))
+        }
+
+        XCTAssertTrue(hits(28, 38), "the leaf itself")
+        XCTAssertTrue(hits(28, 80), "the stem")
+        XCTAssertTrue(hits(31, 80), "a finger just beside the stem")
+        XCTAssertFalse(hits(70, 38), "the air across the frame took the tap")
+        XCTAssertFalse(hits(70, 80), "the air in the box's far corner took the tap")
     }
 }

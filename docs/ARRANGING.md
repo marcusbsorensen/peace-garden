@@ -681,6 +681,51 @@ read as a dome, so the body is lower and the head rests above it. What the test
 found: the snail's feelers went off the side of its frame at two facings of
 eight, which looked like a snail with short feelers.
 
+### What zoom is for
+
+Settled 18 September, by Marcus. Three things, and all three happen **among the
+neighbours**, never as one plant alone:
+
+1. **Careful arranging.** Setting a plant exactly beside another, a flower
+   against the right leaf.
+2. **Showing a plant to a friend in its setting**, with the plants round it.
+3. **Being sure of the plant you tap** before its sheet opens.
+
+So the 3× cap stays. It is the answer, not a stand-in for one: a plant alone,
+large enough to read its binomial, is `PlantDetailView`'s job. Each purpose
+asks something of the plot:
+
+- **Arranging** needs a plant in hand to be carried past the edge of the
+  screen when zoomed, so the plot has to pan under it as it nears the edge.
+  The drag is already measured in unzoomed plot coordinates, so a plant already
+  moves more finely under the finger at 3×.
+- **Showing off** is a moment for looking, so the ground's cells showing at 3×
+  now matter, and so does going to one plant quickly: a double tap on a plant
+  to come in on it among its neighbours, and a double tap to go back out.
+- **The right plant** means a plant answers where its leaves are, not across
+  the box round them. Where two boxes overlap, the nearer plant takes the tap
+  even on the far plant's leaves.
+
+All four built 18 September:
+
+- **Pixel-true taps.** A plant answers on a 48-cell map of its own leaves, grown
+  by a cell for the finger, instead of on the box round them. At 3x the
+  grown margin is a third of the size, which is what zooming in to be sure is for.
+- **Pan while carrying.** Something held within 56 points of the screen's edge
+  pans the plot, faster the nearer it is, and goes on while the finger is still.
+  What is held moves against the pan, and is put down where it is held, not
+  where the last drag event said: the plot may have moved under a finger that
+  has not.
+- **Double tap to come in**, to 2.4x, centred half a metre up the plant; a
+  double tap anywhere on a plant goes back out. A single tap now waits a moment
+  to be sure it is one. Not verifiable with injected taps, which arrive too far
+  apart to be a double.
+- **The ground redrawn close.** What is on screen is drawn again at the zoom it
+  is seen at, a quarter of a second after the view settles, antialiased, and
+  laid over the stretched drawing. The quads stay: they are the grain, as the
+  bank's cells are. What went was the drawing being enlarged, which made each
+  quad a blurred patch.
+
 ## The light is rebuilt, not filtered
 
 `StageBackdrop` is a studio, on purpose: one hard key, a cold rim, and an ambient
@@ -817,12 +862,6 @@ Two things it turns on, both in `GardenVisits`:
 - **Whether the shadows should be soft, and how soft.** They are drawn hard
   here, with a blur that widens as the light drops. A real shadow's edge softens
   with distance from what cast it, which a single blur cannot say.
-- **What zoom is for.** Close enough to read one plant's binomial is a different
-  screen from far enough to see the whole plot, and if zoom reaches the first it
-  overlaps what `PlantDetailView` already does. Built 18 September as far as 3×
-  and no further, which is close enough to see a plant's leaves and stops well
-  short of a binomial — so the question is still open, and the cap is the
-  answer until it is settled. At 3× the ground's cells begin to show.
 - **What the growth rule actually is.** A little more world per meeting, at a
   rate that keeps a tall plant at roughly half the radius. Whether that is
   smooth or in steps, and whether a garden of two hundred plants is still one

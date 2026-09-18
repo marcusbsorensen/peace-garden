@@ -1,6 +1,7 @@
 import SceneKit
 import simd
 import SeedCore
+import SwiftUI
 import UIKit
 
 /// A plant as a still, drawn at the garden's own scale.
@@ -106,6 +107,20 @@ final class GardenSprites {
         /// touch meant for the lantern — the lantern could be seen and not
         /// picked up. So a plant answers only where it has leaves.
         let opaque: CGRect
+        /// Where the leaves are, cell by cell, in a unit square: what a finger
+        /// actually has to land on.
+        ///
+        /// **A box is not enough where plants overlap.** The box round a plant
+        /// is still mostly air, and where a near plant's box lies over a far
+        /// plant's leaves the near plant took the tap — the wrong sheet opened.
+        /// Zoom is partly *for* being sure of the plant tapped, and zooming in
+        /// could not help while the air answered.
+        let leaves: Path
+
+        /// The leaves at a drawn size.
+        func leaves(in size: CGSize) -> Path {
+            leaves.applying(CGAffineTransform(scaleX: size.width, y: size.height))
+        }
     }
 
     /// What the cache holds: the picture and where the plant is in it, measured
@@ -113,10 +128,70 @@ final class GardenSprites {
     private final class Rendered {
         let image: UIImage
         let opaque: CGRect
-        init(image: UIImage, opaque: CGRect) {
+        let leaves: Path
+        init(image: UIImage, opaque: CGRect, leaves: Path) {
             self.image = image
             self.opaque = opaque
+            self.leaves = leaves
         }
+    }
+
+    /// How finely the leaves are mapped: cells across a sprite's frame.
+    nonisolated static let leafCells = 48
+
+    /// Every cell of a picture with something opaque in it, grown by a cell
+    /// all round, as a path in a unit square.
+    ///
+    /// Grown because a stem one point wide is a leaf a finger cannot hit; a cell
+    /// either side is a little tolerance at the fitted size, and at 3x the same
+    /// cell is a third of that — which is what zooming in to be sure is for.
+    /// Rows are merged into runs, so a plant is tens of rectangles, not
+    /// thousands.
+    static func leafPath(of image: UIImage) -> Path {
+        guard let cg = image.cgImage else { return Path(CGRect(x: 0, y: 0, width: 1, height: 1)) }
+        let width = cg.width, height = cg.height
+        var pixels = [UInt8](repeating: 0, count: width * height * 4)
+        guard let context = CGContext(
+            data: &pixels, width: width, height: height,
+            bitsPerComponent: 8, bytesPerRow: width * 4,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else { return Path(CGRect(x: 0, y: 0, width: 1, height: 1)) }
+        context.draw(cg, in: CGRect(x: 0, y: 0, width: width, height: height))
+
+        let n = leafCells
+        var solid = [Bool](repeating: false, count: n * n)
+        for y in stride(from: 0, to: height, by: 2) {
+            for x in stride(from: 0, to: width, by: 2) where pixels[(y * width + x) * 4 + 3] > 24 {
+                solid[(y * n / height) * n + x * n / width] = true
+            }
+        }
+
+        var grown = solid
+        for row in 0..<n {
+            for column in 0..<n where solid[row * n + column] {
+                for dy in -1...1 {
+                    for dx in -1...1 {
+                        let r = row + dy, c = column + dx
+                        if (0..<n).contains(r), (0..<n).contains(c) { grown[r * n + c] = true }
+                    }
+                }
+            }
+        }
+
+        var path = Path()
+        let cell = 1 / Double(n)
+        for row in 0..<n {
+            var column = 0
+            while column < n {
+                guard grown[row * n + column] else { column += 1; continue }
+                let start = column
+                while column < n, grown[row * n + column] { column += 1 }
+                path.addRect(CGRect(x: Double(start) * cell, y: Double(row) * cell,
+                                    width: Double(column - start) * cell, height: cell))
+            }
+        }
+        return path
     }
 
     /// The box round everything in a picture that is not transparent, as
@@ -206,7 +281,7 @@ final class GardenSprites {
         let metres = frameMetres(for: genome)
         let key = Self.key(genome: genome, growth: growth, step: step, turn: quarter) as NSString
         if let held = cache.object(forKey: key) {
-            return Sprite(image: held.image, metres: metres, opaque: held.opaque)
+            return Sprite(image: held.image, metres: metres, opaque: held.opaque, leaves: held.leaves)
         }
 
         let side = CGFloat(metres) * Self.renderedPointsPerMetre
@@ -239,8 +314,9 @@ final class GardenSprites {
         let snapshot = view.snapshot()
         guard snapshot.size.width > 0 else { return nil }
         let opaque = Self.opaqueBounds(of: snapshot)
-        cache.setObject(Rendered(image: snapshot, opaque: opaque), forKey: key)
-        return Sprite(image: snapshot, metres: metres, opaque: opaque)
+        let leaves = Self.leafPath(of: snapshot)
+        cache.setObject(Rendered(image: snapshot, opaque: opaque, leaves: leaves), forKey: key)
+        return Sprite(image: snapshot, metres: metres, opaque: opaque, leaves: leaves)
     }
 
     /// A plant standing outdoors, under the same light as the ground it stands on.
