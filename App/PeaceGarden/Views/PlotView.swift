@@ -32,20 +32,25 @@ struct PlotView: View {
 
             GeometryReader { proxy in
                 let side = model.garden.plotSide
+                let world = GardenWorlds.shared.resolve(model.garden.arrangements.first?.world)
+                // A hill lifts a plant above the far corner and a ravine hangs
+                // the cut below the near one, so the camera has to leave room
+                // for the ground as well as for what stands on it.
+                let relief = GardenWorlds.shared.relief(world: world, plotSide: side)
                 let view = Isometric.fitting(
                     plotSide: side,
                     in: proxy.size,
-                    headroom: GardenSprites.tallestExpected,
-                    soilDepth: GardenGround.rimDepth
+                    headroom: GardenSprites.tallestExpected + relief.high,
+                    soilDepth: GardenGround.rimDepth - relief.low
                 )
 
                 ZStack(alignment: .topLeading) {
-                    plot(side: side, in: view)
+                    plot(world: world, side: side, in: view, size: proxy.size)
 
                     // Far to near, and nothing else decides what covers what.
                     ForEach(standing(plotSide: side)) { standing in
-                        pool(for: standing, in: view)
-                        plant(standing, in: view)
+                        pool(for: standing, world: world, side: side, in: view)
+                        plant(standing, world: world, side: side, in: view)
                     }
                 }
                 .frame(width: proxy.size.width, height: proxy.size.height)
@@ -56,6 +61,7 @@ struct PlotView: View {
                 header
                 if model.hybrids.isEmpty { empty }
                 Spacer(minLength: 0)
+                grounds
             }
             .padding(.horizontal, 26)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -107,28 +113,33 @@ struct PlotView: View {
 
     // MARK: The ground
 
-    private func plot(side: Double, in view: Isometric) -> some View {
-        Canvas { context, _ in
-            // The cut is drawn first: it hangs behind the surface, and the
-            // surface is what covers the top of it.
-            for (path, colour) in GardenGround.nearFaces(plotSide: side, in: view) {
-                context.fill(path, with: .color(colour))
-            }
-            context.fill(
-                GardenGround.topFace(plotSide: side, in: view),
-                with: .color(GardenGround.shade(base: GardenGround.turf, normal: SIMD3(0, 1, 0)))
-            )
-        }
-        .allowsHitTesting(false)
+    /// The ground, drawn once and kept.
+    ///
+    /// The flat plot underneath is the fallback rather than dead code: if the
+    /// world atlas is missing from the bundle the garden is still a place with
+    /// an edge, instead of fourteen plants standing in the dark.
+    private func plot(world: Int, side: Double, in view: Isometric, size: CGSize) -> some View {
+        GardenGroundView(world: world, plotSide: side, view: view, size: size)
+            .allowsHitTesting(false)
+    }
+
+    /// Where a plant's foot actually is, which on a world is not `y = 0`.
+    ///
+    /// A square plot **is** a heightmap, so standing a plant on terrain is a
+    /// lookup rather than a problem. Drag a plant into the ravine and it goes
+    /// down into it.
+    private func standsAt(_ spot: Spot, world: Int, side: Double) -> Double {
+        GardenWorlds.shared.height(world: world, x: spot.x, z: spot.z, plotSide: side)
     }
 
     // MARK: The plants
 
-    private func plant(_ standing: Standing, in view: Isometric) -> some View {
+    private func plant(_ standing: Standing, world: Int, side: Double,
+                       in view: Isometric) -> some View {
         GardenPlantSprite(
             genome: standing.record.genome,
             growth: standing.growth,
-            foot: view.point(standing.spot),
+            foot: view.point(standing.spot, y: standsAt(standing.spot, world: world, side: side)),
             pointsPerMetre: view.pointsPerMetre
         ) {
             visits.seen(standing.record, growth: standing.growth)
@@ -142,9 +153,11 @@ struct PlotView: View {
     /// garden's own vocabulary for *look here* is light — `StageBackdrop` has
     /// done exactly this behind a single plant since August.
     @ViewBuilder
-    private func pool(for standing: Standing, in view: Isometric) -> some View {
+    private func pool(for standing: Standing, world: Int, side: Double,
+                      in view: Isometric) -> some View {
         if standing.announces {
-            let centre = view.point(standing.spot)
+            let centre = view.point(standing.spot,
+                                    y: standsAt(standing.spot, world: world, side: side))
             let axes = view.ellipse(radius: 0.38)
 
             Ellipse()
@@ -182,6 +195,36 @@ struct PlotView: View {
                 .foregroundStyle(Chrome.faint)
         }
         .padding(.top, 44)
+    }
+
+    /// The grounds, picked the way you pick a plant.
+    ///
+    /// **Nothing here is named.** A named world is forty-two translations, and
+    /// `docs/WEBSITE.md` has already recorded the ten area names becoming 420
+    /// commissions at a multiplier that is now forty-two. Unnamed, the fiftieth
+    /// world costs a render.
+    @ViewBuilder
+    private var grounds: some View {
+        if GardenWorlds.shared.isLoaded {
+            let chosen = GardenWorlds.shared.resolve(model.garden.arrangements.first?.world)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    ForEach(0..<GardenWorlds.shared.count, id: \.self) { world in
+                        Button {
+                            model.choose(world: world)
+                        } label: {
+                            GroundMark(world: world,
+                                       plotSide: model.garden.plotSide,
+                                       isChosen: world == chosen)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.vertical, 6)
+            }
+            .padding(.bottom, 26)
+        }
     }
 
     private var empty: some View {
@@ -237,6 +280,89 @@ private struct GardenPlantSprite: View {
         }
         .task(id: GardenSprites.key(genome: genome, growth: growth)) {
             sprite = GardenSprites.shared.sprite(genome: genome, growth: growth)
+        }
+    }
+}
+
+/// The ground under the garden.
+///
+/// Its own view so the drawing can happen off the main actor and arrive when it
+/// is ready. The flat plot underneath is the fallback rather than dead code: if
+/// the world atlas is missing from the bundle the garden is still a place with
+/// an edge, instead of fourteen plants standing in the dark.
+private struct GardenGroundView: View {
+    let world: Int
+    let plotSide: Double
+    let view: Isometric
+    let size: CGSize
+
+    @State private var ground: UIImage?
+
+    var body: some View {
+        Group {
+            if let ground {
+                Image(uiImage: ground)
+                    .resizable()
+                    .frame(width: size.width, height: size.height)
+            } else if !GardenWorlds.shared.isLoaded {
+                Canvas { context, _ in
+                    for (path, colour) in GardenGround.nearFaces(plotSide: plotSide, in: view) {
+                        context.fill(path, with: .color(colour))
+                    }
+                    context.fill(
+                        GardenGround.topFace(plotSide: plotSide, in: view),
+                        with: .color(GardenGround.shade(base: GardenGround.turf,
+                                                        normal: SIMD3(0, 1, 0)))
+                    )
+                }
+            } else {
+                Color.clear
+            }
+        }
+        .task(id: "\(world)-\(Int(plotSide * 100))-\(Int(size.width))x\(Int(size.height))") {
+            ground = await GardenTerrain.shared.image(
+                world: world, plotSide: plotSide, view: view, size: size
+            )
+        }
+    }
+}
+
+/// One ground in the row, drawn as itself rather than described.
+private struct GroundMark: View {
+    let world: Int
+    let plotSide: Double
+    let isChosen: Bool
+
+    private static let size = CGSize(width: 64, height: 46)
+
+    @State private var image: UIImage?
+
+    var body: some View {
+        ZStack {
+            if let image {
+                Image(uiImage: image)
+                    .resizable()
+                    .frame(width: Self.size.width, height: Self.size.height)
+            } else {
+                Color.clear.frame(width: Self.size.width, height: Self.size.height)
+            }
+        }
+        // The chosen one is brighter and the rest stand back, rather than a tick
+        // or a ring — a border round a landscape is a stamp on a picture.
+        .opacity(isChosen ? 1 : 0.42)
+        .task {
+            let view = Isometric.fitting(
+                plotSide: plotSide,
+                in: Self.size,
+                headroom: 0,
+                soilDepth: GardenGround.rimDepth,
+                margin: 2
+            )
+            // Coarser than the plot, and eight of them at once: a mark sixty
+            // points wide has no grain to show, so the colour is averaged over
+            // each quad rather than the stipple being sampled at one point.
+            image = await GardenTerrain.shared.image(world: world, plotSide: plotSide,
+                                                     view: view, size: Self.size, detail: 26)
         }
     }
 }

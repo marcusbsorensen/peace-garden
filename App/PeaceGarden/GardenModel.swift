@@ -344,6 +344,22 @@ final class GardenModel {
 
     // MARK: - Plumbing
 
+    /// Stand the garden on a different ground.
+    ///
+    /// Told, not inherited: it goes on the bed beside the template, where the
+    /// arrangement and the note already live. Nothing about a plant changes, and
+    /// a plant standing where the ground is about to become a gorge keeps its
+    /// `x` and `z` and is simply lower — a spot is a place on the plot rather
+    /// than a place on a particular surface.
+    func choose(world: Int) {
+        if garden.beds?.isEmpty ?? true {
+            garden.beds = [Bed(name: "", template: .thematic, world: world)]
+        } else {
+            garden.beds?[0].world = world
+        }
+        persist()
+    }
+
     private func persist() {
         do {
             try store.save(garden)

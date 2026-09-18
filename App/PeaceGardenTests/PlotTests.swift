@@ -290,4 +290,54 @@ final class PlotTests: XCTestCase {
                               "the plant floats \(String(format: "%.1f", gap * 100))% of its frame above the ground")
         }
     }
+
+    // MARK: - The worlds
+
+    /// **A height is a sixteen-bit number hidden in two colour channels**, and
+    /// every step of ordinary image handling is entitled to move a colour by a
+    /// value or two while keeping it the same colour. A value or two here is a
+    /// centimetre of hill in the wrong place, which nothing on screen would ever
+    /// look wrong enough to catch.
+    ///
+    /// So each world's relief is held against what the exporter measured. If a
+    /// decode ever starts going through a colour space, this is what says so.
+    func testEveryWorldIsTheShapeItWasExportedAs() throws {
+        let worlds = GardenWorlds.shared
+        try XCTSkipUnless(worlds.isLoaded, "the world atlas is not in this bundle")
+        XCTAssertEqual(worlds.count, 8)
+
+        let exported: [(low: Double, high: Double)] = [
+            (-0.1241, 0.1584),   // meadow
+            (-0.4320, 0.3545),   // hillside
+            (-0.1000, 0.9689),   // alpine
+            (0.0000, 0.2669),    // lake
+            (-1.1360, 0.3465),   // ravine
+            (-0.1613, 0.1486),   // verge
+            (-0.0500, 0.2323),   // raised beds
+            (-0.0976, 0.1213)    // parterre
+        ]
+
+        for (world, expected) in exported.enumerated() {
+            let measured = worlds.relief(world: world, plotSide: GardenWorlds.drawnForSide)
+            XCTAssertEqual(measured.low, expected.low, accuracy: 0.002, "world \(world) floor")
+            XCTAssertEqual(measured.high, expected.high, accuracy: 0.002, "world \(world) peak")
+        }
+    }
+
+    /// The relief is scaled with the plot, so a garden of fifty meetings gets a
+    /// bigger hill rather than the same hill with more ground round it — and a
+    /// plant on that hill stands on it rather than inside it.
+    func testAHillGrowsWithThePlotItIsOn() throws {
+        let worlds = GardenWorlds.shared
+        try XCTSkipUnless(worlds.isLoaded, "the world atlas is not in this bundle")
+
+        let small = worlds.relief(world: 2, plotSide: GardenWorlds.drawnForSide)
+        let large = worlds.relief(world: 2, plotSide: GardenWorlds.drawnForSide * 2)
+        XCTAssertEqual(large.high, small.high * 2, accuracy: 1e-9)
+
+        // And the ground under a place is the ground the drawing puts there.
+        let onThePeak = worlds.height(world: 2, x: 0, z: 0, plotSide: GardenWorlds.drawnForSide)
+        XCTAssertGreaterThanOrEqual(onThePeak, small.low)
+        XCTAssertLessThanOrEqual(onThePeak, small.high)
+    }
 }

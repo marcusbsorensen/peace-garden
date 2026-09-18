@@ -80,6 +80,18 @@ enum GardenGround {
         shadow: Double = 1,
         light: Light = .noon
     ) -> Color {
+        let lit = shaded(base: base, normal: normal, shadow: shadow, light: light)
+        return Color(red: lit.x, green: lit.y, blue: lit.z)
+    }
+
+    /// The same answer as components, for the thousands of quads a terrain is
+    /// made of — a `Color` per cell would be four thousand boxed values a frame.
+    static func shaded(
+        base: SIMD3<Double>,
+        normal: SIMD3<Double>,
+        shadow: Double = 1,
+        light: Light = .noon
+    ) -> SIMD3<Double> {
         let hemi = 0.5 + 0.5 * normal.y
         let key = max(0, simd_dot(normal, light.direction))
         let lit = pow(key, 0.9) * light.strength * (0.18 + 0.82 * shadow)
@@ -89,7 +101,7 @@ enum GardenGround {
             let ambient = light.sky[channel] * hemi + light.bounce[channel] * (1 - hemi)
             out[channel] = min(1, max(0, base[channel] * (ambient + light.colour[channel] * lit)))
         }
-        return underCeiling(out)
+        return ceilinged(out)
     }
 
     // MARK: What the ground is made of
@@ -116,21 +128,23 @@ enum GardenGround {
     static let saturationCeiling = 0.28
 
     static func underCeiling(_ rgb: SIMD3<Double>) -> Color {
+        let held = ceilinged(rgb)
+        return Color(red: held.x, green: held.y, blue: held.z)
+    }
+
+    static func ceilinged(_ rgb: SIMD3<Double>) -> SIMD3<Double> {
         let high = max(rgb.x, max(rgb.y, rgb.z))
         let low = min(rgb.x, min(rgb.y, rgb.z))
-        guard high > 0 else { return Color(red: 0, green: 0, blue: 0) }
+        guard high > 0 else { return SIMD3(repeating: 0) }
 
         let saturation = (high - low) / high
-        guard saturation > saturationCeiling else {
-            return Color(red: rgb.x, green: rgb.y, blue: rgb.z)
-        }
+        guard saturation > saturationCeiling else { return rgb }
 
         // Pulled toward its own grey rather than desaturated to it, so the
         // material keeps its hue and loses only what it was not allowed.
         let keep = saturationCeiling / saturation
         let grey = high * (1 - keep)
-        let pulled = rgb * keep + SIMD3(repeating: grey)
-        return Color(red: pulled.x, green: pulled.y, blue: pulled.z)
+        return rgb * keep + SIMD3(repeating: grey)
     }
 
     // MARK: The shapes

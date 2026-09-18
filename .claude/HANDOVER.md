@@ -1,4 +1,4 @@
-# The Garden screen — handover 17 September 2026
+# The Garden screen — handover 18 September 2026
 
 ## Goal
 
@@ -9,12 +9,14 @@ choice of ground and a sun and moon going round it.
 ## State
 
 **Done and verified, and looked at on a simulator.** The Garden screen is the
-plot. Flat ground, noon light held still, plants standing on it at their real
-relative sizes, and a pool of light under anything that has changed since it was
-last opened. Thematic no longer stands one plant inside another. 49 app tests,
-from 35; SeedCore untouched at 106. Two commits on `main`, not pushed.
+plot: a floating square plot in isometric, standing on one of eight worlds, with
+the plants at their real relative sizes standing on the terrain, a pool of light
+under anything that has changed since it was last opened, and a row of little
+worlds to choose the ground from. Thematic no longer stands one plant inside
+another. 51 app tests, from 35; SeedCore at 106. Three commits on `main`, not
+pushed.
 
-**Done, not built into the app.** Terrain, the orbit, and the gestures. The
+**Done, not built into the app.** The orbit and the gestures. The
 interactive Design canvas remains the reference:
 https://claude.ai/artifact/JtRewHDMGQJJTPnKvS5Tru — eight worlds, drag a plant,
 hour slider, orbiting sun and moon with cast shadows, real moon phase. Its
@@ -32,7 +34,10 @@ names. What Danish still needs is its *prose*. See
 | --- | --- |
 | `docs/ARRANGING.md` | The whole design, updated with what was settled and measured today. |
 | `App/PeaceGarden/Arranging/Isometric.swift` | The projection, its inverse, and the fit to a viewport. |
-| `App/PeaceGarden/Rendering/GardenGround.swift` | The plot, the cut, the light, and the saturation ceiling. |
+| `App/PeaceGarden/Rendering/GardenGround.swift` | The cut, the light, the saturation ceiling, and the flat plot that is the fallback. |
+| `App/PeaceGarden/Rendering/GardenWorlds.swift` | The eight grounds, as height and colour per cell. |
+| `App/PeaceGarden/Rendering/GardenTerrain.swift` | The plot drawn as a mesh, off the main actor and kept. |
+| `App/PeaceGarden/Resources/Worlds/` | The two textures, 276 KB, straight from the mockup. |
 | `App/PeaceGarden/Rendering/GardenSprites.swift` | Plants as stills at one shared scale. **Not `ThumbnailRenderer`** — see below. |
 | `App/PeaceGarden/Views/PlotView.swift` | The screen. |
 | `App/PeaceGarden/Views/GardenVisits.swift` | What has changed since a plant was last opened. |
@@ -97,13 +102,50 @@ in the same place here.
 | Cut soil | `[0.215, 0.185, 0.160]`, shaded with a fixed shadow term of 0.55. |
 | Light | Noon `[-0.332, 0.883, 0.332]`, strength 0.76, sky `[0.40, 0.48, 0.60]`, bounce `[0.27, 0.25, 0.20]`, `pow(key, 0.9)`, `0.18 + 0.82·shadow`. |
 
+## Terrain: done
+
+Eight worlds, from the mockup's own two textures — 128 by 128 cells each, height
+packed sixteen-bit into the red and green bytes, albedo as plain RGB. A world
+ships as what it is rather than as a picture of itself, so the light is applied
+where the ground is drawn; that is what lets the orbit move without eight times
+twenty-four renders.
+
+The ground is **chosen**, and the choice is `Bed.world` — optional, so nothing
+migrates. Growing it from the gardener's seed was the alternative and was
+rejected on ARRANGING.md's own opening line. A world is a number because a world
+has no name, which makes the atlas's row order part of the file format: add at
+the end, never reorder.
+
+Two faults, both found by looking:
+
+1. **The ravine came out as a lattice of black diamonds.** A world's colour is
+   stippled — that is what gives strata and scree their grain — and a mesh
+   coarser than the atlas reads one cell per quad, so each quad took a dot or a
+   gap. The plot is drawn at the atlas's own resolution now, and anything
+   coarser averages over the patch its quad covers. **The meadow, having no
+   stipple, hid this completely.**
+2. **The middle of a quad is not the average of two opposite corners.** Where the
+   ground is steep that point sits off the surface, so the march for shade
+   started underground. Flat ground agrees, so the meadow hid this too.
+
+Drawing sixteen thousand quads is about half a second, which inside `body` is
+half a second of frozen phone. `GardenTerrain` is an actor: the screen appears at
+once and the ground arrives a beat later.
+
 ## Next step
 
-**The terrain, then the orbit** — in that order, because the orbit is what stops
-the ground being a picture and there has to be a ground first. `GardenGround` is
-written against a height at a place rather than against zero, so a heightmap
-drops in without the drawing changing shape; `nearFaces` already samples along
-the rim for exactly that reason.
+**The orbit.** The sun up from 06:00 to 18:00, the moon the other twelve hours,
+one light because exactly one of them is above the horizon at any hour. The
+numbers are in *What the mockup actually says* below, and the shape of the work
+is already in place: `GardenGround.Light` is a value with noon in it,
+`GardenTerrain` takes one and keys its cache on nothing else, and the plants are
+already rendered per growth bucket and cached the same way. What it needs is the
+light as a function of the hour, the eight points round the clock to render at,
+and the crossfade between them.
+
+`GardenVisits` is the thing to be careful of: night falling must not make the
+whole garden announce itself. It reads growth and never the bloom for exactly
+that reason, and there is a test.
 
 ## Thematic crowding: done
 
@@ -127,6 +169,12 @@ because one garden is what let the fault through the first time.
 
 ## Traps
 
+- **A world's colour is stippled, so never point-sample it at a coarse mesh.**
+  The grain is the texture; one cell per quad is either the grain or a lattice of
+  holes, depending on whether the mesh matches the atlas.
+- **The meadow hides terrain faults.** It has almost no relief and no stipple, so
+  it draws correctly under arithmetic that is wrong. Check a new world drawing
+  against the ravine or the alpine, never against the meadow.
 - **`ThumbnailRenderer` is the wrong renderer for a garden.** It frames every
   plant against its own mature bounds so each fills its tile, which is right for
   a grid and is the one thing a garden must not do. `GardenSprites` is

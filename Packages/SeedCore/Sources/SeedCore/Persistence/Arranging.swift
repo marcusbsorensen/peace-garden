@@ -82,16 +82,37 @@ public struct Bed: Codable, Equatable, Identifiable, Sendable {
     /// nothing has to remember that.
     public var placed: [String: Spot]
 
+    /// Which ground this bed stands on, as a row in the world atlas.
+    ///
+    /// **Told, not inherited.** Settled 18 September. The ground could have been
+    /// grown from the gardener's own seed, which would have made it one more
+    /// thing about them that they did not choose — and put it on the wrong side
+    /// of the line `docs/PLACE.md` draws and `docs/ARRANGING.md` opens with. It
+    /// sits here beside the template, with the arrangement and the note and the
+    /// display name.
+    ///
+    /// **A number, because the worlds have no names.** A named world is
+    /// forty-two translations; `docs/ARRANGING.md` records why the fiftieth world
+    /// has to cost a render and nothing else. So the order of the rows in the
+    /// atlas is the file format, the way the trait labels are: a world may be
+    /// added at the end, and none may be reordered or removed.
+    ///
+    /// Optional so that nothing migrates. A bed written before this decodes as
+    /// no choice, and no choice is the first world.
+    public var world: Int?
+
     public init(
         id: UUID = UUID(),
         name: String,
         template: Template = .thematic,
-        placed: [String: Spot] = [:]
+        placed: [String: Spot] = [:],
+        world: Int? = nil
     ) {
         self.id = id
         self.name = name
         self.template = template
         self.placed = placed
+        self.world = world
     }
 
     public func spot(for plant: PlantRecord) -> Spot? {

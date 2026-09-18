@@ -356,6 +356,20 @@ be the same trap on a list Marcus has already described as *landscapes from all
 over the Earth*. Unnamed, the fiftieth world costs a render. Named, it costs
 forty-two translations and a reading that has barely started.
 
+### A fourth, which the app's own drawing taught
+
+**A world's colour is stippled, and a mesh coarser than the atlas turns grain
+into a lattice.** The ravine's strata and the scree are drawn as single dark
+cells among lighter ones; that is what gives them their texture. Drawing the plot
+at sixty-four quads a side and reading one cell per quad picked a dot or a gap,
+and the gorge came out as a regular lattice of black diamonds — which reads as
+holes in the ground rather than as a sampling fault, and which the meadow, having
+no stipple to alias, was perfectly happy to hide.
+
+The plot is drawn at the atlas's own resolution, so a quad is a cell and the
+grain is the grain. Anything coarser — the row of little worlds — averages the
+colour over the patch its quad covers instead.
+
 ### Three things the renders taught, which no test would have
 
 The same lesson the husk taught in August, and `tools/preview/README.md` is
@@ -600,6 +614,19 @@ Two things it turns on, both in `GardenVisits`:
 - **Night falls by the clock, with an override** in Seed.
 - **Templates are pure functions**, and a bed stores only what was moved by hand.
 - **`beds` is optional on `Garden`**, so nothing migrates and no version moves.
+- **The ground is chosen, and the choice lives on the bed.** Settled 18
+  September. `Bed.world` is an optional row in the world atlas, so nothing
+  migrates and no bed written before it has to say anything. Growing the world
+  from the gardener's own seed was the alternative and was rejected on this
+  document's own opening line: it would have made the ground one more thing about
+  somebody that they did not choose.
+- **A world is a number, because a world has no name.** The order of the rows in
+  the atlas is therefore the file format, the way the trait labels are: a world
+  may be added at the end, and none may be reordered or removed.
+- **A plant standing where the ground changes keeps its `x` and `z` and is
+  simply lower.** A spot is a place on the plot rather than a place on a
+  particular surface, so swapping Meadow for Ravine drops a plant into the gorge
+  rather than moving it out of the way of one.
 - **Thematic ranks an area's plants down its depth** rather than scattering them
   in it, because an area is one plant wide. The only template whose spot depends
   on the other plants, and it still depends on no arrival order.
@@ -637,12 +664,3 @@ Two things it turns on, both in `GardenVisits`:
   smooth or in steps, and whether a garden of two hundred plants is still one
   plot, are both unanswered. A plot that grows in square rings has a natural
   answer to the first and none to the second.
-- **Whether terrain is chosen or drawn from the seed.** Every world in the
-  mockup is hand-tuned noise. The gardener's own seed could grow the world, which
-  would make it inherited rather than told — and would put it on the wrong side
-  of the line this document opens with. Worth deciding on purpose rather than
-  drifting into.
-- **What happens to a plant standing where the ground changes.** Nothing in the
-  design stops somebody swapping Meadow for Ravine with a plant standing exactly
-  where the gorge is about to be. It should probably keep its `x, z` and simply
-  be lower, but that is a decision rather than an accident waiting to be one.
