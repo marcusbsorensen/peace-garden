@@ -27,6 +27,7 @@ declare(strict_types=1);
  */
 
 require_once __DIR__ . '/Seeds.php';
+require_once __DIR__ . '/Limits.php';
 require_once __DIR__ . '/WalkStore.php';
 
 function respond(int $status, array $body): never
@@ -58,13 +59,23 @@ function settings(): array
     ];
 }
 
+/**
+ * The store, opened once a request.
+ *
+ * Held, because the rate limit asks for it before the route does and two
+ * `WalkStore::open` calls are two connections and two runs of the migrations
+ * for one request.
+ */
 function store(array $settings): WalkStore
 {
+    static $open = null;
+    if ($open !== null) return $open;
+
     if (str_starts_with($settings['dsn'], 'sqlite:')) {
         $directory = dirname(substr($settings['dsn'], strlen('sqlite:')));
         if (!is_dir($directory)) mkdir($directory, 0700, true);
     }
-    return WalkStore::open($settings['dsn'], $settings['user'], $settings['password']);
+    return $open = WalkStore::open($settings['dsn'], $settings['user'], $settings['password']);
 }
 
 /** The request's JSON object, or a 400. */
@@ -109,9 +120,36 @@ function checkedPlant(mixed $plant): array
             'height' => (float) $height, 'family' => $family];
 }
 
+/**
+ * Stops here if this caller has written too often lately.
+ *
+ * Before the body is read and before anything is looked up, so a caller that
+ * is over its limit costs the service a counter and nothing else. `Limits.php`
+ * says what is kept and for how long — a salted bucket and a count, never an
+ * address.
+ */
+function withinLimits(array $settings, string $path): void
+{
+    $wait = (new Limits(store($settings)->connection()))
+        ->wait($path, Limits::caller($_SERVER), time());
+    if ($wait === null) return;
+
+    header('Retry-After: ' . $wait);
+    respond(429, [
+        'error' => 'That is more writing than this service takes from one place in an hour.',
+        'retryAfter' => $wait,
+    ]);
+}
+
 function route(string $method, string $path): never
 {
     $settings = settings();
+
+    // Every route that writes, and `pending` too: it is the one a phone calls
+    // unprompted, so it is the one a script would call in a loop.
+    if ($method === 'POST' && isset(Limits::ROUTES[$path])) {
+        withinLimits($settings, $path);
+    }
 
     if ($path === '/api/walk' && $method === 'GET') {
         respond(200, ['plots' => store($settings)->plots()]);

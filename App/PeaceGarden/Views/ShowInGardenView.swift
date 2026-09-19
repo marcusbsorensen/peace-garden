@@ -155,7 +155,15 @@ struct ShowInGardenView: View {
                 // One sentence, in this person's language, saying what to do
                 // rather than what the service said. The service writes in
                 // English and its words are for the log.
-                trouble = String(localized: "The garden could not be reached just now. Nothing has changed; try again when you have a signal.")
+                //
+                // **One sentence for all three troubles**, and it has to be
+                // true of each: no signal, a service that refused, and a
+                // service saying this address has written too much lately.
+                // *When you have a signal* was true of one of them and wrong
+                // about the other two. Telling them apart on screen would mean
+                // a duration in forty-two languages for a case an ordinary
+                // person never meets.
+                trouble = String(localized: "The garden could not be reached just now. Nothing has changed; try again in a little while.")
                 working = false
             }
         }

@@ -143,6 +143,10 @@ final class WalkStore
         return new Offers($this->db, $this);
     }
 
+    /// The same connection, for the parts of the service that keep their own
+    /// tables beside the walk rather than in it.
+    public function connection(): PDO { return $this->db; }
+
     public function plots(): int
     {
         $query = $this->db->prepare('SELECT COALESCE(MAX(plot) + 1, 0) FROM long_walk');

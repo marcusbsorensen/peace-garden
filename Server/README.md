@@ -303,6 +303,14 @@ the service's own files unreachable, as it does `.pages/`.
     What it does prevent is anybody planting *somebody else's* plant or
     answering for them. Rate limiting belongs in front of the service.
   - Checked by `tools/reference/check_offers.php`, in CI.
+- **How often one caller may write**, `.api/Limits.php`: 20 offers, 60 answers,
+  30 withdrawals and 240 askings an hour per address, answered `429` with a
+  `Retry-After` when the allowance is gone. It is in PHP because the vhost is
+  not ours to configure, so it caps what is *written* rather than what arrives
+  — which is the half that matters on an append-only walk. What is stored is a
+  salted digest of the address and a count, dropped once the window passes;
+  the salt is random per install and lives in the database. Checked by
+  `tools/reference/check_limits.php`, in CI.
 - `POST /api/walk/plant` — **answers 403**: it is the one route that plants with
   nobody asked, and it exists for the reference check. A local copy opens it in
   `.api/config.php` (copy `config.example.php`; git ignores it and `deploy.sh`

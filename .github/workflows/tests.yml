@@ -121,6 +121,11 @@ jobs:
       # is held.
       - name: Nothing is planted unasked
         run: php tools/reference/check_offers.php
+      # And one caller cannot fill the walk. The interesting half is that the
+      # allowance comes back: a limit that counted for ever would lock somebody
+      # out of their own garden by the second week and nothing would say so.
+      - name: One caller cannot fill the walk
+        run: php tools/reference/check_limits.php
       - name: The site's own prose is commissioned, not drifting
         run: python3 tools/strings/check.py
       # The numeral rule, which nothing enforced until 6 September and which
