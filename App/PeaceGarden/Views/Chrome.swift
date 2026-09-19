@@ -1130,6 +1130,95 @@ struct ChromeIconLabel: View {
     }
 }
 
+/// One mark: a glyph in a circle that unrolls its word when it is touched.
+///
+/// **Lifted out of the stage's row**, which is where the bargain was struck:
+/// nothing on screen until somebody asks, and the same bargain in any language,
+/// which words are not. `PlantStageView.mark` says why one word at a time and
+/// not four — four tracked-out words come to 533 points in Italian against a
+/// phone's 402. Anywhere else in the app that wants a row of actions wants
+/// exactly this, and a second implementation of it would be two rows that
+/// looked alike until one of them was changed.
+///
+/// **Tap unrolls, tap the same one again to act, a long press acts straight
+/// away.** With VoiceOver the unrolling collapses: the word is already being
+/// read aloud, so the first touch would buy nothing and cost an activation.
+///
+/// `expanded` is shared by every mark in a row, so unrolling one rolls up the
+/// rest — the row is one width wide and only one word fits in it.
+struct ChromeMark: View {
+    let glyph: AnyShape
+    /// What this mark is called among its neighbours. Only `expanded` reads it.
+    let name: String
+    let title: LocalizedStringKey
+    var isProminent: Bool = false
+    var titleSpacing: CGFloat = 7
+    /// Every word shown at once, stacked, which is the Settings menu style.
+    var namesEveryMark: Bool = false
+    @Binding var expanded: String?
+    let act: () -> Void
+
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOver
+    @State private var hideTask: Task<Void, Never>?
+
+    /// How long an unrolled word stays before it rolls back up.
+    static let wordLingers: Duration = .seconds(4)
+
+    private var showsTitle: Bool { namesEveryMark || expanded == name }
+
+    var body: some View {
+        ChromeIconLabel(
+            glyph: glyph,
+            title: title,
+            tint: isProminent ? Chrome.ink : Chrome.muted,
+            titleSpacing: titleSpacing,
+            showsTitle: showsTitle,
+            axis: namesEveryMark ? .vertical : .horizontal
+        )
+        .frame(maxWidth: namesEveryMark ? .infinity : nil)
+        // Ten all round puts a 28-point glyph in a circle of 48 — round,
+        // because the two insets are the same, and over the forty-four a target
+        // is meant to be. Eighteen once a word unrolls: the cap of a 48-point
+        // capsule curves through twenty-four, so a word set at ten would start
+        // inside its own end.
+        .pressable(
+            isProminent: isProminent,
+            horizontal: namesEveryMark ? 4 : (showsTitle ? 18 : 10),
+            vertical: 10
+        )
+        .contentShape(Capsule())
+        .onTapGesture {
+            hideTask?.cancel()
+            if showsTitle || voiceOver {
+                expanded = nil
+                act()
+            } else {
+                expanded = name
+                scheduleHide()
+            }
+        }
+        .onLongPressGesture(minimumDuration: 0.32) {
+            hideTask?.cancel()
+            expanded = nil
+            act()
+        }
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction { act() }
+        .animation(Chrome.fadeIn, value: showsTitle)
+    }
+
+    /// A word that was asked for and then left alone rolls back up, so a row
+    /// returns to being a row of marks rather than staying half-open.
+    private func scheduleHide() {
+        hideTask?.cancel()
+        hideTask = Task {
+            try? await Task.sleep(for: Self.wordLingers)
+            guard !Task.isCancelled else { return }
+            withAnimation(Chrome.fadeIn) { if expanded == name { expanded = nil } }
+        }
+    }
+}
+
 // MARK: - Holding rather than tapping
 
 /// Reports whether a button is being pressed, and draws nothing of its own.
@@ -1208,6 +1297,37 @@ struct HoldToConfirm: View {
     /// the caller can put its confirmation alert back.
     let askInstead: () -> Void
 
+    /// How the control is dressed.
+    ///
+    /// **Two sets of clothes, one behaviour.** In Settings this is a row among
+    /// rows and wears their type: a small glyph, a sentence beside it, the full
+    /// width. In a row of marks it has to be a mark or it is the one control on
+    /// the screen in a different font, which is what it was on the plant. The
+    /// hold is the same hold either way — the thing that made it a hold is that
+    /// it cannot be undone, and that is true of it wherever it is drawn.
+    enum Dress {
+        /// A full-width row, as the three in Settings are.
+        case row
+        /// A mark among marks: the glyph at twenty-eight, the word tracked out
+        /// in caps beside it, and the word shown only once it has been asked
+        /// for. `ChromeMark` is its neighbour and this matches it exactly.
+        case mark(showsTitle: Bool)
+    }
+
+    var dress: Dress = .row
+
+    private var isMark: Bool {
+        if case .mark = dress { return true }
+        return false
+    }
+
+    private var showsWord: Bool {
+        switch dress {
+        case .row: return true
+        case .mark(let shows): return shows
+        }
+    }
+
     static let duration: Double = 3
     /// Faster than it filled, so letting go reads as a release rather than as a
     /// rewind.
@@ -1226,7 +1346,7 @@ struct HoldToConfirm: View {
     private var wantsPlainButton: Bool { voiceOver || switchControl || assistiveTouch }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: isMark ? .center : .leading, spacing: 8) {
             if wantsPlainButton {
                 Button(action: askInstead) { face(0) }
                     .buttonStyle(.plain)
@@ -1245,6 +1365,7 @@ struct HoldToConfirm: View {
                     .font(.system(size: 13, weight: .light))
                     .foregroundStyle(Chrome.muted)
                     .lineSpacing(4)
+                    .multilineTextAlignment(isMark ? .center : .leading)
                     .transition(.opacity)
             }
         }
@@ -1278,7 +1399,11 @@ struct HoldToConfirm: View {
                 // shapes the two ends.
                 .scaleEffect(x: progress, anchor: .leading)
 
-            row(glyphTint: tint, textTint: Chrome.ink)
+            // A mark takes its neighbours' grey rather than the ink a Settings
+            // row takes. This is the one thing on the row that cannot be
+            // undone, and a control that shouts about that is a control people
+            // reach for by accident because it caught their eye.
+            row(glyphTint: tint, textTint: isMark ? Chrome.muted : Chrome.ink)
 
             row(glyphTint: filledForeground, textTint: filledForeground)
                 .mask(alignment: .leading) {
@@ -1290,18 +1415,40 @@ struct HoldToConfirm: View {
         .contentShape(Rectangle())
     }
 
+    @ViewBuilder
     private func row(glyphTint: Color, textTint: Color) -> some View {
-        HStack(spacing: 10) {
-            glyph
-                .stroke(glyphTint, style: Chrome.monoline)
-                .frame(width: 15, height: 15)
-            Text(title)
-                .font(.system(size: 15, weight: .light))
-                .foregroundStyle(textTint)
+        if isMark {
+            // `ChromeIconLabel`'s own metrics, and the padding `pressable`
+            // would have given it, so this sits in a row of marks at exactly
+            // their height and their weight. It draws its own capsule, because
+            // the fill has to be clipped to it.
+            ChromeIconLabel(
+                glyph: glyph,
+                title: title2,
+                tint: textTint,
+                showsTitle: showsWord
+            )
+            .padding(.horizontal, showsWord ? 18 : 10)
+            .padding(.vertical, 10)
+        } else {
+            HStack(spacing: 10) {
+                glyph
+                    .stroke(glyphTint, style: Chrome.monoline)
+                    .frame(width: 15, height: 15)
+                Text(title)
+                    .font(.system(size: 15, weight: .light))
+                    .foregroundStyle(textTint)
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 12)
         }
-        .padding(.horizontal, 18)
-        .padding(.vertical, 12)
     }
+
+    /// The title as a key, for `ChromeIconLabel`.
+    ///
+    /// `title` is a resource because the consequence beside it is spoken as
+    /// well as drawn; the label wants a key. One string, resolved twice.
+    private var title2: LocalizedStringKey { LocalizedStringKey(String(localized: title)) }
 
     // MARK: The hold
 

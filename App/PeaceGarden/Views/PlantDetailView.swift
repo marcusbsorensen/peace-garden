@@ -18,6 +18,9 @@ struct PlantDetailView: View {
     @State private var releasing = false
     /// The shared garden's one screen, for asking or for answering.
     @State private var showing = false
+    /// Which mark in the row along the foot has its word unrolled. One at a
+    /// time: the row is one width wide.
+    @State private var expandedMark: String?
     /// The assisted path only, the same as the three rows in Settings:
     /// `HoldToConfirm` asks for this when a sustained press is not available.
     @State private var confirming = false
@@ -99,7 +102,7 @@ struct PlantDetailView: View {
             Text("It leaves your garden for the Wild Fields. The person you grew it with keeps theirs, and every other plant here stays where it is.")
         }
         .sheet(isPresented: $showing) {
-            ShowInGardenView(record: model.garden.plants.first { $0.id == record.id } ?? record)
+            ShowInGardenView(record: live)
                 .presentationBackground(Chrome.ground)
         }
         .sheet(isPresented: $editing) {
@@ -178,88 +181,154 @@ struct PlantDetailView: View {
                         }
                     }
 
-                    QuietButton(title: "Tell it differently") { editing = true }
-                        .padding(.top, 6)
-
-                    peaceGarden
+                    standing
                         .padding(.top, 2)
                 }
                 .padding(.horizontal, 40)
                 .frame(maxWidth: Chrome.readableWidth)
-                .padding(.bottom, 26)
+                .padding(.bottom, 22)
             }
 
-            // The same control as the three rows in Settings, for the same
-            // reason: this is irreversible, and a hold is a decision where a
-            // tap is an accident. `HoldToConfirm` also carries the assisted
-            // path — a three-second press is a motor task, and for somebody who
-            // cannot make one the row becomes a button and the alert below
-            // comes back.
-            HoldToConfirm(
-                title: "Release to the Wild Fields",
-                // Worded for what survives, the way the three in Settings are.
-                // No name in it: a name would make this a format string for the
-                // sake of a fact the sentence does not need, and the person is
-                // already named twice on the screen above it.
-                consequence: "It leaves your garden for the Wild Fields. The person you grew it with keeps theirs, and every other plant here stays where it is.",
-                glyph: AnyShape(GardenGlyph()),
-                tint: Chrome.ochre,
-                filledForeground: Chrome.nearBlack,
-                action: { release() },
-                askInstead: { confirming = true }
-            )
-            // The row's fill is a `Rectangle`, which takes whatever height it
-            // is offered. In Settings it is offered its own, inside a scrolling
-            // column; here it sits under a `Spacer` on a full-screen stage and
-            // was handed half the screen, drawing a capsule the height of the
-            // plant. This asks it for its ideal height and leaves the width to
-            // the layout.
-            .fixedSize(horizontal: false, vertical: true)
-            .frame(maxWidth: Chrome.readableWidth)
-            .padding(.horizontal, 40)
-            .padding(.bottom, 30)
+            marks
+                .frame(maxWidth: Chrome.readableWidth)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 30)
+
         }
     }
 
-    /// Where this plant stands with the shared garden on the web.
+    /// This plant as the garden holds it now.
+    ///
+    /// **`record` is a copy taken when the screen opened**, and the asking
+    /// changes a plant while the screen is up: a plant offered a moment ago
+    /// went on saying *Show in the peace garden*, which is a screen telling
+    /// somebody their own action did not happen. The garden is observed, so
+    /// reading it here is what redraws the row.
+    private var live: PlantRecord {
+        model.garden.plants.first { $0.id == record.id } ?? record
+    }
+
+    /// Where this plant stands with the shared garden on the web, in a line.
     ///
     /// **A plant that is on the web looks different from one that is not**, and
     /// somebody who cannot tell at a glance has been handed a decision they
-    /// cannot review (`docs/WEBSITE.md`). This is that difference on the plant's
-    /// own screen; the mark in Garden is the other half.
-    ///
-    /// Four states and no more, because the fifth — *offer it again* — is the
-    /// one the design does not have: there is one invitation per plant, which
-    /// is what lets a decline be the block and the app have no block list.
+    /// cannot review (`docs/WEBSITE.md`). A state is not a thing to press, so
+    /// it is said here and the pressing is in the row below.
     @ViewBuilder
-    private var peaceGarden: some View {
-        let standing = record.standingOrHere
-        switch standing.state {
-        case .here where record.canBeOffered:
-            QuietButton(title: "Show in the peace garden") { showing = true }
-
+    private var standing: some View {
+        switch live.standingOrHere.state {
         case .asked:
-            standingLine("Waiting on \(record.encounter?.peerDisplayName ?? String(localized: "the other gardener"))")
-
-        case .invited:
-            QuietButton(title: "Answer about the peace garden", isProminent: true) { showing = true }
-
+            standingLine("Waiting on \(live.encounter?.peerDisplayName ?? String(localized: "the other gardener"))")
         case .shown:
-            VStack(spacing: 4) {
-                standingLine("In the peace garden")
-                QuietButton(title: "Take it back") { takeItBack() }
-            }
-
+            standingLine("In the peace garden")
+        // One line for both endings. They are different events — the other
+        // gardener said no, or one of the two took it back — but what a person
+        // needs off this screen is where the plant is, and a line naming whose
+        // decision it was would put somebody else's answer on your screen in
+        // their name.
         case .declined, .withdrawn:
-            standingLine("Kept to this garden")
-
-        // A hybrid from before a meeting left tokens behind, a plant of this
-        // person's own, or a standing written by a newer version: each of them
-        // has nothing to offer and nothing to say about it, so the screen says
-        // nothing rather than a greyed row that invites a tap.
-        case .here, .unknown:
+            standingLine("In this garden only")
+        case .here, .invited, .unknown:
             EmptyView()
         }
+    }
+
+    /// Everything that can be done to this plant, as marks.
+    ///
+    /// **The same row as the foot of the stage**, which is the app's one way of
+    /// offering more than one thing at once: a glyph in a circle, its word only
+    /// once it has been asked for, and one word at a time because four of them
+    /// do not fit in any language. `ChromeMark` is shared with the stage so the
+    /// two rows cannot drift apart.
+    ///
+    /// **Release is a mark too, and still a hold.** It was a Settings row on a
+    /// screen that has no Settings rows — a different type, a different colour
+    /// and a different alignment from everything beside it. What made it a hold
+    /// is that it cannot be undone, and that is true of it whatever it is
+    /// wearing, so it wears a mark's clothes and keeps the three seconds.
+    @ViewBuilder
+    private var marks: some View {
+        let plant = live
+        HStack(spacing: 10) {
+            Spacer(minLength: 0)
+
+            ChromeMark(
+                glyph: AnyShape(PencilShape()),
+                name: "meeting",
+                title: "The meeting",
+                expanded: $expandedMark
+            ) { editing = true }
+
+            if plant.canBeOffered {
+                ChromeMark(
+                    glyph: AnyShape(GardenGlyph()),
+                    name: "show",
+                    title: "Show",
+                    expanded: $expandedMark
+                ) { showing = true }
+            }
+
+            if plant.standingOrHere.state == .invited {
+                ChromeMark(
+                    glyph: AnyShape(GardenGlyph()),
+                    name: "answer",
+                    title: "Answer",
+                    isProminent: true,
+                    expanded: $expandedMark
+                ) { showing = true }
+            }
+
+            if plant.standingOrHere.isShown {
+                ChromeMark(
+                    glyph: AnyShape(CycleGlyph()),
+                    name: "back",
+                    title: "Take it back",
+                    expanded: $expandedMark
+                ) { takeItBack() }
+            }
+
+            releaseMark
+
+            Spacer(minLength: 0)
+        }
+    }
+
+    /// Letting a plant go, which is the one thing on this screen that cannot be
+    /// taken back — so it is held rather than tapped.
+    ///
+    /// A tap unrolls its word like any other mark; the hold is what fires it.
+    /// `HoldToConfirm` also carries the assisted path: a three-second press is
+    /// a motor task, and for somebody who cannot make one the mark becomes an
+    /// ordinary button and the alert comes back.
+    private var releaseMark: some View {
+        HoldToConfirm(
+            title: "Release",
+            // Worded for what survives, the way the three in Settings are. No
+            // name in it: a name would make this a format string for the sake
+            // of a fact the sentence does not need, and the person is already
+            // named on the screen above it.
+            consequence: "It leaves your garden for the Wild Fields. The person you grew it with keeps theirs, and every other plant here stays where it is.",
+            // Its own mark, drawn for this: a head let go and its seeds
+            // lifting away. It had been borrowing the garden's, which says the
+            // opposite of where a released plant goes.
+            glyph: AnyShape(ReleaseGlyph()),
+            tint: Chrome.ochre,
+            filledForeground: Chrome.nearBlack,
+            action: { release() },
+            askInstead: { confirming = true },
+            dress: .mark(showsTitle: expandedMark == "release")
+        )
+        // Collapsed, a tap unrolls the word rather than starting a hold nobody
+        // asked for; unrolled, the hold is the only thing that fires.
+        .allowsHitTesting(expandedMark == "release")
+        .overlay {
+            if expandedMark != "release" {
+                Color.clear
+                    .contentShape(Capsule())
+                    .onTapGesture { expandedMark = "release" }
+            }
+        }
+        .fixedSize(horizontal: true, vertical: true)
     }
 
     private func standingLine(_ key: LocalizedStringKey) -> some View {
@@ -270,7 +339,7 @@ struct PlantDetailView: View {
     }
 
     private func takeItBack() {
-        Task { await model.withdraw(record) }
+        Task { await model.withdraw(live) }
     }
 
     /// The light the plant leaves as.

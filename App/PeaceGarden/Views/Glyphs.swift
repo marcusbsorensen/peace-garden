@@ -153,6 +153,63 @@ struct LeafGlyph: Shape {
     }
 }
 
+/// A plant let go: the head opened, and its seeds lifting away on the wind.
+///
+/// **Drawn because there was no mark for letting go.** Release to the Wild
+/// Fields had been borrowing `GardenGlyph`, which says *garden* — the opposite
+/// of where a released plant is going — and then `LeafGlyph`, which says
+/// *leaf*. Neither says release, and a mark whose word has to explain it is a
+/// mark doing nothing.
+///
+/// Three things, and the order they are read in is the sentence: a stem bowing
+/// under the wind, the cup at its head left open and empty, and three seeds
+/// rising away from it on the diagonal. The stem stays — a released plant is
+/// not destroyed, it is somewhere else — and what has gone has gone upward and
+/// to the right, which is the direction every departure is drawn in.
+///
+/// The three seeds shrink as they go, which is the only depth a monoline has.
+struct ReleaseGlyph: Shape {
+    func path(in rect: CGRect) -> Path {
+        let body = rect.insetBy(dx: 0.8, dy: 0.8)
+        func at(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+            CGPoint(x: body.minX + body.width * x, y: body.minY + body.height * y)
+        }
+
+        var path = Path()
+
+        // A stem, bowing, with nothing at its head.
+        //
+        // **The head is empty on purpose and there is no cup drawn on it.** A
+        // cup was drawn there twice and read as a fork both times: at
+        // twenty-eight points on a one-point line, a stem, a cup and three
+        // seeds are more marks than the circle has room to tell apart. What is
+        // left says it better anyway — this is a plant with its seed gone, and
+        // an empty head is that.
+        path.move(to: at(0.24, 1.00))
+        path.addQuadCurve(to: at(0.34, 0.34), control: at(0.16, 0.70))
+
+        // Three seeds going, each smaller than the last, each a stroke with a
+        // tail rather than a closed shape: a closed shape three pixels across
+        // is a dot however it is built, and a dot is not going anywhere.
+        for (x, y, size) in [(0.58, 0.30), (0.76, 0.19), (0.92, 0.08)].enumerated().map({
+            ($0.element.0, $0.element.1, 0.22 - Double($0.offset) * 0.045)
+        }) {
+            let run = body.width * size
+            let head = at(x, y)
+            // Up and to the right, which is the way everything in this mark is
+            // travelling, with a tail curving back to where it came from.
+            let tail = CGPoint(x: head.x - run * 0.88, y: head.y + run * 0.60)
+            path.move(to: tail)
+            path.addQuadCurve(
+                to: head,
+                control: CGPoint(x: tail.x + run * 0.14, y: tail.y - run * 0.48)
+            )
+        }
+
+        return path
+    }
+}
+
 /// The sun, for a plant that opens by day.
 struct SunGlyph: Shape {
     var rays: Int = 8

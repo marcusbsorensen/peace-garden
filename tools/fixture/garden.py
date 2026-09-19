@@ -13,7 +13,7 @@ It writes six plants: one offerable, one asked, one invited, one shown, one
 declined, and one hybrid from before meetings left tokens behind, which can
 never be asked about.
 """
-import hashlib, json, struct, sys, uuid, datetime
+import base64, hashlib, json, struct, sys, uuid, datetime
 
 CROSS = "peacegarden.cross.v1"
 SEED = "peacegarden.seed.v1"
@@ -61,8 +61,13 @@ for label, peer, state, days in rows:
     record = {
         "id": str(uuid.uuid4()).upper(),
         "seed": child.hex(),
+        # **Base64, not hex.** `SeedID` writes itself as hex and so does
+        # `MeetingTokens`, but `Lineage.encounterID` is a plain `Data` with a
+        # synthesised `Codable`, and a plain `Data` is base64. Written as hex it
+        # decodes to 48 bytes of nonsense, the app is perfectly happy, and the
+        # plot service answers 400 on an encounter 96 characters wide.
         "lineage": {"crossed": {"parentA": low.hex(), "parentB": high.hex(),
-                                "encounterID": encounter.hex()}},
+                                "encounterID": base64.b64encode(encounter).decode()}},
         "birth": when(days),
         "savedAt": when(days),
         "encounter": {"peerDisplayName": peer, "happenedAt": when(days), "showsDateTime": True,
@@ -70,6 +75,8 @@ for label, peer, state, days in rows:
     }
     if label != "untokened":
         record["tokens"] = {
+            # Hex, because `MeetingTokens` writes itself as hex. The two
+            # spellings live side by side in one file; see above.
             "ours": digest("token.ours", label.encode())[:16].hex(),
             "theirs": digest("token.theirs", label.encode())[:16].hex(),
         }

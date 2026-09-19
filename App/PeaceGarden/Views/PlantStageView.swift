@@ -298,39 +298,20 @@ struct PlantStageView: View {
         titleSpacing: CGFloat = 7,
         open: @escaping () -> Void
     ) -> some View {
-        let showsTitle = menuStyle.namesEveryMark || expandedMark == name
-        return ChromeIconLabel(
+        // `ChromeMark` is this row, lifted out so the plant's own row of
+        // actions is the same row and not a second one that looks like it.
+        // What stays here is the stage's business: the hold task this view
+        // already owns for other reasons, and `present`, which closes Settings
+        // before it opens anything else.
+        ChromeMark(
             glyph: AnyShape(glyph),
+            name: name,
             title: title,
-            tint: isProminent ? Chrome.ink : Chrome.muted,
-            titleSpacing: titleSpacing,
-            showsTitle: showsTitle,
-            axis: menuStyle.namesEveryMark ? .vertical : .horizontal
-        )
-        .frame(maxWidth: menuStyle.namesEveryMark ? .infinity : nil)
-        // Ten all round puts a 28-point glyph in a circle of 48 — round,
-        // because the two insets are the same, and over the forty-four a target
-        // is meant to be. Eighteen once a word unrolls: the cap of a 48-point
-        // capsule curves through twenty-four, so a word set at ten would start
-        // inside its own end.
-        .pressable(
             isProminent: isProminent,
-            horizontal: menuStyle.namesEveryMark ? 4 : (showsTitle ? 18 : 10),
-            vertical: 10
-        )
-        .contentShape(Capsule())
-        .onTapGesture {
-            hideTask?.cancel()
-            if showsTitle || voiceOver {
-                present(open)
-            } else {
-                expandedMark = name
-                scheduleHide()
-            }
-        }
-        .onLongPressGesture(minimumDuration: 0.32) { present(open) }
-        .accessibilityAddTraits(.isButton)
-        .accessibilityAction { present(open) }
+            titleSpacing: titleSpacing,
+            namesEveryMark: menuStyle.namesEveryMark,
+            expanded: $expandedMark
+        ) { present(open) }
     }
 
     /// Rising is the point — the cog is at the foot of the screen now, so the
