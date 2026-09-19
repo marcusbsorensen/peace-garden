@@ -27,3 +27,8 @@ design/garden/peace-garden-shared-garden.html
 manus-output/
 out/
 build/
+
+# The Yale Bright Star Catalogue, fetched once by hand and not ours to
+# redistribute here. tools/sky/pack.py says where it comes from; its output,
+# App/PeaceGarden/Resources/stars.bin, is committed.
+tools/sky/bsc5.dat

@@ -106,6 +106,8 @@ struct PlotView: View {
 
     /// Where the heading and Close are on the screen, so the sun and moon keep off them.
     @State private var headingFrame: CGRect = .null
+    /// The asking line's place on screen, so the stars keep off it too.
+    @State private var askingFrame: CGRect = .null
     @State private var closeFrame: CGRect = .null
 
     var body: some View {
@@ -133,7 +135,7 @@ struct PlotView: View {
 
                 ZStack(alignment: .topLeading) {
                     GardenSky(light: light, date: model.now, view: view,
-                              keepClear: [headingFrame, closeFrame])
+                              keepClear: [headingFrame, closeFrame, askingFrame])
 
                     ZStack(alignment: .topLeading) {
                         plot(world: world, side: side, in: view, size: proxy.size, light: light)
@@ -760,6 +762,7 @@ struct PlotView: View {
                     .pressable()
             }
             .buttonStyle(.plain)
+            .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { askingFrame = $0 }
             .padding(.bottom, 10)
         }
     }

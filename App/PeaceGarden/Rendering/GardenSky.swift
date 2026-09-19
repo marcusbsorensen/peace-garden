@@ -1,4 +1,5 @@
 import SwiftUI
+import SeedCore
 
 /// What is behind the plot: space, darkening with the hour, with the stars out
 /// at night and whichever body is up standing in it.
@@ -76,33 +77,76 @@ struct GardenSky: View {
         ]
     }
 
-    /// **Fixed, not drifting.** A sky whose stars wander is the one thing that
-    /// would give away that they are drawn, so they are dealt once from a fixed
-    /// seed and stay where they were put. They come out as the sun goes down,
-    /// and the plot is drawn over them, so it occludes its own patch of sky.
+    /// The real sky, for where this phone is, at the hour it is.
+    ///
+    /// **It used to be a hundred and ninety dots dealt from a fixed seed**, and
+    /// the comment here said why: a sky whose stars wander is the one thing
+    /// that would give away that they are drawn. That was the right answer
+    /// while they were invented. They are not invented now — they wander
+    /// because the earth turns, which is the opposite of giving the game away.
+    ///
+    /// **The whole sphere, both halves.** Zenith at the top of the screen,
+    /// nadir at the foot, and the horizon across the middle where the plot
+    /// floats. The half below is the sky somebody on the other side of the
+    /// world has overhead at this moment; a garden about two people meeting
+    /// shows both their skies and the line between them that neither can see
+    /// past. Nothing draws that line — the plot is on it.
+    ///
+    /// Drawn in bands rather than one fill a star: five thousand fills a
+    /// redraw is five thousand calls into the rasteriser for a backdrop, and
+    /// the eye cannot tell a magnitude 5.1 star from a 5.2 one anyway.
     private func stars(in context: inout GraphicsContext, size: CGSize) {
         let showing = light.isDay ? max(0, 1 - light.up * 5) : 1
         guard showing > 0.01 else { return }
 
-        var seed: UInt32 = 20_260_917
-        func next() -> Double {
-            seed = seed &* 1_664_525 &+ 1_013_904_223
-            return Double(seed) / Double(UInt32.max)
+        let placed = StarField.shared.stars(
+            at: date, in: size, place: Whereabouts.place(of: TimeZone.current, at: date)
+        )
+        guard !placed.isEmpty else { return }
+
+        // Sixteen bands of brightness against six of colour: ninety-six fills
+        // at the very most, and in practice a good deal fewer.
+        var bands: [Int: (radius: Double, alpha: Double, tint: Color, path: Path)] = [:]
+        for star in placed {
+            // The stars keep off the words, as the sun and the moon do. A body
+            // can be moved aside; a constellation cannot, so these are dimmed
+            // where the words are instead — and dimmed *gradually*, over a
+            // dozen points, because a star-free rectangle is a straight line
+            // drawn by leaving something out.
+            let clear = keepClear.reduce(1.0) { least, box in
+                min(least, Self.dimming(at: star.at, near: box))
+            }
+            guard clear > 0.02 else { continue }
+            let alpha = star.alpha * clear
+            let brightness = min(15, Int(alpha * 16))
+            let warmth = min(5, max(0, Int((star.warmth + 0.4) / 2.3 * 6)))
+            let key = brightness * 6 + warmth
+            var band = bands[key] ?? (star.radius, alpha, star.tint, Path())
+            band.path.addEllipse(in: CGRect(
+                x: star.at.x - star.radius, y: star.at.y - star.radius,
+                width: star.radius * 2, height: star.radius * 2
+            ))
+            bands[key] = band
         }
 
-        for _ in 0..<190 {
-            let x = next() * Double(size.width)
-            let y = next() * Double(size.height) * 0.74
-            let magnitude = next()
-            let radius = 0.35 + magnitude * magnitude * 1.5
-            let alpha = (0.18 + magnitude * 0.72) * showing
-
-            context.fill(
-                Path(ellipseIn: CGRect(x: x - radius, y: y - radius,
-                                       width: radius * 2, height: radius * 2)),
-                with: .color(.white.opacity(alpha))
-            )
+        for band in bands.values {
+            context.fill(band.path, with: .color(band.tint.opacity(band.alpha * showing)))
         }
+    }
+
+    /// How much light a star keeps this near a line of words: nothing inside
+    /// them, all of it a dozen points out, and a smooth ramp between.
+    static func dimming(at point: CGPoint, near box: CGRect) -> Double {
+        guard !box.isNull, !box.isEmpty else { return 1 }
+        let fade = 14.0
+        let outside = box.insetBy(dx: -fade, dy: -fade)
+        guard outside.contains(point) else { return 1 }
+        if box.contains(point) { return 0 }
+
+        let dx = max(box.minX - point.x, point.x - box.maxX, 0)
+        let dy = max(box.minY - point.y, point.y - box.maxY, 0)
+        let away = (dx * dx + dy * dy).squareRoot()
+        return min(1, away / fade)
     }
 
     // MARK: Whichever body is up

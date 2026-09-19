@@ -157,3 +157,36 @@ spot again, and short of claiming an accuracy a phone in a street does not have.
 - **Whether the coordinate is ever publishable.** The safe answer above is that
   it is not, and nothing yet needs it to be. If it ever is, it is a new consent
   with its own screen and its own withdrawal, not a checkbox on this one.
+
+## The sky is a place too, and it costs nothing
+
+**19 September 2026.** The garden's stars used to be a hundred and ninety dots
+dealt from a fixed seed. They are the real sky now — the Yale Bright Star
+Catalogue to magnitude 6.5, put where the phone is, at the hour it is.
+
+**It asks for nothing, and that is the whole design.** Where somebody is comes
+from their time zone. The tz database ships a representative coordinate for
+every zone it keeps, every phone already has the file, and a phone keeping
+London time is a phone in London's sky. No permission, no request, no setting.
+
+That matters here rather than in a rendering note, because this document's
+whole argument is that a coordinate is taken only when **both** people at a
+meeting ask for it — recording where I was records where you were. A sky drawn
+from a coordinate would have been a second, unrelated use of a permission
+granted for meetings, under a usage description that could only cover both by
+describing neither properly. A time zone is not that: it is a fact about a
+clock, the app never learns it more precisely than a city, and nothing about it
+crosses the air.
+
+**What it costs.** A zone's coordinate is its principal city, so Aberdeen is
+given London's sky — six degrees of tilt, three fingers at arm's length, and
+invisible unless somebody is checking. That is the whole of the accuracy a
+coordinate would have bought.
+
+**Both halves of the sphere are drawn** (Marcus, 19 September). The plot floats
+and there is no ground under it, so the stars beneath a person's feet are there
+to be seen — and they are the stars somebody on the other side of the world is
+looking up at while this person looks down at them. A garden about two people
+meeting shows both their skies at once, with the horizon across the middle
+where the plot floats: the line they each have and neither can see past.
+Nothing draws it. The garden is standing on it.
