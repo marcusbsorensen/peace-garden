@@ -48,5 +48,5 @@ The one thing that existed was the contact token — sixteen bytes each phone mi
 ## Traps, added to the previous list
 - **`Data` encodes as base64.** A token written base64 on disk and sent as hex is two spellings of one secret; `MeetingTokens` has a hand-written `Codable` for this reason and `SeedID` beside it is hex.
 - **`Server/.api/config.php` is local, gitignored, and was pointing at a dead session scratchpad.** It now points at this session's; set it to somewhere that survives before relying on a local walk. The previous 120-arrival local database is untouched at its old path.
-- **A simulator fixture's tokens must be hex**, and dates `.iso8601` (as before). `scratchpad/fixture.py` writes a garden with one plant in each standing.
+- **A simulator fixture's tokens must be hex**, and dates `.iso8601` (as before). `tools/fixture/garden.py` writes a garden with one plant in each standing, and its header has the command.
 - **Injected taps reach SwiftUI buttons** and still do not reach the SceneKit recogniser. Both screens here are SwiftUI, so the whole flow can be driven from the command line.

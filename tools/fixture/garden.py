@@ -1,4 +1,18 @@
-"""A garden with one plant in each standing, for looking at the asking."""
+"""A garden with one plant in each standing, for looking at the asking.
+
+    python3 tools/fixture/garden.py "$(xcrun simctl get_app_container booted \
+        app.peacegarden data)/Library/Application Support/PeaceGarden/garden.json"
+
+Then launch with `-pgOpen garden -pgPlots http://localhost:8803` to point the
+app at a local plot service. Two things the app will not tell you if you get
+them wrong: dates must be ISO 8601, and a token is hex — `Data` decodes from
+base64 by default, so a hex token written as base64 arrives half as long again
+as it should be and the service answers 400.
+
+It writes six plants: one offerable, one asked, one invited, one shown, one
+declined, and one hybrid from before meetings left tokens behind, which can
+never be asked about.
+"""
 import hashlib, json, struct, sys, uuid, datetime
 
 CROSS = "peacegarden.cross.v1"
