@@ -32,18 +32,23 @@ The one thing that existed was the contact token — sixteen bytes each phone mi
 - **Every plant grown before today.** No tokens, so no invitation is possible, ever. The app says nothing rather than offering a row that cannot work.
 - **Anything grown from a link.** An offer link is forwardable, so a secret in one is held by everybody it reached. Whether the *reply* link should carry a token — letting the offerer be reached but not the replier — is open, and is a change to the link format.
 
+## Also done, 19 September, after the first write-up
+- **Rate limiting** (`Server/.api/Limits.php`): 20 offers, 60 answers, 30 withdrawals and 240 askings an hour per address, answered `429` with `Retry-After`. In PHP because 20i's vhost is not ours, so it caps what is **written** rather than what arrives — the half that matters on an append-only walk. What is stored is a salted digest and a count, dropped once the window passes; the salt is random per install and lives in the database, so the table cannot be read back into addresses. `REMOTE_ADDR` only: a forwarded header with no known proxy is written by the caller. `tools/reference/check_limits.php`, 11 checks, in CI — the one worth having is that the allowance **comes back**, since a limit that counted for ever would lock somebody out of their own garden by the second week.
+- **The service is deployed.** `/api/walk/offer`, `/pending`, `/answer` and `/withdraw` answer on peacegarden.app; `/plant` still answers 403; `tools/deploy.sh` checked every path. The rate-limit tables migrated on the live MySQL, which could only be proved there.
+- **The plant detail screen**: `StageVeil` takes the light off the plant while the details are up, because a tall plant fills the glass and every word was drawn on its stem. One gradient, so no edge: strong at the top for the name, a clear window through the middle, nearly solid at the foot where the meeting and the three controls are. Checked dark and light.
+
 ## Next, in the order I would do it
-1. **Deploy the service.** The four new routes are in the repo and not on peacegarden.app. `tools/deploy.sh`; the server's `config.php` is never touched. Until then the app's asking answers 404 against the live host.
-2. **Rate limiting in front of `/api/walk/offer` and `/answer`**, before anybody knows the addresses. The walk is append-only.
-3. **Backups and a tested restore**, still owed, and cheapest while the database is nearly empty.
-4. **Sign in with Apple**, for a gardener's own plot and a plant's own page — the part the tokens deliberately do not cover.
-5. **Settings' copy is now out of date** in three places `WEBSITE.md` §*What this asks of the app* names: the username's line, *Reset everything* saying nothing about a plot, and a **Peace garden** section that appears once something has been shared.
+1. **Backups and a tested restore**, still owed, and cheapest while the database is nearly empty.
+2. **Sign in with Apple**, for a gardener's own plot and a plant's own page — the part the tokens deliberately do not cover.
+3. **Settings' copy is now out of date** in three places `WEBSITE.md` §*What this asks of the app* names: the username's line, *Reset everything* saying nothing about a plot, and a **Peace garden** section that appears once something has been shared.
+4. **Watch the asking against the live service**, which has not been done: the end-to-end run was against a local copy. `-pgPlots` is only needed for the local one, so a plain launch now talks to peacegarden.app.
 
 ## What I would look at again on screen
 - `ShowInGardenView` has a **large gap** between the facts and the buttons; first light's fix — one column between two spacers — is the pattern.
 - Its footnote is **small caps across three ragged lines** and reads as a warning label.
 - The screen is **all words, no plant**, which no other screen in this app is.
 - The invitation capsule is assertive beside the figures.
+- On the detail screen the age caption still sits **on the flower head** of a tall plant. The veil is strong enough there to read it and no stronger, because the alternative is dimming the one part of a spire worth seeing.
 
 ## Traps, added to the previous list
 - **`Data` encodes as base64.** A token written base64 on disk and sent as hex is two spellings of one secret; `MeetingTokens` has a hand-written `Codable` for this reason and `SeedID` beside it is hex.
