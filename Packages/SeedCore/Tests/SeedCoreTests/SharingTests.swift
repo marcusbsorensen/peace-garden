@@ -36,7 +36,7 @@ final class SharingTests: XCTestCase {
     }
 
     func testAStateFromANewerVersionDecodesRatherThanThrowingTheGardenAway() throws {
-        let json = #"{"state":"withdrawn","changedAt":0}"#
+        let json = #"{"state":"lifted","changedAt":0}"#
         let standing = try JSONDecoder().decode(Standing.self, from: Data(json.utf8))
 
         XCTAssertEqual(standing.state, .unknown)

@@ -283,9 +283,30 @@ the service's own files unreachable, as it does `.pages/`.
 
 - `GET /api/walk` — plots opened. `GET /api/walk/plot/{n}` — a plot's plantings:
   seed, both parents, the meeting, and the spot to stand it on.
-- `POST /api/walk/plant` — **answers 403** until sharing has sign-in and both
-  gardeners' consent. A local copy opens it in `.api/config.php` (copy
-  `config.example.php`; git ignores it and `deploy.sh` leaves the server's alone).
+- **The asking**, `.api/Offers.php`, which is how anything gets into the walk:
+  - `POST /api/walk/offer` — `{to, from, plant}`. One gardener offers a plant,
+    addressed to the sixteen bytes the other minted at their meeting. It plants
+    nothing.
+  - `POST /api/walk/pending` — `{tokens: […]}`, at most 128. Everything touching
+    those tokens either way round: offers made to this phone, and the state of
+    offers made from it. This is the request the app's *Alert me when a joint
+    seed is shared* switch turns **off entirely**.
+  - `POST /api/walk/answer` — `{seed, to, yes}`. Only the token an offer was
+    addressed to can answer it. Yes plants it by the rule; no is final, because
+    there is one offer per plant.
+  - `POST /api/walk/withdraw` — `{seed, token}`. Either gardener, at any time.
+    An accepted planting is **hidden rather than deleted**: the walk is
+    append-only, the slot stays taken, and the border keeps the gap.
+  - A token carries **consent, not authenticity**. The service cannot tell two
+    tokens minted at a real meeting from two minted by one person, so it cannot
+    tell a real pair of gardeners from somebody planting invented crossings.
+    What it does prevent is anybody planting *somebody else's* plant or
+    answering for them. Rate limiting belongs in front of the service.
+  - Checked by `tools/reference/check_offers.php`, in CI.
+- `POST /api/walk/plant` — **answers 403**: it is the one route that plants with
+  nobody asked, and it exists for the reference check. A local copy opens it in
+  `.api/config.php` (copy `config.example.php`; git ignores it and `deploy.sh`
+  leaves the server's alone).
 - The rule is `.api/LongWalk.php`, a port of SeedCore's, checked in CI by
   `tools/reference/check_long_walk.php`. The service refuses a seed that is not
   the cross of the parents it names.
@@ -296,6 +317,12 @@ Locally, with the browser pages beside it:
 `php -S localhost:8803 -t tools/wasm/web tools/wasm/dev-router.php`, then
 `node tools/wasm/send-arrivals.mjs http://localhost:8803 120` to stand in for
 phones, and open `/walk.html?source=service`.
+
+**Against the app**, which is the only way to watch the asking end to end:
+launch the simulator with `-pgPlots http://localhost:8803` and the app talks to
+the local service instead of the live one. Debug builds only —
+`PlotService.origin` is a constant, because an address the app would take from
+anywhere is a way to send somebody's meetings somewhere else.
 
 **Checked on the first deploy, 18 September:** `/.api/router.php`,
 `/.api/config.php` and the rest answer 403 from nginx's dot rule, so PHP-FPM

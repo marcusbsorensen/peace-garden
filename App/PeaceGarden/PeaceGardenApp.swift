@@ -29,6 +29,15 @@ struct PeaceGardenApp: App {
                 .onOpenURL { url in
                     model.receive(url: url)
                 }
+                // The one request this app makes on its own, and only when the
+                // person has left invitations on: whether anything has happened
+                // to any of the meetings in this garden. Off, it is not made,
+                // and the service is never told this phone exists — see
+                // `Sharing.swift`. It is quiet about failing; nobody asked for
+                // it, so a phone with no signal simply learns nothing today.
+                .task {
+                    await model.catchUpOnTheAsking()
+                }
         }
     }
 }

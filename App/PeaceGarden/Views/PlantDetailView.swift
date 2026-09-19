@@ -16,6 +16,8 @@ struct PlantDetailView: View {
     /// what is on screen is the truth about the garden throughout.
     @State private var flight: Double = 0
     @State private var releasing = false
+    /// The shared garden's one screen, for asking or for answering.
+    @State private var showing = false
     /// The assisted path only, the same as the three rows in Settings:
     /// `HoldToConfirm` asks for this when a sustained press is not available.
     @State private var confirming = false
@@ -72,6 +74,10 @@ struct PlantDetailView: View {
             Button("Release it", role: .destructive) { release() }
         } message: {
             Text("It leaves your garden for the Wild Fields. The person you grew it with keeps theirs, and every other plant here stays where it is.")
+        }
+        .sheet(isPresented: $showing) {
+            ShowInGardenView(record: model.garden.plants.first { $0.id == record.id } ?? record)
+                .presentationBackground(Chrome.ground)
         }
         .sheet(isPresented: $editing) {
             EncounterEditView(record: record) { name, place, keepsCoordinate in
@@ -151,6 +157,8 @@ struct PlantDetailView: View {
 
                     QuietButton(title: "Tell it differently") { editing = true }
                         .padding(.top, 4)
+
+                    peaceGarden
                 }
                 .padding(.horizontal, 40)
                 .frame(maxWidth: Chrome.readableWidth)
@@ -187,6 +195,58 @@ struct PlantDetailView: View {
             .padding(.horizontal, 40)
             .padding(.bottom, 30)
         }
+    }
+
+    /// Where this plant stands with the shared garden on the web.
+    ///
+    /// **A plant that is on the web looks different from one that is not**, and
+    /// somebody who cannot tell at a glance has been handed a decision they
+    /// cannot review (`docs/WEBSITE.md`). This is that difference on the plant's
+    /// own screen; the mark in Garden is the other half.
+    ///
+    /// Four states and no more, because the fifth — *offer it again* — is the
+    /// one the design does not have: there is one invitation per plant, which
+    /// is what lets a decline be the block and the app have no block list.
+    @ViewBuilder
+    private var peaceGarden: some View {
+        let standing = record.standingOrHere
+        switch standing.state {
+        case .here where record.canBeOffered:
+            QuietButton(title: "Show in the peace garden") { showing = true }
+
+        case .asked:
+            standingLine("Waiting on \(record.encounter?.peerDisplayName ?? String(localized: "the other gardener"))")
+
+        case .invited:
+            QuietButton(title: "Answer about the peace garden", isProminent: true) { showing = true }
+
+        case .shown:
+            VStack(spacing: 4) {
+                standingLine("In the peace garden")
+                QuietButton(title: "Take it back") { takeItBack() }
+            }
+
+        case .declined, .withdrawn:
+            standingLine("Kept to this garden")
+
+        // A hybrid from before a meeting left tokens behind, a plant of this
+        // person's own, or a standing written by a newer version: each of them
+        // has nothing to offer and nothing to say about it, so the screen says
+        // nothing rather than a greyed row that invites a tap.
+        case .here, .unknown:
+            EmptyView()
+        }
+    }
+
+    private func standingLine(_ key: LocalizedStringKey) -> some View {
+        Text(key)
+            .chromeLabel(size: 10)
+            .foregroundStyle(Chrome.faint)
+            .padding(.top, 4)
+    }
+
+    private func takeItBack() {
+        Task { await model.withdraw(record) }
     }
 
     /// The light the plant leaves as.

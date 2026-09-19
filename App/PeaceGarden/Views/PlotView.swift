@@ -17,6 +17,8 @@ struct PlotView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var selected: PlantRecord?
+    /// The plant somebody else has asked about, while it is being answered.
+    @State private var answering: PlantRecord?
 
     @AppStorage(Chrome.daylightKey) private var daylightRaw = GardenDaylight.byTheClock.rawValue
 
@@ -189,6 +191,7 @@ struct PlotView: View {
                     .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { headingFrame = $0 }
                 if model.hybrids.isEmpty { empty }
                 Spacer(minLength: 0)
+                asking
                 grounds
             }
             .padding(.horizontal, 26)
@@ -203,6 +206,11 @@ struct PlotView: View {
         }
         .sensoryFeedback(.impact(weight: .medium), trigger: lifts)
         .sensoryFeedback(.selection, trigger: turn)
+        .sheet(item: $answering) { record in
+            ShowInGardenView(record: record)
+                .environment(model)
+                .presentationBackground(Chrome.ground)
+        }
         .fullScreenCover(item: $selected) { record in
             PlantDetailView(record: record).environment(model)
         }
@@ -724,6 +732,36 @@ struct PlotView: View {
         }
         .padding(.top, 44)
         .allowsHitTesting(false)
+    }
+
+    /// Somebody is waiting on an answer about one of these plants.
+    ///
+    /// **It has to be findable**, or it is an invitation nobody ever sees: the
+    /// answer decides whether a plant of this person's stands on the open web,
+    /// and it arrives while they are doing something else. It says nothing
+    /// about who or which — the plant itself is where that is read.
+    ///
+    /// **Down here rather than under the heading** (Marcus, 19 September):
+    /// between the title and the garden there is sky, and sky holds the sun,
+    /// the moon and the stars and nothing else. Above the row of figures the
+    /// ground has already come up behind it, so a line of words there sits on
+    /// something dark rather than across a field of stars.
+    ///
+    /// **No count and no numeral.** One string rather than a plural entry in
+    /// forty-two languages, and `tools/strings/app_check.py` would refuse a
+    /// numeral here anyway.
+    @ViewBuilder
+    private var asking: some View {
+        if let asked = model.invited.first {
+            Button { answering = asked } label: {
+                Text("Somebody has asked about a plant here")
+                    .chromeLabel()
+                    .foregroundStyle(Chrome.pinkGold)
+                    .pressable()
+            }
+            .buttonStyle(.plain)
+            .padding(.bottom, 10)
+        }
     }
 
     /// The grounds, picked the way you pick a plant.

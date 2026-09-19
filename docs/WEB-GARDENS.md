@@ -296,7 +296,10 @@ per cell and nothing else, and the privacy page says so before it runs.
   release. It has to be rewritten before the page means anything.
 - **The privacy page** has to be rewritten first, as `/wild`'s own comment says.
 - **Release uploads nothing yet.** `PlantDetailView.release()` animates and
-  deletes. Releasing to a place needs the plot service.
+  deletes. Releasing to a place needs the plot service. It is also a different
+  action from *Show in the peace garden*, which is the Long Walk and is built:
+  release is letting a plant go, and the Wild Fields have no asking because a
+  released plant is not put anywhere in particular.
 
 ## What has to exist first
 
@@ -325,6 +328,49 @@ In order, because each needs the one before:
 5. **The structures**, modelled, per area as each area is built.
 6. **The curator's tool.**
 7. **The Wild Fields**, once release uploads something.
+
+## The asking, and what a shared plant consents to
+
+**Built 19 September.** Nothing reaches the Long Walk until both gardeners have
+said so, and the whole of what stands in for an account is the pair of tokens a
+meeting leaves on the two phones. `Server/.api/Offers.php`, `Server/README.md`
+§*The plot service*, and `SeedCore`'s `Sharing.swift`.
+
+- **The token is the address, and consent is what it carries.** An offer is
+  addressed to the sixteen bytes its recipient minted at that meeting, so only
+  that phone can answer it. The service holds a bag of offers keyed by opaque
+  bytes and no directory of people at all: it never learns a name, and two
+  offers concerning the same pair of gardeners are not linkable.
+- **What it does not carry is authenticity.** A service cannot tell two tokens
+  minted at a real meeting from two minted by one person on one machine, so it
+  cannot tell a real pair of gardeners from somebody planting invented
+  crossings. Nobody can plant *somebody else's* plant or answer for them, which
+  is the property the address being secret actually buys. Spam is abuse control
+  and belongs in front of the service.
+- **This supersedes *a plant is published by a plot, proved by a key*** for the
+  Long Walk (`WEBSITE.md` §*Who can put a plant there*) and only there. That
+  argument is about a page carrying somebody's name, and its premise is that a
+  seed is public. A token is not public. A plant's own page, which does carry a
+  name, still needs the plot and the sign-in.
+- **A plant in the Long Walk carries no name, no note and no date** — the seed,
+  both parents and the meeting, which is what a browser needs to grow it. So the
+  consent asked on the phone is about one thing: the plant standing where anyone
+  walking the garden can come across it. The name-and-note flow `WEBSITE.md`
+  specifies is a plant's own page, and it is a second consent with its own
+  screen — folding it in here would publish prose on a yes given to a different
+  question, which `PHASES.md` forbids.
+- **A meeting from before the tokens were kept can never be asked about.** Every
+  plant grown before 19 September is in that position. The app says nothing
+  about it rather than offering a row that cannot work.
+- **A seed that arrived by link leaves no tokens**, because an offer link is
+  forwardable and a secret in a forwarded link is held by everybody it reached.
+  So a plant grown from a link cannot be shown. Whether the *reply* link should
+  carry one — which would let the offerer be reached but not the replier — is
+  open, and is a change to the link format.
+- **Withdrawing is either gardener's, at any time, without the other.** An
+  accepted planting is hidden rather than deleted: the walk stays append-only,
+  the slot stays taken, and the border is left with a gap, which is what lifting
+  a plant out of a border leaves.
 
 ## Open questions
 

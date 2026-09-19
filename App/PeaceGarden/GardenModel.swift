@@ -17,12 +17,22 @@ final class GardenModel {
     private let store: GardenStore
     private var clock: Task<Void, Never>?
 
+    /// The phone's side of the shared garden. Held rather than made per call so
+    /// a test can hand the model a service that never touches a network.
+    let plots: PlotService
+
     /// Growth is measured in hours and days, so a slow tick is plenty and
     /// leaves the battery alone.
     private static let tickInterval: Duration = .seconds(20)
 
-    init(store: GardenStore) {
+    init(store: GardenStore, plots: PlotService? = nil) {
         self.store = store
+#if DEBUG
+        // A developer's own service, when one is named on the command line.
+        self.plots = plots ?? PlotService(origin: Developer.shared.plotService ?? PlotService.origin)
+#else
+        self.plots = plots ?? PlotService()
+#endif
         do {
             garden = try store.load()
         } catch {
@@ -204,6 +214,116 @@ final class GardenModel {
     /// Keep growing this plant.
     func contains(seed: SeedID) -> Bool {
         garden.plants.contains { $0.seed == seed }
+    }
+
+    // MARK: - The shared garden
+
+    /// Plants this phone has been asked about and has not answered.
+    var invited: [PlantRecord] {
+        garden.plants.filter { $0.standingOrHere.state == .invited }
+    }
+
+    /// Plants standing in the peace garden.
+    var shown: [PlantRecord] {
+        garden.plants.filter(\.standingOrHere.isShown)
+    }
+
+    /// Offers this plant to the peace garden, addressed to the gardener it was
+    /// grown with.
+    ///
+    /// **It does not go up.** It goes into the asking, and stands in the garden
+    /// only if the other gardener says yes — showing it publishes their seed
+    /// along with this one's, so it was never one person's to publish.
+    @discardableResult
+    func offer(_ record: PlantRecord) async -> Result<Standing, PlotService.Trouble> {
+        guard let tokens = record.tokens, let arrival = WalkArrival(record: record) else {
+            return .failure(.unreadable)
+        }
+        do {
+            let offer = try await plots.offer(arrival, tokens: tokens)
+            return .success(settle(offer, on: record))
+        } catch let trouble as PlotService.Trouble {
+            return .failure(trouble)
+        } catch {
+            return .failure(.unreachable)
+        }
+    }
+
+    /// The answer to somebody else's offer of a plant this person helped make.
+    ///
+    /// No is final for this plant. There is one invitation per plant and this
+    /// was it, which is what lets the app have no block list at all: declining
+    /// *is* the block, and a list would need to name a person.
+    @discardableResult
+    func answer(_ record: PlantRecord, yes: Bool) async -> Result<Standing, PlotService.Trouble> {
+        guard let tokens = record.tokens else { return .failure(.unreadable) }
+        do {
+            let offer = try await plots.answer(seed: record.seed, to: tokens.oursHex, yes: yes)
+            return .success(settle(offer, on: record))
+        } catch let trouble as PlotService.Trouble {
+            return .failure(trouble)
+        } catch {
+            return .failure(.unreachable)
+        }
+    }
+
+    /// Takes a plant back out of the peace garden.
+    ///
+    /// Either gardener, at any time, without the other being involved, and
+    /// whether it was them who offered it. A consent that cannot be withdrawn
+    /// is not worth much; this is the same reasoning that made dropping a
+    /// coordinate a real deletion rather than a hidden flag.
+    @discardableResult
+    func withdraw(_ record: PlantRecord) async -> Result<Standing, PlotService.Trouble> {
+        guard let tokens = record.tokens else { return .failure(.unreadable) }
+        do {
+            let offer = try await plots.withdraw(seed: record.seed, token: tokens.oursHex)
+            return .success(settle(offer, on: record))
+        } catch let trouble as PlotService.Trouble {
+            return .failure(trouble)
+        } catch {
+            return .failure(.unreachable)
+        }
+    }
+
+    /// Asks the service whether anything has happened to any of this garden's
+    /// meetings, and writes down what it says.
+    ///
+    /// **Off means no request.** `Sharing.wantsInvitations` is read here and
+    /// nowhere further in: a switch that suppressed the answer while the
+    /// question was still being asked would be a lie of the kind this project
+    /// has avoided everywhere else, and off is the reason the service can
+    /// honestly be told nothing.
+    ///
+    /// Quiet about failure. Nobody asked for this — it runs when the app opens
+    /// — so a phone with no signal simply learns nothing this time.
+    func catchUpOnTheAsking() async {
+        guard Sharing.wantsInvitations else { return }
+        let tokens = garden.plants.compactMap(\.tokens?.oursHex)
+        guard !tokens.isEmpty else { return }
+        guard let offers = try? await plots.pending(tokens: tokens) else { return }
+
+        for offer in offers {
+            guard let index = garden.plants.firstIndex(where: { $0.seed.hex == offer.seed }),
+                  let ours = garden.plants[index].tokens?.oursHex,
+                  let standing = offer.standing(forOurToken: ours, unknownAt: Self.currentDate())
+            else { continue }
+            garden.plants[index].standing = standing
+        }
+        persist()
+    }
+
+    /// Writes down where a plant stands after the service has spoken.
+    @discardableResult
+    private func settle(_ offer: SharedOffer, on record: PlantRecord) -> Standing {
+        let ours = record.tokens?.oursHex ?? ""
+        let standing = offer.standing(forOurToken: ours, unknownAt: Self.currentDate())
+            ?? Standing(state: .unknown, changedAt: Self.currentDate())
+        if let index = garden.plants.firstIndex(where: { $0.id == record.id }) {
+            garden.plants[index].standing = standing
+            persist()
+        }
+        return standing
     }
 
     // MARK: - Starting again

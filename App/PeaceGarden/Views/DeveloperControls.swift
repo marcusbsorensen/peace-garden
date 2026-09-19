@@ -95,6 +95,17 @@ final class Developer {
     /// `-pgArea longWalk`, with `-pgPlotSide 5.2`.
     let previewArea: String? = UserDefaults.standard.string(forKey: "pgArea")
 
+    /// Point the asking at a plot service of one's own:
+    /// `-pgPlots http://localhost:8807`.
+    ///
+    /// **Debug only, and `PlotService.origin` is a constant for the same
+    /// reason.** An address the app would take from anywhere is a way to send
+    /// somebody's meetings somewhere else; this exists so the whole flow can be
+    /// watched against a local `php -S` before it is watched against the live
+    /// one. `Server/README.md` has the command.
+    let plotService: URL? = UserDefaults.standard.string(forKey: "pgPlots")
+        .flatMap(URL.init(string:))
+
     let fixedPlotSide: Double? = {
         let side = UserDefaults.standard.double(forKey: "pgPlotSide")
         return side > 0 ? side : nil

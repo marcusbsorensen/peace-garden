@@ -31,6 +31,12 @@ require_once __DIR__ . '/WalkStore.php';
 
 function respond(int $status, array $body): never
 {
+    // A refusal is worth a line in the log, and the line is the status and the
+    // route only. A body here carries tokens, and a token in a log is a way to
+    // answer for somebody: the one thing the address being secret is for.
+    if ($status >= 400) {
+        error_log(sprintf('plot service: %d on %s', $status, $GLOBALS['path'] ?? '?'));
+    }
     http_response_code($status);
     header('Content-Type: application/json; charset=utf-8');
     header('Cache-Control: no-cache');

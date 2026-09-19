@@ -47,6 +47,36 @@ public struct MeetingTokens: Codable, Equatable, Sendable {
 
     public var oursHex: String { ours.hexString }
     public var theirsHex: String { theirs.hexString }
+
+    // MARK: Written as hex, the way a seed is
+
+    /// **Hex on disk, because hex is what goes on the wire.**
+    ///
+    /// `Data` encodes as base64 by default, and a token written base64 in the
+    /// garden and sent as hex to the service is two spellings of one secret —
+    /// which is how a fixture came to send tokens half as long again as they
+    /// are. `SeedID` beside it is hex for the same reason, and a garden file a
+    /// person could be asked to look at should have one spelling in it.
+    private enum CodingKeys: String, CodingKey { case ours, theirs }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let ours = try container.decode(String.self, forKey: .ours)
+        let theirs = try container.decode(String.self, forKey: .theirs)
+        guard let oursBytes = Data(hexString: ours), let theirsBytes = Data(hexString: theirs) else {
+            throw DecodingError.dataCorruptedError(
+                forKey: .ours, in: container, debugDescription: "a token is hex"
+            )
+        }
+        self.ours = oursBytes
+        self.theirs = theirsBytes
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(oursHex, forKey: .ours)
+        try container.encode(theirsHex, forKey: .theirs)
+    }
 }
 
 // MARK: - Where a plant stands
@@ -76,6 +106,9 @@ public struct Standing: Codable, Equatable, Sendable {
         /// One of them said no. Final for this plant — there is one invitation
         /// per plant, and declining it is the block (`docs/WEBSITE.md`).
         case declined
+        /// It stood in the peace garden and one of them took it back. It does
+        /// not go back: there is one offer per plant and this was it.
+        case withdrawn
         /// Written by a newer version of the app than this one.
         case unknown
 
@@ -112,7 +145,7 @@ public struct Standing: Codable, Equatable, Sendable {
     public var canAsk: Bool {
         switch state {
         case .here: return true
-        case .asked, .invited, .shown, .declined, .unknown: return false
+        case .asked, .invited, .shown, .declined, .withdrawn, .unknown: return false
         }
     }
 }
