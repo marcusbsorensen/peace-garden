@@ -1,81 +1,52 @@
-# Peace Garden: web gardens, the Long Walk and a plant in a browser — handover 18 September 2026
+# Peace Garden: the asking — handover 19 September 2026
 
-This session covered five areas: glow-in-the-dark figures, zoom, the web gardens design, the Long Walk, and SeedCore in WebAssembly (the afternoon). The app's Garden-screen handover it replaces is at `git show 7d5845d:.claude/HANDOVER.md`. Its traps still apply.
+One thing this session: **a plant can now be put in the shared garden, and it takes both gardeners.** The previous handover, whose traps still apply, is at `git show 8a7e904:.claude/HANDOVER.md`.
 
-## Goal
-The website's shared garden should look and work like the app's Garden screen: floating isometric plots, curated **by rule**, one layout per area. The Wild Fields stay uncurated. The design is `docs/WEB-GARDENS.md`, with a shared copy at https://claude.ai/code/artifact/b662a38c-3948-4a53-9e41-084bdea8ee7b
+## The problem it solves
+A plant made at a meeting is grown from its child seed, **both parents' seeds** and the meeting's ID — a browser cannot draw it from less. So showing one of your plants publishes the other gardener's seed too. It was never one person's to publish, and there was no way to ask them: no accounts, no directory, nothing that identifies a person, all by design.
+
+The one thing that existed was the contact token — sixteen bytes each phone mints in its `PollenCard` at a meeting — and it was **minted and thrown away**. It cannot be added to a meeting that has already happened, which is why `WEBSITE.md` called keeping it the most urgent item in phase 2.
 
 ## State
-- **Done, tested, pushed** (`6898c8b` is on `origin/main`). SeedCore has 120 tests and the app has 74; all pass.
-- **Glow-in-the-dark figures:** hare, fox, moth and snail, each a new `LampKind`. `CreatureTests` checks that none is clipped by its frame.
-- **Zoom:**
-  - Taps land on a plant's leaves, not the box round them.
-  - Carrying something to the screen edge pans the plot.
-  - Double tap zooms in on a plant among its neighbours.
-  - The ground on screen is redrawn at the zoomed resolution.
-  - **The double tap is unverified.** Injected taps come too far apart to register; it needs a real thumb.
-- **Long Walk rule** in SeedCore: tiers cut from measured heights, drifts of one colour capped at five, append-only, nothing in front of something shorter. `LongWalkTests`.
-- **Long Walk structures** in the app, developer preview only: a mown path, a tall yew behind the far border, a low hedge in front of the near one, and hedge shadows. Checked by eye at midday and at one quarter-turn. **Not checked at night.**
-- **A plant in a browser (afternoon):** SeedCore builds for WebAssembly and `tools/wasm/web/` draws one plant with WebGL2. The module is **2.1 MB brotli** (2.8 MB gzip, 7.9 MB raw) after `wasm-opt -Oz`; the rest is the Swift standard library and FoundationEssentials, not SeedCore (0.3 MB). The whole SeedCore suite passes inside wasm, apart from `GardenStoreTests`. All 15 pinned port seeds grow the same buffers as on the Mac: identical shape, indices, UVs and texels, with positions within 3.2 µm and normals within 3 × 10⁻⁴ (libm rounding). SeedCore 124 tests and the app's 74 pass. Written up in `WEBSITE.md` §*What renders the plant*.
-- **Drawn only with diffuse texture and a plain sun.** Relief and roughness maps, the app's lighting, and a plant's name are still to come.
-- **A Long Walk plot in the browser (evening):** `tools/wasm/web/walk.html` (`?plot=N` for others). The module plants real crossings of two parents by `LongWalk.Walk.plant`, then grows each planting from its lineage. The page draws the app's plot: true isometric, the 0.95 m slab with strata, the three-stripe mown path, a 2.0 m yew on the far side and a 0.7 m hedge on the near, swapped as it turns in quarter turns, lit by the app's midday light and shading formula. Plot 1 is 24 plants from 29 arrivals, planted and grown in 0.4 s. Checked by eye at all four turns and at phone width.
-- **The Long Walk judged at 500 plants (late evening):** `walk.html?arrivals=500&from=0&span=3` plants 500 and shows plots end to end with each plot's fill. The rule held; the look was too sparse (1.4 plants a m², drifts unreadable). **Marcus chose to double it**: two staggered rows a tier, 48 a plot. Drifts are kept to five by refusing a slot that would join drifts past five (a latent bug the density exposed). Every plot but the newest four is full at 600 arrivals. A partly filled plot is shown as it is. SeedCore 124/124, app 74 pass.
-- **The walk is a fixed demonstration sequence** (`tools/wasm/Sources/PlantWasm/Walk.swift`), the same on every reload. The plot service will supply real plantings and their lineage instead.
-- **Differences from the app:** no hedge or plant shadows, no albedo atlas on the turf, a flat slab rather than the bulged one, and no night.
-- **The plot service (night):** `Server/.api/`. The Long Walk rule ported to PHP (`LongWalk.php`), held to 600 pinned Swift placements by `tools/reference/check_long_walk.php` in CI (three deliberate breakages each caught); the cross check (`Seeds.php`, matches the pinned child); an append-only store (`WalkStore.php`, SQLite or MySQL through PDO, arrivals serialised by a lock row); `/api/walk`, `/api/walk/plot/{n}`, and `POST /api/walk/plant`, which answers 403 unless a local config opens it. End to end locally: `tools/wasm/send-arrivals.mjs` sends 120 real crossings, the service places all 120 where the Swift rule does (worst 1.1e-7 m, float32 in the module), and `walk.html?source=service` draws them. `Server/README.md` § The plot service.
-- **No straight lines (18 September, late):** Marcus's rule: every edge in the app and web garden is organic (soil, hedges, paths, shadows). SeedCore `Morphology/Organic.swift` is shared by both: a worn outline that wanders inward only, verges, and hedges grown as one loaf-section mesh with shouldered ends (`OrganicTests` pins values, and they match in wasm). The hedges overhang the worn rim (web centre ±2.48). The night garden is how Marcus likes it; leave it alone.
-- **The sun and moon keep off the words:** `GardenSky.clear` moves a body down or sideways (never up) out of the measured header and Close frames. `SkyTests`. Checked at seven clock shifts.
-- **Light in Settings:** a "Light" row with a three-way icon toggle, Sun (`.always`, "Always day") | Sun & Moon (`.byTheClock`) | Moon (`.alwaysNight`, hour 0). Stored names are unchanged. `DaylightTests`. App 84 tests, 1 skipped, all pass. Known loose ends: the small sun in the middle icon is tight at 22 pt; the Sun setting's noon sky looks dusky blue-grey with the bodies half off the left edge; an "Always daylight" string may linger in the catalogue.
-- **Not started:** sign-in, consent, the phone's upload, the curator tool and the Wild Fields.
+- **Done, tested, pushed.** `bf46213` on `origin/main`. SeedCore 145, app 98 (1 skipped), `check_offers.php` 31 checks and `check_long_walk.php` 600 placements, both in CI.
+- **Watched end to end on an iPhone 17 Pro** against a local copy of the service: an invitation appeared on the garden screen, was answered, and the plant stood in plot 0 of the walk. The service agreed.
 
-## Files
-- `docs/WEB-GARDENS.md`: the design: ten areas, plots, dressing, the curator tool, the Wild Fields, worn paths, build order. Current.
-- `Packages/SeedCore/Sources/SeedCore/WebGardens/LongWalk.swift`: the rule. The tier cut-offs are measured values (see its doc comment).
-- `Packages/SeedCore/Sources/SeedCore/Growth/Maturity.swift`: a plant's grown size. It moved here from `PlantSceneBuilder`, which now forwards to it.
-- `App/PeaceGarden/Rendering/GardenStructures.swift`: hedges, `MownPath`, `HedgeShadow`, and `FootShadow` (shared with the figures).
-- `App/PeaceGarden/Rendering/GardenCreatures.swift`: the figures. Its `camera(for:)` is reused by the hedges.
-- `App/PeaceGarden/Views/PlotView.swift`: `hedges`/`hedgeLines`, `comeIn`, `nudge`, and `GardenGroundView`'s close redraw.
-- `App/PeaceGarden/Views/DeveloperControls.swift`: the `-pgPlotSide` and `-pgArea` launch settings.
-- `docs/ARRANGING.md`: *The glow-in-the-dark figures* and *What zoom is for*.
-
-- `tools/wasm/`: the browser module (`Sources/PlantWasm/Exports.swift`, the buffer layout is in its header comment), `build.sh`, and `web/` (the page and `plant.js`). Preview it with the `plant-wasm` launch configuration.
-- `Packages/SeedCore/Sources/SeedCore/Determinism/PortableSHA256.swift` and `Genome/RGB.swift` (HSB to RGB, moved out of the app's `GradientTexture`).
+### What is built
+- **The tokens are kept.** `MeetingTokens` on `PlantRecord`: `ours`, which this phone is addressed at, and `theirs`, where it addresses the other gardener. **Two rather than one**, so an invitation has a direction that cannot be set the wrong way round. Written as hex, the way a seed is.
+- **`Standing`** says where a plant stands: here, asked, invited, shown, declined, withdrawn. Absent means here, so no garden migrates; an unknown word from a newer version decodes rather than throwing the garden away.
+- **The asking, in PHP** (`Server/.api/Offers.php`): `POST /api/walk/offer`, `/pending`, `/answer`, `/withdraw`. An offer is addressed to the token its recipient minted, only that phone can answer it, there is **one offer per plant** — which is what makes a decline final and is why the app needs no block list — and either gardener can take it back at any time without the other.
+- **`/api/walk/plant` stays shut.** It is the one route that plants with nobody asked, and it exists for the reference check.
+- **The phone's side**: `PlotService` (four calls, a transport it can be handed), `GardenModel.offer/answer/withdraw/catchUpOnTheAsking`, and `ShowInGardenView` — **one screen for both gardeners**, because they are told the same facts and only the question differs; two screens drift into a large question and a small one.
+- **Off means no request.** `Sharing.wantsInvitations` is read in one place and the question stops there. `AskingTests` pins it.
+- **`-pgPlots http://localhost:8803`** points a debug build at a local service. `Server/README.md` has the command.
 
 ## Decisions made
-- **Curate by rule.** We design each area's layout; plants take their place by the rule; only showcase plants are placed by hand. An area is many 5.2 m plots. The Wild Fields are uncurated, and a plant's place there comes from its seed.
-- **Placement is assigned once on arrival and stored.** A plant never moves. This supersedes the seed-derived grid in `WEBSITE.md` (marked there).
-- **The rule is "nothing stands in front of something shorter", not rows.** Filling row by row left 11 of the first 15 plots half empty.
-- **Measure tiers on 300 different parent pairs.** A sample crossed with one parent skews tall and is half bells.
-- **Hedges:** tall behind the far border, low in front of the near one, swapped as the plot turns. Grown, not built: organic, from `Organic.hedge` (18 September; they were clipped boxes).
-- **No straight line anywhere in the garden** (Marcus, 18 September): ground outline and sides, path, hedges, shadows. Shapes from SeedCore's `Organic`, shared by app and web; placement tests against the outline.
-- **Worn paths in the Wild Fields are accepted,** as counts per ground cell only: no cookie, no identifier, no address. The privacy page must say so before they go live.
-- **Zoom stays capped at 3×.** Its uses are arranging, showing a plant among its neighbours, and tapping the right plant.
-- **Figures are 3D models, not paintings.** Their glow is a second render added over the figure by the square of the lamps' glow.
+- **The token is the address; consent is what it carries.** The service holds a bag of offers keyed by opaque bytes and no directory of people.
+- **A token does not carry authenticity.** A service cannot tell two tokens minted at a real meeting from two minted by one person on one machine, so it cannot tell a real pair of gardeners from somebody planting invented crossings. What it prevents is anybody planting *somebody else's* plant or answering for them. **Spam is abuse control and is not built** — rate limiting belongs in front of the service, and the walk is append-only, so spam is expensive to undo.
+- **This supersedes *a plant is published by a plot, proved by a key*** for the Long Walk only. That argument (`WEBSITE.md` §*Who can put a plant there*) is about a page carrying a name, and its premise is that a seed is public. A token is not. A plant's own page still needs the plot and the sign-in.
+- **A Long Walk plant carries no name, no note and no date.** So this consent is about one thing: the plant standing where anyone walking the garden can come across it. The name-and-note flow is a plant's own page and is a second consent with its own screen — folding it in here would publish prose on a yes given to a different question, which `PHASES.md` forbids.
+- **A withdrawn planting is hidden, not deleted.** The walk stays append-only, the slot stays taken, and the border keeps the gap.
+- **The invitation line sits above the row of figures, not under the heading** (Marcus, 19 September): between the title and the garden there is sky, and sky holds the sun, the moon and the stars and nothing else.
 
-- **WebAssembly is the renderer.** Marcus asked for a trim before building on it; it went from 2.5 to 2.1 MB brotli with wasm-opt. Embedded Swift is the next big cut, and a rewrite, so it waits.
-- **On WASI, SeedCore imports `FoundationEssentials` and hashes with `PortableSHA256`.** The full Foundation (through swift-crypto) is 37 MB of ICU data. Use nothing from outside `FoundationEssentials` in SeedCore: `String(format:)` and `replacingOccurrences` were rewritten for this.
-- **SeedCore arithmetic that must wrap uses `Int64`/`UInt64`, never `Int`.** `Int` is 32 bits in wasm; `speckle` was the one case.
+## What cannot be shared, and why
+- **Every plant grown before today.** No tokens, so no invitation is possible, ever. The app says nothing rather than offering a row that cannot work.
+- **Anything grown from a link.** An offer link is forwardable, so a secret in one is held by everybody it reached. Whether the *reply* link should carry a token — letting the offerer be reached but not the replier — is open, and is a change to the link format.
 
-- **Plot service decisions (Marcus, 18 September):** a shared plant's record carries the child seed, **both parents' seeds** and the meeting ID, with both gardeners' consent (WEBSITE.md amended). The placement rule runs in **PHP, as a port checked in CI** against placements pinned from the Swift; the phone sends height and colour family, which only a grown plant can give.
+## Next, in the order I would do it
+1. **Deploy the service.** The four new routes are in the repo and not on peacegarden.app. `tools/deploy.sh`; the server's `config.php` is never touched. Until then the app's asking answers 404 against the live host.
+2. **Rate limiting in front of `/api/walk/offer` and `/answer`**, before anybody knows the addresses. The walk is append-only.
+3. **Backups and a tested restore**, still owed, and cheapest while the database is nearly empty.
+4. **Sign in with Apple**, for a gardener's own plot and a plant's own page — the part the tokens deliberately do not cover.
+5. **Settings' copy is now out of date** in three places `WEBSITE.md` §*What this asks of the app* names: the username's line, *Reset everything* saying nothing about a plot, and a **Peace garden** section that appears once something has been shared.
 
-## Next step
-**The plot service is live** on peacegarden.app (deployed 18 September, on the 20i MySQL database `peacegarden-353030306e97`, host 127.0.0.1; credentials only in the server's `public_html/.api/config.php`, which Marcus wrote and `deploy.sh` never touches). Checked live: `/api/walk` and `/api/walk/plot/0` answer 200 with an empty walk, `POST /api/walk/plant` answers 403, and nginx answers 403 to anything under `/.api/`. Before it can take a real plant:
-1. **Sign-in** (Sign in with Apple for a gardener's plot, WEBSITE.md) and **both gardeners' consent** on the phone, with copy saying the other gardener's plant becomes visible.
-2. **The phone's side**: Release (today it only deletes, `PlantDetailView.release()`) sends seed, parents, meeting, height and family to `POST /api/walk/plant`.
-3. **Backups and a tested restore** of the database, still owed (WEBSITE.md).
-Ask Marcus which first.
+## What I would look at again on screen
+- `ShowInGardenView` has a **large gap** between the facts and the buttons; first light's fix — one column between two spacers — is the pattern.
+- Its footnote is **small caps across three ragged lines** and reads as a warning label.
+- The screen is **all words, no plant**, which no other screen in this app is.
+- The invitation capsule is assertive beside the figures.
 
-## Traps
-- **WebAssembly needs the swift.org toolchain, not Xcode's.** Installed: `~/Library/Developer/Toolchains/swift-6.3.3-RELEASE.xctoolchain` and the SDK `swift-6.3.3-RELEASE_wasm`. Use that toolchain's `swift` explicitly. To run the tests in wasm: `swift build --build-tests --swift-sdk swift-6.3.3-RELEASE_wasm`, then `node tools/wasm/run-wasi.mjs <scratch>/debug/SeedCorePackageTests.xctest`, optionally followed by test class names such as `SeedCoreTests.PortableSHA256Tests`. The whole suite takes about 7 minutes.
-- **Two wasm builds at once in one package race and report nonsense errors.**
-- **`build.sh` wants `wasm-opt`** (`brew install binaryen`). Without it the module is 2.5 MB brotli rather than 2.1.
-- **zsh does not word-split `$VAR`.** Pass lists of seeds as an array.
-- **The simulator's garden was emptied on 18 September** (its container came back fresh after a test run). A Long Walk fixture under the two-row rule is in the session scratchpad (`fixture/`) if it survives; otherwise rebuild one as below. The earlier fixture backups were in the session scratchpad and may be gone.
-- **Rebuilding a plot fixture:** a throwaway SwiftPM tool that depends on `Packages/SeedCore` by path, plants 300 crossings with `LongWalk.Walk`, and writes `{plants, placed}`. Dates **must** be encoded `.iso8601`. Otherwise the app fails to read the garden, falls to the first-run screen, and may overwrite the file; terminate it at once.
-- **The simulator's daylight pref may be left on a fixed setting.** For clock-shift previews launch with `-garden.daylight.v1 byTheClock`, and use positive shifts. A fixture backup is at `scratchpad/fixture/garden.backup.json` if the scratchpad survives.
-- **Preview command:** `xcrun simctl launch booted app.peacegarden -pgOpen garden -pgPlotSide 5.2 -pgArea longWalk`. For night, add `-developer.clockShift 43200`.
-- **A figure's foot is `lift` up its picture, not on the bottom edge.** Anything that places, shadows or hit-tests a figure or hedge piece must allow for it.
-- **Sheared sprite shadows collapse to hairlines near noon.** Anything long, like a hedge, needs a ground-polygon shadow instead.
-- **A vertical face is lit by the sky, not the sun.** Pick its material brighter than it looks on its own, then grey it.
-- **A token-guard hook blocks plain `cat` and `grep`, and blocks heredocs containing the word "curl".** Use Read, `rg`, or write scripts to the scratchpad.
-- **SeedCore tests take about 100 s.** Use `--filter`. For the app: `xcodegen generate`, then `xcodebuild test -scheme PeaceGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro'`.
+## Traps, added to the previous list
+- **`Data` encodes as base64.** A token written base64 on disk and sent as hex is two spellings of one secret; `MeetingTokens` has a hand-written `Codable` for this reason and `SeedID` beside it is hex.
+- **`Server/.api/config.php` is local, gitignored, and was pointing at a dead session scratchpad.** It now points at this session's; set it to somewhere that survives before relying on a local walk. The previous 120-arrival local database is untouched at its old path.
+- **A simulator fixture's tokens must be hex**, and dates `.iso8601` (as before). `scratchpad/fixture.py` writes a garden with one plant in each standing.
+- **Injected taps reach SwiftUI buttons** and still do not reach the SceneKit recogniser. Both screens here are SwiftUI, so the whole flow can be driven from the command line.
