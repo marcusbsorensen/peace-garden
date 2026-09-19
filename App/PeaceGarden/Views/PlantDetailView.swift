@@ -43,6 +43,29 @@ struct PlantDetailView: View {
             .opacity(releasing ? 0 : 1)
             .animation(.easeIn(duration: 0.45), value: releasing)
 
+            // The plant steps back while there is something to read.
+            //
+            // **Why a veil and not a move.** Everywhere else in this app the
+            // thing in the way is moved — the sun and the moon keep off the
+            // words rather than being dimmed behind them. That works because a
+            // body in the sky has somewhere else to be. A plant is the subject
+            // of this screen, it is framed by `PlantSceneBuilder.framing` for
+            // reasons the mushroom taught us, and a tall thin one fills the
+            // glass from top to bottom whatever the camera does: there is
+            // nowhere to put it. So the plant stays exactly where it is and the
+            // light comes off it for as long as the words are up.
+            //
+            // **It has no edge**, which is the rule: a gradient is not a line,
+            // and a panel behind the text would have drawn four. It is darkest
+            // at the two ends, where the words are, and thinnest across the
+            // middle third, which is the part of a plant worth looking at.
+            StageVeil()
+                .ignoresSafeArea()
+                .opacity(detailsVisible && !releasing ? 1 : 0)
+                .allowsHitTesting(false)
+                .animation(Chrome.fadeIn, value: detailsVisible)
+                .animation(.easeOut(duration: 0.3), value: releasing)
+
             details
                 .opacity(detailsVisible && !releasing ? 1 : 0)
                 .allowsHitTesting(detailsVisible && !releasing)
@@ -156,13 +179,14 @@ struct PlantDetailView: View {
                     }
 
                     QuietButton(title: "Tell it differently") { editing = true }
-                        .padding(.top, 4)
+                        .padding(.top, 6)
 
                     peaceGarden
+                        .padding(.top, 2)
                 }
                 .padding(.horizontal, 40)
                 .frame(maxWidth: Chrome.readableWidth)
-                .padding(.bottom, 18)
+                .padding(.bottom, 26)
             }
 
             // The same control as the three rows in Settings, for the same
@@ -281,5 +305,42 @@ struct PlantDetailView: View {
             model.delete(record)
             dismiss()
         }
+    }
+}
+
+/// The light coming off the stage while there is something to read over it.
+///
+/// One gradient, darkest at the two ends and thinnest across the middle third.
+/// The ends are where the words are — a name and an age at the top, a meeting
+/// and what can be done about it at the foot — and the middle is the part of a
+/// plant worth looking at, so the veil is shaped like the screen's own use
+/// rather than laid on evenly.
+///
+/// `Chrome.ground` rather than black, so it takes the light out of a dark
+/// stage and puts it back into a pale one, and the words above it stay the
+/// same words in both.
+struct StageVeil: View {
+    var body: some View {
+        LinearGradient(
+            stops: [
+                // The name and the age.
+                .init(color: Chrome.ground.opacity(0.90), location: 0),
+                .init(color: Chrome.ground.opacity(0.80), location: 0.11),
+                .init(color: Chrome.ground.opacity(0.40), location: 0.22),
+                // The window: a third of the screen with almost nothing on it,
+                // and the part of a plant worth looking at.
+                .init(color: Chrome.ground.opacity(0.22), location: 0.28),
+                .init(color: Chrome.ground.opacity(0.22), location: 0.46),
+                // Down to the meeting and what can be done about it. Nearly
+                // solid, because the words here are small and grey and a plant
+                // read through them is a plant nobody chose to look at: the tap
+                // that put these words up takes them down again.
+                .init(color: Chrome.ground.opacity(0.72), location: 0.60),
+                .init(color: Chrome.ground.opacity(0.95), location: 0.72),
+                .init(color: Chrome.ground.opacity(0.97), location: 1),
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
     }
 }
