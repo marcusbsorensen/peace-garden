@@ -21,6 +21,12 @@ final class Seeds
         return is_string($value) && preg_match('/\A[0-9a-f]{64}\z/', $value) === 1;
     }
 
+    /** 32 lowercase hex characters: one of the sixteen-byte tokens a meeting leaves. */
+    public static function isHex16(mixed $value): bool
+    {
+        return is_string($value) && preg_match('/\A[0-9a-f]{32}\z/', $value) === 1;
+    }
+
     /** SHA-256 over the domain, a zero byte, then each part with a big-endian length. */
     public static function digest(string $domain, string ...$parts): string
     {

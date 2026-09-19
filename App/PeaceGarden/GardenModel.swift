@@ -148,7 +148,11 @@ final class GardenModel {
             lineage: outcome.result.lineage,
             birth: outcome.happenedAt,
             savedAt: Self.currentDate(),
-            encounter: note
+            encounter: note,
+            // The one moment this can be kept. A plant saved without them is a
+            // meeting that can never carry an invitation, and no later version
+            // can repair it. See `MeetingTokens`.
+            tokens: outcome.tokens
         )
         garden.plants.append(record)
         persist()

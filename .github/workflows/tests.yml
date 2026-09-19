@@ -115,6 +115,12 @@ jobs:
       # to the Swift; this holds the PHP to them. The runner has PHP already.
       - name: The plot service's rule is SeedCore's
         run: php tools/reference/check_long_walk.php
+      # And the asking above it: nothing reaches the walk until the second
+      # gardener has said yes, and only the token an offer was addressed to
+      # can say it. The walk itself has no way to tell, so this is where it
+      # is held.
+      - name: Nothing is planted unasked
+        run: php tools/reference/check_offers.php
       - name: The site's own prose is commissioned, not drifting
         run: python3 tools/strings/check.py
       # The numeral rule, which nothing enforced until 6 September and which

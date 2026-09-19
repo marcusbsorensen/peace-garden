@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/LongWalk.php';
+require_once __DIR__ . '/Offers.php';
 
 /**
  * The Long Walk, stored: every planting in the order it arrived, never changed.
@@ -62,6 +63,16 @@ final class WalkStore
             nudge_z DOUBLE PRECISION NOT NULL
         )");
         $this->run('CREATE INDEX IF NOT EXISTS long_walk_plot ON long_walk (plot)');
+        // Added after the table was live, so it is an ALTER that may already
+        // have run. A planting taken back is hidden rather than deleted: the
+        // walk is append-only and nothing in it moves, so the row stays, keeps
+        // its slot, and simply is not drawn. The border is left with a gap,
+        // which is what lifting a plant out of one leaves.
+        try {
+            $this->run('ALTER TABLE long_walk ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0');
+        } catch (Throwable) {
+            // Already there.
+        }
         // One row, written first in every arrival's transaction: the write lock
         // that keeps two arrivals from being placed against the same walk.
         $this->run('CREATE TABLE IF NOT EXISTS long_walk_lock (id INTEGER PRIMARY KEY, arrivals INTEGER NOT NULL)');
@@ -104,12 +115,32 @@ final class WalkStore
         }
     }
 
-    /** A plot's plantings, in the order they arrived. */
+    /** A plot's plantings, in the order they arrived. Hidden ones are not in it. */
     public function plot(int $plot): array
     {
-        $query = $this->db->prepare('SELECT * FROM long_walk WHERE plot = ? ORDER BY arrival');
+        $query = $this->db->prepare('SELECT * FROM long_walk WHERE plot = ? AND hidden = 0 ORDER BY arrival');
         $query->execute([$plot]);
         return array_map([self::class, 'planting'], $query->fetchAll());
+    }
+
+    /**
+     * Takes a planting out of the drawing without taking it out of the walk.
+     *
+     * The row stays and keeps its slot, so nothing already placed moves and
+     * nothing new is placed where it stood. `plant` still reads it, which is
+     * the point: the rule saw it when it placed everything around it, and a
+     * rule that stopped seeing it would be a different rule.
+     */
+    public function hide(string $seed): void
+    {
+        $update = $this->db->prepare('UPDATE long_walk SET hidden = 1 WHERE seed = ?');
+        $update->execute([$seed]);
+    }
+
+    /** The asking that decides what ever reaches the walk. */
+    public function offers(): Offers
+    {
+        return new Offers($this->db, $this);
     }
 
     public function plots(): int

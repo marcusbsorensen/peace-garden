@@ -25,6 +25,12 @@ struct ExchangeOutcome: Equatable, Identifiable {
     /// Measured here and never received from the other side.
     var coordinate: Coordinate?
 
+    /// The two sets of sixteen bytes this meeting leaves behind, kept with the
+    /// plant so the other gardener can be asked before it is ever shown on the
+    /// web. Nil where either phone's card carried none — an older version, or a
+    /// seed that arrived by link.
+    var tokens: MeetingTokens?
+
     var id: String { result.childSeed.hex }
 }
 
@@ -122,9 +128,11 @@ final class PollenExchangeService: NSObject {
             plantName: identity.genome.name.full,
             birth: identity.birth,
             sharesPlace: willing,
-            // Minted here, per meeting, and never kept: nothing in this app
-            // holds a token after the exchange it belonged to. See
-            // `PollenCard.contactToken`.
+            // Minted here, per meeting. Kept with the plant this meeting
+            // grows, and with nothing else — it is how the other gardener can
+            // be asked before that plant is ever shown on the web, and it says
+            // only that somebody was at this meeting. See
+            // `PollenCard.contactToken` and `MeetingTokens`.
             contactToken: PollenCard.makeContactToken(),
             arrival: .met
         )
@@ -261,9 +269,11 @@ final class PollenExchangeService: NSObject {
             plantName: identity.genome.name.full,
             birth: identity.birth,
             sharesPlace: willing,
-            // Minted here, per meeting, and never kept: nothing in this app
-            // holds a token after the exchange it belonged to. See
-            // `PollenCard.contactToken`.
+            // Minted here, per meeting. Kept with the plant this meeting
+            // grows, and with nothing else — it is how the other gardener can
+            // be asked before that plant is ever shown on the web, and it says
+            // only that somebody was at this meeting. See
+            // `PollenCard.contactToken` and `MeetingTokens`.
             contactToken: PollenCard.makeContactToken(),
             arrival: .met
         )
@@ -285,7 +295,11 @@ final class PollenExchangeService: NSObject {
             // Willing, so the place half of a meeting can be watched too. This
             // phone's own switch still decides whether a reading is taken at
             // all, and the gate in `finishIfAgreed` is unchanged.
-            sharesPlace: true
+            sharesPlace: true,
+            // And a token of their own, so the plant this makes can be carried
+            // through the whole of the sharing flow on one simulator. Nobody
+            // answers it, which is what a plant waiting on somebody looks like.
+            contactToken: PollenCard.makeContactToken()
         )
         remoteCard = stranger
         remoteNonce = Pollination.makeNonce(byteCount: ExchangeProtocol.nonceByteCount)
@@ -428,6 +442,19 @@ final class PollenExchangeService: NSObject {
         finishIfAgreed()
     }
 
+    /// The pair of tokens a meeting leaves, or nil.
+    ///
+    /// **Both or neither**, the same shape as the place flag above it. One
+    /// token alone can address somebody who cannot address back, which is a
+    /// worse thing to keep than nothing: it would let this phone invite a
+    /// gardener whose own copy of the plant could never carry the answer.
+    /// An older phone sends no token at all, and this is where that becomes
+    /// *no invitation possible* rather than a half-built one.
+    private static func tokens(ours: Data?, theirs: Data?) -> MeetingTokens? {
+        guard let ours, let theirs, ours != theirs else { return nil }
+        return MeetingTokens(ours: ours, theirs: theirs)
+    }
+
     private func finishIfAgreed() {
         guard let localResult, let remoteChecksum, let remoteCard else { return }
         guard remoteChecksum == localResult.checksum else {
@@ -446,7 +473,8 @@ final class PollenExchangeService: NSObject {
                 peerDisplayName: remoteCard.displayName,
                 peerPlantName: remoteCard.plantName,
                 happenedAt: Self.now,
-                coordinate: agreed ? placeReading : nil
+                coordinate: agreed ? placeReading : nil,
+                tokens: Self.tokens(ours: card?.contactToken, theirs: remoteCard.contactToken)
             )
         )
         // Hold the connection open briefly so the other side's confirm is not

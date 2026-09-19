@@ -98,13 +98,29 @@ public struct PlantRecord: Codable, Equatable, Identifiable, Sendable {
     public var savedAt: Date
     public var encounter: EncounterNote?
 
+    /// The two tokens the meeting left behind, kept so that the other gardener
+    /// can be asked before this plant is ever shown on the web.
+    ///
+    /// **Optional, and absent on every plant grown before it existed.** A
+    /// meeting made without tokens can never carry an invitation, which is why
+    /// `docs/WEBSITE.md` called this the most urgent item in phase 2: it cannot
+    /// be added to a meeting that has already happened. Nothing migrates —
+    /// a record without it simply cannot be shared, and says so.
+    public var tokens: MeetingTokens?
+
+    /// Whether this plant also stands in the shared garden on the web. Absent
+    /// means here and nowhere else.
+    public var standing: Standing?
+
     public init(
         id: UUID = UUID(),
         seed: SeedID,
         lineage: Lineage,
         birth: Date,
         savedAt: Date = Date(),
-        encounter: EncounterNote? = nil
+        encounter: EncounterNote? = nil,
+        tokens: MeetingTokens? = nil,
+        standing: Standing? = nil
     ) {
         self.id = id
         self.seed = seed
@@ -112,10 +128,26 @@ public struct PlantRecord: Codable, Equatable, Identifiable, Sendable {
         self.birth = birth
         self.savedAt = savedAt
         self.encounter = encounter
+        self.tokens = tokens
+        self.standing = standing
     }
 
     public var genome: Genome { Genome(seed: seed, lineage: lineage) }
     public var isHybrid: Bool { lineage.isHybrid }
+
+    /// Where this plant stands with the shared garden. Absent is `here`.
+    public var standingOrHere: Standing { standing ?? .here }
+
+    /// Whether this plant could be offered to the shared garden today.
+    ///
+    /// Three things have to hold, and each is a different refusal: it has to be
+    /// a hybrid, so that there is a second gardener at all; it has to carry the
+    /// meeting's tokens, so that gardener can be reached; and it has to be
+    /// standing only here, because one invitation per plant is what makes a
+    /// decline final.
+    public var canBeOffered: Bool {
+        isHybrid && tokens != nil && standingOrHere.canAsk
+    }
 
     public func growth(now: Date = Date()) -> GrowthModel.State {
         GrowthModel(genome: genome).state(birth: birth, now: now)
