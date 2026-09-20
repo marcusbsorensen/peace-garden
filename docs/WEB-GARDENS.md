@@ -123,6 +123,9 @@ Three things follow from the table:
 - **Ten ambassadors, one per area** (`WEBSITE.md` §*The ambassador plants*),
   stand in each area's first plot, in the slot the template marks as the
   specimen: the one place in every area that is hand-placed from the start.
+  **The ten seeds exist, 20 September** (`SeedCore/WebGardens/Ambassadors.swift`);
+  what no template yet says is which slot is the specimen, and no area yet
+  plants its ambassador.
 
 ### Structures need drawing properly
 
@@ -330,7 +333,20 @@ In order, because each needs the one before:
    Walk is the best first one: its rule is the plainest best practice there is
    (tall at the back, drifts, repetition), and its plots open end to end, so
    the map is a line before it has to be a shape.
-4. **The plot service's slot assignment**, append-only.
+4. **The plot service's slot assignment**, append-only. **Done, 19–20
+   September.** The service places every arrival by the Long Walk's rule
+   (`check_long_walk.php` holds the PHP to the Swift over 600 placements), and
+   since 20 September it knows there are ten areas and keeps nine shut:
+   `SeedCore/WebGardens/Areas.swift`, `Server/.api/Areas.php`,
+   `GET /api/garden`, and a 409 for a plant whose area is not planted yet. A
+   table for each area rather than an area column, because `plot`, `side`,
+   `tier` and `slot_index` mean a double border on a travel row and would mean
+   something else on a knot-garden row.
+
+   **A plant is offered to the area its own name belongs to**, from the app,
+   since 20 September. That is nine plants in ten refused for now, which the
+   app says on the screen before it asks rather than after: a plant whose area
+   is still to be planted gets two sentences and no question.
 5. **The structures**, modelled, per area as each area is built.
 6. **The curator's tool.**
 7. **The Wild Fields**, once release uploads something.

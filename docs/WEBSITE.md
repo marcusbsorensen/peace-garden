@@ -441,6 +441,33 @@ sentence of explanation.
 That is the version to build. It is cheaper, it is already true, and it teaches
 something a visitor can carry to any plant on the site.
 
+**The seeds exist, 20 September** (`SeedCore/WebGardens/Ambassadors.swift`,
+`AmbassadorTests`, `tools/reference/ambassador_vectors.json`). They were found
+rather than chosen: minted in order from a fixed label, keeping the first seed
+to land on each area, and the test runs the search again and checks it arrives
+at the same ten. All ten sown on one day, a month before the garden opened,
+because the slowest takes twenty-one days to mature.
+
+| Area | Ambassador |
+| --- | --- |
+| The Seedbed | *Verora angustifolia* |
+| The Cold Frame | *Nyxisora crassicaulis* |
+| The Coppice | *Rosea caerulea* |
+| The Glasshouse | *Aurea pallida* |
+| The Knot Garden | *Quina caerulea* |
+| The Home Ground | *Fenunora patentifolia* |
+| The Long Walk | *Halula crassicaulis* |
+| The Crossing | *Melyrina latifolia* |
+| The Orchard | *Cyninora contorta* |
+| The Quiet Garden | *Olyne paniculata* |
+
+**What is not decided is how one stands in a plot.** An ambassador is not a
+shared plant and should not be a row in an area's table — nobody put it there
+and nobody can withdraw it — but the placement rule runs in the plot service,
+which means either the service plants it as a row anyway, or every drawer of a
+plot knows to put it in before the arrivals. That is a service decision and it
+is open.
+
 #### If the plant should carry it too
 
 Making the theme shape the plant is possible and it is a **breaking change to

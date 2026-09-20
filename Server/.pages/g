@@ -66,14 +66,23 @@
         fix rather than a wrapper or an override character, because the fact
         being recorded is that this run is English.
 
-        It is English because it is temporary — it goes when the garden opens —
+        **Reworded 20 September**, because it had stopped being true. It said
+      *every plant here is invented, the garden is not open yet*, on a page
+      whose travel area now sends a visitor to a Long Walk that is planted and
+      open. A notice that is false about one tenth of what it covers is worse
+      than none: it tells somebody who has just come back from `/walk` that
+      what they saw was made up.
+
+      It is English because it is temporary — it goes when the garden opens —
         and docs/LANGUAGES.md is where the argument about which of the
         site's own prose gets commissioned is being had. If it is still here
         when that is settled, it belongs in the catalogue and these two
         attributes go.
       -->
       <p class="notice body" id="invented" lang="en" dir="ltr" hidden>
-        Every plant here is invented. The garden is not open yet.
+        The plants drawn here stand in for a garden still being planted. The
+        Long Walk is the one area with real plants in it, and its own page
+        grows them.
       </p>
 
       <!-- 1. The map: ten areas, five across and two down. -->
