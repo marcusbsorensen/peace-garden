@@ -48,9 +48,14 @@
       </section>
 
       <!--
-        The three places this page can send somebody, in the order they become
-        true for a reader: the garden is open now, the app is what you would
-        install, and the Wild Fields is not running yet and says so.
+        The four places this page can send somebody, in the order they become
+        true for a reader: the two you can walk today, then the app you would
+        install, then the Wild Fields, which is not running yet and says so.
+
+        The garden and the Long Walk are both open and are not the same place —
+        one is ten areas laid out by theme, the other is a path of plots laid
+        out by when people met — so each is named rather than folded into the
+        other under a word they would have to share.
       -->
       <section class="invitation">
         <h2 class="label" id="garden-title" data-s="gardenTitle"></h2>
@@ -63,8 +68,8 @@
         <p class="body quiet" id="areas"></p>
         <p>
           <!--
-            Three links on this page carry the same word, which is one word rather
-            than three commissions — but three links with the same name and three
+            Four links on this page carry the same word, which is one word rather
+            than four commissions — but three links with the same name and three
             destinations is a list a screen reader cannot tell apart. The heading
             above each one is already the difference, so it is named as part of
             the link rather than written out again.
@@ -75,6 +80,20 @@
             id="garden-go"
             data-s="goOn"
             aria-labelledby="garden-go garden-title"
+          ></a>
+        </p>
+      </section>
+
+      <section class="invitation">
+        <h2 class="label" id="walk-title" data-s="walkTitle"></h2>
+        <p class="body" data-s="walkBody"></p>
+        <p>
+          <a
+            class="quiet-button"
+            href="/walk"
+            id="walk-go"
+            data-s="goOn"
+            aria-labelledby="walk-go walk-title"
           ></a>
         </p>
       </section>

@@ -312,8 +312,21 @@ interesting half.
 
 | | | | | |
 | --- | --- | --- | --- | --- |
-| The Cold Frame | The Home Ground | The Seedbed | The Coppice | The Long Walk |
+| The Cold Frame | The Home Ground | The Seedbed | The Coppice | The Avenue |
 | The Quiet Garden | The Orchard | The Knot Garden | The Glasshouse | The Crossing |
+
+**`travel` was The Long Walk until 20 September.** It gave way when the Long
+Walk — the path of plots, at `/walk` — got a page and a link from the front
+page, which put the two names one under the other on the same screen with
+different destinations. The brief for this area had always described an avenue
+(*grande allée*, *Lindenallee*, *paseo*), so the name only caught up with it.
+
+**Nothing was recommissioned, because English was the only one that said it.**
+All forty-one banks that have named the areas named this one an avenue rather
+than a walk — *Den Lange Allé*, *La grande allée*, *La alameda*, *Il lungo
+viale*, *Dugi drvored*, 並木道 — so every namer had already read the brief and
+named the feature in it. The English label was the outlier, and the collision it
+caused was an English-only collision.
 
 Every one of them is a real place in a garden — something a gardener could point
 at — rather than ten abstractions dressed up. The cold frame is where a plant is
@@ -794,7 +807,7 @@ between them.
 | --- | --- |
 | **A third hand-maintained port**, in JavaScript | The thing HANDOVER.md forbids by name. `tools/preview/` has drifted twice, and a plant in the garden that does not match the plant on the phone is the one failure this project cannot survive. |
 | **A JavaScript port with a CI gate** — the `tools/reference/` treatment: render the same seeds through both, fail on disagreement | Honest, and proven: CI already runs a second implementation of the derivation. It is real work to write and real work to keep. |
-| **`SeedCore` compiled to WebAssembly** | One implementation, so drift is impossible by construction rather than by vigilance. 2.1 MB brotli, measured 18 September (below). |
+| **`SeedCore` compiled to WebAssembly** | One implementation, so drift is impossible by construction rather than by vigilance. 7.9 MB raw, delivered at 2.8 MB gzipped (below). |
 | **Rendered images made somewhere** | Ruled out on principle: it would be the first stored appearance in the project's history, on the one surface where a mismatch is most visible. ARCHITECTURE.md's one idea is that nothing about a plant's appearance is stored, sent or synced. |
 
 **Recommendation: WebAssembly, with the CI-gated port as the fallback if the
@@ -822,8 +835,17 @@ table however convenient it looks.
 
 **Measured, 18 September.** `tools/wasm/` builds SeedCore for the browser and
 `/dev/plant` draws one plant from it with WebGL2. The module is 7.9 MB
-raw, 2.8 MB gzipped and **2.1 MB brotli**. It loads in about 40 ms and grows a
-plant in 20 to 100 ms on a Mac. Four changes got it there from 12.6 MB brotli:
+raw, 2.8 MB gzipped and 2.1 MB brotli. It loads in about 40 ms and grows a
+plant in 11 ms on a Mac, measured over sixty plants on 20 September.
+
+**What a visitor actually receives is the 2.8 MB gzip**, and it takes serving
+by hand: nginx at 20i gzips JavaScript, CSS and JSON and not `application/wasm`,
+and its vhost is not ours, so `/plant.wasm` in `Server/index.php` picks an
+encoding and serves the module from `.pages/`. Brotli is built and never
+delivered — the CDN in front of the origin normalises `Accept-Encoding`, so a
+browser asking for `br, gzip` reaches PHP as `gzip`.
+
+Four changes got the module there from 12.6 MB brotli:
 
 - **`FoundationEssentials` on WASI.** The full Foundation brings ICU, a single
   37 MB block of text data SeedCore never reads.
@@ -1043,8 +1065,12 @@ handed a decision they cannot review.
   nothing needs it to be. If it ever is, it is a new consent with its own screen
   and its own withdrawal.
 - ~~**The wasm bundle size**, which decides whether the recommended renderer
-  survives contact with a phone on mobile data.~~ **2.1 MB brotli**, measured
-  18 September; see *What renders the plant*. Earlier: deferred rather than answered,
+  survives contact with a phone on mobile data.~~ **2.8 MB on the wire**,
+  measured against the deployed page on 20 September: 2,813,245 bytes received
+  for 7,871,557 decoded. The 2.1 MB brotli measured on 18 September is what the
+  file compresses to and **not what anybody receives** — 20i's CDN normalises
+  `Accept-Encoding` to cut its cache variants, so `br, gzip` reaches the origin
+  as `gzip`. See `Server/index.php` at `/plant.wasm`. Earlier: deferred rather than answered,
   2 September: **the first pass draws no plant at all**, only a marked space of
   the right proportions. Everything else on a page — the language, the passage,
   the names, the invitation — can be built and looked at without it, and the

@@ -157,6 +157,11 @@ export const EN = Object.freeze({
   wildBody:
     "Somewhere to send a seed when there is nobody in the room. A seed set down here waits for another to arrive, and what grows belongs to whoever was at both ends of it.",
   walkTitle: "The Long Walk",
+  // On the front page, beside the other three. Shorter than `walkAbout`, which
+  // is the walk's own page saying how to move around it — how to walk is not
+  // an invitation to.
+  walkBody:
+    "A path with plots down either side of it, and in each plot the plants that two people grew when they met. It is a garden of pairs rather than of themes, and it is as long as the meetings that have happened.",
   walkAbout:
     "A path with plots down either side of it, and in each plot the plants that two people grew when they met. Walk on to go further down it, or turn to go round to another side of the same plots.",
   // While the plants are being grown. They are grown one at a time, in this
@@ -177,7 +182,7 @@ export const EN = Object.freeze({
   // Said once and used on both of the pages that are not built yet, because two
   // ways of saying *not yet* is one more than a reader needs.
   notYet: "Not open yet.",
-  // What the front page's three links are called where a link needs a word of
+  // What the front page's four links are called where a link needs a word of
   // its own rather than the heading above it.
   goOn: "Go on",
 
@@ -224,7 +229,21 @@ export const EN = Object.freeze({
   areaGround: "The Home Ground",
   areaBeginnings: "The Seedbed",
   areaRenewal: "The Coppice",
-  areaTravel: "The Long Walk",
+  // **Not The Long Walk**, which it was until 20 September and which is now a
+  // different place on this same site: the path of plots at `/walk`, where two
+  // people's plants stand. The front page names both, one under the other, and
+  // a reader clicking the area expecting the walk would arrive at a bank of
+  // quotations about travel. The brief for this area always described an
+  // avenue — grande allée, Lindenallee, paseo — so the name has only caught up
+  // with it.
+  //
+  // **Nothing is recommissioned, because English was the only one that said
+  // it.** All forty-one banks that have named the areas named this one an
+  // avenue and not a walk: *Den Lange Allé*, *La grande allée*, *La alameda*,
+  // *Il lungo viale*, *Dugi drvored*, 並木道. Every namer read the brief and
+  // named the feature in it. The English label was the outlier, and the
+  // collision it caused was an English-only collision.
+  areaTravel: "The Avenue",
   areaPeace: "The Quiet Garden",
   areaKinship: "The Orchard",
   areaPattern: "The Knot Garden",
