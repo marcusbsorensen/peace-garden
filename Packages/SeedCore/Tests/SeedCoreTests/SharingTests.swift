@@ -114,8 +114,15 @@ final class SharingTests: XCTestCase {
             JSONSerialization.jsonObject(with: data) as? [String: Any]
         )
 
-        // router.php reads exactly these five and no others.
-        XCTAssertEqual(Set(body.keys), ["seed", "parents", "encounter", "height", "family"])
+        // router.php reads exactly these six and no others. `area` joined them
+        // on 20 September, and it is the one the service will accept as absent
+        // — an older app sends five and means the Long Walk.
+        XCTAssertEqual(Set(body.keys), ["seed", "parents", "encounter", "height", "family", "area"])
+
+        // And it is sent as the area's own name rather than as a number, so a
+        // reader of the wire can see which area a plant went to without a table
+        // to look it up in.
+        XCTAssertEqual(body["area"] as? String, "travel")
 
         let seed = try XCTUnwrap(body["seed"] as? String)
         let parents = try XCTUnwrap(body["parents"] as? [String])
