@@ -104,6 +104,15 @@ if (str_starts_with($path, '/api/')) {
 //
 // Eight megabytes becomes 2.8 with gzip and 2.1 with brotli. `readfile`
 // streams, so none of it is held in memory.
+//
+// **Brotli does not arrive, and the reason is in front of this host.** 20i
+// puts a CDN in front of the origin, and it normalises `Accept-Encoding` on
+// the way through to cut its cache variants: a request for `br, gzip` reaches
+// PHP as `gzip`, and a request for `br` alone reaches it with nothing at all —
+// measured both ways on 20 September. So every browser gets the gzip. The
+// brotli branch stays because it is three lines, it is right, it works on the
+// local server, and it starts working by itself the day that CDN changes or
+// the site moves. What it is not is a saving anybody is getting today.
 if ($path === '/plant.wasm') {
     $accepts = $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '';
     $forms = [['br', '.br'], ['gzip', '.gz']];
