@@ -160,10 +160,15 @@ export const EN = Object.freeze({
   // On the front page, beside the other three. Shorter than `walkAbout`, which
   // is the walk's own page saying how to move around it — how to walk is not
   // an invitation to.
+  //
+  // **It says which area it is.** The Long Walk is one of the garden's ten and
+  // not a second garden, and the front page lists it in both places — among
+  // the ten area names under *The garden*, and here with a way in. Saying so
+  // is what keeps that from reading as two places with one name.
   walkBody:
-    "A path with plots down either side of it, and in each plot the plants that two people grew when they met. It is a garden of pairs rather than of themes, and it is as long as the meetings that have happened.",
+    "The one area of the garden with real plants in it: a double border either side of a mown path, tall at the back and graded to the front. Every plant standing in it grew from a meeting, and it goes on as long as the meetings do.",
   walkAbout:
-    "A path with plots down either side of it, and in each plot the plants that two people grew when they met. Walk on to go further down it, or turn to go round to another side of the same plots.",
+    "One of the garden's ten areas, and the first with anything growing in it. A double border either side of a mown path, with the plants two people grew when they met. Walk on to go further down it, or turn to go round to another side of the same plots.",
   // While the plants are being grown. They are grown one at a time, in this
   // browser, from the same arithmetic the phone uses, and on a long plot that
   // takes a moment worth naming.
@@ -229,21 +234,7 @@ export const EN = Object.freeze({
   areaGround: "The Home Ground",
   areaBeginnings: "The Seedbed",
   areaRenewal: "The Coppice",
-  // **Not The Long Walk**, which it was until 20 September and which is now a
-  // different place on this same site: the path of plots at `/walk`, where two
-  // people's plants stand. The front page names both, one under the other, and
-  // a reader clicking the area expecting the walk would arrive at a bank of
-  // quotations about travel. The brief for this area always described an
-  // avenue — grande allée, Lindenallee, paseo — so the name has only caught up
-  // with it.
-  //
-  // **Nothing is recommissioned, because English was the only one that said
-  // it.** All forty-one banks that have named the areas named this one an
-  // avenue and not a walk: *Den Lange Allé*, *La grande allée*, *La alameda*,
-  // *Il lungo viale*, *Dugi drvored*, 並木道. Every namer read the brief and
-  // named the feature in it. The English label was the outlier, and the
-  // collision it caused was an English-only collision.
-  areaTravel: "The Avenue",
+  areaTravel: "The Long Walk",
   areaPeace: "The Quiet Garden",
   areaKinship: "The Orchard",
   areaPattern: "The Knot Garden",

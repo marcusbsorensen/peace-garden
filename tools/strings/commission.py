@@ -331,17 +331,14 @@ AREAS = {
             "The road — ad ripam, peregrinus, travel and travail",
             "Far off — Fernweh, tramontane, serendipity",
         ],
-        "why": "An avenue is a real garden feature: the formal ride you can see "
-               "the end of and still have to walk. The one at Windsor is three "
-               "miles.",
+        "why": "A long walk is a real garden feature: the formal avenue you can "
+               "see the end of and still have to walk. The one at Windsor is "
+               "three miles.",
         "note": "Not a hike or a ramble. It is the garden's own avenue — grande "
-                "allée, Lindenallee, paseo. **And not this language's words "
-                "for a long walk**: `walkTitle` on the same site is The Long "
-                "Walk, a different place entirely — the path of plots where "
-                "two people's plants stand — and the front page names both, "
-                "one under the other. The English area name was *The Long "
-                "Walk* until 20 September for exactly the reason a namer will "
-                "want to reach for it, and it had to be given up.",
+                "allée, Lindenallee, paseo. This area is also the one that is "
+                "built: `walkTitle` and `/walk` on the site are this place, so "
+                "whatever it is called here is what a visitor walking it will "
+                "see.",
     },
     "areaPeace": {
         "theme": "peace",

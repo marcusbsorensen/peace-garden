@@ -52,10 +52,13 @@
         true for a reader: the two you can walk today, then the app you would
         install, then the Wild Fields, which is not running yet and says so.
 
-        The garden and the Long Walk are both open and are not the same place —
-        one is ten areas laid out by theme, the other is a path of plots laid
-        out by when people met — so each is named rather than folded into the
-        other under a word they would have to share.
+        **The Long Walk is one of the garden's ten areas**, not a second
+        garden, so it appears twice on this page: once as a name in the list
+        under *The garden*, and once here with a way in. That is deliberate.
+        It is the only area with real plants standing in it — the other nine
+        draw from `plots.js`'s stand-in and say so — and a reader who would
+        like to see the thing rather than a placeholder should not have to
+        find out which of ten to click.
       -->
       <section class="invitation">
         <h2 class="label" id="garden-title" data-s="gardenTitle"></h2>

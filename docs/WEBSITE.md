@@ -312,21 +312,8 @@ interesting half.
 
 | | | | | |
 | --- | --- | --- | --- | --- |
-| The Cold Frame | The Home Ground | The Seedbed | The Coppice | The Avenue |
+| The Cold Frame | The Home Ground | The Seedbed | The Coppice | The Long Walk |
 | The Quiet Garden | The Orchard | The Knot Garden | The Glasshouse | The Crossing |
-
-**`travel` was The Long Walk until 20 September.** It gave way when the Long
-Walk — the path of plots, at `/walk` — got a page and a link from the front
-page, which put the two names one under the other on the same screen with
-different destinations. The brief for this area had always described an avenue
-(*grande allée*, *Lindenallee*, *paseo*), so the name only caught up with it.
-
-**Nothing was recommissioned, because English was the only one that said it.**
-All forty-one banks that have named the areas named this one an avenue rather
-than a walk — *Den Lange Allé*, *La grande allée*, *La alameda*, *Il lungo
-viale*, *Dugi drvored*, 並木道 — so every namer had already read the brief and
-named the feature in it. The English label was the outlier, and the collision it
-caused was an English-only collision.
 
 Every one of them is a real place in a garden — something a gardener could point
 at — rather than ten abstractions dressed up. The cold frame is where a plant is
