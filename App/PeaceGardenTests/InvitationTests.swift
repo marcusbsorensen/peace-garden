@@ -33,47 +33,6 @@ final class InvitationTests: XCTestCase {
         XCTAssertFalse(PlotView.gardenersAsking(waiting)[0].isEmpty)
     }
 
-    // MARK: The thread from a plant to the question
-
-    func testAThreadIsNotARuledLine() {
-        // Nothing in this garden is straight, and a thread drawn from a point
-        // to a point with nothing done to it would be the one thing on screen
-        // that a machine had made.
-        let head = CGPoint(x: 200, y: 300), foot = CGPoint(x: 200, y: 700)
-        let path = Strand.path(from: head, to: foot, seed: seed("a wandering one"))
-
-        var furthest = 0.0
-        path.forEach { element in
-            switch element {
-            case .quadCurve(_, let control): furthest = max(furthest, abs(control.x - 200))
-            default: break
-            }
-        }
-        XCTAssertGreaterThan(furthest, 0.5, "the thread falls dead straight")
-        XCTAssertLessThan(furthest, Strand.wander * 2,
-                          "a thread that wanders this far is admired rather than followed")
-    }
-
-    func testAThreadHangsTheSameWayEveryTimeItIsDrawn() {
-        // A thread that changed as the screen refreshed would be the one thing
-        // in the garden that flickered.
-        let one = Strand.lean(of: seed("held still"))
-        XCTAssertEqual(one, Strand.lean(of: seed("held still")))
-    }
-
-    func testTwoPlantsDoNotHangAlike() {
-        let leans = Set((0..<24).map { Strand.lean(of: seed("thread \($0)")).rounded() })
-        XCTAssertGreaterThan(leans.count, 6, "every thread leans the same way")
-    }
-
-    func testAThreadStartsAtThePlantAndEndsAtTheQuestion() {
-        let head = CGPoint(x: 140, y: 280), foot = CGPoint(x: 210, y: 720)
-        let path = Strand.path(from: head, to: foot, seed: seed("both ends"))
-        XCTAssertEqual(path.currentPoint?.x ?? 0, foot.x, accuracy: 0.001)
-        XCTAssertEqual(path.currentPoint?.y ?? 0, foot.y, accuracy: 0.001)
-        XCTAssertEqual(path.boundingRect.minY, head.y, accuracy: Strand.wander * 2)
-    }
-
     // MARK: The chevrons
 
     func testAChevronPointsTheWayItSaysItDoes() {

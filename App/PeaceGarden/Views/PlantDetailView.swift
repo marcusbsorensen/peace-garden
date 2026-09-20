@@ -131,20 +131,23 @@ struct PlantDetailView: View {
 
     private var details: some View {
         VStack {
-            VStack(spacing: 8) {
-                Text(live.genome.name.full)
-                    .plantName()
-                    .foregroundStyle(Chrome.ink)
-                Text(verbatim: live.growth(now: model.now).caption())
-                    .chromeLabel()
-                    .foregroundStyle(Chrome.faint)
-            }
-            .padding(.top, 64)
+            // **The name alone over the crown.** The age used to sit under it,
+            // which on a tall plant is small grey capitals laid across the
+            // flower head — the one part of a spire worth looking at, and the
+            // one place on this screen where the veil is deliberately no
+            // stronger than it has to be. How old a plant is belongs with what
+            // it is, not with what it is called, so it has gone down to the
+            // foot with the meeting and the standing. What is left up here is
+            // one large word, light on dark, which reads over anything.
+            Text(live.genome.name.full)
+                .plantName()
+                .foregroundStyle(Chrome.ink)
+                .padding(.top, 64)
 
             Spacer()
 
-            if let encounter = live.encounter {
-                VStack(spacing: 12) {
+            VStack(spacing: 12) {
+                if let encounter = live.encounter {
                     if let note = encounter.note {
                         // Somebody's own sentence about their own meeting.
                         Text(verbatim: note)
@@ -191,14 +194,23 @@ struct PlantDetailView: View {
                             }
                         }
                     }
-
-                    standing
-                        .padding(.top, 2)
                 }
-                .padding(.horizontal, 40)
-                .frame(maxWidth: Chrome.readableWidth)
-                .padding(.bottom, 22)
+
+                // **How old it is, and where it stands.** Both are the plant
+                // now rather than the meeting it came from, so they are one
+                // group of their own under the meeting's — and both survive a
+                // plant with no meeting written down, which the block above
+                // does not.
+                VStack(spacing: 4) {
+                    Text(verbatim: live.growth(now: model.now).caption())
+                        .chromeLabel(size: 10)
+                        .foregroundStyle(Chrome.faint)
+                    standing
+                }
             }
+            .padding(.horizontal, 40)
+            .frame(maxWidth: Chrome.readableWidth)
+            .padding(.bottom, 22)
 
             marks
                 .frame(maxWidth: Chrome.readableWidth)

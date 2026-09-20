@@ -739,11 +739,17 @@ struct PlotView: View {
     /// and a plant standing in a garden, are two facts about one thing with
     /// nothing between them. The thread is the between.
     ///
-    /// **Why they are not straight.** Nothing in this garden is — the soil, the
-    /// hedges, the paths and the shadows are all irregular, and a ruled line
-    /// would be the one thing on screen that a machine had made. `Strand` bends
-    /// each one by an amount taken from that plant's own seed, so it hangs the
-    /// same way every time and no two hang alike.
+    /// **Why they are straight, when nothing else here is.** The rule about
+    /// this garden — no ruled lines, the soil and the hedges and the paths and
+    /// the shadows all irregular — is a rule about the *scene*. A thread that
+    /// wandered was tried first and it was a scene object: a soft gold curve
+    /// coming out of the ground beside a stem, which on the plot read as a
+    /// second stem and below the plot as a root. Drawn dead straight, thin and
+    /// dotted, it stops pretending to have grown there and becomes what it is
+    /// — the interface pointing at something (Marcus, 20 September).
+    ///
+    /// It falls **vertically**, so nothing about it has to be read: it is
+    /// under its own plant, and it ends where the question is.
     ///
     /// The plot's zoom and pan are render transforms and do not move layout, so
     /// a plant's place on the glass is worked out here with the same arithmetic
@@ -753,35 +759,31 @@ struct PlotView: View {
                          screen size: CGSize, glass: CGRect) -> some View {
         let waiting = model.invited
         if !waiting.isEmpty, !askingFrame.isNull, size.width > 0 {
-            // **Each thread comes down under its own plant**, not to the middle
-            // of the notice. Gathered to one point they were a bundle hanging
-            // off the plot by its root; falling where they stand, they are
-            // three threads and you can see which is which.
             let top = askingFrame.minY - glass.minY - 6
-            let inset: CGFloat = 20
             let standings = standing(plotSide: side, in: view)
-            let heads = waiting.compactMap { record -> (SeedID, CGPoint)? in
+            let heads = waiting.compactMap { record -> CGPoint? in
                 guard let spot = standings.first(where: { $0.record.id == record.id })?.spot
                 else { return nil }
                 let at = view.point(spot, y: standsAt(spot, world: world, side: side))
-                return (record.seed, onTheGlass(at, in: size))
+                return onTheGlass(at, in: size)
             }
 
             Canvas { context, _ in
-                for (seed, head) in heads where head.y < top {
-                    let foot = CGPoint(
-                        x: min(max(head.x, askingFrame.minX - glass.minX + inset),
-                               askingFrame.maxX - glass.minX - inset),
-                        y: top
+                for head in heads where head.y < top {
+                    var path = Path()
+                    path.move(to: head)
+                    path.addLine(to: CGPoint(x: head.x, y: top))
+                    // Dots rather than dashes, and under a point wide. A dash
+                    // has a direction and a length and starts looking like a
+                    // measurement; a dotted line is only a line of sight. It
+                    // crosses the lit face of the plot and then the night
+                    // below it, and at this weight it holds on both without
+                    // being the brightest thing on either.
+                    context.stroke(
+                        path,
+                        with: .color(Chrome.pinkGold.opacity(0.5)),
+                        style: StrokeStyle(lineWidth: 0.75, lineCap: .round, dash: [0.75, 6])
                     )
-                    let path = Strand.path(from: head, to: foot, seed: seed)
-                    // The same two passes as `UnfurlingBackdrop`: a wide, nearly
-                    // invisible halo so the thread has air around it, and a
-                    // hairline down the middle so it is a thread and not a smear.
-                    context.stroke(path, with: .color(Chrome.pinkGold.opacity(0.05)),
-                                   style: StrokeStyle(lineWidth: 7, lineCap: .round))
-                    context.stroke(path, with: .color(Chrome.pinkGold.opacity(0.22)),
-                                   style: StrokeStyle(lineWidth: 1, lineCap: .round))
                 }
             }
             .frame(width: size.width, height: size.height)
@@ -876,7 +878,19 @@ struct PlotView: View {
                 Text(asked(by: waiting))
                     .chromeLabel()
                     .foregroundStyle(Chrome.pinkGold)
-                    .pressable()
+                    .multilineTextAlignment(.center)
+                    // **No outline**, though it is a button and `pressable`
+                    // is what this app puts round one. A capsule the width of
+                    // the screen, hard-edged, sitting above a row of glowing
+                    // figures was the loudest object on a screen made of soft
+                    // light, and it read as the thing to press on a screen
+                    // whose whole argument is that the plant is. What says it
+                    // can be pressed now is what it is made of: the one pink
+                    // gold on the screen, the same gold as the rings, with
+                    // three threads coming down to land on it.
+                    .padding(.horizontal, 28)
+                    .padding(.vertical, 10)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { askingFrame = $0 }
