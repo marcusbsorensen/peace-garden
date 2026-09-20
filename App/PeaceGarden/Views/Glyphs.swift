@@ -177,34 +177,70 @@ struct ReleaseGlyph: Shape {
 
         var path = Path()
 
-        // A stem, bowing, with nothing at its head.
+        // **The hairs sit on a flattened dome, not on a circle.** Spread evenly
+        // around the hub they made a five-pointed asterisk, and the stalk
+        // leaving the same hub read as a sixth ray. Their tips are on an
+        // ellipse half again as wide as it is tall, so the silhouette is a
+        // canopy — which is the whole of what tells a parachute from a star.
         //
-        // **The head is empty on purpose and there is no cup drawn on it.** A
-        // cup was drawn there twice and read as a fork both times: at
-        // twenty-eight points on a one-point line, a stem, a cup and three
-        // seeds are more marks than the circle has room to tell apart. What is
-        // left says it better anyway — this is a plant with its seed gone, and
-        // an empty head is that.
-        path.move(to: at(0.24, 1.00))
-        path.addQuadCurve(to: at(0.34, 0.34), control: at(0.16, 0.70))
+        // Five is the count. The mark this replaced learnt that twenty-eight
+        // points of circle will not hold a stem, a cup and three seeds; five
+        // hairs get away with it only because they all leave one point, which
+        // the eye takes as one object however many strokes it took.
+        // **Leaning, because a seed that is upright has landed.** Drawn
+        // square to the frame it was a dandelion at rest with some weather
+        // underneath it; tipped into the way the wind is going, and with its
+        // stalk trailing behind rather than hanging, it is one thing being
+        // carried. The whole head turns about its own hub, so the canopy keeps
+        // its shape and only its attitude changes.
+        let lean = 15.0 * .pi / 180
+        let hub = at(0.50, 0.34)
+        func turned(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+            CGPoint(x: hub.x + (x * cos(lean) - y * sin(lean)) * body.width,
+                    y: hub.y + (x * sin(lean) + y * cos(lean)) * body.height)
+        }
 
-        // Three seeds going, each smaller than the last, each a stroke with a
-        // tail rather than a closed shape: a closed shape three pixels across
-        // is a dot however it is built, and a dot is not going anywhere.
-        for (x, y, size) in [(0.58, 0.30), (0.76, 0.19), (0.92, 0.08)].enumerated().map({
-            ($0.element.0, $0.element.1, 0.22 - Double($0.offset) * 0.045)
-        }) {
-            let run = body.width * size
-            let head = at(x, y)
-            // Up and to the right, which is the way everything in this mark is
-            // travelling, with a tail curving back to where it came from.
-            let tail = CGPoint(x: head.x - run * 0.88, y: head.y + run * 0.60)
-            path.move(to: tail)
+        // **The hairs sit on a flattened dome, not on a circle.** Spread evenly
+        // around the hub they made a five-pointed asterisk, and the stalk
+        // leaving the same hub read as a sixth ray. Their tips are on an
+        // ellipse half again as wide as it is tall, so the silhouette is a
+        // canopy — which is the whole of what tells a parachute from a star.
+        //
+        // Five is the count. The mark this replaced learnt that twenty-eight
+        // points of circle will not hold a stem, a cup and three seeds; five
+        // hairs get away with it only because they all leave one point, which
+        // the eye takes as one object however many strokes it took.
+        for (x, y) in [(-0.31, -0.12), (-0.19, -0.23), (0.0, -0.28),
+                       (0.19, -0.23), (0.31, -0.12)] {
+            let tip = turned(x, y)
+            path.move(to: hub)
+            // Bowed outward, away from the hair in the middle, so the canopy
+            // opens rather than splaying.
             path.addQuadCurve(
-                to: head,
-                control: CGPoint(x: tail.x + run * 0.14, y: tail.y - run * 0.48)
+                to: tip,
+                control: CGPoint(x: (hub.x + tip.x) / 2 + (tip.x - hub.x) * 0.22,
+                                 y: (hub.y + tip.y) / 2 + (tip.y - hub.y) * 0.10)
             )
         }
+
+        // The stalk, trailing out of the canopy, with nothing on its end but
+        // the line's own round cap — which at this weight is the seed, and is
+        // one mark rather than two.
+        path.move(to: hub)
+        path.addQuadCurve(to: turned(0, 0.26), control: turned(0.04, 0.13))
+
+        // **Two waves of wind, deliberately unmatched.** Drawn the same length
+        // at the same phase one above the other they were an ≈, which is a
+        // sign somebody has already read before they read a picture. One runs
+        // under the seed and off the right-hand side, the other starts at the
+        // left and stops short — two gusts rather than a symbol.
+        path.move(to: at(0.32, 0.75))
+        path.addQuadCurve(to: at(0.64, 0.70), control: at(0.47, 0.66))
+        path.addQuadCurve(to: at(0.98, 0.76), control: at(0.83, 0.81))
+
+        path.move(to: at(0.03, 0.95))
+        path.addQuadCurve(to: at(0.38, 0.89), control: at(0.19, 0.84))
+        path.addQuadCurve(to: at(0.74, 0.95), control: at(0.58, 1.00))
 
         return path
     }
