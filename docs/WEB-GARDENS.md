@@ -126,8 +126,13 @@ Three things follow from the table:
 
 ### Structures need drawing properly
 
-A hedge, a glazed frame, a bench, staging, a path edge. None of them exist in
-the app, which has ground, plants, lamps and figures and nothing built. They
+A hedge, a glazed frame, a bench, staging, a path edge. **Two of them exist
+now**, both built for the Long Walk and both in the app and the browser: a
+hedge (`GardenStructures.swift` — `HedgeLine`, `HedgePiece`, `HedgeShadow`) and
+a mown path (`MownPath`), ported to `longwalk.js`. The frame, the bench, the
+staging, the bed edging, the row labels, the tree positions and the knot
+hedging are still to come, and each belongs to an area that is not built yet.
+They
 carry the look of each area, and **they meet the same test the figures did**: a
 hedge drawn as a green rectangle is clip art beside plants grown from a genome.
 So they are modelled and lit the way the figures are, by the garden's own light
