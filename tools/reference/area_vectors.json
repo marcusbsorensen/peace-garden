@@ -1,0 +1,12 @@
+[
+  { "area": "beginnings", "open": false, "table": "" },
+  { "area": "waiting", "open": false, "table": "" },
+  { "area": "renewal", "open": false, "table": "" },
+  { "area": "light", "open": false, "table": "" },
+  { "area": "pattern", "open": false, "table": "" },
+  { "area": "ground", "open": false, "table": "" },
+  { "area": "travel", "open": true, "table": "long_walk" },
+  { "area": "meeting", "open": false, "table": "" },
+  { "area": "kinship", "open": false, "table": "" },
+  { "area": "peace", "open": false, "table": "" }
+]

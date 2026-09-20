@@ -4,6 +4,7 @@ declare(strict_types=1);
 /**
  * The plot service, at /api/…, same-origin with the pages (WEBSITE.md, 2 September).
  *
+ *   GET  /api/garden               the ten areas, and which a plant can stand in
  *   GET  /api/walk                 how many plots the Long Walk has opened
  *   GET  /api/walk/plot/{n}        a plot's plantings: seed, parents, meeting, spot
  *   POST /api/walk/offer           one gardener offers a plant, addressed to the other
@@ -23,9 +24,18 @@ declare(strict_types=1);
  * anybody being asked. It answers 403 unless `open_for_planting` is set in
  * `.api/config.php`, which is for a local copy and for the reference check.
  *
+ * **One of ten areas is open**, and the service says which. The Long Walk is
+ * `travel`; the other nine have names, layouts and a place on the map and no
+ * placement rule, so a plant cannot stand in them. `Areas.php` is the list and
+ * `GET /api/garden` is how a phone learns it without being told by a version of
+ * itself. Every route under `/api/walk/…` is the travel area's, and it keeps
+ * that spelling: it is a live address that a deployed page and an installed app
+ * both call, and the walk is what it has always been.
+ *
  * Reached from `index.php`, which hands over any path under /api/.
  */
 
+require_once __DIR__ . '/Areas.php';
 require_once __DIR__ . '/Seeds.php';
 require_once __DIR__ . '/Limits.php';
 require_once __DIR__ . '/WalkStore.php';
@@ -116,8 +126,31 @@ function checkedPlant(mixed $plant): array
     if (Seeds::cross($parents[0], $parents[1], $encounter) !== $seed) {
         respond(422, ['error' => 'That seed is not the cross of those parents at that meeting.']);
     }
+
+    // **Which area it belongs to**, which the phone works out from the plant's
+    // own genus head — `Arrangement.theme(of:)`, the same ten themes that order
+    // the passages. Absent means the Long Walk, because that is where every
+    // plant offered before today went and an older app must keep working.
+    //
+    // **The area is taken on trust, exactly as the height and the colour family
+    // are.** A service cannot grow the plant to check any of the three; what it
+    // can check is that the seed really is the cross of those parents at that
+    // meeting, which is the thing that stops one person planting in another's
+    // name. A caller who lies about the area misfiles their own plant.
+    $area = $plant['area'] ?? 'travel';
+    if (!Areas::exists($area)) {
+        respond(400, ['error' => 'area is one of the garden\'s ten, or absent for the Long Walk.']);
+    }
+    if (!Areas::isOpen($area)) {
+        // 409 rather than 400: the request is well formed and would be right on
+        // another day. The phone says so in those words — the area is not open
+        // yet, rather than something is wrong with your plant.
+        respond(409, ['error' => 'That area of the garden is not open yet.', 'area' => $area,
+                      'open' => Areas::OPEN]);
+    }
+
     return ['seed' => $seed, 'parents' => [$parents[0], $parents[1]], 'encounter' => $encounter,
-            'height' => (float) $height, 'family' => $family];
+            'height' => (float) $height, 'family' => $family, 'area' => $area];
 }
 
 /**
@@ -149,6 +182,14 @@ function route(string $method, string $path): never
     // unprompted, so it is the one a script would call in a loop.
     if ($method === 'POST' && isset(Limits::ROUTES[$path])) {
         withinLimits($settings, $path);
+    }
+
+    // **The whole garden, named, before anything is offered to it.** A phone
+    // asks this to find out whether the area its plant belongs to is built,
+    // because the alternative is a version of the app deciding that for itself
+    // and being wrong the day an area opens.
+    if ($path === '/api/garden' && $method === 'GET') {
+        respond(200, ['areas' => Areas::all()]);
     }
 
     if ($path === '/api/walk' && $method === 'GET') {
