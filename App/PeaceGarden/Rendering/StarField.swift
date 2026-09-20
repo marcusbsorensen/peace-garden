@@ -14,6 +14,13 @@ import SeedCore
 /// **It asks for nothing.** Where the phone is comes from its time zone, which
 /// it was already keeping before the app existed. `Whereabouts`, and
 /// `docs/PLACE.md` for why no coordinate is taken.
+///
+/// **The arithmetic is not here.** Where a star lands, how big it is drawn and
+/// what colour it is are all in `Sky`, in SeedCore, because the web walk draws
+/// the same field with `tools/wasm/web/sky.js` and a constant kept in one
+/// renderer would be a second sky. What is here is the part only a phone does:
+/// reading the catalogue out of the bundle once, and not working the field out
+/// again while nothing has moved.
 @MainActor
 final class StarField {
     static let shared = StarField()
@@ -27,24 +34,13 @@ final class StarField {
         return stars
     }()
 
-    /// How faint a star has to be before it is left out.
-    ///
-    /// Six is a dark country sky: about five thousand stars. The catalogue
-    /// carries half a magnitude more than this so the number is a decision
-    /// about how the garden looks rather than about what was shipped.
-    static let faintest = 6.0
-
-    /// How much of the sky is across the screen.
-    ///
-    /// A little over half a turn, so the sky spills past both edges rather than
-    /// ending at them. Altitude is not scaled to match: the whole hundred and
-    /// eighty degrees from zenith to nadir is always on screen, because leaving
-    /// the other person's half off it would be the one thing this is for.
-    static let fieldOfView = 220.0
+    /// How faint a star has to be before it is left out. `Sky` decides; this is
+    /// here because the tests and the renderer both ask for it by this name.
+    static var faintest: Double { Sky.faintest }
 
     // MARK: What is where
 
-    /// One star, placed and dressed.
+    /// One star, placed and dressed for a SwiftUI canvas.
     struct Placed {
         var at: CGPoint
         var radius: Double
@@ -83,27 +79,21 @@ final class StarField {
         placed.reserveCapacity(3_000)
 
         for star in catalogue {
-            guard star.magnitude <= Self.faintest else { continue }
-            let (altitude, azimuth) = Sky.horizon(
-                rightAscension: star.rightAscension,
-                declination: star.declination,
+            guard let spot = Sky.place(
+                star,
                 siderealTime: sidereal,
-                latitude: place.latitude
-            )
-            let across = Sky.offset(from: facing, to: azimuth)
-            guard abs(across) <= Self.fieldOfView / 2 else { continue }
-
-            let x = size.width * (0.5 + across / Self.fieldOfView)
-            // Zenith at the top, nadir at the foot, the horizon across the
-            // middle where the plot floats.
-            let y = size.height * (0.5 - altitude / 180)
+                latitude: place.latitude,
+                facing: facing,
+                width: size.width,
+                height: size.height
+            ) else { continue }
 
             placed.append(Placed(
-                at: CGPoint(x: x, y: y),
-                radius: Self.radius(ofMagnitude: star.magnitude),
-                alpha: Self.alpha(ofMagnitude: star.magnitude),
-                tint: Self.tint(ofColourIndex: star.colourIndex),
-                warmth: max(-0.4, min(1.9, star.colourIndex))
+                at: CGPoint(x: spot.x, y: spot.y),
+                radius: spot.radius,
+                alpha: spot.alpha,
+                tint: Color(red: spot.tint.red, green: spot.tint.green, blue: spot.tint.blue),
+                warmth: spot.warmth
             ))
         }
 
@@ -114,37 +104,16 @@ final class StarField {
 
     // MARK: How a star is drawn
 
-    /// Brightness is a ratio, not a number of points: each magnitude is two and
-    /// a half times the light of the next. Drawn straight, Sirius would be a
-    /// disc and everything else a speck, so this is flattened hard — the eye
-    /// reads a bright star as *bigger* as well as brighter, and only a little
-    /// of each is needed to tell them apart.
     static func radius(ofMagnitude magnitude: Double) -> Double {
-        let brightness = max(0, faintest - magnitude)
-        return 0.32 + pow(brightness, 1.45) * 0.24
+        Sky.radius(ofMagnitude: magnitude)
     }
 
     static func alpha(ofMagnitude magnitude: Double) -> Double {
-        let brightness = max(0, faintest - magnitude)
-        return min(1, 0.16 + brightness * 0.16)
+        Sky.alpha(ofMagnitude: magnitude)
     }
 
-    /// A star's colour, from B−V: how much brighter it is in blue light than in
-    /// yellow. Rigel is about −0.03 and blue-white, the sun is +0.65, Betelgeuse
-    /// is +1.85 and orange.
-    ///
-    /// **Held well short of what the numbers would give.** Real starlight at
-    /// this size is almost white — the colour is there at the edge of seeing,
-    /// and a sky of frank blue and orange dots is a chart of star types rather
-    /// than a sky.
     static func tint(ofColourIndex index: Double) -> Color {
-        let warmth = max(-0.4, min(1.9, index))
-        if warmth <= 0 {
-            // Blue-white.
-            let t = min(1, -warmth / 0.4)
-            return Color(red: 1 - 0.10 * t, green: 1 - 0.04 * t, blue: 1)
-        }
-        let t = min(1, warmth / 1.9)
-        return Color(red: 1, green: 1 - 0.13 * t, blue: 1 - 0.28 * t)
+        let rgb = Sky.tint(ofColourIndex: index)
+        return Color(red: rgb.red, green: rgb.green, blue: rgb.blue)
     }
 }

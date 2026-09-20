@@ -190,3 +190,30 @@ looking up at while this person looks down at them. A garden about two people
 meeting shows both their skies at once, with the horizon across the middle
 where the plot floats: the line they each have and neither can see past.
 Nothing draws it. The garden is standing on it.
+
+### And the browser is under it too
+
+**20 September 2026.** The web walk draws the same field. A browser cannot run
+SeedCore, so the arithmetic that puts a star on the glass now exists twice —
+`Sky` in Swift and `tools/wasm/web/sky.js` in JavaScript — and a port drifts
+unless something holds it. `SkyVectorTests` writes down what the Swift sees and
+`tools/reference/check_sky.mjs` fails CI if the JavaScript sees anything else,
+which is the arrangement `check_long_walk.php` already has with the plot
+service's placing rule.
+
+What moved to make that possible: the field's own decisions — how faint a star
+has to be, how wide the sky is across the screen, how big and how bright and
+what colour each one is drawn — were constants in the app's renderer, and are
+now in `Sky` beside the astronomy. A constant kept in one of two renderers is a
+second sky, and the whole point of this one is that two people looking at the
+same garden from opposite sides of the world are looking at one.
+
+**Exactness, and where it is not available.** The vectors carry seventeen
+significant digits, so anything built out of arithmetic has to match to the last
+bit, and does. `sin`, `cos`, `asin`, `atan2` and `pow` cannot: Darwin's libm and
+V8's are each correct to about an ulp without being correct to the same bit, and
+demanding they agree would be demanding a property of two C libraries rather
+than of this code. So those carry a stated tolerance — a billionth of a degree,
+which is ten million times finer than anything that could show on a screen — and
+the check prints the furthest the two skies ever drift, which today is a tenth of
+a trillionth of a pixel.

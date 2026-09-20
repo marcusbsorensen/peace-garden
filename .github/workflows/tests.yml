@@ -76,6 +76,12 @@ jobs:
         with:
           python-version: '3.12'
 
+      # For the sky port, which is the one check in this job that is neither
+      # Python nor PHP.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
       # The reference asserts its own invariants — that a cross is commutative
       # and that distinct encounters give distinct children — and prints the
       # vectors pinned into DerivationVectorTests. If the two implementations
@@ -133,6 +139,13 @@ jobs:
       # lives in tools/backup.sh --restore-test.
       - name: A copy of the walk is a copy of the walk
         run: php tools/reference/check_backup.php
+      # The web walk draws the same sky as the app, in JavaScript, because a
+      # browser cannot run SeedCore. SkyVectorTests writes down what the Swift
+      # sees; this holds the port to it — including a field of eight thousand
+      # real stars, which is the only place a catalogue decoded half a byte out
+      # or a sky drawn upside down actually shows.
+      - name: The browser's sky is SeedCore's sky
+        run: node tools/reference/check_sky.mjs
       - name: The site's own prose is commissioned, not drifting
         run: python3 tools/strings/check.py
       # The numeral rule, which nothing enforced until 6 September and which

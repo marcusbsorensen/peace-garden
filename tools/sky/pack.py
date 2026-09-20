@@ -2,10 +2,16 @@
 
     python3 tools/sky/pack.py
 
-Writes two things, both generated — edit this script, never its outputs:
+Writes four things, all generated — edit this script, never its outputs:
 
   App/PeaceGarden/Resources/stars.bin     the catalogue, 6 bytes a star
   Packages/SeedCore/Sources/SeedCore/Sky/Places.swift   where a time zone is
+  tools/wasm/web/stars.bin                the same catalogue, for the browser
+  tools/wasm/web/places.json              the same zones, for the browser
+
+The two for the browser are copies rather than a second source: the web walk
+draws the same sky as the app, and two catalogues that could drift apart would
+be two skies.
 
 **The catalogue** is the Yale Bright Star Catalogue (BSC5, Hoffleit & Warren),
 every star to magnitude 6.5 — which is what an eye sees on a dark night. It is
@@ -26,6 +32,7 @@ fingers held at arm's length, and invisible unless you are checking. A
 coordinate would fix it, and the reason not to take one is in `docs/PLACE.md`.
 """
 
+import json
 import re
 import struct
 import sys
@@ -39,6 +46,8 @@ ZONE_TAB = Path("/usr/share/zoneinfo/zone.tab")
 
 STARS_OUT = ROOT / "App/PeaceGarden/Resources/stars.bin"
 PLACES_OUT = ROOT / "Packages/SeedCore/Sources/SeedCore/Sky/Places.swift"
+WEB_STARS_OUT = ROOT / "tools/wasm/web/stars.bin"
+WEB_PLACES_OUT = ROOT / "tools/wasm/web/places.json"
 
 #: Everything an eye can see, and nothing it cannot. The renderer picks its own
 #: limit from within this; the data does not decide how dark the sky looks.
@@ -188,10 +197,22 @@ def main():
     PLACES_OUT.parent.mkdir(parents=True, exist_ok=True)
     PLACES_OUT.write_text(swift(found))
 
+    # The browser's two, byte for byte the same data. `sky.js` reads the
+    # catalogue with the same six-byte layout SeedCore's `StarCatalogue` does,
+    # and `tools/reference/check_sky.mjs` holds its arithmetic to the Swift's.
+    WEB_STARS_OUT.parent.mkdir(parents=True, exist_ok=True)
+    WEB_STARS_OUT.write_bytes(blob)
+    WEB_PLACES_OUT.write_text(json.dumps(
+        {name: [lat, lon] for name, (lat, lon) in found.items()},
+        separators=(",", ":"), sort_keys=True,
+    ) + "\n")
+
     brightest = rows[0]
     print(f"{len(rows)} stars to magnitude {FAINTEST}, {len(blob) / 1024:.1f} KB")
     print(f"  brightest: magnitude {brightest[2]} at RA {brightest[0]:.3f}, dec {brightest[1]:.3f}")
     print(f"{len(found)} time zones -> {PLACES_OUT.relative_to(ROOT)}")
+    print(f"  and the browser's copies -> {WEB_STARS_OUT.relative_to(ROOT)}, "
+          f"{WEB_PLACES_OUT.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":
