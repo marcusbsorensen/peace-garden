@@ -121,11 +121,11 @@ Three things follow from the table:
   hold and still be a garden. It will open more plots than any other area for
   the same number of plants, and that is right.
 - **Ten ambassadors, one per area** (`WEBSITE.md` §*The ambassador plants*),
-  stand in each area's first plot, in the slot the template marks as the
-  specimen: the one place in every area that is hand-placed from the start.
-  **The ten seeds exist, 20 September** (`SeedCore/WebGardens/Ambassadors.swift`);
-  what no template yet says is which slot is the specimen, and no area yet
-  plants its ambassador.
+  stand in each area's first plot. **The ten seeds exist, 20 September**
+  (`SeedCore/WebGardens/Ambassadors.swift`), and **the Long Walk's is standing
+  in it**, the same day — see §*The ambassador, standing*, which also answers
+  what a specimen slot is for an area whose plots never reach an end. The other
+  nine wait on their areas' rules.
 
 ### Structures need drawing properly
 
@@ -211,6 +211,50 @@ not dressing; they are how a visitor can see the rule.
   already follows: a vertical face gets the sky and little of the sun, and at
   yew's own darkness the face towards the path was black at midday. Brighter
   alone made it toy-green in the sun, so it is also greyed towards blue.
+
+## The ambassador, standing
+
+**Built 20 September.** *Halula crassicaulis* stands at the head of the Long
+Walk's first plot: `LongWalk.ambassador` in SeedCore, `Ambassadors.php` in the
+plot service, held to each other by `tools/reference/check_ambassador.php`.
+
+- **There is no specimen slot, and that is the answer rather than a gap.** This
+  document asked which slot of a template an ambassador stands in. For a double
+  border the honest answer is none: a walk's feature belongs at the end of its
+  vista, and this walk has no end — its plots open end to end for as long as
+  people go on meeting. What it has is a head. So the ambassador is simply the
+  first plant the rule ever placed, and the slot it took is the first slot of
+  its own tier at the start of plot 0.
+- **It could not have been the tall one at the back.** *Halula* is 1.02 m, the
+  middle of a border. Measured across the ten, only *Cyninora contorta* is a
+  back-tier plant at all, so a specimen fixed at the back of a border would have
+  stood a short plant behind taller ones in nine areas out of ten, which is the
+  one rule the Long Walk is built on. **A specimen slot has to be a slot the
+  area's own ambassador can actually stand in**, and that is a constraint on
+  every template still to be written.
+- **It is not a row.** A slot and a nudge are both pure functions of the pinned
+  seed, so the placement is derived on each side rather than stored on either:
+  the Swift records it, the PHP re-derives it, and the check holds the two
+  together. That also makes *nobody put it there and nobody can take it away*
+  structural rather than a promise — there is no row for a withdrawal, a report
+  or a backup to reach, and `WalkStore` refuses to plant an ambassador's seed at
+  all.
+- **The rule sees it.** The service hands it to the placement rule ahead of the
+  stored arrivals, so every plant shared since has been graded against a border
+  with its oldest plant in it. Handing it over afterwards would have drawn a
+  plant nothing was placed around.
+- **The walk is never empty.** `GET /api/walk` has said one plot since the day
+  the garden opened, and `/walk` has had something in it to look at before
+  anybody shared anything — which is what an ambassador was for.
+- **A planting with no parents grows from its seed.** An ambassador was minted,
+  not crossed, so the service sends it with an empty `parents` and no meeting,
+  and `longwalk.js` grows it with `pg_grow` rather than `pg_grow_hybrid`. The
+  empty list is how the wire says *this plant has no lineage* without a new
+  field.
+
+**Flipped while the walk was empty**, the same argument as the area flip the day
+before: the walk is append-only, so the ambassador could be its first planting
+only until somebody else's plant arrived. It had none.
 
 ## The dressing: what we place by hand
 
@@ -343,6 +387,9 @@ In order, because each needs the one before:
    `tier` and `slot_index` mean a double border on a travel row and would mean
    something else on a knot-garden row.
 
+   **The travel ambassador stands at the head of it**, since 20 September,
+   derived rather than stored — §*The ambassador, standing*.
+
    **A plant is offered to the area its own name belongs to**, from the app,
    since 20 September. That is nine plants in ten refused for now, which the
    app says on the screen before it asks rather than after: a plant whose area
@@ -412,4 +459,5 @@ meeting leaves on the two phones. `Server/.api/Offers.php`, `Server/README.md`
 - **Whether a plot can be too empty to open.** The Quiet Garden's rule makes a
   plot with three plants correct; a Long Walk plot with three plants is
   unfinished. Opening a plot only when the last is full says nothing about the
-  first days of an area, when every area is empty.
+  first days of an area — though no area's first plot is ever quite empty now,
+  because its ambassador is in it.

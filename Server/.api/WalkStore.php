@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/Ambassadors.php';
 require_once __DIR__ . '/LongWalk.php';
 require_once __DIR__ . '/Offers.php';
 
@@ -16,6 +17,14 @@ require_once __DIR__ . '/Offers.php';
  * September), its slot, the height and colour family the rule placed it by,
  * and its nudge. No account, no address, no time: the order of the rows is the
  * order of arrival, and nothing else about the arrival is written down.
+ *
+ * **The ambassador is not in it.** *Halula crassicaulis* stands at the head of
+ * plot 0 and has done since before the walk had a row in it, but nobody offered
+ * it and nobody can take it back, so it is not in the table of plants people
+ * offered. `Ambassadors::planting('travel')` derives its slot from the pinned
+ * seed, and this class puts it in front of the rule when placing and in front
+ * of a plot when serving one. Nothing about it is stored, so there is no row
+ * for `hide` to reach and none for a backup to carry.
  *
  * PDO, so it runs on SQLite locally and on the 20i database once there is one.
  * Every statement with a value in it is prepared; the fixed ones run as they are.
@@ -87,6 +96,16 @@ final class WalkStore
     public function plant(string $seed, string $parentA, string $parentB, string $encounter,
                           float $height, int $family): array
     {
+        // **Never an ambassador.** Unreachable from any route today: the offer
+        // and plant routes both check that the seed is the cross of its two
+        // parents at their meeting, and an ambassador is minted rather than
+        // crossed, so no caller can produce parents that hash to one. This is
+        // what keeps it unreachable the day somebody adds a route that plants a
+        // minted seed. It is a bug and not a refusal, so it is thrown.
+        if (Ambassadors::isOne($seed)) {
+            throw new LogicException('an ambassador cannot be planted: it is already standing');
+        }
+
         $this->db->beginTransaction();
         try {
             $this->run('UPDATE long_walk_lock SET arrivals = arrivals + 1 WHERE id = 1');
@@ -98,7 +117,16 @@ final class WalkStore
             }
             $all = $this->db->prepare('SELECT * FROM long_walk ORDER BY arrival');
             $all->execute();
-            $walk = array_map([self::class, 'forRule'], $all->fetchAll());
+            // **The ambassador first, then the arrivals.** It is standing in
+            // plot 0 whether or not anything else is, so the rule has to see it:
+            // a plant graded against a border that is missing its oldest plant
+            // is graded against a border that is not there. It is prepended
+            // rather than stored, because its slot is a pure function of its
+            // pinned seed and comes back the same every time it is asked for.
+            $walk = array_merge(
+                [Ambassadors::planting('travel')],
+                array_map([self::class, 'forRule'], $all->fetchAll())
+            );
             $p = LongWalk::plant($walk, $seed, $height, $family);
             $insert = $this->db->prepare('INSERT INTO long_walk
                 (seed, parent_a, parent_b, encounter, plot, side, tier, slot_index, height, family, nudge_x, nudge_z)
@@ -115,12 +143,30 @@ final class WalkStore
         }
     }
 
-    /** A plot's plantings, in the order they arrived. Hidden ones are not in it. */
+    /**
+     * A plot's plantings, in the order they arrived. Hidden ones are not in it.
+     *
+     * Plot 0 opens with the ambassador, which arrived before all of them and is
+     * not a row. It carries no parents and no meeting, because it has neither:
+     * a reader grows it from its seed alone rather than from a lineage, and an
+     * empty `parents` is how it says so without a new field on the wire.
+     */
     public function plot(int $plot): array
     {
         $query = $this->db->prepare('SELECT * FROM long_walk WHERE plot = ? AND hidden = 0 ORDER BY arrival');
         $query->execute([$plot]);
-        return array_map([self::class, 'planting'], $query->fetchAll());
+        $plantings = array_map([self::class, 'planting'], $query->fetchAll());
+        $standing = $plot === 0 ? Ambassadors::planting('travel') : null;
+        if ($standing === null) return $plantings;
+        [$x, $z] = LongWalk::spot($standing['side'], $standing['tier'], $standing['index']);
+        array_unshift($plantings, [
+            'seed' => $standing['seed'],
+            'parents' => [],
+            'encounter' => null,
+            'plot' => 0,
+            'spot' => [$x + $standing['nudgeX'], $z + $standing['nudgeZ']],
+        ]);
+        return $plantings;
     }
 
     /**
@@ -147,11 +193,16 @@ final class WalkStore
     /// tables beside the walk rather than in it.
     public function connection(): PDO { return $this->db; }
 
+    /**
+     * Plots opened. Never fewer than one: the walk opened with its ambassador
+     * in plot 0, so there has been somewhere to walk since before anybody
+     * shared anything.
+     */
     public function plots(): int
     {
         $query = $this->db->prepare('SELECT COALESCE(MAX(plot) + 1, 0) FROM long_walk');
         $query->execute();
-        return (int) $query->fetchColumn();
+        return max(1, (int) $query->fetchColumn());
     }
 
     /** What the page needs to grow a planting and stand it in its place. */

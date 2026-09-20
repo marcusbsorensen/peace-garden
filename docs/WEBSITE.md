@@ -461,12 +461,18 @@ because the slowest takes twenty-one days to mature.
 | The Orchard | *Cyninora contorta* |
 | The Quiet Garden | *Olyne paniculata* |
 
-**What is not decided is how one stands in a plot.** An ambassador is not a
-shared plant and should not be a row in an area's table — nobody put it there
-and nobody can withdraw it — but the placement rule runs in the plot service,
-which means either the service plants it as a row anyway, or every drawer of a
-plot knows to put it in before the arrivals. That is a service decision and it
-is open.
+**How one stands in a plot: settled 20 September, and the Long Walk's is
+standing.** Neither of the two ways this paragraph used to offer. An
+ambassador's slot and its nudge are both pure functions of its pinned seed, so
+the placement is **derived on each side rather than stored on either**: the
+Swift records where the rule put it, the service re-derives the same slot from
+the seed, and `tools/reference/check_ambassador.php` holds the two together.
+There is no row, so nobody put it there and nobody can take it away without that
+being a promise anybody has to keep — and no drawer needs to know either, because
+the service hands the ambassador to the rule ahead of the stored arrivals and
+serves it with the plot. `docs/WEB-GARDENS.md` §*The ambassador, standing* has
+the rest, including why an area's specimen cannot be a slot at the back of a
+border.
 
 #### If the plant should carry it too
 
@@ -482,10 +488,14 @@ would need `PHASES.md` to say so.
 
 #### What it asks of the plot service
 
-An eleventh kind of row, or a flag on the existing one: ten pinned seeds, each
-with its area, its birthday and its passage set. They are not shared plants —
-nobody put them there, no name attaches to them, no report can be filed against
-them, and they do not appear in anybody's garden.
+**Not a row at all, as it turned out.** `Server/.api/Ambassadors.php` holds the
+ten pinned seeds with the two facts about each grown plant that a placement rule
+needs — its height and its flower's colour family, which PHP cannot work out
+because it cannot grow a plant — and the placement follows from those. They are
+not shared plants: nobody put them there, no name attaches to them, no report
+can be filed against them, and they do not appear in anybody's garden. Having no
+row is what makes all four of those structural rather than rules somebody has to
+remember.
 
 ### Every action on a key
 

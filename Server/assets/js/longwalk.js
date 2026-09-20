@@ -248,7 +248,8 @@ export async function growPlots(e, stage, first, span, report) {
 
 // Grows `span` plots from the plot service, as a visitor's page will: the
 // service says what is planted where, with each plant's lineage, and the
-// module grows each plant from that lineage.
+// module grows each plant from that lineage — or, for the one plant with no
+// lineage, from its seed.
 export async function growFromService(e, stage, first, span, report) {
   stage.clear();
   const plots = [];
@@ -259,10 +260,21 @@ export async function growFromService(e, stage, first, span, report) {
     plots.push(plantings.length);
     const along = (k - (span - 1) / 2) * SIDE;
     for (const [i, p] of plantings.entries()) {
-      const words = new TextEncoder().encode([p.seed, ...p.parents, p.encounter].join(' '));
+      // **Two plants grow two ways.** Nearly everything down here is a hybrid,
+      // and a hybrid's traits come from its parents, so it is grown from its
+      // whole lineage. The one plant that is not is the ambassador standing at
+      // the head of plot 0: it was minted, so it has no parents and no meeting,
+      // and it grows from its seed alone. The service says which by sending an
+      // empty `parents`.
+      const lineage = p.parents ?? [];
+      const words = new TextEncoder().encode(
+        lineage.length === 2 ? [p.seed, ...lineage, p.encounter].join(' ') : p.seed,
+      );
       const pointer = e.pg_alloc(words.length);
       new Uint8Array(e.memory.buffer, pointer, words.length).set(words);
-      const length = e.pg_grow_hybrid(pointer, words.length);
+      const length = lineage.length === 2
+        ? e.pg_grow_hybrid(pointer, words.length)
+        : e.pg_grow(pointer, words.length);
       e.pg_free(pointer);
       if (length === 0) continue;
       stage.add(p.spot[0], p.spot[1] + along, decode(takeResult(e, length)));

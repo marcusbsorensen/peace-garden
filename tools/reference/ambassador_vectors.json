@@ -2,15 +2,16 @@
   "sown": 1787184000,
   "gardenOpened": 1789862400,
   "ambassadors": [
-    {"area": "beginnings", "seed": "526ffb12041c8641eead7cb97614517436806c5748c3f581754dd102738719ae", "name": "Verora angustifolia", "genusHead": "Ver"},
-    {"area": "waiting", "seed": "8c0992d3e4221b40489b83d05c0ec3131fc8c771365970ffbb1354a93431ff3f", "name": "Nyxisora crassicaulis", "genusHead": "Nyx"},
-    {"area": "renewal", "seed": "c295b64b290a2e9b3c6ece6c70dafb1816205f60f42a0663e47bfb738b30d292", "name": "Rosea caerulea", "genusHead": "Ros"},
-    {"area": "light", "seed": "53b234ab46f50e06243314d3d6159c67d0b26b2c0bc44a5fcd4b83ad28c4bc41", "name": "Aurea pallida", "genusHead": "Aur"},
-    {"area": "pattern", "seed": "75121838c745b4c11d8c34bdf4492890833a1a8ca768942ef26cbbbba7a74b7b", "name": "Quina caerulea", "genusHead": "Quin"},
-    {"area": "ground", "seed": "540d870092386fc9a3e5611499390c1de91fbadddf276bc6ef6eec73dc30326d", "name": "Fenunora patentifolia", "genusHead": "Fen"},
-    {"area": "travel", "seed": "be9dd17805ea1ebab2c56695b13158adb8d985f165564c10804961b543c12d3c", "name": "Halula crassicaulis", "genusHead": "Hal"},
-    {"area": "meeting", "seed": "9bca751433cf86be586c46b3b6582a504fb4df133036321ce000f066e13d7284", "name": "Melyrina latifolia", "genusHead": "Mel"},
-    {"area": "kinship", "seed": "ec0850ec7cd6824077a0c51e3c4c8cc670b321bdf66b8eb8f338fff81deb6bf3", "name": "Cyninora contorta", "genusHead": "Cyn"},
-    {"area": "peace", "seed": "2d1894df5b3f19d3d1c4a12cae8e8d7334a07f942ba60903d37846a190faa4eb", "name": "Olyne paniculata", "genusHead": "Ol"}
-  ]
+    {"area": "beginnings", "seed": "526ffb12041c8641eead7cb97614517436806c5748c3f581754dd102738719ae", "name": "Verora angustifolia", "genusHead": "Ver", "height": 1.095889687538147, "family": 4},
+    {"area": "waiting", "seed": "8c0992d3e4221b40489b83d05c0ec3131fc8c771365970ffbb1354a93431ff3f", "name": "Nyxisora crassicaulis", "genusHead": "Nyx", "height": 0.6767851710319519, "family": 4},
+    {"area": "renewal", "seed": "c295b64b290a2e9b3c6ece6c70dafb1816205f60f42a0663e47bfb738b30d292", "name": "Rosea caerulea", "genusHead": "Ros", "height": 0.9952253103256226, "family": 3},
+    {"area": "light", "seed": "53b234ab46f50e06243314d3d6159c67d0b26b2c0bc44a5fcd4b83ad28c4bc41", "name": "Aurea pallida", "genusHead": "Aur", "height": 0.6757330298423767, "family": 0},
+    {"area": "pattern", "seed": "75121838c745b4c11d8c34bdf4492890833a1a8ca768942ef26cbbbba7a74b7b", "name": "Quina caerulea", "genusHead": "Quin", "height": 1.006360411643982, "family": 4},
+    {"area": "ground", "seed": "540d870092386fc9a3e5611499390c1de91fbadddf276bc6ef6eec73dc30326d", "name": "Fenunora patentifolia", "genusHead": "Fen", "height": 1.1019959449768066, "family": 6},
+    {"area": "travel", "seed": "be9dd17805ea1ebab2c56695b13158adb8d985f165564c10804961b543c12d3c", "name": "Halula crassicaulis", "genusHead": "Hal", "height": 1.0231088399887085, "family": 3},
+    {"area": "meeting", "seed": "9bca751433cf86be586c46b3b6582a504fb4df133036321ce000f066e13d7284", "name": "Melyrina latifolia", "genusHead": "Mel", "height": 0.6093385815620422, "family": 5},
+    {"area": "kinship", "seed": "ec0850ec7cd6824077a0c51e3c4c8cc670b321bdf66b8eb8f338fff81deb6bf3", "name": "Cyninora contorta", "genusHead": "Cyn", "height": 1.3274011611938477, "family": 0},
+    {"area": "peace", "seed": "2d1894df5b3f19d3d1c4a12cae8e8d7334a07f942ba60903d37846a190faa4eb", "name": "Olyne paniculata", "genusHead": "Ol", "height": 0.7478628754615784, "family": 1}
+  ],
+  "longWalk": {"seed": "be9dd17805ea1ebab2c56695b13158adb8d985f165564c10804961b543c12d3c", "plot": 0, "side": -1, "tier": 1, "index": 0, "nudge": [-0.0207843137254902, -0.04556862745098039]}
 }

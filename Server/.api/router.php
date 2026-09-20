@@ -32,6 +32,13 @@ declare(strict_types=1);
  * that spelling: it is a live address that a deployed page and an installed app
  * both call, and the walk is what it has always been.
  *
+ * **Plot 0 opens with the Long Walk's ambassador in it**, which is not a row
+ * and is not in any of the routes above: `WalkStore` derives its slot from the
+ * pinned seed in `Ambassadors.php` and serves it at the head of the plot, with
+ * an empty `parents` because it was minted rather than crossed. So the walk has
+ * had one plot and one plant in it since the garden opened, and nothing anybody
+ * can offer, answer or withdraw touches it.
+ *
  * Reached from `index.php`, which hands over any path under /api/.
  */
 

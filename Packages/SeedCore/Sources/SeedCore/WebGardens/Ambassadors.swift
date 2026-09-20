@@ -116,4 +116,14 @@ public struct Ambassador: Equatable, Sendable {
     public func growth(now: Date = Date()) -> GrowthModel.State {
         GrowthModel(genome: genome).state(birth: sown, now: now)
     }
+
+    /// Its grown height and the colour family of its flower: the two facts a
+    /// placement rule needs about a plant and the two that only a grown plant
+    /// can give.
+    ///
+    /// Recorded for all ten in `tools/reference/ambassador_vectors.json`,
+    /// because the plot service is PHP and cannot grow a plant to find them
+    /// out. Ten rather than the one open area, for the reason the ten seeds are
+    /// pinned at all: the area that opens next should not have to go looking.
+    public var traits: LongWalk.Traits { LongWalk.traits(of: genome) }
 }

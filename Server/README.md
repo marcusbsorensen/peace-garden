@@ -281,8 +281,19 @@ and tap it. It should open the app. If it opens Safari instead:
 `index.php` hands every path under `/api/` to `.api/router.php`. The dot keeps
 the service's own files unreachable, as it does `.pages/`.
 
-- `GET /api/walk` — plots opened. `GET /api/walk/plot/{n}` — a plot's plantings:
-  seed, both parents, the meeting, and the spot to stand it on.
+- `GET /api/walk` — plots opened, never fewer than one. `GET /api/walk/plot/{n}`
+  — a plot's plantings: seed, both parents, the meeting, and the spot to stand
+  it on.
+- **The ambassador is in plot 0 and is not a row**, `.api/Ambassadors.php`.
+  *Halula crassicaulis* was placed by the rule into an empty walk before
+  anything was shared, and its slot and nudge are pure functions of its pinned
+  seed, so the service re-derives the placement rather than storing it. It is
+  handed to the rule ahead of the stored arrivals — every shared plant is graded
+  against it — and served at the head of plot 0 with an **empty `parents` and no
+  meeting**, because it was minted and has neither; a reader grows it from its
+  seed alone. Nothing to hide, nothing to withdraw, nothing for a backup to
+  carry, and `WalkStore::plant` refuses an ambassador's seed outright. Checked
+  by `tools/reference/check_ambassador.php`, in CI.
 - **The asking**, `.api/Offers.php`, which is how anything gets into the walk:
   - `POST /api/walk/offer` — `{to, from, plant}`. One gardener offers a plant,
     addressed to the sixteen bytes the other minted at their meeting. It plants

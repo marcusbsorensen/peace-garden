@@ -126,6 +126,13 @@ jobs:
       # on refusing plants for a week and nothing logs a thing.
       - name: The service's garden is SeedCore's garden
         run: php tools/reference/check_areas.php
+      # And about the ten plants that stand for the ten areas. The service
+      # cannot grow one to find out how tall it is, so it holds the height and
+      # the colour family as constants — and a constant copied out of another
+      # program is the thing that drifts. This also derives the travel
+      # ambassador's slot on both sides rather than pinning it twice.
+      - name: The ambassadors are SeedCore's ambassadors
+        run: php tools/reference/check_ambassador.php
       # And the asking above it: nothing reaches the walk until the second
       # gardener has said yes, and only the token an offer was addressed to
       # can say it. The walk itself has no way to tell, so this is where it

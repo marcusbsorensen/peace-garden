@@ -27,8 +27,14 @@ import SeedCore
 // The same sequence of arrivals every time, so a plot looks the same on every
 // reload, the way a real one would.
 
-nonisolated(unsafe) private var walk = LongWalk.Walk()
-nonisolated(unsafe) private var genomes: [String: Genome] = [:]
+// Opened rather than empty: the walk starts with its ambassador standing at
+// the head of plot 0, the way the real one does, so an invented walk is not a
+// walk with its oldest plant missing.
+nonisolated(unsafe) private var walk = LongWalk.Walk.opened()
+nonisolated(unsafe) private var genomes: [String: Genome] = {
+    let one = Ambassadors.of(.travel)
+    return [one.seed.hex: one.genome]
+}()
 
 /// The n-th arrival of the demonstration: two parents who meet once, and their child.
 private func arrival(_ n: Int) -> (child: SeedID, parentA: SeedID, parentB: SeedID, encounter: Data, genome: Genome) {
@@ -45,7 +51,10 @@ private func arrival(_ n: Int) -> (child: SeedID, parentA: SeedID, parentB: Seed
 @_expose(wasm, "pg_walk_arrive")
 @_cdecl("pg_walk_arrive")
 public func pgWalkArrive() -> Int32 {
-    let (child, _, _, _, genome) = arrival(walk.plantings.count)
+    // Counted from the arrivals, not from the plantings: the ambassador is in
+    // the walk and is not an arrival, and `pg_lineage(n)` has to go on naming
+    // the same n-th crossing it always did.
+    let (child, _, _, _, genome) = arrival(walk.plantings.count - 1)
     let planting = walk.plant(seed: child, traits: LongWalk.traits(of: genome))
     genomes[planting.seed] = genome
     return Int32(planting.plot)

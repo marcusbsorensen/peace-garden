@@ -225,6 +225,20 @@ public enum LongWalk {
 
         public init() {}
 
+        /// **The walk as it opened**: the travel ambassador standing in it, and
+        /// nothing else. `LongWalk.ambassador` is the planting.
+        ///
+        /// Kept apart from `init()` deliberately. An empty walk is what the rule
+        /// is judged against — `LongWalkVectorTests` plants six hundred arrivals
+        /// into one and pins where each went — and a walk that arrived with a
+        /// plant already in it would move every one of those placements.
+        public static func opened() -> Walk {
+            var walk = Walk()
+            let one = Ambassadors.of(.travel)
+            walk.plant(seed: one.seed, traits: LongWalk.traits(of: one.genome))
+            return walk
+        }
+
         /// Plots opened so far.
         public var plots: Int { (plantings.map(\.plot).max() ?? -1) + 1 }
 
@@ -380,4 +394,33 @@ public enum LongWalk {
             return seen
         }
     }
+
+    // MARK: The ambassador
+
+    /// **The plant standing where the walk begins.**
+    ///
+    /// *Halula crassicaulis* — `Ambassadors.of(.travel)`, sown a month before
+    /// the garden opened — placed by this rule into an empty walk, which is the
+    /// whole of what makes it the specimen. `docs/WEB-GARDENS.md` asks which
+    /// slot of a template an ambassador stands in; for this area the answer is
+    /// that it stands in the first one the rule filled. A double border's
+    /// feature belongs at the end of its vista, and this walk has no end — its
+    /// plots open end to end for as long as people go on meeting — so what it
+    /// has instead is a head, and the oldest plant in the area stands at it.
+    ///
+    /// **It takes its own tier, like anything else.** *Halula* is 1.02 m, which
+    /// is the middle of a border rather than the back of one, and only one of
+    /// the ten ambassadors is a back-tier plant at all. A specimen slot fixed at
+    /// the back of a border would have stood a short plant behind taller ones in
+    /// nine areas out of ten, which is the one rule the walk is built on.
+    ///
+    /// **It is not a row anywhere.** A slot and a nudge are both pure functions
+    /// of the seed, and the seed is pinned, so asking for the placement again
+    /// gives the same answer for ever — there is nothing to store. That is also
+    /// what keeps it out of `long_walk`: nobody offered it, so it is not in the
+    /// table of things people offered, and there is no row for a withdrawal or a
+    /// report to reach. The rule still sees it, because the service hands it to
+    /// the rule ahead of the stored arrivals, so everything planted afterwards
+    /// is graded against a plant that is standing there.
+    public static let ambassador: Planting = Walk.opened().plantings[0]
 }

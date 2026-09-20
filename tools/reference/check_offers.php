@@ -45,6 +45,21 @@ function crossing(int $n): array
 
 function token(string $of): string { return substr(hash('sha256', $of), 0, 32); }
 
+/**
+ * A plot's shared plants: what it holds, minus the ambassador standing at the
+ * head of plot 0.
+ *
+ * The walk is never empty and never was — *Halula crassicaulis* was placed
+ * there before anything else and is not a row in the table. Every count below
+ * is about what gardeners put there, which is what these checks are about, so
+ * the one plant nobody put there is taken out first. It is the one with no
+ * parents, because it has none.
+ */
+function shared(WalkStore $walk, int $plot = 0): array
+{
+    return array_values(array_filter($walk->plot($plot), fn ($p) => count($p['parents']) === 2));
+}
+
 $now = 1_700_000_000;
 
 // MARK: An offer plants nothing
@@ -56,7 +71,11 @@ $theirs = token('one/theirs');
 
 check('an offer is new the first time', $new === true);
 check('an offer starts out waiting', $offer['state'] === Offers::OFFERED);
-check('an offer plants nothing', $walk->plots() === 0);
+check('an offer plants nothing', shared($walk) === []);
+// And yet there is somewhere to walk: plot 0 opened with the ambassador in it,
+// before any of this, and it is there whether or not a gardener has shared
+// anything. `check_ambassador.php` is where that is held to the Swift.
+check('the walk was never empty', $walk->plots() === 1 && count($walk->plot(0)) === 1);
 
 // MARK: Who can see it, and who cannot
 
@@ -71,14 +90,14 @@ check('what comes back carries no seeds but its own',
 
 check('the wrong token cannot answer', $offers->answer($one['seed'], token('wrong'), true, $now) === null);
 check('the gardener who sent it cannot answer for the other', $offers->answer($one['seed'], $mine, true, $now) === null);
-check('and none of that planted anything', $walk->plots() === 0);
+check('and none of that planted anything', shared($walk) === []);
 
 // MARK: Yes plants it
 
 $answered = $offers->answer($one['seed'], $theirs, true, $now + 60);
 check('yes plants it', $answered !== null && $answered['planting'] !== null);
-check('it stands in the walk', count($walk->plot(0)) === 1);
-check('the plant in the walk is the one offered', $walk->plot(0)[0]['seed'] === $one['seed']);
+check('it stands in the walk', count(shared($walk)) === 1);
+check('the plant in the walk is the one offered', shared($walk)[0]['seed'] === $one['seed']);
 check('the offer is settled', $answered['offer']['state'] === Offers::ACCEPTED);
 check('and says when', $answered['offer']['answeredAt'] === $now + 60);
 
@@ -97,13 +116,13 @@ $theirs2 = token('two/theirs');
 $offers->offer($two['seed'], $theirs2, $mine2, $two['a'], $two['b'], $two['encounter'], 0.6, 4, $now);
 $no = $offers->answer($two['seed'], $theirs2, false, $now);
 
-check('no plants nothing', $no['planting'] === null && count($walk->plot(0)) === 1);
+check('no plants nothing', $no['planting'] === null && count(shared($walk)) === 1);
 check('no is recorded', $no['offer']['state'] === Offers::DECLINED);
 [$third, $thirdNew] = $offers->offer($two['seed'], $theirs2, $mine2, $two['a'], $two['b'], $two['encounter'], 0.6, 4, $now);
 check('a declined plant cannot be offered again', $thirdNew === false && $third['state'] === Offers::DECLINED);
 check('answering a settled offer changes nothing',
       $offers->answer($two['seed'], $theirs2, true, $now)['planting'] === null);
-check('and it is still not in the walk', count($walk->plot(0)) === 1);
+check('and it is still not in the walk', count(shared($walk)) === 1);
 
 // MARK: Taking it back
 
@@ -112,21 +131,21 @@ $mine3 = token('three/mine');
 $theirs3 = token('three/theirs');
 $offers->offer($three['seed'], $theirs3, $mine3, $three['a'], $three['b'], $three['encounter'], 1.6, 1, $now);
 $offers->answer($three['seed'], $theirs3, true, $now);
-check('two plants stand in the walk', count($walk->plot(0)) === 2);
+check('two plants stand in the walk', count(shared($walk)) === 2);
 $stoodAt = null;
-foreach ($walk->plot(0) as $p) if ($p['seed'] === $three['seed']) $stoodAt = $p['spot'];
+foreach (shared($walk) as $p) if ($p['seed'] === $three['seed']) $stoodAt = $p['spot'];
 
 $taken = $offers->withdraw($three['seed'], $mine3, $now + 120);
 check('the gardener who shared it can take it back', $taken !== null && $taken['state'] === Offers::WITHDRAWN);
-check('it is no longer drawn', count($walk->plot(0)) === 1);
-check('and the one beside it is untouched', $walk->plot(0)[0]['seed'] === $one['seed']);
+check('it is no longer drawn', count(shared($walk)) === 1);
+check('and the one beside it is untouched', shared($walk)[0]['seed'] === $one['seed']);
 
 // The slot it had is not handed to the next arrival: the walk is append-only
 // and the rule still sees it, so a border keeps the gap.
 $four = crossing(4);
 [$planted] = $walk->plant($four['seed'], $four['a'], $four['b'], $four['encounter'], 1.6, 1);
 check('a withdrawn plant keeps its slot', $stoodAt !== null && $planted['spot'] !== $stoodAt);
-$standing = array_map(fn ($p) => $p['spot'], $walk->plot(0));
+$standing = array_map(fn ($p) => $p['spot'], $walk->plot(0));  // the ambassador included: nothing may stand on it either
 check('nothing is planted on top of it', count($standing) === count(array_unique(array_map('json_encode', $standing))));
 
 $stranger = $offers->withdraw($one['seed'], token('nobody'), $now);

@@ -68,6 +68,62 @@ final class AmbassadorTests: XCTestCase {
         XCTAssertEqual(month, 31, accuracy: 0.01)
     }
 
+    // MARK: Standing in the garden
+
+    /// **The walk opens with its ambassador at its head, in its own tier.**
+    ///
+    /// Not a reserved slot and not a role in a template: it is the first thing
+    /// the rule placed, and the rule placed it the way it places everything.
+    /// `LongWalk.ambassador` says why that is the right reading of "specimen"
+    /// for an area whose plots open end to end and never reach an end.
+    func testTheWalkOpensWithItsAmbassadorAtItsHead() {
+        let walk = LongWalk.Walk.opened()
+        XCTAssertEqual(walk.plantings.count, 1)
+        XCTAssertEqual(walk.plots, 1)
+
+        let standing = LongWalk.ambassador
+        let travel = Ambassadors.of(.travel)
+        XCTAssertEqual(standing.seed, travel.seed.hex)
+        XCTAssertEqual(standing.plot, 0)
+        XCTAssertEqual(standing.slot.tier, standing.traits.tier,
+                       "the ambassador was put somewhere other than its own tier")
+
+        // The first slot of its tier in tie-breaking order, which is the start
+        // of the plot: an empty plot scores every open slot alike, so the tie
+        // is broken down the walk and the ambassador stands where a visitor
+        // coming down onto plot 0 meets it first.
+        let first = LongWalk.slots.first { $0.tier == standing.traits.tier }
+        XCTAssertEqual(standing.slot, first)
+    }
+
+    /// **Asking twice gives the same plant in the same place.**
+    ///
+    /// This is the property that lets the service derive the ambassador instead
+    /// of storing it. If a slot or a nudge ever stopped being a pure function of
+    /// the pinned seed, an ambassador would move between two requests — which
+    /// is the one thing nothing in this garden is allowed to do.
+    func testItsPlacementIsDerivedAndNotDrawnAfresh() {
+        XCTAssertEqual(LongWalk.Walk.opened().plantings[0], LongWalk.Walk.opened().plantings[0])
+        XCTAssertEqual(LongWalk.ambassador, LongWalk.Walk.opened().plantings[0])
+    }
+
+    /// **Six hundred arrivals later it has not moved, and nobody is standing on
+    /// it.**
+    ///
+    /// The point of handing the ambassador to the rule ahead of the stored rows
+    /// rather than drawing it on afterwards: everything planted since has been
+    /// graded against a plant that is really there.
+    func testTheWalkFillsAroundIt() {
+        var walk = LongWalk.Walk.opened()
+        let standing = LongWalk.ambassador
+        for (seed, traits) in LongWalkVectorTests.arrivals() {
+            let planting = walk.plant(seed: seed, traits: traits)
+            XCTAssertFalse(planting.plot == standing.plot && planting.slot == standing.slot,
+                           "\(planting.seed) was planted on top of the ambassador")
+        }
+        XCTAssertEqual(walk.plantings.first, standing, "the ambassador moved")
+    }
+
     // MARK: What the rest of the site reads
 
     /// Pins `tools/reference/ambassador_vectors.json`, the way `AreaVectorTests`
@@ -110,12 +166,24 @@ final class AmbassadorTests: XCTestCase {
         ]
         for (i, one) in Ambassadors.all.enumerated() {
             let comma = i == Area.allCases.count - 1 ? "" : ","
+            let traits = one.traits
             lines.append("""
                     {"area": "\(one.area.rawValue)", "seed": "\(one.seed.hex)", \
-                "name": "\(one.genome.name.full)", "genusHead": "\(one.genome.name.genusHead)"}\(comma)
+                "name": "\(one.genome.name.full)", "genusHead": "\(one.genome.name.genusHead)", \
+                "height": \(traits.height), "family": \(traits.family)}\(comma)
                 """)
         }
-        lines.append("  ]")
+        lines.append("  ],")
+        // The one ambassador that is actually standing in a garden today, with
+        // the slot this rule put it in. The plot service derives the same
+        // placement from the seed, the height and the family rather than
+        // storing it, so this is what `check_ambassador.php` holds it to.
+        let planting = LongWalk.ambassador
+        lines.append("""
+              "longWalk": {"seed": "\(planting.seed)", "plot": \(planting.plot), \
+            "side": \(planting.slot.side.rawValue), "tier": \(planting.slot.tier.rawValue), \
+            "index": \(planting.slot.index), "nudge": [\(planting.nudge.x), \(planting.nudge.z)]}
+            """)
         lines.append("}")
         return lines.joined(separator: "\n") + "\n"
     }
