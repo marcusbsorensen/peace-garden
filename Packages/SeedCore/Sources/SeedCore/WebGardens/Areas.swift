@@ -24,7 +24,7 @@ import Foundation
 /// It lives in SeedCore so the phone, the website and the plot service read one
 /// list. `Server/.api/Areas.php` is the port and `tools/reference/check_areas.php`
 /// holds it to this.
-public enum Area: String, CaseIterable, Sendable {
+public enum Area: String, CaseIterable, Sendable, Codable {
     case beginnings, waiting, renewal, light, pattern
     case ground, travel, meeting, kinship, peace
 
@@ -64,5 +64,22 @@ public enum Area: String, CaseIterable, Sendable {
         // when they get a rule.
         default: return ""
         }
+    }
+
+    /// **An area this version has never heard of reads as the Long Walk.**
+    ///
+    /// The same rule `Standing` follows and for the same reason: a payload
+    /// written by a newer version must decode rather than throw, or one unknown
+    /// word discards whatever it was part of. The fallback is the Long Walk
+    /// because that is what an absent area means to the service too — one rule
+    /// in two places rather than two that can differ.
+    ///
+    /// It is a fallback and not a guess: an area named here and unknown to this
+    /// build is an area built after it, and a phone that cannot place a plant
+    /// is better off treating it as the one area that has always existed than
+    /// refusing to read the record at all.
+    public init(from decoder: any Decoder) throws {
+        let named = try decoder.singleValueContainer().decode(String.self)
+        self = Area(rawValue: named) ?? .travel
     }
 }

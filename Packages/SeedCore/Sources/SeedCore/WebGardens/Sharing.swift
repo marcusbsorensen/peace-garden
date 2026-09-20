@@ -188,13 +188,28 @@ public struct WalkArrival: Codable, Equatable, Sendable {
     public var height: Double
     /// One of the seven colour families. `LongWalk.family`.
     public var family: Int
+    /// Which of the garden's ten areas this plant belongs in.
+    ///
+    /// **A plant's area is its theme's**, and its theme comes from its genus
+    /// head — the same ten that order the passages. The phone is the only thing
+    /// that can say it: the theme is read off a grown name, and a service
+    /// cannot grow one, which is the same reason `height` and `family` are sent
+    /// rather than worked out at the far end.
+    ///
+    /// **Defaulted to the Long Walk**, which is where every plant offered so
+    /// far has gone. It is the one area with a placement rule, so it is the
+    /// only one the service will accept, and sending a plant's real area before
+    /// its area is built means a refusal rather than a planting. `Area.isOpen`.
+    public var area: Area
 
-    public init(seed: String, parents: [String], encounter: String, height: Double, family: Int) {
+    public init(seed: String, parents: [String], encounter: String, height: Double,
+                family: Int, area: Area = .travel) {
         self.seed = seed
         self.parents = parents
         self.encounter = encounter
         self.height = height
         self.family = family
+        self.area = area
     }
 
     /// What this plant would arrive as, or nil if it is not a hybrid.
@@ -203,7 +218,7 @@ public struct WalkArrival: Codable, Equatable, Sendable {
     /// nothing here can express its arrival. Whether a gardener may show a plant
     /// of their own is a separate question with a separate answer; it is not
     /// this one refused quietly.
-    public init?(record: PlantRecord) {
+    public init?(record: PlantRecord, area: Area = .travel) {
         guard case let .crossed(parentA, parentB, encounterID) = record.lineage else { return nil }
         let traits = LongWalk.traits(of: record.genome)
         self.init(
@@ -211,7 +226,8 @@ public struct WalkArrival: Codable, Equatable, Sendable {
             parents: [parentA.hex, parentB.hex],
             encounter: encounterID.hexString,
             height: traits.height,
-            family: traits.family
+            family: traits.family,
+            area: area
         )
     }
 
