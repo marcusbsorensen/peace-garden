@@ -190,7 +190,8 @@ export function makeWalkStage(canvas, span, e) {
 
   rebuildGround();
   new ResizeObserver(draw).observe(canvas);
-  return { add, clear, turnBy, draw };
+  // `turn` is read by the sky, which has to face the way the camera does.
+  return { add, clear, turnBy, draw, turn: () => turn };
 }
 
 // Plants arrivals by the rule until there are `total`, reporting as it goes.

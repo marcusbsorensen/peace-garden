@@ -45,24 +45,6 @@
   import { makeWalkStage, plantArrivals, growPlots, growFromService, describe } from './walk.js';
   import { makeSky } from './sky.js';
 
-  // The same sky the app draws, worked out for wherever this browser is
-  // keeping time and asking for nothing to find out. Both halves of it: the
-  // plot floats, so the stars under it are drawn too — they are the ones
-  // somebody on the other side of the world is looking up at.
-  //
-  // It keeps off the page's own words the way the sun and the moon do in the
-  // app, by dimming rather than by being cut out of a rectangle. The boxes are
-  // read at each redraw, because the list of plots grows as the walk does.
-  makeSky(document.getElementById('sky'), {
-    keepClear: () => ['note', 'plots'].map((id) => document.getElementById(id))
-      .concat([document.querySelector('nav')])
-      .filter(Boolean)
-      .map((element) => element.getBoundingClientRect())
-      .filter((box) => box.width > 0 && box.height > 0),
-  }).catch(() => {
-    // No sky is a worse walk, not a broken one.
-  });
-
   // ?arrivals=500&from=0&span=3 — how many plants have arrived, and which plots to look at.
   // ?source=service — draw what the plot service holds instead of planting here.
   const query = new URLSearchParams(location.search);
@@ -75,8 +57,36 @@
   const report = (text) => { note.textContent = text; };
   const e = await loadModule('PlantWasm.wasm');
   const stage = makeWalkStage(document.getElementById('stage'), span, e);
-  document.getElementById('left').addEventListener('click', () => stage.turnBy(-1));
-  document.getElementById('right').addEventListener('click', () => stage.turnBy(1));
+
+  // The same sky the app draws, worked out for wherever this browser is
+  // keeping time and asking for nothing to find out. Both halves of it: the
+  // plot floats, so the stars under it are drawn too — they are the ones
+  // somebody on the other side of the world is looking up at.
+  //
+  // **It turns with the walk.** Turning is the person walking round to another
+  // side, so what they can see of the sky goes round with them — a quarter of
+  // the sky a quarter turn, and back where it started after four.
+  //
+  // It keeps off the page's own words the way the sun and the moon do in the
+  // app, by dimming rather than by being cut out of a rectangle. The boxes are
+  // read at each redraw, because the list of plots grows as the walk does.
+  let sky = null;
+  makeSky(document.getElementById('sky'), {
+    quarterTurns: () => stage.turn(),
+    keepClear: () => ['note', 'plots'].map((id) => document.getElementById(id))
+      .concat([document.querySelector('nav')])
+      .filter(Boolean)
+      .map((element) => element.getBoundingClientRect())
+      .filter((box) => box.width > 0 && box.height > 0),
+  }).then((made) => { sky = made; }).catch((trouble) => {
+    // No sky is a worse walk, not a broken one — but a sky that silently is
+    // not there is an hour of somebody's life, so it says why.
+    console.warn('no sky:', trouble);
+  });
+
+  const turn = (quarters) => { stage.turnBy(quarters); sky?.draw(); };
+  document.getElementById('left').addEventListener('click', () => turn(-1));
+  document.getElementById('right').addEventListener('click', () => turn(1));
 
   if (query.get('source') === 'service') {
     const { plots: opened } = await (await fetch('/api/walk')).json();

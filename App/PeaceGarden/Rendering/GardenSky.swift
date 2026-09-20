@@ -99,8 +99,15 @@ struct GardenSky: View {
         let showing = light.isDay ? max(0, 1 - light.up * 5) : 1
         guard showing > 0.01 else { return }
 
+        // **The sky turns with the plot.** Turning the garden is the person
+        // walking round it, so what they can see of the sky changes with it —
+        // which is the same reason both halves of the sphere are drawn. A
+        // quarter turn is a quarter of the sky, and after four the same stars
+        // are back where they started.
+        let here = Whereabouts.place(of: TimeZone.current, at: date)
         let placed = StarField.shared.stars(
-            at: date, in: size, place: Whereabouts.place(of: TimeZone.current, at: date)
+            at: date, in: size, place: here,
+            facing: StarField.facing(fromLatitude: here.latitude, turn: view.turn)
         )
         guard !placed.isEmpty else { return }
 

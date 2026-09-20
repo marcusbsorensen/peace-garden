@@ -51,41 +51,59 @@ final class StarField {
         var warmth: Double
     }
 
+    /// **Two caches, because a turn is not a minute.**
+    ///
+    /// Where a star stands — its altitude and azimuth — depends on the hour and
+    /// on where the phone is, and on nothing else: turning round does not move
+    /// the stars, it moves you. So the trigonometry is worked out once a minute
+    /// and kept, and turning the plot only remaps what is already worked out,
+    /// which is a subtraction a star. Without the split, a quarter turn would
+    /// be eight thousand stars' worth of `asin` and `atan2` on the main thread
+    /// while the plot is mid-gesture.
+    private var aimedFor: Aiming?
+    private var aimed: [Sky.Aim] = []
+
     private var cachedFor: Key?
     private var cached: [Placed] = []
 
-    private struct Key: Equatable {
+    private struct Aiming: Equatable {
         /// The sky turns a quarter of a degree a minute, which is a fifth of a
         /// point on a phone. Recomputing oftener than this buys nothing.
         var minute: Int
-        var width: Double
-        var height: Double
         var latitude: Double
         var longitude: Double
     }
 
-    /// Every star on screen, for this moment and this size.
-    func stars(at date: Date, in size: CGSize, place: Place) -> [Placed] {
-        let key = Key(
+    private struct Key: Equatable {
+        var aiming: Aiming
+        var facing: Double
+        var width: Double
+        var height: Double
+    }
+
+    /// Every star on screen, for this moment, this size, and whichever way the
+    /// garden has been turned to face.
+    func stars(at date: Date, in size: CGSize, place: Place, facing towards: Double) -> [Placed] {
+        let aiming = Aiming(
             minute: Int(date.timeIntervalSince1970 / 60),
-            width: size.width, height: size.height,
             latitude: place.latitude, longitude: place.longitude
         )
+        let key = Key(aiming: aiming, facing: towards, width: size.width, height: size.height)
         if key == cachedFor { return cached }
 
-        let sidereal = Sky.siderealTime(at: date, longitude: place.longitude)
-        let facing = Sky.facing(fromLatitude: place.latitude)
+        if aiming != aimedFor {
+            let sidereal = Sky.siderealTime(at: date, longitude: place.longitude)
+            aimed = catalogue.compactMap {
+                Sky.aim($0, siderealTime: sidereal, latitude: place.latitude)
+            }
+            aimedFor = aiming
+        }
+
         var placed: [Placed] = []
         placed.reserveCapacity(3_000)
-
-        for star in catalogue {
-            guard let spot = Sky.place(
-                star,
-                siderealTime: sidereal,
-                latitude: place.latitude,
-                facing: facing,
-                width: size.width,
-                height: size.height
+        for aim in aimed {
+            guard let spot = Sky.onGlass(
+                aim, facing: towards, width: size.width, height: size.height
             ) else { continue }
 
             placed.append(Placed(
@@ -100,6 +118,25 @@ final class StarField {
         cachedFor = key
         cached = placed
         return placed
+    }
+
+    /// Which way somebody looking at the plot at this turn is facing.
+    ///
+    /// **Ninety degrees a quarter turn, and the sign is not a preference.** The
+    /// sun and the moon are already placed through the plot's own projection —
+    /// `GardenSky.body` hands the light direction to `Isometric.point` — so they
+    /// swing when the plot is turned, whether or not anybody meant them to. If
+    /// the stars did not swing with them by the same amount in the same
+    /// direction, the sun would walk out of its constellations, which is a
+    /// thing a sky cannot do.
+    ///
+    /// Working out which direction that is: `Isometric.point` puts a horizontal
+    /// direction at `x = (a − b)·cos30`, and `facing(x:z:)` at quarter *t*
+    /// makes that `√2·sin(bearing − 45° + 90t)`. So a turn of +1 draws the
+    /// world as if every bearing had gained ninety degrees — which is the
+    /// observer having lost them.
+    static func facing(fromLatitude latitude: Double, turn: Int) -> Double {
+        Sky.facing(fromLatitude: latitude) - Double(turn) * 90
     }
 
     // MARK: How a star is drawn

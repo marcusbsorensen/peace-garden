@@ -167,29 +167,56 @@ export function tintOfColourIndex(index) {
   return [1, 1 - 0.13 * t, 1 - 0.28 * t];
 }
 
-/** Every star on the glass, for this moment, this size and this place. */
-export function placeStars(catalogue, { width, height }, place, date) {
+/** Where every star stands and how it is drawn — everything that does **not**
+ *  depend on which way the observer is facing.
+ *
+ *  The split is here because the garden turns. Nothing in `horizon` knows about
+ *  facing: altitude and azimuth are the same whichever way somebody has their
+ *  back to. So this is worked out once a minute, and `onGlass` does the turning,
+ *  which is a subtraction — a sky that recomputed eight thousand stars' worth of
+ *  trigonometry per frame could not follow a turn. */
+export function aimStars(catalogue, place, date) {
   const sidereal = siderealTime(date, place.longitude);
-  const towards = facing(place.latitude);
-  const placed = [];
-
+  const aimed = [];
   for (const star of catalogue) {
     if (star.magnitude > FAINTEST) continue;
     const { altitude, azimuth } = horizon(
       star.rightAscension, star.declination, sidereal, place.latitude
     );
-    const across = offset(towards, azimuth);
-    if (Math.abs(across) > FIELD_OF_VIEW / 2) continue;
-
-    placed.push({
-      x: width * (0.5 + across / FIELD_OF_VIEW),
-      // Zenith at the top, nadir at the foot, the horizon across the middle
-      // where the plot floats.
-      y: height * (0.5 - altitude / 180),
+    aimed.push({
+      altitude,
+      azimuth,
       radius: radiusOfMagnitude(star.magnitude),
       alpha: alphaOfMagnitude(star.magnitude),
       tint: tintOfColourIndex(star.colourIndex),
     });
+  }
+  return aimed;
+}
+
+/** The same star on a screen of this size, for somebody facing this way, or
+ *  null if it is off the side. */
+export function onGlass(aim, towards, width, height) {
+  const across = offset(towards, aim.azimuth);
+  if (Math.abs(across) > FIELD_OF_VIEW / 2) return null;
+  return {
+    x: width * (0.5 + across / FIELD_OF_VIEW),
+    // Zenith at the top, nadir at the foot, the horizon across the middle
+    // where the plot floats.
+    y: height * (0.5 - aim.altitude / 180),
+    radius: aim.radius,
+    alpha: aim.alpha,
+    tint: aim.tint,
+  };
+}
+
+/** Both halves at once, for a caller with nothing to keep between frames. */
+export function placeStars(catalogue, { width, height }, place, date, towards = null) {
+  const aim = towards ?? facing(place.latitude);
+  const placed = [];
+  for (const aimed of aimStars(catalogue, place, date)) {
+    const spot = onGlass(aimed, aim, width, height);
+    if (spot) placed.push(spot);
   }
   return placed;
 }
@@ -226,7 +253,11 @@ export function dimming(x, y, box) {
  * that is a fifth of a pixel. `keepClear` is asked for the boxes the page's own
  * words are in, each in CSS pixels, every time it redraws.
  */
-export async function makeSky(canvas, { keepClear = () => [], now = () => new Date() } = {}) {
+export async function makeSky(canvas, {
+  keepClear = () => [],
+  quarterTurns = () => 0,
+  now = () => new Date(),
+} = {}) {
   const here = new URL('.', import.meta.url);
   const [catalogue, zones] = await Promise.all([
     fetch(new URL('stars.bin', here)).then((r) => r.arrayBuffer()).then(decodeCatalogue),
@@ -235,6 +266,8 @@ export async function makeSky(canvas, { keepClear = () => [], now = () => new Da
 
   const context = canvas.getContext('2d');
   let timer = null;
+  let aimedFor = null;
+  let aimed = [];
 
   const draw = () => {
     const ratio = window.devicePixelRatio || 1;
@@ -249,7 +282,24 @@ export async function makeSky(canvas, { keepClear = () => [], now = () => new Da
     const place = placeOf(zones, thisBrowsersZone(), date);
     const boxes = keepClear();
 
-    for (const star of placeStars(catalogue, { width, height }, place, date)) {
+    // Worked out once a minute and kept, because turning does not move the
+    // stars — it moves you. See `aimStars`.
+    const minute = `${Math.floor(date.getTime() / 60000)} ${place.latitude} ${place.longitude}`;
+    if (minute !== aimedFor) {
+      aimed = aimStars(catalogue, place, date);
+      aimedFor = minute;
+    }
+
+    // **Which way the camera is looking, and why the sign is not the app's.**
+    // The app turns the plot under a fixed camera; this walk turns the camera
+    // around a fixed plot. Those are opposite rotations of the same scene, so
+    // the sky follows the turn with the opposite sign — and in both the sun
+    // stays where it belongs among the stars, which is the thing being kept.
+    const towards = facing(place.latitude) + quarterTurns() * 90;
+
+    for (const aim of aimed) {
+      const star = onGlass(aim, towards, width, height);
+      if (!star) continue;
       let alpha = star.alpha;
       for (const box of boxes) {
         alpha *= dimming(star.x, star.y, box);

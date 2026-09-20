@@ -130,6 +130,37 @@ for (const field of vectors.field) {
   });
 }
 
+// MARK: Turning
+
+// Both renderers turn in quarter turns, and both do it by moving the observer
+// rather than the sky — so a quarter turn has to be exactly a quarter of the
+// field of view on the glass, and four of them have to come back.
+{
+  const field = vectors.field[0];
+  const place = { latitude: field.latitude, longitude: field.longitude };
+  const aimed = sky.aimStars(catalogue, place, new Date(field.at * 1000));
+  const towards = sky.facing(field.latitude);
+  const quarter = (field.width * 90) / sky.FIELD_OF_VIEW;
+
+  let moved = 0;
+  for (const aim of aimed) {
+    const at = sky.onGlass(aim, towards, field.width, field.height);
+    const after = sky.onGlass(aim, towards - 90, field.width, field.height);
+    const back = sky.onGlass(aim, towards - 360, field.width, field.height);
+
+    if (at && back) {
+      same('four turns bring a star back', back.x, at.x, 1e-9);
+      same('four turns leave its height alone', back.y, at.y, 1e-9);
+    }
+    if (at && after && at.x + quarter <= field.width + 1) {
+      same('a quarter turn is a quarter of the sky', after.x, at.x + quarter, 1e-9);
+      moved++;
+    }
+  }
+  checks++;
+  if (moved < 500) failures.push('too few stars were in both views to say the turn is right');
+}
+
 // MARK: Keeping off the words
 
 // Not in the vectors, because nothing in Swift draws this the same way — the

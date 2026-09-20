@@ -160,8 +160,68 @@ public extension Sky {
         }
     }
 
-    /// Where this star is on a screen of this size, or nil if it is off the
-    /// side or too faint to draw.
+    /// Where a star stands and how it is drawn — everything about it that does
+    /// **not** depend on which way the observer is facing.
+    ///
+    /// The split exists because the garden turns. Turning it is a quarter turn
+    /// of the whole sphere and the sky goes round with it, and the sky cannot
+    /// recompute eight thousand stars' worth of trigonometry per frame while it
+    /// does. Nothing in `horizon` knows about facing: altitude and azimuth are
+    /// the same whichever way somebody has their back to. So this is worked out
+    /// once a minute and `onGlass` does the turning, which is a subtraction.
+    struct Aim: Equatable, Sendable {
+        public var altitude: Double
+        public var azimuth: Double
+        public var radius: Double
+        public var alpha: Double
+        public var warmth: Double
+        public var tint: (red: Double, green: Double, blue: Double)
+
+        public static func == (a: Aim, b: Aim) -> Bool {
+            a.altitude == b.altitude && a.azimuth == b.azimuth && a.radius == b.radius
+                && a.alpha == b.alpha && a.warmth == b.warmth && a.tint == b.tint
+        }
+    }
+
+    /// Where this star stands for somebody at this latitude, dressed, or nil if
+    /// it is too faint to draw at all.
+    static func aim(_ star: Star, siderealTime: Double, latitude: Double) -> Aim? {
+        guard star.magnitude <= faintest else { return nil }
+        let (altitude, azimuth) = horizon(
+            rightAscension: star.rightAscension,
+            declination: star.declination,
+            siderealTime: siderealTime,
+            latitude: latitude
+        )
+        return Aim(
+            altitude: altitude,
+            azimuth: azimuth,
+            radius: radius(ofMagnitude: star.magnitude),
+            alpha: alpha(ofMagnitude: star.magnitude),
+            warmth: warmth(ofColourIndex: star.colourIndex),
+            tint: tint(ofColourIndex: star.colourIndex)
+        )
+    }
+
+    /// The same star on a screen of this size, for somebody facing this way, or
+    /// nil if it is off the side.
+    static func onGlass(_ aim: Aim, facing towards: Double, width: Double, height: Double) -> Placement? {
+        let across = offset(from: towards, to: aim.azimuth)
+        guard abs(across) <= fieldOfView / 2 else { return nil }
+
+        return Placement(
+            x: width * (0.5 + across / fieldOfView),
+            // Zenith at the top, nadir at the foot, the horizon across the
+            // middle where the plot floats.
+            y: height * (0.5 - aim.altitude / 180),
+            radius: aim.radius,
+            alpha: aim.alpha,
+            warmth: aim.warmth,
+            tint: aim.tint
+        )
+    }
+
+    /// Both halves at once, for a caller with nothing to keep between frames.
     static func place(
         _ star: Star,
         siderealTime: Double,
@@ -170,26 +230,8 @@ public extension Sky {
         width: Double,
         height: Double
     ) -> Placement? {
-        guard star.magnitude <= faintest else { return nil }
-        let (altitude, azimuth) = horizon(
-            rightAscension: star.rightAscension,
-            declination: star.declination,
-            siderealTime: siderealTime,
-            latitude: latitude
-        )
-        let across = offset(from: towards, to: azimuth)
-        guard abs(across) <= fieldOfView / 2 else { return nil }
-
-        return Placement(
-            x: width * (0.5 + across / fieldOfView),
-            // Zenith at the top, nadir at the foot, the horizon across the
-            // middle where the plot floats.
-            y: height * (0.5 - altitude / 180),
-            radius: radius(ofMagnitude: star.magnitude),
-            alpha: alpha(ofMagnitude: star.magnitude),
-            warmth: warmth(ofColourIndex: star.colourIndex),
-            tint: tint(ofColourIndex: star.colourIndex)
-        )
+        guard let aimed = aim(star, siderealTime: siderealTime, latitude: latitude) else { return nil }
+        return onGlass(aimed, facing: towards, width: width, height: height)
     }
 
     /// Brightness is a ratio, not a number of points: each magnitude is two and

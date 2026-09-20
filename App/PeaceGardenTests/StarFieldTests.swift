@@ -32,9 +32,7 @@ final class StarFieldTests: XCTestCase {
         // The whole point: a garden about two people meeting shows the sky
         // somebody on the far side of the world has overhead. If these were
         // culled the idea would be gone and nothing would look wrong.
-        let placed = StarField.shared.stars(
-            at: Date(timeIntervalSince1970: 1_700_000_000), in: size, place: london
-        )
+        let placed = field(turn: 0)
         guard !placed.isEmpty else {
             return XCTFail("no catalogue in the test bundle")
         }
@@ -45,9 +43,7 @@ final class StarFieldTests: XCTestCase {
     }
 
     func testEveryStarLandsOnTheGlass() {
-        let placed = StarField.shared.stars(
-            at: Date(timeIntervalSince1970: 1_700_000_000), in: size, place: london
-        )
+        let placed = field(turn: 0)
         for star in placed {
             XCTAssertTrue((-1...size.width + 1).contains(star.at.x))
             XCTAssertTrue((-1...size.height + 1).contains(star.at.y))
@@ -98,9 +94,103 @@ final class StarFieldTests: XCTestCase {
         XCTAssertEqual(GardenSky.dimming(at: .zero, near: .null), 1)
     }
 
+    // MARK: Turning the garden turns the sky
+
+    func testAQuarterTurnIsAQuarterOfTheSky() {
+        // Turning the plot is the person walking round it, so what they can see
+        // of the sky moves with it — and by the same amount, which is what makes
+        // it a turn rather than a drift.
+        XCTAssertEqual(StarField.facing(fromLatitude: 51.5, turn: 0), 180)
+        XCTAssertEqual(StarField.facing(fromLatitude: 51.5, turn: 1), 90)
+        XCTAssertEqual(StarField.facing(fromLatitude: 51.5, turn: 2), 0)
+        XCTAssertEqual(StarField.facing(fromLatitude: 51.5, turn: 3), -90)
+        // From the southern hemisphere the sky faces the other way to begin
+        // with, and turns the same way from there.
+        XCTAssertEqual(StarField.facing(fromLatitude: -33.87, turn: 1), -90)
+    }
+
+    func testFourTurnsBringTheSameStarsBack() {
+        let start = field(turn: 0)
+        guard !start.isEmpty else { return XCTFail("no catalogue in the test bundle") }
+        let round = field(turn: 4)
+
+        XCTAssertEqual(round.count, start.count)
+        for (before, after) in zip(start, round) {
+            XCTAssertEqual(after.at.x, before.at.x, accuracy: 1e-9)
+            XCTAssertEqual(after.at.y, before.at.y, accuracy: 1e-9)
+        }
+        // And turning the other way is turning the other way.
+        XCTAssertEqual(field(turn: -4).count, start.count)
+        XCTAssertEqual(field(turn: -1).count, field(turn: 3).count)
+    }
+
+    func testTurningSlidesTheWholeFieldByAQuarterOfTheFieldOfView() {
+        // Every star that survives both turns has moved by exactly the same
+        // distance, because a turn moves the observer and not the sky.
+        let before = field(turn: 0), after = field(turn: 1)
+        guard !before.isEmpty, !after.isEmpty else {
+            return XCTFail("no catalogue in the test bundle")
+        }
+        let quarter = size.width * 90 / Sky.fieldOfView
+
+        var checked = 0
+        for star in before {
+            let wanted = star.at.x + quarter
+            guard wanted <= size.width + 1 else { continue }   // it has gone off the edge
+            guard let moved = after.first(where: {
+                abs($0.at.y - star.at.y) < 1e-9 && abs($0.radius - star.radius) < 1e-12
+            }) else { continue }
+            XCTAssertEqual(moved.at.x, wanted, accuracy: 1e-6)
+            checked += 1
+        }
+        XCTAssertGreaterThan(checked, 500, "not enough stars were in both views to say anything")
+    }
+
+    func testTheSkyTurnsTheWayThePlotDoes() {
+        // **The load-bearing one.** The sun and the moon are placed through the
+        // plot's own projection, so they already swing when it is turned. If the
+        // stars swung the other way — or by the wrong amount — the sun would
+        // walk out of its constellations, and nothing else in the app would
+        // notice. This holds the sky's quarter turn to `Isometric`'s.
+        //
+        // `Isometric.point` puts a horizontal direction at screen x
+        // proportional to `a − b`. The claim is that at turn *t* a direction of
+        // bearing θ lands where bearing θ + 90t landed at turn 0 — which is the
+        // observer having lost ninety degrees a turn, which is the sign
+        // `StarField.facing(fromLatitude:turn:)` uses.
+        var view = Isometric.fitting(
+            plotSide: 8, in: CGSize(width: 400, height: 800), headroom: 3, soilDepth: 1
+        )
+        for turn in 1...3 {
+            for bearing in stride(from: 0.0, to: 360.0, by: 15.0) {
+                view.turn = 0
+                let shifted = radians(bearing + Double(turn) * 90)
+                let atRest = view.point(x: sin(shifted), z: cos(shifted)).x
+
+                view.turn = turn
+                let moved = radians(bearing)
+                let turned = view.point(x: sin(moved), z: cos(moved)).x
+
+                XCTAssertEqual(turned, atRest, accuracy: 1e-9,
+                               "bearing \(bearing) at turn \(turn)")
+            }
+        }
+    }
+
     // MARK: The mapping, as the field computes it
 
     private func y(ofAltitude altitude: Double, in size: CGSize) -> Double {
         size.height * (0.5 - altitude / 180)
+    }
+
+    private func radians(_ degrees: Double) -> Double { degrees * .pi / 180 }
+
+    private func field(turn: Int) -> [StarField.Placed] {
+        StarField.shared.stars(
+            at: Date(timeIntervalSince1970: 1_700_000_000),
+            in: size,
+            place: london,
+            facing: StarField.facing(fromLatitude: london.latitude, turn: turn)
+        )
     }
 }
