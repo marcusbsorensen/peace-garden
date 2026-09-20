@@ -255,6 +255,42 @@ final class AskingTests: XCTestCase {
         XCTAssertEqual(model.garden.plants[0].standingOrHere.state, .here)
     }
 
+    // MARK: Which area it is offered to
+
+    /// The area on the wire is the plant's own, and the way to prove it is a
+    /// plant that does not belong to travel — otherwise *it sent the right
+    /// area* and *it sent travel, as it always did* are the same answer.
+    @MainActor
+    func testTheOfferCarriesThePlantsOwnAreaRatherThanAlwaysTheLongWalk() async {
+        guard let outsider = (0..<40).map({ hybrid("area-\($0)") })
+            .first(where: { Arrangement.area(of: $0) != .travel })
+        else { return XCTFail("forty crossings and every one of them travel") }
+        let model = model(with: [outsider])
+
+        await model.offer(outsider)
+
+        let area = Arrangement.area(of: outsider).rawValue
+        XCTAssertEqual(stub.bodies.count, 1)
+        XCTAssertTrue(stub.bodies[0].contains("\"area\":\"\(area)\""), stub.bodies[0])
+    }
+
+    /// A service that says the area is shut leaves the plant where it was, the
+    /// same as any other refusal. The screen keeps it from getting this far;
+    /// an app older than the service's list of open areas would not.
+    @MainActor
+    func testAnAreaThatIsNotPlantedYetIsRefusedAndChangesNothing() async {
+        let plant = hybrid()
+        let model = model(with: [plant])
+        stub.replies["/api/walk/offer"] = (409, #"{"error":"That area of the garden is not open yet."}"#)
+
+        let result = await model.offer(plant)
+
+        guard case let .failure(trouble) = result else { return XCTFail("a 409 is not a success") }
+        XCTAssertEqual(trouble, .refused(status: 409, said: "That area of the garden is not open yet."))
+        XCTAssertEqual(model.garden.plants[0].standingOrHere.state, .here)
+        XCTAssertTrue(model.garden.plants[0].canBeOffered)
+    }
+
     // MARK: Starting again
 
     @MainActor

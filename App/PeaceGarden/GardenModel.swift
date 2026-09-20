@@ -236,7 +236,15 @@ final class GardenModel {
     /// along with this one's, so it was never one person's to publish.
     @discardableResult
     func offer(_ record: PlantRecord) async -> Result<Standing, PlotService.Trouble> {
-        guard let tokens = record.tokens, let arrival = WalkArrival(record: record) else {
+        // **The area is the plant's own**, which is the area its genus head
+        // belongs to and not the one it was offered from. The service knows
+        // ten and keeps nine shut, so a plant whose area is still to be
+        // planted comes back refused; `ShowInGardenView` says so before
+        // anybody presses anything, and the refusal is the second line of
+        // defence for a phone older than the list.
+        guard let tokens = record.tokens,
+              let arrival = WalkArrival(record: record, area: Arrangement.area(of: record))
+        else {
             return .failure(.unreadable)
         }
         do {

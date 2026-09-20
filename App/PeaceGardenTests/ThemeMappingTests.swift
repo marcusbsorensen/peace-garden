@@ -12,6 +12,26 @@ import SeedCore
 /// exists for. Both are cheap to prove and impossible to notice.
 final class ThemeMappingTests: XCTestCase {
 
+    // MARK: - The ten themes are the ten areas
+
+    /// `Quotes.Theme` is the app's and `SeedCore.Area` is the plot service's,
+    /// and they are the same ten under the same names. Both halves matter: a
+    /// theme with no area is a plant that cannot be offered anywhere, and an
+    /// area no theme reaches is a part of the garden nothing can ever stand in.
+    func testEveryThemeIsAnAreaAndEveryAreaIsAThemeUnderTheSameName() {
+        XCTAssertEqual(Set(Quotes.Theme.allCases.map(\.area)), Set(Area.allCases))
+        XCTAssertEqual(Quotes.Theme.allCases.count, Area.allCases.count)
+        for theme in Quotes.Theme.allCases {
+            XCTAssertEqual(theme.area.rawValue, theme.rawValue)
+        }
+    }
+
+    /// One area is planted, and it is the one the Long Walk is.
+    func testTheOnlyAreaOpenIsTravel() {
+        XCTAssertEqual(Area.open, [.travel])
+        XCTAssertEqual(Quotes.Theme.travel.area, .travel)
+    }
+
     // MARK: - Every syllable is spoken for
 
     func testEveryGenusHeadBelongsToExactlyOneTheme() {

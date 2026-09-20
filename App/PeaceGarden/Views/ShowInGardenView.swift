@@ -30,6 +30,15 @@ struct ShowInGardenView: View {
     /// Whether this phone is being asked, rather than doing the asking.
     private var isBeingAsked: Bool { record.standingOrHere.state == .invited }
 
+    /// Whether the area this plant belongs to has been planted yet.
+    ///
+    /// A plant stands in the area its own name belongs to, and the garden is
+    /// being planted an area at a time — so for now the service takes travel
+    /// and refuses the other nine. Asked rather than asking, it is open by
+    /// proof: the other phone's offer was accepted, so this plant's area
+    /// exists whatever this version of the app believes.
+    private var areaIsOpen: Bool { isBeingAsked || Arrangement.area(of: record).isOpen }
+
     private var peer: String {
         record.encounter?.peerDisplayName ?? String(localized: "the other gardener")
     }
@@ -72,26 +81,37 @@ struct ShowInGardenView: View {
                         .padding(.horizontal, 64)
                         .padding(.top, 62)
 
-                    if isBeingAsked {
+                    if !areaIsOpen {
+                        headline("The garden is being planted an area at a time, and this plant's area comes later.")
+                    } else if isBeingAsked {
                         headline("\(peer) would like this plant to stand in the public website garden.")
                     } else {
                         headline("Show this plant in the public website garden.")
                     }
 
-                    VStack(spacing: 16) {
-                        fact("The garden is open. Anyone walking it can come across this plant.")
-                        fact("What stands there is the plant itself, grown from its seed at its real age, the way it grows here.")
-                        fact("Your name, what you wrote about the meeting and the day it happened stay on this phone.")
-                        // The load-bearing one, and the reason there is a second
-                        // gardener to ask at all.
-                        if isBeingAsked {
-                            fact("It grew from your seed and \(peer)'s together, so the garden carries both. That is why you are being asked.")
-                        } else {
-                            fact("It grew from your seed and \(peer)'s together, so the garden carries both. They are asked before it goes anywhere.")
+                    if !areaIsOpen {
+                        VStack(spacing: 16) {
+                            fact("A plant stands in the area its own name belongs to. The Long Walk is the one area planted so far.")
+                            fact("It goes on growing here meanwhile, and you can ask \(peer) the day its area opens.")
                         }
+                        .padding(.horizontal, 40)
+                        .frame(maxWidth: Chrome.readableWidth)
+                    } else {
+                        VStack(spacing: 16) {
+                            fact("The garden is open. Anyone walking it can come across this plant.")
+                            fact("What stands there is the plant itself, grown from its seed at its real age, the way it grows here.")
+                            fact("Your name, what you wrote about the meeting and the day it happened stay on this phone.")
+                            // The load-bearing one, and the reason there is a second
+                            // gardener to ask at all.
+                            if isBeingAsked {
+                                fact("It grew from your seed and \(peer)'s together, so the garden carries both. That is why you are being asked.")
+                            } else {
+                                fact("It grew from your seed and \(peer)'s together, so the garden carries both. They are asked before it goes anywhere.")
+                            }
+                        }
+                        .padding(.horizontal, 40)
+                        .frame(maxWidth: Chrome.readableWidth)
                     }
-                    .padding(.horizontal, 40)
-                    .frame(maxWidth: Chrome.readableWidth)
 
                     if let trouble {
                         Text(verbatim: trouble)
@@ -105,7 +125,9 @@ struct ShowInGardenView: View {
             }
 
             VStack(spacing: 6) {
-                if isBeingAsked {
+                if !areaIsOpen {
+                    EmptyView()
+                } else if isBeingAsked {
                     QuietButton(title: "Let it stand there", isProminent: true) { answer(yes: true) }
                     QuietButton(title: "Keep it here") { answer(yes: false) }
                     // Said plainly, because it is the one irreversible half of
@@ -185,6 +207,16 @@ struct ShowInGardenView: View {
             switch await work() {
             case .success:
                 dismiss()
+            case .failure(.refused(let status, _)) where status == 409:
+                // **The one refusal with its own sentence.** The service says
+                // 409 for a plant whose area is not planted yet, and the
+                // sentence below — *try again in a little while* — would be
+                // false: no waiting of that kind fixes it, and nothing the
+                // person can do does either. Reached only by an app older
+                // than the service's list, because `areaIsOpen` takes the
+                // question off the screen before it is asked.
+                trouble = String(localized: "This plant's area of the garden is still to be planted. It can stand there once that area opens.")
+                working = false
             case .failure:
                 // One sentence, in this person's language, saying what to do
                 // rather than what the service said. The service writes in

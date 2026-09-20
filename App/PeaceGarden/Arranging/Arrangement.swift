@@ -77,6 +77,17 @@ enum Arrangement {
         Quotes.Theme(genusHead: plant.genome.name.genusHead)
     }
 
+    /// The same fact in the plot service's words: the area of the shared
+    /// garden this plant stands in.
+    ///
+    /// `SeedCore.Area` and `Quotes.Theme` are the same ten, because the map
+    /// above is what both of them are for. They stay two types because the
+    /// theme carries a position, a set of syllables and a bank of passages,
+    /// and the service needs a name it can put in a table.
+    static func area(of plant: PlantRecord) -> Area {
+        theme(of: plant).area
+    }
+
     // MARK: - The templates
 
     /// Every plant's spot under one template, in metres from the plot's middle.
@@ -291,5 +302,29 @@ enum Arrangement {
             out[plant.id] = Spot(x: side * (jx - 0.5) * 0.9, z: side * (jz - 0.5) * 0.9)
         }
         return out
+    }
+}
+
+
+/// Which area of the shared garden a theme is.
+///
+/// Written out rather than `Area(rawValue: rawValue)`, which would compile for
+/// ever after either list changed and quietly file a tenth of all plants
+/// somewhere else. A `switch` over both is a build failure the day one of them
+/// grows an eleventh case, which is the day somebody needs to think about it.
+extension Quotes.Theme {
+    var area: Area {
+        switch self {
+        case .beginnings: return .beginnings
+        case .waiting:    return .waiting
+        case .renewal:    return .renewal
+        case .light:      return .light
+        case .pattern:    return .pattern
+        case .ground:     return .ground
+        case .travel:     return .travel
+        case .meeting:    return .meeting
+        case .kinship:    return .kinship
+        case .peace:      return .peace
+        }
     }
 }
