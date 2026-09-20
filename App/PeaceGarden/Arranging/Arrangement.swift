@@ -74,7 +74,7 @@ enum Arrangement {
     ///
     /// `ArrangementTests` holds it to the plant's own name.
     static func theme(of plant: PlantRecord) -> Quotes.Theme {
-        Quotes.Theme(genusHead: plant.genome.name.genusHead)
+        Quotes.Theme(area: area(of: plant))
     }
 
     /// The same fact in the plot service's words: the area of the shared
@@ -85,7 +85,7 @@ enum Arrangement {
     /// theme carries a position, a set of syllables and a bank of passages,
     /// and the service needs a name it can put in a table.
     static func area(of plant: PlantRecord) -> Area {
-        theme(of: plant).area
+        Area(genome: plant.genome)
     }
 
     // MARK: - The templates
@@ -313,6 +313,23 @@ enum Arrangement {
 /// somewhere else. A `switch` over both is a build failure the day one of them
 /// grows an eleventh case, which is the day somebody needs to think about it.
 extension Quotes.Theme {
+
+    /// The theme an area is, which is the same ten read the other way.
+    init(area: Area) {
+        switch area {
+        case .beginnings: self = .beginnings
+        case .waiting:    self = .waiting
+        case .renewal:    self = .renewal
+        case .light:      self = .light
+        case .pattern:    self = .pattern
+        case .ground:     self = .ground
+        case .travel:     self = .travel
+        case .meeting:    self = .meeting
+        case .kinship:    self = .kinship
+        case .peace:      self = .peace
+        }
+    }
+
     var area: Area {
         switch self {
         case .beginnings: return .beginnings

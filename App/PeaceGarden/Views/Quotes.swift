@@ -86,38 +86,20 @@ enum Quotes {
 
         /// The genus syllables that mean this theme.
         ///
-        /// Every one of `PlantName.genusHeads` appears exactly once across the
-        /// ten themes, which is what makes `init(genusHead:)` total. The list
-        /// is frozen — see `PlantName.genusHeads` for why a twenty-fifth
-        /// syllable cannot simply be added — so the themes were fitted to the
-        /// syllables rather than the syllables chosen for the themes. Four
-        /// themes take three heads and six take two, which leaves a plant
-        /// half again as likely to be born to Beginnings as to Peace.
-        /// Documented rather than corrected: correcting it means either
-        /// renaming every plant that exists or weighting the draw, and a
-        /// weighted draw would break the one thing this design is for, which
-        /// is that the name and the theme are the same fact said twice.
-        var genusHeads: [String] {
-            switch self {
-            case .beginnings: return ["Thal", "Lir", "Ver"]   // a shoot, a lily, the spring
-            case .waiting:    return ["Nyx", "Umbr"]          // night, shade
-            case .renewal:    return ["Dros", "Ros"]          // dew, and dew again
-            case .light:      return ["El", "Aur", "Sel"]     // sun, dawn, moon
-            case .pattern:    return ["Cal", "Quin"]          // the shapely, the five
-            case .ground:     return ["Cer", "Fen", "Pell"]   // grain, fen, the earth's skin
-            case .travel:     return ["Zeph", "Ael", "Hal"]   // west wind, gust, salt sea
-            case .meeting:    return ["Mel", "Ith"]           // honey, Ithaca
-            case .kinship:    return ["Vin", "Cyn"]           // a bond, the dog at the door
-            case .peace:      return ["Ol", "Bel"]            // the olive, a clear sky
-            }
-        }
+        /// **The table is `SeedCore.Area.genusHeads`** and this reads it. It
+        /// moved there on 20 September because the website has to file a plant
+        /// into an area and the website is SeedCore compiled to wasm, not this
+        /// app; a second copy here would be two lists that agree until the day
+        /// they do not. `ThemeMappingTests` still holds every head to exactly
+        /// one theme, which is now a statement about the core's table.
+        var genusHeads: [String] { area.genusHeads }
 
         /// The theme a plant's name says it belongs to.
         ///
         /// Total by construction, and defended by `ThemeMappingTests`: every
         /// head is claimed once, and none twice.
         init(genusHead: String) {
-            self = Theme.allCases.first { $0.genusHeads.contains(genusHead) } ?? .beginnings
+            self.init(area: Area(genusHead: genusHead))
         }
 
         /// This theme's three subthemes, in the order the genus tails read

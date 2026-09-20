@@ -56,6 +56,49 @@ final class AreaVectorTests: XCTestCase {
     /// **An open area has a table and a closed one does not.** The two are one
     /// fact said twice, and a table named for an area with no placement rule is
     /// a promise about a schema nobody has designed.
+    // MARK: The syllables
+
+    /// Every genus head belongs to exactly one area, and no area claims a
+    /// syllable that is not one. The table is hand-written over a frozen list,
+    /// which is the kind of thing that goes wrong silently: a head dropped from
+    /// it costs nobody a compile error and quietly sends a tenth of all plants
+    /// to the Seedbed.
+    func testEveryGenusHeadBelongsToExactlyOneArea() {
+        var claims: [String: [Area]] = [:]
+        for area in Area.allCases {
+            for head in area.genusHeads { claims[head, default: []].append(area) }
+        }
+        for head in PlantName.genusHeads {
+            XCTAssertEqual(
+                claims[head]?.count, 1,
+                "\(head) is claimed by \(claims[head] ?? []) — every head needs exactly one area"
+            )
+        }
+        XCTAssertEqual(claims.count, PlantName.genusHeads.count)
+    }
+
+    func testNoAreaClaimsASyllableThatDoesNotExist() {
+        let known = Set(PlantName.genusHeads)
+        for area in Area.allCases {
+            for head in area.genusHeads {
+                XCTAssertTrue(known.contains(head), "\(area) claims \(head), which is not a genus head")
+            }
+        }
+    }
+
+    /// A plant is filed by the name it carries. Minting its seed afresh gives
+    /// a different plant with a different name, so reading the area off the
+    /// genome and reading it off a fresh mint are different answers, and this
+    /// one is the genome's.
+    func testAPlantsAreaIsReadFromTheNameItCarries() {
+        for i in 0..<64 {
+            let seed = SeedID(bytes: seedDigest(SeedDomain.seed, Data("area-\(i)".utf8)))!
+            let genome = Genome(seed: seed)
+            XCTAssertEqual(Area(genome: genome), Area(genusHead: genome.name.genusHead))
+            XCTAssertTrue(Area(genome: genome).genusHeads.contains(genome.name.genusHead))
+        }
+    }
+
     func testOnlyAnOpenAreaHasATable() {
         for area in Area.allCases {
             XCTAssertEqual(area.isOpen, !area.table.isEmpty, "\(area.rawValue)")

@@ -66,6 +66,63 @@ public enum Area: String, CaseIterable, Sendable, Codable {
         }
     }
 
+    // MARK: Which area a plant is
+
+    /// The genus syllables that mean this area.
+    ///
+    /// **This is the table the app used to hold**, moved here on 20 September
+    /// for one reason: the website has to file a plant into an area, and the
+    /// website is this package compiled to wasm rather than the app. Leaving
+    /// the syllables in `Quotes.Theme` meant the one place that needed to know
+    /// which area a plant belongs to could not be told — and copying them
+    /// would be two tables that agree until the day they do not.
+    ///
+    /// Every one of `PlantName.genusHeads` appears exactly once across the
+    /// ten, which is what makes `init(genusHead:)` total. The list is frozen —
+    /// see `PlantName.genusHeads` for why a twenty-fifth syllable cannot
+    /// simply be added — so the areas were fitted to the syllables rather than
+    /// the syllables chosen for the areas. Four areas take three heads and six
+    /// take two, which leaves a plant half again as likely to be born to the
+    /// Seedbed as to the Quiet Garden. Documented rather than corrected:
+    /// correcting it means either renaming every plant that exists or
+    /// weighting the draw, and a weighted draw would break the one thing this
+    /// design is for, which is that the name and the area are the same fact
+    /// said twice.
+    public var genusHeads: [String] {
+        switch self {
+        case .beginnings: return ["Thal", "Lir", "Ver"]   // a shoot, a lily, the spring
+        case .waiting:    return ["Nyx", "Umbr"]          // night, shade
+        case .renewal:    return ["Dros", "Ros"]          // dew, and dew again
+        case .light:      return ["El", "Aur", "Sel"]     // sun, dawn, moon
+        case .pattern:    return ["Cal", "Quin"]          // the shapely, the five
+        case .ground:     return ["Cer", "Fen", "Pell"]   // grain, fen, the earth's skin
+        case .travel:     return ["Zeph", "Ael", "Hal"]   // west wind, gust, salt sea
+        case .meeting:    return ["Mel", "Ith"]           // honey, Ithaca
+        case .kinship:    return ["Vin", "Cyn"]           // a bond, the dog at the door
+        case .peace:      return ["Ol", "Bel"]            // the olive, a clear sky
+        }
+    }
+
+    /// The area a plant's name says it belongs to.
+    ///
+    /// Total by construction, and defended by `AreaVectorTests`: every head is
+    /// claimed once, and none twice.
+    public init(genusHead: String) {
+        self = Area.allCases.first { $0.genusHeads.contains(genusHead) } ?? .beginnings
+    }
+
+    /// The area a plant belongs to, read off the plant.
+    ///
+    /// **The plant's own name, not the one its seed would mint.** A hybrid's
+    /// traits are drawn from its parents, so the same child seed minted afresh
+    /// is a different plant with a different name — over fourteen crossings
+    /// drawn for the mockup, all fourteen genus heads differed. Taking the
+    /// genome's own name is the only reading that files a plant where its
+    /// label says it stands.
+    public init(genome: Genome) {
+        self.init(genusHead: genome.name.genusHead)
+    }
+
     /// **An area this version has never heard of reads as the Long Walk.**
     ///
     /// The same rule `Standing` follows and for the same reason: a payload
