@@ -126,6 +126,13 @@ jobs:
       # out of their own garden by the second week and nothing would say so.
       - name: One caller cannot fill the walk
         run: php tools/reference/check_limits.php
+      # The nightly copy of the walk. What is checked here is the part that
+      # runs with nobody watching: a dump cut short is a valid gzip of a valid
+      # beginning and restores most of the walk in silence, so the copy is read
+      # back before it is filed. Restoring one for real wants a MariaDB and
+      # lives in tools/backup.sh --restore-test.
+      - name: A copy of the walk is a copy of the walk
+        run: php tools/reference/check_backup.php
       - name: The site's own prose is commissioned, not drifting
         run: python3 tools/strings/check.py
       # The numeral rule, which nothing enforced until 6 September and which

@@ -336,3 +336,68 @@ anywhere is a way to send somebody's meetings somewhere else.
 `/.api/config.php` and the rest answer 403 from nginx's dot rule, so PHP-FPM
 never runs a service file directly. The service runs on the 20i MySQL database
 named in the server's `config.php`.
+
+## Keeping the walk
+
+The Long Walk is append-only and every plant's place is worked out from what
+arrived before it. Lose a row and everything after it stands somewhere else;
+lose the order and they all do. None of it can be derived from anything else,
+because the thing that made it was two people meeting once.
+
+`.api/backup.php` takes the copy, from cron at 03:17 server time:
+
+```
+17 3 * * * /usr/bin/php $HOME/public_html/.api/backup.php >> $HOME/backups/backup.log 2>&1
+```
+
+It copies `long_walk`, `long_walk_lock` and `walk_offers` and leaves
+`rate_limits` and `rate_salt` out on purpose — those are this hour's arithmetic
+about callers, and restoring them would hand back spent allowance and re-key
+every bucket. It reads each copy back before filing it, because a dump cut
+short is a valid gzip of a valid beginning and restores most of the walk in
+silence. Thirty stay on the server.
+
+From the Mac:
+
+| | |
+|---|---|
+| `tools/backup.sh` | take a copy now, then pull every copy down |
+| `tools/backup.sh --pull` | pull only |
+| `tools/backup.sh --install-cron` | put that line in the server's crontab |
+| `tools/backup.sh --restore-test` | load the newest copy and replay the walk out of it |
+| `tools/backup.sh --rehearse` | the same, on a walk made for it |
+
+The pulled copies go to `~/Documents/Peace Garden backups` (`$PG_BACKUPS` moves
+them), and that is the copy that matters: `~/backups` on the 20i account is the
+same disk, the same provider and the same billing relationship as the database
+it came from.
+
+### Restoring
+
+```
+gunzip -c ~/Documents/Peace\ Garden\ backups/walk-….sql.gz \
+  | ssh peacegarden 'mysql --defaults-file=… <database>'
+```
+
+There is no one-line script for this on purpose. Restoring is the rare thing
+done once under pressure, and a script that did it would also be a script that
+could do it by accident. What the tooling does instead is prove beforehand that
+the copy *will* restore.
+
+### The test, and why it is a replay
+
+`--restore-test` loads the newest copy into an empty MariaDB of the same version
+(in Docker — there is no MySQL on the Mac) and then plants every arrival again,
+in order, into a second empty database, by the same rule that placed it the
+first time. Every column of every row has to come back the same. A row count
+cannot see a lost ordering: each restored row is individually plausible and the
+walk is wrong.
+
+`--rehearse` does all of that on a walk it sows itself — two dozen arrivals, two
+taken back, three offers — because until two people have met and agreed, the
+real walk is empty and a test of it passes by having nothing to get wrong. It
+then deletes one arrival from the middle of the restored copy and requires the
+check to fail, so the check is known to be a check.
+
+`tools/reference/check_backup.php` is the part that runs in CI: the reading-back,
+the pruning, and the refusal to put a password on a command line.
