@@ -85,6 +85,26 @@
       <section class="garden-area" id="area" hidden>
         <h1 class="heading" id="area-name"></h1>
         <div class="area-plot" id="area-plot" role="group"></div>
+        <!--
+          The one area that exists for real. `travel` is the Long Walk, which
+          is built: `/walk` grows every plant standing in it from what the plot
+          service holds, where this page draws the whole garden as dots from a
+          stand-in. `walk.js` unhides this on that area and no other, because
+          the other nine have nowhere to send anybody yet.
+
+          Named by the heading above it, the same way the front page's four
+          links are: the word on the link is the same each time, and the area's
+          name is what makes it a different destination.
+        -->
+        <p id="area-walk-line" hidden>
+          <a
+            class="quiet-button"
+            href="/walk"
+            id="area-walk"
+            data-s="walkThisArea"
+            aria-labelledby="area-walk area-name"
+          ></a>
+        </p>
       </section>
 
       <!-- 3. One plant, and the four ways out of it. -->

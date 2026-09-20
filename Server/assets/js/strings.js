@@ -157,6 +157,12 @@ export const EN = Object.freeze({
   wildBody:
     "Somewhere to send a seed when there is nobody in the room. A seed set down here waits for another to arrive, and what grows belongs to whoever was at both ends of it.",
   walkTitle: "The Long Walk",
+  // The way out of the garden's travel area and into the walk itself. It is
+  // the same place: `/g` draws it as dots from the stand-in, `/walk` grows
+  // every plant in it from what the plot service holds. A visitor who has
+  // walked to this one area of ten should be told the real one is there, and
+  // the other nine have nothing to offer such a link.
+  walkThisArea: "Walk this area",
   // On the front page, beside the other three. Shorter than `walkAbout`, which
   // is the walk's own page saying how to move around it — how to walk is not
   // an invitation to.

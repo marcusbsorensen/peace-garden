@@ -144,6 +144,13 @@ async function drawArea(theme) {
     plot.append(dot);
   }
   plot.setAttribute("aria-label", `${areaName(theme)}, ${plants.length}`);
+
+  // **The one area with a real one behind it.** `travel` is the Long Walk, and
+  // `/walk` grows every plant standing in it out of the plot service, where
+  // everything on this page is a dot from the stand-in. Hidden on the other
+  // nine rather than shown disabled: a control that goes nowhere is worse than
+  // no control.
+  el("area-walk-line").hidden = theme !== "travel";
 }
 
 async function drawPlant(theme, id) {
