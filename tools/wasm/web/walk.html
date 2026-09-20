@@ -55,7 +55,7 @@
   const note = document.getElementById('note');
   const list = document.getElementById('plots');
   const report = (text) => { note.textContent = text; };
-  const e = await loadModule('/assets/PlantWasm.wasm');
+  const e = await loadModule('/plant.wasm');
   const stage = makeWalkStage(document.getElementById('stage'), span, e);
 
   // The same sky the app draws, worked out for wherever this browser is

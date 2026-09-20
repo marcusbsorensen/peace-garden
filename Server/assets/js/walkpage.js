@@ -40,7 +40,7 @@ async function walk() {
   // this page uses this one instance: `loadModule` compiles and instantiates,
   // and calling it a second time would fetch and compile the whole thing
   // again.
-  const engine = await loadModule('/assets/PlantWasm.wasm');
+  const engine = await loadModule('/plant.wasm');
   const stage = makeWalkStage(el('stage'), SPAN, engine);
 
   // The same sky the app draws, and it turns with the walk: turning is the

@@ -23,7 +23,7 @@ const wasi = new Proxy({
   fd_prestat_get: () => 8,
 }, { get: (known, name) => known[name] ?? (() => 52) });
 
-const file = fileURLToPath(new URL('../../Server/assets/PlantWasm.wasm', import.meta.url));
+const file = fileURLToPath(new URL('../../Server/.pages/PlantWasm.wasm', import.meta.url));
 const { instance } = await WebAssembly.instantiate(await readFile(file), { wasi_snapshot_preview1: wasi });
 const e = instance.exports;
 memory = e.memory;

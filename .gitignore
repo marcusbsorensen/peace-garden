@@ -34,7 +34,10 @@ build/
 tools/sky/bsc5.dat
 
 # The plant renderer, eight megabytes of Swift built for wasm32 by
-# tools/wasm/build.sh. It is deployed from Server/assets/ and rebuilt rather
-# than committed: a binary this size in the history costs every clone forever,
-# and it is reproducible from the sources beside it.
-Server/assets/PlantWasm.wasm
+# tools/wasm/build.sh, and the two compressed copies `Server/index.php` serves
+# from. Deployed from Server/.pages/ and rebuilt rather than committed: a binary
+# this size in the history costs every clone forever, and it is reproducible
+# from the sources beside it.
+Server/.pages/PlantWasm.wasm
+Server/.pages/PlantWasm.wasm.gz
+Server/.pages/PlantWasm.wasm.br

@@ -62,8 +62,8 @@ if [ "$upload" = yes ]; then
     # `--delete` would take the server's. The walk is then a night with no
     # plants in it, which looks like an empty garden rather than a failed
     # upload.
-    if [ ! -f "$HERE/Server/assets/PlantWasm.wasm" ]; then
-        echo "Server/assets/PlantWasm.wasm is missing. Run tools/wasm/build.sh first." >&2
+    if [ ! -f "$HERE/Server/.pages/PlantWasm.wasm.gz" ]; then
+        echo "Server/.pages/PlantWasm.wasm.gz is missing. Run tools/wasm/build.sh first." >&2
         exit 1
     fi
 
@@ -136,7 +136,7 @@ check_path /assets/js/page.js   200 application/javascript
 check_path /assets/js/longwalk.js 200 application/javascript
 check_path /assets/js/sky.js      200 application/javascript
 check_path /assets/js/plant.js    200 application/javascript
-check_path /assets/PlantWasm.wasm 200 application/wasm
+check_path /plant.wasm            200 application/wasm
 check_path /assets/places.json    200 application/json
 check_path /assets/stars.bin      200 application/octet-stream
 check_path /assets/icon.svg     200 image/svg+xml

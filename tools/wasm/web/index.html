@@ -41,7 +41,7 @@
   const stage = makeStage(document.getElementById('stage'));
 
   const started = performance.now();
-  const grow = await loadGrower('/assets/PlantWasm.wasm');
+  const grow = await loadGrower('/plant.wasm');
   const loaded = performance.now() - started;
 
   function plant(seed) {

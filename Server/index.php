@@ -89,6 +89,70 @@ if (str_starts_with($path, '/api/')) {
     exit;
 }
 
+// **The plant renderer, compressed by hand.**
+//
+// It is eight megabytes of Swift built for wasm32, and nginx here gzips
+// JavaScript, CSS and JSON but not `application/wasm` — measured against the
+// live host on 20 September: `/assets/js/longwalk.js` comes back
+// `content-encoding: gzip` and the module comes back whole. The vhost is not
+// ours to add a MIME type to, so the one part of this host we do control
+// serves it instead.
+//
+// The copies are built by `tools/wasm/build.sh` and live in `.pages/`, which
+// nginx refuses outright because it is a dot-directory — so this is the only
+// way to them, and there is no second address serving the module uncompressed.
+//
+// Eight megabytes becomes 2.8 with gzip and 2.1 with brotli. `readfile`
+// streams, so none of it is held in memory.
+if ($path === '/plant.wasm') {
+    $accepts = $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '';
+    $forms = [['br', '.br'], ['gzip', '.gz']];
+    $file = __DIR__ . '/.pages/PlantWasm.wasm';
+    $encoding = null;
+    foreach ($forms as [$token, $suffix]) {
+        // A plain substring test: these two tokens are not prefixes of any
+        // other encoding name, and a `q=0` on one of them is a browser nobody
+        // has.
+        if (str_contains($accepts, $token) && is_file($file . $suffix)) {
+            $file .= $suffix;
+            $encoding = $token;
+            break;
+        }
+    }
+    if (!is_file($file)) {
+        // Built rather than committed, so the way this goes missing is a
+        // deploy from a clone that has never run the build. That is a fault at
+        // this end, not in the request.
+        http_response_code(500);
+        header('Content-Type: text/plain; charset=utf-8');
+        exit("The plant renderer is missing from this server.\n");
+    }
+
+    // Of the bytes on disk, by way of size and mtime rather than a hash: this
+    // is megabytes, and hashing it on every request to save sending it is the
+    // wrong way round.
+    $etag = '"' . dechex((int) filemtime($file)) . '-' . dechex((int) filesize($file)) . '"';
+    header('ETag: ' . $etag);
+    header('Vary: Accept-Encoding');
+    if (trim($_SERVER['HTTP_IF_NONE_MATCH'] ?? '') === $etag) {
+        http_response_code(304);
+        exit;
+    }
+
+    header('Content-Type: application/wasm');
+    if ($encoding !== null) {
+        header('Content-Encoding: ' . $encoding);
+    }
+    header('Content-Length: ' . filesize($file));
+    // A new build is a new URL only in the sense that the bytes change; the
+    // path does not. So it is cached for a day and revalidated after that,
+    // which the ETag above makes cheap.
+    header('Cache-Control: public, max-age=86400, must-revalidate');
+    header('X-Content-Type-Options: nosniff');
+    readfile($file);
+    exit;
+}
+
 if (!isset(ROUTES[$path])) {
     // A miss is a miss, including `/strings/en.json`, which is fetched for
     // every language except the one written into `strings.js` and is *meant*
