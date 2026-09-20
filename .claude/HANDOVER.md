@@ -1,6 +1,6 @@
 # Peace Garden: the ten areas — handover 20 September 2026
 
-One thing this session: **the garden stopped being one long border and became ten areas, nine of them shut.** The previous handover, whose traps still apply, is at `git show ea4cf86~5:.claude/HANDOVER.md`.
+One thing this session: **the garden stopped being one long border and became ten areas, nine of them shut.** The previous handover, whose traps still apply, is at `git show ea4cf86:.claude/HANDOVER.md`.
 
 ## State
 - **Done, tested, pushed, deployed.** `ea4cf86` on `origin/main`. SeedCore 178, app all passing, `check_areas` 47 checks, `check_long_walk` 600 placements, `check_offers`, `check_limits`, `check_backup` 22, `check_sky` 9729, `export.py --check` in step.
