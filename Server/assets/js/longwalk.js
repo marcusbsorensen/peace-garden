@@ -169,8 +169,18 @@ export function makeWalkStage(canvas, span, e) {
     });
     gl.bindVertexArray(null);
     plants.push({ x, z, parts, textures });
-    draw();
   }
+
+  // **Adding a plant does not draw the walk.** It used to, and that made
+  // filling a plot quadratic: every plant redrew every plant already standing,
+  // so three full plots were a hundred and forty scene renders of up to a
+  // hundred and forty plants each. The work is all on the GPU, so it does not
+  // show up as time spent in `add` — it shows up as the frame the grower waits
+  // for afterwards taking a second and a half.
+  //
+  // Whoever is filling the stage says when to draw, which is once a batch.
+  // `clear` and `turnBy` still draw on their own, because they are one
+  // change each and the answer has to be on screen when they return.
 
   // Takes every plant off the stage, for moving along the walk.
   function clear() {
@@ -197,10 +207,11 @@ export function makeWalkStage(canvas, span, e) {
 // Plants arrivals by the rule until there are `total`, reporting as it goes.
 export async function plantArrivals(e, total, report) {
   let arrived = 0;
+  let since = performance.now();
   while (arrived < total) {
     e.pg_walk_arrive();
     arrived += 1;
-    if (arrived % 10 === 0) { report(`Planting by the rule: ${arrived} of ${total} arrived`); await frame(); }
+    if (performance.now() - since > SLICE) { report(`Planting by the rule: ${arrived} of ${total} arrived`); await breathe(); since = performance.now(); }
   }
   return e.pg_walk_plots();
 }
@@ -214,6 +225,7 @@ export function describe(e, plot) {
 // Grows `span` plots from `first`, laid end to end down the walk, one plant at a time.
 export async function growPlots(e, stage, first, span, report) {
   stage.clear();
+  let since = performance.now();
   for (let k = 0; k < span; k++) {
     const plot = first + k;
     const along = (k - (span - 1) / 2) * SIDE;
@@ -223,9 +235,15 @@ export async function growPlots(e, stage, first, span, report) {
       const buffer = takeResult(e, length);
       const spot = new Float32Array(buffer.slice(0, 8));
       stage.add(spot[0], spot[1] + along, decode(buffer.slice(8)));
-      if (i % 4 === 3) { report(`Growing plot ${plot + 1}: ${i + 1} of ${count}`); await frame(); }
+      if (performance.now() - since > SLICE) {
+        report(`Growing plot ${plot + 1}: ${i + 1} of ${count}`);
+        stage.draw();
+        await breathe();
+        since = performance.now();
+      }
     }
   }
+  stage.draw();
 }
 
 // Grows `span` plots from the plot service, as a visitor's page will: the
@@ -234,6 +252,7 @@ export async function growPlots(e, stage, first, span, report) {
 export async function growFromService(e, stage, first, span, report) {
   stage.clear();
   const plots = [];
+  let since = performance.now();
   for (let k = 0; k < span; k++) {
     const plot = first + k;
     const { plantings } = await (await fetch(`/api/walk/plot/${plot}`)).json();
@@ -247,13 +266,67 @@ export async function growFromService(e, stage, first, span, report) {
       e.pg_free(pointer);
       if (length === 0) continue;
       stage.add(p.spot[0], p.spot[1] + along, decode(takeResult(e, length)));
-      if (i % 4 === 3) { report(`Growing plot ${plot + 1}: ${i + 1} of ${plantings.length}`); await frame(); }
+      // A batch of four, then one draw and one frame: the walk fills in in
+      // handfuls, which is what a growing garden should look like, and the
+      // page stays answerable to a finger throughout.
+      if (performance.now() - since > SLICE) {
+        report(`Growing plot ${plot + 1}: ${i + 1} of ${plantings.length}`);
+        stage.draw();
+        await breathe();
+        since = performance.now();
+      }
     }
   }
+  stage.draw();
   return plots;
 }
 
-const frame = () => new Promise((resolve) => requestAnimationFrame(() => resolve()));
+// **Letting go of the thread, without waiting for a frame to come round.**
+//
+// These loops used to pause on `requestAnimationFrame`, on the reasoning that
+// a frame is how often there is any point drawing. That is true when frames
+// arrive sixty times a second and false the moment they do not: a tab the
+// compositor has decided is not worth painting gets one frame a second, and a
+// walk that pauses thirty-five times then takes thirty-five seconds to grow
+// while the work in it adds up to two. It is not a rare case — a background
+// tab, a hidden pane, a phone with the screen off mid-load — and there is no
+// warning, because nothing is wrong: every plant still appears, just slowly
+// enough that a reader leaves.
+//
+// A macrotask has no such opinion. It returns as soon as the event loop is
+// free, which is what these pauses are actually for: letting a finger, a tap
+// or a resize be answered between batches. What is drawn still reaches the
+// screen on the compositor's own schedule, which is where that decision
+// belongs.
+//
+// `setTimeout(0)` is clamped to about four milliseconds after a few nested
+// calls, and these are nested hundreds deep. A `MessageChannel` is not
+// clamped.
+//
+// Built on first use rather than on import: a listening port is an open handle,
+// and a module that holds one from the moment it is loaded keeps a Node process
+// alive for ever merely by being imported. Nothing imports this outside a
+// browser today. Something will.
+const breathe = (() => {
+  let channel = null;
+  let waiting = [];
+  return () => new Promise((resolve) => {
+    if (!channel) {
+      channel = new MessageChannel();
+      channel.port1.onmessage = () => { const go = waiting; waiting = []; go.forEach((done) => done()); };
+    }
+    waiting.push(resolve);
+    channel.port2.postMessage(0);
+  });
+})();
+
+// How long to work before letting go, in milliseconds. About one frame at
+// sixty a second: long enough that the pauses are a small part of the whole,
+// short enough that nothing waits noticeably to be answered. Counted rather
+// than assumed, because a plant takes eleven milliseconds to grow on a Mac and
+// several times that on a phone — a batch of a fixed number of plants is a
+// different length of freeze on every device.
+const SLICE = 16;
 
 // MARK: - The ground
 
