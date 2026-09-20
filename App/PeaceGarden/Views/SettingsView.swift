@@ -144,7 +144,7 @@ struct SettingsView: View {
         // The alternative — resetting anyway — leaves a plant standing in a
         // public garden with no phone anywhere able to take it down, and says
         // nothing. Starting again can wait for a signal; that cannot be undone.
-        .alert("The peace garden could not be reached", isPresented: $somethingIsStillStanding) {
+        .alert("The public website garden could not be reached", isPresented: $somethingIsStillStanding) {
             Button("All right", role: .cancel) {}
         } message: {
             Text("Nothing has changed. Plants of yours are still standing there, and this is the only phone that can take them down, so try again when you have a signal.")
@@ -642,11 +642,11 @@ struct SettingsView: View {
         case .plants:
             return model.stillInTheAsking.isEmpty
                 ? "Your own seed and its plant stay. The people you grew those plants with keep theirs."
-                : "Your own seed and its plant stay. Plants of yours standing in the peace garden come down first. The people you grew those plants with keep theirs."
+                : "Your own seed and its plant stay. Plants of yours standing in the public website garden come down first. The people you grew those plants with keep theirs."
         case .everything:
             return model.stillInTheAsking.isEmpty
                 ? "Your seed, your plant and your garden all go. The people you have met keep the plants you grew together."
-                : "Your seed, your plant and your garden all go. Plants of yours standing in the peace garden come down first. The people you have met keep the plants you grew together."
+                : "Your seed, your plant and your garden all go. Plants of yours standing in the public website garden come down first. The people you have met keep the plants you grew together."
         }
     }
 

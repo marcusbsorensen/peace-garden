@@ -9,9 +9,9 @@ them wrong: dates must be ISO 8601, and a token is hex — `Data` decodes from
 base64 by default, so a hex token written as base64 arrives half as long again
 as it should be and the service answers 400.
 
-It writes six plants: one offerable, one asked, one invited, one shown, one
-declined, and one hybrid from before meetings left tokens behind, which can
-never be asked about.
+It writes eight plants: one offerable, one asked, three invited (two of them
+from the same gardener), one shown, one declined, and one hybrid from before
+meetings left tokens behind, which can never be asked about.
 """
 import base64, hashlib, json, struct, sys, uuid, datetime
 
@@ -48,6 +48,10 @@ rows = [
     ("here", "Ada", None, 40),
     ("asked", "Bo", "asked", 32),
     ("invited", "Cai", "invited", 25),
+    # Three waiting, and two of them from the same person, so the notice has to
+    # name each gardener once while agreeing with the number of *plants*.
+    ("invited-two", "Cai", "invited", 21),
+    ("invited-three", "Ines", "invited", 9),
     ("shown", "Devi", "shown", 18),
     ("declined", "Esme", "declined", 12),
     ("untokened", "Fen", None, 60),

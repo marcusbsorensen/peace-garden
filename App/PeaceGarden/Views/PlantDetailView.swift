@@ -24,18 +24,21 @@ struct PlantDetailView: View {
     /// The assisted path only, the same as the three rows in Settings:
     /// `HoldToConfirm` asks for this when a sustained press is not available.
     @State private var confirming = false
+    /// Which plant the chevrons have walked to, if any. `nil` is the one this
+    /// screen was opened on.
+    @State private var stepped: PlantRecord.ID?
 
     var body: some View {
         ZStack {
             StageBackdrop(
-                palette: record.genome.palette,
-                presence: record.growth(now: model.now).heightScale
+                palette: live.genome.palette,
+                presence: live.growth(now: model.now).heightScale
             )
                 .ignoresSafeArea()
 
             PlantSceneView(
-                genome: record.genome,
-                growth: record.growth(now: model.now),
+                genome: live.genome,
+                growth: live.growth(now: model.now),
                 onTap: { withAnimation(Chrome.fadeIn) { detailsVisible.toggle() } }
             )
             .ignoresSafeArea()
@@ -88,6 +91,14 @@ struct PlantDetailView: View {
                 .allowsHitTesting(!releasing)
                 .animation(.easeOut(duration: 0.3), value: releasing)
         }
+        // **Through the ones still waiting, without going back for each.**
+        // Three invitations used to be three trips out to the garden and back
+        // in again, and the garden is where you have just come from. They
+        // appear only while this plant is one of the ones waiting and there is
+        // more than one, because a chevron with nowhere to go is a control that
+        // lies.
+        .overlay(alignment: .leading) { chevron(towardsTrailing: false) }
+        .overlay(alignment: .trailing) { chevron(towardsTrailing: true) }
         // An alert rather than a confirmation dialog, for the reason
         // SettingsView gives: a dialog on a sheet with a black presentation
         // background drew its destructive button and dropped the cancel, which
@@ -121,10 +132,10 @@ struct PlantDetailView: View {
     private var details: some View {
         VStack {
             VStack(spacing: 8) {
-                Text(record.genome.name.full)
+                Text(live.genome.name.full)
                     .plantName()
                     .foregroundStyle(Chrome.ink)
-                Text(verbatim: record.growth(now: model.now).caption())
+                Text(verbatim: live.growth(now: model.now).caption())
                     .chromeLabel()
                     .foregroundStyle(Chrome.faint)
             }
@@ -132,7 +143,7 @@ struct PlantDetailView: View {
 
             Spacer()
 
-            if let encounter = record.encounter {
+            if let encounter = live.encounter {
                 VStack(spacing: 12) {
                     if let note = encounter.note {
                         // Somebody's own sentence about their own meeting.
@@ -204,8 +215,61 @@ struct PlantDetailView: View {
     /// went on saying *Show in the peace garden*, which is a screen telling
     /// somebody their own action did not happen. The garden is observed, so
     /// reading it here is what redraws the row.
+    /// **Everything on this screen reads `live`, not `record`.**
+    ///
+    /// It began as a fix for one thing — a value copy went stale, so an offered
+    /// plant went on saying *Show in the peace garden* — and the plant, its
+    /// name and its meeting were still read from the copy. That was invisible
+    /// until the chevrons arrived and stepped to the next plant: the standing
+    /// and the marks changed and the plant on screen did not, which looks like
+    /// a screen that has stopped working.
     private var live: PlantRecord {
-        model.garden.plants.first { $0.id == record.id } ?? record
+        let id = stepped ?? record.id
+        return model.garden.plants.first { $0.id == id }
+            ?? model.garden.plants.first { $0.id == record.id }
+            ?? record
+    }
+
+    /// The ones still waiting on an answer, in the order the garden holds them.
+    private var waiting: [PlantRecord] { model.invited }
+
+    /// One chevron, if there is anywhere for it to go.
+    ///
+    /// **Sitting in the veil's own window**, the band across the middle where
+    /// `StageVeil` lets the plant through and no word stands — so it is clear
+    /// of the name above and the row of marks below at every size, and it does
+    /// not need a background of its own to be legible.
+    @ViewBuilder
+    private func chevron(towardsTrailing: Bool) -> some View {
+        let others = waiting
+        if others.count > 1, others.contains(where: { $0.id == live.id }), !releasing {
+            Button { step(towardsTrailing ? 1 : -1, through: others) } label: {
+                ChevronGlyph(towardsTrailing: towardsTrailing)
+                    .stroke(Chrome.pinkGold.opacity(0.75), style: Chrome.monoline)
+                    .frame(width: 14, height: 26)
+                    // Room round it for a finger, without a ring drawn to say
+                    // so, and off the very edge of the glass where a thumb
+                    // resting on the phone would find it by accident.
+                    .padding(18)
+                    .padding(.horizontal, 6)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .transition(.opacity)
+        }
+    }
+
+    /// Walks to the next plant waiting on an answer, and round at the end.
+    ///
+    /// Round rather than stopping, because the row is short and a chevron that
+    /// went dead at one end would be a control that changes its mind.
+    private func step(_ by: Int, through others: [PlantRecord]) {
+        guard let at = others.firstIndex(where: { $0.id == live.id }) else { return }
+        let next = others[(at + by + others.count) % others.count]
+        withAnimation(Chrome.fadeIn) {
+            detailsVisible = true
+            stepped = next.id
+        }
     }
 
     /// Where this plant stands with the shared garden on the web, in a line.
@@ -220,7 +284,7 @@ struct PlantDetailView: View {
         case .asked:
             standingLine("Waiting on \(live.encounter?.peerDisplayName ?? String(localized: "the other gardener"))")
         case .shown:
-            standingLine("In the peace garden")
+            standingLine("In the public website garden")
         // One line for both endings. They are different events — the other
         // gardener said no, or one of the two took it back — but what a person
         // needs off this screen is where the plant is, and a line naming whose
@@ -348,7 +412,7 @@ struct PlantDetailView: View {
     /// white at its core whatever colour it casts, and a fully saturated dot
     /// reads as a petal that came loose rather than as the plant going.
     private var lightColour: Color {
-        let tip = record.genome.palette.petalTip
+        let tip = live.genome.palette.petalTip
         return Color(hue: tip.hue, saturation: 0.18, brightness: 1)
     }
 

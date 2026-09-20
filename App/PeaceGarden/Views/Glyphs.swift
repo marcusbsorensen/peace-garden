@@ -348,3 +348,39 @@ struct BloomGlyph: Shape {
         return path
     }
 }
+
+/// On to the next one waiting, and back to the last.
+///
+/// **Bowed, not folded.** Two straight strokes meeting at a point is the
+/// system chevron, and it is the one mark in this app that would have come
+/// from somewhere else. A stroke that bends instead of breaking is the same
+/// hand as every other glyph here, and at the size this is drawn the
+/// difference is felt rather than seen: it stops being a symbol borrowed from
+/// a settings list and becomes a thing in this garden pointing the way.
+///
+/// It points to where the next plant is, so it has no head and no tail — an
+/// arrow would say *go somewhere else* and this only says *there is another*.
+struct ChevronGlyph: Shape {
+    /// Which way it points. Leading is back down the queue.
+    var towardsTrailing = true
+
+    func path(in rect: CGRect) -> Path {
+        let body = rect.insetBy(dx: 0.8, dy: 0.8)
+        func at(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+            let across = towardsTrailing ? x : 1 - x
+            return CGPoint(x: body.minX + body.width * across, y: body.minY + body.height * y)
+        }
+
+        // Two curves meeting at the point rather than one bow through it. One
+        // quadratic across the whole height is an arc, and an arc at this size
+        // is a bracket — which is what the first drawing turned out to be. Two
+        // is a stroke that comes in nearly straight, bends where the fold would
+        // have been, and goes out nearly straight again.
+        var path = Path()
+        path.move(to: at(0.12, 0.06))
+        path.addQuadCurve(to: at(0.94, 0.50), control: at(0.74, 0.28))
+        path.addQuadCurve(to: at(0.12, 0.94), control: at(0.74, 0.72))
+        return path
+    }
+}
+

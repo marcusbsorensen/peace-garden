@@ -19,6 +19,13 @@ struct PlotView: View {
     @State private var selected: PlantRecord?
     /// The plant somebody else has asked about, while it is being answered.
     @State private var answering: PlantRecord?
+    /// Which outstanding invitation the notice at the foot opens next.
+    ///
+    /// It steps rather than always opening the first, so a garden with three
+    /// waiting in it can be walked through from the notice alone. The plant
+    /// screen has its own way through them — see `PlantDetailView`'s chevrons —
+    /// and this is for somebody who has not got there yet.
+    @State private var askedStep = 0
 
     @AppStorage(Chrome.daylightKey) private var daylightRaw = GardenDaylight.byTheClock.rawValue
 
@@ -163,6 +170,7 @@ struct PlotView: View {
                             switch thing {
                             case .plant(let standing):
                                 pool(for: standing, world: world, side: side, in: view)
+                                waiting(for: standing, world: world, side: side, in: view)
                                 plant(standing, world: world, side: side, in: view,
                                       light: light, lamps: lamps, glow: glow)
                             case .lamp(let lamp):
@@ -176,6 +184,11 @@ struct PlotView: View {
                     .scaleEffect(zoom * pinching)
                     .offset(x: pan.width + panning.width, y: pan.height + panning.height)
                     .rotationEffect(turning)
+
+                    // Over the plot and under the words, because a thread joins
+                    // one to the other and has to be in both their spaces.
+                    threads(world: world, side: side, in: view,
+                            screen: proxy.size, glass: proxy.frame(in: .global))
                 }
                 .frame(width: proxy.size.width, height: proxy.size.height)
                 .onAppear { screen = proxy.size }
@@ -684,6 +697,109 @@ struct PlotView: View {
         return Spot(x: cos(angle) * radius, z: sin(angle) * radius)
     }
 
+    // MARK: The ones somebody is waiting on
+
+    /// A ring of light round a plant the other gardener has asked about.
+    ///
+    /// **The garden says which one.** The notice at the foot of the screen used
+    /// to be the only thing that knew, so it told you something was waiting and
+    /// left you to find it among fourteen plants. The plant is standing right
+    /// there; the ring is the pointing.
+    ///
+    /// A ring rather than a pool, because `pool` — a filled glow in the same
+    /// gold — already means *this one has grown since you last looked*, and two
+    /// different things saying themselves the same way is one thing said twice.
+    /// Stroked, so a plant stands inside it rather than on top of it.
+    @ViewBuilder
+    private func waiting(for standing: Standing, world: Int, side: Double,
+                         in view: Isometric) -> some View {
+        if standing.record.standingOrHere.state == .invited, held?.id != standing.id {
+            let centre = view.point(standing.spot,
+                                    y: standsAt(standing.spot, world: world, side: side))
+            // Wide enough to be a ring round the stem and no wider. At 0.46 it
+            // was bigger than the plant standing in it, which reads as a mark
+            // on the ground that a plant happens to be near.
+            let axes = view.ellipse(radius: 0.30)
+
+            Ellipse()
+                .stroke(Chrome.pinkGold.opacity(0.45), style: Chrome.monoline)
+                .frame(width: axes.width * 2, height: axes.height * 2)
+                .contentShape(Ellipse())
+                .onTapGesture {
+                    visits.seen(standing.record, growth: standing.growth)
+                    selected = standing.record
+                }
+                .position(centre)
+        }
+    }
+
+    /// The threads: one from each waiting plant down to the question at the foot.
+    ///
+    /// **Why they are drawn at all.** A notice that says somebody is waiting,
+    /// and a plant standing in a garden, are two facts about one thing with
+    /// nothing between them. The thread is the between.
+    ///
+    /// **Why they are not straight.** Nothing in this garden is — the soil, the
+    /// hedges, the paths and the shadows are all irregular, and a ruled line
+    /// would be the one thing on screen that a machine had made. `Strand` bends
+    /// each one by an amount taken from that plant's own seed, so it hangs the
+    /// same way every time and no two hang alike.
+    ///
+    /// The plot's zoom and pan are render transforms and do not move layout, so
+    /// a plant's place on the glass is worked out here with the same arithmetic
+    /// `nudge(finger:)` uses rather than read back from SwiftUI.
+    @ViewBuilder
+    private func threads(world: Int, side: Double, in view: Isometric,
+                         screen size: CGSize, glass: CGRect) -> some View {
+        let waiting = model.invited
+        if !waiting.isEmpty, !askingFrame.isNull, size.width > 0 {
+            // **Each thread comes down under its own plant**, not to the middle
+            // of the notice. Gathered to one point they were a bundle hanging
+            // off the plot by its root; falling where they stand, they are
+            // three threads and you can see which is which.
+            let top = askingFrame.minY - glass.minY - 6
+            let inset: CGFloat = 20
+            let standings = standing(plotSide: side, in: view)
+            let heads = waiting.compactMap { record -> (SeedID, CGPoint)? in
+                guard let spot = standings.first(where: { $0.record.id == record.id })?.spot
+                else { return nil }
+                let at = view.point(spot, y: standsAt(spot, world: world, side: side))
+                return (record.seed, onTheGlass(at, in: size))
+            }
+
+            Canvas { context, _ in
+                for (seed, head) in heads where head.y < top {
+                    let foot = CGPoint(
+                        x: min(max(head.x, askingFrame.minX - glass.minX + inset),
+                               askingFrame.maxX - glass.minX - inset),
+                        y: top
+                    )
+                    let path = Strand.path(from: head, to: foot, seed: seed)
+                    // The same two passes as `UnfurlingBackdrop`: a wide, nearly
+                    // invisible halo so the thread has air around it, and a
+                    // hairline down the middle so it is a thread and not a smear.
+                    context.stroke(path, with: .color(Chrome.pinkGold.opacity(0.05)),
+                                   style: StrokeStyle(lineWidth: 7, lineCap: .round))
+                    context.stroke(path, with: .color(Chrome.pinkGold.opacity(0.22)),
+                                   style: StrokeStyle(lineWidth: 1, lineCap: .round))
+                }
+            }
+            .frame(width: size.width, height: size.height)
+            .allowsHitTesting(false)
+        }
+    }
+
+    /// A point in the plot's own coordinates, where it actually lands on the
+    /// glass once the plot has been zoomed and panned.
+    private func onTheGlass(_ point: CGPoint, in size: CGSize) -> CGPoint {
+        let scale = zoom * pinching
+        let middle = CGPoint(x: size.width / 2, y: size.height / 2)
+        return CGPoint(
+            x: middle.x + (point.x - middle.x) * scale + pan.width + panning.width,
+            y: middle.y + (point.y - middle.y) * scale + pan.height + panning.height
+        )
+    }
+
     /// The light finding a plant that has changed since it was last opened.
     ///
     /// A pool on the ground rather than a mark beside the plant, because the
@@ -754,9 +870,10 @@ struct PlotView: View {
     /// numeral here anyway.
     @ViewBuilder
     private var asking: some View {
-        if let asked = model.invited.first {
-            Button { answering = asked } label: {
-                Text("Somebody has asked about a plant here")
+        let waiting = model.invited
+        if !waiting.isEmpty {
+            Button { openTheNextAsked(of: waiting) } label: {
+                Text(asked(by: waiting))
                     .chromeLabel()
                     .foregroundStyle(Chrome.pinkGold)
                     .pressable()
@@ -765,6 +882,57 @@ struct PlotView: View {
             .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { askingFrame = $0 }
             .padding(.bottom, 10)
         }
+    }
+
+    /// Who has asked, and what they asked for.
+    ///
+    /// **It said *somebody* while the app knew the name.** The people in this
+    /// garden are the whole subject of it — every plant here came from meeting
+    /// one of them — and anonymising them turned a person's question into a
+    /// notification from a service. It also said *asked about a plant*, which
+    /// could be a question, a message or a query; what was actually asked is
+    /// for the plant to be shown where anyone can come across it.
+    ///
+    /// **Two keys rather than a plural rule.** The count decides which sentence
+    /// is looked up, so neither carries a numeral — which `tools/strings/app_check.py`
+    /// would refuse — and both are a whole sentence for a translator to move
+    /// around. `ListFormatter` puts the names in the reader's own language,
+    /// with that language's own word for *and*.
+    private func asked(by waiting: [PlantRecord]) -> LocalizedStringKey {
+        let who = ListFormatter.localizedString(byJoining: Self.gardenersAsking(waiting))
+        // One *plant*, not one person: two plants from the same meeting are two
+        // questions, and the sentence has to agree with the plants.
+        return waiting.count == 1
+            ? "\(who) has asked to show a plant you grew together"
+            : "\(who) have asked to show plants you grew together"
+    }
+
+    /// Who is asking, each of them once, in the order their plants arrived.
+    ///
+    /// Once, because two plants from one meeting are two questions and one
+    /// person, and a notice that said *Cai and Cai* would be counting plants
+    /// while appearing to count people.
+    static func gardenersAsking(_ waiting: [PlantRecord]) -> [String] {
+        var names: [String] = []
+        for record in waiting {
+            let name = record.encounter?.peerDisplayName ?? String(localized: "the other gardener")
+            if !names.contains(name) { names.append(name) }
+        }
+        return names
+    }
+
+    /// Opens the next one waiting, and the one after that next time.
+    ///
+    /// It goes to the plant rather than straight to the question, because the
+    /// plant is what is being asked about and answering without looking at it
+    /// is the thing this whole screen exists to avoid. The answer is one mark
+    /// away from there, and the chevrons carry on through the rest.
+    private func openTheNextAsked(of waiting: [PlantRecord]) {
+        guard !waiting.isEmpty else { return }
+        let next = waiting[askedStep % waiting.count]
+        askedStep += 1
+        visits.seen(next, growth: next.growth(now: model.now))
+        selected = next
     }
 
     /// The grounds, picked the way you pick a plant.

@@ -73,9 +73,9 @@ struct ShowInGardenView: View {
                         .padding(.top, 62)
 
                     if isBeingAsked {
-                        headline("\(peer) would like this plant to stand in the peace garden.")
+                        headline("\(peer) would like this plant to stand in the public website garden.")
                     } else {
-                        headline("Show this plant in the peace garden.")
+                        headline("Show this plant in the public website garden.")
                     }
 
                     VStack(spacing: 16) {
