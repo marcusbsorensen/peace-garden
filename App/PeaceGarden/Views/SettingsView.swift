@@ -26,6 +26,11 @@ struct SettingsView: View {
     @State private var draftName = ""
     @FocusState private var editingName: Bool
     @State private var confirming: Reset?
+    /// While the peace garden is being asked to let go of everything. See
+    /// `perform(_:)`.
+    @State private var takingBack = false
+    /// Raised when it would not, and nothing was reset.
+    @State private var somethingIsStillStanding = false
     @AppStorage(Places.preferredKey) private var preferredPlace = ""
     @AppStorage(Sharing.invitationsKey) private var wantsInvitations = Sharing.invitationsDefault
     @AppStorage(Chrome.namesPlantKey) private var namesPlant = true
@@ -134,6 +139,15 @@ struct SettingsView: View {
             }
         } message: { reset in
             Text(consequence(reset))
+        }
+        // **Nothing was reset**, which is the whole of what this says first.
+        // The alternative — resetting anyway — leaves a plant standing in a
+        // public garden with no phone anywhere able to take it down, and says
+        // nothing. Starting again can wait for a signal; that cannot be undone.
+        .alert("The peace garden could not be reached", isPresented: $somethingIsStillStanding) {
+            Button("All right", role: .cancel) {}
+        } message: {
+            Text("Nothing has changed. Plants of yours are still standing there, and this is the only phone that can take them down, so try again when you have a signal.")
         }
     }
 
@@ -528,6 +542,9 @@ struct SettingsView: View {
 
             row(.everything)
         }
+        .opacity(takingBack ? 0.4 : 1)
+        .allowsHitTesting(!takingBack)
+        .animation(Chrome.fadeIn, value: takingBack)
     }
 
     private func row(_ reset: Reset) -> some View {
@@ -619,19 +636,55 @@ struct SettingsView: View {
         switch reset {
         case .seed:
             return "The plant you have now was created once and this creates another. Your garden keeps every plant you have grown with somebody, and so do they."
+        // **The peace garden is named only when it is holding something.**
+        // A sentence about a shared garden under a reset, for somebody who has
+        // never shared anything, is a line about a place they have not been.
         case .plants:
-            return "Your own seed and its plant stay. The people you grew those plants with keep theirs."
+            return model.stillInTheAsking.isEmpty
+                ? "Your own seed and its plant stay. The people you grew those plants with keep theirs."
+                : "Your own seed and its plant stay. Plants of yours standing in the peace garden come down first. The people you grew those plants with keep theirs."
         case .everything:
-            return "Your seed, your plant and your garden all go. The people you have met keep the plants you grew together."
+            return model.stillInTheAsking.isEmpty
+                ? "Your seed, your plant and your garden all go. The people you have met keep the plants you grew together."
+                : "Your seed, your plant and your garden all go. Plants of yours standing in the peace garden come down first. The people you have met keep the plants you grew together."
         }
     }
 
+    /// **The peace garden lets go first, and only then does anything here go.**
+    ///
+    /// A plant's contact tokens live in this garden and nowhere else — that is
+    /// what lets the service hold no account, and it is also why emptying this
+    /// phone while a plant is standing in the peace garden would leave it
+    /// standing for good, reachable by nobody. So both of the rows that remove
+    /// plants ask for them back first, and if the garden cannot be reached they
+    /// do nothing at all rather than half of it.
+    ///
+    /// *Get a new seed* keeps every plant and takes nothing down, so it goes
+    /// straight through.
     private func perform(_ reset: Reset) {
-        switch reset {
-        case .seed: model.resetSeed()
-        case .plants: model.forgetPlants()
-        case .everything: model.resetEverything()
+        guard reset != .seed else {
+            model.resetSeed()
+            return finish()
         }
+        confirming = nil
+        takingBack = true
+        Task {
+            let left = await model.takeEverythingBack()
+            takingBack = false
+            guard left.isEmpty else {
+                somethingIsStillStanding = true
+                return
+            }
+            if reset == .plants {
+                model.forgetPlants()
+            } else {
+                model.resetEverything()
+            }
+            finish()
+        }
+    }
+
+    private func finish() {
         confirming = nil
         close()
     }

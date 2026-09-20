@@ -255,12 +255,67 @@ final class AskingTests: XCTestCase {
         XCTAssertEqual(model.garden.plants[0].standingOrHere.state, .here)
     }
 
+    // MARK: Starting again
+
+    @MainActor
+    func testOnlyWhatTheGardenIsStillHoldingIsInTheAsking() {
+        let model = model(with: [
+            hybrid("shown", standing: Standing(state: .shown, changedAt: .distantPast)),
+            hybrid("asked", standing: Standing(state: .asked, changedAt: .distantPast)),
+            hybrid("invited", standing: Standing(state: .invited, changedAt: .distantPast)),
+            // Settled, so there is nothing left to take back.
+            hybrid("declined", standing: Standing(state: .declined, changedAt: .distantPast)),
+            hybrid("withdrawn", standing: Standing(state: .withdrawn, changedAt: .distantPast)),
+            hybrid("here"),
+            // Never reached the service at all.
+            hybrid("untokened", remembersTheMeeting: false,
+                   standing: Standing(state: .shown, changedAt: .distantPast)),
+        ])
+
+        XCTAssertEqual(model.stillInTheAsking.count, 3)
+    }
+
+    @MainActor
+    func testStartingAgainAsksTheGardenToLetGoOfEverythingFirst() async {
+        // The failure this prevents: the contact tokens live in this garden and
+        // nowhere else, so wiping it while a plant is standing leaves the plant
+        // standing for good, with no phone anywhere able to take it down.
+        let model = model(with: [
+            hybrid("shown", standing: Standing(state: .shown, changedAt: .distantPast)),
+            hybrid("asked", standing: Standing(state: .asked, changedAt: .distantPast)),
+            hybrid("here"),
+        ])
+        stub.replies["/api/walk/withdraw"] = (200, offerJSON(hybrid("shown"), state: "withdrawn"))
+
+        let left = await model.takeEverythingBack()
+
+        XCTAssertTrue(left.isEmpty)
+        XCTAssertEqual(stub.asked.filter { $0 == "/api/walk/withdraw" }.count, 2)
+        XCTAssertTrue(model.stillInTheAsking.isEmpty)
+    }
+
+    @MainActor
+    func testAPlantTheGardenWillNotLetGoOfIsHandedBackRatherThanForgotten() async {
+        let model = model(with: [
+            hybrid("shown", standing: Standing(state: .shown, changedAt: .distantPast)),
+        ])
+        stub.replies["/api/walk/withdraw"] = (503, "")
+
+        let left = await model.takeEverythingBack()
+
+        // The caller is told, and the plant is still standing — which is what
+        // stops Settings resetting anything.
+        XCTAssertEqual(left.count, 1)
+        XCTAssertEqual(model.shown.count, 1)
+    }
+
     // MARK: Fixtures
 
     private let mine = SeedID(bytes: seedDigest(SeedDomain.seed, Data("asking-mine".utf8)))!
 
-    private func hybrid(remembersTheMeeting: Bool = true, standing: Standing? = nil) -> PlantRecord {
-        let theirs = SeedID(bytes: seedDigest(SeedDomain.seed, Data("asking-theirs".utf8)))!
+    private func hybrid(_ named: String = "asking-theirs",
+                        remembersTheMeeting: Bool = true, standing: Standing? = nil) -> PlantRecord {
+        let theirs = SeedID(bytes: seedDigest(SeedDomain.seed, Data(named.utf8)))!
         let encounter = Pollination.encounterID(
             seedA: mine, seedB: theirs,
             nonceA: Data("nonce-a".utf8), nonceB: Data("nonce-b".utf8)

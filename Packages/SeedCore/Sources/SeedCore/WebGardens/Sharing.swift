@@ -148,6 +148,25 @@ public struct Standing: Codable, Equatable, Sendable {
         case .asked, .invited, .shown, .declined, .withdrawn, .unknown: return false
         }
     }
+
+    /// Whether the peace garden is still holding something of this plant's that
+    /// this phone can take back.
+    ///
+    /// The three unsettled states: standing there, offered and unanswered, or
+    /// offered *to* this phone and unanswered. Either gardener may withdraw any
+    /// of them at any time. `declined` and `withdrawn` are already settled and
+    /// there is nothing left to take back; `here` was never there.
+    ///
+    /// **This is what a reset has to consult.** The contact tokens live in this
+    /// garden and nowhere else, so a reset that wipes them while a plant is
+    /// standing leaves it standing for good — with no phone anywhere able to
+    /// reach it. See `GardenModel.takeEverythingBack`.
+    public var canTakeBack: Bool {
+        switch state {
+        case .asked, .invited, .shown: return true
+        case .here, .declined, .withdrawn, .unknown: return false
+        }
+    }
 }
 
 // MARK: - What is posted

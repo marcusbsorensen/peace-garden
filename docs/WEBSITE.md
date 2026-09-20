@@ -953,6 +953,24 @@ failure by another route — so either it takes the plot too and says so, or it 
 plainly that the plot stays and where to go for it. Either is defensible; silence
 is not.
 
+**Settled, 20 September: it takes them down, and if it cannot, it does nothing.**
+The first half arrived before the plot did, by the Long Walk. A plant's contact
+tokens live in the phone's garden and nowhere else — which is what lets the
+service hold no account — so *Reset everything* and *Empty the garden* were both
+quietly permanent in a second way: wiping the tokens while a plant stood in the
+peace garden left it standing with no phone anywhere able to ask for it to come
+down. Both rows now withdraw everything the garden is still holding before they
+remove anything, and their consequence gains a clause saying so — but only when
+something is actually standing, because a sentence about a shared garden under a
+reset, for somebody who has never shared anything, is a line about a place they
+have not been.
+
+**And if the garden cannot be reached, nothing is reset at all**, with an alert
+that says so. Resetting anyway is the version that leaves a plant standing in a
+public garden for good and says nothing; starting again can wait for a signal,
+and that cannot wait for anything. `Standing.canTakeBack` is the three unsettled
+states and `GardenModel.takeEverythingBack` is the doing of it.
+
 ### Deliberately not settings
 
 - **A guest-book switch**, because there is no guest book and there is nothing to

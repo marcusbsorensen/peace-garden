@@ -215,4 +215,27 @@ final class SharingTests: XCTestCase {
     private func isHex32(_ text: String) -> Bool {
         text.count == 64 && text.allSatisfy { "0123456789abcdef".contains($0) }
     }
+
+    // MARK: What a reset has to let go of first
+
+    func testTheGardenIsStillHoldingWhatHasNotBeenSettled() {
+        for state in [Standing.State.asked, .invited, .shown] {
+            XCTAssertTrue(Standing(state: state, changedAt: .distantPast).canTakeBack,
+                          "\(state) is still in the asking")
+        }
+        for state in [Standing.State.here, .declined, .withdrawn, .unknown] {
+            XCTAssertFalse(Standing(state: state, changedAt: .distantPast).canTakeBack,
+                           "\(state) has nothing left to take back")
+        }
+    }
+
+    func testTakingBackAndAskingAgainAreNeverBothTrue() {
+        // A plant is either this phone's to offer or the garden's to give back,
+        // and never both — which is what lets Settings reason about a reset by
+        // one of them alone.
+        for state in [Standing.State.here, .asked, .invited, .shown, .declined, .withdrawn, .unknown] {
+            let standing = Standing(state: state, changedAt: .distantPast)
+            XCTAssertFalse(standing.canAsk && standing.canTakeBack, "\(state)")
+        }
+    }
 }

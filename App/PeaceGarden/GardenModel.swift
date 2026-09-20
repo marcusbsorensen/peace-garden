@@ -286,6 +286,39 @@ final class GardenModel {
         }
     }
 
+    /// Plants the peace garden is still holding something of.
+    ///
+    /// Standing there, offered and unanswered, or offered to this phone and
+    /// unanswered. A plant with no tokens is not in it: nothing of it ever
+    /// reached the service.
+    var stillInTheAsking: [PlantRecord] {
+        garden.plants.filter { $0.tokens != nil && $0.standingOrHere.canTakeBack }
+    }
+
+    /// Takes every one of them back, and returns the ones still standing.
+    ///
+    /// **Why starting again has to do this first.** A plant's contact tokens
+    /// live in this garden and nowhere else — that is the whole point of them,
+    /// and it is what lets the service hold no account. The cost is that a
+    /// reset which wipes them while a plant is standing in the peace garden
+    /// leaves it standing for good: the row stays, the plant stays drawn, and
+    /// there is no longer a phone anywhere that can ask for it to come down.
+    /// *Reset everything* is already the irreversible row on that screen; this
+    /// keeps it from being irreversible somewhere the person cannot see.
+    ///
+    /// One at a time rather than all at once, because the service counts
+    /// withdrawals per address per hour and a garden emptied in parallel would
+    /// spend the whole allowance in a second and lose the tail of it.
+    func takeEverythingBack() async -> [PlantRecord] {
+        var left: [PlantRecord] = []
+        for record in stillInTheAsking {
+            if case .failure = await withdraw(record) {
+                left.append(record)
+            }
+        }
+        return left
+    }
+
     /// Asks the service whether anything has happened to any of this garden's
     /// meetings, and writes down what it says.
     ///
