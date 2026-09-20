@@ -57,6 +57,16 @@ if [ "$upload" = yes ]; then
     # `.api/config.php` is the plot service's database credentials, written on
     # the server and never in git, so it is the reverse case: a plain exclude,
     # to skip it here and keep `--delete` from removing the server's copy.
+    # The plant renderer is built rather than committed — see .gitignore — so
+    # a clone that has never run tools/wasm/build.sh has no copy of it, and
+    # `--delete` would take the server's. The walk is then a night with no
+    # plants in it, which looks like an empty garden rather than a failed
+    # upload.
+    if [ ! -f "$HERE/Server/assets/PlantWasm.wasm" ]; then
+        echo "Server/assets/PlantWasm.wasm is missing. Run tools/wasm/build.sh first." >&2
+        exit 1
+    fi
+
     rsync -a $dry --delete --stats \
         --exclude='.DS_Store' \
         --filter='-s /README.md' \
@@ -111,12 +121,24 @@ check_path /g                                      200 text/html
 check_path /garden                                 200 text/html
 check_path /download                               200 text/html
 check_path /wild                                   200 text/html
+check_path /walk                                   200 text/html
 check_path /t                                      200 text/html
 check_path /.well-known/apple-app-site-association 200 application/json
 
 # A sample of the static half, which nginx types from its own mime.types.
 check_path /assets/site.css     200 text/css
 check_path /assets/js/page.js   200 application/javascript
+# The Long Walk's three modules and the two files the sky reads. `.wasm` and
+# `.bin` are the ones worth naming: a host that does not know `application/wasm`
+# serves the module as `application/octet-stream`, which
+# `WebAssembly.instantiateStreaming` refuses, and the page is then a night with
+# no plants in it and no error anybody sees.
+check_path /assets/js/longwalk.js 200 application/javascript
+check_path /assets/js/sky.js      200 application/javascript
+check_path /assets/js/plant.js    200 application/javascript
+check_path /assets/PlantWasm.wasm 200 application/wasm
+check_path /assets/places.json    200 application/json
+check_path /assets/stars.bin      200 application/octet-stream
 check_path /assets/icon.svg     200 image/svg+xml
 check_path /languages.json      200 application/json
 check_path /strings/fr.json     200 application/json

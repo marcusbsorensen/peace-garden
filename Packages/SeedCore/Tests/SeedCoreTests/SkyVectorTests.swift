@@ -7,7 +7,7 @@ import XCTest
 /// browser cannot run SeedCore. That makes it a port, and a port drifts unless
 /// something holds it — the same arrangement `LongWalkVectorTests` has with the
 /// plot service's placing rule. This file is what the Swift says;
-/// `tools/reference/check_sky.mjs` fails CI if `tools/wasm/web/sky.js` says
+/// `tools/reference/check_sky.mjs` fails CI if `Server/assets/js/sky.js` says
 /// anything else.
 ///
 /// **What is pinned is the whole pipeline**, not a handful of trig calls: the
@@ -26,7 +26,7 @@ final class SkyVectorTests: XCTestCase {
     static var catalogueURL: URL {
         var url = URL(fileURLWithPath: #filePath)
         for _ in 0..<5 { url.deleteLastPathComponent() }
-        return url.appendingPathComponent("tools/wasm/web/stars.bin")
+        return url.appendingPathComponent("Server/assets/stars.bin")
     }
 
     static let recordingKey = "PEACE_GARDEN_RECORD_VECTORS"

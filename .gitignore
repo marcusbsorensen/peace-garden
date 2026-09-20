@@ -32,3 +32,9 @@ build/
 # redistribute here. tools/sky/pack.py says where it comes from; its output,
 # App/PeaceGarden/Resources/stars.bin, is committed.
 tools/sky/bsc5.dat
+
+# The plant renderer, eight megabytes of Swift built for wasm32 by
+# tools/wasm/build.sh. It is deployed from Server/assets/ and rebuilt rather
+# than committed: a binary this size in the history costs every clone forever,
+# and it is reproducible from the sources beside it.
+Server/assets/PlantWasm.wasm

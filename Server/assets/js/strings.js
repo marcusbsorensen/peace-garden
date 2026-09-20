@@ -156,6 +156,24 @@ export const EN = Object.freeze({
   wildTitle: "The Wild Fields",
   wildBody:
     "Somewhere to send a seed when there is nobody in the room. A seed set down here waits for another to arrive, and what grows belongs to whoever was at both ends of it.",
+  walkTitle: "The Long Walk",
+  walkAbout:
+    "A path with plots down either side of it, and in each plot the plants that two people grew when they met. Walk on to go further down it, or turn to go round to another side of the same plots.",
+  // While the plants are being grown. They are grown one at a time, in this
+  // browser, from the same arithmetic the phone uses, and on a long plot that
+  // takes a moment worth naming.
+  walkGrowing: "Growing the plants\u2026",
+  walkEmpty: "Nothing has been planted here yet.",
+  // The walk could not be drawn at all. Said in words rather than left as an
+  // empty night, which a reader would take for the garden.
+  walkAway: "The walk cannot be reached just now.",
+  // The four ways through it. `walkBack` and `walkOn` move down the path;
+  // `walkLeft` and `walkRight` turn on the spot.
+  walkBack: "Back",
+  walkOn: "On",
+  walkLeft: "Turn left",
+  walkRight: "Turn right",
+
   // Said once and used on both of the pages that are not built yet, because two
   // ways of saying *not yet* is one more than a reader needs.
   notYet: "Not open yet.",

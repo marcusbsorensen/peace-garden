@@ -322,7 +322,9 @@ the service's own files unreachable, as it does `.pages/`.
   never inside it. The 20i database goes in `config.php` once it exists.
 
 Locally, with the browser pages beside it:
-`php -S localhost:8803 -t tools/wasm/web tools/wasm/dev-router.php`, then
+`php -S localhost:8803 -t Server tools/wasm/dev-router.php` — which serves
+the whole site with the plot service behind it, same-origin the way the live
+host is — then
 `node tools/wasm/send-arrivals.mjs http://localhost:8803 120` to stand in for
 phones, and open `/walk.html?source=service`.
 

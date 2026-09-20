@@ -195,7 +195,7 @@ Nothing draws it. The garden is standing on it.
 
 **20 September 2026.** The web walk draws the same field. A browser cannot run
 SeedCore, so the arithmetic that puts a star on the glass now exists twice —
-`Sky` in Swift and `tools/wasm/web/sky.js` in JavaScript — and a port drifts
+`Sky` in Swift and `Server/assets/js/sky.js` in JavaScript — and a port drifts
 unless something holds it. `SkyVectorTests` writes down what the Swift sees and
 `tools/reference/check_sky.mjs` fails CI if the JavaScript sees anything else,
 which is the arrangement `check_long_walk.php` already has with the plot

@@ -1,0 +1,111 @@
+<!doctype html>
+<!--
+  The Long Walk.
+
+  A path with plots down either side of it, and in each plot the plants that
+  two people grew when they met. It runs away from the reader; walking on goes
+  further down it, and turning goes round to another side of the same plots.
+
+  **This page is the one the app talks to, not a picture of it.** The plants
+  are grown here, in the browser, from the same SeedCore that grows them on the
+  phone — `plant.js` loads that library built for wasm32 and `longwalk.js`
+  hands it each planting the plot service holds. Nothing is drawn from an image
+  and nothing is precomputed: a plant on this page is the plant on the phone
+  because it is the same arithmetic, not because somebody kept two drawings in
+  step.
+
+  **The sky is the real one**, worked out for wherever this browser is keeping
+  time and asking for nothing to find out — `sky.js`, a port of SeedCore's
+  `Sky`, held to it by `tools/reference/check_sky.mjs`. Both halves of it: the
+  plots float, so the stars under them are drawn too.
+
+  **It is a night, so the page is dark whatever the reader's system says.**
+  Every other page here follows `prefers-color-scheme`; this one cannot,
+  because the walk is lit by its own sky and a pale page around it is a second
+  room.
+
+  `noindex`, for the reason `/g` gives: walkable and indexed are different
+  properties and only one of them was asked for.
+
+  Static, like the rest: no analytics, no font CDN, no third-party anything.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Peace Garden — the Long Walk</title>
+    <meta name="description" content="A path with plots down either side, and in each one the plants two people grew when they met." />
+    <meta name="color-scheme" content="dark" />
+    <meta name="robots" content="noindex" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/icon-180.png" />
+  </head>
+
+  <body class="night">
+    <!--
+      The walk itself, behind everything. The sky is behind the plots, and the
+      pool of light sits between them so the plots stand in front of the sky
+      rather than on top of a picture of one.
+    -->
+    <div class="walk" aria-hidden="true">
+      <canvas id="sky"></canvas>
+      <div class="pool"></div>
+    </div>
+    <canvas class="walk-stage" id="stage" aria-label="The Long Walk"></canvas>
+
+    <main class="page walk-page" id="page">
+      <header class="masthead">
+        <a href="/"
+          ><img class="mark" src="/assets/icon.svg" alt="" width="44" height="44"
+        /></a>
+        <span class="wordmark">Peace Garden</span>
+      </header>
+
+      <h1 class="heading" data-s="walkTitle"></h1>
+      <p class="body walk-about" data-s="walkAbout"></p>
+
+      <!--
+        One line, and only when there is something to say: while the plants are
+        being grown, or when there is nothing down there yet. It carries no
+        count — a running tally of plots and plants is a readout, and this is a
+        walk.
+      -->
+      <p class="label walk-note" id="note" role="status" hidden></p>
+
+      <nav class="walk-keys" id="keys" role="group" hidden>
+        <button class="pad-key" type="button" id="back" data-s="walkBack"></button>
+        <button class="pad-key" type="button" id="left" data-s="walkLeft"></button>
+        <button class="pad-key" type="button" id="right" data-s="walkRight"></button>
+        <button class="pad-key" type="button" id="on" data-s="walkOn"></button>
+      </nav>
+
+      <p class="notice body">
+        <a href="/privacy" data-s="privacyTitle"></a>
+      </p>
+
+      <footer class="foot">
+        <label class="chooser">
+          <span class="label" id="language-label"></span>
+          <span class="chooser__field">
+            <select id="language" class="chooser__select"></select>
+            <!-- Monoline, even weight, round free ends, per BRAND.md §3.2. -->
+            <svg class="chooser__mark" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path
+                d="M4 6.5 L8 10.5 L12 6.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.25"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+        </label>
+      </footer>
+    </main>
+
+    <script type="module" src="/assets/js/plain.js"></script>
+    <script type="module" src="/assets/js/walkpage.js"></script>
+  </body>
+</html>

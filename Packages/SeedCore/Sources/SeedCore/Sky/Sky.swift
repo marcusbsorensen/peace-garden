@@ -119,7 +119,7 @@ public enum Sky {
 /// 2-D canvas in a browser. A constant kept in one of them is a second sky, and
 /// the point of this one is that somebody holding the phone and somebody
 /// walking the garden in a browser are under the same stars. The browser's copy
-/// is a port — `tools/wasm/web/sky.js` — and `tools/reference/check_sky.mjs`
+/// is a port — `Server/assets/js/sky.js` — and `tools/reference/check_sky.mjs`
 /// holds it to vectors this produced, the way `check_long_walk.php` holds the
 /// service's placing rule.
 ///

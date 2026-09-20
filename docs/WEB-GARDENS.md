@@ -315,7 +315,8 @@ In order, because each needs the one before:
    are the WebGL above. Whether a plot is one WebGL scene or sprites laid on a
    canvas the way the app does it is a decision for when (1) runs.
 3. **One area's template**, built and judged at five hundred plants. **Done
-   for the Long Walk, 18 September**, in the browser (`tools/wasm/web/walk.html`).
+   for the Long Walk, 18 September**, in the browser (`/walk`, and
+   `/dev/walk` for a walk invented to look at).
    The rule held: every plot full but the growing end, 3% of plants a tier from
    their own. The look did not: one row a tier was about 1.4 plants a square
    metre and read as single stems on turf, with drifts too far apart to read

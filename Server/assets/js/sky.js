@@ -258,7 +258,10 @@ export async function makeSky(canvas, {
   quarterTurns = () => 0,
   now = () => new Date(),
 } = {}) {
-  const here = new URL('.', import.meta.url);
+  // The catalogue and the zone table sit beside the other assets rather than
+  // among the modules, so this walks up out of `js/` rather than naming a
+  // path: the module is then movable and the two files travel with it.
+  const here = new URL('../', import.meta.url);
   const [catalogue, zones] = await Promise.all([
     fetch(new URL('stars.bin', here)).then((r) => r.arrayBuffer()).then(decodeCatalogue),
     fetch(new URL('places.json', here)).then((r) => r.json()),

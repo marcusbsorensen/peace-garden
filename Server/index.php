@@ -58,6 +58,7 @@ const ROUTES = [
     '/garden' => ['g', 'text/html; charset=utf-8'],
     '/download' => ['download', 'text/html; charset=utf-8'],
     '/wild' => ['wild', 'text/html; charset=utf-8'],
+    '/walk' => ['walk', 'text/html; charset=utf-8'],
     '/t' => ['t', 'text/html; charset=utf-8'],
     // A privacy notice is a mandatory App Store listing field, so this path is
     // load-bearing for the submission rather than decorative. See

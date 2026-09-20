@@ -2,7 +2,7 @@
 //
 //   node tools/reference/check_sky.mjs
 //
-// `tools/wasm/web/sky.js` is a port: a browser cannot run SeedCore, so the
+// `Server/assets/js/sky.js` is a port: a browser cannot run SeedCore, so the
 // arithmetic that puts a star on the glass exists twice. A port drifts unless
 // something holds it, which is the arrangement `check_long_walk.php` already
 // has with the plot service's placing rule. `SkyVectorTests` writes down what
@@ -18,12 +18,12 @@
 
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import * as sky from '../wasm/web/sky.js';
+import * as sky from '../../Server/assets/js/sky.js';
 
 const here = new URL('.', import.meta.url);
 const vectors = JSON.parse(await readFile(new URL('sky_vectors.json', here), 'utf8'));
 const catalogue = sky.decodeCatalogue(
-  (await readFile(fileURLToPath(new URL('../wasm/web/stars.bin', here)))).buffer
+  (await readFile(fileURLToPath(new URL('../../Server/assets/stars.bin', here)))).buffer
 );
 
 let checks = 0;
@@ -191,5 +191,5 @@ if (failures.length === 0) {
 console.error(`The two skies have drifted apart: ${failures.length} of ${checks} checks failed.\n`);
 for (const failure of failures.slice(0, 12)) console.error('  ' + failure);
 if (failures.length > 12) console.error(`  …and ${failures.length - 12} more.`);
-console.error('\nBoth come from the same arithmetic. Fix tools/wasm/web/sky.js to match Sky.swift.');
+console.error('\nBoth come from the same arithmetic. Fix Server/assets/js/sky.js to match Sky.swift.');
 process.exit(1);

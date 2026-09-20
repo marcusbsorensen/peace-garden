@@ -862,3 +862,151 @@ a.quiet-button {
 .roster__empty {
   padding: 12px 4px;
 }
+
+/* MARK: The Long Walk
+
+   `/walk` is a night with words over it. The walk fills the viewport and the
+   page's own prose floats on top, so the chrome and the canvas are not two
+   panels with an edge between them — there is no edge, which is the rule, and
+   a rounded box round a night scene would have drawn one.
+
+   The page forces dark: every other page here follows the reader's system, and
+   this one cannot, because the walk is lit by its own sky. `.night` pins the
+   tokens rather than the light-mode block being written round it, so one
+   declaration says it and `prefers-color-scheme` above is left alone. */
+.night {
+  --ground: #000000;
+  --ink: #ffffff;
+  --muted: rgba(255, 255, 255, 0.72);
+  --faint: rgba(255, 255, 255, 0.56);
+  --section: rgba(255, 255, 255, 0.8);
+  --hairline: rgba(255, 255, 255, 0.24);
+  --passage-ink: rgba(255, 255, 255, 0.84);
+  background: #000000;
+  color: #ffffff;
+}
+
+.walk,
+.walk-stage {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Behind the plots and behind the pool of light, so the walk stands in front
+   of the sky rather than on top of a picture of one. */
+.walk #sky {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+}
+
+.walk .pool {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(
+    ellipse 50% 45% at 50% 55%,
+    rgba(255, 255, 255, 0.08),
+    transparent 70%
+  );
+}
+
+/* The light comes off the walk where the words are, the way `StageVeil` takes
+   it off a plant in the app. A plot's ground is a pale green and the prose was
+   laid straight across it; the alternative to this was moving the words, and
+   there is nowhere to move them to — the walk is the whole viewport.
+
+   One gradient at each end, so there is no edge: a panel behind the text would
+   have drawn four lines on a page whose whole argument is that it has none.
+   Clear through the middle third, which is the part of a walk worth looking
+   at. */
+.walk-page::before,
+.walk-page::after {
+  content: "";
+  position: fixed;
+  inset-inline: 0;
+  height: 46svh;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.walk-page::before {
+  inset-block-start: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.92),
+    rgba(0, 0, 0, 0.86) 42%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.walk-page::after {
+  inset-block-end: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.9),
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+/* The words sit over the walk. `pointer-events` is off on the column so a
+   finger dragged across the middle of the page reaches the plots, and back on
+   for the things that are actually for pressing. */
+.walk-page {
+  position: relative;
+  z-index: 1;
+  min-height: 100svh;
+  pointer-events: none;
+  /* A column with the walk showing through the middle of it: the title and
+     what the place is at the top, the four ways through it at the bottom, and
+     nothing in between. Laid out in the ordinary flow the keys landed halfway
+     down, on top of the plants, which is the one part of the page a reader
+     came for. */
+  display: flex;
+  flex-direction: column;
+}
+
+.walk-keys {
+  margin-block-start: auto;
+}
+
+/* `.foot` takes the slack on every other page. Here `.walk-keys` above it is
+   already doing that, and two of them share the gap out between them, which
+   leaves the keys stranded halfway down the walk. */
+.walk-page .foot {
+  margin-block-start: 0;
+}
+
+.walk-page a,
+.walk-page button,
+.walk-page select,
+.walk-page .chooser {
+  pointer-events: auto;
+}
+
+.walk-about {
+  max-width: var(--measure);
+}
+
+.walk-note {
+  margin-block-start: 1rem;
+  /* Brighter than the faint labels elsewhere. It sits where the gradient above
+     has let go, so a faint grey lands on the lit face of a plot and is the one
+     line on the page somebody actually has to read. */
+  color: var(--muted);
+}
+
+/* The four ways through the walk, in a row that wraps to two on a narrow
+   phone. `pad-key` is the garden's own key, shared so the two pages cannot
+   drift into two kinds of button. */
+.walk-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+

@@ -32,7 +32,7 @@
   </form>
 </main>
 <script type="module">
-  import { loadGrower, makeStage } from './plant.js';
+  import { loadGrower, makeStage } from '/assets/js/plant.js';
 
   // A pinned port vector, so the first plant is one the tests already know.
   const first = '3734da9881088da86a12c203b5d6bd000c5b86e222992061d515aa706cf57e9e';
@@ -41,7 +41,7 @@
   const stage = makeStage(document.getElementById('stage'));
 
   const started = performance.now();
-  const grow = await loadGrower('PlantWasm.wasm');
+  const grow = await loadGrower('/assets/PlantWasm.wasm');
   const loaded = performance.now() - started;
 
   function plant(seed) {

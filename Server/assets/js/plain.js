@@ -85,6 +85,19 @@ async function main() {
   state.languages = await manifest();
   await settle();
   document.body.dataset.ready = "1";
+  return state.strings;
 }
 
-main();
+/// The settled strings, for a page that has words of its own to say later.
+///
+/// `/walk` says two things after the page is dressed — *growing the plants*
+/// and *nothing has been planted here yet* — and it cannot say them in the
+/// reader's language until the negotiation above has finished. Exported as the
+/// promise rather than as the value because a module that imports this one
+/// runs the moment it is fetched, which is long before a manifest has come
+/// back over the network.
+///
+/// A module is loaded once however many times it is imported, so importing
+/// this from a page script does not settle the language twice: it waits on the
+/// same negotiation the page's own `<script>` tag started.
+export const dressed = main();

@@ -6,8 +6,8 @@ Writes four things, all generated — edit this script, never its outputs:
 
   App/PeaceGarden/Resources/stars.bin     the catalogue, 6 bytes a star
   Packages/SeedCore/Sources/SeedCore/Sky/Places.swift   where a time zone is
-  tools/wasm/web/stars.bin                the same catalogue, for the browser
-  tools/wasm/web/places.json              the same zones, for the browser
+  Server/assets/stars.bin                 the same catalogue, for the browser
+  Server/assets/places.json               the same zones, for the browser
 
 The two for the browser are copies rather than a second source: the web walk
 draws the same sky as the app, and two catalogues that could drift apart would
@@ -46,8 +46,8 @@ ZONE_TAB = Path("/usr/share/zoneinfo/zone.tab")
 
 STARS_OUT = ROOT / "App/PeaceGarden/Resources/stars.bin"
 PLACES_OUT = ROOT / "Packages/SeedCore/Sources/SeedCore/Sky/Places.swift"
-WEB_STARS_OUT = ROOT / "tools/wasm/web/stars.bin"
-WEB_PLACES_OUT = ROOT / "tools/wasm/web/places.json"
+WEB_STARS_OUT = ROOT / "Server/assets/stars.bin"
+WEB_PLACES_OUT = ROOT / "Server/assets/places.json"
 
 #: Everything an eye can see, and nothing it cannot. The renderer picks its own
 #: limit from within this; the data does not decide how dark the sky looks.

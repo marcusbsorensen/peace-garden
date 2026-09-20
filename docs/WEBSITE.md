@@ -821,7 +821,7 @@ copy of the geometry with nothing checking it is the one option that is off the
 table however convenient it looks.
 
 **Measured, 18 September.** `tools/wasm/` builds SeedCore for the browser and
-`tools/wasm/web/` draws one plant from it with WebGL2. The module is 7.9 MB
+`/dev/plant` draws one plant from it with WebGL2. The module is 7.9 MB
 raw, 2.8 MB gzipped and **2.1 MB brotli**. It loads in about 40 ms and grows a
 plant in 20 to 100 ms on a Mac. Four changes got it there from 12.6 MB brotli:
 

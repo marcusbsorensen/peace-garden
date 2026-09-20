@@ -17,7 +17,7 @@ import SeedCore
 ///
 /// **The arithmetic is not here.** Where a star lands, how big it is drawn and
 /// what colour it is are all in `Sky`, in SeedCore, because the web walk draws
-/// the same field with `tools/wasm/web/sky.js` and a constant kept in one
+/// the same field with `Server/assets/js/sky.js` and a constant kept in one
 /// renderer would be a second sky. What is here is the part only a phone does:
 /// reading the catalogue out of the bundle once, and not working the field out
 /// again while nothing has moved.

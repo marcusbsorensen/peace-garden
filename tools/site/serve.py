@@ -55,6 +55,7 @@ PAGES = {
     "/garden": ("g", "text/html"),
     "/download": ("download", "text/html"),
     "/wild": ("wild", "text/html"),
+    "/walk": ("walk", "text/html"),
     "/t": ("t", "text/html"),
     "/privacy": ("privacy", "text/html"),
     "/.well-known/apple-app-site-association": (
@@ -111,6 +112,12 @@ def main():
     socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(("", args.port), handler) as server:
         print(f"http://localhost:{args.port}/g   — the garden")
+        # `/walk` is served from here like any other page and then says it
+        # cannot reach the walk, because the plot service is not behind this
+        # one. `tools/wasm/dev-router.php` serves the same site with the
+        # service behind it; that is the one to run for the Long Walk.
+        print(f"http://localhost:{args.port}/walk — the Long Walk (needs the "
+              "plot service: see Server/README.md)")
         print(f"http://localhost:{args.port}/t   — the testers")
         print(f"http://localhost:{args.port}/s   — a seed link, with one in the fragment")
         server.serve_forever()

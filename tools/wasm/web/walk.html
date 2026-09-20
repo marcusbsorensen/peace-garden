@@ -41,9 +41,9 @@
   </nav>
 </main>
 <script type="module">
-  import { loadModule } from './plant.js';
-  import { makeWalkStage, plantArrivals, growPlots, growFromService, describe } from './walk.js';
-  import { makeSky } from './sky.js';
+  import { loadModule } from '/assets/js/plant.js';
+  import { makeWalkStage, plantArrivals, growPlots, growFromService, describe } from '/assets/js/longwalk.js';
+  import { makeSky } from '/assets/js/sky.js';
 
   // ?arrivals=500&from=0&span=3 — how many plants have arrived, and which plots to look at.
   // ?source=service — draw what the plot service holds instead of planting here.
@@ -55,7 +55,7 @@
   const note = document.getElementById('note');
   const list = document.getElementById('plots');
   const report = (text) => { note.textContent = text; };
-  const e = await loadModule('PlantWasm.wasm');
+  const e = await loadModule('/assets/PlantWasm.wasm');
   const stage = makeWalkStage(document.getElementById('stage'), span, e);
 
   // The same sky the app draws, worked out for wherever this browser is
