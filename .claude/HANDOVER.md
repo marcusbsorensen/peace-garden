@@ -1,4 +1,4 @@
-# Peace Garden: the asking — handover 19 September 2026
+# Peace Garden: the asking — handover 19–20 September 2026
 
 One thing this session: **a plant can now be put in the shared garden, and it takes both gardeners.** The previous handover, whose traps still apply, is at `git show 8a7e904:.claude/HANDOVER.md`.
 
@@ -37,21 +37,28 @@ The one thing that existed was the contact token — sixteen bytes each phone mi
 - **The service is deployed.** `/api/walk/offer`, `/pending`, `/answer` and `/withdraw` answer on peacegarden.app; `/plant` still answers 403; `tools/deploy.sh` checked every path. The rate-limit tables migrated on the live MySQL, which could only be proved there.
 - **The plant detail screen**: `StageVeil` takes the light off the plant while the details are up, because a tall plant fills the glass and every word was drawn on its stem. One gradient, so no edge: strong at the top for the name, a clear window through the middle, nearly solid at the foot where the meeting and the three controls are. Checked dark and light.
 
+## Also done, 20 September
+- **The walk is copied every night, and the copy is proved to come back.** `Server/.api/backup.php` runs from cron at 03:17, copies `long_walk`, `long_walk_lock` and `walk_offers` — not the rate limiter's arithmetic, which would hand back spent allowance — and **reads each copy back before filing it**, because a dump cut short is a valid gzip of a valid beginning and restores most of the walk in silence. `tools/backup.sh` pulls them to `~/Documents/Peace Garden backups`, which is the copy that survives losing the account. `--restore-test` loads one into an empty MariaDB (Docker) and then **replays** every arrival into a second one by the same rule: a row count cannot see a lost ordering, because each restored row is individually plausible and the walk is wrong. `--rehearse` sows a walk of its own, since the real one is empty, and then deletes an arrival from the middle and requires the check to fail. `tools/reference/check_backup.php` holds the nightly half in CI.
+- **The consent screen has the plant on it.** `ShowInGardenView` is now the plant, `StageVeil(cut: .reading)`, and the words over it. The veil is cut to the words rather than to the plant — a narrow window low down where the stem is — and that window is what closed the gap between the facts and the buttons. The footnote is prose instead of tracked capitals, and the plant's name clears Close.
+- **Starting again takes the plants down first.** The contact tokens live in the phone's garden and nowhere else, so *Reset everything* and *Empty the garden* were permanent in a second way: wiping them while a plant stood in the peace garden left it standing for good. Both rows now run `GardenModel.takeEverythingBack()` first, one plant at a time (the service counts withdrawals per hour), and **if the garden cannot be reached, nothing is reset at all**. The consequence gains a clause only while something is standing.
+- **The browser is under the same sky as the phone.** The field's own decisions — `faintest`, `fieldOfView`, radius, alpha, tint, and the x/y mapping — moved from `StarField` into `Sky`, so both renderers are ports of one thing. `tools/wasm/web/sky.js` draws it on a 2-D canvas behind the walk; `SkyVectorTests` records what the Swift sees and `tools/reference/check_sky.mjs` holds the JavaScript to it, including a sample of the real catalogue placed from four latitudes. Exact for arithmetic, a billionth of a degree for anything through libm.
+
 ## Next, in the order I would do it
-1. **Backups and a tested restore**, still owed, and cheapest while the database is nearly empty.
-2. **Sign in with Apple**, for a gardener's own plot and a plant's own page — the part the tokens deliberately do not cover.
-3. **Settings' copy is now out of date** in three places `WEBSITE.md` §*What this asks of the app* names: the username's line, *Reset everything* saying nothing about a plot, and a **Peace garden** section that appears once something has been shared.
-4. **Watch the asking against the live service**, which has not been done: the end-to-end run was against a local copy. `-pgPlots` is only needed for the local one, so a plain launch now talks to peacegarden.app.
+1. **Sign in with Apple**, for a gardener's own plot and a plant's own page — the part the tokens deliberately do not cover, and the thing blocking the **Peace garden** section `WEBSITE.md` asks for in Settings.
+2. **Turn the sky with the plot.** The plot turns in quarter turns and the sky does not follow. Nearly free — the field of view is already 220° of a full circle — and it would mean turning the garden turns your view of the sky.
+3. **The Long Walk has no public page.** `tools/wasm/web/walk.html` is a local preview; `/garden` on the site is the 2-D area walk. The sky is ready for the page before the page exists.
+4. **Watch the asking against the live service** with a fresh fixture. Note that a plain launch now talks to peacegarden.app, so the fixture's Ada plant comes back **declined** from the live test earlier — launch with `-pgPlots http://127.0.0.1:9` to see the local standings.
 
 ## What I would look at again on screen
-- `ShowInGardenView` has a **large gap** between the facts and the buttons; first light's fix — one column between two spacers — is the pattern.
-- Its footnote is **small caps across three ragged lines** and reads as a warning label.
-- The screen is **all words, no plant**, which no other screen in this app is.
 - The invitation capsule is assertive beside the figures.
 - On the detail screen the age caption still sits **on the flower head** of a tall plant. The veil is strong enough there to read it and no stronger, because the alternative is dimming the one part of a spire worth seeing.
+- The **Milky Way is not in the sky** and the Wild Fields are described as lit by it. It is unresolved starlight rather than catalogue stars, so it needs its own treatment.
 
 ## Traps, added to the previous list
 - **`Data` encodes as base64.** A token written base64 on disk and sent as hex is two spellings of one secret; `MeetingTokens` has a hand-written `Codable` for this reason and `SeedID` beside it is hex.
 - **`Server/.api/config.php` is local, gitignored, and was pointing at a dead session scratchpad.** It now points at this session's; set it to somewhere that survives before relying on a local walk. The previous 120-arrival local database is untouched at its old path.
 - **A simulator fixture's tokens must be hex**, and dates `.iso8601` (as before). `tools/fixture/garden.py` writes a garden with one plant in each standing, and its header has the command.
 - **Injected taps reach SwiftUI buttons** and still do not reach the SceneKit recogniser. Both screens here are SwiftUI, so the whole flow can be driven from the command line.
+- **Backticks inside a double-quoted remote `ssh` script run on the Mac.** A comment in `install_cron` containing `` `crontab -l` `` executed it locally, and `set -eu` in the same script silently installed an **empty** crontab because `crontab -l` exits 1 with no crontab and killed the subshell before the new line was echoed. Both caught by checking what the far end actually holds.
+- **There is no MySQL client on the Mac**, so `--rehearse` takes its copy with the database's own dumper inside the container — but asks `backup.php --tables` and `--preamble` for the shape, so there is one idea of what a copy holds rather than two.
+- **Trig will not match bit for bit across languages.** Darwin's libm and V8's are each correct to about an ulp and not to the same bit. Pin arithmetic exactly and give library calls a tolerance stated in the units of the thing measured.
