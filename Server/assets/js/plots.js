@@ -1,8 +1,11 @@
 // Where the garden's plants come from.
 //
-// The plot service does not exist yet — 20i with a database on it, decided 2
-// September, unbuilt. This module is the shape of the hole it will fill, and a
-// stand-in that fills it well enough to walk around in.
+// **There is a plot service, and it does not answer these questions.** It was
+// decided on 2 September and built: 20i with a database on it, holding the Long
+// Walk — arrivals placed into plots of forty-eight along a path, which `/walk`
+// draws. The ten themed areas below are a different garden with no table behind
+// them, so this module is still the shape of a hole, and still a stand-in that
+// fills it well enough to walk around in.
 //
 // **The stand-in is marked as one and cannot be mistaken for the service.** It
 // invents seeds, and every page that draws from it says so. The point of having

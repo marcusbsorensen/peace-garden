@@ -12,11 +12,16 @@
   right goes from the still and long-span toward the moving and momentary,
   walking down from solitary toward shared.
 
-  **Nothing here is published yet.** The plot service does not exist, so this
-  draws from `plots.js`'s stand-in, and the page says so on the screen in as
-  many words. The point of building it before the service is that the geometry,
-  the pad and the keyboard walk can be argued about while they are still cheap
-  to change.
+  **Nothing here is published yet**, and the reason is no longer that there is
+  no service. There is one — 20i with a database on it, answering `/api/walk` —
+  but what it holds is the Long Walk, which is a different garden: plots of
+  forty-eight down either side of a path, drawn at `/walk`. These ten areas are
+  laid out by theme and have no table behind them, so this still draws from
+  `plots.js`'s stand-in and still says so on the screen in as many words.
+
+  The point of building it before its own service is that the geometry, the pad
+  and the keyboard walk can be argued about while they are still cheap to
+  change.
 
   Static, like `/s`: no analytics, no font CDN, no third-party anything.
 -->
