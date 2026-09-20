@@ -35,13 +35,42 @@ struct ShowInGardenView: View {
     }
 
     var body: some View {
+        ZStack {
+            // **The plant is on the screen it is about.** This was the one
+            // screen in the app with no plant on it, which made the question
+            // abstract: *show this plant* with nothing to look at is a
+            // checkbox. It stands here the way it stands everywhere else, and
+            // the words are read over it through the same veil the detail
+            // screen uses, for the same reason — a plant is the subject and
+            // has nowhere else to go.
+            StageBackdrop(
+                palette: record.genome.palette,
+                presence: record.growth(now: model.now).heightScale
+            )
+            .ignoresSafeArea()
+
+            PlantSceneView(genome: record.genome, growth: record.growth(now: model.now))
+                .ignoresSafeArea()
+
+            StageVeil(cut: .reading)
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+
+            content
+        }
+    }
+
+    private var content: some View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(spacing: 22) {
                     Text(record.genome.name.full)
                         .plantName()
                         .foregroundStyle(Chrome.ink)
-                        .padding(.top, 48)
+                        // Clear of Close, which sits in the same corner of the
+                        // same screen and was catching the long names.
+                        .padding(.horizontal, 64)
+                        .padding(.top, 62)
 
                     if isBeingAsked {
                         headline("\(peer) would like this plant to stand in the peace garden.")
@@ -82,8 +111,14 @@ struct ShowInGardenView: View {
                     // Said plainly, because it is the one irreversible half of
                     // this screen and a decline is also the block: there is one
                     // invitation for a plant and this is it.
+                    // **Prose, in the plain voice.** It wore the app's label
+                    // voice — small, uppercase, wide-tracked — which is for
+                    // one or two words on a control. Two sentences in it came
+                    // out as three ragged lines of capitals that nobody reads,
+                    // and this is the sentence on the screen that most needs
+                    // reading.
                     Text("Keeping it here is final for this plant. Yours stays exactly where it is either way.")
-                        .chromeLabel(size: 10)
+                        .font(.system(size: 12, weight: .light))
                         .foregroundStyle(Chrome.faint)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
@@ -92,7 +127,7 @@ struct ShowInGardenView: View {
                     QuietButton(title: "Ask \(peer)", isProminent: true) { ask() }
                     QuietButton(title: "Not now") { dismiss() }
                     Text("It appears in the garden only once they say yes.")
-                        .chromeLabel(size: 10)
+                        .font(.system(size: 12, weight: .light))
                         .foregroundStyle(Chrome.faint)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
@@ -106,7 +141,6 @@ struct ShowInGardenView: View {
             .animation(Chrome.fadeIn, value: working)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Chrome.ground)
         .overlay(alignment: .topTrailing) {
             QuietButton(title: "Close") { dismiss() }
                 .padding(.trailing, 12)

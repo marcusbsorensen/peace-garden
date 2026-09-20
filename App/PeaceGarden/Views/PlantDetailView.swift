@@ -389,27 +389,54 @@ struct PlantDetailView: View {
 /// stage and puts it back into a pale one, and the words above it stay the
 /// same words in both.
 struct StageVeil: View {
+    /// How much of the screen the words take.
+    ///
+    /// **The veil is cut to the words, not to the plant.** On the detail screen
+    /// there is a name at the top, a few grey lines at the foot and a third of
+    /// the screen with nothing on it, so the veil opens wide in the middle. The
+    /// consent screen is four paragraphs and two buttons: opening it there put
+    /// a flower head behind a sentence, which is a plant nobody can look at and
+    /// a sentence nobody can read. So it keeps a narrower window, lower down,
+    /// where the stem is and no word stands.
+    enum Cut { case stage, reading }
+
+    var cut: Cut = .stage
+
     var body: some View {
         LinearGradient(
-            stops: [
-                // The name and the age.
-                .init(color: Chrome.ground.opacity(0.90), location: 0),
-                .init(color: Chrome.ground.opacity(0.80), location: 0.11),
-                .init(color: Chrome.ground.opacity(0.40), location: 0.22),
-                // The window: a third of the screen with almost nothing on it,
-                // and the part of a plant worth looking at.
-                .init(color: Chrome.ground.opacity(0.22), location: 0.28),
-                .init(color: Chrome.ground.opacity(0.22), location: 0.46),
-                // Down to the meeting and what can be done about it. Nearly
-                // solid, because the words here are small and grey and a plant
-                // read through them is a plant nobody chose to look at: the tap
-                // that put these words up takes them down again.
-                .init(color: Chrome.ground.opacity(0.72), location: 0.60),
-                .init(color: Chrome.ground.opacity(0.95), location: 0.72),
-                .init(color: Chrome.ground.opacity(0.97), location: 1),
-            ],
+            stops: cut == .reading ? Self.reading : Self.stage,
             startPoint: .top,
             endPoint: .bottom
         )
     }
+
+    private static let reading: [Gradient.Stop] = [
+        .init(color: Chrome.ground.opacity(0.94), location: 0),
+        .init(color: Chrome.ground.opacity(0.90), location: 0.30),
+        // Through the facts, which run to a little over half way.
+        .init(color: Chrome.ground.opacity(0.88), location: 0.56),
+        // The window: the stem, between the last fact and the first button.
+        .init(color: Chrome.ground.opacity(0.34), location: 0.63),
+        .init(color: Chrome.ground.opacity(0.34), location: 0.75),
+        .init(color: Chrome.ground.opacity(0.88), location: 0.81),
+        .init(color: Chrome.ground.opacity(0.96), location: 1),
+    ]
+
+    private static let stage: [Gradient.Stop] = [
+        // The name and the age.
+        .init(color: Chrome.ground.opacity(0.90), location: 0),
+        .init(color: Chrome.ground.opacity(0.80), location: 0.11),
+        .init(color: Chrome.ground.opacity(0.40), location: 0.22),
+        // The window: a third of the screen with almost nothing on it, and the
+        // part of a plant worth looking at.
+        .init(color: Chrome.ground.opacity(0.22), location: 0.28),
+        .init(color: Chrome.ground.opacity(0.22), location: 0.46),
+        // Down to the meeting and what can be done about it. Nearly solid,
+        // because the words here are small and grey and a plant read through
+        // them is a plant nobody chose to look at: the tap that put these words
+        // up takes them down again.
+        .init(color: Chrome.ground.opacity(0.72), location: 0.60),
+        .init(color: Chrome.ground.opacity(0.95), location: 0.72),
+        .init(color: Chrome.ground.opacity(0.97), location: 1),
+    ]
 }
