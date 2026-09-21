@@ -17,10 +17,17 @@ import Foundation
 /// **Twenty-four plants in a 5.2 m plot**: four quarters of six, between the
 /// walk's forty-eight in the same square and the room's ten.
 ///
-/// **What a visitor should see**: two paths crossing at a round of paving, and
-/// in each of the four quarters a small bed that builds from low planting along
-/// the path edges to a single tall plant at its outer corner. Every quarter
-/// faces the middle, because the middle is what the place is.
+/// **What a visitor should see**: grass, with two paths mown through it crossing
+/// at a round of paving, and in each of the four quarters planting that builds
+/// from low along the path edges to a single tall plant at the outer corner.
+/// Every quarter faces the middle, because the middle is what the place is.
+///
+/// **The quarters are grass and not soil**, decided by Marcus on 21 September
+/// after looking at both. Bare beds with one plant standing in them read as a
+/// plot waiting to be dug; grass left rough between mown paths is a garden
+/// either way, whether it holds one plant or twenty-four. It also means the
+/// quarters need no edge drawn at all — a mown path's own edge is the only
+/// boundary in the place.
 ///
 /// The rule runs in SeedCore so the plot service, the website and the app read
 /// one copy. `Server/.api/Crossing.php` is the port, and

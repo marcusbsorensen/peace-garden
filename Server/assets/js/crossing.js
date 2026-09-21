@@ -1,6 +1,7 @@
 // A plot of the Crossing, drawn the way the app draws a plot: a floating slab
-// of ground seen in true isometric, two mown paths crossing at a round of
-// paving, and a bed in each of the four quarters.
+// of ground seen in true isometric, grass all over it, two mown paths crossing
+// at a round of paving, and the planting standing in the rough grass of the
+// four quarters between them.
 //
 // **It is one place, so the page shows one plot.** The Long Walk draws three
 // end to end because a walk is a length you look down. A crossing is not: it is
@@ -19,7 +20,7 @@ import { COLOUR, RIM_DEPTH, SIDE, readOutline, readStructure } from './longwalk.
 // Its own, not the walk's or the room's: three areas drawing from one seed
 // would be three plots with the same wandering edge, which is the sort of thing
 // an eye catches without being able to say why.
-const CROSS = { ground: 5107, floor: 23, roundel: 61, mow: [37, 41] };
+const CROSS = { ground: 5107, floor: 23, roundel: 61, rough: 71, mow: [37, 41] };
 
 export function plan(e) {
   return JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_cross_plan())));
@@ -37,23 +38,55 @@ export function makeCrossGround(place) {
     };
     const UP = [0, 1, 0];
 
-    // **The slab's top is soil, and the paths are laid over it.** The other way
-    // round — grass everywhere with four beds cut into it — would mean drawing
-    // four L-shaped holes with two wandering edges each. A quadripartite garden
-    // is beds with paths through them, so drawing it that way round is both
-    // simpler and truer.
+    // **The slab's top is grass, and the paths are mown through it.** It was
+    // bare soil until Marcus looked at it: four brown quarters with one plant
+    // standing in them read as a plot waiting to be planted rather than as a
+    // garden. Grass all over, cut short where you walk and left rough where you
+    // do not, is what a quadripartite garden of this kind actually is — and it
+    // means the quarters need no edges drawn at all, because a mown path's own
+    // edge is the only boundary there is.
     const outline = readOutline(e, SIDE, SIDE, CROSS.ground);
     const n = outline.length;
     for (let i = 0; i < n; i++) {
       const a = outline[i], b = outline[(i + 1) % n];
-      tri([0, 0, 0], [a[0], 0, a[1]], [b[0], 0, b[1]], UP, COLOUR.humus);
+      tri([0, 0, 0], [a[0], 0, a[1]], [b[0], 0, b[1]], UP, COLOUR.turf);
+    }
+
+    // **Rough grass, mottled.** One flat green over four quarters is a snooker
+    // table. This is a grid of quads carrying a tone at each corner rather than
+    // over each face, so neighbours share their corners and the shading runs
+    // continuous — no cell edge anywhere, which is the whole point of not
+    // drawing the quarters as shapes.
+    const half = SIDE / 2 - 0.06;
+    const cell = 0.26;
+    const steps = Math.ceil((half * 2) / cell);
+    // Darker than the turf it is drawn from, and varying hard. Grass left long
+    // is both: it takes less light than a cut sward and it is uneven, and the
+    // two together are the whole difference between a lawn and a meadow. 0.9
+    // also buys the mown paths their contrast — `COLOUR.grass` is a fifth
+    // brighter than `COLOUR.turf` to begin with, so against this the cut runs
+    // read as a third brighter, which is what a path through grass looks like
+    // from above.
+    const rough = (x, z) => COLOUR.turf.map((v) => v * 0.9 * (1
+      + 0.13 * (e.pg_verge(x * 1.31, -1, CROSS.rough) / 0.14)
+      + 0.11 * (e.pg_verge(z * 1.07, 1, CROSS.rough) / 0.14)));
+    for (let i = 0; i < steps; i++) {
+      const x0 = -half + i * cell, x1 = Math.min(half, x0 + cell);
+      if (x0 >= half) break;
+      for (let j = 0; j < steps; j++) {
+        const z0 = -half + j * cell, z1 = Math.min(half, z0 + cell);
+        if (z0 >= half) break;
+        quad([x0, 0.003, z0], [x1, 0.003, z0], [x1, 0.003, z1], [x0, 0.003, z1], UP,
+             rough(x0, z0), rough(x1, z0), rough(x1, z1), rough(x0, z1));
+      }
     }
 
     // **The two paths, mown and crossing.** Each is a run of stripes across its
     // own width, alternating because a mower goes up and back, with both long
-    // edges wandering because a bed's edge was dug rather than drawn. The walk's
-    // path is the same path; this one is simply crossed by another.
-    const half = SIDE / 2 - 0.06;
+    // edges wandering because the mower was steered by eye. Against the rough
+    // grass either side they are the lighter, tidier thing, which is how a path
+    // through grass reads from above. The walk's path is the same path; this
+    // one is simply crossed by another.
     const wide = place.pathHalfWidth;
     const stripe = 0.42;
     const rows = Math.ceil(SIDE / stripe) + 1;

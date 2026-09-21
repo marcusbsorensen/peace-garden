@@ -62,6 +62,18 @@ no plant on it.
   of a border, a place in a group of three, and a place in a bed of six. Three
   areas is where *a table for each* stopped being a prediction.
 
+### The quarters are grass
+Marcus looked at a plot with one plant in it and called the bare soil: four
+brown quarters read as ground waiting to be dug rather than as a garden. The
+slab's top is grass now, with the two paths mown through it and the quarters
+left rough — a mottle carried on the corners of a 0.26 m grid, so neighbours
+share their corners and no cell edge shows anywhere. The rough grass is the
+turf colour at 0.9, which is what buys the mown runs their contrast.
+
+**It also deleted a problem rather than solving one:** a quarter is no longer a
+shape with an edge, so there are no four L-shaped beds to draw and no boundary
+in the plot except the path's own wandering edge.
+
 ### What looking found, all of it the paving
 `Organic.roundel` is the first structure that is neither hedge nor bench. It
 arrived as a bright dish two metres across and took four passes:
@@ -81,11 +93,7 @@ arrived as a bright dish two metres across and took four passes:
 1. **The fourth area.** The Orchard would be the first to need a plant to be
    *under* another (trees on a quincunx, a guild round each); the Knot Garden
    the first where a slot has a mirror. The Seedbed is the plainest left.
-2. **Whether the Crossing's quarters should be soil or rough grass.** They are
-   bare soil, which is what the walk's borders are, and with one plant standing
-   a plot reads as a lot of brown. Grass with beds cut into it means four
-   L-shaped holes with two wandering edges each.
-3. **Still open from the last handover:** whether the share screen should hold
+2. **Still open from the last handover:** whether the share screen should hold
    its question back while it asks `/api/garden`. Unchanged, and still not
    watched on a device.
 

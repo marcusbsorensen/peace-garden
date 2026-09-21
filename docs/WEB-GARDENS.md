@@ -108,7 +108,7 @@ a border with a knot garden's name.
 | **The Orchard** | kinship | Trees on a quincunx, meadow beneath, plants grouped round each tree as its guild. The shrubs and flowers under a tree are chosen to go with it. | Meadow | Tree positions |
 | **The Knot Garden** | pattern | Low clipped hedging in an interlaced geometric pattern, each compartment filled with one colour. Symmetrical: a plant's slot has a mirror, and a compartment fills with one colour family. | Flat, gravel | The hedging pattern |
 | **The Glasshouse** | light | Staging along the sides, pots on it, a central aisle. Tender plants, set close to the glass for the light. | Floor tiles | The benches, the glass |
-| **The Crossing** | meeting | Four paths meeting at a centre, four quarters, one feature where they cross: the quadripartite garden, one of the oldest plans there is for a meeting place. Plants face the centre. **Twenty-four a plot, and an arrival goes wherever there is least**, so the four quarters grow together. | Level, two mown paths | The paths, a round of paving where they cross |
+| **The Crossing** | meeting | Four paths meeting at a centre, four quarters, one feature where they cross: the quadripartite garden, one of the oldest plans there is for a meeting place. Plants face the centre. **Twenty-four a plot, and an arrival goes wherever there is least**, so the four quarters grow together. | Grass, with two paths mown through it | The paths, a round of paving where they cross |
 
 Three things follow from the table:
 
@@ -356,6 +356,11 @@ page's own prose landed on the lawn.
   other 17 took the rank beside it.
 - **The rule held first time**, as the room's did, and for the same reason: it
   borrowed a shape that had already been argued about rather than inventing one.
+- **The quarters are grass, not beds.** They were bare soil until Marcus looked
+  at a plot holding one plant: four brown quarters read as ground waiting to be
+  dug. Grass left rough between mown paths is a garden whether it holds one
+  plant or twenty-four, and it means a quarter needs no edge drawn at all — a
+  mown path's own wandering edge is the only boundary in the place.
 - **A round of paving, and the first structure that is neither hedge nor
   bench.** `Organic.roundel`: a low disc standing proud of the grass with a
   wandering edge and a rim down to the ground. It holds no plant, which is what
