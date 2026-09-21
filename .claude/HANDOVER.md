@@ -5,14 +5,23 @@ the bench got a back and the Crossing opened, both recorded below. The handover
 before that, whose traps still apply, is at `git show 9bed47c:.claude/HANDOVER.md`.
 
 ## State
-- **Built, tested, committed. NOT deployed** — Marcus asked for the Orchard to
-  be built and has not asked for a deploy. `sh tools/deploy.sh` is the command,
-  and the SSH IP allowlist below will very likely need his attention first.
-- SeedCore tests, app tests (by hand, in the simulator), and every reference
-  check pass. `check_orchard` agrees with the Swift on all 500 arrivals across
-  26 plots at 1629 checks, and it agreed **first time**.
-- Live still shows three areas. `/api/garden` will say `kinship` is open as
-  soon as the deploy goes.
+- **Done, tested, pushed, deployed.** `fd22549` on `origin/main`. SeedCore 223,
+  app 129 (1 skipped, run by hand in the simulator), `check_orchard` 1651 checks
+  over 500 placements, `check_crossing` 1959, `check_quiet_garden` 1850,
+  `check_ambassador` 279, `check_areas` 47, `check_long_walk` 600,
+  `check_backup` 25, `check_sky` 9729, `check_offers`, `check_limits`,
+  `tools/site/export.py --check` and `tools/preview/check_port.py` all in step.
+- Live: `/api/garden` says `travel`, `meeting`, `kinship` and `peace` are open,
+  `/api/orchard` answers one plot, and `https://peacegarden.app/orchard` draws
+  it — looked at in the live browser, quincunx and mown discs and all, with
+  *Cyninora contorta* under the middle tree. `orchard.js` and `longwalk.js` were
+  fetched back off the host and diffed against local: both match.
+- **The Orchard reads as five trees and no planting until it fills.** A
+  middle-guild place stands 0.75 m from its trunk, so at two of the four turns
+  the middle trunk is between the ambassador and the viewer, and at the default
+  turn the page's prose sits over it. The Crossing looked much the same on its
+  first day. **Left alone deliberately**; the cheap fix would be opening a plot
+  at an outer guild, which costs the thing that made the middle guild rankless.
 - **The host's SSH IP allowlist stopped a deploy earlier today.** rsync answers
   `Connection reset by 45.8.225.251`, not a permission denial, because the
   allowlist gates SSH before authentication. It is My20i -> peacegarden.app ->
@@ -152,13 +161,11 @@ every one of its faults was one the roundel had already taught:
 
 ## The decisions waiting for Marcus
 
-1. **Whether to deploy the Orchard.** It is built and tested and not live. The
-   SSH IP allowlist under *State* is the thing that will stop it.
-2. **The fifth area.** The Knot Garden is the first where a slot has a *mirror*,
+1. **The fifth area.** The Knot Garden is the first where a slot has a *mirror*,
    which is the one structural first left that none of the four has met; the
    Seedbed is the plainest; the Glasshouse is the first with a roof, and so the
    first where the sky is occluded. Six left.
-3. **Whether the share screen should hold its question back while it asks
+2. **Whether the share screen should hold its question back while it asks
    `/api/garden`.** Carried from two handovers ago. Unchanged, and still not
    watched on a device.
 
