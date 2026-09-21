@@ -1,98 +1,117 @@
-# Peace Garden: the ambassador stands — handover 20 September 2026
+# Peace Garden: the second area — handover 21 September 2026
 
-One thing this session: **the Long Walk stopped being empty.** *Halula
-crassicaulis* is in plot 0, and two of the three decisions the last handover
-left for Marcus are closed. The previous handover, whose traps still apply, is
-at `git show 75e2c8a:.claude/HANDOVER.md`.
+One thing this session: **the garden has two areas open instead of one.** The
+Quiet Garden is built, live and drawn. The previous handover, whose traps still
+apply, is at `git show 6a6518b:.claude/HANDOVER.md`.
 
 ## State
-- **Done, tested, pushed, deployed.** `8462dce` on `origin/main`. SeedCore 181,
-  `check_ambassador` 272 checks, `check_areas` 47, `check_long_walk` 600
-  placements, `check_offers`, `check_limits`, `check_backup` 22, `check_sky`
-  9729, `export.py --check` and `check_port.py` in step.
-- Live: `https://peacegarden.app/api/walk` answers `{"plots":1}`, `/api/walk/plot/0`
-  serves the ambassador, and `/walk` draws it — looked at, in the live browser,
-  standing alone in a double border with the path and the hedges.
+- **Done, tested, pushed, deployed.** `fd8c5ee` on `origin/main`. SeedCore 194,
+  `check_quiet_garden` 1850 checks over 500 placements, `check_ambassador` 279,
+  `check_areas` 47, `check_long_walk` 600, `check_offers`, `check_limits`,
+  `check_backup` 22, `check_sky` 9729, `export.py --check` and `check_port.py`
+  in step.
+- Live: `/api/garden` says `travel` and `peace` are open, `/api/quiet` answers
+  one plot, and `https://peacegarden.app/quiet` draws it — looked at, in the
+  live browser, with *Olyne paniculata* sitting beside its bench.
 
-## What is built (`8462dce`)
+## What is built (`cbbe0c8`)
 
-### The walk's ambassador stands at its head, and is not a row
-- `LongWalk.ambassador` and `LongWalk.Walk.opened()` in SeedCore;
-  `Server/.api/Ambassadors.php` in the service;
-  `tools/reference/check_ambassador.php` holds them together in CI.
-- **There is no specimen slot, and that is the answer rather than a gap.**
-  WEB-GARDENS.md asked which slot of a template an ambassador stands in. A
-  double border's feature belongs at the end of its vista and **this walk has no
-  end** — its plots open end to end for as long as people meet — so what it has
-  is a head, and the ambassador is simply the first plant the rule ever placed.
-- **It could not have been the tall one at the back.** *Halula* is 1.02 m, the
-  middle of a border, and only *Cyninora contorta* (kinship, 1.33 m) is a
-  back-tier plant at all. A specimen fixed at the back would stand a short plant
-  behind taller ones in nine areas of ten. **A specimen slot has to be one the
-  area's own ambassador can stand in** — a constraint on every template still to
-  be written.
-- **Not a row, and that was not one of the two options on the table.** A slot and
-  a nudge are pure functions of the pinned seed, so the placement is derived on
-  each side rather than stored on either. Nothing for a withdrawal, a report or a
-  backup to reach, and `WalkStore::plant` throws on an ambassador's seed so that
-  stays true the day somebody adds a route that plants a minted one. The service
-  hands it to the rule **ahead of** the stored arrivals, so everything shared
-  since is graded against a border with its oldest plant in it.
-- **A planting with no parents grows from its seed.** The service sends an empty
-  `parents` and no meeting; `longwalk.js` reaches for `pg_grow` instead of
-  `pg_grow_hybrid`. `pg_grow` already existed — no new wasm export was needed,
-  though the module was rebuilt so `/dev/walk` opens with the ambassador too.
-- **Flipped while the walk was empty**, the same argument as the area flip: the
-  walk is append-only, so the ambassador could be its first planting only until
-  somebody else's plant arrived. It had none, measured before touching anything.
-- `check_offers.php` now counts the plants **gardeners** put there, because the
-  walk is never empty again.
+### The Quiet Garden: ten plants where the walk holds forty-eight
+`SeedCore/WebGardens/QuietGarden.swift`, `Server/.api/QuietGarden.php`,
+`RoomStore.php`, `Server/assets/js/quietgarden.js`, `/quiet`, `/dev/quiet`.
+
+- **The room:** a 5.2 m square, hedge round all four sides at 2.3 m, a bench
+  lying across one corner with one plant beside it, and a group of three at the
+  foot of the hedge in each of the other three corners. The middle and the
+  middles of all four sides stay grass.
+- **No tree.** Marcus dropped it: nothing grown here is one (0.24–2.04 m), and a
+  drawn tree among plants grown from a genome is clip art. **The specimen is the
+  plant by the bench**, which is always the plot's first arrival — so the
+  ambassador gets it in plot 0 without a reserved slot, the same answer the walk
+  reached yesterday by a different route. It is also what lets a 0.75 m
+  ambassador be a specimen at all.
+- **A group is one colour or a tone of it.** Own colour, else an unplanted
+  corner, else a colour near its own — the two arcs either side, or pale. **The
+  near-colour fallback is load-bearing**: measured over 300 crossings the seven
+  families are badly uneven (two take 43%, pale takes 3.7%), so own-colour alone
+  would strand pale groups and open plots for want of a match.
+- **Back-from-arm cut at 1.13 m**, the 67th centile, because a group is one back
+  and two arms. Deliberately not the walk's 1.28 m.
+- **At 500 arrivals: 51 plots, 49 full**, the growing end holding six and five.
+  The walk takes 11 for the same 500. Joiners: 185 own colour, 112 a tone.
+- **The rule held first time**, which the walk's did not, because it borrowed the
+  walk's shape rather than inventing one.
+- **`quiet_garden` is a table of its own.** The two areas share no column after
+  `encounter`, which is the point at which *a table for each area* stopped being
+  a prediction. An offer now carries its area and is planted there.
+
+### What looking found, all of it in the drawing
+- Four hedges round an enclosure left **a notch at every corner** — a domed end
+  falls to the ground over half the hedge's height, a metre on the tall ones.
+  `Organic.hedge` gained a `domed` flag; the enclosure's four runs are square-
+  ended and overlap by a hedge's thickness.
+- The **bench lay along its corner's diagonal** instead of across it and read as
+  a headstone. `atan2(z, x)`, not `atan2(-z, x)`.
+- The room was **framed so tight the page's prose landed on the lawn**; `/quiet`
+  frames 1.25 plot-sides.
+
+### A new module is a new address (`fd8c5ee`)
+`/plant.wasm` is 8 MB at a path that never changes. A browser or CDN holding
+yesterday's copy cannot know a new one exists, so a returning visitor was told
+`/quiet` could not be reached. `index.php` now stamps the module's mtime-and-size
+into each page as `data-module`, and the drivers read it. `Cache-Control` is
+`no-cache` as well; a dev copy says `no-store`.
 
 ## The decisions waiting for Marcus
 
-1. **The second area.** The only one of the three left. The Quiet Garden is
-   cheapest — its hedge already exists in `GardenStructures.swift` — and its rule
-   is the most distinctive ("the fewest plants per plot of any area, by rule").
-   **Not started, on purpose:** the Long Walk's own notes record that *without
-   the path and the hedges, a plot is a scatter of plants on grass — the rule is
-   right and invisible.* Designing a second rule without being able to look at it
-   rendered repeats exactly that. It wants a session with eyes on it.
-2. **Whether an area's template must give its ambassador a slot it fits.** Found
-   this session and not yet a rule anywhere: nine of the ten ambassadors are edge
-   or middle plants. The Quiet Garden's *Olyne paniculata* is 0.75 m, so whatever
-   "the one tree" of an enclosure turns out to mean, it is not that plant.
+1. **The third area.** The Crossing is the obvious next (quadripartite, four
+   paths to a centre, plants facing in) and would be the first with a structure
+   that is neither hedge nor bench. The Orchard would be the first to need a
+   plant to be *under* another.
+2. **Whether the app should ask `/api/garden` rather than its built-in list.**
+   `ShowInGardenView.areaIsOpen` reads `Area.isOpen`, compiled in — so an
+   installed app learns that peace opened when it is next updated, not on the
+   day. The route exists precisely so a phone need not be told by a version of
+   itself. It errs safe (says *not yet* rather than promising a refusal), but it
+   is the wrong way round and it is one change.
+3. **Whether a bench should have a back.** Seen end-on it reads as a slab, which
+   is true of benches and may still be worth fixing, since two of the four
+   quarter turns put it that way.
 
 ## Traps
-- **The browser pane caches `/plant.wasm` hard.** A rebuilt module was still the
-  old one in the page, and a cache-busted 7.9 MB fetch times out the JS tool.
-  Probe a rebuilt wasm under node with `node:wasi` instead — it takes a second
-  and it is unambiguous. This cost a wrong reading of `pg_walk_plots` once.
-- **The browser pane throttles `requestAnimationFrame` to 1 Hz** regardless of
-  `document.hidden` or fronting the tab. Anything timed in it is wrong by an
-  order of magnitude.
-- **The language banks nest under a `strings` key.**
-- **The Long Walk *is* the travel area.** Renaming either on the assumption they
-  are two things is a wrong turn already taken and reverted.
-- **20i's CDN normalises `Accept-Encoding`.** Brotli never arrives. Measured 20
-  September; do not measure it again.
-- **`/.api/` and `/.pages/` are refused by nginx's dot-directory rule**, so only
-  `index.php` can serve from them.
-- **`Server/.api/config.php` is gitignored and points wherever it was last left**
-   — this session found it aimed at a previous session's scratchpad SQLite, with
-  120 arrivals in it placed before the ambassador existed. A local walk that
-  looks wrong may just be stale: delete the file it names and re-send arrivals.
+- **`/plant.wasm` caching, now three ways.** Fixed for the live pages by the
+  stamp above. If a page ever loads the module by the bare path again, a
+  returning visitor runs the old one. `/dev/*` busts its own address every load.
+  **Probe a rebuilt module under node with `node:wasi`** rather than in the
+  browser pane — it takes a second and it is unambiguous. This cost three wrong
+  readings across two sessions.
+- **The browser pane throttles `requestAnimationFrame` to 1 Hz.** Anything timed
+  in it is wrong by an order of magnitude.
+- **The language banks nest under a `strings` key.** The `walk*` and `quiet*`
+  strings are **not** in the per-language catalogues — they live in
+  `strings.js`, English, until commissioned. Only `areaPeace` and the other nine
+  area names are translated, which is why a second area cost two strings.
+- **The Long Walk *is* the travel area.** Renaming either is a wrong turn already
+  taken and reverted.
+- **20i's CDN normalises `Accept-Encoding`** and holds a response for its full
+  max-age; it is not ours to purge. Brotli never arrives. Do not measure again.
+- **`/.api/` and `/.pages/` are refused by nginx's dot-directory rule.**
+- **`Server/.api/config.php` is gitignored and points wherever it was last left.**
+- **`swift build --package-path tools/wasm` fails on macOS** (deployment target);
+  it only builds for wasm. Use `sh tools/wasm/build.sh`.
 - Adding or removing an app file needs `xcodegen generate`. Nothing this session
   added one.
 
 ## Still open from before
-- **A plant's own page** (capability URL). WEBSITE.md says it is built first and
-  it is what makes a plot worth having.
-- **Sign in with Apple**, deliberately behind the plant page.
+- **A plant's own page** (capability URL), then **Sign in with Apple**.
 - The **Milky Way** is absent from the sky though the Wild Fields are described
   as lit by it.
 - The **Wild Fields** need release-to-a-place; the **curator's tool** is unbuilt.
 - Two dotted threads from plants standing near each other run almost on top of
   one another below the plot.
-- The app's `-pgArea longWalk` preview draws **the gardener's own plants** into a
-  Long Walk-shaped plot, so it has no ambassador and deliberately was not given
-  one: it is a preview of the structures, not of the walk.
+- **`WalkStore` has outgrown its name** — it holds the connection for a garden
+  with two areas now. Renaming touches every caller and the reference checks, so
+  it is a commit of its own.
+- The plumbing in `longwalk.js` (GL, camera, quarter turns, the plant program) is
+  shared with `quietgarden.js` by importing from it. **A third area is when that
+  wants a module of its own.**
