@@ -196,16 +196,29 @@ public enum Organic {
 
     // MARK: A bench
 
-    /// A garden seat: a plank across two plank ends, standing on `y = 0`,
-    /// running along `z`, centred on the origin, its seat facing up.
+    /// A garden seat: a plank across two plank ends, with a back of two rails on
+    /// short posts. It stands on `y = 0`, runs along `z`, is centred on the
+    /// origin, and its back is on the `+x` side.
     ///
-    /// **Backless, and sawn rather than grown.** The hedge beside it is a loaf
-    /// that has bulged where it grew; this is three boards that have weathered,
-    /// so its wander is a fraction of the hedge's and it lives in the softness
-    /// of the edges rather than in the line of the thing. A bench drawn with
-    /// ruled edges among plants grown from a genome is the clip art
-    /// `docs/WEB-GARDENS.md` warns about, and a bench that undulated like a
-    /// hedge would be a different mistake: it would not read as made.
+    /// **Sawn rather than grown.** The hedge beside it is a loaf that has bulged
+    /// where it grew; this is boards that have weathered, so its wander is a
+    /// fraction of the hedge's and it lives in the softness of the edges rather
+    /// than in the line of the thing. A bench drawn with ruled edges among
+    /// plants grown from a genome is the clip art `docs/WEB-GARDENS.md` warns
+    /// about, and a bench that undulated like a hedge would be a different
+    /// mistake: it would not read as made.
+    ///
+    /// **The back is what makes it a seat when you look down its length.**
+    /// Backless, end-on it was one upright panel four tenths of a metre across
+    /// and very nearly square — a slab — and two of the room's four quarter
+    /// turns put it that way, so half of all the views of the Quiet Garden had
+    /// it. A post above each end and two rails across them put a shoulder into
+    /// that silhouette, which is the shape a seat is known by.
+    ///
+    /// **The back stands on `+x`, the side away from the lawn.** The room turns
+    /// the bench so `+x` points into its own corner, so a sitter faces the
+    /// middle of the room with the hedges behind them, which is the only way
+    /// round a seat goes into the angle of two hedges.
     ///
     /// **Unnamed**, as the hedges and the lights are. A named structure is
     /// forty-two translations.
@@ -213,20 +226,40 @@ public enum Organic {
                              depth: Double = 0.42, seed: UInt64) -> StructureMesh {
         var mesh = StructureMesh()
         let board = 0.065
+        // How far the back rises above the seat, and how far back it sits: over
+        // the ends rather than overhanging them, so the seat stays the widest
+        // thing in the silhouette and the back reads as carried by it.
+        let rise = 0.33
+        let backAt = Float(depth / 2 - board / 2)
+        let endAt = { (end: Double) in Float(end * (length / 2 - 0.19)) }
 
         // The seat, swept along the bench's own length.
         append(plank(length: length, width: depth, thickness: board,
                      lift: height - board, seed: mix64(seed &+ 1)),
                to: &mesh, turned: false, at: SIMD3<Float>(0, 0, 0))
 
-        // Two ends, the same plank turned a quarter and stood on the ground.
-        // Inset from the seat's ends, so the seat overhangs them the way a
-        // bench's does and the whole thing does not read as a box.
         for end in [-1.0, 1.0] {
+            // Two ends, the same plank turned a quarter and stood on the ground.
+            // Inset from the seat's ends, so the seat overhangs them the way a
+            // bench's does and the whole thing does not read as a box.
             append(plank(length: depth, width: board, thickness: height - board,
                          lift: 0, seed: mix64(seed &+ UInt64(bitPattern: Int64(end)) &+ 7)),
                    to: &mesh, turned: true,
-                   at: SIMD3<Float>(0, 0, Float(end * (length / 2 - 0.19))))
+                   at: SIMD3<Float>(0, 0, endAt(end)))
+
+            // A post standing on each end, square in plan, carrying the rails.
+            append(plank(length: board, width: board, thickness: rise,
+                         lift: height, seed: mix64(seed &+ UInt64(bitPattern: Int64(end)) &+ 11)),
+                   to: &mesh, turned: false,
+                   at: SIMD3<Float>(backAt, 0, endAt(end)))
+        }
+
+        // Two rails, with daylight between them, because a back in one piece is
+        // the same panel the ends already are and would undo what it is for.
+        for (i, rail) in [(lift: 0.06, deep: 0.10), (lift: 0.22, deep: 0.11)].enumerated() {
+            append(plank(length: length, width: board, thickness: rail.deep,
+                         lift: height + rail.lift, seed: mix64(seed &+ UInt64(i) &+ 13)),
+                   to: &mesh, turned: false, at: SIMD3<Float>(backAt, 0, 0))
         }
         mesh.computeNormals()
         return mesh

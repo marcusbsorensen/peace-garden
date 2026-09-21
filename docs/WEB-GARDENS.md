@@ -309,8 +309,15 @@ service, the website and the app can all read it. Built 21 September, with
 - **The bench is sawn, not grown** (`Organic.bench`): a plank across two plank
   ends, its wander a twentieth of a hedge's and all of it in the softness of the
   edges. A hedge undulates because it grew; a bench was made, and one that
-  undulated the same way would read as melted. Seen end-on it reads as a slab,
-  which is also true of a bench.
+  undulated the same way would read as melted.
+- **It has a back, decided 21 September.** Backless it read end-on as a single
+  upright panel four tenths of a metre across and nearly square — a slab — and
+  two of the four quarter turns put it that way, so half of all views of the
+  room had it. A post over each end carries two rails, which puts a shoulder in
+  the silhouette; the daylight between the rails is the point of there being two
+  of them, since a back in one piece is the same panel the ends already are. The
+  back stands on the bench's `+x`, which the room turns to point into the
+  corner, so a sitter faces the lawn with the hedges behind them.
 
 **What looking found:** the template was right first time, which the walk's was
 not — because it borrowed the walk's shape (a first choice, a near-enough
