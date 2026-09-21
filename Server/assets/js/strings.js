@@ -211,6 +211,15 @@ export const EN = Object.freeze({
   // The Crossing could not be drawn.
   crossAway: "The Crossing cannot be reached just now.",
 
+  // A fourth area, and the same two strings a fourth time: the heading is
+  // `areaKinship`, already commissioned in all forty-two, and the four keys
+  // still never say where you are. Four areas have now cost eight strings
+  // between them, which is the whole argument of `LANGUAGES.md` holding.
+  orchardAbout:
+    "One of the garden's ten areas: five trees standing in a quincunx, with a guild of four plants under each and meadow grass cut back into a disc round every trunk. A plant arriving goes under the earliest tree with a place left, so a tree is either fully planted or still bare — never five half-planted at once. Go on to the next orchard, or turn to go round this one.",
+  // The Orchard could not be drawn.
+  orchardAway: "The Orchard cannot be reached just now.",
+
   // Said once and used on both of the pages that are not built yet, because two
   // ways of saying *not yet* is one more than a reader needs.
   notYet: "Not open yet.",

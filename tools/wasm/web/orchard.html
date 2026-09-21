@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Orchard</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; color: rgb(255 255 255 / 0.85);
+    font: 15px/1.4 Georgia, serif; }
+  main { position: fixed; inset: 0; }
+  .pool { position: absolute; inset: 0;
+    background: radial-gradient(ellipse 50% 45% at 50% 55%, rgb(255 255 255 / 0.08), transparent 70%); }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #sky { z-index: -1; }
+  #note, #held { position: absolute; inset-inline-start: 16px; margin: 0;
+    font: 11px/1.6 system-ui, sans-serif; letter-spacing: 0.06em; color: rgb(255 255 255 / 0.5); }
+  #note { inset-block-start: 16px; inset-inline-end: 16px; }
+  #held { inset-block-start: 40px; padding: 0; list-style: none; font-variant-numeric: tabular-nums; }
+  nav { position: absolute; inset-inline: 16px; inset-block-end: 16px; display: flex; flex-wrap: wrap;
+    gap: 8px; justify-content: center; }
+  button { background: transparent; color: inherit; border: 1px solid rgb(255 255 255 / 0.4);
+    border-radius: 6px; padding: 8px 14px; font: 11px/1 system-ui, sans-serif;
+    letter-spacing: 0.14em; text-transform: uppercase; }
+  button:disabled { opacity: 0.3; }
+</style>
+</head>
+<body>
+<main>
+  <canvas id="sky" aria-hidden="true"></canvas>
+  <div class="pool"></div>
+  <canvas id="stage" aria-label="A plot of the Orchard"></canvas>
+  <p id="note">Loading…</p>
+  <ul id="held"></ul>
+  <nav>
+    <button id="back" aria-label="The plot before">Back</button>
+    <button id="left" aria-label="Turn left">Turn left</button>
+    <button id="right" aria-label="Turn right">Turn right</button>
+    <button id="on" aria-label="The next plot">On</button>
+  </nav>
+</main>
+<script type="module">
+  // The workbench for the third area. `?arrivals=500&plot=0` invents a garden
+  // of five hundred plants and shows one plot of it, which is how
+  // docs/WEB-GARDENS.md says a template is judged: a garden of fourteen hides
+  // layout faults.
+  //
+  // One plot at a time, because an orchard is a pattern you look into rather
+  // than a length you look down.
+  import { loadModule } from '/assets/js/plant.js';
+  import { makePlotStage } from '/assets/js/longwalk.js';
+  import { describeOrchard, growOrchardFromService, growInvented, makeOrchardGround, plan, plantVisitors, trees }
+    from '/assets/js/orchard.js';
+  import { makeSky } from '/assets/js/sky.js';
+
+  const query = new URLSearchParams(location.search);
+  const number = (name, fallback) => Math.max(0, parseInt(query.get(name) ?? '', 10) || fallback);
+  const arrivals = number('arrivals', 500);
+  const fromService = query.get('source') === 'service';
+  let plot = number('plot', 0);
+
+  const note = document.getElementById('note');
+  const held = document.getElementById('held');
+  const report = (text) => { note.textContent = text; };
+  // **The module, never from the cache.** The live host sends it with a day's
+  // max-age, which is right there and wrong on a workbench: a browser that
+  // fetched it this morning goes on running this morning's Swift against
+  // this afternoon's JavaScript, and reports exports missing that are there.
+  // The dev router answers `no-store`, but a copy already in the cache is
+  // never asked about, so the address is made new each time.
+  const MODULE = `/plant.wasm?dev=${Date.now()}`;
+  const e = await loadModule(MODULE);
+  const place = plan(e);
+  const stage = makePlotStage(document.getElementById('stage'), 1, e, makeOrchardGround(place, trees(e)));
+
+  let sky = null;
+  makeSky(document.getElementById('sky'), {
+    quarterTurns: () => stage.turn(),
+    keepClear: () => ['note', 'held'].map((id) => document.getElementById(id))
+      .concat([document.querySelector('nav')])
+      .filter(Boolean)
+      .map((element) => element.getBoundingClientRect())
+      .filter((box) => box.width > 0 && box.height > 0),
+  }).then((made) => { sky = made; }).catch((trouble) => {
+    console.warn('no sky:', trouble);
+  });
+
+  const turn = (quarters) => { stage.turnBy(quarters); sky?.draw(); };
+  document.getElementById('left').addEventListener('click', () => turn(-1));
+  document.getElementById('right').addEventListener('click', () => turn(1));
+
+  let plots = 1;
+  if (!fromService) plots = await plantVisitors(e, arrivals, report);
+
+  // What the rule did with this plot, in words: how many stand under each tree
+  // and how that guild's ranks are filled, so a guild that looks wrong can be
+  // read rather than guessed at. **The thing to watch is the shape of the
+  // counts** — 4 4 4 2 0, never 3 3 3 3 2. A guild started while an earlier one
+  // stands bare is this area's whole failure.
+  //
+  // 4 4 4 3 4 is *not* a failure, and this page is what proved it: a guild's
+  // last place holds the tightest constraint in the plot, so one can sit at
+  // three waiting for a plant tall enough for its crown while the next fills.
+  // Both the PHP check and the Swift test asserted the counts fall from guild
+  // to guild, both passed on their own five hundred, and this workbench draws a
+  // different five hundred — which is how the falsehood was caught.
+  function say() {
+    held.replaceChildren();
+    if (fromService) return;
+    const rows = describeOrchard(e, plot);
+    ['middle', 'first', 'second', 'third', 'fourth'].forEach((name, g) => {
+      const here = rows.filter((r) => r.slot.guild === g);
+      const line = document.createElement('li');
+      if (!here.length) {
+        line.textContent = `${name}: bare`;
+      } else if (g === 0) {
+        // The middle tree's four have no rank: they are all the same distance
+        // from the plot's centre, so there is no in-front-of among them.
+        const heights = here.map((r) => r.traits.height.toFixed(2)).sort().join(', ');
+        line.textContent = `${name}: ${here.length} — no ranks — ${heights} m`;
+      } else {
+        const ranks = ['understorey', 'flank', 'crown'].map((rank, n) =>
+          `${rank} ${here.filter((r) => (r.slot.index === 0 ? 0 : r.slot.index < 3 ? 1 : 2) === n).length}`
+        ).join(' · ');
+        const heights = here.map((r) => r.traits.height.toFixed(2)).sort().join(', ');
+        line.textContent = `${name}: ${here.length} — ${ranks} — ${heights} m`;
+      }
+      held.append(line);
+    });
+  }
+
+  async function show() {
+    document.getElementById('back').disabled = plot === 0;
+    document.getElementById('on').disabled = plot + 1 >= plots;
+    const count = fromService
+      ? await growOrchardFromService(e, stage, plot, report)
+      : await growInvented(e, stage, plot, report);
+    report(`Plot ${plot + 1} of ${plots} — ${count} of ${place.slots}`);
+    say();
+    sky?.draw();
+  }
+
+  document.getElementById('back').addEventListener('click', () => { plot = Math.max(0, plot - 1); show(); });
+  document.getElementById('on').addEventListener('click', () => { plot = Math.min(plots - 1, plot + 1); show(); });
+  await show();
+</script>
+</body>
+</html>

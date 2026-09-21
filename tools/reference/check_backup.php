@@ -71,7 +71,7 @@ for ($i = 0; $i < 4; $i++) {
 }
 $store->offers()->offer($seeds[0], str_repeat('1', 32), str_repeat('2', 32),
     str_repeat('a', 64), str_repeat('b', 64), str_repeat('c', 64), 1.0, 0, 1_700_000_000);
-// One planting in each of the other two areas, so the copy is proved to carry
+// One planting in each of the other three areas, so the copy is proved to carry
 // every open area rather than only the one this check grew up around. A table
 // left out of KEPT dumps as no rows at all, which is exactly what a silent data
 // loss looks like.
@@ -79,6 +79,8 @@ $store->plantInto('peace', str_repeat('d', 64), str_repeat('a', 64), str_repeat(
                   str_repeat('c', 64), 1.4, 2);
 $store->plantInto('meeting', str_repeat('e', 64), str_repeat('a', 64), str_repeat('b', 64),
                   str_repeat('c', 64), 0.8, 3);
+$store->plantInto('kinship', str_repeat('f', 64), str_repeat('a', 64), str_repeat('b', 64),
+                  str_repeat('c', 64), 1.1, 1);
 unset($store);
 
 // MARK: Taking one

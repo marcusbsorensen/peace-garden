@@ -67,6 +67,10 @@ const ROUTES = [
     // on one page would have to branch on layout, plot count and prose is the
     // moment it is three pages wearing one URL.
     '/cross' => ['cross', 'text/html; charset=utf-8'],
+    // The fourth, and the one that settled it: an area whose rule leaves
+    // part of the plot deliberately bare needs its own words as much as its
+    // own drawing, and neither would survive a shared page.
+    '/orchard' => ['orchard', 'text/html; charset=utf-8'],
     '/t' => ['t', 'text/html; charset=utf-8'],
     // A privacy notice is a mandatory App Store listing field, so this path is
     // load-bearing for the submission rather than decorative. See

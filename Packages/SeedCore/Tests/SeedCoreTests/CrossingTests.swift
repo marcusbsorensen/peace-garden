@@ -182,10 +182,16 @@ final class CrossingTests: XCTestCase {
         XCTAssertLessThan(one.traits.height, Crossing.middleFrom)
     }
 
+    /// **This area is `meeting`, and it says so here rather than anywhere else.**
+    ///
+    /// The whole list of open areas used to be asserted here too, and that was
+    /// wrong: opening the Orchard broke the *Crossing's* suite, which tells
+    /// somebody nothing about the Crossing. `AreaVectorTests` is the one place
+    /// the list is written down, deliberately, so that opening an area fails in
+    /// exactly one test and somebody edits one line on purpose.
     func testTheCrossingIsTheMeetingArea() {
         XCTAssertTrue(Area.meeting.isOpen)
         XCTAssertEqual(Area.meeting.table, "crossing")
-        XCTAssertEqual(Set(Area.open), [.travel, .peace, .meeting])
     }
 
     // MARK: The cuts

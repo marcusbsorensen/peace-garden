@@ -1,25 +1,19 @@
-# Peace Garden: the third area — handover 21 September 2026
+# Peace Garden: the fourth area — handover 21 September 2026
 
-Two things this session: **the bench has a back**, and **the Crossing is open**.
-Three of ten areas are planted now. The previous handover, whose traps still
-apply, is at `git show 9bed47c:.claude/HANDOVER.md`.
-
-**If you are the session picking this up: the fourth area is decided and not
-started.** Read *The fourth area is the Orchard* below, then the Traps, and
-build. Nothing else here is outstanding.
+**The Orchard is open.** Four of ten areas are planted. Earlier the same day:
+the bench got a back and the Crossing opened, both recorded below. The handover
+before that, whose traps still apply, is at `git show 9bed47c:.claude/HANDOVER.md`.
 
 ## State
-- **Done, tested, pushed, deployed.** `9a483c7` on `origin/main`. SeedCore 207,
-  app 129 (1 skipped, run by hand in the simulator), `check_crossing` 1959
-  checks over 500 placements, `check_quiet_garden` 1850, `check_ambassador` 279,
-  `check_areas` 47, `check_long_walk` 600, `check_offers`, `check_limits`,
-  `check_backup` 25, `check_sky` 9729, `export.py --check` and `check_port.py`
-  in step.
-- Live: `/api/garden` says `travel`, `meeting` and `peace` are open,
-  `/api/cross` answers one plot, and `https://peacegarden.app/cross` draws it —
-  looked at, in the live browser, grass quarters and all, with *Melyrina
-  latifolia* on the first quarter's diagonal.
-- **The host's SSH IP allowlist stopped a deploy mid-session.** rsync answers
+- **Built, tested, committed. NOT deployed** — Marcus asked for the Orchard to
+  be built and has not asked for a deploy. `sh tools/deploy.sh` is the command,
+  and the SSH IP allowlist below will very likely need his attention first.
+- SeedCore tests, app tests (by hand, in the simulator), and every reference
+  check pass. `check_orchard` agrees with the Swift on all 500 arrivals across
+  26 plots at 1629 checks, and it agreed **first time**.
+- Live still shows three areas. `/api/garden` will say `kinship` is open as
+  soon as the deploy goes.
+- **The host's SSH IP allowlist stopped a deploy earlier today.** rsync answers
   `Connection reset by 45.8.225.251`, not a permission denial, because the
   allowlist gates SSH before authentication. It is My20i -> peacegarden.app ->
   Security -> SSH Access, and it needs whatever this Mac's public IP is that
@@ -97,76 +91,76 @@ arrived as a bright dish two metres across and took four passes:
   on the page shaded flat** — one normal and one tone a triangle, from where the
   triangle is — which is what makes it faces rather than a surface.
 
-## The fourth area is the Orchard, and it is decided
+## The Orchard, built
 
-Marcus chose it on 21 September and answered the three questions it raises. **No
-code is written yet** — this section is the brief, so the session that builds it
-does not have to re-decide anything.
-
-The Orchard is `kinship`. Genus heads `Vin` (a bond) and `Cyn` (the dog at the
-door); table `orchard`; heading `areaMeeting`'s neighbour `areaKinship`, "The
-Orchard", already in `strings.js` and already translated in all 42 catalogues,
-so — as with the last three — it costs two English strings, `orchardAbout` and
-`orchardAway`.
-
-1. **The garden plants the trees, not the gardeners.** Five trees in a quincunx
-   are *structures*, like the hedges, the bench and the roundel: drawn by a new
-   `Organic.tree`, standing in every plot from the day it opens, a row nowhere.
-   Every arriving plant joins a guild underneath one.
-
-   This is the roundel's move again and it was chosen for the same reason. The
-   alternative — the tallest arrivals become the trees — leaves a new plot with
-   five empty tree slots and guild slots that mean nothing until a tall plant
-   happens along, and hands the first gardener to the Orchard a tree while the
-   second gets shade. **What it costs:** the Orchard is the first area where a
-   gardener's plant can never take the most prominent thing in the plot. The
-   Quiet Garden's bench is the precedent that says this is allowed.
-
-2. **Twenty a plot** — four guild places at the compass points of each of five
-   trees. Between the Crossing's 24 and the Quiet Garden's 10, in the same
-   5.2 m square. Four round a trunk is the spacing a guild wants; six reads as
-   a ring.
-
-3. **Fill one guild, then the next** — *not* the Crossing's "wherever there is
-   least". A tree is either dressed or bare, never all five half-done, which is
-   what a young orchard actually looks like. **This is the whole reason to build
-   a fourth area rather than a second Crossing**: it is the opposite rule, so it
-   tests whether the template survives a placement that is deliberately uneven.
-
-### What decision 3 leaves for the build to settle
-Two sub-choices follow from it and are the builder's call, not Marcus's — but
-name them in the commit rather than letting them be accidents:
-- **Which guild fills first.** The centre of the quincunx, then the four corners
-  in quarter order, is the reading that matches how the other three areas number
-  themselves.
-- **Which of a guild's four places a plant takes.** Height, as everywhere else:
-  the tallest behind the trunk, the lowest at the front. Note that this makes a
-  guild's four ranks *fixed*, which is nearer the Quiet Garden's ten than the
-  Crossing's quarters, and means the order check compares ranks and never
-  distances — the trap the Crossing already taught.
-
-### The shape of the work, from the Crossing's pattern
 `SeedCore/WebGardens/Orchard.swift`, `Server/.api/Orchard.php`,
-`OrchardStore.php`, `Server/assets/js/orchard.js`, `orchardpage.js`,
-`Server/.pages/orchard`, `/orchard` in `index.php` and `router.php`,
-`/dev/orchard`, `tools/reference/check_orchard.php`, `Organic.tree` +
-`pg_tree` in `tools/wasm/Sources/PlantWasm/Dressing.swift`, a `Cross.swift`
-equivalent for the plot calls, `Areas.swift`/`Areas.php` to open `kinship` and
-name the table, `Ambassadors.php`, `WalkStore.php`, `backup.php`'s KEPT list,
-`check_backup.php`, `check_ambassador.php`, `walk.js`'s `built` map, and
-`docs/WEB-GARDENS.md`. **Re-record `area_vectors.json`** — opening an area
-breaks `AreaVectorTests` by design, and rename the test to say four.
+`OrchardStore.php`, `Server/assets/js/orchard.js`, `orchardpage.js`, `/orchard`,
+`/dev/orchard`, `tools/reference/check_orchard.php`, `Organic.tree`,
+`pg_tree`, `pg_orchard_*`. The long version is in `docs/WEB-GARDENS.md`
+§*The Orchard, built*; what follows is only what a next session needs.
 
-**No libm in the quincunx.** Tree spots and the four compass places are literals,
-for the reason `Organic.quarter` exists: a sine from a host's own library is not
-the same number on every host, and a placement has to match in Swift and PHP for
-ever.
+Marcus chose the area and answered its three questions before any code existed:
+the garden plants the trees, twenty a plot, and a guild is finished before the
+next is begun.
 
-## Still waiting for Marcus
+- **The rule is the Crossing's two loops turned inside out** — guild outside,
+  rank inside. That nesting *is* the area. A port with them swapped agrees about
+  the first four plants of every plot, about every plot's total and about most
+  placements after that, which is why the check replays all five hundred.
+- **The middle guild has no ranks**, because its four places are all the same
+  distance from the plot's centre and the middle tree is the one you walk all
+  the way round. This is not an accommodation: it is the Crossing's *three
+  sharing an arc* applied to a whole guild, and it is what lets a plot open with
+  any plant at all — including the 1.33 m kinship ambassador, the tallest of
+  the ten.
+- **Cuts at 0.75 and 1.30**, the 25th and 75th centiles of 300 crossings for a
+  guild of 1:2:1.
+- **Three plants in four get their own rank, against the Crossing's 96.6%**, and
+  that is the rule's price rather than a fault — `inOrder` still guarantees the
+  picture for every plant. Recorded in `OrchardTests` so a change that wrecks it
+  shows up.
+- **At 500: 26 plots, 25 exactly full.** One older plot sits at 19 because its
+  last free place wants a plant of 0.77 m or less; it is not abandoned, and the
+  test says so in the way it checks.
+- **The counts do not fall from guild to guild, and asserting they did was this
+  session's one real bug.** 4 4 4 3 4 is correct: a guild's last place holds the
+  tightest constraint in the plot and can wait a long time for a plant tall
+  enough for its crown. Both the PHP check and the Swift test asserted
+  monotonicity, both passed on the `orchard-arrival-` five hundred, and
+  `/dev/orchard` — which uses `orchard-parent-` seeds — showed 4 4 4 3 4 on
+  screen. **Two samples caught what one could not**, and the workbench earned
+  its keep as something other than a picture. The checks now assert the two
+  things that really are guaranteed, and are stronger for it.
 
-1. **Whether the share screen should hold its question back while it asks
-   `/api/garden`.** Carried from the handover before last. Unchanged, and still
-   not watched on a device.
+### The tree took four passes, which is the roundel's number
+`Organic.tree` is the second structure that is neither hedge nor bench, and
+every one of its faults was one the roundel had already taught:
+- **Too big and too low** — it covered the planting, and an orchard where you
+  cannot see the guild is five trees.
+- **A green balloon.** `wobble` is in -1...1 but value noise only *touches* its
+  ends; a typical reading is a third of the range. A coefficient chosen from the
+  range gives a third of the lumpiness it looks like it asks for. **This is the
+  trap to remember: 0.20 drew a ball, 0.55 drew a canopy.**
+- **Faceted.** Flat shading was tried on the roundel's precedent and made a
+  polyhedron. The roundel is flat because paving *is* faces; a canopy is grown
+  and belongs with the hedges, which are smooth.
+- **A star at every treetop, twice.** The canopy's poles are one point held by
+  25 vertices and `computeNormals` gave each only its own faces; and a per-face
+  colour hash gave tiny touching triangles wildly different greens. Both are
+  *the mesh showing through its own shading*, which is the roundel's third pass
+  again.
+
+## The decisions waiting for Marcus
+
+1. **Whether to deploy the Orchard.** It is built and tested and not live. The
+   SSH IP allowlist under *State* is the thing that will stop it.
+2. **The fifth area.** The Knot Garden is the first where a slot has a *mirror*,
+   which is the one structural first left that none of the four has met; the
+   Seedbed is the plainest; the Glasshouse is the first with a roof, and so the
+   first where the sky is occluded. Six left.
+3. **Whether the share screen should hold its question back while it asks
+   `/api/garden`.** Carried from two handovers ago. Unchanged, and still not
+   watched on a device.
 
 ## Traps
 - **Run the app's tests by hand when an area opens.** CI cannot: they need Xcode
@@ -180,7 +174,31 @@ ever.
   `cross*` are **not** in the per-language catalogues — they live in
   `strings.js`, English, until commissioned. Only the ten area names are
   translated, which is why a third area cost two strings again.
-- **The Long Walk *is* the travel area**, and the Crossing *is* `meeting`.
+- **The Long Walk *is* the travel area**, the Crossing *is* `meeting`, and the
+  Orchard *is* `kinship` — not `renewal`, which is the Coppice, and not
+  `ground`, which is the Home Ground.
+- **`wobble` is in -1...1 but value noise only touches its ends.** A typical
+  reading is about a third of the range, so a coefficient picked from the range
+  gives a third of the effect it looks like it asks for. This is what drew the
+  first canopy as a ball, and it applies to every use of `wobble` and `noise`
+  in `Organic`.
+- **`PeaceGarden.xcodeproj` is at the repository root**, not under `App/`.
+- **Opening an area breaks the *previous* area's test suite.**
+  `CrossingTests.testTheCrossingIsTheMeetingArea` asserted the whole list of
+  open areas, so opening the Orchard failed a test that tells nobody anything
+  about the Crossing. Fixed by taking the list out of it. The list is now
+  written down in exactly two places on purpose — `AreaVectorTests` for
+  SeedCore and `ThemeMappingTests` for the app — and **an area that opens should
+  fail those two and nothing else**. If a third place turns up, take it out
+  rather than updating it.
+- **A new page needs adding to `tools/site/serve.py`'s `PAGES` as well as to
+  `Server/index.php`.** `python3 tools/site/export.py --check` is what catches
+  it. **`/cross` was missing from it** — the Crossing shipped that way and the
+  last handover recorded this check as in step when it was not. Fixed here for
+  both pages. It is dev-only tooling, so nothing live was broken; what was
+  broken is that `/cross` did not work in the static site preview.
+- The two python checks are **`tools/site/export.py`** and
+  **`tools/preview/check_port.py`**, not under `tools/reference/`.
 - **20i's CDN normalises `Accept-Encoding`** and holds a response for its full
   max-age. Brotli never arrives. Do not measure again.
 - **`/.api/` and `/.pages/` are refused by nginx's dot-directory rule.**
@@ -205,9 +223,15 @@ ever.
 - **`WalkStore` has outgrown its name** — it holds the connection for a garden
   with three areas now, and says so in its own doc comment. Renaming touches
   every caller and the reference checks, so it is a commit of its own.
-- **The plumbing in `longwalk.js` is now imported by two other areas**
-  (`quietgarden.js` and `crossing.js`) for GL, the camera, the quarter turns,
-  the plant program, `COLOUR`, `SIDE`, `RIM_DEPTH`, `readOutline` and
-  `readStructure`. The last handover said a third area is when that wants a
-  module of its own. **It is now that.** Nothing is broken by leaving it; it is
-  simply the wrong name on the door.
+- **The plumbing in `longwalk.js` is now imported by three other areas**
+  (`quietgarden.js`, `crossing.js`, `orchard.js`) for GL, the camera, the
+  quarter turns, the plant program, `COLOUR`, `SIDE`, `RIM_DEPTH`, `readOutline`
+  and `readStructure`. Two handovers ago said a third area is when that wants a
+  module of its own; it is now four, and `COLOUR` has grown `leaf` and `bark`
+  for an area that is not the Long Walk. **This is the oldest unpaid debt in the
+  web garden.** Nothing is broken by leaving it — it is simply the wrong name on
+  the door, and the file's own comment at `makePlotStage` says so.
+- **`Organic` is now 660 lines and holds five structures** (hedge, bench,
+  roundel, tree, plus the ground's outline and verges). It has not become hard
+  to read yet, but the tree is the first one big enough that a `Structures/`
+  split would be worth considering at the sixth.

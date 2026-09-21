@@ -6,6 +6,7 @@ require_once __DIR__ . '/Areas.php';
 require_once __DIR__ . '/LongWalk.php';
 require_once __DIR__ . '/RoomStore.php';
 require_once __DIR__ . '/CrossStore.php';
+require_once __DIR__ . '/OrchardStore.php';
 require_once __DIR__ . '/Offers.php';
 
 /**
@@ -51,6 +52,7 @@ final class WalkStore
         // nightly copy does not know to keep.
         $store->room();
         $store->cross();
+        $store->orchard();
         return $store;
     }
 
@@ -226,6 +228,13 @@ final class WalkStore
         return $cross ??= new CrossStore($this->db);
     }
 
+    /** The Orchard, on the same connection. */
+    public function orchard(): OrchardStore
+    {
+        static $orchard = null;
+        return $orchard ??= new OrchardStore($this->db);
+    }
+
     /**
      * Plants one arrival into whichever area it belongs to.
      *
@@ -240,6 +249,7 @@ final class WalkStore
         return match ($area) {
             'peace' => $this->room()->plant($seed, $parentA, $parentB, $encounter, $height, $family),
             'meeting' => $this->cross()->plant($seed, $parentA, $parentB, $encounter, $height, $family),
+            'kinship' => $this->orchard()->plant($seed, $parentA, $parentB, $encounter, $height, $family),
             default => $this->plant($seed, $parentA, $parentB, $encounter, $height, $family),
         };
     }
@@ -249,6 +259,7 @@ final class WalkStore
     {
         if ($area === 'peace') { $this->room()->hide($seed); return; }
         if ($area === 'meeting') { $this->cross()->hide($seed); return; }
+        if ($area === 'kinship') { $this->orchard()->hide($seed); return; }
         $this->hide($seed);
     }
 

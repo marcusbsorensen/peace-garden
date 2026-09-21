@@ -105,7 +105,7 @@ a border with a knot garden's name.
 | **The Coppice** | renewal | Stools in blocks, each block cut in its year of the rotation, so every stage stands at once, from cut stumps to full poles. Woodland flowers in the light between. | Woodland floor, gentle relief | Stools, the cut and the uncut |
 | **The Long Walk** | travel | A double border either side of a path: tall at the back, graded to the front, drifts of three and five, the same colour repeated down its length for rhythm. The walk goes on; plots open end to end. | Level, a mown path | The path, a hedge behind each border |
 | **The Quiet Garden** | peace | An enclosure: hedged, one tree, one bench, and more lawn than planting. **The fewest plants per plot of any area, by rule.** Room is what it is for. | Lawn | A hedge round, a bench |
-| **The Orchard** | kinship | Trees on a quincunx, meadow beneath, plants grouped round each tree as its guild. The shrubs and flowers under a tree are chosen to go with it. | Meadow | Tree positions |
+| **The Orchard** | kinship | Five trees on a quincunx, meadow beneath, and a guild of four under each. **Twenty a plot, and an arrival goes under the earliest tree with a place left**, so trees are dressed one at a time rather than five at once. The first area whose tallest thing is not something anybody grew. | Meadow, mown into a disc under each tree | The five trees |
 | **The Knot Garden** | pattern | Low clipped hedging in an interlaced geometric pattern, each compartment filled with one colour. Symmetrical: a plant's slot has a mirror, and a compartment fills with one colour family. | Flat, gravel | The hedging pattern |
 | **The Glasshouse** | light | Staging along the sides, pots on it, a central aisle. Tender plants, set close to the glass for the light. | Floor tiles | The benches, the glass |
 | **The Crossing** | meeting | Four paths meeting at a centre, four quarters, one feature where they cross: the quadripartite garden, one of the oldest plans there is for a meeting place. Plants face the centre. **Twenty-four a plot, and an arrival goes wherever there is least**, so the four quarters grow together. | Grass, with two paths mown through it | The paths, a round of paving where they cross |
@@ -325,6 +325,93 @@ second, a new plot only when neither fits) rather than inventing one. What
 looking *did* change was the drawing: the corner notches, the bench lying along
 its corner's diagonal instead of across it, and a room framed so tight that the
 page's own prose landed on the lawn.
+
+## The Orchard, built
+
+21 September, the same day as the other three. `SeedCore/WebGardens/Orchard.swift`,
+`Server/.api/Orchard.php`, `OrchardStore.php`, `Server/assets/js/orchard.js`,
+`/orchard`, `/dev/orchard`, `tools/reference/check_orchard.php`, and
+`Organic.tree`.
+
+- **Twenty a plot: five guilds of four.** Between the crossing's twenty-four and
+  the room's ten. Four is one place nearest the middle of the plot, two beside
+  the trunk and one furthest out, so a guild faces the middle exactly as a
+  crossing's quarter does.
+- **The rule is *finish one guild, then start the next*** — the Crossing's rule
+  turned inside out, and the reason to build a fourth area at all. What it
+  guarantees is that **no guild is started while an earlier one stands empty**,
+  and that **a free place in an earlier guild is one nobody in a later guild
+  could have stood in**. It does *not* guarantee that the counts fall from guild
+  to guild: 4 4 4 3 4 is correct, because a guild's last place holds the
+  tightest constraint in the plot and may wait a long time for a plant tall
+  enough. Both `check_orchard.php` and `OrchardTests` asserted the falsehood
+  first, both passed on their own five hundred, and the workbench at
+  `/dev/orchard` — which draws a different five hundred — is what showed it. The Crossing
+  looks for a plant's own rank across every quarter before it will accept a
+  neighbouring rank, because its business is keeping four beds level. This looks
+  through every rank of the earliest unfinished guild before it will move to the
+  next guild. **The two loops nested the other way round is the whole
+  difference**, and it is what the port has to get right: a port with them
+  swapped agrees about the first four plants of every plot, about every plot's
+  total, and about most placements after that.
+- **The five trees are structures, not plantings.** `Organic.tree`, standing in
+  every plot from the day it opens, a row in no table — the roundel's move
+  again. The alternative, the tallest arrivals becoming the trees, leaves a new
+  plot with five empty tree slots and guild places that mean nothing until a tall
+  plant happens along. What it costs is that this is the first area where a
+  gardener's plant cannot be the tallest thing in the plot; the Quiet Garden's
+  bench is the precedent that says an area may hold something nobody planted.
+- **The middle guild has no ranks at all**, and it is not a special case bolted
+  on. Every rule here orders plants outward from the middle of the plot, and the
+  four places under the middle tree are all the same distance from that middle —
+  there is no in-front-of among them, because the middle tree is the one you can
+  walk all the way round. It is the Crossing's *three sharing an arc* applied to
+  a whole guild. It is also what makes the rule work: the first four arrivals go
+  under the middle tree whatever they are, so a plot never opens by turning
+  somebody away, and the 1.33 m ambassador — the tallest of the ten — has
+  somewhere to stand that is not the back of a guild.
+- **Cuts at 0.75 m and 1.30 m**, measured at the 25th and 75th centiles of three
+  hundred crossings for a guild of 1:2:1. The fourth division of one population
+  by a fourth template.
+- **At 500 arrivals: 26 plots, 25 exactly full**, the twenty-sixth holding two
+  and one older plot holding nineteen — its last free place wants a plant of
+  0.77 m or less and the last of the five hundred went into that same plot. An
+  older plot goes on receiving after a newer one opens, because `place` scans
+  plots oldest first every time.
+- **Three plants in four get their own rank, where the Crossing gets 96.6%.**
+  Preferring the guild over the rank means a guild of four takes whoever arrives
+  next rather than waiting for the right height. 301 of 399 in their own rank, 58
+  one step out, 40 one step in, none further. **It is not a visual fault**:
+  `inOrder` is what guarantees the picture and it holds for every plant. A rank
+  is the height a place was meant for; `inOrder` is what a visitor sees.
+- **The rule held first time**, as the room's and the crossing's did, and the
+  port agreed with the Swift on all five hundred at the first run.
+- **What looking found was all in the tree.** `Organic.tree` is the second
+  structure that is neither hedge nor bench, and it took four passes, which is
+  the roundel's number:
+  - **Too big and too low.** A 1.7 m spread on a 1.55 m crown covered the
+    planting from every angle — and an orchard where you cannot see the guild is
+    five trees. Lifted and narrowed.
+  - **A green balloon on a stick.** The lumpiness was set at 0.20 of the radius
+    from `wobble`'s -1...1 range, but value noise only touches its ends: a
+    typical reading is about a third of the range, so the canopy came out a
+    twelfth out of true instead of a fifth. 0.55, and one octave nearly as broad
+    as the tree, is what made a canopy lopsided rather than merely bumpy.
+  - **Faceted.** Flat shading was tried first, on the roundel's precedent, and
+    it made a polyhedron. The roundel is flat because paving *is* faces; a
+    canopy is a grown thing and belongs with the hedges, which are smooth. Once
+    the lumpiness was strong enough, smooth normals read as foliage.
+  - **A star at every treetop**, twice over. The canopy's two poles are one
+    point held by twenty-five vertices, and `computeNormals` gave each only its
+    own faces; and the per-face colour hash gave tiny touching triangles wildly
+    different greens. One averaged normal for the pole ring, and a tone read
+    smoothly off each vertex's own height, and it is gone. Both are the same
+    fault the roundel had in its third pass: **the mesh showing through its own
+    shading.**
+- **The mown disc under each tree is the guild made visible.** Grass left long
+  between the trees and cut back round each trunk is what an orchard is, and it
+  is also the only thing on the page that says which four plants belong to which
+  tree — without a line being drawn anywhere.
 
 ## The Crossing, built
 

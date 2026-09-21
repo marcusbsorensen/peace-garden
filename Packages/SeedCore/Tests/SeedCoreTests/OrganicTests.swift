@@ -82,5 +82,47 @@ final class OrganicTests: XCTestCase {
     static let pinnedX = 2.5134835866491474
     static let pinnedVerge = -0.03701313226545083
 
+    // MARK: - A tree
+
+    /// The Orchard's trees are structures nobody planted, so nothing about them
+    /// is checked by a placement vector. These are the properties the drawing
+    /// depends on.
+    func testATreeStandsOnTheGroundAndClearsItsOwnGuild() {
+        let tree = Organic.tree(seed: 5)
+        XCTAssertFalse(tree.positions.isEmpty)
+        XCTAssertEqual(tree.normals.count, tree.positions.count)
+        XCTAssertEqual(tree.indices.count % 3, 0)
+        for i in tree.indices { XCTAssertLessThan(Int(i), tree.positions.count) }
+
+        let low = tree.positions.map(\.y).min() ?? 1
+        let high = tree.positions.map(\.y).max() ?? 0
+        XCTAssertEqual(low, 0, accuracy: 1e-5, "a tree has to stand on the ground")
+        XCTAssertGreaterThan(high, 3.0, "a tree has to be taller than any plant")
+
+        // Every normal is a unit vector, including the two poles of the canopy,
+        // whose vertices are all at one point and are given one averaged normal
+        // rather than the star `computeNormals` would leave.
+        for n in tree.normals {
+            XCTAssertEqual((n.x * n.x + n.y * n.y + n.z * n.z).squareRoot(), 1, accuracy: 1e-4)
+        }
+
+        // **Nothing is drawn where a guild stands.** A plant sits
+        // `Orchard.guildRadius` from the trunk, and the canopy's lowest point
+        // out there has to be above the tallest plant this garden grows.
+        let reach = Float(Orchard.guildRadius)
+        let overhead = tree.positions
+            .filter { ($0.x * $0.x + $0.z * $0.z).squareRoot() > reach - 0.03 && $0.y > 1 }
+            .map(\.y).min() ?? 0
+        XCTAssertGreaterThan(overhead, 2.35, "the canopy dips into the guild beneath it")
+    }
+
+    /// The same seed is the same tree, and a different seed is a different one —
+    /// so a plot is the same on every visit and five trees are not one tree
+    /// drawn five times.
+    func testATreeIsItsSeed() {
+        XCTAssertEqual(Organic.tree(seed: 11).positions, Organic.tree(seed: 11).positions)
+        XCTAssertNotEqual(Organic.tree(seed: 11).positions, Organic.tree(seed: 12).positions)
+    }
+
     private func stride_(from: Int, to: Int) -> [Int] { from < to ? Array(from..<to) : [] }
 }

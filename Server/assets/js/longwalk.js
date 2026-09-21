@@ -31,6 +31,20 @@ export const COLOUR = {
   // the plot's own rock showing through — picked against the grass it is
   // surrounded by, the way the timber was picked against the yew.
   stone: [0.345, 0.330, 0.302],
+  // The Orchard's trees, both picked against the grass and against the yew
+  // rather than against a swatch.
+  //
+  // `leaf` is warmer and lighter than the yew because a fruit tree in leaf is
+  // not a clipped hedge: the yew's blue-green is what a dense evergreen does
+  // with light, and an orchard canopy is thinner, younger and yellower. It also
+  // has to survive being the largest coloured area on the page — five canopies
+  // cover more of a plot than anything else in this garden — so it sits a step
+  // above the grass rather than a leap.
+  leaf: [0.315, 0.400, 0.215],
+  // `bark` is much darker than the bench's timber and browner than the
+  // bedrock. A living trunk standing in its own canopy's shade is the darkest
+  // thing on the slab, and drawing it at plank brightness made five pale posts.
+  bark: [0.268, 0.222, 0.188],
 };
 
 // Midday, GardenGround.swift.
