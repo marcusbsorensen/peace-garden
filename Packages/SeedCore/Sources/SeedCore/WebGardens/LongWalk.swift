@@ -89,6 +89,7 @@ public enum LongWalk {
 
     /// The tier a grown plant belongs in.
     ///
+    ///
     /// **Measured, then set to fit the slots.** Across three hundred crossings
     /// of three hundred different pairs of parents, grown heights run 0.21 m to
     /// 2.22 m with thirds at 0.85 m and 1.19 m. A side of a plot has five front
@@ -119,22 +120,23 @@ public enum LongWalk {
 
     // MARK: A plant's traits
 
-    /// What the rule needs to know about a plant, and nothing else. Stored with
-    /// the planting, so a slot never has to be worked out again.
-    public struct Traits: Codable, Equatable, Hashable, Sendable {
-        public var height: Double
-        public var family: Int
-
-        public init(height: Double, family: Int) {
-            self.height = height
-            self.family = family
-        }
-
-        public var tier: Tier { LongWalk.tier(height: height) }
-    }
+    /// What a placement rule needs to know about a plant, and nothing else.
+    ///
+    /// **`PlantTraits` under another name**, since 21 September, when the Quiet
+    /// Garden wanted the same two facts. The grown height and the flower's
+    /// colour family are facts about a plant rather than about this area; what
+    /// belongs to an area is what it reads off them, which is `tier` here and
+    /// `stand` there. The spelling stays because it is in
+    /// `long_walk_vectors.json` and in the PHP port, and the encoded shape is
+    /// the same two fields either way.
+    public typealias Traits = PlantTraits
 
     /// Read from the grown plant. Builds its mesh once, which is why a plant's
     /// traits are stored with it rather than read again.
+    ///
+    /// Not the Long Walk's alone — every area needs these two — but it lives
+    /// here because this is the area that first needed it, and moving it would
+    /// rename a function the port and the vectors both know.
     public static func traits(of genome: Genome) -> Traits {
         let bounds = Maturity.bounds(for: genome)
         let petal = genome.palette.petalBase
@@ -423,4 +425,13 @@ public enum LongWalk {
     /// the rule ahead of the stored arrivals, so everything planted afterwards
     /// is graded against a plant that is standing there.
     public static let ambassador: Planting = Walk.opened().plantings[0]
+}
+
+/// The Long Walk's reading of a plant: which tier of a border it belongs in.
+///
+/// An extension rather than a property of `PlantTraits`, because the reading
+/// belongs to the area and not to the plant. The Quiet Garden's `stand` sits
+/// beside it in that area's own file, and a third area will add a third.
+extension PlantTraits {
+    public var tier: LongWalk.Tier { LongWalk.tier(height: height) }
 }

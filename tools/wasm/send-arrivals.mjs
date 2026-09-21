@@ -1,6 +1,10 @@
 // Stands in for phones sending plants to the plot service, until phones can.
 //
-//   node tools/wasm/send-arrivals.mjs http://localhost:8803 120
+//   node tools/wasm/send-arrivals.mjs http://localhost:8803 120 [area]
+//
+// `area` is one of the garden's ten and defaults to `travel`. An arrival is a
+// plant, and where it goes is the service's business — this only says which
+// area it claims to belong to, exactly as a phone does.
 //
 // Each arrival is a real crossing grown by SeedCore in the browser module:
 // its seed, both parents, the meeting, and the height and colour family a phone
@@ -10,7 +14,7 @@
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
-const [base = 'http://localhost:8803', count = '48'] = process.argv.slice(2);
+const [base = 'http://localhost:8803', count = '48', area = 'travel'] = process.argv.slice(2);
 
 let memory;
 const view = () => new DataView(memory.buffer);
@@ -32,7 +36,9 @@ e._initialize();
 const tally = {};
 for (let n = 0; n < Number(count); n++) {
   const length = e.pg_lineage(n);
-  const body = new TextDecoder().decode(new Uint8Array(memory.buffer, e.pg_result(), length));
+  const lineage = JSON.parse(
+    new TextDecoder().decode(new Uint8Array(memory.buffer, e.pg_result(), length)));
+  const body = JSON.stringify({ ...lineage, area });
   const response = await fetch(`${base}/api/walk/plant`, { method: 'POST', body });
   tally[response.status] = (tally[response.status] ?? 0) + 1;
   if (response.status >= 400) {
@@ -40,5 +46,6 @@ for (let n = 0; n < Number(count); n++) {
     process.exit(1);
   }
 }
-const walk = await (await fetch(`${base}/api/walk`)).json();
-console.log(`Sent ${count} arrivals: ${JSON.stringify(tally)}. The walk has ${walk.plots} plots.`);
+const where = area === 'peace' ? '/api/quiet' : '/api/walk';
+const held = await (await fetch(`${base}${where}`)).json();
+console.log(`Sent ${count} arrivals to ${area}: ${JSON.stringify(tally)}. It has ${held.plots} plots.`);

@@ -75,6 +75,18 @@ final class Offers
         )");
         $this->run('CREATE INDEX IF NOT EXISTS walk_offers_to ON walk_offers (token_to)');
         $this->run('CREATE INDEX IF NOT EXISTS walk_offers_from ON walk_offers (token_from)');
+        // Added on 21 September, when the garden had a second area to be
+        // offered a plant for, so it is an ALTER that may already have run.
+        // Every offer made before it was for the Long Walk, which is what the
+        // default says, and an offer answered after it is planted where its own
+        // area's rule says. The column stays after the answer, unlike the
+        // plant's own fields: it is where to look for the planting, not
+        // anything about the plant.
+        try {
+            $this->run("ALTER TABLE walk_offers ADD COLUMN area VARCHAR(16) NOT NULL DEFAULT 'travel'");
+        } catch (Throwable) {
+            // Already there.
+        }
     }
 
     /**
@@ -85,17 +97,18 @@ final class Offers
      * handed the one that already exists, whatever state it is in.
      */
     public function offer(string $seed, string $to, string $from, string $parentA, string $parentB,
-                          string $encounter, float $height, int $family, int $now): array
+                          string $encounter, float $height, int $family, int $now,
+                          string $area = 'travel'): array
     {
         if ($existing = $this->find($seed)) {
             return [self::seen($existing), false];
         }
         $insert = $this->db->prepare('INSERT INTO walk_offers
-            (seed, token_to, token_from, parent_a, parent_b, encounter, height, family, state, offered_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            (seed, token_to, token_from, parent_a, parent_b, encounter, height, family, state, offered_at, area)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         try {
             $insert->execute([$seed, $to, $from, $parentA, $parentB, $encounter, $height, $family,
-                              self::OFFERED, $now]);
+                              self::OFFERED, $now, $area]);
         } catch (PDOException $clash) {
             // Two offers of one plant, racing. The unique seed settles it and
             // the loser is handed the winner, which is the same answer it would
@@ -145,7 +158,8 @@ final class Offers
             return ['offer' => self::seen($this->find($seed) ?? []), 'planting' => null];
         }
 
-        [$planting] = $this->walk->plant(
+        [$planting] = $this->walk->plantInto(
+            (string) ($row['area'] ?? 'travel'),
             $seed, (string) $row['parent_a'], (string) $row['parent_b'], (string) $row['encounter'],
             (float) $row['height'], (int) $row['family']
         );
@@ -170,7 +184,9 @@ final class Offers
         if (!hash_equals((string) $row['token_to'], $token)
             && !hash_equals((string) $row['token_from'], $token)) return null;
 
-        if ($row['state'] === self::ACCEPTED) $this->walk->hide($seed);
+        if ($row['state'] === self::ACCEPTED) {
+            $this->walk->hideIn((string) ($row['area'] ?? 'travel'), $seed);
+        }
         $this->settle($seed, self::WITHDRAWN, $now);
         return self::seen($this->find($seed) ?? []);
     }

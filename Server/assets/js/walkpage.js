@@ -13,7 +13,7 @@
 // workbench and turns a walk into a readout. What is left is one line, and
 // only while there is something to wait for.
 import { loadModule } from './plant.js';
-import { makeWalkStage, growFromService } from './longwalk.js';
+import { makePlotStage, growFromService } from './longwalk.js';
 import { makeSky } from './sky.js';
 import { dressed } from './plain.js';
 
@@ -41,7 +41,7 @@ async function walk() {
   // and calling it a second time would fetch and compile the whole thing
   // again.
   const engine = await loadModule('/plant.wasm');
-  const stage = makeWalkStage(el('stage'), SPAN, engine);
+  const stage = makePlotStage(el("stage"), SPAN, engine);
 
   // The same sky the app draws, and it turns with the walk: turning is the
   // reader going round to another side, so what they can see of the sky goes

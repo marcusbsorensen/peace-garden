@@ -11,9 +11,12 @@ import SeedCore
 //   pg_outline(w, l, seed)         the ground's outline into the result: point
 //                                  count (u32), then x, z (f32) per point
 //   pg_verge(along, side, seed)    how far a path's verge wanders there (f64)
-//   pg_hedge(l, h, t, seed)        a hedge into the result: vertex count, index
+//   pg_hedge(l, h, t, seed, domed) a hedge into the result: vertex count, index
 //                                  count (u32), positions, normals (3 × f32),
-//                                  indices (u32)
+//                                  indices (u32). `domed` 0 cuts its ends
+//                                  square, for a run that carries on into the
+//                                  next one round an enclosure
+//   pg_bench(l, h, d, seed)        the Quiet Garden's seat, the same shape
 
 @_expose(wasm, "pg_outline")
 @_cdecl("pg_outline")
@@ -34,16 +37,32 @@ public func pgVerge(_ along: Double, _ side: Int32, _ seed: UInt32) -> Double {
 
 @_expose(wasm, "pg_hedge")
 @_cdecl("pg_hedge")
-public func pgHedge(_ length: Double, _ height: Double, _ thickness: Double, _ seed: UInt32) -> Int32 {
-    let mesh = Organic.hedge(length: length, height: height, thickness: thickness, seed: UInt64(seed))
+public func pgHedge(_ length: Double, _ height: Double, _ thickness: Double,
+                    _ seed: UInt32, _ domed: Int32) -> Int32 {
+    let out = structure(Organic.hedge(length: length, height: height, thickness: thickness,
+                                      seed: UInt64(seed), domed: domed != 0))
+    setResult(out)
+    return Int32(out.count)
+}
+
+@_expose(wasm, "pg_bench")
+@_cdecl("pg_bench")
+public func pgBench(_ length: Double, _ height: Double, _ depth: Double, _ seed: UInt32) -> Int32 {
+    let out = structure(Organic.bench(length: length, height: height, depth: depth,
+                                      seed: UInt64(seed)))
+    setResult(out)
+    return Int32(out.count)
+}
+
+/// A structure's mesh, in the shape `readHedge` in the page already reads.
+private func structure(_ mesh: StructureMesh) -> [UInt8] {
     var out: [UInt8] = []
     put(UInt32(mesh.positions.count), &out)
     put(UInt32(mesh.indices.count), &out)
     for p in mesh.positions { put(p.x, &out); put(p.y, &out); put(p.z, &out) }
     for n in mesh.normals { put(n.x, &out); put(n.y, &out); put(n.z, &out) }
     for i in mesh.indices { put(i, &out) }
-    setResult(out)
-    return Int32(out.count)
+    return out
 }
 
 private func put(_ value: UInt32, _ out: inout [UInt8]) {

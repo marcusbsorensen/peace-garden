@@ -162,6 +162,8 @@ export const EN = Object.freeze({
   // every plant in it from what the plot service holds. A visitor who has
   // walked to this one area of ten should be told the real one is there, and
   // the other nine have nothing to offer such a link.
+  // Named by the area's heading beside it, so the same two words carry a
+  // reader to whichever of the built areas they are standing in.
   walkThisArea: "Walk this area",
   // On the front page, beside the other three. Shorter than `walkAbout`, which
   // is the walk's own page saying how to move around it — how to walk is not
@@ -189,6 +191,18 @@ export const EN = Object.freeze({
   walkOn: "On",
   walkLeft: "Turn left",
   walkRight: "Turn right",
+
+  // The Quiet Garden's own page. **Two strings and no more**, because the rest
+  // of what the page says it already had: the heading is `areaPeace`, which is
+  // commissioned in forty-one languages along with the other nine area names,
+  // and `walkBack`, `walkOn`, `walkLeft`, `walkRight`, `walkGrowing` and
+  // `walkEmpty` never said *walk* in any of them — they are how you move and
+  // what is happening, not where you are. A second area costing two strings
+  // rather than nine is the whole argument of `LANGUAGES.md` working.
+  quietAbout:
+    "One of the garden's ten areas, and the quietest by rule: a hedge round a lawn, a bench in one corner, and a few groups of planting at the foot of the hedge. It holds the fewest plants of any area, because room is what it is for. Go on to the next enclosure, or turn to go round this one.",
+  // The room could not be drawn. `walkAway` names the walk, so this is its own.
+  quietAway: "The Quiet Garden cannot be reached just now.",
 
   // Said once and used on both of the pages that are not built yet, because two
   // ways of saying *not yet* is one more than a reader needs.

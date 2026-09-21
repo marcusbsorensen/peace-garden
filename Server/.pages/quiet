@@ -1,0 +1,117 @@
+<!doctype html>
+<!--
+  The Quiet Garden.
+
+  A lawn with a hedge round it, a bench in one corner and a plant beside the
+  bench, and three groups of planting gathered into the other three corners.
+  It holds ten plants where the Long Walk holds forty-eight in the same square,
+  because room is what a quiet garden is for.
+
+  **One room at a time, and that is the difference from the walk.** A walk is a
+  length you look down, so `/walk` draws three of its plots end to end. An
+  enclosure is somewhere you are inside: going on is going into the next one,
+  and three hedged rooms side by side would be three gardens rather than one
+  seen properly.
+
+  **This page is the one the app talks to, not a picture of it.** The plants
+  are grown here, in the browser, from the same SeedCore that grows them on the
+  phone — `plant.js` loads that library built for wasm32 and `quietgarden.js`
+  hands it each planting the plot service holds. Nothing is drawn from an image
+  and nothing is precomputed: a plant on this page is the plant on the phone
+  because it is the same arithmetic, not because somebody kept two drawings in
+  step. The hedge and the bench come from the same place, through `Organic`.
+
+  **The sky is the real one**, worked out for wherever this browser is keeping
+  time and asking for nothing to find out — `sky.js`, a port of SeedCore's
+  `Sky`, held to it by `tools/reference/check_sky.mjs`. Both halves of it: the
+  plots float, so the stars under them are drawn too.
+
+  **It is a night, so the page is dark whatever the reader's system says.**
+  Every other page here follows `prefers-color-scheme`; this one cannot,
+  because the garden is lit by its own sky and a pale page around it is a
+  second room.
+
+  `noindex`, for the reason `/g` gives: walkable and indexed are different
+  properties and only one of them was asked for.
+
+  Static, like the rest: no analytics, no font CDN, no third-party anything.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Peace Garden — the Quiet Garden</title>
+    <meta name="description" content="A hedged lawn with a bench, and the few plants two people grew when they met." />
+    <meta name="color-scheme" content="dark" />
+    <meta name="robots" content="noindex" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/icon-180.png" />
+  </head>
+
+  <body class="night">
+    <!--
+      The walk itself, behind everything. The sky is behind the plots, and the
+      pool of light sits between them so the plots stand in front of the sky
+      rather than on top of a picture of one.
+    -->
+    <div class="walk" aria-hidden="true">
+      <canvas id="sky"></canvas>
+      <div class="pool"></div>
+    </div>
+    <canvas class="walk-stage" id="stage" aria-label="The Quiet Garden"></canvas>
+
+    <main class="page walk-page" id="page">
+      <header class="masthead">
+        <a href="/"
+          ><img class="mark" src="/assets/icon.svg" alt="" width="44" height="44"
+        /></a>
+        <span class="wordmark">Peace Garden</span>
+      </header>
+
+      <h1 class="heading" data-s="areaPeace"></h1>
+      <p class="body walk-about" data-s="quietAbout"></p>
+
+      <!--
+        One line, and only when there is something to say: while the plants are
+        being grown, or when there is nothing here yet. It carries no count — a
+        running tally of plots and plants is a readout, and this is a garden.
+      -->
+      <p class="label walk-note" id="note" role="status" hidden></p>
+
+      <nav class="walk-keys" id="keys" role="group" hidden>
+        <button class="pad-key" type="button" id="back" data-s="walkBack"></button>
+        <button class="pad-key" type="button" id="left" data-s="walkLeft"></button>
+        <button class="pad-key" type="button" id="right" data-s="walkRight"></button>
+        <button class="pad-key" type="button" id="on" data-s="walkOn"></button>
+      </nav>
+
+      <p class="notice body">
+        <a href="/privacy" data-s="privacyTitle"></a>
+      </p>
+
+      <footer class="foot">
+        <label class="chooser">
+          <span class="label" id="language-label"></span>
+          <span class="chooser__field">
+            <select id="language" class="chooser__select"></select>
+            <!-- Monoline, even weight, round free ends, per BRAND.md §3.2. -->
+            <svg class="chooser__mark" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path
+                d="M4 6.5 L8 10.5 L12 6.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.25"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+        </label>
+      </footer>
+    </main>
+
+    <script type="module" src="/assets/js/plain.js"></script>
+    <script type="module" src="/assets/js/quietpage.js"></script>
+  </body>
+</html>

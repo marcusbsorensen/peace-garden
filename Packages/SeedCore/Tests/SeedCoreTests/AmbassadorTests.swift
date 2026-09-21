@@ -174,15 +174,24 @@ final class AmbassadorTests: XCTestCase {
                 """)
         }
         lines.append("  ],")
-        // The one ambassador that is actually standing in a garden today, with
-        // the slot this rule put it in. The plot service derives the same
-        // placement from the seed, the height and the family rather than
-        // storing it, so this is what `check_ambassador.php` holds it to.
-        let planting = LongWalk.ambassador
+        // The ambassadors that are actually standing in a garden today, each
+        // with the slot its own area's rule put it in. **The two shapes differ**
+        // — a walk planting names a side and a tier, a room planting names a
+        // corner and a place in a group — because the areas do, which is the
+        // same reason they have a table each. The plot service derives both
+        // placements from the pinned seed rather than storing them, and
+        // `check_ambassador.php` is where the two derivations are held together.
+        let walk = LongWalk.ambassador
         lines.append("""
-              "longWalk": {"seed": "\(planting.seed)", "plot": \(planting.plot), \
-            "side": \(planting.slot.side.rawValue), "tier": \(planting.slot.tier.rawValue), \
-            "index": \(planting.slot.index), "nudge": [\(planting.nudge.x), \(planting.nudge.z)]}
+              "longWalk": {"seed": "\(walk.seed)", "plot": \(walk.plot), \
+            "side": \(walk.slot.side.rawValue), "tier": \(walk.slot.tier.rawValue), \
+            "index": \(walk.slot.index), "nudge": [\(walk.nudge.x), \(walk.nudge.z)]},
+            """)
+        let room = QuietGarden.ambassador
+        lines.append("""
+              "quietGarden": {"seed": "\(room.seed)", "plot": \(room.plot), \
+            "corner": \(room.slot.corner.rawValue), "index": \(room.slot.index), \
+            "nudge": [\(room.nudge.x), \(room.nudge.z)]}
             """)
         lines.append("}")
         return lines.joined(separator: "\n") + "\n"

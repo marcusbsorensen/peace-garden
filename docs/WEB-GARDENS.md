@@ -118,8 +118,10 @@ Three things follow from the table:
   stillness at two scales. That was never designed; it came out of the themes.
 - **The Quiet Garden is the one area where the rule is fewer.** Every other
   template asks how to fit plants in well; this one asks how few a plot can
-  hold and still be a garden. It will open more plots than any other area for
-  the same number of plants, and that is right.
+  hold and still be a garden. It opens more plots than any other area for the
+  same number of plants, and that is right: measured at five hundred, fifty-one
+  plots against the Long Walk's eleven. **Built 21 September** — §*The Quiet
+  Garden, built*.
 - **Ten ambassadors, one per area** (`WEBSITE.md` §*The ambassador plants*),
   stand in each area's first plot. **The ten seeds exist, 20 September**
   (`SeedCore/WebGardens/Ambassadors.swift`), and **the Long Walk's is standing
@@ -255,6 +257,67 @@ plot service, held to each other by `tools/reference/check_ambassador.php`.
 **Flipped while the walk was empty**, the same argument as the area flip the day
 before: the walk is append-only, so the ambassador could be its first planting
 only until somebody else's plant arrived. It had none.
+
+## The Quiet Garden, built
+
+The rule is in `SeedCore` (`WebGardens/QuietGarden.swift`), where the plot
+service, the website and the app can all read it. Built 21 September, with
+`QuietGardenTests`, `QuietGardenVectorTests` and
+`tools/reference/check_quiet_garden.php`. Live at `/quiet`.
+
+- **The plot:** a 5.2 m square with a hedge round all four sides, its inner face
+  2.3 m out, so the room is 4.6 m across. A bench lies across one corner, one
+  plant stands beside it, and each of the other three corners holds a group of
+  three at the foot of the hedge. **Ten plants a plot**, against the walk's
+  forty-eight in the same square. The middle of the room and the middles of all
+  four sides stay grass.
+- **No tree.** WEB-GARDENS said an enclosure has one. Nothing grown here is a
+  tree: heights run 0.24 m to 2.04 m, which is a shrub at best, and a drawn tree
+  among plants grown from a genome is the clip art this document warns about.
+  Marcus dropped it on 21 September, and **the specimen is the plant by the
+  bench** instead.
+- **The specimen is the plot's first plant.** Not a reserved slot: a new plot is
+  opened by taking its bench slot, so the plant beside the seat is always the
+  oldest thing in the room. The same answer the Long Walk reached by a different
+  route, and the reason this template can take a 0.75 m ambassador — a plant
+  standing alone in grass beside a seat has no height to live up to.
+- **A group is one colour, or a tone of it.** A group's colour is set by its
+  first plant. An arriving plant takes a group of its own colour, else opens an
+  unplanted corner, else joins a group of a colour near its own — the two arcs
+  either side, or pale. **The near-colour fallback is not a nicety.** The seven
+  families are nothing like evenly drawn: measured over three hundred crossings,
+  two of them take 43% of plants between them and pale takes 3.7%, so own-colour
+  alone would leave pale groups that never filled and plots that opened for want
+  of a match.
+- **Nothing stands in front of something shorter**, as on the walk, at the scale
+  of a group of three: the back of a group is at least as tall as either arm.
+  The cut between back and arm is 1.13 m, the 67th centile of the measured
+  spread, because a group is one back and two arms. It is not the walk's 1.28 m
+  and should not be — that one divides three tiers in the proportion 5:4:3.
+- **How it fills, at five hundred:** 51 plots, 49 of them full, the two at the
+  growing end holding six and five. Of the plants that joined an existing group,
+  185 matched its colour exactly and 112 were a tone of it.
+- **The hedge's ends are cut square, not domed.** A free-standing run ends in a
+  long shoulder falling to the ground over half its height — a metre on the tall
+  ones — which leaves a notch at every corner you can see the sky through. Round
+  an enclosure each run carries on into the next, so `Organic.hedge` gained a
+  `domed` flag and the four runs overlap by a hedge's thickness.
+- **Tall on the two far sides, low on the two near**, the rule Marcus settled for
+  the walk on 18 September, now applied four times. Where a tall run meets a low
+  one at a corner there is a step, which is what a hedge cut down to keep a view
+  actually looks like.
+- **The bench is sawn, not grown** (`Organic.bench`): a plank across two plank
+  ends, its wander a twentieth of a hedge's and all of it in the softness of the
+  edges. A hedge undulates because it grew; a bench was made, and one that
+  undulated the same way would read as melted. Seen end-on it reads as a slab,
+  which is also true of a bench.
+
+**What looking found:** the template was right first time, which the walk's was
+not — because it borrowed the walk's shape (a first choice, a near-enough
+second, a new plot only when neither fits) rather than inventing one. What
+looking *did* change was the drawing: the corner notches, the bench lying along
+its corner's diagonal instead of across it, and a room framed so tight that the
+page's own prose landed on the lawn.
 
 ## The dressing: what we place by hand
 
@@ -394,7 +457,16 @@ In order, because each needs the one before:
    since 20 September. That is nine plants in ten refused for now, which the
    app says on the screen before it asks rather than after: a plant whose area
    is still to be planted gets two sentences and no question.
-5. **The structures**, modelled, per area as each area is built.
+   **A second area, 21 September.** The Quiet Garden is open: its rule is in
+   `SeedCore`, its port in `Server/.api/QuietGarden.php`, its plantings in a
+   `quiet_garden` table of their own beside the walk's, and `/quiet` draws it.
+   An offer now carries the area it is for and is planted there when it is
+   answered. That is the point at which *a table for each area* stopped being a
+   prediction: the two tables share no column after `encounter`.
+
+5. **The structures**, modelled, per area as each area is built. **The hedge,
+   the mown grass and the bench exist**; the glazed frame, the staging, the bed
+   edging, the row labels, the tree positions and the knot hedging do not.
 6. **The curator's tool.**
 7. **The Wild Fields**, once release uploads something.
 
@@ -450,7 +522,9 @@ meeting leaves on the two phones. `Server/.api/Offers.php`, `Server/README.md`
   the same way in the app is a choice. Doing it would mean the templates live in
   `SeedCore`, where both can read them.
 - **Whether plots in an area can be walked between**, or only reached from the
-  map. The app's pan stops at the plot's edge.
+  map. The app's pan stops at the plot's edge. The Quiet Garden answered it one
+  way for itself by accident: an enclosure is a room, so `/quiet` shows one plot
+  and *On* goes into the next rather than panning along a line.
 - **Whether a released plant can be found again** by whoever released it
   (`PHASES.md`, still open). The Wild Fields work either way.
 - **How the Coppice shows its rotation.** A coupe cut this year and a coupe

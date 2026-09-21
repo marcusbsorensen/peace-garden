@@ -28,10 +28,10 @@ final class Areas
      * open because it has a name and a layout on paper; it is open when there
      * is a rule that gives an arriving plant a slot and never moves it again.
      */
-    public const OPEN = ['travel'];
+    public const OPEN = ['travel', 'peace'];
 
     /** What this area's plantings are called, or '' for an area with no table yet. */
-    public const TABLES = ['travel' => 'long_walk'];
+    public const TABLES = ['travel' => 'long_walk', 'peace' => 'quiet_garden'];
 
     public static function exists(mixed $area): bool
     {

@@ -145,12 +145,14 @@ async function drawArea(theme) {
   }
   plot.setAttribute("aria-label", `${areaName(theme)}, ${plants.length}`);
 
-  // **The one area with a real one behind it.** `travel` is the Long Walk, and
-  // `/walk` grows every plant standing in it out of the plot service, where
-  // everything on this page is a dot from the stand-in. Hidden on the other
-  // nine rather than shown disabled: a control that goes nowhere is worse than
-  // no control.
-  el("area-walk-line").hidden = theme !== "travel";
+  // **The areas with a real one behind them.** `travel` is the Long Walk and
+  // `peace` is the Quiet Garden; both have a page that grows every plant
+  // standing in them out of the plot service, where everything here is a dot
+  // from the stand-in. Hidden on the other eight rather than shown disabled: a
+  // control that goes nowhere is worse than no control.
+  const built = { travel: "/walk", peace: "/quiet" };
+  el("area-walk-line").hidden = !(theme in built);
+  if (theme in built) el("area-walk").href = built[theme];
 }
 
 async function drawPlant(theme, id) {

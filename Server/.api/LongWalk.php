@@ -29,6 +29,12 @@ final class LongWalk
     public const DEPTH = [0.95, 1.45, 1.95];
     public const PER_ROW = [5, 4, 3];
 
+    /// The seventh colour family: the flowers too unsaturated to have a hue at
+    /// all. SeedCore's `LongWalk.paleFamily`. It is here rather than in an area
+    /// of its own because the six arcs and the pale are a fact about a flower
+    /// and every area that groups by colour reads the same seven.
+    public const PALE_FAMILY = 6;
+
     public static function tier(float $height): int
     {
         if ($height < 0.93) return 0;

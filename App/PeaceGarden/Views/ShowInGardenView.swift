@@ -34,9 +34,17 @@ struct ShowInGardenView: View {
     ///
     /// A plant stands in the area its own name belongs to, and the garden is
     /// being planted an area at a time — so for now the service takes travel
-    /// and refuses the other nine. Asked rather than asking, it is open by
-    /// proof: the other phone's offer was accepted, so this plant's area
-    /// exists whatever this version of the app believes.
+    /// and peace and refuses the other eight. Asked rather than asking, it is
+    /// open by proof: the other phone's offer was accepted, so this plant's
+    /// area exists whatever this version of the app believes.
+    ///
+    /// **This reads the built-in list rather than `GET /api/garden`**, so an
+    /// installed app learns that an area has opened when it is next updated
+    /// and not on the day. That is the wrong way round — the route exists
+    /// precisely so a phone need not be told by a version of itself — and it
+    /// is the next thing to fix here. It errs safe: an app that has not heard
+    /// of an open area says *not yet* rather than promising a planting the
+    /// service would refuse.
     private var areaIsOpen: Bool { isBeingAsked || Arrangement.area(of: record).isOpen }
 
     private var peer: String {

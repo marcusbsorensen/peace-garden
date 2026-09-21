@@ -59,6 +59,10 @@ const ROUTES = [
     '/download' => ['download', 'text/html; charset=utf-8'],
     '/wild' => ['wild', 'text/html; charset=utf-8'],
     '/walk' => ['walk', 'text/html; charset=utf-8'],
+    // The second built area, since 21 September. Its own page rather than a
+    // query on `/walk`: the two are laid out by different rules, shown a
+    // different number of plots at a time, and described in different words.
+    '/quiet' => ['quiet', 'text/html; charset=utf-8'],
     '/t' => ['t', 'text/html; charset=utf-8'],
     // A privacy notice is a mandatory App Store listing field, so this path is
     // load-bearing for the submission rather than decorative. See
@@ -156,7 +160,12 @@ if ($path === '/plant.wasm') {
     // A new build is a new URL only in the sense that the bytes change; the
     // path does not. So it is cached for a day and revalidated after that,
     // which the ETag above makes cheap.
-    header('Cache-Control: public, max-age=86400, must-revalidate');
+    //
+    // **Except on a development copy**, where the module is rebuilt every few
+    // minutes and a browser inside that day serves the old one without asking.
+    // `tools/wasm/dev-router.php` sets this; nothing on the live host does.
+    header('Cache-Control: ' . (($GLOBALS['pg_no_cache'] ?? false)
+        ? 'no-store, max-age=0' : 'public, max-age=86400, must-revalidate'));
     header('X-Content-Type-Options: nosniff');
     readfile($file);
     exit;

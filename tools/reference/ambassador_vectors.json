@@ -13,5 +13,6 @@
     {"area": "kinship", "seed": "ec0850ec7cd6824077a0c51e3c4c8cc670b321bdf66b8eb8f338fff81deb6bf3", "name": "Cyninora contorta", "genusHead": "Cyn", "height": 1.3274011611938477, "family": 0},
     {"area": "peace", "seed": "2d1894df5b3f19d3d1c4a12cae8e8d7334a07f942ba60903d37846a190faa4eb", "name": "Olyne paniculata", "genusHead": "Ol", "height": 0.7478628754615784, "family": 1}
   ],
-  "longWalk": {"seed": "be9dd17805ea1ebab2c56695b13158adb8d985f165564c10804961b543c12d3c", "plot": 0, "side": -1, "tier": 1, "index": 0, "nudge": [-0.0207843137254902, -0.04556862745098039]}
+  "longWalk": {"seed": "be9dd17805ea1ebab2c56695b13158adb8d985f165564c10804961b543c12d3c", "plot": 0, "side": -1, "tier": 1, "index": 0, "nudge": [-0.0207843137254902, -0.04556862745098039]},
+  "quietGarden": {"seed": "2d1894df5b3f19d3d1c4a12cae8e8d7334a07f942ba60903d37846a190faa4eb", "plot": 0, "corner": 0, "index": 0, "nudge": [-0.12082352941176472, -0.12694117647058822]}
 }

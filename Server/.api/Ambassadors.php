@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/Areas.php';
 require_once __DIR__ . '/LongWalk.php';
+require_once __DIR__ . '/QuietGarden.php';
 
 /**
  * The ten plants that stand for the ten areas, as the plot service knows them.
@@ -90,16 +91,26 @@ final class Ambassadors
     /**
      * Where an area's ambassador stands, by that area's own rule.
      *
-     * The Long Walk only, because it is the only area with a rule. The others
-     * get this when they get one, and the shape of the answer will be that
-     * area's, not this one's.
+     * **The answer's shape is the area's, not a shared one.** A Long Walk
+     * planting names a side of a path and a tier of a border; a Quiet Garden
+     * planting names a corner of a room and a place in a group of three. That
+     * is the same reason each area has a table of its own rather than a shared
+     * one with an area column, and it is why this returns the area's own array
+     * rather than something flattened to fit both.
+     *
+     * The areas with no rule get nothing, because a placement invented for one
+     * of them would be a promise about a layout nobody has designed.
      */
     public static function planting(string $area): ?array
     {
-        if ($area !== 'travel') return null;
-        static $planting = null;
-        if ($planting !== null) return $planting;
-        $one = self::ALL['travel'];
-        return $planting = LongWalk::plant([], $one['seed'], $one['height'], $one['family']);
+        static $placed = [];
+        if (array_key_exists($area, $placed)) return $placed[$area];
+        $one = self::ALL[$area] ?? null;
+        if ($one === null) return $placed[$area] = null;
+        return $placed[$area] = match ($area) {
+            'travel' => LongWalk::plant([], $one['seed'], $one['height'], $one['family']),
+            'peace' => QuietGarden::plant([], $one['seed'], $one['height'], $one['family']),
+            default => null,
+        };
     }
 }

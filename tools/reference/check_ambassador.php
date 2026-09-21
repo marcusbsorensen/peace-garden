@@ -27,6 +27,7 @@ declare(strict_types=1);
  */
 
 require_once __DIR__ . '/../../Server/.api/Ambassadors.php';
+require_once __DIR__ . '/../../Server/.api/QuietGarden.php';
 
 $vectors = json_decode(
     file_get_contents(__DIR__ . '/ambassador_vectors.json'), true, 512, JSON_THROW_ON_ERROR
@@ -65,7 +66,7 @@ foreach ($vectors['ambassadors'] as $n => $row) {
     is_same("$area's colour family", $row['family'], $php['family'] ?? null);
 }
 
-// MARK: The one that is standing in a garden
+// MARK: The two that are standing in a garden
 
 $pinned = $vectors['longWalk'];
 $standing = Ambassadors::planting('travel');
@@ -76,6 +77,21 @@ is_same('its side of the path', $pinned['side'], $standing['side']);
 is_same('its tier', $pinned['tier'], $standing['tier']);
 is_same('its slot down the walk', $pinned['index'], $standing['index']);
 is_same('its nudge', $pinned['nudge'], [$standing['nudgeX'], $standing['nudgeZ']]);
+
+// The second one, whose planting is a different shape because its area is.
+$room = $vectors['quietGarden'];
+$sitting = Ambassadors::planting('peace');
+
+is_same('the Quiet Garden ambassador\'s seed', $room['seed'], $sitting['seed']);
+is_same('its plot', $room['plot'], $sitting['plot']);
+is_same('its corner', $room['corner'], $sitting['corner']);
+is_same('its place in that corner', $room['index'], $sitting['index']);
+is_same('its nudge', $room['nudge'], [$sitting['nudgeX'], $sitting['nudgeZ']]);
+
+// It is beside the bench, which is what a plot's first plant always is — and
+// the reason this area could take a 0.75 m ambassador at all. A specimen slot
+// at the back of a group would have wanted a plant half as tall again.
+is_same('it is the plant beside the bench', QuietGarden::BENCH, $sitting['corner']);
 
 // It stands in its own tier. Said separately because it is the reason there is
 // no specimen slot: only one of the ten ambassadors is tall enough for the back
@@ -88,10 +104,19 @@ is_same('its tier is the tier its height belongs to',
 // rule. A placement invented for one of them would be a promise about a layout
 // nobody has designed.
 foreach (Areas::ALL as $area) {
-    if ($area === 'travel') continue;
+    if (Areas::isOpen($area)) continue;
     $checks++;
     if (Ambassadors::planting($area) !== null) {
         $failed[] = "$area has no rule and the service placed its ambassador anyway";
+    }
+}
+
+// And every area that *is* open has its ambassador standing in it. The day a
+// third opens, this is what says its plant was never put in.
+foreach (Areas::OPEN as $area) {
+    $checks++;
+    if (Ambassadors::planting($area) === null) {
+        $failed[] = "$area is open and its ambassador is not standing in it";
     }
 }
 
@@ -141,5 +166,6 @@ if ($failed !== []) {
     exit(1);
 }
 
-printf("Ten ambassadors, %s standing at the head of plot %d, and the service agrees: %d checks.\n",
-    $vectors['ambassadors'][6]['name'], $standing['plot'], $checks);
+printf("Ten ambassadors, %s at the head of the walk and %s beside the bench, "
+     . "and the service agrees: %d checks.\n",
+    $vectors['ambassadors'][6]['name'], $vectors['ambassadors'][9]['name'], $checks);

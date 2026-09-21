@@ -30,17 +30,21 @@ public enum Area: String, CaseIterable, Sendable, Codable {
 
     /// **Whether a plant can stand here yet.**
     ///
-    /// One of ten. The Long Walk was built first because its rule is the
+    /// Two of ten. The Long Walk was built first because its rule is the
     /// plainest best practice there is — tall at the back, drifts, repetition —
     /// and because its plots open end to end, so the map is a line before it
     /// has to be a shape (`docs/WEB-GARDENS.md` §*What has to exist first*).
+    /// The Quiet Garden was built second, on 21 September, because its rule is
+    /// the opposite one — the fewest plants per plot of any area — and a
+    /// second area that only repeated the first would not have told us whether
+    /// a template is a thing this garden can have two of.
     ///
     /// **An area is open when it has a placement rule, not when it has a
     /// name.** All ten have names, layouts on paper and a place on the map.
-    /// What the other nine do not have is a rule that says which slot an
+    /// What the other eight do not have is a rule that says which slot an
     /// arriving plant takes and never moves it, which is what makes a garden
     /// curated rather than scattered.
-    public var isOpen: Bool { self == .travel }
+    public var isOpen: Bool { self == .travel || self == .peace }
 
     /// The areas a plant can be offered to today.
     public static var open: [Area] { allCases.filter(\.isOpen) }
@@ -59,7 +63,8 @@ public enum Area: String, CaseIterable, Sendable, Codable {
     public var table: String {
         switch self {
         case .travel: return "long_walk"
-        // The nine that are not open have no table, and a name for one here
+        case .peace: return "quiet_garden"
+        // The eight that are not open have no table, and a name for one here
         // would be a promise about a schema nobody has designed. They get one
         // when they get a rule.
         default: return ""

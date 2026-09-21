@@ -7,6 +7,8 @@ declare(strict_types=1);
  *   GET  /api/garden               the ten areas, and which a plant can stand in
  *   GET  /api/walk                 how many plots the Long Walk has opened
  *   GET  /api/walk/plot/{n}        a plot's plantings: seed, parents, meeting, spot
+ *   GET  /api/quiet                the same, for the Quiet Garden
+ *   GET  /api/quiet/plot/{n}       the same, for the Quiet Garden
  *   POST /api/walk/offer           one gardener offers a plant, addressed to the other
  *   POST /api/walk/pending         what is waiting on these tokens, either way round
  *   POST /api/walk/answer          the other gardener says yes or no
@@ -24,13 +26,18 @@ declare(strict_types=1);
  * anybody being asked. It answers 403 unless `open_for_planting` is set in
  * `.api/config.php`, which is for a local copy and for the reference check.
  *
- * **One of ten areas is open**, and the service says which. The Long Walk is
- * `travel`; the other nine have names, layouts and a place on the map and no
- * placement rule, so a plant cannot stand in them. `Areas.php` is the list and
- * `GET /api/garden` is how a phone learns it without being told by a version of
- * itself. Every route under `/api/walk/…` is the travel area's, and it keeps
- * that spelling: it is a live address that a deployed page and an installed app
- * both call, and the walk is what it has always been.
+ * **Two of ten areas are open**, and the service says which. The Long Walk is
+ * `travel` and the Quiet Garden is `peace`; the other eight have names, layouts
+ * and a place on the map and no placement rule, so a plant cannot stand in
+ * them. `Areas.php` is the list and `GET /api/garden` is how a phone learns it
+ * without being told by a version of itself.
+ *
+ * **The asking is the garden's, though its routes are spelled `/api/walk/…`.**
+ * An offer carries the area its plant belongs to and is planted there when it
+ * is answered; the spelling stays because it is a live address that a deployed
+ * page and an installed app both call, and an installed app cannot be asked to
+ * learn a new one. What is the travel area's alone is `GET /api/walk` and
+ * `GET /api/walk/plot/{n}`, which have `/api/quiet` beside them now.
  *
  * **Plot 0 opens with the Long Walk's ambassador in it**, which is not a row
  * and is not in any of the routes above: `WalkStore` derives its slot from the
@@ -208,6 +215,15 @@ function route(string $method, string $path): never
         respond(200, ['plot' => $plot, 'plantings' => store($settings)->plot($plot)]);
     }
 
+    if ($path === '/api/quiet' && $method === 'GET') {
+        respond(200, ['plots' => store($settings)->room()->plots()]);
+    }
+
+    if (preg_match('#\A/api/quiet/plot/(0|[1-9][0-9]{0,5})\z#', $path, $m) && $method === 'GET') {
+        $plot = (int) $m[1];
+        respond(200, ['plot' => $plot, 'plantings' => store($settings)->room()->plot($plot)]);
+    }
+
     if ($path === '/api/walk/offer' && $method === 'POST') {
         $body = readBody();
         $to = $body['to'] ?? null;
@@ -218,7 +234,7 @@ function route(string $method, string $path): never
         $plant = checkedPlant($body['plant'] ?? null);
         [$offer, $new] = store($settings)->offers()->offer(
             $plant['seed'], $to, $from, $plant['parents'][0], $plant['parents'][1],
-            $plant['encounter'], $plant['height'], $plant['family'], time()
+            $plant['encounter'], $plant['height'], $plant['family'], time(), $plant['area']
         );
         respond($new ? 201 : 200, ['offer' => $offer]);
     }
@@ -267,11 +283,11 @@ function route(string $method, string $path): never
 
     if ($path === '/api/walk/plant' && $method === 'POST') {
         if (!$settings['open_for_planting']) {
-            respond(403, ['error' => 'The Long Walk opens for planting once sharing has sign-in and both gardeners\' consent.']);
+            respond(403, ['error' => 'The garden opens for planting once sharing has sign-in and both gardeners\' consent.']);
         }
         $plant = checkedPlant(readBody(4096));
-        [$planting, $new] = store($settings)->plant(
-            $plant['seed'], $plant['parents'][0], $plant['parents'][1],
+        [$planting, $new] = store($settings)->plantInto(
+            $plant['area'], $plant['seed'], $plant['parents'][0], $plant['parents'][1],
             $plant['encounter'], $plant['height'], $plant['family']
         );
         respond($new ? 201 : 200, $planting);

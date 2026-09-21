@@ -12,6 +12,7 @@ declare(strict_types=1);
  *
  *   long_walk        the walk itself
  *   long_walk_lock   the arrival count the placing rule counts from
+ *   quiet_garden     the second area, and its own lock
  *   walk_offers      consent in flight: who has asked whom, and what was said
  *
  * **What is left out, on purpose.** `rate_limits` and `rate_salt` are this
@@ -35,7 +36,11 @@ if (PHP_SAPI !== 'cli') {
 }
 
 /** The tables the walk is made of, dumped in this order so a restore can replay it. */
-const KEPT = ['long_walk', 'long_walk_lock', 'walk_offers'];
+// An area that opens is a table to add here. Nothing derives this list from
+// `Areas::TABLES`, and it should not: a copy of the garden is the one place
+// where being told explicitly what to keep is worth the repetition, and a lock
+// table has no area to be derived from anyway.
+const KEPT = ['long_walk', 'long_walk_lock', 'quiet_garden', 'quiet_garden_lock', 'walk_offers'];
 
 /** How many copies stay on the server. The Mac keeps every one it has pulled. */
 const KEEP = 30;
@@ -262,7 +267,10 @@ function readItBack(string $path, array $counts): void
         throw new RuntimeException('the copy stops early — it was cut short');
     }
     foreach (KEPT as $table) {
-        if (empty($found[$table]) && $counts[$table] > 0) {
+        // A table with no count in the header is one this copy was taken
+        // before the service had — reading it as zero rows is the truth about
+        // that copy, and is what lets an older copy still verify.
+        if (empty($found[$table]) && ($counts[$table] ?? 0) > 0) {
             throw new RuntimeException("$table is not in the copy");
         }
     }

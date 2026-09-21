@@ -30,7 +30,17 @@ if (str_starts_with($path, '/api/')) {
     return true;
 }
 
-$bench = ['/dev/walk' => 'web/walk.html', '/dev/plant' => 'web/index.html'];
+// **The module is never cached locally.** The live host sends it with a day's
+// max-age, which is right for a file whose name changes when its contents do
+// and wrong for one that is rebuilt every few minutes: a browser inside that
+// day serves the old module without asking, and the page then runs yesterday's
+// Swift against today's JavaScript. That has cost two wrong readings already —
+// exports that were there reported missing, and a walk that opened empty when
+// it no longer does. So here, and only here, it revalidates every time.
+$GLOBALS['pg_no_cache'] = true;
+
+$bench = ['/dev/walk' => 'web/walk.html', '/dev/quiet' => 'web/quiet.html',
+          '/dev/plant' => 'web/index.html'];
 if (isset($bench[$path])) {
     header('Content-Type: text/html; charset=utf-8');
     header('Cache-Control: no-store');

@@ -95,11 +95,12 @@
         <h1 class="heading" id="area-name"></h1>
         <div class="area-plot" id="area-plot" role="group"></div>
         <!--
-          The one area that exists for real. `travel` is the Long Walk, which
-          is built: `/walk` grows every plant standing in it from what the plot
-          service holds, where this page draws the whole garden as dots from a
-          stand-in. `walk.js` unhides this on that area and no other, because
-          the other nine have nowhere to send anybody yet.
+          The areas that exist for real: `travel` is the Long Walk and `peace`
+          is the Quiet Garden. Both are built, and `/walk` and `/quiet` grow
+          every plant standing in them from what the plot service holds, where
+          this page draws the whole garden as dots from a stand-in. `walk.js`
+          unhides this on those two and sets where it goes, because the other
+          eight have nowhere to send anybody yet.
 
           Named by the heading above it, the same way the front page's four
           links are: the word on the link is the same each time, and the area's

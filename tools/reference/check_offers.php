@@ -148,6 +148,30 @@ check('a withdrawn plant keeps its slot', $stoodAt !== null && $planted['spot'] 
 $standing = array_map(fn ($p) => $p['spot'], $walk->plot(0));  // the ambassador included: nothing may stand on it either
 check('nothing is planted on top of it', count($standing) === count(array_unique(array_map('json_encode', $standing))));
 
+// MARK: The second area
+
+// **An offer carries the area its plant belongs to**, and is planted there. A
+// Quiet Garden plant answered yes must not turn up in the Long Walk, and the
+// two counts either side of this are what would catch it.
+$five = crossing(5);
+$mine5 = token('five/mine');
+$theirs5 = token('five/theirs');
+$walkHeld = count(shared($walk));
+$offers->offer($five['seed'], $theirs5, $mine5, $five['a'], $five['b'], $five['encounter'],
+               0.9, 2, $now, 'peace');
+$planted = $offers->answer($five['seed'], $theirs5, true, $now);
+check('a Quiet Garden plant is planted', $planted['planting'] !== null);
+check('and not in the walk', count(shared($walk)) === $walkHeld);
+$room = array_values(array_filter($walk->room()->plot(0), fn ($p) => count($p['parents']) === 2));
+check('it is in the room', count($room) === 1 && $room[0]['seed'] === $five['seed']);
+check('beside the ambassador, which is still there', count($walk->room()->plot(0)) === 2);
+
+// And taking it back reaches the right area's table.
+$offers->withdraw($five['seed'], $mine5, $now + 60);
+check('taking it back empties the room again',
+      count(array_filter($walk->room()->plot(0), fn ($p) => count($p['parents']) === 2)) === 0);
+check('and the ambassador is untouched', count($walk->room()->plot(0)) === 1);
+
 $stranger = $offers->withdraw($one['seed'], token('nobody'), $now);
 check('a stranger cannot take back somebody else\'s plant', $stranger === null);
 check('an offer that does not exist cannot be withdrawn',

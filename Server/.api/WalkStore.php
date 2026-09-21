@@ -2,7 +2,9 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/Ambassadors.php';
+require_once __DIR__ . '/Areas.php';
 require_once __DIR__ . '/LongWalk.php';
+require_once __DIR__ . '/RoomStore.php';
 require_once __DIR__ . '/Offers.php';
 
 /**
@@ -42,6 +44,11 @@ final class WalkStore
         ]);
         $store = new self($db);
         $store->migrate();
+        // The Quiet Garden's tables too, rather than when somebody first asks
+        // for it. They cost one `CREATE TABLE IF NOT EXISTS` a request, and a
+        // table that does not exist until the first visitor is a table the
+        // nightly copy does not know to keep.
+        $store->room();
         return $store;
     }
 
@@ -192,6 +199,46 @@ final class WalkStore
     /// The same connection, for the parts of the service that keep their own
     /// tables beside the walk rather than in it.
     public function connection(): PDO { return $this->db; }
+
+    /**
+     * The Quiet Garden, on the same connection.
+     *
+     * **This class has outgrown its name**, which is a thing worth saying
+     * rather than quietly fixing: it opened the database for a service that was
+     * only the Long Walk, and now it holds the connection for a garden with two
+     * areas in it and eight to come. Renaming it means touching every caller and
+     * the reference checks in one go, which is a commit of its own and not this
+     * one. `Offers` and `Limits` already reach through it the same way.
+     */
+    public function room(): RoomStore
+    {
+        static $room = null;
+        return $room ??= new RoomStore($this->db);
+    }
+
+    /**
+     * Plants one arrival into whichever area it belongs to.
+     *
+     * The one place that knows an area's name maps to a table. Everything above
+     * it — the asking, the routes — carries the area as a word and never a
+     * table, so an area that opens is a case here rather than a change
+     * everywhere.
+     */
+    public function plantInto(string $area, string $seed, string $parentA, string $parentB,
+                              string $encounter, float $height, int $family): array
+    {
+        return match ($area) {
+            'peace' => $this->room()->plant($seed, $parentA, $parentB, $encounter, $height, $family),
+            default => $this->plant($seed, $parentA, $parentB, $encounter, $height, $family),
+        };
+    }
+
+    /** Takes a planting out of the drawing, in whichever area holds it. */
+    public function hideIn(string $area, string $seed): void
+    {
+        if ($area === 'peace') { $this->room()->hide($seed); return; }
+        $this->hide($seed);
+    }
 
     /**
      * Plots opened. Never fewer than one: the walk opened with its ambassador

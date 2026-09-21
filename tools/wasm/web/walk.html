@@ -42,7 +42,7 @@
 </main>
 <script type="module">
   import { loadModule } from '/assets/js/plant.js';
-  import { makeWalkStage, plantArrivals, growPlots, growFromService, describe } from '/assets/js/longwalk.js';
+  import { makePlotStage, plantArrivals, growPlots, growFromService, describe } from '/assets/js/longwalk.js';
   import { makeSky } from '/assets/js/sky.js';
 
   // ?arrivals=500&from=0&span=3 — how many plants have arrived, and which plots to look at.
@@ -55,8 +55,15 @@
   const note = document.getElementById('note');
   const list = document.getElementById('plots');
   const report = (text) => { note.textContent = text; };
-  const e = await loadModule('/plant.wasm');
-  const stage = makeWalkStage(document.getElementById('stage'), span, e);
+  // **The module, never from the cache.** The live host sends it with a day's
+  // max-age, which is right there and wrong on a workbench: a browser that
+  // fetched it this morning goes on running this morning's Swift against
+  // this afternoon's JavaScript, and reports exports missing that are there.
+  // The dev router answers `no-store`, but a copy already in the cache is
+  // never asked about, so the address is made new each time.
+  const MODULE = `/plant.wasm?dev=${Date.now()}`;
+  const e = await loadModule(MODULE);
+  const stage = makePlotStage(document.getElementById('stage'), span, e);
 
   // The same sky the app draws, worked out for wherever this browser is
   // keeping time and asking for nothing to find out. Both halves of it: the

@@ -9,19 +9,23 @@
 
 import { ROLES, decode, takeResult, link, attribute, multiply } from './plant.js';
 
-const SIDE = 5.2;           // LongWalk.plotSide
+export const SIDE = 5.2;    // LongWalk.plotSide, and QuietGarden.plotSide
 const PATH_HALF = 0.6;      // LongWalk.pathHalfWidth
 const HEDGE_FROM = 2.3;     // LongWalk.hedgeFrom
-const RIM_DEPTH = 0.95;     // GardenGround.rimDepth
-const HEDGE = { thickness: 0.36, tall: 2.0, low: 0.7 };
+export const RIM_DEPTH = 0.95;  // GardenGround.rimDepth
+export const HEDGE = { thickness: 0.36, tall: 2.0, low: 0.7 };
 
-const COLOUR = {
+export const COLOUR = {
   turf: [0.235, 0.265, 0.190],
   grass: [0.285, 0.320, 0.225],
   humus: [0.205, 0.158, 0.116],
   earth: [0.375, 0.300, 0.232],
   bedrock: [0.340, 0.330, 0.318],
   yew: [0.27, 0.39, 0.27],
+  // Oak left out: grey with the warmth still under it. Picked against the
+  // yew beside it rather than against a swatch, the way the hedge's own
+  // brightening was.
+  timber: [0.44, 0.40, 0.345],
 };
 
 // Midday, GardenGround.swift.
@@ -75,7 +79,13 @@ void main() {
   outColour = vec4(shade(texture(colour, vUV).rgb, n), 1.0);
 }`;
 
-export function makeWalkStage(canvas, span, e) {
+// **The stage is not the walk's.** Everything in it — the GL plumbing, the
+// isometric camera, the quarter turns, the plant program — is what a plot is,
+// and the Quiet Garden's page uses the same one with its own ground. The one
+// thing an area supplies is how its ground is built. When a third area wants
+// it, this belongs in a module of its own rather than in the first area that
+// happened to need it.
+export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   const gl = canvas.getContext('webgl2', { antialias: true, alpha: true, premultipliedAlpha: true });
   if (!gl) throw new Error('This browser has no WebGL2.');
   const ground = program(gl, GROUND_VERTEX, GROUND_FRAGMENT, ['position', 'normal', 'colour'], ['offset']);
@@ -96,7 +106,9 @@ export function makeWalkStage(canvas, span, e) {
     if (groundMesh) groundMesh.release();
     // The tall hedge goes on whichever side is further from the viewer.
     const farSide = eye()[0] > 0 ? -1 : 1;
-    groundMesh = upload(gl, ground, buildGround(farSide, span, e));
+    // The eye as well, because an area with a hedge on all four sides needs to
+    // know which two of them are the near ones and a single sign cannot say.
+    groundMesh = upload(gl, ground, buildTheGround(farSide, span, e, eye()));
   }
 
   function draw() {
@@ -343,7 +355,7 @@ const SLICE = 16;
 // MARK: - The ground
 
 // Seeds for the walk's dressing, so it is the same shape on every visit.
-const SEED = { ground: 2026, verge: 7, floor: 5, hedge: { '-1': 31, '1': 32 } };
+export const SEED = { ground: 2026, verge: 7, floor: 5, hedge: { '-1': 31, '1': 32 } };
 
 // No straight line anywhere in the garden: the ground's outline, its sides,
 // the path's verges and the hedges all come from SeedCore's `Organic`, the
@@ -411,7 +423,8 @@ function buildGround(farSide, span, e) {
   // whichever side is further from the viewer.
   for (const side of [-1, 1]) {
     const height = side === farSide ? HEDGE.tall : HEDGE.low;
-    const mesh = readHedge(e, length - 0.9, height, HEDGE.thickness, SEED.hedge[side]);
+    const mesh = readStructure(
+      takeResult(e, e.pg_hedge(length - 0.9, height, HEDGE.thickness, SEED.hedge[side], 1)));
     const x = side * (HEDGE_FROM + HEDGE.thickness / 2);
     for (let t = 0; t < mesh.indices.length; t += 3) {
       const corners = [0, 1, 2].map((k) => mesh.indices[t + k]);
@@ -425,15 +438,15 @@ function buildGround(farSide, span, e) {
   return { positions: new Float32Array(positions), normals: new Float32Array(normals), colours: new Float32Array(colours) };
 }
 
-function readOutline(e, width, length, seed) {
+export function readOutline(e, width, length, seed) {
   const bytes = takeResult(e, e.pg_outline(width, length, seed));
   const count = new DataView(bytes).getUint32(0, true);
   const xz = new Float32Array(bytes.slice(4, 4 + count * 8));
   return Array.from({ length: count }, (_, i) => [xz[i * 2], xz[i * 2 + 1]]);
 }
 
-function readHedge(e, length, height, thickness, seed) {
-  const bytes = takeResult(e, e.pg_hedge(length, height, thickness, seed));
+// A structure's mesh: `pg_hedge` and `pg_bench` answer in the same shape.
+export function readStructure(bytes) {
   const view = new DataView(bytes);
   const vertices = view.getUint32(0, true), indices = view.getUint32(4, true);
   let at = 8;
@@ -442,7 +455,7 @@ function readHedge(e, length, height, thickness, seed) {
   return { positions, normals, indices: new Uint32Array(bytes.slice(at, at + indices * 4)) };
 }
 
-function hash(n) {
+export function hash(n) {
   const x = Math.sin(n * 12.9898) * 43758.5453;
   return x - Math.floor(x);
 }

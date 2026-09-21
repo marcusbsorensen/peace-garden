@@ -284,6 +284,16 @@ the service's own files unreachable, as it does `.pages/`.
 - `GET /api/walk` — plots opened, never fewer than one. `GET /api/walk/plot/{n}`
   — a plot's plantings: seed, both parents, the meeting, and the spot to stand
   it on.
+- **The Quiet Garden**, `.api/QuietGarden.php` and `.api/RoomStore.php`: a
+  `quiet_garden` table of its own beside the walk's, because the two share no
+  column after `encounter` — a walk row names a side of a path and a tier of a
+  border, a room row names a corner and a place in a group of three. `GET
+  /api/quiet` and `GET /api/quiet/plot/{n}` read it, and `/quiet` draws it.
+  Checked by `tools/reference/check_quiet_garden.php`, in CI.
+- **An offer carries the area its plant is for**, and is planted there when it
+  is answered. The routes are still spelled `/api/walk/…` because an installed
+  app calls them and cannot be asked to learn a new address; what is the travel
+  area's alone is `GET /api/walk` and `GET /api/walk/plot/{n}`.
 - **The ambassador is in plot 0 and is not a row**, `.api/Ambassadors.php`.
   *Halula crassicaulis* was placed by the rule into an empty walk before
   anything was shared, and its slot and nudge are pure functions of its pinned
@@ -293,7 +303,8 @@ the service's own files unreachable, as it does `.pages/`.
   meeting**, because it was minted and has neither; a reader grows it from its
   seed alone. Nothing to hide, nothing to withdraw, nothing for a backup to
   carry, and `WalkStore::plant` refuses an ambassador's seed outright. Checked
-  by `tools/reference/check_ambassador.php`, in CI.
+  by `tools/reference/check_ambassador.php`, in CI. The Quiet Garden's, *Olyne
+  paniculata*, stands beside its bench the same way.
 - **The asking**, `.api/Offers.php`, which is how anything gets into the walk:
   - `POST /api/walk/offer` — `{to, from, plant}`. One gardener offers a plant,
     addressed to the sixteen bytes the other minted at their meeting. It plants
@@ -337,7 +348,17 @@ Locally, with the browser pages beside it:
 the whole site with the plot service behind it, same-origin the way the live
 host is — then
 `node tools/wasm/send-arrivals.mjs http://localhost:8803 120` to stand in for
-phones, and open `/walk.html?source=service`.
+phones — add `peace` as a third argument to send them to the Quiet Garden —
+and open `/walk` or `/quiet`. The workbenches are `/dev/walk` and `/dev/quiet`,
+which invent a garden rather than reading the service.
+
+**The module is never cached on a development copy.** `dev-router.php` answers
+`/plant.wasm` with `no-store`, because the live host's day-long `max-age` is
+right for a file rebuilt rarely and wrong for one rebuilt every few minutes: a
+browser inside that day runs the morning's Swift against the afternoon's
+JavaScript and reports exports missing that are there. The two workbench pages
+also ask for a fresh address each load, for the copies a browser cached before
+that header existed.
 
 **Against the app**, which is the only way to watch the asking end to end:
 launch the simulator with `-pgPlots http://localhost:8803` and the app talks to
