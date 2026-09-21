@@ -5,6 +5,7 @@ require_once __DIR__ . '/Ambassadors.php';
 require_once __DIR__ . '/Areas.php';
 require_once __DIR__ . '/LongWalk.php';
 require_once __DIR__ . '/RoomStore.php';
+require_once __DIR__ . '/CrossStore.php';
 require_once __DIR__ . '/Offers.php';
 
 /**
@@ -44,11 +45,12 @@ final class WalkStore
         ]);
         $store = new self($db);
         $store->migrate();
-        // The Quiet Garden's tables too, rather than when somebody first asks
-        // for it. They cost one `CREATE TABLE IF NOT EXISTS` a request, and a
+        // The other areas' tables too, rather than when somebody first asks
+        // for them. They cost one `CREATE TABLE IF NOT EXISTS` a request, and a
         // table that does not exist until the first visitor is a table the
         // nightly copy does not know to keep.
         $store->room();
+        $store->cross();
         return $store;
     }
 
@@ -205,15 +207,23 @@ final class WalkStore
      *
      * **This class has outgrown its name**, which is a thing worth saying
      * rather than quietly fixing: it opened the database for a service that was
-     * only the Long Walk, and now it holds the connection for a garden with two
-     * areas in it and eight to come. Renaming it means touching every caller and
-     * the reference checks in one go, which is a commit of its own and not this
-     * one. `Offers` and `Limits` already reach through it the same way.
+     * only the Long Walk, and now it holds the connection for a garden with
+     * three areas in it and seven to come. Renaming it means touching every
+     * caller and the reference checks in one go, which is a commit of its own
+     * and not this one. `Offers` and `Limits` already reach through it the same
+     * way.
      */
     public function room(): RoomStore
     {
         static $room = null;
         return $room ??= new RoomStore($this->db);
+    }
+
+    /** The Crossing, on the same connection. */
+    public function cross(): CrossStore
+    {
+        static $cross = null;
+        return $cross ??= new CrossStore($this->db);
     }
 
     /**
@@ -229,6 +239,7 @@ final class WalkStore
     {
         return match ($area) {
             'peace' => $this->room()->plant($seed, $parentA, $parentB, $encounter, $height, $family),
+            'meeting' => $this->cross()->plant($seed, $parentA, $parentB, $encounter, $height, $family),
             default => $this->plant($seed, $parentA, $parentB, $encounter, $height, $family),
         };
     }
@@ -237,6 +248,7 @@ final class WalkStore
     public function hideIn(string $area, string $seed): void
     {
         if ($area === 'peace') { $this->room()->hide($seed); return; }
+        if ($area === 'meeting') { $this->cross()->hide($seed); return; }
         $this->hide($seed);
     }
 

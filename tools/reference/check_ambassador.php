@@ -166,6 +166,7 @@ if ($failed !== []) {
     exit(1);
 }
 
-printf("Ten ambassadors, %s at the head of the walk and %s beside the bench, "
-     . "and the service agrees: %d checks.\n",
-    $vectors['ambassadors'][6]['name'], $vectors['ambassadors'][9]['name'], $checks);
+printf("Ten ambassadors — %s at the head of the walk, %s at the crossing, "
+     . "%s beside the bench — and the service agrees: %d checks.\n",
+    $vectors['ambassadors'][6]['name'], $vectors['ambassadors'][7]['name'],
+    $vectors['ambassadors'][9]['name'], $checks);

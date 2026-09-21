@@ -204,6 +204,13 @@ export const EN = Object.freeze({
   // The room could not be drawn. `walkAway` names the walk, so this is its own.
   quietAway: "The Quiet Garden cannot be reached just now.",
 
+  // A third area, and the same two strings again: the heading is `areaMeeting`,
+  // already commissioned, and the four keys still never say where you are.
+  crossAbout:
+    "One of the garden's ten areas: two mown paths crossing at a round of paving, with a bed in each of the four quarters. A plant arriving goes wherever there is least, so the four grow together, and each quarter builds from low planting along the paths to one tall plant at its far corner. Go on to the next crossing, or turn to go round this one.",
+  // The Crossing could not be drawn.
+  crossAway: "The Crossing cannot be reached just now.",
+
   // Said once and used on both of the pages that are not built yet, because two
   // ways of saying *not yet* is one more than a reader needs.
   notYet: "Not open yet.",

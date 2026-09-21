@@ -26,7 +26,6 @@ final class ThemeMappingTests: XCTestCase {
         }
     }
 
-    /// One area is planted, and it is the one the Long Walk is.
     /// **What this build ships believing**, which is not the same question as
     /// what is open. The app asks `GET /api/garden` for that now
     /// (`PlotService.garden()`); this list is what stands in when the service
@@ -37,10 +36,11 @@ final class ThemeMappingTests: XCTestCase {
     /// said travel, which nothing caught, because the app's tests need Xcode
     /// and CI does not run them. **Run them by hand when an area opens.**
     func testWhatThisBuildShipsBelievingIsOpen() {
-        XCTAssertEqual(Set(Area.open), [.travel, .peace])
+        XCTAssertEqual(Set(Area.open), [.travel, .peace, .meeting])
         XCTAssertEqual(OpenAreas.builtIn.areas, Set(Area.open))
         XCTAssertEqual(Quotes.Theme.travel.area, .travel)
         XCTAssertEqual(Quotes.Theme.peace.area, .peace)
+        XCTAssertEqual(Quotes.Theme.meeting.area, .meeting)
     }
 
     // MARK: - Every syllable is spoken for

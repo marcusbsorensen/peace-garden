@@ -6,7 +6,7 @@
   { "area": "pattern", "open": false, "table": "" },
   { "area": "ground", "open": false, "table": "" },
   { "area": "travel", "open": true, "table": "long_walk" },
-  { "area": "meeting", "open": false, "table": "" },
+  { "area": "meeting", "open": true, "table": "crossing" },
   { "area": "kinship", "open": false, "table": "" },
   { "area": "peace", "open": true, "table": "quiet_garden" }
 ]

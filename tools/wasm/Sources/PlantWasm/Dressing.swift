@@ -17,6 +17,7 @@ import SeedCore
 //                                  square, for a run that carries on into the
 //                                  next one round an enclosure
 //   pg_bench(l, h, d, seed)        the Quiet Garden's seat, the same shape
+//   pg_roundel(r, lift, seed)      the Crossing's paving, the same shape
 
 @_expose(wasm, "pg_outline")
 @_cdecl("pg_outline")
@@ -50,6 +51,14 @@ public func pgHedge(_ length: Double, _ height: Double, _ thickness: Double,
 public func pgBench(_ length: Double, _ height: Double, _ depth: Double, _ seed: UInt32) -> Int32 {
     let out = structure(Organic.bench(length: length, height: height, depth: depth,
                                       seed: UInt64(seed)))
+    setResult(out)
+    return Int32(out.count)
+}
+
+@_expose(wasm, "pg_roundel")
+@_cdecl("pg_roundel")
+public func pgRoundel(_ radius: Double, _ lift: Double, _ seed: UInt32) -> Int32 {
+    let out = structure(Organic.roundel(radius: radius, lift: lift, seed: UInt64(seed)))
     setResult(out)
     return Int32(out.count)
 }

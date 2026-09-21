@@ -63,6 +63,10 @@ const ROUTES = [
     // query on `/walk`: the two are laid out by different rules, shown a
     // different number of plots at a time, and described in different words.
     '/quiet' => ['quiet', 'text/html; charset=utf-8'],
+    // The third, the same day. Three areas, three pages: the moment a `?area=`
+    // on one page would have to branch on layout, plot count and prose is the
+    // moment it is three pages wearing one URL.
+    '/cross' => ['cross', 'text/html; charset=utf-8'],
     '/t' => ['t', 'text/html; charset=utf-8'],
     // A privacy notice is a mandatory App Store listing field, so this path is
     // load-bearing for the submission rather than decorative. See

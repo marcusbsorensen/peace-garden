@@ -26,6 +26,11 @@ export const COLOUR = {
   // yew beside it rather than against a swatch, the way the hedge's own
   // brightening was.
   timber: [0.44, 0.40, 0.345],
+  // The Crossing's paving. Cooler than the timber and lighter than the
+  // bedrock under the slab, so a roundel reads as laid stone rather than as
+  // the plot's own rock showing through — picked against the grass it is
+  // surrounded by, the way the timber was picked against the yew.
+  stone: [0.345, 0.330, 0.302],
 };
 
 // Midday, GardenGround.swift.

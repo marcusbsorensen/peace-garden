@@ -13,6 +13,7 @@ declare(strict_types=1);
  *   long_walk        the walk itself
  *   long_walk_lock   the arrival count the placing rule counts from
  *   quiet_garden     the second area, and its own lock
+ *   crossing         the third area, and its own lock
  *   walk_offers      consent in flight: who has asked whom, and what was said
  *
  * **What is left out, on purpose.** `rate_limits` and `rate_salt` are this
@@ -40,7 +41,8 @@ if (PHP_SAPI !== 'cli') {
 // `Areas::TABLES`, and it should not: a copy of the garden is the one place
 // where being told explicitly what to keep is worth the repetition, and a lock
 // table has no area to be derived from anyway.
-const KEPT = ['long_walk', 'long_walk_lock', 'quiet_garden', 'quiet_garden_lock', 'walk_offers'];
+const KEPT = ['long_walk', 'long_walk_lock', 'quiet_garden', 'quiet_garden_lock',
+              'crossing', 'crossing_lock', 'walk_offers'];
 
 /** How many copies stay on the server. The Mac keeps every one it has pulled. */
 const KEEP = 30;

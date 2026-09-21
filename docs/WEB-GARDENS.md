@@ -108,7 +108,7 @@ a border with a knot garden's name.
 | **The Orchard** | kinship | Trees on a quincunx, meadow beneath, plants grouped round each tree as its guild. The shrubs and flowers under a tree are chosen to go with it. | Meadow | Tree positions |
 | **The Knot Garden** | pattern | Low clipped hedging in an interlaced geometric pattern, each compartment filled with one colour. Symmetrical: a plant's slot has a mirror, and a compartment fills with one colour family. | Flat, gravel | The hedging pattern |
 | **The Glasshouse** | light | Staging along the sides, pots on it, a central aisle. Tender plants, set close to the glass for the light. | Floor tiles | The benches, the glass |
-| **The Crossing** | meeting | Four paths meeting at a centre, four quarters, one feature where they cross: the quadripartite garden, one of the oldest plans there is for a meeting place. Plants face the centre. | Level | The paths, the centre |
+| **The Crossing** | meeting | Four paths meeting at a centre, four quarters, one feature where they cross: the quadripartite garden, one of the oldest plans there is for a meeting place. Plants face the centre. **Twenty-four a plot, and an arrival goes wherever there is least**, so the four quarters grow together. | Level, two mown paths | The paths, a round of paving where they cross |
 
 Three things follow from the table:
 
@@ -325,6 +325,52 @@ second, a new plot only when neither fits) rather than inventing one. What
 looking *did* change was the drawing: the corner notches, the bench lying along
 its corner's diagonal instead of across it, and a room framed so tight that the
 page's own prose landed on the lawn.
+
+## The Crossing, built
+
+21 September, the same day as the Quiet Garden. `SeedCore/WebGardens/Crossing.swift`,
+`Server/.api/Crossing.php`, `CrossStore.php`, `Server/assets/js/crossing.js`,
+`/cross`, `/dev/cross`, `tools/reference/check_crossing.php`.
+
+- **Twenty-four a plot: four quarters of six.** Between the walk's forty-eight
+  in the same square and the room's ten. Six is three along the path edges, two
+  behind them and one at the outer corner, so a quarter builds outward from the
+  middle of the place.
+- **The rule is *wherever there is least*.** An arriving plant goes to the
+  emptiest quarter of the oldest plot that has a slot it fits, and a tie goes to
+  the lowest-numbered quarter. That is the whole of it, and it is what the area
+  is about: a quadripartite garden reads as four ways arriving at one place only
+  while all four look equally used. **`<` and not `<=` on that count** is the
+  thing the port has to get right, and the only thing it could get wrong while
+  agreeing about every number.
+- **Cuts at 0.97 m and 1.43 m**, measured at the 50th and 83rd centiles of three
+  hundred crossings for a bed of 3:2:1. Deliberately neither the walk's
+  0.93/1.28 nor the room's 1.13: the same population divided three ways by three
+  templates.
+- **The three at the path rank share an arc**, which is what frees them from
+  having to be in order with each other. Only ranks are compared, never
+  distances, so the rule never has to say which of three equals stands in front
+  of which.
+- **At 500 arrivals: 21 plots, 20 full**, the growing one holding 21 with its
+  quarters at 6, 5, 5, 5. 484 of 501 plants got a slot of their own rank; the
+  other 17 took the rank beside it.
+- **The rule held first time**, as the room's did, and for the same reason: it
+  borrowed a shape that had already been argued about rather than inventing one.
+- **A round of paving, and the first structure that is neither hedge nor
+  bench.** `Organic.roundel`: a low disc standing proud of the grass with a
+  wandering edge and a rim down to the ground. It holds no plant, which is what
+  lets the 0.61 m meeting ambassador be a plot's first arrival — the same test
+  the Quiet Garden's specimen had to pass.
+
+**What looking found**, all of it in the drawing and all of it about the
+paving. It arrived as a bright dish two metres across and went through four
+states before it was stone: too big (1.0 m radius against a 1.2 m path, now
+0.85), too bright and too blue (a near-neutral albedo under a blue sky ambient
+is a blue lid), drawn with its own mesh's rings showing as spokes, and finally
+too smooth — **smooth normals over a cambered disc take one broad highlight and
+read as a polished cover.** It is the one thing on the page shaded flat, one
+normal and one tone a triangle, which is what makes it faces rather than a
+surface.
 
 ## The dressing: what we place by hand
 

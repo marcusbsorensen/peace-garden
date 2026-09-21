@@ -9,6 +9,8 @@ declare(strict_types=1);
  *   GET  /api/walk/plot/{n}        a plot's plantings: seed, parents, meeting, spot
  *   GET  /api/quiet                the same, for the Quiet Garden
  *   GET  /api/quiet/plot/{n}       the same, for the Quiet Garden
+ *   GET  /api/cross                the same, for the Crossing
+ *   GET  /api/cross/plot/{n}       the same, for the Crossing
  *   POST /api/walk/offer           one gardener offers a plant, addressed to the other
  *   POST /api/walk/pending         what is waiting on these tokens, either way round
  *   POST /api/walk/answer          the other gardener says yes or no
@@ -228,6 +230,15 @@ function route(string $method, string $path): never
     if (preg_match('#\A/api/quiet/plot/(0|[1-9][0-9]{0,5})\z#', $path, $m) && $method === 'GET') {
         $plot = (int) $m[1];
         respond(200, ['plot' => $plot, 'plantings' => store($settings)->room()->plot($plot)]);
+    }
+
+    if ($path === '/api/cross' && $method === 'GET') {
+        respond(200, ['plots' => store($settings)->cross()->plots()]);
+    }
+
+    if (preg_match('#\A/api/cross/plot/(0|[1-9][0-9]{0,5})\z#', $path, $m) && $method === 'GET') {
+        $plot = (int) $m[1];
+        respond(200, ['plot' => $plot, 'plantings' => store($settings)->cross()->plot($plot)]);
     }
 
     if ($path === '/api/walk/offer' && $method === 'POST') {

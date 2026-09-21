@@ -30,7 +30,7 @@ public enum Area: String, CaseIterable, Sendable, Codable {
 
     /// **Whether a plant can stand here yet.**
     ///
-    /// Two of ten. The Long Walk was built first because its rule is the
+    /// Three of ten. The Long Walk was built first because its rule is the
     /// plainest best practice there is — tall at the back, drifts, repetition —
     /// and because its plots open end to end, so the map is a line before it
     /// has to be a shape (`docs/WEB-GARDENS.md` §*What has to exist first*).
@@ -39,12 +39,17 @@ public enum Area: String, CaseIterable, Sendable, Codable {
     /// second area that only repeated the first would not have told us whether
     /// a template is a thing this garden can have two of.
     ///
+    /// The Crossing was built third, the same day, because it is the first
+    /// whose plot is not one bed: four quarters that have to be kept level with
+    /// each other, and the first structure in the garden that is neither hedge
+    /// nor bench.
+    ///
     /// **An area is open when it has a placement rule, not when it has a
     /// name.** All ten have names, layouts on paper and a place on the map.
-    /// What the other eight do not have is a rule that says which slot an
+    /// What the other seven do not have is a rule that says which slot an
     /// arriving plant takes and never moves it, which is what makes a garden
     /// curated rather than scattered.
-    public var isOpen: Bool { self == .travel || self == .peace }
+    public var isOpen: Bool { self == .travel || self == .peace || self == .meeting }
 
     /// The areas a plant can be offered to today.
     public static var open: [Area] { allCases.filter(\.isOpen) }
@@ -64,7 +69,8 @@ public enum Area: String, CaseIterable, Sendable, Codable {
         switch self {
         case .travel: return "long_walk"
         case .peace: return "quiet_garden"
-        // The eight that are not open have no table, and a name for one here
+        case .meeting: return "crossing"
+        // The seven that are not open have no table, and a name for one here
         // would be a promise about a schema nobody has designed. They get one
         // when they get a rule.
         default: return ""
