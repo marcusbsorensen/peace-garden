@@ -157,15 +157,24 @@ if ($path === '/plant.wasm') {
         header('Content-Encoding: ' . $encoding);
     }
     header('Content-Length: ' . filesize($file));
-    // A new build is a new URL only in the sense that the bytes change; the
-    // path does not. So it is cached for a day and revalidated after that,
-    // which the ETag above makes cheap.
+    // **Kept, and asked about every time.** This was `max-age=86400,
+    // must-revalidate` on the reasoning that a module changes rarely. The flaw
+    // is that a new build is *not* a new URL here — the path never changes — so
+    // a browser that fetched the module yesterday goes on running yesterday's
+    // Swift for a day, whatever has been deployed. That is not theoretical: the
+    // day the Quiet Garden opened, a browser that had visited `/walk` the day
+    // before was told `/quiet` could not be reached, because the module it had
+    // did not have the room in it.
     //
-    // **Except on a development copy**, where the module is rebuilt every few
-    // minutes and a browser inside that day serves the old one without asking.
-    // `tools/wasm/dev-router.php` sets this; nothing on the live host does.
+    // `no-cache` keeps the copy and revalidates it, which the ETag above makes
+    // one small conditional request rather than eight megabytes. A visitor who
+    // comes back to an unchanged module pays a 304; one who comes back to a new
+    // one gets it the same day it shipped.
+    //
+    // A development copy says `no-store` instead, because there the module is
+    // rebuilt every few minutes. `tools/wasm/dev-router.php` sets that.
     header('Cache-Control: ' . (($GLOBALS['pg_no_cache'] ?? false)
-        ? 'no-store, max-age=0' : 'public, max-age=86400, must-revalidate'));
+        ? 'no-store, max-age=0' : 'public, no-cache'));
     header('X-Content-Type-Options: nosniff');
     readfile($file);
     exit;
@@ -193,9 +202,32 @@ if ($body === false) {
     exit("The page is missing from this server.\n");
 }
 
+// **The module's address carries which build it is.**
+//
+// `/plant.wasm` is eight megabytes at a path that never changes, so a browser
+// or a CDN that has one has no way to know a new one exists. Revalidating
+// helps and is not enough: 20i's CDN holds a response for its full max-age and
+// is not ours to purge, so the day the Quiet Garden opened a returning visitor
+// was told the area could not be reached for up to a day after it had been.
+//
+// So the pages that load it ask for it by a name that changes when the bytes
+// do — the same mtime-and-size stamp the module's own ETag is made of. A page
+// is served by this file and a JavaScript module is not, which is why the
+// stamp is put in the page and read from there rather than written into
+// `walkpage.js`. `PG_MODULE` in a page is this, and a page without it is
+// untouched.
+if (str_contains($body, 'PG_MODULE')) {
+    $module = __DIR__ . '/.pages/PlantWasm.wasm';
+    $stamp = is_file($module)
+        ? dechex((int) filemtime($module)) . '-' . dechex((int) filesize($module))
+        : 'x';
+    $body = str_replace('PG_MODULE', '/plant.wasm?v=' . $stamp, $body);
+}
+
 // A seed link is opened once and then often re-opened from the same message, so
 // a conditional request is worth answering. The tag is of the bytes, so it
-// changes when the page does and not when the upload runs.
+// changes when the page does and not when the upload runs — and, since the
+// module's stamp is in them, when a new module is deployed.
 $etag = '"' . md5($body) . '"';
 header('ETag: ' . $etag);
 if (trim($_SERVER['HTTP_IF_NONE_MATCH'] ?? '') === $etag) {

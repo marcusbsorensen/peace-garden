@@ -29,7 +29,7 @@ const say = async (key) => {
 };
 
 async function room() {
-  const engine = await loadModule('/plant.wasm');
+  const engine = await loadModule(document.documentElement.dataset.module || '/plant.wasm');
   // The room's own numbers — where the hedge stands, where the bench does —
   // come from the module rather than being written down again here, so the
   // page cannot disagree with the rule about the shape of the place.

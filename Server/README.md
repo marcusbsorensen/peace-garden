@@ -352,13 +352,16 @@ phones — add `peace` as a third argument to send them to the Quiet Garden —
 and open `/walk` or `/quiet`. The workbenches are `/dev/walk` and `/dev/quiet`,
 which invent a garden rather than reading the service.
 
-**The module is never cached on a development copy.** `dev-router.php` answers
-`/plant.wasm` with `no-store`, because the live host's day-long `max-age` is
-right for a file rebuilt rarely and wrong for one rebuilt every few minutes: a
-browser inside that day runs the morning's Swift against the afternoon's
-JavaScript and reports exports missing that are there. The two workbench pages
-also ask for a fresh address each load, for the copies a browser cached before
-that header existed.
+**`/plant.wasm` is revalidated, not cached for a day.** It used to be
+`max-age=86400, must-revalidate`, on the reasoning that a module changes
+rarely. The flaw is that a new build is not a new URL — the path never changes
+— so a browser that fetched it yesterday ran yesterday's Swift today. The day
+the Quiet Garden opened, a browser that had visited `/walk` the day before was
+told `/quiet` could not be reached. It is `no-cache` now, which with the ETag
+is one small conditional request rather than eight megabytes. A development
+copy says `no-store`, because there it is rebuilt every few minutes, and the
+two workbench pages ask for a fresh address each load as well, for copies a
+browser stored before any of this.
 
 **Against the app**, which is the only way to watch the asking end to end:
 launch the simulator with `-pgPlots http://localhost:8803` and the app talks to

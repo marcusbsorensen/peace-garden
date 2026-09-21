@@ -29,7 +29,9 @@
 
   Static, like the rest: no analytics, no font CDN, no third-party anything.
 -->
-<html lang="en">
+<!-- `data-module` is stamped by index.php: the module's address with this
+     build's mark on it, so a new one is a new address. -->
+<html lang="en" data-module="PG_MODULE">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
