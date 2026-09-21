@@ -5,7 +5,7 @@ Three of ten areas are planted now. The previous handover, whose traps still
 apply, is at `git show 9bed47c:.claude/HANDOVER.md`.
 
 ## State
-- **Done, tested, pushed, deployed.** `c4da1b0` on `origin/main`. SeedCore 207,
+- **Done, tested, pushed, deployed.** `9a483c7` on `origin/main`. SeedCore 207,
   app 129 (1 skipped, run by hand in the simulator), `check_crossing` 1959
   checks over 500 placements, `check_quiet_garden` 1850, `check_ambassador` 279,
   `check_areas` 47, `check_long_walk` 600, `check_offers`, `check_limits`,
@@ -13,8 +13,13 @@ apply, is at `git show 9bed47c:.claude/HANDOVER.md`.
   in step.
 - Live: `/api/garden` says `travel`, `meeting` and `peace` are open,
   `/api/cross` answers one plot, and `https://peacegarden.app/cross` draws it —
-  looked at, in the live browser, with *Melyrina latifolia* on the first
-  quarter's diagonal.
+  looked at, in the live browser, grass quarters and all, with *Melyrina
+  latifolia* on the first quarter's diagonal.
+- **The host's SSH IP allowlist stopped a deploy mid-session.** rsync answers
+  `Connection reset by 45.8.225.251`, not a permission denial, because the
+  allowlist gates SSH before authentication. It is My20i -> peacegarden.app ->
+  Security -> SSH Access, and it needs whatever this Mac's public IP is that
+  day (api.ipify.org gives it). Only Marcus can set it.
 
 ## The bench has a back (`2d4c541`)
 
