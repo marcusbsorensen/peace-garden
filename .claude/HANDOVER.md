@@ -1,136 +1,120 @@
-# Peace Garden: the second area — handover 21 September 2026
+# Peace Garden: the third area — handover 21 September 2026
 
-One thing this session: **the garden has two areas open instead of one.** The
-Quiet Garden is built, live and drawn. The previous handover, whose traps still
-apply, is at `git show 6a6518b:.claude/HANDOVER.md`.
+Two things this session: **the bench has a back**, and **the Crossing is open**.
+Three of ten areas are planted now. The previous handover, whose traps still
+apply, is at `git show 9bed47c:.claude/HANDOVER.md`.
 
 ## State
-- **Done, tested, pushed, deployed.** `fd8c5ee` on `origin/main`. SeedCore 194,
-  `check_quiet_garden` 1850 checks over 500 placements, `check_ambassador` 279,
+- **Done, tested, pushed, deployed.** `c4da1b0` on `origin/main`. SeedCore 207,
+  app 129 (1 skipped, run by hand in the simulator), `check_crossing` 1959
+  checks over 500 placements, `check_quiet_garden` 1850, `check_ambassador` 279,
   `check_areas` 47, `check_long_walk` 600, `check_offers`, `check_limits`,
-  `check_backup` 22, `check_sky` 9729, `export.py --check` and `check_port.py`
+  `check_backup` 25, `check_sky` 9729, `export.py --check` and `check_port.py`
   in step.
-- Live: `/api/garden` says `travel` and `peace` are open, `/api/quiet` answers
-  one plot, and `https://peacegarden.app/quiet` draws it — looked at, in the
-  live browser, with *Olyne paniculata* sitting beside its bench.
+- Live: `/api/garden` says `travel`, `meeting` and `peace` are open,
+  `/api/cross` answers one plot, and `https://peacegarden.app/cross` draws it —
+  looked at, in the live browser, with *Melyrina latifolia* on the first
+  quarter's diagonal.
 
-## What is built (`cbbe0c8`)
+## The bench has a back (`2d4c541`)
 
-### The Quiet Garden: ten plants where the walk holds forty-eight
-`SeedCore/WebGardens/QuietGarden.swift`, `Server/.api/QuietGarden.php`,
-`RoomStore.php`, `Server/assets/js/quietgarden.js`, `/quiet`, `/dev/quiet`.
+Decision 2 from the last handover, and it was real: seen down its own length the
+seat was one upright panel 0.42 m across and very nearly square — a slab — and
+two of the room's four quarter turns put it that way, so half of every view of
+the Quiet Garden had one. A post standing on each end carries two rails, which
+puts a shoulder in the end-on silhouette. Two rails and not one board: a back in
+one piece is the same panel the ends already are.
 
-- **The room:** a 5.2 m square, hedge round all four sides at 2.3 m, a bench
-  lying across one corner with one plant beside it, and a group of three at the
-  foot of the hedge in each of the other three corners. The middle and the
-  middles of all four sides stay grass.
-- **No tree.** Marcus dropped it: nothing grown here is one (0.24–2.04 m), and a
-  drawn tree among plants grown from a genome is clip art. **The specimen is the
-  plant by the bench**, which is always the plot's first arrival — so the
-  ambassador gets it in plot 0 without a reserved slot, the same answer the walk
-  reached yesterday by a different route. It is also what lets a 0.75 m
-  ambassador be a specimen at all.
-- **A group is one colour or a tone of it.** Own colour, else an unplanted
-  corner, else a colour near its own — the two arcs either side, or pale. **The
-  near-colour fallback is load-bearing**: measured over 300 crossings the seven
-  families are badly uneven (two take 43%, pale takes 3.7%), so own-colour alone
-  would strand pale groups and open plots for want of a match.
-- **Back-from-arm cut at 1.13 m**, the 67th centile, because a group is one back
-  and two arms. Deliberately not the walk's 1.28 m.
-- **At 500 arrivals: 51 plots, 49 full**, the growing end holding six and five.
-  The walk takes 11 for the same 500. Joiners: 185 own colour, 112 a tone.
-- **The rule held first time**, which the walk's did not, because it borrowed the
-  walk's shape rather than inventing one.
-- **`quiet_garden` is a table of its own.** The two areas share no column after
-  `encounter`, which is the point at which *a table for each area* stopped being
-  a prediction. An offer now carries its area and is planted there.
+The back is on the bench's `+x`, which the room turns to point into its corner,
+so a sitter faces the lawn with the hedges behind them. `pg_bench` keeps its
+signature and no placement rule is involved.
 
-### What looking found, all of it in the drawing
-- Four hedges round an enclosure left **a notch at every corner** — a domed end
-  falls to the ground over half the hedge's height, a metre on the tall ones.
-  `Organic.hedge` gained a `domed` flag; the enclosure's four runs are square-
-  ended and overlap by a hedge's thickness.
-- The **bench lay along its corner's diagonal** instead of across it and read as
-  a headstone. `atan2(z, x)`, not `atan2(-z, x)`.
-- The room was **framed so tight the page's prose landed on the lawn**; `/quiet`
-  frames 1.25 plot-sides.
+## The Crossing (`c4da1b0`)
 
-### The app asks the garden which areas are open
-`PlotService.garden()`, `GardenModel.openAreas()`, `ShowInGardenView`,
-six tests in `AskingTests`.
+`SeedCore/WebGardens/Crossing.swift`, `Server/.api/Crossing.php`,
+`CrossStore.php`, `Server/assets/js/crossing.js`, `crosspage.js`, `/cross`,
+`/dev/cross`, `tools/reference/check_crossing.php`.
 
-- **It read its own compiled list until now**, so a phone learned that an area
-  had opened at its next update rather than on the day — and `GET /api/garden`
-  had no caller but the website, which is the thing it was built to prevent.
-- **Prompted, not polled**: one GET when the share screen opens, and never
-  otherwise, which is what keeps it clear of the *Alert me* switch. It carries
-  no token, no body and nothing about the phone. Asked once a session.
-- **What this build believes stands in** when the service cannot be reached, and
-  errs toward *not yet*.
-- An area this build has never heard of is **dropped, not read as travel** —
-  `Area.init(from:)`'s lenient fallback is right for a stored record and wrong
-  here.
-- One test builds `GET /api/garden`'s reply out of
-  `tools/reference/area_vectors.json` rather than by hand, so the app's decoder
-  is held to the shape the service actually sends. It pins the shape, not the
-  agreement: the two lists are meant to be able to differ.
-- **The app names no area in any language**, and the one sentence that did
-  (*"The Long Walk is the one area planted so far"*) had gone false. It now says
-  the areas are planted one at a time and counts none. Giving the app ten area
-  names would be 420 commissions to say what the website already says.
+Marcus chose all three of the recommendations put to him: 24 a plot in four
+quarters of six; the quarter with the fewest; a round paving at the centre with
+no plant on it.
 
-### A new module is a new address (`fd8c5ee`)
-`/plant.wasm` is 8 MB at a path that never changes. A browser or CDN holding
-yesterday's copy cannot know a new one exists, so a returning visitor was told
-`/quiet` could not be reached. `index.php` now stamps the module's mtime-and-size
-into each page as `data-module`, and the drivers read it. `Cache-Control` is
-`no-cache` as well; a dev copy says `no-store`.
+- **Twenty-four a plot**, between the walk's 48 and the room's 10. Six is three
+  along the path edges, two behind them, one at the outer corner.
+- **The rule is *wherever there is least*** — the emptiest quarter of the oldest
+  plot that has a slot the plant fits, ties to the lowest-numbered quarter.
+  **`<` and not `<=` on that count** is the only thing a port could get wrong
+  while agreeing about every number, which is why the check replays all 500.
+- **Cuts at 0.97 m and 1.43 m**, measured at the 50th and 83rd centiles for a
+  bed of 3:2:1. Not the walk's 0.93/1.28, not the room's 1.13. *(I first wrote
+  25th and 50th in the question put to Marcus; that was wrong and the code has
+  the right ones.)*
+- **The three at the path rank share an arc**, which is what frees them from
+  having to be in order with each other. Only ranks are compared, never
+  distances.
+- **At 500: 21 plots, 20 full**, the growing one holding 21 with quarters at
+  6, 5, 5, 5. 484 of 501 got a slot of their own rank. **The rule held first
+  time**, as the room's did, because it borrowed a shape already argued about.
+- **Slot spots are written out as literals**, not computed from an angle: a sine
+  from a host's own library is not the same number on every host and a placement
+  has to match in Swift and PHP for ever. Same reason `Organic.quarter` exists.
+- **`crossing` is a third table.** The columns after `encounter` now mean a tier
+  of a border, a place in a group of three, and a place in a bed of six. Three
+  areas is where *a table for each* stopped being a prediction.
+
+### What looking found, all of it the paving
+`Organic.roundel` is the first structure that is neither hedge nor bench. It
+arrived as a bright dish two metres across and took four passes:
+- **Too big.** 1.0 m radius against a 1.2 m path; now 0.85, a quarter of a metre
+  wider than the path on each side.
+- **Too bright and too blue.** A near-neutral albedo under a blue sky ambient is
+  a blue lid. The stone is warmer and darker now.
+- **Its own mesh showing.** Taking the tone from the vertex's distance from the
+  middle drew the rings as spokes.
+- **Too smooth**, which was the real one. Smooth normals over a cambered disc
+  take one broad highlight and read as a polished cover. **It is the one thing
+  on the page shaded flat** — one normal and one tone a triangle, from where the
+  triangle is — which is what makes it faces rather than a surface.
 
 ## The decisions waiting for Marcus
 
-1. **The third area.** The Crossing is the obvious next (quadripartite, four
-   paths to a centre, plants facing in) and would be the first with a structure
-   that is neither hedge nor bench. The Orchard would be the first to need a
-   plant to be *under* another.
-2. **Whether a bench should have a back.** Seen end-on it reads as a slab, which
-   is true of benches and may still be worth fixing, since two of the four
-   quarter turns put it that way.
-3. **Whether the share screen should hold its question back while it asks.**
-   `ShowInGardenView` shows what this build believes and corrects itself when
-   `/api/garden` answers, so an area opened since the build flips from *not yet*
-   to *you can* within a second of the screen appearing. Decided that way
-   because the two agree in every other case and a blank or a spinner would
-   cost the common screen to spare the rare one — but it has not been watched on
-   a device, and it is a second of bad news before good.
+1. **The fourth area.** The Orchard would be the first to need a plant to be
+   *under* another (trees on a quincunx, a guild round each); the Knot Garden
+   the first where a slot has a mirror. The Seedbed is the plainest left.
+2. **Whether the Crossing's quarters should be soil or rough grass.** They are
+   bare soil, which is what the walk's borders are, and with one plant standing
+   a plot reads as a lot of brown. Grass with beds cut into it means four
+   L-shaped holes with two wandering edges each.
+3. **Still open from the last handover:** whether the share screen should hold
+   its question back while it asks `/api/garden`. Unchanged, and still not
+   watched on a device.
 
 ## Traps
-- **`/plant.wasm` caching, now three ways.** Fixed for the live pages by the
-  stamp above. If a page ever loads the module by the bare path again, a
-  returning visitor runs the old one. `/dev/*` busts its own address every load.
-  **Probe a rebuilt module under node with `node:wasi`** rather than in the
-  browser pane — it takes a second and it is unambiguous. This cost three wrong
-  readings across two sessions.
-- **The browser pane throttles `requestAnimationFrame` to 1 Hz.** Anything timed
-  in it is wrong by an order of magnitude.
-- **The language banks nest under a `strings` key.** The `walk*` and `quiet*`
-  strings are **not** in the per-language catalogues — they live in
-  `strings.js`, English, until commissioned. Only `areaPeace` and the other nine
-  area names are translated, which is why a second area cost two strings.
-- **The Long Walk *is* the travel area.** Renaming either is a wrong turn already
-  taken and reverted.
+- **Run the app's tests by hand when an area opens.** CI cannot: they need Xcode
+  on a Mac. This is the trap that bit last time; it did not this time.
+  `xcodebuild test -project PeaceGarden.xcodeproj -scheme PeaceGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro'`
+- **`/plant.wasm` caching.** Fixed for the live pages by the `data-module` stamp
+  in `index.php`. **Probe a rebuilt module under node with `node:wasi`** rather
+  than in the browser pane — a second, and unambiguous.
+- **The browser pane throttles `requestAnimationFrame` to 1 Hz.**
+- **The language banks nest under a `strings` key.** `walk*`, `quiet*` and now
+  `cross*` are **not** in the per-language catalogues — they live in
+  `strings.js`, English, until commissioned. Only the ten area names are
+  translated, which is why a third area cost two strings again.
+- **The Long Walk *is* the travel area**, and the Crossing *is* `meeting`.
 - **20i's CDN normalises `Accept-Encoding`** and holds a response for its full
-  max-age; it is not ours to purge. Brotli never arrives. Do not measure again.
+  max-age. Brotli never arrives. Do not measure again.
 - **`/.api/` and `/.pages/` are refused by nginx's dot-directory rule.**
 - **`Server/.api/config.php` is gitignored and points wherever it was last left.**
-- **`swift build --package-path tools/wasm` fails on macOS** (deployment target);
-  it only builds for wasm. Use `sh tools/wasm/build.sh`.
-- **CI does not run `App/PeaceGardenTests`** — they need Xcode on a Mac. Opening
-  the Quiet Garden left `ThemeMappingTests` asserting travel was the only open
-  area, through a commit and a deploy, and nothing said so. Run them by hand
-  when an area opens:
-  `xcodebuild test -project PeaceGarden.xcodeproj -scheme PeaceGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro'`
+- **`swift build --package-path tools/wasm` fails on macOS** (deployment target).
+  Use `sh tools/wasm/build.sh`.
 - Adding or removing an app file needs `xcodegen generate`. Nothing this session
   added one.
+- **The Mac's disk was at 98% (18 GiB of 926) during this session** and macOS
+  was reporting memory failures because swap could not grow. Another session was
+  sorting it. The big ones: `~/Library` 263G, `~/ComfyUI` 125G, `~/omlx-models`
+  63G; reclaimable caches CoreSimulator 20G, `~/Library/Application Support/Claude`
+  25G, DerivedData 13G, `~/.cache` 15G.
 
 ## Still open from before
 - **A plant's own page** (capability URL), then **Sign in with Apple**.
@@ -140,8 +124,11 @@ into each page as `data-module`, and the drivers read it. `Cache-Control` is
 - Two dotted threads from plants standing near each other run almost on top of
   one another below the plot.
 - **`WalkStore` has outgrown its name** — it holds the connection for a garden
-  with two areas now. Renaming touches every caller and the reference checks, so
-  it is a commit of its own.
-- The plumbing in `longwalk.js` (GL, camera, quarter turns, the plant program) is
-  shared with `quietgarden.js` by importing from it. **A third area is when that
-  wants a module of its own.**
+  with three areas now, and says so in its own doc comment. Renaming touches
+  every caller and the reference checks, so it is a commit of its own.
+- **The plumbing in `longwalk.js` is now imported by two other areas**
+  (`quietgarden.js` and `crossing.js`) for GL, the camera, the quarter turns,
+  the plant program, `COLOUR`, `SIDE`, `RIM_DEPTH`, `readOutline` and
+  `readStructure`. The last handover said a third area is when that wants a
+  module of its own. **It is now that.** Nothing is broken by leaving it; it is
+  simply the wrong name on the door.
