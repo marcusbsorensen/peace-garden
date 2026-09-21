@@ -30,22 +30,34 @@ struct ShowInGardenView: View {
     /// Whether this phone is being asked, rather than doing the asking.
     private var isBeingAsked: Bool { record.standingOrHere.state == .invited }
 
+    /// **What the service says is open**, until it has said anything.
+    ///
+    /// `nil` before the answer arrives, which is when this build's own list
+    /// stands in — see `areaIsOpen`.
+    @State private var open: OpenAreas?
+
     /// Whether the area this plant belongs to has been planted yet.
     ///
     /// A plant stands in the area its own name belongs to, and the garden is
-    /// being planted an area at a time — so for now the service takes travel
-    /// and peace and refuses the other eight. Asked rather than asking, it is
-    /// open by proof: the other phone's offer was accepted, so this plant's
-    /// area exists whatever this version of the app believes.
+    /// being planted an area at a time by somebody who is not shipping an app.
+    /// **So this asks the garden rather than reading its own list**, which it
+    /// did until 21 September — a phone that reads its own list learns that an
+    /// area has opened when it is next updated, and `GET /api/garden` exists
+    /// precisely so it need not be told by a version of itself.
     ///
-    /// **This reads the built-in list rather than `GET /api/garden`**, so an
-    /// installed app learns that an area has opened when it is next updated
-    /// and not on the day. That is the wrong way round — the route exists
-    /// precisely so a phone need not be told by a version of itself — and it
-    /// is the next thing to fix here. It errs safe: an app that has not heard
-    /// of an open area says *not yet* rather than promising a planting the
-    /// service would refuse.
-    private var areaIsOpen: Bool { isBeingAsked || Arrangement.area(of: record).isOpen }
+    /// **This build's list stands in until the answer arrives**, rather than
+    /// the screen holding its question back for it. The two agree in every case
+    /// but one: an area opened since this app was built. So the common screen
+    /// is right the moment it appears, the rare one corrects itself within a
+    /// second of opening, and the correction is always from *not yet* to *you
+    /// can* — which is the direction to be briefly wrong in.
+    ///
+    /// Asked rather than asking, it is open by proof and no question is put to
+    /// the service at all: the other phone's offer was accepted, so this
+    /// plant's area exists whatever either of them believes.
+    private var areaIsOpen: Bool {
+        isBeingAsked || (open ?? .builtIn).has(Arrangement.area(of: record))
+    }
 
     private var peer: String {
         record.encounter?.peerDisplayName ?? String(localized: "the other gardener")
@@ -75,6 +87,13 @@ struct ShowInGardenView: View {
 
             content
         }
+        // Prompted, and only here: the one request this app makes that is not
+        // about a plant is made when somebody opens the screen it answers a
+        // question on. Nothing is sent — see `PlotService.garden()`.
+        .task {
+            guard !isBeingAsked else { return }
+            open = await model.openAreas()
+        }
     }
 
     private var content: some View {
@@ -99,7 +118,15 @@ struct ShowInGardenView: View {
 
                     if !areaIsOpen {
                         VStack(spacing: 16) {
-                            fact("A plant stands in the area its own name belongs to. The Long Walk is the one area planted so far.")
+                            // **It names no area and counts none.** The app
+                            // has no word for any of the ten in any language,
+                            // and giving it ten would be four hundred and
+                            // twenty commissions to say something a gardener
+                            // can already read on the website. A tally of how
+                            // many are planted would go stale the day one
+                            // opened, which is the thing this screen has just
+                            // stopped doing.
+                            fact("A plant stands in the area its own name belongs to, and the areas are being planted one at a time.")
                             fact("It goes on growing here meanwhile, and you can ask \(peer) the day its area opens.")
                         }
                         .padding(.horizontal, 40)

@@ -284,6 +284,10 @@ the service's own files unreachable, as it does `.pages/`.
 - `GET /api/walk` — plots opened, never fewer than one. `GET /api/walk/plot/{n}`
   — a plot's plantings: seed, both parents, the meeting, and the spot to stand
   it on.
+- `GET /api/garden` — the ten areas and which are open. **The app asks this on
+  the screen that puts the question**, since 21 September; before that it read
+  a list compiled into itself and learned that an area had opened when it was
+  next updated. It carries nothing either way: no token, no body, no limit.
 - **The Quiet Garden**, `.api/QuietGarden.php` and `.api/RoomStore.php`: a
   `quiet_garden` table of its own beside the walk's, because the two share no
   column after `encounter` — a walk row names a side of a path and a tier of a

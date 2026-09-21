@@ -201,7 +201,13 @@ function route(string $method, string $path): never
     // **The whole garden, named, before anything is offered to it.** A phone
     // asks this to find out whether the area its plant belongs to is built,
     // because the alternative is a version of the app deciding that for itself
-    // and being wrong the day an area opens.
+    // and being wrong the day an area opens. **The app has asked since 21
+    // September** — until then it read its own compiled list and this route
+    // had no caller but the website, which was the thing it was built to
+    // prevent happening quietly.
+    //
+    // It carries nothing and takes nothing: no token, no body, no limit. It is
+    // the one route here that says nothing about whoever asked.
     if ($path === '/api/garden' && $method === 'GET') {
         respond(200, ['areas' => Areas::all()]);
     }

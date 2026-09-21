@@ -23,10 +23,12 @@ final class AskingTests: XCTestCase {
         var replies: [String: (status: Int, body: String)] = [:]
         private(set) var asked: [String] = []
         private(set) var bodies: [String] = []
+        private(set) var methods: [String] = []
 
         func send(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
             let path = request.url?.path() ?? ""
             asked.append(path)
+            methods.append(request.httpMethod ?? "")
             bodies.append(String(decoding: request.httpBody ?? Data(), as: UTF8.self))
             let answer = replies[path] ?? (status: 200, body: "{}")
             let response = HTTPURLResponse(
@@ -59,6 +61,134 @@ final class AskingTests: XCTestCase {
             store: store,
             plots: PlotService(transport: stub, origin: URL(string: "https://example.invalid")!)
         )
+    }
+
+    // MARK: Which areas are open
+
+    /// The ten as the service answers them, with these ones open.
+    private func gardenJSON(open: [String]) -> String {
+        let rows = ["beginnings", "waiting", "renewal", "light", "pattern",
+                    "ground", "travel", "meeting", "kinship", "peace"]
+            .map { #"{"area":"\#($0)","open":\#(open.contains($0))}"# }
+        return #"{"areas":[\#(rows.joined(separator: ","))]}"#
+    }
+
+    /// **The app believes the service, not itself.** This is the whole point:
+    /// the garden is planted one area at a time by somebody who is not shipping
+    /// an app, so a phone that read its own list learned that an area had
+    /// opened when it was next updated.
+    @MainActor
+    func testItAsksTheGardenWhichAreasAreOpen() async {
+        let model = model()
+        stub.replies["/api/garden"] = (200, gardenJSON(open: ["travel", "peace"]))
+
+        let open = await model.openAreas()
+
+        XCTAssertEqual(stub.asked, ["/api/garden"])
+        XCTAssertEqual(open.areas, [.travel, .peace])
+    }
+
+    /// An area this build has never heard of is shut as far as it is concerned,
+    /// and is dropped rather than read as the Long Walk the way a stored record
+    /// would be. A list with an eleventh area in it must not open a tenth.
+    @MainActor
+    func testAnAreaThisBuildHasNeverHeardOfIsIgnoredRatherThanGuessedAt() async {
+        let model = model()
+        stub.replies["/api/garden"] = (200, #"{"areas":[{"area":"travel","open":true},{"area":"orangery","open":true}]}"#)
+
+        let open = await model.openAreas()
+
+        XCTAssertEqual(open.areas, [.travel])
+    }
+
+    /// **And it believes it when the answer is fewer.** A build that shipped
+    /// with an area open must stop offering to it if the service closes it,
+    /// which is the half a compiled list could never do.
+    @MainActor
+    func testAnAreaThisBuildThinksIsOpenClosesWhenTheServiceSaysSo() async {
+        let model = model()
+        XCTAssertTrue(OpenAreas.builtIn.has(.travel), "this build ships with travel open")
+        stub.replies["/api/garden"] = (200, gardenJSON(open: []))
+
+        let open = await model.openAreas()
+
+        XCTAssertFalse(open.has(.travel))
+    }
+
+    /// Unreachable, refused or unreadable, the answer is what this build was
+    /// compiled believing — which says *not yet* about anything it has not
+    /// heard of, so it cannot promise a planting the service would refuse.
+    @MainActor
+    func testWhenTheServiceCannotBeReachedItFallsBackToItsOwnList() async {
+        for reply in [(503, "nothing doing"), (200, "{}"), (200, #"{"areas":[]}"#)] {
+            stub = Stub()
+            let model = model()
+            stub.replies["/api/garden"] = reply
+
+            let open = await model.openAreas()
+
+            XCTAssertEqual(open, .builtIn, "\(reply) should have fallen back")
+        }
+    }
+
+    /// **Once a session, not once a screen.** A gardener opening the question
+    /// for four plants in a row is one request.
+    @MainActor
+    func testItAsksOnceAndKeepsTheAnswer() async {
+        let model = model()
+        stub.replies["/api/garden"] = (200, gardenJSON(open: ["travel"]))
+
+        _ = await model.openAreas()
+        _ = await model.openAreas()
+        _ = await model.openAreas()
+
+        XCTAssertEqual(stub.asked, ["/api/garden"])
+    }
+
+    /// It carries nothing: no token, no seed, no body. The one request in this
+    /// app that says nothing about the person making it.
+    @MainActor
+    func testTheQuestionCarriesNothing() async {
+        let model = model()
+        stub.replies["/api/garden"] = (200, gardenJSON(open: ["travel"]))
+
+        _ = await model.openAreas()
+
+        XCTAssertEqual(stub.bodies, [""])
+        XCTAssertEqual(stub.methods, ["GET"])
+    }
+
+    /// **The reply it reads is the reply the service sends.**
+    ///
+    /// The JSON above is written by hand, which is the way an app test drifts
+    /// from a service: both sides go on passing their own tests while agreeing
+    /// about nothing. `tools/reference/area_vectors.json` is what SeedCore says
+    /// the garden is and what `check_areas.php` holds `Areas.php` to, so this
+    /// builds `GET /api/garden`'s answer out of it and reads that instead.
+    ///
+    /// It pins the **shape**, not the agreement: the two lists are allowed to
+    /// differ — that is the whole point of asking — but the app has to be able
+    /// to read whatever the service sends.
+    @MainActor
+    func testItCanReadWhatTheServiceActuallySends() async throws {
+        var url = URL(fileURLWithPath: #filePath)
+        for _ in 0..<3 { url.deleteLastPathComponent() }   // …/App/PeaceGardenTests/<this>
+        url.appendPathComponent("tools/reference/area_vectors.json")
+        guard let data = try? Data(contentsOf: url) else {
+            throw XCTSkip("tools/reference/area_vectors.json is not beside this checkout")
+        }
+
+        struct Row: Decodable { var area: String; var open: Bool }
+        let rows = try JSONDecoder().decode([Row].self, from: data)
+        let sent = rows.map { #"{"area":"\#($0.area)","open":\#($0.open)}"# }
+
+        let model = model()
+        stub.replies["/api/garden"] = (200, #"{"areas":[\#(sent.joined(separator: ","))]}"#)
+
+        let open = await model.openAreas()
+
+        XCTAssertEqual(open.areas, Set(rows.filter(\.open).compactMap { Area(rawValue: $0.area) }))
+        XCTAssertFalse(open.areas.isEmpty, "the reference says no area is open")
     }
 
     // MARK: Offering

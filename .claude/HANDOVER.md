@@ -55,6 +55,30 @@ apply, is at `git show 6a6518b:.claude/HANDOVER.md`.
 - The room was **framed so tight the page's prose landed on the lawn**; `/quiet`
   frames 1.25 plot-sides.
 
+### The app asks the garden which areas are open
+`PlotService.garden()`, `GardenModel.openAreas()`, `ShowInGardenView`,
+six tests in `AskingTests`.
+
+- **It read its own compiled list until now**, so a phone learned that an area
+  had opened at its next update rather than on the day — and `GET /api/garden`
+  had no caller but the website, which is the thing it was built to prevent.
+- **Prompted, not polled**: one GET when the share screen opens, and never
+  otherwise, which is what keeps it clear of the *Alert me* switch. It carries
+  no token, no body and nothing about the phone. Asked once a session.
+- **What this build believes stands in** when the service cannot be reached, and
+  errs toward *not yet*.
+- An area this build has never heard of is **dropped, not read as travel** —
+  `Area.init(from:)`'s lenient fallback is right for a stored record and wrong
+  here.
+- One test builds `GET /api/garden`'s reply out of
+  `tools/reference/area_vectors.json` rather than by hand, so the app's decoder
+  is held to the shape the service actually sends. It pins the shape, not the
+  agreement: the two lists are meant to be able to differ.
+- **The app names no area in any language**, and the one sentence that did
+  (*"The Long Walk is the one area planted so far"*) had gone false. It now says
+  the areas are planted one at a time and counts none. Giving the app ten area
+  names would be 420 commissions to say what the website already says.
+
 ### A new module is a new address (`fd8c5ee`)
 `/plant.wasm` is 8 MB at a path that never changes. A browser or CDN holding
 yesterday's copy cannot know a new one exists, so a returning visitor was told
@@ -68,15 +92,16 @@ into each page as `data-module`, and the drivers read it. `Cache-Control` is
    paths to a centre, plants facing in) and would be the first with a structure
    that is neither hedge nor bench. The Orchard would be the first to need a
    plant to be *under* another.
-2. **Whether the app should ask `/api/garden` rather than its built-in list.**
-   `ShowInGardenView.areaIsOpen` reads `Area.isOpen`, compiled in — so an
-   installed app learns that peace opened when it is next updated, not on the
-   day. The route exists precisely so a phone need not be told by a version of
-   itself. It errs safe (says *not yet* rather than promising a refusal), but it
-   is the wrong way round and it is one change.
-3. **Whether a bench should have a back.** Seen end-on it reads as a slab, which
+2. **Whether a bench should have a back.** Seen end-on it reads as a slab, which
    is true of benches and may still be worth fixing, since two of the four
    quarter turns put it that way.
+3. **Whether the share screen should hold its question back while it asks.**
+   `ShowInGardenView` shows what this build believes and corrects itself when
+   `/api/garden` answers, so an area opened since the build flips from *not yet*
+   to *you can* within a second of the screen appearing. Decided that way
+   because the two agree in every other case and a blank or a spinner would
+   cost the common screen to spare the rare one — but it has not been watched on
+   a device, and it is a second of bad news before good.
 
 ## Traps
 - **`/plant.wasm` caching, now three ways.** Fixed for the live pages by the
@@ -99,6 +124,11 @@ into each page as `data-module`, and the drivers read it. `Cache-Control` is
 - **`Server/.api/config.php` is gitignored and points wherever it was last left.**
 - **`swift build --package-path tools/wasm` fails on macOS** (deployment target);
   it only builds for wasm. Use `sh tools/wasm/build.sh`.
+- **CI does not run `App/PeaceGardenTests`** — they need Xcode on a Mac. Opening
+  the Quiet Garden left `ThemeMappingTests` asserting travel was the only open
+  area, through a commit and a deploy, and nothing said so. Run them by hand
+  when an area opens:
+  `xcodebuild test -project PeaceGarden.xcodeproj -scheme PeaceGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro'`
 - Adding or removing an app file needs `xcodegen generate`. Nothing this session
   added one.
 

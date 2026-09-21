@@ -453,6 +453,12 @@ In order, because each needs the one before:
    **The travel ambassador stands at the head of it**, since 20 September,
    derived rather than stored — §*The ambassador, standing*.
 
+   **The app asks which areas are open** rather than reading a list compiled
+   into itself, since 21 September (`PlotService.garden()`), so a phone learns
+   that an area has opened on the day rather than at its next update. What it
+   was built believing stands in when the service cannot be reached, and errs
+   toward *not yet*.
+
    **A plant is offered to the area its own name belongs to**, from the app,
    since 20 September. That is nine plants in ten refused for now, which the
    app says on the screen before it asks rather than after: a plant whose area

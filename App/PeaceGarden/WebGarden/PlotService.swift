@@ -28,7 +28,46 @@ struct PlotService: Sendable {
         self.origin = origin
     }
 
-    // MARK: The four things a phone says
+    // MARK: The five things a phone says
+
+    /// **Which of the garden's ten areas a plant can stand in today.**
+    ///
+    /// The one question here that is not about a plant, and the only one that
+    /// sends nothing at all: a bare GET, no body, no token, no seed. What comes
+    /// back is the list `GET /api/garden` answers — every area named, and
+    /// whether it is open.
+    ///
+    /// **Why ask at all, when `Area.isOpen` is compiled in.** Because that list
+    /// is this build's, and the garden is planted one area at a time by
+    /// somebody who is not shipping an app. Until 21 September
+    /// `ShowInGardenView` read the compiled list, so a phone learned that an
+    /// area had opened when it was next updated rather than on the day — which
+    /// is exactly what this route was built to prevent, and the app was the one
+    /// caller not using it.
+    ///
+    /// **It is prompted, not polled.** The request is made when a gardener
+    /// opens the screen that asks the question, and never otherwise. That is
+    /// what keeps it clear of the *Alert me when a joint seed is shared*
+    /// switch, which exists to stop an **unprompted** request — `pending` is
+    /// the one a phone makes on its own, and this is not.
+    ///
+    /// An area this build has never heard of is dropped rather than guessed at.
+    /// `Area.init(from:)` reads an unknown name as the Long Walk, which is the
+    /// right fallback for a stored record and the wrong one here: it would put
+    /// a second travel in the list and say nothing true. An area built after
+    /// this app is an area this app has nothing to offer to.
+    func garden() async throws -> OpenAreas {
+        let reply: GardenReply = try await fetch("/api/garden")
+        // A garden always has areas. An empty list is a reply this version
+        // cannot read rather than a garden with nothing open in it, and the
+        // caller falls back to what it was built believing.
+        guard !reply.areas.isEmpty else { throw Trouble.unreadable }
+        return OpenAreas(areas: Set(
+            reply.areas.filter(\.open).compactMap { Area(rawValue: $0.area) }
+        ))
+    }
+
+    // MARK: The four things a phone says about a plant
 
     /// Offers one plant, addressed to the token the other gardener minted.
     func offer(_ arrival: WalkArrival, tokens: MeetingTokens) async throws -> SharedOffer {
@@ -90,6 +129,11 @@ struct PlotService: Sendable {
         var plant: WalkArrival
     }
 
+    private struct GardenReply: Decodable {
+        struct Row: Decodable { var area: String; var open: Bool }
+        var areas: [Row]
+    }
+
     private struct Asking: Encodable { var tokens: [String] }
     private struct Answering: Encodable { var seed: String; var to: String; var yes: Bool }
     private struct Withdrawing: Encodable { var seed: String; var token: String }
@@ -101,6 +145,38 @@ struct PlotService: Sendable {
 
     private func askMany(_ path: String, _ body: some Encodable) async throws -> [SharedOffer] {
         try await ask(path, body).offers ?? []
+    }
+
+    /// A read, which is the only kind of request here with no body.
+    ///
+    /// **Eight seconds rather than twenty.** The four calls below are a
+    /// gardener pressing a button and waiting for it to happen; this one runs
+    /// while they are reading, and an answer that arrives after they have
+    /// decided is no answer. Failing quickly is what lets the caller fall back
+    /// to what it already knew.
+    private func fetch<Answer: Decodable>(_ path: String) async throws -> Answer {
+        var request = URLRequest(url: origin.appending(path: path))
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        // Nothing of this phone's is cached or revalidated. Which areas are
+        // open is exactly the thing a stale answer gets wrong.
+        request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        request.timeoutInterval = 8
+
+        let data: Data
+        let response: HTTPURLResponse
+        do {
+            (data, response) = try await transport.send(request)
+        } catch {
+            throw Trouble.unreachable
+        }
+        guard (200..<300).contains(response.statusCode) else {
+            throw Trouble.refused(status: response.statusCode, said: nil)
+        }
+        guard let answer = try? JSONDecoder().decode(Answer.self, from: data) else {
+            throw Trouble.unreadable
+        }
+        return answer
     }
 
     private func ask(_ path: String, _ body: some Encodable) async throws -> Reply {
@@ -128,6 +204,29 @@ struct PlotService: Sendable {
         guard let reply else { throw Trouble.unreadable }
         return reply
     }
+}
+
+// MARK: - What is open
+
+/// The areas of the shared garden a plant can be offered to.
+///
+/// **A value rather than a list of names**, so the one question a screen asks
+/// it — *can this plant go anywhere yet* — has one answer and no place to put a
+/// second copy of the rule.
+struct OpenAreas: Sendable, Equatable {
+    var areas: Set<Area>
+
+    /// What this build was compiled believing, for when the service cannot be
+    /// reached.
+    ///
+    /// **It errs the safe way.** A build that has not heard of an area says
+    /// *not yet* about it, which is a gardener waiting rather than a gardener
+    /// promised a planting the service would refuse. The reverse is already
+    /// covered further down: a plant offered to an area the service keeps shut
+    /// comes back 409, with its own sentence.
+    static let builtIn = OpenAreas(areas: Set(Area.open))
+
+    func has(_ area: Area) -> Bool { areas.contains(area) }
 }
 
 // MARK: - Sending it

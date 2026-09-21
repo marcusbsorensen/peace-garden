@@ -3,6 +3,14 @@ name: Tests
 # The parts that must not drift are the derivation and the geometry, and they
 # are exactly the parts that need no device to test. Everything above them —
 # SwiftUI, SceneKit — needs Xcode on a Mac and is not run here.
+#
+# **So `App/PeaceGardenTests` is run by hand**, and the day an area opens is
+# when to remember: opening the Quiet Garden on 21 September left
+# `ThemeMappingTests` asserting that travel was the only one, and nothing said
+# so for a commit and a deploy.
+#
+#   xcodebuild test -project PeaceGarden.xcodeproj -scheme PeaceGarden \
+#     -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 on:
   push:
     branches: [main]

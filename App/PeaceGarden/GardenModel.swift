@@ -228,6 +228,33 @@ final class GardenModel {
         garden.plants.filter(\.standingOrHere.isShown)
     }
 
+    /// **Which areas of the shared garden are open**, from the service rather
+    /// than from what this build was compiled believing.
+    ///
+    /// The garden is planted one area at a time by somebody who is not shipping
+    /// an app, so a phone that read its own list learned that an area had
+    /// opened when it was next updated. `GET /api/garden` exists so it need not
+    /// be told by a version of itself, and until 21 September the app was the
+    /// one caller not using it.
+    ///
+    /// **Asked once a session.** A gardener opening this screen for four plants
+    /// in a row is one question, not four. The window that leaves is a session:
+    /// an area that opens while the app is in the foreground is learned the
+    /// next time it starts, which is a different order of wrong from the next
+    /// time it is updated.
+    ///
+    /// If the service cannot be reached, what this build believes — which says
+    /// *not yet* about anything it has not heard of, and so cannot promise a
+    /// planting that would be refused.
+    func openAreas() async -> OpenAreas {
+        if let learned { return learned }
+        let answer = (try? await plots.garden()) ?? .builtIn
+        learned = answer
+        return answer
+    }
+
+    private var learned: OpenAreas?
+
     /// Offers this plant to the peace garden, addressed to the gardener it was
     /// grown with.
     ///
@@ -237,11 +264,11 @@ final class GardenModel {
     @discardableResult
     func offer(_ record: PlantRecord) async -> Result<Standing, PlotService.Trouble> {
         // **The area is the plant's own**, which is the area its genus head
-        // belongs to and not the one it was offered from. The service knows
-        // ten and keeps nine shut, so a plant whose area is still to be
-        // planted comes back refused; `ShowInGardenView` says so before
-        // anybody presses anything, and the refusal is the second line of
-        // defence for a phone older than the list.
+        // belongs to and not the one it was offered from. The service keeps
+        // the unbuilt areas shut, so a plant whose area is still to be planted
+        // comes back refused; `ShowInGardenView` asks `openAreas()` and says so
+        // before anybody presses anything, and the refusal is the second line
+        // of defence for a phone that could not reach the service to ask.
         guard let tokens = record.tokens,
               let arrival = WalkArrival(record: record, area: Arrangement.area(of: record))
         else {
