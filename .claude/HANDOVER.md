@@ -4,6 +4,10 @@ Two things this session: **the bench has a back**, and **the Crossing is open**.
 Three of ten areas are planted now. The previous handover, whose traps still
 apply, is at `git show 9bed47c:.claude/HANDOVER.md`.
 
+**If you are the session picking this up: the fourth area is decided and not
+started.** Read *The fourth area is the Orchard* below, then the Traps, and
+build. Nothing else here is outstanding.
+
 ## State
 - **Done, tested, pushed, deployed.** `9a483c7` on `origin/main`. SeedCore 207,
   app 129 (1 skipped, run by hand in the simulator), `check_crossing` 1959
@@ -93,14 +97,76 @@ arrived as a bright dish two metres across and took four passes:
   on the page shaded flat** — one normal and one tone a triangle, from where the
   triangle is — which is what makes it faces rather than a surface.
 
-## The decisions waiting for Marcus
+## The fourth area is the Orchard, and it is decided
 
-1. **The fourth area.** The Orchard would be the first to need a plant to be
-   *under* another (trees on a quincunx, a guild round each); the Knot Garden
-   the first where a slot has a mirror. The Seedbed is the plainest left.
-2. **Still open from the last handover:** whether the share screen should hold
-   its question back while it asks `/api/garden`. Unchanged, and still not
-   watched on a device.
+Marcus chose it on 21 September and answered the three questions it raises. **No
+code is written yet** — this section is the brief, so the session that builds it
+does not have to re-decide anything.
+
+The Orchard is `kinship`. Genus heads `Vin` (a bond) and `Cyn` (the dog at the
+door); table `orchard`; heading `areaMeeting`'s neighbour `areaKinship`, "The
+Orchard", already in `strings.js` and already translated in all 42 catalogues,
+so — as with the last three — it costs two English strings, `orchardAbout` and
+`orchardAway`.
+
+1. **The garden plants the trees, not the gardeners.** Five trees in a quincunx
+   are *structures*, like the hedges, the bench and the roundel: drawn by a new
+   `Organic.tree`, standing in every plot from the day it opens, a row nowhere.
+   Every arriving plant joins a guild underneath one.
+
+   This is the roundel's move again and it was chosen for the same reason. The
+   alternative — the tallest arrivals become the trees — leaves a new plot with
+   five empty tree slots and guild slots that mean nothing until a tall plant
+   happens along, and hands the first gardener to the Orchard a tree while the
+   second gets shade. **What it costs:** the Orchard is the first area where a
+   gardener's plant can never take the most prominent thing in the plot. The
+   Quiet Garden's bench is the precedent that says this is allowed.
+
+2. **Twenty a plot** — four guild places at the compass points of each of five
+   trees. Between the Crossing's 24 and the Quiet Garden's 10, in the same
+   5.2 m square. Four round a trunk is the spacing a guild wants; six reads as
+   a ring.
+
+3. **Fill one guild, then the next** — *not* the Crossing's "wherever there is
+   least". A tree is either dressed or bare, never all five half-done, which is
+   what a young orchard actually looks like. **This is the whole reason to build
+   a fourth area rather than a second Crossing**: it is the opposite rule, so it
+   tests whether the template survives a placement that is deliberately uneven.
+
+### What decision 3 leaves for the build to settle
+Two sub-choices follow from it and are the builder's call, not Marcus's — but
+name them in the commit rather than letting them be accidents:
+- **Which guild fills first.** The centre of the quincunx, then the four corners
+  in quarter order, is the reading that matches how the other three areas number
+  themselves.
+- **Which of a guild's four places a plant takes.** Height, as everywhere else:
+  the tallest behind the trunk, the lowest at the front. Note that this makes a
+  guild's four ranks *fixed*, which is nearer the Quiet Garden's ten than the
+  Crossing's quarters, and means the order check compares ranks and never
+  distances — the trap the Crossing already taught.
+
+### The shape of the work, from the Crossing's pattern
+`SeedCore/WebGardens/Orchard.swift`, `Server/.api/Orchard.php`,
+`OrchardStore.php`, `Server/assets/js/orchard.js`, `orchardpage.js`,
+`Server/.pages/orchard`, `/orchard` in `index.php` and `router.php`,
+`/dev/orchard`, `tools/reference/check_orchard.php`, `Organic.tree` +
+`pg_tree` in `tools/wasm/Sources/PlantWasm/Dressing.swift`, a `Cross.swift`
+equivalent for the plot calls, `Areas.swift`/`Areas.php` to open `kinship` and
+name the table, `Ambassadors.php`, `WalkStore.php`, `backup.php`'s KEPT list,
+`check_backup.php`, `check_ambassador.php`, `walk.js`'s `built` map, and
+`docs/WEB-GARDENS.md`. **Re-record `area_vectors.json`** — opening an area
+breaks `AreaVectorTests` by design, and rename the test to say four.
+
+**No libm in the quincunx.** Tree spots and the four compass places are literals,
+for the reason `Organic.quarter` exists: a sine from a host's own library is not
+the same number on every host, and a placement has to match in Swift and PHP for
+ever.
+
+## Still waiting for Marcus
+
+1. **Whether the share screen should hold its question back while it asks
+   `/api/garden`.** Carried from the handover before last. Unchanged, and still
+   not watched on a device.
 
 ## Traps
 - **Run the app's tests by hand when an area opens.** CI cannot: they need Xcode
