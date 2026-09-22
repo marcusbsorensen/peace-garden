@@ -25,8 +25,10 @@ this one, whose traps mostly still apply, is at
 
 **CI had been red since 20 September and nobody had recorded it.** Twelve runs,
 through the Crossing, the Orchard and the Knot Garden. Fixed on 22 September in
-`104e4a5`; what follows is what it actually was, because the shape of the answer
-matters more than the patch.
+*A vector file is compared as numbers, because two C libraries do not agree* —
+named rather than numbered, because a commit cannot carry its own hash. What
+follows is what it actually was, because the shape of the answer matters more
+than the patch.
 
 **Reproduced on this Mac rather than by pushing.** The wasm SDK is already
 installed, so the suite can be built and run for another host locally:
