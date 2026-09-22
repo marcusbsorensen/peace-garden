@@ -100,7 +100,7 @@ is_same('it is the plant beside the bench', QuietGarden::BENCH, $sitting['corner
 is_same('its tier is the tier its height belongs to',
         LongWalk::tier($vectors['ambassadors'][6]['height']), $standing['tier']);
 
-// The nine that are not open have no placement, because their areas have no
+// The five that are not open have no placement, because their areas have no
 // rule. A placement invented for one of them would be a promise about a layout
 // nobody has designed.
 foreach (Areas::ALL as $area) {
@@ -167,6 +167,8 @@ if ($failed !== []) {
 }
 
 printf("Ten ambassadors — %s at the head of the walk, %s at the crossing, "
-     . "%s under the middle tree, %s beside the bench — and the service agrees: %d checks.\n",
+     . "%s under the middle tree, %s beside the bench, %s in the knot — "
+     . "and the service agrees: %d checks.\n",
     $vectors['ambassadors'][6]['name'], $vectors['ambassadors'][7]['name'],
-    $vectors['ambassadors'][8]['name'], $vectors['ambassadors'][9]['name'], $checks);
+    $vectors['ambassadors'][8]['name'], $vectors['ambassadors'][9]['name'],
+    $vectors['ambassadors'][4]['name'], $checks);

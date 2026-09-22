@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Knot Garden</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; color: rgb(255 255 255 / 0.85);
+    font: 15px/1.4 Georgia, serif; }
+  main { position: fixed; inset: 0; }
+  .pool { position: absolute; inset: 0;
+    background: radial-gradient(ellipse 50% 45% at 50% 55%, rgb(255 255 255 / 0.08), transparent 70%); }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #sky { z-index: -1; }
+  #note, #held { position: absolute; inset-inline-start: 16px; margin: 0;
+    font: 11px/1.6 system-ui, sans-serif; letter-spacing: 0.06em; color: rgb(255 255 255 / 0.5); }
+  #note { inset-block-start: 16px; inset-inline-end: 16px; }
+  #held { inset-block-start: 40px; padding: 0; list-style: none; font-variant-numeric: tabular-nums; }
+  nav { position: absolute; inset-inline: 16px; inset-block-end: 16px; display: flex; flex-wrap: wrap;
+    gap: 8px; justify-content: center; }
+  button { background: transparent; color: inherit; border: 1px solid rgb(255 255 255 / 0.4);
+    border-radius: 6px; padding: 8px 14px; font: 11px/1 system-ui, sans-serif;
+    letter-spacing: 0.14em; text-transform: uppercase; }
+  button:disabled { opacity: 0.3; }
+</style>
+</head>
+<body>
+<main>
+  <canvas id="sky" aria-hidden="true"></canvas>
+  <div class="pool"></div>
+  <canvas id="stage" aria-label="A plot of the Knot Garden"></canvas>
+  <p id="note">Loading…</p>
+  <ul id="held"></ul>
+  <nav>
+    <button id="back" aria-label="The plot before">Back</button>
+    <button id="left" aria-label="Turn left">Turn left</button>
+    <button id="right" aria-label="Turn right">Turn right</button>
+    <button id="on" aria-label="The next plot">On</button>
+  </nav>
+</main>
+<script type="module">
+  // The workbench for the fifth area. `?arrivals=500&plot=0` invents a garden
+  // of five hundred plants and shows one plot of it, which is how
+  // docs/WEB-GARDENS.md says a template is judged: a garden of fourteen hides
+  // layout faults.
+  //
+  // **It draws a different five hundred from the test suite's**, and that is
+  // the point of it rather than a detail — the Orchard's workbench is what
+  // caught a false assertion that both the Swift test and the PHP check agreed
+  // on, because all three had only ever looked at the same sample.
+  import { loadModule } from '/assets/js/plant.js';
+  import { makePlotStage } from '/assets/js/longwalk.js';
+  import { describeKnot, growKnotFromService, growInvented, makeKnotGround, plan, plantVisitors }
+    from '/assets/js/knot.js';
+  import { makeSky } from '/assets/js/sky.js';
+
+  const query = new URLSearchParams(location.search);
+  const number = (name, fallback) => Math.max(0, parseInt(query.get(name) ?? '', 10) || fallback);
+  const arrivals = number('arrivals', 500);
+  const fromService = query.get('source') === 'service';
+  let plot = number('plot', 0);
+
+  const note = document.getElementById('note');
+  const held = document.getElementById('held');
+  const report = (text) => { note.textContent = text; };
+  // **The module, never from the cache.** The live host sends it with a day's
+  // max-age, which is right there and wrong on a workbench.
+  const MODULE = `/plant.wasm?dev=${Date.now()}`;
+  const e = await loadModule(MODULE);
+  const place = plan(e);
+  const stage = makePlotStage(document.getElementById('stage'), 1, e, makeKnotGround(place));
+
+  let sky = null;
+  makeSky(document.getElementById('sky'), {
+    quarterTurns: () => stage.turn(),
+    keepClear: () => ['note', 'held'].map((id) => document.getElementById(id))
+      .concat([document.querySelector('nav')])
+      .filter(Boolean)
+      .map((element) => element.getBoundingClientRect())
+      .filter((box) => box.width > 0 && box.height > 0),
+  }).then((made) => { sky = made; }).catch((trouble) => {
+    console.warn('no sky:', trouble);
+  });
+
+  const turn = (quarters) => { stage.turnBy(quarters); sky?.draw(); };
+  document.getElementById('left').addEventListener('click', () => turn(-1));
+  document.getElementById('right').addEventListener('click', () => turn(1));
+
+  let plots = 1;
+  if (!fromService) plots = await plantVisitors(e, arrivals, report);
+
+  // What the rule did with this plot, in words: which colour claimed each pair
+  // and how the pair's two compartments are filling. **The thing to watch is
+  // that the two numbers in a pair stay level** — 4+4, or 3+4 while it fills.
+  // A pair at 4+0 is one block of colour and one bare compartment, which is
+  // the failure this area's *wherever there is least* exists to prevent.
+  const NAMES = ['north–south', 'east–west', 'NE–SW', 'SE–NW'];
+  function say() {
+    held.replaceChildren();
+    if (fromService) return;
+    const rows = describeKnot(e, plot);
+    const pairOf = (c) => (c % 2) + (c >= 4 ? 2 : 0);
+    NAMES.forEach((name, pair) => {
+      const here = rows.filter((r) => pairOf(r.slot.compartment) === pair);
+      const line = document.createElement('li');
+      if (!here.length) {
+        line.textContent = `${name}: unclaimed`;
+      } else {
+        const first = here[0].slot.compartment;
+        const other = first ^ 2;
+        const counts = [first, other].map((c) => here.filter((r) => r.slot.compartment === c).length);
+        const heights = here.map((r) => r.traits.height.toFixed(2)).sort().join(', ');
+        line.textContent = `${name}: colour ${here[0].traits.family} — ${counts[0]}+${counts[1]} — ${heights} m`;
+      }
+      held.append(line);
+    });
+  }
+
+  async function show() {
+    document.getElementById('back').disabled = plot === 0;
+    document.getElementById('on').disabled = plot + 1 >= plots;
+    const count = fromService
+      ? await growKnotFromService(e, stage, plot, report)
+      : await growInvented(e, stage, plot, report);
+    report(`Plot ${plot + 1} of ${plots} — ${count} of ${place.slots}`);
+    say();
+    sky?.draw();
+  }
+
+  document.getElementById('back').addEventListener('click', () => { plot = Math.max(0, plot - 1); show(); });
+  document.getElementById('on').addEventListener('click', () => { plot = Math.min(plots - 1, plot + 1); show(); });
+  await show();
+</script>
+</body>
+</html>

@@ -15,6 +15,7 @@ declare(strict_types=1);
  *   quiet_garden     the second area, and its own lock
  *   crossing         the third area, and its own lock
  *   orchard          the fourth area, and its own lock
+ *   knot_garden      the fifth area, and its own lock
  *   walk_offers      consent in flight: who has asked whom, and what was said
  *
  * **What is left out, on purpose.** `rate_limits` and `rate_salt` are this
@@ -44,7 +45,8 @@ if (PHP_SAPI !== 'cli') {
 // table has no area to be derived from anyway.
 const KEPT = ['long_walk', 'long_walk_lock', 'quiet_garden', 'quiet_garden_lock',
               'crossing', 'crossing_lock',
-              'orchard', 'orchard_lock', 'walk_offers'];
+              'orchard', 'orchard_lock',
+              'knot_garden', 'knot_garden_lock', 'walk_offers'];
 
 /** How many copies stay on the server. The Mac keeps every one it has pulled. */
 const KEEP = 30;

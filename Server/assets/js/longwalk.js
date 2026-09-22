@@ -45,6 +45,20 @@ export const COLOUR = {
   // bedrock. A living trunk standing in its own canopy's shade is the darkest
   // thing on the slab, and drawing it at plank brightness made five pale posts.
   bark: [0.268, 0.222, 0.188],
+  // The Knot Garden's ground. Picked against the grass the other four areas
+  // stand on rather than against a swatch: it has to read as *not lawn* from
+  // the first glance, because it is the only area whose floor is not green,
+  // and it has to stay under the planting rather than glare out from between
+  // it. Warm rather than neutral — a neutral pale grey under this sky's blue
+  // ambient comes out lilac, which is the fault the Crossing's paving had on
+  // its first pass.
+  gravel: [0.470, 0.436, 0.376],
+  // The Knot Garden's hedging. Clipped box, not the walk's yew: box is a
+  // fresher, yellower green, and at ankle height in full light it takes far
+  // more of the sun than a 2 m yew wall does. Picked against the gravel it
+  // stands in, which is the brightest ground in the garden — against that, the
+  // yew read as a shadow rather than as a hedge.
+  box: [0.288, 0.378, 0.226],
 };
 
 // Midday, GardenGround.swift.

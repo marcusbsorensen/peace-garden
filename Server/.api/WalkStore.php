@@ -7,6 +7,7 @@ require_once __DIR__ . '/LongWalk.php';
 require_once __DIR__ . '/RoomStore.php';
 require_once __DIR__ . '/CrossStore.php';
 require_once __DIR__ . '/OrchardStore.php';
+require_once __DIR__ . '/KnotStore.php';
 require_once __DIR__ . '/Offers.php';
 
 /**
@@ -53,6 +54,7 @@ final class WalkStore
         $store->room();
         $store->cross();
         $store->orchard();
+        $store->knot();
         return $store;
     }
 
@@ -210,7 +212,7 @@ final class WalkStore
      * **This class has outgrown its name**, which is a thing worth saying
      * rather than quietly fixing: it opened the database for a service that was
      * only the Long Walk, and now it holds the connection for a garden with
-     * three areas in it and seven to come. Renaming it means touching every
+     * five areas in it and five to come. Renaming it means touching every
      * caller and the reference checks in one go, which is a commit of its own
      * and not this one. `Offers` and `Limits` already reach through it the same
      * way.
@@ -235,6 +237,13 @@ final class WalkStore
         return $orchard ??= new OrchardStore($this->db);
     }
 
+    /** The Knot Garden, on the same connection. */
+    public function knot(): KnotStore
+    {
+        static $knot = null;
+        return $knot ??= new KnotStore($this->db);
+    }
+
     /**
      * Plants one arrival into whichever area it belongs to.
      *
@@ -250,6 +259,7 @@ final class WalkStore
             'peace' => $this->room()->plant($seed, $parentA, $parentB, $encounter, $height, $family),
             'meeting' => $this->cross()->plant($seed, $parentA, $parentB, $encounter, $height, $family),
             'kinship' => $this->orchard()->plant($seed, $parentA, $parentB, $encounter, $height, $family),
+            'pattern' => $this->knot()->plant($seed, $parentA, $parentB, $encounter, $height, $family),
             default => $this->plant($seed, $parentA, $parentB, $encounter, $height, $family),
         };
     }
@@ -260,6 +270,7 @@ final class WalkStore
         if ($area === 'peace') { $this->room()->hide($seed); return; }
         if ($area === 'meeting') { $this->cross()->hide($seed); return; }
         if ($area === 'kinship') { $this->orchard()->hide($seed); return; }
+        if ($area === 'pattern') { $this->knot()->hide($seed); return; }
         $this->hide($seed);
     }
 

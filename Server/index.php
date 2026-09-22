@@ -71,6 +71,10 @@ const ROUTES = [
     // part of the plot deliberately bare needs its own words as much as its
     // own drawing, and neither would survive a shared page.
     '/orchard' => ['orchard', 'text/html; charset=utf-8'],
+    // The fifth, on 22 September. The first area whose prose has to explain a
+    // rule about colour rather than about height, which is the clearest case
+    // yet for a page of its own.
+    '/knot' => ['knot', 'text/html; charset=utf-8'],
     '/t' => ['t', 'text/html; charset=utf-8'],
     // A privacy notice is a mandatory App Store listing field, so this path is
     // load-bearing for the submission rather than decorative. See

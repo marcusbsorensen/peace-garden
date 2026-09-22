@@ -106,7 +106,7 @@ a border with a knot garden's name.
 | **The Long Walk** | travel | A double border either side of a path: tall at the back, graded to the front, drifts of three and five, the same colour repeated down its length for rhythm. The walk goes on; plots open end to end. | Level, a mown path | The path, a hedge behind each border |
 | **The Quiet Garden** | peace | An enclosure: hedged, one tree, one bench, and more lawn than planting. **The fewest plants per plot of any area, by rule.** Room is what it is for. | Lawn | A hedge round, a bench |
 | **The Orchard** | kinship | Five trees on a quincunx, meadow beneath, and a guild of four under each. **Twenty a plot, and an arrival goes under the earliest tree with a place left**, so trees are dressed one at a time rather than five at once. The first area whose tallest thing is not something anybody grew. | Meadow, mown into a disc under each tree | The five trees |
-| **The Knot Garden** | pattern | Low clipped hedging in an interlaced geometric pattern, each compartment filled with one colour. Symmetrical: a plant's slot has a mirror, and a compartment fills with one colour family. | Flat, gravel | The hedging pattern |
+| **The Knot Garden** | pattern | Low clipped hedging woven over and under itself inside a square edging, and eight compartments — four at the sides, four at the corners — each filled with one colour. **Thirty-two a plot, and a plant's colour decides which pair of opposite compartments it stands in**, its height where in the block. The first area whose rule reads anything but a height. | Flat, gravel | The woven hedging and its edging |
 | **The Glasshouse** | light | Staging along the sides, pots on it, a central aisle. Tender plants, set close to the glass for the light. | Floor tiles | The benches, the glass |
 | **The Crossing** | meeting | Four paths meeting at a centre, four quarters, one feature where they cross: the quadripartite garden, one of the oldest plans there is for a meeting place. Plants face the centre. **Twenty-four a plot, and an arrival goes wherever there is least**, so the four quarters grow together. | Grass, with two paths mown through it | The paths, a round of paving where they cross |
 
@@ -131,13 +131,17 @@ Three things follow from the table:
 
 ### Structures need drawing properly
 
-A hedge, a glazed frame, a bench, staging, a path edge. **Two of them exist
-now**, both built for the Long Walk and both in the app and the browser: a
-hedge (`GardenStructures.swift` — `HedgeLine`, `HedgePiece`, `HedgeShadow`) and
-a mown path (`MownPath`), ported to `longwalk.js`. The frame, the bench, the
-staging, the bed edging, the row labels, the tree positions and the knot
-hedging are still to come, and each belongs to an area that is not built yet.
-They
+A hedge, a glazed frame, a bench, staging, a path edge. **Five of them exist
+now.** The first two were built for the Long Walk and are in the app and the
+browser: a hedge (`GardenStructures.swift` — `HedgeLine`, `HedgePiece`,
+`HedgeShadow`) and a mown path (`MownPath`), ported to `longwalk.js`. Then
+`Organic.bench` for the Quiet Garden, `Organic.roundel` for the Crossing's
+paving and `Organic.tree` for the Orchard. **The Knot Garden needed none**: its
+woven bands and its edging are `Organic.hedge` at ankle height, which is the
+first area built without a structure of its own and the point at which the
+hedge stopped being the Long Walk's. The frame, the staging, the bed edging and
+the row labels are still to come, and each belongs to an area that is not built
+yet. They
 carry the look of each area, and **they meet the same test the figures did**: a
 hedge drawn as a green rectangle is clip art beside plants grown from a genome.
 So they are modelled and lit the way the figures are, by the garden's own light
@@ -412,6 +416,108 @@ page's own prose landed on the lawn.
   between the trees and cut back round each trunk is what an orchard is, and it
   is also the only thing on the page that says which four plants belong to which
   tree — without a line being drawn anywhere.
+
+## The Knot Garden, built
+
+22 September. `SeedCore/WebGardens/KnotGarden.swift`, `Server/.api/KnotGarden.php`,
+`KnotStore.php`, `Server/assets/js/knot.js`, `/knot`, `/dev/knot`,
+`tools/reference/check_knot.php`. No new structure: the knot is drawn in
+`Organic.hedge`, which is the first time an area has been built without one.
+
+- **Thirty-two a plot: eight compartments of four.** Between the walk's
+  forty-eight in the same square and the crossing's twenty-four. Four to a
+  compartment because a block of three does not read as a block, and the
+  compartments are blocks — that is what a knot garden's planting is.
+- **The first rule that reads a plant's colour.** `PlantTraits` has carried
+  `family` since the Long Walk and four areas have graded by height alone. This
+  one asks the colour first and the height second: **colour picks the pair of
+  opposite compartments, height picks the place within one.** Both fields used
+  at last, and the height grammar every other area shares kept rather than
+  thrown away.
+- **The eight are four mirror pairs, and a pair holds one colour.** Opposite
+  compartments across the middle of the plot — north against south, east against
+  west, and the two diagonals — so the knot is symmetric in colour, which is
+  what a knot garden looks like from above. A plot therefore carries four of the
+  seven colour families, eight places each.
+- **Nothing is reserved, and that settled what *a slot has a mirror* means.**
+  The literal reading — taking a place holds the opposite place open for a
+  matching plant — was rejected against a rule already written into four areas'
+  comments: nothing in this garden reserves a slot, not even for an ambassador.
+  The Orchard had also shown that a merely *constrained* place can wait hundreds
+  of arrivals, and a reserved one would wait on a plant nobody has grown. A pair
+  is claimed by the first plant to stand in it and filled by whoever of that
+  colour arrives next.
+- **The worry the brief raised was unfounded, and the number says so.** Seven
+  families and four pairs a plot: a rule that claimed pairs greedily would open
+  a plot for every colour that turned up and leave the garden half empty. This
+  one claims a pair only when a plant needs one, so **at five hundred it is 17
+  plots, 66 pairs claimed, 56 of them exactly full, and 92% of every place in
+  the garden holding a plant** — the best fill of the five areas. The rarest
+  colour is pale, nineteen plants of five hundred and one, and it claimed three
+  pairs in the whole garden rather than one in every plot.
+- **Five plants in six get the rank their height asks for**: 420 of 501 in their
+  own rank, 48 one step out, 33 one step in, none further. Between the
+  Crossing's 96.6% and the Orchard's 75%, for a nameable reason — preferring the
+  pair over the rank displaces plants as the Orchard's guild-first rule does,
+  but a pair holds eight places against a guild's four, so there is twice as
+  much room to find the right one.
+- **The cuts are the Orchard's 0.75 and 1.30, and are named as the Orchard's.**
+  A compartment of four graded outward is the same 1:2:1 a guild is, so it
+  divides the same population the same way. This is the first area to share cuts
+  with another; re-measuring would have produced the same two numbers and
+  presented them as an independent finding, which is a way of making one fact
+  look like two.
+- **The two compartments of a pair fill together**, which is the Crossing's
+  *wherever there is least* asked of two instead of four — and *not* "they never
+  differ by more than one", which is false and was this suite's first failure.
+  A compartment whose remaining places are the wrong rank is passed over however
+  empty it is. The test replays the five hundred arrival by arrival, because
+  *which of the two was emptier* is a fact about the moment and the finished
+  plot cannot say. At five hundred exactly one pair of sixty-six ends uneven.
+- **The pattern is a woven grid, and that is worth saying plainly.** Two bands
+  each way, crossing four times, inside a square edging: four compartments at
+  the sides, four at the corners, and the weave closing round a middle that
+  holds no plant. It is a real knot-garden plan and it gives eight compartments
+  of one size, which is what a mirror pair needs to read as a mirror — the
+  alternative considered, an octagram of a square and a diamond, puts the
+  compartments in the star's points, and a regular octagram's points are 0.45 m²
+  each, which will not hold four plants at any scale that fits a 5.2 m plot.
+  **What it does not do is curve.** A curvilinear knot would read more like a
+  knot at a glance, and it wants a run of hedging that follows an arc, which
+  `Organic.hedge` cannot draw. That is the next pass if anybody wants it, and it
+  is a change to `Organic` rather than to the rule.
+- **The weave is drawn rather than implied**, and it is drawn the way a real
+  knot garden is made: living hedge cannot be woven, so the under-band stops
+  square against the over-band's face and starts again beyond it, while the
+  over-band carries on through and swells where the two have grown into each
+  other. Which does which alternates round the knot, so every run is over at one
+  of its two crossings and under at the other.
+- **What looking found was all in the band and the ground**, and took three
+  passes:
+  - **The bands were walls.** 0.22 m through and 0.32 m tall drew nine boxes
+    with walls between them, and no crossing read as a crossing because the
+    junctions were blobs. Thinner was not enough on its own: what reads as a
+    wall is a run **taller than it is broad**. Young clipped box in a knot is a
+    ribbon laid on the ground, so it is 0.18 m through and 0.17 m tall, and at
+    that the weave reads from every turn.
+  - **The gravel was a tiled floor.** A square grid of cells each split on the
+    same diagonal and flat-toned draws a checkerboard however small the cells
+    are and however hard the tones vary: the eye finds the grid first, because
+    the grid is the only thing in the picture that repeats exactly. Jittering
+    the lattice by a third of a cell and turning each cell's diagonal with the
+    same noise put it right. **It was the grid's regularity that had to go, not
+    its size** — the cell is what it was.
+  - **Per-face tone, not per-corner.** Grass is a surface and carries its tone
+    on the corners of a grid, interpolated, so no cell edge shows. Gravel is a
+    heap of stones, and the same smooth interpolation drew wet sand. It is the
+    roundel's finding — paving is faces — at a twentieth of the size.
+- **The ambassador wanted no accommodation.** *Quina caerulea*, 1.0064 m, family
+  4, placed by the rule into an empty Knot Garden: it claims the first pair for
+  its colour and stands in the north compartment, at one of the two places
+  beside the middle of it, because 1.0064 m reads as a side rather than a heart.
+  Nothing had to be arranged for it — an empty compartment refuses nobody —
+  which is worth having confirmed rather than assumed, given what the Orchard's
+  1.33 m ambassador cost.
 
 ## The Crossing, built
 

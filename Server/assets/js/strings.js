@@ -220,6 +220,15 @@ export const EN = Object.freeze({
   // The Orchard could not be drawn.
   orchardAway: "The Orchard cannot be reached just now.",
 
+  // A fifth area, and the same two strings a fifth time: the heading is
+  // `areaPattern`, already commissioned in all forty-two, and the four keys
+  // still never say where you are. Five areas have now cost ten strings
+  // between them against the ninety-odd a page apiece would have been.
+  knotAbout:
+    "One of the garden's ten areas: two bands of low clipped hedging woven over and under each other, with a block of planting in each of the eight compartments they make. Here a plant's colour decides where it stands — each compartment and the one opposite it hold the same colour, so the pattern is symmetrical — and its height decides its place within the block. Go on to the next knot, or turn to go round this one.",
+  // The Knot Garden could not be drawn.
+  knotAway: "The Knot Garden cannot be reached just now.",
+
   // Said once and used on both of the pages that are not built yet, because two
   // ways of saying *not yet* is one more than a reader needs.
   notYet: "Not open yet.",

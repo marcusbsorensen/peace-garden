@@ -96,12 +96,13 @@
         <div class="area-plot" id="area-plot" role="group"></div>
         <!--
           The areas that exist for real: `travel` is the Long Walk, `peace` the
-          Quiet Garden, `meeting` the Crossing and `kinship` the Orchard. All
-          four are built, and `/walk`, `/quiet`, `/cross` and `/orchard` grow
-          every plant standing in them from what the plot service holds, where
-          this page draws the whole garden as dots from a stand-in. `walk.js`
-          unhides this on those four and sets where it goes, because the other
-          six have nowhere to send anybody yet.
+          Quiet Garden, `meeting` the Crossing, `kinship` the Orchard and
+          `pattern` the Knot Garden. All five are built, and `/walk`, `/quiet`,
+          `/cross`, `/orchard` and `/knot` grow every plant standing in them
+          from what the plot service holds, where this page draws the whole
+          garden as dots from a stand-in. `walk.js` unhides this on those five
+          and sets where it goes, because the other five have nowhere to send
+          anybody yet.
 
           Named by the heading above it, the same way the front page's four
           links are: the word on the link is the same each time, and the area's

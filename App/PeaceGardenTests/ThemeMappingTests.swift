@@ -36,12 +36,13 @@ final class ThemeMappingTests: XCTestCase {
     /// said travel, which nothing caught, because the app's tests need Xcode
     /// and CI does not run them. **Run them by hand when an area opens.**
     func testWhatThisBuildShipsBelievingIsOpen() {
-        XCTAssertEqual(Set(Area.open), [.travel, .peace, .meeting, .kinship])
+        XCTAssertEqual(Set(Area.open), [.travel, .peace, .meeting, .kinship, .pattern])
         XCTAssertEqual(OpenAreas.builtIn.areas, Set(Area.open))
         XCTAssertEqual(Quotes.Theme.travel.area, .travel)
         XCTAssertEqual(Quotes.Theme.peace.area, .peace)
         XCTAssertEqual(Quotes.Theme.meeting.area, .meeting)
         XCTAssertEqual(Quotes.Theme.kinship.area, .kinship)
+        XCTAssertEqual(Quotes.Theme.pattern.area, .pattern)
     }
 
     // MARK: - Every syllable is spoken for

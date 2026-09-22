@@ -155,6 +155,14 @@ jobs:
 
       - name: The Orchard's rule is SeedCore's
         run: php tools/reference/check_orchard.php
+
+      # The fifth area's, and the first whose answer turns on a plant's colour
+      # rather than only its height. A port that read the colour but claimed
+      # pairs in a different order agrees about the whole of plot 0 and
+      # diverges a long way in, when a colour first runs out of room in the
+      # plot it started in.
+      - name: The Knot Garden's rule is SeedCore's
+        run: php tools/reference/check_knot.php
       # And the asking above it: nothing reaches the walk until the second
       # gardener has said yes, and only the token an offer was addressed to
       # can say it. The walk itself has no way to tell, so this is where it

@@ -146,12 +146,13 @@ async function drawArea(theme) {
   plot.setAttribute("aria-label", `${areaName(theme)}, ${plants.length}`);
 
   // **The areas with a real one behind them.** `travel` is the Long Walk,
-  // `peace` the Quiet Garden, `meeting` the Crossing and `kinship` the Orchard;
-  // each has a page that grows every plant standing in it out of the plot
-  // service, where everything here is a dot from the stand-in. Hidden on the
-  // other six rather than shown disabled: a control that goes nowhere is worse
-  // than no control.
-  const built = { travel: "/walk", peace: "/quiet", meeting: "/cross", kinship: "/orchard" };
+  // `peace` the Quiet Garden, `meeting` the Crossing, `kinship` the Orchard and
+  // `pattern` the Knot Garden; each has a page that grows every plant standing
+  // in it out of the plot service, where everything here is a dot from the
+  // stand-in. Hidden on the other five rather than shown disabled: a control
+  // that goes nowhere is worse than no control.
+  const built = { travel: "/walk", peace: "/quiet", meeting: "/cross", kinship: "/orchard",
+                  pattern: "/knot" };
   el("area-walk-line").hidden = !(theme in built);
   if (theme in built) el("area-walk").href = built[theme];
 }

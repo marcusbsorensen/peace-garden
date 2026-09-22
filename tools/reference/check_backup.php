@@ -71,7 +71,7 @@ for ($i = 0; $i < 4; $i++) {
 }
 $store->offers()->offer($seeds[0], str_repeat('1', 32), str_repeat('2', 32),
     str_repeat('a', 64), str_repeat('b', 64), str_repeat('c', 64), 1.0, 0, 1_700_000_000);
-// One planting in each of the other three areas, so the copy is proved to carry
+// One planting in each of the other four areas, so the copy is proved to carry
 // every open area rather than only the one this check grew up around. A table
 // left out of KEPT dumps as no rows at all, which is exactly what a silent data
 // loss looks like.
@@ -81,6 +81,8 @@ $store->plantInto('meeting', str_repeat('e', 64), str_repeat('a', 64), str_repea
                   str_repeat('c', 64), 0.8, 3);
 $store->plantInto('kinship', str_repeat('f', 64), str_repeat('a', 64), str_repeat('b', 64),
                   str_repeat('c', 64), 1.1, 1);
+$store->plantInto('pattern', str_repeat('9', 64), str_repeat('a', 64), str_repeat('b', 64),
+                  str_repeat('c', 64), 1.2, 5);
 unset($store);
 
 // MARK: Taking one
@@ -112,6 +114,11 @@ check('the copy counts the arrival lock', ($counts['long_walk_lock'] ?? -1) === 
 check('the copy holds the Quiet Garden', ($counts['quiet_garden'] ?? -1) === 1);
 check('the copy holds the Crossing', ($counts['crossing'] ?? -1) === 1);
 check('the copy counts the Crossing lock', ($counts['crossing_lock'] ?? -1) === 1);
+// The Orchard was never checked here, which is the gap this row closes: it
+// opened on 21 September and the copy has been carrying it on trust since.
+check('the copy holds the Orchard', ($counts['orchard'] ?? -1) === 1);
+check('the copy holds the Knot Garden', ($counts['knot_garden'] ?? -1) === 1);
+check('the copy counts the Knot Garden lock', ($counts['knot_garden_lock'] ?? -1) === 1);
 
 // MARK: Reading it back
 

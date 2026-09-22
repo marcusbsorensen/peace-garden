@@ -52,13 +52,21 @@ public enum Area: String, CaseIterable, Sendable, Codable {
     /// deliberately bare. It is also the first area holding a structure taller
     /// than anything a gardener can grow.
     ///
+    /// The Knot Garden was built fifth, on 22 September, because it is the
+    /// first area whose rule reads something other than a height. Four areas
+    /// have now graded by height alone, and a template that could only ever ask
+    /// one question of a plant would be a template for one kind of garden. This
+    /// one asks a plant's colour first and its height second, which is what a
+    /// knot garden is: symmetrical in colour, graded in height.
+    ///
     /// **An area is open when it has a placement rule, not when it has a
     /// name.** All ten have names, layouts on paper and a place on the map.
-    /// What the other six do not have is a rule that says which slot an
+    /// What the other five do not have is a rule that says which slot an
     /// arriving plant takes and never moves it, which is what makes a garden
     /// curated rather than scattered.
     public var isOpen: Bool {
-        self == .travel || self == .peace || self == .meeting || self == .kinship
+        self == .travel || self == .peace || self == .meeting
+            || self == .kinship || self == .pattern
     }
 
     /// The areas a plant can be offered to today.
@@ -81,7 +89,8 @@ public enum Area: String, CaseIterable, Sendable, Codable {
         case .peace: return "quiet_garden"
         case .meeting: return "crossing"
         case .kinship: return "orchard"
-        // The six that are not open have no table, and a name for one here
+        case .pattern: return "knot_garden"
+        // The five that are not open have no table, and a name for one here
         // would be a promise about a schema nobody has designed. They get one
         // when they get a rule.
         default: return ""

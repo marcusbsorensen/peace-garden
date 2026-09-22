@@ -59,6 +59,7 @@ PAGES = {
     "/quiet": ("quiet", "text/html"),
     "/cross": ("cross", "text/html"),
     "/orchard": ("orchard", "text/html"),
+    "/knot": ("knot", "text/html"),
     "/t": ("t", "text/html"),
     "/privacy": ("privacy", "text/html"),
     "/.well-known/apple-app-site-association": (

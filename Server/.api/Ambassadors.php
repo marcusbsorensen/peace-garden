@@ -6,6 +6,7 @@ require_once __DIR__ . '/LongWalk.php';
 require_once __DIR__ . '/QuietGarden.php';
 require_once __DIR__ . '/Crossing.php';
 require_once __DIR__ . '/Orchard.php';
+require_once __DIR__ . '/KnotGarden.php';
 
 /**
  * The ten plants that stand for the ten areas, as the plot service knows them.
@@ -114,6 +115,7 @@ final class Ambassadors
             'meeting' => Crossing::plant([], $one['seed'], $one['height'], $one['family']),
             'peace' => QuietGarden::plant([], $one['seed'], $one['height'], $one['family']),
             'kinship' => Orchard::plant([], $one['seed'], $one['height'], $one['family']),
+            'pattern' => KnotGarden::plant([], $one['seed'], $one['height'], $one['family']),
             default => null,
         };
     }
