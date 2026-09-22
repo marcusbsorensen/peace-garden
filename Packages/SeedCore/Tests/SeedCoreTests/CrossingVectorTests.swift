@@ -48,6 +48,32 @@ final class CrossingVectorTests: XCTestCase {
                 \(Self.recordingKey)=1 swift test --package-path Packages/SeedCore
                 """)
         }
-        XCTAssertEqual(committed, rendered, "the rule has moved since the vectors were recorded")
+        // **A grown height is allowed a hundredth of a millimetre and nothing
+        // else is allowed anything.** Two C libraries do not agree to the last
+        // bit about `sin`, `cos`, `pow` and `exp`, and a plant's mesh is built out
+        // of all four; the plot, the slot and the nudge are arithmetic and must
+        // still match exactly. `VectorFile` sets out the measurement this rests on.
+        VectorFile.same(committed: committed, rendered: rendered,
+                        tolerant: ["height": VectorFile.height],
+                        recordWith: """
+                            If the rule has moved and that was meant, re-record with \
+                            \(Self.recordingKey)=1 swift test --package-path Packages/SeedCore \
+                            --filter CrossingVectorTests, then run php tools/reference/check_crossing.php.
+                            """)
+    }
+
+    /// **And the tolerance the comparison above allows cannot move a plant.**
+    ///
+    /// The rule asks two kinds of question about a height: which side of a cut
+    /// it falls, and whether it is taller than another plant in one quarter of one plot.
+    /// This says every recorded height clears both cuts, and every pair the
+    /// rule compares is further apart than twice the tolerance — so a host that
+    /// computes a height a few of a `Float`'s last bits differently still puts
+    /// every one of these five hundred in the same place.
+    func testThePlacementCannotTurnOnTheLastBitOfAHeight() throws {
+        let committed = try String(contentsOf: Self.vectorsURL, encoding: .utf8)
+        VectorFile.placementCannotTurn(on: committed,
+                                       cuts: [Crossing.middleFrom, Crossing.cornerFrom],
+                                       groupedBy: ["plot", "quarter"])
     }
 }

@@ -142,7 +142,19 @@ final class AmbassadorTests: XCTestCase {
                 \(Self.recordingKey)=1 swift test --package-path Packages/SeedCore
                 """)
         }
-        XCTAssertEqual(onDisk, rendered, "the ambassadors have moved since the reference was recorded")
+        // **A grown height is allowed a hundredth of a millimetre and nothing
+        // else is allowed anything.** The heights here are read off a built
+        // mesh, so they are the one thing in this file that two C libraries
+        // compute differently; the seeds, the names, the genus heads, the
+        // colour families and both pinned placements are exact.
+        VectorFile.same(committed: onDisk, rendered: rendered,
+                        tolerant: ["height": VectorFile.height],
+                        recordWith: """
+                            If the ambassadors moved on purpose, re-record with \
+                            \(Self.recordingKey)=1 swift test --package-path Packages/SeedCore \
+                            --filter AmbassadorTests, then run \
+                            php tools/reference/check_ambassador.php.
+                            """)
     }
 
     // MARK: Fixtures

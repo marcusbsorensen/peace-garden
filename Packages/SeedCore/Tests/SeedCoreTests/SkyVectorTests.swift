@@ -172,17 +172,28 @@ final class SkyVectorTests: XCTestCase {
                 --filter SkyVectorTests`.
                 """)
         }
-        guard committed != rendered else { return }
-        let old = committed.split(separator: "\n"), new = rendered.split(separator: "\n")
-        var where_ = "\(old.count) lines committed, \(new.count) computed"
-        for (line, pair) in zip(old, new).enumerated() where pair.0 != pair.1 {
-            where_ = "first at line \(line + 1):\n  was \(pair.0)\n  now \(pair.1)"
-            break
-        }
-        XCTFail("""
-            The sky has changed and tools/reference/sky_vectors.json has not — \(where_).
-            Re-record with `\(Self.recordingKey)=1 swift test --package-path Packages/SeedCore \
-            --filter SkyVectorTests`, then run `node tools/reference/check_sky.mjs`.
-            """)
+        // **The same tolerances `check_sky.mjs` already allows the JavaScript,
+        // allowed to the Swift for the same reason.** That file worked this out
+        // first and said it plainly: `sin`, `cos`, `asin`, `atan2` and `pow` are
+        // library functions, two libms are each correct to within about an ulp
+        // of the true value without being correct to the same bit as each other,
+        // and demanding equality of them is demanding that two C libraries
+        // agree. It allowed a billionth of a degree on an angle, a millionth of
+        // a pixel on a position and 10⁻¹² on a radius; so does this. Everything
+        // built out of `+ - * /` — a sidereal time, a star count, the field's
+        // own width and height — still has to match to the last bit.
+        //
+        // Until 22 September this compared the two as strings, which is what
+        // left continuous integration red for two days: the same sky, drawn on
+        // Linux, differed in the last digit of one star's x.
+        VectorFile.same(committed: committed, rendered: rendered,
+                        tolerant: ["altitude": VectorFile.angle, "azimuth": VectorFile.angle,
+                                   "x": VectorFile.pixel, "y": VectorFile.pixel,
+                                   "radius": VectorFile.power],
+                        recordWith: """
+                            If the sky changed on purpose, re-record with \
+                            \(Self.recordingKey)=1 swift test --package-path Packages/SeedCore \
+                            --filter SkyVectorTests, then run node tools/reference/check_sky.mjs.
+                            """)
     }
 }

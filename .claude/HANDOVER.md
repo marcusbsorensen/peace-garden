@@ -11,8 +11,8 @@ this one, whose traps mostly still apply, is at
   `check_quiet_garden` 1850, `check_ambassador` 279, `check_areas` 47,
   `check_long_walk` 600, `check_backup` 28, `check_sky` 9729, `check_offers`,
   `check_limits`, `tools/site/export.py --check` and
-  `tools/preview/check_port.py` all in step **on this Mac**. See the CI note
-  below, which is the one thing in this handover worth reading first.
+  `tools/preview/check_port.py` all in step. **And in step on WebAssembly too**,
+  which had not been true since 20 September — see *The libm divergence* below.
 - Live: `/api/garden` says `pattern`, `travel`, `meeting`, `kinship` and `peace`
   are open, `/api/knot` answers one plot, and `https://peacegarden.app/knot`
   draws it — looked at in the live browser, with *Quina caerulea* standing alone
@@ -21,39 +21,67 @@ this one, whose traps mostly still apply, is at
 - **The Knot Garden reads as one plant in an empty pattern until it fills**, the
   way the Crossing and the Orchard did on their first day. Left alone.
 
-## ⚠ CI has been red since 20 September, and it is not this area
+## The libm divergence, found and answered
 
-**Nobody has recorded this and it needs a decision.** Every push since
-`20 September 21:54` has failed `SeedCore (Linux)` and `SeedCore (WebAssembly)`
-— twelve runs, through the Crossing, the Orchard and now this. The five failures
-are the same failure five times: **macOS and Linux disagree about a grown
-plant's height by one Float ULP**, so every vector file recorded on this Mac
-fails to reproduce anywhere else.
+**CI had been red since 20 September and nobody had recorded it.** Twelve runs,
+through the Crossing, the Orchard and the Knot Garden. Fixed on 22 September in
+`104e4a5`; what follows is what it actually was, because the shape of the answer
+matters more than the patch.
 
+**Reproduced on this Mac rather than by pushing.** The wasm SDK is already
+installed, so the suite can be built and run for another host locally:
+
+```sh
+swift build --package-path Packages/SeedCore --build-tests \
+  --swift-sdk swift-6.3.3-RELEASE_wasm --scratch-path .build-wasm
+node tools/wasm/run-wasi.mjs .build-wasm/debug/SeedCorePackageTests.xctest
 ```
-Verora angustifolia   macOS 1.095889687538147   Linux 1.0958898067474365
-Fenunora patentifolia macOS 1.1019959449768066  Linux 1.101995825767517
-```
 
-Failing: `AmbassadorTests`, `CrossingVectorTests`, `OrchardVectorTests`,
-`QuietGardenVectorTests`, `SkyVectorTests` — and `KnotGardenVectorTests` now
-joins them, for the same reason and no other.
+Ten minutes, and it is the only way to see what another host sees. It is in
+`.gitignore` and noted in the workflow.
 
-**Why it matters more than it looks.** The whole argument for SeedCore's
-compatibility layer is that macOS and Linux agree to the bit, and this says they
-no longer do somewhere in `Maturity.bounds`. It is almost certainly a
-transcendental in the mesh build (`Foundation`'s `pow`/`exp`, or FMA
-contraction), not the placement rules — `Organic` was written without `sin` for
-exactly this reason and `Organic`'s own tests still pass on both.
+**What differs, measured rather than guessed.** Of five hundred arrivals to the
+Knot Garden, **194 have a grown height that differs between macOS and
+WebAssembly, by at most 3.6 × 10⁻⁷ m** — three of a `Float`'s last bits, a third
+of a micron. **Nothing else differs at all**: not a plot, not a slot, not a
+nudge, not a colour family, in any of the five areas. The rules were already
+platform-independent; only the last bits of the numbers fed to them were not.
 
-**What it does not break.** A plant's place is decided once, from the height the
-*phone* read, and stored; the website draws where the service says. So nothing
-in the live garden is wrong. What is broken is the thing that would tell us if
-something became wrong.
+**It is not fixable and it never was.** A plant's mesh is built out of `sin`,
+`cos`, `pow` and `exp`. Apple's libm and wasi-libc are each correct to within
+about an ulp of the true value without being correct to the same bit as one
+another. `tools/reference/check_sky.mjs` had already reached exactly this
+conclusion for the JavaScript port and written it down — *demanding equality of
+those is demanding that two C libraries agree, which is not a property of this
+code and not one anybody can fix* — and allowed a named tolerance per quantity.
+The Swift side was still comparing rendered JSON as **strings**.
 
-**It is a commit of its own** and it is the first thing I would do next. Finding
-which operation diverges is the work; re-recording the vectors on Linux is not
-the fix, because then the Mac fails instead.
+**So the six suites now compare values, not bytes**, through
+`Tests/SeedCoreTests/VectorFile.swift`: a grown height is allowed a hundredth of
+a millimetre and everything else is allowed nothing. A nudge is seed bytes
+divided and multiplied, so it is exact; a plot and a slot are integers, so they
+are exact. The sky reuses `check_sky.mjs`'s own `ANGLE`, `PIXEL` and `POW`, with
+the same names on purpose.
+
+**And the tolerance is proved safe rather than asserted to be.** Each area's
+vector test now also runs `VectorFile.placementCannotTurn(on:cuts:groupedBy:)`,
+which says every recorded height clears that area's cuts by more than the
+tolerance and every pair the rule compares is further apart than twice it —
+which is the whole of what a rule asks about a height. The tightest margin in
+the garden is **1.6 × 10⁻⁴ m**, sixteen times the tolerance and four hundred
+times the disagreement. The day a plant lands near a cut, that test fails and
+says which plant and which cut.
+
+**Where the tolerance is now blind**, and it is worth knowing: a change to the
+geometry that moved every height by less than ten microns would no longer be
+caught by these files. A change that moves a plant still is, exactly, because a
+placement is integers.
+
+`LongWalk.middleFrom` and `LongWalk.backFrom` were added on the way: its cuts
+were literals inside `tier(height:)` where the other four areas name theirs, and
+the margin test needed to read the rule rather than copy it.
+
+**Green on both hosts**: 246 tests on macOS, 240 under WebAssembly, no failures.
 
 ## The Knot Garden, built
 
@@ -133,12 +161,9 @@ and that is a real limit rather than an oversight.**
 
 ## The decisions waiting for Marcus
 
-1. **Whether to fix the macOS/Linux height divergence next, or open a sixth
-   area first.** Carried above. My recommendation is the divergence: five areas
-   now rest on vector files that only one machine can reproduce.
-2. **Whether the Knot Garden's weave should curve**, which is the `Organic.hedge`
+1. **Whether the Knot Garden's weave should curve**, which is the `Organic.hedge`
    arc above, and is the difference between a parterre and a knot.
-3. **Whether the share screen should hold its question back while it asks
+2. **Whether the share screen should hold its question back while it asks
    `/api/garden`.** Carried from three handovers ago. Unchanged, and still not
    watched on a device.
 
@@ -156,6 +181,14 @@ and that is a real limit rather than an oversight.**
   it. Also `tools/wasm/dev-router.php` for the workbench, which nothing checks.
 - **A new reference check needs a step in `.github/workflows/tests.yml`.**
   Nothing derives the list.
+- **A vector file records what one host computes, and hosts differ in the last
+  bits.** Compare through `VectorFile.same`, never as strings, and name the
+  tolerance for the fields that need one. A new area's vector test also wants
+  `VectorFile.placementCannotTurn(on:cuts:groupedBy:)`, or the tolerance is
+  merely convenient. See *The libm divergence* above.
+- **Run the suite for another host before believing CI is green.** `swift test`
+  on the Mac says nothing about Linux or WebAssembly, and it said nothing for
+  two days.
 - **`check_backup.php` was not asserting the Orchard's table.** Fixed here,
   along with the Knot Garden's. It had been carrying the Orchard on trust since
   21 September, which is exactly the silent data loss the check exists for.

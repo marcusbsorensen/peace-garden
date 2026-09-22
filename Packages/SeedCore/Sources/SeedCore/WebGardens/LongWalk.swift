@@ -99,9 +99,17 @@ public enum LongWalk {
     ///
     /// Crossings of **one** person with forty others ran taller and were half
     /// bells, which is why the sample is three hundred different pairs.
+    /// **Named, as the other four areas' cuts are.** They were literals inside
+    /// this function until 22 September, which meant a test that wanted to
+    /// check how close a plant stands to a tier boundary had to write 0.93 down
+    /// a second time — and a second copy of a number is a number that can
+    /// drift from the one it copies.
+    public static let middleFrom = 0.93
+    public static let backFrom = 1.28
+
     public static func tier(height: Double) -> Tier {
-        if height < 0.93 { return .edge }
-        if height < 1.28 { return .middle }
+        if height < middleFrom { return .edge }
+        if height < backFrom { return .middle }
         return .back
     }
 
