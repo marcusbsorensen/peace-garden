@@ -161,13 +161,85 @@ every one of its faults was one the roundel had already taught:
 
 ## The decisions waiting for Marcus
 
-1. **The fifth area.** The Knot Garden is the first where a slot has a *mirror*,
-   which is the one structural first left that none of the four has met; the
-   Seedbed is the plainest; the Glasshouse is the first with a roof, and so the
-   first where the sky is occluded. Six left.
-2. **Whether the share screen should hold its question back while it asks
+1. **Whether the share screen should hold its question back while it asks
    `/api/garden`.** Carried from two handovers ago. Unchanged, and still not
    watched on a device.
+
+## The fifth area is the Knot Garden, and it is decided
+
+Marcus chose it on 21 September and answered the three questions it raises.
+**No code is written yet** — this section is the brief, so the session that
+builds it does not have to re-decide anything.
+
+The Knot Garden is `pattern`. Genus heads `Cal` (the shapely) and `Quin` (the
+five); table `knot_garden`; heading `areaPattern`, "The Knot Garden", already in
+`strings.js` and already translated in all 42 catalogues, so — as with the last
+four — it costs two English strings, `knotAbout` and `knotAway`.
+
+**It is the first area whose rule reads a plant's colour.** `PlantTraits` has
+carried `family` since the Long Walk and no rule has ever looked at it; four
+areas have graded by height alone. Seven families: six arcs of the hue circle
+plus pale, from `LongWalk.family(hue:saturation:)`.
+
+1. **Thirty-two a plot: eight compartments of four.** Between the walk's 48 and
+   the crossing's 24. Four plants is enough to read as a block of one colour,
+   which three is not.
+2. **The eight are four mirror pairs, and a pair shares a colour family.** That
+   is what *a slot has a mirror* turns out to mean — the knot is symmetric in
+   colour, which is what a knot garden looks like from above. So a plot carries
+   four of the seven families, eight places each.
+
+   **Nothing is ever reserved.** The literal reading — taking a place holds the
+   opposite place for a matching plant — was rejected, and for a reason already
+   written into four areas' comments: nothing in this garden reserves a slot,
+   not even for an ambassador. The Orchard also showed that a constrained place
+   can wait hundreds of arrivals, and a *reserved* one would wait on a plant
+   nobody has grown.
+3. **Colour picks the compartment pair, height picks the place within it.** Both
+   fields of `PlantTraits` used for the first time, and the height grammar every
+   other area shares is kept rather than thrown away.
+
+### What the build has to settle, and should name in the commit
+- **The pattern.** Eight compartments in the 5.2 m square: four at the corners
+  and four at the sides, with the knot's crossing at the centre. **The centre
+  holds no plant**, as the Crossing's paving does and for the same reason — an
+  area's opening place has to be one its own ambassador can stand in, and a
+  centrepiece is not it. Mirror pairs are then opposite corners (two pairs) and
+  opposite sides (two pairs).
+- **The interlace is the hard part and will take the passes.** A knot's bands
+  cross *over and under* each other. `Organic.hedge` exists and is the right
+  tool, but an over-crossing means lifting one run at the crossing, and a knot
+  drawn without the over-and-under is four hedges in a pattern rather than a
+  knot. Budget the roundel's four passes and the tree's four again.
+- **Gravel, not grass** — the first ground in the garden that is neither lawn
+  nor meadow. Probably the roundel's per-face tone at a much finer grain; the
+  trap is that gravel drawn too coarse is shingle and too fine is sand.
+- **What an arrival does when no pair in any plot holds its family and no pair
+  is unclaimed.** The analogue of `ranks(beside:)`. Start with: try every plot
+  oldest-first for its own family, then every plot for an unclaimed pair, then
+  open a new plot. **Check the fill at 500** — with seven families and four
+  pairs a plot, early plots will reject a lot, and whether that settles down is
+  the one number that could send the design back.
+- **The cuts will be the Orchard's 0.75 and 1.30**, because a compartment of
+  four graded outward is the same 1:2:1 the Orchard's guild is. **Say so** — this
+  would be the first area to share cuts with another, and the honest thing is to
+  name the reuse rather than re-measure and present the same numbers as
+  independent.
+- **The ambassador is *Quina caerulea*, 1.0064 m, family 4.** An empty plot has
+  no claimed pairs, so it claims one for family 4 and stands in it. No
+  awkwardness, unlike the Orchard's — worth confirming rather than assuming.
+
+### The shape of the work, from the Orchard's pattern
+`SeedCore/WebGardens/KnotGarden.swift`, `Server/.api/KnotGarden.php`,
+`KnotStore.php`, `Server/assets/js/knot.js`, `knotpage.js`,
+`Server/.pages/knot`, `/knot` in `index.php` and `router.php`, `/dev/knot`,
+`tools/reference/check_knot.php`, the hedging in `Organic`, a `Knot.swift` in
+`tools/wasm/Sources/PlantWasm/`, `Areas.swift`/`Areas.php` to open `pattern`,
+`Ambassadors.php`, `WalkStore.php`, `backup.php`'s KEPT list,
+`check_backup.php`, `check_ambassador.php`, `walk.js`'s `built` map,
+**`tools/site/serve.py`'s `PAGES`**, and `docs/WEB-GARDENS.md`. **Re-record
+`area_vectors.json`**, and expect `ThemeMappingTests` and `AreaVectorTests` to
+fail by design — and nothing else, per the trap below.
 
 ## Traps
 - **Run the app's tests by hand when an area opens.** CI cannot: they need Xcode
