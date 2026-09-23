@@ -703,6 +703,34 @@ millimetres deep in each — the lap is a line of more light and the ripple a
 glint. At 30% opacity the seedlings under it were a milky smudge; at 14% they
 read and so does the glass.
 
+## The Glasshouse, chosen
+
+The eighth area, `light`, chosen on 23 September. Nothing is built yet. It
+comes before the Home Ground and the Coppice because **it holds the most plants
+still waiting for a place** — 12.6% of arrivals, against 11.7% and 8.4% — and
+because it reuses the Cold Frame's glass.
+
+**What was measured first** (4,000 crossings): `light` plants are the tallest
+in the garden, **0.44–1.88 m, median 1.03 m, none under 0.5 m**. On staging at
+bench height a 1.88 m plant would stand 2.7 m, which decided the first answer.
+
+Marcus's three answers:
+
+1. **Staging and a border.** Pots on staging along the sunny side, and the
+   tallest in a soil border along the back, where they cannot shade the pots.
+   That is how a glasshouse grows its tomatoes.
+2. **Thirty-two a plot**: twenty-four pots on the staging, two deep and twelve
+   long, and a border of eight. The border takes the tallest quarter, which puts
+   the cut near the 75th centile, about 1.26 m. To be measured over this area's
+   own plants, as the Cold Frame's was.
+3. **A spectrum of colour along the staging.** Each place on the bench stands
+   for a band of hue, and a pot takes the free place nearest its own, so a bench
+   fills as a run of colour. The first rule that sorts by hue rather than
+   claiming by colour family. **The fill is to be simulated before anything is
+   built**, and this answer comes back to Marcus if the fill is poor. Two things
+   it must settle: where pale plants go, since they have no hue; and how a
+   border plant is ordered, since the spectrum is the staging's.
+
 ## The Crossing, built
 
 21 September, the same day as the Quiet Garden. `SeedCore/WebGardens/Crossing.swift`,
