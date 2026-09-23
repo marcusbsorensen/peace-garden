@@ -76,7 +76,7 @@ for ($i = 0; $i < 4; $i++) {
 $store->offers()->offer($seeds[0], str_repeat('1', 32), str_repeat('2', 32),
     str_repeat('a', 64), str_repeat('b', 64), str_repeat('c', 64), 1.0, 0, 1_700_000_000,
     'beginnings', 'paniculata');
-// One planting in each of the other four areas, so the copy is proved to carry
+// One planting in each of the other six areas, so the copy is proved to carry
 // every open area rather than only the one this check grew up around. A table
 // left out of KEPT dumps as no rows at all, which is exactly what a silent data
 // loss looks like.
@@ -94,6 +94,8 @@ $store->plantInto('pattern', str_repeat('9', 64), str_repeat('a', 64), str_repea
 // wrong drill — silently, because the rule would still be self-consistent.
 $store->plantInto('beginnings', str_repeat('8', 64), str_repeat('a', 64), str_repeat('b', 64),
                   str_repeat('c', 64), 1.3, 2, 'contorta');
+$store->plantInto('waiting', str_repeat('7', 64), str_repeat('a', 64), str_repeat('b', 64),
+                  str_repeat('c', 64), 0.9, 6);
 unset($store);
 
 // MARK: Taking one
@@ -132,6 +134,8 @@ check('the copy holds the Knot Garden', ($counts['knot_garden'] ?? -1) === 1);
 check('the copy counts the Knot Garden lock', ($counts['knot_garden_lock'] ?? -1) === 1);
 check('the copy holds the Seedbed', ($counts['seedbed'] ?? -1) === 1);
 check('the copy counts the Seedbed lock', ($counts['seedbed_lock'] ?? -1) === 1);
+check('the copy holds the Cold Frame', ($counts['cold_frame'] ?? -1) === 1);
+check('the copy counts the Cold Frame lock', ($counts['cold_frame_lock'] ?? -1) === 1);
 
 // MARK: What a restore writes back
 

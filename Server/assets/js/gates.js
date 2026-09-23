@@ -29,6 +29,7 @@ export const BUILT = Object.freeze({
   kinship: "/orchard",
   pattern: "/knot",
   beginnings: "/seedbed",
+  waiting: "/frame",
 });
 
 /// The bar's link back to the hub, from an area.

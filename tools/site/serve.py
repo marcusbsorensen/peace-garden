@@ -61,6 +61,7 @@ PAGES = {
     "/orchard": ("orchard", "text/html"),
     "/knot": ("knot", "text/html"),
     "/seedbed": ("seedbed", "text/html"),
+    "/frame": ("frame", "text/html"),
     "/t": ("t", "text/html"),
     "/privacy": ("privacy", "text/html"),
     "/.well-known/apple-app-site-association": (

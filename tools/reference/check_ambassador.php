@@ -28,6 +28,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../Server/.api/Ambassadors.php';
 require_once __DIR__ . '/../../Server/.api/QuietGarden.php';
+require_once __DIR__ . '/../../Server/.api/ColdFrame.php';
 
 $vectors = json_decode(
     file_get_contents(__DIR__ . '/ambassador_vectors.json'), true, 512, JSON_THROW_ON_ERROR
@@ -100,7 +101,19 @@ is_same('it is the plant beside the bench', QuietGarden::BENCH, $sitting['corner
 is_same('its tier is the tier its height belongs to',
         LongWalk::tier($vectors['ambassadors'][6]['height']), $standing['tier']);
 
-// The five that are not open have no placement, because their areas have no
+// The Cold Frame's, which opens its area as every other ambassador does: in the
+// first place of the first frame of plot 0, and in the rank its grown height
+// belongs to. *Nyxisora crassicaulis* grows to 0.68 m, under the 0.85 m cut, so
+// the front rank — and the frame it stands in is claimed for its colour before
+// anybody has shared anything.
+$waiting = Ambassadors::planting('waiting');
+is_same('the Cold Frame ambassador\'s plot', 0, $waiting['plot'] ?? null);
+is_same('its frame', ColdFrame::BACK_WEST, $waiting['frame'] ?? null);
+is_same('its rank is the rank its height belongs to',
+        ColdFrame::rank($vectors['ambassadors'][1]['height']), $waiting['rank'] ?? null);
+is_same('its place along that rank', 0, $waiting['index'] ?? null);
+
+// The three that are not open have no placement, because their areas have no
 // rule. A placement invented for one of them would be a promise about a layout
 // nobody has designed.
 foreach (Areas::ALL as $area) {
@@ -167,8 +180,8 @@ if ($failed !== []) {
 }
 
 printf("Ten ambassadors — %s at the head of the walk, %s at the crossing, "
-     . "%s under the middle tree, %s beside the bench, %s in the knot — "
-     . "and the service agrees: %d checks.\n",
+     . "%s under the middle tree, %s beside the bench, %s in the knot, "
+     . "%s in the first frame — and the service agrees: %d checks.\n",
     $vectors['ambassadors'][6]['name'], $vectors['ambassadors'][7]['name'],
     $vectors['ambassadors'][8]['name'], $vectors['ambassadors'][9]['name'],
-    $vectors['ambassadors'][4]['name'], $checks);
+    $vectors['ambassadors'][4]['name'], $vectors['ambassadors'][1]['name'], $checks);

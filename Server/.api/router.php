@@ -17,6 +17,8 @@ declare(strict_types=1);
  *   GET  /api/knot/plot/{n}        the same, for the Knot Garden
  *   GET  /api/seedbed              the same, for the Seedbed
  *   GET  /api/seedbed/plot/{n}     the same, for the Seedbed
+ *   GET  /api/frame                the same, for the Cold Frame
+ *   GET  /api/frame/plot/{n}       the same, for the Cold Frame
  *   POST /api/walk/offer           one gardener offers a plant, addressed to the other
  *   POST /api/walk/pending         what is waiting on these tokens, either way round
  *   POST /api/walk/answer          the other gardener says yes or no
@@ -34,10 +36,12 @@ declare(strict_types=1);
  * anybody being asked. It answers 403 unless `open_for_planting` is set in
  * `.api/config.php`, which is for a local copy and for the reference check.
  *
- * **Two of ten areas are open**, and the service says which. The Long Walk is
- * `travel` and the Quiet Garden is `peace`; the other eight have names, layouts
- * and a place on the map and no placement rule, so a plant cannot stand in
- * them. `Areas.php` is the list and `GET /api/garden` is how a phone learns it
+ * **Seven of ten areas are open**, and the service says which: the Seedbed
+ * (`beginnings`), the Cold Frame (`waiting`), the Knot Garden (`pattern`), the
+ * Long Walk (`travel`), the Crossing (`meeting`), the Orchard (`kinship`) and
+ * the Quiet Garden (`peace`). The other three have names, layouts and a place
+ * on the map and no placement rule, so a plant cannot stand in them.
+ * `Areas.php` is the list and `GET /api/garden` is how a phone learns it
  * without being told by a version of itself.
  *
  * **The asking is the garden's, though its routes are spelled `/api/walk/…`.**
@@ -45,7 +49,8 @@ declare(strict_types=1);
  * is answered; the spelling stays because it is a live address that a deployed
  * page and an installed app both call, and an installed app cannot be asked to
  * learn a new one. What is the travel area's alone is `GET /api/walk` and
- * `GET /api/walk/plot/{n}`, which have `/api/quiet` beside them now.
+ * `GET /api/walk/plot/{n}`, and every other open area has its own pair beside
+ * them, listed above.
  *
  * **Plot 0 opens with the Long Walk's ambassador in it**, which is not a row
  * and is not in any of the routes above: `WalkStore` derives its slot from the
@@ -286,6 +291,15 @@ function route(string $method, string $path): never
     if (preg_match('#\A/api/seedbed/plot/(0|[1-9][0-9]{0,5})\z#', $path, $m) && $method === 'GET') {
         $plot = (int) $m[1];
         respond(200, ['plot' => $plot, 'plantings' => store($settings)->seedbed()->plot($plot)]);
+    }
+
+    if ($path === '/api/frame' && $method === 'GET') {
+        respond(200, ['plots' => store($settings)->coldFrame()->plots()]);
+    }
+
+    if (preg_match('#\A/api/frame/plot/(0|[1-9][0-9]{0,5})\z#', $path, $m) && $method === 'GET') {
+        $plot = (int) $m[1];
+        respond(200, ['plot' => $plot, 'plantings' => store($settings)->coldFrame()->plot($plot)]);
     }
 
     if ($path === '/api/walk/offer' && $method === 'POST') {

@@ -30,7 +30,7 @@ public enum Area: String, CaseIterable, Sendable, Codable {
 
     /// **Whether a plant can stand here yet.**
     ///
-    /// Three of ten. The Long Walk was built first because its rule is the
+    /// Seven of ten. The Long Walk was built first because its rule is the
     /// plainest best practice there is — tall at the back, drifts, repetition —
     /// and because its plots open end to end, so the map is a line before it
     /// has to be a shape (`docs/WEB-GARDENS.md` §*What has to exist first*).
@@ -59,14 +59,22 @@ public enum Area: String, CaseIterable, Sendable, Codable {
     /// one asks a plant's colour first and its height second, which is what a
     /// knot garden is: symmetrical in colour, graded in height.
     ///
+    /// The Seedbed was built sixth, on 23 September, because it is the first
+    /// rule that groups by sameness rather than sorting by difference.
+    ///
+    /// The Cold Frame was built seventh, on 23 September, because it is the
+    /// first area that draws a plant as something other than what it will
+    /// be: every plant young, placed by the height it will grow to.
+    ///
     /// **An area is open when it has a placement rule, not when it has a
     /// name.** All ten have names, layouts on paper and a place on the map.
-    /// What the other five do not have is a rule that says which slot an
+    /// What the other three do not have is a rule that says which slot an
     /// arriving plant takes and never moves it, which is what makes a garden
     /// curated rather than scattered.
     public var isOpen: Bool {
         self == .travel || self == .peace || self == .meeting
             || self == .kinship || self == .pattern || self == .beginnings
+            || self == .waiting
     }
 
     /// The areas a plant can be offered to today.
@@ -91,6 +99,7 @@ public enum Area: String, CaseIterable, Sendable, Codable {
         case .kinship: return "orchard"
         case .pattern: return "knot_garden"
         case .beginnings: return "seedbed"
+        case .waiting: return "cold_frame"
         // The five that are not open have no table, and a name for one here
         // would be a promise about a schema nobody has designed. They get one
         // when they get a rule.

@@ -58,8 +58,10 @@ public func pgResult() -> UnsafeRawPointer? {
 }
 
 enum PlantBuffer {
-    static func encode(_ genome: Genome) -> [UInt8] {
-        let mesh = PlantBuilder(genome: genome).mesh(growth: Maturity.bloomPreview(for: genome))
+    /// At its best unless told otherwise. The Cold Frame is the one area that
+    /// says otherwise: it draws every plant young (`ColdFrame.drawn`).
+    static func encode(_ genome: Genome, growth: GrowthModel.State? = nil) -> [UInt8] {
+        let mesh = PlantBuilder(genome: genome).mesh(growth: growth ?? Maturity.bloomPreview(for: genome))
         var out: [UInt8] = []
         out.append(contentsOf: Array("PGP1".utf8))
         put(UInt32(mesh.parts.count), &out)

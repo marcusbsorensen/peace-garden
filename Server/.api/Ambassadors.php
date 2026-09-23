@@ -8,6 +8,7 @@ require_once __DIR__ . '/Crossing.php';
 require_once __DIR__ . '/Orchard.php';
 require_once __DIR__ . '/KnotGarden.php';
 require_once __DIR__ . '/Seedbed.php';
+require_once __DIR__ . '/ColdFrame.php';
 
 /**
  * The ten plants that stand for the ten areas, as the plot service knows them.
@@ -39,9 +40,9 @@ final class Ambassadors
 {
     /**
      * Each area's plant: the pinned seed, and the two facts about the grown
-     * plant that a placement rule needs. All ten, though nine of the areas are
-     * shut, for the same reason SeedCore pins all ten — the area that opens
-     * next should not have to go looking for its plant.
+     * plant that a placement rule needs. All ten, though three of the areas
+     * are still shut, for the same reason SeedCore pins all ten — the area that
+     * opens next should not have to go looking for its plant.
      */
     public const ALL = [
         // The Seedbed reads a third fact, and only the Seedbed does: a plant's
@@ -123,6 +124,7 @@ final class Ambassadors
             'kinship' => Orchard::plant([], $one['seed'], $one['height'], $one['family']),
             'pattern' => KnotGarden::plant([], $one['seed'], $one['height'], $one['family']),
             'beginnings' => Seedbed::plant([], $one['seed'], $one['height'], $one['family'], $one['kind']),
+            'waiting' => ColdFrame::plant([], $one['seed'], $one['height'], $one['family']),
             default => null,
         };
     }

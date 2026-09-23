@@ -237,6 +237,49 @@ check('an answered offer keeps no kind', $after !== false && $after['kind'] === 
       && $after['height'] === null);
 check('but still says which area to look in', $after !== false && $after['area'] === 'beginnings');
 
+// MARK: The seventh area
+
+// **The Cold Frame is reached the way every area is**: through `plantInto`,
+// whose fallback is the Long Walk. So an area missing from that `match` is not
+// refused — its plants are filed in the walk, graded against a border they do
+// not belong to, and nothing says so. The two counts either side of the answer
+// are what would catch it.
+function framedAs(WalkStore $walk, string $seed): ?array
+{
+    $query = $walk->connection()->prepare(
+        'SELECT frame, slot_rank, slot_index, hidden FROM cold_frame WHERE seed = ?');
+    $query->execute([$seed]);
+    $row = $query->fetch();
+    return $row === false ? null : $row;
+}
+
+$nine = crossing(9);
+$mine9 = token('nine/mine');
+$theirs9 = token('nine/theirs');
+$walkHeld = count(shared($walk));
+$offers->offer($nine['seed'], $theirs9, $mine9, $nine['a'], $nine['b'], $nine['encounter'],
+               1.1, 2, $now, 'waiting');
+check('a Cold Frame plant is planted',
+      $offers->answer($nine['seed'], $theirs9, true, $now)['planting'] !== null);
+check('and not in the walk', count(shared($walk)) === $walkHeld);
+$framed = framedAs($walk, $nine['seed']);
+// The first frame is the ambassador's, claimed by *Nyxisora crassicaulis* for
+// its colour, which is not this plant's. So a plant of another colour opens the
+// second frame, and at 1.1 m it opens it in the back rank — the answer only the
+// Cold Frame's rule gives, where a plant misfiled anywhere else has no row here
+// at all.
+check('it is in the Cold Frame, in a frame of its own colour',
+      $framed !== null && (int) $framed['frame'] === 1
+      && (int) $framed['slot_rank'] === 1 && (int) $framed['slot_index'] === 0);
+check('beside the ambassador, which is still there', count($walk->coldFrame()->plot(0)) === 2);
+
+// And taking it back reaches the Cold Frame's table, not the walk's: the row
+// stays and keeps its place, and is not drawn.
+$offers->withdraw($nine['seed'], $mine9, $now + 60);
+$lifted = framedAs($walk, $nine['seed']);
+check('taking it back hides it in the Cold Frame', $lifted !== null && (int) $lifted['hidden'] === 1);
+check('and the frame is back to its ambassador alone', count($walk->coldFrame()->plot(0)) === 1);
+
 $stranger = $offers->withdraw($one['seed'], token('nobody'), $now);
 check('a stranger cannot take back somebody else\'s plant', $stranger === null);
 check('an offer that does not exist cannot be withdrawn',

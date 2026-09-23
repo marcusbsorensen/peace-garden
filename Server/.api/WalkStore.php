@@ -9,6 +9,7 @@ require_once __DIR__ . '/CrossStore.php';
 require_once __DIR__ . '/OrchardStore.php';
 require_once __DIR__ . '/KnotStore.php';
 require_once __DIR__ . '/SeedbedStore.php';
+require_once __DIR__ . '/ColdFrameStore.php';
 require_once __DIR__ . '/Offers.php';
 
 /**
@@ -57,6 +58,7 @@ final class WalkStore
         $store->orchard();
         $store->knot();
         $store->seedbed();
+        $store->coldFrame();
         return $store;
     }
 
@@ -217,7 +219,7 @@ final class WalkStore
      * **This class has outgrown its name**, which is a thing worth saying
      * rather than quietly fixing: it opened the database for a service that was
      * only the Long Walk, and now it holds the connection for a garden with
-     * five areas in it and five to come. Renaming it means touching every
+     * seven areas in it and three to come. Renaming it means touching every
      * caller and the reference checks in one go, which is a commit of its own
      * and not this one. `Offers` and `Limits` already reach through it the same
      * way.
@@ -256,6 +258,13 @@ final class WalkStore
         return $seedbed ??= new SeedbedStore($this->db);
     }
 
+    /** The Cold Frame, on the same connection. */
+    public function coldFrame(): ColdFrameStore
+    {
+        static $coldFrame = null;
+        return $coldFrame ??= new ColdFrameStore($this->db);
+    }
+
     /**
      * Plants one arrival into whichever area it belongs to.
      *
@@ -267,7 +276,7 @@ final class WalkStore
      * **`$kind` is the Seedbed's alone.** It is a plant's epithet, and the sixth
      * area is the only one whose rule reads it: a drill is claimed by the kind
      * of the first plant sown in it. Every area's `plant` takes it so that this
-     * can hand the same arguments to any of them; the other five ignore it, as
+     * can hand the same arguments to any of them; the other six ignore it, as
      * they ignore nothing else they are given. Absent means the empty kind,
      * which is what a plant offered before the epithet went on the wire has.
      */
@@ -280,6 +289,7 @@ final class WalkStore
             'kinship' => $this->orchard()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
             'pattern' => $this->knot()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
             'beginnings' => $this->seedbed()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
+            'waiting' => $this->coldFrame()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
             default => $this->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
         };
     }
@@ -292,6 +302,7 @@ final class WalkStore
         if ($area === 'kinship') { $this->orchard()->hide($seed); return; }
         if ($area === 'pattern') { $this->knot()->hide($seed); return; }
         if ($area === 'beginnings') { $this->seedbed()->hide($seed); return; }
+        if ($area === 'waiting') { $this->coldFrame()->hide($seed); return; }
         $this->hide($seed);
     }
 

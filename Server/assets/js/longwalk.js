@@ -95,12 +95,15 @@ uniform mat4 viewProjection;
 out vec3 vNormal; out vec3 vColour;
 void main() { vNormal = normal; vColour = colour; gl_Position = viewProjection * vec4(position, 1.0); }`;
 
+// `opacity` is 1 for everything but glass, which is drawn last and seen through.
+// Premultiplied, because the canvas is.
 const GROUND_FRAGMENT = `#version 300 es
 precision highp float;
 in vec3 vNormal; in vec3 vColour;
+uniform float opacity;
 ${SHADE}
 out vec4 outColour;
-void main() { outColour = vec4(shade(vColour, normalize(vNormal)), 1.0); }`;
+void main() { outColour = vec4(shade(vColour, normalize(vNormal)) * opacity, opacity); }`;
 
 const PLANT_VERTEX = `#version 300 es
 in vec3 position; in vec3 normal; in vec2 uv;
@@ -129,12 +132,19 @@ void main() {
 export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   const gl = canvas.getContext('webgl2', { antialias: true, alpha: true, premultipliedAlpha: true });
   if (!gl) throw new Error('This browser has no WebGL2.');
-  const ground = program(gl, GROUND_VERTEX, GROUND_FRAGMENT, ['position', 'normal', 'colour'], ['offset']);
+  const ground = program(gl, GROUND_VERTEX, GROUND_FRAGMENT, ['position', 'normal', 'colour'], ['offset', 'opacity']);
   const plantProgram = program(gl, PLANT_VERTEX, PLANT_FRAGMENT, ['position', 'normal', 'uv'], ['offset', 'colour']);
 
   const plants = [];
   let turn = 0;
   let groundMesh = null;
+  // **Glass, for the one area that has any.** A ground builder may hand back a
+  // `glass` mesh beside its own, and it is drawn after the plants, blended and
+  // without writing depth, so what stands under it shows through. The Cold
+  // Frame's lights are the first thing in the garden a reader has to see
+  // through; every other area returns no glass and draws exactly as it did.
+  let glassMesh = null;
+  let glassOpacity = 1;
 
   // The camera looks down (1, 1, 1), turned in quarter turns about the plot.
   function eye() {
@@ -149,7 +159,11 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     const farSide = eye()[0] > 0 ? -1 : 1;
     // The eye as well, because an area with a hedge on all four sides needs to
     // know which two of them are the near ones and a single sign cannot say.
-    groundMesh = upload(gl, ground, buildTheGround(farSide, span, e, eye()));
+    const built = buildTheGround(farSide, span, e, eye());
+    groundMesh = upload(gl, ground, built);
+    if (glassMesh) glassMesh.release();
+    glassMesh = built.glass ? upload(gl, ground, built.glass) : null;
+    glassOpacity = built.glass?.opacity ?? 1;
   }
 
   function draw() {
@@ -177,6 +191,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     }
 
     gl.useProgram(ground.program);
+    gl.uniform1f(ground.at.opacity, 1);
     groundMesh.draw();
 
     gl.useProgram(plantProgram.program);
@@ -191,6 +206,17 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
       }
     }
     gl.bindVertexArray(null);
+
+    if (glassMesh) {
+      gl.useProgram(ground.program);
+      gl.uniform1f(ground.at.opacity, glassOpacity);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+      gl.depthMask(false);
+      glassMesh.draw();
+      gl.depthMask(true);
+      gl.disable(gl.BLEND);
+    }
   }
 
   function add(x, z, grown) {

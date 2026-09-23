@@ -79,7 +79,7 @@ extension Organic {
 
     /// One board: a rounded rectangle swept along `z`, `width` across `x` and
     /// `thickness` up `y`, its underside at `lift`.
-    private static func plank(length: Double, width: Double, thickness: Double,
+    static func plank(length: Double, width: Double, thickness: Double,
                               lift: Double, seed: UInt64) -> StructureMesh {
         let rings = max(3, Int((length / 0.09).rounded()))
         let around = 28
@@ -150,7 +150,7 @@ extension Organic {
 
     /// Copies one piece into another, optionally turned a quarter about `y`, so
     /// a bench's ends can be the same board as its seat.
-    private static func append(_ piece: StructureMesh, to mesh: inout StructureMesh,
+    static func append(_ piece: StructureMesh, to mesh: inout StructureMesh,
                                turned: Bool, at offset: SIMD3<Float>) {
         let base = UInt32(mesh.positions.count)
         for position in piece.positions {

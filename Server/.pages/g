@@ -108,12 +108,13 @@
         <!--
           The areas that exist for real: `travel` is the Long Walk, `peace` the
           Quiet Garden, `meeting` the Crossing, `kinship` the Orchard,
-          `pattern` the Knot Garden and `beginnings` the Seedbed. All six are
-          built, and `/walk`, `/quiet`, `/cross`, `/orchard`, `/knot` and
-          `/seedbed` grow every plant standing in them from what the plot
-          service holds, where this page draws the whole garden as dots from a
-          stand-in. `walk.js` unhides this on those six and sets where it goes,
-          because the other four have nowhere to send anybody yet.
+          `pattern` the Knot Garden, `beginnings` the Seedbed and `waiting` the
+          Cold Frame. All seven are built, and `/walk`, `/quiet`, `/cross`,
+          `/orchard`, `/knot`, `/seedbed` and `/frame` grow every plant
+          standing in them from what the plot service holds, where this page
+          draws the whole garden as dots from a stand-in. `walk.js` unhides this
+          on those seven and sets where it goes, because the other three have
+          nowhere to send anybody yet.
 
           Named by the heading above it, the same way the front page's four
           links are: the word on the link is the same each time, and the area's

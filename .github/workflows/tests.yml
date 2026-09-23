@@ -178,6 +178,15 @@ jobs:
       # diverges only when a common kind first fills eight places.
       - name: The Seedbed's rule is SeedCore's
         run: php tools/reference/check_seedbed.php
+
+      # The seventh area's, which claims a frame by colour as the Knot Garden
+      # claims a pair, and then tries a plant's own rank before the other one.
+      # A port that tried every frame's own rank before any frame's other rank
+      # agrees for the first two hundred arrivals and diverges in plot 4, the
+      # first time a rank is out of room while another frame of that colour
+      # still has some.
+      - name: The Cold Frame's rule is SeedCore's
+        run: php tools/reference/check_cold_frame.php
       # And the asking above it: nothing reaches the walk until the second
       # gardener has said yes, and only the token an offer was addressed to
       # can say it. The walk itself has no way to tell, so this is where it

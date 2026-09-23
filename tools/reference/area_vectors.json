@@ -1,6 +1,6 @@
 [
   { "area": "beginnings", "open": true, "table": "seedbed" },
-  { "area": "waiting", "open": false, "table": "" },
+  { "area": "waiting", "open": true, "table": "cold_frame" },
   { "area": "renewal", "open": false, "table": "" },
   { "area": "light", "open": false, "table": "" },
   { "area": "pattern", "open": true, "table": "knot_garden" },

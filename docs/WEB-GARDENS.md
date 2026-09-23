@@ -99,7 +99,7 @@ a border with a knot garden's name.
 
 | Area | Theme | How it is laid out | Ground | Structures |
 | --- | --- | --- | --- | --- |
-| **The Cold Frame** | waiting | Low glazed frames in rows, plants in tight ranks inside them, hardening off. Small plants only: the young stages of what grows elsewhere. | Flat, gravel between | Frames, lids propped open by day and shut at night |
+| **The Cold Frame** | waiting | Four low glazed frames, two ranks of six young plants in each, hardening off. **Every plant drawn young** — the young stages of what grows elsewhere — and nobody turned away. **Forty-eight a plot; colour claims a frame and the height a plant will grow to orders its ranks**, tallest-to-be at the back under the high side of the glass. | Flat, gravel between, soil inside the frames | Frames of boards, their lights propped open by day |
 | **The Home Ground** | ground | The kitchen garden: rectangular beds 1.2 m wide, so no soil is ever stood on, paths between, crops in rows across each bed. | Flat, dark soil | Bed edging, paths |
 | **The Seedbed** | beginnings | Straight parallel drills, a label at the end of each row. One plant repeated along a drill, not mixed. | Fine tilth, flat | Row labels |
 | **The Coppice** | renewal | Stools in blocks, each block cut in its year of the rotation, so every stage stands at once, from cut stumps to full poles. Woodland flowers in the light between. | Woodland floor, gentle relief | Stools, the cut and the uncut |
@@ -131,8 +131,9 @@ Three things follow from the table:
 
 ### Structures need drawing properly
 
-A hedge, a glazed frame, a bench, staging, a path edge. **Five of them exist
-now.** The first two were built for the Long Walk and are in the app and the
+A hedge, a glazed frame, a bench, staging, a path edge. **Seven of them exist
+now** — the row label for the Seedbed and the glazed frame for the Cold Frame
+since this paragraph was first written. The first two were built for the Long Walk and are in the app and the
 browser: a hedge (`GardenStructures.swift` — `HedgeLine`, `HedgePiece`,
 `HedgeShadow`) and a mown path (`MownPath`), ported to `longwalk.js`. Then
 `Organic.bench` for the Quiet Garden, `Organic.roundel` for the Crossing's
@@ -611,6 +612,96 @@ leaning back 22°, because **seen from the garden's fixed isometric eye a plate
 standing upright is a line two pixels wide**. Nothing is written on it: at this
 scale a word would be four pixels tall and would fight the plants. The drill's
 kind is named in the page's text, where it can be read and translated.
+
+## The Cold Frame, built
+
+The seventh area, `waiting`, 23 September. `SeedCore/WebGardens/ColdFrame.swift`,
+`Morphology/Structures/GlazedFrame.swift`, `Server/.api/ColdFrame.php`,
+`ColdFrameStore.php`, `Server/assets/js/frame.js`, `framepage.js`, `/frame`,
+`/dev/frame`, `tools/reference/check_cold_frame.php`. **The first area that draws
+a plant as something other than what it will be.**
+
+Marcus answered its three questions on 23 September, after a measurement that
+changed the first one: **every plant, drawn young; four frames of twelve; colour
+claims a frame and the grown height orders its ranks.**
+
+### Nobody is turned away, and that was measured
+
+The layout's first reading was *small plants only*. The plants whose names put
+them in `waiting` — about 9% of arrivals — grow to **0.33–1.64 m, median 0.85**,
+and a low frame holds about 0.4 m, so a height limit would have refused nine in
+ten of the area's own plants. So every plant is admitted and **placed by the
+height it will grow to, drawn at an early stage**. The drawn height is never
+stored and never read by the rule; it is a matter of drawing.
+
+### The rule
+
+Colour picks the frame, height picks the rank. In order: a frame already
+holding this plant's colour family, oldest plot first — its own rank if there
+is room and nothing would stand out of order, otherwise the other rank on the
+same terms; failing that the first frame nobody has claimed; failing that a new
+plot. A rank fills from its west end. The claim is read off the plants, as the
+Knot Garden's and the Seedbed's are.
+
+- **The cut is 0.85 m, the median of this area's own plants**, and it is the
+  first cut measured over one area's plants rather than all of them. Five
+  hundred `waiting` arrivals took 5,805 crossings to find. A borrowed cut would
+  have divided them unevenly — the Orchard's 0.75 puts 65% at the back, the
+  Long Walk's 0.93 puts 39% — where this one puts 49.8%. `ColdFrameTests`
+  draws its sample the same way, and so does the workbench.
+- **At five hundred: 12 plots, 45 frames claimed, 37 of them full, 87% of every
+  place holding a plant**, and 485 of 501 plants in the rank their height asks
+  for. Between the two other areas whose places are claimed — the Knot
+  Garden's 92% and the Seedbed's 65% — and nearer the Knot's, for its reason: a
+  claim is made only when a plant needs one, and seven colour families are
+  far fewer than forty-six kinds.
+- **The margin holds.** The nearest recorded height to the cut is 0.4 mm clear,
+  forty times the tolerance two hosts are allowed to disagree by, and
+  `ColdFrameVectorTests` runs `placementCannotTurn` over plot and frame.
+
+### Drawn young
+
+`ColdFrame.drawn` is not a moment on the plant's own timeline, and cannot be:
+`GrowthModel` grows height first and buds only once the height is done, so a
+plant young enough to stand under glass has never shown its colour — and colour
+is what claims a frame. The state is put together: `heightScale` 0.30,
+`leafUnfurl` 0.7, `budSwell` 0.2, nothing open. Each number was measured:
+
+- **Below 0.25, `PlantBuilder` draws the seed's husk** at the foot of the stem.
+- **Leaves fully open stood above the glass.** A young plant's leaves are drawn
+  at nearly half their grown size on a stem a third of its height.
+- **A bud swollen further is a full-size flower head on a seedling** — at 0.8
+  the tallest plant was 0.9 m.
+
+That draws the five hundred **0.10–0.45 m tall**, and `ColdFrameTests` holds
+every one under the glass above it with 2 cm to spare. The grading does the
+rest: the glass is lowest at the front, and the front rank holds the plants
+that will grow shortest, whose young stages are shortest too.
+
+**The slope is the ranks' own grading.** A cold frame is built higher at the
+back so rain runs off and the glass faces the light, and the rule stands the
+plants that will grow tallest at the back. The two were never designed
+together, and they agree.
+
+### The frame, and the glass
+
+`Organic.coldFrame`, `frameLights` and `frameGlass` — the seventh structure, in
+three pieces because it is three materials. The box is four of the bench's
+planks, the ends cut down to the slope; the lights are painted bars resting on
+the back wall and propped at the front on a block, which is how a frame is by
+day and why there is a gap under the front of the glass. **The garden is lit at
+midday on every page**, so the lights are always propped; *shut at night* would
+need a page that knows its own hour.
+
+**The glass is the first thing in the garden a reader has to see through.**
+`makePlotStage` gained a pass for it: a ground builder may hand back a `glass`
+mesh, and it is drawn after the plants, blended and without writing depth.
+Every other area returns none and draws exactly as it did. Clear glass is seen
+by what it reflects and where it doubles, so each light is glazed in panes
+**lapped** down the slope, as a frame light is, with a ripple a couple of
+millimetres deep in each — the lap is a line of more light and the ripple a
+glint. At 30% opacity the seedlings under it were a milky smudge; at 14% they
+read and so does the glass.
 
 ## The Crossing, built
 

@@ -282,6 +282,19 @@ export const EN = Object.freeze({
   // The Seedbed could not be drawn.
   seedbedAway: "The Seedbed cannot be reached just now.",
 
+  // A seventh area, and the same two strings a seventh time: the heading is
+  // `areaWaiting`, already commissioned in all forty-two.
+  //
+  // **It says the plants are young, because the drawing cannot say why.** Every
+  // other page shows a plant at its best; this one shows each at a stage it
+  // passed long ago, and a reader who has seen their plant in flower elsewhere
+  // should be told that is what the frames are for rather than left to think
+  // the page has drawn it wrong.
+  frameAbout:
+    "Four low frames on gravel with their glass propped open, each holding young plants of one colour, the ones that will grow tallest at the back. Go on to the next four, or turn to see these from another side.",
+  // The Cold Frame could not be drawn.
+  frameAway: "The Cold Frame cannot be reached just now.",
+
   // Said once and used on both of the pages that are not built yet, because two
   // ways of saying *not yet* is one more than a reader needs.
   notYet: "Not open yet.",

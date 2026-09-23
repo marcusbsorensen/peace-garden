@@ -79,6 +79,10 @@ const ROUTES = [
     // the drawing cannot: a row label carries no writing, so which kind claimed
     // which drill is written under the plot in words.
     '/seedbed' => ['seedbed', 'text/html; charset=utf-8'],
+    // The seventh, on 23 September, and the first whose plants are drawn as
+    // something other than what they will be: young, under glass, placed by
+    // the height they will grow to.
+    '/frame' => ['frame', 'text/html; charset=utf-8'],
     '/t' => ['t', 'text/html; charset=utf-8'],
     // A privacy notice is a mandatory App Store listing field, so this path is
     // load-bearing for the submission rather than decorative. See
