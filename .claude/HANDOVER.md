@@ -5,9 +5,11 @@ of ten areas are planted. The handover before this one — whose *Traps* all sti
 apply and are not repeated here — is at `git show ff3f8e5:.claude/HANDOVER.md`.
 
 ## State
-- **Committed locally, not yet pushed or deployed.** Deploying opens the Seedbed
-  on the live site and migrates the live database (a `seedbed` table and lock,
-  and a `kind` column on `walk_offers`); ask Marcus before either.
+- **Done, tested, pushed, deployed** (`02c58c7`, CI green on all three hosts).
+  Live: `/api/garden` lists six areas open, `/api/seedbed/plot/0` answers the
+  ambassador (*angustifolia*, drill 0), and `/seedbed` draws with no console
+  errors. The live database took the `seedbed` table and the `walk_offers.kind`
+  column.
 - SeedCore 271 tests on macOS, **265 under WebAssembly, green**; app 129 (1
   skipped), run by hand. Every `tools/reference/check_*.php` passes (bar
   `check_restore`, which needs a live MariaDB and is not in CI), `check_sky.mjs`,
@@ -47,7 +49,6 @@ read from `garden.js`. The worded gates came and went in the same afternoon.
 **No new strings**: the area names were already commissioned in 42 languages.
 
 ## Waiting for Marcus
-- **Push and deploy** — see *State*.
 - **The Seedbed's furrows** come out as fairly even bands at page size. They
   read as a raked bed rather than as ruled lines, but it is the one place the
   no-straight-lines rule deserves his eye.
