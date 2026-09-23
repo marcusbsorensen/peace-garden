@@ -214,16 +214,27 @@ Marcus answered the first decision: curve it. `197e6fd`.
 
 ## The decisions waiting for Marcus
 
-1. **Whether the share screen should hold its question back while it asks
-   `/api/garden`.** Carried from four handovers ago. Unchanged, and still not
-   watched on a device. `ShowInGardenView` draws what this build believes and
-   corrects itself when the service answers, so a phone built before an area
-   opened shows *this plant's area comes later* for as long as the request takes
-   and then flips to the offer. The request is made once a session and cached,
-   times out at 8 s, and is skipped entirely when this phone is the one being
-   asked. **It went from hypothetical to live on 22 September**: any build older
-   than that is in exactly the diverging case for a Knot Garden plant. What
-   would settle it is watching it on a device on a slow connection.
+**None.** Both are answered.
+
+- **Whether the Knot Garden's weave should curve** — yes, and it does. See *The
+  curve* above.
+- **Whether the share screen should hold its question back while it asks
+  `/api/garden`** — it does not need to. Carried from four handovers ago and
+  closed on 23 September by a decision about the garden rather than about the
+  code: **all ten areas will be open before the app is announced.**
+  `ShowInGardenView` draws what the build believes and corrects itself when the
+  service answers, which can only be a correction when an area opened after that
+  build shipped. If every area is open before the first public build is cut, the
+  two lists agree for every build that reaches anybody, the flicker is
+  unreachable, and so is the whole *this plant's area comes later* form of the
+  screen. Nothing to change, and nothing left to watch on a device.
+  - **What the request is still for.** `GET /api/garden` was built so a phone
+    need not learn about an opening from a version of itself, and that job ends
+    at announcement. It is kept because it is one request per app launch,
+    carries nothing about the phone, and is the only way the app can be told an
+    area has *gone* — a withdrawn area, or a plot service that cannot take a
+    plant, stops being offered instead of being promised. Taking it out would
+    buy one fewer request and lose that.
 
 ## Traps
 - **Run the app's tests by hand when an area opens.** CI cannot: they need Xcode
