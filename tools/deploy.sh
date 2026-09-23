@@ -123,11 +123,13 @@ check_path /download                               200 text/html
 check_path /wild                                   200 text/html
 check_path /walk                                   200 text/html
 check_path /t                                      200 text/html
+check_path /meanings                               200 text/html
 check_path /.well-known/apple-app-site-association 200 application/json
 
 # A sample of the static half, which nginx types from its own mime.types.
 check_path /assets/site.css     200 text/css
 check_path /assets/js/page.js   200 application/javascript
+check_path /assets/js/frontpage.js 200 application/javascript
 # The Long Walk's three modules and the two files the sky reads. `.wasm` and
 # `.bin` are the ones worth naming: a host that does not know `application/wasm`
 # serves the module as `application/octet-stream`, which

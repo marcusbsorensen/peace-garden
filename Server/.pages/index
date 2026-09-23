@@ -9,16 +9,30 @@
   open, and a domain whose whole purpose is carrying links looks broken when the
   domain itself refuses to load.
 
-  **It is built almost entirely out of words that already existed.** `tagline`
-  and `about1`–`about3` were written for a `/s` with no seed in it, and a reader
-  who types the domain is asking the same question as a reader who opens a spent
-  link. They are commissioned in forty-one languages already; a front page
-  written from scratch would have been a fresh commission in forty-two.
+  **It shows the garden rather than describing it.** Until 24 September this was
+  four paragraphs and four links, built from words the seedless `/s` already
+  had. Marcus chose this in its place, design B of two prototypes (the other, a
+  night, is `tools/wasm/web/front-a.html`):
+
+  - one plant on a stage, turning under a finger — the child of a meeting,
+    grown here by the app's own arithmetic;
+  - how a plant comes to be, in three steps with a glyph each;
+  - the ten areas as cards, each in its own ground colour with its glyph, what
+    its plants mean and its name. The open ones come first and are links.
+
+  It follows the reader's light or dark setting, as the pages of words do.
+
+  **The plant is a demonstration, and nobody's.** Its two parents are minted
+  from fixed words by `pg_front_meeting` (`tools/wasm/Sources/PlantWasm/
+  Front.swift`), so the page shows what a meeting makes without showing a plant
+  anybody grew.
 
   Static, like every other page here: no analytics, no font CDN, no third-party
   anything.
 -->
-<html lang="en">
+<!-- `data-module` is stamped by index.php: the module's address with this
+     build's mark on it, so a new one is a new address. -->
+<html lang="en" data-module="PG_MODULE">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -31,14 +45,13 @@
   </head>
 
   <body>
-    <div class="pool" aria-hidden="true"></div>
-
-    <main class="page" id="page">
+    <main class="page front" id="page">
       <!--
         The bar. On every page of the site, and the only way between any two of
         them that is not a link somebody happened to put in a paragraph.
         `site.css` §The bar says why it is the masthead with two things added
-        rather than a header of its own.
+        rather than a header of its own. The mark is not a link here, because
+        this is where it leads.
       -->
       <header class="masthead bar">
         <span class="bar__home">
@@ -50,110 +63,60 @@
         </span>
       </header>
 
-      <h1 class="heading" data-s="tagline"></h1>
+      <!-- The stage: the words on one side, the plant on the other. -->
+      <section class="front-hero">
+        <div class="front-hero__words">
+          <h1 class="front-hero__title" data-s="tagline"></h1>
+          <p class="front-hero__lead" data-s="frontLead"></p>
+          <p class="front-ways">
+            <a class="front-pill front-pill--solid" href="/download" data-s="downloadTitle"></a>
+            <a class="front-pill" href="/garden" data-s="gardenTitle"></a>
+          </p>
+        </div>
+        <!--
+          Hidden until a plant is on it, so a browser with no WebGL2, or one
+          that cannot fetch the module, is shown the words alone rather than an
+          empty glow and a hint to drag nothing.
+        -->
+        <div class="front-plant" id="plant-stage" hidden>
+          <canvas id="plant" role="img"></canvas>
+          <span class="front-plant__hint" aria-hidden="true" data-s="frontTurn"></span>
+        </div>
+      </section>
 
-      <section class="about">
-        <p class="body" data-s="about1"></p>
-        <p class="body" data-s="about2"></p>
-        <p class="body" data-s="about3"></p>
+      <!-- Three steps, as the app's first run has them. Monoline, even weight,
+           round free ends, per BRAND.md §3.2. -->
+      <section class="front-steps">
+        <div class="front-step">
+          <svg viewBox="0 0 56 56" aria-hidden="true" focusable="false"><path d="M9 14h14a3 3 0 0 1 3 3v24a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3V17a3 3 0 0 1 3-3ZM33 12h14a3 3 0 0 1 3 3v24a3 3 0 0 1-3 3H33a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3ZM26.5 24c1.2 1.4 1.2 3.6 0 5M29.5 22c2.2 2.6 2.2 6.4 0 9"/></svg>
+          <h2 data-s="frontMeet"></h2>
+          <p data-s="frontMeetBody"></p>
+        </div>
+        <div class="front-step">
+          <svg viewBox="0 0 56 56" aria-hidden="true" focusable="false"><path d="M8 18c3-5 10-5 12 0s-3 9-6 9-8-4-6-9ZM8 42c3-5 10-5 12 0s-3 9-6 9-8-4-6-9ZM22 22c8 2 12 4 14 6M22 46c8-2 12-6 14-12M40 30c4-6 12-5 12 2s-6 10-9 10-5-6-3-12Z"/></svg>
+          <h2 data-s="frontCross"></h2>
+          <p data-s="frontCrossBody"></p>
+        </div>
+        <div class="front-step">
+          <svg viewBox="0 0 56 56" aria-hidden="true" focusable="false"><path d="M8 48h40M28 48V22M28 34c-7 0-11-4-12-10 7 0 11 4 12 10ZM28 28c1-7 5-11 12-12 0 7-5 11-12 12ZM40 10a4 4 0 1 0 8 0M44 3v2"/></svg>
+          <h2 data-s="frontGrow"></h2>
+          <p data-s="frontGrowBody"></p>
+        </div>
       </section>
 
       <!--
-        The four places this page can send somebody, in the order they become
-        true for a reader: the two you can walk today, then the app you would
-        install, then the Wild Fields, which is not running yet and says so.
-
-        **The Long Walk is one of the garden's ten areas**, not a second
-        garden, so it appears twice on this page: once as a name in the list
-        under *The garden*, and once here with a way in. That is deliberate.
-        It is the only area with real plants standing in it — the other nine
-        draw from `plots.js`'s stand-in and say so — and a reader who would
-        like to see the thing rather than a placeholder should not have to
-        find out which of ten to click.
+        The garden: ten cards, each its ground, its glyph and what gathers
+        there. Drawn by `frontpage.js` from `garden.js`, `gates.js` and
+        `meanings.js`, so they are the map's areas in the map's colours, and
+        each says what its area page and `/meanings` say.
       -->
-      <section class="invitation">
-        <h2 class="label" id="garden-title" data-s="gardenTitle"></h2>
-        <p class="body" data-s="gardenBody"></p>
-        <!--
-          The ten area names are read out of `AREA_KEYS` rather than written
-          here, so the list is in the reader's own language wherever the map
-          already is. `plain.js` fills it.
-        -->
-        <p class="body quiet" id="areas"></p>
-        <p>
-          <!--
-            Four links on this page carry the same word, which is one word rather
-            than four commissions — but three links with the same name and three
-            destinations is a list a screen reader cannot tell apart. The heading
-            above each one is already the difference, so it is named as part of
-            the link rather than written out again.
-          -->
-          <a
-            class="quiet-button"
-            href="/garden"
-            id="garden-go"
-            data-s="goOn"
-            aria-labelledby="garden-go garden-title"
-          ></a>
-        </p>
+      <section class="front-garden">
+        <header class="front-garden__head">
+          <h2 class="front-garden__title" id="cards-title" data-s="gardenTitle"></h2>
+          <a class="quiet-button" href="/meanings" data-s="meaningsTitle"></a>
+        </header>
+        <nav class="front-cards" id="cards" aria-labelledby="cards-title"></nav>
       </section>
-
-      <section class="invitation">
-        <h2 class="label" id="walk-title" data-s="walkTitle"></h2>
-        <p class="body" data-s="walkBody"></p>
-        <p>
-          <a
-            class="quiet-button"
-            href="/walk"
-            id="walk-go"
-            data-s="goOn"
-            aria-labelledby="walk-go walk-title"
-          ></a>
-        </p>
-      </section>
-
-      <section class="invitation">
-        <h2 class="label" id="download-title" data-s="downloadTitle"></h2>
-        <p class="body" data-s="downloadBody"></p>
-        <p>
-          <!--
-            Three links on this page carry the same word, which is one word rather
-            than three commissions — but three links with the same name and three
-            destinations is a list a screen reader cannot tell apart. The heading
-            above each one is already the difference, so it is named as part of
-            the link rather than written out again.
-          -->
-          <a
-            class="quiet-button"
-            href="/download"
-            id="download-go"
-            data-s="goOn"
-            aria-labelledby="download-go download-title"
-          ></a>
-        </p>
-      </section>
-
-      <section class="invitation">
-        <h2 class="label" id="wild-title" data-s="wildTitle"></h2>
-        <p class="body" data-s="wildBody"></p>
-        <p>
-          <!--
-            Three links on this page carry the same word, which is one word rather
-            than three commissions — but three links with the same name and three
-            destinations is a list a screen reader cannot tell apart. The heading
-            above each one is already the difference, so it is named as part of
-            the link rather than written out again.
-          -->
-          <a
-            class="quiet-button"
-            href="/wild"
-            id="wild-go"
-            data-s="goOn"
-            aria-labelledby="wild-go wild-title"
-          ></a>
-        </p>
-      </section>
-
 
       <!--
         The foot mirrors the bar: one hairline, above it here where the
@@ -184,5 +147,6 @@
     </main>
 
     <script type="module" src="/assets/js/plain.js"></script>
+    <script type="module" src="/assets/js/frontpage.js"></script>
   </body>
 </html>

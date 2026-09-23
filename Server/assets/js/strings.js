@@ -147,6 +147,11 @@ export const EN = Object.freeze({
   //
   // The ten areas are not listed here either. `AREA_KEYS` already names them in
   // every language the map has, so the front page reads them from there.
+  //
+  // **That front was replaced on 24 September 2026** by the one the `front*`
+  // keys below are for. `gardenBody`, `walkBody` and `goOn` were said only on
+  // it and are said nowhere now; they are kept, commissioned, until Marcus
+  // decides whether they go.
   // Also the bar's way back to the hub, on every page of the site. It is the
   // hub's own name, so naming the link a second time would be one word saying
   // what another word already says.
@@ -349,6 +354,27 @@ export const EN = Object.freeze({
   // What the front page's four links are called where a link needs a word of
   // its own rather than the heading above it.
   goOn: "Go on",
+
+  // The front, since 24 September 2026: one plant on a stage, then how a plant
+  // comes to be in three steps, then the ten areas as cards. **Eight keys, and
+  // they buy the page Marcus chose** over the one built from `about1`–`about3`.
+  // The cards need none: each is its area's name and its `meaning*` line, which
+  // the area pages and `/meanings` already carry.
+  //
+  // The lead is the three steps said once, in the order they happen, so a
+  // reader who goes no further than the first screen has the whole of it.
+  frontLead:
+    "Two phones touch and hand each other a seed. What grows is a plant neither could have grown alone, opening over real days.",
+  // Under the plant, which turns under a finger or a pointer.
+  frontTurn: "Drag to turn",
+  // The three steps, as the app's first run has them. The headings are one
+  // word each and carry a glyph, so they are read as a sequence, not as prose.
+  frontMeet: "Meet",
+  frontMeetBody: "Two people touch phones, in the same room.",
+  frontCross: "Cross",
+  frontCrossBody: "Each hands the other a seed, and the two seeds cross.",
+  frontGrow: "Grow",
+  frontGrowBody: "A plant neither could have grown alone opens over real days.",
 
   privacyTitle: "Privacy",
   privacy1:
