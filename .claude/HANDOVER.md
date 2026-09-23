@@ -1,67 +1,61 @@
-# Peace Garden: the Cold Frame is built — handover 23 September 2026 (night)
+# Peace Garden: build the Glasshouse — handover 23 September 2026
 
-Fuller notes on earlier work: `git show 780ecf2:.claude/HANDOVER.md` (the Seedbed, the walkable site) and `git show ff3f8e5:.claude/HANDOVER.md` (the libm divergence and older traps, all still valid). The long version of this one is `docs/WEB-GARDENS.md` §*The Cold Frame, built*.
+This session built and deployed the Cold Frame, then chose and simulated the Glasshouse. Fuller notes: `git show 64d4253:.claude/HANDOVER.md` (the Cold Frame); older traps: `git show ff3f8e5:.claude/HANDOVER.md`.
 
 ## Goal
-Open all ten garden areas before the app is announced. **Seven are built**; three to go: the Coppice (`renewal`), the Glasshouse (`light`), the Home Ground (`ground`). Each still needs its three questions answered by Marcus.
+Open all ten garden areas before the app is announced. Seven are open. Build the eighth, the Glasshouse (`light`), whose design Marcus has settled.
 
 ## State
-- **The Cold Frame (`waiting`) is built, verified, pushed and deployed** (`a1e6b0b`, CI green on all three jobs). Live: `/api/garden` lists `waiting` open, `/api/frame/plot/0` serves the ambassador, `/frame` draws with no console errors, and the Knot Garden still draws after the stage's glass pass. SeedCore 292 tests under WebAssembly, 0 failures (was 265).
-  - SeedCore: 298 tests on macOS, 0 failures (was 271).
-  - The app: 129 run, 1 skipped, 0 failures, run by hand with `xcodebuild test … iPhone 17 Pro`.
-  - PHP: every `tools/reference/check_*.php` in CI passes. `check_cold_frame` runs 3,105 checks over 500 placements.
-  - Also passing: `check_sky.mjs`, `export.py --check`, `check_port.py`, and `tools/strings/check.py` and `app_check.py`.
-- Looked at in `/dev/frame?arrivals=200` from all four turns, and on `/frame` against the dev service, where the ambassador, *Nyxisora crassicaulis*, stands young in the back-west frame.
+- **The Cold Frame (`waiting`) is done, verified, pushed and deployed** (`a1e6b0b`). CI is green on all three jobs, and `/frame` draws live.
+  - SeedCore: 298 tests on macOS and 292 under WebAssembly.
+  - The app: 129 run, 1 skipped.
+  - Every `check_*.php` passes.
+- **The Glasshouse is designed and simulated, and has no code** (`195a05b`). Its full design is in `docs/WEB-GARDENS.md` §*The Glasshouse, chosen* and §*The fill, simulated*.
 
-## What was decided while building (not Marcus's decisions)
-- **The cut is 0.85 m, the median of `waiting` plants only**: 500 of them, found in 5,805 crossings. It is the first cut measured over one area's own plants. `ColdFrameTests`, the vectors and the workbench all draw this area's plants only.
-- **At 500 arrivals:** 12 plots, 87% of places held, and 485 of 501 plants in their own rank. The nearest plant to the cut is 0.4 mm away, 40 times the tolerance.
-- **Drawn young means `ColdFrame.drawn`**, a composed state: `heightScale` 0.30, leaves 0.7, buds 0.2, nothing open.
-  - It is not a moment on the plant's own timeline, because a plant young enough to fit under glass has never shown colour, and colour is what claims a frame.
-  - Below 0.25 the seed's husk is drawn.
-  - The plants come out 0.10–0.45 m tall, every one under its glass. `ColdFrameTests` holds this.
-- **Glass is a new pass in `makePlotStage`** (`longwalk.js`). A ground builder may return a `glass` mesh, and it is drawn blended after the plants.
-  - Opacity 0.14. At 0.3 the plants under it were a milky smudge.
-  - The panes are lapped and rippled so the glass itself can be seen.
-- **The lights are always propped open**, because every plot is lit at midday. Shutting them at night would need a page that knows its own hour.
-- **Routes are `/frame`, `/api/frame`, `/api/frame/plot/{n}` and `/dev/frame`.**
-- **Two new strings, `frameAbout` and `frameAway`**, in English only, as every area's are.
+## Files
+- `Packages/SeedCore/Sources/SeedCore/WebGardens/ColdFrame.swift`: the newest rule to model on. It has a measured cut and draws plants at a chosen growth stage.
+- `Packages/SeedCore/Sources/SeedCore/WebGardens/Seedbed.swift`, `PlantTraits.swift`: how a new trait (`kind`) was added. The Glasshouse's hue goes in the same way.
+- `Packages/SeedCore/Sources/SeedCore/Morphology/Structures/`: where the staging goes, beside `GlazedFrame.swift`.
+- `Packages/SeedCore/Sources/SeedCore/Genome/Colouring.swift:240`: `flowerHue`, where a plant's hue is derived.
+- `Packages/SeedCore/Tests/SeedCoreTests/ColdFrameTests.swift`: draws only one area's plants. Copy this for `light`.
+- `Server/.api/ColdFrame.php`, `ColdFrameStore.php`, `WalkStore.php` (`plantInto`), `tools/reference/check_cold_frame.php`, `check_offers.php`: the service side, one file per layer.
+- `Server/assets/js/frame.js`, `framepage.js`, `Server/.pages/frame`, `tools/wasm/Sources/PlantWasm/Frame.swift`, `tools/wasm/web/frame.html`: copy these for the page.
+- `Server/assets/js/longwalk.js` `makePlotStage`: a ground builder may return `glass`, which is drawn blended after the plants. The Glasshouse's roof uses it.
+
+## Decisions made
+- **Staging and a border.** Short plants stand in pots on the staging; the tallest stand in a soil border along the back, where they cannot shade the pots.
+- **32 a plot:** 12 positions along the staging with 2 pots at each, plus a border of 8.
+- **The border cut is the Orchard's 1.30**, borrowed and named as `Orchard.crownFrom`. The measured 75th centile is 1.294.
+- **The staging is a spectrum of colour.**
+  - The hue circle is cut at about 114°, in the empty green arc.
+  - 12 bands of equal *share*, not equal width. Equal width filled only 68–82%.
+  - A pot looks for its own band in every open plot, oldest first, then one band off, then opens a new plot.
+  - Pale plants (saturation under 0.22) take any free place.
+  - On a fresh sample: 87% of places held, 86% of pots in their own band, none more than one off.
+- **The border fills in arrival order from the door end** (Marcus). The spectrum belongs to the staging alone.
+- **Hue is exact on every host**, because it is arithmetic from seed bytes with no `sin` or `pow`. Band edges therefore need no tolerance and no margin test. The border cut does need `placementCannotTurn`.
+- **Hue becomes a fourth trait, `PlantTraits.hue`.** The phone sends it and the store keeps it in a column, arriving by both paths as `kind` does. That includes a `walk_offers` migration, done the way the Seedbed's was.
 
 ## Next step
-The eighth area. Its three questions were put to Marcus on 23 September, after measuring the three unbuilt areas' plants (4,000 crossings):
+Write `Glasshouse.swift` with tests and a vector file.
+- Set the 12 band edges from a larger `light` sample than 500 (2,000 or more), and write them in as literal constants.
+- Then, in order: the PHP port, the store, `check_glasshouse.php`, the CI step, the wasm exports, the staging structure, and the page last.
 
-| Area | Share | Mature height | Median | Under 1.0 m |
-| --- | --- | --- | --- | --- |
-| Glasshouse (`light`) | 12.6% | 0.44–1.88 m | 1.03 m | 47% |
-| Home Ground (`ground`) | 11.7% | 0.21–2.33 m | 0.81 m | 63% |
-| Coppice (`renewal`) | 8.4% | 0.32–1.91 m | 0.89 m | 62% |
-
-**He chose the Glasshouse**, and all three answers: staging and a border for the tallest; thirty-two a plot (twenty-four pots two deep on the staging, a border of eight); **a spectrum of colour along the staging**, each place a band of hue and a pot taking the free place nearest its own. `docs/WEB-GARDENS.md` §*The Glasshouse, chosen* has the long version.
-
-**The fill is simulated and the spectrum holds** (`docs/WEB-GARDENS.md` §*The fill, simulated*):
-- The circle is cut in the empty green arc at about 114°.
-- Twelve bands of equal share, not equal width. A pot looks for its own band in every open plot, then one place off, then opens a new plot. Pale plants take any free place.
-- On a fresh sample: 87% held, 86% of pots in their own band, none more than one place off.
-- The border cut is the Orchard's 1.30 (p75 measured 1.294).
-- Hue is exact, so it needs no tolerance. It must become a fourth trait, carried by both arrival paths like the kind.
-- The border is planted in arrival order from the door end (Marcus, 23 September). The spectrum belongs to the staging alone.
-
-**Next: build `Glasshouse.swift`** on the Cold Frame's pattern. Set the band edges from a larger `light` sample than 500. Add `PlantTraits.hue`, carried by both arrival paths. Build the staging structure, still owed in `Structures/`.
-
-## Traps, new today
-- **The WebAssembly suite needs the swift.org toolchain, not Xcode's.** The command in `ff3f8e5`'s handover calls plain `swift`, which is Xcode's here, and it crashes with *No available targets are compatible with triple "wasm32-unknown-wasip1"*. Use:
-  `~/Library/Developer/Toolchains/swift-6.3.3-RELEASE.xctoolchain/usr/bin/swift build --package-path Packages/SeedCore --build-tests --swift-sdk swift-6.3.3-RELEASE_wasm --scratch-path .build-wasm`
-  If the build fails, `run-wasi.mjs` will still run the old test bundle and report green. Check that the build succeeded first.
-- **`WalkStore::plantInto` sends any unknown area to the Long Walk, and says nothing.** A new area that is not added there loses its plants to the walk. `check_offers.php` now catches this for the Cold Frame. Add a block for each new area.
-- **The rank is stored as `slot_rank`**, because RANK is reserved in MySQL 8.
-- **A structure file cannot share a name with a rule file** in one Swift module, which is why the frame is `Structures/GlazedFrame.swift`.
-- **The open list is in eight places**, all updated for `waiting`:
+## Traps
+- **The WebAssembly suite must be built with the swift.org toolchain:** `~/Library/Developer/Toolchains/swift-6.3.3-RELEASE.xctoolchain/usr/bin/swift build --package-path Packages/SeedCore --build-tests --swift-sdk swift-6.3.3-RELEASE_wasm --scratch-path .build-wasm`
+  - Plain `swift` is Xcode's here and crashes.
+  - If the build fails, `run-wasi.mjs` still runs the old test bundle and reports green. Check that the build succeeded first.
+- **`WalkStore::plantInto` sends any unknown area to the Long Walk, and says nothing.** Add the `light` case there, and a block in `check_offers.php`.
+- **A structure file cannot share a name with a rule file** in one Swift module.
+- **The open list is in eight places:**
   - `Areas.swift`, `Areas.php`
   - `backup.php` `KEPT`
   - `gates.js` `BUILT`
   - `.pages/g`'s comment
   - `AreaVectorTests`, whose name changes too
   - `area_vectors.json`
-  - `ThemeMappingTests`
-- A page also needs its route in `Server/index.php`, `tools/site/serve.py` and `tools/wasm/dev-router.php`.
-- The dev service on port 8803 may already be running from an earlier session. It serves new files without a restart.
+  - the app's `ThemeMappingTests`, run by hand
+- A page's route is also needed in `Server/index.php`, `tools/site/serve.py` and `tools/wasm/dev-router.php`.
+- **Measure over the area's own plants.** Bands fitted to one sample flatter it: 98% on the sample they were fitted to, 87% on a fresh one.
+- **Deploying migrates the live database.** Ask Marcus, rebuild the module with `sh tools/wasm/build.sh`, then run `sh tools/deploy.sh`.
+- The dev service on port 8803 may already be running. `/dev/<area>?arrivals=200` is the workbench.
