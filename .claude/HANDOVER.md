@@ -6,7 +6,7 @@ Fuller notes on earlier work: `git show 780ecf2:.claude/HANDOVER.md` (the Seedbe
 Open all ten garden areas before the app is announced. **Seven are built**; three to go: the Coppice (`renewal`), the Glasshouse (`light`), the Home Ground (`ground`). Each still needs its three questions answered by Marcus.
 
 ## State
-- **The Cold Frame (`waiting`) is built, verified, committed and pushed, and is not yet deployed.** SeedCore 292 tests under WebAssembly, 0 failures (was 265).
+- **The Cold Frame (`waiting`) is built, verified, pushed and deployed** (`a1e6b0b`, CI green on all three jobs). Live: `/api/garden` lists `waiting` open, `/api/frame/plot/0` serves the ambassador, `/frame` draws with no console errors, and the Knot Garden still draws after the stage's glass pass. SeedCore 292 tests under WebAssembly, 0 failures (was 265).
   - SeedCore: 298 tests on macOS, 0 failures (was 271).
   - The app: 129 run, 1 skipped, 0 failures, run by hand with `xcodebuild test … iPhone 17 Pro`.
   - PHP: every `tools/reference/check_*.php` in CI passes. `check_cold_frame` runs 3,105 checks over 500 placements.
@@ -28,12 +28,15 @@ Open all ten garden areas before the app is announced. **Seven are built**; thre
 - **Two new strings, `frameAbout` and `frameAway`**, in English only, as every area's are.
 
 ## Next step
-1. **Ask Marcus before deploying.** Deploying migrates the live database: it creates `cold_frame` and `cold_frame_lock`. The command is `sh tools/deploy.sh`. First rebuild the module with `sh tools/wasm/build.sh`, since the new exports are in it.
-2. After deploying:
-   - Check `/api/garden` lists `waiting` as open.
-   - Check `/api/frame/plot/0` serves the ambassador.
-   - Look at `/frame` live.
-3. Then the eighth area. Ask Marcus its three questions before any code, and measure before designing.
+The eighth area. Its three questions were put to Marcus on 23 September, after measuring the three unbuilt areas' plants (4,000 crossings):
+
+| Area | Share | Mature height | Median | Under 1.0 m |
+| --- | --- | --- | --- | --- |
+| Glasshouse (`light`) | 12.6% | 0.44–1.88 m | 1.03 m | 47% |
+| Home Ground (`ground`) | 11.7% | 0.21–2.33 m | 0.81 m | 63% |
+| Coppice (`renewal`) | 8.4% | 0.32–1.91 m | 0.89 m | 62% |
+
+Record his answers here and in `docs/WEB-GARDENS.md`, then simulate the fill before writing the rule, as the Cold Frame was.
 
 ## Traps, new today
 - **The WebAssembly suite needs the swift.org toolchain, not Xcode's.** The command in `ff3f8e5`'s handover calls plain `swift`, which is Xcode's here, and it crashes with *No available targets are compatible with triple "wasm32-unknown-wasip1"*. Use:
