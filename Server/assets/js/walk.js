@@ -13,6 +13,7 @@
 // `aria-label`s rather than being four unnamed arrows.
 
 import { AREAS, areaFor, neighbouringArea, randomPlant, stepWithin } from "./garden.js";
+import { BUILT } from "./gates.js";
 import { direction, manifest, negotiate, readable, remember, tracks, uppercases } from "./languages.js";
 import { register, setSheetTitle } from "./keys.js";
 import { AREA_KEYS, loadStrings } from "./strings.js";
@@ -145,16 +146,17 @@ async function drawArea(theme) {
   }
   plot.setAttribute("aria-label", `${areaName(theme)}, ${plants.length}`);
 
-  // **The areas with a real one behind them.** `travel` is the Long Walk,
-  // `peace` the Quiet Garden, `meeting` the Crossing, `kinship` the Orchard and
-  // `pattern` the Knot Garden; each has a page that grows every plant standing
-  // in it out of the plot service, where everything here is a dot from the
-  // stand-in. Hidden on the other five rather than shown disabled: a control
-  // that goes nowhere is worse than no control.
-  const built = { travel: "/walk", peace: "/quiet", meeting: "/cross", kinship: "/orchard",
-                  pattern: "/knot" };
-  el("area-walk-line").hidden = !(theme in built);
-  if (theme in built) el("area-walk").href = built[theme];
+  // **The areas with a real one behind them.** Each has a page that grows every
+  // plant standing in it out of the plot service, where everything here is a
+  // dot from the stand-in. Hidden on the other five rather than shown disabled:
+  // a control that goes nowhere is worse than no control.
+  //
+  // The five used to be written out here. They are read from `gates.js` now,
+  // because the map at the foot of every area page lights the open areas out
+  // of the same table — and two tables of which areas are open is one table
+  // and a thing to keep in step.
+  el("area-walk-line").hidden = !(theme in BUILT);
+  if (theme in BUILT) el("area-walk").href = BUILT[theme];
 }
 
 async function drawPlant(theme, id) {

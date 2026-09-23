@@ -43,6 +43,7 @@ $bench = ['/dev/walk' => 'web/walk.html', '/dev/quiet' => 'web/quiet.html',
           '/dev/cross' => 'web/cross.html',
           '/dev/orchard' => 'web/orchard.html',
           '/dev/knot' => 'web/knot.html',
+          '/dev/seedbed' => 'web/seedbed.html',
           '/dev/plant' => 'web/index.html'];
 if (isset($bench[$path])) {
     header('Content-Type: text/html; charset=utf-8');

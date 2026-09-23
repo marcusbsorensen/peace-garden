@@ -1,26 +1,48 @@
 <!doctype html>
 <!--
-  The Crossing.
+  The Seedbed.
 
-  Two mown paths crossing at a round of paving, and rough grass with planting in
-  each of the four quarters: the quadripartite garden, one of the oldest plans
-  there is for a meeting place. It holds twenty-four plants where the Long Walk holds
-  forty-eight and the Quiet Garden holds ten, all in the same square.
+  Six drills of eight places across a bed of fine tilth, forty-eight to a plot —
+  the Long Walk's number, where the Knot Garden holds thirty-two, the Crossing
+  twenty-four, the Orchard twenty and the Quiet Garden ten, all in the same
+  square.
 
-  **The rule here is about keeping four things level.** An arriving plant goes
-  to whichever quarter has the fewest in it, because four paths meeting reads as
-  four ways arriving at one place only while all four look equally used. Within
-  a quarter the planting builds outward from the paths — low along the edges you
-  walk, one tall plant at the far corner — so every quarter faces the middle,
-  which is what the place is.
+  **This is the first area whose rule groups by sameness.** The five before it
+  all sort by difference: the walk grades a border by height, the Quiet Garden
+  reads a group of three, the Crossing ranks a quarter, the Orchard stands its
+  tallest in the middle, the Knot Garden claims a pair by colour and then grades
+  it. Every one asks *how does this plant differ from that one*. A nursery row
+  asks the other question, and a drill sown with one kind is the plainest answer
+  to it.
+
+  **A kind is the epithet, and that was measured rather than chosen.** Over five
+  hundred crossings 490 binomials are unique and the genus is nearly as rare, so
+  a drill claimed by either would hold one plant and wait forever. The epithet
+  repeats — 46 of them over those five hundred — and it is the truer reading
+  besides, because an epithet is chosen to say the one thing that is most so
+  about a plant where a genus is inherited.
+
+  **A drill is claimed, never reserved**, as the Knot Garden's pairs are: the
+  first plant sown in a drill claims it for its kind, and only that kind joins
+  it. Nothing is held open for a kind that has not arrived, which is what keeps
+  a bed of 46 possible kinds from owing more drills than it has.
+
+  **So a bed is mostly part-sown, and the page says so rather than hiding it.**
+  A new plot opens the moment a seventh kind arrives, and it opens holding one
+  plant. Five hundred arrivals fill 65% of the places here against the Knot
+  Garden's 92%, and that waste is the right waste: a kind that arrives once
+  stands in its drill alone. The six drills are written out under the drawing,
+  each with its kind and how many of its eight places are sown, because the
+  labels in the bed cannot carry it — nothing is written on a row label, at this
+  scale a word would be four pixels tall and fight the plants.
 
   **This page is the one the app talks to, not a picture of it.** The plants are
   grown here, in the browser, from the same SeedCore that grows them on the
-  phone — `plant.js` loads that library built for wasm32 and `crossing.js` hands
+  phone — `plant.js` loads that library built for wasm32 and `seedbed.js` hands
   it each planting the plot service holds. Nothing is drawn from an image and
   nothing is precomputed: a plant on this page is the plant on the phone because
   it is the same arithmetic, not because somebody kept two drawings in step. The
-  paving comes from the same place, through `Organic`.
+  row labels come from the same place, through `Organic`.
 
   **The sky is the real one**, worked out for wherever this browser is keeping
   time and asking for nothing to find out — `sky.js`, a port of SeedCore's
@@ -43,8 +65,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Peace Garden — the Crossing</title>
-    <meta name="description" content="Four paths meeting at a centre, and the plants two people grew when they met." />
+    <title>Peace Garden — the Seedbed</title>
+    <meta name="description" content="Six drills across a bed of fine tilth, each sown with one kind of the plants two people grew." />
     <meta name="color-scheme" content="dark" />
     <meta name="robots" content="noindex" />
     <link rel="stylesheet" href="/assets/site.css" />
@@ -71,9 +93,8 @@
         top of a map the reader has to find their place in again. `gates.js`
         writes the fragment.
 
-        **It does not name the area.** It did, in a `.label` beside the link,
-        and the heading under the plot names it too — the same words twice on
-        one screen, and the heading is the one that belongs to the drawing.
+        **It does not name the area.** The heading under the plot names it, and
+        the same words twice on one screen is one time too many.
       -->
       <header class="masthead bar">
         <a class="bar__home" href="/">
@@ -87,14 +108,26 @@
 
       <!--
         The drawing, in the page's own flow rather than fixed behind it. The
-        words used to lie across it; they sit under it now, which is the
-        arrangement `PlantDetailView` uses in the app. See site.css §An area
-        page.
+        words sit under it, which is the arrangement `PlantDetailView` uses in
+        the app. See site.css §An area page.
       -->
-      <canvas class="walk-stage" id="stage" aria-label="The Crossing"></canvas>
+      <canvas class="walk-stage" id="stage" aria-label="The Seedbed"></canvas>
 
-      <h1 class="heading" data-s="areaMeeting"></h1>
-      <p class="body walk-about" data-s="crossAbout"></p>
+      <h1 class="heading" data-s="areaBeginnings"></h1>
+      <p class="body walk-about" data-s="seedbedAbout"></p>
+
+      <!--
+        The six drills, written by `seedbedpage.js`: the kind that claimed each
+        one, in the serif this site keeps for the name a plant is given, and how
+        many of its eight places are sown — as eight marks rather than as a
+        number, the way `/g` draws how full an area is. A number would be a
+        string and this is the same fact in no language at all.
+
+        **All six, claimed or not.** A bed is drawn out and labelled before
+        anything goes into it and stands part-sown long afterwards. Listing only
+        the drills with something in them would make a bed of one row look full.
+      -->
+      <ul class="drills" id="drills" hidden></ul>
 
       <!--
         One line, and only when there is something to say: while the plants are
@@ -180,6 +213,6 @@
     </main>
 
     <script type="module" src="/assets/js/plain.js"></script>
-    <script type="module" src="/assets/js/crosspage.js"></script>
+    <script type="module" src="/assets/js/seedbedpage.js"></script>
   </body>
 </html>

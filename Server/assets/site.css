@@ -207,6 +207,63 @@ body {
   margin-block-end: 6px;
 }
 
+/* ── The bar ──────────────────────────────────────────────────────────────
+   The mark and the wordmark, the way back to the garden, and — on an area
+   page — the name of the area you are standing in.
+
+   **The site had no way between its pages at all.** Every path was reached by
+   typing it or by following a link minted elsewhere, and the one route into
+   the garden was the front page. So this is on every page, including the
+   front, where the mark was not a link and the link to the garden is the whole
+   point of having a bar there.
+
+   It is the masthead with one thing added rather than a second kind of header:
+   the same row, the same gap, the same mark at the same size. What is new is a
+   rule under it — one hairline, which is the only edge this project draws —
+   and the link at its end. Nothing here is filled, coloured or underlined: the
+   link back wears `.quiet-button`, which is the capsule the front page's four
+   links already wear.
+
+   **It does not say which area you are standing in**, though it did for a day.
+   The heading under the plot says that, and a bar naming the area a few hundred
+   points above its own heading is one screen saying the same words twice.
+
+   It wraps rather than shrinking. On a narrow phone the mark and wordmark keep
+   the first line and the way out sits centred underneath, which is a bar of two
+   lines instead of a bar with a squeezed capsule in it. */
+.masthead.bar {
+  inline-size: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 16px;
+  margin-block-end: 0;
+  padding-block-end: 14px;
+  border-block-end: 1px solid var(--hairline);
+}
+
+.bar__home {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.bar__ways {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  /* Pushed to the end while the bar is one line, and harmless once it wraps. */
+  margin-inline-start: auto;
+}
+
+/* Smaller than the capsules in the body of a page: a bar is chrome, and a
+   control in it should not be the loudest thing on the screen. */
+.bar .quiet-button {
+  padding: 5px 14px;
+  font-size: 0.76rem;
+}
+
+
 /* The ground travels with the mark, so there is no light and dark pair. It is
    an app icon and is drawn as one. */
 .mark {
@@ -863,15 +920,34 @@ a.quiet-button {
   padding: 12px 4px;
 }
 
-/* MARK: The Long Walk
+/* MARK: An area page
 
-   `/walk` is a night with words over it. The walk fills the viewport and the
-   page's own prose floats on top, so the chrome and the canvas are not two
-   panels with an edge between them — there is no edge, which is the rule, and
-   a rounded box round a night scene would have drawn one.
+   `/walk`, `/quiet`, `/cross`, `/orchard`, `/knot` and `/seedbed`: a plot
+   floating in the real night sky, and the page's own words underneath it.
+
+   **The words used to lie across the drawing.** The plot filled the viewport
+   and the title and its paragraph ran down the middle from the top, over the
+   planting — which is the one part of the page anybody came for — held legible
+   by a gradient that took the light off the plot to make room for them. Marcus
+   settled it on 23 September: the sky and the plot floating in it are the
+   metaphor, and words floating over that break it. So the drawing keeps a band
+   of the screen to itself and the words sit below it, on the page rather than
+   in the sky.
+
+   **The arrangement is the app's.** `PlantDetailView` gives the drawing the
+   middle of the screen and stands what it has to say underneath in one block —
+   a name, then the supporting lines, then the marks you can press, inside the
+   readable width and centred. Same order, same rhythm, in this project's own
+   tokens: `.heading` for the name, `.body` for the sentence under it,
+   `--measure` for the column, and the serif still nowhere near either of them.
+
+   **There is still no edge.** The night is not cut off where the words begin;
+   it is masked out over a hundred and fifty points, so the stars thin and
+   stop. A panel behind the text would have drawn four lines on a page whose
+   whole argument is that it has none.
 
    The page forces dark: every other page here follows the reader's system, and
-   this one cannot, because the walk is lit by its own sky. `.night` pins the
+   this one cannot, because the area is lit by its own sky. `.night` pins the
    tokens rather than the light-mode block being written round it, so one
    declaration says it and `prefers-color-scheme` above is left alone. */
 .night {
@@ -884,17 +960,88 @@ a.quiet-button {
   --passage-ink: rgba(255, 255, 255, 0.84);
   background: #000000;
   color: #ffffff;
+
+  /* How much of the screen the drawing gets. Floored so a short window does
+     not reduce a garden to a smear, and capped so a tall one does not leave
+     the words below the fold.
+
+     **It is the largest band the words still fit under**, which is the trade
+     this arrangement makes: the plot used to have the whole viewport and the
+     words lay across it, and it is about half the size now. Set by looking, at
+     1280 x 800 and at 375 x 812.
+
+     `--bar` is how far down the screen that band starts — the page's top
+     padding, the mark, and the rule under it — and is only ever used to say
+     where the sky should have stopped. It is a measurement rather than a
+     setting: nothing is positioned by it. */
+  --scene: clamp(230px, 46svh, 520px);
+  --bar: 92px;
 }
 
-.walk,
-.walk-stage {
-  position: fixed;
-  inset: 0;
+/* A wide window gives the words more room than they need. The paragraph is two
+   sentences and it is three lines at 375 and three lines at 1280; everything
+   the extra height bought was sky. So the band takes more of the screen and the
+   bar sits nearer the top of it.
+
+   **A media query rather than one larger clamp.** A phone's proportions are
+   already right, and this number there would push the keys off the bottom of
+   the screen.
+
+   It is as much as the band can have with the pad and the map still above the
+   fold on a 1280 x 800 window, which was the measurement that set it. The privacy line
+   and the chooser fall below, and scroll to. */
+@media (min-width: 60rem) {
+  .night {
+    --scene: clamp(320px, 55svh, 700px);
+    --bar: 76px;
+  }
+
+  .walk-page {
+    padding-block-start: max(20px, env(safe-area-inset-top));
+  }
+
+  .walk-page > .masthead.bar {
+    padding-block-end: 10px;
+  }
+
+  /* A taller band needs less air under it to be separate from the words. */
+  .walk-page .heading {
+    margin-block-start: 20px;
+  }
+}
+
+/* The sky, behind everything, still the whole viewport — and then masked, so
+   it has a horizon rather than a hem.
+
+   The stars thin out over the last hundred and forty points of the drawing's
+   band and there are none below it, so the words sit on the page and not in
+   the sky. Faded rather than cut, because a rectangle of night ending in a
+   straight line is an edge, and this project draws one edge: the hairline
+   under the bar. */
+/* Absolute rather than fixed, which it was while it was the whole page. The
+   plot is in the flow now, so a sky pinned to the glass would slide out from
+   under it the moment a short window made the page scroll. */
+.walk {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
   width: 100%;
-  height: 100%;
+  height: 100svh;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 calc(var(--bar) + var(--scene) - 140px),
+    transparent calc(var(--bar) + var(--scene))
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 calc(var(--bar) + var(--scene) - 140px),
+    transparent calc(var(--bar) + var(--scene))
+  );
 }
 
-/* Behind the plots and behind the pool of light, so the walk stands in front
+/* Behind the plots and behind the pool of light, so the area stands in front
    of the sky rather than on top of a picture of one. */
 .walk #sky {
   position: absolute;
@@ -904,81 +1051,59 @@ a.quiet-button {
   z-index: -2;
 }
 
+/* The pool of light is where the plot is, which is no longer the middle of the
+   screen. */
 .walk .pool {
   position: absolute;
   inset: 0;
   z-index: -1;
   background: radial-gradient(
-    ellipse 50% 45% at 50% 55%,
+    ellipse 50% 40% at 50% 34%,
     rgba(255, 255, 255, 0.08),
     transparent 70%
   );
 }
 
-/* The light comes off the walk where the words are, the way `StageVeil` takes
-   it off a plant in the app. A plot's ground is a pale green and the prose was
-   laid straight across it; the alternative to this was moving the words, and
-   there is nowhere to move them to — the walk is the whole viewport.
-
-   One gradient at each end, so there is no edge: a panel behind the text would
-   have drawn four lines on a page whose whole argument is that it has none.
-   Clear through the middle third, which is the part of a walk worth looking
-   at. */
-.walk-page::before,
-.walk-page::after {
-  content: "";
-  position: fixed;
-  inset-inline: 0;
-  height: 46svh;
+/* The drawing's band. In the page's own flow rather than fixed behind it, so
+   nothing has to be told twice how tall it is: the words start where the
+   canvas ends. `makePlotStage` watches the canvas and fits the plot to
+   whatever box it is given, so this is the only place the size is said. */
+.walk-stage {
+  display: block;
+  inline-size: 100%;
+  block-size: var(--scene);
+  flex: none;
   pointer-events: none;
-  z-index: -1;
 }
 
-.walk-page::before {
-  inset-block-start: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.92),
-    rgba(0, 0, 0, 0.86) 42%,
-    rgba(0, 0, 0, 0) 100%
-  );
-}
-
-.walk-page::after {
-  inset-block-end: 0;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.9),
-    rgba(0, 0, 0, 0) 100%
-  );
-}
-
-/* The words sit over the walk. `pointer-events` is off on the column so a
-   finger dragged across the middle of the page reaches the plots, and back on
-   for the things that are actually for pressing. */
+/* A column down the middle of the screen, with the drawing full width at the
+   top of it and everything else kept to the measure. `.page`'s own width would
+   have squeezed the plot into four hundred and forty points on a desktop. */
 .walk-page {
   position: relative;
   z-index: 1;
   min-height: 100svh;
   pointer-events: none;
-  /* A column with the walk showing through the middle of it: the title and
-     what the place is at the top, the four ways through it at the bottom, and
-     nothing in between. Laid out in the ordinary flow the keys landed halfway
-     down, on top of the plants, which is the one part of the page a reader
-     came for. */
   display: flex;
   flex-direction: column;
+  align-items: center;
+  max-width: none;
+  padding-inline: 0;
+  gap: 0;
 }
 
-.walk-keys {
-  margin-block-start: auto;
+.walk-page > *:not(.walk-stage) {
+  inline-size: 100%;
+  max-inline-size: var(--measure);
+  padding-inline: 28px;
 }
 
-/* `.foot` takes the slack on every other page. Here `.walk-keys` above it is
-   already doing that, and two of them share the gap out between them, which
-   leaves the keys stranded halfway down the walk. */
-.walk-page .foot {
-  margin-block-start: 0;
+/* The bar is the one thing here that may be wider than the measure. The
+   measure is for prose; the bar is a row of three things that want to be on
+   one line, and on a page whose column is the whole window there is no reason
+   to make them wrap at four hundred and forty points. */
+.walk-page > .masthead.bar {
+  max-inline-size: min(100%, 760px);
 }
 
 .walk-page a,
@@ -988,25 +1113,235 @@ a.quiet-button {
   pointer-events: auto;
 }
 
+/* The app's rhythm under the drawing: the name, then the sentence under it,
+   then a gap, then the things you can press. */
+.walk-page .heading {
+  margin-block-start: 26px;
+}
+
 .walk-about {
+  margin-block-start: 12px;
   max-width: var(--measure);
 }
 
 .walk-note {
   margin-block-start: 1rem;
-  /* Brighter than the faint labels elsewhere. It sits where the gradient above
-     has let go, so a faint grey lands on the lit face of a plot and is the one
-     line on the page somebody actually has to read. */
+  /* Brighter than the faint labels elsewhere: it is the one line on the page
+     somebody actually has to read. */
   color: var(--muted);
 }
 
-/* The four ways through the walk, in a row that wraps to two on a narrow
-   phone. `pad-key` is the garden's own key, shared so the two pages cannot
-   drift into two kinds of button. */
-.walk-keys {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+/* ── The Seedbed's drills ─────────────────────────────────────────────────
+   The six drills of a bed, under the paragraph: what claimed each one and how
+   far along it is sown.
+
+   **Only this area has words under its paragraph, and the reason is that its
+   labels carry none.** `Organic.rowLabel` leaves the tongue blank on purpose —
+   at the size a plot is drawn, a word on it would be four pixels tall and would
+   fight the plants — so the fact the whole area is built on, which kind claimed
+   which drill, has nowhere to be but here.
+
+   Two columns: the kind, right against the middle, and its eight places beside
+   it. A grid rather than a row apiece, so the marks of all six line up whether
+   the kind beside them is *rubra* or *patentifolia* — six ragged rows would
+   read as six unrelated facts rather than as one bed. */
+.drills {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
   justify-content: center;
+  /* The row gap is the drill gap, and it is the whole legibility of the list.
+     At a hairline's worth the six rows of marks close into one block of
+     texture, which is a swatch and not six drills — the same fault the Knot's
+     gravel had, one dimension down. */
+  gap: 13px 14px;
+  margin-block-start: 18px;
+  list-style: none;
 }
 
+.drill {
+  display: contents;
+}
+
+/* The serif, which this site reserves for the binomial a plant is given. An
+   epithet is half a binomial — and the half that was chosen to say what the
+   plant is like — so it wears the same voice at the size the line needs.
+   Smaller than `.plant-name` and not a heading: six of these are a list of what
+   is standing in the bed, not six titles. */
+.drill__kind {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1rem;
+  line-height: 1.2;
+  color: var(--ink);
+  text-align: end;
+}
+
+/* How far along a drill is sown, as eight marks rather than as a number — the
+   same argument `.garden-cell__fill` makes, and the same fact in no language at
+   all. They fill from the end the drill fills from, which is the end its label
+   stands at. The count is on the row's own label for anybody listening rather
+   than looking. */
+.drill__places {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.drill__place {
+  inline-size: 11px;
+  block-size: 2px;
+  background: var(--hairline);
+}
+
+.drill__place--sown {
+  background: var(--muted);
+}
+
+/* ── The ways on ─────────────────────────────────────────────────────────
+   Under the words, the two things a reader can do from here: move about this
+   area with the pad, or leave it for another with the map. Both are drawn
+   rather than written — the pad in glyphs and the map as the garden's own
+   five by two — so the only words below the paragraph are the paragraph's.
+
+   **Under the text, and never over the drawing.** The sky and the plot are
+   kept clear of anything floating, which is why the words moved below them in
+   the first place; a control laid over the plot would undo that.
+
+   It takes the slack, so on a tall window the pad and the map sit at the foot
+   of it instead of trailing off under the words. It may be wider than the
+   measure, as the bar may: on a wide window the pad and the map stand side by
+   side, which keeps the map above the fold at 1280 x 800, and on a phone the
+   row wraps and the map sits under the pad. */
+.walk-page > .walk-ways {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 22px 56px;
+  max-inline-size: min(100%, 760px);
+  margin-block-start: auto;
+  padding-block: 26px 22px;
+}
+
+/* `.foot` takes the slack on every other page. Here `.walk-ways` above it is
+   already doing that, and two of them share the gap out between them, which
+   leaves the pad stranded halfway down the page. */
+.walk-page .foot {
+  margin-block-start: 0;
+}
+
+/* The pad. Two pairs — paging from plot to plot, and turning the plot in
+   front of you — with a gap between them wider than the gap inside either,
+   so the row reads as two actions of two ways each rather than four equal
+   keys. `pad-key` is the garden's own key, shared with `/g`'s pad so the two
+   pages cannot drift into two kinds of button. */
+.walk-keys {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.walk-keys__pair {
+  display: flex;
+  gap: 6px;
+}
+
+/* Forty-four square, which is the smallest a finger is promised; the glyph
+   inside is twenty, so it sits in the key with room round it rather than
+   filling it. */
+.walk-keys .pad-key {
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  padding: 0;
+}
+
+/* The keyboard's ring, the same one the map's cells take: a brighter edge
+   alone was too near the resting hairline to find at a glance, and a key the
+   keyboard is on has to be the one thing that says so. */
+.walk-keys .pad-key:focus-visible {
+  outline: 1px solid var(--muted);
+  outline-offset: 3px;
+}
+
+/* The glyphs. Monoline, even weight, round free ends — BRAND.md §3.2, and the
+   same stroke the chooser's chevron is drawn with. The weight is set here
+   rather than on each path, so the four cannot come to disagree. */
+.pad-glyph {
+  display: block;
+  inline-size: 20px;
+  block-size: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Previous and next follow the writing direction, as the row they sit in
+   does: under Arabic or Hebrew the way back is on the right and points right.
+   The rings do not mirror. Clockwise is a direction in the world rather than
+   on the page, and a mirrored ring would say the opposite of its name. */
+[dir="rtl"] .pad-glyph--page {
+  transform: scaleX(-1);
+}
+
+/* The map. The garden's ten areas five by two, as `/g` draws them, at a size
+   that sits under the words without competing with the plot — the plot is
+   the page, and this is how to leave it.
+
+   Each cell is a hit area of forty-four by thirty-two with a smaller shape
+   drawn in the middle of it, so the drawing can be quiet and the target still
+   be a size a finger can find. The grid follows the writing direction, so the
+   map mirrors under a right-to-left language as the hub's does. */
+.minimap {
+  display: grid;
+  grid-template-columns: repeat(5, 44px);
+  grid-template-rows: repeat(2, 32px);
+}
+
+.minimap__cell {
+  position: relative;
+  display: block;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.minimap__cell::before {
+  content: "";
+  position: absolute;
+  inset: 6px 7px;
+  border: 1px solid var(--faint);
+  border-radius: 6px;
+  transition: border-color 200ms ease-out;
+}
+
+a.minimap__cell:hover::before {
+  border-color: var(--ink);
+}
+
+/* The keyboard's ring, drawn round the shape rather than round the hit area,
+   so it lands on what the reader can see. */
+a.minimap__cell:focus-visible {
+  outline: none;
+}
+
+a.minimap__cell:focus-visible::before {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px var(--ground), 0 0 0 4px var(--muted);
+}
+
+/* Where you are: the one fill on the map. */
+.minimap__cell--here::before {
+  border-color: var(--muted);
+  background: var(--muted);
+}
+
+/* Not open yet. Drawn, because the map is ten areas and a map with holes in
+   it is a different map, but only just. */
+.minimap__cell--closed::before {
+  border-color: var(--hairline);
+  opacity: 0.6;
+}

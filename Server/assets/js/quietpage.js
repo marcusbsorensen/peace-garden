@@ -16,10 +16,20 @@ import { loadModule } from './plant.js';
 import { makePlotStage } from './longwalk.js';
 import { growRoomFromService, makeRoomGround, plan } from './quietgarden.js';
 import { makeSky } from './sky.js';
-import { dressed } from './plain.js';
+import { dressed, whenSettled } from './plain.js';
+import { openWays } from './gates.js';
 
 const el = (id) => document.getElementById(id);
 const note = el('note');
+
+// Where this page stands on the map. The bar says it, the link back to the
+// garden carries it, and `gates.js` marks it on the map at the foot of the
+// page — all three from this one word.
+//
+// **Drawn whether or not the plot service answers.** A page that cannot reach
+// its plants is exactly the page a reader needs a way out of.
+const THEME = 'peace';
+whenSettled((strings) => openWays(THEME, strings));
 
 const say = async (key) => {
   const strings = await dressed;
@@ -35,15 +45,17 @@ async function room() {
   // page cannot disagree with the rule about the shape of the place.
   // **One plot, framed as though there were a little more than one.** The walk
   // gets three plots end to end, which is a wide, low shape that sits under the
-  // page's own words. A single square room framed tight fills the middle of the
-  // screen and the prose lands on the lawn. A quarter more than a plot's side
-  // is the margin that leaves the hedge clear of the heading.
+  // page's own words. A single square room framed tight touches the sides of
+  // its band; a quarter more than a plot's side is the margin that leaves air
+  // round the hedge, so the room reads as a place rather than as a texture.
   const stage = makePlotStage(el('stage'), 1.25, engine, makeRoomGround(plan(engine)));
 
   let sky = null;
   makeSky(el('sky'), {
     quarterTurns: () => stage.turn(),
-    keepClear: () => [...document.querySelectorAll('.page .heading, .page .walk-about, .page .walk-note, .page .walk-keys, .page .masthead, .page .foot')]
+    // Only the bar is in the sky now — the heading, the paragraph and the keys
+    // are below the drawing, where the mask has already taken the stars off.
+    keepClear: () => [...document.querySelectorAll('.page .masthead')]
       .map((node) => node.getBoundingClientRect())
       .filter((box) => box.width > 0 && box.height > 0),
   }).then((made) => { sky = made; }).catch((trouble) => {

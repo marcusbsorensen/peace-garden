@@ -42,9 +42,20 @@
     <div class="pool" aria-hidden="true"></div>
 
     <main class="page" id="page">
-      <header class="masthead">
-        <img class="mark" src="/assets/icon.svg" alt="" width="44" height="44" />
-        <p class="wordmark heading">Peace Garden</p>
+      <!--
+        The bar. On every page of the site, and the only way between any two of
+        them that is not a link somebody happened to put in a paragraph.
+        `site.css` §The bar says why it is the masthead with two things added
+        rather than a header of its own.
+      -->
+      <header class="masthead bar">
+        <span class="bar__home">
+          <img class="mark" src="/assets/icon.svg" alt="" width="44" height="44" />
+          <p class="wordmark heading">Peace Garden</p>
+        </span>
+        <span class="bar__ways">
+          <a class="quiet-button" href="/garden" data-s="gardenTitle"></a>
+        </span>
       </header>
 
       <!-- A seed arrived. -->

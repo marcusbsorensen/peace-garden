@@ -19,6 +19,22 @@ const el = (id) => document.getElementById(id);
 
 const state = { languages: [], chosen: null, strings: null, settled: null };
 
+/// Things to do again whenever a language is settled.
+///
+/// **`[data-s]` covers a label that is written into the page and nothing
+/// else.** The map at the foot of an area page is built from `garden.js`, and
+/// its cells are named by area names — so a reader who changes the chooser
+/// would otherwise be left with five Greek labels and a map that answers in
+/// English. This is how a page says *and me*.
+const listeners = [];
+
+/// Run something now if a language has already been settled, and again every
+/// time one is settled after that.
+export function whenSettled(run) {
+  listeners.push(run);
+  if (state.strings) run(state.strings);
+}
+
 /// Negotiate, dress the page, and build the chooser.
 ///
 /// The same four facts `/s` and `/g` settle — which language the labels are in,
@@ -45,6 +61,18 @@ async function settle() {
     // a language part way through its commission has the prose and not yet
     // this.
     state.strings.dress(node, node.dataset.s);
+  }
+  // A control drawn as a glyph, with its words as its name rather than its
+  // face: the pad under an area's plot. The name is the catalogue's, so it is
+  // in the reader's language, and the tooltip is the same words for anybody
+  // with a pointer who wonders what a ring with an arrow on it does. Written
+  // here and not into the markup because English in an `aria-label` is a name
+  // nobody can translate.
+  for (const node of document.querySelectorAll("[data-s-label]")) {
+    const words = state.strings.t(node.dataset.sLabel);
+    node.setAttribute("aria-label", words);
+    node.title = words;
+    state.strings.dress(node, node.dataset.sLabel);
   }
   el("language-label").textContent = state.strings.t("language");
 
@@ -79,6 +107,8 @@ async function settle() {
     });
   }
   select.value = state.settled.ui;
+
+  for (const run of listeners) run(state.strings);
 }
 
 async function main() {

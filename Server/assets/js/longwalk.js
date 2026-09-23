@@ -53,6 +53,14 @@ export const COLOUR = {
   // ambient comes out lilac, which is the fault the Crossing's paving had on
   // its first pass.
   gravel: [0.470, 0.436, 0.376],
+  // The Seedbed's ground. Fine tilth: soil raked down to a crumb, which is
+  // neither the grass four areas stand on nor the Knot's gravel. Picked against
+  // both — darker and browner than the gravel, because raked soil takes light
+  // and gives little of it back, and warmer than the bedrock under the slab so
+  // the bed does not read as the plot's own rock scraped bare. It also has to
+  // stay under a part-sown drill without competing: most of this area is
+  // ground, and ground that glares is a bed nobody looks into.
+  tilth: [0.330, 0.268, 0.200],
   // The Knot Garden's hedging. Clipped box, not the walk's yew: box is a
   // fresher, yellower green, and at ankle height in full light it takes far
   // more of the sun than a 2 m yew wall does. Picked against the gravel it

@@ -75,6 +75,10 @@ const ROUTES = [
     // rule about colour rather than about height, which is the clearest case
     // yet for a page of its own.
     '/knot' => ['knot', 'text/html; charset=utf-8'],
+    // The sixth, on 23 September, and the first whose page has to say something
+    // the drawing cannot: a row label carries no writing, so which kind claimed
+    // which drill is written under the plot in words.
+    '/seedbed' => ['seedbed', 'text/html; charset=utf-8'],
     '/t' => ['t', 'text/html; charset=utf-8'],
     // A privacy notice is a mandatory App Store listing field, so this path is
     // load-bearing for the submission rather than decorative. See

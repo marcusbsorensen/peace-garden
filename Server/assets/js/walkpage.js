@@ -15,7 +15,8 @@
 import { loadModule } from './plant.js';
 import { makePlotStage, growFromService } from './longwalk.js';
 import { makeSky } from './sky.js';
-import { dressed } from './plain.js';
+import { dressed, whenSettled } from './plain.js';
+import { openWays } from './gates.js';
 
 // Three plots at a time: the one in front of the reader and its neighbours
 // either side, which is as much as fits on a phone held upright and is the
@@ -24,6 +25,15 @@ const SPAN = 3;
 
 const el = (id) => document.getElementById(id);
 const note = el('note');
+
+// Where this page stands on the map. The bar says it, the link back to the
+// garden carries it, and `gates.js` marks it on the map at the foot of the
+// page — all three from this one word.
+//
+// **Drawn whether or not the plot service answers.** A page that cannot reach
+// its plants is exactly the page a reader needs a way out of.
+const THEME = 'travel';
+whenSettled((strings) => openWays(THEME, strings));
 
 // The words arrive with `plain.js`, which settles a language over the network,
 // so this page can be running before there is anything to say it in.
@@ -53,7 +63,9 @@ async function walk() {
   let sky = null;
   makeSky(el('sky'), {
     quarterTurns: () => stage.turn(),
-    keepClear: () => [...document.querySelectorAll('.page .heading, .page .walk-about, .page .walk-note, .page .walk-keys, .page .masthead, .page .foot')]
+    // Only the bar is in the sky now — the heading, the paragraph and the keys
+    // are below the drawing, where the mask has already taken the stars off.
+    keepClear: () => [...document.querySelectorAll('.page .masthead')]
       .map((node) => node.getBoundingClientRect())
       .filter((box) => box.width > 0 && box.height > 0),
   }).then((made) => { sky = made; }).catch((trouble) => {

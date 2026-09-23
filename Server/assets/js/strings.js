@@ -147,6 +147,9 @@ export const EN = Object.freeze({
   //
   // The ten areas are not listed here either. `AREA_KEYS` already names them in
   // every language the map has, so the front page reads them from there.
+  // Also the bar's way back to the hub, on every page of the site. It is the
+  // hub's own name, so naming the link a second time would be one word saying
+  // what another word already says.
   gardenTitle: "The garden",
   gardenBody:
     "Ten areas, each one a theme, laid out as a map you can walk. Every plant standing in the garden was grown from a meeting, and the words under it come from the reader's own language rather than a translation of somebody else's.",
@@ -175,8 +178,14 @@ export const EN = Object.freeze({
   // is what keeps that from reading as two places with one name.
   walkBody:
     "The one area of the garden with real plants in it: a double border either side of a mown path, tall at the back and graded to the front. Every plant standing in it grew from a meeting, and it goes on as long as the meetings do.",
+  // **Two sentences, and the second one is the same on all five area pages.**
+  // Each of these used to open by saying *one of the garden's ten areas*, which
+  // the bar at the top of the page now says by standing the area's name beside
+  // a link to the garden — and then ran to four or five lines, which is a
+  // paragraph to read before you are allowed to look at the thing it describes.
+  // What is left is what the place is, and what the keys do.
   walkAbout:
-    "One of the garden's ten areas, and the first with anything growing in it. A double border either side of a mown path, with the plants two people grew when they met. Walk on to go further down it, or turn to go round to another side of the same plots.",
+    "A double border either side of a mown path, tall at the back and graded to the front. Go on down the walk, or turn to see the plots from another side.",
   // While the plants are being grown. They are grown one at a time, in this
   // browser, from the same arithmetic the phone uses, and on a long plot that
   // takes a moment worth naming.
@@ -185,29 +194,53 @@ export const EN = Object.freeze({
   // The walk could not be drawn at all. Said in words rather than left as an
   // empty night, which a reader would take for the garden.
   walkAway: "The walk cannot be reached just now.",
-  // The four ways through it. `walkBack` and `walkOn` move down the path;
-  // `walkLeft` and `walkRight` turn on the spot.
+  // The four ways through it. `walkBack` and `walkOn` move down the path; the
+  // other two turn the camera on the spot without moving anybody.
+  //
+  // **They were `walkLeft` and `walkRight` — *Turn left*, *Turn right* — and
+  // the words were needed elsewhere.** The foot of an area page named the
+  // areas to the left and the right of this one on the map, and a page with
+  // *Turn left* on it and a gate to the left of it is a page with two meanings
+  // for one word. So the turn is named as a turn: a quarter of the plot, in the
+  // direction the words say, which is also what the reader is doing — going
+  // round it rather than along anything.
+  //
+  // The two old keys are gone rather than kept: nothing else used them, and
+  // they were still uncommissioned, so no other language has to be told. Two
+  // out and two in, and the count does not move.
+  //
+  // **The pad draws these four as glyphs now, and the words are their names**
+  // — each key's `aria-label` and tooltip, through `data-s-label` in
+  // `plain.js`. Nothing is spent and nothing is lost: a screen reader still
+  // hears the words, in the reader's language, and the eye gets a chevron and
+  // a ring that need no language at all.
   walkBack: "Back",
   walkOn: "On",
-  walkLeft: "Turn left",
-  walkRight: "Turn right",
+  walkTurnAnti: "Turn anticlockwise",
+  walkTurnClock: "Turn clockwise",
+
+  // `nextTo`, *Next to this area*, stood here over the worded gates at the
+  // foot of an area page. The gates are a small map now, labelled by
+  // `gardenTitle` and named cell by cell from `AREA_KEYS`, so the label went
+  // with them. It had not been commissioned, so no other language has to be
+  // told.
 
   // The Quiet Garden's own page. **Two strings and no more**, because the rest
   // of what the page says it already had: the heading is `areaPeace`, which is
   // commissioned in forty-one languages along with the other nine area names,
-  // and `walkBack`, `walkOn`, `walkLeft`, `walkRight`, `walkGrowing` and
-  // `walkEmpty` never said *walk* in any of them — they are how you move and
-  // what is happening, not where you are. A second area costing two strings
+  // and `walkBack`, `walkOn`, `walkTurnAnti`, `walkTurnClock`, `walkGrowing`
+  // and `walkEmpty` never said *walk* in any of them — they are how you move
+  // and what is happening, not where you are. A second area costing two strings
   // rather than nine is the whole argument of `LANGUAGES.md` working.
   quietAbout:
-    "One of the garden's ten areas, and the quietest by rule: a hedge round a lawn, a bench in one corner, and a few groups of planting at the foot of the hedge. It holds the fewest plants of any area, because room is what it is for. Go on to the next enclosure, or turn to go round this one.",
+    "A hedge round a lawn, a bench in one corner, and the fewest plants of any area, because room is what it is for. Go on to the next enclosure, or turn to see this one from another side.",
   // The room could not be drawn. `walkAway` names the walk, so this is its own.
   quietAway: "The Quiet Garden cannot be reached just now.",
 
   // A third area, and the same two strings again: the heading is `areaMeeting`,
   // already commissioned, and the four keys still never say where you are.
   crossAbout:
-    "One of the garden's ten areas: two mown paths crossing at a round of paving, with rough grass and planting in each of the four quarters. A plant arriving goes wherever there is least, so the four grow together, and each quarter builds from low planting along the paths to one tall plant at its far corner. Go on to the next crossing, or turn to go round this one.",
+    "Two mown paths crossing at a round of paving, with planting in each of the four quarters, low along the paths and tall at the far corners. Go on to the next crossing, or turn to see this one from another side.",
   // The Crossing could not be drawn.
   crossAway: "The Crossing cannot be reached just now.",
 
@@ -216,7 +249,7 @@ export const EN = Object.freeze({
   // still never say where you are. Four areas have now cost eight strings
   // between them, which is the whole argument of `LANGUAGES.md` holding.
   orchardAbout:
-    "One of the garden's ten areas: five trees standing in a quincunx, with a guild of four plants under each and meadow grass cut back into a disc round every trunk. A plant arriving goes under the earliest tree with a place left, so a tree is either fully planted or still bare — never five half-planted at once. Go on to the next orchard, or turn to go round this one.",
+    "Five trees standing in a quincunx, each with a guild of four plants under it and the meadow grass cut back to a disc round its trunk. Go on to the next orchard, or turn to see this one from another side.",
   // The Orchard could not be drawn.
   orchardAway: "The Orchard cannot be reached just now.",
 
@@ -225,9 +258,29 @@ export const EN = Object.freeze({
   // still never say where you are. Five areas have now cost ten strings
   // between them against the ninety-odd a page apiece would have been.
   knotAbout:
-    "One of the garden's ten areas: two bands of low clipped hedging woven over and under each other, with a block of planting in each of the eight compartments they make. Here a plant's colour decides where it stands — each compartment and the one opposite it hold the same colour, so the pattern is symmetrical — and its height decides its place within the block. Go on to the next knot, or turn to go round this one.",
+    "Two bands of low clipped hedging woven over and under each other, with a block of one colour in each of the eight compartments they make. Go on to the next knot, or turn to see this one from another side.",
   // The Knot Garden could not be drawn.
   knotAway: "The Knot Garden cannot be reached just now.",
+
+  // A sixth area, and the same two strings a sixth time: the heading is
+  // `areaBeginnings`, already commissioned in all forty-two, and the four keys
+  // still never say where you are. Six areas have now cost twelve strings
+  // between them, and the map that joins them none, against the hundred-odd a
+  // page apiece would have been.
+  //
+  // **The six drills under the plot cost nothing**, and that was the point of
+  // drawing the count as eight marks rather than writing it: an epithet is a
+  // proper noun and travels, and *three of eight* would have been a thirteenth
+  // string in forty-three languages for a fact a row of marks already says.
+  //
+  // **Nothing here says the bed is full or filling.** A plot opens as soon as a
+  // seventh kind arrives and it opens holding one plant, so most drills in most
+  // plots are part-sown — *sown with one kind* is what a drill is, and how far
+  // along it has got is the list's business, not this sentence's.
+  seedbedAbout:
+    "Six drills across a bed of fine tilth, each one sown with a single kind of plant and filling from the label at its head. Go on to the next bed, or turn to see this one from another side.",
+  // The Seedbed could not be drawn.
+  seedbedAway: "The Seedbed cannot be reached just now.",
 
   // Said once and used on both of the pages that are not built yet, because two
   // ways of saying *not yet* is one more than a reader needs.

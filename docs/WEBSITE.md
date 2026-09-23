@@ -1070,6 +1070,34 @@ not.** Whatever the mark is, it is monoline, and tapping it reaches the page.
 Somebody who cannot tell at a glance which of their plants are published has been
 handed a decision they cannot review.
 
+## Moving through the garden
+
+Settled with Marcus on 23 September, after a look at how the site was actually
+navigated: there was no nav anywhere, four of the five built areas were reachable
+only by front page → hub → map cell → *go on*, and nothing linked one area to
+another.
+
+- **A slim bar on every page**: the mark, the wordmark, and a link to the hub.
+  From an area page that link is `/garden#<theme>`, and the hub opens at the
+  area you came from. The bar does not name the area — the heading under the
+  plot does, and the same words twice on one screen was one too many.
+- **The words sit below the plot, as the app's do.** The sky and the plot
+  floating in it are the picture; text floating over them broke it. Each area's
+  paragraph is two sentences: what the place is, and what the keys do.
+- **A glyph-only pad**: two pairs, chevrons to page between plots and rings to
+  turn the garden, with a gap between so paging and turning read as different
+  things. Monoline, round caps, the brand's icon rules. Every key keeps its name
+  for a screen reader from the catalogue, set through `data-s-label`.
+- **Turning is called turning.** The camera keys were *left* and *right*, which
+  are the words a visitor reaches for to mean walking somewhere else.
+- **A minimap to travel by**: the garden's own 5×2 map, read from `garden.js`
+  rather than retyped — one map for the hub, the minimap and the app. Where you
+  are is filled; the built areas are links; the closed ones are drawn faintly
+  and are not. It replaced a line of worded gates to neighbouring areas, because
+  it answers *where am I* as well as *where can I go*.
+- **It cost no new strings.** The ten area names were already commissioned in
+  42 languages, and every control reuses a key that already said the thing.
+
 ## Still open
 
 - ~~**Whether the garden is a place you can walk.**~~ Answered *yes*, 2

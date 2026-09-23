@@ -16,10 +16,20 @@ import { loadModule } from './plant.js';
 import { makePlotStage } from './longwalk.js';
 import { growCrossFromService, makeCrossGround, plan } from './crossing.js';
 import { makeSky } from './sky.js';
-import { dressed } from './plain.js';
+import { dressed, whenSettled } from './plain.js';
+import { openWays } from './gates.js';
 
 const el = (id) => document.getElementById(id);
 const note = el('note');
+
+// Where this page stands on the map. The bar says it, the link back to the
+// garden carries it, and `gates.js` marks it on the map at the foot of the
+// page — all three from this one word.
+//
+// **Drawn whether or not the plot service answers.** A page that cannot reach
+// its plants is exactly the page a reader needs a way out of.
+const THEME = 'meeting';
+whenSettled((strings) => openWays(THEME, strings));
 
 const say = async (key) => {
   const strings = await dressed;
@@ -34,14 +44,17 @@ async function place() {
   // from the module rather than being written down again here, so the page
   // cannot disagree with the rule about the shape of the place.
   // **One plot, framed as though there were a little more than one**, the
-  // Quiet Garden's margin and for its reason: a single square framed tight
-  // fills the middle of the screen and the page's prose lands on the planting.
+  // Quiet Garden's margin: a single square framed tight touches the sides of
+  // its band, and a plot with air round it reads as a place you are looking
+  // into rather than a texture filling the screen.
   const stage = makePlotStage(el('stage'), 1.25, engine, makeCrossGround(plan(engine)));
 
   let sky = null;
   makeSky(el('sky'), {
     quarterTurns: () => stage.turn(),
-    keepClear: () => [...document.querySelectorAll('.page .heading, .page .walk-about, .page .walk-note, .page .walk-keys, .page .masthead, .page .foot')]
+    // Only the bar is in the sky now — the heading, the paragraph and the keys
+    // are below the drawing, where the mask has already taken the stars off.
+    keepClear: () => [...document.querySelectorAll('.page .masthead')]
       .map((node) => node.getBoundingClientRect())
       .filter((box) => box.width > 0 && box.height > 0),
   }).then((made) => { sky = made; }).catch((trouble) => {

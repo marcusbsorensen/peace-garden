@@ -35,9 +35,22 @@
     <div class="pool" aria-hidden="true"></div>
 
     <main class="page" id="page">
-      <header class="masthead">
-        <img class="mark" src="/assets/icon.svg" alt="" width="44" height="44" />
-        <span class="wordmark">Peace Garden</span>
+      <!--
+        The bar. On every page of the site, and the only way between any two of
+        them that is not a link somebody happened to put in a paragraph.
+        `site.css` §The bar says why it is the masthead with two things added
+        rather than a header of its own.
+      -->
+      <header class="masthead bar">
+        <span class="bar__home">
+          <img class="mark" src="/assets/icon.svg" alt="" width="44" height="44" />
+          <span class="wordmark">Peace Garden</span>
+        </span>
+        <span class="bar__ways">
+          <!-- Written out rather than read from the catalogue: this page is
+               English and stays English, and `door.js` fills no labels. -->
+          <a class="quiet-button" href="/garden">The garden</a>
+        </span>
       </header>
 
       <!--
