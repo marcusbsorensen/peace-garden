@@ -1,12 +1,14 @@
-# Peace Garden: the fifth area — handover 22 September 2026
+# Peace Garden: the fifth area, curved — handover 23 September 2026
 
-**The Knot Garden is open.** Five of ten areas are planted. The handover before
-this one, whose traps mostly still apply, is at
+**The Knot Garden is open and its bands curve.** Five of ten areas are planted.
+The handover before this one, whose traps mostly still apply, is at
 `git show 41169df:.claude/HANDOVER.md`.
 
 ## State
-- **Done, tested, pushed, deployed.** `2bc18d5` on `origin/main`. SeedCore 241
-  tests, app 129 (1 skipped, run by hand in the simulator), `check_knot` 1770
+- **Done, tested, pushed, deployed.** *The knot's bands curve, because a weave
+  drawn with a ruler is a grid* on `origin/main`. SeedCore 251 tests on macOS
+  and 245 on WebAssembly, app 129 (1 skipped, run by hand in the simulator),
+  `check_knot` 1770
   checks over 500 placements, `check_orchard` 1651, `check_crossing` 1959,
   `check_quiet_garden` 1850, `check_ambassador` 279, `check_areas` 47,
   `check_long_walk` 600, `check_backup` 28, `check_sky` 9729, `check_offers`,
@@ -20,6 +22,9 @@ this one, whose traps mostly still apply, is at
   were fetched back off the host and diffed against local: all four match.
 - **The Knot Garden reads as one plant in an empty pattern until it fills**, the
   way the Crossing and the Orchard did on their first day. Left alone.
+- Looked at live after the curve went up, and looked at locally with forty
+  arrivals sent by `tools/wasm/send-arrivals.mjs` so the compartments had blocks
+  in them — which is the only way to see whether the bands crowd the planting.
 
 ## The libm divergence, found and answered
 
@@ -144,8 +149,8 @@ a colour, and colour picking the pair while height picks the place.
 ### What the pattern is, and what it is not
 Two bands each way, crossing four times, inside a square edging: four
 compartments at the sides, four at the corners, the weave closing round a middle
-that holds no plant. **It reads as a woven grid rather than as a curving knot,
-and that is a real limit rather than an oversight.**
+that holds no plant. **It read as a woven grid rather than as a curving knot
+for one day, which the bands' bow answered.**
 
 - The alternative considered first was the classic octagram — a square and a
   diamond interlaced. Its compartments are the star's eight points, and a
@@ -155,19 +160,70 @@ and that is a real limit rather than an oversight.**
   and both give badly unequal compartments. The orthogonal weave is the one that
   gives **eight compartments of one size**, which is what a mirror pair needs in
   order to read as a mirror.
-- **What would make it curve is `Organic`, not the rule.** A run of hedging that
-  follows an arc is the missing piece; `Organic.hedge` draws straight runs only.
-  That is a change to a shared structure with five areas' worth of callers, and
-  it is a session of its own — but it is the single thing that would make this
-  area look like its name rather than merely be laid out like it.
+- **What made it curve was `Organic`, not the rule.** Done on 23 September —
+  see *The curve* below. The sentence that stood here was right about where the
+  change belonged and wrong about the shape: what a weave needs is not an arc
+  but a line that is flat where it meets a crossing.
+
+## The curve, 23 September
+
+Marcus answered the first decision: curve it. `197e6fd`.
+
+- **`Organic.hedge` gained `bow`** — how far the middle of a run stands off the
+  straight line between its two ends. Sixth thing the file knows how to do, and
+  it turned out to be a parameter rather than a structure.
+- **The line is flat at both ends**, `(1 - f²)²` rather than a circle's arc, and
+  that is the whole design. The first shape tried was a plain parabola, which
+  arrives at its ends still turning. Drawn, it showed everything a weave has at
+  a crossing: the inner stretch and the arm met at a visible corner, the
+  under-run's square cut end came out oblique and poked through the band
+  crossing over it, and the swelling sat on the axis while the band had curved
+  away from it. **Flat ends make a crossing the one place on a run where nothing
+  is happening**, which is exactly where a weave puts its joints and its cuts,
+  and all three faults went at once.
+- **A run that does not bow is the run it always was, to the bit.** The call is
+  shared with the Long Walk, the Quiet Garden and the app.
+  `testAHedgeThatDoesNotBowIsTheHedgeItWas` compares the positions and the
+  normals with no tolerance at all, which is right here because both sides are
+  the same arithmetic on the same host — unlike a vector file, which is two
+  hosts and wants `VectorFile.same`.
+- **`KnotGarden.weave` is where the four runs are laid out now**, and `knot.js`
+  draws what it is given. The layout was in the page; it moved for the reason
+  `bandHalfThickness` was in the rule already — a compartment's edges are where
+  the bands' faces are, so the shape of a band is something the rule has to be
+  able to answer, and two copies of it can drift without either looking wrong.
+- **The numbers came out of measuring, not out of taste.** `knotBow` 0.30 is
+  free: it bows into the middle, nothing is planted there, and the nearest plant
+  to any band is exactly as near as it was when every band was straight.
+  `armBow` 0.05 is paid for: the nearest place to an arm stood 0.18 m from the
+  band's face, `Planting.nudge` already spends 0.09 of that, and 0.05 of bow
+  leaves 0.048 m. **Half the margin the straight weave had**, spent knowingly.
+  `KnotGarden.clearance(x:z:)` is the measure and
+  `testNoPlaceStandsInABandHoweverItIsNudged` is the guard.
+- **The bug worth knowing about.** Each run was first cut between `under` and
+  `over` in the order those two are named, which is right for the two runs at
+  `+bandFrom` and wrong for the two at `-bandFrom`: there the crossings lie the
+  other way round, so one stretch spanned the whole plot and one had its ends
+  swapped and came out with a negative length. **It drew something that looked
+  nearly right** — plausible enough that two rounds of looking at screenshots
+  went past it, and it was the plan JSON printed as a table that showed it.
+  `testEachRunIsThreeStretchesEndToEndWithOneGap` is the assertion now.
+- **What is still true from the day before**: the pattern is an orthogonal
+  weave, not an octagram, and the reasons above still hold. What has changed is
+  only that it no longer reads as a grid.
 
 ## The decisions waiting for Marcus
 
-1. **Whether the Knot Garden's weave should curve**, which is the `Organic.hedge`
-   arc above, and is the difference between a parterre and a knot.
-2. **Whether the share screen should hold its question back while it asks
-   `/api/garden`.** Carried from three handovers ago. Unchanged, and still not
-   watched on a device.
+1. **Whether the share screen should hold its question back while it asks
+   `/api/garden`.** Carried from four handovers ago. Unchanged, and still not
+   watched on a device. `ShowInGardenView` draws what this build believes and
+   corrects itself when the service answers, so a phone built before an area
+   opened shows *this plant's area comes later* for as long as the request takes
+   and then flips to the offer. The request is made once a session and cached,
+   times out at 8 s, and is skipped entirely when this phone is the one being
+   asked. **It went from hypothetical to live on 22 September**: any build older
+   than that is in exactly the diverging case for a Knot Garden plant. What
+   would settle it is watching it on a device on a slow connection.
 
 ## Traps
 - **Run the app's tests by hand when an area opens.** CI cannot: they need Xcode
@@ -217,6 +273,19 @@ and that is a real limit rather than an oversight.**
 - **20i's CDN normalises `Accept-Encoding`.** Do not measure again.
 - **`/.api/` and `/.pages/` are refused by nginx's dot-directory rule.**
 - **`Server/.api/config.php` is gitignored and points wherever it was last left.**
+- **The wasm test build needs the swift.org toolchain named**, not the `swift`
+  on the PATH, which is Xcode's and has no WebAssembly backend — it dies with
+  *No available targets are compatible with triple "wasm32-unknown-wasip1"* and
+  a compiler crash dump, which reads like a bug in the code and is not.
+  `tools/wasm/build.sh` finds the right one for itself; a test build has to be
+  told:
+  `~/Library/Developer/Toolchains/swift-6.3.3-RELEASE.xctoolchain/usr/bin/swift build --package-path Packages/SeedCore --build-tests --swift-sdk swift-6.3.3-RELEASE_wasm --scratch-path .build-wasm`
+- **To look closely at a plot in the browser pane**, scale the stage canvas with
+  CSS — `document.getElementById('stage').style.transform = 'scale(2.4)'` with
+  `transformOrigin` on the plot — and hide the page's text. The canvas backs
+  900 CSS px with 1800, so 2× is pixel-for-pixel. `zoom` does not crop, and
+  `drawImage` off that canvas comes back blank, because the WebGL context does
+  not preserve its drawing buffer.
 - **`swift build --package-path tools/wasm` fails on macOS** (deployment target).
   Use `sh tools/wasm/build.sh`.
 - **The host's SSH IP allowlist** can stop a deploy: rsync answers
@@ -244,8 +313,11 @@ and that is a real limit rather than an oversight.**
   exported for a fifth. **This is the oldest unpaid debt in the web garden** and
   it grew again today. Nothing is broken by leaving it — it is the wrong name on
   the door — and the file's own comment at `makePlotStage` says so.
-- **`Organic` is 709 lines and holds five structures** (hedge, bench, roundel,
-  tree, plus the ground's outline and verges). The Knot Garden needed no sixth,
-  so the `Structures/` split is still only worth considering rather than due —
-  but the arc-following hedge above would be the sixth thing, and that is when
-  to do it.
+- **`Organic` is 727 lines and holds five structures** (hedge, bench, roundel,
+  tree, plus the ground's outline and verges). The curve turned out to be a
+  parameter on the hedge rather than a sixth structure, so the `Structures/`
+  split did not become due after all — but the file is longer again and nothing
+  else is coming that would make it shorter. **It is a mechanical move with no
+  behaviour in it**, which makes it a good commit to do on its own and a bad one
+  to fold into anything else. `private` members would have to become `internal`,
+  since Swift's `private` is file-scoped.
