@@ -13,8 +13,9 @@
 // shows three end to end; a bed is a rectangle you read across, and two of them
 // end to end read as one bed with a seam in it.
 //
-// **This is the one area page with something under the paragraph.** The other
-// five say what the area is and let the drawing say the rest, which works
+// **This is the one area page with a list of its own under the paragraph.**
+// Every area has the block saying what its plants mean (`meanings.js`); past
+// that, the others say what the area is and let the drawing say the rest, which works
 // because the drawing is the whole of what the rule did. Here it is not: a
 // drill's kind is the fact the area is built on, and `Organic.rowLabel` cannot
 // carry it — nothing is written on a label, because at this scale a word is four
@@ -27,6 +28,7 @@ import { describeSeedbed, drillAt, growSeedbedFromService, makeSeedbedGround, pl
 import { makeSky } from './sky.js';
 import { dressed, whenSettled } from './plain.js';
 import { openWays } from './gates.js';
+import { showGathers } from './meanings.js';
 
 const el = (id) => document.getElementById(id);
 const note = el('note');
@@ -39,6 +41,9 @@ const note = el('note');
 // its plants is exactly the page a reader needs a way out of.
 const THEME = 'beginnings';
 whenSettled((strings) => openWays(THEME, strings));
+// And what the plants here mean, under the paragraph. The same one word says
+// which row of `meanings.js` to read, so the block cannot name another area.
+whenSettled((strings) => showGathers(THEME, strings));
 
 const say = async (key) => {
   const strings = await dressed;

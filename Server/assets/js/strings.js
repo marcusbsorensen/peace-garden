@@ -295,6 +295,54 @@ export const EN = Object.freeze({
   // The Cold Frame could not be drawn.
   frameAway: "The Cold Frame cannot be reached just now.",
 
+  // What the plants in each area mean. **Every area gathers the plants of one
+  // theme, and the pages above say only how each is laid out**, so a reader
+  // standing in the Cold Frame was never told that what brought these plants
+  // here is waiting. One line apiece, under the area's paragraph, and again in
+  // the table at `/meanings`. `meanings.js` is the table both are drawn from.
+  //
+  // **Ten rather than seven**, because the table names every area, open or not.
+  //
+  // **Not the `sense` lines in `commission.py`**, though those were the start.
+  // Each of those lists the theme's three parts in prose — *how a seed goes, the
+  // road, and the far off* — and the block these sit in lists the three parts
+  // anyway, one row down. Said twice on one screen is once too many, as the bar
+  // found. So each of these says what the theme is *about*, in the words the
+  // project already gave it where it had some: *the earth, and the earth that is
+  // yours* is the Home Ground's reason for its name, and *kept rather than
+  // happened upon* is Marcus's reading of the Orchard.
+  //
+  // English only, like the area paragraphs, and falling back in silence.
+  meaningWaiting:
+    "Waiting: what is held back until its time, however long that is, and whoever keeps watch.",
+  meaningGround: "Ground: the earth a plant stands in, and the earth that is yours.",
+  meaningBeginnings: "Beginnings: the first thing a seed does, and how much comes of it.",
+  meaningRenewal: "Renewal: what is cut back and comes again, and what is mended.",
+  meaningTravel: "Travel: the ways a seed and a person go, and the pull of somewhere else.",
+  meaningPeace: "Peace: the quiet a garden is for, and the ease that comes with it.",
+  meaningKinship: "Kinship: what grows together, and the people kept rather than happened upon.",
+  meaningPattern: "Pattern: the order in living things, and the names given to order.",
+  meaningLight: "Light: what a plant turns towards, and the day it keeps time by.",
+  meaningMeeting: "Meeting: two coming together at the right moment, and what each owes the other.",
+  // The lookup at `/meanings`, and the link to it from every area page. The
+  // title is also the link's words, so the link says where it goes.
+  meaningsTitle: "What the names mean",
+  // **Says the rule and no more.** The worked example under it takes a name
+  // apart piece by piece, which is what makes the rule legible; a paragraph
+  // explaining it as well would be the same thing twice.
+  meaningsAbout:
+    "A plant's name says where it belongs. The start of its first word chooses the area it stands in, and the ending chooses which of that area's three parts the words under it come from.",
+  meaningsSecond:
+    "The second word names the one way a plant most differs from the rest of its genus. After a first word ending in -ynth it takes its masculine form, so rubra becomes ruber.",
+  // The heads of the two tables. `meaningsNames` is also the lead-in to the
+  // syllables on an area page. The three parts are headed by their endings,
+  // which are pieces of a name and need no words.
+  meaningsArea: "Area",
+  meaningsMeaning: "What it holds",
+  meaningsNames: "Names beginning",
+  meaningsWord: "Second word",
+  meaningsSays: "What it says of the plant",
+
   // Said once and used on both of the pages that are not built yet, because two
   // ways of saying *not yet* is one more than a reader needs.
   notYet: "Not open yet.",

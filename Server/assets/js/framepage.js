@@ -11,15 +11,18 @@
 // square you look into, and two of them side by side are eight frames in a
 // yard with no reason to be one plot rather than another.
 //
-// **Nothing under the paragraph.** The Seedbed writes its drills out because a
+// **No list under the paragraph.** The Seedbed writes its drills out because a
 // drill's kind cannot be drawn; here what claims a frame is a colour, and the
-// first buds of the young plants in it already show it.
+// first buds of the young plants in it already show it. What does sit under it
+// is the block every area has, saying what the plants here mean — see
+// `meanings.js`.
 import { loadModule } from './plant.js';
 import { makePlotStage } from './longwalk.js';
 import { growFrameFromService, makeFrameGround, plan } from './frame.js';
 import { makeSky } from './sky.js';
 import { dressed, whenSettled } from './plain.js';
 import { openWays } from './gates.js';
+import { showGathers } from './meanings.js';
 
 const el = (id) => document.getElementById(id);
 const note = el('note');
@@ -30,6 +33,9 @@ const note = el('note');
 // exactly the page a reader needs a way out of.
 const THEME = 'waiting';
 whenSettled((strings) => openWays(THEME, strings));
+// And what the plants here mean, under the paragraph. The same one word says
+// which row of `meanings.js` to read, so the block cannot name another area.
+whenSettled((strings) => showGathers(THEME, strings));
 
 const say = async (key) => {
   const strings = await dressed;

@@ -1,0 +1,226 @@
+<!doctype html>
+<!--
+  Front page, design B: the stage by day.
+
+  A prototype for Marcus to choose between, served only by the workbench at
+  /dev/front-b. Where design A is the garden at night, this is the app: one
+  plant on the stage the app gives it, lit by day, turning under a finger —
+  then how a plant comes to be, in three glyphs, and the garden as ten cards
+  that each say what gathers there.
+
+  It follows the reader's light or dark setting, as the front page does today;
+  it is drawn light first because design A is the night.
+
+  The plant is a demonstration meeting's child, grown here by the app's own
+  arithmetic. The words on the cards are the project's own attributions
+  (`tools/strings/commission.py` `sense`), English only while this is a
+  prototype.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Peace Garden — design B</title>
+<meta name="color-scheme" content="light dark" />
+<link rel="stylesheet" href="/assets/site.css" />
+<link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
+<style>
+  :root { --paper: #f3f1ec; --ink-b: #16150f; --soft: rgb(22 21 15 / 0.62); --line: rgb(22 21 15 / 0.16); }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #0b0b0a; --ink-b: #f4f2ec; --soft: rgb(244 242 236 / 0.66); --line: rgb(244 242 236 / 0.2); }
+  }
+  body { background: var(--paper); color: var(--ink-b); }
+  .fb { --gutter: clamp(16px, 5vw, 64px); --wide: 1180px; }
+  .fb-row { display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    max-inline-size: var(--wide); margin-inline: auto; padding-inline: var(--gutter); }
+  .fb-bar { padding-block: calc(env(safe-area-inset-top, 0px) + 18px) 14px; }
+  .fb-rule { max-inline-size: calc(var(--wide) - 2 * var(--gutter)); margin-inline: auto; block-size: 1px;
+    background: var(--line); border: 0; }
+  @media (max-width: 1180px) { .fb-rule { margin-inline: var(--gutter); } }
+  .fb-home { display: flex; align-items: center; gap: 12px; color: inherit; text-decoration: none;
+    font: 300 13px/1 var(--sans); letter-spacing: 0.12em; }
+  .fb-home img { inline-size: 36px; block-size: 36px; border-radius: 9px; }
+  .fb-link { color: var(--soft); font-size: 13px; text-decoration: none; }
+  .fb-pill { display: inline-flex; align-items: center; min-block-size: 46px; padding: 0 24px; border-radius: 999px;
+    border: 1px solid var(--ink-b); color: var(--ink-b); text-decoration: none;
+    font: 400 11px/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; transition: opacity 200ms; }
+  .fb-pill:hover { opacity: 0.75; }
+  .fb-pill--solid { background: var(--ink-b); color: var(--paper); }
+  .fb-pill--small { min-block-size: 34px; padding: 0 16px; border-color: var(--line); }
+
+  /* The stage: the words on one side, the plant on the other. */
+  .fb-hero { display: grid; grid-template-columns: 1fr 1.1fr; align-items: center; gap: 24px;
+    max-inline-size: var(--wide); margin-inline: auto; padding: clamp(24px, 6svh, 64px) var(--gutter) 0;
+    min-block-size: min(86svh, 820px); }
+  .fb-hero h1 { margin: 0 0 22px; font: 200 clamp(40px, 6.4vw, 84px)/1.0 var(--sans); letter-spacing: -0.015em;
+    text-wrap: balance; }
+  .fb-hero p { margin: 0 0 32px; max-inline-size: 26em; font: 300 17px/1.55 var(--sans); color: var(--soft); }
+  .fb-ways { display: flex; gap: 10px; flex-wrap: wrap; }
+  .fb-plant { position: relative; aspect-ratio: 4 / 5; max-block-size: 78svh; justify-self: center; inline-size: 100%; }
+  .fb-plant::before { content: ""; position: absolute; inset: 8% 4% 4%; border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(120 130 150 / 0.22), transparent); }
+  .fb-plant canvas { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; cursor: grab; }
+  .fb-hint { position: absolute; inset-inline: 0; inset-block-end: 2%; text-align: center;
+    font: 300 11px/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: var(--soft); }
+
+  /* Three beats, as the app's first run has them. */
+  .fb-beats { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 4vw, 56px);
+    max-inline-size: var(--wide); margin: clamp(48px, 10svh, 110px) auto; padding-inline: var(--gutter); }
+  .fb-beat svg { display: block; inline-size: 56px; block-size: 56px; margin-block-end: 18px; fill: none;
+    stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
+  .fb-beat h2 { margin: 0 0 6px; font: 300 12px/1.2 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; }
+  .fb-beat p { margin: 0; font: 300 15px/1.55 var(--sans); color: var(--soft); max-inline-size: 22em; }
+
+  /* The garden: ten cards, each its ground, its glyph and what gathers there. */
+  .fb-garden { max-inline-size: var(--wide); margin-inline: auto; padding: 0 var(--gutter); }
+  .fb-garden header { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-block-end: 22px; }
+  .fb-garden h2 { margin: 0; font: 200 clamp(28px, 3.6vw, 44px)/1.05 var(--sans); }
+  .fb-cards { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(200px, 1fr); gap: 14px;
+    overflow-x: auto; scroll-snap-type: x mandatory; padding-block-end: 12px; scrollbar-width: thin; }
+  @media (min-width: 1100px) { .fb-cards { grid-auto-flow: row; grid-template-columns: repeat(5, 1fr); } }
+  .fb-card { scroll-snap-align: start; display: grid; grid-template-rows: auto 1fr auto; gap: 10px;
+    aspect-ratio: 3 / 4; padding: 18px; border-radius: 20px; color: #fff; text-decoration: none;
+    background: var(--area-ground); transition: transform 240ms ease-out, filter 240ms; }
+  a.fb-card:hover { transform: translateY(-4px); filter: brightness(1.08); }
+  .fb-card svg { inline-size: 40px; block-size: 40px; fill: none; stroke: currentColor; stroke-width: 1.25;
+    stroke-linecap: round; stroke-linejoin: round; }
+  .fb-card p { margin: 0; align-self: end; font: 300 13px/1.45 var(--sans); color: rgb(255 255 255 / 0.86); }
+  .fb-card h3 { margin: 0; font: 400 11px/1.3 var(--sans); letter-spacing: 0.16em; text-transform: uppercase; }
+  .fb-card--closed { filter: saturate(0.3) brightness(0.62); }
+  .fb-card--closed h3::after { content: " · not open yet"; letter-spacing: 0.08em; text-transform: none; opacity: 0.7; }
+
+  .fb-foot { padding-block: 16px 40px; margin-block-start: 56px; }
+  @media (max-width: 760px) {
+    .fb-hero { grid-template-columns: 1fr; min-block-size: 0; }
+    .fb-plant { order: -1; max-inline-size: 440px; }
+    .fb-beats { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main class="fb">
+  <header class="fb-row fb-bar">
+    <a class="fb-home" href="/"><img src="/assets/icon.svg" alt="" />Peace Garden</a>
+    <a class="fb-pill fb-pill--small" href="/garden" data-s="gardenTitle"></a>
+  </header>
+  <hr class="fb-rule" />
+
+  <section class="fb-hero">
+    <div>
+      <h1 data-s="tagline"></h1>
+      <!-- New copy, English only while this is a prototype. -->
+      <p>Two phones touch and hand each other a seed. What grows is a plant neither could have grown alone, opening over real days.</p>
+      <div class="fb-ways">
+        <a class="fb-pill fb-pill--solid" href="/download" data-s="downloadTitle"></a>
+        <a class="fb-pill" href="/garden" data-s="gardenTitle"></a>
+      </div>
+    </div>
+    <div class="fb-plant">
+      <canvas id="plant" aria-label="A plant grown from a meeting"></canvas>
+      <span class="fb-hint" aria-hidden="true">Drag to turn</span>
+    </div>
+  </section>
+
+  <section class="fb-beats">
+    <div class="fb-beat">
+      <svg viewBox="0 0 56 56" aria-hidden="true"><path d="M9 14h14a3 3 0 0 1 3 3v24a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3V17a3 3 0 0 1 3-3ZM33 12h14a3 3 0 0 1 3 3v24a3 3 0 0 1-3 3H33a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3ZM26.5 24c1.2 1.4 1.2 3.6 0 5M29.5 22c2.2 2.6 2.2 6.4 0 9"/></svg>
+      <h2>Meet</h2>
+      <p>Two people touch phones, in the same room.</p>
+    </div>
+    <div class="fb-beat">
+      <svg viewBox="0 0 56 56" aria-hidden="true"><path d="M8 18c3-5 10-5 12 0s-3 9-6 9-8-4-6-9ZM8 42c3-5 10-5 12 0s-3 9-6 9-8-4-6-9ZM22 22c8 2 12 4 14 6M22 46c8-2 12-6 14-12M40 30c4-6 12-5 12 2s-6 10-9 10-5-6-3-12Z"/></svg>
+      <h2>Cross</h2>
+      <p>Each hands the other a seed, and the two seeds cross.</p>
+    </div>
+    <div class="fb-beat">
+      <svg viewBox="0 0 56 56" aria-hidden="true"><path d="M8 48h40M28 48V22M28 34c-7 0-11-4-12-10 7 0 11 4 12 10ZM28 28c1-7 5-11 12-12 0 7-5 11-12 12ZM40 10a4 4 0 1 0 8 0M44 3v2"/></svg>
+      <h2>Grow</h2>
+      <p>A plant neither could have grown alone opens over real days.</p>
+    </div>
+  </section>
+
+  <section class="fb-garden">
+    <header>
+      <h2 data-s="gardenTitle"></h2>
+      <a class="fb-pill fb-pill--small" href="/meanings">What the areas mean</a>
+    </header>
+    <nav class="fb-cards" id="cards"></nav>
+  </section>
+
+  <hr class="fb-rule" style="margin-block-start: 56px" />
+  <footer class="fb-row fb-foot">
+    <a class="fb-link" href="/privacy" data-s="privacyTitle"></a>
+    <label class="chooser">
+      <span class="label" id="language-label"></span>
+      <span class="chooser__field"><select id="language" class="chooser__select"></select></span>
+    </label>
+  </footer>
+</main>
+
+<script type="module" src="/assets/js/plain.js"></script>
+<script type="module">
+  import { loadModule, takeResult, decode, makeStage } from '/assets/js/plant.js';
+  import { AREAS } from '/assets/js/garden.js';
+  import { AREA_KEYS } from '/assets/js/strings.js';
+  import { BUILT, LOOK } from '/assets/js/gates.js';
+  import { whenSettled } from '/assets/js/plain.js';
+
+  // What gathers in each area: the project's own one-line meanings, from
+  // `tools/strings/commission.py`. English only in this prototype.
+  const SENSE = {
+    waiting: 'Being held back until the time is right — and standing and watching while it is not.',
+    ground: 'The soil itself, the place you are from, and a place somebody keeps.',
+    beginnings: 'The first act, the small becoming large, and what a start settles.',
+    renewal: 'Cutting so that it grows back, the turning year, and being made whole.',
+    travel: 'How a seed goes, the road, and the far off.',
+    peace: 'Quiet as a sound, the words for stopping, and being at ease.',
+    kinship: 'Things grown together, the words for kin, and two people.',
+    pattern: 'The counted, the fitted-together, and order named.',
+    light: 'The edges of the day, reading the light, and light itself.',
+    meeting: 'The moment, two that need each other, and the manners of it.',
+  };
+
+  const query = new URLSearchParams(location.search);
+  const e = await loadModule(`/plant.wasm?dev=${Date.now()}`);
+  const grow = (words, hybrid) => {
+    const bytes = new TextEncoder().encode(words);
+    const at = e.pg_alloc(bytes.length);
+    new Uint8Array(e.memory.buffer, at, bytes.length).set(bytes);
+    const length = hybrid ? e.pg_grow_hybrid(at, bytes.length) : e.pg_grow(at, bytes.length);
+    e.pg_free(at);
+    return length ? decode(takeResult(e, length)) : null;
+  };
+  const n = parseInt(query.get('meeting') ?? '3', 10);
+  const words = new TextDecoder().decode(takeResult(e, e.pg_front_meeting(n)));
+  makeStage(document.getElementById('plant')).show(grow(words, true));
+
+  const SVG = 'http://www.w3.org/2000/svg';
+  whenSettled((strings) => {
+    const cards = document.getElementById('cards');
+    cards.replaceChildren();
+    // Open areas first, in map order, then the three still to come.
+    const order = [...AREAS].sort((p, q) =>
+      (BUILT[q.theme] ? 1 : 0) - (BUILT[p.theme] ? 1 : 0) || p.y - q.y || p.x - q.x);
+    for (const area of order) {
+      const href = BUILT[area.theme];
+      const card = document.createElement(href ? 'a' : 'div');
+      card.className = href ? 'fb-card' : 'fb-card fb-card--closed';
+      if (href) card.href = href;
+      card.style.setProperty('--area-ground', LOOK[area.theme].ground);
+      const svg = document.createElementNS(SVG, 'svg');
+      svg.setAttribute('viewBox', '0 0 20 20');
+      svg.setAttribute('aria-hidden', 'true');
+      const path = document.createElementNS(SVG, 'path');
+      path.setAttribute('d', LOOK[area.theme].glyph);
+      svg.append(path);
+      const sense = document.createElement('p');
+      sense.textContent = SENSE[area.theme];
+      const name = document.createElement('h3');
+      name.textContent = strings.t(AREA_KEYS[area.theme]);
+      card.append(svg, sense, name);
+      cards.append(card);
+    }
+  });
+</script>
+</body>
+</html>

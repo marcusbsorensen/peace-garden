@@ -17,6 +17,7 @@ import { makePlotStage, growFromService } from './longwalk.js';
 import { makeSky } from './sky.js';
 import { dressed, whenSettled } from './plain.js';
 import { openWays } from './gates.js';
+import { showGathers } from './meanings.js';
 
 // Three plots at a time: the one in front of the reader and its neighbours
 // either side, which is as much as fits on a phone held upright and is the
@@ -34,6 +35,9 @@ const note = el('note');
 // its plants is exactly the page a reader needs a way out of.
 const THEME = 'travel';
 whenSettled((strings) => openWays(THEME, strings));
+// And what the plants here mean, under the paragraph. The same one word says
+// which row of `meanings.js` to read, so the block cannot name another area.
+whenSettled((strings) => showGathers(THEME, strings));
 
 // The words arrive with `plain.js`, which settles a language over the network,
 // so this page can be running before there is anything to say it in.

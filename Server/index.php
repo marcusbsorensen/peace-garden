@@ -83,6 +83,9 @@ const ROUTES = [
     // something other than what they will be: young, under glass, placed by
     // the height they will grow to.
     '/frame' => ['frame', 'text/html; charset=utf-8'],
+    // What the names mean, on 23 September: the table every area page links
+    // to, saying what brings a plant to each area and what its two words say.
+    '/meanings' => ['meanings', 'text/html; charset=utf-8'],
     '/t' => ['t', 'text/html; charset=utf-8'],
     // A privacy notice is a mandatory App Store listing field, so this path is
     // load-bearing for the submission rather than decorative. See

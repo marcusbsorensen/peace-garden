@@ -1,0 +1,247 @@
+<!doctype html>
+<!--
+  Front page, design A: the garden at night.
+
+  A prototype for Marcus to choose between, served only by the workbench at
+  /dev/front-a. It uses the site's own stylesheet, strings and plant module, so
+  what it draws is the real garden rather than a picture of one.
+
+  **Everything on it is real.** The diorama is the ten areas five by two, as
+  `garden.js` lays them out, each standing on the ground its page draws and
+  each open one holding its ambassador, grown here from the seed the plot
+  service serves. The meeting below it is a demonstration: two parents minted
+  from fixed words, and the child the app would grow from them.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Peace Garden — design A</title>
+<meta name="color-scheme" content="dark" />
+<link rel="stylesheet" href="/assets/site.css" />
+<link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
+<style>
+  body.night { background: #000; }
+  .fa { --gutter: clamp(16px, 5vw, 56px); --wide: 1100px; color: var(--ink); }
+  .fa-bar, .fa-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    max-inline-size: var(--wide); margin-inline: auto; padding-inline: var(--gutter); }
+  .fa-bar { position: absolute; inset-inline: 0; inset-block-start: 0; z-index: 3;
+    padding-block: calc(env(safe-area-inset-top, 0px) + 18px) 14px; }
+  .fa-bar::after, .fa-foot::before { content: ""; position: absolute; inset-inline: var(--gutter);
+    block-size: 1px; background: var(--hairline); }
+  .fa-bar::after { inset-block-end: 0; }
+  .fa-foot { position: relative; margin-block: 72px 0; padding-block: 16px 40px; }
+  .fa-foot::before { inset-block-start: 0; }
+  .fa-home { display: flex; align-items: center; gap: 12px; color: inherit; text-decoration: none; }
+  .fa-home .mark { inline-size: 36px; block-size: 36px; border-radius: 9px; }
+  .fa-foot a { color: var(--faint); font-size: 13px; text-decoration: none; }
+
+  /* The hero: the diorama fills the first screen, the sky behind it. */
+  .fa-hero { position: relative; block-size: min(100svh, 900px); min-block-size: 560px; overflow: hidden; }
+  .fa-hero canvas { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; }
+  .fa-hero .pool { position: absolute; inset: 0;
+    background: radial-gradient(ellipse 55% 42% at 50% 50%, rgb(255 255 255 / 0.07), transparent 70%); }
+  .fa-words { position: absolute; z-index: 2; inset-inline: var(--gutter); inset-block-end: clamp(28px, 7svh, 72px);
+    max-inline-size: calc(var(--wide) - 2 * var(--gutter)); margin-inline: auto;
+    display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 20px; }
+  .fa-tagline { margin: 0; max-inline-size: 12ch; font: 200 clamp(34px, 5.4vw, 64px)/1.05 var(--sans);
+    letter-spacing: -0.005em; text-wrap: balance; }
+  .fa-ways { display: flex; gap: 10px; flex-wrap: wrap; }
+  .fa-pill { display: inline-flex; align-items: center; min-block-size: 44px; padding: 0 22px; border-radius: 999px;
+    border: 1px solid rgb(255 255 255 / 0.4); color: inherit; text-decoration: none;
+    font: 400 11px/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase;
+    backdrop-filter: blur(6px); background: rgb(0 0 0 / 0.3); transition: background 200ms, border-color 200ms; }
+  .fa-pill:hover { border-color: #fff; background: rgb(255 255 255 / 0.08); }
+  .fa-pill--solid { background: #fff; color: #000; border-color: #fff; }
+  .fa-pill--solid:hover { background: rgb(255 255 255 / 0.86); }
+
+  /* Two seeds, one plant: nothing but the three plants and two signs. */
+  .fa-meeting { display: grid; grid-template-columns: 1fr auto 1fr auto 1.5fr; align-items: center;
+    gap: clamp(4px, 2vw, 24px); padding: clamp(56px, 12svh, 120px) var(--gutter) 0;
+    max-inline-size: var(--wide); margin-inline: auto; }
+  .fa-meeting canvas { inline-size: 100%; aspect-ratio: 3 / 4; display: block; touch-action: pan-y; }
+  .fa-meeting .op { font: 200 clamp(24px, 4vw, 44px)/1 var(--sans); color: rgb(255 255 255 / 0.4); }
+  .fa-note { text-align: center; margin: 8px auto 0; padding-inline: var(--gutter); max-inline-size: 30em; }
+
+  /* The map, large: each area its ground and its glyph, its name under. */
+  .fa-map { padding: clamp(64px, 14svh, 140px) var(--gutter) 0; max-inline-size: var(--wide); margin-inline: auto; }
+  .fa-map h2 { margin: 0 0 28px; text-align: center; }
+  .fa-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(8px, 1.4vw, 16px); }
+  .fa-tile { display: grid; grid-template-rows: 1fr auto; aspect-ratio: 1 / 1.05; border-radius: 18px;
+    color: #fff; text-decoration: none; background: var(--area-ground);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08); transition: transform 240ms ease-out, filter 240ms; }
+  a.fa-tile:hover { transform: translateY(-3px); filter: brightness(1.1); }
+  .fa-tile svg { place-self: center; inline-size: 36%; block-size: auto; margin-block-start: 14%; fill: none;
+    stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
+  .fa-tile span { padding: 0 10px 14px; text-align: center; font: 300 12px/1.25 var(--sans); letter-spacing: 0.03em; }
+  .fa-tile--closed { filter: saturate(0.25) brightness(0.5); }
+  .fa-more { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-block-start: 28px; }
+  .fa-more .fa-pill { backdrop-filter: none; background: transparent; }
+
+  @media (max-width: 620px) {
+    .fa-grid { grid-template-columns: repeat(2, 1fr); }
+    .fa-meeting { grid-template-columns: 1fr auto 1fr; }
+    .fa-meeting .op--eq { display: none; }
+    .fa-meeting figure:last-of-type { grid-column: 1 / -1; inline-size: 70%; margin-inline: auto; }
+  }
+  .fa-meeting figure { margin: 0; }
+</style>
+</head>
+<body class="night">
+<main class="fa">
+  <header class="fa-bar">
+    <a class="fa-home" href="/"><img class="mark" src="/assets/icon.svg" alt="" /><span class="wordmark">Peace Garden</span></a>
+    <a class="quiet-button" href="/garden" data-s="gardenTitle"></a>
+  </header>
+
+  <section class="fa-hero">
+    <canvas id="sky" aria-hidden="true"></canvas>
+    <div class="pool"></div>
+    <canvas id="stage" aria-hidden="true"></canvas>
+    <div class="fa-words">
+      <h1 class="fa-tagline" data-s="tagline"></h1>
+      <div class="fa-ways">
+        <a class="fa-pill fa-pill--solid" href="/garden" data-s="gardenTitle"></a>
+        <a class="fa-pill" href="/download" data-s="downloadTitle"></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="fa-meeting" aria-hidden="true">
+    <figure><canvas id="parent-a"></canvas></figure>
+    <span class="op">+</span>
+    <figure><canvas id="parent-b"></canvas></figure>
+    <span class="op op--eq">=</span>
+    <figure><canvas id="child"></canvas></figure>
+  </section>
+  <!-- New copy, English only while this is a prototype. -->
+  <p class="body fa-note">Two phones touch and hand each other a seed. What grows is a plant neither could have grown alone.</p>
+
+  <section class="fa-map">
+    <h2 class="label" data-s="gardenTitle"></h2>
+    <nav class="fa-grid" id="map"></nav>
+    <div class="fa-more">
+      <a class="fa-pill" href="/meanings">What the areas mean</a>
+      <a class="fa-pill" href="/wild" data-s="wildTitle"></a>
+    </div>
+  </section>
+
+  <footer class="fa-foot">
+    <a href="/privacy" data-s="privacyTitle"></a>
+    <label class="chooser">
+      <span class="label" id="language-label"></span>
+      <span class="chooser__field"><select id="language" class="chooser__select"></select></span>
+    </label>
+  </footer>
+</main>
+
+<script type="module" src="/assets/js/plain.js"></script>
+<script type="module">
+  import { loadModule, takeResult, decode, makeStage } from '/assets/js/plant.js';
+  import { makePlotStage, COLOUR, hash, readOutline } from '/assets/js/longwalk.js';
+  import { AREAS } from '/assets/js/garden.js';
+  import { AREA_KEYS } from '/assets/js/strings.js';
+  import { BUILT, LOOK } from '/assets/js/gates.js';
+  import { makeSky } from '/assets/js/sky.js';
+  import { whenSettled } from '/assets/js/plain.js';
+
+  const query = new URLSearchParams(location.search);
+  const e = await loadModule(`/plant.wasm?dev=${Date.now()}`);
+  const SVG = 'http://www.w3.org/2000/svg';
+
+  // The map's colours are the ground as seen; the stage wants it before the
+  // sun reaches it.
+  const albedo = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255 / 1.25);
+
+  // MARK: The diorama — ten slabs of ground, five by two.
+  const TILE = 0.9, PITCH = 1.04;
+  const centreOf = (a) => [(a.x - 2) * PITCH, (a.y - 0.5) * PITCH * 1.08];
+  function buildDiorama(farSide, span, e) {
+    const positions = [], normals = [], colours = [];
+    const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
+    const tri = (a, b, c, n, col) => { vertex(a, n, col); vertex(b, n, col); vertex(c, n, col); };
+    AREAS.forEach((area, k) => {
+      const [cx, cz] = centreOf(area);
+      const open = Boolean(BUILT[area.theme]);
+      let base = albedo(LOOK[area.theme].ground);
+      if (!open) { const g = (base[0] + base[1] + base[2]) / 3; base = base.map((v) => (v * 0.3 + g * 0.7) * 0.55); }
+      const outline = readOutline(e, TILE, TILE, 401 + k * 17);
+      const n = outline.length;
+      for (let i = 0; i < n; i++) {
+        const a = outline[i], b = outline[(i + 1) % n];
+        const tone = 0.94 + 0.12 * hash(k * 97 + i);
+        tri([cx, 0, cz], [cx + a[0], 0, cz + a[1]], [cx + b[0], 0, cz + b[1]], [0, 1, 0], base.map((v) => v * tone));
+      }
+      const depth = 0.16 + 0.05 * hash(k * 31);
+      const side = open ? COLOUR.earth : COLOUR.earth.map((v) => v * 0.6);
+      for (let i = 0; i < n; i++) {
+        const a = outline[i], b = outline[(i + 1) % n];
+        const dx = b[0] - a[0], dz = b[1] - a[1], l = Math.hypot(dx, dz) || 1;
+        const nn = [dz / l, 0, -dx / l];
+        const A = [cx + a[0], 0, cz + a[1]], B = [cx + b[0], 0, cz + b[1]];
+        const C = [cx + b[0], -depth, cz + b[1]], D = [cx + a[0], -depth, cz + a[1]];
+        tri(A, B, C, nn, side); tri(A, C, D, nn, side.map((v) => v * 0.8));
+      }
+    });
+    return { positions: new Float32Array(positions), normals: new Float32Array(normals), colours: new Float32Array(colours) };
+  }
+
+  const stage = makePlotStage(document.getElementById('stage'), 0.8, e, buildDiorama);
+  let sky = null;
+  makeSky(document.getElementById('sky'), { quarterTurns: () => stage.turn(), keepClear: () => [] })
+    .then((made) => { sky = made; }).catch(() => {});
+
+  const grow = (words, hybrid) => {
+    const bytes = new TextEncoder().encode(words);
+    const at = e.pg_alloc(bytes.length);
+    new Uint8Array(e.memory.buffer, at, bytes.length).set(bytes);
+    const length = hybrid ? e.pg_grow_hybrid(at, bytes.length) : e.pg_grow(at, bytes.length);
+    e.pg_free(at);
+    return length ? decode(takeResult(e, length)) : null;
+  };
+
+  // MARK: Two seeds, one plant — a demonstration meeting, grown here.
+  const n = parseInt(query.get('meeting') ?? '3', 10);
+  const [child, a, b, meeting] = new TextDecoder().decode(takeResult(e, e.pg_front_meeting(n))).split(' ');
+  makeStage(document.getElementById('parent-a')).show(grow(a, false));
+  makeStage(document.getElementById('parent-b')).show(grow(b, false));
+  makeStage(document.getElementById('child')).show(grow([child, a, b, meeting].join(' '), true));
+
+  // MARK: The map, in the reader's language.
+  whenSettled((strings) => {
+    const map = document.getElementById('map');
+    map.replaceChildren();
+    for (const area of [...AREAS].sort((p, q) => p.y - q.y || p.x - q.x)) {
+      const href = BUILT[area.theme];
+      const tile = document.createElement(href ? 'a' : 'span');
+      tile.className = href ? 'fa-tile' : 'fa-tile fa-tile--closed';
+      if (href) tile.href = href;
+      tile.style.setProperty('--area-ground', LOOK[area.theme].ground);
+      const svg = document.createElementNS(SVG, 'svg');
+      svg.setAttribute('viewBox', '0 0 20 20');
+      svg.setAttribute('aria-hidden', 'true');
+      const path = document.createElementNS(SVG, 'path');
+      path.setAttribute('d', LOOK[area.theme].glyph);
+      svg.append(path);
+      const name = document.createElement('span');
+      name.textContent = strings.t(AREA_KEYS[area.theme]);
+      tile.append(svg, name);
+      map.append(tile);
+    }
+  });
+
+  // Each open area's ambassador, from the service: the first planting of plot
+  // 0 that nobody crossed.
+  for (const area of AREAS) {
+    const path = BUILT[area.theme];
+    if (!path) continue;
+    try {
+      const { plantings } = await (await fetch(`/api${path}/plot/0`)).json();
+      const one = plantings.find((p) => !(p.parents ?? []).length);
+      const grown = one && grow(one.seed, false);
+      if (grown) { const [cx, cz] = centreOf(area); stage.add(cx, cz, grown); stage.draw(); }
+    } catch { /* an area the service cannot answer for stands empty */ }
+  }
+</script>
+</body>
+</html>

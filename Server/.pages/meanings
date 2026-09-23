@@ -1,0 +1,120 @@
+<!doctype html>
+<!--
+  What the names mean.
+
+  **The garden's ten areas each gather the plants of one theme, and a plant's
+  name is what says which.** The head of the genus carries the theme, the ending
+  of the genus carries which of the theme's three parts the words under the
+  plant are drawn from, and the second word says the one way the plant most
+  departs from its genus. None of that was written anywhere a reader could find
+  it; it was in docs/NAMES-AND-THEMES.md, `Epithet.swift` and a comment in
+  `Areas.swift`. This is the table a reader looks it up in.
+
+  **Drawn, not written out.** Both tables come from `meanings.js`, which the
+  block under every area's paragraph is drawn from too, so the short account on
+  an area page and the long one here are one table read twice. Each area page
+  links to its own row, `/meanings#waiting` and so on.
+
+  Follows the reader's system, light or dark, as the other pages of words do.
+  An area page is a night because it is lit by its own sky; this page has none.
+
+  No `noindex`: it publishes no plant anybody grew, only the key to reading
+  one, which is the reason `/g` and the areas carry it. Static, like the rest:
+  no analytics, no font CDN, no third-party anything.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Peace Garden — what the names mean</title>
+    <meta name="description" content="What brings a plant to each of the garden's ten areas, and what the two words of its name say about it." />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/icon-180.png" />
+  </head>
+
+  <body>
+    <div class="pool" aria-hidden="true"></div>
+
+    <main class="page meanings-page" id="page">
+      <!--
+        The bar. On every page of the site, and the only way between any two of
+        them that is not a link somebody happened to put in a paragraph.
+        `site.css` §The bar says why it is the masthead with two things added
+        rather than a header of its own.
+      -->
+      <header class="masthead bar">
+        <a class="bar__home" href="/">
+          <img class="mark" src="/assets/icon.svg" alt="" width="44" height="44" />
+          <span class="wordmark">Peace Garden</span>
+        </a>
+        <span class="bar__ways">
+          <a class="quiet-button" href="/garden" data-s="gardenTitle"></a>
+        </span>
+      </header>
+
+      <h1 class="heading" data-s="meaningsTitle"></h1>
+      <p class="body" data-s="meaningsAbout"></p>
+
+      <!--
+        One name, taken apart: each piece of it, and what that piece says. It
+        is read back through `passages.js` by `meanings.js`, so it is filed by
+        the same rule the passage under a real plant is.
+      -->
+      <figure class="meanings-example" id="example" hidden></figure>
+
+      <!--
+        The ten themes. A table because it is one: ten rows that are read
+        across and compared down. On a phone each row becomes a short stack
+        with its headings beside the cells, rather than a table the reader has
+        to scroll sideways through — see site.css §What the names mean.
+      -->
+      <div class="meanings-scroll">
+        <table class="meanings-table meanings-themes">
+          <thead id="themes-head"></thead>
+          <tbody id="themes-body"></tbody>
+        </table>
+      </div>
+
+      <p class="body" data-s="meaningsSecond"></p>
+
+      <div class="meanings-scroll">
+        <table class="meanings-table meanings-epithets">
+          <thead id="epithets-head"></thead>
+          <tbody id="epithets-body"></tbody>
+        </table>
+      </div>
+
+      <!--
+        The foot mirrors the bar: one hairline, above it here where the
+        bar's is below, and a row of two things at opposite ends — the
+        privacy notice where the mark stands, the language where the way back
+        to the garden does.
+      -->
+      <footer class="foot bar-foot">
+        <a class="bar-foot__link" href="/privacy" data-s="privacyTitle"></a>
+        <label class="chooser">
+          <span class="label" id="language-label"></span>
+          <span class="chooser__field">
+            <select id="language" class="chooser__select"></select>
+            <!-- Monoline, even weight, round free ends, per BRAND.md §3.2. -->
+            <svg class="chooser__mark" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path
+                d="M4 6.5 L8 10.5 L12 6.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.25"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+        </label>
+      </footer>
+    </main>
+
+    <script type="module" src="/assets/js/plain.js"></script>
+    <script type="module" src="/assets/js/meaningspage.js"></script>
+  </body>
+</html>

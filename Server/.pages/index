@@ -154,11 +154,15 @@
         </p>
       </section>
 
-      <p class="notice body">
-        <a href="/privacy" data-s="privacyTitle"></a>
-      </p>
 
-      <footer class="foot">
+      <!--
+        The foot mirrors the bar: one hairline, above it here where the
+        bar's is below, and a row of two things at opposite ends — the
+        privacy notice where the mark stands, the language where the way back
+        to the garden does.
+      -->
+      <footer class="foot bar-foot">
+        <a class="bar-foot__link" href="/privacy" data-s="privacyTitle"></a>
         <label class="chooser">
           <span class="label" id="language-label"></span>
           <span class="chooser__field">

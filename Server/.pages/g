@@ -161,9 +161,23 @@
       -->
       <p class="garden-foot">
         <button class="quiet-button" type="button" id="random" data-s="random"></button>
+        <!--
+          The key to the map: what brings a plant to each area, and what its
+          name says. Beside the one other thing at the foot of the garden, and
+          in the same capsule, because both are ways of looking at the whole
+          of it rather than at one place in it.
+        -->
+        <a class="quiet-button" href="/meanings" data-s="meaningsTitle"></a>
       </p>
 
-      <footer class="foot">
+      <!--
+        The foot mirrors the bar: one hairline, above it here where the
+        bar's is below, and a row of two things at opposite ends — the
+        privacy notice where the mark stands, the language where the way back
+        to the garden does.
+      -->
+      <footer class="foot bar-foot">
+        <a class="bar-foot__link" href="/privacy" data-s="privacyTitle"></a>
         <label class="chooser">
           <span class="label" id="language-label"></span>
           <span class="chooser__field">

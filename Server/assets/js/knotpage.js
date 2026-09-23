@@ -18,6 +18,7 @@ import { growKnotFromService, makeKnotGround, plan } from './knot.js';
 import { makeSky } from './sky.js';
 import { dressed, whenSettled } from './plain.js';
 import { openWays } from './gates.js';
+import { showGathers } from './meanings.js';
 
 const el = (id) => document.getElementById(id);
 const note = el('note');
@@ -30,6 +31,9 @@ const note = el('note');
 // its plants is exactly the page a reader needs a way out of.
 const THEME = 'pattern';
 whenSettled((strings) => openWays(THEME, strings));
+// And what the plants here mean, under the paragraph. The same one word says
+// which row of `meanings.js` to read, so the block cannot name another area.
+whenSettled((strings) => showGathers(THEME, strings));
 
 const say = async (key) => {
   const strings = await dressed;

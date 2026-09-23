@@ -13,7 +13,7 @@
 // it can be checked with no browser and no site, and a table of paths on this
 // website has no business in it. `walk.js` reads `BUILT` from here too, so the
 // hub and the map at the foot of an area cannot come to disagree about which
-// six are open.
+// seven are open.
 
 import { AREA_KEYS } from "./strings.js";
 import { AREAS, areaFor } from "./garden.js";
@@ -30,6 +30,63 @@ export const BUILT = Object.freeze({
   pattern: "/knot",
   beginnings: "/seedbed",
   waiting: "/frame",
+});
+
+/// What each area looks like on the map: the colour of its ground, and a glyph
+/// of its layout.
+///
+/// **The ground is the colour its page draws it**, lit: `COLOUR` in
+/// `longwalk.js` is an albedo, and a plot on screen comes out about a quarter
+/// brighter than it under the garden's midday, so these are those values
+/// brought up to what the eye sees on the slab. Four areas stand on grass and
+/// are green here, which is true of them; the glyph is what tells them apart.
+/// The three not built yet are given the ground their layouts name — a woodland
+/// floor, glasshouse tiles, the dark soil of a kitchen garden — so the map is
+/// already the garden it will be.
+///
+/// **A glyph is the one shape each layout is known by**, drawn to BRAND.md §3.2
+/// as the pad's are: monoline, even weight, round free ends, on a 20-unit grid.
+/// A dot is a stroke of no length, which a round cap draws as a dot. Nothing is
+/// written in a cell, for the reason the cells are unnamed on the page: at this
+/// size a word would be the loudest thing there. Glyphs do not mirror under a
+/// right-to-left language — a cold frame is higher at its back whichever way a
+/// page is read.
+const ring = (cx, cy, r) =>
+  `M${cx - r} ${cy}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
+const dot = (x, y) => `M${x} ${y}h0`;
+
+export const LOOK = Object.freeze({
+  // A frame seen from its end: the ground, a low front, a high back, and the
+  // light resting on the back and propped at the front, with a seedling under it.
+  waiting: { ground: "#968b78",
+    glyph: "M2.5 16H17.5M4.5 16V12.5M15.5 16V8.2M15.8 7.4L4 9.8M10 16V13.4M10 14.2c1.3-.2 2-.9 2.2-2" },
+  // Two beds either side of a path, crops in rows across them.
+  ground: { ground: "#4d3b2c",
+    glyph: `M3 4H8.5V16H3ZM11.5 4H17V16H11.5Z${dot(5.75, 7.5)}${dot(5.75, 10)}${dot(5.75, 12.5)}${dot(14.25, 7.5)}${dot(14.25, 10)}${dot(14.25, 12.5)}` },
+  // Three drills, and the label at the head of them.
+  beginnings: { ground: "#6a5641",
+    glyph: "M7.5 6H17M7.5 10H17M7.5 14H17M4 16.5V8.5M2.6 8.9L4.9 5.6" },
+  // A stool with its poles, new wood fanning from an old cut.
+  renewal: { ground: "#5e4a33",
+    glyph: "M6 16.5H14M10 16.5V3.5M10 16.5L5.8 5M10 16.5L14.2 5M8 16.5L3.5 9M12 16.5L16.5 9" },
+  // A walk seen down its length: two borders drawing together.
+  travel: { ground: "#5b6648",
+    glyph: "M3 17.5L8.7 2.5M17 17.5L11.3 2.5" },
+  // An enclosure: a hedge round, one tree, one bench.
+  peace: { ground: "#56654a",
+    glyph: `M5.5 3.5H14.5A2 2 0 0 1 16.5 5.5V14.5A2 2 0 0 1 14.5 16.5H5.5A2 2 0 0 1 3.5 14.5V5.5A2 2 0 0 1 5.5 3.5Z${ring(7.8, 7.8, 1.8)}M11 13.2H13.8` },
+  // Five trees on a quincunx.
+  kinship: { ground: "#66704a",
+    glyph: `${ring(5, 5, 1.7)}${ring(15, 5, 1.7)}${ring(10, 10, 1.7)}${ring(5, 15, 1.7)}${ring(15, 15, 1.7)}` },
+  // A square and a diamond woven through each other: the oldest knot there is.
+  pattern: { ground: "#968b78",
+    glyph: "M5 5H15V15H5ZM10 2.5L17.5 10L10 17.5L2.5 10Z" },
+  // A glasshouse end-on: a pitched roof and its glazing bars.
+  light: { ground: "#8a5a43",
+    glyph: "M2.5 16.5H17.5M3.5 16.5V9L10 3.5L16.5 9V16.5M10 3.5V16.5M6.7 6.3V16.5M13.3 6.3V16.5" },
+  // Four paths meeting at a round of paving.
+  meeting: { ground: "#5b6648",
+    glyph: `${ring(10, 10, 2.8)}M10 2.5V7.2M10 12.8V17.5M2.5 10H7.2M12.8 10H17.5` },
 });
 
 /// The bar's link back to the hub, from an area.
@@ -94,6 +151,9 @@ function drawMap(map, theme, strings) {
     cell.className = "minimap__cell";
     cell.style.gridColumn = String(area.x + 1);
     cell.style.gridRow = String(area.y + 1);
+    const look = LOOK[area.theme];
+    cell.style.setProperty("--area-ground", look.ground);
+    cell.append(glyph(look.glyph));
 
     if (!href) {
       cell.classList.add("minimap__cell--closed");
@@ -117,4 +177,18 @@ function drawMap(map, theme, strings) {
     map.append(cell);
   }
   map.hidden = false;
+}
+
+/// One area's glyph, drawn as the pad's are and hidden from a screen reader:
+/// the cell carries the area's name, and the drawing says nothing more.
+function glyph(d) {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "minimap__glyph");
+  svg.setAttribute("viewBox", "0 0 20 20");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", d);
+  svg.append(path);
+  return svg;
 }
