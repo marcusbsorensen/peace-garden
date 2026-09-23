@@ -38,7 +38,13 @@ The eighth area. Its three questions were put to Marcus on 23 September, after m
 
 **He chose the Glasshouse**, and all three answers: staging and a border for the tallest; thirty-two a plot (twenty-four pots two deep on the staging, a border of eight); **a spectrum of colour along the staging**, each place a band of hue and a pot taking the free place nearest its own. `docs/WEB-GARDENS.md` §*The Glasshouse, chosen* has the long version.
 
-**Next: simulate the fill in a scratch test before writing the rule.** Use `light` plants only, as `ColdFrameTests` does for `waiting`. Measure three things: the border cut (about the 75th centile, near 1.26 m), how the spectrum fills (pale plants have no hue), and how a border plant is ordered. If the spectrum fills poorly, take it back to Marcus before building.
+**The fill is simulated and the spectrum holds** (`docs/WEB-GARDENS.md` §*The fill, simulated*):
+- The circle is cut in the empty green arc at about 114°.
+- Twelve bands of equal share, not equal width. A pot looks for its own band in every open plot, then one place off, then opens a new plot. Pale plants take any free place.
+- On a fresh sample: 87% held, 86% of pots in their own band, none more than one place off.
+- The border cut is the Orchard's 1.30 (p75 measured 1.294).
+- Hue is exact, so it needs no tolerance. It must become a fourth trait, carried by both arrival paths like the kind.
+- Still open: how the border is ordered.
 
 ## Traps, new today
 - **The WebAssembly suite needs the swift.org toolchain, not Xcode's.** The command in `ff3f8e5`'s handover calls plain `swift`, which is Xcode's here, and it crashes with *No available targets are compatible with triple "wasm32-unknown-wasip1"*. Use:

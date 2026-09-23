@@ -731,6 +731,38 @@ Marcus's three answers:
    it must settle: where pale plants go, since they have no hue; and how a
    border plant is ordered, since the spectrum is the staging's.
 
+### The fill, simulated
+
+23 September, before any rule was written. 500 `light` plants (3,930 crossings),
+twelve positions along the staging with two pots at each, a border of eight.
+
+- **Plants of this area avoid green.** Hues from 100° to 140° hold two plants
+  in five hundred, so the circle is cut there: the bench runs from blue-green
+  through blue, violet, magenta, red, orange and yellow, and its two ends are
+  the colour flowers are least often. Nineteen plants in five hundred are pale
+  and have no hue.
+- **Bands of equal width fill badly.** Hue is not spread evenly, so the
+  crowded bands open new plots while others stand empty: 68% held if a pot must
+  have its own band, 82% if it may stand one place off.
+- **Bands of equal share fill well.** Each position stands for a twelfth of the
+  plants rather than a twelfth of the circle. Plant by plant, a pot looks for
+  its own band in every open plot first, then one place off, then opens a new
+  plot. Pale plants take any free place.
+  - **Measured on a fresh 500 the bands were not fitted to: 18 plots, 87% of
+    places held, the staging 92% full, 86% of pots in their own band and none
+    more than one place off.** On the sample the bands were fitted to it was 98%
+    and 94%, which is how much fitting flatters.
+  - The band edges are to be set from a larger sample, so less is fitted.
+- **The border cut is the Orchard's 1.30, borrowed and named as such.** The
+  75th centile of these plants is 1.294 m. The border fills more loosely than
+  the staging, 70% on the fresh sample, because plots are opened by whichever
+  runs out first.
+- **Hue is exact on every host.** It is drawn from the seed by arithmetic, with
+  no `sin` or `pow` in it, so a band edge needs no tolerance, unlike a height
+  cut. It does need carrying: `PlantTraits` holds a colour family, not a hue,
+  so a hue is a fourth trait, sent by the phone and stored like the Seedbed's
+  kind, by both arrival paths.
+
 ## The Crossing, built
 
 21 September, the same day as the Quiet Garden. `SeedCore/WebGardens/Crossing.swift`,
