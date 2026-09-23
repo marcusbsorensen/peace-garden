@@ -16,6 +16,16 @@
 // other. Two bands simply overlapping would be a grid; the alternation is the
 // difference between a grid and a knot.
 //
+// **The bands curve, which is the other half of that difference.** Interlaced
+// straight runs are a weave, and a weave drawn with a ruler still reads as a
+// grid: there is no line for the eye to follow through a crossing. Each band
+// is in three stretches — an arm, the inner stretch between its two crossings,
+// and the other arm — and the inner one bows in toward the empty middle while
+// the arms bow out, so a band arrives at a crossing turning and leaves it
+// turning the same way. The four inner stretches close round the middle as a
+// ring of four arcs. The bows are zero at the crossings, so the crossings do
+// not move and neither does any plant.
+//
 // It is also how a real knot garden is made. Living hedge cannot be woven, so a
 // Tudor knot is planted exactly this way — the under-band interrupted, the
 // over-band continuous — and the eye does the rest.
@@ -33,11 +43,6 @@ import { COLOUR, RIM_DEPTH, SIDE, hash, readOutline, readStructure } from './lon
 // areas drawing from one seed would be five plots with the same wandering edge,
 // which is the sort of thing an eye catches without being able to say why.
 const KNOT = { ground: 7417, floor: 31, grain: 53, band: 601, edging: 641, bridge: 673 };
-
-// How far an under-run's cut end hides inside the band that crosses over it.
-// Enough that no daylight shows at the joint, little enough that the two ends
-// still read as one run diving under rather than as a band with a lump in it.
-const TUCK = 0.04;
 
 export function plan(e) {
   return JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_knot_plan())));
@@ -135,11 +140,7 @@ export function makeKnotGround(place) {
 
     const band = place.bandHalfThickness * 2;
     const from = place.bandFrom;
-    const edge = place.edgingFrom;
     const high = place.bandHeight;
-    // How far short of a crossing's middle an under-run stops: inside the far
-    // face of the band that crosses it.
-    const short = place.bandHalfThickness - TUCK;
 
     let mark = 0;
     // One run of hedging, along x or along z, from `a` to `b` on that axis and
@@ -147,28 +148,25 @@ export function makeKnotGround(place) {
     // domed — every one of them is buried, either in the edging or inside the
     // band that crosses over it — which is what `domed: 0` is for, and the
     // reason the Quiet Garden's enclosure needed it first.
-    const run = (alongX, fixed, a, b, height, thickness) => {
+    // `bow` stands the stretch's middle off the straight line between its two
+    // ends, toward the axis it is fixed on — the same number in the mesh's own
+    // frame either way round, because `lay` puts a run's own x on whichever
+    // axis it is fixed to.
+    const run = (alongX, fixed, a, b, height, thickness, bow = 0) => {
       const length = b - a, mid = (a + b) / 2;
       const mesh = readStructure(
-        takeResult(e, e.pg_hedge(length, height, thickness, KNOT.band + mark++, 0)));
+        takeResult(e, e.pg_hedge(length, height, thickness, KNOT.band + mark++, 0, bow)));
       lay(mesh, alongX, alongX ? [mid, 0, fixed] : [fixed, 0, mid], vertex);
     };
 
-    // **The four runs of the knot, each broken once.**
-    //
-    // A run along z at x = s dives under the run along x at z = −s; a run along
-    // x at z = s dives under the run along z at x = s. Written as the two rules
-    // rather than as a table of four, because what has to be true is that each
-    // run is over at one crossing and under at the other, and a table is a
-    // thing that can be typed wrong without being wrong-looking.
-    for (const s of [from, -from]) {
-      // Along z, standing at x = s, under the crossing at z = −s.
-      run(false, s, -edge, -s - short, high, band);
-      run(false, s, -s + short, edge, high, band);
-      // Along x, standing at z = s, under the crossing at x = s.
-      run(true, s, -edge, s - short, high, band);
-      run(true, s, s + short, edge, high, band);
-    }
+    // **The knot, and the square edging round it**, as the rule lays them out:
+    // three stretches to each of the four runs, which is a run cut at the
+    // crossing it dives under and cut again at the crossing it rides over,
+    // where its two bows change hand. `KnotGarden.weave` says which is which
+    // and why, and the page draws what it is given — a second copy of a weave
+    // here is a thing that can drift from the rule a compartment is measured
+    // against without either of them looking wrong.
+    for (const b of place.weave) run(b.alongX, b.at, b.from, b.to, high, band, b.bow);
 
     // **The swelling where a band rides over.** A clipped hedge is thicker and
     // a little taller where two runs meet and have grown into each other, and
@@ -179,23 +177,21 @@ export function makeKnotGround(place) {
     // It is a piece of hedge and not a lift of the run itself, because a run is
     // over at one of its crossings and under at the other: a run raised along
     // its whole length would ride over both.
+    //
+    // It also sits on the joint where a band's inner stretch meets its arm,
+    // which is at the over-crossing and is where the two bows change hand.
+    // Nothing needs covering there — a bow leaves both its ends flat, so the
+    // two stretches meet along the same line — but a lump is welcome on a seam
+    // all the same.
+    //
+    // Straight, and it can be: a stretch is flat at its ends, so the band under
+    // the swell is running along its own axis and not across it.
     const swellHigh = high + 0.055, swellThick = band + 0.055, swellLong = 0.58;
     for (const s of [from, -from]) {
       // The run along z at x = s is over at z = +s; the run along x at z = s is
       // over at x = −s. The two sentences above, read the other way round.
       run(false, s, s - swellLong / 2, s + swellLong / 2, swellHigh, swellThick);
       run(true, s, -s - swellLong / 2, -s + swellLong / 2, swellHigh, swellThick);
-    }
-
-    // **The square edging**, which is what makes the four corner compartments
-    // compartments rather than the gravel round the outside. It is the same
-    // band as the knot and not a taller enclosing hedge: the Quiet Garden is
-    // the area that is an enclosure, and a knot garden's border is part of the
-    // pattern, drawn at the pattern's own height so you read over it.
-    mark = 100;
-    for (const s of [edge, -edge]) {
-      run(false, s, -edge, edge, high, band);
-      run(true, s, -edge, edge, high, band);
     }
 
     // Its sides hang from the outline down to a floor as rough as a clod's, in

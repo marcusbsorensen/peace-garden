@@ -457,7 +457,7 @@ function buildGround(farSide, span, e) {
   for (const side of [-1, 1]) {
     const height = side === farSide ? HEDGE.tall : HEDGE.low;
     const mesh = readStructure(
-      takeResult(e, e.pg_hedge(length - 0.9, height, HEDGE.thickness, SEED.hedge[side], 1)));
+      takeResult(e, e.pg_hedge(length - 0.9, height, HEDGE.thickness, SEED.hedge[side], 1, 0)));
     const x = side * (HEDGE_FROM + HEDGE.thickness / 2);
     for (let t = 0; t < mesh.indices.length; t += 3) {
       const corners = [0, 1, 2].map((k) => mesh.indices[t + k]);

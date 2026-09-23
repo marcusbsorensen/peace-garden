@@ -157,6 +157,84 @@ final class KnotGardenTests: XCTestCase {
         }
     }
 
+    /// **No plant stands in the hedge, however it is nudged.** The bands bow
+    /// now, and a bow eats into the room between a place and the band beside
+    /// it — which is the whole price of curving the weave, and the number that
+    /// says how far the arms may go.
+    ///
+    /// The margin the straight weave left was 0.18 m, and the nudge spends
+    /// half of it. What is asserted here is what is left after both: a plant
+    /// pushed as hard as the seed can push it still stands clear of the box.
+    func testNoPlaceStandsInABandHoweverItIsNudged() {
+        let nudge = 0.09
+        var tightest = (Double.greatestFiniteMagnitude, "")
+        for slot in KnotGarden.slots {
+            let spot = slot.spot
+            // The nudge is a square, so the corners of it are the hard cases.
+            for dx in [-nudge, 0, nudge] {
+                for dz in [-nudge, 0, nudge] {
+                    let clear = KnotGarden.clearance(x: spot.x + dx, z: spot.z + dz)
+                    if clear < tightest.0 { tightest = (clear, "\(slot)") }
+                }
+            }
+        }
+        XCTAssertGreaterThan(tightest.0, 0.03,
+                             "a nudged plant stands \(tightest.0) m from a band: \(tightest.1)")
+    }
+
+    /// **Each run is three stretches end to end with one gap in it**, and the
+    /// gap is at the crossing it dives under. Which of a run's two crossings
+    /// that is differs between the run at `+bandFrom` and the one at
+    /// `-bandFrom`, so this is the assertion that catches a run cut in the
+    /// order its crossings are named rather than the order they lie in — which
+    /// gives a stretch that spans the plot and one with its ends swapped, and
+    /// still draws something that looks nearly right.
+    func testEachRunIsThreeStretchesEndToEndWithOneGap() {
+        let gap = 2 * (KnotGarden.bandHalfThickness - KnotGarden.tuck)
+        var runs: [String: [KnotGarden.Stretch]] = [:]
+        for stretch in KnotGarden.weave where abs(stretch.at) == KnotGarden.bandFrom {
+            runs["\(stretch.alongX) \(stretch.at)", default: []].append(stretch)
+        }
+        XCTAssertEqual(runs.count, 4, "the knot is not four runs")
+        for (name, stretches) in runs {
+            XCTAssertEqual(stretches.count, 3, "\(name) is not in three")
+            for stretch in stretches {
+                XCTAssertGreaterThan(stretch.to - stretch.from, 0.5,
+                                     "\(name) has a stretch of \(stretch.to - stretch.from) m")
+            }
+            XCTAssertEqual(stretches.first!.from, -KnotGarden.edgingFrom, accuracy: 0)
+            XCTAssertEqual(stretches.last!.to, KnotGarden.edgingFrom, accuracy: 0)
+            let gaps = zip(stretches, stretches.dropFirst()).map { $1.from - $0.to }
+            XCTAssertEqual(gaps.filter { $0 > 1e-9 }.count, 1,
+                           "\(name) is cut \(gaps.filter { $0 > 1e-9 }.count) times, not once")
+            XCTAssertEqual(gaps.max()!, gap, accuracy: 1e-12, "\(name)'s gap is the wrong width")
+            XCTAssertEqual(gaps.min()!, 0, accuracy: 1e-12, "\(name) has a second gap")
+        }
+    }
+
+    /// **A bow is zero at every crossing**, which is what keeps the compartments
+    /// where they were when the bands were straight — and therefore what keeps
+    /// every plant already in the ground standing where it stands.
+    func testTheBandsAreWhereTheyWereAtEveryCrossing() {
+        for stretch in KnotGarden.weave {
+            for end in [stretch.from, stretch.to] {
+                XCTAssertEqual(stretch.line(at: end), stretch.at, accuracy: 0,
+                               "a stretch stands off its own line at an end")
+            }
+            XCTAssertEqual(stretch.line(at: (stretch.from + stretch.to) / 2),
+                           stretch.at + stretch.bow, accuracy: 0,
+                           "a stretch does not stand off by its bow in the middle")
+        }
+        // The four inner stretches are the ones that bow in, and each of them
+        // runs between the two crossings on one of the rule's own two lines.
+        let inner = KnotGarden.weave.filter { abs($0.bow) == KnotGarden.knotBow }
+        XCTAssertEqual(inner.count, 4, "the knot is not four inner stretches")
+        for stretch in inner {
+            XCTAssertEqual(abs(stretch.at), KnotGarden.bandFrom, accuracy: 0)
+            XCTAssertLessThan(stretch.bow * stretch.at, 0, "an inner stretch bows outward")
+        }
+    }
+
     /// Two plants in one plot may not stand on top of each other. The closest
     /// pair here is tighter than any other area's, which is the price of
     /// thirty-two in the square — and the reason the nudge is the smallest in

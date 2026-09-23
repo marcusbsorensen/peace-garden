@@ -11,11 +11,15 @@ import SeedCore
 //   pg_outline(w, l, seed)         the ground's outline into the result: point
 //                                  count (u32), then x, z (f32) per point
 //   pg_verge(along, side, seed)    how far a path's verge wanders there (f64)
-//   pg_hedge(l, h, t, seed, domed) a hedge into the result: vertex count, index
+//   pg_hedge(l, h, t, seed, domed, bow)
+//                                  a hedge into the result: vertex count, index
 //                                  count (u32), positions, normals (3 × f32),
 //                                  indices (u32). `domed` 0 cuts its ends
 //                                  square, for a run that carries on into the
-//                                  next one round an enclosure
+//                                  next one round an enclosure; `bow` stands
+//                                  its middle off the line between its ends,
+//                                  which is what draws a knot rather than a
+//                                  grid
 //   pg_bench(l, h, d, seed)        the Quiet Garden's seat, the same shape
 //   pg_roundel(r, lift, seed)      the Crossing's paving, the same shape
 //   pg_tree(h, spread, base, seed) the Orchard's trees, the same shape
@@ -40,9 +44,9 @@ public func pgVerge(_ along: Double, _ side: Int32, _ seed: UInt32) -> Double {
 @_expose(wasm, "pg_hedge")
 @_cdecl("pg_hedge")
 public func pgHedge(_ length: Double, _ height: Double, _ thickness: Double,
-                    _ seed: UInt32, _ domed: Int32) -> Int32 {
+                    _ seed: UInt32, _ domed: Int32, _ bow: Double) -> Int32 {
     let out = structure(Organic.hedge(length: length, height: height, thickness: thickness,
-                                      seed: UInt64(seed), domed: domed != 0))
+                                      seed: UInt64(seed), domed: domed != 0, bow: bow))
     setResult(out)
     return Int32(out.count)
 }

@@ -12,7 +12,8 @@ import SeedCore
 //
 //   pg_knot_plan()        the plot's own numbers as JSON: its side, where the
 //                         knot's runs and the edging lie, how thick and how
-//                         high a band is, and what a plot holds — so the page
+//                         high a band is, every stretch of the weave with the
+//                         bow it takes, and what a plot holds — so the page
 //                         keeps no copy of them
 //   pg_knot_arrive()      plants the next arrival; returns its plot
 //   pg_knot_count(plot)   plantings in a plot so far
@@ -49,11 +50,18 @@ private func knotVisitor(_ n: Int) -> (child: SeedID, genome: Genome) {
 @_expose(wasm, "pg_knot_plan")
 @_cdecl("pg_knot_plan")
 public func pgKnotPlan() -> Int32 {
+    let weave = KnotGarden.weave.map {
+        """
+        {"alongX":\($0.alongX),"at":\($0.at),"from":\($0.from),\
+        "to":\($0.to),"bow":\($0.bow)}
+        """
+    }.joined(separator: ",")
     let json = """
         {"plotSide":\(KnotGarden.plotSide),"bandFrom":\(KnotGarden.bandFrom),\
         "edgingFrom":\(KnotGarden.edgingFrom),\
         "bandHalfThickness":\(KnotGarden.bandHalfThickness),\
         "bandHeight":\(KnotGarden.bandHeight),\
+        "weave":[\(weave)],\
         "slots":\(KnotGarden.slots.count),\
         "compartments":\(KnotGarden.Compartment.allCases.count)}
         """

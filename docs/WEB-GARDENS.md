@@ -106,7 +106,7 @@ a border with a knot garden's name.
 | **The Long Walk** | travel | A double border either side of a path: tall at the back, graded to the front, drifts of three and five, the same colour repeated down its length for rhythm. The walk goes on; plots open end to end. | Level, a mown path | The path, a hedge behind each border |
 | **The Quiet Garden** | peace | An enclosure: hedged, one tree, one bench, and more lawn than planting. **The fewest plants per plot of any area, by rule.** Room is what it is for. | Lawn | A hedge round, a bench |
 | **The Orchard** | kinship | Five trees on a quincunx, meadow beneath, and a guild of four under each. **Twenty a plot, and an arrival goes under the earliest tree with a place left**, so trees are dressed one at a time rather than five at once. The first area whose tallest thing is not something anybody grew. | Meadow, mown into a disc under each tree | The five trees |
-| **The Knot Garden** | pattern | Low clipped hedging woven over and under itself inside a square edging, and eight compartments — four at the sides, four at the corners — each filled with one colour. **Thirty-two a plot, and a plant's colour decides which pair of opposite compartments it stands in**, its height where in the block. The first area whose rule reads anything but a height. | Flat, gravel | The woven hedging and its edging |
+| **The Knot Garden** | pattern | Low clipped hedging, curving, woven over and under itself inside a square edging, and eight compartments — four at the sides, four at the corners — each filled with one colour. **Thirty-two a plot, and a plant's colour decides which pair of opposite compartments it stands in**, its height where in the block. The first area whose rule reads anything but a height. | Flat, gravel | The woven hedging and its edging |
 | **The Glasshouse** | light | Staging along the sides, pots on it, a central aisle. Tender plants, set close to the glass for the light. | Floor tiles | The benches, the glass |
 | **The Crossing** | meeting | Four paths meeting at a centre, four quarters, one feature where they cross: the quadripartite garden, one of the oldest plans there is for a meeting place. Plants face the centre. **Twenty-four a plot, and an arrival goes wherever there is least**, so the four quarters grow together. | Grass, with two paths mown through it | The paths, a round of paving where they cross |
 
@@ -139,7 +139,10 @@ browser: a hedge (`GardenStructures.swift` — `HedgeLine`, `HedgePiece`,
 paving and `Organic.tree` for the Orchard. **The Knot Garden needed none**: its
 woven bands and its edging are `Organic.hedge` at ankle height, which is the
 first area built without a structure of its own and the point at which the
-hedge stopped being the Long Walk's. The frame, the staging, the bed edging and
+hedge stopped being the Long Walk's. It did need the hedge to bend — `bow`,
+added on 23 September, stands a run's middle off the straight line between its
+ends and leaves both ends flat, which is a sixth thing `Organic` knows how to
+draw and the point at which a `Structures/` split is worth doing. The frame, the staging, the bed edging and
 the row labels are still to come, and each belongs to an area that is not built
 yet. They
 carry the look of each area, and **they meet the same test the figures did**: a
@@ -419,10 +422,12 @@ page's own prose landed on the lawn.
 
 ## The Knot Garden, built
 
-22 September. `SeedCore/WebGardens/KnotGarden.swift`, `Server/.api/KnotGarden.php`,
+22 September, and curved on 23 September.
+`SeedCore/WebGardens/KnotGarden.swift`, `Server/.api/KnotGarden.php`,
 `KnotStore.php`, `Server/assets/js/knot.js`, `/knot`, `/dev/knot`,
 `tools/reference/check_knot.php`. No new structure: the knot is drawn in
-`Organic.hedge`, which is the first time an area has been built without one.
+`Organic.hedge`, which is the first time an area has been built without one —
+though `Organic.hedge` learned to bend for it.
 
 - **Thirty-two a plot: eight compartments of four.** Between the walk's
   forty-eight in the same square and the crossing's twenty-four. Four to a
@@ -474,18 +479,31 @@ page's own prose landed on the lawn.
   empty it is. The test replays the five hundred arrival by arrival, because
   *which of the two was emptier* is a fact about the moment and the finished
   plot cannot say. At five hundred exactly one pair of sixty-six ends uneven.
-- **The pattern is a woven grid, and that is worth saying plainly.** Two bands
-  each way, crossing four times, inside a square edging: four compartments at
-  the sides, four at the corners, and the weave closing round a middle that
-  holds no plant. It is a real knot-garden plan and it gives eight compartments
-  of one size, which is what a mirror pair needs to read as a mirror — the
-  alternative considered, an octagram of a square and a diamond, puts the
-  compartments in the star's points, and a regular octagram's points are 0.45 m²
-  each, which will not hold four plants at any scale that fits a 5.2 m plot.
-  **What it does not do is curve.** A curvilinear knot would read more like a
-  knot at a glance, and it wants a run of hedging that follows an arc, which
-  `Organic.hedge` cannot draw. That is the next pass if anybody wants it, and it
-  is a change to `Organic` rather than to the rule.
+- **The pattern is a weave.** Two bands each way, crossing four times, inside a
+  square edging: four compartments at the sides, four at the corners, and the
+  weave closing round a middle that holds no plant. It is a real knot-garden
+  plan and it gives eight compartments of one size, which is what a mirror pair
+  needs to read as a mirror — the alternative considered, an octagram of a
+  square and a diamond, puts the compartments in the star's points, and a
+  regular octagram's points are 0.45 m² each, which will not hold four plants at
+  any scale that fits a 5.2 m plot.
+- **The bands curve, and that is what stopped it reading as a grid** — added on
+  23 September, one day after the area opened, because straight interlaced runs
+  are a weave the eye has nothing to follow through. `KnotGarden.weave` cuts
+  each run into three: an arm, the stretch between its two crossings, and the
+  other arm. The inner stretch bows 0.30 m in toward the empty middle, so the
+  four of them close round it as a ring of four arcs; the arms bow 0.05 m the
+  other way, so a run leaves a crossing turning back and reads as a ribbon
+  rather than as a line with a curve let into it.
+  - **No plant moved for it.** `Organic.hedge`'s bow is zero at both ends of a
+    stretch, so every crossing is where it was, every compartment keeps its four
+    corners, and `knot_garden_vectors.json` is untouched.
+  - **The inner bow is free and the arm's is paid for.** Nothing is planted in
+    the middle, so the inner stretch may bow as far as it likes; an arm has a
+    compartment on each side. The nearest place to an arm stood 0.18 m from the
+    band's face, of which the nudge already spends 0.09; at 0.05 m of bow a
+    nudged plant still stands 0.048 m clear. `KnotGarden.clearance(x:z:)`
+    measures it and `KnotGardenTests` holds it.
 - **The weave is drawn rather than implied**, and it is drawn the way a real
   knot garden is made: living hedge cannot be woven, so the under-band stops
   square against the over-band's face and starts again beyond it, while the

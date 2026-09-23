@@ -106,7 +106,7 @@ export function makeRoomGround(room) {
       const near = run.turn ? run.at * eye[2] > 0 : run.at * eye[0] > 0;
       const height = near ? HEDGE.low : HEDGE.tall;
       const mesh = readStructure(
-        takeResult(e, e.pg_hedge(past(room.hedgeFrom), height, HEDGE.thickness, ROOM.hedge[i], 0)));
+        takeResult(e, e.pg_hedge(past(room.hedgeFrom), height, HEDGE.thickness, ROOM.hedge[i], 0, 0)));
       place(mesh, run.turn, run.turn ? [0, 0, run.at] : [run.at, 0, 0], COLOUR.yew, vertex);
     });
 

@@ -69,6 +69,56 @@ final class OrganicTests: XCTestCase {
         XCTAssertLessThan(nearEnd, 1.6, "the hedge's end is a cut face")
     }
 
+    /// **A run that does not bow is the run four areas already draw, to the
+    /// bit.** The Knot Garden's curve goes through the call the Long Walk, the
+    /// Quiet Garden and the app's hedges all make, and none of their hedges
+    /// should move a millimetre because a fifth area asked for a curve.
+    func testAHedgeThatDoesNotBowIsTheHedgeItWas() {
+        let asked = Organic.hedge(length: 5.2, height: 2.0, thickness: 0.36, seed: 5, bow: 0)
+        let never = Organic.hedge(length: 5.2, height: 2.0, thickness: 0.36, seed: 5)
+        XCTAssertEqual(asked.positions, never.positions)
+        XCTAssertEqual(asked.normals, never.normals)
+    }
+
+    /// **A bow moves the middle of a run and leaves both its ends**, which is
+    /// what lets the Knot Garden curve its bands without moving a crossing or a
+    /// compartment — and it turns the section with the line rather than
+    /// leaning it over, so a bowed run is as thick as a straight one the whole
+    /// way along.
+    func testABowedHedgeKeepsItsEndsAndItsThickness() {
+        let length = 1.44, bow = 0.13
+        let straight = Organic.hedge(length: length, height: 0.17, thickness: 0.18,
+                                     seed: 7, domed: false)
+        let bowed = Organic.hedge(length: length, height: 0.17, thickness: 0.18,
+                                  seed: 7, domed: false, bow: bow)
+        XCTAssertEqual(bowed.positions.count, straight.positions.count)
+
+        // A ring's two ground vertices are its first and its last; the point
+        // between them is where the run's own line is.
+        let stride = 21
+        let rings = straight.positions.count / stride
+        func line(_ mesh: StructureMesh, _ ring: Int) -> SIMD3<Float> {
+            (mesh.positions[ring * stride] + mesh.positions[ring * stride + stride - 1]) / 2
+        }
+        for end in [0, rings - 1] {
+            XCTAssertEqual(line(bowed, end).x, line(straight, end).x, accuracy: 0.005,
+                           "a bow moved an end of the run")
+            XCTAssertEqual(line(bowed, end).z, line(straight, end).z, accuracy: 0.02,
+                           "a bow shortened the run")
+        }
+        XCTAssertEqual(Double(line(bowed, rings / 2).x - line(straight, rings / 2).x),
+                       bow, accuracy: 1e-5, "the middle does not stand off by the bow")
+
+        func across(_ mesh: StructureMesh, _ ring: Int) -> Double {
+            let d = mesh.positions[ring * stride] - mesh.positions[ring * stride + stride - 1]
+            return Double((d * d).sum().squareRoot())
+        }
+        for ring in 0..<rings {
+            XCTAssertEqual(across(bowed, ring), across(straight, ring), accuracy: 1e-5,
+                           "the bow thinned the run at ring \(ring)")
+        }
+    }
+
     /// Pinned, so the browser's build is held to the phone's: a host whose
     /// arithmetic drew a different edge would fail here, in the wasm run too.
     func testTheEdgesArePinned() {

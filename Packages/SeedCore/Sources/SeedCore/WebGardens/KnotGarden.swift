@@ -81,10 +81,177 @@ public enum KnotGarden {
     /// is the thing this area exists to draw.
     public static let bandFrom = 0.76
 
+    /// How far the stretch of a run between its two crossings stands in toward
+    /// the middle of the plot, at its middle.
+    ///
+    /// **This is the difference between a knot and a parterre**, and the area
+    /// was laid out without it. Four straight bands woven over and under are a
+    /// weave, and a weave drawn with a ruler reads as a grid however honestly
+    /// it is interlaced: there is no line for the eye to follow through a
+    /// crossing. Bowed, the four inner stretches close round the empty middle
+    /// as a ring of four arcs and each band becomes a ribbon that goes
+    /// somewhere.
+    ///
+    /// **It bows into the middle because the middle is the one place with
+    /// room.** Nothing is planted there, so this number costs nothing: at 0.30
+    /// the nearest plant to any band is exactly as near as it was when every
+    /// band was straight. The compartments are full of plants, and a band that
+    /// bowed into one would stand where a plant already does.
+    ///
+    /// **No plant moves for this.** A bow is zero at both crossings, so every
+    /// compartment keeps the four corners it had and
+    /// `tools/reference/knot_garden_vectors.json` does not change.
+    ///
+    /// 0.30 m leaves a middle 0.74 m across, which still reads as a middle the
+    /// weave closes round rather than as four bands meeting.
+    public static let knotBow = 0.30
+
+    /// How far the stretch of a run from a crossing out to the edging stands
+    /// out, away from the middle of the plot, at its middle.
+    ///
+    /// **A band that bows one way and then the other is a ribbon**; one that
+    /// bows only between its crossings is a straight band with a curve let into
+    /// it. So the four arms of each run bow the other way from its inner
+    /// stretch, and a run leaves a crossing turning back.
+    ///
+    /// **0.05, and this one is paid for**, which is why it is a sixth of the
+    /// inner bow. An arm has a compartment on each side of it. The nearest
+    /// place to an arm is the one at 1.03 m in a corner compartment, 0.18 m
+    /// from the band's face when the band is straight; a plant stands up to
+    /// `Planting.nudge` — 0.09 m on an axis — off its place, so that 0.18 is
+    /// really 0.09. At
+    /// 0.05 the arm takes 0.04 of what is left and a nudged plant still stands
+    /// 0.048 m clear of ankle-high box, which is a planted block with its edge
+    /// against the hedge. `clearance(x:z:)` is where that is measured, and
+    /// `KnotGardenTests` is where it is held.
+    public static let armBow = 0.05
+
     /// Where the square edging lies, from the middle of the plot. It is the same
     /// band as the knot, closing the four corner compartments — without it they
     /// are not compartments but the gravel round the outside.
     public static let edgingFrom = 2.20
+
+    /// How far an under-run's cut end hides inside the band that crosses over
+    /// it. Enough that no daylight shows at the joint, little enough that the
+    /// two ends still read as one run diving under rather than as a band with a
+    /// lump in it.
+    public static let tuck = 0.04
+
+    // MARK: The weave
+
+    /// One length of the knot's band: it runs along `x` or along `z`, from
+    /// `from` to `to` on that axis, stands at `at` on the other, and its middle
+    /// stands `bow` off the straight line between its two ends — away from the
+    /// middle of the plot where that is positive.
+    public struct Stretch: Sendable, Equatable {
+        public let alongX: Bool
+        public let at: Double
+        public let from: Double
+        public let to: Double
+        public let bow: Double
+
+        /// Where the band's line stands on the axis it is fixed to, `along`
+        /// metres down the axis it runs on.
+        ///
+        /// `Organic.hedge`'s bow, which is `bow` at the middle and flat on the
+        /// straight line between the two ends — so a stretch's two ends are on
+        /// `at` however hard it bows, and a crossing does not move.
+        public func line(at along: Double) -> Double {
+            let fraction = 2 * (along - (from + to) / 2) / (to - from)
+            let hump = 1 - fraction * fraction
+            return at + bow * hump * hump
+        }
+    }
+
+    /// **The knot as lengths of band**: three to each of the four runs, and
+    /// four more for the square edging.
+    ///
+    /// A run along z at x = s dives under the run along x at z = −s; a run
+    /// along x at z = s dives under the run along z at x = s. Written as the
+    /// two rules rather than as a table of four, because what has to be true is
+    /// that each run is over at one of its two crossings and under at the
+    /// other, and a table is a thing that can be typed wrong without looking
+    /// wrong.
+    ///
+    /// **Each run is in three**: an arm, the stretch between its two crossings,
+    /// and the other arm. It is cut at its under-crossing because that gap is
+    /// the weave, and cut again at its over-crossing because the two stretches
+    /// meeting there bow opposite ways and one length of hedge bows one way.
+    /// That second cut does not show: `Organic.hedge` leaves a bow flat at both
+    /// ends, so the two stretches meet along the same line, which is the whole
+    /// reason the bow is shaped the way it is.
+    ///
+    /// **It is here rather than in the page** for the reason
+    /// `bandHalfThickness` is: a compartment's edges are where the bands' faces
+    /// are, so the shape of the bands is something the rule has to be able to
+    /// answer. The page draws these and keeps no copy of them.
+    public static var weave: [Stretch] {
+        var band: [Stretch] = []
+        for s in [bandFrom, -bandFrom] {
+            // Along z, standing at x = s, under the crossing at z = −s.
+            band += run(alongX: false, at: s, under: -s, over: s)
+            // Along x, standing at z = s, under the crossing at x = s.
+            band += run(alongX: true, at: s, under: s, over: -s)
+        }
+        // The square edging, straight: a knot's border is the frame the pattern
+        // is drawn in, and a frame that wandered would be a fifth band.
+        for s in [edgingFrom, -edgingFrom] {
+            band.append(Stretch(alongX: false, at: s, from: -edgingFrom, to: edgingFrom, bow: 0))
+            band.append(Stretch(alongX: true, at: s, from: -edgingFrom, to: edgingFrom, bow: 0))
+        }
+        return band
+    }
+
+    /// One run of the weave in its three stretches, in the order they lie along
+    /// the axis it runs on.
+    ///
+    /// **Which crossing comes first is not the same for all four runs** — the
+    /// run at `+bandFrom` dives under at the near end and the one at
+    /// `-bandFrom` at the far end — so the three are cut out between the two
+    /// crossings sorted rather than between `under` and `over` in the order
+    /// they are named. Writing it the other way round gives two of the four
+    /// runs a stretch that spans the plot and one with its ends swapped, which
+    /// is a mistake the drawing very nearly hides.
+    ///
+    /// Only the under-crossing takes a bite out of the band: that gap is the
+    /// weave. At the over-crossing the two stretches meet, because one length
+    /// of hedge bows one way and they bow opposite ways.
+    private static func run(alongX: Bool, at: Double,
+                            under: Double, over: Double) -> [Stretch] {
+        let short = bandHalfThickness - tuck
+        let away = at > 0 ? 1.0 : -1.0
+        let first = min(under, over), second = max(under, over)
+        let gapBefore = { (crossing: Double) in crossing == under ? short : 0 }
+        return [
+            Stretch(alongX: alongX, at: at, from: -edgingFrom,
+                    to: first - gapBefore(first), bow: away * armBow),
+            Stretch(alongX: alongX, at: at, from: first + gapBefore(first),
+                    to: second - gapBefore(second), bow: -away * knotBow),
+            Stretch(alongX: alongX, at: at, from: second + gapBefore(second),
+                    to: edgingFrom, bow: away * armBow),
+        ]
+    }
+
+    /// How far a point on the ground stands from the nearest face of the
+    /// nearest band, in metres. Negative inside a band.
+    ///
+    /// Walked rather than solved, because the nearest point on `Stretch.line`
+    /// is a cubic to solve and this is asked by tests rather than by a page
+    /// drawing a frame.
+    public static func clearance(x: Double, z: Double, steps: Int = 400) -> Double {
+        var nearest = Double.greatestFiniteMagnitude
+        for stretch in weave {
+            let length = stretch.to - stretch.from
+            for step in 0...steps {
+                let along = stretch.from + length * Double(step) / Double(steps)
+                let stands = stretch.line(at: along)
+                let dx = x - (stretch.alongX ? along : stands)
+                let dz = z - (stretch.alongX ? stands : along)
+                nearest = min(nearest, (dx * dx + dz * dz).squareRoot())
+            }
+        }
+        return nearest - bandHalfThickness
+    }
 
     // MARK: The eight compartments
 
