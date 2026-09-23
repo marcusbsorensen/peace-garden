@@ -48,6 +48,52 @@ link to `/garden#<theme>`); the words below the plot as in the app; a glyph pad
 read from `garden.js`. The worded gates came and went in the same afternoon.
 **No new strings**: the area names were already commissioned in 42 languages.
 
+## Next: the Cold Frame, `waiting` — decided, not started
+
+Marcus answered its three questions on 23 September, after a measurement that
+changed the first one. **Build it next.**
+
+**What was measured** (2000 crossings, `LongWalk.traits`): plants whose name puts
+them in `waiting` are about 9% of arrivals and run **0.40–1.52 m at maturity**,
+median 0.82 m (p10 0.54, p25 0.65, p75 1.02, p90 1.17). A low glazed frame holds
+about 0.4 m. So "small plants only" as a height limit would have refused over
+90% of the Cold Frame's own plants — a 0.5 m cut admits under a tenth of them.
+Across all arrivals: 6% are under 0.5 m, 25% under 0.75 m.
+
+**The three answers:**
+1. **Every plant, drawn young.** Nobody is turned away. Each plant stands in its
+   frame at an early growth stage, whatever it will grow into — the layout's own
+   words, *the young stages of what grows elsewhere*. SeedCore already builds a
+   plant at any stage: `PlantBuilder.mesh(growth: GrowthModel.State)`, which the
+   app uses to grow plants over days. The web's grow export currently draws a
+   mature plant; the Cold Frame needs a young stage passed through.
+   **Choose the stage by measuring**, not by taste: the tallest seedling (from a
+   1.5 m plant) has to stand under the glass, and the shortest has to still read
+   as a plant at the isometric eye.
+2. **Four frames of twelve, 48 a plot**: two rows of two frames, each about
+   2 m × 1 m with a path between, two ranks of six inside each.
+3. **Colour claims a frame; height orders the ranks inside it.** The Knot
+   Garden's claim-not-reserve: the first plant in a frame gives it its colour
+   family, only that family joins it, read off the plants rather than stored.
+   Inside, the mature height decides front or back rank — the ones that will
+   grow tallest stand at the back, so a frame is graded by what its seedlings
+   will become. **The height used is the mature one**, not the drawn young one:
+   it is a fact about the plant, stored with it, like every area's.
+
+**Things to settle while building, not decisions for Marcus:**
+- The rank cut. Measure it, or name whose it borrows (the Knot borrowed the
+  Orchard's). A cut means the libm margin applies again: this area's vector test
+  needs `VectorFile.placementCannotTurn`, unlike the Seedbed's.
+- Simulate the fill before building, as the Seedbed was: seven colour families
+  over four frames a plot.
+- The structure: a low glazed frame with its lid propped by day — the second of
+  the four structures still owed, in `Morphology/Structures/`. Glass is new: it
+  has to read as glass at the isometric eye without hiding the seedlings, and
+  its edges are organic like everything else.
+- It is **`waiting`**, and the `waiting` genus heads and map cell (top-left of
+  the 5×2 map, above the Quiet Garden) already exist. Eight places record the
+  open list — see *Traps, new today*.
+
 ## Waiting for Marcus
 - **The Seedbed's furrows** come out as fairly even bands at page size. They
   read as a raked bed rather than as ruled lines, but it is the one place the
