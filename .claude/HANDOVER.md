@@ -44,7 +44,9 @@ The eighth area. Its three questions were put to Marcus on 23 September, after m
 - On a fresh sample: 87% held, 86% of pots in their own band, none more than one place off.
 - The border cut is the Orchard's 1.30 (p75 measured 1.294).
 - Hue is exact, so it needs no tolerance. It must become a fourth trait, carried by both arrival paths like the kind.
-- Still open: how the border is ordered.
+- The border is planted in arrival order from the door end (Marcus, 23 September). The spectrum belongs to the staging alone.
+
+**Next: build `Glasshouse.swift`** on the Cold Frame's pattern. Set the band edges from a larger `light` sample than 500. Add `PlantTraits.hue`, carried by both arrival paths. Build the staging structure, still owed in `Structures/`.
 
 ## Traps, new today
 - **The WebAssembly suite needs the swift.org toolchain, not Xcode's.** The command in `ff3f8e5`'s handover calls plain `swift`, which is Xcode's here, and it crashes with *No available targets are compatible with triple "wasm32-unknown-wasip1"*. Use:

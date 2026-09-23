@@ -757,6 +757,8 @@ twelve positions along the staging with two pots at each, a border of eight.
   75th centile of these plants is 1.294 m. The border fills more loosely than
   the staging, 70% on the fresh sample, because plots are opened by whichever
   runs out first.
+- **The border is planted in arrival order from the door end**, Marcus's answer on
+  23 September. The spectrum belongs to the staging alone.
 - **Hue is exact on every host.** It is drawn from the seed by arithmetic, with
   no `sin` or `pow` in it, so a band edge needs no tolerance, unlike a height
   cut. It does need carrying: `PlantTraits` holds a colour family, not a hue,
