@@ -87,6 +87,22 @@ final class Offers
         } catch (Throwable) {
             // Already there.
         }
+        // Added on 23 September, when the Seedbed opened and a placement needed
+        // a third fact about the plant. Another ALTER that may already have run,
+        // and the reason it defaults to the empty string rather than being NULL:
+        // an offer made before this migration is answered after it, and the
+        // empty kind is the one the rule already understands. So an offer in
+        // flight across the deploy still plants — into the drill of unnamed
+        // plants, which is what a plant whose phone never sent an epithet is.
+        //
+        // Unlike `area`, this one is dropped when the offer is answered. It is a
+        // fact about the plant rather than about where to find the planting, so
+        // it belongs with the parents, the height and the family in `settle`.
+        try {
+            $this->run("ALTER TABLE walk_offers ADD COLUMN kind VARCHAR(64) NOT NULL DEFAULT ''");
+        } catch (Throwable) {
+            // Already there.
+        }
     }
 
     /**
@@ -95,20 +111,26 @@ final class Offers
      * Returns [the offer as the phone should see it, whether it is new]. A
      * second offer of the same plant is not a second invitation: the phone is
      * handed the one that already exists, whatever state it is in.
+     *
+     * `$kind` is the plant's epithet, kept for the same reason its height and
+     * its colour family are: the plant is planted when the *other* gardener
+     * answers, which may be days later, and nothing at that moment can grow it
+     * again to read the name off it. An offer made without one carries the empty
+     * kind, which is what an older app sends.
      */
     public function offer(string $seed, string $to, string $from, string $parentA, string $parentB,
                           string $encounter, float $height, int $family, int $now,
-                          string $area = 'travel'): array
+                          string $area = 'travel', string $kind = ''): array
     {
         if ($existing = $this->find($seed)) {
             return [self::seen($existing), false];
         }
         $insert = $this->db->prepare('INSERT INTO walk_offers
-            (seed, token_to, token_from, parent_a, parent_b, encounter, height, family, state, offered_at, area)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            (seed, token_to, token_from, parent_a, parent_b, encounter, height, family, state, offered_at, area, kind)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         try {
             $insert->execute([$seed, $to, $from, $parentA, $parentB, $encounter, $height, $family,
-                              self::OFFERED, $now, $area]);
+                              self::OFFERED, $now, $area, $kind]);
         } catch (PDOException $clash) {
             // Two offers of one plant, racing. The unique seed settles it and
             // the loser is handed the winner, which is the same answer it would
@@ -161,7 +183,7 @@ final class Offers
         [$planting] = $this->walk->plantInto(
             (string) ($row['area'] ?? 'travel'),
             $seed, (string) $row['parent_a'], (string) $row['parent_b'], (string) $row['encounter'],
-            (float) $row['height'], (int) $row['family']
+            (float) $row['height'], (int) $row['family'], (string) ($row['kind'] ?? '')
         );
         $this->settle($seed, self::ACCEPTED, $now);
         return ['offer' => self::seen($this->find($seed) ?? []), 'planting' => $planting];
@@ -202,9 +224,12 @@ final class Offers
     /** Settles an offer and drops the plant it carried. */
     private function settle(string $seed, string $state, int $now): void
     {
-        $update = $this->db->prepare('UPDATE walk_offers SET state = ?, answered_at = ?,
-            parent_a = NULL, parent_b = NULL, encounter = NULL, height = NULL, family = NULL
-            WHERE seed = ?');
+        // `kind` goes back to the empty string rather than to NULL, because the
+        // column is NOT NULL — it is the same erasure the nullable fields get.
+        $update = $this->db->prepare("UPDATE walk_offers SET state = ?, answered_at = ?,
+            parent_a = NULL, parent_b = NULL, encounter = NULL, height = NULL, family = NULL,
+            kind = ''
+            WHERE seed = ?");
         $update->execute([$state, $now, $seed]);
     }
 

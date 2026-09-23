@@ -109,12 +109,13 @@ final class AreaVectorTests: XCTestCase {
     /// Opening one is a decision about the garden rather than a tidy-up, so it
     /// fails here first and somebody edits this line on purpose — the same
     /// reason `check_areas.php` checks the list rather than deriving it.
-    func testTheOpenAreasAreTheWalkTheRoomTheCrossingTheOrchardAndTheKnot() {
+    func testTheOpenAreasAreTheWalkTheRoomTheCrossingTheOrchardTheKnotAndTheSeedbed() {
         XCTAssertEqual(Area.travel.table, "long_walk")
         XCTAssertEqual(Area.meeting.table, "crossing")
         XCTAssertEqual(Area.kinship.table, "orchard")
         XCTAssertEqual(Area.peace.table, "quiet_garden")
         XCTAssertEqual(Area.pattern.table, "knot_garden")
-        XCTAssertEqual(Area.open, [.pattern, .travel, .meeting, .kinship, .peace])
+        XCTAssertEqual(Area.beginnings.table, "seedbed")
+        XCTAssertEqual(Area.open, [.beginnings, .pattern, .travel, .meeting, .kinship, .peace])
     }
 }

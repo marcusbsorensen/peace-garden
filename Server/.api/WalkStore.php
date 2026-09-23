@@ -8,6 +8,7 @@ require_once __DIR__ . '/RoomStore.php';
 require_once __DIR__ . '/CrossStore.php';
 require_once __DIR__ . '/OrchardStore.php';
 require_once __DIR__ . '/KnotStore.php';
+require_once __DIR__ . '/SeedbedStore.php';
 require_once __DIR__ . '/Offers.php';
 
 /**
@@ -55,6 +56,7 @@ final class WalkStore
         $store->cross();
         $store->orchard();
         $store->knot();
+        $store->seedbed();
         return $store;
     }
 
@@ -105,9 +107,12 @@ final class WalkStore
      * Places one arrival by the rule and keeps it. Returns [the planting, whether
      * it is new]: a seed that has arrived before gets the place it already has,
      * because a plant has one place.
+     *
+     * `$kind` is the Seedbed's trait and nothing here reads it; it is in the
+     * signature so `plantInto` can call every area's `plant` alike.
      */
     public function plant(string $seed, string $parentA, string $parentB, string $encounter,
-                          float $height, int $family): array
+                          float $height, int $family, string $kind = ''): array
     {
         // **Never an ambassador.** Unreachable from any route today: the offer
         // and plant routes both check that the seed is the cross of its two
@@ -244,6 +249,13 @@ final class WalkStore
         return $knot ??= new KnotStore($this->db);
     }
 
+    /** The Seedbed, on the same connection. */
+    public function seedbed(): SeedbedStore
+    {
+        static $seedbed = null;
+        return $seedbed ??= new SeedbedStore($this->db);
+    }
+
     /**
      * Plants one arrival into whichever area it belongs to.
      *
@@ -251,16 +263,24 @@ final class WalkStore
      * it — the asking, the routes — carries the area as a word and never a
      * table, so an area that opens is a case here rather than a change
      * everywhere.
+     *
+     * **`$kind` is the Seedbed's alone.** It is a plant's epithet, and the sixth
+     * area is the only one whose rule reads it: a drill is claimed by the kind
+     * of the first plant sown in it. Every area's `plant` takes it so that this
+     * can hand the same arguments to any of them; the other five ignore it, as
+     * they ignore nothing else they are given. Absent means the empty kind,
+     * which is what a plant offered before the epithet went on the wire has.
      */
     public function plantInto(string $area, string $seed, string $parentA, string $parentB,
-                              string $encounter, float $height, int $family): array
+                              string $encounter, float $height, int $family, string $kind = ''): array
     {
         return match ($area) {
-            'peace' => $this->room()->plant($seed, $parentA, $parentB, $encounter, $height, $family),
-            'meeting' => $this->cross()->plant($seed, $parentA, $parentB, $encounter, $height, $family),
-            'kinship' => $this->orchard()->plant($seed, $parentA, $parentB, $encounter, $height, $family),
-            'pattern' => $this->knot()->plant($seed, $parentA, $parentB, $encounter, $height, $family),
-            default => $this->plant($seed, $parentA, $parentB, $encounter, $height, $family),
+            'peace' => $this->room()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
+            'meeting' => $this->cross()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
+            'kinship' => $this->orchard()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
+            'pattern' => $this->knot()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
+            'beginnings' => $this->seedbed()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
+            default => $this->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
         };
     }
 
@@ -271,6 +291,7 @@ final class WalkStore
         if ($area === 'meeting') { $this->cross()->hide($seed); return; }
         if ($area === 'kinship') { $this->orchard()->hide($seed); return; }
         if ($area === 'pattern') { $this->knot()->hide($seed); return; }
+        if ($area === 'beginnings') { $this->seedbed()->hide($seed); return; }
         $this->hide($seed);
     }
 

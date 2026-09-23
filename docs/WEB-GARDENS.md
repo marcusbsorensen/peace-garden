@@ -537,6 +537,81 @@ though `Organic.hedge` learned to bend for it.
   which is worth having confirmed rather than assumed, given what the Orchard's
   1.33 m ambassador cost.
 
+## The Seedbed, built
+
+The sixth area, `beginnings`, and **the first rule in the garden that groups by
+sameness**. The five before it all sort by difference: a border graded by
+height, a group of three read by rank, a quarter ranked, a crown standing over
+its flanks, a pair claimed by colour and then graded. Every one asks *how does
+this plant differ from that one*. A nursery row asks the other question, and a
+drill sown with one kind is the plainest possible answer to it.
+
+Marcus answered the three questions on 23 September before any code existed:
+**six drills of eight**, forty-eight a plot; **a drill is claimed by the kind of
+the first plant sown in it**, and only that kind may join it; **a place is taken
+in the order of arrival**, filling from the labelled end.
+
+### A kind is the epithet, and that was measured rather than chosen
+
+The obvious reading of *kind* is the plant's name, and it does not work. Over
+five hundred crossings **490 binomials are unique**; the genus is nearly as
+rare, the commonest standing five times. A drill claimed by either would hold
+one plant and wait forever, and the area would be a bed of singletons.
+
+The **epithet** repeats: 46 of them over those five hundred, *rubra* thirty
+times, *aurea* twenty-nine. It is also the truer reading. A genus is inherited —
+`PlantName` gives a hybrid one parent's genus — where an epithet is chosen by
+`Epithet.describing` to say the one thing that is most so about the plant it
+names. **A drill of *contorta* is a drill of plants that are actually alike**,
+which is what a nursery row means.
+
+So `PlantTraits` carries a third fact. It had held two since the Long Walk —
+height and colour family — on the argument that only two can be read without
+looking; the kind is a third of exactly that sort, read off the grown plant and
+stored with the planting. Nothing but the Seedbed reads it, and the service
+never derives it: the phone sends it, the store keeps it in a column, and the
+PHP rule compares it as a string. **The port needs to know nothing about
+botany.**
+
+### What the rule does
+
+Three steps, oldest plot first: a drill already sown with this kind and not yet
+full; failing that the first drill nobody has claimed; failing that a new plot,
+first drill. A drill fills from index 0 outward, so reading a drill from its
+label is reading it in the order it was sown.
+
+- **A drill is claimed, never reserved**, as the Knot Garden's pairs are, and
+  read off the plants rather than stored in a column — a claim that cannot go
+  stale, be restored wrong, or disagree with what is standing in it. Were a
+  drill held open for each of the 46 kinds, one plot would owe more drills than
+  a bed has.
+- **Nothing here reads a height, and nothing reads a colour.** This is the only
+  area whose placement neither can move, which is why its vector file needs no
+  `placementCannotTurn` check: it has no cuts for a plant to stand near. See
+  `.claude/HANDOVER.md` §*The libm divergence* for why that matters everywhere
+  else. `SeedbedTests` proves it by replaying every arrival with its height
+  thrown away and again with one colour for all of them.
+- **The nudge is the only one in the garden that differs by direction**: 0.035 m
+  across a drill, 0.06 m along it. A drill has to read as a line, and a line
+  survives being uneven along its length but not across it.
+
+### The fill, and why it is the loosest in the garden
+
+Five hundred arrivals: **16 plots, 91 drills claimed, 47 of them full, 65% of
+places held** — against the Knot Garden's 92%. The waste is inherent and it is
+the right waste: a kind that arrives once claims a drill and stands in it alone,
+which is what a part-sown seedbed looks like. A bed shows what has been sown,
+not what would look tidiest.
+
+### The label
+
+`Organic.rowLabel` — the sixth structure the file knows how to draw, and the
+first of the four that the five remaining areas need. A tongue on a short stake,
+leaning back 22°, because **seen from the garden's fixed isometric eye a plate
+standing upright is a line two pixels wide**. Nothing is written on it: at this
+scale a word would be four pixels tall and would fight the plants. The drill's
+kind is named in the page's text, where it can be read and translated.
+
 ## The Crossing, built
 
 21 September, the same day as the Quiet Garden. `SeedCore/WebGardens/Crossing.swift`,

@@ -25,9 +25,34 @@ import Foundation
 public struct PlantTraits: Codable, Equatable, Hashable, Sendable {
     public var height: Double
     public var family: Int
+    /// The plant's epithet, lower case as it is written: `rubra`, `contorta`.
+    ///
+    /// **A third fact, because the sixth area asks a question the other two
+    /// cannot answer.** The Seedbed sows a drill with one kind, and a kind has
+    /// to be something two plants can share: across five hundred crossings the
+    /// binomial is unique 490 times and the genus is nearly as rare, while the
+    /// epithet repeats — 46 of them, the commonest thirty times. It is also the
+    /// one part of a name that is *read off the plant* rather than inherited,
+    /// which is what makes a drill of it a drill of things that are alike.
+    ///
+    /// Empty for a planting made before this existed. `Seedbed.place(for:)`
+    /// compares it like any other string, so unnamed plants gather in a drill
+    /// of their own rather than being refused — which is the right answer for a
+    /// rule about sameness, and a drill nobody should ever see, because every
+    /// path a plant arrives by carries its kind. Nothing but the Seedbed reads
+    /// it.
+    public var kind: String
 
-    public init(height: Double, family: Int) {
+    public init(height: Double, family: Int, kind: String = "") {
         self.height = height
         self.family = family
+        self.kind = kind
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let fields = try decoder.container(keyedBy: CodingKeys.self)
+        height = try fields.decode(Double.self, forKey: .height)
+        family = try fields.decode(Int.self, forKey: .family)
+        kind = try fields.decodeIfPresent(String.self, forKey: .kind) ?? ""
     }
 }

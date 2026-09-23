@@ -114,10 +114,14 @@ final class SharingTests: XCTestCase {
             JSONSerialization.jsonObject(with: data) as? [String: Any]
         )
 
-        // router.php reads exactly these six and no others. `area` joined them
-        // on 20 September, and it is the one the service will accept as absent
-        // — an older app sends five and means the Long Walk.
-        XCTAssertEqual(Set(body.keys), ["seed", "parents", "encounter", "height", "family", "area"])
+        // router.php reads exactly these seven and no others. `area` joined them
+        // on 20 September and `kind` on 23 September, and those two are the ones
+        // the service will accept as absent — an older app sends five and means
+        // the Long Walk, and a plant with no epithet on the wire is the empty
+        // kind, which the Seedbed compares like any other: it joins the drill of
+        // unnamed plants.
+        XCTAssertEqual(Set(body.keys),
+                       ["seed", "parents", "encounter", "height", "family", "area", "kind"])
 
         // And it is sent as the area's own name rather than as a number, so a
         // reader of the wire can see which area a plant went to without a table

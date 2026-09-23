@@ -7,6 +7,7 @@ require_once __DIR__ . '/QuietGarden.php';
 require_once __DIR__ . '/Crossing.php';
 require_once __DIR__ . '/Orchard.php';
 require_once __DIR__ . '/KnotGarden.php';
+require_once __DIR__ . '/Seedbed.php';
 
 /**
  * The ten plants that stand for the ten areas, as the plot service knows them.
@@ -43,8 +44,13 @@ final class Ambassadors
      * next should not have to go looking for its plant.
      */
     public const ALL = [
+        // The Seedbed reads a third fact, and only the Seedbed does: a plant's
+        // epithet, which is what claims a drill. It is pinned here beside the
+        // other two for the same reason they are — the service cannot grow the
+        // plant to read the name off it.
         'beginnings' => ['seed' => '526ffb12041c8641eead7cb97614517436806c5748c3f581754dd102738719ae',
-                         'height' => 1.095889687538147, 'family' => 4],  // Verora angustifolia
+                         'height' => 1.095889687538147, 'family' => 4,
+                         'kind' => 'angustifolia'],  // Verora angustifolia
         'waiting' => ['seed' => '8c0992d3e4221b40489b83d05c0ec3131fc8c771365970ffbb1354a93431ff3f',
                       'height' => 0.6767851710319519, 'family' => 4],  // Nyxisora crassicaulis
         'renewal' => ['seed' => 'c295b64b290a2e9b3c6ece6c70dafb1816205f60f42a0663e47bfb738b30d292',
@@ -116,6 +122,7 @@ final class Ambassadors
             'peace' => QuietGarden::plant([], $one['seed'], $one['height'], $one['family']),
             'kinship' => Orchard::plant([], $one['seed'], $one['height'], $one['family']),
             'pattern' => KnotGarden::plant([], $one['seed'], $one['height'], $one['family']),
+            'beginnings' => Seedbed::plant([], $one['seed'], $one['height'], $one['family'], $one['kind']),
             default => null,
         };
     }

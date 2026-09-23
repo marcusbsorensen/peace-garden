@@ -15,6 +15,8 @@ declare(strict_types=1);
  *   GET  /api/orchard/plot/{n}     the same, for the Orchard
  *   GET  /api/knot                 the same, for the Knot Garden
  *   GET  /api/knot/plot/{n}        the same, for the Knot Garden
+ *   GET  /api/seedbed              the same, for the Seedbed
+ *   GET  /api/seedbed/plot/{n}     the same, for the Seedbed
  *   POST /api/walk/offer           one gardener offers a plant, addressed to the other
  *   POST /api/walk/pending         what is waiting on these tokens, either way round
  *   POST /api/walk/answer          the other gardener says yes or no
@@ -122,9 +124,9 @@ function readBody(int $limit = 8192): array
  *
  * The seed has to be the cross of those two parents at that meeting, which is
  * what stops an invented plant being put in the walk — `Seeds::cross` is
- * SeedCore's own derivation, held to it in CI. The height and family are the
- * two the placement rule needs and the two only a grown plant can give, so they
- * are taken on trust and held to the range a plant can actually reach.
+ * SeedCore's own derivation, held to it in CI. The height, the family and the
+ * kind are the three the placement rules need and the three only a grown plant
+ * can give, so they are taken on trust and held to what a plant can actually be.
  */
 function checkedPlant(mixed $plant): array
 {
@@ -142,6 +144,20 @@ function checkedPlant(mixed $plant): array
     if (!(is_float($height) || is_int($height)) || $height < 0.05 || $height > 4.0
         || !is_int($family) || $family < 0 || $family > 6) {
         respond(400, ['error' => 'height is metres, 0.05 to 4; family is 0 to 6.']);
+    }
+
+    // **The kind, which is the plant's epithet**, and the third trait a rule can
+    // want: the Seedbed claims a drill by it. Absent means the empty kind, which
+    // is what every plant offered before 23 September carries and what the other
+    // five areas ignore.
+    //
+    // Lower case, because every epithet is built that way (`Epithet.Form`), so a
+    // capital is a sign that something upstream is wrong rather than something
+    // to take quietly — two spellings of one kind would be two drills. Held to
+    // 64 characters, which is the column's width.
+    $kind = $plant['kind'] ?? '';
+    if (!is_string($kind) || !preg_match('/\A[a-z]{0,64}\z/', $kind)) {
+        respond(400, ['error' => 'kind is a plant\'s epithet: up to 64 lower-case letters, or absent.']);
     }
     if (Seeds::cross($parents[0], $parents[1], $encounter) !== $seed) {
         respond(422, ['error' => 'That seed is not the cross of those parents at that meeting.']);
@@ -170,7 +186,7 @@ function checkedPlant(mixed $plant): array
     }
 
     return ['seed' => $seed, 'parents' => [$parents[0], $parents[1]], 'encounter' => $encounter,
-            'height' => (float) $height, 'family' => $family, 'area' => $area];
+            'height' => (float) $height, 'family' => $family, 'area' => $area, 'kind' => $kind];
 }
 
 /**
@@ -263,6 +279,15 @@ function route(string $method, string $path): never
         respond(200, ['plot' => $plot, 'plantings' => store($settings)->knot()->plot($plot)]);
     }
 
+    if ($path === '/api/seedbed' && $method === 'GET') {
+        respond(200, ['plots' => store($settings)->seedbed()->plots()]);
+    }
+
+    if (preg_match('#\A/api/seedbed/plot/(0|[1-9][0-9]{0,5})\z#', $path, $m) && $method === 'GET') {
+        $plot = (int) $m[1];
+        respond(200, ['plot' => $plot, 'plantings' => store($settings)->seedbed()->plot($plot)]);
+    }
+
     if ($path === '/api/walk/offer' && $method === 'POST') {
         $body = readBody();
         $to = $body['to'] ?? null;
@@ -273,7 +298,8 @@ function route(string $method, string $path): never
         $plant = checkedPlant($body['plant'] ?? null);
         [$offer, $new] = store($settings)->offers()->offer(
             $plant['seed'], $to, $from, $plant['parents'][0], $plant['parents'][1],
-            $plant['encounter'], $plant['height'], $plant['family'], time(), $plant['area']
+            $plant['encounter'], $plant['height'], $plant['family'], time(), $plant['area'],
+            $plant['kind']
         );
         respond($new ? 201 : 200, ['offer' => $offer]);
     }
@@ -327,7 +353,7 @@ function route(string $method, string $path): never
         $plant = checkedPlant(readBody(4096));
         [$planting, $new] = store($settings)->plantInto(
             $plant['area'], $plant['seed'], $plant['parents'][0], $plant['parents'][1],
-            $plant['encounter'], $plant['height'], $plant['family']
+            $plant['encounter'], $plant['height'], $plant['family'], $plant['kind']
         );
         respond($new ? 201 : 200, $planting);
     }

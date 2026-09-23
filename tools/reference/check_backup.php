@@ -69,8 +69,13 @@ for ($i = 0; $i < 4; $i++) {
     $store->plant($seed, str_repeat('a', 64), str_repeat('b', 64), str_repeat('c', 64),
                   1.0 + $i * 0.4, $i % 3);
 }
+// Offered and not yet answered, which is the only state in which an offer holds
+// a plant at all — and the state in which losing the kind would lose it for
+// good, because the plant is placed when the answer comes and nothing then can
+// read the name off it again.
 $store->offers()->offer($seeds[0], str_repeat('1', 32), str_repeat('2', 32),
-    str_repeat('a', 64), str_repeat('b', 64), str_repeat('c', 64), 1.0, 0, 1_700_000_000);
+    str_repeat('a', 64), str_repeat('b', 64), str_repeat('c', 64), 1.0, 0, 1_700_000_000,
+    'beginnings', 'paniculata');
 // One planting in each of the other four areas, so the copy is proved to carry
 // every open area rather than only the one this check grew up around. A table
 // left out of KEPT dumps as no rows at all, which is exactly what a silent data
@@ -83,6 +88,12 @@ $store->plantInto('kinship', str_repeat('f', 64), str_repeat('a', 64), str_repea
                   str_repeat('c', 64), 1.1, 1);
 $store->plantInto('pattern', str_repeat('9', 64), str_repeat('a', 64), str_repeat('b', 64),
                   str_repeat('c', 64), 1.2, 5);
+// The Seedbed's carries a kind, which is the one trait no other area stores. A
+// copy that carried the row and dropped the column would restore a bed whose
+// drills are claimed by nothing, and every later arrival would be sown in the
+// wrong drill — silently, because the rule would still be self-consistent.
+$store->plantInto('beginnings', str_repeat('8', 64), str_repeat('a', 64), str_repeat('b', 64),
+                  str_repeat('c', 64), 1.3, 2, 'contorta');
 unset($store);
 
 // MARK: Taking one
@@ -119,6 +130,46 @@ check('the copy counts the Crossing lock', ($counts['crossing_lock'] ?? -1) === 
 check('the copy holds the Orchard', ($counts['orchard'] ?? -1) === 1);
 check('the copy holds the Knot Garden', ($counts['knot_garden'] ?? -1) === 1);
 check('the copy counts the Knot Garden lock', ($counts['knot_garden_lock'] ?? -1) === 1);
+check('the copy holds the Seedbed', ($counts['seedbed'] ?? -1) === 1);
+check('the copy counts the Seedbed lock', ($counts['seedbed_lock'] ?? -1) === 1);
+
+// MARK: What a restore writes back
+
+// A row count says the row is there and says nothing about its columns, and the
+// Seedbed has one no other area has. So the copy is opened and read: this is a
+// SQLite walk, so what the gz carries after the preamble is the database file
+// itself, which is exactly what a restore puts back.
+$restoredKind = null;
+$restoredDrill = null;
+$restoredOffer = null;
+if ($copy !== '') {
+    $whole = gzdecode((string) file_get_contents($copy)) ?: '';
+    $marker = "-- A SQLite file follows, not SQL.\n";
+    $tail = "\n" . COMPLETED . "\n";
+    $from = strpos($whole, $marker);
+    $to = strrpos($whole, $tail);
+    if ($from !== false && $to !== false) {
+        $file = "$into/restored.sqlite";
+        file_put_contents($file, substr($whole, $from + strlen($marker), $to - $from - strlen($marker)));
+        try {
+            $back = new PDO("sqlite:$file", null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+            $row = $back->query('SELECT kind, drill FROM seedbed')->fetch(PDO::FETCH_ASSOC);
+            $restoredKind = $row['kind'] ?? null;
+            $restoredDrill = $row === false ? null : (int) $row['drill'];
+            $waiting = $back->query('SELECT kind FROM walk_offers')->fetch(PDO::FETCH_ASSOC);
+            $restoredOffer = $waiting === false ? null : $waiting['kind'];
+            unset($back);
+        } catch (Throwable) {
+            // Left null, which is what the checks below report.
+        }
+        unlink($file);
+    }
+}
+check('a restored Seedbed row still knows its kind', $restoredKind === 'contorta');
+// And it is not the drill the ambassador holds, which is the answer a kind
+// dropped on the way through would have given.
+check('and the drill that kind claimed', $restoredDrill === 1);
+check('an offer still in flight keeps its kind too', $restoredOffer === 'paniculata');
 
 // MARK: Reading it back
 

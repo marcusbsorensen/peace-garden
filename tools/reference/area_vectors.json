@@ -1,5 +1,5 @@
 [
-  { "area": "beginnings", "open": false, "table": "" },
+  { "area": "beginnings", "open": true, "table": "seedbed" },
   { "area": "waiting", "open": false, "table": "" },
   { "area": "renewal", "open": false, "table": "" },
   { "area": "light", "open": false, "table": "" },

@@ -62,9 +62,12 @@ final class RoomStore
      * Places one arrival by the rule and keeps it. Returns [the planting,
      * whether it is new]: a seed that has arrived before gets the place it
      * already has, because a plant has one place.
+     *
+     * `$kind` is the Seedbed's trait and nothing here reads it; it is in the
+     * signature so `WalkStore::plantInto` can call every area's `plant` alike.
      */
     public function plant(string $seed, string $parentA, string $parentB, string $encounter,
-                          float $height, int $family): array
+                          float $height, int $family, string $kind = ''): array
     {
         if (Ambassadors::isOne($seed)) {
             throw new LogicException('an ambassador cannot be planted: it is already standing');

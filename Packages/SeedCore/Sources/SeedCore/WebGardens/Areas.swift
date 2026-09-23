@@ -66,7 +66,7 @@ public enum Area: String, CaseIterable, Sendable, Codable {
     /// curated rather than scattered.
     public var isOpen: Bool {
         self == .travel || self == .peace || self == .meeting
-            || self == .kinship || self == .pattern
+            || self == .kinship || self == .pattern || self == .beginnings
     }
 
     /// The areas a plant can be offered to today.
@@ -90,6 +90,7 @@ public enum Area: String, CaseIterable, Sendable, Codable {
         case .meeting: return "crossing"
         case .kinship: return "orchard"
         case .pattern: return "knot_garden"
+        case .beginnings: return "seedbed"
         // The five that are not open have no table, and a name for one here
         // would be a promise about a schema nobody has designed. They get one
         // when they get a rule.

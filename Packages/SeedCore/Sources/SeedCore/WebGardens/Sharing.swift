@@ -188,6 +188,18 @@ public struct WalkArrival: Codable, Equatable, Sendable {
     public var height: Double
     /// One of the seven colour families. `LongWalk.family`.
     public var family: Int
+    /// The plant's epithet, lower case: `rubra`, `contorta`. `PlantTraits.kind`.
+    ///
+    /// **Sent because the Seedbed claims a drill by it**, and because it is read
+    /// off a grown name — the same reason `height` and `family` are sent rather
+    /// than worked out at the far end. Nothing else on the wire carries a
+    /// plant's name, and nothing but the sixth area reads this one.
+    ///
+    /// **Empty by default, which is what an older payload decodes as.** A phone
+    /// that has never heard of a kind goes on posting the two traits it knows,
+    /// and the service reads the missing third as the empty kind rather than
+    /// refusing the arrival.
+    public var kind: String
     /// Which of the garden's ten areas this plant belongs in.
     ///
     /// **A plant's area is its theme's**, and its theme comes from its genus
@@ -203,13 +215,27 @@ public struct WalkArrival: Codable, Equatable, Sendable {
     public var area: Area
 
     public init(seed: String, parents: [String], encounter: String, height: Double,
-                family: Int, area: Area = .travel) {
+                family: Int, area: Area = .travel, kind: String = "") {
         self.seed = seed
         self.parents = parents
         self.encounter = encounter
         self.height = height
         self.family = family
         self.area = area
+        self.kind = kind
+    }
+
+    /// `kind` alone is optional, for the payload a phone built before the
+    /// Seedbed existed. Everything else is required, as it always was.
+    public init(from decoder: any Decoder) throws {
+        let fields = try decoder.container(keyedBy: CodingKeys.self)
+        seed = try fields.decode(String.self, forKey: .seed)
+        parents = try fields.decode([String].self, forKey: .parents)
+        encounter = try fields.decode(String.self, forKey: .encounter)
+        height = try fields.decode(Double.self, forKey: .height)
+        family = try fields.decode(Int.self, forKey: .family)
+        area = try fields.decode(Area.self, forKey: .area)
+        kind = try fields.decodeIfPresent(String.self, forKey: .kind) ?? ""
     }
 
     /// What this plant would arrive as, or nil if it is not a hybrid.
@@ -227,12 +253,13 @@ public struct WalkArrival: Codable, Equatable, Sendable {
             encounter: encounterID.hexString,
             height: traits.height,
             family: traits.family,
-            area: area
+            area: area,
+            kind: traits.kind
         )
     }
 
     /// The traits the placement rule reads, without going back to the mesh.
     public var traits: LongWalk.Traits {
-        LongWalk.Traits(height: height, family: family)
+        LongWalk.Traits(height: height, family: family, kind: kind)
     }
 }

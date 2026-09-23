@@ -172,6 +172,71 @@ check('taking it back empties the room again',
       count(array_filter($walk->room()->plot(0), fn ($p) => count($p['parents']) === 2)) === 0);
 check('and the ambassador is untouched', count($walk->room()->plot(0)) === 1);
 
+// MARK: The sixth area, and the kind an offer has to carry
+
+// **The Seedbed claims a drill by the plant's kind**, and the plant is planted
+// when the *other* gardener answers — days later, on a service that cannot grow
+// it again to read its name. So the kind travels with the offer or it is lost,
+// and losing it is invisible: every plant would simply be sown in the drill of
+// unnamed plants and the rule would go on agreeing with itself.
+function sownAs(WalkStore $walk, string $seed): ?array
+{
+    $query = $walk->connection()->prepare('SELECT kind, drill, slot_index FROM seedbed WHERE seed = ?');
+    $query->execute([$seed]);
+    $row = $query->fetch();
+    return $row === false ? null : $row;
+}
+
+$six = crossing(6);
+$mine6 = token('six/mine');
+$theirs6 = token('six/theirs');
+$offers->offer($six['seed'], $theirs6, $mine6, $six['a'], $six['b'], $six['encounter'],
+               1.0, 2, $now, 'beginnings', 'contorta');
+check('a Seedbed plant is planted', $offers->answer($six['seed'], $theirs6, true, $now)['planting'] !== null);
+$sown = sownAs($walk, $six['seed']);
+check('the kind survived the asking', $sown !== null && $sown['kind'] === 'contorta');
+// Drill 0 belongs to the ambassador, *Verora angustifolia*, so a plant whose
+// kind was dropped would be sown in the first drill nobody has claimed and look
+// exactly like this one. What tells them apart is the kind in the row above and
+// the plant that follows it below.
+check('it claimed a drill of its own', $sown !== null && (int) $sown['drill'] === 1
+      && (int) $sown['slot_index'] === 0);
+
+$seven = crossing(7);
+$mine7 = token('seven/mine');
+$theirs7 = token('seven/theirs');
+$offers->offer($seven['seed'], $theirs7, $mine7, $seven['a'], $seven['b'], $seven['encounter'],
+               1.7, 5, $now, 'beginnings', 'contorta');
+$offers->answer($seven['seed'], $theirs7, true, $now);
+$beside = sownAs($walk, $seven['seed']);
+// A different height and a different colour, and it still joins the first one:
+// this area reads neither, and a kind that had been dropped would have opened a
+// third drill instead.
+check('a second plant of that kind joins the same drill',
+      $beside !== null && (int) $beside['drill'] === 1 && (int) $beside['slot_index'] === 1);
+
+// And an offer made without a kind — which is every offer made before the
+// column existed — still plants, in the drill of unnamed plants.
+$eight = crossing(8);
+$mine8 = token('eight/mine');
+$theirs8 = token('eight/theirs');
+$offers->offer($eight['seed'], $theirs8, $mine8, $eight['a'], $eight['b'], $eight['encounter'],
+               0.7, 1, $now, 'beginnings');
+$offers->answer($eight['seed'], $theirs8, true, $now);
+$unnamed = sownAs($walk, $eight['seed']);
+check('an offer with no kind still plants', $unnamed !== null && $unnamed['kind'] === '');
+check('and stands in a drill of its own', $unnamed !== null && (int) $unnamed['drill'] === 2);
+
+// The kind is the plant's, not the planting's address, so it goes when the offer
+// is settled — with the parents, the height and the family, and for the reason
+// they go: an accepted plant is in the bed and does not need to be here twice.
+$left = $walk->connection()->prepare('SELECT kind, height, area FROM walk_offers WHERE seed = ?');
+$left->execute([$six['seed']]);
+$after = $left->fetch();
+check('an answered offer keeps no kind', $after !== false && $after['kind'] === ''
+      && $after['height'] === null);
+check('but still says which area to look in', $after !== false && $after['area'] === 'beginnings');
+
 $stranger = $offers->withdraw($one['seed'], token('nobody'), $now);
 check('a stranger cannot take back somebody else\'s plant', $stranger === null);
 check('an offer that does not exist cannot be withdrawn',
