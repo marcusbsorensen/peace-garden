@@ -332,3 +332,63 @@ Marcus answered the first decision: curve it. `197e6fd`.
   behaviour in it**, which makes it a good commit to do on its own and a bad one
   to fold into anything else. `private` members would have to become `internal`,
   since Swift's `private` is file-scoped.
+
+## Addendum: the five areas still to open
+
+Five of ten are planted — `travel`, `peace`, `meeting`, `kinship`, `pattern`.
+**All ten open before the app is announced**, which is what closed the share
+screen's question above, so this list is the run to announcement.
+
+An area is open when it has a placement rule, not when it has a name: all ten
+have names, layouts on paper and a place on the map. `Area.isOpen` is the list
+that decides, and `docs/WEB-GARDENS.md` holds each layout.
+
+| Area | Theme | Laid out as | Structure it needs |
+| --- | --- | --- | --- |
+| **The Seedbed** | `beginnings` | Straight parallel drills, one plant repeated along a drill rather than mixed, a label at the end of each row. Fine tilth. | Row labels — **unbuilt** |
+| **The Cold Frame** | `waiting` | Low glazed frames in rows, plants in tight ranks inside them, hardening off. Small plants only: the young stages of what grows elsewhere. | A glazed frame, lids propped by day — **unbuilt** |
+| **The Coppice** | `renewal` | Stools in blocks, each block cut in its year of the rotation so every stage stands at once, from cut stumps to full poles. Woodland flowers in the light between. | Stools — possibly `Organic.tree` cut back, possibly its own |
+| **The Glasshouse** | `light` | Staging along the sides, pots on it, a central aisle. Tender plants set close to the glass. | Staging and glass — **unbuilt** |
+| **The Home Ground** | `ground` | The kitchen garden: rectangular beds 1.2 m wide so no soil is stood on, paths between, crops in rows across each bed. | Bed edging and paths — **unbuilt** |
+
+**Four structures are still to come** — the frame, the staging, the bed edging
+and the row labels — and each belongs to one of these five. That is four of the
+five areas needing something `Organic` cannot draw yet, where the last four
+areas needed one structure between them. **The `Structures/` split is worth
+doing before the first of them, not after the fourth.**
+
+### What is not decided for any of them
+
+Each area so far was chosen by Marcus answering **three questions before any
+code existed**: how many plants a plot and in what divisions, what the divisions
+mean to each other, and which trait picks which. None of the five has them
+answered. What each one is *for* — the thing it would test that the five built
+ones have not — is worth naming when it is chosen, because that is how the five
+so far were picked:
+
+- **The Seedbed** would be the first rule that groups by *kind* rather than
+  grading by a number: one plant repeated along a drill is a rule about
+  sameness, and every rule so far sorts by difference.
+- **The Cold Frame** would be the first rule that can *turn a plant away on its
+  own traits* — small plants only — rather than on which area its name belongs
+  to. That is a new answer for `ShowInGardenView` to have to give.
+- **The Coppice** would be the first rule in which a place *changes what it
+  shows over time*, if the rotation is real: append-only says a plant never
+  moves, and a block cut in its year is the first thing that would look
+  different on two visits without anything having moved.
+- **The Glasshouse** would be the first area whose plot is not the ground —
+  plants on staging, at a height, with an aisle — and the first with something
+  drawn *in front of* the planting.
+- **The Home Ground** is the plainest of the five and the nearest to the Long
+  Walk's grammar, which makes it the cheapest to open and the least informative.
+
+### The cost of each, from the last five
+
+A new area is **six places that record the open list**, not two — `Areas.swift`,
+`Areas.php`, `backup.php`'s `KEPT`, `walk.js`'s `built` map, `.pages/g`'s
+comment, and the `AreaVectorTests`/`ThemeMappingTests` assertions.
+`check_areas.php` catches only the first two. It is also a rule, a PHP port, a
+store, a page, a `/dev/` page, a reference check, a step in
+`.github/workflows/tests.yml`, ten strings in `strings.js`, and a line in
+`tools/site/serve.py`'s `PAGES` and `tools/wasm/dev-router.php`. All of it is in
+*Traps* above.
