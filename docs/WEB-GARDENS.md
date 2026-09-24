@@ -1266,25 +1266,15 @@ northern one is at least as tall; chance is half.
   the gap to their neighbour and half the rosettes less than half as wide as
   theirs: a thicket in one bed and a scatter in another.
 
-### Open questions for Marcus
+### Decided, 24 September 2026
 
-1. **Spacing: the crop's own, or one for every bed?** Recommended: **the crop's
-   own** — umbels 14 a bed, spires 27, rosettes 52 — so each bed reads as a sown
-   crop, at the cost that only a third of plots hold all three. The other
-   answer: 24 a bed for every crop, most plots holding one bed of each, umbels
-   crowded and rosettes sparse.
-2. **Grading within a bed: two ends, or three bands?** Recommended: **two
-   ends** — a fill that never depends on a height, and three pairs in four in
-   order. The other answer: three bands of rows, 85% in order on strangers but
-   75% held when the gardeners are uneven.
-3. **The paths: trodden soil, or mown grass?** Recommended: **trodden soil**,
-   paler than the beds, so the whole plot is earth and the map's dark ground is
-   true of it. Grass paths are the allotment's other look, and they would make
-   this the fifth green area on the map.
-4. **The bed edges: mounded soil, or boards?** Recommended: **mounded soil**,
-   the path's edge being the bed's shoulder. Boards would be the one long
-   straight thing in the garden, however much they wandered.
-5. **The map's glyph: redraw it with three beds, or keep two and a path?**
-   Recommended: **redraw with three**, because a glyph in `gates.js` `LOOK` is
-   the one shape its area's layout is known by, and two beds is a layout this
-   area does not have.
+Marcus took all five recommendations.
+
+1. **Spacing is the crop's own**: umbels 14 a bed, spires 27, rosettes 52.
+2. **A bed fills from both ends**: tall from the north, short from the south.
+3. **The paths are trodden soil**, paler than the beds, so the whole plot is
+   earth.
+4. **The beds are mounded, with no boards**; a path's edge is a bed's shoulder.
+5. **The map's glyph shows three beds**, redrawn the same day in `gates.js`
+   `LOOK.ground`: three bed outlines, with short upright strokes for the
+   spires, flat bars for the umbels' heads and close dots for the rosettes.
