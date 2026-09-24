@@ -79,9 +79,11 @@ peacegarden.app/
         └── passages.js                ← theme, subtheme, and the draw
 ```
 
-Almost everything is a file. No build step, no framework, no npm, and one
-twenty-line PHP script whose whole job is to put a `Content-Type` on four
-paths. Deploy with:
+Almost everything is a file. No build step, no framework, no npm, and one PHP
+script, `index.php`, which serves every page in `.pages/` with the type it is,
+hands `/api/` to the plot service, sends the plant renderer compressed, and
+stamps each page's scripts and stylesheet with the build they are, so a
+returning browser cannot run yesterday's copy of one. Deploy with:
 
     tools/deploy.sh
 
@@ -104,14 +106,14 @@ The symptom is the one this file already warned about in another form: `/s`,
 so a browser saved the page instead of drawing it. Every request was a 200 and
 every log line was clean.
 
-**So `index.php` serves those four**, because the same nginx vhost offers
-exactly that and nothing else:
+**So `index.php` serves them**, and every page added since, because the same
+nginx vhost offers exactly that and nothing else:
 
     location / { try_files $uri $uri/ @dispatch; }
     location @dispatch { if (-f $document_root/index.php) { rewrite ^ /index.php last; } }
 
 A path with no file behind it reaches `index.php` with `REQUEST_URI` intact.
-Which is why the four live in `.pages/` rather than at the paths they are
+Which is why the pages live in `.pages/` rather than at the paths they are
 served at: a file at `/s` wins at `try_files` and is served as a download
 again, and `index.php` never sees the request. The leading dot is not
 decoration — nginx's own `location ~ /\.(?!well-known(?:/|$)) { deny all; }`
@@ -119,17 +121,17 @@ makes the directory unreachable from outside, so each page has one address
 rather than two.
 
 **Every page added here has to be added to `ROUTES` in `index.php`** — and to
-`PAGES` in `tools/site/serve.py`, which is the same four rows in Python. `g`
-was missing from the old list once and arrived as a download; nothing said so.
+`PAGES` in `tools/site/serve.py`, which is the same rows in Python. `g` was
+missing from the old list once and arrived as a download; nothing said so.
 Serve the directory locally the way the host serves it before believing a page
 works:
 
     python3 tools/site/serve.py
 
 That is the reason it exists rather than `python3 -m http.server`, which types
-a file by its extension and so cannot draw any of the three pages.
+a file by its extension and so cannot draw a single page here.
 
-**The cost is that four paths now need PHP.** Static files did not. It is the
+**The cost is that every page now needs PHP.** Static files did not. It is the
 trade the host leaves available: `/s` is in every link already minted and
 cannot grow an extension, so either something sets the header or the header is
 wrong. If PHP is ever unavailable, the association file — and only that one —
@@ -142,8 +144,10 @@ rather than a plan.
 **Getting `.htaccess` honoured instead** would mean 20i moving this site off
 its nginx-only config, which is a support request rather than anything in this
 repository. It would make `.htaccess` here do the routing — it is written to
-send the same four paths to `index.php` either way, so one mechanism would
-still serve them and the two hosts could not disagree about what `/s` is.
+send paths to `index.php` rather than serve them itself, so one mechanism would
+still serve them and the two hosts could not disagree about what `/s` is. It
+names only the first four paths, though, `/s`, `/g`, `/t` and the association
+file, and every page since would need adding to it before that day.
 
 **`/t` is the test roster** — forty-three gardeners, one per language, for
 looking at the site from where a reader of it stands. There are no accounts
@@ -152,8 +156,8 @@ site has nobody to log in. It is `noindex, nofollow`, it guards nothing, and it
 can ship or be left out of an upload without anything else noticing.
 
 **There is one drawing.** `tools/icon/make_icon.py` writes `assets/icon.svg`,
-`assets/icon-180.png` and `favicon.ico` from the same dials, and the three
-pages point their header `<img>` at that same `icon.svg`. Change the dials and
+`assets/icon-180.png` and `favicon.ico` from the same dials, and every page
+points the `<img>` in its bar at that same `icon.svg`. Change the dials and
 re-run the generator; hand-edit none of them.
 
 There used to be a second file, `assets/mark.svg`, described here as a copy of

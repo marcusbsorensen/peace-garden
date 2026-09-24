@@ -177,16 +177,6 @@ struct ReleaseGlyph: Shape {
 
         var path = Path()
 
-        // **The hairs sit on a flattened dome, not on a circle.** Spread evenly
-        // around the hub they made a five-pointed asterisk, and the stalk
-        // leaving the same hub read as a sixth ray. Their tips are on an
-        // ellipse half again as wide as it is tall, so the silhouette is a
-        // canopy — which is the whole of what tells a parachute from a star.
-        //
-        // Five is the count. The mark this replaced learnt that twenty-eight
-        // points of circle will not hold a stem, a cup and three seeds; five
-        // hairs get away with it only because they all leave one point, which
-        // the eye takes as one object however many strokes it took.
         // **Leaning, because a seed that is upright has landed.** Drawn
         // square to the frame it was a dandelion at rest with some weather
         // underneath it; tipped into the way the wind is going, and with its

@@ -1,6 +1,7 @@
 <?php
 /**
- * The four paths that have no file extension, served with the type they are.
+ * Every page on the site, none of them with a file extension, served with the
+ * type it is — and the plant renderer, and the door to the plot service.
  *
  * **Why this file exists at all.** The design in Server/README.md was a pile of
  * static files and an `.htaccess` that gave `/s`, `/g`, `/t` and the
@@ -20,20 +21,21 @@
  *     location @dispatch { if (-f $document_root/index.php) { rewrite ^ /index.php last; } }
  *
  * So a path with no file behind it arrives here with `REQUEST_URI` intact. The
- * four pages therefore live in `.pages/`, off the paths they are served at —
+ * pages therefore live in `.pages/`, off the paths they are served at —
  * a file at `/s` would win at `try_files` and be served as a download again,
  * which is the failure this file exists to fix. The leading dot is not
  * decoration: nginx's own `location ~ /\.(?!well-known(?:/|$)) { deny all; }`
  * makes the directory unreachable from outside, so there is one address for
  * each page rather than two.
  *
- * The cost is that these four paths need PHP to be up. Static files did not.
+ * The cost is that every page needs PHP to be up. Static files did not.
  * That is a real trade and it is the one the host leaves available: `/s` is the
  * path in every link already minted and it cannot grow a `.html`, so either it
  * is served by something that can set a header or it is served wrongly.
  *
- * On a host that does read `.htaccess`, the file beside this one routes the
- * same four paths here rather than serving them itself, so the two agree.
+ * On a host that does read `.htaccess`, the file beside this one routes paths
+ * here rather than serving them itself, so the two agree — though it names
+ * only the first four, `/s`, `/g`, `/t` and the association file.
  */
 
 declare(strict_types=1);
@@ -43,7 +45,7 @@ declare(strict_types=1);
  *
  * Named one by one rather than derived from the filesystem. A rule that turns
  * any file in a directory into a page is a rule that serves whatever is left in
- * that directory by accident; four lines of table cannot.
+ * that directory by accident; a table of one line per path cannot.
  */
 const ROUTES = [
     // The front. It answered 403 until 16 September, which was the host's

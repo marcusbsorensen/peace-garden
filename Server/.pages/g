@@ -57,10 +57,10 @@
         rather than a header of its own.
       -->
       <header class="masthead bar">
-        <span class="bar__home">
+        <a class="bar__home" href="/">
           <img class="mark" src="/assets/icon.svg" alt="" width="44" height="44" />
           <span class="wordmark" id="wordmark">Peace Garden</span>
-        </span>
+        </a>
         <!--
           The ways on from here, as glyphs rather than words, so they read the
           same in every language: the garden (the app's own Garden mark,

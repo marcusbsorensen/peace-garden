@@ -208,29 +208,30 @@ body {
 }
 
 /* ── The bar ──────────────────────────────────────────────────────────────
-   The mark and the wordmark, the way back to the garden, and — on an area
-   page — the name of the area you are standing in.
+   The mark and the wordmark, which lead to the front page, and the ways on
+   from here as a row of glyphs at the other end — §The bar's glyphs, near the
+   end of this file, draws them.
 
    **The site had no way between its pages at all.** Every path was reached by
    typing it or by following a link minted elsewhere, and the one route into
    the garden was the front page. So this is on every page, including the
-   front, where the mark was not a link and the link to the garden is the whole
-   point of having a bar there.
+   front, where the mark is not a link, because the front is where it leads,
+   and the glyphs are the whole point of having a bar there.
 
-   It is the masthead with one thing added rather than a second kind of header:
-   the same row, the same gap, the same mark at the same size. What is new is a
-   rule under it — one hairline, which is the only edge this project draws —
-   and the link at its end. Nothing here is filled, coloured or underlined: the
-   link back wears `.quiet-button`, which is the capsule the front page's four
-   links already wear.
+   It is the masthead with two things added rather than a second kind of
+   header: the same row, the same gap, the same mark at the same size. What is
+   new is a rule under it — one hairline, which is the only edge this project
+   draws — and the glyphs at its end. Nothing here is filled, coloured or
+   underlined: each glyph is a line drawing in a hairline ring, and the link
+   home is the mark and the wordmark as they stand, with no line under them.
 
    **It does not say which area you are standing in**, though it did for a day.
    The heading under the plot says that, and a bar naming the area a few hundred
    points above its own heading is one screen saying the same words twice.
 
    It wraps rather than shrinking. On a narrow phone the mark and wordmark keep
-   the first line and the way out sits centred underneath, which is a bar of two
-   lines instead of a bar with a squeezed capsule in it. */
+   the first line and the glyphs sit centred underneath, which is a bar of two
+   lines instead of one with its ways squeezed into what is left. */
 .masthead.bar {
   inline-size: 100%;
   flex-wrap: wrap;
@@ -254,13 +255,6 @@ body {
   gap: 12px;
   /* Pushed to the end while the bar is one line, and harmless once it wraps. */
   margin-inline-start: auto;
-}
-
-/* Smaller than the capsules in the body of a page: a bar is chrome, and a
-   control in it should not be the loudest thing on the screen. */
-.bar .quiet-button {
-  padding: 5px 14px;
-  font-size: 0.76rem;
 }
 
 
