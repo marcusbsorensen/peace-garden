@@ -72,7 +72,7 @@ def problems_for(code, catalogue, source, claims=CLAIMS, group="prose"):
     """One group of commissioned prose.
 
     **`claims` is a parameter because there are two groups now and they arrive
-    separately.** The six paragraphs and the six on `/privacy` are different
+    separately.** The six paragraphs and the eight on `/privacy` are different
     commissions; a language may have either without the other, and folding them
     into one table made 41 of 42 catalogues fail as half-commissioned the
     moment the privacy keys existed. Same rule as the ten area names.

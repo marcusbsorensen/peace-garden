@@ -121,14 +121,15 @@ export const EN = Object.freeze({
   notASeed: "That link does not carry a seed.",
   newerVersion: "This seed came from a newer version of Peace Garden.",
 
-  // The privacy page, at `/privacy`. **A mandatory App Store listing field,
-  // and unusually short to write here because the app's design is the policy.**
+  // The privacy page, at `/privacy`. **A mandatory App Store listing field.**
   //
-  // Six keys against a `strings.js` that opens by defending the low tens — paid
-  // deliberately, Marcus's call on 6 September, on the grounds that a page
-  // saying *nothing about you leaves your phone* in English only, to a reader
-  // who was handed a link by a friend and is wondering whether it is a scam, is
-  // the one page where falling back to English costs the most.
+  // Eight keys against a `strings.js` that opens by defending the low tens —
+  // paid deliberately, Marcus's call on 6 September, on the grounds that a page
+  // about what leaves your phone, in English only, to a reader who was handed a
+  // link by a friend and is wondering whether it is a scam, is the one page
+  // where falling back to English costs the most. Six until 24 September, when
+  // the web garden gave the page something to say about a server and two
+  // paragraphs were added to say it; the keys are next to `privacyTitle`.
   //
   // Every sentence says what the app *does*, per the register in
   // tools/strings/BRIEF.md: *it stays on this phone* rather than *it never
@@ -418,21 +419,56 @@ export const EN = Object.freeze({
   frontGrow: "Grow",
   frontGrowBody: "A plant neither could have grown alone opens over real days.",
 
+  // **Rewritten on 24 September, Marcus's wording**, because the page had
+  // stopped being true: it said no server held a copy, that one random number
+  // crossed at a meeting and reached nobody else, and that the site was plain
+  // files, and since the web garden opened none of that holds. Each sentence is
+  // checked against the code it describes, and the comment above each names
+  // that code, so the next change to the code knows which sentence it moves.
+  //
+  // On the page in the order 1, 2, 3, 4, 6, 7, 5: the phone, the meeting, the
+  // storage, the link, then the web garden and the asking, and the website
+  // last. The numbers are the order the keys were made, not the order read.
   privacyTitle: "Privacy",
+  // The phone is where a garden lives. There is no account anywhere, in the
+  // app or on the site; the site's tester latch is a shared word in
+  // `testers.js`, not a sign-in.
   privacy1:
-    "Peace Garden keeps what you grow on your own phone. There is no account, nothing to sign in to, and no server holding a copy.",
-  // The one paragraph a reviewer is most likely to ask about, so it is the most
-  // specific. `SettingsView` says the same thing inside the app, in eight
-  // languages, and the two should agree.
+    "Peace Garden keeps what you grow on your own phone. There is no account and nothing to sign in to.",
+  // The one paragraph a reviewer is most likely to ask about, so it is the
+  // most specific: every field of `PollenCard`, the nonce that travels beside
+  // it, and the name the phone advertises while `PollenExchangeService` is
+  // looking for a partner. `SettingsView` says the same things inside the app,
+  // and the two should agree.
   privacy2:
-    "When two phones touch, each hands the other a seed, the name you chose to show, and a random number. That passes straight between the two phones and reaches nobody else.",
+    "When two phones touch, they connect directly, encrypted, and each hands the other its seed and when it was drawn, its plant's name, the name you chose to show, whether a place may be kept with the meeting, and two random numbers: one that makes the meeting's plant, and one the other phone can use later to offer that plant to the web garden. While you are meeting, the name you chose to show can be seen by other phones nearby that are open to a meeting.",
+  // `GardenStore`: one file in the app's own storage, which the phone's
+  // backups include and removing the app removes.
   privacy3:
-    "Your seeds, your plants, and anything you write about a meeting stay in the app's own storage on your phone. Removing the app removes them.",
-  // The fragment argument, said without the word fragment.
+    "Your seeds, your plants, and anything you write about a meeting stay in the app's own storage on your phone, and in your phone's backups. Removing the app removes them from the phone.",
+  // The fragment argument, said without the word fragment, and what the
+  // fragment carries: `PollenLink`'s fields, which whoever holds the link can
+  // read as surely as the page does.
   privacy4:
-    "A seed travels in a link after the # sign, which is the part of a web address a browser keeps to itself. Opening one draws the plant on your own device.",
+    "A seed travels in a link after the # sign, which is the part of a web address a browser keeps to itself. The link carries the seed and when it was drawn, the plant's name, the name you chose to show and a random number, so whoever you send it to can read them.",
+  // The web garden, `Server/.api/`: what an offer and a planting keep
+  // (`Offers.php` and the area stores), what taking back leaves
+  // (`TakenBack.php`), the backups (`backup.php`, `tools/backup.sh`) and the
+  // thirty days an offer waits (`Offers::LAPSES_AFTER`, swept hourly by
+  // `sweep.php`). The traits are said plainly rather than left inside *what
+  // the garden needs*, because each of them is stored.
+  privacy6:
+    "If you and the person you met both agree to share a plant, the web garden keeps it: its seed, the seeds of its two parents, a number for the meeting, your two random numbers, and what the garden needs to place it — its height, colour, area, the second word of its name, and when it was offered. Anyone can see it standing in the garden. No one's name goes with it. Either of you can take it back; the garden then forgets the plant and keeps only a scrambled record, so that it cannot be planted again. The site's backups keep what they held for thirty days. An offer nobody answers is taken back after thirty days.",
+  // `GardenModel.catchUpOnTheAsking`, run when the app starts and only while
+  // `sharing.invitations.v1` is on: it sends this phone's own token for each
+  // meeting, and nothing else.
+  privacy7:
+    "With alerts on, each time the app starts it asks the web garden about the plants you have offered or been offered, by sending its random numbers.",
+  // The website: `Limits.php` for the scrambled address and its hour (and
+  // `sweep.php`, which keeps the hour when nobody asks), `languages.js` for the
+  // language kept in the browser, and nothing anywhere that sets a cookie.
   privacy5:
-    "This site is made of plain files. It has no advertising, no analytics, and no cookies.",
+    "This site runs on a web host, with no advertising, no analytics and no cookies. Your language choice is remembered in your own browser. To limit abuse, the web garden keeps a scrambled form of your internet address for up to an hour, and the host keeps its usual request logs.",
 
   // The ten areas of the garden, in the order they are walked: the top row of
   // the map left to right, then the bottom. Each names one passage theme, and
