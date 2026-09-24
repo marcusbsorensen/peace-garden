@@ -187,6 +187,14 @@ jobs:
       # still has some.
       - name: The Cold Frame's rule is SeedCore's
         run: php tools/reference/check_cold_frame.php
+
+      # The eighth area's, the first that reads a hue: a pot tries its own band
+      # in every plot before a neighbour in any, and the neighbour its hue leans
+      # to before the other. A port that tried each plot's neighbours before
+      # the next plot's own band parts company at arrival 26; one that always
+      # tried the lower neighbour first, at arrival 103.
+      - name: The Glasshouse's rule is SeedCore's
+        run: php tools/reference/check_glasshouse.php
       # And the asking above it: nothing reaches the walk until the second
       # gardener has said yes, and only the token an offer was addressed to
       # can say it. The walk itself has no way to tell, so this is where it

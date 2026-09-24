@@ -705,7 +705,7 @@ read and so does the glass.
 
 ## The Glasshouse, chosen
 
-The eighth area, `light`, chosen on 23 September. Nothing is built yet. It
+The eighth area, `light`, chosen on 23 September and built on the 24th (below). It
 comes before the Home Ground and the Coppice because **it holds the most plants
 still waiting for a place** — 12.6% of arrivals, against 11.7% and 8.4% — and
 because it reuses the Cold Frame's glass.
@@ -764,6 +764,71 @@ twelve positions along the staging with two pots at each, a border of eight.
   cut. It does need carrying: `PlantTraits` holds a colour family, not a hue,
   so a hue is a fourth trait, sent by the phone and stored like the Seedbed's
   kind, by both arrival paths.
+
+## The Glasshouse, built
+
+24 September. `SeedCore/WebGardens/Glasshouse.swift`,
+`Morphology/Structures/SpanHouse.swift` and `Staging.swift`,
+`Server/.api/Glasshouse.php`, `GlasshouseStore.php`,
+`Server/assets/js/glasshouse.js`, `glasshousepage.js`, `/glasshouse`,
+`/dev/glasshouse`, `tools/reference/check_glasshouse.php`. **The first area
+that sorts by hue, and the first whose plants do not all stand on the ground.**
+
+### The rule
+
+Height picks the bed. A plant of 1.30 m or more (`Orchard.crownFrom`, borrowed)
+goes in the border: the next place from the door in the oldest plot with one,
+whatever its colour. Anything shorter is potted on the staging:
+
+1. its own band, in every open plot, oldest first;
+2. one band off, in every open plot — the neighbour its hue leans to first, and
+   never across the cut, where the two ends of the bench are the two ends of
+   the spectrum rather than neighbours;
+3. a new plot, at its own band.
+
+A pale plant, or one whose hue was never sent, takes the first free pot from
+the door. A position fills its row by the glass before its row by the path.
+
+- **The band edges were set from 2,864 hued plants** of the area's own (3,000
+  out of 23,259 crossings, less 136 pale), under a label the tests do not use,
+  and written in as literals: 166.6°, 190.8°, 215.9°, 239.8°, 265.8°, 291.0°,
+  315.7°, 345.4°, 15.7°, 40.3° and 69.6°, as turns past the 114° cut.
+- **On a fresh five hundred: 17 plots, 92% of places held, the staging and the
+  border both 91–92% full, and 322 of 364 hued pots in their own band**, none
+  more than one off. Better than the simulation's 87% and 86%, because the
+  edges were fitted to six times the sample and a pot one band off tries the
+  side its hue leans to first — a choice the simulation did not make, taken
+  here because Marcus's answer was *the free place nearest its own*.
+- **Hue became `PlantTraits.hue`**, a turn of the circle, optional: the phone
+  sends it (`WalkArrival.hue`), `walk_offers` gained a nullable `hue` column,
+  and a plant without one is placed as a pale one is. `GlasshouseStore::exactly`
+  binds it as the shortest text that reads back as the same double, because
+  PDO binds a float at fourteen significant digits — harmless for a height,
+  and not for a number compared with a band edge exactly. `check_offers.php`
+  holds a hue to the bit through the asking.
+- **The vector file compares the hue exactly**, under WebAssembly as on the
+  Mac, and `placementCannotTurn` checks only the border's cut: nothing here
+  weighs one plant's height against another's.
+
+### The house
+
+`Organic.spanHouse` and `spanHouseGlass`: a span house 4.4 m by 3.4 m, eaves
+at 2.1 m and ridge at 2.9 m, glazed to the ground, with its sliding door slid
+open in the `x−` gable — the end the spectrum and the border both count from.
+**The eaves and ridge were set by the plants under them**: a potted plant
+stands 0.83 m off the floor and may be 1.30 m tall, and `GlasshouseTests` holds
+every one of the five hundred under the roof with a tenth of a metre to spare
+(the nearest is 0.23 m clear). `Organic.staging` is five slats on five frames
+of legs; `Organic.pot` is a turned clay pot, round by `Organic.turn`, which
+sums the board's corner series four times rather than calling `sin`.
+
+The page draws a pot under every planting with a `lift`, which the service
+sends beside its spot. So the ground is built again for each plot
+(`makePlotStage`'s `rebuild`), and `add` takes a lift. The glass is the Cold
+Frame's pass at 5% rather than 7%, because two or three layers of it stand
+between the eye and a pot. The floor is quarry tiles, the map's `LOOK.light`
+ground, laid on the Knot Garden's jittered lattice with a tone to a tile, so
+the grid a tiled floor is shows as tone rather than as ruled lines.
 
 ## The Coppice, chosen
 
@@ -1170,7 +1235,8 @@ surface.
 The rules place the plants. What we choose by hand is everything else, per plot:
 
 - **Its ground**, from the app's eight worlds, or new ones made for the areas
-  (the Glasshouse has no world yet, and needs a floor).
+  (the Glasshouse's is quarry tiles, drawn by its page rather than taken from a
+  world).
 - **Its lights and figures**: a lantern at the Crossing's centre, fireflies in
   the Orchard's grass, a glow-in-the-dark hare in the Quiet Garden. They are
   `Bed.lamps`, stored as strings, so a web garden can hold a figure the app has

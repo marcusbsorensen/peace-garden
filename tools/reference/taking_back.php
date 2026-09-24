@@ -36,6 +36,8 @@ const TAKING_BACK = [
     'pattern' => ['knot_garden', ['plot', 'compartment', 'slot_index'], ['height', 'family'], []],
     'beginnings' => ['seedbed', ['plot', 'drill', 'slot_index'], ['kind'], ['height' => 0.0, 'family' => 0]],
     'waiting' => ['cold_frame', ['plot', 'frame', 'slot_rank', 'slot_index'], ['height', 'family'], []],
+    'light' => ['glasshouse', ['plot', 'bed', 'slot_index', 'slot_row'], [],
+                ['height' => 0.0, 'family' => 0, 'hue' => null]],
 ];
 
 /**
@@ -58,6 +60,7 @@ function takingBackStore(string $area, string $file): object
         'pattern' => new KnotStore($db),
         'beginnings' => new SeedbedStore($db),
         'waiting' => new ColdFrameStore($db),
+        'light' => new GlasshouseStore($db),
     };
 }
 
@@ -78,6 +81,7 @@ function takingBack(string $area, array $vectors, int $count = 200): void
             'b' => hash('sha256', "taking back, parent b $n"),
             'encounter' => hash('sha256', "taking back, meeting $n"),
             'height' => (float) $v['height'], 'family' => (int) $v['family'], 'kind' => (string) ($v['kind'] ?? ''),
+            'hue' => isset($v['hue']) ? (float) $v['hue'] : null,
         ];
     }
 
@@ -91,8 +95,10 @@ function takingBack(string $area, array $vectors, int $count = 200): void
     $lifted = takingBackStore($area, $taken_file);
     $taken = [];
     foreach ($arrivals as $n => $a) {
-        $whole->plant($a['seed'], $a['a'], $a['b'], $a['encounter'], $a['height'], $a['family'], $a['kind']);
-        $lifted->plant($a['seed'], $a['a'], $a['b'], $a['encounter'], $a['height'], $a['family'], $a['kind']);
+        // The hue is the Glasshouse's alone; every other area's `plant` takes
+        // seven arguments and PHP lets an eighth pass by unread.
+        $whole->plant($a['seed'], $a['a'], $a['b'], $a['encounter'], $a['height'], $a['family'], $a['kind'], $a['hue']);
+        $lifted->plant($a['seed'], $a['a'], $a['b'], $a['encounter'], $a['height'], $a['family'], $a['kind'], $a['hue']);
 
         // Taken back at once, now and then; taken back a few arrivals later,
         // now and then; and, less often, hidden the old way and erased by the
@@ -148,7 +154,8 @@ function takingBack(string $area, array $vectors, int $count = 200): void
             if ($other[$column] !== $row[$column]) $failed[] = "$label lost its $column, which the rule reads";
         }
         foreach ($blanked as $column => $value) {
-            if ($other[$column] != $value) $failed[] = "$label kept its $column, which the rule does not read";
+            $same = $value === null ? $other[$column] === null : $other[$column] == $value;
+            if (!$same) $failed[] = "$label kept its $column, which the rule does not read";
         }
     }
 

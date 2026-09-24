@@ -26,6 +26,7 @@ declare(strict_types=1);
  *   knot_garden   plot, compartment, slot, height, family
  *   seedbed       plot, drill, slot, kind                (height, family not read)
  *   cold_frame    plot, frame, rank, slot, height, family
+ *   glasshouse    plot, bed, slot, row                   (height, family, hue not read)
  *
  * with the arrival number, which is the order. Each store names its own list in
  * a `TAKEN_BACK` constant, as the columns it blanks. What goes, everywhere: the

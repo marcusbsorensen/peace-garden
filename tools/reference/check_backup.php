@@ -76,7 +76,7 @@ for ($i = 0; $i < 4; $i++) {
 $store->offers()->offer($seeds[0], str_repeat('1', 32), str_repeat('2', 32),
     str_repeat('a', 64), str_repeat('b', 64), str_repeat('c', 64), 1.0, 0, 1_700_000_000,
     'beginnings', 'paniculata');
-// One planting in each of the other six areas, so the copy is proved to carry
+// One planting in each of the other seven areas, so the copy is proved to carry
 // every open area rather than only the one this check grew up around. A table
 // left out of KEPT dumps as no rows at all, which is exactly what a silent data
 // loss looks like.
@@ -96,6 +96,12 @@ $store->plantInto('beginnings', str_repeat('8', 64), str_repeat('a', 64), str_re
                   str_repeat('c', 64), 1.3, 2, 'contorta');
 $store->plantInto('waiting', str_repeat('7', 64), str_repeat('a', 64), str_repeat('b', 64),
                   str_repeat('c', 64), 0.9, 6);
+// The Glasshouse's carries a hue, the one trait no other area stores. A copy
+// that dropped the column would restore a staging whose pots stand in bands
+// nothing records, and the next arrival of that colour would be placed as if
+// its neighbours were pale — silently, as the Seedbed's kind would be.
+$store->plantInto('light', str_repeat('6', 64), str_repeat('a', 64), str_repeat('b', 64),
+                  str_repeat('c', 64), 0.9, 4, '', 0.8);
 unset($store);
 
 // MARK: Taking one
@@ -140,6 +146,8 @@ check('the copy holds the Seedbed', ($counts['seedbed'] ?? -1) === 1);
 check('the copy counts the Seedbed lock', ($counts['seedbed_lock'] ?? -1) === 1);
 check('the copy holds the Cold Frame', ($counts['cold_frame'] ?? -1) === 1);
 check('the copy counts the Cold Frame lock', ($counts['cold_frame_lock'] ?? -1) === 1);
+check('the copy holds the Glasshouse', ($counts['glasshouse'] ?? -1) === 1);
+check('the copy counts the Glasshouse lock', ($counts['glasshouse_lock'] ?? -1) === 1);
 
 // MARK: What a restore writes back
 
@@ -150,6 +158,7 @@ check('the copy counts the Cold Frame lock', ($counts['cold_frame_lock'] ?? -1) 
 $restoredKind = null;
 $restoredDrill = null;
 $restoredOffer = null;
+$restoredHue = null;
 if ($copy !== '') {
     $whole = gzdecode((string) file_get_contents($copy)) ?: '';
     $marker = "-- A SQLite file follows, not SQL.\n";
@@ -166,6 +175,8 @@ if ($copy !== '') {
             $restoredDrill = $row === false ? null : (int) $row['drill'];
             $waiting = $back->query('SELECT kind FROM walk_offers')->fetch(PDO::FETCH_ASSOC);
             $restoredOffer = $waiting === false ? null : $waiting['kind'];
+            $potted = $back->query('SELECT hue FROM glasshouse')->fetch(PDO::FETCH_ASSOC);
+            $restoredHue = $potted === false ? null : (float) $potted['hue'];
             unset($back);
         } catch (Throwable) {
             // Left null, which is what the checks below report.
@@ -178,6 +189,7 @@ check('a restored Seedbed row still knows its kind', $restoredKind === 'contorta
 // dropped on the way through would have given.
 check('and the drill that kind claimed', $restoredDrill === 1);
 check('an offer still in flight keeps its kind too', $restoredOffer === 'paniculata');
+check('a restored Glasshouse row still knows its hue', $restoredHue === 0.8);
 
 // MARK: Reading it back
 

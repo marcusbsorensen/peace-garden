@@ -301,6 +301,24 @@ export const EN = Object.freeze({
   // The Cold Frame could not be drawn.
   frameAway: "The Cold Frame cannot be reached just now.",
 
+  // An eighth area, and the same two strings an eighth time: the heading is
+  // `areaLight`, already commissioned in all forty-two.
+  //
+  // **It says the pots run as a spectrum, because a reader looking down on
+  // them may not see it.** Twenty-four pots in two rows read first as a crowd,
+  // and the order in them — blue-green at the door, yellow at the far end — is
+  // what this area is. It names the two ends and not the twelve places: the
+  // colours between them are there to be seen, and a list of twelve would be
+  // longer than the plot is wide.
+  //
+  // **"House", in the paging clause**, where the Cold Frame says *the next
+  // four* and the Seedbed *the next bed*: a plot here is one glasshouse, and
+  // that is the word a reader will have for it.
+  glasshouseAbout:
+    "A glasshouse, its pots set out along the staging as a run of colour from blue-green at the door to yellow at the far end, and the tallest plants in a border along the back. Go on to the next house, or turn to see this one from another side.",
+  // The Glasshouse could not be drawn.
+  glasshouseAway: "The Glasshouse cannot be reached just now.",
+
   // What the plants in each area mean. **Every area gathers the plants of one
   // theme, and the pages above say only how each is laid out**, so a reader
   // standing in the Cold Frame was never told that what brought these plants

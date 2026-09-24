@@ -169,6 +169,11 @@ final class AmbassadorTests: XCTestCase {
 
     /// Hand-rolled rather than `JSONEncoder`, so the file is in the areas'
     /// declared order and reads as a list somebody can check by eye.
+    ///
+    /// **The hue is in it since 24 September**, when the Glasshouse opened and
+    /// sorted by it. Compared exactly, not tolerated as a height is: a hue is
+    /// the seed's bytes through `+ − × ÷`, so it is the same double on every
+    /// host, and this file under WebAssembly is one place that is proved.
     private static func rendered() -> String {
         var lines = [
             "{",
@@ -182,7 +187,7 @@ final class AmbassadorTests: XCTestCase {
             lines.append("""
                     {"area": "\(one.area.rawValue)", "seed": "\(one.seed.hex)", \
                 "name": "\(one.genome.name.full)", "genusHead": "\(one.genome.name.genusHead)", \
-                "height": \(traits.height), "family": \(traits.family)}\(comma)
+                "height": \(traits.height), "family": \(traits.family), "hue": \(traits.hue ?? -1)}\(comma)
                 """)
         }
         lines.append("  ],")

@@ -155,6 +155,21 @@ final class Offers
         } catch (Throwable) {
             // Already there.
         }
+        // Added on 24 September, when the Glasshouse opened and a placement
+        // needed a fourth fact: the flower's hue. Another ALTER that may already
+        // have run, and **nullable where `kind` is not**, because there is no
+        // hue that means *none* the way the empty string is the empty kind. An
+        // offer made before the migration and answered after it plants with a
+        // null hue, which the Glasshouse reads as it reads a pale flower: any
+        // free pot on the staging.
+        //
+        // Dropped when the offer is answered, as `kind` is: a fact about the
+        // plant, not about where to find the planting.
+        try {
+            $this->run('ALTER TABLE walk_offers ADD COLUMN hue DOUBLE PRECISION NULL');
+        } catch (Throwable) {
+            // Already there.
+        }
         // Added on 24 September, with taking back that deletes. The key the
         // fingerprints are made under, one row, minted on first use; and the
         // index the thirty-day sweep reads, so a sweep that finds nothing costs
@@ -188,10 +203,12 @@ final class Offers
      * answers, which may be days later, and nothing at that moment can grow it
      * again to read the name off it. An offer made without one carries the empty
      * kind, which is what an older app sends.
+     *
+     * `$hue` is kept for the same reason, and null when an older app sent none.
      */
     public function offer(string $seed, string $to, string $from, string $parentA, string $parentB,
                           string $encounter, float $height, int $family, int $now,
-                          string $area = 'travel', string $kind = ''): array
+                          string $area = 'travel', string $kind = '', ?float $hue = null): array
     {
         $this->lapse($now);
         $sent = $this->sent($seed, [$to, $from]);
@@ -208,11 +225,11 @@ final class Offers
             return [$this->seen($existing, $sent), false];
         }
         $insert = $this->db->prepare('INSERT INTO walk_offers
-            (seed, token_to, token_from, parent_a, parent_b, encounter, height, family, state, offered_at, area, kind)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            (seed, token_to, token_from, parent_a, parent_b, encounter, height, family, state, offered_at, area, kind, hue)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         try {
             $insert->execute([$seed, $to, $from, $parentA, $parentB, $encounter, $height, $family,
-                              self::OFFERED, $now, $area, $kind]);
+                              self::OFFERED, $now, $area, $kind, GlasshouseStore::exactly($hue)]);
         } catch (PDOException $clash) {
             // Two offers of one plant, racing. The unique seed settles it and
             // the loser is handed the winner, which is the same answer it would
@@ -278,7 +295,8 @@ final class Offers
         [$planting] = $this->walk->plantInto(
             (string) ($row['area'] ?? 'travel'),
             $seed, (string) $row['parent_a'], (string) $row['parent_b'], (string) $row['encounter'],
-            (float) $row['height'], (int) $row['family'], (string) ($row['kind'] ?? '')
+            (float) $row['height'], (int) $row['family'], (string) ($row['kind'] ?? ''),
+            isset($row['hue']) ? (float) $row['hue'] : null
         );
         if (!$this->accept($seed, $now)) {
             // The offer changed under this answer — it lapsed in the hourly
@@ -358,7 +376,7 @@ final class Offers
         // column is NOT NULL — it is the same erasure the nullable fields get.
         $update = $this->db->prepare("UPDATE walk_offers SET state = ?, answered_at = ?,
             parent_a = NULL, parent_b = NULL, encounter = NULL, height = NULL, family = NULL,
-            kind = ''
+            kind = '', hue = NULL
             WHERE seed = ? AND state = ?");
         $update->execute([self::ACCEPTED, $now, $seed, self::OFFERED]);
         return $update->rowCount() === 1;
@@ -366,9 +384,10 @@ final class Offers
 
     /**
      * Settles an offer as withdrawn or declined and erases it: the seed and
-     * both tokens become their fingerprints, and the plant's fields and its
-     * area go. `$row` is the row as it was read, in the clear; `$at` is when
-     * it was withdrawn, declined, or lapsed.
+     * both tokens become their fingerprints, and the plant's fields — the
+     * Glasshouse's hue among them — and its area go. `$row` is the row as it
+     * was read, in the clear; `$at` is when it was withdrawn, declined, or
+     * lapsed.
      *
      * **Only if the row is still as it was read**, which is what makes this
      * safe beside itself. The hourly sweep, a request's own sweep and a phone
@@ -383,7 +402,7 @@ final class Offers
         $update = $this->db->prepare("UPDATE walk_offers SET state = ?, answered_at = ?,
             seed = ?, token_to = ?, token_from = ?,
             parent_a = NULL, parent_b = NULL, encounter = NULL, height = NULL, family = NULL,
-            kind = '', area = ''
+            kind = '', hue = NULL, area = ''
             WHERE offer = ? AND seed = ? AND state = ?");
         $update->execute([$state, $at,
                           $this->seedPrint((string) $row['seed']),

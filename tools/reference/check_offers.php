@@ -454,6 +454,98 @@ check('and nothing else of it', framedAs($walk, $nine['seed']) === null
       && stillHeld($db, $nine + ['mine' => $mine9, 'theirs' => $theirs9]) === []);
 check('and the frame is back to its ambassador alone', count($walk->coldFrame()->plot(0)) === 1);
 
+// MARK: The eighth area, and the hue an offer has to carry
+
+// **The Glasshouse stands a pot at its place in a spectrum, and the place is
+// read off the plant's hue** — which, like the Seedbed's kind, has to travel
+// with the offer, because the plant is planted when the other gardener answers
+// and nothing then can grow it to see its colour. Losing it would be invisible
+// twice over: the plant would land in `plantInto`'s fallback, the walk, if the
+// area were missing there; and if the hue alone were dropped it would take the
+// first free pot from the door, which is a place the rule also gives.
+function pottedAs(WalkStore $walk, string $seed): ?array
+{
+    $query = $walk->connection()->prepare(
+        'SELECT bed, slot_index, slot_row, hue, hidden FROM glasshouse WHERE seed = ?');
+    $query->execute([$seed]);
+    $row = $query->fetch();
+    return $row === false ? null : $row;
+}
+
+$ten = crossing(10);
+$mine10 = token('ten/mine');
+$theirs10 = token('ten/theirs');
+$walkHeld = count(shared($walk));
+// Violet, 280°: the sixth band, well away from the door, so a hue that had
+// been dropped — which would put it in the first free pot from the door —
+// cannot land in the same place by chance.
+$violet = 280.0 / 360.0;
+$offers->offer($ten['seed'], $theirs10, $mine10, $ten['a'], $ten['b'], $ten['encounter'],
+               0.9, 4, $now, 'light', '', $violet);
+check('a Glasshouse plant is planted',
+      $offers->answer($ten['seed'], $theirs10, true, $now)['planting'] !== null);
+check('and not in the walk', count(shared($walk)) === $walkHeld);
+$potted = pottedAs($walk, $ten['seed']);
+// To the bit, which is what `GlasshouseStore::exactly` is for: bound as a
+// plain float, PDO writes fourteen digits and 280° comes back a different
+// double — near enough for a height, not for a number compared with a band
+// edge exactly.
+check('the hue survived the asking, to the bit', $potted !== null && (float) $potted['hue'] === $violet);
+check('it is potted on the staging at its own band', $potted !== null
+      && (int) $potted['bed'] === Glasshouse::STAGING
+      && (int) $potted['slot_index'] === Glasshouse::band($violet) && (int) $potted['slot_row'] === 0);
+check('beside the ambassador, which is still there', count($walk->glasshouse()->plot(0)) === 2);
+$served = $walk->glasshouse()->plot(0)[1] ?? [];
+check('and the page is told how far off the floor it stands',
+      ($served['lift'] ?? null) === Glasshouse::STAGING_TOP + Glasshouse::POT_SOIL);
+
+// A plant tall enough for the border goes there, whatever its colour.
+$eleven = crossing(11);
+$mine11 = token('eleven/mine');
+$theirs11 = token('eleven/theirs');
+$offers->offer($eleven['seed'], $theirs11, $mine11, $eleven['a'], $eleven['b'], $eleven['encounter'],
+               1.6, 4, $now, 'light', '', $violet);
+$offers->answer($eleven['seed'], $theirs11, true, $now);
+$tall = pottedAs($walk, $eleven['seed']);
+check('a tall one goes in the border, first from the door', $tall !== null
+      && (int) $tall['bed'] === Glasshouse::BORDER && (int) $tall['slot_index'] === 0);
+
+// And an offer made without a hue — every offer made before the column
+// existed — still plants: in the first free pot from the door.
+$twelve = crossing(12);
+$mine12 = token('twelve/mine');
+$theirs12 = token('twelve/theirs');
+$offers->offer($twelve['seed'], $theirs12, $mine12, $twelve['a'], $twelve['b'], $twelve['encounter'],
+               0.9, 4, $now, 'light');
+$offers->answer($twelve['seed'], $theirs12, true, $now);
+$unhued = pottedAs($walk, $twelve['seed']);
+check('an offer with no hue still plants', $unhued !== null && $unhued['hue'] === null);
+check('in the first free pot from the door', $unhued !== null
+      && (int) $unhued['bed'] === Glasshouse::STAGING && (int) $unhued['slot_index'] === 0);
+
+// The hue goes when the offer is settled, with the rest of the plant.
+$settled = $walk->connection()->prepare('SELECT hue, area FROM walk_offers WHERE seed = ?');
+$settled->execute([$ten['seed']]);
+$after = $settled->fetch();
+check('an answered offer keeps no hue', $after !== false && $after['hue'] === null);
+check('but still says which area to look in', $after !== false && $after['area'] === 'light');
+
+// Taking it back reaches the Glasshouse's table, and leaves the pot empty. It
+// is found by its arrival number afterwards, because its seed is gone.
+$tenArrival = arrivalOf($db, 'glasshouse', $ten['seed']);
+$offers->withdraw($ten['seed'], $mine10, $now + 60);
+$lifted = arrival($db, 'glasshouse', (int) $tenArrival);
+check('taking it back hides it in the Glasshouse', $lifted !== null && (int) $lifted['hidden'] === 1);
+check('where it keeps its bed, its position and its row', $lifted !== null
+      && (int) $lifted['bed'] === Glasshouse::STAGING
+      && (int) $lifted['slot_index'] === Glasshouse::band($violet) && (int) $lifted['slot_row'] === 0);
+check('and not its hue, which no rule reads of a plant standing', $lifted !== null && $lifted['hue'] === null
+      && (float) $lifted['height'] === 0.0);
+$tenOffer = $db->query("SELECT hue FROM walk_offers WHERE state = 'withdrawn' AND hue IS NOT NULL")->fetchAll();
+check('and the offer keeps no hue either', $tenOffer === []);
+check('and nothing else of it', pottedAs($walk, $ten['seed']) === null
+      && stillHeld($db, $ten + ['mine' => $mine10, 'theirs' => $theirs10]) === []);
+
 // A published plant's seed, parents and meeting are public. Offering it again
 // with two invented tokens must not hand back the real ones, or the stranger
 // could withdraw it with them.
@@ -474,9 +566,9 @@ check('an offer that does not exist cannot be withdrawn',
 // **Found when it is asked about.** One second short of thirty days it is still
 // waiting; at thirty days it is withdrawn, answered at the moment it lapsed,
 // and erased exactly as a withdrawal is.
-$ten = crossing(10);
-$mine10 = token('ten/mine');
-$theirs10 = token('ten/theirs');
+$ten = crossing(30);
+$mine10 = token('lapse ten/mine');
+$theirs10 = token('lapse ten/theirs');
 $offers->offer($ten['seed'], $theirs10, $mine10, $ten['a'], $ten['b'], $ten['encounter'], 1.2, 3, $now);
 $lapse = $now + Offers::LAPSES_AFTER;
 check('an offer is still waiting a second before thirty days',
@@ -494,9 +586,9 @@ check('a lapsed offer cannot be made again', $reoffered !== null && $reNew === f
 
 // **Found when it is answered.** A yes that arrives after thirty days finds the
 // offer gone and plants nothing.
-$eleven = crossing(11);
-$mine11 = token('eleven/mine');
-$theirs11 = token('eleven/theirs');
+$eleven = crossing(31);
+$mine11 = token('lapse eleven/mine');
+$theirs11 = token('lapse eleven/theirs');
 $offers->offer($eleven['seed'], $theirs11, $mine11, $eleven['a'], $eleven['b'], $eleven['encounter'], 0.8, 0, $now);
 $held = count(shared($walk));
 $tooLate = $offers->answer($eleven['seed'], $theirs11, true, $lapse + 60);
@@ -507,18 +599,18 @@ check('and leaves nothing of it', stillHeld($db, $eleven + ['mine' => $mine11, '
 
 // **Swept, when nobody asks.** An offer whose phones never ask again still goes:
 // any other offer, or any phone asking about anything, sweeps it.
-$twelve = crossing(12);
-$mine12 = token('twelve/mine');
-$theirs12 = token('twelve/theirs');
+$twelve = crossing(32);
+$mine12 = token('lapse twelve/mine');
+$theirs12 = token('lapse twelve/theirs');
 $offers->offer($twelve['seed'], $theirs12, $mine12, $twelve['a'], $twelve['b'], $twelve['encounter'], 0.8, 0, $now);
-$thirteen = crossing(13);
-$offers->offer($thirteen['seed'], token('thirteen/theirs'), token('thirteen/mine'),
+$thirteen = crossing(33);
+$offers->offer($thirteen['seed'], token('lapse thirteen/theirs'), token('lapse thirteen/mine'),
                $thirteen['a'], $thirteen['b'], $thirteen['encounter'], 0.8, 0, $lapse + 1);
 check('somebody else\'s offer sweeps an offer that has lapsed',
       stillHeld($db, $twelve + ['mine' => $mine12, 'theirs' => $theirs12]) === []);
 check('and leaves a fresh one alone', offerNumber($db, $thirteen['seed']) !== null);
-$fourteen = crossing(14);
-$offers->offer($fourteen['seed'], token('fourteen/theirs'), token('fourteen/mine'),
+$fourteen = crossing(34);
+$offers->offer($fourteen['seed'], token('lapse fourteen/theirs'), token('lapse fourteen/mine'),
                $fourteen['a'], $fourteen['b'], $fourteen['encounter'], 0.8, 0, $now + 10);
 $offers->touching([token('anyone at all')], $now + 10 + Offers::LAPSES_AFTER);
 check('so does any phone asking about anything', offerNumber($db, $fourteen['seed']) === null);

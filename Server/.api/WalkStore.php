@@ -10,6 +10,7 @@ require_once __DIR__ . '/OrchardStore.php';
 require_once __DIR__ . '/KnotStore.php';
 require_once __DIR__ . '/SeedbedStore.php';
 require_once __DIR__ . '/ColdFrameStore.php';
+require_once __DIR__ . '/GlasshouseStore.php';
 require_once __DIR__ . '/Offers.php';
 require_once __DIR__ . '/TakenBack.php';
 
@@ -73,12 +74,13 @@ final class WalkStore
         $store->knot();
         $store->seedbed();
         $store->coldFrame();
+        $store->glasshouse();
         // And the asking's, for the same reason and one more: `offer_key` is
         // in the nightly copy's list, and mysqldump refuses a list naming a
         // table that is not there. Its migration is also the one that erases
-        // what an offer withdrawn before 24 September still held, and this is
-        // what makes that happen on the first request after a deploy, whatever
-        // that request is for.
+        // what an offer withdrawn or declined before 24 September still held,
+        // and this is what makes that happen on the first request after a
+        // deploy, whatever that request is for.
         $store->offers();
         return $store;
     }
@@ -247,7 +249,7 @@ final class WalkStore
      * **This class has outgrown its name**, which is a thing worth saying
      * rather than quietly fixing: it opened the database for a service that was
      * only the Long Walk, and now it holds the connection for a garden with
-     * seven areas in it and three to come. Renaming it means touching every
+     * eight areas in it and two to come. Renaming it means touching every
      * caller and the reference checks in one go, which is a commit of its own
      * and not this one. `Offers` and `Limits` already reach through it the same
      * way.
@@ -293,6 +295,13 @@ final class WalkStore
         return $coldFrame ??= new ColdFrameStore($this->db);
     }
 
+    /** The Glasshouse, on the same connection. */
+    public function glasshouse(): GlasshouseStore
+    {
+        static $glasshouse = null;
+        return $glasshouse ??= new GlasshouseStore($this->db);
+    }
+
     /**
      * Plants one arrival into whichever area it belongs to.
      *
@@ -307,9 +316,20 @@ final class WalkStore
      * can hand the same arguments to any of them; the other six ignore it, as
      * they ignore nothing else they are given. Absent means the empty kind,
      * which is what a plant offered before the epithet went on the wire has.
+     *
+     * **`$hue` is the Glasshouse's alone**, and handed to it alone: the flower's
+     * hue as a turn of the circle, which stands a pot at its place in the
+     * staging's spectrum. Null means it was never sent — a plant offered before
+     * 24 September — and the Glasshouse reads that as it reads a pale flower.
+     *
+     * **An area missing from this `match` is not refused: it falls to the Long
+     * Walk and says nothing.** So each area that opens is a case here the day it
+     * opens, and `check_offers.php` has a block for it that would catch the
+     * plant turning up in the walk instead.
      */
     public function plantInto(string $area, string $seed, string $parentA, string $parentB,
-                              string $encounter, float $height, int $family, string $kind = ''): array
+                              string $encounter, float $height, int $family, string $kind = '',
+                              ?float $hue = null): array
     {
         return match ($area) {
             'peace' => $this->room()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
@@ -318,6 +338,8 @@ final class WalkStore
             'pattern' => $this->knot()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
             'beginnings' => $this->seedbed()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
             'waiting' => $this->coldFrame()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
+            'light' => $this->glasshouse()->plant($seed, $parentA, $parentB, $encounter, $height, $family,
+                                                  $kind, $hue),
             default => $this->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
         };
     }
@@ -331,6 +353,7 @@ final class WalkStore
         if ($area === 'pattern') { $this->knot()->takeBack($seed); return; }
         if ($area === 'beginnings') { $this->seedbed()->takeBack($seed); return; }
         if ($area === 'waiting') { $this->coldFrame()->takeBack($seed); return; }
+        if ($area === 'light') { $this->glasshouse()->takeBack($seed); return; }
         $this->takeBack($seed);
     }
 
