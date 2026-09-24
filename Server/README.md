@@ -506,7 +506,7 @@ launchd job**, whether or not anybody pulls. The newest copy is kept on each
 side however old it is, so a server whose cron stopped, or a Mac that has not
 pulled for two months, still holds one copy — and that copy is older than
 thirty days. **Time Machine and iCloud** keep their own history of
-`~/Documents/Peace Garden backups`, which neither the job nor anything else
+`~/Library/Application Support/Peace Garden backups`, which neither the job nor anything else
 here can prune.
 
 The Mac's job, from the checkout that will stay (it runs *that* `backup.sh`):
@@ -522,9 +522,10 @@ else, no SSH and no pull — logging to `prune.log` in the backups folder. A
 second install finds it there; a moved checkout or a new `$PG_BACKUPS` is
 reloaded. `--uninstall-launchd` unloads and removes it. `launchctl kickstart
 gui/$(id -u)/app.peacegarden.prune-backups` runs it once now, and the log says
-whether it could reach the folder: `~/Documents` is behind macOS's privacy
-controls, and a job the system has not allowed there fails with *Operation not
-permitted*. Restoring an older copy brings erased rows back into the live tables,
+whether it could reach the folder. The folder was in `~/Documents` until 24
+September 2026, where macOS's privacy controls refused the job with *Operation
+not permitted*; it is in Application Support now, which a background job may
+reach. Restoring an older copy brings erased rows back into the live tables,
 and the first request afterwards erases them again.
 
 From the Mac:
@@ -539,7 +540,7 @@ From the Mac:
 | `tools/backup.sh --restore-test` | load the newest copy and replay the walk out of it |
 | `tools/backup.sh --rehearse` | the same, on a walk made for it |
 
-The pulled copies go to `~/Documents/Peace Garden backups` (`$PG_BACKUPS` moves
+The pulled copies go to `~/Library/Application Support/Peace Garden backups` (`$PG_BACKUPS` moves
 them), and that is the copy that matters: `~/backups` on the 20i account is the
 same disk, the same provider and the same billing relationship as the database
 it came from.
@@ -547,7 +548,7 @@ it came from.
 ### Restoring
 
 ```
-gunzip -c ~/Documents/Peace\ Garden\ backups/walk-….sql.gz \
+gunzip -c ~/Library/Application\ Support/Peace\ Garden\ backups/walk-….sql.gz \
   | ssh peacegarden 'mysql --defaults-file=… <database>'
 ```
 

@@ -44,7 +44,11 @@ set -eu
 HOST=peacegarden
 REMOTE=backups
 HERE=$(cd "$(dirname "$0")/.." && pwd)
-INTO=${PG_BACKUPS:-$HOME/Documents/Peace Garden backups}
+# In Application Support rather than Documents, since 24 September 2026:
+# macOS keeps a background job out of ~/Documents, so the daily prune was
+# refused there, and Documents is also what iCloud syncs, which kept a history
+# of every copy that nothing here could prune.
+INTO=${PG_BACKUPS:-$HOME/Library/Application Support/Peace Garden backups}
 
 # How long a pulled copy is kept. `KEEP_DAYS` in Server/.api/backup.php is the
 # server's, and the two are the same number on purpose.
