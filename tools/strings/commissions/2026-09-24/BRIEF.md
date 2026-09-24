@@ -1,8 +1,8 @@
 # The front page, and what the names mean
 
-About thirty short strings for the website, in forty-one languages; for the
-app's seven languages, fifty-two more for the sheet that explains a plant's
-name. Each language has its own sheet in `sheets/<code>.md`, which is this
+Fifty-five short strings for the website, in forty-one languages; for the
+app's seven languages, fifty-two for the sheet that explains a plant's name,
+all but two of them the website's own words split or repeated. Each language has its own sheet in `sheets/<code>.md`, which is this
 brief with that language's own material filled in and the exact count at its
 head: read that rather than this file alone, because half of what matters is
 the vocabulary your language has already settled on.
@@ -43,7 +43,7 @@ by somebody they met.
   never leaves*. A negative reads as a warning even when it was meant kindly.
 - **Headings and labels are short, and short on purpose.** `frontMeet`,
   `frontCross` and `frontGrow` are one word each in English and sit under a
-  glyph as three steps; the `meanings*` labels head the columns of a table. If
+  glyph as three steps; the thirty part labels are a short list. If
   your language needs two words, use two, and no more.
 - **Sentence case.** The tracked-out capitals on the page are set by the
   stylesheet, and some languages are excluded from them — that is handled for
@@ -57,7 +57,7 @@ Each is one line in the form **Headword: definition.**
 
 The site cuts the line at its **first colon** and sets what comes before it as
 a dictionary headword — on each area page, on each of the ten cards on the
-front page, and in the table at `/meanings`. The colon itself is used up by
+front page, and as that area's entry at `/meanings`. The colon itself is used up by
 that cut and does not appear on the page.
 
 - **One colon, straight after the headword, and none anywhere else in the
@@ -114,7 +114,7 @@ Then:
 3. **Look at it.** `python3 tools/site/serve.py`, then
    `http://localhost:8801/t`, the word at the door is `peace`, and pick your
    language's gardener. Then `/` for the front page and its ten cards,
-   `/meanings` for the table, and `/frame` for one area's entry under its
+   `/meanings` for the entries, and `/frame` for one area's entry under its
    paragraph. In the app, the book beside a plant's name on the seed screen.
 
 **Then somebody who reads the language has to look**, which is

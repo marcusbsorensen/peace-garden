@@ -1,8 +1,8 @@
 # The front page, and what the names mean
 
-About thirty short strings for the website, in forty-one languages; for the
-app's seven languages, fifty-two more for the sheet that explains a plant's
-name. Each language has its own sheet in `sheets/<code>.md`, which is this
+Fifty-five short strings for the website, in forty-one languages; for the
+app's seven languages, fifty-two for the sheet that explains a plant's name,
+all but two of them the website's own words split or repeated. Each language has its own sheet in `sheets/<code>.md`, which is this
 brief with that language's own material filled in and the exact count at its
 head: read that rather than this file alone, because half of what matters is
 the vocabulary your language has already settled on.
@@ -43,7 +43,7 @@ by somebody they met.
   never leaves*. A negative reads as a warning even when it was meant kindly.
 - **Headings and labels are short, and short on purpose.** `frontMeet`,
   `frontCross` and `frontGrow` are one word each in English and sit under a
-  glyph as three steps; the `meanings*` labels head the columns of a table. If
+  glyph as three steps; the thirty part labels are a short list. If
   your language needs two words, use two, and no more.
 - **Sentence case.** The tracked-out capitals on the page are set by the
   stylesheet, and some languages are excluded from them — that is handled for
@@ -57,7 +57,7 @@ Each is one line in the form **Headword: definition.**
 
 The site cuts the line at its **first colon** and sets what comes before it as
 a dictionary headword — on each area page, on each of the ten cards on the
-front page, and in the table at `/meanings`. The colon itself is used up by
+front page, and as that area's entry at `/meanings`. The colon itself is used up by
 that cut and does not appear on the page.
 
 - **One colon, straight after the headword, and none anywhere else in the
@@ -114,7 +114,7 @@ Then:
 3. **Look at it.** `python3 tools/site/serve.py`, then
    `http://localhost:8801/t`, the word at the door is `peace`, and pick your
    language's gardener. Then `/` for the front page and its ten cards,
-   `/meanings` for the table, and `/frame` for one area's entry under its
+   `/meanings` for the entries, and `/frame` for one area's entry under its
    paragraph. In the app, the book beside a plant's name on the seed screen.
 
 **Then somebody who reads the language has to look**, which is
@@ -124,7 +124,7 @@ Then:
 
 # Dutch — Nederlands  (nl)
 
-**29 strings for the site and 52 for the app.** The ten site entries and twenty of the app's are the same ten headwords and definitions, written once.
+**55 strings for the site and 52 for the app**, and all but two of the app's are the site's own: the ten entries split at the colon, and the thirty parts word for word. Write each once.
 
 Write into `Server/strings/nl.json` and `App/PeaceGarden/Resources/Localizable.xcstrings`.
 
@@ -335,7 +335,7 @@ Commissioned and shipping. **What you write has to agree with them.**
 
 > Not open yet.
 
-*Where it is seen.* On the card of each area that is still being built, on the front page, and beside the same areas in the table at `/meanings`.
+*Where it is seen.* On the card of each area that is still being built, on the front page, and beside the same areas' names in their entries at `/meanings`.
 
 *It must say:*
   - This area opens later.
@@ -352,7 +352,7 @@ Each one is **Headword: definition.** — one colon, straight after the headword
 
 > Waiting: what is held back until its time, however long that is, and whoever keeps watch.
 
-*The card it sits on.* Above **De koude bak**. Also under that area's paragraph on its own page, and in the `/meanings` table.
+*The card it sits on.* Above **De koude bak**. Also under that area's drawing on its own page, and as its entry at `/meanings`.
 
 *The headword.* Waiting as a noun, the act of it. The word for waiting rather than for hope or expectation.
 
@@ -369,7 +369,7 @@ Each one is **Headword: definition.** — one colon, straight after the headword
 
 > Ground: the earth a plant stands in, and the earth that is yours.
 
-*The card it sits on.* Above **De geboortegrond**. Also under that area's paragraph on its own page, and in the `/meanings` table.
+*The card it sits on.* Above **De geboortegrond**. Also under that area's drawing on its own page, and as its entry at `/meanings`.
 
 *The headword.* Ground as earth. Where your language's word for it also means *reason* or *floor*, pick the one a gardener means.
 
@@ -388,7 +388,7 @@ Each one is **Headword: definition.** — one colon, straight after the headword
 
 > Beginnings: the first thing a seed does, and how much comes of it.
 
-*The card it sits on.* Above **Het zaaibed**. Also under that area's paragraph on its own page, and in the `/meanings` table.
+*The card it sits on.* Above **Het zaaibed**. Also under that area's drawing on its own page, and as its entry at `/meanings`.
 
 *The headword.* Beginnings, in whichever number your language speaks of beginnings as a subject.
 
@@ -405,7 +405,7 @@ Each one is **Headword: definition.** — one colon, straight after the headword
 
 > Renewal: what is cut back and comes again, and what is mended.
 
-*The card it sits on.* Above **De knotwilgen**. Also under that area's paragraph on its own page, and in the `/meanings` table.
+*The card it sits on.* Above **De knotwilgen**. Also under that area's drawing on its own page, and as its entry at `/meanings`.
 
 *The headword.* Renewal: coming again, being made new.
 
@@ -422,7 +422,7 @@ Each one is **Headword: definition.** — one colon, straight after the headword
 
 > Travel: the ways a seed and a person go, and the pull of somewhere else.
 
-*The card it sits on.* Above **De lange laan**. Also under that area's paragraph on its own page, and in the `/meanings` table.
+*The card it sits on.* Above **De lange laan**. Also under that area's drawing on its own page, and as its entry at `/meanings`.
 
 *The headword.* Travel as a noun: going, the journey.
 
@@ -442,7 +442,7 @@ Each one is **Headword: definition.** — one colon, straight after the headword
 
 > Peace: the quiet a garden is for, and the ease that comes with it.
 
-*The card it sits on.* Above **De stille tuin**. Also under that area's paragraph on its own page, and in the `/meanings` table.
+*The card it sits on.* Above **De stille tuin**. Also under that area's drawing on its own page, and as its entry at `/meanings`.
 
 *The headword.* Peace in the quiet, inward sense.
 
@@ -459,7 +459,7 @@ Each one is **Headword: definition.** — one colon, straight after the headword
 
 > Kinship: what grows together, and the people kept rather than happened upon.
 
-*The card it sits on.* Above **De boomgaard**. Also under that area's paragraph on its own page, and in the `/meanings` table.
+*The card it sits on.* Above **De boomgaard**. Also under that area's drawing on its own page, and as its entry at `/meanings`.
 
 *The headword.* Kinship: belonging together as kin, by blood or by choice.
 
@@ -478,7 +478,7 @@ Each one is **Headword: definition.** — one colon, straight after the headword
 
 > Pattern: the order in living things, and the names given to order.
 
-*The card it sits on.* Above **Het parterre**. Also under that area's paragraph on its own page, and in the `/meanings` table.
+*The card it sits on.* Above **Het parterre**. Also under that area's drawing on its own page, and as its entry at `/meanings`.
 
 *The headword.* Pattern as order in living things.
 
@@ -498,7 +498,7 @@ Each one is **Headword: definition.** — one colon, straight after the headword
 
 > Light: what a plant turns towards, and the day it keeps time by.
 
-*The card it sits on.* Above **De kas**. Also under that area's paragraph on its own page, and in the `/meanings` table.
+*The card it sits on.* Above **De kas**. Also under that area's drawing on its own page, and as its entry at `/meanings`.
 
 *The headword.* Light as a noun, as in sunlight.
 
@@ -518,7 +518,7 @@ Each one is **Headword: definition.** — one colon, straight after the headword
 
 > Meeting: two coming together at the right moment, and what each owes the other.
 
-*The card it sits on.* Above **De kruising**. Also under that area's paragraph on its own page, and in the `/meanings` table.
+*The card it sits on.* Above **De kruising**. Also under that area's drawing on its own page, and as its entry at `/meanings`.
 
 *The headword.* Meeting: two coming together, the word your `tagline` already uses for *a meeting*.
 
@@ -534,7 +534,7 @@ Each one is **Headword: definition.** — one colon, straight after the headword
   - Two that need each other — fig and wasp, yucca moth, Ophrys
   - The manners of it — xenia, limen, interfulgence
 
-## The page at /meanings (8)
+## The page at /meanings (4)
 
 ### `meaningsTitle`
 
@@ -567,7 +567,7 @@ Each one is **Headword: definition.** — one colon, straight after the headword
 
 > The second word names the one way a plant most differs from the rest of its genus. After a first word ending in -ynth it takes its masculine form, so rubra becomes ruber.
 
-*Where it is seen.* The second paragraph of `/meanings`, after the worked example.
+*Where it is seen.* The paragraph after the ten entries at `/meanings`, above the glossary of second words it introduces.
 
 *It must say:*
   - The second word of the name names the one way this plant most differs from the rest of its genus.
@@ -575,188 +575,150 @@ Each one is **Headword: definition.** — one colon, straight after the headword
 
 *Note.* `-ynth`, `rubra` and `ruber` are Latin and copied exactly, letter for letter. *Genus* and *masculine form* are the ordinary botanical and grammatical terms in your language.
 
-### `meaningsArea`
-
-> Area
-
-*Where it is seen.* A column heading in the table at `/meanings`, over the ten area names.
-
-*It must say:*
-  - An area of the garden.
-
-*Note.* One word. In the app's languages the app's name sheet has the same word as a row label (`Area`); they are one word in two places.
-
-### `meaningsMeaning`
-
-> What it holds
-
-*Where it is seen.* A column heading in the table at `/meanings`, over the ten definitions; on a phone it becomes a small label above each one.
-
-*It must say:*
-  - What the theme holds: what it gathers in and is about.
-
 ### `meaningsNames`
 
 > Names beginning
 
-*Where it is seen.* A column heading in the table at `/meanings`, over the syllables that begin plant names in each area — *Nyx-*, *Fen-*. On a phone it becomes a label directly before the syllables.
+*Where it is seen.* A small label in each entry at `/meanings`, where a dictionary gives a word's etymology, leading straight into the name-starts that bring a plant to that area — *Nyx-*, *Fen-*, each with a drawing and its root.
 
 *It must say:*
   - Names that begin with the syllables that follow.
 
 *Note.* It has to lead straight into a list of name-beginnings, so choose the grammar that runs into one.
 
-### `meaningsWord`
+## The thirty parts (30)
 
-> Second word
+Each theme's three parts, as the numbered senses of its entry: under the definition on an area's page, and at `/meanings` with the endings that choose each one. Labels in a short list, one line each on a phone: sentence case, no full stop. What the examples have in common is what a label has to cover; the examples stay in English on the page.
 
-*Where it is seen.* A column heading in the second table at `/meanings`, over Latin second words such as *ruber*.
-
-*It must say:*
-  - The second word of a plant's name.
-
-### `meaningsSays`
-
-> What it says of the plant
-
-*Where it is seen.* The column heading beside `meaningsWord`, over what each second word says about its plant.
-
-*It must say:*
-  - What that word says about the plant.
-
-## The app's name sheet (32 more)
-
-A book beside a plant's name on the seed screen opens a sheet: the theme as a headword with its definition (the twenty keys above), the area it puts the plant in, and the theme's three parts, with the one the name's ending chose set in full ink and the other two faint. **The ten `area.*` keys are already written in your language** and are left alone.
-
-### The thirty parts
-
-Labels in a short list, one line each on a phone: sentence case, no full stop. Each is the name of one third of a theme, so what the examples after the dash have in common is what the label has to cover. The examples are context and are not translated.
+**Your language is one of the app's**, whose name sheet lists the same thirty under the same names — `subtheme.<case>` there, `subtheme<Case>` here. One label, written once, in both.
 
 **Waiting**
 
-- `subtheme.heldBack`  **Held back**  
-  dormancy, stratification, marcescence.  
-  *One of the three parts of the theme Waiting: dormancy, a seed that will not germinate yet. Listed on the screen that explains a plant's name.*
-- `subtheme.theLongCount`  **The long count**  
-  Masada dates, Beal's bottles, bamboo mast years.  
-  *One of the three parts of the theme Waiting: very long waits, seeds that germinated after centuries. Listed on the screen that explains a plant's name.*
-- `subtheme.standingAndWatching`  **Standing and watching**  
-  patiens, abide, the gardener's shadow.  
-  *One of the three parts of the theme Waiting: patience, keeping watch. Listed on the screen that explains a plant's name.*
+- `subthemeHeldBack`  ·  app: `subtheme.heldBack`  **Held back**  
+  Dormancy: a seed or a bud held until its season.  
+  *dormancy, stratification, marcescence*
+- `subthemeTheLongCount`  ·  app: `subtheme.theLongCount`  **The long count**  
+  Very long waits: seeds that germinated after centuries.  
+  *Masada dates, Beal's bottles, bamboo mast years*
+- `subthemeStandingAndWatching`  ·  app: `subtheme.standingAndWatching`  **Standing and watching**  
+  Patience: keeping watch while it happens.  
+  *patiens, abide, the gardener's shadow*
 
 **Ground**
 
-- `subtheme.theSoilItself`  **The soil itself**  
-  rhizosphere, a teaspoon of earth, Darwin's worms.  
-  *One of the three parts of the theme Ground: soil, and what lives in it. Listed on the screen that explains a plant's name.*
-- `subtheme.aPlaceYouAreFrom`  **A place you are from**  
-  querencia, Heimat, petrichor.  
-  *One of the three parts of the theme Ground: home ground, belonging to a place. Listed on the screen that explains a plant's name.*
-- `subtheme.aKeptPlace`  **A kept place**  
-  pairidaeza, colere, garden as enclosure.  
-  *One of the three parts of the theme Ground: a garden as a place enclosed and tended. Listed on the screen that explains a plant's name.*
+- `subthemeTheSoilItself`  ·  app: `subtheme.theSoilItself`  **The soil itself**  
+  The soil, and what lives in it.  
+  *rhizosphere, a teaspoon of earth, Darwin's worms*
+- `subthemeAPlaceYouAreFrom`  ·  app: `subtheme.aPlaceYouAreFrom`  **A place you are from**  
+  Home ground: belonging to a place.  
+  *querencia, Heimat, petrichor*
+- `subthemeAKeptPlace`  ·  app: `subtheme.aKeptPlace`  **A kept place**  
+  A garden as a place enclosed and tended.  
+  *pairidaeza, colere, garden as enclosure*
 
 **Beginnings**
 
-- `subtheme.theFirstAct`  **The first act**  
-  germination, imbibition, radicle, meristem.  
-  *One of the three parts of the theme Beginnings: germination, the first root. Listed on the screen that explains a plant's name.*
-- `subtheme.smallToLarge`  **Small to large**  
-  the acorn, the coco de mer against orchid dust.  
-  *One of the three parts of the theme Beginnings: the acorn and the oak. Listed on the screen that explains a plant's name.*
-- `subtheme.whatAStartSettles`  **What a start settles**  
-  the Bramley pip, prime and primrose.  
-  *One of the three parts of the theme Beginnings: what a beginning decides about everything after it. Listed on the screen that explains a plant's name.*
+- `subthemeTheFirstAct`  ·  app: `subtheme.theFirstAct`  **The first act**  
+  Germination: the first root a seed puts out.  
+  *germination, imbibition, radicle, meristem*
+- `subthemeSmallToLarge`  ·  app: `subtheme.smallToLarge`  **Small to large**  
+  The acorn and the oak: how much grows from how little.  
+  *the acorn, the coco de mer against orchid dust*
+- `subthemeWhatAStartSettles`  ·  app: `subtheme.whatAStartSettles`  **What a start settles**  
+  What a beginning decides about everything after it.  
+  *the Bramley pip, prime and primrose*
 
 **Renewal**
 
-- `subtheme.cutAndComeAgain`  **Cut and come again**  
-  coppicing, epicormic buds, the Hiroshima ginkgos.  
-  *One of the three parts of the theme Renewal: a plant cut back that grows again. A gardener's phrase. Listed on the screen that explains a plant's name.*
-- `subtheme.theTurningYear`  **The turning year**  
-  If Winter comes, spring as water.  
-  *One of the three parts of the theme Renewal: the seasons coming round. Listed on the screen that explains a plant's name.*
-- `subtheme.madeWhole`  **Made whole**  
-  kintsugi, resurgam, anastasis, convalesce.  
-  *One of the three parts of the theme Renewal: mending and healing, what was broken made whole. Listed on the screen that explains a plant's name.*
+- `subthemeCutAndComeAgain`  ·  app: `subtheme.cutAndComeAgain`  **Cut and come again**  
+  A plant cut back that grows again — a gardener's phrase in English.  
+  *coppicing, epicormic buds, the Hiroshima ginkgos*
+- `subthemeTheTurningYear`  ·  app: `subtheme.theTurningYear`  **The turning year**  
+  The seasons coming round.  
+  *If Winter comes, spring as water*
+- `subthemeMadeWhole`  ·  app: `subtheme.madeWhole`  **Made whole**  
+  Mending and healing: what was broken, made whole.  
+  *kintsugi, resurgam, anastasis, convalesce*
 
 **Travel**
 
-- `subtheme.howASeedGoes`  **How a seed goes**  
-  anemochory, sea beans, the dandelion's vortex.  
-  *One of the three parts of the theme Travel: how seeds are carried by wind and water. Listed on the screen that explains a plant's name.*
-- `subtheme.theRoad`  **The road**  
-  ad ripam, peregrinus, travel and travail.  
-  *One of the three parts of the theme Travel: journeys and pilgrims. Listed on the screen that explains a plant's name.*
-- `subtheme.farOff`  **Far off**  
-  Fernweh, tramontane, serendipity.  
-  *One of the three parts of the theme Travel: distance, and the longing for somewhere else. Listed on the screen that explains a plant's name.*
+- `subthemeHowASeedGoes`  ·  app: `subtheme.howASeedGoes`  **How a seed goes**  
+  How seeds are carried, by wind and by water.  
+  *anemochory, sea beans, the dandelion's vortex*
+- `subthemeTheRoad`  ·  app: `subtheme.theRoad`  **The road**  
+  Journeys, and the people who make them.  
+  *ad ripam, peregrinus, travel and travail*
+- `subthemeFarOff`  ·  app: `subtheme.farOff`  **Far off**  
+  Distance, and the longing for somewhere else.  
+  *Fernweh, tramontane, serendipity*
 
 **Peace**
 
-- `subtheme.quietAsASound`  **Quiet as a sound**  
-  psithurism, snow, the anechoic chamber.  
-  *One of the three parts of the theme Peace: quiet as something heard, wind in trees, snow. Listed on the screen that explains a plant's name.*
-- `subtheme.theWordsForStopping`  **The words for stopping**  
-  pax, serenus, quietus, sabbath.  
-  *One of the three parts of the theme Peace: the words for rest and ceasing. Listed on the screen that explains a plant's name.*
-- `subtheme.atEase`  **At ease**  
-  hygge, sobremesa, shinrin-yoku.  
-  *One of the three parts of the theme Peace: comfort, being at ease with others. Listed on the screen that explains a plant's name.*
+- `subthemeQuietAsASound`  ·  app: `subtheme.quietAsASound`  **Quiet as a sound**  
+  Quiet as something heard: wind in trees, snow falling.  
+  *psithurism, snow, the anechoic chamber*
+- `subthemeTheWordsForStopping`  ·  app: `subtheme.theWordsForStopping`  **The words for stopping**  
+  The words people have for rest and ceasing.  
+  *pax, serenus, quietus, sabbath*
+- `subthemeAtEase`  ·  app: `subtheme.atEase`  **At ease**  
+  Comfort: being at ease, with others and alone.  
+  *hygge, sobremesa, shinrin-yoku*
 
 **Kinship**
 
-- `subtheme.grownTogether`  **Grown together**  
-  inosculation, grafting, lichen, mycorrhiza.  
-  *One of the three parts of the theme Kinship: grafts, lichen, roots and fungi joined. Listed on the screen that explains a plant's name.*
-- `subtheme.theWordsForIt`  **The words for it**  
-  sibb, God-sib, companion, kind and kin.  
-  *One of the three parts of the theme Kinship: the words people have for kin and companions. Listed on the screen that explains a plant's name.*
-- `subtheme.twoPeople`  **Two people**  
-  Donne, Montaigne, Hávamál, ubuntu.  
-  *One of the three parts of the theme Kinship: friendship between two people. Listed on the screen that explains a plant's name.*
+- `subthemeGrownTogether`  ·  app: `subtheme.grownTogether`  **Grown together**  
+  Grafts, lichen, roots and fungi joined into one.  
+  *inosculation, grafting, lichen, mycorrhiza*
+- `subthemeTheWordsForIt`  ·  app: `subtheme.theWordsForIt`  **The words for it**  
+  The words people have for kin and companions.  
+  *sibb, God-sib, companion, kind and kin*
+- `subthemeTwoPeople`  ·  app: `subtheme.twoPeople`  **Two people**  
+  Friendship between two people.  
+  *Donne, Montaigne, Hávamál, ubuntu*
 
 **Pattern**
 
-- `subtheme.counted`  **Counted**  
-  the golden angle, Fibonacci spirals, quincunx.  
-  *One of the three parts of the theme Pattern: patterns that are numbers, spirals and the golden angle. Listed on the screen that explains a plant's name.*
-- `subtheme.fittedTogether`  **Fitted together**  
-  tessellation, decussate leaves, Turing patterns.  
-  *One of the three parts of the theme Pattern: shapes that tile and interlock. Listed on the screen that explains a plant's name.*
-- `subtheme.orderNamed`  **Order named**  
-  cosmos, rhythm, ordo, the anthology.  
-  *One of the three parts of the theme Pattern: the words people have for order. Listed on the screen that explains a plant's name.*
+- `subthemeCounted`  ·  app: `subtheme.counted`  **Counted**  
+  Patterns that are numbers: spirals, the golden angle.  
+  *the golden angle, Fibonacci spirals, quincunx*
+- `subthemeFittedTogether`  ·  app: `subtheme.fittedTogether`  **Fitted together**  
+  Shapes that tile and interlock.  
+  *tessellation, decussate leaves, Turing patterns*
+- `subthemeOrderNamed`  ·  app: `subtheme.orderNamed`  **Order named**  
+  The words people have for order.  
+  *cosmos, rhythm, ordo, the anthology*
 
 **Light**
 
-- `subtheme.theEdgesOfTheDay`  **The edges of the day**  
-  gloaming, alpenglow, apricity, gökotta.  
-  *One of the three parts of the theme Light: dawn and dusk. Listed on the screen that explains a plant's name.*
-- `subtheme.readingTheLight`  **Reading the light**  
-  photoperiodism, heliotropism, the day's eye.  
-  *One of the three parts of the theme Light: how a plant senses light and turns to it. Listed on the screen that explains a plant's name.*
-- `subtheme.lightItself`  **Light itself**  
-  lux, solstice, phosphorus, the eight minutes.  
-  *One of the three parts of the theme Light: sunlight as a thing in itself. Listed on the screen that explains a plant's name.*
+- `subthemeTheEdgesOfTheDay`  ·  app: `subtheme.theEdgesOfTheDay`  **The edges of the day**  
+  Dawn and dusk.  
+  *gloaming, alpenglow, apricity, gökotta*
+- `subthemeReadingTheLight`  ·  app: `subtheme.readingTheLight`  **Reading the light**  
+  How a plant senses light and turns to it.  
+  *photoperiodism, heliotropism, the day's eye*
+- `subthemeLightItself`  ·  app: `subtheme.lightItself`  **Light itself**  
+  Sunlight as a thing in itself.  
+  *lux, solstice, phosphorus, the eight minutes*
 
 **Meeting**
 
-- `subtheme.theMoment`  **The moment**  
-  kairos, clinamen, ichigo ichie.  
-  *One of the three parts of the theme Meeting: the right moment, a chance meeting. Listed on the screen that explains a plant's name.*
-- `subtheme.twoThatNeedEachOther`  **Two that need each other**  
-  fig and wasp, yucca moth, Ophrys.  
-  *One of the three parts of the theme Meeting: a flower and its pollinator. Listed on the screen that explains a plant's name.*
-- `subtheme.theMannersOfIt`  **The manners of it**  
-  xenia, limen, interfulgence.  
-  *One of the three parts of the theme Meeting: hospitality, how a guest is received. Listed on the screen that explains a plant's name.*
+- `subthemeTheMoment`  ·  app: `subtheme.theMoment`  **The moment**  
+  The right moment: a meeting that happens when it should.  
+  *kairos, clinamen, ichigo ichie*
+- `subthemeTwoThatNeedEachOther`  ·  app: `subtheme.twoThatNeedEachOther`  **Two that need each other**  
+  A flower and its pollinator: two that live by each other.  
+  *fig and wasp, yucca moth, Ophrys*
+- `subthemeTheMannersOfIt`  ·  app: `subtheme.theMannersOfIt`  **The manners of it**  
+  Hospitality: how a guest is received.  
+  *xenia, limen, interfulgence*
 
-### Two more
+## The app's two of its own
+
+A book beside a plant's name on the seed screen opens a sheet: the theme's headword and definition, the area it puts the plant in, and the three parts — all written above. **The ten `area.*` keys are already in your language.** Two labels are the app's alone:
 
 - `Area`  
   *Row label on the screen that explains a plant's name, beside the place in the shared garden the plant belongs to, such as 'The Cold Frame'. A part of a garden, not a measurement. The website heads its table with the same word (key meaningsArea).*
 - `What the name means`  
   *The book mark beside a plant's name on the seed screen, read aloud. It opens a page explaining what the plant's name says about it.*
 
-  `Area` is the same word as the site's `meaningsArea`. `What the name means` is the site's `meaningsTitle` said of one plant.
+  `Area` is the word for one of the garden's ten areas, as the site's pages speak of them. `What the name means` is the site's `meaningsTitle` said of one plant.

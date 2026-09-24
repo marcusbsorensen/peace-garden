@@ -32,7 +32,7 @@ import sys
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parents[3]
 sys.path.insert(0, str(ROOT / "tools/strings"))
-from commission import AREAS, CLAIMS, PRIVACY, english  # noqa: E402
+from commission import AREAS, CLAIMS, PARTS, PRIVACY, REGISTER, english  # noqa: E402
 from commission import FRONT as FRONT_CLAIMS  # noqa: E402
 from commission import MEANINGS as MEANING_CLAIMS  # noqa: E402
 
@@ -54,8 +54,13 @@ FRONT = ["frontLead", "frontTurn", "frontMeet", "frontMeetBody",
 # and the word on a closed card stay English on a page otherwise translated.
 FRONT_REST = ["downloadTitle", "gardenTitle", "notYet"]
 MEANING = [f"meaning{t.capitalize()}" for t in THEMES]
-MEANINGS = ["meaningsTitle", "meaningsAbout", "meaningsSecond", "meaningsArea",
-            "meaningsMeaning", "meaningsNames", "meaningsWord", "meaningsSays"]
+# The four headings the page's two tables had went with the tables, when
+# `/meanings` became a dictionary on 24 September.
+MEANINGS = ["meaningsTitle", "meaningsAbout", "meaningsSecond", "meaningsNames"]
+# The thirty part labels, on the site since Marcus moved them into the
+# catalogue on 24 September: `subtheme<Case>`, the app's `subtheme.<case>`.
+PART_KEYS = {f"subtheme{key[0].upper()}{key[1:]}": f"subtheme.{key}"
+             for parts in PARTS.values() for key, _ in parts}
 
 # The app's plain keys: their English is the key.
 APP_PLAIN = ["Area", "What the name means"]
@@ -65,7 +70,8 @@ APP_PLAIN = ["Area", "What the name means"]
 NOTES = {**FRONT_CLAIMS, **{k: v for k, v in MEANING_CLAIMS.items()
                            if k.startswith("meanings")}}
 ENTRIES = {k.removeprefix("meaning").lower(): v
-           for k, v in MEANING_CLAIMS.items() if not k.startswith("meanings")}
+           for k, v in MEANING_CLAIMS.items()
+           if k.startswith("meaning") and not k.startswith("meanings")}
 
 
 # ---------------------------------------------------------------------------
@@ -140,7 +146,7 @@ def site_keys(leave_out):
         keys += FRONT_REST
     if "meaning-lines" not in leave_out:
         keys += MEANING
-    return keys + MEANINGS
+    return keys + MEANINGS + list(PART_KEYS)
 
 
 # Every key a catalogue can lack, sorted by why. `missing.json` is written
@@ -149,6 +155,7 @@ WHY = {
     "this commission: the front page": FRONT + FRONT_REST,
     "this commission: the ten meaning lines": MEANING,
     "this commission: /meanings": MEANINGS,
+    "this commission: the thirty part labels": list(PART_KEYS),
     "the privacy page, its own sheet (commission.py --privacy)": list(PRIVACY),
     "the area paragraphs, English only by strings.js": ["walkAbout", "quietAbout", "crossAbout", "orchardAbout",
                    "knotAbout", "seedbedAbout", "frameAbout"],
@@ -193,8 +200,9 @@ def sheet(code, catalogue, source, app, keys, leave_out):
     if in_app:
         app_count = len(app_keys(app))
         out.append(f"**{site_count} strings for the site and {app_count} for the "
-                   f"app.** The ten site entries and twenty of the app's are "
-                   "the same ten headwords and definitions, written once.\n")
+                   f"app**, and all but two of the app's are the site's own: "
+                   "the ten entries split at the colon, and the thirty parts "
+                   "word for word. Write each once.\n")
     else:
         out.append(f"**{site_count} strings for the site.** Your language is "
                    "not one of the app's, so there is no app half.\n")
@@ -203,7 +211,13 @@ def sheet(code, catalogue, source, app, keys, leave_out):
                   if in_app else "."))
     out.append("")
 
-    # The vocabulary first, because it constrains everything after it.
+    # What a reader has corrected, then the vocabulary: both constrain
+    # everything after them.
+    if REGISTER.get(code):
+        out.append("## What a reader of this language has already corrected\n")
+        out.append("Rules, not examples.\n")
+        out += [f"- {line}" for line in REGISTER[code]]
+        out.append("")
     out.append("## The words this language has already chosen\n")
     out.append("Commissioned and shipping. **What you write has to agree with "
                "them.**\n")
@@ -259,8 +273,8 @@ def sheet(code, catalogue, source, app, keys, leave_out):
             out.append(quote(source[key]) + "\n")
             name = theirs.get(f"area{theme.capitalize()}")
             out.append(f"*The card it sits on.* Above **{name}**. Also under "
-                       "that area's paragraph on its own page, and in the "
-                       "`/meanings` table.\n")
+                       "that area's drawing on its own page, and as its entry "
+                       "at `/meanings`.\n")
             out.append(f"*The headword.* {entry['headword']}\n")
             out.append("*The definition must say:*")
             out += [f"  - {line}" for line in entry["must"]]
@@ -280,36 +294,43 @@ def sheet(code, catalogue, source, app, keys, leave_out):
         out.append(quote(source[key]) + "\n")
         claim_block(out, NOTES[key])
 
+    out.append(f"## The thirty parts ({len(PART_KEYS)})\n")
+    out.append("Each theme's three parts, as the numbered senses of its entry: "
+               "under the definition on an area's page, and at `/meanings` "
+               "with the endings that choose each one. Labels in a short list, "
+               "one line each on a phone: sentence case, no full stop. What "
+               "the examples have in common is what a label has to cover; the "
+               "examples stay in English on the page.\n")
     if in_app:
-        grouped = subtheme_keys(app)
-        out.append("## The app's name sheet (32 more)\n")
+        out.append("**Your language is one of the app's**, whose name sheet "
+                   "lists the same thirty under the same names — "
+                   "`subtheme.<case>` there, `subtheme<Case>` here. One label, "
+                   "written once, in both.\n")
+    for theme in THEMES:
+        out.append(f"**{source[f'meaning{theme.capitalize()}'].split(':')[0]}**\n")
+        for key in [k for k in PART_KEYS
+                    if MEANING_CLAIMS[k]["seen"].endswith(
+                        f"`{PART_KEYS[k]}`.")
+                    and f"entry for {theme.capitalize()}:" in MEANING_CLAIMS[k]["seen"]]:
+            claim = MEANING_CLAIMS[key]
+            also = f"  ·  app: `{PART_KEYS[key]}`" if in_app else ""
+            out.append(f"- `{key}`{also}  **{source[key]}**  \n"
+                       f"  {claim['must'][0]}  \n"
+                       f"  *{claim['note'].split(' — ', 1)[1].split('. Those stay')[0]}*")
+        out.append("")
+
+    if in_app:
+        out.append("## The app's two of its own\n")
         out.append("A book beside a plant's name on the seed screen opens a "
-                   "sheet: the theme as a headword with its definition (the "
-                   "twenty keys above), the area it puts the plant in, and the "
-                   "theme's three parts, with the one the name's ending chose "
-                   "set in full ink and the other two faint. **The ten "
-                   "`area.*` keys are already written in your language** and "
-                   "are left alone.\n")
-        out.append("### The thirty parts\n")
-        out.append("Labels in a short list, one line each on a phone: "
-                   "sentence case, no full stop. Each is the name of one third "
-                   "of a theme, so what the examples after the dash have in "
-                   "common is what the label has to cover. The examples are "
-                   "context and are not translated.\n")
-        for theme in THEMES:
-            out.append(f"**{source[f'meaning{theme.capitalize()}'].split(':')[0]}**\n")
-            for key, line in grouped[theme]:
-                comment = app[key].get("comment", "")
-                out.append(f"- `{key}`  **{app_english(app, key)}**  \n"
-                           f"  {line.split(' — ', 1)[1]}.  \n"
-                           f"  *{comment}*")
-            out.append("")
-        out.append("### Two more\n")
+                   "sheet: the theme's headword and definition, the area it "
+                   "puts the plant in, and the three parts — all written "
+                   "above. **The ten `area.*` keys are already in your "
+                   "language.** Two labels are the app's alone:\n")
         for key in APP_PLAIN:
             out.append(f"- `{key}`  \n  *{app[key].get('comment', '')}*")
-        out.append("\n  `Area` is the same word as the site's `meaningsArea`. "
-                   "`What the name means` is the site's `meaningsTitle` said of "
-                   "one plant.\n")
+        out.append("\n  `Area` is the word for one of the garden's ten areas, "
+                   "as the site's pages speak of them. `What the name means` "
+                   "is the site's `meaningsTitle` said of one plant.\n")
     return "\n".join(out).rstrip() + "\n"
 
 
@@ -463,6 +484,11 @@ def app_problems(code, app, written):
             problems.append(f"app {key}: an exclamation mark")
         if key.startswith("subtheme.") and value.rstrip().endswith("."):
             problems.append(f"app {key}: a label with a full stop")
+    # The site's thirty parts and the app's are one list.
+    for key, app_key in PART_KEYS.items():
+        ours, theirs = written.get(key), app_value(app, app_key, code)
+        if ours and filled(theirs) and ours.strip() != theirs.strip():
+            problems.append(f"{key}: the site says {ours!r}, the app {theirs!r}")
     # The site's line and the app's two halves are one entry.
     for theme in THEMES:
         line = written.get(f"meaning{theme.capitalize()}")

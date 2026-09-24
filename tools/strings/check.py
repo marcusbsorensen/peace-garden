@@ -188,12 +188,26 @@ def meaning_problems_for(code, catalogue, app):
     sheet sets `theme.<name>` as the headword and `theme.<name>.definition`
     under it, so the site's line and the app's pair have to be the same words,
     or a reader sees two definitions of one theme.
+
+    The thirty part labels are held to the app's `subtheme.<case>` the same
+    way, and to being labels: no full stop.
     """
     found = []
     strings = catalogue.get("strings", {})
     for key in MEANINGS:
         value = strings.get(key)
         if not (isinstance(value, str) and value.strip()):
+            continue
+        if key.startswith("subtheme"):
+            # A part label: a label, and in the app's languages the app's own
+            # `subtheme.<case>` in the same words.
+            if value.rstrip().endswith("."):
+                found.append(f"{key}: a full stop. It is a label, not a sentence")
+            case = key.removeprefix("subtheme")
+            theirs = app_value(app, f"subtheme.{case[0].lower()}{case[1:]}", code)
+            if theirs and theirs.strip() != value.strip():
+                found.append(f"{key}: the site says {value!r} and the app "
+                             f"{theirs!r}. One label, one wording")
             continue
         if key.startswith("meanings"):
             if key == "meaningsSecond":

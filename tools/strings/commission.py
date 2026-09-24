@@ -337,8 +337,8 @@ _NOTES = {
     },
     "notYet": {
         "seen": "On the card of each area that is still being built, on the "
-                "front page, and beside the same areas in the table at "
-                "`/meanings`.",
+                "front page, and beside the same areas' names in their entries "
+                "at `/meanings`.",
         "must": ["This area opens later."],
         "note": "A plain statement of where things stand, matter-of-fact "
                 "rather than apologetic. Keep the full stop.",
@@ -371,7 +371,8 @@ _NOTES = {
                 "arrives in the next paragraph.",
     },
     "meaningsSecond": {
-        "seen": "The second paragraph of `/meanings`, after the worked example.",
+        "seen": "The paragraph after the ten entries at `/meanings`, above "
+                "the glossary of second words it introduces.",
         "must": [
             "The second word of the name names the one way this plant most "
             "differs from the rest of its genus.",
@@ -382,38 +383,14 @@ _NOTES = {
                 "letter for letter. *Genus* and *masculine form* are the "
                 "ordinary botanical and grammatical terms in your language.",
     },
-    "meaningsArea": {
-        "seen": "A column heading in the table at `/meanings`, over the ten "
-                "area names.",
-        "must": ["An area of the garden."],
-        "note": "One word. In the app's languages the app's name sheet has the "
-                "same word as a row label (`Area`); they are one word in two "
-                "places.",
-    },
-    "meaningsMeaning": {
-        "seen": "A column heading in the table at `/meanings`, over the ten "
-                "definitions; on a phone it becomes a small label above each "
-                "one.",
-        "must": ["What the theme holds: what it gathers in and is about."],
-    },
     "meaningsNames": {
-        "seen": "A column heading in the table at `/meanings`, over the "
-                "syllables that begin plant names in each area — *Nyx-*, "
-                "*Fen-*. On a phone it becomes a label directly before the "
-                "syllables.",
+        "seen": "A small label in each entry at `/meanings`, where a "
+                "dictionary gives a word's etymology, leading straight into "
+                "the name-starts that bring a plant to that area — *Nyx-*, "
+                "*Fen-*, each with a drawing and its root.",
         "must": ["Names that begin with the syllables that follow."],
         "note": "It has to lead straight into a list of name-beginnings, so "
                 "choose the grammar that runs into one.",
-    },
-    "meaningsWord": {
-        "seen": "A column heading in the second table at `/meanings`, over "
-                "Latin second words such as *ruber*.",
-        "must": ["The second word of a plant's name."],
-    },
-    "meaningsSays": {
-        "seen": "The column heading beside `meaningsWord`, over what each "
-                "second word says about its plant.",
-        "must": ["What that word says about the plant."],
     },
 }
 
@@ -526,26 +503,6 @@ FRONT = {key: _NOTES[key] for key in [
     "frontLead", "frontTurn", "frontMeet", "frontMeetBody", "frontCross",
     "frontCrossBody", "frontGrow", "frontGrowBody",
     "downloadTitle", "gardenTitle", "notYet"]}
-
-# What the names mean: the ten one-line meanings, which the area pages, the
-# front page's cards and `/meanings` all set as a headword and a definition, and
-# the eight strings of `/meanings` itself.
-#
-# **The ten are `Headword: definition.`, cut at the first colon** by
-# `splitEntry` in `meanings.js` — `:` or the full-width `：` — so a line has one
-# colon, straight after the headword. `check.py` holds them to that, and in the
-# app's languages to the app's `theme.*` keys, which are the same two halves.
-MEANINGS = {
-    **{f"meaning{theme.capitalize()}": {
-        "seen": "Under the area's paragraph on its own page, on the area's "
-                "card on the front page, and in the table at `/meanings` — "
-                "each time as a dictionary headword and its definition.",
-        **ENTRIES[theme]}
-       for theme in ENTRIES},
-    **{key: _NOTES[key] for key in [
-        "meaningsTitle", "meaningsAbout", "meaningsSecond", "meaningsArea",
-        "meaningsMeaning", "meaningsNames", "meaningsWord", "meaningsSays"]},
-}
 
 
 # The ten areas, in map order, and what each is a place for.
@@ -760,6 +717,107 @@ AREAS = {
 }
 
 
+# The three parts of each theme, in the order the endings choose them.
+#
+# **Keys on the site since 24 September 2026**, when Marcus moved them into the
+# catalogue: until then they were English data in `meanings.js`, and the app
+# had them keyed from the start as `subtheme.<case>`. The site's key is the
+# same case, `subtheme` + its name — one list, two catalogues, and in the app's
+# languages the same words in both. `gloss` is what each third holds, for the
+# translator; the examples come from `AREAS` below.
+PARTS = {
+    "waiting": [
+        ("heldBack", "Dormancy: a seed or a bud held until its season."),
+        ("theLongCount", "Very long waits: seeds that germinated after centuries."),
+        ("standingAndWatching", "Patience: keeping watch while it happens."),
+    ],
+    "ground": [
+        ("theSoilItself", "The soil, and what lives in it."),
+        ("aPlaceYouAreFrom", "Home ground: belonging to a place."),
+        ("aKeptPlace", "A garden as a place enclosed and tended."),
+    ],
+    "beginnings": [
+        ("theFirstAct", "Germination: the first root a seed puts out."),
+        ("smallToLarge", "The acorn and the oak: how much grows from how little."),
+        ("whatAStartSettles", "What a beginning decides about everything after it."),
+    ],
+    "renewal": [
+        ("cutAndComeAgain", "A plant cut back that grows again — a gardener's phrase in English."),
+        ("theTurningYear", "The seasons coming round."),
+        ("madeWhole", "Mending and healing: what was broken, made whole."),
+    ],
+    "travel": [
+        ("howASeedGoes", "How seeds are carried, by wind and by water."),
+        ("theRoad", "Journeys, and the people who make them."),
+        ("farOff", "Distance, and the longing for somewhere else."),
+    ],
+    "peace": [
+        ("quietAsASound", "Quiet as something heard: wind in trees, snow falling."),
+        ("theWordsForStopping", "The words people have for rest and ceasing."),
+        ("atEase", "Comfort: being at ease, with others and alone."),
+    ],
+    "kinship": [
+        ("grownTogether", "Grafts, lichen, roots and fungi joined into one."),
+        ("theWordsForIt", "The words people have for kin and companions."),
+        ("twoPeople", "Friendship between two people."),
+    ],
+    "pattern": [
+        ("counted", "Patterns that are numbers: spirals, the golden angle."),
+        ("fittedTogether", "Shapes that tile and interlock."),
+        ("orderNamed", "The words people have for order."),
+    ],
+    "light": [
+        ("theEdgesOfTheDay", "Dawn and dusk."),
+        ("readingTheLight", "How a plant senses light and turns to it."),
+        ("lightItself", "Sunlight as a thing in itself."),
+    ],
+    "meeting": [
+        ("theMoment", "The right moment: a meeting that happens when it should."),
+        ("twoThatNeedEachOther", "A flower and its pollinator: two that live by each other."),
+        ("theMannersOfIt", "Hospitality: how a guest is received."),
+    ],
+}
+
+
+# What the names mean: the ten one-line meanings, which the area pages, the
+# front page's cards and `/meanings` all set as a headword and a definition, and
+# the four strings of `/meanings` itself (the four headings its two tables had
+# went with the tables on 24 September), and the thirty part labels.
+#
+# **The ten are `Headword: definition.`, cut at the first colon** by
+# `splitEntry` in `meanings.js` — `:` or the full-width `：` — so a line has one
+# colon, straight after the headword. `check.py` holds them to that, and in the
+# app's languages to the app's `theme.*` keys, which are the same two halves.
+MEANINGS = {
+    **{f"meaning{theme.capitalize()}": {
+        "seen": "Under the area's drawing on its own page, on the area's "
+                "card on the front page, and as the area's entry at "
+                "`/meanings` — each time as a dictionary headword and its "
+                "definition.",
+        **ENTRIES[theme]}
+       for theme in ENTRIES},
+    **{key: _NOTES[key] for key in [
+        "meaningsTitle", "meaningsAbout", "meaningsSecond",
+        "meaningsNames"]},
+    **{f"subtheme{key[0].upper()}{key[1:]}": {
+        "seen": f"The {('first', 'second', 'third')[index]} numbered sense of "
+                f"the entry for {theme.capitalize()}: under the definition on "
+                "the area's own page, and at `/meanings` with the endings that "
+                "choose it and the examples its passages were read into. The "
+                f"app's name sheet lists the same label, as `subtheme.{key}`.",
+        "must": [gloss],
+        "note": "A label, not a sentence: sentence case, no full stop, one "
+                "line on a phone. It names one third of the theme, so what "
+                "these examples have in common is what it has to cover — "
+                + AREAS[f"area{theme.capitalize()}"]["thirds"][index]
+                .split(" — ", 1)[1] + ". Those stay in English on the page; the "
+                "label is the part to write.",
+    } for theme, parts in PARTS.items()
+      for index, (key, gloss) in enumerate(parts)},
+}
+
+
+
 def english():
     """The six, the thirteen and the ten, as `strings.js` has them today."""
     source = SOURCE.read_text()
@@ -768,6 +826,35 @@ def english():
     for match in re.finditer(r'^  (\w+):\s*\n?\s*"((?:[^"\\]|\\.)*)",', body, re.M):
         found[match.group(1)] = match.group(2).encode().decode("unicode_escape")
     return found
+
+
+# What a reader of each language has corrected, as rules for the next job.
+#
+# **Written down because a reader's correction is a register, not a fix.** A
+# native reader changes one sentence and means every sentence: Marcus, reading
+# the Danish of the 24 September commission, corrected *mennesker* in three
+# strings, and the next commission in Danish would write it again unless it is
+# told. Every mode prints its language's lines, above the vocabulary.
+REGISTER = {
+    "da": [
+        "**People are *folk* or *personer*, never *mennesker*.** Whichever "
+        "reads naturally: *To personer rører telefonerne mod hinanden*, *de "
+        "folk, man holder fast i*, *de veje som frø og folk tager*. Marcus, "
+        "reading the Danish on 24 September 2026.",
+    ],
+}
+
+
+def register(code):
+    """This language's corrections, printed where the vocabulary is."""
+    lines = REGISTER.get(code)
+    if not lines:
+        return
+    print("**What a reader of this language has already corrected.** Rules, "
+          "not examples:\n")
+    for line in lines:
+        print(f"- {line}")
+    print()
 
 
 def settled_words(theirs, source, code, wanted):
@@ -781,6 +868,7 @@ def settled_words(theirs, source, code, wanted):
     """
     have = {k: v for k, v in theirs.items()
             if k in wanted and isinstance(v, str) and v.strip()}
+    register(code)
     if not have:
         return
     for key, value in have.items():

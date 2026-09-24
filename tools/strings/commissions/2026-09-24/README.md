@@ -19,14 +19,22 @@ writes text, as `commission.py` does.
 | --- | ---: | ---: | ---: |
 | Site: the front page (`front*` 8, plus `downloadTitle`, `gardenTitle`, `notYet`) | 11 | 41 | 451 |
 | Site: the ten meaning lines (`meaning*`) | 10 | 41 | 410 |
-| Site: `/meanings` (`meanings*`) | 8 | 41 | 328 |
+| Site: `/meanings` (`meaningsTitle`, `meaningsAbout`, `meaningsSecond`, `meaningsNames`) | 4 | 41 | 164 |
+| Site: the thirty part labels (`subtheme*`) | 30 | 41 | 1,230 |
 | App: the name sheet (10 headwords, 10 definitions, 30 parts, `Area`, `What the name means`) | 52 | 7 | 364 |
-| **Total** | | | **1,553** |
+| **Total** | | | **2,619** |
 
-In the seven app languages the site's ten meaning lines and the app's twenty
-`theme.*` keys are the same ten entries, written once and joined or split at
-the colon, so the distinct writing is 1,483. The ten `area.*` keys are already
-in all seven and are not in it.
+In the app's seven languages all but two of the app's fifty-two are the
+site's own words: the ten entries split at the colon, and the thirty parts
+repeated. Each is written once, so the distinct writing is 2,339. The ten
+`area.*` keys are already in all seven and are not in it.
+
+**Two changes since the sheets were first written, both 24 September.** Main
+made `/meanings` a dictionary and dropped the four headings its tables had
+(`meaningsArea`, `meaningsMeaning`, `meaningsWord`, `meaningsSays`); they are
+gone from the commission and from Danish. And Marcus moved the thirty part
+labels into the site's catalogue, as `subtheme<Case>` beside the app's
+`subtheme.<case>`, so they are in the commission for all forty-one.
 
 The 41 are every site language except Kalaallisut, which is left out by its own
 `awaiting` note: the machine pass was not good enough there to ship, and it
@@ -56,10 +64,14 @@ Marcus answered all five the same day.
 
 ## Where it stands
 
-- **Danish is written**, site and app, and waiting for Marcus to read it:
-  `/`, `/meanings` and `/frame` through `/t`, and the book beside a plant's
-  name in the app. Its `read` note in `Server/strings/da.json` still covers
-  only the area names, and changes when the reading is done.
+- **Danish is written and read.** Marcus corrected it on 24 September:
+  people are *folk* or *personer*, never *mennesker*, and `meaningTravel` is
+  his own line. The rule is in `tools/strings/BRIEF.md` and in `REGISTER` in
+  `commission.py`, which every Danish sheet now prints. Three older Danish
+  strings outside this commission still say *mennesker* — `about1` on the
+  site, and two in the app about leaving the garden — and wait on his word.
+  The `read` note in `Server/strings/da.json` still covers only the area
+  names.
 - **The other forty are next, a batch at a time**, each grouped by the problem
   it shares:
 
@@ -90,19 +102,20 @@ Marcus answered all five the same day.
 ## What each language still lacks, and why
 
 `missing.json` has it per language. Every site language but Kalaallisut lacks
-the same 63 keys:
+the same 89 keys:
 
 | Group | Keys |
 | --- | --- |
 | **This commission: the front page** (11) | `frontLead` `frontTurn` `frontMeet` `frontMeetBody` `frontCross` `frontCrossBody` `frontGrow` `frontGrowBody` `downloadTitle` `gardenTitle` `notYet` |
 | **This commission: the meaning lines** (10) | `meaningWaiting` `meaningGround` `meaningBeginnings` `meaningRenewal` `meaningTravel` `meaningPeace` `meaningKinship` `meaningPattern` `meaningLight` `meaningMeeting` |
-| **This commission: `/meanings`** (8) | `meaningsTitle` `meaningsAbout` `meaningsSecond` `meaningsArea` `meaningsMeaning` `meaningsNames` `meaningsWord` `meaningsSays` |
+| **This commission: `/meanings`** (4) | `meaningsTitle` `meaningsAbout` `meaningsSecond` `meaningsNames` |
+| **This commission: the part labels** (30) | `subthemeHeldBack` … `subthemeTheMannersOfIt`, three to a theme in map order |
 | The privacy page, its own sheet (6) | `privacyTitle` `privacy1`–`privacy5` — present as `null` |
 | The area paragraphs, English only by `strings.js` (7) | `walkAbout` `quietAbout` `crossAbout` `orchardAbout` `knotAbout` `seedbedAbout` `frameAbout` |
 | Live, uncommissioned, not in this round (17) | `walkTitle` `wildTitle` `wildBody` `downloadBody` `walkGrowing` `walkEmpty` `walkBack` `walkOn` `walkTurnAnti` `walkTurnClock` `walkAway` `quietAway` `crossAway` `orchardAway` `knotAway` `seedbedAway` `frameAway` |
 | Said nowhere on the site, kept until you decide whether they go (4) | `gardenBody` `walkBody` `goOn` — per `strings.js` — and `walkThisArea`, which no page or script uses either |
 
-**Kalaallisut** lacks those 63 and sixteen more — the six paragraphs and the
+**Kalaallisut** lacks those 89 and sixteen more — the six paragraphs and the
 ten area names — all deliberately, by its `awaiting` note.
 
 **The app's seven** each lack the 52 of this commission and **64 older strings
@@ -114,11 +127,9 @@ own.
 ## Kept out on purpose
 
 - **The area paragraphs**, English only by `strings.js`.
-- **The part labels, instances and epithet glosses on the site.** They are
-  English data in `meanings.js`, not catalogue keys, by that file's own
-  account. The app commissions its thirty parts here; if the site ever wants
-  them, `meanings.js` says moving them into the catalogue is mechanical, and
-  the seven would already have them.
+- **The instances and the epithet glosses on the site.** English data in
+  `meanings.js`, the project's own record of what it attributed to what. The
+  part labels above them are keys since 24 September.
 - **The area names, the plant names and the name-beginnings.** The names are
   written; the Latin travels as it is.
 - **The four keys said nowhere**, until you decide their fate.
