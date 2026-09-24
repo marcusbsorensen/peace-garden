@@ -9,6 +9,7 @@ require_once __DIR__ . '/Orchard.php';
 require_once __DIR__ . '/KnotGarden.php';
 require_once __DIR__ . '/Seedbed.php';
 require_once __DIR__ . '/ColdFrame.php';
+require_once __DIR__ . '/Glasshouse.php';
 
 /**
  * The ten plants that stand for the ten areas, as the plot service knows them.
@@ -40,7 +41,7 @@ final class Ambassadors
 {
     /**
      * Each area's plant: the pinned seed, and the two facts about the grown
-     * plant that a placement rule needs. All ten, though three of the areas
+     * plant that a placement rule needs. All ten, though two of the areas
      * are still shut, for the same reason SeedCore pins all ten — the area that
      * opens next should not have to go looking for its plant.
      */
@@ -56,8 +57,12 @@ final class Ambassadors
                       'height' => 0.6767851710319519, 'family' => 4],  // Nyxisora crassicaulis
         'renewal' => ['seed' => 'c295b64b290a2e9b3c6ece6c70dafb1816205f60f42a0663e47bfb738b30d292',
                       'height' => 0.9952253103256226, 'family' => 3],  // Rosea caerulea
+        // The Glasshouse reads a fourth, and only the Glasshouse does: the
+        // flower's hue, as a turn of the circle, which is what stands a pot at
+        // its place in the staging's spectrum. Pinned for the same reason.
         'light' => ['seed' => '53b234ab46f50e06243314d3d6159c67d0b26b2c0bc44a5fcd4b83ad28c4bc41',
-                    'height' => 0.6757330298423767, 'family' => 0],  // Aurea pallida
+                    'height' => 0.6757330298423767, 'family' => 0,
+                    'hue' => 0.09056447676905748],  // Aurea pallida
         'pattern' => ['seed' => '75121838c745b4c11d8c34bdf4492890833a1a8ca768942ef26cbbbba7a74b7b',
                       'height' => 1.006360411643982, 'family' => 4],  // Quina caerulea
         'ground' => ['seed' => '540d870092386fc9a3e5611499390c1de91fbadddf276bc6ef6eec73dc30326d',
@@ -125,6 +130,7 @@ final class Ambassadors
             'pattern' => KnotGarden::plant([], $one['seed'], $one['height'], $one['family']),
             'beginnings' => Seedbed::plant([], $one['seed'], $one['height'], $one['family'], $one['kind']),
             'waiting' => ColdFrame::plant([], $one['seed'], $one['height'], $one['family']),
+            'light' => Glasshouse::plant([], $one['seed'], $one['height'], $one['family'], $one['hue']),
             default => null,
         };
     }

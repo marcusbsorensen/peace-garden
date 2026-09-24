@@ -198,7 +198,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     gl.uniform1i(plantProgram.at.colour, 0);
     gl.activeTexture(gl.TEXTURE0);
     for (const plant of plants) {
-      gl.uniform3fv(plantProgram.at.offset, [plant.x, 0, plant.z]);
+      gl.uniform3fv(plantProgram.at.offset, [plant.x, plant.lift, plant.z]);
       for (const part of plant.parts) {
         gl.bindTexture(gl.TEXTURE_2D, plant.textures[part.role]);
         gl.bindVertexArray(part.vao);
@@ -219,7 +219,9 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     }
   }
 
-  function add(x, z, grown) {
+  // `lift` is how far off the ground the plant stands: nothing, everywhere but
+  // the Glasshouse, whose staging stands its pots 0.83 m off the floor.
+  function add(x, z, grown, lift = 0) {
     const textures = {};
     for (const role of ROLES) {
       const t = grown.textures[role];
@@ -247,7 +249,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
       return { vao, buffers, count: part.indices.length, role: part.role };
     });
     gl.bindVertexArray(null);
-    plants.push({ x, z, parts, textures });
+    plants.push({ x, z, lift, parts, textures });
   }
 
   // **Adding a plant does not draw the walk.** It used to, and that made
@@ -277,10 +279,18 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     draw();
   }
 
+  // Builds the ground again without turning, for an area whose ground depends
+  // on which plot is showing: the Glasshouse draws a pot under each potted
+  // plant, and a plot with eleven pots on its staging is not one with twenty.
+  function rebuild() {
+    rebuildGround();
+    draw();
+  }
+
   rebuildGround();
   new ResizeObserver(draw).observe(canvas);
   // `turn` is read by the sky, which has to face the way the camera does.
-  return { add, clear, turnBy, draw, turn: () => turn };
+  return { add, clear, turnBy, draw, rebuild, turn: () => turn };
 }
 
 // Plants arrivals by the rule until there are `total`, reporting as it goes.

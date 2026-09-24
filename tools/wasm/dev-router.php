@@ -45,6 +45,7 @@ $bench = ['/dev/walk' => 'web/walk.html', '/dev/quiet' => 'web/quiet.html',
           '/dev/knot' => 'web/knot.html',
           '/dev/seedbed' => 'web/seedbed.html',
           '/dev/frame' => 'web/frame.html',
+          '/dev/glasshouse' => 'web/glasshouse.html',
           '/dev/front-a' => 'web/front-a.html',
           '/dev/front-b' => 'web/front-b.html',
           '/dev/plant' => 'web/index.html'];

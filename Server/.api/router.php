@@ -19,6 +19,9 @@ declare(strict_types=1);
  *   GET  /api/seedbed/plot/{n}     the same, for the Seedbed
  *   GET  /api/frame                the same, for the Cold Frame
  *   GET  /api/frame/plot/{n}       the same, for the Cold Frame
+ *   GET  /api/glasshouse           the same, for the Glasshouse
+ *   GET  /api/glasshouse/plot/{n}  the same, for the Glasshouse, each planting
+ *                                  with how far off the floor it stands
  *   POST /api/walk/offer           one gardener offers a plant, addressed to the other
  *   POST /api/walk/pending         what is waiting on these tokens, either way round
  *   POST /api/walk/answer          the other gardener says yes or no
@@ -36,11 +39,12 @@ declare(strict_types=1);
  * anybody being asked. It answers 403 unless `open_for_planting` is set in
  * `.api/config.php`, which is for a local copy and for the reference check.
  *
- * **Seven of ten areas are open**, and the service says which: the Seedbed
- * (`beginnings`), the Cold Frame (`waiting`), the Knot Garden (`pattern`), the
- * Long Walk (`travel`), the Crossing (`meeting`), the Orchard (`kinship`) and
- * the Quiet Garden (`peace`). The other three have names, layouts and a place
- * on the map and no placement rule, so a plant cannot stand in them.
+ * **Eight of ten areas are open**, and the service says which: the Seedbed
+ * (`beginnings`), the Cold Frame (`waiting`), the Glasshouse (`light`), the
+ * Knot Garden (`pattern`), the Long Walk (`travel`), the Crossing (`meeting`),
+ * the Orchard (`kinship`) and the Quiet Garden (`peace`). The other two have
+ * names, layouts and a place on the map and no placement rule, so a plant
+ * cannot stand in them.
  * `Areas.php` is the list and `GET /api/garden` is how a phone learns it
  * without being told by a version of itself.
  *
@@ -129,9 +133,10 @@ function readBody(int $limit = 8192): array
  *
  * The seed has to be the cross of those two parents at that meeting, which is
  * what stops an invented plant being put in the walk — `Seeds::cross` is
- * SeedCore's own derivation, held to it in CI. The height, the family and the
- * kind are the three the placement rules need and the three only a grown plant
- * can give, so they are taken on trust and held to what a plant can actually be.
+ * SeedCore's own derivation, held to it in CI. The height, the family, the kind
+ * and the hue are the four the placement rules need and the four only a grown
+ * plant can give, so they are taken on trust and held to what a plant can
+ * actually be.
  */
 function checkedPlant(mixed $plant): array
 {
@@ -164,6 +169,20 @@ function checkedPlant(mixed $plant): array
     if (!is_string($kind) || !preg_match('/\A[a-z]{0,64}\z/', $kind)) {
         respond(400, ['error' => 'kind is a plant\'s epithet: up to 64 lower-case letters, or absent.']);
     }
+
+    // **The hue, as a turn of the colour circle**: 0 up to but not including 1,
+    // as the genome holds it. The fourth trait, and the Glasshouse's alone — it
+    // stands a pot at its place in the staging's spectrum. Absent means null,
+    // which is what every plant offered before 24 September carries and what
+    // the Glasshouse reads as it reads a pale flower: any free pot.
+    //
+    // A number, never a string, and taken as the exact double the phone sent:
+    // it is the seed's bytes through arithmetic alone, so it is the same double
+    // here as on the phone, and a band edge falls the same side of it in both.
+    $hue = $plant['hue'] ?? null;
+    if ($hue !== null && (!(is_float($hue) || is_int($hue)) || $hue < 0 || $hue >= 1)) {
+        respond(400, ['error' => 'hue is a turn of the colour circle, 0 up to 1, or absent.']);
+    }
     if (Seeds::cross($parents[0], $parents[1], $encounter) !== $seed) {
         respond(422, ['error' => 'That seed is not the cross of those parents at that meeting.']);
     }
@@ -191,7 +210,8 @@ function checkedPlant(mixed $plant): array
     }
 
     return ['seed' => $seed, 'parents' => [$parents[0], $parents[1]], 'encounter' => $encounter,
-            'height' => (float) $height, 'family' => $family, 'area' => $area, 'kind' => $kind];
+            'height' => (float) $height, 'family' => $family, 'area' => $area, 'kind' => $kind,
+            'hue' => $hue === null ? null : (float) $hue];
 }
 
 /**
@@ -302,6 +322,15 @@ function route(string $method, string $path): never
         respond(200, ['plot' => $plot, 'plantings' => store($settings)->coldFrame()->plot($plot)]);
     }
 
+    if ($path === '/api/glasshouse' && $method === 'GET') {
+        respond(200, ['plots' => store($settings)->glasshouse()->plots()]);
+    }
+
+    if (preg_match('#\A/api/glasshouse/plot/(0|[1-9][0-9]{0,5})\z#', $path, $m) && $method === 'GET') {
+        $plot = (int) $m[1];
+        respond(200, ['plot' => $plot, 'plantings' => store($settings)->glasshouse()->plot($plot)]);
+    }
+
     if ($path === '/api/walk/offer' && $method === 'POST') {
         $body = readBody();
         $to = $body['to'] ?? null;
@@ -313,7 +342,7 @@ function route(string $method, string $path): never
         [$offer, $new] = store($settings)->offers()->offer(
             $plant['seed'], $to, $from, $plant['parents'][0], $plant['parents'][1],
             $plant['encounter'], $plant['height'], $plant['family'], time(), $plant['area'],
-            $plant['kind']
+            $plant['kind'], $plant['hue']
         );
         // Offered already, by somebody holding a different pair of tokens. Said
         // without either of them — see `Offers::offer`.
@@ -372,7 +401,7 @@ function route(string $method, string $path): never
         $plant = checkedPlant(readBody(4096));
         [$planting, $new] = store($settings)->plantInto(
             $plant['area'], $plant['seed'], $plant['parents'][0], $plant['parents'][1],
-            $plant['encounter'], $plant['height'], $plant['family'], $plant['kind']
+            $plant['encounter'], $plant['height'], $plant['family'], $plant['kind'], $plant['hue']
         );
         respond($new ? 201 : 200, $planting);
     }

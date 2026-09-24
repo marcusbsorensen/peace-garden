@@ -28,7 +28,7 @@ final class Areas
      * open because it has a name and a layout on paper; it is open when there
      * is a rule that gives an arriving plant a slot and never moves it again.
      */
-    public const OPEN = ['beginnings', 'waiting', 'pattern', 'travel', 'meeting', 'kinship', 'peace'];
+    public const OPEN = ['beginnings', 'waiting', 'light', 'pattern', 'travel', 'meeting', 'kinship', 'peace'];
 
     /** What this area's plantings are called, or '' for an area with no table yet. */
     public const TABLES = [
@@ -39,6 +39,7 @@ final class Areas
         'pattern' => 'knot_garden',
         'beginnings' => 'seedbed',
         'waiting' => 'cold_frame',
+        'light' => 'glasshouse',
     ];
 
     public static function exists(mixed $area): bool

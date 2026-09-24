@@ -29,6 +29,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../Server/.api/Ambassadors.php';
 require_once __DIR__ . '/../../Server/.api/QuietGarden.php';
 require_once __DIR__ . '/../../Server/.api/ColdFrame.php';
+require_once __DIR__ . '/../../Server/.api/Glasshouse.php';
 
 $vectors = json_decode(
     file_get_contents(__DIR__ . '/ambassador_vectors.json'), true, 512, JSON_THROW_ON_ERROR
@@ -65,6 +66,11 @@ foreach ($vectors['ambassadors'] as $n => $row) {
     // into the same double, so they are either equal or one of them moved.
     is_same("$area's height", $row['height'], $php['height'] ?? null);
     is_same("$area's colour family", $row['family'], $php['family'] ?? null);
+    // The hue, where the service pins one — only the Glasshouse's ambassador,
+    // because only the Glasshouse reads it. Exact, for the height's reason and
+    // one more: a hue is exact on every host, so there is no excuse for it
+    // not to be.
+    if (isset($php['hue'])) is_same("$area's hue", $row['hue'], $php['hue']);
 }
 
 // MARK: The two that are standing in a garden
@@ -113,7 +119,18 @@ is_same('its rank is the rank its height belongs to',
         ColdFrame::rank($vectors['ambassadors'][1]['height']), $waiting['rank'] ?? null);
 is_same('its place along that rank', 0, $waiting['index'] ?? null);
 
-// The three that are not open have no placement, because their areas have no
+// The Glasshouse's, which opens the staging at its own place in the spectrum:
+// *Aurea pallida* grows to 0.68 m, under the border's 1.30 m, so it is potted,
+// and its orange stands it in the tenth band, three from the far end — the
+// first pot on the staging, in the row by the glass.
+$light = Ambassadors::planting('light');
+is_same('the Glasshouse ambassador\'s plot', 0, $light['plot'] ?? null);
+is_same('its bed', Glasshouse::STAGING, $light['bed'] ?? null);
+is_same('its place is its own band',
+        Glasshouse::band($vectors['ambassadors'][3]['hue']), $light['index'] ?? null);
+is_same('its row', 0, $light['row'] ?? null);
+
+// The two that are not open have no placement, because their areas have no
 // rule. A placement invented for one of them would be a promise about a layout
 // nobody has designed.
 foreach (Areas::ALL as $area) {
@@ -181,7 +198,8 @@ if ($failed !== []) {
 
 printf("Ten ambassadors — %s at the head of the walk, %s at the crossing, "
      . "%s under the middle tree, %s beside the bench, %s in the knot, "
-     . "%s in the first frame — and the service agrees: %d checks.\n",
+     . "%s in the first frame, %s on the staging — and the service agrees: %d checks.\n",
     $vectors['ambassadors'][6]['name'], $vectors['ambassadors'][7]['name'],
     $vectors['ambassadors'][8]['name'], $vectors['ambassadors'][9]['name'],
-    $vectors['ambassadors'][4]['name'], $vectors['ambassadors'][1]['name'], $checks);
+    $vectors['ambassadors'][4]['name'], $vectors['ambassadors'][1]['name'],
+    $vectors['ambassadors'][3]['name'], $checks);
