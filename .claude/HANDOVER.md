@@ -30,8 +30,6 @@ All ten areas open before the app is announced, on the new plant shapes.
 ## Next step
 The app build that sends `habit` (and `hue`, and new-shape heights), then the replant from a fresh copy (`tools/replant/README.md` §runbook), which now covers all ten areas. After that, the at-scale work, or the gateways design pass.
 
-The `area/ground` branch is merged; delete it when convenient.
-
 ## Open, set aside
 - **Until the app build that sends `habit` ships, every Home Ground arrival is sown as an umbel.** The replant after that build (`tools/replant/README.md` §runbook) puts each in its own crop's bed. Same build is needed for the Coppice's ferns and the Glasshouse's hues.
 - `groundAbout` and `groundAway` are English only, joining `coppiceAbout`, `coppiceAway`, `moveUp`…`zoomOut`, `moveHome`. Regenerate `tools/strings/commissions/2026-09-24/` with `sheets.py` before sending.
