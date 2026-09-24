@@ -443,6 +443,21 @@ page's own prose landed on the lawn.
   between the trees and cut back round each trunk is what an orchard is, and it
   is also the only thing on the page that says which four plants belong to which
   tree — without a line being drawn anywhere.
+- **The discs and the meadow stay on the slab** (25 September 2026). Marcus
+  saw the grass under the four outer trees overflowing the plot's edge. The
+  outer trunks stand 1.70 m out and the wandering edge is 0.74–0.78 m beyond
+  them, so a disc of 1.07 m radius hung a third of a metre into the sky — and
+  had since the Orchard opened; the shadows of 24 September did not cause it.
+  The meadow under it was a square grid 2.54 m either way on an outline that
+  comes in to 2.42 m, so it overhung too, as a ruled edge with four corners
+  poking out. Now the meadow is rings drawn in from the outline itself, and
+  each disc's rim is the lesser of its wandering circle and the distance to
+  the edge, rounded where one turns into the other: where a tree is near the
+  edge the cut runs to the lip and stops on it. **On the edge, not short of
+  it**, because a guild's outer plant can stand within a centimetre of the
+  edge (6 mm in the workbench's five hundred), and a strip of meadow left
+  there would put a plant out of its own disc. Checked on the geometry: no
+  rim or meadow point off the plot, and every one of 501 spots inside its disc.
 
 ## The Knot Garden, built
 

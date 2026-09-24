@@ -58,27 +58,56 @@ export function makeOrchardGround(place, trunks) {
     }
 
     // **Meadow grass, mottled.** The Crossing's arithmetic exactly, because it
-    // is the same long grass: a grid of quads carrying a tone at each corner
+    // is the same long grass: quads carrying a tone at each corner
     // rather than over each face, so neighbours share corners and no cell edge
     // shows anywhere. An orchard's sward is rougher than a crossing's quarters
     // if anything — it is cut once a year, not left between paths — so it is
     // drawn a shade darker and varying a shade harder.
-    const half = SIDE / 2 - 0.06;
+    //
+    // **Laid on the outline, not on a square.** It was a grid 2.54 m either
+    // way, and the plot's wandering edge comes in to 2.42 m: the meadow ran
+    // past the slab on nearly every side, as a ruled edge with its four corners
+    // sticking out into the sky. It is now rings drawn in from the outline
+    // itself — the outline goes once round the middle, so each of its points
+    // can be walked straight in — and so the meadow stops exactly where the
+    // ground does, on the ground's own wandering edge.
     const cell = 0.26;
-    const steps = Math.ceil((half * 2) / cell);
+    const rings = Math.ceil(SIDE / 2 / cell);
     const rough = (x, z) => COLOUR.turf.map((v) => v * 0.87 * (1
       + 0.15 * (e.pg_verge(x * 1.31, -1, GROVE.rough) / 0.14)
       + 0.12 * (e.pg_verge(z * 1.07, 1, GROVE.rough) / 0.14)));
-    for (let i = 0; i < steps; i++) {
-      const x0 = -half + i * cell, x1 = Math.min(half, x0 + cell);
-      if (x0 >= half) break;
-      for (let j = 0; j < steps; j++) {
-        const z0 = -half + j * cell, z1 = Math.min(half, z0 + cell);
-        if (z0 >= half) break;
-        quad([x0, 0.003, z0], [x1, 0.003, z0], [x1, 0.003, z1], [x0, 0.003, z1], UP,
-             rough(x0, z0), rough(x1, z0), rough(x1, z1), rough(x0, z1));
+    const inward = (p, k) => [p[0] * (k / rings), p[1] * (k / rings)];
+    for (let i = 0; i < n; i++) {
+      const a = outline[i], b = outline[(i + 1) % n];
+      for (let k = 0; k < rings; k++) {
+        const [a0, a1, b0, b1] = [inward(a, k), inward(a, k + 1), inward(b, k), inward(b, k + 1)];
+        quad([a0[0], 0.003, a0[1]], [a1[0], 0.003, a1[1]], [b1[0], 0.003, b1[1]], [b0[0], 0.003, b0[1]], UP,
+             rough(...a0), rough(...a1), rough(...b1), rough(...b0));
       }
     }
+
+    // How far a line from `from` heading `(dx, dz)` runs before it leaves the
+    // plot: the nearest crossing of the outline.
+    const reach = (from, dx, dz) => {
+      let best = Infinity;
+      for (let i = 0; i < n; i++) {
+        const a = outline[i], b = outline[(i + 1) % n];
+        const ex = b[0] - a[0], ez = b[1] - a[1];
+        const det = dx * ez - dz * ex;
+        if (Math.abs(det) < 1e-9) continue;
+        const wx = a[0] - from[0], wz = a[1] - from[1];
+        const along = (wx * ez - wz * ex) / det;
+        const on = (wx * dz - wz * dx) / det;
+        if (along > 0 && on >= 0 && on <= 1) best = Math.min(best, along);
+      }
+      return best;
+    };
+    // The lesser of two, with the corner between them rounded over `k`, and
+    // never more than either.
+    const softer = (a, b, k) => {
+      const h = Math.max(k - Math.abs(a - b), 0) / k;
+      return Math.min(a, b) - h * h * k / 4;
+    };
 
     // **A mown disc under each tree**, a little wider than the guild that stands
     // in it so the planting is inside the cut rather than on its edge. Its rim
@@ -89,8 +118,21 @@ export function makeOrchardGround(place, trunks) {
     // step there; a position does not, because the rim closes in space and so
     // does the noise it is sampled from. `Organic.tree` does the same thing for
     // the same reason.
+    //
+    // **And it stays on the plot.** The four outer trunks stand 1.70 m out and
+    // the plot's edge is only 0.74–0.78 m beyond them, so a disc of 1.07 m
+    // radius hung a third of a metre over the slab's side into the sky. Where
+    // the edge is nearer than the disc, the cut now runs to the edge and stops
+    // on it, as a lawn is mown to the lip of a bank — on the plot's own
+    // wandering edge, and rounded where the circle turns onto it, so the rim
+    // has no corner. It stops *on* the edge, not short of it: a guild's outer
+    // plant can stand within a centimetre of the edge (6 mm, in the workbench's
+    // five hundred), and a strip of meadow left there
+    // would put it out of its own disc, or draw a ruled-looking hairline round
+    // the slab where it is thin. (The 4 mm is what a chord between two rim
+    // points bows past the edge where it dents inward.)
     const discRadius = place.guildRadius + 0.32;
-    const fan = 64;
+    const fan = 96;
     for (const [t, trunk] of trunks.entries()) {
       const rim = [];
       for (let a = 0; a <= fan; a++) {
@@ -99,7 +141,8 @@ export function makeOrchardGround(place, trunks) {
         const wander = 1
           + 0.07 * (e.pg_verge(cx * 1.4, -1, GROVE.mow + t) / 0.14)
           + 0.06 * (e.pg_verge(cz * 1.2, 1, GROVE.mow + t) / 0.14);
-        rim.push([trunk[0] + discRadius * wander * cx, trunk[1] + discRadius * wander * cz]);
+        const r = softer(discRadius * wander, reach(trunk, cx, cz) - 0.004, 0.12);
+        rim.push([trunk[0] + r * cx, trunk[1] + r * cz]);
       }
       // Cut grass is brighter than the meadow round it, and each disc is mown a
       // fraction differently, so five discs are not five copies.
