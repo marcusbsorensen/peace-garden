@@ -717,7 +717,7 @@ Each theme's three parts, as the numbered senses of its entry: under the definit
 A book beside a plant's name on the seed screen opens a sheet: the theme's headword and definition, the area it puts the plant in, and the three parts — all written above. **The ten `area.*` keys are already in your language.** Two labels are the app's alone:
 
 - `Area`  
-  *Row label on the screen that explains a plant's name, beside the place in the shared garden the plant belongs to, such as 'The Cold Frame'. A part of a garden, not a measurement. The website heads its table with the same word (key meaningsArea).*
+  *Row label on the screen that explains a plant's name, beside the place in the shared garden the plant belongs to, such as 'The Cold Frame'. A part of a garden, not a measurement: one of the garden's ten areas, as the website names them (keys area*).*
 - `What the name means`  
   *The book mark beside a plant's name on the seed screen, read aloud. It opens a page explaining what the plant's name says about it.*
 

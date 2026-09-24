@@ -144,7 +144,7 @@ Commissioned and shipping. **What you write has to agree with them.**
     da  En plante gror fra et møde.
 - `about1`
     en  Peace Garden makes a plant out of two people meeting. Two phones hand each other a seed. What grows from the two seeds is a plant that combines their features, like a handshake or a joint garden that has some of each person. It opens over real days, in its own time.
-    da  Peace Garden laver en plante ud af to mennesker, der mødes. To telefoner rækker hinanden et frø. Det, der gror af de to frø, er en plante med træk fra dem begge — som et håndtryk eller en fælles have, der har noget af hver. Den åbner sig over rigtige dage, i sit eget tempo.
+    da  Peace Garden laver en plante ud af to personer, der mødes. To telefoner rækker hinanden et frø. Det, der gror af de to frø, er en plante med træk fra dem begge — som et håndtryk eller en fælles have, der har noget af hver. Den åbner sig over rigtige dage, i sit eget tempo.
 - `about2`
     en  A seed travels in a link as well as by touch, so it reaches a phone that has never heard of any of this.
     da  Et frø rejser i et link såvel som ved berøring, så det når frem til en telefon, der aldrig har hørt om noget af dette.
@@ -723,7 +723,7 @@ Each theme's three parts, as the numbered senses of its entry: under the definit
 A book beside a plant's name on the seed screen opens a sheet: the theme's headword and definition, the area it puts the plant in, and the three parts — all written above. **The ten `area.*` keys are already in your language.** Two labels are the app's alone:
 
 - `Area`  
-  *Row label on the screen that explains a plant's name, beside the place in the shared garden the plant belongs to, such as 'The Cold Frame'. A part of a garden, not a measurement. The website heads its table with the same word (key meaningsArea).*
+  *Row label on the screen that explains a plant's name, beside the place in the shared garden the plant belongs to, such as 'The Cold Frame'. A part of a garden, not a measurement: one of the garden's ten areas, as the website names them (keys area*).*
 - `What the name means`  
   *The book mark beside a plant's name on the seed screen, read aloud. It opens a page explaining what the plant's name says about it.*
 

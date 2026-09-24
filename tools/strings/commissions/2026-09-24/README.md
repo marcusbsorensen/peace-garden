@@ -67,11 +67,11 @@ Marcus answered all five the same day.
 - **Danish is written and read.** Marcus corrected it on 24 September:
   people are *folk* or *personer*, never *mennesker*, and `meaningTravel` is
   his own line. The rule is in `tools/strings/BRIEF.md` and in `REGISTER` in
-  `commission.py`, which every Danish sheet now prints. Three older Danish
-  strings outside this commission still say *mennesker* — `about1` on the
-  site, and two in the app about leaving the garden — and wait on his word.
-  The `read` note in `Server/strings/da.json` still covers only the area
-  names.
+  `commission.py`, which every Danish sheet now prints, and `check.py` flags
+  *menneske* anywhere in Danish, site or app. The three older strings that
+  said it — `about1`, and two in the app about leaving the garden — say
+  *personer* and *folk* now. The `read` note in `Server/strings/da.json`
+  records what he read and when.
 - **The other forty are next, a batch at a time**, each grouped by the problem
   it shares:
 

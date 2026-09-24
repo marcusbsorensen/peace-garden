@@ -170,6 +170,36 @@ LATIN = ["-ynth", "rubra", "ruber"]
 APP = ROOT / "App/PeaceGarden/Resources/Localizable.xcstrings"
 
 
+# Words a native reader has ruled out, by language: the part of `REGISTER` in
+# `commission.py` a machine can see. **Checked in every string the language
+# has, site and app, and not only in a commission's own**, because the rule is
+# the reader's and it is general: Marcus's *folk* or *personer* for people in
+# Danish found three older strings saying *mennesker* the day it was made.
+AVOID = {
+    "da": [("menneske", "people are folk or personer in Danish, never "
+                        "mennesker (Marcus, 24 September 2026)")],
+}
+
+
+def avoid_problems_for(code, catalogue, app):
+    """Any word this language's reader has ruled out, anywhere it is said."""
+    found = []
+    rules = AVOID.get(code, [])
+    if not rules:
+        return found
+    said = {f"{key}": value for key, value in catalogue.get("strings", {}).items()
+            if isinstance(value, str)}
+    for key in app:
+        value = app_value(app, key, code)
+        if value:
+            said[f"app {key[:48]!r}"] = value
+    for where, value in said.items():
+        for word, why in rules:
+            if word in value.casefold():
+                found.append(f"{where}: says {word!r}. {why}")
+    return found
+
+
 def app_value(app, key, code):
     """One language's words for one app key, or None."""
     return (app.get(key, {}).get("localizations", {}).get(code, {})
@@ -374,6 +404,7 @@ def main():
                  + problems_for(code, catalogue, source, MEANINGS,
                                 "meanings")
                  + meaning_problems_for(code, catalogue, app)
+                 + avoid_problems_for(code, catalogue, app)
                  + area_problems_for(catalogue, source))
         if found:
             print(f"{code}:")

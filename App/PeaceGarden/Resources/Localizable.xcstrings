@@ -1032,7 +1032,7 @@
 
     },
     "Area" : {
-      "comment" : "Row label on the screen that explains a plant's name, beside the place in the shared garden the plant belongs to, such as 'The Cold Frame'. A part of a garden, not a measurement. The website heads its table with the same word (key meaningsArea).",
+      "comment" : "Row label on the screen that explains a plant's name, beside the place in the shared garden the plant belongs to, such as 'The Cold Frame'. A part of a garden, not a measurement: one of the garden's ten areas, as the website names them (keys area*).",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -9254,7 +9254,7 @@
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dit eget frø og dets plante bliver. De mennesker, du groede de planter sammen med, beholder deres."
+            "value" : "Dit eget frø og dets plante bliver. De folk, du groede de planter sammen med, beholder deres."
           }
         },
         "es" : {
@@ -9489,7 +9489,7 @@
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dit frø, din plante og din have forsvinder alle sammen. De mennesker, du har mødt, beholder de planter, I groede frem sammen."
+            "value" : "Dit frø, din plante og din have forsvinder alle sammen. De folk, du har mødt, beholder de planter, I groede frem sammen."
           }
         },
         "es" : {
