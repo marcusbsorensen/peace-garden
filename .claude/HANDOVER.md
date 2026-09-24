@@ -17,6 +17,9 @@ All ten areas open before the app is announced, on the new plant shapes.
 - **Tests**: SeedCore 378/0 on macOS, 372/0 under WebAssembly; every PHP check passes, including the new `check_home_ground.php`, offers and backup; replant rehearsal passes across ten areas; strings check clean.
 - **Live**: `/api/garden` lists ten open; `/ground` serves and draws; `deploy.sh` checks pass. The live Home Ground holds only its ambassador.
 
+- **The plant panel is live** (merge `0863179`, deployed 24 September late, backup taken first). Tap a plant on any area page, or press `p`: its name, what the name means, one passage (the app's own rule for a crossed plant), and *Send as a postcard*, a link `/<area>?plot=N#p=<12 hex>` that opens the plant with its panel up. Shared module `Server/assets/js/plantpanel.js`; name from the new `pg_name` export. `docs/WEB-GARDENS.md` records the decision and the as-built. Seven new strings, English only. Distinct from the phase-2 *plant's own page* in `WEBSITE.md`, which carries the gardener and needs a second consent.
+- `tools/reference/passage_reference.py` `theme_of` still uses the old `passage.theme.v1` draw rather than the genus head the app uses; its checks pass but it no longer describes the app.
+
 ## Files
 - `docs/WEB-GARDENS.md` §"The Home Ground, chosen" → §"Decided" (items 6–7 are tonight's) → §"The Home Ground, built".
 - `tools/homeground/` — the simulation, now the decided design.
