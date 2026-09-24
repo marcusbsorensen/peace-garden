@@ -38,11 +38,26 @@
 /// - `layers`: how quickly layers darken towards `darkest` — the ground's
 ///   light lost where the most is in the way — which a pile approaches and
 ///   does not pass, so ten leaves are not ten times one.
+/// - `lean`: how much of the sun's slide to give it, 1 unless said. A tree's
+///   crown is laid at half, so its shade is a pool under it leaning away from
+///   the sun rather than a crown-shaped patch two metres off.
+/// - `wander`: how far, as a share, the slide of anything above the ground
+///   wanders by where it is — three slow waves and a grain. A clipped hedge's
+///   top is near enough a line, and so is its shadow's far edge unless it is
+///   given the unevenness a real yew's has; its foot does not move.
+/// - `dapple`: how much of the shade is broken up by light coming through,
+///   in waves a hand to a forearm across, as under a fruit tree.
 ///
 /// Answers the grid as `loss`, how much of the ground's light is taken at each
 /// cell (0–255 for 0–1), with where it lies.
 export function castShadow(each, look) {
-  const slide = [-look.sun[0] / look.sun[1], -look.sun[2] / look.sun[1]];
+  const lean = look.lean ?? 1;
+  const slide = [-look.sun[0] / look.sun[1] * lean, -look.sun[2] / look.sun[1] * lean];
+  // How far a point's slide is stretched or shrunk, by where it is.
+  const wander = look.wander
+    ? (x, z) => 1 + look.wander * (0.45 * Math.sin(x * 4.1 + z * 2.3 + 1.7) + 0.3 * Math.sin(x * -2.9 + z * 6.7 + 4.2)
+      + 0.15 * Math.sin(x * 11.3 + z * 9.1 + 0.3) + 0.2 * (grain(x * 53.1 + z * 97.3) - 0.5))
+    : () => 1;
 
   // Where it lies: its own bounds with room for the far blur round them, or
   // the rect it was given.
@@ -52,7 +67,7 @@ export function castShadow(each, look) {
   } else {
     x0 = z0 = Infinity; x1 = z1 = -Infinity;
     const grow = (x, y, z) => {
-      const h = Math.max(0, y), px = x + slide[0] * h, pz = z + slide[1] * h;
+      const h = Math.max(0, y) * wander(x, z), px = x + slide[0] * h, pz = z + slide[1] * h;
       if (px < x0) x0 = px; if (px > x1) x1 = px;
       if (pz < z0) z0 = pz; if (pz > z1) z1 = pz;
     };
@@ -71,11 +86,12 @@ export function castShadow(each, look) {
   // frond add up to the frond rather than to whichever cell centres they
   // happened to cover. A bigger one covers every cell whose middle is in it.
   each((ax, ay, az, bx, by, bz, cx, cy, cz) => {
-    const ha = Math.max(0, ay), hb = Math.max(0, by), hc = Math.max(0, cy);
+    const ya = Math.max(0, ay), yb = Math.max(0, by), yc = Math.max(0, cy);
+    const ha = ya * wander(ax, az), hb = yb * wander(bx, bz), hc = yc * wander(cx, cz);
     const u0 = (ax + slide[0] * ha - x0) / cell, v0 = (az + slide[1] * ha - z0) / cell;
     const u1 = (bx + slide[0] * hb - x0) / cell, v1 = (bz + slide[1] * hb - z0) / cell;
     const u2 = (cx + slide[0] * hc - x0) / cell, v2 = (cz + slide[1] * hc - z0) / cell;
-    const t = smooth(0, look.high, (ha + hb + hc) / 3);
+    const t = smooth(0, look.high, (ya + yb + yc) / 3);
     const low = 1 - t, high = t * look.faint;
     const twice = (u1 - u0) * (v2 - v0) - (u2 - u0) * (v1 - v0);
     const area = Math.abs(twice) / 2;
@@ -116,13 +132,37 @@ export function castShadow(each, look) {
   const edge = Math.max(2, look.edge ?? 3);
   for (let j = 0; j < h; j++) {
     const fj = smooth(0, edge, Math.min(j, h - 1 - j));
+    const z = z0 + (j + 0.5) * cell;
     for (let i = 0; i < w; i++) {
       const fade = fj * smooth(0, edge, Math.min(i, w - 1 - i));
       const layers = near[j * w + i] + far[j * w + i];
-      loss[j * w + i] = Math.round(255 * fade * look.darkest * (1 - Math.exp(-look.layers * layers)));
+      let lost = fade * look.darkest * (1 - Math.exp(-look.layers * layers));
+      if (look.dapple && lost > 0) {
+        const x = x0 + (i + 0.5) * cell;
+        const light = 0.6 * noise(x * 4.3 + z * 2.1, z * 4.3 - x * 2.1) + 0.4 * noise(x * 9.7 - z * 5.3 + 31, z * 9.7 + x * 5.3 + 17);
+        lost *= 1 - look.dapple * smooth(0.4, 0.75, light);
+      }
+      loss[j * w + i] = Math.round(255 * lost);
     }
   }
   return { x0, z0, cell, w, h, loss };
+}
+
+/// Smooth noise between 0 and 1: a lattice of random heights, eased between.
+/// Turned and stretched where it is read, so no row of it lines up with the
+/// plot — a sum of waves did, and drew a trellis in the shade.
+function noise(x, z) {
+  const i = Math.floor(x), j = Math.floor(z), fx = x - i, fz = z - j;
+  const at = (a, b) => grain(a * 157.31 + b * 311.7);
+  const sx = fx * fx * (3 - 2 * fx), sz = fz * fz * (3 - 2 * fz);
+  const top = at(i, j) + (at(i + 1, j) - at(i, j)) * sx;
+  const bottom = at(i, j + 1) + (at(i + 1, j + 1) - at(i, j + 1)) * sx;
+  return top + (bottom - top) * sz;
+}
+
+function grain(n) {
+  const x = Math.sin(n * 12.9898) * 43758.5453;
+  return x - Math.floor(x);
 }
 
 function smooth(a, b, v) {

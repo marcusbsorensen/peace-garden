@@ -165,14 +165,22 @@ void main() { outColour = vec4(vec3(1.0 - texture(loss, vUV).r * vFade), 1.0); }
 // - `hedge`: what a ground builder hands the stage as `casting` — the Knot's
 //   box, the Cold Frame's boxes, the Seedbed's labels, the Quiet Garden's
 //   hedge round and bench, the Long Walk's yew and low hedge. Solid, so
-//   darker, and blurred less: clipped box has an edge. A 2 m yew's shadow is
-//   a metre long; what of it falls past the plot falls on nothing (`draw`).
+//   darker, and blurred less near its foot: clipped box has an edge. A 2 m
+//   yew's shadow is a metre long, and its far edge — the shadow of the hedge's
+//   top — wanders a fifth either way and is blurred wider, so it reads as
+//   clipped yew and not as a ruled line; what of it falls past the plot falls
+//   on nothing (`draw`).
+// - `canopy`: an orchard tree's crown, handed back as `canopy`. A pool under
+//   it, leaning away from the sun at half the slide, broken by dapple, and
+//   light: eight tenths of the grass's light is left at its darkest.
 // - `above` is how far a shadow floats over the surface it lies on, clear of
 //   the highest dressing any ground lays over its floor (6 mm, the Cold
 //   Frame's and the Glasshouse border's soil), so it never fights one.
 const SHADOW = {
   plant: { cell: 0.012, most: 112, near: 0.02, far: 0.07, high: 0.4, faint: 0.5, layers: 1.1, darkest: 0.42 },
-  hedge: { cell: 0.02, most: 1024, near: 0.015, far: 0.05, high: 0.6, faint: 0.8, layers: 1.6, darkest: 0.45 },
+  hedge: { cell: 0.02, most: 1024, near: 0.015, far: 0.08, high: 0.6, faint: 0.8, layers: 1.6, darkest: 0.45, wander: 0.18 },
+  canopy: { cell: 0.02, most: 1024, near: 0.06, far: 0.12, high: 1, faint: 1, layers: 1.2, darkest: 0.22, lean: 0.5,
+    wander: 0.15, dapple: 0.75 },
   above: 0.01,
   // How far apart the points of the mesh a shadow is drawn on are, so it
   // follows a bed's shoulder or a hollow in the litter.
@@ -251,12 +259,21 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     // long, and what falls past the plot's edge falls on nothing.
     if (hedges) releaseShadow(hedges);
     hedges = null;
-    if (built.casting?.length) {
-      const c = built.casting;
-      const cast = castShadow((visit) => {
+    const casts = [[built.casting, SHADOW.hedge], [built.canopy, SHADOW.canopy]]
+      .filter(([c]) => c?.length)
+      .map(([c, look]) => castShadow((visit) => {
         for (let i = 0; i < c.length; i += 9) visit(c[i], c[i + 1], c[i + 2], c[i + 3], c[i + 4], c[i + 5], c[i + 6], c[i + 7], c[i + 8]);
-      }, { ...SHADOW.hedge, sun: LIGHT.sun, rect: [-extent.x, -extent.z, extent.x, extent.z] });
-      hedges = layShadow(cast, 0, 0, (px, pz) => floorAt(px, pz) + SHADOW.above);
+      }, { ...look, sun: LIGHT.sun, rect: [-extent.x, -extent.z, extent.x, extent.z] }));
+    if (casts.length) {
+      // Two over one grid — the Orchard's trunks and its crowns — are one
+      // texture: the light each leaves, multiplied.
+      const [first, ...rest] = casts;
+      for (const other of rest) {
+        for (let k = 0; k < first.loss.length; k++) {
+          first.loss[k] = Math.round(255 - (255 - first.loss[k]) * (255 - other.loss[k]) / 255);
+        }
+      }
+      hedges = layShadow(first, 0, 0, (px, pz) => floorAt(px, pz) + SHADOW.above);
     }
   }
 
