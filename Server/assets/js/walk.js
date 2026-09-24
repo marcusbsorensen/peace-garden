@@ -124,8 +124,11 @@ function drawMap(counts) {
       // number here would be a string; a row of dots is the same fact and
       // travels everywhere. The count is on the label for anybody listening
       // rather than looking.
+      // Not on an open area: its plants are on its own page, and the count
+      // here would be the stand-in's, which says nothing about them.
       const fill = document.createElement("span");
       fill.className = "garden-cell__fill";
+      fill.hidden = area.theme in BUILT;
       fill.style.setProperty("--fill", String(Math.min(1, (counts[area.theme] ?? 0) / 40)));
 
       cell.append(name, fill);
@@ -142,7 +145,9 @@ function drawMap(counts) {
     // bidi algorithm does not reorder it inside an Arabic or Hebrew map. See
     // strings.js §dress.
     state.strings.dress(name, AREA_KEYS[theme]);
-    cell.setAttribute("aria-label", `${areaName(theme)}, ${counts[theme] ?? 0}`);
+    cell.setAttribute("aria-label", theme in BUILT
+      ? areaName(theme)
+      : `${areaName(theme)}, ${counts[theme] ?? 0}`);
   }
 }
 

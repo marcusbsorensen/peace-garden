@@ -81,41 +81,21 @@ export function demoSource({ count = 240, seed = 20260903 } = {}) {
   };
 }
 
-/// The real one, when there is one.
+/// The garden the map draws: the stand-in, always.
 ///
-/// Same origin as the pages, which is the reason the plot service was put on
-/// 20i alongside them: it removes a whole class of question about where a
-/// request goes and what it carries. Nothing here sends a fragment, a name or a
-/// coordinate — the queries are a theme and a pair of small integers.
-export function serviceSource({ base = "/api" } = {}) {
-  const get = async (path) => {
-    const response = await fetch(`${base}${path}`, { headers: { accept: "application/json" } });
-    if (!response.ok) throw new Error(`plot service: ${response.status}`);
-    return response.json();
-  };
-  return {
-    invented: false,
-    area: (theme) => get(`/area/${encodeURIComponent(theme)}`),
-    plant: (id) => get(`/plant/${encodeURIComponent(id)}`),
-    count: () => get("/count").then((d) => d.total),
-    counts: () => get("/counts"),
-    all: () => get("/all"),
-  };
-}
-
-/// Whichever is available, preferring the real one.
+/// **This used to ask the plot service first**, at `/api/count`, and fall back
+/// to the stand-in when it was refused. The service never had that route, or
+/// any of the five a whole-garden source would need — it grew one route per
+/// area instead, which each area's own page reads — so every visit to `/g`
+/// logged a 404 and got the stand-in anyway. Removed 24 September 2026. An open
+/// area is no longer drawn here at all (`walk.js` `goTo` sends it to its page),
+/// so what the stand-in covers is the areas not open yet, which is the truth.
 ///
-/// A page asks once and is told which it got, because *the difference has to be
-/// on the screen*. A garden of invented plants that does not say so is the one
-/// thing this file must never become.
+/// A page is still told which it got, because *the difference has to be on the
+/// screen*. A garden of invented plants that does not say so is the one thing
+/// this file must never become.
 export async function source() {
-  try {
-    const live = serviceSource();
-    await live.count();
-    return live;
-  } catch {
-    return demoSource();
-  }
+  return demoSource();
 }
 
 export { AREA_SIZE };
