@@ -546,6 +546,77 @@ check('and the offer keeps no hue either', $tenOffer === []);
 check('and nothing else of it', pottedAs($walk, $ten['seed']) === null
       && stillHeld($db, $ten + ['mine' => $mine10, 'theirs' => $theirs10]) === []);
 
+// MARK: The ninth area, and the habit an offer has to carry
+
+// **The Coppice stands a fern on a stool and a star in the light, and which is
+// read off the plant's habit** — which travels with the offer for the hue's
+// reason. Dropped, it would be invisible: a fern read as a star stands on the
+// floor, which is a place the rule also gives.
+function stoodAs(WalkStore $walk, string $seed): ?array
+{
+    $query = $walk->connection()->prepare(
+        'SELECT coupe, place, slot_index, habit, height, hidden FROM coppice WHERE seed = ?');
+    $query->execute([$seed]);
+    $row = $query->fetch();
+    return $row === false ? null : $row;
+}
+
+$thirteen = crossing(13);
+$mine13 = token('thirteen/mine');
+$theirs13 = token('thirteen/theirs');
+$walkHeld = count(shared($walk));
+$offers->offer($thirteen['seed'], $theirs13, $mine13, $thirteen['a'], $thirteen['b'], $thirteen['encounter'],
+               0.7, 5, $now, 'renewal', '', null, 'fern');
+check('a Coppice plant is planted',
+      $offers->answer($thirteen['seed'], $theirs13, true, $now)['planting'] !== null);
+check('and not in the walk', count(shared($walk)) === $walkHeld);
+$stool = stoodAs($walk, $thirteen['seed']);
+// A fern: the first coupe's middle stool. Read as a star, a plant of 0.7 m
+// would have gone to the front row of the second coupe, the first holding the
+// ambassador — so a habit dropped on the way cannot land here by chance.
+check('the habit survived the asking', $stool !== null && $stool['habit'] === 'fern');
+check('it stands on the first coupe\'s middle stool', $stool !== null
+      && (int) $stool['coupe'] === 0 && (int) $stool['place'] === Coppice::STOOL
+      && (int) $stool['slot_index'] === Coppice::STOOL_ORDER[0]);
+check('beside the ambassador, which is still there', count($walk->coppice()->plot(0, 0)) === 2);
+$served = $walk->coppice()->plot(0, 0)[1] ?? [];
+check('and the page is told its coupe is cut this year',
+      array_key_exists('stage', $served) && $served['stage'] === Coppice::CUT);
+check('and a year on, regrowing', ($walk->coppice()->plot(0, 1)[1]['stage'] ?? null) === Coppice::REGROWING);
+check('while a star is drawn at its best, whatever the year',
+      array_key_exists('stage', $walk->coppice()->plot(0, 0)[0]) && $walk->coppice()->plot(0, 0)[0]['stage'] === null);
+
+// An offer made without a habit — every offer made before the column existed
+// — still plants: as a star, on the floor.
+$fourteen = crossing(14);
+$mine14 = token('fourteen/mine');
+$theirs14 = token('fourteen/theirs');
+$offers->offer($fourteen['seed'], $theirs14, $mine14, $fourteen['a'], $fourteen['b'], $fourteen['encounter'],
+               0.7, 5, $now, 'renewal');
+$offers->answer($fourteen['seed'], $theirs14, true, $now);
+$unsent = stoodAs($walk, $fourteen['seed']);
+check('an offer with no habit still plants', $unsent !== null && $unsent['habit'] === '');
+check('in the light, as a star', $unsent !== null && (int) $unsent['place'] === Coppice::FRONT
+      && (int) $unsent['coupe'] === 1);
+
+$settled = $walk->connection()->prepare('SELECT habit, area FROM walk_offers WHERE seed = ?');
+$settled->execute([$thirteen['seed']]);
+$after = $settled->fetch();
+check('an answered offer keeps no habit', $after !== false && $after['habit'] === '');
+check('but still says which area to look in', $after !== false && $after['area'] === 'renewal');
+
+// Taking it back keeps its place and its habit, which the rule reads of a plant
+// standing: a floor holds one fern at most.
+$thirteenArrival = arrivalOf($db, 'coppice', $thirteen['seed']);
+$offers->withdraw($thirteen['seed'], $mine13, $now + 60);
+$lifted = arrival($db, 'coppice', (int) $thirteenArrival);
+check('taking it back hides it in the Coppice', $lifted !== null && (int) $lifted['hidden'] === 1);
+check('where it keeps its coupe, its place and its habit', $lifted !== null
+      && (int) $lifted['coupe'] === 0 && (int) $lifted['place'] === Coppice::STOOL
+      && $lifted['habit'] === 'fern' && (float) $lifted['height'] === 0.7 && (int) $lifted['family'] === 0);
+check('and nothing else of it', stoodAs($walk, $thirteen['seed']) === null
+      && stillHeld($db, $thirteen + ['mine' => $mine13, 'theirs' => $theirs13]) === []);
+
 // A published plant's seed, parents and meeting are public. Offering it again
 // with two invented tokens must not hand back the real ones, or the stranger
 // could withdraw it with them.

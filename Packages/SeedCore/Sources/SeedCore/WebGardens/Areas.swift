@@ -30,7 +30,7 @@ public enum Area: String, CaseIterable, Sendable, Codable {
 
     /// **Whether a plant can stand here yet.**
     ///
-    /// Eight of ten. The Long Walk was built first because its rule is the
+    /// Nine of ten. The Long Walk was built first because its rule is the
     /// plainest best practice there is — tall at the back, drifts, repetition —
     /// and because its plots open end to end, so the map is a line before it
     /// has to be a shape (`docs/WEB-GARDENS.md` §*What has to exist first*).
@@ -71,15 +71,20 @@ public enum Area: String, CaseIterable, Sendable, Codable {
     /// because it is the first rule that sorts by hue rather than claiming by a
     /// colour family: its staging is a run of colour, a band to each position.
     ///
+    /// The Coppice was built ninth, on 24 September, because its own plants
+    /// divide by habit, and exactly — every one is a fern or a star — and
+    /// because it is the first area that knows its date: one coupe is cut
+    /// each winter, and the wood shows which.
+    ///
     /// **An area is open when it has a placement rule, not when it has a
     /// name.** All ten have names, layouts on paper and a place on the map.
-    /// What the other two do not have is a rule that says which slot an
+    /// What the last one does not have is a rule that says which slot an
     /// arriving plant takes and never moves it, which is what makes a garden
     /// curated rather than scattered.
     public var isOpen: Bool {
         self == .travel || self == .peace || self == .meeting
             || self == .kinship || self == .pattern || self == .beginnings
-            || self == .waiting || self == .light
+            || self == .waiting || self == .light || self == .renewal
     }
 
     /// The areas a plant can be offered to today.
@@ -106,9 +111,10 @@ public enum Area: String, CaseIterable, Sendable, Codable {
         case .beginnings: return "seedbed"
         case .waiting: return "cold_frame"
         case .light: return "glasshouse"
-        // The two that are not open have no table, and a name for one here
-        // would be a promise about a schema nobody has designed. They get one
-        // when they get a rule.
+        case .renewal: return "coppice"
+        // The one that is not open has no table, and a name for it here would
+        // be a promise about a schema nobody has designed. It gets one when it
+        // gets a rule.
         default: return ""
         }
     }

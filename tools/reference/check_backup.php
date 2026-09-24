@@ -102,6 +102,12 @@ $store->plantInto('waiting', str_repeat('7', 64), str_repeat('a', 64), str_repea
 // its neighbours were pale — silently, as the Seedbed's kind would be.
 $store->plantInto('light', str_repeat('6', 64), str_repeat('a', 64), str_repeat('b', 64),
                   str_repeat('c', 64), 0.9, 4, '', 0.8);
+// The Coppice's carries a habit, the one trait no other area stores. A copy
+// that dropped it would restore a wood whose stools stand empty of what was
+// on them, and a fern arriving next would find the floor's one-fern cap
+// already spent or never spent — silently, as the others would.
+$store->plantInto('renewal', str_repeat('5', 64), str_repeat('a', 64), str_repeat('b', 64),
+                  str_repeat('c', 64), 0.7, 5, '', null, 'fern');
 unset($store);
 
 // MARK: Taking one
@@ -148,6 +154,8 @@ check('the copy holds the Cold Frame', ($counts['cold_frame'] ?? -1) === 1);
 check('the copy counts the Cold Frame lock', ($counts['cold_frame_lock'] ?? -1) === 1);
 check('the copy holds the Glasshouse', ($counts['glasshouse'] ?? -1) === 1);
 check('the copy counts the Glasshouse lock', ($counts['glasshouse_lock'] ?? -1) === 1);
+check('the copy holds the Coppice', ($counts['coppice'] ?? -1) === 1);
+check('the copy counts the Coppice lock', ($counts['coppice_lock'] ?? -1) === 1);
 
 // MARK: What a restore writes back
 
@@ -159,6 +167,7 @@ $restoredKind = null;
 $restoredDrill = null;
 $restoredOffer = null;
 $restoredHue = null;
+$restoredHabit = null;
 if ($copy !== '') {
     $whole = gzdecode((string) file_get_contents($copy)) ?: '';
     $marker = "-- A SQLite file follows, not SQL.\n";
@@ -177,6 +186,8 @@ if ($copy !== '') {
             $restoredOffer = $waiting === false ? null : $waiting['kind'];
             $potted = $back->query('SELECT hue FROM glasshouse')->fetch(PDO::FETCH_ASSOC);
             $restoredHue = $potted === false ? null : (float) $potted['hue'];
+            $stool = $back->query('SELECT habit FROM coppice')->fetch(PDO::FETCH_ASSOC);
+            $restoredHabit = $stool === false ? null : $stool['habit'];
             unset($back);
         } catch (Throwable) {
             // Left null, which is what the checks below report.
@@ -190,6 +201,7 @@ check('a restored Seedbed row still knows its kind', $restoredKind === 'contorta
 check('and the drill that kind claimed', $restoredDrill === 1);
 check('an offer still in flight keeps its kind too', $restoredOffer === 'paniculata');
 check('a restored Glasshouse row still knows its hue', $restoredHue === 0.8);
+check('a restored Coppice row still knows its habit', $restoredHabit === 'fern');
 
 // MARK: Reading it back
 

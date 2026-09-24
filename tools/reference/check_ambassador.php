@@ -71,6 +71,9 @@ foreach ($vectors['ambassadors'] as $n => $row) {
     // one more: a hue is exact on every host, so there is no excuse for it
     // not to be.
     if (isset($php['hue'])) is_same("$area's hue", $row['hue'], $php['hue']);
+    // The habit, where the service pins one — only the Coppice's, because
+    // only the Coppice reads it. A word, and exact on every host.
+    if (isset($php['habit'])) is_same("$area's habit", $row['habit'], $php['habit']);
 }
 
 // MARK: The two that are standing in a garden
@@ -129,6 +132,16 @@ is_same('its bed', Glasshouse::STAGING, $light['bed'] ?? null);
 is_same('its place is its own band',
         Glasshouse::band($vectors['ambassadors'][3]['hue']), $light['index'] ?? null);
 is_same('its row', 0, $light['row'] ?? null);
+
+// The Coppice's, which opens the first coupe's floor: *Rosea caerulea* is a
+// star, so it stands in the light and is never cut, and at 1.00 m it stands in
+// the front row, in the middle place, which is where a row starts.
+$renewal = Ambassadors::planting('renewal');
+is_same('the Coppice ambassador\'s plot', 0, $renewal['plot'] ?? null);
+is_same('its coupe', 0, $renewal['coupe'] ?? null);
+is_same('its place is the row its height asks for',
+        Coppice::row($vectors['ambassadors'][2]['height']), $renewal['place'] ?? null);
+is_same('the middle of that row', Coppice::FLOOR_ORDER[0], $renewal['index'] ?? null);
 
 // The two that are not open have no placement, because their areas have no
 // rule. A placement invented for one of them would be a promise about a layout

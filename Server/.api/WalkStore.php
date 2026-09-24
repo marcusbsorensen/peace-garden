@@ -11,6 +11,7 @@ require_once __DIR__ . '/KnotStore.php';
 require_once __DIR__ . '/SeedbedStore.php';
 require_once __DIR__ . '/ColdFrameStore.php';
 require_once __DIR__ . '/GlasshouseStore.php';
+require_once __DIR__ . '/CoppiceStore.php';
 require_once __DIR__ . '/Offers.php';
 require_once __DIR__ . '/TakenBack.php';
 
@@ -75,6 +76,7 @@ final class WalkStore
         $store->seedbed();
         $store->coldFrame();
         $store->glasshouse();
+        $store->coppice();
         // And the asking's, for the same reason and one more: `offer_key` is
         // in the nightly copy's list, and mysqldump refuses a list naming a
         // table that is not there. Its migration is also the one that erases
@@ -249,7 +251,7 @@ final class WalkStore
      * **This class has outgrown its name**, which is a thing worth saying
      * rather than quietly fixing: it opened the database for a service that was
      * only the Long Walk, and now it holds the connection for a garden with
-     * eight areas in it and two to come. Renaming it means touching every
+     * nine areas in it and one to come. Renaming it means touching every
      * caller and the reference checks in one go, which is a commit of its own
      * and not this one. `Offers` and `Limits` already reach through it the same
      * way.
@@ -302,6 +304,13 @@ final class WalkStore
         return $glasshouse ??= new GlasshouseStore($this->db);
     }
 
+    /** The Coppice, on the same connection. */
+    public function coppice(): CoppiceStore
+    {
+        static $coppice = null;
+        return $coppice ??= new CoppiceStore($this->db);
+    }
+
     /**
      * Plants one arrival into whichever area it belongs to.
      *
@@ -322,6 +331,10 @@ final class WalkStore
      * staging's spectrum. Null means it was never sent — a plant offered before
      * 24 September — and the Glasshouse reads that as it reads a pale flower.
      *
+     * **`$habit` is the Coppice's alone**, and handed to it alone: the plant's
+     * archetype, which says whether it stands on a stool. Empty means it was
+     * never sent, and the Coppice reads that as a star: in the light, never cut.
+     *
      * **An area missing from this `match` is not refused: it falls to the Long
      * Walk and says nothing.** So each area that opens is a case here the day it
      * opens, and `check_offers.php` has a block for it that would catch the
@@ -329,7 +342,7 @@ final class WalkStore
      */
     public function plantInto(string $area, string $seed, string $parentA, string $parentB,
                               string $encounter, float $height, int $family, string $kind = '',
-                              ?float $hue = null): array
+                              ?float $hue = null, string $habit = ''): array
     {
         return match ($area) {
             'peace' => $this->room()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
@@ -340,6 +353,8 @@ final class WalkStore
             'waiting' => $this->coldFrame()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
             'light' => $this->glasshouse()->plant($seed, $parentA, $parentB, $encounter, $height, $family,
                                                   $kind, $hue),
+            'renewal' => $this->coppice()->plant($seed, $parentA, $parentB, $encounter, $height, $family,
+                                                 $kind, $hue, $habit),
             default => $this->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
         };
     }
@@ -354,6 +369,7 @@ final class WalkStore
         if ($area === 'beginnings') { $this->seedbed()->takeBack($seed); return; }
         if ($area === 'waiting') { $this->coldFrame()->takeBack($seed); return; }
         if ($area === 'light') { $this->glasshouse()->takeBack($seed); return; }
+        if ($area === 'renewal') { $this->coppice()->takeBack($seed); return; }
         $this->takeBack($seed);
     }
 
