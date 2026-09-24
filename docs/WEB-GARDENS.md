@@ -1038,3 +1038,243 @@ meeting leaves on the two phones. `Server/.api/Offers.php`, `Server/README.md`
   unfinished. Opening a plot only when the last is full says nothing about the
   first days of an area — though no area's first plot is ever quite empty now,
   because its ambassador is in it.
+
+## The Home Ground, chosen
+
+The last area, `ground`, designed on 24 September. Nothing is built. The theme
+holds the soil itself, a place you are from, and a kept place, and the name was
+chosen because *home ground* carries both the earth and the belonging
+(`strings.js`, the comment on `areaGround`). The table above already says what
+kind of garden it is: a kitchen garden, rectangular beds 1.2 m wide so no soil
+is ever stood on, paths between, crops in rows across each bed. What was left
+to choose is what a *crop* is, when every plant is unique.
+
+### The finding that decided it: this area has three crops, and you can see them
+
+The genus is read off the flower (`PlantName.roots`), and the three roots that
+mean `ground` belong to three families: **`Cer` is always a spire, `Fen` always
+an umbel, `Pell` always a succulent.** Every plant in the Home Ground is one of
+three forms, in nearly equal shares, and the three are as unlike each other as
+three crops in a vegetable garden. Measured over 2,000 Home Ground plants
+(16,990 crossings, 12% of all):
+
+| Root | Form | Share | Height, median (range) | Across, median (90th centile) |
+| --- | --- | --- | --- | --- |
+| `Cer` — the grain | spire | 32% | 1.35 m (0.59–2.32) | 0.39 m (0.59) |
+| `Fen` — the fennel's family | umbel | 35% | 0.93 m (0.40–1.60) | 0.62 m (0.85) |
+| `Pell` — the earth's skin | succulent | 33% | 0.47 m (0.19–0.84) | 0.20 m (0.29) |
+
+That is a kitchen garden already standing in the name: spires in a stand, like
+a grain; flat umbel heads, which are what carrots, parsnips and fennel are when
+they run to seed; low rosettes packed close, like a salad bed. **The crop is the
+genus root**, and it is the first reading in the garden that is a fact about a
+plant's name and also something a visitor can see without being told.
+
+### Three layouts considered
+
+1. **The rotation — recommended.** Three beds side by side, a crop to a bed,
+   rows across each, the tall end away from the sun. A kitchen garden groups
+   its crops by family so that a family can move bed together, and here the
+   families are the three roots: three beds is a three-course rotation drawn at
+   the moment it stands still. Which bed holds which crop is not fixed by the
+   plan, as it is not in a rotated garden; it is set by what arrives.
+2. **The allotments.** A place you are from, read literally: each plot divided
+   into strips, a strip to a gardener, their plants in it. **Rejected on
+   privacy first.** A planting carries both its parents' seeds so that a
+   browser can grow it, and a gardener's own seed is a parent of every plant
+   their meetings make; a strip per seed would gather one person's meetings
+   into one place on a public page. That is a map of who met whom, which the
+   plot service was built not to hold (§*The asking*: two offers concerning the
+   same pair are not linkable). It would also fill worse than the Seedbed:
+   most gardeners will share a handful of plants, so most strips would hold
+   one or two.
+3. **The walled potager.** A kept place, read as *pairidaeza*: four beds round
+   a cross of paths, a feature where they meet, a wall round. **Rejected
+   because it is two areas already built**: the Crossing's plan inside the
+   Quiet Garden's hedge. A kitchen garden's truth is in its beds and rows, not
+   in its quarters.
+
+### The plot
+
+- **Three beds, each 1.2 m wide and 4.2 m long**, running the length of the plot
+  from −z to +z, their middles at x = −1.65, 0 and +1.65 m. Paths of 0.45 m
+  between them and a headland of 0.5 m at each end; the outermost bed edge is
+  0.35 m inside the plot, clear of the outline's 0.16 m wander.
+- **North is −z**, the end away from the page's midday sun, which lights the
+  plot from (−x, +z). A tall row there shades nothing but the headland. A
+  kitchen garden puts its runner beans and its sweetcorn at the north end for
+  the same reason.
+- **The crop sets the spacing**, which is what every seed packet is for. Each
+  crop is spaced at about its own median spread, so neighbours meet as a sown
+  crop's do:
+
+  | Crop | Across a row | Down the bed | A bed holds |
+  | --- | --- | --- | --- |
+  | spire | 3, at 0.40 m | 9 rows, 0.45 m apart | 27 |
+  | umbel | 2, at 0.60 m | 7 rows, 0.60 m apart | 14 |
+  | succulent | 4, at 0.28 m | 13 rows, 0.30 m apart | 52 |
+
+  About half the spires and umbels are wider than the gap to their neighbour,
+  and one rosette in eight is, which is a bed at maturity rather than a
+  nursery. At most 2% of any crop reaches more than 0.2 m into a path, so the
+  paths stay open.
+- **A plot therefore holds 42 to 156 plants**, depending on which crops claimed
+  its beds; the largest in any simulated run held 93. The Long Walk's page
+  already draws three plots of 48, so 93 is inside what a page has done.
+- **The nudge is 0.025 m down the bed and 0.05 m along the row.** A row across
+  a bed has to read as a row, for the reason a drill does in the Seedbed.
+
+### The rule
+
+Two traits: **the crop decides the bed, the height decides the end.**
+
+1. A bed already sown with this plant's crop and not yet full, oldest plot
+   first, beds west to east.
+2. Otherwise the first bed nobody has sown, oldest plot first. It takes this
+   crop's spacing from then on.
+3. Otherwise a new plot, its west bed.
+
+Within the bed, **a plant at least as tall as its crop's cut takes the next
+place from the north end** — row by row, west to east along each row — **and a
+shorter one the next place from the south end**, east to west, working north.
+The bed is full when the two meet.
+
+- **The cuts are each crop's own median**, measured on the 2,000: **spire
+  1.346 m, umbel 0.928 m, succulent 0.469 m.** Three cuts rather than one,
+  because the three crops barely overlap: a single cut would send nearly every
+  rosette to the south end and every spire to the north, and a bed of one crop
+  would not be graded at all. The umbel's 0.928 is two millimetres from the
+  Long Walk's 0.93, and it is **not** borrowed: the walk's divides the whole
+  garden into thirds and this divides one crop in half. The Knot Garden
+  refused to make one fact look like two; this is the other side of the same
+  rule, two facts that happen to agree.
+- **Nothing is ever displaced.** If a bed of a plant's crop has any place left,
+  it has a place for this plant, because either end will take it. So the fill
+  does not depend on a single height, only on the mix of crops, and no plant
+  ever stands at the wrong end.
+- **Everything that came in from the north end is at least as tall as
+  everything that came in from the south**, in every bed. That is the whole of
+  the grading, and it is as much as an append-only bed can promise without
+  bands: arrivals come in no order of height, so within each end they stand in
+  the order they came.
+- **A height is compared only with a cut, never with another plant.** The Long
+  Walk, the Orchard and the Cold Frame all ask whether a plant would stand out
+  of order against its neighbours; this rule never does. The one place two
+  hosts' heights can disagree is at the three cuts, and the nearest of 2,500
+  fresh arrivals is 0.09 mm from its cut — nine times `VectorFile.height` — so
+  the vector test needs `placementCannotTurn` over the three cuts, as the Cold
+  Frame's does.
+- **The crop is a fifth trait**, after the Glasshouse's hue. The service cannot
+  grow a plant to read its name, so the phone sends the genus root and the
+  store keeps it in a column, arriving by both paths as the Seedbed's kind
+  does. It is three or four letters, exact on every host, and the PHP port
+  compares it as a string and needs to know nothing about botany.
+- **The ambassador opens the west bed for umbels.** *Fenunora patentifolia* is
+  1.102 m, over the umbel cut, so it takes the first place from the north end
+  of the first bed: the north-west corner of plot 0, the head of the garden.
+  It is 0.93 m across, wider than nine umbels in ten, and leans a little into
+  the row beside it, which the first plant in a bed is allowed to do.
+
+### How it reads in the isometric view
+
+- **The page opens looking up the beds from their south ends.** At the first
+  turn the eye is over the (+x, +z) corner, so in every bed the short end is
+  nearer than the tall one: the way a gardener looks up a bed. The camera is
+  always on a diagonal, so the beds are never seen square-on; two of the four
+  turns look up them from the south and two from the north, and in those two
+  the spires' north ends stand in front, as every area has turns that are its
+  worst.
+- **One plot a page**, as the Seedbed shows one: a kitchen garden is a
+  rectangle you stand at the end of, and two of them end to end read as one
+  garden with a seam.
+- **The crop can be told from across the plot.** A spike, a flat head and a
+  low rosette are silhouettes nobody takes for each other, so three beds read
+  as three crops before anything on the page names them.
+- **Everything is soil, and nothing is ruled.** The beds are raised about
+  0.08 m and mounded, with soft shoulders down to the path, and their outlines
+  wander by a few centimetres (`Organic`), so no bed has a straight edge. The
+  paths are the same soil trodden paler and flatter, and **the edge of a path
+  is the shoulder of a bed**, not a line drawn between them. No boards: a board
+  is a ruled line, and a mounded bed is how a no-dig garden is made anyway.
+  The soil is dark, the map's `#4d3b2c` — darker than the Seedbed's tilth,
+  which is the same earth raked fine for sowing — and toned per face, as the
+  tilth is, because soil is crumbs rather than a surface.
+- **No new structure.** The beds are the ground's own relief, as the Seedbed's
+  drills are. An empty bed in a new plot is dug ground waiting to be sown,
+  which is what an unsown bed in a kitchen garden looks like; the reading the
+  Crossing had to escape is the one this area wants.
+
+### The fill, simulated
+
+24 September, before any rule was written. The simulation is **Swift: a small
+package at `tools/homeground/` that links SeedCore**, so every height, spread
+and root is the garden's own, from `Maturity.bounds` and the name. It is not a
+SeedCore test, because nothing about a rule that does not exist yet should run
+in CI. `swift run -c release --package-path tools/homeground` prints every
+number below; the grown samples are kept in its `.build`, so a second run takes
+seconds.
+
+**Four streams**, each placed after the ambassador: the 2,000 the cuts were
+measured on; a fresh 500 and a fresh 2,000 they were not; and **a village**:
+500 plants from sixty gardeners meeting unevenly, weights falling as one over
+rank, every meeting a new crossing of their own two seeds. The village is the
+realistic stream and the unkind one. Arrivals come in runs, the crops are no
+longer even (39% spire, 42% umbel, 19% succulent) and the heights lean, which
+is the Long Walk's warning about a sample drawn from few gardeners.
+
+Six rules were run, to separate what each part of the design buys:
+
+| Rule | Fresh 500 | Fresh 2,000 | Village 500 | Plots with all three crops, fresh 2,000 | Pairs in shading order |
+| --- | --- | --- | --- | --- | --- |
+| **A** fixed beds (a `Cer`, a `Fen` and a `Pell` bed in every plot), one spacing of 24 a bed, arrival order | 8 plots, 87% held | 31, 90% | 9, **77%** | 25 of 31 | 50% |
+| **B** as A, from two ends | 8, 87% | 31, 90% | 9, 77% | 25 of 31 | 77% |
+| **C′** claimed beds, one spacing, two ends | 8, 91% | 28, 99% | 8, 91% | 24 of 28 | 77% |
+| **C** claimed beds, the crop's spacing, arrival order | 8, 91% | 29, 97% | 9, 92% | 10 of 29 | 50% |
+| **D — recommended.** Claimed beds, the crop's spacing, two ends | **8, 91%** | **29, 97%** | **9, 92%** | 10 of 29 | **72–78%** |
+| **E** claimed beds, the crop's spacing, three bands of rows | 8, 91% | 29, 96% | 10, **75%** | 11 of 29 | 85–86% |
+
+*Held* is the share of places in sown beds holding a plant. *Pairs in shading
+order* is how often, of two plants in one bed standing in different rows, the
+northern one is at least as tall; chance is half.
+
+- **D at a fresh 500: 8 plots, 6 of them full, 23 beds sown and 20 full, 91% of
+  places held.** At 2,000: 29 plots, 28 full, 97%. In the village: 9 plots, 7
+  full, 92%. Within a point of the Knot Garden's 92% at five hundred, the best
+  in the garden, and it holds in the stream built to break it.
+- **Fixed beds fail the village.** A bed that belongs to a crop in every plot
+  waits for that crop, so a garden short of rosettes opens plots for the others
+  and leaves a rosette bed half empty in each: 77%. Claiming is the Knot
+  Garden's, the Seedbed's and the Cold Frame's move, and it is what makes the
+  fill indifferent to the mix.
+- **The two ends cost nothing.** C and D put the same plants in the same beds
+  and hold the same share; D stands three pairs in four in shading order where
+  C stands half. It is grading for free, which is the whole argument for it.
+- **Three bands grade better and break in the village.** E stands 85–86% of
+  pairs in order and 93–96% of plants in their own band on strangers. But a
+  band waits for heights, and when the heights lean the bands run out
+  unevenly: 75%, ten plots where D needs nine, and only four of them full.
+- **In every bed of every run, everything from the north end is at least as tall
+  as everything from the south.** The meeting falls anywhere from 14% to 79% of
+  the way down a full bed, which is how uneven the halves of a small crop are.
+- **What the crop's spacing costs is variety between plots, not fill.** With
+  one spacing a plot usually holds one bed of each crop (24 of 28 plots at
+  2,000). With the crop's, an umbel bed is full at 14 and a rosette bed at 52,
+  so umbels claim more than half the beds (48 of 86) and only 10 of 29 plots
+  hold all three. That is what an allotment looks like — the ground goes to the
+  crops that take room, and the salad gets one bed — and it is the price of
+  beds that read as crops. At one spacing, 91% of umbels would be wider than
+  the gap to their neighbour and half the rosettes less than half as wide as
+  theirs: a thicket in one bed and a scatter in another.
+
+### Decided, 24 September 2026
+
+Marcus took all five recommendations.
+
+1. **Spacing is the crop's own**: umbels 14 a bed, spires 27, rosettes 52.
+2. **A bed fills from both ends**: tall from the north, short from the south.
+3. **The paths are trodden soil**, paler than the beds, so the whole plot is
+   earth.
+4. **The beds are mounded, with no boards**; a path's edge is a bed's shoulder.
+5. **The map's glyph shows three beds**, redrawn the same day in `gates.js`
+   `LOOK.ground`: three bed outlines, with short upright strokes for the
+   spires, flat bars for the umbels' heads and close dots for the rosettes.
