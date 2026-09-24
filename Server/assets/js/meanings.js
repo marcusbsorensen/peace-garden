@@ -24,7 +24,8 @@
 //
 // **What is in the catalogue and what is not.** The one-line meaning of each
 // theme is new prose, so it is a key in `strings.js` like every other sentence
-// the site says, English-only for now and falling back in silence. The heads
+// the site says, commissioned since 24 September and falling back in silence
+// where a language has none yet. The heads
 // and roots are proper nouns and travel as they are. The subtheme labels, the
 // instances under them and the epithet glosses are English data here rather
 // than sixty more commissions: they are the project's own record of what it

@@ -317,7 +317,11 @@ export const EN = Object.freeze({
   // yours* is the Home Ground's reason for its name, and *kept rather than
   // happened upon* is Marcus's reading of the Orchard.
   //
-  // English only, like the area paragraphs, and falling back in silence.
+  // **Commissioned since 24 September 2026**, when the front page put one on
+  // each of its ten cards beside an area name already in the reader's
+  // language; Danish first. Falling back in silence where a language has none
+  // yet. Each is `Headword: definition.` and `splitEntry` cuts at the first
+  // colon, so a translation keeps one, straight after the headword.
   meaningWaiting:
     "Waiting: what is held back until its time, however long that is, and whoever keeps watch.",
   meaningGround: "Ground: the earth a plant stands in, and the earth that is yours.",

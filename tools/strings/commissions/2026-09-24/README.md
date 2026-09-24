@@ -32,82 +32,60 @@ The 41 are every site language except Kalaallisut, which is left out by its own
 `awaiting` note: the machine pass was not good enough there to ship, and it
 wants a speaker.
 
-## Decisions first
+## Decided, 24 September
 
-1. **The ten meaning lines.** `strings.js` marks them *English only*, and
-   `meanings.js` *English-only for now*. Commission them?
-   - **Yes (recommended).** The new front page sets one on every card, beside
-     an area name already in the reader's language, and the app is
-     commissioning the same ten entries for its name sheet. Left in English, a
-     Greek front page shows ten Greek names under ten English definitions.
-   - No. `sheets.py --leave-out meaning-lines`: 1,143 strings, and the app still
-     gets its twenty.
-2. **The front page's other three keys**, `downloadTitle`, `gardenTitle` and
-   `notYet`, uncommissioned in every language.
-   - **Include (recommended).** They are the front's two buttons and the word
-     on a closed card; without them a translated front page has three English
-     labels on its first screen. 123 strings.
-   - Leave out. `sheets.py --leave-out front-rest`: 1,430 strings.
-3. **Order.**
-   - **Danish alone first, read by you, then the other forty in five batches
-     (recommended).** The headword-and-colon form is new, and the last
-     Danish-first round corrected the brief twice before the rest were ordered.
-   - All forty-one at once.
-4. **The privacy page**: six keys, `null` in all forty-two, its sheet already
-   written (`commission.py --privacy <code>`), and linked from the foot of the
-   new front page.
-   - **Same round (recommended).** 246 more strings, and it is the page a wary
-     reader opens.
-   - Later.
-5. **A standing check for these keys.** `check.py` has no group for them, so a
-   half-translated front page passes it clean; `sheets.py --check` covers this
-   round only.
-   - **Add `FRONT` and `MEANINGS` as groups of their own in `commission.py`,
-     checked by `check.py` (recommended),** as a separate change before the
-     returns come in. A group with nothing written is allowed, so no catalogue
-     starts failing; the colon rule and the site–app agreement move across
-     from `--check`.
-   - Keep the dated check only.
+Marcus answered all five the same day.
 
-## What you run or send next
+1. **The ten meaning lines are commissioned**, reversing *English only* in
+   `strings.js` and `meanings.js`. Both comments were changed in the commit
+   that landed Danish.
+2. **`downloadTitle`, `gardenTitle` and `notYet` are included.**
+3. **Danish first, for Marcus to read, then the other forty in batches**,
+   later.
+4. **The privacy page is in this round, but not yet.** Its English is being
+   corrected — `privacy1`–`privacy5` are out of date about what the server
+   stores — so nothing on it is translated until the new English is in
+   `strings.js`. `privacyTitle` waits with them: the page arrives as one group.
+   When it lands, `commission.py --privacy <code>` prints its sheet from the
+   corrected English; check its `PRIVACY` claims against the new wording first,
+   because those are the specification the translator writes to.
+5. **`FRONT` and `MEANINGS` are standing groups** in `commission.py`, checked
+   by `check.py` in every catalogue — the colon, the Latin, and the site's line
+   against the app's two halves. A group with nothing written is allowed, so
+   the forty languages still to come pass as they are.
 
-1. Answer the five above. If 1 or 2 is a no, regenerate with the
-   `--leave-out` shown. Regenerate anyway if the English in `strings.js` or the
-   app's catalogue has moved since 24 September:
+## Where it stands
 
-       python3 tools/strings/commissions/2026-09-24/sheets.py
+- **Danish is written**, site and app, and waiting for Marcus to read it:
+  `/`, `/meanings` and `/frame` through `/t`, and the book beside a plant's
+  name in the app. Its `read` note in `Server/strings/da.json` still covers
+  only the area names, and changes when the reading is done.
+- **The other forty are next, a batch at a time**, each grouped by the problem
+  it shares:
 
-2. **Hand over `sheets/da.md`.** There is no send step to run: every earlier
-   round was a sheet handed to a translator, and for the site languages that
-   was a Claude session writing the catalogues directly, batched by shared
-   problem (the area names went in five batches in `b8ccd43`). So either open
-   a session on this branch and give it the sheet, or send the file to a
-   person. The sheet says where to write and what to run.
-3. Read the Danish yourself — `/`, `/meanings`, `/frame` through `/t`, and the
-   book beside a plant's name in the app.
-4. The other forty, a batch at a time, each grouped by the problem it shares:
+  | Batch | Languages | What they share |
+  | --- | --- | --- |
+  | 2 | es fr it nb nl sv | the app's other six, both halves |
+  | 3 | ja ko zh ar he | the full-width colon, and headwords in scripts where a colon sits differently |
+  | 4 | de pt ro ca gl is fi hu eu et | the rest of western and northern Europe |
+  | 5 | ru uk be pl cs sk sl hr sr bg mk | Slavic |
+  | 6 | lt lv cy ga el tr sq mt | the rest |
 
-   | Batch | Languages | What they share |
-   | --- | --- | --- |
-   | 2 | es fr it nb nl sv | the app's other six, both halves |
-   | 3 | ja ko zh ar he | the full-width colon, and headwords in scripts where a colon sits differently |
-   | 4 | de pt ro ca gl is fi hu eu et | the rest of western and northern Europe |
-   | 5 | ru uk be pl cs sk sl hr sr bg mk | Slavic |
-   | 6 | lt lv cy ga el tr sq mt | the rest |
+  There is no send step to run: every earlier round was a sheet handed to a
+  translator, and for the site languages that was a Claude session writing the
+  catalogues directly. Hand each batch its `sheets/<code>.md`. Regenerate
+  first if the English has moved:
 
-5. After each batch:
+      python3 tools/strings/commissions/2026-09-24/sheets.py
 
-       python3 tools/strings/commissions/2026-09-24/sheets.py --check
-       python3 tools/strings/check.py
-       python3 tools/strings/app_check.py
-       python3 tools/site/export.py --check
+- **After each batch:**
 
-6. **When the meaning lines land, two comments stop being true**: *English
-   only, like the area paragraphs* above `meaningWaiting` in
-   `Server/assets/js/strings.js`, and *English-only for now* in
-   `Server/assets/js/meanings.js`. Change them in the commit that lands the
-   first language.
-7. Then a reader for each language, as `docs/REVIEWING-A-LANGUAGE.md` asks.
+      python3 tools/strings/commissions/2026-09-24/sheets.py --check
+      python3 tools/strings/check.py
+      python3 tools/strings/app_check.py
+      python3 tools/site/export.py --check
+
+- Then a reader for each language, as `docs/REVIEWING-A-LANGUAGE.md` asks.
 
 ## What each language still lacks, and why
 

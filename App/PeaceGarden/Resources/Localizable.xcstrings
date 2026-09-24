@@ -1032,7 +1032,15 @@
 
     },
     "Area" : {
-      "comment" : "Row label on the screen that explains a plant's name, beside the place in the shared garden the plant belongs to, such as 'The Cold Frame'. A part of a garden, not a measurement. The website heads its table with the same word (key meaningsArea)."
+      "comment" : "Row label on the screen that explains a plant's name, beside the place in the shared garden the plant belongs to, such as 'The Cold Frame'. A part of a garden, not a measurement. The website heads its table with the same word (key meaningsArea).",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Område"
+          }
+        }
+      }
     },
     "Ask %@" : {
 
@@ -8306,7 +8314,15 @@
 
     },
     "What the name means" : {
-      "comment" : "The book mark beside a plant's name on the seed screen, read aloud. It opens a page explaining what the plant's name says about it."
+      "comment" : "The book mark beside a plant's name on the seed screen, read aloud. It opens a page explaining what the plant's name says about it.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hvad navnet betyder"
+          }
+        }
+      }
     },
     "What they will see" : {
       "comment" : "Heading over the field where somebody types the name the other person will see.",
@@ -10252,6 +10268,12 @@
       "comment" : "One of the three parts of the theme Ground: a garden as a place enclosed and tended. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Et plejet sted"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10264,6 +10286,12 @@
       "comment" : "One of the three parts of the theme Ground: home ground, belonging to a place. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Et sted, du kommer fra"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10276,6 +10304,12 @@
       "comment" : "One of the three parts of the theme Peace: comfort, being at ease with others. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I ro og mag"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10288,6 +10322,12 @@
       "comment" : "One of the three parts of the theme Pattern: patterns that are numbers, spirals and the golden angle. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Talt op"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10300,6 +10340,12 @@
       "comment" : "One of the three parts of the theme Renewal: a plant cut back that grows again. A gardener's phrase. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skåret ned, groet igen"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10312,6 +10358,12 @@
       "comment" : "One of the three parts of the theme Travel: distance, and the longing for somewhere else. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det fjerne"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10324,6 +10376,12 @@
       "comment" : "One of the three parts of the theme Pattern: shapes that tile and interlock. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Føjet sammen"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10336,6 +10394,12 @@
       "comment" : "One of the three parts of the theme Kinship: grafts, lichen, roots and fungi joined. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Groet sammen"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10348,6 +10412,12 @@
       "comment" : "One of the three parts of the theme Waiting: dormancy, a seed that will not germinate yet. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Holdt tilbage"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10360,6 +10430,12 @@
       "comment" : "One of the three parts of the theme Travel: how seeds are carried by wind and water. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hvordan et frø rejser"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10372,6 +10448,12 @@
       "comment" : "One of the three parts of the theme Light: sunlight as a thing in itself. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selve lyset"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10384,6 +10466,12 @@
       "comment" : "One of the three parts of the theme Renewal: mending and healing, what was broken made whole. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Helt igen"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10396,6 +10484,12 @@
       "comment" : "One of the three parts of the theme Pattern: the words people have for order. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navngivet orden"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10408,6 +10502,12 @@
       "comment" : "One of the three parts of the theme Peace: quiet as something heard, wind in trees, snow. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stilhed som en lyd"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10420,6 +10520,12 @@
       "comment" : "One of the three parts of the theme Light: how a plant senses light and turns to it. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At læse lyset"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10432,6 +10538,12 @@
       "comment" : "One of the three parts of the theme Beginnings: the acorn and the oak. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fra lille til stor"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10444,6 +10556,12 @@
       "comment" : "One of the three parts of the theme Waiting: patience, keeping watch. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At stå og våge"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10456,6 +10574,12 @@
       "comment" : "One of the three parts of the theme Light: dawn and dusk. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dagens kanter"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10468,6 +10592,12 @@
       "comment" : "One of the three parts of the theme Beginnings: germination, the first root. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det første skridt"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10480,6 +10610,12 @@
       "comment" : "One of the three parts of the theme Waiting: very long waits, seeds that germinated after centuries. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den lange tælling"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10492,6 +10628,12 @@
       "comment" : "One of the three parts of the theme Meeting: hospitality, how a guest is received. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skik og brug"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10504,6 +10646,12 @@
       "comment" : "One of the three parts of the theme Meeting: the right moment, a chance meeting. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Øjeblikket"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10516,6 +10664,12 @@
       "comment" : "One of the three parts of the theme Travel: journeys and pilgrims. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vejen"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10528,6 +10682,12 @@
       "comment" : "One of the three parts of the theme Ground: soil, and what lives in it. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selve jorden"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10540,6 +10700,12 @@
       "comment" : "One of the three parts of the theme Renewal: the seasons coming round. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Årets gang"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10552,6 +10718,12 @@
       "comment" : "One of the three parts of the theme Kinship: the words people have for kin and companions. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordene for det"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10564,6 +10736,12 @@
       "comment" : "One of the three parts of the theme Peace: the words for rest and ceasing. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordene for at holde inde"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10576,6 +10754,12 @@
       "comment" : "One of the three parts of the theme Kinship: friendship between two people. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To mennesker"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10588,6 +10772,12 @@
       "comment" : "One of the three parts of the theme Meeting: a flower and its pollinator. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To, der har brug for hinanden"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10600,6 +10790,12 @@
       "comment" : "One of the three parts of the theme Beginnings: what a beginning decides about everything after it. Listed on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hvad en begyndelse afgør"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10662,6 +10858,12 @@
       "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Begyndelser"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10674,6 +10876,12 @@
       "comment" : "The definition under the headword 'Beginnings'. The website says the same after 'Beginnings:' (key meaningBeginnings).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "det første, et frø gør, og hvor meget der kommer ud af det."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10686,6 +10894,12 @@
       "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name. The earth, and ground that is one's own.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jord"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10698,6 +10912,12 @@
       "comment" : "The definition under the headword 'Ground'. The website says the same after 'Ground:' (key meaningGround).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "den jord, en plante står i, og den jord, der er din."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10710,6 +10930,12 @@
       "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slægtskab"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10722,6 +10948,12 @@
       "comment" : "The definition under the headword 'Kinship'. The website says the same after 'Kinship:' (key meaningKinship).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "det, der gror sammen, og de mennesker, man holder fast i, frem for dem, man tilfældigt støder på."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10734,6 +10966,12 @@
       "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name. The noun, as in sunlight. Not the light appearance in Settings.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lys"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10746,6 +10984,12 @@
       "comment" : "The definition under the headword 'Light'. The website says the same after 'Light:' (key meaningLight).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "det, en plante vender sig mod, og dagen, den stiller sit ur efter."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10758,6 +11002,12 @@
       "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name. Two coming together, not an appointment.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Møde"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10770,6 +11020,12 @@
       "comment" : "The definition under the headword 'Meeting'. The website says the same after 'Meeting:' (key meaningMeeting).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "to, hvis veje krydses i det rette øjeblik, og hvad de skylder hinanden."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10782,6 +11038,12 @@
       "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name. Order in living things, not a sewing pattern.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mønster"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10794,6 +11056,12 @@
       "comment" : "The definition under the headword 'Pattern'. The website says the same after 'Pattern:' (key meaningPattern).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ordenen i det levende og de navne, orden har fået."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10806,6 +11074,12 @@
       "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fred"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10818,6 +11092,12 @@
       "comment" : "The definition under the headword 'Peace'. The website says the same after 'Peace:' (key meaningPeace).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "den stilhed, en have er til for, og den ro, der følger med."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10830,6 +11110,12 @@
       "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fornyelse"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10842,6 +11128,12 @@
       "comment" : "The definition under the headword 'Renewal'. The website says the same after 'Renewal:' (key meaningRenewal).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "det, der skæres ned og kommer igen, og det, der bliver helt igen."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10854,6 +11146,12 @@
       "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name. A noun.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rejse"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10866,6 +11164,12 @@
       "comment" : "The definition under the headword 'Travel'. The website says the same after 'Travel:' (key meaningTravel).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "de veje, et frø og et menneske går, og dragningen mod et andet sted."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10878,6 +11182,12 @@
       "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name. A noun: the act of waiting.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Venten"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -10890,6 +11200,12 @@
       "comment" : "The definition under the headword 'Waiting'. The website says the same after 'Waiting:' (key meaningWaiting).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "det, der holdes tilbage, til tiden er inde, hvor længe det end varer, og den, der våger over det."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
