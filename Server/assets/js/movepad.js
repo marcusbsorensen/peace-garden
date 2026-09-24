@@ -70,15 +70,17 @@ import { whenSettled } from './plain.js';
 // chevron turned. The magnifier is a ring and a handle with a plus or a minus
 // in it, and the rings are the two that were there.
 const LENS = 'M3.25 8.5A5.25 5.25 0 1 0 13.75 8.5A5.25 5.25 0 1 0 3.25 8.5M12.3 12.3L16.5 16.5';
+// In the order the pad reads, row by row, so the keyboard's Tab walks it as
+// the eye does.
 const KEYS = [
+  { go: 'clock', label: 'walkTurnClock', path: 'M13.73 4.68A6.5 6.5 0 1 1 6.27 4.68M5.93 7.91L6.27 4.68L3.04 4.34' },
   { go: 'up', label: 'moveUp', path: 'M4.5 12.75L10 7.25L15.5 12.75' },
+  { go: 'anti', label: 'walkTurnAnti', path: 'M6.27 4.68A6.5 6.5 0 1 0 13.73 4.68M16.96 4.34L13.73 4.68L14.07 7.91' },
   { go: 'left', label: 'moveLeft', path: 'M12.75 4.5L7.25 10L12.75 15.5' },
   { go: 'right', label: 'moveRight', path: 'M7.25 4.5L12.75 10L7.25 15.5' },
+  { go: 'out', label: 'zoomOut', path: `${LENS}M6.25 8.5H10.75` },
   { go: 'down', label: 'moveDown', path: 'M4.5 7.25L10 12.75L15.5 7.25' },
   { go: 'in', label: 'zoomIn', path: `${LENS}M6.25 8.5H10.75M8.5 6.25V10.75` },
-  { go: 'out', label: 'zoomOut', path: `${LENS}M6.25 8.5H10.75` },
-  { go: 'anti', label: 'walkTurnAnti', path: 'M6.27 4.68A6.5 6.5 0 1 0 13.73 4.68M16.96 4.34L13.73 4.68L14.07 7.91' },
-  { go: 'clock', label: 'walkTurnClock', path: 'M13.73 4.68A6.5 6.5 0 1 1 6.27 4.68M5.93 7.91L6.27 4.68L3.04 4.34' },
 ];
 
 // Which way each direction moves the window, in the viewer's frame.

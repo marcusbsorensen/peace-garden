@@ -27,6 +27,9 @@
   --section: rgba(255, 255, 255, 0.8);
   --hairline: rgba(255, 255, 255, 0.24);
   --passage-ink: rgba(255, 255, 255, 0.84);
+  /* A key's wash: enough to tell a kind of key from its neighbours, not
+     enough to read as a filled button. */
+  --wash: rgba(255, 255, 255, 0.09);
 
   /* The stage. `StageBackdrop`: a cool slate at hue 0.60, saturation 0.30,
      brightness 0.26, a little above centre, falling away to nothing rather
@@ -68,6 +71,7 @@
     --section: rgba(18, 18, 18, 0.78);
     --hairline: rgba(18, 18, 18, 0.2);
     --passage-ink: rgba(18, 18, 18, 0.84);
+    --wash: rgba(18, 18, 18, 0.06);
 
     /* Pulled back to a third on a light ground, where a saturated glow is a
        stain rather than a pool. */
@@ -992,6 +996,7 @@ a.quiet-button {
   --section: rgba(255, 255, 255, 0.8);
   --hairline: rgba(255, 255, 255, 0.24);
   --passage-ink: rgba(255, 255, 255, 0.84);
+  --wash: rgba(255, 255, 255, 0.09);
   background: #000000;
   color: #ffffff;
 
@@ -1337,10 +1342,12 @@ a.quiet-button {
 .walk-keys__pad .pad-key[data-go="left"] { grid-column: 1; grid-row: 2; }
 .walk-keys__pad .pad-key[data-go="right"] { grid-column: 3; grid-row: 2; }
 .walk-keys__pad .pad-key[data-go="down"] { grid-column: 2; grid-row: 3; }
-.walk-keys__pad .pad-key[data-go="in"] { grid-column: 3; grid-row: 1; }
-.walk-keys__pad .pad-key[data-go="out"] { grid-column: 3; grid-row: 3; }
-.walk-keys__pad .pad-key[data-go="anti"] { grid-column: 1; grid-row: 1; }
-.walk-keys__pad .pad-key[data-go="clock"] { grid-column: 1; grid-row: 3; }
+/* The turns across the top, clockwise first, and the magnifiers across the
+   bottom, out before in: Marcus's order, 24 September. */
+.walk-keys__pad .pad-key[data-go="clock"] { grid-column: 1; grid-row: 1; }
+.walk-keys__pad .pad-key[data-go="anti"] { grid-column: 3; grid-row: 1; }
+.walk-keys__pad .pad-key[data-go="out"] { grid-column: 1; grid-row: 3; }
+.walk-keys__pad .pad-key[data-go="in"] { grid-column: 3; grid-row: 3; }
 
 /* A key with nothing to do that way. Marked rather than disabled, so the
    keyboard's focus stays on it (see `refresh` in movepad.js), and drawn as a
@@ -1364,6 +1371,13 @@ a.quiet-button {
   inline-size: 44px;
   block-size: 44px;
   padding: 0;
+}
+
+/* **The four directions are washed**, so the cross reads as one control
+   and the turns and magnifiers in its corners as others. Marcus, 24
+   September. */
+.walk-keys__pad .pad-key:is([data-go="up"], [data-go="down"], [data-go="left"], [data-go="right"]) {
+  background: var(--wash);
 }
 
 /* The keyboard's ring, the same one the map's cells take: a brighter edge
