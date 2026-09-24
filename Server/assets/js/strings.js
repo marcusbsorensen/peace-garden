@@ -343,14 +343,12 @@ export const EN = Object.freeze({
     "A plant's name says where it belongs. The start of its first word chooses the area it stands in, and the ending chooses which of that area's three parts the words under it come from.",
   meaningsSecond:
     "The second word names the one way a plant most differs from the rest of its genus. After a first word ending in -ynth it takes its masculine form, so rubra becomes ruber.",
-  // The heads of the two tables. `meaningsNames` is also the lead-in to the
-  // syllables on an area page. The three parts are headed by their endings,
-  // which are pieces of a name and need no words.
-  meaningsArea: "Area",
-  meaningsMeaning: "What it holds",
+  // Over the name-starts in each entry at `/meanings`, where a dictionary
+  // gives a word's etymology. The one heading the entries need: the area is
+  // named by its own name, the senses are numbered and headed by their
+  // endings, and the second words are introduced by `meaningsSecond`. The four
+  // other headings the page had while it was two tables went with the tables.
   meaningsNames: "Names beginning",
-  meaningsWord: "Second word",
-  meaningsSays: "What it says of the plant",
 
   // Said once and used on both of the pages that are not built yet, because two
   // ways of saying *not yet* is one more than a reader needs.

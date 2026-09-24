@@ -8,12 +8,14 @@
   plant are drawn from, and the second word says the one way the plant most
   departs from its genus. None of that was written anywhere a reader could find
   it; it was in docs/NAMES-AND-THEMES.md, `Epithet.swift` and a comment in
-  `Areas.swift`. This is the table a reader looks it up in.
+  `Areas.swift`. This is the dictionary a reader looks it up in.
 
-  **Drawn, not written out.** Both tables come from `meanings.js`, which the
-  block under every area's paragraph is drawn from too, so the short account on
-  an area page and the long one here are one table read twice. Each area page
-  links to its own row, `/meanings#waiting` and so on.
+  **Drawn, not written out.** The entries and the glossary come from
+  `meanings.js`, which the entry under every area's drawing is drawn from too,
+  so the short account on an area page and the long one here are one table read
+  twice. Each area page links to its own entry, `/meanings#waiting` and so on.
+  Since 24 September every root and every second word has a drawing, so a
+  reader can follow a name by its pictures in any language.
 
   Follows the reader's system, light or dark, as the other pages of words do.
   An area page is a night because it is lit by its own sky; this page has none.
@@ -82,26 +84,25 @@
       <figure class="meanings-example" id="example" hidden></figure>
 
       <!--
-        The ten themes. A table because it is one: ten rows that are read
-        across and compared down. On a phone each row becomes a short stack
-        with its headings beside the cells, rather than a table the reader has
-        to scroll sideways through — see site.css §What the names mean.
+        The ten areas as the map's tiles, each a way to its entry below: a
+        contents in pictures, named for a screen reader by the areas' own names.
       -->
-      <div class="meanings-scroll">
-        <table class="meanings-table meanings-themes">
-          <thead id="themes-head"></thead>
-          <tbody id="themes-body"></tbody>
-        </table>
-      </div>
+      <nav class="meanings-index" id="index" hidden></nav>
 
-      <p class="body" data-s="meaningsSecond"></p>
+      <!--
+        The ten entries, set as a dictionary sets a word: the theme as the
+        headword with its area's tile, the definition, the name-starts as the
+        etymology with a drawing of each root, and the three parts as the
+        numbered senses. A list because it is one, and each entry is the anchor
+        its area page links to — `/meanings#waiting` and so on. See site.css
+        §The page at /meanings.
+      -->
+      <ol class="lexicon" id="lexicon"></ol>
 
-      <div class="meanings-scroll">
-        <table class="meanings-table meanings-epithets">
-          <thead id="epithets-head"></thead>
-          <tbody id="epithets-body"></tbody>
-        </table>
-      </div>
+      <p class="body meanings-second" data-s="meaningsSecond"></p>
+
+      <!-- The second words, each with a drawing of what it says. -->
+      <dl class="glossary" id="epithets" hidden></dl>
 
       <!--
         The foot: one hairline and the privacy notice. The language it used to

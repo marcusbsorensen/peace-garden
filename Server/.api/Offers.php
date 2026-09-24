@@ -123,6 +123,15 @@ final class Offers
                           string $area = 'travel', string $kind = ''): array
     {
         if ($existing = $this->find($seed)) {
+            // **Only to the two who met.** A second offer of one plant is
+            // answered with the first — which is how a retry, or the other
+            // phone offering the same child, learns where it stands — but the
+            // answer carries both tokens, and either token can withdraw. An
+            // accepted plant's seed is public at `/api/<area>/plot/<n>`, so
+            // until 24 September anybody could offer a published plant with two
+            // invented tokens, be handed the real pair, and take it down. The
+            // pair asked with has to be the pair stored, in either order.
+            if (!self::samePair($existing, $to, $from)) return [null, false];
             return [self::seen($existing), false];
         }
         $insert = $this->db->prepare('INSERT INTO walk_offers
@@ -135,7 +144,9 @@ final class Offers
             // Two offers of one plant, racing. The unique seed settles it and
             // the loser is handed the winner, which is the same answer it would
             // have had a moment earlier.
-            if ($row = $this->find($seed)) return [self::seen($row), false];
+            if ($row = $this->find($seed)) {
+                return self::samePair($row, $to, $from) ? [self::seen($row), false] : [null, false];
+            }
             throw $clash;
         }
         return [self::seen($this->find($seed) ?? []), true];
@@ -242,6 +253,16 @@ final class Offers
      * parents and traits never go back: the phone that made the offer has them
      * already, and the phone being asked grew the plant itself.
      */
+    /// Whether `$to` and `$from` are this offer's two tokens, in either order:
+    /// the phone that offered sends them one way round, and the other phone,
+    /// offering the same child, sends them the other.
+    private static function samePair(array $row, string $to, string $from): bool
+    {
+        $stored = [(string) $row['token_to'], (string) $row['token_from']];
+        return (hash_equals($stored[0], $to) && hash_equals($stored[1], $from))
+            || (hash_equals($stored[0], $from) && hash_equals($stored[1], $to));
+    }
+
     private static function seen(array $row): array
     {
         return [
