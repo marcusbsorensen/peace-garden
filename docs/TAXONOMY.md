@@ -200,13 +200,13 @@ is a single repeated shape. The theme each root carries is unchanged.
 | Family | Low-merous root | High-merous root | The resemblance |
 | --- | --- | --- | --- |
 | **Veraceae** · spire | `Ver` 4 · beginnings | `Cer` 6 · ground | *ver*, the spring, and *Ceres*, the grain: a foxglove spike and a wheat ear |
-| **Quinaceae** · umbel | `Quin` 5 · pattern | `Fen` 8 · ground | *quinque*, five — an umbel is five-merous — and the fen that cow parsley stands in |
+| **Calaceae** · umbel | `Cal` 5 · pattern | `Fen` 8 · ground | *kalos*, the shapely — an umbel is an arrangement, which is Pattern's subject — and the fen that cow parsley stands in |
 | **Umbraceae** · fern | `Umbr` 3 · waiting | `Dros` 5 · renewal | *umbra*, shade, and *drosos*, dew: where a frond lives and what it holds |
 | **Melaceae** · orchid | `Mel` 3 · meeting | `Sel` 6 · light | Orchids *are* 3-merous. *meli*, the honey that pays the pollinator; *Selēnē*, the moon orchid |
 | **Liraceae** · lotus | `Lir` 8 · beginnings | `Nyx` 14 · waiting | *leirion*, lily — a lotus is a water lily — and *Nyx*, night, for the ones that open in it |
 | **Cynaceae** · thistle | `Cyn` 13 · kinship | `Hal` 21 · travel | *Cynara* is the artichoke, a thistle. *hals*, the salt sea, is sea holly |
 | **Vinaceae** · vine | `Vin` 4 · kinship | `Ael` 6 · travel | *vinculum*, a bond, for the honeysuckle’s twining; *aellē*, a gust, for a lax stem in wind |
-| **Calaceae** · bell | `Cal` 5 · pattern | `Ith` 10 · meeting | *kalos*, the shapely — Campanula is 5-merous — and Ithaca, the bell rung on arrival |
+| **Quinaceae** · bell | `Quin` 5 · pattern | `Ith` 10 · meeting | *quinque*, five — Campanula is 5-merous, and five lobes on one bell can be counted — and Ithaca, the bell rung on arrival |
 | **Elaceae** · star | `El` 5 · light | `Ros` 8 · renewal | *hēlios*, the sun as a flat radial bloom; *ros*, the dew, on a dog rose's five |
 | **Belaceae** · poppy | `Bel` 4 · peace | `Aur` 6 · light | *bellus*, a clear sky, for remembrance; *aurora* for the poppy that opens at dawn |
 | **Pellaceae** · succulent | `Pell` 8 · ground | `Thal` 12 · beginnings | *pellis*, the earth's skin, for a houseleek; *thallos*, a body with no organs told apart |

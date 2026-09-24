@@ -1,6 +1,9 @@
 # The website
 
-*peacegarden.app.* Scoped 2 September 2026, not started.
+*peacegarden.app.* Scoped 2 September 2026, and live since 16 September. Read
+against what is on main on 24 September; where a decision below has since been
+overtaken it is marked superseded, with the date, and its reasoning is left
+standing.
 
 **The site is the page a seed lands on.** Every seed link minted so far points at
 `https://peacegarden.app/s`, that path answers 403, and somebody who taps one
@@ -15,11 +18,52 @@ and it is most of what follows. **A garden you can walk**, with areas and paths
 and other people's plots — [BOTANICAL-GARDEN.md](BOTANICAL-GARDEN.md) — is last,
 and it is the only one of the four that is not yet agreed to be built at all.
 
+**Superseded 16 and 24 September: the page explaining Peace Garden is `/`, not a
+seedless `/s`.** The bare domain answered 403 until 16 September, and that
+stopped being tenable from two directions at once: an App Store listing needs a
+support URL a reviewer can open, and a domain whose whole purpose is carrying
+links looks broken when the domain itself refuses to load. For its first week
+`/` was four paragraphs and four links, built from words `/s` already had.
+
+**Since 24 September the front page shows the garden rather than describing
+it.** It is design B of two prototypes put on the workbench on 23 September —
+`/dev/front-a`, a night, and `/dev/front-b` — and Marcus chose B. It is
+`Server/.pages/index` and `assets/js/frontpage.js`, and it is three things:
+
+- **One plant on a stage**, turning under a finger or a pointer, beside the
+  tagline, a one-sentence lead and two ways on, to the download page and to the
+  garden. The plant is the child of a demonstration meeting: `pg_front_meeting`
+  (`tools/wasm/Sources/PlantWasm/Front.swift`) mints two parents from fixed
+  words and `pg_grow_hybrid` crosses them in the browser, so it is what the app
+  would grow from those two seeds and it is nobody's. `?meeting=` is not read
+  on `/`, though the workbench reads it: a page that can be asked by its query
+  for a different plant is a page that can be linked to as if that plant meant
+  something. A browser with no WebGL2, or no module, gets the words and the
+  cards, which are the page, and nothing is said about the plant it could not
+  draw.
+- **How a plant comes to be, in three steps** — meet, cross, grow — each a
+  one-word heading with a monoline glyph, as the app's first run has them. The
+  lead above says the three once, in order, so a reader who goes no further
+  than the first screen has the whole of it.
+- **The ten areas as cards**, each in its own ground colour with the glyph of
+  its layout, what its plants mean set as headword and definition, and its
+  name. The open areas come first, in map order, and are links; the rest say
+  *not yet*. The cards are the map read as a list: they are drawn from
+  `garden.js`, `gates.js` and `meanings.js`, so a card cannot disagree with the
+  area page it opens or with the minimap at that page's foot.
+
+It follows the reader's light or dark setting, as the other pages of words do.
+It cost eight `front*` keys, English until they are commissioned and falling
+back per string; the cards cost none, because each is an area name and a
+`meaning*` line the site already had. The keys the old front used alone
+(`gardenBody`, `walkBody`, `goOn`) are said nowhere now and are kept,
+commissioned, until Marcus decides whether they go.
+
 ## What is already true
 
 | | |
 | --- | --- |
-| The domain | `peacegarden.app`, with a certificate that validates. A bare GET answers 403 — the host's default for a directory with nothing in it. |
+| The domain | `peacegarden.app`, with a certificate that validates. A bare GET answered 403 — the host's default for a directory with nothing in it — until 16 September; `/` is the front page now (above). |
 | The association file | Deployed, served as `application/json` with no redirect, and **already in Apple's CDN**. It claims `/s*` for the app and names `app.peacegarden.Clip` for a clip that does not exist yet. |
 | The link format | `PollenLink`, version 1, payload in the fragment, six-byte checksum, base64url fields so a full stop in a name is never a separator. `PollenLink.path` is `/s` and the host is passed in rather than baked in. |
 | The renderers | `SeedCore` is authoritative. `tools/reference/` is a second implementation of the derivation, gated by CI. `tools/preview/` is a Python port of the geometry that has drifted twice and is for judging shape. |
@@ -379,6 +423,11 @@ to English per name, so a language ships its map in pieces; `check.py` asks for
 the ten together before it calls a language done, and fails outright on two
 areas sharing a name, which is the one fault that makes a map unusable.
 
+**The app says them too, since 24 September.** Its name sheet names the area a
+plant's name puts it in, and it takes the site's names in each of the app's
+other seven languages rather than holding English: a Danish reader sees
+*Dvalebedet* in both places rather than the Cold Frame in one of them.
+
 **The pad.** On a plant page, four arrows to the nearest plant in each direction.
 Nearest is measured along the direction of travel first and sideways second,
 within a cone rather than along a ray — a strict ray finds almost nothing on a
@@ -440,6 +489,19 @@ sentence of explanation.
 
 That is the version to build. It is cheaper, it is already true, and it teaches
 something a visitor can carry to any plant on the site.
+
+**Built, 23 September, as `/meanings`**: the table a reader looks it up in —
+every theme's name-starts, their roots and its three parts, and what a second
+word says — opened by a worked example that takes one name apart piece by piece.
+Before it, none of that was written anywhere a reader could find it. Each area
+page carries its own entry from the same table and links to its row,
+`/meanings#waiting` and so on, so the short account and the long one are one
+table read twice. The table is `meanings.js`, which checks itself against the
+name-reading `passages.js` already does. The `meaning*` lines are English only
+and fall back in silence; the part labels are English data rather than sixty
+new commissions. Since 24 September the app's seed screen gives the same
+account for the one plant in hand, and its open book is the same drawing as the
+site's (see *Moving through the garden*).
 
 **The seeds exist, 20 September** (`SeedCore/WebGardens/Ambassadors.swift`,
 `AmbassadorTests`, `tools/reference/ambassador_vectors.json`). They were found
@@ -1081,9 +1143,40 @@ another.
   From an area page that link is `/garden#<theme>`, and the hub opens at the
   area you came from. The bar does not name the area — the heading under the
   plot does, and the same words twice on one screen was one too many.
+- **The bar's ways on are drawn, since 24 September**, so they read the same
+  in every language: the app's own Garden mark (`GardenGlyph`) to the hub, an
+  open book to `/meanings`, and a globe beside the language chooser, which
+  moved up from the foot to sit with the other ways on from a page. The book is
+  one SVG path on a twenty-unit grid, and the app's `MeaningsGlyph` is
+  transcribed from it rather than redrawn, so the two cannot drift apart. Each
+  glyph's words are its accessible name and its tooltip, written from the
+  catalogue through `data-s-label`. **Flags were considered and not used**: a
+  flag is a country, and several of these languages are spoken in many
+  countries or belong to none, so the chooser shows each language's own name
+  for itself. The mark and wordmark lead to `/` from the pages of words and the
+  area pages; on `/` itself, `/garden`, `/s` and `/t` they are not a link.
+- **One foot on every page**, since 23 September: a hairline, the bar turned
+  over, and the privacy link under it, instead of a paragraph and a footer. It
+  held the language chooser too, for a day.
 - **The words sit below the plot, as the app's do.** The sky and the plot
   floating in it are the picture; text floating over them broke it. Each area's
   paragraph is two sentences: what the place is, and what the keys do.
+- **In two outlined panels, since 24 September**, side by side on a wide window
+  and one above the other on a phone. One says what the area is: its name, and
+  what its plants mean set as a dictionary entry — the theme's word as the
+  headword, what it means as the definition, and its three parts as numbered
+  senses. It is the one thing on the page that says why these plants are here
+  rather than somewhere else, which is what a reader looks a word up for, and
+  the headword is the way to that theme's row on `/meanings`, with the bar's
+  book beside it. The other panel is every way about the area and out of it,
+  the pad over the minimap. Each is outlined in the hairline, the only edge
+  this project draws, drawn all round; they replace the hairlines above and
+  below the pad and map that went in on 23 September. **The layout paragraph
+  stays for screen readers only**: a reader who cannot see the drawing is the
+  one it describes something to, and everybody else can see it. The line of
+  which name-starts bring a plant to the area went on 23 September too — it
+  cost the pad and the map their place above the fold on a laptop, Marcus chose
+  the fold, and the names are on `/meanings`, a link away.
 - **A glyph-only pad**: two pairs, chevrons to page between plots and rings to
   turn the garden, with a gap between so paging and turning read as different
   things. Monoline, round caps, the brand's icon rules. Every key keeps its name
@@ -1095,8 +1188,36 @@ another.
   are is filled; the built areas are links; the closed ones are drawn faintly
   and are not. It replaced a line of worded gates to neighbouring areas, because
   it answers *where am I* as well as *where can I go*.
+- **Each cell is its area's ground, since 23 September**: the colour its page
+  draws it, lit, with a glyph of its layout drawn to BRAND.md §3.2. Four areas
+  stand on grass and are green, which is true of them; the glyph is what tells
+  them apart. The three not built yet take the ground their layouts name — a
+  woodland floor, glasshouse tiles, the dark soil of a kitchen garden — and are
+  drawn greyed rather than left out. `gates.js` `LOOK` is the table, and the
+  front page's cards read it too.
+- **The hub sends an open area straight to its own page, since 24 September.**
+  However it is chosen — a cell clicked, Enter on the marked cell, a step off
+  the edge of a closed area into an open one, or a wander that lands in one —
+  `walk.js` `goTo` goes to the page that grows its real plants. Until then the
+  hub opened the area's stand-in, with a link on to the real page under it: one
+  screen in the way of the place the reader had asked for. So `/garden` draws
+  only the areas not open yet, and its notice says exactly that. A fragment
+  naming an open area — which is what an area page's way back carries — marks
+  that cell on the map, without taking focus, rather than sending the reader
+  on: sending them on would make the way back a way round in a circle.
+- **And the hub no longer asks `/api/count`.** `plots.js` asked on every visit,
+  was refused, and drew the stand-in anyway: the service never had that route,
+  or any of the five a whole-garden source would need, because it grew one
+  route per area instead, which each area's own page reads. It draws the
+  stand-in without asking now, and an open area's cell carries neither the
+  stand-in's fill nor its count. The stand-in is still marked as one on the
+  screen, because a garden of invented plants that does not say so is the one
+  thing that file must never become.
 - **It cost no new strings.** The ten area names were already commissioned in
   42 languages, and every control reuses a key that already said the thing.
+  The bar's glyphs kept to that: their names are the keys of the places they
+  lead to, `gardenTitle`, `meaningsTitle` and `language`. `meaningsTitle` came
+  with `/meanings` on 23 September and is English until it is commissioned.
 
 ## Still open
 
@@ -1156,6 +1277,10 @@ another.
   where a request goes and what it carries. What the decision does not remove is
   the part that was never about hosting: backups, and a restore somebody has
   actually tried.
-- **Whether `peacegarden.app` is also the app's marketing page.** The position
+- ~~**Whether `peacegarden.app` is also the app's marketing page.** The position
   here is that `/s` with no seed in it is already that page, and that a separate
-  one earns its place only when there is an App Store listing to point at.
+  one earns its place only when there is an App Store listing to point at.~~
+  **Answered by the listing, 16 September**: a support URL a reviewer can open
+  had to exist, so `/` became a page, and since 24 September it shows the garden
+  — see the head of this document. `/s` with no seed still explains itself, for
+  the reader who arrives there.

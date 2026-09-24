@@ -8,12 +8,40 @@ seed lands on.
 
 ```
 peacegarden.app/
-├── index.php                          ← serves the four paths below
+├── index.php                          ← serves every page in .pages/, /plant.wasm, and /api/
 ├── .pages/                            ← nginx refuses a dot-directory
+│   ├── index                          ← the front: a plant, three steps, ten area cards
 │   ├── s                              ← the page a seed lands on
-│   ├── g                              ← the garden, walked
+│   ├── g                              ← the garden, walked; served at /g and /garden
+│   ├── meanings                       ← what the names mean: the lookup table
+│   ├── walk                           ← the Long Walk
+│   ├── quiet                          ← the Quiet Garden
+│   ├── cross                          ← the Crossing
+│   ├── orchard                        ← the Orchard
+│   ├── knot                           ← the Knot Garden
+│   ├── seedbed                        ← the Seedbed
+│   ├── frame                          ← the Cold Frame
+│   ├── wild                           ← the Wild Fields
+│   ├── download                       ← the app
+│   ├── privacy                        ← what the site and the app keep
 │   ├── t                              ← the test roster
+│   ├── PlantWasm.wasm(.gz, .br)       ← built by tools/wasm/build.sh, not committed
 │   └── apple-app-site-association     ← no file extension, and none is added
+├── .api/                              ← the plot service; see below
+│   ├── router.php                     ← every /api/ route
+│   ├── Areas.php, Ambassadors.php     ← the ten areas, and the plant that stands for each
+│   ├── Seeds.php                      ← whether a seed is the cross of the parents it names
+│   ├── LongWalk.php, WalkStore.php    ← the Long Walk's rule, and its table
+│   ├── QuietGarden.php, RoomStore.php ← the Quiet Garden's rule, and its table
+│   ├── Crossing.php, CrossStore.php   ← the Crossing's rule, and its table
+│   ├── Orchard.php, OrchardStore.php  ← the Orchard's rule, and its table
+│   ├── KnotGarden.php, KnotStore.php  ← the Knot Garden's rule, and its table
+│   ├── Seedbed.php, SeedbedStore.php  ← the Seedbed's rule, and its table
+│   ├── ColdFrame.php, ColdFrameStore.php ← the Cold Frame's rule, and its table
+│   ├── Offers.php                     ← the asking: offer, pending, answer, withdraw
+│   ├── Limits.php                     ← how often one caller may write
+│   ├── backup.php                     ← the nightly copy, from cron
+│   └── config.example.php             ← copy to config.php, which git ignores
 ├── .htaccess                          ← for a host that reads one. This is not.
 ├── languages.json                     ← generated: tools/site/export.py
 ├── testers.json                       ← generated: one gardener per language
@@ -23,15 +51,30 @@ peacegarden.app/
 └── assets/
     ├── site.css
     ├── icon.svg, icon-180.png         ← generated, from the same drawing
+    ├── stars.bin, places.json         ← generated: tools/sky/pack.py, for sky.js
     └── js/
+        ├── frontpage.js               ← the / page: grows the front plant, draws the cards
         ├── page.js                    ← the /s page
         ├── walk.js                    ← the /g page
+        ├── meaningspage.js            ← the /meanings page's own opening
+        ├── plain.js                   ← /download, /wild and /privacy: words and a chooser
         ├── door.js                    ← the /t page
+        ├── walkpage.js, longwalk.js   ← the Long Walk: the page, and the plot drawn
+        ├── quietpage.js, quietgarden.js ← the Quiet Garden: the page, and the plot drawn
+        ├── crosspage.js, crossing.js  ← the Crossing: the page, and the plot drawn
+        ├── orchardpage.js, orchard.js ← the Orchard: the page, and the plot drawn
+        ├── knotpage.js, knot.js       ← the Knot Garden: the page, and the plot drawn
+        ├── seedbedpage.js, seedbed.js ← the Seedbed: the page, and the plot drawn
+        ├── framepage.js, frame.js     ← the Cold Frame: the page, and the plot drawn
+        ├── plant.js                   ← grows a plant in the wasm module, draws it in WebGL2
+        ├── sky.js                     ← the real sky, a port of SeedCore's Sky
+        ├── gates.js                   ← the bar and the minimap; which areas are open
+        ├── meanings.js                ← what each area's plants mean: the one table
         ├── link.js                    ← reads the fragment
         ├── languages.js               ← negotiation and the chooser
         ├── strings.js                 ← the catalogue, English written
         ├── testers.js                 ← standing in another language
-        ├── garden.js, plots.js        ← the map, and what stands on it
+        ├── garden.js, plots.js        ← the map, and the stand-in for areas not open
         ├── keys.js                    ← the keyboard, and the sheet under ?
         └── passages.js                ← theme, subtheme, and the draw
 ```
@@ -131,12 +174,13 @@ is deploying rather than to a reader of the site.
   claims more than what is actually switched off, and nothing should. Note that
   `/s` is now a PHP request rather than a static one, so it appears in whatever
   the host logs for PHP as well.
-- **The root.** `peacegarden.app/` still answers 403, and `index.php` returns
-  that 403 deliberately: with an index in place the root would otherwise become
-  whatever the script did next. `/s` with no seed in it is the page that says
-  what Peace Garden is, so what the root should do is the open question in
-  docs/WEBSITE.md about whether there is a marketing page at all — left alone
-  rather than answered with a redirect.
+- **The root.** `peacegarden.app/` answered 403 until 16 September, and
+  `index.php` returned that 403 deliberately: with an index in place the root
+  would otherwise have become whatever the script did next, and what the root
+  should do was an open question in docs/WEBSITE.md. *Superseded 16 September*:
+  an App Store listing needs a support URL a reviewer can open, so `/` is a
+  page, `.pages/index`. Since 24 September it is the front — a plant on a
+  stage, three steps, ten area cards — drawn by `assets/js/frontpage.js`.
 
 ## What the next page reuses
 
