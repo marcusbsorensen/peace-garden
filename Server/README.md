@@ -369,8 +369,23 @@ the service's own files unreachable, as it does `.pages/`.
     addressed to can answer it. Yes plants it by the rule; no is final, because
     there is one offer per plant.
   - `POST /api/walk/withdraw` — `{seed, token}`. Either gardener, at any time.
-    An accepted planting is **hidden rather than deleted**: the walk is
-    append-only, the slot stays taken, and the border keeps the gap.
+    **Taking back deletes** (since 24 September): the seed, both parents, the
+    meeting and the traits leave the live database. An accepted planting keeps
+    only its place, hidden — the area is append-only and the next arrival is
+    placed against what is already standing, so the slot stays taken, the
+    border keeps the gap, and the row keeps exactly what its area's rule reads
+    (`.api/TakenBack.php` lists it per area). The offer keeps keyed
+    fingerprints of the seed and the two tokens, the word `withdrawn` and its
+    two times: enough to refuse the plant if anybody offers it again — its
+    seed, parents and meeting were public while it stood — and to tell both
+    phones, which ask by token. The key is `offer_key`, which the nightly copy
+    carries with `walk_offers`. Rows withdrawn before this are erased the same
+    way by a migration that runs on every request and finds nothing once it
+    has run.
+  - **An offer nobody answers lapses after thirty days**: it becomes a
+    withdrawal, answered at the moment it lapsed, and is erased the same way.
+    Checked whenever the offer is looked up, and swept on every `offer` and
+    `pending` request.
   - A token carries **consent, not authenticity**. The service cannot tell two
     tokens minted at a real meeting from two minted by one person, so it cannot
     tell a real pair of gardeners from somebody planting invented crossings.
@@ -382,9 +397,11 @@ the service's own files unreachable, as it does `.pages/`.
   `Retry-After` when the allowance is gone. It is in PHP because the vhost is
   not ours to configure, so it caps what is *written* rather than what arrives
   — which is the half that matters on an append-only walk. What is stored is a
-  salted digest of the address and a count, dropped once the window passes;
-  the salt is random per install and lives in the database. Checked by
-  `tools/reference/check_limits.php`, in CI.
+  salted digest of the address and a count. The salt is random per install and
+  lives in the same database, so anybody holding the database could try every
+  IPv4 address against a digest; what protects an address is that its row is
+  deleted at the first limited request after its hour, every time, and that no
+  backup copies the table. Checked by `tools/reference/check_limits.php`, in CI.
 - `POST /api/walk/plant` — **answers 403**: it is the one route that plants with
   nobody asked, and it exists for the reference check. A local copy opens it in
   `.api/config.php` (copy `config.example.php`; git ignores it and `deploy.sh`
@@ -439,12 +456,22 @@ because the thing that made it was two people meeting once.
 17 3 * * * /usr/bin/php $HOME/public_html/.api/backup.php >> $HOME/backups/backup.log 2>&1
 ```
 
-It copies `long_walk`, `long_walk_lock` and `walk_offers` and leaves
-`rate_limits` and `rate_salt` out on purpose — those are this hour's arithmetic
-about callers, and restoring them would hand back spent allowance and re-key
-every bucket. It reads each copy back before filing it, because a dump cut
-short is a valid gzip of a valid beginning and restores most of the walk in
-silence. Thirty stay on the server.
+It copies every area's table and its lock, `walk_offers` and `offer_key`
+(`KEPT` in `backup.php` is the list), and leaves `rate_limits` and `rate_salt`
+out on purpose — those are this hour's arithmetic about callers, and restoring
+them would hand back spent allowance and re-key every bucket. It reads each
+copy back before filing it, because a dump cut short is a valid gzip of a
+valid beginning and restores most of the walk in silence. Thirty stay on the
+server.
+
+**A copy keeps what the database held that night.** A plant taken back, or an
+offer that lapses, is erased from the live tables at once and is in no copy
+taken afterwards. The copies taken before keep it until they go: on the server
+that is thirty days, as the oldest copy is pruned. **The Mac's copies are never
+pruned** — `tools/backup.sh` pulls without `--delete`, on purpose, so every
+copy ever pulled is still there, and so is everything taken back after it was
+pulled. Restoring an older copy brings withdrawn rows back into the live
+tables, and the first request afterwards erases them again.
 
 From the Mac:
 

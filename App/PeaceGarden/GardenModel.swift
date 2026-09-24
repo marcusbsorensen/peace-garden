@@ -372,13 +372,33 @@ final class GardenModel {
         guard let offers = try? await plots.pending(tokens: tokens) else { return }
 
         for offer in offers {
-            guard let index = garden.plants.firstIndex(where: { $0.seed.hex == offer.seed }),
+            guard let index = Self.plant(for: offer, in: garden.plants),
                   let ours = garden.plants[index].tokens?.oursHex,
                   let standing = offer.standing(forOurToken: ours, unknownAt: Self.currentDate())
             else { continue }
             garden.plants[index].standing = standing
         }
         persist()
+    }
+
+    /// Which plant a row from the service is about.
+    ///
+    /// By its seed, and **by this phone's own token when the service sends no
+    /// seed**. Since 24 September a withdrawn offer is erased on the server: it
+    /// keeps a fingerprint of the seed rather than the seed, so it cannot say
+    /// which plant it was, and answers with an empty seed and the token this
+    /// phone asked with. That token was minted here for one meeting, and one
+    /// meeting grows one plant, so it names the plant as surely as the seed
+    /// did. Only an empty seed falls back to it: a row that names a seed is
+    /// about that seed or about nothing here.
+    static func plant(for offer: SharedOffer, in plants: [PlantRecord]) -> Int? {
+        if !offer.seed.isEmpty {
+            return plants.firstIndex(where: { $0.seed.hex == offer.seed })
+        }
+        return plants.firstIndex(where: { plant in
+            guard let ours = plant.tokens?.oursHex else { return false }
+            return ours == offer.to || ours == offer.from
+        })
     }
 
     /// Writes down where a plant stands after the service has spoken.

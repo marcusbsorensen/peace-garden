@@ -15,7 +15,12 @@ declare(strict_types=1);
  *   - an offer plants nothing,
  *   - only the token an offer was addressed to can answer it,
  *   - one offer per plant, so a decline is final,
- *   - a withdrawn plant leaves the walk alone and its slot empty.
+ *   - a withdrawn plant leaves the walk alone and its slot empty,
+ *   - and leaves nothing of itself in the database but that slot, the traits
+ *     the rule reads and fingerprints — while both phones still hear of it and
+ *     nobody can offer it again,
+ *   - an offer nobody answers lapses into a withdrawal after thirty days,
+ *   - and what the old code kept of a withdrawal is erased on opening.
  */
 
 require_once __DIR__ . '/../../Server/.api/Seeds.php';
@@ -44,6 +49,68 @@ function crossing(int $n): array
 }
 
 function token(string $of): string { return substr(hash('sha256', $of), 0, 32); }
+
+/**
+ * Every table in the database, every row, every column, searched for any of
+ * these strings. What "no longer stored anywhere" means, checked as literally
+ * as a check can: not the columns this file knows about, but whatever the
+ * service has made since.
+ */
+function stillHeld(PDO $db, array $needles): array
+{
+    $found = [];
+    $tables = $db->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")
+                 ->fetchAll(PDO::FETCH_COLUMN);
+    foreach ($tables as $table) {
+        foreach ($db->query("SELECT * FROM $table")->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            foreach ($row as $column => $value) {
+                foreach ($needles as $what => $needle) {
+                    if (is_string($value) && str_contains($value, $needle)) $found[] = "$what in $table.$column";
+                }
+            }
+        }
+    }
+    return $found;
+}
+
+/** What `stillHeld` found, said after a check's name when there is anything to say. */
+function found(array $held): string
+{
+    return $held === [] ? '' : ': ' . implode(', ', $held);
+}
+
+/** A row of an area's table by its arrival number, which is what outlives its seed. */
+function arrival(PDO $db, string $table, int $arrival): ?array
+{
+    $query = $db->prepare("SELECT * FROM $table WHERE arrival = ?");
+    $query->execute([$arrival]);
+    $row = $query->fetch(PDO::FETCH_ASSOC);
+    return $row === false ? null : $row;
+}
+
+function arrivalOf(PDO $db, string $table, string $seed): ?int
+{
+    $query = $db->prepare("SELECT arrival FROM $table WHERE seed = ?");
+    $query->execute([$seed]);
+    $found = $query->fetchColumn();
+    return $found === false ? null : (int) $found;
+}
+
+function offerRow(PDO $db, int $offer): ?array
+{
+    $query = $db->prepare('SELECT * FROM walk_offers WHERE offer = ?');
+    $query->execute([$offer]);
+    $row = $query->fetch(PDO::FETCH_ASSOC);
+    return $row === false ? null : $row;
+}
+
+function offerNumber(PDO $db, string $seed): ?int
+{
+    $query = $db->prepare('SELECT offer FROM walk_offers WHERE seed = ?');
+    $query->execute([$seed]);
+    $found = $query->fetchColumn();
+    return $found === false ? null : (int) $found;
+}
 
 /**
  * A plot's shared plants: what it holds, minus the ambassador standing at the
@@ -79,12 +146,12 @@ check('the walk was never empty', $walk->plots() === 1 && count($walk->plot(0)) 
 
 // MARK: Who can see it, and who cannot
 
-check('the gardener it was sent to finds it', count($offers->touching([$theirs])) === 1);
-check('the gardener who sent it sees its state', count($offers->touching([$mine])) === 1);
-check('a stranger finds nothing', $offers->touching([token('somebody else')]) === []);
-check('no tokens asks nothing', $offers->touching([]) === []);
+check('the gardener it was sent to finds it', count($offers->touching([$theirs], $now)) === 1);
+check('the gardener who sent it sees its state', count($offers->touching([$mine], $now)) === 1);
+check('a stranger finds nothing', $offers->touching([token('somebody else')], $now) === []);
+check('no tokens asks nothing', $offers->touching([], $now) === []);
 check('what comes back carries no seeds but its own',
-      array_keys($offers->touching([$theirs])[0]) === ['seed', 'to', 'from', 'state', 'offeredAt', 'answeredAt']);
+      array_keys($offers->touching([$theirs], $now)[0]) === ['seed', 'to', 'from', 'state', 'offeredAt', 'answeredAt']);
 
 // MARK: Only the gardener it was addressed to can answer
 
@@ -101,7 +168,7 @@ check('the plant in the walk is the one offered', shared($walk)[0]['seed'] === $
 check('the offer is settled', $answered['offer']['state'] === Offers::ACCEPTED);
 check('and says when', $answered['offer']['answeredAt'] === $now + 60);
 
-$settled = $offers->touching([$theirs])[0];
+$settled = $offers->touching([$theirs], $now)[0];
 check('a settled offer keeps the seed and the two tokens',
       $settled['seed'] === $one['seed'] && $settled['to'] === $theirs && $settled['from'] === $mine);
 
@@ -134,11 +201,81 @@ $offers->answer($three['seed'], $theirs3, true, $now);
 check('two plants stand in the walk', count(shared($walk)) === 2);
 $stoodAt = null;
 foreach (shared($walk) as $p) if ($p['seed'] === $three['seed']) $stoodAt = $p['spot'];
+$db = $walk->connection();
+$threeArrival = arrivalOf($db, 'long_walk', $three['seed']);
+$threeOffer = offerNumber($db, $three['seed']);
+$before = arrival($db, 'long_walk', (int) $threeArrival);
 
 $taken = $offers->withdraw($three['seed'], $mine3, $now + 120);
 check('the gardener who shared it can take it back', $taken !== null && $taken['state'] === Offers::WITHDRAWN);
+check('and is told so about the plant it named', $taken !== null && $taken['seed'] === $three['seed']
+      && $taken['from'] === $mine3 && $taken['answeredAt'] === $now + 120);
 check('it is no longer drawn', count(shared($walk)) === 1);
 check('and the one beside it is untouched', shared($walk)[0]['seed'] === $one['seed']);
+
+// MARK: Taking it back deletes
+
+// The seed, both parents, the meeting and both tokens, searched for in every
+// column of every table. None of them may be anywhere.
+$three['mine'] = $mine3;
+$three['theirs'] = $theirs3;
+check('nothing of a withdrawn plant is left in the database' . found(stillHeld($db, $three)),
+      stillHeld($db, $three) === []);
+
+// What is left in the walk is its place and the two traits the rule reads.
+$after = arrival($db, 'long_walk', (int) $threeArrival);
+check('the walk keeps the row, hidden, under the same arrival', $after !== null && (int) $after['hidden'] === 1);
+check('its seed is a marker that is not a seed', $after !== null
+      && $after['seed'] === TakenBack::marker((int) $threeArrival) && !Seeds::isHex32($after['seed']));
+check('its parents and meeting are gone', $after !== null
+      && $after['parent_a'] === '' && $after['parent_b'] === '' && $after['encounter'] === '');
+check('and its nudge, which was a piece of its seed', $after !== null
+      && (float) $after['nudge_x'] === 0.0 && (float) $after['nudge_z'] === 0.0);
+check('it keeps its place and what the rule reads', $after !== null && $before !== null
+      && array_intersect_key($after, array_flip(['plot', 'side', 'tier', 'slot_index', 'height', 'family']))
+         == array_intersect_key($before, array_flip(['plot', 'side', 'tier', 'slot_index', 'height', 'family'])));
+
+// And what is left of the offer is fingerprints, the word and the times.
+$print = offerRow($db, (int) $threeOffer);
+check('the offer keeps a fingerprint of its seed, not the seed', $print !== null
+      && strlen($print['seed']) === 64 && $print['seed'][0] === 'h');
+check('and fingerprints of its tokens', $print !== null
+      && strlen($print['token_to']) === 32 && $print['token_to'][0] === 'h'
+      && strlen($print['token_from']) === 32 && $print['token_from'][0] === 'h');
+check('and no plant, and no area', $print !== null && $print['parent_a'] === null && $print['encounter'] === null
+      && $print['height'] === null && $print['kind'] === '' && $print['area'] === '');
+
+// **The other phone still hears.** It asks with its own token and is told the
+// offer was withdrawn, with that token and no seed — the service has none to
+// give — and finds its plant by the token.
+$heard = $offers->touching([$theirs3], $now + 180);
+check('the other phone still finds it by its token', count($heard) === 1);
+check('told in its own words: its token, no seed, withdrawn', ($heard[0] ?? null) === [
+    'seed' => '', 'to' => $theirs3, 'from' => '', 'state' => Offers::WITHDRAWN,
+    'offeredAt' => $now, 'answeredAt' => $now + 120,
+]);
+check('and a stranger still finds nothing', $offers->touching([token('somebody else')], $now + 180) === []);
+
+// **And it still cannot come back.** The seed, parents and meeting were public
+// while it stood; anybody who read them has everything an offer needs except
+// the tokens. The fingerprint is what refuses them.
+[$again3, $againNew] = $offers->offer($three['seed'], token('replant/a'), token('replant/b'),
+                                      $three['a'], $three['b'], $three['encounter'], 1.6, 1, $now + 200);
+check('a withdrawn plant offered again by strangers is refused', $again3 === null && $againNew === false);
+[$again3, $againNew] = $offers->offer($three['seed'], $theirs3, $mine3,
+                                      $three['a'], $three['b'], $three['encounter'], 1.6, 1, $now + 200);
+check('offered again by the two who met, it is still withdrawn', $again3 !== null && $againNew === false
+      && $again3['state'] === Offers::WITHDRAWN && $again3['seed'] === $three['seed']
+      && $again3['to'] === $theirs3 && $again3['from'] === $mine3);
+check('and that brought nothing back', stillHeld($db, $three) === [] && count(shared($walk)) === 1);
+$late = $offers->answer($three['seed'], $theirs3, true, $now + 240);
+check('a yes that arrives after the withdrawal plants nothing', $late !== null && $late['planting'] === null
+      && $late['offer']['state'] === Offers::WITHDRAWN && count(shared($walk)) === 1);
+check('the wrong token still cannot answer it', $offers->answer($three['seed'], token('wrong'), true, $now) === null);
+$twice = $offers->withdraw($three['seed'], $theirs3, $now + 300);
+check('withdrawing twice is the first withdrawal', $twice !== null && $twice['state'] === Offers::WITHDRAWN
+      && $twice['answeredAt'] === $now + 120 && $twice['to'] === $theirs3);
+check('and still leaves nothing behind', stillHeld($db, $three) === []);
 
 // The slot it had is not handed to the next arrival: the walk is append-only
 // and the rule still sees it, so a border keeps the gap.
@@ -171,6 +308,8 @@ $offers->withdraw($five['seed'], $mine5, $now + 60);
 check('taking it back empties the room again',
       count(array_filter($walk->room()->plot(0), fn ($p) => count($p['parents']) === 2)) === 0);
 check('and the ambassador is untouched', count($walk->room()->plot(0)) === 1);
+check('and nothing of it is left in the room or the asking',
+      stillHeld($walk->connection(), $five + ['mine' => $mine5, 'theirs' => $theirs5]) === []);
 
 // MARK: The sixth area, and the kind an offer has to carry
 
@@ -274,10 +413,18 @@ check('it is in the Cold Frame, in a frame of its own colour',
 check('beside the ambassador, which is still there', count($walk->coldFrame()->plot(0)) === 2);
 
 // And taking it back reaches the Cold Frame's table, not the walk's: the row
-// stays and keeps its place, and is not drawn.
+// stays and keeps its place, and is not drawn. It is found by its arrival
+// number afterwards, because its seed is no longer there to find it by.
+$nineArrival = arrivalOf($db, 'cold_frame', $nine['seed']);
 $offers->withdraw($nine['seed'], $mine9, $now + 60);
-$lifted = framedAs($walk, $nine['seed']);
+$lifted = arrival($db, 'cold_frame', (int) $nineArrival);
 check('taking it back hides it in the Cold Frame', $lifted !== null && (int) $lifted['hidden'] === 1);
+check('where it keeps its frame, its rank and its place', $lifted !== null && (int) $lifted['frame'] === 1
+      && (int) $lifted['slot_rank'] === 1 && (int) $lifted['slot_index'] === 0);
+check('and the family that claimed the frame, and its height', $lifted !== null
+      && (int) $lifted['family'] === 2 && (float) $lifted['height'] === 1.1);
+check('and nothing else of it', framedAs($walk, $nine['seed']) === null
+      && stillHeld($db, $nine + ['mine' => $mine9, 'theirs' => $theirs9]) === []);
 check('and the frame is back to its ambassador alone', count($walk->coldFrame()->plot(0)) === 1);
 
 // A published plant's seed, parents and meeting are public. Offering it again
@@ -294,6 +441,110 @@ $stranger = $offers->withdraw($one['seed'], token('nobody'), $now);
 check('a stranger cannot take back somebody else\'s plant', $stranger === null);
 check('an offer that does not exist cannot be withdrawn',
       $offers->withdraw(hash('sha256', 'never offered'), $mine, $now) === null);
+
+// MARK: An offer nobody answers lapses after thirty days
+
+// **Found when it is asked about.** One second short of thirty days it is still
+// waiting; at thirty days it is withdrawn, answered at the moment it lapsed,
+// and erased exactly as a withdrawal is.
+$ten = crossing(10);
+$mine10 = token('ten/mine');
+$theirs10 = token('ten/theirs');
+$offers->offer($ten['seed'], $theirs10, $mine10, $ten['a'], $ten['b'], $ten['encounter'], 1.2, 3, $now);
+$lapse = $now + Offers::LAPSES_AFTER;
+check('an offer is still waiting a second before thirty days',
+      ($offers->touching([$theirs10], $lapse - 1)[0]['state'] ?? null) === Offers::OFFERED);
+check('at thirty days it has lapsed into a withdrawal', ($offers->touching([$theirs10], $lapse)[0] ?? null) === [
+    'seed' => '', 'to' => $theirs10, 'from' => '', 'state' => Offers::WITHDRAWN,
+    'offeredAt' => $now, 'answeredAt' => $lapse,
+]);
+check('and nothing of it is left', stillHeld($db, $ten + ['mine' => $mine10, 'theirs' => $theirs10]) === []);
+check('the phone that offered it hears the same', ($offers->touching([$mine10], $lapse)[0]['from'] ?? null) === $mine10);
+[$reoffered, $reNew] = $offers->offer($ten['seed'], $theirs10, $mine10, $ten['a'], $ten['b'], $ten['encounter'],
+                                      1.2, 3, $lapse + 5);
+check('a lapsed offer cannot be made again', $reoffered !== null && $reNew === false
+      && $reoffered['state'] === Offers::WITHDRAWN);
+
+// **Found when it is answered.** A yes that arrives after thirty days finds the
+// offer gone and plants nothing.
+$eleven = crossing(11);
+$mine11 = token('eleven/mine');
+$theirs11 = token('eleven/theirs');
+$offers->offer($eleven['seed'], $theirs11, $mine11, $eleven['a'], $eleven['b'], $eleven['encounter'], 0.8, 0, $now);
+$held = count(shared($walk));
+$tooLate = $offers->answer($eleven['seed'], $theirs11, true, $lapse + 60);
+check('a yes after thirty days plants nothing', $tooLate !== null && $tooLate['planting'] === null
+      && $tooLate['offer']['state'] === Offers::WITHDRAWN && $tooLate['offer']['answeredAt'] === $lapse
+      && count(shared($walk)) === $held);
+check('and leaves nothing of it', stillHeld($db, $eleven + ['mine' => $mine11, 'theirs' => $theirs11]) === []);
+
+// **Swept, when nobody asks.** An offer whose phones never ask again still goes:
+// any other offer, or any phone asking about anything, sweeps it.
+$twelve = crossing(12);
+$mine12 = token('twelve/mine');
+$theirs12 = token('twelve/theirs');
+$offers->offer($twelve['seed'], $theirs12, $mine12, $twelve['a'], $twelve['b'], $twelve['encounter'], 0.8, 0, $now);
+$thirteen = crossing(13);
+$offers->offer($thirteen['seed'], token('thirteen/theirs'), token('thirteen/mine'),
+               $thirteen['a'], $thirteen['b'], $thirteen['encounter'], 0.8, 0, $lapse + 1);
+check('somebody else\'s offer sweeps an offer that has lapsed',
+      stillHeld($db, $twelve + ['mine' => $mine12, 'theirs' => $theirs12]) === []);
+check('and leaves a fresh one alone', offerNumber($db, $thirteen['seed']) !== null);
+$fourteen = crossing(14);
+$offers->offer($fourteen['seed'], token('fourteen/theirs'), token('fourteen/mine'),
+               $fourteen['a'], $fourteen['b'], $fourteen['encounter'], 0.8, 0, $now + 10);
+$offers->touching([token('anyone at all')], $now + 10 + Offers::LAPSES_AFTER);
+check('so does any phone asking about anything', offerNumber($db, $fourteen['seed']) === null);
+
+// MARK: What was withdrawn before today
+
+// **The migration.** Until 24 September a withdrawal hid the planting and kept
+// everything, so a database carried across the deploy holds withdrawn offers
+// with their seeds and tokens and hidden plantings with their seeds, parents and
+// meetings. Opening the store is what erases them, and opening it again changes
+// nothing further. Written here the way the old code wrote them.
+$legacyFile = sys_get_temp_dir() . '/peacegarden-offers-legacy-' . getmypid() . '.sqlite';
+@unlink($legacyFile);
+$legacy = WalkStore::open('sqlite:' . $legacyFile);
+$old = crossing(20);
+$oldMine = token('old/mine');
+$oldTheirs = token('old/theirs');
+$legacy->plant($old['seed'], $old['a'], $old['b'], $old['encounter'], 1.3, 4);
+$legacyDb = $legacy->connection();
+$legacyDb->prepare('UPDATE long_walk SET hidden = 1 WHERE seed = ?')->execute([$old['seed']]);
+$legacyDb->prepare("INSERT INTO walk_offers (seed, token_to, token_from, state, offered_at, answered_at, area)
+                    VALUES (?, ?, ?, 'withdrawn', ?, ?, 'travel')")
+         ->execute([$old['seed'], $oldTheirs, $oldMine, $now, $now + 50]);
+$oldArrival = arrivalOf($legacyDb, 'long_walk', $old['seed']);
+$heldBefore = arrival($legacyDb, 'long_walk', (int) $oldArrival);
+$old += ['mine' => $oldMine, 'theirs' => $oldTheirs];
+check('the legacy rows hold what the old code kept', count(stillHeld($legacyDb, $old)) >= 5);
+unset($legacy, $legacyDb);
+
+$reopened = WalkStore::open('sqlite:' . $legacyFile);
+$reDb = $reopened->connection();
+check('opening the store erases what a withdrawal before today kept' . found(stillHeld($reDb, $old)),
+      stillHeld($reDb, $old) === []);
+$migrated = arrival($reDb, 'long_walk', (int) $oldArrival);
+check('and leaves its place where it was', $migrated !== null && $heldBefore !== null
+      && $migrated['seed'] === TakenBack::marker((int) $oldArrival)
+      && $migrated['plot'] === $heldBefore['plot'] && $migrated['slot_index'] === $heldBefore['slot_index']
+      && $migrated['height'] === $heldBefore['height'] && $migrated['family'] === $heldBefore['family']);
+check('and both phones still hear that it was withdrawn',
+      ($reopened->offers()->touching([$oldTheirs], $now + 60)[0] ?? null) === [
+          'seed' => '', 'to' => $oldTheirs, 'from' => '', 'state' => Offers::WITHDRAWN,
+          'offeredAt' => $now, 'answeredAt' => $now + 50,
+      ]);
+$snapshot = static fn (PDO $db) => [
+    $db->query('SELECT * FROM long_walk ORDER BY arrival')->fetchAll(PDO::FETCH_ASSOC),
+    $db->query('SELECT * FROM walk_offers ORDER BY offer')->fetchAll(PDO::FETCH_ASSOC),
+];
+$once = $snapshot($reDb);
+unset($reopened, $reDb);
+$third = WalkStore::open('sqlite:' . $legacyFile);
+check('and running it again changes nothing', $snapshot($third->connection()) === $once);
+unset($third);
+@unlink($legacyFile);
 
 @unlink($file);
 

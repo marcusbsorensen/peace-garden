@@ -12,14 +12,24 @@ declare(strict_types=1);
  * Walk is append-only, so a planting is expensive to undo, and a bag of offers
  * that nobody can answer is a bag that grows for ever.
  *
- * **It keeps a counter, not an address.** What is stored is a salted SHA-256 of
- * the caller's address, truncated, with the window it belongs to — and the row
- * is deleted once the window has passed. The salt is random per install and
- * lives in the database, so the table cannot be read back into addresses by
- * anybody holding it, and two installs of this service produce different
- * buckets for the same caller. The site keeps no analytics and this is not the
- * beginning of some: nothing here is read except to answer *has this caller
- * written too much in the last hour*.
+ * **It keeps a scrambled address and a count, for an hour.** What is stored is
+ * an HMAC-SHA256 of the route and the caller's address, truncated, with the
+ * time its window started and how many writes it has seen. The key is a salt
+ * minted once per install, so two installs produce different buckets for the
+ * same caller — but it is kept in `rate_salt`, in this same database, and there
+ * are only four billion IPv4 addresses. So anybody holding the database can try
+ * every one and turn a bucket back into the address it came from. What
+ * protects an address is not the scrambling but the deleting: every request
+ * that touches this table first deletes every row whose window has ended
+ * (`sweep`), so a bucket is gone at the first limited request after its hour.
+ * `backup.php` leaves both tables out of every copy, so no backup holds one.
+ * The site keeps no analytics and this is not the beginning of some: nothing
+ * here is read except to answer *has this caller written too much in the last
+ * hour*.
+ *
+ * **What an hour depends on.** A row goes when the next limited request comes,
+ * not on a clock: this service has no scheduler of its own, so after the last
+ * request of a quiet spell its buckets wait for the next one.
  *
  * **What it cannot do.** An address is not a person and a caller with many
  * addresses is not slowed by this at all. It is proportionate cover against one
@@ -73,6 +83,7 @@ final class Limits
         [$allowed, $window] = self::ROUTES[$route] ?? [null, null];
         if ($allowed === null) return null;
 
+        $this->sweep($now);
         $bucket = substr(hash_hmac('sha256', $route . "\0" . $caller, $this->salt()), 0, 32);
 
         $this->db->beginTransaction();
@@ -95,7 +106,6 @@ final class Limits
                     $fresh->execute([$bucket, $now]);
                 }
                 $this->db->commit();
-                $this->sweep($now);
                 return null;
             }
 
@@ -158,17 +168,19 @@ final class Limits
     }
 
     /**
-     * Drops windows that have run out.
+     * Drops every window that has ended, on every request that touches the
+     * table.
      *
-     * One request in fifty, because this is housekeeping and not an answer
-     * anybody is waiting for. The longest window is an hour, so a row is never
-     * far past its use.
+     * Every time rather than one request in fifty, as it was until 24
+     * September: a draw let a bucket outlive its hour by as many requests as
+     * the dice took, and the privacy page says an hour. It is one DELETE
+     * through the index on `started_at`, which on a quiet table finds nothing.
+     * Measured against the longest window, which is also every window: an hour.
      */
     private function sweep(int $now): void
     {
-        if (random_int(1, 50) !== 1) return;
-        $oldest = $now - max(array_column(self::ROUTES, 1));
-        $drop = $this->db->prepare('DELETE FROM rate_limits WHERE started_at < ?');
-        $drop->execute([$oldest]);
+        $ended = $now - max(array_column(self::ROUTES, 1));
+        $drop = $this->db->prepare('DELETE FROM rate_limits WHERE started_at <= ?');
+        $drop->execute([$ended]);
     }
 }

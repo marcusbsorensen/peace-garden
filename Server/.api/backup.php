@@ -19,12 +19,22 @@ declare(strict_types=1);
  *   seedbed          the sixth area, and its own lock
  *   cold_frame       the seventh area, and its own lock
  *   walk_offers      consent in flight: who has asked whom, and what was said
+ *   offer_key        the key a withdrawn offer's fingerprints are made under,
+ *                    without which a restored table could no longer refuse a
+ *                    withdrawn plant offered again (`Offers.php`)
  *
  * **What is left out, on purpose.** `rate_limits` and `rate_salt` are this
  * hour's arithmetic about callers, not anything anybody made. Restoring them
  * would hand back allowance that had been spent and re-key every bucket to an
  * older salt; leaving them out lets the service build them fresh, which is what
- * it does on any empty database.
+ * it does on any empty database. It also means no copy ever holds a scrambled
+ * address.
+ *
+ * **A copy holds what the database held that night.** A plant taken back is
+ * erased from the live tables at once and is in no copy taken after that, but
+ * the copies already taken keep it until they go: the server keeps KEEP of
+ * them, one a day, and `tools/backup.sh` pulls each to the Mac, which keeps
+ * every one. Server/README.md says so where restoring is described.
  *
  * **Run it from cron, on the server.** `tools/backup.sh --install-cron` puts it
  * there; `tools/backup.sh` pulls what it has written down to the Mac, which is
@@ -50,7 +60,7 @@ const KEPT = ['long_walk', 'long_walk_lock', 'quiet_garden', 'quiet_garden_lock'
               'orchard', 'orchard_lock',
               'knot_garden', 'knot_garden_lock',
               'seedbed', 'seedbed_lock',
-              'cold_frame', 'cold_frame_lock', 'walk_offers'];
+              'cold_frame', 'cold_frame_lock', 'walk_offers', 'offer_key'];
 
 /** How many copies stay on the server. The Mac keeps every one it has pulled. */
 const KEEP = 30;

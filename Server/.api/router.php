@@ -32,6 +32,11 @@ declare(strict_types=1);
  * recipient minted at that meeting, and only that phone can answer it. There is
  * no account anywhere in it, and the service never learns a name.
  *
+ * **Taking back deletes, and an unanswered offer lapses after thirty days.**
+ * Either way the seed, the parents, the meeting and the traits leave the
+ * database, and a planting keeps only its place (`TakenBack.php`,
+ * `Offers.php`).
+ *
  * **`/plant` stays shut**, because it is the one route that plants without
  * anybody being asked. It answers 403 unless `open_for_planting` is set in
  * `.api/config.php`, which is for a local copy and for the reference check.
@@ -335,7 +340,7 @@ function route(string $method, string $path): never
         foreach ($tokens as $token) {
             if (!Seeds::isHex16($token)) respond(400, ['error' => 'Each token is 32 lowercase hex characters.']);
         }
-        respond(200, ['offers' => store($settings)->offers()->touching(array_values($tokens))]);
+        respond(200, ['offers' => store($settings)->offers()->touching(array_values($tokens), time())]);
     }
 
     if ($path === '/api/walk/answer' && $method === 'POST') {

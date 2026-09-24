@@ -11,6 +11,7 @@ require_once __DIR__ . '/KnotStore.php';
 require_once __DIR__ . '/SeedbedStore.php';
 require_once __DIR__ . '/ColdFrameStore.php';
 require_once __DIR__ . '/Offers.php';
+require_once __DIR__ . '/TakenBack.php';
 
 /**
  * The Long Walk, stored: every planting in the order it arrived, never changed.
@@ -25,19 +26,32 @@ require_once __DIR__ . '/Offers.php';
  * and its nudge. No account, no address, no time: the order of the rows is the
  * order of arrival, and nothing else about the arrival is written down.
  *
+ * **Until it is taken back.** Then the row keeps its place and the two traits
+ * the rule reads, and its seed, parents, meeting and nudge are written over
+ * (`TakenBack.php`). It stays, hidden, because the rule placed everything after
+ * it by it.
+ *
  * **The ambassador is not in it.** *Halula crassicaulis* stands at the head of
  * plot 0 and has done since before the walk had a row in it, but nobody offered
  * it and nobody can take it back, so it is not in the table of plants people
  * offered. `Ambassadors::planting('travel')` derives its slot from the pinned
  * seed, and this class puts it in front of the rule when placing and in front
  * of a plot when serving one. Nothing about it is stored, so there is no row
- * for `hide` to reach and none for a backup to carry.
+ * for `takeBack` to reach and none for a backup to carry.
  *
  * PDO, so it runs on SQLite locally and on the 20i database once there is one.
  * Every statement with a value in it is prepared; the fixed ones run as they are.
  */
 final class WalkStore
 {
+    /**
+     * What a planting taken back has written over, beyond what every area
+     * writes over. Nothing: the walk's rule reads the height (a border is
+     * graded by it) and the family (a drift is made of it), and it reads them
+     * of every plant in a plot, so both stay.
+     */
+    private const TAKEN_BACK = [];
+
     private function __construct(private PDO $db) {}
 
     public static function open(string $dsn, ?string $user = null, ?string $password = null): self
@@ -59,6 +73,13 @@ final class WalkStore
         $store->knot();
         $store->seedbed();
         $store->coldFrame();
+        // And the asking's, for the same reason and one more: `offer_key` is
+        // in the nightly copy's list, and mysqldump refuses a list naming a
+        // table that is not there. Its migration is also the one that erases
+        // what an offer withdrawn before 24 September still held, and this is
+        // what makes that happen on the first request after a deploy, whatever
+        // that request is for.
+        $store->offers();
         return $store;
     }
 
@@ -99,6 +120,12 @@ final class WalkStore
         } catch (Throwable) {
             // Already there.
         }
+        // Added on 24 September, when taking back began to delete: the rows
+        // hidden before then still hold the seed, the parents and the meeting,
+        // and this erases them. It runs every request and finds nothing once
+        // it has run once; the index is what keeps that finding cheap.
+        $this->run('CREATE INDEX IF NOT EXISTS long_walk_hidden ON long_walk (hidden)');
+        TakenBack::sweep($this->db, 'long_walk', self::TAKEN_BACK);
         // One row, written first in every arrival's transaction: the write lock
         // that keeps two arrivals from being placed against the same walk.
         $this->run('CREATE TABLE IF NOT EXISTS long_walk_lock (id INTEGER PRIMARY KEY, arrivals INTEGER NOT NULL)');
@@ -190,17 +217,18 @@ final class WalkStore
     }
 
     /**
-     * Takes a planting out of the drawing without taking it out of the walk.
+     * Takes a planting back: out of the drawing, and its seed, parents, meeting
+     * and nudge out of the database.
      *
-     * The row stays and keeps its slot, so nothing already placed moves and
-     * nothing new is placed where it stood. `plant` still reads it, which is
-     * the point: the rule saw it when it placed everything around it, and a
-     * rule that stopped seeing it would be a different rule.
+     * The row stays and keeps its slot, its height and its family, so nothing
+     * already placed moves and nothing new is placed where it stood. `plant`
+     * still reads it, which is the point: the rule saw it when it placed
+     * everything around it, and a rule that stopped seeing it would be a
+     * different rule. `TakenBack.php` says what is kept and why.
      */
-    public function hide(string $seed): void
+    public function takeBack(string $seed): void
     {
-        $update = $this->db->prepare('UPDATE long_walk SET hidden = 1 WHERE seed = ?');
-        $update->execute([$seed]);
+        TakenBack::lift($this->db, 'long_walk', self::TAKEN_BACK, $seed);
     }
 
     /** The asking that decides what ever reaches the walk. */
@@ -294,16 +322,16 @@ final class WalkStore
         };
     }
 
-    /** Takes a planting out of the drawing, in whichever area holds it. */
-    public function hideIn(string $area, string $seed): void
+    /** Takes a planting back, in whichever area holds it. */
+    public function takeBackIn(string $area, string $seed): void
     {
-        if ($area === 'peace') { $this->room()->hide($seed); return; }
-        if ($area === 'meeting') { $this->cross()->hide($seed); return; }
-        if ($area === 'kinship') { $this->orchard()->hide($seed); return; }
-        if ($area === 'pattern') { $this->knot()->hide($seed); return; }
-        if ($area === 'beginnings') { $this->seedbed()->hide($seed); return; }
-        if ($area === 'waiting') { $this->coldFrame()->hide($seed); return; }
-        $this->hide($seed);
+        if ($area === 'peace') { $this->room()->takeBack($seed); return; }
+        if ($area === 'meeting') { $this->cross()->takeBack($seed); return; }
+        if ($area === 'kinship') { $this->orchard()->takeBack($seed); return; }
+        if ($area === 'pattern') { $this->knot()->takeBack($seed); return; }
+        if ($area === 'beginnings') { $this->seedbed()->takeBack($seed); return; }
+        if ($area === 'waiting') { $this->coldFrame()->takeBack($seed); return; }
+        $this->takeBack($seed);
     }
 
     /**

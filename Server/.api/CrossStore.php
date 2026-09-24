@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/Ambassadors.php';
+require_once __DIR__ . '/TakenBack.php';
 require_once __DIR__ . '/Crossing.php';
 
 /**
@@ -16,11 +17,21 @@ require_once __DIR__ . '/Crossing.php';
  * could only suggest.
  *
  * Everything else is `WalkStore`'s, deliberately: the same append-only insert,
- * the same lock row, the same hiding rather than deleting, and the same
- * ambassador handed to the rule ahead of the stored arrivals.
+ * the same lock row, the same taking back that keeps a place and erases the
+ * plant, and the same ambassador handed to the rule ahead of the stored
+ * arrivals.
  */
 final class CrossStore
 {
+    /**
+     * What a planting taken back has written over, beyond the seed, the parents,
+     * the meeting and the nudge that every area writes over (`TakenBack.php`).
+     * The family, which the Crossing's rule never reads: it ranks a quarter by
+     * height alone and fills the emptiest one. The height stays, because a
+     * quarter is graded outward by it.
+     */
+    private const TAKEN_BACK = ['family' => 0];
+
     public function __construct(private PDO $db)
     {
         $this->migrate();
@@ -53,6 +64,11 @@ final class CrossStore
         $this->run('CREATE INDEX IF NOT EXISTS crossing_plot ON crossing (plot)');
         $this->run('CREATE TABLE IF NOT EXISTS crossing_lock (id INTEGER PRIMARY KEY, arrivals INTEGER NOT NULL)');
         $this->run('INSERT INTO crossing_lock (id, arrivals) SELECT 1, 0 WHERE NOT EXISTS (SELECT 1 FROM crossing_lock)');
+        // Added on 24 September, when taking back began to delete: a row hidden
+        // before then still holds the seed, the parents and the meeting, and
+        // this erases it. Every request, and nothing to do once it has run.
+        $this->run('CREATE INDEX IF NOT EXISTS crossing_hidden ON crossing (hidden)');
+        TakenBack::sweep($this->db, 'crossing', self::TAKEN_BACK);
     }
 
     /**
@@ -130,11 +146,13 @@ final class CrossStore
         return $plantings;
     }
 
-    /** Takes a planting out of the drawing without taking it out of the area. */
-    public function hide(string $seed): void
+    /**
+     * Takes a planting back: out of the drawing, and out of the database but for
+     * its place and what the rule reads. The area keeps the gap.
+     */
+    public function takeBack(string $seed): void
     {
-        $update = $this->db->prepare('UPDATE crossing SET hidden = 1 WHERE seed = ?');
-        $update->execute([$seed]);
+        TakenBack::lift($this->db, 'crossing', self::TAKEN_BACK, $seed);
     }
 
     /**

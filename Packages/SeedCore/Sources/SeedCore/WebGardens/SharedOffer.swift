@@ -13,6 +13,14 @@ import Foundation
 /// never told which plants the phone holds, nor learns that two offers concern
 /// the same pair of gardeners.
 ///
+/// **A withdrawn offer comes back from `pending` with an empty seed**, and with
+/// only the token the phone asked with — the other is empty too. Since 24
+/// September the service erases an offer that is taken back, keeping keyed
+/// fingerprints of the seed and tokens rather than the values, so it has
+/// nothing else to say. The phone finds the plant by its own token
+/// (`GardenModel.plant(for:in:)`). All three stay strings, never null, so an
+/// older phone still reads the rest of the answer.
+///
 /// `state` is the service's word, kept as a string rather than an enum. The two
 /// sides deploy separately, and a service that learns a new word should not stop
 /// an older phone reading the rest of the row.

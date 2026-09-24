@@ -144,3 +144,8 @@ if ($failed !== []) {
 printf("The PHP sows all %d arrivals where the Swift does, across %d plots, "
      . "%d drills claimed and %d of them full: %d checks.\n",
     count($vectors), $plots, $claimed, $full, $checks);
+
+// **Taking back keeps the place and erases the plant**, and moves nothing that
+// arrives after it. `taking_back.php` says how that is checked.
+require_once __DIR__ . '/taking_back.php';
+takingBack('beginnings', $vectors);

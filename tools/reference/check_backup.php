@@ -123,6 +123,10 @@ if ($copy !== '') {
 }
 check('the copy says how many arrivals it holds', ($counts['long_walk'] ?? -1) === 4);
 check('the copy says how many offers it holds', ($counts['walk_offers'] ?? -1) === 1);
+// The key a withdrawn offer's fingerprints are made under. Without it a
+// restored `walk_offers` could no longer recognise a withdrawn plant offered
+// again, so it travels with the offers.
+check('the copy carries the offers\' key', ($counts['offer_key'] ?? -1) === 1);
 check('the copy counts the arrival lock', ($counts['long_walk_lock'] ?? -1) === 1);
 check('the copy holds the Quiet Garden', ($counts['quiet_garden'] ?? -1) === 1);
 check('the copy holds the Crossing', ($counts['crossing'] ?? -1) === 1);

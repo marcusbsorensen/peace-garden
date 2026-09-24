@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/Ambassadors.php';
+require_once __DIR__ . '/TakenBack.php';
 require_once __DIR__ . '/ColdFrame.php';
 
 /**
@@ -37,11 +38,22 @@ require_once __DIR__ . '/ColdFrame.php';
  * which is what is stored, as every area stores it.
  *
  * Everything else is `WalkStore`'s, deliberately: the same append-only insert,
- * the same lock row, the same hiding rather than deleting, and the same
- * ambassador handed to the rule ahead of the stored arrivals.
+ * the same lock row, the same taking back that keeps a place and erases the
+ * plant, and the same ambassador handed to the rule ahead of the stored
+ * arrivals.
  */
 final class ColdFrameStore
 {
+    /**
+     * What a planting taken back has written over, beyond the seed, the parents,
+     * the meeting and the nudge that every area writes over (`TakenBack.php`).
+     * Nothing: the frame's rule reads the family of the first plant in each
+     * frame, which is the frame's claim, and the height of every plant in it,
+     * which orders its two ranks. Both stay, with the rank, which is a column
+     * here because the slot alone does not say it.
+     */
+    private const TAKEN_BACK = [];
+
     public function __construct(private PDO $db)
     {
         $this->migrate();
@@ -75,6 +87,11 @@ final class ColdFrameStore
         $this->run('CREATE INDEX IF NOT EXISTS cold_frame_plot ON cold_frame (plot)');
         $this->run('CREATE TABLE IF NOT EXISTS cold_frame_lock (id INTEGER PRIMARY KEY, arrivals INTEGER NOT NULL)');
         $this->run('INSERT INTO cold_frame_lock (id, arrivals) SELECT 1, 0 WHERE NOT EXISTS (SELECT 1 FROM cold_frame_lock)');
+        // Added on 24 September, when taking back began to delete: a row hidden
+        // before then still holds the seed, the parents and the meeting, and
+        // this erases it. Every request, and nothing to do once it has run.
+        $this->run('CREATE INDEX IF NOT EXISTS cold_frame_hidden ON cold_frame (hidden)');
+        TakenBack::sweep($this->db, 'cold_frame', self::TAKEN_BACK);
     }
 
     /**
@@ -156,11 +173,13 @@ final class ColdFrameStore
         return $plantings;
     }
 
-    /** Takes a planting out of the drawing without taking it out of the area. */
-    public function hide(string $seed): void
+    /**
+     * Takes a planting back: out of the drawing, and out of the database but for
+     * its place and what the rule reads. The area keeps the gap.
+     */
+    public function takeBack(string $seed): void
     {
-        $update = $this->db->prepare('UPDATE cold_frame SET hidden = 1 WHERE seed = ?');
-        $update->execute([$seed]);
+        TakenBack::lift($this->db, 'cold_frame', self::TAKEN_BACK, $seed);
     }
 
     /**

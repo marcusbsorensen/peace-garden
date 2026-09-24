@@ -31,6 +31,38 @@ require_once __DIR__ . '/WalkStore.php';
  * **One offer per plant**, which is what makes a decline final: there is one
  * invitation, and declining it is the block (WEBSITE.md, *Deliberately not
  * settings*).
+ *
+ * **Taking back deletes** (24 September). A withdrawn offer keeps no seed, no
+ * parents, no meeting, no traits and no area, and its planting, if it had one,
+ * keeps only its place (`TakenBack.php`). What the row does keep is a keyed
+ * fingerprint of the seed and of each token, the word `withdrawn` and the two
+ * times, because two things still need it:
+ *
+ *   - **Refusing a re-offer.** While a plant stood in the garden its seed, its
+ *     parents and its meeting were public at `/api/<area>/plot/<n>`, and those
+ *     three are everything `checkedPlant` asks of an offer. A service that
+ *     forgot the plant entirely would let anybody who had read them offer it
+ *     again, addressed to a token of their own, answer yes, and plant it back.
+ *     The seed's fingerprint is what `offer` finds instead.
+ *   - **Answering the two phones.** The phone that did not withdraw learns it
+ *     from `pending`, asked with its own token, and either phone may still
+ *     answer or withdraw what it believes is waiting. The token fingerprints
+ *     are what those requests are matched against, and the answer carries back
+ *     only what the asking phone sent: its own token, and the seed when it
+ *     named one (`pending` names none, so a withdrawn row comes back from it
+ *     with an empty seed and the phone finds its plant by token).
+ *
+ * A fingerprint is HMAC-SHA256 under a key minted once per install and kept in
+ * `offer_key`, beside this table and in the same backups — a restore that lost
+ * the key would lose every refusal with it. So it hides nothing from somebody
+ * holding the whole database; what it does is keep the seed and the tokens out
+ * of it. A seed is 32 random bytes and a token 16, so a fingerprint can confirm
+ * one somebody already holds and cannot give one back.
+ *
+ * **An offer nobody answers lapses after thirty days**, and is then exactly a
+ * withdrawn one: same word, same erasure, answered at the moment it lapsed.
+ * Checked when the offer is next looked up, and swept on every `offer` and
+ * `pending` request, so an offer waiting on a phone that never asks still goes.
  */
 final class Offers
 {
@@ -38,6 +70,16 @@ final class Offers
     public const ACCEPTED = 'accepted';
     public const DECLINED = 'declined';
     public const WITHDRAWN = 'withdrawn';
+
+    /// How long an offer waits for its answer: thirty days, in seconds.
+    public const LAPSES_AFTER = 30 * 86400;
+
+    /// What starts a fingerprint in the seed and token columns. Seeds and
+    /// tokens are lowercase hex, which has no `h`, so a fingerprint is never
+    /// taken for either and every route refuses one offered as either.
+    private const PRINT = 'h';
+
+    private ?string $key = null;
 
     public function __construct(private PDO $db, private WalkStore $walk)
     {
@@ -58,7 +100,8 @@ final class Offers
         // need to be here twice, and a declined one should not be anywhere.
         // What stays is the seed, the two tokens and the answer, so both phones
         // can learn what happened without the service keeping the refusal's
-        // subject matter.
+        // subject matter — and once it is withdrawn, not even the seed and the
+        // tokens, only their fingerprints (`erase`).
         $this->run("CREATE TABLE IF NOT EXISTS walk_offers (
             offer $id,
             seed CHAR(64) NOT NULL UNIQUE,
@@ -81,7 +124,8 @@ final class Offers
         // default says, and an offer answered after it is planted where its own
         // area's rule says. The column stays after the answer, unlike the
         // plant's own fields: it is where to look for the planting, not
-        // anything about the plant.
+        // anything about the plant. It goes when the offer is withdrawn, when
+        // there is no longer a planting to look for.
         try {
             $this->run("ALTER TABLE walk_offers ADD COLUMN area VARCHAR(16) NOT NULL DEFAULT 'travel'");
         } catch (Throwable) {
@@ -103,6 +147,23 @@ final class Offers
         } catch (Throwable) {
             // Already there.
         }
+        // Added on 24 September, with taking back that deletes. The key the
+        // fingerprints are made under, one row, minted on first use; and the
+        // index the thirty-day sweep reads, so a sweep that finds nothing costs
+        // a lookup rather than a pass over every offer ever made.
+        $this->run('CREATE TABLE IF NOT EXISTS offer_key (id INTEGER PRIMARY KEY, hmac_key CHAR(64) NOT NULL)');
+        $this->run('CREATE INDEX IF NOT EXISTS walk_offers_waiting ON walk_offers (state, offered_at)');
+        // **The migration.** An offer withdrawn before today still holds its
+        // seed and both tokens in the clear, and this puts them through the
+        // same erasure a withdrawal does now. It runs on every request and
+        // finds nothing once it has run: an erased row's seed starts with the
+        // fingerprint's letter. It leaves the times and the word alone, so
+        // both phones hear the same thing about the offer as before.
+        $plain = $this->db->prepare('SELECT * FROM walk_offers WHERE state = ? AND seed NOT LIKE ?');
+        $plain->execute([self::WITHDRAWN, self::PRINT . '%']);
+        foreach ($plain->fetchAll() as $row) {
+            $this->erase($row, (int) ($row['answered_at'] ?? $row['offered_at']));
+        }
     }
 
     /**
@@ -110,7 +171,8 @@ final class Offers
      *
      * Returns [the offer as the phone should see it, whether it is new]. A
      * second offer of the same plant is not a second invitation: the phone is
-     * handed the one that already exists, whatever state it is in.
+     * handed the one that already exists, whatever state it is in — a
+     * withdrawn or lapsed one included, which is what keeps it withdrawn.
      *
      * `$kind` is the plant's epithet, kept for the same reason its height and
      * its colour family are: the plant is planted when the *other* gardener
@@ -122,7 +184,9 @@ final class Offers
                           string $encounter, float $height, int $family, int $now,
                           string $area = 'travel', string $kind = ''): array
     {
-        if ($existing = $this->find($seed)) {
+        $this->lapse($now);
+        $sent = $this->sent($seed, [$to, $from]);
+        if ($existing = $this->find($seed, $now)) {
             // **Only to the two who met.** A second offer of one plant is
             // answered with the first — which is how a retry, or the other
             // phone offering the same child, learns where it stands — but the
@@ -131,8 +195,8 @@ final class Offers
             // until 24 September anybody could offer a published plant with two
             // invented tokens, be handed the real pair, and take it down. The
             // pair asked with has to be the pair stored, in either order.
-            if (!self::samePair($existing, $to, $from)) return [null, false];
-            return [self::seen($existing), false];
+            if (!$this->samePair($existing, $to, $from)) return [null, false];
+            return [$this->seen($existing, $sent), false];
         }
         $insert = $this->db->prepare('INSERT INTO walk_offers
             (seed, token_to, token_from, parent_a, parent_b, encounter, height, family, state, offered_at, area, kind)
@@ -144,12 +208,12 @@ final class Offers
             // Two offers of one plant, racing. The unique seed settles it and
             // the loser is handed the winner, which is the same answer it would
             // have had a moment earlier.
-            if ($row = $this->find($seed)) {
-                return self::samePair($row, $to, $from) ? [self::seen($row), false] : [null, false];
+            if ($row = $this->find($seed, $now)) {
+                return $this->samePair($row, $to, $from) ? [$this->seen($row, $sent), false] : [null, false];
             }
             throw $clash;
         }
-        return [self::seen($this->find($seed) ?? []), true];
+        return [$this->seen($this->find($seed, $now) ?? [], $sent), true];
     }
 
     /**
@@ -160,16 +224,24 @@ final class Offers
      * and asks about all of them at once — and because the switch that turns
      * this off (`sharing.invitations.v1`) has to turn off *the request*, not a
      * banner. Off means the service is never told this phone exists.
+     *
+     * A withdrawn offer is found by its tokens' fingerprints and comes back
+     * with the tokens this phone asked with and an empty seed: the service no
+     * longer has the seed to give, and the phone knows its own plant by the
+     * token it minted for that meeting.
      */
-    public function touching(array $tokens): array
+    public function touching(array $tokens, int $now): array
     {
         if ($tokens === []) return [];
-        $marks = implode(',', array_fill(0, count($tokens), '?'));
+        $this->lapse($now);
+        $sent = $this->sent(null, $tokens);
+        $asked = [...$tokens, ...array_keys($sent)];
+        $marks = implode(',', array_fill(0, count($asked), '?'));
         $query = $this->db->prepare(
             "SELECT * FROM walk_offers WHERE token_to IN ($marks) OR token_from IN ($marks) ORDER BY offer"
         );
-        $query->execute([...$tokens, ...$tokens]);
-        return array_map([self::class, 'seen'], $query->fetchAll());
+        $query->execute([...$asked, ...$asked]);
+        return array_map(fn (array $row) => $this->seen($row, $sent), $query->fetchAll());
     }
 
     /**
@@ -182,13 +254,14 @@ final class Offers
      */
     public function answer(string $seed, string $to, bool $yes, int $now): ?array
     {
-        $row = $this->find($seed);
-        if ($row === null || !hash_equals((string) $row['token_to'], $to)) return null;
-        if ($row['state'] !== self::OFFERED) return ['offer' => self::seen($row), 'planting' => null];
+        $sent = $this->sent($seed, [$to]);
+        $row = $this->find($seed, $now);
+        if ($row === null || !$this->holds($row, 'token_to', $to)) return null;
+        if ($row['state'] !== self::OFFERED) return ['offer' => $this->seen($row, $sent), 'planting' => null];
 
         if (!$yes) {
             $this->settle($seed, self::DECLINED, $now);
-            return ['offer' => self::seen($this->find($seed) ?? []), 'planting' => null];
+            return ['offer' => $this->seen($this->find($seed, $now) ?? [], $sent), 'planting' => null];
         }
 
         [$planting] = $this->walk->plantInto(
@@ -197,42 +270,58 @@ final class Offers
             (float) $row['height'], (int) $row['family'], (string) ($row['kind'] ?? '')
         );
         $this->settle($seed, self::ACCEPTED, $now);
-        return ['offer' => self::seen($this->find($seed) ?? []), 'planting' => $planting];
+        return ['offer' => $this->seen($this->find($seed, $now) ?? [], $sent), 'planting' => $planting];
     }
 
     /**
      * Taken back by whichever gardener holds one of its tokens.
      *
      * **Either of them, at any time, without the other.** An offer still
-     * waiting simply goes. One already accepted leaves its planting in the walk
-     * — the walk is append-only and nothing in it ever moves — but the planting
-     * is hidden, so the slot stays empty, which is what a plant lifted out of a
-     * border leaves behind. A consent that cannot be withdrawn is not worth
-     * much, and this is the whole of what withdrawing means here.
+     * waiting goes. One already accepted is taken back out of its area: the
+     * area is append-only and nothing in it ever moves, so the planting keeps
+     * its place, hidden, as the gap a plant lifted out of a border leaves — and
+     * everything else about it is erased, there and here. A consent that
+     * cannot be withdrawn is not worth much, and nor is one whose withdrawal
+     * leaves the thing consented to on the server.
+     *
+     * Withdrawing twice is the first withdrawal, returned again.
      */
     public function withdraw(string $seed, string $token, int $now): ?array
     {
-        $row = $this->find($seed);
+        $sent = $this->sent($seed, [$token]);
+        $row = $this->find($seed, $now);
         if ($row === null) return null;
-        if (!hash_equals((string) $row['token_to'], $token)
-            && !hash_equals((string) $row['token_from'], $token)) return null;
+        if (!$this->holds($row, 'token_to', $token) && !$this->holds($row, 'token_from', $token)) return null;
+        if ($row['state'] === self::WITHDRAWN) return $this->seen($row, $sent);
 
         if ($row['state'] === self::ACCEPTED) {
-            $this->walk->hideIn((string) ($row['area'] ?? 'travel'), $seed);
+            $this->walk->takeBackIn((string) ($row['area'] ?? 'travel'), $seed);
         }
-        $this->settle($seed, self::WITHDRAWN, $now);
-        return self::seen($this->find($seed) ?? []);
+        $this->erase($row, $now);
+        return $this->seen($this->find($seed, $now) ?? [], $sent);
     }
 
-    private function find(string $seed): ?array
+    /**
+     * The offer for this seed, in the clear or erased. An offer found still
+     * waiting past its thirty days lapses here, before anybody is told about
+     * it, so no route can answer or be answered with an offer that has gone.
+     */
+    private function find(string $seed, int $now): ?array
     {
-        $query = $this->db->prepare('SELECT * FROM walk_offers WHERE seed = ?');
-        $query->execute([$seed]);
+        $query = $this->db->prepare('SELECT * FROM walk_offers WHERE seed IN (?, ?)');
+        $query->execute([$seed, $this->seedPrint($seed)]);
         $row = $query->fetch();
-        return $row === false ? null : $row;
+        if ($row === false) return null;
+        if ($row['state'] === self::OFFERED && (int) $row['offered_at'] + self::LAPSES_AFTER <= $now) {
+            $this->erase($row, (int) $row['offered_at'] + self::LAPSES_AFTER);
+            $query->execute([$seed, $this->seedPrint($seed)]);
+            $row = $query->fetch();
+            return $row === false ? null : $row;
+        }
+        return $row;
     }
 
-    /** Settles an offer and drops the plant it carried. */
+    /** Settles an offer as accepted or declined, and drops the plant it carried. */
     private function settle(string $seed, string $state, int $now): void
     {
         // `kind` goes back to the empty string rather than to NULL, because the
@@ -245,6 +334,110 @@ final class Offers
     }
 
     /**
+     * Withdraws an offer and erases it: the seed and both tokens become their
+     * fingerprints, and the plant's fields and its area go. `$row` is the row
+     * as it stands, in the clear; `$at` is when it was withdrawn, or when it
+     * lapsed.
+     */
+    private function erase(array $row, int $at): void
+    {
+        $update = $this->db->prepare("UPDATE walk_offers SET state = ?, answered_at = ?,
+            seed = ?, token_to = ?, token_from = ?,
+            parent_a = NULL, parent_b = NULL, encounter = NULL, height = NULL, family = NULL,
+            kind = '', area = ''
+            WHERE offer = ?");
+        $update->execute([self::WITHDRAWN, $at,
+                          $this->seedPrint((string) $row['seed']),
+                          $this->tokenPrint((string) $row['token_to']),
+                          $this->tokenPrint((string) $row['token_from']),
+                          $row['offer']]);
+    }
+
+    /**
+     * Every offer that has waited thirty days, lapsed. Read through the index
+     * on (state, offered_at), so on a day when nothing lapses it is one lookup
+     * that finds nothing.
+     */
+    private function lapse(int $now): void
+    {
+        $due = $this->db->prepare('SELECT * FROM walk_offers WHERE state = ? AND offered_at <= ?');
+        $due->execute([self::OFFERED, $now - self::LAPSES_AFTER]);
+        foreach ($due->fetchAll() as $row) {
+            $this->erase($row, (int) $row['offered_at'] + self::LAPSES_AFTER);
+        }
+    }
+
+    // MARK: - Fingerprints
+
+    private function seedPrint(string $seed): string
+    {
+        return self::PRINT . substr(hash_hmac('sha256', "seed\0" . $seed, $this->key()), 0, 63);
+    }
+
+    private function tokenPrint(string $token): string
+    {
+        return self::PRINT . substr(hash_hmac('sha256', "token\0" . $token, $this->key()), 0, 31);
+    }
+
+    private static function isPrint(string $value): bool
+    {
+        return str_starts_with($value, self::PRINT);
+    }
+
+    /**
+     * What the asking phone sent, keyed so an erased row can be read back in
+     * its terms: each token's fingerprint gives the token, and `seed` gives the
+     * seed if the request named one.
+     */
+    private function sent(?string $seed, array $tokens): array
+    {
+        $sent = [];
+        foreach ($tokens as $token) $sent[$this->tokenPrint((string) $token)] = (string) $token;
+        if ($seed !== null) $sent['seed'] = $seed;
+        return $sent;
+    }
+
+    /** Whether `$token` is the one in this column, in the clear or erased. */
+    private function holds(array $row, string $column, string $token): bool
+    {
+        $stored = (string) $row[$column];
+        return hash_equals($stored, self::isPrint($stored) ? $this->tokenPrint($token) : $token);
+    }
+
+    /**
+     * The key, minted once and kept in the database, as the rate limit's salt
+     * is and for the same reasons — except that this one is in the backups,
+     * because a restored table of fingerprints is no use without it.
+     */
+    private function key(): string
+    {
+        if ($this->key !== null) return $this->key;
+        $query = $this->db->prepare('SELECT hmac_key FROM offer_key WHERE id = 1');
+        $query->execute();
+        if ($key = $query->fetchColumn()) return $this->key = (string) $key;
+
+        try {
+            $insert = $this->db->prepare('INSERT INTO offer_key (id, hmac_key) VALUES (1, ?)');
+            $insert->execute([bin2hex(random_bytes(32))]);
+        } catch (PDOException) {
+            // Another request minted it a moment ago; the read below returns it.
+        }
+        $query->execute();
+        return $this->key = (string) $query->fetchColumn();
+    }
+
+    // MARK: - What a phone is told
+
+    /// Whether `$to` and `$from` are this offer's two tokens, in either order:
+    /// the phone that offered sends them one way round, and the other phone,
+    /// offering the same child, sends them the other.
+    private function samePair(array $row, string $to, string $from): bool
+    {
+        return ($this->holds($row, 'token_to', $to) && $this->holds($row, 'token_from', $from))
+            || ($this->holds($row, 'token_to', $from) && $this->holds($row, 'token_from', $to));
+    }
+
+    /**
      * What a phone is told about an offer.
      *
      * The tokens go back so a phone can tell which of its plants an offer is
@@ -252,23 +445,21 @@ final class Offers
      * with a bag of tokens and gets answers keyed the same way. The plant's
      * parents and traits never go back: the phone that made the offer has them
      * already, and the phone being asked grew the plant itself.
+     *
+     * **An erased offer is told in the asker's own words.** Its seed and tokens
+     * are fingerprints, which mean nothing to a phone, so each is replaced by
+     * what the request sent that matches it, and by the empty string where the
+     * request sent nothing that does. Never null: the phone reads all three as
+     * strings, and a null in one row would lose it the whole answer.
      */
-    /// Whether `$to` and `$from` are this offer's two tokens, in either order:
-    /// the phone that offered sends them one way round, and the other phone,
-    /// offering the same child, sends them the other.
-    private static function samePair(array $row, string $to, string $from): bool
+    private function seen(array $row, array $sent = []): array
     {
-        $stored = [(string) $row['token_to'], (string) $row['token_from']];
-        return (hash_equals($stored[0], $to) && hash_equals($stored[1], $from))
-            || (hash_equals($stored[0], $from) && hash_equals($stored[1], $to));
-    }
-
-    private static function seen(array $row): array
-    {
+        $said = fn (?string $value) => $value !== null && self::isPrint($value) ? ($sent[$value] ?? '') : $value;
+        $seed = $row['seed'] ?? null;
         return [
-            'seed' => $row['seed'] ?? null,
-            'to' => $row['token_to'] ?? null,
-            'from' => $row['token_from'] ?? null,
+            'seed' => $seed !== null && self::isPrint((string) $seed) ? ($sent['seed'] ?? '') : $seed,
+            'to' => $said(isset($row['token_to']) ? (string) $row['token_to'] : null),
+            'from' => $said(isset($row['token_from']) ? (string) $row['token_from'] : null),
             'state' => $row['state'] ?? null,
             'offeredAt' => isset($row['offered_at']) ? (int) $row['offered_at'] : null,
             'answeredAt' => isset($row['answered_at']) ? (int) $row['answered_at'] : null,

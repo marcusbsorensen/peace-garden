@@ -16,6 +16,9 @@ declare(strict_types=1);
  * The last is the one worth a test of its own. A limit that counted for ever
  * would lock somebody out of their own garden by the second week, and nothing
  * about using the app would reveal it until then.
+ *
+ * And a fifth, which is about what is kept rather than what is allowed: a
+ * scrambled address is gone at the first request after its hour, every time.
  */
 
 require_once __DIR__ . '/../../Server/.api/Limits.php';
@@ -78,7 +81,7 @@ check('a route with no limit passes', $limits->wait('/api/walk', '198.51.100.7',
 // MARK: What is kept
 
 $rows = $db->query('SELECT bucket FROM rate_limits')->fetchAll();
-check('the buckets say nothing about who', count($rows) > 0 && !array_filter(
+check('a bucket is not the address written down', count($rows) > 0 && !array_filter(
     $rows, fn ($row) => str_contains($row['bucket'], '198.51.100')
 ));
 check('a bucket is a fixed-width digest', count(array_filter(
@@ -96,6 +99,35 @@ $here = $db->query('SELECT bucket FROM rate_limits ORDER BY bucket')->fetchAll(P
 $there = $otherDb->query('SELECT bucket FROM rate_limits ORDER BY bucket')->fetchAll(PDO::FETCH_COLUMN);
 check('the same caller buckets differently on another install',
       array_intersect($here, $there) === []);
+
+// MARK: Gone within the hour, every time
+
+// **Not on a draw.** Until 24 September a window that had ended was dropped on
+// one request in fifty, so a bucket outlived its hour by however long the dice
+// took. Now every request that touches the table drops every window that has
+// ended — asked here fifty times in a row, by a caller and a route that have
+// nothing to do with the rows being dropped, so a draw would have to be lucky
+// fifty times to pass.
+$bucketsAt = fn (PDO $db) => $db->query('SELECT bucket, started_at FROM rate_limits ORDER BY started_at')
+                                ->fetchAll(PDO::FETCH_KEY_PAIR);
+$clock = $now + 10 * $window;
+$gone = true;
+for ($i = 0; $i < 50; $i++) {
+    $limits->wait($offer, "203.0.113.$i", $clock);          // a window opens
+    $limits->wait('/api/walk/pending', '192.0.2.1', $clock + $window);   // an hour later, somebody else
+    $left = $bucketsAt($db);
+    // What may be left is the window that opened just now, and nothing older.
+    if (array_filter($left, fn ($started) => (int) $started <= $clock) !== []) $gone = false;
+    $clock += $window + 1;
+}
+check('every window that has ended is gone at the next request, fifty times out of fifty', $gone);
+
+$limits->wait($offer, '203.0.113.200', $clock);
+$limits->wait($offer, '203.0.113.201', $clock + $window - 1);
+check('a window still open is kept', in_array($clock, array_map('intval', $bucketsAt($db)), true));
+$limits->wait($offer, '203.0.113.202', $clock + $window);
+check('and gone at the first request after its hour',
+      !in_array($clock, array_map('intval', $bucketsAt($db)), true));
 
 @unlink($file);
 @unlink($second);
