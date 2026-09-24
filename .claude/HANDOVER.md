@@ -18,10 +18,14 @@ Real variety among the species, low and broad plants among them, before the app 
   - v2 on 6,000 plants: median height÷spread **1.28** (2.15 on main), **31%** wider than tall (6%), **22%** under 0.5 m (6%). Lotus 0.34 × 0.87 m; succulents open rosettes; poppy, bell and star ratio about 1.36.
   - Young stages held: crown leaves grow with height in proportion to how upright they are. Cold Frame tallest seedling 0.34 m (0.45 on main); Coppice's closest star over a cut fern 0.16 m clear.
   - SeedCore on v2: 357 tests, 39 failures in 22 — the recorded vectors, area fill and cut numbers, and one new floor: a young lotus is 0.058 m, under `ColdFrameTests.swift:275`'s 0.08 m.
-- **In flight: the cup fix**, the same agent on the same branch:
-  - **The ring under blooms is the centre dome** (`PlantBuilder.swift` `addBloom`, `addDome(role: .centre, …)`): oversized, centred on the point every petal springs from so the petals pierce it, open underneath (the web lights back faces, so the hollow shows), any hue. Nothing green sits under the petals; `addSepals` gives reflexed blades to 70% of seeds whatever their archetype.
+- **The cup fix, done**: `5ede00b` on `shape/broader`. The ring and the hollow are gone from every family (`ring_branch_after.png`):
+  - **The ring was the centre dome** (`PlantBuilder.swift` `addBloom`, `addDome(role: .centre, …)`): oversized, centred on the point every petal springs from so the petals pierce it, open underneath (the web lights back faces, so the hollow shows), any hue. Nothing green sits under the petals; `addSepals` gives reflexed blades to 70% of seeds whatever their archetype.
   - **Fix, version C:** petals attach on a ring at 0.9 of the centre's radius and shorten by half of it; the centre capped at 0.34 of a petal; a closed cup from the stem tip to the petal bases, a bulbous involucre on the thistle; no reflexed sepals on poppy, umbel, orchid, thistle, fern. Its own leaf-green **calyx colour role** through `Palette`/`Colouring`, the app's `GradientTexture` and `PlantSceneBuilder`, the wasm texture bake and `plant.js` `ROLES`.
-  - Also toning down the poppy's basal leaves, which read as a flat green star.
+  - As built: `addCalyx` (`PlantBuilder.swift:910`), per-family `Calyx` and `Sepals` (`Archetype.swift:117,135`). Thistle a scaly urn; lotus, star, fern small cups; bell five slender lobes; poppy, orchid, umbel a stem-coloured swelling so nothing is hollow. `MeshRole.calyx` is placed last so existing role indices do not shift; its colour is derived from the leaf colour (no new gene).
+  - Poppy's basal leaves: 3–6, upright, cut to the midrib; ratio 1.49.
+  - v3 overall: ratio 1.29, 30% wider than tall, 22% under 0.5 m. SeedCore 357 tests, 34 failures, none new. App (Simulator) and wasm build.
+  - The Python port `tools/preview/plant_model.py` lacks the habit and the calyx.
+- **In flight: stage 2**, a background agent working in the same worktree on `shape/broader` (no merge, push, deploy or ssh). First **rounder petals** (Marcus asked mid-stage): soft rounded outlines for lotus, poppy, bell, orchid, umbel and the rest; star and thistle stay pointed but smooth; each petal's midrib length held so heights barely move; its own commit and `stage2/petals_before_after.png`. Then the stage 2 list below, then a report.
 
 ## The measurement (6,000 plants, read-only)
 - Median height 1.00 m, spread 0.45 m, height÷spread 2.15; 6% wider than tall, nearly all plume.
@@ -39,15 +43,16 @@ Real variety among the species, low and broad plants among them, before the app 
 - Earlier decisions stand: glyphs over words, no flags, dictionary headwords with one colon, Danish says "folk"/"personer", never "mennesker", Danish first in any round.
 
 ## Next step
-1. When the cup fix reports: check `ring_branch_after.png` and the shape renders, and that the app and web both draw the calyx role.
-2. Then stage 2, on the branch:
+1. When stage 2 reports: show Marcus the petal close-ups and each area's old → new cut. Check the Cold Frame seedling-floor decision (young rosettes and lotuses are 0.044 m, under the 0.08 m floor, by design) and whether the Glasshouse still borrows the Orchard's 1.30.
+2. Stage 2, as briefed to the agent, on the branch:
    - re-measure every area's cuts on the new heights: Long Walk 0.93/1.28, Quiet Garden 1.13, Crossing 0.97/1.43, Orchard 0.75/1.30 (the Knot Garden and the Glasshouse border borrow it), Cold Frame 0.85, Coppice 1.10, the Glasshouse band edges if hue moved (it should not);
    - re-record every `tools/reference/*_vectors.json`, and the ambassador heights in `Server/.api/Ambassadors.php`;
    - the structure tests: Glasshouse roof, Cold Frame glass at the young stage, Coppice's "shortest star over every cut fern";
    - `PlantFormTests` width pins, the Python port `tools/preview/plant_model.py` with `PortVectorTests`, the app's sprite headroom (`GardenSprites.swift:43`), the committed samples in `tools/coppice` and `tools/homeground`;
    - check spacing: the Glasshouse staging and Cold Frame ranks are 0.3 m apart, the tightest; the Orchard and Quiet Garden have the most room;
-   - the young lotus's 0.058 m against the Cold Frame's 0.08 m seedling floor;
-   - write the replant tool, rehearse it on a copy;
+   - the Cold Frame's 0.08 m seedling floor against young rosettes;
+   - the Python port, the app's tests, the wasm suite, the Coppice and Home Ground samples re-simulated, `docs/WEB-GARDENS.md` and `docs/TAXONOMY.md` numbers;
+   - write the replant tool (`tools/replant/`: SeedCore regrows every stored seed from a backup copy; a PHP step replays each area in arrival order; taken-back rows have no seed and must keep their place), rehearse it on a local copy and on a copy of the newest real backup, and write the live runbook;
    - **ask Marcus before** the backup, deploy and replant: they change the live database. Then merge, remove the worktree and its `worktree-agent-*` branches.
 3. Then the Home Ground, from `docs/WEB-GARDENS.md` §"The Home Ground, chosen" (its fill was simulated on the old shapes and needs re-simulating).
 4. Strings: `coppiceAbout` and `coppiceAway` are English only; commission them with the next round, Danish first.
