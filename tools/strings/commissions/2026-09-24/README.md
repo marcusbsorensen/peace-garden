@@ -105,8 +105,13 @@ Marcus answered all five the same day.
 
 ## What each language still lacks, and why
 
+**Regenerated late on 24 September**, after the Glasshouse, the Coppice and
+the Home Ground opened and the pad replaced the chevrons: thirteen new keys,
+all English only by `strings.js` and outside this round, and `walkBack` and
+`walkOn` gone. The sheets themselves did not change.
+
 `missing.json` has it per language. Every site language but Kalaallisut lacks
-the same 91 keys:
+the same 102 keys:
 
 | Group | Keys |
 | --- | --- |
@@ -115,11 +120,11 @@ the same 91 keys:
 | **This commission: `/meanings`** (4) | `meaningsTitle` `meaningsAbout` `meaningsSecond` `meaningsNames` |
 | **This commission: the part labels** (30) | `subthemeHeldBack` … `subthemeTheMannersOfIt`, three to a theme in map order |
 | The privacy page, its own sheet (8) | `privacyTitle` `privacy1`–`privacy7` — present as `null` |
-| The area paragraphs, English only by `strings.js` (7) | `walkAbout` `quietAbout` `crossAbout` `orchardAbout` `knotAbout` `seedbedAbout` `frameAbout` |
-| Live, uncommissioned, not in this round (17) | `walkTitle` `wildTitle` `wildBody` `downloadBody` `walkGrowing` `walkEmpty` `walkBack` `walkOn` `walkTurnAnti` `walkTurnClock` `walkAway` `quietAway` `crossAway` `orchardAway` `knotAway` `seedbedAway` `frameAway` |
+| The area paragraphs, English only by `strings.js` (10) | `walkAbout` `quietAbout` `crossAbout` `orchardAbout` `knotAbout` `seedbedAbout` `frameAbout` `glasshouseAbout` `coppiceAbout` `groundAbout` |
+| Live, uncommissioned, not in this round (25) | `walkTitle` `wildTitle` `wildBody` `downloadBody` `walkGrowing` `walkEmpty` `walkTurnAnti` `walkTurnClock` `walkAway` `quietAway` `crossAway` `orchardAway` `knotAway` `seedbedAway` `frameAway` `glasshouseAway` `coppiceAway` `groundAway`, and the pad's seven: `moveUp` `moveDown` `moveLeft` `moveRight` `zoomIn` `zoomOut` `moveHome` |
 | Said nowhere on the site, kept until you decide whether they go (4) | `gardenBody` `walkBody` `goOn` — per `strings.js` — and `walkThisArea`, which no page or script uses either |
 
-**Kalaallisut** lacks those 91 and sixteen more — the six paragraphs and the
+**Kalaallisut** lacks those 102 and sixteen more — the six paragraphs and the
 ten area names — all deliberately, by its `awaiting` note.
 
 **The app's seven** each lack the 52 of this commission and **64 older strings

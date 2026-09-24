@@ -158,12 +158,17 @@ WHY = {
     "this commission: the thirty part labels": list(PART_KEYS),
     "the privacy page, its own sheet (commission.py --privacy)": list(PRIVACY),
     "the area paragraphs, English only by strings.js": ["walkAbout", "quietAbout", "crossAbout", "orchardAbout",
-                   "knotAbout", "seedbedAbout", "frameAbout"],
+                   "knotAbout", "seedbedAbout", "frameAbout",
+                   "glasshouseAbout", "coppiceAbout", "groundAbout"],
+    # `walkBack` and `walkOn` went with the chevrons, 24 September; the six
+    # keys of the pad that replaced them are English only by `strings.js`.
     "live, uncommissioned, and not in this round": [
         "walkTitle", "wildTitle", "wildBody", "downloadBody",
-        "walkGrowing", "walkEmpty", "walkBack", "walkOn", "walkTurnAnti",
+        "walkGrowing", "walkEmpty", "walkTurnAnti",
         "walkTurnClock", "walkAway", "quietAway", "crossAway", "orchardAway",
-        "knotAway", "seedbedAway", "frameAway"],
+        "knotAway", "seedbedAway", "frameAway",
+        "glasshouseAway", "coppiceAway", "groundAway",
+        "moveUp", "moveDown", "moveLeft", "moveRight", "zoomIn", "zoomOut", "moveHome"],
     "said nowhere on the site, kept until Marcus decides whether they go": [
         "gardenBody", "walkBody", "goOn", "walkThisArea"],
     "the six paragraphs, awaiting by decision": list(CLAIMS),
