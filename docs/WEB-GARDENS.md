@@ -1946,7 +1946,8 @@ numbers and a crop is a word.
    service to make it. Marcus.
 
 **This is not the plant's own page** (`WEBSITE.md` §*What a shared plant page
-is*, and the phase-2 note in §*The walkable garden*). That page carries the
+is*, and *Names live on a plant's own page* in §*And it has been answered,
+before anything was published*). That page carries the
 gardener's name and note, and is a second consent with its own screen, as
 §*The asking, and what a shared plant consents to* says. The panel carries
 only what the seed already implies, which is what the plant standing in the
