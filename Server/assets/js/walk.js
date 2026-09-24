@@ -341,6 +341,11 @@ async function settle() {
     // See strings.js §dress, and the note beside `#invented` in `/g`.
     state.strings.dress(node, node.dataset.s);
   }
+  // The bar's glyphs, whose words are their names. See plain.js.
+  for (const node of document.querySelectorAll("[data-s-label]")) {
+    node.setAttribute("aria-label", state.strings.t(node.dataset.sLabel));
+    node.title = state.strings.t(node.dataset.sLabel);
+  }
   el("language-label").textContent = state.strings.t("language");
   setSheetTitle(state.strings.t("keys"));
 

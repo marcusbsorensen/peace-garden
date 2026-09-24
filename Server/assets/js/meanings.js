@@ -284,27 +284,63 @@ export function showGathers(theme, strings) {
   if (!block || !row) return;
   block.replaceChildren();
 
-  const meaning = make("p", "body gathers__meaning", strings.t(row.meaning));
-  strings.dress(meaning, row.meaning);
+  // **Set as a dictionary entry**, since 24 September: the theme's word as the
+  // headword, what it means as the definition, and the three parts as its
+  // numbered senses. It is the one thing on the page that says why these
+  // plants are here rather than somewhere else, which is what a reader looks a
+  // word up for. The headword is the way to the whole table, at this row, and
+  // carries the bar's book so it reads as one.
+  const { word, definition } = splitEntry(strings.t(row.meaning));
+  const entry = make("p", "gathers__entry");
+  strings.dress(entry, row.meaning);
+  if (word) {
+    const link = make("a", "gathers__word");
+    link.href = `/meanings#${theme}`;
+    link.title = strings.t("meaningsTitle");
+    link.append(make("dfn", null, word), bookGlyph());
+    entry.append(link, " ");
+  }
+  entry.append(make("span", "gathers__definition", definition));
 
   // **No names line here.** Which name-starts bring a plant to this area, and
   // their roots, are on `/meanings`, a link away: on the area page they cost
   // the pad and the map their place above the fold on a laptop, and Marcus
   // chose the fold (23 September).
-  const parts = english(make("p", "label gathers__parts"));
-  row.parts.forEach((entry, index) => {
-    if (index) parts.append(" ");
-    parts.append(make("span", "gathers__part", entry.label));
-  });
+  const senses = english(make("ol", "gathers__senses"));
+  for (const entry of row.parts) senses.append(make("li", "gathers__part", entry.label));
 
-  const more = make("p", "gathers__more");
-  const link = make("a", "gathers__link", strings.t("meaningsTitle"));
-  link.href = `/meanings#${theme}`;
-  strings.dress(link, "meaningsTitle");
-  more.append(link);
-
-  block.append(meaning, parts, more);
+  block.append(entry, senses);
   block.hidden = false;
+}
+
+/// One `meaning*` line as a headword and its definition.
+///
+/// Every English line is *Word: what it means*, and a translation is asked to
+/// keep the colon. One that did not — or a full-width colon, as Chinese and
+/// Japanese write it — is still read right: the first colon of either kind
+/// splits it, and a line with none is all definition and no headword, which
+/// is a plain sentence rather than a broken entry.
+export function splitEntry(text) {
+  const at = text.search(/[:：]/);
+  if (at < 1) return { word: null, definition: text.trim() };
+  return { word: text.slice(0, at).trim(), definition: text.slice(at + 1).trim() };
+}
+
+/// The bar's open book, small, beside a headword. The same path as the bar's
+/// and the app's `MeaningsGlyph`.
+export const BOOK = "M10 5.2C8.2 3.9 5.4 3.5 2.75 3.9V15.4C5.4 15 8.2 15.4 10 16.7C11.8 15.4 14.6 15 17.25 15.4V3.9C14.6 3.5 11.8 3.9 10 5.2ZM10 5.2V16.7";
+
+function bookGlyph() {
+  const SVG = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(SVG, "svg");
+  svg.setAttribute("class", "gathers__book");
+  svg.setAttribute("viewBox", "0 0 20 20");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+  const path = document.createElementNS(SVG, "path");
+  path.setAttribute("d", BOOK);
+  svg.append(path);
+  return svg;
 }
 
 /// Everything `/meanings` draws: the worked example, the ten themes and the

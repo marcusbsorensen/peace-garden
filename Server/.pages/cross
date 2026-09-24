@@ -80,8 +80,25 @@
           <img class="mark" src="/assets/icon.svg" alt="" width="44" height="44" />
           <span class="wordmark">Peace Garden</span>
         </a>
+        <!--
+          The ways on from here, as glyphs rather than words, so they read the
+          same in every language: the garden (the app's own Garden mark,
+          `GardenGlyph` in Chrome.swift), what the names mean (an open book,
+          the app's `MeaningsGlyph`), and the language. Each glyph's words
+          are its name and tooltip, written from the catalogue by the page's
+          script. See site.css §The bar's glyphs.
+        -->
         <span class="bar__ways">
-          <a class="quiet-button" href="/garden" id="bar-hub" data-s="gardenTitle"></a>
+          <a class="bar-glyph" href="/garden" id="bar-hub" data-s-label="gardenTitle"><svg class="bar-glyph__mark" viewBox="0 0 15 15" aria-hidden="true" focusable="false"><path d="M 4.674 4.059 C 3.796 1.407, 6.716 1.407, 5.838 4.059 C 8.089 2.405, 8.991 5.181, 6.198 5.166 C 8.467 6.795, 6.105 8.512, 5.256 5.850 C 4.407 8.512, 2.045 6.795, 4.314 5.166 C 1.521 5.181, 2.423 2.405, 4.674 4.059 Z M 5.784 14.100 C 5.652 10.932, 5.124 9.612, 5.256 7.500 M 10.140 14.100 C 9.678 10.932, 9.150 8.556, 8.622 6.180 M 10.140 14.100 C 10.338 10.404, 10.470 6.972, 10.338 3.540 M 10.140 14.100 C 10.800 10.932, 11.658 8.820, 12.318 6.972 M 4.200 14.100 L 11.328 14.100" vector-effect="non-scaling-stroke" /></svg></a>
+          <a class="bar-glyph" href="/meanings" data-s-label="meaningsTitle"><svg class="bar-glyph__mark" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 5.2C8.2 3.9 5.4 3.5 2.75 3.9V15.4C5.4 15 8.2 15.4 10 16.7C11.8 15.4 14.6 15 17.25 15.4V3.9C14.6 3.5 11.8 3.9 10 5.2ZM10 5.2V16.7" vector-effect="non-scaling-stroke" /></svg></a>
+          <label class="bar-language">
+            <span class="visually-hidden" id="language-label"></span>
+            <svg class="bar-language__mark" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0M10 3C7.4 5.3 7.4 14.7 10 17M10 3C12.6 5.3 12.6 14.7 10 17M3 10H17M4.2 6.2H15.8M4.2 13.8H15.8" vector-effect="non-scaling-stroke" /></svg>
+            <span class="chooser__field">
+              <select id="language" class="chooser__select"></select>
+              <svg class="chooser__mark" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6.5 L8 10.5 L12 6.5" /></svg>
+            </span>
+          </label>
         </span>
       </header>
 
@@ -93,8 +110,16 @@
       -->
       <canvas class="walk-stage" id="stage" aria-label="The Crossing"></canvas>
 
+      <!--
+        Two panels under the drawing, side by side on a wide window and one
+        above the other on a phone: what this area is — its name and what its
+        plants mean, set as a dictionary entry — and the ways about it and out
+        of it. See site.css §The two panels.
+      -->
+      <div class="area-panels">
+      <section class="area-panel area-panel--words">
       <h1 class="heading" data-s="areaMeeting"></h1>
-      <p class="body walk-about" data-s="crossAbout"></p>
+      <p class="body walk-about visually-hidden" data-s="crossAbout"></p>
 
       <!--
         One line, and only when there is something to say: while the plants are
@@ -112,7 +137,8 @@
       -->
       <section class="gathers" id="gathers" hidden></section>
 
-      <div class="walk-ways">
+      </section>
+      <div class="area-panel area-panel--ways walk-ways">
         <nav class="walk-keys" id="keys" role="group" hidden>
           <!--
             Two pairs, and the gap between them says so: paging from one plot
@@ -162,33 +188,15 @@
         -->
         <nav class="minimap" id="minimap" hidden></nav>
       </div>
+      </div>
 
 
       <!--
-        The foot mirrors the bar: one hairline, above it here where the
-        bar's is below, and a row of two things at opposite ends — the
-        privacy notice where the mark stands, the language where the way back
-        to the garden does.
+        The foot: one hairline and the privacy notice. The language it used to
+        hold went up into the bar, beside the other ways on from a page.
       -->
       <footer class="foot bar-foot">
         <a class="bar-foot__link" href="/privacy" data-s="privacyTitle"></a>
-        <label class="chooser">
-          <span class="label" id="language-label"></span>
-          <span class="chooser__field">
-            <select id="language" class="chooser__select"></select>
-            <!-- Monoline, even weight, round free ends, per BRAND.md §3.2. -->
-            <svg class="chooser__mark" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-              <path
-                d="M4 6.5 L8 10.5 L12 6.5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.25"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </span>
-        </label>
       </footer>
     </main>
 

@@ -18,7 +18,7 @@ import { loadModule, takeResult, decode, makeStage } from './plant.js';
 import { AREAS } from './garden.js';
 import { AREA_KEYS } from './strings.js';
 import { BUILT, LOOK } from './gates.js';
-import { themeRow } from './meanings.js';
+import { splitEntry, themeRow } from './meanings.js';
 import { whenSettled } from './plain.js';
 
 const el = (id) => document.getElementById(id);
@@ -76,9 +76,17 @@ whenSettled((strings) => {
     card.style.setProperty('--area-ground', LOOK[area.theme].ground);
 
     const meaningKey = themeRow(area.theme).meaning;
+    // The same entry the area page sets, headword and definition.
+    const { word, definition } = splitEntry(strings.t(meaningKey));
     const meaning = document.createElement('p');
     meaning.className = 'front-card__meaning';
-    meaning.textContent = strings.t(meaningKey);
+    if (word) {
+      const headword = document.createElement('dfn');
+      headword.className = 'front-card__word';
+      headword.textContent = word;
+      meaning.append(headword, ' ');
+    }
+    meaning.append(definition);
     strings.dress(meaning, meaningKey);
 
     const nameKey = AREA_KEYS[area.theme];
