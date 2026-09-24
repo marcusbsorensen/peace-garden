@@ -24,14 +24,16 @@
 //
 // **What is in the catalogue and what is not.** The one-line meaning of each
 // theme is new prose, so it is a key in `strings.js` like every other sentence
-// the site says, English-only for now and falling back in silence. The heads
-// and roots are proper nouns and travel as they are. The subtheme labels, the
-// instances under them and the epithet glosses are English data here rather
-// than sixty more commissions: they are the project's own record of what it
-// attributed to what, quoted, and a table a reader looks things up in. If they
-// are ever commissioned, moving them into the catalogue is mechanical.
+// the site says, commissioned since 24 September and falling back in silence
+// where a language has none yet. The heads
+// and roots are proper nouns and travel as they are. **The thirty part labels
+// are keys too, since 24 September** — `subtheme<Case>`, the app's own
+// `subtheme.<case>` — and each keeps its English beside its key here, which
+// `selfTest` holds to the catalogue. The instances under them and the epithet
+// glosses are English data rather than more commissions: they are the
+// project's own record of what it attributed to what, quoted.
 
-import { AREA_KEYS } from "./strings.js";
+import { AREA_KEYS, EN } from "./strings.js";
 import { BUILT, LOOK } from "./gates.js";
 import { subthemeOf, syllables, themeOf } from "./passages.js";
 
@@ -232,7 +234,11 @@ const HEAD_GLYPHS = Object.freeze({
 
 const head = (syllable, from, root, gloss) =>
   Object.freeze({ syllable, from, root, gloss, glyph: HEAD_GLYPHS[syllable] });
-const part = (key, label, instances) => Object.freeze({ key, label, instances });
+/// `string` is the part's key in `strings.js`: the `Quotes.Subtheme` case, as
+/// the app keys it. `label` is its English, kept here for `selfTest` to hold
+/// the catalogue to.
+const part = (key, label, instances) =>
+  Object.freeze({ key, label, instances, string: `subtheme${key[0].toUpperCase()}${key.slice(1)}` });
 
 /// The ten themes, in map order — the top row of the garden left to right, then
 /// the bottom — which is the order `AREA_KEYS` names them in.
@@ -571,8 +577,10 @@ export function showGathers(theme, strings) {
     heads.append(item);
   }
 
-  const senses = english(make("ol", "gathers__senses"));
-  for (const part of row.parts) senses.append(make("li", "gathers__part", part.label));
+  const senses = make("ol", "gathers__senses");
+  for (const part of row.parts) {
+    senses.append(strings.dress(make("li", "gathers__part", strings.t(part.string)), part.string));
+  }
 
   block.append(entry, heads, senses);
   block.hidden = false;
@@ -652,7 +660,8 @@ function showExample(strings) {
   strings.dress(area, AREA_KEYS[theme]);
   const number = make("span", "meanings-example__number", String(partIndex + 1));
   number.setAttribute("aria-hidden", "true");
-  say(number, `-${tail}`, row.parts[partIndex].label, true);
+  const chosen = row.parts[partIndex].string;
+  strings.dress(say(number, `-${tail}`, strings.t(chosen), false), chosen);
   say(drawn(epithet.glyph, "meanings-example__glyph"), EXAMPLE.epithet, epithet.says, true);
 
   figure.append(name, keyed);
@@ -765,7 +774,7 @@ function entryNode(row, strings) {
     const sense = make("li", "entry__sense");
     const label = make("p", "entry__sense-label");
     label.append(
-      english(make("span", null, part.label)),
+      strings.dress(make("span", null, strings.t(part.string)), part.string),
       english(make("span", "entry__endings", ENDINGS[index].map((tail) => `-${tail}`).join(" ")))
     );
     const instances = make("p", "entry__instances");
@@ -804,8 +813,9 @@ function showEpithets() {
 ///
 /// **Every head once, in the theme `passages.js` puts it in; every ending
 /// picking the part it is listed under; the ten in the order the map names
-/// them; the example filed where it says it is; and a drawing, its own, for
-/// every head and every second word.** A drift in any of these
+/// them; the example filed where it says it is; every part's
+/// label the English of its own key in `strings.js`; and a drawing, its own,
+/// for every head and every second word.** A drift in any of these
 /// would still read perfectly well on the page, which is why it is checked
 /// rather than looked at.
 export function selfTest() {
@@ -838,6 +848,17 @@ export function selfTest() {
   }
 
   if (ENDINGS.flat().length !== 10) fail("ten endings");
+
+  // Each part's label is a catalogue key, and the English kept here is the
+  // English there. Two copies that drift would put one label on an area page
+  // in English and another in the table the app agrees with.
+  const parts = THEMES.flatMap((row) => row.parts);
+  if (new Set(parts.map((entry) => entry.string)).size !== 30) fail("thirty parts, thirty keys");
+  for (const entry of parts) {
+    if (EN[entry.string] !== entry.label) {
+      fail(`${entry.string} is ${JSON.stringify(EN[entry.string])} in strings.js, ${JSON.stringify(entry.label)} here`);
+    }
+  }
 
   // A head with no drawing would be drawn as an empty square on both pages,
   // and two heads with one drawing would say two roots are one.

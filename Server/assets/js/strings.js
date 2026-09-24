@@ -335,7 +335,11 @@ export const EN = Object.freeze({
   // yours* is the Home Ground's reason for its name, and *kept rather than
   // happened upon* is Marcus's reading of the Orchard.
   //
-  // English only, like the area paragraphs, and falling back in silence.
+  // **Commissioned since 24 September 2026**, when the front page put one on
+  // each of its ten cards beside an area name already in the reader's
+  // language; Danish first. Falling back in silence where a language has none
+  // yet. Each is `Headword: definition.` and `splitEntry` cuts at the first
+  // colon, so a translation keeps one, straight after the headword.
   meaningWaiting:
     "Waiting: what is held back until its time, however long that is, and whoever keeps watch.",
   meaningGround: "Ground: the earth a plant stands in, and the earth that is yours.",
@@ -363,6 +367,46 @@ export const EN = Object.freeze({
   // endings, and the second words are introduced by `meaningsSecond`. The four
   // other headings the page had while it was two tables went with the tables.
   meaningsNames: "Names beginning",
+
+  // The three parts of each theme, as the numbered senses of its entry: under
+  // the definition on an area page, and at `/meanings` with the endings that
+  // choose them. **In the catalogue since 24 September 2026**, when Marcus
+  // moved them out of `meanings.js`, where they had been English data. The app
+  // keyed them from the start as `subtheme.<case>`, and these are the same
+  // cases, so a language that has one catalogue has the words for the other.
+  //
+  // `meanings.js` keeps each English label beside its key, and `selfTest`
+  // holds the two to each other. Labels, not sentences: no full stop.
+  subthemeHeldBack: "Held back",
+  subthemeTheLongCount: "The long count",
+  subthemeStandingAndWatching: "Standing and watching",
+  subthemeTheSoilItself: "The soil itself",
+  subthemeAPlaceYouAreFrom: "A place you are from",
+  subthemeAKeptPlace: "A kept place",
+  subthemeTheFirstAct: "The first act",
+  subthemeSmallToLarge: "Small to large",
+  subthemeWhatAStartSettles: "What a start settles",
+  subthemeCutAndComeAgain: "Cut and come again",
+  subthemeTheTurningYear: "The turning year",
+  subthemeMadeWhole: "Made whole",
+  subthemeHowASeedGoes: "How a seed goes",
+  subthemeTheRoad: "The road",
+  subthemeFarOff: "Far off",
+  subthemeQuietAsASound: "Quiet as a sound",
+  subthemeTheWordsForStopping: "The words for stopping",
+  subthemeAtEase: "At ease",
+  subthemeGrownTogether: "Grown together",
+  subthemeTheWordsForIt: "The words for it",
+  subthemeTwoPeople: "Two people",
+  subthemeCounted: "Counted",
+  subthemeFittedTogether: "Fitted together",
+  subthemeOrderNamed: "Order named",
+  subthemeTheEdgesOfTheDay: "The edges of the day",
+  subthemeReadingTheLight: "Reading the light",
+  subthemeLightItself: "Light itself",
+  subthemeTheMoment: "The moment",
+  subthemeTwoThatNeedEachOther: "Two that need each other",
+  subthemeTheMannersOfIt: "The manners of it",
 
   // Said once and used on both of the pages that are not built yet, because two
   // ways of saying *not yet* is one more than a reader needs.
