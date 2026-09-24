@@ -231,15 +231,19 @@ PRIVACY = {
             "was offered.",
             "Anyone can see it standing in the garden.",
             "No one's name goes with it.",
-            "Either of them can take it back; the garden then forgets the plant "
-            "and keeps only a scrambled record, so it cannot be planted again.",
+            "Either of them can take it back; the garden then forgets the plant, "
+            "keeping only its empty place in the plot and a scrambled record, so "
+            "it cannot be planted again.",
             "The site's backups keep what they held for thirty days.",
             "An offer nobody answers is taken back after thirty days.",
         ],
         "must not": [
             "Say *nothing is kept* after taking back, or that it is deleted "
-            "everywhere. A scrambled record stays, and the backups keep it for "
-            "thirty days.",
+            "everywhere. Its empty place and a scrambled record stay, and the "
+            "backups keep it for thirty days.",
+            "Make *its empty place in the plot* sound like the plant, or a "
+            "marker with its name. It is the gap where it stood, kept so that "
+            "nothing planted after it moves.",
             "Turn *the second word of its name* into a technical term. It is "
             "the plant's epithet, said as a gardener would find it.",
             "Imply the plant can be put back after it is taken back.",
@@ -250,12 +254,15 @@ PRIVACY = {
                 "garden.",
         "must": [
             "With alerts on, each time the app starts it asks the web garden "
-            "about plants offered or offered to you.",
-            "It asks by sending its random numbers.",
+            "about your shared plants.",
+            "It asks by sending the random numbers from your meetings.",
         ],
         "must not": [
             "Say it asks all the time, or in the background. It asks when it "
             "starts.",
+            "Narrow *the random numbers from your meetings* to the shared plants' "
+            "alone. It sends one for every meeting, and the answer is about the "
+            "shared plants.",
             "Name the setting differently from the app's own switch, if your "
             "language has the app.",
         ],

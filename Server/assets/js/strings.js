@@ -472,18 +472,23 @@ export const EN = Object.freeze({
   // The web garden, `Server/.api/`: what an offer and a planting keep
   // (`Offers.php` and the area stores), what taking back leaves
   // (`TakenBack.php`), the backups (`backup.php`, `tools/backup.sh`) and the
-  // thirty days an offer waits (`Offers::LAPSES_AFTER`, swept hourly by
-  // `sweep.php`). The traits are said plainly rather than left inside *what
-  // the garden needs*, because each of them is stored.
+  // thirty days an offer waits (`Offers::LAPSES_AFTER`, swept every five
+  // minutes by `sweep.php`). The traits are said plainly rather than left
+  // inside *what the garden needs*, because each of them is stored. *Its empty
+  // place in the plot* is `TakenBack.php`'s placeholder: the row that holds the
+  // gap, kept so every later plant stands where the rule put it.
   privacy6:
-    "If you and the person you met both agree to share a plant, the web garden keeps it: its seed, the seeds of its two parents, a number for the meeting, your two random numbers, and what the garden needs to place it — its height, colour, area, the second word of its name, and when it was offered. Anyone can see it standing in the garden. No one's name goes with it. Either of you can take it back; the garden then forgets the plant and keeps only a scrambled record, so that it cannot be planted again. The site's backups keep what they held for thirty days. An offer nobody answers is taken back after thirty days.",
+    "If you and the person you met both agree to share a plant, the web garden keeps it: its seed, the seeds of its two parents, a number for the meeting, your two random numbers, and what the garden needs to place it — its height, colour, area, the second word of its name, and when it was offered. Anyone can see it standing in the garden. No one's name goes with it. Either of you can take it back; the garden then forgets the plant, keeping only its empty place in the plot and a scrambled record, so that it cannot be planted again. The site's backups keep what they held for thirty days. An offer nobody answers is taken back after thirty days.",
   // `GardenModel.catchUpOnTheAsking`, run when the app starts and only while
   // `sharing.invitations.v1` is on: it sends this phone's own token for each
-  // meeting, and nothing else.
+  // meeting — every meeting's, shared or not, which is what *the random numbers
+  // from your meetings* says — and nothing else, and hears back about the
+  // plants that were offered.
   privacy7:
-    "With alerts on, each time the app starts it asks the web garden about the plants you have offered or been offered, by sending its random numbers.",
-  // The website: `Limits.php` for the scrambled address and its hour (and
-  // `sweep.php`, which keeps the hour when nobody asks), `languages.js` for the
+    "With alerts on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings.",
+  // The website: `Limits.php` for the scrambled address and its hour — a
+  // fifty-five-minute window and `sweep.php` every five minutes, which is what
+  // keeps it inside the hour when nobody asks — `languages.js` for the
   // language kept in the browser, and nothing anywhere that sets a cookie.
   privacy5:
     "This site runs on a web host, with no advertising, no analytics and no cookies. Your language choice is remembered in your own browser. To limit abuse, the web garden keeps a scrambled form of your internet address for up to an hour, and the host keeps its usual request logs.",
