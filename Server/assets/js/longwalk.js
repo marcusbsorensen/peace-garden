@@ -172,9 +172,9 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     // The eye as well, because an area with a hedge on all four sides needs to
     // know which two of them are the near ones and a single sign cannot say.
     const built = buildTheGround(farSide, span, e, eye());
-    groundMesh = upload(gl, ground, built);
+    groundMesh = withPieces(gl, ground, upload(gl, ground, built), built.pieces, 'opaque');
     if (glassMesh) glassMesh.release();
-    glassMesh = built.glass ? upload(gl, ground, built.glass) : null;
+    glassMesh = built.glass ? withPieces(gl, ground, upload(gl, ground, built.glass), built.pieces, 'glass') : null;
     glassOpacity = built.glass?.opacity ?? 1;
   }
 
@@ -479,7 +479,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   new ResizeObserver(draw).observe(canvas);
   // `turn` is read by the sky, which has to face the way the camera does.
   return { add, clear, turnBy, draw, rebuild, turn: () => turn, view, held, lookAt, carried, seams, onScreen,
-           pick, named, toward };
+           pick, named, toward, toScreen };
 }
 
 // Plants arrivals by the rule until there are `total`, reporting as it goes.
@@ -751,6 +751,30 @@ function upload(gl, p, mesh) {
   return {
     draw() { gl.bindVertexArray(vao); gl.drawArrays(gl.TRIANGLES, 0, count); gl.bindVertexArray(null); },
     release() { buffers.forEach((b) => gl.deleteBuffer(b)); gl.deleteVertexArray(vao); },
+  };
+}
+
+// **Pieces that move**, for the one area that has any: the Cold Frame's
+// lights, which open (`frame.js`). A ground builder may hand back `pieces`, a
+// function answering them as they stand now — `{ opaque, glass }`, each a mesh
+// in the ground's shape or null — and the same answer until one moves. They are
+// drawn with the ground and with its glass, and uploaded only when they have
+// moved. Every other area hands back none, and this is `mesh` as it was.
+function withPieces(gl, p, mesh, pieces, which) {
+  if (!pieces) return mesh;
+  let from = null, piece = null;
+  return {
+    draw() {
+      mesh.draw();
+      const now = pieces();
+      if (now !== from) {
+        piece?.release();
+        piece = now[which] ? upload(gl, p, now[which]) : null;
+        from = now;
+      }
+      piece?.draw();
+    },
+    release() { mesh.release(); piece?.release(); },
   };
 }
 

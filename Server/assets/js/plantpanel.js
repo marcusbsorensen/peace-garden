@@ -54,7 +54,14 @@ const MARK = 12;
 /// Makes the panel for one area page. `theme` is the page's own, for naming
 /// the area an ambassador stands for; `engine` is the module the page grows
 /// its plants with, asked for their names.
-export function plantPanel({ theme, engine }) {
+///
+/// `cover` is what stands over the plants, for the one area that has any: the
+/// Cold Frame's lights (`frame.js`, `makeFrameLids`). A tap is its before it is
+/// the plants' — `cover.tapped(x, y, plant)`, with the plant the same tap found,
+/// answers whether it took it — and a plant's panel opens only once
+/// `cover.uncover(plant)` has lifted whatever is over it. A tap that finds
+/// neither is `cover.missed()`.
+export function plantPanel({ theme, engine, cover = null }) {
   let pad = null;
   let strings = null;
   let settled = null;
@@ -62,6 +69,7 @@ export function plantPanel({ theme, engine }) {
   let shown = null;      // what was worked out for it: its name, for a postcard
   let returnTo = null;
   let generation = 0;
+  let asking = 0;        // which `show` is the latest, while a cover lifts
 
   const postcard = readPostcard();
   const dialog = build();
@@ -82,12 +90,19 @@ export function plantPanel({ theme, engine }) {
     // the middle. Answers false when there is no plant there.
     tapped: (clientX, clientY, { nearest = false } = {}) => {
       const plant = pickAt(clientX, clientY, nearest);
-      if (!plant) return false;
+      if (!nearest && coverTook(clientX, clientY, plant)) return true;
+      if (!plant) {
+        if (!nearest) cover?.missed();
+        return false;
+      }
       show(plant, { move: true });
       return true;
     },
     // The plants on the stage are about to go.
-    leaving: () => close({ quietly: true }),
+    leaving: () => {
+      asking += 1;
+      close({ quietly: true });
+    },
     // A plot has been grown: if a postcard is waiting for a plant in it, go to
     // that plant and open its panel. Once — a postcard is an arrival, not a
     // standing instruction — and a seed that is not here just leaves the plot
@@ -109,6 +124,13 @@ export function plantPanel({ theme, engine }) {
     if (!pad || pad.busy()) return null;
     const box = pad.canvas.getBoundingClientRect();
     return pad.stage.pick(clientX - box.left, clientY - box.top, nearest ? null : FINGER);
+  }
+
+  // Whether a tap was the cover's: the glass of a shut frame, which opens.
+  function coverTook(clientX, clientY, plant) {
+    if (!cover || !pad || pad.busy()) return false;
+    const box = pad.canvas.getBoundingClientRect();
+    return cover.tapped(clientX - box.left, clientY - box.top, plant);
   }
 
   // How close to come to a plant: near enough that the clear part of the
@@ -152,6 +174,10 @@ export function plantPanel({ theme, engine }) {
   // MARK: Opening and closing
 
   async function show(plant, { move = false, arriving = false } = {}) {
+    // **What is over the plant is lifted first**, and the panel opens once
+    // it is: a seedling in a shut frame is seen into before it is read about.
+    const mine = (asking += 1);
+    if (cover && (!(await cover.uncover(plant)) || mine !== asking)) return;
     open = plant;
     if (!dialog.open) {
       // Where focus goes back to. A postcard arrives with nothing focused.
@@ -400,14 +426,16 @@ export function plantPanel({ theme, engine }) {
     // the dialog does by itself.
     node.addEventListener('keydown', (event) => event.stopPropagation());
     // A tap outside the panel closes it — or, if it lands on another plant,
-    // opens that one instead, so a reader can go from plant to plant.
+    // opens that one instead, so a reader can go from plant to plant. On the
+    // glass of a shut frame it closes the panel and opens that frame.
     node.addEventListener('click', (event) => {
       if (event.target !== node) return;
       const inside = body.getBoundingClientRect();
       const { clientX: x, clientY: y } = event;
       if (x >= inside.left && x <= inside.right && y >= inside.top && y <= inside.bottom) return;
       const plant = pickAt(x, y, false);
-      if (plant) show(plant, { move: true });
+      if (coverTook(x, y, plant)) close();
+      else if (plant) show(plant, { move: true });
       else close();
     });
     node.addEventListener('close', () => {
