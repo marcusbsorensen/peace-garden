@@ -397,7 +397,15 @@ struct SettingsView: View {
                         .padding(.horizontal, 26)
                         .underlining()
 
-                    Text("Whatever you write goes to the other phone as it stands. It is the one place in this app where a seed carries a sentence somebody chose rather than one the app offered.")
+                    // **What is written here is used nowhere else yet.** It is
+                    // kept under `places.custom.v1` and read by nothing but
+                    // this field: the note screen offers the figurative places
+                    // (`Places.offered`), a `PollenCard` has no place in it at
+                    // all, and nothing is sent to the web garden. Until 24
+                    // September this said it went to the other phone, which it
+                    // never has. The sentence now says what happens; when a
+                    // seed does carry it, the sentence is the thing to change.
+                    Text("What you write here is kept in this phone's settings, and for now it appears only there.")
                         .font(.system(size: 13, weight: .light))
                         .foregroundStyle(Chrome.muted)
                         .lineSpacing(4)
@@ -411,7 +419,21 @@ struct SettingsView: View {
             // because that field made the old sentence untrue. "That is
             // everything that crosses between you" was a promise, and a promise
             // that quietly stops being true is worse than never having made it.
-            Text("When you meet someone, your phones exchange your seed, your name, and two random numbers for that meeting: one that makes the new seed, and one this phone will answer to if the other person later shares the plant with you. That is everything that crosses between you, and it goes directly from phone to phone. None of it can be turned back into anything about you or your phone, and neither number is kept after the meeting.")
+            //
+            // Rewritten again on 24 September, because it had stopped being
+            // true in three places. It said neither number was kept after the
+            // meeting, and both phones keep both contact tokens with the plant
+            // (`PlantRecord.tokens`) — that is how either can offer it later —
+            // and the meeting's ID, made from the two nonces, in its lineage.
+            // It called its list everything that crosses, and the card also
+            // carries the plant's name, when the seed was drawn and whether
+            // a place may be kept (`PollenCard`). And it said none of it could
+            // be turned back into anything about you, of a list with your name
+            // in it. So it now lists what the card carries and says what is
+            // kept, and claims nothing it does not list. `privacy2` in
+            // Server/assets/js/strings.js states the same facts for the web,
+            // and the two should agree.
+            Text("When you meet someone, your phones connect directly, encrypted, and each hands the other its seed, when that seed was drawn, its plant's name, the name you chose to show, whether a place may be kept with the meeting, and two random numbers: one that makes the new plant, and one the other phone can use later to offer that plant to the web garden. Each phone keeps both second numbers with the plant, and a number for the meeting made from the first two.")
                 .font(.system(size: 13, weight: .light))
                 .foregroundStyle(Chrome.muted)
                 .lineSpacing(4)
@@ -443,9 +465,15 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 22) {
             username
 
+            // The note used to say the username would show publicly only if
+            // you approved, which read as though approving could publish it.
+            // Nothing does: the username goes to the other phone at a meeting
+            // and in a seed's link, and no request to the web garden carries a
+            // name of any kind (`WalkArrival`, `PlotService`). A shared plant
+            // stands there with its seeds and nothing that names a person.
             switchRow(
                 "Alert me when a joint seed is shared",
-                note: "Your username will only show publicly if you approve.",
+                note: "A plant you both share goes to the web garden without your username.",
                 isOn: $wantsInvitations
             )
         }

@@ -640,6 +640,53 @@
         }
       }
     },
+    "A plant you both share goes to the web garden without your username." : {
+      "comment" : "Under the switch about joint seeds. The username goes to the other phone at a meeting; the web garden is never sent it.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dit brugernavn vises kun offentligt, hvis du godkender det."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tu nombre de usuario solo aparece públicamente si tú lo apruebas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ton nom d’utilisateur n’apparaît publiquement que si tu l’acceptes."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Il tuo nome utente compare pubblicamente solo se lo approvi."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Brukernavnet ditt vises bare offentlig hvis du godkjenner det."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Je gebruikersnaam komt alleen publiek in beeld als jij dat goedkeurt."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ditt användarnamn visas offentligt bara om du godkänner det."
+          }
+        }
+      }
+    },
     "A seed from my peace garden. Open this and a plant grows on your phone from my seed and one drawn for you — one that neither of us could have grown alone." : {
       "comment" : "The message that travels with a link, written as if by the person sending it. Read by somebody who has never heard of the app.",
       "localizations" : {
@@ -8402,8 +8449,11 @@
         }
       }
     },
+    "What you write here is kept in this phone's settings, and for now it appears only there." : {
+      "comment" : "Under the field where a custom place is written, in Settings. True as it stands: what is written is kept in the phone's settings and nothing else uses it yet."
+    },
     "Whatever you write goes to the other phone as it stands. It is the one place in this app where a seed carries a sentence somebody chose rather than one the app offered." : {
-
+      "extractionState" : "stale"
     },
     "When %lld days old" : {
       "comment" : "The value beside 'First bloom' on the seed screen: how old the plant will be the first time it flowers.",
@@ -8554,6 +8604,9 @@
         }
       }
     },
+    "When you meet someone, your phones connect directly, encrypted, and each hands the other its seed, when that seed was drawn, its plant's name, the name you chose to show, whether a place may be kept with the meeting, and two random numbers: one that makes the new plant, and one the other phone can use later to offer that plant to the web garden. Each phone keeps both second numbers with the plant, and a number for the meeting made from the first two." : {
+      "comment" : "The plainest account the app gives of what leaves the phone at a meeting, under the place settings. A list of facts: each item is something the phone really sends, and the last sentence is what it keeps afterwards."
+    },
     "When you meet someone, your phones exchange your seed, your name, and a random number for that meeting. That is everything that crosses between you, and it goes directly from phone to phone. A seed cannot be turned back into anything about you or your phone." : {
       "comment" : "The plainest account the app gives of what leaves the phone. It sits in the settings screen under the switch about places.",
       "extractionState" : "stale",
@@ -8603,7 +8656,7 @@
       }
     },
     "When you meet someone, your phones exchange your seed, your name, and two random numbers for that meeting: one that makes the new seed, and one this phone will answer to if the other person later shares the plant with you. That is everything that crosses between you, and it goes directly from phone to phone. None of it can be turned back into anything about you or your phone, and neither number is kept after the meeting." : {
-
+      "extractionState" : "stale"
     },
     "Where" : {
       "comment" : "Label over the field for where a meeting happened. Set uppercase and wide-tracked, so it wants to be one short word.",
@@ -9516,6 +9569,7 @@
     },
     "Your username will only show publicly if you approve." : {
       "comment" : "Under that switch.",
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
