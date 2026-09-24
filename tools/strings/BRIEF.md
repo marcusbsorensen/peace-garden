@@ -42,6 +42,13 @@ the English. Go looking for the plainest way your language says this one.
   Which is exactly why it belongs on the numbers being reported and nowhere
   else.
 
+- **What your language's reader has already corrected.** A native reader's
+  correction to one string is a rule for every string after it, and
+  `commission.py` prints your language's under *What a reader of this language
+  has already corrected*, from `REGISTER` in that file. **Danish: people are
+  *folk* or *personer*, never *mennesker*** — whichever reads naturally.
+  Marcus, reading the Danish on 24 September 2026.
+
 - **The ten area names are a separate commission, and not this one.** *The Cold
   Frame*, *The Seedbed*, *The Crossing*. They are named in every language —
   Marcus reversed the English-only rule on 5 September 2026 — but by their own

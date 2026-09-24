@@ -23,7 +23,8 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CATALOGUES = ROOT / "Server/strings"
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from commission import AREAS, CLAIMS, PRIVACY, english  # noqa: E402
+from commission import (AREAS, CLAIMS, FRONT, MEANINGS, PRIVACY,  # noqa: E402
+                        english)
 
 # How much longer than the English a string may be before the layout is at risk.
 #
@@ -33,6 +34,13 @@ from commission import AREAS, CLAIMS, PRIVACY, english  # noqa: E402
 # runaway paraphrase that is the actual failure. Measured in characters, which
 # is crude and is the same crudeness for every language.
 LENGTH_FACTOR = 1.9
+
+# **Below this many characters of English the ratio says nothing**, and is
+# not asked. *Meet* is four letters and *Begegnen* eight: twice the English and
+# exactly right. The front page's steps and the `/meanings` column heads are
+# words, not prose, and a word is as long as the language makes it. Every
+# string the ratio was written for is well past this.
+SHORT = 20
 
 # The word each language settled on for `seed`, kept in `terms.json` and read
 # off the commissioned strings by `terms.py`. See that file for why it is a
@@ -105,7 +113,7 @@ def problems_for(code, catalogue, source, claims=CLAIMS, group="prose"):
                          "them — see BRIEF.md")
 
         ratio = len(value) / max(1, len(source[key]))
-        if ratio > LENGTH_FACTOR:
+        if len(source[key]) >= SHORT and ratio > LENGTH_FACTOR:
             found.append(f"{key}: {ratio:.1f}× the English. The layout is sized "
                          f"for prose, not for a paraphrase of it")
 
@@ -147,6 +155,114 @@ def problems_for(code, catalogue, source, claims=CLAIMS, group="prose"):
                     "language's own word for a seed in the thirteen already "
                     "shipping. Either the paragraph avoids saying seed, or it "
                     "says it with a different word")
+    return found
+
+
+# The one colon. `splitEntry` in `meanings.js` cuts a meaning line at the first
+# of either, and sets what is before it as the headword.
+COLON = re.compile(r"[:：]")
+
+# The Latin `meaningsSecond` quotes, which travel exactly as they are.
+LATIN = ["-ynth", "rubra", "ruber"]
+
+# The app's catalogue, for the one place the site and the app say the same
+# thing in two halves.
+APP = ROOT / "App/PeaceGarden/Resources/Localizable.xcstrings"
+
+
+# Words a native reader has ruled out, by language: the part of `REGISTER` in
+# `commission.py` a machine can see. **Checked in every string the language
+# has, site and app, and not only in a commission's own**, because the rule is
+# the reader's and it is general: Marcus's *folk* or *personer* for people in
+# Danish found three older strings saying *mennesker* the day it was made.
+AVOID = {
+    "da": [("menneske", "people are folk or personer in Danish, never "
+                        "mennesker (Marcus, 24 September 2026)")],
+}
+
+
+def avoid_problems_for(code, catalogue, app):
+    """Any word this language's reader has ruled out, anywhere it is said."""
+    found = []
+    rules = AVOID.get(code, [])
+    if not rules:
+        return found
+    said = {f"{key}": value for key, value in catalogue.get("strings", {}).items()
+            if isinstance(value, str)}
+    for key in app:
+        value = app_value(app, key, code)
+        if value:
+            said[f"app {key[:48]!r}"] = value
+    for where, value in said.items():
+        for word, why in rules:
+            if word in value.casefold():
+                found.append(f"{where}: says {word!r}. {why}")
+    return found
+
+
+def app_value(app, key, code):
+    """One language's words for one app key, or None."""
+    return (app.get(key, {}).get("localizations", {}).get(code, {})
+               .get("stringUnit", {}).get("value"))
+
+
+def meaning_problems_for(code, catalogue, app):
+    """The ten meaning lines, as a headword and a definition.
+
+    **The colon is structure, not punctuation.** The site cuts each line at its
+    first colon and never prints it: the headword becomes a `<dfn>`, the rest
+    runs on after it. A line with no colon is all definition and no headword; a
+    line with two prints the second in the middle of the definition.
+
+    **And in the app's languages the line is two app keys joined.** The name
+    sheet sets `theme.<name>` as the headword and `theme.<name>.definition`
+    under it, so the site's line and the app's pair have to be the same words,
+    or a reader sees two definitions of one theme.
+
+    The thirty part labels are held to the app's `subtheme.<case>` the same
+    way, and to being labels: no full stop.
+    """
+    found = []
+    strings = catalogue.get("strings", {})
+    for key in MEANINGS:
+        value = strings.get(key)
+        if not (isinstance(value, str) and value.strip()):
+            continue
+        if key.startswith("subtheme"):
+            # A part label: a label, and in the app's languages the app's own
+            # `subtheme.<case>` in the same words.
+            if value.rstrip().endswith("."):
+                found.append(f"{key}: a full stop. It is a label, not a sentence")
+            case = key.removeprefix("subtheme")
+            theirs = app_value(app, f"subtheme.{case[0].lower()}{case[1:]}", code)
+            if theirs and theirs.strip() != value.strip():
+                found.append(f"{key}: the site says {value!r} and the app "
+                             f"{theirs!r}. One label, one wording")
+            continue
+        if key.startswith("meanings"):
+            if key == "meaningsSecond":
+                for latin in LATIN:
+                    if latin not in value:
+                        found.append(f"meaningsSecond: {latin!r} is gone. It is "
+                                     "Latin, and is copied exactly")
+            continue
+        colons = COLON.findall(value)
+        parts = COLON.split(value, 1)
+        head = parts[0].strip()
+        if len(colons) != 1 or not head:
+            found.append(f"{key}: {len(colons)} colons. One, straight after the "
+                         "headword — the site cuts the line there")
+            continue
+        if len(head.split()) > 3:
+            found.append(f"{key}: the headword {head!r} is a phrase. It is the "
+                         "theme's name, as a dictionary lists it")
+        theme = key.removeprefix("meaning").lower()
+        app_head = app_value(app, f"theme.{theme}", code)
+        app_body = app_value(app, f"theme.{theme}.definition", code)
+        if app_head and app_body and (head, parts[1].strip()) != (
+                app_head.strip(), app_body.strip()):
+            found.append(f"{key}: the site says {value!r} and the app "
+                         f"{app_head!r} / {app_body!r}. One entry, one wording")
     return found
 
 
@@ -254,8 +370,10 @@ def distance(a, b):
 
 def main():
     source = english()
+    app = json.loads(APP.read_text())["strings"]
     codes = sys.argv[1:] or sorted(p.stem for p in CATALOGUES.glob("*.json"))
     total, written, named, private, clean, been_read = 0, 0, 0, 0, 0, 0
+    fronted, meant = 0, 0
     for code in codes:
         path = CATALOGUES / f"{code}.json"
         if not path.exists():
@@ -272,10 +390,21 @@ def main():
         if all(isinstance(strings.get(k), str) and strings[k].strip()
                for k in PRIVACY):
             private += 1
+        if all(isinstance(strings.get(k), str) and strings[k].strip()
+               for k in FRONT):
+            fronted += 1
+        if all(isinstance(strings.get(k), str) and strings[k].strip()
+               for k in MEANINGS):
+            meant += 1
         if catalogue.get("read"):
             been_read += 1
         found = (problems_for(code, catalogue, source)
                  + problems_for(code, catalogue, source, PRIVACY, "privacy page")
+                 + problems_for(code, catalogue, source, FRONT, "front page")
+                 + problems_for(code, catalogue, source, MEANINGS,
+                                "meanings")
+                 + meaning_problems_for(code, catalogue, app)
+                 + avoid_problems_for(code, catalogue, app)
                  + area_problems_for(catalogue, source))
         if found:
             print(f"{code}:")
@@ -287,7 +416,8 @@ def main():
     print(f"\n{written} of {total} catalogues have the prose"
           f"{f', {awaiting} still awaiting it' if awaiting else ''}. "
           f"{named} have all ten area names. {private} have the privacy "
-          f"page. {clean} clean.")
+          f"page. {fronted} have the front page, {meant} what the names "
+          f"mean. {clean} clean.")
     # **The count that matters and had nowhere to live.** Everything above is
     # what a machine can see. This is the one number that says whether anybody
     # who speaks the language has looked, and until `read` existed the only way
