@@ -62,13 +62,35 @@ async function plantsIn(theme) {
 
 function readFragment() {
   const [area, plant] = decodeURIComponent(location.hash.slice(1)).split("/");
+  // **An open area is never opened here.** Its own page grows its real plants,
+  // and this page would show stand-ins under a notice saying so. The fragment
+  // still says where the reader was — an area page's way back to the garden
+  // carries its own name, `gates.js` `hubHref` — so it marks that cell on the
+  // map instead. Sending the reader on to the area's page would make that way
+  // back a way round in a circle.
+  if (area in BUILT) {
+    state.where = { area: null, plant: null };
+    state.hover = area;
+    return;
+  }
   state.where = {
     area: areaFor(area) ? area : null,
     plant: plant || null,
   };
 }
 
+/// Somewhere on the map, or in an area, or at one plant in it.
+///
+/// **Choosing an open area goes to its own page**, however it was chosen: a
+/// cell clicked, Enter on the marked cell, a step off the edge of a closed area
+/// into an open one, or a wander that landed in one. Until 24 September a click
+/// opened the area's stand-in here, with a link on to the real page under it —
+/// one screen in the way of the place the reader had asked for.
 function goTo(area, plant) {
+  if (area in BUILT) {
+    location.assign(BUILT[area]);
+    return;
+  }
   const next = [area, plant].filter(Boolean).map(encodeURIComponent).join("/");
   location.hash = next ? `#${next}` : "";
 }
@@ -145,18 +167,6 @@ async function drawArea(theme) {
     plot.append(dot);
   }
   plot.setAttribute("aria-label", `${areaName(theme)}, ${plants.length}`);
-
-  // **The areas with a real one behind them.** Each has a page that grows every
-  // plant standing in it out of the plot service, where everything here is a
-  // dot from the stand-in. Hidden on the other five rather than shown disabled:
-  // a control that goes nowhere is worse than no control.
-  //
-  // The five used to be written out here. They are read from `gates.js` now,
-  // because the map at the foot of every area page lights the open areas out
-  // of the same table — and two tables of which areas are open is one table
-  // and a thing to keep in step.
-  el("area-walk-line").hidden = !(theme in BUILT);
-  if (theme in BUILT) el("area-walk").href = BUILT[theme];
 }
 
 async function drawPlant(theme, id) {
@@ -225,7 +235,13 @@ async function render() {
   el("area").hidden = !area || Boolean(plant);
   el("plant").hidden = !plant;
 
-  if (!area) return drawMap(await state.plots.counts());
+  if (!area) {
+    drawMap(await state.plots.counts());
+    // Marked without focus: a reader arriving back from an area page sees
+    // where they were, and the page does not scroll to it or steal the keys.
+    highlight({ focus: false });
+    return undefined;
+  }
   if (!plant) return drawArea(area);
   return drawPlant(area, plant);
 }
@@ -276,11 +292,11 @@ async function walk(direction) {
   return goTo(over.theme, landing.id);
 }
 
-function highlight() {
+function highlight({ focus = true } = {}) {
   for (const cell of el("map-grid").children) {
     cell.classList.toggle("is-hovered", cell.dataset.theme === state.hover);
   }
-  el("map-grid").querySelector(".is-hovered")?.focus();
+  if (focus) el("map-grid").querySelector(".is-hovered")?.focus();
 }
 
 /// Somewhere else, chosen without a reason. The point of the whole thing.

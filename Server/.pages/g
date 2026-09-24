@@ -91,9 +91,8 @@
         attributes go.
       -->
       <p class="notice body" id="invented" lang="en" dir="ltr" hidden>
-        The plants drawn here stand in for a garden still being planted. The
-        Long Walk is the one area with real plants in it, and its own page
-        grows them.
+        The plants drawn here stand in for the areas not open yet. Choosing an
+        open area goes to its own page, which grows the real plants.
       </p>
 
       <!-- 1. The map: ten areas, five across and two down. -->
@@ -106,29 +105,11 @@
         <h1 class="heading" id="area-name"></h1>
         <div class="area-plot" id="area-plot" role="group"></div>
         <!--
-          The areas that exist for real: `travel` is the Long Walk, `peace` the
-          Quiet Garden, `meeting` the Crossing, `kinship` the Orchard,
-          `pattern` the Knot Garden, `beginnings` the Seedbed and `waiting` the
-          Cold Frame. All seven are built, and `/walk`, `/quiet`, `/cross`,
-          `/orchard`, `/knot`, `/seedbed` and `/frame` grow every plant
-          standing in them from what the plot service holds, where this page
-          draws the whole garden as dots from a stand-in. `walk.js` unhides this
-          on those seven and sets where it goes, because the other three have
-          nowhere to send anybody yet.
-
-          Named by the heading above it, the same way the front page's four
-          links are: the word on the link is the same each time, and the area's
-          name is what makes it a different destination.
+          Only the areas not open yet are drawn here. Choosing an open one goes
+          straight to its own page, which grows its real plants — `walk.js`
+          `goTo` — so there is no longer a *Walk this area* link under the plot
+          to get there by.
         -->
-        <p id="area-walk-line" hidden>
-          <a
-            class="quiet-button"
-            href="/walk"
-            id="area-walk"
-            data-s="walkThisArea"
-            aria-labelledby="area-walk area-name"
-          ></a>
-        </p>
       </section>
 
       <!-- 3. One plant, and the four ways out of it. -->
