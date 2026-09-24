@@ -275,7 +275,9 @@ under the petals; seven plants in ten had reflexed sepals whatever they were.
   `GradientTexture` and `PlantSceneBuilder`, the wasm bake in
   `tools/wasm/.../Exports.swift`, and `ROLES` in `Server/assets/js/plant.js`.
 
-Not ported: `tools/preview/plant_model.py` has neither this nor the habit above.
+Ported to `tools/preview/plant_model.py` on 24 September 2026, with the habit
+above and the petal outline below; see its README for what the port still
+lacks.
 
 ## A petal's outline
 
@@ -320,7 +322,9 @@ A poppy or a water lily read as a star of spikes.
 - **Leaves stay on the main stem's nodes in all three forms.** As specified —
   the branches of an umbel are bare in life, and leaves on them would be a
   fourth thing to tune.
-- **`tools/preview` has drifted further.** The branch code in it is a faithful
-  mirror written alongside the Swift, but the stems there still lack
-  `apexPoint`, the bloom lag and the foot dome. `SeedCore` is authoritative;
-  the preview is for judging shape.
+- ~~**`tools/preview` has drifted further.**~~ Brought level on 24 September
+  2026 with the habit, the calyx and the round petal, and the crozier, the apex
+  point, `leaf.taper.N` and `bloom.lean.N` with them; compared by hand against
+  SeedCore's own meshes, every vertex count equal and every bound within Float
+  precision. It still lacks the `maturity` vertex attribute and twelve palette
+  draws. `SeedCore` is authoritative; the preview is for judging shape.
