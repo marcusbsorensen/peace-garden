@@ -184,6 +184,27 @@ check(all(0.0 <= v <= 1.0 for p in POSITION.values() for v in p),
 check(len(set(map(tuple, POSITION.values()))) == len(POSITION),
       "no two themes sit at the same point")
 
+# The website keeps a copy of the positions, for the plant panel on an area
+# page, which draws a crossed plant's passage from its parents' shared theme as
+# the app does at the meeting. Read out of `passages.js` the way the app's are
+# read out of `Quotes.swift`, and held to them, order included: a tie in
+# `between` goes to the first theme in `allCases` order.
+PAGE = ROOT / "Server" / "assets" / "js" / "passages.js"
+page_source = PAGE.read_text()
+try:
+    region = page_source[page_source.index("const POSITIONS"):]
+    region = region[:region.index("});")]
+except ValueError:
+    sys.exit("could not find `POSITIONS` in passages.js")
+page_positions = {
+    name: [float(v) for v in values.split(",")]
+    for name, values in re.findall(r"^\s*(\w+): \[([\d.,\s]+)\]", region, re.M)
+}
+check(list(page_positions) == THEMES and all(page_positions[t] == POSITION[t] for t in THEMES),
+      "passages.js has the app's positions, in the app's order")
+check(f"INHERIT_FIRST = {INHERIT_FIRST};" in page_source and f"INHERIT_SECOND = {INHERIT_SECOND};" in page_source,
+      "passages.js has GeneSource's two inheritance odds")
+
 print("\nThe bank")
 check(set(BANK) == set(THEMES), "every passage's theme is a real theme")
 empty = [t for t in THEMES if not BANK[t]]

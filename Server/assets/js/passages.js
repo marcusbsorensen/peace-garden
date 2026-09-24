@@ -63,6 +63,62 @@ const THEME_SUBTHEMES = {
   peace: ["quietAsASound", "theWordsForStopping", "atEase"],
 };
 
+/// Mirrored from `Quotes.Theme.position`: where each theme sits in the four
+/// dimensions `Quotes.Dimension` names — company, motion, duration, register —
+/// in `Theme.allCases` order, which is the order a tie is settled in. Only the
+/// plant panel reads it, to take a crossed plant's passage from the theme its
+/// two parents share, as the app does at the meeting. `passage_reference.py`
+/// holds this copy to the app's.
+const POSITIONS = Object.freeze({
+  beginnings: [0.30, 0.45, 0.60, 0.35],
+  waiting: [0.15, 0.10, 1.00, 0.40],
+  renewal: [0.25, 0.70, 0.70, 0.35],
+  light: [0.30, 0.60, 0.35, 0.50],
+  pattern: [0.40, 0.25, 0.50, 0.70],
+  ground: [0.25, 0.05, 0.85, 0.45],
+  travel: [0.35, 1.00, 0.45, 0.75],
+  meeting: [0.90, 0.70, 0.10, 0.55],
+  kinship: [1.00, 0.30, 0.90, 0.30],
+  peace: [0.55, 0.00, 0.75, 0.20],
+});
+
+/// `GeneSource.inheritFirstParent` and `inheritSecondParent`: a pair takes the
+/// first parent's theme below the first, the second's below the second, and
+/// one lying between them otherwise.
+const INHERIT_FIRST = 0.36;
+const INHERIT_SECOND = 0.72;
+
+/// The theme nearest to two others along one dimension, neither of them — a
+/// port of `Quotes.between`. Nearness on the governing axis first, and over all
+/// four only to break a tie; the first of equals wins, as Swift's `min` has it.
+export function between(one, other, axis) {
+  const a = POSITIONS[one], b = POSITIONS[other];
+  const midpoint = (a[axis] + b[axis]) / 2;
+  const centre = a.map((value, i) => (value + b[i]) / 2);
+  let best = null, bestNear = Infinity, bestAll = Infinity;
+  for (const [theme, at] of Object.entries(POSITIONS)) {
+    if (theme === one || theme === other) continue;
+    const near = Math.abs(at[axis] - midpoint);
+    const all = at.reduce((sum, value, i) => sum + (value - centre[i]) ** 2, 0);
+    if (near < bestNear || (near === bestNear && all < bestAll)) {
+      best = theme; bestNear = near; bestAll = all;
+    }
+  }
+  return best ?? one;
+}
+
+/// The theme two parents share — a port of `Quotes.sharedTheme`, with what only
+/// SeedCore can work out handed over by the module's `pg_name`: each parent's
+/// own genus head, the lower seed's first, and the pair's two rolls.
+export function sharedTheme({ heads, inherit, axis }) {
+  const mine = themeOf(heads[0]);
+  const theirs = themeOf(heads[1]);
+  if (inherit < INHERIT_FIRST) return mine;
+  if (inherit < INHERIT_SECOND) return theirs;
+  const dimensions = POSITIONS.beginnings.length;
+  return between(mine, theirs, Math.min(dimensions - 1, Math.floor(axis * dimensions)));
+}
+
 /// Reads the two syllables back off a written genus.
 ///
 /// A port of `PlantName.init(genus:epithet:)`, and the fussy part is deliberate:
