@@ -89,6 +89,10 @@ const ROUTES = [
     // stand on the ground: three in four are potted on the staging, set out as
     // a run of colour, and the tallest stand in a border along the back.
     '/glasshouse' => ['glasshouse', 'text/html; charset=utf-8'],
+    // The ninth, on 24 September, and the first that knows the year: a wood
+    // cut one band a winter, whose ferns on their stools are drawn at the
+    // stage the service says their coupe is in.
+    '/coppice' => ['coppice', 'text/html; charset=utf-8'],
     // What the names mean, on 23 September: the table every area page links
     // to, saying what brings a plant to each area and what its two words say.
     '/meanings' => ['meanings', 'text/html; charset=utf-8'],

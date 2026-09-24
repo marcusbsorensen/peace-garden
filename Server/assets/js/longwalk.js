@@ -69,8 +69,9 @@ export const COLOUR = {
   box: [0.288, 0.378, 0.226],
 };
 
-// Midday, GardenGround.swift.
-const LIGHT = {
+// Midday, GardenGround.swift. Read by the Coppice too, which lays a stool's
+// shadow away from it.
+export const LIGHT = {
   sun: [-0.3320, 0.8829, 0.3320],
   sunColour: [1.00, 0.96, 0.88],
   strength: 0.76,
