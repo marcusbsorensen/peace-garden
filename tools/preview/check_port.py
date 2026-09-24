@@ -208,7 +208,8 @@ def check(plant, problems):
         placements = bloom_placements(
             genome,
             growth,
-            [index / STEM_SEGMENTS for index in node_indices(genome.nodeCount)],
+            [index / STEM_SEGMENTS
+             for index in node_indices(genome.nodeCount, zone=genome.nodeZone)],
             stalk_count(genome, growth["heightScale"]),
         )
         recorded = sample["blooms"]

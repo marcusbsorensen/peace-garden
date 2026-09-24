@@ -209,35 +209,71 @@ DEFAULT_PROFILE = dict(
     petalWidthScale=1.0, petalCurlBias=0.0, headPitchBias=0.0, centreScale=1.0,
     bloomsAtNodes=False, bloomPresence=1.0, swayScale=1.0,
     inflorescence="raceme", bloomScale=1.0, branchSpread=0.0, branchCount=5,
+    # What holds a flower from beneath, how its sepals are carried, the outline
+    # a petal is cut to and how crumpled it is. The family's rather than the
+    # plant's — see `Calyx`, `Sepals` and `PetalOutline` in Archetype.swift.
+    calyx="cup", sepals="appressed", petalOutline="rounded", petalCrumple=0.0,
+    # The habit: how wide a plant stands for its height. All of it exists
+    # because every plant was a stick — see the habit section of
+    # `ArchetypeProfile`. Ranges are `(lo, hi)` and inclusive, as the Swift's
+    # `ClosedRange`s are.
+    rosette=False, crownLeaves=(0, 0), crownLengthScale=1.6, crownPitch=(0.9, 1.3),
+    crownTaper=0.5, crownRise=0.55, pads=False, fleshiness=0.0, pinnae=(0, 0),
+    leafReach=0.55, nodeZone=(0.16, 0.90),
 )
 
 PROFILE_OVERRIDES = {
     "spire": dict(petals=(4, 6), heightScale=1.35, nodeScale=1.6, petalLengthScale=0.55,
-                  bloomsAtNodes=True, leafLengthScale=0.8),
+                  bloomsAtNodes=True, leafLengthScale=0.8,
+                  crownLeaves=(0, 3), crownPitch=(0.6, 1.0)),
     "umbel": dict(petals=(5, 8), inflorescence="head", branchSpread=0.0, branchCount=5, bloomScale=0.8,
-                  heightScale=0.9, petalLengthScale=0.45, centreScale=0.6, leafDroop=1.2),
-    "fern": dict(petals=(3, 5), heightScale=0.8, nodeScale=1.9, leafLengthScale=1.5, leafWidthScale=0.7,
-                 leafDroop=1.3, bloomPresence=0.05, swayScale=1.3),
-    "orchid": dict(petals=(3, 6), inflorescence="solitary", bloomScale=1.7, heightScale=0.85, stemThickness=0.8, nodeScale=0.6, petalLengthScale=1.0, petalWidthScale=1.3, petalCurlBias=0.25,
-                   headPitchBias=0.5, leafLengthScale=1.2),
-    "lotus": dict(petals=(8, 14), inflorescence="solitary", bloomScale=1.7, heightScale=0.7, stemThickness=1.4, petalLengthScale=1.0,
-                  petalWidthScale=1.5, petalCurlBias=-0.55, centreScale=1.7, nodeScale=0.5),
-    "thistle": dict(petals=(13, 21), inflorescence="solitary", bloomScale=2.4, heightScale=0.9, nodeScale=0.55,
-                    stemThickness=1.2, petalLengthScale=0.4, petalWidthScale=0.3, petalCurlBias=-0.3,
-                    centreScale=1.3),
+                  heightScale=0.9, petalLengthScale=0.45, centreScale=0.6, leafDroop=1.2,
+                  crownLeaves=(2, 5), crownLengthScale=1.7, crownPitch=(0.7, 1.2), leafReach=0.6,
+                  calyx="lid", sepals="none"),
+    "fern": dict(petals=(3, 5), nodeScale=1.9, leafLengthScale=1.5, leafWidthScale=0.7,
+                 leafDroop=1.3, bloomPresence=0.05, swayScale=1.3,
+                 rosette=True, crownLeaves=(2, 4), crownLengthScale=2.2, crownPitch=(0.15, 0.45),
+                 heightScale=0.32, crownTaper=0.2, pinnae=(9, 15), sepals="none"),
+    "orchid": dict(petals=(3, 6), inflorescence="solitary", bloomScale=1.7, heightScale=0.6,
+                   stemThickness=0.8, nodeScale=0.6, petalLengthScale=1.0, petalWidthScale=1.3,
+                   petalCurlBias=0.25, headPitchBias=0.5, leafLengthScale=1.2,
+                   rosette=True, crownLeaves=(1, 3), crownLengthScale=1.7, crownPitch=(0.95, 1.35),
+                   leafWidthScale=1.5, calyx="stalk", sepals="none"),
+    "lotus": dict(petals=(8, 14), inflorescence="solitary", bloomScale=1.7, heightScale=0.31,
+                  stemThickness=1.4, petalLengthScale=0.6, petalWidthScale=1.5, petalCurlBias=-0.3,
+                  centreScale=1.7, nodeScale=0.5,
+                  rosette=True, pads=True, crownLeaves=(2, 4), crownLengthScale=1.9,
+                  leafLengthScale=1.25, sepals="none"),
+    "thistle": dict(petals=(13, 21), inflorescence="solitary", bloomScale=2.4, heightScale=0.9,
+                    nodeScale=0.55, stemThickness=1.2, petalLengthScale=0.4, petalWidthScale=0.3,
+                    petalCurlBias=-0.3, centreScale=1.3,
+                    crownLeaves=(3, 7), crownPitch=(1.1, 1.4), leafReach=0.4,
+                    calyx="urn", sepals="none", petalOutline="pointed"),
     "vine": dict(petals=(4, 6), heightScale=1.45, stemThickness=0.6, nodeScale=1.7, leafLengthScale=0.65,
-                 leafWidthScale=1.1, swayScale=1.8, bloomsAtNodes=True, petalLengthScale=0.5),
+                 leafWidthScale=1.1, swayScale=1.8, bloomsAtNodes=True, petalLengthScale=0.5,
+                 leafReach=0.3),
     "bell": dict(petals=(5, 10), petalCurlBias=-0.75, petalLengthScale=1.1, headPitchBias=1.0,
-                 bloomsAtNodes=True),
-    "star": dict(petals=(5, 8), petalCurlBias=0.35, petalWidthScale=0.6, centreScale=0.7, petalCountScale=0.9),
+                 bloomsAtNodes=True,
+                 crownLeaves=(3, 7), crownPitch=(0.95, 1.35), leafLengthScale=1.3,
+                 crownLengthScale=2.3, leafReach=0.8, sepals="spreading"),
+    "star": dict(petals=(5, 8), petalCurlBias=0.35, petalWidthScale=0.6, centreScale=0.7,
+                 crownLeaves=(4, 9), nodeZone=(0.08, 0.85), leafReach=0.8, leafLengthScale=1.25,
+                 heightScale=0.9, crownLengthScale=2.3, crownPitch=(0.95, 1.35),
+                 calyx="shallowCup", sepals="reflexed", petalOutline="pointed"),
     "poppy": dict(petals=(4, 6), inflorescence="solitary", bloomScale=1.7, heightScale=0.75,
-                  nodeScale=0.35, leafLengthScale=0.7, petalLengthScale=1.0, petalWidthScale=1.6, petalCurlBias=-0.35,
-                  headPitchBias=0.35, swayScale=1.4),
-    "succulent": dict(petals=(8, 12), heightScale=0.45, stemThickness=1.9, nodeScale=2.1, leafLengthScale=0.55,
-                      leafWidthScale=1.6, leafDroop=0.3, petalLengthScale=0.5, bloomPresence=0.6),
+                  nodeScale=0.35, leafLengthScale=1.2, petalLengthScale=1.0, petalWidthScale=1.6,
+                  petalCurlBias=-0.35, headPitchBias=0.35, swayScale=1.4,
+                  crownLeaves=(3, 6), crownLengthScale=2.0, crownPitch=(0.7, 1.1),
+                  nodeZone=(0.05, 0.35), leafReach=0.7, calyx="swelling", sepals="none",
+                  pinnae=(5, 8), petalCrumple=1.0),
+    "succulent": dict(petals=(8, 12), rosette=True, fleshiness=1.0, crownPitch=(0.95, 1.3),
+                      crownLengthScale=1.0, heightScale=0.31, stemThickness=0.9, nodeScale=2.1,
+                      leafLengthScale=1.4, leafWidthScale=0.85, leafDroop=0.3,
+                      petalLengthScale=0.5, bloomPresence=0.6, crownRise=0.3),
     "plume": dict(petals=(5, 10), inflorescence="head", branchSpread=1.0, branchCount=7, bloomScale=0.8,
-                  heightScale=1.05, nodeScale=1.8, petalLengthScale=0.35,
-                  petalWidthScale=0.35, leafLengthScale=0.6, leafWidthScale=0.4),
+                  heightScale=0.75, nodeScale=1.8, petalLengthScale=0.35,
+                  petalWidthScale=0.35, leafLengthScale=0.6, leafWidthScale=0.4,
+                  crownLeaves=(0, 3)),
 }
 
 
@@ -392,7 +428,32 @@ class Genome:
             profile["branchSpread"] + source.signed("stem.branch.spread") * 0.14, 0, 1)
         self.branchAngle = source.value("stem.branch.angle", 1.0, 1.35)
 
-        self.height = source.value("stem.height", 0.44, 1.42) * profile["heightScale"] * self.vigour
+        # Whether the plant flowers, and how long its leaves are, are read here,
+        # ahead of the bloom and the foliage they belong to, because on a
+        # rosette they decide how tall the stem is. A key gives the same value
+        # however often it is read — draws are by label, not by position — so
+        # the bloom and foliage below agree with these.
+        flowers = source.unit("bloom.present") < profile["bloomPresence"]
+        leaf_length = source.value("foliage.length", 0.055, 0.28) * profile["leafLengthScale"] * self.vigour
+        # A rosette's leaves are its whole size, so it takes the leaf draw at a
+        # little over half strength: the fivefold range that makes one stem
+        # leafy and another bare would make one lotus a metre across and the
+        # next a saucer. 0.1675 is the middle of `foliage.length`'s draw.
+        typical_length = 0.1675 * profile["leafLengthScale"] * self.vigour
+        rosette_length = profile["crownLengthScale"] * (leaf_length * 0.6 + typical_length * 0.4)
+        drawn_height = source.value("stem.height", 0.44, 1.42) * profile["heightScale"] * self.vigour
+        if profile["pads"]:
+            # A water lily holds its flower just clear of its pads, so the stem
+            # answers to the pads: a quarter of the largest pad's width, and a
+            # sliver of the stem draw so no two stand the same.
+            self.height = 0.06 + rosette_length * 0.25 + drawn_height * 0.1
+        elif profile["rosette"] and not flowers:
+            # A rosette that does not flower sends up no stalk: a stub the inner
+            # leaves stand round and hide, still a height so that a fern's
+            # crozier has something to uncurl from.
+            self.height = 0.08 + drawn_height * 0.25
+        else:
+            self.height = drawn_height
         self.baseRadius = source.value("stem.baseRadius", 0.006, 0.022) * profile["stemThickness"]
         self.taper = source.value("stem.taper", 0.16, 0.86)
         self.lean = source.signed("stem.lean") * 0.75
@@ -402,7 +463,7 @@ class Genome:
         self.sides = source.integer("stem.sides", 6, 9)
 
         self.leavesPerNode = source.integer("foliage.leavesPerNode", 1, 3)
-        self.leafLength = source.value("foliage.length", 0.055, 0.28) * profile["leafLengthScale"] * self.vigour
+        self.leafLength = leaf_length
         self.leafWidthRatio = source.value("foliage.widthRatio", 0.13, 0.88) * profile["leafWidthScale"]
         self.leafDroop = source.bell("foliage.droop", 0, 1.15) * profile["leafDroop"]
         self.leafFold = source.value("foliage.fold", 0.02, 0.62)
@@ -413,6 +474,27 @@ class Genome:
         self.veinCount = source.integer("foliage.veinCount", 2, 9)
         self.veinDepth = source.bell("foliage.veinDepth", 0.2, 1.0) if source.chance("foliage.hasVeins", 0.72) else 0.0
         self.leafTipSharpness = source.value("foliage.tipSharpness", 0.5, 2.4)
+
+        # The habit — `Genome.Habit`. Leaf size answers partly to the stem,
+        # which is what stops a tall plant being a twig: measured against 0.9m
+        # and held between 0.4 and 1.5. Kept off `leafLength` itself, which the
+        # epithets read: a long-leaved plant is long-leaved for its genus.
+        reach = profile["leafReach"]
+        self.stemLeafScale = (1 - reach) + reach * min(1.5, max(0.4, self.height / 0.9))
+        self.rosette = profile["rosette"]
+        self.crownCount = ((self.nodeCount * self.leavesPerNode if self.rosette else 0)
+                           + source.integer("habit.crownLeaves", *profile["crownLeaves"]))
+        # Held to sixty centimetres off a rosette: past that a bell is wearing
+        # rhubarb, and it was the one thing making a two-metre spread.
+        self.crownLength = (rosette_length if self.rosette
+                            else min(0.6, profile["crownLengthScale"] * self.leafLength * self.stemLeafScale))
+        self.crownPitch = source.value("habit.crownPitch", *profile["crownPitch"])
+        self.crownTaper = profile["crownTaper"]
+        self.crownRise = profile["crownRise"]
+        self.pads = profile["pads"]
+        self.fleshiness = profile["fleshiness"]
+        self.pinnae = source.integer("habit.pinnae", *profile["pinnae"])
+        self.nodeZone = profile["nodeZone"]
 
         # The genus has a petal count; the plant does not draw one. See
         # SeedCore's Genome.swift and docs/TAXONOMY.md §1.
@@ -433,7 +515,11 @@ class Genome:
         self.sepalCount = source.integer("bloom.sepalCount", 3, 6) if source.chance("bloom.hasSepals", 0.7) else 0
         self.hasPistil = source.chance("bloom.hasPistil", 0.75)
         self.bloomsAtNodes = profile["bloomsAtNodes"]
-        self.bloomPresent = source.unit("bloom.present") < profile["bloomPresence"]
+        self.bloomPresent = flowers
+        self.calyx = profile["calyx"]
+        self.sepals = profile["sepals"]
+        self.petalOutline = profile["petalOutline"]
+        self.crumple = profile["petalCrumple"]
 
         self.palette = derive_palette(source, seed)
         self.glow = self.palette["glow"]
@@ -687,8 +773,18 @@ def transport_frames(positions, radii, twist):
 STEM_SEGMENTS = 28
 
 
-def node_indices(node_count, segments=STEM_SEGMENTS):
+def node_indices(node_count, segments=STEM_SEGMENTS, zone=(0.16, 0.90)):
     """Which stem samples carry the leaf nodes, as indices into the sweep.
+
+    `zone` is the family's `nodeZone` — where on the stem its nodes sit, as
+    fractions of its length. A daisy is leafy nearly from the ground and a
+    poppy's few nodes are low with the stem bare above them; `0.16...0.90`,
+    the default, is what every plant had before the zone was a profile's.
+
+    The Swift works this in `Float` and this in doubles, and that was checked
+    rather than assumed for the two new zones as for the old one: over every
+    `nodeCount` from 1 to 40, the only index where the two round differently is
+    poppy's zone at 29 nodes, and a poppy grows three at most.
 
     Split out of `build_skeleton` so a node's place on the stem can be had
     without sweeping one. The sweep is the only part of this file that wants
@@ -701,9 +797,10 @@ def node_indices(node_count, segments=STEM_SEGMENTS):
     enough on its own: `transport_frames` numbers `positions` from 0 to 1 and
     the stem always has `segments + 1` of them.
     """
+    low, span = zone[0], zone[1] - zone[0]
     indices = []
     for index in range(node_count):
-        fraction = 0.55 if node_count == 1 else 0.16 + 0.74 * index / (node_count - 1)
+        fraction = low + span * 0.53 if node_count == 1 else low + span * index / (node_count - 1)
         indices.append(min(segments, rounded(fraction * segments)))
     return indices
 
@@ -723,6 +820,44 @@ def stalk_count(genome, height_scale):
     return genome.branchCount if smoothstep((height_scale - 0.25) / (0.7 - 0.25)) > 0.001 else 0
 
 
+def apex_point(t, span):
+    """How much of its full thickness a stem still has at `t`.
+
+    Mirror of `SkeletonBuilder.apexPoint`: the last `span` of a stem or stalk
+    runs out to nothing on an ogive, so the tube closes on a point rather than
+    showing its own lit inside wall through an open end. Clamped before the
+    root, as the Swift is, because `1 - (1 - span)` does not round back to
+    `span` and the tip vertex would otherwise be a NaN.
+    """
+    start = 1 - span
+    if t <= start:
+        return 1.0
+    s = (t - start) / span
+    return math.sqrt(max(0.0, 1 - s * s))
+
+
+def crozier_turn(height_scale):
+    """The total turn a young shoot's coiled tip carries, in radians.
+
+    Mirror of `SkeletonBuilder.crozierTurn`. A shoot comes up with its growing
+    point curled over and opens as it grows; gone by the time the plant is half
+    its height, so a grown plant is exactly as it was before this existed.
+    """
+    return 1.6 * math.pi * (1 - smoothstep((height_scale - 0.06) / (0.5 - 0.06)))
+
+
+def _coil_step(t, turn, segments):
+    """The coil's share of one integration step: the derivative of `s^1.7`,
+    so the shoot leaves the ground almost straight and keeps the curl at its
+    growing end. The bottom third stays upright."""
+    start = 0.35
+    if turn <= 0 or t <= start:
+        return 0.0
+    span = 1 - start
+    s = (t - start) / span
+    return turn * 1.7 * s ** 0.7 / (segments * span)
+
+
 def build_skeleton(genome, height_scale, segments=STEM_SEGMENTS):
     length = max(0.01, genome.height * height_scale)
     step = length / segments
@@ -730,6 +865,10 @@ def build_skeleton(genome, height_scale, segments=STEM_SEGMENTS):
     sway_amplitude = genome.sway * 0.8
 
     base_radius = genome.baseRadius * (0.4 + 0.6 * height_scale)
+    coil_turn = crozier_turn(height_scale)
+    # A growing point is a few stem-diameters long, sized against the stem's
+    # thickness rather than its length, or on a spire it is a whisker.
+    point_span = min(0.16, max(0.045, base_radius * 5 / length))
     positions = [np.zeros(3)]
     radii = [base_radius]
     direction = np.array([0.0, 1.0, 0.0])
@@ -737,16 +876,19 @@ def build_skeleton(genome, height_scale, segments=STEM_SEGMENTS):
 
     for index in range(1, segments + 1):
         t = index / segments
-        direction = rotate_axis(direction, np.array([0.0, 0.0, 1.0]), lean_per_step * (0.6 + 0.8 * t))
+        # The crozier bends about the lean's own axis, so a leaning stem
+        # relaxes into its lean: one continuous bend from base to tip.
+        direction = rotate_axis(direction, np.array([0.0, 0.0, 1.0]),
+                                lean_per_step * (0.6 + 0.8 * t) + _coil_step(t, coil_turn, segments))
         direction = rotate_axis(direction, np.array([1.0, 0.0, 0.0]),
                                 sway_amplitude * math.cos(t * math.pi * 2.2) / segments)
         direction = normalize(direction)
         position = position + direction * step
         positions.append(position)
-        radii.append(base_radius * (1 - (1 - genome.taper) * t))
+        radii.append(base_radius * (1 - (1 - genome.taper) * t) * apex_point(t, point_span))
 
     samples = transport_frames(positions, radii, genome.twist)
-    nodes = [samples[index] for index in node_indices(genome.nodeCount, segments)]
+    nodes = [samples[index] for index in node_indices(genome.nodeCount, segments, genome.nodeZone)]
     return dict(stem=samples, nodes=nodes, apex=samples[-1],
                 branches=build_branches(genome, samples, height_scale, length))
 
@@ -778,7 +920,11 @@ def build_branches(genome, samples, height_scale, stem_length):
 
         climb = max(0.0, apex["position"][1] - origin["position"][1])
         target_y = apex["position"][1] + spread * climb * jitter.value(-0.5, 0.5)
-        reach = min(stem_length * 0.7, climb * 2.4 + stem_length * 0.2) * vigour
+        # The ceiling comes in with spread: at 0.7 a tall plume's low stalks
+        # made it two metres across, the widest plant in the garden by half a
+        # metre once everything else had been broadened to meet it.
+        ceiling = stem_length * (0.7 - 0.08 * spread)
+        reach = min(ceiling, climb * 2.4 + stem_length * 0.2) * vigour
         if reach <= stem_length * 0.002:
             continue
 
@@ -820,9 +966,12 @@ def _sweep_branch(origin, radial, angle, target_y, reach, levelling, taper):
             travelled -= step * (1 - crossing)
         break
 
+    # A stalk is a stem and ends like one, through the same ogive.
     base = origin["radius"] * 0.45
+    span = min(0.2, max(0.06, base * 5 / max(0.0001, travelled)))
     last = len(positions) - 1
-    radii = [base * (1 - (1 - taper) * (i / last)) for i in range(len(positions))]
+    radii = [base * (1 - (1 - taper) * (i / last)) * apex_point(i / last, span)
+             for i in range(len(positions))]
     return transport_frames(positions, radii, 0.0)
 
 
@@ -881,14 +1030,39 @@ def build_mesh(genome, growth):
 
 
 def _add_leaves(builder, genome, skeleton, growth):
-    total = genome.leafCount
+    """Mirror of `PlantBuilder.addLeaves`: the crown's leaves, then the stem's.
+
+    A rosette carries none on the stem — its node leaves are counted into
+    `crownCount` instead — and every other family may carry a few at its foot
+    as well as those up the stem. Leaves open from the base upward, and the
+    crown is the base, so its leaves are the first out, outermost first.
+    """
+    crown = genome.crownCount
+    on_stem = 0 if genome.rosette else genome.leafCount
+    total = crown + on_stem
     if total <= 0 or growth["leafUnfurl"] <= 0:
         return
     opened = total * growth["leafUnfurl"]
     vigour = 0.45 + 0.55 * growth["heightScale"]
+    # A crown leaf that stands up grows as the plant's height does, and one
+    # lying out grows as a stem leaf does. Tied to `vigour` alone a young fern
+    # stood a fifth taller than it had before it had a crown; tied to the
+    # height alone a young succulent or lotus shrank to a few centimetres.
+    upright = 0.15 + 0.85 * growth["heightScale"]
 
-    for index in range(total):
+    foot = skeleton["stem"][0]
+    for index in range(crown):
         progress = opened - index
+        if progress <= 0:
+            return
+        _add_crown_leaf(builder, genome, index, crown, foot,
+                        min(1.0, progress), vigour, upright)
+
+    # Stem leaves keep the jitter streams they always had, keyed by their own
+    # index rather than their place in the opening order, so a crown arriving
+    # under a plant does not reshuffle the leaves above it.
+    for index in range(on_stem):
+        progress = opened - (crown + index)
         if progress <= 0:
             break
         openness = min(1.0, progress)
@@ -899,31 +1073,191 @@ def _add_leaves(builder, genome, skeleton, growth):
 
         jitter = SplitMix64(genome.seed, f"leaf.{index}")
         azimuth = genome.divergence * index + jitter.value(-0.12, 0.12)
-        scale = openness * vigour * jitter.value(0.86, 1.14)
-        length = genome.leafLength * scale
-        if length <= 0.001:
-            continue
+        # A separate stream, as in the Swift, so the taper was added without
+        # shifting the azimuth and scale drawn above it.
+        shape = SplitMix64(genome.seed, f"leaf.taper.{index}")
+        scale = (openness * vigour * jitter.value(0.86, 1.14)
+                 * leaf_taper(node["t"], shape))
 
-        axis = node["tangent"]
         radial = normalize(node["normal"] * math.cos(azimuth) + node["binormal"] * math.sin(azimuth))
         pitch = genome.leafPitch + jitter.value(-0.1, 0.1)
-        forward = normalize(radial * math.sin(pitch) + axis * math.cos(pitch))
-        side = normalize(np.cross(axis, radial))
-        up = normalize(np.cross(forward, side))
-        origin = node["position"] + radial * node["radius"] * 0.8
-        half_width = length * genome.leafWidthRatio * 0.5
+        _add_blade(builder, genome,
+                   origin=node["position"] + radial * node["radius"] * 0.8,
+                   axis=node["tangent"], radial=radial,
+                   length=genome.leafLength * genome.stemLeafScale * scale,
+                   pitch=pitch, droop=genome.leafDroop)
 
-        def point(u, v, origin=origin, forward=forward, up=up, side=side,
-                  length=length, half_width=half_width):
-            profile = blade_profile(v, genome.leafTipSharpness, genome.serration, genome.teeth)
-            across = (u - 0.5) * 2 * half_width * profile
-            sag = -genome.leafDroop * length * v * v * 0.8
-            crease = genome.leafFold * half_width * profile * (abs(u - 0.5) * 2) ** 2
-            vein = (genome.veinDepth * half_width * 0.14
-                    * math.sin(v * math.pi * 2 * genome.veinCount) * (abs(u - 0.5) * 2))
-            return origin + forward * (v * length) + up * (sag + crease + vein) + side * across
 
-        builder.add_surface("leaf", 19, 9, point)
+def leaf_taper(t, jitter):
+    """How large a stem leaf is for its height up the stem.
+
+    Mirror of `PlantBuilder.leafTaper`: largest low down, smaller toward the
+    crown, and the very lowest small again because a seedling's first pair
+    stay small. A per-leaf draw on top, wide enough to break the rhythm.
+    """
+    rise = min(1.0, max(0.0, t / 0.22))
+    fall = 1 - 0.62 * min(1.0, max(0.0, (t - 0.2) / 0.8))
+    return rise * fall * jitter.value(0.82, 1.2)
+
+
+def _add_crown_leaf(builder, genome, index, count, foot, openness, lying, upright):
+    """One leaf from the crown, at the foot of the stem.
+
+    Mirror of `PlantBuilder.addCrownLeaf`. Outermost first, and each one in
+    from it smaller and more upright — a rosette, a fern's vase and a poppy's
+    clump alike. Laid round the world's up rather than the stem's tangent,
+    because a leaning stem leans from the crown and the crown sits flat.
+    """
+    # How far in from the outside this leaf is, 0 outermost and 1 at the centre.
+    inward = index / (count - 1) if count > 1 else 0.0
+    jitter = SplitMix64(genome.seed, f"leaf.crown.{index}")
+    azimuth = genome.divergence * index + jitter.value(-0.15, 0.15)
+    up = np.array([0.0, 1.0, 0.0])
+    radial = np.array([math.cos(azimuth), 0.0, math.sin(azimuth)])
+    spread = jitter.value(0.86, 1.14)
+
+    if genome.pads:
+        # A pad lies flat, so it grows as a leaf lying out does.
+        _add_pad(builder, genome, foot["position"] + radial * foot["radius"] * 0.6,
+                 radial, inward,
+                 genome.crownLength * (1 - 0.35 * inward) * openness * lying * spread,
+                 openness, jitter)
+        return
+
+    pitch = genome.crownPitch * (1 - genome.crownRise * inward) + jitter.value(-0.08, 0.08)
+    # Upright by the cosine of its angle off vertical: a frond standing
+    # straight up grows wholly with the height, a leaf on the soil wholly as a
+    # stem leaf does.
+    standing = max(0.0, math.cos(pitch))
+    size = openness * spread * (lying + (upright - lying) * standing)
+    length = genome.crownLength * (1 - genome.crownTaper * inward) * size
+    # A rosette is stacked: each leaf in rises from a little higher on the
+    # crown than the one outside it.
+    lift = genome.crownLength * 0.06 * inward * size if genome.rosette else 0.0
+    # Crown leaves arch rather than sag, and a fleshy one turns its tip up a
+    # little instead. Capped where the tip comes back to the height it left
+    # from, so no leaf is drawn through the ground it grows on.
+    turn = -0.18 * genome.fleshiness if genome.fleshiness > 0 else genome.leafDroop * 1.1
+    arch = min(turn, math.pi - 2 * pitch - 0.1)
+    _add_blade(builder, genome,
+               origin=foot["position"] + radial * foot["radius"] * 0.8
+               + up * (foot["radius"] + lift),
+               axis=up, radial=radial, length=length, pitch=pitch,
+               droop=0.0, arch=arch, pinnae=genome.pinnae)
+
+
+def _add_pad(builder, genome, foot, radial, inward, diameter, openness, jitter):
+    """A lotus pad: round, held flat on its own stalk from the middle.
+
+    Mirror of `PlantBuilder.addPad`. The outer pads are the broadest and sit
+    lowest, spreading furthest; the inner ones stand a little higher and closer
+    in, so neighbours overlap like a water lily's rather than standing up like
+    dishes on a table.
+    """
+    if diameter <= 0.002:
+        return
+    up = np.array([0.0, 1.0, 0.0])
+    radius = diameter * 0.5
+    out = diameter * (0.68 - 0.36 * inward) * jitter.value(0.85, 1.15)
+    rise = diameter * (0.03 + 0.2 * inward) * jitter.value(0.7, 1.3)
+    centre = foot + radial * out + up * rise
+
+    # The stalk climbs first and leans out after, a quadratic through a point
+    # above the foot, so it meets the pad from below.
+    bend = foot + up * rise * 0.95 + radial * out * 0.15
+    stalk_radius = max(0.0008, diameter * 0.016)
+    positions, radii = [], []
+    for step in range(9):
+        t = step / 8
+        a = foot + (bend - foot) * t
+        b = bend + (centre - bend) * t
+        positions.append(a + (b - a) * t)
+        radii.append(stalk_radius * (1 - 0.3 * t))
+    # A petiole is part of the leaf, and is drawn as one.
+    builder.add_tube("leaf", transport_frames(positions, radii, 0.0), 5)
+
+    # Tipped a little outward, and cupped so the rim stands above the middle.
+    tilt = jitter.value(0.02, 0.1)
+    normal = normalize(up + radial * tilt)
+    forward = normalize(radial - normal * float(np.dot(radial, normal)))
+    side = normalize(np.cross(normal, forward))
+    cup = radius * jitter.value(0.04, 0.1) * openness
+    vein_depth = genome.veinDepth
+
+    def point(u, v):
+        x = v * 2 - 1
+        width = math.sqrt(max(0.0, 1 - x * x))
+        y = (u * 2 - 1) * width
+        distance = x * x + y * y
+        # Faint ribs out from the centre, enough to catch the light.
+        rib = vein_depth * radius * 0.03 * (u * 2 - 1) * (u * 2 - 1)
+        return (centre + forward * (x * radius) + side * (y * radius)
+                + normal * (cup * distance + rib))
+
+    builder.add_surface("leaf", 19, 11, point)
+
+
+def _add_blade(builder, genome, origin, axis, radial, length, pitch, droop,
+               arch=0.0, pinnae=0):
+    """A blade from `origin`, leaning `pitch` off `axis` toward `radial`.
+
+    Mirror of `PlantBuilder.addBlade`, shared by the stem's leaves and the
+    crown's. **A sagging blade is pushed; an arching one turns**: the sag moves
+    each point of a straight midrib off to one side, which is right for a leaf
+    held out from a stem and kinks a frond that starts near upright, so a crown
+    leaf's midrib turns its own direction a little at a time instead —
+    constant curvature, closed-form.
+    """
+    if length <= 0.001:
+        return
+
+    forward = normalize(radial * math.sin(pitch) + axis * math.cos(pitch))
+    side = normalize(np.cross(axis, radial))
+    up = normalize(np.cross(forward, side))
+
+    fleshiness = genome.fleshiness
+    # A fleshy leaf is smooth and runs out to a point: teeth, veins and fold
+    # laid over a swollen blade crumple it, and a blunt one reads as a pebble.
+    smooth = max(0.0, 1 - fleshiness)
+    half_width = length * genome.leafWidthRatio * 0.5
+    fold = genome.leafFold * (0.3 + 0.7 * smooth)
+    sharpness = max(genome.leafTipSharpness, 1.5 * fleshiness)
+    # A pinnate frond is the saw-toothed margin cut nearly to the midrib, with
+    # three rows to a leaflet or the cuts alias into a ragged edge.
+    serration = 3.6 if pinnae > 0 else genome.serration * smooth
+    teeth = pinnae if pinnae > 0 else genome.teeth
+    rows = 3 * pinnae + 4 if pinnae > 0 else 19
+    vein_count = genome.veinCount
+    vein_depth = genome.veinDepth * smooth
+
+    def spine(s):
+        if abs(arch) <= 1e-3:
+            return forward * (s * length) + up * (-droop * length * s * s * 0.8), up
+        heading = pitch + arch * s
+        run = length / arch
+        position = (radial * (run * (math.cos(pitch) - math.cos(heading)))
+                    + axis * (run * (math.sin(heading) - math.sin(pitch))))
+        return position, axis * math.sin(heading) - radial * math.cos(heading)
+
+    def point(u, v, thickness):
+        s = v
+        profile = blade_profile(s, sharpness, serration, teeth)
+        across = (u - 0.5) * 2 * half_width * profile
+        crease = fold * half_width * profile * (abs(u - 0.5) * 2) ** 2
+        vein = (vein_depth * half_width * 0.14
+                * math.sin(s * math.pi * 2 * vein_count) * (abs(u - 0.5) * 2))
+        # A fleshy leaf is swollen across its middle and thin at the edge.
+        x = (u - 0.5) * 2
+        swell = thickness * half_width * profile * (1 - x * x)
+        midrib, face = spine(s)
+        return origin + midrib + face * (crease + vein + swell) + side * across
+
+    builder.add_surface("leaf", rows, 9, lambda u, v: point(u, v, 0.7 * fleshiness))
+    # A succulent's leaf has an underside: a second surface bowed the other way
+    # and meeting the first at the margin makes the leaf a body, not a sheet.
+    if fleshiness > 0:
+        builder.add_surface("leaf", rows, 9, lambda u, v: point(u, v, -0.7 * fleshiness),
+                            flip=True)
 
 
 def _flush_factor(position, growth):
@@ -1029,8 +1363,13 @@ def _add_blooms(builder, genome, skeleton, growth):
 
 def _add_bloom(builder, genome, sample, scale, growth, index):
     jitter = SplitMix64(genome.seed, f"bloom.{index}")
+    # Every head on a spike used to tip by exactly the same angle in the same
+    # plane, so the spike leaned as one object. Its own stream, as in the
+    # Swift, so the draws on `jitter` keep their order.
+    lean = SplitMix64(genome.seed, f"bloom.lean.{index}")
     nod_axis = normalize(np.cross(sample["tangent"], sample["normal"]))
-    axis = normalize(rotate_axis(sample["tangent"], nod_axis, genome.headPitch))
+    axis = normalize(rotate_axis(sample["tangent"], nod_axis,
+                                 genome.headPitch + lean.value(-0.22, 0.22)))
     ref_a = arbitrary_perpendicular(axis)
     ref_b = normalize(np.cross(axis, ref_a))
 
@@ -1056,6 +1395,15 @@ def _add_bloom(builder, genome, sample, scale, growth, index):
                      petal_length * 0.10, flatten=0.9, rows=4,
                      columns=max(5, genome.sides - 2))
 
+    # **The centre is a third of a petal at most, and the petals stand on its
+    # rim.** Sized by the gene alone a lotus's centre reached nine-tenths of a
+    # petal, and centred on the point every petal sprang from, so the petals
+    # pierced it and its rim hung outside them: a ring under every flower.
+    # Capped here rather than in the gene, so the gene still orders centres.
+    # The petals start at nine-tenths of the rim and are shortened by half of
+    # it, so the flower is as wide as it was.
+    centre_radius = min(petal_length * genome.centreRadius * 1.6, petal_length * 0.34)
+    base_ring = centre_radius * 0.9
     per_layer = max(3, genome.petalCount)
 
     for layer in range(max(1, genome.layers)):
@@ -1067,10 +1415,12 @@ def _add_bloom(builder, genome, sample, scale, growth, index):
             petal_jitter = SplitMix64(genome.seed, f"petal.{index}.{layer}.{petal}")
             _add_petal(builder, genome, origin, axis, ref_a, ref_b,
                        azimuth + petal_jitter.value(-0.05, 0.05), layer_open,
-                       petal_length * layer_scale * petal_jitter.value(0.92, 1.08),
-                       growth["bloomOpen"])
+                       (petal_length - base_ring * 0.5) * layer_scale * petal_jitter.value(0.92, 1.08),
+                       growth["bloomOpen"],
+                       # Inner layers stand a little further in, so they rise
+                       # from inside the outer ones rather than through them.
+                       base_ring * (1 - layer_fraction * 0.3))
 
-    centre_radius = petal_length * genome.centreRadius * 1.6
     builder.add_dome("centre", origin, axis, ref_a, centre_radius,
                      flatten=0.55 + jitter.unit() * 0.4, rows=8, columns=14)
 
@@ -1082,32 +1432,135 @@ def _add_bloom(builder, genome, sample, scale, growth, index):
         _add_pistil(builder, genome, origin, axis, ref_a, centre_radius,
                     petal_length * 0.55 * growth["bloomOpen"])
 
-    if genome.sepalCount > 0:
-        _add_sepals(builder, genome, sample["position"], axis, ref_a, ref_b,
-                    petal_length * 0.5, petal_length * 0.2)
+    rim_radius, rim_depth = _add_calyx(builder, genome, origin, axis, ref_a,
+                                       centre_radius, petal_length)
+
+    # The sepals, present from the bud onward. A bell always has its five;
+    # everyone else has them where `bloom.hasSepals` drew them, carried the way
+    # the family carries them.
+    sepals = genome.sepals
+    count = 5 if sepals == "spreading" else genome.sepalCount
+    if count <= 0 or sepals == "none":
+        return
+    cup_side = origin - axis * rim_depth * 0.25
+    if sepals == "reflexed":
+        # From partway down the cup, past a right angle to the axis, so they
+        # fold back down the stem.
+        _add_sepals(builder, genome, count, origin - axis * rim_depth * 0.6, rim_radius * 0.7,
+                    axis, ref_a, ref_b, (1.75, 2.25),
+                    petal_length * 0.5, petal_length * 0.2, -0.25)
+    elif sepals == "spreading":
+        _add_sepals(builder, genome, count, cup_side, rim_radius * 0.95,
+                    axis, ref_a, ref_b, (1.0, 1.3),
+                    petal_length * 0.42, petal_length * 0.07, -0.1)
+    elif sepals == "appressed":
+        # Short, held up close under the petals, curving in to them.
+        _add_sepals(builder, genome, count, cup_side, rim_radius * 0.95,
+                    axis, ref_a, ref_b, (0.55, 0.8),
+                    petal_length * 0.28, petal_length * 0.13, 0.12)
 
 
-def _add_sepals(builder, genome, origin, axis, ref_a, ref_b, length, width):
+# How each family's calyx is built: its role, its rim against the centre's
+# radius, its depth, and its flare — below 1 a bowl, above 1 a stalk flaring at
+# the top. Depth is a function because two of them are measured against the
+# petal and three against the rim. Mirror of the switch in `addCalyx`.
+CALYX_SHAPES = {
+    "lid":        ("stem",  0.92, lambda petal, rim: petal * 0.1,  0.5),
+    "swelling":   ("stem",  0.92, lambda petal, rim: petal * 0.22, 1.6),
+    "stalk":      ("stem",  0.92, lambda petal, rim: petal * 0.45, 2.2),
+    "cup":        ("calyx", 1.04, lambda petal, rim: max(petal * 0.14, rim * 0.45), 0.55),
+    "shallowCup": ("calyx", 1.08, lambda petal, rim: rim * 0.32, 0.45),
+    "urn":        ("calyx", 1.04, lambda petal, rim: rim * 1.5, 1.0),
+}
+
+
+def _add_calyx(builder, genome, origin, axis, side, centre_radius, petal_length):
+    """The closed body under a flower, from a little way down its stalk to just
+    outside the centre's rim, where it turns in underneath it.
+
+    Mirror of `PlantBuilder.addCalyx`. **Every flower gets one, because the
+    centre alone was a hollow**: a dome open underneath, whose rim the petals
+    pierced. It starts from a point on the stalk and ends tucked under the
+    centre, so the flower is one body with no inside to show. What it is is the
+    family's — a daisy's shallow green cup, a thistle's urn of scales, a
+    poppy's swollen stalk-top. Returns the rim's radius and the cup's depth,
+    which the sepals are placed from.
+    """
+    up = normalize(axis)
+    right = normalize(side - up * float(np.dot(side, up)))
+    forward = np.cross(up, right)
+    calyx = genome.calyx
+
+    role, rim_scale, depth_of, flare = CALYX_SHAPES[calyx]
+    rim = centre_radius * rim_scale
+    depth = depth_of(petal_length, rim)
+    base = origin - up * depth
+    tuck = centre_radius * 0.85
+    # The lip sits just under the petals' bases, so they rest on it rather
+    # than fighting it for the same plane.
+    lip = depth - centre_radius * 0.04
+    urn = calyx == "urn"
+
+    def point(u, v):
+        # Taken clockwise, so `add_surface` reads the normals as outward.
+        azimuth = -u * 2 * math.pi
+        if v < 0.82:
+            s = v / 0.82
+            height = lip * s
+            if urn:
+                # Swells to a fifth past the rim two-thirds of the way up, then
+                # draws in to it: an urn tapering into the stalk.
+                belly = rim * 1.2
+                radius = (belly * math.sin(math.pi * 0.5 * s / 0.68) if s < 0.68
+                          else belly + (rim - belly) * ((s - 0.68) / 0.32))
+                # Scales: rows of bracts overlapping upward, each flaring at its
+                # tip, alternate columns half a row out of step.
+                column = int(u * 12)
+                row = s * 6 + (0 if column % 2 == 0 else 0.5)
+                radius *= 1 + 0.09 * (row - math.floor(row)) * s
+            else:
+                radius = rim * s ** flare
+        else:
+            # Over the rim and in under the centre.
+            w = (v - 0.82) / 0.18
+            height = lip
+            radius = rim + (tuck - rim) * w
+        return (base + up * height + right * (radius * math.cos(azimuth))
+                + forward * (radius * math.sin(azimuth)))
+
+    builder.add_surface(role, 25 if urn else 11, 25 if urn else 17, point)
+    return rim, depth
+
+
+def _add_sepals(builder, genome, count, origin, ring, axis, ref_a, ref_b,
+                pitch, length, width, curve):
+    """A whorl of short green blades round the cup.
+
+    Mirror of `PlantBuilder.addSepals`. `pitch` is the angle off the flower's
+    axis — past a right angle they fold back down the stalk, well under one
+    they stand up against the petals — and `curve` bends each along its
+    length, back for negative.
+    """
     if length <= 0.002:
         return
-    for index in range(genome.sepalCount):
+    for index in range(count):
         jitter = SplitMix64(genome.seed, f"sepal.{index}")
-        azimuth = 2 * math.pi * index / genome.sepalCount + jitter.value(-0.1, 0.1)
+        azimuth = 2 * math.pi * index / count + jitter.value(-0.1, 0.1)
         radial = normalize(ref_a * math.cos(azimuth) + ref_b * math.sin(azimuth))
-        pitch = jitter.value(1.75, 2.25)
-        forward = normalize(radial * math.sin(pitch) + axis * math.cos(pitch))
+        angle = jitter.value(*pitch)
+        forward = normalize(radial * math.sin(angle) + axis * math.cos(angle))
         side = normalize(np.cross(axis, radial))
         up = normalize(np.cross(forward, side))
         half_width = width * 0.5
+        start = origin + radial * ring
 
-        def point(u, v, origin=origin, forward=forward, up=up, side=side,
-                  length=length, half_width=half_width):
+        def point(u, v, start=start, forward=forward, up=up, side=side):
             profile = blade_profile(v, 1.3, 0, 0)
             across = (u - 0.5) * 2 * half_width * profile
-            curve = -0.25 * length * v * v
-            return origin + forward * (v * length) + up * curve + side * across
+            bend = curve * length * v * v
+            return start + forward * (v * length) + up * bend + side * across
 
-        builder.add_surface("leaf", 7, 5, point)
+        builder.add_surface("calyx", 7, 5, point)
 
 
 def _add_pistil(builder, genome, origin, axis, side, radius, length):
@@ -1122,25 +1575,85 @@ def _add_pistil(builder, genome, origin, axis, side, radius, length):
     builder.add_dome("stamen", tip, axis, side, stalk * 2.2, flatten=1.0, rows=5, columns=10)
 
 
-def _add_petal(builder, genome, origin, axis, ref_a, ref_b, azimuth, openness, length, bloom_open):
+def _add_petal(builder, genome, origin, axis, ref_a, ref_b, azimuth, openness, length,
+               bloom_open, base_ring):
+    """Mirror of `PlantBuilder.addPetal`, on the centre's rim and cut to the
+    family's outline."""
     radial = normalize(ref_a * math.cos(azimuth) + ref_b * math.sin(azimuth))
+    # Each petal leaves the centre's rim, not its middle.
+    origin = origin + radial * base_ring
     forward = normalize(radial * math.sin(openness) + axis * math.cos(openness))
     side = normalize(np.cross(axis, radial))
     up = normalize(np.cross(side, forward))
     half_width = length * genome.petalWidthRatio * 0.5
     curl = genome.curl * bloom_open - (1 - bloom_open) * 0.7
+    sharpness = genome.petalTipSharpness
+    rounded_outline = genome.petalOutline == "rounded"
+    crumple = genome.crumple
+    # Where the creases fall, from the petal's own place round the flower, so
+    # no two petals of a poppy are creased alike and no draw is spent.
+    crease_phase = azimuth * 2.7
 
     def point(u, v):
-        profile = blade_profile(v, genome.petalTipSharpness, 0, 0)
-        across = (u - 0.5) * 2 * half_width * profile
-        bend = curl * length * v * v * 0.75
-        twist_angle = genome.bloomTwist * v
+        s = petal_row(v)
+        profile = (petal_profile(s, sharpness) if rounded_outline
+                   else blade_profile(s, sharpness, 0, 0))
+        x = (u - 0.5) * 2
+        across = x * half_width * profile
+        bend = curl * length * s * s * 0.75
+        # A round petal is dished a little across its width, its edges turned
+        # in toward the flower's middle — which is also what makes the round
+        # end read as round from the side.
+        dish = -0.22 * half_width * profile * x * x if rounded_outline else 0.0
+        # Creased silk: two soft waves at an angle to the midrib, strongest
+        # toward the edge and the tip, where a poppy's petal is thinnest.
+        crease = 0.0
+        if crumple != 0:
+            crease = (crumple * half_width * profile * 0.12 * (0.35 + 0.65 * abs(x)) * s
+                      * (0.6 * math.sin(math.pi * (3 * s + 1.2 * x) + crease_phase)
+                         + 0.4 * math.sin(math.pi * (5 * s - 0.9 * x) + 2 * crease_phase)))
+        twist_angle = genome.bloomTwist * s
         local_side = side * math.cos(twist_angle) + up * math.sin(twist_angle)
         local_up = up * math.cos(twist_angle) - side * math.sin(twist_angle)
-        cleft = genome.notch * length * 0.2 * math.exp(-((u - 0.5) * 5) ** 2) * (v ** 6)
-        return origin + forward * (v * length - cleft) + local_side * across + local_up * bend
+        # A cleft cut into the very tip, dying away toward the base.
+        cleft = genome.notch * length * 0.2 * math.exp(-((x * 2.5) ** 2)) * (s ** 6)
+        return (origin + forward * (s * length - cleft) + local_side * across
+                + local_up * (bend + dish + crease))
 
-    builder.add_surface("petal", 13, 9, point)
+    # Seventeen rows, drawn in toward the tip: thirteen even ones made the edge
+    # a polygon and closed the tip in one straight cut, which is where a round
+    # end has all its curve.
+    builder.add_surface("petal", 17, 9, point)
+
+
+def petal_row(v):
+    """How far along a petal row `v` of its grid stands: `v + v² − v³`.
+
+    Mirror of `PlantBuilder.petalRow`. Even at the base and closest together at
+    the tip, which spaces the rows evenly round a round end. Only where the
+    rows fall moves; the petal's length is its length.
+    """
+    return v + v * v - v * v * v
+
+
+def petal_profile(s, sharpness):
+    """Width of a round petal at `s` along it: 0 at the base, 1 at its widest,
+    0 at the tip, with no corner anywhere between.
+
+    Mirror of `PlantBuilder.petalProfile`. A quarter sine out of a narrow claw
+    to the widest point, then a quarter superellipse whose tangent at the tip
+    is square to the midrib — a round end, never a point. The tip gene says
+    how round: bluntest, the widest point at 0.62 and the end fuller than a
+    circle; sharpest, the widest at 0.48 and an oval running to a soft point.
+    """
+    k = max(0.0, min(1.0, (sharpness - 0.6) / 1.8))
+    widest = 0.62 - 0.14 * k
+    fullness = 2.6 - 0.8 * k
+    s = max(0.0, min(1.0, s))
+    if s <= widest:
+        return math.sin(math.pi * 0.5 * s / widest) ** 0.8
+    t = (s - widest) / (1 - widest)
+    return max(0.0, 1 - t ** fullness) ** (1 / fullness)
 
 
 def _add_stamens(builder, genome, origin, axis, ref_a, ref_b, radius, length):
@@ -1222,5 +1735,15 @@ def ramp_colour(role, u, v, palette):
     if role == "centre":
         centre = palette["centre"]
         return hsb_interpolate(centre, (centre[0], centre[1], max(0, centre[2] * 0.7)), v)
+
+    if role == "calyx":
+        # The cup and sepals: the leaf's own colour, fresh — brighter and a
+        # little less saturated than the blade, lightening toward the rim. See
+        # `PaletteRamp.calyx`. Its own role because the stem's colour came out
+        # a dark olive under the petals.
+        leaf = palette["leaf"]
+        base = (leaf[0], leaf[1], min(1, leaf[2] * 1.05))
+        rim = (leaf[0], leaf[1] * 0.88, min(1, leaf[2] * 1.35))
+        return hsb_interpolate(base, rim, smoothstep(v))
 
     return hsb_interpolate(palette["centre"], palette["petalTip"], v)

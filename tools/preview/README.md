@@ -150,10 +150,17 @@ Fifteen plants is still a sample, and it is worth being plain about what it
 cannot see.
 
 - **The geometry itself.** The vectors stop at the bloom placements. The stem
-  sweep, the leaves and the petals are not compared, and the port is known to be
-  behind on several of them — the crozier and the apex point in `build_skeleton`,
-  the `leaf.taper.N` stream, the `bloom.lean.N` stream, the `maturity` vertex
-  attribute, and twelve palette draws (marbling and leaf venation).
+  sweep, the leaves and the petals are not compared here. They were compared
+  once by hand, on 24 September 2026 when the habit, the calyx and the round
+  petal came across: a throwaway Swift executable printed `Maturity.bounds`,
+  the vertex count per role and each role's centroid for sixty grown plants and
+  forty at each of three young ages, and the port agreed on every count and to
+  within Float precision on every bound and centroid — worst 2.3e-5 relative on
+  a spread, 3.5e-7 m on a centroid. That was one day's agreement, not a guard.
+  The crozier, the apex point, `leaf.taper.N` and `bloom.lean.N` came across
+  at the same time. Still missing: the `maturity` vertex attribute, and twelve
+  palette draws (marbling and leaf venation), so colour is the port's own
+  approximation where those apply.
 - **Anything rare that nobody has thought of yet.** The rounding fault was the
   one-in-twenty-seven case, and it is covered now only because somebody went
   looking for it and put the seed in the file. Three chosen seeds do not make a
