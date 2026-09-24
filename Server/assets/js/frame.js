@@ -61,6 +61,11 @@ export function makeFrameGround(place) {
   return function buildFrameGround(farSide, span, e, eye) {
     const positions = [], normals = [], colours = [];
     const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
+    // What throws a shadow on the gravel and the soil: each frame's box of
+    // boards, handed to the stage as `casting`. Not the lights' bars — a bar's
+    // shadow is a ruled line — and not the glass.
+    const casting = [];
+    const casts = (p, nn, c) => { vertex(p, nn, c); casting.push(...p); };
     const tri = (a, b, c, n, ca, cb = ca, cc = ca) => { vertex(a, n, ca); vertex(b, n, cb); vertex(c, n, cc); };
     const quad = (a, b, c, d, n, ca, cb = ca, cc = cb, cd = ca) => {
       tri(a, b, c, n, ca, cb, cc); tri(a, c, d, n, ca, cc, cd);
@@ -143,7 +148,7 @@ export function makeFrameGround(place) {
     const glassVertex = (p, nn, c) => { glass.positions.push(...p); glass.normals.push(...nn); glass.colours.push(...c); };
     place.frames.forEach(([fx, fz], f) => {
       const at = [fx, 0, fz];
-      set(readStructure(takeResult(e, e.pg_frame_box(FRAME.box + f))), at, BOARD, 0.24, vertex);
+      set(readStructure(takeResult(e, e.pg_frame_box(FRAME.box + f))), at, BOARD, 0.24, casts);
       set(readStructure(takeResult(e, e.pg_frame_lights(FRAME.lights + f))), at, BAR, 0.1, vertex);
       set(readStructure(takeResult(e, e.pg_frame_glass(FRAME.glass + f))), at, GLASS, 0, glassVertex);
     });
@@ -171,6 +176,7 @@ export function makeFrameGround(place) {
       positions: new Float32Array(positions),
       normals: new Float32Array(normals),
       colours: new Float32Array(colours),
+      casting: new Float32Array(casting),
       glass: {
         positions: new Float32Array(glass.positions),
         normals: new Float32Array(glass.normals),
