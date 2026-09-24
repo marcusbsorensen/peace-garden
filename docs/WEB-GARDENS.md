@@ -1101,27 +1101,18 @@ the ferns crowd onto the floor's front rows and leave the back rows waiting, at
 98.8%. It was passed over because a wood that dense is a border. Twenty-one a
 plot holds 99.2%, but at seven plants a coupe the stages are too thin to read.
 
-### Open questions for Marcus
+### Decided, 24 September 2026
 
-1. **When does the rotation turn?** *Recommended:* once a year, at the winter
-   solstice, taken as 21 December UTC. It is the middle of the cutting season,
-   and it is the turning year the theme's second third is named for.
-   *Otherwise:* on 1 January; or never, with each plot's stages fixed when it
-   opens.
-2. **What stands on the stools?** *Recommended:* the ferns, which lose no
-   flower by it. *Otherwise:* the stars, which get the heights in their natural
-   order at the cost of 87% of the flowers two years in three.
-3. **The stars' colours?** *Recommended:* mixed, as they arrive. *Otherwise:*
-   a carpet of one colour to a coupe, at 96.2% rather than 97.8%.
-4. **The stool?** *Recommended:* a low boss of old wood whose growth is its
-   fern. *Otherwise:* a stool with poles of its own, grown by the stage, which
-   would repeat the Orchard's move of a structure taller than anything
-   planted.
-5. **A plant's own page?** *Recommended:* it draws the plant grown, whatever
-   its coupe's year, so the Coppice's stage belongs to the wood and not to the
-   plant. *Otherwise:* the same stage everywhere.
-6. **How many to a plot?** *Recommended:* thirty-three. *Otherwise:*
-   forty-five, which fills a point better and reads as a border.
+1. **The rotation turns once a year, at the winter solstice**, taken as
+   21 December UTC. Marcus.
+2. **Ferns stand on the stools**, and the stars on the floor are never cut.
+   Marcus.
+3. **The stars' colours are mixed as they arrive**, with no carpets. Marcus.
+4. **The stool is a low boss of old wood whose growth is its fern**, with no
+   poles of its own. Taken as recommended, open to change.
+5. **A plant's own page draws it grown**, whatever its coupe's year. Taken as
+   recommended, open to change.
+6. **Thirty-three a plot.** Marcus.
 
 ## The Crossing, built
 
@@ -1391,8 +1382,8 @@ meeting leaves on the two phones. `Server/.api/Offers.php`, `Server/README.md`
 - **How the Coppice shows its rotation.** A coupe cut this year and a coupe
   uncut for seven are both true at once; whether a plot's stage is fixed when it
   opens or turns with the real year is a question about what renewal means here.
-  **Proposed on 24 September**: it turns with the year, and only the ferns on
-  the stools are cut (§*The Coppice, chosen*). The choice is still Marcus's.
+  **Decided on 24 September**: it turns with the year at the winter solstice,
+  and only the ferns on the stools are cut (§*The Coppice, chosen*).
 - **Whether a plot can be too empty to open.** The Quiet Garden's rule makes a
   plot with three plants correct; a Long Walk plot with three plants is
   unfinished. Opening a plot only when the last is full says nothing about the
