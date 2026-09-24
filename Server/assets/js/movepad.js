@@ -45,7 +45,7 @@
 //
 // Registered with `keys.js`, so `?` lists them, labelled by the buttons they
 // press: the arrows and WASD move, `+` and `=` come closer, `-` goes further,
-// `0` and Home go back to the whole plot, `Q` and `[` turn anticlockwise, `E`
+// `0` and Home glide back to the whole plot, as the middle of the pad does, `Q` and `[` turn anticlockwise, `E`
 // and `]` clockwise. `keys.js` already keeps them out of the way of a reader
 // typing, or choosing a language.
 //
@@ -77,6 +77,9 @@ const KEYS = [
   { go: 'up', label: 'moveUp', path: 'M4.5 12.75L10 7.25L15.5 12.75' },
   { go: 'anti', label: 'walkTurnAnti', path: 'M6.27 4.68A6.5 6.5 0 1 0 13.73 4.68M16.96 4.34L13.73 4.68L14.07 7.91' },
   { go: 'left', label: 'moveLeft', path: 'M12.75 4.5L7.25 10L12.75 15.5' },
+  // Home: a filled dot in a square, the plot and the middle of it (Marcus).
+  { go: 'home', label: 'moveHome', path: 'M6 4.5H14A1.5 1.5 0 0 1 15.5 6V14A1.5 1.5 0 0 1 14 15.5H6A1.5 1.5 0 0 1 4.5 14V6A1.5 1.5 0 0 1 6 4.5Z',
+    dot: 'M10 8.25A1.75 1.75 0 1 1 10 11.75A1.75 1.75 0 1 1 10 8.25Z' },
   { go: 'right', label: 'moveRight', path: 'M7.25 4.5L12.75 10L7.25 15.5' },
   { go: 'out', label: 'zoomOut', path: `${LENS}M6.25 8.5H10.75` },
   { go: 'down', label: 'moveDown', path: 'M4.5 7.25L10 12.75L15.5 7.25' },
@@ -100,6 +103,16 @@ const STEP = Math.SQRT2;
 // How quickly the look catches up with where it has been asked to be, in
 // milliseconds: the time to cover about two thirds of the way.
 const EASE = 90;
+
+// **The way home is a glide, not an ease.** The middle of the pad takes the
+// look back to the whole plot the way a camera would: pulling back and
+// panning together, slow at both ends, so the reader sees where they were
+// go by on the way out and keeps their bearings. Its length grows with how far
+// there is to come — how many times closer, and how far across — between
+// these two, in milliseconds. Marcus, 24 September.
+const GLIDE_LEAST = 450;
+const GLIDE_MOST = 1200;
+const stillness = window.matchMedia('(prefers-reduced-motion: reduce)');
 
 /// Puts the pad in `nav` and answers to it, to the keys and to the canvas.
 ///
@@ -172,7 +185,15 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show, t
 
   let easing = 0;
   let last = 0;
+  let gliding = false;
   function ease() {
+    // Anything asked for during a glide takes over from wherever it has got
+    // to, rather than waiting for it to land.
+    if (gliding) {
+      cancelAnimationFrame(easing);
+      easing = 0;
+      gliding = false;
+    }
     if (easing) return;
     last = performance.now();
     const tick = (now) => {
@@ -229,7 +250,52 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show, t
   }
 
   const closer = (factor) => aim({ ...target, zoom: target.zoom * factor });
-  const whole = () => aim({ zoom: 1, x: 0, y: 0 });
+
+  const atHome = () => target.zoom <= 1 + 1e-3
+    && Math.abs(target.x) < 1e-3 && Math.abs(target.y) < 1e-3;
+
+  // Back to the whole plot of the plot you are on, by a glide. The turn is
+  // kept: a reader who has turned the plot has chosen which way to face.
+  //
+  // The pan is spread over the zoom rather than over the time. Moved evenly in
+  // metres, the look would race across the ground while it is close and crawl
+  // once it is far; moved with the width of the window, it crosses the screen
+  // at a steady pace the whole way out.
+  function home() {
+    cancelAnimationFrame(easing);
+    easing = 0;
+    const from = stage.view();
+    Object.assign(target, stage.held({ zoom: 1, x: 0, y: 0 }));
+    const to = { ...target };
+    const span = Math.abs(Math.log(to.zoom / from.zoom));
+    const wide = canvas.clientWidth * stage.view(1).metresPerPixel;
+    const far = Math.hypot(to.x - from.x, to.y - from.y) / wide;
+    const length = stillness.matches ? 0
+      : Math.min(GLIDE_MOST, GLIDE_LEAST + 260 * span + 500 * far);
+    refresh();
+    if (length === 0) {
+      stage.lookAt(to);
+      return;
+    }
+    const zoomed = Math.abs(1 / to.zoom - 1 / from.zoom) > 1e-6;
+    const start = performance.now();
+    gliding = true;
+    const tick = (now) => {
+      if (!gliding) return;
+      const t = Math.min(1, (now - start) / length);
+      const s = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      const zoom = from.zoom * Math.pow(to.zoom / from.zoom, s);
+      const u = zoomed ? (1 / zoom - 1 / from.zoom) / (1 / to.zoom - 1 / from.zoom) : s;
+      stage.lookAt(t < 1 ? { zoom, x: from.x + (to.x - from.x) * u, y: from.y + (to.y - from.y) * u } : to);
+      if (t < 1) {
+        easing = requestAnimationFrame(tick);
+      } else {
+        easing = 0;
+        gliding = false;
+      }
+    };
+    easing = requestAnimationFrame(tick);
+  }
 
   function turn(quarters) {
     // Finished moving first, so the turn goes round where the look was going.
@@ -258,6 +324,7 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show, t
       right: !atEdge('right') || neighbour('right') !== null,
       in: target.zoom < closest - 1e-3,
       out: target.zoom > 1 + 1e-3,
+      home: !atHome(),
       anti: true,
       clock: true,
     };
@@ -270,7 +337,7 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show, t
   const press = {
     up: () => move('up'), down: () => move('down'),
     left: () => move('left'), right: () => move('right'),
-    in: () => closer(STEP), out: () => closer(1 / STEP),
+    in: () => closer(STEP), out: () => closer(1 / STEP), home: () => home(),
     anti: () => turn(-1), clock: () => turn(1),
   };
   for (const [go, button] of Object.entries(buttons)) {
@@ -292,14 +359,14 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show, t
     });
   }
   register({ keys: ['+', '='], group: 'look', target: buttons.in, when: visible, run: () => { closer(STEP); } });
-  // Further, and all the way out: one row in the sheet, because going back to
-  // the whole plot is what the minus key does when it is held long enough.
+  register({ keys: ['-'], group: 'look', target: buttons.out, when: visible, run: () => { closer(1 / STEP); } });
+  // Home, the middle of the pad: the same glide, and nothing to do (so the key
+  // falls through to the page) when the whole plot is already in view.
   register({
-    keys: ['-', '0', 'Home'], group: 'look', target: buttons.out, when: visible,
-    run: (event) => {
-      if (event.key === '-') closer(1 / STEP);
-      else if (target.zoom > 1 + 1e-3) whole();
-      else return false;
+    keys: ['0', 'Home'], group: 'look', target: buttons.home, when: visible,
+    run: () => {
+      if (atHome()) return false;
+      home();
       return true;
     },
   });
@@ -412,6 +479,12 @@ function build(nav) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttribute('d', key.path);
     svg.append(path);
+    if (key.dot) {
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      dot.setAttribute('d', key.dot);
+      dot.setAttribute('class', 'pad-glyph__dot');
+      svg.append(dot);
+    }
     button.append(svg);
     pad.append(button);
     buttons[key.go] = button;

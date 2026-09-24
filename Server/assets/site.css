@@ -1342,6 +1342,7 @@ a.quiet-button {
 .walk-keys__pad .pad-key[data-go="left"] { grid-column: 1; grid-row: 2; }
 .walk-keys__pad .pad-key[data-go="right"] { grid-column: 3; grid-row: 2; }
 .walk-keys__pad .pad-key[data-go="down"] { grid-column: 2; grid-row: 3; }
+.walk-keys__pad .pad-key[data-go="home"] { grid-column: 2; grid-row: 2; }
 /* The turns across the top, clockwise first, and the magnifiers across the
    bottom, out before in: Marcus's order, 24 September. */
 .walk-keys__pad .pad-key[data-go="clock"] { grid-column: 1; grid-row: 1; }
@@ -1400,6 +1401,11 @@ a.quiet-button {
   stroke-width: 1.25;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+/* The one filled mark on the pad: the dot in Home's square. */
+.pad-glyph__dot {
+  fill: currentColor;
 }
 
 /* The map. The garden's ten areas five by two, as `/g` draws them, at a size

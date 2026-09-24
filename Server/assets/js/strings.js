@@ -239,6 +239,7 @@ export const EN = Object.freeze({
   moveRight: "Move right",
   zoomIn: "Zoom in",
   zoomOut: "Zoom out",
+  moveHome: "Show the whole plot",
 
   // `nextTo`, *Next to this area*, stood here over the worded gates at the
   // foot of an area page. The gates are a small map now, labelled by
