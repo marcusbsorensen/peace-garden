@@ -27,9 +27,10 @@ declare(strict_types=1);
  * here is read except to answer *has this caller written too much in the last
  * hour*.
  *
- * **What an hour depends on.** A row goes when the next limited request comes,
- * not on a clock: this service has no scheduler of its own, so after the last
- * request of a quiet spell its buckets wait for the next one.
+ * **What an hour depends on.** A row goes at the next limited request after
+ * its window ends, or at the next run of `sweep.php`, which cron starts every
+ * hour for the quiet spells when no request comes. So a bucket outlives its
+ * window by at most the time to the next sweep: up to an hour more.
  *
  * **What it cannot do.** An address is not a person and a caller with many
  * addresses is not slowed by this at all. It is proportionate cover against one
@@ -176,11 +177,17 @@ final class Limits
      * the dice took, and the privacy page says an hour. It is one DELETE
      * through the index on `started_at`, which on a quiet table finds nothing.
      * Measured against the longest window, which is also every window: an hour.
+     *
+     * Public because `sweep.php` runs it every hour from cron as well, for the
+     * quiet spells when no request comes to do it. One DELETE is atomic on
+     * both databases, so the two running at once is two deletes of the same
+     * rows and nothing worse. Returns how many went.
      */
-    private function sweep(int $now): void
+    public function sweep(int $now): int
     {
         $ended = $now - max(array_column(self::ROUTES, 1));
         $drop = $this->db->prepare('DELETE FROM rate_limits WHERE started_at <= ?');
         $drop->execute([$ended]);
+        return $drop->rowCount();
     }
 }

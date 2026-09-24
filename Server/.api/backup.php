@@ -32,9 +32,9 @@ declare(strict_types=1);
  *
  * **A copy holds what the database held that night.** A plant taken back is
  * erased from the live tables at once and is in no copy taken after that, but
- * the copies already taken keep it until they go: the server keeps KEEP of
- * them, one a day, and `tools/backup.sh` pulls each to the Mac, which keeps
- * every one. Server/README.md says so where restoring is described.
+ * the copies already taken keep it until they go: thirty days, here and on the
+ * Mac, where `tools/backup.sh` prunes what it pulls to the same length.
+ * Server/README.md says so where restoring is described.
  *
  * **Run it from cron, on the server.** `tools/backup.sh --install-cron` puts it
  * there; `tools/backup.sh` pulls what it has written down to the Mac, which is
@@ -62,8 +62,17 @@ const KEPT = ['long_walk', 'long_walk_lock', 'quiet_garden', 'quiet_garden_lock'
               'seedbed', 'seedbed_lock',
               'cold_frame', 'cold_frame_lock', 'walk_offers', 'offer_key'];
 
-/** How many copies stay on the server. The Mac keeps every one it has pulled. */
+/** How many copies stay on the server, at most. */
 const KEEP = 30;
+
+/**
+ * And for how long, at most: thirty days, on the server and on the Mac alike
+ * (`KEEP_DAYS` in tools/backup.sh). One copy a day makes the two limits the
+ * same thing, but a count alone is not a length of time — a week of cron not
+ * running leaves thirty copies spanning thirty-seven days — and the privacy
+ * page says thirty days. The newest copy is kept whatever its age.
+ */
+const KEEP_DAYS = 30;
 
 /** The marker mysqldump writes last. Its absence is a dump cut short. */
 const COMPLETED = '-- Dump completed';
@@ -298,19 +307,43 @@ function readItBack(string $path, array $counts): void
 
 // MARK: Keeping a few
 
-/** Leaves the newest KEEP copies and removes the rest. Returns how many went. */
-function prune(string $into): int
+/**
+ * Leaves the newest KEEP copies, none of them older than KEEP_DAYS but the
+ * newest, and removes the rest. Returns how many went.
+ *
+ * The age is read off the stamp in the name rather than the file's time, which
+ * a copy or a restore can change; a name with no stamp is left alone.
+ */
+function prune(string $into, ?int $now = null): int
 {
+    $now ??= time();
     $copies = glob("$into/walk-*.sql.gz") ?: [];
     sort($copies); // The stamp sorts as the date does, which is why it is written that way.
-    $extra = count($copies) - KEEP;
-    if ($extra <= 0) {
+    if ($copies === []) {
         return 0;
     }
-    foreach (array_slice($copies, 0, $extra) as $old) {
+    $newest = end($copies);
+    $going = array_slice($copies, 0, max(0, count($copies) - KEEP));
+    foreach ($copies as $copy) {
+        $taken = stampOf($copy);
+        if ($copy !== $newest && $taken !== null && $taken < $now - KEEP_DAYS * 86400) {
+            $going[] = $copy;
+        }
+    }
+    $going = array_unique($going);
+    foreach ($going as $old) {
         unlink($old);
     }
-    return $extra;
+    return count($going);
+}
+
+/** When a copy was taken, read off its name, or null for a name with no stamp. */
+function stampOf(string $path): ?int
+{
+    if (!preg_match('/^walk-(\d{4})-(\d{2})-(\d{2})T(\d{2})(\d{2})(\d{2})Z\.sql\.gz$/', basename($path), $m)) {
+        return null;
+    }
+    return gmmktime((int) $m[4], (int) $m[5], (int) $m[6], (int) $m[2], (int) $m[3], (int) $m[1]);
 }
 
 // MARK: Small things

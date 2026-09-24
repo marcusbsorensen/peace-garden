@@ -379,13 +379,14 @@ the service's own files unreachable, as it does `.pages/`.
     two times: enough to refuse the plant if anybody offers it again — its
     seed, parents and meeting were public while it stood — and to tell both
     phones, which ask by token. The key is `offer_key`, which the nightly copy
-    carries with `walk_offers`. Rows withdrawn before this are erased the same
-    way by a migration that runs on every request and finds nothing once it
-    has run.
+    carries with `walk_offers`. **A declined offer is erased the same way**
+    and keeps the word `declined`, which still refuses a second offer. Rows
+    withdrawn or declined before this are erased by a migration that runs on
+    every request and finds nothing once it has run.
   - **An offer nobody answers lapses after thirty days**: it becomes a
     withdrawal, answered at the moment it lapsed, and is erased the same way.
-    Checked whenever the offer is looked up, and swept on every `offer` and
-    `pending` request.
+    Checked whenever the offer is looked up, swept on every `offer` and
+    `pending` request, and swept every hour by `.api/sweep.php` (below).
   - A token carries **consent, not authenticity**. The service cannot tell two
     tokens minted at a real meeting from two minted by one person, so it cannot
     tell a real pair of gardeners from somebody planting invented crossings.
@@ -400,8 +401,17 @@ the service's own files unreachable, as it does `.pages/`.
   salted digest of the address and a count. The salt is random per install and
   lives in the same database, so anybody holding the database could try every
   IPv4 address against a digest; what protects an address is that its row is
-  deleted at the first limited request after its hour, every time, and that no
-  backup copies the table. Checked by `tools/reference/check_limits.php`, in CI.
+  deleted once its hour is over — at the first limited request after it, or at
+  the next hourly sweep, whichever comes first — and that no backup copies the
+  table. Checked by `tools/reference/check_limits.php`, in CI.
+- **The hourly sweep**, `.api/sweep.php`: a command, not a page, run from cron.
+  It drops every rate-limit window that has ended and lapses every offer that
+  has waited thirty days, for the hours when no request comes to do either. It
+  is safe beside the service and beside itself — a second run, or four at once,
+  or a request lapsing the same offer, changes nothing further — and says one
+  line in its log when it removed something, in counts only. Checked by
+  `tools/reference/check_sweep.php`, in CI. Its cron line is under *Keeping
+  the walk*.
 - `POST /api/walk/plant` — **answers 403**: it is the one route that plants with
   nobody asked, and it exists for the reference check. A local copy opens it in
   `.api/config.php` (copy `config.example.php`; git ignores it and `deploy.sh`
@@ -461,25 +471,44 @@ It copies every area's table and its lock, `walk_offers` and `offer_key`
 out on purpose — those are this hour's arithmetic about callers, and restoring
 them would hand back spent allowance and re-key every bucket. It reads each
 copy back before filing it, because a dump cut short is a valid gzip of a
-valid beginning and restores most of the walk in silence. Thirty stay on the
-server.
+valid beginning and restores most of the walk in silence. At most thirty stay
+on the server, and none older than thirty days but the newest.
 
-**A copy keeps what the database held that night.** A plant taken back, or an
-offer that lapses, is erased from the live tables at once and is in no copy
-taken afterwards. The copies taken before keep it until they go: on the server
-that is thirty days, as the oldest copy is pruned. **The Mac's copies are never
-pruned** — `tools/backup.sh` pulls without `--delete`, on purpose, so every
-copy ever pulled is still there, and so is everything taken back after it was
-pulled. Restoring an older copy brings withdrawn rows back into the live
-tables, and the first request afterwards erases them again.
+`.api/sweep.php` is the hourly clean-up, at seven minutes past every hour. The
+line, as it goes in the server's crontab — in the 20i control panel, under
+*Scheduled Tasks* (cron jobs), the schedule is every hour at minute 7 and the
+command is everything after the five time fields:
+
+```
+7 * * * * /usr/bin/php $HOME/public_html/.api/sweep.php >> $HOME/backups/sweep.log 2>&1
+```
+
+`tools/backup.sh --install-cron` adds it over SSH beside the backup line, and
+a second run finds both already there. Without it, a scrambled address waits
+for the next limited request however long that is, and an offer nobody
+answers for the next `offer` or `pending` request.
+
+**A copy keeps what the database held that night.** A plant taken back, an
+offer declined, or one that lapses, is erased from the live tables at once and
+is in no copy taken afterwards. The copies taken before keep it until they go,
+which is **thirty days on both sides**: the server prunes its own copies by
+their date as well as their number, and `tools/backup.sh` deletes the pulled
+copies on the Mac older than thirty days after every pull that succeeds. The
+newest copy is kept on each side however old it is, so a server whose cron
+stopped, or a Mac that has not pulled for two months, still holds one copy —
+and that copy is older than thirty days. **Time Machine and iCloud** keep their
+own history of `~/Documents/Peace Garden backups`, which nothing here can
+prune. Restoring an older copy brings erased rows back into the live tables,
+and the first request afterwards erases them again.
 
 From the Mac:
 
 | | |
 |---|---|
 | `tools/backup.sh` | take a copy now, then pull every copy down |
-| `tools/backup.sh --pull` | pull only |
-| `tools/backup.sh --install-cron` | put that line in the server's crontab |
+| `tools/backup.sh --pull` | pull only, then prune the Mac's copies to thirty days |
+| `tools/backup.sh --prune` | prune the Mac's copies to thirty days, pull nothing |
+| `tools/backup.sh --install-cron` | put the backup and sweep lines in the server's crontab |
 | `tools/backup.sh --restore-test` | load the newest copy and replay the walk out of it |
 | `tools/backup.sh --rehearse` | the same, on a walk made for it |
 

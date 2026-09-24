@@ -5,7 +5,10 @@
 #
 #   tools/backup.sh                 take a copy now, then pull everything down
 #   tools/backup.sh --pull          pull what is already there, take nothing
-#   tools/backup.sh --install-cron  set the server taking one a day
+#   tools/backup.sh --prune         drop the Mac's copies older than thirty
+#                                   days, pull nothing
+#   tools/backup.sh --install-cron  set the server taking one a day, and
+#                                   sweeping every hour (sweep.php)
 #   tools/backup.sh --restore-test  load the newest copy into an empty database
 #                                   and replay the walk out of it
 #   tools/backup.sh --rehearse      the same, on a walk made for the purpose,
@@ -19,6 +22,15 @@
 # matters for the other kind lives here, on the Mac, where Time Machine and
 # iCloud can reach it.
 #
+# **Thirty days, here as on the server** (24 September, Marcus's call). Every
+# copy holds whatever the garden held that night — plants since taken back
+# included — and the privacy page says the site's backups keep what they held
+# for thirty days. So after every pull that succeeds, the copies here older
+# than thirty days are deleted, by the date in their names. The newest is never
+# deleted, however old: a Mac that has not pulled for two months keeps the last
+# copy it has rather than none. Time Machine and iCloud keep their own history
+# of this folder, which this cannot reach; see Server/README.md.
+#
 # **Why there is a restore test at all.** A backup nobody has restored is a
 # belief about a file. The test is not that the file exists or that it is
 # valid gzip; it is that the walk comes back *as the same walk* — every plant
@@ -31,6 +43,10 @@ REMOTE=backups
 HERE=$(cd "$(dirname "$0")/.." && pwd)
 INTO=${PG_BACKUPS:-$HOME/Documents/Peace Garden backups}
 
+# How long a pulled copy is kept. `KEEP_DAYS` in Server/.api/backup.php is the
+# server's, and the two are the same number on purpose.
+KEEP_DAYS=30
+
 # The database the copies came from, so the test restores into its own kind.
 IMAGE=mariadb:10.11
 
@@ -38,7 +54,7 @@ IMAGE=mariadb:10.11
 PORT=33061
 
 usage() {
-    echo "usage: $0 [--pull|--install-cron|--restore-test [file]|--rehearse]" >&2
+    echo "usage: $0 [--pull|--prune|--install-cron|--restore-test [file]|--rehearse]" >&2
     exit 2
 }
 
@@ -52,20 +68,70 @@ take() {
 pull() {
     mkdir -p "$INTO"
     echo "Pulling into $INTO"
-    # No `--delete`: the server keeps the last thirty and this keeps all of
-    # them. The history is the point — a row quietly wrong for a fortnight is
-    # only recoverable from a copy older than the fortnight.
-    rsync -a --stats \
-        -e "ssh -o ConnectTimeout=20" \
-        "$HOST:$REMOTE/" "$INTO/" | sed -n '/Number of files transferred/p'
+    # No `--delete`, so a copy the server has just pruned is not taken from here
+    # in the same breath; this folder's own thirty days are `prune`'s to keep.
+    # Thirty days still reaches past a fortnight, which is the case the history
+    # is for: a row quietly wrong for a fortnight is only recoverable from a copy
+    # older than the fortnight.
+    #
+    # The status is rsync's, not the filter's: a pull that failed must not be
+    # followed by a prune, or a Mac cut off from the server would delete its
+    # copies one day at a time and fetch none.
+    if ! stats=$(rsync -a --stats -e "ssh -o ConnectTimeout=20" "$HOST:$REMOTE/" "$INTO/"); then
+        echo "The pull did not finish, so nothing here was pruned." >&2
+        exit 1
+    fi
+    printf '%s\n' "$stats" | sed -n '/Number of files transferred/p'
+    prune
     echo
     ls -lh "$INTO" | tail -5
+}
+
+# Drops the copies here older than KEEP_DAYS, by the stamp in their names —
+# `walk-2026-09-24T031700Z.sql.gz`, which sorts as the date does — and never the
+# newest. A file whose name carries no stamp is left alone: it is not a copy
+# this script made, so it is not this script's to delete.
+prune() {
+    [ -d "$INTO" ] || return 0
+    newest=$(ls -1 "$INTO" | grep -E '^walk-[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{6}Z\.sql\.gz$' | tail -1 || true)
+    [ -n "$newest" ] || return 0
+    cutoff=$(date -u -v-"$KEEP_DAYS"d +%Y-%m-%dT%H%M%SZ)
+    dropped=0
+    for copy in "$INTO"/walk-*.sql.gz; do
+        name=$(basename "$copy")
+        [ "$name" = "$newest" ] && continue
+        case "$name" in
+            walk-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T[0-9][0-9][0-9][0-9][0-9][0-9]Z.sql.gz) ;;
+            *) continue ;;
+        esac
+        stamp=${name#walk-}
+        stamp=${stamp%.sql.gz}
+        # `expr` compares two strings that are not numbers as strings, and
+        # these stamps compare as strings exactly as they do as dates.
+        if expr "$stamp" \< "$cutoff" > /dev/null; then
+            rm -f -- "$copy"
+            dropped=$((dropped + 1))
+        fi
+    done
+    echo "Dropped $dropped cop$([ "$dropped" -eq 1 ] && echo y || echo ies) older than $KEEP_DAYS days; kept $newest and everything newer than $cutoff"
 }
 
 install_cron() {
     # 03:17, because every service on a shared box runs on the hour and the
     # database is quietest between them.
-    line='17 3 * * * /usr/bin/php $HOME/public_html/.api/backup.php >> $HOME/backups/backup.log 2>&1'
+    install_line 'backup.php' \
+        '17 3 * * * /usr/bin/php $HOME/public_html/.api/backup.php >> $HOME/backups/backup.log 2>&1'
+    # And the hourly clean-up, at seven past for the same reason: ended
+    # rate-limit windows and thirty-day offers, for the hours nobody asks the
+    # service anything. See Server/.api/sweep.php.
+    install_line 'sweep.php' \
+        '7 * * * * /usr/bin/php $HOME/public_html/.api/sweep.php >> $HOME/backups/sweep.log 2>&1'
+}
+
+# One line in the server's crontab, added once: a second run finds it there.
+install_line() {
+    name=$1
+    line=$2
     ssh -o ConnectTimeout=20 "$HOST" "
         set -eu
         mkdir -p \$HOME/backups
@@ -74,13 +140,13 @@ install_cron() {
         # which installs an empty crontab and says it worked.
         # (No backticks in here. This whole script is inside double quotes on
         # the way to the far end, so a pair of them runs on the Mac instead.)
-        if crontab -l 2>/dev/null | grep -q 'backup.php'; then
+        if crontab -l 2>/dev/null | grep -q '$name'; then
             echo 'Already there:'
         else
             { crontab -l 2>/dev/null || true; echo '$line'; } | crontab -
             echo 'Installed:'
         fi
-        crontab -l | grep 'backup.php' || { echo 'but it is not there.' >&2; exit 1; }
+        crontab -l | grep '$name' || { echo 'but it is not there.' >&2; exit 1; }
     "
 }
 
@@ -218,6 +284,7 @@ needs_docker() {
 case "${1:-}" in
     "")             take; echo; pull ;;
     --pull)         pull ;;
+    --prune)        prune ;;
     --install-cron) install_cron ;;
     --restore-test) restore_test "${2:-}" ;;
     --rehearse)     rehearse ;;
