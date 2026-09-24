@@ -52,34 +52,34 @@ final class Ambassadors
         // other two for the same reason they are — the service cannot grow the
         // plant to read the name off it.
         'beginnings' => ['seed' => '526ffb12041c8641eead7cb97614517436806c5748c3f581754dd102738719ae',
-                         'height' => 1.095889687538147, 'family' => 4,
+                         'height' => 1.0950173139572144, 'family' => 4,
                          'kind' => 'angustifolia'],  // Verora angustifolia
         'waiting' => ['seed' => '8c0992d3e4221b40489b83d05c0ec3131fc8c771365970ffbb1354a93431ff3f',
-                      'height' => 0.6767851710319519, 'family' => 4],  // Nyxisora crassicaulis
+                      'height' => 0.30920299887657166, 'family' => 4],  // Nyxisora crassicaulis
         // The Coppice reads a fifth, and only the Coppice does: the plant's
         // habit, its archetype's name, which says whether it stands on a stool.
         // This one is a star, so it stands in the light.
         'renewal' => ['seed' => 'c295b64b290a2e9b3c6ece6c70dafb1816205f60f42a0663e47bfb738b30d292',
-                      'height' => 0.9952253103256226, 'family' => 3,
+                      'height' => 0.9061852693557739, 'family' => 3,
                       'habit' => 'star'],  // Rosea caerulea
         // The Glasshouse reads a fourth, and only the Glasshouse does: the
         // flower's hue, as a turn of the circle, which is what stands a pot at
         // its place in the staging's spectrum. Pinned for the same reason.
         'light' => ['seed' => '53b234ab46f50e06243314d3d6159c67d0b26b2c0bc44a5fcd4b83ad28c4bc41',
-                    'height' => 0.6757330298423767, 'family' => 0,
+                    'height' => 0.7377139925956726, 'family' => 0,
                     'hue' => 0.09056447676905748],  // Aurea pallida
         'pattern' => ['seed' => '75121838c745b4c11d8c34bdf4492890833a1a8ca768942ef26cbbbba7a74b7b',
-                      'height' => 1.006360411643982, 'family' => 4],  // Quina caerulea
+                      'height' => 1.0851181745529175, 'family' => 4],  // Quina caerulea
         'ground' => ['seed' => '540d870092386fc9a3e5611499390c1de91fbadddf276bc6ef6eec73dc30326d',
-                     'height' => 1.1019959449768066, 'family' => 6],  // Fenunora patentifolia
+                     'height' => 1.1002660989761353, 'family' => 6],  // Fenunora patentifolia
         'travel' => ['seed' => 'be9dd17805ea1ebab2c56695b13158adb8d985f165564c10804961b543c12d3c',
-                     'height' => 1.0231088399887085, 'family' => 3],  // Halula crassicaulis
+                     'height' => 1.0417732000350952, 'family' => 3],  // Halula crassicaulis
         'meeting' => ['seed' => '9bca751433cf86be586c46b3b6582a504fb4df133036321ce000f066e13d7284',
-                      'height' => 0.6093385815620422, 'family' => 5],  // Melyrina latifolia
+                      'height' => 0.46054115891456604, 'family' => 5],  // Melyrina latifolia
         'kinship' => ['seed' => 'ec0850ec7cd6824077a0c51e3c4c8cc670b321bdf66b8eb8f338fff81deb6bf3',
-                      'height' => 1.3274011611938477, 'family' => 0],  // Cyninora contorta
+                      'height' => 1.3397456407546997, 'family' => 0],  // Cyninora contorta
         'peace' => ['seed' => '2d1894df5b3f19d3d1c4a12cae8e8d7334a07f942ba60903d37846a190faa4eb',
-                    'height' => 0.7478628754615784, 'family' => 1],  // Olyne paniculata
+                    'height' => 0.5453125238418579, 'family' => 1],  // Olyne paniculata
     ];
 
     /** The day all ten were sown, a month before the garden opened. */

@@ -198,12 +198,12 @@ final class CrossingTests: XCTestCase {
 
     func testTheCutsAreTheCrossingsOwn() {
         XCTAssertEqual(Crossing.rank(height: 0.5), .path)
-        XCTAssertEqual(Crossing.rank(height: 0.96), .path)
-        XCTAssertEqual(Crossing.rank(height: 0.97), .middle)
-        XCTAssertEqual(Crossing.rank(height: 1.42), .middle)
-        XCTAssertEqual(Crossing.rank(height: 1.43), .corner)
+        XCTAssertEqual(Crossing.rank(height: 0.90), .path)
+        XCTAssertEqual(Crossing.rank(height: 0.91), .middle)
+        XCTAssertEqual(Crossing.rank(height: 1.29), .middle)
+        XCTAssertEqual(Crossing.rank(height: 1.30), .corner)
         // Deliberately not the walk's or the room's.
         XCTAssertNotEqual(Crossing.middleFrom, QuietGarden.backFrom)
-        XCTAssertNotEqual(Crossing.cornerFrom, 1.28)
+        XCTAssertNotEqual(Crossing.cornerFrom, LongWalk.backFrom)
     }
 }

@@ -37,8 +37,8 @@ final class LongWalk
 
     public static function tier(float $height): int
     {
-        if ($height < 0.93) return 0;
-        if ($height < 1.28) return 1;
+        if ($height < 0.77) return 0;
+        if ($height < 1.20) return 1;
         return 2;
     }
 

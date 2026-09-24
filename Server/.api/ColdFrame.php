@@ -83,9 +83,10 @@ final class ColdFrame
      * **The median of the area's own plants**, measured over the five hundred
      * arrivals whose names put them here rather than over the whole garden, so
      * that two ranks of six divide them in half. A cut borrowed from another
-     * area would not: the Orchard's 0.75 puts 65% of them at the back.
+     * area would not: the Orchard's 0.58 puts 12% of them at the back. 0.38 since
+     * the plants' shapes changed on 24 September 2026; it was 0.85.
      */
-    public const BACK_FROM = 0.85;
+    public const BACK_FROM = 0.38;
 
     /** Which rank a plant of this grown height belongs in. */
     public static function rank(float $height): int

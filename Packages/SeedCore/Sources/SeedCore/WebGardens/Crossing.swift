@@ -91,17 +91,19 @@ public enum Crossing {
 
     /// **The cuts, measured then set to fit the slots.** Across three hundred
     /// crossings of three hundred different pairs of parents, grown heights run
-    /// 0.23 m to 2.35 m. A quarter is three at the path, two behind and one at
+    /// 0.15 m to 2.31 m. A quarter is three at the path, two behind and one at
     /// the corner, so the cuts belong at the 50th and 83rd centiles, which
-    /// measured 0.966 m and 1.429 m. Set at 0.97 and 1.43.
+    /// measured 0.910 m and 1.303 m. Set at 0.91 and 1.30. They were 0.97 and
+    /// 1.43 until the plants' shapes changed on 24 September 2026, and were
+    /// measured again then on the Long Walk's three hundred.
     ///
-    /// They are not the walk's 0.93 and 1.28, and not the room's 1.13, and none
+    /// They are not the walk's 0.77 and 1.20, and not the room's 1.09, and none
     /// of those is wrong: a border of 5:4:3 rows, a group of one back and two
     /// arms, and a bed of 3:2:1 divide the same population three different ways.
     /// The same plant is the middle of a border on the walk, the back of a group
     /// in the room, and one of the three at a path edge here.
-    public static let middleFrom = 0.97
-    public static let cornerFrom = 1.43
+    public static let middleFrom = 0.91
+    public static let cornerFrom = 1.30
 
     public static func rank(height: Double) -> Rank {
         if height < middleFrom { return .path }

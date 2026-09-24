@@ -21,7 +21,9 @@ import Foundation
 /// here grow to between 0.33 and 1.64 m (median 0.85), and a frame holds about
 /// 0.4 m, so a height limit would have refused nine in ten of the area's own
 /// plants. Every plant is admitted and drawn young instead, which is what a
-/// cold frame is for anyway.
+/// cold frame is for anyway. Since the plants' shapes changed on 24 September
+/// 2026 every one of them is a lotus or a fern, 0.23 to 0.82 m (median 0.38),
+/// and a limit would still refuse four in ten.
 ///
 /// **Colour claims a frame and the mature height orders its ranks.** The Knot
 /// Garden's claim, asked of a frame instead of a pair, and read off the plants
@@ -108,17 +110,19 @@ public enum ColdFrame {
 
     /// **The median of the area's own plants.** Five hundred arrivals whose
     /// names put them in the Cold Frame, out of 5,805 crossings, grow to a
-    /// median of 0.848 m, set at 0.85. Two ranks of six divide a frame in
+    /// median of 0.379 m, set at 0.38. Two ranks of six divide a frame in
     /// half, so the cut that divides the population in half is the one that
-    /// lets the most plants have their own rank.
+    /// lets the most plants have their own rank. It was 0.85 until the
+    /// plants' shapes changed on 24 September 2026, measured the same way.
     ///
     /// **Measured over this area's plants rather than all of them**, which no
     /// earlier area needed to do. The Cold Frame's plants are shorter than the
-    /// garden's — a quarter of all arrivals are under 0.75 m, and a quarter of
-    /// these are under 0.69 m — so a cut borrowed from another area would
-    /// divide them unevenly: the Orchard's 0.75 puts 65% of them at the back,
-    /// the Long Walk's 0.93 puts 39%. This one puts 49.8%.
-    public static let backFrom = 0.85
+    /// garden's — a quarter of all arrivals are under 0.55 m, and a quarter of
+    /// these are under 0.32 m, because every one is a water lily's pads or a
+    /// fern's young vase — so a cut borrowed from another area would divide
+    /// them unevenly: the Orchard's 0.58 puts 12% of them at the back, the
+    /// Long Walk's 0.77 puts 1%. This one puts 49.8%.
+    public static let backFrom = 0.38
 
     public static func rank(height: Double) -> Rank {
         height < backFrom ? .front : .back
@@ -178,9 +182,11 @@ public enum ColdFrame {
     ///   is; a bud swollen further stands a full-size flower head on a young
     ///   stem, and at 0.8 the tallest plant was 0.9 m.
     ///
-    /// That draws the five hundred between 0.11 and 0.45 m tall. The shortest
-    /// still reads as a plant, and `ColdFrameTests` holds the tallest of each
-    /// rank under the glass it stands beneath.
+    /// That draws the five hundred between 0.05 and 0.34 m tall, and none of
+    /// them under 0.15 m in whichever direction it has grown: the shortest are
+    /// young water lilies, their pads lying on the soil 0.26 m and more across.
+    /// Every one reads as a plant, and `ColdFrameTests` holds the tallest of
+    /// each rank under the glass it stands beneath.
     public static let drawn = GrowthModel.State(
         stage: .growing, stageProgress: 0.5, overall: 0.3,
         heightScale: 0.30, leafUnfurl: 0.7, budSwell: 0.2, bloomOpen: 0,

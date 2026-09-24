@@ -14,7 +14,7 @@ declare(strict_types=1);
  * Coppice is a fern or a star. A fern takes a free stool in the oldest plot with
  * one, in the coupe holding fewest ferns on stools; failing that, the floor, one
  * fern to a coupe's floor; failing that, a new plot's middle stool. A star takes
- * its own row of the floor — the back from 1.10 m up — oldest plot first, in the
+ * its own row of the floor — the back from 1.00 m up — oldest plot first, in the
  * coupe with fewest on its floor; then the other row, if nothing would stand out
  * of order; then a new plot. **Rows outside, plots inside**, and the emptiest
  * coupe within a plot.
@@ -62,7 +62,7 @@ final class Coppice
     public const FRONT = 2;
 
     /** The median of the area's own stars, measured as the Cold Frame's cut was. */
-    public const BACK_FROM = 1.10;
+    public const BACK_FROM = 1.00;
 
     /** The three stages of a coupe's rotation. */
     public const CUT = 0;

@@ -91,11 +91,16 @@ public enum LongWalk {
     ///
     ///
     /// **Measured, then set to fit the slots.** Across three hundred crossings
-    /// of three hundred different pairs of parents, grown heights run 0.21 m to
-    /// 2.22 m with thirds at 0.85 m and 1.19 m. A side of a plot has five front
+    /// of three hundred different pairs of parents, grown heights run 0.15 m to
+    /// 2.31 m with thirds at 0.70 m and 1.09 m. A side of a plot has five front
     /// slots, four middle and three back a row, so the cuts are at the 42nd and 75th
-    /// centiles instead, 0.93 m and 1.28 m: set at the thirds, the back rows
+    /// centiles instead, 0.77 m and 1.20 m: set at the thirds, the back rows
     /// filled first and every plot opened with its front edge half empty.
+    ///
+    /// **Measured again on 24 September 2026**, when the plants' shapes changed
+    /// and every area's cuts with them; they were 0.93 m and 1.28 m. Three
+    /// thousand crossings put the same two centiles at 0.771 m and 1.185 m, so
+    /// three hundred was enough.
     ///
     /// Crossings of **one** person with forty others ran taller and were half
     /// bells, which is why the sample is three hundred different pairs.
@@ -104,8 +109,8 @@ public enum LongWalk {
     /// check how close a plant stands to a tier boundary had to write 0.93 down
     /// a second time — and a second copy of a number is a number that can
     /// drift from the one it copies.
-    public static let middleFrom = 0.93
-    public static let backFrom = 1.28
+    public static let middleFrom = 0.77
+    public static let backFrom = 1.20
 
     public static func tier(height: Double) -> Tier {
         if height < middleFrom { return .edge }

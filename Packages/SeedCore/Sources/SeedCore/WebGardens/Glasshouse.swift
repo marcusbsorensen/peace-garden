@@ -48,11 +48,15 @@ public enum Glasshouse {
     /// `z`, and how high its eaves and its ridge stand.
     ///
     /// **Set by the plants under the roof, not by the look of the house.** A
-    /// pot on the staging holds a plant of up to 1.30 m — anything taller goes
-    /// in the border — and stands it 0.83 m off the floor, so the glass over
-    /// the staging has to clear 2.13 m. With the eaves at 2.1 and the ridge at
-    /// 2.9 it clears the tallest in the test sample by a fifth of a metre, and
-    /// the roof pitches at 25°, which is what a glasshouse is built to, steep
+    /// pot on the staging held a plant of up to 1.30 m — anything taller went
+    /// in the border — and stood it 0.83 m off the floor, so the glass over
+    /// the staging had to clear 2.13 m. With the eaves at 2.1 and the ridge at
+    /// 2.9 it cleared the tallest in the test sample by a fifth of a metre.
+    /// Since the plants' shapes changed on 24 September 2026 the border takes
+    /// everything from 1.14 m, the glass over a pot need clear only 1.97 m,
+    /// and the nearest plant stands 0.39 m under the roof; the house was left
+    /// as built, with more air over the pots rather than less. The roof
+    /// pitches at 25°, which is what a glasshouse is built to, steep
     /// enough to shed rain and shallow enough to take the winter sun.
     /// `GlasshouseTests` holds every plant under it.
     public static let houseLength = 4.4
@@ -90,12 +94,19 @@ public enum Glasshouse {
 
     // MARK: Which bed
 
-    /// **The border takes the tallest quarter, and its cut is the Orchard's.**
-    /// Measured over this area's own plants, as the Cold Frame's was: the 75th
-    /// centile of five hundred `light` arrivals is 1.294 m, and the Orchard's
-    /// crown already stands at 1.30. Borrowed and named as borrowed, rather
-    /// than a second number six millimetres from the first.
-    public static let borderFrom = Orchard.crownFrom
+    /// **The border takes the tallest quarter, measured over this area's own
+    /// plants**, as the Cold Frame's cut was: the 75th centile of five hundred
+    /// `light` arrivals, drawn under a label the tests do not use, is 1.139 m.
+    /// Set at 1.14.
+    ///
+    /// **It was the Orchard's crown until 24 September 2026**, when the plants'
+    /// shapes changed. The 75th centile of these plants was 1.294 m and the
+    /// Orchard's crown stood at 1.30, so one number served both, borrowed and
+    /// named as borrowed. The new shapes brought these plants down further than
+    /// the garden's as a whole — their 75th centile by 0.16 m, the garden's by
+    /// 0.09 — and at the Orchard's new 1.20 the border would take 18% of them
+    /// rather than a quarter. Two facts that no longer agree are two numbers.
+    public static let borderFrom = 1.14
 
     /// The two beds a plant can stand in.
     public enum Bed: Int, Codable, CaseIterable, Sendable {
@@ -279,7 +290,7 @@ public enum Glasshouse {
         ///
         /// **Height picks the bed, and then each bed has its own rule.**
         ///
-        /// A plant of 1.30 m or more goes in the border: the next place from
+        /// A plant of 1.14 m or more goes in the border: the next place from
         /// the door in the oldest plot that has one, and failing that a new
         /// plot. Nothing about its colour is asked.
         ///
