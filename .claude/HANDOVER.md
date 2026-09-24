@@ -34,7 +34,7 @@ One upload warning, harmless unless visionOS is wanted: `UIRequiredDeviceCapabil
 
 ## Open, set aside
 - **Until build 2 is what people run, every Home Ground arrival is sown as an umbel.** The replant after that build (`tools/replant/README.md` §runbook) puts each in its own crop's bed. Same build is needed for the Coppice's ferns and the Glasshouse's hues.
-- The commission (`tools/strings/commissions/2026-09-24/`) is regenerated: the thirteen English-only keys of the three new areas and the pad are grouped in `sheets.py`'s `WHY` and counted in its README (102 lacking per language, was 91). The sheets did not change. Batch 2 (es fr it nb nl sv) is next when Marcus sends it.
+- The commission (`tools/strings/commissions/2026-09-24/`) is regenerated: the thirteen English-only keys of the three new areas and the pad are grouped in `sheets.py`'s `WHY` and counted in its README (102 lacking per language, was 91). The sheets did not change. **Batch 2 (es fr it nb nl sv) is written and live on the site** (`4a3dba4`, deployed 24 September), unread by any speaker; the commission README tables what each wants a reader to check. Its app half ships in build 3. Batch 3 (ja ko zh ar he) is next.
 - From before: young water-lily pads through the Cold Frame's walls; the Glasshouse staging crowded. Both set aside by Marcus.
 - Marcus's gateways idea (glimpses of neighbouring areas) needs a design pass; hooks in `movepad.js` `neighbour()`.
 
