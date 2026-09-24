@@ -38,7 +38,9 @@ let listening = false;
 ///   Several because a direction wants both `ArrowLeft` and `h`.
 /// - `target`: the control this operates, or a function returning it. The sheet
 ///   reads its label from here, and an action with no target needs `label`.
-/// - `label`: only for an action with no control of its own on the page.
+/// - `label`: only for an action with no control of its own on the page. A
+///   function is asked each time the sheet opens, so words that arrive with
+///   the reader's language after the action was registered are still its words.
 /// - `group`: rows are listed in registration order within a group.
 /// - `run`: what to do. Returning `false` means "not applicable now", and the
 ///   key falls through to the browser.
@@ -73,7 +75,8 @@ export function registered() {
 function resolve(action) {
   const node = typeof action.target === "function" ? action.target() : action.target;
   const text = node?.getAttribute?.("aria-label") || node?.textContent?.trim();
-  return { node, label: action.label ?? text ?? "" };
+  const label = typeof action.label === "function" ? action.label() : action.label;
+  return { node, label: label ?? text ?? "" };
 }
 
 /// True while the reader is putting words somewhere, in which case a letter is

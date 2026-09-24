@@ -18,6 +18,7 @@ import { makeSky } from './sky.js';
 import { dressed, whenSettled } from './plain.js';
 import { openWays } from './gates.js';
 import { openMovePad } from './movepad.js';
+import { plantPanel } from './plantpanel.js';
 import { showGathers } from './meanings.js';
 
 // Three plots at a time: the one in front of the reader and its neighbours
@@ -91,6 +92,9 @@ async function walk() {
   const growing = () => say('walkGrowing');
   await openMovePad({
     nav: el('keys'), canvas: el('stage'), stage, plots: opened, step: SPAN,
+    // A tap on a plant opens its panel (`plantpanel.js`), the same on every
+    // area page, and a postcard to one of this area's plants lands here.
+    plants: plantPanel({ theme: THEME, engine }),
     show: async (from) => {
       await growFromService(engine, stage, from,
                             Math.max(0, Math.min(SPAN, opened - from)), growing);

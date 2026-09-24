@@ -66,6 +66,15 @@ if [ "$upload" = yes ]; then
         echo "Server/.pages/PlantWasm.wasm.gz is missing. Run tools/wasm/build.sh first." >&2
         exit 1
     fi
+    # A module built before `pg_name` grows every plant and names none, and the
+    # plant panel on every area page then opens on nothing. Asked of the module
+    # itself, because a file that exists says nothing about when it was built.
+    if ! node -e 'const fs = require("fs"); const m = new WebAssembly.Module(fs.readFileSync(process.argv[1]));
+        process.exit(WebAssembly.Module.exports(m).some((e) => e.name === "pg_name") ? 0 : 1)' \
+        "$HERE/Server/.pages/PlantWasm.wasm"; then
+        echo "Server/.pages/PlantWasm.wasm has no pg_name. Run tools/wasm/build.sh again." >&2
+        exit 1
+    fi
 
     rsync -a $dry --delete --stats \
         --exclude='.DS_Store' \
@@ -158,6 +167,9 @@ check_path /api/coppice                 200 application/json
 check_path /assets/js/ground.js         200 application/javascript
 check_path /assets/js/groundpage.js     200 application/javascript
 check_path /api/ground                  200 application/json
+# A plant's panel, which all ten area pages import: a page that cannot load
+# it cannot load at all.
+check_path /assets/js/plantpanel.js     200 application/javascript
 check_path /assets/places.json    200 application/json
 check_path /assets/stars.bin      200 application/octet-stream
 check_path /assets/icon.svg     200 image/svg+xml

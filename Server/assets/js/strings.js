@@ -241,6 +241,26 @@ export const EN = Object.freeze({
   zoomOut: "Zoom out",
   moveHome: "Show the whole plot",
 
+  // A plant's panel, since 24 September (`plantpanel.js`): what opens when a
+  // plant on an area page is tapped. **Seven strings, and the panel's real
+  // words cost none**: the name is Latin and travels as it is, what it means
+  // is the `meaning*` line and the `subtheme*` part the area's own block
+  // already says, and the passage is the reader's bank.
+  //
+  // **English only for now**, like the pad's. `plantKey` is the `p` key's row
+  // in the sheet under `?`, which has no control of its own to be labelled by;
+  // `plantAmbassador` marks the one plant in an area that was minted rather
+  // than crossed. A postcard is a link to the plant: `plantPostcardText` goes
+  // with the link into whatever the reader sends it by, and the two after it
+  // say what happened when there was no share sheet to send it with.
+  plantKey: "Read about the plant in the middle",
+  plantAmbassador: "{area}'s ambassador: the first plant to stand here",
+  plantPostcard: "Send as a postcard",
+  plantPostcardText: "{name}, growing in {area}, in Peace Garden.",
+  plantCopied: "The link to this plant is copied, ready to send.",
+  plantCopyThis: "Copy this link to send it:",
+  plantClose: "Close",
+
   // `nextTo`, *Next to this area*, stood here over the worded gates at the
   // foot of an area page. The gates are a small map now, labelled by
   // `gardenTitle` and named cell by cell from `AREA_KEYS`, so the label went

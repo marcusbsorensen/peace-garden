@@ -222,7 +222,7 @@ export async function growFrameFromService(e, stage, plot, report) {
       : e.pg_grow_young(pointer, words.length);
     e.pg_free(pointer);
     if (length === 0) continue;
-    stage.add(p.spot[0], p.spot[1], decode(takeResult(e, length)));
+    stage.add(p.spot[0], p.spot[1], decode(takeResult(e, length)), 0, { ...p, plot });
     if (performance.now() - since > SLICE) {
       report(`Growing: ${i + 1} of ${plantings.length}`);
       stage.draw();

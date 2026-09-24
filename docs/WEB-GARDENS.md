@@ -1925,3 +1925,72 @@ numbers and a crop is a word.
   1.5 cm. Which beds are sown is read off the plantings' spots.
 - **No words for the crops.** Three shapes nobody takes for each other say it.
   `groundAbout` and `groundAway` are English only for now.
+
+## A plant's panel, decided
+
+### Decided, 24 September 2026
+
+1. **Tapping or clicking any plant on an area page opens a panel about it**:
+   its Latin name; what the name means — its theme's line and the part of the
+   theme it belongs to, as `/meanings` gives them; and one passage from the
+   passage bank in the reader's language. An area's ambassador is marked as
+   the area's ambassador. Marcus.
+2. **Every plant, not only ambassadors, and only what the seed implies.**
+   Everything the panel shows follows from the seed and the parents the page
+   already has from the plot service. Nothing about the gardener — no name, no
+   note, no date. Marcus.
+3. **A postcard is a link to the plant.** *Send as a postcard* shares an
+   address that opens the area at that plot, close in on that plant, with its
+   panel open — through the browser's own share sheet where there is one, and
+   otherwise copied, with the panel saying so. Nothing is stored on the
+   service to make it. Marcus.
+
+**This is not the plant's own page** (`WEBSITE.md` §*What a shared plant page
+is*, and *Names live on a plant's own page* in §*And it has been answered,
+before anything was published*). That page carries the
+gardener's name and note, and is a second consent with its own screen, as
+§*The asking, and what a shared plant consents to* says. The panel carries
+only what the seed already implies, which is what the plant standing in the
+garden was consented to: so it needs no consent of its own, and a postcard
+publishes nothing that walking the garden did not already show.
+
+### As built, 24 September 2026
+
+`Server/assets/js/plantpanel.js`, handed to the pad (`movepad.js`) by all ten
+area pages in one line each; `pg_name` in `tools/wasm/Sources/PlantWasm/
+Name.swift`; `sharedTheme` in `passages.js`.
+
+- **The name is SeedCore's.** `pg_name` takes the words the page grew the plant
+  from and answers its binomial, its genus head and ending, and for a crossed
+  plant the two parents' own heads and the pair's two rolls.
+- **The passage is the app's, for a reader on the same bank.** A crossed
+  plant's is drawn as `Quotes.passage(for:)` draws it at the meeting: the
+  parents' shared theme, the part the child's ending picks in it, the line
+  folded from the child's seed. So it can come from a different theme from
+  the one the name means, as it does in the app. `passages.js` mirrors the
+  theme positions and `passage_reference.py` holds the mirror to
+  `Quotes.swift`; on the forty crossed plants in a local Knot Garden, the
+  module's rolls and the page's theme agreed with the reference's own
+  hashing every time. An ambassador was never crossed and has no passage in
+  the app; it takes the one its own name and seed draw, as `/s` does.
+- **Picking is on the screen.** The stage keeps each planting's seed, parents,
+  meeting and plot beside its mesh, and a tap goes to the plant whose stem,
+  foot to top as drawn, passes nearest, within a fingertip plus the plant's
+  own half-width at that zoom. A tap is a press that neither moved eight
+  pixels nor had a second finger, answered on the click after it.
+- **The keyboard's way in is `p`**: the plant nearest the middle of the
+  window, after moving the window with the pad's keys. Listed in the sheet
+  under `?`.
+- **The panel is a dialog over the drawing**, in the two panels' shape: from
+  the foot of a phone's screen, at the end of the line on a wider window. The
+  plant is brought, closer, to the middle of the part of the drawing the panel
+  leaves clear. A tap outside closes it, or opens the plant it lands on.
+- **A postcard is `/<area>?plot=N#p=<the first twelve of the seed>`**, `N`
+  counted from one. The page opens on that plot and, if the plant is there,
+  goes to it with its panel open; if it is not, the plot is simply open. The
+  share sheet where there is one, the clipboard where there is not, and the
+  link itself to copy where neither works.
+- **Seven strings, English only for now**: `plantKey`, `plantAmbassador`,
+  `plantPostcard`, `plantPostcardText`, `plantCopied`, `plantCopyThis`,
+  `plantClose`. While a sentence falls back to English, the area name set in
+  it is the English one too.

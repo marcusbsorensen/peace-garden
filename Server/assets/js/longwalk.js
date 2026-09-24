@@ -146,6 +146,8 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   // through; every other area returns no glass and draws exactly as it did.
   let glassMesh = null;
   let glassOpacity = 1;
+  // The last frame's view and projection together, which `pick` reads.
+  let drawn = null;
 
   // **How close, and where.** `zoom` is how many times closer than the whole
   // plot, which is 1 and is the view every area page opened on before it could
@@ -193,6 +195,8 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     Object.assign(look, hold(look, all));
     const projection = ortho(all.cx + look.x, all.cy + look.y, all.w / look.zoom, all.h / look.zoom);
     const viewProjection = multiply(projection, view);
+    // Kept for `pick`, which has to find a plant where it was last drawn.
+    drawn = viewProjection;
 
     for (const [p, extra] of [[ground, null], [plantProgram, null]]) {
       gl.useProgram(p.program);
@@ -235,7 +239,12 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
 
   // `lift` is how far off the ground the plant stands: nothing, everywhere but
   // the Glasshouse, whose staging stands its pots 0.83 m off the floor.
-  function add(x, z, grown, lift = 0) {
+  //
+  // `who` is what the plot service said about the plant — its seed, its
+  // parents, its meeting and its plot — kept beside the mesh so a tap on it can
+  // be answered with its name (`plantpanel.js`). A stage filled by a workbench's
+  // invented plants passes none, and those plants cannot be picked.
+  function add(x, z, grown, lift = 0, who = null) {
     const textures = {};
     for (const role of ROLES) {
       const t = grown.textures[role];
@@ -263,7 +272,11 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
       return { vao, buffers, count: part.indices.length, role: part.role };
     });
     gl.bindVertexArray(null);
-    plants.push({ x, z, lift, parts, textures });
+    // How tall and how wide it stands, from the grown mesh's bounds, for
+    // `pick`: a tap anywhere on a spire should find the spire.
+    const height = Math.max(0, grown.max?.[1] ?? 0);
+    const reach = Math.max(0.05, ...[0, 2].flatMap((i) => [Math.abs(grown.min?.[i] ?? 0), Math.abs(grown.max?.[i] ?? 0)]));
+    plants.push({ x, z, lift, parts, textures, who, height, reach });
   }
 
   // **Adding a plant does not draw the walk.** It used to, and that made
@@ -411,10 +424,62 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     draw();
   }
 
+  // MARK: Which plant
+
+  // Where a point in the world was last drawn, in CSS pixels from the
+  // canvas's top-left corner.
+  function toScreen([x, y, z]) {
+    const m = drawn;
+    const cx = m[0] * x + m[4] * y + m[8] * z + m[12];
+    const cy = m[1] * x + m[5] * y + m[9] * z + m[13];
+    return [(cx + 1) / 2 * canvas.clientWidth, (1 - cy) / 2 * canvas.clientHeight];
+  }
+
+  // **The plant under a tap**: the one whose stem, drawn from its foot to its
+  // top as it stands on the screen, passes nearest the point, if that is near
+  // enough. Near enough is a fingertip plus the plant's own half-width at this
+  // zoom, so a close look at one broad plant takes a tap anywhere on it, and a
+  // whole plot of small ones takes one near the one meant. Two plants the same
+  // distance away go to the one in front. Only plants the service named can be
+  // picked. `px` and `py` are CSS pixels from the canvas's top-left; with no
+  // `slop` the nearest plant is answered however far away it is, which is what
+  // the keyboard asks for.
+  function pick(px, py, slop = null) {
+    if (!drawn) return null;
+    const perMetre = 1 / view().metresPerPixel;
+    const facing = eye();
+    let best = null, bestGap = Infinity, bestDepth = -Infinity;
+    for (const plant of plants) {
+      if (!plant.who) continue;
+      const foot = toScreen([plant.x, plant.lift, plant.z]);
+      const top = toScreen([plant.x, plant.lift + plant.height, plant.z]);
+      const gap = Math.max(0, segmentGap(px, py, foot, top) - (slop === null ? 0 : plant.reach * perMetre));
+      if (slop !== null && gap > slop) continue;
+      const depth = dot3([plant.x, plant.lift, plant.z], facing);
+      if (gap < bestGap - 0.5 || (Math.abs(gap - bestGap) <= 0.5 && depth > bestDepth)) {
+        best = plant; bestGap = gap; bestDepth = depth;
+      }
+    }
+    return best && { ...best.who, at: [best.x, best.lift + best.height / 2, best.z], height: best.height };
+  }
+
+  // The plants the service named, for finding one by its seed.
+  function named() {
+    return plants.filter((plant) => plant.who)
+      .map((plant) => ({ ...plant.who, at: [plant.x, plant.lift + plant.height / 2, plant.z], height: plant.height }));
+  }
+
+  // The look `zoom` times closer with `point` in the middle of it, kept to
+  // where a look may be — for going to a plant.
+  function toward(point, zoom) {
+    return hold(over(point, zoom), whole());
+  }
+
   rebuildGround();
   new ResizeObserver(draw).observe(canvas);
   // `turn` is read by the sky, which has to face the way the camera does.
-  return { add, clear, turnBy, draw, rebuild, turn: () => turn, view, held, lookAt, carried, seams, onScreen };
+  return { add, clear, turnBy, draw, rebuild, turn: () => turn, view, held, lookAt, carried, seams, onScreen,
+           pick, named, toward };
 }
 
 // Plants arrivals by the rule until there are `total`, reporting as it goes.
@@ -490,7 +555,7 @@ export async function growFromService(e, stage, first, span, report) {
         : e.pg_grow(pointer, words.length);
       e.pg_free(pointer);
       if (length === 0) continue;
-      stage.add(p.spot[0], p.spot[1] + along, decode(takeResult(e, length)));
+      stage.add(p.spot[0], p.spot[1] + along, decode(takeResult(e, length)), 0, { ...p, plot });
       // A batch of four, then one draw and one frame: the walk fills in in
       // handfuls, which is what a growing garden should look like, and the
       // page stays answerable to a finger throughout.
@@ -752,5 +817,12 @@ function axes(view) {
 }
 
 function dot3(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
+// How far (px, py) is from the segment between two points on the screen.
+function segmentGap(px, py, [ax, ay], [bx, by]) {
+  const dx = bx - ax, dy = by - ay;
+  const length = dx * dx + dy * dy;
+  const t = length ? Math.min(1, Math.max(0, ((px - ax) * dx + (py - ay) * dy) / length)) : 0;
+  return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+}
 function cross3(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
 function normalise3(v) { const l = Math.hypot(...v); return v.map((x) => x / l); }

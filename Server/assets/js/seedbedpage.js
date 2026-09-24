@@ -29,6 +29,7 @@ import { makeSky } from './sky.js';
 import { dressed, whenSettled } from './plain.js';
 import { openWays } from './gates.js';
 import { openMovePad } from './movepad.js';
+import { plantPanel } from './plantpanel.js';
 import { showGathers } from './meanings.js';
 
 const el = (id) => document.getElementById(id);
@@ -159,6 +160,9 @@ async function place() {
 
   await openMovePad({
     nav: el('keys'), canvas: el('stage'), stage, plots: opened, show,
+    // A tap on a plant opens its panel (`plantpanel.js`), the same on every
+    // area page, and a postcard to one of this area's plants lands here.
+    plants: plantPanel({ theme: THEME, engine }),
     turned: () => sky?.draw(),
   });
 }
