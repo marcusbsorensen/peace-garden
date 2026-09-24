@@ -263,18 +263,23 @@ body {
 
 
 /* The ground travels with the mark, so there is no light and dark pair. It is
-   an app icon and is drawn as one. */
+   an app icon and is drawn as one.
+
+   **Larger since 24 September**, with the wordmark: at 44 px and 12 px, light and grey, the
+   name sat small over a page of full-width plots and bold headings,
+   and read as a caption to the site rather than its name. Marcus. */
 .mark {
-  inline-size: 44px;
-  block-size: 44px;
+  inline-size: 60px;
+  block-size: 60px;
   border-radius: 22%;
   display: block;
 }
 
 .wordmark {
-  font-size: 12px;
-  letter-spacing: 0.24em;
-  color: var(--section);
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  color: var(--ink);
 }
 
 .seed,
@@ -358,11 +363,14 @@ body {
 }
 
 /* ── The foot ─────────────────────────────────────────────────────────────
-   The bar turned over: the same hairline, above the row here where the bar's
-   is below it, and two things at opposite ends — the privacy notice at the
+   The bar turned over: two things at opposite ends — the privacy notice at the
    start, where the mark stands in the bar, and the language at the end, where
    the way back to the garden does. They were a paragraph and a footer one
    under the other, which was a screen of scrolling for two links.
+
+   **No hairline above it since 24 September.** Everything above the foot sits
+   in a band or a card of its own now, so a rule there closed off nothing and
+   was one more line on the page. Marcus.
 
    It wraps as the bar does: on a narrow phone the two sit centred, one line
    each, rather than squeezed. */
@@ -375,7 +383,6 @@ body {
   inline-size: 100%;
   margin-block-start: auto;
   padding-block: 14px 0;
-  border-block-start: 1px solid var(--hairline);
 }
 
 .bar-foot__link {
@@ -1690,10 +1697,10 @@ a.minimap__cell:focus-visible::before {
   }
 }
 
-/* The foot takes the slack again, now the panels no longer do. */
+/* The foot takes the slack again, now the panels no longer do. With no
+   hairline, as on every page: the panels above it are their own edge. */
 .walk-page > .bar-foot {
   margin-block-start: auto;
-  border-block-start: 1px solid var(--hairline);
   padding-block-start: 14px;
 }
 
