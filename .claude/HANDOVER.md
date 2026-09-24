@@ -1,4 +1,4 @@
-# Peace Garden: build front page B, then the Glasshouse — handover 23 September 2026 (late)
+# Peace Garden: build the Glasshouse — handover 24 September 2026
 
 This session did too much for one note. It built the Cold Frame, chose and simulated the Glasshouse, and redid the site chrome. The Glasshouse's full note is `git show 61223ee:.claude/HANDOVER.md`. Older traps are in `git show ff3f8e5:.claude/HANDOVER.md`.
 
@@ -14,7 +14,8 @@ Open all ten garden areas before the app is announced, with a front page that sh
   - A new page, `/meanings`, with the lookup table.
 - **The Cold Frame is live** (`a1e6b0b`).
 - **The Glasshouse is designed and simulated, with no code.** It is written up in `docs/WEB-GARDENS.md` §*The Glasshouse, chosen* and §*The fill, simulated*.
-- **Front page: Marcus chose design B.** It exists only as a workbench prototype and the live `/` is unchanged.
+- **Front page B is live** (`5b18834`, deployed 24 September; `/` checked live at 1280px: plant drawn, ten cards, seven links, no console errors). Markup in `Server/.pages/index`, script `Server/assets/js/frontpage.js`, styles at the end of `site.css` (§The front), eight `front*` keys in `strings.js`, English only for now. Built on the site's own bar, foot and colour tokens rather than the prototype's; cards use the `meaning*` lines and `notYet`.
+- **Unused keys kept:** `gardenBody`, `walkBody`, `goOn` are said nowhere now. Marcus chose to keep them for now.
 
 ## Files
 - `tools/wasm/web/front-b.html`: the chosen prototype, at `/dev/front-b`, with inline styles and script.
@@ -43,17 +44,12 @@ Open all ten garden areas before the app is announced, with a front page that sh
   - Hue becomes a fourth trait, `PlantTraits.hue`, and needs no tolerance.
 
 ## Next step
-Build design B into the live front page:
-- Move `front-b.html`'s markup into `Server/.pages/index`, keeping its `data-module` stamp.
-- Move its styles into `site.css` and its script into `page.js`, or a new `frontpage.js`.
-- Put the prototype's English captions and the `SENSE` lines into `strings.js`, or read them from `meanings.js` instead of the inline `SENSE` table.
-- Check it at 375px and 1280px, in light and in dark.
-- Then deploy, after asking Marcus. The Glasshouse comes after that.
+Build the Glasshouse, from `git show 61223ee:.claude/HANDOVER.md` and `docs/WEB-GARDENS.md` §*The Glasshouse, chosen* and §*The fill, simulated*. Commission the eight `front*` keys when the next string round goes out.
 
 ## Traps
 - **The Write hook opens local files as `file://` tabs** in the browser pane. They take focus, and screenshots of the real tab then come back blank. Close those tabs and select the working tab again.
 - **Screenshots miss content scrolled into view by a script.** To see a whole page, make the window tall (`resize_window` 1280×2200) and reload, then set the viewport back to `desktop`.
 - **The WebAssembly suite needs the swift.org toolchain**: `~/Library/Developer/Toolchains/swift-6.3.3-RELEASE.xctoolchain/usr/bin/swift`. Plain `swift` crashes. If the build fails, `run-wasi.mjs` runs the stale test bundle and reports green.
 - **`WalkStore::plantInto` sends an unknown area to the Long Walk and says nothing.** A new area needs its case there and a block in `check_offers.php`.
-- **Deploying migrates the live database.** Rebuild the module with `sh tools/wasm/build.sh`, then run `sh tools/deploy.sh`, and ask Marcus first. `deploy.sh` does not yet check `/meanings`.
+- **Deploying migrates the live database.** Rebuild the module with `sh tools/wasm/build.sh`, then run `sh tools/deploy.sh`, and ask Marcus first. `deploy.sh` checks `/meanings` and `frontpage.js` now.
 - **`docs/TAXONOMY.md:203,209` has Cal and Quin swapped**; `PlantName.swift` is right. Not yet fixed.
