@@ -22,6 +22,10 @@ declare(strict_types=1);
  *   GET  /api/glasshouse           the same, for the Glasshouse
  *   GET  /api/glasshouse/plot/{n}  the same, for the Glasshouse, each planting
  *                                  with how far off the floor it stands
+ *   GET  /api/coppice              the same, for the Coppice
+ *   GET  /api/coppice/plot/{n}     the same, for the Coppice, with the year of its
+ *                                  rotation, each coupe's stage in it, and each
+ *                                  fern on a stool drawn at its coupe's stage
  *   POST /api/walk/offer           one gardener offers a plant, addressed to the other
  *   POST /api/walk/pending         what is waiting on these tokens, either way round
  *   POST /api/walk/answer          the other gardener says yes or no
@@ -44,12 +48,12 @@ declare(strict_types=1);
  * anybody being asked. It answers 403 unless `open_for_planting` is set in
  * `.api/config.php`, which is for a local copy and for the reference check.
  *
- * **Eight of ten areas are open**, and the service says which: the Seedbed
- * (`beginnings`), the Cold Frame (`waiting`), the Glasshouse (`light`), the
- * Knot Garden (`pattern`), the Long Walk (`travel`), the Crossing (`meeting`),
- * the Orchard (`kinship`) and the Quiet Garden (`peace`). The other two have
- * names, layouts and a place on the map and no placement rule, so a plant
- * cannot stand in them.
+ * **Nine of ten areas are open**, and the service says which: the Seedbed
+ * (`beginnings`), the Cold Frame (`waiting`), the Coppice (`renewal`), the
+ * Glasshouse (`light`), the Knot Garden (`pattern`), the Long Walk (`travel`),
+ * the Crossing (`meeting`), the Orchard (`kinship`) and the Quiet Garden
+ * (`peace`). The Home Ground has a name, a layout and a place on the map and no
+ * placement rule, so a plant cannot stand in it.
  * `Areas.php` is the list and `GET /api/garden` is how a phone learns it
  * without being told by a version of itself.
  *
@@ -188,6 +192,17 @@ function checkedPlant(mixed $plant): array
     if ($hue !== null && (!(is_float($hue) || is_int($hue)) || $hue < 0 || $hue >= 1)) {
         respond(400, ['error' => 'hue is a turn of the colour circle, 0 up to 1, or absent.']);
     }
+
+    // **The habit, the plant's archetype's name**: `fern`, `star`. The fifth
+    // trait, and the Coppice's alone — a fern stands on a stool and is cut with
+    // its coupe. Absent means the empty habit, which is what every plant offered
+    // before the Coppice opened carries and what the Coppice reads as a star.
+    // Lower-case letters only, as `Archetype` spells them, and 16 at most, the
+    // column's width.
+    $habit = $plant['habit'] ?? '';
+    if (!is_string($habit) || !preg_match('/\A[a-z]{0,16}\z/', $habit)) {
+        respond(400, ['error' => 'habit is a plant\'s archetype: up to 16 lower-case letters, or absent.']);
+    }
     if (Seeds::cross($parents[0], $parents[1], $encounter) !== $seed) {
         respond(422, ['error' => 'That seed is not the cross of those parents at that meeting.']);
     }
@@ -216,7 +231,7 @@ function checkedPlant(mixed $plant): array
 
     return ['seed' => $seed, 'parents' => [$parents[0], $parents[1]], 'encounter' => $encounter,
             'height' => (float) $height, 'family' => $family, 'area' => $area, 'kind' => $kind,
-            'hue' => $hue === null ? null : (float) $hue];
+            'hue' => $hue === null ? null : (float) $hue, 'habit' => $habit];
 }
 
 /**
@@ -336,6 +351,21 @@ function route(string $method, string $path): never
         respond(200, ['plot' => $plot, 'plantings' => store($settings)->glasshouse()->plot($plot)]);
     }
 
+    if ($path === '/api/coppice' && $method === 'GET') {
+        respond(200, ['plots' => store($settings)->coppice()->plots()]);
+    }
+
+    // **The first route that answers with the date in it.** The year of the
+    // rotation is today's in UTC, worked out here and sent with the plot, so a
+    // page never asks its own clock and two visitors either side of midnight
+    // see one wood.
+    if (preg_match('#\A/api/coppice/plot/(0|[1-9][0-9]{0,5})\z#', $path, $m) && $method === 'GET') {
+        $plot = (int) $m[1];
+        $year = Coppice::yearOn(time());
+        respond(200, ['plot' => $plot, 'year' => $year, 'stages' => CoppiceStore::stages($plot, $year),
+                      'plantings' => store($settings)->coppice()->plot($plot, $year)]);
+    }
+
     if ($path === '/api/walk/offer' && $method === 'POST') {
         $body = readBody();
         $to = $body['to'] ?? null;
@@ -347,7 +377,7 @@ function route(string $method, string $path): never
         [$offer, $new] = store($settings)->offers()->offer(
             $plant['seed'], $to, $from, $plant['parents'][0], $plant['parents'][1],
             $plant['encounter'], $plant['height'], $plant['family'], time(), $plant['area'],
-            $plant['kind'], $plant['hue']
+            $plant['kind'], $plant['hue'], $plant['habit']
         );
         // Offered already, by somebody holding a different pair of tokens. Said
         // without either of them — see `Offers::offer`.
@@ -406,7 +436,8 @@ function route(string $method, string $path): never
         $plant = checkedPlant(readBody(4096));
         [$planting, $new] = store($settings)->plantInto(
             $plant['area'], $plant['seed'], $plant['parents'][0], $plant['parents'][1],
-            $plant['encounter'], $plant['height'], $plant['family'], $plant['kind'], $plant['hue']
+            $plant['encounter'], $plant['height'], $plant['family'], $plant['kind'], $plant['hue'],
+            $plant['habit']
         );
         respond($new ? 201 : 200, $planting);
     }

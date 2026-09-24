@@ -10,6 +10,7 @@ require_once __DIR__ . '/KnotGarden.php';
 require_once __DIR__ . '/Seedbed.php';
 require_once __DIR__ . '/ColdFrame.php';
 require_once __DIR__ . '/Glasshouse.php';
+require_once __DIR__ . '/Coppice.php';
 
 /**
  * The ten plants that stand for the ten areas, as the plot service knows them.
@@ -41,8 +42,8 @@ final class Ambassadors
 {
     /**
      * Each area's plant: the pinned seed, and the two facts about the grown
-     * plant that a placement rule needs. All ten, though two of the areas
-     * are still shut, for the same reason SeedCore pins all ten — the area that
+     * plant that a placement rule needs. All ten, though one of the areas
+     * is still shut, for the same reason SeedCore pins all ten — the area that
      * opens next should not have to go looking for its plant.
      */
     public const ALL = [
@@ -55,8 +56,12 @@ final class Ambassadors
                          'kind' => 'angustifolia'],  // Verora angustifolia
         'waiting' => ['seed' => '8c0992d3e4221b40489b83d05c0ec3131fc8c771365970ffbb1354a93431ff3f',
                       'height' => 0.6767851710319519, 'family' => 4],  // Nyxisora crassicaulis
+        // The Coppice reads a fifth, and only the Coppice does: the plant's
+        // habit, its archetype's name, which says whether it stands on a stool.
+        // This one is a star, so it stands in the light.
         'renewal' => ['seed' => 'c295b64b290a2e9b3c6ece6c70dafb1816205f60f42a0663e47bfb738b30d292',
-                      'height' => 0.9952253103256226, 'family' => 3],  // Rosea caerulea
+                      'height' => 0.9952253103256226, 'family' => 3,
+                      'habit' => 'star'],  // Rosea caerulea
         // The Glasshouse reads a fourth, and only the Glasshouse does: the
         // flower's hue, as a turn of the circle, which is what stands a pot at
         // its place in the staging's spectrum. Pinned for the same reason.
@@ -131,6 +136,7 @@ final class Ambassadors
             'beginnings' => Seedbed::plant([], $one['seed'], $one['height'], $one['family'], $one['kind']),
             'waiting' => ColdFrame::plant([], $one['seed'], $one['height'], $one['family']),
             'light' => Glasshouse::plant([], $one['seed'], $one['height'], $one['family'], $one['hue']),
+            'renewal' => Coppice::plant([], $one['seed'], $one['height'], $one['family'], $one['habit']),
             default => null,
         };
     }

@@ -151,7 +151,8 @@ public enum LongWalk {
         return Traits(height: Double(bounds.max.y - bounds.min.y),
                       family: family(hue: petal.hue, saturation: petal.saturation),
                       kind: genome.name.epithet,
-                      hue: petal.hue)
+                      hue: petal.hue,
+                      habit: genome.form.archetype.rawValue)
     }
 
     // MARK: Slots

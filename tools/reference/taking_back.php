@@ -38,6 +38,7 @@ const TAKING_BACK = [
     'waiting' => ['cold_frame', ['plot', 'frame', 'slot_rank', 'slot_index'], ['height', 'family'], []],
     'light' => ['glasshouse', ['plot', 'bed', 'slot_index', 'slot_row'], [],
                 ['height' => 0.0, 'family' => 0, 'hue' => null]],
+    'renewal' => ['coppice', ['plot', 'coupe', 'place', 'slot_index'], ['height', 'habit'], ['family' => 0]],
 ];
 
 /**
@@ -61,6 +62,7 @@ function takingBackStore(string $area, string $file): object
         'beginnings' => new SeedbedStore($db),
         'waiting' => new ColdFrameStore($db),
         'light' => new GlasshouseStore($db),
+        'renewal' => new CoppiceStore($db),
     };
 }
 
@@ -82,6 +84,7 @@ function takingBack(string $area, array $vectors, int $count = 200): void
             'encounter' => hash('sha256', "taking back, meeting $n"),
             'height' => (float) $v['height'], 'family' => (int) $v['family'], 'kind' => (string) ($v['kind'] ?? ''),
             'hue' => isset($v['hue']) ? (float) $v['hue'] : null,
+            'habit' => (string) ($v['habit'] ?? ''),
         ];
     }
 
@@ -95,10 +98,13 @@ function takingBack(string $area, array $vectors, int $count = 200): void
     $lifted = takingBackStore($area, $taken_file);
     $taken = [];
     foreach ($arrivals as $n => $a) {
-        // The hue is the Glasshouse's alone; every other area's `plant` takes
-        // seven arguments and PHP lets an eighth pass by unread.
-        $whole->plant($a['seed'], $a['a'], $a['b'], $a['encounter'], $a['height'], $a['family'], $a['kind'], $a['hue']);
-        $lifted->plant($a['seed'], $a['a'], $a['b'], $a['encounter'], $a['height'], $a['family'], $a['kind'], $a['hue']);
+        // The hue is the Glasshouse's alone and the habit the Coppice's; every
+        // other area's `plant` takes fewer arguments and PHP lets the rest pass
+        // by unread.
+        $whole->plant($a['seed'], $a['a'], $a['b'], $a['encounter'], $a['height'], $a['family'], $a['kind'],
+                      $a['hue'], $a['habit']);
+        $lifted->plant($a['seed'], $a['a'], $a['b'], $a['encounter'], $a['height'], $a['family'], $a['kind'],
+                       $a['hue'], $a['habit']);
 
         // Taken back at once, now and then; taken back a few arrivals later,
         // now and then; and, less often, hidden the old way and erased by the

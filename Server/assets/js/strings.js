@@ -319,6 +319,27 @@ export const EN = Object.freeze({
   // The Glasshouse could not be drawn.
   glasshouseAway: "The Glasshouse cannot be reached just now.",
 
+  // A ninth area, and the same two strings a ninth time: the heading is
+  // `areaRenewal`, already commissioned in all forty-two.
+  //
+  // **It says the wood is cut in turn, because the drawing cannot say that it
+  // moves.** One visit shows one year: a band of pale stools and new shoots
+  // beside two of ferns coming back. That the open band moves on each winter,
+  // and that the ferns are cut and the flowers never are, is what this area is,
+  // and a reader looking once cannot see it.
+  //
+  // **No word for which band is cut**, where the design allowed one: *the far
+  // band* is the near one after a half turn, and the pale faces already say
+  // which it is.
+  //
+  // **"Further into the wood", in the paging clause**, where the Glasshouse
+  // says *the next house*: a plot here is not a thing with a name of its own,
+  // and the coupes run on from one plot into the next.
+  coppiceAbout:
+    "A wood cut in three bands, one each winter in turn, with ferns coming back from the old stools and flowers standing in the light between them, never cut. Go on further into the wood, or turn to see this part of it from another side.",
+  // The Coppice could not be drawn.
+  coppiceAway: "The Coppice cannot be reached just now.",
+
   // What the plants in each area mean. **Every area gathers the plants of one
   // theme, and the pages above say only how each is laid out**, so a reader
   // standing in the Cold Frame was never told that what brought these plants

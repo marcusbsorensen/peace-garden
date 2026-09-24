@@ -5,8 +5,8 @@ import Foundation
 #endif
 
 /// What a placement rule needs to know about a grown plant, and nothing else:
-/// how tall it came out and what colour its flower is — and, since the Seedbed
-/// and the Glasshouse, its kind and its hue.
+/// how tall it came out and what colour its flower is — and, since the Seedbed,
+/// the Glasshouse and the Coppice, its kind, its hue and its habit.
 ///
 /// **Two facts, because only two can be read without looking.**
 /// `docs/WEB-GARDENS.md` §*Slots and roles* says a template asks questions a
@@ -63,12 +63,36 @@ public struct PlantTraits: Codable, Equatable, Hashable, Sendable {
     /// it along the spectrum takes any free place — so an older phone's plant
     /// is planted rather than refused. Nothing but the Glasshouse reads it.
     public var hue: Double?
+    /// The plant's habit: the name of its archetype, as `Archetype` spells it
+    /// — `fern`, `star`, `spire`.
+    ///
+    /// **A fifth fact, because the ninth area's own plants divide by habit,
+    /// and exactly.** The Coppice's genus heads are `Dros` and `Ros`, and
+    /// `PlantName.roots` gives those to many-merous ferns and many-merous stars
+    /// and to nothing else, so every plant there is one or the other. The
+    /// Coppice stands its ferns on stools, cut with their coupe, and its stars
+    /// in the light between. Height cannot tell the two apart — they overlap
+    /// from half a metre to one and a half — and colour cannot either, because
+    /// a fern has almost no bloom to show one.
+    ///
+    /// **Exact on every host**, like the hue: an archetype is picked from the
+    /// seed's bytes, with no `sin` or `pow` involved, so a phone and the
+    /// service cannot disagree about it.
+    ///
+    /// **Empty where it was never sent**: a planting made before this existed,
+    /// or an offer from a phone that predates it. `Coppice.place(for:)` asks
+    /// only whether a plant is a fern, so an unknown habit is placed as a star
+    /// is — in the light, never cut — and is planted rather than refused.
+    /// Nothing but the Coppice reads it.
+    public var habit: String
 
-    public init(height: Double, family: Int, kind: String = "", hue: Double? = nil) {
+    public init(height: Double, family: Int, kind: String = "", hue: Double? = nil,
+                habit: String = "") {
         self.height = height
         self.family = family
         self.kind = kind
         self.hue = hue
+        self.habit = habit
     }
 
     public init(from decoder: any Decoder) throws {
@@ -77,5 +101,6 @@ public struct PlantTraits: Codable, Equatable, Hashable, Sendable {
         family = try fields.decode(Int.self, forKey: .family)
         kind = try fields.decodeIfPresent(String.self, forKey: .kind) ?? ""
         hue = try fields.decodeIfPresent(Double.self, forKey: .hue)
+        habit = try fields.decodeIfPresent(String.self, forKey: .habit) ?? ""
     }
 }
