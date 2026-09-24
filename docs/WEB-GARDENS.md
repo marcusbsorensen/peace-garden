@@ -1995,46 +1995,69 @@ Name.swift`; `sharedTheme` in `passages.js`.
   `plantClose`. While a sentence falls back to English, the area name set in
   it is the English one too.
 
-## A shadow under every plant, built 24 September 2026
+## Shadows: under every plant and beside the low structures, built 24 September 2026
 
 A close look at the Knot Garden showed the box lit from the upper left and the
 plants standing on the gravel as though laid over it, not grown out of it. No
-plant cast anything; the only shadow on any page was a Coppice stool's. So the
-stage (`makePlotStage` in `Server/assets/js/longwalk.js`) now lays a **contact
-shadow under every plant, in every area**, built once in `add` from the
-plant's own height and spread.
+plant cast anything; the only shadow on any page was a Coppice stool's.
 
-- **A darkening, not a colour.** Drawn after the ground and before the plants
-  with `blendFunc(DST_COLOR, ZERO)`, depth-tested and not depth-written, so the
-  gravel's stones, the tilth and the paths keep their own tones under it, and
-  a hedge, a pot or a frame's side in front of one still hides it.
-- **Soft and irregular.** A middle and five rings, six parts in ten of the
-  ground's light at the middle rising smoothly to all of it at the rim, so
-  there is no edge; the rim wanders by three slow waves and a grain from the
-  plant's place, as a stool's footprint does.
-- **Where the light is.** It slides away from the sun (`LIGHT.sun`, in the
-  world's frame, so it turns with the plot) by 0.32 of the plant's height times
-  the sun's slope, held to 0.7 of its own radius so a spire does not lay a
-  streak, and is drawn out that way. Its radius is 0.72 of the plant's spread,
-  between 9 cm and 55 cm.
-- **On what the plant stands on.** It floats 1 cm over the floor, clear of the
-  highest dressing any ground lays (6 mm). An area whose floor is not level
-  hands the stage its height on the ground builder (`height`: the Home Ground's
-  beds, the Coppice's litter), so a shadow on a bed's shoulder follows it down.
-  A plant standing off the floor shadows what it stands in (`seat`): the
-  compost in a Glasshouse pot, kept inside 6.8 cm, or a Coppice stool's cut
-  face, kept inside 10 cm and riding a centimetre over its slope. A fern on a
-  stool is given no second shadow on the litter, where the stool's own already
-  lies; the two would have stacked into a hole under every stool.
+**A first pass sized a soft oval by each plant's spread**, and Marcus saw the
+fault in it at once: a spindly plant with a few wide branches got a broad pool
+it had nothing to cast, and a dense rosette whose leaves are piled up its stem
+got a small one. So the size and the strength now come from what the plant
+actually puts between the sun and the ground.
 
-Overlapping shadows multiply, so a crowded row is darker between its plants;
-at six in ten, two together still read as ground. On the Home Ground workbench
-(500 arrivals, 71 plants on the plot shown) a frame drew in 3–3.5 ms with the
-shadows and 3.7 ms without — within the noise.
+- **From its own triangles** (`Server/assets/js/shadow.js`). When a plant is
+  added, every triangle of it is slid along `LIGHT.sun` down onto the ground
+  and laid into a small grid (1.2 cm cells, at most 112 a side), each cell
+  counting the layers over it — a triangle smaller than two cells is spread
+  by its area, a bigger one covers the cells whose middles it contains. Layers
+  become lost light as `0.42 × (1 − e^(−1.1 × layers))`, so a pile of leaves
+  darkens to six tenths of the ground's light and no further, and one thin
+  leaf is well under that.
+- **Low sharp, high soft.** Each triangle's share is split by its height:
+  what is low is blurred 2 cm and counts fully, what is 40 cm up or more is
+  blurred 7 cm and counts half. A dense rosette sits in a dark pool; a spire's
+  flowers are a faint smudge off to the side; a spindly umbel's thin branches
+  blur to almost nothing. The grid is faded to exactly nothing over its last
+  cells, so the sheet it is drawn on never shows an edge.
+- **Where the light is** comes free: the projection is along the sun in the
+  world's frame, so the shadow leans away from it and turns with the plot.
+- **On what the plant stands on**, as before: a sheet 1 cm over the floor
+  following its height (the Home Ground's beds, the Coppice's litter); in a
+  Glasshouse pot, the compost, within 6.8 cm; on a Coppice stool, the cut
+  face, within 10 cm. That disc fades out from a third of the way and its rim
+  wanders by the plant's place, so it is not a ring on the compost. A fern on
+  a stool still gets no second shadow on the litter.
+- **Multiplied**, drawn after the ground and before the plants, depth-tested
+  and not depth-written, and now **kept to the ground by the stencil**: the
+  ground is drawn a second time into the stencil only, keeping what faces up,
+  and shadows are laid only there. So a shadow reaching past the plot's
+  wandering edge is not laid down the slab's side or over the sky.
 
-**Hedges and walls cast nothing yet.** The same trick would serve them — each
-run's footprint slid away from the sun by its height and laid on the floor as
-a fan, as the Coppice already does for a stool — and the Knot's box, at ankle
-height, would throw only a hand's width, which is what would make it sit in the
-gravel. The yew and the Quiet Garden's walls are 2 m, and a slide of a metre
-across the border would need clipping to the plot; worth a pass of its own.
+About 2.4 ms a plant to work out (27,000 triangles on average on the Home
+Ground workbench, 10 ms for the largest), once, when it is added; drawing is
+one extra textured sheet a plant.
+
+**The structures' shadows.** A ground builder may hand back `casting` beside
+its mesh — the triangles that throw a shadow — and the stage lays them down
+the same way over the whole plot (2 cm cells), clipped to it, once each time
+the ground is built (a turn, or another plot). Handed back now:
+
+- **The Knot Garden's box**, bands, swells and edging: a hand's width of soft
+  shade on the side away from the light, following each band's curve. The
+  first of these and the reason for them.
+- **The Cold Frame's boxes** (not the lights' bars, whose shadows would be ruled
+  lines, and not the glass) and **the Seedbed's labels**.
+- **The tall ones**: the Long Walk's yew and low hedge and the Quiet Garden's
+  hedge round and its bench. A 2 m yew throws a metre, which falls across the
+  border on two of the four turns and off the plot on the others; clipped by
+  the stencil, it read as shade and not as a fault, so it stayed.
+
+Left for now: the Glasshouse (its staging's slats and the house's bars would
+throw ruled stripes, and a pot's shadow falls on slats with the floor showing
+between them, which one sheet at one height cannot follow), the Orchard's
+trees (a whole canopy's shade over the grass is a decision about the look of
+the area, not a fix), and the Crossing, whose roundels are paving and throw
+nothing. A turn costs roughly 10–30 ms more than it did, for working the structures'
+shadow out again; the plants' are kept.
