@@ -535,17 +535,6 @@ struct QuietButton: View {
 }
 
 extension View {
-    /// The edge that tells a line of text it can be pressed.
-    ///
-    /// Everything in this app is thin, letterspaced and half-transparent, which
-    /// is the point — and it left the buttons indistinguishable from the labels
-    /// standing next to them. A hairline capsule is the least that can be added
-    /// and still answer the question, without the screen growing a chrome.
-    ///
-    /// Anything that is a button wears this, including the ones that are not
-    /// `QuietButton`: a `ShareLink` styled to match, and the rename affordance
-    /// in Seed, which was the worst of them — a sentence that happened to be
-    /// tappable.
     /// Lays a `SproutingRule` along the bottom edge of this view, so the rule's
     /// *line* — not the box its tendrils curl in — sits exactly where the view
     /// ends.
@@ -572,6 +561,18 @@ extension View {
         .padding(.bottom, SproutingRule.height / 2)
     }
 
+    /// The edge that tells a line of text it can be pressed.
+    ///
+    /// Everything in this app is thin, letterspaced and half-transparent, which
+    /// is the point — and it left the buttons indistinguishable from the labels
+    /// standing next to them. A hairline capsule is the least that can be added
+    /// and still answer the question, without the screen growing a chrome.
+    ///
+    /// Anything that is a button wears this, including the ones that are not
+    /// `QuietButton`: a `ShareLink` styled to match, and the rename affordance
+    /// in Seed, which was the worst of them — a sentence that happened to be
+    /// tappable.
+    ///
     /// `horizontal` is for a control with nothing but a glyph in it, where the
     /// standing inset makes a wide oval out of something that should be round.
     ///
