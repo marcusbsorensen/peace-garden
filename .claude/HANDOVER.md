@@ -1,68 +1,48 @@
-# Peace Garden: broader plant shapes — handover 24 September 2026 (evening)
+# Peace Garden: nine areas, new shapes, the move pad — handover 24 September 2026 (night)
 
-The Coppice is open and live. The session's second half turned to the plants themselves: every one is narrow and tall, and Marcus chose to change their shape everywhere. Older notes: `git show 8922297:.claude/HANDOVER.md` (the morning's: eight areas, the Coppice next).
+This session did too much for one note: the Coppice, new plant shapes everywhere, and new page navigation. All three are merged, deployed and live. Older notes: `git show 16b42c2:.claude/HANDOVER.md`.
 
 ## Goal
-Real variety among the species, low and broad plants among them, before the app is announced. Then the Home Ground, the tenth area.
+Open the tenth area, the Home Ground, before the app is announced, on the new plant shapes.
 
 ## State
-- **Deployed and checked live** (main `735b659`, pushed):
-  - **The Coppice, the ninth area.** Rule in `SeedCore/WebGardens/Coppice.swift`, port `Server/.api/Coppice.php`, store `CoppiceStore.php`, page `/coppice`, stool `Morphology/Structures/Stool.swift`. On the design's fresh 500 it holds the simulation's numbers exactly: 16 plots, 14 full, 94.9%.
-  - `PlantTraits.habit` (the archetype's name) on the wire and in `walk_offers`; empty means never sent, read as a star.
-  - `/api/coppice/plot/{n}` sends the year of the rotation (turns 21 December UTC), each coupe's stage, and each stool fern's stage. The service is in year 0 until 21 December 2026; years 1 and 2 were checked only on `/dev/coppice`.
-  - Backup taken before the migration; `coppice` and `coppice_lock` are in `backup.php`'s KEPT.
-- **The sweep cron runs.** Installed with `tools/backup.sh --install-cron`; `~/backups/sweep.log` shows a run at 12:55 UTC. The privacy page's "up to an hour" holds.
-- **Needs an app build:** the phone does not yet send `habit`, so every fern offered from the app lands on the Coppice floor as a star, and the stools stay empty until the build ships. The Glasshouse `hue` and the name-meaning sheet are waiting on the same build.
-- **The new shapes, approved**, on branch `shape/broader` in the worktree `.claude/worktrees/agent-af70adf3868978ef3` (not merged, not pushed):
-  - `461c600` v1 and `4d1c96e` v2: a *habit* per archetype (`Archetype.swift` `profile(for:)`, `Genome.Habit`): crown leaves from the stem's foot; rosettes for succulent, fern, orchid and lotus; round pads for lotus; cut fronds for fern; stem leaves that grow with stem height. New genes are named draws (`habit.crownLeaves`, `habit.crownPitch`, `habit.pinnae`, `leaf.crown.N`), so nothing else shifts; names are untouched. `docs/PLANT-FORMS.md` §"Habit".
-  - v2 on 6,000 plants: median height÷spread **1.28** (2.15 on main), **31%** wider than tall (6%), **22%** under 0.5 m (6%). Lotus 0.34 × 0.87 m; succulents open rosettes; poppy, bell and star ratio about 1.36.
-  - Young stages held: crown leaves grow with height in proportion to how upright they are. Cold Frame tallest seedling 0.34 m (0.45 on main); Coppice's closest star over a cut fern 0.16 m clear.
-  - SeedCore on v2: 357 tests, 39 failures in 22 — the recorded vectors, area fill and cut numbers, and one new floor: a young lotus is 0.058 m, under `ColdFrameTests.swift:275`'s 0.08 m.
-- **The cup fix, done**: `5ede00b` on `shape/broader`. The ring and the hollow are gone from every family (`ring_branch_after.png`):
-  - **The ring was the centre dome** (`PlantBuilder.swift` `addBloom`, `addDome(role: .centre, …)`): oversized, centred on the point every petal springs from so the petals pierce it, open underneath (the web lights back faces, so the hollow shows), any hue. Nothing green sits under the petals; `addSepals` gives reflexed blades to 70% of seeds whatever their archetype.
-  - **Fix, version C:** petals attach on a ring at 0.9 of the centre's radius and shorten by half of it; the centre capped at 0.34 of a petal; a closed cup from the stem tip to the petal bases, a bulbous involucre on the thistle; no reflexed sepals on poppy, umbel, orchid, thistle, fern. Its own leaf-green **calyx colour role** through `Palette`/`Colouring`, the app's `GradientTexture` and `PlantSceneBuilder`, the wasm texture bake and `plant.js` `ROLES`.
-  - As built: `addCalyx` (`PlantBuilder.swift:910`), per-family `Calyx` and `Sepals` (`Archetype.swift:117,135`). Thistle a scaly urn; lotus, star, fern small cups; bell five slender lobes; poppy, orchid, umbel a stem-coloured swelling so nothing is hollow. `MeshRole.calyx` is placed last so existing role indices do not shift; its colour is derived from the leaf colour (no new gene).
-  - Poppy's basal leaves: 3–6, upright, cut to the midrib; ratio 1.49.
-  - v3 overall: ratio 1.29, 30% wider than tall, 22% under 0.5 m. SeedCore 357 tests, 34 failures, none new. App (Simulator) and wasm build.
-  - The Python port `tools/preview/plant_model.py` lacks the habit and the calyx.
-- **In flight: stage 2**, a background agent working in the same worktree on `shape/broader` (no merge, push, deploy or ssh). First **rounder petals** (Marcus asked mid-stage): soft rounded outlines for lotus, poppy, bell, orchid, umbel and the rest; star and thistle stay pointed but smooth; each petal's midrib length held so heights barely move; its own commit and `stage2/petals_before_after.png`. Then the stage 2 list below, then a report.
+- **Live and checked** (main `f8e4591`, pushed, deployed; backups taken before and after):
+  - **Coppice**, the ninth area: `/coppice`, rule `Packages/SeedCore/Sources/SeedCore/WebGardens/Coppice.swift`, `PlantTraits.habit`, a year that turns on 21 December UTC.
+  - **New plant shapes**: a habit per archetype (crown leaves; rosettes for succulent, fern, orchid and lotus; lotus pads), a closed calyx under every bloom in place of the ring, and round petals (star and thistle stay pointed). Median height÷spread 1.29, against 2.15 before; 30% of plants are wider than tall.
+  - **Every area's cuts re-measured**, and every vector file re-recorded. The Glasshouse border has its own cut again (1.14). The Cold Frame cut is now 0.38.
+  - **Replant**: run live and verified. It moved nothing, because the live garden holds no plantings.
+  - **Move pad** on all nine area pages (`Server/assets/js/movepad.js`): directions follow the screen; zoom and turns in the corners; the centre key, a dot in a square, glides home. Nine live pages load clean in a fresh browser.
+  - **Sweep cron** runs on the server every five minutes.
+  - **Tests**: SeedCore 357/0, WebAssembly 351/0, app 131 pass, every PHP check passes.
+- **Waiting on an app build**: the phone does not yet send `habit` or `hue`, and still sends old-shape heights. Once that build ships, run the replant again from a fresh copy (`tools/replant/README.md` §runbook).
+- **Unverified**: the Coppice's years 1 and 2 on the live service, which stays in year 0 until 21 December.
 
-## The measurement (6,000 plants, read-only)
-- Median height 1.00 m, spread 0.45 m, height÷spread 2.15; 6% wider than tall, nearly all plume.
-- **Why:** stem height is a gene (`Genome.swift:282`); spread comes from leaf length (`:312`), drawn independently of height, so spread plateaus near 0.47 m and tall plants read as sticks (ratio 3.7 over 1.6 m). Nodes sit 16–90% up the stem, never at the base (`PlantSkeleton.swift:96-102`).
-- **Succulent** is a small leafy column (0.45 × 0.20 m) and nothing builds a rosette; **lotus** and **poppy** are a big bloom on a 0.7 m stem.
-- Numbers, renders and tools are in the session scratchpad (`/private/tmp/claude-501/-Users-marcus-Projects-peace-garden/70b0cbab-03c1-4376-a9c0-5e0072493992/scratchpad/`): `plant_shapes*.csv`, `archetype_summary*.csv` (main, `_v1`, `_after`), `area_spacing.csv`, `shape/` (measuring package), `draw_grid.py`, the render grids, and `ring/` (the ring investigation: `ring_compare.png`, `prototype_C.diff`, `render_closeup.py`, `probe/`). **Session-only**: copy what is wanted into `tools/` before the session is cleared.
-- **Nothing spaces plants by spread.** Room for wider plants (nearest places): Orchard 0.90, Quiet Garden 0.85, Crossing and Knot Garden about 0.55, Seedbed 0.52, Coppice 0.40, Glasshouse staging and Cold Frame 0.30.
+## Files
+- `tools/replant/README.md` — how to replant the live garden; the runbook's steps are in order.
+- `docs/WEB-GARDENS.md` — every area's design and measured numbers, re-measured 24 September; §"The Home Ground, chosen" is next.
+- `docs/PLANT-FORMS.md` §"Habit" — the new shapes.
+- `Packages/SeedCore/Sources/SeedCore/Genome/Archetype.swift` `profile(for:)`, and `Morphology/PlantBuilder.swift` (`addCalyx`, crown leaves, pads, petal outline): the shape levers.
+- `tools/homeground/` — the Home Ground's simulation; its samples are now keyed to SeedCore's shapes.
 
 ## Decisions made
-- **Change shape everywhere now (option c)**, heights included, rather than add breadth only or version the rules. Marcus, 24 September.
-- **Replant the live web garden** when the shapes go live: re-grow each stored seed with the new shapes on the Mac and replay every area's arrivals in their original order, after a backup. Places may change once.
-- **Shapes approved at v2**, then the cup fix and the poppy change, **then straight to stage 2** without another look. Marcus, 24 September.
-- **A closed green cup under the petals** rather than the ring, with its own green; botany per archetype as above.
-- **Coppice:** no stage words on the page (a turn would make "the far band" wrong); the floor is lighter in the cut band. Stools cast shadows, the only web page that draws any.
-- Earlier decisions stand: glyphs over words, no flags, dictionary headwords with one colon, Danish says "folk"/"personer", never "mennesker", Danish first in any round.
+- **Shapes changed everywhere (option c)**, and the live garden replanted, rather than versioning the shape rules.
+- **A closed green calyx under the petals**, with its colour drawn from the leaf. `MeshRole.calyx` is placed last so older role indices hold.
+- **Move pad**: plots are treated as a line, because the service sends only a count. Home keeps the turn.
+- **Coppice**: no stage words on the page.
+- **Standing rules**: no straight lines in the garden; glyphs over words; Danish says "folk"/"personer", never "mennesker", and goes first in any round.
+- **Marcus's idea for later**: gateways that show glimpses of neighbouring areas. It hooks in at an area's first and last plot edges in `movepad.js` `neighbour()`. It needs a design first: which area lies past which end.
 
 ## Next step
-1. When stage 2 reports: show Marcus the petal close-ups and each area's old → new cut. Check the Cold Frame seedling-floor decision (young rosettes and lotuses are 0.044 m, under the 0.08 m floor, by design) and whether the Glasshouse still borrows the Orchard's 1.30.
-2. Stage 2, as briefed to the agent, on the branch:
-   - re-measure every area's cuts on the new heights: Long Walk 0.93/1.28, Quiet Garden 1.13, Crossing 0.97/1.43, Orchard 0.75/1.30 (the Knot Garden and the Glasshouse border borrow it), Cold Frame 0.85, Coppice 1.10, the Glasshouse band edges if hue moved (it should not);
-   - re-record every `tools/reference/*_vectors.json`, and the ambassador heights in `Server/.api/Ambassadors.php`;
-   - the structure tests: Glasshouse roof, Cold Frame glass at the young stage, Coppice's "shortest star over every cut fern";
-   - `PlantFormTests` width pins, the Python port `tools/preview/plant_model.py` with `PortVectorTests`, the app's sprite headroom (`GardenSprites.swift:43`), the committed samples in `tools/coppice` and `tools/homeground`;
-   - check spacing: the Glasshouse staging and Cold Frame ranks are 0.3 m apart, the tightest; the Orchard and Quiet Garden have the most room;
-   - the Cold Frame's 0.08 m seedling floor against young rosettes;
-   - the Python port, the app's tests, the wasm suite, the Coppice and Home Ground samples re-simulated, `docs/WEB-GARDENS.md` and `docs/TAXONOMY.md` numbers;
-   - write the replant tool (`tools/replant/`: SeedCore regrows every stored seed from a backup copy; a PHP step replays each area in arrival order; taken-back rows have no seed and must keep their place), rehearse it on a local copy and on a copy of the newest real backup, and write the live runbook;
-   - **ask Marcus before** the backup, deploy and replant: they change the live database. Then merge, remove the worktree and its `worktree-agent-*` branches.
-3. Then the Home Ground, from `docs/WEB-GARDENS.md` §"The Home Ground, chosen" (its fill was simulated on the old shapes and needs re-simulating).
-4. Strings: `coppiceAbout` and `coppiceAway` are English only; commission them with the next round, Danish first.
+Build the Home Ground. First put Marcus the two design points found under the new shapes: its rosettes are 0.38 m wide on a 0.28 m spacing, and its umbel cut, 0.932, sits 0.009 mm from an arrival. With those answered, the Glasshouse and Coppice builds are the template: rule, port and store, then page, then the `gates.js` BUILT entry, then the deploy checks.
+
+## Open, set aside by Marcus
+- Young water-lily pads reach through the Cold Frame's walls in 55% of end places. The recommended fix is to draw young flat leaves smaller.
+- The Glasshouse staging is crowded: 99% of its plants are wider than the 0.30 m gap. Recommended: leave it for the at-scale work.
+- `coppiceAbout`, `coppiceAway`, `moveUp`…`zoomOut` and `moveHome` are English only. Regenerate `tools/strings/commissions/2026-09-24/` with `sheets.py` before sending; `walkBack` and `walkOn` are gone.
 
 ## Traps
-- **Playwright MCP:** misbehaves when agents share it. Drive renders from a playwright-core script of your own, with a fresh profile.
-- **Agents in worktrees:** merge the branch, then `git worktree remove --force` and delete the branch.
-- **Seeing a new deploy:** a browser that visited earlier keeps old JS unless the page is served through `index.php` with stamps.
-- **Toolchains:** the WebAssembly suite needs `~/Library/Developer/Toolchains/swift-6.3.3-RELEASE.xctoolchain/usr/bin/swift`. Run `sh tools/wasm/build.sh` before any deploy that touches Swift; the module is built, not committed.
-- **Before deploying a migration:** `sh tools/backup.sh` first. Deploying migrates the live MariaDB on the first request.
-- **The token-guard hook** blocks unbounded `cat`, `grep`, `git show` and large images; pipe through `head`, use `rg`, downscale screenshots with `sips` before reading.
-- **Heights are exact only to 0.01 mm across hosts** (`VectorFile.height`); habit and hue are exact. Any new cut needs `placementCannotTurn` in its vector test.
-- **Loose ends, left alone:** PDO rounds stored decimals to 14 digits; `.htaccess` routes only `s|g|t`; the `g` key on `/g` is labelled by the wordmark; unused keys `gardenBody`, `walkBody`, `goOn`, `walkThisArea`; the local branch `area/coppice` is merged and can be deleted.
+- **Token-guard hook**: blocks unbounded `cat`, `grep`, `git show`, heredoc `cat >` and large images. Use `rg`, `head`, Read with offset/limit, and the Write tool; downscale screenshots with `sips -Z 1000` first.
+- **Renders**: don't use the Playwright MCP. Drive playwright-core scripts of your own with a fresh profile; the local server is `php -S localhost:8847 -t Server tools/wasm/dev-router.php`.
+- **MariaDB**: the restore test and `rehearse.sh --mariadb` need OrbStack (`open -a OrbStack`). Quit it afterwards.
+- **Before any deploy that touches Swift**: run `sh tools/wasm/build.sh`; the module is built, not committed.
+- **The `shape/broader` worktree** (`.claude/worktrees/agent-af70adf3868978ef3`) is merged but locked by a finished agent. Remove it with `git worktree remove -f -f`, then delete `shape/broader` and `worktree-agent-af70adf3868978ef3`.
