@@ -176,6 +176,51 @@ The new keys are `stem.branch.count`, `stem.branch.spread` and
 `stem.branch.angle`. **Nothing already there was renamed**, which is the only
 property here that could not have been repaired afterwards.
 
+## Habit: how wide a plant stands
+
+Added 24 September 2026, as a prototype for looking at. **Every plant was a
+stick.** Across six thousand seeds the median plant was a metre tall and
+forty-five centimetres across, height over spread 2.15, and six in a hundred
+were wider than tall — nearly all of them plumes. The inflorescence work above
+gave the tops of plants somewhere to go; nothing gave the bottoms anywhere.
+Leaves sat only on nodes between 16% and 90% of the way up the stem, and a
+leaf's length was drawn without reference to the stem, so spread plateaued near
+half a metre whatever the height.
+
+`ArchetypeProfile` now carries a habit as well as an inflorescence, and
+`Genome.Habit` is drawn from it under new `habit.` keys:
+
+- **Crown leaves.** Leaves from the foot of the stem, outermost first, each one
+  in smaller (`crownTaper`) and more upright than the last, on the golden angle.
+  That one rule is a rosette, a fern's vase and a poppy's clump. Most families
+  get a few as a basal clump; `rosette` families carry *all* their leaves there
+  and their stem becomes a flowering stalk — **succulent, fern, orchid, lotus**.
+  A rosette that does not flower keeps only a stub of stem.
+- **Crown leaves arch rather than sag.** The old sag pushes a straight midrib
+  sideways, which kinks a near-upright blade. An arch turns the midrib along its
+  length at constant curvature, capped so the tip never goes below the crown.
+- **Pads** (lotus): round, peltate, cupped, on curved petioles drawn as leaf.
+- **Fleshy leaves** (succulent): a second surface bowed the other way, so the
+  leaf has a body, and a tip that curls up.
+- **Pinnae** (fern): fronds cut nearly to the midrib, so a frond from the crown
+  still reads as a fern rather than an agave.
+- **`leafReach`**: stem leaves are scaled by the stem's height, part-way, so a
+  tall plant is not a twig. Kept off `foliage.length`, which the epithets read.
+- **`nodeZone`**: where the nodes sit, per family — low and short on a poppy.
+
+**Names do not move.** `leafCount` is still nodes times leaves per node, the
+count the epithet reads; crown leaves are added on top. No existing key was
+renamed or re-ranged, and the archetype draw is untouched. Heights did move for
+six families — fern, orchid, lotus, succulent, star, plume — because their
+habit changed, and a plume's spray reaches a little less far.
+
+Measured on the same six thousand seeds: height over spread 2.15 → 1.39,
+wider than tall 6% → 26%, under half a metre 6% → 16%, widest plant 2.2m →
+1.5m, median height 0.99m → 0.85m. Spire, vine and thistle stay towers.
+
+**Not yet done**: the areas' cuts, the recorded vectors and the Python port all
+still describe the old shapes.
+
 ## What is left
 
 - **The centre dome of a large solitary bloom has a hard bright rim.** Visible
