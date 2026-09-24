@@ -17,11 +17,11 @@ afternoon; this does the same, and reads the app's English out of
 run it again. What it owns is what exists nowhere else in a form a translator
 can be handed: what each string has to say.
 
-**Why not a fourth mode of `commission.py`.** `check.py` imports that file's
-groups and runs in CI, so a group added there is a standing rule for every
-catalogue rather than one round's paperwork. Whether these keys become
-standing groups is Marcus's call, and the README puts it to him; until then
-`--check` below does their share of the mechanical checking.
+**What each string has to say lives in `commission.py`**, as `FRONT` and
+`MEANINGS`, which Marcus made standing groups on 24 September, so `check.py`
+holds every catalogue to them. This file prints them into the sheets, and
+`--check` adds what only this round needs: the app's name sheet, and the
+whole of it arriving at once.
 """
 
 import json
@@ -33,6 +33,8 @@ HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parents[3]
 sys.path.insert(0, str(ROOT / "tools/strings"))
 from commission import AREAS, CLAIMS, PRIVACY, english  # noqa: E402
+from commission import FRONT as FRONT_CLAIMS  # noqa: E402
+from commission import MEANINGS as MEANING_CLAIMS  # noqa: E402
 
 CATALOGUES = ROOT / "Server/strings"
 XCSTRINGS = ROOT / "App/PeaceGarden/Resources/Localizable.xcstrings"
@@ -58,301 +60,12 @@ MEANINGS = ["meaningsTitle", "meaningsAbout", "meaningsSecond", "meaningsArea",
 # The app's plain keys: their English is the key.
 APP_PLAIN = ["Area", "What the name means"]
 
-# ---------------------------------------------------------------------------
-# What each string has to say.
-#
-# Same shape as `commission.py`'s CLAIMS. **`must not` appears only where there
-# is a known trap**: the fluent, obvious rendering that says the wrong thing.
-# ---------------------------------------------------------------------------
-NOTES = {
-    "frontLead": {
-        "seen": "The front page, `/`, directly under the heading (`tagline`). "
-                "It is the whole of the page for a reader who goes no further "
-                "than the first screen.",
-        "must": [
-            "Two phones touch, and each hands the other a seed.",
-            "What grows is one plant that took both of them: neither person "
-            "could have grown this plant alone.",
-            "It opens over real days.",
-        ],
-        "must not": [
-            "Read as *neither can grow anything alone*. The claim is about this "
-            "plant needing both seeds, and a reader with a plant of their own "
-            "already knows the other reading is false.",
-        ],
-        "note": "Two of its three claims are already in your `about1`: *two "
-                "phones hand each other a seed* and *it opens over real days*. "
-                "Use the same words for them here.",
-    },
-    "frontTurn": {
-        "seen": "A small hint under the plant on the front page, which turns "
-                "when somebody drags it with a finger or a mouse. Visual only: "
-                "a screen reader skips it.",
-        "must": [
-            "Dragging the plant turns it.",
-        ],
-        "note": "The one instruction in this commission, and it is a hint on a "
-                "control rather than a sentence. Use the form your language's "
-                "interfaces use for such a hint — an infinitive or a short "
-                "phrase is usual — and a verb for *drag* that covers a finger "
-                "as well as a mouse.",
-    },
-    "frontMeet": {
-        "seen": "The first of three steps on the front page, each a heading of "
-                "one word under a glyph, read left to right as a sequence: "
-                "*Meet*, *Cross*, *Grow*.",
-        "must": ["Two people meet, in person."],
-        "note": "The three are one form between them — three verbs, or three "
-                "verbal nouns, whichever your language uses for the steps of a "
-                "process. One word each where your language allows.",
-    },
-    "frontMeetBody": {
-        "seen": "Under *Meet*.",
-        "must": [
-            "Two people touch their phones together.",
-            "They are in the same place, physically together.",
-        ],
-        "note": "*In the same room* stands for being there together; your "
-                "language's everyday way of saying *face to face* or *in the "
-                "same place* is right if a room is too literal.",
-    },
-    "frontCross": {
-        "seen": "The second step, under its glyph.",
-        "must": ["The two seeds are crossed, as a gardener crosses two plants."],
-        "must not": [
-            "Be a word that means only crossing a road, or a cross as a shape. "
-            "A word that holds the gardener's sense as well — *krydse*, "
-            "*croiser* — is exactly right.",
-        ],
-        "note": "Your `growBody` already has the verb: *Peace Garden crosses "
-                "this seed with one of your own*. Use it. Where your "
-                "`areaMeeting` is the plant-cross word, the two will visibly "
-                "belong together, which is right.",
-    },
-    "frontCrossBody": {
-        "seen": "Under *Cross*.",
-        "must": [
-            "The exchange goes both ways: each person hands the other a seed.",
-            "Then the two seeds are crossed.",
-        ],
-        "note": "*Hand each other a seed* is the phrase your `about1` already "
-                "has. Agree with it.",
-    },
-    "frontGrow": {
-        "seen": "The third step, under its glyph.",
-        "must": ["A plant grows."],
-    },
-    "frontGrowBody": {
-        "seen": "Under *Grow*.",
-        "must": [
-            "The plant is one neither of the two could have grown alone.",
-            "It opens over real days.",
-        ],
-        "note": "It repeats the second sentence of `frontLead`, a screen "
-                "further down. Word the two alike.",
-    },
-    "gardenTitle": {
-        "seen": "The front page's second button and the heading over the ten "
-                "cards. Also the name of the garden's glyph in the bar on every "
-                "page, read aloud and shown on hover, and the heading of the "
-                "small map at the foot of each area page.",
-        "must": ["The garden: the place of ten areas that a reader can walk."],
-        "note": "A name for the place, with the article your language gives a "
-                "place it means as *the one*. The word for *garden* your "
-                "catalogue already uses.",
-    },
-    "downloadTitle": {
-        "seen": "The front page's first button, which opens `/download`, and "
-                "that page's heading.",
-        "must": ["The app — Peace Garden on the phone — as a thing, by name."],
-        "must not": [
-            "Be a command such as *Download* or *Get the app*. It is a heading.",
-        ],
-    },
-    "notYet": {
-        "seen": "On the card of each area that is still being built, on the "
-                "front page, and beside the same areas in the table at "
-                "`/meanings`.",
-        "must": ["This area opens later."],
-        "note": "A plain statement of where things stand, matter-of-fact "
-                "rather than apologetic. Keep the full stop.",
-    },
-    "meaningsTitle": {
-        "seen": "The heading of `/meanings`, and the words of every link to it: "
-                "the book glyph in the bar on every page (read aloud and shown "
-                "on hover) and the headword on each area page.",
-        "must": ["What the names of the plants mean."],
-        "note": "A heading, so no full stop. In the app's languages the app's "
-                "own button says *What the name means*, of one plant; the two "
-                "should read as the same phrase in the singular and the plural.",
-    },
-    "meaningsAbout": {
-        "seen": "The first paragraph of `/meanings`, above a worked example "
-                "that takes one name apart piece by piece.",
-        "must": [
-            "A plant's name says where the plant belongs.",
-            "The beginning of the name's first word chooses the area it "
-            "stands in.",
-            "The ending of that same first word chooses which of the area's "
-            "three parts the words shown under the plant come from.",
-        ],
-        "must not": [
-            "Suggest anybody chooses or gives the name. It is drawn from the "
-            "seed.",
-        ],
-        "note": "*The words under it* are the quotation shown under a plant. "
-                "*First word* is said plainly on purpose; the term *genus* "
-                "arrives in the next paragraph.",
-    },
-    "meaningsSecond": {
-        "seen": "The second paragraph of `/meanings`, after the worked example.",
-        "must": [
-            "The second word of the name names the one way this plant most "
-            "differs from the rest of its genus.",
-            "After a first word ending in -ynth, the second word takes its "
-            "masculine form: rubra becomes ruber.",
-        ],
-        "note": "`-ynth`, `rubra` and `ruber` are Latin and copied exactly, "
-                "letter for letter. *Genus* and *masculine form* are the "
-                "ordinary botanical and grammatical terms in your language.",
-    },
-    "meaningsArea": {
-        "seen": "A column heading in the table at `/meanings`, over the ten "
-                "area names.",
-        "must": ["An area of the garden."],
-        "note": "One word. In the app's languages the app's name sheet has the "
-                "same word as a row label (`Area`); they are one word in two "
-                "places.",
-    },
-    "meaningsMeaning": {
-        "seen": "A column heading in the table at `/meanings`, over the ten "
-                "definitions; on a phone it becomes a small label above each "
-                "one.",
-        "must": ["What the theme holds: what it gathers in and is about."],
-    },
-    "meaningsNames": {
-        "seen": "A column heading in the table at `/meanings`, over the "
-                "syllables that begin plant names in each area — *Nyx-*, "
-                "*Fen-*. On a phone it becomes a label directly before the "
-                "syllables.",
-        "must": ["Names that begin with the syllables that follow."],
-        "note": "It has to lead straight into a list of name-beginnings, so "
-                "choose the grammar that runs into one.",
-    },
-    "meaningsWord": {
-        "seen": "A column heading in the second table at `/meanings`, over "
-                "Latin second words such as *ruber*.",
-        "must": ["The second word of a plant's name."],
-    },
-    "meaningsSays": {
-        "seen": "The column heading beside `meaningsWord`, over what each "
-                "second word says about its plant.",
-        "must": ["What that word says about the plant."],
-    },
-}
-
-# The ten entries. `must` is what the definition has to carry, half by half;
-# `headword` is the trap in the theme's own word. The three parts each theme
-# holds come from `commission.py`'s AREAS, printed under each.
-ENTRIES = {
-    "waiting": {
-        "headword": "Waiting as a noun, the act of it. The word for waiting "
-                    "rather than for hope or expectation.",
-        "must": [
-            "What is held back until its time comes, however long that is.",
-            "And whoever keeps watch over it — a person standing by.",
-        ],
-    },
-    "ground": {
-        "headword": "Ground as earth. Where your language's word for it also "
-                    "means *reason* or *floor*, pick the one a gardener means.",
-        "must": [
-            "The earth a plant stands in.",
-            "And the earth that is yours — home ground, belonging.",
-        ],
-        "note": "*Yours* addresses the reader, informally. If your language "
-                "has one word that is both soil and home, as Latin *colere* "
-                "is both to till and to dwell, it is the headword.",
-    },
-    "beginnings": {
-        "headword": "Beginnings, in whichever number your language speaks of "
-                    "beginnings as a subject.",
-        "must": [
-            "The first thing a seed does — germination.",
-            "And how much comes of it — small becoming large.",
-        ],
-    },
-    "renewal": {
-        "headword": "Renewal: coming again, being made new.",
-        "must": [
-            "What is cut back and grows again, in the gardener's sense.",
-            "And what is mended — made whole after breaking.",
-        ],
-    },
-    "travel": {
-        "headword": "Travel as a noun: going, the journey.",
-        "must": [
-            "The ways a seed goes and the ways a person goes, both.",
-            "And the pull of somewhere else — longing for a far place.",
-        ],
-        "must not": [
-            "Make *pull* a physical pulling. It is the tug of elsewhere.",
-        ],
-    },
-    "peace": {
-        "headword": "Peace in the quiet, inward sense.",
-        "must": [
-            "The quiet a garden exists for.",
-            "And the ease that comes with that quiet.",
-        ],
-    },
-    "kinship": {
-        "headword": "Kinship: belonging together as kin, by blood or by "
-                    "choice.",
-        "must": [
-            "What grows together — grafts, roots and fungi joined.",
-            "And the people kept rather than happened upon: chosen and held "
-            "on to, set against chance.",
-        ],
-        "note": "*Kept rather than happened upon* is Marcus's reading of the "
-                "Orchard. The contrast between keeping and chance is the point "
-                "of the half; keep both sides of it.",
-    },
-    "pattern": {
-        "headword": "Pattern as order in living things.",
-        "must": [
-            "The order in living things — spirals, tiling.",
-            "And the names given to order — the words people have for it.",
-        ],
-        "must not": [
-            "Be a sewing pattern, a template or a model to copy.",
-        ],
-    },
-    "light": {
-        "headword": "Light as a noun, as in sunlight.",
-        "must": [
-            "What a plant turns towards.",
-            "And the day it keeps time by — a plant measures the length of "
-            "the day.",
-        ],
-        "must not": [
-            "Be *light* as in weight, or the light appearance in the app's "
-            "settings.",
-        ],
-    },
-    "meeting": {
-        "headword": "Meeting: two coming together, the word your `tagline` "
-                    "already uses for *a meeting*.",
-        "must": [
-            "Two coming together at the right moment.",
-            "And what each owes the other — the obligations of host and guest, "
-            "of flower and pollinator.",
-        ],
-        "must not": [
-            "Be an appointment or a conference.",
-        ],
-    },
-}
+# What each string has to say lives in `commission.py`, as `FRONT` and
+# `MEANINGS`, since Marcus made them standing groups on 24 September.
+NOTES = {**FRONT_CLAIMS, **{k: v for k, v in MEANING_CLAIMS.items()
+                           if k.startswith("meanings")}}
+ENTRIES = {k.removeprefix("meaning").lower(): v
+           for k, v in MEANING_CLAIMS.items() if not k.startswith("meanings")}
 
 
 # ---------------------------------------------------------------------------
@@ -665,8 +378,8 @@ def check(leave_out):
     """The mechanical half, for this commission's keys only.
 
     None of this reads the language; `check.py`'s opening paragraph applies
-    word for word. It is here because `check.py` has no group for these keys
-    yet, so a half-translated front page passes it clean.
+    word for word. `check.py` covers the site's groups for good; this adds the
+    app's half of the name sheet, which only this round is writing.
     """
     source = english()
     app = app_catalogue()
