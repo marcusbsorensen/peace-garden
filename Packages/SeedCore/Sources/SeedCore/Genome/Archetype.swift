@@ -142,6 +142,24 @@ public enum Sepals: String, CaseIterable, Sendable {
     case appressed
 }
 
+/// The outline a petal is cut to.
+///
+/// **Every petal used to end in a point**, because one profile drew petals and
+/// leaves alike: a lens whose width falls to nothing at the tip, drawn out
+/// into a needle by the tip gene in four plants in five. It suited a leaf and
+/// a daisy's ray. On a poppy or a water lily it made a star of spikes, and
+/// thirteen straight-sided rows made the edge a polygon. A rounded petal is
+/// most petals, so it is the default; the two families whose flower is sharp
+/// keep the point.
+public enum PetalOutline: String, CaseIterable, Sendable {
+    /// Widest past the middle and closing in a round end: a poppy's, a lily's.
+    /// The tip gene says how far the widest point stands toward the tip and
+    /// how full the end is, from broadly round to a softly pointed oval.
+    case rounded
+    /// The lens that runs out to a point: a daisy's ray, a thistle's floret.
+    case pointed
+}
+
 /// How many parts a flower is built in — its merosity.
 ///
 /// **The character that separates the two genus roots of a family**, and the
@@ -215,6 +233,12 @@ public struct ArchetypeProfile: Sendable {
     /// How the sepals are carried. `bloom.hasSepals` still decides whether a
     /// plant shows them, except a bell's, which always has its five.
     public var sepals: Sepals = .appressed
+    /// The outline a petal is cut to. Round unless the family's flower is
+    /// sharp.
+    public var petalOutline: PetalOutline = .rounded
+    /// How crumpled a petal is, 0 smooth and 1 a poppy's: silk that was
+    /// folded in the bud and has not quite let go of it.
+    public var petalCrumple: Double = 0
 
     // MARK: Habit — how wide a plant stands for its height
     //
@@ -420,6 +444,8 @@ public struct ArchetypeProfile: Sendable {
             profile.leafReach = 0.4
             profile.calyx = .urn
             profile.sepals = .none
+            // Florets, each a narrow spine.
+            profile.petalOutline = .pointed
         case .vine:
             profile.petals = (4, 6)
             profile.heightScale = 1.45
@@ -464,6 +490,8 @@ public struct ArchetypeProfile: Sendable {
             profile.crownPitch = 0.95...1.35
             profile.calyx = .shallowCup
             profile.sepals = .reflexed
+            // Rays: the one family named for its sharp petals.
+            profile.petalOutline = .pointed
         case .poppy:
             profile.petals = (4, 6)
             profile.inflorescence = .solitary
@@ -488,6 +516,8 @@ public struct ArchetypeProfile: Sendable {
             profile.calyx = .swelling
             profile.sepals = .none
             profile.pinnae = 5...8
+            // Four broad round petals of creased silk.
+            profile.petalCrumple = 1
         case .succulent:
             // **A rosette at last.** It was a thick stem with small leaves up
             // it — a leafy column forty-five centimetres tall and twenty

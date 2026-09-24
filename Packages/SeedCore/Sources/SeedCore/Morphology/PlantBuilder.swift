@@ -1081,18 +1081,42 @@ public struct PlantBuilder {
         let sharpness = Float(bloom.tipSharpness)
 
         let notch = Float(bloom.notch)
+        let rounded = bloom.outline == .rounded
+        let crumple = Float(bloom.crumple)
+        // Where the creases fall, from the petal's own place round the flower,
+        // so no two petals of a poppy are creased alike and no draw is spent.
+        let creasePhase = azimuth * 2.7
 
-        builder.addSurface(role: .petal, rows: 13, columns: 9, maturity: bloomOpen) { u, v in
-            let s = v
-            let profile = Self.bladeProfile(s, sharpness: sharpness, serration: 0, teeth: 0)
-            let across = (u - 0.5) * 2 * halfWidth * profile
+        // **Seventeen rows, drawn in toward the tip.** Thirteen evenly spaced
+        // rows made a petal's edge a polygon of twelve straight sides, and the
+        // last of them closed on the tip in one straight cut, which is where a
+        // round end has all its curve. `petalRow` spaces them so the rows fall
+        // evenly round the end rather than along the midrib.
+        builder.addSurface(role: .petal, rows: 17, columns: 9, maturity: bloomOpen) { u, v in
+            let s = Self.petalRow(v)
+            let profile = rounded
+                ? Self.petalProfile(s, sharpness: sharpness)
+                : Self.bladeProfile(s, sharpness: sharpness, serration: 0, teeth: 0)
+            let x = (u - 0.5) * 2
+            let across = x * halfWidth * profile
             let bend = curl * length * s * s * 0.75
+            // A round petal is dished a little across its width, its edges
+            // turned in toward the flower's middle, as a petal is and a blade
+            // is not. It is also what makes the round end read as round from
+            // the side, where a flat one is a line.
+            let dish = rounded ? -0.22 * halfWidth * profile * x * x : 0
+            // Creased silk: two soft waves at an angle to the midrib, stronger
+            // toward the edge and the tip, where a poppy's petal is thinnest.
+            let crease = crumple == 0 ? 0 : crumple * halfWidth * profile * 0.12 * (0.35 + 0.65 * abs(x)) * s
+                * (0.6 * sin(.pi * (3 * s + 1.2 * x) + creasePhase)
+                   + 0.4 * sin(.pi * (5 * s - 0.9 * x) + 2 * creasePhase))
             let twistAngle = twist * s
             let localSide = side * cos(twistAngle) + up * sin(twistAngle)
             let localUp = up * cos(twistAngle) - side * sin(twistAngle)
             // A cleft cut into the very tip, dying away toward the base.
-            let cleft = notch * length * 0.2 * exp(-pow((u - 0.5) * 5, 2)) * pow(s, 6)
-            return origin + forward * (s * length - cleft) + localSide * across + localUp * bend
+            let cleft = notch * length * 0.2 * exp(-pow(x * 2.5, 2)) * pow(s, 6)
+            return origin + forward * (s * length - cleft) + localSide * across
+                + localUp * (bend + dish + crease)
         }
     }
 
@@ -1135,6 +1159,44 @@ public struct PlantBuilder {
                 columns: 8
             )
         }
+    }
+
+    // MARK: - Petal outline
+
+    /// How far along a petal row `v` of its grid stands, `0` at the base and
+    /// `1` at the tip: `v + v² − v³`.
+    ///
+    /// Even at the base, closest together at the tip, and smooth between, so
+    /// no step in the spacing shows. Near the tip what is left of the petal
+    /// goes as the square of what is left of the grid, which is what spaces
+    /// the rows evenly round a round end: there the width goes as the square
+    /// root of what is left of the petal. The length along the midrib is the
+    /// petal's length whatever this does, since only where the rows fall moves.
+    static func petalRow(_ v: Float) -> Float {
+        v + v * v - v * v * v
+    }
+
+    /// Width of a round petal at `s` along its length, `0` at the base, `1`
+    /// at its widest and `0` at the tip, with no corner anywhere between.
+    ///
+    /// From a narrow claw it widens on a quarter sine to its widest point, and
+    /// closes from there on a quarter of a superellipse, whose tangent at the
+    /// tip is square to the midrib: a round end, never a point. The tip gene,
+    /// which drew a lens out into a needle, says instead how round: at its
+    /// bluntest the widest point stands at 0.62 of the petal and the end is
+    /// fuller than a circle; at its sharpest the widest point is at 0.48 and the
+    /// end an oval running to a soft point. The widest is as wide as the lens's
+    /// was, so a flower's petals are no wider for it, only fuller at the end.
+    static func petalProfile(_ s: Float, sharpness: Float) -> Float {
+        let k = max(0, min(1, (sharpness - 0.6) / 1.8))
+        let widest = 0.62 - 0.14 * k
+        let fullness = 2.6 - 0.8 * k
+        let s = max(0, min(1, s))
+        if s <= widest {
+            return pow(sin(.pi * 0.5 * s / widest), 0.8)
+        }
+        let t = (s - widest) / (1 - widest)
+        return pow(max(0, 1 - pow(t, fullness)), 1 / fullness)
     }
 
     // MARK: - Shared profile

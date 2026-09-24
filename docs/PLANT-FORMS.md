@@ -277,6 +277,42 @@ under the petals; seven plants in ten had reflexed sepals whatever they were.
 
 Not ported: `tools/preview/plant_model.py` has neither this nor the habit above.
 
+## A petal's outline
+
+Added 24 September 2026. **Every petal ended in a point.** One profile drew
+petals and leaves alike, `bladeProfile`: a lens whose width falls to nothing at
+the tip, with the tip gene (0.6 to 2.4, drawn the same for every family) raising
+it to a power, so four petals in five were drawn out into a concave needle. It
+was sampled at thirteen even rows, so the edge was a polygon of twelve straight
+sides and the tip, where a round end has all its curve, was one straight cut.
+A poppy or a water lily read as a star of spikes.
+
+- **The outline is the family's** (`PetalOutline` on `ArchetypeProfile`, carried
+  on `Genome.Bloom`). Round for ten families; pointed for the star, named for
+  its sharp petals, and the thistle, whose florets are spines.
+- **A round petal** (`PlantBuilder.petalProfile`) widens from a narrow claw on a
+  quarter sine to its widest point, then closes on a quarter superellipse whose
+  tangent at the tip is square to the midrib: a round end, never a point, and no
+  corner anywhere. The tip gene now says how round: at its bluntest the widest
+  point is at 0.62 of the petal and the end fuller than a circle; at its
+  sharpest the widest point is at 0.48 and the end a softly pointed oval. The
+  widest is as wide as the lens was.
+- **It is dished a little across**, its edges turned in toward the flower's
+  middle, which is what makes the end read as round from the side.
+- **A poppy's is creased** (`petalCrumple`): two soft waves at an angle to the
+  midrib, strongest toward the edge and the tip, phased by the petal's place
+  round the flower, so no draw is spent.
+- **Seventeen rows, drawn in toward the tip** (`petalRow`, `v + v² − v³`), for
+  every petal including the pointed ones: even at the base and closest at the
+  tip, so the rows fall evenly round a round end and a star's taper is a curve
+  rather than facets.
+- **A petal's length along its midrib is what it was**, so blooms keep their
+  reach. Over 3,000 minted seeds the median change in grown height is 0 mm for
+  most families, +1 mm lotus, +3 mm poppy, +5 mm orchid (largest 59 mm, a
+  nodding poppy), and in spread 0 mm except poppy +3 mm. No gene was added or
+  moved. The largest mesh of the 3,000 went from 74,712 triangles to 90,840,
+  against the budget test's 120,000.
+
 ## What is left
 
 - ~~**The centre dome of a large solitary bloom has a hard bright rim.**~~ It

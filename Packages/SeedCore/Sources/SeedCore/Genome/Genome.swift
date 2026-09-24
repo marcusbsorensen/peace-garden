@@ -154,6 +154,10 @@ public struct Genome: Equatable, Sendable {
         public var calyx: Calyx
         /// How the sepals are carried, where `sepalCount` gives it any.
         public var sepals: Sepals
+        /// The outline each petal is cut to. The family's.
+        public var outline: PetalOutline
+        /// How crumpled each petal is, 0 smooth. The family's.
+        public var crumple: Double
     }
 
     public struct Palette: Equatable, Sendable {
@@ -483,7 +487,9 @@ public struct Genome: Equatable, Sendable {
             atNodes: profile.bloomsAtNodes,
             present: flowers,
             calyx: profile.calyx,
-            sepals: profile.sepals
+            sepals: profile.sepals,
+            outline: profile.petalOutline,
+            crumple: profile.petalCrumple
         )
 
         palette = Palette.derive(from: source, seed: seed)
