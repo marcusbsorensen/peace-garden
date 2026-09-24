@@ -286,7 +286,7 @@ export async function growGroundFromService(e, stage, place, plot, report) {
     e.pg_free(pointer);
     if (length === 0) continue;
     const [x, z] = p.spot;
-    stage.add(x, z, decode(takeResult(e, length)), place.height(x, z));
+    stage.add(x, z, decode(takeResult(e, length)), place.height(x, z), { ...p, plot });
     if (performance.now() - since > SLICE) {
       report(`Growing: ${i + 1} of ${plantings.length}`);
       stage.draw();

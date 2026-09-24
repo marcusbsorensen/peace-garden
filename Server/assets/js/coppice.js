@@ -318,7 +318,8 @@ export async function growCoppiceFromService(e, stage, place, plot, report) {
     e.pg_free(pointer);
     if (length === 0) continue;
     const [x, z] = p.spot;
-    stage.add(x, z, decode(takeResult(e, length)), place.height(x, z) + (staged >= 0 ? place.stoolHeight : 0));
+    stage.add(x, z, decode(takeResult(e, length)), place.height(x, z) + (staged >= 0 ? place.stoolHeight : 0),
+              { ...p, plot });
     if (performance.now() - since > SLICE) {
       report(`Growing: ${i + 1} of ${plantings.length}`);
       stage.draw();

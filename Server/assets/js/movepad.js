@@ -122,12 +122,28 @@ const stillness = window.matchMedia('(prefers-reduced-motion: reduce)');
 ///   shows at once — three on the walk, one everywhere else.
 /// - `show(first)`: grows the plots from `first`; may be slow, is awaited.
 /// - `turned()`: after a turn, for the sky, which faces the way the camera does.
+/// - `plants`: what a tap on a plant opens — `plantpanel.js`, the same on every
+///   area page. Told when a plot is about to go and when one has been grown,
+///   and asked which plot to open on, which is how a postcard lands.
 ///
 /// Shows the first plot, and resolves when it is grown.
-export async function openMovePad({ nav, canvas, stage, plots, step = 1, show, turned = () => {} }) {
+export async function openMovePad({ nav, canvas, stage, plots, step = 1, show: grow, turned = () => {}, plants = null }) {
   const buttons = build(nav);
-  let at = 0;
+  // The plot a postcard names, or the first. Rounded down to a page of `step`,
+  // because the walk only ever shows its plots three at a time from a multiple
+  // of three, and a postcard to its fifth plot opens on the fourth to sixth.
+  const asked = Math.min(Math.max(0, plants?.start?.() ?? 0), Math.max(0, plots - 1));
+  let at = asked - (asked % step);
   let busy = false;
+
+  // Growing a plot takes the plants the panel may be showing off the stage, so
+  // it is told first; and told again once the new ones stand, so a postcard
+  // can find its plant among them.
+  const show = async (first) => {
+    plants?.leaving?.();
+    await grow(first);
+    plants?.shown?.(first);
+  };
 
   // Where the look is going, which the stage catches up with frame by frame.
   // Every decision is made against this rather than against where the look has
@@ -351,6 +367,18 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show, t
 
   whenSettled((strings) => setSheetTitle(strings.t('keys')));
   const visible = () => !nav.hidden;
+  // The plant in the middle of the window, for a reader without a pointer:
+  // move the window to it with the pad's keys, then `p`. Listed in the `?`
+  // sheet under the pad's own keys.
+  if (plants) {
+    register({
+      keys: ['p'], group: 'look', label: () => plants.keyLabel(), when: visible,
+      run: () => {
+        const box = canvas.getBoundingClientRect();
+        return plants.tapped(box.left + box.width / 2, box.top + box.height / 2, { nearest: true }) !== false;
+      },
+    });
+  }
   for (const [side, keys] of [['up', ['ArrowUp', 'w']], ['left', ['ArrowLeft', 'a']],
                               ['down', ['ArrowDown', 's']], ['right', ['ArrowRight', 'd']]]) {
     register({
@@ -433,6 +461,34 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show, t
   canvas.addEventListener('pointerup', lift);
   canvas.addEventListener('pointercancel', lift);
 
+  // **A tap is a press that neither moved nor had company.** The drag and the
+  // pinch above use the same fingers, so a tap is read from its own record of
+  // them rather than theirs: one pointer down, lifted within a few pixels of
+  // where it went down, with no second finger at any point. It is answered on
+  // the `click` that follows rather than on the lift, so the panel it opens is
+  // not under the finger when the browser sends that click on — and a finger
+  // that scrolled the page instead is cancelled by the browser and never
+  // clicks at all.
+  const SLOP = 8;
+  const down = new Set();
+  let tap = null;
+  canvas.addEventListener('pointerdown', (event) => {
+    down.add(event.pointerId);
+    tap = down.size === 1 && (event.pointerType !== 'mouse' || event.button === 0)
+      ? { x: event.clientX, y: event.clientY } : null;
+  });
+  canvas.addEventListener('pointermove', (event) => {
+    if (tap && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) > SLOP) tap = null;
+  });
+  const up = (event) => { down.delete(event.pointerId); };
+  canvas.addEventListener('pointerup', up);
+  canvas.addEventListener('pointercancel', (event) => { up(event); tap = null; });
+  canvas.addEventListener('click', (event) => {
+    const was = tap;
+    tap = null;
+    if (was && plants && !busy) plants.tapped(event.clientX, event.clientY);
+  });
+
   // A trackpad's pinch arrives as a wheel with the control key down, in every
   // browser but Safari, which sends its own gesture events. The plain wheel is
   // the page's.
@@ -454,6 +510,25 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show, t
 
   nav.hidden = false;
   refresh();
+  // What the panel needs of the pad: which plot is showing, and a way to go to
+  // a plant — closer in, with it in the middle of the window, as a glide.
+  plants?.attach?.({
+    stage, canvas,
+    at: () => at,
+    busy: () => busy,
+    go: (point, zoom) => {
+      Object.assign(target, stage.toward(point, zoom));
+      if (stillness.matches) {
+        cancelAnimationFrame(easing);
+        easing = 0;
+        stage.lookAt(target);
+        refresh();
+      } else {
+        ease();
+        refresh();
+      }
+    },
+  });
   await show(at);
 }
 

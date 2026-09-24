@@ -161,14 +161,17 @@ WHY = {
                    "knotAbout", "seedbedAbout", "frameAbout",
                    "glasshouseAbout", "coppiceAbout", "groundAbout"],
     # `walkBack` and `walkOn` went with the chevrons, 24 September; the six
-    # keys of the pad that replaced them are English only by `strings.js`.
+    # keys of the pad that replaced them are English only by `strings.js`, and
+    # so are the plant panel's seven, added the same evening.
     "live, uncommissioned, and not in this round": [
         "walkTitle", "wildTitle", "wildBody", "downloadBody",
         "walkGrowing", "walkEmpty", "walkTurnAnti",
         "walkTurnClock", "walkAway", "quietAway", "crossAway", "orchardAway",
         "knotAway", "seedbedAway", "frameAway",
         "glasshouseAway", "coppiceAway", "groundAway",
-        "moveUp", "moveDown", "moveLeft", "moveRight", "zoomIn", "zoomOut", "moveHome"],
+        "moveUp", "moveDown", "moveLeft", "moveRight", "zoomIn", "zoomOut", "moveHome",
+        "plantKey", "plantAmbassador", "plantPostcard", "plantPostcardText",
+        "plantCopied", "plantCopyThis", "plantClose"],
     "said nowhere on the site, kept until Marcus decides whether they go": [
         "gardenBody", "walkBody", "goOn", "walkThisArea"],
     "the six paragraphs, awaiting by decision": list(CLAIMS),

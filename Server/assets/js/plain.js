@@ -31,9 +31,13 @@ const listeners = [];
 
 /// Run something now if a language has already been settled, and again every
 /// time one is settled after that.
+///
+/// `run` is handed the settled facts as well as the words — which bank a
+/// passage is drawn from, and whether it is borrowed — for the one thing on an
+/// area page that quotes at length, a plant's panel (`plantpanel.js`).
 export function whenSettled(run) {
   listeners.push(run);
-  if (state.strings) run(state.strings);
+  if (state.strings) run(state.strings, state.settled);
 }
 
 /// Negotiate, dress the page, and build the chooser.
@@ -96,7 +100,7 @@ async function settle() {
   }
   select.value = state.settled.ui;
 
-  for (const run of listeners) run(state.strings);
+  for (const run of listeners) run(state.strings, state.settled);
 }
 
 async function main() {
