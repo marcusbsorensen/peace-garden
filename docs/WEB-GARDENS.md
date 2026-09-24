@@ -833,8 +833,8 @@ the grid a tiled floor is shows as tone rather than as ruled lines.
 ## The Coppice, chosen
 
 The ninth area, `renewal`, designed on 24 September with a simulation and no
-code, the way the Glasshouse was. Nothing is built. The numbers below are the
-design's, and the build measures its own. It holds 8.4% of arrivals, the fewest
+code, the way the Glasshouse was, and built the same day (§*The Coppice,
+built*). The numbers below are the design's, and the build measures its own. It holds 8.4% of arrivals, the fewest
 of the three areas still shut. It also answers the question this document has
 carried since it was written (§*Open questions*): how a coppice shows its
 rotation.
@@ -1178,6 +1178,69 @@ plot holds 99.2%, but at seven plants a coupe the stages are too thin to read.
 5. **A plant's own page draws it grown**, whatever its coupe's year. Taken as
    recommended, open to change.
 6. **Thirty-three a plot.** Marcus.
+
+## The Coppice, built
+
+24 September, the same day it was designed. `SeedCore/WebGardens/Coppice.swift`,
+`Server/.api/Coppice.php`, `CoppiceStore.php`,
+`tools/reference/check_coppice.php`. **The first area whose rule reads a
+habit, and the first that knows its date.**
+
+### The rule, as built
+
+The rule is §*The rule* above, unchanged. Built, it holds the simulation's
+numbers exactly, because the tests draw the design's fresh sample
+(`coppice-fresh`) in the same order:
+
+- **At five hundred: 16 plots, 14 full, 94.9% of places held**, nothing empty
+  in a settled plot, 257 of 268 plants on the floor in their own row, and 2
+  ferns on the floor.
+- **The closest star over a cut fern stands 0.23 m clear of it**, and the
+  tallest cut fern is 0.35 m. `CoppiceTests` grows every fern on a stool at
+  `Coppice.cutDrawn` to hold that.
+- **No star is on a stool, no floor holds two ferns, and nothing stands out of
+  order**, in the Swift and in the port.
+
+**Habit became `PlantTraits.habit`**, the archetype's name, a string:
+`WalkArrival.habit` carries it, `walk_offers` gained a `habit` column that is
+emptied when an offer is answered, and the Coppice's table stores it. Empty
+where it was never sent, and read as a star's, so an older phone's fern stands
+in the light rather than being refused. It is exact on every host, so the
+vector file compares it as a word.
+
+**The year is the service's.** `Coppice.year(utcYear:month:day:)` counts the
+21 Decembers since the wood opened, so year 0 runs to 21 December 2026 and in
+it the first coupe of plot 0 stands cut. `GET /api/coppice/plot/{n}` sends the
+year, each coupe's stage in it, and each fern on a stool with its stage; a
+star, and a fern on the floor, is sent with no stage, which is *drawn at its
+best*.
+
+**Taking back keeps the height and the habit**, which the rule reads of a
+coupe's floor, and writes over the family, which it never reads.
+
+### The page
+
+`Morphology/Structures/Stool.swift`, `Server/assets/js/coppice.js`,
+`coppicepage.js`, `/coppice`, `/dev/coppice` (with `?year=` and a *Next winter*
+button, since the service stays in year 0 until 21 December 2026).
+
+- **The stool** is bark and a cut face, 0.35–0.45 m across from the fern's
+  seed, its outline wandering inward only, by up to 3 cm, so no stool is wider
+  than the spacing was worked out for. The bark stands 3 cm into the ground so a
+  stool on a slope never floats. The face is cream in the cut year, weathering
+  the next, grey in the third. Round by `Organic.turn`.
+- **The floor rises and falls by up to 5 cm**, level at the rim, and is a
+  little lighter in the cut band and a little darker in the grown one, blended
+  across the rides. It is read from the service's per-coupe stages, so the open
+  band shows before any stool in it has a fern.
+- **The rides are 0.48 m wide, give or take 12%**, and wander up to 0.08 m off
+  their line. At the narrowest that leaves a floor plant about 8 cm clear of a
+  ride, where the design measured 12 cm at a constant width.
+- **Stools cast shadows**, their footprints moved away from the light; the
+  first page to draw any.
+- **No stage words.** *The far band is cut* is wrong after a turn, and the pale
+  faces say which band it is. The page's two new strings, `coppiceAbout` and
+  `coppiceAway`, are English only for now, as the Glasshouse's were.
 
 ## The Crossing, built
 
