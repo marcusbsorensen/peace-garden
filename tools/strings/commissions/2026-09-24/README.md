@@ -76,7 +76,7 @@ Marcus answered all five the same day.
   said it — `about1`, and two in the app about leaving the garden — say
   *personer* and *folk* now. The `read` note in `Server/strings/da.json`
   records what he read and when.
-- **The other forty are next, a batch at a time**, each grouped by the problem
+- **Batch 2 is written** (below). **The other thirty-four are next, a batch at a time**, each grouped by the problem
   it shares:
 
   | Batch | Languages | What they share |
@@ -102,6 +102,23 @@ Marcus answered all five the same day.
       python3 tools/site/export.py --check
 
 - Then a reader for each language, as `docs/REVIEWING-A-LANGUAGE.md` asks.
+
+## Batch 2, written 24 September
+
+**es fr it nb nl sv, both halves**: 55 site strings and 52 app strings each,
+written from their sheets by a Claude session per language, as every earlier
+site round was. Every check above passes. **Nobody who speaks any of the six
+has read them yet**; these are the choices each translator asked a reader to
+look at first.
+
+| | For the reader |
+| --- | --- |
+| es | `Area` is *Zona* (*área* reads as a measurement). Pattern is *Orden*, not *Patrón* (a template, or a boss). |
+| fr | `Area` is *Espace*; a reader might prefer *Coin*. A no-break space before each colon. Straight apostrophes, as `fr.json` has; the app's older French uses curly ones. `downloadTitle` *L'application*, where the app says *l'app*. |
+| it | Kinship is *Parentela*, which leans to blood; *Affinità* is the alternative. Pattern is *Disegno*. |
+| nb | People are *personer* for a pair and *folk* in general, never *mennesker* — the Danish rule, applied by judgement; `about1` still says *to mennesker*. `A kept place` is *Et hegnet sted*. |
+| nl | `Area` is *Gebied*. The plant is *ze*, as `about1` has it; `growBody` says *hij*. Four part labels to check: *De eerste daad*, *Het jaar dat keert*, *De omgangsvormen*, *Een verzorgde plek*. |
+| sv | People are *människor*, as `about1` has them. Peace is *Frid* (inward), not *fred* (no war). Kinship is *Frändskap*, which takes in kin by choice. |
 
 ## What each language still lacks, and why
 
