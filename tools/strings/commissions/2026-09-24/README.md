@@ -76,7 +76,7 @@ Marcus answered all five the same day.
   said it — `about1`, and two in the app about leaving the garden — say
   *personer* and *folk* now. The `read` note in `Server/strings/da.json`
   records what he read and when.
-- **Batch 2 is written** (below). **The other thirty-four are next, a batch at a time**, each grouped by the problem
+- **Batches 2 and 3 are written** (below). **The other twenty-nine are next, a batch at a time**, each grouped by the problem
   it shares:
 
   | Batch | Languages | What they share |
@@ -119,6 +119,20 @@ look at first.
 | nb | People are *personer* for a pair and *folk* in general, never *mennesker* — the Danish rule, applied by judgement; `about1` still says *to mennesker*. `A kept place` is *Et hegnet sted*. |
 | nl | `Area` is *Gebied*. The plant is *ze*, as `about1` has it; `growBody` says *hij*. Four part labels to check: *De eerste daad*, *Het jaar dat keert*, *De omgangsvormen*, *Een verzorgde plek*. |
 | sv | People are *människor*, as `about1` has them. Peace is *Frid* (inward), not *fred* (no war). Kinship is *Frändskap*, which takes in kin by choice. |
+
+## Batch 3, written 25 September
+
+**ja ko zh ar he, the site only** (none is an app language): 55 strings each,
+written from their sheets as batch 2 was. Every check passes. Unread by any
+speaker; these are what each translator asked a reader to look at first.
+
+| | For the reader |
+| --- | --- |
+| ja | です・ます and あなた, as `ja.json`. `notYet` is 準備中です. Headwords 絆 (Kinship), 模様 (Pattern), 安らぎ (Peace), 土 (Ground). *Area* as 区画 needs agreeing. Full-width `：`, no spaces. |
+| ko | Plain `:` (the sheet keeps `：` for zh and ja). 평온 (Peace), 재생 (Renewal — also "playback"), 유대 (Kinship), 무늬 (Pattern). Genus written 속(屬). |
+| zh | Simplified, as `zh.json`. Full-width `：`. 规律 for Pattern (纹理 the alternative); 彼此应尽的本分 for what each owes the other; `notYet` 尚未开放. *Area* is 区域, first use. |
+| ar | Plain `:`. One U+200E before `-ynth` in `meaningsSecond`, so the hyphen stays on its left; `rubra`/`ruber` need none. قسم for *area*, جزء for *part*. قرابة leans to blood kin. |
+| he | Plain `:`. No marks: the Latin follows `he.json`'s `ל-iPhone`, so `ב-ynth` shows its hyphen as a Hebrew prefix's. Addressed to one man, as the catalogue is; the forms here read the same for either. תבנית (Pattern) can mean a template. |
 
 ## What each language still lacks, and why
 
