@@ -171,6 +171,71 @@ public struct ArchetypeProfile: Sendable {
     /// Before the seed's own draw scales it. `.head` only.
     public var branchCount: Int = 5
 
+    // MARK: Habit — how wide a plant stands for its height
+    //
+    // **Everything below exists because every plant was a stick.** Measured
+    // across six thousand seeds on 24 September 2026: a median height of a
+    // metre against a spread of forty-five centimetres, and six plants in a
+    // hundred wider than tall, nearly all of them plumes. Two things did it.
+    // Leaves sat only on nodes between a sixth and nine-tenths of the way up
+    // the stem, so nothing ever grew from the ground; and a leaf's length was
+    // drawn without reference to the stem carrying it, so a two-metre plant
+    // wore the leaves of a forty-centimetre one. There was no rosette, no
+    // pad, no frond — no low plant at all.
+    //
+    // These are the habit a family grows in, the way `inflorescence` is the
+    // way it flowers. The seed still decides everything within them.
+
+    /// Every leaf rises from the crown, and the stem is only a flowering stalk.
+    ///
+    /// A succulent's rosette, a fern's shuttlecock of fronds, a lotus's pads,
+    /// an orchid's fan of straps. The node count still says how many leaves
+    /// there are — the name counts them — but none of them is carried up the
+    /// stem.
+    public var rosette: Bool = false
+    /// Leaves at the crown as well as those the nodes carry: a basal clump
+    /// under a poppy, the big divided leaves at the foot of an umbel.
+    ///
+    /// On a rosette these are added to the nodes' own, so it is also a floor
+    /// on how sparse a rosette can be.
+    public var crownLeaves: ClosedRange<Int> = 0...0
+    /// How long a crown leaf is against a stem leaf. A plant's largest leaves
+    /// are at its foot, where they have had longest to grow.
+    public var crownLengthScale: Double = 1.6
+    /// How far off vertical the outermost crown leaf lies, in radians. Inner
+    /// ones stand more upright, which is what gives a rosette a centre and a
+    /// fern its vase.
+    public var crownPitch: ClosedRange<Double> = 0.9...1.3
+    /// How much shorter the innermost crown leaf is than the outermost.
+    ///
+    /// A half for most: a rosette's centre is its youngest, smallest leaves.
+    /// A fern's shuttlecock is the exception — its inner fronds are nearly as
+    /// long as its outer ones and simply stand straighter, which is what gives
+    /// it height rather than a bowl.
+    public var crownTaper: Double = 0.5
+    /// Crown leaves are round, flat, held up on their own stalks from the
+    /// middle of the blade: a lotus's pads. The only family that has them.
+    public var pads: Bool = false
+    /// How thick a leaf is against its own width, 0 for a blade.
+    public var fleshiness: Double = 0
+    /// Crown leaves cut nearly to the midrib into this many pairs of
+    /// leaflets, 0 for a leaf with an ordinary margin.
+    ///
+    /// A fern's stem leaves used to read as pinnae up a stalk, which was most
+    /// of what made it a fern. Brought down to the crown as whole fronds they
+    /// read as broad blades — an agave, not a fern — until the frond itself is
+    /// cut.
+    public var pinnae: ClosedRange<Int> = 0...0
+    /// How far a stem leaf's size follows the stem's height, 0 not at all and
+    /// 1 in proportion.
+    ///
+    /// **This is what keeps a tall plant from being a twig.** Half of the size
+    /// is still the leaf's own draw, so a tall plant can be sparse-leaved and a
+    /// short one leafy; the other half answers to the plant.
+    public var leafReach: Double = 0.55
+    /// Where the stem's nodes sit, as fractions of its length.
+    public var nodeZone: ClosedRange<Double> = 0.16...0.90
+
     public static func profile(for archetype: Archetype) -> ArchetypeProfile {
         var profile = ArchetypeProfile()
         switch archetype {
@@ -181,6 +246,10 @@ public struct ArchetypeProfile: Sendable {
             profile.petalLengthScale = 0.55
             profile.bloomsAtNodes = true
             profile.leafLengthScale = 0.8
+            // A tower on purpose, and one of three the garden keeps. A few
+            // leaves at its foot so it stands on something.
+            profile.crownLeaves = 0...3
+            profile.crownPitch = 0.6...1.0
         case .umbel:
             profile.petals = (5, 8)
             profile.inflorescence = .head
@@ -191,9 +260,14 @@ public struct ArchetypeProfile: Sendable {
             profile.petalLengthScale = 0.45
             profile.centreScale = 0.6
             profile.leafDroop = 1.2
+            // The big divided leaves an umbellifer makes at its foot before it
+            // sends up a flowering stem at all.
+            profile.crownLeaves = 2...5
+            profile.crownLengthScale = 1.7
+            profile.crownPitch = 0.7...1.2
+            profile.leafReach = 0.6
         case .fern:
             profile.petals = (3, 5)
-            profile.heightScale = 0.8
             profile.nodeScale = 1.9
             profile.leafLengthScale = 1.5
             profile.leafWidthScale = 0.7
@@ -209,14 +283,30 @@ public struct ArchetypeProfile: Sendable {
             // 1.15 times 1.3 is 1.495, so **a fern's droop ceiling is where it
             // already was** and its worst-looking individual is the same one
             // the garden already had. Nothing was lost to buy the rest.
+            //
+            // Since the fronds came down to the crown they arch rather than sag
+            // — `PlantBuilder.addBlade` turns the midrib instead of pushing it —
+            // so the kink cannot happen at any droop. 1.3 stays because it is
+            // the curve a fern already had.
             profile.leafDroop = 1.3
             profile.bloomPresence = 0.05
             profile.swayScale = 1.3
+            // **A shuttlecock, not a stalk with leaves on.** Every frond comes
+            // from the crown, the outer ones arching out and the inner ones
+            // standing up, so a fern is a vase as wide as it is tall. Its
+            // height is its fronds'; the stem is only the crown between them.
+            profile.rosette = true
+            profile.crownLeaves = 2...4
+            profile.crownLengthScale = 2.2
+            profile.crownPitch = 0.15...0.45
+            profile.heightScale = 0.32
+            profile.crownTaper = 0.2
+            profile.pinnae = 9...15
         case .orchid:
             profile.petals = (3, 6)
             profile.inflorescence = .solitary
             profile.bloomScale = 1.7
-            profile.heightScale = 0.85
+            profile.heightScale = 0.6
             profile.stemThickness = 0.8
             profile.nodeScale = 0.6
             profile.petalLengthScale = 1.0
@@ -224,17 +314,32 @@ public struct ArchetypeProfile: Sendable {
             profile.petalCurlBias = 0.25
             profile.headPitchBias = 0.5
             profile.leafLengthScale = 1.2
+            // A fan of broad straps at the base and one flower on a bare
+            // spike, which is a slipper orchid exactly.
+            profile.rosette = true
+            profile.crownLeaves = 1...3
+            profile.crownLengthScale = 1.7
+            profile.crownPitch = 0.95...1.35
+            profile.leafWidthScale = 1.5
         case .lotus:
             profile.petals = (8, 14)
             profile.inflorescence = .solitary
             profile.bloomScale = 1.7
-            profile.heightScale = 0.7
+            profile.heightScale = 0.31
             profile.stemThickness = 1.4
             profile.petalLengthScale = 1.0
             profile.petalWidthScale = 1.5
             profile.petalCurlBias = -0.55
             profile.centreScale = 1.7
             profile.nodeScale = 0.5
+            // **Low and broad**: round pads held flat just off the ground on
+            // their own stalks, and the flower carried not far above them.
+            // It was a seventy-centimetre stem with three ordinary leaves.
+            profile.rosette = true
+            profile.pads = true
+            profile.crownLeaves = 2...4
+            profile.crownLengthScale = 1.5
+            profile.leafLengthScale = 1.25
         case .thistle:
             profile.petals = (13, 21)
             profile.inflorescence = .solitary
@@ -246,6 +351,11 @@ public struct ArchetypeProfile: Sendable {
             profile.petalWidthScale = 0.3
             profile.petalCurlBias = -0.3
             profile.centreScale = 1.3
+            // A thistle is a rosette for its first year and bolts in its
+            // second; the flat spiny rosette stays at its foot.
+            profile.crownLeaves = 3...7
+            profile.crownPitch = 1.1...1.4
+            profile.leafReach = 0.4
         case .vine:
             profile.petals = (4, 6)
             profile.heightScale = 1.45
@@ -256,6 +366,7 @@ public struct ArchetypeProfile: Sendable {
             profile.swayScale = 1.8
             profile.bloomsAtNodes = true
             profile.petalLengthScale = 0.5
+            profile.leafReach = 0.3
         case .bell:
             // Five and ten rather than five and six: *Campanula* single, and
             // Campanula 'Flore Pleno' doubled. Six was drawn and looked at, and
@@ -268,30 +379,55 @@ public struct ArchetypeProfile: Sendable {
             profile.petalLengthScale = 1.1
             profile.headPitchBias = 1.0
             profile.bloomsAtNodes = true
+            profile.crownLeaves = 2...6
+            profile.crownPitch = 0.8...1.3
+            profile.leafLengthScale = 1.3
         case .star:
             profile.petals = (5, 8)
             profile.petalCurlBias = 0.35
             profile.petalWidthScale = 0.6
             profile.centreScale = 0.7
+            // A daisy's habit: leafy from the ground up, and bushy for it.
+            profile.crownLeaves = 3...8
+            profile.nodeZone = 0.08...0.85
+            profile.leafReach = 0.65
+            profile.leafLengthScale = 1.25
+            profile.heightScale = 0.9
         case .poppy:
             profile.petals = (4, 6)
             profile.inflorescence = .solitary
             profile.bloomScale = 1.7
             profile.heightScale = 0.75
             profile.nodeScale = 0.35
-            profile.leafLengthScale = 0.7
+            profile.leafLengthScale = 1.0
             profile.petalLengthScale = 1.0
             profile.petalWidthScale = 1.6
             profile.petalCurlBias = -0.35
             profile.headPitchBias = 0.35
             profile.swayScale = 1.4
+            // Upright still, but out of a clump of leaves at the ground, and
+            // the stem bare above its few low nodes.
+            profile.crownLeaves = 4...9
+            profile.crownLengthScale = 1.6
+            profile.crownPitch = 0.8...1.25
+            profile.nodeZone = 0.05...0.35
         case .succulent:
+            // **A rosette at last.** It was a thick stem with small leaves up
+            // it — a leafy column forty-five centimetres tall and twenty
+            // across — and nothing in the garden sat on the ground. Now every
+            // leaf comes from the crown, fleshy, the outer ones lying out and
+            // the inner ones cupped, and the stem is only the short flowering
+            // stalk that four plants in ten never send up.
             profile.petals = (8, 12)
-            profile.heightScale = 0.45
-            profile.stemThickness = 1.9
+            profile.rosette = true
+            profile.fleshiness = 1
+            profile.crownPitch = 0.85...1.25
+            profile.crownLengthScale = 1
+            profile.heightScale = 0.31
+            profile.stemThickness = 0.9
             profile.nodeScale = 2.1
-            profile.leafLengthScale = 0.55
-            profile.leafWidthScale = 1.6
+            profile.leafLengthScale = 1.4
+            profile.leafWidthScale = 1.8
             profile.leafDroop = 0.3
             profile.petalLengthScale = 0.5
             profile.bloomPresence = 0.6
@@ -301,12 +437,13 @@ public struct ArchetypeProfile: Sendable {
             profile.branchSpread = 1
             profile.branchCount = 7
             profile.bloomScale = 0.8
-            profile.heightScale = 1.05
+            profile.heightScale = 0.75
             profile.nodeScale = 1.8
             profile.petalLengthScale = 0.35
             profile.petalWidthScale = 0.35
             profile.leafLengthScale = 0.6
             profile.leafWidthScale = 0.4
+            profile.crownLeaves = 0...3
         }
         return profile
     }

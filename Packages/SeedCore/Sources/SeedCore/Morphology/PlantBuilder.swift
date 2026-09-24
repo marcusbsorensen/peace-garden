@@ -115,19 +115,34 @@ public struct PlantBuilder {
     // MARK: - Leaves
 
     private func addLeaves(_ builder: inout MeshBuilder, skeleton: PlantSkeleton, growth: GrowthModel.State) {
-        let total = genome.leafCount
+        let crown = genome.habit.crownCount
+        let onStem = genome.habit.rosette ? 0 : genome.leafCount
+        let total = crown + onStem
         guard total > 0, growth.leafUnfurl > 0 else { return }
 
         // Leaves open from the base upward. The one at the frontier is part
-        // grown rather than popping in at full size.
+        // grown rather than popping in at full size. The crown is the base, so
+        // its leaves are the first out, outermost first.
         let opened = Double(total) * growth.leafUnfurl
         let divergence = Float(genome.foliage.divergence)
         // Leaves grow with the plant rather than arriving full size on a stem
         // that is still a few centimetres tall.
         let vigour = Float(0.45 + 0.55 * growth.heightScale)
 
-        for index in 0..<total {
+        for index in 0..<crown {
             let progress = opened - Double(index)
+            guard progress > 0 else { return }
+            addCrownLeaf(
+                &builder, index: index, of: crown, foot: skeleton.stem[0],
+                openness: Float(min(1.0, progress)), vigour: vigour
+            )
+        }
+
+        // Stem leaves keep the jitter streams they always had, keyed by their
+        // own index rather than by their place in the opening order, so a
+        // crown arriving under a plant does not reshuffle the leaves above it.
+        for index in 0..<onStem {
+            let progress = opened - Double(crown + index)
             guard progress > 0 else { break }
             let openness = Float(min(1.0, progress))
 
@@ -190,42 +205,251 @@ public struct PlantBuilder {
         jitter: inout SplitMix64
     ) {
         let foliage = genome.foliage
-        let length = Float(foliage.length) * scale
-        guard length > 0.001 else { return }
-
-        let axis = node.tangent
         let radial = simd_normalize(node.normal * cos(azimuth) + node.binormal * sin(azimuth))
         let pitch = Float(foliage.pitch) + Float(jitter.value(in: -0.1...0.1))
+        addBlade(
+            &builder,
+            origin: node.position + radial * node.radius * 0.8,
+            axis: node.tangent,
+            radial: radial,
+            length: Float(foliage.length * genome.habit.stemLeafScale) * scale,
+            pitch: pitch,
+            droop: Float(foliage.droop),
+            maturity: maturity
+        )
+    }
+
+    /// One leaf from the crown, at the foot of the stem.
+    ///
+    /// **Outermost first, and each one in from it smaller and more upright.**
+    /// That one rule is a rosette, a fern's vase and a poppy's clump alike: the
+    /// oldest leaves have had longest to grow and lie furthest out, the new
+    /// ones come up through the middle. The spiral is the golden angle the stem
+    /// leaves already use, so a rosette seen from above is a whorl rather than
+    /// spokes.
+    ///
+    /// Laid round the world's up rather than the stem's tangent, because a
+    /// leaning stem leans from the crown and the crown itself sits flat on the
+    /// ground.
+    private func addCrownLeaf(
+        _ builder: inout MeshBuilder,
+        index: Int,
+        of count: Int,
+        foot: PathSample,
+        openness: Float,
+        vigour: Float
+    ) {
+        let habit = genome.habit
+        // How far in from the outside this leaf is, 0 outermost and 1 at the
+        // centre.
+        let inward = count > 1 ? Float(index) / Float(count - 1) : 0
+        var jitter = SplitMix64(seed: genome.seed, label: "leaf.crown.\(index)")
+        let azimuth = Float(genome.foliage.divergence) * Float(index)
+            + Float(jitter.value(in: -0.15...0.15))
+        let up = SIMD3<Float>(0, 1, 0)
+        let radial = SIMD3<Float>(cos(azimuth), 0, sin(azimuth))
+        let size = openness * vigour * Float(jitter.value(in: 0.86...1.14))
+        // Inner leaves are younger, and a younger leaf is paler.
+        let maturity = min(openness, 1 - 0.35 * inward)
+
+        if habit.pads {
+            addPad(
+                &builder, foot: foot.position + radial * foot.radius * 0.6,
+                radial: radial, inward: inward,
+                diameter: Float(habit.crownLength) * (1 - 0.35 * inward) * size,
+                openness: openness, maturity: maturity, jitter: &jitter
+            )
+            return
+        }
+
+        let length = Float(habit.crownLength) * (1 - Float(habit.crownTaper) * inward) * size
+        let pitch = Float(habit.crownPitch) * (1 - 0.55 * inward)
+            + Float(jitter.value(in: -0.08...0.08))
+        // A rosette is stacked rather than flat: each leaf in rises from a
+        // little higher on the crown than the one outside it.
+        let lift = habit.rosette ? Float(habit.crownLength) * 0.06 * inward * size : 0
+        // Crown leaves arch rather than sag — see `addBlade` — by as much as
+        // the plant's droop says, and a fleshy leaf curls its tip back up, as
+        // an echeveria's does.
+        //
+        // **Held off the ground.** An arch from a crown on the soil turns down
+        // toward it, so the turn is capped where the tip comes back to the
+        // height it left from: `pitch + arch` no further round than `π - pitch`.
+        // Past that the leaf would be drawn through the ground it grows on.
+        let turn = Float(genome.foliage.droop) * 1.1 - 0.5 * Float(habit.fleshiness)
+        let arch = min(turn, Float.pi - 2 * pitch - 0.1)
+        addBlade(
+            &builder,
+            origin: foot.position + radial * foot.radius * 0.8 + up * (foot.radius + lift),
+            axis: up,
+            radial: radial,
+            length: length,
+            pitch: pitch,
+            droop: 0,
+            arch: arch,
+            pinnae: habit.pinnae,
+            maturity: maturity
+        )
+    }
+
+    /// A lotus pad: round, held flat on its own stalk from the middle of the
+    /// blade.
+    ///
+    /// The outer pads are the broadest and sit lowest, spreading furthest from
+    /// the crown; the inner ones stand higher and closer in, which is what
+    /// makes a clump of pads read as layered rather than as dishes on a table.
+    private func addPad(
+        _ builder: inout MeshBuilder,
+        foot: SIMD3<Float>,
+        radial: SIMD3<Float>,
+        inward: Float,
+        diameter: Float,
+        openness: Float,
+        maturity: Float,
+        jitter: inout SplitMix64
+    ) {
+        guard diameter > 0.002 else { return }
+        let up = SIMD3<Float>(0, 1, 0)
+        let radius = diameter * 0.5
+        let out = diameter * (1.0 - 0.6 * inward) * Float(jitter.value(in: 0.85...1.15))
+        let rise = diameter * (0.14 + 0.6 * inward) * Float(jitter.value(in: 0.8...1.2))
+        let centre = foot + radial * out + up * rise
+
+        // The stalk climbs first and leans out after, so it meets the pad from
+        // below rather than arriving along the ground. A quadratic through a
+        // point above the foot does that without a new curve of its own.
+        let bend = foot + up * rise * 0.95 + radial * out * 0.15
+        let stalkRadius = max(0.0008, diameter * 0.016)
+        var positions: [SIMD3<Float>] = []
+        var radii: [Float] = []
+        for step in 0...8 {
+            let t = Float(step) / 8
+            let a = foot + (bend - foot) * t
+            let b = bend + (centre - bend) * t
+            positions.append(a + (b - a) * t)
+            radii.append(stalkRadius * (1 - 0.3 * t))
+        }
+        // A petiole is part of the leaf, and is drawn as one: the same green,
+        // unfolding with it.
+        builder.addTube(
+            role: .leaf,
+            path: SkeletonBuilder.transportFrames(positions: positions, radii: radii, twist: 0),
+            sides: 5,
+            maturity: maturity
+        )
+
+        // Tipped a little outward, so the rim away from the crown is the low
+        // one, and cupped, so the rim stands above the middle.
+        let tilt = Float(jitter.value(in: 0.06...0.2))
+        let normal = simd_normalize(up + radial * tilt)
+        let forward = simd_normalize(radial - normal * dot(radial, normal))
+        let side = simd_normalize(cross(normal, forward))
+        let cup = radius * Float(jitter.value(in: 0.1...0.22)) * openness
+        let veinDepth = Float(genome.foliage.veinDepth)
+
+        builder.addSurface(role: .leaf, rows: 19, columns: 11, maturity: maturity) { u, v in
+            let x = v * 2 - 1
+            let width = max(0, 1 - x * x).squareRoot()
+            let y = (u * 2 - 1) * width
+            let distance = x * x + y * y
+            // Faint ribs out from the centre, as a pad's veins run, enough to
+            // catch the light without cutting into the round.
+            let rib = veinDepth * radius * 0.03 * (u * 2 - 1) * (u * 2 - 1)
+            return centre + forward * (x * radius) + side * (y * radius)
+                + normal * (cup * distance + rib)
+        }
+    }
+
+    /// A blade, from `origin`, leaning `pitch` off `axis` toward `radial`.
+    ///
+    /// Shared by the stem's leaves and the crown's, which differ only in where
+    /// they start and which way is up.
+    private func addBlade(
+        _ builder: inout MeshBuilder,
+        origin: SIMD3<Float>,
+        axis: SIMD3<Float>,
+        radial: SIMD3<Float>,
+        length: Float,
+        pitch: Float,
+        droop: Float,
+        arch: Float = 0,
+        pinnae: Int = 0,
+        maturity: Float
+    ) {
+        guard length > 0.001 else { return }
+        let foliage = genome.foliage
+
         let forward = simd_normalize(radial * sin(pitch) + axis * cos(pitch))
         // Built from `radial`, which is always perpendicular to the stem, so
         // the frame stays well defined even for a leaf held close to vertical.
         let side = simd_normalize(cross(axis, radial))
         let up = simd_normalize(cross(forward, side))
-        let origin = node.position + radial * node.radius * 0.8
 
         let halfWidth = length * Float(foliage.widthRatio) * 0.5
-        let droop = Float(foliage.droop)
         let fold = Float(foliage.fold)
         let sharpness = Float(foliage.tipSharpness)
-        let serration = Float(foliage.serration)
+        // A pinnate frond is the same saw-toothed margin cut nearly to the
+        // midrib: 3.6 takes `bladeProfile`'s tooth four-fifths of the way in.
+        let serration = pinnae > 0 ? 3.6 : Float(foliage.serration)
+        let teeth = pinnae > 0 ? pinnae : genome.foliage.teeth
+        // Three rows to a leaflet, or the cuts alias into a ragged edge.
+        let rows = pinnae > 0 ? 3 * pinnae + 4 : 19
 
-        let teeth = genome.foliage.teeth
         let veinCount = Float(genome.foliage.veinCount)
         let veinDepth = Float(genome.foliage.veinDepth)
 
-        // More rows than the blade strictly needs, so the teeth and the veins
-        // have something to be cut into.
-        builder.addSurface(role: .leaf, rows: 19, columns: 9, maturity: maturity) { u, v in
+        // Where the midrib is at `s`, and which way the blade's face looks.
+        //
+        // **A sagging blade is pushed; an arching one turns.** The sag moves
+        // each point of a straight midrib off to one side, which is right for
+        // a leaf held out from a stem and wrong for a frond: on one that
+        // starts near upright the push goes sideways, and past a droop of
+        // about 1.3 the blade kinks back over itself — `ArchetypeProfile`'s
+        // fern has a paragraph about it. An arch turns the midrib's own
+        // direction a little at a time along its length, so its length is its
+        // length however far it bends, and it cannot kink. Constant curvature,
+        // so the curve is closed-form rather than integrated per vertex.
+        func spine(_ s: Float) -> (position: SIMD3<Float>, up: SIMD3<Float>) {
+            guard abs(arch) > 1e-3 else {
+                // The blade sags under its own length.
+                return (forward * (s * length) + up * (-droop * length * s * s * 0.8), up)
+            }
+            let heading = pitch + arch * s
+            let run = length / arch
+            let position = radial * (run * (cos(pitch) - cos(heading)))
+                + axis * (run * (sin(heading) - sin(pitch)))
+            return (position, axis * sin(heading) - radial * cos(heading))
+        }
+
+        func point(_ u: Float, _ v: Float, thickness: Float) -> SIMD3<Float> {
             let s = v
             let profile = Self.bladeProfile(s, sharpness: sharpness, serration: serration, teeth: teeth)
             let across = (u - 0.5) * 2 * halfWidth * profile
-            // The blade sags under its own length, and folds into a shallow V.
-            let sag = -droop * length * s * s * 0.8
+            // The blade folds into a shallow V.
             let crease = fold * halfWidth * profile * pow(abs(u - 0.5) * 2, 2)
             // Ribs running out from the midrib, deepening toward the margin.
             let vein = veinDepth * halfWidth * 0.14
                 * sin(s * .pi * 2 * veinCount) * (abs(u - 0.5) * 2)
-            return origin + forward * (s * length) + up * (sag + crease + vein) + side * across
+            // A fleshy leaf is swollen across its middle and thin at the edge.
+            let x = (u - 0.5) * 2
+            let swell = thickness * halfWidth * profile * (1 - x * x)
+            let (midrib, face) = spine(s)
+            return origin + midrib + face * (crease + vein + swell) + side * across
+        }
+
+        // More rows than the blade strictly needs, so the teeth and the veins
+        // have something to be cut into.
+        let fleshiness = Float(genome.habit.fleshiness)
+        builder.addSurface(role: .leaf, rows: rows, columns: 9, maturity: maturity) { u, v in
+            point(u, v, thickness: 0.45 * fleshiness)
+        }
+        // **A succulent's leaf has an underside.** One surface bowed upward is
+        // still a sheet, and seen edge-on it is a line. A second, bowed the
+        // other way and meeting it at the margin, makes the leaf a body.
+        if fleshiness > 0 {
+            builder.addSurface(role: .leaf, rows: rows, columns: 9, flipWinding: true, maturity: maturity) { u, v in
+                point(u, v, thickness: -0.45 * fleshiness)
+            }
         }
     }
 
