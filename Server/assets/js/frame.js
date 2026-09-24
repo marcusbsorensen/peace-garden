@@ -41,11 +41,15 @@ const BAR = [0.80, 0.79, 0.74];
 /// a bed of its own, darker and finer, and a seedling stands in that.
 const SOIL = [0.300, 0.240, 0.180];
 
-/// The glass: the sky it reflects, at a seventh of full strength. Clear glass is
+/// The glass: the sky it reflects, at a fourteenth of full strength. Clear glass is
 /// seen by what it reflects and by where it doubles, which `Organic.frameGlass`
 /// gives it as a ripple and as laps between panes.
+///
+/// **Halved from a seventh, 24 September 2026.** With one seedling in a plot
+/// the frames read as lids shut over bare soil; Marcus asked whether the beds
+/// were covered. Lighter, the soil and a lone plant show through.
 const GLASS = [0.78, 0.85, 0.92];
-const GLASS_OPACITY = 0.14;
+const GLASS_OPACITY = 0.07;
 
 export function plan(e) {
   return JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_frame_plan())));

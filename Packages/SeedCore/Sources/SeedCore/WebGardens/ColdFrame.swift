@@ -72,7 +72,12 @@ public enum ColdFrame {
     /// How far the front of a lid is propped above the front wall by day, on a
     /// block, to let the air in. That is how a frame is hardened off: propped a
     /// little at first, more each day, then the lights taken off altogether.
-    public static let propped = 0.10
+    ///
+    /// **0.16 since 24 September 2026, up from 0.10**, so the gap at the front
+    /// reads as open from the page's isometric eye; at 0.10 the lights looked
+    /// shut. It stays under 0.18, the back wall's height over the front's, so
+    /// the glass still falls to the front.
+    public static let propped = 0.16
 
     /// Along a rank, between one place and the next, and how far either rank
     /// stands from the middle of its frame.
