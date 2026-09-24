@@ -1181,6 +1181,49 @@ another.
   turn the garden, with a gap between so paging and turning read as different
   things. Monoline, round caps, the brand's icon rules. Every key keeps its name
   for a screen reader from the catalogue, set through `data-s-label`.
+- **A move pad and a zoom, since 24 September**, because Marcus wanted
+  visitors to be able to really see the plants. The pad is one cluster, three
+  keys by three: four chevrons as a cross, a magnifier with a plus and one with
+  a minus in its right-hand corners, the two rings in its left. It is written
+  by one module, `movepad.js`, into an empty `#keys` on every area page, so the
+  nine pages cannot come to differ. What it does:
+  - **Closer and further**, from the whole plot, which is the view every area
+    page had before and is the furthest out, to near enough that the window's
+    shorter side is 0.9 m — one flower across a finger's width of a phone.
+    Smooth, about the middle of the window. A pinch on the plot or a trackpad's
+    pinch (a wheel with the control key) does the same about the fingers.
+  - **The directions are the screen's**, whichever way the plot is turned.
+    Closer in, a direction moves the window across the plot, and a drag does
+    too. The point under the middle of the window is held over the plot's own
+    ground, so there is always a plant in the middle of it rather than a
+    corner of sky, and a direction pressed against a side runs along it.
+  - **The plots of an area lie end to end**, the next one further along the
+    ground's z, as the walk's three are drawn. The plot service answers with
+    a count and nothing else, so that line is the only arrangement there is
+    to go by. On this projection it always runs more across the screen than
+    up it, so left and right go along it — which of the two is *on* depends on
+    the turn, and is read from the camera — and up and down only move the
+    window. At the whole plot, left and right step straight to the next plot
+    (three at a time on the walk, as paging did). Closer in, the window moves
+    to the edge the plot shares with the next, and one more press crosses,
+    arriving over the same point of ground carried across the seam and as
+    close as before; one press the other way goes back. A held key stops at
+    the edge rather than falling through into a plot that has to be grown.
+  - **A turn goes round what is in the middle of the window.**
+  - **Keys**, registered with `keys.js` so `?` lists them: the arrows and WASD
+    move, `+` or `=` closer, `-` further, `0` or Home the whole plot, `Q` or `[`
+    and `E` or `]` turn. Up and down fall through to the page when there is
+    nothing to move, so the arrows still scroll it at the whole plot; nothing
+    fires while the language chooser has focus. A key with nothing to do is
+    `aria-disabled` rather than disabled, so the keyboard's focus stays on it.
+  - **Nothing mirrors under a right-to-left language**, the pad included: its
+    directions are the screen's, not the reading's.
+  - **The plain scroll wheel and a finger moving up the page are the page's.**
+    Only closer in does a finger on the plot move the plot instead.
+
+  Six strings, English only for now: `moveUp`, `moveDown`, `moveLeft`,
+  `moveRight`, `zoomIn`, `zoomOut`. `walkBack` and `walkOn` went with the
+  chevrons they named; neither had been commissioned.
 - **Turning is called turning.** The camera keys were *left* and *right*, which
   are the words a visitor reaches for to mean walking somewhere else.
 - **A minimap to travel by**: the garden's own 5×2 map, read from `garden.js`
