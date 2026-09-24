@@ -385,6 +385,49 @@ struct BloomGlyph: Shape {
     }
 }
 
+/// An open book, for what a plant's name means.
+///
+/// **Transcribed, not drawn here.** The website opens `/meanings` with the same
+/// mark, and it is written as one SVG path on a twenty-unit grid so that both
+/// can carry it exactly:
+///
+///     M10 5.2C8.2 3.9 5.4 3.5 2.75 3.9V15.4C5.4 15 8.2 15.4 10 16.7
+///     C11.8 15.4 14.6 15 17.25 15.4V3.9C14.6 3.5 11.8 3.9 10 5.2ZM10 5.2V16.7
+///
+/// Redrawing it on this side would be two marks that agree until somebody
+/// improves one, so a change starts from that path and comes here second.
+///
+/// The grid already carries its own margin — the pages stop at 2.75 and 17.25 —
+/// so it takes the whole of `markBox` rather than a share of it, and nothing
+/// is inset for the stroke. The top and bottom edges of both pages dip where
+/// they reach the spine, which is what makes this a book lying open rather
+/// than two panes of glass side by side.
+struct MeaningsGlyph: Shape {
+    func path(in rect: CGRect) -> Path {
+        let box = markBox(rect, 1)
+        func at(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+            CGPoint(x: box.minX + box.width * x / 20, y: box.minY + box.height * y / 20)
+        }
+
+        var path = Path()
+        // The left page, from the head of the spine out to its corner and
+        // down, then back along the foot to the spine.
+        path.move(to: at(10, 5.2))
+        path.addCurve(to: at(2.75, 3.9), control1: at(8.2, 3.9), control2: at(5.4, 3.5))
+        path.addLine(to: at(2.75, 15.4))
+        path.addCurve(to: at(10, 16.7), control1: at(5.4, 15), control2: at(8.2, 15.4))
+        // The right page, the left one mirrored, and closed at the spine.
+        path.addCurve(to: at(17.25, 15.4), control1: at(11.8, 15.4), control2: at(14.6, 15))
+        path.addLine(to: at(17.25, 3.9))
+        path.addCurve(to: at(10, 5.2), control1: at(14.6, 3.5), control2: at(11.8, 3.9))
+        path.closeSubpath()
+        // The spine.
+        path.move(to: at(10, 5.2))
+        path.addLine(to: at(10, 16.7))
+        return path
+    }
+}
+
 /// On to the next one waiting, and back to the last.
 ///
 /// **Bowed, not folded.** Two straight strokes meeting at a point is the

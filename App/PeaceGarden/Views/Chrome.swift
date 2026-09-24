@@ -467,8 +467,10 @@ extension View {
     ///
     /// "Only" is meant literally, and for a while it was not true: four screen
     /// titles were wearing it, which claims that "A seed on the wind" and
-    /// "Peace garden" are things something is *called*. It is now on four
-    /// views, all of them a `genome.name.full`. Grep before adding a fifth.
+    /// "Peace garden" are things something is *called*. Every use is a
+    /// `genome.name.full` or, on `NameMeaningView`, a piece of one — the head
+    /// and the ending, each set beside what it means. Grep before adding
+    /// anything that is neither.
     func plantName(size: CGFloat = 26) -> some View {
         font(.system(size: size, weight: .light, design: .serif))
             .italic()
