@@ -124,7 +124,7 @@ a border with a knot garden's name.
 | Area | Theme | How it is laid out | Ground | Structures |
 | --- | --- | --- | --- | --- |
 | **The Cold Frame** | waiting | Four low glazed frames, two ranks of six young plants in each, hardening off. **Every plant drawn young** — the young stages of what grows elsewhere — and nobody turned away. **Forty-eight a plot; colour claims a frame and the height a plant will grow to orders its ranks**, tallest-to-be at the back under the high side of the glass. | Flat, gravel between, soil inside the frames | Frames of boards, their lights propped open by day |
-| **The Home Ground** | ground | The kitchen garden: rectangular beds 1.2 m wide, so no soil is ever stood on, paths between, crops in rows across each bed. | Flat, dark soil | Bed edging, paths |
+| **The Home Ground** | ground | The kitchen garden: rectangular beds 1.2 m wide, so no soil is ever stood on, paths between, crops in rows across each bed. | Dark soil, mounded into beds, no boards | None: the beds are the ground's relief |
 | **The Seedbed** | beginnings | Straight parallel drills, a label at the end of each row. One plant repeated along a drill, not mixed. | Fine tilth, flat | Row labels |
 | **The Coppice** | renewal | Stools in blocks, each block cut in its year of the rotation, so every stage stands at once, from cut stumps to full poles. Woodland flowers in the light between. | Woodland floor, gentle relief | Stools, the cut and the uncut |
 | **The Long Walk** | travel | A double border either side of a path: tall at the back, graded to the front, drifts of three and five, the same colour repeated down its length for rhythm. The walk goes on; plots open end to end. | Level, a mown path | The path, a hedge behind each border |
@@ -1863,3 +1863,65 @@ Then, on the new shapes, two more, both on the recommendation:
    1.346 m (0.89 mm clear) and the rosette cut 0.275 m (0.48 mm clear).
    Rounding all three to two places does not work: 1.35 falls 0.002 mm from a
    spire.
+
+## The Home Ground, built
+
+24 September, the same day it was designed, and the last of the ten.
+`SeedCore/WebGardens/HomeGround.swift`, `Server/.api/HomeGround.php`,
+`HomeGroundStore.php`, `tools/reference/check_home_ground.php`. **With it every
+area is open.**
+
+### The rule, as built
+
+The rule is §*The rule* above, with Marcus's two answers of the same evening:
+rosettes three across at 0.38 m, thirty a bed, and the umbel's cut at 0.930 m.
+`tools/homeground` now runs that design, and the tests draw its fresh stream in
+the same order, so the two agree exactly:
+
+- **At five hundred: 9 plots, 7 full, 26 beds sown and 23 full** (6 of spires,
+  13 of umbels, 7 of rosettes), **90% of places held**, and 4 plots holding all
+  three crops.
+- **In every bed, everything from the north end is at least as tall as
+  everything from the south**, and each end is a run from its own end, in the
+  Swift and in the port.
+
+**The crop is read off the habit, not sent as a new trait.** The design called
+it a fifth trait, the genus root sent by the phone. By the time the rule was
+written the Coppice had made the habit the fifth, and in this area it names the
+root exactly — `Cer` only ever a spire, `Fen` an umbel, `Pell` a succulent —
+so `HomeGround.Crop(habit:)` is the whole of it. No new column in the offers,
+no new field on the wire. `HomeGroundTests` holds the naming table to it: if
+that test fails, the table has changed.
+
+**A habit never sent is sown as an umbel**: the widest spacing, so whatever
+the plant is it has room, and the commonest crop. It matters now, because the
+phone does not send a habit until its next build: until then every Home Ground
+arrival is an umbel, sorted by the umbel's cut. The replant after that build
+puts each in its own crop's bed.
+
+**The vector test holds each height clear of its own crop's cut**, not of all
+three: a spire in the recorded five hundred stands 0.005 mm from the umbel's
+0.930, and a spire is never asked about it.
+
+**The crop is a column; the claim is read off it.** A bed is claimed by the
+first plant sown in it, as a Seedbed drill is, and a planting taken back keeps
+its bed, its crop and its place, and gives up its height, family and habit: no
+standing plant's height is ever read. The replant writes the crop from the PHP
+rule's answer and checks it against the habit, since the plan's places are
+numbers and a crop is a word.
+
+### The page
+
+`Server/assets/js/ground.js`, `groundpage.js`, `/ground`, `/dev/ground`.
+
+- **The soil is `LOOK.ground` brought down a quarter**, as the tilth and the
+  litter are, on the jittered lattice with a tone to a crumb.
+- **A bed is the ground's own relief**: 8 cm high, domed a little across its
+  top, a shoulder 16 cm wide down to the path, corners rounded, and each side
+  and end wandering by up to 4.5 cm on its own. No boards. Plants stand on it:
+  each is lifted by the ground's height at its spot.
+- **Paths are the same soil trodden paler**, with less spread in the crumb.
+- **A sown bed is raked, an unsown one dug**: rougher, in clods of up to
+  1.5 cm. Which beds are sown is read off the plantings' spots.
+- **No words for the crops.** Three shapes nobody takes for each other say it.
+  `groundAbout` and `groundAway` are English only for now.
