@@ -68,7 +68,7 @@ require_once __DIR__ . '/WalkStore.php';
  * **An offer nobody answers lapses after thirty days**, and is then exactly a
  * withdrawn one: same word, same erasure, answered at the moment it lapsed.
  * Checked when the offer is next looked up, swept on every `offer` and
- * `pending` request, and swept every hour by `sweep.php` from cron, so an offer
+ * `pending` request, and swept every five minutes by `sweep.php` from cron, so an offer
  * waiting on a phone that never asks still goes.
  */
 final class Offers

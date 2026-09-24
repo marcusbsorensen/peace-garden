@@ -12,25 +12,28 @@ declare(strict_types=1);
  * Walk is append-only, so a planting is expensive to undo, and a bag of offers
  * that nobody can answer is a bag that grows for ever.
  *
- * **It keeps a scrambled address and a count, for an hour.** What is stored is
- * an HMAC-SHA256 of the route and the caller's address, truncated, with the
- * time its window started and how many writes it has seen. The key is a salt
- * minted once per install, so two installs produce different buckets for the
- * same caller — but it is kept in `rate_salt`, in this same database, and there
- * are only four billion IPv4 addresses. So anybody holding the database can try
- * every one and turn a bucket back into the address it came from. What
- * protects an address is not the scrambling but the deleting: every request
- * that touches this table first deletes every row whose window has ended
- * (`sweep`), so a bucket is gone at the first limited request after its hour.
+ * **It keeps a scrambled address and a count, for up to an hour.** What is
+ * stored is an HMAC-SHA256 of the route and the caller's address, truncated,
+ * with the time its window started and how many writes it has seen. The key is
+ * a salt minted once per install, so two installs produce different buckets
+ * for the same caller — but it is kept in `rate_salt`, in this same database,
+ * and there are only four billion IPv4 addresses. So anybody holding the
+ * database can try every one and turn a bucket back into the address it came
+ * from. What protects an address is not the scrambling but the deleting: every
+ * request that touches this table first deletes every row whose window has
+ * ended (`sweep`), so a bucket is gone at the first limited request after its
+ * window.
  * `backup.php` leaves both tables out of every copy, so no backup holds one.
  * The site keeps no analytics and this is not the beginning of some: nothing
- * here is read except to answer *has this caller written too much in the last
- * hour*.
+ * here is read except to answer *has this caller written too much lately*.
  *
- * **What an hour depends on.** A row goes at the next limited request after
- * its window ends, or at the next run of `sweep.php`, which cron starts every
- * hour for the quiet spells when no request comes. So a bucket outlives its
- * window by at most the time to the next sweep: up to an hour more.
+ * **Why an hour holds.** A window is fifty-five minutes (`WINDOW`), and a row
+ * goes at the next limited request after its window ends or at the next run of
+ * `sweep.php`, which cron starts every five minutes (`SWEPT_EVERY`) for the
+ * quiet spells when no request comes. So no bucket is older than fifty-five
+ * minutes plus five: the hour the privacy page promises, which is why the
+ * window is not an hour itself. Until 24 September it was, swept on a draw,
+ * and a bucket could outlive its hour by as long as the service stayed quiet.
  *
  * **What it cannot do.** An address is not a person and a caller with many
  * addresses is not slowed by this at all. It is proportionate cover against one
@@ -39,7 +42,22 @@ declare(strict_types=1);
  */
 final class Limits
 {
-    /// How many writes an address gets, and over how long.
+    /// How long a window lasts: fifty-five minutes, so that with the five
+    /// minutes a sweep can take to come round a scrambled address is gone
+    /// within the hour. See the note above.
+    public const WINDOW = 3300;
+
+    /// How often cron runs `sweep.php`, in seconds. It is the line in
+    /// Server/README.md and `tools/backup.sh --install-cron` that makes it so;
+    /// this is what the arithmetic above assumes of them.
+    public const SWEPT_EVERY = 300;
+
+    /// How many writes an address gets in a window.
+    ///
+    /// **The hourly allowances, scaled to fifty-five minutes** when the window
+    /// shrank on 24 September — 20, 60, 30 and 240 an hour — and rounded to the
+    /// nearest write, so a person using the app meets the limit no sooner than
+    /// before and a script is held back as much.
     ///
     /// `pending` is the generous one: a phone asks it every time the app opens,
     /// and asking is the whole of what the *Alert me* switch turns off — a
@@ -47,10 +65,10 @@ final class Limits
     /// `offer` is the tight one: it is the route that makes a row, and a person
     /// sharing twenty plants in an hour is not a person sharing plants.
     public const ROUTES = [
-        '/api/walk/offer' => [20, 3600],
-        '/api/walk/answer' => [60, 3600],
-        '/api/walk/withdraw' => [30, 3600],
-        '/api/walk/pending' => [240, 3600],
+        '/api/walk/offer' => [18, self::WINDOW],
+        '/api/walk/answer' => [55, self::WINDOW],
+        '/api/walk/withdraw' => [28, self::WINDOW],
+        '/api/walk/pending' => [220, self::WINDOW],
     ];
 
     public function __construct(private PDO $db)
@@ -173,13 +191,13 @@ final class Limits
      * table.
      *
      * Every time rather than one request in fifty, as it was until 24
-     * September: a draw let a bucket outlive its hour by as many requests as
+     * September: a draw let a bucket outlive its window by as many requests as
      * the dice took, and the privacy page says an hour. It is one DELETE
      * through the index on `started_at`, which on a quiet table finds nothing.
-     * Measured against the longest window, which is also every window: an hour.
+     * Measured against the longest window, which is also every window.
      *
-     * Public because `sweep.php` runs it every hour from cron as well, for the
-     * quiet spells when no request comes to do it. One DELETE is atomic on
+     * Public because `sweep.php` runs it every five minutes from cron as well,
+     * for the quiet spells when no request comes to do it. One DELETE is atomic on
      * both databases, so the two running at once is two deletes of the same
      * rows and nothing worse. Returns how many went.
      */

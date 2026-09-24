@@ -2,7 +2,8 @@
 declare(strict_types=1);
 
 /**
- * The hourly clean-up, for the hours nobody asks the service anything.
+ * The clean-up every five minutes, for the hours nobody asks the service
+ * anything.
  *
  * **Why it exists.** The service tidies as it answers: every limited request
  * drops the rate-limit windows that have ended (`Limits::sweep`), and every
@@ -11,13 +12,15 @@ declare(strict_types=1);
  * about a quiet week, when the last caller's scrambled address and an offer
  * nobody will answer both sit there until somebody comes. The privacy page
  * promises an hour and thirty days, and those have to hold when nobody comes,
- * so cron runs this once an hour and does both.
+ * so cron runs this every five minutes and does both. Five, not sixty: a
+ * rate-limit window is fifty-five minutes, and a sweep five minutes after it
+ * ends is what keeps a scrambled address inside the hour (`Limits::WINDOW`).
  *
  * **Run it from cron, on the server**, beside `backup.php` and read the same
  * way: `config.php` names the database, and `PG_WALK_DSN` points it elsewhere
- * for the reference check. The line Server/README.md gives:
- *
- *   7 * * * * /usr/bin/php $HOME/public_html/.api/sweep.php >> $HOME/backups/sweep.log 2>&1
+ * for the reference check. Server/README.md gives the crontab line, every five
+ * minutes, and `tools/backup.sh --install-cron` installs it; it is not written
+ * out here because its minute field would close this comment.
  *
  * **Safe beside the service and beside itself.** Opening the store runs the
  * same idempotent migrations a request runs. The rate-limit sweep is a single

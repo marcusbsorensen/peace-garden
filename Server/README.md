@@ -386,25 +386,31 @@ the service's own files unreachable, as it does `.pages/`.
   - **An offer nobody answers lapses after thirty days**: it becomes a
     withdrawal, answered at the moment it lapsed, and is erased the same way.
     Checked whenever the offer is looked up, swept on every `offer` and
-    `pending` request, and swept every hour by `.api/sweep.php` (below).
+    `pending` request, and swept every five minutes by `.api/sweep.php`
+    (below).
   - A token carries **consent, not authenticity**. The service cannot tell two
     tokens minted at a real meeting from two minted by one person, so it cannot
     tell a real pair of gardeners from somebody planting invented crossings.
     What it does prevent is anybody planting *somebody else's* plant or
     answering for them. Rate limiting belongs in front of the service.
   - Checked by `tools/reference/check_offers.php`, in CI.
-- **How often one caller may write**, `.api/Limits.php`: 20 offers, 60 answers,
-  30 withdrawals and 240 askings an hour per address, answered `429` with a
+- **How often one caller may write**, `.api/Limits.php`: 18 offers, 55 answers,
+  28 withdrawals and 220 askings per address in a window of fifty-five minutes
+  — the hourly 20, 60, 30 and 240 scaled to it — answered `429` with a
   `Retry-After` when the allowance is gone. It is in PHP because the vhost is
   not ours to configure, so it caps what is *written* rather than what arrives
   — which is the half that matters on an append-only walk. What is stored is a
   salted digest of the address and a count. The salt is random per install and
   lives in the same database, so anybody holding the database could try every
   IPv4 address against a digest; what protects an address is that its row is
-  deleted once its hour is over — at the first limited request after it, or at
-  the next hourly sweep, whichever comes first — and that no backup copies the
-  table. Checked by `tools/reference/check_limits.php`, in CI.
-- **The hourly sweep**, `.api/sweep.php`: a command, not a page, run from cron.
+  deleted once its window is over — at the first limited request after it, or
+  at the next sweep, whichever comes first — and that no backup copies the
+  table. **The window is fifty-five minutes and the sweep comes every five**, so
+  no scrambled address is kept longer than an hour, which is what the privacy
+  page says. Checked by `tools/reference/check_limits.php`, in CI, down to a
+  two-hour quiet spell swept only by cron.
+- **The sweep**, `.api/sweep.php`: a command, not a page, run from cron every
+  five minutes.
   It drops every rate-limit window that has ended and lapses every offer that
   has waited thirty days, for the hours when no request comes to do either. It
   is safe beside the service and beside itself — a second run, or four at once,
@@ -474,31 +480,51 @@ copy back before filing it, because a dump cut short is a valid gzip of a
 valid beginning and restores most of the walk in silence. At most thirty stay
 on the server, and none older than thirty days but the newest.
 
-`.api/sweep.php` is the hourly clean-up, at seven minutes past every hour. The
-line, as it goes in the server's crontab — in the 20i control panel, under
-*Scheduled Tasks* (cron jobs), the schedule is every hour at minute 7 and the
-command is everything after the five time fields:
+`.api/sweep.php` is the clean-up, every five minutes. The line, as it goes in
+the server's crontab — in the 20i control panel, under *Scheduled Tasks* (cron
+jobs), the schedule is every five minutes and the command is everything after
+the five time fields:
 
 ```
-7 * * * * /usr/bin/php $HOME/public_html/.api/sweep.php >> $HOME/backups/sweep.log 2>&1
+*/5 * * * * /usr/bin/php $HOME/public_html/.api/sweep.php >> $HOME/backups/sweep.log 2>&1
 ```
 
 `tools/backup.sh --install-cron` adds it over SSH beside the backup line, and
-a second run finds both already there. Without it, a scrambled address waits
-for the next limited request however long that is, and an offer nobody
-answers for the next `offer` or `pending` request.
+a second run finds both already there. **Five minutes is part of the privacy
+page's arithmetic**: a rate-limit window is fifty-five, so a sweep any less
+often lets a scrambled address outlive the hour. Without the line at all, an
+address waits for the next limited request however long that is, and an offer
+nobody answers for the next `offer` or `pending` request.
 
 **A copy keeps what the database held that night.** A plant taken back, an
 offer declined, or one that lapses, is erased from the live tables at once and
 is in no copy taken afterwards. The copies taken before keep it until they go,
 which is **thirty days on both sides**: the server prunes its own copies by
-their date as well as their number, and `tools/backup.sh` deletes the pulled
-copies on the Mac older than thirty days after every pull that succeeds. The
-newest copy is kept on each side however old it is, so a server whose cron
-stopped, or a Mac that has not pulled for two months, still holds one copy —
-and that copy is older than thirty days. **Time Machine and iCloud** keep their
-own history of `~/Documents/Peace Garden backups`, which nothing here can
-prune. Restoring an older copy brings erased rows back into the live tables,
+their date as well as their number, and on the Mac the pulled copies older than
+thirty days are deleted after every pull that succeeds and **once a day by a
+launchd job**, whether or not anybody pulls. The newest copy is kept on each
+side however old it is, so a server whose cron stopped, or a Mac that has not
+pulled for two months, still holds one copy — and that copy is older than
+thirty days. **Time Machine and iCloud** keep their own history of
+`~/Documents/Peace Garden backups`, which neither the job nor anything else
+here can prune.
+
+The Mac's job, from the checkout that will stay (it runs *that* `backup.sh`):
+
+```
+tools/backup.sh --install-launchd
+```
+
+It writes `~/Library/LaunchAgents/app.peacegarden.prune-backups.plist` from
+the template in `tools/launchd/`, loads it with `launchctl bootstrap
+gui/$(id -u)`, and runs `tools/backup.sh --prune` daily at 09:41 — nothing
+else, no SSH and no pull — logging to `prune.log` in the backups folder. A
+second install finds it there; a moved checkout or a new `$PG_BACKUPS` is
+reloaded. `--uninstall-launchd` unloads and removes it. `launchctl kickstart
+gui/$(id -u)/app.peacegarden.prune-backups` runs it once now, and the log says
+whether it could reach the folder: `~/Documents` is behind macOS's privacy
+controls, and a job the system has not allowed there fails with *Operation not
+permitted*. Restoring an older copy brings erased rows back into the live tables,
 and the first request afterwards erases them again.
 
 From the Mac:
@@ -508,6 +534,7 @@ From the Mac:
 | `tools/backup.sh` | take a copy now, then pull every copy down |
 | `tools/backup.sh --pull` | pull only, then prune the Mac's copies to thirty days |
 | `tools/backup.sh --prune` | prune the Mac's copies to thirty days, pull nothing |
+| `tools/backup.sh --install-launchd` | have this Mac run `--prune` daily; `--uninstall-launchd` stops it |
 | `tools/backup.sh --install-cron` | put the backup and sweep lines in the server's crontab |
 | `tools/backup.sh --restore-test` | load the newest copy and replay the walk out of it |
 | `tools/backup.sh --rehearse` | the same, on a walk made for it |

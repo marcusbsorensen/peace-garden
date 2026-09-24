@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * The hourly clean-up: what cron runs does what the privacy page says.
+ * The five-minute clean-up: what cron runs does what the privacy page says.
  *
  * Run: php tools/reference/check_sweep.php
  *
@@ -59,8 +59,8 @@ $now = time();
 $store = WalkStore::open($dsn);
 $db = $store->connection();
 $limits = new Limits($db);
-$limits->wait('/api/walk/offer', '198.51.100.1', $now - 3600 - 5);   // ended five seconds ago
-$limits->wait('/api/walk/pending', '198.51.100.2', $now - 60);       // a minute into its hour
+$limits->wait('/api/walk/offer', '198.51.100.1', $now - Limits::WINDOW - 5);   // ended five seconds ago
+$limits->wait('/api/walk/pending', '198.51.100.2', $now - 60);                 // a minute into its window
 
 $offers = $store->offers();
 $cross = function (int $n): array {
@@ -159,6 +159,18 @@ check('and the offer is still found by its token', ($second->touching([$racing['
       === Offers::WITHDRAWN);
 unset($store, $first, $second, $late);
 
+// MARK: As often as the hour needs
+
+// `Limits` counts on a sweep every SWEPT_EVERY seconds to keep an address
+// inside the hour, and nothing in PHP can make cron do that. What can be held
+// is that the two places that give the cron line give that one.
+$line = '*/' . intdiv(Limits::SWEPT_EVERY, 60)
+      . ' * * * * /usr/bin/php $HOME/public_html/.api/sweep.php >> $HOME/backups/sweep.log 2>&1';
+$repo = dirname(__DIR__, 2);
+check('the README gives the cron line at the interval Limits counts on',
+      str_contains((string) file_get_contents("$repo/Server/README.md"), $line));
+check('and --install-cron installs that line', str_contains((string) file_get_contents("$repo/tools/backup.sh"), "'$line'"));
+
 // MARK: Only from cron
 
 check('it is a command, not a page: it refuses to run under a web server',
@@ -170,4 +182,4 @@ if ($failures > 0) {
     fwrite(STDERR, "\n$failures checks failed.\n");
     exit(1);
 }
-fwrite(STDOUT, "\nThe hourly sweep clears what has ended and nothing else.\n");
+fwrite(STDOUT, "\nThe sweep clears what has ended and nothing else.\n");

@@ -7,8 +7,10 @@
 #   tools/backup.sh --pull          pull what is already there, take nothing
 #   tools/backup.sh --prune         drop the Mac's copies older than thirty
 #                                   days, pull nothing
+#   tools/backup.sh --install-launchd    have this Mac run --prune once a day
+#   tools/backup.sh --uninstall-launchd  stop it
 #   tools/backup.sh --install-cron  set the server taking one a day, and
-#                                   sweeping every hour (sweep.php)
+#                                   sweeping every five minutes (sweep.php)
 #   tools/backup.sh --restore-test  load the newest copy into an empty database
 #                                   and replay the walk out of it
 #   tools/backup.sh --rehearse      the same, on a walk made for the purpose,
@@ -25,11 +27,12 @@
 # **Thirty days, here as on the server** (24 September, Marcus's call). Every
 # copy holds whatever the garden held that night — plants since taken back
 # included — and the privacy page says the site's backups keep what they held
-# for thirty days. So after every pull that succeeds, the copies here older
-# than thirty days are deleted, by the date in their names. The newest is never
-# deleted, however old: a Mac that has not pulled for two months keeps the last
-# copy it has rather than none. Time Machine and iCloud keep their own history
-# of this folder, which this cannot reach; see Server/README.md.
+# for thirty days. So the copies here older than thirty days are deleted, by
+# the date in their names: after every pull that succeeds, and once a day by
+# launchd whether or not anybody pulls (`--install-launchd`). The newest is
+# never deleted, however old: a Mac that has not pulled for two months keeps
+# the last copy it has rather than none. Time Machine and iCloud keep their own
+# history of this folder, which this cannot reach; see Server/README.md.
 #
 # **Why there is a restore test at all.** A backup nobody has restored is a
 # belief about a file. The test is not that the file exists or that it is
@@ -53,8 +56,16 @@ IMAGE=mariadb:10.11
 # Loopback only, and a port nothing in this house is using.
 PORT=33061
 
+# The daily prune's launchd job: its label, its template, and where a user's
+# agents live. `PG_LAUNCHCTL` stands a recorder in for launchctl, which is how
+# the job is tested without loading anything into this Mac's own session.
+LABEL=app.peacegarden.prune-backups
+TEMPLATE="$HERE/tools/launchd/$LABEL.plist"
+AGENTS="$HOME/Library/LaunchAgents"
+LAUNCHCTL=${PG_LAUNCHCTL:-launchctl}
+
 usage() {
-    echo "usage: $0 [--pull|--prune|--install-cron|--restore-test [file]|--rehearse]" >&2
+    echo "usage: $0 [--pull|--prune|--install-launchd|--uninstall-launchd|--install-cron|--restore-test [file]|--rehearse]" >&2
     exit 2
 }
 
@@ -121,11 +132,12 @@ install_cron() {
     # database is quietest between them.
     install_line 'backup.php' \
         '17 3 * * * /usr/bin/php $HOME/public_html/.api/backup.php >> $HOME/backups/backup.log 2>&1'
-    # And the hourly clean-up, at seven past for the same reason: ended
-    # rate-limit windows and thirty-day offers, for the hours nobody asks the
-    # service anything. See Server/.api/sweep.php.
+    # And the clean-up every five minutes: ended rate-limit windows and
+    # thirty-day offers, for the hours nobody asks the service anything. Five
+    # because a window is fifty-five minutes and the privacy page says an hour.
+    # See Server/.api/sweep.php.
     install_line 'sweep.php' \
-        '7 * * * * /usr/bin/php $HOME/public_html/.api/sweep.php >> $HOME/backups/sweep.log 2>&1'
+        '*/5 * * * * /usr/bin/php $HOME/public_html/.api/sweep.php >> $HOME/backups/sweep.log 2>&1'
 }
 
 # One line in the server's crontab, added once: a second run finds it there.
@@ -148,6 +160,56 @@ install_line() {
         fi
         crontab -l | grep '$name' || { echo 'but it is not there.' >&2; exit 1; }
     "
+}
+
+# MARK: The daily prune on this Mac
+
+# Fills the template's two paths in, for a sed replacement: a backslash, the
+# `|` delimiter and `&` would each mean something to sed, and `&` and `<`
+# something to the plist, so all of them are escaped.
+plist_path() {
+    printf '%s' "$1" | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/[\\|&]/\\&/g'
+}
+
+# Puts the job in ~/Library/LaunchAgents and loads it into this user's session.
+# Idempotent: the same job already loaded is left alone and said to be there; a
+# changed one (the checkout moved, `$PG_BACKUPS` changed) is unloaded and loaded
+# again. Run it from the checkout that will stay: the job runs *this*
+# backup.sh, and a worktree that is later removed takes the job's script with it.
+install_launchd() {
+    target="$AGENTS/$LABEL.plist"
+    domain="gui/$(id -u)"
+    mkdir -p "$AGENTS" "$INTO"
+    made=$(mktemp)
+    sed -e "s|@BACKUP_SH@|$(plist_path "$HERE/tools/backup.sh")|g" \
+        -e "s|@BACKUPS@|$(plist_path "$INTO")|g" "$TEMPLATE" > "$made"
+    plutil -lint -s "$made" || { rm -f "$made"; echo "The job would not be a valid plist." >&2; exit 1; }
+
+    if [ -f "$target" ] && cmp -s "$made" "$target" && "$LAUNCHCTL" print "$domain/$LABEL" > /dev/null 2>&1; then
+        rm -f "$made"
+        echo "Already there: $target, loaded as $LABEL"
+        return 0
+    fi
+    # Unloaded first, because bootstrap refuses a label that is already loaded
+    # and a job loaded from an older file would go on running the old one.
+    "$LAUNCHCTL" bootout "$domain/$LABEL" > /dev/null 2>&1 || true
+    mv "$made" "$target"
+    chmod 644 "$target"
+    "$LAUNCHCTL" bootstrap "$domain" "$target"
+    echo "Installed: $target, loaded as $LABEL. It prunes $INTO daily at 09:41;"
+    echo "its log is $INTO/prune.log."
+}
+
+# Unloads the job and removes its file. Nothing to remove is not a failure.
+uninstall_launchd() {
+    target="$AGENTS/$LABEL.plist"
+    "$LAUNCHCTL" bootout "gui/$(id -u)/$LABEL" > /dev/null 2>&1 || true
+    if [ -f "$target" ]; then
+        rm -f "$target"
+        echo "Removed: $target"
+    else
+        echo "Not installed: nothing at $target"
+    fi
 }
 
 # MARK: The restore test
@@ -285,6 +347,8 @@ case "${1:-}" in
     "")             take; echo; pull ;;
     --pull)         pull ;;
     --prune)        prune ;;
+    --install-launchd)   install_launchd ;;
+    --uninstall-launchd) uninstall_launchd ;;
     --install-cron) install_cron ;;
     --restore-test) restore_test "${2:-}" ;;
     --rehearse)     rehearse ;;

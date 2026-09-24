@@ -235,7 +235,7 @@ function withinLimits(array $settings, string $path): void
 
     header('Retry-After: ' . $wait);
     respond(429, [
-        'error' => 'That is more writing than this service takes from one place in an hour.',
+        'error' => 'That is more writing than this service takes from one place in under an hour.',
         'retryAfter' => $wait,
     ]);
 }
