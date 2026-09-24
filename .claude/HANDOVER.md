@@ -20,6 +20,11 @@ All ten areas open before the app is announced, on the new plant shapes.
 - **The plant panel is live** (merge `0863179`, deployed 24 September late, backup taken first). Tap a plant on any area page, or press `p`: its name, what the name means, one passage (the app's own rule for a crossed plant), and *Send as a postcard*, a link `/<area>?plot=N#p=<12 hex>` that opens the plant with its panel up. Shared module `Server/assets/js/plantpanel.js`; name from the new `pg_name` export. `docs/WEB-GARDENS.md` records the decision and the as-built. Seven new strings, English only. Distinct from the phase-2 *plant's own page* in `WEBSITE.md`, which carries the gardener and needs a second consent.
 - `tools/reference/passage_reference.py` `theme_of` still uses the old `passage.theme.v1` draw rather than the genus head the app uses; its checks pass but it no longer describes the app.
 
+- **Live, 24 September late** (merge `b675bda`, and `1e70130` before it):
+  - **Shadows** (`Server/assets/js/shadow.js`): each plant's from its own triangles projected along the sun and blurred, so a dense rosette sits in a pool and a spindly plant barely marks the ground; the Knot's box, the Cold Frame's boxes, the Seedbed's labels; the Long Walk's yew and low hedge and the Quiet Garden's hedge and bench, far edges wandering; the Orchard's crowns a dappled pool. Left out by choice: Glasshouse staging and bars, Cold Frame lid bars (straight stripes). A turn now costs 14–50 ms (structure shadows recomputed).
+  - **Cold Frame lights open**: a tap on a shut frame's glass swings both lights to 60° on the back edge (no panel); taps then pick plants; one open at a time; `p` and postcards open the frame first. Closing a panel leaves the frame open (decided for Marcus).
+  - **The name larger** (mark 60 px, wordmark 22 px regular, full ink) and **no hairline above the foot** on any page. Marcus.
+
 ## Files
 - `docs/WEB-GARDENS.md` §"The Home Ground, chosen" → §"Decided" (items 6–7 are tonight's) → §"The Home Ground, built".
 - `tools/homeground/` — the simulation, now the decided design.
