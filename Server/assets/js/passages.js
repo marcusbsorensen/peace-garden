@@ -22,16 +22,16 @@
 /// **Frozen**, and frozen in the app for a harder reason than here: `GeneSource`
 /// indexes by `unit(label) × count`, so a twenty-fifth syllable would rename
 /// every plant on every phone. Mirrored from `PlantName.genusHeads`.
-const GENUS_HEADS = [
+export const GENUS_HEADS = Object.freeze([
   "Ael", "Aur", "Bel", "Cal", "Cer", "Cyn", "Dros", "El", "Fen", "Hal",
   "Ith", "Lir", "Mel", "Nyx", "Ol", "Pell", "Quin", "Ros", "Sel", "Thal",
   "Umbr", "Ver", "Vin", "Zeph",
-];
+]);
 
 /// Mirrored from `PlantName.genusTails`, and read the same way: ten endings
 /// banded 3/3/4 over three subthemes, which suits the bank rather than fighting
 /// it — the last third is the words and the sayings and is reliably the largest.
-const GENUS_TAILS = ["ia", "is", "a", "ea", "ina", "ora", "yne", "era", "ula", "ynth"];
+export const GENUS_TAILS = Object.freeze(["ia", "is", "a", "ea", "ina", "ora", "yne", "era", "ula", "ynth"]);
 
 /// Mirrored from `Quotes.Theme.genusHeads`. Every head appears exactly once.
 /// Four themes take three heads and six take two, which is the only division of
