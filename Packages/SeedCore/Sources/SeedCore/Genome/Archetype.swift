@@ -213,6 +213,13 @@ public struct ArchetypeProfile: Sendable {
     /// long as its outer ones and simply stand straighter, which is what gives
     /// it height rather than a bowl.
     public var crownTaper: Double = 0.5
+    /// How much more upright the innermost crown leaf stands than the
+    /// outermost, as a fraction of the outer one's angle off vertical.
+    ///
+    /// Most crowns close toward the middle, which is what gives a fern its
+    /// vase. A succulent's opens: stood up at the same rate its fleshy leaves
+    /// made a wall, and a rosette drawn that way read as a box.
+    public var crownRise: Double = 0.55
     /// Crown leaves are round, flat, held up on their own stalks from the
     /// middle of the blade: a lotus's pads. The only family that has them.
     public var pads: Bool = false
@@ -327,18 +334,22 @@ public struct ArchetypeProfile: Sendable {
             profile.bloomScale = 1.7
             profile.heightScale = 0.31
             profile.stemThickness = 1.4
-            profile.petalLengthScale = 1.0
+            // A water lily's flower is smaller than its pads and opens wide
+            // over them. At a whole petal and a deep cup it was a goblet half
+            // a metre across on a stalk, and the pads were a saucer under it.
+            profile.petalLengthScale = 0.6
             profile.petalWidthScale = 1.5
-            profile.petalCurlBias = -0.55
+            profile.petalCurlBias = -0.3
             profile.centreScale = 1.7
             profile.nodeScale = 0.5
-            // **Low and broad**: round pads held flat just off the ground on
-            // their own stalks, and the flower carried not far above them.
-            // It was a seventy-centimetre stem with three ordinary leaves.
+            // **Low and broad**: round pads lying over one another just off
+            // the ground on short stalks, and the flower held just clear of
+            // them — `Genome` sizes the stem from the pads. It was a seventy-
+            // centimetre stem with three ordinary leaves.
             profile.rosette = true
             profile.pads = true
             profile.crownLeaves = 2...4
-            profile.crownLengthScale = 1.5
+            profile.crownLengthScale = 1.9
             profile.leafLengthScale = 1.25
         case .thistle:
             profile.petals = (13, 21)
@@ -379,27 +390,31 @@ public struct ArchetypeProfile: Sendable {
             profile.petalLengthScale = 1.1
             profile.headPitchBias = 1.0
             profile.bloomsAtNodes = true
-            profile.crownLeaves = 2...6
-            profile.crownPitch = 0.8...1.3
+            profile.crownLeaves = 3...7
+            profile.crownPitch = 0.95...1.35
             profile.leafLengthScale = 1.3
+            profile.crownLengthScale = 2.3
+            profile.leafReach = 0.8
         case .star:
             profile.petals = (5, 8)
             profile.petalCurlBias = 0.35
             profile.petalWidthScale = 0.6
             profile.centreScale = 0.7
             // A daisy's habit: leafy from the ground up, and bushy for it.
-            profile.crownLeaves = 3...8
+            profile.crownLeaves = 4...9
             profile.nodeZone = 0.08...0.85
-            profile.leafReach = 0.65
+            profile.leafReach = 0.8
             profile.leafLengthScale = 1.25
             profile.heightScale = 0.9
+            profile.crownLengthScale = 2.3
+            profile.crownPitch = 0.95...1.35
         case .poppy:
             profile.petals = (4, 6)
             profile.inflorescence = .solitary
             profile.bloomScale = 1.7
             profile.heightScale = 0.75
             profile.nodeScale = 0.35
-            profile.leafLengthScale = 1.0
+            profile.leafLengthScale = 1.2
             profile.petalLengthScale = 1.0
             profile.petalWidthScale = 1.6
             profile.petalCurlBias = -0.35
@@ -407,10 +422,11 @@ public struct ArchetypeProfile: Sendable {
             profile.swayScale = 1.4
             // Upright still, but out of a clump of leaves at the ground, and
             // the stem bare above its few low nodes.
-            profile.crownLeaves = 4...9
-            profile.crownLengthScale = 1.6
-            profile.crownPitch = 0.8...1.25
+            profile.crownLeaves = 5...10
+            profile.crownLengthScale = 2.3
+            profile.crownPitch = 0.95...1.35
             profile.nodeZone = 0.05...0.35
+            profile.leafReach = 0.7
         case .succulent:
             // **A rosette at last.** It was a thick stem with small leaves up
             // it — a leafy column forty-five centimetres tall and twenty
@@ -421,16 +437,17 @@ public struct ArchetypeProfile: Sendable {
             profile.petals = (8, 12)
             profile.rosette = true
             profile.fleshiness = 1
-            profile.crownPitch = 0.85...1.25
+            profile.crownPitch = 0.95...1.3
             profile.crownLengthScale = 1
             profile.heightScale = 0.31
             profile.stemThickness = 0.9
             profile.nodeScale = 2.1
             profile.leafLengthScale = 1.4
-            profile.leafWidthScale = 1.8
+            profile.leafWidthScale = 0.85
             profile.leafDroop = 0.3
             profile.petalLengthScale = 0.5
             profile.bloomPresence = 0.6
+            profile.crownRise = 0.3
         case .plume:
             profile.petals = (5, 10)
             profile.inflorescence = .head

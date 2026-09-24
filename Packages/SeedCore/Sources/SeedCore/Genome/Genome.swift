@@ -117,6 +117,8 @@ public struct Genome: Equatable, Sendable {
         public var crownPitch: Double
         /// How much shorter the innermost crown leaf is than the outermost.
         public var crownTaper: Double
+        /// How much more upright the innermost crown leaf stands.
+        public var crownRise: Double
         /// Crown leaves are round pads on their own stalks.
         public var pads: Bool
         /// How thick a leaf is against its own width, 0 for a blade.
@@ -314,18 +316,43 @@ public struct Genome: Equatable, Sendable {
         // succulent, whose `nodeScale` of 2.1 takes 9 to 19 and no further:
         // `GenomeTests` declares 20 the limit.
         //
-        // Whether the plant flowers is read here, ahead of the bloom it belongs
-        // to, because on a rosette it decides whether there is a stem at all. The same key gives the same
-        // value however often it is read, so the bloom below still agrees.
+        // Whether the plant flowers, and how long its leaves are, are read
+        // here, ahead of the bloom and the foliage they belong to, because on a
+        // rosette they decide how tall the stem is. A key gives the same value
+        // however often it is read, so the bloom and foliage below agree.
         let flowers = source.unit("bloom.present") < profile.bloomPresence
+        let leafLength = source.value("foliage.length", 0.055...0.28) * profile.leafLengthScale * form.vigour
+        // **A rosette's leaves are its whole size**, and its stem is a
+        // flowering stalk that says nothing about how big the plant is. So a
+        // rosette does not scale its leaves by the stem, and it takes the leaf
+        // draw at a little over half strength: the fivefold range in
+        // `foliage.length` that makes one stem leafy and another bare would
+        // make one lotus a metre across and the next a saucer. The draw still
+        // orders them — the longest-leaved rosette is still the largest.
+        // 0.1675 is the middle of `foliage.length`'s draw.
+        let typicalLength = 0.1675 * profile.leafLengthScale * form.vigour
+        let rosetteLength = profile.crownLengthScale * (leafLength * 0.6 + typicalLength * 0.4)
         let drawnHeight = source.value("stem.height", 0.44...1.42) * profile.heightScale * form.vigour
-        // **A rosette that does not flower sends up no stalk.** Its stem is the
-        // flowering stalk and nothing else, so without a flower all that is
-        // left is the crown the leaves come from: a stub a quarter the height
-        // plus a few centimetres, which the inner leaves stand round and hide.
-        // Still a height rather than none, so a fern's crozier has something to
-        // uncurl from while it is young.
-        let height = profile.rosette && !flowers ? 0.08 + drawnHeight * 0.25 : drawnHeight
+        let height: Double
+        if profile.pads {
+            // **A water lily holds its flower just clear of its pads**, so the
+            // stem answers to the pads rather than to a height of its own: a
+            // quarter of the largest pad's width, which is a little above the
+            // highest one, and a sliver of the stem draw so no two stand the
+            // same. It was a stem of its own, and the flower stood on a stalk
+            // over some leaves.
+            height = 0.06 + rosetteLength * 0.25 + drawnHeight * 0.1
+        } else if profile.rosette && !flowers {
+            // **A rosette that does not flower sends up no stalk.** Its stem is
+            // the flowering stalk and nothing else, so without a flower all
+            // that is left is the crown the leaves come from: a stub a quarter
+            // the height plus a few centimetres, which the inner leaves stand
+            // round and hide. Still a height rather than none, so a fern's
+            // crozier has something to uncurl from while it is young.
+            height = 0.08 + drawnHeight * 0.25
+        } else {
+            height = drawnHeight
+        }
         let baseRadius = source.value("stem.baseRadius", 0.006...0.022) * profile.stemThickness
         stem = Stem(
             height: height,
@@ -355,7 +382,7 @@ public struct Genome: Equatable, Sendable {
         // margin and a two-ribbed blade, neither of which the garden had.
         foliage = Foliage(
             leavesPerNode: source.integer("foliage.leavesPerNode", 1...3),
-            length: source.value("foliage.length", 0.055...0.28) * profile.leafLengthScale * form.vigour,
+            length: leafLength,
             widthRatio: source.value("foliage.widthRatio", 0.13...0.88) * profile.leafWidthScale,
             // Held to 1.15 rather than the 1.3 the rest of these took, because
             // droop is the one vegetative trait with a drawing limit rather
@@ -395,23 +422,18 @@ public struct Genome: Equatable, Sendable {
         let stemLeafScale = (1 - reach) + reach * min(1.5, max(0.4, height / 0.9))
         let crownCount = (profile.rosette ? stem.nodeCount * foliage.leavesPerNode : 0)
             + source.integer("habit.crownLeaves", profile.crownLeaves)
-        // **A rosette's leaves are its whole size**, and its stem is a
-        // flowering stalk that says nothing about how big the plant is. So a
-        // rosette does not scale its leaves by the stem, and it takes the leaf
-        // draw at a little over half strength: the fivefold range in
-        // `foliage.length` that makes one stem leafy and another bare would
-        // make one lotus a metre across and the next a saucer. The draw still
-        // orders them — the longest-leaved rosette is still the largest.
-        // 0.1675 is the middle of `foliage.length`'s draw.
-        let typicalLength = 0.1675 * profile.leafLengthScale * form.vigour
-        let rosetteLength = foliage.length * 0.6 + typicalLength * 0.4
         habit = Habit(
             rosette: profile.rosette,
             crownCount: crownCount,
-            crownLength: profile.crownLengthScale
-                * (profile.rosette ? rosetteLength : foliage.length * stemLeafScale),
+            crownLength: profile.rosette
+                ? rosetteLength
+                // Held to sixty centimetres: a tall plant's basal leaves grow with
+                // it, but past that a bell is wearing rhubarb, and it was the
+                // one thing making a two-metre spread.
+                : min(0.6, profile.crownLengthScale * foliage.length * stemLeafScale),
             crownPitch: source.value("habit.crownPitch", profile.crownPitch),
             crownTaper: profile.crownTaper,
+            crownRise: profile.crownRise,
             pads: profile.pads,
             fleshiness: profile.fleshiness,
             pinnae: source.integer("habit.pinnae", profile.pinnae),

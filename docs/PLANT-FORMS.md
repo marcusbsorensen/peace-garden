@@ -199,14 +199,28 @@ half a metre whatever the height.
 - **Crown leaves arch rather than sag.** The old sag pushes a straight midrib
   sideways, which kinks a near-upright blade. An arch turns the midrib along its
   length at constant curvature, capped so the tip never goes below the crown.
-- **Pads** (lotus): round, peltate, cupped, on curved petioles drawn as leaf.
+- **Pads** (lotus): round, peltate, barely cupped, overlapping, on short
+  curved petioles drawn as leaf. The lotus's stem is sized from its pads, so the
+  flower — smaller than a pad, opening wide — stands just clear of them: a
+  water lily rather than a flower on a stalk over some leaves.
 - **Fleshy leaves** (succulent): a second surface bowed the other way, so the
-  leaf has a body, and a tip that curls up.
+  leaf has a body; smooth (no teeth, veins or deep fold, which crumpled it) and
+  pointed. The centre opens rather than standing up (`crownRise`), and the tips
+  turn up only a little — both the other way, and a rosette closes into a box.
 - **Pinnae** (fern): fronds cut nearly to the midrib, so a frond from the crown
   still reads as a fern rather than an agave.
 - **`leafReach`**: stem leaves are scaled by the stem's height, part-way, so a
   tall plant is not a twig. Kept off `foliage.length`, which the epithets read.
 - **`nodeZone`**: where the nodes sit, per family — low and short on a poppy.
+
+**Young plants are no taller than they were.** Crown leaves open first, and at
+first they grew at the stem leaves' rate, so a young fern came out a fifth taller
+than before — over the Cold Frame's glass and level with the Coppice's stars. A
+crown leaf now grows with the plant's height by as much as it stands upright:
+a fern's fronds wholly, a succulent's lying leaves hardly at all.
+
+A basal leaf is held to sixty centimetres however tall its plant, so that
+bells and stars are fuller at the foot without wearing rhubarb.
 
 **Names do not move.** `leafCount` is still nodes times leaves per node, the
 count the epithet reads; crown leaves are added on top. No existing key was
@@ -214,9 +228,16 @@ renamed or re-ranged, and the archetype draw is untouched. Heights did move for
 six families — fern, orchid, lotus, succulent, star, plume — because their
 habit changed, and a plume's spray reaches a little less far.
 
-Measured on the same six thousand seeds: height over spread 2.15 → 1.39,
-wider than tall 6% → 26%, under half a metre 6% → 16%, widest plant 2.2m →
-1.5m, median height 0.99m → 0.85m. Spire, vine and thistle stay towers.
+Measured on the same six thousand seeds: height over spread 2.15 → 1.28,
+wider than tall 6% → 31%, under half a metre 6% → 22%, widest plant 2.2m →
+1.45m, median height 0.99m → 0.85m. Spire, vine and thistle stay towers.
+
+Drawn young at `ColdFrame.drawn` the tallest front and back plants in the Cold
+Frame are 0.32m and 0.34m (0.38m and 0.45m before), and at `Coppice.cutDrawn`
+the tallest fern is 0.36m, as before. The shortest is a lotus at 0.06m — a bud
+on a short stalk over pads a quarter of a metre across — under the 0.08m the
+Cold Frame's test asks of a seedling. A low plant is legible by its width;
+whether the frame should ask that of it is for when the areas are re-measured.
 
 **Not yet done**: the areas' cuts, the recorded vectors and the Python port all
 still describe the old shapes.
