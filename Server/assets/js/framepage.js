@@ -22,6 +22,7 @@ import { growFrameFromService, makeFrameGround, plan } from './frame.js';
 import { makeSky } from './sky.js';
 import { dressed, whenSettled } from './plain.js';
 import { openWays } from './gates.js';
+import { openMovePad } from './movepad.js';
 import { showGathers } from './meanings.js';
 
 const el = (id) => document.getElementById(id);
@@ -63,29 +64,23 @@ async function place() {
     console.warn('no sky:', trouble);
   });
 
-  const turn = (quarters) => { stage.turnBy(quarters); sky?.draw(); };
-  el('left').addEventListener('click', () => turn(-1));
-  el('right').addEventListener('click', () => turn(1));
-
   const { plots: opened } = await (await fetch('/api/frame')).json();
   if (!opened) {
     await say('walkEmpty');
     return;
   }
 
-  let plot = 0;
+  // The pad: moving about this plot and on to the next, closer and further,
+  // and turning. `movepad.js`, the same on every area page.
   const growing = () => say('walkGrowing');
-  const show = async () => {
-    el('back').disabled = plot === 0;
-    el('on').disabled = plot + 1 >= opened;
-    await growFrameFromService(engine, stage, plot, growing);
-    note.hidden = true;
-  };
-
-  el('back').addEventListener('click', () => { plot = Math.max(0, plot - 1); show(); });
-  el('on').addEventListener('click', () => { plot = Math.min(opened - 1, plot + 1); show(); });
-  el('keys').hidden = false;
-  await show();
+  await openMovePad({
+    nav: el('keys'), canvas: el('stage'), stage, plots: opened,
+    show: async (plot) => {
+      await growFrameFromService(engine, stage, plot, growing);
+      note.hidden = true;
+    },
+    turned: () => sky?.draw(),
+  });
 }
 
 place().catch((trouble) => {

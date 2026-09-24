@@ -27,6 +27,9 @@
   --section: rgba(255, 255, 255, 0.8);
   --hairline: rgba(255, 255, 255, 0.24);
   --passage-ink: rgba(255, 255, 255, 0.84);
+  /* A key's wash: enough to tell a kind of key from its neighbours, not
+     enough to read as a filled button. */
+  --wash: rgba(255, 255, 255, 0.09);
 
   /* The stage. `StageBackdrop`: a cool slate at hue 0.60, saturation 0.30,
      brightness 0.26, a little above centre, falling away to nothing rather
@@ -68,6 +71,7 @@
     --section: rgba(18, 18, 18, 0.78);
     --hairline: rgba(18, 18, 18, 0.2);
     --passage-ink: rgba(18, 18, 18, 0.84);
+    --wash: rgba(18, 18, 18, 0.06);
 
     /* Pulled back to a third on a light ground, where a saturated glow is a
        stain rather than a pool. */
@@ -992,6 +996,7 @@ a.quiet-button {
   --section: rgba(255, 255, 255, 0.8);
   --hairline: rgba(255, 255, 255, 0.24);
   --passage-ink: rgba(255, 255, 255, 0.84);
+  --wash: rgba(255, 255, 255, 0.09);
   background: #000000;
   color: #ffffff;
 
@@ -1107,7 +1112,24 @@ a.quiet-button {
   inline-size: 100%;
   block-size: var(--scene);
   flex: none;
-  pointer-events: none;
+  /* Answers to fingers and a pointer since the pad could zoom: a pinch, a
+     trackpad's pinch, and closer in a drag (movepad.js). At the whole plot a
+     finger moving up or down it scrolls the page, as anywhere else. */
+  pointer-events: auto;
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Closer in, the plot is dragged, so a finger on it moves the plot rather
+   than the page. The page is still scrolled from anywhere else on it. */
+.walk-stage--close {
+  touch-action: none;
+  cursor: grab;
+}
+
+.walk-stage--held {
+  cursor: grabbing;
 }
 
 /* A column down the middle of the screen, with the drawing full width at the
@@ -1288,20 +1310,57 @@ a.quiet-button {
   margin-block-start: 0;
 }
 
-/* The pad. Two pairs — paging from plot to plot, and turning the plot in
-   front of you — with a gap between them wider than the gap inside either,
-   so the row reads as two actions of two ways each rather than four equal
-   keys. `pad-key` is the garden's own key, shared with `/g`'s pad so the two
-   pages cannot drift into two kinds of button. */
+/* The pad. Since 24 September one cluster, three keys by three: the four
+   directions as a cross, the two magnifiers in its right-hand corners, and
+   the two rings in its left-hand corners, beside the cross. Every way of
+   changing what the window shows is in one place a thumb can cover, and the
+   empty middle is what makes the cross read as a cross. It used to be two
+   pairs in a row, paging and turning. Written by `movepad.js`. `pad-key` is
+   the garden's own key, shared with `/g`'s pad so the two pages cannot drift
+   into two kinds of button.
+
+   A rings column a gap away from the cross was tried first, and the empty
+   corners between them read as a hole rather than as a gap.
+
+   **Left to right in every language.** Up, down, left and right are the
+   screen's directions, not the reading direction's, so the pad must not
+   mirror under Arabic or Hebrew the way a row of text would. */
 .walk-keys {
   display: flex;
-  align-items: center;
-  gap: 28px;
+  justify-content: center;
+  direction: ltr;
 }
 
-.walk-keys__pair {
-  display: flex;
+.walk-keys__pad {
+  display: grid;
+  grid-template-columns: repeat(3, 44px);
+  grid-template-rows: repeat(3, 44px);
   gap: 6px;
+}
+
+.walk-keys__pad .pad-key[data-go="up"] { grid-column: 2; grid-row: 1; }
+.walk-keys__pad .pad-key[data-go="left"] { grid-column: 1; grid-row: 2; }
+.walk-keys__pad .pad-key[data-go="right"] { grid-column: 3; grid-row: 2; }
+.walk-keys__pad .pad-key[data-go="down"] { grid-column: 2; grid-row: 3; }
+.walk-keys__pad .pad-key[data-go="home"] { grid-column: 2; grid-row: 2; }
+/* The turns across the top, clockwise first, and the magnifiers across the
+   bottom, out before in: Marcus's order, 24 September. */
+.walk-keys__pad .pad-key[data-go="clock"] { grid-column: 1; grid-row: 1; }
+.walk-keys__pad .pad-key[data-go="anti"] { grid-column: 3; grid-row: 1; }
+.walk-keys__pad .pad-key[data-go="out"] { grid-column: 1; grid-row: 3; }
+.walk-keys__pad .pad-key[data-go="in"] { grid-column: 3; grid-row: 3; }
+
+/* A key with nothing to do that way. Marked rather than disabled, so the
+   keyboard's focus stays on it (see `refresh` in movepad.js), and drawn as a
+   disabled key is. */
+.walk-keys .pad-key[aria-disabled="true"] {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.walk-keys .pad-key[aria-disabled="true"]:hover {
+  border-color: var(--hairline);
+  color: var(--muted);
 }
 
 /* Forty-four square, which is the smallest a finger is promised; the glyph
@@ -1313,6 +1372,13 @@ a.quiet-button {
   inline-size: 44px;
   block-size: 44px;
   padding: 0;
+}
+
+/* **The four directions are washed**, so the cross reads as one control
+   and the turns and magnifiers in its corners as others. Marcus, 24
+   September. */
+.walk-keys__pad .pad-key:is([data-go="up"], [data-go="down"], [data-go="left"], [data-go="right"]) {
+  background: var(--wash);
 }
 
 /* The keyboard's ring, the same one the map's cells take: a brighter edge
@@ -1337,12 +1403,9 @@ a.quiet-button {
   stroke-linejoin: round;
 }
 
-/* Previous and next follow the writing direction, as the row they sit in
-   does: under Arabic or Hebrew the way back is on the right and points right.
-   The rings do not mirror. Clockwise is a direction in the world rather than
-   on the page, and a mirrored ring would say the opposite of its name. */
-[dir="rtl"] .pad-glyph--page {
-  transform: scaleX(-1);
+/* The one filled mark on the pad: the dot in Home's square. */
+.pad-glyph__dot {
+  fill: currentColor;
 }
 
 /* The map. The garden's ten areas five by two, as `/g` draws them, at a size
@@ -1490,19 +1553,14 @@ a.minimap__cell:focus-visible::before {
   justify-content: start;
 }
 
-/* The pad over the map: two pairs of keys, one above the other, and the map
-   under them. Centred in its panel, which is as wide as the map. */
+/* The pad over the map, and the map under it. Centred in its panel, which is
+   as wide as the map. */
 .area-panel--ways {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 18px;
-}
-
-.area-panel--ways .walk-keys {
-  flex-direction: column;
-  gap: 8px;
 }
 
 /* The block inside the words panel keeps the panel's own alignment. A grid,

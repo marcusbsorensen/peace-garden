@@ -153,46 +153,13 @@
 
       </section>
       <div class="area-panel area-panel--ways walk-ways">
-        <nav class="walk-keys" id="keys" role="group" hidden>
-          <!--
-            Two pairs, and the gap between them says so: paging from one plot
-            to the next, then turning the one in front of you. They used to be
-            four words in a row, and four equal buttons read as four unrelated
-            actions however they were ordered.
-
-            **Glyphs, and the words are their names.** `data-s-label` has
-            `plain.js` write each one's `aria-label` and tooltip from the
-            catalogue, so a screen reader hears *Turn anticlockwise* in the
-            reader's own language. The chevrons are previous and next, and
-            mirror under a right-to-left language as the row does; the rings
-            are a direction of turn, which is the same in every language, and
-            do not. Monoline, even weight, round free ends, per BRAND.md §3.2.
-          -->
-          <span class="walk-keys__pair">
-            <button class="pad-key" type="button" id="back" data-s-label="walkBack">
-              <svg class="pad-glyph pad-glyph--page" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                <path d="M12.75 4.5L7.25 10L12.75 15.5" />
-              </svg>
-            </button>
-            <button class="pad-key" type="button" id="on" data-s-label="walkOn">
-              <svg class="pad-glyph pad-glyph--page" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                <path d="M7.25 4.5L12.75 10L7.25 15.5" />
-              </svg>
-            </button>
-          </span>
-          <span class="walk-keys__pair">
-            <button class="pad-key" type="button" id="left" data-s-label="walkTurnAnti">
-              <svg class="pad-glyph" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                <path d="M6.27 4.68A6.5 6.5 0 1 0 13.73 4.68M16.96 4.34L13.73 4.68L14.07 7.91" />
-              </svg>
-            </button>
-            <button class="pad-key" type="button" id="right" data-s-label="walkTurnClock">
-              <svg class="pad-glyph" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                <path d="M13.73 4.68A6.5 6.5 0 1 1 6.27 4.68M5.93 7.91L6.27 4.68L3.04 4.34" />
-              </svg>
-            </button>
-          </span>
-        </nav>
+        <!--
+          The pad: four directions, closer and further, and the two turns.
+          Written by `movepad.js`, the same on every area page, so it is
+          described there and in site.css §The pad rather than nine times
+          here. Hidden until there is a plot to move about.
+        -->
+        <nav class="walk-keys" id="keys" role="group" hidden></nav>
 
         <!--
           The garden's map, small: ten cells five by two, this area filled, the

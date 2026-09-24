@@ -147,6 +147,15 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   let glassMesh = null;
   let glassOpacity = 1;
 
+  // **How close, and where.** `zoom` is how many times closer than the whole
+  // plot, which is 1 and is the view every area page opened on before it could
+  // be zoomed. `x` and `y` are how far the middle of the window has moved from
+  // the middle of that whole view, in metres across the screen — the viewer's
+  // frame, not the plot's, so right is right whichever way the plot is turned.
+  // `movepad.js` is what moves them; this only keeps them over the plot.
+  const look = { zoom: 1, x: 0, y: 0 };
+  let aspect = 1;
+
   // The camera looks down (1, 1, 1), turned in quarter turns about the plot.
   function eye() {
     const angle = turn * Math.PI / 2;
@@ -177,8 +186,12 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     gl.enable(gl.DEPTH_TEST);
     gl.disable(gl.CULL_FACE);
 
+    aspect = width / height || 1;
     const view = lookAlong(eye());
-    const projection = fit(view, width / height, span);
+    const all = frame(view, aspect, span);
+    // A window made smaller can leave the look too close, or off the plot.
+    Object.assign(look, hold(look, all));
+    const projection = ortho(all.cx + look.x, all.cy + look.y, all.w / look.zoom, all.h / look.zoom);
     const viewProjection = multiply(projection, view);
 
     for (const [p, extra] of [[ground, null], [plantProgram, null]]) {
@@ -274,10 +287,120 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     draw();
   }
 
+  // **A turn goes round what you are looking at**, not round the middle of the
+  // plot. Close in on one plant and turn, and it is the same plant in the
+  // middle of the window from its other side — found by taking the point of
+  // ground under the middle of the window before the turn and putting it back
+  // there after. From the whole view nothing has moved, so nothing changes.
   function turnBy(quarters) {
+    const kept = underMiddle(look);
     turn = (turn + quarters + 4) % 4;
     rebuildGround();
+    Object.assign(look, over(kept, look.zoom));
     draw();
+  }
+
+  // How far the plots on this stage run each way from its middle, on the
+  // ground: a plot's half-width across, and along, as many plots as the stage
+  // holds. A `span` past a whole number is margin — the Quiet Garden's 1.25 —
+  // and not ground.
+  const extent = { x: SIDE / 2, z: (SIDE * Math.max(1, Math.floor(span))) / 2 };
+
+  // The point under the middle of a look, `ABOVE` the soil.
+  function underMiddle({ x: px, y: py }) {
+    const view = lookAlong(eye());
+    const whole = frame(view, aspect, span);
+    const { x, y, z } = axes(view);
+    const vx = whole.cx + px, vy = whole.cy + py;
+    const t = (ABOVE - vx * x[1] - vy * y[1]) / z[1];
+    return [0, 1, 2].map((i) => vx * x[i] + vy * y[i] + t * z[i]);
+  }
+
+  // The look `zoom` times closer with `point` in the middle of it.
+  function over(point, zoom) {
+    const view = lookAlong(eye());
+    const whole = frame(view, aspect, span);
+    const { x, y } = axes(view);
+    return { zoom, x: dot3(point, x) - whole.cx, y: dot3(point, y) - whole.cy };
+  }
+
+  // **Where a look may be: over the plot.** The point under the middle of the
+  // window stays on the plot's own ground, so however close the look and
+  // wherever it has been moved, there is a plant in the middle of it rather
+  // than a corner of empty sky — which is what keeping the window inside the
+  // drawing's box on the screen gave, because an isometric plot is a diamond
+  // in that box, not the box.
+  //
+  // The ground it may range over grows with the zoom, from the one point in
+  // the middle at the whole view — so that the whole view is exactly the one
+  // every area page had before it could be zoomed — to nearly all of the plot
+  // at the closest. A direction pressed against an edge runs along it, the way
+  // a hand on a wall follows it.
+  function hold({ zoom, x, y }, all) {
+    const nearest = Math.min(Math.max(zoom, 1), closest(all));
+    const point = underMiddle({ x, y });
+    const room = 1 - 1 / nearest;
+    point[0] = Math.min(Math.max(point[0], -extent.x * room), extent.x * room);
+    point[2] = Math.min(Math.max(point[2], -extent.z * room), extent.z * room);
+    return over(point, nearest);
+  }
+
+  const whole = () => frame(lookAlong(eye()), aspect, span);
+
+  // A look kept to where a look may be, without drawing it — for `movepad.js`,
+  // which asks where a key would go before deciding what the key does.
+  function held(wanted) {
+    return hold({ ...look, ...wanted }, whole());
+  }
+
+  // Where the look is, how close it can come, and how many metres across the
+  // screen a pixel of the canvas is at `zoom`, for a drag or a pinch.
+  function view(zoom = look.zoom) {
+    const all = whole();
+    const most = closest(all);
+    return {
+      ...look,
+      closest: most,
+      metresPerPixel: all.w / Math.min(Math.max(zoom, 1), most) / (canvas.clientWidth || 1),
+    };
+  }
+
+  // Moves the look, kept to where a look may be, and draws. Answers where it
+  // ended up, which is not always where it was asked to go.
+  function lookAt(wanted) {
+    Object.assign(look, held(wanted));
+    draw();
+    return { ...look };
+  }
+
+  // The look on the plot `along` plots further down the line (-1 is back),
+  // arrived at from this one: the same point of ground carried across the seam
+  // between them, so a look that leaves by one plot's edge comes in by the
+  // next one's facing edge, as close as it was.
+  function carried(wanted, along) {
+    const point = underMiddle({ ...look, ...wanted });
+    point[2] -= along * 2 * extent.z;
+    return hold(over(point, wanted.zoom ?? look.zoom), whole());
+  }
+
+  // Whether a look is at the seam with the plot before this one (`back`) or
+  // after it (`on`): the point under its middle as far along the plot as a
+  // look that close may go. At the whole view it is at both, because it may go
+  // nowhere.
+  function seams(wanted) {
+    const at = held(wanted);
+    const room = 1 - 1 / at.zoom;
+    const z = underMiddle(at)[2];
+    const give = 1e-3 + extent.z * room * 1e-3;
+    return { back: z <= -extent.z * room + give, on: z >= extent.z * room - give };
+  }
+
+  // Where a direction on the ground is on the screen, in the viewer's frame,
+  // x to the right and y up — how `movepad.js` knows which side of the screen
+  // the next plot along is on after a turn.
+  function onScreen(direction) {
+    const { x, y } = axes(lookAlong(eye()));
+    return [dot3(direction, x), dot3(direction, y)];
   }
 
   // Builds the ground again without turning, for an area whose ground depends
@@ -291,7 +414,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   rebuildGround();
   new ResizeObserver(draw).observe(canvas);
   // `turn` is read by the sky, which has to face the way the camera does.
-  return { add, clear, turnBy, draw, rebuild, turn: () => turn };
+  return { add, clear, turnBy, draw, rebuild, turn: () => turn, view, held, lookAt, carried, seams, onScreen };
 }
 
 // Plants arrivals by the rule until there are `total`, reporting as it goes.
@@ -574,9 +697,13 @@ function lookAlong(direction) {
   return [x[0], y[0], z[0], 0, x[1], y[1], z[1], 0, x[2], y[2], z[2], 0, 0, 0, 0, 1];
 }
 
-// Orthographic, fitted to the plot, its hedges and its tallest plants, as the
-// app frames a plot with headroom above and the slab's depth below.
-function fit(view, aspect, span) {
+// The whole view: the window fitted to the plot, its hedges and its tallest
+// plants, as the app frames a plot with headroom above and the slab's depth
+// below. `cx`, `cy`, `w` and `h` are the window, in metres across the screen;
+// `content` is the part of it the plot fills, which is narrower than the
+// window on a wide screen and shorter on a tall one. A closer look may move
+// anywhere inside `content` and nowhere outside it.
+function frame(view, aspect, span) {
   const h = SIDE / 2, L = (SIDE * span) / 2;
   let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
   for (const x of [-h, h]) for (const y of [-RIM_DEPTH, 2.3]) for (const z of [-L, L]) {
@@ -586,13 +713,44 @@ function fit(view, aspect, span) {
     minY = Math.min(minY, vy); maxY = Math.max(maxY, vy);
   }
   const margin = 1.06;
-  let w = (maxX - minX) * margin, hgt = (maxY - minY) * margin;
+  const contentW = (maxX - minX) * margin, contentH = (maxY - minY) * margin;
+  let w = contentW, hgt = contentH;
   if (w / hgt > aspect) hgt = w / aspect; else w = hgt * aspect;
   const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+  return { cx, cy, w, h: hgt, content: { w: contentW, h: contentH } };
+}
+
+// Orthographic, looking at (cx, cy) through a window w by h.
+function ortho(cx, cy, w, hgt) {
   const l = cx - w / 2, r = cx + w / 2, b = cy - hgt / 2, t = cy + hgt / 2, n = -20, f = 20;
   return [2 / (r - l), 0, 0, 0, 0, 2 / (t - b), 0, 0, 0, 0, -2 / (f - n), 0,
     -(r + l) / (r - l), -(t + b) / (t - b), -(f + n) / (f - n), 1];
 }
 
+// **How close a look can come**: near enough that the window's shorter side is
+// this many metres, which puts one flower of a plant across a finger's width
+// of a phone's screen at the page's own angle. Measured against the window
+// rather than as a fixed number of times closer, so a phone and a wide desktop
+// window both stop at the same nearness to a plant.
+const CLOSEST = 0.9;
+
+// How far above the soil the point a look is held over sits, in metres: the
+// middle of the height `frame` fits the whole view to, so that the whole view's
+// own middle is over the middle of the plot and holding it there moves nothing.
+// It is also about where a border's flowers are, so it is the plants that stay
+// put under the middle of the window through a turn, not the soil.
+const ABOVE = (2.3 - RIM_DEPTH) / 2;
+
+function closest(whole) {
+  return Math.max(1, Math.min(whole.w, whole.h) / CLOSEST);
+}
+
+// A view's own axes in the world: right across the screen, up it, and back
+// towards the eye.
+function axes(view) {
+  return { x: [view[0], view[4], view[8]], y: [view[1], view[5], view[9]], z: [view[2], view[6], view[10]] };
+}
+
+function dot3(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
 function cross3(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
 function normalise3(v) { const l = Math.hypot(...v); return v.map((x) => x / l); }

@@ -200,8 +200,8 @@ export const EN = Object.freeze({
   // The walk could not be drawn at all. Said in words rather than left as an
   // empty night, which a reader would take for the garden.
   walkAway: "The walk cannot be reached just now.",
-  // The four ways through it. `walkBack` and `walkOn` move down the path; the
-  // other two turn the camera on the spot without moving anybody.
+  // The pad under every area's plot (`movepad.js`). The two turns turn the
+  // camera on the spot without moving anybody.
   //
   // **They were `walkLeft` and `walkRight` — *Turn left*, *Turn right* — and
   // the words were needed elsewhere.** The foot of an area page named the
@@ -220,10 +220,26 @@ export const EN = Object.freeze({
   // `plain.js`. Nothing is spent and nothing is lost: a screen reader still
   // hears the words, in the reader's language, and the eye gets a chevron and
   // a ring that need no language at all.
-  walkBack: "Back",
-  walkOn: "On",
   walkTurnAnti: "Turn anticlockwise",
   walkTurnClock: "Turn clockwise",
+  // **The pad became four directions and two magnifiers, 24 September**, when
+  // Marcus asked for a way to see the plants close to. `walkBack` and `walkOn`
+  // — *Back* and *On*, down the path — went with the two chevrons they named:
+  // the left and right keys now do their paging and more, and a key named *On*
+  // that moves the window to the left after a turn would be a name that lies.
+  // They had not been commissioned, so nobody has to be told. Six in, two out.
+  //
+  // **English only for now**, like `coppiceAbout`. The directions are the
+  // screen's, not the plot's: *up* is up the screen whichever way the plot is
+  // turned, which is why these do not say north or along. Each is a key's
+  // name, never text on it.
+  moveUp: "Move up",
+  moveDown: "Move down",
+  moveLeft: "Move left",
+  moveRight: "Move right",
+  zoomIn: "Zoom in",
+  zoomOut: "Zoom out",
+  moveHome: "Show the whole plot",
 
   // `nextTo`, *Next to this area*, stood here over the worded gates at the
   // foot of an area page. The gates are a small map now, labelled by
@@ -234,8 +250,8 @@ export const EN = Object.freeze({
   // The Quiet Garden's own page. **Two strings and no more**, because the rest
   // of what the page says it already had: the heading is `areaPeace`, which is
   // commissioned in forty-one languages along with the other nine area names,
-  // and `walkBack`, `walkOn`, `walkTurnAnti`, `walkTurnClock`, `walkGrowing`
-  // and `walkEmpty` never said *walk* in any of them — they are how you move
+  // and `walkBack`, `walkOn` (since gone to the pad's `move*`), `walkTurnAnti`,
+  // `walkTurnClock`, `walkGrowing` and `walkEmpty` never said *walk* in any of them — they are how you move
   // and what is happening, not where you are. A second area costing two strings
   // rather than nine is the whole argument of `LANGUAGES.md` working.
   quietAbout:

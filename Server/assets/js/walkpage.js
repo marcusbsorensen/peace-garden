@@ -17,6 +17,7 @@ import { makePlotStage, growFromService } from './longwalk.js';
 import { makeSky } from './sky.js';
 import { dressed, whenSettled } from './plain.js';
 import { openWays } from './gates.js';
+import { openMovePad } from './movepad.js';
 import { showGathers } from './meanings.js';
 
 // Three plots at a time: the one in front of the reader and its neighbours
@@ -78,30 +79,25 @@ async function walk() {
     console.warn('no sky:', trouble);
   });
 
-  const turn = (quarters) => { stage.turnBy(quarters); sky?.draw(); };
-  el('left').addEventListener('click', () => turn(-1));
-  el('right').addEventListener('click', () => turn(1));
-
   const { plots: opened } = await (await fetch('/api/walk')).json();
   if (!opened) {
     await say('walkEmpty');
     return;
   }
 
-  let from = 0;
+  // The pad, the same on every area page (`movepad.js`). A crossing here moves
+  // the three plots on screen on by three, which is what paging always did:
+  // the next three are the ones beyond the edge of these.
   const growing = () => say('walkGrowing');
-  const show = async () => {
-    el('back').disabled = from === 0;
-    el('on').disabled = from + SPAN >= opened;
-    await growFromService(engine, stage, from,
-                          Math.max(0, Math.min(SPAN, opened - from)), growing);
-    note.hidden = true;
-  };
-
-  el('back').addEventListener('click', () => { from = Math.max(0, from - SPAN); show(); });
-  el('on').addEventListener('click', () => { from = Math.min(opened - 1, from + SPAN); show(); });
-  el('keys').hidden = false;
-  await show();
+  await openMovePad({
+    nav: el('keys'), canvas: el('stage'), stage, plots: opened, step: SPAN,
+    show: async (from) => {
+      await growFromService(engine, stage, from,
+                            Math.max(0, Math.min(SPAN, opened - from)), growing);
+      note.hidden = true;
+    },
+    turned: () => sky?.draw(),
+  });
 }
 
 walk().catch((trouble) => {
