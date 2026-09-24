@@ -4,7 +4,8 @@
 // That is the point of the arrangement: there is one implementation of the
 // plant, and it is the one on the phone.
 
-export const ROLES = ['stem', 'leaf', 'petal', 'centre', 'stamen'];
+// `MeshRole.allCases`, in its order: the buffer names a role by its index.
+export const ROLES = ['stem', 'leaf', 'petal', 'centre', 'stamen', 'calyx'];
 
 // The module asks WASI for a clock, some randomness and somewhere to print.
 // Nothing else it imports is ever called while growing a plant, so everything

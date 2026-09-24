@@ -14,7 +14,7 @@ require_once __DIR__ . '/LongWalk.php';
  * them anywhere else. Change the Swift first, re-record, then bring this along.
  *
  * **Height picks the bed; then the staging sorts by hue and the border by
- * arrival.** A plant of 1.30 m or more stands in the soil border along the back,
+ * arrival.** A plant of 1.14 m or more stands in the soil border along the back,
  * in the next place from the door. Anything shorter goes in a pot on the
  * staging, which is a spectrum: twelve positions, each standing for a twelfth of
  * the area's hued plants, blue-green at the door and yellow at the far end. A
@@ -73,11 +73,13 @@ final class Glasshouse
     public const BORDER = 1;
 
     /**
-     * **The Orchard's crown, borrowed.** The 75th centile of this area's own
-     * plants is 1.294 m, so the border takes the tallest quarter. Kept equal to
-     * `Orchard.crownFrom` in the Swift; the check holds it to the vector file.
+     * **The tallest quarter of this area's own plants**: their 75th centile,
+     * 1.139 m, set at 1.14. It was the Orchard's crown, 1.30, borrowed, until
+     * the plants' shapes changed on 24 September 2026 and the two numbers
+     * parted. `Glasshouse.borderFrom` in the Swift; the check holds it to the
+     * vector file.
      */
-    public const BORDER_FROM = 1.30;
+    public const BORDER_FROM = 1.14;
 
     /** Where the circle is cut, as a turn: 114°, in the green no flower here is. */
     public const CUT = 114.0 / 360.0;

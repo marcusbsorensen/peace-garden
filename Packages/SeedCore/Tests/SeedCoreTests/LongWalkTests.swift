@@ -15,11 +15,12 @@ final class LongWalkTests: XCTestCase {
         var random = SplitMix64(seed: 2026)
         return (0..<count).map { n in
             let u = Double(random.next() % 10_000) / 10_000
-            // Piecewise through the measured centiles: 0.21, 0.85 at a third,
-            // 1.19 at two thirds, 2.22 at the top.
-            let height = u < 1 / 3 ? 0.21 + u * 3 * 0.64
-                : u < 2 / 3 ? 0.85 + (u - 1 / 3) * 3 * 0.34
-                : 1.19 + (u - 2 / 3) * 3 * 1.03
+            // Piecewise through the measured centiles: 0.15, 0.70 at a third,
+            // 1.09 at two thirds, 2.31 at the top (the shapes of 24 September
+            // 2026; they were 0.21, 0.85, 1.19 and 2.22).
+            let height = u < 1 / 3 ? 0.15 + u * 3 * 0.55
+                : u < 2 / 3 ? 0.70 + (u - 1 / 3) * 3 * 0.39
+                : 1.09 + (u - 2 / 3) * 3 * 1.22
             let family = Int(random.next() % 7)
             return (seed("arrival-\(n)"), LongWalk.Traits(height: height, family: family))
         }
@@ -149,10 +150,10 @@ final class LongWalkTests: XCTestCase {
     /// The cuts, where the measurement put them.
     func testTheTiersAreCutWhereTheyWereMeasured() {
         XCTAssertEqual(LongWalk.tier(height: 0.5), .edge)
-        XCTAssertEqual(LongWalk.tier(height: 0.92), .edge)
-        XCTAssertEqual(LongWalk.tier(height: 0.93), .middle)
-        XCTAssertEqual(LongWalk.tier(height: 1.27), .middle)
-        XCTAssertEqual(LongWalk.tier(height: 1.28), .back)
+        XCTAssertEqual(LongWalk.tier(height: 0.76), .edge)
+        XCTAssertEqual(LongWalk.tier(height: 0.77), .middle)
+        XCTAssertEqual(LongWalk.tier(height: 1.19), .middle)
+        XCTAssertEqual(LongWalk.tier(height: 1.20), .back)
         XCTAssertEqual(LongWalk.family(hue: 0.1, saturation: 0.1), LongWalk.paleFamily)
         XCTAssertEqual(LongWalk.family(hue: 0.99, saturation: 0.8), 5)
         XCTAssertEqual(LongWalk.family(hue: 350, saturation: 0.8), 5)

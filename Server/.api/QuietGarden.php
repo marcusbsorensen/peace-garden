@@ -31,7 +31,7 @@ final class QuietGarden
     public const AT_THE_HEDGE = 1.95;
     public const ALONG_THE_HEDGE = 1.10;
     public const BESIDE_THE_BENCH = 0.95;
-    public const BACK_FROM = 1.13;
+    public const BACK_FROM = 1.09;
 
     /** The bench's corner, which holds one plant and no group. */
     public const BENCH = 0;

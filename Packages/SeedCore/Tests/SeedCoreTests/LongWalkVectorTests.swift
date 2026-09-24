@@ -25,9 +25,9 @@ final class LongWalkVectorTests: XCTestCase {
         var random = SplitMix64(seed: 1809)
         return (0..<600).map { n in
             let u = Double(random.next() % 10_000) / 10_000
-            let height = u < 1 / 3 ? 0.21 + u * 3 * 0.64
-                : u < 2 / 3 ? 0.85 + (u - 1 / 3) * 3 * 0.34
-                : 1.19 + (u - 2 / 3) * 3 * 1.03
+            let height = u < 1 / 3 ? 0.15 + u * 3 * 0.55
+                : u < 2 / 3 ? 0.70 + (u - 1 / 3) * 3 * 0.39
+                : 1.09 + (u - 2 / 3) * 3 * 1.22
             let family = Int(random.next() % 7)
             let seed = SeedMint.mint(fromEntropy: Data("long-walk-vector-\(n)".utf8))
             return (seed, LongWalk.Traits(height: height, family: family))

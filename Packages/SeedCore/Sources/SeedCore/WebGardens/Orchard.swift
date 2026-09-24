@@ -114,20 +114,25 @@ public enum Orchard {
 
     /// **The cuts, measured then set to fit the places.** Across three hundred
     /// crossings of three hundred different pairs of parents, grown heights ran
-    /// 0.38 m to 2.20 m. An outer guild is one nearest the middle, two at the
+    /// 0.15 m to 2.31 m. An outer guild is one nearest the middle, two at the
     /// flanks and one furthest out, so the cuts belong at the 25th and 75th
-    /// centiles, which measured 0.752 m and 1.295 m. Set at 0.75 and 1.30.
+    /// centiles, which measured 0.583 m and 1.202 m. Set at 0.58 and 1.20. They
+    /// were 0.75 and 1.30 until the plants' shapes changed on 24 September
+    /// 2026, and were measured again then on the Long Walk's three hundred.
     ///
     /// The middle guild is not in this count, and does not need to be: it takes
     /// any plant, so the sixteen places the cuts are for are handed a fair sample
     /// of everything that arrives.
     ///
-    /// They are not the walk's 0.93 and 1.28, not the room's 1.13 and not the
-    /// crossing's 0.97 and 1.43, and none of those is wrong. A border of 5:4:3
-    /// rows, a group of one back and two arms, a bed of 3:2:1 and a guild of
-    /// 1:2:1 divide the same population four different ways.
-    public static let flankFrom = 0.75
-    public static let crownFrom = 1.30
+    /// They are not the room's 1.09 and not the crossing's 0.91 and 1.30, and
+    /// none of those is wrong. A border of 5:4:3 rows, a group of one back and
+    /// two arms, a bed of 3:2:1 and a guild of 1:2:1 divide the same population
+    /// four different ways. **The crown's is the walk's back cut, 1.20**,
+    /// because both are the tallest quarter: three back slots of twelve and
+    /// one place of four. Measured on one sample, one centile is one number;
+    /// the two were 1.28 and 1.30 only because each area had drawn its own.
+    public static let flankFrom = 0.58
+    public static let crownFrom = 1.20
 
     public static func rank(height: Double) -> Rank {
         if height < flankFrom { return .understorey }

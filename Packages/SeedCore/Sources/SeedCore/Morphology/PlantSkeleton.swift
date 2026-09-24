@@ -90,13 +90,18 @@ public enum SkeletonBuilder {
             twist: Float(genome.stem.twist)
         )
 
+        // Where the nodes sit is the family's: a daisy is leafy nearly from the
+        // ground, a poppy's few nodes are low and its stem bare above them.
+        // `0.16...0.90` is what every plant had before the zone was a profile's.
         let nodeCount = genome.stem.nodeCount
+        let zoneLow = Float(genome.habit.nodeZone.lowerBound)
+        let zoneSpan = Float(genome.habit.nodeZone.upperBound) - zoneLow
         var nodes: [PathSample] = []
         nodes.reserveCapacity(nodeCount)
         for index in 0..<nodeCount {
             let fraction: Float = nodeCount == 1
-                ? 0.55
-                : 0.16 + 0.74 * Float(index) / Float(nodeCount - 1)
+                ? zoneLow + zoneSpan * 0.53
+                : zoneLow + zoneSpan * Float(index) / Float(nodeCount - 1)
             let sampleIndex = min(samples.count - 1, Int((fraction * Float(samples.count - 1)).rounded()))
             nodes.append(samples[sampleIndex])
         }
@@ -192,7 +197,13 @@ public enum SkeletonBuilder {
             // The `stemLength` term is what keeps the topmost stalk from
             // vanishing: it has almost no height to climb, so without a floor
             // it would terminate the moment it left the stem.
-            let reach = min(stemLength * 0.7, climb * 2.4 + stemLength * 0.2) * vigour
+            //
+            // The ceiling comes in with spread. A spray's lowest stalks leave
+            // half-way down the stem and hit it, and at 0.7 a tall plume was two
+            // metres across — the widest plant in the garden by half a metre,
+            // when everything else had been made broader to meet it.
+            let ceiling = stemLength * (0.7 - 0.08 * spread)
+            let reach = min(ceiling, climb * 2.4 + stemLength * 0.2) * vigour
             guard reach > stemLength * 0.002 else { continue }
 
             let path = sweep(

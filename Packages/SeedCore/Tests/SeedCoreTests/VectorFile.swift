@@ -42,9 +42,11 @@ enum VectorFile {
     /// Above it: the largest height two hosts have ever disagreed by is
     /// 3.6 × 10⁻⁷ m, so this is twenty-eight times the disagreement it has to
     /// absorb. Below it: the closest any recorded height comes to a placement
-    /// cut is 2.3 × 10⁻⁴ m and the closest two heights the rules ever compare
-    /// with each other is 1.6 × 10⁻⁴ m, so this is sixteen times finer than the
-    /// finest decision any rule makes.
+    /// cut is 3.7 × 10⁻⁴ m and the closest two heights the rules ever compare
+    /// with each other is 1.0 × 10⁻⁴ m, so this is ten times finer than the
+    /// finest decision any rule makes. (Measured again when the vectors were
+    /// re-recorded for the plants' new shapes, 24 September 2026; it was 2.3 and
+    /// 1.6 × 10⁻⁴ m, sixteen times.)
     ///
     /// It is a length rather than a ratio because a height is a length, and the
     /// thing it must stay clear of — a tier cut, a rank cut — is a length too.
@@ -175,8 +177,8 @@ enum VectorFile {
 /// It is also a live measurement. The day a crossing throws up a plant standing
 /// 0.9299999 m tall, this fails and says so, and somebody decides whether to
 /// move the cut or narrow the tolerance. As recorded, the tightest margin in
-/// the whole garden is 1.6 × 10⁻⁴ m — sixteen times the tolerance and four
-/// hundred times the disagreement.
+/// the whole garden is 1.0 × 10⁻⁴ m, two ferns on one coupe's floor — ten
+/// times the tolerance and nearly three hundred times the disagreement.
 extension VectorFile {
 
     /// `cuts` are the numbers the area's rule compares a height against, and

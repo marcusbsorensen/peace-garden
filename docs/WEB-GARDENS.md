@@ -9,6 +9,30 @@ Wild Fields, which nobody does.
 Nothing here is built. The website cannot yet draw a plant (§*What has to exist
 first*), and until it can, every decision below is a design and not a garden.
 
+## The plants' shapes changed, 24 September 2026
+
+Every plant was narrow and tall, and Marcus chose to change their shape
+everywhere (`docs/PLANT-FORMS.md` §*Habit*, §*What holds a flower from
+beneath*, §*A petal's outline*). The garden came down and out: over three
+thousand crossings the median height is 0.87 m and the median spread 0.62 m
+(measured over six thousand plants before, 1.00 and 0.45), and three plants in
+ten are wider than they are tall. A lotus is a water lily 0.34 m tall, a succulent a rosette of 0.28. **Every measured number below was measured again the way it
+was first measured, and changed where it changed**, so the cuts, fills and
+margins in this document are the new shapes'. Names, areas, hues, colour
+families, kinds and habits did not move; only heights did.
+
+- **The cuts:** Long Walk 0.93/1.28 → 0.77/1.20, Quiet Garden 1.13 → 1.09,
+  Crossing 0.97/1.43 → 0.91/1.30, Orchard 0.75/1.30 → 0.58/1.20 (the Knot
+  Garden's with it), Cold Frame 0.85 → 0.38, Coppice 1.10 → 1.00, and the
+  Glasshouse border its own again at 1.14 rather than the Orchard's.
+- **The four cuts over all crossings were measured on one sample of three
+  hundred** where each area had drawn its own, so the Orchard's crown and the
+  walk's back cut, both the tallest quarter, are now one number.
+- **The live garden is replanted** when the shapes go live: every stored seed
+  grown again, every area's arrivals placed again in order (`tools/replant`).
+- Where a design section below records what a simulation found before the
+  shapes changed and nothing re-ran it, it says so.
+
 ## What was settled
 
 Settled by Marcus, 18 September:
@@ -163,9 +187,9 @@ the website and the app can all read it. Built 18 September, with
   front slots, four middle and three back, so 48 plants a plot. The tiers have
   different spacings, so they stagger against each other too.
 - **Tiers from measurement.** Across 300 crossings of 300 different pairs of
-  parents, grown heights run 0.21 to 2.22 m, with thirds at 0.85 and 1.19 m. The
-  cuts are at 0.93 m and 1.28 m instead, to match the number of slots in each
-  tier. Crossings of one person with forty others ran taller and were half
+  parents, grown heights run 0.15 to 2.31 m, with thirds at 0.70 and 1.09 m. The
+  cuts are at 0.77 m and 1.20 m instead, to match the number of slots in each
+  tier (0.93 m and 1.28 m before 24 September 2026). Crossings of one person with forty others ran taller and were half
   bells, so a sample from one gardener is the wrong sample.
 - **The rule is that nothing stands in front of something shorter**, not
   "tall ones in the back row". A plant goes to its own tier in the oldest plot
@@ -235,7 +259,7 @@ plot service, held to each other by `tools/reference/check_ambassador.php`.
   people go on meeting. What it has is a head. So the ambassador is simply the
   first plant the rule ever placed, and the slot it took is the first slot of
   its own tier at the start of plot 0.
-- **It could not have been the tall one at the back.** *Halula* is 1.02 m, the
+- **It could not have been the tall one at the back.** *Halula* is 1.04 m, the
   middle of a border. Measured across the ten, only *Cyninora contorta* is a
   back-tier plant at all, so a specimen fixed at the back of a border would have
   stood a short plant behind taller ones in nine areas out of ten, which is the
@@ -280,14 +304,14 @@ service, the website and the app can all read it. Built 21 September, with
   forty-eight in the same square. The middle of the room and the middles of all
   four sides stay grass.
 - **No tree.** WEB-GARDENS said an enclosure has one. Nothing grown here is a
-  tree: heights run 0.24 m to 2.04 m, which is a shrub at best, and a drawn tree
+  tree: heights run 0.15 m to 2.31 m, which is a shrub at best, and a drawn tree
   among plants grown from a genome is the clip art this document warns about.
   Marcus dropped it on 21 September, and **the specimen is the plant by the
   bench** instead.
 - **The specimen is the plot's first plant.** Not a reserved slot: a new plot is
   opened by taking its bench slot, so the plant beside the seat is always the
   oldest thing in the room. The same answer the Long Walk reached by a different
-  route, and the reason this template can take a 0.75 m ambassador — a plant
+  route, and the reason this template can take a 0.55 m ambassador — a plant
   standing alone in grass beside a seat has no height to live up to.
 - **A group is one colour, or a tone of it.** A group's colour is set by its
   first plant. An arriving plant takes a group of its own colour, else opens an
@@ -299,12 +323,12 @@ service, the website and the app can all read it. Built 21 September, with
   of a match.
 - **Nothing stands in front of something shorter**, as on the walk, at the scale
   of a group of three: the back of a group is at least as tall as either arm.
-  The cut between back and arm is 1.13 m, the 67th centile of the measured
-  spread, because a group is one back and two arms. It is not the walk's 1.28 m
+  The cut between back and arm is 1.09 m, the 67th centile of the measured
+  spread, because a group is one back and two arms. It is not the walk's 1.20 m
   and should not be — that one divides three tiers in the proportion 5:4:3.
 - **How it fills, at five hundred:** 51 plots, 49 of them full, the two at the
-  growing end holding six and five. Of the plants that joined an existing group,
-  185 matched its colour exactly and 112 were a tone of it.
+  growing end holding seven and four. Of the plants that joined an existing
+  group, 188 matched its colour exactly and 109 were a tone of it.
 - **The hedge's ends are cut square, not domed.** A free-standing run ends in a
   long shoulder falling to the ground over half its height — a metre on the tall
   ones — which leaves a notch at every corner you can see the sky through. Round
@@ -376,20 +400,19 @@ page's own prose landed on the lawn.
   walk all the way round. It is the Crossing's *three sharing an arc* applied to
   a whole guild. It is also what makes the rule work: the first four arrivals go
   under the middle tree whatever they are, so a plot never opens by turning
-  somebody away, and the 1.33 m ambassador — the tallest of the ten — has
+  somebody away, and the 1.34 m ambassador — the tallest of the ten — has
   somewhere to stand that is not the back of a guild.
-- **Cuts at 0.75 m and 1.30 m**, measured at the 25th and 75th centiles of three
-  hundred crossings for a guild of 1:2:1. The fourth division of one population
-  by a fourth template.
-- **At 500 arrivals: 26 plots, 25 exactly full**, the twenty-sixth holding two
-  and one older plot holding nineteen — its last free place wants a plant of
-  0.77 m or less and the last of the five hundred went into that same plot. An
-  older plot goes on receiving after a newer one opens, because `place` scans
-  plots oldest first every time.
-- **Three plants in four get their own rank, where the Crossing gets 96.6%.**
+- **Cuts at 0.58 m and 1.20 m**, measured at the 25th and 75th centiles of three
+  hundred crossings for a guild of 1:2:1 (0.75 m and 1.30 m before 24 September
+  2026). The fourth division of one population by a fourth template, and its
+  crown is the walk's back cut: both are the tallest quarter.
+- **At 500 arrivals: 26 plots, 24 exactly full**, the twenty-fifth holding
+  nineteen and the twenty-sixth two. An older plot goes on receiving after a
+  newer one opens, because `place` scans plots oldest first every time.
+- **Four plants in five get their own rank, where the Crossing gets 95.4%.**
   Preferring the guild over the rank means a guild of four takes whoever arrives
-  next rather than waiting for the right height. 301 of 399 in their own rank, 58
-  one step out, 40 one step in, none further. **It is not a visual fault**:
+  next rather than waiting for the right height. 321 of 399 in their own rank, 44
+  one step out, 34 one step in, none further. **It is not a visual fault**:
   `inOrder` is what guarantees the picture and it holds for every plant. A rank
   is the height a place was meant for; `inOrder` is what a visitor sees.
 - **The rule held first time**, as the room's and the crossing's did, and the
@@ -461,13 +484,13 @@ though `Organic.hedge` learned to bend for it.
   the garden holding a plant** — the best fill of the five areas. The rarest
   colour is pale, nineteen plants of five hundred and one, and it claimed three
   pairs in the whole garden rather than one in every plot.
-- **Five plants in six get the rank their height asks for**: 420 of 501 in their
-  own rank, 48 one step out, 33 one step in, none further. Between the
-  Crossing's 96.6% and the Orchard's 75%, for a nameable reason — preferring the
+- **Four plants in five get the rank their height asks for**: 410 of 501 in their
+  own rank, 67 one step out, 24 one step in, none further. Between the
+  Crossing's 95.4% and the Orchard's 80%, for a nameable reason — preferring the
   pair over the rank displaces plants as the Orchard's guild-first rule does,
   but a pair holds eight places against a guild's four, so there is twice as
   much room to find the right one.
-- **The cuts are the Orchard's 0.75 and 1.30, and are named as the Orchard's.**
+- **The cuts are the Orchard's 0.58 and 1.20, and are named as the Orchard's.**
   A compartment of four graded outward is the same 1:2:1 a guild is, so it
   divides the same population the same way. This is the first area to share cuts
   with another; re-measuring would have produced the same two numbers and
@@ -479,7 +502,8 @@ though `Organic.hedge` learned to bend for it.
   A compartment whose remaining places are the wrong rank is passed over however
   empty it is. The test replays the five hundred arrival by arrival, because
   *which of the two was emptier* is a fact about the moment and the finished
-  plot cannot say. At five hundred exactly one pair of sixty-six ends uneven.
+  plot cannot say. At five hundred none of the sixty-six ends more than one
+  apart (one did before 24 September 2026).
 - **The pattern is a weave.** Two bands each way, crossing four times, inside a
   square edging: four compartments at the sides, four at the corners, and the
   weave closing round a middle that holds no plant. It is a real knot-garden
@@ -530,13 +554,13 @@ though `Organic.hedge` learned to bend for it.
     on the corners of a grid, interpolated, so no cell edge shows. Gravel is a
     heap of stones, and the same smooth interpolation drew wet sand. It is the
     roundel's finding — paving is faces — at a twentieth of the size.
-- **The ambassador wanted no accommodation.** *Quina caerulea*, 1.0064 m, family
+- **The ambassador wanted no accommodation.** *Quina caerulea*, 1.085 m, family
   4, placed by the rule into an empty Knot Garden: it claims the first pair for
   its colour and stands in the north compartment, at one of the two places
-  beside the middle of it, because 1.0064 m reads as a side rather than a heart.
+  beside the middle of it, because 1.085 m reads as a side rather than a heart.
   Nothing had to be arranged for it — an empty compartment refuses nobody —
   which is worth having confirmed rather than assumed, given what the Orchard's
-  1.33 m ambassador cost.
+  1.34 m ambassador cost.
 
 ## The Seedbed, built
 
@@ -630,7 +654,9 @@ claims a frame and the grown height orders its ranks.**
 The layout's first reading was *small plants only*. The plants whose names put
 them in `waiting` — about 9% of arrivals — grow to **0.33–1.64 m, median 0.85**,
 and a low frame holds about 0.4 m, so a height limit would have refused nine in
-ten of the area's own plants. So every plant is admitted and **placed by the
+ten of the area's own plants. With the shapes of 24 September 2026 every one of
+them is a lotus or a fern, 0.23–0.82 m, median 0.38, and a limit would still
+refuse four in ten. So every plant is admitted and **placed by the
 height it will grow to, drawn at an early stage**. The drawn height is never
 stored and never read by the rule; it is a matter of drawing.
 
@@ -643,20 +669,23 @@ same terms; failing that the first frame nobody has claimed; failing that a new
 plot. A rank fills from its west end. The claim is read off the plants, as the
 Knot Garden's and the Seedbed's are.
 
-- **The cut is 0.85 m, the median of this area's own plants**, and it is the
-  first cut measured over one area's plants rather than all of them. Five
-  hundred `waiting` arrivals took 5,805 crossings to find. A borrowed cut would
-  have divided them unevenly — the Orchard's 0.75 puts 65% at the back, the
-  Long Walk's 0.93 puts 39% — where this one puts 49.8%. `ColdFrameTests`
+- **The cut is 0.38 m, the median of this area's own plants** (0.85 m before
+  24 September 2026), and it is the first cut measured over one area's plants
+  rather than all of them. Five hundred `waiting` arrivals took 5,805 crossings
+  to find. A borrowed cut would have divided them unevenly — the Orchard's 0.58
+  puts 12% at the back, the Long Walk's 0.77 puts 1% — where this one puts
+  49.8%. `ColdFrameTests`
   draws its sample the same way, and so does the workbench.
-- **At five hundred: 12 plots, 45 frames claimed, 37 of them full, 87% of every
-  place holding a plant**, and 485 of 501 plants in the rank their height asks
-  for. Between the two other areas whose places are claimed — the Knot
+- **At five hundred: 12 plots, 46 frames claimed, 35 of them full, 87% of every
+  place holding a plant**, and 472 of 501 plants in the rank their height asks
+  for (485 before 24 September 2026: two in five of these plants now stand
+  within 5 cm of the cut, and a plant near it is the one sent to the other rank
+  when its own is full; no cut near the median does better). Between the two other areas whose places are claimed — the Knot
   Garden's 92% and the Seedbed's 65% — and nearer the Knot's, for its reason: a
   claim is made only when a plant needs one, and seven colour families are
   far fewer than forty-six kinds.
-- **The margin holds.** The nearest recorded height to the cut is 0.4 mm clear,
-  forty times the tolerance two hosts are allowed to disagree by, and
+- **The margin holds.** The nearest recorded height to the cut is 0.37 mm clear,
+  thirty-seven times the tolerance two hosts are allowed to disagree by, and
   `ColdFrameVectorTests` runs `placementCannotTurn` over plot and frame.
 
 ### Drawn young
@@ -673,8 +702,11 @@ is what claims a frame. The state is put together: `heightScale` 0.30,
 - **A bud swollen further is a full-size flower head on a seedling** — at 0.8
   the tallest plant was 0.9 m.
 
-That draws the five hundred **0.10–0.45 m tall**, and `ColdFrameTests` holds
-every one under the glass above it with 2 cm to spare. The grading does the
+That draws the five hundred **0.05–0.34 m tall**, and `ColdFrameTests` holds
+every one under the glass above it with 2 cm to spare. The shortest are young
+water lilies, their pads on the soil 0.26 m and more across, so since 24
+September 2026 the test's floor on how small a seedling may be asks its larger
+extent rather than its height: none is under 0.15 m. The grading does the
 rest: the glass is lowest at the front, and the front rank holds the plants
 that will grow shortest, whose young stages are shortest too.
 
@@ -754,7 +786,8 @@ twelve positions along the staging with two pots at each, a border of eight.
     and 94%, which is how much fitting flatters.
   - The band edges are to be set from a larger sample, so less is fitted.
 - **The border cut is the Orchard's 1.30, borrowed and named as such.** The
-  75th centile of these plants is 1.294 m. The border fills more loosely than
+  75th centile of these plants is 1.294 m. (Since 24 September 2026 the border
+  has its own, 1.14; see §*The Glasshouse, built*.) The border fills more loosely than
   the staging, 70% on the fresh sample, because plots are opened by whichever
   runs out first.
 - **The border is planted in arrival order from the door end**, Marcus's answer on
@@ -776,8 +809,7 @@ that sorts by hue, and the first whose plants do not all stand on the ground.**
 
 ### The rule
 
-Height picks the bed. A plant of 1.30 m or more (`Orchard.crownFrom`, borrowed)
-goes in the border: the next place from the door in the oldest plot with one,
+Height picks the bed. A plant of 1.14 m or more goes in the border: the next place from the door in the oldest plot with one,
 whatever its colour. Anything shorter is potted on the staging:
 
 1. its own band, in every open plot, oldest first;
@@ -793,12 +825,22 @@ the door. A position fills its row by the glass before its row by the path.
   out of 23,259 crossings, less 136 pale), under a label the tests do not use,
   and written in as literals: 166.6°, 190.8°, 215.9°, 239.8°, 265.8°, 291.0°,
   315.7°, 345.4°, 15.7°, 40.3° and 69.6°, as turns past the 114° cut.
-- **On a fresh five hundred: 17 plots, 92% of places held, the staging and the
-  border both 91–92% full, and 322 of 364 hued pots in their own band**, none
-  more than one off. Better than the simulation's 87% and 86%, because the
-  edges were fitted to six times the sample and a pot one band off tries the
-  side its hue leans to first — a choice the simulation did not make, taken
-  here because Marcus's answer was *the free place nearest its own*.
+- **The border's cut is its own, 1.14 m**: the 75th centile of five hundred of
+  the area's plants drawn under a label the tests do not use, 1.139 m. It was
+  the Orchard's crown, borrowed, until 24 September 2026; the new shapes brought
+  these plants down further than the garden's as a whole (their 75th centile by
+  0.16 m, the garden's by 0.09), and the Orchard's new 1.20 would have taken 18%
+  of them rather than a quarter. **The band edges stay**: they are cut across
+  hue, and no hue moved.
+- **On a fresh five hundred: 18 plots, 87% of places held, the staging 89% full
+  and the border 81%, and 340 of 372 hued pots in their own band**, none more
+  than one off. It was 17 plots and 92% before the shapes changed: the border's
+  quarter of these five hundred is 24%, a little under its quarter of the
+  places, so the staging opens plots a little ahead of the border. Own band is
+  better than the simulation's 86%, because the edges were fitted to six times
+  the sample and a pot one band off tries the side its hue leans to first — a
+  choice the simulation did not make, taken here because Marcus's answer was
+  *the free place nearest its own*.
 - **Hue became `PlantTraits.hue`**, a turn of the circle, optional: the phone
   sends it (`WalkArrival.hue`), `walk_offers` gained a nullable `hue` column,
   and a plant without one is placed as a pale one is. `GlasshouseStore::exactly`
@@ -818,7 +860,9 @@ open in the `x−` gable — the end the spectrum and the border both count from
 **The eaves and ridge were set by the plants under them**: a potted plant
 stands 0.83 m off the floor and may be 1.30 m tall, and `GlasshouseTests` holds
 every one of the five hundred under the roof with a tenth of a metre to spare
-(the nearest is 0.23 m clear). `Organic.staging` is five slats on five frames
+(the nearest was 0.23 m clear). Since 24 September 2026 a potted plant is under
+1.14 m and the nearest stands 0.39 m under the roof; the house was left as
+built, with more air over the pots. `Organic.staging` is five slats on five frames
 of legs; `Organic.pot` is a turned clay pot, round by `Organic.turn`, which
 sums the board's corner series four times rather than calling `sin`.
 
@@ -854,12 +898,15 @@ check against.
   had nothing to act on until now.
 - **A fern has no bloom to speak of.** Its profile sets `bloomPresence` to 0.05.
   A star carries every flower in the area.
-- **Ferns are the shorter habit**: 0.31–1.40 m, median 0.78. Stars are
-  0.52–1.95 m, median 1.10. Both spread about half a metre.
-- **Drawn young, a fern is 0.08–0.41 m tall**, at the Cold Frame's
-  `heightScale` of 0.30 with no bud. That makes the shortest star, 0.52 m, taller
-  than the tallest cut fern. The design below rests on that fact.
-- The ambassador, *Rosea caerulea*, is a star of 0.995 m.
+- **Ferns are the shorter habit**: 0.22–0.92 m, median 0.49. Stars are
+  0.48–1.77 m, median 1.00. A fern spreads 0.67 m, a star 0.79 (the median of
+  each; with the shapes before 24 September 2026, 0.31–1.40 and 0.52–1.95 m,
+  both about half a metre across).
+- **Drawn young, a fern is 0.08–0.38 m tall**, at the Cold Frame's
+  `heightScale` of 0.30 with no bud. That makes the shortest star in either
+  sample, 0.43 m, taller than the tallest cut fern. The design below rests on
+  that fact.
+- The ambassador, *Rosea caerulea*, is a star of 0.906 m.
 
 ### Three layouts, and the one chosen
 
@@ -892,12 +939,12 @@ three layouts considered all show that; they differ in where.
 Something in each coupe has to be cut, and three ways of deciding what were
 simulated side by side (§*The fill, simulated* has the numbers):
 
-- **By height**, with the tallest 45% on the stools. This fills worst, at 94.7%
-  at two thousand. It also cuts 64% of the stars, so the showiest flowers in the
-  wood would be out of flower two years in three.
+- **By height**, with the tallest 45% on the stools. This fills at 96.2% at two
+  thousand. It also cuts 81% of the stars, so the showiest flowers in the wood
+  would be out of flower two years in three.
 - **The stars on the stools and the ferns on the floor.** The heights stand in
   their natural order, the tall habit growing over the short one, and it fills
-  at 97.8%. It cuts 87% of the stars. Colour is the one thing a star has, so
+  at 96.2%. It cuts 89% of the stars. Colour is the one thing a star has, so
   this was rejected.
 - **The ferns on the stools and the stars on the floor — chosen.** It fills at
   97.8% and cuts no star, ever. Every flower in the Coppice is drawn in flower
@@ -905,13 +952,13 @@ simulated side by side (§*The fill, simulated* has the numbers):
   had no bloom to lose, and a fern growing back from a cut comes up as a fern
   always does, in croziers, which is as plain a picture of renewal as a garden
   has. **In a coupe's cut year every star stands over every fern in it**, with
-  0.23 m to spare at the closest. Each winter one band of the plot becomes a
+  0.15 m to spare at the closest. Each winter one band of the plot becomes a
   glade of flowers over new growth, and the other two show the ferns coming
   back. That is also true to the practice: in real woods the cutting is what
   brings the flowers.
 
-**The cost: a grown fern does not overtop the stars.** Measured at five hundred, 41 of 233 ferns on stools stand over the front
-row of their coupe in their grown year, and 8 over the shortest star behind
+**The cost: a grown fern does not overtop the stars.** Measured at five hundred, 5 of 233 ferns on stools stand over the front
+row of their coupe in their grown year, and none over the shortest star behind
 them. So the rotation reads at knee height, under the flowers, not as poles
 over them. What says *coppice* at a glance is the stool, the old cut wood each
 fern grows out of (§*The stool*). The fern is what the stool grows.
@@ -955,7 +1002,7 @@ steps.
 
 **A star:**
 
-1. Its own row of the floor, which is the back row from 1.10 m up and the front
+1. Its own row of the floor, which is the back row from 1.00 m up and the front
    row below. The search runs oldest plot first, and within a plot takes the
    coupe with fewest on its floor.
 2. Failing that, the other row on the same terms, but only if nothing would
@@ -975,7 +1022,7 @@ guessed.** Stools make up 45% of the places and ferns 48% of the arrivals, so
 some ferns have to stand on the floor. With no ferns allowed there, the floor
 fell behind the stools and never caught up, finishing at 94.7%. With no limit,
 a long run of ferns took the floor from the stars, and the plots the stars
-opened afterwards had stools no fern would come to: 73.1% against 85.4% in that
+opened afterwards had stools no fern would come to: 74.9% against 85.4% in that
 order. A cap of one keeps the realistic fill where no limit put it, and it
 keeps the floor the stars'.
 
@@ -988,23 +1035,25 @@ keeps the floor the stars'.
   seed bytes with no `sin` or `pow` involved, so the test needs no tolerance.
   If the Glasshouse's hue is built first, one `walk_offers` migration can carry
   both.
-- **One height cut, 1.10 m**, the median of this area's own stars, measured
-  over the area's own plants as the Cold Frame's was. It divides the fresh
-  sample's stars 48.4% to the back. A borrowed cut would divide them unevenly:
-  the Orchard's 1.30 would put 28% at the back, the Long Walk's 0.93 would put
-  67%. The nearest of 2,084 stars stands 0.60 mm from it. The vector file will
+- **One height cut, 1.00 m**, the median of this area's own stars, measured
+  over the area's own plants as the Cold Frame's was (1.10 m before 24 September
+  2026). It divides the fresh sample's stars 49.0% to the back. A borrowed cut
+  would divide them unevenly: the Orchard's 1.20 would put 28% at the back, the
+  Long Walk's 0.77 would put 75%. The nearest of 2,084 stars stands 0.25 mm from
+  it. The vector file will
   still need `placementCannotTurn` over plot, coupe and row, because a height
   comes out of `sin`.
 - **Colour is not read.** Carpets were considered: the first star on a coupe's
   floor would claim it for its colour family, the way bluebells hold a coupe. It
-  held 96.2% against 97.8%, and a Coppice whose three bands were three colours
+  held 97.8%, as the rule did, but left 15 places empty in settled plots where
+  the rule left 3, and a Coppice whose three bands were three colours
   would ask the eye to read colour stripes where it should read the cut. The
   Knot Garden and the Cold Frame already sort by colour, and the Glasshouse
   will. This one sorts by the year.
 - **Arrival order** decides the rest. A place is taken once and never changes,
   as in every area.
 
-The ambassador is a star under 1.10 m, so it opens plot 0 in the front row of
+The ambassador is a star under 1.00 m, so it opens plot 0 in the front row of
 coupe 0. An empty floor refuses nobody.
 
 ### The rotation
@@ -1022,9 +1071,9 @@ is 78, 77 and 78 of 233, and it stays that way year after year.
 
 | Stage | The fern on a stool is drawn | Height, measured |
 | --- | --- | --- |
-| **Cut** | `heightScale` 0.30, `leafUnfurl` 0.6, no bud — the Cold Frame's young state without its bud | 0.08–0.41 m, median 0.21 |
-| **Regrowing** | `heightScale` 0.65, `leafUnfurl` 0.9, `budSwell` 0.4 | 0.20–0.98 m, median 0.51 |
-| **Grown** | At its best, `Maturity.bloomPreview`, as everywhere else | 0.31–1.40 m, median 0.78 |
+| **Cut** | `heightScale` 0.30, `leafUnfurl` 0.6, no bud — the Cold Frame's young state without its bud | 0.08–0.38 m, median 0.20 |
+| **Regrowing** | `heightScale` 0.65, `leafUnfurl` 0.9, `budSwell` 0.4 | 0.15–0.65 m, median 0.35 |
+| **Grown** | At its best, `Maturity.bloomPreview`, as everywhere else | 0.22–0.92 m, median 0.49 |
 
 The two young stages are the Cold Frame's `drawn` with its numbers changed, so
 they are the same kind of thing: a stage assembled for drawing, never stored and
@@ -1094,7 +1143,7 @@ from the other, unless it says otherwise.
 | 250 | 8 | 7 | 95.1% | 0 |
 | 500 | 16 | 14 | 94.9% | 0 |
 | 1,000 | 31 | 30 | 97.8% | 0 |
-| 2,000 | 62 | 59 | 97.8% | 7 of 1,980 |
+| 2,000 | 62 | 59 | 97.8% | 3 of 1,980 |
 | 4,000, both samples end to end | 122 | 120 | 99.4% | 0 |
 
 *Settled* means every plot but the newest two, which are where a visitor would
@@ -1103,21 +1152,20 @@ find an empty place in the old part of the wood.
 - **At five hundred it holds 94.9%.** That sits between the Knot Garden's 92%
   and the Orchard's 96%, and it rises with the count, because nearly every
   empty place is at the growing end.
-- **Fitting flatters it very little.** On the sample the cut was measured on,
-  the numbers are 94.9% and 97.8% again, with 6 settled places empty at two
-  thousand. The Glasshouse's twelve band edges gained eleven points from
+- **Fitting does not flatter it.** On the sample the cut was measured on, the
+  numbers are 94.9% and 97.8% at five hundred and a thousand, and at two
+  thousand 96.2% with 22 settled places empty — worse than the fresh sample,
+  which is two samples differing rather than anything the cut did (with the
+  shapes before 24 September 2026 the two samples came out alike). The Glasshouse's twelve band edges gained eleven points from
   fitting. The Coppice has one fitted number, a median, and that is the
   difference.
-- **The distribution at two thousand**: 59 plots of 33, then 26, 24 and 4 at
-  the growing end. In 59 of the 60 settled plots the three coupes hold exactly
-  the same number of ferns on stools and of plants on the floor. In the other,
-  one floor has one plant fewer.
-- **1,045 of 1,086 plants on the floor are in their own row** (96.2%). **Nothing
+- **The distribution at two thousand**: 59 plots of 33, then 30, 23 and 1 at
+  the growing end. In all 60 settled plots the three coupes hold exactly the
+  same number of ferns on stools and of plants on the floor.
+- **1,042 of 1,087 plants on the floor are in their own row** (95.9%). **Nothing
   stands out of order anywhere**, in any stream tried, with or without the cap.
-- **36 of 951 ferns stand on the floor** (3.8%).
-- **The worst wait**: one plot stayed unfinished for 119 arrivals. Its last
-  three places were all in the back row, and each wanted a star of 1.10 m or
-  more.
+- **37 of 951 ferns stand on the floor** (3.9%).
+- **The worst wait**: one plot stayed unfinished for 120 arrivals.
 
 **Worst cases.** The same two thousand plants in orders no real garden would
 send. The longest run of one habit in either realistic stream is 11.
@@ -1126,20 +1174,20 @@ send. The longest run of one habit in either realistic stream is 11.
 | --- | --- | --- |
 | Runs of twenty, stars then ferns | 97.8% | 99.4% |
 | Runs of sixty | 97.8% | 97.8% |
-| Every star first, then every fern | 53.2% (855 stools empty) | 96.2% |
-| Every fern first, then every star | 57.2% | 85.4% (73.1% with no cap) |
-| Heights sorted within each habit, in windows of a hundred, either way | 94.8% | 97.8% |
-| Heights sorted within each habit over the whole stream, shortest first / tallest first | 94.8% | 71.3% / 67.4% |
+| Every star first, then every fern | 54.2% (840 stools empty) | 96.2% |
+| Every fern first, then every star | 57.2% | 85.4% (74.9% with no cap) |
+| Heights sorted within each habit, in windows of a hundred, shortest first / tallest first | 94.8% | 96.2% / 97.8% |
+| Heights sorted within each habit over the whole stream, shortest first / tallest first | 94.8% / 97.8% | 71.3% / 68.1% |
 | One colour at a time | 97.8% | 97.8% |
-| Shuffled | 97.8% | 99.4% |
+| Shuffled | 97.8% | 97.8% |
 
 - **A stool waits for a fern, and a fern always comes.** A thousand stars in a
-  row open 57 plots with every stool empty, and the ferns that follow fill them
+  row open 56 plots with every stool empty, and the ferns that follow fill them
   back to 96.2%.
 - **The one order it cannot recover from is every fern first.** The ferns fill
   the stools and their share of the floor, then run out, and the stars open
   plots with stools no fern will ever come to. The cap is what brings it from
-  73.1% to 85.4%.
+  74.9% to 85.4%.
 - **Sorting heights across the whole stream defeats any rule that grades by
   height**, and the Cold Frame and the Crossing grade the same way. Late in a
   sorted stream, half of each new plot's floor wants a plant shorter, or
@@ -1150,21 +1198,21 @@ send. The longest run of one habit in either realistic stream is 11.
 
 | Rule | Held | Settled empty | Stars out of flower two years in three |
 | --- | --- | --- | --- |
-| **Ferns to stools, stars to the floor, one fern to a coupe's floor** | 97.8% | 7 | none |
-| The same, with carpets of one colour | 96.2% | 23 | none |
+| **Ferns to stools, stars to the floor, one fern to a coupe's floor** | 97.8% | 3 | none |
+| The same, with carpets of one colour | 97.8% | 15 | none |
 | The same, with no fern on the floor | 94.7% | 66 | none |
-| The same, with any number of ferns on the floor | 97.8% | 2 | none, but 73.1% if the ferns come first |
-| The tallest 45% on stools, by height (cut 0.96 m) | 94.7% | 69 | 667 of 1,049 |
-| Stars on stools, ferns the floor | 97.8% | 4 | 916 of 1,049 |
+| The same, with any number of ferns on the floor | 97.8% | 2 | none, but 74.9% if the ferns come first |
+| The tallest 45% on stools, by height (cut 0.71 m) | 96.2% | 24 | 848 of 1,049 |
+| Stars on stools, ferns the floor | 96.2% | 41 | 934 of 1,049 |
 
 **The template's one real number is its stool share.** `simulate.py --sweep`
 tried stools from three to seven a coupe and floor rows from two to four. Every
-share between 43% and 47% fills well: 97.2% to 99.2% at two thousand. At 50%
-and above the stools are left waiting, at 94.7% down to 68.9%. At 38% and below
+share between 43% and 47% fills well: 95.2% to 98.8% at two thousand. At 50%
+and above the stools are left waiting, at 94.7% down to 68.9%. At 40% and below
 the ferns crowd onto the floor's front rows and leave the back rows waiting, at
-95.0% down to 75.8%. Forty-five a plot, seven stools and four a row, holds
+95.2% down to 75.8%. Forty-five a plot, seven stools and four a row, holds
 98.8%. It was passed over because a wood that dense is a border. Twenty-one a
-plot holds 99.2%, but at seven plants a coupe the stages are too thin to read.
+plot holds 98.2%, but at seven plants a coupe the stages are too thin to read.
 
 ### Decided, 24 September 2026
 
@@ -1193,10 +1241,10 @@ numbers exactly, because the tests draw the design's fresh sample
 (`coppice-fresh`) in the same order:
 
 - **At five hundred: 16 plots, 14 full, 94.9% of places held**, nothing empty
-  in a settled plot, 257 of 268 plants on the floor in their own row, and 2
+  in a settled plot, 259 of 268 plants on the floor in their own row, and 2
   ferns on the floor.
-- **The closest star over a cut fern stands 0.23 m clear of it**, and the
-  tallest cut fern is 0.35 m. `CoppiceTests` grows every fern on a stool at
+- **The closest star over a cut fern stands 0.15 m clear of it**, and the
+  tallest cut fern is 0.36 m (0.23 m and 0.35 m before 24 September 2026). `CoppiceTests` grows every fern on a stool at
   `Coppice.cutDrawn` to hold that.
 - **No star is on a stool, no floor holds two ferns, and nothing stands out of
   order**, in the Swift and in the port.
@@ -1259,17 +1307,17 @@ button, since the service stays in year 0 until 21 December 2026).
   while all four look equally used. **`<` and not `<=` on that count** is the
   thing the port has to get right, and the only thing it could get wrong while
   agreeing about every number.
-- **Cuts at 0.97 m and 1.43 m**, measured at the 50th and 83rd centiles of three
-  hundred crossings for a bed of 3:2:1. Deliberately neither the walk's
-  0.93/1.28 nor the room's 1.13: the same population divided three ways by three
-  templates.
+- **Cuts at 0.91 m and 1.30 m**, measured at the 50th and 83rd centiles of three
+  hundred crossings for a bed of 3:2:1 (0.97 m and 1.43 m before 24 September
+  2026). Deliberately neither the walk's 0.77/1.20 nor the room's 1.09: the same
+  population divided three ways by three templates.
 - **The three at the path rank share an arc**, which is what frees them from
   having to be in order with each other. Only ranks are compared, never
   distances, so the rule never has to say which of three equals stands in front
   of which.
-- **At 500 arrivals: 21 plots, 20 full**, the growing one holding 21 with its
-  quarters at 6, 5, 5, 5. 484 of 501 plants got a slot of their own rank; the
-  other 17 took the rank beside it.
+- **At 500 arrivals: 22 plots, 20 full**, the two at the growing end holding 15
+  and 6. 478 of 501 plants got a slot of their own rank; the other 23 took the
+  rank beside it.
 - **The rule held first time**, as the room's did, and for the same reason: it
   borrowed a shape that had already been argued about rather than inventing one.
 - **The quarters are grass, not beds.** They were bare soil until Marcus looked
@@ -1280,7 +1328,7 @@ button, since the service stays in year 0 until 21 December 2026).
 - **A round of paving, and the first structure that is neither hedge nor
   bench.** `Organic.roundel`: a low disc standing proud of the grass with a
   wandering edge and a rim down to the ground. It holds no plant, which is what
-  lets the 0.61 m meeting ambassador be a plot's first arrival — the same test
+  lets the 0.46 m meeting ambassador be a plot's first arrival — the same test
   the Quiet Garden's specimen had to pass.
 
 **What looking found**, all of it in the drawing and all of it about the
@@ -1749,6 +1797,42 @@ northern one is at least as tall; chance is half.
   beds that read as crops. At one spacing, 91% of umbels would be wider than
   the gap to their neighbour and half the rosettes less than half as wide as
   theirs: a thicket in one bed and a scatter in another.
+
+### Simulated again on the new shapes, 24 September 2026
+
+The same package, run again after the plants' shapes changed (its samples are
+now kept under the name of what the plants grow into, so an old sample cannot
+answer for a new SeedCore). **The decided design fills as it did**: rule D holds
+8 plots and 91% at a fresh five hundred, 29 plots and 97% at two thousand, and
+9 plots and 92% in the village, the same as above, and every bed still stands
+everything from its north end at least as tall as everything from its south.
+Pairs in shading order are 76%, 76% and 68% (72–78% above); E, three bands,
+does worse than it did (83% at a fresh five hundred, 70% and eleven plots in
+the village).
+
+What moved is the plants, and it touches two decisions before anything is
+built:
+
+| Root | Height, median (range) | Across, median (90th centile) |
+| --- | --- | --- |
+| `Cer` spire | 1.35 m (0.60–2.32) | 0.47 m (0.70) |
+| `Fen` umbel | 0.93 m (0.40–1.60) | 0.67 m (0.95) |
+| `Pell` succulent | 0.28 m (0.11–0.61) | 0.38 m (0.51) |
+
+- **The rosettes are nearly twice as wide**, 0.38 m against the 0.28 m they are
+  spaced at, so 88% of them are wider than the gap to their neighbour (one in
+  eight was), and spires and umbels 63% and 61% (about half were). Six in a
+  hundred spires and five in a hundred umbels reach more than 0.2 m into a path
+  (2% was the most). *Each crop spaced at about its own median spread* would
+  now put rosettes at about 0.38 m, three across and ten rows, thirty a bed:
+  worth deciding before the bed is built.
+- **The cuts**: spire 1.346 m, umbel 0.932 m, succulent 0.275 m. At the rounded
+  umbel cut a fresh arrival in the village stands 0.009 mm from it, under
+  `VectorFile.height`, so the built cut will need nudging off it the way the
+  other areas' comments describe. The umbel's median is no longer beside the
+  Long Walk's cut, which is 0.77 m now; the argument for not borrowing it stands
+  without the coincidence.
+- The ambassador, *Fenunora patentifolia*, is 1.100 m tall and 1.06 m across.
 
 ### Decided, 24 September 2026
 

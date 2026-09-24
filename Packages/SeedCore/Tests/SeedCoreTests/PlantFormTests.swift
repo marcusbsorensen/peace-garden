@@ -101,10 +101,18 @@ final class PlantFormTests: XCTestCase {
         // the two solitary heads by 28 and 24. The widths and heights did not
         // move at all, which is the number worth reading here: the dome sits
         // inside the flower's own footprint and does not reach past it.
+        //
+        // **Raised again for the shapes of 24 September 2026**, and this time
+        // the sizes moved on purpose: crown leaves at every foot, a calyx under
+        // every flower and seventeen rows to a petal put on the vertices
+        // (9775, 3437 and 3832 before), and the three widened (46, 46 and 26 cm
+        // before). The lotus is a water lily at 35 cm, where it stood 75 on a
+        // stalk, and the succulent a rosette at 33, where it was a column of 46.
+        // The umbel's height is where it was.
         let expected: [String: (vertices: Int, width: Int, height: Int)] = [
-            "vector-a": (9775, 46, 73),
-            "vector-b": (3437, 46, 75),
-            "vector-c": (3832, 26, 46)
+            "vector-a": (13566, 52, 73),
+            "vector-b": (5692, 65, 35),
+            "vector-c": (5963, 35, 33)
         ]
 
         for (label, want) in expected.sorted(by: { $0.key < $1.key }) {

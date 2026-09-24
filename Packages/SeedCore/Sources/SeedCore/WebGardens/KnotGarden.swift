@@ -324,15 +324,17 @@ public enum KnotGarden {
     /// two at the sides and one furthest out — the same 1:2:1 an orchard guild
     /// is — so it divides the same population of grown heights the same way, and
     /// the 25th and 75th centiles of three hundred crossings are where they were
-    /// when `Orchard` measured them: 0.752 m and 1.295 m, set at 0.75 and 1.30.
+    /// when `Orchard` measured them: 0.583 m and 1.202 m, set at 0.58 and 1.20,
+    /// since the plants' shapes changed on 24 September 2026 (they were 0.75
+    /// and 1.30).
     ///
     /// This is the first area to share its cuts with another, and naming the
     /// reuse is the honest thing. Re-measuring would have produced the same two
     /// numbers and presented them as an independent finding, which is a way of
     /// making one fact look like two.
     ///
-    /// They are not the walk's 0.93 and 1.28, not the room's 1.13 and not the
-    /// crossing's 0.97 and 1.43, and none of those is wrong: a border of 5:4:3
+    /// They are not the walk's 0.77, not the room's 1.09 and not the
+    /// crossing's 0.91 and 1.30, and none of those is wrong: a border of 5:4:3
     /// rows, a group of one back and two arms, and a bed of 3:2:1 divide the
     /// same population differently again.
     public static let sideFrom = Orchard.flankFrom

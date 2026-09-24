@@ -88,11 +88,13 @@ public enum Coppice {
 
     // MARK: Which row
 
-    /// **The median of the area's own stars.** 2,084 stars of the Coppice's
-    /// own, measured as the Cold Frame's cut was, divide 48.4% to the back at
-    /// 1.10 m. A borrowed cut would divide them unevenly: the Orchard's 1.30
-    /// puts 28% at the back, the Long Walk's 0.93 puts 67%.
-    public static let backFrom = 1.10
+    /// **The median of the area's own stars.** The 1,035 stars of the design's
+    /// sample (`tools/coppice/sample.json`) stand at a median of 1.001 m, set
+    /// at 1.00, and it divides the 1,049 of the fresh sample 49.0% to the back.
+    /// A borrowed cut would divide them unevenly: the Orchard's 1.20 puts 28%
+    /// at the back, the Long Walk's 0.77 puts 75%. It was 1.10 until the
+    /// plants' shapes changed on 24 September 2026, measured the same way.
+    public static let backFrom = 1.00
 
     /// Where a plant stands in a coupe: on a stool, or in one of the floor's
     /// two rows. **The back row is `z−` of the stools**, further from the eye
@@ -190,8 +192,8 @@ public enum Coppice {
     /// shoots with their leaves not yet open, and no bud. The Cold Frame's
     /// young state without its bud, so the two are the same kind of thing: a
     /// stage assembled for drawing, never stored and never read by the rule.
-    /// Draws the area's ferns between 0.08 and 0.41 m, so the shortest star,
-    /// 0.52 m, stands over every cut fern.
+    /// Draws the area's ferns between 0.08 and 0.38 m, so the shortest star,
+    /// 0.43 m, stands over every cut fern.
     public static let cutDrawn: GrowthModel.State = {
         var state = ColdFrame.drawn
         state.heightScale = 0.30
@@ -201,7 +203,7 @@ public enum Coppice {
     }()
 
     /// **How a fern on a stool is drawn in the year after**: most of its
-    /// height, its leaves nearly open, in bud. 0.20 to 0.98 m, median 0.51.
+    /// height, its leaves nearly open, in bud. 0.15 to 0.65 m, median 0.35.
     public static let regrowingDrawn: GrowthModel.State = {
         var state = ColdFrame.drawn
         state.stageProgress = 0.8
@@ -282,7 +284,7 @@ public enum Coppice {
         ///
         /// **A star:**
         ///
-        /// 1. Its own row of the floor — the back from 1.10 m up, the front
+        /// 1. Its own row of the floor — the back from 1.00 m up, the front
         ///    below — oldest plot first, and within a plot the coupe with
         ///    fewest on its floor.
         /// 2. Failing that, the other row on the same terms, but only if
@@ -390,7 +392,7 @@ public enum Coppice {
 
     /// **The first plant in the Coppice**, and the one it is drawn with
     /// before anybody has released anything into it: `Ambassadors.of(.renewal)`
-    /// placed by this rule into an empty area. A star under 1.10 m, so it opens
+    /// placed by this rule into an empty area. A star under 1.00 m, so it opens
     /// plot 0 in the front row of coupe 0. Derived rather than stored, as the
     /// other eight are.
     public static let ambassador: Planting = Ways.opened().plantings[0]

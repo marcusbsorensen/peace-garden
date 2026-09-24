@@ -98,7 +98,9 @@ def draw_backdrop(image, palette):
 # end, a lid facing away, a surface wound inside out all come out looking solid.
 # It is the reason the hole in the foot of every stem lived here undetected —
 # `preview` was rendering the mesh, faithfully, and quietly closing it.
-DOUBLE_SIDED = {"stem", "leaf", "petal"}
+#
+# `calyx` is double-sided in the app too: its sepals are single sheets.
+DOUBLE_SIDED = {"stem", "leaf", "petal", "calyx"}
 
 
 def render(genome, growth, size=(420, 620), yaw=0.55, pitch=0.08, supersample=2,

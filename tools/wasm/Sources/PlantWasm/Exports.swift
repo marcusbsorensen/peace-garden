@@ -91,7 +91,7 @@ enum PlantBuffer {
         case .leaf: side = 256
         case .petal: side = 192
         case .centre: side = 96
-        case .stem, .stamen: side = 64
+        case .stem, .stamen, .calyx: side = 64
         }
         put(UInt32(side), &out)
         out.reserveCapacity(out.count + side * side * 4)

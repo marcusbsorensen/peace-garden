@@ -41,7 +41,7 @@ final class KnotGarden
      * The Orchard's cuts, named as the Orchard's rather than written out again.
      * A compartment of four graded outward is the same 1:2:1 a guild is, so it
      * divides the same population of grown heights the same way — and a second
-     * copy of 0.75 and 1.30 would be a number that could drift from the one it
+     * copy of 0.58 and 1.20 would be a number that could drift from the one it
      * is a copy of.
      */
     public const SIDE_FROM = Orchard::FLANK_FROM;

@@ -176,16 +176,155 @@ The new keys are `stem.branch.count`, `stem.branch.spread` and
 `stem.branch.angle`. **Nothing already there was renamed**, which is the only
 property here that could not have been repaired afterwards.
 
+## Habit: how wide a plant stands
+
+Added 24 September 2026, as a prototype for looking at. **Every plant was a
+stick.** Across six thousand seeds the median plant was a metre tall and
+forty-five centimetres across, height over spread 2.15, and six in a hundred
+were wider than tall — nearly all of them plumes. The inflorescence work above
+gave the tops of plants somewhere to go; nothing gave the bottoms anywhere.
+Leaves sat only on nodes between 16% and 90% of the way up the stem, and a
+leaf's length was drawn without reference to the stem, so spread plateaued near
+half a metre whatever the height.
+
+`ArchetypeProfile` now carries a habit as well as an inflorescence, and
+`Genome.Habit` is drawn from it under new `habit.` keys:
+
+- **Crown leaves.** Leaves from the foot of the stem, outermost first, each one
+  in smaller (`crownTaper`) and more upright than the last, on the golden angle.
+  That one rule is a rosette, a fern's vase and a poppy's clump. Most families
+  get a few as a basal clump; `rosette` families carry *all* their leaves there
+  and their stem becomes a flowering stalk — **succulent, fern, orchid, lotus**.
+  A rosette that does not flower keeps only a stub of stem.
+- **Crown leaves arch rather than sag.** The old sag pushes a straight midrib
+  sideways, which kinks a near-upright blade. An arch turns the midrib along its
+  length at constant curvature, capped so the tip never goes below the crown.
+- **Pads** (lotus): round, peltate, barely cupped, overlapping, on short
+  curved petioles drawn as leaf. The lotus's stem is sized from its pads, so the
+  flower — smaller than a pad, opening wide — stands just clear of them: a
+  water lily rather than a flower on a stalk over some leaves.
+- **Fleshy leaves** (succulent): a second surface bowed the other way, so the
+  leaf has a body; smooth (no teeth, veins or deep fold, which crumpled it) and
+  pointed. The centre opens rather than standing up (`crownRise`), and the tips
+  turn up only a little — both the other way, and a rosette closes into a box.
+- **Pinnae** (fern): fronds cut nearly to the midrib, so a frond from the crown
+  still reads as a fern rather than an agave.
+- **`leafReach`**: stem leaves are scaled by the stem's height, part-way, so a
+  tall plant is not a twig. Kept off `foliage.length`, which the epithets read.
+- **`nodeZone`**: where the nodes sit, per family — low and short on a poppy.
+
+**Young plants are no taller than they were.** Crown leaves open first, and at
+first they grew at the stem leaves' rate, so a young fern came out a fifth taller
+than before — over the Cold Frame's glass and level with the Coppice's stars. A
+crown leaf now grows with the plant's height by as much as it stands upright:
+a fern's fronds wholly, a succulent's lying leaves hardly at all.
+
+A basal leaf is held to sixty centimetres however tall its plant, so that
+bells and stars are fuller at the foot without wearing rhubarb.
+
+**Names do not move.** `leafCount` is still nodes times leaves per node, the
+count the epithet reads; crown leaves are added on top. No existing key was
+renamed or re-ranged, and the archetype draw is untouched. Heights did move for
+six families — fern, orchid, lotus, succulent, star, plume — because their
+habit changed, and a plume's spray reaches a little less far.
+
+Measured on the same six thousand seeds: height over spread 2.15 → 1.28,
+wider than tall 6% → 31%, under half a metre 6% → 22%, widest plant 2.2m →
+1.45m, median height 0.99m → 0.85m. Spire, vine and thistle stay towers.
+
+Drawn young at `ColdFrame.drawn` the tallest front and back plants in the Cold
+Frame are 0.32m and 0.34m (0.38m and 0.45m before), and at `Coppice.cutDrawn`
+the tallest fern is 0.36m, as before. The shortest are lotuses and succulents
+at 0.04–0.06m — a bud on a short stalk over pads, a young rosette — under the
+0.08m the Cold Frame's test asks of a seedling. A low plant is legible by its width;
+whether the frame should ask that of it is for when the areas are re-measured.
+
+**Not yet done**: the areas' cuts, the recorded vectors and the Python port all
+still describe the old shapes.
+
+## What holds a flower from beneath
+
+Added 24 September 2026. **The ring under every flower was its centre.** The
+centre was a dome sized by the gene alone — a lotus's reached nine-tenths of a
+petal — centred on the single point every petal sprang from, so the petals
+pierced it and its rim hung outside them. It was open underneath, and the web
+lights back faces, so from below it was the inside of a bowl. Nothing green sat
+under the petals; seven plants in ten had reflexed sepals whatever they were.
+
+- **The centre is at most a third of a petal**, capped in `addBloom` rather than
+  in the gene, so the gene still orders centres and no draw moved.
+- **Petals stand on its rim**, at nine-tenths of its radius, shortened by half
+  of that so the flower is as wide as it was.
+- **A closed body underneath**, from a point on the stalk to just outside the
+  centre's rim, where it turns in under it: the centre's dome and it are one
+  closed shape, so there is no inside to show from any side. What it is is the
+  family's (`Calyx` on `ArchetypeProfile`, carried on `Genome.Bloom`): a small
+  green cup (lotus, bell, spire, vine, succulent, plume, fern); a wide shallow
+  one (star); a bulbous urn of scales tapering into the stalk (thistle); and in
+  the stem's own colour, a swelling (poppy), a thickened stalk (orchid) or a
+  bare lid (umbel).
+- **Sepals are carried the family's way** (`Sepals`): reflexed on a star, five
+  slender spreading lobes on a bell, short lobes held up against the petals on
+  spire, vine, succulent and plume, none on poppy, umbel, orchid, thistle,
+  lotus and fern. `bloom.hasSepals` still decides which plants show them, except
+  a bell, which always has its five.
+- **A new mesh role, `calyx`**, for the cup and the sepals: the leaf's own
+  colour, fresh, where the stem's came out dark olive. It is last in `MeshRole`
+  because the web and the WebAssembly buffer name a role by its index. Every
+  place that lists roles has it: `PaletteRamp` (colour and relief), the app's
+  `GradientTexture` and `PlantSceneBuilder`, the wasm bake in
+  `tools/wasm/.../Exports.swift`, and `ROLES` in `Server/assets/js/plant.js`.
+
+Ported to `tools/preview/plant_model.py` on 24 September 2026, with the habit
+above and the petal outline below; see its README for what the port still
+lacks.
+
+## A petal's outline
+
+Added 24 September 2026. **Every petal ended in a point.** One profile drew
+petals and leaves alike, `bladeProfile`: a lens whose width falls to nothing at
+the tip, with the tip gene (0.6 to 2.4, drawn the same for every family) raising
+it to a power, so four petals in five were drawn out into a concave needle. It
+was sampled at thirteen even rows, so the edge was a polygon of twelve straight
+sides and the tip, where a round end has all its curve, was one straight cut.
+A poppy or a water lily read as a star of spikes.
+
+- **The outline is the family's** (`PetalOutline` on `ArchetypeProfile`, carried
+  on `Genome.Bloom`). Round for ten families; pointed for the star, named for
+  its sharp petals, and the thistle, whose florets are spines.
+- **A round petal** (`PlantBuilder.petalProfile`) widens from a narrow claw on a
+  quarter sine to its widest point, then closes on a quarter superellipse whose
+  tangent at the tip is square to the midrib: a round end, never a point, and no
+  corner anywhere. The tip gene now says how round: at its bluntest the widest
+  point is at 0.62 of the petal and the end fuller than a circle; at its
+  sharpest the widest point is at 0.48 and the end a softly pointed oval. The
+  widest is as wide as the lens was.
+- **It is dished a little across**, its edges turned in toward the flower's
+  middle, which is what makes the end read as round from the side.
+- **A poppy's is creased** (`petalCrumple`): two soft waves at an angle to the
+  midrib, strongest toward the edge and the tip, phased by the petal's place
+  round the flower, so no draw is spent.
+- **Seventeen rows, drawn in toward the tip** (`petalRow`, `v + v² − v³`), for
+  every petal including the pointed ones: even at the base and closest at the
+  tip, so the rows fall evenly round a round end and a star's taper is a curve
+  rather than facets.
+- **A petal's length along its midrib is what it was**, so blooms keep their
+  reach. Over 3,000 minted seeds the median change in grown height is 0 mm for
+  most families, +1 mm lotus, +3 mm poppy, +5 mm orchid (largest 59 mm, a
+  nodding poppy), and in spread 0 mm except poppy +3 mm. No gene was added or
+  moved. The largest mesh of the 3,000 went from 74,712 triangles to 90,840,
+  against the budget test's 120,000.
+
 ## What is left
 
-- **The centre dome of a large solitary bloom has a hard bright rim.** Visible
-  on the poppy and the lotus in the preview sheet, less so in the app. It is the
-  existing centre treatment scaled up rather than anything new, and it is a
-  shading question rather than a geometry one.
+- ~~**The centre dome of a large solitary bloom has a hard bright rim.**~~ It
+  was geometry after all, not shading — see "What holds a flower from beneath".
 - **Leaves stay on the main stem's nodes in all three forms.** As specified —
   the branches of an umbel are bare in life, and leaves on them would be a
   fourth thing to tune.
-- **`tools/preview` has drifted further.** The branch code in it is a faithful
-  mirror written alongside the Swift, but the stems there still lack
-  `apexPoint`, the bloom lag and the foot dome. `SeedCore` is authoritative;
-  the preview is for judging shape.
+- ~~**`tools/preview` has drifted further.**~~ Brought level on 24 September
+  2026 with the habit, the calyx and the round petal, and the crozier, the apex
+  point, `leaf.taper.N` and `bloom.lean.N` with them; compared by hand against
+  SeedCore's own meshes, every vertex count equal and every bound within Float
+  precision. It still lacks the `maturity` vertex attribute and twelve palette
+  draws. `SeedCore` is authoritative; the preview is for judging shape.

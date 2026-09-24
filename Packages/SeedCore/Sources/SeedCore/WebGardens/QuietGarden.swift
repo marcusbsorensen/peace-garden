@@ -94,15 +94,17 @@ public enum QuietGarden {
 
     /// **The cut, measured then set to fit the slots.** Across three hundred
     /// crossings of three hundred different pairs of parents, grown heights run
-    /// 0.24 m to 2.04 m. A group is one back and two arms, so the back wants the
+    /// 0.15 m to 2.31 m. A group is one back and two arms, so the back wants the
     /// tallest third of the population and the cut belongs at the 67th centile,
-    /// which measured 1.133 m. Set at 1.13.
+    /// which measured 1.090 m. Set at 1.09. It was 1.13 until the plants'
+    /// shapes changed on 24 September 2026, and was measured again then on the
+    /// Long Walk's three hundred.
     ///
-    /// It is not the Long Walk's 1.28 m and should not be: that cut divides
+    /// It is not the Long Walk's 1.20 m and should not be: that cut divides
     /// three tiers of a border in the proportion 5:4:3, and this one divides a
     /// group of three one way. The same plant is the middle of a border there
     /// and the back of a group here, which is what having two areas means.
-    public static let backFrom = 1.13
+    public static let backFrom = 1.09
 
     public static func stand(height: Double) -> Stand {
         height < backFrom ? .arm : .back

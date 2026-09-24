@@ -116,12 +116,23 @@ struct SplitMix {
 
 /// Samples are slow to grow — every plant builds its mesh — so they are kept
 /// between runs in the package's own build directory, which git ignores.
+///
+/// **Named by what the plants grow into**, since the shapes changed on 24
+/// September 2026: a sample kept by name alone went on answering with the old
+/// heights after SeedCore had moved, and nothing said so. The stamp is the
+/// ambassador's grown height to the bit, so a SeedCore that grows plants
+/// differently grows a fresh sample.
 enum Cache {
+    static let stamp: String = {
+        let bounds = Maturity.bounds(for: Ambassadors.of(.ground).genome)
+        return String((bounds.max.y - bounds.min.y).bitPattern, radix: 16)
+    }()
+
     static func load(_ name: String, make: () -> (plants: [Plant], crossings: Int)) -> (plants: [Plant], crossings: Int) {
         let dir = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
             .appendingPathComponent(".build/samples")
-        let file = dir.appendingPathComponent("\(name).json")
+        let file = dir.appendingPathComponent("\(name)-\(stamp).json")
         struct Stored: Codable { var plants: [Plant]; var crossings: Int }
         if let data = try? Data(contentsOf: file), let stored = try? JSONDecoder().decode(Stored.self, from: data) {
             return (stored.plants, stored.crossings)
