@@ -129,6 +129,10 @@ if ($copy !== '') {
 }
 check('the copy says how many arrivals it holds', ($counts['long_walk'] ?? -1) === 4);
 check('the copy says how many offers it holds', ($counts['walk_offers'] ?? -1) === 1);
+// The key a withdrawn offer's fingerprints are made under. Without it a
+// restored `walk_offers` could no longer recognise a withdrawn plant offered
+// again, so it travels with the offers.
+check('the copy carries the offers\' key', ($counts['offer_key'] ?? -1) === 1);
 check('the copy counts the arrival lock', ($counts['long_walk_lock'] ?? -1) === 1);
 check('the copy holds the Quiet Garden', ($counts['quiet_garden'] ?? -1) === 1);
 check('the copy holds the Crossing', ($counts['crossing'] ?? -1) === 1);
@@ -230,7 +234,9 @@ $keeping = scratch();
 for ($i = 1; $i <= KEEP + 5; $i++) {
     touch(sprintf('%s/walk-2026-01-%02dT000000Z.sql.gz', $keeping, $i));
 }
-$dropped = prune($keeping);
+// Pruned on the day of the newest, so the thirty days reach back over all of
+// them and it is the count alone that decides.
+$dropped = prune($keeping, gmmktime(0, 0, 0, 1, KEEP + 5, 2026));
 $left = glob("$keeping/walk-*.sql.gz") ?: [];
 check('pruning drops the extras', $dropped === 5);
 check('pruning leaves as many as it keeps', count($left) === KEEP);
@@ -238,6 +244,28 @@ sort($left);
 check('pruning keeps the newest', str_contains(end($left), sprintf('01-%02d', KEEP + 5)));
 check('pruning takes the oldest first', !str_contains(implode(' ', $left), 'walk-2026-01-01'));
 check('pruning a folder with few in it takes none', prune($into) === 0);
+
+// **And thirty days, not only thirty copies.** A week of cron not running
+// leaves fewer than thirty copies reaching further back than thirty days, and
+// the privacy page promises the days. The newest stays whatever its age.
+$aging = scratch();
+$day = 86400;
+$taken = gmmktime(3, 17, 0, 9, 24, 2026);
+foreach ([45, 31, 30, 29, 1, 0] as $daysAgo) {
+    touch(sprintf('%s/walk-%s.sql.gz', $aging, gmdate('Y-m-d\\THis\\Z', $taken - $daysAgo * $day)));
+}
+touch("$aging/walk-by-hand.sql.gz");
+check('copies older than thirty days go, however few there are', prune($aging, $taken + 60) === 3);
+$kept = array_map('basename', glob("$aging/walk-*.sql.gz") ?: []);
+check('the ones inside thirty days stay', count($kept) === 4 && in_array('walk-2026-08-26T031700Z.sql.gz', $kept, true));
+check('a copy with no stamp in its name is not pruned', in_array('walk-by-hand.sql.gz', $kept, true));
+$stale = scratch();
+foreach ([90, 75, 61] as $daysAgo) {
+    touch(sprintf('%s/walk-%s.sql.gz', $stale, gmdate('Y-m-d\\THis\\Z', $taken - $daysAgo * $day)));
+}
+prune($stale, $taken);
+check('the newest copy stays, however old',
+      array_map('basename', glob("$stale/walk-*.sql.gz") ?: []) === ['walk-2026-07-25T031700Z.sql.gz']);
 
 // MARK: Reading the configuration
 

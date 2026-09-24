@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/Ambassadors.php';
+require_once __DIR__ . '/TakenBack.php';
 require_once __DIR__ . '/Seedbed.php';
 
 /**
@@ -30,11 +31,23 @@ require_once __DIR__ . '/Seedbed.php';
  * wrong after a restore.
  *
  * Everything else is `WalkStore`'s, deliberately: the same append-only insert,
- * the same lock row, the same hiding rather than deleting, and the same
- * ambassador handed to the rule ahead of the stored arrivals.
+ * the same lock row, the same taking back that keeps a place and erases the
+ * plant, and the same ambassador handed to the rule ahead of the stored
+ * arrivals.
  */
 final class SeedbedStore
 {
+    /**
+     * What a planting taken back has written over, beyond the seed, the parents,
+     * the meeting and the nudge that every area writes over (`TakenBack.php`).
+     * The height and the family, which the Seedbed's rule never reads. The kind
+     * stays: the first plant sown in a drill is what claimed it, and a drill
+     * whose claim had been blanked would be handed to the next kind to arrive.
+     * The slot stays too, though the rule counts a drill rather than reading
+     * it, because it is where the gap is.
+     */
+    private const TAKEN_BACK = ['height' => 0.0, 'family' => 0];
+
     public function __construct(private PDO $db)
     {
         $this->migrate();
@@ -68,6 +81,11 @@ final class SeedbedStore
         $this->run('CREATE INDEX IF NOT EXISTS seedbed_plot ON seedbed (plot)');
         $this->run('CREATE TABLE IF NOT EXISTS seedbed_lock (id INTEGER PRIMARY KEY, arrivals INTEGER NOT NULL)');
         $this->run('INSERT INTO seedbed_lock (id, arrivals) SELECT 1, 0 WHERE NOT EXISTS (SELECT 1 FROM seedbed_lock)');
+        // Added on 24 September, when taking back began to delete: a row hidden
+        // before then still holds the seed, the parents and the meeting, and
+        // this erases it. Every request, and nothing to do once it has run.
+        $this->run('CREATE INDEX IF NOT EXISTS seedbed_hidden ON seedbed (hidden)');
+        TakenBack::sweep($this->db, 'seedbed', self::TAKEN_BACK);
     }
 
     /**
@@ -146,11 +164,13 @@ final class SeedbedStore
         return $plantings;
     }
 
-    /** Takes a planting out of the drawing without taking it out of the area. */
-    public function hide(string $seed): void
+    /**
+     * Takes a planting back: out of the drawing, and out of the database but for
+     * its place and what the rule reads. The area keeps the gap.
+     */
+    public function takeBack(string $seed): void
     {
-        $update = $this->db->prepare('UPDATE seedbed SET hidden = 1 WHERE seed = ?');
-        $update->execute([$seed]);
+        TakenBack::lift($this->db, 'seedbed', self::TAKEN_BACK, $seed);
     }
 
     /**

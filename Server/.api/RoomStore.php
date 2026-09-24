@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/Ambassadors.php';
+require_once __DIR__ . '/TakenBack.php';
 require_once __DIR__ . '/QuietGarden.php';
 
 /**
@@ -17,13 +18,22 @@ require_once __DIR__ . '/QuietGarden.php';
  * walk's own table, which is live and append-only, out of this entirely.
  *
  * Everything else is `WalkStore`'s, deliberately: the same append-only insert,
- * the same lock row, the same hiding rather than deleting, and the same
- * ambassador handed to the rule ahead of the stored arrivals. Two areas with
- * two different answers to *what happens when a gardener takes a plant back*
- * would be two gardens.
+ * the same lock row, the same taking back that keeps a place and erases the
+ * plant, and the same ambassador handed to the rule ahead of the stored
+ * arrivals. Two areas with two different answers to *what happens when a
+ * gardener takes a plant back* would be two gardens.
  */
 final class RoomStore
 {
+    /**
+     * What a planting taken back has written over, beyond the seed, the parents,
+     * the meeting and the nudge that every area writes over (`TakenBack.php`).
+     * Nothing: the room's rule reads the height of every plant in a group (the
+     * back stands at least as tall as its arms) and the family of the plant that
+     * founded each group, so both stay.
+     */
+    private const TAKEN_BACK = [];
+
     public function __construct(private PDO $db)
     {
         $this->migrate();
@@ -56,6 +66,11 @@ final class RoomStore
         $this->run('CREATE INDEX IF NOT EXISTS quiet_garden_plot ON quiet_garden (plot)');
         $this->run('CREATE TABLE IF NOT EXISTS quiet_garden_lock (id INTEGER PRIMARY KEY, arrivals INTEGER NOT NULL)');
         $this->run('INSERT INTO quiet_garden_lock (id, arrivals) SELECT 1, 0 WHERE NOT EXISTS (SELECT 1 FROM quiet_garden_lock)');
+        // Added on 24 September, when taking back began to delete: a row hidden
+        // before then still holds the seed, the parents and the meeting, and
+        // this erases it. Every request, and nothing to do once it has run.
+        $this->run('CREATE INDEX IF NOT EXISTS quiet_garden_hidden ON quiet_garden (hidden)');
+        TakenBack::sweep($this->db, 'quiet_garden', self::TAKEN_BACK);
     }
 
     /**
@@ -133,11 +148,13 @@ final class RoomStore
         return $plantings;
     }
 
-    /** Takes a planting out of the drawing without taking it out of the room. */
-    public function hide(string $seed): void
+    /**
+     * Takes a planting back: out of the drawing, and out of the database but for
+     * its place and what the rule reads. The room keeps the gap.
+     */
+    public function takeBack(string $seed): void
     {
-        $update = $this->db->prepare('UPDATE quiet_garden SET hidden = 1 WHERE seed = ?');
-        $update->execute([$seed]);
+        TakenBack::lift($this->db, 'quiet_garden', self::TAKEN_BACK, $seed);
     }
 
     /**

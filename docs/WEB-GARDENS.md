@@ -1427,9 +1427,13 @@ meeting leaves on the two phones. `Server/.api/Offers.php`, `Server/README.md`
   carry one — which would let the offerer be reached but not the replier — is
   open, and is a change to the link format.
 - **Withdrawing is either gardener's, at any time, without the other.** An
-  accepted planting is hidden rather than deleted: the walk stays append-only,
-  the slot stays taken, and the border is left with a gap, which is what lifting
-  a plant out of a border leaves.
+  accepted planting keeps its place, hidden: the walk stays append-only, the
+  slot stays taken, and the border is left with a gap, which is what lifting a
+  plant out of a border leaves. **Everything else about it is deleted** (24
+  September): the seed, both parents, the meeting and the traits the area's
+  rule does not read, and the offer keeps only fingerprints (`Server/.api/
+  TakenBack.php`, `Offers.php`). An offer nobody answers lapses into a
+  withdrawal after thirty days.
 
 ## Open questions
 

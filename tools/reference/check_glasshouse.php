@@ -151,3 +151,8 @@ if ($failed !== []) {
 printf("The PHP places all %d arrivals where the Swift does, across %d plots, "
      . "%d in pots and %d in the border, %d of %d hued pots in their own band: %d checks.\n",
     count($vectors), $plots, $pots, count($ways) - $pots, $ownBand, $hued, $checks);
+
+// **Taking back keeps the place and erases the plant**, and moves nothing that
+// arrives after it. `taking_back.php` says how that is checked.
+require_once __DIR__ . '/taking_back.php';
+takingBack('light', $vectors);

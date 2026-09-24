@@ -360,6 +360,39 @@ final class AskingTests: XCTestCase {
         XCTAssertEqual(model.garden.plants[0].standingOrHere.state, .here)
     }
 
+    /// **A withdrawal the other gardener made is still heard.** The service
+    /// erases a withdrawn offer and can no longer say which seed it was about,
+    /// so it answers with an empty seed and the token this phone asked with.
+    @MainActor
+    func testAWithdrawalWithNoSeedIsFoundByOurOwnToken() async {
+        var plant = hybrid()
+        plant.standing = Standing(state: .shown, changedAt: Date(timeIntervalSince1970: 1))
+        let model = model(with: [plant])
+        stub.replies["/api/walk/pending"] = (200, """
+        {"offers":[{"seed":"","to":"","from":"\(plant.tokens!.oursHex)",
+          "state":"withdrawn","offeredAt":1,"answeredAt":2}]}
+        """)
+
+        await model.catchUpOnTheAsking()
+
+        XCTAssertEqual(model.garden.plants[0].standingOrHere.state, .withdrawn)
+    }
+
+    @MainActor
+    func testARowWithNoSeedAndNoTokenOfOursIsIgnored() async {
+        var plant = hybrid()
+        plant.standing = Standing(state: .shown, changedAt: Date(timeIntervalSince1970: 1))
+        let model = model(with: [plant])
+        stub.replies["/api/walk/pending"] = (200, """
+        {"offers":[{"seed":"","to":"\(String(repeating: "cd", count: 16))","from":"",
+          "state":"withdrawn","offeredAt":1,"answeredAt":2}]}
+        """)
+
+        await model.catchUpOnTheAsking()
+
+        XCTAssertEqual(model.garden.plants[0].standingOrHere.state, .shown)
+    }
+
     @MainActor
     func testAServiceThatCannotAnswerLeavesThePlantWhereItWas() async {
         let plant = hybrid()

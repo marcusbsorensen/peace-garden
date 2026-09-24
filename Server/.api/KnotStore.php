@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/Ambassadors.php';
+require_once __DIR__ . '/TakenBack.php';
 require_once __DIR__ . '/KnotGarden.php';
 
 /**
@@ -23,11 +24,21 @@ require_once __DIR__ . '/KnotGarden.php';
  * restore.
  *
  * Everything else is `WalkStore`'s, deliberately: the same append-only insert,
- * the same lock row, the same hiding rather than deleting, and the same
- * ambassador handed to the rule ahead of the stored arrivals.
+ * the same lock row, the same taking back that keeps a place and erases the
+ * plant, and the same ambassador handed to the rule ahead of the stored
+ * arrivals.
  */
 final class KnotStore
 {
+    /**
+     * What a planting taken back has written over, beyond the seed, the parents,
+     * the meeting and the nudge that every area writes over (`TakenBack.php`).
+     * Nothing: the knot's rule reads the family of the first plant in each pair,
+     * which is the pair's claim, and the height of every plant in a
+     * compartment, which grades it. Both stay.
+     */
+    private const TAKEN_BACK = [];
+
     public function __construct(private PDO $db)
     {
         $this->migrate();
@@ -60,6 +71,11 @@ final class KnotStore
         $this->run('CREATE INDEX IF NOT EXISTS knot_garden_plot ON knot_garden (plot)');
         $this->run('CREATE TABLE IF NOT EXISTS knot_garden_lock (id INTEGER PRIMARY KEY, arrivals INTEGER NOT NULL)');
         $this->run('INSERT INTO knot_garden_lock (id, arrivals) SELECT 1, 0 WHERE NOT EXISTS (SELECT 1 FROM knot_garden_lock)');
+        // Added on 24 September, when taking back began to delete: a row hidden
+        // before then still holds the seed, the parents and the meeting, and
+        // this erases it. Every request, and nothing to do once it has run.
+        $this->run('CREATE INDEX IF NOT EXISTS knot_garden_hidden ON knot_garden (hidden)');
+        TakenBack::sweep($this->db, 'knot_garden', self::TAKEN_BACK);
     }
 
     /**
@@ -137,11 +153,13 @@ final class KnotStore
         return $plantings;
     }
 
-    /** Takes a planting out of the drawing without taking it out of the area. */
-    public function hide(string $seed): void
+    /**
+     * Takes a planting back: out of the drawing, and out of the database but for
+     * its place and what the rule reads. The area keeps the gap.
+     */
+    public function takeBack(string $seed): void
     {
-        $update = $this->db->prepare('UPDATE knot_garden SET hidden = 1 WHERE seed = ?');
-        $update->execute([$seed]);
+        TakenBack::lift($this->db, 'knot_garden', self::TAKEN_BACK, $seed);
     }
 
     /**

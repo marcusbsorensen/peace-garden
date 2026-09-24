@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Once a day on the Mac: delete the pulled copies of the garden older than
+  thirty days, and nothing else. `tools/backup.sh --prune`, with no pull, no
+  SSH and no server.
+
+  **Why it exists.** The privacy page says the site's backups keep what they
+  held for thirty days. The server prunes its own copies every night; the Mac
+  pruned only when somebody ran a pull, so a month without one was a month of
+  copies older than the promise. This runs whether or not anybody pulls.
+
+  **A template, not a file to copy by hand.** `tools/backup.sh --install-launchd`
+  fills in the two paths — where backup.sh is, and where the copies are — and
+  puts the result in ~/Library/LaunchAgents; `--uninstall-launchd` takes it
+  away. The log goes in the backups folder beside the copies, where the
+  server's backup and sweep logs arrive too.
+
+  09:41 because a Mac is more often awake then than at three in the morning,
+  and launchd runs a missed calendar job at the next wake rather than never.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>app.peacegarden.prune-backups</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/sh</string>
+    <string>@BACKUP_SH@</string>
+    <string>--prune</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PG_BACKUPS</key>
+    <string>@BACKUPS@</string>
+    <key>PATH</key>
+    <string>/usr/bin:/bin:/usr/sbin:/sbin</string>
+  </dict>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>9</integer>
+    <key>Minute</key>
+    <integer>41</integer>
+  </dict>
+  <key>StandardOutPath</key>
+  <string>@BACKUPS@/prune.log</string>
+  <key>StandardErrorPath</key>
+  <string>@BACKUPS@/prune.log</string>
+  <key>ProcessType</key>
+  <string>Background</string>
+</dict>
+</plist>

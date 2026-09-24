@@ -136,15 +136,22 @@ CLAIMS = {
 #
 # **Its own group, and not part of `CLAIMS`, for the reason the areas are their
 # own group: a language may have one commission and not the other.** Folding
-# these six in with the six paragraphs made every catalogue that already had
-# the prose fail as half-commissioned the moment the keys existed — 41 of 42,
-# on the first run after they were added. A group is what lets a page arrive
-# on its own.
+# these in with the six paragraphs made every catalogue that already had the
+# prose fail as half-commissioned the moment the keys existed — 41 of 42, on
+# the first run after they were added. A group is what lets a page arrive on
+# its own.
+#
+# **Eight keys since 24 September**, when the English was rewritten because it
+# had stopped being true — it said no server held a copy, and the web garden
+# does — and `privacy6` and `privacy7` were added to say what it holds and what
+# the app asks it. No language had translated the page yet, so nothing had to
+# be withdrawn.
 #
 # The claims themselves matter more here than anywhere else on the site.
 # `privacy2` is the sentence a reviewer is most likely to ask about, and the
 # one where a fluent overstatement — *nothing is sent* — would be both untrue
-# and the most reassuring thing to write.
+# and the most reassuring thing to write. `privacy6` is the one where a fluent
+# softening — *nothing is kept* — would be.
 PRIVACY = {
     "privacyTitle": {
         "seen": "The heading of /privacy.",
@@ -154,48 +161,57 @@ PRIVACY = {
     "privacy1": {
         "seen": "First paragraph of /privacy.",
         "must": [
-            "What you grow stays on your own phone.",
+            "What you grow is kept on your own phone.",
             "There is no account and nothing to sign in to.",
-            "No server holds a copy.",
         ],
         "must not": [
-            "Say data is 'encrypted' or 'secure'. Neither is the claim. The "
-            "claim is that there is nowhere else for it to be.",
+            "Say data is 'encrypted' or 'secure'. Neither is the claim here.",
+            "Say no server is involved. The web garden is one, and "
+            "`privacy6` says what it keeps.",
         ],
     },
     "privacy2": {
         "seen": "Second paragraph of /privacy — **the load-bearing one.**",
         "must": [
-            "When two phones touch, each hands the other a seed, the shown "
-            "name, and a random number.",
-            "It passes straight between the two phones.",
-            "It reaches nobody else.",
+            "When two phones touch, they connect directly and encrypted.",
+            "Each hands the other: its seed and when it was drawn, its plant's "
+            "name, the chosen name, whether a place may be kept with the "
+            "meeting, and two random numbers — one makes the meeting's plant, "
+            "one lets the other phone offer that plant to the web garden later.",
+            "While meeting, the chosen name can be seen by other phones nearby "
+            "that are open to a meeting.",
         ],
         "must not": [
-            "Say *nothing is sent*. Something is sent, to one other phone, and "
-            "a privacy page that overstates is worse than one that explains. "
-            "**This is the paragraph a reviewer is most likely to ask about** "
-            "and the one where a fluent overstatement does the most damage.",
-            "Imply a server or a service is involved in the meeting.",
+            "Leave out any item of that list, or add one. **It is the whole of "
+            "what crosses, and a reviewer reads it as that.**",
+            "Say *nothing is sent*, or that it reaches nobody else. Something is "
+            "sent, and the name is visible nearby while meeting.",
+            "Imply a server or a service is involved in the meeting itself.",
         ],
-        "note": "`SettingsView` says this same thing inside the app, in eight "
-                "languages. If your language is one of them, agree with it.",
+        "note": "`SettingsView` says the same things inside the app. If your "
+                "language has the app, agree with it.",
     },
     "privacy3": {
         "seen": "Third paragraph of /privacy.",
         "must": [
             "Seeds, plants and anything written about a meeting stay in the "
-            "app's own storage on the phone.",
-            "Removing the app removes them.",
+            "app's own storage on the phone, and in the phone's backups.",
+            "Removing the app removes them from the phone.",
         ],
-        "must not": ["Suggest a backup, an export or a way to recover them."],
+        "must not": [
+            "Say removing the app removes them everywhere. The phone's own "
+            "backups keep what they hold, which is why *from the phone* is "
+            "there.",
+        ],
     },
     "privacy4": {
         "seen": "Fourth paragraph of /privacy.",
         "must": [
             "A seed travels in a link after the # sign.",
             "That part of a web address is kept by the browser.",
-            "Opening one draws the plant on the reader's own device.",
+            "The link carries the seed and when it was drawn, the plant's name, "
+            "the chosen name and a random number.",
+            "Whoever it is sent to can read them.",
         ],
         "must not": [
             "Use the word *fragment*, or any other term of art. The reader is "
@@ -205,20 +221,71 @@ PRIVACY = {
             "explicit that a link can be forwarded and posted publicly.",
         ],
     },
+    "privacy6": {
+        "seen": "Fifth paragraph of /privacy, about the web garden.",
+        "must": [
+            "If both people agree to share a plant, the web garden keeps it: "
+            "its seed, its two parents' seeds, a number for the meeting, the "
+            "two random numbers, and what the garden needs to place it — its "
+            "height, colour, area, the second word of its name, and when it "
+            "was offered.",
+            "Anyone can see it standing in the garden.",
+            "No one's name goes with it.",
+            "Either of them can take it back; the garden then forgets the plant, "
+            "keeping only its empty place in the plot and a scrambled record, so "
+            "it cannot be planted again.",
+            "The site's backups keep what they held for thirty days.",
+            "An offer nobody answers is taken back after thirty days.",
+        ],
+        "must not": [
+            "Say *nothing is kept* after taking back, or that it is deleted "
+            "everywhere. Its empty place and a scrambled record stay, and the "
+            "backups keep it for thirty days.",
+            "Make *its empty place in the plot* sound like the plant, or a "
+            "marker with its name. It is the gap where it stood, kept so that "
+            "nothing planted after it moves.",
+            "Turn *the second word of its name* into a technical term. It is "
+            "the plant's epithet, said as a gardener would find it.",
+            "Imply the plant can be put back after it is taken back.",
+        ],
+    },
+    "privacy7": {
+        "seen": "Sixth paragraph of /privacy, about the app asking the web "
+                "garden.",
+        "must": [
+            "With alerts on, each time the app starts it asks the web garden "
+            "about your shared plants.",
+            "It asks by sending the random numbers from your meetings.",
+        ],
+        "must not": [
+            "Say it asks all the time, or in the background. It asks when it "
+            "starts.",
+            "Narrow *the random numbers from your meetings* to the shared plants' "
+            "alone. It sends one for every meeting, and the answer is about the "
+            "shared plants.",
+            "Name the setting differently from the app's own switch, if your "
+            "language has the app.",
+        ],
+    },
     "privacy5": {
         "seen": "Last paragraph of /privacy, about the website rather than "
                 "the app.",
         "must": [
-            "This site is made of plain files.",
-            "It has no advertising, no analytics and no cookies.",
+            "The site runs on a web host, with no advertising, no analytics "
+            "and no cookies.",
+            "The language choice is remembered in the reader's own browser.",
+            "To limit abuse, the web garden keeps a scrambled form of the "
+            "internet address for up to an hour.",
+            "The host keeps its usual request logs.",
         ],
         "must not": [
             "Extend the claim to the app, which is a different thing with a "
             "different answer.",
+            "Say the address is not kept, or is anonymised. It is scrambled, "
+            "and kept for an hour.",
         ],
     },
 }
-
 
 # The front page, at `/`, since 24 September 2026.
 #
@@ -824,7 +891,12 @@ def english():
     body = source[source.index("export const EN"):source.index("export const KEYS")]
     found = {}
     for match in re.finditer(r'^  (\w+):\s*\n?\s*"((?:[^"\\]|\\.)*)",', body, re.M):
-        found[match.group(1)] = match.group(2).encode().decode("unicode_escape")
+        # The escapes are undone and anything outside ASCII is kept as it is.
+        # `.encode().decode("unicode_escape")` did the first and broke the
+        # second, reading UTF-8 as Latin-1, and it went unnoticed because no
+        # English string had a character past ASCII until `privacy6`'s dash.
+        found[match.group(1)] = (match.group(2).encode("latin-1", "backslashreplace")
+                                 .decode("unicode_escape"))
     return found
 
 
@@ -908,7 +980,7 @@ def prose(catalogue, code, source):
 
 
 def privacy(catalogue, code, source):
-    """The six strings on /privacy.
+    """The eight strings on /privacy.
 
     Same brief as the six paragraphs — this is a translation, and the claims
     are the specification — so it prints `BRIEF.md` rather than a third one.
@@ -920,7 +992,7 @@ def privacy(catalogue, code, source):
     print(f"\n# {catalogue['language']} — {catalogue['endonym']}  ({code})")
     print("# The privacy page\n")
     print(f"Write into `Server/strings/{code}.json`.\n")
-    print("**Six sentences, and they are the most exact on the site.** A privacy")
+    print("**Eight strings, and they are the most exact on the site.** A privacy")
     print("notice that overstates is worse than one that explains, so the")
     print("*must not* lines below matter more here than anywhere else — see")
     print("`privacy2` in particular, which is the one a reviewer asks about.\n")
@@ -928,7 +1000,7 @@ def privacy(catalogue, code, source):
     print("## The words this language has already chosen\n")
     settled_words(theirs, source, code, [k for k in source if k not in PRIVACY])
 
-    print("\n## The six\n")
+    print("\n## The eight\n")
     for key, claim in PRIVACY.items():
         print(f"### `{key}`\n")
         print(f"> {source[key]}\n")

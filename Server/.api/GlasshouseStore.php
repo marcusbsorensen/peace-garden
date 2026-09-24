@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/Ambassadors.php';
+require_once __DIR__ . '/TakenBack.php';
 require_once __DIR__ . '/Glasshouse.php';
 
 /**
@@ -20,12 +21,13 @@ require_once __DIR__ . '/Glasshouse.php';
  * the reason `slot_index` is not `index` and `slot_rank` is not `rank`.
  *
  * **`hue` is a column here and nowhere else.** It is the one trait this area's
- * rule reads that no other does, and it is kept for the reason every area keeps
- * the traits its rule read: `plant` hands the rule every standing plant again
- * on each arrival, and the rule asks each of them its band. Nullable, because a
- * plant whose phone never sent a hue has none — and the rule reads null as it
- * reads a pale flower, so that plant takes any free pot rather than being
- * refused.
+ * rule reads that no other does — of the plant arriving, to choose its band.
+ * The rule asks the plants already standing only where they stand, which is
+ * why a planting taken back can let its hue go (`TAKEN_BACK`); it is stored for
+ * what every area stores, a record of the planting while it stands. Nullable,
+ * because a plant whose phone never sent a hue has none — and the rule reads
+ * null as it reads a pale flower, so that plant takes any free pot rather than
+ * being refused.
  *
  * **Nothing here records which band a position stands for.** That is the
  * rule's, a list of eleven edges fixed in `Glasshouse`; a pot one band off
@@ -33,11 +35,24 @@ require_once __DIR__ . '/Glasshouse.php';
  * stands and not a claim on the place.
  *
  * Everything else is `WalkStore`'s, deliberately: the same append-only insert,
- * the same lock row, the same hiding rather than deleting, and the same
- * ambassador handed to the rule ahead of the stored arrivals.
+ * the same lock row, the same taking back that keeps a place and erases the
+ * plant, and the same ambassador handed to the rule ahead of the stored
+ * arrivals.
  */
 final class GlasshouseStore
 {
+    /**
+     * What a planting taken back has written over, beyond the seed, the parents,
+     * the meeting and the nudge that every area writes over (`TakenBack.php`).
+     * The height, the family and the hue, none of which the Glasshouse's rule
+     * reads of a plant already standing: it asks only how many stand in the
+     * border of a plot, and how many pots at a position of the staging are
+     * taken. The plant's own hue and height choose its place, and are the
+     * arriving plant's, not the standing ones'. The bed, the position and the
+     * glass row stay, because those are the counts.
+     */
+    private const TAKEN_BACK = ['height' => 0.0, 'family' => 0, 'hue' => null];
+
     public function __construct(private PDO $db)
     {
         $this->migrate();
@@ -72,6 +87,11 @@ final class GlasshouseStore
         $this->run('CREATE INDEX IF NOT EXISTS glasshouse_plot ON glasshouse (plot)');
         $this->run('CREATE TABLE IF NOT EXISTS glasshouse_lock (id INTEGER PRIMARY KEY, arrivals INTEGER NOT NULL)');
         $this->run('INSERT INTO glasshouse_lock (id, arrivals) SELECT 1, 0 WHERE NOT EXISTS (SELECT 1 FROM glasshouse_lock)');
+        // Added on 24 September, when taking back began to delete: a row hidden
+        // before then still holds the seed, the parents and the meeting, and
+        // this erases it. Every request, and nothing to do once it has run.
+        $this->run('CREATE INDEX IF NOT EXISTS glasshouse_hidden ON glasshouse (hidden)');
+        TakenBack::sweep($this->db, 'glasshouse', self::TAKEN_BACK);
     }
 
     /**
@@ -154,11 +174,13 @@ final class GlasshouseStore
         return $plantings;
     }
 
-    /** Takes a planting out of the drawing without taking it out of the area. */
-    public function hide(string $seed): void
+    /**
+     * Takes a planting back: out of the drawing, and out of the database but for
+     * its place and what the rule reads. The area keeps the gap.
+     */
+    public function takeBack(string $seed): void
     {
-        $update = $this->db->prepare('UPDATE glasshouse SET hidden = 1 WHERE seed = ?');
-        $update->execute([$seed]);
+        TakenBack::lift($this->db, 'glasshouse', self::TAKEN_BACK, $seed);
     }
 
     /**

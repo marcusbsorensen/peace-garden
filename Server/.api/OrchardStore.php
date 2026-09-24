@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/Ambassadors.php';
+require_once __DIR__ . '/TakenBack.php';
 require_once __DIR__ . '/Orchard.php';
 
 /**
@@ -15,11 +16,21 @@ require_once __DIR__ . '/Orchard.php';
  * ring of four under it. There is no column any two of them could share.
  *
  * Everything else is `WalkStore`'s, deliberately: the same append-only insert,
- * the same lock row, the same hiding rather than deleting, and the same
- * ambassador handed to the rule ahead of the stored arrivals.
+ * the same lock row, the same taking back that keeps a place and erases the
+ * plant, and the same ambassador handed to the rule ahead of the stored
+ * arrivals.
  */
 final class OrchardStore
 {
+    /**
+     * What a planting taken back has written over, beyond the seed, the parents,
+     * the meeting and the nudge that every area writes over (`TakenBack.php`).
+     * The family, which the Orchard's rule never reads: it finishes one guild
+     * before the next and ranks a guild by height alone. The height stays,
+     * because a guild is graded outward by it.
+     */
+    private const TAKEN_BACK = ['family' => 0];
+
     public function __construct(private PDO $db)
     {
         $this->migrate();
@@ -52,6 +63,11 @@ final class OrchardStore
         $this->run('CREATE INDEX IF NOT EXISTS orchard_plot ON orchard (plot)');
         $this->run('CREATE TABLE IF NOT EXISTS orchard_lock (id INTEGER PRIMARY KEY, arrivals INTEGER NOT NULL)');
         $this->run('INSERT INTO orchard_lock (id, arrivals) SELECT 1, 0 WHERE NOT EXISTS (SELECT 1 FROM orchard_lock)');
+        // Added on 24 September, when taking back began to delete: a row hidden
+        // before then still holds the seed, the parents and the meeting, and
+        // this erases it. Every request, and nothing to do once it has run.
+        $this->run('CREATE INDEX IF NOT EXISTS orchard_hidden ON orchard (hidden)');
+        TakenBack::sweep($this->db, 'orchard', self::TAKEN_BACK);
     }
 
     /**
@@ -129,11 +145,13 @@ final class OrchardStore
         return $plantings;
     }
 
-    /** Takes a planting out of the drawing without taking it out of the area. */
-    public function hide(string $seed): void
+    /**
+     * Takes a planting back: out of the drawing, and out of the database but for
+     * its place and what the rule reads. The area keeps the gap.
+     */
+    public function takeBack(string $seed): void
     {
-        $update = $this->db->prepare('UPDATE orchard SET hidden = 1 WHERE seed = ?');
-        $update->execute([$seed]);
+        TakenBack::lift($this->db, 'orchard', self::TAKEN_BACK, $seed);
     }
 
     /**

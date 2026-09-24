@@ -56,7 +56,11 @@ Marcus answered all five the same day.
    `strings.js`. `privacyTitle` waits with them: the page arrives as one group.
    When it lands, `commission.py --privacy <code>` prints its sheet from the
    corrected English; check its `PRIVACY` claims against the new wording first,
-   because those are the specification the translator writes to.
+   because those are the specification the translator writes to. **Landed
+   later on 24 September**: the new English is in `strings.js`, with two new
+   paragraphs, `privacy6` and `privacy7`, and the `PRIVACY` claims were
+   rewritten to it the same day. Every catalogue carries the eight as `null`,
+   Danish included, for the round to translate next.
 5. **`FRONT` and `MEANINGS` are standing groups** in `commission.py`, checked
    by `check.py` in every catalogue — the colon, the Latin, and the site's line
    against the app's two halves. A group with nothing written is allowed, so
@@ -102,7 +106,7 @@ Marcus answered all five the same day.
 ## What each language still lacks, and why
 
 `missing.json` has it per language. Every site language but Kalaallisut lacks
-the same 89 keys:
+the same 91 keys:
 
 | Group | Keys |
 | --- | --- |
@@ -110,12 +114,12 @@ the same 89 keys:
 | **This commission: the meaning lines** (10) | `meaningWaiting` `meaningGround` `meaningBeginnings` `meaningRenewal` `meaningTravel` `meaningPeace` `meaningKinship` `meaningPattern` `meaningLight` `meaningMeeting` |
 | **This commission: `/meanings`** (4) | `meaningsTitle` `meaningsAbout` `meaningsSecond` `meaningsNames` |
 | **This commission: the part labels** (30) | `subthemeHeldBack` … `subthemeTheMannersOfIt`, three to a theme in map order |
-| The privacy page, its own sheet (6) | `privacyTitle` `privacy1`–`privacy5` — present as `null` |
+| The privacy page, its own sheet (8) | `privacyTitle` `privacy1`–`privacy7` — present as `null` |
 | The area paragraphs, English only by `strings.js` (7) | `walkAbout` `quietAbout` `crossAbout` `orchardAbout` `knotAbout` `seedbedAbout` `frameAbout` |
 | Live, uncommissioned, not in this round (17) | `walkTitle` `wildTitle` `wildBody` `downloadBody` `walkGrowing` `walkEmpty` `walkBack` `walkOn` `walkTurnAnti` `walkTurnClock` `walkAway` `quietAway` `crossAway` `orchardAway` `knotAway` `seedbedAway` `frameAway` |
 | Said nowhere on the site, kept until you decide whether they go (4) | `gardenBody` `walkBody` `goOn` — per `strings.js` — and `walkThisArea`, which no page or script uses either |
 
-**Kalaallisut** lacks those 89 and sixteen more — the six paragraphs and the
+**Kalaallisut** lacks those 91 and sixteen more — the six paragraphs and the
 ten area names — all deliberately, by its `awaiting` note.
 
 **The app's seven** each lack the 52 of this commission and **64 older strings

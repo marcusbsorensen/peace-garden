@@ -3,18 +3,28 @@
   Privacy.
 
   **A mandatory App Store listing field, and the reason this page exists at
-  all.** It is also the shortest page on the site to write honestly, because
-  the app's design is the policy: no server, no account, no sync, and no
-  network request of the app's own. There is very little to disclose and the
-  page's job is to say so plainly rather than at length.
+  all.** The app's design is most of the policy: no account, no sync, and a
+  garden kept in the app's own storage. What it does send is said in full —
+  what two phones hand each other at a meeting, what a seed's link carries,
+  what the web garden keeps of a plant two people agree to share and for how
+  long, what the app asks it on starting, and what the site keeps of a
+  visitor. Until 24 September this comment said there was no server and no
+  network request of the app's own, and the page said the same; the web
+  garden made both untrue, and the page was rewritten to Marcus's wording.
+
+  Seven paragraphs, in the order a reader meets the things they describe: the
+  phone, the meeting, the storage, the link, the web garden, the asking, and
+  the website last. The keys are numbered in the order they were made, so the
+  page reads 1, 2, 3, 4, 6, 7, 5. `strings.js` names, beside each key, the code
+  its sentence is true of.
 
   Written in the reader's own language like everything else here. Marcus's call,
   6 September 2026: the reader of this page was handed a link by somebody they
   met and is wondering whether it is a scam, so it is the one page where falling
   back to English costs the most.
 
-  Static, like every other page: no analytics, no font CDN, no third-party
-  anything — which this page then says, and would be a poor place to be lying.
+  No analytics, no font CDN, no third-party anything — which this page then
+  says, and would be a poor place to be lying.
 -->
 <html lang="en">
   <head>
@@ -71,6 +81,8 @@
       <p class="body" data-s="privacy2"></p>
       <p class="body" data-s="privacy3"></p>
       <p class="body" data-s="privacy4"></p>
+      <p class="body" data-s="privacy6"></p>
+      <p class="body" data-s="privacy7"></p>
       <p class="body" data-s="privacy5"></p>
     </main>
 

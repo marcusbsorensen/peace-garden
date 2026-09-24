@@ -60,9 +60,11 @@ function sow(string $dsn, ?string $user, ?string $password, int $arrivals): void
         );
     }
     // Two taken back, so the copy carries a row that is in the walk and not in
-    // the drawing — the case a restore is likeliest to flatten.
-    $store->hide($sown[3]);
-    $store->hide($sown[11] ?? $sown[0]);
+    // the drawing — the case a restore is likeliest to flatten, and since 24
+    // September a row whose seed is a marker, which the replay has to stand in
+    // for.
+    $store->takeBack($sown[3]);
+    $store->takeBack($sown[11] ?? $sown[0]);
 
     // And one offer of each kind, because those are copied too.
     $offers = $store->offers();
@@ -151,35 +153,44 @@ $replayed = WalkStore::open($replayedDsn, $user, $password);
 $compared = ['plot', 'side', 'tier', 'slot_index', 'height', 'family', 'nudge_x', 'nudge_z',
              'parent_a', 'parent_b', 'encounter'];
 
+// **A planting taken back is replayed as one.** Its seed is a marker and its
+// parents and meeting are gone, so it cannot be planted again as itself. What it
+// kept is what the rule reads, so a stand-in with its height and its family is
+// placed where it stood, and taking the stand-in back leaves the same row. The
+// rows are paired by their order rather than by seed for the same reason: the
+// order is the one thing every row still has.
 foreach ($rows as $row) {
+    $seed = (string) $row['seed'];
+    $standIn = TakenBack::isMarker($seed);
+    if ($standIn) $seed = hash('sha256', 'stand-in ' . $row['arrival']);
     $replayed->plant(
-        (string) $row['seed'],
-        (string) $row['parent_a'],
-        (string) $row['parent_b'],
-        (string) $row['encounter'],
+        $seed,
+        $standIn ? $seed : (string) $row['parent_a'],
+        $standIn ? $seed : (string) $row['parent_b'],
+        $standIn ? $seed : (string) $row['encounter'],
         (float) $row['height'],
         (int) $row['family']
     );
+    if ($standIn) $replayed->takeBack($seed);
 }
 
 $again = $replayed->connection()->query('SELECT * FROM long_walk ORDER BY arrival')->fetchAll();
 check('replaying the copy grows a walk of the same length', count($again) === count($rows));
 
-$bySeed = [];
-foreach ($again as $row) {
-    $bySeed[(string) $row['seed']] = $row;
-}
-
-foreach ($rows as $row) {
+foreach ($rows as $i => $row) {
     $seed = (string) $row['seed'];
-    $short = substr($seed, 0, 8);
-    if (!isset($bySeed[$seed])) {
+    $short = TakenBack::isMarker($seed) ? 'taken back ' . $row['arrival'] : substr($seed, 0, 8);
+    $replay = $again[$i] ?? null;
+    if ($replay === null) {
         check("$short is in the replayed walk", false);
         continue;
     }
+    if (!TakenBack::isMarker($seed)) {
+        check("$short is the arrival replayed in its turn", (string) $replay['seed'] === $seed);
+    }
     foreach ($compared as $column) {
         $was = $row[$column];
-        $now = $bySeed[$seed][$column];
+        $now = $replay[$column];
         $same = is_float($was) || is_float($now)
             ? abs((float) $was - (float) $now) < 1e-12
             : (string) $was === (string) $now;

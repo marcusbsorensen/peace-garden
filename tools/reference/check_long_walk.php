@@ -30,3 +30,8 @@ foreach ($vectors as $n => $v) {
     $walk[] = $p;
 }
 printf("The PHP places all %d arrivals where the Swift does, across %d plots.\n", count($vectors), LongWalk::plots($walk));
+
+// **Taking back keeps the place and erases the plant**, and moves nothing that
+// arrives after it. `taking_back.php` says how that is checked.
+require_once __DIR__ . '/taking_back.php';
+takingBack('travel', $vectors);

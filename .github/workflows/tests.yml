@@ -206,6 +206,13 @@ jobs:
       # out of their own garden by the second week and nothing would say so.
       - name: One caller cannot fill the walk
         run: php tools/reference/check_limits.php
+      # And the five-minute clean-up cron runs, for the quiet spells when no request
+      # comes to do it: an ended window and a thirty-day offer go, nothing else
+      # does, and two runs at once, or a run beside a request, erase nothing
+      # twice. What the privacy page says about an hour and thirty days rests
+      # on it.
+      - name: The sweep clears what has ended
+        run: php tools/reference/check_sweep.php
       # The nightly copy of the walk. What is checked here is the part that
       # runs with nobody watching: a dump cut short is a valid gzip of a valid
       # beginning and restores most of the walk in silence, so the copy is read
