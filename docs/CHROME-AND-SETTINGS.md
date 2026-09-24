@@ -8,6 +8,10 @@ says why — see also *[What the drawing changed](#what-the-drawing-changed)* at
 the foot, which is where the marks that could not be drawn as written are
 recorded.
 
+Some of it has moved since. Where it has, the section keeps the reasoning it
+was built on, marks the part that no longer holds as superseded with the date,
+and says what is there now. The last pass against the code was 24 September.
+
 ## What is wrong today
 
 - **Settings hides inside the seed modal.** `SeedView` is a screen about your
@@ -62,6 +66,32 @@ Reduce Motion gets a crossfade: the panel still has to arrive.
 
 `SeedView` keeps its own Close and loses its Settings button.
 
+**Superseded 2 September: the cog is at the foot, and the panel rises.** The
+whole of the chrome moved into one band at the foot of the stage — the plant's
+name, its growth stage, and four marks: seed, meet, garden, cog — so every
+control is under a thumb, which the cog in the far top corner never was. The
+Settings panel now comes up from the bottom for the same reason it once came
+down: it arrives from where the mark that opened it is. Reduce Motion still gets
+a crossfade. The two-step unroll outlived the move and became every mark's
+(`ChromeMark`); how many touches it costs is the *Menu bar* setting — Hidden,
+Marks only, or Marks and words, where the last removes the first touch. The cog
+is no longer drawn as an instrument; see *[What the drawing
+changed](#what-the-drawing-changed)*.
+
+**24 September: the seed screen gained a mark.** An open book beside the
+plant's name (`MeaningsGlyph`, in `Glyphs.swift`) opens `NameMeaningView`, a
+sheet that says what the name means — the account the website gives at
+`/meanings`. The name is set with its head and ending at full strength and a
+dot after the head, as a dictionary divides a word; the theme follows as a
+headword and definition, then the area of the shared garden it puts the plant
+in, on a row marked with `GardenGlyph`; then the theme's three parts, with the
+one the ending chooses lit and the ending set beside it. The book stands alone,
+with no word — beside an italic name a word in capitals would be a second
+heading — in the same hairline ring `pressable` gives every control, forty-four
+points round, and VoiceOver reads it as *What the name means*. The mark is
+transcribed from the SVG path the website draws, not redrawn, so the two cannot
+drift apart; a change starts from the site's path and comes to the app second.
+
 ## The name
 
 One layout, always. No swap between a display state and an edit state, because
@@ -75,13 +105,17 @@ the swap is what makes the rule and the field collide.
   the moment the screen opens, not something that appears when editing starts.
   A rule under a value is the oldest signal in print that the value is yours to
   fill in.
-- **Centred on the rule**, and the tendrils curl *down*. Two things were
-  learned by building it leading-aligned first: a short name tucked against the
-  left end looks like it has fallen off the rule, and the tendrils open upward
-  with their coils about twenty points in from either end — clear air under a
-  centred name, and the first two letters of a leading-aligned one. Turning the
-  pair over puts the coils in the empty band below the line. They stay
-  mirrored, so the rule still reads as one thing sprouting.
+- **Centred on the rule.** Two things were learned by building it
+  leading-aligned first: a short name tucked against the left end looks like it
+  has fallen off the rule, and the tendrils open upward with their coils about
+  twenty points in from either end — clear air under a centred name, and the
+  first two letters of a leading-aligned one. It was built centred *and* with
+  the tendrils turned down. **Superseded 2 September: they open upward again**,
+  which is the way everything else in this app opens, and centring is what
+  leaves them clear air to do it in. `underlining(curlingDown:)` keeps the
+  turned-over pair for a value that has to stay leading-aligned; nothing uses
+  it at present. The pair stays mirrored either way, so the rule still reads as
+  one thing sprouting.
 - **A pencil laid over the trailing end**, drawn thin to match the cog, in
   `Chrome.faint`. Over rather than beside, so the field keeps the full width of
   the rule and its centre is the rule's centre. It is an affordance rather than
@@ -107,6 +141,28 @@ needs no line at all.
 | Starting again | Three rows, held rather than tapped — see below | revealed while held |
 
 That is around forty words against roughly three hundred.
+
+**Superseded 2 September: the screen is grouped by the question each control
+answers**, under four headings — *Display*, *Seed planting location*, *Joint
+seeds*, *Starting again* — because a flat list is fine at six things and stops
+being fine at ten. The rule above still governs the lines underneath. What the
+screen holds now:
+
+| Heading | Controls | Line underneath |
+| --- | --- | --- |
+| Display | **Show plant name**, **Show growth stage**, *Menu bar*, **Let the plant turn**, *How the plant is drawn* (with *Its colour* when the drawing is tinted), *Appearance*, and *Light* — three marks, day, the clock, night | Under the menu bar, turning, appearance and light, each saying what the choice does |
+| Seed planting location | *How the place is said*: One of the places, Where you actually are, Something you write — and under it the place, the coordinates or the words | Under each state; then, whichever is chosen, the plain account of everything that crosses between two phones |
+| Joint seeds | Label `GARDENER USERNAME`, field on the rule; toggle **Alert me when a joint seed is shared** | *Plants you have already grown keep the name they were grown under.* and *Your username will only show publicly if you approve.* |
+| Starting again | The held rows, below | revealed while held |
+
+The username moved into *Joint seeds*, because it is not
+something you look at: it is what the other phone is told you are called. Its
+line was reworded because *Plants grown under this name will keep it* was heard
+as *a name once used is fixed*, which stopped being true once a shared plant's
+page on the website reads the name live. The location switch went into *How
+the place is said*: a menu of figurative places and a switch that wrote down a
+coordinate were two answers to one question, and only one of them can be the
+answer.
 
 **The section labels are `Chrome.sectionLabel`, not `Chrome.faint`.** At 0.28
 they all but vanished. `faint` is right for a label standing beside the value it
@@ -136,6 +192,9 @@ pressure cannot be done by reflex, and unlike an alert it can be abandoned
 halfway through by simply letting go, which is the gentlest possible way out of
 a decision somebody has started making by accident.
 
+- **Two rows or three.** *Empty the garden* is shown only when there are
+  plants grown with somebody else to empty; for anyone else it would be a
+  control that does nothing.
 - **Three seconds, filling left to right** inside the existing capsule.
 - **Its consequence fades in beneath it as the hold begins.** This is the whole
   reason the hold is long: three seconds is roughly how long the sentence takes
@@ -185,8 +244,11 @@ Monoline, round free ends, no filled shapes — [BRAND.md](BRAND.md) §3.2, the
 same rule the app icon is drawn to, and the same stroke weight as the cog.
 15pt, in the row's own colour, to the left of the label.
 
-- **A seed**, on *Get a new seed*. An ovoid, broad at the crown and tapering to
-  a point. The seam went; see *[What the drawing
+- **A seed**, on *Get a new seed* — `SeedGlyph`, the same mark as the Seed
+  mark at the foot of the stage. Nearly an oval, one end a little drawn and the
+  other a little fuller, lying twenty degrees off upright, with a shade line
+  inside one flank. It began as an ovoid broad at the crown and tapering to a
+  point; the seam went first, and then the taper. See *[What the drawing
   changed](#what-the-drawing-changed)*.
 - **A recycling turn**, on *Reset everything*. Three arrows in a triangle is a
   corporate glyph and this app has no right angles; it is drawn instead as
@@ -194,8 +256,14 @@ same rule the app icon is drawn to, and the same stroke weight as the cog.
   which is the app's own spiral repeated three times. The meaning is worth
   having — *recycling* says the material returns rather than that it is
   destroyed, which is true here and is the kinder and more accurate word for it.
-- **The middle row** takes three ovoids standing on a ground line, the garden
-  emptied to its outlines.
+- **The middle row**, *Empty the garden*, takes `GardenGlyph` — the Garden
+  mark from the foot of the stage: a flower of five lobes on one closed
+  outline, on a stem, beside a tuft of three grass blades, both standing on a
+  short bed line. **Superseded 2–3 September:** it was specified as three
+  ovoids standing on a ground line, the garden emptied to its outlines. The
+  `Shape` was redrawn with the four stage marks into plants a reader can name,
+  and the row draws the same `GardenGlyph` as the stage's Garden mark, so what
+  the row empties is drawn as the thing it empties.
 
 ### Reach
 
@@ -212,7 +280,10 @@ A three-second hold is a motor task, and some people cannot make one.
 ## Keep becomes log
 
 **Log**, on the settings screen, the seed screen, the offer inside Exchange,
-and in the `NSLocationWhenInUseUsageDescription` string. The seed screen was
+and in the `NSLocationWhenInUseUsageDescription` string. *(Since 2 September
+there is no switch on either screen to carry the word: location is one of the
+three answers to* How the place is said*. It stands in the Exchange offer and
+the purpose string, which are the two places that still ask.)* The seed screen was
 not on the original list and carries a third copy of the same switch; leaving
 it saying *keep* would have been the drift this section exists to prevent.
 
@@ -233,13 +304,21 @@ The place offer inside Exchange shortens to match:
 
 - `App/PeaceGarden/Views/PlantStageView.swift` — the cog, top right, on
   `controlsVisible`; the two-step unroll; and Settings as a layer that slides
-  down rather than a sheet.
+  down rather than a sheet. *(Since 2 September: the cog is the fourth mark in
+  the band at the foot, and the layer rises.)*
 - `App/PeaceGarden/Views/Chrome.swift` — the cog, pencil, seed, recycling and
   garden `Shape`s; `Chrome.sectionLabel` and the three warm colours;
   `ChromeIconLabel`; `PressReporting`; and `HoldToConfirm`, which owns the
   fill, the mask, the drain and the haptics. `underlining()` gains
   `curlingDown` and `pressable()` gains `horizontal`.
 - `App/PeaceGarden/Views/SeedView.swift` — loses Settings; *keep* becomes *log*.
+  Since 24 September it also holds the book beside the name and
+  `NameMeaningView`, the sheet it opens.
+- `App/PeaceGarden/Views/Glyphs.swift` — not on the original list. The marks
+  for the seed's traits and for meeting moved here once there were enough of
+  them to bury the colours and type in `Chrome.swift`, and `MeaningsGlyph`, the
+  open book, joined them on 24 September. The cog, pencil, seed, recycling turn
+  and garden stay in `Chrome.swift`.
 - `App/PeaceGarden/Views/SettingsView.swift` — the name row, the copy, and the
   three held rows. Takes `close` rather than reading `dismiss`.
 - `App/PeaceGarden/Views/ExchangeView.swift` — the place offer's wording.
@@ -255,13 +334,20 @@ wrong until you see them at fifteen points.
   floor this drawing had to survive, and it is no longer the size the cog is
   used at: the marks along the foot of the stage are drawn at 28 now, in a
   48-point circle — see `ChromeIconLabel.glyphSize`. Fifteen is still live for
-  the seed and the recycling turn, which a Settings row draws at that size.
+  the seed, the garden and the recycling turn, which a Settings row draws at
+  that size.
   Teeth as outlines merge into blobs: at this size a tooth is about as wide as it is
   long, so its two flanks and the arc across the top fill in and the mark is a
   washer with bumps. Inverting the emphasis — a small ring with long teeth —
   gives the brightness glyph instead, which arrives before the cog does. A
   dominant ring with short teeth on it reads as a graduated dial, which is the
   instrument the section above asks for.
+  **Superseded 2 September: it is an ordinary gear.** Three drawings, the dial
+  among them, each read as a sun, a spinner or a wheel with bumps, and
+  which of those a reader lands on is not something proportion can settle.
+  Recognition wins on the one mark whose whole job is to be found without being
+  read. `CogShape` is seven teeth on a flattened-cosine profile, so there is no
+  right angle anywhere in it, phased from twelve o'clock, with a bore.
 - **The seed lost its seam.** Four ways of drawing it failed: a bar across an
   oval is a Greek theta, and neither shortening it nor dropping it below centre
   shakes that off; a shallow curve turns the mark into a face; the two halves
@@ -269,11 +355,27 @@ wrong until you see them at fifteen points.
   parted, they stop being one seed. A neutral oval is what made a seam
   necessary in the first place — it says nothing, so something has to be added.
   A shape round at one end and pointed at the other is already a seed.
+  **Then the point went too, 2 September.** Run over most of the height, the
+  taper made a water drop, a flame or a leaf — anything but a seed, which is
+  barely pointed. The crown is turned rather than drawn out now, the foot stays
+  round, and the mark lies twenty degrees off upright, because square to the
+  frame it was a specimen and nothing else in this app sits square. A shade
+  line inside one flank, stepped in along the curve's own normal, says the
+  surface turns away.
 - **The garden gained a ground line**, and the grid became a row. Fifteen
   points cannot hold two rows of anything taller than it is wide, so the
   two-over-one cluster came out round and read as punctuation; the row on its
   own reads as three zeros. A line under the same three outlines makes it a
   bed with things planted in it.
+  **Superseded 2–3 September: a flower and a tuft of grass.** Three identical
+  outlines left the ground line doing all the work. Three plants at three
+  heights read as three squiggles; upright stems on a full-width line were a
+  colonnade. Two plants a reader can name is worth more than three that read as
+  marks, and at fifteen points two is what there is room for. The flower is one
+  closed outline of five lobes, because strokes radiating from a centre are a
+  sun at this size. The grass is three blades, because a seed head drawn as a
+  zigzag put turns narrower than the stroke and came out a threaded rod. The
+  bed line stayed, cut to the width of their feet.
 - **The hold is driven by a button's press state, not a `DragGesture`.** A
   `DragGesture(minimumDistance: 0)` inside a `ScrollView` never began at all:
   the scroll view takes the touch first and hands it on only once it is

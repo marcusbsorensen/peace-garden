@@ -113,6 +113,11 @@ async function render() {
     // is not reordered by bidi inside a right-to-left page. See strings.js.
     strings.dress(node, node.dataset.s);
   }
+  // The bar's glyphs, whose words are their names. See plain.js.
+  for (const node of document.querySelectorAll("[data-s-label]")) {
+    node.setAttribute("aria-label", t(node.dataset.sLabel));
+    node.title = t(node.dataset.sLabel);
+  }
   el("language-label").textContent = t("language");
   // The sheet's own heading, and the only word the keyboard layer needs: every
   // other row in it is labelled by the control it operates.

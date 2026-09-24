@@ -344,6 +344,11 @@ function route(string $method, string $path): never
             $plant['encounter'], $plant['height'], $plant['family'], time(), $plant['area'],
             $plant['kind'], $plant['hue']
         );
+        // Offered already, by somebody holding a different pair of tokens. Said
+        // without either of them — see `Offers::offer`.
+        if ($offer === null) {
+            respond(409, ['error' => 'This plant has already been offered.']);
+        }
         respond($new ? 201 : 200, ['offer' => $offer]);
     }
 

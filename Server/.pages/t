@@ -42,14 +42,21 @@
         rather than a header of its own.
       -->
       <header class="masthead bar">
-        <span class="bar__home">
+        <a class="bar__home" href="/">
           <img class="mark" src="/assets/icon.svg" alt="" width="44" height="44" />
           <span class="wordmark">Peace Garden</span>
-        </span>
+        </a>
+        <!--
+          The ways on from here, as glyphs rather than words, so they read the
+          same in every language: the garden (the app's own Garden mark,
+          `GardenGlyph` in Chrome.swift), what the names mean (an open book,
+          the app's `MeaningsGlyph`), and the language. Each glyph's words
+          are its name and tooltip, written from the catalogue by the page's
+          script. See site.css §The bar's glyphs.
+        -->
         <span class="bar__ways">
-          <!-- Written out rather than read from the catalogue: this page is
-               English and stays English, and `door.js` fills no labels. -->
-          <a class="quiet-button" href="/garden">The garden</a>
+          <a class="bar-glyph" href="/garden" aria-label="The garden" title="The garden"><svg class="bar-glyph__mark" viewBox="0 0 15 15" aria-hidden="true" focusable="false"><path d="M 4.674 4.059 C 3.796 1.407, 6.716 1.407, 5.838 4.059 C 8.089 2.405, 8.991 5.181, 6.198 5.166 C 8.467 6.795, 6.105 8.512, 5.256 5.850 C 4.407 8.512, 2.045 6.795, 4.314 5.166 C 1.521 5.181, 2.423 2.405, 4.674 4.059 Z M 5.784 14.100 C 5.652 10.932, 5.124 9.612, 5.256 7.500 M 10.140 14.100 C 9.678 10.932, 9.150 8.556, 8.622 6.180 M 10.140 14.100 C 10.338 10.404, 10.470 6.972, 10.338 3.540 M 10.140 14.100 C 10.800 10.932, 11.658 8.820, 12.318 6.972 M 4.200 14.100 L 11.328 14.100" vector-effect="non-scaling-stroke" /></svg></a>
+          <a class="bar-glyph" href="/meanings" aria-label="What the names mean" title="What the names mean"><svg class="bar-glyph__mark" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 5.2C8.2 3.9 5.4 3.5 2.75 3.9V15.4C5.4 15 8.2 15.4 10 16.7C11.8 15.4 14.6 15 17.25 15.4V3.9C14.6 3.5 11.8 3.9 10 5.2ZM10 5.2V16.7" vector-effect="non-scaling-stroke" /></svg></a>
         </span>
       </header>
 

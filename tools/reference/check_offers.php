@@ -361,6 +361,16 @@ $offers->withdraw($ten['seed'], $mine10, $now + 60);
 $lifted = pottedAs($walk, $ten['seed']);
 check('taking it back hides it in the Glasshouse', $lifted !== null && (int) $lifted['hidden'] === 1);
 
+// A published plant's seed, parents and meeting are public. Offering it again
+// with two invented tokens must not hand back the real ones, or the stranger
+// could withdraw it with them.
+[$probe, $probeNew] = $offers->offer($one['seed'], token('stranger/a'), token('stranger/b'),
+                                     $one['a'], $one['b'], $one['encounter'], 1.1, 2, $now);
+check('a stranger re-offering a published plant is told nothing', $probe === null && $probeNew === false);
+[$other, ] = $offers->offer($one['seed'], $mine, $theirs, $one['a'], $one['b'], $one['encounter'], 1.1, 2, $now);
+check('the other phone, offering the same child, still learns where it stands',
+      $other !== null && $other['to'] === $theirs && $other['from'] === $mine);
+
 $stranger = $offers->withdraw($one['seed'], token('nobody'), $now);
 check('a stranger cannot take back somebody else\'s plant', $stranger === null);
 check('an offer that does not exist cannot be withdrawn',

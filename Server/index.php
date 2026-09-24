@@ -1,6 +1,7 @@
 <?php
 /**
- * The four paths that have no file extension, served with the type they are.
+ * Every page on the site, none of them with a file extension, served with the
+ * type it is — and the plant renderer, and the door to the plot service.
  *
  * **Why this file exists at all.** The design in Server/README.md was a pile of
  * static files and an `.htaccess` that gave `/s`, `/g`, `/t` and the
@@ -20,20 +21,21 @@
  *     location @dispatch { if (-f $document_root/index.php) { rewrite ^ /index.php last; } }
  *
  * So a path with no file behind it arrives here with `REQUEST_URI` intact. The
- * four pages therefore live in `.pages/`, off the paths they are served at —
+ * pages therefore live in `.pages/`, off the paths they are served at —
  * a file at `/s` would win at `try_files` and be served as a download again,
  * which is the failure this file exists to fix. The leading dot is not
  * decoration: nginx's own `location ~ /\.(?!well-known(?:/|$)) { deny all; }`
  * makes the directory unreachable from outside, so there is one address for
  * each page rather than two.
  *
- * The cost is that these four paths need PHP to be up. Static files did not.
+ * The cost is that every page needs PHP to be up. Static files did not.
  * That is a real trade and it is the one the host leaves available: `/s` is the
  * path in every link already minted and it cannot grow a `.html`, so either it
  * is served by something that can set a header or it is served wrongly.
  *
- * On a host that does read `.htaccess`, the file beside this one routes the
- * same four paths here rather than serving them itself, so the two agree.
+ * On a host that does read `.htaccess`, the file beside this one routes paths
+ * here rather than serving them itself, so the two agree — though it names
+ * only the first four, `/s`, `/g`, `/t` and the association file.
  */
 
 declare(strict_types=1);
@@ -43,7 +45,7 @@ declare(strict_types=1);
  *
  * Named one by one rather than derived from the filesystem. A rule that turns
  * any file in a directory into a page is a rule that serves whatever is left in
- * that directory by accident; four lines of table cannot.
+ * that directory by accident; a table of one line per path cannot.
  */
 const ROUTES = [
     // The front. It answered 403 until 16 September, which was the host's
@@ -249,6 +251,53 @@ if (str_contains($body, 'PG_MODULE')) {
         ? dechex((int) filemtime($module)) . '-' . dechex((int) filesize($module))
         : 'x';
     $body = str_replace('PG_MODULE', '/plant.wasm?v=' . $stamp, $body);
+}
+
+// **So does every script and the stylesheet, since 24 September 2026.**
+//
+// The same fault as the module's, one layer up. nginx serves `/assets/` itself,
+// before this file is reached, and sends no `Cache-Control` — so a browser
+// keeps a script for as long as its own heuristic says (a tenth of the time
+// since the file last changed), and 20i's CDN keeps one copy per encoding it
+// has normalised to. The day the dictionary shipped, a returning browser ran
+// the new pages against yesterday's `meanings.js`: the panels drew, and the
+// words in them did not, with nothing in the console to say why.
+//
+// Two halves, because a module is reached two ways:
+//
+// - a `src` or `href` written in the page gets the file's stamp in its query,
+//   the same mtime-and-size stamp as the module's;
+// - a module imported by another — `./meanings.js` from `walkpage.js` — is
+//   given its stamped address by an import map written into the head, which
+//   every browser this site supports reads. Its keys are the unstamped
+//   addresses, so a relative import resolves to one and is sent on.
+//
+// A page's entry script and the same module imported from elsewhere must end
+// up at one address, or the browser runs two copies and `plain.js`'s settled
+// language is held twice. Both halves use the one stamp, so they do.
+$assets = __DIR__ . '/assets';
+$stampOf = static function (string $relative) use ($assets): ?string {
+    $file = $assets . '/' . $relative;
+    return is_file($file) ? dechex((int) filemtime($file)) . '-' . dechex((int) filesize($file)) : null;
+};
+$body = preg_replace_callback(
+    '#\b(src|href)="/assets/([A-Za-z0-9_./-]+\.(?:js|css))"#',
+    static function (array $m) use ($stampOf): string {
+        $stamp = $stampOf($m[2]);
+        return $stamp === null ? $m[0] : "{$m[1]}=\"/assets/{$m[2]}?v={$stamp}\"";
+    },
+    $body
+);
+if (str_contains($body, 'type="module"')) {
+    $imports = [];
+    foreach (glob($assets . '/js/*.js') ?: [] as $file) {
+        $name = basename($file);
+        $imports["/assets/js/{$name}"] = "/assets/js/{$name}?v=" . $stampOf("js/{$name}");
+    }
+    $map = json_encode(['imports' => $imports], JSON_UNESCAPED_SLASHES);
+    // Before any module script, which the head is: an import map that arrives
+    // after the first module has started loading is ignored.
+    $body = preg_replace('#</head>#', "  <script type=\"importmap\">{$map}</script>\n  </head>", $body, 1);
 }
 
 // A seed link is opened once and then often re-opened from the same message, so

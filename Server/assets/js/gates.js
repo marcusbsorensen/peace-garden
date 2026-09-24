@@ -55,15 +55,23 @@ export const BUILT = Object.freeze({
 const ring = (cx, cy, r) =>
   `M${cx - r} ${cy}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
 const dot = (x, y) => `M${x} ${y}h0`;
+// A bed seen from above, 3.9 wide and 14 long, its corners eased: `x` is where
+// its top edge starts, after the corner. Relative, so no corner is arithmetic
+// that JavaScript can round into 11.249999999999998.
+const bed = (x) =>
+  `M${x} 3h2.5a.7 .7 0 0 1 .7 .7v12.6a.7 .7 0 0 1 -.7 .7h-2.5a.7 .7 0 0 1 -.7 -.7v-12.6a.7 .7 0 0 1 .7 -.7Z`;
 
 export const LOOK = Object.freeze({
   // A frame seen from its end: the ground, a low front, a high back, and the
   // light resting on the back and propped at the front, with a seedling under it.
   waiting: { ground: "#968b78",
     glyph: "M2.5 16H17.5M4.5 16V12.5M15.5 16V8.2M15.8 7.4L4 9.8M10 16V13.4M10 14.2c1.3-.2 2-.9 2.2-2" },
-  // Two beds either side of a path, crops in rows across them.
+  // Three beds from above, a crop to each: spires as short upright strokes,
+  // umbels as flat heads, succulents as rosettes packed close. The three
+  // marks differ in shape, not just in number, so the crops still tell apart
+  // at 20px, where a ring the size of a rosette closes into a dot.
   ground: { ground: "#4d3b2c",
-    glyph: `M3 4H8.5V16H3ZM11.5 4H17V16H11.5Z${dot(5.75, 7.5)}${dot(5.75, 10)}${dot(5.75, 12.5)}${dot(14.25, 7.5)}${dot(14.25, 10)}${dot(14.25, 12.5)}` },
+    glyph: `${bed(2.5)}${bed(8.75)}${bed(15)}M3.75 5.4V7M3.75 9.2V10.8M3.75 13V14.6M9.55 6.2H10.45M9.55 10H10.45M9.55 13.8H10.45${dot(16.25, 5.6)}${dot(16.25, 8.4)}${dot(16.25, 11.2)}${dot(16.25, 14)}` },
   // Three drills, and the label at the head of them.
   beginnings: { ground: "#6a5641",
     glyph: "M7.5 6H17M7.5 10H17M7.5 14H17M4 16.5V8.5M2.6 8.9L4.9 5.6" },

@@ -830,6 +830,355 @@ between the eye and a pot. The floor is quarry tiles, the map's `LOOK.light`
 ground, laid on the Knot Garden's jittered lattice with a tone to a tile, so
 the grid a tiled floor is shows as tone rather than as ruled lines.
 
+## The Coppice, chosen
+
+The ninth area, `renewal`, designed on 24 September with a simulation and no
+code, the way the Glasshouse was. Nothing is built. The numbers below are the
+design's, and the build measures its own. It holds 8.4% of arrivals, the fewest
+of the three areas still shut. It also answers the question this document has
+carried since it was written (§*Open questions*): how a coppice shows its
+rotation.
+
+### What was measured first
+
+`tools/coppice/` grew 4,000 plants whose names put them in the Coppice: 2,000
+from 23,791 crossings to measure on, and another 2,000 from 24,054 crossings to
+check against.
+
+- **Every plant in the Coppice is a fern or a star.** Its genus heads are `Dros`
+  and `Ros`, and `PlantName.roots` gives those two to many-merous ferns and
+  many-merous stars and to nothing else. That is not a tendency in a sample. It
+  is a fact of the naming table, which is frozen. The split is 48 ferns to 52
+  stars in both samples. **This is the first area whose own plants divide by
+  habit, and they divide exactly.** The *Habit* row of §*Slots and roles* has
+  had nothing to act on until now.
+- **A fern has no bloom to speak of.** Its profile sets `bloomPresence` to 0.05.
+  A star carries every flower in the area.
+- **Ferns are the shorter habit**: 0.31–1.40 m, median 0.78. Stars are
+  0.52–1.95 m, median 1.10. Both spread about half a metre.
+- **Drawn young, a fern is 0.08–0.41 m tall**, at the Cold Frame's
+  `heightScale` of 0.30 with no bud. That makes the shortest star, 0.52 m, taller
+  than the tallest cut fern. The design below rests on that fact.
+- The ambassador, *Rosea caerulea*, is a star of 0.995 m.
+
+### Three layouts, and the one chosen
+
+A coppice is a wood cut in panels, called coupes. Each year one coupe is cut to
+the stool and left to grow back, so every stage stands at once: stumps, poles
+waist-high, and poles grown. The flowers come up in the light a cut lets in. The
+three layouts considered all show that; they differ in where.
+
+1. **One coupe to a plot.** Each plot would stand at one stage, and plot *n*
+   would be cut in year *n* mod 3, so the rotation would show on the map. It is
+   the simplest rule of the three. It was rejected because a visitor comes down
+   onto a plot and would see one stage there. *Every stage at once* is the
+   coppice's picture, so it has to be inside the plot.
+2. **Four coupes round a standard.** The plot would be quartered round one tall
+   plant left uncut, which is coppice-with-standards, the commonest English
+   form. It was rejected on three counts. It is the Crossing's plan with a tree
+   where the paving is. The standard is a height place that waits for a tall
+   plant, and the Orchard showed that such a place can wait hundreds of
+   arrivals. And four coupes need a four-year rotation, which shows only three
+   distinct stages.
+3. **Three coupes in bands, cut in turn — chosen.** Two rides cross the plot
+   and divide it into three long panels side by side. That is what a worked
+   coppice looks like from above: cants laid alongside each other and cut in
+   sequence, which gives the stepped profile, stumps next to half-grown next to
+   grown. Three bands give three stages, and three is as many as a plant's
+   growth shows distinctly: young, half-grown and grown.
+
+### What is cut: the ferns
+
+Something in each coupe has to be cut, and three ways of deciding what were
+simulated side by side (§*The fill, simulated* has the numbers):
+
+- **By height**, with the tallest 45% on the stools. This fills worst, at 94.7%
+  at two thousand. It also cuts 64% of the stars, so the showiest flowers in the
+  wood would be out of flower two years in three.
+- **The stars on the stools and the ferns on the floor.** The heights stand in
+  their natural order, the tall habit growing over the short one, and it fills
+  at 97.8%. It cuts 87% of the stars. Colour is the one thing a star has, so
+  this was rejected.
+- **The ferns on the stools and the stars on the floor — chosen.** It fills at
+  97.8% and cuts no star, ever. Every flower in the Coppice is drawn in flower
+  every year. A fern loses nothing a visitor could see by being cut, because it
+  had no bloom to lose, and a fern growing back from a cut comes up as a fern
+  always does, in croziers, which is as plain a picture of renewal as a garden
+  has. **In a coupe's cut year every star stands over every fern in it**, with
+  0.23 m to spare at the closest. Each winter one band of the plot becomes a
+  glade of flowers over new growth, and the other two show the ferns coming
+  back. That is also true to the practice: in real woods the cutting is what
+  brings the flowers.
+
+**The cost: a grown fern does not overtop the stars.** Measured at five hundred, 41 of 233 ferns on stools stand over the front
+row of their coupe in their grown year, and 8 over the shortest star behind
+them. So the rotation reads at knee height, under the flowers, not as poles
+over them. What says *coppice* at a glance is the stool, the old cut wood each
+fern grows out of (§*The stool*). The fern is what the stool grows.
+
+### The plot
+
+**Thirty-three a plot: three coupes of eleven.** That is five stools down the
+middle of each band and three places in the light on either side, a back row
+and a front row. The Glasshouse has thirty-two in the same square and the Long
+Walk forty-eight.
+
+| | Where, in metres from the middle of the plot |
+| --- | --- |
+| **Coupes** | Bands along `x`, their middles at `z` −1.80, 0 and +1.80. Coupe 0 is `z−`, the far band before the page is turned |
+| **Rides** | Two, their centrelines at `z` ±0.90. Each is 0.48 m wide and wanders up to 0.08 m off its line |
+| **Stools** | `x` −1.8, −0.9, 0, 0.9, 1.8, on the coupe's middle |
+| **The floor** | `x` −1.35, 0, 1.35, in a back row 0.40 m behind the stools and a front row 0.40 m in front |
+| **Nudge** | 0.06 m either way, from the seed |
+
+The nearest two places stand 0.40 m apart before the nudge. At the worst nudge
+and the worst wander, every place is 0.18 m clear of the plot's rim and 0.12 m
+clear of a ride. `simulate.py` checks both. A row fills from its middle outward:
+stools in the order 2, 1, 3, 0, 4, and floor places 1, 0, 2. A coupe holding
+three plants then reads as a clump, where filling from one end would make it a
+line. Which place a plant takes along its row changes no count, so none of this
+needed simulating.
+
+### The rule
+
+An arrival is either a fern or a star, and the two are placed by different
+steps.
+
+**A fern:**
+
+1. A free stool in the oldest plot that has one, in whichever of that plot's
+   coupes holds fewest ferns on stools. A tie goes to the lowest coupe.
+2. Failing that, the floor, by a star's rule below, **but no more than one fern
+   to a coupe's floor.** A fern standing on the floor is not cut, just as a fern
+   on a woodland floor is not.
+3. Failing that, a new plot, on the middle stool of its first coupe.
+
+**A star:**
+
+1. Its own row of the floor, which is the back row from 1.10 m up and the front
+   row below. The search runs oldest plot first, and within a plot takes the
+   coupe with fewest on its floor.
+2. Failing that, the other row on the same terms, but only if nothing would
+   stand out of order. Nothing in a coupe's front row may be taller than
+   anything in its back row. This is the Cold Frame's `inOrder` asked of a
+   floor.
+3. Failing that, a new plot, in its own row of the first coupe.
+
+The loops are the Crossing's: row outside, plot inside, and the emptiest coupe
+within the plot, with coupes standing in for quarters. That keeps the three
+coupes of a plot level, so each of the three stages has plants from a plot's
+first few arrivals. That matters more here than anywhere, because one coupe is
+always in its cut year.
+
+**The cap of one fern to a coupe's floor was found by the simulation, not
+guessed.** Stools make up 45% of the places and ferns 48% of the arrivals, so
+some ferns have to stand on the floor. With no ferns allowed there, the floor
+fell behind the stools and never caught up, finishing at 94.7%. With no limit,
+a long run of ferns took the floor from the stars, and the plots the stars
+opened afterwards had stools no fern would come to: 73.1% against 85.4% in that
+order. A cap of one keeps the realistic fill where no limit put it, and it
+keeps the floor the stars'.
+
+**The traits it reads, and the thresholds:**
+
+- **Habit, a fifth trait.** `PlantTraits` gains the archetype's name, sent by
+  the phone and stored in a column by both arrival paths, as the Seedbed's kind
+  was and the Glasshouse's hue will be. The rule asks one question of it: is
+  this a fern. It is exact on every host, because an archetype is picked from
+  seed bytes with no `sin` or `pow` involved, so the test needs no tolerance.
+  If the Glasshouse's hue is built first, one `walk_offers` migration can carry
+  both.
+- **One height cut, 1.10 m**, the median of this area's own stars, measured
+  over the area's own plants as the Cold Frame's was. It divides the fresh
+  sample's stars 48.4% to the back. A borrowed cut would divide them unevenly:
+  the Orchard's 1.30 would put 28% at the back, the Long Walk's 0.93 would put
+  67%. The nearest of 2,084 stars stands 0.60 mm from it. The vector file will
+  still need `placementCannotTurn` over plot, coupe and row, because a height
+  comes out of `sin`.
+- **Colour is not read.** Carpets were considered: the first star on a coupe's
+  floor would claim it for its colour family, the way bluebells hold a coupe. It
+  held 96.2% against 97.8%, and a Coppice whose three bands were three colours
+  would ask the eye to read colour stripes where it should read the cut. The
+  Knot Garden and the Cold Frame already sort by colour, and the Glasshouse
+  will. This one sorts by the year.
+- **Arrival order** decides the rest. A place is taken once and never changes,
+  as in every area.
+
+The ambassador is a star under 1.10 m, so it opens plot 0 in the front row of
+coupe 0. An empty floor refuses nobody.
+
+### The rotation
+
+A coupe's stage is arithmetic on its place in the wood and the year:
+
+    stage = (year − (3 × plot + coupe)) mod 3      0 cut, 1 regrowing, 2 grown
+
+`year` counts the winters since the Coppice opened, so the first coupe of
+plot 0 is the first one cut. The coupes are cut in sequence along the wood, so
+the stepped profile runs unbroken from the last coupe of one plot into the
+first coupe of the next. In
+every year a third of the ferns on stools are in each stage: at five hundred it
+is 78, 77 and 78 of 233, and it stays that way year after year.
+
+| Stage | The fern on a stool is drawn | Height, measured |
+| --- | --- | --- |
+| **Cut** | `heightScale` 0.30, `leafUnfurl` 0.6, no bud — the Cold Frame's young state without its bud | 0.08–0.41 m, median 0.21 |
+| **Regrowing** | `heightScale` 0.65, `leafUnfurl` 0.9, `budSwell` 0.4 | 0.20–0.98 m, median 0.51 |
+| **Grown** | At its best, `Maturity.bloomPreview`, as everywhere else | 0.31–1.40 m, median 0.78 |
+
+The two young stages are the Cold Frame's `drawn` with its numbers changed, so
+they are the same kind of thing: a stage assembled for drawing, never stored and
+never read by the rule. A star, and a fern on the floor, is drawn at its best
+every year.
+
+**The year is the plot service's to say.** It goes out with the plantings, so
+two visitors on either side of midnight see one wood, and a check can pin the
+year. This would be the first page that knows its date. Every other page is lit
+at midday and knows nothing of time.
+
+### The stool
+
+Each fern on a stool stands on one: a low boss of old wood, 0.35–0.45 m across
+and about 0.10 m high, its outline wandering, with the cut face on top. The
+fern's foot stands on the face. **The face is pale in the year of cutting and
+weathers grey over the next two**, so the stool is the one structure in the
+garden that shows the year. It is drawn in the same pass as the plant it
+carries, so it belongs to a planting and not to the plot: an empty stool place
+shows the woodland floor, not a dead stump. It is grown wood that was cut,
+so its outline can wander more than a sawn bench's and less than a hedge's.
+At 0.45 m across, the widest stool still leaves the nearest floor plant 0.05 m
+clear at the worst nudge.
+
+### How it reads from the page's eye
+
+- **The ground is a woodland floor**: leaf litter at `LOOK.renewal`'s `#5e4a33`,
+  moss where the ground dips, and gentle relief so that no two stools stand at
+  one height. None of the eight worlds is a wood, so this is a new one.
+- **The rides are trodden, not mown.** They are litter worn paler, with no
+  stripes, and they bow and change width along their length. They meet the rim
+  where they meet it, not at a corner of a grid. A coupe has no drawn edge: the
+  rides are its only boundary, as the mown paths are the Crossing's. **Nothing
+  in the plot is a straight line**: not the rides, not a stool's outline, not a
+  shadow. A stool's shadow is its footprint moved away from the light, as a
+  hedge's is.
+- **Seen at the page's angle, the three bands run corner to corner** across the
+  diamond of the plot, one of them open. The cut coupe shows pale stool faces
+  and croziers under a stand of stars in flower. The next shows ferns
+  half-grown, and the third ferns grown, still under the flowers. The cut moves
+  one band a year, so from the page's first view the open band is the far one
+  one year, the middle the next, and the near one the third. Turning the plot
+  shows the other orders.
+- **Back is `z−`**, as in the Cold Frame. The floor's taller row is further
+  from the eye before a turn, and a half turn reverses it, as it reverses the
+  frames' ranks.
+- **Its words belong to the page.** Which stage a coupe is in, *cut this
+  winter*, is a string, and a string is forty-two translations
+  (§*Structures need drawing properly*). The stool stays unnamed, as every
+  structure is.
+
+### The fill, simulated
+
+24 September. `tools/coppice/coppice-sample` is a small Swift tool built
+against SeedCore. It grows each arrival and writes down its height, spread,
+colour, archetype and the height it is drawn at in each young stage.
+`tools/coppice/simulate.py` plants those arrivals by the rule above, and by the
+rules it was chosen over, in Python. The rule has not been written in Swift yet,
+so there is nothing to call. Both samples are committed, so the script runs
+without Swift. The cut was measured on one sample and every number below comes
+from the other, unless it says otherwise.
+
+**The realistic stream**, the fresh sample in the order it was drawn:
+
+| Arrivals | Plots | Full | Held | Empty in settled plots |
+| --- | --- | --- | --- | --- |
+| 250 | 8 | 7 | 95.1% | 0 |
+| 500 | 16 | 14 | 94.9% | 0 |
+| 1,000 | 31 | 30 | 97.8% | 0 |
+| 2,000 | 62 | 59 | 97.8% | 7 of 1,980 |
+| 4,000, both samples end to end | 122 | 120 | 99.4% | 0 |
+
+*Settled* means every plot but the newest two, which are where a visitor would
+find an empty place in the old part of the wood.
+
+- **At five hundred it holds 94.9%.** That sits between the Knot Garden's 92%
+  and the Orchard's 96%, and it rises with the count, because nearly every
+  empty place is at the growing end.
+- **Fitting flatters it very little.** On the sample the cut was measured on,
+  the numbers are 94.9% and 97.8% again, with 6 settled places empty at two
+  thousand. The Glasshouse's twelve band edges gained eleven points from
+  fitting. The Coppice has one fitted number, a median, and that is the
+  difference.
+- **The distribution at two thousand**: 59 plots of 33, then 26, 24 and 4 at
+  the growing end. In 59 of the 60 settled plots the three coupes hold exactly
+  the same number of ferns on stools and of plants on the floor. In the other,
+  one floor has one plant fewer.
+- **1,045 of 1,086 plants on the floor are in their own row** (96.2%). **Nothing
+  stands out of order anywhere**, in any stream tried, with or without the cap.
+- **36 of 951 ferns stand on the floor** (3.8%).
+- **The worst wait**: one plot stayed unfinished for 119 arrivals. Its last
+  three places were all in the back row, and each wanted a star of 1.10 m or
+  more.
+
+**Worst cases.** The same two thousand plants in orders no real garden would
+send. The longest run of one habit in either realistic stream is 11.
+
+| Order | Held at 1,000 | Held at 2,000 |
+| --- | --- | --- |
+| Runs of twenty, stars then ferns | 97.8% | 99.4% |
+| Runs of sixty | 97.8% | 97.8% |
+| Every star first, then every fern | 53.2% (855 stools empty) | 96.2% |
+| Every fern first, then every star | 57.2% | 85.4% (73.1% with no cap) |
+| Heights sorted within each habit, in windows of a hundred, either way | 94.8% | 97.8% |
+| Heights sorted within each habit over the whole stream, shortest first / tallest first | 94.8% | 71.3% / 67.4% |
+| One colour at a time | 97.8% | 97.8% |
+| Shuffled | 97.8% | 99.4% |
+
+- **A stool waits for a fern, and a fern always comes.** A thousand stars in a
+  row open 57 plots with every stool empty, and the ferns that follow fill them
+  back to 96.2%.
+- **The one order it cannot recover from is every fern first.** The ferns fill
+  the stools and their share of the floor, then run out, and the stars open
+  plots with stools no fern will ever come to. The cap is what brings it from
+  73.1% to 85.4%.
+- **Sorting heights across the whole stream defeats any rule that grades by
+  height**, and the Cold Frame and the Crossing grade the same way. Late in a
+  sorted stream, half of each new plot's floor wants a plant shorter, or
+  taller, than any still to come. Sorted within windows of a hundred, which is a strong
+  fashion for tall plants and no more, it makes no difference.
+
+**The rules it was chosen over**, on the fresh sample at two thousand:
+
+| Rule | Held | Settled empty | Stars out of flower two years in three |
+| --- | --- | --- | --- |
+| **Ferns to stools, stars to the floor, one fern to a coupe's floor** | 97.8% | 7 | none |
+| The same, with carpets of one colour | 96.2% | 23 | none |
+| The same, with no fern on the floor | 94.7% | 66 | none |
+| The same, with any number of ferns on the floor | 97.8% | 2 | none, but 73.1% if the ferns come first |
+| The tallest 45% on stools, by height (cut 0.96 m) | 94.7% | 69 | 667 of 1,049 |
+| Stars on stools, ferns the floor | 97.8% | 4 | 916 of 1,049 |
+
+**The template's one real number is its stool share.** `simulate.py --sweep`
+tried stools from three to seven a coupe and floor rows from two to four. Every
+share between 43% and 47% fills well: 97.2% to 99.2% at two thousand. At 50%
+and above the stools are left waiting, at 94.7% down to 68.9%. At 38% and below
+the ferns crowd onto the floor's front rows and leave the back rows waiting, at
+95.0% down to 75.8%. Forty-five a plot, seven stools and four a row, holds
+98.8%. It was passed over because a wood that dense is a border. Twenty-one a
+plot holds 99.2%, but at seven plants a coupe the stages are too thin to read.
+
+### Decided, 24 September 2026
+
+1. **The rotation turns once a year, at the winter solstice**, taken as
+   21 December UTC. Marcus.
+2. **Ferns stand on the stools**, and the stars on the floor are never cut.
+   Marcus.
+3. **The stars' colours are mixed as they arrive**, with no carpets. Marcus.
+4. **The stool is a low boss of old wood whose growth is its fern**, with no
+   poles of its own. Taken as recommended, open to change.
+5. **A plant's own page draws it grown**, whatever its coupe's year. Taken as
+   recommended, open to change.
+6. **Thirty-three a plot.** Marcus.
+
 ## The Crossing, built
 
 21 September, the same day as the Quiet Garden. `SeedCore/WebGardens/Crossing.swift`,
@@ -1099,8 +1448,250 @@ meeting leaves on the two phones. `Server/.api/Offers.php`, `Server/README.md`
 - **How the Coppice shows its rotation.** A coupe cut this year and a coupe
   uncut for seven are both true at once; whether a plot's stage is fixed when it
   opens or turns with the real year is a question about what renewal means here.
+  **Decided on 24 September**: it turns with the year at the winter solstice,
+  and only the ferns on the stools are cut (§*The Coppice, chosen*).
 - **Whether a plot can be too empty to open.** The Quiet Garden's rule makes a
   plot with three plants correct; a Long Walk plot with three plants is
   unfinished. Opening a plot only when the last is full says nothing about the
   first days of an area — though no area's first plot is ever quite empty now,
   because its ambassador is in it.
+
+## The Home Ground, chosen
+
+The last area, `ground`, designed on 24 September. Nothing is built. The theme
+holds the soil itself, a place you are from, and a kept place, and the name was
+chosen because *home ground* carries both the earth and the belonging
+(`strings.js`, the comment on `areaGround`). The table above already says what
+kind of garden it is: a kitchen garden, rectangular beds 1.2 m wide so no soil
+is ever stood on, paths between, crops in rows across each bed. What was left
+to choose is what a *crop* is, when every plant is unique.
+
+### The finding that decided it: this area has three crops, and you can see them
+
+The genus is read off the flower (`PlantName.roots`), and the three roots that
+mean `ground` belong to three families: **`Cer` is always a spire, `Fen` always
+an umbel, `Pell` always a succulent.** Every plant in the Home Ground is one of
+three forms, in nearly equal shares, and the three are as unlike each other as
+three crops in a vegetable garden. Measured over 2,000 Home Ground plants
+(16,990 crossings, 12% of all):
+
+| Root | Form | Share | Height, median (range) | Across, median (90th centile) |
+| --- | --- | --- | --- | --- |
+| `Cer` — the grain | spire | 32% | 1.35 m (0.59–2.32) | 0.39 m (0.59) |
+| `Fen` — the fennel's family | umbel | 35% | 0.93 m (0.40–1.60) | 0.62 m (0.85) |
+| `Pell` — the earth's skin | succulent | 33% | 0.47 m (0.19–0.84) | 0.20 m (0.29) |
+
+That is a kitchen garden already standing in the name: spires in a stand, like
+a grain; flat umbel heads, which are what carrots, parsnips and fennel are when
+they run to seed; low rosettes packed close, like a salad bed. **The crop is the
+genus root**, and it is the first reading in the garden that is a fact about a
+plant's name and also something a visitor can see without being told.
+
+### Three layouts considered
+
+1. **The rotation — recommended.** Three beds side by side, a crop to a bed,
+   rows across each, the tall end away from the sun. A kitchen garden groups
+   its crops by family so that a family can move bed together, and here the
+   families are the three roots: three beds is a three-course rotation drawn at
+   the moment it stands still. Which bed holds which crop is not fixed by the
+   plan, as it is not in a rotated garden; it is set by what arrives.
+2. **The allotments.** A place you are from, read literally: each plot divided
+   into strips, a strip to a gardener, their plants in it. **Rejected on
+   privacy first.** A planting carries both its parents' seeds so that a
+   browser can grow it, and a gardener's own seed is a parent of every plant
+   their meetings make; a strip per seed would gather one person's meetings
+   into one place on a public page. That is a map of who met whom, which the
+   plot service was built not to hold (§*The asking*: two offers concerning the
+   same pair are not linkable). It would also fill worse than the Seedbed:
+   most gardeners will share a handful of plants, so most strips would hold
+   one or two.
+3. **The walled potager.** A kept place, read as *pairidaeza*: four beds round
+   a cross of paths, a feature where they meet, a wall round. **Rejected
+   because it is two areas already built**: the Crossing's plan inside the
+   Quiet Garden's hedge. A kitchen garden's truth is in its beds and rows, not
+   in its quarters.
+
+### The plot
+
+- **Three beds, each 1.2 m wide and 4.2 m long**, running the length of the plot
+  from −z to +z, their middles at x = −1.65, 0 and +1.65 m. Paths of 0.45 m
+  between them and a headland of 0.5 m at each end; the outermost bed edge is
+  0.35 m inside the plot, clear of the outline's 0.16 m wander.
+- **North is −z**, the end away from the page's midday sun, which lights the
+  plot from (−x, +z). A tall row there shades nothing but the headland. A
+  kitchen garden puts its runner beans and its sweetcorn at the north end for
+  the same reason.
+- **The crop sets the spacing**, which is what every seed packet is for. Each
+  crop is spaced at about its own median spread, so neighbours meet as a sown
+  crop's do:
+
+  | Crop | Across a row | Down the bed | A bed holds |
+  | --- | --- | --- | --- |
+  | spire | 3, at 0.40 m | 9 rows, 0.45 m apart | 27 |
+  | umbel | 2, at 0.60 m | 7 rows, 0.60 m apart | 14 |
+  | succulent | 4, at 0.28 m | 13 rows, 0.30 m apart | 52 |
+
+  About half the spires and umbels are wider than the gap to their neighbour,
+  and one rosette in eight is, which is a bed at maturity rather than a
+  nursery. At most 2% of any crop reaches more than 0.2 m into a path, so the
+  paths stay open.
+- **A plot therefore holds 42 to 156 plants**, depending on which crops claimed
+  its beds; the largest in any simulated run held 93. The Long Walk's page
+  already draws three plots of 48, so 93 is inside what a page has done.
+- **The nudge is 0.025 m down the bed and 0.05 m along the row.** A row across
+  a bed has to read as a row, for the reason a drill does in the Seedbed.
+
+### The rule
+
+Two traits: **the crop decides the bed, the height decides the end.**
+
+1. A bed already sown with this plant's crop and not yet full, oldest plot
+   first, beds west to east.
+2. Otherwise the first bed nobody has sown, oldest plot first. It takes this
+   crop's spacing from then on.
+3. Otherwise a new plot, its west bed.
+
+Within the bed, **a plant at least as tall as its crop's cut takes the next
+place from the north end** — row by row, west to east along each row — **and a
+shorter one the next place from the south end**, east to west, working north.
+The bed is full when the two meet.
+
+- **The cuts are each crop's own median**, measured on the 2,000: **spire
+  1.346 m, umbel 0.928 m, succulent 0.469 m.** Three cuts rather than one,
+  because the three crops barely overlap: a single cut would send nearly every
+  rosette to the south end and every spire to the north, and a bed of one crop
+  would not be graded at all. The umbel's 0.928 is two millimetres from the
+  Long Walk's 0.93, and it is **not** borrowed: the walk's divides the whole
+  garden into thirds and this divides one crop in half. The Knot Garden
+  refused to make one fact look like two; this is the other side of the same
+  rule, two facts that happen to agree.
+- **Nothing is ever displaced.** If a bed of a plant's crop has any place left,
+  it has a place for this plant, because either end will take it. So the fill
+  does not depend on a single height, only on the mix of crops, and no plant
+  ever stands at the wrong end.
+- **Everything that came in from the north end is at least as tall as
+  everything that came in from the south**, in every bed. That is the whole of
+  the grading, and it is as much as an append-only bed can promise without
+  bands: arrivals come in no order of height, so within each end they stand in
+  the order they came.
+- **A height is compared only with a cut, never with another plant.** The Long
+  Walk, the Orchard and the Cold Frame all ask whether a plant would stand out
+  of order against its neighbours; this rule never does. The one place two
+  hosts' heights can disagree is at the three cuts, and the nearest of 2,500
+  fresh arrivals is 0.09 mm from its cut — nine times `VectorFile.height` — so
+  the vector test needs `placementCannotTurn` over the three cuts, as the Cold
+  Frame's does.
+- **The crop is a fifth trait**, after the Glasshouse's hue. The service cannot
+  grow a plant to read its name, so the phone sends the genus root and the
+  store keeps it in a column, arriving by both paths as the Seedbed's kind
+  does. It is three or four letters, exact on every host, and the PHP port
+  compares it as a string and needs to know nothing about botany.
+- **The ambassador opens the west bed for umbels.** *Fenunora patentifolia* is
+  1.102 m, over the umbel cut, so it takes the first place from the north end
+  of the first bed: the north-west corner of plot 0, the head of the garden.
+  It is 0.93 m across, wider than nine umbels in ten, and leans a little into
+  the row beside it, which the first plant in a bed is allowed to do.
+
+### How it reads in the isometric view
+
+- **The page opens looking up the beds from their south ends.** At the first
+  turn the eye is over the (+x, +z) corner, so in every bed the short end is
+  nearer than the tall one: the way a gardener looks up a bed. The camera is
+  always on a diagonal, so the beds are never seen square-on; two of the four
+  turns look up them from the south and two from the north, and in those two
+  the spires' north ends stand in front, as every area has turns that are its
+  worst.
+- **One plot a page**, as the Seedbed shows one: a kitchen garden is a
+  rectangle you stand at the end of, and two of them end to end read as one
+  garden with a seam.
+- **The crop can be told from across the plot.** A spike, a flat head and a
+  low rosette are silhouettes nobody takes for each other, so three beds read
+  as three crops before anything on the page names them.
+- **Everything is soil, and nothing is ruled.** The beds are raised about
+  0.08 m and mounded, with soft shoulders down to the path, and their outlines
+  wander by a few centimetres (`Organic`), so no bed has a straight edge. The
+  paths are the same soil trodden paler and flatter, and **the edge of a path
+  is the shoulder of a bed**, not a line drawn between them. No boards: a board
+  is a ruled line, and a mounded bed is how a no-dig garden is made anyway.
+  The soil is dark, the map's `#4d3b2c` — darker than the Seedbed's tilth,
+  which is the same earth raked fine for sowing — and toned per face, as the
+  tilth is, because soil is crumbs rather than a surface.
+- **No new structure.** The beds are the ground's own relief, as the Seedbed's
+  drills are. An empty bed in a new plot is dug ground waiting to be sown,
+  which is what an unsown bed in a kitchen garden looks like; the reading the
+  Crossing had to escape is the one this area wants.
+
+### The fill, simulated
+
+24 September, before any rule was written. The simulation is **Swift: a small
+package at `tools/homeground/` that links SeedCore**, so every height, spread
+and root is the garden's own, from `Maturity.bounds` and the name. It is not a
+SeedCore test, because nothing about a rule that does not exist yet should run
+in CI. `swift run -c release --package-path tools/homeground` prints every
+number below; the grown samples are kept in its `.build`, so a second run takes
+seconds.
+
+**Four streams**, each placed after the ambassador: the 2,000 the cuts were
+measured on; a fresh 500 and a fresh 2,000 they were not; and **a village**:
+500 plants from sixty gardeners meeting unevenly, weights falling as one over
+rank, every meeting a new crossing of their own two seeds. The village is the
+realistic stream and the unkind one. Arrivals come in runs, the crops are no
+longer even (39% spire, 42% umbel, 19% succulent) and the heights lean, which
+is the Long Walk's warning about a sample drawn from few gardeners.
+
+Six rules were run, to separate what each part of the design buys:
+
+| Rule | Fresh 500 | Fresh 2,000 | Village 500 | Plots with all three crops, fresh 2,000 | Pairs in shading order |
+| --- | --- | --- | --- | --- | --- |
+| **A** fixed beds (a `Cer`, a `Fen` and a `Pell` bed in every plot), one spacing of 24 a bed, arrival order | 8 plots, 87% held | 31, 90% | 9, **77%** | 25 of 31 | 50% |
+| **B** as A, from two ends | 8, 87% | 31, 90% | 9, 77% | 25 of 31 | 77% |
+| **C′** claimed beds, one spacing, two ends | 8, 91% | 28, 99% | 8, 91% | 24 of 28 | 77% |
+| **C** claimed beds, the crop's spacing, arrival order | 8, 91% | 29, 97% | 9, 92% | 10 of 29 | 50% |
+| **D — recommended.** Claimed beds, the crop's spacing, two ends | **8, 91%** | **29, 97%** | **9, 92%** | 10 of 29 | **72–78%** |
+| **E** claimed beds, the crop's spacing, three bands of rows | 8, 91% | 29, 96% | 10, **75%** | 11 of 29 | 85–86% |
+
+*Held* is the share of places in sown beds holding a plant. *Pairs in shading
+order* is how often, of two plants in one bed standing in different rows, the
+northern one is at least as tall; chance is half.
+
+- **D at a fresh 500: 8 plots, 6 of them full, 23 beds sown and 20 full, 91% of
+  places held.** At 2,000: 29 plots, 28 full, 97%. In the village: 9 plots, 7
+  full, 92%. Within a point of the Knot Garden's 92% at five hundred, the best
+  in the garden, and it holds in the stream built to break it.
+- **Fixed beds fail the village.** A bed that belongs to a crop in every plot
+  waits for that crop, so a garden short of rosettes opens plots for the others
+  and leaves a rosette bed half empty in each: 77%. Claiming is the Knot
+  Garden's, the Seedbed's and the Cold Frame's move, and it is what makes the
+  fill indifferent to the mix.
+- **The two ends cost nothing.** C and D put the same plants in the same beds
+  and hold the same share; D stands three pairs in four in shading order where
+  C stands half. It is grading for free, which is the whole argument for it.
+- **Three bands grade better and break in the village.** E stands 85–86% of
+  pairs in order and 93–96% of plants in their own band on strangers. But a
+  band waits for heights, and when the heights lean the bands run out
+  unevenly: 75%, ten plots where D needs nine, and only four of them full.
+- **In every bed of every run, everything from the north end is at least as tall
+  as everything from the south.** The meeting falls anywhere from 14% to 79% of
+  the way down a full bed, which is how uneven the halves of a small crop are.
+- **What the crop's spacing costs is variety between plots, not fill.** With
+  one spacing a plot usually holds one bed of each crop (24 of 28 plots at
+  2,000). With the crop's, an umbel bed is full at 14 and a rosette bed at 52,
+  so umbels claim more than half the beds (48 of 86) and only 10 of 29 plots
+  hold all three. That is what an allotment looks like — the ground goes to the
+  crops that take room, and the salad gets one bed — and it is the price of
+  beds that read as crops. At one spacing, 91% of umbels would be wider than
+  the gap to their neighbour and half the rosettes less than half as wide as
+  theirs: a thicket in one bed and a scatter in another.
+
+### Decided, 24 September 2026
+
+Marcus took all five recommendations.
+
+1. **Spacing is the crop's own**: umbels 14 a bed, spires 27, rosettes 52.
+2. **A bed fills from both ends**: tall from the north, short from the south.
+3. **The paths are trodden soil**, paler than the beds, so the whole plot is
+   earth.
+4. **The beds are mounded, with no boards**; a path's edge is a bed's shoulder.
+5. **The map's glyph shows three beds**, redrawn the same day in `gates.js`
+   `LOOK.ground`: three bed outlines, with short upright strokes for the
+   spires, flat bars for the umbels' heads and close dots for the rosettes.

@@ -1031,6 +1031,9 @@
     "Appearance" : {
 
     },
+    "Area" : {
+      "comment" : "Row label on the screen that explains a plant's name, beside the place in the shared garden the plant belongs to, such as 'The Cold Frame'. A part of a garden, not a measurement. The website heads its table with the same word (key meaningsArea)."
+    },
     "Ask %@" : {
 
     },
@@ -8302,6 +8305,9 @@
     "What stands there is the plant itself, grown from its seed at its real age, the way it grows here." : {
 
     },
+    "What the name means" : {
+      "comment" : "The book mark beside a plant's name on the seed screen, read aloud. It opens a page explaining what the plant's name says about it."
+    },
     "What they will see" : {
       "comment" : "Heading over the field where somebody types the name the other person will see.",
       "localizations" : {
@@ -9602,6 +9608,546 @@
         }
       }
     },
+    "area.beginnings" : {
+      "comment" : "A place in the shared garden, where plants of the theme Beginnings stand. A name, not a description: use the website's name for it (key areaBeginnings; the brief is tools/strings/NAMING.md).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Seedbed"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Såbedet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El semillero"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le semis"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il semenzaio"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Såbedet"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Het zaaibed"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Såbädden"
+          }
+        }
+      }
+    },
+    "area.ground" : {
+      "comment" : "A place in the shared garden, where plants of the theme Ground stand. A name, not a description: use the website's name for it (key areaGround; the brief is tools/strings/NAMING.md).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Home Ground"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hjemstavnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tierra natal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La terre natale"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La terra natia"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hjemstavnen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De geboortegrond"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hembygden"
+          }
+        }
+      }
+    },
+    "area.kinship" : {
+      "comment" : "A place in the shared garden, where plants of the theme Kinship stand. A name, not a description: use the website's name for it (key areaKinship; the brief is tools/strings/NAMING.md).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Orchard"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frugthaven"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El vergel"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le verger"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il frutteto"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frukthagen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De boomgaard"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fruktträdgården"
+          }
+        }
+      }
+    },
+    "area.light" : {
+      "comment" : "A place in the shared garden, where plants of the theme Light stand. A name, not a description: use the website's name for it (key areaLight; the brief is tools/strings/NAMING.md).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Glasshouse"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drivhuset"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El invernadero"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La serre"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La serra"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drivhuset"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De kas"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Växthuset"
+          }
+        }
+      }
+    },
+    "area.meeting" : {
+      "comment" : "A place in the shared garden, where plants of the theme Meeting stand. A name, not a description: use the website's name for it (key areaMeeting; the brief is tools/strings/NAMING.md).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Crossing"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Krydsningen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El cruce"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le croisement"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'incrocio"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Krysningen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De kruising"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Korsningen"
+          }
+        }
+      }
+    },
+    "area.pattern" : {
+      "comment" : "A place in the shared garden, where plants of the theme Pattern stand. A name, not a description: use the website's name for it (key areaPattern; the brief is tools/strings/NAMING.md).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Knot Garden"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barokhaven"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El jardín de arrayanes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le parterre de broderie"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il giardino all'italiana"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barokkhagen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Het parterre"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barockparterren"
+          }
+        }
+      }
+    },
+    "area.peace" : {
+      "comment" : "A place in the shared garden, where plants of the theme Peace stand. A name, not a description: use the website's name for it (key areaPeace; the brief is tools/strings/NAMING.md).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Quiet Garden"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den Stille Have"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El jardín silencioso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le jardin silencieux"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il giardino silenzioso"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den stille hagen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De stille tuin"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tysta trädgården"
+          }
+        }
+      }
+    },
+    "area.renewal" : {
+      "comment" : "A place in the shared garden, where plants of the theme Renewal stand. A name, not a description: use the website's name for it (key areaRenewal; the brief is tools/strings/NAMING.md).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Coppice"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stubhaven"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las cepas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La cépée"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La ceppaia"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stubbehagen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De knotwilgen"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stubbskotten"
+          }
+        }
+      }
+    },
+    "area.travel" : {
+      "comment" : "A place in the shared garden, where plants of the theme Travel stand. A name, not a description: use the website's name for it (key areaTravel; the brief is tools/strings/NAMING.md).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Long Walk"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den Lange Allé"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La alameda"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La grande allée"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il lungo viale"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den lange alléen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De lange laan"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Långa allén"
+          }
+        }
+      }
+    },
+    "area.waiting" : {
+      "comment" : "A place in the shared garden, where plants of the theme Waiting stand. A name, not a description: use the website's name for it (key areaWaiting; the brief is tools/strings/NAMING.md).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Cold Frame"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dvalebedet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La latencia"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La dormance"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La dormienza"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dvalebedet"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De koude bak"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kallbänken"
+          }
+        }
+      }
+    },
     "in this specific digital space," : {
       "comment" : "Third of the four first-screen lines.",
       "localizations" : {
@@ -9702,6 +10248,366 @@
         }
       }
     },
+    "subtheme.aKeptPlace" : {
+      "comment" : "One of the three parts of the theme Ground: a garden as a place enclosed and tended. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "A kept place"
+          }
+        }
+      }
+    },
+    "subtheme.aPlaceYouAreFrom" : {
+      "comment" : "One of the three parts of the theme Ground: home ground, belonging to a place. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "A place you are from"
+          }
+        }
+      }
+    },
+    "subtheme.atEase" : {
+      "comment" : "One of the three parts of the theme Peace: comfort, being at ease with others. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "At ease"
+          }
+        }
+      }
+    },
+    "subtheme.counted" : {
+      "comment" : "One of the three parts of the theme Pattern: patterns that are numbers, spirals and the golden angle. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Counted"
+          }
+        }
+      }
+    },
+    "subtheme.cutAndComeAgain" : {
+      "comment" : "One of the three parts of the theme Renewal: a plant cut back that grows again. A gardener's phrase. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cut and come again"
+          }
+        }
+      }
+    },
+    "subtheme.farOff" : {
+      "comment" : "One of the three parts of the theme Travel: distance, and the longing for somewhere else. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Far off"
+          }
+        }
+      }
+    },
+    "subtheme.fittedTogether" : {
+      "comment" : "One of the three parts of the theme Pattern: shapes that tile and interlock. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Fitted together"
+          }
+        }
+      }
+    },
+    "subtheme.grownTogether" : {
+      "comment" : "One of the three parts of the theme Kinship: grafts, lichen, roots and fungi joined. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Grown together"
+          }
+        }
+      }
+    },
+    "subtheme.heldBack" : {
+      "comment" : "One of the three parts of the theme Waiting: dormancy, a seed that will not germinate yet. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Held back"
+          }
+        }
+      }
+    },
+    "subtheme.howASeedGoes" : {
+      "comment" : "One of the three parts of the theme Travel: how seeds are carried by wind and water. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "How a seed goes"
+          }
+        }
+      }
+    },
+    "subtheme.lightItself" : {
+      "comment" : "One of the three parts of the theme Light: sunlight as a thing in itself. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Light itself"
+          }
+        }
+      }
+    },
+    "subtheme.madeWhole" : {
+      "comment" : "One of the three parts of the theme Renewal: mending and healing, what was broken made whole. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Made whole"
+          }
+        }
+      }
+    },
+    "subtheme.orderNamed" : {
+      "comment" : "One of the three parts of the theme Pattern: the words people have for order. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Order named"
+          }
+        }
+      }
+    },
+    "subtheme.quietAsASound" : {
+      "comment" : "One of the three parts of the theme Peace: quiet as something heard, wind in trees, snow. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Quiet as a sound"
+          }
+        }
+      }
+    },
+    "subtheme.readingTheLight" : {
+      "comment" : "One of the three parts of the theme Light: how a plant senses light and turns to it. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Reading the light"
+          }
+        }
+      }
+    },
+    "subtheme.smallToLarge" : {
+      "comment" : "One of the three parts of the theme Beginnings: the acorn and the oak. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Small to large"
+          }
+        }
+      }
+    },
+    "subtheme.standingAndWatching" : {
+      "comment" : "One of the three parts of the theme Waiting: patience, keeping watch. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Standing and watching"
+          }
+        }
+      }
+    },
+    "subtheme.theEdgesOfTheDay" : {
+      "comment" : "One of the three parts of the theme Light: dawn and dusk. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The edges of the day"
+          }
+        }
+      }
+    },
+    "subtheme.theFirstAct" : {
+      "comment" : "One of the three parts of the theme Beginnings: germination, the first root. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The first act"
+          }
+        }
+      }
+    },
+    "subtheme.theLongCount" : {
+      "comment" : "One of the three parts of the theme Waiting: very long waits, seeds that germinated after centuries. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The long count"
+          }
+        }
+      }
+    },
+    "subtheme.theMannersOfIt" : {
+      "comment" : "One of the three parts of the theme Meeting: hospitality, how a guest is received. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The manners of it"
+          }
+        }
+      }
+    },
+    "subtheme.theMoment" : {
+      "comment" : "One of the three parts of the theme Meeting: the right moment, a chance meeting. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The moment"
+          }
+        }
+      }
+    },
+    "subtheme.theRoad" : {
+      "comment" : "One of the three parts of the theme Travel: journeys and pilgrims. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The road"
+          }
+        }
+      }
+    },
+    "subtheme.theSoilItself" : {
+      "comment" : "One of the three parts of the theme Ground: soil, and what lives in it. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The soil itself"
+          }
+        }
+      }
+    },
+    "subtheme.theTurningYear" : {
+      "comment" : "One of the three parts of the theme Renewal: the seasons coming round. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The turning year"
+          }
+        }
+      }
+    },
+    "subtheme.theWordsForIt" : {
+      "comment" : "One of the three parts of the theme Kinship: the words people have for kin and companions. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The words for it"
+          }
+        }
+      }
+    },
+    "subtheme.theWordsForStopping" : {
+      "comment" : "One of the three parts of the theme Peace: the words for rest and ceasing. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The words for stopping"
+          }
+        }
+      }
+    },
+    "subtheme.twoPeople" : {
+      "comment" : "One of the three parts of the theme Kinship: friendship between two people. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Two people"
+          }
+        }
+      }
+    },
+    "subtheme.twoThatNeedEachOther" : {
+      "comment" : "One of the three parts of the theme Meeting: a flower and its pollinator. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Two that need each other"
+          }
+        }
+      }
+    },
+    "subtheme.whatAStartSettles" : {
+      "comment" : "One of the three parts of the theme Beginnings: what a beginning decides about everything after it. Listed on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "What a start settles"
+          }
+        }
+      }
+    },
     "the coordinates of this moment," : {
       "comment" : "Second of the four first-screen lines. Lower case and a comma because it continues the line before it.",
       "localizations" : {
@@ -9751,6 +10657,246 @@
     },
     "the other gardener" : {
 
+    },
+    "theme.beginnings" : {
+      "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Beginnings"
+          }
+        }
+      }
+    },
+    "theme.beginnings.definition" : {
+      "comment" : "The definition under the headword 'Beginnings'. The website says the same after 'Beginnings:' (key meaningBeginnings).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "the first thing a seed does, and how much comes of it."
+          }
+        }
+      }
+    },
+    "theme.ground" : {
+      "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name. The earth, and ground that is one's own.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ground"
+          }
+        }
+      }
+    },
+    "theme.ground.definition" : {
+      "comment" : "The definition under the headword 'Ground'. The website says the same after 'Ground:' (key meaningGround).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "the earth a plant stands in, and the earth that is yours."
+          }
+        }
+      }
+    },
+    "theme.kinship" : {
+      "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Kinship"
+          }
+        }
+      }
+    },
+    "theme.kinship.definition" : {
+      "comment" : "The definition under the headword 'Kinship'. The website says the same after 'Kinship:' (key meaningKinship).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "what grows together, and the people kept rather than happened upon."
+          }
+        }
+      }
+    },
+    "theme.light" : {
+      "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name. The noun, as in sunlight. Not the light appearance in Settings.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Light"
+          }
+        }
+      }
+    },
+    "theme.light.definition" : {
+      "comment" : "The definition under the headword 'Light'. The website says the same after 'Light:' (key meaningLight).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "what a plant turns towards, and the day it keeps time by."
+          }
+        }
+      }
+    },
+    "theme.meeting" : {
+      "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name. Two coming together, not an appointment.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meeting"
+          }
+        }
+      }
+    },
+    "theme.meeting.definition" : {
+      "comment" : "The definition under the headword 'Meeting'. The website says the same after 'Meeting:' (key meaningMeeting).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "two coming together at the right moment, and what each owes the other."
+          }
+        }
+      }
+    },
+    "theme.pattern" : {
+      "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name. Order in living things, not a sewing pattern.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Pattern"
+          }
+        }
+      }
+    },
+    "theme.pattern.definition" : {
+      "comment" : "The definition under the headword 'Pattern'. The website says the same after 'Pattern:' (key meaningPattern).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "the order in living things, and the names given to order."
+          }
+        }
+      }
+    },
+    "theme.peace" : {
+      "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Peace"
+          }
+        }
+      }
+    },
+    "theme.peace.definition" : {
+      "comment" : "The definition under the headword 'Peace'. The website says the same after 'Peace:' (key meaningPeace).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "the quiet a garden is for, and the ease that comes with it."
+          }
+        }
+      }
+    },
+    "theme.renewal" : {
+      "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Renewal"
+          }
+        }
+      }
+    },
+    "theme.renewal.definition" : {
+      "comment" : "The definition under the headword 'Renewal'. The website says the same after 'Renewal:' (key meaningRenewal).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "what is cut back and comes again, and what is mended."
+          }
+        }
+      }
+    },
+    "theme.travel" : {
+      "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name. A noun.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Travel"
+          }
+        }
+      }
+    },
+    "theme.travel.definition" : {
+      "comment" : "The definition under the headword 'Travel'. The website says the same after 'Travel:' (key meaningTravel).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "the ways a seed and a person go, and the pull of somewhere else."
+          }
+        }
+      }
+    },
+    "theme.waiting" : {
+      "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name. A noun: the act of waiting.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Waiting"
+          }
+        }
+      }
+    },
+    "theme.waiting.definition" : {
+      "comment" : "The definition under the headword 'Waiting'. The website says the same after 'Waiting:' (key meaningWaiting).",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "what is held back until its time, however long that is, and whoever keeps watch."
+          }
+        }
+      }
     },
     "tile.caption" : {
       "comment" : "Under a plant in the garden. First what the plant is doing, then who it was grown with.",

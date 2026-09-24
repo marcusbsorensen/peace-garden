@@ -208,29 +208,30 @@ body {
 }
 
 /* ── The bar ──────────────────────────────────────────────────────────────
-   The mark and the wordmark, the way back to the garden, and — on an area
-   page — the name of the area you are standing in.
+   The mark and the wordmark, which lead to the front page, and the ways on
+   from here as a row of glyphs at the other end — §The bar's glyphs, near the
+   end of this file, draws them.
 
    **The site had no way between its pages at all.** Every path was reached by
    typing it or by following a link minted elsewhere, and the one route into
    the garden was the front page. So this is on every page, including the
-   front, where the mark was not a link and the link to the garden is the whole
-   point of having a bar there.
+   front, where the mark is not a link, because the front is where it leads,
+   and the glyphs are the whole point of having a bar there.
 
-   It is the masthead with one thing added rather than a second kind of header:
-   the same row, the same gap, the same mark at the same size. What is new is a
-   rule under it — one hairline, which is the only edge this project draws —
-   and the link at its end. Nothing here is filled, coloured or underlined: the
-   link back wears `.quiet-button`, which is the capsule the front page's four
-   links already wear.
+   It is the masthead with two things added rather than a second kind of
+   header: the same row, the same gap, the same mark at the same size. What is
+   new is a rule under it — one hairline, which is the only edge this project
+   draws — and the glyphs at its end. Nothing here is filled, coloured or
+   underlined: each glyph is a line drawing in a hairline ring, and the link
+   home is the mark and the wordmark as they stand, with no line under them.
 
    **It does not say which area you are standing in**, though it did for a day.
    The heading under the plot says that, and a bar naming the area a few hundred
    points above its own heading is one screen saying the same words twice.
 
    It wraps rather than shrinking. On a narrow phone the mark and wordmark keep
-   the first line and the way out sits centred underneath, which is a bar of two
-   lines instead of a bar with a squeezed capsule in it. */
+   the first line and the glyphs sit centred underneath, which is a bar of two
+   lines instead of one with its ways squeezed into what is left. */
 .masthead.bar {
   inline-size: 100%;
   flex-wrap: wrap;
@@ -254,13 +255,6 @@ body {
   gap: 12px;
   /* Pushed to the end while the bar is one line, and harmless once it wraps. */
   margin-inline-start: auto;
-}
-
-/* Smaller than the capsules in the body of a page: a bar is chrome, and a
-   control in it should not be the loudest thing on the screen. */
-.bar .quiet-button {
-  padding: 5px 14px;
-  font-size: 0.76rem;
 }
 
 
@@ -1444,108 +1438,281 @@ a.minimap__cell:focus-visible::before {
    a genus head, an ending, an epithet. A root, a gloss or a subtheme is not a
    plant name and is set in the sans like everything else. */
 
-/* ── Under an area's paragraph ──────────────────────────────────────────────
-   Four short lines: what the theme is, the syllables that bring a plant here,
-   the three parts, and the way to the whole table. Centred in the column as
-   the paragraph above it is, and packed closer than the page's own rhythm so
-   the four read as one block rather than four more things to scroll past. */
-.walk-page > .gathers {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  margin-block-end: 22px;
-}
-
+/* The entry under an area's drawing is styled in §The two panels, below. The
+   four-line block it replaced, and that block's rules, went on 24 September. */
 .gathers p {
   margin: 0;
 }
 
-.gathers__meaning {
-  font-size: 15px;
+/* ── The two panels ─────────────────────────────────────────────────────────
+   Under an area's drawing since 24 September: on one side what the area is —
+   its name, and what its plants mean set as a dictionary entry — and on the
+   other every way about it and out of it, the pad over the map. Each in an
+   outline, the hairline being the only edge this project draws, drawn all
+   round rather than as rules above and below.
+
+   The paragraph that said how the area is laid out is kept for a screen
+   reader, who cannot see the drawing it describes, and taken off the screen
+   for everybody else, who can. */
+.walk-page > .area-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 16px;
+  max-inline-size: min(100%, 860px);
+  margin-block: 22px;
 }
 
-/* The syllables. Each head with its root after it is one unit that does not
-   break, so a line wraps between two of them and never inside one. */
-.gathers__names {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--faint);
+.area-panel {
+  border: 1px solid var(--hairline);
+  border-radius: 18px;
+  padding: 22px 24px;
 }
 
-/* On a line of its own over the syllables: inline, it broke between its two
-   words on a phone and read as NAMES over BEGINNING Nyx. */
-.gathers__lead {
-  display: block;
+.area-panel--words {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  text-align: start;
 }
 
-.gathers__name {
-  white-space: nowrap;
+.area-panel--words .heading {
+  margin: 0;
 }
 
-/* The dot between two units hangs off the end of the first, and the space
-   after it is where a line may break — so a wrapped row ends on a dot rather
-   than starting the next line with one. */
-.gathers__names .gathers__name:not(:last-child)::after,
-.gathers__part:not(:last-child)::after {
-  content: "·";
-  margin-inline: 6px 3px;
-  color: var(--faint);
+.area-panel--words .walk-note {
+  margin: 0;
 }
 
-.gathers__head {
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 300;
-  font-size: 17px;
-  color: var(--ink);
+.area-panel--words .drills {
+  margin-block-start: 4px;
+  justify-content: start;
 }
 
-/* The three parts, as a row of labels. Brighter than a caption, because it is
-   what the sentence above it says the area holds. */
-.gathers__parts {
-  line-height: 1.7;
+/* The pad over the map: two pairs of keys, one above the other, and the map
+   under them. Centred in its panel, which is as wide as the map. */
+.area-panel--ways {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.area-panel--ways .walk-keys {
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* The block inside the words panel keeps the panel's own alignment. A grid,
+   so the drawings of the area's name-starts can stand at the end of the
+   headword's line, beside the entry rather than under it, and the senses run
+   the whole width beneath both. */
+.area-panel--words .gathers {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 10px 18px;
+  inline-size: 100%;
+}
+
+.gathers__entry {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.gathers__senses {
+  grid-column: 1 / -1;
+}
+
+/* The name-starts' drawings: the entry's own at `/meanings`, smaller, and
+   quieter than the headword they stand beside. */
+.gathers__heads {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  padding-block-start: 5px;
+  list-style: none;
   color: var(--muted);
 }
 
-.gathers__part {
+.gathers__glyph {
+  display: grid;
+}
+
+.gathers__head-glyph {
+  inline-size: 22px;
+  block-size: 22px;
+}
+
+/* A dictionary entry: the headword, then what it means. */
+.gathers__entry {
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-inline-size: 34em;
+}
+
+.gathers__word {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-inline-end: 4px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.gathers__word dfn {
+  font-style: normal;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+.gathers__book {
+  inline-size: 15px;
+  block-size: 15px;
+  align-self: center;
+  fill: none;
+  stroke: var(--faint);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 200ms ease-out;
+}
+
+.gathers__word:hover .gathers__book,
+.gathers__word:focus-visible .gathers__book {
+  stroke: var(--ink);
+}
+
+.gathers__word:focus-visible {
+  outline: 1px solid var(--muted);
+  outline-offset: 3px;
+}
+
+/* The three parts as the entry's numbered senses. */
+.gathers__senses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: sense;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.gathers__senses .gathers__part {
+  counter-increment: sense;
   white-space: nowrap;
 }
 
-/* The way to the table: the size and weight of the privacy link at the foot,
-   and lit the same way when reached for. */
-.gathers__link {
-  font-size: 13px;
-  letter-spacing: 0.02em;
+.gathers__senses .gathers__part::before {
+  content: counter(sense) " ";
   color: var(--faint);
-  text-decoration: none;
-  transition: color 200ms ease-out;
 }
 
-.gathers__link:hover,
-.gathers__link:focus-visible {
+/* A phone: one panel above the other, the words first. */
+@media (max-width: 46rem) {
+  .walk-page > .area-panels {
+    grid-template-columns: 1fr;
+    padding-inline: 16px;
+  }
+
+  .area-panel {
+    padding: 18px;
+  }
+}
+
+/* The foot takes the slack again, now the panels no longer do. */
+.walk-page > .bar-foot {
+  margin-block-start: auto;
+  border-block-start: 1px solid var(--hairline);
+  padding-block-start: 14px;
+}
+
+/* ── The bar's glyphs ───────────────────────────────────────────────────────
+   The ways on from any page, drawn rather than written so they are the same
+   in every language: the garden, as the app's own Garden mark; what the names
+   mean, as an open book; and the language, as a globe beside the language's
+   own name for itself. Each glyph's words are its accessible name and its
+   tooltip. Flags were considered and not used: a flag is a country, and
+   several of these languages are spoken in many or belong to none. */
+.bar-glyph {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 38px;
+  block-size: 38px;
+  border: 1px solid var(--hairline);
+  border-radius: 50%;
+  color: var(--muted);
+  transition: border-color 200ms ease-out, color 200ms ease-out;
+}
+
+.bar-glyph:hover,
+.bar-glyph:focus-visible {
+  border-color: var(--muted);
   color: var(--ink);
+  outline: none;
 }
 
-/* A wide window gives the block the bar's width rather than the paragraph's,
-   so each of its lines is one line and the lead-in sits beside the syllables
-   it introduces. Every line saved here is a line the pad and the map are
-   nearer the fold at 1280 x 800, which is the measurement `.night` was set by
-   and which this block costs about a hundred and thirty points of. */
-@media (min-width: 60rem) {
-  .walk-page > .gathers {
-    max-inline-size: min(100%, 680px);
-    gap: 6px;
-  }
+.bar-glyph__mark,
+.bar-language__mark {
+  inline-size: 20px;
+  block-size: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
-  .gathers__meaning {
-    max-width: none;
-  }
+.bar-language {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+}
 
-  .gathers__lead {
-    display: inline;
-    margin-inline-end: 10px;
-  }
+.bar-language .chooser__mark path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bar-language .chooser__select {
+  border-block-end: 0;
+}
+
+/* A name that is read out and not shown. */
+.visually-hidden {
+  position: absolute !important;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0 !important;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The headword on a front-page card, as on an area page. */
+.front-card__word {
+  display: block;
+  margin-block-end: 2px;
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 400;
+  color: #ffffff;
 }
 
 /* The hub's foot holds two capsules now; a little air between them. */
@@ -1554,20 +1721,77 @@ a.minimap__cell:focus-visible::before {
 }
 
 /* ── The page at /meanings ──────────────────────────────────────────────────
-   The page's words keep to the measure and stay centred, as every page's do.
-   The tables are the one thing allowed wider, because a row read across is the
-   point of them. */
+   A dictionary, since 24 September, where it was a table: ten entries, one per
+   area, each set as a dictionary sets a word — the headword, the definition,
+   the etymology, the numbered senses — and a glossary of the second words.
+
+   **Drawn as much as written.** Every root has its drawing and so has every
+   second word, so a reader with none of the page's languages can still follow
+   a name by its pictures: *Nyx* is a crescent, *noctiflora* a flower under
+   one. The drawings keep BRAND.md §3.2 as every glyph on the site does, and the
+   one colour on the page is each area's own ground, on its tile, as the map
+   has it.
+
+   The page's own words keep to the measure and stay centred, as every page's
+   do; the entries and the glossary are the one thing allowed the width, and
+   read from the start edge, as a dictionary does. The edges are the hairline,
+   as everywhere: a rule between entries, and on a wide window a rule between
+   an entry's two columns. */
 .meanings-page {
   max-width: 64rem;
 }
 
-/* One name taken apart: the name, and under it what each piece says. */
+/* Every drawing on the page, and the area page's small ones: monoline, even
+   weight, round free ends, stroked in the ink of whatever holds it. A colour
+   drawing — *aurea*, *rubra* — sets its own stroke on each path. */
+.meanings-tile__glyph,
+.meanings-example__glyph,
+.entry__glyph,
+.glossary__glyph,
+.gathers__head-glyph {
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* An area's tile: its ground, and its layout's glyph on it — the map's cell,
+   brought here. The ground travels with the tile, so there is no light and
+   dark pair: white on each ground reads in both. */
+.meanings-tile {
+  display: inline-grid;
+  place-items: center;
+  border-radius: 7px;
+  background: var(--area-ground);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.92);
+  transition: box-shadow 200ms ease-out, filter 200ms ease-out;
+}
+
+.meanings-tile__glyph {
+  inline-size: 20px;
+  block-size: 20px;
+}
+
+/* ── One name, taken apart ──
+   In an outline, as an area's panels are: the name, and under each piece of it
+   the mark the rest of the page gives that piece and what it says. */
 .meanings-example {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
+  inline-size: min(100%, 38rem);
   margin: 0;
+  padding: 28px 24px 24px;
+  border: 1px solid var(--hairline);
+  border-radius: 18px;
+}
+
+.meanings-example__name {
+  font-size: 30px;
 }
 
 .meanings-example__between {
@@ -1578,7 +1802,7 @@ a.minimap__cell:focus-visible::before {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px 28px;
+  gap: 16px 40px;
   margin: 0;
 }
 
@@ -1586,15 +1810,25 @@ a.minimap__cell:focus-visible::before {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
 }
 
 .meanings-example__term {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
   font-family: var(--serif);
   font-style: italic;
   font-weight: 300;
-  font-size: 16px;
+  font-size: 17px;
   color: var(--ink);
+}
+
+.meanings-example__glyph {
+  inline-size: 26px;
+  block-size: 26px;
+  color: var(--muted);
 }
 
 .meanings-example__says {
@@ -1603,183 +1837,384 @@ a.minimap__cell:focus-visible::before {
   color: var(--faint);
 }
 
-/* Wide tables scroll inside themselves; the page never scrolls sideways. */
-.meanings-scroll {
+/* A sense's number, drawn the way the entries draw it: a numeral in a ring. */
+.meanings-example__number,
+.entry__sense::before {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 24px;
+  block-size: 24px;
+  border: 1px solid var(--hairline);
+  border-radius: 50%;
+  font-family: var(--sans);
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--muted);
+}
+
+.meanings-example__number {
+  margin-block: 1px;
+}
+
+/* ── The contents ──
+   The ten tiles five by two, in the map's order and at the minimap's size, so
+   the garden's own map is the way into the dictionary. The grid follows the
+   writing direction, and mirrors under a right-to-left language as the map
+   does. */
+.meanings-index {
+  display: grid;
+  grid-template-columns: repeat(5, 48px);
+  grid-auto-rows: 40px;
+}
+
+.meanings-index__link {
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.meanings-index__tile {
+  inline-size: 40px;
+  block-size: 32px;
+}
+
+.meanings-index__link:hover .meanings-index__tile {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+  filter: brightness(1.12);
+}
+
+.meanings-index__link:focus-visible {
+  outline: none;
+}
+
+.meanings-index__link:focus-visible .meanings-index__tile {
+  box-shadow: 0 0 0 2px var(--ground), 0 0 0 3px var(--muted);
+}
+
+/* ── The entries ── */
+.lexicon {
   inline-size: 100%;
-  overflow-x: auto;
-}
-
-.meanings-table {
-  inline-size: 100%;
-  border-collapse: collapse;
-  font-weight: 300;
-}
-
-.meanings-themes {
-  min-inline-size: 52rem;
-}
-
-.meanings-table th,
-.meanings-table td {
-  padding: 12px 10px;
-  vertical-align: top;
+  margin: 0;
+  padding: 0;
+  list-style: none;
   text-align: start;
+  border-block-start: 1px solid var(--hairline);
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 26px;
+  padding: 34px 6px;
   border-block-end: 1px solid var(--hairline);
+  /* Arriving from an area page, or from a tile, the entry lands a little
+     below the top of the window rather than hard against it. */
+  scroll-margin-block-start: 20px;
 }
 
-.meanings-table thead th {
+/* The entry a reader came from an area page to find: ringed the way a key the
+   keyboard is on is ringed, rather than filled, and rounded as the area's
+   panels are. */
+.entry--here {
+  outline: 1px solid var(--muted);
+  outline-offset: -1px;
+  border-radius: 18px;
+}
+
+/* The headword, with the area's tile before it and the area's name after it,
+   where a dictionary puts the part of speech. It wraps under the headword on a
+   phone. */
+.entry__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.entry__tile {
+  flex: none;
+  inline-size: 40px;
+  block-size: 32px;
+}
+
+.entry__word {
+  margin: 0;
+  font-size: 30px;
   font-weight: 300;
-  padding-block: 8px;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  color: var(--ink);
 }
 
-/* The three parts are headed by their endings, which are pieces of a name. */
-.meanings-endings {
+.entry__area {
+  margin: 0;
+  padding-block-start: 4px;
+}
+
+.entry__area-name {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+a.entry__area-name {
+  border-block-end: 1px solid var(--hairline);
+  transition: color 200ms ease-out, border-color 200ms ease-out;
+}
+
+a.entry__area-name:hover,
+a.entry__area-name:focus-visible {
+  color: var(--ink);
+  border-color: var(--muted);
+  outline: none;
+}
+
+.entry__closed {
+  color: var(--faint);
+}
+
+/* A dot between the area and *not open yet*, so the two read as two things
+   said of the entry rather than as one name. */
+.entry__closed::before {
+  content: "·";
+  margin-inline: 4px 10px;
+}
+
+.entry__definition {
+  margin: 16px 0 0;
+  max-inline-size: 32em;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.entry__lead {
+  margin: 26px 0 12px;
+}
+
+/* The etymology. Each line is a name-start: its drawing in a ring, the
+   syllable in the serif, and the root it came from with what the root means.
+   The syllables are given a column of their own so the roots line up under
+   one another, as a dictionary's do. */
+.entry__heads {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+}
+
+.entry__head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.entry__syllable {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 14px;
+  min-inline-size: 7.5rem;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 21px;
+  color: var(--ink);
+}
+
+/* A ring round the drawing, as the bar rings its ways on: it gathers a small
+   drawing into a mark rather than leaving it loose beside a word. The ring
+   is the box's border, so the drawing inside is twenty-two points, a
+   touch over the size it is drawn for. */
+.entry__glyph {
+  inline-size: 40px;
+  block-size: 40px;
+  padding: 8px;
+  border: 1px solid var(--hairline);
+  border-radius: 50%;
+  color: var(--ink);
+}
+
+.entry__root {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--faint);
+}
+
+/* *Gk* and *L*, as a dictionary abbreviates a language: small and tracked. */
+.entry__from {
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.entry__etymon {
+  color: var(--muted);
+}
+
+.entry__gloss {
+  quotes: "‘" "’";
+  color: var(--section);
+}
+
+/* The senses: a numeral in a ring, the part in the label voice with the
+   endings that choose it after it in the serif, and the instances under it. */
+.entry__senses {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: sense;
+  align-self: start;
+}
+
+.entry__sense {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  column-gap: 14px;
+  counter-increment: sense;
+}
+
+.entry__sense::before {
+  content: counter(sense);
+  grid-row: span 2;
+}
+
+.entry__sense-label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin: 0;
+  padding-block-start: 4px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--section);
+}
+
+.entry__endings {
   font-family: var(--serif);
   font-style: italic;
   font-size: 15px;
+  letter-spacing: normal;
+  text-transform: none;
   color: var(--faint);
   white-space: nowrap;
 }
 
-.meanings-area {
-  font-weight: 300;
+.entry__instances {
+  grid-column: 2;
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--faint);
 }
 
-.meanings-area__name {
-  font-size: 15px;
-  color: var(--ink);
+/* ── The second words ── */
+.meanings-second {
+  margin-block-start: 18px;
 }
 
-.meanings-area__closed {
-  display: block;
-  margin-block-start: 6px;
+/* A glossary: each second word with its drawing at the start of its row, the
+   words in the serif, what they say under them. Two columns on a wide window,
+   read down, so each group — the stem, the leaves, the colours, the petals —
+   stays together. The drawing stands in the row's padding rather than in the
+   term, so a long pair wraps under its own first word and not under the
+   drawing. */
+.glossary {
+  inline-size: 100%;
+  margin: 0;
+  text-align: start;
+  column-gap: 64px;
 }
 
-.meanings-meaning {
-  font-size: 14px;
-  line-height: 1.45;
+.glossary__row {
+  position: relative;
+  break-inside: avoid;
+  min-block-size: 60px;
+  padding-block: 12px;
+  padding-inline-start: 46px;
+  border-block-end: 1px solid var(--hairline);
+}
+
+.glossary__glyph {
+  position: absolute;
+  inset-inline-start: 2px;
+  inset-block-start: 15px;
+  inline-size: 28px;
+  block-size: 28px;
   color: var(--muted);
 }
 
-/* In the table each head takes a line of its own, with its language. Given
-   the width for most of those lines to fit whole, because a root broken
-   across two lines — *vinculum, a* / *bond* — reads as two facts. */
-.meanings-names {
-  inline-size: 15rem;
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--faint);
-}
-
-.meanings-names .gathers__name {
-  display: block;
-  white-space: normal;
-}
-
-.meanings-part__label {
-  display: block;
-  font-size: 14px;
-  color: var(--section);
-}
-
-.meanings-part__instances {
-  display: block;
-  margin-block-start: 3px;
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--faint);
-}
-
-/* The row a reader came from an area page to find: ringed the way a key the
-   keyboard is on is ringed, rather than filled. */
-.meanings-row--here {
-  outline: 1px solid var(--muted);
-  outline-offset: -1px;
-}
-
-/* The second words. Two columns, the word in the serif and what it says
-   beside it; short enough to stay a table on a phone. */
-.meanings-word {
+.glossary__word {
+  margin: 0;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 16px;
+  font-weight: 300;
+  font-size: 17px;
   color: var(--ink);
 }
 
-.meanings-says {
-  font-size: 14px;
-  color: var(--muted);
+.glossary__says {
+  margin: 2px 0 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--faint);
 }
 
-/* On a phone, each of the ten rows becomes a short stack: the area's name,
-   then each cell with its heading written above it from `data-label`. A
-   six-column table scrolled sideways at four hundred points is a table nobody
-   reads across, which is the only reason to have one. The headings row is
-   kept for a screen reader and taken off the screen. */
-@media (max-width: 46rem) {
-  .meanings-themes {
-    min-inline-size: 0;
+/* A wide window: each entry in two columns — the word, what it means and where
+   it comes from on one side, its senses on the other, with a hairline between
+   — and the glossary in two. */
+@media (min-width: 52rem) {
+  .entry {
+    grid-template-columns: minmax(0, 11fr) minmax(0, 9fr);
+    column-gap: 56px;
+    padding: 40px 24px;
   }
 
-  .meanings-themes,
-  .meanings-themes tbody,
-  .meanings-themes tr,
-  .meanings-themes th,
-  .meanings-themes td {
-    display: block;
+  .entry__senses {
+    padding-block-start: 6px;
+    padding-inline-start: 40px;
+    border-inline-start: 1px solid var(--hairline);
+    align-self: stretch;
   }
 
-  .meanings-themes thead {
-    position: absolute;
-    inline-size: 1px;
-    block-size: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  .meanings-themes tr {
-    padding-block: 16px;
-    border-block-end: 1px solid var(--hairline);
-  }
-
-  .meanings-themes th,
-  .meanings-themes td {
-    padding: 5px 0;
-    border: 0;
-  }
-
-  .meanings-themes td[data-label]::before {
-    content: attr(data-label);
-    display: block;
-    margin-block-end: 3px;
-    font-family: var(--sans);
-    font-style: normal;
-    font-size: 11px;
-    font-weight: 300;
-    letter-spacing: 0.218em;
-    text-transform: uppercase;
-    color: var(--faint);
-  }
-
-  /* Except where the heading is a run of endings, which are pieces of a name
-     and keep the case and the serif they are written in. */
-  .meanings-themes td.meanings-part::before {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 14px;
-    letter-spacing: normal;
-    text-transform: none;
+  .glossary {
+    columns: 2;
   }
 }
 
-/* The written-above headings follow the label voice's two exceptions. */
-[data-keeps-case] .meanings-themes td[data-label]::before {
-  text-transform: none;
-}
+/* A phone: the page's margins are narrower, and so is the headword. */
+@media (max-width: 30rem) {
+  .meanings-example {
+    padding-inline: 16px;
+  }
 
-[data-untracked] .meanings-themes td[data-label]::before {
-  letter-spacing: normal;
+  .meanings-example__key {
+    gap: 16px 24px;
+  }
+
+  .entry {
+    padding-inline: 0;
+  }
+
+  .entry--here {
+    padding-inline: 14px;
+  }
+
+  .entry__word {
+    font-size: 26px;
+  }
+
+  .entry__syllable {
+    min-inline-size: 6.5rem;
+  }
 }
 
 /* ── The front, at / ────────────────────────────────────────────────────────

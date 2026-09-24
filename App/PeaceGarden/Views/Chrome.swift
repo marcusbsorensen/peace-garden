@@ -467,8 +467,10 @@ extension View {
     ///
     /// "Only" is meant literally, and for a while it was not true: four screen
     /// titles were wearing it, which claims that "A seed on the wind" and
-    /// "Peace garden" are things something is *called*. It is now on four
-    /// views, all of them a `genome.name.full`. Grep before adding a fifth.
+    /// "Peace garden" are things something is *called*. Every use is a
+    /// `genome.name.full` or, on `NameMeaningView`, a piece of one — the head
+    /// and the ending, each set beside what it means. Grep before adding
+    /// anything that is neither.
     func plantName(size: CGFloat = 26) -> some View {
         font(.system(size: size, weight: .light, design: .serif))
             .italic()
@@ -533,17 +535,6 @@ struct QuietButton: View {
 }
 
 extension View {
-    /// The edge that tells a line of text it can be pressed.
-    ///
-    /// Everything in this app is thin, letterspaced and half-transparent, which
-    /// is the point — and it left the buttons indistinguishable from the labels
-    /// standing next to them. A hairline capsule is the least that can be added
-    /// and still answer the question, without the screen growing a chrome.
-    ///
-    /// Anything that is a button wears this, including the ones that are not
-    /// `QuietButton`: a `ShareLink` styled to match, and the rename affordance
-    /// in Seed, which was the worst of them — a sentence that happened to be
-    /// tappable.
     /// Lays a `SproutingRule` along the bottom edge of this view, so the rule's
     /// *line* — not the box its tendrils curl in — sits exactly where the view
     /// ends.
@@ -570,6 +561,18 @@ extension View {
         .padding(.bottom, SproutingRule.height / 2)
     }
 
+    /// The edge that tells a line of text it can be pressed.
+    ///
+    /// Everything in this app is thin, letterspaced and half-transparent, which
+    /// is the point — and it left the buttons indistinguishable from the labels
+    /// standing next to them. A hairline capsule is the least that can be added
+    /// and still answer the question, without the screen growing a chrome.
+    ///
+    /// Anything that is a button wears this, including the ones that are not
+    /// `QuietButton`: a `ShareLink` styled to match, and the rename affordance
+    /// in Seed, which was the worst of them — a sentence that happened to be
+    /// tappable.
+    ///
     /// `horizontal` is for a control with nothing but a glyph in it, where the
     /// standing inset makes a wide oval out of something that should be round.
     ///

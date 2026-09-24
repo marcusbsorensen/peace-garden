@@ -124,6 +124,9 @@ check_path /wild                                   200 text/html
 check_path /walk                                   200 text/html
 check_path /t                                      200 text/html
 check_path /meanings                               200 text/html
+# The eighth area, the newest page, so the one most likely to be missing a
+# route: a page absent from `Server/index.php`'s table answers 404 here.
+check_path /glasshouse                             200 text/html
 check_path /.well-known/apple-app-site-association 200 application/json
 
 # A sample of the static half, which nginx types from its own mime.types.
@@ -139,6 +142,11 @@ check_path /assets/js/longwalk.js 200 application/javascript
 check_path /assets/js/sky.js      200 application/javascript
 check_path /assets/js/plant.js    200 application/javascript
 check_path /plant.wasm            200 application/wasm
+# The Glasshouse's two modules, and its plot service. The route answering
+# JSON is the sign the service knows the area; the pages' routes are above.
+check_path /assets/js/glasshouse.js     200 application/javascript
+check_path /assets/js/glasshousepage.js 200 application/javascript
+check_path /api/glasshouse              200 application/json
 check_path /assets/places.json    200 application/json
 check_path /assets/stars.bin      200 application/octet-stream
 check_path /assets/icon.svg     200 image/svg+xml
