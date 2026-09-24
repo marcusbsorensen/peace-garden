@@ -143,6 +143,13 @@ export function makeKnotGround(place) {
     const high = place.bandHeight;
 
     let mark = 0;
+    // **What the box throws on the gravel**: every triangle of every run, handed
+    // to the stage beside the ground as `casting`, which lays them down from
+    // the sun's side. At ankle height that is a hand's width of shade on the
+    // side away from the light, which is what sits a band in the gravel rather
+    // than on it.
+    const casting = [];
+    const cast = (p, nn, c) => { vertex(p, nn, c); casting.push(...p); };
     // One run of hedging, along x or along z, from `a` to `b` on that axis and
     // standing on the other at `fixed`. Its ends are cut square rather than
     // domed — every one of them is buried, either in the edging or inside the
@@ -156,7 +163,7 @@ export function makeKnotGround(place) {
       const length = b - a, mid = (a + b) / 2;
       const mesh = readStructure(
         takeResult(e, e.pg_hedge(length, height, thickness, KNOT.band + mark++, 0, bow)));
-      lay(mesh, alongX, alongX ? [mid, 0, fixed] : [fixed, 0, mid], vertex);
+      lay(mesh, alongX, alongX ? [mid, 0, fixed] : [fixed, 0, mid], cast);
     };
 
     // **The knot, and the square edging round it**, as the rule lays them out:
@@ -217,6 +224,7 @@ export function makeKnotGround(place) {
       positions: new Float32Array(positions),
       normals: new Float32Array(normals),
       colours: new Float32Array(colours),
+      casting: new Float32Array(casting),
     };
   };
 }

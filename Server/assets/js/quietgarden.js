@@ -41,6 +41,10 @@ export function makeRoomGround(room) {
   return function buildRoomGround(farSide, span, e, eye) {
     const positions = [], normals = [], colours = [];
     const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
+    // What throws a shadow on the lawn: the hedge round and the bench, handed
+    // to the stage as `casting`.
+    const casting = [];
+    const casts = (p, nn, c) => { vertex(p, nn, c); casting.push(...p); };
     const tri = (a, b, c, n, ca, cb = ca, cc = ca) => { vertex(a, n, ca); vertex(b, n, cb); vertex(c, n, cc); };
     const quad = (a, b, c, d, n, ca, cb = ca, cc = cb, cd = ca) => {
       tri(a, b, c, n, ca, cb, cc); tri(a, c, d, n, ca, cc, cd);
@@ -107,7 +111,7 @@ export function makeRoomGround(room) {
       const height = near ? HEDGE.low : HEDGE.tall;
       const mesh = readStructure(
         takeResult(e, e.pg_hedge(past(room.hedgeFrom), height, HEDGE.thickness, ROOM.hedge[i], 0, 0)));
-      place(mesh, run.turn, run.turn ? [0, 0, run.at] : [run.at, 0, 0], COLOUR.yew, vertex);
+      place(mesh, run.turn, run.turn ? [0, 0, run.at] : [run.at, 0, 0], COLOUR.yew, casts);
     });
 
     // **The bench**, in its own corner, turned to face the middle of the lawn.
@@ -115,12 +119,13 @@ export function makeRoomGround(room) {
     // put into the angle of two hedges: the length of it faces the middle of
     // the lawn rather than one of the sides.
     const bench = readStructure(takeResult(e, e.pg_bench(1.5, 0.45, 0.42, ROOM.bench)));
-    placeTurned(bench, room.bench, Math.atan2(room.bench[1], room.bench[0]), COLOUR.timber, vertex);
+    placeTurned(bench, room.bench, Math.atan2(room.bench[1], room.bench[0]), COLOUR.timber, casts);
 
     return {
       positions: new Float32Array(positions),
       normals: new Float32Array(normals),
       colours: new Float32Array(colours),
+      casting: new Float32Array(casting),
     };
   };
 }

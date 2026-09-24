@@ -117,6 +117,7 @@ export function makeOrchardGround(place, trunks) {
     // is a diagram — but they vary by a little, because an orchard is planted
     // in one season from one stock and its trees are siblings.
     const CROWN_BASE = 2.10;
+    const casting = [], canopy = [];
     for (const [t, trunk] of trunks.entries()) {
       const wobbleSeed = GROVE.tree + t * 17;
       const tall = 3.15 + 0.26 * ((t * 11) % 7) / 6;
@@ -162,6 +163,13 @@ export function makeOrchardGround(place, trunks) {
 
         corner.forEach((p, k) => vertex([trunk[0] + p[0], p[1], trunk[1] + p[2]], normal[k],
                                         base.map((c) => c * toneAt(p[1]))));
+        // **Its shade**: the crown handed to the stage as `canopy`, laid as a
+        // dappled pool; the foot of the trunk as `casting`, a plant's contact
+        // shadow. Only the foot, because a bare trunk's whole shadow is a
+        // two-metre ruled stripe across the grass.
+        const at = corner.map((p) => [trunk[0] + p[0], p[1], trunk[1] + p[2]]).flat();
+        if (inCanopy) canopy.push(...at);
+        else if (my < 0.6) casting.push(...at);
       }
     }
 
@@ -188,6 +196,8 @@ export function makeOrchardGround(place, trunks) {
       positions: new Float32Array(positions),
       normals: new Float32Array(normals),
       colours: new Float32Array(colours),
+      casting: new Float32Array(casting),
+      canopy: new Float32Array(canopy),
     };
   };
 }

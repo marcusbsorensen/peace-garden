@@ -65,6 +65,10 @@ export function makeSeedbedGround(place) {
   return function buildSeedbedGround(farSide, span, e, eye) {
     const positions = [], normals = [], colours = [];
     const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
+    // What throws a shadow on the tilth: the labels, handed to the stage as
+    // `casting`.
+    const casting = [];
+    const casts = (p, nn, c) => { vertex(p, nn, c); casting.push(...p); };
     const tri = (a, b, c, n, ca, cb = ca, cc = ca) => { vertex(a, n, ca); vertex(b, n, cb); vertex(c, n, cc); };
     const quad = (a, b, c, d, n, ca, cb = ca, cc = cb, cd = ca) => {
       tri(a, b, c, n, ca, cb, cc); tri(a, c, d, n, ca, cc, cd);
@@ -170,7 +174,7 @@ export function makeSeedbedGround(place) {
     // named in the page's text, where it can be read and translated.
     for (let d = 0; d < place.drills; d++) {
       const mesh = readStructure(takeResult(e, e.pg_seedbed_label(0.38, 0.19, SEEDBED.label + d)));
-      stand(mesh, [place.drillX[d], 0, place.labelAt], vertex);
+      stand(mesh, [place.drillX[d], 0, place.labelAt], casts);
     }
 
     // Its sides hang from the outline down to a floor as rough as a clod's, in
@@ -196,6 +200,7 @@ export function makeSeedbedGround(place) {
       positions: new Float32Array(positions),
       normals: new Float32Array(normals),
       colours: new Float32Array(colours),
+      casting: new Float32Array(casting),
     };
   };
 }

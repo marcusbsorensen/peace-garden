@@ -18,7 +18,7 @@
 // `meanings.js`.
 import { loadModule } from './plant.js';
 import { makePlotStage } from './longwalk.js';
-import { growFrameFromService, makeFrameGround, plan } from './frame.js';
+import { growFrameFromService, makeFrameGround, makeFrameLids, plan } from './frame.js';
 import { makeSky } from './sky.js';
 import { dressed, whenSettled } from './plain.js';
 import { openWays } from './gates.js';
@@ -53,7 +53,12 @@ async function place() {
   // **One plot, framed as though there were a little more than one**, the
   // Quiet Garden's margin.
   const frames = plan(engine);
-  const stage = makePlotStage(el('stage'), 1.25, engine, makeFrameGround(frames));
+  // The frames' lights, which a tap on their glass opens (`frame.js`, §The
+  // lights, which open). Kept here, because the stage builds the ground again
+  // at every turn and a frame propped open stays open through one.
+  const lids = makeFrameLids(frames);
+  const stage = makePlotStage(el('stage'), 1.25, engine, makeFrameGround(frames, lids));
+  lids.attach(stage);
 
   let sky = null;
   makeSky(el('sky'), {
@@ -78,8 +83,12 @@ async function place() {
     nav: el('keys'), canvas: el('stage'), stage, plots: opened,
     // A tap on a plant opens its panel (`plantpanel.js`), the same on every
     // area page, and a postcard to one of this area's plants lands here.
-    plants: plantPanel({ theme: THEME, engine }),
+    // Here the lights are asked about a tap first, and a plant's frame is
+    // opened before its panel.
+    plants: plantPanel({ theme: THEME, engine, cover: lids }),
     show: async (plot) => {
+      // Another plot's frames are shut: what was opened was opened here.
+      lids.shut();
       await growFrameFromService(engine, stage, plot, growing);
       note.hidden = true;
     },

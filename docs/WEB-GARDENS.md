@@ -735,6 +735,40 @@ millimetres deep in each — the lap is a line of more light and the ripple a
 glint. At 30% opacity the seedlings under it were a milky smudge; at 14% they
 read and so does the glass.
 
+### The lights open, 24 September 2026
+
+**Decided.** *Tapping a frame's glass opens that frame, and then a plant in it
+can be tapped* — a reader trying to reach a seedling was tapping the glass over
+it, and the frame should answer by opening rather than by being tapped
+through. Marcus.
+
+**As built.** `makeFrameLids` in `frame.js`; `cover` in `plantpanel.js`;
+`pieces` and `toScreen` on the stage in `longwalk.js`.
+
+- **The lights leave the ground.** The box and the two blocks stay baked into
+  it; each frame's lights and their glass are drawn by the stage as `pieces`,
+  moved where they stand now and uploaded only when they move. Nothing in the
+  module changed: the blocks are told from the bars as the two planks that
+  reach below the lights' underside.
+- **Both lights of a frame swing up together, 60°, on the top of the back
+  rail**, the high edge a light rests on, eased over about half a second — no
+  swing at all for a reader who asks for reduced motion. Once up, each is
+  propped on a stay stood on its block and meeting the light where it rested
+  on it; the stay is the light's own stile, thinner and stretched, so it has
+  the plank's wander rather than a ruled edge.
+- **Glass first while shut.** A tap inside a shut light's outline on the
+  screen opens that frame and opens no panel, whatever is under it. A plant in
+  the open frame standing in front of that glass keeps the tap. A plant found
+  where it shows outside the glass, or by the `p` key, or by a postcard, has
+  its frame opened first and its panel once the light is up.
+- **One open at a time.** Tapping another frame's glass shuts the open one as
+  it opens; so does a tap on nothing, and going to another plot shuts every
+  frame at once. **Closing the panel leaves the frame open** — the reader is
+  still looking into it — and a tap on the gravel after that shuts it.
+- **The keyboard opens a frame by `p`**, which opens the plant nearest the
+  middle and its frame with it. No new key and no new strings: a frame with
+  nothing in it has nothing to open it for.
+
 ## The Glasshouse, chosen
 
 The eighth area, `light`, chosen on 23 September and built on the 24th (below). It
@@ -1994,3 +2028,83 @@ Name.swift`; `sharedTheme` in `passages.js`.
   `plantPostcard`, `plantPostcardText`, `plantCopied`, `plantCopyThis`,
   `plantClose`. While a sentence falls back to English, the area name set in
   it is the English one too.
+
+## Shadows: under every plant and beside the low structures, built 24 September 2026
+
+A close look at the Knot Garden showed the box lit from the upper left and the
+plants standing on the gravel as though laid over it, not grown out of it. No
+plant cast anything; the only shadow on any page was a Coppice stool's.
+
+**A first pass sized a soft oval by each plant's spread**, and Marcus saw the
+fault in it at once: a spindly plant with a few wide branches got a broad pool
+it had nothing to cast, and a dense rosette whose leaves are piled up its stem
+got a small one. So the size and the strength now come from what the plant
+actually puts between the sun and the ground.
+
+- **From its own triangles** (`Server/assets/js/shadow.js`). When a plant is
+  added, every triangle of it is slid along `LIGHT.sun` down onto the ground
+  and laid into a small grid (1.2 cm cells, at most 112 a side), each cell
+  counting the layers over it — a triangle smaller than two cells is spread
+  by its area, a bigger one covers the cells whose middles it contains. Layers
+  become lost light as `0.42 × (1 − e^(−1.1 × layers))`, so a pile of leaves
+  darkens to six tenths of the ground's light and no further, and one thin
+  leaf is well under that.
+- **Low sharp, high soft.** Each triangle's share is split by its height:
+  what is low is blurred 2 cm and counts fully, what is 40 cm up or more is
+  blurred 7 cm and counts half. A dense rosette sits in a dark pool; a spire's
+  flowers are a faint smudge off to the side; a spindly umbel's thin branches
+  blur to almost nothing. The grid is faded to exactly nothing over its last
+  cells, so the sheet it is drawn on never shows an edge.
+- **Where the light is** comes free: the projection is along the sun in the
+  world's frame, so the shadow leans away from it and turns with the plot.
+- **On what the plant stands on**, as before: a sheet 1 cm over the floor
+  following its height (the Home Ground's beds, the Coppice's litter); in a
+  Glasshouse pot, the compost, within 6.8 cm; on a Coppice stool, the cut
+  face, within 10 cm. That disc fades out from a third of the way and its rim
+  wanders by the plant's place, so it is not a ring on the compost. A fern on
+  a stool still gets no second shadow on the litter.
+- **Multiplied**, drawn after the ground and before the plants, depth-tested
+  and not depth-written, and now **kept to the ground by the stencil**: the
+  ground is drawn a second time into the stencil only, keeping what faces up,
+  and shadows are laid only there. So a shadow reaching past the plot's
+  wandering edge is not laid down the slab's side or over the sky.
+
+About 2.4 ms a plant to work out (27,000 triangles on average on the Home
+Ground workbench, 10 ms for the largest), once, when it is added; drawing is
+one extra textured sheet a plant.
+
+**The structures' shadows.** A ground builder may hand back `casting` beside
+its mesh — the triangles that throw a shadow — and the stage lays them down
+the same way over the whole plot (2 cm cells), clipped to it, once each time
+the ground is built (a turn, or another plot). Handed back now:
+
+- **The Knot Garden's box**, bands, swells and edging: a hand's width of soft
+  shade on the side away from the light, following each band's curve. The
+  first of these and the reason for them.
+- **The Cold Frame's boxes** (not the lights' bars, whose shadows would be ruled
+  lines, and not the glass) and **the Seedbed's labels**.
+- **The tall ones**: the Long Walk's yew and low hedge and the Quiet Garden's
+  hedge round and its bench. A 2 m yew throws a metre, which falls across the
+  border on two of the four turns and off the plot on the others; clipped by
+  the stencil, it read as shade and not as a fault, so it stayed.
+
+**After a look, 24 September 2026.** The tall hedges' shadows had a far edge
+as straight as the hedge top, so each point's slide now wanders by where it
+is — three slow waves and a grain, a fifth either way — with a wider blur
+beyond the foot; the foot stays where the hedge stands. The Knot's box gets
+the same, a centimetre or two at its height. **The Orchard's trees** are
+handed back as `canopy`: each crown laid at half the sun's slide, so it pools
+under the tree leaning away from the light, at most two tenths of the grass's
+light taken, and broken by dapple from smooth noise (a sum of waves drew a
+trellis); the foot of each trunk casts as a plant does, and only the foot,
+because a bare trunk's whole shadow is a two-metre stripe. **The Cold Frame's
+lights**, since they open, are pieces drawn apart from the ground and cast
+nothing; the boxes still do, and opening a light redraws without working any
+shadow out again.
+
+Left for now: the Glasshouse (its staging's slats and the house's bars would
+throw ruled stripes, and a pot's shadow falls on slats with the floor showing
+between them, which one sheet at one height cannot follow) and the Crossing,
+whose roundels are paving and throw
+nothing. A turn costs roughly 10–30 ms more than it did, for working the structures'
+shadow out again; the plants' are kept.

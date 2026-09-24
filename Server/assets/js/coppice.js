@@ -84,7 +84,7 @@ export function plan(e) {
 // MARK: - The ground
 
 export function makeCoppiceGround(place) {
-  return function buildCoppiceGround(farSide, span, e) {
+  function buildCoppiceGround(farSide, span, e) {
     const positions = [], normals = [], colours = [];
     const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
     const tri = (a, b, c, n, ca, cb = ca, cc = ca) => { vertex(a, n, ca); vertex(b, n, cb); vertex(c, n, cc); };
@@ -253,7 +253,13 @@ export function makeCoppiceGround(place) {
       normals: new Float32Array(normals),
       colours: new Float32Array(colours),
     };
-  };
+  }
+  // **The stage's plant shadows lie on this floor**, so it is told how high
+  // the floor is, and what a fern on a stool stands in: the stool's cut face,
+  // whose narrowest is 12 cm from the middle, and which falls 1.2 cm across
+  // (`Organic.stoolFace`, `stoolSlope`), so a shadow on it rides a centimetre
+  // over the middle and stays inside 10 cm.
+  return Object.assign(buildCoppiceGround, { height: place.height, seat: { radius: 0.1, rise: 0.01 } });
 }
 
 /// Where a stool meets the ground, as `pg_coppice_footprint` answers: the same

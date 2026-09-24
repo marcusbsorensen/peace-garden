@@ -70,7 +70,7 @@ export function plan(e) {
 // MARK: - The ground
 
 export function makeGlasshouseGround(place) {
-  return function buildGlasshouseGround(farSide, span, e) {
+  function buildGlasshouseGround(farSide, span, e) {
     const positions = [], normals = [], colours = [];
     const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
     const tri = (a, b, c, n, ca, cb = ca, cc = ca) => { vertex(a, n, ca); vertex(b, n, cb); vertex(c, n, cc); };
@@ -199,7 +199,11 @@ export function makeGlasshouseGround(place) {
         opacity: GLASS_OPACITY,
       },
     };
-  };
+  }
+  // **What a potted plant's shadow lies on**: the compost in its pot, 7.5 cm
+  // from the middle to the wall and domed 6 mm (`Organic.potSoil`). Kept
+  // inside it, and a little over the dome, so it never hangs past the rim.
+  return Object.assign(buildGlasshouseGround, { seat: { radius: 0.068, rise: 0.008 } });
 }
 
 /// A structure, moved to where it stands, with a grain across it read off where

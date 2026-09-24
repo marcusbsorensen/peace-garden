@@ -126,7 +126,7 @@ export function bedOf(place, x) {
 // MARK: - The ground
 
 export function makeGroundGround(place) {
-  return function buildHomeGround(farSide, span, e) {
+  function buildHomeGround(farSide, span, e) {
     const positions = [], normals = [], colours = [];
     const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
     const tri = (a, b, c, n, ca, cb = ca, cc = ca) => { vertex(a, n, ca); vertex(b, n, cb); vertex(c, n, cc); };
@@ -253,7 +253,10 @@ export function makeGroundGround(place) {
       normals: new Float32Array(normals),
       colours: new Float32Array(colours),
     };
-  };
+  }
+  // **The stage's plant shadows lie on this soil too**, so it is told how high
+  // the soil is: a shadow on a bed's shoulder follows the shoulder down.
+  return Object.assign(buildHomeGround, { height: place.height });
 }
 
 // MARK: - Growing a plot
