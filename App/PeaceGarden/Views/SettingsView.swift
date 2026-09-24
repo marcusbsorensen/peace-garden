@@ -11,10 +11,14 @@ import SeedCore
 /// **The screen says what each control does, and earns a line underneath only
 /// where something would otherwise surprise somebody.** It carried a paragraph
 /// under every control once — around three hundred words for five decisions,
-/// each of them repeating what the confirmation alert then said again. Three of
-/// the five sections need no line at all, and the three that take something
-/// away say their piece at the moment somebody is deciding rather than while
-/// they are reading.
+/// each of them repeating what the confirmation alert then said again. Now a
+/// control whose label says all of it, like *Show plant name* or *How the
+/// plant is drawn*, stands alone, and a line goes only under the ones that
+/// would otherwise leave a question: what *Hidden* hides, what the light does
+/// by the clock, what leaves the phone when two people meet. The three rows
+/// under *Starting again* keep no line on the screen at all, and say their
+/// piece while one is being held, at the moment somebody is deciding rather
+/// than while they are reading.
 struct SettingsView: View {
     @Environment(GardenModel.self) private var model
     @Environment(PlaceKeeping.self) private var place

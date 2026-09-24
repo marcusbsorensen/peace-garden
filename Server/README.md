@@ -8,12 +8,40 @@ seed lands on.
 
 ```
 peacegarden.app/
-├── index.php                          ← serves the four paths below
+├── index.php                          ← serves every page in .pages/, /plant.wasm, and /api/
 ├── .pages/                            ← nginx refuses a dot-directory
+│   ├── index                          ← the front: a plant, three steps, ten area cards
 │   ├── s                              ← the page a seed lands on
-│   ├── g                              ← the garden, walked
+│   ├── g                              ← the garden, walked; served at /g and /garden
+│   ├── meanings                       ← what the names mean: the lookup table
+│   ├── walk                           ← the Long Walk
+│   ├── quiet                          ← the Quiet Garden
+│   ├── cross                          ← the Crossing
+│   ├── orchard                        ← the Orchard
+│   ├── knot                           ← the Knot Garden
+│   ├── seedbed                        ← the Seedbed
+│   ├── frame                          ← the Cold Frame
+│   ├── wild                           ← the Wild Fields
+│   ├── download                       ← the app
+│   ├── privacy                        ← what the site and the app keep
 │   ├── t                              ← the test roster
+│   ├── PlantWasm.wasm(.gz, .br)       ← built by tools/wasm/build.sh, not committed
 │   └── apple-app-site-association     ← no file extension, and none is added
+├── .api/                              ← the plot service; see below
+│   ├── router.php                     ← every /api/ route
+│   ├── Areas.php, Ambassadors.php     ← the ten areas, and the plant that stands for each
+│   ├── Seeds.php                      ← whether a seed is the cross of the parents it names
+│   ├── LongWalk.php, WalkStore.php    ← the Long Walk's rule, and its table
+│   ├── QuietGarden.php, RoomStore.php ← the Quiet Garden's rule, and its table
+│   ├── Crossing.php, CrossStore.php   ← the Crossing's rule, and its table
+│   ├── Orchard.php, OrchardStore.php  ← the Orchard's rule, and its table
+│   ├── KnotGarden.php, KnotStore.php  ← the Knot Garden's rule, and its table
+│   ├── Seedbed.php, SeedbedStore.php  ← the Seedbed's rule, and its table
+│   ├── ColdFrame.php, ColdFrameStore.php ← the Cold Frame's rule, and its table
+│   ├── Offers.php                     ← the asking: offer, pending, answer, withdraw
+│   ├── Limits.php                     ← how often one caller may write
+│   ├── backup.php                     ← the nightly copy, from cron
+│   └── config.example.php             ← copy to config.php, which git ignores
 ├── .htaccess                          ← for a host that reads one. This is not.
 ├── languages.json                     ← generated: tools/site/export.py
 ├── testers.json                       ← generated: one gardener per language
@@ -23,22 +51,39 @@ peacegarden.app/
 └── assets/
     ├── site.css
     ├── icon.svg, icon-180.png         ← generated, from the same drawing
+    ├── stars.bin, places.json         ← generated: tools/sky/pack.py, for sky.js
     └── js/
+        ├── frontpage.js               ← the / page: grows the front plant, draws the cards
         ├── page.js                    ← the /s page
         ├── walk.js                    ← the /g page
+        ├── meaningspage.js            ← the /meanings page's own opening
+        ├── plain.js                   ← /download, /wild and /privacy: words and a chooser
         ├── door.js                    ← the /t page
+        ├── walkpage.js, longwalk.js   ← the Long Walk: the page, and the plot drawn
+        ├── quietpage.js, quietgarden.js ← the Quiet Garden: the page, and the plot drawn
+        ├── crosspage.js, crossing.js  ← the Crossing: the page, and the plot drawn
+        ├── orchardpage.js, orchard.js ← the Orchard: the page, and the plot drawn
+        ├── knotpage.js, knot.js       ← the Knot Garden: the page, and the plot drawn
+        ├── seedbedpage.js, seedbed.js ← the Seedbed: the page, and the plot drawn
+        ├── framepage.js, frame.js     ← the Cold Frame: the page, and the plot drawn
+        ├── plant.js                   ← grows a plant in the wasm module, draws it in WebGL2
+        ├── sky.js                     ← the real sky, a port of SeedCore's Sky
+        ├── gates.js                   ← the bar and the minimap; which areas are open
+        ├── meanings.js                ← what each area's plants mean: the one table
         ├── link.js                    ← reads the fragment
         ├── languages.js               ← negotiation and the chooser
         ├── strings.js                 ← the catalogue, English written
         ├── testers.js                 ← standing in another language
-        ├── garden.js, plots.js        ← the map, and what stands on it
+        ├── garden.js, plots.js        ← the map, and the stand-in for areas not open
         ├── keys.js                    ← the keyboard, and the sheet under ?
         └── passages.js                ← theme, subtheme, and the draw
 ```
 
-Almost everything is a file. No build step, no framework, no npm, and one
-twenty-line PHP script whose whole job is to put a `Content-Type` on four
-paths. Deploy with:
+Almost everything is a file. No build step, no framework, no npm, and one PHP
+script, `index.php`, which serves every page in `.pages/` with the type it is,
+hands `/api/` to the plot service, sends the plant renderer compressed, and
+stamps each page's scripts and stylesheet with the build they are, so a
+returning browser cannot run yesterday's copy of one. Deploy with:
 
     tools/deploy.sh
 
@@ -61,14 +106,14 @@ The symptom is the one this file already warned about in another form: `/s`,
 so a browser saved the page instead of drawing it. Every request was a 200 and
 every log line was clean.
 
-**So `index.php` serves those four**, because the same nginx vhost offers
-exactly that and nothing else:
+**So `index.php` serves them**, and every page added since, because the same
+nginx vhost offers exactly that and nothing else:
 
     location / { try_files $uri $uri/ @dispatch; }
     location @dispatch { if (-f $document_root/index.php) { rewrite ^ /index.php last; } }
 
 A path with no file behind it reaches `index.php` with `REQUEST_URI` intact.
-Which is why the four live in `.pages/` rather than at the paths they are
+Which is why the pages live in `.pages/` rather than at the paths they are
 served at: a file at `/s` wins at `try_files` and is served as a download
 again, and `index.php` never sees the request. The leading dot is not
 decoration — nginx's own `location ~ /\.(?!well-known(?:/|$)) { deny all; }`
@@ -76,17 +121,17 @@ makes the directory unreachable from outside, so each page has one address
 rather than two.
 
 **Every page added here has to be added to `ROUTES` in `index.php`** — and to
-`PAGES` in `tools/site/serve.py`, which is the same four rows in Python. `g`
-was missing from the old list once and arrived as a download; nothing said so.
+`PAGES` in `tools/site/serve.py`, which is the same rows in Python. `g` was
+missing from the old list once and arrived as a download; nothing said so.
 Serve the directory locally the way the host serves it before believing a page
 works:
 
     python3 tools/site/serve.py
 
 That is the reason it exists rather than `python3 -m http.server`, which types
-a file by its extension and so cannot draw any of the three pages.
+a file by its extension and so cannot draw a single page here.
 
-**The cost is that four paths now need PHP.** Static files did not. It is the
+**The cost is that every page now needs PHP.** Static files did not. It is the
 trade the host leaves available: `/s` is in every link already minted and
 cannot grow an extension, so either something sets the header or the header is
 wrong. If PHP is ever unavailable, the association file — and only that one —
@@ -99,8 +144,10 @@ rather than a plan.
 **Getting `.htaccess` honoured instead** would mean 20i moving this site off
 its nginx-only config, which is a support request rather than anything in this
 repository. It would make `.htaccess` here do the routing — it is written to
-send the same four paths to `index.php` either way, so one mechanism would
-still serve them and the two hosts could not disagree about what `/s` is.
+send paths to `index.php` rather than serve them itself, so one mechanism would
+still serve them and the two hosts could not disagree about what `/s` is. It
+names only the first four paths, though, `/s`, `/g`, `/t` and the association
+file, and every page since would need adding to it before that day.
 
 **`/t` is the test roster** — forty-three gardeners, one per language, for
 looking at the site from where a reader of it stands. There are no accounts
@@ -109,8 +156,8 @@ site has nobody to log in. It is `noindex, nofollow`, it guards nothing, and it
 can ship or be left out of an upload without anything else noticing.
 
 **There is one drawing.** `tools/icon/make_icon.py` writes `assets/icon.svg`,
-`assets/icon-180.png` and `favicon.ico` from the same dials, and the three
-pages point their header `<img>` at that same `icon.svg`. Change the dials and
+`assets/icon-180.png` and `favicon.ico` from the same dials, and every page
+points the `<img>` in its bar at that same `icon.svg`. Change the dials and
 re-run the generator; hand-edit none of them.
 
 There used to be a second file, `assets/mark.svg`, described here as a copy of
@@ -131,12 +178,13 @@ is deploying rather than to a reader of the site.
   claims more than what is actually switched off, and nothing should. Note that
   `/s` is now a PHP request rather than a static one, so it appears in whatever
   the host logs for PHP as well.
-- **The root.** `peacegarden.app/` still answers 403, and `index.php` returns
-  that 403 deliberately: with an index in place the root would otherwise become
-  whatever the script did next. `/s` with no seed in it is the page that says
-  what Peace Garden is, so what the root should do is the open question in
-  docs/WEBSITE.md about whether there is a marketing page at all — left alone
-  rather than answered with a redirect.
+- **The root.** `peacegarden.app/` answered 403 until 16 September, and
+  `index.php` returned that 403 deliberately: with an index in place the root
+  would otherwise have become whatever the script did next, and what the root
+  should do was an open question in docs/WEBSITE.md. *Superseded 16 September*:
+  an App Store listing needs a support URL a reviewer can open, so `/` is a
+  page, `.pages/index`. Since 24 September it is the front — a plant on a
+  stage, three steps, ten area cards — drawn by `assets/js/frontpage.js`.
 
 ## What the next page reuses
 

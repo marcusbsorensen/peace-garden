@@ -15,6 +15,7 @@
 // way it read.
 
 import { AREAS, AREA_SIZE, cellFor } from "./garden.js";
+import { GENUS_HEADS, GENUS_TAILS, placement } from "./passages.js";
 
 /// What a source has to answer. Three questions, all of them ordinary.
 ///
@@ -46,15 +47,25 @@ export function demoSource({ count = 240, seed = 20260903 } = {}) {
   };
   const hex = (n) => Array.from({ length: n }, () => "0123456789abcdef"[Math.floor(next() * 16)]).join("");
 
-  const SYLLABLES = ["ael", "wyn", "lir", "sel", "dros", "hal", "quin", "elu", "bel", "nor", "cyn", "vir"];
-  const TAILS = ["ora", "ynth", "isia", "una", "ella", "inia"];
+  // **The genus is built from the real syllables, and the area is read off it.**
+  // It used to draw an area and a syllable separately, from a list of its own
+  // that still had `wyn` in it weeks after the app renamed it `Vin` — so a
+  // plant could be drawn in *peace* under a name that files it under *kinship*,
+  // and its page would then give it a passage from the wrong theme. Now the head and
+  // the ending are the app's own, from `PlantName` by way of `passages.js`, and
+  // `placement` decides the area exactly as it does for a real name. Only the
+  // epithet is still invented here, and an epithet says nothing about either.
+  //
+  // One consequence, and it is the true one: a theme with three heads gets
+  // half as many plants again as a theme with two, as it will in the garden.
   const EPITHETS = ["nocticola", "stellifolia", "vivescens", "glacina", "pluvata", "umbrata", "ferrifolia", "cinifolia"];
   const pick = (list) => list[Math.floor(next() * list.length)];
 
   const plants = [];
   for (let i = 0; i < count; i += 1) {
     const s = hex(64);
-    const theme = AREAS[Math.floor(next() * AREAS.length)].theme;
+    const genus = `${pick(GENUS_HEADS)}${pick(GENUS_TAILS)}`;
+    const { theme } = placement(genus);
     const { x, y } = cellFor(s);
     plants.push({
       id: s.slice(0, 12),
@@ -62,7 +73,7 @@ export function demoSource({ count = 240, seed = 20260903 } = {}) {
       theme,
       x,
       y,
-      name: `${pick(SYLLABLES)}${pick(TAILS)} ${pick(EPITHETS)}`.replace(/^./, (c) => c.toUpperCase()),
+      name: `${genus} ${pick(EPITHETS)}`,
       birth: new Date(Date.now() - Math.floor(next() * 400) * 86400000),
     });
   }
