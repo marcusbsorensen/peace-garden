@@ -225,6 +225,14 @@ final class AskingTests: XCTestCase {
         // The plant goes with it, because the service cannot grow one.
         let sent = try XCTUnwrap(body["plant"] as? [String: Any])
         XCTAssertEqual(sent["seed"] as? String, plant.seed.hex)
+        // With what three areas place by and the service cannot measure: the
+        // Glasshouse's hue, and the habit the Coppice and the Home Ground read.
+        // A build without them sows every Home Ground arrival as an umbel.
+        let traits = LongWalk.traits(of: plant.genome)
+        XCTAssertEqual(sent["habit"] as? String, traits.habit)
+        XCTAssertFalse(traits.habit.isEmpty)
+        XCTAssertEqual(try XCTUnwrap(sent["hue"] as? Double), try XCTUnwrap(traits.hue), accuracy: 1e-9)
+        XCTAssertEqual(try XCTUnwrap(sent["height"] as? Double), traits.height, accuracy: 1e-9)
     }
 
     @MainActor
