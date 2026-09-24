@@ -2088,10 +2088,23 @@ the ground is built (a turn, or another plot). Handed back now:
   border on two of the four turns and off the plot on the others; clipped by
   the stencil, it read as shade and not as a fault, so it stayed.
 
+**After a look, 24 September 2026.** The tall hedges' shadows had a far edge
+as straight as the hedge top, so each point's slide now wanders by where it
+is — three slow waves and a grain, a fifth either way — with a wider blur
+beyond the foot; the foot stays where the hedge stands. The Knot's box gets
+the same, a centimetre or two at its height. **The Orchard's trees** are
+handed back as `canopy`: each crown laid at half the sun's slide, so it pools
+under the tree leaning away from the light, at most two tenths of the grass's
+light taken, and broken by dapple from smooth noise (a sum of waves drew a
+trellis); the foot of each trunk casts as a plant does, and only the foot,
+because a bare trunk's whole shadow is a two-metre stripe. **The Cold Frame's
+lights**, since they open, are pieces drawn apart from the ground and cast
+nothing; the boxes still do, and opening a light redraws without working any
+shadow out again.
+
 Left for now: the Glasshouse (its staging's slats and the house's bars would
 throw ruled stripes, and a pot's shadow falls on slats with the floor showing
-between them, which one sheet at one height cannot follow), the Orchard's
-trees (a whole canopy's shade over the grass is a decision about the look of
-the area, not a fix), and the Crossing, whose roundels are paving and throw
+between them, which one sheet at one height cannot follow) and the Crossing,
+whose roundels are paving and throw
 nothing. A turn costs roughly 10–30 ms more than it did, for working the structures'
 shadow out again; the plants' are kept.
