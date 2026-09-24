@@ -253,6 +253,7 @@ struct NameMeaningView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
+            // One of the garden's ten areas, named as the website names them.
             factRow(AnyShape(GardenGlyph()), "Area", value: Text(theme.area.label))
         }
     }
