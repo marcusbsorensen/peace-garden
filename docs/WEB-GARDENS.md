@@ -1846,3 +1846,20 @@ Marcus took all five recommendations.
 5. **The map's glyph shows three beds**, redrawn the same day in `gates.js`
    `LOOK.ground`: three bed outlines, with short upright strokes for the
    spires, flat bars for the umbels' heads and close dots for the rosettes.
+
+Then, on the new shapes, two more, both on the recommendation:
+
+6. **Rosettes are spaced at their new median spread**: three across at 0.38 m,
+   ten rows 0.40 m apart, **thirty a bed** rather than fifty-two. Half of them
+   (49%) are wider than the gap to their neighbour, in line with the spires'
+   63% and the umbels' 61%, and none reaches 0.2 m into a path. Rule D fills
+   as before: 9 plots and 90% at a fresh five hundred, 32 plots and 98% at two
+   thousand, 10 plots and 89% in the village. Plots holding all three crops
+   rise from 10 to 16 of 32 at two thousand, because a rosette bed now fills at
+   thirty; the largest plot holds 71 plants, not 93.
+7. **The umbel cut is 0.930 m**, moved off the measured 0.932, where a village
+   arrival stood 0.009 mm from it. At 0.930 the nearest of every sample is
+   0.58 mm away and the tall share is unchanged, 50.1%. The spire cut stays
+   1.346 m (0.89 mm clear) and the rosette cut 0.275 m (0.48 mm clear).
+   Rounding all three to two places does not work: 1.35 falls 0.002 mm from a
+   spire.

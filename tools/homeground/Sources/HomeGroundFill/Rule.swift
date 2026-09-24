@@ -20,7 +20,7 @@ enum Crop: String, CaseIterable {
         switch self {
         case .cer: return (3, 9)    // 0.40 m across, 0.45 m between rows
         case .fen: return (2, 7)    // 0.60 m across, 0.60 m between rows
-        case .pell: return (4, 13)  // 0.28 m across, 0.30 m between rows
+        case .pell: return (3, 10)  // 0.38 m across, 0.40 m between rows
         }
     }
 }
