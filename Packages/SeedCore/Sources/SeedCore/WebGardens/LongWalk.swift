@@ -150,7 +150,8 @@ public enum LongWalk {
         let petal = genome.palette.petalBase
         return Traits(height: Double(bounds.max.y - bounds.min.y),
                       family: family(hue: petal.hue, saturation: petal.saturation),
-                      kind: genome.name.epithet)
+                      kind: genome.name.epithet,
+                      hue: petal.hue)
     }
 
     // MARK: Slots

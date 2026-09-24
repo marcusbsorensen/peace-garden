@@ -114,14 +114,23 @@ final class SharingTests: XCTestCase {
             JSONSerialization.jsonObject(with: data) as? [String: Any]
         )
 
-        // router.php reads exactly these seven and no others. `area` joined them
-        // on 20 September and `kind` on 23 September, and those two are the ones
-        // the service will accept as absent — an older app sends five and means
-        // the Long Walk, and a plant with no epithet on the wire is the empty
-        // kind, which the Seedbed compares like any other: it joins the drill of
-        // unnamed plants.
+        // router.php reads exactly these eight and no others. `area` joined them
+        // on 20 September, `kind` on 23 September and `hue` on 24 September, and
+        // those three are the ones the service will accept as absent — an older
+        // app sends five and means the Long Walk, a plant with no epithet on the
+        // wire is the empty kind, which the Seedbed compares like any other,
+        // and a plant with no hue takes any free pot on the Glasshouse staging,
+        // as a pale one does.
         XCTAssertEqual(Set(body.keys),
-                       ["seed", "parents", "encounter", "height", "family", "area", "kind"])
+                       ["seed", "parents", "encounter", "height", "family", "area", "kind", "hue"])
+        // Sent as the turn of the circle the genome holds, exactly. Read back
+        // with `JSONDecoder`, not out of `body`: under WebAssembly
+        // `JSONSerialization` parses a double a last bit out (0.4026400416433909
+        // comes back ...084), where the encoder's text and `JSONDecoder` are
+        // both exact — and it is the text that goes on the wire.
+        XCTAssertNotNil(body["hue"] as? Double)
+        XCTAssertEqual(try JSONDecoder().decode(WalkArrival.self, from: data).hue,
+                       record.genome.palette.petalBase.hue)
 
         // And it is sent as the area's own name rather than as a number, so a
         // reader of the wire can see which area a plant went to without a table

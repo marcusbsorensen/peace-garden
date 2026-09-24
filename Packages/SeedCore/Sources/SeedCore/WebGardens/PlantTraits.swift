@@ -5,7 +5,8 @@ import Foundation
 #endif
 
 /// What a placement rule needs to know about a grown plant, and nothing else:
-/// how tall it came out and what colour its flower is.
+/// how tall it came out and what colour its flower is — and, since the Seedbed
+/// and the Glasshouse, its kind and its hue.
 ///
 /// **Two facts, because only two can be read without looking.**
 /// `docs/WEB-GARDENS.md` §*Slots and roles* says a template asks questions a
@@ -42,11 +43,32 @@ public struct PlantTraits: Codable, Equatable, Hashable, Sendable {
     /// path a plant arrives by carries its kind. Nothing but the Seedbed reads
     /// it.
     public var kind: String
+    /// The hue of the plant's flower, as a turn of the colour circle: 0 up to
+    /// but not including 1, red at 0, as `Genome.Palette.petalBase` holds it.
+    ///
+    /// **A fourth fact, because the eighth area sorts by the one thing a colour
+    /// family throws away.** The Glasshouse stands its pots along the staging
+    /// as a run of colour, a place for each twelfth of the plants, and seven
+    /// families are too coarse to order twelve places by. `family` is a hue cut
+    /// into six arcs; this is the hue before it was cut.
+    ///
+    /// **Exact on every host**, unlike a height. It is drawn from the seed's
+    /// bytes by `+ − × ÷` alone — no `sin`, no `pow`, no mesh — so Apple's
+    /// libm and wasi-libc never get a say in it, and a band edge laid across it
+    /// needs no tolerance and no margin test.
+    ///
+    /// **Nil where it was never sent**: a planting made before this existed,
+    /// or an offer from a phone that predates it. `Glasshouse.place(for:)`
+    /// reads nil as it reads a pale flower — a plant whose colour cannot place
+    /// it along the spectrum takes any free place — so an older phone's plant
+    /// is planted rather than refused. Nothing but the Glasshouse reads it.
+    public var hue: Double?
 
-    public init(height: Double, family: Int, kind: String = "") {
+    public init(height: Double, family: Int, kind: String = "", hue: Double? = nil) {
         self.height = height
         self.family = family
         self.kind = kind
+        self.hue = hue
     }
 
     public init(from decoder: any Decoder) throws {
@@ -54,5 +76,6 @@ public struct PlantTraits: Codable, Equatable, Hashable, Sendable {
         height = try fields.decode(Double.self, forKey: .height)
         family = try fields.decode(Int.self, forKey: .family)
         kind = try fields.decodeIfPresent(String.self, forKey: .kind) ?? ""
+        hue = try fields.decodeIfPresent(Double.self, forKey: .hue)
     }
 }
