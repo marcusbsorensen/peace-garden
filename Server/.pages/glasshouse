@@ -1,0 +1,197 @@
+<!doctype html>
+<!--
+  The Glasshouse.
+
+  A span house of painted bars and glass on a floor of quarry tiles: pots on
+  slatted staging down its sunny side and a soil border along the back —
+  twenty-four pots and a border of eight to a plot, in the same square as every
+  other area.
+
+  **The first area that sorts by hue.** Each of the staging's twelve places
+  stands for a twelfth of the colours this area's plants come in, so the pots
+  run as a spectrum: blue-green at the door, through blue, violet, magenta, red
+  and orange, to yellow at the far end. A pot takes its own place if there is
+  room in any house, one place along if not, and opens a new house after that.
+  A pale flower has no place on the spectrum and takes any free pot.
+
+  **The tallest go in the border**, because the plants whose names put them
+  here are the tallest in the garden: the quarter of them over 1.30 m would
+  stand 2.7 m on the staging, and in the soil along the back they shade nothing
+  but the path. They are planted in the order they came, from the door.
+
+  **The glass is seen through**, as the Cold Frame's is: drawn after the plants,
+  blended, rippled and lapped on the roof, and fainter here, because there is a
+  whole house of it between the eye and a pot.
+
+  **This page is the one the app talks to, not a picture of it.** The plants are
+  grown here, in the browser, from the same SeedCore that grows them on the
+  phone. The house, the staging and the pots come from the same place, through
+  `Organic`.
+
+  **The sky is the real one**, worked out for wherever this browser is keeping
+  time — `sky.js`, a port of SeedCore's `Sky`.
+
+  **It is a night, so the page is dark whatever the reader's system says**, as
+  every area page is. The house is lit at midday all the same, as every plot
+  is, which is why its door stands open.
+
+  `noindex`, for the reason `/g` gives. Static, like the rest: no analytics, no
+  font CDN, no third-party anything.
+-->
+<!-- `data-module` is stamped by index.php: the module's address with this
+     build's mark on it, so a new one is a new address. -->
+<html lang="en" data-module="PG_MODULE">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Peace Garden — the Glasshouse</title>
+    <meta name="description" content="A glasshouse of the plants two people grew: pots on the staging set out as a run of colour, and the tallest in a border along the back." />
+    <meta name="color-scheme" content="dark" />
+    <meta name="robots" content="noindex" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/icon-180.png" />
+  </head>
+
+  <body class="night">
+    <!--
+      The plot itself, behind everything. The sky is behind it, and the pool of
+      light sits between them so the plot stands in front of the sky rather than
+      on top of a picture of one.
+    -->
+    <div class="walk" aria-hidden="true">
+      <canvas id="sky"></canvas>
+      <div class="pool"></div>
+    </div>
+
+    <main class="page walk-page" id="page">
+      <!--
+        The bar. On every page of the site, and here it says one more thing: the
+        link back to the map carries this area in its fragment, and `/g` reads
+        one — so coming back from an area lands in that area rather than at the
+        top of a map the reader has to find their place in again. `gates.js`
+        writes the fragment.
+
+        **It does not name the area.** The heading under the plot names it, and
+        the same words twice on one screen is one time too many.
+      -->
+      <header class="masthead bar">
+        <a class="bar__home" href="/">
+          <img class="mark" src="/assets/icon.svg" alt="" width="44" height="44" />
+          <span class="wordmark">Peace Garden</span>
+        </a>
+        <span class="bar__ways">
+          <a class="quiet-button" href="/garden" id="bar-hub" data-s="gardenTitle"></a>
+        </span>
+      </header>
+
+      <!--
+        The drawing, in the page's own flow rather than fixed behind it. The
+        words sit under it, which is the arrangement `PlantDetailView` uses in
+        the app. See site.css §An area page.
+      -->
+      <canvas class="walk-stage" id="stage" aria-label="The Glasshouse"></canvas>
+
+      <h1 class="heading" data-s="areaLight"></h1>
+      <p class="body walk-about" data-s="glasshouseAbout"></p>
+
+      <!--
+        One line, and only when there is something to say: while the plants are
+        being grown, or when there is nothing here yet. It carries no count — a
+        running tally of plots and plants is a readout, and this is a garden.
+      -->
+      <p class="label walk-note" id="note" role="status" hidden></p>
+
+      <!--
+        What gathers here: the theme this area is, the syllables that bring a
+        plant to it, and its three parts, with a way to the whole table. Written
+        by `meanings.js` from the one table `/meanings` is drawn from, so the two
+        cannot come to disagree. Hidden until it is written, so a page whose
+        script has not run shows nothing rather than an empty band.
+      -->
+      <section class="gathers" id="gathers" hidden></section>
+
+      <div class="walk-ways">
+        <nav class="walk-keys" id="keys" role="group" hidden>
+          <!--
+            Two pairs, and the gap between them says so: paging from one plot
+            to the next, then turning the one in front of you. They used to be
+            four words in a row, and four equal buttons read as four unrelated
+            actions however they were ordered.
+
+            **Glyphs, and the words are their names.** `data-s-label` has
+            `plain.js` write each one's `aria-label` and tooltip from the
+            catalogue, so a screen reader hears *Turn anticlockwise* in the
+            reader's own language. The chevrons are previous and next, and
+            mirror under a right-to-left language as the row does; the rings
+            are a direction of turn, which is the same in every language, and
+            do not. Monoline, even weight, round free ends, per BRAND.md §3.2.
+          -->
+          <span class="walk-keys__pair">
+            <button class="pad-key" type="button" id="back" data-s-label="walkBack">
+              <svg class="pad-glyph pad-glyph--page" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                <path d="M12.75 4.5L7.25 10L12.75 15.5" />
+              </svg>
+            </button>
+            <button class="pad-key" type="button" id="on" data-s-label="walkOn">
+              <svg class="pad-glyph pad-glyph--page" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                <path d="M7.25 4.5L12.75 10L7.25 15.5" />
+              </svg>
+            </button>
+          </span>
+          <span class="walk-keys__pair">
+            <button class="pad-key" type="button" id="left" data-s-label="walkTurnAnti">
+              <svg class="pad-glyph" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                <path d="M6.27 4.68A6.5 6.5 0 1 0 13.73 4.68M16.96 4.34L13.73 4.68L14.07 7.91" />
+              </svg>
+            </button>
+            <button class="pad-key" type="button" id="right" data-s-label="walkTurnClock">
+              <svg class="pad-glyph" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                <path d="M13.73 4.68A6.5 6.5 0 1 1 6.27 4.68M5.93 7.91L6.27 4.68L3.04 4.34" />
+              </svg>
+            </button>
+          </span>
+        </nav>
+
+        <!--
+          The garden's map, small: ten cells five by two, this area filled, the
+          other built areas lit and each a link to its page, the closed ones
+          faint and inert. Drawn by `gates.js` from `garden.js`'s own table, so
+          there is one map rather than a second one written out here.
+        -->
+        <nav class="minimap" id="minimap" hidden></nav>
+      </div>
+
+
+      <!--
+        The foot mirrors the bar: one hairline, above it here where the
+        bar's is below, and a row of two things at opposite ends — the
+        privacy notice where the mark stands, the language where the way back
+        to the garden does.
+      -->
+      <footer class="foot bar-foot">
+        <a class="bar-foot__link" href="/privacy" data-s="privacyTitle"></a>
+        <label class="chooser">
+          <span class="label" id="language-label"></span>
+          <span class="chooser__field">
+            <select id="language" class="chooser__select"></select>
+            <!-- Monoline, even weight, round free ends, per BRAND.md §3.2. -->
+            <svg class="chooser__mark" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path
+                d="M4 6.5 L8 10.5 L12 6.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.25"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+        </label>
+      </footer>
+    </main>
+
+    <script type="module" src="/assets/js/plain.js"></script>
+    <script type="module" src="/assets/js/glasshousepage.js"></script>
+  </body>
+</html>

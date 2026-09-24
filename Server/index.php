@@ -83,6 +83,10 @@ const ROUTES = [
     // something other than what they will be: young, under glass, placed by
     // the height they will grow to.
     '/frame' => ['frame', 'text/html; charset=utf-8'],
+    // The eighth, on 24 September, and the first whose plants do not all
+    // stand on the ground: three in four are potted on the staging, set out as
+    // a run of colour, and the tallest stand in a border along the back.
+    '/glasshouse' => ['glasshouse', 'text/html; charset=utf-8'],
     // What the names mean, on 23 September: the table every area page links
     // to, saying what brings a plant to each area and what its two words say.
     '/meanings' => ['meanings', 'text/html; charset=utf-8'],
