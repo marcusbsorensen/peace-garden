@@ -37,7 +37,25 @@ public enum PaletteRamp {
             return interpolate(palette.centre, edge, v)
         case .stamen:
             return interpolate(palette.centre, palette.petalTip, v)
+        case .calyx:
+            return calyx(v: v, palette: palette)
         }
+    }
+
+    /// The cup and sepals: the leaf's own colour, fresh.
+    ///
+    /// Derived from the leaf rather than drawn, so a plant with burgundy
+    /// foliage has a burgundy calyx and nothing new crosses between phones.
+    /// Brighter and a little less saturated than the blade, as a leaf is
+    /// toward its young tip, and lightening toward the rim, which is where
+    /// the light reaches a cup held under a flower.
+    private static func calyx(v: Double, palette: Genome.Palette) -> HSB {
+        var base = palette.leaf
+        base.brightness = min(1, palette.leaf.brightness * 1.05)
+        var rim = palette.leaf
+        rim.brightness = min(1, palette.leaf.brightness * 1.35)
+        rim.saturation = palette.leaf.saturation * 0.88
+        return interpolate(base, rim, smoothstep(v))
     }
 
     // MARK: - Petals
@@ -247,6 +265,10 @@ public enum PaletteRamp {
             return (0.42 + bumps * 0.4).clamped(to: 0...1)
         case .stamen:
             return 0.5
+        case .calyx:
+            // Fine ribs running up the cup, as a calyx's veins do.
+            let ribs = abs(sin(u * .pi * 10))
+            return (0.5 + pow(ribs, 4) * 0.14).clamped(to: 0...1)
         }
     }
 

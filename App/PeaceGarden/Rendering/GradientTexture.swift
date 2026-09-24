@@ -46,7 +46,7 @@ enum GradientTexture {
         case .leaf: return 256
         case .petal: return 192
         case .centre: return 96
-        case .stem, .stamen: return 64
+        case .stem, .stamen, .calyx: return 64
         }
     }
 
@@ -198,6 +198,7 @@ enum GradientTexture {
         case .stem: return 9
         case .centre: return 8
         case .stamen: return 0
+        case .calyx: return 6
         }
     }
 
@@ -212,6 +213,7 @@ enum GradientTexture {
         case .petal: return (0.45 - palette.sheen * 0.3, 0.10)
         case .centre: return (0.55, 0.12)
         case .stamen: return (0.4, 0)
+        case .calyx: return (0.62, 0.1)
         }
     }
 

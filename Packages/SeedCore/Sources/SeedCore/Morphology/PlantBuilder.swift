@@ -782,6 +782,17 @@ public struct PlantBuilder {
             columns: max(5, genome.stem.sides - 2)
         )
 
+        // **The centre is a third of a petal at most, and the petals stand on
+        // its rim.** It was sized by the gene alone — `centreRadius` times 1.6,
+        // so a lotus's reached nine-tenths of a petal — and centred on the
+        // one point every petal sprang from, so the petals pierced it and its
+        // rim hung outside them: the ring under every flower in the garden.
+        // Capped here rather than in the gene, so the gene still orders centres
+        // from small to large and nothing about a seed's draw changes. The
+        // petals start at nine-tenths of the rim, and are shortened by half of
+        // that, so the flower is as wide as it was.
+        let centreRadius = min(petalLength * Float(bloom.centreRadius) * 1.6, petalLength * 0.34)
+        let baseRing = centreRadius * 0.9
         let perLayer = max(3, bloom.petalCount)
 
         for layer in 0..<max(1, bloom.layers) {
@@ -801,13 +812,16 @@ public struct PlantBuilder {
                     refB: refB,
                     azimuth: azimuth + Float(petalJitter.value(in: -0.05...0.05)),
                     open: layerOpen,
-                    length: petalLength * layerScale * Float(petalJitter.value(in: 0.92...1.08)),
-                    bloomOpen: Float(growth.bloomOpen)
+                    length: (petalLength - baseRing * 0.5) * layerScale
+                        * Float(petalJitter.value(in: 0.92...1.08)),
+                    bloomOpen: Float(growth.bloomOpen),
+                    // Inner layers stand a little further in, so they rise
+                    // from inside the outer ones rather than through them.
+                    baseRing: baseRing * (1 - layerFraction * 0.3)
                 )
             }
         }
 
-        let centreRadius = petalLength * Float(bloom.centreRadius) * 1.6
         builder.addDome(
             role: .centre,
             centre: origin,
@@ -843,50 +857,166 @@ public struct PlantBuilder {
             )
         }
 
-        // The green collar under the flower, present from the bud onward — it
-        // is what wrapped the petals before they opened.
-        if bloom.sepalCount > 0 {
+        let rim = addCalyx(
+            &builder, origin: origin, axis: axis, side: refA,
+            centreRadius: centreRadius, petalLength: petalLength
+        )
+
+        // The sepals, present from the bud onward — they are what wrapped the
+        // petals before they opened. A bell always has its five; everyone
+        // else has them where `bloom.hasSepals` drew them, and carries them
+        // the way the family does.
+        let sepals = bloom.sepals
+        let count = sepals == .spreading ? 5 : bloom.sepalCount
+        guard count > 0, sepals != .none else { return }
+        let cupSide = origin - axis * rim.depth * 0.25
+        switch sepals {
+        case .none:
+            break
+        case .reflexed:
+            // From partway down the cup, past a right angle to the axis, so
+            // they fold back down the stem.
             addSepals(
-                &builder,
-                origin: sample.position,
-                axis: axis,
-                refA: refA,
-                refB: refB,
-                length: petalLength * 0.5,
-                width: petalLength * 0.2
+                &builder, count: count, origin: origin - axis * rim.depth * 0.6, ring: rim.radius * 0.7,
+                axis: axis, refA: refA, refB: refB, pitch: 1.75...2.25,
+                length: petalLength * 0.5, width: petalLength * 0.2, curve: -0.25
+            )
+        case .spreading:
+            addSepals(
+                &builder, count: count, origin: cupSide, ring: rim.radius * 0.95,
+                axis: axis, refA: refA, refB: refB, pitch: 1.0...1.3,
+                length: petalLength * 0.42, width: petalLength * 0.07, curve: -0.1
+            )
+        case .appressed:
+            // Short, and held up close under the petals, curving in to them.
+            addSepals(
+                &builder, count: count, origin: cupSide, ring: rim.radius * 0.95,
+                axis: axis, refA: refA, refB: refB, pitch: 0.55...0.8,
+                length: petalLength * 0.28, width: petalLength * 0.13, curve: 0.12
             )
         }
     }
 
-    /// A whorl of short green blades, swept back beneath the petals.
-    private func addSepals(
+    /// The closed body under a flower, from a little way down its stalk to just
+    /// outside the centre's rim, where it turns in underneath it.
+    ///
+    /// **Closed, so nothing is hollow from any side.** It starts from a point
+    /// on the stalk and ends tucked under the centre, and the centre's dome
+    /// covers the rest, so the flower is one body and the web's two-sided
+    /// lighting has no inside to show. Its normals face out: it is a surface
+    /// of revolution taken clockwise, which `addSurface` reads as outward.
+    ///
+    /// Returns the rim's radius and the cup's depth, for the sepals.
+    private func addCalyx(
         _ builder: inout MeshBuilder,
         origin: SIMD3<Float>,
         axis: SIMD3<Float>,
+        side: SIMD3<Float>,
+        centreRadius: Float,
+        petalLength: Float
+    ) -> (radius: Float, depth: Float) {
+        let up = simd_normalize(axis)
+        let right = simd_normalize(side - up * dot(side, up))
+        let forward = cross(up, right)
+        let calyx = genome.bloom.calyx
+
+        let role: MeshRole
+        let rim: Float
+        let depth: Float
+        // How fast the profile widens from its foot: below 1 a bowl, above 1
+        // a stalk flaring at the top.
+        let flare: Float
+        switch calyx {
+        case .lid:
+            role = .stem; rim = centreRadius * 0.92; depth = petalLength * 0.1; flare = 0.5
+        case .swelling:
+            role = .stem; rim = centreRadius * 0.92; depth = petalLength * 0.22; flare = 1.6
+        case .stalk:
+            role = .stem; rim = centreRadius * 0.92; depth = petalLength * 0.45; flare = 2.2
+        case .cup:
+            role = .calyx; rim = centreRadius * 1.04
+            depth = max(petalLength * 0.14, rim * 0.45); flare = 0.55
+        case .shallowCup:
+            role = .calyx; rim = centreRadius * 1.08; depth = rim * 0.32; flare = 0.45
+        case .urn:
+            role = .calyx; rim = centreRadius * 1.04; depth = rim * 1.5; flare = 1
+        }
+        let base = origin - up * depth
+        let tuck = centreRadius * 0.85
+        // The lip sits just under the petals' bases, so they rest on it
+        // rather than fighting it for the same plane.
+        let lip = depth - centreRadius * 0.04
+
+        let urn = calyx == .urn
+        builder.addSurface(role: role, rows: urn ? 25 : 11, columns: urn ? 25 : 17) { u, v in
+            let azimuth = -u * 2 * .pi
+            var radius: Float
+            var height: Float
+            if v < 0.82 {
+                let s = v / 0.82
+                height = lip * s
+                if urn {
+                    // Swells to a fifth past the rim two-thirds of the way up,
+                    // then draws in to it: an urn tapering into the stalk.
+                    let belly = rim * 1.2
+                    radius = s < 0.68
+                        ? belly * sin(.pi * 0.5 * s / 0.68)
+                        : belly + (rim - belly) * ((s - 0.68) / 0.32)
+                    // Scales: rows of bracts overlapping upward, each flaring at
+                    // its tip, and alternate columns half a row out of step.
+                    let column = Int(u * 12)
+                    let row = s * 6 + (column % 2 == 0 ? 0 : 0.5)
+                    radius *= 1 + 0.09 * (row - row.rounded(.down)) * s
+                } else {
+                    radius = rim * pow(s, flare)
+                }
+            } else {
+                // Over the rim and in under the centre.
+                let w = (v - 0.82) / 0.18
+                height = lip
+                radius = rim + (tuck - rim) * w
+            }
+            return base + up * height + right * (radius * cos(azimuth)) + forward * (radius * sin(azimuth))
+        }
+        return (rim, depth)
+    }
+
+    /// A whorl of short green blades round the cup.
+    ///
+    /// `pitch` is the angle off the flower's axis: past a right angle they
+    /// fold back down the stalk, well under one they stand up against the
+    /// petals. `curve` bends each one along its length, back for negative.
+    private func addSepals(
+        _ builder: inout MeshBuilder,
+        count: Int,
+        origin: SIMD3<Float>,
+        ring: Float,
+        axis: SIMD3<Float>,
         refA: SIMD3<Float>,
         refB: SIMD3<Float>,
+        pitch: ClosedRange<Double>,
         length: Float,
-        width: Float
+        width: Float,
+        curve: Float
     ) {
         guard length > 0.002 else { return }
-        let count = genome.bloom.sepalCount
 
         for index in 0..<count {
             var jitter = SplitMix64(seed: genome.seed, label: "sepal.\(index)")
             let azimuth = 2 * .pi * Float(index) / Float(count) + Float(jitter.value(in: -0.1...0.1))
             let radial = simd_normalize(refA * cos(azimuth) + refB * sin(azimuth))
-            // Past a right angle to the axis, so they fold back down the stem.
-            let pitch = Float(jitter.value(in: 1.75...2.25))
-            let forward = simd_normalize(radial * sin(pitch) + axis * cos(pitch))
+            let angle = Float(jitter.value(in: pitch))
+            let forward = simd_normalize(radial * sin(angle) + axis * cos(angle))
             let side = simd_normalize(cross(axis, radial))
             let up = simd_normalize(cross(forward, side))
             let halfWidth = width * 0.5
+            let start = origin + radial * ring
 
-            builder.addSurface(role: .leaf, rows: 7, columns: 5) { u, v in
+            builder.addSurface(role: .calyx, rows: 7, columns: 5) { u, v in
                 let profile = Self.bladeProfile(v, sharpness: 1.3, serration: 0, teeth: 0)
                 let across = (u - 0.5) * 2 * halfWidth * profile
-                let curve = -0.25 * length * v * v
-                return origin + forward * (v * length) + up * curve + side * across
+                let bend = curve * length * v * v
+                return start + forward * (v * length) + up * bend + side * across
             }
         }
     }
@@ -932,10 +1062,13 @@ public struct PlantBuilder {
         azimuth: Float,
         open: Float,
         length: Float,
-        bloomOpen: Float
+        bloomOpen: Float,
+        baseRing: Float
     ) {
         let bloom = genome.bloom
         let radial = simd_normalize(refA * cos(azimuth) + refB * sin(azimuth))
+        // Each petal leaves the centre's rim, not its middle.
+        let origin = origin + radial * baseRing
         let forward = simd_normalize(radial * sin(open) + axis * cos(open))
         let side = simd_normalize(cross(axis, radial))
         let up = simd_normalize(cross(side, forward))

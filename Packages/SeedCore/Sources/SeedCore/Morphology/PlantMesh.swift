@@ -15,6 +15,14 @@ public enum MeshRole: String, CaseIterable, Sendable {
     case petal
     case centre
     case stamen
+    /// The green cup under a flower and its sepals.
+    ///
+    /// Its own role rather than the stem's, whose colour is the leaf's taken
+    /// darker and came out a dark olive under the petals: a calyx is the
+    /// freshest green on the plant. **Last on purpose**: the web and the
+    /// WebAssembly buffer name a role by its place in `allCases`, so a role
+    /// added anywhere else would repaint every plant already on a page.
+    case calyx
 }
 
 /// Renderer-agnostic geometry for one plant.

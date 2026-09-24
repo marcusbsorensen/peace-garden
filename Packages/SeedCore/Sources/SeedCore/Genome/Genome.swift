@@ -150,6 +150,10 @@ public struct Genome: Equatable, Sendable {
         public var hasPistil: Bool
         public var atNodes: Bool
         public var present: Bool
+        /// What holds the flower from beneath. The family's.
+        public var calyx: Calyx
+        /// How the sepals are carried, where `sepalCount` gives it any.
+        public var sepals: Sepals
     }
 
     public struct Palette: Equatable, Sendable {
@@ -477,7 +481,9 @@ public struct Genome: Equatable, Sendable {
                 : 0,
             hasPistil: source.chance("bloom.hasPistil", 0.75),
             atNodes: profile.bloomsAtNodes,
-            present: flowers
+            present: flowers,
+            calyx: profile.calyx,
+            sepals: profile.sepals
         )
 
         palette = Palette.derive(from: source, seed: seed)

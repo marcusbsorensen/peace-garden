@@ -183,6 +183,10 @@ enum PlantSceneBuilder {
         case .stamen:
             material.emission.contents = GradientTexture.colour(palette.centre, alpha: 1)
             material.emission.intensity = CGFloat(0.15 + palette.glow * 0.3)
+        case .calyx:
+            // The cup is a closed body and hides its own back faces, but the
+            // sepals on the same material are single blades, so both sides.
+            material.isDoubleSided = true
         }
         return material
     }
@@ -241,7 +245,8 @@ enum PlantSceneBuilder {
         case .centre, .stamen:
             // Pollen arrives late. A closed flower's centre is pale and dry.
             return (0.72, 0.72, 0.58, 0.6)
-        case .stem:
+        case .stem, .calyx:
+            // A calyx is green from the bud: it is what the bud is wrapped in.
             return nil
         }
     }
@@ -255,6 +260,7 @@ enum PlantSceneBuilder {
         case .petal: return 0.45 - palette.sheen * 0.3
         case .centre: return 0.55
         case .stamen: return 0.4
+        case .calyx: return 0.62
         }
     }
 

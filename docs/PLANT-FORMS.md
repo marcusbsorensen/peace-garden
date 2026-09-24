@@ -234,20 +234,53 @@ wider than tall 6% → 31%, under half a metre 6% → 22%, widest plant 2.2m →
 
 Drawn young at `ColdFrame.drawn` the tallest front and back plants in the Cold
 Frame are 0.32m and 0.34m (0.38m and 0.45m before), and at `Coppice.cutDrawn`
-the tallest fern is 0.36m, as before. The shortest is a lotus at 0.06m — a bud
-on a short stalk over pads a quarter of a metre across — under the 0.08m the
-Cold Frame's test asks of a seedling. A low plant is legible by its width;
+the tallest fern is 0.36m, as before. The shortest are lotuses and succulents
+at 0.04–0.06m — a bud on a short stalk over pads, a young rosette — under the
+0.08m the Cold Frame's test asks of a seedling. A low plant is legible by its width;
 whether the frame should ask that of it is for when the areas are re-measured.
 
 **Not yet done**: the areas' cuts, the recorded vectors and the Python port all
 still describe the old shapes.
 
+## What holds a flower from beneath
+
+Added 24 September 2026. **The ring under every flower was its centre.** The
+centre was a dome sized by the gene alone — a lotus's reached nine-tenths of a
+petal — centred on the single point every petal sprang from, so the petals
+pierced it and its rim hung outside them. It was open underneath, and the web
+lights back faces, so from below it was the inside of a bowl. Nothing green sat
+under the petals; seven plants in ten had reflexed sepals whatever they were.
+
+- **The centre is at most a third of a petal**, capped in `addBloom` rather than
+  in the gene, so the gene still orders centres and no draw moved.
+- **Petals stand on its rim**, at nine-tenths of its radius, shortened by half
+  of that so the flower is as wide as it was.
+- **A closed body underneath**, from a point on the stalk to just outside the
+  centre's rim, where it turns in under it: the centre's dome and it are one
+  closed shape, so there is no inside to show from any side. What it is is the
+  family's (`Calyx` on `ArchetypeProfile`, carried on `Genome.Bloom`): a small
+  green cup (lotus, bell, spire, vine, succulent, plume, fern); a wide shallow
+  one (star); a bulbous urn of scales tapering into the stalk (thistle); and in
+  the stem's own colour, a swelling (poppy), a thickened stalk (orchid) or a
+  bare lid (umbel).
+- **Sepals are carried the family's way** (`Sepals`): reflexed on a star, five
+  slender spreading lobes on a bell, short lobes held up against the petals on
+  spire, vine, succulent and plume, none on poppy, umbel, orchid, thistle,
+  lotus and fern. `bloom.hasSepals` still decides which plants show them, except
+  a bell, which always has its five.
+- **A new mesh role, `calyx`**, for the cup and the sepals: the leaf's own
+  colour, fresh, where the stem's came out dark olive. It is last in `MeshRole`
+  because the web and the WebAssembly buffer name a role by its index. Every
+  place that lists roles has it: `PaletteRamp` (colour and relief), the app's
+  `GradientTexture` and `PlantSceneBuilder`, the wasm bake in
+  `tools/wasm/.../Exports.swift`, and `ROLES` in `Server/assets/js/plant.js`.
+
+Not ported: `tools/preview/plant_model.py` has neither this nor the habit above.
+
 ## What is left
 
-- **The centre dome of a large solitary bloom has a hard bright rim.** Visible
-  on the poppy and the lotus in the preview sheet, less so in the app. It is the
-  existing centre treatment scaled up rather than anything new, and it is a
-  shading question rather than a geometry one.
+- ~~**The centre dome of a large solitary bloom has a hard bright rim.**~~ It
+  was geometry after all, not shading — see "What holds a flower from beneath".
 - **Leaves stay on the main stem's nodes in all three forms.** As specified —
   the branches of an umbel are bare in life, and leaves on them would be a
   fourth thing to tune.

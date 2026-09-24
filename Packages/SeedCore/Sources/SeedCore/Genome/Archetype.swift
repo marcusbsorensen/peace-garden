@@ -103,6 +103,45 @@ public enum Inflorescence: String, CaseIterable, Sendable {
     case solitary
 }
 
+/// What holds a flower from beneath: the body the petals stand on.
+///
+/// **Every flower gets one, because the centre alone was a hollow.** The
+/// centre was a dome open underneath, wider than the petals' own base and
+/// centred on the one point every petal sprang from, so the petals pierced it
+/// and its rim hung outside them — a ring round the flower, and from below the
+/// inside of a bowl. Now the petals stand on the centre's rim and something
+/// closed sits under both. What it is depends on the family, which is botany
+/// rather than taste: a daisy has a shallow green cup, a thistle an urn of
+/// scales, a poppy's sepals fall as it opens and leave only the swollen top of
+/// the stalk.
+public enum Calyx: String, CaseIterable, Sendable {
+    /// A lid under the centre in the stem's colour and nothing to see: an
+    /// umbel's florets sit straight on their stalks.
+    case lid
+    /// The top of the stalk swelling into the flower, in the stem's colour.
+    case swelling
+    /// A thickened flower stalk, as an orchid's ovary is, in the stem's colour.
+    case stalk
+    /// A small closed green cup hugging the petals' bases.
+    case cup
+    /// A wide, shallow green cup: a composite's involucre.
+    case shallowCup
+    /// A bulbous urn of scales the florets stand out of: a thistle's
+    /// involucre.
+    case urn
+}
+
+/// How a flower's sepals are carried, where it has any.
+public enum Sepals: String, CaseIterable, Sendable {
+    case none
+    /// Swept back beneath the flower, as every flower's were before this.
+    case reflexed
+    /// Five slender lobes standing out from the cup: a bellflower's calyx.
+    case spreading
+    /// Short lobes held up against the petals' backs.
+    case appressed
+}
+
 /// How many parts a flower is built in — its merosity.
 ///
 /// **The character that separates the two genus roots of a family**, and the
@@ -170,6 +209,12 @@ public struct ArchetypeProfile: Sendable {
     public var branchSpread: Double = 0
     /// Before the seed's own draw scales it. `.head` only.
     public var branchCount: Int = 5
+    /// What holds the flower from beneath. A small green cup unless the family
+    /// says otherwise.
+    public var calyx: Calyx = .cup
+    /// How the sepals are carried. `bloom.hasSepals` still decides whether a
+    /// plant shows them, except a bell's, which always has its five.
+    public var sepals: Sepals = .appressed
 
     // MARK: Habit — how wide a plant stands for its height
     //
@@ -273,6 +318,8 @@ public struct ArchetypeProfile: Sendable {
             profile.crownLengthScale = 1.7
             profile.crownPitch = 0.7...1.2
             profile.leafReach = 0.6
+            profile.calyx = .lid
+            profile.sepals = .none
         case .fern:
             profile.petals = (3, 5)
             profile.nodeScale = 1.9
@@ -309,6 +356,7 @@ public struct ArchetypeProfile: Sendable {
             profile.heightScale = 0.32
             profile.crownTaper = 0.2
             profile.pinnae = 9...15
+            profile.sepals = .none
         case .orchid:
             profile.petals = (3, 6)
             profile.inflorescence = .solitary
@@ -328,6 +376,8 @@ public struct ArchetypeProfile: Sendable {
             profile.crownLengthScale = 1.7
             profile.crownPitch = 0.95...1.35
             profile.leafWidthScale = 1.5
+            profile.calyx = .stalk
+            profile.sepals = .none
         case .lotus:
             profile.petals = (8, 14)
             profile.inflorescence = .solitary
@@ -351,6 +401,7 @@ public struct ArchetypeProfile: Sendable {
             profile.crownLeaves = 2...4
             profile.crownLengthScale = 1.9
             profile.leafLengthScale = 1.25
+            profile.sepals = .none
         case .thistle:
             profile.petals = (13, 21)
             profile.inflorescence = .solitary
@@ -367,6 +418,8 @@ public struct ArchetypeProfile: Sendable {
             profile.crownLeaves = 3...7
             profile.crownPitch = 1.1...1.4
             profile.leafReach = 0.4
+            profile.calyx = .urn
+            profile.sepals = .none
         case .vine:
             profile.petals = (4, 6)
             profile.heightScale = 1.45
@@ -395,6 +448,7 @@ public struct ArchetypeProfile: Sendable {
             profile.leafLengthScale = 1.3
             profile.crownLengthScale = 2.3
             profile.leafReach = 0.8
+            profile.sepals = .spreading
         case .star:
             profile.petals = (5, 8)
             profile.petalCurlBias = 0.35
@@ -408,6 +462,8 @@ public struct ArchetypeProfile: Sendable {
             profile.heightScale = 0.9
             profile.crownLengthScale = 2.3
             profile.crownPitch = 0.95...1.35
+            profile.calyx = .shallowCup
+            profile.sepals = .reflexed
         case .poppy:
             profile.petals = (4, 6)
             profile.inflorescence = .solitary
@@ -421,12 +477,17 @@ public struct ArchetypeProfile: Sendable {
             profile.headPitchBias = 0.35
             profile.swayScale = 1.4
             // Upright still, but out of a clump of leaves at the ground, and
-            // the stem bare above its few low nodes.
-            profile.crownLeaves = 5...10
-            profile.crownLengthScale = 2.3
-            profile.crownPitch = 0.95...1.35
+            // the stem bare above its few low nodes. The clump is few, held
+            // up, and cut to the midrib as a poppy's leaves are: longer and
+            // flatter, it lay out round the stem as a large green star.
+            profile.crownLeaves = 3...6
+            profile.crownLengthScale = 2.0
+            profile.crownPitch = 0.7...1.1
             profile.nodeZone = 0.05...0.35
             profile.leafReach = 0.7
+            profile.calyx = .swelling
+            profile.sepals = .none
+            profile.pinnae = 5...8
         case .succulent:
             // **A rosette at last.** It was a thick stem with small leaves up
             // it — a leafy column forty-five centimetres tall and twenty
