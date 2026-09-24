@@ -174,6 +174,7 @@ final class AmbassadorTests: XCTestCase {
     /// sorted by it. Compared exactly, not tolerated as a height is: a hue is
     /// the seed's bytes through `+ − × ÷`, so it is the same double on every
     /// host, and this file under WebAssembly is one place that is proved.
+    /// **The habit since the Coppice**, compared as a word.
     private static func rendered() -> String {
         var lines = [
             "{",
@@ -187,7 +188,7 @@ final class AmbassadorTests: XCTestCase {
             lines.append("""
                     {"area": "\(one.area.rawValue)", "seed": "\(one.seed.hex)", \
                 "name": "\(one.genome.name.full)", "genusHead": "\(one.genome.name.genusHead)", \
-                "height": \(traits.height), "family": \(traits.family), "hue": \(traits.hue ?? -1)}\(comma)
+                "height": \(traits.height), "family": \(traits.family), "hue": \(traits.hue ?? -1), "habit": "\(traits.habit)"}\(comma)
                 """)
         }
         lines.append("  ],")

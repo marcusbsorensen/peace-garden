@@ -213,6 +213,18 @@ public struct WalkArrival: Codable, Equatable, Sendable {
     /// a plant with no hue as it reads a pale one: it takes any free pot on the
     /// staging rather than being refused.
     public var hue: Double?
+    /// The plant's habit, its archetype's name: `fern`, `star`.
+    /// `PlantTraits.habit`.
+    ///
+    /// **Sent because the Coppice stands its ferns on stools** and its stars
+    /// in the light, and for the reason the other traits are sent: the service
+    /// cannot grow the plant to find out. Exact, because an archetype is picked
+    /// from the seed's bytes.
+    ///
+    /// **Absent from an older payload, and empty when it is.** The service
+    /// reads a plant with no habit as a star: it stands on the floor, is never
+    /// cut, and is not refused.
+    public var habit: String
     /// Which of the garden's ten areas this plant belongs in.
     ///
     /// **A plant's area is its theme's**, and its theme comes from its genus
@@ -228,7 +240,8 @@ public struct WalkArrival: Codable, Equatable, Sendable {
     public var area: Area
 
     public init(seed: String, parents: [String], encounter: String, height: Double,
-                family: Int, area: Area = .travel, kind: String = "", hue: Double? = nil) {
+                family: Int, area: Area = .travel, kind: String = "", hue: Double? = nil,
+                habit: String = "") {
         self.seed = seed
         self.parents = parents
         self.encounter = encounter
@@ -237,10 +250,11 @@ public struct WalkArrival: Codable, Equatable, Sendable {
         self.area = area
         self.kind = kind
         self.hue = hue
+        self.habit = habit
     }
 
-    /// `kind` and `hue` alone are optional, for the payload a phone built
-    /// before the Seedbed or the Glasshouse existed. Everything else is
+    /// `kind`, `hue` and `habit` alone are optional, for the payload a phone
+    /// built before the Seedbed, the Glasshouse or the Coppice existed. Everything else is
     /// required, as it always was.
     public init(from decoder: any Decoder) throws {
         let fields = try decoder.container(keyedBy: CodingKeys.self)
@@ -252,6 +266,7 @@ public struct WalkArrival: Codable, Equatable, Sendable {
         area = try fields.decode(Area.self, forKey: .area)
         kind = try fields.decodeIfPresent(String.self, forKey: .kind) ?? ""
         hue = try fields.decodeIfPresent(Double.self, forKey: .hue)
+        habit = try fields.decodeIfPresent(String.self, forKey: .habit) ?? ""
     }
 
     /// What this plant would arrive as, or nil if it is not a hybrid.
@@ -271,12 +286,13 @@ public struct WalkArrival: Codable, Equatable, Sendable {
             family: traits.family,
             area: area,
             kind: traits.kind,
-            hue: traits.hue
+            hue: traits.hue,
+            habit: traits.habit
         )
     }
 
     /// The traits the placement rule reads, without going back to the mesh.
     public var traits: LongWalk.Traits {
-        LongWalk.Traits(height: height, family: family, kind: kind, hue: hue)
+        LongWalk.Traits(height: height, family: family, kind: kind, hue: hue, habit: habit)
     }
 }
