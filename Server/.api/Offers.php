@@ -59,10 +59,17 @@ require_once __DIR__ . '/WalkStore.php';
  * of it. A seed is 32 random bytes and a token 16, so a fingerprint can confirm
  * one somebody already holds and cannot give one back.
  *
+ * **A declined offer is erased the same way** (24 September, Marcus's call). It
+ * was never planted, so nothing of it was ever public, but it kept the seed and
+ * both tokens in the clear for good. Now it keeps the same fingerprints and the
+ * word `declined`, which is still what refuses a second offer and still what
+ * both phones are told.
+ *
  * **An offer nobody answers lapses after thirty days**, and is then exactly a
  * withdrawn one: same word, same erasure, answered at the moment it lapsed.
- * Checked when the offer is next looked up, and swept on every `offer` and
- * `pending` request, so an offer waiting on a phone that never asks still goes.
+ * Checked when the offer is next looked up, swept on every `offer` and
+ * `pending` request, and swept every hour by `sweep.php` from cron, so an offer
+ * waiting on a phone that never asks still goes.
  */
 final class Offers
 {
@@ -141,7 +148,8 @@ final class Offers
         //
         // Unlike `area`, this one is dropped when the offer is answered. It is a
         // fact about the plant rather than about where to find the planting, so
-        // it belongs with the parents, the height and the family in `settle`.
+        // it belongs with the parents, the height and the family in `accept`
+        // and `erase`.
         try {
             $this->run("ALTER TABLE walk_offers ADD COLUMN kind VARCHAR(64) NOT NULL DEFAULT ''");
         } catch (Throwable) {
@@ -153,16 +161,17 @@ final class Offers
         // a lookup rather than a pass over every offer ever made.
         $this->run('CREATE TABLE IF NOT EXISTS offer_key (id INTEGER PRIMARY KEY, hmac_key CHAR(64) NOT NULL)');
         $this->run('CREATE INDEX IF NOT EXISTS walk_offers_waiting ON walk_offers (state, offered_at)');
-        // **The migration.** An offer withdrawn before today still holds its
-        // seed and both tokens in the clear, and this puts them through the
-        // same erasure a withdrawal does now. It runs on every request and
-        // finds nothing once it has run: an erased row's seed starts with the
-        // fingerprint's letter. It leaves the times and the word alone, so
-        // both phones hear the same thing about the offer as before.
-        $plain = $this->db->prepare('SELECT * FROM walk_offers WHERE state = ? AND seed NOT LIKE ?');
-        $plain->execute([self::WITHDRAWN, self::PRINT . '%']);
+        // **The migration.** An offer withdrawn or declined before today still
+        // holds its seed and both tokens in the clear, and this puts them
+        // through the same erasure a withdrawal or a decline does now. It runs
+        // on every request and finds nothing once it has run: an erased row's
+        // seed starts with the fingerprint's letter. It leaves the times and
+        // the word alone, so both phones hear the same thing about the offer
+        // as before.
+        $plain = $this->db->prepare('SELECT * FROM walk_offers WHERE state IN (?, ?) AND seed NOT LIKE ?');
+        $plain->execute([self::WITHDRAWN, self::DECLINED, self::PRINT . '%']);
         foreach ($plain->fetchAll() as $row) {
-            $this->erase($row, (int) ($row['answered_at'] ?? $row['offered_at']));
+            $this->erase($row, (string) $row['state'], (int) ($row['answered_at'] ?? $row['offered_at']));
         }
     }
 
@@ -260,7 +269,9 @@ final class Offers
         if ($row['state'] !== self::OFFERED) return ['offer' => $this->seen($row, $sent), 'planting' => null];
 
         if (!$yes) {
-            $this->settle($seed, self::DECLINED, $now);
+            // Declined, and erased as a withdrawal is: the fingerprints and
+            // the word are all a refusal needs.
+            $this->erase($row, self::DECLINED, $now);
             return ['offer' => $this->seen($this->find($seed, $now) ?? [], $sent), 'planting' => null];
         }
 
@@ -269,7 +280,14 @@ final class Offers
             $seed, (string) $row['parent_a'], (string) $row['parent_b'], (string) $row['encounter'],
             (float) $row['height'], (int) $row['family'], (string) ($row['kind'] ?? '')
         );
-        $this->settle($seed, self::ACCEPTED, $now);
+        if (!$this->accept($seed, $now)) {
+            // The offer changed under this answer — it lapsed in the hourly
+            // sweep, or was withdrawn, in the moment between reading it and
+            // planting it. It is not the garden's to keep, so the planting
+            // just made is taken back at once.
+            $this->walk->takeBackIn((string) ($row['area'] ?? 'travel'), $seed);
+            $planting = null;
+        }
         return ['offer' => $this->seen($this->find($seed, $now) ?? [], $sent), 'planting' => $planting];
     }
 
@@ -284,7 +302,9 @@ final class Offers
      * cannot be withdrawn is not worth much, and nor is one whose withdrawal
      * leaves the thing consented to on the server.
      *
-     * Withdrawing twice is the first withdrawal, returned again.
+     * Withdrawing twice is the first withdrawal, returned again, and
+     * withdrawing a declined offer is the decline: it is already as settled,
+     * and as erased, as a withdrawal would leave it.
      */
     public function withdraw(string $seed, string $token, int $now): ?array
     {
@@ -292,12 +312,14 @@ final class Offers
         $row = $this->find($seed, $now);
         if ($row === null) return null;
         if (!$this->holds($row, 'token_to', $token) && !$this->holds($row, 'token_from', $token)) return null;
-        if ($row['state'] === self::WITHDRAWN) return $this->seen($row, $sent);
+        if ($row['state'] === self::WITHDRAWN || $row['state'] === self::DECLINED) {
+            return $this->seen($row, $sent);
+        }
 
         if ($row['state'] === self::ACCEPTED) {
             $this->walk->takeBackIn((string) ($row['area'] ?? 'travel'), $seed);
         }
-        $this->erase($row, $now);
+        $this->erase($row, self::WITHDRAWN, $now);
         return $this->seen($this->find($seed, $now) ?? [], $sent);
     }
 
@@ -313,7 +335,7 @@ final class Offers
         $row = $query->fetch();
         if ($row === false) return null;
         if ($row['state'] === self::OFFERED && (int) $row['offered_at'] + self::LAPSES_AFTER <= $now) {
-            $this->erase($row, (int) $row['offered_at'] + self::LAPSES_AFTER);
+            $this->erase($row, self::WITHDRAWN, (int) $row['offered_at'] + self::LAPSES_AFTER);
             $query->execute([$seed, $this->seedPrint($seed)]);
             $row = $query->fetch();
             return $row === false ? null : $row;
@@ -321,50 +343,70 @@ final class Offers
         return $row;
     }
 
-    /** Settles an offer as accepted or declined, and drops the plant it carried. */
-    private function settle(string $seed, string $state, int $now): void
+    /**
+     * Settles an offer as accepted, and drops the plant it carried: it is in
+     * its area now and does not need to be here twice. The area stays, as
+     * where to look for the planting.
+     *
+     * Only an offer still waiting, so an answer that loses a race with the
+     * sweep or a withdrawal changes nothing. Returns whether it was this call
+     * that settled it.
+     */
+    private function accept(string $seed, int $now): bool
     {
         // `kind` goes back to the empty string rather than to NULL, because the
         // column is NOT NULL — it is the same erasure the nullable fields get.
         $update = $this->db->prepare("UPDATE walk_offers SET state = ?, answered_at = ?,
             parent_a = NULL, parent_b = NULL, encounter = NULL, height = NULL, family = NULL,
             kind = ''
-            WHERE seed = ?");
-        $update->execute([$state, $now, $seed]);
+            WHERE seed = ? AND state = ?");
+        $update->execute([self::ACCEPTED, $now, $seed, self::OFFERED]);
+        return $update->rowCount() === 1;
     }
 
     /**
-     * Withdraws an offer and erases it: the seed and both tokens become their
-     * fingerprints, and the plant's fields and its area go. `$row` is the row
-     * as it stands, in the clear; `$at` is when it was withdrawn, or when it
-     * lapsed.
+     * Settles an offer as withdrawn or declined and erases it: the seed and
+     * both tokens become their fingerprints, and the plant's fields and its
+     * area go. `$row` is the row as it was read, in the clear; `$at` is when
+     * it was withdrawn, declined, or lapsed.
+     *
+     * **Only if the row is still as it was read**, which is what makes this
+     * safe beside itself. The hourly sweep, a request's own sweep and a phone
+     * withdrawing can all reach one offer at once, and a second erasure of a
+     * row already erased would fingerprint the fingerprints and lose the offer
+     * for good. Matching on the seed and the state as read turns the loser of
+     * that race into an update of nothing.
      */
-    private function erase(array $row, int $at): void
+    private function erase(array $row, string $state, int $at): bool
     {
+        if (self::isPrint((string) $row['seed'])) return false;
         $update = $this->db->prepare("UPDATE walk_offers SET state = ?, answered_at = ?,
             seed = ?, token_to = ?, token_from = ?,
             parent_a = NULL, parent_b = NULL, encounter = NULL, height = NULL, family = NULL,
             kind = '', area = ''
-            WHERE offer = ?");
-        $update->execute([self::WITHDRAWN, $at,
+            WHERE offer = ? AND seed = ? AND state = ?");
+        $update->execute([$state, $at,
                           $this->seedPrint((string) $row['seed']),
                           $this->tokenPrint((string) $row['token_to']),
                           $this->tokenPrint((string) $row['token_from']),
-                          $row['offer']]);
+                          $row['offer'], (string) $row['seed'], (string) $row['state']]);
+        return $update->rowCount() === 1;
     }
 
     /**
      * Every offer that has waited thirty days, lapsed. Read through the index
      * on (state, offered_at), so on a day when nothing lapses it is one lookup
-     * that finds nothing.
+     * that finds nothing. Returns how many lapsed, for `sweep.php` to say.
      */
-    private function lapse(int $now): void
+    public function lapse(int $now): int
     {
         $due = $this->db->prepare('SELECT * FROM walk_offers WHERE state = ? AND offered_at <= ?');
         $due->execute([self::OFFERED, $now - self::LAPSES_AFTER]);
+        $lapsed = 0;
         foreach ($due->fetchAll() as $row) {
-            $this->erase($row, (int) $row['offered_at'] + self::LAPSES_AFTER);
+            if ($this->erase($row, self::WITHDRAWN, (int) $row['offered_at'] + self::LAPSES_AFTER)) $lapsed++;
         }
+        return $lapsed;
     }
 
     // MARK: - Fingerprints

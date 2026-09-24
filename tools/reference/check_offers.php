@@ -191,6 +191,33 @@ check('answering a settled offer changes nothing',
       $offers->answer($two['seed'], $theirs2, true, $now)['planting'] === null);
 check('and it is still not in the walk', count(shared($walk)) === 1);
 
+// **A decline is erased as a withdrawal is**, and is still final. Nothing of it
+// was ever public, but it used to keep the seed and both tokens for good. Now
+// the fingerprints and the word are all that is left, and they are enough to
+// refuse the plant again and to tell both phones.
+$two['mine'] = $mine2;
+$two['theirs'] = $theirs2;
+check('nothing of a declined plant is left in the database' . found(stillHeld($walk->connection(), $two)),
+      stillHeld($walk->connection(), $two) === []);
+$declinedRows = $walk->connection()->query("SELECT * FROM walk_offers WHERE state = 'declined'")->fetchAll();
+check('the decline keeps fingerprints, the word and its times', count($declinedRows) === 1
+      && $declinedRows[0]['seed'][0] === 'h' && $declinedRows[0]['token_to'][0] === 'h'
+      && $declinedRows[0]['parent_a'] === null && $declinedRows[0]['area'] === '');
+check('the phone that offered it hears no, by its token', ($offers->touching([$mine2], $now + 5)[0] ?? null) === [
+    'seed' => '', 'to' => '', 'from' => $mine2, 'state' => Offers::DECLINED,
+    'offeredAt' => $now, 'answeredAt' => $now,
+]);
+[$strangers, ] = $offers->offer($two['seed'], token('two/stranger a'), token('two/stranger b'),
+                                $two['a'], $two['b'], $two['encounter'], 0.6, 4, $now);
+check('strangers offering a declined plant are refused', $strangers === null);
+$withdrawnDecline = $offers->withdraw($two['seed'], $mine2, $now + 9);
+check('withdrawing a declined offer leaves it declined', $withdrawnDecline !== null
+      && $withdrawnDecline['state'] === Offers::DECLINED && $withdrawnDecline['answeredAt'] === $now
+      && $withdrawnDecline['seed'] === $two['seed'] && $withdrawnDecline['from'] === $mine2);
+check('and the one it was sent to still cannot say yes',
+      ($offers->answer($two['seed'], $theirs2, true, $now + 10)['offer']['state'] ?? null) === Offers::DECLINED
+      && count(shared($walk)) === 1);
+
 // MARK: Taking it back
 
 $three = crossing(3);
@@ -515,6 +542,14 @@ $legacyDb->prepare('UPDATE long_walk SET hidden = 1 WHERE seed = ?')->execute([$
 $legacyDb->prepare("INSERT INTO walk_offers (seed, token_to, token_from, state, offered_at, answered_at, area)
                     VALUES (?, ?, ?, 'withdrawn', ?, ?, 'travel')")
          ->execute([$old['seed'], $oldTheirs, $oldMine, $now, $now + 50]);
+// And a decline, which until the same day kept its seed and tokens too.
+$refused = crossing(21);
+$refusedMine = token('refused/mine');
+$refusedTheirs = token('refused/theirs');
+$legacyDb->prepare("INSERT INTO walk_offers (seed, token_to, token_from, state, offered_at, answered_at, area)
+                    VALUES (?, ?, ?, 'declined', ?, ?, 'meeting')")
+         ->execute([$refused['seed'], $refusedTheirs, $refusedMine, $now, $now + 70]);
+$refused += ['mine' => $refusedMine, 'theirs' => $refusedTheirs];
 $oldArrival = arrivalOf($legacyDb, 'long_walk', $old['seed']);
 $heldBefore = arrival($legacyDb, 'long_walk', (int) $oldArrival);
 $old += ['mine' => $oldMine, 'theirs' => $oldTheirs];
@@ -525,6 +560,13 @@ $reopened = WalkStore::open('sqlite:' . $legacyFile);
 $reDb = $reopened->connection();
 check('opening the store erases what a withdrawal before today kept' . found(stillHeld($reDb, $old)),
       stillHeld($reDb, $old) === []);
+check('and what a decline before today kept' . found(stillHeld($reDb, $refused)),
+      stillHeld($reDb, $refused) === []);
+check('and the decline is still a decline, to both phones',
+      ($reopened->offers()->touching([$refusedMine], $now + 60)[0] ?? null) === [
+          'seed' => '', 'to' => '', 'from' => $refusedMine, 'state' => Offers::DECLINED,
+          'offeredAt' => $now, 'answeredAt' => $now + 70,
+      ]);
 $migrated = arrival($reDb, 'long_walk', (int) $oldArrival);
 check('and leaves its place where it was', $migrated !== null && $heldBefore !== null
       && $migrated['seed'] === TakenBack::marker((int) $oldArrival)
