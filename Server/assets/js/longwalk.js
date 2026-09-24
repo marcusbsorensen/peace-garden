@@ -70,7 +70,8 @@ export const COLOUR = {
 };
 
 // Midday, GardenGround.swift. Read by the Coppice too, which lays a stool's
-// shadow away from it.
+// shadow away from it, and by the stage, which slides every plant's shadow
+// away from it.
 export const LIGHT = {
   sun: [-0.3320, 0.8829, 0.3320],
   sunColour: [1.00, 0.96, 0.88],
@@ -124,6 +125,49 @@ void main() {
   outColour = vec4(shade(texture(colour, vUV).rgb, n), 1.0);
 }`;
 
+// **A plant's shadow is a darkening, not a colour.** It is drawn over the
+// ground already on the screen and multiplies it (`DST_COLOR, ZERO`), so gravel
+// stays gravel and a path stays a path under it, only darker; painting a shadow
+// colour would lay one flat tone over stones of a dozen. `shade` is how much of
+// the ground's light is left: six parts in ten at the middle, all of it at the
+// rim.
+const SHADOW_VERTEX = `#version 300 es
+in vec3 position; in float shade;
+uniform mat4 viewProjection;
+out float vShade;
+void main() { vShade = shade; gl_Position = viewProjection * vec4(position, 1.0); }`;
+
+const SHADOW_FRAGMENT = `#version 300 es
+precision highp float;
+in float vShade;
+out vec4 outColour;
+void main() { outColour = vec4(vec3(vShade), 1.0); }`;
+
+// **What a plant's shadow is.** Not the sun's cast shadow of its leaves — that
+// needs a shadow map and the page is one pass — but the dark a plant keeps
+// under itself where it meets the ground, which is what tells the eye it is
+// planted rather than stood on the picture. Without it a close look at the
+// Knot Garden showed plants laid over the gravel, not growing out of it.
+//
+// - `reach` is how far the shadow spreads, as a share of how far the plant
+//   does, with a floor (`least`) so a spire still has a foot and a ceiling
+//   (`most`) so the broadest plant does not put a compartment in the dark.
+// - `lean` is how far it slides away from the sun for each metre of the
+//   plant's height, and `leanMost` how far it may slide at all as a share of
+//   its own radius: enough to say where the light is, and a tall spire does
+//   not lay a streak across the path.
+// - `darkest` is the light left at the middle. Two plants' shadows overlapping
+//   multiply, so it is set for that too: two together are still ground.
+// - `wobble` is how far the rim wanders in and out: nothing in the garden is
+//   a ruled line, and a circle is one.
+// - `rings` are where the dark is stepped down between the middle and the rim,
+//   as shares of the way out: enough of them that the fall reads as a blur.
+// - `above` is how far it floats over the surface it lies on, clear of the
+//   highest dressing any ground lays over its floor (6 mm, the Cold Frame's
+//   and the Glasshouse border's soil) so it never fights one.
+const SHADOW = { reach: 0.72, least: 0.09, most: 0.55, lean: 0.32, leanMost: 0.7, darkest: 0.6,
+  wobble: 0.16, above: 0.01, around: 28, rings: [0.22, 0.45, 0.68, 0.86, 1] };
+
 // **The stage is not the walk's.** Everything in it — the GL plumbing, the
 // isometric camera, the quarter turns, the plant program — is what a plot is,
 // and the Quiet Garden's page uses the same one with its own ground. The one
@@ -135,6 +179,15 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   if (!gl) throw new Error('This browser has no WebGL2.');
   const ground = program(gl, GROUND_VERTEX, GROUND_FRAGMENT, ['position', 'normal', 'colour'], ['offset', 'opacity']);
   const plantProgram = program(gl, PLANT_VERTEX, PLANT_FRAGMENT, ['position', 'normal', 'uv'], ['offset', 'colour']);
+  const shadowProgram = program(gl, SHADOW_VERTEX, SHADOW_FRAGMENT, ['position', 'shade'], []);
+  // **What a plant's shadow lies on.** An area whose floor is not level says
+  // how high it is anywhere (`height`, on the builder it hands the stage), so
+  // a shadow on a bed's shoulder or a hollow in the litter follows it rather
+  // than going under it. An area with plants off the floor — in a pot, on a
+  // stool — says how wide and how uneven what they stand in is (`seat`), and
+  // their shadow is kept to it rather than hanging in the air past its edge.
+  const floorAt = buildTheGround.height ?? (() => 0);
+  const seat = buildTheGround.seat ?? { radius: 0.1, rise: 0.01 };
 
   const plants = [];
   let turn = 0;
@@ -212,6 +265,21 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     gl.uniform1f(ground.at.opacity, 1);
     groundMesh.draw();
 
+    // The shadows, after the ground they darken and before the plants that
+    // stand in them. Depth-tested, so a hedge or a pot in front of one keeps
+    // it; not depth-written, so they do not hide each other or anything after.
+    gl.useProgram(shadowProgram.program);
+    gl.uniformMatrix4fv(shadowProgram.at.viewProjection, false, viewProjection);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.DST_COLOR, gl.ZERO);
+    gl.depthMask(false);
+    for (const plant of plants) {
+      gl.bindVertexArray(plant.shadow.vao);
+      gl.drawElements(gl.TRIANGLES, plant.shadow.count, gl.UNSIGNED_SHORT, 0);
+    }
+    gl.depthMask(true);
+    gl.disable(gl.BLEND);
+
     gl.useProgram(plantProgram.program);
     gl.uniform1i(plantProgram.at.colour, 0);
     gl.activeTexture(gl.TEXTURE0);
@@ -276,7 +344,80 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     // `pick`: a tap anywhere on a spire should find the spire.
     const height = Math.max(0, grown.max?.[1] ?? 0);
     const reach = Math.max(0.05, ...[0, 2].flatMap((i) => [Math.abs(grown.min?.[i] ?? 0), Math.abs(grown.max?.[i] ?? 0)]));
-    plants.push({ x, z, lift, parts, textures, who, height, reach });
+    plants.push({ x, z, lift, parts, textures, who, height, reach, shadow: shadowUnder(x, z, lift, height, reach) });
+  }
+
+  // **The shadow under a plant**, built once when it is added: a middle and
+  // rings round it, darkest at the middle and gone at the rim, so there is no
+  // edge to it anywhere — one ring would have drawn a disc with a line round it.
+  //
+  // It slides away from the sun by a little of the plant's height and is drawn
+  // out that way, which is what says where the light is coming from; the slide
+  // is in the world's frame, as the sun is, so it turns with the plot. Its rim
+  // wanders by the plant's own place, three slow waves and a grain on top, as a
+  // stool's footprint does, so no two shadows are one shape.
+  //
+  // **A plant off the floor shadows what it stands in**: the compost in its pot
+  // or the cut face of its stool, kept inside it. The Coppice's stool already
+  // throws its own shadow on the litter, so a fern on one is not given a second
+  // there — the two would stack into a hole under every stool.
+  function shadowUnder(x, z, lift, height, reach) {
+    const seated = lift > floorAt(x, z) + 0.02;
+    const rise = Math.max(0.12, LIGHT.sun[1]);
+    const away = [-LIGHT.sun[0] / rise, -LIGHT.sun[2] / rise];
+    const steep = Math.hypot(...away);
+    const toward = away.map((v) => v / steep);
+    let radius = Math.min(SHADOW.most, Math.max(SHADOW.least, reach * SHADOW.reach));
+    let lean = Math.min(SHADOW.lean * height * steep, SHADOW.leanMost * radius);
+    if (seated) {
+      const fit = Math.min(1, seat.radius / (radius + lean));
+      radius *= fit; lean *= fit;
+    }
+    const key = Math.round(x * 997) * 7919 + Math.round(z * 991) * 104729;
+    const phase = [1, 2, 3, 4].map((k) => hash(key + k * 0.37) * Math.PI * 2);
+    // The middle sits a little down the slide, not at the foot: the dark is
+    // where the plant is thickest over the ground, and that leans with it.
+    const middle = [x + toward[0] * lean * 0.3, z + toward[1] * lean * 0.3];
+    // The rim: an oval drawn out along the slide, centred half-way down it.
+    const rim = Array.from({ length: SHADOW.around }, (_, a) => {
+      const t = (a / SHADOW.around) * Math.PI * 2;
+      const wander = 1 + SHADOW.wobble * (0.5 * Math.sin(2 * t + phase[0]) + 0.3 * Math.sin(3 * t + phase[1])
+        + 0.2 * Math.sin(5 * t + phase[2]) + 0.25 * (hash(key + a * 13.1 + phase[3]) - 0.5));
+      const along = Math.cos(t) * (radius + lean / 2) * wander, across = Math.sin(t) * radius * wander;
+      return [x + toward[0] * (lean / 2 + along) - toward[1] * across,
+              z + toward[1] * (lean / 2 + along) + toward[0] * across];
+    });
+    const surface = (px, pz) => (seated ? lift + seat.rise : floorAt(px, pz) + SHADOW.above);
+    const light = (share) => 1 - (1 - SHADOW.darkest) * (1 - share * share) ** 1.5;
+    const positions = [middle[0], surface(...middle), middle[1]];
+    const shades = [light(0)];
+    for (const share of SHADOW.rings) {
+      for (const [rx, rz] of rim) {
+        const px = middle[0] + (rx - middle[0]) * share, pz = middle[1] + (rz - middle[1]) * share;
+        positions.push(px, surface(px, pz), pz);
+        shades.push(light(share));
+      }
+    }
+    const n = SHADOW.around, indices = [];
+    for (let a = 0; a < n; a++) indices.push(0, 1 + a, 1 + (a + 1) % n);
+    for (let r = 0; r < SHADOW.rings.length - 1; r++) {
+      for (let a = 0; a < n; a++) {
+        const i = 1 + r * n + a, j = 1 + r * n + (a + 1) % n;
+        indices.push(i, i + n, j, j, i + n, j + n);
+      }
+    }
+    const vao = gl.createVertexArray();
+    gl.bindVertexArray(vao);
+    const buffers = [
+      attribute(gl, shadowProgram.at.position, new Float32Array(positions), 3),
+      attribute(gl, shadowProgram.at.shade, new Float32Array(shades), 1),
+    ];
+    const indexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+    buffers.push(indexBuffer);
+    gl.bindVertexArray(null);
+    return { vao, buffers, count: indices.length };
   }
 
   // **Adding a plant does not draw the walk.** It used to, and that made
@@ -295,6 +436,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     for (const plant of plants) {
       for (const part of plant.parts) { part.buffers.forEach((b) => gl.deleteBuffer(b)); gl.deleteVertexArray(part.vao); }
       Object.values(plant.textures).forEach((t) => gl.deleteTexture(t));
+      plant.shadow.buffers.forEach((b) => gl.deleteBuffer(b)); gl.deleteVertexArray(plant.shadow.vao);
     }
     plants.length = 0;
     draw();
