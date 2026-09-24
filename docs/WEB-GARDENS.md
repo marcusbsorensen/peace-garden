@@ -1994,3 +1994,47 @@ Name.swift`; `sharedTheme` in `passages.js`.
   `plantPostcard`, `plantPostcardText`, `plantCopied`, `plantCopyThis`,
   `plantClose`. While a sentence falls back to English, the area name set in
   it is the English one too.
+
+## A shadow under every plant, built 24 September 2026
+
+A close look at the Knot Garden showed the box lit from the upper left and the
+plants standing on the gravel as though laid over it, not grown out of it. No
+plant cast anything; the only shadow on any page was a Coppice stool's. So the
+stage (`makePlotStage` in `Server/assets/js/longwalk.js`) now lays a **contact
+shadow under every plant, in every area**, built once in `add` from the
+plant's own height and spread.
+
+- **A darkening, not a colour.** Drawn after the ground and before the plants
+  with `blendFunc(DST_COLOR, ZERO)`, depth-tested and not depth-written, so the
+  gravel's stones, the tilth and the paths keep their own tones under it, and
+  a hedge, a pot or a frame's side in front of one still hides it.
+- **Soft and irregular.** A middle and five rings, six parts in ten of the
+  ground's light at the middle rising smoothly to all of it at the rim, so
+  there is no edge; the rim wanders by three slow waves and a grain from the
+  plant's place, as a stool's footprint does.
+- **Where the light is.** It slides away from the sun (`LIGHT.sun`, in the
+  world's frame, so it turns with the plot) by 0.32 of the plant's height times
+  the sun's slope, held to 0.7 of its own radius so a spire does not lay a
+  streak, and is drawn out that way. Its radius is 0.72 of the plant's spread,
+  between 9 cm and 55 cm.
+- **On what the plant stands on.** It floats 1 cm over the floor, clear of the
+  highest dressing any ground lays (6 mm). An area whose floor is not level
+  hands the stage its height on the ground builder (`height`: the Home Ground's
+  beds, the Coppice's litter), so a shadow on a bed's shoulder follows it down.
+  A plant standing off the floor shadows what it stands in (`seat`): the
+  compost in a Glasshouse pot, kept inside 6.8 cm, or a Coppice stool's cut
+  face, kept inside 10 cm and riding a centimetre over its slope. A fern on a
+  stool is given no second shadow on the litter, where the stool's own already
+  lies; the two would have stacked into a hole under every stool.
+
+Overlapping shadows multiply, so a crowded row is darker between its plants;
+at six in ten, two together still read as ground. On the Home Ground workbench
+(500 arrivals, 71 plants on the plot shown) a frame drew in 3–3.5 ms with the
+shadows and 3.7 ms without — within the noise.
+
+**Hedges and walls cast nothing yet.** The same trick would serve them — each
+run's footprint slid away from the sun by its height and laid on the floor as
+a fan, as the Coppice already does for a stool — and the Knot's box, at ankle
+height, would throw only a hand's width, which is what would make it sit in the
+gravel. The yew and the Quiet Garden's walls are 2 m, and a slide of a metre
+across the border would need clipping to the plot; worth a pass of its own.
