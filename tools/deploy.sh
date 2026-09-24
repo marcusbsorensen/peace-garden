@@ -124,11 +124,12 @@ check_path /wild                                   200 text/html
 check_path /walk                                   200 text/html
 check_path /t                                      200 text/html
 check_path /meanings                               200 text/html
-# The eighth and ninth areas, the newest pages, so the ones most likely to be
-# missing a route: a page absent from `Server/index.php`'s table answers 404
-# here.
+# The eighth, ninth and tenth areas, the newest pages, so the ones most likely
+# to be missing a route: a page absent from `Server/index.php`'s table answers
+# 404 here.
 check_path /glasshouse                             200 text/html
 check_path /coppice                                200 text/html
+check_path /ground                                 200 text/html
 check_path /.well-known/apple-app-site-association 200 application/json
 
 # A sample of the static half, which nginx types from its own mime.types.
@@ -153,6 +154,10 @@ check_path /api/glasshouse              200 application/json
 check_path /assets/js/coppice.js        200 application/javascript
 check_path /assets/js/coppicepage.js    200 application/javascript
 check_path /api/coppice                 200 application/json
+# And the Home Ground's.
+check_path /assets/js/ground.js         200 application/javascript
+check_path /assets/js/groundpage.js     200 application/javascript
+check_path /api/ground                  200 application/json
 check_path /assets/places.json    200 application/json
 check_path /assets/stars.bin      200 application/octet-stream
 check_path /assets/icon.svg     200 image/svg+xml

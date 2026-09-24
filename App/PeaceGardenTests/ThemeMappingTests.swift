@@ -37,7 +37,7 @@ final class ThemeMappingTests: XCTestCase {
     /// and CI does not run them. **Run them by hand when an area opens.**
     func testWhatThisBuildShipsBelievingIsOpen() {
         XCTAssertEqual(Set(Area.open), [.travel, .peace, .meeting, .kinship, .pattern, .beginnings, .waiting, .light,
-                                        .renewal])
+                                        .renewal, .ground])
         XCTAssertEqual(OpenAreas.builtIn.areas, Set(Area.open))
         XCTAssertEqual(Quotes.Theme.travel.area, .travel)
         XCTAssertEqual(Quotes.Theme.peace.area, .peace)

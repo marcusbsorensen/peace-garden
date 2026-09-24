@@ -28,6 +28,7 @@ declare(strict_types=1);
  *   cold_frame    plot, frame, rank, slot, height, family
  *   glasshouse    plot, bed, slot, row                   (height, family, hue not read)
  *   coppice       plot, coupe, place, slot, height, habit (family is not read)
+ *   home_ground   plot, bed, crop, slot                  (height, family, habit not read)
  *
  * with the arrival number, which is the order. Each store names its own list in
  * a `TAKEN_BACK` constant, as the columns it blanks. What goes, everywhere: the

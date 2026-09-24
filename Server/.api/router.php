@@ -26,6 +26,8 @@ declare(strict_types=1);
  *   GET  /api/coppice/plot/{n}     the same, for the Coppice, with the year of its
  *                                  rotation, each coupe's stage in it, and each
  *                                  fern on a stool drawn at its coupe's stage
+ *   GET  /api/ground               the same, for the Home Ground
+ *   GET  /api/ground/plot/{n}      the same, for the Home Ground
  *   POST /api/walk/offer           one gardener offers a plant, addressed to the other
  *   POST /api/walk/pending         what is waiting on these tokens, either way round
  *   POST /api/walk/answer          the other gardener says yes or no
@@ -48,12 +50,12 @@ declare(strict_types=1);
  * anybody being asked. It answers 403 unless `open_for_planting` is set in
  * `.api/config.php`, which is for a local copy and for the reference check.
  *
- * **Nine of ten areas are open**, and the service says which: the Seedbed
+ * **All ten areas are open**, and the service says which: the Seedbed
  * (`beginnings`), the Cold Frame (`waiting`), the Coppice (`renewal`), the
- * Glasshouse (`light`), the Knot Garden (`pattern`), the Long Walk (`travel`),
- * the Crossing (`meeting`), the Orchard (`kinship`) and the Quiet Garden
- * (`peace`). The Home Ground has a name, a layout and a place on the map and no
- * placement rule, so a plant cannot stand in it.
+ * Glasshouse (`light`), the Knot Garden (`pattern`), the Home Ground
+ * (`ground`), the Long Walk (`travel`), the Crossing (`meeting`), the Orchard
+ * (`kinship`) and the Quiet Garden (`peace`). The Home Ground opened last, on
+ * 24 September 2026.
  * `Areas.php` is the list and `GET /api/garden` is how a phone learns it
  * without being told by a version of itself.
  *
@@ -193,10 +195,12 @@ function checkedPlant(mixed $plant): array
         respond(400, ['error' => 'hue is a turn of the colour circle, 0 up to 1, or absent.']);
     }
 
-    // **The habit, the plant's archetype's name**: `fern`, `star`. The fifth
-    // trait, and the Coppice's alone — a fern stands on a stool and is cut with
-    // its coupe. Absent means the empty habit, which is what every plant offered
-    // before the Coppice opened carries and what the Coppice reads as a star.
+    // **The habit, the plant's archetype's name**: `fern`, `star`, `umbel`. The
+    // fifth trait, read by two areas — a fern stands on a stool in the Coppice
+    // and is cut with its coupe, and in the Home Ground the habit names the
+    // crop. Absent means the empty habit, which is what every plant offered
+    // before the Coppice opened carries; the Coppice reads it as a star, and the
+    // Home Ground sows it as an umbel.
     // Lower-case letters only, as `Archetype` spells them, and 16 at most, the
     // column's width.
     $habit = $plant['habit'] ?? '';
@@ -364,6 +368,15 @@ function route(string $method, string $path): never
         $year = Coppice::yearOn(time());
         respond(200, ['plot' => $plot, 'year' => $year, 'stages' => CoppiceStore::stages($plot, $year),
                       'plantings' => store($settings)->coppice()->plot($plot, $year)]);
+    }
+
+    if ($path === '/api/ground' && $method === 'GET') {
+        respond(200, ['plots' => store($settings)->homeGround()->plots()]);
+    }
+
+    if (preg_match('#\A/api/ground/plot/(0|[1-9][0-9]{0,5})\z#', $path, $m) && $method === 'GET') {
+        $plot = (int) $m[1];
+        respond(200, ['plot' => $plot, 'plantings' => store($settings)->homeGround()->plot($plot)]);
     }
 
     if ($path === '/api/walk/offer' && $method === 'POST') {

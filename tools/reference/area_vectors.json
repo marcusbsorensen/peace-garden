@@ -4,7 +4,7 @@
   { "area": "renewal", "open": true, "table": "coppice" },
   { "area": "light", "open": true, "table": "glasshouse" },
   { "area": "pattern", "open": true, "table": "knot_garden" },
-  { "area": "ground", "open": false, "table": "" },
+  { "area": "ground", "open": true, "table": "home_ground" },
   { "area": "travel", "open": true, "table": "long_walk" },
   { "area": "meeting", "open": true, "table": "crossing" },
   { "area": "kinship", "open": true, "table": "orchard" },

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Home Ground</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; color: rgb(255 255 255 / 0.85);
+    font: 15px/1.4 Georgia, serif; }
+  main { position: fixed; inset: 0; }
+  .pool { position: absolute; inset: 0;
+    background: radial-gradient(ellipse 50% 45% at 50% 55%, rgb(255 255 255 / 0.08), transparent 70%); }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #sky { z-index: -1; }
+  #note, #held { position: absolute; inset-inline-start: 16px; margin: 0;
+    font: 11px/1.6 system-ui, sans-serif; letter-spacing: 0.06em; color: rgb(255 255 255 / 0.5); }
+  #note { inset-block-start: 16px; inset-inline-end: 16px; }
+  #held { inset-block-start: 40px; padding: 0; list-style: none; font-variant-numeric: tabular-nums; }
+  nav { position: absolute; inset-inline: 16px; inset-block-end: 16px; display: flex; flex-wrap: wrap;
+    gap: 8px; justify-content: center; }
+  button { background: transparent; color: inherit; border: 1px solid rgb(255 255 255 / 0.4);
+    border-radius: 6px; padding: 8px 14px; font: 11px/1 system-ui, sans-serif;
+    letter-spacing: 0.14em; text-transform: uppercase; }
+  button:disabled { opacity: 0.3; }
+</style>
+</head>
+<body>
+<main>
+  <canvas id="sky" aria-hidden="true"></canvas>
+  <div class="pool"></div>
+  <canvas id="stage" aria-label="A plot of the Home Ground"></canvas>
+  <p id="note">Loading…</p>
+  <ul id="held"></ul>
+  <nav>
+    <button id="back" aria-label="The plot before">Back</button>
+    <button id="left" aria-label="Turn left">Turn left</button>
+    <button id="right" aria-label="Turn right">Turn right</button>
+    <button id="on" aria-label="The next plot">On</button>
+  </nav>
+</main>
+<script type="module">
+  // The workbench for the tenth area. `?arrivals=500&plot=0` invents a Home
+  // Ground of five hundred of its own plants and shows one plot of it, which is
+  // how docs/WEB-GARDENS.md says a template is judged. `?source=service` draws
+  // what the local plot service holds instead.
+  //
+  // **The thing to look at is whether the three beds read as three crops** —
+  // spikes, flat heads, low rosettes — before anything names them, and whether
+  // each bed's tall end is its north end. `?span=0.6` looks closer.
+  //
+  // **It draws a different five hundred from the test suite's**, and that is
+  // the point of it rather than a detail — see the Orchard's workbench.
+  import { loadModule } from '/assets/js/plant.js';
+  import { makePlotStage } from '/assets/js/longwalk.js';
+  import { describeGround, growInvented, growGroundFromService, makeGroundGround, plan,
+           plantVisitors } from '/assets/js/ground.js';
+  import { makeSky } from '/assets/js/sky.js';
+
+  const query = new URLSearchParams(location.search);
+  const number = (name, fallback) => Math.max(0, parseInt(query.get(name) ?? '', 10) || fallback);
+  const arrivals = number('arrivals', 500);
+  const fromService = query.get('source') === 'service';
+  let plot = number('plot', 0);
+
+  const note = document.getElementById('note');
+  const held = document.getElementById('held');
+  const report = (text) => { note.textContent = text; };
+  // **The module, never from the cache.** The live host sends it with a day's
+  // max-age, which is right there and wrong on a workbench.
+  const MODULE = `/plant.wasm?dev=${Date.now()}`;
+  const e = await loadModule(MODULE);
+  const ground = plan(e);
+  const span = parseFloat(query.get('span') ?? '') || 1;
+  const stage = makePlotStage(document.getElementById('stage'), span, e, makeGroundGround(ground));
+
+  let sky = null;
+  makeSky(document.getElementById('sky'), {
+    quarterTurns: () => stage.turn(),
+    keepClear: () => ['note', 'held'].map((id) => document.getElementById(id))
+      .concat([document.querySelector('nav')])
+      .filter(Boolean)
+      .map((element) => element.getBoundingClientRect())
+      .filter((box) => box.width > 0 && box.height > 0),
+  }).then((made) => { sky = made; }).catch((trouble) => {
+    console.warn('no sky:', trouble);
+  });
+
+  const turn = (quarters) => { stage.turnBy(quarters); sky?.draw(); };
+  document.getElementById('left').addEventListener('click', () => turn(-1));
+  document.getElementById('right').addEventListener('click', () => turn(1));
+
+  let plots = 1;
+  if (!fromService) plots = await plantVisitors(e, arrivals, report);
+  else plots = (await (await fetch('/api/ground')).json()).plots;
+
+  // What the rule did with this plot, in words: each bed's crop, and how many
+  // of its places are sown from each end. **The thing to watch is where the
+  // two ends meet**, which is how uneven the halves of a crop came.
+  function say() {
+    held.replaceChildren();
+    if (fromService) return;
+    const rows = describeGround(e, plot);
+    const lines = [];
+    for (let bed = 0; bed < ground.beds; bed++) {
+      const here = rows.filter((r) => r.slot.bed === bed);
+      if (here.length === 0) { lines.push(`bed ${bed}: dug, not sown`); continue; }
+      const crop = here[0].slot.crop, s = ground.crops[crop];
+      const north = here.filter((r) => r.traits.height >= s.cut).length;
+      lines.push(`bed ${bed}, ${crop}: ${here.length} of ${s.capacity}, ${north} from the north, `
+        + `${here.length - north} from the south`);
+    }
+    for (const line of lines) {
+      const item = document.createElement('li');
+      item.textContent = line;
+      held.append(item);
+    }
+  }
+
+  async function show() {
+    document.getElementById('back').disabled = plot === 0;
+    document.getElementById('on').disabled = plot + 1 >= plots;
+    const count = fromService
+      ? await growGroundFromService(e, stage, ground, plot, report)
+      : await growInvented(e, stage, ground, plot, report);
+    report(`Plot ${plot + 1} of ${plots} — ${count} plants`);
+    say();
+    sky?.draw();
+  }
+
+  document.getElementById('back').addEventListener('click', () => { plot = Math.max(0, plot - 1); show(); });
+  document.getElementById('on').addEventListener('click', () => { plot = Math.min(plots - 1, plot + 1); show(); });
+  await show();
+</script>
+</body>
+</html>

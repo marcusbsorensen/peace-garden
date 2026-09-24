@@ -12,7 +12,8 @@ import SeedCore
 
 let perArea = Int(CommandLine.arguments[1])!
 let offers = Int(CommandLine.arguments[2])!
-let open: [Area] = [.travel, .peace, .meeting, .kinship, .pattern, .beginnings, .waiting, .light, .renewal]
+let open: [Area] = [.travel, .peace, .meeting, .kinship, .pattern, .beginnings, .waiting, .light, .renewal,
+                    .ground]
 var wanted = Dictionary(uniqueKeysWithValues: open.map { ($0, perArea) })
 var offersLeft = offers
 var n = 0

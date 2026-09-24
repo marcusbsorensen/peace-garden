@@ -71,8 +71,8 @@ foreach ($vectors['ambassadors'] as $n => $row) {
     // one more: a hue is exact on every host, so there is no excuse for it
     // not to be.
     if (isset($php['hue'])) is_same("$area's hue", $row['hue'], $php['hue']);
-    // The habit, where the service pins one — only the Coppice's, because
-    // only the Coppice reads it. A word, and exact on every host.
+    // The habit, where the service pins one — the Coppice's and the Home
+    // Ground's, because only those two read it. A word, and exact on every host.
     if (isset($php['habit'])) is_same("$area's habit", $row['habit'], $php['habit']);
 }
 
@@ -143,9 +143,21 @@ is_same('its place is the row its height asks for',
         Coppice::row($vectors['ambassadors'][2]['height']), $renewal['place'] ?? null);
 is_same('the middle of that row', Coppice::FLOOR_ORDER[0], $renewal['index'] ?? null);
 
-// The two that are not open have no placement, because their areas have no
-// rule. A placement invented for one of them would be a promise about a layout
-// nobody has designed.
+// The Home Ground's, which opens the west bed for umbels: *Fenunora
+// patentifolia* is 1.100 m, over the umbel's cut, so it takes the first place
+// from the north end — the north-west corner of plot 0, the head of the garden.
+$ground = Ambassadors::planting('ground');
+$groundRow = array_values(array_filter($vectors['ambassadors'], fn($r) => $r['area'] === 'ground'))[0];
+is_same('the Home Ground ambassador\'s plot', 0, $ground['plot'] ?? null);
+is_same('its bed', 0, $ground['bed'] ?? null);
+is_same('its crop is the one its habit names', HomeGround::crop($groundRow['habit']), $ground['crop'] ?? null);
+is_same('and its genus root', $groundRow['genusHead'], $ground['crop'] ?? null);
+is_same('the north end, for its height', 0, $ground['index'] ?? null);
+
+// An area that is not open has no placement, because it has no rule. A
+// placement invented for one would be a promise about a layout nobody has
+// designed. None is shut since the Home Ground opened; this stays for the day
+// one is.
 foreach (Areas::ALL as $area) {
     if (Areas::isOpen($area)) continue;
     $checks++;

@@ -38,7 +38,7 @@ foreach (AREAS as $table => $spec) {
     $again = $fresh->connection()->query("SELECT * FROM $table ORDER BY arrival")->fetchAll(PDO::FETCH_ASSOC);
     foreach ($rows as $i => $row) {
         $other = $again[$i] ?? null;
-        $columns = array_merge(['seed', 'plot'], array_values($spec['slot']));
+        $columns = array_merge(['seed', 'plot'], array_values($spec['slot']), array_values($spec['derived'] ?? []));
         foreach ($columns as $column) {
             $checks++;
             if ($other === null || (string) $other[$column] !== (string) $row[$column]) {

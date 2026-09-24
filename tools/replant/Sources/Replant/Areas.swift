@@ -93,5 +93,17 @@ struct AreaTable: Sendable {
                         "nudgeX": p.nudge.x, "nudgeZ": p.nudge.z]
             }
         },
+        // **The crop is not in the place**, though the slot holds it: it is a
+        // word, the plan's places are numbers, and it is the habit's, which the
+        // plan already carries. `replant.php` writes it from its own rule and
+        // checks it against the habit.
+        AreaTable(table: "home_ground", area: .ground, slot: ["bed", "index"]) { arrivals in
+            var ways = HomeGround.Ways.opened()
+            return arrivals.map { seed, traits in
+                let p = ways.plant(seed: seed, traits: traits)
+                return ["plot": Double(p.plot), "bed": Double(p.slot.bed), "index": Double(p.slot.index),
+                        "nudgeX": p.nudge.x, "nudgeZ": p.nudge.z]
+            }
+        },
     ]
 }

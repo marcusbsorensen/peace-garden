@@ -64,10 +64,20 @@ for p in fresh.plants + village.plants {
 }
 print("  nearest arrival to its cut, fresh and village: \(String(format: "%.5f", nearest)) m")
 
+// The cuts as built: the umbel's moved off 0.932, where a village arrival
+// stood 0.009 mm from it, to 0.930 (docs/WEB-GARDENS.md §"Decided", 7).
+var decided = medians
+decided[.fen] = 0.930
+var clearest = Double.infinity
+for p in fit.plants + fresh.plants + village.plants {
+    clearest = min(clearest, abs(p.height - decided[Crop(rawValue: p.head)!]!))
+}
+print("  as built: \(Crop.allCases.map { "\($0.rawValue) \(f(decided[$0]!, 3))" }.joined(separator: ", ")); nearest plant in any sample \(String(format: "%.5f", clearest)) m")
+
 // MARK: - The spacing
 
 print("\nTHE SPACING (fit sample): how often a plant is wider than the gap to its neighbour")
-let gaps: [Crop: (across: Double, along: Double)] = [.cer: (0.40, 0.45), .fen: (0.60, 0.60), .pell: (0.28, 0.30)]
+let gaps: [Crop: (across: Double, along: Double)] = [.cer: (0.40, 0.45), .fen: (0.60, 0.60), .pell: (0.38, 0.40)]
 for crop in Crop.allCases {
     let w = fit.plants.filter { $0.head == crop.rawValue }.map(\.wide)
     let g = gaps[crop]!
@@ -93,10 +103,10 @@ for crop in Crop.allCases {
 
 let rules: [Rule] = [
     Rule(name: "A  fixed beds, one spacing, arrival order", claim: .fixed, spacing: .uniform(across: 3, rows: 8), fill: .oneEnded),
-    Rule(name: "B  fixed beds, one spacing, two ends", claim: .fixed, spacing: .uniform(across: 3, rows: 8), fill: .twoEnded(medians)),
-    Rule(name: "C' claimed beds, one spacing, two ends", claim: .claimed, spacing: .uniform(across: 3, rows: 8), fill: .twoEnded(medians)),
+    Rule(name: "B  fixed beds, one spacing, two ends", claim: .fixed, spacing: .uniform(across: 3, rows: 8), fill: .twoEnded(decided)),
+    Rule(name: "C' claimed beds, one spacing, two ends", claim: .claimed, spacing: .uniform(across: 3, rows: 8), fill: .twoEnded(decided)),
     Rule(name: "C  claimed beds, crop's spacing, arrival order", claim: .claimed, spacing: .byCrop, fill: .oneEnded),
-    Rule(name: "D  claimed beds, crop's spacing, two ends", claim: .claimed, spacing: .byCrop, fill: .twoEnded(medians)),
+    Rule(name: "D  claimed beds, crop's spacing, two ends", claim: .claimed, spacing: .byCrop, fill: .twoEnded(decided)),
     Rule(name: "E  claimed beds, crop's spacing, three bands", claim: .claimed, spacing: .byCrop, fill: .banded(terciles)),
 ]
 

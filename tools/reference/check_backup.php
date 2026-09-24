@@ -108,6 +108,11 @@ $store->plantInto('light', str_repeat('6', 64), str_repeat('a', 64), str_repeat(
 // already spent or never spent — silently, as the others would.
 $store->plantInto('renewal', str_repeat('5', 64), str_repeat('a', 64), str_repeat('b', 64),
                   str_repeat('c', 64), 0.7, 5, '', null, 'fern');
+// The Home Ground's carries a crop, which claims a bed. A copy that dropped it
+// would restore beds nothing says are sown, and the next arrival would claim
+// one already standing full of another crop — silently, as the others would.
+$store->plantInto('ground', str_repeat('4', 64), str_repeat('a', 64), str_repeat('b', 64),
+                  str_repeat('c', 64), 0.2, 3, '', null, 'succulent');
 unset($store);
 
 // MARK: Taking one
@@ -156,6 +161,8 @@ check('the copy holds the Glasshouse', ($counts['glasshouse'] ?? -1) === 1);
 check('the copy counts the Glasshouse lock', ($counts['glasshouse_lock'] ?? -1) === 1);
 check('the copy holds the Coppice', ($counts['coppice'] ?? -1) === 1);
 check('the copy counts the Coppice lock', ($counts['coppice_lock'] ?? -1) === 1);
+check('the copy holds the Home Ground', ($counts['home_ground'] ?? -1) === 1);
+check('the copy counts the Home Ground lock', ($counts['home_ground_lock'] ?? -1) === 1);
 
 // MARK: What a restore writes back
 
@@ -168,6 +175,7 @@ $restoredDrill = null;
 $restoredOffer = null;
 $restoredHue = null;
 $restoredHabit = null;
+$restoredCrop = null;
 if ($copy !== '') {
     $whole = gzdecode((string) file_get_contents($copy)) ?: '';
     $marker = "-- A SQLite file follows, not SQL.\n";
@@ -188,6 +196,8 @@ if ($copy !== '') {
             $restoredHue = $potted === false ? null : (float) $potted['hue'];
             $stool = $back->query('SELECT habit FROM coppice')->fetch(PDO::FETCH_ASSOC);
             $restoredHabit = $stool === false ? null : $stool['habit'];
+            $sown = $back->query('SELECT crop, bed FROM home_ground')->fetch(PDO::FETCH_ASSOC);
+            $restoredCrop = $sown === false ? null : [$sown['crop'], (int) $sown['bed']];
             unset($back);
         } catch (Throwable) {
             // Left null, which is what the checks below report.
@@ -202,6 +212,7 @@ check('and the drill that kind claimed', $restoredDrill === 1);
 check('an offer still in flight keeps its kind too', $restoredOffer === 'paniculata');
 check('a restored Glasshouse row still knows its hue', $restoredHue === 0.8);
 check('a restored Coppice row still knows its habit', $restoredHabit === 'fern');
+check('a restored Home Ground row still knows its crop, and the bed it claimed', $restoredCrop === ['Pell', 1]);
 
 // MARK: Reading it back
 

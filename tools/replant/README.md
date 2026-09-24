@@ -160,7 +160,7 @@ line.
 
    Open every area's page in a fresh browser profile (an old one keeps the old
    JavaScript): `/walk`, `/quiet`, `/cross`, `/orchard`, `/knot`, the Seedbed,
-   `/frame`, `/glasshouse`, `/coppice`.
+   `/frame`, `/glasshouse`, `/coppice`, `/ground`.
 
 7. **Back up again**, so the newest copy is the replanted garden:
 
