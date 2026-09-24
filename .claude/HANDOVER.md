@@ -28,11 +28,13 @@ All ten areas open before the app is announced, on the new plant shapes.
 - No words for the crops on the page.
 
 ## Next step
-The app build that sends `habit` (and `hue`, and new-shape heights), then the replant from a fresh copy (`tools/replant/README.md` §runbook), which now covers all ten areas. After that, the at-scale work, or the gateways design pass.
+**Build 2 (1.0) is uploaded to App Store Connect**, 24 September 20:55 (delivery `93b033f3-8c12-4ec7-80ab-c86f6133e119`; archive `build/PeaceGarden-1.0-2.xcarchive`, `.ipa` in `build/export-1.0-2/`). It sends `habit`, `hue` and the new-shape heights — the source had since the Glasshouse and the Coppice; build 1 of 16 September predated both. `AskingTests` now checks the offer carries them. App suite 131/0 (1 skipped).
+Once it is through processing and on testers' phones: the replant from a fresh copy (`tools/replant/README.md` §runbook), across all ten areas. After that, the at-scale work, or the gateways design pass.
+One upload warning, harmless unless visionOS is wanted: `UIRequiredDeviceCapabilities` lists `accelerometer`, which visionOS lacks (90984).
 
 ## Open, set aside
-- **Until the app build that sends `habit` ships, every Home Ground arrival is sown as an umbel.** The replant after that build (`tools/replant/README.md` §runbook) puts each in its own crop's bed. Same build is needed for the Coppice's ferns and the Glasshouse's hues.
-- `groundAbout` and `groundAway` are English only, joining `coppiceAbout`, `coppiceAway`, `moveUp`…`zoomOut`, `moveHome`. Regenerate `tools/strings/commissions/2026-09-24/` with `sheets.py` before sending.
+- **Until build 2 is what people run, every Home Ground arrival is sown as an umbel.** The replant after that build (`tools/replant/README.md` §runbook) puts each in its own crop's bed. Same build is needed for the Coppice's ferns and the Glasshouse's hues.
+- The commission (`tools/strings/commissions/2026-09-24/`) is regenerated: the thirteen English-only keys of the three new areas and the pad are grouped in `sheets.py`'s `WHY` and counted in its README (102 lacking per language, was 91). The sheets did not change. Batch 2 (es fr it nb nl sv) is next when Marcus sends it.
 - From before: young water-lily pads through the Cold Frame's walls; the Glasshouse staging crowded. Both set aside by Marcus.
 - Marcus's gateways idea (glimpses of neighbouring areas) needs a design pass; hooks in `movepad.js` `neighbour()`.
 
