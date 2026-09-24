@@ -1925,3 +1925,30 @@ numbers and a crop is a word.
   1.5 cm. Which beds are sown is read off the plantings' spots.
 - **No words for the crops.** Three shapes nobody takes for each other say it.
   `groundAbout` and `groundAway` are English only for now.
+
+## A plant's panel, decided
+
+### Decided, 24 September 2026
+
+1. **Tapping or clicking any plant on an area page opens a panel about it**:
+   its Latin name; what the name means — its theme's line and the part of the
+   theme it belongs to, as `/meanings` gives them; and one passage from the
+   passage bank in the reader's language. An area's ambassador is marked as
+   the area's ambassador. Marcus.
+2. **Every plant, not only ambassadors, and only what the seed implies.**
+   Everything the panel shows follows from the seed and the parents the page
+   already has from the plot service. Nothing about the gardener — no name, no
+   note, no date. Marcus.
+3. **A postcard is a link to the plant.** *Send as a postcard* shares an
+   address that opens the area at that plot, close in on that plant, with its
+   panel open — through the browser's own share sheet where there is one, and
+   otherwise copied, with the panel saying so. Nothing is stored on the
+   service to make it. Marcus.
+
+**This is not the plant's own page** (`WEBSITE.md` §*What a shared plant page
+is*, and the phase-2 note in §*The walkable garden*). That page carries the
+gardener's name and note, and is a second consent with its own screen, as
+§*The asking, and what a shared plant consents to* says. The panel carries
+only what the seed already implies, which is what the plant standing in the
+garden was consented to: so it needs no consent of its own, and a postcard
+publishes nothing that walking the garden did not already show.
