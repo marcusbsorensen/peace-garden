@@ -617,6 +617,71 @@ check('where it keeps its coupe, its place and its habit', $lifted !== null
 check('and nothing else of it', stoodAs($walk, $thirteen['seed']) === null
       && stillHeld($db, $thirteen + ['mine' => $mine13, 'theirs' => $theirs13]) === []);
 
+// MARK: The tenth area, and the habit read as a crop
+
+// **The Home Ground reads the same habit to other ends: it names the crop, and
+// the crop claims a bed.** Dropped on the way, a spire would be sown as an
+// umbel — which is a place the rule also gives, so nothing would look wrong.
+function bedded(WalkStore $walk, string $seed): ?array
+{
+    $query = $walk->connection()->prepare(
+        'SELECT bed, crop, slot_index, habit, height, family, hidden FROM home_ground WHERE seed = ?');
+    $query->execute([$seed]);
+    $row = $query->fetch();
+    return $row === false ? null : $row;
+}
+
+$fifteen = crossing(15);
+$mine15 = token('fifteen/mine');
+$theirs15 = token('fifteen/theirs');
+$walkHeld = count(shared($walk));
+$offers->offer($fifteen['seed'], $theirs15, $mine15, $fifteen['a'], $fifteen['b'], $fifteen['encounter'],
+               1.5, 2, $now, 'ground', '', null, 'spire');
+check('a Home Ground plant is planted',
+      $offers->answer($fifteen['seed'], $theirs15, true, $now)['planting'] !== null);
+check('and not in the walk', count(shared($walk)) === $walkHeld);
+$spire = bedded($walk, $fifteen['seed']);
+// A spire over its crop's cut: the north end of the middle bed, the west bed
+// being the ambassador's umbels. Read as an umbel it would have gone to the
+// west bed beside the ambassador, so a habit dropped on the way cannot land
+// here by chance.
+check('the habit survived the asking', $spire !== null && $spire['habit'] === 'spire');
+check('it opens the middle bed for spires, at its north end', $spire !== null
+      && (int) $spire['bed'] === 1 && $spire['crop'] === 'Cer' && (int) $spire['slot_index'] === 0);
+check('beside the ambassador, which is still there', count($walk->homeGround()->plot(0)) === 2);
+
+// An offer made without a habit still plants: as an umbel, beside the
+// ambassador. Short, so from the south end of the west bed.
+$sixteen = crossing(16);
+$mine16 = token('sixteen/mine');
+$theirs16 = token('sixteen/theirs');
+$offers->offer($sixteen['seed'], $theirs16, $mine16, $sixteen['a'], $sixteen['b'], $sixteen['encounter'],
+               0.6, 3, $now, 'ground');
+$offers->answer($sixteen['seed'], $theirs16, true, $now);
+$unsent = bedded($walk, $sixteen['seed']);
+check('an offer with no habit still plants', $unsent !== null && $unsent['habit'] === '');
+check('as an umbel, at the south end of the west bed', $unsent !== null && (int) $unsent['bed'] === 0
+      && $unsent['crop'] === 'Fen' && (int) $unsent['slot_index'] === HomeGround::capacity('Fen') - 1);
+
+$settled = $walk->connection()->prepare('SELECT habit, area FROM walk_offers WHERE seed = ?');
+$settled->execute([$fifteen['seed']]);
+$after = $settled->fetch();
+check('an answered offer keeps no habit', $after !== false && $after['habit'] === '');
+check('but still says which area to look in', $after !== false && $after['area'] === 'ground');
+
+// Taking it back keeps its place and its bed's crop, and nothing of the plant:
+// no rule reads the height, family or habit of a plant already standing.
+$fifteenArrival = arrivalOf($db, 'home_ground', $fifteen['seed']);
+$offers->withdraw($fifteen['seed'], $mine15, $now + 60);
+$lifted = arrival($db, 'home_ground', (int) $fifteenArrival);
+check('taking it back hides it in the Home Ground', $lifted !== null && (int) $lifted['hidden'] === 1);
+check('where it keeps its bed, its crop and its place', $lifted !== null
+      && (int) $lifted['bed'] === 1 && $lifted['crop'] === 'Cer' && (int) $lifted['slot_index'] === 0);
+check('and not its height, family or habit', $lifted !== null && (float) $lifted['height'] === 0.0
+      && (int) $lifted['family'] === 0 && $lifted['habit'] === '');
+check('and nothing else of it', bedded($walk, $fifteen['seed']) === null
+      && stillHeld($db, $fifteen + ['mine' => $mine15, 'theirs' => $theirs15]) === []);
+
 // A published plant's seed, parents and meeting are public. Offering it again
 // with two invented tokens must not hand back the real ones, or the stranger
 // could withdraw it with them.

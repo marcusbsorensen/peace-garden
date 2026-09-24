@@ -39,6 +39,8 @@ const TAKING_BACK = [
     'light' => ['glasshouse', ['plot', 'bed', 'slot_index', 'slot_row'], [],
                 ['height' => 0.0, 'family' => 0, 'hue' => null]],
     'renewal' => ['coppice', ['plot', 'coupe', 'place', 'slot_index'], ['height', 'habit'], ['family' => 0]],
+    'ground' => ['home_ground', ['plot', 'bed', 'crop', 'slot_index'], [],
+                 ['height' => 0.0, 'family' => 0, 'habit' => '']],
 ];
 
 /**
@@ -63,6 +65,7 @@ function takingBackStore(string $area, string $file): object
         'waiting' => new ColdFrameStore($db),
         'light' => new GlasshouseStore($db),
         'renewal' => new CoppiceStore($db),
+        'ground' => new HomeGroundStore($db),
     };
 }
 
@@ -98,9 +101,9 @@ function takingBack(string $area, array $vectors, int $count = 200): void
     $lifted = takingBackStore($area, $taken_file);
     $taken = [];
     foreach ($arrivals as $n => $a) {
-        // The hue is the Glasshouse's alone and the habit the Coppice's; every
-        // other area's `plant` takes fewer arguments and PHP lets the rest pass
-        // by unread.
+        // The hue is the Glasshouse's alone and the habit the Coppice's and the
+        // Home Ground's; every other area's `plant` takes fewer arguments and PHP
+        // lets the rest pass by unread.
         $whole->plant($a['seed'], $a['a'], $a['b'], $a['encounter'], $a['height'], $a['family'], $a['kind'],
                       $a['hue'], $a['habit']);
         $lifted->plant($a['seed'], $a['a'], $a['b'], $a['encounter'], $a['height'], $a['family'], $a['kind'],

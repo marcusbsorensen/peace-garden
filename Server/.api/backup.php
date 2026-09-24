@@ -20,6 +20,7 @@ declare(strict_types=1);
  *   cold_frame       the seventh area, and its own lock
  *   glasshouse       the eighth area, and its own lock
  *   coppice          the ninth area, and its own lock
+ *   home_ground      the tenth area, and its own lock
  *   walk_offers      consent in flight: who has asked whom, and what was said
  *   offer_key        the key a withdrawn offer's fingerprints are made under,
  *                    without which a restored table could no longer refuse a
@@ -64,7 +65,8 @@ const KEPT = ['long_walk', 'long_walk_lock', 'quiet_garden', 'quiet_garden_lock'
               'seedbed', 'seedbed_lock',
               'cold_frame', 'cold_frame_lock',
               'glasshouse', 'glasshouse_lock',
-              'coppice', 'coppice_lock', 'walk_offers', 'offer_key'];
+              'coppice', 'coppice_lock',
+              'home_ground', 'home_ground_lock', 'walk_offers', 'offer_key'];
 
 /** How many copies stay on the server, at most. */
 const KEEP = 30;

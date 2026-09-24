@@ -11,6 +11,7 @@ require_once __DIR__ . '/Seedbed.php';
 require_once __DIR__ . '/ColdFrame.php';
 require_once __DIR__ . '/Glasshouse.php';
 require_once __DIR__ . '/Coppice.php';
+require_once __DIR__ . '/HomeGround.php';
 
 /**
  * The ten plants that stand for the ten areas, as the plot service knows them.
@@ -42,9 +43,7 @@ final class Ambassadors
 {
     /**
      * Each area's plant: the pinned seed, and the two facts about the grown
-     * plant that a placement rule needs. All ten, though one of the areas
-     * is still shut, for the same reason SeedCore pins all ten — the area that
-     * opens next should not have to go looking for its plant.
+     * plant that a placement rule needs. All ten, and all ten open.
      */
     public const ALL = [
         // The Seedbed reads a third fact, and only the Seedbed does: a plant's
@@ -70,8 +69,12 @@ final class Ambassadors
                     'hue' => 0.09056447676905748],  // Aurea pallida
         'pattern' => ['seed' => '75121838c745b4c11d8c34bdf4492890833a1a8ca768942ef26cbbbba7a74b7b',
                       'height' => 1.0851181745529175, 'family' => 4],  // Quina caerulea
+        // The Home Ground reads the habit too, and to other ends: it names the
+        // crop, and the crop claims a bed. This one is an umbel over the
+        // umbel's cut, so it opens the west bed at its north end.
         'ground' => ['seed' => '540d870092386fc9a3e5611499390c1de91fbadddf276bc6ef6eec73dc30326d',
-                     'height' => 1.1002660989761353, 'family' => 6],  // Fenunora patentifolia
+                     'height' => 1.1002660989761353, 'family' => 6,
+                     'habit' => 'umbel'],  // Fenunora patentifolia
         'travel' => ['seed' => 'be9dd17805ea1ebab2c56695b13158adb8d985f165564c10804961b543c12d3c',
                      'height' => 1.0417732000350952, 'family' => 3],  // Halula crassicaulis
         'meeting' => ['seed' => '9bca751433cf86be586c46b3b6582a504fb4df133036321ce000f066e13d7284',
@@ -118,8 +121,10 @@ final class Ambassadors
      * one with an area column, and it is why this returns the area's own array
      * rather than something flattened to fit both.
      *
-     * The areas with no rule get nothing, because a placement invented for one
-     * of them would be a promise about a layout nobody has designed.
+     * A name that is not an area gets nothing. Until the Home Ground opened,
+     * on 24 September, a shut area got nothing too, because a placement
+     * invented for one would have been a promise about a layout nobody had
+     * designed; all ten have a rule now.
      */
     public static function planting(string $area): ?array
     {
@@ -137,6 +142,7 @@ final class Ambassadors
             'waiting' => ColdFrame::plant([], $one['seed'], $one['height'], $one['family']),
             'light' => Glasshouse::plant([], $one['seed'], $one['height'], $one['family'], $one['hue']),
             'renewal' => Coppice::plant([], $one['seed'], $one['height'], $one['family'], $one['habit']),
+            'ground' => HomeGround::plant([], $one['seed'], $one['height'], $one['family'], $one['habit']),
             default => null,
         };
     }

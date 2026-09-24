@@ -12,6 +12,7 @@ require_once __DIR__ . '/SeedbedStore.php';
 require_once __DIR__ . '/ColdFrameStore.php';
 require_once __DIR__ . '/GlasshouseStore.php';
 require_once __DIR__ . '/CoppiceStore.php';
+require_once __DIR__ . '/HomeGroundStore.php';
 require_once __DIR__ . '/Offers.php';
 require_once __DIR__ . '/TakenBack.php';
 
@@ -77,6 +78,7 @@ final class WalkStore
         $store->coldFrame();
         $store->glasshouse();
         $store->coppice();
+        $store->homeGround();
         // And the asking's, for the same reason and one more: `offer_key` is
         // in the nightly copy's list, and mysqldump refuses a list naming a
         // table that is not there. Its migration is also the one that erases
@@ -251,7 +253,7 @@ final class WalkStore
      * **This class has outgrown its name**, which is a thing worth saying
      * rather than quietly fixing: it opened the database for a service that was
      * only the Long Walk, and now it holds the connection for a garden with
-     * nine areas in it and one to come. Renaming it means touching every
+     * all ten areas in it. Renaming it means touching every
      * caller and the reference checks in one go, which is a commit of its own
      * and not this one. `Offers` and `Limits` already reach through it the same
      * way.
@@ -311,6 +313,13 @@ final class WalkStore
         return $coppice ??= new CoppiceStore($this->db);
     }
 
+    /** The Home Ground, on the same connection. */
+    public function homeGround(): HomeGroundStore
+    {
+        static $homeGround = null;
+        return $homeGround ??= new HomeGroundStore($this->db);
+    }
+
     /**
      * Plants one arrival into whichever area it belongs to.
      *
@@ -331,9 +340,11 @@ final class WalkStore
      * staging's spectrum. Null means it was never sent — a plant offered before
      * 24 September — and the Glasshouse reads that as it reads a pale flower.
      *
-     * **`$habit` is the Coppice's alone**, and handed to it alone: the plant's
-     * archetype, which says whether it stands on a stool. Empty means it was
-     * never sent, and the Coppice reads that as a star: in the light, never cut.
+     * **`$habit` is the Coppice's and the Home Ground's**, and handed to those
+     * two alone: the plant's archetype, which says whether it stands on a stool,
+     * and which crop it is. Empty means it was never sent; the Coppice reads
+     * that as a star, in the light and never cut, and the Home Ground sows it as
+     * an umbel.
      *
      * **An area missing from this `match` is not refused: it falls to the Long
      * Walk and says nothing.** So each area that opens is a case here the day it
@@ -355,6 +366,8 @@ final class WalkStore
                                                   $kind, $hue),
             'renewal' => $this->coppice()->plant($seed, $parentA, $parentB, $encounter, $height, $family,
                                                  $kind, $hue, $habit),
+            'ground' => $this->homeGround()->plant($seed, $parentA, $parentB, $encounter, $height, $family,
+                                                   $kind, $hue, $habit),
             default => $this->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
         };
     }
@@ -370,6 +383,7 @@ final class WalkStore
         if ($area === 'waiting') { $this->coldFrame()->takeBack($seed); return; }
         if ($area === 'light') { $this->glasshouse()->takeBack($seed); return; }
         if ($area === 'renewal') { $this->coppice()->takeBack($seed); return; }
+        if ($area === 'ground') { $this->homeGround()->takeBack($seed); return; }
         $this->takeBack($seed);
     }
 
