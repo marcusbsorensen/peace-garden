@@ -103,6 +103,21 @@ final class Offers
         } catch (Throwable) {
             // Already there.
         }
+        // Added on 24 September, when the Glasshouse opened and a placement
+        // needed a fourth fact: the flower's hue. Another ALTER that may already
+        // have run, and **nullable where `kind` is not**, because there is no
+        // hue that means *none* the way the empty string is the empty kind. An
+        // offer made before the migration and answered after it plants with a
+        // null hue, which the Glasshouse reads as it reads a pale flower: any
+        // free pot on the staging.
+        //
+        // Dropped when the offer is answered, as `kind` is: a fact about the
+        // plant, not about where to find the planting.
+        try {
+            $this->run('ALTER TABLE walk_offers ADD COLUMN hue DOUBLE PRECISION NULL');
+        } catch (Throwable) {
+            // Already there.
+        }
     }
 
     /**
@@ -117,20 +132,22 @@ final class Offers
      * answers, which may be days later, and nothing at that moment can grow it
      * again to read the name off it. An offer made without one carries the empty
      * kind, which is what an older app sends.
+     *
+     * `$hue` is kept for the same reason, and null when an older app sent none.
      */
     public function offer(string $seed, string $to, string $from, string $parentA, string $parentB,
                           string $encounter, float $height, int $family, int $now,
-                          string $area = 'travel', string $kind = ''): array
+                          string $area = 'travel', string $kind = '', ?float $hue = null): array
     {
         if ($existing = $this->find($seed)) {
             return [self::seen($existing), false];
         }
         $insert = $this->db->prepare('INSERT INTO walk_offers
-            (seed, token_to, token_from, parent_a, parent_b, encounter, height, family, state, offered_at, area, kind)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            (seed, token_to, token_from, parent_a, parent_b, encounter, height, family, state, offered_at, area, kind, hue)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         try {
             $insert->execute([$seed, $to, $from, $parentA, $parentB, $encounter, $height, $family,
-                              self::OFFERED, $now, $area, $kind]);
+                              self::OFFERED, $now, $area, $kind, GlasshouseStore::exactly($hue)]);
         } catch (PDOException $clash) {
             // Two offers of one plant, racing. The unique seed settles it and
             // the loser is handed the winner, which is the same answer it would
@@ -183,7 +200,8 @@ final class Offers
         [$planting] = $this->walk->plantInto(
             (string) ($row['area'] ?? 'travel'),
             $seed, (string) $row['parent_a'], (string) $row['parent_b'], (string) $row['encounter'],
-            (float) $row['height'], (int) $row['family'], (string) ($row['kind'] ?? '')
+            (float) $row['height'], (int) $row['family'], (string) ($row['kind'] ?? ''),
+            isset($row['hue']) ? (float) $row['hue'] : null
         );
         $this->settle($seed, self::ACCEPTED, $now);
         return ['offer' => self::seen($this->find($seed) ?? []), 'planting' => $planting];
@@ -228,7 +246,7 @@ final class Offers
         // column is NOT NULL — it is the same erasure the nullable fields get.
         $update = $this->db->prepare("UPDATE walk_offers SET state = ?, answered_at = ?,
             parent_a = NULL, parent_b = NULL, encounter = NULL, height = NULL, family = NULL,
-            kind = ''
+            kind = '', hue = NULL
             WHERE seed = ?");
         $update->execute([$state, $now, $seed]);
     }
