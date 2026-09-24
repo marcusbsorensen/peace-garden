@@ -59,6 +59,12 @@ const FORMAT = 'peace-garden-replant/1';
  * Every area's table: its area, its rule, and the rule's slot fields against
  * the columns they are stored in. `extra` is the one trait beyond height and
  * family the rule is handed, where it is handed one.
+ *
+ * `derived` is a part of the place that is a word rather than a number, and so
+ * not in the plan's places: the Home Ground's crop, which the rule reads off
+ * the habit and nothing else (`HomeGround::crop`). The plan carries the habit,
+ * so it carries the crop; it is written from the PHP rule's answer and checked
+ * against the habit.
  */
 const AREAS = [
     'long_walk' => ['area' => 'travel', 'rule' => 'LongWalk', 'extra' => null,
@@ -79,6 +85,8 @@ const AREAS = [
                      'slot' => ['bed' => 'bed', 'index' => 'slot_index', 'row' => 'slot_row']],
     'coppice' => ['area' => 'renewal', 'rule' => 'Coppice', 'extra' => 'habit',
                   'slot' => ['coupe' => 'coupe', 'place' => 'place', 'index' => 'slot_index']],
+    'home_ground' => ['area' => 'ground', 'rule' => 'HomeGround', 'extra' => 'habit',
+                      'slot' => ['bed' => 'bed', 'index' => 'slot_index'], 'derived' => ['crop' => 'crop']],
 ];
 
 if (realpath((string) ($argv[0] ?? '')) === __FILE__) {
@@ -275,6 +283,7 @@ function write(PDO $db, array $plan): array
         $ways = [Ambassadors::planting($spec['area'])];
         $sets = ['plot = ?'];
         foreach ($spec['slot'] as $column) $sets[] = "$column = ?";
+        foreach ($spec['derived'] ?? [] as $column) $sets[] = "$column = ?";
         $sets[] = 'height = ?';
         $sets[] = 'family = ?';
         if ($spec['extra'] !== null) $sets[] = "{$spec['extra']} = ?";
@@ -316,9 +325,13 @@ function write(PDO $db, array $plan): array
             else foreach ($spec['slot'] as $key => $column) {
                 if ((int) $row[$column] !== (int) $placed[$key]) { $moved++; break; }
             }
+            foreach ($spec['derived'] ?? [] as $key => $column) {
+                if ((string) $row[$column] !== (string) $placed[$key]) { $moved++; break; }
+            }
 
             $values = [(int) $placed['plot']];
             foreach (array_keys($spec['slot']) as $key) $values[] = (int) $placed[$key];
+            foreach (array_keys($spec['derived'] ?? []) as $key) $values[] = (string) $placed[$key];
             // Heights and hues bound as the shortest text that reads back as
             // the same double: PDO binds a float at fourteen digits
             // (`GlasshouseStore::exactly`), and a height is compared with a cut.
@@ -396,6 +409,9 @@ function verify(PDO $db, array $plan): array
             if ((int) $row['family'] !== (int) $p['family']) $wrong[] = "$at is family {$row['family']}";
             if ($spec['extra'] === 'kind' && (string) $row['kind'] !== (string) $p['kind']) $wrong[] = "$at is kind {$row['kind']}";
             if ($spec['extra'] === 'habit' && (string) $row['habit'] !== (string) $p['habit']) $wrong[] = "$at is habit {$row['habit']}";
+            if (isset($spec['derived']['crop']) && (string) $row['crop'] !== HomeGround::crop((string) $p['habit'])) {
+                $wrong[] = "$at is sown with {$row['crop']}";
+            }
             if ($spec['extra'] === 'hue' && ($row['hue'] === null) !== ($p['hue'] === null)) $wrong[] = "$at has hue {$row['hue']}";
             if ($spec['extra'] === 'hue' && $row['hue'] !== null && $p['hue'] !== null && !near((float) $row['hue'], (float) $p['hue'])) {
                 $wrong[] = "$at has hue {$row['hue']}";

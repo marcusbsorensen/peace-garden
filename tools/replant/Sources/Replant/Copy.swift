@@ -58,7 +58,7 @@ struct CopyError: Error, CustomStringConvertible {
 struct Copy {
     /// The tables the replant reads: every area's, and the asking's.
     static let tables = ["long_walk", "quiet_garden", "crossing", "orchard", "knot_garden",
-                         "seedbed", "cold_frame", "glasshouse", "coppice", "walk_offers"]
+                         "seedbed", "cold_frame", "glasshouse", "coppice", "home_ground", "walk_offers"]
 
     let file: String
     /// Of the file's bytes as they are on disk, so a plan names the copy it
