@@ -13,7 +13,7 @@
 // it can be checked with no browser and no site, and a table of paths on this
 // website has no business in it. `walk.js` reads `BUILT` from here too, so the
 // hub and the map at the foot of an area cannot come to disagree about which
-// nine are open.
+// ten are open.
 
 import { AREA_KEYS } from "./strings.js";
 import { AREAS, areaFor } from "./garden.js";
@@ -32,6 +32,7 @@ export const BUILT = Object.freeze({
   waiting: "/frame",
   light: "/glasshouse",
   renewal: "/coppice",
+  ground: "/ground",
 });
 
 /// What each area looks like on the map: the colour of its ground, and a glyph
@@ -42,9 +43,10 @@ export const BUILT = Object.freeze({
 /// brighter than it under the garden's midday, so these are those values
 /// brought up to what the eye sees on the slab. Four areas stand on grass and
 /// are green here, which is true of them; the glyph is what tells them apart.
-/// The one not built yet is given the ground its layout names — the dark soil
-/// of a kitchen garden — so the map is already the garden it will be, as the
-/// Glasshouse's tiles and the Coppice's woodland floor were before they opened.
+/// Each area not yet built was given the ground its layout names, so the map
+/// was already the garden it would be: the Glasshouse's tiles, the Coppice's
+/// woodland floor and the Home Ground's dark soil were all on it before they
+/// opened, and the soil is the colour `ground.js` brings down onto its beds.
 ///
 /// **A glyph is the one shape each layout is known by**, drawn to BRAND.md §3.2
 /// as the pad's are: monoline, even weight, round free ends, on a 20-unit grid.

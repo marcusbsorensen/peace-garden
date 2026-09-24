@@ -64,6 +64,7 @@ PAGES = {
     "/frame": ("frame", "text/html"),
     "/glasshouse": ("glasshouse", "text/html"),
     "/coppice": ("coppice", "text/html"),
+    "/ground": ("ground", "text/html"),
     "/meanings": ("meanings", "text/html"),
     "/t": ("t", "text/html"),
     "/privacy": ("privacy", "text/html"),

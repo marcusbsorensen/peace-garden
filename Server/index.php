@@ -93,6 +93,9 @@ const ROUTES = [
     // cut one band a winter, whose ferns on their stools are drawn at the
     // stage the service says their coupe is in.
     '/coppice' => ['coppice', 'text/html; charset=utf-8'],
+    // The tenth and last, on 24 September: a kitchen garden whose crops are
+    // the three forms its genus roots name, a crop to a bed.
+    '/ground' => ['ground', 'text/html; charset=utf-8'],
     // What the names mean, on 23 September: the table every area page links
     // to, saying what brings a plant to each area and what its two words say.
     '/meanings' => ['meanings', 'text/html; charset=utf-8'],

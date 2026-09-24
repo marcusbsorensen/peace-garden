@@ -356,6 +356,24 @@ export const EN = Object.freeze({
   // The Coppice could not be drawn.
   coppiceAway: "The Coppice cannot be reached just now.",
 
+  // The tenth and last area, and the same two strings a tenth time: the
+  // heading is `areaGround`, already commissioned in all forty-two.
+  //
+  // **It names the three crops by their shapes**, because that is how a
+  // reader tells them apart and the drawing already shows it: the words give
+  // the reason the beds differ, not a list of what is in them. **And it says
+  // why the tall end is where it is**, because a bed graded from one end reads
+  // as an accident unless the reader knows a kitchen garden does it for the
+  // light.
+  //
+  // **"Plot", in the paging clause**, where the Glasshouse says *the next
+  // house*: a kitchen garden is kept in plots, and that is the word a reader
+  // will have for it.
+  groundAbout:
+    "A kitchen garden of three raised beds, each sown in rows with one crop: tall spikes, flat heads or low rosettes, the taller plants at the north end, where they shade nothing but the path. Go on to the next plot, or turn to see this one from another side.",
+  // The Home Ground could not be drawn.
+  groundAway: "The Home Ground cannot be reached just now.",
+
   // What the plants in each area mean. **Every area gathers the plants of one
   // theme, and the pages above say only how each is laid out**, so a reader
   // standing in the Cold Frame was never told that what brought these plants
