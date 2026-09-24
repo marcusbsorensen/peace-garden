@@ -367,18 +367,6 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show: g
 
   whenSettled((strings) => setSheetTitle(strings.t('keys')));
   const visible = () => !nav.hidden;
-  // The plant in the middle of the window, for a reader without a pointer:
-  // move the window to it with the pad's keys, then `p`. Listed in the `?`
-  // sheet under the pad's own keys.
-  if (plants) {
-    register({
-      keys: ['p'], group: 'look', label: () => plants.keyLabel(), when: visible,
-      run: () => {
-        const box = canvas.getBoundingClientRect();
-        return plants.tapped(box.left + box.width / 2, box.top + box.height / 2, { nearest: true }) !== false;
-      },
-    });
-  }
   for (const [side, keys] of [['up', ['ArrowUp', 'w']], ['left', ['ArrowLeft', 'a']],
                               ['down', ['ArrowDown', 's']], ['right', ['ArrowRight', 'd']]]) {
     register({
@@ -400,6 +388,18 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show: g
   });
   register({ keys: ['q', '['], group: 'look', target: buttons.anti, when: visible, run: () => { turn(-1); } });
   register({ keys: ['e', ']'], group: 'look', target: buttons.clock, when: visible, run: () => { turn(1); } });
+  // The plant in the middle of the window, for a reader without a pointer:
+  // move the window to it with the pad's keys, then `p`. Listed in the `?`
+  // sheet under the pad's own keys.
+  if (plants) {
+    register({
+      keys: ['p'], group: 'look', label: () => plants.keyLabel(), when: visible,
+      run: () => {
+        const box = canvas.getBoundingClientRect();
+        return plants.tapped(box.left + box.width / 2, box.top + box.height / 2, { nearest: true }) !== false;
+      },
+    });
+  }
 
   // MARK: The canvas
 
@@ -511,13 +511,16 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show: g
   nav.hidden = false;
   refresh();
   // What the panel needs of the pad: which plot is showing, and a way to go to
-  // a plant — closer in, with it in the middle of the window, as a glide.
+  // a plant — `zoom` times closer, with the plant `[dx, dy]` CSS pixels from the
+  // middle of the window (right and down), as a glide.
   plants?.attach?.({
     stage, canvas,
     at: () => at,
     busy: () => busy,
-    go: (point, zoom) => {
-      Object.assign(target, stage.toward(point, zoom));
+    go: (point, zoom, [dx, dy] = [0, 0]) => {
+      const there = stage.toward(point, zoom);
+      const metres = stage.view(there.zoom).metresPerPixel;
+      Object.assign(target, stage.held({ ...there, x: there.x - dx * metres, y: there.y + dy * metres }));
       if (stillness.matches) {
         cancelAnimationFrame(easing);
         easing = 0;

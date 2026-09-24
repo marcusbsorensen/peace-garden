@@ -40,7 +40,7 @@
 import { whenSettled } from './plain.js';
 import { choose, loadBank, placement, sharedTheme, subthemeOf } from './passages.js';
 import { splitEntry, themeRow } from './meanings.js';
-import { AREA_KEYS } from './strings.js';
+import { AREA_KEYS, EN } from './strings.js';
 import { direction } from './languages.js';
 import { takeResult } from './plant.js';
 
@@ -111,32 +111,62 @@ export function plantPanel({ theme, engine }) {
     return pad.stage.pick(clientX - box.left, clientY - box.top, nearest ? null : FINGER);
   }
 
-  // How close to come to a plant: near enough that the window's shorter side is
-  // a little over twice its height, so a low rosette and a tree each fill about
-  // half of it — and never closer than the pad itself can come.
-  function closeness(plant) {
+  // How close to come to a plant: near enough that the clear part of the
+  // drawing's shorter side is a little over twice its height, so a low rosette
+  // and a tree each fill about half of it — and never closer than the pad
+  // itself can come.
+  function closeness(plant, clear) {
     const whole = pad.stage.view(1);
-    const across = Math.min(pad.canvas.clientWidth, pad.canvas.clientHeight) * whole.metresPerPixel;
+    const across = Math.min(clear.width, clear.height) * whole.metresPerPixel;
     const wanted = Math.max(1.4, plant.height * 2.4);
     return Math.min(whole.closest, Math.max(1, across / wanted));
   }
 
+  // **The part of the drawing the panel leaves clear**, and how far its middle
+  // is from the drawing's, in CSS pixels: the band above the panel on a phone,
+  // where it rises from the foot of the screen, or the side of it the panel is
+  // not on, on a wider window. The plant goes to the middle of that rather than
+  // of the drawing, which on a phone would put it under the panel.
+  function clearOf() {
+    const stage = pad.canvas.getBoundingClientRect();
+    const panel = dialog.querySelector('.plant-panel__body').getBoundingClientRect();
+    const covers = panel.top < stage.bottom && panel.bottom > stage.top
+      && panel.left < stage.right && panel.right > stage.left;
+    const parts = covers ? [
+      { left: stage.left, right: stage.right, top: stage.top, bottom: Math.min(stage.bottom, panel.top) },
+      { left: stage.left, right: Math.min(stage.right, panel.left), top: stage.top, bottom: stage.bottom },
+      { left: Math.max(stage.left, panel.right), right: stage.right, top: stage.top, bottom: stage.bottom },
+    ] : [stage];
+    const room = (part) => Math.max(0, part.right - part.left) * Math.max(0, part.bottom - part.top);
+    const best = parts.reduce((a, b) => (room(b) > room(a) ? b : a));
+    // Too little of the drawing left to matter: the middle of all of it.
+    const part = room(best) > 120 * 120 ? best : stage;
+    return {
+      width: part.right - part.left,
+      height: part.bottom - part.top,
+      dx: (part.left + part.right - stage.left - stage.right) / 2,
+      dy: (part.top + part.bottom - stage.top - stage.bottom) / 2,
+    };
+  }
+
   // MARK: Opening and closing
 
-  function show(plant, { move = false, arriving = false } = {}) {
-    // A tap brings the plant to the middle of the window, and closer if the
-    // look was further off than the plant wants; it never pulls a closer look
-    // back out.
-    if (move) pad.go(plant.at, Math.max(pad.stage.view().zoom, closeness(plant)));
-    const again = dialog.open;
+  async function show(plant, { move = false, arriving = false } = {}) {
     open = plant;
-    render(plant);
-    if (!again) {
+    if (!dialog.open) {
       // Where focus goes back to. A postcard arrives with nothing focused.
       returnTo = arriving ? null : document.activeElement;
       dialog.showModal();
     }
     dialog.querySelector('.plant-panel__body').focus();
+    const done = await render(plant);
+    // Then the plant is brought to the middle of what the panel leaves clear,
+    // closer if the look was further off than the plant wants — never pulled
+    // back out from a closer look. After the words, because the passage is
+    // what sets how tall the panel stands.
+    if (!done || !move || open !== plant) return;
+    const clear = clearOf();
+    pad.go(plant.at, Math.max(pad.stage.view().zoom, closeness(plant, clear)), [clear.dx, clear.dy]);
   }
 
   function close({ quietly = false } = {}) {
@@ -149,7 +179,7 @@ export function plantPanel({ theme, engine }) {
   // MARK: What it says
 
   async function render(plant) {
-    if (!strings) return;
+    if (!strings) return false;
     const mine = (generation += 1);
     const named = nameOf(plant);
     status('');
@@ -157,7 +187,7 @@ export function plantPanel({ theme, engine }) {
       // A seed the module cannot read is not a plant this page grew; there is
       // nothing to say about it, so the panel does not stay open saying nothing.
       close();
-      return;
+      return false;
     }
     const { theme: meaningTheme, subtheme: part } = placement(named.name);
     // The meeting's passage: see the head of this file.
@@ -176,7 +206,7 @@ export function plantPanel({ theme, engine }) {
     const figure = dialog.querySelector('.plant-panel__passage');
     figure.hidden = true;
     const bank = await loadBank(settled.bank);
-    if (mine !== generation) return;
+    if (mine !== generation) return false;
     const passage = choose(bank, passageTheme, passagePart, seedBytes(plant.seed));
     figure.hidden = !passage;
     if (passage) {
@@ -189,6 +219,7 @@ export function plantPanel({ theme, engine }) {
         ? `${passage.source} · ${strings.t('inEnglish')}`
         : passage.source;
     }
+    return true;
   }
 
   // The binomial as the app's name sheet sets it: the head and the ending at
@@ -218,7 +249,7 @@ export function plantPanel({ theme, engine }) {
     const is = !(plant.parents?.length);
     node.hidden = !is;
     if (is) {
-      node.textContent = strings.t('plantAmbassador', { area: strings.t(AREA_KEYS[theme]) });
+      node.textContent = strings.t('plantAmbassador', { area: areaIn('plantAmbassador') });
       strings.dress(node, 'plantAmbassador');
     }
   }
@@ -255,6 +286,14 @@ export function plantPanel({ theme, engine }) {
     }
   }
 
+  // The area's name for a sentence to carry: in the sentence's own language.
+  // A sentence still in English with an Arabic name set into it is two
+  // languages in one line and neither reads, so while `key` falls back, the
+  // name it carries is the English one too.
+  function areaIn(key) {
+    return strings.borrowed(key) ? EN[AREA_KEYS[theme]] : strings.t(AREA_KEYS[theme]);
+  }
+
   function nameOf(plant) {
     const lineage = plant.parents ?? [];
     const words = new TextEncoder().encode(
@@ -281,7 +320,7 @@ export function plantPanel({ theme, engine }) {
     if (!shown) return;
     const { plant, named } = shown;
     const url = address(plant);
-    const area = strings.t(AREA_KEYS[theme]);
+    const area = areaIn('plantPostcardText');
     if (navigator.share) {
       try {
         await navigator.share({ title: named.name, text: strings.t('plantPostcardText', { name: named.name, area }), url });
@@ -337,7 +376,7 @@ export function plantPanel({ theme, engine }) {
     closer.addEventListener('click', () => close());
     top.append(name, closer);
 
-    const ambassador = make('p', 'label plant-panel__ambassador');
+    const ambassador = make('p', 'plant-panel__ambassador');
     const entry = make('p', 'plant-panel__entry');
     const parts = make('ol', 'plant-panel__parts');
 

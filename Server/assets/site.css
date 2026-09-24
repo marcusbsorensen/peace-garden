@@ -1703,7 +1703,8 @@ a.minimap__cell:focus-visible::before {
 
    **The two panels' shape, over the drawing rather than under it**: the same
    hairline all round and the same eighteen-point corners, on the night's own
-   black nearly opaque, so the words read over whatever is planted behind them.
+   black, solid, so the words read over whatever is planted behind them — at
+   nine-tenths the page's own words showed through.
    Like the sheet under `?` it is a dialog with a veil, but a thin one, because
    the plant it is about is the one thing behind it worth seeing.
 
@@ -1746,7 +1747,7 @@ a.minimap__cell:focus-visible::before {
   margin: 16px;
   margin-block-end: max(16px, env(safe-area-inset-bottom));
   padding: 18px 22px 20px;
-  background: rgba(0, 0, 0, 0.9);
+  background: var(--ground);
   border: 1px solid var(--hairline);
   border-radius: 18px;
   text-align: start;
@@ -1793,7 +1794,12 @@ a.minimap__cell:focus-visible::before {
   flex: none;
 }
 
+/* A sentence rather than a label: two lines of tracked capitals under the
+   name would outweigh it. */
 .plant-panel__ambassador {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
   color: var(--muted);
 }
 
