@@ -735,6 +735,40 @@ millimetres deep in each — the lap is a line of more light and the ripple a
 glint. At 30% opacity the seedlings under it were a milky smudge; at 14% they
 read and so does the glass.
 
+### The lights open, 24 September 2026
+
+**Decided.** *Tapping a frame's glass opens that frame, and then a plant in it
+can be tapped* — a reader trying to reach a seedling was tapping the glass over
+it, and the frame should answer by opening rather than by being tapped
+through. Marcus.
+
+**As built.** `makeFrameLids` in `frame.js`; `cover` in `plantpanel.js`;
+`pieces` and `toScreen` on the stage in `longwalk.js`.
+
+- **The lights leave the ground.** The box and the two blocks stay baked into
+  it; each frame's lights and their glass are drawn by the stage as `pieces`,
+  moved where they stand now and uploaded only when they move. Nothing in the
+  module changed: the blocks are told from the bars as the two planks that
+  reach below the lights' underside.
+- **Both lights of a frame swing up together, 60°, on the top of the back
+  rail**, the high edge a light rests on, eased over about half a second — no
+  swing at all for a reader who asks for reduced motion. Once up, each is
+  propped on a stay stood on its block and meeting the light where it rested
+  on it; the stay is the light's own stile, thinner and stretched, so it has
+  the plank's wander rather than a ruled edge.
+- **Glass first while shut.** A tap inside a shut light's outline on the
+  screen opens that frame and opens no panel, whatever is under it. A plant in
+  the open frame standing in front of that glass keeps the tap. A plant found
+  where it shows outside the glass, or by the `p` key, or by a postcard, has
+  its frame opened first and its panel once the light is up.
+- **One open at a time.** Tapping another frame's glass shuts the open one as
+  it opens; so does a tap on nothing, and going to another plot shuts every
+  frame at once. **Closing the panel leaves the frame open** — the reader is
+  still looking into it — and a tap on the gravel after that shuts it.
+- **The keyboard opens a frame by `p`**, which opens the plant nearest the
+  middle and its frame with it. No new key and no new strings: a frame with
+  nothing in it has nothing to open it for.
+
 ## The Glasshouse, chosen
 
 The eighth area, `light`, chosen on 23 September and built on the 24th (below). It
