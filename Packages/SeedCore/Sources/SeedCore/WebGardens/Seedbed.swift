@@ -79,11 +79,40 @@ public enum Seedbed {
         (0..<places).map { Slot(drill: drill, index: $0) }
     }
 
+    /// How many places along a drill a plant takes: **two for a lotus, one
+    /// for everything else.** Marcus's choice on 25 September 2026, made for
+    /// the Cold Frame and the Seedbed together.
+    ///
+    /// Since the plants' shapes changed on 24 September a lotus is a water
+    /// lily, and grown here its pads reach a median 0.51 m from the stem (0.69
+    /// m at the ninetieth percentile) — the 0.52 m between places along a
+    /// drill, and more. One plant in twelve stood with its stem inside a
+    /// lotus's pads. Standing centred across two places, a lotus has 0.78 m to
+    /// the next stem along its drill, and in the simulation made before this
+    /// was chosen no stem stood inside a lotus's pads. Five hundred arrivals
+    /// take nineteen plots where they took fifteen.
+    ///
+    /// **This is still an area no height can move.** The habit is picked from
+    /// the seed's bytes with no `sin` or `pow` in it, exact on every host like
+    /// the kind, so a drill and a place still come from facts the phone and
+    /// the service cannot disagree about. A plant whose habit was never sent
+    /// is not a lotus, and takes one place.
+    public static func span(of traits: PlantTraits) -> Int {
+        traits.habit == Archetype.lotus.rawValue ? 2 : 1
+    }
+
     /// One plant standing in the Seedbed.
     public struct Planting: Codable, Equatable, Sendable {
         public var seed: String
         public var plot: Int
+        /// The first place it holds, the one nearer the label of a lotus's two.
         public var slot: Slot
+        /// How many places along the drill it holds, from `slot` outward:
+        /// `Seedbed.span(of:)`, decided when it was sown and kept, as its place
+        /// is. **Stored rather than read again off the traits**, because a
+        /// planting made before 25 September holds one place whatever it is,
+        /// and reads as holding one until the replant sows it again.
+        public var span: Int
         public var traits: PlantTraits
         /// A small offset from the place, from the seed, and the only area
         /// whose two directions differ: 0.035 m across the drill and 0.06 m
@@ -93,8 +122,41 @@ public enum Seedbed {
         /// neighbours in a drill at worst, and 0.67 m between drills.
         public var nudge: Spot
 
+        /// Where it stands: the middle of the places it holds, and its nudge.
+        /// **A lotus stands centred across its two**, half a place further
+        /// from the label than its first. Worked out from a place counted in
+        /// halves, so a plant holding one place stands exactly where
+        /// `Slot.spot` puts it, to the last bit.
         public var spot: Spot {
-            Spot(x: slot.spot.x + nudge.x, z: slot.spot.z + nudge.z)
+            let at = Double(slot.index) + Double(span - 1) / 2
+            return Spot(x: slot.spot.x + nudge.x,
+                        z: (at - Double(Seedbed.places - 1) / 2) * Seedbed.alongGap + nudge.z)
+        }
+
+        /// Every place it holds, from the label outward.
+        public var slots: [Slot] {
+            (0..<span).map { Slot(drill: slot.drill, index: slot.index + $0) }
+        }
+
+        public init(seed: String, plot: Int, slot: Slot, span: Int = 1, traits: PlantTraits, nudge: Spot) {
+            self.seed = seed
+            self.plot = plot
+            self.slot = slot
+            self.span = span
+            self.traits = traits
+            self.nudge = nudge
+        }
+
+        /// **A planting stored before 25 September has no span**, and holds
+        /// one place: the one it was sown in, lotus or not.
+        public init(from decoder: any Decoder) throws {
+            let fields = try decoder.container(keyedBy: CodingKeys.self)
+            seed = try fields.decode(String.self, forKey: .seed)
+            plot = try fields.decode(Int.self, forKey: .plot)
+            slot = try fields.decode(Slot.self, forKey: .slot)
+            span = try fields.decodeIfPresent(Int.self, forKey: .span) ?? 1
+            traits = try fields.decode(PlantTraits.self, forKey: .traits)
+            nudge = try fields.decode(Spot.self, forKey: .nudge)
         }
     }
 
@@ -130,10 +192,12 @@ public enum Seedbed {
             self.plot(plot).first { $0.slot.drill == drill }?.traits.kind
         }
 
-        /// How many plants are in a drill. A drill fills from the label, so
-        /// this is also the index of its next place.
+        /// How many places in a drill are held. A drill fills from the label
+        /// without a gap, so this is also the index of its next place. It was
+        /// how many plants stand in it until a lotus took two, and it still is
+        /// for a drill with no lotus in it.
         public func sown(_ drill: Int, in plot: Int) -> Int {
-            self.plot(plot).filter { $0.slot.drill == drill }.count
+            self.plot(plot).filter { $0.slot.drill == drill }.map { $0.slot.index + $0.span }.max() ?? 0
         }
 
         /// Where this plant goes, without planting it.
@@ -143,14 +207,21 @@ public enum Seedbed {
         /// new plot. **A drill is claimed, never reserved** — a kind that has
         /// not arrived holds nothing — which is what keeps a rare kind from
         /// pinning a drill open in every plot.
+        ///
+        /// **A lotus needs two places side by side**, the next two its drill
+        /// would fill. A drill of its kind with one place left has no room for
+        /// it, and it goes on as a plant finding the drill full does; the place
+        /// stays for a plant of one place of that kind. An unclaimed drill and
+        /// a new plot always have two.
         public func place(for traits: PlantTraits) -> (plot: Int, slot: Slot) {
             let count = max(plots, 1)
+            let span = Seedbed.span(of: traits)
 
             // A drill of this kind with room in it, oldest plot first.
             for plot in 0..<count {
                 for drill in 0..<Seedbed.drills where kind(of: drill, in: plot) == traits.kind {
                     let next = sown(drill, in: plot)
-                    if next < Seedbed.places { return (plot, Slot(drill: drill, index: next)) }
+                    if next + span <= Seedbed.places { return (plot, Slot(drill: drill, index: next)) }
                 }
             }
 
@@ -173,8 +244,8 @@ public enum Seedbed {
                 guard bytes.count > i else { return 0 }
                 return (Double(bytes[i]) / 255 - 0.5) * 2 * reach
             }
-            let planting = Planting(seed: seed.hex, plot: plot, slot: slot, traits: traits,
-                                    nudge: Spot(x: jitter(26, 0.035), z: jitter(27, 0.06)))
+            let planting = Planting(seed: seed.hex, plot: plot, slot: slot, span: Seedbed.span(of: traits),
+                                    traits: traits, nudge: Spot(x: jitter(26, 0.035), z: jitter(27, 0.06)))
             plantings.append(planting)
             return planting
         }

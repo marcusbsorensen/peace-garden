@@ -11,6 +11,12 @@ import XCTest
 /// of them exact on every host. The height is in the file because it is stored
 /// with a planting and drawn, not because anything is decided by it, and
 /// `SeedbedTests.testAPlantsHeightChangesNothing` is the proof.
+///
+/// **The habit and the span since 25 September 2026**, when a lotus began to
+/// take two places. Both exact on every host, like the kind, so this file
+/// still needs no tolerance but the height's. Its arrivals are the area's own
+/// plants since the same day (`SeedbedTests.arrivals`), so it carries a third
+/// of them lotuses rather than one in twelve.
 final class SeedbedVectorTests: XCTestCase {
 
     static var vectorsURL: URL {
@@ -28,8 +34,9 @@ final class SeedbedVectorTests: XCTestCase {
             let p = ways.plant(seed: seed, traits: traits)
             lines.append("""
                 {"seed":"\(seed.hex)","height":\(traits.height),"family":\(traits.family),\
-                "kind":"\(traits.kind)","plot":\(p.plot),"drill":\(p.slot.drill),\
-                "index":\(p.slot.index),"nudge":[\(p.nudge.x),\(p.nudge.z)]}
+                "kind":"\(traits.kind)","habit":"\(traits.habit)","plot":\(p.plot),\
+                "drill":\(p.slot.drill),"index":\(p.slot.index),"span":\(p.span),\
+                "nudge":[\(p.nudge.x),\(p.nudge.z)]}
                 """)
         }
         // One JSON document, not one per line, because a file that differs from

@@ -128,6 +128,38 @@ public enum ColdFrame {
         height < backFrom ? .front : .back
     }
 
+    // MARK: A lotus takes two places
+
+    /// How many places along a rank a plant takes: **two for a lotus, one for
+    /// everything else.** Marcus's choice on 25 September 2026.
+    ///
+    /// Since the plants' shapes changed on 24 September a lotus is a water
+    /// lily, low and wide: drawn young here its pads reach a median 0.31 m
+    /// from the stem (0.40 m at the ninetieth percentile), which is exactly the
+    /// 0.31 m between places, and a quarter of the Cold Frame's plants stood
+    /// with their stem inside a lotus's pads. A lotus standing centred across
+    /// two places has 0.46 m either side of its stem to the next, and in the
+    /// simulation made before this was chosen no stem stood inside a lotus's
+    /// pads at all. It costs room: five hundred arrivals take eighteen plots
+    /// where they took twelve.
+    ///
+    /// **The habit is read, not a width.** A habit is picked from the seed's
+    /// bytes with no `sin` or `pow` in it, so the phone and the service agree
+    /// about it exactly and this needs no tolerance. A plant whose habit was
+    /// never sent is not a lotus, and takes one place.
+    public static func span(of traits: PlantTraits) -> Int {
+        traits.habit == Archetype.lotus.rawValue ? 2 : 1
+    }
+
+    /// The first place along a rank that nothing holds, given the plants
+    /// standing in it. **A rank fills from its west end without a gap**, so
+    /// this is the place after the furthest one held — and, for a rank of
+    /// single places, how many stand in it, which is what it was before a
+    /// lotus took two.
+    static func next(along rank: [Planting]) -> Int {
+        rank.map { $0.slot.index + $0.span }.max() ?? 0
+    }
+
     // MARK: Slots
 
     /// One place in one plot: which frame, which rank, and how far along it.
@@ -208,7 +240,15 @@ public enum ColdFrame {
     public struct Planting: Codable, Equatable, Sendable {
         public var seed: String
         public var plot: Int
+        /// The first place it holds, the west one of a lotus's two.
         public var slot: Slot
+        /// How many places along the rank it holds, from `slot` eastward:
+        /// `ColdFrame.span(of:)`, decided when it was planted and kept, as
+        /// its place is. **Stored rather than read again off the traits**,
+        /// because a planting made before 25 September holds one place
+        /// whatever it is, and reads as holding one until the replant places
+        /// it again.
+        public var span: Int
         /// The plant's traits, **the grown height among them**. The young
         /// height it is drawn at is never stored: it is a matter of drawing,
         /// and nothing is decided by it.
@@ -219,8 +259,42 @@ public enum ColdFrame {
         /// Seedbed's across a drill.
         public var nudge: Spot
 
+        /// Where it stands: the middle of the places it holds, and its nudge.
+        /// **A lotus stands centred across its two**, half a place east of
+        /// its first. Worked out from a place counted in halves rather than
+        /// as the first place's spot moved along, so a plant holding one
+        /// place stands exactly where `Slot.spot` puts it, to the last bit.
         public var spot: Spot {
-            Spot(x: slot.spot.x + nudge.x, z: slot.spot.z + nudge.z)
+            let centre = slot.frame.centre
+            let at = Double(slot.index) + Double(span - 1) / 2
+            return Spot(x: centre.x + (at - Double(ColdFrame.places - 1) / 2) * ColdFrame.alongGap + nudge.x,
+                        z: centre.z + (slot.rank == .back ? -ColdFrame.rankFrom : ColdFrame.rankFrom) + nudge.z)
+        }
+
+        /// Every place it holds, west to east.
+        public var slots: [Slot] {
+            (0..<span).map { Slot(frame: slot.frame, rank: slot.rank, index: slot.index + $0) }
+        }
+
+        public init(seed: String, plot: Int, slot: Slot, span: Int = 1, traits: PlantTraits, nudge: Spot) {
+            self.seed = seed
+            self.plot = plot
+            self.slot = slot
+            self.span = span
+            self.traits = traits
+            self.nudge = nudge
+        }
+
+        /// **A planting stored before 25 September has no span**, and holds
+        /// one place: the one it was given, lotus or not.
+        public init(from decoder: any Decoder) throws {
+            let fields = try decoder.container(keyedBy: CodingKeys.self)
+            seed = try fields.decode(String.self, forKey: .seed)
+            plot = try fields.decode(Int.self, forKey: .plot)
+            slot = try fields.decode(Slot.self, forKey: .slot)
+            span = try fields.decodeIfPresent(Int.self, forKey: .span) ?? 1
+            traits = try fields.decode(PlantTraits.self, forKey: .traits)
+            nudge = try fields.decode(Spot.self, forKey: .nudge)
         }
     }
 
@@ -269,8 +343,16 @@ public enum ColdFrame {
         /// Plot outside, rank inside, as the Knot Garden and the Orchard have
         /// it: a frame reading as one colour matters more than a plant getting
         /// the rank its height asks for.
+        ///
+        /// **A lotus asks each rank for two places side by side** — the next
+        /// two its rank would fill, from the west — and a rank with one place
+        /// left has no room for it, so it goes on to the next choice as a
+        /// plant finding a full rank does. That last place is not given up: a
+        /// plant of one place can still take it. A frame nobody has claimed
+        /// and a new plot always have two.
         public func place(for traits: PlantTraits) -> (plot: Int, slot: Slot) {
             let own = ColdFrame.rank(height: traits.height)
+            let span = ColdFrame.span(of: traits)
             let opened = plots
             let byPlot = (0..<opened).map { self.plot($0) }
 
@@ -279,9 +361,9 @@ public enum ColdFrame {
                     let here = byPlot[plot].filter { $0.slot.frame == frame }
                     guard here.first?.traits.family == traits.family else { continue }
                     for rank in [own, own == .back ? .front : .back] {
-                        let taken = here.filter { $0.slot.rank == rank }.count
-                        if taken < ColdFrame.places, inOrder(traits.height, in: rank, among: here) {
-                            return (plot, Slot(frame: frame, rank: rank, index: taken))
+                        let next = ColdFrame.next(along: here.filter { $0.slot.rank == rank })
+                        if next + span <= ColdFrame.places, inOrder(traits.height, in: rank, among: here) {
+                            return (plot, Slot(frame: frame, rank: rank, index: next))
                         }
                     }
                 }
@@ -317,8 +399,8 @@ public enum ColdFrame {
                 guard bytes.count > i else { return 0 }
                 return (Double(bytes[i]) / 255 - 0.5) * 2 * reach
             }
-            let planting = Planting(seed: seed.hex, plot: plot, slot: slot, traits: traits,
-                                    nudge: Spot(x: jitter(26, 0.03), z: jitter(27, 0.03)))
+            let planting = Planting(seed: seed.hex, plot: plot, slot: slot, span: ColdFrame.span(of: traits),
+                                    traits: traits, nudge: Spot(x: jitter(26, 0.03), z: jitter(27, 0.03)))
             plantings.append(planting)
             return planting
         }

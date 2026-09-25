@@ -83,7 +83,12 @@ public struct PlantTraits: Codable, Equatable, Hashable, Sendable {
     /// or an offer from a phone that predates it. `Coppice.place(for:)` asks
     /// only whether a plant is a fern, so an unknown habit is placed as a star
     /// is — in the light, never cut — and is planted rather than refused.
-    /// Nothing but the Coppice reads it.
+    ///
+    /// **Four areas read it now, each asking one thing.** The Coppice asks
+    /// whether a plant is a fern, the Home Ground which crop it is, and since
+    /// 25 September 2026 the Cold Frame and the Seedbed whether it is a lotus,
+    /// which takes two places (`ColdFrame.span(of:)`). Each reads an unknown
+    /// habit as the answer that asks least of the area.
     public var habit: String
 
     public init(height: Double, family: Int, kind: String = "", hue: Double? = nil,

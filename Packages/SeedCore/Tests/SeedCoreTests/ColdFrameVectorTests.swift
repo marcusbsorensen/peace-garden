@@ -13,6 +13,10 @@ import XCTest
 /// only as trustworthy as the margin between each plant and the cut — see
 /// `VectorFile` — and `testThePlacementCannotTurnOnTheLastBitOfAHeight` is
 /// here for the reason it is in the Knot Garden's suite.
+///
+/// **The habit and the span since 25 September 2026**, when a lotus began to
+/// take two places. The habit is a word and the span a count, exact on every
+/// host, so the port is held to both with no tolerance.
 final class ColdFrameVectorTests: XCTestCase {
     static var vectorsURL: URL {
         var url = URL(fileURLWithPath: #filePath)
@@ -29,8 +33,9 @@ final class ColdFrameVectorTests: XCTestCase {
             let p = ways.plant(seed: seed, traits: traits)
             lines.append("""
                 {"seed":"\(seed.hex)","height":\(traits.height),"family":\(traits.family),\
-                "plot":\(p.plot),"frame":\(p.slot.frame.rawValue),"rank":\(p.slot.rank.rawValue),\
-                "index":\(p.slot.index),"nudge":[\(p.nudge.x),\(p.nudge.z)]}
+                "habit":"\(traits.habit)","plot":\(p.plot),"frame":\(p.slot.frame.rawValue),\
+                "rank":\(p.slot.rank.rawValue),"index":\(p.slot.index),"span":\(p.span),\
+                "nudge":[\(p.nudge.x),\(p.nudge.z)]}
                 """)
         }
         // One JSON document, not one per line: see `SeedbedVectorTests`.
