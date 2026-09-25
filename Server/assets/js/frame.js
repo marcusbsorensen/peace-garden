@@ -20,7 +20,7 @@
 // `pg_frame_plan` rather than being written down again here.
 
 import { decode, takeResult } from './plant.js';
-import { COLOUR, RIM_DEPTH, SIDE, hash, readOutline, readStructure } from './longwalk.js';
+import { COLOUR, RIM_DEPTH, SIDE, hash, keepToPlot, readOutline, readStructure } from './longwalk.js';
 
 // Seeds for this area's dressing, its own and not another area's, so seven
 // plots do not share one wandering edge.
@@ -90,7 +90,12 @@ export function makeFrameGround(place, lids = makeFrameLids(place)) {
     // for the reason `knot.js` §The ground sets out: a regular grid of flat
     // faces draws a tiled floor however small it is. Its own seeds, and it
     // leaves out the cells a frame stands on, where the soil is drawn instead.
-    const half = SIDE / 2 - 0.06;
+    // **Laid a little wider than the plot and kept to it** (`keepToPlot`), since
+    // 25 September 2026: laid inside a 2.54 m square over an edge that comes in
+    // to 2.42 m, it ran past the slab with a ruled edge and four corners in the
+    // sky. Now it ends on the plot's own wandering edge.
+    const half = SIDE / 2 + 0.06;
+    const onPlot = keepToPlot(outline);
     const lattice = (cell, from, to) => {
       const stepsX = Math.ceil((to[0] - from[0]) / cell), stepsZ = Math.ceil((to[1] - from[1]) / cell);
       const grid = [];
@@ -99,10 +104,10 @@ export function makeFrameGround(place, lids = makeFrameLids(place)) {
         for (let j = 0; j <= stepsZ; j++) {
           const edge = i === 0 || j === 0 || i === stepsX || j === stepsZ;
           const shift = edge ? 0 : cell * 0.34;
-          row.push([
+          row.push(onPlot(
             Math.max(from[0], Math.min(to[0], from[0] + i * cell + shift * (hash(i * 7919 + j * 104729 + from[0] * 1e3) - 0.5) * 2)),
             Math.max(from[1], Math.min(to[1], from[1] + j * cell + shift * (hash(i * 6733 + j * 92831 + from[1] * 1e3) - 0.5) * 2)),
-          ]);
+          ));
         }
         grid.push(row);
       }

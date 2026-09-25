@@ -36,7 +36,7 @@
 // `pg_knot_plan` rather than being written down again here.
 
 import { decode, takeResult } from './plant.js';
-import { COLOUR, RIM_DEPTH, SIDE, hash, readOutline, readStructure } from './longwalk.js';
+import { COLOUR, RIM_DEPTH, SIDE, hash, keepToPlot, readOutline, readStructure } from './longwalk.js';
 
 // Seeds for this area's dressing, so a plot is the same shape on every visit.
 // Its own, not the walk's, the room's, the crossing's or the orchard's: five
@@ -95,7 +95,12 @@ export function makeKnotGround(place) {
     // what a stone is: at a plot this size a centimetre of pea gravel is a
     // fraction of a pixel and dissolves into dither, while a hand's breadth is
     // a beach.
-    const half = SIDE / 2 - 0.06;
+    // **Laid a little wider than the plot and kept to it** (`keepToPlot`), since
+    // 25 September 2026: laid inside a 2.54 m square over an edge that comes in
+    // to 2.42 m, it ran past the slab with a ruled edge and four corners in the
+    // sky. Now it ends on the plot's own wandering edge.
+    const half = SIDE / 2 + 0.06;
+    const onPlot = keepToPlot(outline);
     const cell = 0.06;
     const steps = Math.ceil((half * 2) / cell);
     const lattice = [];
@@ -104,10 +109,10 @@ export function makeKnotGround(place) {
       for (let j = 0; j <= steps; j++) {
         const edgeOfSheet = i === 0 || j === 0 || i === steps || j === steps;
         const shift = edgeOfSheet ? 0 : cell * 0.34;
-        row.push([
+        row.push(onPlot(
           Math.max(-half, Math.min(half, -half + i * cell + shift * (hash(i * 7919 + j * 104729) - 0.5) * 2)),
           Math.max(-half, Math.min(half, -half + j * cell + shift * (hash(i * 6733 + j * 92831) - 0.5) * 2)),
-        ]);
+        ));
       }
       lattice.push(row);
     }

@@ -31,7 +31,7 @@
 // `pg_seedbed_plan` rather than being written down again here.
 
 import { decode, takeResult } from './plant.js';
-import { COLOUR, RIM_DEPTH, SIDE, hash, readOutline, readStructure } from './longwalk.js';
+import { COLOUR, RIM_DEPTH, SIDE, hash, keepToPlot, readOutline, readStructure } from './longwalk.js';
 
 // Seeds for this area's dressing, so a bed is the same shape on every visit.
 // Its own, not the walk's, the room's, the crossing's, the orchard's or the
@@ -85,7 +85,12 @@ export function makeSeedbedGround(place) {
     // **The crumb.** The Knot's lattice, jittered the same way and split on the
     // diagonal the noise chooses, at a finer cell — this is tilth, which is what
     // a gardener calls soil worked down until a seed can be covered by it.
-    const half = SIDE / 2 - 0.06;
+    // **Laid a little wider than the plot and kept to it** (`keepToPlot`), since
+    // 25 September 2026: laid inside a 2.54 m square over an edge that comes in
+    // to 2.42 m, it ran past the slab with a ruled edge and four corners in the
+    // sky. Now it ends on the plot's own wandering edge.
+    const half = SIDE / 2 + 0.06;
+    const onPlot = keepToPlot(outline);
     const cell = 0.05;
     const steps = Math.ceil((half * 2) / cell);
     const lattice = [];
@@ -94,10 +99,10 @@ export function makeSeedbedGround(place) {
       for (let j = 0; j <= steps; j++) {
         const edgeOfSheet = i === 0 || j === 0 || i === steps || j === steps;
         const shift = edgeOfSheet ? 0 : cell * 0.34;
-        row.push([
+        row.push(onPlot(
           Math.max(-half, Math.min(half, -half + i * cell + shift * (hash(i * 7919 + j * 104729) - 0.5) * 2)),
           Math.max(-half, Math.min(half, -half + j * cell + shift * (hash(i * 6733 + j * 92831) - 0.5) * 2)),
-        ]);
+        ));
       }
       lattice.push(row);
     }

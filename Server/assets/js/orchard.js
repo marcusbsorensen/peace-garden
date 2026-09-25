@@ -21,7 +21,7 @@
 // down again here.
 
 import { decode, takeResult } from './plant.js';
-import { COLOUR, RIM_DEPTH, SIDE, readOutline, readStructure } from './longwalk.js';
+import { COLOUR, RIM_DEPTH, SIDE, readOutline, readStructure, rimReach } from './longwalk.js';
 
 // Seeds for this area's dressing, so a plot is the same shape on every visit.
 // Its own, not the walk's, the room's or the crossing's: four areas drawing from
@@ -86,22 +86,6 @@ export function makeOrchardGround(place, trunks) {
       }
     }
 
-    // How far a line from `from` heading `(dx, dz)` runs before it leaves the
-    // plot: the nearest crossing of the outline.
-    const reach = (from, dx, dz) => {
-      let best = Infinity;
-      for (let i = 0; i < n; i++) {
-        const a = outline[i], b = outline[(i + 1) % n];
-        const ex = b[0] - a[0], ez = b[1] - a[1];
-        const det = dx * ez - dz * ex;
-        if (Math.abs(det) < 1e-9) continue;
-        const wx = a[0] - from[0], wz = a[1] - from[1];
-        const along = (wx * ez - wz * ex) / det;
-        const on = (wx * dz - wz * dx) / det;
-        if (along > 0 && on >= 0 && on <= 1) best = Math.min(best, along);
-      }
-      return best;
-    };
     // The lesser of two, with the corner between them rounded over `k`, and
     // never more than either.
     const softer = (a, b, k) => {
@@ -141,7 +125,7 @@ export function makeOrchardGround(place, trunks) {
         const wander = 1
           + 0.07 * (e.pg_verge(cx * 1.4, -1, GROVE.mow + t) / 0.14)
           + 0.06 * (e.pg_verge(cz * 1.2, 1, GROVE.mow + t) / 0.14);
-        const r = softer(discRadius * wander, reach(trunk, cx, cz) - 0.004, 0.12);
+        const r = softer(discRadius * wander, rimReach(outline, trunk, cx, cz) - 0.004, 0.12);
         rim.push([trunk[0] + r * cx, trunk[1] + r * cz]);
       }
       // Cut grass is brighter than the meadow round it, and each disc is mown a

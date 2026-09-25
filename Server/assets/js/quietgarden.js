@@ -13,7 +13,7 @@
 // rather than being written down again here.
 
 import { decode, takeResult } from './plant.js';
-import { COLOUR, HEDGE, RIM_DEPTH, SEED, SIDE, hash, readOutline, readStructure } from './longwalk.js';
+import { COLOUR, HEDGE, RIM_DEPTH, SEED, SIDE, hash, keepToPlot, readOutline, readStructure } from './longwalk.js';
 
 // Seeds for this area's dressing, so a room is the same shape on every visit.
 // Its own, not the walk's: two areas drawing from one seed would be two plots
@@ -63,16 +63,33 @@ export function makeRoomGround(room) {
     // its borders rough; here the grass is the garden, so the stripes run the
     // whole width of the room and out under the hedges. A mower goes up and
     // back, so they alternate, and they wander because the mower did.
+    //
+    // **Mown to the plot's edge and no further** (25 September 2026). Each
+    // stripe was one quad 2.54 m either side of the middle, over an edge that
+    // comes in to 2.42 m, so the lawn ran past the slab with ruled ends. Now a
+    // stripe runs a little past the plot in narrow pieces, each corner kept to
+    // it, so its ends follow the edge's own wander.
     const stripe = 0.42;
     const rows = Math.ceil(SIDE / stripe) + 1;
+    const onPlot = keepToPlot(outline);
+    const half = SIDE / 2 + 0.06;
+    const pieces = 40;
     for (let r = 0; r < rows; r++) {
-      const z0 = -SIDE / 2 + r * stripe, z1 = Math.min(SIDE / 2, z0 + stripe);
+      const z0 = -SIDE / 2 + r * stripe, z1 = z0 + stripe;
       if (z0 >= SIDE / 2) break;
       const edge = (z) => 0.05 * (e.pg_verge(z * 1.7, r % 2 ? 1 : -1, ROOM.mow) / 0.14);
       const c = COLOUR.grass.map((v) => v * (r % 2 ? 1.05 : 0.95));
-      const half = SIDE / 2 - 0.06;
-      quad([-half, 0.004, z0 + edge(z0)], [half, 0.004, z0 + edge(z0 + 3)],
-           [half, 0.004, z1 + edge(z1 + 3)], [-half, 0.004, z1 + edge(z1)], [0, 1, 0], c);
+      // The stripe's two wandering sides, read at each end as before and
+      // carried straight across between them.
+      const near = [z0 + edge(z0), z0 + edge(z0 + 3)], far = [z1 + edge(z1), z1 + edge(z1 + 3)];
+      const at = (u, side) => {
+        const [x, z] = onPlot(-half + 2 * half * u, side[0] + (side[1] - side[0]) * u);
+        return [x, 0.004, z];
+      };
+      for (let k = 0; k < pieces; k++) {
+        const u0 = k / pieces, u1 = (k + 1) / pieces;
+        quad(at(u0, near), at(u1, near), at(u1, far), at(u0, far), [0, 1, 0], c);
+      }
     }
 
     // Its sides hang from the outline down to a floor as rough as a clod's, in
