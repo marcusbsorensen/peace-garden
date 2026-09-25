@@ -165,7 +165,7 @@ Commissioned and shipping. **What you write has to agree with them.**
     pt  Fazê-la crescer
 - `growBody`
     en  Peace Garden crosses this seed with one of your own, and the plant that comes of the pair is yours to keep. This meeting grows one plant, you both have it, and it stays the same for as long as you do.
-    pt  O Peace Garden cruza esta semente com outra sua, e a planta que nasce do par fica sua. Deste encontro cresce uma só planta, a mesma para os dois, e fica assim.
+    pt  O Peace Garden cruza esta semente com outra tua, e a planta que nasce do par fica tua. Deste encontro cresce uma só planta, a mesma para os dois, e fica assim.
 - `appNote`
     en  Peace Garden is on iPhone and iPad. This link keeps, so there is no hurry.
     pt  O Peace Garden está no iPhone e no iPad. O link fica, por isso não há pressa.
