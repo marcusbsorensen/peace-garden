@@ -135,8 +135,12 @@ enum Planner {
                 let wasPlace = ["plot"] + spec.slot
                 let same = wasPlace.allSatisfy { key in
                     let column = key == "index" ? "slot_index"
-                        : key == "rank" ? "slot_rank" : key == "row" ? "slot_row" : key
-                    return item.was[column]?.double == place[key]
+                        : key == "rank" ? "slot_rank" : key == "row" ? "slot_row"
+                        : key == "span" ? "slot_span" : key
+                    // A copy from before the lotus rule has no span, and
+                    // every planting in it held one place.
+                    let was = item.was[column]?.double ?? (key == "span" ? 1 : nil)
+                    return was == place[key]
                 }
                 if !same { moved += 1 }
                 plantings.append(Plan.Planting(

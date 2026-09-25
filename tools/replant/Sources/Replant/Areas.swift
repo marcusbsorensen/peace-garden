@@ -58,21 +58,26 @@ struct AreaTable: Sendable {
                         "index": Double(p.slot.index), "nudgeX": p.nudge.x, "nudgeZ": p.nudge.z]
             }
         },
-        AreaTable(table: "seedbed", area: .beginnings, slot: ["drill", "index"]) { arrivals in
+        // **The span is part of the place** in these two since 25 September
+        // 2026: how many places a planting holds, two for a lotus. A copy
+        // taken before the deploy has no `slot_span` column, and every row in
+        // it held one place (`Planner.make` reads a missing span as 1).
+        AreaTable(table: "seedbed", area: .beginnings, slot: ["drill", "index", "span"]) { arrivals in
             var ways = Seedbed.Ways.opened()
             return arrivals.map { seed, traits in
                 let p = ways.plant(seed: seed, traits: traits)
                 return ["plot": Double(p.plot), "drill": Double(p.slot.drill),
-                        "index": Double(p.slot.index), "nudgeX": p.nudge.x, "nudgeZ": p.nudge.z]
+                        "index": Double(p.slot.index), "span": Double(p.span),
+                        "nudgeX": p.nudge.x, "nudgeZ": p.nudge.z]
             }
         },
-        AreaTable(table: "cold_frame", area: .waiting, slot: ["frame", "rank", "index"]) { arrivals in
+        AreaTable(table: "cold_frame", area: .waiting, slot: ["frame", "rank", "index", "span"]) { arrivals in
             var ways = ColdFrame.Ways.opened()
             return arrivals.map { seed, traits in
                 let p = ways.plant(seed: seed, traits: traits)
                 return ["plot": Double(p.plot), "frame": Double(p.slot.frame.rawValue),
                         "rank": Double(p.slot.rank.rawValue), "index": Double(p.slot.index),
-                        "nudgeX": p.nudge.x, "nudgeZ": p.nudge.z]
+                        "span": Double(p.span), "nudgeX": p.nudge.x, "nudgeZ": p.nudge.z]
             }
         },
         AreaTable(table: "glasshouse", area: .light, slot: ["bed", "index", "row"]) { arrivals in
