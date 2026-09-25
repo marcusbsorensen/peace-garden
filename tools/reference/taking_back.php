@@ -34,8 +34,10 @@ const TAKING_BACK = [
     'meeting' => ['crossing', ['plot', 'quarter', 'slot_index'], ['height'], ['family' => 0]],
     'kinship' => ['orchard', ['plot', 'guild', 'slot_index'], ['height'], ['family' => 0]],
     'pattern' => ['knot_garden', ['plot', 'compartment', 'slot_index'], ['height', 'family'], []],
-    'beginnings' => ['seedbed', ['plot', 'drill', 'slot_index'], ['kind'], ['height' => 0.0, 'family' => 0]],
-    'waiting' => ['cold_frame', ['plot', 'frame', 'slot_rank', 'slot_index'], ['height', 'family'], []],
+    'beginnings' => ['seedbed', ['plot', 'drill', 'slot_index', 'slot_span'], ['kind'],
+                     ['height' => 0.0, 'family' => 0, 'habit' => '']],
+    'waiting' => ['cold_frame', ['plot', 'frame', 'slot_rank', 'slot_index', 'slot_span'], ['height', 'family'],
+                  ['habit' => '']],
     'light' => ['glasshouse', ['plot', 'bed', 'slot_index', 'slot_row'], [],
                 ['height' => 0.0, 'family' => 0, 'hue' => null]],
     'renewal' => ['coppice', ['plot', 'coupe', 'place', 'slot_index'], ['height', 'habit'], ['family' => 0]],
@@ -101,9 +103,9 @@ function takingBack(string $area, array $vectors, int $count = 200): void
     $lifted = takingBackStore($area, $taken_file);
     $taken = [];
     foreach ($arrivals as $n => $a) {
-        // The hue is the Glasshouse's alone and the habit the Coppice's and the
-        // Home Ground's; every other area's `plant` takes fewer arguments and PHP
-        // lets the rest pass by unread.
+        // The hue is the Glasshouse's alone and the habit the Coppice's, the
+        // Home Ground's, the Seedbed's and the Cold Frame's; every other area's
+        // `plant` takes fewer arguments and PHP lets the rest pass by unread.
         $whole->plant($a['seed'], $a['a'], $a['b'], $a['encounter'], $a['height'], $a['family'], $a['kind'],
                       $a['hue'], $a['habit']);
         $lifted->plant($a['seed'], $a['a'], $a['b'], $a['encounter'], $a['height'], $a['family'], $a['kind'],

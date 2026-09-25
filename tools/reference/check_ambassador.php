@@ -71,8 +71,9 @@ foreach ($vectors['ambassadors'] as $n => $row) {
     // one more: a hue is exact on every host, so there is no excuse for it
     // not to be.
     if (isset($php['hue'])) is_same("$area's hue", $row['hue'], $php['hue']);
-    // The habit, where the service pins one — the Coppice's and the Home
-    // Ground's, because only those two read it. A word, and exact on every host.
+    // The habit, where the service pins one — the Coppice's, the Home Ground's,
+    // the Seedbed's and the Cold Frame's, because only those four read it. A
+    // word, and exact on every host.
     if (isset($php['habit'])) is_same("$area's habit", $row['habit'], $php['habit']);
 }
 
@@ -121,6 +122,10 @@ is_same('its frame', ColdFrame::BACK_WEST, $waiting['frame'] ?? null);
 is_same('its rank is the rank its height belongs to',
         ColdFrame::rank($vectors['ambassadors'][1]['height']), $waiting['rank'] ?? null);
 is_same('its place along that rank', 0, $waiting['index'] ?? null);
+// And, since 25 September, the first two: it is a lotus, and a lotus takes two
+// places and stands between them.
+is_same('it is a lotus', 'lotus', $vectors['ambassadors'][1]['habit']);
+is_same('and holds two places', 2, $waiting['span'] ?? null);
 
 // The Glasshouse's, which opens the staging at its own place in the spectrum:
 // *Aurea pallida* grows to 0.68 m, under the border's 1.30 m, so it is potted,

@@ -37,6 +37,17 @@ require_once __DIR__ . '/ColdFrame.php';
  * and that is the page's business: the rule is decided by the grown height,
  * which is what is stored, as every area stores it.
  *
+ * **`slot_span` is how many places a planting holds**, since 25 September 2026,
+ * when a lotus began to take two (`ColdFrame::span`). It is part of the place,
+ * like the rank: the index alone does not say where a lotus stands, and the
+ * next plant along its rank is placed after both its places. Stored rather than
+ * read again off the habit, because a planting made before the rule holds one
+ * place whatever it is, and the column's default of 1 says so for every row
+ * that was there when it was added. **`habit` is stored beside it** because a
+ * replant regrows every plant and the rehearsal plants them again through this
+ * store, which needs the habit to give the same span; the rule itself reads
+ * only the arriving plant's.
+ *
  * Everything else is `WalkStore`'s, deliberately: the same append-only insert,
  * the same lock row, the same taking back that keeps a place and erases the
  * plant, and the same ambassador handed to the rule ahead of the stored
@@ -46,13 +57,14 @@ final class ColdFrameStore
 {
     /**
      * What a planting taken back has written over, beyond the seed, the parents,
-     * the meeting and the nudge that every area writes over (`TakenBack.php`).
-     * Nothing: the frame's rule reads the family of the first plant in each
+     * the meeting and the nudge that every area writes over (`TakenBack.php`):
+     * its habit. The frame's rule reads the family of the first plant in each
      * frame, which is the frame's claim, and the height of every plant in it,
      * which orders its two ranks. Both stay, with the rank, which is a column
-     * here because the slot alone does not say it.
+     * here because the slot alone does not say it, and the span, which is how
+     * many places it keeps. The habit is read only of a plant arriving.
      */
-    private const TAKEN_BACK = [];
+    private const TAKEN_BACK = ['habit' => ''];
 
     public function __construct(private PDO $db)
     {
@@ -78,8 +90,10 @@ final class ColdFrameStore
             frame INTEGER NOT NULL,
             slot_rank INTEGER NOT NULL,
             slot_index INTEGER NOT NULL,
+            slot_span INTEGER NOT NULL DEFAULT 1,
             height DOUBLE PRECISION NOT NULL,
             family INTEGER NOT NULL,
+            habit VARCHAR(16) NOT NULL DEFAULT '',
             nudge_x DOUBLE PRECISION NOT NULL,
             nudge_z DOUBLE PRECISION NOT NULL,
             hidden INTEGER NOT NULL DEFAULT 0
@@ -91,6 +105,19 @@ final class ColdFrameStore
         // before then still holds the seed, the parents and the meeting, and
         // this erases it. Every request, and nothing to do once it has run.
         $this->run('CREATE INDEX IF NOT EXISTS cold_frame_hidden ON cold_frame (hidden)');
+        // Added on 25 September, when a lotus began to take two places. ALTERs
+        // that may already have run, as `Offers` adds its columns, and plain
+        // `ADD COLUMN` because MySQL has no `IF NOT EXISTS` for one: on a table
+        // that has them they fail, and that is the answer. Every row already
+        // there holds one place, which is what the old rule gave it, and has no
+        // habit, which nothing reads of a plant already standing.
+        foreach (["slot_span INTEGER NOT NULL DEFAULT 1", "habit VARCHAR(16) NOT NULL DEFAULT ''"] as $column) {
+            try {
+                $this->run("ALTER TABLE cold_frame ADD COLUMN $column");
+            } catch (Throwable) {
+                // Already there.
+            }
+        }
         TakenBack::sweep($this->db, 'cold_frame', self::TAKEN_BACK);
     }
 
@@ -99,11 +126,15 @@ final class ColdFrameStore
      * whether it is new]: a seed that has arrived before gets the place it
      * already has, because a plant has one place.
      *
-     * `$kind` is the Seedbed's trait and nothing here reads it; it is in the
-     * signature so `WalkStore::plantInto` can call every area's `plant` alike.
+     * `$kind` and `$hue` are the Seedbed's and the Glasshouse's, and nothing
+     * here reads them; they are in the signature so `WalkStore::plantInto` can
+     * call every area's `plant` alike. `$habit` says whether the plant is a
+     * lotus, which takes two places; the empty string, a habit never sent, takes
+     * one.
      */
     public function plant(string $seed, string $parentA, string $parentB, string $encounter,
-                          float $height, int $family, string $kind = ''): array
+                          float $height, int $family, string $kind = '', ?float $hue = null,
+                          string $habit = ''): array
     {
         if (Ambassadors::isOne($seed)) {
             throw new LogicException('an ambassador cannot be planted: it is already standing');
@@ -130,16 +161,17 @@ final class ColdFrameStore
                 [Ambassadors::planting('waiting')],
                 array_map([self::class, 'forRule'], $all->fetchAll())
             );
-            $p = ColdFrame::plant($ways, $seed, $height, $family);
+            $p = ColdFrame::plant($ways, $seed, $height, $family, $habit);
             $insert = $this->db->prepare('INSERT INTO cold_frame
-                (seed, parent_a, parent_b, encounter, plot, frame, slot_rank, slot_index, height, family, nudge_x, nudge_z)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+                (seed, parent_a, parent_b, encounter, plot, frame, slot_rank, slot_index, slot_span,
+                 height, family, habit, nudge_x, nudge_z)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
             $insert->execute([$seed, $parentA, $parentB, $encounter, $p['plot'], $p['frame'], $p['rank'],
-                              $p['index'], $height, $family, $p['nudgeX'], $p['nudgeZ']]);
+                              $p['index'], $p['span'], $height, $family, $habit, $p['nudgeX'], $p['nudgeZ']]);
             $this->db->commit();
             return [self::planting(['seed' => $seed, 'parent_a' => $parentA, 'parent_b' => $parentB,
                 'encounter' => $encounter, 'plot' => $p['plot'], 'frame' => $p['frame'],
-                'slot_rank' => $p['rank'], 'slot_index' => $p['index'],
+                'slot_rank' => $p['rank'], 'slot_index' => $p['index'], 'slot_span' => $p['span'],
                 'nudge_x' => $p['nudgeX'], 'nudge_z' => $p['nudgeZ']]), true];
         } catch (Throwable $error) {
             if ($this->db->inTransaction()) $this->db->rollBack();
@@ -151,7 +183,8 @@ final class ColdFrameStore
      * A plot's plantings, in the order they arrived. Hidden ones are not in it.
      *
      * Plot 0 opens with the ambassador at the west end of the first frame's
-     * front rank, which is not a row. It carries no parents and no meeting,
+     * front rank, across its first two places since it is a lotus, which is
+     * not a row. It carries no parents and no meeting,
      * because it was minted rather than crossed, and an empty `parents` is how
      * the wire says so.
      */
@@ -162,7 +195,7 @@ final class ColdFrameStore
         $plantings = array_map([self::class, 'planting'], $query->fetchAll());
         if ($plot !== 0) return $plantings;
         $standing = Ambassadors::planting('waiting');
-        [$x, $z] = ColdFrame::spot($standing['frame'], $standing['rank'], $standing['index']);
+        [$x, $z] = ColdFrame::spot($standing['frame'], $standing['rank'], $standing['index'], $standing['span']);
         array_unshift($plantings, [
             'seed' => $standing['seed'],
             'parents' => [],
@@ -196,12 +229,14 @@ final class ColdFrameStore
     /**
      * What the page needs to grow a planting and stand it in its place: the
      * same five fields every area sends. Which frame and rank a plant is in is
-     * already in the spot, and the young height it is drawn at is the page's to
-     * work out, so neither is on the wire.
+     * already in the spot, and so is a lotus's standing across two places — the
+     * spot is their middle — and the young height it is drawn at is the page's
+     * to work out, so none of them is on the wire.
      */
     private static function planting(array $row): array
     {
-        [$x, $z] = ColdFrame::spot((int) $row['frame'], (int) $row['slot_rank'], (int) $row['slot_index']);
+        [$x, $z] = ColdFrame::spot((int) $row['frame'], (int) $row['slot_rank'], (int) $row['slot_index'],
+                                   (int) ($row['slot_span'] ?? 1));
         return [
             'seed' => $row['seed'],
             'parents' => [$row['parent_a'], $row['parent_b']],
@@ -216,8 +251,9 @@ final class ColdFrameStore
         return [
             'seed' => $row['seed'], 'plot' => (int) $row['plot'],
             'frame' => (int) $row['frame'], 'rank' => (int) $row['slot_rank'],
-            'index' => (int) $row['slot_index'],
+            'index' => (int) $row['slot_index'], 'span' => (int) $row['slot_span'],
             'height' => (float) $row['height'], 'family' => (int) $row['family'],
+            'habit' => (string) $row['habit'],
         ];
     }
 }

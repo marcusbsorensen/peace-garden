@@ -31,8 +31,15 @@ declare(strict_types=1);
  * when a frame's own rank is full or out of order while a later frame of the
  * same colour has room.
  *
+ * **A lotus takes two places**, since 25 September 2026: the next two its rank
+ * would fill, standing centred across them (`span`). The habit is read for it,
+ * and only the arriving plant's; a plant already standing says how many places
+ * it holds by its span, which is stored with it.
+ *
  * A planting here is an array: seed (hex), plot, frame (0-3), rank (0 front,
- * 1 back), index (0-5), height, family, nudgeX, nudgeZ.
+ * 1 back), index (0-5, the west one of a lotus's two), span (1, or 2 for a
+ * lotus), height, family, habit, nudgeX, nudgeZ. A planting with no span holds
+ * one place, which is what every planting made before the lotus rule holds.
  */
 final class ColdFrame
 {
@@ -94,6 +101,31 @@ final class ColdFrame
         return $height < self::BACK_FROM ? self::FRONT : self::BACK;
     }
 
+    /**
+     * How many places along a rank a plant takes: **two for a lotus, one for
+     * everything else**, Marcus's choice on 25 September 2026. A lotus's pads
+     * reach as far from its stem as the next place, and standing across two
+     * it has 0.46 m either side. The habit is a word, the same on the phone and
+     * here, so nothing about this can round differently; the empty habit, a
+     * plant whose phone never sent one, takes one place.
+     */
+    public static function span(string $habit): int
+    {
+        return $habit === 'lotus' ? 2 : 1;
+    }
+
+    /**
+     * The first place along a rank that nothing holds: the place after the
+     * furthest one held, since a rank fills from its west end without a gap.
+     * `$rank` is the plantings standing in it.
+     */
+    public static function next(array $rank): int
+    {
+        $next = 0;
+        foreach ($rank as $p) $next = max($next, (int) $p['index'] + (int) ($p['span'] ?? 1));
+        return $next;
+    }
+
     /** The middle of a frame, from the middle of the plot: [x, z]. */
     public static function centre(int $frame): array
     {
@@ -104,16 +136,21 @@ final class ColdFrame
     }
 
     /**
-     * Where a place is, in metres from the middle of its plot: [x, z].
+     * Where a plant holding `span` places from `index` stands, in metres from
+     * the middle of its plot: [x, z]. The middle of its places, so a lotus
+     * stands half a place east of its first.
      *
      * `index` 0 is the west end of the rank, and a rank fills from there, the
      * way trays are set into a frame from the end a gardener reaches in at.
+     * The place is counted in halves, as the Swift counts it, so a plant of
+     * one place stands where it always did, to the last bit.
      */
-    public static function spot(int $frame, int $rank, int $index): array
+    public static function spot(int $frame, int $rank, int $index, int $span = 1): array
     {
         [$x, $z] = self::centre($frame);
+        $at = $index + ($span - 1) / 2;
         return [
-            $x + ($index - (self::PLACES - 1) / 2) * self::ALONG_GAP,
+            $x + ($at - (self::PLACES - 1) / 2) * self::ALONG_GAP,
             $z + ($rank === self::BACK ? -self::RANK_FROM : self::RANK_FROM),
         ];
     }
@@ -167,10 +204,15 @@ final class ColdFrame
      * Plot outside, rank inside, as the Knot Garden and the Orchard have it: a
      * frame reading as one colour matters more than a plant getting the rank its
      * height asks for.
+     *
+     * **A lotus asks each rank for two places side by side.** A rank with one
+     * place left has no room for it, and it goes on as a plant finding a full
+     * rank does; the place stays for a plant of one.
      */
-    public static function place(array $ways, float $height, int $family): array
+    public static function place(array $ways, float $height, int $family, string $habit = ''): array
     {
         $own = self::rank($height);
+        $span = self::span($habit);
         $other = $own === self::BACK ? self::FRONT : self::BACK;
         $opened = self::plots($ways);
         $byPlot = [];
@@ -186,9 +228,9 @@ final class ColdFrame
                 // `here.first?.traits.family == traits.family` does.
                 if (($here === [] ? null : (int) $here[0]['family']) !== $family) continue;
                 foreach ([$own, $other] as $rank) {
-                    $taken = count(array_filter($here, fn($p) => (int) $p['rank'] === $rank));
-                    if ($taken < self::PLACES && self::inOrder($height, $rank, $here)) {
-                        return [$plot, ['frame' => $frame, 'rank' => $rank, 'index' => $taken]];
+                    $next = self::next(array_filter($here, fn($p) => (int) $p['rank'] === $rank));
+                    if ($next + $span <= self::PLACES && self::inOrder($height, $rank, $here)) {
+                        return [$plot, ['frame' => $frame, 'rank' => $rank, 'index' => $next]];
                     }
                 }
             }
@@ -210,15 +252,17 @@ final class ColdFrame
      * Seedbed's across a drill: places along a rank are 0.31 m apart and a rank
      * is meant to read as one.
      */
-    public static function plant(array $ways, string $seedHex, float $height, int $family): array
+    public static function plant(array $ways, string $seedHex, float $height, int $family,
+                                 string $habit = ''): array
     {
-        [$plot, $slot] = self::place($ways, $height, $family);
+        [$plot, $slot] = self::place($ways, $height, $family, $habit);
         $bytes = array_values(unpack('C*', hex2bin($seedHex)));
         $jitter = fn(int $i, float $reach) => isset($bytes[$i]) ? ($bytes[$i] / 255 - 0.5) * 2 * $reach : 0.0;
         return [
             'seed' => $seedHex, 'plot' => $plot,
             'frame' => $slot['frame'], 'rank' => $slot['rank'], 'index' => $slot['index'],
-            'height' => $height, 'family' => $family,
+            'span' => self::span($habit),
+            'height' => $height, 'family' => $family, 'habit' => $habit,
             'nudgeX' => $jitter(26, 0.03), 'nudgeZ' => $jitter(27, 0.03),
         ];
     }

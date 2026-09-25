@@ -26,6 +26,11 @@ declare(strict_types=1);
  * five hundred stands close enough to 0.85 m, or to another plant in its frame,
  * for that to matter.
  *
+ * **The habit and the span since 25 September 2026**, when a lotus began to take
+ * two places. Both exact, and compared exactly: a port that gave a lotus one
+ * place, or gave its second to the next plant, is caught at the first lotus
+ * that is not last in its rank.
+ *
  *   php tools/reference/check_cold_frame.php
  */
 
@@ -50,22 +55,23 @@ if ($standing === null) {
 $ways = [$standing];
 
 foreach ($vectors as $n => $want) {
-    $got = ColdFrame::plant($ways, $want['seed'], $want['height'], $want['family']);
+    $got = ColdFrame::plant($ways, $want['seed'], $want['height'], $want['family'], $want['habit']);
     $ways[] = $got;
     $checks++;
     $same = $got['plot'] === $want['plot']
         && $got['frame'] === $want['frame']
         && $got['rank'] === $want['rank']
         && $got['index'] === $want['index']
+        && $got['span'] === $want['span']
         && $got['nudgeX'] === $want['nudge'][0]
         && $got['nudgeZ'] === $want['nudge'][1];
     if (!$same) {
         $failed[] = sprintf(
-            'arrival %d (%s, %.3f m, colour %d): SeedCore put it in plot %d frame %d rank %d place %d, '
-                . 'the service in plot %d frame %d rank %d place %d',
-            $n, substr($want['seed'], 0, 12), $want['height'], $want['family'],
-            $want['plot'], $want['frame'], $want['rank'], $want['index'],
-            $got['plot'], $got['frame'], $got['rank'], $got['index']
+            'arrival %d (%s, %.3f m, colour %d, %s): SeedCore put it in plot %d frame %d rank %d place %d '
+                . 'holding %d, the service in plot %d frame %d rank %d place %d holding %d',
+            $n, substr($want['seed'], 0, 12), $want['height'], $want['family'], $want['habit'],
+            $want['plot'], $want['frame'], $want['rank'], $want['index'], $want['span'],
+            $got['plot'], $got['frame'], $got['rank'], $got['index'], $got['span']
         );
         if (count($failed) >= 5) break;
     }
@@ -75,6 +81,7 @@ $plots = ColdFrame::plots($ways);
 $claimed = 0;
 $full = 0;
 $ownRank = 0;
+$lotuses = 0;
 
 // And the shape of the place the two of them agree on, which is what a visitor
 // sees: every plant inside its own frame, a colour to a frame, each rank filled
@@ -83,7 +90,7 @@ $ownRank = 0;
 foreach ($ways as $p) {
     $checks++;
     [$cx, $cz] = ColdFrame::centre($p['frame']);
-    [$x, $z] = ColdFrame::spot($p['frame'], $p['rank'], $p['index']);
+    [$x, $z] = ColdFrame::spot($p['frame'], $p['rank'], $p['index'], $p['span']);
     $atX = $x + $p['nudgeX'];
     $atZ = $z + $p['nudgeZ'];
     if (abs($atX - $cx) >= ColdFrame::FRAME_LENGTH / 2 || abs($atZ - $cz) >= ColdFrame::FRAME_DEPTH / 2) {
@@ -98,6 +105,13 @@ foreach ($ways as $p) {
             substr($p['seed'], 0, 12), $p['rank'], $p['frame']);
     }
     if ($p['rank'] === ColdFrame::rank($p['height'])) $ownRank++;
+    // A lotus holds two places and nothing else holds more than one: the span
+    // is the habit's, and read off nothing else.
+    $checks++;
+    if ($p['span'] !== ColdFrame::span($p['habit'])) {
+        $failed[] = sprintf('%s is a %s and holds %d places', substr($p['seed'], 0, 12), $p['habit'], $p['span']);
+    }
+    if ($p['span'] === 2) $lotuses++;
 }
 
 for ($plot = 0; $plot < $plots; $plot++) {
@@ -106,7 +120,7 @@ for ($plot = 0; $plot < $plots; $plot++) {
         $block = array_values(array_filter($here, fn($p) => $p['frame'] === $frame));
         if ($block === []) continue;
         $claimed++;
-        if (count($block) === 2 * ColdFrame::PLACES) $full++;
+        if (array_sum(array_map(fn($p) => $p['span'], $block)) === 2 * ColdFrame::PLACES) $full++;
 
         // One colour to a frame, which is what makes four frames read as four.
         $checks++;
@@ -118,10 +132,14 @@ for ($plot = 0; $plot < $plots; $plot++) {
 
         foreach (ColdFrame::RANKS as $rank) {
             // Each rank fills from its west end: 0, 1, 2 and so on with nothing
-            // missing, because a place's index is how many stood there first.
+            // missing and nothing held twice, a lotus's two places among them —
+            // so the place after a lotus is never given to the plant after it.
             $checks++;
-            $taken = array_map(fn($p) => (int) $p['index'],
-                array_values(array_filter($block, fn($p) => $p['rank'] === $rank)));
+            $taken = [];
+            foreach ($block as $p) {
+                if ($p['rank'] !== $rank) continue;
+                for ($i = 0; $i < $p['span']; $i++) $taken[] = (int) $p['index'] + $i;
+            }
             sort($taken);
             if ($taken !== [] && $taken !== range(0, count($taken) - 1)) {
                 $failed[] = sprintf('plot %d frame %d rank %d is filled %s',
@@ -177,8 +195,9 @@ if ($failed !== []) {
 }
 
 printf("The PHP places all %d arrivals where the Swift does, across %d plots, "
-     . "%d frames claimed and %d of them full, %d of %d plants in their own rank: %d checks.\n",
-    count($vectors), $plots, $claimed, $full, $ownRank, count($ways), $checks);
+     . "%d frames claimed and %d of them full, %d of %d plants in their own rank, "
+     . "%d lotuses across two places: %d checks.\n",
+    count($vectors), $plots, $claimed, $full, $ownRank, count($ways), $lotuses, $checks);
 
 // **Taking back keeps the place and erases the plant**, and moves nothing that
 // arrives after it. `taking_back.php` says how that is checked.

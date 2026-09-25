@@ -50,11 +50,18 @@ final class Ambassadors
         // epithet, which is what claims a drill. It is pinned here beside the
         // other two for the same reason they are — the service cannot grow the
         // plant to read the name off it.
+        //
+        // Since 25 September the Seedbed and the Cold Frame read the habit as
+        // well, and ask one thing of it: whether a plant is a lotus, which
+        // takes two places. The Seedbed's is a spire and takes one; the Cold
+        // Frame's is a lotus, so it holds the first two places of its rank and
+        // stands between them.
         'beginnings' => ['seed' => '526ffb12041c8641eead7cb97614517436806c5748c3f581754dd102738719ae',
                          'height' => 1.0950173139572144, 'family' => 4,
-                         'kind' => 'angustifolia'],  // Verora angustifolia
+                         'kind' => 'angustifolia', 'habit' => 'spire'],  // Verora angustifolia
         'waiting' => ['seed' => '8c0992d3e4221b40489b83d05c0ec3131fc8c771365970ffbb1354a93431ff3f',
-                      'height' => 0.30920299887657166, 'family' => 4],  // Nyxisora crassicaulis
+                      'height' => 0.30920299887657166, 'family' => 4,
+                      'habit' => 'lotus'],  // Nyxisora crassicaulis
         // The Coppice reads a fifth, and only the Coppice does: the plant's
         // habit, its archetype's name, which says whether it stands on a stool.
         // This one is a star, so it stands in the light.
@@ -138,8 +145,9 @@ final class Ambassadors
             'peace' => QuietGarden::plant([], $one['seed'], $one['height'], $one['family']),
             'kinship' => Orchard::plant([], $one['seed'], $one['height'], $one['family']),
             'pattern' => KnotGarden::plant([], $one['seed'], $one['height'], $one['family']),
-            'beginnings' => Seedbed::plant([], $one['seed'], $one['height'], $one['family'], $one['kind']),
-            'waiting' => ColdFrame::plant([], $one['seed'], $one['height'], $one['family']),
+            'beginnings' => Seedbed::plant([], $one['seed'], $one['height'], $one['family'], $one['kind'],
+                                           $one['habit']),
+            'waiting' => ColdFrame::plant([], $one['seed'], $one['height'], $one['family'], $one['habit']),
             'light' => Glasshouse::plant([], $one['seed'], $one['height'], $one['family'], $one['hue']),
             'renewal' => Coppice::plant([], $one['seed'], $one['height'], $one['family'], $one['habit']),
             'ground' => HomeGround::plant([], $one['seed'], $one['height'], $one['family'], $one['habit']),
