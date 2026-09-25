@@ -269,7 +269,9 @@ export function readDrills(place, entries) {
     const here = drills[entry.drill];
     if (!here) continue;
     if (here.sown === 0) here.kind = entry.kind ?? null;
-    here.sown += 1;
+    // A lotus holds two places since 25 September 2026; a planting from a
+    // service that does not say holds one.
+    here.sown += entry.span ?? 1;
   }
   return drills;
 }

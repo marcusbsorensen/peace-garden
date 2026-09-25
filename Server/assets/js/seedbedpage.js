@@ -154,6 +154,7 @@ async function place() {
     writeDrills(el('drills'), readDrills(bed, plantings.map((p) => ({
       drill: drillAt(bed, p.spot[0]),
       kind: kinds.get(p.seed),
+      span: p.span,
     }))), bed.places);
     note.hidden = true;
   };

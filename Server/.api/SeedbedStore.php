@@ -189,6 +189,7 @@ final class SeedbedStore
             'plot' => 0,
             'drill' => $standing['drill'],
             'kind' => $standing['kind'],
+            'span' => $standing['span'],
             'spot' => [$x + $standing['nudgeX'], $z + $standing['nudgeZ']],
         ]);
         return $plantings;
@@ -219,7 +220,10 @@ final class SeedbedStore
      * the drill it stands in. The kind is on the wire because the page cannot
      * recover it: an epithet is read off a grown plant, and the page grows a
      * plant to draw it, not to name it. Nothing on the label says it either.
-     * A lotus's two places are not on it: its spot is their middle.
+     * **The span is on it too**, since 25 September, for the page's marks of
+     * how far each drill is sown: a lotus holds two places, and a drill of
+     * four lotuses is full. Where the plant stands needs nothing more than the
+     * spot, which is the middle of its places.
      */
     private static function planting(array $row): array
     {
@@ -231,6 +235,7 @@ final class SeedbedStore
             'plot' => (int) $row['plot'],
             'drill' => (int) $row['drill'],
             'kind' => (string) $row['kind'],
+            'span' => (int) ($row['slot_span'] ?? 1),
             'spot' => [$x + (float) $row['nudge_x'], $z + (float) $row['nudge_z']],
         ];
     }
