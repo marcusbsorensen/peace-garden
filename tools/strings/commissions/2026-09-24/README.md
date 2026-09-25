@@ -143,7 +143,7 @@ speaker; these are what each translator asked a reader to look at first.
 | | For the reader |
 | --- | --- |
 | de | *Begegnen / Kreuzen / Wachsen*. *ziehen* is "raise a plant" in the grow lines and "drag" in `frontTurn`. *Worte* where a purist might want *Wörter*. |
-| pt | European, as the catalogue is. **Address needs settling**: `growBody` uses *sua* (você), these two lines *tu* (*a terra que é tua*, *de onde és*), since *sua* would make `meaningGround` the plant's own earth. |
+| pt | European, as the catalogue is. **Address settled: *tu* throughout** (Marcus, 25 September). `growBody`'s *sua* became *tua*; it was the only string addressing the reader as *você*. |
 | ro | `frontGrowBody` at 1.88× the English. `meaningGround` *Pământ* over *Pământul natal*; *Glie* if it reads twice. *Rânduială* for Pattern. *Roata anului*, *Buna-cuviință*. |
 | ca | *Creuar*, as `growBody`. *Ordre* for Pattern, as Spanish chose *Orden*. `meaningBeginnings` carries small-to-large less sharply than the English. |
 | gl | *Atoparse / Cruzar / Medrar*. *Orde* for Pattern. *zona* for *area*, following Spanish; no settled word. |
