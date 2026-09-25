@@ -931,7 +931,11 @@ function buildGround(farSide, span, e) {
   // The hedges: one length each side, grown rather than built, the tall yew on
   // whichever side is further from the viewer. Each throws its shadow on the
   // border in front of it (`casting`).
+  // **On the plot** (`hedgeToPlot`): the inner face where the rule has it, the
+  // outer side pressed onto the plot's own edge. The tone is read off where
+  // the hedge was grown, so pressing it does not move its grain.
   const casting = [];
+  const onPlot = hedgeToPlot(outline, [HEDGE_FROM, Infinity]);
   for (const side of [-1, 1]) {
     const height = side === farSide ? HEDGE.tall : HEDGE.low;
     const mesh = readStructure(
@@ -940,9 +944,12 @@ function buildGround(farSide, span, e) {
     for (let t = 0; t < mesh.indices.length; t += 3) {
       const corners = [0, 1, 2].map((k) => mesh.indices[t + k]);
       for (const v of corners) {
-        const p = [mesh.positions[v * 3] + x, mesh.positions[v * 3 + 1], mesh.positions[v * 3 + 2]];
-        const tone = 0.9 + 0.2 * hash(Math.round(p[1] * 37) * 131 + Math.round(p[2] * 29));
-        vertex(p, [mesh.normals[v * 3], mesh.normals[v * 3 + 1], mesh.normals[v * 3 + 2]], COLOUR.yew.map((c) => c * tone));
+        const grown = [mesh.positions[v * 3] + x, mesh.positions[v * 3 + 1], mesh.positions[v * 3 + 2]];
+        const fit = onPlot(grown[0], grown[2]);
+        const p = [fit.at[0], grown[1], fit.at[1]];
+        const tone = 0.9 + 0.2 * hash(Math.round(grown[1] * 37) * 131 + Math.round(grown[2] * 29));
+        vertex(p, pressNormal([mesh.normals[v * 3], mesh.normals[v * 3 + 1], mesh.normals[v * 3 + 2]], fit),
+               COLOUR.yew.map((c) => c * tone));
         casting.push(...p);
       }
     }
@@ -994,6 +1001,58 @@ export function keepToPlot(outline) {
     const rim = rimReach(outline, [0, 0], x / r, z / r) - 0.004;
     return r <= rim ? [x, z] : [x * rim / r, z * rim / r];
   };
+}
+
+// **Keeping a hedge on the slab.** The walk's and the room's hedges stand
+// with their inner face 2.3 m out, where the rule puts it, and were grown
+// 0.36 m thick — past an edge that wanders between 2.42 and 2.56 m, and at the
+// room's corners past an edge that is rounded where the hedges meet square.
+// Marcus, 25 September 2026: pulled inside, the places the plants stand in
+// kept exactly. So the inner face does not move — nothing inside
+// `inner` (the half-sizes of the rectangle the inner faces stand on) is
+// touched — and what lies beyond it is drawn in towards the inner face, onto
+// the band between it and the edge: along a side straight across the hedge,
+// and at a corner fanned from the inner corner. The squeeze is a tanh, so the
+// hedge keeps its own shape near its inner face and only its outer side is
+// pressed, ending on the edge and following its wander. Answers the point and
+// the factor its depth was pressed by at that point, for the normals.
+export function hedgeToPlot(outline, inner) {
+  const memo = new Map();
+  const room = (key, q, dx, dz) => {
+    let d = memo.get(key);
+    if (d === undefined) { d = rimReach(outline, q, dx, dz) - 0.006; memo.set(key, d); }
+    return Math.max(0.02, d);
+  };
+  return (x, z) => {
+    const qx = Math.max(-inner[0], Math.min(inner[0], x)), qz = Math.max(-inner[1], Math.min(inner[1], z));
+    const ox = x - qx, oz = z - qz, u = Math.hypot(ox, oz);
+    if (u < 1e-9) return { at: [x, z], across: [1, 0], pressed: 1, spread: 1 };
+    const dx = ox / u, dz = oz / u;
+    const corner = ox !== 0 && oz !== 0;
+    const key = corner
+      ? `c${Math.sign(ox)}${Math.sign(oz)}:${Math.round(Math.atan2(dz, dx) * 180)}`
+      : ox !== 0 ? `x${Math.sign(ox)}:${Math.round(qz * 100)}` : `z${Math.sign(oz)}:${Math.round(qx * 100)}`;
+    const depth = room(key, [qx, qz], dx, dz);
+    const t = Math.tanh(u / depth);
+    return {
+      at: [qx + dx * depth * t, qz + dz * depth * t],
+      across: [dx, dz],
+      pressed: Math.max(0.02, 1 - t * t),
+      spread: corner ? (depth * t) / u : 1,
+    };
+  };
+}
+
+// A normal carried through `hedgeToPlot`: a surface pressed flat across the
+// hedge turns to face across it, so the component across is divided by how
+// hard it was pressed.
+export function pressNormal(n, fit) {
+  const [dx, dz] = fit.across;
+  const along = n[0] * dx + n[2] * dz;
+  const px = n[0] - along * dx, pz = n[2] - along * dz;
+  const m = [along / fit.pressed * dx + px / fit.spread, n[1], along / fit.pressed * dz + pz / fit.spread];
+  const l = Math.hypot(m[0], m[1], m[2]) || 1;
+  return [m[0] / l, m[1] / l, m[2] / l];
 }
 
 // A structure's mesh: `pg_hedge` and `pg_bench` answer in the same shape.

@@ -13,7 +13,7 @@
 // rather than being written down again here.
 
 import { decode, takeResult } from './plant.js';
-import { COLOUR, HEDGE, RIM_DEPTH, SEED, SIDE, hash, keepToPlot, readOutline, readStructure } from './longwalk.js';
+import { COLOUR, HEDGE, RIM_DEPTH, SEED, SIDE, hash, hedgeToPlot, keepToPlot, pressNormal, readOutline, readStructure } from './longwalk.js';
 
 // Seeds for this area's dressing, so a room is the same shape on every visit.
 // Its own, not the walk's: two areas drawing from one seed would be two plots
@@ -116,7 +116,12 @@ export function makeRoomGround(room) {
     // sides away from the viewer and low on the two nearest, so the reader is
     // looking into the room over a low hedge rather than at the back of a tall
     // one.
+    //
+    // **On the plot** (`hedgeToPlot`), since 25 September 2026: the inner faces
+    // where the rule has them, the outer sides pressed onto the plot's edge,
+    // and each corner, which stood square past a rounded edge, fanned into it.
     const from = room.hedgeFrom + HEDGE.thickness / 2;
+    const hedgeOnPlot = hedgeToPlot(outline, [room.hedgeFrom, room.hedgeFrom]);
     const runs = [
       { turn: false, at: -from }, { turn: false, at: from },
       { turn: true, at: -from }, { turn: true, at: from },
@@ -128,7 +133,7 @@ export function makeRoomGround(room) {
       const height = near ? HEDGE.low : HEDGE.tall;
       const mesh = readStructure(
         takeResult(e, e.pg_hedge(past(room.hedgeFrom), height, HEDGE.thickness, ROOM.hedge[i], 0, 0)));
-      place(mesh, run.turn, run.turn ? [0, 0, run.at] : [run.at, 0, 0], COLOUR.yew, casts);
+      place(mesh, run.turn, run.turn ? [0, 0, run.at] : [run.at, 0, 0], COLOUR.yew, casts, hedgeOnPlot);
     });
 
     // **The bench**, in its own corner, turned to face the middle of the lawn.
@@ -148,8 +153,9 @@ export function makeRoomGround(room) {
 }
 
 /// A structure's triangles, moved into place, with the grain that keeps a
-/// single colour from reading as plastic.
-function place(mesh, turn, at, colour, vertex) {
+/// single colour from reading as plastic — and, given `onPlot`, kept to the
+/// plot, the grain read off where it was grown.
+function place(mesh, turn, at, colour, vertex, onPlot = null) {
   for (let t = 0; t < mesh.indices.length; t += 3) {
     for (const k of [0, 1, 2]) {
       const v = mesh.indices[t + k];
@@ -159,7 +165,9 @@ function place(mesh, turn, at, colour, vertex) {
       const nn = turn ? [nRaw[2], nRaw[1], nRaw[0]] : nRaw;
       const here = [p[0] + at[0], p[1] + at[1], p[2] + at[2]];
       const tone = 0.9 + 0.2 * hash(Math.round(here[1] * 37) * 131 + Math.round(here[2] * 29));
-      vertex(here, nn, colour.map((c) => c * tone));
+      const fit = onPlot && onPlot(here[0], here[2]);
+      if (fit) vertex([fit.at[0], here[1], fit.at[1]], pressNormal(nn, fit), colour.map((c) => c * tone));
+      else vertex(here, nn, colour.map((c) => c * tone));
     }
   }
 }
