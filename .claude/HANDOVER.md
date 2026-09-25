@@ -30,6 +30,8 @@ All ten areas open before the app is announced, on the new plant shapes.
   - **Every area's floor ends on the plot's edge** (`025bb02`): the Orchard's mown discs and meadow, the Crossing's grass and paths, and the Knot, Cold Frame, Glasshouse, Seedbed and Quiet Garden floors hung past it. **Hedges on the plot** (`81b8271`): the Long Walk's and Quiet Garden's outer faces drawn in to the edge; the rule's inner faces and every place unmoved.
   - **A lotus takes two places** in the Cold Frame and the Seedbed (`6cc8b90`, Marcus's choice after measuring: a young lotus's pads reached 0.31 m, the Cold Frame's spacing, and a quarter of its plants stood inside one). Stems inside pads 1 in 500 in each. Fresh 500: Cold Frame 18 plots (was 12), Seedbed 19 (was 15). New columns `slot_span` and `habit` on both tables. The Cold Frame's ambassador, a lotus, now holds the first two places of its rank. Old stored plantings read as one place until the replant. SeedCore 390/0 macOS, 384/0 wasm; 16 PHP checks; replant rehearsal passes across ten areas.
 
+- **Batches 4 and 5 of the commission are live** (25 September): de pt ro ca gl is fi hu eu et (`fe5f2c6`; Portuguese settled on *tu* throughout, Marcus) and the eleven Slavic languages (`13f214c`). Thirty-three of forty-one have the front page and the meanings. **Batch 6 (lt lv cy ga el tr sq mt) is next, and Marcus has said its deploy is included once the checks pass.** The commission README tables each language's points for a reader.
+
 ## Files
 - `docs/WEB-GARDENS.md` §"The Home Ground, chosen" → §"Decided" (items 6–7 are tonight's) → §"The Home Ground, built".
 - `tools/homeground/` — the simulation, now the decided design.
