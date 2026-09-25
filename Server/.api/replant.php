@@ -57,8 +57,14 @@ const FORMAT = 'peace-garden-replant/1';
 
 /**
  * Every area's table: its area, its rule, and the rule's slot fields against
- * the columns they are stored in. `extra` is the one trait beyond height and
- * family the rule is handed, where it is handed one.
+ * the columns they are stored in. `extra` is the traits beyond height and
+ * family the rule is handed, in the order it takes them, each stored in the
+ * column of its own name.
+ *
+ * **`span` is part of the place in the Seedbed and the Cold Frame**, since 25
+ * September 2026: how many places a planting holds, two for a lotus. It comes
+ * from the habit, which is why those two are handed it, and it is written and
+ * checked like any other part of the slot.
  *
  * `derived` is a part of the place that is a word rather than a number, and so
  * not in the plan's places: the Home Ground's crop, which the rule reads off
@@ -67,25 +73,26 @@ const FORMAT = 'peace-garden-replant/1';
  * against the habit.
  */
 const AREAS = [
-    'long_walk' => ['area' => 'travel', 'rule' => 'LongWalk', 'extra' => null,
+    'long_walk' => ['area' => 'travel', 'rule' => 'LongWalk', 'extra' => [],
                     'slot' => ['side' => 'side', 'tier' => 'tier', 'index' => 'slot_index']],
-    'quiet_garden' => ['area' => 'peace', 'rule' => 'QuietGarden', 'extra' => null,
+    'quiet_garden' => ['area' => 'peace', 'rule' => 'QuietGarden', 'extra' => [],
                        'slot' => ['corner' => 'corner', 'index' => 'slot_index']],
-    'crossing' => ['area' => 'meeting', 'rule' => 'Crossing', 'extra' => null,
+    'crossing' => ['area' => 'meeting', 'rule' => 'Crossing', 'extra' => [],
                    'slot' => ['quarter' => 'quarter', 'index' => 'slot_index']],
-    'orchard' => ['area' => 'kinship', 'rule' => 'Orchard', 'extra' => null,
+    'orchard' => ['area' => 'kinship', 'rule' => 'Orchard', 'extra' => [],
                   'slot' => ['guild' => 'guild', 'index' => 'slot_index']],
-    'knot_garden' => ['area' => 'pattern', 'rule' => 'KnotGarden', 'extra' => null,
+    'knot_garden' => ['area' => 'pattern', 'rule' => 'KnotGarden', 'extra' => [],
                       'slot' => ['compartment' => 'compartment', 'index' => 'slot_index']],
-    'seedbed' => ['area' => 'beginnings', 'rule' => 'Seedbed', 'extra' => 'kind',
-                  'slot' => ['drill' => 'drill', 'index' => 'slot_index']],
-    'cold_frame' => ['area' => 'waiting', 'rule' => 'ColdFrame', 'extra' => null,
-                     'slot' => ['frame' => 'frame', 'rank' => 'slot_rank', 'index' => 'slot_index']],
-    'glasshouse' => ['area' => 'light', 'rule' => 'Glasshouse', 'extra' => 'hue',
+    'seedbed' => ['area' => 'beginnings', 'rule' => 'Seedbed', 'extra' => ['kind', 'habit'],
+                  'slot' => ['drill' => 'drill', 'index' => 'slot_index', 'span' => 'slot_span']],
+    'cold_frame' => ['area' => 'waiting', 'rule' => 'ColdFrame', 'extra' => ['habit'],
+                     'slot' => ['frame' => 'frame', 'rank' => 'slot_rank', 'index' => 'slot_index',
+                                'span' => 'slot_span']],
+    'glasshouse' => ['area' => 'light', 'rule' => 'Glasshouse', 'extra' => ['hue'],
                      'slot' => ['bed' => 'bed', 'index' => 'slot_index', 'row' => 'slot_row']],
-    'coppice' => ['area' => 'renewal', 'rule' => 'Coppice', 'extra' => 'habit',
+    'coppice' => ['area' => 'renewal', 'rule' => 'Coppice', 'extra' => ['habit'],
                   'slot' => ['coupe' => 'coupe', 'place' => 'place', 'index' => 'slot_index']],
-    'home_ground' => ['area' => 'ground', 'rule' => 'HomeGround', 'extra' => 'habit',
+    'home_ground' => ['area' => 'ground', 'rule' => 'HomeGround', 'extra' => ['habit'],
                       'slot' => ['bed' => 'bed', 'index' => 'slot_index'], 'derived' => ['crop' => 'crop']],
 ];
 
@@ -106,6 +113,14 @@ function replant(array $argv): int
         $config = configuration();
         $store = WalkStore::open($config['dsn'], $config['user'] ?? null, $config['password'] ?? null);
         $db = $store->connection();
+        // **Every area's store opened first, which runs its migration.** The
+        // replant writes columns a migration adds — the Seedbed's and the Cold
+        // Frame's `slot_span` and `habit`, since 25 September — and an area
+        // nobody has visited since the deploy would not have them yet.
+        foreach (['room', 'cross', 'orchard', 'knot', 'seedbed', 'coldFrame', 'glasshouse', 'coppice',
+                  'homeGround'] as $area) {
+            $store->$area();
+        }
         $db->prepare('CREATE TABLE IF NOT EXISTS replant_log (
             plan CHAR(64) NOT NULL PRIMARY KEY,
             replanted_at BIGINT NOT NULL,
@@ -286,7 +301,7 @@ function write(PDO $db, array $plan): array
         foreach ($spec['derived'] ?? [] as $column) $sets[] = "$column = ?";
         $sets[] = 'height = ?';
         $sets[] = 'family = ?';
-        if ($spec['extra'] !== null) $sets[] = "{$spec['extra']} = ?";
+        foreach ($spec['extra'] as $column) $sets[] = "$column = ?";
         $sets[] = 'nudge_x = ?';
         $sets[] = 'nudge_z = ?';
         $update = $db->prepare("UPDATE $table SET " . implode(', ', $sets) . ' WHERE arrival = ? AND seed = ?');
@@ -299,15 +314,12 @@ function write(PDO $db, array $plan): array
             $seed = (string) $p['seed'];
             $height = (float) $p['height'];
             $family = (int) $p['family'];
-            $extra = match ($spec['extra']) {
+            $extra = array_map(fn (string $trait) => match ($trait) {
                 'kind' => (string) $p['kind'],
                 'hue' => $p['hue'] === null ? null : (float) $p['hue'],
                 'habit' => (string) $p['habit'],
-                default => null,
-            };
-            $placed = $spec['extra'] === null
-                ? $rule::plant($ways, $seed, $height, $family)
-                : $rule::plant($ways, $seed, $height, $family, $extra);
+            }, $spec['extra']);
+            $placed = $rule::plant($ways, $seed, $height, $family, ...$extra);
             foreach ($p['place'] as $key => $want) {
                 if (abs((float) $placed[$key] - (float) $want) > 1e-12) {
                     throw new RuntimeException(sprintf('%s arrival %d: the PHP rule puts it at %s %s where SeedCore puts it at %s. '
@@ -337,8 +349,9 @@ function write(PDO $db, array $plan): array
             // (`GlasshouseStore::exactly`), and a height is compared with a cut.
             $values[] = GlasshouseStore::exactly($height);
             $values[] = $family;
-            if ($spec['extra'] === 'hue') $values[] = GlasshouseStore::exactly($extra);
-            elseif ($spec['extra'] !== null) $values[] = $extra;
+            foreach ($spec['extra'] as $i => $trait) {
+                $values[] = $trait === 'hue' ? GlasshouseStore::exactly($extra[$i]) : $extra[$i];
+            }
             $values[] = GlasshouseStore::exactly((float) $placed['nudgeX']);
             $values[] = GlasshouseStore::exactly((float) $placed['nudgeZ']);
             $values[] = (int) $p['arrival'];
@@ -407,13 +420,14 @@ function verify(PDO $db, array $plan): array
             }
             if (!near((float) $row['height'], (float) $p['height'])) $wrong[] = "$at is {$row['height']} m tall";
             if ((int) $row['family'] !== (int) $p['family']) $wrong[] = "$at is family {$row['family']}";
-            if ($spec['extra'] === 'kind' && (string) $row['kind'] !== (string) $p['kind']) $wrong[] = "$at is kind {$row['kind']}";
-            if ($spec['extra'] === 'habit' && (string) $row['habit'] !== (string) $p['habit']) $wrong[] = "$at is habit {$row['habit']}";
+            $extra = $spec['extra'];
+            if (in_array('kind', $extra, true) && (string) $row['kind'] !== (string) $p['kind']) $wrong[] = "$at is kind {$row['kind']}";
+            if (in_array('habit', $extra, true) && (string) $row['habit'] !== (string) $p['habit']) $wrong[] = "$at is habit {$row['habit']}";
             if (isset($spec['derived']['crop']) && (string) $row['crop'] !== HomeGround::crop((string) $p['habit'])) {
                 $wrong[] = "$at is sown with {$row['crop']}";
             }
-            if ($spec['extra'] === 'hue' && ($row['hue'] === null) !== ($p['hue'] === null)) $wrong[] = "$at has hue {$row['hue']}";
-            if ($spec['extra'] === 'hue' && $row['hue'] !== null && $p['hue'] !== null && !near((float) $row['hue'], (float) $p['hue'])) {
+            if (in_array('hue', $extra, true) && ($row['hue'] === null) !== ($p['hue'] === null)) $wrong[] = "$at has hue {$row['hue']}";
+            if (in_array('hue', $extra, true) && $row['hue'] !== null && $p['hue'] !== null && !near((float) $row['hue'], (float) $p['hue'])) {
                 $wrong[] = "$at has hue {$row['hue']}";
             }
             if (!near((float) $row['nudge_x'], (float) $p['place']['nudgeX'])

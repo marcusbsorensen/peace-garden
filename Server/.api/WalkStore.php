@@ -340,11 +340,13 @@ final class WalkStore
      * staging's spectrum. Null means it was never sent — a plant offered before
      * 24 September — and the Glasshouse reads that as it reads a pale flower.
      *
-     * **`$habit` is the Coppice's and the Home Ground's**, and handed to those
-     * two alone: the plant's archetype, which says whether it stands on a stool,
-     * and which crop it is. Empty means it was never sent; the Coppice reads
-     * that as a star, in the light and never cut, and the Home Ground sows it as
-     * an umbel.
+     * **`$habit` is the Coppice's, the Home Ground's, the Seedbed's and the Cold
+     * Frame's**, and handed to those four alone: the plant's archetype, which
+     * says whether it stands on a stool, which crop it is, and — since 25
+     * September — whether it is a lotus, which takes two places in a drill or a
+     * rank. Empty means it was never sent; the Coppice reads that as a star, in
+     * the light and never cut, the Home Ground sows it as an umbel, and the
+     * other two give it one place.
      *
      * **An area missing from this `match` is not refused: it falls to the Long
      * Walk and says nothing.** So each area that opens is a case here the day it
@@ -360,8 +362,10 @@ final class WalkStore
             'meeting' => $this->cross()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
             'kinship' => $this->orchard()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
             'pattern' => $this->knot()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
-            'beginnings' => $this->seedbed()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
-            'waiting' => $this->coldFrame()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
+            'beginnings' => $this->seedbed()->plant($seed, $parentA, $parentB, $encounter, $height, $family,
+                                                    $kind, $hue, $habit),
+            'waiting' => $this->coldFrame()->plant($seed, $parentA, $parentB, $encounter, $height, $family,
+                                                   $kind, $hue, $habit),
             'light' => $this->glasshouse()->plant($seed, $parentA, $parentB, $encounter, $height, $family,
                                                   $kind, $hue),
             'renewal' => $this->coppice()->plant($seed, $parentA, $parentB, $encounter, $height, $family,

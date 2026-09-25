@@ -668,7 +668,9 @@ Five hundred arrivals: **16 plots, 91 drills claimed, 47 of them full, 65% of
 places held** — against the Knot Garden's 92%. The waste is inherent and it is
 the right waste: a kind that arrives once claims a drill and stands in it alone,
 which is what a part-sown seedbed looks like. A bed shows what has been sown,
-not what would look tidiest.
+not what would look tidiest. Those five hundred were any crossings; since 25
+September they are the area's own plants and a lotus takes two places, and the
+numbers are the ones under *A lotus takes two places*, below.
 
 ### The label
 
@@ -678,6 +680,57 @@ leaning back 22°, because **seen from the garden's fixed isometric eye a plate
 standing upright is a line two pixels wide**. Nothing is written on it: at this
 scale a word would be four pixels tall and would fight the plants. The drill's
 kind is named in the page's text, where it can be read and translated.
+
+### A lotus takes two places, 25 September 2026
+
+**Decided.** *A lotus takes two places, standing centred across two
+neighbouring places, in the Cold Frame and the Seedbed only.* Marcus, from four
+options simulated on 24 September. Since the shapes changed that day a lotus is
+a water lily, low and wide: grown here its pads reach a median **0.51 m** from
+the stem (0.69 m at the ninetieth percentile), and places along a drill are
+0.52 m apart, so **one plant in twelve stood with its stem inside a lotus's
+pads**. Simulated beforehand on five hundred of the area's own plants, the rule
+took that to none, at the cost of **fifteen plots becoming nineteen**. The
+other options — six places a drill at 0.70 m, or pads drawn smaller — were
+set aside. The Cold Frame's section says the same for that area.
+
+**As built.** `Seedbed.span(of:)`, `Planting.span`, `slot_span` and `habit` in
+`SeedbedStore`, `Seedbed::span` in the port.
+
+- **The habit is read, and only whether it is `lotus`.** It is picked from the
+  seed's bytes, exact on every host like the kind, so this is still the one
+  area no height can move and its vector file still needs no margin. A plant
+  whose phone never sent a habit takes one place.
+- **A lotus takes the next two places its drill would fill**, and stands at
+  their middle — half a place further from the label than its first, plus its
+  usual nudge, which leaves **0.78 m to the next stem along the drill**. The
+  second place is held, and a drill counts as sown to the end of it, so the
+  plant after a lotus stands after both.
+- **A drill's last single place is no place for a lotus.** It goes on as a
+  plant finding its drill full does — an unclaimed drill, then a new plot —
+  and the place waits for a plant of one place of that kind. So a common kind
+  can now claim a second drill in a plot whose first still has a place in it.
+- **Taking back keeps both places.** `slot_span` is part of the place and
+  stays with the placeholder; the habit goes with the rest of the plant, since
+  the rule reads it only of a plant arriving.
+- **A planting stored before this holds one place**, whatever it is: the
+  column is added with a default of 1 (an `ALTER` that may already have run, as
+  `Offers` adds its columns), and `Planting` decodes a missing span as 1. Until
+  the replant places everything again, an old lotus stands where it stood, in
+  one place, and the next arrival along its drill takes the place after it.
+  The replant writes `slot_span` and `habit` for every planting.
+- **The wire carries the span** beside the drill and the kind, for the page's
+  marks of how far each drill is sown: a drill of four lotuses is full. Where a
+  plant stands needs only its spot, which is already the middle of its places.
+- **`SeedbedTests` now draws the area's own plants**, as the Cold Frame's
+  always has, and so does `/dev/seedbed`: a third of them are lotuses, where
+  one crossing in twelve is, and a sample of any crossing would measure a rule
+  that hardly runs.
+
+At five hundred of the area's own plants, 173 of them lotuses: **19 plots, 112
+drills claimed, 66 of them full, 73% of places held**, and one stem inside a
+lotus's pads — two lotuses side by side in neighbouring drills, 0.69 m apart,
+where the rule does not reach and the drills stay 0.74 m apart.
 
 ## The Cold Frame, built
 
@@ -725,7 +778,8 @@ Knot Garden's and the Seedbed's are.
   when its own is full; no cut near the median does better). Between the two other areas whose places are claimed — the Knot
   Garden's 92% and the Seedbed's 65% — and nearer the Knot's, for its reason: a
   claim is made only when a plant needs one, and seven colour families are
-  far fewer than forty-six kinds.
+  far fewer than forty-six kinds. Since 25 September a lotus takes two places,
+  and the numbers are the ones under *A lotus takes two places*, below.
 - **The margin holds.** The nearest recorded height to the cut is 0.37 mm clear,
   thirty-seven times the tolerance two hosts are allowed to disagree by, and
   `ColdFrameVectorTests` runs `placementCannotTurn` over plot and frame.
@@ -810,6 +864,42 @@ through. Marcus.
 - **The keyboard opens a frame by `p`**, which opens the plant nearest the
   middle and its frame with it. No new key and no new strings: a frame with
   nothing in it has nothing to open it for.
+
+### A lotus takes two places, 25 September 2026
+
+**Decided.** *A lotus takes two places, standing centred across two
+neighbouring places, in the Cold Frame and the Seedbed only.* Marcus. Drawn
+young here, a lotus's pads reach a median **0.31 m** from the stem (0.40 m at
+the ninetieth percentile) — exactly the 0.31 m between places along a rank —
+and **a quarter of the Cold Frame's plants stood with their stem inside a
+lotus's pads**. Simulated beforehand, the rule took that to none, at the cost
+of **twelve plots becoming eighteen**. A narrower front rank, fewer places a
+rank, and pads drawn smaller were the options set aside.
+
+**As built.** `ColdFrame.span(of:)`, `Planting.span` and `slots`, `slot_span`
+and `habit` in `ColdFrameStore`, `ColdFrame::span` and `::next` in the port. The
+rest is the Seedbed's, above, point for point: the habit read only for
+`lotus`, the next two places the rank would fill, the middle of them plus the
+nudge, the second place held, a missing span read as one place, taking back
+keeping both.
+
+- **A rank's last single place is no place for a lotus**, which goes on as a
+  plant finding its rank full does: the other rank of the same frame if it
+  stands in order there, then a frame of its colour elsewhere, then an
+  unclaimed frame. The place waits for a plant of one.
+- **The ambassador is a lotus.** *Nyxisora crassicaulis* now holds the first two
+  places of the first frame's front rank and stands between them, 0.155 m east
+  of where it stood; it is derived, not stored, so it moved by itself.
+- **The wire is unchanged.** The page draws a plant at its spot, which is
+  already the middle of a lotus's places, and has no marks to count.
+
+At five hundred, 274 of them lotuses: **18 plots, 69 frames claimed, 57 of them
+full, 90% of every place held**, and one stem inside a lotus's pads — a lotus
+among the widest tenth and a fern in the next place of its rank, 0.44 m apart
+after their nudges, the case the simulation found too. **Fewer plants have the
+rank their height asks for: 448 of 501, from 472.** Three in four lotuses
+belong in the front rank, and a front rank that held six plants now holds
+three lotuses, so it fills sooner and more of what follows is sent behind.
 
 ## The Glasshouse, chosen
 

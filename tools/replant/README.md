@@ -28,6 +28,13 @@ SeedCore's, planting for planting.
   now (a planting from a phone that never sent a hue or a habit gets them), and
   its plot, slot and nudge are the rule's, replayed in arrival order after the
   area's ambassador, exactly as the store places an arrival.
+  In the Seedbed and the Cold Frame its place includes its **span**, how many
+  places it holds — two for a lotus since 25 September 2026 — written to
+  `slot_span`, with the habit beside it in `habit`. A copy taken before that
+  deploy has neither column; the planner reads every row in it as holding one
+  place, which is what it held, and `replant.php` opens every area's store
+  before it writes, so the columns are there even in an area nobody has
+  visited since the deploy.
 - **A planting taken back:** its row is **deleted**. It has no seed, so it
   cannot be regrown. It was kept, with its place and the traits the rule reads,
   only so that nothing placed after it would move (`TakenBack.php`); on the one
@@ -84,7 +91,11 @@ needed for the last two. On 24 September 2026 all three passed: 360 arrivals
 from main's SeedCore (40 an area, every seventh taken back, three offers, one
 accepted) replanted on SQLite and on MariaDB, and the newest copy on this Mac
 (`walk-2026-09-24T122727Z.sql.gz`, which holds no plantings yet and one
-declined offer) replanted in MariaDB.
+declined offer) replanted in MariaDB. On 25 September, with a lotus taking two
+places, all three passed again against `main` as live: 341 plantings on SQLite
+and on MariaDB, 20 of the Cold Frame's 34 and 12 of the Seedbed's 34 lotuses
+across two places, and `walk-2026-09-24T213448Z.sql.gz`, still without
+plantings, in MariaDB.
 
 ## The runbook for the live run
 

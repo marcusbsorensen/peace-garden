@@ -24,8 +24,8 @@ declare(strict_types=1);
  *   crossing      plot, quarter, slot, height            (family is not read)
  *   orchard       plot, guild, slot, height              (family is not read)
  *   knot_garden   plot, compartment, slot, height, family
- *   seedbed       plot, drill, slot, kind                (height, family not read)
- *   cold_frame    plot, frame, rank, slot, height, family
+ *   seedbed       plot, drill, slot, span, kind          (height, family, habit not read)
+ *   cold_frame    plot, frame, rank, slot, span, height, family   (habit is not read)
  *   glasshouse    plot, bed, slot, row                   (height, family, hue not read)
  *   coppice       plot, coupe, place, slot, height, habit (family is not read)
  *   home_ground   plot, bed, crop, slot                  (height, family, habit not read)

@@ -6,23 +6,40 @@ final class SeedbedTests: XCTestCase {
 
     // MARK: Arrivals
 
-    private static let sample: [(SeedID, PlantTraits)] = make(500)
+    /// **Five hundred plants whose names put them in the Seedbed**, as
+    /// `ColdFrameTests` draws the Cold Frame's, since 25 September 2026.
+    ///
+    /// Until then any crossing would do: the rule read only a kind and the
+    /// order of arrival, and neither cared which area a name belonged to. Now
+    /// it reads the habit too, and the area's own plants are more than a third
+    /// lotuses where the garden's are one in twelve, so a sample of any
+    /// crossing would measure a lotus rule that hardly ever runs.
+    private static let found = crossings(500)
+    private static let sample: [(SeedID, PlantTraits)] = found.map { ($0.seed, LongWalk.traits(of: $0.genome)) }
 
     static func arrivals(_ count: Int = 500) -> [(SeedID, PlantTraits)] {
-        count <= sample.count ? Array(sample.prefix(count)) : make(count)
+        count <= sample.count ? Array(sample.prefix(count)) : crossings(count).map { ($0.seed, LongWalk.traits(of: $0.genome)) }
     }
 
-    private static func make(_ count: Int) -> [(SeedID, PlantTraits)] {
-        (0..<count).map { n in
+    static func genomes(_ count: Int = 500) -> [Genome] {
+        count <= found.count ? found.prefix(count).map(\.genome) : crossings(count).map(\.genome)
+    }
+
+    private static func crossings(_ count: Int) -> [(seed: SeedID, genome: Genome)] {
+        var found: [(seed: SeedID, genome: Genome)] = []
+        var n = 0
+        while found.count < count {
             let a = SeedMint.mint(fromEntropy: Data("seedbed-arrival-\(n)-a".utf8))
             let b = SeedMint.mint(fromEntropy: Data("seedbed-arrival-\(n)-b".utf8))
+            n += 1
             let meeting = Pollination.encounterID(seedA: a, seedB: b,
                                                   nonceA: Data("a".utf8), nonceB: Data("b".utf8))
             let child = Pollination.cross(seedA: a, seedB: b, encounterID: meeting)
             let genome = Genome(seed: child,
                                 lineage: .crossed(parentA: a, parentB: b, encounterID: meeting))
-            return (child, LongWalk.traits(of: genome))
+            if Area(genome: genome) == .beginnings { found.append((child, genome)) }
         }
+        return found
     }
 
     static func filled(_ count: Int = 500) -> Seedbed.Ways {
@@ -40,9 +57,10 @@ final class SeedbedTests: XCTestCase {
         XCTAssertEqual(Set(Seedbed.slots).count, 48)
         let ways = Self.full
         for plot in 0..<ways.plots {
-            XCTAssertLessThanOrEqual(ways.plot(plot).count, 48, "plot \(plot) is overfull")
-            XCTAssertEqual(Set(ways.plot(plot).map(\.slot)).count, ways.plot(plot).count,
-                           "two plants in one place in plot \(plot)")
+            // The places held, not the plants: a lotus holds two.
+            let held = ways.plot(plot).flatMap(\.slots)
+            XCTAssertLessThanOrEqual(held.count, 48, "plot \(plot) is overfull")
+            XCTAssertEqual(Set(held).count, held.count, "two plants hold one place in plot \(plot)")
         }
     }
 
@@ -94,7 +112,7 @@ final class SeedbedTests: XCTestCase {
         let ways = Self.full
         for plot in 0..<ways.plots {
             for drill in 0..<Seedbed.drills {
-                let taken = ways.plot(plot).filter { $0.slot.drill == drill }.map(\.slot.index).sorted()
+                let taken = ways.plot(plot).filter { $0.slot.drill == drill }.flatMap(\.slots).map(\.index).sorted()
                 XCTAssertEqual(taken, Array(0..<taken.count),
                                "drill \(drill) of plot \(plot) is sown \(taken)")
             }
@@ -128,7 +146,8 @@ final class SeedbedTests: XCTestCase {
         for (seed, traits) in Self.arrivals() {
             asGrown.plant(seed: seed, traits: traits)
             flattened.plant(seed: seed,
-                            traits: PlantTraits(height: 0.42, family: traits.family, kind: traits.kind))
+                            traits: PlantTraits(height: 0.42, family: traits.family, kind: traits.kind,
+                                                habit: traits.habit))
         }
         XCTAssertEqual(asGrown.plantings.map(\.plot), flattened.plantings.map(\.plot))
         XCTAssertEqual(asGrown.plantings.map(\.slot), flattened.plantings.map(\.slot))
@@ -141,7 +160,8 @@ final class SeedbedTests: XCTestCase {
         for (seed, traits) in Self.arrivals() {
             asGrown.plant(seed: seed, traits: traits)
             oneColour.plant(seed: seed,
-                            traits: PlantTraits(height: traits.height, family: 3, kind: traits.kind))
+                            traits: PlantTraits(height: traits.height, family: 3, kind: traits.kind,
+                                                habit: traits.habit))
         }
         XCTAssertEqual(asGrown.plantings.map(\.slot), oneColour.plantings.map(\.slot))
     }
@@ -171,6 +191,106 @@ final class SeedbedTests: XCTestCase {
         }
     }
 
+    // MARK: A lotus takes two places
+
+    private static func lotus(_ kind: String) -> PlantTraits {
+        PlantTraits(height: 0.3, family: 1, kind: kind, habit: Archetype.lotus.rawValue)
+    }
+
+    /// Every lotus holds two neighbouring places in one drill and stands at
+    /// their middle; every other plant holds one and stands on it.
+    func testALotusStandsCentredAcrossTwoPlaces() {
+        let ways = Self.full
+        var lotuses = 0
+        for p in ways.plantings {
+            let isLotus = p.traits.habit == Archetype.lotus.rawValue
+            XCTAssertEqual(p.span, isLotus ? 2 : 1, "\(p.seed) holds \(p.span) places")
+            XCTAssertLessThanOrEqual(p.slot.index + p.span, Seedbed.places, "\(p.seed) runs off its drill")
+            let first = p.slots.first!.spot, last = p.slots.last!.spot
+            XCTAssertEqual(p.spot.z - p.nudge.z, (first.z + last.z) / 2, accuracy: 1e-12)
+            XCTAssertEqual(p.spot.x - p.nudge.x, first.x, accuracy: 1e-12)
+            if isLotus { lotuses += 1 }
+        }
+        XCTAssertGreaterThan(lotuses, 120, "a sample of this area's own plants is more than a third lotuses")
+    }
+
+    /// **The reason for the rule, held as a test**: of five hundred plants
+    /// drawn as the page draws them, one in twelve stood with its stem inside
+    /// a lotus's pads, and now one does.
+    ///
+    /// **The one is across a drill, where the rule does not reach.** Two
+    /// lotuses side by side in neighbouring drills, 0.69 m apart, and one of
+    /// them among the widest tenth. Places along a drill are what a lotus
+    /// takes two of; the drills stay 0.74 m apart, as Marcus chose. The
+    /// simulation he chose from found the same kind of case, a lotus over a
+    /// lotus in the next drill.
+    func testNoStemStandsInsideALotussPads() {
+        let genomes = [Ambassadors.of(.beginnings).genome] + Self.genomes()
+        let plants = zip(Self.full.plantings, genomes).map { (p, g) in (seed: p.seed, plot: p.plot, spot: p.spot, genome: g) }
+        let crowded = LotusPads.crowded(plants, growth: { Maturity.bloomPreview(for: $0) })
+        let stems = Set(crowded.map(\.stem)).count
+        print("SEEDBED: \(stems) stems inside a lotus's pads")
+        XCTAssertLessThanOrEqual(stems, plants.count / 100, crowded.prefix(5).map(\.description).joined(separator: "; "))
+    }
+
+    /// No stem stands between the two places a lotus holds, or nearer its own
+    /// than a place and a half, less the two nudges along the drill.
+    func testNoStemStandsInALotussPair() {
+        let ways = Self.full
+        for plot in 0..<ways.plots {
+            let here = ways.plot(plot)
+            for lotus in here where lotus.span == 2 {
+                for other in here where other.seed != lotus.seed && other.slot.drill == lotus.slot.drill {
+                    let gap = abs(other.spot.z - lotus.spot.z)
+                    let least = (1 + Double(other.span) / 2) * Seedbed.alongGap - 0.12
+                    XCTAssertGreaterThanOrEqual(gap, least - 1e-12, "\(other.seed) stands in \(lotus.seed)'s pair")
+                }
+            }
+        }
+    }
+
+    /// The second place a lotus holds is never given to a later plant.
+    func testALotussSecondPlaceIsNeverGivenAway() {
+        var ways = Seedbed.Ways()
+        let seed = { (n: Int) in SeedMint.mint(fromEntropy: Data("sb-lotus-\(n)".utf8)) }
+        let first = ways.plant(seed: seed(0), traits: Self.lotus("rubra"))
+        XCTAssertEqual(first.slots, [Seedbed.Slot(drill: 0, index: 0), Seedbed.Slot(drill: 0, index: 1)])
+        let second = ways.plant(seed: seed(1), traits: PlantTraits(height: 1.2, family: 4, kind: "rubra"))
+        XCTAssertEqual(second.slot, Seedbed.Slot(drill: 0, index: 2))
+        XCTAssertEqual(ways.sown(0, in: 0), 3)
+    }
+
+    /// **A drill's last single place is no place for a lotus**, which goes on
+    /// as a plant finding the drill full does — to an unclaimed drill — and
+    /// the place waits for a plant of one of that kind.
+    func testTheLastPlaceOfADrillWaitsForAPlantOfOne() {
+        var ways = Seedbed.Ways()
+        let seed = { (n: Int) in SeedMint.mint(fromEntropy: Data("sb-last-\(n)".utf8)) }
+        for n in 0..<7 { ways.plant(seed: seed(n), traits: PlantTraits(height: 1.0, family: 2, kind: "rubra")) }
+        XCTAssertEqual(ways.sown(0, in: 0), 7)
+        let lotus = ways.plant(seed: seed(7), traits: Self.lotus("rubra"))
+        XCTAssertEqual(lotus.slots, [Seedbed.Slot(drill: 1, index: 0), Seedbed.Slot(drill: 1, index: 1)])
+        XCTAssertEqual(ways.kind(of: 1, in: 0), "rubra", "the drill it claims is claimed for its kind")
+        let one = ways.plant(seed: seed(8), traits: PlantTraits(height: 1.0, family: 2, kind: "rubra"))
+        XCTAssertEqual(one.slot, Seedbed.Slot(drill: 0, index: 7))
+    }
+
+    /// **A planting stored before 25 September holds the one place it was
+    /// sown in**, lotus or not, until the replant sows it again.
+    func testAPlantingStoredBeforeTheRuleHoldsOnePlace() throws {
+        var old = Seedbed.Ways()
+        let seed = { (n: Int) in SeedMint.mint(fromEntropy: Data("sb-old-\(n)".utf8)) }
+        old.plant(seed: seed(0), traits: PlantTraits(height: 0.3, family: 1, kind: "rubra"))
+        var json = String(decoding: try JSONEncoder().encode(old), as: UTF8.self)
+        json = json.replacingOccurrences(of: #""span":1,"#, with: "")
+            .replacingOccurrences(of: #","span":1"#, with: "")
+        XCTAssertFalse(json.contains("span"))
+        var ways = try JSONDecoder().decode(Seedbed.Ways.self, from: Data(json.utf8))
+        XCTAssertEqual(ways.plantings[0].span, 1)
+        let lotus = ways.plant(seed: seed(1), traits: Self.lotus("rubra"))
+        XCTAssertEqual(lotus.slots.map(\.index), [1, 2])
+    }
+
     // MARK: The ambassador
 
     func testTheAmbassadorStandsAtTheHeadOfTheFirstDrill() {
@@ -184,6 +304,9 @@ final class SeedbedTests: XCTestCase {
 
     // MARK: The outcome
 
+    /// Five hundred of the area's own plants, 173 of them lotuses, take
+    /// nineteen plots with 73% of every place held. The simulation Marcus
+    /// chose the lotus rule from gave nineteen too, and fifteen without it.
     func testHowFiveHundredLandOnTheSeedbed() {
         let ways = Self.full
         var claimed = 0, full = 0
@@ -193,11 +316,13 @@ final class SeedbedTests: XCTestCase {
                 if ways.sown(drill, in: plot) == Seedbed.places { full += 1 }
             }
         }
-        let held = ways.plantings.count
+        let held = ways.plantings.map(\.span).reduce(0, +)
         let capacity = ways.plots * 48
-        print("SEEDBED: \(held) plants, \(ways.plots) plots, \(claimed) drills claimed, "
+        let lotuses = ways.plantings.filter { $0.span == 2 }.count
+        print("SEEDBED: \(ways.plantings.count) plants, \(lotuses) lotuses, \(ways.plots) plots, \(claimed) drills claimed, "
               + "\(full) full, \(held * 100 / capacity)% of places held")
-        XCTAssertEqual(held, 501)
+        XCTAssertEqual(ways.plantings.count, 501)
+        XCTAssertLessThanOrEqual(ways.plots, 20)
         XCTAssertGreaterThan(full, 30, "hardly a drill filled")
         XCTAssertGreaterThan(held * 100 / capacity, 60, "the bed is too empty to read")
     }

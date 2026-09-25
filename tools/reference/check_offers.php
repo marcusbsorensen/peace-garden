@@ -682,6 +682,76 @@ check('and not its height, family or habit', $lifted !== null && (float) $lifted
 check('and nothing else of it', bedded($walk, $fifteen['seed']) === null
       && stillHeld($db, $fifteen + ['mine' => $mine15, 'theirs' => $theirs15]) === []);
 
+// MARK: The lotus, and the two places it takes
+
+// **Since 25 September a lotus takes two places in the Cold Frame and the
+// Seedbed**, read off the habit the offer carries. Dropped on the way, a lotus
+// would be given one place and the next plant would stand in its pads — a place
+// the rule also gives, so the span in the row and the plant after it are what
+// tell them apart.
+function held(PDO $db, string $table, string $seed): ?array
+{
+    $query = $db->prepare("SELECT slot_index, slot_span, habit, hidden FROM $table WHERE seed = ?");
+    $query->execute([$seed]);
+    $row = $query->fetch();
+    return $row === false ? null : $row;
+}
+
+// The Cold Frame's first frame holds its ambassador, a lotus of colour 4, in
+// the first two places of its front rank. A young lotus of that colour joins it
+// in the next two, and a plant of one after both.
+$seventeen = crossing(17);
+$mine17 = token('seventeen/mine');
+$theirs17 = token('seventeen/theirs');
+$offers->offer($seventeen['seed'], $theirs17, $mine17, $seventeen['a'], $seventeen['b'], $seventeen['encounter'],
+               0.30, 4, $now, 'waiting', '', null, 'lotus');
+$offers->answer($seventeen['seed'], $theirs17, true, $now);
+$pads = held($db, 'cold_frame', $seventeen['seed']);
+check('a lotus in the Cold Frame holds two places, after the ambassador\'s two', $pads !== null
+      && (int) $pads['slot_index'] === 2 && (int) $pads['slot_span'] === 2 && $pads['habit'] === 'lotus');
+$eighteen = crossing(18);
+$mine18 = token('eighteen/mine');
+$theirs18 = token('eighteen/theirs');
+$offers->offer($eighteen['seed'], $theirs18, $mine18, $eighteen['a'], $eighteen['b'], $eighteen['encounter'],
+               0.30, 4, $now, 'waiting');
+$offers->answer($eighteen['seed'], $theirs18, true, $now);
+$after = held($db, 'cold_frame', $eighteen['seed']);
+check('and the plant after it stands after both', $after !== null
+      && (int) $after['slot_index'] === 4 && (int) $after['slot_span'] === 1);
+$lotusAt = $walk->coldFrame()->plot(0)[1]['spot'] ?? [0.0, 0.0];
+[$firstX] = ColdFrame::spot(ColdFrame::BACK_WEST, ColdFrame::FRONT, 2);
+[$secondX] = ColdFrame::spot(ColdFrame::BACK_WEST, ColdFrame::FRONT, 3);
+check('the page is sent the middle of its two places', abs($lotusAt[0] - ($firstX + $secondX) / 2) <= 0.03 + 1e-9);
+
+// Taken back, it keeps both places: the next plant of one stands after them,
+// not in the gap it leaves.
+$seventeenArrival = arrivalOf($db, 'cold_frame', $seventeen['seed']);
+$offers->withdraw($seventeen['seed'], $mine17, $now + 60);
+$lifted = arrival($db, 'cold_frame', (int) $seventeenArrival);
+check('a lotus taken back keeps both its places and not its habit', $lifted !== null
+      && (int) $lifted['hidden'] === 1 && (int) $lifted['slot_index'] === 2 && (int) $lifted['slot_span'] === 2
+      && $lifted['habit'] === '');
+$nineteen = crossing(19);
+$mine19 = token('nineteen/mine');
+$theirs19 = token('nineteen/theirs');
+$offers->offer($nineteen['seed'], $theirs19, $mine19, $nineteen['a'], $nineteen['b'], $nineteen['encounter'],
+               0.30, 4, $now, 'waiting');
+$offers->answer($nineteen['seed'], $theirs19, true, $now);
+$later = held($db, 'cold_frame', $nineteen['seed']);
+check('and nothing is given its places', $later !== null && (int) $later['slot_index'] === 5);
+
+// The Seedbed's drill of *contorta* holds two plants of one place. A lotus of
+// that kind takes the next two, whatever its height and colour.
+$lotusSeed = hash('sha256', 'check_offers: a lotus in the seedbed');
+[$sownLotus] = $walk->plantInto('beginnings', $lotusSeed, hash('sha256', 'la'), hash('sha256', 'lb'),
+                                hash('sha256', 'le'), 0.3, 1, 'contorta', null, 'lotus');
+$sown = held($db, 'seedbed', $lotusSeed);
+check('a lotus in the Seedbed holds two places in its kind\'s drill', $sown !== null
+      && (int) $sown['slot_index'] === 2 && (int) $sown['slot_span'] === 2 && $sown['habit'] === 'lotus');
+[$x0, $z2] = Seedbed::spot(1, 2);
+[$x0, $z3] = Seedbed::spot(1, 3);
+check('and stands between them', abs($sownLotus['spot'][1] - ($z2 + $z3) / 2) <= 0.06 + 1e-9);
+
 // A published plant's seed, parents and meeting are public. Offering it again
 // with two invented tokens must not hand back the real ones, or the stranger
 // could withdraw it with them.

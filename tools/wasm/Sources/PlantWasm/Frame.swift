@@ -17,10 +17,11 @@ import SeedCore
 //   pg_frame_arrive()        plants the next arrival; returns its plot
 //   pg_frame_count(plot)     plantings in a plot so far
 //   pg_frame_grow(plot, i)   grows the i-th planting of a plot, **young**, into
-//                            the result: spot x, spot z (f32 each), then a
-//                            plant buffer
+//                            the result: spot x, spot z (f32 each) — a lotus's
+//                            the middle of its two places — then a plant buffer
 //   pg_frame_plots()         plots opened so far
-//   pg_frame_describe(p)     a plot's plantings as JSON: place and traits
+//   pg_frame_describe(p)     a plot's plantings as JSON: place, span (two for
+//                            a lotus, since 25 September 2026) and traits
 //   pg_frame_box(seed)       a frame's box of boards,
 //   pg_frame_lights(seed)    its lights' bars and the blocks they are propped on,
 //   pg_frame_glass(seed)     and the glass in them — each in the shape `pg_hedge`

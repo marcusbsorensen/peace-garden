@@ -106,7 +106,7 @@
     if (fromService) return;
     const rows = describeSeedbed(e, plot);
     const drills = readDrills(place,
-      rows.map((r) => ({ drill: r.slot.drill, kind: r.traits.kind })));
+      rows.map((r) => ({ drill: r.slot.drill, kind: r.traits.kind, span: r.span })));
     for (const drill of drills) {
       const line = document.createElement('li');
       line.textContent = drill.kind

@@ -97,7 +97,8 @@
   // how many stand in each of its ranks, front and back. **The thing to watch
   // is that a frame holds one colour**, and after that that the two ranks are
   // about even — a frame whose back rank is always full and front always bare
-  // is a cut in the wrong place.
+  // is a cut in the wrong place. Since a lotus takes two places, a rank says
+  // how many of its six places are held and how many lotuses hold them.
   const FRAMES = ['back west', 'back east', 'front west', 'front east'];
   function say() {
     held.replaceChildren();
@@ -106,8 +107,14 @@
     FRAMES.forEach((name, f) => {
       const here = rows.filter((r) => r.slot.frame === f);
       const line = document.createElement('li');
+      const rank = (r) => {
+        const on = here.filter((p) => p.slot.rank === r);
+        const lotuses = on.filter((p) => p.span === 2).length;
+        const held = on.reduce((n, p) => n + (p.span ?? 1), 0);
+        return `${held} of ${place.places} ${r ? 'back' : 'front'}${lotuses ? ` (${lotuses} lotus${lotuses === 1 ? '' : 'es'})` : ''}`;
+      };
       line.textContent = here.length
-        ? `${name}: family ${here[0].traits.family} — ${here.filter((r) => r.slot.rank === 0).length} front, ${here.filter((r) => r.slot.rank === 1).length} back`
+        ? `${name}: family ${here[0].traits.family} — ${rank(0)}, ${rank(1)}`
         : `${name}: empty`;
       held.append(line);
     });

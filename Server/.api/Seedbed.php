@@ -35,8 +35,16 @@ declare(strict_types=1);
  * because they are stored with a planting and drawn, not because anything here
  * asks them a question.
  *
- * A planting here is an array: seed (hex), plot, drill (0-5), index (0-7),
- * height, family, kind, nudgeX, nudgeZ.
+ * **A lotus takes two places**, since 25 September 2026: the next two its
+ * drill would fill, standing centred across them (`span`). The habit is read
+ * for it — a word, exact on every host like the kind, so the placement still
+ * needs no tolerance — and only the arriving plant's; a plant already standing
+ * says how many places it holds by its span, which is stored with it.
+ *
+ * A planting here is an array: seed (hex), plot, drill (0-5), index (0-7, the
+ * one nearer the label of a lotus's two), span (1, or 2 for a lotus), height,
+ * family, kind, habit, nudgeX, nudgeZ. A planting with no span holds one place,
+ * which is what every planting made before the lotus rule holds.
  */
 final class Seedbed
 {
@@ -66,18 +74,34 @@ final class Seedbed
     public const LABEL_AT = -2.15;
 
     /**
-     * Where a place is, in metres from the middle of its plot: [x, z].
+     * Where a plant holding `span` places from `index` stands, in metres from
+     * the middle of its plot: [x, z]. The middle of its places, so a lotus
+     * stands half a place further from the label than its first.
      *
      * `index` 0 is the place nearest the label, and a drill fills from there
      * outward, so reading a drill from its label is reading it in the order it
-     * was sown.
+     * was sown. The place is counted in halves, as the Swift counts it, so a
+     * plant of one place stands where it always did, to the last bit.
      */
-    public static function spot(int $drill, int $index): array
+    public static function spot(int $drill, int $index, int $span = 1): array
     {
+        $at = $index + ($span - 1) / 2;
         return [
             ($drill - (self::DRILLS - 1) / 2) * self::DRILL_GAP,
-            ($index - (self::PLACES - 1) / 2) * self::ALONG_GAP,
+            ($at - (self::PLACES - 1) / 2) * self::ALONG_GAP,
         ];
+    }
+
+    /**
+     * How many places along a drill a plant takes: **two for a lotus, one for
+     * everything else**, Marcus's choice on 25 September 2026. A lotus's pads
+     * reach as far from its stem as the next place along a drill, and further;
+     * standing across two it has 0.78 m to the next stem. The empty habit, a
+     * plant whose phone never sent one, takes one place.
+     */
+    public static function span(string $habit): int
+    {
+        return $habit === 'lotus' ? 2 : 1;
     }
 
     /** Every place in one plot, drill by drill and along each. */
@@ -120,16 +144,18 @@ final class Seedbed
     }
 
     /**
-     * How many plants are in a drill. A drill fills from the label, so this is
-     * also the index of its next place.
+     * How many places in a drill are held. A drill fills from the label without
+     * a gap, so this is also the index of its next place — and, in a drill with
+     * no lotus in it, how many plants stand there, which is what it counted
+     * until a lotus took two.
      */
     public static function sown(array $here, int $drill): int
     {
-        $count = 0;
+        $next = 0;
         foreach ($here as $p) {
-            if ((int) $p['drill'] === $drill) $count++;
+            if ((int) $p['drill'] === $drill) $next = max($next, (int) $p['index'] + (int) ($p['span'] ?? 1));
         }
-        return $count;
+        return $next;
     }
 
     /**
@@ -140,10 +166,15 @@ final class Seedbed
      * opened at the head of its first drill. **A drill is claimed, never
      * reserved** — a kind that has not arrived holds nothing — which is what
      * keeps a rare kind from pinning a drill open in every plot.
+     *
+     * **A lotus needs two places side by side.** A drill of its kind with one
+     * place left has no room for it, and it goes on as a plant finding the drill
+     * full does; the place stays for a plant of one place of that kind.
      */
-    public static function place(array $ways, string $kind): array
+    public static function place(array $ways, string $kind, string $habit = ''): array
     {
         $plots = max(self::plots($ways), 1);
+        $span = self::span($habit);
         $byPlot = [];
         for ($plot = 0; $plot < $plots; $plot++) {
             $byPlot[$plot] = array_values(array_filter($ways, fn($p) => (int) $p['plot'] === $plot));
@@ -154,7 +185,7 @@ final class Seedbed
             for ($drill = 0; $drill < self::DRILLS; $drill++) {
                 if (self::kindOf($byPlot[$plot], $drill) !== $kind) continue;
                 $next = self::sown($byPlot[$plot], $drill);
-                if ($next < self::PLACES) return [$plot, ['drill' => $drill, 'index' => $next]];
+                if ($next + $span <= self::PLACES) return [$plot, ['drill' => $drill, 'index' => $next]];
             }
         }
 
@@ -179,15 +210,15 @@ final class Seedbed
      * along its length but not being uneven across it.
      */
     public static function plant(array $ways, string $seedHex, float $height,
-                                 int $family, string $kind): array
+                                 int $family, string $kind, string $habit = ''): array
     {
-        [$plot, $slot] = self::place($ways, $kind);
+        [$plot, $slot] = self::place($ways, $kind, $habit);
         $bytes = array_values(unpack('C*', hex2bin($seedHex)));
         $jitter = fn(int $i, float $reach) => isset($bytes[$i]) ? ($bytes[$i] / 255 - 0.5) * 2 * $reach : 0.0;
         return [
             'seed' => $seedHex, 'plot' => $plot,
-            'drill' => $slot['drill'], 'index' => $slot['index'],
-            'height' => $height, 'family' => $family, 'kind' => $kind,
+            'drill' => $slot['drill'], 'index' => $slot['index'], 'span' => self::span($habit),
+            'height' => $height, 'family' => $family, 'kind' => $kind, 'habit' => $habit,
             'nudgeX' => $jitter(26, 0.035), 'nudgeZ' => $jitter(27, 0.06),
         ];
     }

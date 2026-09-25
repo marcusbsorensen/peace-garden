@@ -30,6 +30,16 @@ require_once __DIR__ . '/Seedbed.php';
  * would be the same thing written twice, and the copy is the one that can be
  * wrong after a restore.
  *
+ * **`slot_span` is how many places a planting holds**, since 25 September 2026,
+ * when a lotus began to take two (`Seedbed::span`). It is part of the place: the
+ * next plant along a drill is sown after both of a lotus's places, and the spot
+ * is their middle. Stored rather than read again off the habit, because a
+ * planting made before the rule holds one place whatever it is, and the column's
+ * default of 1 says so for every row that was there when it was added.
+ * **`habit` is stored beside it** because a replant regrows every plant and the
+ * rehearsal sows them again through this store, which needs the habit to give
+ * the same span; the rule itself reads only the arriving plant's.
+ *
  * Everything else is `WalkStore`'s, deliberately: the same append-only insert,
  * the same lock row, the same taking back that keeps a place and erases the
  * plant, and the same ambassador handed to the rule ahead of the stored
@@ -40,13 +50,14 @@ final class SeedbedStore
     /**
      * What a planting taken back has written over, beyond the seed, the parents,
      * the meeting and the nudge that every area writes over (`TakenBack.php`).
-     * The height and the family, which the Seedbed's rule never reads. The kind
-     * stays: the first plant sown in a drill is what claimed it, and a drill
-     * whose claim had been blanked would be handed to the next kind to arrive.
-     * The slot stays too, though the rule counts a drill rather than reading
-     * it, because it is where the gap is.
+     * The height and the family, which the Seedbed's rule never reads, and the
+     * habit, which it reads only of a plant arriving. The kind stays: the first
+     * plant sown in a drill is what claimed it, and a drill whose claim had been
+     * blanked would be handed to the next kind to arrive. The slot and the span
+     * stay too, because they are where the gap is and how long it is: a lotus
+     * taken back keeps both its places.
      */
-    private const TAKEN_BACK = ['height' => 0.0, 'family' => 0];
+    private const TAKEN_BACK = ['height' => 0.0, 'family' => 0, 'habit' => ''];
 
     public function __construct(private PDO $db)
     {
@@ -71,9 +82,11 @@ final class SeedbedStore
             plot INTEGER NOT NULL,
             drill INTEGER NOT NULL,
             slot_index INTEGER NOT NULL,
+            slot_span INTEGER NOT NULL DEFAULT 1,
             height DOUBLE PRECISION NOT NULL,
             family INTEGER NOT NULL,
             kind VARCHAR(64) NOT NULL DEFAULT '',
+            habit VARCHAR(16) NOT NULL DEFAULT '',
             nudge_x DOUBLE PRECISION NOT NULL,
             nudge_z DOUBLE PRECISION NOT NULL,
             hidden INTEGER NOT NULL DEFAULT 0
@@ -85,6 +98,16 @@ final class SeedbedStore
         // before then still holds the seed, the parents and the meeting, and
         // this erases it. Every request, and nothing to do once it has run.
         $this->run('CREATE INDEX IF NOT EXISTS seedbed_hidden ON seedbed (hidden)');
+        // Added on 25 September, when a lotus began to take two places: ALTERs
+        // that may already have run, as `ColdFrameStore`'s are. Every row
+        // already there holds one place, which is what the old rule gave it.
+        foreach (["slot_span INTEGER NOT NULL DEFAULT 1", "habit VARCHAR(16) NOT NULL DEFAULT ''"] as $column) {
+            try {
+                $this->run("ALTER TABLE seedbed ADD COLUMN $column");
+            } catch (Throwable) {
+                // Already there.
+            }
+        }
         TakenBack::sweep($this->db, 'seedbed', self::TAKEN_BACK);
     }
 
@@ -92,9 +115,15 @@ final class SeedbedStore
      * Places one arrival by the rule and keeps it. Returns [the planting,
      * whether it is new]: a seed that has arrived before gets the place it
      * already has, because a plant has one place.
+     *
+     * `$hue` is the Glasshouse's and nothing here reads it; it is in the
+     * signature so `WalkStore::plantInto` can call every area's `plant` alike.
+     * `$habit` says whether the plant is a lotus, which takes two places; the
+     * empty string, a habit never sent, takes one.
      */
     public function plant(string $seed, string $parentA, string $parentB, string $encounter,
-                          float $height, int $family, string $kind = ''): array
+                          float $height, int $family, string $kind = '', ?float $hue = null,
+                          string $habit = ''): array
     {
         if (Ambassadors::isOne($seed)) {
             throw new LogicException('an ambassador cannot be planted: it is already standing');
@@ -120,16 +149,17 @@ final class SeedbedStore
                 [Ambassadors::planting('beginnings')],
                 array_map([self::class, 'forRule'], $all->fetchAll())
             );
-            $p = Seedbed::plant($ways, $seed, $height, $family, $kind);
+            $p = Seedbed::plant($ways, $seed, $height, $family, $kind, $habit);
             $insert = $this->db->prepare('INSERT INTO seedbed
-                (seed, parent_a, parent_b, encounter, plot, drill, slot_index, height, family, kind, nudge_x, nudge_z)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+                (seed, parent_a, parent_b, encounter, plot, drill, slot_index, slot_span, height, family, kind, habit,
+                 nudge_x, nudge_z)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
             $insert->execute([$seed, $parentA, $parentB, $encounter, $p['plot'], $p['drill'],
-                              $p['index'], $height, $family, $kind, $p['nudgeX'], $p['nudgeZ']]);
+                              $p['index'], $p['span'], $height, $family, $kind, $habit, $p['nudgeX'], $p['nudgeZ']]);
             $this->db->commit();
             return [self::planting(['seed' => $seed, 'parent_a' => $parentA, 'parent_b' => $parentB,
                 'encounter' => $encounter, 'plot' => $p['plot'], 'drill' => $p['drill'],
-                'slot_index' => $p['index'], 'kind' => $kind,
+                'slot_index' => $p['index'], 'slot_span' => $p['span'], 'kind' => $kind,
                 'nudge_x' => $p['nudgeX'], 'nudge_z' => $p['nudgeZ']]), true];
         } catch (Throwable $error) {
             if ($this->db->inTransaction()) $this->db->rollBack();
@@ -151,7 +181,7 @@ final class SeedbedStore
         $plantings = array_map([self::class, 'planting'], $query->fetchAll());
         if ($plot !== 0) return $plantings;
         $standing = Ambassadors::planting('beginnings');
-        [$x, $z] = Seedbed::spot($standing['drill'], $standing['index']);
+        [$x, $z] = Seedbed::spot($standing['drill'], $standing['index'], $standing['span']);
         array_unshift($plantings, [
             'seed' => $standing['seed'],
             'parents' => [],
@@ -159,6 +189,7 @@ final class SeedbedStore
             'plot' => 0,
             'drill' => $standing['drill'],
             'kind' => $standing['kind'],
+            'span' => $standing['span'],
             'spot' => [$x + $standing['nudgeX'], $z + $standing['nudgeZ']],
         ]);
         return $plantings;
@@ -189,10 +220,14 @@ final class SeedbedStore
      * the drill it stands in. The kind is on the wire because the page cannot
      * recover it: an epithet is read off a grown plant, and the page grows a
      * plant to draw it, not to name it. Nothing on the label says it either.
+     * **The span is on it too**, since 25 September, for the page's marks of
+     * how far each drill is sown: a lotus holds two places, and a drill of
+     * four lotuses is full. Where the plant stands needs nothing more than the
+     * spot, which is the middle of its places.
      */
     private static function planting(array $row): array
     {
-        [$x, $z] = Seedbed::spot((int) $row['drill'], (int) $row['slot_index']);
+        [$x, $z] = Seedbed::spot((int) $row['drill'], (int) $row['slot_index'], (int) ($row['slot_span'] ?? 1));
         return [
             'seed' => $row['seed'],
             'parents' => [$row['parent_a'], $row['parent_b']],
@@ -200,6 +235,7 @@ final class SeedbedStore
             'plot' => (int) $row['plot'],
             'drill' => (int) $row['drill'],
             'kind' => (string) $row['kind'],
+            'span' => (int) ($row['slot_span'] ?? 1),
             'spot' => [$x + (float) $row['nudge_x'], $z + (float) $row['nudge_z']],
         ];
     }
@@ -209,8 +245,9 @@ final class SeedbedStore
         return [
             'seed' => $row['seed'], 'plot' => (int) $row['plot'],
             'drill' => (int) $row['drill'], 'index' => (int) $row['slot_index'],
+            'span' => (int) $row['slot_span'],
             'height' => (float) $row['height'], 'family' => (int) $row['family'],
-            'kind' => (string) $row['kind'],
+            'kind' => (string) $row['kind'], 'habit' => (string) $row['habit'],
         ];
     }
 }

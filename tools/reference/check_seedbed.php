@@ -24,6 +24,9 @@ declare(strict_types=1);
  * nudge is two bytes of the seed divided by 255 — all of it exact on every host,
  * so anything that differs is a port that differs.
  *
+ * **The habit and the span since 25 September 2026**, when a lotus began to take
+ * two places: a word and a count, compared exactly like the rest.
+ *
  *   php tools/reference/check_seedbed.php
  */
 
@@ -48,21 +51,23 @@ if ($standing === null) {
 $ways = [$standing];
 
 foreach ($vectors as $n => $want) {
-    $got = Seedbed::plant($ways, $want['seed'], $want['height'], $want['family'], $want['kind']);
+    $got = Seedbed::plant($ways, $want['seed'], $want['height'], $want['family'], $want['kind'],
+                          $want['habit']);
     $ways[] = $got;
     $checks++;
     $same = $got['plot'] === $want['plot']
         && $got['drill'] === $want['drill']
         && $got['index'] === $want['index']
+        && $got['span'] === $want['span']
         && $got['nudgeX'] === $want['nudge'][0]
         && $got['nudgeZ'] === $want['nudge'][1];
     if (!$same) {
         $failed[] = sprintf(
-            'arrival %d (%s, %s): SeedCore put it in plot %d drill %d place %d, '
-                . 'the service in plot %d drill %d place %d',
-            $n, substr($want['seed'], 0, 12), $want['kind'],
-            $want['plot'], $want['drill'], $want['index'],
-            $got['plot'], $got['drill'], $got['index']
+            'arrival %d (%s, %s, %s): SeedCore put it in plot %d drill %d place %d holding %d, '
+                . 'the service in plot %d drill %d place %d holding %d',
+            $n, substr($want['seed'], 0, 12), $want['kind'], $want['habit'],
+            $want['plot'], $want['drill'], $want['index'], $want['span'],
+            $got['plot'], $got['drill'], $got['index'], $got['span']
         );
         if (count($failed) >= 5) break;
     }
@@ -71,13 +76,14 @@ foreach ($vectors as $n => $want) {
 $plots = Seedbed::plots($ways);
 $claimed = 0;
 $full = 0;
+$lotuses = 0;
 
 // And the shape of the place the two of them agree on, which is what a visitor
 // sees: a kind to a drill, every drill sown from its label with no gap, no older
 // plot passed over, and every plant inside the bed.
 foreach ($ways as $p) {
     $checks++;
-    [$x, $z] = Seedbed::spot($p['drill'], $p['index']);
+    [$x, $z] = Seedbed::spot($p['drill'], $p['index'], $p['span']);
     $atX = $x + $p['nudgeX'];
     $atZ = $z + $p['nudgeZ'];
     // Half the plot, less the half-metre path a gardener kneels in. A seedbed
@@ -87,6 +93,12 @@ foreach ($ways as $p) {
         $failed[] = sprintf('%s stands at %.2f, %.2f — outside the bed',
             substr($p['seed'], 0, 12), $atX, $atZ);
     }
+    // A lotus holds two places and nothing else more than one.
+    $checks++;
+    if ($p['span'] !== Seedbed::span($p['habit'])) {
+        $failed[] = sprintf('%s is a %s and holds %d places', substr($p['seed'], 0, 12), $p['habit'], $p['span']);
+    }
+    if ($p['span'] === 2) $lotuses++;
 }
 
 for ($plot = 0; $plot < $plots; $plot++) {
@@ -95,7 +107,7 @@ for ($plot = 0; $plot < $plots; $plot++) {
         $block = array_values(array_filter($here, fn($p) => $p['drill'] === $drill));
         if ($block === []) continue;
         $claimed++;
-        if (count($block) === Seedbed::PLACES) $full++;
+        if (Seedbed::sown($block, $drill) === Seedbed::PLACES) $full++;
 
         // One kind to a drill, which is the whole of what a seedbed is for.
         $checks++;
@@ -107,9 +119,13 @@ for ($plot = 0; $plot < $plots; $plot++) {
         // And it fills from the label outward: 0, 1, 2 and so on with nothing
         // missing. A gap would be a place nobody can explain — the drill was
         // sown in the order it was sown, and reading it from the label is
-        // reading that order.
+        // reading that order. A lotus's two places are both in it, and a place
+        // held twice would be a lotus's second given away.
         $checks++;
-        $taken = array_map(fn($p) => (int) $p['index'], $block);
+        $taken = [];
+        foreach ($block as $p) {
+            for ($i = 0; $i < $p['span']; $i++) $taken[] = (int) $p['index'] + $i;
+        }
         sort($taken);
         if ($taken !== range(0, count($taken) - 1)) {
             $failed[] = sprintf('plot %d drill %d is sown %s', $plot, $drill, implode(' ', $taken));
@@ -142,8 +158,8 @@ if ($failed !== []) {
 }
 
 printf("The PHP sows all %d arrivals where the Swift does, across %d plots, "
-     . "%d drills claimed and %d of them full: %d checks.\n",
-    count($vectors), $plots, $claimed, $full, $checks);
+     . "%d drills claimed and %d of them full, %d lotuses across two places: %d checks.\n",
+    count($vectors), $plots, $claimed, $full, $lotuses, $checks);
 
 // **Taking back keeps the place and erases the plant**, and moves nothing that
 // arrives after it. `taking_back.php` says how that is checked.
