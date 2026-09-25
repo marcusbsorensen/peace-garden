@@ -958,6 +958,44 @@ export function readOutline(e, width, length, seed) {
   return Array.from({ length: count }, (_, i) => [xz[i * 2], xz[i * 2 + 1]]);
 }
 
+// How far a line from `from` heading `(dx, dz)` runs before it leaves the
+// plot: the nearest crossing of the outline.
+export function rimReach(outline, from, dx, dz) {
+  let best = Infinity;
+  for (let i = 0, n = outline.length; i < n; i++) {
+    const a = outline[i], b = outline[(i + 1) % n];
+    const ex = b[0] - a[0], ez = b[1] - a[1];
+    const det = dx * ez - dz * ex;
+    if (Math.abs(det) < 1e-9) continue;
+    const wx = a[0] - from[0], wz = a[1] - from[1];
+    const along = (wx * ez - wz * ex) / det;
+    const on = (wx * dz - wz * dx) / det;
+    if (along > 0 && on >= 0 && on <= 1) best = Math.min(best, along);
+  }
+  return best;
+}
+
+// **Keeping a dressing on the slab.** Gravel, tilth, tiles, grass: each area
+// lays its floor as a sheet, and a sheet laid square over a wandering outline
+// either overhangs it into the sky or stops short of it with a ruled edge. This
+// answers a point on the plot as it is and a point past the edge pulled
+// straight in, towards the middle, onto the edge — so a sheet laid a little
+// wider than the plot and passed through it ends exactly on the plot's own
+// wandering edge. Straight in rather than to the nearest point on the edge,
+// because the outline goes once round the middle and so neighbours stay in
+// order. 4 mm inside, which is what a chord between two pulled points can bow
+// out where the edge dents in. The Coppice's `ontoRim` did this first.
+export function keepToPlot(outline) {
+  let nearest = Infinity;
+  for (const [x, z] of outline) nearest = Math.min(nearest, Math.hypot(x, z));
+  return (x, z) => {
+    const r = Math.hypot(x, z);
+    if (r < nearest - 0.01) return [x, z];
+    const rim = rimReach(outline, [0, 0], x / r, z / r) - 0.004;
+    return r <= rim ? [x, z] : [x * rim / r, z * rim / r];
+  };
+}
+
 // A structure's mesh: `pg_hedge` and `pg_bench` answer in the same shape.
 export function readStructure(bytes) {
   const view = new DataView(bytes);

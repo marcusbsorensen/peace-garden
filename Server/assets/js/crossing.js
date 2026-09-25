@@ -14,7 +14,7 @@
 // rather than being written down again here.
 
 import { decode, takeResult } from './plant.js';
-import { COLOUR, RIM_DEPTH, SIDE, readOutline, readStructure } from './longwalk.js';
+import { COLOUR, RIM_DEPTH, SIDE, keepToPlot, readOutline, readStructure } from './longwalk.js';
 
 // Seeds for this area's dressing, so a plot is the same shape on every visit.
 // Its own, not the walk's or the room's: three areas drawing from one seed
@@ -53,13 +53,17 @@ export function makeCrossGround(place) {
     }
 
     // **Rough grass, mottled.** One flat green over four quarters is a snooker
-    // table. This is a grid of quads carrying a tone at each corner rather than
-    // over each face, so neighbours share their corners and the shading runs
+    // table. These are quads carrying a tone at each corner rather than over
+    // each face, so neighbours share their corners and the shading runs
     // continuous — no cell edge anywhere, which is the whole point of not
     // drawing the quarters as shapes.
-    const half = SIDE / 2 - 0.06;
+    //
+    // **Laid on the outline, not on a square**, as the Orchard's meadow is
+    // since 25 September 2026: a grid 2.54 m either way over an edge that comes
+    // in to 2.42 m ran past the slab with a ruled edge and four corners in the
+    // sky. Rings drawn in from the outline itself end where the ground does.
     const cell = 0.26;
-    const steps = Math.ceil((half * 2) / cell);
+    const rings = Math.ceil(SIDE / 2 / cell);
     // Darker than the turf it is drawn from, and varying hard. Grass left long
     // is both: it takes less light than a cut sward and it is uneven, and the
     // two together are the whole difference between a lawn and a meadow. 0.9
@@ -70,14 +74,13 @@ export function makeCrossGround(place) {
     const rough = (x, z) => COLOUR.turf.map((v) => v * 0.9 * (1
       + 0.13 * (e.pg_verge(x * 1.31, -1, CROSS.rough) / 0.14)
       + 0.11 * (e.pg_verge(z * 1.07, 1, CROSS.rough) / 0.14)));
-    for (let i = 0; i < steps; i++) {
-      const x0 = -half + i * cell, x1 = Math.min(half, x0 + cell);
-      if (x0 >= half) break;
-      for (let j = 0; j < steps; j++) {
-        const z0 = -half + j * cell, z1 = Math.min(half, z0 + cell);
-        if (z0 >= half) break;
-        quad([x0, 0.003, z0], [x1, 0.003, z0], [x1, 0.003, z1], [x0, 0.003, z1], UP,
-             rough(x0, z0), rough(x1, z0), rough(x1, z1), rough(x0, z1));
+    const inward = (p, k) => [p[0] * (k / rings), p[1] * (k / rings)];
+    for (let i = 0; i < n; i++) {
+      const a = outline[i], b = outline[(i + 1) % n];
+      for (let k = 0; k < rings; k++) {
+        const [a0, a1, b0, b1] = [inward(a, k), inward(a, k + 1), inward(b, k), inward(b, k + 1)];
+        quad([a0[0], 0.003, a0[1]], [a1[0], 0.003, a1[1]], [b1[0], 0.003, b1[1]], [b0[0], 0.003, b0[1]], UP,
+             rough(...a0), rough(...a1), rough(...b1), rough(...b0));
       }
     }
 
@@ -94,21 +97,32 @@ export function makeCrossGround(place) {
     // does.
     const wander = (along, side, seed) => 0.05 * (e.pg_verge(along * 1.7, side, seed) / 0.14);
 
+    // **Each path runs to the plot's edge and stops on it.** It used to stop at
+    // the last whole stripe inside a 2.54 m square: a ruled end, short of the
+    // edge on one side and past it on another. Now the stripes run on past the
+    // plot and every corner is kept to it, the stripe cut across into narrow
+    // pieces so the end follows the edge's wander rather than cutting a chord.
+    const keep = keepToPlot(outline);
+    const pieces = 8;
     for (const [axis, seed] of [[0, CROSS.mow[0]], [1, CROSS.mow[1]]]) {
       for (let r = 0; r < rows; r++) {
         const a0 = -SIDE / 2 + r * stripe;
         if (a0 >= SIDE / 2) break;
-        const a1 = Math.min(SIDE / 2, a0 + stripe);
-        if (a0 < -half || a1 > half) continue;
+        const a1 = a0 + stripe;
         const c = COLOUR.grass.map((v) => v * (r % 2 ? 1.05 : 0.95));
         // The near and far edges of this stripe, each wandering along the
         // path's own length.
         const lo0 = -wide + wander(a0, -1, seed), lo1 = -wide + wander(a1, -1, seed);
         const hi0 = wide + wander(a0, 1, seed), hi1 = wide + wander(a1, 1, seed);
-        const at = (along, across) => (axis === 0
-          ? [across, 0.005, along]
-          : [along, 0.005, across]);
-        quad(at(a0, lo0), at(a0, hi0), at(a1, hi1), at(a1, lo1), UP, c);
+        const at = (along, across) => {
+          const [x, z] = keep(...(axis === 0 ? [across, along] : [along, across]));
+          return [x, 0.005, z];
+        };
+        for (let k = 0; k < pieces; k++) {
+          const u0 = k / pieces, u1 = (k + 1) / pieces;
+          quad(at(a0, lo0 + (hi0 - lo0) * u0), at(a0, lo0 + (hi0 - lo0) * u1),
+               at(a1, lo1 + (hi1 - lo1) * u1), at(a1, lo1 + (hi1 - lo1) * u0), UP, c);
+        }
       }
     }
 

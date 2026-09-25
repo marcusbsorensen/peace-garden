@@ -20,7 +20,7 @@
 // numbers come from `pg_glasshouse_plan` rather than being written down again.
 
 import { decode, takeResult } from './plant.js';
-import { COLOUR, RIM_DEPTH, SIDE, hash, readOutline, readStructure } from './longwalk.js';
+import { COLOUR, RIM_DEPTH, SIDE, hash, keepToPlot, readOutline, readStructure } from './longwalk.js';
 
 // Seeds for this area's dressing, its own and not another area's.
 const GLASS_SEED = { ground: 6421, floor: 43, tile: 61, soil: 89, border: 97, frame: 1511,
@@ -104,7 +104,12 @@ export function makeGlasshouseGround(place) {
     // takes its own tone, and the lines between them are where one tone meets
     // the next rather than lines at all. A tile a little under a third of a
     // metre, which is what a quarry tile is.
-    const half = SIDE / 2 - 0.06;
+    // **Laid a little wider than the plot and kept to it** (`keepToPlot`), since
+    // 25 September 2026: laid inside a 2.54 m square over an edge that comes in
+    // to 2.42 m, it ran past the slab with a ruled edge and four corners in the
+    // sky. Now it ends on the plot's own wandering edge.
+    const half = SIDE / 2 + 0.06;
+    const onPlot = keepToPlot(outline);
     const lattice = (cell, from, to, jitter) => {
       const stepsX = Math.ceil((to[0] - from[0]) / cell), stepsZ = Math.ceil((to[1] - from[1]) / cell);
       const grid = [];
@@ -113,10 +118,10 @@ export function makeGlasshouseGround(place) {
         for (let j = 0; j <= stepsZ; j++) {
           const edge = i === 0 || j === 0 || i === stepsX || j === stepsZ;
           const shift = edge ? 0 : cell * jitter;
-          row.push([
+          row.push(onPlot(
             Math.max(from[0], Math.min(to[0], from[0] + i * cell + shift * (hash(i * 7919 + j * 104729 + from[0] * 1e3) - 0.5) * 2)),
             Math.max(from[1], Math.min(to[1], from[1] + j * cell + shift * (hash(i * 6733 + j * 92831 + from[1] * 1e3) - 0.5) * 2)),
-          ]);
+          ));
         }
         grid.push(row);
       }
