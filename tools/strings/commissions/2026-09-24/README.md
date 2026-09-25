@@ -76,7 +76,7 @@ Marcus answered all five the same day.
   said it — `about1`, and two in the app about leaving the garden — say
   *personer* and *folk* now. The `read` note in `Server/strings/da.json`
   records what he read and when.
-- **Batches 2 and 3 are written** (below). **The other twenty-nine are next, a batch at a time**, each grouped by the problem
+- **Batches 2, 3 and 4 are written** (below). **The other nineteen are next, a batch at a time**, each grouped by the problem
   it shares:
 
   | Batch | Languages | What they share |
@@ -133,6 +133,25 @@ speaker; these are what each translator asked a reader to look at first.
 | zh | Simplified, as `zh.json`. Full-width `：`. 规律 for Pattern (纹理 the alternative); 彼此应尽的本分 for what each owes the other; `notYet` 尚未开放. *Area* is 区域, first use. |
 | ar | Plain `:`. One U+200E before `-ynth` in `meaningsSecond`, so the hyphen stays on its left; `rubra`/`ruber` need none. قسم for *area*, جزء for *part*. قرابة leans to blood kin. |
 | he | Plain `:`. No marks: the Latin follows `he.json`'s `ל-iPhone`, so `ב-ynth` shows its hyphen as a Hebrew prefix's. Addressed to one man, as the catalogue is; the forms here read the same for either. תבנית (Pattern) can mean a template. |
+
+## Batch 4, written 25 September
+
+**de pt ro ca gl is fi hu eu et, the site only**: 55 strings each, written from
+their sheets as batches 2 and 3 were. Every check passes. Unread by any
+speaker; these are what each translator asked a reader to look at first.
+
+| | For the reader |
+| --- | --- |
+| de | *Begegnen / Kreuzen / Wachsen*. *ziehen* is "raise a plant" in the grow lines and "drag" in `frontTurn`. *Worte* where a purist might want *Wörter*. |
+| pt | European, as the catalogue is. **Address needs settling**: `growBody` uses *sua* (você), these two lines *tu* (*a terra que é tua*, *de onde és*), since *sua* would make `meaningGround` the plant's own earth. |
+| ro | `frontGrowBody` at 1.88× the English. `meaningGround` *Pământ* over *Pământul natal*; *Glie* if it reads twice. *Rânduială* for Pattern. *Roata anului*, *Buna-cuviință*. |
+| ca | *Creuar*, as `growBody`. *Ordre* for Pattern, as Spanish chose *Orden*. `meaningBeginnings` carries small-to-large less sharply than the English. |
+| gl | *Atoparse / Cruzar / Medrar*. *Orde* for Pattern. *zona* for *area*, following Spanish; no settled word. |
+| is | *Fundur* is the tagline's word, but also a business meeting. *Appið* (*Smáforritið* the purist's). *Í dvala* repeats *Dvalabeðið*. |
+| fi | The Latin stays in the base form, no case endings. *Kuvio* for Pattern. Three labels doubtful: *Pitkä odotus* (loses the counting), `CutAndComeAgain`, `TheWordsForIt`. |
+| hu | The Latin takes no suffixes; the case goes on the words round it. *Mintázat* for Pattern; *nappal* for day. The generic "we" in `meaningKinship`. |
+| eu | *zu*, as the catalogue. *Antolaera* (phyllotaxis's word) for Pattern needs confirming. Steps as verbal nouns, since *Hazi* alone reads as "seed". *-ynth-ez*. |
+| et | *Ristamine* (breeding) for Cross, beside the area *Ristumine*. *Maa* for Ground. `frontMeetBody` the weakest line. |
 
 ## What each language still lacks, and why
 
