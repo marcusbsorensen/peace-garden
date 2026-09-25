@@ -25,6 +25,11 @@ All ten areas open before the app is announced, on the new plant shapes.
   - **Cold Frame lights open**: a tap on a shut frame's glass swings both lights to 60° on the back edge (no panel); taps then pick plants; one open at a time; `p` and postcards open the frame first. Closing a panel leaves the frame open (decided for Marcus).
   - **The name larger** (mark 60 px, wordmark 22 px regular, full ink) and **no hairline above the foot** on any page. Marcus.
 
+- **Live, 25 September early**:
+  - **Batch 3** of the commission (ja ko zh ar he, site only), `79f78f1`. Twelve of forty-one languages now have the front page and the meanings. Batch 4 (de pt ro ca gl is fi hu eu et) is next.
+  - **Every area's floor ends on the plot's edge** (`025bb02`): the Orchard's mown discs and meadow, the Crossing's grass and paths, and the Knot, Cold Frame, Glasshouse, Seedbed and Quiet Garden floors hung past it. **Hedges on the plot** (`81b8271`): the Long Walk's and Quiet Garden's outer faces drawn in to the edge; the rule's inner faces and every place unmoved.
+  - **A lotus takes two places** in the Cold Frame and the Seedbed (`6cc8b90`, Marcus's choice after measuring: a young lotus's pads reached 0.31 m, the Cold Frame's spacing, and a quarter of its plants stood inside one). Stems inside pads 1 in 500 in each. Fresh 500: Cold Frame 18 plots (was 12), Seedbed 19 (was 15). New columns `slot_span` and `habit` on both tables. The Cold Frame's ambassador, a lotus, now holds the first two places of its rank. Old stored plantings read as one place until the replant. SeedCore 390/0 macOS, 384/0 wasm; 16 PHP checks; replant rehearsal passes across ten areas.
+
 ## Files
 - `docs/WEB-GARDENS.md` §"The Home Ground, chosen" → §"Decided" (items 6–7 are tonight's) → §"The Home Ground, built".
 - `tools/homeground/` — the simulation, now the decided design.
