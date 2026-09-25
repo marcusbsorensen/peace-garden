@@ -468,11 +468,23 @@ page's own prose landed on the lawn.
   one move for all of them — a sheet laid a little wider than the plot, each
   point past the edge pulled straight in onto it, 4 mm inside — and
   `rimReach` beside it is what the discs here use. The Coppice and the Home
-  Ground already kept theirs to the rim. **Still past the edge, and left for a
-  decision**: the Long Walk's hedges stand 0.27 m over the long sides, and the
-  Quiet Garden's hedge round crosses at its corners 0.49 m out, where the
-  plot's corners are rounded. Those are `pg_hedge` runs placed by the rule,
-  not dressing, so moving them is a layout change.
+  Ground already kept theirs to the rim.
+- **The hedges are pulled inside too** (Marcus's choice, 25 September 2026).
+  The Long Walk's stood 0.27 m over the long sides and the Quiet Garden's
+  crossed 0.49 m out at its corners, where the plot's corners are rounded.
+  Where the places are is the rule's (`hedgeFrom` 2.3 m in both), and none
+  of it moved: only where the hedges are drawn did. `hedgeToPlot` in
+  `longwalk.js` leaves the inner face where the rule has it and presses what
+  lies beyond onto the band between it and the plot's edge — straight across
+  along a side, fanned from the inner corner at a corner, as a tanh so the
+  hedge keeps its own shape near the inner face — and `pressNormal` turns the
+  pressed outer side to face out. So each hedge's outer side is now flush
+  with the slab's side and follows its wander, and the walk's hedges are
+  0.11–0.25 m through at the foot where they were 0.33–0.40. Their shadows are
+  worked from the pressed hedge. Measured on the workbench's five hundred in
+  each area, at every turn: every hedge point on the plot, no plant inside a
+  hedge, and the nearest plant exactly as far from a hedge as before (0.11 m
+  on the walk, 0.20 m in the room).
 
 ## The Knot Garden, built
 
