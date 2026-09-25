@@ -76,7 +76,7 @@ Marcus answered all five the same day.
   said it — `about1`, and two in the app about leaving the garden — say
   *personer* and *folk* now. The `read` note in `Server/strings/da.json`
   records what he read and when.
-- **Batches 2, 3 and 4 are written** (below). **The other nineteen are next, a batch at a time**, each grouped by the problem
+- **Batches 2 to 5 are written** (below). **Batch 6, the last eight, is next**, each grouped by the problem
   it shares:
 
   | Batch | Languages | What they share |
@@ -152,6 +152,28 @@ speaker; these are what each translator asked a reader to look at first.
 | hu | The Latin takes no suffixes; the case goes on the words round it. *Mintázat* for Pattern; *nappal* for day. The generic "we" in `meaningKinship`. |
 | eu | *zu*, as the catalogue. *Antolaera* (phyllotaxis's word) for Pattern needs confirming. Steps as verbal nouns, since *Hazi* alone reads as "seed". *-ynth-ez*. |
 | et | *Ristamine* (breeding) for Cross, beside the area *Ristumine*. *Maa* for Ground. `frontMeetBody` the weakest line. |
+
+## Batch 5, written 25 September
+
+**ru uk be pl cs sk sl hr sr bg mk, the site only**: 55 strings each. Every
+check passes. Unread by any speaker. The Latin pieces stay in Latin letters and
+uninflected throughout; the case goes on the words round them. Where *genus* and
+grammatical gender share a word (*род*, *rod*, *rodzaj*), the masculine is
+written *мужской род* / *mužský tvar* / *forma męska* and so on — check each.
+
+| | For the reader |
+| --- | --- |
+| ru | ты, gender-neutral as the catalogue. *Встреча / Скрещивание / Рост*. *род* twice in `meaningsSecond`. `meaningsNames` *Названия на* (fuller: *Названия, начинающиеся на*). |
+| uk | ти, gender-neutral (*поодинці*). *Мандри* matches `about2`. Curly ’ in *зобов’язаний*. `meaningsNames` *Назви на*. |
+| be | ты. *Лад* for Pattern (not *Узор*), *Спакой* for Peace. *куток* for *area*. Check "could not" in the neither-alone line doesn't read "would not bother". |
+| bg | ти. *Закономерност* for Pattern is long for a card. *кът* for *area*. The Kinship line's rhythm. |
+| mk | Nouns for the steps (*Средба / Вкрстување / Растење*). *Шара* for Pattern (*Поредок* the fallback). New words: *подрачје*, *дел*, *род*. |
+| pl | *żadna z dwóch osób … sama* (feminine *osoba*, no gender chosen). *Wzór* for Pattern (*Ład* the alternative). *Ziemia* over *Ziemia rodzinna*. *Obszar* for *area*. |
+| cs | *Řád* for Pattern, *Putování* for Travel. *Země* over *Rodná země* (*Půda* the fallback). *jména* for plant names wants a botanist. |
+| sk | *Pôda* for Ground, so the card doesn't say *Rodná zem* twice. *Vzorec* for Pattern leans to "formula". |
+| sl | The dual for every pair. *Zemlja* over *Rodna zemlja*. *Vzorec* also "sample". |
+| hr | *Susret / Križanje / Rast*. *Uzorak* for Pattern also "sample". *Rez i novi izboj* for cut-and-come-again. |
+| sr | Cyrillic, ekavian, *башта*. As Croatian, in its own words. *подручје* for *area*. |
 
 ## What each language still lacks, and why
 
