@@ -207,15 +207,16 @@ both were in strings written in an earlier round. Marcus settled them the same
 day, and these are the only strings the whole commission has changed rather
 than added.
 
-- **`areaWaiting` was *L-istennija*, and is now *Il-qafas kiesaħ*.** The theme
-  is *Stennija*, so the Waiting card printed the same word twice, once as the
+- **`areaWaiting` was *L-istennija*, and is now *Ir-raqda*.** The theme is
+  *Stennija*, so the Waiting card printed the same word twice, once as the
   dictionary headword and once as the area under it. *L-istennija* had
   translated the theme rather than the Cold Frame, which is what made it
-  collide; the other seven in this batch all name the area by what it does —
-  *Kışlak*, *Žiemavietė*, *Y gaeafle*, *An suan*, *Ο λήθαργος*, *Dimërimi*.
-  **A Maltese gardener should confirm the new name**: *qafas* is first of all a
-  cage, and if the literal reads badly, *Ir-raqda* — the sleep, as Irish and
-  Greek have it — matches the batch.
+  collide. *Ir-raqda* — the sleep — names the area by what it does, as the
+  other seven in this batch do: *Kışlak*, *Žiemavietė*, *Y gaeafle*, *An suan*,
+  *Ο λήθαργος*, *Dimërimi*. Irish and Greek take the same reading of the Cold
+  Frame, so Maltese is not alone in it. The literal *Il-qafas kiesaħ* was tried
+  first and set aside by Marcus: *qafas* is first of all a cage, and it would
+  have been the one name in the batch that described the object.
 - **`growBody` said *jaqsam*, and now says *jinkroċja*.** `frontCross` is one
   word under a glyph, and the brief's rule is that it takes `growBody`'s verb —
   but *Qsim* reads as dividing, not as a gardener crossing two plants, which is
