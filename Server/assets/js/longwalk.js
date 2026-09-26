@@ -9,6 +9,7 @@
 
 import { ROLES, decode, takeResult, link, attribute, multiply } from './plant.js';
 import { castShadow } from './shadow.js';
+import { areasBeside } from './beside.js';
 
 export const SIDE = 5.2;    // LongWalk.plotSide, and QuietGarden.plotSide
 const PATH_HALF = 0.6;      // LongWalk.pathHalfWidth
@@ -92,11 +93,16 @@ vec3 shade(vec3 albedo, vec3 n) {
   return albedo * (ambient + direct);
 }`;
 
+// `offset` is where the mesh stands: nowhere for a plot's own ground, which is
+// built where it is drawn, and out past it for the slabs of the areas beside
+// this one, which are one mesh apiece drawn wherever the turn and the window
+// put them (`BESIDE`).
 const GROUND_VERTEX = `#version 300 es
 in vec3 position; in vec3 normal; in vec3 colour;
 uniform mat4 viewProjection;
+uniform vec3 offset;
 out vec3 vNormal; out vec3 vColour;
-void main() { vNormal = normal; vColour = colour; gl_Position = viewProjection * vec4(position, 1.0); }`;
+void main() { vNormal = normal; vColour = colour; gl_Position = viewProjection * vec4(position + offset, 1.0); }`;
 
 // `opacity` is 1 for everything but glass, which is drawn last and seen through.
 // Premultiplied, because the canvas is. `upOnly` is for marking where shadows
@@ -187,6 +193,69 @@ const SHADOW = {
   step: 0.12,
 };
 
+// **The areas beside this one, out in the sky past the plot.** One slab per
+// open neighbour on the map (`beside.js`), ground only: the wandering outline
+// a plot has, the strata under it and that area's own colour, with nothing
+// standing on it. A glimpse, so that a reader can see the garden goes on and
+// which way, without leaving.
+//
+// **Where it stands is the screen's business and how it is held is the
+// camera's**, and those are two different sentences. A slab goes out in the
+// direction of the key that reaches it, because that is the promise the pad
+// makes — what a reader sees on the left is what Left takes them to, whatever
+// the plot's turn. It is drawn at the plot's own attitude, so it turns as the
+// plot turns and reads as the same kind of thing in the same world.
+//
+// **Further off has to be drawn, because this projection will not draw it.**
+// Orthographic: nothing shrinks with distance, so a slab out there at a
+// plot's size would be a second plot competing with the first. It is drawn at
+// `scale` of one and at `dim` of its light — the ground shader's `opacity`,
+// which the canvas carries through to the sky behind it, so half of what you
+// see out there is sky. The two together are what say "over there"; either
+// alone said "smaller" or "in shadow".
+//
+// `depth` is how far behind the plot a slab stands, along the eye. On an
+// orthographic projection that moves it nowhere on the screen. It is there so
+// that wherever a slab and the plot meet the plot wins, and so that a slab's
+// own underside cannot come out in front of its top.
+//
+// `gap` is the least sky left between the plot and a slab, `rim` the least
+// between a slab and the edge of the canvas. Where there is more room than
+// that, a slab sits in the middle of what there is. **Where there is not, the
+// plot stands in front of it** and hides what it covers, which is what a
+// nearer thing does — up to a point: `gap` is also the least of a slab that
+// must still show, and a slab showing less than that is not drawn at all.
+//
+// **That is why there is nothing below a single plot on a wide window.** The
+// canvas is fitted to the plot, with 2.3 m of headroom over the soil and 0.95
+// below, so under the plot's near corner there is about a third of a metre of
+// sky against the 1.8 a slab wants. On a phone, and under the walk's three
+// plots, there is the room and the slab below is there. Making it appear
+// everywhere means leaving room under the plot in `frame`, which changes the
+// view all ten pages open on.
+//
+// `closest` is the last zoom a slab is drawn at. Closer in than the whole
+// plot a reader is looking at ground rather than at the horizon — and a slab
+// is never drawn part off the canvas, because the edge of a canvas is a
+// straight line and this garden has none of those.
+const BESIDE = {
+  scale: 0.35,
+  dim: 0.5,
+  depth: 14,
+  gap: 0.35,
+  rim: 0.25,
+  closest: 1.2,
+  // How far a slab's underside can hang below `RIM_DEPTH`: the most the floor
+  // wander in a ground builder adds to it.
+  deepest: 1.22,
+};
+
+// Which way a direction lies on the screen: the axis — across, then up — and
+// which end of it. **The screen's axes and not the plot's**, because the pad's
+// are, and a slab that disagreed with the pad would be lying about where a key
+// goes.
+const BESIDE_WAY = { left: [0, -1], right: [0, 1], up: [1, 1], down: [1, -1] };
+
 // **The stage is not the walk's.** Everything in it — the GL plumbing, the
 // isometric camera, the quarter turns, the plant program — is what a plot is,
 // and the Quiet Garden's page uses the same one with its own ground. The one
@@ -223,6 +292,12 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   let glassOpacity = 1;
   // The shadow the ground's own structures throw, if it hands any back.
   let hedges = null;
+  // The slabs of the areas beside this one, if the page has said where it
+  // stands (`beside`). One mesh apiece, built once: a turn moves them about
+  // the screen but does not change their shape, and a page that rebuilt three
+  // slabs on every quarter turn would have made turning cost four times what
+  // it costs.
+  let besides = [];
   // The last frame's view and projection together, which `pick` reads.
   let drawn = null;
 
@@ -308,8 +383,13 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     }
 
     gl.useProgram(ground.program);
-    gl.uniform1f(ground.at.opacity, 1);
     gl.uniform1i(ground.at.upOnly, 0);
+    // The areas beside this one, out past the plot and behind it. Before the
+    // plot, dimmed, and depth-tested like everything else — the plot is drawn
+    // over whatever it covers, which is how a nearer slab behaves.
+    drawBeside(view, all);
+    gl.uniform1f(ground.at.opacity, 1);
+    gl.uniform3fv(ground.at.offset, HERE);
     groundMesh.draw();
 
     // **Where a shadow may fall: on ground, seen.** The ground is drawn once
@@ -373,6 +453,83 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
       gl.depthMask(true);
       gl.disable(gl.BLEND);
     }
+  }
+
+  // **Where the slabs beside the plot stand, and whether each is drawn.**
+  //
+  // In metres across the screen and up it, the window's own frame and the one
+  // `frame` answers in, turned into a place in the world at the very end:
+  // on an orthographic projection an offset along the view's own axes lands
+  // exactly where it was asked to. The across axis is level, so a slab sent
+  // left or right stays on the plot's own ground plane; one sent up or down is
+  // lifted clear of it, which is a thing this projection cannot show and so
+  // does not have to be paid for.
+  //
+  // The window it is placed in is the whole plot's, so the slabs keep their
+  // place as a reader comes closer rather than sliding about the screen with
+  // the zoom. What that costs is that one can fall off the edge on the way in,
+  // and a slab part off the canvas is not drawn at all.
+  function drawBeside(view, all) {
+    if (!besides.length || look.zoom > BESIDE.closest) return;
+    const plot = corners(view, extent.x, extent.z, -RIM_DEPTH * BESIDE.deepest, 0);
+    const half = (SIDE * BESIDE.scale) / 2;
+    const box = spread(corners(view, half, half, -RIM_DEPTH * BESIDE.deepest * BESIDE.scale, 0));
+    const size = [[box.minX, box.maxX], [box.minY, box.maxY]];
+    const whole = [[all.cx - all.w / 2, all.cx + all.w / 2], [all.cy - all.h / 2, all.cy + all.h / 2]];
+    const wide = all.w / look.zoom / 2, tall = all.h / look.zoom / 2;
+    const pane = [[all.cx + look.x - wide, all.cx + look.x + wide],
+                  [all.cy + look.y - tall, all.cy + look.y + tall]];
+    const { x: across, y: up, z: back } = axes(view);
+
+    gl.uniform1f(ground.at.opacity, BESIDE.dim);
+    for (const slab of besides) {
+      const [axis, sign] = BESIDE_WAY[slab.direction];
+      const [low, high] = size[axis];
+      const [near, far] = sign > 0 ? [low, high] : [high, low];
+      // How far the plot comes this way, over the band of screen the slab
+      // stands in rather than corner to corner (`reachOver`).
+      const band = reachOver(plot, 1 - axis, size[1 - axis][0], size[1 - axis][1]);
+      const reach = sign > 0 ? band.max : band.min;
+      // Clear of the plot says how far out it must go at least; inside the
+      // canvas says how far out it may. Room between the two is sky, and it
+      // is shared; no room, and the plot stands in front of what is left.
+      const clear = reach + sign * BESIDE.gap - near;
+      const most = whole[axis][sign > 0 ? 1 : 0] - sign * BESIDE.rim - far;
+      const at = [0, 0];
+      at[axis] = sign * (most - clear) > 0 ? (clear + most) / 2 : most;
+      // **How much of it stands clear of the plot, and enough must.** A slab
+      // and the plot are the same shape at the same attitude, so their edges
+      // on the screen are parallel and what shows past the plot is a strip of
+      // one width all along. Under a single plot on a wide window that strip
+      // is four pixels of a slab's own rim, which is a smudge at the plot's
+      // edge and not a place: **at least as much of a slab must show as the
+      // sky it was asked to leave.** Taller windows have the room and do show
+      // it, which is the honest answer — the canvas is fitted to the plot, and
+      // what is under the plot is however much is left.
+      if (sign * (at[axis] + far - reach) < BESIDE.gap) continue;
+      if (at[axis] + low < pane[axis][0] || at[axis] + high > pane[axis][1]) continue;
+      if (at[1 - axis] + size[1 - axis][0] < pane[1 - axis][0]
+          || at[1 - axis] + size[1 - axis][1] > pane[1 - axis][1]) continue;
+      gl.uniform3fv(ground.at.offset, [0, 1, 2]
+        .map((i) => at[0] * across[i] + at[1] * up[i] - BESIDE.depth * back[i]));
+      slab.mesh.draw();
+    }
+  }
+
+  // **Where this page stands on the map**, which is the one thing about the
+  // garden the stage cannot work out for itself. The page says it, as it says
+  // it to the bar, to the minimap and to the pad, and everything the slabs
+  // beside the plot are follows from that word (`beside.js`).
+  //
+  // Built here and once. A turn moves them about the screen and does not
+  // change them, so nothing is rebuilt on a turn.
+  function beside(theme) {
+    for (const slab of besides) slab.mesh.release();
+    besides = areasBeside(theme).map((area) => ({
+      direction: area.direction,
+      mesh: upload(gl, ground, besideGround(e, area.seed, area.ground)),
+    }));
+    draw();
   }
 
   // `lift` is how far off the ground the plant stands: nothing, everywhere but
@@ -721,8 +878,8 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   rebuildGround();
   new ResizeObserver(draw).observe(canvas);
   // `turn` is read by the sky, which has to face the way the camera does.
-  return { add, clear, turnBy, draw, rebuild, turn: () => turn, view, held, lookAt, carried, seams, onScreen,
-           pick, named, toward, toScreen };
+  return { add, clear, turnBy, draw, rebuild, beside, turn: () => turn, view, held, lookAt, carried, seams,
+           onScreen, pick, named, toward, toScreen };
 }
 
 // Plants arrivals by the rule until there are `total`, reporting as it goes.
@@ -958,6 +1115,59 @@ function buildGround(farSide, span, e) {
            casting: new Float32Array(casting) };
 }
 
+// **A slab of the next area's ground, with nothing standing on it.**
+//
+// Grown the way an area's own builder grows its floor — the same `Organic`
+// outline, the same strata hanging off it — at a plot's own size, and then
+// shrunk. Shrunk rather than grown small: `Organic.outline` wanders a fixed
+// 22 cm inward whatever size it is asked for, so a slab grown at a third of a
+// plot would have three times a plot's wander and would read as a different
+// kind of thing. What this draws is a plot of this garden, seen from further
+// off.
+//
+// **And nothing else comes with it.** No plants, no structures, no shadow: a
+// slab a hundred and forty pixels across has no room for any of them, and a
+// page that grew them would pay for three more gardens to show the edges of
+// three.
+function besideGround(e, seed, ground) {
+  const positions = [], normals = [], colours = [];
+  const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
+  const tri = (a, b, c, n, ca, cb = ca, cc = ca) => { vertex(a, n, ca); vertex(b, n, cb); vertex(c, n, cc); };
+  const quad = (a, b, c, d, n, ca, cb = ca, cc = cb, cd = ca) => { tri(a, b, c, n, ca, cb, cc); tri(a, c, d, n, ca, cc, cd); };
+  const scale = BESIDE.scale;
+
+  const grown = readOutline(e, SIDE, SIDE, seed);
+  const outline = grown.map(([x, z]) => [x * scale, z * scale]);
+  const n = outline.length;
+  for (let i = 0; i < n; i++) {
+    const a = outline[i], b = outline[(i + 1) % n];
+    tri([0, 0, 0], [a[0], 0, a[1]], [b[0], 0, b[1]], [0, 1, 0], ground);
+  }
+
+  // Its sides hang from the outline down to a floor as rough as a clod's, in
+  // the app's strata. The walk's arithmetic, because it is the same slab —
+  // paced round the outline as it was grown, so the floor wanders at a plot's
+  // own rate along it rather than at three times it.
+  const strata = [[0, COLOUR.humus], [0.16, COLOUR.earth], [0.58, COLOUR.earth], [1, COLOUR.bedrock]];
+  let around = 0;
+  const floor = grown.map((p, i) => {
+    if (i > 0) around += Math.hypot(p[0] - grown[i - 1][0], p[1] - grown[i - 1][1]);
+    return RIM_DEPTH * scale * (1 + 0.22 * (e.pg_verge(around, 1, seed) / 0.14));
+  });
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n, a = outline[i], b = outline[j];
+    const dx = b[0] - a[0], dz = b[1] - a[1], l = Math.hypot(dx, dz);
+    const normal = [dz / l, 0, -dx / l];
+    for (let k = 0; k < strata.length - 1; k++) {
+      const [f0, c0] = strata[k], [f1, c1] = strata[k + 1];
+      quad([a[0], -f0 * floor[i], a[1]], [b[0], -f0 * floor[j], b[1]],
+           [b[0], -f1 * floor[j], b[1]], [a[0], -f1 * floor[i], a[1]], normal, c0, c0, c1, c1);
+    }
+  }
+  return { positions: new Float32Array(positions), normals: new Float32Array(normals),
+           colours: new Float32Array(colours) };
+}
+
 export function readOutline(e, width, length, seed) {
   const bytes = takeResult(e, e.pg_outline(width, length, seed));
   const count = new DataView(bytes).getUint32(0, true);
@@ -1137,14 +1347,7 @@ function lookAlong(direction) {
 // window on a wide screen and shorter on a tall one. A closer look may move
 // anywhere inside `content` and nowhere outside it.
 function frame(view, aspect, span) {
-  const h = SIDE / 2, L = (SIDE * span) / 2;
-  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-  for (const x of [-h, h]) for (const y of [-RIM_DEPTH, 2.3]) for (const z of [-L, L]) {
-    const vx = view[0] * x + view[4] * y + view[8] * z;
-    const vy = view[1] * x + view[5] * y + view[9] * z;
-    minX = Math.min(minX, vx); maxX = Math.max(maxX, vx);
-    minY = Math.min(minY, vy); maxY = Math.max(maxY, vy);
-  }
+  const { minX, maxX, minY, maxY } = spread(corners(view, SIDE / 2, (SIDE * span) / 2, -RIM_DEPTH, 2.3));
   const margin = 1.06;
   const contentW = (maxX - minX) * margin, contentH = (maxY - minY) * margin;
   let w = contentW, hgt = contentH;
@@ -1152,6 +1355,73 @@ function frame(view, aspect, span) {
   const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
   return { cx, cy, w, h: hgt, content: { w: contentW, h: contentH } };
 }
+
+// The eight corners of a box about the plot's middle, where the view puts them
+// on the screen: metres across and up, in the window's own frame. Numbered so
+// that two corners joined by an edge of the box differ in one bit, which is
+// what `reachOver` walks.
+function corners(view, hx, hz, low, high) {
+  const out = [];
+  for (const x of [-hx, hx]) for (const y of [low, high]) for (const z of [-hz, hz]) {
+    out.push([view[0] * x + view[4] * y + view[8] * z, view[1] * x + view[5] * y + view[9] * z]);
+  }
+  return out;
+}
+
+// The box on the screen those corners fill.
+function spread(points) {
+  const along = (i) => points.map((p) => p[i]);
+  return { minX: Math.min(...along(0)), maxX: Math.max(...along(0)),
+           minY: Math.min(...along(1)), maxY: Math.max(...along(1)) };
+}
+
+// **How far the plot reaches, over one band of the screen.**
+//
+// `band` is the axis the band is measured along — 0 for a band of columns, 1
+// for a band of rows — and the answer is how far the drawing reaches on the
+// other axis between `lo` and `hi`.
+//
+// **A box on this projection is a six-sided figure**, and its furthest points
+// up, down, left and right are four single corners. Over the narrow band a
+// slab beside it stands in, it reaches nowhere near as far. On the walk that
+// is the difference between putting a slab below three plots' near corner,
+// which is off the bottom of the canvas, and putting it in the sky under the
+// middle of them, where there is room for it.
+//
+// The figure is convex, so its furthest point within a band is on its edge:
+// each of the box's twelve edges is cut to the band and both ends of what is
+// left are looked at. A band that misses the drawing altogether — which
+// nothing here asks for — is answered corner to corner.
+function reachOver(points, band, lo, hi) {
+  const other = 1 - band;
+  let min = Infinity, max = -Infinity;
+  const see = (v) => { min = Math.min(min, v); max = Math.max(max, v); };
+  for (let i = 0; i < points.length; i++) {
+    for (const bit of [4, 2, 1]) {
+      const j = i ^ bit;
+      if (j < i) continue;
+      const p = points[i], q = points[j];
+      const run = q[band] - p[band];
+      let from = 0, to = 1;
+      if (Math.abs(run) < 1e-9) {
+        if (p[band] < lo || p[band] > hi) continue;
+      } else {
+        const a = (lo - p[band]) / run, b = (hi - p[band]) / run;
+        from = Math.max(0, Math.min(a, b));
+        to = Math.min(1, Math.max(a, b));
+        if (from > to) continue;
+      }
+      see(p[other] + (q[other] - p[other]) * from);
+      see(p[other] + (q[other] - p[other]) * to);
+    }
+  }
+  if (min > max) { const all = points.map((p) => p[other]); return { min: Math.min(...all), max: Math.max(...all) }; }
+  return { min, max };
+}
+
+// A mesh drawn where it was built, which is everything but a slab beside the
+// plot (`BESIDE`).
+const HERE = [0, 0, 0];
 
 // Orthographic, looking at (cx, cy) through a window w by h.
 function ortho(cx, cy, w, hgt) {

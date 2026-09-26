@@ -27,7 +27,8 @@ const note = el('note');
 
 // Where this page stands on the map. The bar says it, the link back to the
 // garden carries it, `gates.js` marks it on the map at the foot of the page,
-// and the pad leaves the area by it — all four from this one word.
+// the pad leaves the area by it, and the slabs of the areas beside this one
+// are drawn out in the sky from it — all five from this one word.
 //
 // **Drawn whether or not the plot service answers.** A page that cannot reach
 // its plants is exactly the page a reader needs a way out of.
@@ -55,6 +56,9 @@ async function room() {
   // its band; a quarter more than a plot's side is the margin that leaves air
   // round the hedge, so the room reads as a place rather than as a texture.
   const stage = makePlotStage(el('stage'), 1.25, engine, makeRoomGround(plan(engine)));
+  // And the areas beside this one, as slabs out in the sky past the plot:
+  // the same one word again, and `beside.js` reads the map from it.
+  stage.beside(THEME);
 
   let sky = null;
   makeSky(el('sky'), {

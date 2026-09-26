@@ -31,7 +31,8 @@ const note = el('note');
 
 // Where this page stands on the map. The bar says it, the link back to the
 // garden carries it, `gates.js` marks it on the map at the foot of the page,
-// and the pad leaves the area by it — all four from this one word.
+// the pad leaves the area by it, and the slabs of the areas beside this one
+// are drawn out in the sky from it — all five from this one word.
 //
 // **Drawn whether or not the plot service answers.** A page that cannot reach
 // its plants is exactly the page a reader needs a way out of.
@@ -58,6 +59,9 @@ async function walk() {
   // again.
   const engine = await loadModule(document.documentElement.dataset.module || '/plant.wasm');
   const stage = makePlotStage(el("stage"), SPAN, engine);
+  // And the areas beside this one, as slabs out in the sky past the plot:
+  // the same one word again, and `beside.js` reads the map from it.
+  stage.beside(THEME);
 
   // The same sky the app draws, and it turns with the walk: turning is the
   // reader going round to another side, so what they can see of the sky goes

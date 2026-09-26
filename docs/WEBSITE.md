@@ -1255,6 +1255,34 @@ another.
   Six strings, English only for now: `moveUp`, `moveDown`, `moveLeft`,
   `moveRight`, `zoomIn`, `zoomOut`. `walkBack` and `walkOn` went with the
   chevrons they named; neither had been commissioned.
+- **The areas beside this one, out in the sky, since 26 September.** The pad
+  crosses the map and nothing in the drawing said there was anywhere to cross
+  to. So each open neighbour is a second slab of ground floating past the plot,
+  on the side the key that reaches it points to: `beside.js` reads which areas
+  lie which way from `garden.js` and their grounds from `gates.js` `LOOK` — one
+  map, still — and `longwalk.js` builds and draws them. Ground only: the same
+  `Organic` outline a plot has and the same strata under it, in that area's own
+  colour, with no plants, no structures and no shadow. A slab is 0.35 of a plot
+  and drawn at half its light, because an orthographic projection shrinks
+  nothing with distance and *further off* has to be drawn; it is held at the
+  plot's own attitude, so it turns as the plot turns, while **where** it stands
+  is the screen's and not the camera's, as the pad's directions are. It is a
+  glimpse and not a control: no click target, because the pad and the map are
+  the controls and a new tap target in the scene would compete with tapping a
+  plant. It is drawn only at the whole plot, and gone by 1.2× in. **It cost no
+  new strings**, for the reason the crossing did not.
+  - **A slab is never drawn part off the canvas**, because the edge of a canvas
+    is a straight line and this garden has none. Where there is sky between the
+    plot and the edge it sits in the middle of it; where there is not, it goes
+    as far out as the canvas allows and the plot stands in front of the rest,
+    which is what a nearer thing does — and if less of it would show than the
+    sky it was asked to leave, it is not drawn at all. **That is why the slab
+    below a single plot does not appear on a wide window**: the canvas is
+    fitted to the plot with 2.3 m of headroom above the soil and 0.95 m below,
+    so there is about a third of a metre of sky under the plot's near corner
+    against the 1.8 m a slab wants. On a phone, and on the walk's three plots,
+    there is room and it shows. If it should show everywhere, the frame has to
+    leave room under the plot, which changes the opening view of all ten pages.
 - **Turning is called turning.** The camera keys were *left* and *right*, which
   are the words a visitor reaches for to mean walking somewhere else.
 - **A minimap to travel by**: the garden's own 5×2 map, read from `garden.js`

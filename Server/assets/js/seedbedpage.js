@@ -37,7 +37,8 @@ const note = el('note');
 
 // Where this page stands on the map. The bar says it, the link back to the
 // garden carries it, `gates.js` marks it on the map at the foot of the page,
-// and the pad leaves the area by it — all four from this one word.
+// the pad leaves the area by it, and the slabs of the areas beside this one
+// are drawn out in the sky from it — all five from this one word.
 //
 // **Drawn whether or not the plot service answers.** A page that cannot reach
 // its plants is exactly the page a reader needs a way out of.
@@ -110,6 +111,9 @@ async function place() {
   // rather than a texture filling the screen.
   const bed = plan(engine);
   const stage = makePlotStage(el('stage'), 1.25, engine, makeSeedbedGround(bed));
+  // And the areas beside this one, as slabs out in the sky past the plot:
+  // the same one word again, and `beside.js` reads the map from it.
+  stage.beside(THEME);
 
   // **The wire says where a plant stands, not what it is.** `SeedbedStore` keeps
   // the epithet in a column — the rule is built on it — and `planting` sends the

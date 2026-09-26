@@ -29,8 +29,9 @@ const el = (id) => document.getElementById(id);
 const note = el('note');
 
 // Where this page stands on the map: the bar, the link back to the garden, the
-// minimap at the foot of the page and the pad's way off the edge of the area
-// all read this one word. Drawn whether or not the plot service answers,
+// minimap at the foot of the page, the pad's way off the edge of the area and
+// the slabs of the areas beside this one, out in the sky past the plot, all
+// read this one word. Drawn whether or not the plot service answers,
 // because a page that cannot reach its plants is exactly the page a reader
 // needs a way out of.
 const THEME = 'light';
@@ -54,6 +55,9 @@ async function place() {
   // margin.
   const house = plan(engine);
   const stage = makePlotStage(el('stage'), 1.25, engine, makeGlasshouseGround(house));
+  // And the areas beside this one, as slabs out in the sky past the plot:
+  // the same one word again, and `beside.js` reads the map from it.
+  stage.beside(THEME);
 
   let sky = null;
   makeSky(el('sky'), {
