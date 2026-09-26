@@ -198,7 +198,29 @@ languages, and a negated participle would have to agree with all of them.
 | el | *Κανονικότητα* for Pattern is long for a card; *Μοτίβο* is the alternative and *πατρόν* the sewing one. *Γαλήνη* for Peace, not *ειρήνη*. *λαχτάρα* for the pull of elsewhere, where *νοσταλγία* leans homeward. *περιοχή* for *area*. |
 | tr | *Örüntü* for Pattern is the scientific word; *desen* is fabric and *kalıp* a template. *Yakınlık* for Kinship can read as proximity, and *Akrabalık* leans to blood. `meaningsNames` is *Şöyle başlayan adlar*, because Turkish puts the beginning before the noun and the label has to run into a list. |
 | sq | *Afëria* for Kinship (*Farefisnia* leans to blood). *Paqja* for Peace, with *qetësia* the quiet and *prehja* the ease, so the line does not say one thing three times. *gjini* is both genus and grammatical gender, so `meaningsSecond` says *formën e mashkullit*. *zonë* for *area*. |
-| mt | **Two for Marcus, not only for a reader.** The area is *L-istennija* and the theme is *Stennija*, so that one card says waiting twice: either the area name or the headword has to move. And `frontCross` is *Inkroċjar*, the horticultural word, where `growBody` says *jaqsam* — agreeing with `growBody`, as the brief asks, would have printed *Qsim* under the glyph, which reads as dividing. Nothing written was changed, so the two disagree until one is chosen. Also *Xejra* for Pattern, *Rabta* for Kinship, *Sliem* for Peace. |
+| mt | *Xejra* for Pattern, *Rabta* for Kinship, *Sliem* for Peace. **Two older strings moved for this batch** — see below; they are the only things in six batches that were not additions. |
+
+### The two Maltese changes, decided 26 September
+
+Batch 6 raised two collisions that a reader could not have resolved, because
+both were in strings written in an earlier round. Marcus settled them the same
+day, and these are the only strings the whole commission has changed rather
+than added.
+
+- **`areaWaiting` was *L-istennija*, and is now *Il-qafas kiesaħ*.** The theme
+  is *Stennija*, so the Waiting card printed the same word twice, once as the
+  dictionary headword and once as the area under it. *L-istennija* had
+  translated the theme rather than the Cold Frame, which is what made it
+  collide; the other seven in this batch all name the area by what it does —
+  *Kışlak*, *Žiemavietė*, *Y gaeafle*, *An suan*, *Ο λήθαργος*, *Dimërimi*.
+  **A Maltese gardener should confirm the new name**: *qafas* is first of all a
+  cage, and if the literal reads badly, *Ir-raqda* — the sleep, as Irish and
+  Greek have it — matches the batch.
+- **`growBody` said *jaqsam*, and now says *jinkroċja*.** `frontCross` is one
+  word under a glyph, and the brief's rule is that it takes `growBody`'s verb —
+  but *Qsim* reads as dividing, not as a gardener crossing two plants, which is
+  the one thing that step has to say. *Inkroċjar* is the horticultural word, so
+  the sentence moved to it rather than the step moving away from it.
 
 ## What each language still lacks, and why
 
