@@ -1186,7 +1186,7 @@ another.
   keys by three: four chevrons as a cross, a magnifier with a plus and one with
   a minus in its right-hand corners, the two rings in its left. It is written
   by one module, `movepad.js`, into an empty `#keys` on every area page, so the
-  nine pages cannot come to differ. What it does:
+  ten pages cannot come to differ. What it does:
   - **Closer and further**, from the whole plot, which is the view every area
     page had before and is the furthest out, to near enough that the window's
     shorter side is 0.9 m — one flower across a finger's width of a phone.
@@ -1209,12 +1209,43 @@ another.
     arriving over the same point of ground carried across the seam and as
     close as before; one press the other way goes back. A held key stops at
     the edge rather than falling through into a plot that has to be grown.
+  - **And off the edge of the area, since 26 September.** Pressed against the
+    outer end of the line with no plot that way, a direction leaves for the area
+    that way on the map, carrying the turn and the closeness — so crossing
+    between areas reads as walking on, which crossing between plots already did
+    and a full page navigation carrying nothing did not. **The pad's directions
+    are the map's, in the screen's frame**: right is the area to the right on
+    the map whichever way the plot has been turned, because the turn is the
+    camera and the map is a map, and the minimap under the pad is where a reader
+    sees which area lies which way. Out of the right-hand end of the line and in
+    at the new area's first plot, out of the left and in at its last, so the walk
+    carries on and one press back the way you came puts you where you were; up or
+    down and in at the same plot, the map crossed at the same depth rather than
+    walked along. That is what gives up and down a use beyond moving the window.
+    A held key stops at the boundary here too, and more plainly: what has to be
+    fetched and grown is a whole page. `garden.js` says which area is that way
+    and `gates.js` whether it is open — one map, still — and **it cost no new
+    strings**: the four keys are still four directions, and the map under them
+    already names every area in 42 languages.
+  - **What a crossing carries travels in `sessionStorage`**, one record, read
+    once on arrival and removed at once, checked against the area that loaded it
+    and dropped if it is malformed, stale or for somewhere else, so a reader who
+    crosses and then goes elsewhere by the minimap does not find a stale turn
+    waiting. **Not the fragment**: a fragment is for postcards, which are meant
+    to be sent, and a camera angle means nothing to whoever it is sent to. Which
+    plot to open on goes in the same record rather than into the URL, so a
+    crossing leaves no machinery in a link. The turn and the closeness are put on
+    before the first plot is grown, so nobody sees the default view and then a
+    jump. The pan is not carried — where the reader lands is the crossing's to
+    say, and it says the edge of the new area.
   - **A turn goes round what is in the middle of the window.**
   - **Keys**, registered with `keys.js` so `?` lists them: the arrows and WASD
     move, `+` or `=` closer, `-` further, `0` or Home the whole plot, `Q` or `[`
-    and `E` or `]` turn. Up and down fall through to the page when there is
-    nothing to move, so the arrows still scroll it at the whole plot; nothing
-    fires while the language chooser has focus. A key with nothing to do is
+    and `E` or `]` turn. A direction falls through to the page when there is
+    nothing to move the window across, no plot that way and no area that way
+    either, which on a five-by-two map leaves one of up and down still scrolling
+    the page from every area — up from the top row, down from the bottom;
+    nothing fires while the language chooser has focus. A key with nothing to do is
     `aria-disabled` rather than disabled, so the keyboard's focus stays on it.
   - **Nothing mirrors under a right-to-left language**, the pad included: its
     directions are the screen's, not the reading's.

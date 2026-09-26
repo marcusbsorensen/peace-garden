@@ -1,7 +1,7 @@
-// The move pad under every area's plot: how a reader moves about an area, as
-// opposed to out of it, which is the minimap's job.
+// The move pad under every area's plot: how a reader moves about an area, and
+// off its edge into the area beside it on the map.
 //
-// **One pad, written here, for all nine areas.** It used to be two chevrons and
+// **One pad, written here, for all ten areas.** It used to be two chevrons and
 // two rings copied into each page's markup and wired by each page's script;
 // now each page has an empty `#keys` and hands this module its stage, how many
 // plots it has and how to show one. What is on the pad, what the keys do and
@@ -33,6 +33,12 @@
 //   stops at the edge and does not carry on across: a plot that has to be
 //   fetched and grown is not something to fall into by holding a key a moment
 //   too long.
+// - **Off the edge of the area is the same press again.** Pressed against the
+//   outer end of the line, with no plot that way and an area that way on the
+//   map, a direction leaves for that area's page. It is what gives up and down
+//   something to do beyond moving the window: at the edge they cross the map to
+//   the area above or below. Held keys stop here too, for the same reason —
+//   more so, since what has to be fetched and grown is a whole page.
 // - **Closer and further**, from the whole plot to near enough to see one
 //   flower (`CLOSEST` in `longwalk.js`), about the middle of the window.
 //   Pinching the plot, or a trackpad's pinch, does the same about the fingers.
@@ -40,6 +46,31 @@
 //   moving up the page are left alone.
 // - **The rings turn**, as they did, and a turn goes round whatever is in the
 //   middle of the window.
+//
+// ## What a crossing between areas carries
+//
+// **The pad's directions are the map's directions, in the screen's frame.**
+// Pressing right goes to the area to the right on the map whichever way the plot
+// has been turned. The turn is the camera; the map is a map. A reader who has
+// turned the plot has not turned the garden, and the minimap at the foot of the
+// page is where they can see which area lies which way. `garden.js` says which
+// area is that way and `gates.js` whether it is open: both are read, and there
+// is one map.
+//
+// **The turn and the closeness come across, and the pan does not.** A crossing
+// that put the reader back at the whole plot facing north would read as a new
+// page, which is the thing this exists to stop. Where on the new area they land
+// is the crossing's to say instead: out of the right-hand end of the line and in
+// at its first plot, out of the left-hand end and in at its last, so the walk
+// carries on; up or down and in at the same plot, because that crosses the map
+// at the same depth rather than moving along it.
+//
+// **It travels in `sessionStorage`, one record, read once and removed at once.**
+// Not the fragment: a fragment is for postcards, which are meant to be sent, and
+// a camera angle means nothing to whoever it is sent to. One tab's crossing is
+// one tab's business. The record names the area it was written for and when, and
+// an arrival that does not match it is dropped — a reader who crosses and then
+// goes somewhere else by the minimap must not find a stale turn waiting.
 //
 // ## The keys
 //
@@ -49,9 +80,22 @@
 // and `]` clockwise. `keys.js` already keeps them out of the way of a reader
 // typing, or choosing a language.
 //
-// **Up and down fall through to the page when they have nothing to do**, so a
-// reader at the whole plot still scrolls the page with the arrow keys as on
-// any other page.
+// **A direction falls through to the page when the garden has no answer for
+// it**: nothing to move the window across, no plot that way, and no area that
+// way on the map either. Five areas by two gives every one of them exactly one
+// neighbour above or below, so of up and down one crosses the map and the other
+// still scrolls the page — from the top row, down crosses and up scrolls.
+//
+// **At the whole plot the look is already at every edge**, so from the opening
+// view one press of the crossing direction leaves the area rather than
+// scrolling the page. That is a real cost and it was weighed: an area page is
+// taller than the window, and a reader pressing down to read what is under the
+// plot changes area instead. **Marcus kept it, 26 September**: the arrow keys
+// belong to the garden, a page is scrolled with a wheel, a trackpad or the
+// space bar, and it is the same one press that already steps between plots
+// left and right from the same view. The held-key rule is what makes it safe
+// rather than the zoom. Do not quietly make crossing conditional on being
+// zoomed in — that was the alternative, and it was declined.
 //
 // ## Glyphs, and the words are their names
 //
@@ -62,6 +106,8 @@
 // the screen, a magnifier is a magnifier, and clockwise is a direction in the
 // world.
 
+import { neighbouringArea } from './garden.js';
+import { BUILT } from './gates.js';
 import { register, setSheetTitle } from './keys.js';
 import { whenSettled } from './plain.js';
 
@@ -114,9 +160,26 @@ const GLIDE_LEAST = 450;
 const GLIDE_MOST = 1200;
 const stillness = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+// Where a crossing leaves what it carries, and how long that is good for.
+//
+// A minute is a page load with room to spare — eight megabytes of Swift over a
+// phone's connection, then a plot fetched and grown — and short enough that a
+// record left by a page which never got as far as reading it is not still
+// waiting when the reader comes back to that area later in the same tab.
+const CARRIED = 'site.crossing.v1';
+const FRESH = 60000;
+
+// The plot a crossing lands on when only the arriving area knows which one that
+// is: the last of its line. Plots are counted from nought, as the service counts
+// them, so a number below nought can mean nothing else.
+const LAST = -1;
+
 /// Puts the pad in `nav` and answers to it, to the keys and to the canvas.
 ///
 /// - `stage`: the area's `makePlotStage`.
+/// - `theme`: which area this is, the same one word the page gives `gates.js`
+///   and the panel. It is what the pad leaves the area by; without it the pad
+///   moves about the area and never off it.
 /// - `plots`: how many the plot service has opened.
 /// - `step`: how many plots one crossing moves, which is how many the page
 ///   shows at once — three on the walk, one everywhere else.
@@ -127,12 +190,19 @@ const stillness = window.matchMedia('(prefers-reduced-motion: reduce)');
 ///   and asked which plot to open on, which is how a postcard lands.
 ///
 /// Shows the first plot, and resolves when it is grown.
-export async function openMovePad({ nav, canvas, stage, plots, step = 1, show: grow, turned = () => {}, plants = null }) {
+export async function openMovePad({ nav, canvas, stage, theme = null, plots, step = 1, show: grow, turned = () => {}, plants = null }) {
   const buttons = build(nav);
-  // The plot a postcard names, or the first. Rounded down to a page of `step`,
-  // because the walk only ever shows its plots three at a time from a multiple
-  // of three, and a postcard to its fifth plot opens on the fourth to sixth.
-  const asked = Math.min(Math.max(0, plants?.start?.() ?? 0), Math.max(0, plots - 1));
+  // What a crossing from the area next door left, if this load is one. Taken and
+  // gone, whether it turns out to be any use or not.
+  const arrival = arriving(theme);
+  // The plot a crossing lands on, or the one a postcard names, or the first.
+  // Rounded down to a page of `step`, because the walk only ever shows its plots
+  // three at a time from a multiple of three, and a postcard to its fifth plot
+  // opens on the fourth to sixth.
+  const landing = arrival
+    ? (arrival.plot === LAST ? plots - 1 : arrival.plot)
+    : (plants?.start?.() ?? 0);
+  const asked = Math.min(Math.max(0, landing), Math.max(0, plots - 1));
   let at = asked - (asked % step);
   let busy = false;
 
@@ -163,6 +233,18 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show: g
     const way = along(side);
     const next = at + way * step;
     return way && next >= 0 && next < plots ? next : null;
+  };
+
+  // The page of the area on one side of the map, if there is one open that way.
+  //
+  // **This side is the screen's and nothing else's.** `along` above asks where
+  // the camera stands, because which end of the line of plots is on the right
+  // depends on the turn; an area's place on the map does not, so this asks
+  // `garden.js` for the area that way and `gates.js` whether it is open, and
+  // neither answer is written down here a second time.
+  const onward = (side) => {
+    const next = neighbouringArea(theme, side);
+    return next ? BUILT[next.theme] ?? null : null;
   };
 
   // Whether the look is at the edge this plot shares with the one on `side`:
@@ -243,6 +325,12 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show: g
       aim({ ...target, [axis]: target[axis] + sign * across * (repeating ? HELD : PRESS) });
       return true;
     }
+    // Nowhere left to go on this plot and no plot that way: off the edge of the
+    // area, if the map has one there.
+    if (next === null && onward(side)) {
+      if (!repeating) leave(side);
+      return true;
+    }
     return false;
   }
 
@@ -263,6 +351,28 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show: g
       busy = false;
       refresh();
     }
+  }
+
+  // Leaves for the area on `side`, telling its page which plot to open on and
+  // how the plot was being looked at here.
+  //
+  // Out of the right of the line and in at the first plot, out of the left and in
+  // at the last: the walk carries on, and one press back the way you came puts
+  // you where you were. Up or down is the same plot of the new area, which is the
+  // map crossed at the same depth rather than walked along.
+  function leave(side) {
+    if (busy) return;
+    const next = neighbouringArea(theme, side);
+    const href = next && BUILT[next.theme];
+    if (!href) return;
+    keep({
+      area: next.theme,
+      plot: side === 'right' ? 0 : side === 'left' ? LAST : at,
+      turn: stage.turn(),
+      zoom: target.zoom,
+      at: Date.now(),
+    });
+    location.assign(href);
   }
 
   const closer = (factor) => aim({ ...target, zoom: target.zoom * factor });
@@ -334,10 +444,10 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show: g
   function refresh() {
     const { closest } = stage.view();
     const can = {
-      up: !atEdge('up'),
-      down: !atEdge('down'),
-      left: !atEdge('left') || neighbour('left') !== null,
-      right: !atEdge('right') || neighbour('right') !== null,
+      up: !atEdge('up') || onward('up') !== null,
+      down: !atEdge('down') || onward('down') !== null,
+      left: !atEdge('left') || neighbour('left') !== null || onward('left') !== null,
+      right: !atEdge('right') || neighbour('right') !== null || onward('right') !== null,
       in: target.zoom < closest - 1e-3,
       out: target.zoom > 1 + 1e-3,
       home: !atHome(),
@@ -508,6 +618,14 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show: g
   // A window made smaller can make the look too close or off the plot.
   new ResizeObserver(() => aim(target)).observe(canvas);
 
+  // A crossing's turn and closeness, put on before the first plot is grown, so
+  // the reader arrives facing the way they left and as close as they were rather
+  // than seeing the whole plot from the north and then a jump. Straight there:
+  // an arrival is not a move anybody watches.
+  if (arrival) {
+    turn(arrival.turn - stage.turn());
+    snap({ ...target, zoom: arrival.zoom });
+  }
   nav.hidden = false;
   refresh();
   // What the panel needs of the pad: which plot is showing, and a way to go to
@@ -533,6 +651,47 @@ export async function openMovePad({ nav, canvas, stage, plots, step = 1, show: g
     },
   });
   await show(at);
+}
+
+// Leaves what a crossing carries for the page it is crossing to. Storage that is
+// unavailable costs the reader the turn and the closeness and nothing else,
+// which is a duller crossing rather than a broken one — the same rule as
+// `languages.remember`.
+function keep(record) {
+  try {
+    window.sessionStorage.setItem(CARRIED, JSON.stringify(record));
+  } catch {
+    /* A browser that keeps nothing still walks the garden. */
+  }
+}
+
+/// What was left for `theme`, taken and removed, or null.
+///
+/// **Cheap to check, and dropped on the least doubt.** Anything malformed, older
+/// than `FRESH`, or written for another area is nothing, because what it would do
+/// otherwise is turn a reader's plot for them for no reason they could see. It is
+/// removed before it is read, so a record this page cannot use is not waiting for
+/// the next one either.
+function arriving(theme) {
+  let kept = null;
+  try {
+    kept = window.sessionStorage.getItem(CARRIED);
+    window.sessionStorage.removeItem(CARRIED);
+  } catch {
+    return null;
+  }
+  let record = null;
+  try {
+    record = kept ? JSON.parse(kept) : null;
+  } catch {
+    return null;
+  }
+  const { area, plot, turn, zoom, at } = record ?? {};
+  const fresh = Number.isFinite(at) && Math.abs(Date.now() - at) < FRESH;
+  const sound = Number.isInteger(plot) && plot >= LAST
+    && Number.isInteger(turn) && turn >= 0 && turn < 4
+    && Number.isFinite(zoom) && zoom >= 1;
+  return area === theme && fresh && sound ? { plot, turn, zoom } : null;
 }
 
 // The pad's markup: one grid, three by three — the four directions as a

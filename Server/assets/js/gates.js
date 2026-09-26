@@ -11,9 +11,10 @@
 // **Which areas are open is a different fact from where they are**, and it
 // lives here rather than in `garden.js`: that file is the geometry, written so
 // it can be checked with no browser and no site, and a table of paths on this
-// website has no business in it. `walk.js` reads `BUILT` from here too, so the
-// hub and the map at the foot of an area cannot come to disagree about which
-// ten are open.
+// website has no business in it. `walk.js` reads `BUILT` from here too, and so
+// does `movepad.js`, which is how a reader walks off the edge of one area into
+// the next — so the hub, the map at the foot of an area and the pad cannot come
+// to disagree about which ten are open.
 
 import { AREA_KEYS } from "./strings.js";
 import { AREAS, areaFor } from "./garden.js";

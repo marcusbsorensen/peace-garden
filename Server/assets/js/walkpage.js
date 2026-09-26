@@ -30,8 +30,8 @@ const el = (id) => document.getElementById(id);
 const note = el('note');
 
 // Where this page stands on the map. The bar says it, the link back to the
-// garden carries it, and `gates.js` marks it on the map at the foot of the
-// page — all three from this one word.
+// garden carries it, `gates.js` marks it on the map at the foot of the page,
+// and the pad leaves the area by it — all four from this one word.
 //
 // **Drawn whether or not the plot service answers.** A page that cannot reach
 // its plants is exactly the page a reader needs a way out of.
@@ -91,7 +91,7 @@ async function walk() {
   // the next three are the ones beyond the edge of these.
   const growing = () => say('walkGrowing');
   await openMovePad({
-    nav: el('keys'), canvas: el('stage'), stage, plots: opened, step: SPAN,
+    nav: el('keys'), canvas: el('stage'), stage, theme: THEME, plots: opened, step: SPAN,
     // A tap on a plant opens its panel (`plantpanel.js`), the same on every
     // area page, and a postcard to one of this area's plants lands here.
     plants: plantPanel({ theme: THEME, engine }),
