@@ -175,8 +175,8 @@ PRIVACY = {
         "must": [
             "When two phones touch, they connect directly and encrypted.",
             "Each hands the other: its seed and when that seed was made, its plant's "
-            "name, the chosen name, whether a place may be kept with the "
-            "meeting, and two random numbers — one makes the meeting's plant, "
+            "name, whether a place may be kept with the meeting, the chosen "
+            "name, and two random numbers — one makes the meeting's plant, "
             "one lets the other phone offer that plant to the web garden later.",
             "While meeting, the chosen name can be seen by other phones nearby "
             "that are open to a meeting.",
@@ -189,7 +189,11 @@ PRIVACY = {
             "Imply a server or a service is involved in the meeting itself.",
         ],
         "note": "`SettingsView` says the same things inside the app. If your "
-                "language has the app, agree with it.",
+                "language has the app, agree with it. **Keep whether-a-place "
+                "may-be-kept away from the chosen name**: where the two sit "
+                "side by side, a verb meaning *show* swallows the *whether* "
+                "and the list silently loses an item. Danish and Slovene both "
+                "did it, and the English did it to them (26 September).",
     },
     "privacy3": {
         "seen": "Third paragraph of /privacy.",
