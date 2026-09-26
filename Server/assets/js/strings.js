@@ -553,7 +553,7 @@ export const EN = Object.freeze({
   // place in the plot* is `TakenBack.php`'s placeholder: the row that holds the
   // gap, kept so every later plant stands where the rule put it.
   privacy6:
-    "If you and the person you met both agree to share a plant, the web garden keeps it: its seed, the seeds of its two parents, a number for the meeting, your two random numbers, and what the garden needs to place it — its height, colour, area, the second word of its name, and when it was offered. Anyone can see it standing in the garden. No one's name goes with it. Either of you can take it back; the garden then forgets the plant, keeping only its empty place in the plot and a scrambled record, so that it cannot be planted again. The site's backups keep what they held for thirty days. An offer nobody answers is taken back after thirty days.",
+    "If you and the person you met both agree to share a plant, the web garden keeps it: its seed, the seeds of its two parents, a number for the meeting, your two random numbers, and what the garden needs to place it — its height, colour, area, the second word of its name, and when it was offered. Anyone can see it standing in the garden. No one's name goes with it. Either of you can take it back; the garden then forgets the plant, keeping only its empty place in the plot and a scrambled record, so that it cannot be planted again. The site's backups keep what they held for 30 days. An offer nobody answers is taken back after 30 days.",
   // `GardenModel.catchUpOnTheAsking`, run when the app starts and only while
   // `sharing.invitations.v1` is on: it sends this phone's own token for each
   // meeting — every meeting's, shared or not, which is what *the random numbers
