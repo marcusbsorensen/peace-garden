@@ -1816,9 +1816,16 @@ plant's name and also something a visitor can see without being told.
   and one rosette in eight is, which is a bed at maturity rather than a
   nursery. At most 2% of any crop reaches more than 0.2 m into a path, so the
   paths stay open.
+
+  **The rosette row is superseded** — this section records the design as it was
+  chosen, before the plant shapes changed. On the new shapes a rosette bed is
+  three across at 0.38 m, ten rows 0.40 m apart, **30 a bed rather than 52**.
+  See *Decided*, item 6.
 - **A plot therefore holds 42 to 156 plants**, depending on which crops claimed
   its beds; the largest in any simulated run held 93. The Long Walk's page
   already draws three plots of 48, so 93 is inside what a page has done.
+  **Also superseded by item 6**: with a rosette bed at 30 the range is **42 to
+  90** and the largest simulated plot holds **71**.
 - **The nudge is 0.025 m down the bed and 0.05 m along the row.** A row across
   a bed has to read as a row, for the reason a drill does in the Seedbed.
 
@@ -2240,3 +2247,52 @@ between them, which one sheet at one height cannot follow) and the Crossing,
 whose roundels are paving and throw
 nothing. A turn costs roughly 10–30 ms more than it did, for working the structures'
 shadow out again; the plants' are kept.
+
+## The at-scale work
+
+**Written down once on 24 September, in a handover, and lost when the next one
+dropped it.** It is recorded here so it stops living in `git log`. The evidence
+is `design/at-scale/2026-09-24-sheet.jpg`: every area rendered at its share of
+10,000 shared plants, which is the first time any of them was looked at full.
+
+It is about **how a full garden reads**, not about throughput. Every item is a
+"this was right at one plot and is wrong at a hundred" item.
+
+1. **Open each area on its newest plot.** Every area page opens on plot 0 — the
+   oldest, the ambassador's — so a visitor to a hundred-plot area is shown the
+   first bed ever planted and has to walk to reach anything recent. The default
+   is `plantpanel.js`'s `start`, `postcard?.plot ?? 0`, read by `movepad.js`.
+2. **Give each area an overview.** There is no way to see an area whole. The
+   pad walks plots as a line, and since 24 September the hub sends an open area
+   straight to its page, so the map does not serve as one either.
+3. **Make the colour rules visible.** The Knot Garden's compartment-per-colour,
+   the Glasshouse's spectrum along the staging, the Quiet Garden's one-colour
+   groups — rules that only become legible across many plots, and that nobody
+   has yet seen doing their work.
+4. **The Quiet Garden's near-empty rooms.** It is the one area whose rule is
+   *fewer*: 10 places a plot, so it opens more plots than anything else — 51 at
+   five hundred arrivals against the Long Walk's 11. At its share of 10,000
+   that is about a hundred rooms.
+5. **Seedbed rows left part-empty in the middle of a run.** A drill is one kind
+   repeated, so the gaps are structural, not a placement fault: 73% of places
+   held at five hundred.
+6. **The crowded Glasshouse staging.** 99% of its plants are wider than the
+   0.30 m gap between pots. Deferred into this work on purpose.
+
+**How to see any of it**: every workbench takes `?arrivals=N`, and the
+simulations already run well past five hundred — the Coppice is tabulated out
+to 4,000, `tools/homeground` runs 2,000. Re-running them is how the faults
+become visible; it is not itself the work.
+
+### One cost nobody had written down
+
+**Every one of the ten stores loads the whole area into PHP on each arrival**
+to decide where the plant goes — `SELECT * FROM <area> ORDER BY arrival`, in a
+transaction, N being every plant ever placed there. It is by design, because
+the rules grade an arrival against the whole area, and it is why the ambassador
+has to be prepended. But it is O(N) per placement with no ceiling: nothing ever
+fills up, since a new plot opens whenever the newest will not take an arrival.
+
+The read path is fine and bounded: pages fetch one plot at a time, and `plot`
+and `hidden` are indexed. **Only the write path is unbounded**, and at a
+thousand plants in an area it is a whole-table read for every offer answered.
