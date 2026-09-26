@@ -1276,13 +1276,20 @@ another.
     plot and the edge it sits in the middle of it; where there is not, it goes
     as far out as the canvas allows and the plot stands in front of the rest,
     which is what a nearer thing does — and if less of it would show than the
-    sky it was asked to leave, it is not drawn at all. **That is why the slab
-    below a single plot does not appear on a wide window**: the canvas is
-    fitted to the plot with 2.3 m of headroom above the soil and 0.95 m below,
-    so there is about a third of a metre of sky under the plot's near corner
-    against the 1.8 m a slab wants. On a phone, and on the walk's three plots,
-    there is room and it shows. If it should show everywhere, the frame has to
-    leave room under the plot, which changes the opening view of all ten pages.
+    sky it was asked to leave, it is not drawn at all.
+  - **The frame leaves 0.7 m of sky under the plot, so the area below has
+    somewhere to be.** Fitted to the plot alone — 2.3 m of headroom over the
+    soil, the rim's 0.95 below, the plot in the middle — the canvas left about
+    a third of a metre underneath against the 1.8 a slab wants, and the four
+    wide pages with an area below them drew nothing there while their down key
+    went somewhere. The headroom above could not pay for it, because 2.3 m is
+    a 2 m hedge and 30 cm and taking any of it cuts the yew. So the window is
+    0.7 m taller and the plot rides at the top of it: **a plot now draws at
+    92% of the size it did**, on all ten pages, and `ABOVE` — the point a look
+    is held over — moves down with it, or opening a page would nudge.
+    Shrinking the slab instead does nothing, because a slab and the plot are
+    the same shape at the same attitude and the strip that shows past the
+    plot's near edge is one width whatever size the slab is.
 - **Turning is called turning.** The camera keys were *left* and *right*, which
   are the words a visitor reaches for to mean walking somewhere else.
 - **A minimap to travel by**: the garden's own 5×2 map, read from `garden.js`

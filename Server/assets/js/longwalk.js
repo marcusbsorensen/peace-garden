@@ -17,6 +17,20 @@ const HEDGE_FROM = 2.3;     // LongWalk.hedgeFrom
 export const RIM_DEPTH = 0.95;  // GardenGround.rimDepth
 export const HEDGE = { thickness: 0.36, tall: 2.0, low: 0.7 };
 
+// **Sky under the plot, so the area below it has somewhere to be.** The window
+// used to stop at the bottom of the rim and the plot sat in the middle of it,
+// which left about a third of a metre of sky underneath — less than a slab
+// shows, so the four wide pages with an area below them drew nothing there
+// while their down key went somewhere (26 September).
+//
+// The headroom above could not pay for it: 2.3 m over the soil is a 2 m hedge
+// and 30 cm, and taking any of it cuts the yew. So the window is this much
+// taller instead and the plot rides at the top of it, which is 0.7 m of sky
+// below and a plot drawn at 92% of the size it was. `ABOVE` moves with this —
+// the two are the same number seen from either end, and if they part company
+// the whole view stops being the view a look is held at.
+const UNDER = 0.7;
+
 export const COLOUR = {
   turf: [0.235, 0.265, 0.190],
   grass: [0.285, 0.320, 0.225],
@@ -226,13 +240,13 @@ const SHADOW = {
 // nearer thing does — up to a point: `gap` is also the least of a slab that
 // must still show, and a slab showing less than that is not drawn at all.
 //
-// **That is why there is nothing below a single plot on a wide window.** The
-// canvas is fitted to the plot, with 2.3 m of headroom over the soil and 0.95
-// below, so under the plot's near corner there is about a third of a metre of
-// sky against the 1.8 a slab wants. On a phone, and under the walk's three
-// plots, there is the room and the slab below is there. Making it appear
-// everywhere means leaving room under the plot in `frame`, which changes the
-// view all ten pages open on.
+// **Below a single plot the sky is there because it was asked for.** Fitted
+// to the plot alone — 2.3 m of headroom over the soil, 0.95 of rim below, the
+// plot in the middle — the canvas left about a third of a metre underneath,
+// and a slab wants 1.8. That is what `UNDER` buys, and a plot drawn at 92% of
+// its old size is what it cost. Shrinking the slab instead does nothing: it
+// and the plot are the same shape at the same attitude, so the strip that
+// shows past the plot's near edge is the same width whatever size the slab is.
 //
 // `closest` is the last zoom a slab is drawn at. Closer in than the whole
 // plot a reader is looking at ground rather than at the horizon — and a slab
@@ -500,12 +514,11 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
       // **How much of it stands clear of the plot, and enough must.** A slab
       // and the plot are the same shape at the same attitude, so their edges
       // on the screen are parallel and what shows past the plot is a strip of
-      // one width all along. Under a single plot on a wide window that strip
-      // is four pixels of a slab's own rim, which is a smudge at the plot's
-      // edge and not a place: **at least as much of a slab must show as the
-      // sky it was asked to leave.** Taller windows have the room and do show
-      // it, which is the honest answer — the canvas is fitted to the plot, and
-      // what is under the plot is however much is left.
+      // one width all along, and a strip four pixels wide is a smudge at the
+      // plot's edge and not a place: **at least as much of a slab must show as
+      // the sky it was asked to leave.** `UNDER` is what makes the sky below a
+      // single plot wide enough to pass this; the test stays because a window
+      // can still be shaped so that some direction has no room.
       if (sign * (at[axis] + far - reach) < BESIDE.gap) continue;
       if (at[axis] + low < pane[axis][0] || at[axis] + high > pane[axis][1]) continue;
       if (at[1 - axis] + size[1 - axis][0] < pane[1 - axis][0]
@@ -1341,13 +1354,15 @@ function lookAlong(direction) {
 }
 
 // The whole view: the window fitted to the plot, its hedges and its tallest
-// plants, as the app frames a plot with headroom above and the slab's depth
-// below. `cx`, `cy`, `w` and `h` are the window, in metres across the screen;
+// plants, with headroom above, the rim's depth below, and `UNDER` of sky
+// below that. `cx`, `cy`, `w` and `h` are the window, in metres across the
+// screen;
 // `content` is the part of it the plot fills, which is narrower than the
 // window on a wide screen and shorter on a tall one. A closer look may move
 // anywhere inside `content` and nowhere outside it.
 function frame(view, aspect, span) {
-  const { minX, maxX, minY, maxY } = spread(corners(view, SIDE / 2, (SIDE * span) / 2, -RIM_DEPTH, 2.3));
+  const { minX, maxX, minY, maxY } =
+    spread(corners(view, SIDE / 2, (SIDE * span) / 2, -RIM_DEPTH - UNDER, 2.3));
   const margin = 1.06;
   const contentW = (maxX - minX) * margin, contentH = (maxY - minY) * margin;
   let w = contentW, hgt = contentH;
@@ -1440,9 +1455,13 @@ const CLOSEST = 0.9;
 // How far above the soil the point a look is held over sits, in metres: the
 // middle of the height `frame` fits the whole view to, so that the whole view's
 // own middle is over the middle of the plot and holding it there moves nothing.
-// It is also about where a border's flowers are, so it is the plants that stay
-// put under the middle of the window through a turn, not the soil.
-const ABOVE = (2.3 - RIM_DEPTH) / 2;
+// **It follows `UNDER`, and must.** Sky under the plot is sky the window's
+// middle sits lower against, and a held point that stayed where it was would
+// pull the plot back down into it — the whole view would no longer be the
+// view a look is held at, and opening a page would nudge. It comes out a
+// third of a metre up, which is a stem rather than a border's flowers, so it
+// is nearer the soil than the flowers that stays put through a turn.
+const ABOVE = (2.3 - RIM_DEPTH - UNDER) / 2;
 
 function closest(whole) {
   return Math.max(1, Math.min(whole.w, whole.h) / CLOSEST);
