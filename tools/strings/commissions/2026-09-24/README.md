@@ -76,8 +76,9 @@ Marcus answered all five the same day.
   said it — `about1`, and two in the app about leaving the garden — say
   *personer* and *folk* now. The `read` note in `Server/strings/da.json`
   records what he read and when.
-- **Batches 2 to 5 are written** (below). **Batch 6, the last eight, is next**, each grouped by the problem
-  it shares:
+- **All six batches are written** (below). **Every site language but Kalaallisut
+  now has the front page, the ten meaning lines, `/meanings` and the thirty
+  parts.** Each batch was grouped by the problem it shares:
 
   | Batch | Languages | What they share |
   | --- | --- | --- |
@@ -175,6 +176,30 @@ written *мужской род* / *mužský tvar* / *forma męska* and so on —
 | hr | *Susret / Križanje / Rast*. *Uzorak* for Pattern also "sample". *Rez i novi izboj* for cut-and-come-again. |
 | sr | Cyrillic, ekavian, *башта*. As Croatian, in its own words. *подручје* for *area*. |
 
+## Batch 6, written 26 September
+
+**lt lv cy ga el tr sq mt, the site only**: 55 strings each, the last of the
+forty-one. Every check passes. Unread by any speaker.
+
+Two general notes. **Pattern is the hard headword in all eight**: every one of
+these languages uses its everyday word for *pattern* to mean a sewing pattern
+or a template, which the brief forbids, so each reaches for its word for
+*regularity* instead and each of those is longer than the English. And
+**`notYet` follows Danish, German and Czech in saying *opens later*** rather
+than *not open yet*: ten area names across three genders in most of these
+languages, and a negated participle would have to agree with all of them.
+
+| | For the reader |
+| --- | --- |
+| lt | *Dėsningumas* for Pattern (*Raštas* reads as ornament). *sritis* for *area*, which nothing had settled. `frontTurn` is informal singular, *Vilk, kad pasuktum*, where Lithuanian interfaces often go impersonal. |
+| lv | *Likumsakarība* for Pattern is long for a card, and *Raksts* was rejected as the sewing one. *apvidus* for *area* reads geographic; *nogabals* is the garden word if a reader prefers it. |
+| cy | *Patrwm* for Pattern is also a sewing pattern and Welsh has no cleaner word, so the definition carries the sense. *Carennydd* for Kinship over *Perthynas*. *Tangnefedd* for Peace, the inward one, not *heddwch*. *ardal* for *area*. |
+| ga | `meaningMeeting`'s headword is three words, *Casadh le chéile*, because *Casadh* alone is turning. *Patrún* has the template sense, as Welsh's does. *Suaimhneas* for Peace, not *Síocháin*. *limistéar* for *area*. |
+| el | *Κανονικότητα* for Pattern is long for a card; *Μοτίβο* is the alternative and *πατρόν* the sewing one. *Γαλήνη* for Peace, not *ειρήνη*. *λαχτάρα* for the pull of elsewhere, where *νοσταλγία* leans homeward. *περιοχή* for *area*. |
+| tr | *Örüntü* for Pattern is the scientific word; *desen* is fabric and *kalıp* a template. *Yakınlık* for Kinship can read as proximity, and *Akrabalık* leans to blood. `meaningsNames` is *Şöyle başlayan adlar*, because Turkish puts the beginning before the noun and the label has to run into a list. |
+| sq | *Afëria* for Kinship (*Farefisnia* leans to blood). *Paqja* for Peace, with *qetësia* the quiet and *prehja* the ease, so the line does not say one thing three times. *gjini* is both genus and grammatical gender, so `meaningsSecond` says *formën e mashkullit*. *zonë* for *area*. |
+| mt | **Two for Marcus, not only for a reader.** The area is *L-istennija* and the theme is *Stennija*, so that one card says waiting twice: either the area name or the headword has to move. And `frontCross` is *Inkroċjar*, the horticultural word, where `growBody` says *jaqsam* — agreeing with `growBody`, as the brief asks, would have printed *Qsim* under the glyph, which reads as dividing. Nothing written was changed, so the two disagree until one is chosen. Also *Xejra* for Pattern, *Rabta* for Kinship, *Sliem* for Peace. |
+
 ## What each language still lacks, and why
 
 **Regenerated late on 24 September**, after the Glasshouse, the Coppice and
@@ -184,22 +209,27 @@ all English only by `strings.js` and outside this round, and `walkBack` and
 only by `strings.js` and outside this round like the pad's. The sheets
 themselves did not change.
 
+**Regenerated again on 26 September, with batch 6 in.** This commission's
+fifty-five are now written in all forty-one, so its four rows have left the
+table for every language but Kalaallisut.
+
 `missing.json` has it per language. Every site language but Kalaallisut lacks
-the same 109 keys:
+the same 54 keys, and none of them is this commission's:
 
 | Group | Keys |
 | --- | --- |
-| **This commission: the front page** (11) | `frontLead` `frontTurn` `frontMeet` `frontMeetBody` `frontCross` `frontCrossBody` `frontGrow` `frontGrowBody` `downloadTitle` `gardenTitle` `notYet` |
-| **This commission: the meaning lines** (10) | `meaningWaiting` `meaningGround` `meaningBeginnings` `meaningRenewal` `meaningTravel` `meaningPeace` `meaningKinship` `meaningPattern` `meaningLight` `meaningMeeting` |
-| **This commission: `/meanings`** (4) | `meaningsTitle` `meaningsAbout` `meaningsSecond` `meaningsNames` |
-| **This commission: the part labels** (30) | `subthemeHeldBack` … `subthemeTheMannersOfIt`, three to a theme in map order |
 | The privacy page, its own sheet (8) | `privacyTitle` `privacy1`–`privacy7` — present as `null` |
 | The area paragraphs, English only by `strings.js` (10) | `walkAbout` `quietAbout` `crossAbout` `orchardAbout` `knotAbout` `seedbedAbout` `frameAbout` `glasshouseAbout` `coppiceAbout` `groundAbout` |
 | Live, uncommissioned, not in this round (32) | `walkTitle` `wildTitle` `wildBody` `downloadBody` `walkGrowing` `walkEmpty` `walkTurnAnti` `walkTurnClock` `walkAway` `quietAway` `crossAway` `orchardAway` `knotAway` `seedbedAway` `frameAway` `glasshouseAway` `coppiceAway` `groundAway`, and the pad's seven: `moveUp` `moveDown` `moveLeft` `moveRight` `zoomIn` `zoomOut` `moveHome`, and the plant panel's seven: `plantKey` `plantAmbassador` `plantPostcard` `plantPostcardText` `plantCopied` `plantCopyThis` `plantClose` |
 | Said nowhere on the site, kept until you decide whether they go (4) | `gardenBody` `walkBody` `goOn` — per `strings.js` — and `walkThisArea`, which no page or script uses either |
 
-**Kalaallisut** lacks those 109 and sixteen more — the six paragraphs and the
-ten area names — all deliberately, by its `awaiting` note.
+**The privacy page is the round that is now next**, at eight keys in
+forty-two: it is the only one of the four rows above that is commissioned and
+waiting rather than deliberately English.
+
+**Kalaallisut** lacks those 54, this commission's 55, and sixteen more — the
+six paragraphs and the ten area names — 125 in all, deliberately, by its
+`awaiting` note.
 
 **The app's seven** each lack the 52 of this commission and **64 older strings
 that are live and untranslated in all seven** — the display settings, releasing
