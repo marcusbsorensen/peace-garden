@@ -38,7 +38,14 @@ from commission import MEANINGS as MEANING_CLAIMS  # noqa: E402
 
 CATALOGUES = ROOT / "Server/strings"
 XCSTRINGS = ROOT / "App/PeaceGarden/Resources/Localizable.xcstrings"
-TERMS = json.loads((ROOT / "tools/strings/terms.json").read_text())["seed"]
+_TERMBASE = json.loads((ROOT / "tools/strings/terms.json").read_text())
+TERMS = _TERMBASE["seed"]
+# The forms of that word a language needs beyond the head of it, as `check.py`
+# reads them. Both files ask the same question of a string and have to ask it the
+# same way, or this round's keys are held to a stricter rule than the site's —
+# which is how `check.py` came to be deciding the grammatical number for six
+# languages. See `BY_HAND` in `tools/strings/terms.py`.
+FORMS = _TERMBASE.get("forms", {})
 
 # Kalaallisut is left out, by its own `awaiting` note: the machine pass was not
 # good enough there to ship, and nobody on this side can read it. A null draws
@@ -447,10 +454,12 @@ def check(leave_out):
                 if area in value.lower():
                     problems.append(f"{key}: the English area name {area!r}")
             term = TERMS.get(code)
-            if (term and "seed" in english_value.lower()
-                    and term.lower()[:4] not in value.lower()):
-                problems.append(f"{key}: nothing starts like {term!r}, this "
-                                "language's word for a seed")
+            if term and "seed" in english_value.lower():
+                forms = [f.lower() for f in FORMS.get(code, [])] or [
+                    term.lower()[:4]]
+                if not any(form in value.lower() for form in forms):
+                    problems.append(f"{key}: no form of {term!r}, this "
+                                    "language's word for a seed")
         for key in MEANING:
             if key not in written:
                 continue

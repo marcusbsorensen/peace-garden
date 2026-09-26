@@ -45,8 +45,14 @@ SHORT = 20
 # The word each language settled on for `seed`, kept in `terms.json` and read
 # off the commissioned strings by `terms.py`. See that file for why it is a
 # committed table rather than something worked out on every run.
-TERMS = json.loads((pathlib.Path(__file__).resolve().parent / "terms.json")
-                   .read_text())["seed"]
+_TERMBASE = json.loads((pathlib.Path(__file__).resolve().parent / "terms.json")
+                       .read_text())
+TERMS = _TERMBASE["seed"]
+
+# And, for the languages that need them, the forms of that word — written by
+# hand in `BY_HAND` in `terms.py`, where each entry says why. A language with no
+# entry falls back to the head of its word, below.
+FORMS = _TERMBASE.get("forms", {})
 
 # How long an area name may be before the map wobbles.
 #
@@ -142,19 +148,33 @@ def problems_for(code, catalogue, source, claims=CLAIMS, group="prose"):
     # worse than a page in English.
     term = TERMS.get(code)
     if term:
-        # Matched on the head of the word rather than the whole of it. Every
-        # language here inflects the ending and none of them inflects the head:
-        # Estonian's genitive is `seemne` against a nominative `seeme`, and a
-        # whole-word match calls that a missing word. Four characters, or the
-        # whole term where it is shorter — Danish `frø`, Japanese `種`.
-        head = term.lower()[:4]
+        # **What counts as saying it is the language's own business, and is
+        # written down per language.** `terms.json` carries the forms of the word
+        # for the languages that need them, and any one of them does.
+        #
+        # Where a language has none, the head of the word: four characters, or
+        # the whole of it where it is shorter — Danish `frø`, Japanese `種`.
+        # Most languages here inflect the ending and not the head, so the head
+        # finds every form of the word — Estonian's genitive `seemne` against a
+        # nominative `seeme`, which a whole-word match would call a missing word.
+        #
+        # **The head alone was deciding the grammatical number**, which is not
+        # this check's business and was never meant to be: a plural that changes
+        # the head has nothing of those four characters left in it, so Italian
+        # wrote *Ogni seme* where it wanted *I tuoi semi*, and five other
+        # languages bent a sentence the same way in the privacy round of 26
+        # September. Those six, and Irish, are `BY_HAND` in `terms.py` now.
+        forms = [f.lower() for f in FORMS.get(code, [])] or [term.lower()[:4]]
         for key, value in written.items():
-            if "seed" in source[key].lower() and head not in value.lower():
+            if "seed" in source[key].lower() and not any(
+                    form in value.lower() for form in forms):
                 found.append(
-                    f"{key}: nothing here starts like {term!r}, which is this "
+                    f"{key}: nothing here is a form of {term!r}, which is this "
                     "language's own word for a seed in the thirteen already "
                     "shipping. Either the paragraph avoids saying seed, or it "
-                    "says it with a different word")
+                    "says it with a different word — and if it is a form of the "
+                    "right word that the termbase has not got, add it to "
+                    "`BY_HAND` in `terms.py` and regenerate")
     return found
 
 

@@ -1,5 +1,5 @@
 {
- "note": "The word for `seed`, read off the commissioned strings by tools/strings/terms.py. Regenerate with --write; correct by hand in BY_HAND there, not here.",
+ "note": "The word for `seed`, read off the commissioned strings by tools/strings/terms.py, and under `forms` the other forms of it a language uses, where the first four characters of the word are not enough for check.py to find it. Regenerate with --write; correct by hand in BY_HAND there, not here.",
  "seed": {
   "ar": "بذرة",
   "be": "насенінк",
@@ -43,5 +43,39 @@
   "tr": "tohum",
   "uk": "насінин",
   "zh": "种子"
+ },
+ "forms": {
+  "ar": [
+   "بذرة",
+   "بذر",
+   "بذور"
+  ],
+  "cy": [
+   "hedyn",
+   "hadau"
+  ],
+  "ga": [
+   "síol",
+   "shíol"
+  ],
+  "it": [
+   "seme",
+   "semi"
+  ],
+  "ko": [
+   "씨앗"
+  ],
+  "mk": [
+   "семе",
+   "семињ"
+  ],
+  "mt": [
+   "żerriegħa",
+   "żrieragħ"
+  ],
+  "ro": [
+   "sămânț",
+   "seminț"
+  ]
  }
 }
