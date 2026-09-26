@@ -8692,7 +8692,7 @@
         }
       }
     },
-    "When you meet someone, your phones connect directly, encrypted, and each hands the other its seed, when that seed was drawn, its plant's name, the name you chose to show, whether a place may be kept with the meeting, and two random numbers: one that makes the new plant, and one the other phone can use later to offer that plant to the web garden. Each phone keeps both second numbers with the plant, and a number for the meeting made from the first two." : {
+    "When you meet someone, your phones connect directly, encrypted, and each hands the other its seed, when that seed was made, its plant's name, the name you chose to show, whether a place may be kept with the meeting, and two random numbers: one that makes the new plant, and one the other phone can use later to offer that plant to the web garden. Each phone keeps both second numbers with the plant, and a number for the meeting made from the first two." : {
       "comment" : "The plainest account the app gives of what leaves the phone at a meeting, under the place settings. A list of facts: each item is something the phone really sends, and the last sentence is what it keeps afterwards."
     },
     "When you meet someone, your phones exchange your seed, your name, and a random number for that meeting. That is everything that crosses between you, and it goes directly from phone to phone. A seed cannot be turned back into anything about you or your phone." : {

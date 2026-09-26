@@ -534,7 +534,7 @@ export const EN = Object.freeze({
   // looking for a partner. `SettingsView` says the same things inside the app,
   // and the two should agree.
   privacy2:
-    "When two phones touch, they connect directly, encrypted, and each hands the other its seed and when it was drawn, its plant's name, the name you chose to show, whether a place may be kept with the meeting, and two random numbers: one that makes the meeting's plant, and one the other phone can use later to offer that plant to the web garden. While you are meeting, the name you chose to show can be seen by other phones nearby that are open to a meeting.",
+    "When two phones touch, they connect directly, encrypted, and each hands the other its seed and when that seed was made, its plant's name, the name you chose to show, whether a place may be kept with the meeting, and two random numbers: one that makes the meeting's plant, and one the other phone can use later to offer that plant to the web garden. While you are meeting, the name you chose to show can be seen by other phones nearby that are open to a meeting.",
   // `GardenStore`: one file in the app's own storage, which the phone's
   // backups include and removing the app removes.
   privacy3:
@@ -543,7 +543,7 @@ export const EN = Object.freeze({
   // fragment carries: `PollenLink`'s fields, which whoever holds the link can
   // read as surely as the page does.
   privacy4:
-    "A seed travels in a link after the # sign, which is the part of a web address a browser keeps to itself. The link carries the seed and when it was drawn, the plant's name, the name you chose to show and a random number, so whoever you send it to can read them.",
+    "A seed travels in a link after the # sign, which is the part of a web address a browser keeps to itself. The link carries the seed and when it was made, the plant's name, the name you chose to show and a random number, so whoever you send it to can read them.",
   // The web garden, `Server/.api/`: what an offer and a planting keep
   // (`Offers.php` and the area stores), what taking back leaves
   // (`TakenBack.php`), the backups (`backup.php`, `tools/backup.sh`) and the

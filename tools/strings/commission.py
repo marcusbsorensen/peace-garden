@@ -174,7 +174,7 @@ PRIVACY = {
         "seen": "Second paragraph of /privacy — **the load-bearing one.**",
         "must": [
             "When two phones touch, they connect directly and encrypted.",
-            "Each hands the other: its seed and when it was drawn, its plant's "
+            "Each hands the other: its seed and when that seed was made, its plant's "
             "name, the chosen name, whether a place may be kept with the "
             "meeting, and two random numbers — one makes the meeting's plant, "
             "one lets the other phone offer that plant to the web garden later.",
@@ -209,7 +209,7 @@ PRIVACY = {
         "must": [
             "A seed travels in a link after the # sign.",
             "That part of a web address is kept by the browser.",
-            "The link carries the seed and when it was drawn, the plant's name, "
+            "The link carries the seed and when it was made, the plant's name, "
             "the chosen name and a random number.",
             "Whoever it is sent to can read them.",
         ],
