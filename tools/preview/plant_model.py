@@ -890,7 +890,38 @@ def build_skeleton(genome, height_scale, segments=STEM_SEGMENTS):
     samples = transport_frames(positions, radii, genome.twist)
     nodes = [samples[index] for index in node_indices(genome.nodeCount, segments, genome.nodeZone)]
     return dict(stem=samples, nodes=nodes, apex=samples[-1],
-                branches=build_branches(genome, samples, height_scale, length))
+                branches=build_branches(genome, samples, height_scale, length),
+                pedicels=build_pedicels(genome, nodes, length))
+
+
+def build_pedicels(genome, nodes, stem_length):
+    """Mirror of SkeletonBuilder.pedicels in PlantSkeleton.swift.
+
+    The short stalk a flower at a node stands on. Until 27 September 2026
+    neither this file nor SeedCore had one, so a flower at a node was built
+    coaxial with the stem at that node and the stem ran up through the middle
+    of it and out the top. Keyed by node offset, because a flower too young to
+    have swelled is not drawn and its stalk must not be either.
+    """
+    if not genome.bloomsAtNodes:
+        return {}
+    pedicels = {}
+    for offset, node in enumerate(nodes):
+        if node["t"] <= 0.35:
+            continue
+        jitter = SplitMix64(genome.seed, f"pedicel.{offset}")
+        azimuth = genome.divergence * offset + math.pi
+        radial = normalize(node["normal"] * math.cos(azimuth)
+                           + node["binormal"] * math.sin(azimuth))
+        angle = 0.95 + jitter.value(-0.16, 0.16)
+        reach = stem_length * 0.082 + node["radius"] * 1.4
+        # Nothing to aim at: a pedicel has no target height, so the target is
+        # out of reach and the sweep runs its whole length.
+        path = _sweep_branch(node, radial, angle, float("inf"), reach, 0.55, genome.taper)
+        if len(path) < 3:
+            continue
+        pedicels[offset] = dict(origin=node, path=path)
+    return pedicels
 
 
 def build_branches(genome, samples, height_scale, stem_length):
@@ -1352,7 +1383,14 @@ def _add_blooms(builder, genome, skeleton, growth):
         elif placement["kind"] == "branch":
             sample = branches[placement["index"] - 1]["path"][-1]
         else:
-            sample = skeleton["nodes"][placement["index"] - 1]
+            # On its stalk, not on the stem.
+            pedicel = skeleton.get("pedicels", {}).get(placement["index"] - 1)
+            sample = pedicel["path"][-1] if pedicel else skeleton["nodes"][placement["index"] - 1]
+            if pedicel:
+                base = pedicel["path"][0]
+                builder.add_tube("stem", pedicel["path"], max(4, genome.sides - 2))
+                builder.add_dome("stem", base["position"], -base["tangent"], base["normal"],
+                                 base["radius"], 0.5, 4, max(5, genome.sides - 2))
         # Only the two the placement carries move; a flower's stage, age and
         # phase are the plant's own and pass through untouched.
         local = dict(growth)

@@ -684,18 +684,46 @@ public struct PlantBuilder {
             var size = SplitMix64(seed: genome.seed, label: "bloom.size.\(offset)")
             let up = min(1, max(0, (Float(node.t) - 0.35) / 0.65))
             let scale = (0.4 + 0.34 * up) * Float(size.value(in: 0.88...1.12))
+            // **On its stalk, not on the stem.** Until 27 September 2026 the
+            // node's own sample was handed straight on, so the flower was
+            // built coaxial with the stem and the stem ran up through it and
+            // out the top. `pedicels` is filled in the same order this walks
+            // the nodes, so the tip of the one for this node is where the
+            // flower stands; if a pedicel was too short to sweep, the flower
+            // stays where it was rather than going missing.
+            let sample = skeleton.pedicels[offset]?.path.last ?? node
             body(
                 BloomPlacement(
                     kind: .node, index: offset + 1, t: Double(node.t),
                     budSwell: budSwell, bloomOpen: bloomOpen, scale: Double(scale)
                 ),
-                node
+                sample
             )
         }
     }
 
     private func addBlooms(_ builder: inout MeshBuilder, skeleton: PlantSkeleton, growth: GrowthModel.State) {
+        // **A stalk is drawn with its flower or not at all.** `forEachBloom`
+        // passes over a flower too young to have swelled, and a bare pedicel
+        // standing out from the stem is a worse fault than the threaded
+        // flower this fixes — a seedling would put out stalks before it put
+        // out leaves.
         forEachBloom(skeleton: skeleton, growth: growth) { placement, sample in
+            if placement.kind == .node, let pedicel = skeleton.pedicels[placement.index - 1] {
+                let base = pedicel.path[0]
+                builder.addTube(role: .stem, path: pedicel.path,
+                                sides: max(4, self.genome.stem.sides - 2))
+                builder.addDome(
+                    role: .stem,
+                    centre: base.position,
+                    axis: -base.tangent,
+                    side: base.normal,
+                    radius: base.radius,
+                    flatten: 0.5,
+                    rows: 4,
+                    columns: max(5, self.genome.stem.sides - 2)
+                )
+            }
             // Only the two the placement carries move; a flower's stage, age
             // and phase are the plant's own and are passed through untouched.
             var local = growth

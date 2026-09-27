@@ -38,6 +38,28 @@ public struct PlantSkeleton: Sendable {
     /// Empty rather than optional, so every consumer walks the same list and
     /// the two unbranched forms need no special case.
     public var branches: [Branch] = []
+
+    /// **The short stalk each flower on the stem stands on**, one per node
+    /// that carries a bloom, in the order `forEachBloom` visits them.
+    ///
+    /// **A flower cannot be threaded on the stem it grows from**, which is
+    /// what a flower at a node was until 27 September 2026: its receptacle,
+    /// calyx, centre and petal ring were all built coaxial with the stem at
+    /// that node, so the stem ran up through the middle of the flower and out
+    /// the top. Marcus saw it on one plant; on a mature spire it was every
+    /// node above `t` 0.35.
+    ///
+    /// Kept apart from `branches` rather than added to it. A branch is a
+    /// stalk a `.head` divides into and carries a crown-sized bloom at its
+    /// tip, and the tests that say a raceme does not branch are saying
+    /// something true that this must not break.
+    ///
+    /// **Keyed by the node it leaves**, not a list in bloom order. A flower
+    /// too young to have opened is not drawn at all, and a stalk with no
+    /// flower on it is a worse fault than the one this fixes — so the
+    /// builder looks its pedicel up by node and draws the two together or
+    /// neither.
+    public var pedicels: [Int: Branch] = [:]
 }
 
 public enum SkeletonBuilder {
@@ -116,8 +138,69 @@ public enum SkeletonBuilder {
                 heightScale: heightScale,
                 stemLength: length,
                 taper: taper
+            ),
+            pedicels: pedicels(
+                genome: genome,
+                nodes: nodes,
+                stemLength: length,
+                taper: taper
             )
         )
+    }
+
+    // MARK: - Pedicels
+
+    /// The stalk a flower at a node stands on: out from the stem, then
+    /// turning up, so the flower is held clear of the axis instead of
+    /// threaded on it.
+    ///
+    /// **Short on purpose.** A pedicel is not a branch — it carries one
+    /// flower a little way off the stem and that is all — so it reaches a
+    /// twelfth of the stem's length, enough to clear the stem's own thickness
+    /// and the flower's centre and no more. Longer and a spire stops reading
+    /// as a spike and starts reading as a candelabra.
+    ///
+    /// **Set out on the leaves' own divergence, half a turn off.** The leaves
+    /// at a node are already on the golden angle; putting the pedicel there
+    /// too would send the flower out through the middle of a leaf. Half a
+    /// turn past it puts the flower in the gap the whorl leaves.
+    static func pedicels(
+        genome: Genome,
+        nodes: [PathSample],
+        stemLength: Float,
+        taper: Float
+    ) -> [Int: Branch] {
+        guard genome.bloom.atNodes else { return [:] }
+        let divergence = Float(genome.foliage.divergence)
+        var pedicels: [Int: Branch] = [:]
+        for (offset, node) in nodes.enumerated() where node.t > 0.35 {
+            var jitter = SplitMix64(seed: genome.seed, label: "pedicel.\(offset)")
+            let azimuth = divergence * Float(offset) + .pi
+            let radial = simd_normalize(
+                node.normal * cos(azimuth) + node.binormal * sin(azimuth)
+            )
+            // Leaning well off the stem, and a little differently each time:
+            // a row of flowers all at one angle is the tell the lag and the
+            // size jitter above were put in to avoid.
+            let angle = 0.95 + Float(jitter.value(in: -0.16...0.16))
+            let reach = stemLength * 0.082 + node.radius * 1.4
+            // **Nothing to aim at.** `sweep` stops when it crosses a target
+            // height; a pedicel has none, so the target is out of reach and
+            // it runs its whole length. The levelling still turns it up, which
+            // is the nod a flower on a stalk has.
+            let path = sweep(
+                from: node,
+                radial: radial,
+                angle: angle,
+                targetY: .greatestFiniteMagnitude,
+                reach: reach,
+                levelling: 0.55,
+                taper: taper
+            )
+            guard path.count >= 3 else { continue }
+            pedicels[offset] = Branch(origin: node, path: path)
+        }
+        return pedicels
     }
 
     // MARK: - Branches

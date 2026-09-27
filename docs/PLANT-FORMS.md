@@ -376,3 +376,41 @@ albedo by light without gamma correcting, where the single-plant viewer does
 it properly. Fixing it is three lines and correct, but `shade()` is shared
 with every ground in the garden and the light constants were tuned against the
 uncorrected path, so it means re-tuning and re-checking ten areas.
+
+## A flower stands on a stalk, 27 September 2026
+
+Marcus, on a rendered plant: *you cannot have a stem growing THROUGH a flower
+head and then another flower head on top.* He was right, and it was every
+flower a spire, a vine or a bell carried below its crown — at maturity, every
+node above `t` 0.35, not just the one in front of him.
+
+`forEachBloom` handed a node bloom the node'''s own `PathSample`, and
+`addBloom` builds the receptacle, the calyx, the centre dome and the petal
+ring all coaxial with it. The only displacement was 8% of a petal'''s length
+along the flower'''s own axis, so the stem ran up through the middle of the
+flower and out the top with a clear 50 mm to spare. The leaves at the same
+node did step off the axis; the flower did not.
+
+**A node bloom stands on a pedicel now.** `SkeletonBuilder.pedicels` sweeps a
+short stalk with the same integrator a `.head`'''s stalks use — out from the
+stem at about 0.95 rad, turning up as it goes, a twelfth of the stem'''s length
+plus enough to clear the stem'''s own thickness. Set out on the leaves''' golden
+angle plus half a turn, so the flower comes out through the gap the whorl
+leaves rather than through a leaf.
+
+- **Kept apart from `branches`.** A branch is what a `.head` divides into and
+  carries a crown-sized bloom; the tests saying a raceme does not branch are
+  saying something true.
+- **Keyed by node, and drawn with its flower or not at all.** A flower too
+  young to have swelled is not drawn, and a bare stalk standing out from the
+  stem is a worse fault than the one this fixes — the first attempt put
+  stalks on seedlings, and `testAFreshlySownSeedLooksLikeAShootAndNotAMushroom`
+  caught it.
+- **The terminal flower was always right.** `apexPoint` runs the stem'''s radius
+  to nothing over its last stretch, so a crown bloom genuinely ends the axis.
+- **The recorded vectors did not move.** `BloomPlacement` carries kind, index,
+  `t`, swell, openness and scale, and none of them changed; only the sample
+  the flower is built on did.
+- **The Python preview was brought along** (`build_pedicels`). It mirrored the
+  same impalement, and `check_port.py` compares placements rather than
+  geometry, so it would have stayed green while still drawing the fault.
