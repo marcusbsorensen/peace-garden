@@ -12,7 +12,7 @@
 // are labelled by the controls below, which is why the pad's buttons carry real
 // `aria-label`s rather than being four unnamed arrows.
 
-import { AREAS, areaFor, neighbouringArea, randomPlant, stepWithin } from "./garden.js";
+import { AREAS, COLUMN_RISE, areaFor, neighbouringArea, randomPlant, stepWithin } from "./garden.js";
 import { BUILT } from "./gates.js";
 import { direction, manifest, negotiate, readable, remember, tracks, uppercases } from "./languages.js";
 import { register, setSheetTitle } from "./keys.js";
@@ -108,6 +108,9 @@ function goTo(area, plant) {
 /// a map they were standing in the middle of.
 function drawMap(counts) {
   const grid = el("map-grid");
+  // How far the garden falls end to end, so the stylesheet leaves room at the
+  // top for the lift and the number lives in one place.
+  grid.style.setProperty("--map-fall", String(Math.max(...COLUMN_RISE)));
   if (!grid.childElementCount) {
     for (const area of AREAS) {
       const cell = document.createElement("button");
@@ -115,6 +118,10 @@ function drawMap(counts) {
       cell.className = "garden-cell";
       cell.style.gridColumn = String(area.x + 1);
       cell.style.gridRow = String(area.y + 1);
+      // The garden falls from the Cold Frame end to the Crossing, and this is
+      // the map that shows all ten at once, so it is the one that most has to
+      // be a slope. Same `--rise` the minimap uses, off the same table.
+      cell.style.setProperty("--rise", String(COLUMN_RISE[area.x]));
       cell.dataset.theme = area.theme;
 
       const name = document.createElement("span");

@@ -43,6 +43,34 @@ export const AREAS = Object.freeze([
 export const MAP_WIDTH = 5;
 export const MAP_HEIGHT = 2;
 
+/// How high each column of the map stands, in metres above the lowest.
+///
+/// **A garden on a slope is a garden you can remember.** Five cells by two is a
+/// grid, and a grid has no far end, no top and no bottom — nothing to hold on
+/// to but the names. Ground that rises has all three, and it earns them: water
+/// pools at the foot of it, which is where the Crossing's four paths meet, and
+/// alpines stand at the head, which is where the Cold Frame is. **An alpine
+/// house is a cold frame.** That was luck, and it is the reason the slope runs
+/// this way round rather than the other (Marcus, 27 September).
+///
+/// It runs along the long axis and not the short one so that the pad's Up goes
+/// on meaning north. A garden whose ground rises to one side while up is still
+/// up is an ordinary garden; one where Up means two things is a puzzle.
+///
+/// Written out per column rather than multiplied out from a step, because the
+/// steps will not stay even — a terrace is as deep as the ground it holds back,
+/// and these are a first reading to be looked at rather than a formula.
+export const COLUMN_RISE = Object.freeze([4.8, 3.6, 2.4, 1.2, 0]);
+
+/// How far the ground rises from one area to another, in metres: positive when
+/// `there` stands above `here`. Nothing but the column matters, so two areas in
+/// the same column are level with each other.
+export function riseBetween(here, there) {
+  const from = areaFor(here), to = areaFor(there);
+  if (!from || !to) return 0;
+  return COLUMN_RISE[to.x] - COLUMN_RISE[from.x];
+}
+
 /// How many cells an area is across. Fixed, and deliberately far larger than
 /// any area will hold.
 ///
@@ -170,6 +198,20 @@ export function selfTest() {
   if (AREAS.length !== 10) fail("ten themes, ten areas");
   const seen = new Set(AREAS.map((a) => `${a.x},${a.y}`));
   if (seen.size !== AREAS.length) fail("two areas on one cell");
+
+  // The ground falls one way, all the way. A garden that rises again halfway
+  // along is not a slope, and water would pool in the dip rather than at the
+  // foot — which is where the Crossing is and where the pool is going.
+  if (COLUMN_RISE.length !== MAP_WIDTH) fail("a rise for every column");
+  for (let x = 1; x < MAP_WIDTH; x++) {
+    if (COLUMN_RISE[x] >= COLUMN_RISE[x - 1]) fail("the ground stopped falling");
+  }
+  if (COLUMN_RISE[MAP_WIDTH - 1] !== 0) fail("the foot of the garden is the zero");
+  // Two areas in one column stand on one terrace, and the pad's Up leads
+  // between them: up must never be uphill, or Up would mean two things.
+  if (riseBetween("waiting", "peace") !== 0) fail("a column is not level");
+  if (riseBetween("waiting", "ground") >= 0) fail("the Cold Frame is the head of the garden");
+  if (riseBetween("meeting", "light") <= 0) fail("the Crossing is the foot of the garden");
 
   // A cell is the seed's and stays the seed's.
   const seed = "13c94f5faf1e439ececc86abb39de6df5c8effd788c1ad5fc71cf1df22a51cfb";

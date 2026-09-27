@@ -608,10 +608,17 @@ body[data-loading]:not([data-ready]) .page {
 /* Five across and two down, the layout derived in garden.js. It collapses to
    two across on a phone, which keeps the reading order — a walk right is still
    a walk right, it just wraps. */
+/* And it is a slope. The garden falls from the Cold Frame end to the Crossing
+   — `COLUMN_RISE` in garden.js — so each column stands a little higher than
+   the one to its right, and the map a reader learns the garden from is a
+   hillside rather than a table. The room for the lift is added at the top, so
+   nothing moves but the cells. */
 .garden-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 10px;
+  --map-rise-px: 6.7px;
+  padding-block-start: calc(var(--map-fall, 4.8) * var(--map-rise-px));
 }
 
 /* On a narrow screen the map scrolls sideways rather than wrapping.
@@ -645,6 +652,7 @@ body[data-loading]:not([data-ready]) .page {
 
 .garden-cell {
   position: relative;
+  transform: translateY(calc(var(--rise, 0) * var(--map-rise-px, 6.7px) * -1));
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -1421,10 +1429,17 @@ a.quiet-button {
 
    Each cell is a hit area of forty-eight by forty. The grid follows the writing direction, so the
    map mirrors under a right-to-left language as the hub's does. */
+/* The map is the garden's ground, and the garden's ground falls from the Cold
+   Frame end to the Crossing — so the map is a slope and not a grid. Each cell
+   is lifted by its own column's rise (`--rise`, in metres, set in gates.js
+   from `COLUMN_RISE`), and the room for the lift is added at the top so the
+   whole map keeps its place on the page. A slope is a shape a reader can hold;
+   five by two is not. */
 .minimap {
   display: grid;
   grid-template-columns: repeat(5, 48px);
   grid-template-rows: repeat(2, 40px);
+  padding-block-start: calc(var(--map-fall, 4.8) * var(--map-rise-px, 4.2px));
 }
 
 /* Each cell is its area's ground with its layout's glyph on it — see `LOOK`
@@ -1437,6 +1452,7 @@ a.quiet-button {
   border-radius: 8px;
   color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
+  transform: translateY(calc(var(--rise, 0) * var(--map-rise-px, 4.2px) * -1));
 }
 
 .minimap__cell::before {
@@ -1473,6 +1489,18 @@ a.minimap__cell:focus-visible {
 
 a.minimap__cell:focus-visible::before {
   box-shadow: 0 0 0 2px var(--ground), 0 0 0 3px var(--muted);
+}
+
+/* The areas standing beside this one in the canvas above, drawn as slabs of
+   their own ground out past the plot. Marked here so the corner and the canvas
+   read as one garden: what is on the left of the plot is the cell on the left.
+   A dashed hairline rather than a solid one, because these are places you can
+   see and not the place you are — that one is ringed in ink below. */
+.minimap__cell--beside::before {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.42);
+  outline: 1px dashed rgba(255, 255, 255, 0.34);
+  outline-offset: 1px;
+  border-radius: 7px;
 }
 
 /* Where you are: the tile ringed in ink, and the glyph at full strength. */

@@ -535,6 +535,15 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
       // those. With nothing to spare: the line above has already pulled it in
       // as far as it will go, and a margin on top of that would refuse the
       // slab below the plot the sky `UNDER` was bought for.
+      // **And then it stands on its own terrace.** The garden falls along the
+      // map's long axis, so a neighbour to one side is up a step and the other
+      // down one. A rise is world height, and this projection sends world
+      // height straight up the screen and nowhere else — the across axis is
+      // level — so adding it to the screen offset is the same picture as
+      // lifting the slab, and it keeps every test below honest about where the
+      // slab actually ends up. Only the sides are ever off the level: up and
+      // down lead to the other row of the same column, which is level ground.
+      at[1] += slab.rise * up[1];
       if (at[axis] + low < pane[axis][0] || at[axis] + high > pane[axis][1]) continue;
       if (at[1 - axis] + size[1 - axis][0] < pane[1 - axis][0]
           || at[1 - axis] + size[1 - axis][1] > pane[1 - axis][1]) continue;
@@ -555,6 +564,10 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     for (const slab of besides) slab.mesh.release();
     besides = areasBeside(theme).map((area) => ({
       direction: area.direction,
+      // The terrace, at the slab's own size: a neighbour drawn half a plot
+      // across stands half a step higher, or the ground would disagree with
+      // itself about how far away it is.
+      rise: area.rise * BESIDE.scale,
       mesh: upload(gl, ground, besideGround(e, area.seed, area.ground)),
     }));
     draw();

@@ -22,7 +22,7 @@
 // the reader already has every area's name — in their own language — on the
 // map at the foot of the page, which is also where they can press one.
 
-import { DIRECTIONS, MAP_WIDTH, neighbouringArea } from './garden.js';
+import { DIRECTIONS, MAP_WIDTH, neighbouringArea, riseBetween } from './garden.js';
 import { BUILT, LOOK } from './gates.js';
 
 // **`LOOK`'s colours are grounds as the eye sees them and the shader wants
@@ -52,6 +52,10 @@ export function areasBeside(theme) {
       theme: area.theme,
       seed: area.y * MAP_WIDTH + area.x,
       ground: albedo(LOOK[area.theme].ground),
+      // How much higher that ground stands than this, in metres. The garden
+      // falls from the Cold Frame end to the Crossing, so the neighbour to one
+      // side is up a terrace and the one to the other is down one.
+      rise: riseBetween(theme, area.theme),
     }];
   });
 }

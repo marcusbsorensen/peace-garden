@@ -17,7 +17,7 @@
 // to disagree about which ten are open.
 
 import { AREA_KEYS } from "./strings.js";
-import { AREAS, areaFor } from "./garden.js";
+import { AREAS, COLUMN_RISE, DIRECTIONS, areaFor, neighbouringArea } from "./garden.js";
 
 /// The areas with a page of their own, by theme.
 ///
@@ -152,10 +152,25 @@ export function openWays(theme, strings) {
 /// cell, because at this size a name would be the loudest thing on the page.
 function drawMap(map, theme, strings) {
   map.replaceChildren();
+  // **The ones standing beside the reader in the viewport**, marked so that
+  // the corner and the canvas are plainly the same garden: the slab out to the
+  // left of the plot is this cell, and a reader who looks from one to the
+  // other should not have to work that out.
+  //
+  // The same test `areasBeside` makes in `beside.js`, made again here in four
+  // lines rather than imported, because that module reads `BUILT` and `LOOK`
+  // from this one and importing it back would close a cycle. `BUILT` is the
+  // whole of the rule and it is defined at the top of this file.
+  const beside = new Set(Object.keys(DIRECTIONS)
+    .map((direction) => neighbouringArea(theme, direction)?.theme)
+    .filter((next) => next && BUILT[next]));
   // Named, and not dressed. `dress` marks a borrowed English label `dir="ltr"`
   // as well as `lang="en"`, and on the map itself that would pin the grid left
   // to right under Arabic or Hebrew — the one thing the map must not do.
   map.setAttribute("aria-label", strings.t("gardenTitle"));
+  // How far the garden falls end to end, so the stylesheet can leave room at
+  // the top for the lift without the number being written down twice.
+  map.style.setProperty("--map-fall", String(Math.max(...COLUMN_RISE)));
 
   for (const area of AREAS) {
     const here = area.theme === theme;
@@ -164,6 +179,11 @@ function drawMap(map, theme, strings) {
     cell.className = "minimap__cell";
     cell.style.gridColumn = String(area.x + 1);
     cell.style.gridRow = String(area.y + 1);
+    // How high this column stands, in metres, for the stylesheet to lift the
+    // cell by. The map is the garden's ground and the garden's ground falls
+    // from one end to the other, so the picture in the corner is a slope.
+    cell.style.setProperty("--rise", String(COLUMN_RISE[area.x]));
+    if (beside.has(area.theme)) cell.classList.add("minimap__cell--beside");
     const look = LOOK[area.theme];
     cell.style.setProperty("--area-ground", look.ground);
     cell.append(glyph(look.glyph));
