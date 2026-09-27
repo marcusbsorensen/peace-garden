@@ -87,7 +87,11 @@ export function decode(buffer) {
   const f32s = (n) => { const v = new Float32Array(buffer.slice(at, at + n * 4)); at += n * 4; return v; };
 
   const magic = new TextDecoder().decode(new Uint8Array(buffer, 0, 4));
-  if (magic !== 'PGP1') throw new Error(`not a plant buffer: ${magic}`);
+  // **PGP2 since 27 September 2026**, when `maturity` joined the buffer. The
+  // magic is checked rather than assumed so a page served beside a wasm of
+  // the other version says which it got instead of reading the vertices at
+  // the wrong stride.
+  if (magic !== 'PGP2') throw new Error(`not a plant buffer: ${magic}`);
   at = 4;
   const partCount = u32();
   const bounds = f32s(6);
@@ -98,8 +102,12 @@ export function decode(buffer) {
     const positions = f32s(vertices * 3);
     const normals = f32s(vertices * 3);
     const uvs = f32s(vertices * 2);
+    // How far along its development each surface is, 0 to 1. One value for a
+    // whole leaf, repeated over its vertices, because that is the only
+    // channel that survives every leaf on a plant sharing one material.
+    const maturity = f32s(vertices);
     const indices = new Uint32Array(buffer.slice(at, at + indexCount * 4)); at += indexCount * 4;
-    parts.push({ role, positions, normals, uvs, indices });
+    parts.push({ role, positions, normals, uvs, maturity, indices });
   }
   const textures = {};
   for (const role of ROLES) {
@@ -112,12 +120,26 @@ export function decode(buffer) {
 
 // MARK: - Drawing
 
+/// What a young surface is coloured toward, per role: the app's
+/// `PlantSceneBuilder.youngTint`, kept here beside the viewer that uses it
+/// and read by `longwalk.js` for the garden, so a plant ages the same way
+/// wherever it is drawn. A stem and a calyx are green from the bud and do
+/// not age, which is a strength of zero.
+export const YOUNG = {
+  leaf: [0.78, 0.85, 0.46, 0.72],
+  petal: [0.55, 0.66, 0.42, 0.85],
+  centre: [0.72, 0.72, 0.58, 0.6],
+  stamen: [0.72, 0.72, 0.58, 0.6],
+  stem: [0, 0, 0, 0],
+  calyx: [0, 0, 0, 0],
+};
+
 const VERTEX = `#version 300 es
-in vec3 position; in vec3 normal; in vec2 uv;
+in vec3 position; in vec3 normal; in vec2 uv; in float age;
 uniform mat4 viewProjection;
-out vec3 vNormal; out vec2 vUV;
+out vec3 vNormal; out vec2 vUV; out float vAge;
 void main() {
-  vNormal = normal; vUV = uv;
+  vNormal = normal; vUV = uv; vAge = age;
   gl_Position = viewProjection * vec4(position, 1.0);
 }`;
 
@@ -125,13 +147,21 @@ void main() {
 // app's materials: a petal's back is lit as its own face, not seen through.
 const FRAGMENT = `#version 300 es
 precision highp float;
-in vec3 vNormal; in vec2 vUV;
+in vec3 vNormal; in vec2 vUV; in float vAge;
 uniform sampler2D colour;
 uniform vec3 sun;
+uniform vec4 young;
 out vec4 outColour;
 void main() {
   vec3 n = normalize(gl_FrontFacing ? vNormal : -vNormal);
   vec3 albedo = texture(colour, vUV).rgb;
+  // How far along this surface is. One minus the age, so a brand new one is
+  // fully tinted and a grown one untouched, eased: tissue colours up quickly
+  // at first and then spends a long time finishing. Applied before the
+  // gamma, because both colours are the sRGB the palette was written in.
+  float fresh = 1.0 - clamp(vAge, 0.0, 1.0);
+  fresh = fresh * fresh * (3.0 - 2.0 * fresh);
+  albedo = mix(albedo, young.rgb, fresh * young.a);
   albedo = pow(albedo, vec3(2.2));
   float direct = max(dot(n, sun), 0.0);
   float sky = 0.5 + 0.5 * n.y;
@@ -147,9 +177,11 @@ export function makeStage(canvas) {
     position: gl.getAttribLocation(program, 'position'),
     normal: gl.getAttribLocation(program, 'normal'),
     uv: gl.getAttribLocation(program, 'uv'),
+    age: gl.getAttribLocation(program, 'age'),
     viewProjection: gl.getUniformLocation(program, 'viewProjection'),
     colour: gl.getUniformLocation(program, 'colour'),
     sun: gl.getUniformLocation(program, 'sun'),
+    young: gl.getUniformLocation(program, 'young'),
   };
 
   let plant = null, turn = 0.6, tilt = 0.18, dragging = null;
@@ -175,6 +207,7 @@ export function makeStage(canvas) {
         attribute(gl, at.position, part.positions, 3),
         attribute(gl, at.normal, part.normals, 3),
         attribute(gl, at.uv, part.uvs, 2),
+        attribute(gl, at.age, part.maturity, 1),
       ];
       const indexBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -217,6 +250,7 @@ export function makeStage(canvas) {
     gl.activeTexture(gl.TEXTURE0);
     for (const part of plant.parts) {
       gl.bindTexture(gl.TEXTURE_2D, plant.textures[part.role]);
+      gl.uniform4fv(at.young, YOUNG[ROLES[part.role]] ?? [0, 0, 0, 0]);
       gl.bindVertexArray(part.vao);
       gl.drawElements(gl.TRIANGLES, part.count, gl.UNSIGNED_INT, 0);
     }

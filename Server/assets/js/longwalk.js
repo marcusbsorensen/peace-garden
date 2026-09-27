@@ -7,7 +7,7 @@
 // the ground, path, hedges and light are the app's, from GardenGround.swift,
 // GardenStructures.swift and PlotView.swift.
 
-import { ROLES, decode, takeResult, link, attribute, multiply } from './plant.js';
+import { ROLES, YOUNG, decode, takeResult, link, attribute, multiply } from './plant.js';
 import { castShadow } from './shadow.js';
 import { areasBeside } from './beside.js';
 
@@ -148,21 +148,38 @@ void main() {
 }`;
 
 const PLANT_VERTEX = `#version 300 es
-in vec3 position; in vec3 normal; in vec2 uv;
+in vec3 position; in vec3 normal; in vec2 uv; in float age;
 uniform mat4 viewProjection;
 uniform vec3 offset;
-out vec3 vNormal; out vec2 vUV;
-void main() { vNormal = normal; vUV = uv; gl_Position = viewProjection * vec4(position + offset, 1.0); }`;
+out vec3 vNormal; out vec2 vUV; out float vAge;
+void main() {
+  vNormal = normal; vUV = uv; vAge = age;
+  gl_Position = viewProjection * vec4(position + offset, 1.0);
+}`;
 
+// **Every leaf on a plant samples one texture at the same coordinates**, so
+// without this they come out identical to the pixel, which is most of why a
+// web plant read as moulded rather than grown. `maturity` is the one channel
+// SeedCore carries for exactly this, and the app has used it since it was
+// written; the wasm buffer started sending it on 27 September 2026.
+//
+// `1 - age` so a brand new surface is fully tinted and a grown one is
+// untouched, eased the app's way — tissue colours up quickly at first and
+// then spends a long time finishing.
 const PLANT_FRAGMENT = `#version 300 es
 precision highp float;
-in vec3 vNormal; in vec2 vUV;
+in vec3 vNormal; in vec2 vUV; in float vAge;
 uniform sampler2D colour;
+uniform vec4 young;
 ${SHADE}
 out vec4 outColour;
 void main() {
   vec3 n = normalize(gl_FrontFacing ? vNormal : -vNormal);
-  outColour = vec4(shade(texture(colour, vUV).rgb, n), 1.0);
+  vec3 albedo = texture(colour, vUV).rgb;
+  float fresh = 1.0 - clamp(vAge, 0.0, 1.0);
+  fresh = fresh * fresh * (3.0 - 2.0 * fresh);
+  albedo = mix(albedo, young.rgb, fresh * young.a);
+  outColour = vec4(shade(albedo, n), 1.0);
 }`;
 
 // **A shadow is a darkening, not a colour.** It is drawn over the ground
@@ -302,7 +319,8 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   const gl = canvas.getContext('webgl2', { antialias: true, alpha: true, premultipliedAlpha: true, stencil: true });
   if (!gl) throw new Error('This browser has no WebGL2.');
   const ground = program(gl, GROUND_VERTEX, GROUND_FRAGMENT, ['position', 'normal', 'colour'], ['offset', 'opacity', 'upOnly']);
-  const plantProgram = program(gl, PLANT_VERTEX, PLANT_FRAGMENT, ['position', 'normal', 'uv'], ['offset', 'colour']);
+  const plantProgram = program(gl, PLANT_VERTEX, PLANT_FRAGMENT,
+                               ['position', 'normal', 'uv', 'age'], ['offset', 'colour', 'young']);
   const shadowProgram = program(gl, SHADOW_VERTEX, SHADOW_FRAGMENT, ['position', 'uv', 'fade'], ['loss']);
   // **What a plant's shadow lies on.** An area whose floor is not level says
   // how high it is anywhere (`height`, on the builder it hands the stage), so
@@ -472,6 +490,10 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
       gl.uniform3fv(plantProgram.at.offset, [plant.x, plant.lift, plant.z]);
       for (const part of plant.parts) {
         gl.bindTexture(gl.TEXTURE_2D, plant.textures[part.role]);
+        // What a young one of this part is coloured toward. Set per part
+        // rather than per plant: a bud's petals and the leaves under them
+        // are different ages and go different ways.
+        gl.uniform4fv(plantProgram.at.young, YOUNG[ROLES[part.role]] ?? [0, 0, 0, 0]);
         gl.bindVertexArray(part.vao);
         gl.drawElements(gl.TRIANGLES, part.count, gl.UNSIGNED_INT, 0);
       }
@@ -613,6 +635,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
         attribute(gl, plantProgram.at.position, part.positions, 3),
         attribute(gl, plantProgram.at.normal, part.normals, 3),
         attribute(gl, plantProgram.at.uv, part.uvs, 2),
+        attribute(gl, plantProgram.at.age, part.maturity, 1),
       ];
       const indexBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
