@@ -37,12 +37,19 @@
 
 import { decode, takeResult } from './plant.js';
 import { COLOUR, RIM_DEPTH, SIDE, hash, keepToPlot, readOutline, readStructure } from './longwalk.js';
+import { raiseTrough } from './water.js';
 
 // Seeds for this area's dressing, so a plot is the same shape on every visit.
 // Its own, not the walk's, the room's, the crossing's or the orchard's: five
 // areas drawing from one seed would be five plots with the same wandering edge,
 // which is the sort of thing an eye catches without being able to say why.
-const KNOT = { ground: 7417, floor: 31, grain: 53, band: 601, edging: 641, bridge: 673 };
+// The basin in the middle of the knot. The four inner stretches bow in to
+// within 0.46 m of the middle, and a band is 0.09 m either side of its line,
+// which leaves 0.37 m clear all round: a basin 0.60 m across stands 7 cm
+// inside that.
+const BASIN = { across: 0.60, height: 0.08 };
+
+const KNOT = { ground: 7417, floor: 31, grain: 53, band: 601, edging: 641, bridge: 673, basin: 691 };
 
 export function plan(e) {
   return JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_knot_plan())));
@@ -140,6 +147,15 @@ export function makeKnotGround(place) {
         }
       }
     }
+
+    // **A basin in the empty middle**, which the four inner stretches close
+    // round. The Knot is halfway up the garden, where water is held rather
+    // than found, so it is a ring of stone standing on the gravel — low, a
+    // band's height and less, so it lies inside the knot rather than standing
+    // up out of it. Sunk flush, it read as a drain.
+    raiseTrough(e, { tri, quad }, {
+      across: BASIN.across, height: BASIN.height, seed: KNOT.basin, round: true,
+    });
 
     // MARK: The knot
 

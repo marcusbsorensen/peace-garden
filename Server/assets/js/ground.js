@@ -27,9 +27,18 @@
 
 import { decode, takeResult } from './plant.js';
 import { COLOUR, RIM_DEPTH, SIDE, hash, readOutline } from './longwalk.js';
+import { footing, raiseTrough } from './water.js';
 
 // Seeds for this area's dressing, its own and not another area's.
-const GROUND = { ground: 6173, floor: 59, crumb: 97, drift: 131, clod: 157, edge: 181 };
+const GROUND = { ground: 6173, floor: 59, crumb: 97, drift: 131, clod: 157, edge: 181, trough: 197 };
+
+// **A dipping trough at the near end of a path**, where the can is filled on
+// the way in. The Home Ground is a step up from the foot of the garden and has
+// no ground to spare for a pond — the beds take it — so its water is held in
+// stone. Lengthways down the path, which is 0.45 m between the beds, and ending
+// inside the plot's edge, which comes in no nearer than 2.42 m. Laid across
+// the headland instead it had room for 0.24 m of width and read as a block.
+const TROUGH_AT = { at: [0.83, 1.98], across: 0.36, deep: 0.8 };
 
 /// The soil: the colour the map gives this area — `LOOK.ground` in `gates.js`,
 /// brought down by the quarter a plot is lit up by, as the Seedbed's tilth and
@@ -228,6 +237,10 @@ export function makeGroundGround(place) {
         else { face(a, b, d, key); face(b, c, d, key + 0.25); }
       }
     }
+
+    raiseTrough(e, { tri, quad }, {
+      ...TROUGH_AT, seed: GROUND.trough, height: 0.34, base: footing(place.height, TROUGH_AT),
+    });
 
     // Its sides hang from the outline down to a floor as rough as a clod's, in
     // the app's strata. The walk's arithmetic, because it is the same slab.

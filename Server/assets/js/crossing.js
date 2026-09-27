@@ -13,6 +13,7 @@
 // spot the service gives it. The plot's own numbers come from `pg_cross_plan`
 // rather than being written down again here.
 
+import { raiseTrough } from './water.js';
 import { decode, takeResult } from './plant.js';
 import { COLOUR, RIM_DEPTH, SIDE, keepToPlot, readOutline, readStructure } from './longwalk.js';
 
@@ -20,7 +21,7 @@ import { COLOUR, RIM_DEPTH, SIDE, keepToPlot, readOutline, readStructure } from 
 // Its own, not the walk's or the room's: three areas drawing from one seed
 // would be three plots with the same wandering edge, which is the sort of thing
 // an eye catches without being able to say why.
-const CROSS = { ground: 5107, floor: 23, roundel: 61, rough: 71, mow: [37, 41] };
+const CROSS = { ground: 5107, floor: 23, roundel: 61, rough: 71, mow: [37, 41], basin: 83 };
 
 export function plan(e) {
   return JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_cross_plan())));
@@ -159,6 +160,14 @@ export function makeCrossGround(place) {
       const tone = 0.90 + 0.17 * grain;
       for (const p of corner) vertex(p, nn, COLOUR.stone.map((c) => c * tone));
     }
+
+    // **A basin where the four paths meet.** The Crossing is at the head of
+    // the garden, where water has to be carried and held rather than found, so
+    // it is contained: a stone basin standing on the paving, not a pool sunk in
+    // it. See `raiseTrough`.
+    raiseTrough(e, { tri, quad }, {
+      at: [0, 0], across: place.roundelRadius * 1.15, seed: CROSS.basin, base: 0.05, round: true, height: 0.2,
+    });
 
     // Its sides hang from the outline down to a floor as rough as a clod's, in
     // the app's strata. The walk's arithmetic, because it is the same slab.

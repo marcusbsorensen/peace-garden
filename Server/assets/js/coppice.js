@@ -27,9 +27,10 @@
 
 import { decode, takeResult } from './plant.js';
 import { COLOUR, LIGHT, RIM_DEPTH, SIDE, hash, readOutline, readStructure } from './longwalk.js';
+import { footing, raiseTrough } from './water.js';
 
 // Seeds for this area's dressing, its own and not another area's.
-const COPPICE = { ground: 7151, floor: 47, relief: 53, litter: 67, moss: 71, width: 89,
+const COPPICE = { spring: 1609, ground: 7151, floor: 47, relief: 53, litter: 67, moss: 71, width: 89,
   ride: { '-1': 79, '1': 83 } };
 
 /// The leaf litter: the colour the map gives this area — `LOOK.renewal` in
@@ -228,6 +229,15 @@ export function makeCoppiceGround(place) {
       set(readStructure(takeResult(e, e.pg_coppice_stool(seed))), [x, g, z], BARK, 0.22, vertex);
       set(readStructure(takeResult(e, e.pg_coppice_face(seed))), [x, g, z], FACE[stage] ?? FACE[2], 0.08, vertex);
     }
+
+    // **A spring at the end of the near ride**, caught in a stone basin. The
+    // Coppice is high on the garden, where water is not found lying but comes
+    // up and has to be held, so it is contained, as the Crossing's is above
+    // it. At the ride's end rather than in it, because a ride is the way in.
+    const spring = { at: [2.0, 0.9], across: 0.54 };
+    raiseTrough(e, { tri, quad }, {
+      ...spring, seed: COPPICE.spring, round: true, height: 0.15, base: footing(place.height, spring),
+    });
 
     // Its sides hang from the outline down to a floor as rough as a clod's, in
     // the app's strata. The walk's arithmetic, because it is the same slab.

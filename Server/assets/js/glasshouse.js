@@ -19,12 +19,13 @@
 // the pots, and puts each plant on the spot the service gives it; the plot's own
 // numbers come from `pg_glasshouse_plan` rather than being written down again.
 
+import { raiseTrough } from './water.js';
 import { decode, takeResult } from './plant.js';
 import { COLOUR, RIM_DEPTH, SIDE, hash, keepToPlot, readOutline, readStructure } from './longwalk.js';
 
 // Seeds for this area's dressing, its own and not another area's.
 const GLASS_SEED = { ground: 6421, floor: 43, tile: 61, soil: 89, border: 97, frame: 1511,
-  glass: 1523, staging: 1549, pot: 1571 };
+  glass: 1523, staging: 1549, pot: 1571, trough: 1583 };
 
 /// The floor: quarry tiles, the colour the map gives this area — `LOOK.light` in
 /// `gates.js`, brought down by the quarter a plot is lit up by. A glasshouse
@@ -160,6 +161,15 @@ export function makeGlasshouseGround(place) {
     set(readStructure(takeResult(e, e.pg_glasshouse_frame(GLASS_SEED.frame))), [0, 0, 0], BAR, 0.06, vertex);
     set(readStructure(takeResult(e, e.pg_glasshouse_staging(GLASS_SEED.staging))), [0, 0, place.stagingZ],
       BOARD, 0.24, vertex);
+    // **A trough under the staging**, where a glasshouse keeps its water: at
+    // hand for the can, out of the way of the path, and warmed by the house so
+    // it is never cold on a seedling's roots. Stone and standing on the tiles,
+    // because the Glasshouse is partway up the garden and water there is held
+    // rather than found. Low enough to clear the boards, and short of the
+    // staging's ends so its legs stand clear of it.
+    raiseTrough(e, { tri, quad }, {
+      at: [0, place.stagingZ], across: 2.4, deep: 0.42, seed: GLASS_SEED.trough, height: 0.30,
+    });
     // Three pots and three fillings, turned out of three seeds and handed out
     // by where each stands, so the staging is not one pot twenty-four times.
     const pots = [0, 1, 2].map((k) => readStructure(takeResult(e, e.pg_glasshouse_pot(GLASS_SEED.pot + k))));

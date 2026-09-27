@@ -1031,6 +1031,48 @@ here want dry compost at all. **Fewer frames and smaller frames were both
 measured and both are worse** — a frame holds one colour, so fewer frames
 strand more plots and smaller frames are claimed faster and never fill.
 
+## Water as scenery in the other eight, 27 September 2026
+
+**Prototype, on the branch `water/scenery`, waiting for Marcus to see it.**
+Only the Cold Frame and the Seedbed ever receive a water lily, so the water in
+the other eight holds no plant and moves none: it goes on ground no rule plants.
+It is drawn in the browser only; no rule, vector or PHP port changes.
+
+It follows the grading Marcus approved — open water at the foot of the garden,
+where water gathers, and contained water as the ground climbs, where it has to
+be carried and held — read against `COLUMN_RISE`:
+
+| Rise | Area | Water | Where |
+| --- | --- | --- | --- |
+| 0 m | Quiet Garden | pool, dug (already built) | the middle of the lawn |
+| 1.2 m | Orchard | dipping pond, dug, 0.70 m | the near meadow pocket, (0, 1.72), clear of every mown disc |
+| 1.2 m | Home Ground | stone trough, 0.36 × 0.80 m | lengthways at the near end of a path, (0.83, 1.98) |
+| 2.4 m | Knot Garden | low stone basin, 0.60 m | the empty middle the four inner stretches close round |
+| 3.6 m | Glasshouse | stone trough, 2.4 × 0.42 m | on the tiles under the staging |
+| 3.6 m | Coppice | spring basin, round, 0.54 m | at the end of the near ride, (2.0, 0.9) |
+| 4.8 m | Crossing | raised basin, round | on the roundel where the four paths meet |
+| 4.8 m | Long Walk | stone rill | down the path, meandering across it, stopping short of both ends |
+
+The Home Ground is the exception to the grading: it is at 1.2 m, which is
+still open water, but its beds take the ground a pond would need. So its
+water is held in stone.
+
+`water.js` gained what the eight needed. `raiseTrough` is a stone-walled basin
+standing on the floor, with a plot's squeezed outline or, with `round`, a
+wandering circle. `raiseRill` is a kerbed channel along any centre line.
+`footing` sets a trough into a floor that is not level. `floorAround` walks a
+floor out from a pool that is not in the middle of its plot. The Quiet
+Garden's fan between two loops walked in step folds over itself off the
+middle, and a fold can lay turf across the water. `sinkPool` takes a `lining`
+and `round`.
+
+What the renders changed:
+- The rill down the exact middle of the path drew a rule down the page.
+- The Knot's basin sunk flush read as a drain.
+- The Home Ground's trough laid across the headland had room for 0.24 m of
+  width and read as a breeze block.
+- The Crossing's basin at trough height read as a well head.
+
 ## The Glasshouse, chosen
 
 The eighth area, `light`, chosen on 23 September and built on the 24th (below). It
