@@ -2,7 +2,16 @@ import XCTest
 @testable import SeedCore
 
 /// The seventh area: four frames, a colour to a frame, two ranks graded by what
-/// each plant will grow into, and every plant drawn young.
+/// each plant will grow into, and every plant drawn young — around a tank of
+/// water down the middle of the yard, which is where every water lily goes.
+///
+/// **More than half of what arrives here is a water lily**, and that is a fact
+/// about the area rather than about the sample: an area is chosen from a
+/// plant's genus head and the head is its archetype's own root, so
+/// `Areas.genusHeads` sending `Nyx` here is the same fact as the lotus's root
+/// being `Nyx`. Only this area and the Seedbed ever receive one. Every
+/// measurement below is therefore made twice — once of the water and once of
+/// the frames — because a single number over both says nothing about either.
 final class ColdFrameTests: XCTestCase {
 
     // MARK: Arrivals
@@ -62,31 +71,39 @@ final class ColdFrameTests: XCTestCase {
 
     // MARK: The plot
 
-    func testAPlotHoldsFourFramesOfTwelveAndNoMore() {
-        XCTAssertEqual(ColdFrame.slots.count, 48)
-        XCTAssertEqual(Set(ColdFrame.slots).count, 48)
+    func testAPlotHoldsFourFramesOfTwelveAndATankOfTwentyOne() {
+        XCTAssertEqual(ColdFrame.slots.count, 69)
+        XCTAssertEqual(Set(ColdFrame.slots).count, 69)
+        XCTAssertEqual(ColdFrame.slots.filter { $0.frame.isDry }.count, 48)
+        XCTAssertEqual(ColdFrame.slots.filter { !$0.frame.isDry }.count, ColdFrame.tankPlaces)
         let ways = Self.full
         for plot in 0..<ways.plots {
-            // Asked of the places held rather than the plants, since a lotus
-            // holds two.
+            // Asked of the places held rather than the plants, since a plant
+            // under glass may hold two.
             let held = ways.plot(plot).flatMap(\.slots)
-            XCTAssertLessThanOrEqual(held.count, 48, "plot \(plot) holds \(held.count) places")
+            XCTAssertLessThanOrEqual(held.count, 69, "plot \(plot) holds \(held.count) places")
             XCTAssertEqual(Set(held).count, held.count, "two plants hold one place in plot \(plot)")
             for frame in ColdFrame.Frame.allCases {
-                for rank in ColdFrame.Rank.allCases {
+                // **The tank's rows are not ranks.** Every place in it is
+                // `.front` and the row comes out of the index, so `.back` is
+                // never asked of it and nothing is ever filed there.
+                for rank in frame.isDry ? ColdFrame.Rank.allCases : [.front] {
                     let row = held.filter { $0.frame == frame && $0.rank == rank }
-                    XCTAssertLessThanOrEqual(row.count, ColdFrame.places)
-                    // A rank fills from its west end, so its places are 0..<n.
+                    XCTAssertLessThanOrEqual(row.count, frame.places)
+                    // A rank fills from its west end, so its places are 0..<n;
+                    // the tank fills the same way, along its rows.
                     XCTAssertEqual(Set(row.map(\.index)), Set(0..<row.count),
                                    "plot \(plot) \(frame) \(rank) has a gap in it")
                 }
             }
+            XCTAssertTrue(held.allSatisfy { $0.frame.isDry || $0.rank == .front },
+                          "plot \(plot) filed something in the tank's back rank")
         }
     }
 
     func testEveryPlaceStandsInsideItsFrameWellClearOfTheWalls() {
         let wall = 0.05, nudge = 0.03
-        for slot in ColdFrame.slots {
+        for slot in ColdFrame.slots where slot.frame.isDry {
             let centre = slot.frame.centre
             let along = abs(slot.spot.x - centre.x) + nudge
             let across = abs(slot.spot.z - centre.z) + nudge
@@ -101,30 +118,66 @@ final class ColdFrameTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(2 * ColdFrame.frameZ - ColdFrame.frameDepth, 0.7 - 1e-9)
     }
 
+    /// **Every place in the tank has water round it**, and the tank has the
+    /// yard to itself: it lies between the two rows of frames, touching
+    /// neither, and stops short of the plot's rim at both ends.
+    ///
+    /// The lip is the width the floor gives way over, so a lily nudged toward
+    /// the edge still floats rather than lying up the bank.
+    func testEveryPlaceInTheTankStandsInTheWaterClearOfItsLip() {
+        let lip = 0.12, nudge = 0.03
+        for slot in ColdFrame.slots where !slot.frame.isDry {
+            XCTAssertLessThan(abs(slot.spot.x) + nudge, ColdFrame.tankAcross / 2 - lip,
+                              "\(slot) is against the tank's end")
+            XCTAssertLessThan(abs(slot.spot.z) + nudge, ColdFrame.tankDeep / 2 - lip,
+                              "\(slot) is against the tank's side")
+        }
+        // Clear of the frames in front of it and behind it...
+        XCTAssertLessThan(ColdFrame.tankDeep / 2, ColdFrame.frameZ - ColdFrame.frameDepth / 2 - 0.05)
+        // ...and clear of the plot's rim at either end.
+        XCTAssertLessThan(ColdFrame.tankAcross / 2, ColdFrame.plotSide / 2 - 0.35)
+        // Three rows of seven, and no two places on top of each other.
+        let spots = ColdFrame.slots.filter { !$0.frame.isDry }.map(\.spot)
+        XCTAssertEqual(Set(spots.map(\.z)).count, ColdFrame.tankRows)
+        XCTAssertEqual(Set(spots.map(\.x)).count, ColdFrame.tankWide)
+        XCTAssertEqual(Set(spots.map { "\($0.x),\($0.z)" }).count, ColdFrame.tankPlaces)
+    }
+
     func testTheBackRankIsFurtherBackThanTheFrontInEveryFrame() {
-        for frame in ColdFrame.Frame.allCases {
+        for frame in ColdFrame.Frame.allCases where frame.isDry {
             let front = ColdFrame.Slot(frame: frame, rank: .front, index: 0).spot.z
             let back = ColdFrame.Slot(frame: frame, rank: .back, index: 0).spot.z
             XCTAssertLessThan(back, front, "\(frame)'s back rank is in front")
+        }
+        // **The tank has no ranks**: water is flat and a lily has no view to
+        // be given, so asking for its back rank gives its front rank's place.
+        for index in 0..<ColdFrame.tankPlaces {
+            XCTAssertEqual(ColdFrame.Frame.tank.at(index, rank: .back).z,
+                           ColdFrame.Frame.tank.at(index, rank: .front).z)
         }
     }
 
     // MARK: The rule
 
-    func testAFrameHoldsOneColour() {
+    /// A frame holds one colour. **The tank holds whatever floats**: a pond is
+    /// not sorted by colour or by height, and sorting one would be the tell
+    /// that a rule had been applied where no gardener applies one.
+    func testAFrameHoldsOneColourAndTheTankHoldsThemAll() {
         let ways = Self.full
         for plot in 0..<ways.plots {
-            for frame in ColdFrame.Frame.allCases {
+            for frame in ColdFrame.Frame.allCases where frame.isDry {
                 let families = Set(ways.plot(plot).filter { $0.slot.frame == frame }.map(\.traits.family))
                 XCTAssertLessThanOrEqual(families.count, 1, "plot \(plot) \(frame) holds \(families)")
             }
         }
+        let inWater = Set(ways.plantings.filter { !$0.slot.frame.isDry }.map(\.traits.family))
+        XCTAssertGreaterThan(inWater.count, 1, "the tank was sorted by colour")
     }
 
     func testNothingInTheFrontRankIsTallerThanAnythingAtTheBack() {
         let ways = Self.full
         for plot in 0..<ways.plots {
-            for frame in ColdFrame.Frame.allCases {
+            for frame in ColdFrame.Frame.allCases where frame.isDry {
                 let here = ways.plot(plot).filter { $0.slot.frame == frame }
                 let front = here.filter { $0.slot.rank == .front }.map(\.traits.height)
                 let back = here.filter { $0.slot.rank == .back }.map(\.traits.height)
@@ -143,27 +196,67 @@ final class ColdFrameTests: XCTestCase {
     /// **Since 25 September 2026 a lotus takes two places**, and more than
     /// half of this area's plants are lotuses, so the same five hundred hold
     /// half as many places again: eighteen plots, 90% of every place held and
-    /// twenty-eight plants to a plot where there were forty-two. The
-    /// simulation Marcus chose it from, on a sample of its own, gave eighteen
-    /// plots too.
+    /// twenty-eight plants to a plot where there were forty-two.
+    ///
+    /// **Since the tank was sunk on 27 September 2026 the two must be measured
+    /// apart.** A lily is in the water and holds one place there; nothing else
+    /// is. So five hundred arrivals fill fourteen plots rather than eighteen,
+    /// and the number over the whole plot — about half of every place held —
+    /// is the average of a tank that is always full and frames that are a
+    /// third full. Marcus was shown a full plot and a middling one and chose
+    /// this on 27 September 2026 knowing that: the frames are thin because
+    /// only 227 of every 501 arrivals here want dry compost at all, which the
+    /// tank makes visible rather than causes.
+    ///
+    /// **Fourteen plots, twenty-five frames claimed and fourteen of them
+    /// full.** Moving the cut to the dry median claimed four fewer frames and
+    /// filled five more of them: a rank that is asked for is a rank that
+    /// fills, and at the old cut the front ranks were being skipped.
+    ///
+    /// **What would fail this is the tank running short**, which is the shape
+    /// of the Knot Garden's near-miss: if a plot opened before its water was
+    /// full, the area would be a row of ponds with a few lilies in each.
     func testTheFillAtFiveHundred() {
         let ways = Self.full
-        let places = ways.plots * ColdFrame.slots.count
-        let held = ways.plantings.map(\.span).reduce(0, +)
-        let fill = Double(held) / Double(places)
+        let dryPlaces = ways.plots * ColdFrame.slots.filter { $0.frame.isDry }.count
+        let wetPlaces = ways.plots * ColdFrame.tankPlaces
+        let dryHeld = ways.plantings.filter { $0.slot.frame.isDry }.map(\.span).reduce(0, +)
+        let wetHeld = ways.plantings.filter { !$0.slot.frame.isDry }.count
+        let dryFill = Double(dryHeld) / Double(dryPlaces)
+        let wetFill = Double(wetHeld) / Double(wetPlaces)
         var claimed = 0, full = 0
         for plot in 0..<ways.plots {
-            for frame in ColdFrame.Frame.allCases {
+            for frame in ColdFrame.Frame.allCases where frame.isDry {
                 let count = ways.plot(plot).filter { $0.slot.frame == frame }.map(\.span).reduce(0, +)
                 if count > 0 { claimed += 1 }
                 if count == 12 { full += 1 }
             }
         }
-        let lotuses = ways.plantings.filter { $0.span == 2 }.count
         print("Cold Frame at 500: \(ways.plots) plots, \(claimed) frames claimed, \(full) full, "
-              + "\(held) places held of \(places) (\(fill)), \(lotuses) lotuses")
-        XCTAssertLessThanOrEqual(ways.plots, 19)
-        XCTAssertGreaterThan(fill, 0.8)
+              + "\(dryHeld) of \(dryPlaces) under glass (\(dryFill)), "
+              + "\(wetHeld) of \(wetPlaces) in the water (\(wetFill))")
+        XCTAssertLessThanOrEqual(ways.plots, 15)
+        XCTAssertGreaterThan(wetFill, 0.9)
+        XCTAssertGreaterThan(dryFill, 0.3)
+    }
+
+    /// **The water fills plot by plot**, which is what keeps the area from
+    /// being a row of half-empty ponds: a lily takes the first free place in
+    /// the oldest tank, so at most one tank is part full and every tank after
+    /// it is empty.
+    func testATankFillsBeforeTheNextOneIsUsed() {
+        let ways = Self.full
+        let lilies = (0..<ways.plots).map { plot in
+            ways.plot(plot).filter { !$0.slot.frame.isDry }.count
+        }
+        print("Cold Frame at 500: tanks hold \(lilies)")
+        let firstShort = lilies.firstIndex { $0 < ColdFrame.tankPlaces } ?? lilies.count
+        for plot in 0..<firstShort {
+            XCTAssertEqual(lilies[plot], ColdFrame.tankPlaces)
+        }
+        for plot in (firstShort + 1)..<lilies.count {
+            XCTAssertEqual(lilies[plot], 0, "plot \(plot)'s tank was used before plot \(firstShort)'s was full")
+        }
     }
 
     /// 472 of 501, where it was 485 before the plants' shapes changed on 24
@@ -180,35 +273,53 @@ final class ColdFrameTests: XCTestCase {
     /// them where it held six plants, so it fills sooner and more of what
     /// arrives after it is sent behind. The price of the pads' room; the floor
     /// follows it.
+    ///
+    /// **Asked only of the plants under glass, since 27 September 2026.** A
+    /// rank is a grading by height and the tank has no ranks, so counting a
+    /// lily's `.front` as a rank it asked for would measure nothing.
+    ///
+    /// **219 of 227**, the best this area has measured. Two things moved at
+    /// once: the two-place rule never fires under glass now, so a front rank
+    /// holds six plants again rather than three lotuses; and the cut moved to
+    /// the dry median, so the two ranks are asked for about equally instead of
+    /// four plants in five asking for the back. At the old cut of 0.38 this
+    /// was 197 of 227.
     func testNearlyEveryPlantHasTheRankItsHeightAsksFor() {
-        let own = Self.full.plantings.filter { $0.slot.rank == $0.traits.frameRank }.count
-        let share = Double(own) / Double(Self.full.plantings.count)
-        print("Cold Frame at 500: \(own) of \(Self.full.plantings.count) in their own rank")
-        XCTAssertGreaterThan(share, 0.88)
+        let dry = Self.full.plantings.filter { $0.slot.frame.isDry }
+        let own = dry.filter { $0.slot.rank == $0.traits.frameRank }.count
+        let share = Double(own) / Double(dry.count)
+        print("Cold Frame at 500: \(own) of \(dry.count) under glass in their own rank")
+        XCTAssertGreaterThan(share, 0.94)
     }
 
     /// The cut is the median of this area's plants, so it halves them. Held
     /// here because the sample is what it was measured on, and a sample that
     /// drifted from it would mean the cut no longer says what its comment does.
     func testTheCutDividesTheAreasOwnPlantsInHalf() {
-        let heights = Self.arrivals().map(\.1.height)
-        let back = Double(heights.filter { $0 >= ColdFrame.backFrom }.count) / Double(heights.count)
+        let dry = Self.arrivals().filter { !$0.1.wantsWater }.map(\.1.height).sorted()
+        let all = Self.arrivals().map(\.1.height).sorted()
+        print("Cold Frame cut: \(dry.count) dry of \(all.count), "
+              + "dry median \(dry[dry.count / 2]), all median \(all[all.count / 2])")
+        let back = Double(dry.filter { $0 >= ColdFrame.backFrom }.count) / Double(dry.count)
         XCTAssertEqual(back, 0.5, accuracy: 0.03)
     }
 
+    /// **The ambassador is in the water**, so the first plant under glass
+    /// claims the first frame however the room was opened. A second of its
+    /// colour joins it rather than claiming another.
     func testAClaimedFrameIsFilledBeforeAnotherIsClaimed() {
-        // A second plant of the ambassador's colour joins its frame rather than
-        // claiming another.
         var ways = ColdFrame.Ways.opened()
-        let first = ColdFrame.ambassador
+        XCTAssertFalse(ColdFrame.ambassador.slot.frame.isDry)
+        let first = ways.plant(seed: SeedMint.mint(fromEntropy: Data("cf-first".utf8)),
+                               traits: PlantTraits(height: 0.6, family: 2))
+        XCTAssertEqual(first.slot.frame, .backWest)
         let second = ways.plant(seed: SeedMint.mint(fromEntropy: Data("cf-same".utf8)),
-                                traits: PlantTraits(height: 0.6, family: first.traits.family))
+                                traits: PlantTraits(height: 0.6, family: 2))
         XCTAssertEqual(second.plot, 0)
         XCTAssertEqual(second.slot.frame, first.slot.frame)
         // A plant of another colour claims the next frame.
-        let other = (first.traits.family + 1) % 7
         let third = ways.plant(seed: SeedMint.mint(fromEntropy: Data("cf-other".utf8)),
-                               traits: PlantTraits(height: 0.6, family: other))
+                               traits: PlantTraits(height: 0.6, family: 3))
         XCTAssertEqual(third.slot.frame, .backEast)
     }
 
@@ -262,27 +373,36 @@ final class ColdFrameTests: XCTestCase {
         XCTAssertEqual(Array(late.prefix(early.count)), early)
     }
 
-    // MARK: A lotus takes two places
+    // MARK: A lily is in the water
 
     private static func lotus(_ height: Double, _ family: Int) -> PlantTraits {
         PlantTraits(height: height, family: family, habit: Archetype.lotus.rawValue)
     }
 
-    /// Every lotus holds two neighbouring places in one rank and stands at
-    /// their middle; every other plant holds one and stands on it.
-    func testALotusStandsCentredAcrossTwoPlaces() {
+    /// **Every water lily is in the tank and nothing else is**, since 27
+    /// September 2026. It is the whole of the water rule, and it makes the
+    /// two-place rule under glass unreachable here: the only plant that ever
+    /// held two places is the one that no longer stands in a frame.
+    ///
+    /// The two-place machinery stays where it is. `span` is a stored field
+    /// and rows written before today hold lilies under glass with a span of
+    /// two, which must keep reading back and keep drawing until the replant
+    /// moves them — `testAPlantingStoredBeforeTheRuleHoldsOnePlace` is the
+    /// one that holds that.
+    func testEveryLilyIsInTheWaterAndNothingElseIs() {
         let ways = Self.full
-        var lotuses = 0
+        var lilies = 0
         for p in ways.plantings {
-            let isLotus = p.traits.habit == Archetype.lotus.rawValue
-            XCTAssertEqual(p.span, isLotus ? 2 : 1, "\(p.seed) holds \(p.span) places")
-            XCTAssertLessThanOrEqual(p.slot.index + p.span, ColdFrame.places, "\(p.seed) runs off its rank")
+            let isLily = p.traits.habit == Archetype.lotus.rawValue
+            XCTAssertEqual(p.slot.frame.isDry, !isLily, "\(p.seed) is in the wrong element")
+            XCTAssertEqual(p.span, 1, "\(p.seed) holds \(p.span) places")
+            XCTAssertLessThan(p.slot.index + p.span, p.slot.frame.places + 1, "\(p.seed) runs off its row")
             let first = p.slots.first!.spot, last = p.slots.last!.spot
             XCTAssertEqual(p.spot.x - p.nudge.x, (first.x + last.x) / 2, accuracy: 1e-12)
             XCTAssertEqual(p.spot.z - p.nudge.z, first.z, accuracy: 1e-12)
-            if isLotus { lotuses += 1 }
+            if isLily { lilies += 1 }
         }
-        XCTAssertGreaterThan(lotuses, 200, "a sample of this area's own plants is more than half lotuses")
+        XCTAssertGreaterThan(lilies, 200, "a sample of this area's own plants is more than half lilies")
     }
 
     /// **The reason for the rule, held as a test**: of five hundred plants
@@ -304,62 +424,71 @@ final class ColdFrameTests: XCTestCase {
         XCTAssertLessThanOrEqual(stems, plants.count / 100, crowded.prefix(5).map(\.description).joined(separator: "; "))
     }
 
-    /// No stem stands between the two places a lotus holds, or nearer its own
-    /// than a place and a half, less the two nudges.
-    func testNoStemStandsInALotussPair() {
+    /// **No two lilies float closer than the tank was measured for.** 0.62 m
+    /// between places is the gap a lotus's pads were measured against on 25
+    /// September, and the two nudges can take 0.06 m off it and no more.
+    func testNoTwoLiliesFloatCloserThanTheTankAllows() {
         let ways = Self.full
+        let least = ColdFrame.tankGap - 0.06
         for plot in 0..<ways.plots {
-            let here = ways.plot(plot)
-            for lotus in here where lotus.span == 2 {
-                for other in here where other.seed != lotus.seed
-                    && other.slot.frame == lotus.slot.frame && other.slot.rank == lotus.slot.rank {
-                    let gap = abs(other.spot.x - lotus.spot.x)
-                    let least = (1 + Double(other.span) / 2) * ColdFrame.alongGap - 0.06
-                    XCTAssertGreaterThanOrEqual(gap, least - 1e-12, "\(other.seed) stands in \(lotus.seed)'s pair")
+            let water = ways.plot(plot).filter { !$0.slot.frame.isDry }
+            for (i, lily) in water.enumerated() {
+                for other in water[(i + 1)...] {
+                    let gap = hypot(other.spot.x - lily.spot.x, other.spot.z - lily.spot.z)
+                    XCTAssertGreaterThanOrEqual(gap, least - 1e-12,
+                                                "\(other.seed) floats into \(lily.seed)")
                 }
             }
         }
     }
 
-    /// The second place a lotus holds is never given to a later plant: the
-    /// next plant in the rank takes the place after it.
-    func testALotussSecondPlaceIsNeverGivenAway() {
+    /// **The tank fills along its rows from the west**, the way a frame's
+    /// rank does: seven places to a row, then the next row back.
+    func testTheTankFillsAlongItsRowsFromTheWest() {
         var ways = ColdFrame.Ways()
-        let seed = { (n: Int) in SeedMint.mint(fromEntropy: Data("cf-lotus-\(n)".utf8)) }
-        let first = ways.plant(seed: seed(0), traits: Self.lotus(0.30, 2))
-        XCTAssertEqual(first.slots, [ColdFrame.Slot(frame: .backWest, rank: .front, index: 0),
-                                     ColdFrame.Slot(frame: .backWest, rank: .front, index: 1)])
-        let second = ways.plant(seed: seed(1), traits: PlantTraits(height: 0.30, family: 2))
-        XCTAssertEqual(second.slot, ColdFrame.Slot(frame: .backWest, rank: .front, index: 2))
-        let third = ways.plant(seed: seed(2), traits: Self.lotus(0.31, 2))
-        XCTAssertEqual(third.slots.map(\.index), [3, 4])
-        // And across five hundred no place is held twice, which
-        // `testAPlotHoldsFourFramesOfTwelveAndNoMore` asks of every plot.
+        let seed = { (n: Int) in SeedMint.mint(fromEntropy: Data("cf-lily-\(n)".utf8)) }
+        for n in 0..<ColdFrame.tankPlaces {
+            let lily = ways.plant(seed: seed(n), traits: Self.lotus(0.30, n % 7))
+            XCTAssertEqual(lily.slot, ColdFrame.Slot(frame: .tank, rank: .front, index: n))
+            XCTAssertEqual(lily.span, 1)
+        }
+        // The eighth place is the west end of the second row, a row's depth
+        // behind the first.
+        let first = ColdFrame.Slot(frame: .tank, rank: .front, index: 0).spot
+        let eighth = ColdFrame.Slot(frame: .tank, rank: .front, index: ColdFrame.tankWide).spot
+        XCTAssertEqual(eighth.x, first.x, accuracy: 1e-12)
+        XCTAssertEqual(eighth.z - first.z, ColdFrame.tankGap, accuracy: 1e-12)
+        // And no frame was touched to hold twenty-one lilies.
+        XCTAssertTrue(ways.plantings.allSatisfy { !$0.slot.frame.isDry })
+        XCTAssertEqual(ways.plots, 1)
     }
 
-    /// **A rank's last single place is no place for a lotus**, which goes on
-    /// to the next choice as a plant finding the rank full does. The place is
-    /// not given up: the next plant of one place takes it.
-    func testTheLastPlaceOfARankWaitsForAPlantOfOne() {
+    /// **A full tank opens a new plot rather than putting a lily under
+    /// glass.** The frames are graded by colour and by height and a lily is
+    /// sorted by neither, so there is no frame for it to fall back to — which
+    /// is why a plot's water is always full before the next plot's is used.
+    func testAFullTankOpensANewPlotRatherThanPuttingALilyUnderGlass() {
         var ways = ColdFrame.Ways()
-        let seed = { (n: Int) in SeedMint.mint(fromEntropy: Data("cf-last-\(n)".utf8)) }
-        for n in 0..<5 { ways.plant(seed: seed(n), traits: PlantTraits(height: 0.30, family: 2)) }
-        // One place left in the front rank. A lotus as tall as the rank may
-        // stand behind it, and does.
-        let behind = ways.plant(seed: seed(5), traits: Self.lotus(0.30, 2))
-        XCTAssertEqual(behind.slots.map(\.index), [0, 1])
-        XCTAssertEqual(behind.slot.rank, .back)
-        // A shorter one may not stand behind it, and claims the next frame.
-        let next = ways.plant(seed: seed(6), traits: Self.lotus(0.25, 2))
-        XCTAssertEqual(next.slot, ColdFrame.Slot(frame: .backEast, rank: .front, index: 0))
-        // The last place is still there for a plant of one.
-        let one = ways.plant(seed: seed(7), traits: PlantTraits(height: 0.29, family: 2))
-        XCTAssertEqual(one.slot, ColdFrame.Slot(frame: .backWest, rank: .front, index: 5))
+        let seed = { (n: Int) in SeedMint.mint(fromEntropy: Data("cf-full-tank-\(n)".utf8)) }
+        for n in 0..<ColdFrame.tankPlaces { ways.plant(seed: seed(n), traits: Self.lotus(0.30, 2)) }
+        XCTAssertEqual(ways.plots, 1)
+        let over = ways.plant(seed: seed(99), traits: Self.lotus(0.30, 2))
+        XCTAssertEqual(over.plot, 1)
+        XCTAssertEqual(over.slot, ColdFrame.Slot(frame: .tank, rank: .front, index: 0))
+        XCTAssertEqual(ways.plots, 2)
+        // The four frames of the first plot are still empty, though a plant
+        // of that colour could have stood in one.
+        XCTAssertTrue(ways.plot(0).allSatisfy { !$0.slot.frame.isDry })
     }
 
     /// **A planting stored before 25 September holds the one place it was
     /// given**, lotus or not, until the replant places it again; the next
     /// arrival takes the place after it.
+    ///
+    /// Since 27 September the next arrival, if it is a lily, takes the water
+    /// instead — but a row already written with a lily under glass still
+    /// decodes and still draws where it was put. That is what this holds, and
+    /// it is the reason the two-place machinery stays in the source.
     func testAPlantingStoredBeforeTheRuleHoldsOnePlace() throws {
         var old = ColdFrame.Ways()
         let seed = { (n: Int) in SeedMint.mint(fromEntropy: Data("cf-old-\(n)".utf8)) }
@@ -371,24 +500,45 @@ final class ColdFrameTests: XCTestCase {
         XCTAssertFalse(json.contains("span"))
         var ways = try JSONDecoder().decode(ColdFrame.Ways.self, from: Data(json.utf8))
         XCTAssertEqual(ways.plantings[0].span, 1)
+        // And the rule as it stands now puts the next lily in the water.
         let lotus = ways.plant(seed: seed(1), traits: Self.lotus(0.30, 2))
-        XCTAssertEqual(lotus.slots.map(\.index), [1, 2])
+        XCTAssertEqual(lotus.slot, ColdFrame.Slot(frame: .tank, rank: .front, index: 0))
+        XCTAssertEqual(lotus.span, 1)
+    }
+
+    /// **A lily under glass, as the live store still holds it, keeps its two
+    /// places.** `span` is read back from the row rather than recomputed, so
+    /// the pads a planting was given room for are the pads it is drawn with.
+    func testALilyStoredUnderGlassKeepsItsTwoPlaces() throws {
+        let slot = ColdFrame.Slot(frame: .backWest, rank: .front, index: 0)
+        let planting = ColdFrame.Planting(seed: "ab", plot: 0, slot: slot, span: 2,
+                                          traits: Self.lotus(0.30, 2), nudge: Spot(x: 0, z: 0))
+        let back = try JSONDecoder().decode(ColdFrame.Planting.self,
+                                            from: JSONEncoder().encode(planting))
+        XCTAssertEqual(back.span, 2)
+        XCTAssertEqual(back.slots.map(\.index), [0, 1])
+        XCTAssertEqual(back.spot.x, (slot.spot.x + ColdFrame.alongGap / 2), accuracy: 1e-12)
     }
 
     // MARK: The ambassador
 
-    func testTheAmbassadorOpensTheFirstFrame() {
+    /// **The ambassador is a water lily, so it opens the tank rather than a
+    /// frame.** *Nyxisora crassicaulis* is the plant the Cold Frame is drawn
+    /// with before anybody has released anything into it, and `Nyx` is the
+    /// lotus's own root — the reason this area receives lilies at all is the
+    /// reason its ambassador is one.
+    func testTheAmbassadorOpensTheTank() {
         let one = ColdFrame.ambassador
         let traits = LongWalk.traits(of: Ambassadors.of(.waiting).genome)
+        XCTAssertEqual(traits.habit, Archetype.lotus.rawValue)
         XCTAssertEqual(one.plot, 0)
-        XCTAssertEqual(one.slot.frame, .backWest)
-        XCTAssertEqual(one.slot.rank, traits.frameRank)
+        XCTAssertEqual(one.slot.frame, .tank)
+        XCTAssertEqual(one.slot.rank, .front)
         XCTAssertEqual(one.slot.index, 0)
         XCTAssertEqual(one.seed, Ambassadors.of(.waiting).seed.hex)
-        // *Nyxisora crassicaulis* is a lotus, so since 25 September it holds
-        // the first two places of its rank and stands between them.
-        XCTAssertEqual(traits.habit, Archetype.lotus.rawValue)
-        XCTAssertEqual(one.span, 2)
+        // One place, at the west end of the first row, in the water.
+        XCTAssertEqual(one.span, 1)
+        XCTAssertEqual(one.spot.z - one.nudge.z, -ColdFrame.tankGap, accuracy: 1e-12)
     }
 
     // MARK: Drawn young
@@ -416,6 +566,17 @@ final class ColdFrameTests: XCTestCase {
         var tallestBy: [ColdFrame.Rank: Double] = [:]
         for (planting, genome) in zip(ways.plantings.dropFirst(), genomes) {
             let mesh = PlantBuilder(genome: genome).mesh(growth: ColdFrame.drawn)
+            // **A lily in the tank has the sky over it**, so the only floor
+            // it answers to is the one below, and the measurement is still
+            // made of it: it is a plant in this area and has to read as one.
+            guard planting.slot.frame.isDry else {
+                let tall = Double(mesh.maxBounds.y - mesh.minBounds.y)
+                let across = Double(max(mesh.maxBounds.x - mesh.minBounds.x,
+                                        mesh.maxBounds.z - mesh.minBounds.z))
+                shortest = min(shortest, tall)
+                smallest = min(smallest, max(tall, across))
+                continue
+            }
             let tall = Double(mesh.maxBounds.y - mesh.minBounds.y)
             let across = Double(max(mesh.maxBounds.x - mesh.minBounds.x, mesh.maxBounds.z - mesh.minBounds.z))
             shortest = min(shortest, tall)

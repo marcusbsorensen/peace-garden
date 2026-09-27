@@ -36,10 +36,20 @@ declare(strict_types=1);
  * and only the arriving plant's; a plant already standing says how many places
  * it holds by its span, which is stored with it.
  *
- * A planting here is an array: seed (hex), plot, frame (0-3), rank (0 front,
- * 1 back), index (0-5, the west one of a lotus's two), span (1, or 2 for a
- * lotus), height, family, habit, nudgeX, nudgeZ. A planting with no span holds
- * one place, which is what every planting made before the lotus rule holds.
+ * **A water lily is in the tank**, since 27 September 2026, and nothing else
+ * is. The tank is frame 4, a fifth frame appended rather than a new kind of
+ * thing, so a slot stays one set of numbers in the table and on the wire and
+ * every planting already filed reads back as it did. Its three rows of seven
+ * come out of the index; it has no ranks, so every place in it is rank 0. The
+ * two-place rule is therefore unreachable under glass now — it stays here
+ * because rows written before today hold lilies in frames 0-3 with a span of
+ * two, and those must keep reading back until the replant moves them.
+ *
+ * A planting here is an array: seed (hex), plot, frame (0-3, or 4 for the
+ * tank), rank (0 front, 1 back), index (0-5 in a frame, the west one of a
+ * lotus's two; 0-20 in the tank), span (1, or 2 for a lotus under glass),
+ * height, family, habit, nudgeX, nudgeZ. A planting with no span holds one
+ * place, which is what every planting made before the lotus rule holds.
  */
 final class ColdFrame
 {
@@ -62,10 +72,27 @@ final class ColdFrame
 
     /**
      * Where the middles of the four frames stand: either side of the plot in
-     * `x`, and two rows in `z` with a path between them.
+     * `x`, and two rows in `z` with the tank between them. `FRAME_Z` was
+     * pushed out from 0.9 on 27 September 2026 to make room for the water.
      */
     public const FRAME_X = 1.2;
-    public const FRAME_Z = 0.9;
+    public const FRAME_Z = 1.55;
+
+    /**
+     * **The tank down the middle of the yard** (27 September 2026): seven
+     * places along it by three across, 0.62 m apart — the gap two places in a
+     * frame gave a lotus, and the gap its pads were measured against on 25
+     * September. Twenty-one to a plot.
+     */
+    public const TANK_ACROSS = 4.4;
+    public const TANK_DEEP = 1.8;
+    public const TANK_GAP = 0.62;
+    public const TANK_WIDE = 7;
+    public const TANK_ROWS = 3;
+    public const TANK_PLACES = 21;
+
+    /** The archetypes that want water. Read from the habit, which is a word. */
+    public const WANTS_WATER = ['lotus'];
 
     /** Along a rank, between one place and the next, and how far either rank stands from the middle of its frame. */
     public const ALONG_GAP = 0.31;
@@ -79,7 +106,28 @@ final class ColdFrame
     public const BACK_EAST = 1;
     public const FRONT_WEST = 2;
     public const FRONT_EAST = 3;
+    /** **The dry frames**, which is what every loop over "the frames" means. */
     public const FRAMES = [0, 1, 2, 3];
+    /** The tank is a fifth frame and not a frame. */
+    public const TANK = 4;
+
+    /** Whether plants that want dry compost are set in this frame. */
+    public static function isDry(int $frame): bool
+    {
+        return $frame !== self::TANK;
+    }
+
+    /** Whether this habit belongs in the water. */
+    public static function wantsWater(string $habit): bool
+    {
+        return in_array($habit, self::WANTS_WATER, true);
+    }
+
+    /** How many places a frame holds: two ranks of six, or three rows of seven. */
+    public static function places(int $frame): int
+    {
+        return $frame === self::TANK ? self::TANK_PLACES : self::PLACES;
+    }
 
     /** The two ranks of a frame. The back rank is `z−` of the frame's middle, under the higher glass. */
     public const FRONT = 0;
@@ -92,8 +140,14 @@ final class ColdFrame
      * that two ranks of six divide them in half. A cut borrowed from another
      * area would not: the Orchard's 0.58 puts 12% of them at the back. 0.38 since
      * the plants' shapes changed on 24 September 2026; it was 0.85.
+     *
+     * **0.50 since the tank was sunk on 27 September 2026.** The cut divides
+     * the plants that stand in the frames, and that is no longer every
+     * arrival: the 274 lilies in every 501 were pulling the median down by
+     * 0.12 m, and left at 0.38 the cut put 81% of the frames' plants at the
+     * back with the front ranks standing empty. 0.50 is the dry median.
      */
-    public const BACK_FROM = 0.38;
+    public const BACK_FROM = 0.50;
 
     /** Which rank a plant of this grown height belongs in. */
     public static function rank(float $height): int
@@ -126,9 +180,13 @@ final class ColdFrame
         return $next;
     }
 
-    /** The middle of a frame, from the middle of the plot: [x, z]. */
+    /**
+     * The middle of a frame, from the middle of the plot: [x, z]. The tank
+     * lies down the middle of the yard, between the two rows.
+     */
     public static function centre(int $frame): array
     {
+        if ($frame === self::TANK) return [0.0, 0.0];
         return [
             $frame % 2 === 0 ? -self::FRAME_X : self::FRAME_X,
             $frame < 2 ? -self::FRAME_Z : self::FRAME_Z,
@@ -148,6 +206,17 @@ final class ColdFrame
     public static function spot(int $frame, int $rank, int $index, int $span = 1): array
     {
         [$x, $z] = self::centre($frame);
+        // **The tank's rows are not ranks**: water is flat and a lily has no
+        // view to be given, so the row comes out of the index and the rank is
+        // not read. A place in it holds one plant, so there is no half-place.
+        if ($frame === self::TANK) {
+            $row = intdiv($index, self::TANK_WIDE);
+            $along = $index % self::TANK_WIDE;
+            return [
+                $x + ($along - (self::TANK_WIDE - 1) / 2) * self::TANK_GAP,
+                $z + ($row - (self::TANK_ROWS - 1) / 2) * self::TANK_GAP,
+            ];
+        }
         $at = $index + ($span - 1) / 2;
         return [
             $x + ($at - (self::PLACES - 1) / 2) * self::ALONG_GAP,
@@ -155,7 +224,10 @@ final class ColdFrame
         ];
     }
 
-    /** Every place in one plot, frame by frame, the front rank before the back. */
+    /**
+     * Every place in one plot, frame by frame, the front rank before the back,
+     * and the tank's twenty-one after the four frames' forty-eight.
+     */
     public static function slots(): array
     {
         static $slots = null;
@@ -167,6 +239,9 @@ final class ColdFrame
                     $slots[] = ['frame' => $frame, 'rank' => $rank, 'index' => $index];
                 }
             }
+        }
+        for ($index = 0; $index < self::TANK_PLACES; $index++) {
+            $slots[] = ['frame' => self::TANK, 'rank' => self::FRONT, 'index' => $index];
         }
         return $slots;
     }
@@ -208,9 +283,32 @@ final class ColdFrame
      * **A lotus asks each rank for two places side by side.** A rank with one
      * place left has no room for it, and it goes on as a plant finding a full
      * rank does; the place stays for a plant of one.
+     *
+     * **What wants water is asked first and asked only of the water.** The
+     * frames are sorted by colour and by height and a lily is sorted by
+     * neither, so there is no frame for it to fall back to: a full tank opens
+     * a new plot. That is what keeps a plot's water full before the next
+     * plot's is used.
      */
     public static function place(array $ways, float $height, int $family, string $habit = ''): array
     {
+        if (self::wantsWater($habit)) {
+            $opened = self::plots($ways);
+            for ($plot = 0; $plot < $opened; $plot++) {
+                $taken = [];
+                foreach ($ways as $p) {
+                    if ((int) $p['plot'] !== $plot || (int) $p['frame'] !== self::TANK) continue;
+                    $from = (int) $p['index'];
+                    for ($n = 0; $n < (int) ($p['span'] ?? 1); $n++) $taken[$from + $n] = true;
+                }
+                for ($index = 0; $index < self::TANK_PLACES; $index++) {
+                    if (!isset($taken[$index])) {
+                        return [$plot, ['frame' => self::TANK, 'rank' => self::FRONT, 'index' => $index]];
+                    }
+                }
+            }
+            return [$opened, ['frame' => self::TANK, 'rank' => self::FRONT, 'index' => 0]];
+        }
         $own = self::rank($height);
         $span = self::span($habit);
         $other = $own === self::BACK ? self::FRONT : self::BACK;
@@ -261,7 +359,11 @@ final class ColdFrame
         return [
             'seed' => $seedHex, 'plot' => $plot,
             'frame' => $slot['frame'], 'rank' => $slot['rank'], 'index' => $slot['index'],
-            'span' => self::span($habit),
+            // **A lily in the tank holds one place.** The two it holds under
+            // glass are 0.31 m apart and a lotus's pads need more than one of
+            // them; the tank's are 0.62 m and were measured for a lily. The
+            // span is a fact about the place as much as about the plant.
+            'span' => self::isDry($slot['frame']) ? self::span($habit) : 1,
             'height' => $height, 'family' => $family, 'habit' => $habit,
             'nudgeX' => $jitter(26, 0.03), 'nudgeZ' => $jitter(27, 0.03),
         ];

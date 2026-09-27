@@ -17,6 +17,13 @@ import XCTest
 /// **The habit and the span since 25 September 2026**, when a lotus began to
 /// take two places. The habit is a word and the span a count, exact on every
 /// host, so the port is held to both with no tolerance.
+///
+/// **Re-recorded on 27 September 2026, when the tank was sunk.** Every lily
+/// is now filed in frame 4 with one place, and the cut moved from 0.38 to the
+/// dry median of 0.50, so almost every line in the file moved. The habit is
+/// what routes a plant to the water and it is read from bytes with no `sin`
+/// or `pow` in it, so the two hosts cannot disagree about which element a
+/// plant is in — only, within a tolerance, about its height.
 final class ColdFrameVectorTests: XCTestCase {
     static var vectorsURL: URL {
         var url = URL(fileURLWithPath: #filePath)

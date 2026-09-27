@@ -31,6 +31,15 @@ declare(strict_types=1);
  * place, or gave its second to the next plant, is caught at the first lotus
  * that is not last in its rank.
  *
+ * **The tank since 27 September 2026.** Frame 4 is water and is checked as
+ * water: a place in it is measured against the tank's own rectangle, it has no
+ * ranks to be on the wrong side of, and every plant in it holds one place. The
+ * two rules that make the water worth having are here rather than in the
+ * geometry — **everything that wants water is in it and nothing else is**, and
+ * **a plot's tank is full before the next plot's is used** — because a port
+ * that let a lily fall back to a frame, or that opened a pond per lily, would
+ * place every one of the five hundred somewhere plausible and be wrong.
+ *
  *   php tools/reference/check_cold_frame.php
  */
 
@@ -82,34 +91,62 @@ $claimed = 0;
 $full = 0;
 $ownRank = 0;
 $lotuses = 0;
+$tanks = [];
 
 // And the shape of the place the two of them agree on, which is what a visitor
 // sees: every plant inside its own frame, a colour to a frame, each rank filled
 // from its west end, nothing in a front rank taller than anything behind it,
 // and no older plot passed over.
+$dry = 0;
+$inWater = 0;
+
 foreach ($ways as $p) {
+    $wet = !ColdFrame::isDry($p['frame']);
     $checks++;
     [$cx, $cz] = ColdFrame::centre($p['frame']);
     [$x, $z] = ColdFrame::spot($p['frame'], $p['rank'], $p['index'], $p['span']);
     $atX = $x + $p['nudgeX'];
     $atZ = $z + $p['nudgeZ'];
-    if (abs($atX - $cx) >= ColdFrame::FRAME_LENGTH / 2 || abs($atZ - $cz) >= ColdFrame::FRAME_DEPTH / 2) {
+    $long = $wet ? ColdFrame::TANK_ACROSS : ColdFrame::FRAME_LENGTH;
+    $deep = $wet ? ColdFrame::TANK_DEEP : ColdFrame::FRAME_DEPTH;
+    if (abs($atX - $cx) >= $long / 2 || abs($atZ - $cz) >= $deep / 2) {
         $failed[] = sprintf('%s stands at %.2f, %.2f — outside frame %d',
             substr($p['seed'], 0, 12), $atX, $atZ, $p['frame']);
     }
-    // The back rank is the one further from the eye, in every frame. Said here
-    // because it is the whole of why the tallest stand under the higher glass.
+    // **Everything that wants water is in the tank and nothing else is.** The
+    // habit is a word, the same on the phone and here, so this cannot round.
     $checks++;
-    if (($p['rank'] === ColdFrame::BACK) !== ($z < $cz)) {
-        $failed[] = sprintf('%s is in rank %d and stands on the wrong side of frame %d',
-            substr($p['seed'], 0, 12), $p['rank'], $p['frame']);
+    if ($wet !== ColdFrame::wantsWater($p['habit'])) {
+        $failed[] = sprintf('%s is a %s and is in frame %d',
+            substr($p['seed'], 0, 12), $p['habit'] === '' ? 'plant with no habit' : $p['habit'], $p['frame']);
     }
-    if ($p['rank'] === ColdFrame::rank($p['height'])) $ownRank++;
-    // A lotus holds two places and nothing else holds more than one: the span
-    // is the habit's, and read off nothing else.
+    if ($wet) {
+        $inWater++;
+        // The tank has no ranks, so nothing is ever filed in its back one.
+        $checks++;
+        if ($p['rank'] !== ColdFrame::FRONT) {
+            $failed[] = sprintf('%s is in the tank in rank %d', substr($p['seed'], 0, 12), $p['rank']);
+        }
+    } else {
+        $dry++;
+        // The back rank is the one further from the eye, in every frame. Said
+        // here because it is the whole of why the tallest stand under the
+        // higher glass.
+        $checks++;
+        if (($p['rank'] === ColdFrame::BACK) !== ($z < $cz)) {
+            $failed[] = sprintf('%s is in rank %d and stands on the wrong side of frame %d',
+                substr($p['seed'], 0, 12), $p['rank'], $p['frame']);
+        }
+        if ($p['rank'] === ColdFrame::rank($p['height'])) $ownRank++;
+    }
+    // A lotus under glass holds two places and nothing else holds more than
+    // one; a lily in the tank holds one, because the tank's places are twice
+    // as far apart and were measured for its pads.
     $checks++;
-    if ($p['span'] !== ColdFrame::span($p['habit'])) {
-        $failed[] = sprintf('%s is a %s and holds %d places', substr($p['seed'], 0, 12), $p['habit'], $p['span']);
+    $want = $wet ? 1 : ColdFrame::span($p['habit']);
+    if ($p['span'] !== $want) {
+        $failed[] = sprintf('%s is a %s in frame %d and holds %d places, not %d',
+            substr($p['seed'], 0, 12), $p['habit'], $p['frame'], $p['span'], $want);
     }
     if ($p['span'] === 2) $lotuses++;
 }
@@ -163,27 +200,59 @@ for ($plot = 0; $plot < $plots; $plot++) {
         }
     }
 
+    // **The tank fills along its rows from the west**, without a gap and with
+    // nothing held twice, the way a rank does.
+    $water = array_values(array_filter($here, fn($p) => !ColdFrame::isDry($p['frame'])));
+    $checks++;
+    $taken = array_map(fn($p) => (int) $p['index'], $water);
+    sort($taken);
+    if ($taken !== [] && $taken !== range(0, count($taken) - 1)) {
+        $failed[] = sprintf('plot %d\'s tank is filled %s', $plot, implode(' ', $taken));
+    }
+    $tanks[$plot] = count($water);
+
     // **An unclaimed frame is never passed over.** A plant that cannot join a
     // frame of its own colour claims a fresh one in the oldest plot that has
     // one, so an older plot holding an unclaimed frame while a newer plot holds
-    // anything at all is the rule having skipped a place it should have taken.
+    // a plant under glass is the rule having skipped a place it should have
+    // taken. Since 27 September a plot can also be opened by a lily finding
+    // every tank full, which claims no frame at all — so the newer plot has to
+    // hold something dry for this to mean anything.
     if ($plot < $plots - 1) {
+        $laterDry = array_filter($ways,
+            fn($p) => (int) $p['plot'] > $plot && ColdFrame::isDry($p['frame']));
         $unclaimed = array_values(array_filter(ColdFrame::FRAMES,
             fn($frame) => ColdFrame::familyOf($here, $frame) === null));
         $checks++;
-        if ($unclaimed !== []) {
-            $failed[] = sprintf('plot %d left frame %s unclaimed although plot %d was opened',
-                $plot, implode(' ', $unclaimed), $plot + 1);
+        if ($unclaimed !== [] && $laterDry !== []) {
+            $failed[] = sprintf('plot %d left frame %s unclaimed although a later plot was planted under glass',
+                $plot, implode(' ', $unclaimed));
         }
     }
 
-    // A plot opens in its first frame, the back row's west one, which is what
-    // makes the ambassador the oldest plant of plot 0 without anything
-    // reserving a place for it.
+    // A plot's frames open in the first of them, the back row's west one. Said
+    // of the first plant under glass rather than the first plant, because a
+    // plot now usually opens with a lily in the water and claims no frame
+    // until something dry arrives.
     $checks++;
-    if (($here[0]['frame'] ?? -1) !== ColdFrame::BACK_WEST) {
-        $failed[] = "plot $plot did not open in its first frame";
+    $firstDry = array_values(array_filter($here, fn($p) => ColdFrame::isDry($p['frame'])));
+    if ($firstDry !== [] && $firstDry[0]['frame'] !== ColdFrame::BACK_WEST) {
+        $failed[] = "plot $plot did not open its frames in the first one";
     }
+}
+
+// **A plot's water is full before the next plot's is used**, which is what
+// keeps the area from being a row of half-empty ponds: a lily takes the first
+// free place in the oldest tank, so at most one tank is part full and every
+// tank after it is empty.
+$short = null;
+foreach ($tanks as $plot => $count) {
+    $checks++;
+    if ($short !== null && $count !== 0) {
+        $failed[] = sprintf('plot %d\'s tank was used although plot %d\'s holds only %d',
+            $plot, $short, $tanks[$short]);
+    }
+    if ($short === null && $count < ColdFrame::TANK_PLACES) $short = $plot;
 }
 
 if ($failed !== []) {
@@ -195,9 +264,9 @@ if ($failed !== []) {
 }
 
 printf("The PHP places all %d arrivals where the Swift does, across %d plots, "
-     . "%d frames claimed and %d of them full, %d of %d plants in their own rank, "
-     . "%d lotuses across two places: %d checks.\n",
-    count($vectors), $plots, $claimed, $full, $ownRank, count($ways), $lotuses, $checks);
+     . "%d frames claimed and %d of them full, %d of %d plants under glass in their own rank, "
+     . "%d in the water, %d lotuses across two places: %d checks.\n",
+    count($vectors), $plots, $claimed, $full, $ownRank, $dry, $inWater, $lotuses, $checks);
 
 // **Taking back keeps the place and erases the plant**, and moves nothing that
 // arrives after it. `taking_back.php` says how that is checked.

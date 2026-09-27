@@ -23,7 +23,7 @@ families, kinds and habits did not move; only heights did.
 
 - **The cuts:** Long Walk 0.93/1.28 → 0.77/1.20, Quiet Garden 1.13 → 1.09,
   Crossing 0.97/1.43 → 0.91/1.30, Orchard 0.75/1.30 → 0.58/1.20 (the Knot
-  Garden's with it), Cold Frame 0.85 → 0.38, Coppice 1.10 → 1.00, and the
+  Garden's with it), Cold Frame 0.85 → 0.38 → 0.50, Coppice 1.10 → 1.00, and the
   Glasshouse border its own again at 1.14 rather than the Orchard's.
 - **The four cuts over all crossings were measured on one sample of three
   hundred** where each area had drawn its own, so the Orchard's crown and the
@@ -794,9 +794,9 @@ same terms; failing that the first frame nobody has claimed; failing that a new
 plot. A rank fills from its west end. The claim is read off the plants, as the
 Knot Garden's and the Seedbed's are.
 
-- **The cut is 0.38 m, the median of this area's own plants** (0.85 m before
-  24 September 2026), and it is the first cut measured over one area's plants
-  rather than all of them. Five hundred `waiting` arrivals took 5,805 crossings
+- **The cut is 0.50 m, the median of this area's plants that stand in the
+  frames** (0.38 m from 24 September 2026, 0.85 m before that), and it is the
+  first cut measured over one area's plants rather than all of them. Five hundred `waiting` arrivals took 5,805 crossings
   to find. A borrowed cut would have divided them unevenly — the Orchard's 0.58
   puts 12% at the back, the Long Walk's 0.77 puts 1% — where this one puts
   49.8%. `ColdFrameTests`
@@ -930,6 +930,63 @@ after their nudges, the case the simulation found too. **Fewer plants have the
 rank their height asks for: 448 of 501, from 472.** Three in four lotuses
 belong in the front rank, and a front rank that held six plants now holds
 three lotuses, so it fills sooner and more of what follows is sent behind.
+
+### The tank, 27 September 2026
+
+**Decided.** *A tank of water down the middle of the yard, and every water
+lily in it.* Marcus, from two renders rather than from the arithmetic — a full
+plot and a middling one — having changed direction twice before asking to see
+it. Seven places along by three across at **0.62 m**, the gap a lotus's pads
+were measured against on 25 September: **twenty-one to a plot**, 4.4 m by
+1.8 m. The two rows of frames were pushed out from `frameZ` 0.9 to **1.55** to
+make room, and nothing inside a frame moved.
+
+**Why here at all, and why only here.** An area is chosen from a plant's genus
+head and the head is its archetype's own root, so the two are one fact:
+`Areas.genusHeads` sends `Nyx` here and `Lir` to the Seedbed, and those are the
+lotus's two roots. **No other area in the garden ever receives a water lily** —
+which is also why the Quiet Garden's pool, built two days earlier, can hold
+one in a test and never in the live garden. **274 of every 501 arrivals here
+are lilies**, and until the tank was sunk every one of them was in dry compost
+taking two places under glass.
+
+**As built.** `ColdFrame.Frame.tank` (raw 4, `isDry`, `places`, `at(_:rank:)`),
+`Archetype.wantsWater`, `PlantTraits.wantsWater`, the water branch at the head
+of `place(for:)`; `ColdFrame::TANK` and the same branch in the port;
+`pg_frame_plan` sending the dry frames and a `tank` block; `frame.js` fanning
+its gravel from the tank's rim and calling `sinkPool`. The tank is a fifth
+frame rather than a new kind of place, for the reason `QuietGarden.Corner.pool`
+is a fifth corner: **a slot stays one set of numbers in the table and on the
+wire**, and every planting already filed decodes as it did.
+
+- **The tank has no ranks.** Water is flat and a lily has no view to be given,
+  so every place in it is rank 0 and its three rows come out of the index.
+- **A full tank opens a new plot rather than putting a lily under glass.** The
+  frames are graded by colour and by height and a lily is sorted by neither, so
+  there is no frame to fall back to — which is what keeps a plot's water full
+  before the next plot's is used.
+- **A lily in the tank holds one place.** The two it held under glass were
+  0.31 m apart; the tank's are 0.62 m and were measured for its pads. The span
+  is a fact about the place as much as about the plant. The two-place rule is
+  therefore unreachable under glass now, and stays in the source because rows
+  written before today hold lilies in frames 0–3 with a span of two.
+- **The ambassador is in the water.** *Nyxisora crassicaulis* opens the tank at
+  its west end rather than the first frame; it is derived, not stored.
+
+**The cut moved with it, from 0.38 to 0.50.** The cut divides the plants that
+stand in the frames, and that is no longer every arrival: the 274 lilies were
+pulling the median down by 0.12 m. Left at 0.38 it put **81% of the frames'
+plants at the back**, and it showed — the front ranks stood empty under the
+glass while the back ranks filled. 0.50 is the dry median and puts 50.2% there.
+
+At five hundred: **14 plots, 25 frames claimed, 14 of them full, 274 of 294
+places in the water (93%) and 227 of 672 under glass (34%)**, with **219 of 227
+plants under glass in the rank their height asks for** — the best this area has
+measured, from 197 at the old cut. The frames are thin, and that is this area
+being mostly water rather than the rule failing: only 227 of every 501 arrivals
+here want dry compost at all. **Fewer frames and smaller frames were both
+measured and both are worse** — a frame holds one colour, so fewer frames
+strand more plots and smaller frames are claimed faster and never fill.
 
 ## The Glasshouse, chosen
 

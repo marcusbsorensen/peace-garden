@@ -64,10 +64,9 @@ export const POOL = {
 ///
 /// One call gives a floor everything it needs, so the outline is read once and
 /// the caller passes the same options to `sinkPool`.
-export function rimOf(e, { at = [0, 0], across, seed }) {
-  const scale = across / SIDE;
+export function rimOf(e, { at = [0, 0], across, deep = across, seed }) {
   const grown = readOutline(e, SIDE, SIDE, seed);
-  const rim = ringAt(grown, scale * (1 + (2 * POOL.lip) / across), at);
+  const rim = ringAt(grown, [(across + 2 * POOL.lip) / SIDE, (deep + 2 * POOL.lip) / SIDE], at);
   const loop = Array.from({ length: POOL.steps }, (_, i) => rim(i / POOL.steps));
   return { rim, steps: POOL.steps, inside: (x, z) => encloses(loop, x, z) };
 }
@@ -85,11 +84,10 @@ function encloses(loop, x, z) {
   return within;
 }
 
-export function sinkPool(e, { tri, quad }, { at = [0, 0], across, seed }) {
-  const scale = across / SIDE;
+export function sinkPool(e, { tri, quad }, { at = [0, 0], across, deep = across, seed }) {
   const grown = readOutline(e, SIDE, SIDE, seed);
-  const edge = ringAt(grown, scale, at);
-  const rim = ringAt(grown, scale * (1 + (2 * POOL.lip) / across), at);
+  const edge = ringAt(grown, [across / SIDE, deep / SIDE], at);
+  const rim = ringAt(grown, [(across + 2 * POOL.lip) / SIDE, (deep + 2 * POOL.lip) / SIDE], at);
 
   // The rim: bare wet earth between the floor and the water, lying a whisker
   // over whatever the floor has drawn on it.
@@ -129,12 +127,16 @@ export function sinkPool(e, { tri, quad }, { at = [0, 0], across, seed }) {
 /// rim and a plot's edge have different numbers of points and no index in one
 /// means anything in the other.
 export function walkRound(outline) {
-  return ringAt(outline, 1, [0, 0]);
+  return ringAt(outline, [1, 1], [0, 0]);
 }
 
 /// A closed outline, scaled about its own middle and moved to `at`, read by
 /// how far round it you are rather than by which point you are on — so two
 /// loops with different point counts can be walked together.
+///
+/// `scale` is a pair, because a tank is longer than it is wide and a pool is
+/// not: the outline is grown at a plot's size and squeezed to fit, which is
+/// what keeps its wander in proportion (see the note at the top).
 function ringAt(outline, scale, at) {
   const n = outline.length;
   const run = [0];
@@ -149,8 +151,8 @@ function ringAt(outline, scale, at) {
     while (i < n && run[i] < want) i++;
     const t = (want - run[i - 1]) / (run[i] - run[i - 1] || 1);
     const a = outline[i - 1], b = outline[i % n];
-    return [at[0] + scale * (a[0] + (b[0] - a[0]) * t),
-            at[1] + scale * (a[1] + (b[1] - a[1]) * t)];
+    return [at[0] + scale[0] * (a[0] + (b[0] - a[0]) * t),
+            at[1] + scale[1] * (a[1] + (b[1] - a[1]) * t)];
   };
 }
 

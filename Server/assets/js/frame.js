@@ -21,10 +21,11 @@
 
 import { decode, takeResult } from './plant.js';
 import { COLOUR, RIM_DEPTH, SIDE, hash, keepToPlot, readOutline, readStructure } from './longwalk.js';
+import { rimOf, sinkPool, walkRound } from './water.js';
 
 // Seeds for this area's dressing, its own and not another area's, so seven
 // plots do not share one wandering edge.
-const FRAME = { ground: 5153, floor: 37, grain: 59, soil: 83, box: 1301, lights: 1361, glass: 1427 };
+const FRAME = { ground: 5153, floor: 37, grain: 59, soil: 83, box: 1301, lights: 1361, glass: 1427, tank: 907 };
 
 /// The frames' boards: deal, weathered paler than the bench's oak, as the
 /// Seedbed's labels are — a frame is knocked together from the same stock a
@@ -76,9 +77,18 @@ export function makeFrameGround(place, lids = makeFrameLids(place)) {
 
     const outline = readOutline(e, SIDE, SIDE, FRAME.ground);
     const n = outline.length;
-    for (let i = 0; i < n; i++) {
-      const a = outline[i], b = outline[(i + 1) % n];
-      tri([0, 0, 0], [a[0], 0, a[1]], [b[0], 0, b[1]], UP, COLOUR.gravel);
+    // **The yard's gravel fans out from the tank's rim, not from the middle**,
+    // since the middle is now water (27 September 2026). A ring between two
+    // loops rather than a fan from a point, both walked by how far round them
+    // you are: see `water.js`, which had to teach the Quiet Garden's lawn the
+    // same thing.
+    const tank = { across: place.tank.across, deep: place.tank.deep, seed: FRAME.tank };
+    const { rim, steps, inside: inTank } = rimOf(e, tank);
+    const round = walkRound(outline);
+    for (let i = 0; i < steps; i++) {
+      const u = i / steps, v = (i + 1) / steps;
+      const a = rim(u), b = rim(v), c = round(v), d = round(u);
+      quad([a[0], 0, a[1]], [b[0], 0, b[1]], [c[0], 0, c[1]], [d[0], 0, d[1]], UP, COLOUR.gravel);
     }
 
     // Where a frame's soil is, inside its boards. Frames are asked of the plan,
@@ -133,7 +143,13 @@ export function makeFrameGround(place, lids = makeFrameLids(place)) {
       + 0.06 * (e.pg_verge(z * 0.54, 1, FRAME.ground) / 0.14);
     sheet(lattice(0.06, [-half, -half], [half, half]), 0.003,
       (i, j, k, p) => COLOUR.gravel.map((v) => v * drift(p[0], p[1]) * (0.87 + 0.25 * hash(i * 131 + j * 37 + k * 7 + FRAME.grain))),
-      (x, z) => !inside(x, z));
+      // And it stops at the water, as it stops at a frame's boards.
+      (x, z) => !inside(x, z) && !inTank(x, z));
+
+    // The tank, sunk down the middle of the yard between the two rows. After
+    // the gravel, so its rim lies over it: `water.js` cuts the floor rather
+    // than covering it, which is the one thing a sunk pool needs.
+    sinkPool(e, { tri, quad }, tank);
 
     // **The soil in each frame**, finer and darker, and flat-toned per face as
     // the Seedbed's tilth is — crumbs, not a surface. Its spread is half the
