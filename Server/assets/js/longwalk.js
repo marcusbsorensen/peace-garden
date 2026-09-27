@@ -151,9 +151,10 @@ const PLANT_VERTEX = `#version 300 es
 in vec3 position; in vec3 normal; in vec2 uv; in float age;
 uniform mat4 viewProjection;
 uniform vec3 offset;
-out vec3 vNormal; out vec2 vUV; out float vAge;
+out vec3 vNormal; out vec2 vUV; out float vAge; out vec3 vWorld;
 void main() {
   vNormal = normal; vUV = uv; vAge = age;
+  vWorld = position + offset;
   gl_Position = viewProjection * vec4(position + offset, 1.0);
 }`;
 
@@ -166,20 +167,64 @@ void main() {
 // `1 - age` so a brand new surface is fully tinted and a grown one is
 // untouched, eased the app's way — tissue colours up quickly at first and
 // then spends a long time finishing.
+// **And the surface, since 27 September 2026.** A leaf drawn with one colour
+// and one flat normal has a single uniform sheen wherever you look at it,
+// which is what reads as moulded plastic; `PaletteRamp.relief` has described
+// the veins standing proud of the blade, the quilting between them and the
+// ribbing on a stem since it was written, and the app has lit plants by it
+// all along. The bake is one texture: the tangent-space normal in red and
+// green, the roughness in blue (`PlantBuffer.bakeRelief`).
+//
+// **The tangent frame is found per pixel** rather than carried on the mesh.
+// A leaf's vertices have no tangents and adding them would be a third
+// attribute and a change to every builder; the screen-space derivatives of
+// the world position and the texture coordinate give the same frame for the
+// cost of four subtractions, which is the standard cotangent trick. It is
+// undefined on a degenerate triangle, so the frame falls back to the vertex
+// normal when the derivatives vanish.
+//
+// **The highlight is small on purpose.** This garden lights flat, and the
+// app learnt that taking roughness far down on the raised ground gave every
+// ridge a specular hot enough to burn out the detail it was meant to show.
+// What is wanted is a vein catching the light against matte tissue, not a
+// wet leaf.
 const PLANT_FRAGMENT = `#version 300 es
 precision highp float;
-in vec3 vNormal; in vec2 vUV; in float vAge;
+in vec3 vNormal; in vec2 vUV; in float vAge; in vec3 vWorld;
 uniform sampler2D colour;
+uniform sampler2D relief;
 uniform vec4 young;
+uniform vec3 look;
 ${SHADE}
 out vec4 outColour;
+
+vec3 bentBy(vec3 n, vec3 p, vec2 uv, vec3 tangentNormal) {
+  vec3 dp1 = dFdx(p), dp2 = dFdy(p);
+  vec2 duv1 = dFdx(uv), duv2 = dFdy(uv);
+  vec3 across = cross(dp2, n), along = cross(n, dp1);
+  vec3 t = across * duv1.x + along * duv2.x;
+  vec3 b = across * duv1.y + along * duv2.y;
+  float scale = max(dot(t, t), dot(b, b));
+  if (scale <= 0.0) return n;
+  float invmax = inversesqrt(scale);
+  return normalize(mat3(t * invmax, b * invmax, n) * tangentNormal);
+}
+
 void main() {
   vec3 n = normalize(gl_FrontFacing ? vNormal : -vNormal);
   vec3 albedo = texture(colour, vUV).rgb;
   float fresh = 1.0 - clamp(vAge, 0.0, 1.0);
   fresh = fresh * fresh * (3.0 - 2.0 * fresh);
   albedo = mix(albedo, young.rgb, fresh * young.a);
-  outColour = vec4(shade(albedo, n), 1.0);
+
+  vec3 surface = texture(relief, vUV).rgb;
+  vec2 slope = surface.rg * 2.0 - 1.0;
+  vec3 lit = bentBy(n, vWorld, vUV, vec3(slope, sqrt(max(0.0, 1.0 - dot(slope, slope)))));
+
+  float gloss = 1.0 - surface.b;
+  vec3 halfway = normalize(sun + look);
+  float spec = pow(max(dot(lit, halfway), 0.0), mix(10.0, 90.0, gloss)) * gloss * gloss * 0.30;
+  outColour = vec4(shade(albedo, lit) + spec * sunColour * strength, 1.0);
 }`;
 
 // **A shadow is a darkening, not a colour.** It is drawn over the ground
@@ -320,7 +365,8 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   if (!gl) throw new Error('This browser has no WebGL2.');
   const ground = program(gl, GROUND_VERTEX, GROUND_FRAGMENT, ['position', 'normal', 'colour'], ['offset', 'opacity', 'upOnly']);
   const plantProgram = program(gl, PLANT_VERTEX, PLANT_FRAGMENT,
-                               ['position', 'normal', 'uv', 'age'], ['offset', 'colour', 'young']);
+                               ['position', 'normal', 'uv', 'age'],
+                               ['offset', 'colour', 'relief', 'young', 'look']);
   const shadowProgram = program(gl, SHADOW_VERTEX, SHADOW_FRAGMENT, ['position', 'uv', 'fade'], ['loss']);
   // **What a plant's shadow lies on.** An area whose floor is not level says
   // how high it is anywhere (`height`, on the builder it hands the stage), so
@@ -485,11 +531,17 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
 
     gl.useProgram(plantProgram.program);
     gl.uniform1i(plantProgram.at.colour, 0);
-    gl.activeTexture(gl.TEXTURE0);
+    gl.uniform1i(plantProgram.at.relief, 1);
+    // Where the eye is, for the highlight. The projection is orthographic, so
+    // this is one direction for the whole plot rather than a vector per pixel.
+    gl.uniform3fv(plantProgram.at.look, eye());
     for (const plant of plants) {
       gl.uniform3fv(plantProgram.at.offset, [plant.x, plant.lift, plant.z]);
       for (const part of plant.parts) {
+        gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, plant.textures[part.role]);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, plant.relief[part.role]);
         // What a young one of this part is coloured toward. Set per part
         // rather than per plant: a bud's petals and the leaves under them
         // are different ages and go different ways.
@@ -628,6 +680,21 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       textures[role] = texture;
     }
+    // **And the surface beside the colour**: the normal in red and green
+    // and the roughness in blue, sampled at the same coordinates, so a
+    // vein is lit where it is drawn (`PlantBuffer.bakeRelief`).
+    const relief = {};
+    for (const role of ROLES) {
+      const t = grown.relief[role];
+      const texture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, t.side, t.side, 0, gl.RGBA, gl.UNSIGNED_BYTE, t.pixels);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      relief[role] = texture;
+    }
     const parts = grown.parts.map((part) => {
       const vao = gl.createVertexArray();
       gl.bindVertexArray(vao);
@@ -648,7 +715,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     // `pick`: a tap anywhere on a spire should find the spire.
     const height = Math.max(0, grown.max?.[1] ?? 0);
     const reach = Math.max(0.05, ...[0, 2].flatMap((i) => [Math.abs(grown.min?.[i] ?? 0), Math.abs(grown.max?.[i] ?? 0)]));
-    plants.push({ x, z, lift, parts, textures, who, height, reach, shadow: shadowUnder(x, z, lift, grown) });
+    plants.push({ x, z, lift, parts, textures, relief, who, height, reach, shadow: shadowUnder(x, z, lift, grown) });
   }
 
   // **The shadow under a plant**, from its own triangles (`shadow.js`), built

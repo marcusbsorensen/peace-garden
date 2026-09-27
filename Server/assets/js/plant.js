@@ -87,11 +87,12 @@ export function decode(buffer) {
   const f32s = (n) => { const v = new Float32Array(buffer.slice(at, at + n * 4)); at += n * 4; return v; };
 
   const magic = new TextDecoder().decode(new Uint8Array(buffer, 0, 4));
-  // **PGP2 since 27 September 2026**, when `maturity` joined the buffer. The
+  // **PGP3 since 27 September 2026**, when `maturity` and then the relief
+  // joined the buffer. The
   // magic is checked rather than assumed so a page served beside a wasm of
   // the other version says which it got instead of reading the vertices at
   // the wrong stride.
-  if (magic !== 'PGP2') throw new Error(`not a plant buffer: ${magic}`);
+  if (magic !== 'PGP3') throw new Error(`not a plant buffer: ${magic}`);
   at = 4;
   const partCount = u32();
   const bounds = f32s(6);
@@ -110,12 +111,19 @@ export function decode(buffer) {
     parts.push({ role, positions, normals, uvs, maturity, indices });
   }
   const textures = {};
+  const relief = {};
   for (const role of ROLES) {
     const side = u32();
+    // The colour, and then the surface: a tangent-space normal in red and
+    // green — blue is recovered on the way in, since a height field's normal
+    // always points out of its surface — and the roughness in blue. One side
+    // for the pair, because the two are sampled at the same coordinates.
     textures[role] = { side, pixels: new Uint8Array(buffer.slice(at, at + side * side * 4)) };
     at += side * side * 4;
+    relief[role] = { side, pixels: new Uint8Array(buffer.slice(at, at + side * side * 4)) };
+    at += side * side * 4;
   }
-  return { parts, textures, min: bounds.slice(0, 3), max: bounds.slice(3, 6) };
+  return { parts, textures, relief, min: bounds.slice(0, 3), max: bounds.slice(3, 6) };
 }
 
 // MARK: - Drawing
@@ -137,9 +145,9 @@ export const YOUNG = {
 const VERTEX = `#version 300 es
 in vec3 position; in vec3 normal; in vec2 uv; in float age;
 uniform mat4 viewProjection;
-out vec3 vNormal; out vec2 vUV; out float vAge;
+out vec3 vNormal; out vec2 vUV; out float vAge; out vec3 vWorld;
 void main() {
-  vNormal = normal; vUV = uv; vAge = age;
+  vNormal = normal; vUV = uv; vAge = age; vWorld = position;
   gl_Position = viewProjection * vec4(position, 1.0);
 }`;
 
@@ -147,11 +155,28 @@ void main() {
 // app's materials: a petal's back is lit as its own face, not seen through.
 const FRAGMENT = `#version 300 es
 precision highp float;
-in vec3 vNormal; in vec2 vUV; in float vAge;
+in vec3 vNormal; in vec2 vUV; in float vAge; in vec3 vWorld;
 uniform sampler2D colour;
+uniform sampler2D relief;
 uniform vec3 sun;
 uniform vec4 young;
 out vec4 outColour;
+
+// The tangent frame from the screen-space derivatives, since a leaf's
+// vertices carry no tangents. The same function the garden uses; see the
+// plant fragment in longwalk.js for why it is found per pixel.
+vec3 bentBy(vec3 n, vec3 p, vec2 uv, vec3 tangentNormal) {
+  vec3 dp1 = dFdx(p), dp2 = dFdy(p);
+  vec2 duv1 = dFdx(uv), duv2 = dFdy(uv);
+  vec3 across = cross(dp2, n), along = cross(n, dp1);
+  vec3 t = across * duv1.x + along * duv2.x;
+  vec3 b = across * duv1.y + along * duv2.y;
+  float scale = max(dot(t, t), dot(b, b));
+  if (scale <= 0.0) return n;
+  float invmax = inversesqrt(scale);
+  return normalize(mat3(t * invmax, b * invmax, n) * tangentNormal);
+}
+
 void main() {
   vec3 n = normalize(gl_FrontFacing ? vNormal : -vNormal);
   vec3 albedo = texture(colour, vUV).rgb;
@@ -163,9 +188,17 @@ void main() {
   fresh = fresh * fresh * (3.0 - 2.0 * fresh);
   albedo = mix(albedo, young.rgb, fresh * young.a);
   albedo = pow(albedo, vec3(2.2));
-  float direct = max(dot(n, sun), 0.0);
-  float sky = 0.5 + 0.5 * n.y;
-  vec3 lit = albedo * (0.85 * direct + 0.35 * sky);
+
+  vec3 surface = texture(relief, vUV).rgb;
+  vec2 slope = surface.rg * 2.0 - 1.0;
+  vec3 bent = bentBy(n, vWorld, vUV, vec3(slope, sqrt(max(0.0, 1.0 - dot(slope, slope)))));
+
+  float direct = max(dot(bent, sun), 0.0);
+  float sky = 0.5 + 0.5 * bent.y;
+  float gloss = 1.0 - surface.b;
+  vec3 halfway = normalize(sun + vec3(0.0, 0.0, 1.0));
+  float spec = pow(max(dot(bent, halfway), 0.0), mix(10.0, 90.0, gloss)) * gloss * gloss * 0.30;
+  vec3 lit = albedo * (0.85 * direct + 0.35 * sky) + spec;
   outColour = vec4(pow(lit, vec3(1.0 / 2.2)), 1.0);
 }`;
 
@@ -180,6 +213,7 @@ export function makeStage(canvas) {
     age: gl.getAttribLocation(program, 'age'),
     viewProjection: gl.getUniformLocation(program, 'viewProjection'),
     colour: gl.getUniformLocation(program, 'colour'),
+    relief: gl.getUniformLocation(program, 'relief'),
     sun: gl.getUniformLocation(program, 'sun'),
     young: gl.getUniformLocation(program, 'young'),
   };
@@ -200,6 +234,20 @@ export function makeStage(canvas) {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       textures[role] = texture;
     }
+    // The surface beside the colour: normal in red and green, roughness
+    // in blue (`PlantBuffer.bakeRelief`).
+    const relief = {};
+    for (const role of ROLES) {
+      const t = grown.relief[role];
+      const texture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, t.side, t.side, 0, gl.RGBA, gl.UNSIGNED_BYTE, t.pixels);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      relief[role] = texture;
+    }
     const parts = grown.parts.map((part) => {
       const vao = gl.createVertexArray();
       gl.bindVertexArray(vao);
@@ -216,7 +264,7 @@ export function makeStage(canvas) {
       return { vao, buffers, count: part.indices.length, role: part.role };
     });
     gl.bindVertexArray(null);
-    plant = { parts, textures, min: grown.min, max: grown.max };
+    plant = { parts, textures, relief, min: grown.min, max: grown.max };
     draw();
   }
 
@@ -247,9 +295,12 @@ export function makeStage(canvas) {
     gl.uniformMatrix4fv(at.viewProjection, false, multiply(projection, lookAt(eye, centre)));
     gl.uniform3fv(at.sun, normalise([0.4, 0.8, 0.45]));
     gl.uniform1i(at.colour, 0);
-    gl.activeTexture(gl.TEXTURE0);
+    gl.uniform1i(at.relief, 1);
     for (const part of plant.parts) {
+      gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, plant.textures[part.role]);
+      gl.activeTexture(gl.TEXTURE1);
+      gl.bindTexture(gl.TEXTURE_2D, plant.relief[part.role]);
       gl.uniform4fv(at.young, YOUNG[ROLES[part.role]] ?? [0, 0, 0, 0]);
       gl.bindVertexArray(part.vao);
       gl.drawElements(gl.TRIANGLES, part.count, gl.UNSIGNED_INT, 0);
@@ -282,6 +333,7 @@ export function attribute(gl, location, values, size) {
 function release(gl, plant) {
   for (const part of plant.parts) { part.buffers.forEach((b) => gl.deleteBuffer(b)); gl.deleteVertexArray(part.vao); }
   Object.values(plant.textures).forEach((t) => gl.deleteTexture(t));
+  Object.values(plant.relief ?? {}).forEach((t) => gl.deleteTexture(t));
 }
 
 export function link(gl, vertexSource, fragmentSource) {

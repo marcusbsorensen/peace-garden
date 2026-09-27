@@ -328,3 +328,51 @@ A poppy or a water lily read as a star of spikes.
   SeedCore's own meshes, every vertex count equal and every bound within Float
   precision. It still lacks the `maturity` vertex attribute and twelve palette
   draws. `SeedCore` is authoritative; the preview is for judging shape.
+
+## The web draws a surface, 27 September 2026
+
+Marcus, looking at the Seedbed: *why do the leaves look so artificial and
+plastic-like?* Two things were missing, both already written and both dropped
+at the wasm boundary rather than absent.
+
+**A leaf's age.** `MeshBuilder.addSurface` has carried a `maturity` per
+surface since it was written, and says in its own doc comment why it reaches
+the renderer as a vertex attribute: it is the only channel that survives every
+leaf on a plant sharing one material. The app has read it all along
+(`PlantSceneBuilder.agingModifier`). The wasm encoder wrote positions,
+normals, uvs and indices and left it out, so every leaf sampled one texture at
+the same coordinates and came out identical to the pixel. Now in the buffer,
+and both web shaders tint a young surface from one table ported from
+`youngTint` — a leaf to pale yellow-green, a petal in bud to the calyx's
+colour, a centre and its stamens pale and dry, a stem and a calyx untouched.
+
+**The relief.** `PaletteRamp.relief` describes veins standing proud of the
+blade, the quilting between them, ribbing on a stem and bumps on a floret;
+`GradientTexture.renderNormal` and `renderRoughness` bake it, and
+`GradientTexture`'s own header says what it is for: *a single scalar roughness
+and flat normals give every leaf one uniform sheen, and no amount of colour
+detail recovers from that.* The web baked only the diffuse.
+
+- **One texture, not the app's two.** A height field's tangent-space normal
+  always points out of its surface, so `nz` is recovered on the page and the
+  blue channel carries the roughness — which is read off the same height
+  field, so the ridge the light catches and the gloss on it are the same
+  ridge. The wire is `(nx+1)/2`, `(ny+1)/2`, roughness, 255.
+- **The tangent frame is found per pixel**, from the screen-space derivatives
+  of the world position and the texture coordinate. A leaf's vertices carry no
+  tangents and adding them would be a third attribute and a change to every
+  builder; the derivatives give the same frame for four subtractions.
+- **The relief strengths and roughness swings are the app's, unchanged.** Every
+  one came down after the app's first render: relief convincing in the
+  abstract reads as corrugated iron on a blade the size of a thumb, and
+  roughness taken far down on raised ground gives every ridge a specular hot
+  enough to burn out the detail it was meant to show.
+- **The plant buffer is `PGP3`.** The magic is checked on the page, so a wasm
+  and a page that disagree say which they got rather than reading the vertices
+  at the wrong stride. Nothing stores the buffer.
+
+**Not done, and deliberately.** The garden's shared `shade()` multiplies sRGB
+albedo by light without gamma correcting, where the single-plant viewer does
+it properly. Fixing it is three lines and correct, but `shade()` is shared
+with every ground in the garden and the light constants were tuned against the
+uncorrected path, so it means re-tuning and re-checking ten areas.
