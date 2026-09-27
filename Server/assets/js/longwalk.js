@@ -101,23 +101,56 @@ export const COLOUR = {
 // Midday, GardenGround.swift. Read by the Coppice too, which lays a stool's
 // shadow away from it, and by the stage, which lays every plant's and every
 // hedge's shadow from it.
+//
+// **Re-tuned on 27 September 2026, when the shading became gamma-correct.**
+// These are quantities of light now and add in linear space, where before
+// they were multiplied into an sRGB colour — so the old numbers said
+// something different and were chosen against a different curve. `sun` did
+// not move: it is a direction, every shadow in the garden is laid from it,
+// and it is the app's.
+//
+// A midday outdoors, as the numbers: the sun carries nearly all of it, the
+// sky about an eighth and blue with it, and the ground throws back a warm
+// twentieth. A face turned away from all three reads at about a third of one
+// turned into them, which is the contrast a clear noon has.
 export const LIGHT = {
   sun: [-0.3320, 0.8829, 0.3320],
   sunColour: [1.00, 0.96, 0.88],
-  strength: 0.76,
-  sky: [0.40, 0.48, 0.60],
-  bounce: [0.27, 0.25, 0.20],
+  strength: 1.0,
+  sky: [0.10, 0.13, 0.19],
+  bounce: [0.080, 0.072, 0.055],
 };
 
 // The app's shading, shared by the ground and the plants so they sit in one light.
+//
+// **Gamma-correct since 27 September 2026.** Until then this multiplied an
+// sRGB colour by the light and wrote the product straight out, which is
+// wrong twice over: a texture's bytes are not a quantity of light, and light
+// does not add in sRGB. The single-plant viewer had done it properly from
+// the start (`plant.js`), so the garden and the page a visitor reaches from
+// it disagreed about the same plant. Albedo is taken to linear on the way
+// in, every light adds there, and the sum is encoded once on the way out.
+//
+// **`lightAt` is separate so a highlight can be added in the right space.**
+// A specular is light, not albedo, so it belongs in the sum before the
+// encode; a plant adds one (`PLANT_FRAGMENT`) and the ground does not.
+//
+// **The terminator is true Lambert again.** It used to be `pow(NdotL, 0.9)`,
+// which lifts the shaded side — a fudge for the missing gamma, since without
+// the encode everything below mid grey came out too dark. With the encode
+// doing that job properly the exponent is 1 and the falloff is the physical
+// one.
 const SHADE = `
 uniform vec3 sun, sunColour, sky, bounce;
 uniform float strength;
-vec3 shade(vec3 albedo, vec3 n) {
+vec3 lightAt(vec3 n) {
   float hemi = 0.5 + 0.5 * n.y;
-  vec3 ambient = sky * hemi + bounce * (1.0 - hemi);
-  vec3 direct = pow(max(dot(n, sun), 0.0), 0.9) * strength * sunColour;
-  return albedo * (ambient + direct);
+  return sky * hemi + bounce * (1.0 - hemi) + max(dot(n, sun), 0.0) * strength * sunColour;
+}
+vec3 encode(vec3 linear) { return pow(max(linear, vec3(0.0)), vec3(1.0 / 2.2)); }
+vec3 toLinear(vec3 srgb) { return pow(max(srgb, vec3(0.0)), vec3(2.2)); }
+vec3 shade(vec3 albedo, vec3 n) {
+  return encode(toLinear(albedo) * lightAt(n));
 }`;
 
 // `offset` is where the mesh stands: nowhere for a plot's own ground, which is
@@ -221,10 +254,20 @@ void main() {
   vec2 slope = surface.rg * 2.0 - 1.0;
   vec3 lit = bentBy(n, vWorld, vUV, vec3(slope, sqrt(max(0.0, 1.0 - dot(slope, slope)))));
 
+  // **Only the relief catches the light.** A highlight computed the same way
+  // at every pixel lies evenly over a flat surface, and a large area of even
+  // sheen is what reads as sheet metal — a water lily's pad is the worst
+  // case in the garden, a broad flat disc facing a sun almost overhead.
+  // Gating on how steeply the relief runs here puts the shine on the veins
+  // and the ribs, where a real leaf carries it, and leaves the blade between
+  // them matte.
+  float ridge = clamp(length(slope) * 2.4, 0.0, 1.0);
   float gloss = 1.0 - surface.b;
   vec3 halfway = normalize(sun + look);
-  float spec = pow(max(dot(lit, halfway), 0.0), mix(10.0, 90.0, gloss)) * gloss * gloss * 0.30;
-  outColour = vec4(shade(albedo, lit) + spec * sunColour * strength, 1.0);
+  float spec = pow(max(dot(lit, halfway), 0.0), mix(10.0, 90.0, gloss)) * gloss * gloss * 0.22 * ridge;
+  // The highlight is light and adds where the other light adds, before the
+  // encode. Added after it, it was a wash over the top rather than a sheen.
+  outColour = vec4(encode(toLinear(albedo) * lightAt(lit) + spec * sunColour * strength), 1.0);
 }`;
 
 // **A shadow is a darkening, not a colour.** It is drawn over the ground

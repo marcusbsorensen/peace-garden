@@ -195,9 +195,12 @@ void main() {
 
   float direct = max(dot(bent, sun), 0.0);
   float sky = 0.5 + 0.5 * bent.y;
+  // Only the relief catches the light; a flat surface lit evenly all over
+  // reads as sheet metal. See the plant fragment in longwalk.js.
+  float ridge = clamp(length(slope) * 2.4, 0.0, 1.0);
   float gloss = 1.0 - surface.b;
   vec3 halfway = normalize(sun + vec3(0.0, 0.0, 1.0));
-  float spec = pow(max(dot(bent, halfway), 0.0), mix(10.0, 90.0, gloss)) * gloss * gloss * 0.30;
+  float spec = pow(max(dot(bent, halfway), 0.0), mix(10.0, 90.0, gloss)) * gloss * gloss * 0.22 * ridge;
   vec3 lit = albedo * (0.85 * direct + 0.35 * sky) + spec;
   outColour = vec4(pow(lit, vec3(1.0 / 2.2)), 1.0);
 }`;
