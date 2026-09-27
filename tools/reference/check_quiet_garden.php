@@ -39,7 +39,11 @@ if ($standing === null) {
 $room = [$standing];
 
 foreach ($vectors as $n => $want) {
-    $got = QuietGarden::plant($room, $want['seed'], $want['height'], $want['family']);
+    // The habit goes with them since 27 September: the pool is the one slot
+    // this room chooses by what a plant is, so a vector without it would
+    // check every rule but the one most likely to drift.
+    $got = QuietGarden::plant($room, $want['seed'], $want['height'], $want['family'],
+                              $want['habit'] ?? '');
     $room[] = $got;
     $checks++;
     $same = $got['plot'] === $want['plot']
@@ -65,7 +69,19 @@ foreach ($vectors as $n => $want) {
 $plots = QuietGarden::plots($room);
 $holdings = array_fill(0, $plots, 0);
 foreach ($room as $p) $holdings[$p['plot']]++;
-$full = count(array_filter($holdings, fn($n) => $n === count(QuietGarden::slots())));
+// Full means its ground is full. A pool fills only when a lily arrives, and
+// lilies are one arrival in twelve, so a plot counted with its water in would
+// almost never be full and this would be measuring the draw rather than the
+// rule. `QuietGardenTests` splits it the same way.
+$dry = count(array_filter(QuietGarden::slots(), fn($s) => QuietGarden::isDry($s['corner'])));
+$holdings = array_map(
+    fn($plot) => count(array_filter(
+        $room,
+        fn($p) => $p['plot'] === $plot && QuietGarden::isDry($p['corner'])
+    )),
+    range(0, $plots - 1)
+);
+$full = count(array_filter($holdings, fn($n) => $n === $dry));
 
 $checks++;
 if ($full < $plots - 3) {
@@ -76,6 +92,15 @@ foreach ($room as $p) {
     $checks++;
     [$x, $z] = QuietGarden::spot($p['corner'], $p['index']);
     $out = max(abs($x + $p['nudgeX']), abs($z + $p['nudgeZ']));
+    // A lily stands in the middle of the lawn on purpose, and the invariant
+    // for it is the same one from the other side: inside its own water.
+    if (!QuietGarden::isDry($p['corner'])) {
+        if ($out >= QuietGarden::POOL_ACROSS / 2) {
+            $failed[] = sprintf('%s stands at %.2f, %.2f — out of the water',
+                                substr($p['seed'], 0, 12), $x + $p['nudgeX'], $z + $p['nudgeZ']);
+        }
+        continue;
+    }
     if ($out <= 1.5 || $out >= QuietGarden::HEDGE_FROM) {
         $failed[] = sprintf('%s stands at %.2f, %.2f — on the lawn or in the hedge',
             substr($p['seed'], 0, 12), $x + $p['nudgeX'], $z + $p['nudgeZ']);

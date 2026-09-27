@@ -51,7 +51,21 @@ public enum QuietGarden {
     /// bench rather than to a group that is not there.
     public static let besideTheBench = 0.95
 
-    // MARK: The four corners
+    /// **The pool: how wide it is, and how far from the middle a lily stands
+    /// in it** (27 September 2026).
+    ///
+    /// The room is 4.6 m across and the nearest plant to the middle is the
+    /// specimen, at 2.17 m. A pool 2.2 m wide has a rim at 1.20 and so leaves
+    /// 0.97 m of lawn between the water and the nearest stem — seven times the
+    /// 0.13 m a nudge can spend, so nothing dry can drift into it.
+    ///
+    /// The two lilies stand on the diagonal the bench looks down, so somebody
+    /// sitting on it looks along the water rather than across it, and the one
+    /// at the far end is the one they see first.
+    public static let poolAcross = 2.2
+    public static let inTheWater = 0.5
+
+    // MARK: The four corners and the pool
 
     /// The corners of the room, going round. **Corner 0 holds the bench**, and
     /// is therefore the only one that is not a group.
@@ -60,21 +74,44 @@ public enum QuietGarden {
     /// onto it — is dressing and is chosen per plot, so nothing here decides
     /// which way the bench looks on a screen. What it decides is that the bench
     /// and the specimen are in the same corner as each other for ever.
+    /// **The pool is a fifth place and not a corner**, though it rides in the
+    /// same enum so that a slot stays one pair of numbers on the wire and in
+    /// the store. It is appended, raw value 4, so every planting already filed
+    /// decodes exactly as it did.
     public enum Corner: Int, Codable, CaseIterable, Sendable {
-        case bench = 0, second, third, fourth
+        case bench = 0, second, third, fourth, pool
 
-        /// Which way this corner lies from the middle: ±1 on each axis.
+        /// Which way this corner lies from the middle: ±1 on each axis. The
+        /// pool lies in no direction, being the middle.
         public var lie: (x: Double, z: Double) {
             switch self {
             case .bench:  return (-1, -1)
             case .second: return (1, -1)
             case .third:  return (1, 1)
             case .fourth: return (-1, 1)
+            case .pool:   return (0, 0)
             }
         }
 
         /// How many plants stand in this corner. The bench's corner holds one.
-        public var slots: Int { self == .bench ? 1 : 3 }
+        ///
+        /// **The pool holds two**, and the number is the lilies' and not the
+        /// room's: grown here a lotus's pads reach a median 0.51 m from its
+        /// stem and 0.69 at the ninth in ten (`Seedbed.swift` measured it), so
+        /// two at `inTheWater` stand 1.0 m apart and their pads lie against
+        /// each other, which is what a lily's pads do. A third would be a lily
+        /// under a lily.
+        public var slots: Int {
+            switch self {
+            case .bench: return 1
+            case .pool:  return 2
+            default:     return 3
+            }
+        }
+
+        /// Whether plants that want dry ground stand here. The bench's corner
+        /// does — it holds the specimen — and the pool does not.
+        public var isDry: Bool { self != .pool }
     }
 
     /// Where the bench stands, on the diagonal of its own corner, facing the
@@ -155,6 +192,14 @@ public enum QuietGarden {
         /// Where the slot is, in metres from the middle of its plot.
         public var spot: Spot {
             let lie = corner.lie
+            if corner == .pool {
+                // On the bench's own diagonal, one either side of the middle:
+                // index 0 is the far one, which is the one the bench sees
+                // first, so the oldest lily in a plot is the one you look at.
+                let away = Corner.bench.lie
+                let step = index == 0 ? -inTheWater : inTheWater
+                return Spot(x: away.x * step, z: away.z * step)
+            }
             if corner == .bench {
                 return Spot(x: lie.x * atTheHedge, z: lie.z * besideTheBench)
             }
@@ -166,10 +211,15 @@ public enum QuietGarden {
         }
 
         /// Whether this slot is the back of its group. The specimen is not: it
-        /// stands alone, so there is nothing for it to be at the back of.
+        /// stands alone, so there is nothing for it to be at the back of, and
+        /// nor is a lily — the pool is not a group and nothing stands behind
+        /// anything in it.
         public var stand: Stand {
-            corner != .bench && index == 0 ? .back : .arm
+            corner.isDry && corner != .bench && index == 0 ? .back : .arm
         }
+
+        /// The first place in the water, which is the one the bench looks at.
+        public static let firstInTheWater = Slot(corner: .pool, index: 0)
     }
 
     /// Every slot in one plot, in the order a tie is broken: the bench's corner
@@ -239,6 +289,21 @@ public enum QuietGarden {
         ///    or pale — which is a tonal group and is still a group.
         /// 4. A new plot.
         public func place(for traits: PlantTraits) -> (plot: Int, slot: Slot) {
+            // **A plant that wants water goes in water, or nowhere it can be
+            // seen to be wrong.** The colour rules above are about groups, and
+            // a lily is not in a group — it is in the pool, and the pool is
+            // the only place in this room it can stand. So it is asked first
+            // and asked separately: the first plot with a free place in its
+            // water, or a new plot if every pool is full.
+            if traits.wantsWater {
+                for plot in 0..<plots {
+                    let taken = Set(self.plot(plot).map(\.slot))
+                    if let free = QuietGarden.slots.first(where: {
+                        $0.corner == .pool && !taken.contains($0)
+                    }) { return (plot, free) }
+                }
+                return (plots, .firstInTheWater)
+            }
             for kinship in Kinship.allCases {
                 for plot in 0..<plots {
                     if let slot = slot(in: plot, for: traits, kinship: kinship) {
@@ -271,7 +336,9 @@ public enum QuietGarden {
             let stands: [Stand] = own == .back ? [.back, .arm] : [.arm, .back]
 
             for wanted in stands {
-                for corner in Corner.allCases where corner != .bench {
+                // The bench's corner holds the specimen and the pool holds
+                // lilies; neither is a group, and a dry plant goes in neither.
+                for corner in Corner.allCases where corner != .bench && corner.isDry {
                     let group = here.filter { $0.slot.corner == corner }
                     switch kinship {
                     case .own where group.isEmpty: continue
@@ -316,8 +383,15 @@ public enum QuietGarden {
                 guard bytes.count > i else { return 0 }
                 return (Double(bytes[i]) / 255 - 0.5) * 2 * reach
             }
+            // **A lily takes no nudge.** The nudge is there so that a group of
+            // three on exact marks reads as a clump rather than a planting
+            // plan, and two lilies in a pool 2.2 m across are neither: the
+            // water is small enough that where they float is a decision and
+            // not a chance, and 0.13 m either way would put their pads over
+            // each other more often than not.
+            let reach = slot.corner.isDry ? 0.13 : 0.0
             let planting = Planting(seed: seed.hex, plot: plot, slot: slot, traits: traits,
-                                    nudge: Spot(x: jitter(22, 0.13), z: jitter(23, 0.13)))
+                                    nudge: Spot(x: jitter(22, reach), z: jitter(23, reach)))
             plantings.append(planting)
             return planting
         }

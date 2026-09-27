@@ -358,7 +358,8 @@ final class WalkStore
                               ?float $hue = null, string $habit = ''): array
     {
         return match ($area) {
-            'peace' => $this->room()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
+            'peace' => $this->room()->plant($seed, $parentA, $parentB, $encounter, $height, $family,
+                                            $kind, $hue, $habit),
             'meeting' => $this->cross()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
             'kinship' => $this->orchard()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
             'pattern' => $this->knot()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),

@@ -48,21 +48,34 @@ final class QuietGardenTests: XCTestCase {
 
     // MARK: The room holds what it says it holds
 
-    func testAPlotHoldsTenPlantsAndNoMore() {
-        XCTAssertEqual(QuietGarden.slots.count, 10)
-        XCTAssertEqual(Set(QuietGarden.slots).count, 10)
+    /// **Ten on the ground and two in the water**, since the pool was dug on
+    /// 27 September 2026. The ten are unchanged: the pool was put in the middle
+    /// of the lawn, which held nothing, so it took no planting place to pay for
+    /// itself and the room is two larger than it was.
+    func testAPlotHoldsTenOnTheGroundAndTwoInTheWater() {
+        let dry = QuietGarden.slots.filter { $0.corner.isDry }
+        XCTAssertEqual(dry.count, 10)
+        XCTAssertEqual(QuietGarden.slots.count, 12)
+        XCTAssertEqual(Set(QuietGarden.slots).count, 12)
         let room = Self.filled()
         for plot in 0..<room.plots {
-            XCTAssertLessThanOrEqual(room.plot(plot).count, 10)
+            XCTAssertLessThanOrEqual(room.plot(plot).filter { $0.slot.corner.isDry }.count, 10)
+            XCTAssertLessThanOrEqual(room.plot(plot).filter { !$0.slot.corner.isDry }.count, 2)
         }
     }
 
     /// **The rule is fewer, and the number is the point.** A quarter of the Long
     /// Walk's forty-eight in the same 5.2 m square.
+    ///
+    /// **Counted dry**, from 27 September: the comparison is about how thinly a
+    /// room plants beside a border, and a pool is not planting. The ten that
+    /// this measures have not moved — what changed is that there is now water
+    /// in the middle as well, which the walk has no answer to.
     func testItHoldsAQuarterOfWhatTheWalkDoesInTheSameSquare() {
+        let dry = QuietGarden.slots.filter { $0.corner.isDry }.count
         XCTAssertEqual(QuietGarden.plotSide, LongWalk.plotSide)
-        XCTAssertLessThan(QuietGarden.slots.count * 4, LongWalk.slots.count * 2)
-        XCTAssertEqual(QuietGarden.slots.count * 4, LongWalk.slots.count - 8)
+        XCTAssertLessThan(dry * 4, LongWalk.slots.count * 2)
+        XCTAssertEqual(dry * 4, LongWalk.slots.count - 8)
     }
 
     func testNoTwoPlantsShareASlot() {
@@ -79,13 +92,38 @@ final class QuietGardenTests: XCTestCase {
     /// of a side. It is checked as a distance rather than as a slot, because the
     /// nudge moves a plant off its mark and a nudge that pushed one onto the
     /// grass would be the rule failing where nothing else would notice.
+    ///
+    /// **Except in the water** (27 September 2026). The middle of the room is a
+    /// pool now, and a lily stands in it on purpose — that is the one place on
+    /// this lawn a plant belongs. So the check splits: dry plants keep clear of
+    /// the middle as they always did, and a lily keeps inside the water, which
+    /// is the same invariant from the other side and the one that would catch a
+    /// lily drifting out onto the grass.
     func testNothingStandsOnTheLawn() {
         let room = Self.filled()
         for p in room.plantings {
             let spot = p.spot
             let corner = max(abs(spot.x), abs(spot.z))
+            guard p.slot.corner.isDry else {
+                XCTAssertLessThan(corner, QuietGarden.poolAcross / 2,
+                                  "\(p.seed) is out of the water at \(spot)")
+                continue
+            }
             XCTAssertGreaterThan(corner, 1.5, "\(p.seed) is out on the lawn at \(spot)")
             XCTAssertLessThan(corner, QuietGarden.hedgeFrom, "\(p.seed) is in the hedge at \(spot)")
+        }
+    }
+
+    /// **Only what wants water is in the water, and everything that wants it
+    /// is.** The pool is the one slot in this room chosen by what a plant is
+    /// rather than by what colour it is or how tall, so it is the one that can
+    /// go wrong silently: a lily in a border reads as a planting mistake, and a
+    /// thistle in a pond reads as a bug.
+    func testTheWaterHoldsLiliesAndNothingElse() {
+        let room = Self.filled()
+        for p in room.plantings {
+            XCTAssertEqual(p.slot.corner == .pool, p.traits.wantsWater,
+                           "\(p.seed) is a \(p.traits.habit) in \(p.slot.corner)")
         }
     }
 
@@ -108,7 +146,10 @@ final class QuietGardenTests: XCTestCase {
     func testTheBackOfEveryGroupIsTallerThanItsArms() {
         let room = Self.filled()
         for plot in 0..<room.plots {
-            for corner in QuietGarden.Corner.allCases where corner != .bench {
+            // The bench's corner holds one plant and the pool is not a group:
+            // two lilies float side by side and neither is behind the other,
+            // nor is either of them a colour the room chose.
+            for corner in QuietGarden.Corner.allCases where corner != .bench && corner.isDry {
                 let group = room.plot(plot).filter { $0.slot.corner == corner }
                 guard let back = group.first(where: { $0.slot.index == 0 }) else { continue }
                 for arm in group where arm.slot.index != 0 {
@@ -128,7 +169,10 @@ final class QuietGardenTests: XCTestCase {
     func testEveryGroupIsOneColourOrATonalNeighbourOfIt() {
         let room = Self.filled()
         for plot in 0..<room.plots {
-            for corner in QuietGarden.Corner.allCases where corner != .bench {
+            // The bench's corner holds one plant and the pool is not a group:
+            // two lilies float side by side and neither is behind the other,
+            // nor is either of them a colour the room chose.
+            for corner in QuietGarden.Corner.allCases where corner != .bench && corner.isDry {
                 let group = room.plot(plot).filter { $0.slot.corner == corner }
                 guard let founder = group.first else { continue }
                 let allowed = Set([founder.traits.family] + QuietGarden.near(founder.traits.family))
@@ -146,9 +190,16 @@ final class QuietGardenTests: XCTestCase {
     /// **Every plot but the newest few is full.** The Long Walk's suite found
     /// the opposite on its first rule and that is what the two fallbacks are
     /// for; this checks the same thing of this template's.
+    ///
+    /// **Full means its ground is full**, from 27 September. A pool fills only
+    /// when a lily arrives and lilies are one arrival in twelve, so a plot
+    /// measured with its water in would almost never be full and this would be
+    /// measuring how many lotuses the seeds happened to draw rather than
+    /// whether the rule strands a plot. The water is checked for its own sake
+    /// in `testTheWaterHoldsLiliesAndNothingElse`.
     func testItFillsItsPlotsRatherThanStrandingThem() {
         let room = Self.filled()
-        let counts = (0..<room.plots).map { room.plot($0).count }
+        let counts = (0..<room.plots).map { room.plot($0).filter { $0.slot.corner.isDry }.count }
         let full = counts.filter { $0 == 10 }.count
         let holdings = counts.enumerated()
             .map { "plot \($0.offset): \($0.element)" }.joined(separator: ", ")

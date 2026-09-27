@@ -301,8 +301,38 @@ service, the website and the app can all read it. Built 21 September, with
   2.3 m out, so the room is 4.6 m across. A bench lies across one corner, one
   plant stands beside it, and each of the other three corners holds a group of
   three at the foot of the hedge. **Ten plants a plot**, against the walk's
-  forty-eight in the same square. The middle of the room and the middles of all
-  four sides stay grass.
+  forty-eight in the same square. The middles of all four sides stay grass.
+- **A still pool in the middle, from 27 September, and two lilies in it.** The
+  garden had no water anywhere, though `Archetype.lotus` has been modelled as a
+  water lily since the shapes changed on the 24th — pads lying one against
+  another, a flower smaller than the pads — and was being sown in a drill.
+  Marcus asked where the water was and the answer was nowhere.
+  - **Every area needs one, not the ones it suits.** An area comes from the
+    seed's theme and not from the plant's shape, so a lotus lands in whichever
+    of the ten its own seed names. One pond would catch a tenth of them.
+  - The Quiet Garden is at the foot of the garden's slope (`COLUMN_RISE`), so
+    this is where the water gathers. 2.2 m across; the nearest plant to the
+    middle is the specimen at 2.17 m, which leaves 0.97 m of lawn against the
+    0.13 m a nudge can spend, so nothing dry can drift in.
+  - **Two lilies, and the number is the lilies' not the room's**: grown here a
+    lotus's pads reach a median 0.51 m from the stem, so two at 0.5 m either
+    side of the middle lie against each other, which is what a lily's pads do.
+    A third would be a lily under a lily. They stand on the bench's own
+    diagonal, so somebody sitting on it looks along the water.
+  - **A lily takes no nudge.** The nudge makes a group of three read as a clump
+    rather than a planting plan; two lilies in a small pool are neither.
+  - **The room is two larger, not two rearranged.** The pool went in the middle
+    of the lawn, which held nothing, so it took no planting place to pay for
+    itself. The ten dry places are untouched and still a quarter of the walk's
+    forty-eight — `testItHoldsAQuarterOfWhatTheWalkDoesInTheSameSquare` counts
+    them dry now, because a pool is not planting.
+  - **Full means its ground is full.** A pool fills only when a lily arrives,
+    and lilies are one arrival in twelve, so a plot counted with its water in
+    would almost never be full and the fill check would be measuring the draw
+    rather than the rule.
+  - `Corner.pool` is raw value 4, appended, so every planting already filed
+    decodes as it did. `quiet_garden` gains a `habit` column by the same
+    idempotent ALTER the Seedbed and the Cold Frame use.
 - **No tree.** WEB-GARDENS said an enclosure has one. Nothing grown here is a
   tree: heights run 0.15 m to 2.31 m, which is a shrub at best, and a drawn tree
   among plants grown from a genome is the clip art this document warns about.

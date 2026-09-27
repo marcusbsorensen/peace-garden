@@ -68,6 +68,24 @@ public enum Archetype: String, CaseIterable, Codable, Sendable {
         case .plume: return "Plume"
         }
     }
+
+    /// **Whether this shape grows in standing water.**
+    ///
+    /// The lotus has been a water lily since the shapes changed on 24
+    /// September 2026 — `PlantBuilder` gives it pads that lie one against
+    /// another and a flower smaller than they are — and for three days there
+    /// was nowhere in the garden to put one. It was sown in a drill. Every
+    /// area has a pool from 27 September and this is the list that fills them.
+    ///
+    /// It is a fact about a plant's shape, so it lives here beside the shape
+    /// rather than in an area, and every area asks it the same way through
+    /// `PlantTraits.wantsWater`. When the reed is added it is one more line.
+    public var wantsWater: Bool {
+        switch self {
+        case .lotus: return true
+        default: return false
+        }
+    }
 }
 
 /// How a plant carries its flowers, and therefore what shape it is.

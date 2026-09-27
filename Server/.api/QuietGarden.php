@@ -36,8 +36,32 @@ final class QuietGarden
     /** The bench's corner, which holds one plant and no group. */
     public const BENCH = 0;
 
-    /** Which way each corner lies from the middle of the room: [x, z]. */
-    public const LIE = [[-1, -1], [1, -1], [1, 1], [-1, 1]];
+    /**
+     * The pool, which is a fifth place and not a corner (27 September 2026).
+     *
+     * It rides in the same numbering so a slot stays one pair of numbers in
+     * the table and on the wire, and it is appended, so every planting already
+     * filed reads back exactly as it did. `QuietGarden.swift` says the rest.
+     */
+    public const POOL = 4;
+    public const POOL_ACROSS = 2.2;
+    public const IN_THE_WATER = 0.5;
+
+    /** Which way each corner lies from the middle: [x, z]. The pool is it. */
+    public const LIE = [[-1, -1], [1, -1], [1, 1], [-1, 1], [0, 0]];
+
+    /** Whether plants that want dry ground stand here. */
+    public static function isDry(int $corner): bool
+    {
+        return $corner !== self::POOL;
+    }
+
+    /**
+     * Whether a habit wants standing water. `Archetype::wantsWater` in the
+     * Swift; one list, said twice, because the service and the app place the
+     * same plant and must not disagree about where it goes.
+     */
+    public const WANTS_WATER = ['lotus'];
 
     public const ARM = 0;
     public const BACK = 1;
@@ -62,8 +86,12 @@ final class QuietGarden
         static $slots = null;
         if ($slots !== null) return $slots;
         $slots = [];
-        foreach ([0, 1, 2, 3] as $corner) {
-            $count = $corner === self::BENCH ? 1 : 3;
+        foreach ([0, 1, 2, 3, self::POOL] as $corner) {
+            $count = match ($corner) {
+                self::BENCH => 1,
+                self::POOL => 2,
+                default => 3,
+            };
             for ($index = 0; $index < $count; $index++) {
                 $slots[] = ['corner' => $corner, 'index' => $index];
             }
@@ -74,13 +102,21 @@ final class QuietGarden
     /** Whether a slot is the back of its group. The specimen stands alone. */
     public static function standOf(int $corner, int $index): int
     {
-        return $corner !== self::BENCH && $index === 0 ? self::BACK : self::ARM;
+        return self::isDry($corner) && $corner !== self::BENCH && $index === 0
+            ? self::BACK : self::ARM;
     }
 
     /** Where a slot is, in metres from the middle of its plot: [x, z]. */
     public static function spot(int $corner, int $index): array
     {
         [$lx, $lz] = self::LIE[$corner];
+        if ($corner === self::POOL) {
+            // On the bench's own diagonal, one either side of the middle:
+            // index 0 is the far one, the one the bench sees first.
+            [$ax, $az] = self::LIE[self::BENCH];
+            $step = $index === 0 ? -self::IN_THE_WATER : self::IN_THE_WATER;
+            return [$ax * $step, $az * $step];
+        }
         if ($corner === self::BENCH) {
             return [$lx * self::AT_THE_HEDGE, $lz * self::BESIDE_THE_BENCH];
         }
@@ -107,9 +143,30 @@ final class QuietGarden
      * colour, a corner nobody has planted, a group of a colour near its own, or
      * a new plot.
      */
-    public static function place(array $room, float $height, int $family): array
+    public static function place(array $room, float $height, int $family,
+                                 string $habit = ''): array
     {
         $plots = self::plots($room);
+        // A plant that wants water goes in water. The colour rules below are
+        // about groups and a lily is not in a group — it is in the pool, and
+        // the pool is the only place in this room it can stand. So it is asked
+        // first and separately: the first plot with a free place in its water,
+        // or a new plot if every pool is full.
+        if (in_array($habit, self::WANTS_WATER, true)) {
+            for ($plot = 0; $plot < $plots; $plot++) {
+                $taken = [];
+                foreach ($room as $p) {
+                    if ($p['plot'] === $plot) $taken[$p['corner'] . ':' . $p['index']] = true;
+                }
+                foreach (self::slots() as $slot) {
+                    if ($slot['corner'] !== self::POOL) continue;
+                    if (!isset($taken[$slot['corner'] . ':' . $slot['index']])) {
+                        return [$plot, $slot];
+                    }
+                }
+            }
+            return [$plots, ['corner' => self::POOL, 'index' => 0]];
+        }
         foreach (['own', 'fresh', 'near'] as $kinship) {
             for ($plot = 0; $plot < $plots; $plot++) {
                 $slot = self::slotIn($room, $plot, $height, $family, $kinship);
@@ -120,16 +177,21 @@ final class QuietGarden
     }
 
     /** Plants one arrival and returns the planting; the room only grows. */
-    public static function plant(array $room, string $seedHex, float $height, int $family): array
+    public static function plant(array $room, string $seedHex, float $height, int $family,
+                                 string $habit = ''): array
     {
-        [$plot, $slot] = self::place($room, $height, $family);
+        [$plot, $slot] = self::place($room, $height, $family, $habit);
         $bytes = array_values(unpack('C*', hex2bin($seedHex)));
         $jitter = fn(int $i, float $reach) => isset($bytes[$i]) ? ($bytes[$i] / 255 - 0.5) * 2 * $reach : 0.0;
+        // A lily takes no nudge: the water is small enough that where two of
+        // them float is a decision and not a chance, and 0.13 m either way
+        // would put their pads over each other more often than not.
+        $reach = self::isDry($slot['corner']) ? 0.13 : 0.0;
         return [
             'seed' => $seedHex, 'plot' => $plot,
             'corner' => $slot['corner'], 'index' => $slot['index'],
-            'height' => $height, 'family' => $family,
-            'nudgeX' => $jitter(22, 0.13), 'nudgeZ' => $jitter(23, 0.13),
+            'height' => $height, 'family' => $family, 'habit' => $habit,
+            'nudgeX' => $jitter(22, $reach), 'nudgeZ' => $jitter(23, $reach),
         ];
     }
 

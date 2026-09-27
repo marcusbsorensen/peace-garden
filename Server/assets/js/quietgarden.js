@@ -26,10 +26,14 @@ const ROOM = { ground: 4091, floor: 17, bench: 88, hedge: [211, 212, 213, 214], 
 // Garden stands at the foot of the garden's slope — `COLUMN_RISE` in
 // `garden.js` — so this is where water gathers, and a room with a bench in one
 // corner and nothing in the middle was asking for something to sit and look
-// at. 1.6 m across, which leaves a metre and a half of lawn between its rim
-// and the nearest place a plant stands: the groups come no closer to the
-// middle than 1.10 m and the pool's rim reaches 0.94.
-const POND = { across: 1.6 };
+// at.
+//
+// **2.2 m is `QuietGarden.poolAcross`**, and this has to be that number: the
+// rule stands two lilies 0.5 m either side of the middle and the drawing has
+// to put water under them. Written here rather than read from
+// `pg_room_plan`, which does not carry it — the first thing to fix if a third
+// place ever needs the figure.
+const POND = { across: 2.2 };
 
 // How the four hedges stand. They are drawn low on the two sides nearest the
 // viewer for the reason the walk's are — Marcus, 18 September — because a 2 m

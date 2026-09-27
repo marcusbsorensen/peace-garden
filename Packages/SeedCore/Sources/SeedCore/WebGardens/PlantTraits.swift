@@ -91,6 +91,24 @@ public struct PlantTraits: Codable, Equatable, Hashable, Sendable {
     /// habit as the answer that asks least of the area.
     public var habit: String
 
+    /// **Whether this plant wants standing water**, which every area asks from
+    /// 27 September 2026 because every area has somewhere wet to put it.
+    ///
+    /// The lotus has been a water lily since the shapes changed on 24
+    /// September — pads that lie one against another, a flower smaller than
+    /// the pads — and until the pools were dug there was nowhere in the garden
+    /// for it but a drill of dry soil. `Archetype.wantsWater` is the list, kept
+    /// there because it is a fact about a plant's shape and not about an area,
+    /// and asked here because a habit crosses the wire as a string and an area
+    /// should not be parsing one.
+    ///
+    /// An unknown habit wants no water. That is the answer that asks least, as
+    /// every other reading of `habit` here does: a plant nobody can identify is
+    /// planted in soil, where most plants live.
+    public var wantsWater: Bool {
+        Archetype(rawValue: habit)?.wantsWater ?? false
+    }
+
     public init(height: Double, family: Int, kind: String = "", hue: Double? = nil,
                 habit: String = "") {
         self.height = height

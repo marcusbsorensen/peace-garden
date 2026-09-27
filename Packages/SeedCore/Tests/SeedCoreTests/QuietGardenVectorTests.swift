@@ -30,6 +30,7 @@ final class QuietGardenVectorTests: XCTestCase {
             let p = room.plant(seed: seed, traits: traits)
             lines.append("""
                 {"seed":"\(seed.hex)","height":\(traits.height),"family":\(traits.family),\
+                "habit":"\(traits.habit)",\
                 "plot":\(p.plot),"corner":\(p.slot.corner.rawValue),"index":\(p.slot.index),\
                 "nudge":[\(p.nudge.x),\(p.nudge.z)]}
                 """)

@@ -59,6 +59,7 @@ final class RoomStore
             slot_index INTEGER NOT NULL,
             height DOUBLE PRECISION NOT NULL,
             family INTEGER NOT NULL,
+            habit VARCHAR(16) NOT NULL DEFAULT '',
             nudge_x DOUBLE PRECISION NOT NULL,
             nudge_z DOUBLE PRECISION NOT NULL,
             hidden INTEGER NOT NULL DEFAULT 0
@@ -70,6 +71,16 @@ final class RoomStore
         // before then still holds the seed, the parents and the meeting, and
         // this erases it. Every request, and nothing to do once it has run.
         $this->run('CREATE INDEX IF NOT EXISTS quiet_garden_hidden ON quiet_garden (hidden)');
+        // Added on 27 September, when the pool was dug and the room began to
+        // ask what a plant is: an ALTER that may already have run, as the
+        // Seedbed's and the Cold Frame's are. Every row already there holds a
+        // dry slot, and the empty habit those rows get is what a plant that
+        // wants no water has.
+        try {
+            $this->run("ALTER TABLE quiet_garden ADD COLUMN habit VARCHAR(16) NOT NULL DEFAULT ''");
+        } catch (Throwable) {
+            // Already there.
+        }
         TakenBack::sweep($this->db, 'quiet_garden', self::TAKEN_BACK);
     }
 
@@ -78,11 +89,16 @@ final class RoomStore
      * whether it is new]: a seed that has arrived before gets the place it
      * already has, because a plant has one place.
      *
-     * `$kind` is the Seedbed's trait and nothing here reads it; it is in the
-     * signature so `WalkStore::plantInto` can call every area's `plant` alike.
+     * `$kind` is the Seedbed's trait and `$hue` the Glasshouse's; nothing here
+     * reads either, and they are in the signature so `WalkStore::plantInto`
+     * can call every area's `plant` alike.
+     * `$habit` says whether the plant wants standing water, and a plant that
+     * does goes in the pool: `QuietGarden::WANTS_WATER` is the list. A habit
+     * never sent wants none, and is planted in soil where most plants live.
      */
     public function plant(string $seed, string $parentA, string $parentB, string $encounter,
-                          float $height, int $family, string $kind = ''): array
+                          float $height, int $family, string $kind = '',
+                          ?float $hue = null, string $habit = ''): array
     {
         if (Ambassadors::isOne($seed)) {
             throw new LogicException('an ambassador cannot be planted: it is already standing');
@@ -107,12 +123,12 @@ final class RoomStore
                 [Ambassadors::planting('peace')],
                 array_map([self::class, 'forRule'], $all->fetchAll())
             );
-            $p = QuietGarden::plant($room, $seed, $height, $family);
+            $p = QuietGarden::plant($room, $seed, $height, $family, $habit);
             $insert = $this->db->prepare('INSERT INTO quiet_garden
-                (seed, parent_a, parent_b, encounter, plot, corner, slot_index, height, family, nudge_x, nudge_z)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+                (seed, parent_a, parent_b, encounter, plot, corner, slot_index, height, family, habit, nudge_x, nudge_z)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
             $insert->execute([$seed, $parentA, $parentB, $encounter, $p['plot'], $p['corner'],
-                              $p['index'], $height, $family, $p['nudgeX'], $p['nudgeZ']]);
+                              $p['index'], $height, $family, $habit, $p['nudgeX'], $p['nudgeZ']]);
             $this->db->commit();
             return [self::planting(['seed' => $seed, 'parent_a' => $parentA, 'parent_b' => $parentB,
                 'encounter' => $encounter, 'plot' => $p['plot'], 'corner' => $p['corner'],
