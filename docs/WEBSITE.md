@@ -333,21 +333,24 @@ importantly the map must not move: a garden whose areas rearrange when somebody
 tunes a theme's position is a garden nobody can learn. Retuning a position is
 now a change to the map, and has to be made as one.
 
-**And the ground falls along it, 27 September.** Five by two is a grid, and a
+**And the ground climbs along it, 27 September.** Five by two is a grid, and a
 grid has no far end, no top and no bottom — nothing to hold on to but the
-names. So each column stands a step higher than the one to its right:
-`COLUMN_RISE` in `garden.js`, 4.8 m from the Cold Frame end down to the
-Crossing, and `riseBetween` is what asks. The slope carries no theme and
-replaces none — **it runs along the long axis so that the pad's Up goes on
-meaning north**, and a garden whose ground rises to one side while up is still
-up is an ordinary garden, where one whose Up means two things is a puzzle.
+names. So each column stands a step higher than the one to its left:
+`COLUMN_RISE` in `garden.js`, 4.8 m from the Cold Frame end up to the Crossing,
+and `riseBetween` is what asks. The slope carries no theme and replaces none —
+**it runs along the long axis so that the pad's Up goes on meaning north**, and
+a garden whose ground rises to one side while up is still up is an ordinary
+garden, where one whose Up means two things is a puzzle.
 
-It earns its direction twice over. Water pools at the foot, which is where the
-Crossing's four paths meet; alpines stand at the head, which is where the Cold
-Frame is, and **an alpine house is a cold frame**. `garden.js`'s `selfTest`
-holds the ground to falling all the way and to a column being level, because a
-dip halfway along would pool water in the wrong place and a column that was not
-level would make Up mean uphill.
+**It rises away from the reader rather than toward them**, which was Marcus's
+correction on sight and is the right one: on this projection a plot's own
+ground already climbs to the right, so terraces that climb with it are the
+garden agreeing with itself and terraces that fall against it are two slopes
+arguing. What it settles is which end is wet — the foot is the Cold Frame and
+the Quiet Garden, so the still pool goes in the Quiet Garden, which is where it
+was first put. `garden.js`'s `selfTest` holds the ground to climbing all the
+way and to a column being level, because a dip halfway along would gather water
+in the wrong place and a column that was not level would make Up mean uphill.
 
 It is drawn in all three places the map appears: the hub's ten cards, the
 minimap at the foot of every area page, and the neighbour slabs in the canvas,
