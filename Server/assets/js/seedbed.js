@@ -66,11 +66,16 @@ const LABEL_WOOD = [0.72, 0.65, 0.54];
 /// (`water.js` §*a sunk pool's water lies below the floor*).
 ///
 /// `across` is the full width of the trough, inside the 0.74 m between
-/// drills, so two flooded drills side by side keep 0.30 m of bank between
+/// drills, so two flooded drills side by side keep 0.20 m of bank between
 /// them. `surface` is how far the water lies below the bed, which is what
 /// makes a bank show at all; `deep` is the floor under it, leaving about
 /// 0.09 m of water in the middle for a lily's roots to be in.
-const CHANNEL = { across: 0.44, deep: 0.13, surface: 0.035 };
+///
+/// **0.54 since Marcus saw it at 0.44**, where the sheet of water was
+/// narrow enough to read as a deep furrow until you noticed the pads
+/// floating on it. The colours are the Cold Frame tank's and were never the
+/// problem; a dark band only reads as water once there is enough of it.
+const CHANNEL = { across: 0.54, deep: 0.13, surface: 0.035 };
 
 export function plan(e) {
   return JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_seedbed_plan())));
