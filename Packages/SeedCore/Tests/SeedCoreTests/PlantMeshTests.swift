@@ -17,6 +17,26 @@ final class PlantMeshTests: XCTestCase {
         }
     }
 
+    /// The reach is what the stage fits a turning plant to, so it has to lie
+    /// between the box's furthest face from the stem and its furthest corner.
+    /// And it has to be larger than half the box for the plants that carry
+    /// themselves off to one side, or it would not be worth measuring.
+    func testTheReachLiesBetweenTheBoxsFaceAndItsCorner() {
+        var beyondHalf = 0
+        for index in 0..<40 {
+            let extent = Maturity.extent(for: genome(index))
+            let x = Swift.max(abs(extent.min.x), abs(extent.max.x))
+            let z = Swift.max(abs(extent.min.z), abs(extent.max.z))
+            let face = Swift.max(x, z)
+            let corner = (x * x + z * z).squareRoot()
+            XCTAssertGreaterThanOrEqual(extent.reach, face - 1e-5, "genome \(index)")
+            XCTAssertLessThanOrEqual(extent.reach, corner + 1e-5, "genome \(index)")
+            let halfBox = Swift.max(extent.max.x - extent.min.x, extent.max.z - extent.min.z) * 0.5
+            if extent.reach > halfBox * 1.2 { beyondHalf += 1 }
+        }
+        XCTAssertGreaterThan(beyondHalf, 5)
+    }
+
     func testEveryPlantProducesValidGeometry() {
         // The mesh maths involves normalising vectors that can collapse at tips
         // and poles; one NaN reaches the GPU as a black hole in the middle of

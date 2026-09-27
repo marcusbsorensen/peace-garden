@@ -114,7 +114,7 @@ struct PlantSceneView: UIViewRepresentable {
         private var currentKey: String = ""
         private var plantNode: SCNNode?
         /// What the plant will grow into. Sets how far away the camera stands.
-        private var reference: (min: SIMD3<Float>, max: SIMD3<Float>)?
+        private var reference: (min: SIMD3<Float>, max: SIMD3<Float>, reach: Float)?
         private var referenceSeed: SeedID?
         /// The plant as it is now. Sets what the camera aims at.
         private var meshBounds: (min: SIMD3<Float>, max: SIMD3<Float>)?
@@ -203,7 +203,7 @@ struct PlantSceneView: UIViewRepresentable {
             // growth tick: it is one extra mesh, and it is the same mesh for
             // the whole life of that seed.
             if referenceSeed != genome.seed {
-                reference = PlantSceneBuilder.matureBounds(for: genome)
+                reference = PlantSceneBuilder.matureExtent(for: genome)
                 referenceSeed = genome.seed
             }
             applyFraming()
@@ -275,7 +275,8 @@ struct PlantSceneView: UIViewRepresentable {
                 min: reference.min,
                 max: reference.max,
                 aspect: Float(viewSize.width / viewSize.height),
-                reserved: standingLine ?? 0
+                reserved: standingLine ?? 0,
+                reach: reference.reach
             )
             // The plant stands on its own origin and turns about its stem,
             // which is what a plant does. Offsetting it to spin about the middle

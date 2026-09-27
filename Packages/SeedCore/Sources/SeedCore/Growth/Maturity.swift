@@ -34,7 +34,32 @@ public enum Maturity {
     ///
     /// Builds a whole mesh, so it is worth holding on to per seed.
     public static func bounds(for genome: Genome) -> (min: SIMD3<Float>, max: SIMD3<Float>) {
+        let extent = extent(for: genome)
+        return (extent.min, extent.max)
+    }
+
+    /// `bounds`, and how far the grown plant reaches out from its own stem.
+    ///
+    /// The reach is the radius of the circle the plant sweeps as it turns about
+    /// its stem, which is what the app's stage does. Half the box is that only
+    /// for a plant that is balanced on its stem, and few are: a bell carrying
+    /// its crown off to one side, or a vine leaning away, reaches half as far
+    /// again as half its box. Taken from the same mesh, so it costs a pass over
+    /// the vertices and not a second plant.
+    public static func extent(for genome: Genome) -> (min: SIMD3<Float>, max: SIMD3<Float>, reach: Float) {
         let mesh = PlantBuilder(genome: genome).mesh(growth: bloomPreview(for: genome))
-        return (mesh.minBounds, mesh.maxBounds)
+        return (mesh.minBounds, mesh.maxBounds, reach(of: mesh))
+    }
+
+    /// The furthest any part of `mesh` stands from the vertical through its
+    /// origin, which is the plant's own stem at the foot.
+    public static func reach(of mesh: PlantMesh) -> Float {
+        var furthest: Float = 0
+        for part in mesh.parts {
+            for p in part.positions {
+                furthest = Swift.max(furthest, p.x * p.x + p.z * p.z)
+            }
+        }
+        return furthest.squareRoot()
     }
 }

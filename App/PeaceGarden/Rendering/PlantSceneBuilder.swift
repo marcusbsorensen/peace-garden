@@ -382,6 +382,12 @@ enum PlantSceneBuilder {
         Maturity.bounds(for: genome)
     }
 
+    /// `matureBounds`, with how far the grown plant reaches from its stem —
+    /// what the stage's turntable sweeps. See `framing(reach:)`.
+    static func matureExtent(for genome: Genome) -> (min: SIMD3<Float>, max: SIMD3<Float>, reach: Float) {
+        Maturity.extent(for: genome)
+    }
+
     /// Frames the plant so it fills the same proportion of the view at every
     /// size — a seedling or a plant in full bloom, an iPhone held upright or an
     /// iPad turned on its side.
@@ -406,11 +412,15 @@ enum PlantSceneBuilder {
     /// every time somebody asked for the controls and push it back when they
     /// stopped — motion nobody asked for, in the one part of the app that is
     /// meant to hold still.
+    ///
+    /// `reach` is how far the plant stands out from its stem, for a plant that
+    /// turns about it. See below.
     static func framing(
         min minBounds: SIMD3<Float>,
         max maxBounds: SIMD3<Float>,
         aspect: Float,
-        reserved: Float = 0
+        reserved: Float = 0,
+        reach: Float? = nil
     ) -> (target: SCNVector3, distance: Float) {
         let centre = (minBounds + maxBounds) * 0.5
         let extent = maxBounds - minBounds
@@ -427,14 +437,24 @@ enum PlantSceneBuilder {
         let distance = Swift.max(
             halfHeight / (tan(verticalHalfAngle) * usable),
             halfWidth / tan(horizontalHalfAngle)
-        )
+        ) * 1.25
+        // **Far enough back that the whole turn stays on screen.** Half the
+        // box is only what a plant sweeps when it is balanced on its stem, and
+        // the stage turns it about the stem, not about the middle of its box.
+        // A bell with its crown carried off to one side put that crown out
+        // past the edge of the phone once a turn — measured 27 September 2026,
+        // about one plant in eight on an iPhone held upright. The margin above
+        // is kept for every plant, and this only steps back for the ones whose
+        // reach would otherwise cross the edge: without margin of its own,
+        // because the stage adds a little to every distance on the way in.
+        let sweep = (reach ?? 0) / tan(horizontalHalfAngle)
         // The guard belongs on the distance, not on the plant's measurements. A
         // floor on the extent silently pretends every plant is at least a
         // handspan across, which is true of a mature one and false of every
         // seedling — and it is the seedling that then gets pushed away and
         // rendered as a speck. This only catches a degenerate mesh, and it
         // stays clear of the camera's `zNear`.
-        return (SCNVector3(centre.x, centre.y, centre.z), Swift.max(0.04, distance * 1.25))
+        return (SCNVector3(centre.x, centre.y, centre.z), Swift.max(0.04, distance, sweep))
     }
 
     /// How far to stand off the closed seed at the start of an arrival.
