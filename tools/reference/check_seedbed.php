@@ -76,6 +76,7 @@ foreach ($vectors as $n => $want) {
 $plots = Seedbed::plots($ways);
 $claimed = 0;
 $full = 0;
+$flooded = 0;
 $lotuses = 0;
 
 // And the shape of the place the two of them agree on, which is what a visitor
@@ -115,6 +116,23 @@ for ($plot = 0; $plot < $plots; $plot++) {
         if (count($kinds) > 1) {
             $failed[] = sprintf('plot %d drill %d holds %s', $plot, $drill, implode(' ', $kinds));
         }
+
+        // **And one element: a drill is dry or it is under water.** An
+        // epithet says what is most so about a plant rather than what it is,
+        // so one kind can arrive as a lily and as a fern; they take a drill
+        // each. A half-flooded drill is not a thing a nursery has, and a port
+        // that read only the kind would make one at the first shared epithet.
+        $checks++;
+        $elements = array_values(array_unique(array_map(
+            fn($p) => Seedbed::wantsWater((string) ($p['habit'] ?? '')) ? 1 : 0, $block)));
+        if (count($elements) > 1) {
+            $failed[] = sprintf('plot %d drill %d is half flooded', $plot, $drill);
+        }
+        $checks++;
+        if (Seedbed::isWater($here, $drill) !== ($elements[0] === 1)) {
+            $failed[] = sprintf('plot %d drill %d reads as the wrong element', $plot, $drill);
+        }
+        if ($elements[0] === 1) $flooded++;
 
         // And it fills from the label outward: 0, 1, 2 and so on with nothing
         // missing. A gap would be a place nobody can explain — the drill was
@@ -158,8 +176,9 @@ if ($failed !== []) {
 }
 
 printf("The PHP sows all %d arrivals where the Swift does, across %d plots, "
-     . "%d drills claimed and %d of them full, %d lotuses across two places: %d checks.\n",
-    count($vectors), $plots, $claimed, $full, $lotuses, $checks);
+     . "%d drills claimed, %d of them flooded, %d of them full, "
+     . "%d lotuses across two places: %d checks.\n",
+    count($vectors), $plots, $claimed, $flooded, $full, $lotuses, $checks);
 
 // **Taking back keeps the place and erases the plant**, and moves nothing that
 // arrives after it. `taking_back.php` says how that is checked.

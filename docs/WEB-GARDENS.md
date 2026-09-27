@@ -762,6 +762,49 @@ drills claimed, 66 of them full, 73% of places held**, and one stem inside a
 lotus's pads — two lotuses side by side in neighbouring drills, 0.69 m apart,
 where the rule does not reach and the drills stay 0.74 m apart.
 
+### The drills are flooded, 27 September 2026
+
+**Decided.** *A drill sown with water lilies is a flooded drill.* Marcus, from
+three offers, having been told the thing that ruled the other two out: **grown
+here a lily's pads reach 0.51 m, so it needs a metre of water round it**, and
+a metre-spaced pool does not fit a 5.2 m plot alongside six drills of eight.
+A pool would have meant shortening the drills. Flooding them costs no geometry
+at all — the two places a lotus has taken since 25 September are 1.04 m, which
+is exactly the room its pads want — and it is what a nursery does: the
+aquatics stand in their own rows in water, beside the rows of fine tilth.
+
+**The rule gains one clause.** A drill is claimed **by kind and by element**.
+An epithet says what is most so about a plant rather than what it is —
+*rubra* is red and a water lily can be red — so one kind can arrive as a lily
+and as a fern, and they take a drill each. A half-flooded drill is not a thing
+a nursery has.
+
+**As built.** `Seedbed.Ways.isWater(_:in:)` and the second half of the match in
+`place(for:)`; `Seedbed::isWater` and `::wantsWater` in the port; the element
+invariants in `check_seedbed.php`. **No new column and no change to a slot** —
+the element is read off the first plant's habit, the way the kind is read off
+its epithet.
+
+- **`SeedbedStore` now keeps the habit when a planting is taken back**, for the
+  same reason it already kept the kind: a blanked habit would tell the rule a
+  flooded drill was dry, and the next lily of that kind would claim a fresh
+  drill instead of joining the water. A row taken back before 27 September has
+  a blank habit, so its drill reads as dry until the replant sows it again.
+- **A flooded drill divides exactly**: eight places, two to a lily, four
+  lilies, nothing over. The odd last place a lotus cannot use only exists in
+  rows written before 25 September.
+- **This is still an area no height can move.** The element comes from the
+  habit, picked from the seed's bytes with no `sin` or `pow` in it, so it is
+  exact on every host like the kind.
+
+At five hundred: **21 plots, 124 drills claimed, 60 of them flooded, 57 full,
+66% of places held.** **The two plots are what the water costs and they are
+the price of the whole feature** — an epithet arriving as both takes two
+drills where it took one, so 124 are claimed where 112 were and 57 fill where
+66 did. Nothing else moved: a lotus holds the same two places, and they are now
+two places of water. Water is 48% of the claimed drills, against the 35% of
+arrivals that are lilies, because a flooded drill fills more slowly.
+
 ## The Cold Frame, built
 
 The seventh area, `waiting`, 23 September. `SeedCore/WebGardens/ColdFrame.swift`,

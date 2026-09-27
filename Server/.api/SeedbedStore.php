@@ -50,14 +50,21 @@ final class SeedbedStore
     /**
      * What a planting taken back has written over, beyond the seed, the parents,
      * the meeting and the nudge that every area writes over (`TakenBack.php`).
-     * The height and the family, which the Seedbed's rule never reads, and the
-     * habit, which it reads only of a plant arriving. The kind stays: the first
-     * plant sown in a drill is what claimed it, and a drill whose claim had been
-     * blanked would be handed to the next kind to arrive. The slot and the span
-     * stay too, because they are where the gap is and how long it is: a lotus
-     * taken back keeps both its places.
+     * The height and the family, which the Seedbed's rule never reads. The
+     * kind stays: the first plant sown in a drill is what claimed it, and a
+     * drill whose claim had been blanked would be handed to the next kind to
+     * arrive. The slot and the span stay too, because they are where the gap
+     * is and how long it is: a lotus taken back keeps both its places.
+     *
+     * **The habit stays as well, since 27 September 2026**, for the kind's
+     * own reason: a drill is claimed by kind *and* by element, and the
+     * element is read off the first plant's habit. A blanked habit would tell
+     * the rule that a flooded drill was dry, and the next lily of that kind
+     * would claim a fresh drill rather than joining the water. A row taken
+     * back before today has a blank habit and its drill will read as dry
+     * until the replant sows it again.
      */
-    private const TAKEN_BACK = ['height' => 0.0, 'family' => 0, 'habit' => ''];
+    private const TAKEN_BACK = ['height' => 0.0, 'family' => 0];
 
     public function __construct(private PDO $db)
     {
@@ -174,6 +181,39 @@ final class SeedbedStore
      * row. It carries no parents and no meeting, because it was minted rather
      * than crossed, and an empty `parents` is how the wire says so.
      */
+    /**
+     * **Which drills of this plot are under water**, in order.
+     *
+     * A drill is claimed by kind and by element, and the element is read off
+     * the first plant sown in it. **Hidden plants count**, as they do for the
+     * rule and for the claim: a drill whose only plant was taken back is
+     * still that plant's drill and still its element, which is the whole
+     * reason the habit survives being taken back.
+     *
+     * The ambassador stands in plot 0 and is not in the table, so it is asked
+     * of `Ambassadors` the way `plot()` asks for its planting.
+     */
+    public function water(int $plot): array
+    {
+        $query = $this->db->prepare('SELECT drill, habit FROM seedbed WHERE plot = ? ORDER BY arrival');
+        $query->execute([$plot]);
+        $rows = $query->fetchAll();
+        if ($plot === 0 && ($standing = Ambassadors::planting('beginnings')) !== null) {
+            array_unshift($rows, ['drill' => $standing['drill'], 'habit' => $standing['habit'] ?? '']);
+        }
+        $first = [];
+        foreach ($rows as $row) {
+            $drill = (int) $row['drill'];
+            if (!array_key_exists($drill, $first)) $first[$drill] = (string) $row['habit'];
+        }
+        $water = [];
+        foreach ($first as $drill => $habit) {
+            if (Seedbed::wantsWater($habit)) $water[] = $drill;
+        }
+        sort($water);
+        return $water;
+    }
+
     public function plot(int $plot): array
     {
         $query = $this->db->prepare('SELECT * FROM seedbed WHERE plot = ? AND hidden = 0 ORDER BY arrival');

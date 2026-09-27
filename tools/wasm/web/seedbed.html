@@ -74,7 +74,11 @@
   const MODULE = `/plant.wasm?dev=${Date.now()}`;
   const e = await loadModule(MODULE);
   const place = plan(e);
-  const stage = makePlotStage(document.getElementById('stage'), 1, e, makeSeedbedGround(place));
+  // Which drills of the plot on the stage are flooded, as the real page
+  // holds it: set before the plot is grown, and the ground dug again for it.
+  let flooded = [];
+  const stage = makePlotStage(document.getElementById('stage'), 1, e,
+                              makeSeedbedGround(place, () => flooded));
 
   let sky = null;
   makeSky(document.getElementById('sky'), {
@@ -119,8 +123,15 @@
   async function show() {
     document.getElementById('back').disabled = plot === 0;
     document.getElementById('on').disabled = plot + 1 >= plots;
+    if (!fromService) {
+      flooded = [...new Set(describeSeedbed(e, plot)
+        .filter((r) => r.traits.habit === 'lotus')
+        .map((r) => r.slot.drill))].sort((a, b) => a - b);
+      stage.rebuild();
+    }
     const count = fromService
-      ? (await growSeedbedFromService(e, stage, plot, report)).length
+      ? (await growSeedbedFromService(e, stage, plot, report,
+                                      (water) => { flooded = water; })).length
       : await growInvented(e, stage, plot, report);
     report(`Plot ${plot + 1} of ${plots} — ${count} of ${place.slots}`);
     say();

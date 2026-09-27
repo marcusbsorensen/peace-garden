@@ -34,8 +34,11 @@ const TAKING_BACK = [
     'meeting' => ['crossing', ['plot', 'quarter', 'slot_index'], ['height'], ['family' => 0]],
     'kinship' => ['orchard', ['plot', 'guild', 'slot_index'], ['height'], ['family' => 0]],
     'pattern' => ['knot_garden', ['plot', 'compartment', 'slot_index'], ['height', 'family'], []],
-    'beginnings' => ['seedbed', ['plot', 'drill', 'slot_index', 'slot_span'], ['kind'],
-                     ['height' => 0.0, 'family' => 0, 'habit' => '']],
+    // **The Seedbed keeps the habit as well as the kind**, since 27 September
+    // 2026: a drill is claimed by both, so blanking the habit would tell the
+    // rule a flooded drill was dry and send the next lily somewhere else.
+    'beginnings' => ['seedbed', ['plot', 'drill', 'slot_index', 'slot_span'], ['kind', 'habit'],
+                     ['height' => 0.0, 'family' => 0]],
     'waiting' => ['cold_frame', ['plot', 'frame', 'slot_rank', 'slot_index', 'slot_span'], ['height', 'family'],
                   ['habit' => '']],
     'light' => ['glasshouse', ['plot', 'bed', 'slot_index', 'slot_row'], [],

@@ -24,12 +24,22 @@ import Foundation
 /// (`Epithet.describing`), where a genus is inherited. A drill of *contorta* is
 /// a drill of plants that are actually alike.
 ///
-/// **Nothing here reads a height.** The drill comes from the kind and the place
-/// in it from the order of arrival, so this is the only area whose placement a
-/// grown height cannot move. `SeedbedVectorTests` proves it by replaying every
-/// arrival with its height thrown away, and that is why this area needs no
-/// `placementCannotTurn` check: it has no cuts to stand near. See
-/// `.claude/HANDOVER.md` §*The libm divergence*.
+/// **Some of the drills are under water.** Since 27 September 2026 a drill
+/// sown with water lilies is flooded, which is what a nursery does: the
+/// aquatics stand in their own rows in water beside the rows of fine tilth.
+/// This is one of only two areas a lily can be in — `Areas.genusHeads` sends
+/// `Lir` here and `Nyx` to the Cold Frame, and those are the lotus's two
+/// roots — and **173 of every 501 arrivals here are lilies**, so the wet rows
+/// are a third of the bed rather than a curiosity in the corner.
+///
+/// **Nothing here reads a height.** The drill comes from the kind and the
+/// element and the place in it from the order of arrival, so this is the only
+/// area whose placement a grown height cannot move. `SeedbedVectorTests`
+/// proves it by replaying every arrival with its height thrown away, and that
+/// is why this area needs no `placementCannotTurn` check: it has no cuts to
+/// stand near. The element is read from the habit, which is picked from the
+/// seed's bytes with no `sin` or `pow` in it, so it is exact on every host
+/// like the kind. See `.claude/HANDOVER.md` §*The libm divergence*.
 ///
 /// Append-only, like the other five. A plant never moves, and a drill's order
 /// is the order it was sown in.
@@ -192,6 +202,17 @@ public enum Seedbed {
             self.plot(plot).first { $0.slot.drill == drill }?.traits.kind
         }
 
+        /// **Whether this drill is under water.** A drill sown with water
+        /// lilies is flooded, and a nursery does exactly this: the aquatics
+        /// go in their own rows, standing in water, beside the rows of fine
+        /// tilth. Read off the first plant in the drill, as the kind is.
+        ///
+        /// Nil if nobody has claimed it — an unclaimed drill is neither, and
+        /// becomes whichever the plant that claims it needs.
+        public func isWater(_ drill: Int, in plot: Int) -> Bool? {
+            self.plot(plot).first { $0.slot.drill == drill }?.traits.wantsWater
+        }
+
         /// How many places in a drill are held. A drill fills from the label
         /// without a gap, so this is also the index of its next place. It was
         /// how many plants stand in it until a lotus took two, and it still is
@@ -213,13 +234,24 @@ public enum Seedbed {
         /// it, and it goes on as a plant finding the drill full does; the place
         /// stays for a plant of one place of that kind. An unclaimed drill and
         /// a new plot always have two.
+        ///
+        /// **A drill is claimed by kind and by element**, since 27 September
+        /// 2026. A kind is an epithet and an epithet says what is most so
+        /// about a plant, not what it is — *rubra* is red and a water lily can
+        /// be red — so two plants of one kind may want different ground. A
+        /// lily joins a flooded drill of its kind and a dry plant a dry one;
+        /// neither will take the other's, and a half-flooded drill is not a
+        /// thing a nursery has.
         public func place(for traits: PlantTraits) -> (plot: Int, slot: Slot) {
             let count = max(plots, 1)
             let span = Seedbed.span(of: traits)
+            let wet = traits.wantsWater
 
-            // A drill of this kind with room in it, oldest plot first.
+            // A drill of this kind and this element with room in it, oldest
+            // plot first.
             for plot in 0..<count {
-                for drill in 0..<Seedbed.drills where kind(of: drill, in: plot) == traits.kind {
+                for drill in 0..<Seedbed.drills
+                    where kind(of: drill, in: plot) == traits.kind && isWater(drill, in: plot) == wet {
                     let next = sown(drill, in: plot)
                     if next + span <= Seedbed.places { return (plot, Slot(drill: drill, index: next)) }
                 }

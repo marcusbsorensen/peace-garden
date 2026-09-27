@@ -143,6 +143,31 @@ final class Seedbed
         return null;
     }
 
+    /** The archetypes that want water. Read from the habit, which is a word. */
+    public const WANTS_WATER = ['lotus'];
+
+    /** Whether this habit belongs in water. */
+    public static function wantsWater(string $habit): bool
+    {
+        return in_array($habit, self::WANTS_WATER, true);
+    }
+
+    /**
+     * **Whether this drill is under water**, or null if nobody has claimed
+     * it. A drill sown with water lilies is flooded, which is what a nursery
+     * does: the aquatics stand in their own rows beside the rows of fine
+     * tilth. Read off the first plant in the drill, as the kind is, and from
+     * its habit, which is stored with it — so a row written before the water
+     * says which element its drill is as plainly as a new one.
+     */
+    public static function isWater(array $here, int $drill): ?bool
+    {
+        foreach ($here as $p) {
+            if ((int) $p['drill'] === $drill) return self::wantsWater((string) ($p['habit'] ?? ''));
+        }
+        return null;
+    }
+
     /**
      * How many places in a drill are held. A drill fills from the label without
      * a gap, so this is also the index of its next place — and, in a drill with
@@ -170,20 +195,30 @@ final class Seedbed
      * **A lotus needs two places side by side.** A drill of its kind with one
      * place left has no room for it, and it goes on as a plant finding the drill
      * full does; the place stays for a plant of one place of that kind.
+     *
+     * **A drill is claimed by kind and by element**, since 27 September 2026.
+     * A kind is an epithet and an epithet says what is most so about a plant
+     * rather than what it is — *rubra* is red and a water lily can be red —
+     * so two plants of one kind may want different ground. A lily joins a
+     * flooded drill of its kind and a dry plant a dry one; neither will take
+     * the other's, and a half-flooded drill is not a thing a nursery has.
      */
     public static function place(array $ways, string $kind, string $habit = ''): array
     {
         $plots = max(self::plots($ways), 1);
         $span = self::span($habit);
+        $wet = self::wantsWater($habit);
         $byPlot = [];
         for ($plot = 0; $plot < $plots; $plot++) {
             $byPlot[$plot] = array_values(array_filter($ways, fn($p) => (int) $p['plot'] === $plot));
         }
 
-        // A drill of this kind with room in it, oldest plot first.
+        // A drill of this kind and this element with room in it, oldest plot
+        // first.
         for ($plot = 0; $plot < $plots; $plot++) {
             for ($drill = 0; $drill < self::DRILLS; $drill++) {
                 if (self::kindOf($byPlot[$plot], $drill) !== $kind) continue;
+                if (self::isWater($byPlot[$plot], $drill) !== $wet) continue;
                 $next = self::sown($byPlot[$plot], $drill);
                 if ($next + $span <= self::PLACES) return [$plot, ['drill' => $drill, 'index' => $next]];
             }

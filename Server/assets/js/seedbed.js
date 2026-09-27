@@ -55,14 +55,38 @@ const SEEDBED = { ground: 8837, floor: 29, crumb: 47, drift: 101, furrow: 211, l
 /// a shade brighter, which is the highlight that says the thing is made of wood.
 const LABEL_WOOD = [0.72, 0.65, 0.54];
 
+/// **A flooded drill**, since 27 September 2026: a drill sown with water
+/// lilies stands in water, and this is the trough it stands in.
+///
+/// **The dry drills are shading and nothing else** — every crumb of the bed
+/// lies on one plane at `y = 0.003`, and a drill is a dark line the rake left
+/// — so water cannot simply lie in one. A flooded drill is dug: the tilth is
+/// taken down along it, coloured silt, and the water laid over the hole. That
+/// is the Cold Frame tank's problem at a different shape, and the same answer
+/// (`water.js` §*a sunk pool's water lies below the floor*).
+///
+/// `across` is the full width of the trough, inside the 0.74 m between
+/// drills, so two flooded drills side by side keep 0.30 m of bank between
+/// them. `surface` is how far the water lies below the bed, which is what
+/// makes a bank show at all; `deep` is the floor under it, leaving about
+/// 0.09 m of water in the middle for a lily's roots to be in.
+const CHANNEL = { across: 0.44, deep: 0.13, surface: 0.035 };
+
 export function plan(e) {
   return JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_seedbed_plan())));
 }
 
 // MARK: - The ground
 
-export function makeSeedbedGround(place) {
+/// The bed's ground. **`water` says which drills are flooded in the plot on
+/// the stage**, and is asked afresh every time the ground is built, because
+/// the answer is a fact about the plot rather than about the area: a page
+/// that moves to another plot calls `stage.rebuild()`. A page that never
+/// asks gets the bed as it was before the water, which is what the tests and
+/// any caller written earlier get.
+export function makeSeedbedGround(place, water = () => []) {
   return function buildSeedbedGround(farSide, span, e, eye) {
+    const flooded = new Set(water());
     const positions = [], normals = [], colours = [];
     const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
     // What throws a shadow on the tilth: the labels, handed to the stage as
@@ -77,9 +101,20 @@ export function makeSeedbedGround(place) {
 
     const outline = readOutline(e, SIDE, SIDE, SEEDBED.ground);
     const n = outline.length;
+    // **What backs the crumb at the rim, and only at the rim.** The lattice
+    // below is laid wider than the plot and clipped to it, so it comes up
+    // short of the outline by up to a cell and something has to be behind
+    // that sliver. It used to be a fan of triangles from the middle of the
+    // plot, which was also a lid over everything: a drill dug for water went
+    // under it and the water was drawn inside a closed box. So the backing is
+    // a ring now — the outline and the same outline drawn in toward the
+    // middle — and the middle of the bed is the crumb itself, which is the
+    // only thing that was ever seen there.
+    const INSET = 0.86;
     for (let i = 0; i < n; i++) {
       const a = outline[i], b = outline[(i + 1) % n];
-      tri([0, 0, 0], [a[0], 0, a[1]], [b[0], 0, b[1]], UP, COLOUR.tilth);
+      quad([a[0], 0, a[1]], [b[0], 0, b[1]],
+           [b[0] * INSET, 0, b[1] * INSET], [a[0] * INSET, 0, a[1] * INSET], UP, COLOUR.tilth);
     }
 
     // **The crumb.** The Knot's lattice, jittered the same way and split on the
@@ -149,20 +184,64 @@ export function makeSeedbedGround(place) {
       return 1 + (1 - past) * (-0.17 + 0.27 * shape);
     };
 
-    const crumb = (i, j, k, x) =>
-      COLOUR.tilth.map((v) => v * (1 + driftX[i] + driftZ[j]) * rake(x, j)
+    // **How far the bed is dug away here**, 0 outside a flooded drill. The
+    // trough is a dish rather than a box: a cut edge would be the one ruled
+    // line the house rule forbids, and standing water does not have square
+    // sides anyway.
+    const bank = CHANNEL.across / 2;
+    const sink = (x, j) => {
+      let deepest = 0;
+      for (const drill of flooded) {
+        const across = Math.abs(x - centres[j][drill]) / bank;
+        if (across >= 1) continue;
+        const dish = 1 - across * across;
+        deepest = Math.max(deepest, CHANNEL.deep * dish * dish * (3 - 2 * dish) / (2 - dish));
+      }
+      return deepest;
+    };
+
+    const crumb = (i, j, k, x) => {
+      const under = sink(x, j);
+      // **Silt under water, tilth out of it.** Wet ground is darker and
+      // greyer than the crumb beside it, and the deeper it lies the less of
+      // the sky reaches it.
+      const base = under > 0 ? COLOUR.silt : COLOUR.tilth;
+      const lit = under > 0 ? 1 - 1.9 * under : rake(x, j);
+      return base.map((v) => v * (1 + driftX[i] + driftZ[j]) * lit
         * (0.91 + 0.18 * hash(i * 131 + j * 37 + k * 7 + SEEDBED.crumb)));
-    const up = (p) => [p[0], 0.003, p[1]];
+    };
+    const up = (p, j) => [p[0], 0.003 - sink(p[0], j), p[1]];
     for (let i = 0; i < steps; i++) {
       for (let j = 0; j < steps; j++) {
         const a = lattice[i][j], b = lattice[i + 1][j], c = lattice[i + 1][j + 1], d = lattice[i][j + 1];
+        const A = up(a, j), B = up(b, j), C = up(c, j + 1), D = up(d, j + 1);
         if (hash(i * 31 + j * 17 + SEEDBED.crumb) < 0.5) {
-          tri(up(a), up(b), up(c), UP, crumb(i, j, 0, a[0]));
-          tri(up(a), up(c), up(d), UP, crumb(i, j, 1, c[0]));
+          tri(A, B, C, UP, crumb(i, j, 0, a[0]));
+          tri(A, C, D, UP, crumb(i, j, 1, c[0]));
         } else {
-          tri(up(a), up(b), up(d), UP, crumb(i, j, 2, a[0]));
-          tri(up(b), up(c), up(d), UP, crumb(i, j, 3, c[0]));
+          tri(A, B, D, UP, crumb(i, j, 2, a[0]));
+          tri(B, C, D, UP, crumb(i, j, 3, c[0]));
         }
+
+        // **The water over the hole.** One flat quad a cell, laid only where
+        // the floor is below the surface, so the sheet stops of its own
+        // accord at the waterline rather than being cut to a drawn edge —
+        // which is what gives a flooded drill a wandering margin. Drawn
+        // upward only: it is a surface, not a solid.
+        if (flooded.size === 0) continue;
+        const under = [sink(a[0], j), sink(b[0], j), sink(c[0], j + 1), sink(d[0], j + 1)];
+        if (Math.min(...under) <= CHANNEL.surface) continue;
+        const wet = (p) => [p[0], 0.003 - CHANNEL.surface, p[1]];
+        // **The tank's colours, not a second set.** A flooded drill is the
+        // Cold Frame's water at a different shape: `depths` over the middle
+        // of the channel and `shallows` where the dish comes up under it,
+        // opaque, because this garden lights flat and still water is a
+        // colour rather than a window (`water.js`).
+        const shade = (n) => {
+          const deep = Math.min(1, (under[n] - CHANNEL.surface) / (CHANNEL.deep - CHANNEL.surface));
+          return COLOUR.shallows.map((v, k) => v + (COLOUR.depths[k] - v) * deep);
+        };
+        quad(wet(a), wet(b), wet(c), wet(d), UP, shade(0), shade(1), shade(2), shade(3));
       }
     }
 
@@ -293,9 +372,15 @@ const breathe = () => new Promise((resume) => setTimeout(resume, 0));
 // is the one area whose page has something to say about each drill, and the
 // plantings are where the drills are: a second fetch to read them would be the
 // same answer asked for twice.
-export async function growSeedbedFromService(e, stage, plot, report) {
+export async function growSeedbedFromService(e, stage, plot, report, flood = () => {}) {
   stage.clear();
-  const { plantings } = await (await fetch(`/api/seedbed/plot/${plot}`)).json();
+  const { plantings, water = [] } = await (await fetch(`/api/seedbed/plot/${plot}`)).json();
+  // **The bed is dug before anything is grown into it.** `flood` hands the
+  // plot's wet drills to whatever the caller gave `makeSeedbedGround`, and
+  // rebuilding the ground is what puts them there — a flooded drill is a
+  // fact about the plot, so the ground changes when the plot does.
+  flood(water);
+  stage.rebuild();
   let since = performance.now();
   for (const [i, p] of plantings.entries()) {
     const lineage = p.parents ?? [];

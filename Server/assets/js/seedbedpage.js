@@ -110,7 +110,13 @@ async function place() {
   // drills, and a plot with air round it reads as a place you are looking into
   // rather than a texture filling the screen.
   const bed = plan(engine);
-  const stage = makePlotStage(el('stage'), 1.25, engine, makeSeedbedGround(bed));
+  // **Which drills of the plot on the stage are flooded.** Held here rather
+  // than in the ground, because the ground is built once for the area and
+  // this changes with the plot: `growSeedbedFromService` sets it from the
+  // plot's own answer and `stage.rebuild()` digs the bed again.
+  let flooded = [];
+  const stage = makePlotStage(el('stage'), 1.25, engine,
+                              makeSeedbedGround(bed, () => flooded));
   // And the areas beside this one, as slabs out in the sky past the plot:
   // the same one word again, and `beside.js` reads the map from it.
   stage.beside(THEME);
@@ -154,7 +160,8 @@ async function place() {
   // turning. `movepad.js`, the same on every area page.
   const growing = () => say('walkGrowing');
   const show = async (plot) => {
-    const plantings = await growSeedbedFromService(engine, stage, plot, growing);
+    const plantings = await growSeedbedFromService(engine, stage, plot, growing,
+                                                   (water) => { flooded = water; });
     writeDrills(el('drills'), readDrills(bed, plantings.map((p) => ({
       drill: drillAt(bed, p.spot[0]),
       kind: kinds.get(p.seed),

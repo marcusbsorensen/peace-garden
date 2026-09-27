@@ -334,7 +334,12 @@ function route(string $method, string $path): never
 
     if (preg_match('#\A/api/seedbed/plot/(0|[1-9][0-9]{0,5})\z#', $path, $m) && $method === 'GET') {
         $plot = (int) $m[1];
-        respond(200, ['plot' => $plot, 'plantings' => store($settings)->seedbed()->plot($plot)]);
+        $seedbed = store($settings)->seedbed();
+        // **`water` is which drills of this plot are flooded**, a fact about
+        // the plot rather than about any plant in it: the page digs the bed
+        // before it grows anything into it.
+        respond(200, ['plot' => $plot, 'plantings' => $seedbed->plot($plot),
+                      'water' => $seedbed->water($plot)]);
     }
 
     if ($path === '/api/frame' && $method === 'GET') {
