@@ -103,6 +103,18 @@ public struct GrowthModel {
         ]
     }
 
+    /// How old a plant is when it enters `stage`, in seconds from its birth.
+    public func start(of stage: Stage) -> TimeInterval {
+        guard let index = Stage.allCases.firstIndex(of: stage), index > 0 else { return 0 }
+        return boundaries[index - 1].end
+    }
+
+    /// How old a plant is when it leaves `stage`, or `nil` for `.mature`,
+    /// which it never leaves.
+    public func end(of stage: Stage) -> TimeInterval? {
+        boundaries.first { $0.stage == stage }?.end
+    }
+
     public func state(birth: Date, now: Date = Date(), calendar: Calendar = .current) -> State {
         let age = max(0, now.timeIntervalSince(birth))
         let marks = boundaries

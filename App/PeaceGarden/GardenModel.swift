@@ -39,6 +39,13 @@ final class GardenModel {
             garden = Garden()
             loadError = error.localizedDescription
         }
+#if DEBUG
+        // Before the first reading of the clock, so the stage is on screen from
+        // the first frame rather than after the first tick.
+        if let stage = Developer.shared.stageOnLaunch, let identity = garden.identity {
+            Developer.shared.wind(to: stage, genome: identity.genome, birth: identity.birth)
+        }
+#endif
         now = Self.currentDate()
         startClock()
     }
@@ -100,13 +107,29 @@ final class GardenModel {
     /// which is the moment it first does anything.
     func mintIdentity() {
         guard garden.identity == nil else { return }
+#if DEBUG
+        let seed = Developer.shared.mintWords.map { SeedMint.mint(fromEntropy: Data($0.utf8)) }
+            ?? SeedMint.mintOnThisDevice()
+#else
+        let seed = SeedMint.mintOnThisDevice()
+#endif
         garden.identity = Identity(
-            seed: SeedMint.mintOnThisDevice(),
+            seed: seed,
             birth: Self.currentDate(),
             displayName: ""
         )
         isArriving = true
         persist()
+#if DEBUG
+        // A seed minted to be looked at in a stage goes straight there. The
+        // arrival is six seconds of a seed opening, and on a plant already in
+        // bloom it would be a flower bursting out of a husk.
+        if let stage = Developer.shared.stageOnLaunch, let identity = garden.identity {
+            Developer.shared.wind(to: stage, genome: identity.genome, birth: identity.birth)
+            isArriving = false
+            refreshNow()
+        }
+#endif
     }
 
     /// The arrival has been watched, or waved past.

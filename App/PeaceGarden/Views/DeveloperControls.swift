@@ -130,6 +130,58 @@ final class Developer {
         clockShift = 0
         UserDefaults.standard.set(0.0, forKey: Self.shiftKey)
     }
+
+    /// A stage of the own plant's life, wound to at launch:
+    ///
+    ///     xcrun simctl launch <device> app.peacegarden -pgStage blooming
+    ///
+    /// Any of `GrowthModel.Stage`'s names. The buttons in Settings step the
+    /// clock by fixed amounts, but a plant's stages are its own length, so the
+    /// right number of *+1w* presses to reach a bloom differs for every seed —
+    /// and a spire's flowers on their stalks were built without anybody having
+    /// seen them in the app. This lands on the stage whatever the tempo.
+    let stageOnLaunch: GrowthModel.Stage? = UserDefaults.standard.string(forKey: "pgStage")
+        .flatMap(GrowthModel.Stage.init(rawValue:))
+
+    /// Words to mint the own seed from, instead of this device's entropy:
+    ///
+    ///     xcrun simctl launch <device> app.peacegarden -pgMint pedicel-9 -pgStage blooming
+    ///
+    /// **Read only when a seed is minted**, which is once, at first light on a
+    /// fresh install. A garden that already has a seed keeps it: the argument
+    /// never replaces one. So a particular plant — a spire, a vine — is looked
+    /// at on a simulator of its own, and nobody's plant is swapped out from
+    /// under them by a launch argument left in a scheme.
+    let mintWords: String? = UserDefaults.standard.string(forKey: "pgMint")
+        .flatMap { $0.isEmpty ? nil : $0 }
+
+    /// Shifts the clock so a plant born at `birth` is halfway through `stage`,
+    /// on the hour it opens widest when that hour falls inside the stage.
+    ///
+    /// Halfway because the edges of a stage look like the stages either side
+    /// of it. The hour matters because a bloom closes to a third overnight, and
+    /// a flower half shut is not the one being looked for. `mature` never ends,
+    /// so it is taken a fortnight in, into the first flush.
+    ///
+    /// The shift can come out negative, for a plant already past the stage.
+    /// That winds the garden back, which is as honest as winding it on: nothing
+    /// stored is touched, and Back to now undoes it.
+    func wind(to stage: GrowthModel.Stage, genome: Genome, birth: Date) {
+        let growth = GrowthModel(genome: genome)
+        let start = growth.start(of: stage)
+        let end = growth.end(of: stage)
+        let middle = end.map { (start + $0) / 2 } ?? start + 14 * 86_400
+        var target = birth.addingTimeInterval(middle)
+
+        let hour = genome.tempo.opensByDay ? 13 : 1
+        if let pinned = Calendar.current.date(bySettingHour: hour, minute: 0, second: 0, of: target) {
+            let age = pinned.timeIntervalSince(birth)
+            if age > start, age < (end ?? .infinity) { target = pinned }
+        }
+
+        clockShift = target.timeIntervalSince(Date())
+        UserDefaults.standard.set(clockShift, forKey: Self.shiftKey)
+    }
 }
 
 // MARK: - The section at the foot of Settings
@@ -205,7 +257,7 @@ struct DeveloperSection: View {
                     .font(.system(size: 13, weight: .light))
                     .foregroundStyle(Chrome.muted)
 
-                if developer.clockShift > 0 {
+                if developer.clockShift != 0 {
                     Button {
                         developer.backToNow()
                         model.refreshNow()
@@ -225,12 +277,14 @@ struct DeveloperSection: View {
     /// this panel means closing the panel.
     private var standing: String {
         let stage = model.ownPlantGrowth()?.stage.displayName ?? "no plant"
-        guard developer.clockShift > 0 else { return "Real time · \(stage)" }
-        return "\(shiftDescription) ahead · \(stage)"
+        guard developer.clockShift != 0 else { return "Real time · \(stage)" }
+        let direction = developer.clockShift > 0 ? "ahead" : "behind"
+        return "\(shiftDescription) \(direction) · \(stage)"
     }
 
+    /// `-pgStage` can wind the clock back as well as on.
     private var shiftDescription: String {
-        let shift = developer.clockShift
+        let shift = abs(developer.clockShift)
         if shift < Self.day {
             return "\(Int((shift / Self.hour).rounded()))h"
         }

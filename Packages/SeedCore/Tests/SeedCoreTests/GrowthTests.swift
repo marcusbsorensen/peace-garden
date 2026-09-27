@@ -52,6 +52,29 @@ final class GrowthTests: XCTestCase {
         XCTAssertNil(farFuture.timeToNextStage)
     }
 
+    /// `start(of:)` and `end(of:)` are what the developer clock winds to, so a
+    /// plant set down just inside either edge must read as that stage.
+    func testEachStageRunsFromItsStartToItsEnd() {
+        for index in 0..<20 {
+            let model = GrowthModel(genome: genome(index))
+            let birth = Date(timeIntervalSince1970: 1_700_000_000)
+            var previousEnd: TimeInterval = 0
+            for stage in GrowthModel.Stage.allCases {
+                let start = model.start(of: stage)
+                XCTAssertEqual(start, previousEnd, accuracy: 1e-6)
+                let justIn = model.state(birth: birth, now: birth.addingTimeInterval(start + 1)).stage
+                XCTAssertEqual(justIn, stage)
+                guard let end = model.end(of: stage) else {
+                    XCTAssertEqual(stage, .mature)
+                    continue
+                }
+                let justBefore = model.state(birth: birth, now: birth.addingTimeInterval(end - 1)).stage
+                XCTAssertEqual(justBefore, stage)
+                previousEnd = end
+            }
+        }
+    }
+
     func testBloomOpensAfterTheBudSwells() {
         let genome = genome(5)
         let model = GrowthModel(genome: genome)
