@@ -414,3 +414,56 @@ leaves rather than through a leaf.
 - **The Python preview was brought along** (`build_pedicels`). It mirrored the
   same impalement, and `check_port.py` compares placements rather than
   geometry, so it would have stayed green while still drawing the fault.
+
+## The reed and the cushion, as prototypes, 27 September 2026
+
+**On the branch `shape/reed-cushion`, for Marcus to look at. Neither is an
+archetype yet.** Adding a case to `Archetype` re-slices `form.archetype`,
+which moves about three plants in four, and Marcus chose to do that once and
+knowingly. So the two shapes are `ArchetypeProfile.Prototype` values: a seed
+can be grown against one through `Genome(seed:prototype:)`, which sits behind
+`@_spi(Prototype)`. Nothing shipping reaches it. Every existing plant, vector
+and pinned mesh is unchanged: 400 SeedCore tests and the app's 131 pass.
+
+They are looked at in the app's own light, from a debug build:
+
+    xcrun simctl launch <device> app.peacegarden -pgMint ada -pgPrototype reed -pgStage blooming
+
+`-pgMint` on a fresh install now mints at launch rather than waiting at first
+light, so a script can photograph any number of seeds.
+
+**The reed** is a rosette of strap leaves under a bare culm, with its florets
+on short stalks up the last quarter. A strap is `Habit.strap`:
+`strapProfile` keeps it parallel-sided until its last quarter. Its veins run
+along it, and a stem leaf arches rather than sags. The first try carried
+leaves up the culm and gave it the plume's branched head. It read as an umbel
+drawn thin. At `leafWidthScale` 0.2 the widest straps were a bromeliad's; the
+scale is 0.1.
+
+**The cushion** is `Habit.cushion`, and it is its own builder
+(`addCushion`), because nothing about it goes up a stem. The cushion is a dome
+in the stem's colour. The dome is covered in rosettes, laid on a golden spiral
+from the crown down and jittered off it. Each rosette is a small pillow with a
+whorl of seven to nine fleshy leaves. Nearly one rosette in two carries a flower
+of its own light geometry (`addCushionFlower`). What the renders changed:
+- Rosettes sized to the leaf draw were specks on a bare dome, and the
+  spiral's arms showed as stripes. They are now sized to the dome.
+- In the leaf's colour, the dome carried a leaf's veins round it as bands.
+- A young cushion that opened its rosettes from the top was a tuft on a bald
+  dome. It is now a small dome, covered.
+
+**What a cushion costs.** A full-detail flower on every other rosette came to
+389,000 vertices, thirty-seven ordinary plants. With its own flowers it is
+79,000, about seven, and 0.2 s to build in release. The reed is about four.
+Both want looking at before a Seedbed or a Cold Frame holds a dozen of them.
+
+**What is left for when they become archetypes:**
+- The two cases, and their profiles moved into `profile(for:)`.
+- Four roots, each with a theme, which decides the plant's area, a gloss and a
+  glyph. The roots are proper nouns and are not translated.
+- The labels, *Reed* and *Cushion*, in the app's seven languages.
+- `wantsWater` for the reed.
+- The re-roll: every area vector, the ambassadors, `PortVectorTests` and the
+  Python port.
+- The replant.
+

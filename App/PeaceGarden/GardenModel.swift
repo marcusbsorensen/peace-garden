@@ -1,6 +1,10 @@
 import Foundation
 import Observation
+#if DEBUG
+@_spi(Prototype) import SeedCore
+#else
 import SeedCore
+#endif
 
 /// Everything the app knows: the person's seed, the plants they have kept, and
 /// what time it is for the purpose of growing.
@@ -40,6 +44,13 @@ final class GardenModel {
             loadError = error.localizedDescription
         }
 #if DEBUG
+        // Seed words on a fresh install mean a particular plant is wanted on
+        // screen, so it is minted here rather than at first light: that is a
+        // tap an injected one can reach, but not from a script that is
+        // photographing ten seeds.
+        if garden.identity == nil, Developer.shared.mintWords != nil {
+            mintIdentity()
+        }
         // Before the first reading of the clock, so the stage is on screen from
         // the first frame rather than after the first tick.
         if let stage = Developer.shared.stageOnLaunch, let identity = garden.identity {
@@ -167,6 +178,18 @@ final class GardenModel {
 
     func growth(for genome: Genome, birth: Date) -> GrowthModel.State {
         GrowthModel(genome: genome).state(birth: birth, now: now)
+    }
+
+    /// The own plant as the stage draws it: its genome, or in a debug build a
+    /// shape not yet in the garden grown from the same seed. See
+    /// `Developer.prototype`.
+    func stageGenome(for identity: Identity) -> Genome {
+#if DEBUG
+        if let prototype = Developer.shared.prototype {
+            return Genome(seed: identity.seed, prototype: prototype)
+        }
+#endif
+        return identity.genome
     }
 
     func ownPlantGrowth() -> GrowthModel.State? {

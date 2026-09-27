@@ -130,6 +130,12 @@ public struct Genome: Equatable, Sendable {
         public var stemLeafScale: Double
         /// Where the stem's nodes sit, as fractions of its length.
         public var nodeZone: ClosedRange<Double>
+        /// Every leaf is a strap: parallel-sided, running out to a point only
+        /// at its tip, as a reed's or a rush's is. See `PlantBuilder.strapProfile`.
+        public var strap: Bool = false
+        /// The plant is a cushion: a low dome packed with rosettes too small
+        /// to count, flowering over its surface, as an alpine's is.
+        public var cushion: Bool = false
     }
 
     public struct Bloom: Equatable, Sendable {
@@ -252,22 +258,43 @@ public struct Genome: Equatable, Sendable {
     // MARK: - Derivation
 
     public init(seed: SeedID, lineage: Lineage = .minted) {
-        let source: GeneSource
-        switch lineage {
-        case .minted:
-            source = .primary(seed)
-        case let .crossed(parentA, parentB, _):
-            source = .hybrid(child: seed, parentA: parentA, parentB: parentB)
-        }
-        self.init(seed: seed, lineage: lineage, source: source)
+        self.init(seed: seed, lineage: lineage, source: Self.source(seed: seed, lineage: lineage))
     }
 
-    private init(seed: SeedID, lineage: Lineage, source: GeneSource) {
+    /// **A seed grown to a shape that is not one of the archetypes yet**, for
+    /// looking at before it becomes one. See `ArchetypeProfile.Prototype`.
+    ///
+    /// Behind an SPI so that nothing shipping can reach it: the seed decides
+    /// every trait as it always would, but the profile those traits are drawn
+    /// against is the prototype's, and the archetype recorded is the nearest
+    /// existing one so that a name can still be read. No plant anybody holds
+    /// is grown this way, and nothing about how the others are grown moves.
+    @_spi(Prototype)
+    public init(seed: SeedID, prototype: ArchetypeProfile.Prototype) {
+        self.init(
+            seed: seed, lineage: .minted, source: Self.source(seed: seed, lineage: .minted),
+            prototype: prototype
+        )
+    }
+
+    private static func source(seed: SeedID, lineage: Lineage) -> GeneSource {
+        switch lineage {
+        case .minted:
+            return .primary(seed)
+        case let .crossed(parentA, parentB, _):
+            return .hybrid(child: seed, parentA: parentA, parentB: parentB)
+        }
+    }
+
+    private init(
+        seed: SeedID, lineage: Lineage, source: GeneSource,
+        prototype: ArchetypeProfile.Prototype? = nil
+    ) {
         self.seed = seed
         self.lineage = lineage
 
-        let archetype = source.pick("form.archetype", from: Archetype.allCases)
-        let profile = ArchetypeProfile.profile(for: archetype)
+        let archetype = prototype?.nearest ?? source.pick("form.archetype", from: Archetype.allCases)
+        let profile = prototype.map(ArchetypeProfile.profile(for:)) ?? ArchetypeProfile.profile(for: archetype)
 
         // The two floral facts the name is read from. Everything below is the
         // plant; these two are also its classification.
@@ -446,7 +473,9 @@ public struct Genome: Equatable, Sendable {
             fleshiness: profile.fleshiness,
             pinnae: source.integer("habit.pinnae", profile.pinnae),
             stemLeafScale: stemLeafScale,
-            nodeZone: profile.nodeZone
+            nodeZone: profile.nodeZone,
+            strap: profile.strap,
+            cushion: profile.cushion
         )
 
         // **The genus has a petal count; the plant does not draw one.** It used

@@ -24,6 +24,11 @@ public struct PlantBuilder {
 
     public func mesh(growth: GrowthModel.State) -> PlantMesh {
         var builder = MeshBuilder()
+        // A cushion has no stem to build from: it is its own ground.
+        if genome.habit.cushion {
+            addCushion(&builder, growth: growth)
+            return builder.build()
+        }
         let skeleton = SkeletonBuilder.stem(genome: genome, heightScale: Float(growth.heightScale))
 
         addStem(&builder, skeleton: skeleton, growth: growth)
@@ -216,7 +221,12 @@ public struct PlantBuilder {
     ) {
         let foliage = genome.foliage
         let radial = simd_normalize(node.normal * cos(azimuth) + node.binormal * sin(azimuth))
-        let pitch = Float(foliage.pitch) + Float(jitter.value(in: -0.1...0.1))
+        var pitch = Float(foliage.pitch) + Float(jitter.value(in: -0.1...0.1))
+        // **A strap leaves the culm close to it and arches away**, rather than
+        // standing out and sagging: a sag pushes a long blade sideways and a
+        // reed's leaves are the longest in the garden.
+        let strap = genome.habit.strap
+        if strap { pitch *= 0.5 }
         addBlade(
             &builder,
             origin: node.position + radial * node.radius * 0.8,
@@ -224,7 +234,8 @@ public struct PlantBuilder {
             radial: radial,
             length: Float(foliage.length * genome.habit.stemLeafScale) * scale,
             pitch: pitch,
-            droop: Float(foliage.droop),
+            droop: strap ? 0 : Float(foliage.droop),
+            arch: strap ? min(Float(foliage.droop) * 1.4, 0.75 * .pi - pitch) : 0,
             maturity: maturity
         )
     }
@@ -397,10 +408,12 @@ public struct PlantBuilder {
         droop: Float,
         arch: Float = 0,
         pinnae: Int = 0,
-        maturity: Float
+        maturity: Float,
+        detail: (rows: Int, columns: Int)? = nil
     ) {
         guard length > 0.001 else { return }
         let foliage = genome.foliage
+        let strap = genome.habit.strap
 
         let forward = simd_normalize(radial * sin(pitch) + axis * cos(pitch))
         // Built from `radial`, which is always perpendicular to the stem, so
@@ -419,10 +432,15 @@ public struct PlantBuilder {
         let sharpness = max(Float(foliage.tipSharpness), 1.5 * fleshiness)
         // A pinnate frond is the same saw-toothed margin cut nearly to the
         // midrib: 3.6 takes `bladeProfile`'s tooth four-fifths of the way in.
-        let serration = pinnae > 0 ? 3.6 : Float(foliage.serration) * smooth
+        // A strap's margin is whole: a sedge cuts, but not with teeth anyone
+        // would see at this size.
+        let serration = strap ? 0 : pinnae > 0 ? 3.6 : Float(foliage.serration) * smooth
         let teeth = pinnae > 0 ? pinnae : genome.foliage.teeth
-        // Three rows to a leaflet, or the cuts alias into a ragged edge.
-        let rows = pinnae > 0 ? 3 * pinnae + 4 : 19
+        // Three rows to a leaflet, or the cuts alias into a ragged edge. A
+        // strap is long and arches the whole way, so it takes more rows to
+        // bend smoothly. A cushion's leaves are too small to show any.
+        let rows = detail?.rows ?? (strap ? 26 : pinnae > 0 ? 3 * pinnae + 4 : 19)
+        let columns = detail?.columns ?? 9
 
         let veinCount = Float(genome.foliage.veinCount)
         let veinDepth = Float(genome.foliage.veinDepth) * smooth
@@ -452,13 +470,18 @@ public struct PlantBuilder {
 
         func point(_ u: Float, _ v: Float, thickness: Float) -> SIMD3<Float> {
             let s = v
-            let profile = Self.bladeProfile(s, sharpness: sharpness, serration: serration, teeth: teeth)
+            let profile = strap
+                ? Self.strapProfile(s)
+                : Self.bladeProfile(s, sharpness: sharpness, serration: serration, teeth: teeth)
             let across = (u - 0.5) * 2 * halfWidth * profile
             // The blade folds into a shallow V.
             let crease = fold * halfWidth * profile * pow(abs(u - 0.5) * 2, 2)
             // Ribs running out from the midrib, deepening toward the margin.
-            let vein = veinDepth * halfWidth * 0.14
-                * sin(s * .pi * 2 * veinCount) * (abs(u - 0.5) * 2)
+            // A strap's run the length of it instead, side by side, as a
+            // grass's and a reed's do.
+            let vein = strap
+                ? veinDepth * halfWidth * 0.08 * profile * sin(u * .pi * 2 * veinCount)
+                : veinDepth * halfWidth * 0.14 * sin(s * .pi * 2 * veinCount) * (abs(u - 0.5) * 2)
             // A fleshy leaf is swollen across its middle and thin at the edge.
             let x = (u - 0.5) * 2
             let swell = thickness * halfWidth * profile * (1 - x * x)
@@ -468,14 +491,14 @@ public struct PlantBuilder {
 
         // More rows than the blade strictly needs, so the teeth and the veins
         // have something to be cut into.
-        builder.addSurface(role: .leaf, rows: rows, columns: 9, maturity: maturity) { u, v in
+        builder.addSurface(role: .leaf, rows: rows, columns: columns, maturity: maturity) { u, v in
             point(u, v, thickness: 0.7 * fleshiness)
         }
         // **A succulent's leaf has an underside.** One surface bowed upward is
         // still a sheet, and seen edge-on it is a line. A second, bowed the
         // other way and meeting it at the margin, makes the leaf a body.
         if fleshiness > 0 {
-            builder.addSurface(role: .leaf, rows: rows, columns: 9, flipWinding: true, maturity: maturity) { u, v in
+            builder.addSurface(role: .leaf, rows: rows, columns: columns, flipWinding: true, maturity: maturity) { u, v in
                 point(u, v, thickness: -0.7 * fleshiness)
             }
         }
@@ -1227,7 +1250,164 @@ public struct PlantBuilder {
         return pow(max(0, 1 - pow(t, fullness)), 1 / fullness)
     }
 
+    // MARK: - Cushion
+
+    /// **An alpine cushion: a low dome packed with rosettes.**
+    ///
+    /// One plant, grown as a mound rather than up a stem — the shape a plant
+    /// takes where wind and cold take anything that stands up. The dome is
+    /// drawn first as the cushion's own body, dark and mature, and the
+    /// rosettes are laid over it close enough to hide it, each a whorl of a
+    /// few tiny fleshy leaves turned to face out of the dome where it sits.
+    ///
+    /// **Laid from the crown down, and opened in that order.** The rosettes
+    /// are placed on a spiral that starts at the top and winds out to the
+    /// ground, so the index is also the age: a young cushion is a small tuft
+    /// on top of its own dome, and it spreads outward rather than up.
+    ///
+    /// Its flowers sit in the rosettes themselves, stemless and facing out,
+    /// nearly one rosette in two — which is how a moss campion or a cushion
+    /// saxifrage flowers, over its whole surface at once.
+    private func addCushion(_ builder: inout MeshBuilder, growth: GrowthModel.State) {
+        var shape = SplitMix64(seed: genome.seed, label: "cushion.shape")
+        let full = min(0.32, max(0.1, 0.08 + 0.8 * Float(genome.habit.crownLength)))
+        let flatten = Float(shape.value(in: 0.5...0.78))
+        let radius = full * Float(0.2 + 0.8 * growth.heightScale)
+        let height = radius * flatten
+        // **The rosettes are sized to the dome, not to the leaf draw.** Sized
+        // to the leaf, a large cushion carried a few hundred specks over a
+        // bare dome and read as a striped melon. Each is a small pillow of its
+        // own with a whorl of leaves round it, close enough to crowd its
+        // neighbours, so what the eye gets is a knobbly surface.
+        let spacing = full * Float(shape.value(in: 0.085...0.11))
+        let area = Float.pi * radius * radius * (1 + flatten * flatten)
+        let count = max(6, min(320, Int(area / (spacing * spacing))))
+        // **Covered at every age.** Opened from the top down, a young cushion
+        // was a tuft on top of a bare dome. The dome grows instead, and the
+        // rosettes cover whatever size it has reached, their leaves filling
+        // out as the plant's do.
+        guard growth.leafUnfurl > 0 else { return }
+        let filling = Float(0.35 + 0.65 * growth.leafUnfurl)
+
+        // The cushion's body, under its rosettes: old growth, drawn in the
+        // stem's colour. In a leaf's it carried a leaf's veins, and a dome
+        // the size of the plant drew them as stripes round it.
+        let up = SIMD3<Float>(0, 1, 0)
+        builder.addDome(
+            role: .stem, centre: .zero, axis: up, side: SIMD3<Float>(1, 0, 0),
+            radius: radius * 0.97, flatten: flatten, rows: 9, columns: 22
+        )
+
+        // Down to 86° off the top, so the last ring meets the ground.
+        let reach: Float = 1 - cos(86 * .pi / 180)
+        let golden: Float = 2.399963
+        // How far a rosette may stray from its place on the spiral, in
+        // radians of the dome: most of the way to its neighbours, which is
+        // what stops the spiral's arms reading as bands.
+        let stray = 0.45 * spacing / max(radius, 0.001)
+        for index in 0..<count {
+            var jitter = SplitMix64(seed: genome.seed, label: "cushion.rosette.\(index)")
+            let polar = max(0, min(1.5, acos(1 - reach * (Float(index) + 0.5) / Float(count))
+                + Float(jitter.value(in: -1...1)) * stray))
+            let azimuth = golden * Float(index)
+                + Float(jitter.value(in: -1...1)) * stray / max(0.2, sin(polar))
+            let across = SIMD3<Float>(cos(azimuth), 0, sin(azimuth))
+            let position = across * (radius * sin(polar)) + up * (height * cos(polar))
+            let facing = simd_normalize(across * (sin(polar) / radius) + up * (cos(polar) / height))
+            let side = SkeletonBuilder.arbitraryPerpendicular(to: facing)
+            let other = simd_normalize(cross(facing, side))
+
+            // The rosettes at the rim are the oldest, the ones on top the
+            // newest; the newest are paler.
+            let maturity = min(1, 0.55 + 0.45 * Float(index) / Float(count))
+            let size = spacing * Float(jitter.value(in: 0.85...1.15)) * filling
+            // Stood a little proud of the body, and wide enough to meet its
+            // neighbours, so the body only shows in the gaps a cushion has.
+            builder.addDome(
+                role: .leaf, centre: position + facing * (size * 0.12), axis: facing, side: side,
+                radius: size * 0.72, flatten: 0.55, rows: 3, columns: 6, maturity: maturity
+            )
+            let leaves = 7 + index % 3
+            for blade in 0..<leaves {
+                let turn = Float(blade) * 2 * .pi / Float(leaves) + Float(jitter.value(in: -0.25...0.25))
+                addBlade(
+                    &builder,
+                    origin: position + facing * (size * 0.12),
+                    axis: facing,
+                    radial: simd_normalize(side * cos(turn) + other * sin(turn)),
+                    length: size * 0.7,
+                    // Cupped: a rosette standing a little proud of its
+                    // pillow, not a star lying flat on it.
+                    pitch: Float(jitter.value(in: 0.7...1.0)),
+                    droop: 0,
+                    arch: -0.3,
+                    maturity: maturity,
+                    detail: (rows: 4, columns: 3)
+                )
+            }
+
+            guard genome.bloom.present, growth.budSwell > 0.02,
+                  jitter.value(in: 0...1) < 0.45 else { continue }
+            let flower = Self.flushed(growth, position: Double(index) / Double(count))
+            addCushionFlower(
+                &builder,
+                at: position + facing * (size * 0.45),
+                facing: facing, side: side,
+                length: size * Float(jitter.value(in: 0.6...0.78)),
+                growth: flower
+            )
+        }
+    }
+
+    /// **A cushion's flower: a star a centimetre across, and drawn as one.**
+    /// The garden's own flower is built to be looked at on a stage — seventeen
+    /// rows to a petal, stamens, a pistil — and a hundred of them on one
+    /// cushion came to nearly four hundred thousand vertices, thirty-seven
+    /// ordinary plants. At this size a petal is four rows and a centre is a
+    /// dot, and nobody can tell.
+    private func addCushionFlower(
+        _ builder: inout MeshBuilder,
+        at position: SIMD3<Float>,
+        facing: SIMD3<Float>,
+        side: SIMD3<Float>,
+        length full: Float,
+        growth: GrowthModel.State
+    ) {
+        let bloom = genome.bloom
+        let open = Float(growth.bloomOpen)
+        let length = full * Float(0.35 + 0.65 * growth.budSwell)
+        guard length > 0.0005 else { return }
+        let other = simd_normalize(cross(facing, side))
+        // Off the facing axis: closed up as a bud, lying out flat when open.
+        let lift = 0.2 + 1.2 * open
+        let halfWidth = length * Float(bloom.widthRatio) * 0.5
+        for petal in 0..<bloom.petalCount {
+            let turn = Float(petal) * 2 * .pi / Float(bloom.petalCount)
+            let radial = side * cos(turn) + other * sin(turn)
+            let forward = simd_normalize(facing * cos(lift) + radial * sin(lift))
+            let across = simd_normalize(cross(facing, radial))
+            builder.addSurface(role: .petal, rows: 4, columns: 3, maturity: open) { u, v in
+                let width = halfWidth * sin(.pi * min(1, v * 0.9 + 0.1))
+                return position + forward * (v * length) + across * ((u - 0.5) * 2 * width)
+            }
+        }
+        builder.addDome(
+            role: .centre, centre: position, axis: facing, side: side,
+            radius: length * 0.22, flatten: 0.6, rows: 2, columns: 5
+        )
+    }
+
     // MARK: - Shared profile
+
+    /// Width of a strap at `s` along its length: parallel-sided nearly all the
+    /// way, narrowed a little into its sheath at the foot, and drawn to a point
+    /// over its last quarter.
+    static func strapProfile(_ s: Float) -> Float {
+        let s = max(0, min(1, s))
+        let sheath = 0.6 + 0.4 * min(1, s / 0.06)
+        let tip = s > 0.74 ? pow((1 - s) / 0.26, 0.8) : 1
+        return sheath * tip
+    }
 
     /// Width of a blade at `s` along its length, `0` at both ends.
     ///
