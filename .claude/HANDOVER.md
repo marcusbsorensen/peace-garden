@@ -1,55 +1,48 @@
-# Peace Garden: water, plant surfaces, pedicels — handover 27 September 2026
+# Peace Garden: pedicels seen, water everywhere, reed and cushion — handover 28 September 2026
 
-This session covered too much ground: water in two areas, a rebuild of the web plant shading, and a morphology fix. The decisions are in `docs/WEB-GARDENS.md` and `docs/PLANT-FORMS.md`. The previous handover is at `git show e286c67:.claude/HANDOVER.md`.
+An unattended run of four pieces of work. Three are visual and sit on branches waiting for Marcus's eye; nothing visual was deployed. The previous handover is at `git show be881db:.claude/HANDOVER.md`.
 
 ## Goal
-Water where water lilies go, web plants that look grown rather than moulded, and no flower threaded on its own stem.
+Clear the handover queue: see the pedicels, water in the lily-free areas, the reed and alpine archetypes, and plan-view glyphs. The model changes land before the one replant.
 
 ## State
-Everything below is committed, pushed and deployed. SeedCore has 398 tests passing, the app 131 (1 skipped), and both PHP cross-checks are green.
-- **Cold Frame tank**: 7×3 lilies, 0.62 m apart, frames pushed out to `frameZ` 1.55, cut moved 0.38→0.50 (median of the dry plants only).
-- **Seedbed flooded drills**: a drill is claimed by kind *and* element; the channel is 0.54 m wide; the plot API returns `water`.
-- **Web plant shading**: per-leaf maturity tint, relief and roughness bake (buffer `PGP3`), gamma-correct shared `shade()` with re-tuned `LIGHT`, specular gated on relief slope.
-- **Pedicels**: node blooms on spire, vine and bell now stand on stalks. Ported to the Python preview. The app is rebuilt with it.
-- **Phone build**: `xcodebuild` for `generic/platform=iOS` succeeded with Marcus's signing, but it is **not installed**. He runs it from Xcode.
-- **Unverified in the app**: the pedicels have not been *seen* there. The simulator is a fresh install whose only plant is a 20-hour *Calora gracilis* seedling, and there is no debug way to age a plant.
+- **`main`, pushed, not deployed (app-only):**
+  - `87e63c9`: debug launch args. `-pgStage <stage>` winds the clock to mid-stage at the plant's peak hour. `-pgMint <words>` mints the seed on a fresh install.
+  - Pedicels seen in the simulator on a spire (`pedicel-9`), a vine (`pedicel-3`) and a bell (`pedicel-2`).
+  - `62da45d`: lopsided plants no longer turn off the stage edge. `Maturity.extent` gives the reach, and `framing(reach:)` uses it. 76 of 600 seeds used to leave an iPhone screen; only the 163 that were at or over the edge are framed smaller.
+  - SeedCore 400 tests pass, app 131 (1 skipped).
+- **`water/scenery` (`b7e2123`), JS only, not deployed.** One piece of water in each of the seven dry areas, to the grading (dug at 0–1.2 m, stone above). Renders sent. The table is in `docs/WEB-GARDENS.md` §"Water as scenery in the other eight". No console errors on any page.
+- **`shape/reed-cushion` (`15955dd`), not deployed.** The reed and the cushion as `ArchetypeProfile.Prototype`, behind `@_spi(Prototype)`. The enum is untouched, so no plant moved. Renders sent.
+  - The `-pgPrototype reed|cushion` debug arg shows them on the stage.
+  - On this branch only, `-pgMint` mints at launch.
+  - `docs/PLANT-FORMS.md` last section.
+- **`glyphs/plan-views`, drafts only.** `tools/glyphs/plan-views/glyphs.html`. Good: Cold Frame, Coppice, Knot, Glasshouse. Collapsing into UI icons: Seedbed, Long Walk, Quiet Garden.
 
 ## Files
-- `Packages/SeedCore/Sources/SeedCore/WebGardens/ColdFrame.swift`: the tank, `backFrom`
-- `Packages/SeedCore/Sources/SeedCore/WebGardens/Seedbed.swift`: `isWater`, claim by kind + element
-- `Packages/SeedCore/Sources/SeedCore/Morphology/PlantSkeleton.swift`: `pedicels`, keyed by node offset
-- `Packages/SeedCore/Sources/SeedCore/Morphology/PlantBuilder.swift`: node bloom on its pedicel; the stalk is drawn in `addBlooms`
-- `tools/wasm/Sources/PlantWasm/Exports.swift`: the PGP3 buffer (maturity + `bakeRelief`)
-- `Server/assets/js/longwalk.js`: `LIGHT`, `SHADE` (gamma), `PLANT_FRAGMENT`
-- `Server/assets/js/plant.js`: decoder, `YOUNG` table, single-plant shader
-- `Server/assets/js/seedbed.js`: `CHANNEL`, dug drills, rim-ring backing
-- `Server/.api/{ColdFrame,Seedbed,SeedbedStore}.php`, `router.php`: ports and `water`
-- `tools/reference/check_{cold_frame,seedbed}.php`, `taking_back.php`: the cross-checks
-- `tools/preview/plant_model.py`: `build_pedicels`
+- `App/PeaceGarden/Views/DeveloperControls.swift`: `stageOnLaunch`, `mintWords`, `wind(to:)`; `prototype` on the branch
+- `App/PeaceGarden/Rendering/PlantSceneBuilder.swift`: `framing(reach:)`
+- `Packages/SeedCore/Sources/SeedCore/Growth/Maturity.swift`: `extent`, `reach(of:)`
+- `Server/assets/js/water.js`: `raiseTrough`, `raiseRill`, `footing`, `floorAround` (branch)
+- `Packages/SeedCore/Sources/SeedCore/Morphology/PlantBuilder.swift`: `strapProfile`, `addCushion`, `addCushionFlower` (branch)
+- `Packages/SeedCore/Sources/SeedCore/Genome/Archetype.swift`: `ArchetypeProfile.Prototype` (branch)
 
 ## Decisions made
-- **Only the Cold Frame and the Seedbed ever get lilies.** An area comes from the genus head, which is the archetype's root: `Nyx` and `Lir`. So the Quiet Garden's pool rule can never fire live.
-- **The Seedbed floods drills instead of a pool.** A grown lily's pads need about 1 m, and a pool would mean shortening the six-of-eight drills Marcus chose. That costs 2 plots (21, up from 19); accepted.
-- **Two-place lotus rule**: unreachable under glass now, but kept because stored rows still have `span` 2.
-- **`SeedbedStore` keeps the habit on take-back.** A blank habit reads a flooded drill as dry. Rows taken back before 27 Sep read dry until the replant.
-- **Relief strengths and roughness swings are the app's, unchanged.** They were already tuned down once, from "corrugated iron".
-- **Gamma**: it changes the light curve, not the light's direction. `sun` is unchanged and still shared by plants, ground and shadows.
-- **Pedicels are kept separate from `branches`.** Tests assert that racemes have no branches.
+- Nothing visual is deployed or merged before Marcus sees it.
+- The prototypes are profiles, not enum cases. Adding a case is the re-roll, and it happens once, after the shapes are settled.
+- **The roots are not a 41-language commission.** Heads and roots are untranslated proper nouns. The thirty parts are the subtheme labels. A new root needs a theme, a gloss and a glyph; the new archetype labels need the app's 7 languages. Memory corrected.
+- **A root's theme is its area.** Lilies reach water only through Nyx (Cold Frame) and Lir (Seedbed). A reed's roots go in those themes if it is to stand by water.
+- The web's single-plant view orbits a bounding sphere, so it never had the app's off-screen fault.
 
 ## Next step
-Add a debug-only launch argument that ages the current plant to flowering, so a spire's pedicels can be seen in the simulator. Marcus was offered this as the recommended option and has not yet answered.
+Put Marcus's verdicts on the three branches into effect. Water: merge and deploy, or revise. Reed and cushion: tune, or promote to cases with roots and then re-roll. Glyphs: a third pass on the three that fail.
+
+## Open questions for Marcus
+- Root candidates. Reed: *Syr* (syrinx, the reed pipe) and *Don* (donax, the reed), in waiting and beginnings. Cushion: *Tyl* (tylē, a cushion) and *Or* (oros, a mountain), in travel and meeting, the head of the slope.
+- A spire opens top-down (`PlantBuilder.swift:660`). Real racemes open bottom-up. Keep it or flip it?
+- A cushion is 79k vertices, 7× an ordinary plant. Optimise before it becomes an archetype.
 
 ## Traps
-- **token-guard hook**: blocks plain `grep`, unbounded `cat` and `cat >` heredocs. Use `grep -l`/`-c`, `awk`, `sed -n`, `python3`, or Write.
-- **Backticks inside a GLSL template literal end the JS string.** This broke `plant.js` twice. Check with `node --check` on a `.mjs` copy.
-- **Hidden browser pane**: screenshots time out and `toBlob` returns blank. `preview_start {url}` forces the pane open. `/dev/plant` draws only once, so capture it with a screenshot.
-- **Sunk water needs the floor under it to give way.** Otherwise it draws inside a closed box: the Quiet Garden pool, then the Seedbed backing fan.
-- **XCTest results**: read the "Executed N tests, with M failures" line, not the tail of the output.
-- **`/dev/*` workbenches invent a general population**, so their plot counts differ from the tests' own-area samples.
-- **Stale SourceKit errors in the editor**: trust `swift build`.
-- **`tools/deploy.sh`**: uploads the working tree. SSH sometimes resets at key exchange; retry once and don't hammer it.
-
-## Also pending (not next)
-- Water as scenery in the 8 lily-free areas (grading approved)
-- Plan-view glyphs and slab relief
-- Reed and alpine archetypes, plus the re-roll and 4 root syllables × 41 languages
+- **Hidden browser pane pauses the page**, so `toBlob` and even `setTimeout` never settle. Capture headless with Playwright `browser_run_code_unsafe` → `page.screenshot`.
+- **The token-guard hook** blocks `innerHTML` (the security plugin), unbounded `git show`, and `cat >`. Use Write, and `| head -n`.
+- **Simulators.** The iPhone 17 Pro holds Marcus's garden: do not reinstall onto it. The iPhone Air is scratch; `scratchpad/shoot.sh` pattern: uninstall, install, launch with `-pgMint`.
+- **`pedicel-N` seed words** give known archetypes. Search with a scratch SwiftPM package depending on SeedCore by path.
