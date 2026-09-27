@@ -220,44 +220,52 @@ const SHADOW = {
 // the plot's turn. It is drawn at the plot's own attitude, so it turns as the
 // plot turns and reads as the same kind of thing in the same world.
 //
-// **Further off has to be drawn, because this projection will not draw it.**
-// Orthographic: nothing shrinks with distance, so a slab out there at a
-// plot's size would be a second plot competing with the first. It is drawn at
-// `scale` of one and at `dim` of its light — the ground shader's `opacity`,
-// which the canvas carries through to the sky behind it, so half of what you
-// see out there is sky. The two together are what say "over there"; either
-// alone said "smaller" or "in shadow".
+// **A slab comes out from behind the plot, and does not float apart from
+// it.** It was built the other way on 26 September — the same slabs standing
+// clear in the sky with a hand's breadth of stars between — and Marcus's word
+// for it was disjointed, which was right. Four separate objects hanging in
+// the dark say four places exist; ground running out from under the plot's
+// own edge says one garden. `lap` is how far behind the plot's near edge a
+// slab's own edge sits, and it is why there is nothing to float: the plot,
+// being nearer, hides that much of each of them.
+//
+// **Further off still has to be drawn, because this projection will not draw
+// it.** Orthographic: nothing shrinks with distance, so a neighbour at a
+// plot's size would be a second plot competing with the first. It is `scale`
+// of one and at `dim` of its light — the ground shader's `opacity`, which the
+// canvas carries through to the sky behind it, so half of what you see out
+// there is sky. The two together are what say *over there*; either alone said
+// *smaller* or *in shadow*. `scale` is 0.5 rather than the 0.35 the floating
+// slabs used, because `lap` of it is behind the plot and only the rest shows.
 //
 // `depth` is how far behind the plot a slab stands, along the eye. On an
 // orthographic projection that moves it nowhere on the screen. It is there so
-// that wherever a slab and the plot meet the plot wins, and so that a slab's
-// own underside cannot come out in front of its top.
+// that wherever a slab and the plot meet the plot wins — which is what makes
+// `lap` a lap and not an overlap — and so that a slab's own underside cannot
+// come out in front of its top.
 //
-// `gap` is the least sky left between the plot and a slab, `rim` the least
-// between a slab and the edge of the canvas. Where there is more room than
-// that, a slab sits in the middle of what there is. **Where there is not, the
-// plot stands in front of it** and hides what it covers, which is what a
-// nearer thing does — up to a point: `gap` is also the least of a slab that
-// must still show, and a slab showing less than that is not drawn at all.
+// `least` is how much of a slab must still show past the plot. A slab showing
+// less than that, or reaching past the edge of the canvas, is not drawn.
 //
 // **Below a single plot the sky is there because it was asked for.** Fitted
 // to the plot alone — 2.3 m of headroom over the soil, 0.95 of rim below, the
 // plot in the middle — the canvas left about a third of a metre underneath,
-// and a slab wants 1.8. That is what `UNDER` buys, and a plot drawn at 92% of
-// its old size is what it cost. Shrinking the slab instead does nothing: it
-// and the plot are the same shape at the same attitude, so the strip that
-// shows past the plot's near edge is the same width whatever size the slab is.
+// which is not enough to show a slab under it however far it laps. That is
+// what `UNDER` buys, and a plot drawn at 92% of its old size is what it cost.
+// Lapping further instead buys it back at full size, and Marcus was shown
+// both: it turns the neighbour below into a dark band at the plot's near edge
+// rather than a place, and he kept the sky (27 September).
 //
 // `closest` is the last zoom a slab is drawn at. Closer in than the whole
 // plot a reader is looking at ground rather than at the horizon — and a slab
 // is never drawn part off the canvas, because the edge of a canvas is a
 // straight line and this garden has none of those.
 const BESIDE = {
-  scale: 0.35,
+  scale: 0.5,
   dim: 0.5,
   depth: 14,
-  gap: 0.35,
-  rim: 0.25,
+  lap: 1.7,
+  least: 0.35,
   closest: 1.2,
   // How far a slab's underside can hang below `RIM_DEPTH`: the most the floor
   // wander in a ground builder adds to it.
@@ -479,17 +487,16 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   // lifted clear of it, which is a thing this projection cannot show and so
   // does not have to be paid for.
   //
-  // The window it is placed in is the whole plot's, so the slabs keep their
-  // place as a reader comes closer rather than sliding about the screen with
-  // the zoom. What that costs is that one can fall off the edge on the way in,
-  // and a slab part off the canvas is not drawn at all.
+  // Where it goes is measured off the plot and not off the window, so it holds
+  // its place against the plot's edge as a reader comes closer rather than
+  // sliding about the screen with the zoom. What that costs is that one can
+  // fall off the edge of the canvas on the way in, and then it is not drawn.
   function drawBeside(view, all) {
     if (!besides.length || look.zoom > BESIDE.closest) return;
     const plot = corners(view, extent.x, extent.z, -RIM_DEPTH * BESIDE.deepest, 0);
     const half = (SIDE * BESIDE.scale) / 2;
     const box = spread(corners(view, half, half, -RIM_DEPTH * BESIDE.deepest * BESIDE.scale, 0));
     const size = [[box.minX, box.maxX], [box.minY, box.maxY]];
-    const whole = [[all.cx - all.w / 2, all.cx + all.w / 2], [all.cy - all.h / 2, all.cy + all.h / 2]];
     const wide = all.w / look.zoom / 2, tall = all.h / look.zoom / 2;
     const pane = [[all.cx + look.x - wide, all.cx + look.x + wide],
                   [all.cy + look.y - tall, all.cy + look.y + tall]];
@@ -504,22 +511,30 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
       // stands in rather than corner to corner (`reachOver`).
       const band = reachOver(plot, 1 - axis, size[1 - axis][0], size[1 - axis][1]);
       const reach = sign > 0 ? band.max : band.min;
-      // Clear of the plot says how far out it must go at least; inside the
-      // canvas says how far out it may. Room between the two is sky, and it
-      // is shared; no room, and the plot stands in front of what is left.
-      const clear = reach + sign * BESIDE.gap - near;
-      const most = whole[axis][sign > 0 ? 1 : 0] - sign * BESIDE.rim - far;
       const at = [0, 0];
-      at[axis] = sign * (most - clear) > 0 ? (clear + most) / 2 : most;
-      // **How much of it stands clear of the plot, and enough must.** A slab
-      // and the plot are the same shape at the same attitude, so their edges
-      // on the screen are parallel and what shows past the plot is a strip of
-      // one width all along, and a strip four pixels wide is a smudge at the
-      // plot's edge and not a place: **at least as much of a slab must show as
-      // the sky it was asked to leave.** `UNDER` is what makes the sky below a
-      // single plot wide enough to pass this; the test stays because a window
-      // can still be shaped so that some direction has no room.
-      if (sign * (at[axis] + far - reach) < BESIDE.gap) continue;
+      // **Its near edge sits `lap` inside the plot's**, and the plot, being
+      // nearer, hides that much of it. There is no sky to share out and no
+      // distance to choose — except that the canvas can insist: a slab goes as
+      // far out as there is room for and no further out than `lap` says, so on
+      // a phone, where a plot fills all but a few per cent of the width, the
+      // ones to the side lap further and show a wedge rather than nothing.
+      at[axis] = reach - sign * BESIDE.lap - near;
+      const most = pane[axis][sign > 0 ? 1 : 0] - far;
+      if (sign * (at[axis] - most) > 0) at[axis] = most;
+      // **And enough of it must still come out the other side.** A slab and
+      // the plot are the same shape at the same attitude, so their edges on
+      // the screen are parallel and what shows past the plot is a strip of one
+      // width all along — which makes this a straight subtraction, the slab's
+      // own reach less the lap, and constant for a given direction. It can
+      // still fail: a slab is shorter across the screen than up it on this
+      // projection, so a lap that leaves a margin sideways can swallow one
+      // whole going up.
+      if (sign * (at[axis] + far - reach) < BESIDE.least) continue;
+      // **Whole on the canvas, on both axes, or not drawn at all** — because
+      // the edge of a canvas is a straight line and this garden has none of
+      // those. With nothing to spare: the line above has already pulled it in
+      // as far as it will go, and a margin on top of that would refuse the
+      // slab below the plot the sky `UNDER` was bought for.
       if (at[axis] + low < pane[axis][0] || at[axis] + high > pane[axis][1]) continue;
       if (at[1 - axis] + size[1 - axis][0] < pane[1 - axis][0]
           || at[1 - axis] + size[1 - axis][1] > pane[1 - axis][1]) continue;

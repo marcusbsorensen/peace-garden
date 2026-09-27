@@ -6,9 +6,12 @@
 // the drawing said there was anything out there. The map at the foot of the
 // page says it, but a map is a diagram of a garden and not the garden, and a
 // reader looking at the plot had no reason to think the plot was one of ten.
-// So each open neighbour is drawn as a second slab of ground, small and dim,
-// out in the sky on the side its key points to: `longwalk.js` builds and
-// draws it, and this says what there is to draw.
+// So each open neighbour is drawn as a second slab of ground, smaller and
+// dimmer, coming out from behind the plot on the side its key points to:
+// `longwalk.js` builds and draws it, and this says what there is to draw.
+// They stood clear of the plot for a day, and read as four objects floating
+// apart rather than as one garden — `BESIDE.lap` in `longwalk.js` is the
+// answer and records it.
 //
 // **There is one map and this reads it.** `garden.js` says which area lies
 // which way, `gates.js` whether it is open and what colour its ground is.

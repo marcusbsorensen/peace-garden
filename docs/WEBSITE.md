@@ -1262,7 +1262,7 @@ another.
   lie which way from `garden.js` and their grounds from `gates.js` `LOOK` — one
   map, still — and `longwalk.js` builds and draws them. Ground only: the same
   `Organic` outline a plot has and the same strata under it, in that area's own
-  colour, with no plants, no structures and no shadow. A slab is 0.35 of a plot
+  colour, with no plants, no structures and no shadow. A slab is 0.5 of a plot
   and drawn at half its light, because an orthographic projection shrinks
   nothing with distance and *further off* has to be drawn; it is held at the
   plot's own attitude, so it turns as the plot turns, while **where** it stands
@@ -1271,12 +1271,20 @@ another.
   the controls and a new tap target in the scene would compete with tapping a
   plant. It is drawn only at the whole plot, and gone by 1.2× in. **It cost no
   new strings**, for the reason the crossing did not.
+  - **A slab comes out from behind the plot rather than floating clear of it**
+    (27 September). It was built the other way the day before — the same slabs
+    standing alone in the sky with a hand's breadth of stars between — and
+    Marcus's word for it was *disjointed*. Four separate objects hanging in the
+    dark say four places exist; ground running out from under the plot's own
+    edge says one garden. So a slab's near edge now sits **1.7 m inside the
+    plot's**, and the plot, being nearer, hides that much of it; `scale` went
+    from 0.35 to 0.5 to pay for what is hidden. The lap is a maximum the canvas
+    can override — a slab goes as far out as there is room for and no further —
+    which is what keeps the two at the sides on a phone, where a plot fills all
+    but a few per cent of the width and they lap further and show a wedge.
   - **A slab is never drawn part off the canvas**, because the edge of a canvas
-    is a straight line and this garden has none. Where there is sky between the
-    plot and the edge it sits in the middle of it; where there is not, it goes
-    as far out as the canvas allows and the plot stands in front of the rest,
-    which is what a nearer thing does — and if less of it would show than the
-    sky it was asked to leave, it is not drawn at all.
+    is a straight line and this garden has none; nor if less of it would show
+    past the plot than `least`.
   - **The frame leaves 0.7 m of sky under the plot, so the area below has
     somewhere to be.** Fitted to the plot alone — 2.3 m of headroom over the
     soil, the rim's 0.95 below, the plot in the middle — the canvas left about
@@ -1289,7 +1297,10 @@ another.
     is held over — moves down with it, or opening a page would nudge.
     Shrinking the slab instead does nothing, because a slab and the plot are
     the same shape at the same attitude and the strip that shows past the
-    plot's near edge is one width whatever size the slab is.
+    plot's near edge is one width whatever size the slab is. Lapping further
+    does buy it back at full size, and Marcus was shown both: it turns the
+    neighbour below into a dark band at the plot's near edge rather than a
+    place, and he kept the sky.
 - **Turning is called turning.** The camera keys were *left* and *right*, which
   are the words a visitor reaches for to mean walking somewhere else.
 - **A minimap to travel by**: the garden's own 5×2 map, read from `garden.js`
