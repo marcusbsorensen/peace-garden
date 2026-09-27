@@ -14,12 +14,22 @@
 
 import { decode, takeResult } from './plant.js';
 import { COLOUR, HEDGE, RIM_DEPTH, SEED, SIDE, hash, hedgeToPlot, keepToPlot, pressNormal, readOutline, readStructure } from './longwalk.js';
+import { rimOf, sinkPool, walkRound } from './water.js';
 
 // Seeds for this area's dressing, so a room is the same shape on every visit.
 // Its own, not the walk's: two areas drawing from one seed would be two plots
 // with the same hedge wobble, which is the sort of thing an eye catches
 // without being able to say why.
-const ROOM = { ground: 4091, floor: 17, bench: 88, hedge: [211, 212, 213, 214], mow: 29 };
+const ROOM = { ground: 4091, floor: 17, bench: 88, hedge: [211, 212, 213, 214], mow: 29, pool: 733 };
+
+// **The still pool, in the middle of the lawn** (27 September). The Quiet
+// Garden stands at the foot of the garden's slope — `COLUMN_RISE` in
+// `garden.js` — so this is where water gathers, and a room with a bench in one
+// corner and nothing in the middle was asking for something to sit and look
+// at. 1.6 m across, which leaves a metre and a half of lawn between its rim
+// and the nearest place a plant stands: the groups come no closer to the
+// middle than 1.10 m and the pool's rim reaches 0.94.
+const POND = { across: 1.6 };
 
 // How the four hedges stand. They are drawn low on the two sides nearest the
 // viewer for the reason the walk's are — Marcus, 18 September — because a 2 m
@@ -54,9 +64,18 @@ export function makeRoomGround(room) {
     // filled from the middle. Square here, because a room is.
     const outline = readOutline(e, SIDE, SIDE, ROOM.ground);
     const n = outline.length;
-    for (let i = 0; i < n; i++) {
-      const a = outline[i], b = outline[(i + 1) % n];
-      tri([0, 0, 0], [a[0], 0, a[1]], [b[0], 0, b[1]], [0, 1, 0], COLOUR.turf);
+    // **It fans out from the pool's rim and not from the middle**, since the
+    // middle is now water. A ring between two loops rather than a fan from a
+    // point: both are walked by how far round them you are, because they are
+    // outlines of different sizes and have different numbers of points.
+    const pond = { across: POND.across, seed: ROOM.pool };
+    const { rim, steps, inside: inPond } = rimOf(e, pond);
+    const round = walkRound(outline);
+    for (let i = 0; i < steps; i++) {
+      const u = i / steps, v = (i + 1) / steps;
+      const a = rim(u), b = rim(v), c = round(v), d = round(u);
+      quad([a[0], 0, a[1]], [b[0], 0, b[1]], [c[0], 0, c[1]], [d[0], 0, d[1]],
+           [0, 1, 0], COLOUR.turf);
     }
 
     // **Mown all over, not in borders.** The walk stripes its path and leaves
@@ -88,9 +107,21 @@ export function makeRoomGround(room) {
       };
       for (let k = 0; k < pieces; k++) {
         const u0 = k / pieces, u1 = (k + 1) / pieces;
+        // A stripe stops at the water. Piece by piece, so the edge it leaves
+        // is as ragged as a piece is wide — 13 cm, which the pool's 14 cm rim
+        // covers. Both corners tested, so a piece that only clips the rim goes
+        // too: better a hair of bare earth than a tongue of grass over water.
+        const [ax, , az] = at(u0, near), [bx, , bz] = at(u1, far);
+        if (inPond(ax, az) || inPond(bx, bz)) continue;
         quad(at(u0, near), at(u1, near), at(u1, far), at(u0, far), [0, 1, 0], c);
       }
     }
+
+    // The pool, sunk into the middle of the mown lawn. After the stripes, so
+    // its rim lies over them rather than under: `water.js` lays a pool on the
+    // floor instead of cutting a hole in it, and the rim is what hides the
+    // grass it covers.
+    sinkPool(e, { tri, quad }, pond);
 
     // Its sides hang from the outline down to a floor as rough as a clod's, in
     // the app's strata. The walk's arithmetic, because it is the same slab.

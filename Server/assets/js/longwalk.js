@@ -47,6 +47,19 @@ export const COLOUR = {
   // the plot's own rock showing through — picked against the grass it is
   // surrounded by, the way the timber was picked against the yew.
   stone: [0.345, 0.330, 0.302],
+  // **Still water, which this garden had none of until 27 September**, though
+  // `Archetype.lotus` has been a water lily since the shapes changed on the
+  // 24th and was being sown in a drill. Two colours and not one, because water
+  // is the only surface here that is darker where it is deeper: `shallows` at
+  // the rim where the dish shows through, `depths` over the middle. Picked
+  // against the turf around a pool rather than against a swatch, and kept
+  // below it, because still water in daylight reads as a hole in the lawn and
+  // not as a bright thing lying on it.
+  shallows: [0.172, 0.200, 0.196],
+  depths: [0.098, 0.126, 0.152],
+  // The dish under the water: the plot's own earth, wetted. Darker and a shade
+  // cooler than `humus`, which is what wet soil does.
+  silt: [0.132, 0.112, 0.094],
   // The Orchard's trees, both picked against the grass and against the yew
   // rather than against a swatch.
   //
