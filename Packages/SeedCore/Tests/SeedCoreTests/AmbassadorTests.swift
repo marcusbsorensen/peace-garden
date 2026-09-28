@@ -45,8 +45,10 @@ final class AmbassadorTests: XCTestCase {
         }
         XCTAssertEqual(found, Ambassadors.seeds)
         // The last of the ten. Recorded so that a search which starts needing
-        // thousands of tries is visible rather than merely slow.
-        XCTAssertEqual(n, 82)
+        // thousands of tries is visible rather than merely slow. Twenty-two
+        // since the re-roll of 28 September 2026, when fourteen families and
+        // twenty-eight roots re-dealt every plant's name; it was eighty-two.
+        XCTAssertEqual(n, 22)
     }
 
     // MARK: Mature when the gates opened

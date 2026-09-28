@@ -7,7 +7,7 @@ import simd
 /// The three inflorescences, and the one property that could not be fixed later.
 ///
 /// The visual half of this is `tools/preview/archetypes.py`, which puts one
-/// plant of each of the twelve archetypes side by side. What is here is what a
+/// plant of each archetype side by side. What is here is what a
 /// person cannot see by looking: that a fixed seed still draws the mesh it drew
 /// yesterday, and that a head divides gradually rather than between one frame
 /// and the next.
@@ -109,10 +109,21 @@ final class PlantFormTests: XCTestCase {
         // before). The lotus is a water lily at 35 cm, where it stood 75 on a
         // stalk, and the succulent a rosette at 33, where it was a column of 46.
         // The umbel's height is where it was.
+        //
+        // **`vector-c` moved on 28 September 2026, and not because its shape
+        // did: it is a different plant.** Fourteen families re-sliced
+        // `form.archetype`, and this seed's draw now lands on the plume rather
+        // than the succulent — 20670 vertices, 49 cm by 64, where the
+        // succulent's rosette was 5963, 35 by 33. `vector-a` and `vector-b`
+        // kept their families and every number. So the three no longer cover
+        // one inflorescence each: the umbel and the plume are both heads and
+        // no raceme is pinned here. Left so rather than searched for, because
+        // these three labels are the ones whose history the paragraphs above
+        // record.
         let expected: [String: (vertices: Int, width: Int, height: Int)] = [
             "vector-a": (13566, 52, 73),
             "vector-b": (5692, 65, 35),
-            "vector-c": (5963, 35, 33)
+            "vector-c": (20670, 49, 64)
         ]
 
         for (label, want) in expected.sorted(by: { $0.key < $1.key }) {
@@ -130,12 +141,18 @@ final class PlantFormTests: XCTestCase {
 
     // MARK: - Every archetype claims a form
 
-    func testTheTwelveArchetypesDivideSixTwoAndFour() {
+    /// **Fourteen since 28 September 2026, and both new families are racemes**
+    /// — neither profile names a form, so both take the default. The reed's
+    /// florets are node flowers packed into the top of its culm, as a spire's
+    /// are up the whole of it; the cushion's sit stemless in the rosettes over
+    /// its dome, and it gives off no stalks. It was twelve dividing six, two
+    /// and four; the heads and the solitaries did not move.
+    func testTheFourteenArchetypesDivideEightTwoAndFour() {
         var counts: [Inflorescence: Int] = [:]
         for archetype in Archetype.allCases {
             counts[ArchetypeProfile.profile(for: archetype).inflorescence, default: 0] += 1
         }
-        XCTAssertEqual(counts[.raceme], 6, "racemes")
+        XCTAssertEqual(counts[.raceme], 8, "racemes")
         XCTAssertEqual(counts[.head], 2, "heads")
         XCTAssertEqual(counts[.solitary], 4, "solitaries")
     }

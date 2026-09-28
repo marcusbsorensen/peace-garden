@@ -265,12 +265,18 @@ final class GlasshouseTests: XCTestCase {
 
     // MARK: The ambassador
 
-    func testTheAmbassadorOpensTheStagingAtItsOwnBand() {
+    /// **The ambassador opens the border, first from the door**, since 28
+    /// September 2026. *Elora elata*, a star of 1.45 m, is over the border's
+    /// 1.14, so it is planted in the soil rather than potted, and the staging
+    /// opens empty. (*Aurea pallida*, 0.74 m, opened the staging at its own
+    /// band.)
+    func testTheAmbassadorOpensTheBorderFirstFromTheDoor() {
         let one = Glasshouse.ambassador
         let traits = LongWalk.traits(of: Ambassadors.of(.light).genome)
+        XCTAssertGreaterThanOrEqual(traits.height, Glasshouse.borderFrom)
         XCTAssertEqual(one.plot, 0)
-        XCTAssertEqual(one.slot.bed, .staging)
-        XCTAssertEqual(one.slot.index, traits.glasshouseBand)
+        XCTAssertEqual(one.slot.bed, .border)
+        XCTAssertEqual(one.slot.index, 0)
         XCTAssertEqual(one.slot.row, 0)
         XCTAssertEqual(one.seed, Ambassadors.of(.light).seed.hex)
     }

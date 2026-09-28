@@ -101,52 +101,57 @@ is_same('its nudge', $room['nudge'], [$sitting['nudgeX'], $sitting['nudgeZ']]);
 
 // It is beside the bench, which is what a plot's first plant always is — and
 // the reason this area could take a 0.75 m ambassador at all. A specimen slot
-// at the back of a group would have wanted a plant half as tall again.
+// at the back of a group would have wanted a plant half as tall again. (Since
+// the re-roll of 28 September 2026 it is *Bela caerulea*, 1.06 m, and stands
+// beside the bench for the same reason.)
 is_same('it is the plant beside the bench', QuietGarden::BENCH, $sitting['corner']);
 
 // It stands in its own tier. Said separately because it is the reason there is
-// no specimen slot: only one of the ten ambassadors is tall enough for the back
-// of a border, so a specimen fixed at the back would stand a short plant behind
-// taller ones and break the rule the walk is built on.
+// no specimen slot: three of the ten ambassadors are tall enough for the back
+// of a border (one, until 28 September 2026), so a specimen fixed at the back
+// would stand a short plant behind taller ones in seven areas of ten and break
+// the rule the walk is built on. *Zephea pallida*, 0.52 m, is an edge plant.
 is_same('its tier is the tier its height belongs to',
         LongWalk::tier($vectors['ambassadors'][6]['height']), $standing['tier']);
 
 // The Cold Frame's, which opens its area as every other ambassador does: in the
-// first place of the first frame of plot 0, and in the rank its grown height
-// belongs to. *Nyxisora crassicaulis* grows to 0.68 m, under the 0.85 m cut, so
-// the front rank — and the frame it stands in is claimed for its colour before
-// anybody has shared anything.
+// first place of plot 0 that its rule gives it. *Nyxisora crassicaulis* is a
+// lotus, and since the tank was sunk on 27 September a plant that wants water
+// goes in the tank and nowhere else, holding one place there: so it opens the
+// tank, at the west end of its first row. (Until then it held the first two
+// places of the first frame's front rank, and this check said so until 28
+// September 2026.)
 $waiting = Ambassadors::planting('waiting');
 is_same('the Cold Frame ambassador\'s plot', 0, $waiting['plot'] ?? null);
-is_same('its frame', ColdFrame::BACK_WEST, $waiting['frame'] ?? null);
-is_same('its rank is the rank its height belongs to',
-        ColdFrame::rank($vectors['ambassadors'][1]['height']), $waiting['rank'] ?? null);
-is_same('its place along that rank', 0, $waiting['index'] ?? null);
-// And, since 25 September, the first two: it is a lotus, and a lotus takes two
-// places and stands between them.
+is_same('its frame is the tank', ColdFrame::TANK, $waiting['frame'] ?? null);
+is_same('its place along the tank\'s first row', 0, $waiting['index'] ?? null);
 is_same('it is a lotus', 'lotus', $vectors['ambassadors'][1]['habit']);
-is_same('and holds two places', 2, $waiting['span'] ?? null);
+is_same('so it wants water', true, ColdFrame::wantsWater($vectors['ambassadors'][1]['habit']));
+is_same('and holds one place in it', 1, $waiting['span'] ?? null);
 
-// The Glasshouse's, which opens the staging at its own place in the spectrum:
-// *Aurea pallida* grows to 0.68 m, under the border's 1.30 m, so it is potted,
-// and its orange stands it in the tenth band, three from the far end — the
-// first pot on the staging, in the row by the glass.
+// The Glasshouse's, which opens the border: *Elora elata*, since 28 September
+// 2026, grows to 1.45 m, over the border's 1.14 m, so it is planted in the
+// soil rather than potted, in the border's first place from the door, and the
+// staging opens empty. (*Aurea pallida*, 0.74 m, opened the staging at its own
+// band.)
 $light = Ambassadors::planting('light');
 is_same('the Glasshouse ambassador\'s plot', 0, $light['plot'] ?? null);
-is_same('its bed', Glasshouse::STAGING, $light['bed'] ?? null);
-is_same('its place is its own band',
-        Glasshouse::band($vectors['ambassadors'][3]['hue']), $light['index'] ?? null);
+is_same('its bed is the bed its height belongs to',
+        Glasshouse::bed($vectors['ambassadors'][3]['height']), $light['bed'] ?? null);
+is_same('which is the border', Glasshouse::BORDER, $light['bed'] ?? null);
+is_same('its place is first from the door', 0, $light['index'] ?? null);
 is_same('its row', 0, $light['row'] ?? null);
 
-// The Coppice's, which opens the first coupe's floor: *Rosea caerulea* is a
-// star, so it stands in the light and is never cut, and at 1.00 m it stands in
-// the front row, in the middle place, which is where a row starts.
+// The Coppice's, which opens the first coupe: *Drosula vulgaris*, since 28
+// September 2026, is a fern, so it takes a stool — the first coupe's middle
+// one, which is where a fern opens a plot — and it is cut with its coupe.
+// (*Rosea caerulea* was a star, in the front row's middle place, never cut.)
 $renewal = Ambassadors::planting('renewal');
 is_same('the Coppice ambassador\'s plot', 0, $renewal['plot'] ?? null);
 is_same('its coupe', 0, $renewal['coupe'] ?? null);
-is_same('its place is the row its height asks for',
-        Coppice::row($vectors['ambassadors'][2]['height']), $renewal['place'] ?? null);
-is_same('the middle of that row', Coppice::FLOOR_ORDER[0], $renewal['index'] ?? null);
+is_same('it is a fern', true, Coppice::isFern($vectors['ambassadors'][2]['habit']));
+is_same('so its place is a stool', Coppice::STOOL, $renewal['place'] ?? null);
+is_same('the middle stool', Coppice::STOOL_ORDER[0], $renewal['index'] ?? null);
 
 // The Home Ground's, which opens the west bed for umbels: *Fenunora
 // patentifolia* is 1.100 m, over the umbel's cut, so it takes the first place
@@ -228,7 +233,7 @@ if ($failed !== []) {
 
 printf("Ten ambassadors — %s at the head of the walk, %s at the crossing, "
      . "%s under the middle tree, %s beside the bench, %s in the knot, "
-     . "%s in the first frame, %s on the staging — and the service agrees: %d checks.\n",
+     . "%s in the tank, %s in the border — and the service agrees: %d checks.\n",
     $vectors['ambassadors'][6]['name'], $vectors['ambassadors'][7]['name'],
     $vectors['ambassadors'][8]['name'], $vectors['ambassadors'][9]['name'],
     $vectors['ambassadors'][4]['name'], $vectors['ambassadors'][1]['name'],

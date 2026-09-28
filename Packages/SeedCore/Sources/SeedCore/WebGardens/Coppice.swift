@@ -253,9 +253,10 @@ public enum Coppice {
 
         public init() {}
 
-        /// **The Coppice as it opened**: the renewal ambassador, *Rosea
-        /// caerulea*, a star, in the front row of the first coupe, and nothing
-        /// else.
+        /// **The Coppice as it opened**: the renewal ambassador and nothing
+        /// else. Since the re-roll of 28 September 2026 that is *Drosula
+        /// vulgaris*, a fern, on the first coupe's middle stool; until then it
+        /// was *Rosea caerulea*, a star, in the front row of the first coupe.
         public static func opened() -> Ways {
             var ways = Ways()
             let one = Ambassadors.of(.renewal)
@@ -392,8 +393,10 @@ public enum Coppice {
 
     /// **The first plant in the Coppice**, and the one it is drawn with
     /// before anybody has released anything into it: `Ambassadors.of(.renewal)`
-    /// placed by this rule into an empty area. A star under 1.00 m, so it opens
-    /// plot 0 in the front row of coupe 0. Derived rather than stored, as the
+    /// placed by this rule into an empty area. A fern, so it opens plot 0 on
+    /// coupe 0's middle stool — the coupe cut in year 0, so it is drawn cut
+    /// until 21 December 2026. (A star under 1.00 m until the re-roll of 28
+    /// September 2026, in the front row.) Derived rather than stored, as the
     /// other eight are.
     public static let ambassador: Planting = Ways.opened().plantings[0]
 }

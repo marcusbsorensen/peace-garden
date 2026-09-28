@@ -12,6 +12,11 @@ import XCTest
 /// being `Nyx`. Only this area and the Seedbed ever receive one. Every
 /// measurement below is therefore made twice — once of the water and once of
 /// the frames — because a single number over both says nothing about either.
+///
+/// **Two in three since 28 September 2026**, when the reed came, wanting water
+/// as a lily does, and its many-merous root `Syr` was given to this area. Of
+/// the five hundred below, 192 are lilies, 150 reeds and 158 ferns: 342 for
+/// the tank and 158 for the frames.
 final class ColdFrameTests: XCTestCase {
 
     // MARK: Arrivals
@@ -216,6 +221,19 @@ final class ColdFrameTests: XCTestCase {
     /// **What would fail this is the tank running short**, which is the shape
     /// of the Knot Garden's near-miss: if a plot opened before its water was
     /// full, the area would be a row of ponds with a few lilies in each.
+    ///
+    /// **Seventeen plots and a fifth of the glass, since 28 September 2026**,
+    /// where it was at most fifteen and more than three tenths. The reed wants
+    /// water and its root `Syr` is this area's, so 343 of 501 now go in the
+    /// tank — the ambassador among them — and 158 under glass, where it was
+    /// about 274 and 227. The tank is what opens plots here (twenty-one to
+    /// one, and a full tank opens the next plot rather than putting a plant
+    /// under glass), so the plots follow the water: sixteen full tanks and a
+    /// seventeenth with seven, 96% of every place in the water held. The
+    /// frames come with the plots and fill at the rate the dry plants arrive,
+    /// which is 158 of 816 places, 0.19; seventeen frames claimed and ten of
+    /// them full. The rule is doing what it says. What moved is how much of
+    /// the area is water, and that is the render to look at.
     func testTheFillAtFiveHundred() {
         let ways = Self.full
         let dryPlaces = ways.plots * ColdFrame.slots.filter { $0.frame.isDry }.count
@@ -235,9 +253,9 @@ final class ColdFrameTests: XCTestCase {
         print("Cold Frame at 500: \(ways.plots) plots, \(claimed) frames claimed, \(full) full, "
               + "\(dryHeld) of \(dryPlaces) under glass (\(dryFill)), "
               + "\(wetHeld) of \(wetPlaces) in the water (\(wetFill))")
-        XCTAssertLessThanOrEqual(ways.plots, 15)
+        XCTAssertLessThanOrEqual(ways.plots, 17)
         XCTAssertGreaterThan(wetFill, 0.9)
-        XCTAssertGreaterThan(dryFill, 0.3)
+        XCTAssertGreaterThan(dryFill, 0.19)
     }
 
     /// **The water fills plot by plot**, which is what keeps the area from
@@ -389,20 +407,28 @@ final class ColdFrameTests: XCTestCase {
     /// two, which must keep reading back and keep drawing until the replant
     /// moves them — `testAPlantingStoredBeforeTheRuleHoldsOnePlace` is the
     /// one that holds that.
-    func testEveryLilyIsInTheWaterAndNothingElseIs() {
+    ///
+    /// **Everything that wants water, since 28 September 2026**, when the
+    /// reed joined the lily in `Archetype.wantsWater`. Asked of
+    /// `traits.wantsWater`, which is what the rule asks, rather than of the
+    /// lotus by name: a reed in the tank holds one place, as a lily does, and
+    /// a reed under glass would be the rule broken. The count that follows was
+    /// of lilies, over 200 of some 274; it is of everything in the water now,
+    /// 343 of 501, the ambassador among them.
+    func testEverythingThatWantsWaterIsInTheWaterAndNothingElseIs() {
         let ways = Self.full
-        var lilies = 0
+        var wet = 0
         for p in ways.plantings {
-            let isLily = p.traits.habit == Archetype.lotus.rawValue
-            XCTAssertEqual(p.slot.frame.isDry, !isLily, "\(p.seed) is in the wrong element")
+            let wantsWater = p.traits.wantsWater
+            XCTAssertEqual(p.slot.frame.isDry, !wantsWater, "\(p.seed) is in the wrong element")
             XCTAssertEqual(p.span, 1, "\(p.seed) holds \(p.span) places")
             XCTAssertLessThan(p.slot.index + p.span, p.slot.frame.places + 1, "\(p.seed) runs off its row")
             let first = p.slots.first!.spot, last = p.slots.last!.spot
             XCTAssertEqual(p.spot.x - p.nudge.x, (first.x + last.x) / 2, accuracy: 1e-12)
             XCTAssertEqual(p.spot.z - p.nudge.z, first.z, accuracy: 1e-12)
-            if isLily { lilies += 1 }
+            if wantsWater { wet += 1 }
         }
-        XCTAssertGreaterThan(lilies, 200, "a sample of this area's own plants is more than half lilies")
+        XCTAssertGreaterThan(wet, 300, "a sample of this area's own plants is two in three for the water")
     }
 
     /// **The reason for the rule, held as a test**: of five hundred plants

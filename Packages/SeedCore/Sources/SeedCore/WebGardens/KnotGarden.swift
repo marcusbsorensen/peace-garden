@@ -620,14 +620,15 @@ public enum KnotGarden {
 
     /// **The plant in the north compartment of the first plot.**
     ///
-    /// *Quina caerulea* — `Ambassadors.of(.pattern)` — placed by this rule into
-    /// an empty Knot Garden. An empty plot has no claimed pairs, so it claims
-    /// the first one for its own colour, family 4, and stands in the north
-    /// compartment.
+    /// *Quinyria obscura* — `Ambassadors.of(.pattern)` since the re-roll of 28
+    /// September 2026 — placed by this rule into an empty Knot Garden. An
+    /// empty plot has no claimed pairs, so it claims the first one for its own
+    /// colour, family 4, and stands in the north compartment.
     ///
-    /// **It is 1.0064 m, which reads as a side rather than a heart**, so it
-    /// takes index 1: one of the two places beside the middle of its
-    /// compartment. There is nothing awkward in that, and it is worth having
+    /// **It is 1.22 m, which reads as a point**, so it takes index 3: the
+    /// place at the compartment's outer edge. (*Quina caerulea*, until then,
+    /// was 1.0064 m, a side, and took index 1, beside the middle of its
+    /// compartment.) There is nothing awkward in that, and it is worth having
     /// confirmed rather than assumed — the finding from the walk on 20 September
     /// is that whatever place an area's first arrival takes has to be one the
     /// area's own ambassador can stand in, and here every place in an empty

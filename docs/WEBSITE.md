@@ -534,18 +534,23 @@ to land on each area, and the test runs the search again and checks it arrives
 at the same ten. All ten sown on one day, a month before the garden opened,
 because the slowest takes twenty-one days to mature.
 
-| Area | Ambassador |
-| --- | --- |
-| The Seedbed | *Verora angustifolia* |
-| The Cold Frame | *Nyxisora crassicaulis* |
-| The Coppice | *Rosea caerulea* |
-| The Glasshouse | *Aurea pallida* |
-| The Knot Garden | *Quina caerulea* |
-| The Home Ground | *Fenunora patentifolia* |
-| The Long Walk | *Halula crassicaulis* |
-| The Crossing | *Melyrina latifolia* |
-| The Orchard | *Cyninora contorta* |
-| The Quiet Garden | *Olyne paniculata* |
+**Found again, 28 September 2026**, when the reed and the cushion made
+fourteen families and every plant's name was dealt again. The same search now
+arrives at the ten in twenty-two tries; four seeds are the ones they were, and
+the second column is what they were before.
+
+| Area | Ambassador | Until 28 September |
+| --- | --- | --- |
+| The Seedbed | *Verora angustifolia*, a spire | the same |
+| The Cold Frame | *Nyxisora crassicaulis*, a lotus | the same |
+| The Coppice | *Drosula vulgaris*, a fern | *Rosea caerulea* |
+| The Glasshouse | *Elora elata*, a star | *Aurea pallida* |
+| The Knot Garden | *Quinyria obscura*, a bell | *Quina caerulea* |
+| The Home Ground | *Fenunora patentifolia*, an umbel | the same |
+| The Long Walk | *Zephea pallida*, a plume | *Halula crassicaulis* |
+| The Crossing | *Ithula obscura*, a bell | *Melyrina latifolia* |
+| The Orchard | *Vininora contorta*, a vine | *Cyninora contorta* |
+| The Quiet Garden | *Bela caerulea*, a poppy | *Olyne paniculata* |
 
 **How one stands in a plot: settled 20 September, and the Long Walk's is
 standing.** Neither of the two ways this paragraph used to offer. An

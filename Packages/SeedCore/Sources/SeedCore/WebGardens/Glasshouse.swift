@@ -269,9 +269,11 @@ public enum Glasshouse {
 
         public init() {}
 
-        /// **The Glasshouse as it opened**: the light ambassador, *Aurea
-        /// pallida*, in a pot at its own place in the spectrum, and nothing
-        /// else.
+        /// **The Glasshouse as it opened**: the light ambassador and nothing
+        /// else. Since the re-roll of 28 September 2026 that is *Elora
+        /// elata*, a star of 1.45 m, in the border's first place from the
+        /// door; until then it was *Aurea pallida* in a pot at its own place
+        /// in the spectrum.
         public static func opened() -> Ways {
             var ways = Ways()
             let one = Ambassadors.of(.light)

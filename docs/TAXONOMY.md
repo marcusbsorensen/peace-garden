@@ -61,8 +61,9 @@ plants of one genus can look very different at a glance and still key out the
 same.
 
 So: **the genus head is derived from the floral plan, not drawn beside it.**
-Twenty-four heads, twelve archetypes, and a second floral character to split each
-archetype in two. Same head ⇒ same flower.
+Twenty-four heads, twelve archetypes — twenty-eight and fourteen since 28
+September 2026 — and a second floral character to split each archetype in two.
+Same head ⇒ same flower.
 
 That inverts the current dependency, and inverts it the right way round. **You
 name what you observe.** `PlantName` should be handed the floral traits and read
@@ -147,10 +148,13 @@ shared root. So:
 
 | Rank | What it is | How many | What fixes it |
 | --- | --- | --- | --- |
-| **Family** | The gross floral plan and inflorescence | 12 | The archetype |
-| **Root** | The head. Family plus merosity | 24 | The flower |
-| **Genus** | head + middle + tail, as written | 240 | The root, plus free variation |
+| **Family** | The gross floral plan and inflorescence | 14 | The archetype |
+| **Root** | The head. Family plus merosity | 28 | The flower |
+| **Genus** | head + middle + tail, as written | 280 | The root, plus free variation |
 | **Species** | The epithet | — | This specimen's departure |
+
+*Twelve, twenty-four and 240 when this was written; the reed and the cushion
+made them fourteen, twenty-eight and 280 on 28 September 2026.*
 
 Everything the design already wanted falls out of it. Same head still means
 same flower, so rule 1 holds unchanged and `theme(of:)` is untouched. Gender
@@ -187,7 +191,7 @@ So the draw becomes the *class*, and the count follows from it, with the rare
 variant a real plant has. That is what makes `-merous` worth naming, and it is
 what "tighten the flower only" means in practice.
 
-## The twelve families
+## The fourteen families
 
 **The merosity numbers are proposed, not settled**, and they are exactly the
 kind of thing this repository has learned only rendering catches — the mushroom,
@@ -211,9 +215,11 @@ is a single repeated shape. The theme each root carries is unchanged.
 | **Belaceae** · poppy | `Bel` 4 · peace | `Aur` 6 · light | *bellus*, a clear sky, for remembrance; *aurora* for the poppy that opens at dawn |
 | **Pellaceae** · succulent | `Pell` 8 · ground | `Thal` 12 · beginnings | *pellis*, the earth's skin, for a houseleek; *thallos*, a body with no organs told apart |
 | **Olaceae** · plume | `Ol` 5 · peace | `Zeph` 10 · travel | *oliva* — the olive's flowers are a small panicle and its leaves are narrow — and *Zephyros*, the west wind |
+| **Donaceae** · reed | `Don` 3 · beginnings | `Syr` 6 · waiting | *donax*, the reed — *Arundo donax* is the giant reed — and *syrinx*, the reed pipe Pan cut from one. A rush's flower is 3-merous, six tepals in two threes |
+| **Tylaceae** · cushion | `Tyl` 5 · meeting | `Or` 8 · travel | *tylē*, a cushion, which is what the plant is — moss campion and the cushion saxifrages are 5-merous — and *oros*, a mountain, which is where a cushion grows |
 
-Every one of the twenty-four heads is used once. No family has both roots in one
-theme, so every area holds two or three distinct kinds of plant.
+Every one of the twenty-eight heads is used once. No family has both roots in
+one theme, so every area holds between two and four distinct kinds of plant.
 
 **One family name lands on a real one by the same root that named it**, which
 was not arranged: **Olaceae** beside Oleaceae, both from *olea*, the olive.
@@ -240,6 +246,40 @@ thing an expert notices in the four seconds this document opens by invoking.
 Both roots sit in Pattern and both families are 5-merous at the low root, so the
 swap moved no number and broke no constraint — only which syllable sits on which
 family, and the two family names trading places with it.
+
+### The reed and the cushion, 28 September 2026
+
+*Appended after the plume, having been grown as prototypes first and approved
+as rendered. `docs/PLANT-FORMS.md` has the building.*
+
+**The reed** is a clump of strap leaves at the foot of a bare culm, with small
+florets on short stalks up its last quarter: a sedge's habit, a rush's or a
+reedmace's. The leaves stay off the culm because, carried up it, they made a
+grass stem drawn at the wrong size. 3-merous at `Don` and 6 at `Syr`. It is the
+second family that wants water, after the lotus.
+
+**The cushion** is a low dome covered in small rosettes, nearly one in two
+carrying a flower of its own, with no stalk and no stem leaves: an alpine's
+habit. 5-merous at `Tyl` and 8 at `Or`.
+
+**Their roots were placed by where the plant grows.** The reed's went to the
+themes the lotus's are in — `Don` to beginnings beside `Lir`, `Syr` to waiting
+beside `Nyx` — so that the garden's two water plants meet the same water. The
+cushion's went to meeting and travel, the two areas at the head of the slope,
+where an alpine is. Neither family has both roots in one theme, so the rule
+above holds. It leaves Beginnings and Travel with four kinds of plant each, and
+a plant twice as likely to be born to either as to Peace;
+`docs/NAMES-AND-THEMES.md` has the arithmetic.
+
+**Appending the families is what cost, not the roots.** `form.archetype` is
+`pick`ed across `Archetype.allCases`, so fourteen cases slice it differently
+from twelve, and about three plants in four came out a different family — so a
+different root, a different name and often a different theme. Marcus chose that
+once, while the garden was small. The four roots cost nothing of their own:
+since §1 was built the head has been read off the flower through
+`PlantName.roots`, nothing draws from `PlantName.genusHeads` by position, and
+it took them where the alphabet puts them. **The lists that are still the file
+format are the families' and the tails'**, not the heads'.
 
 ## Built, and what looking at it changed
 

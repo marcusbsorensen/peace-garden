@@ -29,25 +29,50 @@ connection was missing.
 
 ## The one constraint that shaped everything
 
-**The list of heads is frozen.** `GeneSource.pick` indexes by
-`unit(label) * options.count`, so the boundaries between the twenty-four
-syllables are a function of there being twenty-four. Add a twenty-fifth and
-every plant on every phone is renamed.
+**The list of heads was frozen.** The head was drawn with `GeneSource.pick`,
+which indexes by `unit(label) * options.count`, so the boundaries between the
+twenty-four syllables were a function of there being twenty-four. A
+twenty-fifth would have renamed every plant on every phone.
 
 This killed the obvious design, which was to write a head list per theme and
 add whatever syllables the themes needed — eight new ones, as first sketched.
-It cannot be done. **The themes had to be fitted to the syllables**, not the
+It could not be done. **The themes had to be fitted to the syllables**, not the
 syllables chosen for the themes.
 
 It also settles the direction of the map. Deriving the head *from* the theme
 renames plants; deriving the theme *from* the head does not, because a theme is
 never stored — only derived, at the moment a passage is shown.
 
+**The constraint held for the heads only while they were drawn, and it no
+longer does.** From 3 September 2026 the head has been read off the flower —
+`PlantName.roots`, one root to each family and merosity, `docs/TAXONOMY.md`
+§1 — so nothing has indexed this list by position since. The constraint moved
+with the draw rather than going away: `form.archetype` is still `pick`ed, so a
+new *family* re-rolls the garden where a new *head* moves nothing. That is how
+the reed's and the cushion's four roots went in on 28 September 2026 where the
+alphabet puts them, making twenty-eight, and why it was the two families, not
+the four syllables, that renamed about three plants in four that day. It also
+means that `Vin` going in at `Wyn`'s index on 6 September, below, was guarding
+a draw that had stopped three days earlier. **The tails are still drawn and
+still frozen**: an eleventh ending would shift `pick`'s boundaries and rename
+every plant on every phone.
+
 ## The map
 
-Four themes take three heads and six take two. That is the only division of
-twenty-four that keeps every theme populated, and it means a plant is half again
-as likely to be born to Beginnings as to Peace — 12.5% against 8.3%.
+**Two themes take four heads, four take three and four take two**, since the
+reed and the cushion brought four roots on 28 September 2026. Every head is one
+family at one merosity, and a minted plant draws both evenly, so each head is a
+twenty-eighth of the plants minted and a plant is twice as likely to be born to
+Beginnings or Travel as to Peace — 14.3% against 7.1%. The four were given the
+themes their plants grow in, not the ones that would level the count: the
+reed's beside the lily's, so the two water plants share the water, and the
+cushion's to the two areas at the head of the slope, where an alpine is. Put
+into four of the six two-head themes they would have left eight of three and
+two of two, and the tilt where it was.
+
+Until then it was twenty-four: four themes took three heads and six took two,
+the evenest division of twenty-four into ten, and a plant was half again as
+likely to be born to Beginnings as to Peace — 12.5% against 8.3%.
 
 **Recorded rather than corrected.** The two fixes both cost more than the
 problem: renaming every plant, or weighting the draw, and a weighted draw would
@@ -56,14 +81,14 @@ the same fact said twice.
 
 | Theme | Genus heads | Sense |
 | --- | --- | --- |
-| **beginnings** | `Thal` · `Lir` · `Ver` | Gk *thallos*, a young shoot · Gk *leirion*, lily · L *ver*, the spring |
-| **waiting** | `Nyx` · `Umbr` | Gk *Nyx*, night · L *umbra*, shade |
+| **beginnings** | `Thal` · `Lir` · `Ver` · `Don` | Gk *thallos*, a young shoot · Gk *leirion*, lily · L *ver*, the spring · Gk *donax*, the reed |
+| **waiting** | `Nyx` · `Umbr` · `Syr` | Gk *Nyx*, night · L *umbra*, shade · Gk *syrinx*, the reed pipe |
 | **renewal** | `Dros` · `Ros` | Gk *drosos*, dew · L *ros*, dew again |
 | **light** | `El` · `Aur` · `Sel` | Gk *hēlios*, sun · L *aurora*, dawn · Gk *Selēnē*, moon |
 | **pattern** | `Cal` · `Quin` | Gk *kalos*, the shapely · L *quinque*, five |
 | **ground** | `Cer` · `Fen` · `Pell` | L *Ceres*, the grain · fen, low wet ground · L *pellis*, the earth's skin |
-| **travel** | `Zeph` · `Ael` · `Hal` | Gk *Zephyros*, west wind · Gk *aellē*, a gust · Gk *hals*, the salt sea |
-| **meeting** | `Mel` · `Ith` | Gk *meli*, honey · Ithaca, the place arrived at |
+| **travel** | `Zeph` · `Ael` · `Hal` · `Or` | Gk *Zephyros*, west wind · Gk *aellē*, a gust · Gk *hals*, the salt sea · Gk *oros*, a mountain |
+| **meeting** | `Mel` · `Ith` · `Tyl` | Gk *meli*, honey · Ithaca, the place arrived at · Gk *tylē*, a cushion |
 | **kinship** | `Vin` · `Cyn` | L *vinculum*, a bond · Gk *kyōn*, the dog that waits at the door |
 | **peace** | `Ol` · `Bel` | L *oliva*, the olive · L *bellus*, said of weather: a clear sky |
 
@@ -194,7 +219,8 @@ they took the shortest ending. Nothing on screen would ever have said so.
 
 ## What to watch
 
-- **The Beginnings tilt.** 12.5% against Peace's 8.3%. If it reads as a bias in
+- **The Beginnings tilt, and now Travel's.** 14.3% each against Peace's 7.1%
+  since 28 September 2026; it was 12.5% against 8.3%. If it reads as a bias in
   use rather than as a number in a document, the answer is more passages, not a
   weighted draw.
 - **Ten passages a meeting, not thirty.** A pair now draws from one third of
@@ -204,3 +230,20 @@ they took the shortest ending. Nothing on screen would ever have said so.
 - **`Cerera` is honestly ambiguous** — `Cer` + `er` + `a`, or `Cer` + `era` —
   and the hand-written init has to guess. A drawn name never asks, because it
   keeps both syllables from the start. Only ever a display concern.
+
+## The reed and the cushion, 28 September 2026
+
+Two families were appended after the plume (`docs/TAXONOMY.md`), and their four
+roots are in the map above with their senses and the reasons for where they
+went. Each has a glyph in `Server/assets/js/meanings.js`. The map
+itself has been `Area.genusHeads` since 20 September, when it left
+`Quotes.Theme` so that the website could file a plant into an area.
+
+**What it moved, for somebody using it.** About three plants in four came out
+a different family, so a different root and a different name, and with the
+root often a different theme and area. The four heads did none of that; the two
+families did all of it, which is the constraint above in its new place. Marcus
+chose it once, while the garden was small.
+
+`ThemeMappingTests` now pins twenty-eight heads and that they stay sorted, so
+nobody ever has a reason to re-sort them, and still pins the ten tails.

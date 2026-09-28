@@ -17,7 +17,8 @@ import XCTest
 /// runs out of room in the plot it started in. Nothing short of playing it out
 /// finds that.
 ///
-/// **The Knot Garden is opened rather than empty**, so *Quina caerulea* is
+/// **The Knot Garden is opened rather than empty**, so its ambassador —
+/// *Quinyria obscura* since 28 September 2026 — is
 /// standing in the north compartment before the first arrival and has already
 /// claimed that pair for family 4 — which is how the service places them too.
 final class KnotGardenVectorTests: XCTestCase {

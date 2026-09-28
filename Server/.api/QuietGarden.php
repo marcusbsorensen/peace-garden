@@ -60,8 +60,12 @@ final class QuietGarden
      * Whether a habit wants standing water. `Archetype::wantsWater` in the
      * Swift; one list, said twice, because the service and the app place the
      * same plant and must not disagree about where it goes.
+     *
+     * **The lotus and, since 28 September 2026, the reed**, which stands in a
+     * pool's shallows as a lily lies on it. A reed takes one of the pool's two
+     * places, as a lily does.
      */
-    public const WANTS_WATER = ['lotus'];
+    public const WANTS_WATER = ['lotus', 'reed'];
 
     public const ARM = 0;
     public const BACK = 1;

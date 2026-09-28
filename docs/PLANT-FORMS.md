@@ -457,7 +457,8 @@ of its own light geometry (`addCushionFlower`). What the renders changed:
 79,000, about seven, and 0.2 s to build in release. The reed is about four.
 Both want looking at before a Seedbed or a Cold Frame holds a dozen of them.
 
-**What is left for when they become archetypes:**
+**What was left for when they became archetypes** — all of it done on 28
+September 2026; see the next section:
 - The two cases, and their profiles moved into `profile(for:)`.
 - Four roots, each with a theme, which decides the plant's area, a gloss and a
   glyph. The roots are proper nouns and are not translated.
@@ -466,4 +467,70 @@ Both want looking at before a Seedbed or a Cold Frame holds a dozen of them.
 - The re-roll: every area vector, the ambassadors, `PortVectorTests` and the
   Python port.
 - The replant.
+
+## The reed and the cushion become archetypes, and the spire flowers upward, 28 September 2026
+
+**The re-roll Marcus chose.** `Archetype` gained `reed` and `cushion`,
+appended after `plume`, and their profiles moved from `Prototype` into
+`profile(for:)`. `form.archetype` is `pick`ed across the cases, so fourteen
+re-sliced what twelve had sliced and about three plants in four came out a
+different family. That was the reason to do it once, while the garden was
+small, and to put everything else that moves a plant's height into the same
+change. `Prototype`, `Genome.init(seed:prototype:)` and `-pgPrototype` went
+with it: they existed to look at a shape before paying for it, and it is paid
+for. The next new shape can bring them back from `15955dd`.
+
+**Four roots, with their areas.**
+
+| Family | Few | Many | Areas |
+|---|---|---|---|
+| Reed (Donaceae) | *Don*, Gk *donax*, the reed | *Syr*, Gk *syrinx*, the reed pipe | beginnings, waiting |
+| Cushion (Tylaceae) | *Tyl*, Gk *tylē*, a cushion | *Or*, Gk *oros*, a mountain | meeting, travel |
+
+The reed's roots went to the two areas the lily's are in, so the two water
+plants meet the same water; the cushion's to the head of the slope, where an
+alpine grows. `PlantName.genusHeads` is twenty-eight and alphabetical: nothing
+has drawn from it by position since the head was read off the flower, so it
+was never the file format the comment on it still said it was.
+
+**The reed wants water** (`Archetype.wantsWater`), which sends it to the tank,
+the flooded drill and the pool wherever an area has one, and it holds one
+place, as every plant but the lily does.
+
+**The spire flowers from below** (`Genome.Bloom.opensFromBelow`). Every spike
+opened from the crown down: the crown largest and first, the lowest flowers
+half-shut buds for good. That is a bellflower's order — determinate, the
+terminal flower first — and the bell keeps it. A spire is a foxglove, a lupin,
+a delphinium, whose lowest flowers open first and largest and whose tip is
+the youngest bud. The lag, the ceiling and the size along the flowering
+stretch are the same numbers mirrored, and the crown becomes a half-open bud
+two-fifths the size it was — which moves the height every spire is measured
+at, and is why this went into the same re-roll.
+
+**What a cushion costs, now.** Two things, and the larger was not the
+cushion's fault.
+- `MeshBuilder.append` read a part out of its table with `parts[role]`, so the
+  table went on holding the same arrays and every append copied the whole
+  part before adding to it. Quadratic, and invisible while a plant appended a
+  few hundred pieces; a cushion appends three thousand, and 0.16 s of its
+  0.16 s was copying. Taken out of the table instead, the same cushion builds
+  in 0.011 s and every other plant a little faster, with every vertex where
+  it was.
+- A rosette's seven to nine thick blades are one lobed cup now
+  (`addCushionRosette`): the leaves' points and notches where the blades put
+  them, at the same pitch and rising at the tips by the same arch. At a
+  centimetre a leaf, the outline is all that reads. Eighty thousand vertices
+  to thirty-six thousand, about twice an ordinary plant, and 2 ms. Rendered
+  side by side with the blades before it went in.
+
+**A cushion is a shoot until its first leaves open.** Drawn as a dome from the
+first hour it was nothing at all until the leaves began, so the husk stood on
+an empty plot and `testAFreshlySownSeedLooksLikeAShootAndNotAMushroom` said
+so. It comes out of its seed as every seedling does, and becomes a cushion
+with its first leaves.
+
+**The reed is now the heaviest plant**, at about forty thousand vertices:
+sixteen straps of twenty-six rows and up to twenty florets on pedicels. Not
+cut, because it was not asked about and nothing is slow; worth knowing before
+a Seedbed holds a drill of them.
 

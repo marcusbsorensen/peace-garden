@@ -36,8 +36,8 @@ import SeedCore
 // `ColdFrame.drawn` instead of at the plant's best. Where it stands was decided
 // by the height it will grow to; what the page shows is the height it is now.
 //
-// Opened rather than empty: it starts with the waiting ambassador in the first
-// frame, the way the real one does.
+// Opened rather than empty: it starts with the waiting ambassador, a lotus, in
+// the tank, the way the real one does.
 
 nonisolated(unsafe) private var frameWays = ColdFrame.Ways.opened()
 nonisolated(unsafe) private var grownInFrame: [String: Genome] = {

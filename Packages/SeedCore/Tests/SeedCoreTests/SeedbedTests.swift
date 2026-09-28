@@ -14,6 +14,11 @@ final class SeedbedTests: XCTestCase {
     /// it reads the habit too, and the area's own plants are more than a third
     /// lotuses where the garden's are one in twelve, so a sample of any
     /// crossing would measure a lotus rule that hardly ever runs.
+    ///
+    /// **Since 28 September 2026 the reed's root `Don` is this area's too**,
+    /// and a reed wants water. Of the five hundred below, 140 are lotuses and
+    /// 122 reeds, so a little over half of them go in flooded drills; the
+    /// garden's lotuses are one in fourteen now.
     private static let found = crossings(500)
     private static let sample: [(SeedID, PlantTraits)] = found.map { ($0.seed, LongWalk.traits(of: $0.genome)) }
 
@@ -112,6 +117,15 @@ final class SeedbedTests: XCTestCase {
     /// epithet says what is most so about a plant rather than what it is, so
     /// two plants of one kind can want different ground — *rubra* is red and
     /// a water lily can be red. The element is the second half of the claim.
+    ///
+    /// **More water than tilth since 28 September 2026: 67 drills flooded and
+    /// 52 dry**, where the dry had the majority. The reed wants water and its
+    /// root `Don` is this area's, so 262 of these five hundred want a flooded
+    /// drill — 140 lotuses at two places each and 122 reeds at one — against
+    /// 238 that want tilth. The rule is doing what it says: an epithet claims
+    /// a drill of each element it arrives in. The floor that stays is that
+    /// the tilth is not swamped: at least three dry drills to every four
+    /// flooded, which is what was measured (0.78).
     func testADrillIsAllWaterOrAllDry() {
         let ways = Self.full
         var wet = 0, dry = 0
@@ -127,8 +141,8 @@ final class SeedbedTests: XCTestCase {
             }
         }
         print("SEEDBED: \(wet) drills under water, \(dry) dry")
-        XCTAssertGreaterThan(wet, 0, "a third of this area's arrivals are lilies")
-        XCTAssertGreaterThan(dry, wet, "the bed is more tilth than water")
+        XCTAssertGreaterThan(wet, 0, "half of this area's arrivals want water")
+        XCTAssertGreaterThan(Double(dry) / Double(wet), 0.75, "the tilth is swamped by the water")
     }
 
     /// An unclaimed drill is neither element, and becomes whichever the plant
@@ -461,6 +475,9 @@ final class SeedbedTests: XCTestCase {
         XCTAssertGreaterThan(held * 100 / capacity, 60, "the bed is too empty to read")
         // **The water is a third of the bed**, which is the share of arrivals
         // that are lilies: a wet row here is ordinary, not an ornament.
+        // **Over half since 28 September 2026** — 67 of 119 drills, 56% —
+        // because reeds want water too; twenty plots, 66% of places held.
+        // Inside the bounds, and close to the upper one.
         XCTAssertGreaterThan(flooded * 100 / claimed, 30)
         XCTAssertLessThan(flooded * 100 / claimed, 60)
     }

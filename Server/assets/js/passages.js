@@ -19,13 +19,15 @@
 // record. That is what lets a page derive a passage from a name and nothing
 // else — no lineage, no geometry, no derivation.
 
-/// **Frozen**, and frozen in the app for a harder reason than here: `GeneSource`
-/// indexes by `unit(label) × count`, so a twenty-fifth syllable would rename
-/// every plant on every phone. Mirrored from `PlantName.genusHeads`.
+/// Mirrored from `PlantName.genusHeads`: every root a flower can be named
+/// from, in alphabetical order. Twenty-eight since 28 September 2026, when the
+/// reed and the cushion brought `Don`, `Syr`, `Tyl` and `Or`. Nothing here or in
+/// the app draws from it by position, so a root is added where the alphabet
+/// puts it; `PlantName.genusHeads` says why that was once not so.
 export const GENUS_HEADS = Object.freeze([
-  "Ael", "Aur", "Bel", "Cal", "Cer", "Cyn", "Dros", "El", "Fen", "Hal",
-  "Ith", "Lir", "Mel", "Nyx", "Ol", "Pell", "Quin", "Ros", "Sel", "Thal",
-  "Umbr", "Ver", "Vin", "Zeph",
+  "Ael", "Aur", "Bel", "Cal", "Cer", "Cyn", "Don", "Dros", "El", "Fen",
+  "Hal", "Ith", "Lir", "Mel", "Nyx", "Ol", "Or", "Pell", "Quin", "Ros",
+  "Sel", "Syr", "Thal", "Tyl", "Umbr", "Ver", "Vin", "Zeph",
 ]);
 
 /// Mirrored from `PlantName.genusTails`, and read the same way: ten endings
@@ -33,18 +35,18 @@ export const GENUS_HEADS = Object.freeze([
 /// it — the last third is the words and the sayings and is reliably the largest.
 export const GENUS_TAILS = Object.freeze(["ia", "is", "a", "ea", "ina", "ora", "yne", "era", "ula", "ynth"]);
 
-/// Mirrored from `Quotes.Theme.genusHeads`. Every head appears exactly once.
-/// Four themes take three heads and six take two, which is the only division of
-/// twenty-four that keeps every theme populated.
+/// Mirrored from `Area.genusHeads`. Every head appears exactly once. Two themes
+/// take four heads, four take three and four take two: the reed's two roots
+/// went where the lily's are and the cushion's to the head of the slope.
 const THEME_HEADS = {
-  beginnings: ["Thal", "Lir", "Ver"],
-  waiting: ["Nyx", "Umbr"],
+  beginnings: ["Thal", "Lir", "Ver", "Don"],
+  waiting: ["Nyx", "Umbr", "Syr"],
   renewal: ["Dros", "Ros"],
   light: ["El", "Aur", "Sel"],
   pattern: ["Cal", "Quin"],
   ground: ["Cer", "Fen", "Pell"],
-  travel: ["Zeph", "Ael", "Hal"],
-  meeting: ["Mel", "Ith"],
+  travel: ["Zeph", "Ael", "Hal", "Or"],
+  meeting: ["Mel", "Ith", "Tyl"],
   kinship: ["Vin", "Cyn"],
   peace: ["Ol", "Bel"],
 };

@@ -172,14 +172,21 @@ final class CrossingTests: XCTestCase {
 
     // MARK: The ambassador
 
-    func testTheAmbassadorStandsOnTheFirstQuartersDiagonal() {
+    /// **The ambassador opens the first quarter's middle rank**, since 28
+    /// September 2026. *Ithula obscura*, a bell of 1.20 m, is between the
+    /// middle cut and the corner cut, so an empty Crossing gives it the first
+    /// place of the middle rank — slot 3, behind the path rank's slot 1 — and
+    /// the path rank in front of it, the diagonal among it, waits for the
+    /// first short arrivals. (*Melyrina latifolia*, 0.46 m, stood on the
+    /// diagonal itself.)
+    func testTheAmbassadorOpensTheFirstQuartersMiddleRank() {
         let one = Crossing.ambassador
         XCTAssertEqual(one.plot, 0)
-        XCTAssertEqual(one.slot, Crossing.Slot(quarter: .first, index: 0))
-        XCTAssertEqual(one.slot.rank, .path)
+        XCTAssertEqual(one.slot, Crossing.Slot(quarter: .first, index: 3))
+        XCTAssertEqual(one.slot.rank, .middle)
         XCTAssertEqual(one.seed, Ambassadors.of(.meeting).seed.hex)
-        // The reason the paving holds no plant: the meeting ambassador is short.
-        XCTAssertLessThan(one.traits.height, Crossing.middleFrom)
+        XCTAssertGreaterThanOrEqual(one.traits.height, Crossing.middleFrom)
+        XCTAssertLessThan(one.traits.height, Crossing.cornerFrom)
     }
 
     /// **This area is `meeting`, and it says so here rather than anywhere else.**

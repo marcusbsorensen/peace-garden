@@ -91,8 +91,16 @@ final class ColdFrame
     public const TANK_ROWS = 3;
     public const TANK_PLACES = 21;
 
-    /** The archetypes that want water. Read from the habit, which is a word. */
-    public const WANTS_WATER = ['lotus'];
+    /**
+     * The archetypes that want water. Read from the habit, which is a word.
+     * `Archetype.wantsWater` in the Swift, said again here.
+     *
+     * **The reed since 28 September 2026**, which stands in the shallows as a
+     * lily lies on the water. So a reed goes in the tank and holds one place
+     * there, as a lily does, and `Syr` — the reed's many-merous root — being
+     * this area's makes the tank the larger part of what arrives.
+     */
+    public const WANTS_WATER = ['lotus', 'reed'];
 
     /** Along a rank, between one place and the next, and how far either rank stands from the middle of its frame. */
     public const ALONG_GAP = 0.31;

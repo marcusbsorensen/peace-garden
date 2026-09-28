@@ -358,15 +358,17 @@ public enum Orchard {
 
     /// **The plant under the middle tree of the first plot.**
     ///
-    /// *Cyninora contorta* — `Ambassadors.of(.kinship)` — placed by this rule
+    /// *Vininora contorta* — `Ambassadors.of(.kinship)` — placed by this rule
     /// into an empty Orchard, which puts it under the middle tree in the place
     /// nearest the plot's own middle, because that is where a plot opens.
     ///
-    /// **It is 1.33 m, the tallest of the ten ambassadors, and that decided
+    /// **It is 1.93 m, the tallest of the ten ambassadors, and that decided
     /// something.** The finding from the walk on 20 September is that whatever
     /// place an area's first arrival takes has to be one the area's own
-    /// ambassador can stand in. Here it is the one plant of the ten that would
-    /// read as a crown rather than an understorey, and an opening place with a
+    /// ambassador can stand in. Here it is a plant that would read as a crown
+    /// rather than an understorey — one of three of the ten since the re-roll
+    /// of 28 September 2026; before it this seed grew *Cyninora contorta*, a
+    /// thistle of 1.33 m, and it was the only one — and an opening place with a
     /// rank on it would have put the Orchard's ambassador at the back of a guild
     /// with a tree between it and the visitor. The middle guild taking any plant
     /// at all is what makes that a non-question — and it is a property of a

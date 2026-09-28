@@ -24,8 +24,12 @@ public struct PlantBuilder {
 
     public func mesh(growth: GrowthModel.State) -> PlantMesh {
         var builder = MeshBuilder()
-        // A cushion has no stem to build from: it is its own ground.
-        if genome.habit.cushion {
+        // A cushion has no stem to build from: it is its own ground. **Until
+        // its first leaves open it is a shoot like any seedling**, because that
+        // is what comes out of a seed, and the husk in the first hours stands
+        // at the foot of one; drawn as a cushion from the start it was nothing
+        // at all until the leaves began, and the stage framed an empty plot.
+        if genome.habit.cushion && growth.leafUnfurl > 0 {
             addCushion(&builder, growth: growth)
             return builder.build()
         }
@@ -408,8 +412,7 @@ public struct PlantBuilder {
         droop: Float,
         arch: Float = 0,
         pinnae: Int = 0,
-        maturity: Float,
-        detail: (rows: Int, columns: Int)? = nil
+        maturity: Float
     ) {
         guard length > 0.001 else { return }
         let foliage = genome.foliage
@@ -438,9 +441,9 @@ public struct PlantBuilder {
         let teeth = pinnae > 0 ? pinnae : genome.foliage.teeth
         // Three rows to a leaflet, or the cuts alias into a ragged edge. A
         // strap is long and arches the whole way, so it takes more rows to
-        // bend smoothly. A cushion's leaves are too small to show any.
-        let rows = detail?.rows ?? (strap ? 26 : pinnae > 0 ? 3 * pinnae + 4 : 19)
-        let columns = detail?.columns ?? 9
+        // bend smoothly.
+        let rows = strap ? 26 : pinnae > 0 ? 3 * pinnae + 4 : 19
+        let columns = 9
 
         let veinCount = Float(genome.foliage.veinCount)
         let veinDepth = Float(genome.foliage.veinDepth) * smooth
@@ -563,7 +566,13 @@ public struct PlantBuilder {
     /// from, so this cannot report one placement and the geometry use another.
     /// A second walk written to be read by a test would be a third
     /// implementation of the thing that has already drifted three times.
+    ///
+    /// **Except a cushion with leaves, which reports none**, because it draws
+    /// none from the walk: its flowers are `addCushionFlower`'s, one to nearly
+    /// every other rosette, and have no stem to be placed along. Reported
+    /// from the shoot, they were a crown flower no cushion ever draws.
     func bloomPlacementsForTesting(growth: GrowthModel.State) -> [BloomPlacement] {
+        if genome.habit.cushion && growth.leafUnfurl > 0 { return [] }
         let skeleton = SkeletonBuilder.stem(genome: genome, heightScale: Float(growth.heightScale))
         var placements: [BloomPlacement] = []
         forEachBloom(skeleton: skeleton, growth: growth) { placement, _ in
@@ -619,6 +628,11 @@ public struct PlantBuilder {
     /// night-opener to a third at midday, and a third of a flush trough is a
     /// plant that appears to be doing nothing at all.
 
+    /// A flower `lag` behind the plant's own cycle, and never past `ceiling`.
+    private static func lagged(_ value: Double, lag: Double, ceiling: Double) -> Double {
+        min(ceiling, max(0, value - lag) / max(0.01, 1 - lag))
+    }
+
     private static func flushFactor(position: Double, growth: GrowthModel.State) -> Double {
         guard growth.flushDepth > 0 else { return 1 }
         let phase = growth.flush - position
@@ -642,13 +656,25 @@ public struct PlantBuilder {
         guard genome.bloom.present, growth.budSwell > 0.02 else { return }
 
         let bloomScale = Float(genome.branching.bloomScale)
+        let fromBelow = genome.bloom.opensFromBelow
         // The crown leads the cycle, so its position in the wave is zero.
-        let crown = Self.flushed(growth, position: 0)
+        var crown = Self.flushed(growth, position: 0)
+        var crownScale = bloomScale
+        if fromBelow {
+            // **A spike that flowers upward ends in its youngest bud**: it
+            // swells last, opens least and is the smallest thing on the spike.
+            // Floored at a bud rather than nothing, because the tip of a raceme
+            // carries one from the day it begins.
+            let factor = Self.flushFactor(position: 0, growth: growth)
+            crown.budSwell = max(0.03, Self.lagged(growth.budSwell, lag: 0.4, ceiling: 0.5) * factor)
+            crown.bloomOpen = Self.lagged(growth.bloomOpen, lag: 0.4, ceiling: 0.5) * factor
+            crownScale = bloomScale * 0.4
+        }
         body(
             BloomPlacement(
                 kind: .crown, index: 0, t: Double(skeleton.apex.t),
                 budSwell: crown.budSwell, bloomOpen: crown.bloomOpen,
-                scale: Double(bloomScale)
+                scale: Double(crownScale)
             ),
             skeleton.apex
         )
@@ -689,24 +715,29 @@ public struct PlantBuilder {
             // keeps producing at its tip is never uniform — that is what an
             // indeterminate inflorescence is — so the lag has to survive
             // maturity, and `ceiling` is what makes it.
-            let lag = Double(1 - node.t) * 0.5
+            //
+            // **A spire runs the other way** (`Genome.Bloom.opensFromBelow`):
+            // the lowest flower leads, and the lag, the ceiling and the size
+            // are the same numbers mirrored along the flowering stretch.
+            let up = min(1, max(0, (Float(node.t) - 0.35) / 0.65))
+            let lag = fromBelow ? Double(up) * 0.325 : Double(1 - node.t) * 0.5
             // How far open this flower ever gets. The crown reaches full and
             // the lowest on the spike stay half-shut buds for good, which is
             // both what a spike looks like and what makes the smaller flowers
             // read as younger rather than merely scaled down.
-            let ceiling = 0.45 + 0.55 * Double(node.t)
+            let ceiling = fromBelow ? 1 - 0.36 * Double(up) : 0.45 + 0.55 * Double(node.t)
             // A flower's place in the wave is where it stands on the stem.
             let flush = Self.flushFactor(position: Double(node.t), growth: growth)
-            let budSwell = min(ceiling, max(0, growth.budSwell - lag) / max(0.01, 1 - lag)) * flush
-            let bloomOpen = min(ceiling, max(0, growth.bloomOpen - lag) / max(0.01, 1 - lag)) * flush
+            let budSwell = Self.lagged(growth.budSwell, lag: lag, ceiling: ceiling) * flush
+            let bloomOpen = Self.lagged(growth.bloomOpen, lag: lag, ceiling: ceiling) * flush
             guard budSwell > 0.02 else { continue }
             // Every lateral flower was drawn at exactly 0.62, which gave a
             // spire nine identical heads at even spacing — the single strongest
             // tell that a plant had been generated rather than grown. A real
-            // spike swells toward its crown and thins away below it.
+            // spike swells toward its crown and thins away below it; one that
+            // flowers upward is largest at its foot.
             var size = SplitMix64(seed: genome.seed, label: "bloom.size.\(offset)")
-            let up = min(1, max(0, (Float(node.t) - 0.35) / 0.65))
-            let scale = (0.4 + 0.34 * up) * Float(size.value(in: 0.88...1.12))
+            let scale = (fromBelow ? 0.74 - 0.34 * up : 0.4 + 0.34 * up) * Float(size.value(in: 0.88...1.12))
             // **On its stalk, not on the stem.** Until 27 September 2026 the
             // node's own sample was handed straight on, so the flower was
             // built coaxial with the stem and the stem ran up through it and
@@ -1260,10 +1291,11 @@ public struct PlantBuilder {
     /// rosettes are laid over it close enough to hide it, each a whorl of a
     /// few tiny fleshy leaves turned to face out of the dome where it sits.
     ///
-    /// **Laid from the crown down, and opened in that order.** The rosettes
+    /// **Laid from the crown down, and covered at every age.** The rosettes
     /// are placed on a spiral that starts at the top and winds out to the
-    /// ground, so the index is also the age: a young cushion is a small tuft
-    /// on top of its own dome, and it spreads outward rather than up.
+    /// ground, and the rim's are the oldest and darkest. They are not opened
+    /// in that order: a young cushion is a small dome, covered, which grows
+    /// out of the shoot it came from — see the size below.
     ///
     /// Its flowers sit in the rosettes themselves, stemless and facing out,
     /// nearly one rosette in two — which is how a moss campion or a cushion
@@ -1272,21 +1304,31 @@ public struct PlantBuilder {
         var shape = SplitMix64(seed: genome.seed, label: "cushion.shape")
         let full = min(0.32, max(0.1, 0.08 + 0.8 * Float(genome.habit.crownLength)))
         let flatten = Float(shape.value(in: 0.5...0.78))
-        let radius = full * Float(0.2 + 0.8 * growth.heightScale)
+        // **It grows out of the shoot it was**, over the first two-thirds of
+        // its leaves opening. Sized by the plant's height alone, it was a
+        // two-centimetre shoot one minute and a dome a fifth of a metre
+        // across the next, because by the time the first leaves open the
+        // height ramp is a quarter of the way up.
+        let emerging = Float(min(1, growth.leafUnfurl / 0.65))
+        let young = emerging * emerging * (3 - 2 * emerging)
+        let youth = 0.15 + 0.85 * young
+        let radius = full * Float(0.2 + 0.8 * growth.heightScale) * youth
         let height = radius * flatten
         // **The rosettes are sized to the dome, not to the leaf draw.** Sized
         // to the leaf, a large cushion carried a few hundred specks over a
         // bare dome and read as a striped melon. Each is a small pillow of its
         // own with a whorl of leaves round it, close enough to crowd its
         // neighbours, so what the eye gets is a knobbly surface.
-        let spacing = full * Float(shape.value(in: 0.085...0.11))
+        // Closer together while it is emerging, by as much as it is smaller,
+        // so a cushion the size of a thumbnail is covered as a grown one is
+        // rather than a bald dome with six rosettes on it.
+        let spacing = full * Float(shape.value(in: 0.085...0.11)) * youth
         let area = Float.pi * radius * radius * (1 + flatten * flatten)
         let count = max(6, min(320, Int(area / (spacing * spacing))))
         // **Covered at every age.** Opened from the top down, a young cushion
         // was a tuft on top of a bare dome. The dome grows instead, and the
         // rosettes cover whatever size it has reached, their leaves filling
         // out as the plant's do.
-        guard growth.leafUnfurl > 0 else { return }
         let filling = Float(0.35 + 0.65 * growth.leafUnfurl)
 
         // The cushion's body, under its rosettes: old growth, drawn in the
@@ -1327,24 +1369,18 @@ public struct PlantBuilder {
                 role: .leaf, centre: position + facing * (size * 0.12), axis: facing, side: side,
                 radius: size * 0.72, flatten: 0.55, rows: 3, columns: 6, maturity: maturity
             )
-            let leaves = 7 + index % 3
-            for blade in 0..<leaves {
-                let turn = Float(blade) * 2 * .pi / Float(leaves) + Float(jitter.value(in: -0.25...0.25))
-                addBlade(
-                    &builder,
-                    origin: position + facing * (size * 0.12),
-                    axis: facing,
-                    radial: simd_normalize(side * cos(turn) + other * sin(turn)),
-                    length: size * 0.7,
-                    // Cupped: a rosette standing a little proud of its
-                    // pillow, not a star lying flat on it.
-                    pitch: Float(jitter.value(in: 0.7...1.0)),
-                    droop: 0,
-                    arch: -0.3,
-                    maturity: maturity,
-                    detail: (rows: 4, columns: 3)
-                )
-            }
+            addCushionRosette(
+                &builder,
+                origin: position + facing * (size * 0.12),
+                facing: facing, side: side, other: other,
+                leaves: 7 + index % 3,
+                length: size * 0.7,
+                // Cupped: a rosette standing a little proud of its pillow,
+                // not a star lying flat on it.
+                pitch: Float(jitter.value(in: 0.7...1.0)),
+                turn: Float(jitter.value(in: -0.25...0.25)),
+                maturity: maturity
+            )
 
             guard genome.bloom.present, growth.budSwell > 0.02,
                   jitter.value(in: 0...1) < 0.45 else { continue }
@@ -1356,6 +1392,42 @@ public struct PlantBuilder {
                 length: size * Float(jitter.value(in: 0.6...0.78)),
                 growth: flower
             )
+        }
+    }
+
+    /// **A cushion's rosette: its whorl of leaves as one cupped star.**
+    ///
+    /// It was seven to nine blades, each a thick leaf of its own with a top,
+    /// an underside and an edge, and three hundred rosettes of them came to
+    /// eighty thousand vertices, four ordinary plants. A leaf here is a
+    /// centimetre long and pressed against its neighbours, so what the eye
+    /// reads is the whorl's outline — the points of the leaves and the notches
+    /// between them — and one surface gives that at a fraction of the cost.
+    /// The points and notches fall where the blades' did, cupped at the same
+    /// pitch and rising at the tips by the same arch.
+    private func addCushionRosette(
+        _ builder: inout MeshBuilder,
+        origin: SIMD3<Float>,
+        facing: SIMD3<Float>,
+        side: SIMD3<Float>,
+        other: SIMD3<Float>,
+        leaves: Int,
+        length: Float,
+        pitch: Float,
+        turn: Float,
+        maturity: Float
+    ) {
+        // Two columns to a leaf, its point and the notch after it, and one
+        // more to close the ring.
+        builder.addSurface(role: .leaf, rows: 3, columns: 2 * leaves + 1, maturity: maturity) { u, v in
+            let around = u * 2 * .pi + turn
+            let point = 0.5 + 0.5 * cos(Float(leaves) * (around - turn))
+            let reach = length * (0.12 + 0.88 * v) * (0.45 + 0.55 * point)
+            // The tips rise toward the rosette's own axis, as the blades'
+            // arch of -0.3 made them.
+            let lean = pitch - 0.3 * v
+            let radial = side * cos(around) + other * sin(around)
+            return origin + (facing * cos(lean) + radial * sin(lean)) * reach
         }
     }
 

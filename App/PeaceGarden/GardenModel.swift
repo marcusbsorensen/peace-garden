@@ -1,10 +1,6 @@
 import Foundation
 import Observation
-#if DEBUG
-@_spi(Prototype) import SeedCore
-#else
 import SeedCore
-#endif
 
 /// Everything the app knows: the person's seed, the plants they have kept, and
 /// what time it is for the purpose of growing.
@@ -178,18 +174,6 @@ final class GardenModel {
 
     func growth(for genome: Genome, birth: Date) -> GrowthModel.State {
         GrowthModel(genome: genome).state(birth: birth, now: now)
-    }
-
-    /// The own plant as the stage draws it: its genome, or in a debug build a
-    /// shape not yet in the garden grown from the same seed. See
-    /// `Developer.prototype`.
-    func stageGenome(for identity: Identity) -> Genome {
-#if DEBUG
-        if let prototype = Developer.shared.prototype {
-            return Genome(seed: identity.seed, prototype: prototype)
-        }
-#endif
-        return identity.genome
     }
 
     func ownPlantGrowth() -> GrowthModel.State? {

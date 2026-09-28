@@ -604,7 +604,7 @@ const SLICE = 16;
 const breathe = () => new Promise((resume) => setTimeout(resume, 0));
 
 // Grows one plot from the plot service, every plant young. A planting with no
-// parents was minted rather than crossed — the ambassador in the first frame —
+// parents was minted rather than crossed — the ambassador, a lily in the tank —
 // and grows from its seed alone.
 export async function growFrameFromService(e, stage, plot, report) {
   stage.clear();

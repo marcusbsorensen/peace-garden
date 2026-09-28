@@ -151,12 +151,12 @@ final class ColdFrameStore
             }
             $all = $this->db->prepare('SELECT * FROM cold_frame ORDER BY arrival');
             $all->execute();
-            // The ambassador first, then the arrivals: it stands in the front
-            // rank of the first frame whether or not anything else is here, and
-            // **it is what claimed that frame for its colour**. A reading that
-            // left it out would hand the first frame to whoever arrived next,
-            // and every plant of the ambassador's colour would then stand in a
-            // frame of their own beside it.
+            // The ambassador first, then the arrivals: it stands at the west
+            // end of the tank's first row whether or not anything else is here,
+            // **and it holds that place**. A reading that left it out would hand
+            // the place to the next plant that wants water, and two would be
+            // drawn floating in one. (Until the tank was sunk on 27 September it
+            // stood in the first frame and claimed it for its colour.)
             $ways = array_merge(
                 [Ambassadors::planting('waiting')],
                 array_map([self::class, 'forRule'], $all->fetchAll())
@@ -182,9 +182,9 @@ final class ColdFrameStore
     /**
      * A plot's plantings, in the order they arrived. Hidden ones are not in it.
      *
-     * Plot 0 opens with the ambassador at the west end of the first frame's
-     * front rank, across its first two places since it is a lotus, which is
-     * not a row. It carries no parents and no meeting,
+     * Plot 0 opens with the ambassador at the west end of the tank's first
+     * row, one place, since it is a lotus and a lotus is in the water — which
+     * is not a row. It carries no parents and no meeting,
      * because it was minted rather than crossed, and an empty `parents` is how
      * the wire says so.
      */

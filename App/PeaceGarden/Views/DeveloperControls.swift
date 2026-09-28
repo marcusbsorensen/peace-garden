@@ -155,17 +155,6 @@ final class Developer {
     let mintWords: String? = UserDefaults.standard.string(forKey: "pgMint")
         .flatMap { $0.isEmpty ? nil : $0 }
 
-    /// A shape not yet in the garden, grown from the own seed on the stage:
-    ///
-    ///     xcrun simctl launch <device> app.peacegarden -pgPrototype reed -pgStage blooming
-    ///
-    /// Any of `ArchetypeProfile.Prototype`'s names. Only the stage draws it;
-    /// the garden, the seed and everything sent to anyone are the plant as it
-    /// is. It is how a new family is looked at in the app's own light before
-    /// it becomes one — see `Genome.init(seed:prototype:)`.
-    let prototype: ArchetypeProfile.Prototype? = UserDefaults.standard.string(forKey: "pgPrototype")
-        .flatMap(ArchetypeProfile.Prototype.init(rawValue:))
-
     /// Shifts the clock so a plant born at `birth` is halfway through `stage`,
     /// on the hour it opens widest when that hour falls inside the stage.
     ///

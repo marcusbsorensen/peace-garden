@@ -48,8 +48,9 @@ import SeedCore
 // service sends the stage beside the spot, so the page asks the module for the
 // plant at that stage and never works one out from a date.
 //
-// Opened rather than empty: it starts with the renewal ambassador in the front
-// row of the first coupe, the way the real one does.
+// Opened rather than empty: it starts with the renewal ambassador on the first
+// coupe's middle stool (a fern since 28 September 2026), the way the real one
+// does.
 
 nonisolated(unsafe) private var coppiceWays = Coppice.Ways.opened()
 nonisolated(unsafe) private var grownInCoppice: [String: Genome] = {
@@ -220,8 +221,9 @@ public func pgCoppiceFootprint(_ seed: UInt32) -> Int32 {
     return Int32(out.count)
 }
 
-/// `pg_grow` at a stage: a minted plant — the ambassador, which is a star and
-/// so always at its best — for the page drawing what the service holds.
+/// `pg_grow` at a stage: a minted plant — the ambassador, a fern on a stool
+/// since 28 September 2026 and so drawn at its coupe's stage — for the page
+/// drawing what the service holds.
 @_expose(wasm, "pg_grow_coppiced")
 @_cdecl("pg_grow_coppiced")
 public func pgGrowCoppiced(_ text: UnsafePointer<UInt8>, _ length: Int32, _ stage: Int32) -> Int32 {

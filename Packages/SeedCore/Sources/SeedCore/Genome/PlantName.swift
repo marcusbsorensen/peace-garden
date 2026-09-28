@@ -33,10 +33,19 @@ public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
     public var full: String { "\(genus) \(epithet)" }
     public var description: String { full }
 
-    /// **Frozen.** `GeneSource.pick` indexes by `unit(label) * count`, so
-    /// adding one syllable here renames every plant on every phone — a
-    /// twenty-fifth head would shift the boundaries between all twenty-four.
-    /// The list is the file format as surely as the trait labels are.
+    /// **Every root a flower can be named from**, in alphabetical order.
+    ///
+    /// **It was frozen, and is not any more — the one sentence here that
+    /// stopped being true.** While the genus was `source.pick("name.genusHead",
+    /// …)`, which indexes by `unit(label) * count`, a twenty-fifth syllable
+    /// would have shifted the boundaries between all twenty-four and renamed
+    /// every plant on every phone. Since the head has been read off the flower
+    /// (`roots`, below) nothing draws from this list by position: it is what a
+    /// hand-written name is parsed against and what the areas are checked to
+    /// cover. So the four roots of the reed and the cushion, added on 28
+    /// September 2026, went in where the alphabet puts them. What renamed
+    /// three plants in four that day was the new *families*, not the new roots
+    /// — `form.archetype` is still sliced by position.
     ///
     /// Each head carries a sense, and `Quotes.Theme` reads it. That mapping
     /// had to be made to fit these twenty-four rather than the other way
@@ -71,9 +80,9 @@ public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
     /// independent on purpose — a head carries a theme, a family carries a
     /// flower, and no family takes both its roots from one theme.
     public static let genusHeads = [
-        "Ael", "Aur", "Bel", "Cal", "Cer", "Cyn", "Dros", "El", "Fen", "Hal",
-        "Ith", "Lir", "Mel", "Nyx", "Ol", "Pell", "Quin", "Ros", "Sel", "Thal",
-        "Umbr", "Ver", "Vin", "Zeph"
+        "Ael", "Aur", "Bel", "Cal", "Cer", "Cyn", "Don", "Dros", "El", "Fen",
+        "Hal", "Ith", "Lir", "Mel", "Nyx", "Ol", "Or", "Pell", "Quin", "Ros",
+        "Sel", "Syr", "Thal", "Tyl", "Umbr", "Ver", "Vin", "Zeph"
     ]
 
     /// Which root a flower is named from: a family, and a merosity.
@@ -89,7 +98,7 @@ public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
     /// runs: **you name what you observe.** Same root means same floral plan
     /// and same petal count, which is what makes a key possible.
     ///
-    /// Twelve families, two roots each, twenty-four roots — the frozen list
+    /// Fourteen families, two roots each, twenty-eight roots — `genusHeads`
     /// exactly, used once each. `RootTableTests` holds it to that.
     ///
     /// **No family takes both its roots from one theme.** Themes are what the
@@ -99,7 +108,7 @@ public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
     /// `Quotes.Theme` is untouched by any of this and did not move.
     ///
     /// The pairings are judgements about resemblance rather than derivations,
-    /// and the reasoning for each is in `docs/TAXONOMY.md` §"The twelve
+    /// and the reasoning for each is in `docs/TAXONOMY.md` §"The fourteen
     /// families" — *Cynara* is the artichoke, which is a thistle; the olive
     /// flowers in a small panicle on narrow leaves, which is a plume.
     ///
@@ -132,6 +141,12 @@ public struct PlantName: Equatable, Codable, Sendable, CustomStringConvertible {
         .poppy:     (few: "Bel",  many: "Aur"),
         .succulent: (few: "Pell", many: "Thal"),
         .plume:     (few: "Ol",   many: "Zeph"),
+        // 28 September 2026. The few-merous root names the family, as every
+        // other one does: Donaceae, Tylaceae. Gk *donax*, the reed, and
+        // *syrinx*, the reed pipe; Gk *tylē*, a cushion, and *oros*, a
+        // mountain, which is where a cushion grows.
+        .reed:      (few: "Don",  many: "Syr"),
+        .cushion:   (few: "Tyl",  many: "Or"),
     ]
 
     /// The root a plant of this family and this merosity is named from.

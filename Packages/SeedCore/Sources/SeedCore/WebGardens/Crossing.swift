@@ -318,15 +318,18 @@ public enum Crossing {
 
     // MARK: The ambassador
 
-    /// **The plant on the first quarter's diagonal in the first plot.**
+    /// **The first plant in the first quarter of the first plot.**
     ///
-    /// *Melyrina latifolia* — `Ambassadors.of(.meeting)` — placed by this rule
-    /// into an empty Crossing, which puts it in the path rank because that is
-    /// what its height reads as, and in slot 0 because that is where a plot
-    /// starts. It stands looking straight down its quarter's diagonal at the
-    /// paving.
+    /// *Ithula obscura* — `Ambassadors.of(.meeting)` since the re-roll of 28
+    /// September 2026 — placed by this rule into an empty Crossing, which puts
+    /// it in the middle rank because that is what its height, 1.20 m, reads
+    /// as, and in slot 3 because that is where a quarter's middle rank starts:
+    /// behind slot 1, along the path edge. The diagonal in front of it waits
+    /// for the first arrival short enough for the path rank.
     ///
-    /// **It is 0.61 m, and the template was written knowing that.** The finding
+    /// *Melyrina latifolia*, its ambassador until then, was a path-rank plant
+    /// and stood in slot 0, looking straight down its quarter's diagonal at the
+    /// paving. **It was 0.61 m, and the template was written knowing that.** The finding
     /// from the walk on 20 September is that whatever slot an area's first
     /// arrival takes has to be one the area's own ambassador can stand in, and
     /// nine of the ten ambassadors are short. A centre holding a specimen would

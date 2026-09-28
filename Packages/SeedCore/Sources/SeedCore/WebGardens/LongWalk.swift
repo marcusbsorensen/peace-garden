@@ -417,7 +417,7 @@ public enum LongWalk {
 
     /// **The plant standing where the walk begins.**
     ///
-    /// *Halula crassicaulis* — `Ambassadors.of(.travel)`, sown a month before
+    /// *Zephea pallida* — `Ambassadors.of(.travel)`, sown a month before
     /// the garden opened — placed by this rule into an empty walk, which is the
     /// whole of what makes it the specimen. `docs/WEB-GARDENS.md` asks which
     /// slot of a template an ambassador stands in; for this area the answer is
@@ -426,11 +426,13 @@ public enum LongWalk {
     /// plots open end to end for as long as people go on meeting — so what it
     /// has instead is a head, and the oldest plant in the area stands at it.
     ///
-    /// **It takes its own tier, like anything else.** *Halula* is 1.02 m, which
-    /// is the middle of a border rather than the back of one, and only one of
-    /// the ten ambassadors is a back-tier plant at all. A specimen slot fixed at
-    /// the back of a border would have stood a short plant behind taller ones in
-    /// nine areas out of ten, which is the one rule the walk is built on.
+    /// **It takes its own tier, like anything else.** *Zephea* is 0.52 m, which
+    /// is the edge of a border rather than the back of one, and three of the
+    /// ten ambassadors are back-tier plants. A specimen slot fixed at the back
+    /// of a border would have stood a short plant behind taller ones in seven
+    /// areas out of ten, which is the one rule the walk is built on. (Until
+    /// the re-roll of 28 September 2026 it was *Halula crassicaulis*, 1.02 m,
+    /// in the middle tier, and one of the ten was a back-tier plant.)
     ///
     /// **It is not a row anywhere.** A slot and a nudge are both pure functions
     /// of the seed, and the seed is pinned, so asking for the placement again

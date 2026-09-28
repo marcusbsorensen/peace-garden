@@ -20,8 +20,8 @@ import SeedCore
 //   pg_room_describe(p)   a plot's plantings as JSON: slot and traits, for
 //                         judging how the rule fills a room
 //
-// Opened rather than empty: the room starts with Olyne paniculata beside the
-// bench, the way the real one does.
+// Opened rather than empty: the room starts with its ambassador (Bela caerulea
+// since 28 September 2026) beside the bench, the way the real one does.
 
 nonisolated(unsafe) private var room = QuietGarden.Room.opened()
 nonisolated(unsafe) private var grown: [String: Genome] = {

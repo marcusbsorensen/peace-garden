@@ -155,6 +155,17 @@ public struct Genome: Equatable, Sendable {
         public var sepalCount: Int
         public var hasPistil: Bool
         public var atNodes: Bool
+        /// **The flowers up the stem open from the lowest**, which is largest
+        /// and fullest, and the tip carries the youngest bud: a raceme as a
+        /// foxglove's or a lupin's is, flowering upward. The spire's alone.
+        ///
+        /// Every spike opened from the crown down until 28 September 2026,
+        /// the crown largest and first and the lowest flowers half-shut buds
+        /// for good. That is a bellflower's order, which is determinate and
+        /// is right for it; a spire was drawn as one. Marcus chose the flip
+        /// for the same re-roll as the reed and the cushion, because it
+        /// moves the size of every flower on a spire and so its height.
+        public var opensFromBelow: Bool
         public var present: Bool
         /// What holds the flower from beneath. The family's.
         public var calyx: Calyx
@@ -258,43 +269,22 @@ public struct Genome: Equatable, Sendable {
     // MARK: - Derivation
 
     public init(seed: SeedID, lineage: Lineage = .minted) {
-        self.init(seed: seed, lineage: lineage, source: Self.source(seed: seed, lineage: lineage))
-    }
-
-    /// **A seed grown to a shape that is not one of the archetypes yet**, for
-    /// looking at before it becomes one. See `ArchetypeProfile.Prototype`.
-    ///
-    /// Behind an SPI so that nothing shipping can reach it: the seed decides
-    /// every trait as it always would, but the profile those traits are drawn
-    /// against is the prototype's, and the archetype recorded is the nearest
-    /// existing one so that a name can still be read. No plant anybody holds
-    /// is grown this way, and nothing about how the others are grown moves.
-    @_spi(Prototype)
-    public init(seed: SeedID, prototype: ArchetypeProfile.Prototype) {
-        self.init(
-            seed: seed, lineage: .minted, source: Self.source(seed: seed, lineage: .minted),
-            prototype: prototype
-        )
-    }
-
-    private static func source(seed: SeedID, lineage: Lineage) -> GeneSource {
+        let source: GeneSource
         switch lineage {
         case .minted:
-            return .primary(seed)
+            source = .primary(seed)
         case let .crossed(parentA, parentB, _):
-            return .hybrid(child: seed, parentA: parentA, parentB: parentB)
+            source = .hybrid(child: seed, parentA: parentA, parentB: parentB)
         }
+        self.init(seed: seed, lineage: lineage, source: source)
     }
 
-    private init(
-        seed: SeedID, lineage: Lineage, source: GeneSource,
-        prototype: ArchetypeProfile.Prototype? = nil
-    ) {
+    private init(seed: SeedID, lineage: Lineage, source: GeneSource) {
         self.seed = seed
         self.lineage = lineage
 
-        let archetype = prototype?.nearest ?? source.pick("form.archetype", from: Archetype.allCases)
-        let profile = prototype.map(ArchetypeProfile.profile(for:)) ?? ArchetypeProfile.profile(for: archetype)
+        let archetype = source.pick("form.archetype", from: Archetype.allCases)
+        let profile = ArchetypeProfile.profile(for: archetype)
 
         // The two floral facts the name is read from. Everything below is the
         // plant; these two are also its classification.
@@ -514,6 +504,7 @@ public struct Genome: Equatable, Sendable {
                 : 0,
             hasPistil: source.chance("bloom.hasPistil", 0.75),
             atNodes: profile.bloomsAtNodes,
+            opensFromBelow: profile.bloomsAtNodes && profile.opensFromBelow,
             present: flowers,
             calyx: profile.calyx,
             sepals: profile.sepals,
