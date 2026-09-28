@@ -22,12 +22,21 @@
 
 import { decode, takeResult } from './plant.js';
 import { COLOUR, RIM_DEPTH, SIDE, readOutline, readStructure, rimReach } from './longwalk.js';
+import { floorAround, rimOf, sinkPool } from './water.js';
 
 // Seeds for this area's dressing, so a plot is the same shape on every visit.
 // Its own, not the walk's, the room's or the crossing's: four areas drawing from
 // one seed would be four plots with the same wandering edge, which is the sort
 // of thing an eye catches without being able to say why.
-const GROVE = { ground: 6301, floor: 29, rough: 83, mow: 97, tree: 1103 };
+const GROVE = { ground: 6301, floor: 29, rough: 83, mow: 97, tree: 1103, pond: 1117 };
+
+// **A dipping pond in the meadow**, in the pocket on the near side between
+// the middle tree and the two in front of it: the one stretch of ground under
+// the canopy that no guild and no mown disc reaches. The Orchard is one step
+// up from the foot of the garden, where water still lies open, so it is dug
+// and not built. 0.70 m of water and its 0.10 m of wet earth come to within a
+// few centimetres of the nearest discs, which wander by a tenth.
+const POND = { at: [0, 1.72], across: 0.70 };
 
 export function plan(e) {
   return JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_orchard_plan())));
@@ -52,10 +61,10 @@ export function makeOrchardGround(place, trunks) {
 
     const outline = readOutline(e, SIDE, SIDE, GROVE.ground);
     const n = outline.length;
-    for (let i = 0; i < n; i++) {
-      const a = outline[i], b = outline[(i + 1) % n];
-      tri([0, 0, 0], [a[0], 0, a[1]], [b[0], 0, b[1]], UP, COLOUR.turf);
-    }
+    // Walked out from the pond's rim rather than fanned from the middle, so
+    // the pond has a hole to lie in. See `floorAround`.
+    const pond = { at: POND.at, across: POND.across, seed: GROVE.pond, round: true };
+    const { inside: inPond } = rimOf(e, pond);
 
     // **Meadow grass, mottled.** The Crossing's arithmetic exactly, because it
     // is the same long grass: quads carrying a tone at each corner
@@ -76,11 +85,16 @@ export function makeOrchardGround(place, trunks) {
     const rough = (x, z) => COLOUR.turf.map((v) => v * 0.87 * (1
       + 0.15 * (e.pg_verge(x * 1.31, -1, GROVE.rough) / 0.14)
       + 0.12 * (e.pg_verge(z * 1.07, 1, GROVE.rough) / 0.14)));
+    // The floor under the meadow is walked out from the pond, and is the
+    // meadow's own mottle rather than plain turf: a cell with a corner in the
+    // pond is left out, and what shows in its place has to be the same grass.
+    floorAround(e, { quad }, outline, pond, rough);
     const inward = (p, k) => [p[0] * (k / rings), p[1] * (k / rings)];
     for (let i = 0; i < n; i++) {
       const a = outline[i], b = outline[(i + 1) % n];
       for (let k = 0; k < rings; k++) {
         const [a0, a1, b0, b1] = [inward(a, k), inward(a, k + 1), inward(b, k), inward(b, k + 1)];
+        if ([a0, a1, b0, b1].some((p) => inPond(p[0], p[1]))) continue;
         quad([a0[0], 0.003, a0[1]], [a1[0], 0.003, a1[1]], [b1[0], 0.003, b1[1]], [b0[0], 0.003, b0[1]], UP,
              rough(...a0), rough(...a1), rough(...b1), rough(...b0));
       }
@@ -138,6 +152,9 @@ export function makeOrchardGround(place, trunks) {
             [rim[a + 1][0], 0.006, rim[a + 1][1]], UP, cut);
       }
     }
+
+    // The pond, after the meadow and the discs, so its rim lies over them.
+    sinkPool(e, { tri, quad }, pond);
 
     // **The five trees.** Each is `Organic.tree` through the module, standing on
     // the trunk the rule gives. They vary — a quincunx of five identical trees

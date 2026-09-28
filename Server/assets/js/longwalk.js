@@ -10,6 +10,7 @@
 import { ROLES, YOUNG, decode, takeResult, link, attribute, multiply } from './plant.js';
 import { castShadow } from './shadow.js';
 import { areasBeside } from './beside.js';
+import { raiseRill } from './water.js';
 
 export const SIDE = 5.2;    // LongWalk.plotSide, and QuietGarden.plotSide
 const PATH_HALF = 0.6;      // LongWalk.pathHalfWidth
@@ -1208,7 +1209,7 @@ const SLICE = 16;
 // MARK: - The ground
 
 // Seeds for the walk's dressing, so it is the same shape on every visit.
-export const SEED = { ground: 2026, verge: 7, floor: 5, hedge: { '-1': 31, '1': 32 } };
+export const SEED = { ground: 2026, verge: 7, floor: 5, hedge: { '-1': 31, '1': 32 }, rill: 1621 };
 
 // No straight line anywhere in the garden: the ground's outline, its sides,
 // the path's verges and the hedges all come from SeedCore's `Organic`, the
@@ -1271,6 +1272,18 @@ function buildGround(farSide, span, e) {
            [b1[s + 1], 0.005, zb(b1[s + 1])], [b1[s], 0.005, zb(b1[s])], [0, 1, 0], c);
     });
   }
+
+  // **A rill down the middle of the path.** The Long Walk is at the head of
+  // the garden, where water has come furthest, and it is led along the walk
+  // in stone rather than lying anywhere in it. It follows the middle of the
+  // path as the verges wander, and swings slowly across it as well: laid down
+  // the exact middle, even a wandering one, it drew a rule down the page. It
+  // stops short of both ends so the walk can be entered on the grass.
+  const middle = (z) => {
+    const b = across(z);
+    return (b[0] + b[3]) / 2 + 0.2 * wander(z * 0.45, 5, SEED.rill);
+  };
+  raiseRill(e, { tri, quad }, { centre: middle, from: start + 0.9, to: end - 0.9, seed: SEED.rill });
 
   // The hedges: one length each side, grown rather than built, the tall yew on
   // whichever side is further from the viewer. Each throws its shadow on the
