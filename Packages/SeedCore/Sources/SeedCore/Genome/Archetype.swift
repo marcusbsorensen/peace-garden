@@ -329,6 +329,87 @@ public struct ArchetypeProfile: Sendable {
     public var leafReach: Double = 0.55
     /// Where the stem's nodes sit, as fractions of its length.
     public var nodeZone: ClosedRange<Double> = 0.16...0.90
+    /// Strap leaves, crown and stem alike. See `Genome.Habit.strap`.
+    public var strap: Bool = false
+    /// A cushion of rosettes. See `Genome.Habit.cushion`.
+    public var cushion: Bool = false
+
+    /// **The two shapes decided on 27 September 2026 and not yet archetypes.**
+    ///
+    /// Marcus chose a reed and an alpine cushion as proper families, and one
+    /// re-roll of the garden to make room for them: adding a case to
+    /// `Archetype` re-slices `form.archetype`'s draw, which moves about three
+    /// plants in four. So they are drawn here first, as profiles a seed can be
+    /// grown against in a preview, where they can be looked at and changed
+    /// without that costing anything. When the shapes are settled each becomes
+    /// a case, its profile moves into `profile(for:)`, and the re-roll happens
+    /// once.
+    public enum Prototype: String, CaseIterable, Sendable {
+        /// Tall and slender, a clump of arching straps at its foot and more up
+        /// the culm, and a feathery panicle at the top: a reed.
+        case reed
+        /// A low dome of tiny rosettes, starred with small flowers: an alpine
+        /// cushion.
+        case cushion
+
+        /// The existing family a prototype's name is read from until it has
+        /// roots of its own. The plume carries a panicle and the succulent
+        /// carries rosettes, which are the nearest things each has.
+        public var nearest: Archetype {
+            switch self {
+            case .reed: return .plume
+            case .cushion: return .succulent
+            }
+        }
+    }
+
+    public static func profile(for prototype: Prototype) -> ArchetypeProfile {
+        var profile = ArchetypeProfile()
+        switch prototype {
+        case .reed:
+            // Three-parted, as rushes and reeds are, and six in the many.
+            profile.petals = (3, 6)
+            profile.strap = true
+            // **The leaves are a clump at the foot and the culm is bare**, as a
+            // sedge's, a rush's and a reedmace's are. Carried up the culm as
+            // well, they made it a grass stem drawn at the wrong size.
+            profile.rosette = true
+            profile.crownLeaves = 10...16
+            profile.crownLengthScale = 1.1
+            profile.crownPitch = 0.1...0.35
+            profile.crownTaper = 0.3
+            profile.crownRise = 0.6
+            profile.leafLengthScale = 2.4
+            // At 0.2 the widest straps were a bromeliad's.
+            profile.leafWidthScale = 0.1
+            profile.leafDroop = 1.1
+            // **The plume is florets on short stalks up the top of the culm**,
+            // many and small: the spire's node flowers and their pedicels,
+            // packed into the last quarter and cut down to chaff.
+            profile.bloomsAtNodes = true
+            profile.nodeScale = 2.2
+            profile.nodeZone = 0.74...0.98
+            profile.petalLengthScale = 0.28
+            profile.petalWidthScale = 0.5
+            profile.heightScale = 1.45
+            profile.stemThickness = 0.6
+            profile.swayScale = 1.5
+        case .cushion:
+            profile.petals = (5, 8)
+            profile.cushion = true
+            // No stalk and no stem leaves: every leaf is in the cushion.
+            profile.rosette = true
+            profile.crownLeaves = 0...0
+            profile.fleshiness = 0.6
+            profile.heightScale = 0.2
+            profile.leafLengthScale = 1.0
+            profile.leafWidthScale = 0.7
+            profile.leafDroop = 0.2
+            profile.petalLengthScale = 0.4
+            profile.sepals = .none
+        }
+        return profile
+    }
 
     public static func profile(for archetype: Archetype) -> ArchetypeProfile {
         var profile = ArchetypeProfile()

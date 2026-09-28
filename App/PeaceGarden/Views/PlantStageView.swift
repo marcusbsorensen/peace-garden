@@ -70,13 +70,14 @@ struct PlantStageView: View {
     var body: some View {
         ZStack {
             if let identity = model.identity {
-                let growth = model.growth(for: identity.genome, birth: identity.birth)
+                let genome = model.stageGenome(for: identity)
+                let growth = model.growth(for: genome, birth: identity.birth)
 
-                StageBackdrop(palette: identity.genome.palette, presence: growth.heightScale)
+                StageBackdrop(palette: genome.palette, presence: growth.heightScale)
                     .ignoresSafeArea()
 
                 PlantSceneView(
-                    genome: identity.genome,
+                    genome: genome,
                     growth: growth,
                     autoRotates: turntable,
                     style: plantStyle,
