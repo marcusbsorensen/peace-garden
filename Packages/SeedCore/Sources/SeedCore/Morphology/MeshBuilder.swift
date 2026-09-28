@@ -176,7 +176,15 @@ public struct MeshBuilder {
         indices: [UInt32]
     ) {
         guard !positions.isEmpty, !indices.isEmpty else { return }
-        var part = parts[role] ?? PlantMesh.Part(
+        // **Taken out of the table, not copied out of it.** Read with
+        // `parts[role]`, the table went on holding the same arrays, so none of
+        // them was uniquely referenced and every append below copied the
+        // whole part before adding to it: quadratic in the part's size. It
+        // cost nothing anybody noticed until the cushion, which appends three
+        // thousand small pieces to one part and spent 0.16 s of its 0.16 s
+        // copying. Removed first, the arrays are this function's alone and
+        // grow in place.
+        var part = parts.removeValue(forKey: role) ?? PlantMesh.Part(
             role: role, positions: [], normals: [], uvs: [], maturity: [], indices: []
         )
         let offset = UInt32(part.positions.count)
