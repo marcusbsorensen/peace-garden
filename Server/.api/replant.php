@@ -75,7 +75,11 @@ const FORMAT = 'peace-garden-replant/1';
 const AREAS = [
     'long_walk' => ['area' => 'travel', 'rule' => 'LongWalk', 'extra' => [],
                     'slot' => ['side' => 'side', 'tier' => 'tier', 'index' => 'slot_index']],
-    'quiet_garden' => ['area' => 'peace', 'rule' => 'QuietGarden', 'extra' => [],
+    // The habit since 27 September 2026, when the pool was dug: a plant that
+    // wants water goes in it, and without the habit the replay could not know
+    // which. Found by the rehearsal on 28 September, the first garden whose
+    // replay put a lily in the Quiet Garden.
+    'quiet_garden' => ['area' => 'peace', 'rule' => 'QuietGarden', 'extra' => ['habit'],
                        'slot' => ['corner' => 'corner', 'index' => 'slot_index']],
     'crossing' => ['area' => 'meeting', 'rule' => 'Crossing', 'extra' => [],
                    'slot' => ['quarter' => 'quarter', 'index' => 'slot_index']],

@@ -96,19 +96,19 @@ final class PortVectorTests: XCTestCase {
 
     // MARK: - The plants
 
-    /// A seed for each of the twelve families, found by walking a fixed series.
+    /// A seed for each of the fourteen families, found by walking a fixed series.
     ///
     /// **Searched rather than listed**, because a hand-picked seed is a seed
     /// somebody chose and would have to choose again. The series is
     /// `peace-garden-port-vector-0`, `-1`, and so on; the first seed to land on
     /// a family not yet held is kept. Anybody can rerun it and get the same
-    /// twelve, and the index that found each one is written into the file, so a
+    /// fourteen, and the index that found each one is written into the file, so a
     /// reader can check the claim without running anything.
     ///
-    /// All twelve families, because the archetype is the one trait that swings
+    /// All fourteen families, because the archetype is the one trait that swings
     /// every other: it sets the inflorescence, whether flowers open at the
-    /// nodes, and eleven multipliers. Eleven families would leave a twelfth of
-    /// the profile table untested, and `ArchetypeProfile` is exactly the kind of
+    /// nodes, and eleven multipliers. Thirteen families would leave a
+    /// fourteenth of the profile table untested, and `ArchetypeProfile` is exactly the kind of
     /// table that gets edited in one place.
     ///
     /// Then `chosenSeeds` — three plants picked for a reason rather than found
@@ -124,7 +124,7 @@ final class PortVectorTests: XCTestCase {
             }
             index += 1
             // A guard rather than a `while true`: if the archetype draw ever
-            // stopped covering all twelve, this would otherwise hang a CI job
+            // stopped covering all fourteen, this would otherwise hang a CI job
             // rather than say what was wrong.
             if index > 5_000 {
                 fatalError("no seed found for \(Set(Archetype.allCases).subtracting(found.keys))")
@@ -142,13 +142,13 @@ final class PortVectorTests: XCTestCase {
     /// Three plants that are here on purpose rather than by the search.
     ///
     /// **A sample can only be green about what it happens to contain.** The
-    /// twelve above are a fair draw across the families and they were, for
+    /// fourteen above are a fair draw across the families and they were, for
     /// months, quietly green on a live fault: `stem.nodeCount` is
     /// `(integer(2...9) * nodeScale).rounded()`, Swift rounds a half away from
     /// zero and Python's `round` rounds a half to even, and the two therefore
     /// grow a different number of nodes on about one seed in twenty-seven.
     /// `tools/preview/plant_model.py` was wrong about it for as long as it had
-    /// existed. None of the twelve was such a seed, so nothing said so, and a
+    /// existed. None of the twelve it then held was such a seed, so nothing said so, and a
     /// green tick was read as agreement.
     ///
     /// So these three are chosen to cover a *class* of fault rather than to be
@@ -159,10 +159,16 @@ final class PortVectorTests: XCTestCase {
     /// under both rules, which is why fern's 9.5 is safe and lotus's 2.5 is
     /// not. One seed each:
     ///
-    /// - `nodecount-30`, lotus, 5 × 0.5 = 2.5, three nodes against two;
-    /// - `nodecount-41`, vine, 5 × 1.7 = 8.5, nine against eight — and a vine
+    /// - `nodecount-32`, lotus, 5 × 0.5 = 2.5, three nodes against two;
+    /// - `nodecount-67`, vine, 5 × 1.7 = 8.5, nine against eight — and a vine
     ///   blooms at its nodes, so the recorded bloom *count* moves with it;
-    /// - `nodecount-363`, succulent, 5 × 2.1 = 10.5, eleven against ten.
+    /// - `nodecount-42`, succulent, 5 × 2.1 = 10.5, eleven against ten.
+    ///
+    /// **Re-found on 28 September 2026.** The re-roll turned `nodecount-30`,
+    /// `-41` and `-363` into a thistle, a bell and a plume, none of which can
+    /// land on such a half, so they went on passing and guarded nothing. The
+    /// reed's 2.2 and the cushion's 1 cannot land on one either, so the class
+    /// is still these three families.
     ///
     /// All three flower, so their bloom placements are recorded and not merely
     /// their scalars. They were found by walking `nodecount-0` upward and
@@ -179,7 +185,7 @@ final class PortVectorTests: XCTestCase {
     /// stop being interesting and can go. Until then, deleting one to shorten
     /// the file puts the guard back where it was.
     static func chosenSeeds() -> [(entropy: String, seed: SeedID, archetype: Archetype)] {
-        ["nodecount-30", "nodecount-41", "nodecount-363"].map { entropy in
+        ["nodecount-32", "nodecount-67", "nodecount-42"].map { entropy in
             let seed = SeedMint.mint(fromEntropy: Data(entropy.utf8))
             return (entropy: entropy, seed: seed, archetype: Genome(seed: seed).form.archetype)
         }

@@ -70,7 +70,8 @@ $plots = QuietGarden::plots($room);
 $holdings = array_fill(0, $plots, 0);
 foreach ($room as $p) $holdings[$p['plot']]++;
 // Full means its ground is full. A pool fills only when a lily arrives, and
-// lilies are one arrival in twelve, so a plot counted with its water in would
+// lilies are one arrival in twelve (a lily or a reed since 28 September 2026,
+// two in fourteen), so a plot counted with its water in would
 // almost never be full and this would be measuring the draw rather than the
 // rule. `QuietGardenTests` splits it the same way.
 $dry = count(array_filter(QuietGarden::slots(), fn($s) => QuietGarden::isDry($s['corner'])));

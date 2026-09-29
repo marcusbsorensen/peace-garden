@@ -77,9 +77,10 @@ final class Glasshouse
      * 1.139 m, set at 1.14. It was the Orchard's crown, 1.30, borrowed, until
      * the plants' shapes changed on 24 September 2026 and the two numbers
      * parted. `Glasshouse.borderFrom` in the Swift; the check holds it to the
-     * vector file.
+     * vector file. **1.16 since 29 September 2026**, measured again after the
+     * re-roll: 1.160 m.
      */
-    public const BORDER_FROM = 1.14;
+    public const BORDER_FROM = 1.16;
 
     /** Where the circle is cut, as a turn: 114°, in the green no flower here is. */
     public const CUT = 114.0 / 360.0;

@@ -150,6 +150,15 @@ def rounded(value):
     `vectors.json` now carries `nodecount-30` deliberately, for that reason and
     no other.
 
+    **All of the above was measured over twelve families.** On 28 September
+    2026 the reed and the cushion made it fourteen, `form.archetype` re-sliced,
+    and `nodecount-30`, `-41` and `-363` became a thistle, a bell and a plume —
+    families whose `nodeScale` cannot land on a half at all. Over the same four
+    thousand entropies the fault now falls on 153 seeds, lotus 74, vine 42 and
+    succulent 37 (the new families' 2.2 and 1.0 add none), and the first
+    flowering one of each is `nodecount-32`, `nodecount-67` and `nodecount-42`.
+    See the README: the chosen seeds live in `PortVectorTests.swift`.
+
     **Written out, because both of the short ways are wrong**, and each of them
     was written here first and caught by an exhaustive check against `Decimal`
     before it got any further.
@@ -200,14 +209,24 @@ def wrapped_unit(value):
 
 # ---------------------------------------------------------------- archetypes
 
+# **In `Archetype.allCases` order, and appended to, never reordered.**
+# `form.archetype` is a `pick` over this list, which indexes by `unit * count`,
+# so its length is part of every plant's derivation. The reed and the cushion
+# were appended on 28 September 2026, and twelve to fourteen moved about three
+# plants in four to a different family — on both sides at once, which is why
+# the vectors were re-recorded that day. See `ArchetypeProfile` in SeedCore.
 ARCHETYPES = ["spire", "umbel", "fern", "orchid", "lotus", "thistle",
-              "vine", "bell", "star", "poppy", "succulent", "plume"]
+              "vine", "bell", "star", "poppy", "succulent", "plume",
+              "reed", "cushion"]
 
 DEFAULT_PROFILE = dict(
     heightScale=1.0, stemThickness=1.0, nodeScale=1.0, leafLengthScale=1.0,
     leafWidthScale=1.0, leafDroop=1.0, petals=(5, 8), petalLengthScale=1.0,
     petalWidthScale=1.0, petalCurlBias=0.0, headPitchBias=0.0, centreScale=1.0,
     bloomsAtNodes=False, bloomPresence=1.0, swayScale=1.0,
+    # The flowers up a spike open from the lowest, and the tip is the youngest
+    # bud. Meaningful only with `bloomsAtNodes`; see `bloom_placements`.
+    opensFromBelow=False,
     inflorescence="raceme", bloomScale=1.0, branchSpread=0.0, branchCount=5,
     # What holds a flower from beneath, how its sepals are carried, the outline
     # a petal is cut to and how crumpled it is. The family's rather than the
@@ -220,11 +239,17 @@ DEFAULT_PROFILE = dict(
     rosette=False, crownLeaves=(0, 0), crownLengthScale=1.6, crownPitch=(0.9, 1.3),
     crownTaper=0.5, crownRise=0.55, pads=False, fleshiness=0.0, pinnae=(0, 0),
     leafReach=0.55, nodeZone=(0.16, 0.90),
+    # Strap leaves, crown and stem alike, and a cushion of rosettes in place of
+    # a stem. The reed's and the cushion's alone; see `strap_profile` and
+    # `_add_cushion`.
+    strap=False, cushion=False,
 )
 
 PROFILE_OVERRIDES = {
+    # Flowering upward, as a foxglove's and a lupin's spike does, since 28
+    # September 2026: the lowest open first and largest, the tip a bud.
     "spire": dict(petals=(4, 6), heightScale=1.35, nodeScale=1.6, petalLengthScale=0.55,
-                  bloomsAtNodes=True, leafLengthScale=0.8,
+                  bloomsAtNodes=True, opensFromBelow=True, leafLengthScale=0.8,
                   crownLeaves=(0, 3), crownPitch=(0.6, 1.0)),
     "umbel": dict(petals=(5, 8), inflorescence="head", branchSpread=0.0, branchCount=5, bloomScale=0.8,
                   heightScale=0.9, petalLengthScale=0.45, centreScale=0.6, leafDroop=1.2,
@@ -274,6 +299,22 @@ PROFILE_OVERRIDES = {
                   heightScale=0.75, nodeScale=1.8, petalLengthScale=0.35,
                   petalWidthScale=0.35, leafLengthScale=0.6, leafWidthScale=0.4,
                   crownLeaves=(0, 3)),
+    # **The two families added on 28 September 2026**, in the Swift's order and
+    # with its numbers. The reed is a clump of straps at the foot of a bare
+    # culm, flowering in chaff up its last quarter: the spire's node flowers
+    # and pedicels, packed into `nodeZone` and cut small.
+    "reed": dict(petals=(3, 6), strap=True,
+                 rosette=True, crownLeaves=(10, 16), crownLengthScale=1.1,
+                 crownPitch=(0.1, 0.35), crownTaper=0.3, crownRise=0.6,
+                 leafLengthScale=2.4, leafWidthScale=0.1, leafDroop=1.1,
+                 bloomsAtNodes=True, nodeScale=2.2, nodeZone=(0.74, 0.98),
+                 petalLengthScale=0.28, petalWidthScale=0.5,
+                 heightScale=1.45, stemThickness=0.6, swayScale=1.5),
+    # The cushion has no stalk and no stem leaves; every leaf is in the dome.
+    "cushion": dict(petals=(5, 8), cushion=True,
+                    rosette=True, crownLeaves=(0, 0), fleshiness=0.6,
+                    heightScale=0.2, leafLengthScale=1.0, leafWidthScale=0.7,
+                    leafDroop=0.2, petalLengthScale=0.4, sepals="none"),
 }
 
 
@@ -495,6 +536,10 @@ class Genome:
         self.fleshiness = profile["fleshiness"]
         self.pinnae = source.integer("habit.pinnae", *profile["pinnae"])
         self.nodeZone = profile["nodeZone"]
+        # `Genome.Habit.strap` and `.cushion`, carried from the profile and
+        # drawing nothing, so no other trait could move when they arrived.
+        self.strap = profile["strap"]
+        self.cushion = profile["cushion"]
 
         # The genus has a petal count; the plant does not draw one. See
         # SeedCore's Genome.swift and docs/TAXONOMY.md §1.
@@ -515,6 +560,9 @@ class Genome:
         self.sepalCount = source.integer("bloom.sepalCount", 3, 6) if source.chance("bloom.hasSepals", 0.7) else 0
         self.hasPistil = source.chance("bloom.hasPistil", 0.75)
         self.bloomsAtNodes = profile["bloomsAtNodes"]
+        # Only a spike can open from below, so the profile's flag is read
+        # through `bloomsAtNodes` as `Genome.swift` reads it.
+        self.opensFromBelow = profile["bloomsAtNodes"] and profile["opensFromBelow"]
         self.bloomPresent = flowers
         self.calyx = profile["calyx"]
         self.sepals = profile["sepals"]
@@ -542,11 +590,13 @@ class Genome:
         # checked by — and it was not. It sat three months behind: SeedCore
         # stopped drawing the genus on 3 September 2026 and started reading it
         # off the flower (`PlantName.roots` maps a family and a merosity to one
-        # of the twenty-four heads), and replaced the glued two-syllable
-        # epithet with `Epithet`, which says only what has been checked to be
-        # true of the specimen. The port went on gluing `name.epithetHead` to
-        # `name.epithetTail` and printing *pallicola* — "pale-dwelling", which
-        # is not a thing a plant can be — under captions in `preview.py`.
+        # of the heads — twenty-four then, twenty-eight since the reed and the
+        # cushion brought two each on 28 September), and replaced the glued
+        # two-syllable epithet with `Epithet`, which says only what has been
+        # checked to be true of the specimen. The port went on gluing
+        # `name.epithetHead` to `name.epithetTail` and printing *pallicola* —
+        # "pale-dwelling", which is not a thing a plant can be — under captions
+        # in `preview.py`.
         #
         # Porting it rather than deleting it was considered and rejected. It is
         # not a line: `Epithet` reads `palette.marbling`, one of twelve palette
@@ -786,6 +836,13 @@ def node_indices(node_count, segments=STEM_SEGMENTS, zone=(0.16, 0.90)):
     `nodeCount` from 1 to 40, the only index where the two round differently is
     poppy's zone at 29 nodes, and a poppy grows three at most.
 
+    The reed's zone, `0.74...0.98` from 28 September 2026, was checked the same
+    way against a `Float` emulation and agrees at every count from 1 to 40. It
+    does land exactly on a half once — seventeen nodes, the tenth, at 24.5 —
+    but the reed's `nodeScale` of 2.2 grows only 4, 7, 9, 11, 13, 15, 18 or 20
+    nodes, and the nearest any of those comes to a half is a hundredth of a
+    sample, at eighteen.
+
     Split out of `build_skeleton` so a node's place on the stem can be had
     without sweeping one. The sweep is the only part of this file that wants
     numpy, and `check_port.py` runs where there is none — but it still needs
@@ -1006,6 +1063,21 @@ def _sweep_branch(origin, radial, angle, target_y, reach, levelling, taper):
     return transport_frames(positions, radii, 0.0)
 
 
+def strap_profile(s):
+    """Width of a strap at `s` along its length.
+
+    Mirror of `PlantBuilder.strapProfile`, 28 September 2026: parallel-sided
+    nearly all the way, narrowed a little into its sheath at the foot, and
+    drawn to a point over its last quarter. Unlike `blade_profile` it is not
+    nought at the foot — a reed's leaf leaves the clump at six-tenths of its
+    width, wrapped round its neighbours, rather than from a point.
+    """
+    s = max(0.0, min(1.0, s))
+    sheath = 0.6 + 0.4 * min(1.0, s / 0.06)
+    tip = ((1 - s) / 0.26) ** 0.8 if s > 0.74 else 1.0
+    return sheath * tip
+
+
 def blade_profile(s, sharpness, serration, teeth):
     base = math.sin(math.pi * (clamp(s, 0, 1) ** 0.7))
     shaped = max(0.0, base) ** max(0.3, sharpness)
@@ -1019,6 +1091,14 @@ def blade_profile(s, sharpness, serration, teeth):
 def build_mesh(genome, growth):
     """Mirror of SeedCore/Morphology/PlantBuilder.swift."""
     builder = MeshBuilder()
+    # A cushion has no stem to build from: it is its own ground. **Until its
+    # first leaves open it is a shoot like any seedling**, because that is what
+    # comes out of a seed and the husk in the first hours stands at the foot of
+    # one — so the switch is on `leafUnfurl`, exactly as `PlantBuilder.mesh`
+    # makes it, and a cushion's first hours are drawn by everything below.
+    if genome.cushion and growth["leafUnfurl"] > 0:
+        _add_cushion(builder, genome, growth)
+        return builder.parts
     skeleton = build_skeleton(genome, growth["heightScale"])
     builder.add_tube("stem", skeleton["stem"], genome.sides)
 
@@ -1112,11 +1192,22 @@ def _add_leaves(builder, genome, skeleton, growth):
 
         radial = normalize(node["normal"] * math.cos(azimuth) + node["binormal"] * math.sin(azimuth))
         pitch = genome.leafPitch + jitter.value(-0.1, 0.1)
+        # **A strap leaves the culm close to it and arches away**, rather than
+        # standing out and sagging: a sag pushes a long blade sideways, and a
+        # reed's leaves are the longest in the garden. Mirror of the `strap`
+        # branch in `PlantBuilder.addLeaf`. Unreachable today — the reed is a
+        # rosette and carries no stem leaves — and ported all the same, because
+        # the day a strap-leaved family with a leafy stem arrives is the day
+        # nobody will think to look here.
+        strap = genome.strap
+        if strap:
+            pitch *= 0.5
         _add_blade(builder, genome,
                    origin=node["position"] + radial * node["radius"] * 0.8,
                    axis=node["tangent"], radial=radial,
                    length=genome.leafLength * genome.stemLeafScale * scale,
-                   pitch=pitch, droop=genome.leafDroop)
+                   pitch=pitch, droop=0.0 if strap else genome.leafDroop,
+                   arch=min(genome.leafDroop * 1.4, 0.75 * math.pi - pitch) if strap else 0.0)
 
 
 def leaf_taper(t, jitter):
@@ -1247,6 +1338,7 @@ def _add_blade(builder, genome, origin, axis, radial, length, pitch, droop,
     up = normalize(np.cross(forward, side))
 
     fleshiness = genome.fleshiness
+    strap = genome.strap
     # A fleshy leaf is smooth and runs out to a point: teeth, veins and fold
     # laid over a swollen blade crumple it, and a blunt one reads as a pebble.
     smooth = max(0.0, 1 - fleshiness)
@@ -1254,10 +1346,16 @@ def _add_blade(builder, genome, origin, axis, radial, length, pitch, droop,
     fold = genome.leafFold * (0.3 + 0.7 * smooth)
     sharpness = max(genome.leafTipSharpness, 1.5 * fleshiness)
     # A pinnate frond is the saw-toothed margin cut nearly to the midrib, with
-    # three rows to a leaflet or the cuts alias into a ragged edge.
-    serration = 3.6 if pinnae > 0 else genome.serration * smooth
+    # three rows to a leaflet or the cuts alias into a ragged edge. A strap's
+    # margin is whole, and a strap is long and arches the whole way, so it
+    # takes more rows to bend smoothly.
+    #
+    # The Swift also takes a `detail` override for the rows and columns here.
+    # Nothing passes one since 28 September 2026, when the cushion's rosettes
+    # stopped being blades, so it is not carried across.
+    serration = 0.0 if strap else 3.6 if pinnae > 0 else genome.serration * smooth
     teeth = pinnae if pinnae > 0 else genome.teeth
-    rows = 3 * pinnae + 4 if pinnae > 0 else 19
+    rows = 26 if strap else 3 * pinnae + 4 if pinnae > 0 else 19
     vein_count = genome.veinCount
     vein_depth = genome.veinDepth * smooth
 
@@ -1272,11 +1370,19 @@ def _add_blade(builder, genome, origin, axis, radial, length, pitch, droop,
 
     def point(u, v, thickness):
         s = v
-        profile = blade_profile(s, sharpness, serration, teeth)
+        profile = (strap_profile(s) if strap
+                   else blade_profile(s, sharpness, serration, teeth))
         across = (u - 0.5) * 2 * half_width * profile
         crease = fold * half_width * profile * (abs(u - 0.5) * 2) ** 2
-        vein = (vein_depth * half_width * 0.14
-                * math.sin(s * math.pi * 2 * vein_count) * (abs(u - 0.5) * 2))
+        # Ribs running out from the midrib, deepening toward the margin — or,
+        # on a strap, running the length of it side by side, as a grass's and
+        # a reed's do.
+        if strap:
+            vein = (vein_depth * half_width * 0.08 * profile
+                    * math.sin(u * math.pi * 2 * vein_count))
+        else:
+            vein = (vein_depth * half_width * 0.14
+                    * math.sin(s * math.pi * 2 * vein_count) * (abs(u - 0.5) * 2))
         # A fleshy leaf is swollen across its middle and thin at the edge.
         x = (u - 0.5) * 2
         swell = thickness * half_width * profile * (1 - x * x)
@@ -1291,6 +1397,157 @@ def _add_blade(builder, genome, origin, axis, radial, length, pitch, droop,
                             flip=True)
 
 
+# ------------------------------------------------------------------- cushion
+
+def _add_cushion(builder, genome, growth):
+    """An alpine cushion: a low dome packed with rosettes.
+
+    Mirror of `PlantBuilder.addCushion`, ported on 28 September 2026. One plant
+    grown as a mound rather than up a stem. The dome is drawn first as the
+    cushion's own body, in the stem's colour, and the rosettes are laid over it
+    close enough to hide it, each a small pillow with a cupped whorl of leaves
+    turned to face out of the dome where it sits.
+
+    **Laid on a spiral from the crown down**, so the index is also the age: the
+    rim's rosettes are the oldest and the top's the palest. The dome grows with
+    `heightScale` and the rosettes cover whatever size it has reached, so a
+    young cushion is a small whole cushion rather than a tuft on a bare dome.
+
+    Its flowers sit in the rosettes themselves, stemless and facing out, a
+    little under one rosette in two, each with its own place in the flush wave.
+    **They are not what `bloom_placements` describes**: that walks the shoot a
+    cushion is before its leaves open, and SeedCore's `PortVectorTests` records
+    the same walk, so `check_port.py` holds a cushion's crown flower to the
+    Swift and says nothing about these. See the README.
+
+    The jitter draws are taken in the Swift's order — stray, stray, size,
+    pitch, turn, then the flower's chance and length — because a stream keyed
+    by index is only the same stream if it is read the same way.
+    """
+    up = np.array([0.0, 1.0, 0.0])
+    shape = SplitMix64(genome.seed, "cushion.shape")
+    full = min(0.32, max(0.1, 0.08 + 0.8 * genome.crownLength))
+    flatten = shape.value(0.5, 0.78)
+    # It grows out of the shoot it was, over the first two-thirds of its
+    # leaves opening (28 September 2026): sized by height alone it was a
+    # two-centimetre shoot one minute and a fifth-of-a-metre dome the next.
+    emerging = min(1.0, growth["leafUnfurl"] / 0.65)
+    young = emerging * emerging * (3 - 2 * emerging)
+    youth = 0.15 + 0.85 * young
+    radius = full * (0.2 + 0.8 * growth["heightScale"]) * youth
+    height = radius * flatten
+    # The rosettes are sized to the dome, not to the leaf draw: sized to the
+    # leaf, a large cushion was a few hundred specks on a bare dome and read as
+    # a striped melon.
+    # Closer together while it is emerging, by as much as it is smaller, so a
+    # young cushion is covered rather than a bald dome with six rosettes.
+    spacing = full * shape.value(0.085, 0.11) * youth
+    area = math.pi * radius * radius * (1 + flatten * flatten)
+    count = max(6, min(320, int(area / (spacing * spacing))))
+    filling = 0.35 + 0.65 * growth["leafUnfurl"]
+
+    # The body, under the rosettes: old growth, in the stem's colour.
+    builder.add_dome("stem", np.zeros(3), up, np.array([1.0, 0.0, 0.0]),
+                     radius * 0.97, flatten=flatten, rows=9, columns=22)
+
+    # Down to 86° off the top, so the last ring meets the ground.
+    reach = 1 - math.cos(math.radians(86))
+    golden = 2.399963
+    # How far a rosette may stray from its place on the spiral, in radians of
+    # the dome: most of the way to its neighbours, which is what stops the
+    # spiral's arms reading as bands.
+    stray = 0.45 * spacing / max(radius, 0.001)
+    for index in range(count):
+        jitter = SplitMix64(genome.seed, f"cushion.rosette.{index}")
+        polar = max(0.0, min(1.5, math.acos(1 - reach * (index + 0.5) / count)
+                             + jitter.value(-1, 1) * stray))
+        azimuth = golden * index + jitter.value(-1, 1) * stray / max(0.2, math.sin(polar))
+        across = np.array([math.cos(azimuth), 0.0, math.sin(azimuth)])
+        position = across * (radius * math.sin(polar)) + up * (height * math.cos(polar))
+        # The ellipsoid's own normal, not the direction from its centre, so a
+        # rosette on the flattened shoulder faces up the way the surface does.
+        facing = normalize(across * (math.sin(polar) / radius) + up * (math.cos(polar) / height))
+        side = arbitrary_perpendicular(facing)
+        other = normalize(np.cross(facing, side))
+
+        size = spacing * jitter.value(0.85, 1.15) * filling
+        # Stood a little proud of the body, and wide enough to meet its
+        # neighbours, so the body shows only in the gaps a cushion has.
+        seat = position + facing * (size * 0.12)
+        builder.add_dome("leaf", seat, facing, side, size * 0.72,
+                         flatten=0.55, rows=3, columns=6)
+        _add_cushion_rosette(builder, seat, facing, side, other,
+                             leaves=7 + index % 3, length=size * 0.7,
+                             # Cupped: a rosette standing a little proud of its
+                             # pillow, not a star lying flat on it.
+                             pitch=jitter.value(0.7, 1.0),
+                             turn=jitter.value(-0.25, 0.25))
+
+        if not genome.bloomPresent or growth["budSwell"] <= 0.02:
+            continue
+        if jitter.value(0, 1) >= 0.45:
+            continue
+        flower = _flushed(growth, index / count)
+        _add_cushion_flower(builder, genome, position + facing * (size * 0.45),
+                            facing, side, size * jitter.value(0.6, 0.78), flower)
+
+
+def _add_cushion_rosette(builder, origin, facing, side, other, leaves, length, pitch, turn):
+    """A cushion's rosette: its whorl of leaves as one cupped star.
+
+    Mirror of `PlantBuilder.addCushionRosette`. It was seven to nine blades
+    until 28 September 2026, and three hundred rosettes of them came to eighty
+    thousand vertices. A leaf here is a centimetre long and pressed against its
+    neighbours, so what the eye reads is the whorl's outline — the points and
+    the notches between them — and one surface gives that. Two columns to a
+    leaf, its point and the notch after it, and one more to close the ring:
+    `cos(leaves * (around - turn))` is exactly 1 on the even columns and -1 on
+    the odd ones, so the points fall on grid lines and are never cut off.
+    """
+    def point(u, v):
+        around = u * 2 * math.pi + turn
+        tip = 0.5 + 0.5 * math.cos(leaves * (around - turn))
+        reach = length * (0.12 + 0.88 * v) * (0.45 + 0.55 * tip)
+        # The tips rise toward the rosette's own axis, as the blades' arch of
+        # -0.3 made them.
+        lean = pitch - 0.3 * v
+        radial = side * math.cos(around) + other * math.sin(around)
+        return origin + (facing * math.cos(lean) + radial * math.sin(lean)) * reach
+
+    builder.add_surface("leaf", 3, 2 * leaves + 1, point)
+
+
+def _add_cushion_flower(builder, genome, position, facing, side, full, growth):
+    """A cushion's flower: a star a centimetre across, and drawn as one.
+
+    Mirror of `PlantBuilder.addCushionFlower`. The garden's own flower is built
+    to be looked at on a stage, and a hundred of them on one cushion came to
+    nearly four hundred thousand vertices; at this size a petal is four rows
+    and a centre is a dot. Closed up along `facing` as a bud and lying out flat
+    when open.
+    """
+    openness = growth["bloomOpen"]
+    length = full * (0.35 + 0.65 * growth["budSwell"])
+    if length <= 0.0005:
+        return
+    other = normalize(np.cross(facing, side))
+    lift = 0.2 + 1.2 * openness
+    half_width = length * genome.petalWidthRatio * 0.5
+    for petal in range(genome.petalCount):
+        turn = petal * 2 * math.pi / genome.petalCount
+        radial = side * math.cos(turn) + other * math.sin(turn)
+        forward = normalize(facing * math.cos(lift) + radial * math.sin(lift))
+        across = normalize(np.cross(facing, radial))
+
+        def point(u, v, forward=forward, across=across):
+            width = half_width * math.sin(math.pi * min(1.0, v * 0.9 + 0.1))
+            return position + forward * (v * length) + across * ((u - 0.5) * 2 * width)
+
+        builder.add_surface("petal", 4, 3, point)
+    builder.add_dome("centre", position, facing, side, length * 0.22,
+                     flatten=0.6, rows=2, columns=5)
+
+
 def _flush_factor(position, growth):
     """The travelling wave. See SeedCore's PlantBuilder.flushFactor."""
     depth = growth.get("flushDepth", 0.0)
@@ -1298,6 +1555,18 @@ def _flush_factor(position, growth):
         return 1.0
     wave = 0.5 + 0.5 * math.cos(2 * math.pi * (growth.get("flush", 0.0) - position))
     return 1 - depth * 0.55 * (1 - wave)
+
+
+def _lagged(value, lag, ceiling):
+    """A flower `lag` behind the plant's own cycle, and never past `ceiling`.
+
+    Mirror of `PlantBuilder.lagged`, which SeedCore factored out on 28
+    September 2026 when the spire's crown began to need the same expression
+    as its nodes. Kept as one function here for the same reason: two copies
+    of this line are how the port once lost its ceiling in one place and not
+    the other.
+    """
+    return min(ceiling, max(0.0, value - lag) / max(0.01, 1 - lag))
 
 
 def _flushed(growth, position):
@@ -1330,14 +1599,31 @@ def bloom_placements(genome, growth, node_ts, stalks):
     by assumption: each sits on the last sample of its own path, and
     `transport_frames` numbers that one 1.
     """
+    # A cushion with leaves draws no flower from this walk — its flowers are
+    # its rosettes' own — so, as `bloomPlacementsForTesting` does, none.
+    if genome.cushion and growth["leafUnfurl"] > 0:
+        return []
     if not genome.bloomPresent or growth["budSwell"] <= 0.02:
         return []
 
+    from_below = genome.opensFromBelow
     # The crown leads the cycle, so its position in the wave is zero.
     crown = _flushed(growth, 0.0)
+    crown_bud, crown_open = crown["budSwell"], crown["bloomOpen"]
+    crown_scale = genome.bloomScale
+    if from_below:
+        # **A spike that flowers upward ends in its youngest bud**: it swells
+        # last, opens least and is the smallest thing on the spike. Floored at
+        # a bud rather than nothing, because the tip of a raceme carries one
+        # from the day it begins. The wave is applied inside the floor, as the
+        # Swift applies it, so a crown in the trough is still a bud.
+        factor = _flush_factor(0.0, growth)
+        crown_bud = max(0.03, _lagged(growth["budSwell"], 0.4, 0.5) * factor)
+        crown_open = _lagged(growth["bloomOpen"], 0.4, 0.5) * factor
+        crown_scale = genome.bloomScale * 0.4
     placements = [dict(kind="crown", index=0, t=1.0,
-                       budSwell=crown["budSwell"], bloomOpen=crown["bloomOpen"],
-                       scale=genome.bloomScale)]
+                       budSwell=crown_bud, bloomOpen=crown_open,
+                       scale=crown_scale)]
 
     # A head has no up and down to run a wave along, so its stalks take an even
     # share of the cycle instead.
@@ -1353,22 +1639,32 @@ def bloom_placements(genome, growth, node_ts, stalks):
     for offset, t in enumerate(node_ts):
         if t <= 0.35:
             continue
-        lag = (1 - t) * 0.5
+        # How far up the flowering stretch this node stands, 0 at its foot and
+        # 1 at the crown. Taken before the lag now, because a spike that
+        # flowers upward measures its lag along it rather than down from the
+        # crown.
+        up = min(1.0, max(0.0, (t - 0.35) / 0.65))
+        # **A spire runs the other way** (`Genome.Bloom.opensFromBelow`): the
+        # lowest flower leads, and the lag, the ceiling and the size are the
+        # same numbers mirrored along the flowering stretch.
+        lag = up * 0.325 if from_below else (1 - t) * 0.5
         # **This port was missing the ceiling and the taper entirely**, so every
         # spike it drew carried identical fully-open heads at even spacing —
         # which is precisely the tell SeedCore's own comments record fixing, and
         # which every render taken from this file has therefore been wrong about.
-        ceiling = 0.45 + 0.55 * t
+        ceiling = 1 - 0.36 * up if from_below else 0.45 + 0.55 * t
         flush = _flush_factor(t, growth)
-        bud = min(ceiling, max(0.0, growth["budSwell"] - lag) / max(0.01, 1 - lag)) * flush
-        openness = min(ceiling, max(0.0, growth["bloomOpen"] - lag) / max(0.01, 1 - lag)) * flush
+        bud = _lagged(growth["budSwell"], lag, ceiling) * flush
+        openness = _lagged(growth["bloomOpen"], lag, ceiling) * flush
         if bud <= 0.02:
             continue
+        # Swells toward the crown and thins away below it — or, flowering
+        # upward, is largest at its foot.
         size = SplitMix64(genome.seed, f"bloom.size.{offset}")
-        up = min(1.0, max(0.0, (t - 0.35) / 0.65))
+        taper = 0.74 - 0.34 * up if from_below else 0.4 + 0.34 * up
         placements.append(dict(kind="node", index=offset + 1, t=t,
                                budSwell=bud, bloomOpen=openness,
-                               scale=(0.4 + 0.34 * up) * size.value(0.88, 1.12)))
+                               scale=taper * size.value(0.88, 1.12)))
     return placements
 
 

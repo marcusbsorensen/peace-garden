@@ -28,7 +28,7 @@ first — `PEACE_GARDEN_RECORD_VECTORS=1 swift test --package-path Packages/Seed
 passes. It names every field that differs, so what has to change is on screen
 rather than to be hunted for.
 
-**A sample is green about what it looks at, and nothing else.** Twelve of the
+**A sample is green about what it looks at, and nothing else.** Fourteen of the
 plants in the file are a fair draw, one family each. Three are not: they are
 `nodecount-30`, `nodecount-41` and `nodecount-363`, and they are in the file
 because `stem.nodeCount` rounds a half away from zero in Swift and to even in
@@ -36,7 +36,9 @@ Python, so the two languages grew a different plant on about one seed in
 twenty-seven and no sampled seed happened to be one of them. This check was
 green on that for months. When a fault is found that a sample could not see, the
 seed that shows it belongs in the file — see `chosenSeeds` in
-`PortVectorTests.swift`.
+`PortVectorTests.swift`. **Since 28 September 2026 those three no longer show
+it**: the reed and the cushion re-sliced every archetype, and they grow a
+thistle, a bell and a plume now. The README says which seeds replace them.
 
 The file also records each plant's `name.full`, and this deliberately does not
 compare it. See the note in `TRAITS` below.
@@ -236,7 +238,7 @@ def main():
     if not problems:
         # The tally is split, because the two halves of the file are not the
         # same kind of thing and a single count reads as though they were. The
-        # first twelve are a fair sample, one family each. The rest are seeds
+        # first fourteen are a fair sample, one family each. The rest are seeds
         # somebody chose because they trigger a fault a sample cannot see, and
         # a repeated family in the list is the point of them rather than a sign
         # the search has gone wrong.

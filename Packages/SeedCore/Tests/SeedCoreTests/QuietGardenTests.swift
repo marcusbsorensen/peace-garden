@@ -192,7 +192,8 @@ final class QuietGardenTests: XCTestCase {
     /// for; this checks the same thing of this template's.
     ///
     /// **Full means its ground is full**, from 27 September. A pool fills only
-    /// when a lily arrives and lilies are one arrival in twelve, so a plot
+    /// when a lily arrives and lilies are one arrival in twelve (a lily or a
+    /// reed since 28 September 2026, two in fourteen), so a plot
     /// measured with its water in would almost never be full and this would be
     /// measuring how many lotuses the seeds happened to draw rather than
     /// whether the rule strands a plot. The water is checked for its own sake
@@ -220,7 +221,9 @@ final class QuietGardenTests: XCTestCase {
 
     // MARK: The ambassador
 
-    func testOlyneStandsBesideTheBenchInTheFirstPlot() {
+    /// *Bela caerulea* since the re-roll of 28 September 2026, where it was
+    /// *Olyne paniculata*: the first plant stands by the bench whoever it is.
+    func testTheAmbassadorStandsBesideTheBenchInTheFirstPlot() {
         let standing = QuietGarden.ambassador
         let peace = Ambassadors.of(.peace)
         XCTAssertEqual(standing.seed, peace.seed.hex)

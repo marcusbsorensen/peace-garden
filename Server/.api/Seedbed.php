@@ -143,8 +143,15 @@ final class Seedbed
         return null;
     }
 
-    /** The archetypes that want water. Read from the habit, which is a word. */
-    public const WANTS_WATER = ['lotus'];
+    /**
+     * The archetypes that want water. Read from the habit, which is a word.
+     * `Archetype.wantsWater` in the Swift, said again here.
+     *
+     * **The reed since 28 September 2026**, which stands in the shallows as a
+     * lily lies on the water, so a reed floods its drill as a lily does. It
+     * takes one place in it; only a lotus takes two (`span`).
+     */
+    public const WANTS_WATER = ['lotus', 'reed'];
 
     /** Whether this habit belongs in water. */
     public static function wantsWater(string $habit): bool

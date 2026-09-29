@@ -230,6 +230,28 @@ const HEAD_GLYPHS = Object.freeze({
   Mel: hex(7.4, 7.2, 3.1) + hex(12.77, 7.2, 3.1) + hex(10.09, 11.85, 3.1) + "M10.09 14.95V16.2" + dot(10.09, 18),
   // The place arrived at: a pin in the map, standing on its ground.
   Ith: "M10 17C10 17 4.5 11.8 4.5 8a5.5 5.5 0 0 1 11 0C15.5 11.8 10 17 10 17Z" + ring(10, 8, 2) + "M6.5 18.2H13.5",
+  // The four roots of the reed and the cushion, 28 September 2026.
+  //
+  // The reed: a tall culm with long leaves arching off it by turns, and its
+  // plume nodding over at the top, the florets hanging from it. Drawn apart
+  // from `Fen` on purpose, which is reeds *in water* with a mace for a head:
+  // this is the one plant, alone.
+  Don:
+    "M9.6 17.5C9.6 12.5 9.8 8.5 10.4 4.8C11.6 2.6 14 1.9 16.2 3.4" +
+    "M12.2 3.1L12.3 5.3M13.9 2.6L14.3 4.8M15.4 2.9L15.9 5" +
+    "M9.6 15.4C7.6 13.4 5.2 12.9 2.8 13.8M9.7 12.2C11.8 10.4 14.4 10 16.8 10.9M9.9 9C8.3 7.6 6.3 7.3 4.3 7.9" +
+    "M6.5 17.5H13",
+  // The reed pipe: Pan's pipes, four reeds of falling length bound by a cord.
+  Syr:
+    "M4 3.8H16V10.2H13V12.4H10V14.6H7V16.8H4ZM7 3.8V16.8M10 3.8V14.6M13 3.8V12.4M2.8 7H17.2",
+  // A cushion: a pillow, its four corners pulled out and a button at its heart.
+  Tyl:
+    "M3.2 5.2C7.5 6.8 12.5 6.8 16.8 5.2C15.6 8.4 15.6 11.6 16.8 14.8C12.5 13.2 7.5 13.2 3.2 14.8" +
+    "C4.4 11.6 4.4 8.4 3.2 5.2Z" + ring(10, 10, 1.1),
+  // A mountain: a peak and a lesser one behind it, with the snow line on the
+  // high one.
+  Or:
+    "M2.5 16.5L8.5 4.8L13.2 13.4M11.4 10.1L13.9 7.4L17.5 16.5M2.5 16.5H17.5M6.2 9.3L7.5 10.4L8.8 9.1L10 10.4L10.8 9.5",
 });
 
 const head = (syllable, from, root, gloss) =>
@@ -259,7 +281,11 @@ export const THEMES = Object.freeze([
   Object.freeze({
     theme: "waiting",
     meaning: "meaningWaiting",
-    heads: [head("Nyx", "Gk", "Nyx", "night"), head("Umbr", "L", "umbra", "shade")],
+    heads: [
+      head("Nyx", "Gk", "Nyx", "night"),
+      head("Umbr", "L", "umbra", "shade"),
+      head("Syr", "Gk", "syrinx", "the reed pipe"),
+    ],
     parts: [
       part("heldBack", "Held back", "dormancy, stratification, marcescence"),
       part("theLongCount", "The long count", "Masada dates, Beal's bottles, bamboo mast years"),
@@ -287,6 +313,7 @@ export const THEMES = Object.freeze([
       head("Thal", "Gk", "thallos", "a young shoot"),
       head("Lir", "Gk", "leirion", "lily"),
       head("Ver", "L", "ver", "the spring"),
+      head("Don", "Gk", "donax", "the reed"),
     ],
     parts: [
       part("theFirstAct", "The first act", "germination, imbibition, radicle, meristem"),
@@ -313,6 +340,7 @@ export const THEMES = Object.freeze([
       head("Zeph", "Gk", "Zephyros", "the west wind"),
       head("Ael", "Gk", "aellē", "a gust"),
       head("Hal", "Gk", "hals", "the salt sea"),
+      head("Or", "Gk", "oros", "a mountain"),
     ],
     parts: [
       part("howASeedGoes", "How a seed goes", "anemochory, sea beans, the dandelion's vortex"),
@@ -345,8 +373,6 @@ export const THEMES = Object.freeze([
   Object.freeze({
     theme: "pattern",
     meaning: "meaningPattern",
-    // The family table in docs/TAXONOMY.md still has these two on each other's
-    // flower; `PlantName.roots` is right, and the theme is the same either way.
     heads: [head("Cal", "Gk", "kalos", "the shapely"), head("Quin", "L", "quinque", "five")],
     parts: [
       part("counted", "Counted", "the golden angle, Fibonacci spirals, quincunx"),
@@ -373,7 +399,11 @@ export const THEMES = Object.freeze([
     meaning: "meaningMeeting",
     // `Ith` could as easily be Gk *ithys*, straight. Ithaca was chosen because
     // Meeting needed a second head and an arrival is what a meeting is.
-    heads: [head("Mel", "Gk", "meli", "honey"), head("Ith", null, "Ithaca", "the place arrived at")],
+    heads: [
+      head("Mel", "Gk", "meli", "honey"),
+      head("Ith", null, "Ithaca", "the place arrived at"),
+      head("Tyl", "Gk", "tylē", "a cushion"),
+    ],
     parts: [
       part("theMoment", "The moment", "kairos, clinamen, ichigo ichie"),
       part("twoThatNeedEachOther", "Two that need each other", "fig and wasp, yucca moth, Ophrys"),

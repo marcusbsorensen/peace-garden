@@ -148,7 +148,16 @@ enum Planner {
                     height: item.traits.height, heightBits: bits(item.traits.height),
                     family: item.traits.family, kind: item.traits.kind, hue: item.traits.hue,
                     habit: item.traits.habit, wasHeight: item.was["height"]?.double ?? 0,
-                    place: place))
+                    // **Negative zero written as zero.** A plant in the Quiet
+                    // Garden's pool is nudged by -0.0, which JSON writes as
+                    // `-0` and PHP reads back as the integer 0, so its bits
+                    // came out `0000…` on the server and `8000…` here and the
+                    // plan failed its own digest. Nothing stood in the pool
+                    // until the re-roll of 28 September 2026 put lilies and
+                    // reeds in the Quiet Garden's replay. The two zeros place
+                    // a plant identically, and nudges are compared by
+                    // `near()`, so this changes no place, only the spelling.
+                    place: place.mapValues { $0 == 0 ? 0 : $0 }))
             }
             let plotsBefore = (ordered.compactMap { $0["plot"]?.int }.max() ?? -1) + 1
             let plotsAfter = Int(places.map { $0["plot"] ?? 0 }.max() ?? -1) + 1

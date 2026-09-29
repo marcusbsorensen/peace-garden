@@ -243,7 +243,7 @@ const SLICE = 16;
 const breathe = () => new Promise((resume) => setTimeout(resume, 0));
 
 // Grows one plot from the plot service. A planting with no parents was minted
-// rather than crossed — the ambassador on the staging — and grows from its seed
+// rather than crossed — the ambassador, in the border since 28 September 2026 — and grows from its seed
 // alone. The pots are set out first, from the plantings' lifts, so the plants
 // are grown into a staging that already has their pots on it.
 export async function growGlasshouseFromService(e, stage, place, plot, report) {

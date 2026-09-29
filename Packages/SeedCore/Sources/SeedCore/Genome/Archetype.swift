@@ -24,6 +24,8 @@ public enum Archetype: String, CaseIterable, Codable, Sendable {
     case poppy      // single crumpled bloom on a bare stem
     case succulent  // thick short stem, fleshy rosette
     case plume      // feathery many-branched inflorescence
+    case reed       // a clump of straps under a bare culm, florets at its top
+    case cushion    // a low dome of tiny rosettes, starred with flowers
 
     /// The family's name, built the way a real one is.
     ///
@@ -66,6 +68,8 @@ public enum Archetype: String, CaseIterable, Codable, Sendable {
         case .poppy: return "Poppy"
         case .succulent: return "Succulent"
         case .plume: return "Plume"
+        case .reed: return "Reed"
+        case .cushion: return "Cushion"
         }
     }
 
@@ -79,10 +83,15 @@ public enum Archetype: String, CaseIterable, Codable, Sendable {
     ///
     /// It is a fact about a plant's shape, so it lives here beside the shape
     /// rather than in an area, and every area asks it the same way through
-    /// `PlantTraits.wantsWater`. When the reed is added it is one more line.
+    /// `PlantTraits.wantsWater`.
+    ///
+    /// **The reed from 28 September 2026**, which stands in the shallows at a
+    /// pool's edge as a water lily lies on it. Its roots were given themes
+    /// that put it where the lilies are — waiting and beginnings — so that
+    /// the two water plants meet the same water.
     public var wantsWater: Bool {
         switch self {
-        case .lotus: return true
+        case .lotus, .reed: return true
         default: return false
         }
     }
@@ -234,6 +243,9 @@ public struct ArchetypeProfile: Sendable {
     /// Meaningful for `.raceme` alone. The other two forms decide where their
     /// flowers go from the form itself, and their profiles leave this be.
     public var bloomsAtNodes: Bool = false
+    /// The flowers up the stem open from the lowest, and the tip is the
+    /// youngest bud. Only with `bloomsAtNodes`. See `Genome.Bloom.opensFromBelow`.
+    public var opensFromBelow: Bool = false
     /// Fraction of blooms present at all — a fern gets almost none.
     public var bloomPresence: Double = 1
     public var swayScale: Double = 1
@@ -329,6 +341,10 @@ public struct ArchetypeProfile: Sendable {
     public var leafReach: Double = 0.55
     /// Where the stem's nodes sit, as fractions of its length.
     public var nodeZone: ClosedRange<Double> = 0.16...0.90
+    /// Strap leaves, crown and stem alike. See `Genome.Habit.strap`.
+    public var strap: Bool = false
+    /// A cushion of rosettes. See `Genome.Habit.cushion`.
+    public var cushion: Bool = false
 
     public static func profile(for archetype: Archetype) -> ArchetypeProfile {
         var profile = ArchetypeProfile()
@@ -339,6 +355,10 @@ public struct ArchetypeProfile: Sendable {
             profile.nodeScale = 1.6
             profile.petalLengthScale = 0.55
             profile.bloomsAtNodes = true
+            // A foxglove's, a lupin's, a delphinium's: the lowest open first
+            // and largest, and the spike runs up to buds. Flipped on 28
+            // September 2026; see `Genome.Bloom.opensFromBelow`.
+            profile.opensFromBelow = true
             profile.leafLengthScale = 0.8
             // A tower on purpose, and one of three the garden keeps. A few
             // leaves at its foot so it stands on something.
@@ -570,6 +590,53 @@ public struct ArchetypeProfile: Sendable {
             profile.leafLengthScale = 0.6
             profile.leafWidthScale = 0.4
             profile.crownLeaves = 0...3
+        // **The two families added on 28 September 2026**, grown first as
+        // prototypes on the branch `shape/reed-cushion` and approved as
+        // rendered. Appended, because appending is all a new case can do:
+        // `form.archetype` is sliced by the number of cases, so twelve to
+        // fourteen moved about three plants in four, and Marcus chose that
+        // once, while the garden was small. See docs/PLANT-FORMS.md.
+        case .reed:
+            // Three-parted, as rushes and reeds are, and six in the many.
+            profile.petals = (3, 6)
+            profile.strap = true
+            // **The leaves are a clump at the foot and the culm is bare**, as a
+            // sedge's, a rush's and a reedmace's are. Carried up the culm as
+            // well, they made it a grass stem drawn at the wrong size.
+            profile.rosette = true
+            profile.crownLeaves = 10...16
+            profile.crownLengthScale = 1.1
+            profile.crownPitch = 0.1...0.35
+            profile.crownTaper = 0.3
+            profile.crownRise = 0.6
+            profile.leafLengthScale = 2.4
+            // At 0.2 the widest straps were a bromeliad's.
+            profile.leafWidthScale = 0.1
+            profile.leafDroop = 1.1
+            // **The plume is florets on short stalks up the top of the culm**,
+            // many and small: the spire's node flowers and their pedicels,
+            // packed into the last quarter and cut down to chaff.
+            profile.bloomsAtNodes = true
+            profile.nodeScale = 2.2
+            profile.nodeZone = 0.74...0.98
+            profile.petalLengthScale = 0.28
+            profile.petalWidthScale = 0.5
+            profile.heightScale = 1.45
+            profile.stemThickness = 0.6
+            profile.swayScale = 1.5
+        case .cushion:
+            profile.petals = (5, 8)
+            profile.cushion = true
+            // No stalk and no stem leaves: every leaf is in the cushion.
+            profile.rosette = true
+            profile.crownLeaves = 0...0
+            profile.fleshiness = 0.6
+            profile.heightScale = 0.2
+            profile.leafLengthScale = 1.0
+            profile.leafWidthScale = 0.7
+            profile.leafDroop = 0.2
+            profile.petalLengthScale = 0.4
+            profile.sepals = .none
         }
         return profile
     }

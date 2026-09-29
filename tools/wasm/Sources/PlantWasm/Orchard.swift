@@ -23,8 +23,8 @@ import SeedCore
 //                            judging whether the guilds really do fill one at a
 //                            time
 //
-// Opened rather than empty: it starts with Cyninora contorta under the middle
-// tree, the way the real one does.
+// Opened rather than empty: it starts with its ambassador (Vininora contorta
+// since 28 September 2026) under the middle tree, the way the real one does.
 
 nonisolated(unsafe) private var orchardWays = Orchard.Ways.opened()
 nonisolated(unsafe) private var grownInOrchard: [String: Genome] = {

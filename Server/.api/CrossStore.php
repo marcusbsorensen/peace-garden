@@ -97,8 +97,9 @@ final class CrossStore
             }
             $all = $this->db->prepare('SELECT * FROM crossing ORDER BY arrival');
             $all->execute();
-            // The ambassador first, then the arrivals: it stands on the first
-            // quarter's diagonal in plot 0 whether or not anything else is here,
+            // The ambassador first, then the arrivals: it stands in the first
+            // quarter of plot 0 — in the middle rank's first place since 28
+            // September 2026, on the diagonal before — whether or not anything else is here,
             // and the rule counts what is in a quarter to decide where to put
             // the next plant. A count that left it out would be the wrong count.
             $ways = array_merge(
@@ -124,8 +125,8 @@ final class CrossStore
     /**
      * A plot's plantings, in the order they arrived. Hidden ones are not in it.
      *
-     * Plot 0 opens with the ambassador on the first quarter's diagonal, which is
-     * not a row. It carries no parents and no meeting, because it was minted
+     * Plot 0 opens with the ambassador in the first quarter, in the middle
+     * rank's first place since 28 September 2026, which is not a row. It carries no parents and no meeting, because it was minted
      * rather than crossed, and an empty `parents` is how the wire says so.
      */
     public function plot(int $plot): array

@@ -106,7 +106,12 @@ public enum Glasshouse {
     /// the garden's as a whole — their 75th centile by 0.16 m, the garden's by
     /// 0.09 — and at the Orchard's new 1.20 the border would take 18% of them
     /// rather than a quarter. Two facts that no longer agree are two numbers.
-    public static let borderFrom = 1.14
+    ///
+    /// **1.16 since 29 September 2026**, measured the same way after the
+    /// re-roll of the 28th: five hundred `light` arrivals under a label the
+    /// tests do not use put the 75th centile at 1.160 m, and two thousand at
+    /// 1.157. At 1.14 the tests' own five hundred sent 25.8% to the border.
+    public static let borderFrom = 1.16
 
     /// The two beds a plant can stand in.
     public enum Bed: Int, Codable, CaseIterable, Sendable {
@@ -269,9 +274,11 @@ public enum Glasshouse {
 
         public init() {}
 
-        /// **The Glasshouse as it opened**: the light ambassador, *Aurea
-        /// pallida*, in a pot at its own place in the spectrum, and nothing
-        /// else.
+        /// **The Glasshouse as it opened**: the light ambassador and nothing
+        /// else. Since the re-roll of 28 September 2026 that is *Elora
+        /// elata*, a star of 1.45 m, in the border's first place from the
+        /// door; until then it was *Aurea pallida* in a pot at its own place
+        /// in the spectrum.
         public static func opened() -> Ways {
             var ways = Ways()
             let one = Ambassadors.of(.light)

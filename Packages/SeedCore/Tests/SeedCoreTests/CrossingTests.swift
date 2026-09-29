@@ -172,14 +172,21 @@ final class CrossingTests: XCTestCase {
 
     // MARK: The ambassador
 
-    func testTheAmbassadorStandsOnTheFirstQuartersDiagonal() {
+    /// **The ambassador opens the first quarter's middle rank**, since 28
+    /// September 2026. *Ithula obscura*, a bell of 1.20 m, is between the
+    /// middle cut and the corner cut, so an empty Crossing gives it the first
+    /// place of the middle rank — slot 3, behind the path rank's slot 1 — and
+    /// the path rank in front of it, the diagonal among it, waits for the
+    /// first short arrivals. (*Melyrina latifolia*, 0.46 m, stood on the
+    /// diagonal itself.)
+    func testTheAmbassadorOpensTheFirstQuartersMiddleRank() {
         let one = Crossing.ambassador
         XCTAssertEqual(one.plot, 0)
-        XCTAssertEqual(one.slot, Crossing.Slot(quarter: .first, index: 0))
-        XCTAssertEqual(one.slot.rank, .path)
+        XCTAssertEqual(one.slot, Crossing.Slot(quarter: .first, index: 3))
+        XCTAssertEqual(one.slot.rank, .middle)
         XCTAssertEqual(one.seed, Ambassadors.of(.meeting).seed.hex)
-        // The reason the paving holds no plant: the meeting ambassador is short.
-        XCTAssertLessThan(one.traits.height, Crossing.middleFrom)
+        XCTAssertGreaterThanOrEqual(one.traits.height, Crossing.middleFrom)
+        XCTAssertLessThan(one.traits.height, Crossing.cornerFrom)
     }
 
     /// **This area is `meeting`, and it says so here rather than anywhere else.**
@@ -197,11 +204,12 @@ final class CrossingTests: XCTestCase {
     // MARK: The cuts
 
     func testTheCutsAreTheCrossingsOwn() {
+        // 0.85 and 1.34 since 29 September 2026; 0.91 and 1.30 until then.
         XCTAssertEqual(Crossing.rank(height: 0.5), .path)
-        XCTAssertEqual(Crossing.rank(height: 0.90), .path)
-        XCTAssertEqual(Crossing.rank(height: 0.91), .middle)
-        XCTAssertEqual(Crossing.rank(height: 1.29), .middle)
-        XCTAssertEqual(Crossing.rank(height: 1.30), .corner)
+        XCTAssertEqual(Crossing.rank(height: 0.84), .path)
+        XCTAssertEqual(Crossing.rank(height: 0.85), .middle)
+        XCTAssertEqual(Crossing.rank(height: 1.33), .middle)
+        XCTAssertEqual(Crossing.rank(height: 1.34), .corner)
         // Deliberately not the walk's or the room's.
         XCTAssertNotEqual(Crossing.middleFrom, QuietGarden.backFrom)
         XCTAssertNotEqual(Crossing.cornerFrom, LongWalk.backFrom)

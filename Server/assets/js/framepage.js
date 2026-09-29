@@ -7,9 +7,9 @@
 // page that can be asked by its own query string to show plants nobody grew is
 // a page that can be linked to as if those plants were real.
 //
-// **One plot at a time**, as every area but the walk is: four frames are a
-// square you look into, and two of them side by side are eight frames in a
-// yard with no reason to be one plot rather than another.
+// **One plot at a time**, as every area but the walk is: a tank with its
+// frames behind it is a yard you look into, and two of them side by side are
+// two tanks in a yard with no reason to be one plot rather than another.
 //
 // **No list under the paragraph.** The Seedbed writes its drills out because a
 // drill's kind cannot be drawn; here what claims a frame is a colour, and the
@@ -50,7 +50,7 @@ const say = async (key) => {
 
 async function place() {
   const engine = await loadModule(document.documentElement.dataset.module || '/plant.wasm');
-  // Where the four frames stand and how high their walls are come from the
+  // Where the frames stand and how high their walls are come from the
   // module, so the page cannot disagree with the rule about where a frame is.
   // **One plot, framed as though there were a little more than one**, the
   // Quiet Garden's margin.

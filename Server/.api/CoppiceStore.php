@@ -108,9 +108,10 @@ final class CoppiceStore
             }
             $all = $this->db->prepare('SELECT * FROM coppice ORDER BY arrival');
             $all->execute();
-            // The ambassador first, then the arrivals: it stands in the front
-            // row of the first coupe whether or not anything else is here, and
-            // the floor is kept in order around it.
+            // The ambassador first, then the arrivals: it stands on the first
+            // coupe's middle stool whether or not anything else is here — a
+            // fern since 28 September 2026; it was a star in the front row —
+            // and the stools are counted and the floor kept in order around it.
             $ways = array_merge(
                 [Ambassadors::planting('renewal')],
                 array_map([self::class, 'forRule'], $all->fetchAll())
@@ -136,9 +137,17 @@ final class CoppiceStore
      * A plot's plantings, in the order they arrived, drawn as they stand in
      * `$year`. Hidden ones are not in it.
      *
-     * Plot 0 opens with the ambassador, a star in the front row of the first
-     * coupe. It carries no parents and no meeting, because it was minted rather
-     * than crossed, and an empty `parents` is how the wire says so.
+     * Plot 0 opens with the ambassador. It carries no parents and no meeting,
+     * because it was minted rather than crossed, and an empty `parents` is how
+     * the wire says so.
+     *
+     * **Its stage is worked out as any other planting's**, since the re-roll of
+     * 28 September 2026. It was a star in the front row of the first coupe and
+     * sent a stage of null, drawn at its best, and that was written in here as
+     * a constant. It is a fern on the first coupe's middle stool now, so it is
+     * cut with that coupe, and the page draws a stool only under a planting
+     * that has a stage: a null here would have stood it grown on bare floor
+     * while SeedCore draws it cut on its stool.
      */
     public function plot(int $plot, int $year): array
     {
@@ -154,7 +163,8 @@ final class CoppiceStore
             'encounter' => null,
             'plot' => 0,
             'spot' => [$x + $standing['nudgeX'], $z + $standing['nudgeZ']],
-            'stage' => null,
+            'stage' => $standing['place'] === Coppice::STOOL
+                ? Coppice::stage(0, $standing['coupe'], $year) : null,
         ]);
         return $plantings;
     }

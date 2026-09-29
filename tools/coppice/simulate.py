@@ -434,7 +434,10 @@ def report():
             back = [p["height"] for p in coupe["back"]]
             for fern in coupe["stool"]:
                 stools += 1
-                if stars:
+                # The ambassador is a fern on a stool since the re-roll of 28
+                # September 2026, and the sample does not record its young
+                # heights, so it is left out of the cut year's measure.
+                if stars and "cutHeight" in fern:
                     lowest_margin = min(lowest_margin, min(p["height"] for p in stars) - fern["cutHeight"])
                     if fern["cutHeight"] > min(p["height"] for p in stars):
                         over_cut += 1

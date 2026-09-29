@@ -94,7 +94,14 @@ public enum Coppice {
     /// A borrowed cut would divide them unevenly: the Orchard's 1.20 puts 28%
     /// at the back, the Long Walk's 0.77 puts 75%. It was 1.10 until the
     /// plants' shapes changed on 24 September 2026, measured the same way.
-    public static let backFrom = 1.00
+    ///
+    /// **0.99 since 29 September 2026.** After the re-roll of the 28th the
+    /// design's sample was grown again (`simulate.py`'s commands): its 1,067
+    /// stars stand at a median of 0.991 m, set at 0.99, which puts 49.4% of
+    /// the fresh sample's 1,051 at the back. The tests' own five hundred have
+    /// 248 stars at a median of 0.96; a sample of that size is not the one the
+    /// cut is measured on, and the design's moved by a centimetre.
+    public static let backFrom = 0.99
 
     /// Where a plant stands in a coupe: on a stool, or in one of the floor's
     /// two rows. **The back row is `z−` of the stools**, further from the eye
@@ -253,9 +260,10 @@ public enum Coppice {
 
         public init() {}
 
-        /// **The Coppice as it opened**: the renewal ambassador, *Rosea
-        /// caerulea*, a star, in the front row of the first coupe, and nothing
-        /// else.
+        /// **The Coppice as it opened**: the renewal ambassador and nothing
+        /// else. Since the re-roll of 28 September 2026 that is *Drosula
+        /// vulgaris*, a fern, on the first coupe's middle stool; until then it
+        /// was *Rosea caerulea*, a star, in the front row of the first coupe.
         public static func opened() -> Ways {
             var ways = Ways()
             let one = Ambassadors.of(.renewal)
@@ -392,8 +400,10 @@ public enum Coppice {
 
     /// **The first plant in the Coppice**, and the one it is drawn with
     /// before anybody has released anything into it: `Ambassadors.of(.renewal)`
-    /// placed by this rule into an empty area. A star under 1.00 m, so it opens
-    /// plot 0 in the front row of coupe 0. Derived rather than stored, as the
+    /// placed by this rule into an empty area. A fern, so it opens plot 0 on
+    /// coupe 0's middle stool — the coupe cut in year 0, so it is drawn cut
+    /// until 21 December 2026. (A star under 1.00 m until the re-roll of 28
+    /// September 2026, in the front row.) Derived rather than stored, as the
     /// other eight are.
     public static let ambassador: Planting = Ways.opened().plantings[0]
 }

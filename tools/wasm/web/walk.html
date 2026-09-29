@@ -115,7 +115,7 @@
 
   // What the rule did with each plot: its fill by tier, how many plants stand
   // outside their own tier, and how many colours it holds.
-  const tierOf = (height) => (height < 0.77 ? 0 : height < 1.20 ? 1 : 2);
+  const tierOf = (height) => (height < 0.75 ? 0 : height < 1.18 ? 1 : 2);
   const TIERS = ['edge', 'middle', 'back'], SLOTS = [20, 16, 12];
   function summary(plot) {
     const here = describe(e, plot);

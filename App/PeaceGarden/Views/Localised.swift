@@ -72,6 +72,8 @@ extension Archetype {
         case .poppy: return "Poppy"
         case .succulent: return "Succulent"
         case .plume: return "Plume"
+        case .reed: return "Reed"
+        case .cushion: return "Cushion"
         }
     }
 }

@@ -73,14 +73,17 @@ final class ThemeMappingTests: XCTestCase {
         }
     }
 
-    /// The heads are the file format — see `PlantName.genusHeads`. A
-    /// twenty-fifth would shift `pick`'s boundaries and rename every plant on
-    /// every phone, so the count is pinned here as well as commented there.
+    /// **The tails are the file format; the heads are not any more.** A tail
+    /// is still `pick`ed, so an eleventh would shift the boundaries and rename
+    /// every plant on every phone. A head has been read off the flower since
+    /// the roots table, so the reed's and the cushion's four went in on 28
+    /// September 2026 where the alphabet puts them — see `PlantName.genusHeads`.
+    /// What is pinned for the heads is that the list stays sorted, so nobody
+    /// ever has a reason to re-sort it.
     func testTheGenusSyllablesAreStillTheOnesEveryPlantWasNamedFrom() {
-        XCTAssertEqual(PlantName.genusHeads.count, 24)
+        XCTAssertEqual(PlantName.genusHeads.count, 28)
+        XCTAssertEqual(PlantName.genusHeads, PlantName.genusHeads.sorted())
         XCTAssertEqual(PlantName.genusTails.count, 10)
-        XCTAssertEqual(PlantName.genusHeads.first, "Ael")
-        XCTAssertEqual(PlantName.genusHeads.last, "Zeph")
     }
 
     // MARK: - Every theme divides three ways, and every third has passages

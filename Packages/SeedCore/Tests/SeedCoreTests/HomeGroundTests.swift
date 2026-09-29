@@ -205,6 +205,15 @@ final class HomeGroundTests: XCTestCase {
     /// them full, 26 beds sown and 23 full — 6 of spires, 13 of umbels, 7 of
     /// rosettes — 90% of places in sown beds held, and 4 plots holding all
     /// three crops. The simulation's rule D exactly.
+    ///
+    /// **Five plots holding all three since 28 September 2026**, where it was
+    /// four; every other number is where it was. The re-roll dealt the Home
+    /// Ground a different five hundred — 139 spires, 170 umbels and 191
+    /// rosettes where there were 145, 169 and 186 — and a crop claims the
+    /// first bed nobody has sown in the order its plants arrive, so which
+    /// plots end up with all three is the order of arrival and nothing else.
+    /// The rule is unchanged: plots 0, 2, 4, 5 and 6 hold all three, and
+    /// plot 3 is umbels in every bed.
     func testTheFillAtFiveHundred() {
         let ways = Self.full
         XCTAssertEqual(ways.plantings.count, 501)
@@ -229,7 +238,7 @@ final class HomeGroundTests: XCTestCase {
         XCTAssertEqual(sown, 26)
         XCTAssertEqual(fullBeds, 23)
         XCTAssertEqual(byCrop, [.cer: 6, .fen: 13, .pell: 7])
-        XCTAssertEqual(allThree, 4)
+        XCTAssertEqual(allThree, 5)
         XCTAssertEqual(Double(ways.plantings.count) / Double(places), 0.90, accuracy: 0.005)
     }
 

@@ -24,8 +24,8 @@ import SeedCore
 //                         judging whether a pair really does hold one colour
 //                         and fill as a mirror
 //
-// Opened rather than empty: it starts with Quina caerulea in the north
-// compartment, the way the real one does — which means the first pair is
+// Opened rather than empty: it starts with its ambassador (Quinyria obscura
+// since 28 September 2026) in the north compartment, the way the real one does — which means the first pair is
 // already claimed for family 4 before a single arrival, exactly as the service
 // has it.
 

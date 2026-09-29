@@ -1,60 +1,31 @@
-# Peace Garden: the reed, the cushion and the re-roll — handover 28 September 2026
+# Peace Garden: the re-roll's three answers are built and rehearsed — handover 29 September 2026
 
-The previous handover is at `git show be881db:.claude/HANDOVER.md`.
+The previous handover is at `git show b158188:.claude/HANDOVER.md`.
 
 ## Goal
-Promote the reed and the cushion to real archetypes, flip the spire, and re-roll and replant the garden once. Marcus approved all of it on 28 September.
+Promote the reed and the cushion to archetypes, flip the spire, re-roll and replant the garden once (approved 28 September), with Marcus's three answers of 29 September built in.
 
 ## State
-- **Live on peacegarden.app**: water in all ten areas (`water/scenery` merged, `6b8a56d`, deployed, `deploy.sh` check green).
-- **On `main`, app only**:
-  - `-pgStage` and `-pgMint` debug launch args.
-  - The stage frames a turning plant by its reach from the stem (`Maturity.extent`, `framing(reach:)`).
-  - SeedCore 400 tests pass, app 131.
-- **`shape/reed-cushion` (`15955dd`): approved, not merged.** The reed and the cushion as `ArchetypeProfile.Prototype` behind `@_spi(Prototype)`. `-pgPrototype` shows them on the stage, and on this branch `-pgMint` mints at launch.
-- `glyphs/plan-views`: **abandoned**. The symbolic glyphs stay.
+- **Branch `shape/reroll`, on `main`'s `bc4fe4d`. Not merged, not pushed, not deployed, not replanted.**
+  - `cd2f07f`, `d7b7cb9`, `485bd85` — the re-roll itself (see the previous handover).
+  - `75f6778` Danish: *Rør* for Reed (was *Siv*), *Pude* for Cushion. Norwegian *Siv* left.
+  - `883951a` **Cold Frame: a bigger tank.** Front row of frames retired (raw 2, 3 kept for decoding), tank takes its ground: 39 places, six staggered rows of 7/6, 0.62 m along, 0.57 m between rows, 4.4 × 3.16 m at `tankZ` 0.6; `frameZ` 1.65. At 500: 9 plots (was 17), frames in all 9, glass 73% held (was 19%). `sinkPool` has an optional `bank`. Cut 0.50 → 0.49.
+  - `af79044` **Every cut measured again** on three thousand crossings (list in `docs/WEB-GARDENS.md` §*Every cut measured again, 29 September 2026*): Long Walk 0.75/1.18, Quiet 1.08, Crossing 0.85/1.34, Orchard + Knot 0.48/1.18, Glasshouse 1.16, Coppice 0.99, Home Ground spire 1.261 / rosette 0.266 / umbel 0.930. Coppice samples regrown.
+- **Green:** SeedCore 405 (399 inside WebAssembly), app 131 (iPhone Air, 1 skipped), every `tools/reference/check_*.php` (bar `check_restore`), `passage_reference.py`, `check_port.py`, `check_sky.mjs`, strings checks, `tools/replant/rehearse.sh main`.
+- **Wasm rebuilt** into `Server/.pages/` (untracked) from this tree.
+- **Renders** in the session scratchpad `reroll/` (`reroll-answers.jpg`): Cold Frame before/after at plots 1, middle, last; Knot and Coppice plot 1 before/after.
 
-## Files
-- `Packages/SeedCore/Sources/SeedCore/Genome/Archetype.swift`: `Prototype` profiles to move into `profile(for:)` as `case reed, cushion`
-- `Packages/SeedCore/Sources/SeedCore/Genome/PlantName.swift:122`: `roots`; `WebGardens/Areas.swift:146`: `genusHeads` per theme
-- `Packages/SeedCore/Sources/SeedCore/Morphology/PlantBuilder.swift`:
-  - `strapProfile`, `addCushion`, `addCushionFlower` (branch)
-  - the spire's node-bloom order at about `:660`
-- `docs/PLANT-FORMS.md` (last section on the branch): what is left, and why
-
-## Decisions made
-- **Shapes approved as rendered.** Merge `shape/reed-cushion` first, then append the two cases to `Archetype`. Appending re-slices the draw, which is the re-roll Marcus chose.
-- **Roots.** The few-merous root names the family (few + "aceae").
-
-  | Family | Few (petals) | Many (petals) | Themes |
-  |---|---|---|---|
-  | Reed | *Don* (3) | *Syr* (6) | waiting, beginnings |
-  | Cushion | *Tyl* (5) | *Or* (8) | travel, meeting |
-
-  - Reed themes put reeds with the lilies by water. Default: *Syr* to waiting, *Don* to beginnings.
-  - Cushion themes put cushions at the head of the slope. Default: *Or* to travel, *Tyl* to meeting.
-  - Glosses: syrinx, the reed pipe; donax, the reed; tylē, a cushion; oros, a mountain.
-- **Spires open bottom-up** (4a), in the same re-roll, since it moves bloom sizes and so heights.
-- **Roots travel untranslated.** The labels *Reed* and *Cushion* need the app's 7 languages.
+## Open questions for Marcus
+- Look at the renders: the Cold Frame is now a pond with two frames behind it. In a young garden a third colour opens a new plot (two frames a plot), so the rehearsal's small garden went from 2 plots to 4, the later ones mostly empty water.
+- **Go-ahead to back up, deploy and replant** (outward-facing).
 
 ## Next step
-On a branch from `main`, merge `shape/reed-cushion`, then add `case reed, cushion` with the roots and themes above. Then work through every list the survey found:
-- `wantsWater`, and the PHP `WANTS_WATER`
-- `passages.js`, `meanings.js`, `Localised.swift`
-- `plant_model.py` (the port needs the strap and the cushion)
-- the counts in `RootTableTests`, `GenomeTests` and `ThemeMappingTests`
-
-After that:
-- Flip the spire.
-- Cut the cushion's cost; it is 7× an ordinary plant.
-- Re-record every area vector, the ambassadors and `vectors.json`.
-- Rebuild the wasm.
-- Render for Marcus, then back up and replant.
-
-This is a whole session. Do not deploy before the replant rehearsal passes.
+When Marcus says go: `tools/replant/README.md` §the order — `sh tools/backup.sh`, `--restore-test`, plan from that copy and read its notes, deploy (`tools/deploy.sh`), run `replant.php` with `--dry-run` then for real, `--verify`. Then merge `shape/reroll` to `main` and push.
 
 ## Traps
-- **Hidden browser pane pauses the page**, so `toBlob` and even `setTimeout` never settle. Capture headless with Playwright `browser_run_code_unsafe` → `page.screenshot`.
-- **The token-guard hook** blocks `innerHTML` (the security plugin), unbounded `git show`, and `cat >`. Use Write, and `| head -n`.
-- **Simulators.** The iPhone 17 Pro holds Marcus's garden: do not reinstall onto it. The iPhone Air is scratch; `scratchpad/shoot.sh` pattern: uninstall, install, launch with `-pgMint`.
-- **`pedicel-N` seed words** give known archetypes. Search with a scratch SwiftPM package depending on SeedCore by path.
+- **Hidden browser pane pauses the page.** Capture headless: Playwright `browser_run_code_unsafe` → `page.screenshot`, `/dev/<area>?plot=N` on port 8803 (`php -S localhost:8803 -t Server tools/wasm/dev-router.php`).
+- **The token-guard hook** blocks unbounded `git diff`/`git show` (use a small Python script running git), any command containing the word "curl", plain `cat`, `\|` in grep patterns, and images over ~500 KB.
+- **Don't edit SeedCore while a tool builds it** (`tools/homeground`, `tools/coppice`, the wasm): SwiftPM fails with "modified during the build".
+- **The Home Ground tool's sample cache** is stamped with the ground ambassador's height; clear `tools/homeground/.build/samples` when heights move without that plant changing.
+- **Simulators.** The iPhone 17 Pro holds Marcus's garden: do not reinstall onto it. The iPhone Air is scratch.
+- **The reed is the heaviest plant** (~40k vertices), and a Cold Frame tank now holds up to 39 of the area's water plants.

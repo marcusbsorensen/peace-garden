@@ -116,7 +116,8 @@ function offerNumber(PDO $db, string $seed): ?int
  * A plot's shared plants: what it holds, minus the ambassador standing at the
  * head of plot 0.
  *
- * The walk is never empty and never was — *Halula crassicaulis* was placed
+ * The walk is never empty and never was — its ambassador (*Zephea pallida*
+ * since the re-roll of 28 September 2026, *Halula crassicaulis* before) was placed
  * there before anything else and is not a row in the table. Every count below
  * is about what gardeners put there, which is what these checks are about, so
  * the one plant nobody put there is taken out first. It is the one with no
@@ -429,14 +430,16 @@ check('a Cold Frame plant is planted',
       $offers->answer($nine['seed'], $theirs9, true, $now)['planting'] !== null);
 check('and not in the walk', count(shared($walk)) === $walkHeld);
 $framed = framedAs($walk, $nine['seed']);
-// The first frame is the ambassador's, claimed by *Nyxisora crassicaulis* for
-// its colour, which is not this plant's. So a plant of another colour opens the
-// second frame, and at 1.1 m it opens it in the back rank — the answer only the
-// Cold Frame's rule gives, where a plant misfiled anywhere else has no row here
-// at all.
+// The ambassador, *Nyxisora crassicaulis*, is a lotus and has stood in the tank
+// since it was sunk on 27 September, so no frame is claimed before this plant
+// arrives: it claims the first for its colour, and at 1.1 m it opens it in the
+// back rank — the answer only the Cold Frame's rule gives, where a plant
+// misfiled anywhere else has no row here at all. (Until the tank, the first
+// frame was the ambassador's and this plant opened the second; this check said
+// so until 28 September 2026.)
 check('it is in the Cold Frame, in a frame of its own colour',
-      $framed !== null && (int) $framed['frame'] === 1
-      && (int) $framed['slot_rank'] === 1 && (int) $framed['slot_index'] === 0);
+      $framed !== null && (int) $framed['frame'] === ColdFrame::BACK_WEST
+      && (int) $framed['slot_rank'] === ColdFrame::BACK && (int) $framed['slot_index'] === 0);
 check('beside the ambassador, which is still there', count($walk->coldFrame()->plot(0)) === 2);
 
 // And taking it back reaches the Cold Frame's table, not the walk's: the row
@@ -446,8 +449,9 @@ $nineArrival = arrivalOf($db, 'cold_frame', $nine['seed']);
 $offers->withdraw($nine['seed'], $mine9, $now + 60);
 $lifted = arrival($db, 'cold_frame', (int) $nineArrival);
 check('taking it back hides it in the Cold Frame', $lifted !== null && (int) $lifted['hidden'] === 1);
-check('where it keeps its frame, its rank and its place', $lifted !== null && (int) $lifted['frame'] === 1
-      && (int) $lifted['slot_rank'] === 1 && (int) $lifted['slot_index'] === 0);
+check('where it keeps its frame, its rank and its place', $lifted !== null
+      && (int) $lifted['frame'] === ColdFrame::BACK_WEST
+      && (int) $lifted['slot_rank'] === ColdFrame::BACK && (int) $lifted['slot_index'] === 0);
 check('and the family that claimed the frame, and its height', $lifted !== null
       && (int) $lifted['family'] === 2 && (float) $lifted['height'] === 1.1);
 check('and nothing else of it', framedAs($walk, $nine['seed']) === null
@@ -499,7 +503,9 @@ $served = $walk->glasshouse()->plot(0)[1] ?? [];
 check('and the page is told how far off the floor it stands',
       ($served['lift'] ?? null) === Glasshouse::STAGING_TOP + Glasshouse::POT_SOIL);
 
-// A plant tall enough for the border goes there, whatever its colour.
+// A plant tall enough for the border goes there, whatever its colour — in the
+// next place from the door, since the ambassador, *Elora elata*, has held the
+// first since the re-roll of 28 September 2026.
 $eleven = crossing(11);
 $mine11 = token('eleven/mine');
 $theirs11 = token('eleven/theirs');
@@ -507,8 +513,8 @@ $offers->offer($eleven['seed'], $theirs11, $mine11, $eleven['a'], $eleven['b'], 
                1.6, 4, $now, 'light', '', $violet);
 $offers->answer($eleven['seed'], $theirs11, true, $now);
 $tall = pottedAs($walk, $eleven['seed']);
-check('a tall one goes in the border, first from the door', $tall !== null
-      && (int) $tall['bed'] === Glasshouse::BORDER && (int) $tall['slot_index'] === 0);
+check('a tall one goes in the border, next from the door after the ambassador', $tall !== null
+      && (int) $tall['bed'] === Glasshouse::BORDER && (int) $tall['slot_index'] === 1);
 
 // And an offer made without a hue — every offer made before the column
 // existed — still plants: in the first free pot from the door.
@@ -571,20 +577,27 @@ check('a Coppice plant is planted',
       $offers->answer($thirteen['seed'], $theirs13, true, $now)['planting'] !== null);
 check('and not in the walk', count(shared($walk)) === $walkHeld);
 $stool = stoodAs($walk, $thirteen['seed']);
-// A fern: the first coupe's middle stool. Read as a star, a plant of 0.7 m
-// would have gone to the front row of the second coupe, the first holding the
-// ambassador — so a habit dropped on the way cannot land here by chance.
+// A fern: the second coupe's middle stool, the first coupe's being the
+// ambassador's — *Drosula vulgaris*, a fern itself since the re-roll of 28
+// September 2026 — and a fern taking a stool in the coupe with fewest. Read as
+// a star, a plant of 0.7 m would have gone to the front row of the first
+// coupe, whose floor is empty — so a habit dropped on the way cannot land here
+// by chance.
 check('the habit survived the asking', $stool !== null && $stool['habit'] === 'fern');
-check('it stands on the first coupe\'s middle stool', $stool !== null
-      && (int) $stool['coupe'] === 0 && (int) $stool['place'] === Coppice::STOOL
+check('it stands on the second coupe\'s middle stool', $stool !== null
+      && (int) $stool['coupe'] === 1 && (int) $stool['place'] === Coppice::STOOL
       && (int) $stool['slot_index'] === Coppice::STOOL_ORDER[0]);
 check('beside the ambassador, which is still there', count($walk->coppice()->plot(0, 0)) === 2);
+// Coupe 1 of plot 0 stands grown in year 0 and is cut in year 1.
 $served = $walk->coppice()->plot(0, 0)[1] ?? [];
-check('and the page is told its coupe is cut this year',
-      array_key_exists('stage', $served) && $served['stage'] === Coppice::CUT);
-check('and a year on, regrowing', ($walk->coppice()->plot(0, 1)[1]['stage'] ?? null) === Coppice::REGROWING);
-check('while a star is drawn at its best, whatever the year',
-      array_key_exists('stage', $walk->coppice()->plot(0, 0)[0]) && $walk->coppice()->plot(0, 0)[0]['stage'] === null);
+check('and the page is told its coupe is grown this year',
+      array_key_exists('stage', $served) && $served['stage'] === Coppice::GROWN);
+check('and a year on, cut', ($walk->coppice()->plot(0, 1)[1]['stage'] ?? null) === Coppice::CUT);
+// The ambassador is on a stool too, and is told its coupe's stage as any fern
+// on a stool is: coupe 0 is the one cut in year 0.
+check('and so is the ambassador, cut this year with the first coupe',
+      array_key_exists('stage', $walk->coppice()->plot(0, 0)[0])
+      && $walk->coppice()->plot(0, 0)[0]['stage'] === Coppice::CUT);
 
 // An offer made without a habit — every offer made before the column existed
 // — still plants: as a star, on the floor.
@@ -597,7 +610,10 @@ $offers->answer($fourteen['seed'], $theirs14, true, $now);
 $unsent = stoodAs($walk, $fourteen['seed']);
 check('an offer with no habit still plants', $unsent !== null && $unsent['habit'] === '');
 check('in the light, as a star', $unsent !== null && (int) $unsent['place'] === Coppice::FRONT
-      && (int) $unsent['coupe'] === 1);
+      && (int) $unsent['coupe'] === 0);
+$asStar = array_values(array_filter($walk->coppice()->plot(0, 0), fn($p) => $p['seed'] === $fourteen['seed']));
+check('and a star is drawn at its best, whatever the year',
+      $asStar !== [] && array_key_exists('stage', $asStar[0]) && $asStar[0]['stage'] === null);
 
 $settled = $walk->connection()->prepare('SELECT habit, area FROM walk_offers WHERE seed = ?');
 $settled->execute([$thirteen['seed']]);
@@ -612,7 +628,7 @@ $offers->withdraw($thirteen['seed'], $mine13, $now + 60);
 $lifted = arrival($db, 'coppice', (int) $thirteenArrival);
 check('taking it back hides it in the Coppice', $lifted !== null && (int) $lifted['hidden'] === 1);
 check('where it keeps its coupe, its place and its habit', $lifted !== null
-      && (int) $lifted['coupe'] === 0 && (int) $lifted['place'] === Coppice::STOOL
+      && (int) $lifted['coupe'] === 1 && (int) $lifted['place'] === Coppice::STOOL
       && $lifted['habit'] === 'fern' && (float) $lifted['height'] === 0.7 && (int) $lifted['family'] === 0);
 check('and nothing else of it', stoodAs($walk, $thirteen['seed']) === null
       && stillHeld($db, $thirteen + ['mine' => $mine13, 'theirs' => $theirs13]) === []);
@@ -682,13 +698,19 @@ check('and not its height, family or habit', $lifted !== null && (float) $lifted
 check('and nothing else of it', bedded($walk, $fifteen['seed']) === null
       && stillHeld($db, $fifteen + ['mine' => $mine15, 'theirs' => $theirs15]) === []);
 
-// MARK: The lotus, and the two places it takes
+// MARK: The lotus, and the places it takes
 
 // **Since 25 September a lotus takes two places in the Cold Frame and the
 // Seedbed**, read off the habit the offer carries. Dropped on the way, a lotus
 // would be given one place and the next plant would stand in its pads — a place
 // the rule also gives, so the span in the row and the plant after it are what
 // tell them apart.
+//
+// **Since 27 September the habit decides the element as well.** A plant that
+// wants water goes in the Cold Frame's tank, one place to a plant, and floods a
+// drill of its own in the Seedbed, where a lotus still takes two. Dropped on
+// the way, a lotus would be put under glass, or sown in a dry drill of its kind.
+// This section said the 25 September story until 28 September 2026.
 function held(PDO $db, string $table, string $seed): ?array
 {
     $query = $db->prepare("SELECT slot_index, slot_span, habit, hidden FROM $table WHERE seed = ?");
@@ -697,9 +719,10 @@ function held(PDO $db, string $table, string $seed): ?array
     return $row === false ? null : $row;
 }
 
-// The Cold Frame's first frame holds its ambassador, a lotus of colour 4, in
-// the first two places of its front rank. A young lotus of that colour joins it
-// in the next two, and a plant of one after both.
+// The Cold Frame's tank holds its ambassador, a lotus, in its first place. A
+// young lotus joins it in the next, holding one place as everything in the
+// water does; a plant of the same colour that is not a lotus goes under glass,
+// in the frame no plant of its colour has claimed yet.
 $seventeen = crossing(17);
 $mine17 = token('seventeen/mine');
 $theirs17 = token('seventeen/theirs');
@@ -707,50 +730,54 @@ $offers->offer($seventeen['seed'], $theirs17, $mine17, $seventeen['a'], $sevente
                0.30, 4, $now, 'waiting', '', null, 'lotus');
 $offers->answer($seventeen['seed'], $theirs17, true, $now);
 $pads = held($db, 'cold_frame', $seventeen['seed']);
-check('a lotus in the Cold Frame holds two places, after the ambassador\'s two', $pads !== null
-      && (int) $pads['slot_index'] === 2 && (int) $pads['slot_span'] === 2 && $pads['habit'] === 'lotus');
+check('a lotus in the Cold Frame goes in the tank, after the ambassador, and holds one place', $pads !== null
+      && (int) (framedAs($walk, $seventeen['seed'])['frame'] ?? -1) === ColdFrame::TANK
+      && (int) $pads['slot_index'] === 1 && (int) $pads['slot_span'] === 1 && $pads['habit'] === 'lotus');
 $eighteen = crossing(18);
 $mine18 = token('eighteen/mine');
 $theirs18 = token('eighteen/theirs');
 $offers->offer($eighteen['seed'], $theirs18, $mine18, $eighteen['a'], $eighteen['b'], $eighteen['encounter'],
                0.30, 4, $now, 'waiting');
 $offers->answer($eighteen['seed'], $theirs18, true, $now);
-$after = held($db, 'cold_frame', $eighteen['seed']);
-check('and the plant after it stands after both', $after !== null
-      && (int) $after['slot_index'] === 4 && (int) $after['slot_span'] === 1);
+$after = framedAs($walk, $eighteen['seed']);
+check('and a plant of its colour that is not a lotus goes under glass', $after !== null
+      && (int) $after['frame'] === ColdFrame::BACK_EAST && (int) $after['slot_index'] === 0);
 $lotusAt = $walk->coldFrame()->plot(0)[1]['spot'] ?? [0.0, 0.0];
-[$firstX] = ColdFrame::spot(ColdFrame::BACK_WEST, ColdFrame::FRONT, 2);
-[$secondX] = ColdFrame::spot(ColdFrame::BACK_WEST, ColdFrame::FRONT, 3);
-check('the page is sent the middle of its two places', abs($lotusAt[0] - ($firstX + $secondX) / 2) <= 0.03 + 1e-9);
+[$tankX, $tankZ] = ColdFrame::spot(ColdFrame::TANK, ColdFrame::FRONT, 1);
+check('the page is sent its place in the water', abs($lotusAt[0] - $tankX) <= 0.03 + 1e-9
+      && abs($lotusAt[1] - $tankZ) <= 0.03 + 1e-9);
 
-// Taken back, it keeps both places: the next plant of one stands after them,
-// not in the gap it leaves.
+// Taken back, it keeps its place: the next lotus floats after it, not in the
+// gap it leaves.
 $seventeenArrival = arrivalOf($db, 'cold_frame', $seventeen['seed']);
 $offers->withdraw($seventeen['seed'], $mine17, $now + 60);
 $lifted = arrival($db, 'cold_frame', (int) $seventeenArrival);
-check('a lotus taken back keeps both its places and not its habit', $lifted !== null
-      && (int) $lifted['hidden'] === 1 && (int) $lifted['slot_index'] === 2 && (int) $lifted['slot_span'] === 2
-      && $lifted['habit'] === '');
+check('a lotus taken back keeps its place and not its habit', $lifted !== null
+      && (int) $lifted['hidden'] === 1 && (int) $lifted['frame'] === ColdFrame::TANK
+      && (int) $lifted['slot_index'] === 1 && (int) $lifted['slot_span'] === 1 && $lifted['habit'] === '');
 $nineteen = crossing(19);
 $mine19 = token('nineteen/mine');
 $theirs19 = token('nineteen/theirs');
 $offers->offer($nineteen['seed'], $theirs19, $mine19, $nineteen['a'], $nineteen['b'], $nineteen['encounter'],
-               0.30, 4, $now, 'waiting');
+               0.30, 4, $now, 'waiting', '', null, 'lotus');
 $offers->answer($nineteen['seed'], $theirs19, true, $now);
 $later = held($db, 'cold_frame', $nineteen['seed']);
-check('and nothing is given its places', $later !== null && (int) $later['slot_index'] === 5);
+check('and nothing is given its place', $later !== null && (int) $later['slot_index'] === 2);
 
-// The Seedbed's drill of *contorta* holds two plants of one place. A lotus of
-// that kind takes the next two, whatever its height and colour.
+// The Seedbed's drill of *contorta* is dry, sown with two plants that sent no
+// habit. A lotus of that kind wants water, so it passes the dry drill by,
+// floods the first drill nobody has claimed, and takes its first two places,
+// whatever its height and colour.
 $lotusSeed = hash('sha256', 'check_offers: a lotus in the seedbed');
 [$sownLotus] = $walk->plantInto('beginnings', $lotusSeed, hash('sha256', 'la'), hash('sha256', 'lb'),
                                 hash('sha256', 'le'), 0.3, 1, 'contorta', null, 'lotus');
 $sown = held($db, 'seedbed', $lotusSeed);
-check('a lotus in the Seedbed holds two places in its kind\'s drill', $sown !== null
-      && (int) $sown['slot_index'] === 2 && (int) $sown['slot_span'] === 2 && $sown['habit'] === 'lotus');
-[$x0, $z2] = Seedbed::spot(1, 2);
-[$x0, $z3] = Seedbed::spot(1, 3);
-check('and stands between them', abs($sownLotus['spot'][1] - ($z2 + $z3) / 2) <= 0.06 + 1e-9);
+check('a lotus in the Seedbed floods a drill of its kind and holds two places in it', $sown !== null
+      && ($sownLotus['drill'] ?? null) === 3 && ($sownLotus['kind'] ?? null) === 'contorta'
+      && (int) $sown['slot_index'] === 0 && (int) $sown['slot_span'] === 2 && $sown['habit'] === 'lotus');
+[$x0, $z0] = Seedbed::spot(3, 0);
+[$x0, $z1] = Seedbed::spot(3, 1);
+check('and stands between them', abs($sownLotus['spot'][1] - ($z0 + $z1) / 2) <= 0.06 + 1e-9);
 
 // A published plant's seed, parents and meeting are public. Offering it again
 // with two invented tokens must not hand back the real ones, or the stranger

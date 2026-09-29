@@ -44,12 +44,14 @@ final class HomeGround
      * Each crop's spacing and cut: plants across a row, the gap between them,
      * rows down the bed, the gap between those, and the height from which a
      * plant takes the north end. The umbel's cut is 0.930, moved off the
-     * measured 0.932 where an arrival stood 0.009 mm from it.
+     * measured 0.932 where an arrival stood 0.009 mm from it. The spire's and
+     * the rosette's were measured again on 29 September 2026, after the
+     * re-roll: 1.261 (was 1.346) and 0.266 (was 0.275).
      */
     public const CROPS = [
-        'Cer' => ['across' => 3, 'gap' => 0.40, 'rows' => 9, 'rowGap' => 0.45, 'cut' => 1.346],
+        'Cer' => ['across' => 3, 'gap' => 0.40, 'rows' => 9, 'rowGap' => 0.45, 'cut' => 1.261],
         'Fen' => ['across' => 2, 'gap' => 0.60, 'rows' => 7, 'rowGap' => 0.60, 'cut' => 0.930],
-        'Pell' => ['across' => 3, 'gap' => 0.38, 'rows' => 10, 'rowGap' => 0.40, 'cut' => 0.275],
+        'Pell' => ['across' => 3, 'gap' => 0.38, 'rows' => 10, 'rowGap' => 0.40, 'cut' => 0.266],
     ];
 
     /** The crop a habit names. An empty or unknown habit is sown as an umbel. */

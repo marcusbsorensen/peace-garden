@@ -36,8 +36,8 @@ import SeedCore
 // What is new is where they stand: three in four of them in a pot on the
 // staging, 0.83 m off the floor, which is why a planting here carries a lift.
 //
-// Opened rather than empty: it starts with the light ambassador potted at its
-// own band, the way the real one does.
+// Opened rather than empty: it starts with the light ambassador (in the
+// border since 28 September 2026), the way the real one does.
 
 nonisolated(unsafe) private var glasshouseWays = Glasshouse.Ways.opened()
 nonisolated(unsafe) private var grownInGlasshouse: [String: Genome] = {

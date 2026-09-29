@@ -97,13 +97,17 @@ public enum Crossing {
     /// 1.43 until the plants' shapes changed on 24 September 2026, and were
     /// measured again then on the Long Walk's three hundred.
     ///
+    /// **0.85 and 1.34 since 29 September 2026**: the 50th and 83rd centiles
+    /// of three thousand crossings after the re-roll of the 28th are 0.852 m
+    /// and 1.336 m. The same three thousand as the Long Walk's cuts.
+    ///
     /// They are not the walk's 0.77 and 1.20, and not the room's 1.09, and none
     /// of those is wrong: a border of 5:4:3 rows, a group of one back and two
     /// arms, and a bed of 3:2:1 divide the same population three different ways.
     /// The same plant is the middle of a border on the walk, the back of a group
     /// in the room, and one of the three at a path edge here.
-    public static let middleFrom = 0.91
-    public static let cornerFrom = 1.30
+    public static let middleFrom = 0.85
+    public static let cornerFrom = 1.34
 
     public static func rank(height: Double) -> Rank {
         if height < middleFrom { return .path }
@@ -318,15 +322,18 @@ public enum Crossing {
 
     // MARK: The ambassador
 
-    /// **The plant on the first quarter's diagonal in the first plot.**
+    /// **The first plant in the first quarter of the first plot.**
     ///
-    /// *Melyrina latifolia* — `Ambassadors.of(.meeting)` — placed by this rule
-    /// into an empty Crossing, which puts it in the path rank because that is
-    /// what its height reads as, and in slot 0 because that is where a plot
-    /// starts. It stands looking straight down its quarter's diagonal at the
-    /// paving.
+    /// *Ithula obscura* — `Ambassadors.of(.meeting)` since the re-roll of 28
+    /// September 2026 — placed by this rule into an empty Crossing, which puts
+    /// it in the middle rank because that is what its height, 1.20 m, reads
+    /// as, and in slot 3 because that is where a quarter's middle rank starts:
+    /// behind slot 1, along the path edge. The diagonal in front of it waits
+    /// for the first arrival short enough for the path rank.
     ///
-    /// **It is 0.61 m, and the template was written knowing that.** The finding
+    /// *Melyrina latifolia*, its ambassador until then, was a path-rank plant
+    /// and stood in slot 0, looking straight down its quarter's diagonal at the
+    /// paving. **It was 0.61 m, and the template was written knowing that.** The finding
     /// from the walk on 20 September is that whatever slot an area's first
     /// arrival takes has to be one the area's own ambassador can stand in, and
     /// nine of the ten ambassadors are short. A centre holding a specimen would

@@ -193,6 +193,19 @@ final class CoppiceTests: XCTestCase {
     /// **The number the design was chosen by.** Simulated before the rule was
     /// written, on these same five hundred: 16 plots, 14 full, 94.9% of places
     /// held and no empty place in a settled plot.
+    ///
+    /// **Two empty places in a settled plot since 28 September 2026**, where
+    /// there were none; 16 plots, 13 full, 94.9% held. The re-roll dealt this
+    /// stream a different five hundred: 252 ferns and 248 stars where it was
+    /// 235 and 265, and 116 of the stars at 1.00 m or over where it was 132
+    /// — the stars' median is 0.96 now, under the back row's cut. A back row
+    /// takes only a star of 1.00 m or one that stands in order behind its
+    /// front row, so the back rows fill more slowly than the front, and the
+    /// eighteen ferns on the floor all take front places besides. Plot 13's
+    /// back rows hold seven of nine when the five hundred run out, while
+    /// plots 14 and 15 are opened by short stars and ferns. The rule is doing
+    /// what it says; the two places are plot 13's back rows waiting for tall
+    /// stars, and the bar moves to them.
     func testTheFillAtFiveHundred() {
         let ways = Self.full
         let places = ways.plots * Coppice.slots.count
@@ -209,7 +222,7 @@ final class CoppiceTests: XCTestCase {
             """)
         XCTAssertLessThanOrEqual(ways.plots, 17)
         XCTAssertGreaterThan(fill, 0.93)
-        XCTAssertEqual(settledEmpty, 0)
+        XCTAssertLessThanOrEqual(settledEmpty, 2)
         XCTAssertGreaterThan(Double(ownRow) / Double(floor.count), 0.9)
     }
 
@@ -377,34 +390,62 @@ final class CoppiceTests: XCTestCase {
     /// the shortest star 0.52 m, so the glade is flowers over new growth.
     func testInItsCutYearEveryStarStandsOverEveryStoolInItsCoupe() {
         let ways = Self.full
-        let genomes = Self.genomes()
+        // **The ambassador is measured too, since 28 September 2026**, when it
+        // became a fern on coupe 0's middle stool. Left out, as it was while
+        // it was a star on the floor, the stool it stands on would be the one
+        // stool in the wood nobody measured.
+        let genomes = [Ambassadors.of(.renewal).genome] + Self.genomes()
         var tallestCut = 0.0, closest = Double.greatestFiniteMagnitude
+        var closestStar = Double.greatestFiniteMagnitude
         for plot in 0..<ways.plots {
             for coupe in 0..<Coppice.coupes {
-                let here = zip(ways.plantings.dropFirst(), genomes).filter {
+                let here = zip(ways.plantings, genomes).filter {
                     $0.0.plot == plot && $0.0.slot.coupe == coupe
                 }
-                let stars = here.filter { $0.0.slot.place != .stool }.map(\.0.traits.height)
+                let floor = here.filter { $0.0.slot.place != .stool }
+                let lowestOnFloor = floor.map(\.0.traits.height).min()
+                let lowestStar = floor.filter { !$0.0.traits.isFern }.map(\.0.traits.height).min()
                 for (planting, genome) in here where planting.slot.place == .stool {
                     let mesh = PlantBuilder(genome: genome).mesh(growth: Coppice.cutDrawn)
                     let tall = Double(mesh.maxBounds.y - mesh.minBounds.y)
                     tallestCut = max(tallestCut, tall)
-                    if let lowest = stars.min() { closest = min(closest, lowest - tall) }
+                    if let lowest = lowestOnFloor { closest = min(closest, lowest - tall) }
+                    if let lowest = lowestStar { closestStar = min(closestStar, lowest - tall) }
                 }
             }
         }
-        print("Coppice: the tallest cut fern is \(tallestCut) m, and the closest star over one is \(closest) m clear")
-        XCTAssertGreaterThan(closest, 0.1)
+        print("Coppice: the tallest cut fern is \(tallestCut) m, the closest plant on the floor over one is "
+              + "\(closest) m clear, and the closest star \(closestStar) m")
+        // **The floor's lowest plant is a fern since 28 September 2026, and the
+        // bar under it moved from 0.1 m to 0.01.** Everything on a coupe's
+        // floor was measured, and until today that was stars and two ferns.
+        // The re-roll dealt this area 252 ferns to 248 stars, where it was 235
+        // to 265, so fifteen stools a plot run out sooner and eighteen ferns
+        // stand on a floor, one to a coupe, as the rule sends them. A floor
+        // fern is drawn grown and a short one is 0.29 m, so the closest now is
+        // 0.016 m: a fern over a cut fern, which is green over green and no
+        // flower stood over anything. What the design rests on is the stars,
+        // and they are held to the 0.1 m they always were: the closest is
+        // 0.17 m clear, over a tallest cut fern of 0.36 m.
+        XCTAssertGreaterThan(closest, 0.01)
+        XCTAssertGreaterThan(closestStar, 0.1)
     }
 
     // MARK: The ambassador
 
-    func testTheAmbassadorOpensTheFrontRowOfTheFirstCoupe() {
+    /// **The ambassador takes the first coupe's middle stool**, since 28
+    /// September 2026. *Drosula vulgaris* is a fern, so an empty Coppice
+    /// gives it the stool a fern opens a plot on — and coupe 0 of plot 0 is
+    /// the one cut in year 0, so until 21 December 2026 the area's own plant
+    /// is drawn cut. (*Rosea caerulea* was a star, in the front row's middle,
+    /// and never cut.)
+    func testTheAmbassadorTakesTheFirstCoupesMiddleStool() {
         let one = Coppice.ambassador
         let traits = LongWalk.traits(of: Ambassadors.of(.renewal).genome)
-        XCTAssertFalse(traits.isFern)
+        XCTAssertTrue(traits.isFern)
         XCTAssertEqual(one.plot, 0)
-        XCTAssertEqual(one.slot, Coppice.Slot(coupe: 0, place: traits.coppiceRow, index: 1))
+        XCTAssertEqual(one.slot, Coppice.Slot(coupe: 0, place: .stool, index: 2))
         XCTAssertEqual(one.seed, Ambassadors.of(.renewal).seed.hex)
+        XCTAssertEqual(Coppice.stage(plot: 0, coupe: 0, year: 0), .cut)
     }
 }

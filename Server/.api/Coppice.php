@@ -61,8 +61,8 @@ final class Coppice
     public const BACK = 1;
     public const FRONT = 2;
 
-    /** The median of the area's own stars, measured as the Cold Frame's cut was. */
-    public const BACK_FROM = 1.00;
+    /** The median of the area's own stars, measured as the Cold Frame's cut was: 0.99 since 29 September 2026. */
+    public const BACK_FROM = 0.99;
 
     /** The three stages of a coupe's rotation. */
     public const CUT = 0;

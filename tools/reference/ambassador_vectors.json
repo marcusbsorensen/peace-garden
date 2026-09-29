@@ -2,17 +2,17 @@
   "sown": 1787184000,
   "gardenOpened": 1789862400,
   "ambassadors": [
-    {"area": "beginnings", "seed": "526ffb12041c8641eead7cb97614517436806c5748c3f581754dd102738719ae", "name": "Verora angustifolia", "genusHead": "Ver", "height": 1.0950173139572144, "family": 4, "hue": 0.8039013209326065, "habit": "spire"},
+    {"area": "beginnings", "seed": "526ffb12041c8641eead7cb97614517436806c5748c3f581754dd102738719ae", "name": "Verora angustifolia", "genusHead": "Ver", "height": 1.004594326019287, "family": 4, "hue": 0.8039013209326065, "habit": "spire"},
     {"area": "waiting", "seed": "8c0992d3e4221b40489b83d05c0ec3131fc8c771365970ffbb1354a93431ff3f", "name": "Nyxisora crassicaulis", "genusHead": "Nyx", "height": 0.30920299887657166, "family": 4, "hue": 0.7547223321909423, "habit": "lotus"},
-    {"area": "renewal", "seed": "c295b64b290a2e9b3c6ece6c70dafb1816205f60f42a0663e47bfb738b30d292", "name": "Rosea caerulea", "genusHead": "Ros", "height": 0.9061852693557739, "family": 3, "hue": 0.6099565051821925, "habit": "star"},
-    {"area": "light", "seed": "53b234ab46f50e06243314d3d6159c67d0b26b2c0bc44a5fcd4b83ad28c4bc41", "name": "Aurea pallida", "genusHead": "Aur", "height": 0.7377139925956726, "family": 0, "hue": 0.09056447676905748, "habit": "poppy"},
-    {"area": "pattern", "seed": "75121838c745b4c11d8c34bdf4492890833a1a8ca768942ef26cbbbba7a74b7b", "name": "Quina caerulea", "genusHead": "Quin", "height": 1.0851181745529175, "family": 4, "hue": 0.7185860516745026, "habit": "bell"},
+    {"area": "renewal", "seed": "751caa28cd3debc0889cf2e3753bb08227f73c28344bcbdb152676e4e6ba5ad3", "name": "Drosula vulgaris", "genusHead": "Dros", "height": 0.5046804547309875, "family": 6, "hue": 0.6923028318571157, "habit": "fern"},
+    {"area": "light", "seed": "cb56d4faf696980777ee2fa626c4d21a8c6313e77360a7c51af1050de37546af", "name": "Elora elata", "genusHead": "El", "height": 1.4487090110778809, "family": 4, "hue": 0.8310607398530679, "habit": "star"},
+    {"area": "pattern", "seed": "2db9895507d76284f916bfb86161bf11979ad6b908317fced3453dff915613cf", "name": "Quinyria obscura", "genusHead": "Quin", "height": 1.2213140726089478, "family": 4, "hue": 0.6755348440652179, "habit": "bell"},
     {"area": "ground", "seed": "540d870092386fc9a3e5611499390c1de91fbadddf276bc6ef6eec73dc30326d", "name": "Fenunora patentifolia", "genusHead": "Fen", "height": 1.1002660989761353, "family": 6, "hue": 0.5551475452960544, "habit": "umbel"},
-    {"area": "travel", "seed": "be9dd17805ea1ebab2c56695b13158adb8d985f165564c10804961b543c12d3c", "name": "Halula crassicaulis", "genusHead": "Hal", "height": 1.0417732000350952, "family": 3, "hue": 0.6066036733036302, "habit": "thistle"},
-    {"area": "meeting", "seed": "9bca751433cf86be586c46b3b6582a504fb4df133036321ce000f066e13d7284", "name": "Melyrina latifolia", "genusHead": "Mel", "height": 0.46054115891456604, "family": 5, "hue": 0.9282682729169045, "habit": "orchid"},
-    {"area": "kinship", "seed": "ec0850ec7cd6824077a0c51e3c4c8cc670b321bdf66b8eb8f338fff81deb6bf3", "name": "Cyninora contorta", "genusHead": "Cyn", "height": 1.3397456407546997, "family": 0, "hue": 0.07103108447854911, "habit": "thistle"},
-    {"area": "peace", "seed": "2d1894df5b3f19d3d1c4a12cae8e8d7334a07f942ba60903d37846a190faa4eb", "name": "Olyne paniculata", "genusHead": "Ol", "height": 0.5453125238418579, "family": 1, "hue": 0.2243386480249174, "habit": "plume"}
+    {"area": "travel", "seed": "53b234ab46f50e06243314d3d6159c67d0b26b2c0bc44a5fcd4b83ad28c4bc41", "name": "Zephea pallida", "genusHead": "Zeph", "height": 0.5241280794143677, "family": 0, "hue": 0.09056447676905748, "habit": "plume"},
+    {"area": "meeting", "seed": "4e8ae3205804ca5b4da57110894e26ad8a9f28c97d33de28358f9fb2410cf80a", "name": "Ithula obscura", "genusHead": "Ith", "height": 1.1962966918945312, "family": 4, "hue": 0.7734863154759546, "habit": "bell"},
+    {"area": "kinship", "seed": "ec0850ec7cd6824077a0c51e3c4c8cc670b321bdf66b8eb8f338fff81deb6bf3", "name": "Vininora contorta", "genusHead": "Vin", "height": 1.9295012950897217, "family": 0, "hue": 0.07103108447854911, "habit": "vine"},
+    {"area": "peace", "seed": "75121838c745b4c11d8c34bdf4492890833a1a8ca768942ef26cbbbba7a74b7b", "name": "Bela caerulea", "genusHead": "Bel", "height": 1.0573713779449463, "family": 4, "hue": 0.7185860516745026, "habit": "poppy"}
   ],
-  "longWalk": {"seed": "be9dd17805ea1ebab2c56695b13158adb8d985f165564c10804961b543c12d3c", "plot": 0, "side": -1, "tier": 1, "index": 0, "nudge": [-0.0207843137254902, -0.04556862745098039]},
-  "quietGarden": {"seed": "2d1894df5b3f19d3d1c4a12cae8e8d7334a07f942ba60903d37846a190faa4eb", "plot": 0, "corner": 0, "index": 0, "nudge": [-0.12082352941176472, -0.12694117647058822]}
+  "longWalk": {"seed": "53b234ab46f50e06243314d3d6159c67d0b26b2c0bc44a5fcd4b83ad28c4bc41", "plot": 0, "side": -1, "tier": 0, "index": 0, "nudge": [-0.09137254901960784, 0.07521568627450982]},
+  "quietGarden": {"seed": "75121838c745b4c11d8c34bdf4492890833a1a8ca768942ef26cbbbba7a74b7b", "plot": 0, "corner": 0, "index": 0, "nudge": [0.02090196078431374, -0.08309803921568627]}
 }

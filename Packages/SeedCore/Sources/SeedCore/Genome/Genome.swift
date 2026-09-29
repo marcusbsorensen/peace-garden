@@ -130,6 +130,12 @@ public struct Genome: Equatable, Sendable {
         public var stemLeafScale: Double
         /// Where the stem's nodes sit, as fractions of its length.
         public var nodeZone: ClosedRange<Double>
+        /// Every leaf is a strap: parallel-sided, running out to a point only
+        /// at its tip, as a reed's or a rush's is. See `PlantBuilder.strapProfile`.
+        public var strap: Bool = false
+        /// The plant is a cushion: a low dome packed with rosettes too small
+        /// to count, flowering over its surface, as an alpine's is.
+        public var cushion: Bool = false
     }
 
     public struct Bloom: Equatable, Sendable {
@@ -149,6 +155,17 @@ public struct Genome: Equatable, Sendable {
         public var sepalCount: Int
         public var hasPistil: Bool
         public var atNodes: Bool
+        /// **The flowers up the stem open from the lowest**, which is largest
+        /// and fullest, and the tip carries the youngest bud: a raceme as a
+        /// foxglove's or a lupin's is, flowering upward. The spire's alone.
+        ///
+        /// Every spike opened from the crown down until 28 September 2026,
+        /// the crown largest and first and the lowest flowers half-shut buds
+        /// for good. That is a bellflower's order, which is determinate and
+        /// is right for it; a spire was drawn as one. Marcus chose the flip
+        /// for the same re-roll as the reed and the cushion, because it
+        /// moves the size of every flower on a spire and so its height.
+        public var opensFromBelow: Bool
         public var present: Bool
         /// What holds the flower from beneath. The family's.
         public var calyx: Calyx
@@ -446,7 +463,9 @@ public struct Genome: Equatable, Sendable {
             fleshiness: profile.fleshiness,
             pinnae: source.integer("habit.pinnae", profile.pinnae),
             stemLeafScale: stemLeafScale,
-            nodeZone: profile.nodeZone
+            nodeZone: profile.nodeZone,
+            strap: profile.strap,
+            cushion: profile.cushion
         )
 
         // **The genus has a petal count; the plant does not draw one.** It used
@@ -485,6 +504,7 @@ public struct Genome: Equatable, Sendable {
                 : 0,
             hasPistil: source.chance("bloom.hasPistil", 0.75),
             atNodes: profile.bloomsAtNodes,
+            opensFromBelow: profile.bloomsAtNodes && profile.opensFromBelow,
             present: flowers,
             calyx: profile.calyx,
             sepals: profile.sepals,

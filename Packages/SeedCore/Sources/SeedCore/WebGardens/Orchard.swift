@@ -120,6 +120,12 @@ public enum Orchard {
     /// were 0.75 and 1.30 until the plants' shapes changed on 24 September
     /// 2026, and were measured again then on the Long Walk's three hundred.
     ///
+    /// **0.48 and 1.18 since 29 September 2026**: the 25th and 75th centiles
+    /// of three thousand crossings after the re-roll of the 28th are 0.476 m
+    /// and 1.183 m. The same three thousand as the Long Walk's cuts; the Knot
+    /// Garden, which shares these, had its own five hundred ranked 164/234/102
+    /// at the old ones against about 1:2:1, and 142/250/108 at these.
+    ///
     /// The middle guild is not in this count, and does not need to be: it takes
     /// any plant, so the sixteen places the cuts are for are handed a fair sample
     /// of everything that arrives.
@@ -131,8 +137,8 @@ public enum Orchard {
     /// because both are the tallest quarter: three back slots of twelve and
     /// one place of four. Measured on one sample, one centile is one number;
     /// the two were 1.28 and 1.30 only because each area had drawn its own.
-    public static let flankFrom = 0.58
-    public static let crownFrom = 1.20
+    public static let flankFrom = 0.48
+    public static let crownFrom = 1.18
 
     public static func rank(height: Double) -> Rank {
         if height < flankFrom { return .understorey }
@@ -358,15 +364,17 @@ public enum Orchard {
 
     /// **The plant under the middle tree of the first plot.**
     ///
-    /// *Cyninora contorta* — `Ambassadors.of(.kinship)` — placed by this rule
+    /// *Vininora contorta* — `Ambassadors.of(.kinship)` — placed by this rule
     /// into an empty Orchard, which puts it under the middle tree in the place
     /// nearest the plot's own middle, because that is where a plot opens.
     ///
-    /// **It is 1.33 m, the tallest of the ten ambassadors, and that decided
+    /// **It is 1.93 m, the tallest of the ten ambassadors, and that decided
     /// something.** The finding from the walk on 20 September is that whatever
     /// place an area's first arrival takes has to be one the area's own
-    /// ambassador can stand in. Here it is the one plant of the ten that would
-    /// read as a crown rather than an understorey, and an opening place with a
+    /// ambassador can stand in. Here it is a plant that would read as a crown
+    /// rather than an understorey — one of three of the ten since the re-roll
+    /// of 28 September 2026; before it this seed grew *Cyninora contorta*, a
+    /// thistle of 1.33 m, and it was the only one — and an opening place with a
     /// rank on it would have put the Orchard's ambassador at the back of a guild
     /// with a tree between it and the visitor. The middle guild taking any plant
     /// at all is what makes that a non-question — and it is a property of a

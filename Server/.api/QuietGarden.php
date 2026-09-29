@@ -31,7 +31,8 @@ final class QuietGarden
     public const AT_THE_HEDGE = 1.95;
     public const ALONG_THE_HEDGE = 1.10;
     public const BESIDE_THE_BENCH = 0.95;
-    public const BACK_FROM = 1.09;
+    /** The 67th centile of grown heights: 1.08 since 29 September 2026. */
+    public const BACK_FROM = 1.08;
 
     /** The bench's corner, which holds one plant and no group. */
     public const BENCH = 0;
@@ -60,8 +61,12 @@ final class QuietGarden
      * Whether a habit wants standing water. `Archetype::wantsWater` in the
      * Swift; one list, said twice, because the service and the app place the
      * same plant and must not disagree about where it goes.
+     *
+     * **The lotus and, since 28 September 2026, the reed**, which stands in a
+     * pool's shallows as a lily lies on it. A reed takes one of the pool's two
+     * places, as a lily does.
      */
-    public const WANTS_WATER = ['lotus'];
+    public const WANTS_WATER = ['lotus', 'reed'];
 
     public const ARM = 0;
     public const BACK = 1;

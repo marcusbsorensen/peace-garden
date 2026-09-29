@@ -24,9 +24,10 @@ other people's plots and guest books is phase 2, sketched in
   can see of the moment — model, locale, timezone, uptime, the instant itself —
   hashed into 32 bytes that never change and never leave the phone unless you
   meet someone.
-- **A plant derived entirely from that seed.** Twelve archetypes (spire, umbel,
-  fern, orchid, lotus, thistle, vine, bell, star, poppy, succulent, plume),
-  around eighty inherited traits, procedural geometry, and a binomial name.
+- **A plant derived entirely from that seed.** Fourteen archetypes (spire,
+  umbel, fern, orchid, lotus, thistle, vine, bell, star, poppy, succulent,
+  plume, reed, cushion), around eighty inherited traits, procedural geometry,
+  and a binomial name.
 - **Colour with a reason behind it.** Six harmony schemes — monochrome,
   analogous, complementary, split, bicolour, ombré — decide how a flower's two
   colours relate, rather than drawing both at random and hoping. Flowers mostly

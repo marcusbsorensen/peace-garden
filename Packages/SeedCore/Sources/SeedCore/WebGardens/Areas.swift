@@ -133,28 +133,32 @@ public enum Area: String, CaseIterable, Sendable, Codable {
     /// would be two tables that agree until the day they do not.
     ///
     /// Every one of `PlantName.genusHeads` appears exactly once across the
-    /// ten, which is what makes `init(genusHead:)` total. The list is frozen —
-    /// see `PlantName.genusHeads` for why a twenty-fifth syllable cannot
-    /// simply be added — so the areas were fitted to the syllables rather than
-    /// the syllables chosen for the areas. Four areas take three heads and six
-    /// take two, which leaves a plant half again as likely to be born to the
-    /// Seedbed as to the Quiet Garden. Documented rather than corrected:
-    /// correcting it means either renaming every plant that exists or
-    /// weighting the draw, and a weighted draw would break the one thing this
-    /// design is for, which is that the name and the area are the same fact
-    /// said twice.
+    /// ten, which is what makes `init(genusHead:)` total. The areas were
+    /// fitted to the syllables rather than the syllables chosen for the areas.
+    ///
+    /// **Twenty-eight since 28 September 2026**, when the reed and the cushion
+    /// brought two roots each, and each root was given the area that puts its
+    /// plant somewhere it would grow. The reed's go to the two areas the
+    /// lily's roots are in, waiting and beginnings, so the water plants share
+    /// the water; the cushion's go to travel and meeting, which stand at the
+    /// head of the slope, where an alpine is. So two areas now take four
+    /// heads, four take three and four take two, which leaves a plant twice as
+    /// likely to be born to the Seedbed or the Long Walk as to the Quiet
+    /// Garden. Documented rather than corrected: correcting it means weighting
+    /// the draw, and a weighted draw would break the one thing this design is
+    /// for, which is that the name and the area are the same fact said twice.
     public var genusHeads: [String] {
         switch self {
-        case .beginnings: return ["Thal", "Lir", "Ver"]   // a shoot, a lily, the spring
-        case .waiting:    return ["Nyx", "Umbr"]          // night, shade
-        case .renewal:    return ["Dros", "Ros"]          // dew, and dew again
-        case .light:      return ["El", "Aur", "Sel"]     // sun, dawn, moon
-        case .pattern:    return ["Cal", "Quin"]          // the shapely, the five
-        case .ground:     return ["Cer", "Fen", "Pell"]   // grain, fen, the earth's skin
-        case .travel:     return ["Zeph", "Ael", "Hal"]   // west wind, gust, salt sea
-        case .meeting:    return ["Mel", "Ith"]           // honey, Ithaca
-        case .kinship:    return ["Vin", "Cyn"]           // a bond, the dog at the door
-        case .peace:      return ["Ol", "Bel"]            // the olive, a clear sky
+        case .beginnings: return ["Thal", "Lir", "Ver", "Don"]  // a shoot, a lily, the spring, a reed
+        case .waiting:    return ["Nyx", "Umbr", "Syr"]         // night, shade, the reed pipe
+        case .renewal:    return ["Dros", "Ros"]                // dew, and dew again
+        case .light:      return ["El", "Aur", "Sel"]           // sun, dawn, moon
+        case .pattern:    return ["Cal", "Quin"]                // the shapely, the five
+        case .ground:     return ["Cer", "Fen", "Pell"]         // grain, fen, the earth's skin
+        case .travel:     return ["Zeph", "Ael", "Hal", "Or"]   // west wind, gust, salt sea, a mountain
+        case .meeting:    return ["Mel", "Ith", "Tyl"]          // honey, Ithaca, a cushion
+        case .kinship:    return ["Vin", "Cyn"]                 // a bond, the dog at the door
+        case .peace:      return ["Ol", "Bel"]                  // the olive, a clear sky
         }
     }
 

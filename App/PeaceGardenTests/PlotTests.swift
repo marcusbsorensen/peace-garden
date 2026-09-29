@@ -197,7 +197,11 @@ final class PlotTests: XCTestCase {
                               "a frame is more than one step bigger than what it holds")
         }
 
-        XCTAssertGreaterThan(tallest, 2.0, "the measured range has moved; the headroom was set from it")
+        // 1.8 from 28 September 2026, when the re-roll moved it: the same
+        // hundred and twenty crossings are three in four different plants and
+        // top out at 1.90 m. The headroom stays at 2.6 — a reed can still reach
+        // 2.7 m at the top of every draw, and this sample is not the range.
+        XCTAssertGreaterThan(tallest, 1.8, "the measured range has moved; the headroom was set from it")
         XCTAssertLessThanOrEqual(tallest, GardenSprites.tallestExpected)
     }
 

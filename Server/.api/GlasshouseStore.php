@@ -121,11 +121,12 @@ final class GlasshouseStore
             }
             $all = $this->db->prepare('SELECT * FROM glasshouse ORDER BY arrival');
             $all->execute();
-            // The ambassador first, then the arrivals: it stands in a pot on the
-            // staging whether or not anything else is here, **and it holds a
-            // place at its own band**. A reading that left it out would hand
-            // that pot to the next orange plant, and two plants would be drawn
-            // standing in one pot.
+            // The ambassador first, then the arrivals: it stands whether or not
+            // anything else is here, **and it holds a place**. A reading that
+            // left it out would hand that place to the next plant, and two
+            // plants would be drawn standing in one. (Since 28 September 2026
+            // the place is the border's first from the door; it was a pot at
+            // the ambassador's own band of the staging.)
             $ways = array_merge(
                 [Ambassadors::planting('light')],
                 array_map([self::class, 'forRule'], $all->fetchAll())
@@ -150,8 +151,10 @@ final class GlasshouseStore
     /**
      * A plot's plantings, in the order they arrived. Hidden ones are not in it.
      *
-     * Plot 0 opens with the ambassador potted at its own band of the staging,
-     * which is not a row. It carries no parents and no meeting, because it was
+     * Plot 0 opens with the ambassador, which is not a row, in the bed its
+     * height gives it — since the re-roll of 28 September 2026 the border's
+     * first place from the door, where it was a pot at its own band of the
+     * staging — and lifted as that bed lifts it. It carries no parents and no meeting, because it was
      * minted rather than crossed, and an empty `parents` is how the wire says
      * so.
      */

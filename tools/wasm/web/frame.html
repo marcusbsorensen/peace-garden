@@ -99,7 +99,9 @@
   // about even — a frame whose back rank is always full and front always bare
   // is a cut in the wrong place. Since a lotus takes two places, a rank says
   // how many of its six places are held and how many lotuses hold them.
-  const FRAMES = ['back west', 'back east', 'front west', 'front east'];
+  // The back row only since 29 September 2026: the front row's ground is the
+  // tank's now, and its two frames are retired.
+  const FRAMES = ['back west', 'back east'];
   function say() {
     held.replaceChildren();
     if (fromService) return;

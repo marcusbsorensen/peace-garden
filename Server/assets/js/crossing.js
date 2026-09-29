@@ -205,7 +205,7 @@ const SLICE = 16;
 const breathe = () => new Promise((resume) => setTimeout(resume, 0));
 
 // Grows one plot from the plot service. A planting with no parents was minted
-// rather than crossed — the ambassador on the first quarter's diagonal — and
+// rather than crossed — the ambassador, in the first quarter's middle rank since 28 September 2026 — and
 // grows from its seed alone.
 export async function growCrossFromService(e, stage, plot, report) {
   stage.clear();

@@ -5,16 +5,18 @@ import Foundation
 /// The genus root table, held to the four things that make it a classification
 /// rather than a lookup.
 ///
-/// It is a hand-written table over a frozen list, which `docs/NAMES-AND-THEMES.md`
+/// It is a hand-written table over a fixed list, which `docs/NAMES-AND-THEMES.md`
 /// already identified as the kind of thing that goes wrong in silence: a root
-/// dropped from it costs nobody a compile error and quietly renames a twelfth
-/// of every garden. The same argument applies here with more force, because now
+/// dropped from it costs nobody a compile error and quietly renames a
+/// fourteenth of every garden. The same argument applies here with more force, because now
 /// the table decides what a plant *is* and not only what it is called.
 final class RootTableTests: XCTestCase {
 
     // MARK: - The table is a bijection
 
-    /// Twelve families, two roots each, and the frozen twenty-four used once.
+    /// Fourteen families, two roots each, and the twenty-eight heads used once.
+    /// (Twelve and twenty-four until the reed and the cushion, 28 September
+    /// 2026; the list is no longer frozen, but it is still exactly the roots.)
     ///
     /// The three ways this can break are all silent, so all three are named:
     /// a family missing (some plants unnameable), a root used twice (two
@@ -38,7 +40,7 @@ final class RootTableTests: XCTestCase {
             XCTFail("\(root) is claimed by \(families.map(String.init(describing:)).joined(separator: " and "))")
         }
         XCTAssertEqual(Set(seen.keys), Set(PlantName.genusHeads),
-                       "the roots and the frozen heads are not the same set")
+                       "the roots and the heads are not the same set")
     }
 
     /// Every drawn plant's genus starts with the root its own flower names.
@@ -69,7 +71,9 @@ final class RootTableTests: XCTestCase {
             let genome = Genome(seed: SeedMint.mint(fromEntropy: Data("flower-\(index)".utf8)))
             byRoot[genome.name.genusHead, default: []].append(genome)
         }
-        XCTAssertEqual(byRoot.count, 24, "not every root was reached in 4000 seeds")
+        // Twenty-eight since 28 September 2026, when the reed and the cushion
+        // brought two roots each; it was twenty-four.
+        XCTAssertEqual(byRoot.count, 28, "not every root was reached in 4000 seeds")
 
         for (root, plants) in byRoot {
             let plans = Set(plants.map(\.branching.inflorescence))
@@ -149,32 +153,40 @@ final class RootTableTests: XCTestCase {
     ///
     /// SeedCore cannot see `Quotes.Theme` — the banks live in the app target —
     /// so the map is restated. A restatement that can drift is worse than no
-    /// test, so this pins its shape: the ten themes, the twenty-four roots, and
-    /// each root claimed once. `ThemeMappingTests` in the app holds the other
-    /// end against the real thing.
+    /// test, so this pins its shape: the ten themes, the twenty-eight roots,
+    /// and each root claimed once. `ThemeMappingTests` in the app holds the
+    /// other end against the real thing — which, since the app's
+    /// `Quotes.Theme.genusHeads` became a reading of `Area.genusHeads`, is the
+    /// same table as the areas'.
     func testTheRestatedThemeMapIsTheAppsOwn() {
         XCTAssertEqual(Set(Self.themes.keys), Set(PlantName.genusHeads))
         XCTAssertEqual(Set(Self.themes.values).count, 10)
-        // Four themes take three roots and six take two — the only division of
-        // twenty-four that keeps every theme populated. docs/NAMES-AND-THEMES.md.
+        // **Two themes take four roots, four take three and four take two**,
+        // since 28 September 2026. Until then it was four threes and six twos
+        // — the only division of twenty-four that kept every theme populated.
+        // The reed's two roots went to beginnings and waiting, where the
+        // lily's are, so the water plants meet the same water; the cushion's
+        // to travel and meeting, at the head of the slope. See
+        // `Area.genusHeads` and docs/NAMES-AND-THEMES.md.
         var sizes: [Int: Int] = [:]
         for theme in Set(Self.themes.values) {
             sizes[Self.themes.values.filter { $0 == theme }.count, default: 0] += 1
         }
+        XCTAssertEqual(sizes[4], 2)
         XCTAssertEqual(sizes[3], 4)
-        XCTAssertEqual(sizes[2], 6)
+        XCTAssertEqual(sizes[2], 4)
     }
 
     /// `docs/NAMES-AND-THEMES.md` §"The map", restated. See above.
     private static let themes: [String: String] = [
-        "Thal": "beginnings", "Lir": "beginnings", "Ver": "beginnings",
-        "Nyx": "waiting", "Umbr": "waiting",
+        "Thal": "beginnings", "Lir": "beginnings", "Ver": "beginnings", "Don": "beginnings",
+        "Nyx": "waiting", "Umbr": "waiting", "Syr": "waiting",
         "Dros": "renewal", "Ros": "renewal",
         "El": "light", "Aur": "light", "Sel": "light",
         "Cal": "pattern", "Quin": "pattern",
         "Cer": "ground", "Fen": "ground", "Pell": "ground",
-        "Zeph": "travel", "Ael": "travel", "Hal": "travel",
-        "Mel": "meeting", "Ith": "meeting",
+        "Zeph": "travel", "Ael": "travel", "Hal": "travel", "Or": "travel",
+        "Mel": "meeting", "Ith": "meeting", "Tyl": "meeting",
         "Vin": "kinship", "Cyn": "kinship",
         "Ol": "peace", "Bel": "peace",
     ]

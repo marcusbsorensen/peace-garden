@@ -137,11 +137,15 @@ public enum QuietGarden {
     /// shapes changed on 24 September 2026, and was measured again then on the
     /// Long Walk's three hundred.
     ///
+    /// **1.08 since 29 September 2026**: the 67th centile of three thousand
+    /// crossings after the re-roll of the 28th is 1.076 m. Measured on the
+    /// same three thousand as the Long Walk's cuts, for the reason given there.
+    ///
     /// It is not the Long Walk's 1.20 m and should not be: that cut divides
     /// three tiers of a border in the proportion 5:4:3, and this one divides a
     /// group of three one way. The same plant is the middle of a border there
     /// and the back of a group here, which is what having two areas means.
-    public static let backFrom = 1.09
+    public static let backFrom = 1.08
 
     public static func stand(height: Double) -> Stand {
         height < backFrom ? .arm : .back
@@ -401,13 +405,15 @@ public enum QuietGarden {
 
     /// **The plant beside the bench in the first plot.**
     ///
-    /// *Olyne paniculata* — `Ambassadors.of(.peace)` — placed by this rule into
+    /// *Bela caerulea* — `Ambassadors.of(.peace)` — placed by this rule into
     /// an empty room, which puts it in the specimen slot because a plot's first
     /// plant always stands by the bench. The same answer the Long Walk gave to
     /// *which slot is the specimen*, reached by a different template: the oldest
     /// plant in an area stands where a visitor arriving meets it.
     ///
-    /// **It is 0.75 m, and that is the point.** Yesterday's finding on the walk
+    /// **It was *Olyne paniculata*, 0.75 m, until the re-roll of 28 September
+    /// 2026, and that was the point.** *Bela caerulea*, a poppy, is 1.06 m and
+    /// stands beside the bench for the same reason. Yesterday's finding on the walk
     /// was that a specimen slot has to be one the area's own ambassador can
     /// actually stand in — nine of the ten are edge or middle plants. A specimen
     /// standing alone in lawn beside a seat has no height to live up to, where

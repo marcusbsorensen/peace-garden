@@ -1,12 +1,17 @@
-"""One plant of each of the twelve archetypes, side by side, at full bloom.
+"""One plant of each of the fourteen archetypes, side by side, at full bloom.
 
 The acceptance test for `docs/PLANT-FORMS.md`, and the reason it exists: before
 the forms went in, three plants side by side were the same plant three times. If
 two tiles on this sheet still share a silhouette, the forms are not carrying
 enough.
 
+Fourteen since 28 September 2026, when the reed and the cushion were appended;
+the list is `plant_model.ARCHETYPES`, so the sheet grows a fourth row by itself
+and nothing here names a family.
+
     python3 archetypes.py --out sheet.png
     python3 archetypes.py --archetype umbel --stages --out umbel.png
+    python3 archetypes.py --archetype cushion --stages --out cushion.png
 
 `SeedCore` is authoritative and this is a port, so use the sheet to judge
 silhouette and then confirm on a simulator. Shape is what it is good for.

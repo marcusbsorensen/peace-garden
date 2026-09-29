@@ -347,7 +347,8 @@ the service's own files unreachable, as it does `.pages/`.
   app calls them and cannot be asked to learn a new address; what is the travel
   area's alone is `GET /api/walk` and `GET /api/walk/plot/{n}`.
 - **The ambassador is in plot 0 and is not a row**, `.api/Ambassadors.php`.
-  *Halula crassicaulis* was placed by the rule into an empty walk before
+  *Zephea pallida* (*Halula crassicaulis* until the re-roll of 28 September
+  2026) was placed by the rule into an empty walk before
   anything was shared, and its slot and nudge are pure functions of its pinned
   seed, so the service re-derives the placement rather than storing it. It is
   handed to the rule ahead of the stored arrivals — every shared plant is graded
@@ -355,8 +356,9 @@ the service's own files unreachable, as it does `.pages/`.
   meeting**, because it was minted and has neither; a reader grows it from its
   seed alone. Nothing to hide, nothing to withdraw, nothing for a backup to
   carry, and `WalkStore::plant` refuses an ambassador's seed outright. Checked
-  by `tools/reference/check_ambassador.php`, in CI. The Quiet Garden's, *Olyne
-  paniculata*, stands beside its bench the same way.
+  by `tools/reference/check_ambassador.php`, in CI. The Quiet Garden's, *Bela
+  caerulea* (*Olyne paniculata* until 28 September 2026), stands beside its
+  bench the same way.
 - **The asking**, `.api/Offers.php`, which is how anything gets into the walk:
   - `POST /api/walk/offer` — `{to, from, plant}`. One gardener offers a plant,
     addressed to the sixteen bytes the other minted at their meeting. It plants

@@ -102,6 +102,14 @@ public enum LongWalk {
     /// thousand crossings put the same two centiles at 0.771 m and 1.185 m, so
     /// three hundred was enough.
     ///
+    /// **0.75 and 1.18 since 29 September 2026**, measured again after the
+    /// re-roll of the 28th brought the reed and the cushion. This time on three
+    /// thousand crossings of three thousand pairs, where the two centiles are
+    /// 0.746 m and 1.183 m: three hundred of the same put the lower one at
+    /// 0.795, and the Knot Garden's own five hundred at 0.741, so three hundred
+    /// is no longer enough to say a number to the centimetre. The heights now
+    /// run 0.12 m to 2.47 m, with thirds at 0.62 m and 1.07 m.
+    ///
     /// Crossings of **one** person with forty others ran taller and were half
     /// bells, which is why the sample is three hundred different pairs.
     /// **Named, as the other four areas' cuts are.** They were literals inside
@@ -109,8 +117,8 @@ public enum LongWalk {
     /// check how close a plant stands to a tier boundary had to write 0.93 down
     /// a second time — and a second copy of a number is a number that can
     /// drift from the one it copies.
-    public static let middleFrom = 0.77
-    public static let backFrom = 1.20
+    public static let middleFrom = 0.75
+    public static let backFrom = 1.18
 
     public static func tier(height: Double) -> Tier {
         if height < middleFrom { return .edge }
@@ -417,7 +425,7 @@ public enum LongWalk {
 
     /// **The plant standing where the walk begins.**
     ///
-    /// *Halula crassicaulis* — `Ambassadors.of(.travel)`, sown a month before
+    /// *Zephea pallida* — `Ambassadors.of(.travel)`, sown a month before
     /// the garden opened — placed by this rule into an empty walk, which is the
     /// whole of what makes it the specimen. `docs/WEB-GARDENS.md` asks which
     /// slot of a template an ambassador stands in; for this area the answer is
@@ -426,11 +434,13 @@ public enum LongWalk {
     /// plots open end to end for as long as people go on meeting — so what it
     /// has instead is a head, and the oldest plant in the area stands at it.
     ///
-    /// **It takes its own tier, like anything else.** *Halula* is 1.02 m, which
-    /// is the middle of a border rather than the back of one, and only one of
-    /// the ten ambassadors is a back-tier plant at all. A specimen slot fixed at
-    /// the back of a border would have stood a short plant behind taller ones in
-    /// nine areas out of ten, which is the one rule the walk is built on.
+    /// **It takes its own tier, like anything else.** *Zephea* is 0.52 m, which
+    /// is the edge of a border rather than the back of one, and three of the
+    /// ten ambassadors are back-tier plants. A specimen slot fixed at the back
+    /// of a border would have stood a short plant behind taller ones in seven
+    /// areas out of ten, which is the one rule the walk is built on. (Until
+    /// the re-roll of 28 September 2026 it was *Halula crassicaulis*, 1.02 m,
+    /// in the middle tier, and one of the ten was a back-tier plant.)
     ///
     /// **It is not a row anywhere.** A slot and a nudge are both pure functions
     /// of the seed, and the seed is pinned, so asking for the placement again

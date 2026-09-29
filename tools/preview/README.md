@@ -31,8 +31,8 @@ bargain `tools/site/export.py --check` strikes with the passage banks.
 | `python3 tools/preview/check_port.py` | the file is what the **port** computes |
 
 CI runs both, in different jobs, so a failure says which side moved. The file
-holds fifteen plants at four ages each: one before it flowers, one at first full
-opening, and two half a cycle apart in the flush, well past maturity.
+holds seventeen plants at four ages each: one before it flowers, one at first
+full opening, and two half a cycle apart in the flush, well past maturity.
 
 For each it records the genome scalars, the growth state, and **the per-node
 bloom placements**: every drawn flower's `t`, its final `budSwell` and
@@ -40,10 +40,12 @@ bloom placements**: every drawn flower's `t`, its final `budSwell` and
 drifted, and it is invisible in a vertex count — a mesh cannot tell a bud from a
 small flower.
 
-### Twelve found, three chosen
+### Fourteen found, three chosen
 
-The first twelve are one per family, found by a recorded deterministic search —
-a fair sample, and nobody had to pick them.
+The first fourteen are one per family, found by a recorded deterministic search —
+a fair sample, and nobody had to pick them. Fourteen since 28 September 2026,
+when the reed and the cushion were appended; the search walks until it holds
+every case of `Archetype`, so it grew by itself.
 
 The last three are picked, and the difference matters. `nodecount-30`,
 `nodecount-41` and `nodecount-363` are in the file **because they trigger a
@@ -57,6 +59,20 @@ is for; otherwise the next person shortens the file by deleting it.
 `PortVectorTests.chosenSeeds` carries the same note on the Swift side, and
 `vectors.json`'s own `note` field says which plants are which, so a reader who
 has only the file still knows.
+
+**The three stopped doing their job on 28 September 2026, and nothing went
+red.** Appending the reed and the cushion re-sliced `form.archetype` over
+fourteen cases, and `nodecount-30`, `-41` and `-363` grow a thistle, a bell and
+a plume now — families whose `nodeScale` cannot put a product on a half. Both
+checks stayed green, because both still agree about those three plants; they
+have simply stopped being plants that could disagree. That is the failure the
+paragraph above describes, arrived at by a different road. The first flowering
+seed of each family that can still show the fault, walking `nodecount-0`
+upward as before, is `nodecount-32` (lotus, 5 × 0.5 = 2.5), `nodecount-67`
+(vine, 5 × 1.7 = 8.5) and `nodecount-42` (succulent, 5 × 2.1 = 10.5).
+Swapping those into `chosenSeeds` and re-recording puts the guard back. Over
+the four thousand entropies the fault now falls on 153 seeds — lotus 74, vine
+42, succulent 37 — and the reed's 2.2 and the cushion's 1.0 add none.
 
 `check_port.py` needs no numpy and no Pillow. Those are the render's
 dependencies and the CI job installs nothing, which is why the numpy import in
@@ -122,11 +138,12 @@ thing about a plant that no render shows. So a naming implementation here could
 never be checked the way everything else here is checked — and it was not. It
 sat three months behind: SeedCore stopped drawing the genus on 3 September 2026
 and started reading it off the flower (`PlantName.roots` maps a family and a
-merosity to one of the twenty-four heads), and replaced the glued two-syllable
-epithet with `Epithet`, which says only what has been checked to be true of the
-specimen. The port went on gluing `name.epithetHead` to `name.epithetTail` and
-printing *pallicola* — "pale-dwelling", which is not a thing a plant can be —
-under `preview.py`'s captions.
+merosity to one of the heads — twenty-four then, twenty-eight since the reed and
+the cushion brought two each on 28 September), and replaced the glued
+two-syllable epithet with `Epithet`, which says only what has been checked to be
+true of the specimen. The port went on gluing `name.epithetHead` to
+`name.epithetTail` and printing *pallicola* — "pale-dwelling", which is not a
+thing a plant can be — under `preview.py`'s captions.
 
 Porting it was considered and rejected. `Epithet` reads `palette.marbling`, one
 of twelve palette draws the port also lacks, so it is a real piece of work whose
@@ -146,7 +163,7 @@ deliberately excludes it from the compared set.
 
 ## What it does not cover
 
-Fifteen plants is still a sample, and it is worth being plain about what it
+Seventeen plants is still a sample, and it is worth being plain about what it
 cannot see.
 
 - **The geometry itself.** The vectors stop at the bloom placements. The stem
@@ -161,6 +178,23 @@ cannot see.
   at the same time. Still missing: the `maturity` vertex attribute, and twelve
   palette draws (marbling and leaf venation), so colour is the port's own
   approximation where those apply.
+- **The reed, the cushion and the upward spire**, which came across on 28
+  September 2026 — strap leaves (`strap_profile`, the `strap` branches of
+  `_add_blade` and the stem leaf), the whole of `_add_cushion` with its
+  rosettes and flowers, and `opensFromBelow` in `bloom_placements` — were
+  compared the same way and on the same terms. The whole of SeedCore's sources
+  and a short `main.swift` went through `swiftc` as one module, and printed
+  each role's vertex and triangle count, centroid and bounds for forty-four
+  plants covering all fourteen families, at six ages each from before
+  germination to well past maturity: every count identical, every centroid and
+  bound within 7.4e-6 m. Again one day's agreement, not a guard.
+- **A cushion's flowers.** `bloom_placements` walks the shoot a cushion is
+  before its leaves open, and `PortVectorTests` records the same walk through
+  `bloomPlacementsForTesting`, so the file holds a cushion's single crown
+  flower to the Swift at every age — a flower no cushion ever draws once it
+  has leaves. The hundred-odd it does draw, in a little under half its
+  rosettes and each at its own place in the flush wave, come from
+  `_add_cushion` and are covered only by the geometry comparison above.
 - **Anything rare that nobody has thought of yet.** The rounding fault was the
   one-in-twenty-seven case, and it is covered now only because somebody went
   looking for it and put the seed in the file. Three chosen seeds do not make a

@@ -40,6 +40,13 @@ final class GardenModel {
             loadError = error.localizedDescription
         }
 #if DEBUG
+        // Seed words on a fresh install mean a particular plant is wanted on
+        // screen, so it is minted here rather than at first light: that is a
+        // tap an injected one can reach, but not from a script that is
+        // photographing ten seeds.
+        if garden.identity == nil, Developer.shared.mintWords != nil {
+            mintIdentity()
+        }
         // Before the first reading of the clock, so the stage is on screen from
         // the first frame rather than after the first tick.
         if let stage = Developer.shared.stageOnLaunch, let identity = garden.identity {

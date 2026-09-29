@@ -33,7 +33,9 @@ final class GenomeTests: XCTestCase {
             XCTAssertGreaterThanOrEqual(genome.stem.nodeCount, 1)
             XCTAssertLessThanOrEqual(genome.stem.nodeCount, 20)
             XCTAssertTrue((6...9).contains(genome.stem.sides))
-            XCTAssertGreaterThan(genome.stem.height, 0.1)
+            // A cushion's stem is only the shoot it starts as, and short on
+            // purpose; its size is the dome's, which the leaves decide.
+            XCTAssertGreaterThan(genome.stem.height, genome.habit.cushion ? 0.04 : 0.1)
             XCTAssertLessThan(genome.stem.height, 3.0)
             XCTAssertGreaterThan(genome.stem.baseRadius, 0)
             XCTAssertTrue((1...3).contains(genome.bloom.layers))

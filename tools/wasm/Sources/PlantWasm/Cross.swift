@@ -20,8 +20,9 @@ import SeedCore
 //   pg_cross_describe(p)   a plot's plantings as JSON: slot and traits, for
 //                          judging how the rule fills the quarters
 //
-// Opened rather than empty: it starts with Melyrina latifolia on the first
-// quarter's diagonal, the way the real one does.
+// Opened rather than empty: it starts with its ambassador (Ithula obscura
+// since 28 September 2026, in the first quarter's middle rank) the way the
+// real one does.
 
 nonisolated(unsafe) private var ways = Crossing.Ways.opened()
 nonisolated(unsafe) private var grownAtCrossing: [String: Genome] = {
