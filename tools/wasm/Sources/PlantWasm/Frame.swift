@@ -9,7 +9,7 @@ import SeedCore
 // and for the same reason — a template has to be judged at five hundred plants
 // before it is live, and the browser is where it can be looked at.
 //
-//   pg_frame_plan()          the area's own numbers as JSON: its side, the four
+//   pg_frame_plan()          the area's own numbers as JSON: its side, the
 //                            frames' middles, a frame's length, depth and walls,
 //                            how far its lights are propped, where the ranks
 //                            and places stand, and what a plot holds — so the
@@ -72,9 +72,10 @@ private func frameVisitor() -> (child: SeedID, genome: Genome) {
 public func pgFramePlan() -> Int32 {
     // Asked of the rule rather than worked out again here: where a frame
     // stands and where a place sits in it are `Frame.centre` and `Slot.spot`.
-    // The dry frames only. The tank is not a frame and is sent as its own
-    // thing, or the page would draw a fifth box of boards over the water.
-    let frames = ColdFrame.Frame.allCases.filter(\.isDry)
+    // The frames in use only: the back row since 29 September 2026. The tank
+    // is not a frame and is sent as its own thing, or the page would draw a
+    // box of boards over the water; a retired front frame is not sent at all.
+    let frames = ColdFrame.frames
         .map { "[\($0.centre.x),\($0.centre.z)]" }
         .joined(separator: ",")
     let placeX = (0..<ColdFrame.places)
@@ -87,7 +88,8 @@ public func pgFramePlan() -> Int32 {
         "propped":\(ColdFrame.propped),"places":\(ColdFrame.places),\
         "rankFrom":\(ColdFrame.rankFrom),"placeX":[\(placeX)],\
         "backFrom":\(ColdFrame.backFrom),"slots":\(ColdFrame.slots.count),\
-        "tank":{"across":\(ColdFrame.tankAcross),"deep":\(ColdFrame.tankDeep)}}
+        "tank":{"across":\(ColdFrame.tankAcross),"deep":\(ColdFrame.tankDeep),\
+        "at":[\(ColdFrame.Frame.tank.centre.x),\(ColdFrame.Frame.tank.centre.z)]}}
         """
     setResult(Array(json.utf8))
     return Int32(json.utf8.count)

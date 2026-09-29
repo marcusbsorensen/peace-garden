@@ -4,8 +4,9 @@ import FoundationEssentials
 import Foundation
 #endif
 
-/// The Cold Frame: four low glazed frames on gravel, each holding two ranks of
-/// young plants hardening off, their lids propped open by day.
+/// The Cold Frame: low glazed frames on gravel, each holding two ranks of
+/// young plants hardening off, their lids propped open by day, and a tank of
+/// water in front of them. Two frames since 29 September 2026; four until then.
 /// `docs/WEB-GARDENS.md` §*The Cold Frame, built*.
 ///
 /// **The seventh area, and the first that draws a plant as something other
@@ -40,8 +41,10 @@ public enum ColdFrame {
     /// The same square every area uses.
     public static let plotSide = 5.2
 
-    /// Four frames of twelve, two ranks of six in each: forty-eight a plot,
-    /// Marcus's choice on 23 September.
+    /// Two ranks of six in each frame: twelve a frame. Four frames of twelve,
+    /// forty-eight a plot, was Marcus's choice on 23 September; **two frames,
+    /// twenty-four, since 29 September 2026**, when the tank grew into the
+    /// front row's ground (`frames`).
     public static let places = 6
 
     /// A frame's outside, in metres: along the ranks, and from back to front.
@@ -50,8 +53,8 @@ public enum ColdFrame {
     public static let frameLength = 2.0
     public static let frameDepth = 1.1
 
-    /// Where the middles of the four frames stand: two either side of the plot
-    /// in `x`, and two rows in `z` with a path between them 0.7 m wide.
+    /// Where the middles of the frames stand: either side of the plot in `x`,
+    /// and in `z` along the back of the yard.
     ///
     /// **The gap between the two frames of a row is 0.4 m**, which is what
     /// makes them two frames rather than one long one. At 0.2 m they read as a
@@ -64,7 +67,11 @@ public enum ColdFrame {
     /// rows run from 1.0 to 2.1 m out against the plot's own half of 2.6.
     /// Nothing inside a frame moved: the ranks are still 0.24 m either side of
     /// its middle, and a frame still holds two ranks of six.
-    public static let frameZ = 1.55
+    ///
+    /// **1.65 since 29 September 2026**, a tenth further back, so the grown
+    /// tank has the room in front of the frames: the back row runs from 1.1
+    /// to 2.2 m out, 0.4 m inside the plot's half, as the frames' ends are.
+    public static let frameZ = 1.65
 
     /// **The tank down the middle of the yard** (27 September 2026).
     ///
@@ -76,9 +83,10 @@ public enum ColdFrame {
     /// tank was sunk, the 274 lilies in every 501 arrivals here were sown in
     /// dry compost, two places each, because a lily's pads are wider than one.
     ///
-    /// Seven along the yard by three across, 0.62 m apart — the gap two
-    /// places in a frame gave a lotus, and the gap its pads were measured
-    /// against on 25 September. Twenty-one to a plot.
+    /// It was sunk seven along the yard by three across, 0.62 m apart — the
+    /// gap two places in a frame gave a lotus, and the gap its pads were
+    /// measured against on 25 September. Twenty-one to a plot, until 29
+    /// September 2026.
     ///
     /// **What it costs, measured rather than guessed**: five hundred arrivals
     /// now fill fourteen plots where they filled eighteen, because a lily no
@@ -87,13 +95,51 @@ public enum ColdFrame {
     /// that is this area being mostly water rather than the rule failing.
     /// Fewer frames and smaller frames were both measured and both are worse:
     /// a frame holds one colour, so fewer frames strand more plots and smaller
-    /// frames are claimed faster and never fill.
+    /// frames are claimed faster and never fill. That was measured with the
+    /// water at about half of what arrives; at two in three it reverses.
+    ///
+    /// **A bigger tank, Marcus, 29 September 2026: thirty-nine places, and the
+    /// front row of frames gives up its ground to it.** Since the re-roll the
+    /// water takes 343 of every 501 arrivals here and the glass 158, and at
+    /// twenty-one to a tank the water opened seventeen plots while the frames'
+    /// plants were all standing in the first five — frames empty in twelve
+    /// plots of seventeen. He asked for the two to fill in step. Measured on
+    /// this area's own five hundred (`ColdFrameTests`), the frames alone need
+    /// nine plots at two frames of twelve and five at four; the water fills
+    /// nine plots at thirty-nine a tank, and would need about seventy to be
+    /// in step with four frames, which is more water than a plot has ground.
+    /// So the front row went and the tank took its ground: the water fills
+    /// nine plots and the frames stand in all nine, where it was seventeen
+    /// plots and frames in five. Each frame is as it was, two ranks of six
+    /// under a pair of lights.
+    ///
+    /// **Six rows, seven and six in turn**, each row shifted half a place
+    /// from the one behind it, 0.57 m apart. Two places a row apart are then
+    /// `hypot(0.31, 0.57)`, 0.649 m, and two nudges pulling toward each other
+    /// along that slant take up to 0.081 m off it, leaving 0.567 — no closer
+    /// than two places 0.62 m apart along a row come, less the 0.06 m their
+    /// nudges take. At 0.54 m the slant came 0.02 m closer than that, which
+    /// `testNoTwoLiliesFloatCloserThanTheTankAllows` caught. Staggered rather than square
+    /// because a square lattice of six rows would not fit in front of the
+    /// frames, and because lilies in a grid read as a planting plan rather
+    /// than as a pond. The tank lies across the yard in front of the frames,
+    /// its middle `tankZ` toward the front.
     public static let tankAcross = 4.4
-    public static let tankDeep = 1.8
+    public static let tankDeep = 3.16
+    public static let tankZ = 0.6
     public static let tankGap = 0.62
+    public static let tankRowGap = 0.57
     public static let tankWide = 7
-    public static let tankRows = 3
-    public static let tankPlaces = tankWide * tankRows
+    public static let tankRows = 6
+    /// Seven in the rows at the back and every other row after it, six in the
+    /// rows between: thirty-nine.
+    public static let tankPlaces = (tankRows + 1) / 2 * tankWide + tankRows / 2 * (tankWide - 1)
+
+    /// The frames a plant can be set in: **the back row, since 29 September
+    /// 2026.** The front row's two stay in `Frame`, retired, so a planting
+    /// filed in one before today still decodes and still draws where it was
+    /// put until the replant places it again; nothing is placed in them now.
+    public static let frames: [Frame] = [.backWest, .backEast]
 
     /// How high the frame's walls stand at the back and at the front. The lid
     /// slopes between them toward the front, which is toward the sun.
@@ -123,8 +169,10 @@ public enum ColdFrame {
 
     // MARK: The frames
 
-    /// The four frames, in the order a plot opens them: the back row from
-    /// west to east, then the front row. **The back row is `z−`**, which is
+    /// The four frames, in the order a plot opened them: the back row from
+    /// west to east, then the front row. **Only the back row is opened since
+    /// 29 September 2026** (`frames`); the front row's two are retired and
+    /// keep their numbers. **The back row is `z−`**, which is
     /// the side of the plot furthest from the eye before the page is turned.
     /// **The tank is a fifth frame and not a frame**, for the reason
     /// `QuietGarden.Corner.pool` is a fifth corner: a slot stays one set of
@@ -134,9 +182,11 @@ public enum ColdFrame {
         case backWest = 0, backEast, frontWest, frontEast, tank
 
         /// The middle of the frame, from the middle of the plot. The tank
-        /// lies down the middle of the yard, between the two rows.
+        /// lies across the yard in front of the frames. A retired front frame
+        /// keeps the place the formula gives it, which is in the water now:
+        /// what stands there is waiting to be replanted.
         public var centre: Spot {
-            if self == .tank { return Spot(x: 0, z: 0) }
+            if self == .tank { return Spot(x: 0, z: ColdFrame.tankZ) }
             return Spot(x: rawValue % 2 == 0 ? -ColdFrame.frameX : ColdFrame.frameX,
                         z: rawValue < 2 ? -ColdFrame.frameZ : ColdFrame.frameZ)
         }
@@ -145,19 +195,24 @@ public enum ColdFrame {
         public var isDry: Bool { self != .tank }
 
         /// How many places it holds: two ranks of six under a pair of lights,
-        /// or three rows of seven in open water.
+        /// or thirty-nine in open water.
         public var places: Int { self == .tank ? ColdFrame.tankPlaces : ColdFrame.places }
 
         /// Where a place lies within it, from its own middle. **The tank's
         /// rows are not ranks** — water is flat and a lily has no view to be
         /// given, so every place in it is `.front` and the row comes out of
-        /// the index instead.
+        /// the index instead: thirteen to each pair of rows, seven in the one
+        /// behind and six in the one in front, shifted half a place.
         public func at(_ index: Int, rank: Rank) -> Spot {
             if self == .tank {
-                let row = index / ColdFrame.tankWide, along = index % ColdFrame.tankWide
+                let pair = 2 * ColdFrame.tankWide - 1
+                let long = index % pair < ColdFrame.tankWide
+                let row = 2 * (index / pair) + (long ? 0 : 1)
+                let along = long ? index % pair : index % pair - ColdFrame.tankWide
+                let wide = long ? ColdFrame.tankWide : ColdFrame.tankWide - 1
                 return Spot(
-                    x: (Double(along) - Double(ColdFrame.tankWide - 1) / 2) * ColdFrame.tankGap,
-                    z: (Double(row) - Double(ColdFrame.tankRows - 1) / 2) * ColdFrame.tankGap)
+                    x: (Double(along) - Double(wide - 1) / 2) * ColdFrame.tankGap,
+                    z: (Double(row) - Double(ColdFrame.tankRows - 1) / 2) * ColdFrame.tankRowGap)
             }
             return Spot(x: (Double(index) - Double(ColdFrame.places - 1) / 2) * ColdFrame.alongGap,
                         z: rank == .back ? -ColdFrame.rankFrom : ColdFrame.rankFrom)
@@ -194,7 +249,11 @@ public enum ColdFrame {
     /// frames' plants at the back, and it showed — the front ranks stood empty
     /// under the glass while the back ranks filled. 0.50 is the dry median and
     /// puts 50.2% at the back.
-    public static let backFrom = 0.50
+    ///
+    /// **0.49 since 29 September 2026**, measured the same way after the
+    /// re-roll of the 28th: the 158 of these five hundred that want dry
+    /// compost — ferns, every one — stand at a median of 0.486 m.
+    public static let backFrom = 0.49
 
     public static func rank(height: Double) -> Rank {
         height < backFrom ? .front : .back
@@ -256,7 +315,8 @@ public enum ColdFrame {
     }
 
     /// Every place in a plot, frame by frame, the front rank before the back.
-    public static let slots: [Slot] = Frame.allCases.flatMap { frame in
+    /// The frames in use and then the tank; a retired front frame has none.
+    public static let slots: [Slot] = (frames + [.tank]).flatMap { frame in
         (frame.isDry ? Rank.allCases : [.front]).flatMap { rank in
             (0..<frame.places).map { Slot(frame: frame, rank: rank, index: $0) }
         }
@@ -443,7 +503,7 @@ public enum ColdFrame {
             let byPlot = (0..<opened).map { self.plot($0) }
 
             for plot in 0..<opened {
-                for frame in Frame.allCases where frame.isDry {
+                for frame in ColdFrame.frames {
                     let here = byPlot[plot].filter { $0.slot.frame == frame }
                     guard here.first?.traits.family == traits.family else { continue }
                     for rank in [own, own == .back ? .front : .back] {
@@ -455,8 +515,8 @@ public enum ColdFrame {
                 }
             }
             for plot in 0..<opened {
-                for frame in Frame.allCases where frame.isDry
-                    && !byPlot[plot].contains(where: { $0.slot.frame == frame }) {
+                for frame in ColdFrame.frames
+                    where !byPlot[plot].contains(where: { $0.slot.frame == frame }) {
                     return (plot, Slot(frame: frame, rank: own, index: 0))
                 }
             }

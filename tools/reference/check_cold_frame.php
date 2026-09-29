@@ -6,8 +6,7 @@ declare(strict_types=1);
  *
  * `tools/reference/cold_frame_vectors.json` is what `ColdFrame.Ways` in
  * SeedCore does with five hundred real crossings, starting from a Cold Frame
- * that already has its ambassador standing in the front rank of the first
- * frame. This replays the same five hundred through `Server/.api/ColdFrame.php`
+ * that already has its ambassador, a lily, in the tank. This replays the same five hundred through `Server/.api/ColdFrame.php`
  * and fails if any one of them lands anywhere else.
  *
  * **Why the whole five hundred rather than a sample.** The rule has two
@@ -39,6 +38,12 @@ declare(strict_types=1);
  * **a plot's tank is full before the next plot's is used** — because a port
  * that let a lily fall back to a frame, or that opened a pond per lily, would
  * place every one of the five hundred somewhere plausible and be wrong.
+ *
+ * **Two frames and a bigger tank since 29 September 2026** (Marcus): nothing is
+ * placed in the retired front row, frames 2 and 3, and the water and the glass
+ * are asked to fill in step — a plot opened by the water with nothing under its
+ * glass, while an older plot's frames hold everything dry, is the fault the
+ * bigger tank was for, so the plots with anything under glass are counted.
  *
  *   php tools/reference/check_cold_frame.php
  */
@@ -92,6 +97,7 @@ $full = 0;
 $ownRank = 0;
 $lotuses = 0;
 $tanks = [];
+$glazed = 0;
 
 // And the shape of the place the two of them agree on, which is what a visitor
 // sees: every plant inside its own frame, a colour to a frame, each rank filled
@@ -119,6 +125,11 @@ foreach ($ways as $p) {
     if ($wet !== ColdFrame::wantsWater($p['habit'])) {
         $failed[] = sprintf('%s is a %s and is in frame %d',
             substr($p['seed'], 0, 12), $p['habit'] === '' ? 'plant with no habit' : $p['habit'], $p['frame']);
+    }
+    // Nothing is placed in the retired front row.
+    $checks++;
+    if (!$wet && !in_array($p['frame'], ColdFrame::FRAMES, true)) {
+        $failed[] = sprintf('%s is in retired frame %d', substr($p['seed'], 0, 12), $p['frame']);
     }
     if ($wet) {
         $inWater++;
@@ -159,7 +170,7 @@ for ($plot = 0; $plot < $plots; $plot++) {
         $claimed++;
         if (array_sum(array_map(fn($p) => $p['span'], $block)) === 2 * ColdFrame::PLACES) $full++;
 
-        // One colour to a frame, which is what makes four frames read as four.
+        // One colour to a frame, which is what makes two frames read as two.
         $checks++;
         $families = array_values(array_unique(array_map(fn($p) => (int) $p['family'], $block)));
         if (count($families) > 1) {
@@ -210,6 +221,7 @@ for ($plot = 0; $plot < $plots; $plot++) {
         $failed[] = sprintf('plot %d\'s tank is filled %s', $plot, implode(' ', $taken));
     }
     $tanks[$plot] = count($water);
+    if (count($water) < count($here)) $glazed++;
 
     // **An unclaimed frame is never passed over.** A plant that cannot join a
     // frame of its own colour claims a fresh one in the oldest plot that has
@@ -263,10 +275,10 @@ if ($failed !== []) {
     exit(1);
 }
 
-printf("The PHP places all %d arrivals where the Swift does, across %d plots, "
+printf("The PHP places all %d arrivals where the Swift does, across %d plots, %d with plants under glass, "
      . "%d frames claimed and %d of them full, %d of %d plants under glass in their own rank, "
      . "%d in the water, %d lotuses across two places: %d checks.\n",
-    count($vectors), $plots, $claimed, $full, $ownRank, $dry, $inWater, $lotuses, $checks);
+    count($vectors), $plots, $glazed, $claimed, $full, $ownRank, $dry, $inWater, $lotuses, $checks);
 
 // **Taking back keeps the place and erases the plant**, and moves nothing that
 // arrives after it. `taking_back.php` says how that is checked.

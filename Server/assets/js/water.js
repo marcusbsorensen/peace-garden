@@ -118,7 +118,7 @@ function encloses(loop, x, z) {
 /// channel, a tank's kerb — where the ground climbs and has to be told where to
 /// hold its water.
 export function sinkPool(e, { tri, quad }, {
-  at = [0, 0], across, deep = across, seed, lining = COLOUR.silt, round = false,
+  at = [0, 0], across, deep = across, seed, lining = COLOUR.silt, round = false, bank = null,
 }) {
   const grown = shapeOf(e, seed, round);
   const edge = ringAt(grown, [across / SIDE, deep / SIDE], at);
@@ -134,10 +134,36 @@ export function sinkPool(e, { tri, quad }, {
          [0, 1, 0], lining);
   }
 
+  // **A bank, for a pool too big to fall to its middle** (the Cold Frame's
+  // tank, 29 September 2026). The dish below falls from its rim to one point
+  // in the middle, so the water, lying a little under the rim, meets it a
+  // fixed share of the way in — a fifth — and a pool three metres across
+  // showed a third of a metre of wet silt all round, its lilies sitting on
+  // it. With `bank`, the dish falls to its floor within that many metres of
+  // the edge instead, and the water reaches to within a few centimetres of
+  // the rim whatever the pool's size. The floor under it is not drawn: the
+  // water is opaque. The pools that do not ask for one are as they were.
+  if (bank) {
+    const inner = (p) => {
+      const dx = p[0] - at[0], dz = p[1] - at[1], l = Math.hypot(dx, dz) || 1;
+      const k = Math.max(0, (l - bank) / l);
+      return [at[0] + dx * k, at[1] + dz * k];
+    };
+    const slope = Math.hypot(bank, POOL.deep);
+    for (let i = 0; i < POOL.steps; i++) {
+      const u = i / POOL.steps, v = (i + 1) / POOL.steps;
+      const a = edge(u), b = edge(v), c = inner(b), d = inner(a);
+      const mx = (a[0] + b[0]) / 2 - at[0], mz = (a[1] + b[1]) / 2 - at[1], out = Math.hypot(mx, mz) || 1;
+      const normal = [(mx / out) * (POOL.deep / slope), bank / slope, (mz / out) * (POOL.deep / slope)];
+      quad([a[0], POOL.over, a[1]], [b[0], POOL.over, b[1]],
+           [c[0], -POOL.deep, c[1]], [d[0], -POOL.deep, d[1]], normal, lining);
+    }
+  }
+
   // The dish: the water's edge falling away to a floor, in silt. Its own
   // middle is a point, so it is a fan and not a ring — a pool this size has no
   // flat bottom worth the triangles.
-  for (let i = 0; i < POOL.steps; i++) {
+  for (let i = 0; bank === null && i < POOL.steps; i++) {
     const u = i / POOL.steps, v = (i + 1) / POOL.steps;
     const a = edge(u), b = edge(v);
     const normal = fall(a, b, at);

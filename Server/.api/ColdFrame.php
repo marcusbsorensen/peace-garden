@@ -39,15 +39,20 @@ declare(strict_types=1);
  * **A water lily is in the tank**, since 27 September 2026, and nothing else
  * is. The tank is frame 4, a fifth frame appended rather than a new kind of
  * thing, so a slot stays one set of numbers in the table and on the wire and
- * every planting already filed reads back as it did. Its three rows of seven
- * come out of the index; it has no ranks, so every place in it is rank 0. The
+ * every planting already filed reads back as it did. Its rows come out of the
+ * index; it has no ranks, so every place in it is rank 0. The
  * two-place rule is therefore unreachable under glass now — it stays here
  * because rows written before today hold lilies in frames 0-3 with a span of
  * two, and those must keep reading back until the replant moves them.
  *
- * A planting here is an array: seed (hex), plot, frame (0-3, or 4 for the
- * tank), rank (0 front, 1 back), index (0-5 in a frame, the west one of a
- * lotus's two; 0-20 in the tank), span (1, or 2 for a lotus under glass),
+ * **Two frames and a bigger tank since 29 September 2026** (Marcus): the
+ * front row's two frames are retired and the tank took their ground, thirty-
+ * nine places in six staggered rows, so the water and the frames fill in step.
+ * Frames 2 and 3 still read back, and are never placed in.
+ *
+ * A planting here is an array: seed (hex), plot, frame (0-1, 2-3 retired, or
+ * 4 for the tank), rank (0 front, 1 back), index (0-5 in a frame, the west one
+ * of a lotus's two; 0-38 in the tank), span (1, or 2 for a lotus under glass),
  * height, family, habit, nudgeX, nudgeZ. A planting with no span holds one
  * place, which is what every planting made before the lotus rule holds.
  */
@@ -57,8 +62,8 @@ final class ColdFrame
     public const PLOT_SIDE = 5.2;
 
     /**
-     * Four frames of twelve, two ranks of six in each: forty-eight a plot,
-     * Marcus's choice on 23 September.
+     * Two ranks of six in each frame. Four frames of twelve was Marcus's
+     * choice on 23 September; two, since 29 September 2026.
      */
     public const PLACES = 6;
 
@@ -71,25 +76,29 @@ final class ColdFrame
     public const FRAME_DEPTH = 1.1;
 
     /**
-     * Where the middles of the four frames stand: either side of the plot in
-     * `x`, and two rows in `z` with the tank between them. `FRAME_Z` was
-     * pushed out from 0.9 on 27 September 2026 to make room for the water.
+     * Where the middles of the frames stand: either side of the plot in `x`,
+     * and along the back of the yard in `z`. `FRAME_Z` was pushed out from 0.9
+     * on 27 September 2026 to make room for the water, and to 1.65 on 29
+     * September when the tank grew.
      */
     public const FRAME_X = 1.2;
-    public const FRAME_Z = 1.55;
+    public const FRAME_Z = 1.65;
 
     /**
-     * **The tank down the middle of the yard** (27 September 2026): seven
-     * places along it by three across, 0.62 m apart — the gap two places in a
-     * frame gave a lotus, and the gap its pads were measured against on 25
-     * September. Twenty-one to a plot.
+     * **The tank across the yard in front of the frames** (27 September 2026,
+     * grown on 29 September): six rows 0.57 m apart, seven and six in turn,
+     * each shifted half a place from the one behind, 0.62 m apart along a
+     * row — the gap a lotus's pads were measured against on 25 September.
+     * Thirty-nine to a plot, where it was three rows of seven.
      */
     public const TANK_ACROSS = 4.4;
-    public const TANK_DEEP = 1.8;
+    public const TANK_DEEP = 3.16;
+    public const TANK_Z = 0.6;
     public const TANK_GAP = 0.62;
+    public const TANK_ROW_GAP = 0.57;
     public const TANK_WIDE = 7;
-    public const TANK_ROWS = 3;
-    public const TANK_PLACES = 21;
+    public const TANK_ROWS = 6;
+    public const TANK_PLACES = 39;
 
     /**
      * The archetypes that want water. Read from the habit, which is a word.
@@ -107,15 +116,17 @@ final class ColdFrame
     public const RANK_FROM = 0.24;
 
     /**
-     * The four frames, in the order a plot opens them: the back row from west
-     * to east, then the front row. The back row is `z−`.
+     * The four frames, in the order a plot opened them: the back row from west
+     * to east, then the front row. The back row is `z−`. **Only the back row
+     * is opened since 29 September 2026**; the front row's numbers are kept so
+     * a planting filed in one reads back until the replant.
      */
     public const BACK_WEST = 0;
     public const BACK_EAST = 1;
     public const FRONT_WEST = 2;
     public const FRONT_EAST = 3;
-    /** **The dry frames**, which is what every loop over "the frames" means. */
-    public const FRAMES = [0, 1, 2, 3];
+    /** **The dry frames in use**, which is what every loop over "the frames" means. */
+    public const FRAMES = [0, 1];
     /** The tank is a fifth frame and not a frame. */
     public const TANK = 4;
 
@@ -131,7 +142,7 @@ final class ColdFrame
         return in_array($habit, self::WANTS_WATER, true);
     }
 
-    /** How many places a frame holds: two ranks of six, or three rows of seven. */
+    /** How many places a frame holds: two ranks of six, or thirty-nine in the water. */
     public static function places(int $frame): int
     {
         return $frame === self::TANK ? self::TANK_PLACES : self::PLACES;
@@ -154,8 +165,10 @@ final class ColdFrame
      * arrival: the 274 lilies in every 501 were pulling the median down by
      * 0.12 m, and left at 0.38 the cut put 81% of the frames' plants at the
      * back with the front ranks standing empty. 0.50 is the dry median.
+     * **0.49 since 29 September 2026**, the dry median measured again after
+     * the re-roll: 0.486 m.
      */
-    public const BACK_FROM = 0.50;
+    public const BACK_FROM = 0.49;
 
     /** Which rank a plant of this grown height belongs in. */
     public static function rank(float $height): int
@@ -190,11 +203,12 @@ final class ColdFrame
 
     /**
      * The middle of a frame, from the middle of the plot: [x, z]. The tank
-     * lies down the middle of the yard, between the two rows.
+     * lies across the yard in front of the frames. A retired front frame keeps
+     * the place the formula gives it.
      */
     public static function centre(int $frame): array
     {
-        if ($frame === self::TANK) return [0.0, 0.0];
+        if ($frame === self::TANK) return [0.0, self::TANK_Z];
         return [
             $frame % 2 === 0 ? -self::FRAME_X : self::FRAME_X,
             $frame < 2 ? -self::FRAME_Z : self::FRAME_Z,
@@ -217,12 +231,17 @@ final class ColdFrame
         // **The tank's rows are not ranks**: water is flat and a lily has no
         // view to be given, so the row comes out of the index and the rank is
         // not read. A place in it holds one plant, so there is no half-place.
+        // Thirteen to each pair of rows: seven in the one behind, six in the
+        // one in front, shifted half a place.
         if ($frame === self::TANK) {
-            $row = intdiv($index, self::TANK_WIDE);
-            $along = $index % self::TANK_WIDE;
+            $pair = 2 * self::TANK_WIDE - 1;
+            $long = $index % $pair < self::TANK_WIDE;
+            $row = 2 * intdiv($index, $pair) + ($long ? 0 : 1);
+            $along = $long ? $index % $pair : $index % $pair - self::TANK_WIDE;
+            $wide = $long ? self::TANK_WIDE : self::TANK_WIDE - 1;
             return [
-                $x + ($along - (self::TANK_WIDE - 1) / 2) * self::TANK_GAP,
-                $z + ($row - (self::TANK_ROWS - 1) / 2) * self::TANK_GAP,
+                $x + ($along - ($wide - 1) / 2) * self::TANK_GAP,
+                $z + ($row - (self::TANK_ROWS - 1) / 2) * self::TANK_ROW_GAP,
             ];
         }
         $at = $index + ($span - 1) / 2;
@@ -234,7 +253,7 @@ final class ColdFrame
 
     /**
      * Every place in one plot, frame by frame, the front rank before the back,
-     * and the tank's twenty-one after the four frames' forty-eight.
+     * and the tank's thirty-nine after the two frames' twenty-four.
      */
     public static function slots(): array
     {

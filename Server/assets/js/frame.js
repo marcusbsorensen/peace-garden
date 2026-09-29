@@ -1,7 +1,7 @@
 // A plot of the Cold Frame, drawn the way the app draws a plot: a floating slab
-// of ground seen in true isometric, gravel all over it, four low frames of
-// boards standing on it with their lights propped open, and young plants in two
-// ranks inside each.
+// of ground seen in true isometric, gravel all over it, low frames of boards
+// standing on it with their lights propped open, young plants in two ranks
+// inside each, and a tank of water in front of them.
 //
 // **The first page in the garden with something to see through.** The frames'
 // glass is handed to the stage as `glass`, which `makePlotStage` draws after the
@@ -20,8 +20,8 @@
 // `pg_frame_plan` rather than being written down again here.
 
 import { decode, takeResult } from './plant.js';
-import { COLOUR, RIM_DEPTH, SIDE, hash, keepToPlot, readOutline, readStructure } from './longwalk.js';
-import { rimOf, sinkPool, walkRound } from './water.js';
+import { COLOUR, RIM_DEPTH, SIDE, hash, keepToPlot, readOutline, readStructure, rimReach } from './longwalk.js';
+import { rimOf, sinkPool } from './water.js';
 
 // Seeds for this area's dressing, its own and not another area's, so seven
 // plots do not share one wandering edge.
@@ -82,12 +82,23 @@ export function makeFrameGround(place, lids = makeFrameLids(place)) {
     // loops rather than a fan from a point, both walked by how far round them
     // you are: see `water.js`, which had to teach the Quiet Garden's lawn the
     // same thing.
-    const tank = { across: place.tank.across, deep: place.tank.deep, seed: FRAME.tank };
+    //
+    // **Off the middle since 29 September 2026**, when the tank grew into the
+    // front row's ground and its middle moved toward the front. Two loops
+    // walked by how far round each is fold over one another once their middles
+    // part, so the ring is walked round the tank instead, as `floorAround`
+    // walks round a pool: each step of its rim, and the plot's edge straight
+    // out from the tank's middle through it.
+    const tank = { at: place.tank.at, across: place.tank.across, deep: place.tank.deep, seed: FRAME.tank };
     const { rim, steps, inside: inTank } = rimOf(e, tank);
-    const round = walkRound(outline);
+    const out = (p) => {
+      const dx = p[0] - tank.at[0], dz = p[1] - tank.at[1], l = Math.hypot(dx, dz) || 1;
+      const r = rimReach(outline, tank.at, dx / l, dz / l);
+      return [tank.at[0] + (dx / l) * r, tank.at[1] + (dz / l) * r];
+    };
     for (let i = 0; i < steps; i++) {
       const u = i / steps, v = (i + 1) / steps;
-      const a = rim(u), b = rim(v), c = round(v), d = round(u);
+      const a = rim(u), b = rim(v), c = out(b), d = out(a);
       quad([a[0], 0, a[1]], [b[0], 0, b[1]], [c[0], 0, c[1]], [d[0], 0, d[1]], UP, COLOUR.gravel);
     }
 
@@ -146,10 +157,12 @@ export function makeFrameGround(place, lids = makeFrameLids(place)) {
       // And it stops at the water, as it stops at a frame's boards.
       (x, z) => !inside(x, z) && !inTank(x, z));
 
-    // The tank, sunk down the middle of the yard between the two rows. After
+    // The tank, sunk across the yard in front of the frames. After
     // the gravel, so its rim lies over it: `water.js` cuts the floor rather
     // than covering it, which is the one thing a sunk pool needs.
-    sinkPool(e, { tri, quad }, tank);
+    // With a bank: at three metres across, a dish falling to its middle would
+    // leave a wide ring of wet silt between the rim and the water (`water.js`).
+    sinkPool(e, { tri, quad }, { ...tank, bank: 0.25 });
 
     // **The soil in each frame**, finer and darker, and flat-toned per face as
     // the Seedbed's tilth is — crumbs, not a surface. Its spread is half the
