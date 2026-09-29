@@ -102,6 +102,14 @@ public enum LongWalk {
     /// thousand crossings put the same two centiles at 0.771 m and 1.185 m, so
     /// three hundred was enough.
     ///
+    /// **0.75 and 1.18 since 29 September 2026**, measured again after the
+    /// re-roll of the 28th brought the reed and the cushion. This time on three
+    /// thousand crossings of three thousand pairs, where the two centiles are
+    /// 0.746 m and 1.183 m: three hundred of the same put the lower one at
+    /// 0.795, and the Knot Garden's own five hundred at 0.741, so three hundred
+    /// is no longer enough to say a number to the centimetre. The heights now
+    /// run 0.12 m to 2.47 m, with thirds at 0.62 m and 1.07 m.
+    ///
     /// Crossings of **one** person with forty others ran taller and were half
     /// bells, which is why the sample is three hundred different pairs.
     /// **Named, as the other four areas' cuts are.** They were literals inside
@@ -109,8 +117,8 @@ public enum LongWalk {
     /// check how close a plant stands to a tier boundary had to write 0.93 down
     /// a second time — and a second copy of a number is a number that can
     /// drift from the one it copies.
-    public static let middleFrom = 0.77
-    public static let backFrom = 1.20
+    public static let middleFrom = 0.75
+    public static let backFrom = 1.18
 
     public static func tier(height: Double) -> Tier {
         if height < middleFrom { return .edge }

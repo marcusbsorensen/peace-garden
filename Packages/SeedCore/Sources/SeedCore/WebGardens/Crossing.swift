@@ -97,13 +97,17 @@ public enum Crossing {
     /// 1.43 until the plants' shapes changed on 24 September 2026, and were
     /// measured again then on the Long Walk's three hundred.
     ///
+    /// **0.85 and 1.34 since 29 September 2026**: the 50th and 83rd centiles
+    /// of three thousand crossings after the re-roll of the 28th are 0.852 m
+    /// and 1.336 m. The same three thousand as the Long Walk's cuts.
+    ///
     /// They are not the walk's 0.77 and 1.20, and not the room's 1.09, and none
     /// of those is wrong: a border of 5:4:3 rows, a group of one back and two
     /// arms, and a bed of 3:2:1 divide the same population three different ways.
     /// The same plant is the middle of a border on the walk, the back of a group
     /// in the room, and one of the three at a path edge here.
-    public static let middleFrom = 0.91
-    public static let cornerFrom = 1.30
+    public static let middleFrom = 0.85
+    public static let cornerFrom = 1.34
 
     public static func rank(height: Double) -> Rank {
         if height < middleFrom { return .path }

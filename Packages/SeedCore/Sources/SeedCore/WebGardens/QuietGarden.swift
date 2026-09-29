@@ -137,11 +137,15 @@ public enum QuietGarden {
     /// shapes changed on 24 September 2026, and was measured again then on the
     /// Long Walk's three hundred.
     ///
+    /// **1.08 since 29 September 2026**: the 67th centile of three thousand
+    /// crossings after the re-roll of the 28th is 1.076 m. Measured on the
+    /// same three thousand as the Long Walk's cuts, for the reason given there.
+    ///
     /// It is not the Long Walk's 1.20 m and should not be: that cut divides
     /// three tiers of a border in the proportion 5:4:3, and this one divides a
     /// group of three one way. The same plant is the middle of a border there
     /// and the back of a group here, which is what having two areas means.
-    public static let backFrom = 1.09
+    public static let backFrom = 1.08
 
     public static func stand(height: Double) -> Stand {
         height < backFrom ? .arm : .back

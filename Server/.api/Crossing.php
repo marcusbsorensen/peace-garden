@@ -28,9 +28,9 @@ final class Crossing
     public const PATH_HALF_WIDTH = 0.6;
     public const ROUNDEL_RADIUS = 0.85;
 
-    /** The cuts, measured at the 50th and 83rd centiles of grown heights. */
-    public const MIDDLE_FROM = 0.91;
-    public const CORNER_FROM = 1.30;
+    /** The cuts, measured at the 50th and 83rd centiles of grown heights: 0.85 and 1.34 since 29 September 2026. */
+    public const MIDDLE_FROM = 0.85;
+    public const CORNER_FROM = 1.34;
 
     /** Which way each quarter lies from the middle of the plot: [x, z]. */
     public const LIE = [[1, 1], [-1, 1], [-1, -1], [1, -1]];

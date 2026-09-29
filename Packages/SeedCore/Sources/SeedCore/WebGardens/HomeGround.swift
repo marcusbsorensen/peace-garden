@@ -106,11 +106,18 @@ public enum HomeGround {
         /// The spire's 1.346 is 0.89 mm clear and the rosette's 0.275 is
         /// 0.48 mm clear, so both stand as measured. Rounding all three to two
         /// places would not do: 1.35 falls 0.002 mm from a spire.
+        ///
+        /// **Measured again on 29 September 2026**, after the re-roll of the
+        /// 28th, on a fresh 2,000 (`tools/homeground`, its cache cleared): the
+        /// spire's median 1.261 m, down from 1.346 since a spire flowers from
+        /// below; the rosette's 0.266, down from 0.275; the umbel's still
+        /// 0.932, so its 0.930 stands. The nearest plant in any of the tool's
+        /// samples is 0.03 mm from its crop's cut.
         public var cut: Double {
             switch self {
-            case .cer:  return 1.346
+            case .cer:  return 1.261
             case .fen:  return 0.930
-            case .pell: return 0.275
+            case .pell: return 0.266
             }
         }
 

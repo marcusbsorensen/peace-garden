@@ -35,10 +35,11 @@ final class LongWalk
     /// and every area that groups by colour reads the same seven.
     public const PALE_FAMILY = 6;
 
+    /** The cuts, 0.75 and 1.18 since they were measured again on 29 September 2026. */
     public static function tier(float $height): int
     {
-        if ($height < 0.77) return 0;
-        if ($height < 1.20) return 1;
+        if ($height < 0.75) return 0;
+        if ($height < 1.18) return 1;
         return 2;
     }
 

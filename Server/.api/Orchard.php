@@ -30,9 +30,9 @@ final class Orchard
     public const TREE_FROM = 1.70;
     public const GUILD_RADIUS = 0.75;
 
-    /** The cuts, measured at the 25th and 75th centiles of grown heights. */
-    public const FLANK_FROM = 0.58;
-    public const CROWN_FROM = 1.20;
+    /** The cuts, measured at the 25th and 75th centiles of grown heights: 0.48 and 1.18 since 29 September 2026. */
+    public const FLANK_FROM = 0.48;
+    public const CROWN_FROM = 1.18;
 
     /**
      * Which way each guild lies from the middle of the plot: [x, z]. The middle

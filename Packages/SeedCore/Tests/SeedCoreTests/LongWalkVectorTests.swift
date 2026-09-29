@@ -25,9 +25,11 @@ final class LongWalkVectorTests: XCTestCase {
         var random = SplitMix64(seed: 1809)
         return (0..<600).map { n in
             let u = Double(random.next() % 10_000) / 10_000
-            let height = u < 1 / 3 ? 0.15 + u * 3 * 0.55
-                : u < 2 / 3 ? 0.70 + (u - 1 / 3) * 3 * 0.39
-                : 1.09 + (u - 2 / 3) * 3 * 1.22
+            // The measured thirds, as `LongWalkTests` draws them: 0.12, 0.62,
+            // 1.07 and 2.47 since 29 September 2026.
+            let height = u < 1 / 3 ? 0.12 + u * 3 * 0.50
+                : u < 2 / 3 ? 0.62 + (u - 1 / 3) * 3 * 0.45
+                : 1.07 + (u - 2 / 3) * 3 * 1.40
             let family = Int(random.next() % 7)
             let seed = SeedMint.mint(fromEntropy: Data("long-walk-vector-\(n)".utf8))
             return (seed, LongWalk.Traits(height: height, family: family))

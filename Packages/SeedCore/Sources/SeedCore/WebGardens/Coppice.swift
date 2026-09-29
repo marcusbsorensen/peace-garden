@@ -94,7 +94,14 @@ public enum Coppice {
     /// A borrowed cut would divide them unevenly: the Orchard's 1.20 puts 28%
     /// at the back, the Long Walk's 0.77 puts 75%. It was 1.10 until the
     /// plants' shapes changed on 24 September 2026, measured the same way.
-    public static let backFrom = 1.00
+    ///
+    /// **0.99 since 29 September 2026.** After the re-roll of the 28th the
+    /// design's sample was grown again (`simulate.py`'s commands): its 1,067
+    /// stars stand at a median of 0.991 m, set at 0.99, which puts 49.4% of
+    /// the fresh sample's 1,051 at the back. The tests' own five hundred have
+    /// 248 stars at a median of 0.96; a sample of that size is not the one the
+    /// cut is measured on, and the design's moved by a centimetre.
+    public static let backFrom = 0.99
 
     /// Where a plant stands in a coupe: on a stool, or in one of the floor's
     /// two rows. **The back row is `z−` of the stools**, further from the eye

@@ -425,14 +425,30 @@ final class KnotGardenTests: XCTestCase {
     /// sixty-six, fifty-seven of them full, 91% of every claimed place held.
     /// The rule is doing what it says. Whether the shared cuts still divide
     /// the garden 1:2:1 is a question for the cuts, not for this test.
+    ///
+    /// **Seventeen plots and 93% since 29 September 2026**, when the cuts were
+    /// asked that question and measured again on three thousand crossings:
+    /// the Orchard's are 0.48 and 1.18 now, and the ranks here 142, 250 and
+    /// 109 with the ambassador. Sixty-seven pairs claimed, fifty-six of them
+    /// full, 93% of every claimed place held.
     func testHowFiveHundredLandOnTheKnotGarden() {
         let ways = Self.filled()
         let counts = (0..<ways.plots).map { ways.plot($0).count }
         XCTAssertEqual(counts.reduce(0, +), 501)
-        XCTAssertEqual(ways.plots, 18, "\(ways.plots) plots for 501 plants: \(counts)")
+        XCTAssertEqual(ways.plots, 17, "\(ways.plots) plots for 501 plants: \(counts)")
         let claimed = (0..<ways.plots).reduce(0) { total, plot in
             total + KnotGarden.Pair.allCases.filter { ways.family(of: $0, in: plot) != nil }.count
         }
+        let full = (0..<ways.plots).reduce(0) { total, plot in
+            total + KnotGarden.Pair.allCases.filter { pair in
+                ways.plot(plot).filter { $0.slot.compartment.pair == pair }.count == 8
+            }.count
+        }
+        let ranks = KnotGarden.Rank.allCases.map { rank in
+            ways.plantings.filter { KnotGarden.rank(height: $0.traits.height) == rank }.count
+        }
+        print("Knot Garden at 500: \(ways.plots) plots, \(claimed) pairs claimed, \(full) full, "
+              + "\(Double(501) / Double(claimed * 8)) of claimed places held, ranks \(ranks)")
         XCTAssertGreaterThan(Double(501) / Double(claimed * 8), 0.9,
             "501 plants filled \(claimed) claimed pairs badly: \(counts)")
         XCTAssertGreaterThan(Double(501) / Double(ways.plots * 32), 0.86,

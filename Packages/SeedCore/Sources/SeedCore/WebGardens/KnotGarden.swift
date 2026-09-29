@@ -326,7 +326,10 @@ public enum KnotGarden {
     /// the 25th and 75th centiles of three hundred crossings are where they were
     /// when `Orchard` measured them: 0.583 m and 1.202 m, set at 0.58 and 1.20,
     /// since the plants' shapes changed on 24 September 2026 (they were 0.75
-    /// and 1.30).
+    /// and 1.30). **0.48 and 1.18 since 29 September 2026**, when the Orchard's
+    /// were measured again after the re-roll, on three thousand crossings:
+    /// this area's own five hundred ranked 164/234/102 at 0.58 and 1.20, and
+    /// rank 142/250/108 at these.
     ///
     /// This is the first area to share its cuts with another, and naming the
     /// reuse is the honest thing. Re-measuring would have produced the same two

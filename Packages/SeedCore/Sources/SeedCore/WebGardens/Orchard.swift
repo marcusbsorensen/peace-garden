@@ -120,6 +120,12 @@ public enum Orchard {
     /// were 0.75 and 1.30 until the plants' shapes changed on 24 September
     /// 2026, and were measured again then on the Long Walk's three hundred.
     ///
+    /// **0.48 and 1.18 since 29 September 2026**: the 25th and 75th centiles
+    /// of three thousand crossings after the re-roll of the 28th are 0.476 m
+    /// and 1.183 m. The same three thousand as the Long Walk's cuts; the Knot
+    /// Garden, which shares these, had its own five hundred ranked 164/234/102
+    /// at the old ones against about 1:2:1, and 142/250/108 at these.
+    ///
     /// The middle guild is not in this count, and does not need to be: it takes
     /// any plant, so the sixteen places the cuts are for are handed a fair sample
     /// of everything that arrives.
@@ -131,8 +137,8 @@ public enum Orchard {
     /// because both are the tallest quarter: three back slots of twelve and
     /// one place of four. Measured on one sample, one centile is one number;
     /// the two were 1.28 and 1.30 only because each area had drawn its own.
-    public static let flankFrom = 0.58
-    public static let crownFrom = 1.20
+    public static let flankFrom = 0.48
+    public static let crownFrom = 1.18
 
     public static func rank(height: Double) -> Rank {
         if height < flankFrom { return .understorey }

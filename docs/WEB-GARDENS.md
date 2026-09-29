@@ -33,6 +33,57 @@ families, kinds and habits did not move; only heights did.
 - Where a design section below records what a simulation found before the
   shapes changed and nothing re-ran it, it says so.
 
+## Every cut measured again, 29 September 2026
+
+The re-roll of 28 September (the reed and the cushion as families, the spire
+flowering from below) moved the population the cuts were measured on: the Knot
+Garden's own five hundred ranked **164/234/102** against about 1:2:1, and the
+Coppice's tests' stars stood at a median of 0.96 m under a cut described as
+their median, 1.00. Marcus asked for every cut that is a median or a centile of
+a population to be measured again, the way its own comment says it was measured.
+
+**The garden-wide cuts are measured on three thousand crossings of three
+thousand pairs now, not three hundred.** Three hundred of the same put the 25th
+centile at 0.51 m against three thousand's 0.48, and the Knot Garden's own five
+hundred at 0.42 — too loose to say a number to the centimetre. The heights run
+**0.12 to 2.47 m, thirds at 0.62 and 1.07 m** (the Long Walk's synthetic
+arrivals follow them).
+
+| Area | What the cut is | Old | Measured | New |
+|---|---|---|---|---|
+| Long Walk | 42nd / 75th centile, three thousand crossings | 0.77 / 1.20 | 0.746 / 1.183 | **0.75 / 1.18** |
+| Quiet Garden | 67th centile, the same | 1.09 | 1.076 | **1.08** |
+| Crossing | 50th / 83rd centile, the same | 0.91 / 1.30 | 0.852 / 1.336 | **0.85 / 1.34** |
+| Orchard | 25th / 75th centile, the same | 0.58 / 1.20 | 0.476 / 1.183 | **0.48 / 1.18** |
+| Knot Garden | the Orchard's, named as the Orchard's | 0.58 / 1.20 | — | **0.48 / 1.18** |
+| Glasshouse border | 75th centile of five hundred `light` plants, a label the tests do not use | 1.14 | 1.160 (1.157 on two thousand) | **1.16** |
+| Cold Frame | median of its own five hundred's dry plants | 0.50 | 0.486 | **0.49** |
+| Coppice | median of the design sample's stars (`tools/coppice/sample.json`, grown again) | 1.00 | 0.991 | **0.99** |
+| Home Ground spire | median of 2,000 Home Ground spires (`tools/homeground`) | 1.346 | 1.261 | **1.261** |
+| Home Ground umbel | the same, umbels; kept off the median | 0.930 | 0.932 | **0.930** |
+| Home Ground rosette | the same, rosettes | 0.275 | 0.266 | **0.266** |
+
+- **The Knot Garden ranks 142/250/108** at the new cuts, against 164/234/102;
+  its own five hundred run shorter than the garden (their 25th centile is
+  0.42), so it is nearer 1:2:1 without reaching it. Seventeen plots where it
+  was eighteen, 93% of claimed places held.
+- **Every cut stays clear of every recorded height** by more than the 0.01 mm
+  two hosts may disagree by: every area's `placementCannotTurn` passes on the
+  re-recorded vectors, and none needed nudging. The Cold Frame's is now asked
+  of the plants under glass only: the tank reads no height, and at thirty-nine
+  to a tank two lilies stood 4.8 µm apart.
+- **The Coppice's samples were grown again** with `simulate.py`'s commands, and
+  `simulate.py` leaves out the ambassador (a fern on a stool since the re-roll,
+  whose young heights the sample does not record) from its cut-year measure.
+  At 0.99 the fresh sample's stars go 49.4% to the back; the nearest of 2,118
+  stands 0.21 mm from it.
+- **The Home Ground's cache was cleared** before it was measured: it is stamped
+  with the ground ambassador's height, and that plant did not change in the
+  re-roll, so the tool would have answered with the old heights.
+- The Long Walk's drift test was lowered from a half to 0.45: the share of
+  plants in a drift sits at a half (146 of 300, 52% over larger samples) and
+  a bar at exactly a half was failing on which three hundred were drawn.
+
 ## What was settled
 
 Settled by Marcus, 18 September:
@@ -189,7 +240,9 @@ the website and the app can all read it. Built 18 September, with
 - **Tiers from measurement.** Across 300 crossings of 300 different pairs of
   parents, grown heights run 0.15 to 2.31 m, with thirds at 0.70 and 1.09 m. The
   cuts are at 0.77 m and 1.20 m instead, to match the number of slots in each
-  tier (0.93 m and 1.28 m before 24 September 2026). Crossings of one person with forty others ran taller and were half
+  tier (0.93 m and 1.28 m before 24 September 2026; **0.75 m and 1.18 m since
+  29 September**, measured on three thousand after the re-roll, when the
+  heights ran 0.12 to 2.47 m with thirds at 0.62 and 1.07). Crossings of one person with forty others ran taller and were half
   bells, so a sample from one gardener is the wrong sample.
 - **The rule is that nothing stands in front of something shorter**, not
   "tall ones in the back row". A plant goes to its own tier in the oldest plot
@@ -353,8 +406,8 @@ service, the website and the app can all read it. Built 21 September, with
   of a match.
 - **Nothing stands in front of something shorter**, as on the walk, at the scale
   of a group of three: the back of a group is at least as tall as either arm.
-  The cut between back and arm is 1.09 m, the 67th centile of the measured
-  spread, because a group is one back and two arms. It is not the walk's 1.20 m
+  The cut between back and arm is 1.09 m (**1.08 since 29 September 2026**), the
+  67th centile of the measured spread, because a group is one back and two arms. It is not the walk's 1.20 m
   and should not be — that one divides three tiers in the proportion 5:4:3.
 - **How it fills, at five hundred:** 51 plots, 49 of them full, the two at the
   growing end holding seven and four. Of the plants that joined an existing
@@ -434,7 +487,7 @@ page's own prose landed on the lawn.
   somewhere to stand that is not the back of a guild.
 - **Cuts at 0.58 m and 1.20 m**, measured at the 25th and 75th centiles of three
   hundred crossings for a guild of 1:2:1 (0.75 m and 1.30 m before 24 September
-  2026). The fourth division of one population by a fourth template, and its
+  2026; **0.48 m and 1.18 m since 29 September**, on three thousand). The fourth division of one population by a fourth template, and its
   crown is the walk's back cut: both are the tallest quarter.
 - **At 500 arrivals: 26 plots, 24 exactly full**, the twenty-fifth holding
   nineteen and the twenty-sixth two. An older plot goes on receiving after a
@@ -563,6 +616,7 @@ though `Organic.hedge` learned to bend for it.
   but a pair holds eight places against a guild's four, so there is twice as
   much room to find the right one.
 - **The cuts are the Orchard's 0.58 and 1.20, and are named as the Orchard's.**
+  (0.48 and 1.18 since 29 September 2026, and ranking 142/250/108 here.)
   A compartment of four graded outward is the same 1:2:1 a guild is, so it
   divides the same population the same way. This is the first area to share cuts
   with another; re-measuring would have produced the same two numbers and
@@ -815,7 +869,8 @@ a plant as something other than what it will be.**
 
 Marcus answered its three questions on 23 September, after a measurement that
 changed the first one: **every plant, drawn young; four frames of twelve; colour
-claims a frame and the grown height orders its ranks.**
+claims a frame and the grown height orders its ranks.** (Two frames of twelve
+and a tank of thirty-nine since 29 September 2026: *A bigger tank*, below.)
 
 ### Nobody is turned away, and that was measured
 
@@ -837,8 +892,9 @@ same terms; failing that the first frame nobody has claimed; failing that a new
 plot. A rank fills from its west end. The claim is read off the plants, as the
 Knot Garden's and the Seedbed's are.
 
-- **The cut is 0.50 m, the median of this area's plants that stand in the
-  frames** (0.38 m from 24 September 2026, 0.85 m before that), and it is the
+- **The cut is 0.49 m, the median of this area's plants that stand in the
+  frames** (0.50 m from 27 September 2026, 0.38 m from 24 September, 0.85 m
+  before that), and it is the
   first cut measured over one area's plants rather than all of them. Five hundred `waiting` arrivals took 5,805 crossings
   to find. A borrowed cut would have divided them unevenly — the Orchard's 0.58
   puts 12% at the back, the Long Walk's 0.77 puts 1% — where this one puts
@@ -1031,6 +1087,66 @@ here want dry compost at all. **Fewer frames and smaller frames were both
 measured and both are worse** — a frame holds one colour, so fewer frames
 strand more plots and smaller frames are claimed faster and never fill.
 
+### A bigger tank, 29 September 2026
+
+**Decided: Marcus, 29 September.** *A bigger tank, so the tank and the frames
+fill in step, and fewer plots.* The re-roll of the 28th gave this area the
+reed's root `Syr`, and the reed wants water: **343 of every 501 arrivals here
+go in the tank** and 158 under glass. At twenty-one to a tank the water opened
+**seventeen plots**, and the frames' plants, which fill the oldest plot's frames
+first, all stood in the first five — the frames stood empty in twelve plots of
+seventeen, 19% of the glass held.
+
+**The ratio, measured on the area's own five hundred** (`ColdFrameTests`'s
+stream). The frames alone, with the water left out, need **five plots** for 158
+plants at four frames of twelve, and **nine** at two; the water needs 343 ÷ its
+places. For the two to open the same number of plots, four frames need a tank
+of about seventy places — more water than a plot has ground — and two frames a
+tank of about thirty-nine to forty-two. Three rows of seven, as it was, is out
+of step with either.
+
+**What changed: the front row of frames gave up its ground to the water.**
+That is the smallest change that fits: each frame is exactly what it was — two
+ranks of six under a pair of lights, the lotus-takes-two-places rule, the glass,
+the lids that open — and there are two of them, the back row, where there were
+four. The frames move back a tenth (`frameZ` 1.55 → **1.65**) and the tank lies
+across the yard in front of them: **4.4 m by 3.16 m, its middle 0.6 m toward
+the front, thirty-nine places in six rows, seven and six in turn**, each row
+shifted half a place from the one behind it. Along a row the places are still
+**0.62 m** apart, the gap a lily's pads were measured against; the rows stand
+**0.57 m** apart, so two places a row apart are 0.649 m, and the two nudges
+pulling toward each other along that slant leave 0.567 m — no closer than two
+places along a row come. (At 0.54 m between rows the slant came 2 cm closer,
+and `testNoTwoLiliesFloatCloserThanTheTankAllows` caught it.) Staggered rather
+than square: a square lattice of six rows does not fit in front of the frames,
+and lilies in a grid read as a planting plan rather than a pond.
+
+- **The front row is retired, not removed.** `Frame.frontWest` and `frontEast`
+  keep raw values 2 and 3, so a planting filed there still decodes and draws
+  where it stood until the replant; `ColdFrame.frames` is the back row, and it
+  is all the rule and the plan offer. The tank stays raw 4.
+- **The page.** `pg_frame_plan` sends the two frames and the tank's middle
+  (`tank.at`). The gravel ring is walked round the tank from its middle out to
+  the plot's edge, as `floorAround` walks round a pool, because the tank is off
+  the plot's middle now. `sinkPool` takes a **`bank`** (0.25 m here): a dish
+  falling to its middle leaves a fifth of its reach as wet silt above the water
+  line, which at three metres across was a third of a metre of silt with lilies
+  sitting on it; with a bank the water reaches to within a few centimetres of
+  the rim. Pools that do not ask for a bank are as they were. No straight
+  lines: the tank's outline is the plot's own wandering one, grown and squeezed.
+- **The cut is 0.49**, the frames' plants' median measured again after the
+  re-roll (0.486 m; see *Every cut measured again*, below).
+
+At five hundred: **9 plots where there were 17, and frames in all nine.** Eight
+full tanks and a ninth with thirty-one, **343 of 351 places in the water
+(98%)**; **158 of 216 under glass (73%, where it was 19%)**; seventeen frames
+claimed and ten of them full, as before — the frames hold what their colours
+bring, and what changed is that the plots no longer outrun them. **153 of 158**
+under glass in the rank their height asks for. A plot's frames still lag its
+tank — a frame waits for its colour, and the first plot's frames are full at
+about arrival 250 where its tank is full at about 50 — but no plot's frames
+stand empty while its water is used, and `ColdFrameTests` holds that.
+
 ## Water as scenery in the other eight, 27 September 2026
 
 **Prototype, on the branch `water/scenery`, waiting for Marcus to see it.**
@@ -1147,7 +1263,7 @@ that sorts by hue, and the first whose plants do not all stand on the ground.**
 
 ### The rule
 
-Height picks the bed. A plant of 1.14 m or more goes in the border: the next place from the door in the oldest plot with one,
+Height picks the bed. A plant of 1.14 m or more (1.16 m since 29 September 2026) goes in the border: the next place from the door in the oldest plot with one,
 whatever its colour. Anything shorter is potted on the staging:
 
 1. its own band, in every open plot, oldest first;
@@ -1163,7 +1279,8 @@ the door. A position fills its row by the glass before its row by the path.
   out of 23,259 crossings, less 136 pale), under a label the tests do not use,
   and written in as literals: 166.6°, 190.8°, 215.9°, 239.8°, 265.8°, 291.0°,
   315.7°, 345.4°, 15.7°, 40.3° and 69.6°, as turns past the 114° cut.
-- **The border's cut is its own, 1.14 m**: the 75th centile of five hundred of
+- **The border's cut is its own, 1.14 m** (**1.16 since 29 September 2026**,
+  measured again after the re-roll: 1.160 m): the 75th centile of five hundred of
   the area's plants drawn under a label the tests do not use, 1.139 m. It was
   the Orchard's crown, borrowed, until 24 September 2026; the new shapes brought
   these plants down further than the garden's as a whole (their 75th centile by
@@ -1373,7 +1490,8 @@ keeps the floor the stars'.
   seed bytes with no `sin` or `pow` involved, so the test needs no tolerance.
   If the Glasshouse's hue is built first, one `walk_offers` migration can carry
   both.
-- **One height cut, 1.00 m**, the median of this area's own stars, measured
+- **One height cut, 1.00 m** (**0.99 since 29 September 2026**: the regrown
+  design sample's 1,067 stars stand at 0.991 m), the median of this area's own stars, measured
   over the area's own plants as the Cold Frame's was (1.10 m before 24 September
   2026). It divides the fresh sample's stars 49.0% to the back. A borrowed cut
   would divide them unevenly: the Orchard's 1.20 would put 28% at the back, the
@@ -1647,7 +1765,7 @@ button, since the service stays in year 0 until 21 December 2026).
   agreeing about every number.
 - **Cuts at 0.91 m and 1.30 m**, measured at the 50th and 83rd centiles of three
   hundred crossings for a bed of 3:2:1 (0.97 m and 1.43 m before 24 September
-  2026). Deliberately neither the walk's 0.77/1.20 nor the room's 1.09: the same
+  2026; **0.85 m and 1.34 m since 29 September**, on three thousand). Deliberately neither the walk's 0.77/1.20 nor the room's 1.09: the same
   population divided three ways by three templates.
 - **The three at the path rank share an arc**, which is what frees them from
   having to be in order with each other. Only ranks are compared, never
@@ -2206,6 +2324,9 @@ Then, on the new shapes, two more, both on the recommendation:
    arrival stood 0.009 mm from it. At 0.930 the nearest of every sample is
    0.58 mm away and the tall share is unchanged, 50.1%. The spire cut stays
    1.346 m (0.89 mm clear) and the rosette cut 0.275 m (0.48 mm clear).
+   **Measured again on 29 September 2026**, after the re-roll: spire 1.261 m,
+   rosette 0.266 m, the umbel still 0.932 so its 0.930 stands; the nearest
+   plant in any sample is 0.03 mm from its cut.
    Rounding all three to two places does not work: 1.35 falls 0.002 mm from a
    spire.
 
