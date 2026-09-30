@@ -21,7 +21,7 @@ The garden's shapes settled before the app is announced: the reed and the cushio
 
 ## Next step
 Nothing waits on a decision. Candidates:
-- App build 3: the Danish *Rør*, the batch 2 name sheet in the app's seven languages, the re-rolled shapes on the phone. A phone on an older build sends old-shape heights; run the replant again (fresh copy, fresh plan) once build 3 is what people have, if anything has been planted by then.
+- **App build 3 is uploaded** to App Store Connect (30 September 09:25, delivery `39003575-bd47-49f4-8d90-db7dedeb80f1`; archive `build/PeaceGarden-1.0-3.xcarchive`). It carries the re-rolled shapes, the Danish *Rør* and the batch 2 name sheet. App tests 131/0 (1 skipped) on the iPhone Air. Once it is what testers run, and if anything has been planted by then, run the replant again from a fresh copy.
 - The next translation round: the privacy page (8 strings), the English-only area paragraphs, the plant panel and the move pad, and the app's 64 older strings.
 - Readers for the forty unread languages (`docs/REVIEWING-A-LANGUAGE.md`).
 
