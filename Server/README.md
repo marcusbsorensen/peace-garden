@@ -21,7 +21,7 @@ peacegarden.app/
 │   ├── knot                           ← the Knot Garden
 │   ├── seedbed                        ← the Seedbed
 │   ├── frame                          ← the Cold Frame
-│   ├── wild                           ← the Wild Fields
+│   ├── wild                           ← the Wild Fields: where a released plant goes
 │   ├── download                       ← the app
 │   ├── privacy                        ← what the site and the app keep
 │   ├── t                              ← the test roster
@@ -39,6 +39,7 @@ peacegarden.app/
 │   ├── Seedbed.php, SeedbedStore.php  ← the Seedbed's rule, and its table
 │   ├── ColdFrame.php, ColdFrameStore.php ← the Cold Frame's rule, and its table
 │   ├── Offers.php                     ← the asking: offer, pending, answer, withdraw
+│   ├── WildFields.php, WildStore.php  ← the Wild Fields' rule, and its table
 │   ├── Limits.php                     ← how often one caller may write
 │   ├── backup.php                     ← the nightly copy, from cron
 │   └── config.example.php             ← copy to config.php, which git ignores
@@ -57,7 +58,8 @@ peacegarden.app/
         ├── page.js                    ← the /s page
         ├── walk.js                    ← the /g page
         ├── meaningspage.js            ← the /meanings page's own opening
-        ├── plain.js                   ← /download, /wild and /privacy: words and a chooser
+        ├── plain.js                   ← /download and /privacy: words and a chooser
+        ├── wildpage.js, wildfields.js ← the Wild Fields: the page, and the field drawn
         ├── door.js                    ← the /t page
         ├── walkpage.js, longwalk.js   ← the Long Walk: the page, and the plot drawn
         ├── quietpage.js, quietgarden.js ← the Quiet Garden: the page, and the plot drawn
@@ -397,8 +399,8 @@ the service's own files unreachable, as it does `.pages/`.
     answering for them. Rate limiting belongs in front of the service.
   - Checked by `tools/reference/check_offers.php`, in CI.
 - **How often one caller may write**, `.api/Limits.php`: 18 offers, 55 answers,
-  28 withdrawals and 220 askings per address in a window of fifty-five minutes
-  — the hourly 20, 60, 30 and 240 scaled to it — answered `429` with a
+  28 withdrawals, 220 askings and 9 releases per address in a window of
+  fifty-five minutes — the hourly 20, 60, 30, 240 and 10 scaled to it — answered `429` with a
   `Retry-After` when the allowance is gone. It is in PHP because the vhost is
   not ours to configure, so it caps what is *written* rather than what arrives
   — which is the half that matters on an append-only walk. What is stored is a
@@ -420,6 +422,27 @@ the service's own files unreachable, as it does `.pages/`.
   line in its log when it removed something, in counts only. Checked by
   `tools/reference/check_sweep.php`, in CI. Its cron line is under *Keeping
   the walk*.
+- **The Wild Fields**, `.api/WildFields.php` and `.api/WildStore.php`, since
+  1 October 2026: where a plant goes when the app releases it. Not an area —
+  nothing in it is placed against anything else, and there is no asking,
+  because releasing is one gardener letting go of their own copy.
+  - `POST /api/wild/release` — `{seed, parents, encounter, token?}`. Checks the
+    seed is the cross of those parents at that meeting; for a plant the asking
+    has ever held, that the token is one of its two, and takes it out of the
+    asking first (`Offers::letGo`), because a plant stands in one public
+    place. Keeps the seed and both parents and nothing else — no time, no
+    token, no meeting, no order of arrival (`WITHOUT ROWID` on SQLite, for
+    that last). A second release of the same plant is answered with the first.
+  - `GET /api/wild` — the field's size, and how many plants stand in each
+    tile that has any. `GET /api/wild/tile/{x}/{z}` — a tile's plantings:
+    seed, both parents, and the spot, which is the seed's first four bytes on
+    a 64-metre field whose edges meet (`WildFields`, in SeedCore).
+  - A released plant is refused by every area afterwards: `walk/offer` answers
+    `410`.
+  - **Whether the field may publish the parents** is not settled:
+    `docs/WEB-GARDENS.md` §*The Wild Fields*, *Built*.
+  - Checked by `tools/reference/check_wild_fields.php`, in CI, against
+    SeedCore's vectors.
 - `POST /api/walk/plant` — **answers 403**: it is the one route that plants with
   nobody asked, and it exists for the reference check. A local copy opens it in
   `.api/config.php` (copy `config.example.php`; git ignores it and `deploy.sh`
@@ -437,7 +460,12 @@ host is — then
 `node tools/wasm/send-arrivals.mjs http://localhost:8803 120` to stand in for
 phones — add `peace` as a third argument to send them to the Quiet Garden —
 and open `/walk` or `/quiet`. The workbenches are `/dev/walk` and `/dev/quiet`,
-which invent a garden rather than reading the service.
+which invent a garden rather than reading the service. `/wild` reads the
+local field; `/dev/wild?plants=1000` invents one of a thousand, and
+`/dev/wild?source=service` draws the local one without choosing where to open.
+The rate limit holds a local copy to nine releases a window too, so a field
+for looking at is sown from the command line through `WildStore` rather than
+over HTTP.
 
 **`/plant.wasm` is revalidated, not cached for a day.** It used to be
 `max-age=86400, must-revalidate`, on the reasoning that a module changes
@@ -474,7 +502,7 @@ because the thing that made it was two people meeting once.
 17 3 * * * /usr/bin/php $HOME/public_html/.api/backup.php >> $HOME/backups/backup.log 2>&1
 ```
 
-It copies every area's table and its lock, `walk_offers` and `offer_key`
+It copies every area's table and its lock, `wild_fields`, `walk_offers` and `offer_key`
 (`KEPT` in `backup.php` is the list), and leaves `rate_limits` and `rate_salt`
 out on purpose — those are this hour's arithmetic about callers, and restoring
 them would hand back spent allowance and re-key every bucket. It reads each

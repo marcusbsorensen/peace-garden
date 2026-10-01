@@ -9,6 +9,14 @@ Wild Fields, which nobody does.
 Nothing here is built. The website cannot yet draw a plant (§*What has to exist
 first*), and until it can, every decision below is a design and not a garden.
 
+## The Wild Fields built, 1 October 2026
+
+Release sends a plant somewhere now. Marcus had released one believing it
+went to the Wild Fields, and it had gone nowhere, so he asked for the place to
+be built that day. §*The Wild Fields*, *Built*, has what was decided, and the
+one thing that could not be: whether the field may publish a released plant's
+parents without the other gardener's say.
+
 ## The plants' shapes changed, 24 September 2026
 
 Every plant was narrow and tall, and Marcus chose to change their shape
@@ -1883,17 +1891,168 @@ keeps a number per cell and nothing else. That is aggregate footfall and not
 tracking. **Accepted by Marcus, 18 September, on exactly those terms**: counts
 per cell and nothing else, and the privacy page says so before it runs.
 
-### What has to be fixed before it opens
+### What had to be fixed before it opened
 
-- **`/wild` describes the wrong thing.** Its `wildBody` string describes a seed
-  waiting for somebody else, which is *The Winds* and is the opposite of
-  release. It has to be rewritten before the page means anything.
-- **The privacy page** has to be rewritten first, as `/wild`'s own comment says.
-- **Release uploads nothing yet.** `PlantDetailView.release()` animates and
-  deletes. Releasing to a place needs the plot service. It is also a different
-  action from *Show in the peace garden*, which is the Long Walk and is built:
-  release is letting a plant go, and the Wild Fields have no asking because a
-  released plant is not put anywhere in particular.
+All three were done on 1 October 2026, in the build below.
+
+- **`/wild` described the wrong thing.** Its `wildBody` string described a
+  seed waiting for somebody else, which is *The Winds* and is the opposite of
+  release. It now says where a released plant goes.
+- **The privacy page** gained a paragraph, `privacy8`, saying what release
+  sends and what the field keeps, before anything sends it.
+- **Release uploaded nothing.** `PlantDetailView.release()` animated and
+  deleted. It is a different action from *Show in the peace garden*: release
+  is letting a plant go, and the Wild Fields have no asking because a released
+  plant is not put anywhere in particular.
+
+### Built, 1 October 2026
+
+**Marcus decided on 1 October 2026 to build it.** He had released a plant on
+his phone believing it went somewhere, under a sentence saying *It leaves your
+garden for the Wild Fields*, and it had gone nowhere: release animated, deleted
+the plant and sent nothing, because there was nowhere to send it. The sentence
+was true of a place that did not exist. Building the place was the way to make
+it true, rather than rewording it.
+
+**The rule** is SeedCore's `WildFields` (`WebGardens/WildFields.swift`), ported
+to `Server/.api/WildFields.php` and held to it by
+`tools/reference/check_wild_fields.php` over 304 seeds, in CI.
+
+- **The place is the seed's first four bytes**: two across and two along, each
+  the middle of its step, so a place is a whole number of 1/1024ths of a metre
+  and exactly the same double on the phone, the service and the page. No
+  order of arrival, no neighbours, no nudge — two seeds that agree that far
+  stand together, drawn.
+- **The field is 64 metres square and its edges meet.** "One continuous ground
+  running on past the screen" is said as geometry: walk off one side and you
+  walk in from the other, so there is nowhere a reader meets the end of it. 64
+  was chosen for the number of plants likely to be in it rather than for a
+  screen: a few hundred read as a field rather than a search, and a thousand
+  stand one to every four square metres, a meadow rather than a bed (judged on
+  `/dev/wild?plants=1000`). **It can never change**, because every place is a
+  fraction of it.
+- **Read in 8-metre tiles**, which is how a page fetches an edgeless field a
+  piece at a time.
+
+**The service** (`WildStore.php`, routes in `router.php`):
+
+- `POST /api/wild/release` takes `{seed, parents, encounter, token?}`. It
+  checks the seed is the cross of those parents at that meeting, as an offer is
+  checked. It keeps **the seed and the two parents' seeds and nothing else**:
+  no time, no token, no meeting, no address, and no order of arrival — the
+  table has no counter, and on SQLite it is `WITHOUT ROWID` because SQLite's
+  hidden row number would count arrivals for us. The meeting is read to check
+  the cross and dropped; the token is compared and dropped.
+- **Once per plant.** A second release of a plant already standing is answered
+  with that planting, so a phone whose first answer was lost is told the truth
+  by the second, and the other gardener releasing their own copy finds it
+  already there.
+- **A plant the asking has ever held goes only on one of its two tokens**
+  (`Offers::letGo`). While it stood in an area its seed, parents and meeting
+  were public, which is all a release otherwise asks for, so without this a
+  stranger could stand in the wild a plant both gardeners had taken down. A
+  plant the asking never held needs no token: its meeting's number was never
+  published, so knowing it is the proof.
+- **A plant stands in one public place.** Released, it is taken out of the
+  asking first — an offer waiting is withdrawn, a planting in an area is taken
+  back and keeps only its place — by the same withdrawal either gardener can
+  always make, and the other phone hears of it as a withdrawal. And a released
+  plant is refused by every area afterwards: an offer of it is answered `410`,
+  and the app says *This plant is in the Wild Fields, so it cannot be shown
+  anywhere else* without saying which of the two let it go.
+- **Abuse.** Anybody can invent two parents and a meeting and release their
+  child, as anybody can offer one; a token carries consent, not authenticity
+  (§*The asking*). What is in front of that is the rate limit — release is the
+  tightest write, nine a window, because it is the one nobody else agrees to
+  and nobody can undo — and a `hidden` column nothing sets yet, so a plant that
+  should not stand can be taken down by hand without a migration. The curator's
+  tool does not exist.
+- `GET /api/wild` answers the field's size and how many plants stand in each
+  tile that has any, which is what a page opens on; `GET /api/wild/tile/{x}/{z}`
+  answers a tile's plantings, each its seed, parents and spot.
+- The nightly copy carries `wild_fields`: there is no order to lose, but a lost
+  row is a plant somebody let go of that is nowhere at all.
+
+**The app** (`PlantDetailView.release()`, `GardenModel.release`,
+`PlotService.release`):
+
+- **The plant goes only on the service's word that it has arrived.** The hold
+  sends it; the plant stands still with *Sending it to the Wild Fields…* under
+  the row; the reply has to carry this plant's seed back; then the light
+  leaves and the record goes. A plant must never again vanish into nowhere.
+- **If the word does not come, the plant stays and the screen says so** — *The
+  Wild Fields could not be reached just now, so this plant is still here. Try
+  again in a little while.* One sentence for every failure, as the asking has.
+- **Nothing is queued.** A plant waiting to go would be neither here nor
+  there, and a request made later on its behalf would be one the gardener did
+  not make at that moment. Keeping it and saying so is the honest one.
+- **Not behind *Alert me when a joint seed is shared*.** That switch stops the
+  one request the app makes unprompted (`pending`); release is made by a
+  three-second hold.
+- The sentence on the mark is unchanged, because it is now true.
+
+**The page** (`/wild`: `wildpage.js`, `wildfields.js`; `/dev/wild` invents a
+field):
+
+- **Not the plot stage.** A made garden is a floating slab framed whole; the
+  wild is a window onto ground that runs on past it, with a pasture's swells
+  (a metre and a half from hollow to rise, each swell a whole number of waves
+  across the field so the ground meets itself), and the band it is drawn in
+  thins into the night at every side rather than ending at a rectangle.
+- **A plant is lit by the gardens' own plant shader** (`PLANT_FRAGMENT`,
+  exported from `longwalk.js`), with the fireflies' light added to its sum and
+  nothing taken out, so a plant released from the Long Walk is the same plant
+  in another light. It is grown from its seed and both parents, like every
+  hybrid in every garden.
+- **Night, always.** No sun and no lamps: the app's galaxy as the one
+  directional light (a third brighter than the app's, judged on renders — the
+  app's night has a moon and a plot a few metres across, and this has
+  neither), its night sky and bounce, and the Milky Way drawn in the sky where
+  it really is tonight (`sky.js`, `milkyWay`). Fireflies are the app's drift
+  (`GardenLamps`), two to a tile, placed by the tile and not by the plants.
+- **It opens over a plant**, chosen at random in proportion to where they
+  stand, because a reader set down in the middle of four thousand square
+  metres would most likely be looking at grass. It is walked by dragging, and
+  by the pad every area has (`movepad.js`, with `roam`).
+
+**The decision this build could not make: whether the field publishes the
+parents.** A hybrid cannot be drawn without both parents' seeds
+(`GeneSource.hybrid`: every trait is read from one parent, the other, a blend,
+or the child), so the field serves them, and the page grows the true plant.
+But `PHASES.md` settled two things that this contradicts. *A released plant is
+unattributed for good: it carries no lineage back to either gardener* — and
+the parents are the lineage; a gardener's own seed is a parent of every plant
+their meetings make, and the seeds travel in every link. And `WEBSITE.md`,
+amended 18 September, says publishing a hybrid publishes both parents' seeds
+and **therefore needs both gardeners' consent**, which is why the ten areas
+have an asking — while *releasing is one person's*. All three cannot hold. As
+built, release publishes who met whom for the plants somebody lets go, without
+the other gardener's say; `privacy8` says so plainly. The ways out, each cheap
+to switch to before the first deploy and expensive after it:
+
+1. **Keep it** (as built): the true plant, both parents public, the other
+   gardener not asked.
+2. **Ask the other gardener**, as the areas do: release becomes an offer to
+   the wild. A plant with no tokens — every plant from before 19 September,
+   and every plant from a link — could then never be released anywhere.
+3. **Keep the parents on the service and serve the seed alone**: the page
+   grows the child seed as if it had been minted, which is a different-looking
+   plant from the one released — unattributed, and not the plant.
+
+**Not built, and why.**
+
+- **Paths that visitors wear** (§above, accepted 18 September). A later step:
+  it is the first thing on the site that learns where people go, and the
+  privacy page has to say so before it runs. The field is ready for it — wear
+  would be per ground cell, and the ground is already on a fixed grid.
+- **Tapping a plant.** The areas' panel (`plantpanel.js`) is built round a
+  plot and a postcard to it; the field has neither, so a plant here is looked
+  at and not yet opened.
+- **Water under a lotus.** A water lily released into the field lies on grass.
+  The Seedbed floods a drill for its lilies; whether the wild has ponds is a
+  question for a render.
+- **Whether a released plant can be found again** is still open (below). The
+  page cannot say where any particular plant is, and nothing it keeps could.
 
 ## What has to exist first
 
@@ -1953,7 +2112,8 @@ In order, because each needs the one before:
    the mown grass and the bench exist**; the glazed frame, the staging, the bed
    edging, the row labels, the tree positions and the knot hedging do not.
 6. **The curator's tool.**
-7. **The Wild Fields**, once release uploads something.
+7. **The Wild Fields**, once release uploads something. **Done, 1 October
+   2026** — §*The Wild Fields*, *Built*.
 
 ## The asking, and what a shared plant consents to
 
