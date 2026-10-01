@@ -37,6 +37,17 @@ declare(strict_types=1);
  *   GET  /api/wild/tile/{x}/{z}    what stands in one tile: seed, parents, spot
  *   POST /api/wild/release         one gardener lets a plant go into the Wild Fields
  *   POST /api/wild/answer          either of its two gardeners says what of theirs stands beside it
+ *   GET  /api/wild/wear            the paths visitors have worn: a number per worn ground cell
+ *   POST /api/wild/wear            a batch of ground cells a visitor's window crossed while walking
+ *
+ * **The two wear routes are off unless this copy turns them on**, with
+ * `'wear' => true` in `.api/config.php` (since 2 October 2026, `WildWear.php`).
+ * The live site's `config.php` is written on the server and does not say so,
+ * so there they answer 404 as any unknown route does, `GET /api/wild` says
+ * nothing about wear, and the page records nothing and draws nothing. Wear
+ * is the first thing on the site that learns where people go, and it stays
+ * off until the privacy page says so in every language
+ * (`docs/WEB-GARDENS.md` §*Paths that visitors wear*).
  *
  * **The Wild Fields are not an area** (`WildStore.php`, since 1 October
  * 2026). Nothing in them is placed by a rule: a released plant stands where
@@ -118,6 +129,8 @@ function settings(): array
         'user' => null,
         'password' => null,
         'open_for_planting' => false,
+        // Paths that visitors wear in the Wild Fields. Off; see above.
+        'wear' => false,
     ];
 }
 
@@ -305,6 +318,13 @@ function withinLimits(array $settings, string $path): void
 function route(string $method, string $path): never
 {
     $settings = settings();
+
+    // **Wear, where it is off, is not there at all** — refused before the rate
+    // limit, so a batch sent to a copy that has not turned it on is not even
+    // counted against its sender.
+    if ($path === '/api/wild/wear' && $settings['wear'] !== true) {
+        respond(404, ['error' => 'No such route.']);
+    }
 
     // Every route that writes, and `pending` too: it is the one a phone calls
     // unprompted, so it is the one a script would call in a loop.
@@ -507,8 +527,40 @@ function route(string $method, string $path): never
     // **The field, and what stands in each part of it.** Nothing in either
     // answer names a person, a meeting or a time: the field keeps none of them.
     if ($path === '/api/wild' && $method === 'GET') {
+        // `wear` only where wear is on: the cells' size and how many go
+        // across, how many a batch may hold, and the least wear drawn — which
+        // is how the page knows to record and draw it at all.
+        $wear = $settings['wear'] !== true ? [] : ['wear' => [
+            'cell' => WildWear::CELL, 'cells' => WildWear::CELLS, 'most' => WildWear::MOST,
+            'seen' => WildWear::SEEN,
+        ]];
         respond(200, ['side' => WildFields::SIDE, 'tile' => WildFields::TILE, 'tiles' => WildFields::TILES,
-                      'standing' => store($settings)->wild()->standing()]);
+                      'standing' => store($settings)->wild()->standing()] + $wear);
+    }
+
+    // **The paths visitors have worn**, faded to today: `[[x, z, wear], …]`,
+    // one entry for each cell worn past `WildWear::FLOOR`, wear in crossings.
+    // Nothing in it is about anybody: it is the whole field's footfall,
+    // counted per cell and fading, and the same answer for everyone who asks.
+    if ($path === '/api/wild/wear' && $method === 'GET') {
+        respond(200, ['wear' => store($settings)->wear()->field(time())]);
+    }
+
+    // **The cells a visitor's window crossed while walking.** `{cells: [[x,
+    // z], …]}`, at most `WildWear::MOST`, in no order, sent by the page now
+    // and then while somebody drags the field or presses the pad's four
+    // directions (`wear.js`). Each adds one crossing to its cell, once per
+    // batch and up to the day's cap. The body says which cells and nothing
+    // else; nothing about the request is written but those counts, and the
+    // answer is how many cells it held — the request's own number, so it
+    // says nothing about what anybody else has walked.
+    if ($path === '/api/wild/wear' && $method === 'POST') {
+        $cells = readBody()['cells'] ?? null;
+        if (!WildWear::isBatch($cells)) {
+            respond(400, ['error' => 'cells is a list of 1 to ' . WildWear::MOST . ' pairs [x, z], each 0 to '
+                                     . (WildWear::CELLS - 1) . '.']);
+        }
+        respond(200, ['taken' => store($settings)->wear()->walked($cells, time())]);
     }
 
     if (preg_match('#\A/api/wild/tile/([0-9]{1,2})/([0-9]{1,2})\z#', $path, $m) && $method === 'GET') {

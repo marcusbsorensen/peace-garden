@@ -43,13 +43,23 @@
   // The invented plants are minted, not crossed: a field of them is the
   // field's density and its night, which is what this is for, and not anybody's
   // plants.
+  //
+  // **Paths that visitors wear** (2 October 2026): `?wear=demo` invents a
+  // summer's walking over the invented field — desire lines between its
+  // plants, worn by the service's own rule (`inventWear` in `wear.js`) — and
+  // opens over the busiest junction of them, so the wear can be judged before
+  // anybody has walked. With `?source=service`, the local service's wear is
+  // drawn instead, if its `config.php` turns wear on, and dragging here sends
+  // what it crosses, as the page does.
   import { loadModule } from '/assets/js/plant.js';
   import { makeSky } from '/assets/js/sky.js';
   import { SIDE, TILES, flyOver, makeWildStage, spotOf } from '/assets/js/wildfields.js';
+  import { inventWear, walkOn, wearOfField, wornGround } from '/assets/js/wear.js';
 
   const query = new URLSearchParams(location.search);
   const count = Math.max(0, parseInt(query.get('plants') ?? '', 10) || 400);
   const fromService = query.get('source') === 'service';
+  const demo = !fromService && query.get('wear') === 'demo';
   const note = document.getElementById('note');
 
   async function invent(n) {
@@ -71,12 +81,31 @@
   const source = fromService
     ? async (x, z) => (await (await fetch(`/api/wild/tile/${x}/${z}`)).json()).plantings
     : async (x, z) => invented.get(`${x},${z}`) ?? [];
+
+  // The wear: invented, or the service's where it has wear on, or none.
+  const service = fromService ? await (await fetch('/api/wild')).json() : null;
+  const invention = demo ? inventWear([...invented.values()].flat().map((p) => p.spot)) : null;
+  const worn = demo || service?.wear ? wornGround({ seen: service?.wear?.seen }) : null;
+  if (invention) worn.set(invention.wear);
+  let walker = null;
+  const said = fromService ? 'The local service' : `${count} invented plants`;
+  const wearSaid = invention ? ` · ${invention.lines.length} invented desire lines`
+    : service?.wear ? ' · its wear' : '';
+
   const stage = makeWildStage(document.getElementById('stage'), e, {
     source,
-    report: (growing) => { note.textContent = growing ? 'Growing…'
-      : `${fromService ? 'The local service' : `${count} invented plants`} · drag to walk`; },
+    from: invention?.hub,
+    report: (growing) => { note.textContent = growing ? 'Growing…' : `${said}${wearSaid} · drag to walk`; },
+    wear: worn,
+    looked: (point) => walker?.looked(point),
   });
   flyOver(document.getElementById('flies'), stage);
+  if (service?.wear) {
+    walker = walkOn({ canvas: document.getElementById('stage'), nav: document.querySelector('nav') });
+    wearOfField().then((cells) => { worn.set(cells); stage.draw(); });
+  }
+  // For a render script to find its way about: the stage, and what was invented.
+  window.bench = { stage, invention };
   let sky = null;
   makeSky(document.getElementById('sky'), { milkyWay: true, quarterTurns: () => stage.turn() })
     .then((made) => { sky = made; });

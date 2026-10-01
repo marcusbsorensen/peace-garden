@@ -60,6 +60,7 @@ peacegarden.app/
         ├── meaningspage.js            ← the /meanings page's own opening
         ├── plain.js                   ← /download and /privacy: words and a chooser
         ├── wildpage.js, wildfields.js ← the Wild Fields: the page, and the field drawn
+        ├── wear.js                    ← the paths visitors wear in them; loaded only where wear is on
         ├── door.js                    ← the /t page
         ├── walkpage.js, longwalk.js   ← the Long Walk: the page, and the plot drawn
         ├── quietpage.js, quietgarden.js ← the Quiet Garden: the page, and the plot drawn
@@ -457,6 +458,18 @@ the service's own files unreachable, as it does `.pages/`.
     same *Alert me* switch.
   - Checked by `tools/reference/check_wild_fields.php`, in CI, against
     SeedCore's vectors.
+  - **Paths that visitors wear** (2 October 2026, `.api/WildWear.php`), **off
+    unless `.api/config.php` says `'wear' => true`**, which the server's does
+    not. Off, both routes answer 404 before the rate limit, `GET /api/wild`
+    carries no `wear`, and `/wild` does not load `wear.js`. On:
+    `GET /api/wild/wear` answers `[[x, z, wear], …]` for the field's
+    half-metre cells, faded to today. `POST /api/wild/wear` takes
+    `{cells: [[x, z], …]}`, at most 256, each counted once and at most six
+    times a cell a day. 110 a window. `wild_wear` keeps the cell, its wear
+    and today's count; `wild_wear_day` keeps the one day the field was last
+    faded to. Wear halves in thirty days, and the first batch of a day or the
+    sweep fades it. Checked by `tools/reference/check_wild_wear.php`, in CI,
+    including that a copy with no `config.php` has no such routes.
 - `POST /api/walk/plant` — **answers 403**: it is the one route that plants with
   nobody asked, and it exists for the reference check. A local copy opens it in
   `.api/config.php` (copy `config.example.php`; git ignores it and `deploy.sh`
@@ -477,6 +490,10 @@ and open `/walk` or `/quiet`. The workbenches are `/dev/walk` and `/dev/quiet`,
 which invent a garden rather than reading the service. `/wild` reads the
 local field; `/dev/wild?plants=1000` invents one of a thousand, and
 `/dev/wild?source=service` draws the local one without choosing where to open.
+`/dev/wild?wear=demo` invents a summer of paths worn across the invented field;
+with `'wear' => true` in the local `config.php`, `/wild` and
+`/dev/wild?source=service` draw the local service's wear and send what a walk
+crosses.
 The rate limit holds a local copy to nine releases a window too, so a field
 for looking at is sown from the command line through `WildStore` rather than
 over HTTP.
@@ -516,7 +533,7 @@ because the thing that made it was two people meeting once.
 17 3 * * * /usr/bin/php $HOME/public_html/.api/backup.php >> $HOME/backups/backup.log 2>&1
 ```
 
-It copies every area's table and its lock, `wild_fields`, `wild_names`, `walk_offers` and `offer_key`
+It copies every area's table and its lock, `wild_fields`, `wild_names`, `wild_wear`, `wild_wear_day`, `walk_offers` and `offer_key`
 (`KEPT` in `backup.php` is the list), and leaves `rate_limits` and `rate_salt`
 out on purpose — those are this hour's arithmetic about callers, and restoring
 them would hand back spent allowance and re-key every bucket. It reads each

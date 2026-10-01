@@ -82,6 +82,13 @@ final class Limits
         // plant that already exists — and a person changing their mind a few
         // times should never meet a limit.
         '/api/wild/answer' => [55, self::WINDOW],
+        // **The cells a visitor crossed in the Wild Fields**, since 2 October
+        // 2026 and only where wear is turned on (`WildWear.php`): at the
+        // hourly 120 scaled to the window, because a page walking without a
+        // pause sends a batch every half a minute and no more. Limited exactly
+        // as every other write is, and for the same reason; nothing new is
+        // kept about the caller.
+        '/api/wild/wear' => [110, self::WINDOW],
     ];
 
     public function __construct(private PDO $db)
