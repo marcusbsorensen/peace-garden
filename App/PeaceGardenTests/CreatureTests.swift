@@ -12,16 +12,23 @@ import XCTest
 final class CreatureTests: XCTestCase {
 
     private let figures: [LampKind] = LampKind.allCases.filter(GardenCreatures.isCreature)
+    /// Everything taken by the figures' camera: the animals and the two lights
+    /// that are modelled.
+    private let modelled: [LampKind] = LampKind.allCases.filter { GardenCreatures.figure(of: $0) != nil }
 
     /// **No figure touches the edge of its picture, facing any way.** The frame
     /// reaches below the foot for what lies nearer the camera than it, and a
     /// fox with its foot on the bottom edge lost its nose; turned the other
     /// way, the hare's ears are what would go. Every facing, at every turn of
     /// the plot, since a turn is only another facing.
+    ///
+    /// The lantern and the paper lamp too: the paper lamp hangs out to the side
+    /// of its cane a metre up, and either is the part to lose.
     func testNoFigureIsCutOffByItsFrame() throws {
         XCTAssertEqual(Set(figures), [.hare, .fox, .moth, .snail])
+        XCTAssertEqual(Set(modelled), [.hare, .fox, .moth, .snail, .lantern, .paperLamp])
 
-        for kind in figures {
+        for kind in modelled {
             for facing in 0..<8 {
                 let image = try XCTUnwrap(
                     GardenCreatures.shared.picture(kind, step: 4, turn: 0, facing: facing),
