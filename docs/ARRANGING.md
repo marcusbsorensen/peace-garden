@@ -425,6 +425,61 @@ already emphatic about why looking is not a convenience.
   the sun, and colours chosen on their own came out as a black band under the
   plot.
 
+### Three redrawn, on Marcus's word
+
+Marcus's calls on 1 October 2026, from build 3 on his phone. Three worlds were
+wrong in ways that only a person holding the phone could have said, and all three
+were wrong about **scale** — the plot is five metres of ground with metre-tall
+plants on it, and each of the three had been drawn as if it were a landscape seen
+from a hill.
+
+- **Alpine was a mountain range for things the size of mountains.** A massif in
+  the middle, 0.97 m high, so a lantern stood as tall as its peaks and every
+  plant on it looked enormous. It is now foothills climbing to a ridge along the
+  far edge, highest at the far corner, with two-thirds of the plot under fifteen
+  centimetres and gently plantable. **The peak is 0.60 m, and the number is the whole decision.** The
+  plants are 0.5 to 1.4 m and a lantern about half a metre, so anything taller
+  than the smallest of them makes the plot a range again; much lower and the
+  rise stops reading as a climb at the fitted size, where a few centimetres are
+  a pixel. At 0.60 m the slope averages about one in five, which is a steep
+  garden bank rather than a mountainside, and the mountain is said by what
+  covers it rather than by how tall it is: rock coming through in ledges a hand
+  or two high, scree below them, turf paling as it climbs, and snow only in
+  patches on the gentle ground at the top. Those are garden-sized things, so a
+  lantern beside them is the size of a lantern.
+- **The ravine ran across the plot and took most of it.** It now begins nearly
+  closed — a crack barely a hand wide — at the middle of the far right-hand
+  edge, and opens as it comes toward the viewer, to leave through the near
+  left-hand edge about two and a half metres wide and seventy centimetres
+  deep, so the cut under
+  the plot shows its notch. The centreline wanders, and **each wall wanders on
+  its own**, at two scales, so the gorge comes in and out rather than being a
+  channel of constant width; the walls step down in ledges at the same heights
+  all along, with a slight dip, which is what reads as bedded rock, and each
+  ledge holds moss. About a fifth of the plot is gorge, which leaves two good
+  banks of ground either side of it. Its strata are a third lighter than they
+  look right in the hand, for the cut's reason: a wall is lit by the sky and
+  hardly by the sun, and chosen on their own they drew as a black band.
+- **The parterre read as the scales of a lizard.** Twenty-five domed
+  compartments ten centimetres high, flat-shaded, at a plot five metres across:
+  a regular field of small bumps is a reptile. It was not rescued but replaced
+  in the same slot, by a parterre drawn at the plot's own scale — four
+  compartments, a gravel cross 0.6 m wide and a gravel round, a basin with a
+  stone kerb in the middle, a box ball on the round at each diagonal, and every
+  compartment edged in box 0.23 m wide and 0.20 m high with a rounded top over
+  steep sides and filled with dug earth for planting. **What made it legible was
+  fewer, larger things with real height**, so each throws a shadow at every
+  hour. It is regular, because cultivation may be, but every edge wanders by a
+  centimetre or two, because no edge in the garden is ruled.
+
+**The generator is `tools/worlds/worlds.py`, and it redraws in place.** The
+mockup that drew the first eight was never committed, so this one does not
+pretend to regenerate the atlas: it reads it, redraws the blocks it owns, and
+leaves every other world's height and colour byte for byte as they were.
+`--check` says whether the atlas in the repository is what it draws. A world
+redrawn here keeps its index, because a bed stores the index; a new one goes on
+the end.
+
 ## How it is drawn
 
 The stored spot is two metres on the ground whichever way the plot is drawn, so
@@ -457,7 +512,7 @@ hour is a combinatorial blow-up, and snapping to the nearest of eight renders
 makes the sun jump. So **a world ships as what it actually is** — a height and a
 colour per cell — and the light is applied where it is drawn.
 
-All eight worlds come to 223 KB that way: less than **one** pre-rendered tile,
+All eight worlds come to 278 KB that way, with what each cell is made of: less than **one** pre-rendered tile,
 because a rendered tile is mostly shading and shading is exactly what is being
 thrown away. Terrain self-shadowing is then a march along the light direction
 over the heightmap, which is a few hundred thousand operations and imperceptible.
@@ -495,6 +550,51 @@ plant is the only saturated thing on screen, and a lawn in full chroma takes tha
 away. Every world's colour passes through one function on the way out that pulls
 anything over the ceiling back to it, so a material added later cannot quietly
 break the rule by being written too bright.
+
+### The crumb
+
+Marcus's call on 1 October 2026: the ground wanted more texture — grass, sand,
+gravel, mud, earth — to the level of the website's gardens. The website gets it
+from a crumb: a lattice of about five centimetres, each corner moved by a third
+of a cell, each cell split on a diagonal of its own, and a tone to every face
+whose spread says what the ground is (`docs/WEB-GARDENS.md`, the Knot Garden).
+The app's plot is already drawn at about four centimetres a quad, so it had the
+lattice and lacked everything that stops a lattice looking like one.
+
+It has them now, drawn where the plot is drawn and only at the atlas's own
+resolution:
+
+- **Every corner inside the rim is moved by up to a third of a cell.** It was
+  the grid's regularity that drew a tiled floor on the website, not its size.
+  Less on a steep face, because a corner moved sideways on a wall is a corner
+  moved up or down it, and the box hedges came out as rows of teeth; and none
+  on the row beside the rim, which the outline has already squeezed.
+- **Each cell is two faces on a diagonal it chooses**, each lit by its own
+  normal, so a cell that is not flat catches the light on one half.
+- **Each kind of ground has its own crumb**: how widely a face's tone may
+  spread, whether it is toned on its corners and averaged (grass and snow are
+  surfaces) or toned per face (gravel, earth and stone are heaps of separate
+  things, and the website found the smooth version drew wet sand), and how far a
+  corner is lifted or sunk — a centimetre for dug earth and box, a few
+  millimetres for turf, nothing for water. Earth's lift is half shared between
+  neighbouring corners, so a clod is bigger than a cell.
+- **A slow drift** of a few per cent over most of a metre, so a lawn is damper
+  in one corner than another rather than one colour sprinkled evenly.
+
+**What a cell is made of is a byte in the atlas.** The height image's blue
+channel was empty; `tools/worlds/worlds.py` now writes each cell's kind there —
+known for the worlds it draws, read back off the colour for the mockup's five,
+which works because the materials were chosen to be told apart. Everything is
+hashed on the cell's own place on the plot, so the same garden draws the same
+crumb every time, from every side.
+
+Two things looking taught. **Mitred joins drew a fringe of hair along the far
+rim**: a face squeezed thin by the outline has a corner sharp enough that a
+mitre runs out past the edge, so the surface's faces are bevelled. And **the
+cost is the shadow march, not the faces**: twice as many faces, each drawn
+straight into the context rather than through a path, came to about a tenth
+more time for a whole plot than the plain quads did, because the march still
+runs once a cell.
 
 ### The night is a night, and the moon is tonight's moon
 

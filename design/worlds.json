@@ -25,8 +25,8 @@
       "key": "alpine",
       "label": "Alpine",
       "row": 2,
-      "min": -0.1,
-      "max": 0.969
+      "min": -0.018,
+      "max": 0.604
     },
     {
       "key": "lake",
@@ -39,8 +39,8 @@
       "key": "ravine",
       "label": "Ravine",
       "row": 4,
-      "min": -1.136,
-      "max": 0.346
+      "min": -0.73,
+      "max": 0.099
     },
     {
       "key": "verge",
@@ -60,8 +60,8 @@
       "key": "formal",
       "label": "Parterre",
       "row": 7,
-      "min": -0.098,
-      "max": 0.121
+      "min": -0.035,
+      "max": 0.337
     }
   ]
 }
