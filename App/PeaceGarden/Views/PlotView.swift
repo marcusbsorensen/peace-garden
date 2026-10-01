@@ -1141,12 +1141,25 @@ struct PlotView: View {
                                    seed: kind == .fox ? 1 : 7)
                             .offset(y: -trayLift(of: kind))
                             .frame(width: 40, height: 48, alignment: .bottom)
-                            .clipped()
+                            // **Faded, not cut.** The paper lamp's halo
+                            // hangs past the top and the right of its button,
+                            // and a square clip left it a lit square. The
+                            // mask reaches past the button and blurs to
+                            // nothing, so whatever is held in still ends
+                            // softly.
+                            .mask {
+                                RoundedRectangle(cornerRadius: 16)
+                                    .padding(EdgeInsets(top: -7, leading: -5, bottom: -3, trailing: -5))
+                                    .blur(radius: 3)
+                            }
                     }
                     .buttonStyle(.plain)
                 }
             }
-            .padding(.vertical, 2)
+            // Room above for that halo inside the scrolling row, which clips
+            // square at its own edge.
+            .padding(.top, 8)
+            .padding(.bottom, 4)
         }
     }
 

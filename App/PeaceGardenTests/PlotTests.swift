@@ -666,6 +666,36 @@ final class PlotTests: XCTestCase {
         XCTAssertEqual(simd_distance(atItsFoot.colour, warm), 0, accuracy: 1e-9)
     }
 
+    /// A light at its own size lifts exactly as it did before lights had a
+    /// size; one made as large as it goes reaches further, as its pool does,
+    /// and lifts a little more.
+    func testALargerLightReachesFurtherAndAnUntouchedOneIsUnchanged() {
+        let reach = GardenLamps.reach(of: .lantern)
+        let plain = Lamp(kind: .lantern, spot: Spot(x: 0, z: 0))
+        let largest = Lamp(kind: .lantern, spot: Spot(x: 0, z: 0), scale: Lamp.scales.upperBound)
+
+        // Untouched: the squared fall-off through the lantern's own reach.
+        for x in [0.3, reach / 2, 1.2] {
+            let near = 1 - x / reach
+            XCTAssertEqual(GardenLamps.lift(at: Spot(x: x, z: 0), from: [plain]).amount,
+                           near * near, accuracy: 1e-12)
+        }
+
+        // Past a plain lantern's reach, and still inside the largest one's.
+        let beyond = Spot(x: reach + 0.3, z: 0)
+        XCTAssertEqual(GardenLamps.lift(at: beyond, from: [plain]).amount, 0)
+        XCTAssertGreaterThan(GardenLamps.lift(at: beyond, from: [largest]).amount, 0)
+        XCTAssertEqual(GardenLamps.lift(at: Spot(x: reach * 1.6 + 0.01, z: 0), from: [largest]).amount, 0)
+
+        // Over and above the longer reach, stronger — but gently, by less than
+        // its size.
+        let halfway = Spot(x: reach / 2, z: 0)
+        let reachedOnly = pow(1 - 0.5 / Lamp.scales.upperBound, 2)
+        let strength = GardenLamps.lift(at: halfway, from: [largest]).amount / reachedOnly
+        XCTAssertGreaterThan(strength, 1.1)
+        XCTAssertLessThan(strength, Lamp.scales.upperBound)
+    }
+
     /// A light this build cannot draw lights nothing, rather than lighting with
     /// a colour nobody chose.
     func testALightFromTheFutureLightsNothing() throws {

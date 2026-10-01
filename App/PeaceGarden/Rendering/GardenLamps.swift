@@ -128,15 +128,24 @@ enum GardenLamps {
     /// at a lantern's foot is lit and one at the edge of its reach is barely
     /// touched — a linear fall-off lit a whole bed evenly, which reads as the
     /// garden being brighter rather than as a lantern standing in it.
+    ///
+    /// **A larger light reaches further and lifts a little more.** Its reach
+    /// grows with its size, as its pool on the ground does, so the plants it
+    /// lifts are the ones standing in the pool somebody can see. Its strength
+    /// grows only with the square root of its size: a lantern made half as large
+    /// again is a larger lantern, not a brighter flame, and a light at its
+    /// largest lifting a quarter more is enough to see the difference by. A
+    /// light at its own size has no scale stored and draws exactly as before.
     static func lift(at spot: Spot, from lamps: [Lamp]) -> (amount: Double, colour: SIMD3<Double>) {
         var amount = 0.0
         var colour = SIMD3<Double>(repeating: 0)
 
         for lamp in lamps {
             guard let kind = lamp.known else { continue }
+            let size = lamp.drawnScale
             let apart = hypot(spot.x - lamp.spot.x, spot.z - lamp.spot.z)
-            let near = max(0, 1 - apart / reach(of: kind))
-            let weight = near * near
+            let near = max(0, 1 - apart / (reach(of: kind) * size))
+            let weight = near * near * size.squareRoot()
             amount += weight
             colour += self.colour(of: kind) * weight
         }

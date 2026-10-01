@@ -947,9 +947,16 @@ still counts as still. Touching anywhere else shuts the panel.
   plants it was put out to light and becomes a statue in a garden rather than a
   figure in one. A row of dots between the two marks shows where it is in the
   range, so the range is seen rather than found by pressing until nothing
-  happens. The pool on the ground grows with it. The lift a light gives the
-  plants near it does not yet, because that is worked out inside `GardenLamps`,
-  which was being redrawn at the same time.
+  happens. The pool on the ground grows with it, and so does the lift it gives
+  the plants near it (1 October): its reach scales with the pool's, so the
+  plants it lifts are the ones standing in the pool somebody can see, and its
+  strength with the square root of its size, so the largest lifts about a
+  quarter more — a larger lantern, not a brighter flame. A light at its own
+  size lifts exactly as before.
+- **The paper lamp's halo is faded at the tray's edge, not cut.** It hangs
+  past the top and right of its button, and the button's square clip left a
+  lit square in the row. The button is now masked by a blurred shape that
+  reaches past it, and the row has room above for the halo.
 - **`Lamp.facing` and `Lamp.scale`, both optional**, the way `Bed.lamps` and
   `Bed.world` were added, so nothing migrates and a light written before them
   decodes as it was. A light nobody has turned stores no facing and faces the
