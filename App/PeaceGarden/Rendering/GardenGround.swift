@@ -201,6 +201,63 @@ enum GardenGround {
         return Double(h % 100_000) / 100_000
     }
 
+    // MARK: The crumb
+
+    /// What a cell of a world is, which decides how its crumb is drawn. Written
+    /// into the atlas by `tools/worlds/worlds.py`; the order is that file's.
+    enum Kind: UInt8, Sendable {
+        case grass, earth, gravel, rock, scree, snow, water, box, tarmac, sand
+
+        /// **The website's crumb, by surface.** Its ground got its detail from a
+        /// five-centimetre lattice with a tone to a crumb, and the spread of that
+        /// tone is what says what the ground is: narrow on a trodden path, wide
+        /// on dug earth, widest on stones. `docs/ARRANGING.md` §*The crumb*.
+        var crumb: Crumb {
+            switch self {
+            case .grass: Crumb(spread: 0.20, perCorner: true, rough: 0.004)
+            case .earth: Crumb(spread: 0.34, perCorner: false, rough: 0.011)
+            case .gravel: Crumb(spread: 0.32, perCorner: false, rough: 0.004)
+            case .rock: Crumb(spread: 0.22, perCorner: false, rough: 0.010)
+            case .scree: Crumb(spread: 0.36, perCorner: false, rough: 0.008)
+            case .snow: Crumb(spread: 0.07, perCorner: true, rough: 0.003)
+            case .water: Crumb(spread: 0.04, perCorner: true, rough: 0)
+            case .box: Crumb(spread: 0.24, perCorner: false, rough: 0.008)
+            case .tarmac: Crumb(spread: 0.08, perCorner: false, rough: 0.001)
+            case .sand: Crumb(spread: 0.14, perCorner: true, rough: 0.003)
+            }
+        }
+    }
+
+    /// How one kind of ground is broken up.
+    ///
+    /// `spread` is how far a crumb's tone may sit from its neighbours', as a
+    /// fraction of its colour. `perCorner` tones a surface on its corners and
+    /// averages them across each face, so no face edge shows — grass and snow
+    /// are surfaces. Without it each face takes its own tone, because gravel,
+    /// earth and stone are heaps of separate things, and the website found the
+    /// smooth version drew wet sand. `rough` is how far, in metres, a corner of
+    /// the lattice is lifted or sunk, which is what lets the light find a clod.
+    struct Crumb: Sendable {
+        let spread: Double
+        let perCorner: Bool
+        let rough: Double
+    }
+
+    /// A slow wander under the crumb, a few per cent either way over most of a
+    /// metre, so a lawn is damper in one corner than another rather than one
+    /// colour sprinkled evenly. The website's drift, for the same reason.
+    static func drift(x: Double, z: Double) -> Double {
+        let scale = 0.7
+        let u = x / scale + 100, v = z / scale + 100
+        let i = Int(u.rounded(.down)), j = Int(v.rounded(.down))
+        let fu = u - Double(i), fv = v - Double(j)
+        let su = fu * fu * (3 - 2 * fu), sv = fv * fv * (3 - 2 * fv)
+        let a = grain(i, j, 31), b = grain(i + 1, j, 31)
+        let c = grain(i, j + 1, 31), d = grain(i + 1, j + 1, 31)
+        let mixed = (a * (1 - su) + b * su) * (1 - sv) + (c * (1 - su) + d * su) * sv
+        return (mixed - 0.5) * 0.10
+    }
+
     /// The flat plot's surface: a plain turf, deliberately duller than any world
     /// will be. It is a stand-in for a chosen ground and should look like one.
     static let turf = SIMD3<Double>(0.235, 0.265, 0.190)

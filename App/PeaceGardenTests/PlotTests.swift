@@ -307,6 +307,8 @@ final class PlotTests: XCTestCase {
     ///
     /// So each world's relief is held against what the exporter measured. If a
     /// decode ever starts going through a colour space, this is what says so.
+    /// Alpine, ravine and parterre were redrawn on 1 October 2026 by
+    /// `tools/worlds/worlds.py`, which prints these numbers when it writes.
     func testEveryWorldIsTheShapeItWasExportedAs() throws {
         let worlds = GardenWorlds.shared
         try XCTSkipUnless(worlds.isLoaded, "the world atlas is not in this bundle")
@@ -315,12 +317,12 @@ final class PlotTests: XCTestCase {
         let exported: [(low: Double, high: Double)] = [
             (-0.1241, 0.1584),   // meadow
             (-0.4320, 0.3545),   // hillside
-            (-0.1000, 0.9689),   // alpine
+            (-0.0177, 0.6039),   // alpine: foothills to a ridge, not a massif
             (0.0000, 0.2669),    // lake
-            (-1.1360, 0.3465),   // ravine
+            (-0.7304, 0.0987),   // ravine: a gorge that opens as it runs
             (-0.1613, 0.1486),   // verge
             (-0.0500, 0.2323),   // raised beds
-            (-0.0976, 0.1213)    // parterre
+            (-0.0350, 0.3373)    // parterre: box balls the tallest thing
         ]
 
         for (world, expected) in exported.enumerated() {

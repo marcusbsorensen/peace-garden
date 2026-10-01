@@ -7,14 +7,15 @@ import UIKit
 /// **A world ships as what it is, not as a picture of itself.** Eight worlds
 /// times every hour of the day is a combinatorial blow-up, and snapping to the
 /// nearest of eight renders makes the sun jump — so the light is applied where
-/// the ground is drawn rather than baked into it. All eight come to 276 KB that
+/// the ground is drawn rather than baked into it. All eight come to 278 KB that
 /// way, which is less than one pre-rendered tile would be, because a rendered
 /// tile is mostly shading and shading is exactly what is being thrown away.
 ///
 /// Two textures, 128 wide by 128 × 8 tall, one 128-square block per world:
-/// height packed 16-bit big-endian into the red and green bytes, and albedo as
-/// plain RGB. Both come from the mockup, so a world drawn here is the world that
-/// was looked at there.
+/// height packed 16-bit big-endian into the red and green bytes, what the
+/// ground is (`GardenGround.Kind`) in the blue byte, and albedo as plain RGB.
+/// Five worlds are still the mockup's; alpine, ravine and parterre were redrawn
+/// by `tools/worlds/worlds.py`, which also wrote every world's kinds.
 /// Immutable once loaded, and read from whichever thread is drawing — a terrain
 /// is sixteen thousand quads and must not be built on the main actor.
 final class GardenWorlds: Sendable {
@@ -37,6 +38,8 @@ final class GardenWorlds: Sendable {
     private let heights: [Float]
     /// Albedo, three bytes a cell, laid out the same way.
     private let albedo: [UInt8]
+    /// What each cell is made of, one byte a cell, laid out the same way.
+    private let kinds: [UInt8]
 
     private init() {
         let height = Self.pixels(named: "worlds-height")
@@ -49,6 +52,7 @@ final class GardenWorlds: Sendable {
             count = 0
             heights = []
             albedo = []
+            kinds = []
             return
         }
 
@@ -57,12 +61,14 @@ final class GardenWorlds: Sendable {
 
         var metres = [Float](repeating: 0, count: worlds * Self.cells * Self.cells)
         var colours = [UInt8](repeating: 0, count: worlds * Self.cells * Self.cells * 3)
+        var made = [UInt8](repeating: 0, count: worlds * Self.cells * Self.cells)
         let span = Self.heightCeiling - Self.heightFloor
 
         for index in 0..<(worlds * Self.cells * Self.cells) {
             let source = index * 4
             let packed = (Int(height.bytes[source]) << 8) | Int(height.bytes[source + 1])
             metres[index] = Float(Self.heightFloor + Double(packed) / 65_535 * span)
+            made[index] = height.bytes[source + 2]
             colours[index * 3] = colour.bytes[source]
             colours[index * 3 + 1] = colour.bytes[source + 1]
             colours[index * 3 + 2] = colour.bytes[source + 2]
@@ -70,6 +76,7 @@ final class GardenWorlds: Sendable {
 
         heights = metres
         albedo = colours
+        kinds = made
     }
 
     /// **Read without a colour space, never redrawn into one.**
@@ -171,6 +178,16 @@ final class GardenWorlds: Sendable {
             }
         }
         return sum / (taken * 255)
+    }
+
+    /// What the ground is at a cell of the atlas, for how its crumb is drawn.
+    /// Read by cell rather than by place: the terrain asks once per quad, and
+    /// at the atlas's own resolution a quad is a cell.
+    func kind(world: Int, i: Int, j: Int) -> GardenGround.Kind {
+        guard isLoaded else { return .grass }
+        let column = min(max(i, 0), Self.cells - 1), row = min(max(j, 0), Self.cells - 1)
+        return GardenGround.Kind(rawValue: kinds[world * Self.cells * Self.cells + row * Self.cells + column])
+            ?? .grass
     }
 
     /// The deepest and highest this world goes on a plot of this size — what the

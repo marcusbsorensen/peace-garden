@@ -102,18 +102,57 @@ actor GardenTerrain {
 
         // The grid is laid over the square and its outer part drawn in to the
         // plot's outline, so the grid's own last row is the wandering rim.
+        //
+        // **At the atlas's own resolution the grid is also the crumb.** Every
+        // corner inside the rim is moved by up to a third of a cell and lifted
+        // or sunk by what its ground is, so the lattice never reads as a
+        // lattice: the website's Knot Garden found that a regular grid of cells
+        // draws a tiled floor however hard its tones vary, and that it was the
+        // grid's regularity that had to go, not its size. The row of little
+        // worlds is too coarse to carry a crumb and is drawn plain.
+        let crumbed = mesh == GardenWorlds.cells
         let outline = PlotOutline.of(plotSide: plotSide)
+        func atlas(_ n: Int) -> Int { min(GardenWorlds.cells - 1, n * (GardenWorlds.cells - 1) / mesh) }
         var grid = [SIMD3<Double>]()
         grid.reserveCapacity((mesh + 1) * (mesh + 1))
         for j in 0...mesh {
-            let z = -half + Double(j) * step
             for i in 0...mesh {
-                let x = -half + Double(i) * step
+                var x = -half + Double(i) * step
+                var z = -half + Double(j) * step
+                let edge = i == 0 || j == 0 || i == mesh || j == mesh
+                var lift = 0.0
+                if crumbed && !edge {
+                    // **Less on a steep face.** A corner moved sideways on a
+                    // wall is a corner moved up or down it, and a box hedge
+                    // or a bed's side came out as a row of teeth. On the flat
+                    // the full third; on a wall almost none.
+                    let across = (worlds.height(world: world, x: x + step, z: z, plotSide: plotSide)
+                        - worlds.height(world: world, x: x - step, z: z, plotSide: plotSide)) / (2 * step)
+                    let down = (worlds.height(world: world, x: x, z: z + step, plotSide: plotSide)
+                        - worlds.height(world: world, x: x, z: z - step, plotSide: plotSide)) / (2 * step)
+                    let steep = (across * across + down * down) / 0.25
+                    // And none on the row inside the rim, where the outline
+                    // has already squeezed the cells and a moved corner pokes
+                    // out past the edge as a fringe.
+                    let besideRim = i == 1 || j == 1 || i == mesh - 1 || j == mesh - 1
+                    let shift = besideRim ? 0 : step * 0.34 / (1 + steep)
+                    x += shift * (GardenGround.grain(i, j, 11) * 2 - 1)
+                    z += shift * (GardenGround.grain(i, j, 12) * 2 - 1)
+                    // Clods come in twos: half the lift is shared with the
+                    // corners round about, so a lump is bigger than a corner.
+                    let rough = worlds.kind(world: world, i: atlas(i), j: atlas(j)).crumb.rough
+                    let shared = GardenGround.grain(i / 2, j / 2, 13) - 0.5
+                    let own = GardenGround.grain(i, j, 14) - 0.5
+                    lift = rough * (shared * 1.2 + own * 0.8)
+                }
                 let at = outline.warp(x: x, z: z)
-                grid.append(SIMD3(at.x, worlds.height(world: world, x: at.x, z: at.z, plotSide: plotSide), at.z))
+                grid.append(SIMD3(at.x, worlds.height(world: world, x: at.x, z: at.z, plotSide: plotSide) + lift, at.z))
             }
         }
         func corner(_ i: Int, _ j: Int) -> SIMD3<Double> { grid[j * (mesh + 1) + i] }
+        // Where each corner lands on screen, once: four quads share it.
+        let screen = grid.map { view.point(x: $0.x, y: $0.y, z: $0.z) }
+        func spot(_ i: Int, _ j: Int) -> CGPoint { screen[j * (mesh + 1) + i] }
 
         // Off at the fitted size, where an edge is a pixel and antialiasing it
         // is what opens the seams. On for a close drawing, where the skyline
@@ -143,12 +182,17 @@ actor GardenTerrain {
             }
         }
 
+        // Bevelled, not mitred: a face squeezed thin by the rim has a corner
+        // sharp enough that a mitre runs out past the edge as a spike, and a row
+        // of them drew the far rim as a fringe of hair.
+        context.setLineWidth(0.7)
+        context.setLineJoin(.bevel)
         for diagonal in 0...(2 * last) {
             for u in max(0, diagonal - last)...min(last, diagonal) {
                 let (i, j) = cell(u, diagonal - u)
                 let p00 = corner(i, j), p10 = corner(i + 1, j)
                 let p01 = corner(i, j + 1), p11 = corner(i + 1, j + 1)
-                if let reach, !reach.contains(view.point(x: p00.x, y: p00.y, z: p00.z)) { continue }
+                if let reach, !reach.contains(spot(i, j)) { continue }
 
                 // **From the quad's own diagonals, not from anything it sits on.**
                 // The sphere took the sphere's normal for every face and the
@@ -179,16 +223,49 @@ actor GardenTerrain {
                 let facing = simd_dot(normal, light.direction) > 0
                 let shadow: Double = facing && shadowed(world: world, at: middle,
                                                         plotSide: plotSide, light: light) ? 0 : 1
-                let lit = GardenGround.shaded(base: base, normal: normal,
-                                              shadow: shadow, light: light)
 
-                var path = Path()
-                path.move(to: view.point(x: p00.x, y: p00.y, z: p00.z))
-                path.addLine(to: view.point(x: p10.x, y: p10.y, z: p10.z))
-                path.addLine(to: view.point(x: p11.x, y: p11.y, z: p11.z))
-                path.addLine(to: view.point(x: p01.x, y: p01.y, z: p01.z))
-                path.closeSubpath()
-                fill(path, lit, in: context)
+                // Two faces to a cell, split on a diagonal the cell chooses for
+                // itself, each lit by its own normal and toned by its own crumb.
+                let crumb = crumbed ? worlds.kind(world: world, i: atlas(i), j: atlas(j)).crumb : nil
+                let drift = crumbed ? 1 + GardenGround.drift(x: middleX, z: middleZ) : 1
+                let turned = crumbed && GardenGround.grain(i, j, 15) < 0.5
+                func face(_ a: (Int, Int), _ b: (Int, Int), _ c: (Int, Int), salt: Int) {
+                    let pa = corner(a.0, a.1), pb = corner(b.0, b.1), pc = corner(c.0, c.1)
+                    var tone = drift
+                    var faceNormal = normal
+                    if let crumb {
+                        var own = simd_cross(pb - pa, pc - pa)
+                        if own.y < 0 { own = -own }
+                        if simd_length(own) > 1e-12 { faceNormal = simd_normalize(own) }
+                        let grain: Double
+                        if crumb.perCorner {
+                            // Averaging three corners narrows the spread, so it
+                            // is widened back to match the per-face kinds.
+                            let corners = GardenGround.grain(a.0, a.1, 18) + GardenGround.grain(b.0, b.1, 18)
+                                + GardenGround.grain(c.0, c.1, 18)
+                            grain = 0.5 + (corners / 3 - 0.5) * 1.7
+                        } else {
+                            grain = GardenGround.grain(i, j, salt)
+                        }
+                        tone *= 1 + crumb.spread * (grain - 0.5)
+                    }
+                    let lit = GardenGround.shaded(base: base * tone, normal: faceNormal,
+                                                  shadow: shadow, light: light)
+                    context.setFillColor(red: lit.x, green: lit.y, blue: lit.z, alpha: 1)
+                    context.setStrokeColor(red: lit.x, green: lit.y, blue: lit.z, alpha: 1)
+                    context.move(to: spot(a.0, a.1))
+                    context.addLine(to: spot(b.0, b.1))
+                    context.addLine(to: spot(c.0, c.1))
+                    context.closePath()
+                    context.drawPath(using: .fillStroke)
+                }
+                if turned {
+                    face((i, j), (i + 1, j), (i + 1, j + 1), salt: 16)
+                    face((i, j), (i + 1, j + 1), (i, j + 1), salt: 17)
+                } else {
+                    face((i, j), (i + 1, j), (i, j + 1), salt: 16)
+                    face((i + 1, j), (i + 1, j + 1), (i, j + 1), salt: 17)
+                }
             }
         }
     }
