@@ -33,6 +33,12 @@ struct PlantDetailView: View {
     /// Which plant the chevrons have walked to, if any. `nil` is the one this
     /// screen was opened on.
     @State private var stepped: PlantRecord.ID?
+    /// What goes beside the plant in the Wild Fields if it is released: the
+    /// three small switches under the sentence, each off until chosen.
+    @State private var releaseChoice: WildChoice = .none
+    /// The screen saying what stands beside this plant in the Wild Fields,
+    /// for a plant the other gardener let go.
+    @State private var besideWild: WildPlant?
 
     var body: some View {
         ZStack {
@@ -120,6 +126,10 @@ struct PlantDetailView: View {
         }
         .sheet(isPresented: $showing) {
             ShowInGardenView(record: live)
+                .presentationBackground(Chrome.ground)
+        }
+        .sheet(item: $besideWild) { plant in
+            WildBesideView(plant: plant)
                 .presentationBackground(Chrome.ground)
         }
         .sheet(isPresented: $editing) {
@@ -233,6 +243,28 @@ struct PlantDetailView: View {
                     .frame(maxWidth: Chrome.readableWidth)
                     .padding(.bottom, 16)
                     .transition(.opacity)
+
+                // **What goes with it, chosen before the hold** (1 October
+                // 2026): the releaser's name, where they met, when — each off
+                // until chosen. Only for a plant with a meeting's tokens,
+                // because only then is there another gardener to tell and a
+                // way to change it afterwards.
+                if live.tokens != nil, let encounter = live.encounter, !sending {
+                    VStack(spacing: 10) {
+                        WildChoiceChips(choice: $releaseChoice,
+                                        hasName: !(model.identity?.displayName ?? "").isEmpty,
+                                        hasPlace: encounter.place != nil)
+                        Text("Shown beside it only if you choose. Where and when also need \(encounter.peerDisplayName) to choose them.")
+                            .font(.system(size: 11, weight: .light))
+                            .foregroundStyle(Chrome.faint)
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.horizontal, 40)
+                    }
+                    .frame(maxWidth: Chrome.readableWidth)
+                    .padding(.bottom, 18)
+                    .transition(.opacity)
+                }
             }
 
             marks
@@ -301,6 +333,8 @@ struct PlantDetailView: View {
     private func step(_ by: Int, through others: [PlantRecord]) {
         guard let at = others.firstIndex(where: { $0.id == live.id }) else { return }
         let next = others[(at + by + others.count) % others.count]
+        // A choice made for one plant is not carried to the next.
+        releaseChoice = .none
         withAnimation(Chrome.fadeIn) {
             detailsVisible = true
             stepped = next.id
@@ -330,6 +364,12 @@ struct PlantDetailView: View {
         case .here, .invited, .unknown:
             EmptyView()
         }
+        // The other gardener let their copy go: said in their name, because
+        // it is the release they chose to be a moment of contact, and nothing
+        // the field shows of either of them is decided by this line.
+        if live.wild != nil {
+            standingLine("\(live.encounter?.peerDisplayName ?? String(localized: "the other gardener")) let it go into the Wild Fields")
+        }
     }
 
     /// Everything that can be done to this plant, as marks.
@@ -358,7 +398,9 @@ struct PlantDetailView: View {
                 expanded: $expandedMark
             ) { editing = true }
 
-            if plant.canBeOffered {
+            // Not for a plant already in the Wild Fields, which no area can
+            // be offered (`ShowInGardenView`'s 410): one public place.
+            if plant.canBeOffered, plant.wild == nil {
                 ChromeMark(
                     glyph: AnyShape(GardenGlyph()),
                     name: "show",
@@ -384,6 +426,20 @@ struct PlantDetailView: View {
                     title: "Take it back",
                     expanded: $expandedMark
                 ) { takeItBack() }
+            }
+
+            // What of this person's stands beside it in the Wild Fields, for
+            // a plant the other gardener let go: changed here, at any time.
+            if let wild = model.wildPlant(for: plant) {
+                // The two stems bowing to each other, which is the meeting: what
+                // this opens is what each of the two shows beside the plant.
+                // Not the release mark, which stands beside it and means going.
+                ChromeMark(
+                    glyph: AnyShape(MeetGlyph()),
+                    name: "wild",
+                    title: "The Wild Fields",
+                    expanded: $expandedMark
+                ) { besideWild = wild }
             }
 
             releaseMark
@@ -496,11 +552,12 @@ struct PlantDetailView: View {
     private func release() {
         guard !releasing, !sending else { return }
         let plant = live
+        let choice = releaseChoice
         sending = true
         releaseTrouble = nil
 
         Task {
-            let arrived = await model.release(plant)
+            let arrived = await model.release(plant, showing: choice)
             sending = false
             guard case .success = arrived else {
                 withAnimation(Chrome.fadeIn) { releaseTrouble = Self.releaseFailed }

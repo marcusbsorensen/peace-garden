@@ -61,7 +61,14 @@ const MARK = 12;
 /// answers whether it took it — and a plant's panel opens only once
 /// `cover.uncover(plant)` has lifted whatever is over it. A tap that finds
 /// neither is `cover.missed()`.
-export function plantPanel({ theme, engine, cover = null }) {
+///
+/// **The Wild Fields use it too** (1 October 2026), with two things of their
+/// own. `place` is where a plant is, for a postcard, in a field that has no
+/// plots — `{ read, address, finds, text }`, each standing in for the plot's
+/// own below. `beside(plant, strings)` is what stands beside a plant there:
+/// the names and the place and month its two gardeners chose to show, as
+/// nodes to set under its name, or nothing.
+export function plantPanel({ theme, engine, cover = null, place = null, beside = null }) {
   let pad = null;
   let strings = null;
   let settled = null;
@@ -71,7 +78,8 @@ export function plantPanel({ theme, engine, cover = null }) {
   let generation = 0;
   let asking = 0;        // which `show` is the latest, while a cover lifts
 
-  const postcard = readPostcard();
+  const postcard = (place?.read ?? readPostcard)();
+  const finds = place?.finds ?? ((one, card) => one.plot === card.plot && one.seed.toLowerCase().startsWith(card.mark));
   const dialog = build();
 
   whenSettled((words, facts) => {
@@ -110,8 +118,7 @@ export function plantPanel({ theme, engine, cover = null }) {
     shown: () => {
       if (!postcard || postcard.done) return;
       postcard.done = true;
-      const plant = pad.stage.named().find((one) =>
-        one.plot === postcard.plot && one.seed.toLowerCase().startsWith(postcard.mark));
+      const plant = pad.stage.named().find((one) => finds(one, postcard));
       if (plant) show(plant, { move: true, arriving: true });
     },
     keyLabel: () => strings?.t('plantKey') ?? '',
@@ -222,6 +229,7 @@ export function plantPanel({ theme, engine, cover = null }) {
     shown = { plant, named };
     fillName(named);
     fillAmbassador(plant);
+    fillBeside(plant);
     fillMeaning(named, meaningTheme, part);
     for (const [selector, key] of [['.plant-panel__send', 'plantPostcard'], ['.plant-panel__close', 'plantClose']]) {
       const button = dialog.querySelector(selector);
@@ -280,6 +288,15 @@ export function plantPanel({ theme, engine, cover = null }) {
     }
   }
 
+  // Who chose to stand beside it, in the Wild Fields: nothing at all for a
+  // plant nobody named, and nothing on an area page, which has no `beside`.
+  function fillBeside(plant) {
+    const node = dialog.querySelector('.plant-panel__beside');
+    const nodes = beside?.(plant, strings) ?? [];
+    node.replaceChildren(...nodes);
+    node.hidden = nodes.length === 0;
+  }
+
   // What the name means, as the block under the area's heading says it and in
   // the same words: the theme's headword, a link to its entry at `/meanings`,
   // with its definition, and the syllable it came from after it; then the three
@@ -336,6 +353,7 @@ export function plantPanel({ theme, engine, cover = null }) {
   // MARK: The postcard
 
   function address(plant) {
+    if (place) return place.address(plant, MARK);
     const url = new URL(location.pathname, location.origin);
     url.searchParams.set('plot', String(plant.plot + 1));
     url.hash = `p=${plant.seed.slice(0, MARK).toLowerCase()}`;
@@ -346,10 +364,11 @@ export function plantPanel({ theme, engine, cover = null }) {
     if (!shown) return;
     const { plant, named } = shown;
     const url = address(plant);
-    const area = areaIn('plantPostcardText');
+    const text = place ? place.text(named.name, strings)
+      : strings.t('plantPostcardText', { name: named.name, area: areaIn('plantPostcardText') });
     if (navigator.share) {
       try {
-        await navigator.share({ title: named.name, text: strings.t('plantPostcardText', { name: named.name, area }), url });
+        await navigator.share({ title: named.name, text, url });
         return;
       } catch (trouble) {
         // Put away by the reader, which is an answer and not a failure.
@@ -403,6 +422,8 @@ export function plantPanel({ theme, engine, cover = null }) {
     top.append(name, closer);
 
     const ambassador = make('p', 'plant-panel__ambassador');
+    const besideIt = make('div', 'plant-panel__beside');
+    besideIt.hidden = true;
     const entry = make('p', 'plant-panel__entry');
     const parts = make('ol', 'plant-panel__parts');
 
@@ -418,7 +439,7 @@ export function plantPanel({ theme, engine, cover = null }) {
     const said = make('p', 'plant-panel__status');
     said.setAttribute('role', 'status');
 
-    body.append(top, ambassador, entry, parts, figure, actions, said);
+    body.append(top, ambassador, besideIt, entry, parts, figure, actions, said);
     node.append(body);
 
     // A key pressed in the panel is the panel's: the pad's arrows and letters

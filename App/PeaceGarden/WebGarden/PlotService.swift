@@ -10,13 +10,18 @@ import SeedCore
 /// tokens to ask about, and — since 1 October 2026 — a plant released to the
 /// Wild Fields.
 ///
-/// It never sends a name, a coordinate, or anything that identifies the
-/// device. What it does send of a plant is its seed, both parents' seeds and
-/// the meeting's number, and one of the two parents is this person's own seed:
-/// that is what a hybrid is grown from, and `privacy6` and `privacy8` on the
-/// site say so. The tokens it sends are the meeting's, they mean nothing
-/// outside it, and the service holds no directory to look them up in. See
-/// `Offers.php` and `WildStore.php`.
+/// It never sends a coordinate, or anything that identifies the device. What
+/// it does send of a plant is its seed, both parents' seeds and the meeting's
+/// number, and one of the two parents is this person's own seed: that is what
+/// a hybrid is grown from, and `privacy6` and `privacy8` on the site say so.
+/// The tokens it sends are the meeting's, they mean nothing outside it, and
+/// the service holds no directory to look them up in. See `Offers.php` and
+/// `WildStore.php`.
+///
+/// **A name goes only where its owner chose to show it** (1 October 2026):
+/// beside a plant in the Wild Fields, with the meeting's place and month if
+/// they chose those too (`WildShowing`). Nothing is chosen until they choose
+/// it, and each is theirs to withdraw.
 struct PlotService: Sendable {
 
     /// Where the service is. HTTPS and this host only: a service address that
@@ -83,15 +88,28 @@ struct PlotService: Sendable {
     /// **Not made at all when the person has turned invitations off.** That is
     /// the caller's business rather than this type's, and `Sharing.swift` says
     /// why it has to be the request that stops and not a banner.
-    func pending(tokens: [String]) async throws -> [SharedOffer] {
-        guard !tokens.isEmpty else { return [] }
-        var offers: [SharedOffer] = []
+    ///
+    /// **And the Wild Fields', on the same request** (1 October 2026): every
+    /// plant one of these meetings grew that either gardener released, with
+    /// what each chose to show beside it. One poll, so the one switch stops
+    /// both.
+    func pending(tokens: [String]) async throws -> Pending {
+        guard !tokens.isEmpty else { return Pending() }
+        var heard = Pending()
         // The service takes 128 at a time; a long-standing garden asks twice.
         for batch in stride(from: 0, to: tokens.count, by: Self.batch) {
             let some = Array(tokens[batch..<min(batch + Self.batch, tokens.count)])
-            offers += try await askMany("/api/walk/pending", Asking(tokens: some))
+            let reply = try await ask("/api/walk/pending", Asking(tokens: some))
+            heard.offers += reply.offers ?? []
+            heard.wild += reply.wild ?? []
         }
-        return offers
+        return heard
+    }
+
+    /// What `pending` hears: the asking's rows and the Wild Fields'.
+    struct Pending: Sendable, Equatable {
+        var offers: [SharedOffer] = []
+        var wild: [WildNotice] = []
     }
 
     /// Yes or no, from the gardener the offer was addressed to.
@@ -121,10 +139,24 @@ struct PlotService: Sendable {
     /// on the strength of a reply that does not say it arrived. A second
     /// release of a plant already standing is answered with that planting, so
     /// a phone that lost the first answer is told the truth by the second.
-    func release(_ plant: WildRelease) async throws {
-        guard try await ask("/api/wild/release", plant).planting?.seed == plant.seed else {
-            throw Trouble.unreadable
-        }
+    ///
+    /// Returns what the service says stands beside it, when the plant went
+    /// with a meeting's tokens, so the phone can keep it to change later.
+    @discardableResult
+    func release(_ plant: WildRelease) async throws -> WildNotice? {
+        let reply = try await ask("/api/wild/release", plant)
+        guard reply.planting?.seed == plant.seed else { throw Trouble.unreadable }
+        return reply.beside
+    }
+
+    /// What of this gardener's stands beside a released plant: the whole of
+    /// it, each time, so a first answer, a change and a withdrawal are one
+    /// request. **Prompted**, like release — made when somebody chooses, and
+    /// so not behind the *Alert me* switch.
+    func beside(seed: String, token: String, shown: WildShowing) async throws -> WildNotice {
+        guard let notice = try await ask("/api/wild/answer", Beside(seed: seed, token: token, shown: shown)).beside
+        else { throw Trouble.unreadable }
+        return notice
     }
 
     // MARK: What can go wrong
@@ -150,6 +182,10 @@ struct PlotService: Sendable {
         /// A plant standing in the Wild Fields: all a phone reads of it is the
         /// seed, to know it is this plant that arrived.
         var planting: Planted?
+        /// What stands beside a released plant, as one phone is told it.
+        var beside: WildNotice?
+        /// Every released plant touching the tokens `pending` asked with.
+        var wild: [WildNotice]?
         var error: String?
     }
 
@@ -169,14 +205,11 @@ struct PlotService: Sendable {
     private struct Asking: Encodable { var tokens: [String] }
     private struct Answering: Encodable { var seed: String; var to: String; var yes: Bool }
     private struct Withdrawing: Encodable { var seed: String; var token: String }
+    private struct Beside: Encodable { var seed: String; var token: String; var shown: WildShowing }
 
     private func askOne(_ path: String, _ body: some Encodable) async throws -> SharedOffer {
         guard let offer = try await ask(path, body).offer else { throw Trouble.unreadable }
         return offer
-    }
-
-    private func askMany(_ path: String, _ body: some Encodable) async throws -> [SharedOffer] {
-        try await ask(path, body).offers ?? []
     }
 
     /// A read, which is the only kind of request here with no body.

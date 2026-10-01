@@ -439,8 +439,22 @@ the service's own files unreachable, as it does `.pages/`.
     a 64-metre field whose edges meet (`WildFields`, in SeedCore).
   - A released plant is refused by every area afterwards: `walk/offer` answers
     `410`.
-  - **Whether the field may publish the parents** is not settled:
-    `docs/WEB-GARDENS.md` §*The Wild Fields*, *Built*.
+  - **Who stands beside it** (Marcus, 1 October 2026; `wild_names`). The
+    release also takes `theirs` (the token the other phone minted) and
+    `shown` (`{name?, place?, month?}`, the releaser's choice, absent for
+    nothing). Each gardener may show their name; where and when they met
+    stand only once both chose them and both phones sent the same words. The
+    row keeps keyed fingerprints of the two tokens and of each side's place
+    and month (`Keyed.php`, under `offer_key`), and in the clear only what is
+    shown. Tile plantings carry `shown` (`{names, place, month}`, names in
+    alphabetical order) when anything is.
+  - `POST /api/wild/answer` — `{seed, token, shown}`: either gardener's whole
+    choice, so a first answer, a change and a withdrawal are one request.
+    `404` alike for no such plant and somebody else's token. 55 a window.
+  - `POST /api/walk/pending` also answers `wild`: every released plant
+    touching the tokens asked with, as that phone is told it (`released`,
+    `yours` and `theirs` as yes and no, and `shown`). One poll, behind the
+    same *Alert me* switch.
   - Checked by `tools/reference/check_wild_fields.php`, in CI, against
     SeedCore's vectors.
 - `POST /api/walk/plant` — **answers 403**: it is the one route that plants with
@@ -502,13 +516,21 @@ because the thing that made it was two people meeting once.
 17 3 * * * /usr/bin/php $HOME/public_html/.api/backup.php >> $HOME/backups/backup.log 2>&1
 ```
 
-It copies every area's table and its lock, `wild_fields`, `walk_offers` and `offer_key`
+It copies every area's table and its lock, `wild_fields`, `wild_names`, `walk_offers` and `offer_key`
 (`KEPT` in `backup.php` is the list), and leaves `rate_limits` and `rate_salt`
 out on purpose — those are this hour's arithmetic about callers, and restoring
 them would hand back spent allowance and re-key every bucket. It reads each
 copy back before filing it, because a dump cut short is a valid gzip of a
 valid beginning and restores most of the walk in silence. At most thirty stay
 on the server, and none older than thirty days but the newest.
+
+**A table added to `KEPT` cannot cost a night's copy** (1 October 2026).
+mysqldump refuses a list naming a table that is not there, and the service
+makes its tables on the first request after a deploy, so a deploy with no
+request before 03:17 used to lose that night's copy. `backup.php` now opens the
+store first, running the same migrations a request would. For `wild_names`,
+after the upload all the same: open `/wild` once, and check that
+`php ~/public_html/.api/backup.php --tables` lists `wild_names`.
 
 `.api/sweep.php` is the clean-up, every five minutes. The line, as it goes in
 the server's crontab — in the 20i control panel, under *Scheduled Tasks* (cron

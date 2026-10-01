@@ -82,7 +82,8 @@ there**, and leaves the phone only once the field has it (`WEB-GARDENS.md`
 §*The Wild Fields*, *Built*). In phase 2 it becomes a place: a released plant
 stands in a wild area of the shared garden with **no name, no sender and no
 date** — the plant alone, which is the only part of it that was never anybody's
-to disclose.
+to disclose. *(Since 1 October 2026: unless its gardeners choose to show their
+names, and where and when they met — below.)*
 
 Two things follow, and both are cheaper to build in than to add:
 
@@ -90,17 +91,18 @@ Two things follow, and both are cheaper to build in than to add:
   rule as deleting above. A plot service that treats a hybrid as one row shared
   between two people has to let one of them stand down from it without the row
   going.
-- **A released plant is unattributed for good.** It carries no lineage back to
-  either gardener, so the invitation below can never be offered on it and no
-  later consent can put a name on it. That is the difference between releasing
-  a plant and un-sharing one.
-
-  **As built on 1 October 2026 the field keeps no name, sender or date, but it
-  does keep both parents' seeds**, because a hybrid cannot be drawn without
-  them — and the parents are a lineage. This and *releasing is one person's*
-  cannot both hold while the field draws the true plant; `WEB-GARDENS.md`
-  §*The Wild Fields*, *Built*, sets out the three ways out, and it is
-  Marcus's to choose before the first deploy.
+- ~~**A released plant is unattributed for good.**~~ **Superseded by Marcus,
+  1 October 2026.** Releasing stays one person's, and the plant goes into the
+  field at once, as built, with both parents' seeds. But release is also a
+  moment of contact: the one who releases it chooses whether their gardener
+  name, where they met and when they met stand beside it, and the other
+  gardener is told and asked the same three — anonymous unless they choose.
+  A name is its owner's alone to show; the place and the month belong to the
+  meeting and stand only once both chose them (Claude's call, pending
+  Marcus's review). Either can withdraw at any time. `WEB-GARDENS.md`
+  §*The Wild Fields*, *Who stands beside it*. The rule this replaces said the
+  plant carried no lineage back to either gardener; it already carried both
+  parents' seeds, which is what Marcus chose to keep.
 
 Whether a released plant can be found again by the person who released it is
 open. Everything above works either way, and answering it needs a real garden to

@@ -210,11 +210,111 @@ check('and is still held, so it is not released again', $wild->holds($one['seed'
 check('releasing it again does not bring it back', $fresh === false
       && (int) $db->query("SELECT hidden FROM wild_fields WHERE seed = '{$one['seed']}'")->fetchColumn() === 1);
 
+// MARK: Who stands beside it
+
+// Marcus's decision of 1 October 2026: the releaser chooses as they let go,
+// the other answers when told, either changes their answer at any time. A
+// name is its owner's alone; the place and the month stand only once both
+// chose the same. Nothing is kept that is not shown, but what lets each of
+// the two answer for themselves.
+$six = crossing(6);
+$a6 = token('six/released');
+$b6 = token('six/grown with');
+$none = ['name' => null, 'place' => null, 'month' => null];
+$wild->release($six['seed'], $six['a'], $six['b']);
+$told = $wild->beside($six['seed'], $a6, $b6,
+                      ['name' => 'Wren', 'place' => 'On the winds', 'month' => '2026-03']);
+check('the releaser is told it released it, and what it chose',
+      $told['released'] === true && $told['yours'] === ['name' => true, 'place' => true, 'month' => true]);
+check('and that the other has chosen nothing yet',
+      $told['theirs'] === ['name' => false, 'place' => false, 'month' => false]);
+[$sx, $sz] = WildFields::tile($six['seed']);
+$beside = fn () => array_values(array_filter($wild->tile($sx, $sz), fn ($p) => $p['seed'] === $six['seed']))[0];
+check('the field shows the releaser\'s name at once, and no place or month',
+      $beside()['shown'] === ['names' => ['Wren'], 'place' => null, 'month' => null]);
+check('a plant nobody named carries no shown at all',
+      !array_key_exists('shown', $wild->find($four['seed'])));
+check('the other gardener\'s words are kept nowhere, and the releaser\'s place and month only as fingerprints',
+      stillHeld($db, ['the place' => 'On the winds', 'the month' => '2026-03',
+                      'a token' => $a6, 'the other token' => $b6]) === []);
+
+// The other phone hears of it on the poll it already makes, with its own token.
+$heard = $wild->touching([$b6, token('unrelated')]);
+check('the other phone hears of it, told it did not release it',
+      count($heard) === 1 && $heard[0]['seed'] === $six['seed'] && $heard[0]['token'] === $b6
+      && $heard[0]['released'] === false);
+check('and what the releaser chose, as yes and no',
+      $heard[0]['theirs'] === ['name' => true, 'place' => true, 'month' => true]);
+check('a token that is neither of the two hears nothing', $wild->touching([token('unrelated')]) === []);
+check('and cannot answer', $wild->answer($six['seed'], token('unrelated'), ['name' => 'Mallory'] + $none) === null);
+check('nor can anybody answer for a plant released without names',
+      $wild->answer($four['seed'], token('four/a'), ['name' => 'Mallory'] + $none) === null);
+
+// The other answers: their name, and the month — the same month.
+$answered = $wild->answer($six['seed'], $b6, ['name' => 'Ash', 'place' => null, 'month' => '2026-03']);
+check('two names stand beside it, in alphabetical order, not in the order of who released it',
+      $answered['shown']['names'] === ['Ash', 'Wren'] && $beside()['shown']['names'] === ['Ash', 'Wren']);
+check('the month stands once both chose it', $beside()['shown']['month'] === '2026-03');
+check('the place does not, while only one has', $beside()['shown']['place'] === null);
+
+// The place, remembered differently on the two phones, is not shown: a place
+// one of them never wrote is not one either agreed to.
+$wild->answer($six['seed'], $b6, ['name' => 'Ash', 'place' => 'By the canal', 'month' => '2026-03']);
+check('two different places show no place', $beside()['shown']['place'] === null);
+check('and the different words are kept nowhere', stillHeld($db, ['a place' => 'By the canal']) === []);
+$wild->answer($six['seed'], $b6, ['name' => 'Ash', 'place' => 'On the winds', 'month' => '2026-03']);
+check('the same place, chosen by both, stands', $beside()['shown']['place'] === 'On the winds');
+
+// Either withdraws, at any time, without the other.
+$wild->answer($six['seed'], $a6, ['name' => 'Wren', 'place' => null, 'month' => '2026-03']);
+check('the releaser withdrawing the place takes it down for both', $beside()['shown']['place'] === null);
+check('and the words go with it', stillHeld($db, ['the place' => 'On the winds']) === []);
+$wild->answer($six['seed'], $b6, $none);
+check('the other withdrawing everything leaves only the releaser\'s name',
+      $beside()['shown'] === ['names' => ['Wren'], 'place' => null, 'month' => null]);
+check('and their name is kept nowhere', stillHeld($db, ['the name' => 'Ash']) === []);
+$wild->answer($six['seed'], $a6, $none);
+check('both anonymous, the plant is a plant again, with no shown at all',
+      !array_key_exists('shown', $beside()));
+$withdrawn = $wild->touching([$a6]);
+check('and the releaser can still change its mind later',
+      count($withdrawn) === 1 && $withdrawn[0]['released'] === true
+      && $wild->answer($six['seed'], $a6, ['name' => 'Wren'] + $none) !== null);
+
+// The other phone releasing its own copy answers for itself, and a stranger
+// releasing the plant again does not get to stand beside it.
+$wild->beside($six['seed'], $b6, $a6, ['name' => 'Ash', 'place' => null, 'month' => null]);
+check('the other gardener releasing their copy answers as themselves, not as a releaser',
+      $beside()['shown']['names'] === ['Ash', 'Wren'] && $wild->touching([$b6])[0]['released'] === false);
+check('a stranger releasing it again with tokens of their own stands nobody beside it',
+      $wild->beside($six['seed'], token('stranger'), token('stranger 2'), ['name' => 'Mallory'] + $none) === null
+      && $beside()['shown']['names'] === ['Ash', 'Wren']);
+
+// What a names row is, and what it is not.
+$named = array_column($db->query('PRAGMA table_info(wild_names)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+check('a names row is two token fingerprints, what each chose, and what both chose: ' . implode(', ', $named),
+      $named === ['seed', 'print_a', 'print_b', 'name_a', 'name_b', 'place_a', 'place_b', 'month_a', 'month_b',
+                  'place', 'month']);
+$namesRowid = true;
+try {
+    $db->query('SELECT rowid FROM wild_names')->fetchAll();
+} catch (PDOException) {
+    $namesRowid = false;
+}
+check('and SQLite keeps no hidden row number for it either', $namesRowid === false);
+check('a hidden plant shows nobody beside it', (function () use ($db, $wild, $six, $sx, $sz) {
+    $db->prepare('UPDATE wild_fields SET hidden = 1 WHERE seed = ?')->execute([$six['seed']]);
+    $gone = !in_array($six['seed'], array_column($wild->tile($sx, $sz), 'seed'), true);
+    $db->prepare('UPDATE wild_fields SET hidden = 0 WHERE seed = ?')->execute([$six['seed']]);
+    return $gone;
+})());
+
 // MARK: The limit
 
 check('release is limited, and is the tightest write',
       isset(Limits::ROUTES['/api/wild/release'])
       && Limits::ROUTES['/api/wild/release'][0] <= min(array_column(Limits::ROUTES, 0)));
+check('answering what stands beside a plant is limited too', isset(Limits::ROUTES['/api/wild/answer']));
 
 unset($walk, $db, $wild, $offers);
 @unlink($file);

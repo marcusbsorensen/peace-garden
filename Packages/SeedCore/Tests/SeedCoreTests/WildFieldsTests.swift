@@ -91,12 +91,69 @@ final class WildFieldsTests: XCTestCase {
         XCTAssertEqual(release.seed, record.seed.hex)
         XCTAssertEqual(release.parents.count, 2)
         XCTAssertEqual(release.token, String(repeating: "07", count: 16))
+        XCTAssertEqual(release.theirs, String(repeating: "08", count: 16))
 
-        // Exactly the four keys the service reads, and nothing grown.
+        // Exactly the five keys the service reads, and nothing grown: since 1
+        // October 2026 the other phone's token goes too, so the other gardener
+        // can be told and answer. Nothing shown is nothing sent.
         // Decoded by hand rather than through `JSONSerialization`, which the
         // WebAssembly build does not link (`VectorFile.Value`).
         let body = try JSONDecoder().decode([String: VectorFile.Value].self, from: JSONEncoder().encode(release))
-        XCTAssertEqual(Set(body.keys), ["seed", "parents", "encounter", "token"])
+        XCTAssertEqual(Set(body.keys), ["seed", "parents", "encounter", "token", "theirs"])
+    }
+
+    // MARK: Who stands beside it
+
+    func testWhatIsChosenGoesWithTheRelease() throws {
+        let record = hybrid(tokens: MeetingTokens(ours: Data(repeating: 7, count: 16),
+                                                  theirs: Data(repeating: 8, count: 16)))
+        let shown = WildShowing(name: "Wren", month: "2026-03")
+        let release = try XCTUnwrap(WildRelease(record: record, shown: shown))
+        XCTAssertEqual(release.shown, shown)
+        let body = try JSONDecoder().decode([String: VectorFile.Value].self, from: JSONEncoder().encode(release))
+        XCTAssertEqual(Set(body.keys), ["seed", "parents", "encounter", "token", "theirs", "shown"])
+        // Anonymous is nothing sent rather than an empty object.
+        XCTAssertNil(try XCTUnwrap(WildRelease(record: record, shown: .nothing)).shown)
+    }
+
+    func testNothingIsShownWithoutTheMeetingsTokens() throws {
+        // No other gardener to tell, and no way to change it later.
+        let release = try XCTUnwrap(WildRelease(record: hybrid(tokens: nil), shown: WildShowing(name: "Wren")))
+        XCTAssertNil(release.shown)
+        XCTAssertNil(release.theirs)
+    }
+
+    func testOnlyWhatIsChosenIsSentAndItIsTidied() {
+        let choosing = WildShowing.choosing(WildChoice(name: true, place: false, month: true),
+                                            name: "  Wren\u{202E} ", place: "On the winds", month: "2026-03")
+        XCTAssertEqual(choosing, WildShowing(name: "Wren", place: nil, month: "2026-03"))
+        XCTAssertEqual(choosing.choice, WildChoice(name: true, place: false, month: true))
+        // Cut by whole characters, counted in code points as the service counts.
+        let long = WildShowing.choosing(WildChoice(place: true), name: nil,
+                                        place: String(repeating: "é", count: 70), month: nil)
+        XCTAssertEqual(long.place?.unicodeScalars.count, WildShowing.placeLength)
+        XCTAssertEqual(WildShowing.choosing(WildChoice(name: true), name: "   ", place: nil, month: nil), .nothing)
+    }
+
+    func testAMonthIsWrittenAsTheFieldShowsIt() {
+        XCTAssertEqual(WildShowing.month(year: 2026, month: 3), "2026-03")
+        XCTAssertEqual(WildShowing.month(year: 2026, month: 11), "2026-11")
+    }
+
+    /// The shape `WildStore::seen` answers in, so the two cannot drift apart
+    /// without one side noticing.
+    func testWhatTheServiceSaysIsRead() throws {
+        let json = #"{"seed":"ab","token":"cd","released":false,"yours":{"name":false,"place":false,"month":false},"theirs":{"name":true,"place":true,"month":false},"shown":{"names":["Wren"],"place":null,"month":null}}"#
+        let notice = try JSONDecoder().decode(WildNotice.self, from: Data(json.utf8))
+        XCTAssertFalse(notice.released)
+        XCTAssertEqual(notice.theirs, WildChoice(name: true, place: true))
+        XCTAssertEqual(notice.shown, WildShown(names: ["Wren"]))
+    }
+
+    func testAGardenFromBeforeReleasedPlantsStillReads() throws {
+        let old = #"{"schemaVersion":1,"plants":[]}"#
+        let garden = try JSONDecoder().decode(Garden.self, from: Data(old.utf8))
+        XCTAssertNil(garden.released)
     }
 
     func testAPlantFromBeforeTokensSendsNone() throws {

@@ -36,6 +36,7 @@ declare(strict_types=1);
  *   GET  /api/wild                 the Wild Fields: how big, and how many stand in each tile
  *   GET  /api/wild/tile/{x}/{z}    what stands in one tile: seed, parents, spot
  *   POST /api/wild/release         one gardener lets a plant go into the Wild Fields
+ *   POST /api/wild/answer          either of its two gardeners says what of theirs stands beside it
  *
  * **The Wild Fields are not an area** (`WildStore.php`, since 1 October
  * 2026). Nothing in them is placed by a rule: a released plant stands where
@@ -248,6 +249,39 @@ function checkedPlant(mixed $plant): array
 }
 
 /**
+ * What one gardener chooses to show beside a plant in the Wild Fields: their
+ * gardener name, where they met and the month they met, each the value to
+ * show or absent for not. Since 1 October 2026 (`WildStore.php`).
+ *
+ * **No free text beyond what the phone already kept.** The name is the one
+ * the gardener chose for meetings, at most 48 characters as the app holds it;
+ * the place is the meeting's place as the phone kept it, at most 64; the month
+ * is `YYYY-MM`. None may carry a control or a formatting character, so
+ * nothing shown can reorder or hide the text around it. Absent and null are
+ * both *not shown*, which is the default for all three.
+ */
+function checkedShown(mixed $shown): array
+{
+    if ($shown === null) return ['name' => null, 'place' => null, 'month' => null];
+    if (!is_array($shown)) respond(400, ['error' => 'shown is a JSON object, or absent.']);
+    $text = function (mixed $value, int $most, string $what) {
+        if ($value === null) return null;
+        $value = is_string($value) ? trim($value) : $value;
+        if (!is_string($value) || !preg_match('/\A[^\p{Cc}\p{Cf}\p{Zl}\p{Zp}]{1,' . $most . '}\z/u', $value)) {
+            respond(400, ['error' => "$what is 1 to $most characters with no control characters, or absent."]);
+        }
+        return $value;
+    };
+    $month = $shown['month'] ?? null;
+    if ($month !== null && (!is_string($month) || !preg_match('/\A[0-9]{4}-(0[1-9]|1[0-2])\z/', $month))) {
+        respond(400, ['error' => 'month is YYYY-MM, or absent.']);
+    }
+    return ['name' => $text($shown['name'] ?? null, 48, 'name'),
+            'place' => $text($shown['place'] ?? null, 64, 'place'),
+            'month' => $month];
+}
+
+/**
  * Stops here if this caller has written too often lately.
  *
  * Before the body is read and before anything is looked up, so a caller that
@@ -433,7 +467,14 @@ function route(string $method, string $path): never
         foreach ($tokens as $token) {
             if (!Seeds::isHex16($token)) respond(400, ['error' => 'Each token is 32 lowercase hex characters.']);
         }
-        respond(200, ['offers' => store($settings)->offers()->touching(array_values($tokens), time())]);
+        // **And the Wild Fields', on the same request** (1 October 2026): a
+        // plant one of these meetings grew that either gardener has released,
+        // with what each chose to show beside it. One poll rather than two, so
+        // the *Alert me* switch, which stops this request, stops both.
+        $asked = array_values($tokens);
+        $store = store($settings);
+        respond(200, ['offers' => $store->offers()->touching($asked, time()),
+                      'wild' => $store->wild()->touching($asked)]);
     }
 
     if ($path === '/api/walk/answer' && $method === 'POST') {
@@ -495,12 +536,24 @@ function route(string $method, string $path): never
     // - **Once per plant.** A plant already standing is answered with where it
     //   stands, whoever asks, so a phone whose first answer was lost can ask
     //   again and be told the release took.
+    //
+    // **And, since 1 October 2026, `theirs` and `shown`.** `theirs` is the
+    // token the other phone minted at the meeting, and with `token` it is
+    // what lets each of the two answer for themselves about what stands beside
+    // the plant (`WildStore::beside`); both are kept as fingerprints only.
+    // `shown` is the releaser's choice of what to show — their name, where
+    // they met, the month — and absent means nothing (`checkedShown`). A plant
+    // already standing is answered for whichever of its two gardeners
+    // `token` is, so the other phone releasing its own copy answers too; a
+    // stranger's token, or one for a plant released without names, changes
+    // nothing.
     if ($path === '/api/wild/release' && $method === 'POST') {
         $body = readBody();
         $seed = $body['seed'] ?? null;
         $parents = $body['parents'] ?? null;
         $encounter = $body['encounter'] ?? null;
         $token = $body['token'] ?? null;
+        $theirs = $body['theirs'] ?? null;
         if (!Seeds::isHex32($seed) || !is_array($parents) || count($parents) !== 2
             || !Seeds::isHex32($parents[0] ?? null) || !Seeds::isHex32($parents[1] ?? null)
             || !Seeds::isHex32($encounter)) {
@@ -509,12 +562,20 @@ function route(string $method, string $path): never
         if ($token !== null && !Seeds::isHex16($token)) {
             respond(400, ['error' => 'token is 32 lowercase hex characters, or absent.']);
         }
+        if ($theirs !== null && (!Seeds::isHex16($theirs) || $token === null || $theirs === $token)) {
+            respond(400, ['error' => 'theirs is 32 lowercase hex characters, sent with token and not the same, or absent.']);
+        }
+        $shown = checkedShown($body['shown'] ?? null);
+        if ($theirs === null && array_filter($shown) !== []) {
+            respond(400, ['error' => 'shown is sent with token and theirs, or not at all.']);
+        }
         if (Seeds::cross($parents[0], $parents[1], $encounter) !== $seed) {
             respond(422, ['error' => 'That seed is not the cross of those parents at that meeting.']);
         }
         $store = store($settings);
-        if (($standing = $store->wild()->find($seed)) !== null) {
-            respond(200, ['planting' => $standing]);
+        if ($store->wild()->find($seed) !== null) {
+            $beside = $theirs === null ? null : $store->wild()->answer($seed, $token, $shown);
+            respond(200, ['planting' => $store->wild()->find($seed)] + ($beside ? ['beside' => $beside] : []));
         }
         if (!$store->offers()->letGo($seed, $token, time())) {
             // The same answer whether there was no token or the wrong one, as
@@ -523,7 +584,31 @@ function route(string $method, string $path): never
             respond(403, ['error' => 'This plant has stood in the garden, and only the two who grew it can release it.']);
         }
         [$planting, $new] = $store->wild()->release($seed, $parents[0], $parents[1]);
-        respond($new ? 201 : 200, ['planting' => $planting]);
+        $beside = $theirs === null ? null : $store->wild()->beside($seed, $token, $theirs, $shown);
+        // Read again, so the planting answered carries what was just chosen.
+        if ($beside !== null) $planting = $store->wild()->find($seed) ?? $planting;
+        respond($new ? 201 : 200, ['planting' => $planting] + ($beside ? ['beside' => $beside] : []));
+    }
+
+    // **What stands beside a released plant, answered by one of its two
+    // gardeners.** `{seed, token, shown}`: `token` is this phone's own from
+    // the meeting, and `shown` the whole of its choice — name, place, month,
+    // each absent for not shown — so the first answer, a change and a
+    // withdrawal are one request. Either of the two, at any time, without
+    // the other: a name is its owner's alone, and the place and the month
+    // stand only while both have chosen the same (`WildStore::answer`).
+    if ($path === '/api/wild/answer' && $method === 'POST') {
+        $body = readBody();
+        $seed = $body['seed'] ?? null;
+        $token = $body['token'] ?? null;
+        if (!Seeds::isHex32($seed) || !Seeds::isHex16($token)) {
+            respond(400, ['error' => 'seed is 64 hex characters and token is 32.']);
+        }
+        $seen = store($settings)->wild()->answer($seed, $token, checkedShown($body['shown'] ?? null));
+        // One answer for no such plant, a plant released without names, and
+        // somebody else's token, as `/api/walk/answer` gives.
+        if ($seen === null) respond(404, ['error' => 'No released plant at that token.']);
+        respond(200, ['beside' => $seen]);
     }
 
     if ($path === '/api/walk/plant' && $method === 'POST') {

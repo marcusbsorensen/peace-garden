@@ -117,6 +117,11 @@ $store->plantInto('ground', str_repeat('4', 64), str_repeat('a', 64), str_repeat
 // nothing about it could be replayed; what a copy that left the table out
 // would lose is the plant itself, released and then nowhere.
 $store->wild()->release(str_repeat('3', 64), str_repeat('a', 64), str_repeat('b', 64));
+// With a name its releaser chose to show beside it (since 1 October 2026). A
+// copy without `wild_names` would restore the plant with nobody beside it, and
+// with no way left for either gardener to withdraw what they had shown.
+$store->wild()->beside(str_repeat('3', 64), str_repeat('5', 32), str_repeat('6', 32),
+                       ['name' => 'Ash', 'place' => null, 'month' => null]);
 unset($store);
 
 // MARK: Taking one
@@ -168,6 +173,7 @@ check('the copy counts the Coppice lock', ($counts['coppice_lock'] ?? -1) === 1)
 check('the copy holds the Home Ground', ($counts['home_ground'] ?? -1) === 1);
 check('the copy counts the Home Ground lock', ($counts['home_ground_lock'] ?? -1) === 1);
 check('the copy holds the Wild Fields', ($counts['wild_fields'] ?? -1) === 1);
+check('and who stands beside them', ($counts['wild_names'] ?? -1) === 1);
 
 // MARK: What a restore writes back
 
@@ -182,6 +188,7 @@ $restoredHue = null;
 $restoredHabit = null;
 $restoredCrop = null;
 $restoredWild = null;
+$restoredName = null;
 if ($copy !== '') {
     $whole = gzdecode((string) file_get_contents($copy)) ?: '';
     $marker = "-- A SQLite file follows, not SQL.\n";
@@ -206,6 +213,8 @@ if ($copy !== '') {
             $restoredCrop = $sown === false ? null : [$sown['crop'], (int) $sown['bed']];
             $wild = $back->query('SELECT parent_a, parent_b FROM wild_fields')->fetch(PDO::FETCH_ASSOC);
             $restoredWild = $wild === false ? null : [$wild['parent_a'], $wild['parent_b']];
+            $named = $back->query('SELECT name_a FROM wild_names')->fetch(PDO::FETCH_ASSOC);
+            $restoredName = $named === false ? null : $named['name_a'];
             unset($back);
         } catch (Throwable) {
             // Left null, which is what the checks below report.
@@ -225,6 +234,34 @@ check('a restored Home Ground row still knows its crop, and the bed it claimed',
 // them would be a plant nobody could draw.
 check('a restored Wild Fields row still knows both its parents',
       $restoredWild === [str_repeat('a', 64), str_repeat('b', 64)]);
+check('and the name its releaser chose to show', $restoredName === 'Ash');
+
+// MARK: A table a deploy added
+
+// **The deploy-order trap** (1 October 2026). The service makes its tables on
+// the first request after a deploy, and on MariaDB mysqldump refuses a list
+// naming a table that is not there — so a deploy adding one to KEPT, with no
+// request before the nightly copy, would cost that night's copy. The copy now
+// makes them itself before it counts. Here a walk is opened, the newest table
+// dropped as though the deploy had come before any request, and the copy has
+// to leave it made.
+$bare = scratch();
+$bareFile = "$bare/walk.sqlite";
+$opened = WalkStore::open("sqlite:$bareFile");
+$opened->connection()->prepare('DROP TABLE IF EXISTS wild_names')->execute();
+unset($opened);
+$bareInto = scratch();
+$running = proc_open(['php', dirname(__DIR__, 2) . '/Server/.api/backup.php', $bareInto],
+                     [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, null,
+                     ['PG_WALK_DSN' => "sqlite:$bareFile", 'PATH' => getenv('PATH') ?: '/usr/bin:/bin']);
+stream_get_contents($pipes[1]);
+stream_get_contents($pipes[2]);
+$bareStatus = proc_close($running);
+$made = (new PDO("sqlite:$bareFile"))
+    ->query("SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'wild_names'")->fetchColumn();
+check('a copy taken before any request has made the tables a deploy added', $bareStatus === 0 && (int) $made === 1);
+clear($bareInto);
+clear($bare);
 
 // MARK: Reading it back
 

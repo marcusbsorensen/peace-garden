@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/Keyed.php';
 require_once __DIR__ . '/WalkStore.php';
 
 /**
@@ -519,19 +520,9 @@ final class Offers
      */
     private function key(): string
     {
-        if ($this->key !== null) return $this->key;
-        $query = $this->db->prepare('SELECT hmac_key FROM offer_key WHERE id = 1');
-        $query->execute();
-        if ($key = $query->fetchColumn()) return $this->key = (string) $key;
-
-        try {
-            $insert = $this->db->prepare('INSERT INTO offer_key (id, hmac_key) VALUES (1, ?)');
-            $insert->execute([bin2hex(random_bytes(32))]);
-        } catch (PDOException) {
-            // Another request minted it a moment ago; the read below returns it.
-        }
-        $query->execute();
-        return $this->key = (string) $query->fetchColumn();
+        // `Keyed.php` since 1 October 2026, when the Wild Fields' names came to
+        // be fingerprinted under the same key.
+        return $this->key ??= Keyed::key($this->db);
     }
 
     // MARK: - What a phone is told

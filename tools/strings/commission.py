@@ -914,8 +914,10 @@ WILD = {
         "must": [
             "This is where a plant goes when it is released (let go).",
             "Nobody arranges it: each plant stands where its own seed puts it.",
-            "A plant there has no name, no sender and no date.",
             "The field goes on in every direction.",
+            "Beside a plant stands only what the two people who grew it "
+            "chose to show (since 1 October 2026: their names, and where "
+            "and when they met).",
             "Drag to walk it.",
         ],
         "must not": [
@@ -937,26 +939,68 @@ WILD = {
         "must": ["The Wild Fields cannot be reached just now."],
         "note": "As `walkAway` and `quietAway` say it of their areas.",
     },
+    # Who stands beside a released plant, since 1 October 2026: each of the
+    # two gardeners may show their name, and where and when they met once
+    # both choose them. The place and the month are the gardeners' own words
+    # and the reader's browser's month, and need no string.
+    "wildByOne": {
+        "seen": "In a released plant's panel at `/wild`, under its name, when "
+                "one of the two people who grew it chose to show their name. "
+                "`{name}` is that name, as they wrote it.",
+        "must": ["This plant was grown by this person."],
+        "must not": [
+            "Hint that a second person exists. A plant shown with one name "
+            "is shown as one person's; the other chose not to be named.",
+        ],
+    },
+    "wildByTwo": {
+        "seen": "As `wildByOne`, when both chose to show their names. `{a}` "
+                "and `{b}` are the two names, in alphabetical order.",
+        "must": ["This plant was grown by these two people."],
+        "must not": [
+            "Say or imply which of the two released it. The order is "
+            "alphabetical so that it does not.",
+        ],
+    },
+    "wildPostcardText": {
+        "seen": "Sent with the link when a reader sends a released plant as a "
+                "postcard, as `plantPostcardText` is from an area. `{name}` "
+                "is the plant's Latin name.",
+        "must": ["{name}, growing in the Wild Fields, in Peace Garden."],
+        "note": "The Wild Fields as `wildTitle` names them.",
+    },
     "privacy8": {
         "seen": "Seventh paragraph of /privacy, between the asking and the "
                 "website.",
         "must": [
             "If you release a plant, the app sends it to the Wild Fields: its "
-            "seed, its two parents' seeds, the number for the meeting, and your "
-            "random number from that meeting if it has one.",
-            "The Wild Fields keep the plant's seed and its parents' seeds and "
-            "nothing else: no name, no date, no record of who released it.",
+            "seed, its two parents' seeds, the number for the meeting, the two "
+            "random numbers from that meeting if it has them, and whatever you "
+            "chose to show beside it.",
+            "The Wild Fields keep the plant's seed and its parents' seeds, and "
+            "no date.",
+            "Beside the plant they show only what each of the two people who "
+            "grew it chose: their username, and where and when they met once "
+            "both chose those.",
+            "Nothing is shown unless it is chosen, and either of you can "
+            "withdraw what you chose at any time.",
+            "So that each can answer for themselves, the Wild Fields keep a "
+            "scrambled form of the two random numbers, and of the place and "
+            "month each chose until both have.",
             "The parents' seeds are the two seeds that met, so anyone who "
             "already knows one of them can tell the plant grew from it.",
             "A plant standing in the web garden is taken back from there "
             "first.",
-            "Anyone can see a released plant, and it cannot be taken back.",
+            "Anyone can see a released plant, and the plant cannot be taken "
+            "back.",
         ],
         "must not": [
-            "Say the plant is anonymous, or untraceable. The third sentence "
-            "is there because it is not, for anybody who already holds one "
-            "of the two seeds.",
+            "Say the plant is anonymous, or untraceable. The sentence on the "
+            "parents' seeds is there because it is not, for anybody who "
+            "already holds one of the two seeds.",
             "Leave out an item of what is sent, or add one.",
+            "Make showing a name sound expected. Nothing is shown unless it "
+            "is chosen; that is the default.",
         ],
     },
 }
