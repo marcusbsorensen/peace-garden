@@ -76,6 +76,12 @@ final class Limits
         // of a plant now and then; ten in an hour is clearing a garden, and
         // nine is room for that and little else.
         '/api/wild/release' => [9, self::WINDOW],
+        // **What stands beside a released plant**, since 1 October 2026: as
+        // generous as answering an offer, at the hourly 60, because it is the
+        // same kind of act — one gardener answering for themselves about a
+        // plant that already exists — and a person changing their mind a few
+        // times should never meet a limit.
+        '/api/wild/answer' => [55, self::WINDOW],
     ];
 
     public function __construct(private PDO $db)
