@@ -5,6 +5,17 @@ struct RootView: View {
 
     @Environment(GardenModel.self) private var model
 
+    /// The released plant being told about, if one is. Held here rather than
+    /// read off the model, because the screen marks it heard as it opens and a
+    /// sheet bound straight to *the first unheard* would change under itself.
+    @State private var hearing: WildPlant?
+
+    private func hearNext() {
+        guard hearing == nil, model.hasIdentity, !model.isArriving else { return }
+        if case .arrived = model.incoming { return }
+        hearing = model.wildToHear.first
+    }
+
     /// Only a fully grown arrival takes over the screen. A seed that turned up
     /// before this person had one of their own waits quietly instead.
     private var incomingBinding: Binding<Bool> {
@@ -45,6 +56,19 @@ struct RootView: View {
                     .environment(model)
             }
         }
+        // **The other gardener let a plant you grew together go into the Wild
+        // Fields** (1 October 2026). Heard on the poll the app already makes,
+        // only while *Alert me* is on, and put in front of this person once:
+        // the plant, who let it go, and what they may show beside it. One at a
+        // time, the next after the last is closed — and not over a seed
+        // arriving, which has the screen first.
+        .sheet(item: $hearing, onDismiss: { hearNext() }) { plant in
+            WildBesideView(plant: plant)
+                .environment(model)
+                .presentationBackground(Chrome.ground)
+        }
+        .onChange(of: model.wildToHear.map(\.id)) { hearNext() }
+        .onAppear { hearNext() }
         .overlay(alignment: .bottom) {
             incomingNotice
         }

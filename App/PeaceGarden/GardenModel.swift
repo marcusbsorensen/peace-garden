@@ -259,16 +259,129 @@ final class GardenModel {
     /// A plant shown in one of the ten areas, or offered to one, is taken out
     /// of the asking by the same request (`Offers::letGo`), with this phone's
     /// token as the proof that it is one of the two who grew it.
-    func release(_ record: PlantRecord) async -> Result<Void, PlotService.Trouble> {
-        guard let plant = WildRelease(record: record) else { return .failure(.unreadable) }
+    ///
+    /// **And what the releaser chose to show beside it** (1 October 2026):
+    /// their name, where they met, the month they met — each off unless
+    /// chosen. The other gardener is told on their next `pending` and answers
+    /// for themselves. A plant released with a meeting's tokens is kept in
+    /// `Garden.released`, so this person can change or withdraw what they
+    /// chose after the plant itself has gone; one without tokens goes with
+    /// nothing beside it, because nothing could later be changed.
+    func release(_ record: PlantRecord, showing choice: WildChoice = .none) async -> Result<Void, PlotService.Trouble> {
+        let shown = WildShowing.choosing(choice, name: garden.identity?.displayName,
+                                         place: record.encounter?.place,
+                                         month: record.encounter.map { Self.month(of: $0.happenedAt) })
+        guard let plant = WildRelease(record: record, shown: shown) else { return .failure(.unreadable) }
         do {
-            try await plots.release(plant)
+            let notice = try await plots.release(plant)
+            if let notice, let kept = ReleasedPlant(record: record, notice: notice) {
+                var released = garden.released ?? []
+                released.removeAll { $0.seed == kept.seed }
+                released.append(kept)
+                garden.released = released
+                persist()
+            }
             return .success(())
         } catch let trouble as PlotService.Trouble {
             return .failure(trouble)
         } catch {
             return .failure(.unreachable)
         }
+    }
+
+    // MARK: - Who stands beside a released plant
+
+    /// The month a meeting happened, as the Wild Fields show it: `YYYY-MM`,
+    /// in this phone's calendar. The two phones were in one place, so they
+    /// read the same month off it.
+    static func month(of date: Date) -> String {
+        let parts = Calendar(identifier: .gregorian).dateComponents(in: .current, from: date)
+        return WildShowing.month(year: parts.year ?? 1970, month: parts.month ?? 1)
+    }
+
+    /// Every released plant this person grew, either because they let it go
+    /// (`Garden.released`) or because the other gardener did and this phone
+    /// still has its copy (`PlantRecord.wild`).
+    var wildPlants: [WildPlant] {
+        (garden.released ?? []).map(WildPlant.init(released:))
+            + garden.plants.compactMap(WildPlant.init(record:))
+    }
+
+    /// The ones the other gardener released that this person has not yet
+    /// been told about: the moment of contact, put in front of them once.
+    var wildToHear: [WildPlant] {
+        garden.plants.filter { $0.wild?.heard == false }.compactMap(WildPlant.init(record:))
+    }
+
+    /// The released plant this record is, if the other gardener let it go.
+    func wildPlant(for record: PlantRecord) -> WildPlant? {
+        garden.plants.first { $0.id == record.id }.flatMap(WildPlant.init(record:))
+    }
+
+    /// Written down once the notice has been in front of this person, so it
+    /// is not put there again. The plant's own screen is where it is changed.
+    func heard(_ plant: WildPlant) {
+        guard let index = garden.plants.firstIndex(where: { $0.id == plant.id }),
+              garden.plants[index].wild?.heard == false else { return }
+        garden.plants[index].wild?.heard = true
+        persist()
+    }
+
+    /// What this person's phone would send for a choice: their gardener name
+    /// as it is now, and the meeting's place and month as this phone keeps
+    /// them.
+    func showing(_ choice: WildChoice, for plant: WildPlant) -> WildShowing {
+        WildShowing.choosing(choice, name: garden.identity?.displayName, place: plant.place,
+                             month: Self.month(of: plant.happenedAt))
+    }
+
+    /// Says what of this person's stands beside a released plant — the whole
+    /// of it, so a first answer, a change and a withdrawal are one request.
+    ///
+    /// **Prompted, and so not behind the *Alert me* switch**, as release is
+    /// not: it is made when somebody chooses, never on its own.
+    @discardableResult
+    func beside(_ plant: WildPlant, choosing choice: WildChoice) async -> Result<WildNotice, PlotService.Trouble> {
+        do {
+            let notice = try await plots.beside(seed: plant.seed.hex, token: plant.tokens.oursHex,
+                                                shown: showing(choice, for: plant))
+            hear(notice)
+            if let index = garden.plants.firstIndex(where: { $0.id == plant.id }) {
+                garden.plants[index].wild?.heard = true
+                persist()
+            }
+            return .success(notice)
+        } catch let trouble as PlotService.Trouble {
+            return .failure(trouble)
+        } catch {
+            return .failure(.unreachable)
+        }
+    }
+
+    /// Writes down what the service said about a released plant, on whichever
+    /// of this garden's records it is about — found by the token this phone
+    /// minted, as an offer is. A plant this phone released is in
+    /// `Garden.released`; one the other gardener released is still among the
+    /// plants, and is told of it here for the first time.
+    private func hear(_ notice: WildNotice) {
+        if let index = garden.released?.firstIndex(where: { $0.tokens.oursHex == notice.token }) {
+            garden.released?[index].notice = notice
+        } else if !notice.released, let index = garden.plants.firstIndex(where: {
+            $0.tokens?.oursHex == notice.token && $0.seed.hex == notice.seed
+        }) {
+            // `released` false: the other phone let it go. A row saying this
+            // phone released a plant it still holds is a release whose answer
+            // was lost, and the plant is still here; it is not news.
+            let heard = garden.plants[index].wild?.heard ?? false
+            garden.plants[index].wild = InTheWild(notice: notice, heard: heard)
+        }
+    }
+
+    /// Every released plant showing something of this person's, which a
+    /// reset has to take down first: the tokens that let them withdraw it
+    /// live in this garden and nowhere else.
+    var stillBesideTheWild: [WildPlant] {
+        wildPlants.filter { !($0.notice?.yours.isNone ?? true) }
     }
 
     /// Has this exact plant already been kept? Guards against a double tap on
@@ -412,6 +525,14 @@ final class GardenModel {
                 left.append(record)
             }
         }
+        // And whatever of this person's stands beside a plant in the Wild
+        // Fields, for the same reason: once the tokens go, nobody can take it
+        // down. Since 1 October 2026.
+        for plant in stillBesideTheWild {
+            if case .failure = await beside(plant, choosing: .none) {
+                left.append(PlantRecord(seed: plant.seed, lineage: plant.lineage, birth: plant.birth))
+            }
+        }
         return left
     }
 
@@ -428,11 +549,15 @@ final class GardenModel {
     /// — so a phone with no signal simply learns nothing this time.
     func catchUpOnTheAsking() async {
         guard Sharing.wantsInvitations else { return }
+        // The released plants' tokens too, so the releaser hears what the
+        // other gardener chose. Same request, same switch.
         let tokens = garden.plants.compactMap(\.tokens?.oursHex)
+            + (garden.released ?? []).map(\.tokens.oursHex)
         guard !tokens.isEmpty else { return }
-        guard let offers = try? await plots.pending(tokens: tokens) else { return }
+        guard let heard = try? await plots.pending(tokens: tokens) else { return }
 
-        for offer in offers {
+        for notice in heard.wild { hear(notice) }
+        for offer in heard.offers {
             guard let index = Self.plant(for: offer, in: garden.plants),
                   let ours = garden.plants[index].tokens?.oursHex,
                   let standing = offer.standing(forOurToken: ours, unknownAt: Self.currentDate())
@@ -522,6 +647,9 @@ final class GardenModel {
     /// Forgets every plant grown with somebody, and keeps this person's seed.
     func forgetPlants() {
         garden.plants.removeAll()
+        // The released ones' notes go too: they were kept only to change what
+        // stands beside them, which `takeEverythingBack` has just withdrawn.
+        garden.released = nil
         persist()
     }
 

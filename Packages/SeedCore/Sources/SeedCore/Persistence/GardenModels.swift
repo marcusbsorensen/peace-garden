@@ -112,6 +112,12 @@ public struct PlantRecord: Codable, Equatable, Identifiable, Sendable {
     /// means here and nowhere else.
     public var standing: Standing?
 
+    /// Whether the other gardener has released this plant into the Wild
+    /// Fields, and what each of the two chose to show beside it there. Absent
+    /// on every plant nobody released, which is every plant grown before 1
+    /// October 2026, so nothing migrates.
+    public var wild: InTheWild?
+
     public init(
         id: UUID = UUID(),
         seed: SeedID,
@@ -120,7 +126,8 @@ public struct PlantRecord: Codable, Equatable, Identifiable, Sendable {
         savedAt: Date = Date(),
         encounter: EncounterNote? = nil,
         tokens: MeetingTokens? = nil,
-        standing: Standing? = nil
+        standing: Standing? = nil,
+        wild: InTheWild? = nil
     ) {
         self.id = id
         self.seed = seed
@@ -130,6 +137,7 @@ public struct PlantRecord: Codable, Equatable, Identifiable, Sendable {
         self.encounter = encounter
         self.tokens = tokens
         self.standing = standing
+        self.wild = wild
     }
 
     public var genome: Genome { Genome(seed: seed, lineage: lineage) }
@@ -173,16 +181,24 @@ public struct Garden: Codable, Equatable, Sendable {
     /// optional so a card from version 1 decodes as a refusal.
     public var beds: [Bed]?
 
+    /// The plants this phone released into the Wild Fields with a meeting's
+    /// tokens, kept so that what it chose to show beside each can be changed
+    /// or withdrawn later (`ReleasedPlant`). Optional, as `beds` is, so a
+    /// file from before 1 October 2026 decodes as nothing released.
+    public var released: [ReleasedPlant]?
+
     public init(
         schemaVersion: Int = Garden.currentSchemaVersion,
         identity: Identity? = nil,
         plants: [PlantRecord] = [],
-        beds: [Bed]? = nil
+        beds: [Bed]? = nil,
+        released: [ReleasedPlant]? = nil
     ) {
         self.schemaVersion = schemaVersion
         self.identity = identity
         self.plants = plants
         self.beds = beds
+        self.released = released
     }
 
     public var hybrids: [PlantRecord] {

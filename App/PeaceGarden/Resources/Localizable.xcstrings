@@ -48,6 +48,9 @@
         }
       }
     },
+    "%@ has let the plant you grew together go into the Wild Fields. Yours stays here." : {
+      "comment" : "Heading of the notice shown once when the other gardener (%@) releases a plant the two grew together. A moment of contact, not an alarm: gentle and plain."
+    },
     "%@ is here. A light tap, top to top." : {
       "comment" : "Under that title. %@ is the other person's name.",
       "localizations" : {
@@ -94,6 +97,9 @@
           }
         }
       }
+    },
+    "%@ let it go into the Wild Fields" : {
+      "comment" : "A small line on a plant's screen when the other gardener (%@) released their copy into the Wild Fields; this person's copy stays. The Wild Fields is the place a released plant goes; use the same name as 'Release to the Wild Fields'."
     },
     "%@ moved out of range before the plant took." : {
       "comment" : "A failure. %@ is the other person's name; 'took' as a cutting takes.",
@@ -1075,6 +1081,9 @@
     "Answer" : {
 
     },
+    "Anyone walking the field can come across it." : {
+      "comment" : "On the Wild Fields notice: the released plant is public on the website."
+    },
     "Appearance" : {
 
     },
@@ -1456,6 +1465,12 @@
           }
         }
       }
+    },
+    "Beside it stands only what each of you chooses. Left as it is, you stay anonymous." : {
+      "comment" : "On the Wild Fields notice, above the three switches. Anonymous is the default."
+    },
+    "Beside it: %@" : {
+      "comment" : "A preview of what would stand beside the plant in the Wild Fields: %@ is names, a place and a month, separated by dots, in the gardeners' own words."
     },
     "Between one field and the next" : {
       "comment" : "One of forty figurative places a seed is imagined passing through on its way to the ground. Offered, already filled in, as the answer to 'Where' on the note about a meeting, and anybody can type over it. The register is the seed's journey rather than real geography, so it wants the same unhurried, slightly literary voice in every language.",
@@ -4215,6 +4230,9 @@
         }
       }
     },
+    "Let go into the Wild Fields" : {
+      "comment" : "Heading in Settings, under Joint seeds, over the list of plants this person released, each opening what stands beside it. The Wild Fields is the place a released plant goes; use the same name as 'Release to the Wild Fields'."
+    },
     "Let it go" : {
       "comment" : "Button that deletes one plant from the garden. Deliberately gentle — the app does not say 'delete' anywhere.",
       "localizations" : {
@@ -6511,6 +6529,9 @@
         }
       }
     },
+    "See it in the Wild Fields" : {
+      "comment" : "Opens the website's Wild Fields at this plant. The Wild Fields is the place a released plant goes; use the same name as 'Release to the Wild Fields'."
+    },
     "Seed" : {
       "comment" : "The mark at the foot of the main screen that opens your own seed, and the label on the row showing it. A noun: the seed itself.",
       "localizations" : {
@@ -6902,6 +6923,9 @@
     },
     "Show this plant in the peace garden." : {
 
+    },
+    "Shown beside it only if you choose. Where and when also need %@ to choose them." : {
+      "comment" : "Under the three switches when releasing a plant. %@ is the other gardener's name, as this phone knows it. Nothing is shown by default."
     },
     "Shown when a seed is exchanged with another, as the place where the seed is planted." : {
 
@@ -7337,6 +7361,12 @@
           }
         }
       }
+    },
+    "The Wild Fields" : {
+      "comment" : "The word on a mark on a plant's screen that opens what stands beside it in the Wild Fields. The Wild Fields is the place a released plant goes; use the same name as 'Release to the Wild Fields'."
+    },
+    "The Wild Fields could not be reached just now. Nothing has changed; try again in a little while." : {
+      "comment" : "When a change to what stands beside a released plant could not be sent. One sentence for every failure."
     },
     "The connection dropped: %@" : {
       "comment" : "A failure. %@ is the system's own account of what went wrong, which arrives already translated.",
@@ -8487,6 +8517,9 @@
     "What it says" : {
 
     },
+    "What stands beside each is yours to change here." : {
+      "comment" : "Under the list of released plants in Settings."
+    },
     "What stands there is the plant itself, grown from its seed at its real age, the way it grows here." : {
 
     },
@@ -8839,6 +8872,9 @@
     },
     "When you meet someone, your phones exchange your seed, your name, and two random numbers for that meeting: one that makes the new seed, and one this phone will answer to if the other person later shares the plant with you. That is everything that crosses between you, and it goes directly from phone to phone. None of it can be turned back into anything about you or your phone, and neither number is kept after the meeting." : {
       "extractionState" : "stale"
+    },
+    "When you met" : {
+      "comment" : "One of three small switches beside 'Your name': show the month and year of the meeting beside the plant in the Wild Fields. Shown only once both gardeners choose it."
     },
     "Where" : {
       "comment" : "Label over the field for where a meeting happened. Set uppercase and wide-tracked, so it wants to be one short word.",
@@ -9322,6 +9358,9 @@
     "Wireframe" : {
 
     },
+    "You let this plant go into the Wild Fields. %@ keeps theirs." : {
+      "comment" : "Heading of the screen where the person who released a plant changes what stands beside it. %@ is the other gardener's name."
+    },
     "Your Peace Garden username" : {
       "comment" : "Label over the name field. 'Peace Garden' is the app's name and stays as it is.",
       "extractionState" : "stale",
@@ -9416,6 +9455,9 @@
           }
         }
       }
+    },
+    "Your name is yours to show. Where and when you met are shown only once you both choose them." : {
+      "comment" : "Under the three switches on the Wild Fields notice: a name is each person's alone; the place and month need both."
     },
     "Your name sits beside your plant on the other person's phone, and in the note they keep of the meeting." : {
       "comment" : "Under the field where somebody types the name the other person will see. Asked once, on the way into a first meeting.",
@@ -9513,6 +9555,9 @@
           }
         }
       }
+    },
+    "Your phones remember the place in different words, so it is not shown." : {
+      "comment" : "When both gardeners chose to show where they met but their two phones kept the place in different words, so neither is shown."
     },
     "Your plant and %@, together" : {
       "comment" : "Under a newly made plant's name, from the second meeting onward. %@ is the other person's plant's name — a Latin binomial, never translated.",

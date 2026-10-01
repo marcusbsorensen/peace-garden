@@ -35,6 +35,8 @@ struct SettingsView: View {
     @State private var takingBack = false
     /// Raised when it would not, and nothing was reset.
     @State private var somethingIsStillStanding = false
+    /// A released plant whose choices are open, from *Let go into the Wild Fields*.
+    @State private var besideWild: WildPlant?
     @AppStorage(Places.preferredKey) private var preferredPlace = ""
     @AppStorage(Sharing.invitationsKey) private var wantsInvitations = Sharing.invitationsDefault
     @AppStorage(Chrome.namesPlantKey) private var namesPlant = true
@@ -492,11 +494,52 @@ struct SettingsView: View {
             // and in a seed's link, and no request to the web garden carries a
             // name of any kind (`WalkArrival`, `PlotService`). A shared plant
             // stands there with its seeds and nothing that names a person.
+            // The one exception is chosen plant by plant and is not this
+            // note's: beside a plant in the Wild Fields, a gardener may show
+            // their name (`WildBesideView`, 1 October 2026).
             switchRow(
                 "Alert me when a joint seed is shared",
                 note: "A plant you both share goes to the web garden without your username.",
                 isOn: $wantsInvitations
             )
+
+            letGo
+        }
+        .sheet(item: $besideWild) { plant in
+            WildBesideView(plant: plant)
+                .environment(model)
+                .presentationBackground(Chrome.ground)
+        }
+    }
+
+    /// The plants this person let go into the Wild Fields, each a way back to
+    /// what they chose to show beside it — their name, where and when they
+    /// met — which they can change or withdraw at any time (1 October 2026).
+    /// The plant itself has left the garden; this is all that is kept of it,
+    /// and only for this. Absent until something has been released.
+    @ViewBuilder
+    private var letGo: some View {
+        let released = model.wildPlants.filter(\.releasedHere)
+        if !released.isEmpty {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Let go into the Wild Fields")
+                    .font(.system(size: 15, weight: .light))
+                    .foregroundStyle(Chrome.ink)
+                ForEach(released) { plant in
+                    Button { besideWild = plant } label: {
+                        Text(verbatim: plant.genome.name.full)
+                            .plantName(size: 16)
+                            .foregroundStyle(Chrome.muted)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+                Text("What stands beside each is yours to change here.")
+                    .font(.system(size: 13, weight: .light))
+                    .foregroundStyle(Chrome.muted)
+                    .lineSpacing(4)
+            }
         }
     }
 
