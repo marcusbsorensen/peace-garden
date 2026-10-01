@@ -151,6 +151,13 @@ public struct Bed: Codable, Equatable, Identifiable, Sendable {
         lamps = allLamps.filter { $0.id != id }
     }
 
+    /// Turns or resizes one light, and nothing else.
+    public mutating func change(lamp id: UUID, _ edit: (inout Lamp) -> Void) {
+        guard var all = lamps, let index = all.firstIndex(where: { $0.id == id }) else { return }
+        edit(&all[index])
+        lamps = all
+    }
+
     public func spot(for plant: PlantRecord) -> Spot? {
         placed[plant.id.uuidString]
     }
@@ -247,13 +254,57 @@ public struct Lamp: Codable, Equatable, Identifiable, Sendable {
     /// plant, so it stays where it was put as the plot grows.
     public var spot: Spot
 
-    public init(id: UUID = UUID(), kind: LampKind, spot: Spot) {
+    /// Which way it faces, in eighths of a turn about the upright, once somebody
+    /// has turned it.
+    ///
+    /// **Until then, nothing is stored**, and a figure faces the way its own
+    /// identifier deals it — `dealtFacing` — so two hares put out together are
+    /// not a pair of bookends. Optional so that nothing migrates: a light
+    /// written before it could be turned decodes facing exactly as it did.
+    public var facing: Int?
+
+    /// How large it is drawn, against the size it was made at. Optional for the
+    /// same reason, and read through `drawnScale`, which keeps it in range.
+    public var scale: Double?
+
+    public init(id: UUID = UUID(), kind: LampKind, spot: Spot,
+                facing: Int? = nil, scale: Double? = nil) {
         self.id = id
         self.kind = kind.rawValue
         self.spot = spot
+        self.facing = facing
+        self.scale = scale
     }
 
     public var known: LampKind? { LampKind(rawValue: kind) }
+
+    /// The sizes a light may be drawn at. Smaller than six tenths, a snail is a
+    /// speck nobody can pick up; larger than eight fifths, a hare stands taller
+    /// than the plants it was put out to light, and stops being a figure in a
+    /// garden and becomes a statue in one.
+    public static let scales: ClosedRange<Double> = 0.6...1.6
+
+    /// How much one press of *smaller* or *larger* changes it: two presses down
+    /// to the smallest and three up to the largest, which is enough to be a
+    /// choice and few enough to find one's way back to where it started.
+    public static let scaleStep = 0.2
+
+    /// The size to draw it at, held inside `scales` — a garden from a later
+    /// build that allows larger still opens here, at the largest this one draws.
+    public var drawnScale: Double {
+        min(max(scale ?? 1, Self.scales.lowerBound), Self.scales.upperBound)
+    }
+
+    /// The facing a light has before anybody turns it, dealt from its
+    /// identifier: the same byte the figures have always faced by, so nothing
+    /// already standing in a garden turns round when this is read.
+    public var dealtFacing: Int { Int(id.uuid.1) % 8 }
+
+    /// The facing to draw it at, in eighths, `0..<8`.
+    public var drawnFacing: Int {
+        guard let facing else { return dealtFacing }
+        return ((facing % 8) + 8) % 8
+    }
 }
 
 /// The lights there are to put out.

@@ -63,6 +63,62 @@ final class LampTests: XCTestCase {
         XCTAssertEqual(back, bed)
     }
 
+    /// **A light written before it could be turned or resized opens exactly as
+    /// it was.** Nothing stored, so it faces the way its identifier has always
+    /// dealt it and is drawn at its own size — and written back, it is written
+    /// without the new fields, so the file does not change by being opened.
+    func testALightFromBeforeTurningOpensAsItWas() throws {
+        let json = """
+        {"id":"22222222-0000-4000-8000-000000000001","kind":"hare","spot":{"x":1,"z":2}}
+        """
+        let lamp = try JSONDecoder().decode(Lamp.self, from: Data(json.utf8))
+
+        XCTAssertNil(lamp.facing)
+        XCTAssertNil(lamp.scale)
+        XCTAssertEqual(lamp.drawnScale, 1)
+        // `0x22` is the identifier's second byte, which is what the figures
+        // have always faced by.
+        XCTAssertEqual(lamp.drawnFacing, 0x22 % 8)
+
+        let written = String(decoding: try JSONEncoder().encode(lamp), as: UTF8.self)
+        XCTAssertFalse(written.contains("facing"), written)
+        XCTAssertFalse(written.contains("scale"), written)
+    }
+
+    /// Turned and resized, and round the file with both kept.
+    func testATurnedAndResizedLightRoundTrips() throws {
+        var bed = Bed(name: "")
+        let hare = Lamp(kind: .hare, spot: Spot(x: 0, z: 0))
+        let lantern = Lamp(kind: .lantern, spot: Spot(x: 1, z: 0))
+        bed.add(hare)
+        bed.add(lantern)
+
+        bed.change(lamp: hare.id) { lamp in
+            lamp.facing = lamp.drawnFacing + 3
+            lamp.scale = 1.4
+        }
+
+        let back = try JSONDecoder().decode(Bed.self, from: JSONEncoder().encode(bed))
+        XCTAssertEqual(back, bed)
+        let turned = try XCTUnwrap(back.allLamps.first { $0.id == hare.id })
+        XCTAssertEqual(turned.drawnFacing, (hare.dealtFacing + 3) % 8)
+        XCTAssertEqual(turned.drawnScale, 1.4, accuracy: 1e-9)
+        XCTAssertEqual(back.allLamps.first { $0.id == lantern.id }, lantern,
+                       "turning one light changed another")
+    }
+
+    /// A facing past a whole turn, or a size from a build that allows more, is
+    /// drawn as the nearest this one can.
+    func testAFacingWrapsAndASizeIsHeldInRange() {
+        var lamp = Lamp(kind: .fox, spot: Spot(x: 0, z: 0), facing: -1, scale: 4)
+        XCTAssertEqual(lamp.drawnFacing, 7)
+        XCTAssertEqual(lamp.drawnScale, Lamp.scales.upperBound)
+        lamp.facing = 9
+        lamp.scale = 0.1
+        XCTAssertEqual(lamp.drawnFacing, 1)
+        XCTAssertEqual(lamp.drawnScale, Lamp.scales.lowerBound)
+    }
+
     /// The kinds are the file format, like the trait labels: added to, never
     /// renamed.
     func testTheNamesOfTheLightsAreTheFileFormat() {

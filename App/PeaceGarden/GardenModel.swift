@@ -651,6 +651,13 @@ final class GardenModel {
         persist()
     }
 
+    /// Turned or resized from the small panel a long press opens on it.
+    func changeLamp(_ id: UUID, _ edit: (inout Lamp) -> Void) {
+        touchBed()
+        garden.beds?[0].change(lamp: id, edit)
+        persist()
+    }
+
     /// Taken out of the garden by being carried off the edge of it — the
     /// physical answer, and one that needs no word on the screen.
     func removeLamp(_ id: UUID) {

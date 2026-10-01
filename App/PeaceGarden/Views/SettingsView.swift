@@ -754,7 +754,11 @@ struct SettingsView: View {
 /// inside a brighter edge, the same edge `pressable(isProminent:)` gives the
 /// prominent button, and the glyph lifts from `faint` to `ink`. The wash is
 /// chrome rather than drawing: the marks themselves stay monoline.
-private struct LightToggle: View {
+///
+/// **One setting in two places.** It is also in the garden's own tray, reading
+/// and writing the same `Chrome.daylightKey`, so changing it in either is
+/// changing it.
+struct LightToggle: View {
     let selection: GardenDaylight
     let choose: (GardenDaylight) -> Void
 

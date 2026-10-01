@@ -187,15 +187,22 @@ struct Isometric: Equatable {
     /// Fitted on both axes and the smaller taken, because a phone is tall and an
     /// iPad in Split View is not, and a plot that overflows sideways loses the
     /// corners that say what shape it is.
+    ///
+    /// `area` is the part of `size` the plot is framed in, when that is not the
+    /// whole of it: on the garden screen, the sky between the heading and the
+    /// tray, so the plot stands above the things that are put on it rather than
+    /// behind them. Marcus, 1 October.
     static func fitting(
         plotSide: Double,
         in size: CGSize,
+        area: CGRect? = nil,
         headroom: Double,
         soilDepth: Double,
         margin: Double = 8
     ) -> Isometric {
-        let width = max(size.width - margin * 2, 1)
-        let height = max(size.height - margin * 2, 1)
+        let box = area ?? CGRect(origin: .zero, size: size)
+        let width = max(box.width - margin * 2, 1)
+        let height = max(box.height - margin * 2, 1)
 
         // The plot draws as a diamond. Corner to corner it spans a whole side's
         // worth of *both* ground axes in each direction, so `x - z` runs over
@@ -221,7 +228,7 @@ struct Isometric: Equatable {
 
         return Isometric(
             pointsPerMetre: scale,
-            centre: CGPoint(x: size.width / 2, y: size.height / 2 + offset)
+            centre: CGPoint(x: box.midX, y: box.midY + offset)
         )
     }
 }

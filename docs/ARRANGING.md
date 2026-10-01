@@ -729,6 +729,97 @@ All four built 18 September:
   bank's cells are. What went was the drawing being enlarged, which made each
   quad a blurred patch.
 
+## The tray, and turning a figure
+
+Asked for by Marcus on 1 October, after living with build 3 on his phone, and
+built the same day. Each of the calls below is his.
+
+**The plot stands above the tray.** The figures and the grounds used to share
+one row along the foot of the screen, with the plot centred in the whole screen
+behind them. They are now two rows in a tray — the things that go on the garden
+above the ground they go on, which in his words makes gravitational sense — and
+the plot is framed in the sky between the heading and whatever stands at the
+foot. Opening the tray lifts the plot; shutting it lets it back down.
+
+- **The ground is moved, not drawn again.** It is drawn once, where the plot
+  would stand framed in the whole screen, and moved to where the plot actually
+  stands. A move can be animated, where a drawing arrives when it is ready: a
+  ground redrawn at its new height jumped while the plants glided up on their
+  own positions. And the terrain's cache keys a drawing by its scale and size
+  but not by where its middle is, so a plot drawn at two heights on one screen
+  would have been handed the first.
+- **Framed from the top of the heading, not its foot.** The fit leaves room
+  above the plot for the tallest plant a garden could grow, and in nearly every
+  garden that room is sky. Framed from under the heading, the plot sat low under
+  a band of empty sky. The heading stands at the leading edge and the plot's far
+  corner is in the middle, so a plant that tall still clears the words.
+
+**Shut by default, and opened by a plus.** The garden is for looking at and the
+tray is for changing it; a workbench standing open under every visit made it
+the other way round. It is not remembered between visits, because somebody who
+opened it last time was doing something, and that is done. The plus draws its
+upright in to become the minus, so it is seen as one control changing its mind
+rather than two swapped.
+
+**A row that runs off the screen says so.** Marcus asked for a double chevron
+to say there were more grounds than fitted. The row's far end fades and a small
+double chevron, drawn in the bowed hand of the other chevrons, stands in the
+fade — only while there is more that way, since a chevron at the end of a row
+that has ended points at nothing. Scrolled along, the near end gets one too.
+
+**How the plot is seen is in the tray as well.** A quarter-turn either way, the
+same step as the two-finger gesture, for anybody who has not found the gesture;
+and a mark that puts the view back — turn, zoom and pan — for anybody who has,
+and has lost their way. Beside them, day, the clock or night: Settings' own
+control on the same stored setting, so it is one setting in two places rather
+than two that disagree. It had been kept off the garden on the grounds that a
+switch on the screen makes the hour a thing you set. That was outweighed:
+Settings cannot be reached from the garden, and somebody who wants to see their
+lanterns lit is looking at the lanterns. The clock is still the default.
+
+**The turn is remembered, on the phone.** Marcus wants to choose a favourite
+side and have the garden open on it. It is kept in the phone's own settings
+rather than on the bed, because it is how somebody likes to look at their
+garden and not anything about the garden: a bed is what was arranged, and
+nothing in it should change because it was looked at from the other side. Zoom
+and pan are not kept. They are for a moment — coming in on one plant to show it
+to somebody — and a garden that opened zoomed in on yesterday's plant would be
+a garden that opened somewhere odd.
+
+### Turning a figure, and its size
+
+A long press still lifts a light to carry it. **Lifted and let go where it was,
+it opens a small panel instead.** A light picked up and put straight back down
+was not being moved, so the same press is read as asking about it, and nobody
+has to learn a second gesture. A finger wandering six points while it is held
+still counts as still. Touching anywhere else shuts the panel.
+
+- **Turning, for the figures only.** They are rendered at eight facings, so a
+  figure turns an eighth at a time. A lantern on a post and a drift of
+  fireflies look the same from every side, and a control that changes nothing
+  is worse than none.
+- **Size, from six tenths of its own to eight fifths, in fifths.** Smaller, and
+  a snail is a speck nobody can pick up; larger, and a hare stands over the
+  plants it was put out to light and becomes a statue in a garden rather than a
+  figure in one. A row of dots between the two marks shows where it is in the
+  range, so the range is seen rather than found by pressing until nothing
+  happens. The pool on the ground grows with it. The lift a light gives the
+  plants near it does not yet, because that is worked out inside `GardenLamps`,
+  which was being redrawn at the same time.
+- **`Lamp.facing` and `Lamp.scale`, both optional**, the way `Bed.lamps` and
+  `Bed.world` were added, so nothing migrates and a light written before them
+  decodes as it was. A light nobody has turned stores no facing and faces the
+  way its identifier has always dealt it: the figures take their facing from the
+  seed's remainder by eight, so a turned figure is handed a seed ending in its
+  facing, and the rest of the seed is still its own. Put back to its own size,
+  the scale is cleared, so a light tried larger and returned is written exactly
+  as before.
+
+**Marks, not words.** Every mark in the tray and the panel is drawn in the
+garden's own monoline hand and labelled for VoiceOver by a system symbol's own
+name for the same action, in the phone's own language. None of it added a
+string to translate.
+
 ## The light is rebuilt, not filtered
 
 `StageBackdrop` is a studio, on purpose: one hard key, a cold rim, and an ambient
@@ -823,7 +914,15 @@ Two things it turns on, both in `GardenVisits`:
   everywhere else — were considered and set aside: it is closer to gardening, and
   it raises where new plants land, whether a plant can be in two beds at once,
   and what an empty bed says to somebody who has not understood the rule.
-- **Night falls by the clock, with an override** in Seed.
+- **Night falls by the clock, with an override** in Settings, and since 1
+  October in the garden's own tray as well — one setting in two places.
+- **The tray at the foot of the garden opens shut**, and the plot is framed
+  above it: things to put on the garden above the grounds, then how the plot
+  is seen. Settled 1 October, by Marcus. The plot's turn is kept on the phone,
+  not on the bed.
+- **A light can be turned and resized**, from a panel a long press opens when
+  the light is let go where it was lifted. `Lamp.facing` and `Lamp.scale` are
+  optional, so nothing migrates.
 - **Templates are pure functions**, and a bed stores only what was moved by hand.
 - **`beds` is optional on `Garden`**, so nothing migrates and no version moves.
 - **The ground is chosen, and the choice lives on the bed.** Settled 18

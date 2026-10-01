@@ -34,7 +34,10 @@ struct PlotView: View {
     /// Quarter-turns of the plot. Stepped rather than free, because isometric
     /// has four natural views and between them the ground's own axes stop being
     /// aligned to the screen, which is what makes it legible.
-    @State private var turn = 0
+    ///
+    /// Kept between visits, so a favourite side is the side the garden opens
+    /// on: `Chrome.plotTurnKey` says why on the phone and not on the bed.
+    @AppStorage(Chrome.plotTurnKey) private var turn = 0
     /// How far the plot is turned while two fingers are still on it. Shown as a
     /// slight lean so the gesture is felt, then snapped to a quarter on release.
     @State private var turning: Angle = .zero
@@ -56,6 +59,11 @@ struct PlotView: View {
 
     /// A light in hand, the same way.
     @State private var heldLamp: Held?
+    /// Whether the light in hand has gone anywhere yet. One lifted and let go
+    /// where it was is being asked about rather than moved, and opens its panel.
+    @State private var lampTravelled = false
+    /// The light whose panel is open.
+    @State private var tending: UUID?
     /// Counted rather than flagged, so every lift is its own tap of feedback.
     @State private var lifts = 0
 
@@ -67,6 +75,14 @@ struct PlotView: View {
     /// outside the `GeometryReader`: where a finger is on the glass, and how
     /// far the plot can pan.
     @State private var screen: CGSize = .zero
+
+    // MARK: The tray
+
+    /// Whether the tray at the foot is open. Shut every time the garden opens.
+    @State private var trayOpen = false
+    /// Where the foot of the screen begins — the asking line, the tray and its
+    /// plus — so the plot is framed in the sky above it.
+    @State private var footFrame: CGRect = .null
 
     private var visits: GardenVisits { .shared }
 
@@ -129,13 +145,21 @@ struct PlotView: View {
                 // the cut below the near one, so the camera has to leave room
                 // for the ground as well as for what stands on it.
                 let relief = GardenWorlds.shared.relief(world: world, plotSide: side)
+                let glass = proxy.frame(in: .global)
+                let area = framing(in: proxy.size, glass: glass)
                 var view = Isometric.fitting(
                     plotSide: side,
                     in: proxy.size,
+                    area: area,
                     headroom: GardenSprites.tallestExpected + relief.high,
                     soilDepth: GardenGround.rimDepth - relief.low
                 )
                 let _ = (view.turn = turn)
+                // How far the frame has moved the plot from the middle of the
+                // screen, which is where its ground is drawn: see
+                // `GardenGroundView.shift`.
+                let shift = CGSize(width: (area?.midX ?? proxy.size.width / 2) - proxy.size.width / 2,
+                                   height: (area?.midY ?? proxy.size.height / 2) - proxy.size.height / 2)
 
                 let lamps = model.garden.arrangements.first?.allLamps ?? []
                 let glow = GardenLamps.glow(in: light)
@@ -145,7 +169,8 @@ struct PlotView: View {
                               keepClear: [headingFrame, closeFrame, askingFrame])
 
                     ZStack(alignment: .topLeading) {
-                        plot(world: world, side: side, in: view, size: proxy.size, light: light)
+                        plot(world: world, side: side, in: view, shift: shift,
+                             size: proxy.size, light: light)
 
                         if isLongWalk {
                             MownPath(view: view, light: light, plotSide: side) { spot in
@@ -188,7 +213,9 @@ struct PlotView: View {
                     // Over the plot and under the words, because a thread joins
                     // one to the other and has to be in both their spaces.
                     threads(world: world, side: side, in: view,
-                            screen: proxy.size, glass: proxy.frame(in: .global))
+                            screen: proxy.size, glass: glass)
+
+                    panel(lamps: lamps, world: world, side: side, in: view, screen: proxy.size)
                 }
                 .frame(width: proxy.size.width, height: proxy.size.height)
                 .onAppear { screen = proxy.size }
@@ -206,8 +233,16 @@ struct PlotView: View {
                     .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { headingFrame = $0 }
                 if model.hybrids.isEmpty { empty }
                 Spacer(minLength: 0)
-                asking
-                grounds
+                foot
+                    .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { frame in
+                        // The first measurement places the plot; every one
+                        // after it moves the plot, and is seen to.
+                        if footFrame.isNull {
+                            footFrame = frame
+                        } else {
+                            withAnimation(.smooth(duration: 0.4)) { footFrame = frame }
+                        }
+                    }
             }
             .padding(.horizontal, 26)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -264,7 +299,7 @@ struct PlotView: View {
             .onEnded { value in
                 let degrees = value.rotation.degrees
                 withAnimation(.easeOut(duration: 0.2)) { turning = .zero }
-                if degrees > 28 { turn -= 1 } else if degrees < -28 { turn += 1 }
+                if degrees > 28 { turnPlot(by: -1) } else if degrees < -28 { turnPlot(by: 1) }
             }
 
         return pinch.simultaneously(with: rotate)
@@ -293,6 +328,50 @@ struct PlotView: View {
         let reachY = size.height * (zoom - 1) / 2
         return CGSize(width: min(max(offset.width, -reachX), reachX),
                       height: min(max(offset.height, -reachY), reachY))
+    }
+
+    /// Where the plot is framed: the sky between the heading and whatever stands
+    /// at the foot of the screen, in the plot's own space.
+    ///
+    /// **Above the tray, not behind it** (Marcus, 1 October). The figures to
+    /// put out and the grounds to stand on are below the plot, which is where
+    /// they belong — the things that go on the garden above the earth it
+    /// stands in. So the plot rises when the tray opens and comes back down
+    /// when it shuts. Until both ends have been measured, the whole screen.
+    ///
+    /// **From the top of the heading, not the foot of it.** The fit keeps
+    /// room above the plot for the tallest plant a garden could grow, and in
+    /// nearly every garden that room is sky. Measured from under the heading,
+    /// the plot sat low with a band of empty sky over it; the heading stands
+    /// at the leading edge and the plot's far corner is in the middle, so the
+    /// tallest plant there still clears the words.
+    private func framing(in size: CGSize, glass: CGRect) -> CGRect? {
+        guard !headingFrame.isNull, !footFrame.isNull else { return nil }
+        let top = headingFrame.minY - glass.minY
+        let bottom = footFrame.minY - glass.minY
+        guard bottom - top > 160 else { return nil }
+        return CGRect(x: 0, y: top, width: size.width, height: bottom - top)
+    }
+
+    /// A quarter-turn, from two fingers or from the tray: one step, one tap of
+    /// feedback. Positive is anticlockwise as seen.
+    private func turnPlot(by quarters: Int) {
+        tending = nil
+        turn = ((turn + quarters) % 4 + 4) % 4
+    }
+
+    private var viewIsMoved: Bool {
+        turn != 0 || zoom > 1.001 || pan != .zero
+    }
+
+    /// The plot as it first opened: from its first side, all of it on screen.
+    private func resetView() {
+        tending = nil
+        turn = 0
+        withAnimation(.easeInOut(duration: 0.35)) {
+            zoom = 1
+            pan = .zero
+        }
     }
 
     // MARK: Zoom, for what it is for
@@ -491,10 +570,12 @@ struct PlotView: View {
     // MARK: The ground
 
     /// The ground, drawn once and kept.
-    private func plot(world: Int, side: Double, in view: Isometric, size: CGSize,
+    private func plot(world: Int, side: Double, in view: Isometric, shift: CGSize, size: CGSize,
                       light: GardenGround.Light) -> some View {
-        GardenGroundView(world: world, plotSide: side, view: view, size: size, light: light,
-                         zoom: zoom, pan: pan)
+        var drawn = view
+        drawn.centre = CGPoint(x: view.centre.x - shift.width, y: view.centre.y - shift.height)
+        return GardenGroundView(world: world, plotSide: side, view: drawn, shift: shift,
+                                size: size, light: light, zoom: zoom, pan: pan)
             .allowsHitTesting(false)
     }
 
@@ -597,7 +678,9 @@ struct PlotView: View {
             let colour = GardenLamps.swiftUIColour(GardenLamps.colour(of: kind))
             let resting = view.point(lamp.spot, y: standsAt(lamp.spot, world: world, side: side))
             let centre = heldLamp?.id == lamp.id ? (heldLamp?.foot ?? resting) : resting
-            let axes = view.ellipse(radius: GardenLamps.reach(of: kind) * 0.72)
+            // A larger light throws a larger pool: the pool is the light, as
+            // far as the ground can tell.
+            let axes = view.ellipse(radius: GardenLamps.reach(of: kind) * 0.72 * lamp.drawnScale)
 
             // **Elliptical, not radial.** A pool lies flat on the ground, so it
             // is drawn as an ellipse; a circular gradient inside a flattened
@@ -622,13 +705,16 @@ struct PlotView: View {
     private func lamp(_ lamp: Lamp, world: Int, side: Double, in view: Isometric,
                       glow: Double) -> some View {
         if let kind = lamp.known {
-            let metre = view.pointsPerMetre
+            // Its size is a size in the garden, so it is drawn at more or fewer
+            // points to the metre and everything about it — the frame, the part
+            // that answers a finger — follows.
+            let metre = view.pointsPerMetre * lamp.drawnScale
             let resting = view.point(lamp.spot, y: standsAt(lamp.spot, world: world, side: side))
             let inHand = heldLamp?.id == lamp.id
+            let lifted = inHand || tending == lamp.id
             let foot = inHand ? (heldLamp?.foot ?? resting) : resting
-            let seed = Int(lamp.id.uuid.0) << 8 | Int(lamp.id.uuid.1)
 
-            LampFigure(kind: kind, glow: glow, pointsPerMetre: metre, seed: seed,
+            LampFigure(kind: kind, glow: glow, pointsPerMetre: metre, seed: Self.seed(of: lamp),
                        hour: hour, turn: turn)
                 .allowsHitTesting(false)
                 // Only the light itself answers a finger, not the whole metre of
@@ -641,11 +727,23 @@ struct PlotView: View {
                         .contentShape(Rectangle())
                         .gesture(carrying(lamp, from: resting, world: world, side: side, in: view))
                 }
-                .scaleEffect(inHand ? 1.06 : 1, anchor: .bottom)
-                .offset(y: inHand ? -8 : 0)
+                .scaleEffect(lifted ? 1.06 : 1, anchor: .bottom)
+                .offset(y: lifted ? -8 : 0)
                 .opacity(inHand && Isometric.isOff(view.ground(at: foot), plotSide: side) ? 0.4 : 1)
                 .position(x: foot.x, y: foot.y - 0.6 * metre)
         }
+    }
+
+    /// The seed a light is drawn from, with its facing in the low three bits.
+    ///
+    /// **A figure has always faced by its seed** — `GardenCreatures.facing` is
+    /// the seed's remainder by eight — so turning one is a matter of handing it
+    /// a seed that ends in the facing chosen. The rest of the seed is the
+    /// light's own, so a drift of fireflies keeps its drift. A light nobody has
+    /// turned gets back exactly the seed it always had.
+    static func seed(of lamp: Lamp) -> Int {
+        let dealt = Int(lamp.id.uuid.0) << 8 | Int(lamp.id.uuid.1)
+        return dealt & ~7 | lamp.drawnFacing
     }
 
     private func carrying(_ lamp: Lamp, from resting: CGPoint, world: Int, side: Double,
@@ -655,7 +753,13 @@ struct PlotView: View {
             .onChanged { value in
                 guard case .second(true, let drag) = value else { return }
                 let travel = drag?.translation ?? .zero
-                if heldLamp?.id != lamp.id { lifts += 1 }
+                if heldLamp?.id != lamp.id {
+                    lifts += 1
+                    lampTravelled = false
+                    tending = nil
+                }
+                // Further than a finger wanders while it is held still.
+                if hypot(travel.width, travel.height) > 6 { lampTravelled = true }
                 heldLamp = Held(id: lamp.id, foot: CGPoint(x: resting.x + travel.width,
                                                            y: resting.y + travel.height))
                 if let finger = drag?.location { nudge(finger: finger) }
@@ -664,6 +768,14 @@ struct PlotView: View {
                 edgePush = .zero
                 guard case .second(true, let drag) = value else {
                     heldLamp = nil
+                    return
+                }
+                // Lifted and let go where it was: not a move, a question.
+                guard lampTravelled else {
+                    withAnimation(.spring(duration: 0.25)) {
+                        heldLamp = nil
+                        tending = lamp.id
+                    }
                     return
                 }
                 let travel = drag?.translation ?? .zero
@@ -949,12 +1061,6 @@ struct PlotView: View {
         selected = next
     }
 
-    /// The grounds, picked the way you pick a plant.
-    ///
-    /// **Nothing here is named.** A named world is forty-two translations, and
-    /// `docs/WEBSITE.md` has already recorded the ten area names becoming 420
-    /// commissions at a multiplier that is now forty-two. Unnamed, the fiftieth
-    /// world costs a render.
     /// How much bigger a figure is drawn in the row than on the plot. A lantern
     /// fills its button at forty points a metre; a snail at that scale is eight
     /// points of nothing.
@@ -975,40 +1081,88 @@ struct PlotView: View {
         return 0.6 * figure.lift * figure.metres * 40 * trayScale(of: kind)
     }
 
+    /// The foot of the screen: the asking line, the tray when it is open, and
+    /// the plus that opens it.
+    private var foot: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            asking
+            if trayOpen {
+                tray
+                    .padding(.bottom, 10)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+            TrayToggle(isOpen: trayOpen) {
+                tending = nil
+                withAnimation(.smooth(duration: 0.4)) { trayOpen.toggle() }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.bottom, 12)
+        }
+    }
+
+    /// What the tray holds, in the order Marcus asked for on 1 October: **the
+    /// things that go on the garden above the ground they go on**, which is the
+    /// order they stand in on the plot as well. Then how the plot is seen.
+    private var tray: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            figures
+            grounds
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 0) {
+                    seeing
+                    Spacer(minLength: 12)
+                    daylight
+                }
+                VStack(alignment: .leading, spacing: 8) {
+                    seeing
+                    daylight
+                }
+            }
+        }
+    }
+
+    /// The lights to put out, unnamed like the worlds: each is drawn as itself
+    /// and added where it can be seen, then carried to where it is wanted.
+    private var figures: some View {
+        ContinuingRow {
+            HStack(spacing: 10) {
+                ForEach(LampKind.allCases, id: \.self) { kind in
+                    Button {
+                        withAnimation(.spring(duration: 0.3)) {
+                            model.addLamp(kind, at: freshSpot(side: plotSide))
+                        }
+                    } label: {
+                        // The figures a little below full glow: at full they
+                        // are a white shape with no form in it.
+                        LampFigure(kind: kind, glow: GardenCreatures.isCreature(kind) ? 0.7 : 1,
+                                   pointsPerMetre: 40 * trayScale(of: kind),
+                                   // The fox side-on: facing out of the row it
+                                   // is a ball with a face.
+                                   seed: kind == .fox ? 1 : 7)
+                            .offset(y: -trayLift(of: kind))
+                            .frame(width: 40, height: 48, alignment: .bottom)
+                            .clipped()
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.vertical, 2)
+        }
+    }
+
+    /// The grounds, picked the way you pick a plant.
+    ///
+    /// **Nothing here is named.** A named world is forty-two translations, and
+    /// `docs/WEBSITE.md` has already recorded the ten area names becoming 420
+    /// commissions at a multiplier that is now forty-two. Unnamed, the fiftieth
+    /// world costs a render.
     @ViewBuilder
     private var grounds: some View {
         if GardenWorlds.shared.isLoaded {
             let chosen = GardenWorlds.shared.resolve(model.garden.arrangements.first?.world)
 
-            ScrollView(.horizontal, showsIndicators: false) {
+            ContinuingRow {
                 HStack(spacing: 10) {
-                    // The lights to put out, first, and unnamed like the worlds:
-                    // each is drawn as itself and added where it can be seen,
-                    // then carried to where it is wanted.
-                    ForEach(LampKind.allCases, id: \.self) { kind in
-                        Button {
-                            withAnimation(.spring(duration: 0.3)) {
-                                model.addLamp(kind, at: freshSpot(side: plotSide))
-                            }
-                        } label: {
-                            // The figures a little below full glow: at full
-                            // they are a white shape with no form in it.
-                            LampFigure(kind: kind, glow: GardenCreatures.isCreature(kind) ? 0.7 : 1,
-                                       pointsPerMetre: 40 * trayScale(of: kind),
-                                       // The fox side-on: facing out of the
-                                       // row it is a ball with a face.
-                                       seed: kind == .fox ? 1 : 7)
-                                .offset(y: -trayLift(of: kind))
-                                .frame(width: 40, height: 48, alignment: .bottom)
-                                .clipped()
-                        }
-                        .buttonStyle(.plain)
-                    }
-
-                    Hairline()
-                        .frame(width: 1, height: 32)
-                        .opacity(0.5)
-
                     ForEach(0..<GardenWorlds.shared.count, id: \.self) { world in
                         Button {
                             model.choose(world: world)
@@ -1020,9 +1174,75 @@ struct PlotView: View {
                         .buttonStyle(.plain)
                     }
                 }
-                .padding(.vertical, 6)
+                .padding(.vertical, 4)
             }
-            .padding(.bottom, 26)
+        }
+    }
+
+    /// Turning the plot and putting the view back, for anybody who has not
+    /// found the two-finger turn — or who has, and has lost their way.
+    ///
+    /// Stepped exactly as the gesture is, a quarter at a time, for the reason
+    /// `turn` gives.
+    private var seeing: some View {
+        HStack(spacing: 8) {
+            TrayMark(glyph: TurnGlyph(clockwise: false, aroundPlot: true), says: "rotate.left") {
+                turnPlot(by: 1)
+            }
+            TrayMark(glyph: TurnGlyph(clockwise: true, aroundPlot: true), says: "rotate.right") {
+                turnPlot(by: -1)
+            }
+            TrayMark(glyph: FramedPlotGlyph(), says: "arrow.counterclockwise",
+                     isEnabled: viewIsMoved) {
+                resetView()
+            }
+        }
+    }
+
+    /// Day, the clock, or night: Settings' own control, on the same setting.
+    private var daylight: some View {
+        LightToggle(selection: GardenDaylight(rawValue: daylightRaw) ?? .byTheClock) {
+            daylightRaw = $0.rawValue
+        }
+    }
+
+    // MARK: A light's panel
+
+    /// The small panel over a light somebody has held and let go, and the
+    /// glass round it that shuts it when anything else is touched.
+    ///
+    /// Placed over the light where it stands on the glass — zoom, pan and all —
+    /// and kept on the screen, below the light rather than above it if above
+    /// would be under the heading.
+    @ViewBuilder
+    private func panel(lamps: [Lamp], world: Int, side: Double, in view: Isometric,
+                       screen size: CGSize) -> some View {
+        if let id = tending, let lamp = lamps.first(where: { $0.id == id }), let kind = lamp.known {
+            let metre = view.pointsPerMetre * lamp.drawnScale
+            let footAt = view.point(lamp.spot, y: standsAt(lamp.spot, world: world, side: side))
+            let top = onTheGlass(CGPoint(x: footAt.x,
+                                         y: footAt.y - GardenLamps.grip(of: kind).height * metre - 8),
+                                 in: size)
+            let bottom = onTheGlass(footAt, in: size)
+            let above = top.y - 30
+            let roomAbove = headingFrame.isNull ? 120 : headingFrame.maxY + 30
+
+            ZStack(alignment: .topLeading) {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        withAnimation(.easeOut(duration: 0.2)) { tending = nil }
+                    }
+
+                LampPanel(lamp: lamp) { edit in
+                    withAnimation(.spring(duration: 0.3)) { model.changeLamp(lamp.id, edit) }
+                }
+                .fixedSize()
+                .position(x: min(max(top.x, 130), size.width - 130),
+                          y: above > roomAbove ? above : bottom.y + 34)
+                .transition(.opacity)
+            }
+            .frame(width: size.width, height: size.height)
         }
     }
 
@@ -1220,7 +1440,19 @@ private struct GardenPlantSprite: View {
 private struct GardenGroundView: View {
     let world: Int
     let plotSide: Double
+    /// The view the ground is drawn in: the plot as it would stand framed in
+    /// the whole screen.
     let view: Isometric
+    /// How far the plot actually stands from there, now that it is framed above
+    /// the tray. The drawing is moved by this rather than drawn again.
+    ///
+    /// **Moved, because a move can be seen happening.** Opening the tray lifts
+    /// the plot, and the plants rise with it on their own `position`s; a ground
+    /// drawn again where it had arrived would jump while they glided. It is
+    /// also what the terrain's cache expects — a drawing is keyed by its scale
+    /// and size and not by where its middle is, so a plot drawn at two places
+    /// on one screen would be handed the first.
+    let shift: CGSize
     let size: CGSize
     let light: GardenGround.Light
     /// The zoom and pan once they have settled — not while fingers are down.
@@ -1246,8 +1478,9 @@ private struct GardenGroundView: View {
         guard zoom > 1.3 else { return nil }
         let middle = CGPoint(x: size.width / 2, y: size.height / 2)
         let width = size.width / zoom * 1.2, height = size.height / zoom * 1.2
-        let x = middle.x - pan.width / zoom - width / 2
-        let y = middle.y - pan.height / zoom - height / 2
+        // In the drawing's own space, which stands `shift` back from the plot's.
+        let x = middle.x - pan.width / zoom - width / 2 - shift.width
+        let y = middle.y - pan.height / zoom - height / 2 - shift.height
         let grain: CGFloat = 16
         return CGRect(x: (x / grain).rounded(.down) * grain, y: (y / grain).rounded(.down) * grain,
                       width: (width / grain).rounded(.up) * grain,
@@ -1267,7 +1500,8 @@ private struct GardenGroundView: View {
             }
         }
         .frame(width: size.width, height: size.height, alignment: .topLeading)
-        .task(id: "\(baseKey)-t\(view.turn)-\(seen.map { "\($0)" } ?? "far")-\(sharpness)") {
+        .offset(shift)
+        .task(id: "\(baseKey)-\(seen.map { "\($0)" } ?? "far")-\(sharpness)") {
             guard let region = seen else {
                 close = nil
                 return
@@ -1285,8 +1519,11 @@ private struct GardenGroundView: View {
         }
     }
 
+    /// The turn is in it, and the scale: the plot turned from the tray, or
+    /// framed smaller above it on a wide screen, is a different drawing.
     private var baseKey: String {
         "\(world)-\(Int(plotSide * 100))-\(Int(size.width))x\(Int(size.height))"
+            + "-t\(((view.turn % 4) + 4) % 4)-\(Int(view.pointsPerMetre * 10))"
             + "-\(Int(light.strength * 1000))-\(Int(light.direction.x * 100))"
     }
 

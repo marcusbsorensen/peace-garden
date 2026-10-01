@@ -128,6 +128,15 @@ enum Chrome {
     /// Whether the garden follows the clock. See `GardenDaylight`.
     static let daylightKey = "garden.daylight.v1"
 
+    /// Which of its four sides the garden's plot is seen from, in quarter-turns.
+    ///
+    /// **Kept on the phone rather than on the bed.** It is how somebody likes to
+    /// look at their garden, not anything about the garden: a bed is what was
+    /// arranged, and nothing in it should change because it was looked at from
+    /// the other side. Kept at all because Marcus asked, 1 October, for a
+    /// favourite side to come back the next time the garden opens.
+    static let plotTurnKey = "garden.turn.v1"
+
     static let fadeIn = Animation.easeInOut(duration: 0.55)
     static let controlsIdleTimeout: Duration = .seconds(6)
 }
@@ -226,9 +235,12 @@ enum StageAppearance: String, CaseIterable, Sendable {
 ///
 /// The override exists because this app is used at two in the morning by people
 /// who will want to see their garden in daylight, and refusing them that would
-/// be purity at somebody else's expense. It is a standing choice rather than a
-/// control on the garden itself, for the same reason: a switch on the screen
-/// would make the hour a thing you set.
+/// be purity at somebody else's expense. It is a standing choice, and for a
+/// while it lived only in Settings, on the grounds that a switch on the garden
+/// would make the hour a thing you set. **Since 1 October it is in the garden's
+/// tray as well** (Marcus): Settings is out of reach from the garden, and the
+/// person who wants to see their lanterns lit is looking at the lanterns. The
+/// clock is still the default, and the tray opens shut.
 ///
 /// The cases are declared in the order Settings lays them out — day, the clock,
 /// night — so the control is `allCases` and nothing has to keep a second list

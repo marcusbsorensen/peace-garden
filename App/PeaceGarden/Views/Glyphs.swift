@@ -453,3 +453,162 @@ struct ChevronGlyph: Shape {
     }
 }
 
+// MARK: - The garden's tray
+
+/// The tray at the foot of the garden: a plus while it is shut, a minus while
+/// it is open.
+///
+/// **One mark that loses a stroke**, rather than two marks swapped, so opening
+/// the tray is seen as the same control changing its mind — the upright draws
+/// itself in to nothing and the bar is left. Each stroke bows very slightly, the
+/// way `ChevronGlyph` does, so it is the hand of this garden and not the plus
+/// on a calculator.
+struct TrayGlyph: Shape {
+    /// `0` is shut — a plus — and `1` is open, a minus.
+    var openness: Double
+
+    var animatableData: Double {
+        get { openness }
+        set { openness = newValue }
+    }
+
+    func path(in rect: CGRect) -> Path {
+        let box = markBox(rect, 0.82)
+        func at(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+            CGPoint(x: box.minX + box.width * x, y: box.minY + box.height * y)
+        }
+        var path = Path()
+        path.move(to: at(0.04, 0.50))
+        path.addQuadCurve(to: at(0.96, 0.50), control: at(0.50, 0.46))
+
+        let reach = 0.46 * (1 - openness)
+        if reach > 0.01 {
+            path.move(to: at(0.50, 0.50 - reach))
+            path.addQuadCurve(to: at(0.50, 0.50 + reach), control: at(0.54, 0.50))
+        }
+        return path
+    }
+}
+
+/// There is more of this row, this way.
+///
+/// **Marcus's double chevron**, 1 October: a row of grounds that ran off the
+/// edge of the screen did not say there were more. Two of `ChevronGlyph`'s
+/// bowed chevrons side by side, so it reads as a direction of travel rather
+/// than as a single mark that could be a button.
+struct DoubleChevronGlyph: Shape {
+    var towardsTrailing = true
+
+    func path(in rect: CGRect) -> Path {
+        let width = rect.width * 0.58
+        let first = CGRect(x: rect.minX, y: rect.minY, width: width, height: rect.height)
+        let second = first.offsetBy(dx: rect.width - width, dy: 0)
+        var path = ChevronGlyph(towardsTrailing: towardsTrailing).path(in: first)
+        path.addPath(ChevronGlyph(towardsTrailing: towardsTrailing).path(in: second))
+        return path
+    }
+}
+
+/// A turn, one way or the other: three quarters of a circle and the head of the
+/// way it is going.
+///
+/// `aroundPlot` puts the plot itself in the middle of it — a small diamond, the
+/// shape the plot is seen as — so turning the whole garden and turning one
+/// figure in it are two marks rather than one mark in two places.
+struct TurnGlyph: Shape {
+    var clockwise = true
+    var aroundPlot = false
+
+    func path(in rect: CGRect) -> Path {
+        let box = markBox(rect, 1)
+        let centre = CGPoint(x: box.midX, y: box.midY)
+        let radius = box.width * 0.40
+        func mirrored(_ point: CGPoint) -> CGPoint {
+            clockwise ? point : CGPoint(x: 2 * centre.x - point.x, y: point.y)
+        }
+
+        // Screen angles grow clockwise. The gap is at the top: the stroke runs
+        // from just right of it, round the bottom, to just left of it, and the
+        // head points back across the gap the way it is going.
+        let start = Double.pi * 1.70, end = Double.pi * 3.30
+        let steps = 32
+        var path = Path()
+        for step in 0...steps {
+            let angle = start + (end - start) * Double(step) / Double(steps)
+            let point = mirrored(CGPoint(x: centre.x + radius * cos(angle),
+                                         y: centre.y + radius * sin(angle)))
+            if step == 0 { path.move(to: point) } else { path.addLine(to: point) }
+        }
+
+        // The head: two short strokes back from the tip, either side of the
+        // way it is travelling.
+        let tip = CGPoint(x: centre.x + radius * cos(end), y: centre.y + radius * sin(end))
+        let along = CGVector(dx: -sin(end), dy: cos(end))
+        let out = CGVector(dx: cos(end), dy: sin(end))
+        let back = radius * 0.55, spread = radius * 0.42
+        for side in [-1.0, 1.0] {
+            path.move(to: mirrored(CGPoint(x: tip.x - along.dx * back + out.dx * spread * side,
+                                           y: tip.y - along.dy * back + out.dy * spread * side)))
+            path.addLine(to: mirrored(tip))
+        }
+
+        if aroundPlot {
+            let w = radius * 0.62, h = w * 0.58
+            path.move(to: CGPoint(x: centre.x, y: centre.y - h))
+            path.addLine(to: CGPoint(x: centre.x + w, y: centre.y))
+            path.addLine(to: CGPoint(x: centre.x, y: centre.y + h))
+            path.addLine(to: CGPoint(x: centre.x - w, y: centre.y))
+            path.closeSubpath()
+        }
+        return path
+    }
+}
+
+/// The plot as it was first seen: its diamond, in the middle of four corners
+/// that frame it.
+///
+/// For putting the view back — turn, zoom and pan — after it has been moved.
+/// A frame round the thing is what *fit it to the screen* has looked like
+/// since viewfinders, and it says nothing about undoing anything else.
+struct FramedPlotGlyph: Shape {
+    func path(in rect: CGRect) -> Path {
+        let box = markBox(rect, 0.92)
+        func at(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+            CGPoint(x: box.minX + box.width * x, y: box.minY + box.height * y)
+        }
+        var path = Path()
+        path.move(to: at(0.50, 0.30))
+        path.addLine(to: at(0.80, 0.50))
+        path.addLine(to: at(0.50, 0.70))
+        path.addLine(to: at(0.20, 0.50))
+        path.closeSubpath()
+
+        let arm: CGFloat = 0.20
+        let corners: [(CGFloat, CGFloat)] = [(0, 0), (1, 0), (1, 1), (0, 1)]
+        for (x, y) in corners {
+            let dx: CGFloat = x == 0 ? arm : -arm
+            let dy: CGFloat = y == 0 ? arm : -arm
+            path.move(to: at(x + dx, y))
+            path.addLine(to: at(x, y))
+            path.addLine(to: at(x, y + dy))
+        }
+        return path
+    }
+}
+
+/// Smaller or larger: a ring, small or large in its frame.
+///
+/// Two rings side by side are the comparison itself, which is all a size
+/// control has to say. Not a plus and a minus, which on this screen already
+/// open and shut the tray.
+struct SizeGlyph: Shape {
+    var larger = true
+
+    func path(in rect: CGRect) -> Path {
+        let centre = CGPoint(x: rect.midX, y: rect.midY)
+        let radius = min(rect.width, rect.height) / 2 * (larger ? 0.86 : 0.40)
+        return Path(ellipseIn: CGRect(x: centre.x - radius, y: centre.y - radius,
+                                      width: radius * 2, height: radius * 2))
+    }
+}
+
