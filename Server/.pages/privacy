@@ -12,11 +12,13 @@
   network request of the app's own, and the page said the same; the web
   garden made both untrue, and the page was rewritten to Marcus's wording.
 
-  Seven paragraphs, in the order a reader meets the things they describe: the
-  phone, the meeting, the storage, the link, the web garden, the asking, and
-  the website last. The keys are numbered in the order they were made, so the
-  page reads 1, 2, 3, 4, 6, 7, 5. `strings.js` names, beside each key, the code
-  its sentence is true of.
+  Eight paragraphs, in the order a reader meets the things they describe: the
+  phone, the meeting, the storage, the link, the web garden, the asking,
+  releasing a plant, and the website last. The keys are numbered in the order
+  they were made, so the page reads 1, 2, 3, 4, 6, 7, 8, 5. `strings.js` names,
+  beside each key, the code its sentence is true of. The eighth was added on
+  1 October 2026, the day release began to send a plant to the Wild Fields,
+  and is English in every language until it is commissioned.
 
   Written in the reader's own language like everything else here. Marcus's call,
   6 September 2026: the reader of this page was handed a link by somebody they
@@ -83,6 +85,7 @@
       <p class="body" data-s="privacy4"></p>
       <p class="body" data-s="privacy6"></p>
       <p class="body" data-s="privacy7"></p>
+      <p class="body" data-s="privacy8"></p>
       <p class="body" data-s="privacy5"></p>
     </main>
 

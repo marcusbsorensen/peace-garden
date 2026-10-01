@@ -133,6 +133,9 @@
           <a class="bar-glyph" href="/meanings" data-s-label="meaningsTitle"><svg class="bar-glyph__mark" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 5.2C8.2 3.9 5.4 3.5 2.75 3.9V15.4C5.4 15 8.2 15.4 10 16.7C11.8 15.4 14.6 15 17.25 15.4V3.9C14.6 3.5 11.8 3.9 10 5.2ZM10 5.2V16.7" vector-effect="non-scaling-stroke" /></svg></a>
         </header>
         <nav class="front-cards" id="cards" aria-labelledby="cards-title"></nav>
+        <!-- And the one place that is not one of the ten: where a released
+             plant goes. Under the cards, as the hub has it beside the map. -->
+        <p class="garden-foot"><a class="quiet-button" href="/wild" data-s="wildTitle"></a></p>
       </section>
 
       <!--

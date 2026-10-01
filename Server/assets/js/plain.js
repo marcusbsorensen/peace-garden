@@ -1,8 +1,9 @@
 // A page that is only words.
 //
-// `/download`, `/wild` and `/privacy` have no seed, no plant and no garden —
+// `/download` and `/privacy` have no seed, no plant and no garden —
 // they are prose and a language chooser, which is the smallest thing this site
-// does. Every page that does more (`/`, `/meanings`, the areas) opens with this
+// does. Every page that does more (`/`, `/meanings`, the areas, `/wild` since
+// it became a field on 1 October 2026) opens with this
 // too, and says the rest in its own script by way of `whenSettled`.
 // `page.js` and `walk.js` both open by settling four facts about a language and
 // then get on with their real work; this module is that opening and nothing

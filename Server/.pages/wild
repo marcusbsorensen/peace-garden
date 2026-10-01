@@ -2,56 +2,63 @@
 <!--
   The Wild Fields.
 
-  **The page exists; the thing it describes does not run.** `PlantDetailView`
-  already has *Release to the Wild Fields* — a one-second hold that sends a
-  plant out of somebody's garden — so the name is the app's own rather than
-  invented here. What this page describes beyond that is the proposal
-  docs/PHASES.md calls The Winds: a seed set down somewhere and left to wait for
-  another.
+  **Where a plant goes when it is released**, since 1 October 2026. Until then
+  this page said `notYet` and described something else — a seed set down to
+  wait for another, which is The Winds (docs/PHASES.md) and the opposite of
+  release — while the app's Release mark deleted the plant and sent it
+  nowhere. Marcus released a plant believing it went somewhere, and decided
+  that day to build the place it was going.
 
-  **Nothing behind it is built, and that is load-bearing rather than a caveat.**
-  `/privacy` says today, truthfully, that no server holds a copy of what you
-  grow. A Wild Field is a server holding seeds. The two cannot both be true, and
-  the order matters: the privacy page has to be rewritten *before* this opens,
-  not after. Until then this page says `notYet`, which is the one sentence that
-  keeps the site from contradicting itself. Do not remove it and open the
-  feature in the same change.
+  **The opposite of the ten areas, and drawn like it** (docs/WEB-GARDENS.md
+  §*The Wild Fields*). Nobody arranges it: a released plant stands where its
+  own seed puts it. It is one ground with no edge rather than plots, walked by
+  dragging rather than by a map, and the window opens over somewhere a plant
+  stands rather than over a corner. No names, no senders, no dates — the plot
+  service keeps none (`Server/.api/WildStore.php`) — and no lamps: it is lit by
+  the Milky Way and by fireflies that are simply there, which is why this page
+  is night whatever the hour.
+
+  **The plants are grown here, in the browser**, from the same SeedCore that
+  grows them on the phone, as on every area page; the field and its night are
+  `wildfields.js`, the page is `wildpage.js`.
+
+  `noindex`, for the reason `/g` gives. Static, like the rest: no analytics,
+  no font CDN, no third-party anything.
 -->
-<html lang="en">
+<!-- `data-module` is stamped by index.php: the module's address with this
+     build's mark on it, so a new one is a new address. -->
+<html lang="en" data-module="PG_MODULE">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Peace Garden — the Wild Fields</title>
-    <meta name="description" content="Somewhere to send a seed when there is nobody in the room." />
-    <meta name="color-scheme" content="dark light" />
+    <meta name="description" content="Where a plant goes when it is released: a field nobody arranges, lit by the Milky Way and by fireflies." />
+    <meta name="color-scheme" content="dark" />
+    <meta name="robots" content="noindex" />
     <link rel="stylesheet" href="/assets/site.css" />
     <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/assets/icon-180.png" />
   </head>
 
-  <body>
-    <div class="pool" aria-hidden="true"></div>
+  <body class="night">
+    <!-- The sky, behind everything, with the Milky Way in it: the light the
+         field is lit by. -->
+    <div class="walk" aria-hidden="true">
+      <canvas id="sky"></canvas>
+      <div class="pool"></div>
+    </div>
 
-    <main class="page" id="page">
+    <main class="page walk-page" id="page">
       <!--
-        The bar. On every page of the site, and the only way between any two of
-        them that is not a link somebody happened to put in a paragraph.
-        `site.css` §The bar says why it is the masthead with two things added
-        rather than a header of its own.
+        The bar. On every page of the site. The garden glyph goes to the map
+        of the ten areas, which is where the Wild Fields are reached from: a
+        named place off the map, not a cell on it (docs/PHASES.md).
       -->
       <header class="masthead bar">
         <a class="bar__home" href="/">
           <img class="mark" src="/assets/icon.svg" alt="" width="44" height="44" />
           <span class="wordmark">Peace Garden</span>
         </a>
-        <!--
-          The ways on from here, as glyphs rather than words, so they read the
-          same in every language: the garden (the app's own Garden mark,
-          `GardenGlyph` in Chrome.swift), what the names mean (an open book,
-          the app's `MeaningsGlyph`), and the language. Each glyph's words
-          are its name and tooltip, written from the catalogue by the page's
-          script. See site.css §The bar's glyphs.
-        -->
         <span class="bar__ways">
           <a class="bar-glyph" href="/garden" data-s-label="gardenTitle"><svg class="bar-glyph__mark" viewBox="0 0 15 15" aria-hidden="true" focusable="false"><path d="M 4.674 4.059 C 3.796 1.407, 6.716 1.407, 5.838 4.059 C 8.089 2.405, 8.991 5.181, 6.198 5.166 C 8.467 6.795, 6.105 8.512, 5.256 5.850 C 4.407 8.512, 2.045 6.795, 4.314 5.166 C 1.521 5.181, 2.423 2.405, 4.674 4.059 Z M 5.784 14.100 C 5.652 10.932, 5.124 9.612, 5.256 7.500 M 10.140 14.100 C 9.678 10.932, 9.150 8.556, 8.622 6.180 M 10.140 14.100 C 10.338 10.404, 10.470 6.972, 10.338 3.540 M 10.140 14.100 C 10.800 10.932, 11.658 8.820, 12.318 6.972 M 4.200 14.100 L 11.328 14.100" vector-effect="non-scaling-stroke" /></svg></a>
           <a class="bar-glyph" href="/meanings" data-s-label="meaningsTitle"><svg class="bar-glyph__mark" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 5.2C8.2 3.9 5.4 3.5 2.75 3.9V15.4C5.4 15 8.2 15.4 10 16.7C11.8 15.4 14.6 15 17.25 15.4V3.9C14.6 3.5 11.8 3.9 10 5.2ZM10 5.2V16.7" vector-effect="non-scaling-stroke" /></svg></a>
@@ -66,23 +73,38 @@
         </span>
       </header>
 
-      <h1 class="heading" data-s="wildTitle"></h1>
-
-      <section class="about">
-        <p class="body" data-s="wildBody"></p>
-        <p class="body" data-s="notYet"></p>
-      </section>
-
-
       <!--
-        The foot: one hairline and the privacy notice. The language it used to
-        hold went up into the bar, beside the other ways on from a page.
+        The field, and the fireflies over it. Two canvases in one band: the
+        field is drawn when the window moves and the fireflies thirty times a
+        second, so they are not one drawing. The band is masked so the field
+        thins into the night at every side rather than stopping at the edge of
+        a rectangle — the field has no edge, and neither does its picture. See
+        site.css §The Wild Fields.
       -->
+      <div class="wild-band">
+        <canvas class="walk-stage" id="stage" aria-label="The Wild Fields"></canvas>
+        <canvas class="wild-flies" id="flies" aria-hidden="true"></canvas>
+      </div>
+
+      <div class="area-panels">
+        <section class="area-panel area-panel--words">
+          <h1 class="heading" data-s="wildTitle"></h1>
+          <p class="body walk-about" data-s="wildBody"></p>
+          <!-- One line, and only when there is something to say. -->
+          <p class="label walk-note" id="note" role="status" hidden></p>
+        </section>
+        <div class="area-panel area-panel--ways walk-ways">
+          <!-- The pad, the same as every area's (`movepad.js`), roaming. -->
+          <nav class="walk-keys" id="keys" role="group" hidden></nav>
+        </div>
+      </div>
+
       <footer class="foot bar-foot">
         <a class="bar-foot__link" href="/privacy" data-s="privacyTitle"></a>
       </footer>
     </main>
 
     <script type="module" src="/assets/js/plain.js"></script>
+    <script type="module" src="/assets/js/wildpage.js"></script>
   </body>
 </html>

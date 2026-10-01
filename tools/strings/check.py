@@ -23,7 +23,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CATALOGUES = ROOT / "Server/strings"
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from commission import (AREAS, CLAIMS, FRONT, MEANINGS, PRIVACY,  # noqa: E402
+from commission import (AREAS, CLAIMS, FRONT, MEANINGS, PRIVACY, WILD,  # noqa: E402
                         english)
 
 # How much longer than the English a string may be before the layout is at risk.
@@ -423,6 +423,8 @@ def main():
                  + problems_for(code, catalogue, source, FRONT, "front page")
                  + problems_for(code, catalogue, source, MEANINGS,
                                 "meanings")
+                 + problems_for(code, catalogue, source, WILD,
+                                "Wild Fields")
                  + meaning_problems_for(code, catalogue, app)
                  + avoid_problems_for(code, catalogue, app)
                  + area_problems_for(catalogue, source))

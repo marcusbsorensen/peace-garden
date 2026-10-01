@@ -189,8 +189,13 @@ const LAST = -1;
 ///   area page. Told when a plot is about to go and when one has been grown,
 ///   and asked which plot to open on, which is how a postcard lands.
 ///
+/// - `roam`: for ground with no edge — the Wild Fields (`wildfields.js`). The
+///   window can be dragged from the opening look, not only closer in, because
+///   walking by dragging is the whole of how that page is walked; and a finger
+///   on it moves the field rather than the page.
+///
 /// Shows the first plot, and resolves when it is grown.
-export async function openMovePad({ nav, canvas, stage, theme = null, plots, step = 1, show: grow, turned = () => {}, plants = null }) {
+export async function openMovePad({ nav, canvas, stage, theme = null, plots, step = 1, show: grow, turned = () => {}, plants = null, roam = false }) {
   const buttons = build(nav);
   // What a crossing from the area next door left, if this load is one. Taken and
   // gone, whether it turns out to be any use or not.
@@ -457,7 +462,7 @@ export async function openMovePad({ nav, canvas, stage, theme = null, plots, ste
     for (const [go, button] of Object.entries(buttons)) {
       button.setAttribute('aria-disabled', String(!can[go]));
     }
-    canvas.classList.toggle('walk-stage--close', target.zoom > 1 + 1e-3);
+    canvas.classList.toggle('walk-stage--close', loose());
   }
 
   const press = {
@@ -519,6 +524,9 @@ export async function openMovePad({ nav, canvas, stage, theme = null, plots, ste
   // page scrolls it, as on any other page, and two fingers pinch.
   const fingers = new Map();
   let pinch = null;
+  // Whether a drag moves the window: closer in, or anywhere on ground that
+  // has no edge to keep it to.
+  const loose = () => roam || target.zoom > 1 + 1e-3;
 
   const spread = () => {
     const [a, b] = [...fingers.values()];
@@ -539,7 +547,7 @@ export async function openMovePad({ nav, canvas, stage, theme = null, plots, ste
   }
 
   canvas.addEventListener('pointerdown', (event) => {
-    if (event.pointerType === 'mouse' && (event.button !== 0 || target.zoom <= 1 + 1e-3)) return;
+    if (event.pointerType === 'mouse' && (event.button !== 0 || !loose())) return;
     fingers.set(event.pointerId, { x: event.clientX, y: event.clientY });
     canvas.setPointerCapture?.(event.pointerId);
     if (fingers.size === 2) pinch = spread();
@@ -547,7 +555,7 @@ export async function openMovePad({ nav, canvas, stage, theme = null, plots, ste
   canvas.addEventListener('pointermove', (event) => {
     const finger = fingers.get(event.pointerId);
     if (!finger) return;
-    if (fingers.size === 1 && target.zoom > 1 + 1e-3) {
+    if (fingers.size === 1 && loose()) {
       const metres = stage.view(target.zoom).metresPerPixel;
       snap({ ...target, x: target.x - (event.clientX - finger.x) * metres,
              y: target.y + (event.clientY - finger.y) * metres });

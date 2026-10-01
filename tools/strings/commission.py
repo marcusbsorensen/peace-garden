@@ -888,6 +888,79 @@ MEANINGS = {
 }
 
 
+# The Wild Fields, built on 1 October 2026, and what release now sends.
+#
+# **A group of its own, and that includes `privacy8`.** The privacy page's
+# eight are commissioned together, so a ninth key in `PRIVACY` would make every
+# language that already has the page fail as half-commissioned the day it was
+# added — the fault `problems_for`'s note describes. Until this group arrives a
+# reader of `/privacy` in another language reads one paragraph in English, the
+# one about release, which is the honest fallback: the page is complete and
+# true, in two languages for a while.
+WILD = {
+    "wildTitle": {
+        "seen": "The heading of `/wild`, and the link to it at the foot of the "
+                "map at `/garden` and under the area cards on the front page.",
+        "must": ["The name of the place a released plant goes: open, "
+                 "unarranged ground, more than one field."],
+        "must not": [
+            "Be a garden or a park. It is the one place on the site nobody "
+            "tends.",
+            "Be an area name. It is not one of the ten and is not on the map.",
+        ],
+    },
+    "wildBody": {
+        "seen": "Under the field at `/wild`.",
+        "must": [
+            "This is where a plant goes when it is released (let go).",
+            "Nobody arranges it: each plant stands where its own seed puts it.",
+            "A plant there has no name, no sender and no date.",
+            "The field goes on in every direction.",
+            "Drag to walk it.",
+        ],
+        "must not": [
+            "Describe a seed waiting for another seed. That is a different "
+            "idea (The Winds) and this paragraph replaced exactly that.",
+            "Say the plant is lost, discarded or deleted. It is let go, and "
+            "it stands somewhere.",
+        ],
+        "note": "*Let go* is the same act the app calls Release; use your "
+                "language's word for releasing a living thing into the wild, "
+                "not for publishing.",
+    },
+    "wildEmpty": {
+        "seen": "Under the field, before anybody has released a plant.",
+        "must": ["Nothing has been released here yet."],
+    },
+    "wildAway": {
+        "seen": "Under the field, when it cannot be drawn at all.",
+        "must": ["The Wild Fields cannot be reached just now."],
+        "note": "As `walkAway` and `quietAway` say it of their areas.",
+    },
+    "privacy8": {
+        "seen": "Seventh paragraph of /privacy, between the asking and the "
+                "website.",
+        "must": [
+            "If you release a plant, the app sends it to the Wild Fields: its "
+            "seed, its two parents' seeds, the number for the meeting, and your "
+            "random number from that meeting if it has one.",
+            "The Wild Fields keep the plant's seed and its parents' seeds and "
+            "nothing else: no name, no date, no record of who released it.",
+            "The parents' seeds are the two seeds that met, so anyone who "
+            "already knows one of them can tell the plant grew from it.",
+            "A plant standing in the web garden is taken back from there "
+            "first.",
+            "Anyone can see a released plant, and it cannot be taken back.",
+        ],
+        "must not": [
+            "Say the plant is anonymous, or untraceable. The third sentence "
+            "is there because it is not, for anybody who already holds one "
+            "of the two seeds.",
+            "Leave out an item of what is sent, or add one.",
+        ],
+    },
+}
+
 
 def english():
     """The six, the thirteen and the ten, as `strings.js` has them today."""

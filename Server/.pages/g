@@ -166,6 +166,14 @@
           of it rather than at one place in it.
         -->
         <a class="quiet-button" href="/meanings" data-s="meaningsTitle"></a>
+        <!--
+          The Wild Fields: where a released plant goes. Off the map rather than
+          a cell on it, because the ten areas are a projection of the ten
+          themes and the wild has no theme and no place among them
+          (docs/PHASES.md) — so it is reached from here, beside the other two
+          ways of looking at the garden whole, and not from the grid.
+        -->
+        <a class="quiet-button" href="/wild" data-s="wildTitle"></a>
       </p>
 
       <!--

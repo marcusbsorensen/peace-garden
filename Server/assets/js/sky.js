@@ -244,6 +244,41 @@ export function dimming(x, y, box) {
   return Math.min(1, Math.hypot(dx, dy) / FADE);
 }
 
+// MARK: The Milky Way
+
+/** The galactic plane in the sky's own coordinates: right ascension and
+ *  declination, in degrees, of a point at galactic longitude `l` and latitude
+ *  `b`. J2000, the IAU's pole: right ascension 192.85948°, declination
+ *  27.12825°, and the celestial pole at galactic longitude 122.93192°. */
+export function fromGalactic(l, b) {
+  const poleRA = 192.85948, poleDec = radians(27.12825), northL = 122.93192;
+  const lat = radians(b), turn = radians(northL - l);
+  const sinDec = Math.sin(lat) * Math.sin(poleDec) + Math.cos(lat) * Math.cos(poleDec) * Math.cos(turn);
+  const ra = poleRA + degrees(Math.atan2(
+    Math.cos(lat) * Math.sin(turn),
+    Math.sin(lat) * Math.cos(poleDec) - Math.cos(lat) * Math.sin(poleDec) * Math.cos(turn)
+  ));
+  return { rightAscension: wrapped(ra), declination: degrees(Math.asin(Math.max(-1, Math.min(1, sinDec)))) };
+}
+
+/** **The Milky Way, as a haze along the galactic plane**, for the one page
+ *  lit by it: the Wild Fields, which have no lamps (docs/WEB-GARDENS.md). Soft
+ *  patches every few degrees of galactic longitude, thickest on the plane and
+ *  gone ten degrees off it, and brighter towards Sagittarius, where the middle
+ *  of the galaxy is — which is what the eye sees of it on a dark night, and no
+ *  more: there is no picture of it here, only where it is. */
+const BAND = (() => {
+  const patches = [];
+  for (let l = 0; l < 360; l += 3) {
+    for (const b of [-7, -3.5, 0, 3.5, 7]) {
+      const towardsMiddle = 0.5 + 0.5 * Math.cos(radians(l));
+      const strength = Math.exp(-((b / 6) ** 2)) * (0.35 + 0.65 * towardsMiddle * towardsMiddle);
+      patches.push({ ...fromGalactic(l, b), strength });
+    }
+  }
+  return patches;
+})();
+
 // MARK: The sky on the page
 
 /**
@@ -257,6 +292,7 @@ export async function makeSky(canvas, {
   keepClear = () => [],
   quarterTurns = () => 0,
   now = () => new Date(),
+  milkyWay = false,
 } = {}) {
   // The catalogue and the zone table sit beside the other assets rather than
   // among the modules, so this walks up out of `js/` rather than naming a
@@ -299,6 +335,31 @@ export async function makeSky(canvas, {
     // the sky follows the turn with the opposite sign — and in both the sun
     // stays where it belongs among the stars, which is the thing being kept.
     const towards = facing(place.latitude) + quarterTurns() * 90;
+
+    // The galaxy first, under the stars, added rather than painted so where
+    // two patches overlap the haze thickens as light does.
+    if (milkyWay) {
+      const sidereal = siderealTime(date, place.longitude);
+      const perDegree = width / FIELD_OF_VIEW;
+      context.globalCompositeOperation = 'lighter';
+      for (const patch of BAND) {
+        const { altitude, azimuth } = horizon(patch.rightAscension, patch.declination, sidereal, place.latitude);
+        const spot = onGlass({ altitude, azimuth, radius: 0, alpha: 0, tint: [1, 1, 1] }, towards, width, height);
+        if (!spot) continue;
+        let alpha = 0.055 * patch.strength;
+        for (const box of boxes) alpha *= dimming(spot.x, spot.y, box);
+        if (alpha <= 0.002) continue;
+        const radius = 5.5 * perDegree;
+        const haze = context.createRadialGradient(spot.x, spot.y, 0, spot.x, spot.y, radius);
+        haze.addColorStop(0, `rgb(205 212 238 / ${alpha})`);
+        haze.addColorStop(1, 'rgb(205 212 238 / 0)');
+        context.fillStyle = haze;
+        context.beginPath();
+        context.arc(spot.x, spot.y, radius, 0, Math.PI * 2);
+        context.fill();
+      }
+      context.globalCompositeOperation = 'source-over';
+    }
 
     for (const aim of aimed) {
       const star = onGlass(aim, towards, width, height);
