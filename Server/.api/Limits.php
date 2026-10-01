@@ -69,6 +69,13 @@ final class Limits
         '/api/walk/answer' => [55, self::WINDOW],
         '/api/walk/withdraw' => [28, self::WINDOW],
         '/api/walk/pending' => [220, self::WINDOW],
+        // **Release is the tightest**, at the hourly 10 scaled to the window,
+        // because it is the one write nobody else has to agree to and the one
+        // nobody can take back: an offer waits for a second gardener, and a
+        // released plant stands in the Wild Fields for good. A person lets go
+        // of a plant now and then; ten in an hour is clearing a garden, and
+        // nine is room for that and little else.
+        '/api/wild/release' => [9, self::WINDOW],
     ];
 
     public function __construct(private PDO $db)

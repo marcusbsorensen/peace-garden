@@ -143,7 +143,9 @@ check('every route counts over the same window', array_unique(array_column(Limit
 check('the allowances are the hourly ones scaled to the window', array_map(
     fn ($route) => $route[0], Limits::ROUTES) === array_map(
     fn ($hourly) => (int) round($hourly * Limits::WINDOW / 3600),
-    ['/api/walk/offer' => 20, '/api/walk/answer' => 60, '/api/walk/withdraw' => 30, '/api/walk/pending' => 240]));
+    ['/api/walk/offer' => 20, '/api/walk/answer' => 60, '/api/walk/withdraw' => 30, '/api/walk/pending' => 240,
+     // Release to the Wild Fields, since 1 October 2026: ten an hour.
+     '/api/wild/release' => 10]));
 
 $quiet = sys_get_temp_dir() . '/peacegarden-limits-quiet-' . getmypid() . '.sqlite';
 @unlink($quiet);

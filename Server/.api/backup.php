@@ -21,6 +21,11 @@ declare(strict_types=1);
  *   glasshouse       the eighth area, and its own lock
  *   coppice          the ninth area, and its own lock
  *   home_ground      the tenth area, and its own lock
+ *   wild_fields      every plant released to the Wild Fields. It has no lock
+ *                    and no order to lose — a released plant stands where its
+ *                    seed says — but a lost row is a plant somebody let go of
+ *                    that is nowhere at all, which is the one thing release
+ *                    was built not to do
  *   walk_offers      consent in flight: who has asked whom, and what was said
  *   offer_key        the key a withdrawn offer's fingerprints are made under,
  *                    without which a restored table could no longer refuse a
@@ -66,7 +71,7 @@ const KEPT = ['long_walk', 'long_walk_lock', 'quiet_garden', 'quiet_garden_lock'
               'cold_frame', 'cold_frame_lock',
               'glasshouse', 'glasshouse_lock',
               'coppice', 'coppice_lock',
-              'home_ground', 'home_ground_lock', 'walk_offers', 'offer_key'];
+              'home_ground', 'home_ground_lock', 'wild_fields', 'walk_offers', 'offer_key'];
 
 /** How many copies stay on the server, at most. */
 const KEEP = 30;

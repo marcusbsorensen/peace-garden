@@ -222,6 +222,13 @@ final class Offers
                           string $habit = ''): array
     {
         $this->lapse($now);
+        // **A released plant is not offered anywhere.** It was let go into the
+        // Wild Fields, which have no asking, and a plant stands in one public
+        // place. The other gardener keeps their copy and can grow it, look at
+        // it and release it in turn; what they cannot do is show it in one of
+        // the ten areas as well. `false` rather than null, so the route can say
+        // which refusal this is.
+        if ($this->walk->wild()->holds($seed)) return [false, false];
         $sent = $this->sent($seed, [$to, $from]);
         if ($existing = $this->find($seed, $now)) {
             // **Only to the two who met.** A second offer of one plant is
@@ -351,6 +358,34 @@ final class Offers
         }
         $this->erase($row, self::WITHDRAWN, $now);
         return $this->seen($this->find($seed, $now) ?? [], $sent);
+    }
+
+    /**
+     * Clears the way for a plant to be released to the Wild Fields. Returns
+     * whether it may go.
+     *
+     * **A plant the asking has never heard of may go**: its seed, its parents
+     * and its meeting were never published, so a caller holding all three is
+     * one of the two phones that grew it.
+     *
+     * **A plant the asking has heard of goes only on one of its two tokens.**
+     * While it stood in an area — or once stood, and was taken back — its seed,
+     * its parents and its meeting were public at `/api/<area>/plot/<n>`, and
+     * those three are all a release otherwise asks for. Without this, anybody
+     * who had read them could stand a plant in the wild that both gardeners
+     * had taken down. The same rule `offer` keeps with `samePair`.
+     *
+     * **And it is taken out of the asking first**, by the same withdrawal
+     * either gardener can make at any time: an offer still waiting goes, and a
+     * planting standing in an area is taken back and keeps only its place. A
+     * plant stands in one public place, and releasing is letting go of it
+     * everywhere it was shown — which the other gardener hears about from
+     * `pending`, as they hear about any withdrawal.
+     */
+    public function letGo(string $seed, ?string $token, int $now): bool
+    {
+        if ($this->find($seed, $now) === null) return true;
+        return $token !== null && $this->withdraw($seed, $token, $now) !== null;
     }
 
     /**
