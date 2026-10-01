@@ -13,9 +13,11 @@ first*), and until it can, every decision below is a design and not a garden.
 
 Release sends a plant somewhere now. Marcus had released one believing it
 went to the Wild Fields, and it had gone nowhere, so he asked for the place to
-be built that day. §*The Wild Fields*, *Built*, has what was decided, and the
-one thing that could not be: whether the field may publish a released plant's
-parents without the other gardener's say.
+be built that day. §*The Wild Fields*, *Built*, has what was decided. The one
+thing that could not be — whether the field may publish a released plant's
+parents without the other gardener's say — Marcus settled the same day: the
+plant goes as built, and release becomes a moment of contact, each gardener
+choosing what of theirs stands beside it (§*Who stands beside it*).
 
 ## The plants' shapes changed, 24 September 2026
 
@@ -1851,7 +1853,9 @@ The opposite of the gardens, and it should look like it.
   continuous ground running on past the screen, walked by panning rather than
   by a map, and the relief is a landscape's rather than a bed's.
 - **No names, no senders, no dates** (`PHASES.md`), and so nothing on it to tap
-  but the plant itself.
+  but the plant itself. *Superseded 1 October 2026: a name, and where and when
+  two gardeners met, stand beside a plant when they choose (§*Who stands
+  beside it*); a plant opens the areas' panel when tapped.*
 - **No lamps.** Nobody put anything out. At night it is lit by the Milky Way,
   and by fireflies that are simply there, which is the one light the wild has
   of its own.
@@ -2039,20 +2043,92 @@ to switch to before the first deploy and expensive after it:
    grows the child seed as if it had been minted, which is a different-looking
    plant from the one released — unattributed, and not the plant.
 
+**Settled by Marcus on 1 October 2026: the first, and more.** Releasing stays
+one gardener's act and the plant, with both parents' seeds, is published as
+built. In his words: *the one who released it can choose for something about
+them to be included or not, and the other gardener gets a notification that
+asks them if they want to be anonymous or have anything included. We want to
+encourage releasing plants into the wild so people can make space for the new
+in their app peace gardens, and also allow for the release to be another
+moment of contact for the gardeners whose seeds germinated the plant.* Built
+the same day, below.
+
+### Who stands beside it, built 1 October 2026
+
+**What each may show, and nothing else:** their gardener name (the one they
+chose for meetings), where they met (the meeting's place as their phone kept
+it — the typed or figurative words, never the coordinate), and when they met
+(month and year). No free text. Default for all three: not shown.
+
+**Claude's call, pending Marcus's review:**
+
+- **A name is its owner's alone to show; the place and the month belong to the
+  meeting both had**, so each stands only once both chose it.
+- **And only if both phones hold the same account of it.** Each phone sends its
+  own words for the place and its own month. Until both have chosen, the
+  service keeps only a keyed fingerprint of each side's choice, which can
+  confirm the other's words match and cannot give them back; when the second
+  chooses and the two match, the words are kept in the clear because they are
+  shown. Two phones that remember the place differently show no place — a
+  place one of them never wrote is not one either agreed to — and the screen
+  says so. The figurative place is drawn from the child seed, so two phones
+  that kept it match unless one is in another language.
+- **Either changes their answer at any time**, withdrawing included, without
+  the other, as the walk's withdrawal is. A name can be shown again after it
+  is withdrawn: it is its owner's. Nothing is final, because nothing here
+  publishes anything of the other's.
+- **The page does not say which of the two let it go**: names are served in
+  alphabetical order, and a plant with one name is shown as one person's
+  (*Grown by Wren*), never with a hint of a second.
+
+**The service** (`WildStore.php`, `wild_names`): one row per plant released
+with a meeting's tokens — fingerprints of the two tokens (`Keyed.php`, under
+the `offer_key` the asking uses), the two names shown, each side's place and
+month fingerprints, and the place and month both chose. No time, no counter,
+`WITHOUT ROWID`. The release takes `theirs` and `shown`;
+`POST /api/wild/answer` takes either gardener's whole choice; `pending`
+answers `wild` beside `offers`, so the other phone hears on the request it
+already makes and the *Alert me* switch stops both. A stranger releasing an
+already-standing plant again, with tokens of their own, stands nobody beside
+it. The nightly copy carries the table, and since this build makes its tables
+itself before it copies, so a deploy can never cost the 03:17 copy.
+
+**The app.** The release mark's sentence is unchanged and the hold is still
+three seconds; under the sentence, three small switches — *Your name*, *Where
+you met*, *When you met* — all off, only for a plant with a meeting's tokens.
+The other phone, on its poll, is shown once a sheet with the plant, *Wren has
+let the plant you grew together go into the Wild Fields. Yours stays here.*,
+the same three switches, a preview of what would stand beside it, and *See it
+in the Wild Fields*, which opens `/wild#p=` and the seed's first twelve
+characters. Afterwards the plant's own screen says who let it go and has a
+mark (the meeting glyph) to change the choice; the one who released it
+changes theirs from Settings, *Let go into the Wild Fields*, where a short
+note of each released plant — seed, lineage, tokens, the other's name, this
+phone's place and meeting time, nothing else — is kept for this. A reset
+withdraws what is shown first, as it takes back an offer. The app posts no
+local notifications for offers, so it posts none for this either.
+
+**The page.** A plant on `/wild` can be tapped and opens the areas' panel
+(`plantpanel.js`, given a `place` and a `beside` of the field's own): its name,
+meaning and passage, and *Grown by* with the names, then the place and month
+in the gardeners' own words and the reader's month. `#p=` opens the page over
+the plant — the seed's first eight characters are where it stands — and then
+opens it. `wildBody` and `privacy8` say what is published and that all of it
+is optional.
+
 **Not built, and why.**
 
 - **Paths that visitors wear** (§above, accepted 18 September). A later step:
   it is the first thing on the site that learns where people go, and the
   privacy page has to say so before it runs. The field is ready for it — wear
   would be per ground cell, and the ground is already on a fixed grid.
-- **Tapping a plant.** The areas' panel (`plantpanel.js`) is built round a
-  plot and a postcard to it; the field has neither, so a plant here is looked
-  at and not yet opened.
 - **Water under a lotus.** A water lily released into the field lies on grass.
   The Seedbed floods a drill for its lilies; whether the wild has ponds is a
   question for a render.
-- **Whether a released plant can be found again** is still open (below). The
-  page cannot say where any particular plant is, and nothing it keeps could.
+- **Whether a released plant can be found again** is partly answered: a plant
+  released with a meeting's tokens is kept as a note so its gardener can
+  change what stands beside it, and *See it in the Wild Fields* finds it. A
+  plant released without tokens still cannot be found by anyone.
 
 ## What has to exist first
 
