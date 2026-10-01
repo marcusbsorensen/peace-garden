@@ -16,6 +16,12 @@ struct PlantDetailView: View {
     /// what is on screen is the truth about the garden throughout.
     @State private var flight: Double = 0
     @State private var releasing = false
+    /// Between the end of the hold and the service's answer. The plant stays
+    /// exactly where it is until the Wild Fields say they have it.
+    @State private var sending = false
+    /// Said in the sentence's place when the Wild Fields could not take the
+    /// plant, so the plant still on the screen is explained by the screen.
+    @State private var releaseTrouble: LocalizedStringResource?
     /// The shared garden's one screen, for asking or for answering.
     @State private var showing = false
     /// Which mark in the row along the foot has its word unrolled. One at a
@@ -217,7 +223,7 @@ struct PlantDetailView: View {
             // anybody could read it; here it stays for as long as the word is
             // out, and the hold comes after it has been read.
             if expandedMark == "release" {
-                Text(Self.releaseConsequence)
+                Text(sending ? Self.releaseSending : releaseTrouble ?? Self.releaseConsequence)
                     .font(.system(size: 13, weight: .light))
                     .foregroundStyle(Chrome.muted)
                     .lineSpacing(4)
@@ -271,7 +277,7 @@ struct PlantDetailView: View {
     @ViewBuilder
     private func chevron(towardsTrailing: Bool) -> some View {
         let others = waiting
-        if others.count > 1, others.contains(where: { $0.id == live.id }), !releasing {
+        if others.count > 1, others.contains(where: { $0.id == live.id }), !releasing, !sending {
             Button { step(towardsTrailing ? 1 : -1, through: others) } label: {
                 ChevronGlyph(towardsTrailing: towardsTrailing)
                     .stroke(Chrome.pinkGold.opacity(0.75), style: Chrome.monoline)
@@ -397,6 +403,19 @@ struct PlantDetailView: View {
     /// the alert on the assisted path.
     static let releaseConsequence: LocalizedStringResource = "It leaves your garden for the Wild Fields. The person you grew it with keeps theirs, and every other plant here stays where it is."
 
+    /// In the sentence's place while the plant is on its way, which is
+    /// usually under a second and is long enough on a slow connection for a
+    /// still plant to look like a hold that did nothing.
+    static let releaseSending: LocalizedStringResource = "Sending it to the Wild Fields…"
+
+    /// In the sentence's place when it did not arrive. **One sentence for
+    /// every failure**, as the asking has (`ShowInGardenView`), and it has to
+    /// be true of each: no signal, a service that refused, and a service
+    /// saying this phone has released a lot lately. What matters is the
+    /// second clause — the plant is still here — because the last time release
+    /// failed, it failed silently and the plant was gone.
+    static let releaseFailed: LocalizedStringResource = "The Wild Fields could not be reached just now, so this plant is still here. Try again in a little while."
+
     private var releaseMark: some View {
         HoldToConfirm(
             title: "Release",
@@ -416,8 +435,9 @@ struct PlantDetailView: View {
             dress: .mark(showsTitle: expandedMark == "release")
         )
         // Collapsed, a tap unrolls the word rather than starting a hold nobody
-        // asked for; unrolled, the hold is the only thing that fires.
-        .allowsHitTesting(expandedMark == "release")
+        // asked for; unrolled, the hold is the only thing that fires — and not
+        // a second time while the first is on its way.
+        .allowsHitTesting(expandedMark == "release" && !sending)
         .overlay {
             if expandedMark != "release" {
                 Color.clear
@@ -449,26 +469,48 @@ struct PlantDetailView: View {
         return Color(hue: tip.hue, saturation: 0.18, brightness: 1)
     }
 
-    /// Sends the plant off, and removes it when it has gone.
+    /// Sends the plant to the Wild Fields, and removes it when it has gone.
     ///
-    /// The order matters. Deleting first and animating afterwards would be an
-    /// animation of a plant that no longer exists — and `dismiss()` on a
-    /// record the garden has already dropped is the shape of a crash. So the
-    /// record stands until the light is off the screen.
+    /// **It goes only when the Wild Fields have it.** Until 1 October 2026
+    /// this animated and deleted and sent nothing, under a sentence saying the
+    /// plant left for the Wild Fields — so a plant let go went nowhere. Now
+    /// the hold sends it (`GardenModel.release`) and the plant stands still
+    /// until the service answers: on its word the light leaves and the plant
+    /// goes; without it the plant stays, and the sentence under the row says
+    /// so. Nothing is queued — see `GardenModel.release` for why.
+    ///
+    /// The order after that is the old one, and still matters. Deleting first
+    /// and animating afterwards would be an animation of a plant that no
+    /// longer exists — and `dismiss()` on a record the garden has already
+    /// dropped is the shape of a crash. So the record stands until the light
+    /// is off the screen. If the screen is closed while the plant is on its
+    /// way, the task carries on and removes it all the same once it arrives.
+    ///
+    /// The plant on the screen is `live`, not `record`: the chevrons can have
+    /// stepped to another plant since the screen opened, and it is the one in
+    /// front of the person that they let go.
     ///
     /// Reduce Motion gets the same two facts in a quarter of a second: the
     /// plant goes, and the screen closes. The objection is to being held
     /// through choreography, not to knowing what happened.
     private func release() {
-        guard !releasing else { return }
-        releasing = true
-
-        let flightTime: Double = reduceMotion ? 0.25 : 1.7
-        withAnimation(.easeOut(duration: flightTime)) { flight = 1 }
+        guard !releasing, !sending else { return }
+        let plant = live
+        sending = true
+        releaseTrouble = nil
 
         Task {
+            let arrived = await model.release(plant)
+            sending = false
+            guard case .success = arrived else {
+                withAnimation(Chrome.fadeIn) { releaseTrouble = Self.releaseFailed }
+                return
+            }
+            releasing = true
+            let flightTime: Double = reduceMotion ? 0.25 : 1.7
+            withAnimation(.easeOut(duration: flightTime)) { flight = 1 }
             try? await Task.sleep(for: .seconds(flightTime + 0.15))
-            model.delete(record)
+            model.delete(plant)
             dismiss()
         }
     }
