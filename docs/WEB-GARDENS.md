@@ -2060,7 +2060,7 @@ chose for meetings), where they met (the meeting's place as their phone kept
 it — the typed or figurative words, never the coordinate), and when they met
 (month and year). No free text. Default for all three: not shown.
 
-**Claude's call, pending Marcus's review:**
+**Claude's call, accepted by Marcus as built on 1 October 2026:**
 
 - **A name is its owner's alone to show; the place and the month belong to the
   meeting both had**, so each stands only once both chose it.
