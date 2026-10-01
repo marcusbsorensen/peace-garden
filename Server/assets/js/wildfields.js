@@ -663,13 +663,54 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
   // How many pixels a metre is at this look, for the fireflies.
   const pixelsPerMetre = () => 1 / view().metresPerPixel;
 
+  // MARK: Tapping a plant (1 October 2026)
+
+  // **What the areas' panel asks of a stage**, answered for the field, so a
+  // released plant opens the same panel as a planted one (`plantpanel.js`):
+  // its name, what the name means, its passage, and — the field's own — who
+  // chose to stand beside it. A planting is handed over as the service sent
+  // it, with the meeting of noughts it was grown with (`growOne`), so the
+  // panel names it as the field grew it.
+  const named = () => standing().filter((plant) => plant.who).map(describe);
+  function describe(plant) {
+    return { ...plant.who, encounter: NO_MEETING, at: [plant.x, plant.y + plant.height / 2, plant.z],
+             height: plant.height };
+  }
+
+  // The plant under a tap, as `longwalk.js` finds one: the stem drawn from
+  // foot to top on the screen, nearest the point, within a fingertip and the
+  // plant's own half-width; the one in front where two are as near. With no
+  // `slop`, the nearest whatever the distance, which is what `p` asks for.
+  function pick(px, py, slop = null) {
+    if (!drawn) return null;
+    const perMetre = pixelsPerMetre();
+    const facing = eye();
+    let best = null, bestGap = Infinity, bestDepth = -Infinity;
+    for (const plant of standing()) {
+      if (!plant.who) continue;
+      const foot = toScreen([plant.x, plant.y, plant.z]);
+      const top = toScreen([plant.x, plant.y + plant.height, plant.z]);
+      const gap = Math.max(0, segmentGap(px, py, foot, top) - (slop === null ? 0 : plant.foot * perMetre));
+      if (slop !== null && gap > slop) continue;
+      const depth = dot([plant.x, plant.y, plant.z], facing);
+      if (gap < bestGap - 0.5 || (Math.abs(gap - bestGap) <= 0.5 && depth > bestDepth)) {
+        best = plant; bestGap = gap; bestDepth = depth;
+      }
+    }
+    return best && describe(best);
+  }
+
+  // The look `zoom` times closer with `point` in the middle of it, for going
+  // to a plant. Anywhere is a place a look may be, so nothing holds it back.
+  const toward = (point, zoom) => held(over(point, zoom));
+
   new ResizeObserver(() => { draw(); walked(); }).observe(canvas);
   draw();
   walked();
 
   return {
     draw, turnBy, turn: () => turn, view, held, lookAt, carried, seams, onScreen, toScreen,
-    drifts: () => drifts, pixelsPerMetre, standing, settled: () => fetching,
+    drifts: () => drifts, pixelsPerMetre, standing, settled: () => fetching, pick, named, toward,
   };
 }
 
@@ -748,3 +789,11 @@ function mod(a, n) { return ((a % n) + n) % n; }
 function dot(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
 function cross(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
 function normalise(v) { const l = Math.hypot(...v); return v.map((x) => x / l); }
+// How far (px, py) is from the segment between two points on the screen, as
+// `longwalk.js` measures it for a tap.
+function segmentGap(px, py, [ax, ay], [bx, by]) {
+  const dx = bx - ax, dy = by - ay;
+  const length = dx * dx + dy * dy;
+  const t = length ? Math.min(1, Math.max(0, ((px - ax) * dx + (py - ay) * dy) / length)) : 0;
+  return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+}

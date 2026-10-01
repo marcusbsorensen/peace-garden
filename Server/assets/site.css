@@ -1884,6 +1884,22 @@ a.minimap__cell:focus-visible::before {
   color: var(--muted);
 }
 
+/* Who chose to stand beside a plant in the Wild Fields: the names, then where
+   and when they met, in the gardeners' own words — set apart by the italic,
+   as somebody's own sentence about a meeting is in the app. */
+.plant-panel__beside {
+  display: grid;
+  gap: 2px;
+}
+
+.plant-panel__beside[hidden] {
+  display: none;
+}
+
+.plant-panel__met {
+  font-style: italic;
+}
+
 /* The theme as the block under the area's heading sets it: the headword,
    which is the way to its entry, and what it means. */
 .plant-panel__entry {

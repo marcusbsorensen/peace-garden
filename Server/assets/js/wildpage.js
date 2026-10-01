@@ -11,11 +11,20 @@
 // each tile; the page picks a tile in proportion to them and a plant in it, at
 // random, and opens with that plant in the middle — *somewhere at random*, as
 // the garden's own map has it. Nothing about the choice is kept or sent.
+//
+// **A plant opens the panel the areas use** (`plantpanel.js`, 1 October
+// 2026): its name, what it means, its passage, and what its two gardeners
+// chose to show beside it — their names, and the place and the month they met
+// once both chose them. A postcard is `/wild#p=` and the first twelve
+// characters of the seed, and the first eight of those are where it stands,
+// so a postcard, or the app's *See it in the Wild Fields*, opens the page over
+// the plant and then opens the plant.
 import { loadModule } from './plant.js';
 import { makeSky } from './sky.js';
 import { dressed } from './plain.js';
 import { openMovePad } from './movepad.js';
-import { SIDE, flyOver, makeWildStage } from './wildfields.js';
+import { plantPanel } from './plantpanel.js';
+import { SIDE, flyOver, makeWildStage, spotOf } from './wildfields.js';
 
 const el = (id) => document.getElementById(id);
 const note = el('note');
@@ -38,10 +47,65 @@ async function opening(standing) {
   return plantings[Math.floor(Math.random() * plantings.length)]?.spot ?? null;
 }
 
+// `#p=` and at least eight hex characters of a seed: a postcard to one plant.
+function postcard() {
+  const mark = location.hash.match(/^#p=([0-9a-f]{8,64})$/i)?.[1];
+  return mark ? { mark: mark.toLowerCase(), done: false } : null;
+}
+
+// Who chose to stand beside a plant, for the panel: the names, then the place
+// and the month, each on its own line. The names and the place are the
+// gardeners' own words in their own script, so each runs in its own
+// direction; the month is written by the reader's browser in the page's
+// language.
+function beside(plant, strings) {
+  const shown = plant.shown;
+  if (!shown || !strings) return [];
+  const lines = [];
+  const names = shown.names ?? [];
+  if (names.length) {
+    const key = names.length === 1 ? 'wildByOne' : 'wildByTwo';
+    const line = text('p', 'plant-panel__ambassador',
+      strings.t(key, names.length === 1 ? { name: names[0] } : { a: names[0], b: names[1] }));
+    strings.dress(line, key);
+    line.dir = 'auto';
+    lines.push(line);
+  }
+  const month = monthWords(shown.month);
+  const where = [shown.place, month].filter(Boolean).join(' · ');
+  if (where) {
+    const line = text('p', 'plant-panel__ambassador plant-panel__met', where);
+    line.dir = 'auto';
+    lines.push(line);
+  }
+  return lines;
+}
+
+function monthWords(month) {
+  const [year, number] = (month ?? '').split('-').map(Number);
+  if (!year || !number) return null;
+  try {
+    return new Intl.DateTimeFormat(document.documentElement.lang || 'en',
+      { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(Date.UTC(year, number - 1, 15)));
+  } catch {
+    return month;
+  }
+}
+
+function text(tag, className, words) {
+  const node = document.createElement(tag);
+  node.className = className;
+  node.textContent = words;
+  return node;
+}
+
 async function field() {
   const engine = await loadModule(document.documentElement.dataset.module || '/plant.wasm');
   const { standing } = await (await fetch('/api/wild')).json();
-  const from = await opening(standing);
+  // A postcard opens over its plant: the seed's first eight characters are
+  // where it stands, so nothing need be fetched to go there.
+  const card = postcard();
+  const from = card ? spotOf(card.mark) : await opening(standing);
   if (!from) say('wildEmpty');
 
   const stage = makeWildStage(el('stage'), engine, {
@@ -72,8 +136,23 @@ async function field() {
   // The pad, the same as every area's, roaming: one field, no plots to step
   // between and no edge to leave the area by, so the four directions only
   // ever walk.
+  const plants = plantPanel({
+    theme: null,
+    engine,
+    beside,
+    place: {
+      read: () => card,
+      finds: (one, wanted) => one.seed.toLowerCase().startsWith(wanted.mark),
+      address: (plant, length) => {
+        const url = new URL('/wild', location.origin);
+        url.hash = `p=${plant.seed.slice(0, length).toLowerCase()}`;
+        return url.href;
+      },
+      text: (name, strings) => strings.t('wildPostcardText', { name }),
+    },
+  });
   await openMovePad({
-    nav: el('keys'), canvas: el('stage'), stage, plots: 1, roam: true,
+    nav: el('keys'), canvas: el('stage'), stage, plots: 1, roam: true, plants,
     show: async () => { await stage.settled(); },
     turned: () => sky?.draw(),
   });

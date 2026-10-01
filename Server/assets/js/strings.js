@@ -167,16 +167,28 @@ export const EN = Object.freeze({
   // (docs/PHASES.md) and the opposite of release; it said what the place
   // would be before anything stood in it. It says now what is there: where a
   // released plant goes, that nobody arranges it, what it carries and does
-  // not, and how it is walked. *No name, no sender and no date* is
-  // `WildStore.php`, which keeps none of the three.
+  // not, and how it is walked. *Only what the two who grew it chose to show*
+  // is Marcus's decision of the same day: each gardener may show their name,
+  // and where and when they met once both choose them (`WildStore.php`,
+  // `wild_names`); nothing is shown unless chosen.
   wildTitle: "The Wild Fields",
   wildBody:
-    "Where a plant goes when it is let go. Nobody arranges the Wild Fields: each plant stands where its own seed puts it, with no name, no sender and no date, and the field runs on in every direction. Drag to walk it.",
+    "Where a plant goes when it is let go. Nobody arranges the Wild Fields: each plant stands where its own seed puts it, and the field runs on in every direction. Beside a plant stands only what the two who grew it chose to show. Drag to walk it.",
   // Said under the field before anybody has released a plant, so a reader
   // knows the grass is not hiding something.
   wildEmpty: "Nothing has been released here yet.",
   // The field could not be drawn at all, as `walkAway` is for the walk.
   wildAway: "The Wild Fields cannot be reached just now.",
+  // In a released plant's panel, under its name, when its gardeners chose to
+  // show their names (`wildpage.js`). One name or two, never a hint of a
+  // second person who chose not to be named: a plant shown with one name is
+  // shown as one person's. In alphabetical order, so neither says who let it
+  // go. Where and when they met follow on a line of their own, in their own
+  // words and the reader's month, and need no string.
+  wildByOne: "Grown by {name}",
+  wildByTwo: "Grown by {a} and {b}",
+  // A postcard from the field, as `plantPostcardText` is from an area.
+  wildPostcardText: "{name}, growing in the Wild Fields, in Peace Garden.",
   walkTitle: "The Long Walk",
   // The way out of the garden's travel area and into the walk itself. It is
   // the same place: `/g` draws it as dots from the stand-in, `/walk` grows
@@ -578,11 +590,20 @@ export const EN = Object.freeze({
   // kept — the seed and the two parents, and no column for anything else. The
   // meeting's number checks the cross and the random number finds the plant
   // in the asking (`Offers::letGo`), and neither is written down. *Taken back
-  // from there first* is that same route withdrawing the offer. The third
-  // sentence is what publishing two parents' seeds means, said plainly
-  // rather than left for a reader to work out.
+  // from there first* is that same route withdrawing the offer. The sentence
+  // on the parents' seeds is what publishing them means, said plainly rather
+  // than left for a reader to work out.
+  //
+  // **What stands beside it, since 1 October 2026** (Marcus's decision that
+  // day, `WildStore.php`'s `wild_names`). Each of the two may show their
+  // username, and where and when they met, which stand only once both chose
+  // them; nothing is shown unless chosen, and either can withdraw. *Both
+  // random numbers* is `theirs` on the release: the other phone's, so the
+  // other gardener can be told and answer. *A scrambled form* is the keyed
+  // fingerprints the row keeps of the two tokens, and of each side's place
+  // and month until both have chosen the same.
   privacy8:
-    "If you release a plant, the app sends it to the Wild Fields: its seed, the seeds of its two parents, the number for the meeting, and your random number from that meeting if it has one. The Wild Fields keep the plant's seed and its parents' seeds, and nothing else: no name, no date, and no record of who released it. Its parents' seeds are the two seeds that met, so anyone who already knows one of them can tell the plant grew from it. If the plant was standing in the web garden, it is taken back from there first. Anyone can see a released plant, and it cannot be taken back.",
+    "If you release a plant, the app sends it to the Wild Fields: its seed, the seeds of its two parents, the number for the meeting, the two random numbers from that meeting if it has them, and whatever you chose to show beside it. The Wild Fields keep the plant's seed and its parents' seeds, and no date. Beside the plant they show only what each of the two people who grew it chose: their username, and where and when they met once both chose those. Nothing is shown unless it is chosen, and either of you can withdraw what you chose at any time. So that each of you can answer for yourself, the Wild Fields keep a scrambled form of the two random numbers, and of the place and month each of you chose until both have. Its parents' seeds are the two seeds that met, so anyone who already knows one of them can tell the plant grew from it. If the plant was standing in the web garden, it is taken back from there first. Anyone can see a released plant, and the plant cannot be taken back.",
   // The website: `Limits.php` for the scrambled address and its hour — a
   // fifty-five-minute window and `sweep.php` every five minutes, which is what
   // keeps it inside the hour when nobody asks — `languages.js` for the
