@@ -164,7 +164,7 @@ struct PlantStageView: View {
                     .multilineTextAlignment(.center)
                     .lineSpacing(6)
 
-                QuietButton(title: "Close") {
+                CloseButton {
                     withAnimation(Chrome.fadeIn) { meetPanelClosed = true }
                 }
             }

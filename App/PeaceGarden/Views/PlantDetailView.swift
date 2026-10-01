@@ -84,7 +84,7 @@ struct PlantDetailView: View {
             }
         }
         .overlay(alignment: .topTrailing) {
-            QuietButton(title: "Close") { dismiss() }
+            CloseButton { dismiss() }
                 .padding(.trailing, 12)
                 .padding(.top, 12)
                 .opacity(releasing ? 0 : 1)

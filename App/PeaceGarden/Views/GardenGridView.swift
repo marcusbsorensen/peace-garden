@@ -47,13 +47,10 @@ struct GardenGridView: View {
                     }
                 }
                 .padding(.horizontal, 26)
-                .padding(.vertical, 34)
+                .padding(.top, 6)
+                .padding(.bottom, 34)
             }
-        }
-        .overlay(alignment: .topTrailing) {
-            QuietButton(title: "Close") { dismiss() }
-                .padding(.trailing, 12)
-                .padding(.top, 12)
+            .closingBar { dismiss() }
         }
         .fullScreenCover(item: $selected) { record in
             PlantDetailView(record: record).environment(model)

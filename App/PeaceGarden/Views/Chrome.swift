@@ -534,7 +534,53 @@ struct QuietButton: View {
     }
 }
 
+/// The way out of a screen: an X in a ring, and no word.
+///
+/// A word was one more string in forty-two languages for the one control
+/// everybody already knows by its shape. The symbol is the system's, so
+/// VoiceOver reads it as *Close* in whatever language the phone speaks.
+struct CloseButton: View {
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "xmark")
+                .font(.system(size: 13, weight: .light))
+                .foregroundStyle(Chrome.ink.opacity(0.75))
+                .frame(width: 18, height: 18)
+                .pressable(horizontal: 12, vertical: 12)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
 extension View {
+    /// For a scroll view on a screen that closes: the X in a band of its own
+    /// across the top, and the scrolling content faded out before it reaches
+    /// the band, so nothing scrolls over the way out.
+    ///
+    /// A fade rather than a strip of ground colour, because some of these
+    /// screens have a plant standing behind the words and a strip would cut
+    /// it in half.
+    func closingBar(_ close: @escaping () -> Void) -> some View {
+        let band: CGFloat = 62
+        return contentMargins(.top, band, for: .scrollContent)
+            .mask {
+                VStack(spacing: 0) {
+                    Color.clear.frame(height: band - 14)
+                    LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom)
+                        .frame(height: 18)
+                    Color.black
+                }
+                .ignoresSafeArea(edges: .bottom)
+            }
+            .overlay(alignment: .topTrailing) {
+                CloseButton(action: close)
+                    .padding(.trailing, 12)
+                    .padding(.top, 8)
+            }
+    }
+
     /// Lays a `SproutingRule` along the bottom edge of this view, so the rule's
     /// *line* — not the box its tendrils curl in — sits exactly where the view
     /// ends.

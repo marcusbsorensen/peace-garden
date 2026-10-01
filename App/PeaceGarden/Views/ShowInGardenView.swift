@@ -103,10 +103,10 @@ struct ShowInGardenView: View {
                     Text(record.genome.name.full)
                         .plantName()
                         .foregroundStyle(Chrome.ink)
-                        // Clear of Close, which sits in the same corner of the
-                        // same screen and was catching the long names.
-                        .padding(.horizontal, 64)
-                        .padding(.top, 62)
+                        // Clear of the X's corner either side, so a long name
+                        // stays centred under it rather than beside it.
+                        .padding(.horizontal, 40)
+                        .padding(.top, 6)
 
                     if !areaIsOpen {
                         headline("The garden is being planted an area at a time, and this plant's area comes later.")
@@ -158,6 +158,7 @@ struct ShowInGardenView: View {
                 }
                 .padding(.bottom, 28)
             }
+            .closingBar { dismiss() }
 
             VStack(spacing: 6) {
                 if !areaIsOpen {
@@ -198,11 +199,6 @@ struct ShowInGardenView: View {
             .animation(Chrome.fadeIn, value: working)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .overlay(alignment: .topTrailing) {
-            QuietButton(title: "Close") { dismiss() }
-                .padding(.trailing, 12)
-                .padding(.top, 12)
-        }
     }
 
     private func headline(_ key: LocalizedStringKey) -> some View {

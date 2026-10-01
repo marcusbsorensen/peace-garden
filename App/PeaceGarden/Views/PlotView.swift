@@ -214,7 +214,7 @@ struct PlotView: View {
             .allowsHitTesting(true)
         }
         .overlay(alignment: .topTrailing) {
-            QuietButton(title: "Close") { dismiss() }
+            CloseButton { dismiss() }
                 .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { closeFrame = $0 }
                 .padding(.trailing, 12)
                 .padding(.top, 12)

@@ -22,13 +22,12 @@ struct SeedView: View {
                         traits(identity: identity)
                     }
                     .padding(.horizontal, 30)
-                    // Clear of Close, which sits in its own band across the top
-                    // rather than in the scroll.
-                    .padding(.top, 68)
+                    .padding(.top, 6)
                     .padding(.bottom, 34)
                     .frame(maxWidth: Chrome.readableWidth)
                     .frame(maxWidth: .infinity)
                 }
+                .closingBar { dismiss() }
                 // Presented the way this screen is, so the second sheet reads
                 // as a page turned rather than a different kind of thing.
                 .sheet(isPresented: $showingMeaning) {
@@ -37,11 +36,6 @@ struct SeedView: View {
                         .presentationBackground(Chrome.ground)
                 }
             }
-        }
-        .overlay(alignment: .topTrailing) {
-            QuietButton(title: "Close") { dismiss() }
-                .padding(.trailing, 12)
-                .padding(.top, 8)
         }
     }
 
@@ -179,16 +173,12 @@ struct NameMeaningView: View {
                     parts(of: theme, chosen: part, tail: name.genusTail)
                 }
                 .padding(.horizontal, 30)
-                .padding(.top, 68)
+                .padding(.top, 6)
                 .padding(.bottom, 34)
                 .frame(maxWidth: Chrome.readableWidth)
                 .frame(maxWidth: .infinity)
             }
-        }
-        .overlay(alignment: .topTrailing) {
-            QuietButton(title: "Close") { dismiss() }
-                .padding(.trailing, 12)
-                .padding(.top, 8)
+            .closingBar { dismiss() }
         }
     }
 

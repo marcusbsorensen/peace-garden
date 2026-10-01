@@ -81,7 +81,7 @@ struct SeedOfferView: View {
             .frame(maxWidth: .infinity)
         }
         .overlay(alignment: .topTrailing) {
-            QuietButton(title: "Close") { dismiss() }
+            CloseButton { dismiss() }
                 .padding(.trailing, 12)
                 .padding(.top, 12)
         }

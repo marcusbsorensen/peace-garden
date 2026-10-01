@@ -74,16 +74,38 @@ struct SettingsView: View {
         var id: String { rawValue }
     }
 
+    /// Pinned over the scroll, on the screen's own ground, with a short fade
+    /// below it so a row going under reads as going under rather than as cut.
+    private var header: some View {
+        HStack(alignment: .center) {
+            Text("Settings")
+                .chromeHeading()
+                .foregroundStyle(Chrome.ink)
+            Spacer(minLength: 12)
+            CloseButton { close() }
+        }
+        .padding(.leading, 30)
+        .padding(.trailing, 14)
+        .padding(.top, 10)
+        .padding(.bottom, 12)
+        .frame(maxWidth: Chrome.readableWidth + 16)
+        .frame(maxWidth: .infinity)
+        .background(Chrome.ground)
+        .overlay(alignment: .bottom) {
+            LinearGradient(colors: [Chrome.ground, Chrome.ground.opacity(0)],
+                           startPoint: .top, endPoint: .bottom)
+                .frame(height: 18)
+                .offset(y: 18)
+                .allowsHitTesting(false)
+        }
+    }
+
     var body: some View {
         ZStack {
             Chrome.ground.ignoresSafeArea()
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 30) {
-                    Text("Settings")
-                        .chromeHeading()
-                        .foregroundStyle(Chrome.ink)
-
                     // Grouped by the question each answers rather than by the
                     // order they were built in. Four headings, and the one
                     // thing that moved between them is the username: it is not
@@ -104,7 +126,7 @@ struct SettingsView: View {
 #endif
                 }
                 .padding(.horizontal, 30)
-                .padding(.top, 34)
+                .padding(.top, 18)
                 .padding(.bottom, 60)
                 .frame(maxWidth: Chrome.readableWidth)
                 .frame(maxWidth: .infinity)
@@ -114,11 +136,10 @@ struct SettingsView: View {
             // scrolled away from should still be kept, which is what losing
             // focus does below.
             .scrollDismissesKeyboard(.interactively)
-        }
-        .overlay(alignment: .topTrailing) {
-            QuietButton(title: "Close") { close() }
-                .padding(.trailing, 12)
-                .padding(.top, 8)
+            // The title and the way out stay put and the settings pass under
+            // them. Scrolled with the rest, the title went off the top and the
+            // toggles slid over the close control.
+            .safeAreaInset(edge: .top, spacing: 0) { header }
         }
         .onAppear { draftName = model.identity?.displayName ?? "" }
         // The alert is the assisted path only: `HoldToConfirm` asks for it when
