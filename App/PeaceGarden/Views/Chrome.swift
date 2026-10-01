@@ -1409,7 +1409,10 @@ struct HoldToConfirm: View {
                     .accessibilityHint("Hold for 3 seconds.")
             }
 
-            if holding {
+            // A mark's sentence is its screen's to place: under a mark it set
+            // the width of the whole column, which dragged the fill out to the
+            // width of an unwrapped line and took the sentence off the glass.
+            if holding, !isMark {
                 Text(consequence)
                     .font(.system(size: 13, weight: .light))
                     .foregroundStyle(Chrome.muted)
@@ -1441,13 +1444,6 @@ struct HoldToConfirm: View {
     /// rather than sliding behind it.
     private func face(_ progress: CGFloat) -> some View {
         ZStack(alignment: .leading) {
-            Rectangle()
-                .fill(tint)
-                // Scaling a rectangle from its leading edge keeps the advancing
-                // edge straight and needs no measurement; the capsule below
-                // shapes the two ends.
-                .scaleEffect(x: progress, anchor: .leading)
-
             // A mark takes its neighbours' grey rather than the ink a Settings
             // row takes. This is the one thing on the row that cannot be
             // undone, and a control that shouts about that is a control people
@@ -1458,6 +1454,16 @@ struct HoldToConfirm: View {
                 .mask(alignment: .leading) {
                     Rectangle().scaleEffect(x: progress, anchor: .leading)
                 }
+        }
+        // Behind the label rather than beside it in the stack, so the face is
+        // exactly as wide as what it says and never as wide as what it is
+        // offered. Scaling a rectangle from its leading edge keeps the
+        // advancing edge straight and needs no measurement; the capsule shapes
+        // the two ends.
+        .background(alignment: .leading) {
+            Rectangle()
+                .fill(tint)
+                .scaleEffect(x: progress, anchor: .leading)
         }
         .clipShape(Capsule())
         .overlay(Capsule().strokeBorder(Chrome.hairline, lineWidth: 1))

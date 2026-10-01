@@ -212,6 +212,23 @@ struct PlantDetailView: View {
             .frame(maxWidth: Chrome.readableWidth)
             .padding(.bottom, 22)
 
+            // **Said when the word is asked for, not while it is held.** Under
+            // the thumb for the three seconds of the hold, it went before
+            // anybody could read it; here it stays for as long as the word is
+            // out, and the hold comes after it has been read.
+            if expandedMark == "release" {
+                Text(Self.releaseConsequence)
+                    .font(.system(size: 13, weight: .light))
+                    .foregroundStyle(Chrome.muted)
+                    .lineSpacing(4)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 40)
+                    .frame(maxWidth: Chrome.readableWidth)
+                    .padding(.bottom, 16)
+                    .transition(.opacity)
+            }
+
             marks
                 .frame(maxWidth: Chrome.readableWidth)
                 .padding(.horizontal, 24)
@@ -376,6 +393,10 @@ struct PlantDetailView: View {
     /// `HoldToConfirm` also carries the assisted path: a three-second press is
     /// a motor task, and for somebody who cannot make one the mark becomes an
     /// ordinary button and the alert comes back.
+    /// One sentence, said above the row when the word is out and carried by
+    /// the alert on the assisted path.
+    static let releaseConsequence: LocalizedStringResource = "It leaves your garden for the Wild Fields. The person you grew it with keeps theirs, and every other plant here stays where it is."
+
     private var releaseMark: some View {
         HoldToConfirm(
             title: "Release",
@@ -383,7 +404,7 @@ struct PlantDetailView: View {
             // name in it: a name would make this a format string for the sake
             // of a fact the sentence does not need, and the person is already
             // named on the screen above it.
-            consequence: "It leaves your garden for the Wild Fields. The person you grew it with keeps theirs, and every other plant here stays where it is.",
+            consequence: Self.releaseConsequence,
             // Its own mark, drawn for this: a head let go and its seeds
             // lifting away. It had been borrowing the garden's, which says the
             // opposite of where a released plant goes.
@@ -401,7 +422,7 @@ struct PlantDetailView: View {
             if expandedMark != "release" {
                 Color.clear
                     .contentShape(Capsule())
-                    .onTapGesture { expandedMark = "release" }
+                    .onTapGesture { withAnimation(Chrome.fadeIn) { expandedMark = "release" } }
             }
         }
         .fixedSize(horizontal: true, vertical: true)
