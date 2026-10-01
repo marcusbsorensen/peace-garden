@@ -33,6 +33,15 @@ declare(strict_types=1);
  *   POST /api/walk/answer          the other gardener says yes or no
  *   POST /api/walk/withdraw        either of them takes it back
  *   POST /api/walk/plant           plants one arrival directly, for the test harness
+ *   GET  /api/wild                 the Wild Fields: how big, and how many stand in each tile
+ *   GET  /api/wild/tile/{x}/{z}    what stands in one tile: seed, parents, spot
+ *   POST /api/wild/release         one gardener lets a plant go into the Wild Fields
+ *
+ * **The Wild Fields are not an area** (`WildStore.php`, since 1 October
+ * 2026). Nothing in them is placed by a rule: a released plant stands where
+ * its seed says (`WildFields.php`), and there is no asking, because releasing
+ * is one gardener letting go of their own copy (`docs/PHASES.md`, *Releasing
+ * is one person's*). What a release does check is in the route below.
  *
  * **Nothing is planted by one gardener alone.** A plant made at a meeting is
  * grown from both parents' seeds, so showing it publishes the other gardener's
@@ -397,6 +406,13 @@ function route(string $method, string $path): never
             $plant['encounter'], $plant['height'], $plant['family'], time(), $plant['area'],
             $plant['kind'], $plant['hue'], $plant['habit']
         );
+        // Released to the Wild Fields, by either gardener, and so not offered
+        // anywhere: a plant stands in one public place. 410 rather than 409,
+        // because 409 is the area-not-open refusal and the phone has its own
+        // sentence for each.
+        if ($offer === false) {
+            respond(410, ['error' => 'This plant has been released to the Wild Fields.']);
+        }
         // Offered already, by somebody holding a different pair of tokens. Said
         // without either of them — see `Offers::offer`.
         if ($offer === null) {
@@ -445,6 +461,69 @@ function route(string $method, string $path): never
         $offer = store($settings)->offers()->withdraw($seed, $token, time());
         if ($offer === null) respond(404, ['error' => 'No offer for that plant at that token.']);
         respond(200, ['offer' => $offer]);
+    }
+
+    // **The field, and what stands in each part of it.** Nothing in either
+    // answer names a person, a meeting or a time: the field keeps none of them.
+    if ($path === '/api/wild' && $method === 'GET') {
+        respond(200, ['side' => WildFields::SIDE, 'tile' => WildFields::TILE, 'tiles' => WildFields::TILES,
+                      'standing' => store($settings)->wild()->standing()]);
+    }
+
+    if (preg_match('#\A/api/wild/tile/([0-9]{1,2})/([0-9]{1,2})\z#', $path, $m) && $method === 'GET') {
+        [$x, $z] = [(int) $m[1], (int) $m[2]];
+        // The page wraps its own coordinates round the field before it asks,
+        // so a tile past the last is a page that has not, and is refused
+        // rather than answered with nothing.
+        if ($x >= WildFields::TILES || $z >= WildFields::TILES) {
+            respond(404, ['error' => 'The field is ' . WildFields::TILES . ' tiles each way, counted from 0.']);
+        }
+        respond(200, ['tile' => [$x, $z], 'plantings' => store($settings)->wild()->tile($x, $z)]);
+    }
+
+    // **Letting a plant go.** `{seed, parents, encounter, token?}`, from the
+    // app's Release, held three seconds on the plant's own screen.
+    //
+    // - **What is checked:** that the seed is the cross of those parents at that
+    //   meeting, as an offer is checked, so nothing invented under somebody
+    //   else's lineage stands in the field; and, for a plant the asking has
+    //   ever held, that the caller holds one of its two tokens (`letGo`).
+    // - **What is kept:** the seed and both parents, which is what a browser
+    //   grows a hybrid from, and nothing else. The meeting is read to check the
+    //   cross and dropped; the token is compared and dropped; no time is
+    //   written anywhere.
+    // - **Once per plant.** A plant already standing is answered with where it
+    //   stands, whoever asks, so a phone whose first answer was lost can ask
+    //   again and be told the release took.
+    if ($path === '/api/wild/release' && $method === 'POST') {
+        $body = readBody();
+        $seed = $body['seed'] ?? null;
+        $parents = $body['parents'] ?? null;
+        $encounter = $body['encounter'] ?? null;
+        $token = $body['token'] ?? null;
+        if (!Seeds::isHex32($seed) || !is_array($parents) || count($parents) !== 2
+            || !Seeds::isHex32($parents[0] ?? null) || !Seeds::isHex32($parents[1] ?? null)
+            || !Seeds::isHex32($encounter)) {
+            respond(400, ['error' => 'seed, parents (two) and encounter are each 64 lowercase hex characters.']);
+        }
+        if ($token !== null && !Seeds::isHex16($token)) {
+            respond(400, ['error' => 'token is 32 lowercase hex characters, or absent.']);
+        }
+        if (Seeds::cross($parents[0], $parents[1], $encounter) !== $seed) {
+            respond(422, ['error' => 'That seed is not the cross of those parents at that meeting.']);
+        }
+        $store = store($settings);
+        if (($standing = $store->wild()->find($seed)) !== null) {
+            respond(200, ['planting' => $standing]);
+        }
+        if (!$store->offers()->letGo($seed, $token, time())) {
+            // The same answer whether there was no token or the wrong one, as
+            // `answer` and `withdraw` give, so the route says nothing about
+            // which plants have been offered beyond what was already public.
+            respond(403, ['error' => 'This plant has stood in the garden, and only the two who grew it can release it.']);
+        }
+        [$planting, $new] = $store->wild()->release($seed, $parents[0], $parents[1]);
+        respond($new ? 201 : 200, ['planting' => $planting]);
     }
 
     if ($path === '/api/walk/plant' && $method === 'POST') {

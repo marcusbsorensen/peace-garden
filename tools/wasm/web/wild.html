@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Wild Fields</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; color: rgb(255 255 255 / 0.85);
+    font: 15px/1.4 Georgia, serif; }
+  main { position: fixed; inset: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+  #sky { z-index: -1; }
+  #flies { pointer-events: none; }
+  #note { position: absolute; inset-inline: 16px; inset-block-start: 16px; margin: 0;
+    font: 11px/1.6 system-ui, sans-serif; letter-spacing: 0.06em; color: rgb(255 255 255 / 0.5); }
+  nav { position: absolute; inset-inline: 16px; inset-block-end: 16px; display: flex; flex-wrap: wrap;
+    gap: 8px; justify-content: center; }
+  button { background: transparent; color: inherit; border: 1px solid rgb(255 255 255 / 0.4);
+    border-radius: 6px; padding: 8px 14px; font: 11px/1 system-ui, sans-serif;
+    letter-spacing: 0.14em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<main>
+  <canvas id="sky" aria-hidden="true"></canvas>
+  <canvas id="stage" aria-label="An invented Wild Fields"></canvas>
+  <canvas id="flies" aria-hidden="true"></canvas>
+  <p id="note">Loading…</p>
+  <nav>
+    <button id="left" aria-label="Turn left">Turn left</button>
+    <button id="right" aria-label="Turn right">Turn right</button>
+    <button id="out" aria-label="Further">Further</button>
+    <button id="in" aria-label="Closer">Closer</button>
+  </nav>
+</main>
+<script type="module">
+  // The workbench for the Wild Fields. `?plants=400` invents a field of that
+  // many released plants — minted seeds, standing where SeedCore's rule puts
+  // each — so the field can be judged at a thousand before anybody has let
+  // one go. `?source=service` draws what the local plot service holds
+  // instead. Drag to walk, as on the page.
+  //
+  // The invented plants are minted, not crossed: a field of them is the
+  // field's density and its night, which is what this is for, and not anybody's
+  // plants.
+  import { loadModule } from '/assets/js/plant.js';
+  import { makeSky } from '/assets/js/sky.js';
+  import { SIDE, TILES, flyOver, makeWildStage, spotOf } from '/assets/js/wildfields.js';
+
+  const query = new URLSearchParams(location.search);
+  const count = Math.max(0, parseInt(query.get('plants') ?? '', 10) || 400);
+  const fromService = query.get('source') === 'service';
+  const note = document.getElementById('note');
+
+  async function invent(n) {
+    const tiles = new Map();
+    for (let i = 0; i < n; i++) {
+      const bytes = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`wild bench ${i}`)));
+      const seed = [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('');
+      const spot = spotOf(seed);
+      const key = `${Math.floor(spot[0] / (SIDE / TILES))},${Math.floor(spot[1] / (SIDE / TILES))}`;
+      if (!tiles.has(key)) tiles.set(key, []);
+      tiles.get(key).push({ seed, parents: [], spot });
+    }
+    return tiles;
+  }
+
+  // The module, never from the cache: see `/dev/quiet`.
+  const e = await loadModule(`/plant.wasm?dev=${Date.now()}`);
+  const invented = fromService ? null : await invent(count);
+  const source = fromService
+    ? async (x, z) => (await (await fetch(`/api/wild/tile/${x}/${z}`)).json()).plantings
+    : async (x, z) => invented.get(`${x},${z}`) ?? [];
+  const stage = makeWildStage(document.getElementById('stage'), e, {
+    source,
+    report: (growing) => { note.textContent = growing ? 'Growing…'
+      : `${fromService ? 'The local service' : `${count} invented plants`} · drag to walk`; },
+  });
+  flyOver(document.getElementById('flies'), stage);
+  let sky = null;
+  makeSky(document.getElementById('sky'), { milkyWay: true, quarterTurns: () => stage.turn() })
+    .then((made) => { sky = made; });
+
+  const canvas = document.getElementById('stage');
+  let held = null;
+  canvas.addEventListener('pointerdown', (event) => { held = [event.clientX, event.clientY]; canvas.setPointerCapture(event.pointerId); });
+  canvas.addEventListener('pointermove', (event) => {
+    if (!held) return;
+    const m = stage.view().metresPerPixel;
+    const v = stage.view();
+    stage.lookAt({ x: v.x - (event.clientX - held[0]) * m, y: v.y + (event.clientY - held[1]) * m });
+    held = [event.clientX, event.clientY];
+  });
+  canvas.addEventListener('pointerup', () => { held = null; });
+  const turn = (q) => { stage.turnBy(q); sky?.draw(); };
+  document.getElementById('left').onclick = () => turn(-1);
+  document.getElementById('right').onclick = () => turn(1);
+  document.getElementById('in').onclick = () => stage.lookAt({ zoom: stage.view().zoom * Math.SQRT2 });
+  document.getElementById('out').onclick = () => stage.lookAt({ zoom: stage.view().zoom / Math.SQRT2 });
+</script>
+</body>
+</html>

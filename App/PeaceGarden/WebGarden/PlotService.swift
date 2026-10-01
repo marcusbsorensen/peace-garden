@@ -1,18 +1,22 @@
 import Foundation
 import SeedCore
 
-/// The phone's side of the plot service: the asking, and nothing else.
+/// The phone's side of the plot service: the asking, and letting a plant go.
 ///
-/// **This is the first network request the app has ever made**, and the reason
-/// it is one file with four calls in it. Everything about a plant is derived
+/// **These were the first network requests the app ever made**, and the reason
+/// they are one file with six calls in it. Everything about a plant is derived
 /// from its seed, so there is nothing here that syncs, backs up, or fetches an
-/// appearance. What crosses the wire is an offer, an answer, and a bag of
-/// opaque tokens to ask about.
+/// appearance. What crosses the wire is an offer, an answer, a bag of opaque
+/// tokens to ask about, and — since 1 October 2026 — a plant released to the
+/// Wild Fields.
 ///
-/// It never sends a name, a seed of this person's own, a coordinate, or
-/// anything that identifies the device. The tokens it sends are the meeting's,
-/// they mean nothing outside it, and the service holds no directory to look
-/// them up in. See `Offers.php`.
+/// It never sends a name, a coordinate, or anything that identifies the
+/// device. What it does send of a plant is its seed, both parents' seeds and
+/// the meeting's number, and one of the two parents is this person's own seed:
+/// that is what a hybrid is grown from, and `privacy6` and `privacy8` on the
+/// site say so. The tokens it sends are the meeting's, they mean nothing
+/// outside it, and the service holds no directory to look them up in. See
+/// `Offers.php` and `WildStore.php`.
 struct PlotService: Sendable {
 
     /// Where the service is. HTTPS and this host only: a service address that
@@ -28,7 +32,7 @@ struct PlotService: Sendable {
         self.origin = origin
     }
 
-    // MARK: The five things a phone says
+    // MARK: The things a phone says
 
     /// **Which of the garden's ten areas a plant can stand in today.**
     ///
@@ -100,6 +104,29 @@ struct PlotService: Sendable {
         try await askOne("/api/walk/withdraw", Withdrawing(seed: seed.hex, token: token))
     }
 
+    // MARK: Letting a plant go
+
+    /// Releases one plant into the Wild Fields, and returns once the service
+    /// says it is standing there.
+    ///
+    /// **Prompted, never polled**: it is made when a gardener has held Release
+    /// for three seconds, and at no other time, which is why the *Alert me*
+    /// switch has nothing to say about it — that switch stops the one request
+    /// a phone makes on its own (`pending`), and this is not that.
+    ///
+    /// **It succeeds only on the planting**, not on a status code. The service
+    /// answers with the planting it stands in the field, and a reply that does
+    /// not carry this plant's seed is treated as a failure: the caller removes
+    /// the plant from this garden on success, and a plant must never be removed
+    /// on the strength of a reply that does not say it arrived. A second
+    /// release of a plant already standing is answered with that planting, so
+    /// a phone that lost the first answer is told the truth by the second.
+    func release(_ plant: WildRelease) async throws {
+        guard try await ask("/api/wild/release", plant).planting?.seed == plant.seed else {
+            throw Trouble.unreadable
+        }
+    }
+
     // MARK: What can go wrong
 
     enum Trouble: Error, Equatable {
@@ -120,8 +147,13 @@ struct PlotService: Sendable {
     private struct Reply: Decodable {
         var offer: SharedOffer?
         var offers: [SharedOffer]?
+        /// A plant standing in the Wild Fields: all a phone reads of it is the
+        /// seed, to know it is this plant that arrived.
+        var planting: Planted?
         var error: String?
     }
+
+    private struct Planted: Decodable { var seed: String }
 
     private struct Offering: Encodable {
         var to: String
@@ -149,7 +181,7 @@ struct PlotService: Sendable {
 
     /// A read, which is the only kind of request here with no body.
     ///
-    /// **Eight seconds rather than twenty.** The four calls below are a
+    /// **Eight seconds rather than twenty.** The calls below are a
     /// gardener pressing a button and waiting for it to happen; this one runs
     /// while they are reading, and an answer that arrives after they have
     /// decided is no answer. Failing quickly is what lets the caller fall back

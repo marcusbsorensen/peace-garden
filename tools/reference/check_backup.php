@@ -113,6 +113,10 @@ $store->plantInto('renewal', str_repeat('5', 64), str_repeat('a', 64), str_repea
 // one already standing full of another crop — silently, as the others would.
 $store->plantInto('ground', str_repeat('4', 64), str_repeat('a', 64), str_repeat('b', 64),
                   str_repeat('c', 64), 0.2, 3, '', null, 'succulent');
+// And one plant let go into the Wild Fields. It has no lock and no order, so
+// nothing about it could be replayed; what a copy that left the table out
+// would lose is the plant itself, released and then nowhere.
+$store->wild()->release(str_repeat('3', 64), str_repeat('a', 64), str_repeat('b', 64));
 unset($store);
 
 // MARK: Taking one
@@ -163,6 +167,7 @@ check('the copy holds the Coppice', ($counts['coppice'] ?? -1) === 1);
 check('the copy counts the Coppice lock', ($counts['coppice_lock'] ?? -1) === 1);
 check('the copy holds the Home Ground', ($counts['home_ground'] ?? -1) === 1);
 check('the copy counts the Home Ground lock', ($counts['home_ground_lock'] ?? -1) === 1);
+check('the copy holds the Wild Fields', ($counts['wild_fields'] ?? -1) === 1);
 
 // MARK: What a restore writes back
 
@@ -176,6 +181,7 @@ $restoredOffer = null;
 $restoredHue = null;
 $restoredHabit = null;
 $restoredCrop = null;
+$restoredWild = null;
 if ($copy !== '') {
     $whole = gzdecode((string) file_get_contents($copy)) ?: '';
     $marker = "-- A SQLite file follows, not SQL.\n";
@@ -198,6 +204,8 @@ if ($copy !== '') {
             $restoredHabit = $stool === false ? null : $stool['habit'];
             $sown = $back->query('SELECT crop, bed FROM home_ground')->fetch(PDO::FETCH_ASSOC);
             $restoredCrop = $sown === false ? null : [$sown['crop'], (int) $sown['bed']];
+            $wild = $back->query('SELECT parent_a, parent_b FROM wild_fields')->fetch(PDO::FETCH_ASSOC);
+            $restoredWild = $wild === false ? null : [$wild['parent_a'], $wild['parent_b']];
             unset($back);
         } catch (Throwable) {
             // Left null, which is what the checks below report.
@@ -213,6 +221,10 @@ check('an offer still in flight keeps its kind too', $restoredOffer === 'panicul
 check('a restored Glasshouse row still knows its hue', $restoredHue === 0.8);
 check('a restored Coppice row still knows its habit', $restoredHabit === 'fern');
 check('a restored Home Ground row still knows its crop, and the bed it claimed', $restoredCrop === ['Pell', 1]);
+// A released plant is grown from its parents, so a row that came back without
+// them would be a plant nobody could draw.
+check('a restored Wild Fields row still knows both its parents',
+      $restoredWild === [str_repeat('a', 64), str_repeat('b', 64)]);
 
 // MARK: Reading it back
 

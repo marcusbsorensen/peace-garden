@@ -240,6 +240,37 @@ final class GardenModel {
         persist()
     }
 
+    /// Sends this plant to the Wild Fields. Removes nothing: the caller removes
+    /// it once this says it arrived, which is the whole of the point.
+    ///
+    /// **Until 1 October 2026 release sent nothing.** It animated and deleted,
+    /// and its sentence said the plant left for the Wild Fields, which did not
+    /// exist — so a plant somebody let go went nowhere at all, and they had no
+    /// way to know. Now the plant leaves this garden only on the service's word
+    /// that it is standing in the field, and if that word does not come the
+    /// plant stays and the screen says so. Nothing is queued to try again
+    /// later: a plant waiting to go would be neither here nor there, and a
+    /// request made later on its behalf would be one the gardener did not make
+    /// at that moment.
+    ///
+    /// **Not behind the *Alert me* switch.** That switch stops the one request
+    /// the app makes unprompted; this one is made by a three-second hold.
+    ///
+    /// A plant shown in one of the ten areas, or offered to one, is taken out
+    /// of the asking by the same request (`Offers::letGo`), with this phone's
+    /// token as the proof that it is one of the two who grew it.
+    func release(_ record: PlantRecord) async -> Result<Void, PlotService.Trouble> {
+        guard let plant = WildRelease(record: record) else { return .failure(.unreadable) }
+        do {
+            try await plots.release(plant)
+            return .success(())
+        } catch let trouble as PlotService.Trouble {
+            return .failure(trouble)
+        } catch {
+            return .failure(.unreachable)
+        }
+    }
+
     /// Has this exact plant already been kept? Guards against a double tap on
     /// Keep growing this plant.
     func contains(seed: SeedID) -> Bool {

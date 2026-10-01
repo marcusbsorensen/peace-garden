@@ -162,9 +162,21 @@ export const EN = Object.freeze({
   downloadTitle: "The app",
   downloadBody:
     "Peace Garden is for iPhone and iPad. A seed is drawn once, on one device, and the plant that grows from it is nobody else's.",
+  // **The Wild Fields, built on 1 October 2026.** The paragraph used to
+  // describe a seed set down to wait for another, which is The Winds
+  // (docs/PHASES.md) and the opposite of release; it said what the place
+  // would be before anything stood in it. It says now what is there: where a
+  // released plant goes, that nobody arranges it, what it carries and does
+  // not, and how it is walked. *No name, no sender and no date* is
+  // `WildStore.php`, which keeps none of the three.
   wildTitle: "The Wild Fields",
   wildBody:
-    "Somewhere to send a seed when there is nobody in the room. A seed set down here waits for another to arrive, and what grows belongs to whoever was at both ends of it.",
+    "Where a plant goes when it is let go. Nobody arranges the Wild Fields: each plant stands where its own seed puts it, with no name, no sender and no date, and the field runs on in every direction. Drag to walk it.",
+  // Said under the field before anybody has released a plant, so a reader
+  // knows the grass is not hiding something.
+  wildEmpty: "Nothing has been released here yet.",
+  // The field could not be drawn at all, as `walkAway` is for the walk.
+  wildAway: "The Wild Fields cannot be reached just now.",
   walkTitle: "The Long Walk",
   // The way out of the garden's travel area and into the walk itself. It is
   // the same place: `/g` draws it as dots from the stand-in, `/walk` grows
@@ -561,6 +573,16 @@ export const EN = Object.freeze({
   // plants that were offered.
   privacy7:
     "With alerts on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings.",
+  // Release, since 1 October 2026: `WildRelease` in SeedCore is what is sent,
+  // `router.php`'s release route what is checked, and `WildStore.php` what is
+  // kept — the seed and the two parents, and no column for anything else. The
+  // meeting's number checks the cross and the random number finds the plant
+  // in the asking (`Offers::letGo`), and neither is written down. *Taken back
+  // from there first* is that same route withdrawing the offer. The third
+  // sentence is what publishing two parents' seeds means, said plainly
+  // rather than left for a reader to work out.
+  privacy8:
+    "If you release a plant, the app sends it to the Wild Fields: its seed, the seeds of its two parents, the number for the meeting, and your random number from that meeting if it has one. The Wild Fields keep the plant's seed and its parents' seeds, and nothing else: no name, no date, and no record of who released it. Its parents' seeds are the two seeds that met, so anyone who already knows one of them can tell the plant grew from it. If the plant was standing in the web garden, it is taken back from there first. Anyone can see a released plant, and it cannot be taken back.",
   // The website: `Limits.php` for the scrambled address and its hour — a
   // fifty-five-minute window and `sweep.php` every five minutes, which is what
   // keeps it inside the hour when nobody asks — `languages.js` for the

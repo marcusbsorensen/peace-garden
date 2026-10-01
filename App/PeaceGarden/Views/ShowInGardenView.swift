@@ -238,6 +238,14 @@ struct ShowInGardenView: View {
             switch await work() {
             case .success:
                 dismiss()
+            case .failure(.refused(let status, _)) where status == 410:
+                // **Released to the Wild Fields**, by whichever of the two let
+                // go of their copy — and not said which, for the reason the
+                // standing line gives for a withdrawal: it would put somebody
+                // else's decision on this screen in their name. A plant stands
+                // in one public place, and *try again* would be false.
+                trouble = String(localized: "This plant is in the Wild Fields, so it cannot be shown anywhere else.")
+                working = false
             case .failure(.refused(let status, _)) where status == 409:
                 // **The one refusal with its own sentence.** The service says
                 // 409 for a plant whose area is not planted yet, and the

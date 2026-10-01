@@ -13,6 +13,7 @@ require_once __DIR__ . '/ColdFrameStore.php';
 require_once __DIR__ . '/GlasshouseStore.php';
 require_once __DIR__ . '/CoppiceStore.php';
 require_once __DIR__ . '/HomeGroundStore.php';
+require_once __DIR__ . '/WildStore.php';
 require_once __DIR__ . '/Offers.php';
 require_once __DIR__ . '/TakenBack.php';
 
@@ -79,6 +80,9 @@ final class WalkStore
         $store->glasshouse();
         $store->coppice();
         $store->homeGround();
+        // And the Wild Fields', which is not an area and has no rule to run,
+        // for the same reason: it is in the nightly copy's list.
+        $store->wild();
         // And the asking's, for the same reason and one more: `offer_key` is
         // in the nightly copy's list, and mysqldump refuses a list naming a
         // table that is not there. Its migration is also the one that erases
@@ -318,6 +322,17 @@ final class WalkStore
     {
         static $homeGround = null;
         return $homeGround ??= new HomeGroundStore($this->db);
+    }
+
+    /**
+     * The Wild Fields, on the same connection. Not an area: nothing in it is
+     * placed by a rule against anything else, so it has no `plant` and is not
+     * in `plantInto`. A plant reaches it by being released (`router.php`).
+     */
+    public function wild(): WildStore
+    {
+        static $wild = null;
+        return $wild ??= new WildStore($this->db);
     }
 
     /**

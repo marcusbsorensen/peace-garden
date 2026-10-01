@@ -181,7 +181,7 @@ void main() {
   outColour = vec4(shade(vColour, normalize(vNormal)) * opacity, opacity);
 }`;
 
-const PLANT_VERTEX = `#version 300 es
+export const PLANT_VERTEX = `#version 300 es
 in vec3 position; in vec3 normal; in vec2 uv; in float age;
 uniform mat4 viewProjection;
 uniform vec3 offset;
@@ -222,7 +222,7 @@ void main() {
 // ridge a specular hot enough to burn out the detail it was meant to show.
 // What is wanted is a vein catching the light against matte tissue, not a
 // wet leaf.
-const PLANT_FRAGMENT = `#version 300 es
+export const PLANT_FRAGMENT = `#version 300 es
 precision highp float;
 in vec3 vNormal; in vec2 vUV; in float vAge; in vec3 vWorld;
 uniform sampler2D colour;
@@ -1481,8 +1481,12 @@ export function hash(n) {
 }
 
 // MARK: - GL plumbing
+//
+// `program` and `upload` are exported, with the plant's two shaders above,
+// for the Wild Fields (`wildfields.js`): a field with no edge cannot be a plot
+// on this stage, and a second copy of how a plant is lit would be two lights.
 
-function program(gl, vertex, fragment, attributes, extraUniforms) {
+export function program(gl, vertex, fragment, attributes, extraUniforms) {
   const p = link(gl, vertex, fragment);
   const at = {};
   for (const name of attributes) at[name] = gl.getAttribLocation(p, name);
@@ -1492,7 +1496,7 @@ function program(gl, vertex, fragment, attributes, extraUniforms) {
   return { program: p, at };
 }
 
-function upload(gl, p, mesh) {
+export function upload(gl, p, mesh) {
   const vao = gl.createVertexArray();
   gl.bindVertexArray(vao);
   const buffers = [

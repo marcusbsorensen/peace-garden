@@ -76,8 +76,10 @@ a requirement on the plot service rather than a feature to add afterwards: a
 plot can empty, and what leaves it has somewhere to go.
 
 Phase 1 already lets one plant go — *Release to the wild fields*, held for three
-seconds, in `PlantDetailView`. Today that removes it from the phone and the
-phrase is a name for the action. In phase 2 it becomes a place: a released plant
+seconds, in `PlantDetailView`. Until 1 October 2026 that removed it from the
+phone and the phrase was a name for the action; **since then the plant is sent
+there**, and leaves the phone only once the field has it (`WEB-GARDENS.md`
+§*The Wild Fields*, *Built*). In phase 2 it becomes a place: a released plant
 stands in a wild area of the shared garden with **no name, no sender and no
 date** — the plant alone, which is the only part of it that was never anybody's
 to disclose.
@@ -92,6 +94,13 @@ Two things follow, and both are cheaper to build in than to add:
   either gardener, so the invitation below can never be offered on it and no
   later consent can put a name on it. That is the difference between releasing
   a plant and un-sharing one.
+
+  **As built on 1 October 2026 the field keeps no name, sender or date, but it
+  does keep both parents' seeds**, because a hybrid cannot be drawn without
+  them — and the parents are a lineage. This and *releasing is one person's*
+  cannot both hold while the field draws the true plant; `WEB-GARDENS.md`
+  §*The Wild Fields*, *Built*, sets out the three ways out, and it is
+  Marcus's to choose before the first deploy.
 
 Whether a released plant can be found again by the person who released it is
 open. Everything above works either way, and answering it needs a real garden to
