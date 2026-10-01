@@ -20,6 +20,9 @@ import UIKit
 /// alone, taken with nothing lighting it but itself. The glow is laid over the
 /// lit figure *added*, by as much as it is dark — so the one render of the glow
 /// serves every hour, and the paint comes up exactly as the lanterns do.
+///
+/// The lantern and the paper lamp are taken here too, by the same camera and
+/// cache, with a flame where the figures have paint: see `GardenLamps.swift`.
 @MainActor
 final class GardenCreatures {
     static let shared = GardenCreatures()
@@ -35,8 +38,14 @@ final class GardenCreatures {
     /// across before anybody zooms.
     nonisolated static let renderedPointsPerMetre: CGFloat = 260
 
+    /// The animals, painted. The lantern and the paper lamp are modelled and
+    /// taken the same way, but they are lights with a flame in them rather than
+    /// paint, and are shown at full strength in the row.
     nonisolated static func isCreature(_ kind: LampKind) -> Bool {
-        figure(of: kind) != nil
+        switch kind {
+        case .hare, .fox, .moth, .snail: return true
+        case .lantern, .paperLamp, .fireflies: return false
+        }
     }
 
     // MARK: The frame each is taken in
@@ -56,15 +65,51 @@ final class GardenCreatures {
         /// The glow's colour, which is also the colour of the little light it
         /// casts.
         let glow: SIMD3<Double>
+        /// Whether its own light is paint or a flame. Paint comes up by the
+        /// square of the lamps' glow, a flame by the glow itself.
+        var flame = false
+        /// Whether it is drawn with a shadow sheared from its own picture.
+        ///
+        /// **Only what stands up off a foot, the way a plant does.** The shear
+        /// reads every pixel as height above the foot. For a stem, a stake or a
+        /// post that is true. For a figure lying along the ground most of the
+        /// picture is ground it covers, and the shear threw that forward as a
+        /// dark copy of the body under it — the shadow under the hare that
+        /// should not have been there. The hare's long feet and haunch, the
+        /// fox and the snail are all footprint; the moth's stake and the
+        /// lights' posts are not.
+        var shadow = false
     }
 
     nonisolated static func figure(of kind: LampKind) -> Figure? {
         switch kind {
         case .hare: return Figure(metres: 0.80, lift: 0.20, glow: SIMD3(0.55, 1.00, 0.62))
         case .fox: return Figure(metres: 0.66, lift: 0.33, glow: SIMD3(0.45, 0.95, 0.88))
-        case .moth: return Figure(metres: 0.60, lift: 0.20, glow: SIMD3(0.64, 0.86, 1.00))
+        case .moth: return Figure(metres: 0.60, lift: 0.20, glow: SIMD3(0.64, 0.86, 1.00), shadow: true)
         case .snail: return Figure(metres: 0.44, lift: 0.26, glow: SIMD3(0.80, 1.00, 0.46))
-        case .lantern, .paperLamp, .fireflies: return nil
+        case .lantern:
+            return Figure(metres: 0.50, lift: 0.08, glow: GardenLamps.colour(of: kind),
+                          flame: true, shadow: true)
+        case .paperLamp:
+            return Figure(metres: 1.10, lift: 0.04, glow: GardenLamps.colour(of: kind),
+                          flame: true, shadow: true)
+        case .fireflies: return nil
+        }
+    }
+
+    /// How far round a figure is turned on the plot, in radians.
+    ///
+    /// Turned with the plot, as a plant is, so its near side stays its near
+    /// side and the sun stays where the sun is. Except the paper lamp, which
+    /// always hangs to the right of its cane: its halo is drawn in the plot,
+    /// round where the paper is, and has to know where that is without asking
+    /// the picture.
+    nonisolated static func turn(of kind: LampKind, facing: Int, quarter: Int) -> Float {
+        switch kind {
+        // Its arm is along +x, and +x a quarter of the way round from the
+        // camera's right is the screen's right.
+        case .paperLamp: return .pi / 4
+        default: return Float(facing) * .pi / 4 + Float(quarter) * .pi / 2
         }
     }
 
@@ -82,6 +127,13 @@ final class GardenCreatures {
 
     // MARK: Rendering
 
+    /// A picture already taken, without taking it: what a figure starts from
+    /// when it is drawn again, so a plot redrawn does not flash its figures
+    /// empty for a frame while the same pictures are fetched.
+    func held(_ kind: LampKind, step: Int?, turn: Int, facing: Int) -> UIImage? {
+        cache.object(forKey: Self.key(kind, step: step, turn: turn, facing: facing) as NSString)
+    }
+
     /// The figure under the garden's light at one of the eight points round the
     /// clock, or — with `step` nil — its glow alone.
     func picture(_ kind: LampKind, step: Int?, turn: Int, facing: Int) -> UIImage? {
@@ -95,7 +147,7 @@ final class GardenCreatures {
         let view = SCNView(frame: CGRect(x: 0, y: 0, width: side, height: side))
         view.scene = step.map {
             GardenSprites.makeScene(lit: GardenGround.Light.at(step: $0).turned(quarters: quarter))
-        } ?? Self.glowScene()
+        } ?? (figure.flame ? SCNScene() : Self.glowScene())
         view.backgroundColor = .clear
         view.isOpaque = false
         view.antialiasingMode = .multisampling4X
@@ -107,13 +159,13 @@ final class GardenCreatures {
         case .fox: body = Self.fox(paint)
         case .moth: body = Self.moth(paint)
         case .snail: body = Self.snail(paint)
-        case .lantern, .paperLamp, .fireflies: return nil
+        case .lantern: body = Self.lantern(paint)
+        case .paperLamp: body = Self.paperLamp(paint)
+        case .fireflies: return nil
         }
 
-        // Turned with the plot, as a plant is, so its near side stays its near
-        // side and the sun stays where the sun is.
         let pivot = SCNNode()
-        pivot.eulerAngles.y = Float(facing) * .pi / 4 + Float(quarter) * .pi / 2
+        pivot.eulerAngles.y = Self.turn(of: kind, facing: facing, quarter: quarter)
         pivot.addChildNode(body)
         view.scene?.rootNode.addChildNode(pivot)
         view.pointOfView = Self.camera(for: figure)
@@ -181,15 +233,21 @@ final class GardenCreatures {
 
         /// The luminous paint. By day it is the pale, faintly green white that
         /// glow-in-the-dark paint is; in the glow picture, it is the glow.
-        var luminous: SCNMaterial {
+        var luminous: SCNMaterial { luminous(SIMD3(0.83, 0.87, 0.74)) }
+
+        /// Luminous paint tinted by day, and giving back `strength` of the
+        /// glow. A pigment that colours the paint also holds less light, so the
+        /// fox's russet glows dimmer than its white — which is what keeps its
+        /// face and the tip of its brush apart from the rest of it after dark.
+        func luminous(_ day: SIMD3<Double>, strength: Double = 1) -> SCNMaterial {
             let material = SCNMaterial()
             if glowing {
                 material.lightingModel = .lambert
-                material.diffuse.contents = Self.colour(glow * 0.35)
-                material.emission.contents = Self.colour(glow * 0.62)
+                material.diffuse.contents = Self.colour(glow * 0.35 * strength)
+                material.emission.contents = Self.colour(glow * 0.62 * strength)
             } else {
                 material.lightingModel = .physicallyBased
-                material.diffuse.contents = Self.colour(SIMD3(0.83, 0.87, 0.74))
+                material.diffuse.contents = Self.colour(day)
                 material.roughness.contents = NSNumber(value: 0.55)
                 material.metalness.contents = NSNumber(value: 0.0)
             }
@@ -247,21 +305,6 @@ final class GardenCreatures {
         return node
     }
 
-    /// A cone from its base to its tip.
-    private static func cone(from base: SIMD3<Float>, to tip: SIMD3<Float>,
-                             radius: Float, tip tipRadius: Float = 0.002,
-                             _ material: SCNMaterial) -> SCNNode {
-        let along = tip - base
-        let geometry = SCNCone(topRadius: CGFloat(tipRadius), bottomRadius: CGFloat(radius),
-                               height: CGFloat(simd_length(along)))
-        geometry.radialSegmentCount = 32
-        geometry.materials = [material]
-        let node = SCNNode(geometry: geometry)
-        node.simdPosition = (base + tip) / 2
-        node.simdOrientation = simd_quatf(from: SIMD3(0, 1, 0), to: simd_normalize(along))
-        return node
-    }
-
     /// The hare, sitting up, ears raised and laid a little back. Faces +z.
     /// Half a metre to the tips of its ears, which is a hare.
     static func hare(_ paint: Paint) -> SCNNode {
@@ -297,59 +340,135 @@ final class GardenCreatures {
         return root
     }
 
-    /// The fox, curled asleep: its brush wrapped round the front of it and its
-    /// nose laid along it.
+    /// The fox, curled asleep: its back to the world, its brush wrapped round
+    /// the front of it and its chin laid on the brush, the white tip of the
+    /// brush by its nose.
+    ///
+    /// **Two paints, and smooth.** It was one pale paint and a brush of
+    /// twenty-six beads, and by day it was a caterpillar; at night it was one
+    /// cyan cushion. A fox is told by three things before anything else — its
+    /// ears, its muzzle and the white end of its brush — so those are what
+    /// is modelled with care, and the paint is two: a russet-pale coat, and a
+    /// whiter paint on the cheeks, the chin and the brush's tip, which also
+    /// holds more of the light. The ear backs, the nose and the shut eyes are
+    /// dark, and dark in the glow too. The body and the brush are each one
+    /// swept surface (`FigureGeometry`), so each takes the light as one thing.
     static func fox(_ paint: Paint) -> SCNNode {
         let root = SCNNode()
-        let coat = paint.luminous
+        let coat = paint.luminous(SIMD3(0.90, 0.69, 0.50), strength: 0.66)
+        let brushCoat = paint.luminous(SIMD3(0.86, 0.62, 0.43), strength: 0.52)
+        let white = paint.luminous(SIMD3(0.93, 0.92, 0.86), strength: 1.05)
+        let dark = paint.unlit(SIMD3(0.13, 0.10, 0.09), roughness: 0.45)
 
-        // Low, so the head can be seen above it: at a body's full height the
-        // head sank into the coil and the fox was a dome.
-        root.addChildNode(blob(SIMD3(0, 0.065, 0), SIMD3(0.19, 0.065, 0.13), coat))
-        root.addChildNode(blob(SIMD3(-0.07, 0.085, -0.02), SIMD3(0.1, 0.075, 0.1), coat))
-
-        // The brush: a run of beads round an ellipse from the rump to under the
-        // chin, fullest past its middle. Close enough together that they read as
-        // one soft length rather than as beads.
-        let beads = 26
-        for bead in 0..<beads {
-            let t = Float(bead) / Float(beads - 1)
-            let angle = Float.pi * (0.97 - 0.82 * t)
-            let x = 0.215 * cos(angle)
-            let z = 0.155 * sin(angle)
-            let radius = 0.03 + 0.032 * sin(Float.pi * pow(t, 0.75))
-            root.addChildNode(blob(SIMD3(x, 0.035 + radius * 0.7, z), SIMD3(repeating: radius), coat))
+        func surface(_ geometry: SCNGeometry, _ material: SCNMaterial) -> SCNNode {
+            geometry.materials = [material]
+            return SCNNode(geometry: geometry)
         }
 
-        // The head resting on the brush at the front, and the muzzle laid along
-        // it, back towards the rump.
-        let head = SIMD3<Float>(0.14, 0.14, 0.09)
-        root.addChildNode(blob(head, SIMD3(0.062, 0.052, 0.058), coat))
-        let nose = SIMD3<Float>(0.06, 0.112, 0.172)
-        root.addChildNode(cone(from: head + SIMD3(-0.02, -0.005, 0.02), to: nose,
-                               radius: 0.034, tip: 0.01, coat))
-        root.addChildNode(blob(nose, SIMD3(repeating: 0.01), paint.eye))
+        // The body: one curve from the rump round the back to the shoulders,
+        // lying low so the head can be seen resting above it. Thickest at the
+        // haunch, closed in a dome at the rump, and narrowing at the far end
+        // into a neck that runs up inside the head.
+        let spine: [SIMD3<Float>] = [
+            SIMD3(-0.06, 0.07, 0.07), SIMD3(-0.11, 0.074, 0.0),
+            SIMD3(-0.07, 0.078, -0.07), SIMD3(0.02, 0.078, -0.085),
+            SIMD3(0.08, 0.082, -0.035), SIMD3(0.075, 0.1, 0.035),
+        ]
+        root.addChildNode(surface(FigureGeometry.sweep(through: spine) { t in
+            let run = min(1, t / 0.16, (1 - t) / 0.08)
+            let dome = sqrt(max(0, run * (2 - run)))
+            let girth: Float = 1 - 0.45 * t * t
+            return SIMD2(0.09 * girth, 0.075 * girth) * dome
+        }, coat))
 
-        // The ears, pricked even asleep, with the black backs a fox's have
-        // painted on their tips.
-        for (base, tip) in [(SIMD3<Float>(0.165, 0.172, 0.055), SIMD3<Float>(0.21, 0.25, 0.037)),
-                            (SIMD3<Float>(0.152, 0.172, 0.122), SIMD3<Float>(0.19, 0.247, 0.15))] {
-            root.addChildNode(cone(from: base, to: tip, radius: 0.028, coat))
-            let from = base + (tip - base) * 0.62
-            root.addChildNode(cone(from: from, to: tip + (tip - base) * 0.02,
-                                   radius: 0.028 * 0.4 + 0.002, paint.eye))
+        // The hind legs, folded up in the hollow of the coil under the head.
+        root.addChildNode(blob(SIMD3(-0.015, 0.055, 0.045), SIMD3(0.075, 0.05, 0.06), coat, yaw: 0.5))
+
+        // The brush, from under the rump round the front to lie across the
+        // paws, full past its middle and closing to a soft point. The last
+        // fifth of it is the white tip.
+        let brush: [SIMD3<Float>] = [
+            SIMD3(-0.085, 0.055, 0.035), SIMD3(-0.14, 0.052, 0.085),
+            SIMD3(-0.085, 0.054, 0.15), SIMD3(0.0, 0.052, 0.165),
+            SIMD3(0.085, 0.048, 0.135), SIMD3(0.13, 0.042, 0.07),
+        ]
+        let brushSize: (Float) -> SIMD2<Float> = { t in
+            let full = 0.03 + 0.032 * sin(Float.pi * min(1, pow(t, 0.8) * 1.08))
+            let end = sqrt(max(0, 1 - pow(max(0, t - 0.82) / 0.18, 2)))
+            let radius = max(0.012, full) * end
+            return SIMD2(radius, radius * 0.86)
         }
+        root.addChildNode(surface(FigureGeometry.sweep(through: brush, to: 0.8, rows: 48,
+                                                       size: brushSize), brushCoat))
+        root.addChildNode(surface(FigureGeometry.sweep(through: brush, from: 0.8, rows: 16,
+                                                       size: brushSize), white))
 
-        // Its eyes, shut: two short dark strokes on the face, across the line
-        // of the muzzle. A white fox with no face was a cushion.
-        let muzzle = simd_normalize(nose - head)
+        // The head, laid on the brush in the hollow of the coil with its muzzle
+        // running along the brush towards the tip.
+        let head = SIMD3<Float>(0.06, 0.128, 0.07)
+        let muzzle = simd_normalize(SIMD3<Float>(0.62, -0.34, 0.72))
         let across = simd_normalize(simd_cross(SIMD3<Float>(0, 1, 0), muzzle))
+        let up = simd_normalize(simd_cross(muzzle, across))
+        let along = simd_quatf(from: SIMD3(0, 0, 1), to: muzzle)
+        let skull = blob(head, SIMD3(0.056, 0.048, 0.06), coat)
+        skull.simdOrientation = along
+        root.addChildNode(skull)
+
+        // The muzzle: long, fine, and tapering to the nose — the line that most
+        // says fox rather than cat or dog.
+        let nose = head + muzzle * 0.105 - up * 0.012
+        root.addChildNode(surface(FigureGeometry.sweep(
+            through: [head + muzzle * 0.01 + up * 0.006, head + muzzle * 0.06 - up * 0.004, nose],
+            rows: 20, around: 24, reference: up
+        ) { t in
+            let radius = 0.034 - 0.024 * t
+            return SIMD2(radius, radius * 0.8)
+        }, coat))
+        // White under it, from the cheeks to the chin.
         for side: Float in [-1, 1] {
-            let eye = head + muzzle * 0.05 + SIMD3(0, 0.026, 0) + across * side * 0.03
-            root.addChildNode(limb(from: eye - across * 0.009 - muzzle * 0.003,
-                                   to: eye + across * 0.009 + muzzle * 0.003,
+            let cheek = blob(head + muzzle * 0.03 - up * 0.02 + across * side * 0.028,
+                             SIMD3(0.024, 0.02, 0.036), white)
+            cheek.simdOrientation = along
+            root.addChildNode(cheek)
+        }
+        let chin = blob(head + muzzle * 0.06 - up * 0.024, SIMD3(0.02, 0.012, 0.04), white)
+        chin.simdOrientation = along
+        root.addChildNode(chin)
+        root.addChildNode(blob(nose + muzzle * 0.004, SIMD3(0.011, 0.009, 0.01), paint.eye))
+
+        // The ears: big, pointed and upright even asleep, laid back a little
+        // and turned out, each a blade swept from base to point. Turned out so
+        // that from any side one of them shows its face: side-on, an ear seen
+        // edge-on was a black spike. Behind each is the
+        // top of the same blade again in dark, a hair further back, for the
+        // black backs a fox's ears have — pale from the front, dark from
+        // behind.
+        for side: Float in [-1, 1] {
+            let base = head - muzzle * 0.02 + up * 0.03 + across * side * 0.03
+            let tip = base + up * 0.075 - muzzle * 0.03 + across * side * 0.018
+            let middle = (base + tip) / 2 + muzzle * 0.006
+            let ear: (Float, Float) -> SCNGeometry = { scale, from in
+                FigureGeometry.sweep(through: [base, middle, tip], from: from, rows: 16, around: 20,
+                                     reference: simd_normalize(muzzle - across * side * 0.6)) { t in
+                    let width = 0.033 * scale * (1 - t) * (0.8 + 0.2 * (1 - t))
+                    return SIMD2(width, 0.009 * scale * (1 - t * 0.7))
+                }
+            }
+            root.addChildNode(surface(ear(1, 0), coat))
+            let back = surface(ear(1.03, 0.3), dark)
+            back.simdPosition = -muzzle * 0.004
+            root.addChildNode(back)
+        }
+
+        // Its eyes, shut: two short dark strokes slanting up the face, as a
+        // fox's eyes slant.
+        for side: Float in [-1, 1] {
+            let eye = head + muzzle * 0.045 + up * 0.022 + across * side * 0.026
+            let slant = simd_normalize(across * side * 0.8 - muzzle * 0.45 + up * 0.25)
+            root.addChildNode(limb(from: eye - slant * 0.011, to: eye + slant * 0.011,
                                    width: 0.0035, depth: 0.0035, paint.eye))
         }
+
         return root
     }
 
@@ -490,9 +609,10 @@ final class GardenCreatures {
 
 // MARK: - Drawing one
 
-/// A figure standing on the plot: lit by the garden at its hour, crossfaded the
-/// way a plant is, with its glow added over it by how dark it is.
-struct CreatureFigure: View {
+/// A modelled figure or light standing on the plot: lit by the garden at its
+/// hour, crossfaded the way a plant is, with its own light added over it by how
+/// dark it is.
+struct ModelledFigure: View {
     let kind: LampKind
     let glow: Double
     let pointsPerMetre: Double
@@ -504,6 +624,21 @@ struct CreatureFigure: View {
     @State private var after: UIImage?
     @State private var shine: UIImage?
 
+    init(kind: LampKind, glow: Double, pointsPerMetre: Double, hour: Double, turn: Int, seed: Int) {
+        self.kind = kind
+        self.glow = glow
+        self.pointsPerMetre = pointsPerMetre
+        self.hour = hour
+        self.turn = turn
+        self.seed = seed
+        let facing = GardenCreatures.facing(seed: seed)
+        let between = GardenGround.Light.steps(at: hour)
+        let held = GardenCreatures.shared
+        _before = State(initialValue: held.held(kind, step: between.before, turn: turn, facing: facing))
+        _after = State(initialValue: held.held(kind, step: between.after, turn: turn, facing: facing))
+        _shine = State(initialValue: held.held(kind, step: nil, turn: turn, facing: facing))
+    }
+
     private var between: (before: Int, after: Int, blend: Double) {
         GardenGround.Light.steps(at: hour)
     }
@@ -513,27 +648,28 @@ struct CreatureFigure: View {
             let side = figure.metres * pointsPerMetre
             let facing = GardenCreatures.facing(seed: seed)
             let colour = GardenLamps.swiftUIColour(figure.glow)
+            // Squared for paint, so that by day — when a lamp's glow is still
+            // a seventh — the paint is pale paint and not a light. At the
+            // lamps' own curve the hare shone at ten in the morning. A flame
+            // is a lamp, and comes up on the lamps' curve.
+            let shown = figure.flame ? glow : glow * glow
 
             ZStack {
-                if let before {
+                if figure.shadow, let before {
                     FootShadow(image: before, side: side, lift: figure.lift, hour: hour, turn: turn)
                 }
                 if let before { Image(uiImage: before).resizable() }
                 if let after { Image(uiImage: after).resizable().opacity(between.blend) }
                 if let shine {
-                    // The paint's own light, and a little of it spilling into
-                    // the air round it — glow-in-the-dark paint is never quite
-                    // contained by its edge.
-                    //
-                    // Squared, so that by day — when a lamp's glow is still a
-                    // seventh — the paint is pale paint and not a light. At the
-                    // lamps' own curve the hare shone at ten in the morning.
+                    // Its own light, and a little of it spilling into the air
+                    // round it — glow-in-the-dark paint is never quite
+                    // contained by its edge, and nor is a lit pane.
                     Image(uiImage: shine).resizable()
                         .blur(radius: max(1, 0.03 * pointsPerMetre))
-                        .opacity(0.8 * glow * glow)
+                        .opacity(0.8 * shown)
                         .blendMode(.plusLighter)
                     Image(uiImage: shine).resizable()
-                        .opacity(glow * glow)
+                        .opacity(shown)
                         .blendMode(.plusLighter)
                 }
             }
@@ -542,14 +678,17 @@ struct CreatureFigure: View {
             // bottom edge of whatever holds it.
             .offset(y: figure.lift * side)
             .background(alignment: .bottom) {
-                // A little of its own light on the ground under it.
-                Ellipse()
-                    .fill(EllipticalGradient(colors: [colour.opacity(0.3 * glow * glow), colour.opacity(0)],
-                                             center: .center, startRadiusFraction: 0,
-                                             endRadiusFraction: 0.5))
-                    .frame(width: 0.5 * pointsPerMetre, height: 0.29 * pointsPerMetre)
-                    .offset(y: 0.145 * pointsPerMetre)
-                    .blendMode(.plusLighter)
+                // A little of its own light on the ground under it. A lamp has
+                // its pool laid by the plot already.
+                if !figure.flame {
+                    Ellipse()
+                        .fill(EllipticalGradient(colors: [colour.opacity(0.3 * shown), colour.opacity(0)],
+                                                 center: .center, startRadiusFraction: 0,
+                                                 endRadiusFraction: 0.5))
+                        .frame(width: 0.5 * pointsPerMetre, height: 0.29 * pointsPerMetre)
+                        .offset(y: 0.145 * pointsPerMetre)
+                        .blendMode(.plusLighter)
+                }
             }
             .task(id: GardenCreatures.key(kind, step: between.before, turn: turn, facing: facing)) {
                 before = GardenCreatures.shared.picture(kind, step: between.before, turn: turn, facing: facing)

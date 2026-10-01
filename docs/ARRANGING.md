@@ -636,6 +636,20 @@ modelled in SceneKit rather than drawn: see *The glow-in-the-dark figures* below
 - **Fireflies barely light the ground.** At a lantern's strength their pool was
   a green spotlight on the grass; a handful of very small lights is enough to
   see a flower by and does not paint the lawn.
+- **The lantern and the paper lamp are modelled, like the figures.** Settled
+  1 October, from build 3 on Marcus's phone: drawn in SwiftUI shapes, with a
+  triangle for a cap and a near-black rule round a rectangle of light, they
+  were clip art standing among things that are solid and lit by the hour. Now
+  each is turned and swept in SceneKit (`FigureGeometry`) — a rounded
+  four-paned lantern of dark grey iron under a flared cap, a ribbed paper lamp
+  on a knuckled bamboo cane — and taken by the figures' camera at the same
+  eight hours and four turns. Their second picture is the flame rather than
+  paint: the glass or paper lit from inside and, for the lantern, the iron
+  round it catching that light on its tray. It is added on the lamps' own
+  curve rather than its square, since a flame is a lamp. Footprint, carrying,
+  pool and lift are as they were; the paper lamp always hangs to the right of
+  its cane, so its halo can be drawn round the paper without asking the
+  picture where it went.
 
 ### What looking at them found
 
@@ -656,9 +670,9 @@ snail. `GardenCreatures`. They were left for an art pass because a hare drawn
 in SwiftUI shapes would be clip art beside plants grown from a genome.
 
 - **Modelled and rendered, like a plant.** Each is a SceneKit figure of
-  ellipsoids, cones and extruded wings, taken by the plants' own camera under
-  the plants' own light, at the eight points round the clock and the four turns
-  of the plot. A painted still would neither turn with the plot nor take the
+  ellipsoids, swept surfaces and extruded wings, taken by the plants' own
+  camera under the plants' own light, at the eight points round the clock and
+  the four turns of the plot. A painted still would neither turn with the plot nor take the
   sun, and would have been the pasted-on look the plants had until they took
   the garden's light.
 - **Figures, not animals.** Glow-in-the-dark paint on a garden figure, pale by
@@ -670,10 +684,18 @@ in SwiftUI shapes would be clip art beside plants grown from a genome.
 - **A figure's foot is not on its frame's bottom edge.** An animal lies along
   the ground, and what is nearer the camera than its foot is drawn below it; a
   fox with its foot on the edge loses its nose. Each frame reaches below the
-  foot by a set fraction, and the shadow shears about the foot rather than the
-  edge.
-- **Painted accents, unlit.** Eyes, noses, the fox's ear tips, the moth's
-  eyespots. They are black in the glow picture, so they hide the glow behind
+  foot by a set fraction.
+- **A shadow only for what stands up off its foot.** The shadow is the
+  picture sheared about the foot, which reads every pixel as height. For the
+  moth's stake, as for a plant's stem, that is true. For the hare's long feet
+  and haunch, the fox and the snail, most of the picture is ground the figure
+  covers, and the shear threw it forward as a dark copy of the body under it —
+  the shadow under the hare that Marcus saw on build 3 and said should not be
+  there. So the hare, the fox and the snail have none. The moth keeps its, and
+  the lantern and the paper lamp, which stand on a post and a cane, now have
+  one.
+- **Painted accents, unlit.** Eyes, noses, the backs of the fox's ears, the
+  moth's eyespots. They are black in the glow picture, so they hide the glow behind
   them. A white fox with no face was a cushion.
 - **They are lights.** A new `LampKind` each, with a small pool and a faint lift
   on nearby plants. Paint that has held the day's light gives back very little.
@@ -683,6 +705,28 @@ What looking found: the fox's head sank into its body at full height and it
 read as a dome, so the body is lower and the head rests above it. What the test
 found: the snail's feelers went off the side of its frame at two facings of
 eight, which looked like a snail with short feelers.
+
+**The fox, again** (1 October, from build 3). By day it looked, in Marcus's
+words, like a scary caterpillar or slug, and at night it could hardly be seen as
+a fox. The caterpillar was the brush: twenty-six spheres on an arc, each taking
+the sun on its own crown with a groove of shade before the next, which is what
+a segmented body looks like. The slug was the rest of it — one pale paint all
+over, so nothing said where the head ended and the brush began. And the glow,
+being that same paint everywhere, made it one cyan cushion.
+
+- **One surface each.** The body is a single tube swept round the coil from
+  rump to neck, closed in a dome at the rump and running up into the head; the
+  brush is another, full past its middle and closing to a soft point. Each
+  takes the light as one thing. The hind legs fill the hollow of the coil, which
+  was a hole through the middle that read as a ring.
+- **What tells a fox.** Big pointed ears turned a little outward, so that from
+  any side one shows its face; side-on, an ear seen edge-on was a black spike.
+  A long fine muzzle to a black nose. The white tip of the brush, by the nose.
+- **Two paints.** A russet-pale coat, and a whiter paint on the cheeks, chin
+  and brush's tip. A pigment that colours the paint also holds less light, so at
+  night the coat glows at two-thirds and the white at full: the face and the
+  tip are the brightest things on it, the ear backs, nose and shut eyes are
+  dark, and the silhouette is the fox's rather than a cushion's.
 
 ### What zoom is for
 
