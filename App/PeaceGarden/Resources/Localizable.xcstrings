@@ -49,7 +49,51 @@
       }
     },
     "%@ has let the plant you grew together go into the Wild Fields. Yours stays here." : {
-      "comment" : "Heading of the notice shown once when the other gardener (%@) releases a plant the two grew together. A moment of contact, not an alarm: gentle and plain."
+      "comment" : "Heading of the notice shown once when the other gardener (%@) releases a plant the two grew together. A moment of contact, not an alarm: gentle and plain.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ har sluppet den plante, I groede frem sammen, ud i Vildmarken. Din bliver her."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ha soltado en los Campos Silvestres la planta que nació del encuentro. La tuya se queda aquí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ a relâché dans les Champs Sauvages la plante que vous avez fait pousser ensemble. La tienne reste ici."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ha lasciato andare nei Campi Selvatici la pianta che avete coltivato insieme. La tua resta qui."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ har sluppet planten dere dyrket fram sammen, ut i Villmarka. Din blir her."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ heeft de plant die jullie samen lieten groeien losgelaten in de Wilde Velden. De jouwe blijft hier."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ har släppt ut växten ni odlade tillsammans på Vildmarken. Din stannar här."
+          }
+        }
+      }
     },
     "%@ is here. A light tap, top to top." : {
       "comment" : "Under that title. %@ is the other person's name.",
@@ -99,7 +143,51 @@
       }
     },
     "%@ let it go into the Wild Fields" : {
-      "comment" : "A small line on a plant's screen when the other gardener (%@) released their copy into the Wild Fields; this person's copy stays. The Wild Fields is the place a released plant goes; use the same name as 'Release to the Wild Fields'."
+      "comment" : "A small line on a plant's screen when the other gardener (%@) released their copy into the Wild Fields; this person's copy stays. The Wild Fields is the place a released plant goes; use the same name as 'Release to the Wild Fields'.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ slap den ud i Vildmarken"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ la soltó en los Campos Silvestres"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ l’a relâchée dans les Champs Sauvages"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ l'ha lasciata andare nei Campi Selvatici"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ slapp den ut i Villmarka"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ liet hem los in de Wilde Velden"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ släppte ut den på Vildmarken"
+          }
+        }
+      }
     },
     "%@ moved out of range before the plant took." : {
       "comment" : "A failure. %@ is the other person's name; 'took' as a cutting takes.",
@@ -149,10 +237,96 @@
       }
     },
     "%@ would like this plant to stand in the peace garden." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ vil gerne have, at denne plante står i fredshaven."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A %@ le gustaría que esta planta estuviera en el jardín de paz."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ aimerait que cette plante se tienne dans le jardin de paix."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ vorrebbe che questa pianta stesse nel giardino di pace."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ vil gjerne at denne planten skal stå i fredshagen."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ wil graag dat deze plant in de vredestuin komt te staan."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ vill att den här växten ska stå i fredsträdgården."
+          }
+        }
+      }
     },
     "%@ · in English" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · på engelsk"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · en inglés"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · en anglais"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · in inglese"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · på engelsk"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · in het Engels"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · på engelska"
+          }
+        }
+      }
     },
     "%lld across %lld" : {
       "comment" : "The value beside 'Petals': %1$lld petals arranged across %2$lld layers. No noun is written, in English or in any translation — which is what saves it from needing a plural. If a language cannot say it without the noun, ask for a plural variation rather than guessing.",
@@ -835,7 +1009,50 @@
       }
     },
     "A seed planted while this is on carries the coordinates the phone measured, to five decimal places. Nothing is looked up and no place is named — the numbers are the honest record, and a map can say the rest." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Et frø, der plantes, mens dette er slået til, bærer de koordinater, telefonen målte, med 5 decimaler. Intet bliver slået op, og intet sted får et navn — tallene er den ærlige optegnelse, og et kort kan sige resten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una semilla plantada mientras esto está activado lleva las coordenadas que midió el teléfono, con 5 decimales. No se busca nada ni se nombra ningún lugar: los números son el registro honesto, y un mapa puede decir el resto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une graine plantée pendant que ce réglage est activé porte les coordonnées mesurées par le téléphone, à 5 décimales. Rien n’est recherché et aucun lieu n’est nommé — les nombres sont le relevé honnête, et une carte peut dire le reste."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un seme piantato mentre questa opzione è attiva porta le coordinate misurate dal telefono, con 5 decimali. Non si cerca nulla e non si nomina nessun luogo: i numeri sono la registrazione onesta, e una mappa può dire il resto."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Et frø som plantes mens dette er slått på, bærer koordinatene telefonen målte, med 5 desimaler. Ingenting slås opp, og ingen steder får navn — tallene er det ærlige vitnesbyrdet, og et kart kan si resten."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Een zaadje dat geplant wordt terwijl dit aan staat, draagt de coördinaten die de telefoon heeft gemeten, op 5 decimalen. Er wordt niets opgezocht en geen plek bij naam genoemd — de getallen zijn het eerlijke verslag, en een kaart kan de rest vertellen."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ett frö som planteras medan det här är på bär de koordinater telefonen mätte, med 5 decimaler. Ingenting slås upp och ingen plats får något namn — siffrorna är det ärliga beskedet, och en karta kan säga resten."
+          }
+        }
+      }
     },
     "A unique seed for you is taking form." : {
       "comment" : "The one heading on the first screen, before anything has been made.",
@@ -1073,19 +1290,235 @@
       }
     },
     "Always day" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altid dag"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siempre de día"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toujours le jour"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sempre giorno"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alltid dag"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altijd dag"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alltid dag"
+          }
+        }
+      }
     },
     "Always night" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altid nat"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siempre de noche"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toujours la nuit"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sempre notte"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alltid natt"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altijd nacht"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alltid natt"
+          }
+        }
+      }
     },
     "Answer" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Svar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responder"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répondre"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rispondi"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Svar"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antwoorden"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Svara"
+          }
+        }
+      }
     },
     "Anyone walking the field can come across it." : {
-      "comment" : "On the Wild Fields notice: the released plant is public on the website."
+      "comment" : "On the Wild Fields notice: the released plant is public on the website.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle, der går rundt i Vildmarken, kan støde på den."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cualquiera que recorra el campo puede encontrársela."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiconque parcourt le champ peut tomber dessus."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiunque attraversi il campo può trovarla."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle som går rundt i Villmarka, kan støte på den."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iedereen die door de velden loopt, kan hem tegenkomen."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vem som helst som strövar över Vildmarken kan stöta på den."
+          }
+        }
+      }
     },
     "Appearance" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Udseende"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aspecto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apparence"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aspetto"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utseende"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weergave"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utseende"
+          }
+        }
+      }
     },
     "Area" : {
       "comment" : "Row label on the screen that explains a plant's name, beside the place in the shared garden the plant belongs to, such as 'The Cold Frame'. A part of a garden, not a measurement: one of the garden's ten areas, as the website names them (keys area*).",
@@ -1135,7 +1568,50 @@
       }
     },
     "Ask %@" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spørg %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar a %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander à %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiedi a %@"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spør %@"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vraag het %@"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fråga %@"
+          }
+        }
+      }
     },
     "Ask them to open Meet on their phone too." : {
       "comment" : "Under that title. 'Meet' is the screen's name — use whatever the mark label 'Meet' was translated as.",
@@ -1467,10 +1943,98 @@
       }
     },
     "Beside it stands only what each of you chooses. Left as it is, you stay anonymous." : {
-      "comment" : "On the Wild Fields notice, above the three switches. Anonymous is the default."
+      "comment" : "On the Wild Fields notice, above the three switches. Anonymous is the default.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ved siden af den står kun det, hver af jer vælger. Lader du det være, forbliver du anonym."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junto a ella solo figura lo que elija cada uno. Si lo dejas como está, sigues en el anonimato."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À côté d’elle ne figure que ce que chacun de vous choisit. Si tu ne changes rien, tu restes anonyme."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accanto a essa c'è solo ciò che sceglie ciascuno di voi. Se lasci tutto com'è, resti anonimo."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ved siden av den står bare det hver av dere velger. Lar du det være som det er, forblir du anonym."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Naast hem staat alleen wat ieder van jullie kiest. Laat je het zoals het is, dan blijf je anoniem."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bredvid den står bara det som var och en av er väljer. Lämnar du det som det är förblir du anonym."
+          }
+        }
+      }
     },
     "Beside it: %@" : {
-      "comment" : "A preview of what would stand beside the plant in the Wild Fields: %@ is names, a place and a month, separated by dots, in the gardeners' own words."
+      "comment" : "A preview of what would stand beside the plant in the Wild Fields: %@ is names, a place and a month, separated by dots, in the gardeners' own words.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ved siden af den: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junto a ella: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À côté d’elle : %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accanto a essa: %@"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ved siden av den: %@"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ernaast: %@"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bredvid den: %@"
+          }
+        }
+      }
     },
     "Between one field and the next" : {
       "comment" : "One of forty figurative places a seed is imagined passing through on its way to the ground. Offered, already filled in, as the answer to 'Where' on the note about a meeting, and anybody can type over it. The register is the seed's journey rather than real geography, so it wants the same unhurried, slightly literary voice in every language.",
@@ -2226,7 +2790,50 @@
       }
     },
     "Dark" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mørk"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oscuro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sombre"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scuro"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mørk"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Donker"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mörk"
+          }
+        }
+      }
     },
     "Default seed planting location" : {
       "comment" : "Label over a menu. Sets a standing answer for the 'Where' field on every note, instead of the figurative place each seed travelled through.",
@@ -2324,7 +2931,50 @@
       }
     },
     "Display" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visning"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affichage"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schermo"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visning"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scherm"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skärm"
+          }
+        }
+      }
     },
     "Done" : {
       "comment" : "Button in the top corner, after a seed has been sent back. Nothing is left to do.",
@@ -2703,10 +3353,96 @@
       }
     },
     "Follow the phone" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Følg telefonen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Como el teléfono"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suivre le téléphone"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Come il telefono"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Følg telefonen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoals de telefoon"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Som telefonen"
+          }
+        }
+      }
     },
     "Follows the hour" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Følger klokken"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Según la hora"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suit l’heure"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Segue l'ora"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Følger klokken"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volgt de klok"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Följer klockan"
+          }
+        }
+      }
     },
     "From %@’s %@" : {
       "comment" : "The same line when the seed arrived by link. %1$@ is a person's name, %2$@ is their plant's Latin binomial. The order can be changed.",
@@ -2762,7 +3498,50 @@
       }
     },
     "Full colour" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle farver"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A todo color"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En couleurs"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A colori"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle farger"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volle kleur"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full färg"
+          }
+        }
+      }
     },
     "Garden" : {
       "comment" : "The mark that opens the garden — the plants grown from meetings.",
@@ -2859,7 +3638,50 @@
       }
     },
     "Gardener username" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brugernavn som gartner"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre de jardinero"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nom de jardinier"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nome da giardiniere"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brukernavn som gartner"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gebruikersnaam"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Användarnamn"
+          }
+        }
+      }
     },
     "Germinating" : {
       "comment" : "What a plant is doing, in the caption under it. The seed has opened and nothing is above ground yet.",
@@ -3050,10 +3872,96 @@
       }
     },
     "Hidden" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skjult"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oculta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Masquée"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nascosta"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skjult"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verborgen"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dold"
+          }
+        }
+      }
     },
     "Hidden keeps the plant alone until you touch the screen. Marks and words is one tap to anything." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Med Skjult står planten alene, til du rører ved skærmen. Med Mærker og ord er alt ét tryk væk."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oculta deja la planta sola hasta que tocas la pantalla. Con Marcas y palabras, todo está a un toque."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "« Masquée » laisse la plante seule jusqu’à ce que tu touches l’écran. « Marques et mots » met tout à un toucher."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nascosta lascia la pianta da sola finché non tocchi lo schermo. Con Segni e parole, tutto è a un tocco."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Med Skjult står planten alene til du rører skjermen. Med Merker og ord er alt ett trykk unna."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verborgen laat de plant alleen tot je het scherm aanraakt. Met Tekens en woorden is alles één tik verwijderd."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dold låter växten vara ensam tills du rör vid skärmen. Med Märken och ord är allt ett tryck bort."
+          }
+        }
+      }
     },
     "Hold for 3 seconds." : {
       "comment" : "Accessibility hint on the three rows that are held rather than tapped. Spoken, never drawn.",
@@ -3103,13 +4011,142 @@
       }
     },
     "Hold for three seconds." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hold nede i 3 sekunder."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantén pulsado 3 segundos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintiens pendant 3 secondes."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tieni premuto per 3 secondi."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hold inne i 3 sekunder."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 seconden ingedrukt houden."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Håll inne i 3 sekunder."
+          }
+        }
+      }
     },
     "How the place is said" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sådan nævnes stedet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cómo se dice el lugar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comment le lieu est dit"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Come si dice il luogo"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slik nevnes stedet"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoe de plek heet"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hur platsen anges"
+          }
+        }
+      }
     },
     "How the plant is drawn" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sådan tegnes planten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cómo se dibuja la planta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comment la plante est dessinée"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Come è disegnata la pianta"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slik tegnes planten"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoe de plant getekend wordt"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hur växten ritas"
+          }
+        }
+      }
     },
     "If they scan this QR code, a plant will grow on both of your phones. It is a mix of the unique seeds on them." : {
       "comment" : "Above the QR code, and the whole of what to do next.",
@@ -3582,10 +4619,96 @@
       }
     },
     "In the middle, the sun and moon go round on the real clock, so a garden visited at night is a night garden. Either side holds it at day or night whatever the hour." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I midten går sol og måne rundt efter det rigtige ur, så en have, du besøger om natten, er en nathave. Siderne holder den fast på dag eller nat, uanset hvad klokken er."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En el centro, el sol y la luna giran según el reloj real, así que un jardín visitado de noche es un jardín de noche. A cada lado se queda fijo de día o de noche, sea la hora que sea."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Au milieu, le soleil et la lune tournent selon l’heure réelle, si bien qu’un jardin visité la nuit est un jardin de nuit. De part et d’autre, il reste au jour ou à la nuit, quelle que soit l’heure."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al centro, il sole e la luna girano secondo l'orologio vero, così un giardino visitato di notte è un giardino notturno. Ai due lati resta fisso di giorno o di notte, a qualunque ora."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I midten går sola og månen rundt etter den virkelige klokken, så en hage du besøker om natten, er en nattehage. Sidene holder den fast på dag eller natt, uansett hva klokken er."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In het midden gaan zon en maan rond op de echte klok, dus een tuin die je ’s nachts bezoekt, is een nachttuin. Aan beide kanten blijft het dag of nacht, hoe laat het ook is."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I mitten går sol och måne runt efter den riktiga klockan, så en trädgård du besöker på natten är en natträdgård. På vardera sidan stannar den i dag eller natt, vad klockan än är."
+          }
+        }
+      }
     },
     "In the peace garden" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I fredshaven"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En el jardín de paz"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans le jardin de paix"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nel giardino di pace"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I fredshagen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In de vredestuin"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I fredsträdgården"
+          }
+        }
+      }
     },
     "In the quiet before rain" : {
       "comment" : "One of forty figurative places a seed is imagined passing through on its way to the ground. Offered, already filled in, as the answer to 'Where' on the note about a meeting, and anybody can type over it. The register is the seed's journey rather than real geography, so it wants the same unhurried, slightly literary voice in every language.",
@@ -3729,16 +4852,188 @@
       }
     },
     "In this garden only" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kun i denne have"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo en este jardín"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans ce jardin seulement"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo in questo giardino"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bare i denne hagen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alleen in deze tuin"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bara i den här trädgården"
+          }
+        }
+      }
     },
     "It appears in the garden only once they say yes." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den kommer først i haven, når de siger ja."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo aparece en el jardín cuando la otra persona dice que sí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elle n’apparaît dans le jardin qu’une fois que l’autre personne a dit oui."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compare nel giardino solo quando l'altra persona dice di sì."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den kommer først i hagen når de sier ja."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hij verschijnt pas in de tuin als de ander ja zegt."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den syns i trädgården först när de säger ja."
+          }
+        }
+      }
     },
     "It grew from your seed and %@'s together, so the garden carries both. That is why you are being asked." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den groede frem af dit frø og frøet fra %@ sammen, så haven rummer dem begge. Det er derfor, du bliver spurgt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creció de tu semilla y de la de %@ juntas, así que el jardín lleva las dos. Por eso se te pregunta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elle a poussé de ta graine et de celle de %@ ensemble, donc le jardin porte les deux. C’est pourquoi on te le demande."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "È cresciuta dal tuo seme e da quello di %@ insieme, quindi il giardino li porta entrambi. Per questo ti viene chiesto."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den vokste fram av frøet ditt og frøet til %@ sammen, så hagen bærer begge. Det er derfor du blir spurt."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hij groeide uit jouw zaadje en dat van %@ samen, dus de tuin draagt ze allebei. Daarom wordt het jou gevraagd."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den växte fram ur ditt frö och %@:s tillsammans, så trädgården bär båda. Därför blir du tillfrågad."
+          }
+        }
+      }
     },
     "It grew from your seed and %@'s together, so the garden carries both. They are asked before it goes anywhere." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den groede frem af dit frø og frøet fra %@ sammen, så haven rummer dem begge. De bliver spurgt, før den kommer nogen steder hen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creció de tu semilla y de la de %@ juntas, así que el jardín lleva las dos. A esa persona se le pregunta antes de que la planta vaya a ningún sitio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elle a poussé de ta graine et de celle de %@ ensemble, donc le jardin porte les deux. L’autre personne est consultée avant qu’elle n’aille où que ce soit."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "È cresciuta dal tuo seme e da quello di %@ insieme, quindi il giardino li porta entrambi. All'altra persona viene chiesto prima che la pianta vada da qualsiasi parte."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den vokste fram av frøet ditt og frøet til %@ sammen, så hagen bærer begge. De blir spurt før den havner noe sted."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hij groeide uit jouw zaadje en dat van %@ samen, dus de tuin draagt ze allebei. De ander wordt gevraagd voordat hij ergens heen gaat."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den växte fram ur ditt frö och %@:s tillsammans, så trädgården bär båda. De tillfrågas innan den hamnar någonstans."
+          }
+        }
+      }
     },
     "It leaves your garden for the Wild Fields. The person you grew it with keeps theirs, and every other plant here stays where it is." : {
       "comment" : "Said under the row while it is held, and in the alert on the assisted path. Worded for what survives rather than for what goes, like the three in Settings.",
@@ -3937,10 +5232,96 @@
       }
     },
     "Its colour" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Farven"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Su color"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sa couleur"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il suo colore"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fargen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kleur van de plant"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Växtens färg"
+          }
+        }
+      }
     },
     "Joint seeds" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fælles frø"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semillas conjuntas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Graines communes"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semi condivisi"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Felles frø"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gedeelde zaadjes"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gemensamma frön"
+          }
+        }
+      }
     },
     "Keep it" : {
       "comment" : "Button that saves what has been written about a meeting. 'It' is the note, not the plant.",
@@ -3990,7 +5371,50 @@
       }
     },
     "Keep it here" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Behold den her"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantenerla aquí"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La garder ici"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tienila qui"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Behold den her"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier houden"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Behåll den här"
+          }
+        }
+      }
     },
     "Keep the coordinates" : {
       "comment" : "A switch on the screen for changing what a kept plant says.",
@@ -4087,7 +5511,50 @@
       }
     },
     "Keeping it here is final for this plant. Yours stays exactly where it is either way." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beholder du den her, er det endeligt for denne plante. Din bliver, præcis hvor den er, uanset hvad."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantenerla aquí es definitivo para esta planta. La tuya se queda exactamente donde está en cualquier caso."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La garder ici est définitif pour cette plante. La tienne reste exactement où elle est dans les deux cas."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tenerla qui è definitivo per questa pianta. La tua resta esattamente dov'è in ogni caso."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beholder du den her, er det endelig for denne planten. Din blir akkurat der den er, uansett."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier houden is definitief voor deze plant. De jouwe blijft hoe dan ook precies waar hij is."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Att behålla den här är slutgiltigt för den här växten. Din stannar precis där den är, hur det än blir."
+          }
+        }
+      }
     },
     "Kept with this meeting" : {
       "comment" : "Label over the coordinates, shown before anything is saved so that what is being kept is visible at the moment of keeping it.",
@@ -4231,7 +5698,51 @@
       }
     },
     "Let go into the Wild Fields" : {
-      "comment" : "Heading in Settings, under Joint seeds, over the list of plants this person released, each opening what stands beside it. The Wild Fields is the place a released plant goes; use the same name as 'Release to the Wild Fields'."
+      "comment" : "Heading in Settings, under Joint seeds, over the list of plants this person released, each opening what stands beside it. The Wild Fields is the place a released plant goes; use the same name as 'Release to the Wild Fields'.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sluppet ud i Vildmarken"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soltadas en los Campos Silvestres"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relâchées dans les Champs Sauvages"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lasciate andare nei Campi Selvatici"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sluppet ut i Villmarka"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Losgelaten in de Wilde Velden"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utsläppta på Vildmarken"
+          }
+        }
+      }
     },
     "Let it go" : {
       "comment" : "Button that deletes one plant from the garden. Deliberately gentle — the app does not say 'delete' anywhere.",
@@ -4281,10 +5792,96 @@
       }
     },
     "Let it stand there" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lad den stå der"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dejar que esté allí"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La laisser y pousser"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lascia che stia lì"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La den stå der"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laat hem daar staan"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Låt den stå där"
+          }
+        }
+      }
     },
     "Let the plant turn" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lad planten dreje"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dejar que la planta gire"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laisser la plante tourner"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lascia girare la pianta"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La planten dreie"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De plant laten draaien"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Låt växten vrida sig"
+          }
+        }
+      }
     },
     "Let this plant go?" : {
       "comment" : "Title of the alert asking to confirm deleting one plant.",
@@ -4334,7 +5931,50 @@
       }
     },
     "Light" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lys"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clair"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiaro"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lys"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Licht"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ljus"
+          }
+        }
+      }
     },
     "Link copied" : {
       "comment" : "What the same button says once it has been pressed.",
@@ -4573,10 +6213,96 @@
       }
     },
     "Marks and words" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mærker og ord"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marcas y palabras"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marques et mots"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Segni e parole"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Merker og ord"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tekens en woorden"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Märken och ord"
+          }
+        }
+      }
     },
     "Marks only" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kun mærker"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo marcas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marques seules"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo segni"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bare merker"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alleen tekens"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bara märken"
+          }
+        }
+      }
     },
     "Mature" : {
       "comment" : "What a plant is doing, in the caption under it. Fully grown; nothing further is coming.",
@@ -4720,7 +6446,50 @@
       }
     },
     "Menu bar" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menulinje"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barra de menú"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barre de menu"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barra dei menu"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menylinje"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menubalk"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menyrad"
+          }
+        }
+      }
     },
     "Met" : {
       "comment" : "Label over the field holding the other person's name, on the screen for changing what a plant says. Set uppercase and wide-tracked, so it wants to be short.",
@@ -5147,7 +6916,50 @@
       }
     },
     "Off, it stays where you leave it and turns only when you drag it." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slået fra bliver den stående, hvor du efterlader den, og drejer kun, når du trækker i den."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apagado, se queda donde la dejas y solo gira cuando la arrastras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Désactivé, elle reste où tu la laisses et ne tourne que si tu la fais glisser."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spento, resta dove la lasci e gira solo quando la trascini."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slått av blir den stående der du lar den være, og dreier bare når du drar i den."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uit blijft hij staan waar je hem laat en draait hij alleen als je eraan sleept."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avstängt står den kvar där du lämnar den och vrider sig bara när du drar i den."
+          }
+        }
+      }
     },
     "Off, the stage is the plant and the marks along the foot, in no language at all." : {
       "comment" : "Under that switch. Says what is left when the words go, rather than what is lost.",
@@ -5768,10 +7580,96 @@
       }
     },
     "One colour" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Én farve"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un solo color"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une seule couleur"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un solo colore"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Én farge"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eén kleur"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En färg"
+          }
+        }
+      }
     },
     "One of the places" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Et af stederne"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uno de los lugares"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un des lieux"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uno dei luoghi"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Et av stedene"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Een van de plekken"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En av platserna"
+          }
+        }
+      }
     },
     "Opens" : {
       "comment" : "Row label on the seed screen, beside 'By day' or 'By night'. A verb: when the flower opens. Not an opening, and not the imperative.",
@@ -6244,7 +8142,50 @@
       }
     },
     "Release" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Løssæt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soltar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relâcher"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lascia andare"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slipp ut"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loslaten"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Släpp ut"
+          }
+        }
+      }
     },
     "Release it" : {
       "comment" : "Confirms the alert above. The row's own words rather than its label with the question mark taken off.",
@@ -6530,7 +8471,51 @@
       }
     },
     "See it in the Wild Fields" : {
-      "comment" : "Opens the website's Wild Fields at this plant. The Wild Fields is the place a released plant goes; use the same name as 'Release to the Wild Fields'."
+      "comment" : "Opens the website's Wild Fields at this plant. The Wild Fields is the place a released plant goes; use the same name as 'Release to the Wild Fields'.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se den i Vildmarken"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verla en los Campos Silvestres"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La voir dans les Champs Sauvages"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vedila nei Campi Selvatici"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se den i Villmarka"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zien in de Wilde Velden"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se den på Vildmarken"
+          }
+        }
+      }
     },
     "Seed" : {
       "comment" : "The mark at the foot of the main screen that opens your own seed, and the label on the row showing it. A noun: the seed itself.",
@@ -6580,7 +8565,50 @@
       }
     },
     "Seed planting location" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hvor frø plantes"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lugar de plantación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lieu de plantation"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Luogo di semina"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hvor frø plantes"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plantplek"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plats för sådd"
+          }
+        }
+      }
     },
     "Seedling" : {
       "comment" : "What a plant is doing, in the caption under it. A young plant, a few leaves in.",
@@ -6913,28 +8941,373 @@
       }
     },
     "Show" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vis"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montrer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vis"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tonen"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visa"
+          }
+        }
+      }
     },
     "Show growth stage" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vis vækststadie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar la etapa de crecimiento"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher le stade de croissance"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra la fase di crescita"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vis vekststadium"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Groeifase tonen"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visa tillväxtstadium"
+          }
+        }
+      }
     },
     "Show plant name" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vis plantens navn"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar el nombre de la planta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher le nom de la plante"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra il nome della pianta"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vis navnet på planten"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plantnaam tonen"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visa växtens namn"
+          }
+        }
+      }
     },
     "Show this plant in the peace garden." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vis denne plante i fredshaven."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar esta planta en el jardín de paz."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montrer cette plante dans le jardin de paix."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra questa pianta nel giardino di pace."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vis denne planten i fredshagen."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deze plant in de vredestuin laten zien."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visa den här växten i fredsträdgården."
+          }
+        }
+      }
     },
     "Shown beside it only if you choose. Where and when also need %@ to choose them." : {
-      "comment" : "Under the three switches when releasing a plant. %@ is the other gardener's name, as this phone knows it. Nothing is shown by default."
+      "comment" : "Under the three switches when releasing a plant. %@ is the other gardener's name, as this phone knows it. Nothing is shown by default.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vises kun ved siden af den, hvis du vælger det. Hvor og hvornår kræver også, at %@ vælger dem."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo se muestra junto a ella si tú lo eliges. El lugar y la fecha del encuentro también necesitan que %@ los elija."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montré à côté d’elle seulement si tu le choisis. Le lieu et le moment doivent aussi être choisis par %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compare accanto a essa solo se lo scegli. Per il luogo e la data serve anche che %@ li scelga."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vises ved siden av den bare hvis du velger det. Hvor og når krever også at %@ velger dem."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alleen getoond als jij dat kiest. Voor waar en wanneer moet %@ ook kiezen."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visas bredvid den bara om du väljer det. Var och när kräver också att %@ väljer dem."
+          }
+        }
+      }
     },
     "Shown when a seed is exchanged with another, as the place where the seed is planted." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vises, når et frø udveksles med en andens, som det sted, hvor frøet bliver plantet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se muestra cuando una semilla se intercambia con otra, como el lugar donde se planta la semilla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiché quand une graine est échangée avec une autre, comme le lieu où la graine est plantée."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viene mostrato quando un seme viene scambiato con un altro, come il luogo in cui il seme è piantato."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vises når et frø utveksles med en annens, som stedet der frøet blir plantet."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Getoond als een zaadje met een ander wordt uitgewisseld, als de plek waar het zaadje geplant wordt."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visas när ett frö utbyts med ett annat, som platsen där fröet planteras."
+          }
+        }
+      }
     },
     "Somebody has asked about a plant here" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nogen har spurgt om en plante her"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alguien ha preguntado por una planta de aquí"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quelqu’un a fait une demande pour une plante d’ici"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qualcuno ha chiesto di una pianta di qui"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noen har spurt om en plante her"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iemand heeft gevraagd naar een plant hier"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Någon har frågat om en växt här"
+          }
+        }
+      }
     },
     "Something you write" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noget, du skriver"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algo que escribes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que tu écris"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qualcosa che scrivi"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noe du skriver"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iets wat je schrijft"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Något du skriver"
+          }
+        }
+      }
     },
     "Somewhere over the water" : {
       "comment" : "One of forty figurative places a seed is imagined passing through on its way to the ground. Offered, already filled in, as the answer to 'Where' on the note about a meeting, and anybody can type over it. The register is the seed's journey rather than real geography, so it wants the same unhurried, slightly literary voice in every language.",
@@ -7219,7 +9592,50 @@
       }
     },
     "Take it back" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag den tilbage"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retirarla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La retirer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ritirala"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta den tilbake"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terughalen"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta tillbaka den"
+          }
+        }
+      }
     },
     "Tell it differently" : {
       "comment" : "Button, and the title of the screen it opens. Changes what a kept plant says about the meeting — the name, the place — without changing the plant.",
@@ -7363,10 +9779,98 @@
       }
     },
     "The Wild Fields" : {
-      "comment" : "The word on a mark on a plant's screen that opens what stands beside it in the Wild Fields. The Wild Fields is the place a released plant goes; use the same name as 'Release to the Wild Fields'."
+      "comment" : "The word on a mark on a plant's screen that opens what stands beside it in the Wild Fields. The Wild Fields is the place a released plant goes; use the same name as 'Release to the Wild Fields'.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vildmarken"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los Campos Silvestres"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les Champs Sauvages"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I Campi Selvatici"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Villmarka"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De Wilde Velden"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vildmarken"
+          }
+        }
+      }
     },
     "The Wild Fields could not be reached just now. Nothing has changed; try again in a little while." : {
-      "comment" : "When a change to what stands beside a released plant could not be sent. One sentence for every failure."
+      "comment" : "When a change to what stands beside a released plant could not be sent. One sentence for every failure.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vildmarken kunne ikke nås lige nu. Intet er ændret; prøv igen om lidt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora mismo no se ha podido llegar a los Campos Silvestres. No ha cambiado nada; vuelve a intentarlo dentro de un rato."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’atteindre les Champs Sauvages pour l’instant. Rien n’a changé ; réessaie dans un petit moment."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al momento non è stato possibile raggiungere i Campi Selvatici. Non è cambiato nulla; riprova tra un po'."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Villmarka kunne ikke nås akkurat nå. Ingenting er endret; prøv igjen om litt."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De Wilde Velden waren nu even niet bereikbaar. Er is niets veranderd; probeer het straks opnieuw."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vildmarken gick inte att nå just nu. Ingenting har ändrats; försök igen om en liten stund."
+          }
+        }
+      }
     },
     "The connection dropped: %@" : {
       "comment" : "A failure. %@ is the system's own account of what went wrong, which arrives already translated.",
@@ -7416,13 +9920,142 @@
       }
     },
     "The garden could not be reached just now. Nothing has changed; try again in a little while." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haven kunne ikke nås lige nu. Intet er ændret; prøv igen om lidt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora mismo no se ha podido llegar al jardín. No ha cambiado nada; vuelve a intentarlo dentro de un rato."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’atteindre le jardin pour l’instant. Rien n’a changé ; réessaie dans un petit moment."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al momento non è stato possibile raggiungere il giardino. Non è cambiato nulla; riprova tra un po'."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hagen kunne ikke nås akkurat nå. Ingenting er endret; prøv igjen om litt."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De tuin was nu even niet bereikbaar. Er is niets veranderd; probeer het straks opnieuw."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trädgården gick inte att nå just nu. Ingenting har ändrats; försök igen om en liten stund."
+          }
+        }
+      }
     },
     "The garden is open. Anyone walking it can come across this plant." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haven er åben. Alle, der går rundt i den, kan støde på denne plante."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El jardín está abierto. Cualquiera que lo recorra puede encontrarse con esta planta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le jardin est ouvert. Quiconque s’y promène peut tomber sur cette plante."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il giardino è aperto. Chiunque lo percorra può trovare questa pianta."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hagen er åpen. Alle som går rundt i den, kan støte på denne planten."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De tuin is open. Iedereen die erdoor loopt, kan deze plant tegenkomen."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trädgården är öppen. Vem som helst som går i den kan stöta på den här växten."
+          }
+        }
+      }
     },
     "The garden was black from the first screen, so a plant would be the only colour in front of you. Light gives that up for a phone in sunlight." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haven har været sort fra første skærm, så en plante kunne være den eneste farve foran dig. Lys giver afkald på det, så telefonen kan læses i sollys."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El jardín fue negro desde la primera pantalla, para que una planta fuera el único color delante de ti. Claro renuncia a eso en favor de un teléfono a pleno sol."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le jardin est noir depuis le premier écran, pour que la plante soit la seule couleur devant toi. « Clair » y renonce, pour un téléphone en plein soleil."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il giardino è nero fin dalla prima schermata, perché una pianta sia l'unico colore davanti a te. Chiaro rinuncia a questo per un telefono al sole."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hagen var svart fra første skjerm, så en plante skulle være den eneste fargen foran deg. Lys gir avkall på det, så telefonen kan leses i sollys."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De tuin was zwart vanaf het eerste scherm, zodat een plant de enige kleur voor je zou zijn. Licht geeft dat op voor een telefoon in de zon."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trädgården var svart från första skärmen, så att en växt skulle vara den enda färgen framför dig. Ljus ger upp det för en telefon i solljus."
+          }
+        }
+      }
     },
     "The imprints swirling together:" : {
       "comment" : "First of four lines that arrive one at a time under that heading, at the pace they can be read. The four are one sentence: this line opens a list and the next three are its items.",
@@ -7472,7 +10105,50 @@
       }
     },
     "The meeting" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mødet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El encuentro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La rencontre"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'incontro"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Møtet"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De ontmoeting"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mötet"
+          }
+        }
+      }
     },
     "The other phone is running a different version of Peace Garden." : {
       "comment" : "A failure. 'Peace Garden' is the app's name and stays as it is.",
@@ -8509,19 +11185,235 @@
       }
     },
     "Waiting for you to allow location." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Venter på, at du giver adgang til din placering."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esperando a que permitas la ubicación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En attente de ton autorisation de localisation."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In attesa che tu consenta l'accesso alla posizione."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Venter på at du gir tilgang til posisjonen din."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wacht tot je locatie toestaat."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Väntar på att du tillåter plats."
+          }
+        }
+      }
     },
     "Waiting on %@" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Venter på %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esperando a %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En attente de %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In attesa di %@"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Venter på %@"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wacht op %@"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Väntar på %@"
+          }
+        }
+      }
     },
     "What it says" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hvad der skal stå"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que dice"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce qui est écrit"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cosa dice"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hva det skal stå"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wat er staat"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vad det står"
+          }
+        }
+      }
     },
     "What stands beside each is yours to change here." : {
-      "comment" : "Under the list of released plants in Settings."
+      "comment" : "Under the list of released plants in Settings.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her kan du ændre, hvad der står ved siden af hver af dem."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aquí puedes cambiar lo que figura junto a cada una."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce qui figure à côté de chacune, tu peux le changer ici."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qui puoi cambiare ciò che c'è accanto a ciascuna."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her kan du endre hva som står ved siden av hver av dem."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wat er naast elke plant staat, kun je hier veranderen."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det som står bredvid var och en kan du ändra här."
+          }
+        }
+      }
     },
     "What stands there is the plant itself, grown from its seed at its real age, the way it grows here." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det, der står der, er selve planten, groet frem af sit frø i sin rigtige alder, sådan som den gror her."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que está allí es la planta misma, crecida de su semilla a su edad real, tal como crece aquí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce qui s’y tient est la plante elle-même, poussée de sa graine à son âge réel, comme elle pousse ici."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ciò che sta lì è la pianta stessa, cresciuta dal suo seme alla sua età reale, come cresce qui."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det som står der, er selve planten, vokst fram av frøet sitt i sin virkelige alder, slik den vokser her."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wat daar staat, is de plant zelf, gegroeid uit zijn zaadje op zijn echte leeftijd, zoals hij hier groeit."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det som står där är växten själv, framvuxen ur sitt frö i sin verkliga ålder, så som den växer här."
+          }
+        }
+      }
     },
     "What the name means" : {
       "comment" : "The book mark beside a plant's name on the seed screen, read aloud. It opens a page explaining what the plant's name says about it.",
@@ -8665,7 +11557,51 @@
       }
     },
     "What you write here is kept in this phone's settings, and for now it appears only there." : {
-      "comment" : "Under the field where a custom place is written, in Settings. True as it stands: what is written is kept in the phone's settings and nothing else uses it yet."
+      "comment" : "Under the field where a custom place is written, in Settings. True as it stands: what is written is kept in the phone's settings and nothing else uses it yet.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det, du skriver her, gemmes i denne telefons indstillinger, og indtil videre vises det kun der."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que escribas aquí se guarda en los ajustes de este teléfono, y por ahora solo aparece ahí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que tu écris ici est gardé dans les réglages de ce téléphone, et pour l’instant n’apparaît que là."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ciò che scrivi qui viene conservato nelle impostazioni di questo telefono, e per ora compare solo lì."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det du skriver her, lagres i innstillingene på denne telefonen, og foreløpig vises det bare der."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wat je hier schrijft, wordt in de instellingen van deze telefoon bewaard, en voorlopig is het alleen daar te zien."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det du skriver här sparas i telefonens inställningar, och för tillfället syns det bara där."
+          }
+        }
+      }
     },
     "Whatever you write goes to the other phone as it stands. It is the one place in this app where a seed carries a sentence somebody chose rather than one the app offered." : {
       "extractionState" : "stale"
@@ -8820,7 +11756,51 @@
       }
     },
     "When you meet someone, your phones connect directly, encrypted, and each hands the other its seed, when that seed was made, its plant's name, the name you chose to show, whether a place may be kept with the meeting, and two random numbers: one that makes the new plant, and one the other phone can use later to offer that plant to the web garden. Each phone keeps both second numbers with the plant, and a number for the meeting made from the first two." : {
-      "comment" : "The plainest account the app gives of what leaves the phone at a meeting, under the place settings. A list of facts: each item is something the phone really sends, and the last sentence is what it keeps afterwards."
+      "comment" : "The plainest account the app gives of what leaves the phone at a meeting, under the place settings. A list of facts: each item is something the phone really sends, and the last sentence is what it keeps afterwards.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Når du møder nogen, opretter jeres telefoner en direkte, krypteret forbindelse, og hver af dem rækker den anden sit frø, hvornår frøet blev skabt, sin plantes navn, det navn, du har valgt at vise, om der må gemmes et sted sammen med mødet, og to tilfældige tal: et, der laver den nye plante, og et, som den anden telefon senere kan bruge til at tilbyde den plante til haven på nettet. Hver telefon gemmer begge telefoners andet tal sammen med planten og et tal for mødet, dannet af de to første."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando te encuentras con alguien, los dos teléfonos se conectan directamente y de forma cifrada, y cada uno le pasa al otro su semilla, cuándo se sacó esa semilla, el nombre de su planta, el nombre que has elegido mostrar, si puede guardarse un lugar junto con el encuentro, y dos números al azar: uno hace la planta nueva, y el otro permite al otro teléfono ofrecer más tarde esa planta al jardín de la web. Cada teléfono guarda con la planta los dos segundos números, y un número para el encuentro hecho a partir de los dos primeros."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quand tu rencontres quelqu’un, vos téléphones se connectent directement, de façon chiffrée, et chacun passe à l’autre sa graine, quand elle a été tirée, le nom de sa plante, le nom que tu as choisi d’afficher, si un lieu peut être gardé avec la rencontre, et deux nombres tirés au hasard : le premier fait la nouvelle plante, le second permet à l’autre téléphone de proposer cette plante au jardin en ligne plus tard. Chaque téléphone garde les deux seconds nombres avec la plante, ainsi qu’un nombre pour la rencontre, fait à partir des deux premiers."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando incontri qualcuno, i vostri telefoni si collegano direttamente e in forma cifrata, e ognuno passa all'altro il suo seme, quando è stato estratto quel seme, il nome della sua pianta, il nome che hai scelto di mostrare, se un luogo può essere conservato con l'incontro, e due numeri casuali: uno fa la nuova pianta, e l'altro permette all'altro telefono di offrire più tardi quella pianta al giardino sul web. Ogni telefono conserva con la pianta entrambi i secondi numeri, e un numero per l'incontro ricavato dai primi due."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Når du møter noen, kobler telefonene deres seg direkte til hverandre, kryptert, og hver av dem rekker den andre frøet sitt, når frøet ble laget, navnet på planten sin, navnet du har valgt å vise, om det får lagres et sted sammen med møtet, og to tilfeldige tall: ett som lager den nye planten, og ett den andre telefonen senere kan bruke til å tilby den planten til hagen på nettet. Hver telefon tar vare på begge telefonenes andre tall sammen med planten, og et tall for møtet laget av de to første."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Als je iemand ontmoet, verbinden jullie telefoons zich rechtstreeks met elkaar, versleuteld, en geven ze elkaar hun zaadje, wanneer dat zaadje getrokken is, de naam van hun plant, de naam die je hebt gekozen om te laten zien, of er een plek bij de ontmoeting bewaard mag worden, en twee willekeurige getallen: het eerste maakt de nieuwe plant, het tweede kan de andere telefoon later gebruiken om die plant aan de tuin op het web aan te bieden. Elke telefoon bewaart beide tweede getallen bij de plant, en een getal voor de ontmoeting dat uit de eerste twee is gemaakt."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "När du möter någon kopplar era telefoner upp sig direkt mot varandra, krypterat, och var och en räcker den andra sitt frö, när det fröet drogs, namnet på sin växt, namnet du har valt att visa, om en plats får sparas med mötet, och två slumptal: det första gör den nya växten, det andra kan den andra telefonen senare använda för att erbjuda den växten till trädgården på webben. Varje telefon behåller båda de andra talen med växten, och ett tal för mötet som görs av de två första."
+          }
+        }
+      }
     },
     "When you meet someone, your phones exchange your seed, your name, and a random number for that meeting. That is everything that crosses between you, and it goes directly from phone to phone. A seed cannot be turned back into anything about you or your phone." : {
       "comment" : "The plainest account the app gives of what leaves the phone. It sits in the settings screen under the switch about places.",
@@ -8874,7 +11854,51 @@
       "extractionState" : "stale"
     },
     "When you met" : {
-      "comment" : "One of three small switches beside 'Your name': show the month and year of the meeting beside the plant in the Wild Fields. Shown only once both gardeners choose it."
+      "comment" : "One of three small switches beside 'Your name': show the month and year of the meeting beside the plant in the Wild Fields. Shown only once both gardeners choose it.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hvornår I mødtes"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fecha del encuentro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quand vous vous êtes rencontrés"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando vi siete incontrati"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Når dere møttes"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wanneer jullie elkaar ontmoetten"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "När ni möttes"
+          }
+        }
+      }
     },
     "Where" : {
       "comment" : "Label over the field for where a meeting happened. Set uppercase and wide-tracked, so it wants to be one short word.",
@@ -9206,7 +12230,50 @@
       }
     },
     "Where you actually are" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hvor du faktisk er"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Donde estás de verdad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Là où tu es vraiment"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dove sei davvero"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der du faktisk er"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waar je echt bent"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Där du faktiskt är"
+          }
+        }
+      }
     },
     "Where you meet" : {
       "comment" : "Heading over the offer to record the spot a meeting happens in. 'You' is the two people meeting.",
@@ -9303,7 +12370,50 @@
       }
     },
     "Where you were" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hvor du var"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dónde estabas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Là où tu étais"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dove eri"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der du var"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waar je was"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Där du var"
+          }
+        }
+      }
     },
     "Wherever the seed travelled" : {
       "comment" : "The first item in that menu, and the default. Leaves each meeting the figurative place drawn from its own seed.",
@@ -9353,13 +12463,143 @@
       }
     },
     "Which one" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hvilket sted"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuál"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lequel"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quale"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hvilket sted"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welke"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vilken"
+          }
+        }
+      }
     },
     "Wireframe" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trådmodel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Malla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fil de fer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fil di ferro"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trådmodell"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draadmodel"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trådmodell"
+          }
+        }
+      }
     },
     "You let this plant go into the Wild Fields. %@ keeps theirs." : {
-      "comment" : "Heading of the screen where the person who released a plant changes what stands beside it. %@ is the other gardener's name."
+      "comment" : "Heading of the screen where the person who released a plant changes what stands beside it. %@ is the other gardener's name.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du slap denne plante ud i Vildmarken. %@ beholder sin."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has soltado esta planta en los Campos Silvestres. %@ conserva la suya."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as relâché cette plante dans les Champs Sauvages. %@ garde la sienne."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai lasciato andare questa pianta nei Campi Selvatici. %@ conserva la sua."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du slapp denne planten ut i Villmarka. %@ beholder sin."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je hebt deze plant losgelaten in de Wilde Velden. De plant van %@ blijft."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du släppte ut den här växten på Vildmarken. %@ behåller sin."
+          }
+        }
+      }
     },
     "Your Peace Garden username" : {
       "comment" : "Label over the name field. 'Peace Garden' is the app's name and stays as it is.",
@@ -9457,7 +12697,51 @@
       }
     },
     "Your name is yours to show. Where and when you met are shown only once you both choose them." : {
-      "comment" : "Under the three switches on the Wild Fields notice: a name is each person's alone; the place and month need both."
+      "comment" : "Under the three switches on the Wild Fields notice: a name is each person's alone; the place and month need both.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit navn er dit eget at vise. Hvor og hvornår I mødtes, vises først, når I begge vælger det."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar tu nombre depende solo de ti. El lugar y la fecha del encuentro solo se muestran cuando las dos personas los eligen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton nom, c’est à toi de le montrer. Le lieu et le moment de votre rencontre ne sont montrés qu’une fois que vous les avez choisis tous les deux."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrare il tuo nome dipende solo da te. Dove e quando vi siete incontrati si mostra solo quando lo scegliete entrambi."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navnet ditt er ditt eget å vise. Hvor og når dere møttes, vises først når dere begge velger det."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Of je naam getoond wordt, kies je zelf. Waar en wanneer jullie elkaar ontmoetten, wordt alleen getoond als jullie dat allebei kiezen."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ditt namn visar du om du vill. Var och när ni möttes visas bara när ni båda har valt det."
+          }
+        }
+      }
     },
     "Your name sits beside your plant on the other person's phone, and in the note they keep of the meeting." : {
       "comment" : "Under the field where somebody types the name the other person will see. Asked once, on the way into a first meeting.",
@@ -9507,7 +12791,50 @@
       }
     },
     "Your name, what you wrote about the meeting and the day it happened stay on this phone." : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit navn, det, du skrev om mødet, og dagen, det skete, bliver på denne telefon."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu nombre, lo que escribiste sobre el encuentro y el día en que ocurrió se quedan en este teléfono."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton nom, ce que tu as écrit sur la rencontre et le jour où elle a eu lieu restent sur ce téléphone."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo nome, ciò che hai scritto sull'incontro e il giorno in cui è avvenuto restano su questo telefono."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navnet ditt, det du skrev om møtet, og dagen det skjedde, blir på denne telefonen."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je naam, wat je over de ontmoeting schreef en de dag waarop die plaatsvond, blijven op deze telefoon."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ditt namn, det du skrev om mötet och dagen det hände stannar på den här telefonen."
+          }
+        }
+      }
     },
     "Your own seed and its plant stay. The people you grew those plants with keep theirs." : {
       "comment" : "Appears under 'Empty the garden' while it is being held down.",
@@ -9557,7 +12884,51 @@
       }
     },
     "Your phones remember the place in different words, so it is not shown." : {
-      "comment" : "When both gardeners chose to show where they met but their two phones kept the place in different words, so neither is shown."
+      "comment" : "When both gardeners chose to show where they met but their two phones kept the place in different words, so neither is shown.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeres telefoner husker stedet med forskellige ord, så det vises ikke."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los dos teléfonos recuerdan el lugar con palabras distintas, así que no se muestra."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vos téléphones se souviennent du lieu avec des mots différents, il n’est donc pas montré."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I vostri telefoni ricordano il luogo con parole diverse, quindi non viene mostrato."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Telefonene deres husker stedet med ulike ord, så det vises ikke."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jullie telefoons onthouden de plek in andere woorden, dus die wordt niet getoond."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Era telefoner minns platsen med olika ord, så den visas inte."
+          }
+        }
+      }
     },
     "Your plant and %@, together" : {
       "comment" : "Under a newly made plant's name, from the second meeting onward. %@ is the other person's plant's name — a Latin binomial, never translated.",
@@ -12197,7 +15568,50 @@
       }
     },
     "the other gardener" : {
-
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "den anden gartner"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "la otra persona"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "l’autre jardinier"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "l'altra persona"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "den andre gartneren"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "de andere tuinier"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "den andra trädgårdsmästaren"
+          }
+        }
+      }
     },
     "theme.beginnings" : {
       "comment" : "A theme's name, set as a dictionary headword above its definition on the screen that explains a plant's name.",
