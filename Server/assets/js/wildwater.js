@@ -55,11 +55,11 @@ export function isLotus(e, planting) {
   return LOTUS_HEADS.has(JSON.parse(new TextDecoder().decode(takeResult(e, length))).head);
 }
 
-// The colours the margin goes toward: grass that stands in wet ground, darker
-// and cooler than the field's (which is already the turf at `DUSK`), and the
-// silt the gardens line their water with.
+// The colour of grass that stands in wet ground, darker and cooler than the
+// field's (which is already the turf at `DUSK`): the tussock a plant in a pond
+// stands on. The margin's own wet and mud are the ground's detail's to draw
+// (`wildground.js`), from `wetness`.
 const RUSH = [0.140, 0.180, 0.122];
-const SILT = COLOUR.silt;
 
 const HOLLOW = {
   // How far from a lotus the water it would shed may run and still be near.
@@ -83,6 +83,21 @@ const HOLLOW = {
 // water lies in about a fifth of the flush, a centimetre deep at most.
 const DAMP = { past: 0.6, dip: 0.03, under: 0.007 };
 
+// **How wet the ground is, as the ground's detail reads it** (`wildground.js`,
+// `wetAt`, joined 2 October 2026): sedge from about a third and wholly by three
+// quarters, mud from about a half, and nothing growing past nine tenths, which
+// is the water's. A margin's wet and mud are answered on that scale, at most:
+//
+// - `bank`: a pond's bank at the water, sedge going over to mud;
+// - `edge`: the mud at its edge, bare silt with the odd tuft;
+// - `flush`: a lotus's damp patch, rushy grass, dark, with a little sedge;
+// - `silt`: the silt in a flush's low spots, among the grass.
+//
+// Taken whole — 1 for the wettest — a damp patch, wet across most of it, was
+// a pale disc of glistening mud rather than the dark, rushy flush with water
+// in its low spots that Marcus chose (`design/wild-lotus-2026-10-02/`, `b`).
+const ON_GROUND = { bank: 0.75, edge: 0.9, flush: 0.45, silt: 0.55 };
+
 // How far from a pond's water its margin reaches before it has faded out
 // altogether, in metres.
 const POND_ZONE = [1.0, 1.8];
@@ -97,6 +112,8 @@ const smooth = (a, b, x) => {
   return t * t * (3 - 2 * t);
 };
 const mix = (a, b, t) => a.map((v, k) => v + (b[k] - v) * t);
+// A colour for asking about the floor, where the colour is not wanted.
+const NONE = [0, 0, 0];
 
 /// The field's water, given the module and the field's own ground: its size,
 /// whose edges meet, and its height everywhere. The stage hands over every
@@ -332,14 +349,31 @@ export function makeWildWater(e, { side, height }) {
     ].join(' ');
     if (next === signature) return false;
     signature = next;
+    const before = [...features, ...tussocks];
     features = ponds.map(({ pond }) => pondFeature(pond)).concat(damp.map(dampPatch));
+    bins = null;
     tussocks = standing.map((r) => {
       const level = ponds.find(({ pond }) => pond.holds(r.spot, 0.005)).pond.W;
       return { at: r.spot, top: level + TUSSOCK.over, shape: wander(r.seed, [0.16, 0.10, 0.06, 0.04]),
                key: `t${r.seed.slice(0, 12)}@${level.toFixed(4)}` };
     });
+    // Where it changed: every feature or tussock that came or went.
+    const after = [...features, ...tussocks];
+    const keys = (list) => new Set(list.map((f) => f.key));
+    const was = keys(before), is = keys(after);
+    for (const f of before) if (!is.has(f.key)) touched.push(boundsOf(f));
+    for (const f of after) if (!was.has(f.key)) touched.push(boundsOf(f));
     version++;
     return true;
+  }
+
+  // Where a feature or a tussock reaches, as `[x0, z0, x1, z1]` in the field's
+  // metres round where it is, which may run past the field's edges.
+  let touched = [];
+  const TUSSOCK_BOX = [-1.4 * TUSSOCK.foot, -1.4 * TUSSOCK.foot, 1.4 * TUSSOCK.foot, 1.4 * TUSSOCK.foot];
+  function boundsOf(f) {
+    const box = f.box ?? TUSSOCK_BOX;
+    return [f.at[0] + box[0], f.at[1] + box[1], f.at[0] + box[2], f.at[1] + box[3]];
   }
 
   /// A hollow's pond as the ground draws it: how far each point of the grid is
@@ -402,8 +436,9 @@ export function makeWildWater(e, { side, height }) {
         return {
           delta,
           level: d < 0.5 ? W : -Infinity,
-          wet: zone * (1 - smooth(0.0, HOLLOW.wet + 0.03 * reach(x, z), above)),
-          mud: zone * (1 - smooth(0.0, HOLLOW.mud + 0.008 * reach(x + 5, z), above)) * (0.4 + 0.6 * smooth(0.0, 0.6, -t)),
+          wet: ON_GROUND.bank * zone * (1 - smooth(0.0, HOLLOW.wet + 0.03 * reach(x, z), above)),
+          mud: ON_GROUND.edge * zone * (1 - smooth(0.0, HOLLOW.mud + 0.008 * reach(x + 5, z), above))
+            * (0.4 + 0.6 * smooth(0.0, 0.6, -t)),
         };
       },
     };
@@ -431,8 +466,8 @@ export function makeWildWater(e, { side, height }) {
           // Water stands where the ground dips far enough: about one point in
           // five across the flush, and none at its edge.
           level: G - DAMP.under - 0.06 * (1 - held),
-          wet: 1 - smooth(0.85, 1.3 + 0.2 * reach(x, z), p),
-          mud: held * smooth(-0.05, -0.2, t),
+          wet: ON_GROUND.flush * (1 - smooth(0.85, 1.3 + 0.2 * reach(x, z), p)),
+          mud: ON_GROUND.silt * held * smooth(-0.05, -0.2, t),
         };
       },
     };
@@ -440,11 +475,32 @@ export function makeWildWater(e, { side, height }) {
 
   // MARK: What the stage asks
 
+  // **The features by the squares of the field their bounds reach**, `BIN`
+  // metres to a side, so asking at a point weighs the few that might hold it
+  // rather than every pond and damp patch on the field. Since the ground's
+  // tufts and stones stand on the floor (joined 2 October 2026) the floor is
+  // asked for at every square in sight, every frame, and for every tuft that
+  // is grown; with a thousand plants the field has some sixty features.
+  const BIN = 4, BINS = Math.round(side / BIN);
+  let bins = null;
+  function binned() {
+    if (bins) return bins;
+    bins = Array.from({ length: BINS * BINS }, () => []);
+    const cell = (v) => ((v % BINS) + BINS) % BINS;
+    for (const f of features) {
+      const i0 = Math.floor((f.at[0] + f.box[0]) / BIN), j0 = Math.floor((f.at[1] + f.box[1]) / BIN);
+      const i1 = Math.min(i0 + BINS - 1, Math.floor((f.at[0] + f.box[2]) / BIN));
+      const j1 = Math.min(j0 + BINS - 1, Math.floor((f.at[1] + f.box[3]) / BIN));
+      for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) bins[cell(j) * BINS + cell(i)].push(f);
+    }
+    return bins;
+  }
+
   // Every feature whose bounds hold a point, with the point in its own frame,
-  // from those given.
-  function near(x, z, among = features) {
+  // from those given, or from all of them.
+  function near(x, z, among = null) {
     const out = [];
-    for (const f of among) {
+    for (const f of among ?? binned()[Math.floor(home(z) / BIN) % BINS * BINS + Math.floor(home(x) / BIN) % BINS]) {
       const dx = wrap(x - f.at[0]), dz = wrap(z - f.at[1]);
       if (dx >= f.box[0] && dx <= f.box[2] && dz >= f.box[1] && dz <= f.box[3]) out.push([f, dx, dz]);
     }
@@ -470,7 +526,11 @@ export function makeWildWater(e, { side, height }) {
   /// answer for a region the point is in, to save asking every feature.
   function sample(x, z, G, base, local = null) {
     let delta = 0, level = -Infinity, wet = 0, mud = 0;
-    for (const [f, dx, dz] of near(x, z, local?.features)) {
+    const holding = near(x, z, local?.features);
+    // Away from every pond and damp patch, the ground as it is: a tussock is
+    // only ever in a pond, inside its bounds.
+    if (!holding.length && !local) return { floor: G, level, colour: base, wet, mud };
+    for (const [f, dx, dz] of holding) {
       const s = f.sample(dx, dz, G, x, z);
       delta += s.delta;
       if (s.level > level) level = s.level;
@@ -490,15 +550,32 @@ export function makeWildWater(e, { side, height }) {
       floor = Math.max(floor, t.top - TUSSOCK.under * smooth(TUSSOCK.top, TUSSOCK.foot, r));
       grass = Math.max(grass, 1 - smooth(TUSSOCK.top, TUSSOCK.foot, r));
     }
-    let colour = base;
-    if (wet > 0) colour = mix(colour, RUSH, 0.5 * wet);
-    if (mud > 0) colour = mix(colour, SILT, 0.7 * mud);
-    if (grass > 0) colour = mix(colour, RUSH, 0.6 * grass);
+    // The margin's wet and mud are answered rather than painted here: the
+    // ground's detail darkens the earth to mud and grows sedge from them
+    // (`wetness`), and painted here as well the margin would be darkened twice.
+    const colour = grass > 0 ? mix(base, RUSH, 0.6 * grass) : base;
     // Nothing is darkened for being under the water: the water hides the
     // floor beyond its first few millimetres, and a floor coloured by which
     // side of the shore each point of the grid fell on would draw the grid
     // along the shore, a tooth to every cell.
-    return { floor, level, colour };
+    return { floor, level, colour, wet, mud };
+  }
+
+  /// **How wet the ground is at a point**, 0 to 1, for the ground's detail
+  /// (`wildground.js`, `wetAt`): 1 where the water's level is over the floor,
+  /// else the larger of the margin's wet and its mud, which are on the
+  /// ground's scale already (`ON_GROUND`). Nothing near any water answers 0
+  /// without asking the ground's height.
+  function wetness(x, z) {
+    if (!near(x, z).length) return 0;
+    const s = sample(x, z, height(x, z), NONE);
+    return s.level > s.floor ? 1 : Math.max(s.wet, s.mud);
+  }
+
+  /// The floor at a point: the field's ground, with what the water has dug or
+  /// heaped on it — where the ground's tufts and stones stand.
+  function floorAt(x, z) {
+    return sample(x, z, height(x, z), NONE).floor;
   }
 
   /// The water's colour at a point `w` under its surface: the gardens' two,
@@ -573,7 +650,13 @@ export function makeWildWater(e, { side, height }) {
   }
 
   return {
-    know, grew, sample, within, waterTone, cells, catchments, surfaceAt, levelAt, footAt,
+    know, grew, sample, within, waterTone, cells, catchments, surfaceAt, levelAt, footAt, wetness, floorAt,
+    // Whether a planting it has been told of is a water lily.
+    lotus: (planting) => Boolean(known.get(planting?.seed)?.lotus),
+    // Where the water has changed since this was last asked, as boxes in the
+    // field's metres (`boundsOf`): the only places its wet and its floor can
+    // have changed.
+    changes() { const out = touched; touched = []; return out; },
     get version() { return version; },
     // For the workbench: the hollows, and how much water each holds at least.
     hollows: () => hollows.map((h, index) => ({ at: h.bottom, floor: height(...h.bottom), least: pondAt(index)?.W ?? null })),

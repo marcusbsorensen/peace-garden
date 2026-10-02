@@ -59,8 +59,9 @@
 // and gives out at the water's edge. Each is GLSL defining `float wearAt(vec2
 // p)` or `float wetAt(vec2 p)` over the field's unwrapped metres, with any
 // uniforms it needs and a `bind` that sets them; `fieldInput` makes one from a
-// function of the field sampled into a texture. `docs/WEB-GARDENS.md` says how
-// the worn paths and the ponds plug in.
+// function of the field sampled into a texture. The stage gives them the worn
+// paths (`wornGround` in `wear.js`) and the ponds' wet (`wetness` in
+// `wildwater.js`), joined on 2 October 2026.
 //
 // **Not done: sway.** The stage draws when the window moves and not
 // otherwise (`flyOver`'s note); grass that swayed would have the whole field,
@@ -202,10 +203,11 @@ const glsl = ({ ab: [a, b], n: [nx, ny], salt }) => `ivec2(${a}, ${b}), vec2(${n
 
 // MARK: - How thick the grass is
 
-// **Two swards, because it could go either way**, for Marcus to choose from
-// renders (2 October 2026). `pasture`: grazed short, a hand high, with earth
-// showing between the tussocks and rank patches the animals left; what the
-// docs have called the field. `meadow`: uncut, a span high, thick, seeding.
+// **The sward is pasture**, chosen by Marcus on 2 October 2026 from renders
+// of two (`design/wild-ground-2026-10-02/`): grazed short, 4 to 15 cm, with
+// earth showing between the tussocks and rank patches the animals left; what
+// the docs have called the field. The other was a meadow, uncut, a span high,
+// thick and seeding; it is in those renders and in this file's history.
 //
 // `candidates` is how many places a square metre tries, and so the most
 // tufts it can hold; `low` and `gain` turn the noise into how thick the grass
@@ -215,12 +217,9 @@ const glsl = ({ ab: [a, b], n: [nx, ny], salt }) => `ivec2(${a}, ${b}), vec2(${n
 // `stones` how stony; `short` how many places a square metre tries for the
 // short grass between the tufts, drawn only close to, and `shortHeight` how
 // tall that is.
-export const SWARDS = {
-  pasture: { candidates: 150, low: 0.2, gain: 1.8, height: [0.05, 0.13], rank: 0.62, rankLift: 1.75,
-             heads: 0.04, rankHeads: 0.4, bare: [0.05, 0.17], stones: 1, short: 380, shortHeight: [0.03, 0.07] },
-  meadow: { candidates: 170, low: 0.08, gain: 1.6, height: [0.10, 0.24], rank: 0.66, rankLift: 1.25,
-            heads: 0.22, rankHeads: 0.45, bare: [0.02, 0.13], stones: 0.6, short: 280, shortHeight: [0.04, 0.09] },
-};
+export const PASTURE = { candidates: 150, low: 0.2, gain: 1.8, height: [0.05, 0.13], rank: 0.62, rankLift: 1.75,
+                         heads: 0.04, rankHeads: 0.4, bare: [0.05, 0.17], stones: 1, short: 380,
+                         shortHeight: [0.03, 0.07] };
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 const smooth = (a, b, v) => { const t = clamp01((v - a) / (b - a)); return t * t * (3 - 2 * t); };
@@ -275,13 +274,31 @@ export const NOTHING = {
 /// at a point in metres, sampled `cells` to a side into a texture that repeats
 /// as the field does, read smoothly between samples. `name` is `wear` or
 /// `wet`; `unit` the texture unit it is bound to (the plants use 0 and 1, the
-/// worn paths' own texture 2). `set(at)` samples it again.
+/// worn paths' own texture 2, the sky the ponds mirror 4). `set(at)` samples
+/// it again; `set(at, { within })` only inside those boxes, `[x0, z0, x1,
+/// z1]` in the field's metres, which may run past its edges.
 export function fieldInput(name, at, { cells = 256, unit = 3 } = {}) {
   const values = new Float32Array(cells * cells);
-  const sample = (fn) => {
-    for (let j = 0; j < cells; j++) {
-      for (let i = 0; i < cells; i++) {
-        values[j * cells + i] = clamp01(fn((i + 0.5) * FIELD / cells, (j + 0.5) * FIELD / cells));
+  const size = FIELD / cells;
+  const sampleOne = (fn, i, j) => {
+    values[j * cells + i] = clamp01(fn((i + 0.5) * size, (j + 0.5) * size));
+  };
+  const sample = (fn, within = null) => {
+    if (!within) {
+      for (let j = 0; j < cells; j++) for (let i = 0; i < cells; i++) sampleOne(fn, i, j);
+      return;
+    }
+    const done = new Uint8Array(cells * cells);
+    for (const [x0, z0, x1, z1] of within) {
+      const i0 = Math.floor(x0 / size - 0.5), i1 = Math.min(i0 + cells - 1, Math.ceil(x1 / size - 0.5));
+      const j0 = Math.floor(z0 / size - 0.5), j1 = Math.min(j0 + cells - 1, Math.ceil(z1 / size - 0.5));
+      for (let j = j0; j <= j1; j++) {
+        for (let i = i0; i <= i1; i++) {
+          const wi = mod(i, cells), wj = mod(j, cells);
+          if (done[wj * cells + wi]) continue;
+          done[wj * cells + wi] = 1;
+          sampleOne(fn, wi, wj);
+        }
       }
     }
   };
@@ -291,7 +308,7 @@ export function fieldInput(name, at, { cells = 256, unit = 3 } = {}) {
   return {
     glsl: `uniform sampler2D ${sampler};\nfloat ${name}At(vec2 p) { return texture(${sampler}, p / ${FIELD.toFixed(1)}).r; }`,
     uniforms: [sampler],
-    set(fn) { sample(fn); dirty = true; },
+    set(fn, { within = null } = {}) { sample(fn, within); dirty = true; },
     bind(gl, where) {
       if (where[sampler] == null) return;
       gl.activeTexture(gl.TEXTURE0 + unit);
@@ -818,13 +835,12 @@ const STONES = [
 
 /// The ground's detail for a stage on `gl`. `side` is the field's (it must be
 /// this module's); `height(x, z)` the ground's height and `colour(x, z)` its
-/// colour, both on unwrapped metres; `sward` one of `SWARDS`; `wear` and
-/// `wet` the inputs, or nothing; `light` what the field adds to every light
-/// (`withFireflies`); `lit` the uniforms that adds.
-export function groundDetail(gl, { side, height, colour, sward = 'pasture', wear = null, wet = null,
-                                   light = (f) => f, lit = [] }) {
+/// colour, both on unwrapped metres; `wear` and `wet` the inputs, or nothing;
+/// `light` what the field adds to every light (`withFireflies`); `lit` the
+/// uniforms that adds. The sward is the pasture (`PASTURE`).
+export function groundDetail(gl, { side, height, colour, wear = null, wet = null, light = (f) => f, lit = [] }) {
   if (side !== FIELD) throw new Error(`the ground's detail is for a field ${FIELD} m across, not ${side}`);
-  const kind = SWARDS[sward] ?? SWARDS.pasture;
+  const kind = PASTURE;
   const inputs = { wear: wear ?? NOTHING.wear, wet: wet ?? NOTHING.wet };
   const inputGLSL = `${inputs.wear.glsl}\n${inputs.wet.glsl}`;
   const inputUniforms = [...inputs.wear.uniforms, ...inputs.wet.uniforms];
@@ -1012,7 +1028,7 @@ export function groundDetail(gl, { side, height, colour, sward = 'pasture', wear
     const before = feet;
     feet = new Map();
     for (const plant of plants) {
-      const reach = plant.foot;
+      const reach = Math.max(plant.foot, plant.flat ?? 0);
       for (let i = Math.floor((plant.x - reach) / PATCH); i <= Math.floor((plant.x + reach) / PATCH); i++) {
         for (let j = Math.floor((plant.z - reach) / PATCH); j <= Math.floor((plant.z + reach) / PATCH); j++) {
           const key = `${i},${j}`;
@@ -1029,14 +1045,22 @@ export function groundDetail(gl, { side, height, colour, sward = 'pasture', wear
 
   // **Under a plant**: the same darkening its foot gives the ground
   // (`FOOT_FRAGMENT` in `wildfields.js`), and shorter by its stem, so its
-  // lowest leaves are not drowned; none right at the stem.
+  // lowest leaves are not drowned; none right at the stem. And nothing at all
+  // under leaves that lie flat on the ground — a water lily's pads, out of
+  // the water (`flat`, how far they reach, joined 2 October 2026): a tuft or
+  // a stone there would come up through the leaf.
   function besidePlants(out, from, count, stride, near, tuft) {
     if (!near) return;
     for (let k = 0; k < count; k++) {
       const o = from + k * stride;
       let shade = 1, keep = 1;
       for (const plant of near) {
-        const r = Math.hypot(out[o] - plant.x, out[o + 2] - plant.z) / plant.foot;
+        const d = Math.hypot(out[o] - plant.x, out[o + 2] - plant.z);
+        if (d < (plant.flat ?? 0)) {
+          if (tuft) out[o + 14] = 2;
+          else out[o + 4] = out[o + 5] = out[o + 6] = 0;
+        }
+        const r = d / plant.foot;
         if (r >= 1) continue;
         shade *= 1 - 0.55 * (1 - smooth(0.15, 1, r));
         keep = Math.min(keep, 0.35 + 0.65 * smooth(0.12, 0.75, r));
@@ -1253,8 +1277,26 @@ export function groundDetail(gl, { side, height, colour, sward = 'pasture', wear
     draw,
     // Something on the field changed what an input answers: draw it again.
     // With `regrow`, the ground's height changed too (water arriving digs a
-    // pond's floor): every square is grown again on the new ground.
+    // pond's floor): every square is grown again on the new ground — or, given
+    // boxes (`[x0, z0, x1, z1]` in the field's metres, as the water's
+    // `changes` answers), only the squares they reach, laid again where they
+    // lie and the rest left alone.
     changed({ regrow = false } = {}) {
+      if (Array.isArray(regrow)) {
+        const reached = (wi, wj) => regrow.some(([x0, z0, x1, z1]) =>
+          Math.abs(wrap((wi + 0.5) * PATCH - (x0 + x1) / 2)) <= (x1 - x0 + PATCH) / 2
+          && Math.abs(wrap((wj + 0.5) * PATCH - (z0 + z1) / 2)) <= (z1 - z0 + PATCH) / 2);
+        for (const cache of [grown, grownShort]) {
+          for (const key of [...cache.keys()]) if (reached(key % PATCHES, Math.floor(key / PATCHES))) cache.delete(key);
+        }
+        for (const squares of [held, pools.short.held]) {
+          for (const key of squares ?? []) {
+            const [i, j] = key.split(',').map(Number);
+            if (reached(mod(i, PATCHES), mod(j, PATCHES))) renew.add(key);
+          }
+        }
+        return;
+      }
       dirty = true;
       if (regrow) { grown.clear(); grownShort.clear(); }
     },
@@ -1281,4 +1323,7 @@ function stream(seed) {
 }
 
 function mod(a, n) { return ((a % n) + n) % n; }
+
+// A distance along the field, the short way round.
+function wrap(d) { return d - FIELD * Math.round(d / FIELD); }
 

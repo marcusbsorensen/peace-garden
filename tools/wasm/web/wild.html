@@ -68,7 +68,6 @@
   import { makeSky } from '/assets/js/sky.js';
   import { SIDE, TILES, flyOver, makeWildStage, spotOf } from '/assets/js/wildfields.js';
   import { isLotus } from '/assets/js/wildwater.js';
-  import { inventWear, walkOn, wearOfField, wornGround } from '/assets/js/wear.js';
 
   const query = new URLSearchParams(location.search);
   const count = Math.max(0, parseInt(query.get('plants') ?? '', 10) || 400);
@@ -121,8 +120,11 @@
     : async (x, z) => invented.tiles.get(`${x},${z}`) ?? [];
   const [at] = points(query.get('at'));
 
-  // The wear: invented, or the service's where it has wear on, or none.
+  // The wear: invented, or the service's where it has wear on, or none — and
+  // `wear.js` loaded only for one of the first two, as the page loads it.
   const service = fromService ? await (await fetch('/api/wild')).json() : null;
+  const { inventWear, walkOn, wearOfField, wornGround } = demo || service?.wear
+    ? await import('/assets/js/wear.js') : {};
   const invention = demo ? inventWear(invented.plants.map((p) => p.spot)) : null;
   const worn = demo || service?.wear ? wornGround({ seen: service?.wear?.seen }) : null;
   if (invention) worn.set(invention.wear);

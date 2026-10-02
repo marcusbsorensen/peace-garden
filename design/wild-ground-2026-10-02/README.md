@@ -1,6 +1,6 @@
 # The Wild Fields' ground, close to, 2 October 2026
 
-Renders of the ground's detail (`Server/assets/js/wildground.js`, docs/WEB-GARDENS.md §*The Wild Fields' ground, close to*). There are two swards, and Marcus chooses between them; `/wild` draws `pasture` until he does.
+Renders of the ground's detail (`Server/assets/js/wildground.js`, docs/WEB-GARDENS.md §*The Wild Fields' ground, close to*). There were two swards; **Marcus chose the pasture on 2 October 2026**, and it is the only one (docs/WEB-GARDENS.md §*The Wild Fields joined*).
 
 - **before**: the ground as it was, one smooth shaded sheet.
 - **pasture** (the default): grazed short, 4 to 15 cm, with earth showing between the tussocks, rank patches left long to about 25 cm, and a tenth of the tufts gone to seed.

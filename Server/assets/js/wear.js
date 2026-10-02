@@ -22,11 +22,13 @@
 // page or the visitor; a batch that fails is dropped, never kept to send
 // later.
 //
-// **Drawn as the ground's own colour trodden paler and flatter**, never as a
-// line laid on it: the ground's shader reads the wear and lightens, dries and
-// flattens the grass where it is worn, through a slow wander and a fine
-// breakup so that a path made of square cells has soft, uneven edges and no
-// straight line anywhere.
+// **Drawn as the ground itself worn**, never as a line laid on it: this
+// answers how worn the ground is at a point (`wearAt`), through a slow wander
+// and a fine breakup so that a path made of square cells has soft, uneven
+// edges and no straight line anywhere, and the ground's detail
+// (`wildground.js`, 2 October 2026) does the rest — the tufts thin, shorten
+// and are pressed flat, and give way to bare earth, trodden paler and its
+// crumb pressed together.
 
 import { SIDE } from './wildfields.js';
 
@@ -201,17 +203,19 @@ export function sendCells(cells) {
 
 // MARK: Drawing
 
-/// The worn ground, for `makeWildStage`'s `wear`: it rewrites the ground's
-/// shader (`shader`), names the one uniform it adds (`uniforms`), and binds
-/// the field's wear as a small texture — one texel a cell, repeating as the
-/// field does — each time the ground is drawn (`bind`). `set(cells)` gives it
-/// the field's wear, `[[x, z, wear], …]` as `GET /api/wild/wear` answers.
+/// The worn ground, for `makeWildStage`'s `wear`, which is the ground's
+/// detail's `wear` input (`wildground.js`): GLSL defining `float wearAt(vec2
+/// p)` over the field's unwrapped metres (`glsl`), the one uniform it adds
+/// (`uniforms`), and the field's wear bound as a small texture — one texel a
+/// cell, repeating as the field does — each time the ground, its tufts or its
+/// stones are drawn (`bind`). `set(cells)` gives it the field's wear,
+/// `[[x, z, wear], …]` as `GET /api/wild/wear` answers.
 export function wornGround({ seen = SEEN } = {}) {
   const levels = new Float32Array(CELLS * CELLS);
   let texture = null;
   let dirty = true;
   return {
-    shader: withWear,
+    glsl: `${WEAR_GLSL}\nfloat wearAt(vec2 p) { return wornAt(vec3(p.x, 0.0, p.y)); }`,
     uniforms: ['wear'],
     set(cells) {
       levels.fill(0);
@@ -251,13 +255,12 @@ function trodden(wear, seen) {
   return Math.min(1, Math.log(wear / seen) / Math.log(FULL / seen));
 }
 
-// The ground's shader, worn. `wornAt` reads the wear under a fragment —
-// pushed about by a slow noise a metre and a half across, so the cells' edges
+// How worn the ground is. `wornAt` reads the wear under a point — pushed
+// about by a slow noise a metre and a half across, so the cells' edges
 // wander, and softened over a cell, then broken up finely at the edge and a
-// little in the middle, where tufts survive in any real path. `trodden` takes
-// the grass towards a paler, drier, browner version of its own colour, and
-// `flattened` lays its normal towards the sky, so a worn patch catches the
-// night's light evenly instead of by the grain of the sward.
+// little in the middle, where tufts survive in any real path. Read by the
+// ground, its tufts and its stones alike (`wildground.js`), which is why it is
+// a point of the field and not a fragment of one shader.
 const WEAR_GLSL = `
 uniform sampler2D wear;
 float wearHash(vec2 p) {
@@ -310,32 +313,7 @@ float wornAt(vec3 w) {
   float depth = mix(0.38, 1.0, smoothstep(0.15, 0.7, s)) * (0.62 + 0.38 * hold) * (0.88 + 0.12 * grain);
   return edge * depth;
 }
-vec3 trodden(vec3 c, float k) {
-  float l = dot(c, vec3(0.30, 0.59, 0.11));
-  vec3 bare = vec3(l * 1.36 + 0.026, l * 1.22 + 0.022, l * 0.92 + 0.012);
-  return mix(c, bare, k);
-}
-vec3 flattened(vec3 n, float k) { return mix(n, vec3(0.0, 1.0, 0.0), 0.6 * k); }
 `;
-
-// What the rewrite looks for in the ground's shader (`GROUND_FRAGMENT` in
-// `wildfields.js`), each exactly once. If the ground's shader has changed
-// shape the field is drawn without wear and says so, rather than not at all.
-const MAIN = 'void main() {';
-const COLOUR_IN = 'toLinear(vColour)';
-const NORMAL_IN = 'lightAt(normalize(vNormal))';
-
-export function withWear(fragment) {
-  const once = (text) => fragment.split(text).length === 2;
-  if (!once(MAIN) || !once(COLOUR_IN) || !once(NORMAL_IN)) {
-    console.warn('the ground\'s shader has changed shape: the Wild Fields are drawn without wear');
-    return fragment;
-  }
-  return fragment
-    .replace(MAIN, `${WEAR_GLSL}\n${MAIN}\n  float worn = wornAt(vWorld);`)
-    .replace(COLOUR_IN, 'toLinear(trodden(vColour, worn))')
-    .replace(NORMAL_IN, 'lightAt(normalize(flattened(vNormal, worn)))');
-}
 
 // MARK: Reading the field's wear
 

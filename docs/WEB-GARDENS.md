@@ -9,6 +9,135 @@ Wild Fields, which nobody does.
 Nothing here is built. The website cannot yet draw a plant (§*What has to exist
 first*), and until it can, every decision below is a design and not a garden.
 
+## The Wild Fields joined: the ponds, the worn paths and the ground, 2 October 2026
+
+Three things built apart on 2 October are one field now, on
+`worktree-agent-a16338ad17866618c`: the ponds Marcus chose (option B, the
+hollows holding water near a lotus, with the night sky in them;
+`wildwater.js`), the paths visitors wear with their paragraph on the privacy
+page in 41 languages (`wear.js`, `WildWear.php`, `privacy9`), and the ground
+close to (`wildground.js`). **Marcus chose the pasture on 2 October 2026**, so
+it is the only sward and the meadow is gone from the code. **Wear is still off
+unless `config.php` says `'wear' => true`**, which only a copy's own
+`config.php` can say (the server's is written on the server and left alone by
+the deploy), and `privacy9` shows only where it is on.
+
+**How they meet** — the two plans in §*The Wild Fields' ground, close to*,
+carried out:
+
+- **The worn paths are the ground's `wear`.** `wornGround()` answers `glsl`
+  (`WEAR_GLSL`, then `wearAt(p)` as `wornAt` at that point) with its one
+  uniform, its texture on unit 2 and `set`, and nothing else: its shader
+  rewrite (`withWear`, `trodden`, `flattened`) is gone. Worn ground is drawn
+  by the ground's detail: the tufts thin, shorten and are pressed flat, and
+  give way to bare earth, trodden paler, its crumb pressed together. The
+  field still tells it what the middle of the window crosses (`looked`,
+  `groundUnder`), and `/wild` still loads `wear.js` only where the service
+  has wear on.
+- **The ponds are the ground's `wet`.** The water answers `wetness(x, z)` —
+  1 where its level is over the floor, else the larger of its margin's wet
+  and mud — and `floorAt(x, z)`, and no longer paints the margin into the
+  ground's colours (a tussock's top in a pond keeps its rush green). The
+  stage makes the water first, stands the tufts and stones on its floor, and
+  samples the wet into a texture (`fieldInput`, unit 3). Whenever what has
+  arrived changes the water, the wet is sampled again and the tufts and
+  stones grown again — where it changed.
+- **Texture units:** the plants 0 and 1, the worn paths 2, the wet 3, and the
+  sky the water mirrors 4 (it was 2, which the worn paths also bind).
+
+**Where the joining went further than the plans, and why**, each judged on
+renders or measured:
+
+- **The margin's wet on the ground's own scale.** The ground reads wet as
+  sedge from a third, mud from a half, and nothing growing past nine tenths,
+  which is the water's. The ponds' wet and mud ran to 1, and taken whole a
+  lotus's damp patch — wet across most of it — drew as a pale disc of
+  glistening mud with no grass in it, nothing like the dark, rushy flush with
+  water in its low spots of the renders Marcus chose. So each is answered on
+  the ground's scale, at most (`ON_GROUND` in `wildwater.js`): a pond's bank
+  at the water 0.75, sedge going over to mud; the mud at its edge 0.9; a
+  damp patch 0.45, rushy grass with a little sedge; the silt in its low spots
+  0.55.
+- **The wet an eighth of a metre to a texel**, not a quarter. A pond's margin
+  needs no finer, but a damp patch's puddles are a hand or two across, and at
+  a quarter each spread a ring of bare mud round itself.
+- **Grown again only where the water changed.** The water says where it has
+  changed since it was last asked (`changes`, the bounds of every pond, damp
+  patch or tussock that came or went); only those texels are sampled again,
+  and only the squares they reach are grown again and laid where they lie.
+  Growing everything in sight again for each lotus that arrived was most of
+  what walking cost: about a second of growing over a nine-metre walk on the
+  slowed phone, now about a tenth of that.
+- **The water's features are kept by the 4 m squares they reach**, because the
+  floor is now asked for at every square in sight every frame and for every
+  tuft grown, and a field of a thousand plants has some sixty ponds and damp
+  patches.
+- **Nothing stands through a water lily's pads.** Out of the water its pads
+  lie flat on the ground, and sedge and stones came up through them; under a
+  lily's pads (`flat`, how far they reach) the tufts and stones give way, as
+  they already did at a stem.
+- **A frame drawn because the window moved counts as a frame of the
+  ripples**, so walking past a pond draws the field once a frame and not now
+  and then twice. With the ground's detail in every frame that doubling cost
+  three to five milliseconds on the desktop.
+- **The workbench** (`/dev/wild`): `?try=` and `?sward=` are gone; `?wear=demo`
+  invents the paths, `?lotus=` places lilies, and `wear.js` is loaded only for
+  `?wear=demo` or a local service with wear on, as the page does.
+  `wild.stage.wetness(x, z)` and `wild.stage.counts()` are for render scripts.
+
+**Checked**, with a local `config.php` turning wear on and with none:
+
+- Every reference check CI runs passes, `check_curate.php`,
+  `check_wild_fields.php`, `check_wild_wear.php` and `check_backup.php`
+  among them; `tools/strings/check.py` has 41 catalogues with the paragraph
+  on paths that visitors wear.
+- `/wild`, `/dev/wild`, `/dev/wild?wear=demo` and `/dev/wild?source=service`,
+  headless in Chrome, have clean consoles either way. With wear off `/wild`
+  fetches no `wear.js`, nothing touches `/api/wild/wear`, which answers 404,
+  and `/privacy` has eight paragraphs; with it on `/wild` loads `wear.js`,
+  reads the field's wear, sends what a drag crosses when the page is put
+  away, and `/privacy` has nine. The ten areas' pages, the front page and
+  the privacy page have clean consoles too.
+
+**What it costs**, on `/dev/wild?plants=1000`, measured as the ground's own
+figures were (above) but with a harness of this joining's own, so the three
+are compared on it: the stage's work for a frame while the window moves every
+frame, a one-pixel read making it wait for the GPU, median and 95th centile in
+milliseconds, two runs each; *slow* is frames more than 25 ms apart in the 300
+of a walk. Headless Chrome on the M4 Max through Metal; desktop 1440 × 900 at
+2×, the phone 390 × 844 at 3× with the CPU slowed four times (CDP).
+
+| | still | walk | slow |
+|---|---|---|---|
+| desktop, the ground alone (7ef2b4a) | 10.4–14.0 (p95 12.5–15.9) | 10.1–12.2 (p95 13.5–16.3) | 24–26 |
+| desktop, the ponds alone (1171d50) | 10.8–12.1 (p95 12.2–17.4) | 9.2–12.8 (p95 14.8–18.1) | 32–33 |
+| desktop, joined | 11.2–11.6 (p95 12.2–15.4) | 10.7–11.5 (p95 14.0–14.3) | 27–32 |
+| phone, the ground alone | 11.8–14.5 (p95 16.2–17.5) | 12.9–14.0 (p95 22.2–22.5) | 57–62 |
+| phone, the ponds alone | 10.5–11.4 (p95 16.9–18.5) | 12.1–12.9 (p95 21.3–21.5) | 56–62 |
+| phone, joined | 12.6–14.0 (p95 15.6–19.6) | 13.2–13.3 (p95 23.0–26.0) | 63–64 |
+
+The frame held at sixty in every case. Joined costs what the ground alone
+does, within the noise between runs, which is several milliseconds; the
+ground's own figures above, from its own harness, are of the same size
+(desktop still 10.6–13.7, phone still 13.7–13.9), though its *slow* counted
+something else. What makes a walk's slow frames on the slowed phone is the
+ponds' own: building the ground again near water takes 60 to 210 ms there,
+as it did before the joining. It wants trying on a real phone before it goes
+live, as the ground does.
+
+**Renders**, night, in `design/wild-together-2026-10-02/` (1000 × 640 from
+2×, reduced to 256 colours), every one over the same 400 invented plants and
+drawn with motion reduced, so the fireflies and the ripples hold still:
+
+- `pond-wide.png`: the field's deepest hollow holding its pond, lilies on it
+  and at its edge, and a damp patch round a lily on the rise above, in pasture
+  (`/dev/wild?plants=400&lotus=46.7,55.4;47.9,54.2;44.6,53.2&at=47.0,54.4`).
+- `pond-margin.png`: its margin close to — mud at the edge, sedge on the
+  bank, the stars in the water, and nothing through the pads of the lily on
+  the bank (the same, `&at=48.85,54.85&zoom=2.1`).
+- `worn-path.png`: the invented summer's desire lines through pasture, worn
+  to bare earth, with wear on (`/dev/wild?plants=400&wear=demo&zoom=1.7`).
+
 ## The Wild Fields' ground, close to, 2 October 2026
 
 Marcus, 2 October: *The textures of the earth have to be more realistic in the
@@ -64,13 +193,14 @@ Renders, before and after, are in `design/wild-ground-2026-10-02/`.
   bounce) with the fireflies added by the field, and under a plant the same
   darkening its foot gives the ground. Beside a stem the tufts are shorter, so
   a plant's lowest leaves are not drowned, and none stand at the stem itself.
-- **Two swards, for Marcus to choose from the renders.** `pasture` (the
-  default, and what this document has called the field): grazed short, 4 to
-  15 cm, earth showing between tussocks, rank patches left long to about
-  25 cm, a tenth of the tufts gone to seed, most of those in the rank grass.
-  `meadow`: uncut, 8 to 28 cm and rank to a third of a metre, thick, a
-  quarter of it seeding, hardly any earth. `/dev/wild?sward=meadow` draws the
-  second; `/wild` draws whichever `makeWildStage` is given (`sward`).
+- **Pasture, chosen by Marcus on 2 October 2026** from renders of two
+  (`design/wild-ground-2026-10-02/`): grazed short, 4 to 15 cm, earth showing
+  between tussocks, rank patches left long to about 25 cm, a tenth of the
+  tufts gone to seed, most of those in the rank grass. It is the only sward
+  (`PASTURE` in `wildground.js`). The other was a meadow — uncut, 8 to 28 cm
+  and rank to a third of a metre, thick, a quarter of it seeding, hardly any
+  earth — and it and `?sward=` went when the three were joined (§*The Wild
+  Fields joined*).
 - **Not built: sway.** The stage draws when the window moves and not
   otherwise; grass that swayed would have the whole field, a thousand plants
   with it, drawn thirty times a second to move blades a few millimetres. The
@@ -83,7 +213,9 @@ sets them; `makeWildStage` takes them as `wear` and `wet` and the detail binds
 them on the ground, the tufts and the stones. `fieldInput(name, at)` makes
 one from a function of the field sampled into a texture that repeats as the
 field does (`set(at)` samples it again). `/dev/wild?try=wear`, `?try=wet` and
-`?try=both` invent a path across the middle and a pond's margin beside it.
+`?try=both` invented a path across the middle and a pond's margin beside it,
+until the worn paths and the ponds were joined to it and gave it the real
+ones (§*The Wild Fields joined*).
 
 - `wear`, 0 to 1: tufts thin out (each at its own place in the order of
   giving way, so a path's edge is ragged), shorten and are pressed flat; the
@@ -93,6 +225,10 @@ field does (`set(at)` samples it again). `/dev/wild?try=wear`, `?try=wet` and
   sedge, from about a third; the earth darkens to the gardens' silt and
   glistens from about a half; nothing grows past nine tenths, which is where
   the water is.
+
+The two plans below are as they were written before the joining; both were
+carried out on 2 October 2026, and §*The Wild Fields joined* says where it
+went further than they did.
 
 **How the worn paths meet it** (`worktree-agent-ae92f34eae33f3ae0`). Its
 `wornGround()` answers `{ shader, uniforms: ['wear'], bind, set }`, and
@@ -2212,7 +2348,10 @@ paragraphs.
   to 4.6 by the spring equinox, below what is drawn.
 - **Drawn** in the ground's shader as its own colour: paler, drier and
   browner, with the normal laid towards the sky, which makes it flatter. It is
-  never a mark on top. The wear is read as a smooth B-spline over the cells,
+  never a mark on top. (Since the joining, the same day, the ground's detail
+  draws it instead — tufts thinned, flattened and given way to trodden earth;
+  `wear.js` answers only how worn a point is: §*The Wild Fields joined*.)
+  The wear is read as a smooth B-spline over the cells,
   because read straight between them every edge was a run of half-metre
   straight pieces (seen on a render). The read wanders on a slow noise and
   frays at the edge from a stride down to a tuft. The rewrite is injected
@@ -2550,6 +2689,9 @@ vector files are unchanged, as the relief has only ever been drawn.
   the tussocks. **Most lotuses are in damp patches**: 26 of 27 in an invented
   field of 400, and 83 of 85 in one of 1,000, where thirteen ponds cover
   190 m², a twentieth of the field. That was known when it was chosen.
+  Since the joining the ground's detail draws the wet and the mud: sedge on
+  a pond's bank, mud at its edge, rushy grass in a damp patch with silt in
+  its low spots (§*The Wild Fields joined*).
 - **Any other plant whose seed puts it in a pond stands where it stands**
   (§*The Wild Fields*), on a tussock that comes up 1.5 cm through the water
   under it, lobed by its own seed. Its foot is seen and nothing of it is

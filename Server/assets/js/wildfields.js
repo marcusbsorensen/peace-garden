@@ -283,6 +283,13 @@ const FINE = 8;
 const WET = 3;
 const STARLIGHT = 4;
 
+// How finely the wet is sampled for the ground's detail: an eighth of a metre
+// to a texel. A pond's margin is a metre or two wide and a quarter would do
+// for it, but a damp patch's puddles are a hand or two across, and at a
+// quarter each spread a ring of bare mud round itself that the patch was lost
+// under.
+const WET_CELLS = 512;
+
 // **Where a plant meets the ground.** No sun, so no cast shadow — but grass
 // under a plant gets less of the sky than grass in the open, and without that
 // a plant reads as laid on the field rather than growing out of it. A soft
@@ -333,7 +340,7 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
   const water = makeWildWater(e, { side: SIDE, height: groundHeight });
   // The ground's detail stands on the floor the water has dug rather than over
   // it, and reads how wet the ground is from the water.
-  const wet = fieldInput('wet', water.wetness, { unit: WET });
+  const wet = fieldInput('wet', water.wetness, { unit: WET, cells: WET_CELLS });
   const detail = groundDetail(gl, { side: SIDE, height: water.floorAt, colour: groundColour, wear, wet,
                                     light: withFireflies, lit: FLY_UNIFORMS });
   const ground = program(gl, GROUND_VERTEX, withFireflies(detail.fragment), ['position', 'normal', 'colour'],
@@ -554,15 +561,18 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
   }
 
   // **And the ground's detail is told how wet the field now is**: the wet
-  // sampled again from the water, wherever it changed, and the tufts and
-  // stones grown again on the floor it has dug — sedge at a pond's margin,
-  // nothing where the water is.
+  // sampled again from the water, and the tufts and stones grown again on the
+  // floor it has dug — sedge at a pond's margin, nothing where the water is.
+  // Only where the water changed: a lotus coming into sight changes a few
+  // square metres, and growing the whole of the ground in sight again for each
+  // was most of what walking cost on a slowed phone.
   function wetted() {
     if (wetFor === water.version) return;
     const started = performance.now();
     wetFor = water.version;
-    wet.set(water.wetness);
-    detail.changed({ regrow: true });
+    const where = water.changes();
+    wet.set(water.wetness, { within: where });
+    detail.changed({ regrow: where });
     cost.wetted.push(performance.now() - started);
   }
 
@@ -872,7 +882,10 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
     gl.bindVertexArray(null);
     const foot = Math.max(0.12, Math.min(0.6,
       0.7 * Math.max(...[0, 2].flatMap((i) => [Math.abs(shape.min?.[i] ?? 0), Math.abs(shape.max?.[i] ?? 0)]))));
-    return { x, y, z, parts, textures, relief, foot, height: Math.max(0, shape.max?.[1] ?? 0), who };
+    // A water lily's pads lie flat on the water or the ground, and the
+    // ground's tufts and stones give way under them (`wildground.js`).
+    const flat = water.lotus(who) ? padsOf(shape) : 0;
+    return { x, y, z, parts, textures, relief, foot, flat, height: Math.max(0, shape.max?.[1] ?? 0), who };
   }
 
   function releasePlant(plant) {
@@ -956,7 +969,9 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
   // drawn again thirty times a second**; otherwise, and for a reader who has
   // asked for less motion, it is drawn only when the window moves, as it
   // always was. A damp patch's puddles are too shallow for ripples to show
-  // and do not count.
+  // and do not count. A frame drawn because the window moved is a frame of
+  // the ripples too, so they wait thirty milliseconds from whichever was
+  // drawn last: walking past a pond draws the field once a frame, not twice.
   const still = window.matchMedia('(prefers-reduced-motion: reduce)');
   const began = performance.now();
   let rippling = 0, lastFrame = 0, open = null;
@@ -1009,6 +1024,7 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
 
   function draw() {
     const began0 = performance.now();
+    lastFrame = began0;
     const ratio = window.devicePixelRatio || 1;
     const width = Math.round(canvas.clientWidth * ratio), height = Math.round(canvas.clientHeight * ratio);
     if (!width || !height) return;
@@ -1191,7 +1207,7 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
     // how much of the ground's detail is in sight.
     cost: () => ({ frames: [...cost.frames], rebuilds: [...cost.rebuilds], builds: [...cost.builds],
                    wetted: [...cost.wetted], rippling: Boolean(sheet) && !still.matches && inWindow(open) }),
-    hollows: () => water.hollows(),
+    hollows: () => water.hollows(), wetness: (x, z) => water.wetness(x, z),
     counts: () => detail.counts(),
   };
 }
@@ -1209,7 +1225,7 @@ export function flyOver(canvas, stage) {
   const [r, g, b] = FIREFLY.colour.map((v) => Math.round(v * 255));
   // Where a firefly's image in still water is: mirrored in the water's level,
   // and seen at the point of the water the view's ray meets on its way to it.
-  // Null over dry ground, and always on `/wild`, which has no water.
+  // Null over dry ground.
   const reflected = ([x, y, z]) => {
     if (!stage.waterAt) return null;
     const towards = stage.facing();
@@ -1264,8 +1280,8 @@ export function flyOver(canvas, stage) {
         context.beginPath();
         context.arc(x, y, Math.max(0.9, Math.min(2.2, 0.012 * metre)), 0, Math.PI * 2);
         context.fill();
-        // **Its reflection, where there is water under it** (the prototype's
-        // water only): still water is a mirror, and seen down this view a
+        // **Its reflection, where there is water under it**: still water is
+        // a mirror, and seen down this view a
         // firefly's image lies as far under the surface as the firefly is
         // over it, seen in the water a little nearer the reader. Faint, as a
         // reflection off dark water at this angle is.
