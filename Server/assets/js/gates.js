@@ -59,23 +59,28 @@ export const BUILT = Object.freeze({
 const ring = (cx, cy, r) =>
   `M${cx - r} ${cy}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
 const dot = (x, y) => `M${x} ${y}h0`;
-// A bed seen from above, 3.9 wide and 14 long, its corners eased: `x` is where
-// its top edge starts, after the corner. Relative, so no corner is arithmetic
-// that JavaScript can round into 11.249999999999998.
+// A bed seen from above, 3.9 wide and 14 long, its corners eased, and its two
+// sides one lazy S: west in the north half, east in the south, as the Home
+// Ground's beds sway on a plot drawn as its table is. `x` is where its top edge
+// starts, after the corner. Relative, so no corner is arithmetic that
+// JavaScript can round into 11.249999999999998.
 const bed = (x) =>
-  `M${x} 3h2.5a.7 .7 0 0 1 .7 .7v12.6a.7 .7 0 0 1 -.7 .7h-2.5a.7 .7 0 0 1 -.7 -.7v-12.6a.7 .7 0 0 1 .7 -.7Z`;
+  `M${x} 3h2.5a.7 .7 0 0 1 .7 .7c-2.7 4.2 2.7 8.4 0 12.6a.7 .7 0 0 1 -.7 .7h-2.5a.7 .7 0 0 1 -.7 -.7c2.7 -4.2 -2.7 -8.4 0 -12.6a.7 .7 0 0 1 .7 -.7Z`;
 
 export const LOOK = Object.freeze({
   // A frame seen from its end: the ground, a low front, a high back, and the
   // light resting on the back and propped at the front, with a seedling under it.
   waiting: { ground: "#968b78",
     glyph: "M2.5 16H17.5M4.5 16V12.5M15.5 16V8.2M15.8 7.4L4 9.8M10 16V13.4M10 14.2c1.3-.2 2-.9 2.2-2" },
-  // Three beds from above, a crop to each: spires as short upright strokes,
-  // umbels as flat heads, succulents as rosettes packed close. The three
+  // Three beds from above, swaying together in a lazy S, a crop to each:
+  // spires as short upright strokes, umbels as flat heads, succulents as
+  // rosettes packed close, each row on its bed's middle as it sways. The three
   // marks differ in shape, not just in number, so the crops still tell apart
-  // at 20px, where a ring the size of a rosette closes into a dot.
+  // at 20px, where a ring the size of a rosette closes into a dot. Straight
+  // beds until 2 October 2026; the S is drawn wider than the plot's 0.15 m so
+  // it still reads as one at this size.
   ground: { ground: "#4d3b2c",
-    glyph: `${bed(2.5)}${bed(8.75)}${bed(15)}M3.75 5.4V7M3.75 9.2V10.8M3.75 13V14.6M9.55 6.2H10.45M9.55 10H10.45M9.55 13.8H10.45${dot(16.25, 5.6)}${dot(16.25, 8.4)}${dot(16.25, 11.2)}${dot(16.25, 14)}` },
+    glyph: `${bed(2.5)}${bed(8.75)}${bed(15)}M2.97 5.4V7M3.75 9.2V10.8M4.53 13V14.6M8.77 6.2H9.67M9.55 10H10.45M10.33 13.8H11.23${dot(15.53, 5.6)}${dot(15.77, 8.4)}${dot(16.62, 11.2)}${dot(17.02, 14)}` },
   // Three drills, and the label at the head of them.
   beginnings: { ground: "#6a5641",
     glyph: "M7.5 6H17M7.5 10H17M7.5 14H17M4 16.5V8.5M2.6 8.9L4.9 5.6" },
@@ -91,16 +96,22 @@ export const LOOK = Object.freeze({
   // Five trees on a quincunx.
   kinship: { ground: "#66704a",
     glyph: `${ring(5, 5, 1.7)}${ring(15, 5, 1.7)}${ring(10, 10, 1.7)}${ring(5, 15, 1.7)}${ring(15, 15, 1.7)}` },
-  // A square and a diamond woven through each other: the oldest knot there is.
+  // A ring round the middle and four small rings on the diagonals woven
+  // through it, over and under in turn, as the knot is laid: going round, the
+  // middle ring rides over a small ring at their first crossing and dives
+  // under at the second, and each gap is a band going under. A square and a
+  // diamond until 2 October 2026.
   pattern: { ground: "#968b78",
-    glyph: "M5 5H15V15H5ZM10 2.5L17.5 10L10 17.5L2.5 10Z" },
+    glyph: "M9.45 14.9A4.93 4.93 0 0 1 5.45 11.9M5.1 9.45A4.93 4.93 0 0 1 8.1 5.45M10.55 5.1A4.93 4.93 0 0 1 14.55 8.1M14.9 10.55A4.93 4.93 0 0 1 11.9 14.55M15.86 11.46A3.12 3.12 0 1 1 13.68 10.37M8.54 15.86A3.12 3.12 0 1 1 9.63 13.68M4.14 8.54A3.12 3.12 0 1 1 6.32 9.63M11.46 4.14A3.12 3.12 0 1 1 10.37 6.32" },
   // A round glasshouse side-on: the wall, the dome on its eaves, the ribs
   // curving up it, and the door. A pitched roof until 2 October 2026.
   light: { ground: "#8a5a43",
     glyph: "M2.5 16.5H17.5M3.5 16.5V10.5A6.5 6.5 0 0 1 16.5 10.5V16.5M3.5 10.5H16.5M10 4V10.5M6.8 10.5Q7.3 5.6 10 4M13.2 10.5Q12.7 5.6 10 4M8.4 16.5V12.8H11.6V16.5" },
-  // Four paths meeting at a round of paving.
+  // Four paths turning in to a round of paving, all four the same way, so
+  // they meet it rather than cross: each comes on at the middle of its side
+  // and turns as the table's ways do. Four straight paths until 2 October 2026.
   meeting: { ground: "#5b6648",
-    glyph: `${ring(10, 10, 2.8)}M10 2.5V7.2M10 12.8V17.5M2.5 10H7.2M12.8 10H17.5` },
+    glyph: `${ring(10, 10, 2.6)}M17.47 10.06C16.27 11.76 13.43 12.96 11.57 12.04M9.93 17.48C8.23 16.29 7.06 13.44 7.95 11.56M2.51 10.03C3.81 8.35 6.63 6.94 8.53 7.89M10.05 2.55C11.69 3.82 12.96 6.57 12.06 8.44` },
 });
 
 /// The bar's link back to the hub, from an area.
