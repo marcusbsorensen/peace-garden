@@ -386,9 +386,21 @@ enum GardenGround {
     /// a fifth thinner than the bank it replaced (94 points of side against
     /// 119, at three times the garden's size). A tenth of a metre more puts
     /// back exactly what the taper takes, so the near side shows the 0.95 m
-    /// `rimDepth` promises and the camera leaves room for, and the website's
-    /// upright 0.95 m sides and this read as the same thickness.
+    /// `rimDepth` promises and the camera leaves room for. The website's plots
+    /// hang this same slab, at the same depth (`Server/assets/js/slab.js`,
+    /// since 2 October 2026).
     static let sideDepth = rimDepth + taper / 2
+
+    /// How small a stone in the side may come out on screen, in points, and
+    /// still be drawn.
+    ///
+    /// **Stones only when zoomed in** (Marcus, 2 October 2026, for the app and
+    /// the website alike). At three points the stones of the whole plot were a
+    /// sprinkle of flecks along the side; a stone is for a close look. So none
+    /// is drawn on the whole plot (`side`, which draws them only into a close
+    /// drawing) and, close up, none under eight points as it is seen — the
+    /// website's rule too (`STONES` in `slab.js`).
+    static let smallestStone = 8.0
 
     /// The slab's side, from the rim down to its lower edge, as pieces to fill
     /// far to near.
@@ -418,9 +430,11 @@ enum GardenGround {
     /// Only what faces the viewer is drawn, because depth runs on `x + z` and the
     /// rest is behind the plot's own surface; and with `within`, only the stretch
     /// of it that reaches into that part of the screen, which is what a close
-    /// drawing of a corner of the plot asks for.
+    /// drawing of a corner of the plot asks for. `magnification` is how many
+    /// times larger than `view` that close drawing is drawn to be seen — its
+    /// sharpness — which is what says how big a stone comes out (`stones`).
     static func side(rim: [SIMD3<Double>], view: Isometric, light: Light,
-                     within: CGRect? = nil) -> [SidePiece] {
+                     within: CGRect? = nil, magnification: Double = 1) -> [SidePiece] {
         let count = rim.count
         guard count > 8 else { return [] }
 
@@ -610,9 +624,14 @@ enum GardenGround {
         runs.sort { $0.depth < $1.depth }
         var pieces = runs.map(\.piece)
 
-        pieces += stones(rim: rim, along: along, perimeter: perimeter, outward: outward, hang: hang.map {
-            (deep: $0.deep, humus: $0.humus, rock: $0.rock)
-        }, view: view, light: light, world: world, normal: normal)
+        // **Stones only when zoomed in** (Marcus, 2 October 2026): a close
+        // drawing is the only drawing made once the plot is zoomed into, so the
+        // whole plot has none and a corner seen close has them.
+        if within != nil {
+            pieces += stones(rim: rim, along: along, perimeter: perimeter, outward: outward, hang: hang.map {
+                (deep: $0.deep, humus: $0.humus, rock: $0.rock)
+            }, view: view, magnification: magnification, light: light, world: world, normal: normal)
+        }
         return pieces
     }
 
@@ -625,7 +644,7 @@ enum GardenGround {
     /// little toward the sky. **Close in tone to the rock round it**: smooth
     /// round stones a shade lighter than the rock read as a row of rivets.
     /// Only where the side faces the viewer squarely, so none is ever cut by
-    /// the silhouette, and none so small on screen that it would be a speck.
+    /// the silhouette, and none smaller on screen than `smallestStone`.
     private static func stones(
         rim: [SIMD3<Double>],
         along: [Double],
@@ -633,6 +652,7 @@ enum GardenGround {
         outward: [SIMD2<Double>],
         hang: [(deep: Double, humus: Double, rock: Double)],
         view: Isometric,
+        magnification: Double,
         light: Light,
         world: (Int, Double) -> SIMD3<Double>,
         normal: (Int, Int, Double) -> SIMD3<Double>
@@ -671,7 +691,7 @@ enum GardenGround {
             let inRock = grain(k, 7, 53) < 0.75
             let width = inRock ? 0.06 + 0.07 * grain(k, 7, 55) : 0.04 + 0.03 * grain(k, 7, 55)
             let tall = width * (0.55 + 0.25 * grain(k, 7, 56))
-            guard width * view.pointsPerMetre > 3 else { continue }
+            guard width * view.pointsPerMetre * magnification >= smallestStone else { continue }
             let centre = inRock
                 ? h.rock + (h.deep - h.rock) * (0.25 + 0.45 * grain(k, 7, 54))
                 : h.humus + (h.rock - h.humus) * (0.35 + 0.4 * grain(k, 7, 54))

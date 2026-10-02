@@ -457,7 +457,9 @@ already emphatic about why looking is not a convenience.
     alone came out the same brown as the earth. Each boundary wanders slowly
     along the side, each band has faint layers in it, and a few angular stones
     sit in the rock, close to it in tone — smooth round ones a shade lighter
-    read as rivets.
+    read as rivets. **Only when zoomed in** (Marcus, the same day, for the app
+    and the website alike): the whole plot has none, and a close drawing none
+    under eight points across as it is seen (`smallestStone`).
 
   **The rim depth as seen is still 0.95 m; the side itself is 1.05 m.** A side
   drawn in at its foot is a side whose foot has moved up the screen — by half

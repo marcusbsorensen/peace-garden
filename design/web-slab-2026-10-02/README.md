@@ -14,6 +14,7 @@ The two close views are reduced to 256 colours to keep them under 500 KB.
 | `before-orchard-gateways`, `after-orchard-gateways` | `/orchard`, 1280×800: the Orchard's page with its three neighbours out past it, whose sides are the same slab at half the size. |
 | `before-knot-side`, `after-knot-side` | The Knot Garden 2.5 times closer, 1000×1000, on the near corner: both near sides and the lower edge. |
 | `before-knot-phone`, `after-knot-phone` | The Knot Garden on a 390×844 phone screen. |
+| `app-after-stones-17-wide`, `app-after-stones-17-side` | The app's Meadow at 17:00 from `WorldRenderTests.testDrawTheSlab`, whole and three times closer, on the sky colour of `design/app-slab-2026-10-02/` at that hour: no stones on the whole plot, and the stones there close up. |
 
 ## What changed
 
@@ -28,6 +29,10 @@ The two close views are reduced to 256 colours to keep them under 500 KB.
   with boundaries that wander along the side, faint layers in each, and a few
   angular stones in the rock.
 - **The near side still shows 0.95 m**, as before and as in the app.
+- **Stones only when zoomed in** (Marcus, 2 October 2026, on both platforms):
+  `after-knot` and the other whole views have none; `after-knot-side`, 2.5
+  times closer, has them. The website draws none until the look is 1.3 times
+  closer than the whole plot, and then none under eight CSS pixels across.
 
 `docs/WEB-GARDENS.md` §*The plot's side as a solid slab* has what is the app's,
 what is different here and why, and the frame times.

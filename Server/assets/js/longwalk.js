@@ -11,7 +11,7 @@ import { ROLES, YOUNG, decode, takeResult, link, attribute, multiply } from './p
 import { castShadow } from './shadow.js';
 import { areasBeside } from './beside.js';
 import { raiseRill } from './water.js';
-import { RIM_DEPTH, STRATA, hangSide, sideShaders } from './slab.js';
+import { RIM_DEPTH, STONES, STRATA, hangSide, sideShaders } from './slab.js';
 
 export const SIDE = 5.2;    // LongWalk.plotSide, and QuietGarden.plotSide
 const PATH_HALF = 0.6;      // LongWalk.pathHalfWidth
@@ -428,7 +428,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
                                ['offset', 'colour', 'relief', 'young', 'look']);
   const shadowProgram = program(gl, SHADOW_VERTEX, SHADOW_FRAGMENT, ['position', 'uv', 'fade'], ['loss']);
   const sideProgram = program(gl, SIDE_SHADERS.vertex, SIDE_SHADERS.fragment,
-                              ['position', 'normal', 'place', 'hang'], ['offset', 'opacity']);
+                              ['position', 'normal', 'place', 'hang'], ['offset', 'opacity', 'stonesFrom']);
   // **What a plant's shadow lies on.** An area whose floor is not level says
   // how high it is anywhere (`height`, on the builder it hands the stage), so
   // a shadow on a bed's shoulder or a hollow in the litter follows it rather
@@ -546,6 +546,11 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
       gl.uniform3fv(p.at.bounce, LIGHT.bounce);
       gl.uniform1f(p.at.strength, LIGHT.strength);
     }
+
+    // **Stones in the side only when the look is zoomed in** (`STONES`), and
+    // then none under eight CSS pixels across: on the whole plot, out of reach.
+    gl.useProgram(sideProgram.program);
+    gl.uniform1f(sideProgram.at.stonesFrom, look.zoom >= STONES.zoom ? STONES.points * ratio : 1e6);
 
     gl.useProgram(ground.program);
     gl.uniform1i(ground.at.upOnly, 0);

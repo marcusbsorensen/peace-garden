@@ -83,9 +83,16 @@ const ROWS = 8;
 /// Stones: one chance in a little under two every half metre of rim.
 const SLOT = 0.5;
 
-/// How few pixels across a stone may be before it is not drawn, because a
-/// stone that small is a speck rather than a stone.
-const SPECK = 4;
+/// **Stones only when zoomed in** (Marcus, 2 October 2026, for the website
+/// and the app alike). On the whole plot they were a sprinkle of pale flecks
+/// along the side; a stone is for a close look. So the stage asks for none
+/// until the look is `zoom` times closer than the whole plot — the zoom the
+/// app draws a close drawing from, and less than one press of the pad — and
+/// then for none under `points` across as the reader sees it, in CSS pixels,
+/// which are the app's points (`GardenGround.smallestStone`). A pixel rule
+/// alone would not do it: a desktop window shows the whole plot at 100 to 140
+/// pixels a metre, where the largest stones are 13 to 18 across.
+export const STONES = { zoom: 1.3, points: 8 };
 
 /// The side hung from a plot's outline.
 ///
@@ -283,7 +290,9 @@ function hangAnew(outline, salt, scale, top) {
 /// graded inside each band as the app grades it, with its edges softened over
 /// a pixel and a half so they never stair-step; the faint layers in each band,
 /// which thicken and thin along the side and meet themselves round the loop;
-/// and the slow tone that wanders along it. A stone has its colour already.
+/// and the slow tone that wanders along it. A stone has its colour already, and
+// is not drawn under `stonesFrom` device pixels across (`STONES`), which the
+// stage sets out of reach on the whole plot.
 export function sideShaders(shade) {
   const vec = (c) => `vec3(${c.map((x) => x.toFixed(4)).join(', ')})`;
   const vertex = `#version 300 es
@@ -300,6 +309,7 @@ precision highp float;
 precision highp int;
 in vec3 vNormal; in vec4 vPlace; in vec4 vHang;
 uniform float opacity;
+uniform float stonesFrom;
 ${shade}
 const vec3 HUMUS = ${vec(STRATA.humus)};
 const vec3 EARTH = ${vec(STRATA.earth)};
@@ -352,8 +362,8 @@ vec3 strata(float down, float humusTo, float rockFrom, float bottom, float aa) {
 void main() {
   vec3 albedo;
   if (vHang.w < 0.0) {
-    // A stone, too few pixels across to be anything but a speck.
-    if (vPlace.z < ${SPECK.toFixed(1)} * fwidth(vPlace.x)) discard;
+    // A stone, if the look is close enough for one and it is big enough.
+    if (vPlace.z < stonesFrom * fwidth(vPlace.x)) discard;
     albedo = vHang.rgb;
   } else {
     float down = vPlace.y;

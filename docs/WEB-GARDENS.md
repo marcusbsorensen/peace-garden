@@ -64,8 +64,7 @@ What is different here, and why:
 - **The bands are worked out per pixel.** The mesh is eight rows down and a
   column per point of the rim, a few thousand triangles; the shader works out
   the bands, their edges (softened over a pixel and a half) and the layers from
-  where on the side each pixel is, so they stay sharp at the closest zoom. A
-  stone under four pixels across is not drawn.
+  where on the side each pixel is, so they stay sharp at the closest zoom.
 - **Hung once a plot.** The side is the same from every quarter, so a turn,
   which builds the ground again, finds it already hung.
 - `COLOUR`'s humus, earth and bedrock are read from `slab.js`, and `RIM_DEPTH`
@@ -81,6 +80,32 @@ a side 3.0 → 3.8, the Orchard with its three neighbours 1.5 → 1.7, the Long 
 Knot Garden 3.5 → 3.0, the Orchard 1.5 → 1.7, the Long Walk 7.7 → 7.8. Every
 view held sixty frames a second before and after, and a turn costs what it did.
 The renders are in `design/web-slab-2026-10-02/`.
+
+### Decided, 2 October 2026
+
+Marcus's two answers, from the renders:
+
+- **Deploy it now**, as built, with the one change below.
+- **Stones only when zoomed in, on the website and in the app alike.** On the
+  whole plot they were a sprinkle of pale flecks along the side; a stone is
+  for a close look. So the whole plot has none, and close up none is drawn
+  under eight points across as it is seen (CSS pixels on the website).
+  - **Website:** none until the look is 1.3 times closer than the whole plot,
+    which one press of the pad passes (`STONES` in `slab.js`, set by the stage
+    as `stonesFrom`). Eight pixels alone would not have done it: a desktop
+    window shows the whole plot at 100 to 140 pixels a metre, where the largest
+    stones are 13 to 18 across, and only a phone's whole plot is small enough
+    to lose them all.
+  - **App:** none on the whole plot, only in the close drawing that is made
+    once the plot is zoomed past 1.3, and there none under eight points at the
+    zoom it is drawn for (`GardenGround.smallestStone`). It had been three
+    points at whatever size the plot was drawn, so the larger stones showed on
+    the whole plot. `PlotTests.testStonesOnlyWhenZoomedIn` holds it on a phone
+    and an iPad.
+
+`design/web-slab-2026-10-02/` has the website's whole Knot Garden with none and
+the close view with them, and the app's 17:00 wide and close views
+(`app-after-stones-…`).
 
 ## The Wild Fields built, 1 October 2026
 
