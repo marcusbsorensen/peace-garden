@@ -36,8 +36,8 @@ require_once __DIR__ . '/TakenBack.php';
  * (`TakenBack.php`). It stays, hidden, because the rule placed everything after
  * it by it.
  *
- * **The ambassador is not in it.** *Halula crassicaulis* stands at the head of
- * plot 0 and has done since before the walk had a row in it, but nobody offered
+ * **The ambassador is not in it.** *Zephea pallida* stands in plot 0 and has
+ * done since before the walk had a row in it, but nobody offered
  * it and nobody can take it back, so it is not in the table of plants people
  * offered. `Ambassadors::planting('travel')` derives its slot from the pinned
  * seed, and this class puts it in front of the rule when placing and in front
@@ -219,13 +219,12 @@ final class WalkStore
         $plantings = array_map([self::class, 'planting'], $query->fetchAll());
         $standing = $plot === 0 ? Ambassadors::planting('travel') : null;
         if ($standing === null) return $plantings;
-        [$x, $z] = LongWalk::spot($standing['side'], $standing['tier'], $standing['index']);
         array_unshift($plantings, [
             'seed' => $standing['seed'],
             'parents' => [],
             'encounter' => null,
             'plot' => 0,
-            'spot' => [$x + $standing['nudgeX'], $z + $standing['nudgeZ']],
+            'spot' => LongWalk::spot(0, $standing['index'], $standing['nudgeX'], $standing['nudgeZ']),
         ]);
         return $plantings;
     }
@@ -437,13 +436,16 @@ final class WalkStore
     /** What the page needs to grow a planting and stand it in its place. */
     private static function planting(array $row): array
     {
-        [$x, $z] = LongWalk::spot((int) $row['side'], (int) $row['tier'], (int) $row['slot_index']);
+        // **Where the plant stands is its place in the table**, since the
+        // drifts of 2 October 2026, nudged and turned as its plot is. The side
+        // and the tier stored beside the place are the table's for it.
         return [
             'seed' => $row['seed'],
             'parents' => [$row['parent_a'], $row['parent_b']],
             'encounter' => $row['encounter'],
             'plot' => (int) $row['plot'],
-            'spot' => [$x + (float) $row['nudge_x'], $z + (float) $row['nudge_z']],
+            'spot' => LongWalk::spot((int) $row['plot'], (int) $row['slot_index'],
+                                     (float) $row['nudge_x'], (float) $row['nudge_z']),
         ];
     }
 

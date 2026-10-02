@@ -72,7 +72,7 @@ final class AmbassadorTests: XCTestCase {
 
     // MARK: Standing in the garden
 
-    /// **The walk opens with its ambassador at its head, in its own tier.**
+    /// **The walk opens with its ambassador in its first plot, in its own tier.**
     ///
     /// Not a reserved slot and not a role in a template: it is the first thing
     /// the rule placed, and the rule placed it the way it places everything.
@@ -90,11 +90,12 @@ final class AmbassadorTests: XCTestCase {
         XCTAssertEqual(standing.slot.tier, standing.traits.tier,
                        "the ambassador was put somewhere other than its own tier")
 
-        // The first slot of its tier in tie-breaking order, which is the start
-        // of the plot: an empty plot scores every open slot alike, so the tie
-        // is broken down the walk and the ambassador stands where a visitor
-        // coming down onto plot 0 meets it first.
-        let first = LongWalk.slots.first { $0.tier == standing.traits.tier }
+        // The first place of its tier in the first lens its colour claims,
+        // since the drifts of 2 October 2026: in an empty plot that is the
+        // lens nearest the middle for a warm colour and the lens at an end for
+        // a cool one. *Zephea* is red, so it stands at the middle of plot 0.
+        let lens = LongWalk.claimOrder(warm: LongWalk.isWarm(standing.traits.family))[0]
+        let first = LongWalk.slots.first { $0.tier == standing.traits.tier && $0.lens == lens }
         XCTAssertEqual(standing.slot, first)
     }
 

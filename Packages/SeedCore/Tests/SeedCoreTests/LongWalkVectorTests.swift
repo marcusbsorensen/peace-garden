@@ -42,10 +42,16 @@ final class LongWalkVectorTests: XCTestCase {
         var lines: [String] = []
         for (seed, traits) in arrivals() {
             let p = walk.plant(seed: seed, traits: traits)
+            // **The plot's variant and where the plant stands**, since the
+            // drifts of 2 October 2026: a place from the table, nudged and
+            // turned, exact on every host, so the port is held to it with no
+            // tolerance.
+            let v = LongWalk.variant(of: p.plot)
             lines.append("""
                 {"seed":"\(seed.hex)","height":\(traits.height),"family":\(traits.family),\
                 "plot":\(p.plot),"side":\(p.slot.side.rawValue),"tier":\(p.slot.tier.rawValue),\
-                "index":\(p.slot.index),"nudge":[\(p.nudge.x),\(p.nudge.z)]}
+                "index":\(p.slot.index),"nudge":[\(p.nudge.x),\(p.nudge.z)],\
+                "variant":[\(v.turn),\(v.mirror ? 1 : 0),\(v.nudge)],"spot":[\(p.spot.x),\(p.spot.z)]}
                 """)
         }
         return "[\n" + lines.joined(separator: ",\n") + "\n]\n"
@@ -86,15 +92,17 @@ final class LongWalkVectorTests: XCTestCase {
     /// **And the tolerance the comparison above allows cannot move a plant.**
     ///
     /// The rule asks two kinds of question about a height: which side of a cut
-    /// it falls, and whether it is taller than another plant in a tier of one side of one plot.
-    /// This says every recorded height clears both cuts, and every pair the
-    /// rule compares is further apart than twice the tolerance — so a host that
-    /// computes a height a few of a `Float`'s last bits differently still puts
-    /// every one of these five hundred in the same place.
+    /// it falls, and whether it is taller than another plant on one side of
+    /// one plot — any tier, since the drifts of 2 October 2026, because a lens
+    /// runs from the back of a border to its front. This says every recorded
+    /// height clears both cuts, and every pair the rule compares is further
+    /// apart than twice the tolerance — so a host that computes a height a few
+    /// of a `Float`'s last bits differently still puts every one of these six
+    /// hundred in the same place.
     func testThePlacementCannotTurnOnTheLastBitOfAHeight() throws {
         let committed = try String(contentsOf: Self.vectorsURL, encoding: .utf8)
         VectorFile.placementCannotTurn(on: committed,
                                        cuts: [LongWalk.middleFrom, LongWalk.backFrom],
-                                       groupedBy: ["plot", "side", "tier"])
+                                       groupedBy: ["plot", "side"])
     }
 }

@@ -1,7 +1,8 @@
 import XCTest
 @testable import SeedCore
 
-/// The sixth area: drills sown one kind to a drill, filling from the label.
+/// The sixth area: drills on the contour, sown one kind to a drill from the
+/// drill's middle, the dry kinds at the head of the bed and the water at its foot.
 final class SeedbedTests: XCTestCase {
 
     // MARK: Arrivals
@@ -72,23 +73,62 @@ final class SeedbedTests: XCTestCase {
     func testEveryPlaceStandsInTheBedWithRoomToKneelRound() {
         let edge = Seedbed.plotSide / 2
         for slot in Seedbed.slots {
-            XCTAssertLessThan(abs(slot.spot.x) + 0.035, edge - 0.5, "drill \(slot.drill) is at the rim")
-            XCTAssertLessThan(abs(slot.spot.z) + 0.06, edge - 0.5, "place \(slot.index) is at the rim")
+            XCTAssertLessThan(abs(slot.spot.x) + 0.06, edge - 0.5, "place \(slot.index) is at the rim")
+            XCTAssertLessThan(abs(slot.spot.z) + 0.035, edge - 0.5, "drill \(slot.drill) is at the rim")
         }
-        // The label stands beyond the first plant and inside the bed.
-        XCTAssertLessThan(Seedbed.labelAt, Seedbed.slots[0].spot.z - 0.2)
-        XCTAssertGreaterThan(Seedbed.labelAt, -edge + 0.2)
+        // Each label stands beyond its drill's first place, at its west end,
+        // and inside the bed.
+        for drill in 0..<Seedbed.drills {
+            let label = Seedbed.label(of: drill), first = Seedbed.Slot(drill: drill, index: 0).spot
+            XCTAssertLessThan(label.x, first.x - 0.2, "drill \(drill)'s label is not at its head")
+            XCTAssertGreaterThan(label.x, -edge + 0.2, "drill \(drill)'s label is at the rim")
+        }
+    }
+
+    /// **The drills are on the contour**: each is an arc, curving the same way
+    /// as the one beside it, and they stand 0.74 m apart all along their length.
+    func testTheDrillsFollowTheContour() {
+        for drill in 0..<Seedbed.drills {
+            let ends = (Seedbed.Slot(drill: drill, index: 0).spot, Seedbed.Slot(drill: drill, index: 7).spot)
+            let middle = Seedbed.Slot(drill: drill, index: 4).spot
+            // Bowed toward the head of the bed: its middle higher than its ends.
+            XCTAssertLessThan(middle.z, min(ends.0.z, ends.1.z) - 0.1, "drill \(drill) is not bowed")
+            guard drill > 0 else { continue }
+            for index in 0..<Seedbed.places {
+                let here = Seedbed.Slot(drill: drill, index: index).spot
+                let nearest = (0..<Seedbed.places).map { i -> Double in
+                    let there = Seedbed.Slot(drill: drill - 1, index: i).spot
+                    return ((here.x - there.x) * (here.x - there.x) + (here.z - there.z) * (here.z - there.z)).squareRoot()
+                }.min()!
+                XCTAssertGreaterThan(nearest, Seedbed.drillGap - 0.06, "drill \(drill) crowds the one above it")
+            }
+        }
+        // And the water is low: the last drill is the foot of the bed.
+        XCTAssertGreaterThan(Seedbed.Slot(drill: 5, index: 4).spot.z, Seedbed.Slot(drill: 0, index: 4).spot.z + 3)
+    }
+
+    /// How far a point stands from a drill's line, in the table.
+    private static func offLine(_ spot: Spot, drill: Int) -> Double {
+        let line = Seedbed.table.curve("drill\(drill)", on: PlotVariant.plain).points
+        var best = Double.infinity
+        for (a, b) in zip(line, line.dropFirst()) {
+            let ax = b.x - a.x, az = b.z - a.z
+            let t = max(0, min(1, ((spot.x - a.x) * ax + (spot.z - a.z) * az) / (ax * ax + az * az)))
+            let dx = spot.x - a.x - ax * t, dz = spot.z - a.z - az * t
+            best = min(best, (dx * dx + dz * dz).squareRoot())
+        }
+        return best
     }
 
     func testADrillIsALineAndNoTwoPlantsCrowd() {
         let ways = Self.full
         for plot in 0..<ways.plots {
             let here = ways.plot(plot)
-            for drill in 0..<Seedbed.drills {
-                let across = here.filter { $0.slot.drill == drill }.map(\.spot.x)
-                guard let low = across.min(), let high = across.max() else { continue }
-                XCTAssertLessThanOrEqual(high - low, 0.07 + 1e-12,
-                                         "drill \(drill) of plot \(plot) wanders across itself")
+            let variant = Seedbed.variant(of: plot)
+            for p in here {
+                // Read back into the table, then measured from its drill's line.
+                let off = Self.offLine(variant.undo(p.spot), drill: p.slot.drill)
+                XCTAssertLessThanOrEqual(off, 0.06, "\(p.seed) wanders off drill \(p.slot.drill) of plot \(plot)")
             }
             for a in here.indices {
                 for b in (a + 1)..<here.count {
@@ -146,53 +186,83 @@ final class SeedbedTests: XCTestCase {
     }
 
     /// An unclaimed drill is neither element, and becomes whichever the plant
-    /// that claims it needs.
+    /// that claims it needs. A lily claims the lowest, at the foot of the bed.
     func testAnUnclaimedDrillIsNeitherElement() {
         var ways = Seedbed.Ways()
-        XCTAssertNil(ways.isWater(0, in: 0))
-        XCTAssertNil(ways.kind(of: 0, in: 0))
+        XCTAssertNil(ways.isWater(5, in: 0))
+        XCTAssertNil(ways.kind(of: 5, in: 0))
         ways.plant(seed: SeedMint.mint(fromEntropy: Data("sb-element".utf8)),
                    traits: Self.lotus("rubra"))
-        XCTAssertEqual(ways.isWater(0, in: 0), true)
-        XCTAssertNil(ways.isWater(1, in: 0))
+        XCTAssertEqual(ways.isWater(5, in: 0), true)
+        XCTAssertNil(ways.isWater(4, in: 0))
+        XCTAssertNil(ways.isWater(0, in: 0))
     }
 
-    /// **A lily and a dry plant of one kind take a drill each.** The lily
-    /// arrives first here, so the dry plant of the same epithet passes the
-    /// flooded drill by and claims the next one rather than wading in.
+    /// The first place a drill is sown in, for a plant of one place or a lily.
+    private static func first(_ drill: Int, wet: Bool) -> Int {
+        wet ? Seedbed.wetOrder[drill][0] : Seedbed.dryOrder[drill][0]
+    }
+
+    /// **A lily and a dry plant of one kind take a drill each**, and from
+    /// opposite sides of the bed: the lily the lowest drill and the dry plant
+    /// the highest, so the dry plant passes the water by rather than wading in.
     func testALilyAndADryPlantOfOneKindDoNotShareADrill() {
         var ways = Seedbed.Ways()
         let seed = { (n: Int) in SeedMint.mint(fromEntropy: Data("sb-share-\(n)".utf8)) }
         let lily = ways.plant(seed: seed(0), traits: Self.lotus("rubra"))
-        XCTAssertEqual(lily.slot, Seedbed.Slot(drill: 0, index: 0))
+        XCTAssertEqual(lily.slot, Seedbed.Slot(drill: 5, index: Self.first(5, wet: true)))
         let dry = ways.plant(seed: seed(1), traits: Self.dry("rubra"))
-        XCTAssertEqual(dry.slot, Seedbed.Slot(drill: 1, index: 0))
+        XCTAssertEqual(dry.slot, Seedbed.Slot(drill: 0, index: Self.first(0, wet: false)))
         // And each joins its own drill from then on, in either order.
         XCTAssertEqual(ways.plant(seed: seed(2), traits: Self.dry("rubra")).slot,
-                       Seedbed.Slot(drill: 1, index: 1))
+                       Seedbed.Slot(drill: 0, index: Seedbed.dryOrder[0][1]))
         XCTAssertEqual(ways.plant(seed: seed(3), traits: Self.lotus("rubra")).slot,
-                       Seedbed.Slot(drill: 0, index: 2))
-        XCTAssertEqual(ways.isWater(0, in: 0), true)
-        XCTAssertEqual(ways.isWater(1, in: 0), false)
+                       Seedbed.Slot(drill: 5, index: Seedbed.wetOrder[5][2]))
+        XCTAssertEqual(ways.isWater(5, in: 0), true)
+        XCTAssertEqual(ways.isWater(0, in: 0), false)
     }
 
-    func testADrillFillsFromTheLabelWithNoGaps() {
+    /// **A drill is sown from its middle**, since 2 October 2026: a dry
+    /// drill's places are taken in the table's order, the one nearest its
+    /// middle first and then farthest-first, so what is sown is always the
+    /// start of that order with nothing skipped. A flooded drill is sown in
+    /// pairs, and the pairs it has touched are always the first in its order:
+    /// a lily passes a pair a reed has half taken, and the next reed fills it.
+    func testADrillIsSownInItsOwnOrder() {
         let ways = Self.full
         for plot in 0..<ways.plots {
             for drill in 0..<Seedbed.drills {
-                let taken = ways.plot(plot).filter { $0.slot.drill == drill }.flatMap(\.slots).map(\.index).sorted()
-                XCTAssertEqual(taken, Array(0..<taken.count),
-                               "drill \(drill) of plot \(plot) is sown \(taken)")
+                let here = ways.plot(plot).filter { $0.slot.drill == drill }
+                guard let first = here.first else { continue }
+                let taken = Set(here.flatMap(\.slots).map(\.index))
+                if first.traits.wantsWater {
+                    let pairs = Seedbed.wetOrder[drill].map { $0 / 2 }
+                    var order: [Int] = []
+                    for pair in pairs where !order.contains(pair) { order.append(pair) }
+                    let touched = Set(taken.map { $0 / 2 })
+                    XCTAssertEqual(touched, Set(order.prefix(touched.count)),
+                                   "flooded drill \(drill) of plot \(plot) is sown \(taken.sorted())")
+                } else {
+                    XCTAssertEqual(taken, Set(Seedbed.dryOrder[drill].prefix(taken.count)),
+                                   "drill \(drill) of plot \(plot) is sown \(taken.sorted())")
+                }
             }
         }
     }
 
-    func testTheDrillsAreSownInTheirOwnOrderWithinAPlot() {
+    /// **Dry kinds claim from the head of the bed and water kinds from its
+    /// foot**, so the flooded drills lie together. Replayed in the order the
+    /// plants arrived: each drill claimed was the highest nobody had sown for a
+    /// dry plant and the lowest for a lily or a reed.
+    func testTheDrillsAreClaimedFromTheirOwnSideOfTheBed() {
         let ways = Self.full
         for plot in 0..<ways.plots {
-            let claimed = Set(ways.plot(plot).map(\.slot.drill)).sorted()
-            XCTAssertEqual(claimed, Array(0..<claimed.count),
-                           "plot \(plot) claimed drills \(claimed) out of order")
+            var unclaimed = Set(0..<Seedbed.drills)
+            for p in ways.plot(plot) where unclaimed.contains(p.slot.drill) {
+                let expected = p.traits.wantsWater ? unclaimed.max()! : unclaimed.min()!
+                XCTAssertEqual(p.slot.drill, expected, "\(p.seed) claimed drill \(p.slot.drill) of plot \(plot)")
+                unclaimed.remove(p.slot.drill)
+            }
         }
     }
 
@@ -279,8 +349,14 @@ final class SeedbedTests: XCTestCase {
         PlantTraits(height: 0.3, family: 1, kind: kind, habit: Archetype.fern.rawValue)
     }
 
+    /// A reed: it wants water as a lily does and takes one place.
+    private static func reed(_ kind: String) -> PlantTraits {
+        PlantTraits(height: 0.6, family: 1, kind: kind, habit: Archetype.reed.rawValue)
+    }
+
     /// Every lotus holds two neighbouring places in one drill and stands at
-    /// their middle; every other plant holds one and stands on it.
+    /// their middle; every other plant holds one and stands on it. Read back
+    /// into the table, since a plot may be mirrored.
     func testALotusStandsCentredAcrossTwoPlaces() {
         let ways = Self.full
         var lotuses = 0
@@ -288,12 +364,30 @@ final class SeedbedTests: XCTestCase {
             let isLotus = p.traits.habit == Archetype.lotus.rawValue
             XCTAssertEqual(p.span, isLotus ? 2 : 1, "\(p.seed) holds \(p.span) places")
             XCTAssertLessThanOrEqual(p.slot.index + p.span, Seedbed.places, "\(p.seed) runs off its drill")
+            if isLotus { XCTAssertEqual(p.slot.index % 2, 0, "\(p.seed) holds two places of different pairs") }
             let first = p.slots.first!.spot, last = p.slots.last!.spot
-            XCTAssertEqual(p.spot.z - p.nudge.z, (first.z + last.z) / 2, accuracy: 1e-12)
-            XCTAssertEqual(p.spot.x - p.nudge.x, first.x, accuracy: 1e-12)
+            let at = Seedbed.variant(of: p.plot).undo(p.spot)
+            XCTAssertEqual(at.x - p.nudge.x, (first.x + last.x) / 2, accuracy: 1e-12)
+            XCTAssertEqual(at.z - p.nudge.z, (first.z + last.z) / 2, accuracy: 1e-12)
             if isLotus { lotuses += 1 }
         }
         XCTAssertGreaterThan(lotuses, 120, "a sample of this area's own plants is more than a third lotuses")
+    }
+
+    /// **Plots alternate**: every other plot is the plan mirrored across the
+    /// bed, so its labels stand at the east end; the water stays low.
+    func testPlotsAreMirroredAlternately() {
+        XCTAssertEqual(Seedbed.variant(of: 0), .plain)
+        for plot in 1..<8 {
+            let variant = Seedbed.variant(of: plot)
+            XCTAssertEqual(variant.turn, 0)
+            XCTAssertEqual(variant.mirror, plot % 2 == 1)
+        }
+        let ways = Self.full
+        for p in ways.plantings where p.plot % 2 == 1 {
+            let at = p.slots.map(\.spot).reduce(0) { $0 + $1.x } / Double(p.span)
+            XCTAssertEqual(p.spot.x, -(at + p.nudge.x), accuracy: 1e-12)
+        }
     }
 
     /// **The reason for the rule, held as a test**: of five hundred plants
@@ -306,12 +400,21 @@ final class SeedbedTests: XCTestCase {
     /// takes two of; the drills stay 0.74 m apart, as Marcus chose. The
     /// simulation he chose from found the same kind of case, a lotus over a
     /// lotus in the next drill.
+    ///
+    /// **Three since the drills curved on 2 October 2026**: the one across a
+    /// drill, and two reeds sown in the place beside a lily's pair, each
+    /// nudged toward the lily, 0.69 m from its stem. That is the 0.78 m a
+    /// lotus has had to the next stem along its drill since 25 September,
+    /// less the two nudges, and the widest tenth of pads reach it; the
+    /// straight bed's sample happened not to put a reed there.
     func testNoStemStandsInsideALotussPads() {
         let genomes = [Ambassadors.of(.beginnings).genome] + Self.genomes()
         let plants = zip(Self.full.plantings, genomes).map { (p, g) in (seed: p.seed, plot: p.plot, spot: p.spot, genome: g) }
         let crowded = LotusPads.crowded(plants, growth: { Maturity.bloomPreview(for: $0) })
         let stems = Set(crowded.map(\.stem)).count
-        print("SEEDBED: \(stems) stems inside a lotus's pads")
+        let drill = Dictionary(uniqueKeysWithValues: Self.full.plantings.map { ($0.seed, $0.slot.drill) })
+        let along = crowded.filter { drill[$0.lotus] == drill[$0.stem] }.count
+        print("SEEDBED: \(stems) stems inside a lotus's pads, \(along) of them along a drill")
         XCTAssertLessThanOrEqual(stems, plants.count / 100, crowded.prefix(5).map(\.description).joined(separator: "; "))
     }
 
@@ -323,8 +426,11 @@ final class SeedbedTests: XCTestCase {
             let here = ways.plot(plot)
             for lotus in here where lotus.span == 2 {
                 for other in here where other.seed != lotus.seed && other.slot.drill == lotus.slot.drill {
-                    let gap = abs(other.spot.z - lotus.spot.z)
-                    let least = (1 + Double(other.span) / 2) * Seedbed.alongGap - 0.12
+                    let dx = other.spot.x - lotus.spot.x, dz = other.spot.z - lotus.spot.z
+                    let gap = (dx * dx + dz * dz).squareRoot()
+                    // Less the two nudges along the drill, and a centimetre
+                    // for the chord of a curved drill being shorter than it.
+                    let least = (1 + Double(other.span) / 2) * Seedbed.alongGap - 0.13
                     XCTAssertGreaterThanOrEqual(gap, least - 1e-12, "\(other.seed) stands in \(lotus.seed)'s pair")
                 }
             }
@@ -337,14 +443,15 @@ final class SeedbedTests: XCTestCase {
     func testALotussSecondPlaceIsNeverGivenAway() {
         var ways = Seedbed.Ways()
         let seed = { (n: Int) in SeedMint.mint(fromEntropy: Data("sb-lotus-\(n)".utf8)) }
+        let pair = Seedbed.wetOrder[5]
         let first = ways.plant(seed: seed(0), traits: Self.lotus("rubra"))
-        XCTAssertEqual(first.slots, [Seedbed.Slot(drill: 0, index: 0), Seedbed.Slot(drill: 0, index: 1)])
+        XCTAssertEqual(first.slots, [Seedbed.Slot(drill: 5, index: pair[0]), Seedbed.Slot(drill: 5, index: pair[1])])
         let second = ways.plant(seed: seed(1), traits: Self.lotus("rubra"))
-        XCTAssertEqual(second.slot, Seedbed.Slot(drill: 0, index: 2))
-        XCTAssertEqual(ways.sown(0, in: 0), 4)
+        XCTAssertEqual(second.slot, Seedbed.Slot(drill: 5, index: pair[2]))
+        XCTAssertEqual(ways.sown(5, in: 0), 4)
         // A dry plant of the same epithet passes the water by.
         let dry = ways.plant(seed: seed(2), traits: Self.dry("rubra"))
-        XCTAssertEqual(dry.slot, Seedbed.Slot(drill: 1, index: 0))
+        XCTAssertEqual(dry.slot, Seedbed.Slot(drill: 0, index: Self.first(0, wet: false)))
     }
 
     /// **A drill's last single place is no place for a lotus**, which goes on
@@ -353,50 +460,68 @@ final class SeedbedTests: XCTestCase {
     ///
     /// Asked of a flooded drill, since 27 September 2026: a lotus never sees
     /// a dry drill's last place at all, so a dry drill could no longer show
-    /// this. Seven lilies fill a drill to its seventh place, one place short.
+    /// this. Seven reeds of one kind, a place each, fill a flooded drill to one
+    /// short, and the place left is half of a pair a reed has the other half of.
     func testTheLastPlaceOfADrillWaitsForAPlantOfOne() throws {
         let seed = { (n: Int) in SeedMint.mint(fromEntropy: Data("sb-last-\(n)".utf8)) }
-        // Seven lilies of one kind, each holding one place, which is how the
-        // rule before 25 September sowed them: planted, then read back with
-        // the span stripped, as `Self.withoutSpans` does it.
         var ways = Seedbed.Ways()
         for n in 0..<7 {
-            ways.plant(seed: seed(n), traits: Self.lotus("rubra"))
-            ways = try Self.withoutSpans(ways)
+            let reed = ways.plant(seed: seed(n), traits: Self.reed("rubra"))
+            XCTAssertEqual(reed.slot, Seedbed.Slot(drill: 5, index: Seedbed.wetOrder[5][n]),
+                           "two reeds share a pair before a third opens another")
         }
-        XCTAssertEqual(ways.sown(0, in: 0), 7)
-        XCTAssertEqual(ways.isWater(0, in: 0), true)
-        // One place left, and a lotus needs two, so it claims the next drill —
-        // claimed for its kind and for its element.
+        XCTAssertEqual(ways.sown(5, in: 0), 7)
+        XCTAssertEqual(ways.isWater(5, in: 0), true)
+        // One place left, and a lotus needs two, so it claims the next drill
+        // up — claimed for its kind and for its element.
         let lotus = ways.plant(seed: seed(7), traits: Self.lotus("rubra"))
-        XCTAssertEqual(lotus.slots, [Seedbed.Slot(drill: 1, index: 0), Seedbed.Slot(drill: 1, index: 1)])
-        XCTAssertEqual(ways.kind(of: 1, in: 0), "rubra", "the drill it claims is claimed for its kind")
-        XCTAssertEqual(ways.isWater(1, in: 0), true, "and for its element")
-        // **The place it passed over waits for a plant of one, and after the
-        // replant there are none.** Only lilies go in water and every lily
-        // takes two, so a flooded drill's odd place can only come from a row
-        // written before 25 September. The next lily takes the next pair in
-        // the new drill rather than squeezing in behind.
-        let after = ways.plant(seed: seed(8), traits: Self.lotus("rubra"))
-        XCTAssertEqual(after.slots, [Seedbed.Slot(drill: 1, index: 2), Seedbed.Slot(drill: 1, index: 3)])
-        XCTAssertEqual(ways.sown(0, in: 0), 7, "the odd place is still empty")
+        let pair = Seedbed.wetOrder[4]
+        XCTAssertEqual(lotus.slots, [Seedbed.Slot(drill: 4, index: pair[0]), Seedbed.Slot(drill: 4, index: pair[1])])
+        XCTAssertEqual(ways.kind(of: 4, in: 0), "rubra", "the drill it claims is claimed for its kind")
+        XCTAssertEqual(ways.isWater(4, in: 0), true, "and for its element")
+        // **The place it passed over waits for a plant of one**, and the next
+        // reed of that kind takes it.
+        XCTAssertEqual(ways.sown(5, in: 0), 7, "the odd place is still empty")
+        let eighth = ways.plant(seed: seed(8), traits: Self.reed("rubra"))
+        XCTAssertEqual(eighth.slot, Seedbed.Slot(drill: 5, index: Seedbed.wetOrder[5][7]))
+        XCTAssertEqual(ways.sown(5, in: 0), Seedbed.places)
     }
 
     /// **A flooded drill divides exactly**: eight places, two to a lily, four
-    /// lilies and nothing left over. The odd place the test above leaves is a
-    /// thing only the old rule could make.
+    /// lilies and nothing left over. Sown in pairs from the middle of the drill.
     func testAFloodedDrillHoldsFourLilies() {
         var ways = Seedbed.Ways()
         let seed = { (n: Int) in SeedMint.mint(fromEntropy: Data("sb-four-\(n)".utf8)) }
         for n in 0..<4 {
             let lily = ways.plant(seed: seed(n), traits: Self.lotus("rubra"))
-            XCTAssertEqual(lily.slot, Seedbed.Slot(drill: 0, index: n * 2))
+            XCTAssertEqual(lily.slot, Seedbed.Slot(drill: 5, index: Seedbed.wetOrder[5][n * 2]))
         }
-        XCTAssertEqual(ways.sown(0, in: 0), Seedbed.places)
-        // The fifth claims the next drill, also flooded.
+        XCTAssertEqual(ways.sown(5, in: 0), Seedbed.places)
+        // The fifth claims the next drill up, also flooded.
         let fifth = ways.plant(seed: seed(4), traits: Self.lotus("rubra"))
-        XCTAssertEqual(fifth.slot, Seedbed.Slot(drill: 1, index: 0))
-        XCTAssertEqual(ways.isWater(1, in: 0), true)
+        XCTAssertEqual(fifth.slot, Seedbed.Slot(drill: 4, index: Self.first(4, wet: true)))
+        XCTAssertEqual(ways.isWater(4, in: 0), true)
+    }
+
+    /// **The orders change which places are taken and never how many.** The
+    /// straight bed sowed a drill from its label; a flooded drill sown that way
+    /// takes a lily while `(8 − reeds) / 2` lilies fit, and sown in pairs it
+    /// takes one while a whole pair is free, which is the same number. So for
+    /// every mix of reeds and lilies arriving into one flooded drill, the two
+    /// orders let in the same plants and turn away the same ones.
+    func testSowingInPairsHoldsWhatSowingFromTheLabelHeld() {
+        for mask in 0..<(1 << 9) {
+            var ways = Seedbed.Ways()
+            var label = 0   // the next place from the label, as the straight bed sowed
+            for n in 0..<9 {
+                let lily = mask & (1 << n) != 0
+                let seed = SeedMint.mint(fromEntropy: Data("sb-mix-\(mask)-\(n)".utf8))
+                let p = ways.plant(seed: seed, traits: lily ? Self.lotus("rubra") : Self.reed("rubra"))
+                let fitted = label + (lily ? 2 : 1) <= Seedbed.places
+                if fitted { label += lily ? 2 : 1 }
+                XCTAssertEqual(p.slot.drill == 5, fitted, "mix \(mask), plant \(n): the two orders disagree")
+            }
+        }
     }
 
     /// The area as a store written before 25 September holds it: every
@@ -420,22 +545,26 @@ final class SeedbedTests: XCTestCase {
         old.plant(seed: seed(0), traits: Self.lotus("rubra"))
         var ways = try Self.withoutSpans(old)
         XCTAssertEqual(ways.plantings[0].span, 1)
-        // It holds place 0 alone, so the next lily of its kind takes 1 and 2.
+        // It holds the first place of its pair alone, so the next lily of its
+        // kind passes that pair by and takes the next whole one.
+        let pair = Seedbed.wetOrder[5]
         let lotus = ways.plant(seed: seed(1), traits: Self.lotus("rubra"))
-        XCTAssertEqual(lotus.slots.map(\.index), [1, 2])
+        XCTAssertEqual(lotus.slots.map(\.index), [pair[2], pair[3]])
         // **A dry plant of the same epithet still passes the water by**, and
         // an old row says which element its drill is as plainly as a new one:
         // the habit was stored with it.
         let dry = ways.plant(seed: seed(2), traits: Self.dry("rubra"))
-        XCTAssertEqual(dry.slot, Seedbed.Slot(drill: 1, index: 0))
+        XCTAssertEqual(dry.slot, Seedbed.Slot(drill: 0, index: Self.first(0, wet: false)))
     }
 
     // MARK: The ambassador
 
-    func testTheAmbassadorStandsAtTheHeadOfTheFirstDrill() {
+    /// The ambassador is a spire, so it claims the top drill, on the dry side
+    /// of the bed, and stands at its middle, where a drill is sown from.
+    func testTheAmbassadorStandsInTheMiddleOfTheTopDrill() {
         let one = Seedbed.ambassador
         XCTAssertEqual(one.plot, 0)
-        XCTAssertEqual(one.slot, Seedbed.Slot(drill: 0, index: 0))
+        XCTAssertEqual(one.slot, Seedbed.Slot(drill: 0, index: Self.first(0, wet: false)))
         XCTAssertEqual(one.seed, Ambassadors.of(.beginnings).seed.hex)
         XCTAssertFalse(one.traits.kind.isEmpty, "the first drill is claimed by nothing")
         XCTAssertEqual(Seedbed.Ways.opened().plantings, [one])

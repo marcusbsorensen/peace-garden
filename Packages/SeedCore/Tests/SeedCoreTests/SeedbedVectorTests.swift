@@ -32,11 +32,16 @@ final class SeedbedVectorTests: XCTestCase {
         var lines: [String] = []
         for (seed, traits) in SeedbedTests.arrivals() {
             let p = ways.plant(seed: seed, traits: traits)
+            // **The plot's variant and where the plant stands**, since the
+            // drills came from a table on 2 October 2026: both exact on every
+            // host, so the port is held to the spot with no tolerance.
+            let v = Seedbed.variant(of: p.plot)
             lines.append("""
                 {"seed":"\(seed.hex)","height":\(traits.height),"family":\(traits.family),\
                 "kind":"\(traits.kind)","habit":"\(traits.habit)","plot":\(p.plot),\
                 "drill":\(p.slot.drill),"index":\(p.slot.index),"span":\(p.span),\
-                "nudge":[\(p.nudge.x),\(p.nudge.z)]}
+                "nudge":[\(p.nudge.x),\(p.nudge.z)],\
+                "variant":[\(v.turn),\(v.mirror ? 1 : 0),\(v.nudge)],"spot":[\(p.spot.x),\(p.spot.z)]}
                 """)
         }
         // One JSON document, not one per line, because a file that differs from

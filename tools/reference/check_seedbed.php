@@ -55,19 +55,26 @@ foreach ($vectors as $n => $want) {
                           $want['habit']);
     $ways[] = $got;
     $checks++;
+    // **The plot's variant and where the plant stands**, since the drills came
+    // from a table on 2 October 2026: a table's place, a mirror and a nudge,
+    // all exact, so compared with no tolerance like the rest.
+    $variant = Seedbed::variant($got['plot']);
+    $spot = Seedbed::spot($got['plot'], $got['drill'], $got['index'], $got['span'], $got['nudgeX'], $got['nudgeZ']);
     $same = $got['plot'] === $want['plot']
         && $got['drill'] === $want['drill']
         && $got['index'] === $want['index']
         && $got['span'] === $want['span']
         && $got['nudgeX'] === $want['nudge'][0]
-        && $got['nudgeZ'] === $want['nudge'][1];
+        && $got['nudgeZ'] === $want['nudge'][1]
+        && [$variant['turn'], $variant['mirror'] ? 1 : 0, $variant['nudge']] === $want['variant']
+        && $spot === [(float) $want['spot'][0], (float) $want['spot'][1]];
     if (!$same) {
         $failed[] = sprintf(
-            'arrival %d (%s, %s, %s): SeedCore put it in plot %d drill %d place %d holding %d, '
-                . 'the service in plot %d drill %d place %d holding %d',
+            'arrival %d (%s, %s, %s): SeedCore put it in plot %d drill %d place %d holding %d at %.17g, %.17g, '
+                . 'the service in plot %d drill %d place %d holding %d at %.17g, %.17g',
             $n, substr($want['seed'], 0, 12), $want['kind'], $want['habit'],
-            $want['plot'], $want['drill'], $want['index'], $want['span'],
-            $got['plot'], $got['drill'], $got['index'], $got['span']
+            $want['plot'], $want['drill'], $want['index'], $want['span'], $want['spot'][0], $want['spot'][1],
+            $got['plot'], $got['drill'], $got['index'], $got['span'], $spot[0], $spot[1]
         );
         if (count($failed) >= 5) break;
     }
@@ -80,13 +87,12 @@ $flooded = 0;
 $lotuses = 0;
 
 // And the shape of the place the two of them agree on, which is what a visitor
-// sees: a kind to a drill, every drill sown from its label with no gap, no older
-// plot passed over, and every plant inside the bed.
+// sees: a kind to a drill, every drill sown in its own order with nothing
+// skipped, the dry drills claimed from the head of the bed and the water from
+// its foot, no older plot passed over, and every plant inside the bed.
 foreach ($ways as $p) {
     $checks++;
-    [$x, $z] = Seedbed::spot($p['drill'], $p['index'], $p['span']);
-    $atX = $x + $p['nudgeX'];
-    $atZ = $z + $p['nudgeZ'];
+    [$atX, $atZ] = Seedbed::spot($p['plot'], $p['drill'], $p['index'], $p['span'], $p['nudgeX'], $p['nudgeZ']);
     // Half the plot, less the half-metre path a gardener kneels in. A seedbed
     // that reached the rim would be a bed nobody could sow.
     $edge = Seedbed::PLOT_SIDE / 2 - 0.5;
@@ -134,20 +140,59 @@ for ($plot = 0; $plot < $plots; $plot++) {
         }
         if ($elements[0] === 1) $flooded++;
 
-        // And it fills from the label outward: 0, 1, 2 and so on with nothing
-        // missing. A gap would be a place nobody can explain — the drill was
-        // sown in the order it was sown, and reading it from the label is
-        // reading that order. A lotus's two places are both in it, and a place
-        // held twice would be a lotus's second given away.
+        // And it is sown in its own order, since 2 October 2026, with nothing
+        // skipped: a dry drill's places are the first of the table's order for
+        // it, and a flooded drill's touched pairs the first of its pairs. A gap
+        // would be a place nobody can explain. A lotus's two places are both in
+        // it, one pair, and a place held twice would be a lotus's second given
+        // away.
         $checks++;
         $taken = [];
         foreach ($block as $p) {
             for ($i = 0; $i < $p['span']; $i++) $taken[] = (int) $p['index'] + $i;
+            if ($p['span'] === 2 && $p['index'] % 2 !== 0) {
+                $failed[] = sprintf('plot %d drill %d: a lotus holds two places of different pairs', $plot, $drill);
+            }
         }
         sort($taken);
-        if ($taken !== range(0, count($taken) - 1)) {
-            $failed[] = sprintf('plot %d drill %d is sown %s', $plot, $drill, implode(' ', $taken));
+        if (count($taken) !== count(array_unique($taken))) {
+            $failed[] = sprintf('plot %d drill %d holds a place twice: %s', $plot, $drill, implode(' ', $taken));
         }
+        if ($elements[0] === 1) {
+            $pairs = [];
+            foreach (Seedbed::wetOrder($drill) as $index) {
+                if (!in_array(intdiv($index, 2), $pairs, true)) $pairs[] = intdiv($index, 2);
+            }
+            $touched = array_values(array_unique(array_map(fn($i) => intdiv($i, 2), $taken)));
+            sort($touched);
+            $first = array_slice($pairs, 0, count($touched));
+            sort($first);
+            if ($touched !== $first) {
+                $failed[] = sprintf('flooded plot %d drill %d is sown %s', $plot, $drill, implode(' ', $taken));
+            }
+        } else {
+            $first = array_slice(Seedbed::dryOrder($drill), 0, count($taken));
+            sort($first);
+            if ($taken !== $first) {
+                $failed[] = sprintf('plot %d drill %d is sown %s', $plot, $drill, implode(' ', $taken));
+            }
+        }
+    }
+
+    // **Each drill claimed was the first on its side of the bed**: replayed in
+    // the order the plants arrived, a dry plant claimed the highest drill
+    // nobody had sown and a lily or a reed the lowest, so the flooded drills
+    // lie together at the foot.
+    $checks++;
+    $unclaimed = range(0, Seedbed::DRILLS - 1);
+    foreach ($here as $p) {
+        if (!in_array($p['drill'], $unclaimed, true)) continue;
+        $want = Seedbed::wantsWater((string) ($p['habit'] ?? '')) ? max($unclaimed) : min($unclaimed);
+        if ($p['drill'] !== $want) {
+            $failed[] = sprintf('%s claimed drill %d of plot %d where drill %d was first on its side',
+                substr($p['seed'], 0, 12), $p['drill'], $plot, $want);
+        }
+        $unclaimed = array_values(array_diff($unclaimed, [$p['drill']]));
     }
 
     // **An unclaimed drill is never passed over.** A plant that cannot join a

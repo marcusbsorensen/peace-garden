@@ -13,6 +13,6 @@
     {"area": "kinship", "seed": "ec0850ec7cd6824077a0c51e3c4c8cc670b321bdf66b8eb8f338fff81deb6bf3", "name": "Vininora contorta", "genusHead": "Vin", "height": 1.9295012950897217, "family": 0, "hue": 0.07103108447854911, "habit": "vine"},
     {"area": "peace", "seed": "75121838c745b4c11d8c34bdf4492890833a1a8ca768942ef26cbbbba7a74b7b", "name": "Bela caerulea", "genusHead": "Bel", "height": 1.0573713779449463, "family": 4, "hue": 0.7185860516745026, "habit": "poppy"}
   ],
-  "longWalk": {"seed": "53b234ab46f50e06243314d3d6159c67d0b26b2c0bc44a5fcd4b83ad28c4bc41", "plot": 0, "side": -1, "tier": 0, "index": 0, "nudge": [-0.09137254901960784, 0.07521568627450982]},
+  "longWalk": {"seed": "53b234ab46f50e06243314d3d6159c67d0b26b2c0bc44a5fcd4b83ad28c4bc41", "plot": 0, "side": -1, "tier": 0, "index": 1, "nudge": [-0.04568627450980392, 0.026862745098039223]},
   "quietGarden": {"seed": "75121838c745b4c11d8c34bdf4492890833a1a8ca768942ef26cbbbba7a74b7b", "plot": 0, "corner": 0, "index": 0, "nudge": [0.02090196078431374, -0.08309803921568627]}
 }

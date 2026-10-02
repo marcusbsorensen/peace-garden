@@ -10,11 +10,11 @@ import SeedCore
 // template has to be judged at five hundred plants before it is live, and the
 // browser is where it can be looked at.
 //
-//   pg_seedbed_plan()        the bed's own numbers as JSON: its side, where
-//                            each of the six drills runs in x, where each of
-//                            the eight places sits in z, the gaps those come
-//                            from, where a label stands, and what a plot holds
-//                            — so the page keeps no copy of them
+//   pg_seedbed_plan()        the bed's own numbers as JSON: its side, how many
+//                            drills and places, the gaps between them, and
+//                            what a plot holds — so the page keeps no copy of
+//                            them. Where the drills run is the place table's
+//                            (`assets/js/tables/seedbed_drills.js`).
 //   pg_seedbed_arrive()      plants the next arrival; returns its plot
 //   pg_seedbed_count(plot)   plantings in a plot so far
 //   pg_seedbed_grow(plot, i) grows the i-th planting of a plot into the result:
@@ -31,12 +31,10 @@ import SeedCore
 //                            count, index count (u32), positions, normals
 //                            (3 × f32), indices (u32)
 //
-// Opened rather than empty: it starts with the beginnings ambassador at the
-// head of the first drill, the way the real one does — so drill 0 is claimed by
-// that plant's epithet before a single arrival, exactly as the service has it.
+// Opened rather than empty: it starts with the beginnings ambassador in the
+// first drill, the way the real one does — so drill 0 is claimed by that
+// plant's epithet before a single arrival, exactly as the service has it.
 //
-// `pg_seedbed_plan` carries drill and place positions where the Knot's carries
-// its weave, because that is the arithmetic the page would otherwise repeat.
 // The drill a plant stands in is claimed, never reserved, so there is nothing
 // to report before the plants arrive; the claim is read back off `describe`,
 // as the Knot's colour claim is.
@@ -74,21 +72,15 @@ private func seedbedVisitor() -> (child: SeedID, genome: Genome) {
 @_expose(wasm, "pg_seedbed_plan")
 @_cdecl("pg_seedbed_plan")
 public func pgSeedbedPlan() -> Int32 {
-    // Asked of the rule, place by place, rather than worked out again here:
-    // where a drill runs and where a place sits along it are `Slot.spot`'s
-    // business, and two copies of that sum drift.
-    let drillX = (0..<Seedbed.drills)
-        .map { "\(Seedbed.Slot(drill: $0, index: 0).spot.x)" }
-        .joined(separator: ",")
-    let placeZ = (0..<Seedbed.places)
-        .map { "\(Seedbed.Slot(drill: 0, index: $0).spot.z)" }
-        .joined(separator: ",")
+    // **Where each drill runs is the table's, since 2 October 2026**: the
+    // drills curve along the contour, and the page reads their lines from
+    // `assets/js/tables/seedbed_drills.js`, made by the same generator from
+    // the same spec as `PlaceTable.seedbedDrills`, and turns them for the plot
+    // with `pg_plot_variant`. What is left here is the bed's counts and gaps.
     let json = """
         {"plotSide":\(Seedbed.plotSide),"drills":\(Seedbed.drills),\
         "places":\(Seedbed.places),"drillGap":\(Seedbed.drillGap),\
-        "alongGap":\(Seedbed.alongGap),"labelAt":\(Seedbed.labelAt),\
-        "drillX":[\(drillX)],"placeZ":[\(placeZ)],\
-        "slots":\(Seedbed.slots.count)}
+        "alongGap":\(Seedbed.alongGap),"slots":\(Seedbed.slots.count)}
         """
     setResult(Array(json.utf8))
     return Int32(json.utf8.count)
@@ -141,7 +133,8 @@ public func pgSeedbedDescribe(_ plot: Int32) -> Int32 {
 
 /// The label that stands at the head of a drill, from `Organic.rowLabel` — so
 /// the browser's label is the shape the app draws. Stands on `y = 0` at the
-/// origin, face toward `z-`: the page sets it at `drillX[d]`, `labelAt`.
+/// origin, face toward `z-`: the page sets it at the first point of its
+/// drill's line and turns it to face out along the drill.
 @_expose(wasm, "pg_seedbed_label")
 @_cdecl("pg_seedbed_label")
 public func pgSeedbedLabel(_ height: Double, _ width: Double, _ seed: UInt32) -> Int32 {
