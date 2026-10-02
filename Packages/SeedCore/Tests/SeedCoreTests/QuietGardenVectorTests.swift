@@ -28,11 +28,17 @@ final class QuietGardenVectorTests: XCTestCase {
         var lines: [String] = []
         for (seed, traits) in QuietGardenTests.arrivals() {
             let p = room.plant(seed: seed, traits: traits)
+            // **Where it stands, turned for its room**, since 2 October 2026:
+            // the variant the plot's number deals it and the spot that gives.
+            // Both are exact on every host, so the service is held to them
+            // with no tolerance.
+            let v = QuietGarden.variant(of: p.plot)
             lines.append("""
                 {"seed":"\(seed.hex)","height":\(traits.height),"family":\(traits.family),\
                 "habit":"\(traits.habit)",\
                 "plot":\(p.plot),"corner":\(p.slot.corner.rawValue),"index":\(p.slot.index),\
-                "nudge":[\(p.nudge.x),\(p.nudge.z)]}
+                "nudge":[\(p.nudge.x),\(p.nudge.z)],\
+                "variant":[\(v.turn),\(v.mirror ? 1 : 0),\(v.nudge)],"spot":[\(p.spot.x),\(p.spot.z)]}
                 """)
         }
         return "[\n" + lines.joined(separator: ",\n") + "\n]\n"
@@ -67,7 +73,7 @@ final class QuietGardenVectorTests: XCTestCase {
     /// **And the tolerance the comparison above allows cannot move a plant.**
     ///
     /// The rule asks two kinds of question about a height: which side of a cut
-    /// it falls, and whether it is taller than another plant in a group of three in one corner.
+    /// it falls, and whether it is taller than another plant in one group of one room.
     /// This says every recorded height clears both cuts, and every pair the
     /// rule compares is further apart than twice the tolerance — so a host that
     /// computes a height a few of a `Float`'s last bits differently still puts

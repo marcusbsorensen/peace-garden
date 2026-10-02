@@ -11,8 +11,8 @@ require_once __DIR__ . '/QuietGarden.php';
  *
  * **A table of its own, beside the walk's rather than inside it.** Every column
  * after `encounter` means something different here: the walk's row names a side
- * of a path and a tier of a border, and this one names a corner of a room and a
- * place in a group of three. One table with an `area` column would be a table
+ * of a path and a tier of a border, and this one names a group in a room and a
+ * place in that group. One table with an `area` column would be a table
  * whose rows only mean anything once you know which area they are — which is
  * ten tables pretending to be one (`docs/WEB-GARDENS.md`). It also keeps the
  * walk's own table, which is live and append-only, out of this entirely.
@@ -153,13 +153,13 @@ final class RoomStore
         $plantings = array_map([self::class, 'planting'], $query->fetchAll());
         if ($plot !== 0) return $plantings;
         $standing = Ambassadors::planting('peace');
-        [$x, $z] = QuietGarden::spot($standing['corner'], $standing['index']);
         array_unshift($plantings, [
             'seed' => $standing['seed'],
             'parents' => [],
             'encounter' => null,
             'plot' => 0,
-            'spot' => [$x + $standing['nudgeX'], $z + $standing['nudgeZ']],
+            'spot' => QuietGarden::spotOn(0, $standing['corner'], $standing['index'],
+                                          $standing['nudgeX'], $standing['nudgeZ']),
         ]);
         return $plantings;
     }
@@ -187,13 +187,15 @@ final class RoomStore
     /** What the page needs to grow a planting and stand it in its place. */
     private static function planting(array $row): array
     {
-        [$x, $z] = QuietGarden::spot((int) $row['corner'], (int) $row['slot_index']);
+        // Where it stands in its room, turned as the room is laid (2 October
+        // 2026).
         return [
             'seed' => $row['seed'],
             'parents' => [$row['parent_a'], $row['parent_b']],
             'encounter' => $row['encounter'],
             'plot' => (int) $row['plot'],
-            'spot' => [$x + (float) $row['nudge_x'], $z + (float) $row['nudge_z']],
+            'spot' => QuietGarden::spotOn((int) $row['plot'], (int) $row['corner'], (int) $row['slot_index'],
+                                          (float) $row['nudge_x'], (float) $row['nudge_z']),
         ];
     }
 

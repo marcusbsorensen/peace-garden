@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/LongWalk.php';
+require_once __DIR__ . '/PlotVariant.php';
+require_once __DIR__ . '/tables/QuietRoomTable.php';
 
 /**
  * The Quiet Garden's placement rule, ported from SeedCore's
@@ -17,12 +19,19 @@ require_once __DIR__ . '/LongWalk.php';
  * Kept to the Swift's arithmetic in the Swift's order, and — more than in the
  * walk's port — to the Swift's **iteration** order, because this rule returns
  * the first slot it finds rather than the best-scoring one. Two passes that
- * disagree about which corner to look at first would file plants differently
+ * disagree about which group to look at first would file plants differently
  * without either being wrong about a single number.
  *
- * A planting here is an array: seed (hex), plot, corner (0 bench, 1–3 the
- * groups), index (0 the back of a group, 1 and 2 its arms), height, family,
- * nudgeX, nudgeZ.
+ * **An asymmetric room, since 2 October 2026** (Marcus; `QuietGarden.swift`
+ * says the rest): the specimen by the bench, a group of five across the water,
+ * a group of three along a side, and one plant alone, the echo, that repeats
+ * the five's colour. The places come from `tables/QuietRoomTable.php`, made
+ * offline, and each room is turned and mirrored by its number
+ * (`PlotVariant.php`); `spotOn` is where a planting stands on its plot.
+ *
+ * A planting here is an array: seed (hex), plot, corner (0 the bench, 1 the
+ * five, 2 the three, 3 the echo, 4 the pool), index (the place in its group,
+ * in its fill order), height, family, nudgeX, nudgeZ.
  */
 final class QuietGarden
 {
@@ -31,37 +40,48 @@ final class QuietGarden
     /**
      * How this area's plots vary, from each plot's number (`PlotVariant.php`):
      * the Swift's `variants`. Turned and mirrored eight ways, as `quiet-a-
-     * rooms.png` turns the rooms. Declared but not yet read.
+     * rooms.png` turns the rooms.
      */
     public const VARIANTS = ['turns' => 4, 'mirror' => true, 'nudges' => 1];
     public const HEDGE_FROM = 2.3;
     public const AT_THE_HEDGE = 1.95;
-    public const ALONG_THE_HEDGE = 1.10;
-    public const BESIDE_THE_BENCH = 0.95;
     /** The 67th centile of grown heights: 1.08 since 29 September 2026. */
     public const BACK_FROM = 1.08;
+    /** Where the bench stands in the table's frame, on its corner's diagonal. */
+    public const BENCH_SPOT = [-1.72, -1.72];
 
     /** The bench's corner, which holds one plant and no group. */
     public const BENCH = 0;
+    /** The group of five across the water, the group of three, and the echo. */
+    public const FIVE = 1;
+    public const THREE = 2;
+    public const ECHO = 3;
 
     /**
-     * The pool, which is a fifth place and not a corner (27 September 2026).
+     * The pool, which is a fifth place and not a group (27 September 2026).
      *
      * It rides in the same numbering so a slot stays one pair of numbers in
-     * the table and on the wire, and it is appended, so every planting already
-     * filed reads back exactly as it did. `QuietGarden.swift` says the rest.
+     * the table and on the wire. The live garden never sends this area a lily,
+     * so it stays empty.
      */
     public const POOL = 4;
-    public const POOL_ACROSS = 2.2;
-    public const IN_THE_WATER = 0.5;
 
-    /** Which way each corner lies from the middle: [x, z]. The pool is it. */
-    public const LIE = [[-1, -1], [1, -1], [1, 1], [-1, 1], [0, 0]];
+    /** How many places each group has: the specimen, the five, the three, the echo, the pool. */
+    public const SIZES = [1, 5, 3, 1, 2];
+
+    /** The groups a dry plant may join, in the order they are asked. */
+    public const GROUPS = [self::FIVE, self::THREE, self::ECHO];
 
     /** Whether plants that want dry ground stand here. */
     public static function isDry(int $corner): bool
     {
         return $corner !== self::POOL;
+    }
+
+    /** Whether it is a group a colour claims: the five and the three. */
+    public static function isGroup(int $corner): bool
+    {
+        return $corner === self::FIVE || $corner === self::THREE;
     }
 
     /**
@@ -78,7 +98,7 @@ final class QuietGarden
     public const ARM = 0;
     public const BACK = 1;
 
-    /** Where a plant of this height stands in a group of three. */
+    /** Where a plant of this height stands in a group. */
     public static function stand(float $height): int
     {
         return $height < self::BACK_FROM ? self::ARM : self::BACK;
@@ -98,12 +118,7 @@ final class QuietGarden
         static $slots = null;
         if ($slots !== null) return $slots;
         $slots = [];
-        foreach ([0, 1, 2, 3, self::POOL] as $corner) {
-            $count = match ($corner) {
-                self::BENCH => 1,
-                self::POOL => 2,
-                default => 3,
-            };
+        foreach (self::SIZES as $corner => $count) {
             for ($index = 0; $index < $count; $index++) {
                 $slots[] = ['corner' => $corner, 'index' => $index];
             }
@@ -111,32 +126,50 @@ final class QuietGarden
         return $slots;
     }
 
-    /** Whether a slot is the back of its group. The specimen stands alone. */
-    public static function standOf(int $corner, int $index): int
+    /**
+     * Where a slot's place is in the table. A planting filed before 2 October
+     * 2026 can hold an index its group no longer has (an arm of what was the
+     * fourth corner's three, now the echo), and reads as standing on the
+     * group's last place until the replant places it again.
+     */
+    public static function row(int $corner, int $index): int
     {
-        return self::isDry($corner) && $corner !== self::BENCH && $index === 0
-            ? self::BACK : self::ARM;
+        $first = 0;
+        for ($c = 0; $c < $corner; $c++) $first += self::SIZES[$c];
+        return $first + min($index, self::SIZES[$corner] - 1);
     }
 
-    /** Where a slot is, in metres from the middle of its plot: [x, z]. */
+    /** Whether a slot is the back of its group, as the table says. */
+    public static function standOf(int $corner, int $index): int
+    {
+        return QuietRoomTable::PLACES[0][self::row($corner, $index)][3] === 1 ? self::BACK : self::ARM;
+    }
+
+    /**
+     * Where a slot is, in metres from the middle of the plot **as the table
+     * draws it**, before the room is turned: [x, z].
+     */
     public static function spot(int $corner, int $index): array
     {
-        [$lx, $lz] = self::LIE[$corner];
-        if ($corner === self::POOL) {
-            // On the bench's own diagonal, one either side of the middle:
-            // index 0 is the far one, the one the bench sees first.
-            [$ax, $az] = self::LIE[self::BENCH];
-            $step = $index === 0 ? -self::IN_THE_WATER : self::IN_THE_WATER;
-            return [$ax * $step, $az * $step];
-        }
-        if ($corner === self::BENCH) {
-            return [$lx * self::AT_THE_HEDGE, $lz * self::BESIDE_THE_BENCH];
-        }
-        return match ($index) {
-            0 => [$lx * self::AT_THE_HEDGE, $lz * self::AT_THE_HEDGE],
-            1 => [$lx * self::AT_THE_HEDGE, $lz * self::ALONG_THE_HEDGE],
-            default => [$lx * self::ALONG_THE_HEDGE, $lz * self::AT_THE_HEDGE],
-        };
+        $place = QuietRoomTable::PLACES[0][self::row($corner, $index)];
+        return [$place[0], $place[1]];
+    }
+
+    /** The variant of a plot: which way round its room is laid. */
+    public static function variant(int $plot): array
+    {
+        return PlotVariant::of($plot, 'peace', self::VARIANTS);
+    }
+
+    /**
+     * **Where a planting stands on its plot**: its place and its nudge, the
+     * sum turned and mirrored as the room is laid. The Swift's
+     * `Planting.spot`, to the bit.
+     */
+    public static function spotOn(int $plot, int $corner, int $index, float $nudgeX, float $nudgeZ): array
+    {
+        [$x, $z] = self::spot($corner, $index);
+        return PlotVariant::apply(self::variant($plot), $x + $nudgeX, $z + $nudgeZ);
     }
 
     /** Plots opened so far. */
@@ -152,8 +185,9 @@ final class QuietGarden
      *
      * A plot's first plant stands by the bench, always, because a new plot is
      * opened by taking its specimen slot. After that: a group of its own
-     * colour, a corner nobody has planted, a group of a colour near its own, or
-     * a new plot.
+     * colour (the five, the three, then the echo, which shows the five's), a
+     * group nobody has planted (the five, then the three), a group of a colour
+     * near its own, or a new plot.
      */
     public static function place(array $room, float $height, int $family,
                                  string $habit = ''): array
@@ -221,24 +255,28 @@ final class QuietGarden
         // front of something shorter.
         $own = self::stand($height);
         $stands = $own === self::BACK ? [self::BACK, self::ARM] : [self::ARM, self::BACK];
+        // The echo shows the five's colour: the five's first plant claims both.
+        $five = null;
+        foreach ($here as $p) {
+            if ($p['corner'] === self::FIVE) { $five = $p['family']; break; }
+        }
 
         foreach ($stands as $wanted) {
-            foreach ([1, 2, 3] as $corner) {
+            foreach (self::GROUPS as $corner) {
                 $group = array_values(array_filter($here, fn($p) => $p['corner'] === $corner));
-                $founder = $group[0] ?? null;
+                $claim = $corner === self::ECHO ? $five : ($group[0]['family'] ?? null);
                 if ($kinship === 'own') {
-                    if ($founder === null || $founder['family'] !== $family) continue;
+                    if ($claim !== $family) continue;
                 } elseif ($kinship === 'fresh') {
-                    if ($founder !== null) continue;
+                    if (!self::isGroup($corner) || $group !== []) continue;
                 } else {
-                    if ($founder === null) continue;
-                    if (!in_array($family, self::near($founder['family']), true)) continue;
+                    if ($claim === null || !in_array($family, self::near($claim), true)) continue;
                 }
                 foreach (self::slots() as $slot) {
                     if ($slot['corner'] !== $corner) continue;
                     if (self::standOf($slot['corner'], $slot['index']) !== $wanted) continue;
                     if (isset($taken[$slot['corner'] . ':' . $slot['index']])) continue;
-                    if (!self::inOrder($group, $height, $slot['index'])) continue;
+                    if (!self::inOrder($group, $height, $slot['corner'], $slot['index'])) continue;
                     return $slot;
                 }
             }
@@ -247,15 +285,18 @@ final class QuietGarden
     }
 
     /**
-     * Whether a plant this tall can stand in this slot: the back of a group is
-     * at least as tall as either of its arms. The Long Walk's rule at the scale
-     * of a group of three.
+     * Whether a plant this tall can stand in this slot: nothing at the back of
+     * a group is shorter than anything in its arms. The Long Walk's rule at the
+     * scale of a group; two at the back of the five are free of each other, and
+     * so are its arms.
      */
-    private static function inOrder(array $group, float $height, int $index): bool
+    private static function inOrder(array $group, float $height, int $corner, int $index): bool
     {
+        $mine = self::standOf($corner, $index);
         foreach ($group as $other) {
-            if ($index === 0 && $other['height'] > $height) return false;
-            if ($index !== 0 && $other['index'] === 0 && $other['height'] < $height) return false;
+            $theirs = self::standOf($other['corner'], $other['index']);
+            if ($mine === self::BACK && $theirs === self::ARM && $other['height'] > $height) return false;
+            if ($mine === self::ARM && $theirs === self::BACK && $other['height'] < $height) return false;
         }
         return true;
     }

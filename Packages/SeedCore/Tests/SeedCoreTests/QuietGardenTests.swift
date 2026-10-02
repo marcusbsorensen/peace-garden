@@ -87,31 +87,91 @@ final class QuietGardenTests: XCTestCase {
         }
     }
 
-    /// **The lawn is never planted.** Every plant stands in a corner, at the
-    /// foot of a hedge; nothing stands in the middle of the room or the middle
-    /// of a side. It is checked as a distance rather than as a slot, because the
-    /// nudge moves a plant off its mark and a nudge that pushed one onto the
-    /// grass would be the rule failing where nothing else would notice.
+    /// **The lawn is never planted.** Every dry plant stands at the foot of a
+    /// hedge, inside it, and well clear of the water; the pool's middle and the
+    /// lawn round it stay grass. It is checked as a distance rather than as a
+    /// slot, because the nudge moves a plant off its mark and a nudge that
+    /// pushed one onto the grass would be the rule failing where nothing else
+    /// would notice.
     ///
-    /// **Except in the water** (27 September 2026). The middle of the room is a
-    /// pool now, and a lily stands in it on purpose — that is the one place on
-    /// this lawn a plant belongs. So the check splits: dry plants keep clear of
-    /// the middle as they always did, and a lily keeps inside the water, which
-    /// is the same invariant from the other side and the one that would catch a
-    /// lily drifting out onto the grass.
+    /// **And a lily keeps inside the water**, the same invariant from the
+    /// other side, which would catch a lily drifting out onto the grass.
+    ///
+    /// **Measured against the pool as each room lays it**, since the room was
+    /// made asymmetric on 2 October 2026: the table's outline, turned for the
+    /// plot.
     func testNothingStandsOnTheLawn() {
         let room = Self.filled()
+        var nearest = Double.infinity
         for p in room.plantings {
             let spot = p.spot
-            let corner = max(abs(spot.x), abs(spot.z))
+            let pool = QuietGarden.table.curve("pool", on: QuietGarden.variant(of: p.plot)).points
             guard p.slot.corner.isDry else {
-                XCTAssertLessThan(corner, QuietGarden.poolAcross / 2,
-                                  "\(p.seed) is out of the water at \(spot)")
+                XCTAssertTrue(Self.inside(spot, pool), "\(p.seed) is out of the water at \(spot)")
+                XCTAssertGreaterThan(Self.distance(spot, to: pool), 0.3, "\(p.seed) is at the water's edge")
                 continue
             }
-            XCTAssertGreaterThan(corner, 1.5, "\(p.seed) is out on the lawn at \(spot)")
-            XCTAssertLessThan(corner, QuietGarden.hedgeFrom, "\(p.seed) is in the hedge at \(spot)")
+            XCTAssertFalse(Self.inside(spot, pool), "\(p.seed) is in the water at \(spot)")
+            let toWater = Self.distance(spot, to: pool)
+            nearest = min(nearest, toWater)
+            XCTAssertGreaterThan(toWater, 0.45, "\(p.seed) is at the water's edge at \(spot)")
+            let out = max(abs(spot.x), abs(spot.z))
+            XCTAssertGreaterThan(out, 0.8, "\(p.seed) is out on the lawn at \(spot)")
+            XCTAssertLessThan(out, QuietGarden.hedgeFrom - 0.15, "\(p.seed) is in the hedge at \(spot)")
         }
+        print("Quiet Garden: the nearest dry plant stands \(nearest) m from the water")
+    }
+
+    /// **The bench looks across the water at the five.** The pool lies between
+    /// them, on the line from the seat to the group, and nearer the seat.
+    func testTheBenchLooksAcrossTheWaterAtTheFive() {
+        for n in 0..<QuietGarden.variants.count {
+            let v = QuietGarden.variants.variant(n)
+            let bench = QuietGarden.bench(on: v)
+            let five = QuietGarden.slots.filter { $0.corner == .five }.map { $0.spot(on: v) }
+            let at = Spot(x: five.map(\.x).reduce(0, +) / 5, z: five.map(\.z).reduce(0, +) / 5)
+            let pool = QuietGarden.table.curve("pool", on: v).points
+            let middle = Spot(x: pool.map(\.x).reduce(0, +) / Double(pool.count),
+                              z: pool.map(\.z).reduce(0, +) / Double(pool.count))
+            // The water's middle is near the line from the seat to the five...
+            let lx = at.x - bench.x, lz = at.z - bench.z
+            let length = hypot(lx, lz)
+            let off = abs((middle.x - bench.x) * lz - (middle.z - bench.z) * lx) / length
+            XCTAssertLessThan(off, 0.25, "variant \(n): the pool is off the bench's line of sight")
+            // ...and nearer the seat than the group.
+            XCTAssertLessThan(hypot(middle.x - bench.x, middle.z - bench.z), length / 2,
+                              "variant \(n): the pool is not off the middle toward the bench")
+            // And the stepping stones lead from the seat to the water.
+            let stones = QuietGarden.table.curve("stones", on: v).points
+            XCTAssertEqual(stones.count, 3)
+            XCTAssertLessThan(hypot(stones[0].x - bench.x, stones[0].z - bench.z), 0.5)
+            XCTAssertLessThan(Self.distance(stones[2], to: pool), 0.25)
+        }
+    }
+
+    /// Whether a point is inside a closed outline: the even-odd rule.
+    static func inside(_ p: Spot, _ loop: [Spot]) -> Bool {
+        var hit = false
+        var j = loop.count - 1
+        for i in loop.indices {
+            let a = loop[i], b = loop[j]
+            if (a.z > p.z) != (b.z > p.z), p.x < (b.x - a.x) * (p.z - a.z) / (b.z - a.z) + a.x { hit.toggle() }
+            j = i
+        }
+        return hit
+    }
+
+    /// How far a point is from the nearest part of a closed outline.
+    static func distance(_ p: Spot, to loop: [Spot]) -> Double {
+        var best = Double.infinity
+        for i in loop.indices {
+            let a = loop[i], b = loop[(i + 1) % loop.count]
+            let ax = b.x - a.x, az = b.z - a.z
+            let m = ax * ax + az * az
+            let t = m == 0 ? 0 : max(0, min(1, ((p.x - a.x) * ax + (p.z - a.z) * az) / m))
+            best = min(best, hypot(p.x - a.x - ax * t, p.z - a.z - az * t))
+        }
+        return best
     }
 
     /// **Only what wants water is in the water, and everything that wants it
@@ -141,23 +201,43 @@ final class QuietGardenTests: XCTestCase {
         }
     }
 
+    /// **One, five, three and one** (2 October 2026): the specimen, a group of
+    /// five with two at its back, a group of three with one, and the echo, and
+    /// the pool's two. Ten on the ground, as before.
+    func testTheRoomIsOneFiveThreeAndOne() {
+        let counts = QuietGarden.Corner.allCases.map { c in QuietGarden.slots.filter { $0.corner == c }.count }
+        XCTAssertEqual(counts, [1, 5, 3, 1, 2])
+        let backs = QuietGarden.Corner.allCases.map { c in
+            QuietGarden.slots.filter { $0.corner == c && $0.stand == .back }.count
+        }
+        XCTAssertEqual(backs, [0, 2, 1, 0, 0])
+        // A group's back stands nearer its corner of the room than its arms.
+        for corner in [QuietGarden.Corner.five, .three] {
+            let group = QuietGarden.slots.filter { $0.corner == corner }
+            let out = { (s: QuietGarden.Slot) in max(abs(s.spot.x), abs(s.spot.z)) }
+            let backs = group.filter { $0.stand == .back }.map(out)
+            let arms = group.filter { $0.stand == .arm }.map(out)
+            XCTAssertGreaterThan(backs.reduce(0, +) / Double(backs.count), arms.reduce(0, +) / Double(arms.count) - 0.3,
+                                 "\(corner)'s back is not toward the hedge")
+        }
+    }
+
     /// **Nothing stands in front of something shorter.** The Long Walk's rule at
-    /// the scale of a group of three: the back is at least as tall as its arms.
+    /// the scale of a group: every plant at its back is at least as tall as
+    /// every one of its arms.
     func testTheBackOfEveryGroupIsTallerThanItsArms() {
         let room = Self.filled()
         for plot in 0..<room.plots {
-            // The bench's corner holds one plant and the pool is not a group:
-            // two lilies float side by side and neither is behind the other,
-            // nor is either of them a colour the room chose.
-            for corner in QuietGarden.Corner.allCases where corner != .bench && corner.isDry {
+            for corner in QuietGarden.Corner.allCases where corner.isGroup {
                 let group = room.plot(plot).filter { $0.slot.corner == corner }
-                guard let back = group.first(where: { $0.slot.index == 0 }) else { continue }
-                for arm in group where arm.slot.index != 0 {
-                    XCTAssertGreaterThanOrEqual(
-                        back.traits.height, arm.traits.height,
-                        "plot \(plot) \(corner): a \(arm.traits.height) m arm in front of a "
-                            + "\(back.traits.height) m back"
-                    )
+                for back in group where back.slot.stand == .back {
+                    for arm in group where arm.slot.stand == .arm {
+                        XCTAssertGreaterThanOrEqual(
+                            back.traits.height, arm.traits.height,
+                            "plot \(plot) \(corner): a \(arm.traits.height) m arm in front of a "
+                                + "\(back.traits.height) m back"
+                        )
+                    }
                 }
             }
         }
@@ -169,10 +249,7 @@ final class QuietGardenTests: XCTestCase {
     func testEveryGroupIsOneColourOrATonalNeighbourOfIt() {
         let room = Self.filled()
         for plot in 0..<room.plots {
-            // The bench's corner holds one plant and the pool is not a group:
-            // two lilies float side by side and neither is behind the other,
-            // nor is either of them a colour the room chose.
-            for corner in QuietGarden.Corner.allCases where corner != .bench && corner.isDry {
+            for corner in QuietGarden.Corner.allCases where corner.isGroup {
                 let group = room.plot(plot).filter { $0.slot.corner == corner }
                 guard let founder = group.first else { continue }
                 let allowed = Set([founder.traits.family] + QuietGarden.near(founder.traits.family))
@@ -183,6 +260,57 @@ final class QuietGardenTests: XCTestCase {
                 }
             }
         }
+    }
+
+    /// **The echo repeats the five's colour, or a tone of it**, across the
+    /// lawn, and stands only once the five has a colour to repeat. At five
+    /// hundred, 20 of 43 are the five's own colour: a plant of that colour goes
+    /// to the five while it has room, and a tone of it may take the echo first.
+    func testTheEchoRepeatsTheFive() {
+        let room = Self.filled()
+        var same = 0, echoes = 0
+        for plot in 0..<room.plots {
+            let here = room.plot(plot)
+            guard let echo = here.first(where: { $0.slot.corner == .echo }) else { continue }
+            echoes += 1
+            let five = here.first { $0.slot.corner == .five }
+            XCTAssertNotNil(five, "plot \(plot) has an echo of nothing")
+            guard let five else { continue }
+            XCTAssertLessThan(room.plantings.firstIndex(of: five)!, room.plantings.firstIndex(of: echo)!,
+                              "plot \(plot)'s echo stood before the five")
+            let family = five.traits.family
+            XCTAssertTrue(([family] + QuietGarden.near(family)).contains(echo.traits.family),
+                          "plot \(plot): a \(echo.traits.family) echo of a \(family) five")
+            if echo.traits.family == family { same += 1 }
+        }
+        print("Quiet Garden at 500: \(same) of \(echoes) echoes are the five's own colour")
+        XCTAssertGreaterThan(echoes, room.plots / 2)
+        XCTAssertGreaterThan(same * 3, echoes, "too few echoes are the five's own colour")
+    }
+
+    /// **Every room is laid as its number says**: a plant stands at its place
+    /// and nudge, turned and mirrored for its plot, and the rooms are laid all
+    /// eight ways.
+    func testEveryRoomIsTurnedAsItsNumberSays() {
+        let room = Self.filled()
+        var seen = Set<String>()
+        for planting in room.plantings {
+            let v = QuietGarden.variant(of: planting.plot)
+            XCTAssertEqual(v, PlotVariant.of(plot: planting.plot, area: .peace))
+            let plain = Spot(x: planting.slot.spot.x + planting.nudge.x,
+                             z: planting.slot.spot.z + planting.nudge.z)
+            XCTAssertEqual(planting.spot, v.apply(plain))
+            seen.insert("\(v.turn) \(v.mirror)")
+        }
+        XCTAssertEqual(QuietGarden.variant(of: 0), .plain)
+        XCTAssertEqual(seen.count, 8, "the rooms are not laid all eight ways")
+    }
+
+    /// **A planting filed before the room changed reads back** on a place its
+    /// group still has, so the page draws it until the replant moves it.
+    func testAnOldEchoArmStandsOnTheEcho() {
+        let old = QuietGarden.Slot(corner: .echo, index: 2)
+        XCTAssertEqual(old.spot, QuietGarden.Slot(corner: .echo, index: 0).spot)
     }
 
     // MARK: How it fills
