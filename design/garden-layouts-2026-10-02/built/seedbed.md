@@ -176,7 +176,8 @@ columns (`drill`, `slot_index`, `slot_span`, the nudge), with no schema change.
   m apart fill 3.7 m of the bed's depth, which leaves room for no more bow
   inside the bed. Seen from the page's eye the flooded drills read as arcs;
   the dry drills read nearly straight. A stronger curve needs a narrower gap
-  between drills, which is Marcus's number.
+  between drills, which is Marcus's number. **Answered the same day:**
+  *Curved more*, below.
 - **A drill of two looks lopsided**: the middle and one end, which is what
   focal-first, then farthest-first, gives on a row. From three up it is
   balanced. A lily's second pair can stand by the label for the same reason.
