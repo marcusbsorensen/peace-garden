@@ -1135,8 +1135,8 @@ Two things it turns on, both in `GardenVisits`:
   when the sun is low); the day's clouds, dealt from the date; the real moon by
   day, the season's sun height and the brightest planet at dusk; and, about once
   an hour, a few of the season's birds very high. `docs/PLACE.md` §*And the day
-  is the real sky as well*. The night is unchanged, and so, for now, is the light
-  on the plot.
+  is the real sky as well*. The night is unchanged. The light on the plot was
+  warmed to match once the shadows had landed (below, *Still open*).
 - **An arrangement is told, not inherited.** Local, never transmitted, unable to
   reach the seed. No new promise, and no change to the sentence on Seed.
 - **One set of plants, several arrangements of it.** Every plant appears in every
@@ -1191,6 +1191,13 @@ Two things it turns on, both in `GardenVisits`:
 - **Whether an arrangement survives a plant being released to the Wild Fields.**
   Releasing is the end of a plant's life here; a spot pointing at a plant that has
   gone is the kind of thing that decodes fine and draws nothing.
+- **How warm the plot's light goes with the sky.** Built 2 October for Marcus
+  to judge from `design/app-light-2026-10-02/`: the sun's colour and the sky's
+  light on the ground come from the palette the day sky is painted with, in
+  the light's own season, so a low sun and a winter noon light the plot gold
+  and a summer noon is as it was. The season colours the light and does not
+  move the sun. The step at six is now seen from both sides, so a plant is
+  never crossfaded towards the other body's light.
 - **Whether the shadows should be soft, and how soft.** Answered 2 October:
   sharp near the foot and softer higher up, the web's way, and under a low sun
   less soft the longer the shadow, so that an evening's stems still read
