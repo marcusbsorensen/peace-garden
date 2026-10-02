@@ -11,11 +11,13 @@ import { ROLES, YOUNG, decode, takeResult, link, attribute, multiply } from './p
 import { castShadow } from './shadow.js';
 import { areasBeside } from './beside.js';
 import { raiseRill } from './water.js';
+import { RIM_DEPTH, STONES, STRATA, hangSide, sideShaders } from './slab.js';
 
 export const SIDE = 5.2;    // LongWalk.plotSide, and QuietGarden.plotSide
 const PATH_HALF = 0.6;      // LongWalk.pathHalfWidth
 const HEDGE_FROM = 2.3;     // LongWalk.hedgeFrom
-export const RIM_DEPTH = 0.95;  // GardenGround.rimDepth
+// GardenGround.rimDepth, which the slab's side (`slab.js`) is hung from.
+export { RIM_DEPTH };
 export const HEDGE = { thickness: 0.36, tall: 2.0, low: 0.7 };
 
 // **Sky under the plot, so the area below it has somewhere to be.** The window
@@ -35,9 +37,10 @@ const UNDER = 0.7;
 export const COLOUR = {
   turf: [0.235, 0.265, 0.190],
   grass: [0.285, 0.320, 0.225],
-  humus: [0.205, 0.158, 0.116],
-  earth: [0.375, 0.300, 0.232],
-  bedrock: [0.340, 0.330, 0.318],
+  // The slab's strata, the app's, kept with the slab (`slab.js`).
+  humus: STRATA.humus,
+  earth: STRATA.earth,
+  bedrock: STRATA.bedrock,
   yew: [0.27, 0.39, 0.27],
   // Oak left out: grey with the warmth still under it. Picked against the
   // yew beside it rather than against a swatch, the way the hedge's own
@@ -180,6 +183,14 @@ void main() {
   if (upOnly && normalize(vNormal).y < 0.5) discard;
   outColour = vec4(shade(vColour, normalize(vNormal)) * opacity, opacity);
 }`;
+
+// **The slab's side has a program of its own** (`slab.js`), since 2 October
+// 2026: its bands and the faint layers in them are worked out per pixel from
+// where on the side a pixel is, which a colour per vertex could only carry on
+// a mesh many times as fine. Lit by `SHADE`, as the ground is, and
+// with the ground's `offset` and `opacity`, so a neighbour's side stands where
+// its top does and is dimmed with it.
+const SIDE_SHADERS = sideShaders(SHADE);
 
 export const PLANT_VERTEX = `#version 300 es
 in vec3 position; in vec3 normal; in vec2 uv; in float age;
@@ -386,8 +397,12 @@ const BESIDE = {
   lap: 1.7,
   least: 0.35,
   closest: 1.2,
-  // How far a slab's underside can hang below `RIM_DEPTH`: the most the floor
-  // wander in a ground builder adds to it.
+  // How far a slab's underside can hang below `RIM_DEPTH`, for the box a
+  // slab is placed by. It was the most the old floor's wander added. The
+  // slab's lower edge (`slab.js`) comes less far down the screen than this
+  // everywhere — 1.05 m and an eighth at the very most, less what the taper
+  // lifts it by — so it is left as it was, and the neighbours stand where
+  // Marcus last saw them.
   deepest: 1.22,
 };
 
@@ -412,6 +427,8 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
                                ['position', 'normal', 'uv', 'age'],
                                ['offset', 'colour', 'relief', 'young', 'look']);
   const shadowProgram = program(gl, SHADOW_VERTEX, SHADOW_FRAGMENT, ['position', 'uv', 'fade'], ['loss']);
+  const sideProgram = program(gl, SIDE_SHADERS.vertex, SIDE_SHADERS.fragment,
+                              ['position', 'normal', 'place', 'hang'], ['offset', 'opacity', 'stonesFrom']);
   // **What a plant's shadow lies on.** An area whose floor is not level says
   // how high it is anywhere (`height`, on the builder it hands the stage), so
   // a shadow on a bed's shoulder or a hollow in the litter follows it rather
@@ -426,6 +443,9 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   const plants = [];
   let turn = 0;
   let groundMesh = null;
+  // The slab's side under it, which every ground builder hands back as `side`
+  // (`hangSide`) and which is drawn by its own program.
+  let sideMesh = null;
   // **Glass, for the one area that has any.** A ground builder may hand back a
   // `glass` mesh beside its own, and it is drawn after the plants, blended and
   // without writing depth, so what stands under it shows through. The Cold
@@ -468,6 +488,8 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     // know which two of them are the near ones and a single sign cannot say.
     const built = buildTheGround(farSide, span, e, eye());
     groundMesh = withPieces(gl, ground, upload(gl, ground, built), built.pieces, 'opaque');
+    if (sideMesh) sideMesh.release();
+    sideMesh = built.side ? uploadSide(gl, sideProgram, built.side) : null;
     if (glassMesh) glassMesh.release();
     glassMesh = built.glass ? withPieces(gl, ground, upload(gl, ground, built.glass), built.pieces, 'glass') : null;
     glassOpacity = built.glass?.opacity ?? 1;
@@ -515,7 +537,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     // Kept for `pick`, which has to find a plant where it was last drawn.
     drawn = viewProjection;
 
-    for (const [p, extra] of [[ground, null], [plantProgram, null]]) {
+    for (const [p, extra] of [[ground, null], [sideProgram, null], [plantProgram, null]]) {
       gl.useProgram(p.program);
       gl.uniformMatrix4fv(p.at.viewProjection, false, viewProjection);
       gl.uniform3fv(p.at.sun, LIGHT.sun);
@@ -524,6 +546,11 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
       gl.uniform3fv(p.at.bounce, LIGHT.bounce);
       gl.uniform1f(p.at.strength, LIGHT.strength);
     }
+
+    // **Stones in the side only when the look is zoomed in** (`STONES`), and
+    // then none under eight CSS pixels across: on the whole plot, out of reach.
+    gl.useProgram(sideProgram.program);
+    gl.uniform1f(sideProgram.at.stonesFrom, look.zoom >= STONES.zoom ? STONES.points * ratio : 1e6);
 
     gl.useProgram(ground.program);
     gl.uniform1i(ground.at.upOnly, 0);
@@ -534,6 +561,13 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     gl.uniform1f(ground.at.opacity, 1);
     gl.uniform3fv(ground.at.offset, HERE);
     groundMesh.draw();
+    if (sideMesh) {
+      gl.useProgram(sideProgram.program);
+      gl.uniform1f(sideProgram.at.opacity, 1);
+      gl.uniform3fv(sideProgram.at.offset, HERE);
+      sideMesh.draw();
+      gl.useProgram(ground.program);
+    }
 
     // **Where a shadow may fall: on ground, seen.** The ground is drawn once
     // more into the stencil only, keeping just what faces up, so a shadow
@@ -633,7 +667,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
                   [all.cy + look.y - tall, all.cy + look.y + tall]];
     const { x: across, y: up, z: back } = axes(view);
 
-    gl.uniform1f(ground.at.opacity, BESIDE.dim);
+    const placed = [];
     for (const slab of besides) {
       const [axis, sign] = BESIDE_WAY[slab.direction];
       const [low, high] = size[axis];
@@ -678,10 +712,22 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
       if (at[axis] + low < pane[axis][0] || at[axis] + high > pane[axis][1]) continue;
       if (at[1 - axis] + size[1 - axis][0] < pane[1 - axis][0]
           || at[1 - axis] + size[1 - axis][1] > pane[1 - axis][1]) continue;
-      gl.uniform3fv(ground.at.offset, [0, 1, 2]
-        .map((i) => at[0] * across[i] + at[1] * up[i] - BESIDE.depth * back[i]));
+      placed.push([slab, [0, 1, 2].map((i) => at[0] * across[i] + at[1] * up[i] - BESIDE.depth * back[i])]);
+    }
+    // Each slab's top with the ground's program and then each one's side with
+    // the side's, so the page changes program twice and not twice a slab.
+    gl.uniform1f(ground.at.opacity, BESIDE.dim);
+    for (const [slab, offset] of placed) {
+      gl.uniform3fv(ground.at.offset, offset);
       slab.mesh.draw();
     }
+    gl.useProgram(sideProgram.program);
+    gl.uniform1f(sideProgram.at.opacity, BESIDE.dim);
+    for (const [slab, offset] of placed) {
+      gl.uniform3fv(sideProgram.at.offset, offset);
+      slab.side.draw();
+    }
+    gl.useProgram(ground.program);
   }
 
   // **Where this page stands on the map**, which is the one thing about the
@@ -692,15 +738,19 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   // Built here and once. A turn moves them about the screen and does not
   // change them, so nothing is rebuilt on a turn.
   function beside(theme) {
-    for (const slab of besides) slab.mesh.release();
-    besides = areasBeside(theme).map((area) => ({
-      direction: area.direction,
-      // The terrace, at the slab's own size: a neighbour drawn half a plot
-      // across stands half a step higher, or the ground would disagree with
-      // itself about how far away it is.
-      rise: area.rise * BESIDE.scale,
-      mesh: upload(gl, ground, besideGround(e, area.seed, area.ground)),
-    }));
+    for (const slab of besides) { slab.mesh.release(); slab.side.release(); }
+    besides = areasBeside(theme).map((area) => {
+      const built = besideGround(e, area.seed, area.ground);
+      return {
+        direction: area.direction,
+        // The terrace, at the slab's own size: a neighbour drawn half a plot
+        // across stands half a step higher, or the ground would disagree with
+        // itself about how far away it is.
+        rise: area.rise * BESIDE.scale,
+        mesh: upload(gl, ground, built),
+        side: uploadSide(gl, sideProgram, built.side),
+      };
+    });
     draw();
   }
 
@@ -1230,24 +1280,9 @@ function buildGround(farSide, span, e) {
     tri([0, 0, 0], [a[0], 0, a[1]], [b[0], 0, b[1]], [0, 1, 0], COLOUR.turf);
   }
 
-  // Its sides hang from that outline, down to a floor as rough as a clod's,
-  // in the app's strata: humus, earth, then bedrock.
-  const strata = [[0, COLOUR.humus], [0.16, COLOUR.earth], [0.58, COLOUR.earth], [1, COLOUR.bedrock]];
-  let around = 0;
-  const floor = outline.map((p, i) => {
-    if (i > 0) around += Math.hypot(p[0] - outline[i - 1][0], p[1] - outline[i - 1][1]);
-    return RIM_DEPTH * (1 + 0.22 * wander(around, 1, SEED.floor));
-  });
-  for (let i = 0; i < n; i++) {
-    const j = (i + 1) % n, a = outline[i], b = outline[j];
-    const dx = b[0] - a[0], dz = b[1] - a[1], l = Math.hypot(dx, dz);
-    const normal = [dz / l, 0, -dx / l];
-    for (let k = 0; k < strata.length - 1; k++) {
-      const [f0, c0] = strata[k], [f1, c1] = strata[k + 1];
-      quad([a[0], -f0 * floor[i], a[1]], [b[0], -f0 * floor[j], b[1]],
-           [b[0], -f1 * floor[j], b[1]], [a[0], -f1 * floor[i], a[1]], normal, c0, c0, c1, c1);
-    }
-  }
+  // Its side: the slab every plot hangs from its outline (`slab.js`), the
+  // floor seed saying how its lower edge undulates.
+  const slab = hangSide(outline, { salt: SEED.floor });
 
   // The mown path: verges cut by eye, stripes that follow them, and ends that
   // wander across as well as along.
@@ -1312,7 +1347,7 @@ function buildGround(farSide, span, e) {
     }
   }
   return { positions: new Float32Array(positions), normals: new Float32Array(normals), colours: new Float32Array(colours),
-           casting: new Float32Array(casting) };
+           casting: new Float32Array(casting), side: slab };
 }
 
 // **A slab of the next area's ground, with nothing standing on it.**
@@ -1333,7 +1368,6 @@ function besideGround(e, seed, ground) {
   const positions = [], normals = [], colours = [];
   const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
   const tri = (a, b, c, n, ca, cb = ca, cc = ca) => { vertex(a, n, ca); vertex(b, n, cb); vertex(c, n, cc); };
-  const quad = (a, b, c, d, n, ca, cb = ca, cc = cb, cd = ca) => { tri(a, b, c, n, ca, cb, cc); tri(a, c, d, n, ca, cc, cd); };
   const scale = BESIDE.scale;
 
   const grown = readOutline(e, SIDE, SIDE, seed);
@@ -1344,28 +1378,12 @@ function besideGround(e, seed, ground) {
     tri([0, 0, 0], [a[0], 0, a[1]], [b[0], 0, b[1]], [0, 1, 0], ground);
   }
 
-  // Its sides hang from the outline down to a floor as rough as a clod's, in
-  // the app's strata. The walk's arithmetic, because it is the same slab —
-  // paced round the outline as it was grown, so the floor wanders at a plot's
-  // own rate along it rather than at three times it.
-  const strata = [[0, COLOUR.humus], [0.16, COLOUR.earth], [0.58, COLOUR.earth], [1, COLOUR.bedrock]];
-  let around = 0;
-  const floor = grown.map((p, i) => {
-    if (i > 0) around += Math.hypot(p[0] - grown[i - 1][0], p[1] - grown[i - 1][1]);
-    return RIM_DEPTH * scale * (1 + 0.22 * (e.pg_verge(around, 1, seed) / 0.14));
-  });
-  for (let i = 0; i < n; i++) {
-    const j = (i + 1) % n, a = outline[i], b = outline[j];
-    const dx = b[0] - a[0], dz = b[1] - a[1], l = Math.hypot(dx, dz);
-    const normal = [dz / l, 0, -dx / l];
-    for (let k = 0; k < strata.length - 1; k++) {
-      const [f0, c0] = strata[k], [f1, c1] = strata[k + 1];
-      quad([a[0], -f0 * floor[i], a[1]], [b[0], -f0 * floor[j], b[1]],
-           [b[0], -f1 * floor[j], b[1]], [a[0], -f1 * floor[i], a[1]], normal, c0, c0, c1, c1);
-    }
-  }
+  // Its side is the slab every plot hangs (`slab.js`), worked out on the
+  // outline as it was grown and then shrunk with it — so its lower edge
+  // wanders at a plot's own rate round it rather than at twice it, and its
+  // bands and stones are a plot's, seen from further off.
   return { positions: new Float32Array(positions), normals: new Float32Array(normals),
-           colours: new Float32Array(colours) };
+           colours: new Float32Array(colours), side: hangSide(grown, { salt: seed, scale }) };
 }
 
 export function readOutline(e, width, length, seed) {
@@ -1509,6 +1527,28 @@ export function upload(gl, p, mesh) {
   return {
     draw() { gl.bindVertexArray(vao); gl.drawArrays(gl.TRIANGLES, 0, count); gl.bindVertexArray(null); },
     release() { buffers.forEach((b) => gl.deleteBuffer(b)); gl.deleteVertexArray(vao); },
+  };
+}
+
+// The slab's side (`hangSide`): four attributes and an index, since its
+// columns share their points and a side is hundreds of them round.
+function uploadSide(gl, p, mesh) {
+  const vao = gl.createVertexArray();
+  gl.bindVertexArray(vao);
+  const buffers = [
+    attribute(gl, p.at.position, mesh.positions, 3),
+    attribute(gl, p.at.normal, mesh.normals, 3),
+    attribute(gl, p.at.place, mesh.places, 4),
+    attribute(gl, p.at.hang, mesh.hangs, 4),
+  ];
+  const index = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mesh.indices, gl.STATIC_DRAW);
+  gl.bindVertexArray(null);
+  const count = mesh.indices.length;
+  return {
+    draw() { gl.bindVertexArray(vao); gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_INT, 0); gl.bindVertexArray(null); },
+    release() { buffers.forEach((b) => gl.deleteBuffer(b)); gl.deleteBuffer(index); gl.deleteVertexArray(vao); },
   };
 }
 

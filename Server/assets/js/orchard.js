@@ -21,7 +21,8 @@
 // down again here.
 
 import { decode, takeResult } from './plant.js';
-import { COLOUR, RIM_DEPTH, SIDE, readOutline, readStructure, rimReach } from './longwalk.js';
+import { COLOUR, SIDE, readOutline, readStructure, rimReach } from './longwalk.js';
+import { hangSide } from './slab.js';
 import { floorAround, rimOf, sinkPool } from './water.js';
 
 // Seeds for this area's dressing, so a plot is the same shape on every visit.
@@ -217,29 +218,15 @@ export function makeOrchardGround(place, trunks) {
       }
     }
 
-    // Its sides hang from the outline down to a floor as rough as a clod's, in
-    // the app's strata. The walk's arithmetic, because it is the same slab.
-    const strata = [[0, COLOUR.humus], [0.16, COLOUR.earth], [0.58, COLOUR.earth], [1, COLOUR.bedrock]];
-    let around = 0;
-    const floor = outline.map((p, i) => {
-      if (i > 0) around += Math.hypot(p[0] - outline[i - 1][0], p[1] - outline[i - 1][1]);
-      return RIM_DEPTH * (1 + 0.22 * (e.pg_verge(around, 1, GROVE.floor) / 0.14));
-    });
-    for (let i = 0; i < n; i++) {
-      const j = (i + 1) % n, a = outline[i], b = outline[j];
-      const dx = b[0] - a[0], dz = b[1] - a[1], l = Math.hypot(dx, dz);
-      const normal = [dz / l, 0, -dx / l];
-      for (let k = 0; k < strata.length - 1; k++) {
-        const [f0, c0] = strata[k], [f1, c1] = strata[k + 1];
-        quad([a[0], -f0 * floor[i], a[1]], [b[0], -f0 * floor[j], b[1]],
-             [b[0], -f1 * floor[j], b[1]], [a[0], -f1 * floor[i], a[1]], normal, c0, c0, c1, c1);
-      }
-    }
+    // Its side: the slab every plot hangs from its outline (`slab.js`), the
+    // floor seed saying how its lower edge undulates.
+    const slab = hangSide(outline, { salt: GROVE.floor });
 
     return {
       positions: new Float32Array(positions),
       normals: new Float32Array(normals),
       colours: new Float32Array(colours),
+      side: slab,
       casting: new Float32Array(casting),
       canopy: new Float32Array(canopy),
     };

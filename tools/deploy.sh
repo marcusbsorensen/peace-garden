@@ -173,6 +173,9 @@ check_path /assets/js/plantpanel.js     200 application/javascript
 # The shadows under every plant and beside every hedge, which the stage
 # imports: a page that cannot load it cannot load at all.
 check_path /assets/js/shadow.js         200 application/javascript
+# The slab every plot hangs, which the stage and every area's ground import:
+# the same again.
+check_path /assets/js/slab.js           200 application/javascript
 check_path /assets/places.json    200 application/json
 check_path /assets/stars.bin      200 application/octet-stream
 check_path /assets/icon.svg     200 image/svg+xml
