@@ -54,8 +54,8 @@ falls short of the claim, the entry says so.
 ### From planting design
 
 - **Drifts.** Plant in long, narrow patches rather than blocks, so neighbouring
-  groups overlap along the border. Jekyll argued for "long rather than
-  block-shaped patches" so that no plant leaves a square hole
+  groups overlap along the border. Jekyll argued for long patches rather than
+  blocks, so that no plant leaves a square hole
   ([*Colour Schemes for the Flower Garden*, ch. III](https://archive.org/stream/cu31924002831117/cu31924002831117_djvu.txt)).
 - **Grading.** Run colour along a border from cool at the ends to hot in the
   middle, as Jekyll's main border at Munstead Wood did
@@ -70,18 +70,18 @@ falls short of the claim, the entry says so.
   ground cover. Order comes from the height relief, not from rows
   ([JKI](https://wissen.julius-kuehn.de/mediaPublic/UrbanesGruen/FS/SG/05/FS_5_Stadtgruen_1_Schmidt.pdf)).
   It is the horticultural precedent for placing seed-chosen plants without a grid.
-- **Repetition.** Repeating a plant or colour at intervals makes a place read as
-  "one place" (Oudolf, in
+- **Repetition.** Repeating a plant or colour at intervals makes a garden read as
+  one place (Oudolf, in
   [Gardenista](https://www.gardenista.com/posts/10-garden-ideas-to-steal-from-superstar-dutch-designer-piet-oudolf/)).
-  Without such devices, intermingling becomes "a functional and aesthetic mess"
+  Without such devices, intermingling turns to a muddle, functionally and to the eye
   ([Rainer, Thinkingardens](https://thinkingardens.co.uk/articles/mingle-or-clump-by-thomas-rainer/)).
 - **Formal frame, loose fill.** A curving clipped hedge holds naturalistic
   planting at Bury Court
   ([Gardens Illustrated](https://www.gardensillustrated.com/gardens/country/south-downs-john-coke)).
   Wirtz clipped evergreens into undulating "clouds", formal mass without straight
   lines ([Jacques Wirtz](https://en.wikipedia.org/wiki/Jacques_Wirtz)).
-- **Seen from above.** Knots and broderie parterres were "designed to be seen from
-  above" ([English Heritage](https://www.english-heritage.org.uk/learn/histories/perfect-parterres/);
+- **Seen from above.** Knots and broderie parterres were made to be looked down on
+  ([English Heritage](https://www.english-heritage.org.uk/learn/histories/perfect-parterres/);
   [Knot garden](https://en.wikipedia.org/wiki/Knot_garden)). The page's eye is the
   eye they were made for.
 
@@ -96,15 +96,15 @@ falls short of the claim, the entry says so.
   ([ArchDaily, Isozaki](https://www.archdaily.com/882896/arata-isozaki-on-ma-the-japanese-concept-of-in-between-space)).
 - **Hide and reveal (*miegakure*).** A partial view creates expectation
   ([NAJGA](https://najga.org/stroll-garden/)).
-- **Roji.** A tea garden's stepping-stone path is laid to give "a sense of
-  traveling a considerable distance", with a waiting bench before the tea house
+- **Roji.** A tea garden's stepping-stone path is laid to make a short walk feel
+  like a long journey, with a waiting bench before the tea house
   ([Portland Japanese Garden](https://japanesegarden.org/garden-spaces/tea-garden/)).
 - **Chahar bagh.** Four quarters divided by water channels meeting at a central
   pool, with sunk beds ([Paradise garden](https://en.wikipedia.org/wiki/Paradise_garden),
   [Charbagh](https://en.wikipedia.org/wiki/Charbagh)).
 - **Clumps, varied.** Brown composed with belts, clumps and single trees
   ([Gardens Trust](https://thegardenstrust.org/history-hub/capability-brown-wimpole-hall/)).
-  Price mocked clumps "turned out of one common mould"
+  Price mocked clumps that all looked cast from one mould
   ([Capability Brown](https://en.wikipedia.org/wiki/Capability_Brown)), so no two
   should match.
 - **Meadow orchard.** Standards in permanent long grass, often on a quincunx
@@ -146,8 +146,8 @@ falls short of the claim, the entry says so.
 - **Curves.** Curved forms are preferred to angular ones, with a medium effect
   across 61 studies ([Bar & Neta 2006](https://www.semanticscholar.org/paper/Humans-Prefer-Curved-Visual-Objects-Bar-Neta/52b1c06824f96a513c7e9b0f4fed1289b566c028);
   [Chuquichambi et al. 2022](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10091794/)).
-- **A bold curve, finely wandering.** Penn State warns that "wobbly lines feel
-  immature" ([Principles of garden design](https://extension.psu.edu/principles-of-garden-design)).
+- **A bold curve, finely wandering.** Penn State warns against wobbly lines, which
+  read as unresolved ([Principles of garden design](https://extension.psu.edu/principles-of-garden-design)).
   So the proposals use one big curve with fine irregularity on it, not jitter at
   every scale.
 - **Middle fractal dimension.** Preference peaks around D 1.3–1.5
