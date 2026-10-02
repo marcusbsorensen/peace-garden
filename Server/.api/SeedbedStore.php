@@ -31,9 +31,9 @@ require_once __DIR__ . '/Seedbed.php';
  * wrong after a restore.
  *
  * **`slot_span` is how many places a planting holds**, since 25 September 2026,
- * when a lotus began to take two (`Seedbed::span`). It is part of the place: the
- * next plant along a drill is sown after both of a lotus's places, and the spot
- * is their middle. Stored rather than read again off the habit, because a
+ * when a lotus began to take two (`Seedbed::span`). It is part of the place: no
+ * later plant is sown in either of a lotus's places, and the spot is their
+ * middle. Stored rather than read again off the habit, because a
  * planting made before the rule holds one place whatever it is, and the column's
  * default of 1 says so for every row that was there when it was added.
  * **`habit` is stored beside it** because a replant regrows every plant and the
@@ -221,7 +221,6 @@ final class SeedbedStore
         $plantings = array_map([self::class, 'planting'], $query->fetchAll());
         if ($plot !== 0) return $plantings;
         $standing = Ambassadors::planting('beginnings');
-        [$x, $z] = Seedbed::spot($standing['drill'], $standing['index'], $standing['span']);
         array_unshift($plantings, [
             'seed' => $standing['seed'],
             'parents' => [],
@@ -230,7 +229,8 @@ final class SeedbedStore
             'drill' => $standing['drill'],
             'kind' => $standing['kind'],
             'span' => $standing['span'],
-            'spot' => [$x + $standing['nudgeX'], $z + $standing['nudgeZ']],
+            'spot' => Seedbed::spot(0, $standing['drill'], $standing['index'], $standing['span'],
+                                    $standing['nudgeX'], $standing['nudgeZ']),
         ]);
         return $plantings;
     }
@@ -267,7 +267,8 @@ final class SeedbedStore
      */
     private static function planting(array $row): array
     {
-        [$x, $z] = Seedbed::spot((int) $row['drill'], (int) $row['slot_index'], (int) ($row['slot_span'] ?? 1));
+        $spot = Seedbed::spot((int) $row['plot'], (int) $row['drill'], (int) $row['slot_index'],
+                              (int) ($row['slot_span'] ?? 1), (float) $row['nudge_x'], (float) $row['nudge_z']);
         return [
             'seed' => $row['seed'],
             'parents' => [$row['parent_a'], $row['parent_b']],
@@ -276,7 +277,7 @@ final class SeedbedStore
             'drill' => (int) $row['drill'],
             'kind' => (string) $row['kind'],
             'span' => (int) ($row['slot_span'] ?? 1),
-            'spot' => [$x + (float) $row['nudge_x'], $z + (float) $row['nudge_z']],
+            'spot' => $spot,
         ];
     }
 

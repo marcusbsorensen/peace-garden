@@ -5,7 +5,8 @@ import Foundation
 #endif
 
 /// The Seedbed: six drills across a bed of fine tilth, each drill sown with one
-/// kind, filling from the labelled end.
+/// kind, the drills curving along the contour of a bed that falls toward its
+/// low side.
 ///
 /// **The first rule in the garden that groups by sameness.** The five areas
 /// before it all sort by difference — the Long Walk grades a border by height,
@@ -32,6 +33,25 @@ import Foundation
 /// roots — and **173 of every 501 arrivals here are lilies**, so the wet rows
 /// are a third of the bed rather than a curiosity in the corner.
 ///
+/// **Drills on the contour, since 2 October 2026** (Marcus, from
+/// `design/garden-layouts-2026-10-02/RESEARCH.md`, the Seedbed, option A). The
+/// six drills were straight and parallel, each labelled at its north end and
+/// sown from there. Now they curve as concentric arcs, the way rows follow the
+/// fall of a bed, from a table made offline (`PlaceTable.seedbedDrills`):
+///
+/// - **The water lies low.** The bed falls toward `z+`. A dry kind claims the
+///   highest drill nobody has sown and a water kind the lowest, so the flooded
+///   drills gather at the foot of the bed like paddies and the dry ones at its
+///   head. Which drill a kind claims changes; whether it can claim one, and in
+///   which plot, does not.
+/// - **A drill is sown from its middle**, not from its label: the place
+///   nearest its middle first, then farthest-first, so a drill of one, three
+///   or five plants looks sown rather than half written. A flooded drill is
+///   sown the same way in pairs, because a lily takes two places side by side.
+///   Neither order changes how many plants a drill holds.
+/// - **Plots alternate**, mirrored one to the next (`variants`), so the labels
+///   stand at the west end of one plot and the east end of the next.
+///
 /// **Nothing here reads a height.** The drill comes from the kind and the
 /// element and the place in it from the order of arrival, so this is the only
 /// area whose placement a grown height cannot move. `SeedbedVectorTests`
@@ -39,10 +59,11 @@ import Foundation
 /// is why this area needs no `placementCannotTurn` check: it has no cuts to
 /// stand near. The element is read from the habit, which is picked from the
 /// seed's bytes with no `sin` or `pow` in it, so it is exact on every host
-/// like the kind. See `.claude/HANDOVER.md` §*The libm divergence*.
+/// like the kind. See `.claude/HANDOVER.md` §*The libm divergence*. A place
+/// comes from the table and the plot's variant only changes its sign, so a
+/// spot is exact on every host too.
 ///
-/// Append-only, like the other five. A plant never moves, and a drill's order
-/// is the order it was sown in.
+/// Append-only, like the other five. A plant never moves.
 public enum Seedbed {
 
     /// The same square as every other area, so the map, the camera and the
@@ -50,9 +71,9 @@ public enum Seedbed {
     public static let plotSide = 5.2
 
     /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
-    /// Marcus's decision of 2 October 2026). Mirrored only, so the drills keep
-    /// the side of the plot they were laid to. Declared but not yet read: the
-    /// area's new layout reads it.
+    /// Marcus's decision of 2 October 2026). Mirrored only, so a plot is laid
+    /// as drawn or mirrored across the bed, alternately: the water stays on the
+    /// low side and the labels change ends.
     public static let variants = PlotVariant.Space(mirror: true)
 
     /// Six drills of eight, chosen by Marcus from three offers on 23 September.
@@ -61,20 +82,70 @@ public enum Seedbed {
     public static let drills = 6
     public static let places = 8
 
-    /// Across the bed, between one drill and the next.
+    /// Across the bed, between one drill and the next, and along a drill
+    /// between one plant and the next: the straight bed's spacing, kept when
+    /// the drills curved (`tools/layouts/tables/seedbed_drills.py`).
     public static let drillGap = 0.74
-    /// Along a drill, between one plant and the next.
     public static let alongGap = 0.52
 
-    /// Where a drill's label stands, in `z`: a little beyond the first plant,
-    /// at the end the drill fills from.
-    public static let labelAt = -2.15
+    /// The drills and their places, made offline.
+    public static let table = PlaceTable.seedbedDrills
+
+    /// Where each place stands in the table, before the plot is mirrored:
+    /// `at[drill][index]`, `index` 0 nearest the drill's label.
+    static let at: [[Spot]] = {
+        var out = Array(repeating: Array(repeating: Spot(x: 0, z: 0), count: places), count: drills)
+        for place in table.places(nudge: 0) {
+            out[table.tag("drill", of: place)][table.tag("index", of: place)] = place.spot
+        }
+        return out
+    }()
+
+    /// **The order a dry drill is sown in**: each drill's places as the table
+    /// lists them, the one nearest its middle first and then farthest-first.
+    static let dryOrder: [[Int]] = {
+        var out = Array(repeating: [Int](), count: drills)
+        for place in table.places(nudge: 0) {
+            out[table.tag("drill", of: place)].append(table.tag("index", of: place))
+        }
+        return out
+    }()
+
+    /// **The order a flooded drill is sown in**: by pairs, the table's `pair`
+    /// rank, and within a pair the place nearer the label first. A lily takes
+    /// a whole pair and a reed the first free place, so two reeds share a pair
+    /// before a third opens another and a flooded drill of lilies still holds
+    /// four.
+    static let wetOrder: [[Int]] = {
+        var out = Array(repeating: [(pair: Int, index: Int)](), count: drills)
+        for place in table.places(nudge: 0) {
+            out[table.tag("drill", of: place)].append((table.tag("pair", of: place), table.tag("index", of: place)))
+        }
+        return out.map { $0.sorted { ($0.pair, $0.index) < ($1.pair, $1.index) }.map(\.index) }
+    }()
+
+    /// **Which drills a plant claims first**: a dry plant the highest, a water
+    /// plant the lowest. Drill 0 is the top of the bed and drill 5 its foot.
+    static func claimOrder(wet: Bool) -> [Int] {
+        wet ? Array((0..<drills).reversed()) : Array(0..<drills)
+    }
+
+    /// The variant a plot is laid with: plain, then mirrored, alternately.
+    public static func variant(of plot: Int) -> PlotVariant {
+        PlotVariant.of(plot: plot, area: .beginnings)
+    }
+
+    /// **Where a drill's label stands**, in the table: the first point of its
+    /// line, a third of a metre before its first place, at the west end.
+    public static func label(of drill: Int) -> Spot {
+        table.curve("drill\(drill)", on: PlotVariant.plain).points[0]
+    }
 
     /// One place in one plot: which drill, and how far along it.
     ///
-    /// `index` 0 is the place nearest the label, and a drill fills from there
-    /// outward, so reading a drill from its label is reading it in the order it
-    /// was sown.
+    /// `index` 0 is the place nearest the label. A drill is not sown in that
+    /// order since 2 October 2026 (`dryOrder`, `wetOrder`); the index still
+    /// says where along the drill a place is, which is what it is stored as.
     public struct Slot: Codable, Equatable, Hashable, Sendable {
         public var drill: Int
         public var index: Int
@@ -84,15 +155,14 @@ public enum Seedbed {
             self.index = index
         }
 
-        public var spot: Spot {
-            Spot(x: (Double(drill) - Double(Seedbed.drills - 1) / 2) * Seedbed.drillGap,
-                 z: (Double(index) - Double(Seedbed.places - 1) / 2) * Seedbed.alongGap)
-        }
+        /// Where the place is in the table, before its plot is mirrored.
+        public var spot: Spot { Seedbed.at[drill][index] }
     }
 
-    /// Every place in a plot, drill by drill.
+    /// Every place in a plot, drill by drill, each drill in the order a dry
+    /// drill is sown.
     public static let slots: [Slot] = (0..<drills).flatMap { drill in
-        (0..<places).map { Slot(drill: drill, index: $0) }
+        dryOrder[drill].map { Slot(drill: drill, index: $0) }
     }
 
     /// How many places along a drill a plant takes: **two for a lotus, one
@@ -131,22 +201,25 @@ public enum Seedbed {
         public var span: Int
         public var traits: PlantTraits
         /// A small offset from the place, from the seed, and the only area
-        /// whose two directions differ: 0.035 m across the drill and 0.06 m
-        /// along it. **A drill has to read as a line**, which is the whole of
-        /// what a seedbed looks like, and a line survives being uneven along
-        /// its length but not being uneven across it. It leaves 0.40 m between
-        /// neighbours in a drill at worst, and 0.67 m between drills.
+        /// whose two directions differ: 0.06 m along the drill, which runs
+        /// across the bed in `x` since 2 October 2026, and 0.035 m across it.
+        /// **A drill has to read as a line**, which is the whole of what a
+        /// seedbed looks like, and a line survives being uneven along its
+        /// length but not being uneven across it.
         public var nudge: Spot
 
-        /// Where it stands: the middle of the places it holds, and its nudge.
-        /// **A lotus stands centred across its two**, half a place further
-        /// from the label than its first. Worked out from a place counted in
-        /// halves, so a plant holding one place stands exactly where
-        /// `Slot.spot` puts it, to the last bit.
+        /// Where it stands: the middle of the places it holds, and its nudge,
+        /// mirrored as its plot is. **A lotus stands centred across its two**,
+        /// half a place further from the label than its first. A plant holding
+        /// one place stands on its place, to the last bit.
         public var spot: Spot {
-            let at = Double(slot.index) + Double(span - 1) / 2
-            return Spot(x: slot.spot.x + nudge.x,
-                        z: (at - Double(Seedbed.places - 1) / 2) * Seedbed.alongGap + nudge.z)
+            let a = Seedbed.at[slot.drill][slot.index]
+            var middle = a
+            if span == 2, slot.index + 1 < Seedbed.places {
+                let b = Seedbed.at[slot.drill][slot.index + 1]
+                middle = Spot(x: (a.x + b.x) / 2, z: (a.z + b.z) / 2)
+            }
+            return Seedbed.variant(of: plot).apply(Spot(x: middle.x + nudge.x, z: middle.z + nudge.z))
         }
 
         /// Every place it holds, from the label outward.
@@ -176,14 +249,22 @@ public enum Seedbed {
         }
     }
 
+    /// One drill of one plot as the rule reads it: what claimed it, whether
+    /// it is under water, and which of its places are held.
+    struct Drill {
+        var kind: String?
+        var wet: Bool?
+        var held: Set<Int> = []
+    }
+
     /// The whole area: every planting, in the order they arrived.
     public struct Ways: Codable, Equatable, Sendable {
         public private(set) var plantings: [Planting] = []
 
         public init() {}
 
-        /// **The Seedbed as it opened**: the beginnings ambassador at the head
-        /// of the first drill, and nothing else.
+        /// **The Seedbed as it opened**: the beginnings ambassador in the first
+        /// drill, and nothing else.
         public static func opened() -> Ways {
             var ways = Ways()
             let one = Ambassadors.of(.beginnings)
@@ -219,12 +300,39 @@ public enum Seedbed {
             self.plot(plot).first { $0.slot.drill == drill }?.traits.wantsWater
         }
 
-        /// How many places in a drill are held. A drill fills from the label
-        /// without a gap, so this is also the index of its next place. It was
-        /// how many plants stand in it until a lotus took two, and it still is
-        /// for a drill with no lotus in it.
+        /// How many places in a drill are held, a lotus's two counted as two.
+        /// A drill is full at `Seedbed.places`.
         public func sown(_ drill: Int, in plot: Int) -> Int {
-            self.plot(plot).filter { $0.slot.drill == drill }.map { $0.slot.index + $0.span }.max() ?? 0
+            self.plot(plot).filter { $0.slot.drill == drill }.map(\.span).reduce(0, +)
+        }
+
+        /// Every drill of every plot, read in one pass over the plantings.
+        func drills(_ count: Int) -> [[Drill]] {
+            var out = Array(repeating: Array(repeating: Drill(), count: Seedbed.drills), count: count)
+            for p in plantings where p.plot < count {
+                if out[p.plot][p.slot.drill].kind == nil {
+                    out[p.plot][p.slot.drill].kind = p.traits.kind
+                    out[p.plot][p.slot.drill].wet = p.traits.wantsWater
+                }
+                for slot in p.slots { out[p.plot][p.slot.drill].held.insert(slot.index) }
+            }
+            return out
+        }
+
+        /// The first place in this drill a plant of this span and element can
+        /// take, in the order the drill is sown, or nil if it has none.
+        ///
+        /// **A lotus takes a whole pair**, the next free one in the flooded
+        /// order. A drill of its kind whose free places are not two of one pair
+        /// has no room for it, and it goes on as a plant finding the drill full
+        /// does; the place stays for a plant of one place of that kind.
+        static func free(in drill: Int, held: Set<Int>, span: Int, wet: Bool) -> Int? {
+            let order = wet ? Seedbed.wetOrder[drill] : Seedbed.dryOrder[drill]
+            for index in order where !held.contains(index) {
+                if span == 1 { return index }
+                if index % 2 == 0, index + 1 < Seedbed.places, !held.contains(index + 1) { return index }
+            }
+            return nil
         }
 
         /// Where this plant goes, without planting it.
@@ -235,12 +343,6 @@ public enum Seedbed {
         /// not arrived holds nothing — which is what keeps a rare kind from
         /// pinning a drill open in every plot.
         ///
-        /// **A lotus needs two places side by side**, the next two its drill
-        /// would fill. A drill of its kind with one place left has no room for
-        /// it, and it goes on as a plant finding the drill full does; the place
-        /// stays for a plant of one place of that kind. An unclaimed drill and
-        /// a new plot always have two.
-        ///
         /// **A drill is claimed by kind and by element**, since 27 September
         /// 2026. A kind is an epithet and an epithet says what is most so
         /// about a plant, not what it is — *rubra* is red and a water lily can
@@ -248,29 +350,41 @@ public enum Seedbed {
         /// lily joins a flooded drill of its kind and a dry plant a dry one;
         /// neither will take the other's, and a half-flooded drill is not a
         /// thing a nursery has.
+        ///
+        /// **And from its own side of the bed**, since 2 October 2026: a dry
+        /// plant claims the highest unclaimed drill, a water plant the lowest
+        /// (`claimOrder`), and takes the first place its drill is sown in. Both
+        /// steps still look at every drill of a plot before the next plot, so
+        /// which plot a plant goes to, and so how many plots there are, is what
+        /// it was.
         public func place(for traits: PlantTraits) -> (plot: Int, slot: Slot) {
             let count = max(plots, 1)
             let span = Seedbed.span(of: traits)
             let wet = traits.wantsWater
+            let order = Seedbed.claimOrder(wet: wet)
+            let state = drills(count)
 
             // A drill of this kind and this element with room in it, oldest
             // plot first.
             for plot in 0..<count {
-                for drill in 0..<Seedbed.drills
-                    where kind(of: drill, in: plot) == traits.kind && isWater(drill, in: plot) == wet {
-                    let next = sown(drill, in: plot)
-                    if next + span <= Seedbed.places { return (plot, Slot(drill: drill, index: next)) }
+                for drill in order {
+                    let here = state[plot][drill]
+                    guard here.kind == traits.kind, here.wet == wet else { continue }
+                    if let index = Ways.free(in: drill, held: here.held, span: span, wet: wet) {
+                        return (plot, Slot(drill: drill, index: index))
+                    }
                 }
             }
 
-            // Otherwise the first drill nobody has sown, oldest plot first.
+            // Otherwise the first drill nobody has sown on its own side of the
+            // bed, oldest plot first.
             for plot in 0..<count {
-                for drill in 0..<Seedbed.drills where kind(of: drill, in: plot) == nil {
-                    return (plot, Slot(drill: drill, index: 0))
+                for drill in order where state[plot][drill].kind == nil {
+                    return (plot, Slot(drill: drill, index: Ways.free(in: drill, held: [], span: span, wet: wet)!))
                 }
             }
 
-            return (count, Slot(drill: 0, index: 0))
+            return (count, Slot(drill: order[0], index: Ways.free(in: order[0], held: [], span: span, wet: wet)!))
         }
 
         /// Plant one arrival, and say where it went.
@@ -283,7 +397,7 @@ public enum Seedbed {
                 return (Double(bytes[i]) / 255 - 0.5) * 2 * reach
             }
             let planting = Planting(seed: seed.hex, plot: plot, slot: slot, span: Seedbed.span(of: traits),
-                                    traits: traits, nudge: Spot(x: jitter(26, 0.035), z: jitter(27, 0.06)))
+                                    traits: traits, nudge: Spot(x: jitter(26, 0.06), z: jitter(27, 0.035)))
             plantings.append(planting)
             return planting
         }

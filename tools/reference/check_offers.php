@@ -366,8 +366,10 @@ check('the kind survived the asking', $sown !== null && $sown['kind'] === 'conto
 // kind was dropped would be sown in the first drill nobody has claimed and look
 // exactly like this one. What tells them apart is the kind in the row above and
 // the plant that follows it below.
+// Since 2 October 2026 a drill is sown from its middle: the first place of
+// the drill's own order, not the place by its label.
 check('it claimed a drill of its own', $sown !== null && (int) $sown['drill'] === 1
-      && (int) $sown['slot_index'] === 0);
+      && (int) $sown['slot_index'] === Seedbed::dryOrder(1)[0]);
 
 $seven = crossing(7);
 $mine7 = token('seven/mine');
@@ -380,7 +382,7 @@ $beside = sownAs($walk, $seven['seed']);
 // this area reads neither, and a kind that had been dropped would have opened a
 // third drill instead.
 check('a second plant of that kind joins the same drill',
-      $beside !== null && (int) $beside['drill'] === 1 && (int) $beside['slot_index'] === 1);
+      $beside !== null && (int) $beside['drill'] === 1 && (int) $beside['slot_index'] === Seedbed::dryOrder(1)[1]);
 
 // And an offer made without a kind — which is every offer made before the
 // column existed — still plants, in the drill of unnamed plants.
@@ -766,18 +768,20 @@ check('and nothing is given its place', $later !== null && (int) $later['slot_in
 
 // The Seedbed's drill of *contorta* is dry, sown with two plants that sent no
 // habit. A lotus of that kind wants water, so it passes the dry drill by,
-// floods the first drill nobody has claimed, and takes its first two places,
-// whatever its height and colour.
+// floods the lowest drill nobody has claimed, at the foot of the bed, and takes
+// the first pair that drill is sown in, whatever its height and colour.
 $lotusSeed = hash('sha256', 'check_offers: a lotus in the seedbed');
 [$sownLotus] = $walk->plantInto('beginnings', $lotusSeed, hash('sha256', 'la'), hash('sha256', 'lb'),
                                 hash('sha256', 'le'), 0.3, 1, 'contorta', null, 'lotus');
 $sown = held($db, 'seedbed', $lotusSeed);
+$pair = Seedbed::wetOrder(5);
 check('a lotus in the Seedbed floods a drill of its kind and holds two places in it', $sown !== null
-      && ($sownLotus['drill'] ?? null) === 3 && ($sownLotus['kind'] ?? null) === 'contorta'
-      && (int) $sown['slot_index'] === 0 && (int) $sown['slot_span'] === 2 && $sown['habit'] === 'lotus');
-[$x0, $z0] = Seedbed::spot(3, 0);
-[$x0, $z1] = Seedbed::spot(3, 1);
-check('and stands between them', abs($sownLotus['spot'][1] - ($z0 + $z1) / 2) <= 0.06 + 1e-9);
+      && ($sownLotus['drill'] ?? null) === 5 && ($sownLotus['kind'] ?? null) === 'contorta'
+      && (int) $sown['slot_index'] === $pair[0] && (int) $sown['slot_span'] === 2 && $sown['habit'] === 'lotus');
+[$x0, $z0] = Seedbed::at(5, $pair[0]);
+[$x1, $z1] = Seedbed::at(5, $pair[1]);
+check('and stands between them', abs($sownLotus['spot'][0] - ($x0 + $x1) / 2) <= 0.06 + 1e-9
+      && abs($sownLotus['spot'][1] - ($z0 + $z1) / 2) <= 0.035 + 1e-9);
 
 // A published plant's seed, parents and meeting are public. Offering it again
 // with two invented tokens must not hand back the real ones, or the stranger

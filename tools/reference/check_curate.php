@@ -103,6 +103,10 @@ copy(dirname($api) . '/index.php', "$site/index.php");
 foreach (glob("$api/*.php") as $php) {
     if (basename($php) !== 'config.php') copy($php, "$site/.api/" . basename($php));
 }
+// And the place tables the areas' rules read (`tools/layouts`), since 2 October
+// 2026, which live in a folder of their own.
+@mkdir("$site/.api/tables", 0700, true);
+foreach (glob("$api/tables/*.php") ?: [] as $php) copy($php, "$site/.api/tables/" . basename($php));
 file_put_contents("$site/.api/config.php", '<?php return ' . var_export(['dsn' => $dsn], true) . ';');
 
 $listen = stream_socket_server('tcp://127.0.0.1:0');
