@@ -919,13 +919,16 @@ would stand at whichever table place has its number, often in another tier.
 `tools/replant` writes the same columns, with no schema change. Capacity is
 unchanged; plot assignment is not, and the live walk will take fewer plots.
 
+**Decided, 2 October 2026: the drifts stay as built.** Marcus kept them,
+knowing what they cost. **11.5% of settled plants stand one height tier from
+their own band** (2.5% in the rows), never with anything taller in front of
+them, in exchange for **22 plots and 98.9% of places held in settled plots**.
+The rule tries the tier beside in an old plot before it opens a new one, and
+that is what fills the plots. He declined the purer-tier variant, a plant
+trying its own tier in every plot first, which measured 24 plots and 91.9%
+held in settled plots.
+
 **Left open:**
-- **More plants stand a tier from their own**: 11.5% of settled plants against
-  2.5% in the rows, every one still in order. The rule tries the tier beside
-  in an old plot before opening a new one, which is what fills the plots. A
-  plant trying its own tier in every plot first measured 24 plots and 91.9%
-  held in settled plots, the baseline's plot count with 0.3 points fewer held,
-  so it was not built.
 - **The near border's bed is mostly hidden** behind the low hedge from the
   page's eye, as its plants always were.
 - **The path is unchanged**; bending it was option B.
@@ -1763,14 +1766,64 @@ curved drill, odd plots mirrored, none colliding and none changing drill; but
 only the replant gives the old plots the new claims and the new order. Plot
 assignment is unchanged.
 
-**Left open:** the drills curve gently, 0.17–0.30 m over 3.6 m, because six
-drills 0.74 m apart fill 3.7 m of the bed's depth and leave no room for more
-bow; seen from the page's eye the flooded drills read as arcs and the dry ones
-nearly straight, and a stronger curve needs a narrower gap between drills,
-which is Marcus's number. A drill of two looks lopsided, the middle and one
-end, which is what focal-first gives on a row; from three up it is balanced.
-Three stems in five hundred stand inside a lotus's pads (one before): two are
-reeds beside a lily's pair, each nudged toward it, under the test's bar of 1%.
+**Left open, as built:** the drills curved gently, 0.17–0.30 m over 3.6 m,
+because six drills 0.74 m apart fill 3.7 m of the bed's depth and leave no
+room for more bow; seen from the page's eye the flooded drills read as arcs and
+the dry ones nearly straight, and a stronger curve needed a narrower gap
+between drills, which was Marcus's number. **He gave it the same day** (below).
+A drill of two looks lopsided, the middle and one end, which is what
+focal-first gives on a row; from three up it is balanced. Three stems in five
+hundred stood inside a lotus's pads (one before): two are reeds beside a lily's
+pair, each nudged toward it, under the test's bar of 1%.
+
+### Curved more, closer together, 2 October 2026
+
+**Decided.** *Curve more, narrower gaps.* Marcus, from the renders of the
+contour bed, so that every drill reads as an arc from the page's eye, the dry
+ones at the head included. Notes and renders:
+`design/garden-layouts-2026-10-02/built/seedbed.md`, *Curved more*.
+
+- **0.60 m between drills, where there were 0.74 m**, about a point 4.8 m below
+  the top drill rather than 9.4 m. Along a drill is unchanged, 0.52 m. Each
+  drill still stands centred across the bed, so on the tighter arcs at the foot
+  its ends come in and the labels stand on a curve.
+- **Every drill bows**, measured over its eight places: 0.33 m at the top,
+  then 0.39, 0.46, 0.52, 0.64 and 0.84 m at the foot, where the flooded drills
+  now curve round like paddies. The dry drills, which claim from the head,
+  bow 0.33–0.46 m; they bowed 0.17–0.25 m. The foot drill's ends and their
+  pools still lie inside the slab.
+- **A plant's nudge is laid along and across its drill** where it stands
+  (`Seedbed.along`, `Seedbed::along`): 0.06 m along it and 0.035 m across,
+  turned to the line between the places either side, or a lotus's two. On the
+  tighter arcs the `x` the nudge ran along before is half across the drill at
+  its ends, and a drill has to read as a line. Only a difference, a square root
+  and a division, so a spot is still exact on every host.
+- **What is unchanged**: six drills of eight, every drill's capacity, which
+  plot every plant goes to, which drill it claims and how many places it
+  holds, and the lotus's two places along a drill. Every drill is sown in
+  the order it was but drill 1, whose fifth and sixth places swap on its new
+  arc, so 17 of the 500 vector rows take another place in that drill.
+- **The fill is the baseline's, to the place**: 36 plots at 1,000, 73.8% held,
+  77.3% in settled plots. Where a drill lies cannot change which drills are
+  claimed or how full they get.
+- **The spacing floors that moved**, and by how much:
+  - the gap itself, 0.74 → 0.60 m; the nearest two places in neighbouring
+    drills are 0.58 m apart (0.72), still wider than along a drill;
+  - the test's floor across, `drillGap − 0.06`, so 0.68 → 0.54 m;
+  - a flooded drill's trough keeps its 0.54 m width, Marcus's, so two flooded
+    drills side by side are dug with 0.06 m of tilth between the dishes (0.20
+    m before) and their water lies 0.20 m apart across a wet bank (0.34 m);
+  - **stems inside a lotus's pads: five of 501, the test's bar of 1%** (two,
+    with the nudge laid along the drill, at 0.74 m). One is along a drill as
+    before; four are across one, a lily beside a lily or a reed in the next
+    drill 0.54–0.65 m away, which the widest pads now reach. The rule along a
+    drill is untouched.
+  - Nothing else moved: 0.48 m between any two places in the table, 0.39 m
+    between any two plants, ±2.06 m for every place, a plant within 0.06 m of
+    its drill's line.
+- **A deploy re-lays every plot by itself**, as before: each planting moves
+  onto its place on the tighter drill, none colliding and none changing drill
+  or plot. The replant needs nothing new for this.
 
 ## The Cold Frame, built
 

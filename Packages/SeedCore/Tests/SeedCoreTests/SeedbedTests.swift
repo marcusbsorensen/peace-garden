@@ -77,22 +77,44 @@ final class SeedbedTests: XCTestCase {
             XCTAssertLessThan(abs(slot.spot.z) + 0.035, edge - 0.5, "drill \(slot.drill) is at the rim")
         }
         // Each label stands beyond its drill's first place, at its west end,
-        // and inside the bed.
+        // and inside the bed. **Measured along the drill since it curved
+        // more**, on 2 October 2026: at the foot a drill's ends turn down the
+        // bed, so its label is a third of a metre before its first place but
+        // much less than that to the west of it.
         for drill in 0..<Seedbed.drills {
-            let label = Seedbed.label(of: drill), first = Seedbed.Slot(drill: drill, index: 0).spot
-            XCTAssertLessThan(label.x, first.x - 0.2, "drill \(drill)'s label is not at its head")
+            let label = Seedbed.label(of: drill)
+            let first = Seedbed.Slot(drill: drill, index: 0).spot, last = Seedbed.Slot(drill: drill, index: 7).spot
+            let toFirst = ((label.x - first.x) * (label.x - first.x) + (label.z - first.z) * (label.z - first.z)).squareRoot()
+            let toLast = ((label.x - last.x) * (label.x - last.x) + (label.z - last.z) * (label.z - last.z)).squareRoot()
+            XCTAssertGreaterThan(toFirst, 0.3, "drill \(drill)'s label crowds its first place")
+            XCTAssertGreaterThan(toLast, toFirst + 2.5, "drill \(drill)'s label is not at its head")
+            XCTAssertLessThan(label.x, first.x, "drill \(drill)'s label is not at its west end")
             XCTAssertGreaterThan(label.x, -edge + 0.2, "drill \(drill)'s label is at the rim")
+            XCTAssertLessThan(abs(label.z), edge - 0.2, "drill \(drill)'s label is at the rim")
         }
     }
 
     /// **The drills are on the contour**: each is an arc, curving the same way
-    /// as the one beside it, and they stand 0.74 m apart all along their length.
+    /// as the one beside it, and they stand `drillGap` apart all along their
+    /// length: 0.74 m until they curved more on 2 October 2026.
+    ///
+    /// **And every one of them reads as an arc**, the dry drills at the head
+    /// included: each bows more than 0.32 m over its eight places, where at
+    /// 0.74 m apart the top drill bowed 0.17 m and read nearly straight.
     func testTheDrillsFollowTheContour() {
         for drill in 0..<Seedbed.drills {
             let ends = (Seedbed.Slot(drill: drill, index: 0).spot, Seedbed.Slot(drill: drill, index: 7).spot)
             let middle = Seedbed.Slot(drill: drill, index: 4).spot
             // Bowed toward the head of the bed: its middle higher than its ends.
             XCTAssertLessThan(middle.z, min(ends.0.z, ends.1.z) - 0.1, "drill \(drill) is not bowed")
+            // How far the drill stands off the straight line between its ends.
+            let ax = ends.1.x - ends.0.x, az = ends.1.z - ends.0.z
+            let chord = (ax * ax + az * az).squareRoot()
+            let bow = (0..<Seedbed.places).map { i -> Double in
+                let p = Seedbed.Slot(drill: drill, index: i).spot
+                return abs(ax * (ends.0.z - p.z) - az * (ends.0.x - p.x)) / chord
+            }.max()!
+            XCTAssertGreaterThan(bow, 0.32, "drill \(drill) reads nearly straight")
             guard drill > 0 else { continue }
             for index in 0..<Seedbed.places {
                 let here = Seedbed.Slot(drill: drill, index: index).spot
@@ -104,7 +126,8 @@ final class SeedbedTests: XCTestCase {
             }
         }
         // And the water is low: the last drill is the foot of the bed.
-        XCTAssertGreaterThan(Seedbed.Slot(drill: 5, index: 4).spot.z, Seedbed.Slot(drill: 0, index: 4).spot.z + 3)
+        XCTAssertGreaterThan(Seedbed.Slot(drill: 5, index: 4).spot.z,
+                             Seedbed.Slot(drill: 0, index: 4).spot.z + 5 * Seedbed.drillGap - 0.1)
     }
 
     /// How far a point stands from a drill's line, in the table.
@@ -354,6 +377,13 @@ final class SeedbedTests: XCTestCase {
         PlantTraits(height: 0.6, family: 1, kind: kind, habit: Archetype.reed.rawValue)
     }
 
+    /// A planting's nudge as it is laid in the table: along its drill where
+    /// it stands and across it, since the drills curved more on 2 October 2026.
+    private static func laid(_ p: Seedbed.Planting) -> Spot {
+        let along = Seedbed.along(drill: p.slot.drill, index: p.slot.index, span: p.span)
+        return Spot(x: p.nudge.x * along.x - p.nudge.z * along.z, z: p.nudge.x * along.z + p.nudge.z * along.x)
+    }
+
     /// Every lotus holds two neighbouring places in one drill and stands at
     /// their middle; every other plant holds one and stands on it. Read back
     /// into the table, since a plot may be mirrored.
@@ -366,9 +396,9 @@ final class SeedbedTests: XCTestCase {
             XCTAssertLessThanOrEqual(p.slot.index + p.span, Seedbed.places, "\(p.seed) runs off its drill")
             if isLotus { XCTAssertEqual(p.slot.index % 2, 0, "\(p.seed) holds two places of different pairs") }
             let first = p.slots.first!.spot, last = p.slots.last!.spot
-            let at = Seedbed.variant(of: p.plot).undo(p.spot)
-            XCTAssertEqual(at.x - p.nudge.x, (first.x + last.x) / 2, accuracy: 1e-12)
-            XCTAssertEqual(at.z - p.nudge.z, (first.z + last.z) / 2, accuracy: 1e-12)
+            let at = Seedbed.variant(of: p.plot).undo(p.spot), laid = Self.laid(p)
+            XCTAssertEqual(at.x - laid.x, (first.x + last.x) / 2, accuracy: 1e-12)
+            XCTAssertEqual(at.z - laid.z, (first.z + last.z) / 2, accuracy: 1e-12)
             if isLotus { lotuses += 1 }
         }
         XCTAssertGreaterThan(lotuses, 120, "a sample of this area's own plants is more than a third lotuses")
@@ -386,7 +416,7 @@ final class SeedbedTests: XCTestCase {
         let ways = Self.full
         for p in ways.plantings where p.plot % 2 == 1 {
             let at = p.slots.map(\.spot).reduce(0) { $0 + $1.x } / Double(p.span)
-            XCTAssertEqual(p.spot.x, -(at + p.nudge.x), accuracy: 1e-12)
+            XCTAssertEqual(p.spot.x, -(at + Self.laid(p).x), accuracy: 1e-12)
         }
     }
 
@@ -407,6 +437,15 @@ final class SeedbedTests: XCTestCase {
     /// lotus has had to the next stem along its drill since 25 September,
     /// less the two nudges, and the widest tenth of pads reach it; the
     /// straight bed's sample happened not to put a reed there.
+    ///
+    /// **Five since the drills came to 0.60 m apart**, later on 2 October
+    /// 2026, when Marcus chose *curve more, narrower gaps*: one along a drill,
+    /// a reed beside a lily's pair as above, and four across one. Those four
+    /// are lilies with a lily or a reed beside them in the next drill,
+    /// 0.54–0.65 m apart where the drills had 0.74 m between them, so the
+    /// wider pads now reach across. Two are in one plot whose water climbed
+    /// to the second drill. Five is the bar. The rule along a drill is
+    /// untouched: a lotus still takes two places.
     func testNoStemStandsInsideALotussPads() {
         let genomes = [Ambassadors.of(.beginnings).genome] + Self.genomes()
         let plants = zip(Self.full.plantings, genomes).map { (p, g) in (seed: p.seed, plot: p.plot, spot: p.spot, genome: g) }

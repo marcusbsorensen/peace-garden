@@ -75,11 +75,15 @@ const LABEL_WOOD = [0.72, 0.65, 0.54];
 /// is the Cold Frame tank's problem at a different shape, and the same answer
 /// (`water.js` §*a sunk pool's water lies below the floor*).
 ///
-/// `across` is the full width of the trough, inside the 0.74 m between
-/// drills, so two flooded drills side by side keep 0.20 m of bank between
-/// them. `surface` is how far the water lies below the bed, which is what
-/// makes a bank show at all; `deep` is the floor under it, leaving about
-/// 0.09 m of water in the middle for a lily's roots to be in.
+/// `across` is the full width of the trough, inside the gap between drills.
+/// At the 0.74 m the drills had until 2 October 2026 two flooded drills side
+/// by side kept 0.20 m of tilth between them; at 0.60 m since, their dishes
+/// meet with 0.06 m to spare, and their water, which stops where the dish
+/// comes up to `surface`, still lies 0.20 m apart across a wet bank. The
+/// width was kept rather than the bank, for the reason below. `surface` is
+/// how far the water lies below the bed, which is what makes a bank show at
+/// all; `deep` is the floor under it, leaving about 0.09 m of water in the
+/// middle for a lily's roots to be in.
 ///
 /// **0.54 since Marcus saw it at 0.44**, where the sheet of water was
 /// narrow enough to read as a deep furrow until you noticed the pads
@@ -363,7 +367,7 @@ function stand(mesh, at, facing, vertex) {
 /// **The wire says which since the kind went on it**: `SeedbedStore::planting`
 /// sends the drill beside the spot, and a page should read that. This is for a
 /// planting that does not carry one. The nudge across a drill is 0.035 m
-/// against 0.74 m between drills, so the nearest is never in doubt. Asked of
+/// against 0.60 m between drills, so the nearest is never in doubt. Asked of
 /// the table the rule reads, so this cannot come to disagree with it about
 /// where a drill runs.
 export function drillAt(x, z, variant = PLAIN) {

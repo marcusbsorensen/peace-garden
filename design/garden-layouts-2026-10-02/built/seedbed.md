@@ -176,7 +176,8 @@ columns (`drill`, `slot_index`, `slot_span`, the nudge), with no schema change.
   m apart fill 3.7 m of the bed's depth, which leaves room for no more bow
   inside the bed. Seen from the page's eye the flooded drills read as arcs;
   the dry drills read nearly straight. A stronger curve needs a narrower gap
-  between drills, which is Marcus's number.
+  between drills, which is Marcus's number. **Answered the same day:**
+  *Curved more*, below.
 - **A drill of two looks lopsided**: the middle and one end, which is what
   focal-first, then farthest-first, gives on a row. From three up it is
   balanced. A lily's second pair can stand by the label for the same reason.
@@ -185,3 +186,90 @@ columns (`drill`, `slot_index`, `slot_span`, the nudge), with no schema change.
 - `docs/WEB-GARDENS.md` §*The Seedbed, built* describes the straight drills,
   *filling from the labelled end* and the label at the north end, and needs
   folding in.
+
+## Curved more, 2 October 2026
+
+Marcus's answer to the first item left open: **curve more, narrower gaps**.
+
+**What changed**
+
+- **0.60 m between drills, where there were 0.74 m**, about a point 4.8 m
+  below the top drill rather than 9.4 m (`ACROSS` and `RADIUS` in
+  `tables/seedbed_drills.py`, `Seedbed.drillGap`). Along a drill is unchanged,
+  0.52 m. Each drill is now centred across the bed, so on the tighter arcs at
+  the foot its ends come in and the labels stand on a curve of their own.
+
+  | Drill | Radius | Bow over its places | Was |
+  |---|---|---|---|
+  | 0 (top) | 4.80 m | 0.33 m | 0.17 m |
+  | 1 | 4.20 m | 0.39 m | 0.20 m |
+  | 2 | 3.60 m | 0.46 m | 0.25 m |
+  | 3 | 3.00 m | 0.52 m | 0.26 m |
+  | 4 | 2.40 m | 0.64 m | 0.28 m |
+  | 5 (foot) | 1.80 m | 0.84 m | 0.30 m |
+
+  The dry drills, which claim from the head, bow 0.33–0.46 m, and the
+  flooded ones at the foot curve round like paddies. Every place stays within
+  ±2.06 m of the middle, and the foot drill's ends and their pools inside the
+  slab.
+- **A plant's nudge is laid along and across its drill** where it stands:
+  0.06 m along it and 0.035 m across, turned to the line between the places
+  either side of it, or a lotus's two (`Seedbed.along`, `Seedbed::along`).
+  On the tighter arcs the `x` it ran along before is half across the drill at
+  the ends, and a drill has to read as a line. Only a difference, a square
+  root and a division, so the spot is still exact on every host, and the
+  vectors compare it with no tolerance.
+- **The drawing** needed only its numbers: the rake reads the gap from
+  `pg_seedbed_plan`, and the troughs keep Marcus's 0.54 m.
+- **Vectors re-recorded.** Plot, drill, span and nudge are unchanged in every
+  row. 17 of the 500 take another place in the same drill, all in drill 1:
+  on its new arc the fifth and sixth places of its sowing order (index 2 and
+  4) swap, two places nearly as far from what is sown already. Every other
+  drill's order, dry and flooded, is what it was. `check_offers` measures the
+  lotus's nudge along its drill.
+- **Tests**: every drill bows more than 0.32 m; a label stands a third of a
+  metre before its drill's first place along the drill, rather than 0.2 m west
+  of it, since at the foot a drill's ends turn down the bed.
+
+**The spacing floors that moved, and by how much**
+
+- The gap, 0.74 → 0.60 m (−0.14). The nearest two places in neighbouring
+  drills are 0.58 m apart (0.72), still wider than the 0.52 m along a drill.
+- The test's floor across, `drillGap − 0.06`: 0.68 → 0.54 m.
+- Two flooded drills side by side are dug with 0.06 m of tilth between their
+  dishes (0.20 m before); their water lies 0.20 m apart across a wet bank
+  (0.34 m). The trough's width was kept, since Marcus widened it to read as
+  water.
+- **Stems inside a lotus's pads: five of 501, which is the test's bar of 1%**
+  (two at 0.74 m, with the nudge laid along the drill). One is along a drill,
+  a reed beside a lily's pair as before. Four are across a drill: a lily
+  beside a lily or a reed in the next drill, 0.54–0.65 m apart, which the
+  widest pads now reach. Two of those are in one plot whose water climbed to
+  the second drill. The lotus rule along a drill is untouched.
+- Nothing else moved: 0.48 m between any two places in the table, 0.39 m
+  between any two plants, ±2.06 m for a place, within 0.06 m of its drill's
+  line, a lotus 0.78 m from the next stem along its drill less the nudges.
+
+**The fill**: `layouts-harness`, every figure the baseline's to the place:
+36 plots at 1,000, 1275 of 1728 places held (73.8%), 77.3% in settled plots,
+370 settled places empty. Where a drill lies cannot change which drills are
+claimed or how full they get.
+
+**What a replant needs**: nothing new. Capacities and plot assignment are
+unchanged. A deploy re-lays every plot by itself: each planting moves onto its
+place on the tighter drill, none colliding and none changing drill or plot.
+
+**Renders**, from `/dev/seedbed` on a local server, the same plants as the
+first renders: `seedbed-after2-10.jpg` (plot 0 after 45 arrivals, ten places
+held), `seedbed-after2-full.jpg` (plot 3 of 500, mirrored) and
+`seedbed-after2-three.jpg` (plots 3, 4 and 5). Compare each with its
+`seedbed-after-` render above.
+
+**Left open**
+
+- **The foot drill curves hardest**, 0.84 m over its places, because
+  concentric drills tighten toward the middle they share. A top drill that
+  bowed 0.35 m or more needs the foot tighter still, and its ends then reach
+  the rim; 0.62 m gaps or more, for a margin under the pads' bar, need the top
+  drill flatter. 0.60 m about 4.8 m is where all three fit.
+
