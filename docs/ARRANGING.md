@@ -465,8 +465,13 @@ already emphatic about why looking is not a convenience.
   than the bank it replaced (94 points of side against 119, at three times the
   garden's size). So the side is `sideDepth`, `rimDepth` and half the taper,
   and what shows from the front is the 0.95 m argued for above, the room the
-  camera leaves, and the thickness of the website's upright sides. The
+  camera leaves, and the thickness the website's upright sides had. The
   before-and-after renders are in `design/app-slab-2026-10-02/`.
+
+  **The website's plots hang the same slab**, from the same night (Marcus,
+  2 October 2026: both should read as the same object). `Server/assets/js/slab.js`
+  is this function in WebGL; `WEB-GARDENS.md` §*The plot's side as a solid
+  slab* says what it does differently and why.
 
 ### Three redrawn, on Marcus's word
 

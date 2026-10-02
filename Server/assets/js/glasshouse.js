@@ -21,7 +21,8 @@
 
 import { raiseTrough } from './water.js';
 import { decode, takeResult } from './plant.js';
-import { COLOUR, RIM_DEPTH, SIDE, hash, keepToPlot, readOutline, readStructure } from './longwalk.js';
+import { SIDE, hash, keepToPlot, readOutline, readStructure } from './longwalk.js';
+import { hangSide } from './slab.js';
 
 // Seeds for this area's dressing, its own and not another area's.
 const GLASS_SEED = { ground: 6421, floor: 43, tile: 61, soil: 89, border: 97, frame: 1511,
@@ -184,29 +185,15 @@ export function makeGlasshouseGround(place) {
     const glassVertex = (p, nn, c) => { glass.positions.push(...p); glass.normals.push(...nn); glass.colours.push(...c); };
     set(readStructure(takeResult(e, e.pg_glasshouse_glass(GLASS_SEED.glass))), [0, 0, 0], GLASS, 0, glassVertex);
 
-    // Its sides hang from the outline down to a floor as rough as a clod's, in
-    // the app's strata. The walk's arithmetic, because it is the same slab.
-    const strata = [[0, COLOUR.humus], [0.16, COLOUR.earth], [0.58, COLOUR.earth], [1, COLOUR.bedrock]];
-    let around = 0;
-    const floor = outline.map((p, i) => {
-      if (i > 0) around += Math.hypot(p[0] - outline[i - 1][0], p[1] - outline[i - 1][1]);
-      return RIM_DEPTH * (1 + 0.22 * (e.pg_verge(around, 1, GLASS_SEED.floor) / 0.14));
-    });
-    for (let i = 0; i < n; i++) {
-      const j = (i + 1) % n, a = outline[i], b = outline[j];
-      const dx = b[0] - a[0], dz = b[1] - a[1], l = Math.hypot(dx, dz);
-      const normal = [dz / l, 0, -dx / l];
-      for (let k = 0; k < strata.length - 1; k++) {
-        const [f0, c0] = strata[k], [f1, c1] = strata[k + 1];
-        quad([a[0], -f0 * floor[i], a[1]], [b[0], -f0 * floor[j], b[1]],
-             [b[0], -f1 * floor[j], b[1]], [a[0], -f1 * floor[i], a[1]], normal, c0, c0, c1, c1);
-      }
-    }
+    // Its side: the slab every plot hangs from its outline (`slab.js`), the
+    // floor seed saying how its lower edge undulates.
+    const slab = hangSide(outline, { salt: GLASS_SEED.floor });
 
     return {
       positions: new Float32Array(positions),
       normals: new Float32Array(normals),
       colours: new Float32Array(colours),
+      side: slab,
       glass: {
         positions: new Float32Array(glass.positions),
         normals: new Float32Array(glass.normals),
