@@ -28,6 +28,11 @@ import XCTest
 /// **Re-recorded on 29 September 2026**, when the tank grew to thirty-nine
 /// places in the front row's ground and the cut moved to 0.49: nine plots
 /// where there were seventeen, and every plant's place with them.
+///
+/// **Re-recorded on 2 October 2026**, when the tank became a pond: the plots
+/// are as they were, and what moved is which of the thirty-nine places in the
+/// water a reed and a lily take. Each line now carries its plot's variant and
+/// where it stands, mirrored for its plot, both exact on every host.
 final class ColdFrameVectorTests: XCTestCase {
     static var vectorsURL: URL {
         var url = URL(fileURLWithPath: #filePath)
@@ -42,11 +47,13 @@ final class ColdFrameVectorTests: XCTestCase {
         var lines: [String] = []
         for (seed, traits) in ColdFrameTests.arrivals() {
             let p = ways.plant(seed: seed, traits: traits)
+            let v = ColdFrame.variant(of: p.plot)
             lines.append("""
                 {"seed":"\(seed.hex)","height":\(traits.height),"family":\(traits.family),\
                 "habit":"\(traits.habit)","plot":\(p.plot),"frame":\(p.slot.frame.rawValue),\
                 "rank":\(p.slot.rank.rawValue),"index":\(p.slot.index),"span":\(p.span),\
-                "nudge":[\(p.nudge.x),\(p.nudge.z)]}
+                "nudge":[\(p.nudge.x),\(p.nudge.z)],\
+                "variant":[\(v.turn),\(v.mirror ? 1 : 0),\(v.nudge)],"spot":[\(p.spot.x),\(p.spot.z)]}
                 """)
         }
         // One JSON document, not one per line: see `SeedbedVectorTests`.
@@ -85,12 +92,12 @@ final class ColdFrameVectorTests: XCTestCase {
     /// **Asked of the plants under glass only, since 29 September 2026.** The
     /// water reads no height — what wants water goes in the first free place of
     /// the oldest tank, whatever its height — so a tank is not a group whose
-    /// heights are ever weighed. It was asked of the tank as well while a tank
+    /// heights are ever weighed. Nor is the pond that took its place. It was asked of the tank as well while a tank
     /// held twenty-one; at thirty-nine, two lilies in one of them stand 4.8 µm
     /// apart, which would matter only to a rule that compared them.
     func testThePlacementCannotTurnOnTheLastBitOfAHeight() throws {
         let committed = try String(contentsOf: Self.vectorsURL, encoding: .utf8)
-        let tank = "\"frame\":\(ColdFrame.Frame.tank.rawValue),"
+        let tank = "\"frame\":\(ColdFrame.Frame.pond.rawValue),"
         let dry = committed.split(separator: "\n")
             .filter { $0.hasPrefix("{") && !$0.contains(tank) }
             .map { $0.hasSuffix(",") ? String($0.dropLast()) : String($0) }

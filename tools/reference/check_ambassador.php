@@ -117,14 +117,14 @@ is_same('its tier is the tier its height belongs to',
 // The Cold Frame's, which opens its area as every other ambassador does: in the
 // first place of plot 0 that its rule gives it. *Nyxisora crassicaulis* is a
 // lotus, and since the tank was sunk on 27 September a plant that wants water
-// goes in the tank and nowhere else, holding one place there: so it opens the
-// tank, at the west end of its first row. (Until then it held the first two
-// places of the first frame's front rank, and this check said so until 28
-// September 2026.)
+// goes in the water and nowhere else, holding one place there: so it opens
+// the water — since 2 October 2026 the pond, at its deepest point, the first
+// of its open water. (Until then the tank, at the west end of its first row;
+// until 27 September the first two places of the first frame's front rank.)
 $waiting = Ambassadors::planting('waiting');
 is_same('the Cold Frame ambassador\'s plot', 0, $waiting['plot'] ?? null);
-is_same('its frame is the tank', ColdFrame::TANK, $waiting['frame'] ?? null);
-is_same('its place along the tank\'s first row', 0, $waiting['index'] ?? null);
+is_same('its frame is the pond', ColdFrame::POND, $waiting['frame'] ?? null);
+is_same('its place is the first of the open water', ColdFrame::waterOrder('lotus')[0], $waiting['index'] ?? null);
 is_same('it is a lotus', 'lotus', $vectors['ambassadors'][1]['habit']);
 is_same('so it wants water', true, ColdFrame::wantsWater($vectors['ambassadors'][1]['habit']));
 is_same('and holds one place in it', 1, $waiting['span'] ?? null);
@@ -233,7 +233,7 @@ if ($failed !== []) {
 
 printf("Ten ambassadors — %s at the head of the walk, %s at the crossing, "
      . "%s under the middle tree, %s beside the bench, %s in the knot, "
-     . "%s in the tank, %s in the border — and the service agrees: %d checks.\n",
+     . "%s in the pond, %s in the border — and the service agrees: %d checks.\n",
     $vectors['ambassadors'][6]['name'], $vectors['ambassadors'][7]['name'],
     $vectors['ambassadors'][8]['name'], $vectors['ambassadors'][9]['name'],
     $vectors['ambassadors'][4]['name'], $vectors['ambassadors'][1]['name'],

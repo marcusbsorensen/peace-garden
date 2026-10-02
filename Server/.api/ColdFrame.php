@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/PlotVariant.php';
+require_once __DIR__ . '/tables/ColdFramePondTable.php';
+
 /**
  * The Cold Frame's placement rule, ported from SeedCore's
  * `WebGardens/ColdFrame.swift` so the plot service can run it.
@@ -50,9 +53,17 @@ declare(strict_types=1);
  * nine places in six staggered rows, so the water and the frames fill in step.
  * Frames 2 and 3 still read back, and are never placed in.
  *
+ * **A pond planted as a pond since 2 October 2026** (Marcus; `ColdFrame.swift`
+ * says the rest). Frame 4 is the pond now, its thirty-nine places from
+ * `tables/ColdFramePondTable.php`: fifteen at the margin in five clumps of
+ * three, where a reed is offered a place first, and twenty-four in the open
+ * water from the deepest point out, where a lily is. Each falls back to the
+ * other's water (`waterOrder`). The plots are mirrored by their numbers
+ * (`PlotVariant.php`), and `spotOn` is where a planting stands on its plot.
+ *
  * A planting here is an array: seed (hex), plot, frame (0-1, 2-3 retired, or
- * 4 for the tank), rank (0 front, 1 back), index (0-5 in a frame, the west one
- * of a lotus's two; 0-38 in the tank), span (1, or 2 for a lotus under glass),
+ * 4 for the pond), rank (0 front, 1 back), index (0-5 in a frame, the west one
+ * of a lotus's two; 0-38 in the pond), span (1, or 2 for a lotus under glass),
  * height, family, habit, nudgeX, nudgeZ. A planting with no span holds one
  * place, which is what every planting made before the lotus rule holds.
  */
@@ -64,7 +75,7 @@ final class ColdFrame
     /**
      * How this area's plots vary, from each plot's number (`PlotVariant.php`):
      * the Swift's `variants`. Mirrored only, so the frames stay at the back
-     * under their high side. Declared but not yet read.
+     * under their high side.
      */
     public const VARIANTS = ['turns' => 1, 'mirror' => true, 'nudges' => 1];
 
@@ -92,29 +103,21 @@ final class ColdFrame
     public const FRAME_Z = 1.65;
 
     /**
-     * **The tank across the yard in front of the frames** (27 September 2026,
-     * grown on 29 September): six rows 0.57 m apart, seven and six in turn,
-     * each shifted half a place from the one behind, 0.62 m apart along a
-     * row — the gap a lotus's pads were measured against on 25 September.
-     * Thirty-nine to a plot, where it was three rows of seven.
+     * **The pond across the yard in front of the frames** (2 October 2026),
+     * where the tank was: thirty-nine places, as Marcus chose for the tank on
+     * 29 September, from the table. Half a metre between lilies.
      */
-    public const TANK_ACROSS = 4.4;
-    public const TANK_DEEP = 3.16;
-    public const TANK_Z = 0.6;
-    public const TANK_GAP = 0.62;
-    public const TANK_ROW_GAP = 0.57;
-    public const TANK_WIDE = 7;
-    public const TANK_ROWS = 6;
-    public const TANK_PLACES = 39;
+    public const POND_PLACES = 39;
+    public const POND_GAP = 0.50;
 
     /**
      * The archetypes that want water. Read from the habit, which is a word.
      * `Archetype.wantsWater` in the Swift, said again here.
      *
      * **The reed since 28 September 2026**, which stands in the shallows as a
-     * lily lies on the water. So a reed goes in the tank and holds one place
+     * lily lies on the water. So a reed goes in the water and holds one place
      * there, as a lily does, and `Syr` — the reed's many-merous root — being
-     * this area's makes the tank the larger part of what arrives.
+     * this area's makes the water the larger part of what arrives.
      */
     public const WANTS_WATER = ['lotus', 'reed'];
 
@@ -134,13 +137,17 @@ final class ColdFrame
     public const FRONT_EAST = 3;
     /** **The dry frames in use**, which is what every loop over "the frames" means. */
     public const FRAMES = [0, 1];
-    /** The tank is a fifth frame and not a frame. */
-    public const TANK = 4;
+    /** The pond is a fifth frame and not a frame: the tank's number, kept. */
+    public const POND = 4;
+
+    /** The kinds of water a place in the pond is, as the table tags them. */
+    public const MARGIN = 0;
+    public const OPEN = 1;
 
     /** Whether plants that want dry compost are set in this frame. */
     public static function isDry(int $frame): bool
     {
-        return $frame !== self::TANK;
+        return $frame !== self::POND;
     }
 
     /** Whether this habit belongs in the water. */
@@ -152,7 +159,28 @@ final class ColdFrame
     /** How many places a frame holds: two ranks of six, or thirty-nine in the water. */
     public static function places(int $frame): int
     {
-        return $frame === self::TANK ? self::TANK_PLACES : self::PLACES;
+        return $frame === self::POND ? self::POND_PLACES : self::PLACES;
+    }
+
+    /**
+     * **The order a plant that wants water is offered the pond's places**:
+     * a reed the margin, clump by clump, then the open water from its outer
+     * edge in; a lily the open water from the deepest point out, then the
+     * margin. The Swift's `waterOrder(for:)`.
+     */
+    public static function waterOrder(string $habit): array
+    {
+        static $orders = null;
+        if ($orders === null) {
+            $margin = [];
+            $open = [];
+            foreach (ColdFramePondTable::PLACES[0] as $index => $place) {
+                if ($place[2] === self::MARGIN) $margin[] = $index;
+                else $open[] = $index;
+            }
+            $orders = ['reed' => array_merge($margin, array_reverse($open)), 'lily' => array_merge($open, $margin)];
+        }
+        return $habit === 'reed' ? $orders['reed'] : $orders['lily'];
     }
 
     /** The two ranks of a frame. The back rank is `z−` of the frame's middle, under the higher glass. */
@@ -209,13 +237,13 @@ final class ColdFrame
     }
 
     /**
-     * The middle of a frame, from the middle of the plot: [x, z]. The tank
-     * lies across the yard in front of the frames. A retired front frame keeps
-     * the place the formula gives it.
+     * The middle of a frame, from the middle of the plot: [x, z]. The pond's
+     * places are the table's own, from the plot's middle, so its middle is the
+     * plot's. A retired front frame keeps the place the formula gives it.
      */
     public static function centre(int $frame): array
     {
-        if ($frame === self::TANK) return [0.0, self::TANK_Z];
+        if ($frame === self::POND) return [0.0, 0.0];
         return [
             $frame % 2 === 0 ? -self::FRAME_X : self::FRAME_X,
             $frame < 2 ? -self::FRAME_Z : self::FRAME_Z,
@@ -223,44 +251,66 @@ final class ColdFrame
     }
 
     /**
-     * Where a plant holding `span` places from `index` stands, in metres from
-     * the middle of its plot: [x, z]. The middle of its places, so a lotus
-     * stands half a place east of its first.
-     *
-     * `index` 0 is the west end of the rank, and a rank fills from there, the
-     * way trays are set into a frame from the end a gardener reaches in at.
-     * The place is counted in halves, as the Swift counts it, so a plant of
-     * one place stands where it always did, to the last bit.
+     * Where a place lies within its frame, from the frame's own middle: [x, z].
+     * The pond has no ranks, and its places are the table's; a pond index past
+     * the table's end is a row written in an older scheme, and stands on the
+     * pond's last place until the replant.
      */
-    public static function spot(int $frame, int $rank, int $index, int $span = 1): array
+    public static function at(int $frame, int $rank, int $index): array
     {
-        [$x, $z] = self::centre($frame);
-        // **The tank's rows are not ranks**: water is flat and a lily has no
-        // view to be given, so the row comes out of the index and the rank is
-        // not read. A place in it holds one plant, so there is no half-place.
-        // Thirteen to each pair of rows: seven in the one behind, six in the
-        // one in front, shifted half a place.
-        if ($frame === self::TANK) {
-            $pair = 2 * self::TANK_WIDE - 1;
-            $long = $index % $pair < self::TANK_WIDE;
-            $row = 2 * intdiv($index, $pair) + ($long ? 0 : 1);
-            $along = $long ? $index % $pair : $index % $pair - self::TANK_WIDE;
-            $wide = $long ? self::TANK_WIDE : self::TANK_WIDE - 1;
-            return [
-                $x + ($along - ($wide - 1) / 2) * self::TANK_GAP,
-                $z + ($row - (self::TANK_ROWS - 1) / 2) * self::TANK_ROW_GAP,
-            ];
+        if ($frame === self::POND) {
+            $place = ColdFramePondTable::PLACES[0][min($index, self::POND_PLACES - 1)];
+            return [$place[0], $place[1]];
         }
-        $at = $index + ($span - 1) / 2;
         return [
-            $x + ($at - (self::PLACES - 1) / 2) * self::ALONG_GAP,
-            $z + ($rank === self::BACK ? -self::RANK_FROM : self::RANK_FROM),
+            ($index - (self::PLACES - 1) / 2) * self::ALONG_GAP,
+            $rank === self::BACK ? -self::RANK_FROM : self::RANK_FROM,
         ];
     }
 
     /**
+     * Where a plant holding `span` places from `index` stands, in metres from
+     * the middle of the plot **as the table draws it**: [x, z]. The middle of
+     * its places, so a lotus under glass stands half a place east of its
+     * first.
+     *
+     * `index` 0 is the west end of the rank, and a rank fills from there, the
+     * way trays are set into a frame from the end a gardener reaches in at.
+     * Worked out as the Swift's `Planting.spot` is, the first and last places
+     * averaged, so a plant of one place stands where its place is to the bit.
+     */
+    public static function spot(int $frame, int $rank, int $index, int $span = 1): array
+    {
+        [$x, $z] = self::centre($frame);
+        [$ax, $az] = self::at($frame, $rank, $index);
+        [$bx, $bz] = self::at($frame, $rank, $index + $span - 1);
+        return [$x + ($ax + $bx) / 2, $z + ($az + $bz) / 2];
+    }
+
+    /** The variant of a plot: mirrored or not, by its number. */
+    public static function variant(int $plot): array
+    {
+        return PlotVariant::of($plot, 'waiting', self::VARIANTS);
+    }
+
+    /**
+     * **Where a planting stands on its plot**: its place and its nudge, the
+     * sum mirrored as the plot is laid. The Swift's `Planting.spot`, to the
+     * bit.
+     */
+    public static function spotOn(int $plot, int $frame, int $rank, int $index, int $span,
+                                  float $nudgeX, float $nudgeZ): array
+    {
+        [$cx, $cz] = self::centre($frame);
+        [$ax, $az] = self::at($frame, $rank, $index);
+        [$bx, $bz] = self::at($frame, $rank, $index + $span - 1);
+        return PlotVariant::apply(self::variant($plot),
+                                  $cx + ($ax + $bx) / 2 + $nudgeX, $cz + ($az + $bz) / 2 + $nudgeZ);
+    }
+
+    /**
      * Every place in one plot, frame by frame, the front rank before the back,
-     * and the tank's thirty-nine after the two frames' twenty-four.
+     * and the pond's thirty-nine after the two frames' twenty-four.
      */
     public static function slots(): array
     {
@@ -274,8 +324,8 @@ final class ColdFrame
                 }
             }
         }
-        for ($index = 0; $index < self::TANK_PLACES; $index++) {
-            $slots[] = ['frame' => self::TANK, 'rank' => self::FRONT, 'index' => $index];
+        for ($index = 0; $index < self::POND_PLACES; $index++) {
+            $slots[] = ['frame' => self::POND, 'rank' => self::FRONT, 'index' => $index];
         }
         return $slots;
     }
@@ -320,28 +370,29 @@ final class ColdFrame
      *
      * **What wants water is asked first and asked only of the water.** The
      * frames are sorted by colour and by height and a lily is sorted by
-     * neither, so there is no frame for it to fall back to: a full tank opens
+     * neither, so there is no frame for it to fall back to: a full pond opens
      * a new plot. That is what keeps a plot's water full before the next
      * plot's is used.
      */
     public static function place(array $ways, float $height, int $family, string $habit = ''): array
     {
         if (self::wantsWater($habit)) {
+            $order = self::waterOrder($habit);
             $opened = self::plots($ways);
             for ($plot = 0; $plot < $opened; $plot++) {
                 $taken = [];
                 foreach ($ways as $p) {
-                    if ((int) $p['plot'] !== $plot || (int) $p['frame'] !== self::TANK) continue;
+                    if ((int) $p['plot'] !== $plot || (int) $p['frame'] !== self::POND) continue;
                     $from = (int) $p['index'];
                     for ($n = 0; $n < (int) ($p['span'] ?? 1); $n++) $taken[$from + $n] = true;
                 }
-                for ($index = 0; $index < self::TANK_PLACES; $index++) {
+                foreach ($order as $index) {
                     if (!isset($taken[$index])) {
-                        return [$plot, ['frame' => self::TANK, 'rank' => self::FRONT, 'index' => $index]];
+                        return [$plot, ['frame' => self::POND, 'rank' => self::FRONT, 'index' => $index]];
                     }
                 }
             }
-            return [$opened, ['frame' => self::TANK, 'rank' => self::FRONT, 'index' => 0]];
+            return [$opened, ['frame' => self::POND, 'rank' => self::FRONT, 'index' => $order[0]]];
         }
         $own = self::rank($height);
         $span = self::span($habit);
@@ -393,10 +444,11 @@ final class ColdFrame
         return [
             'seed' => $seedHex, 'plot' => $plot,
             'frame' => $slot['frame'], 'rank' => $slot['rank'], 'index' => $slot['index'],
-            // **A lily in the tank holds one place.** The two it holds under
-            // glass are 0.31 m apart and a lotus's pads need more than one of
-            // them; the tank's are 0.62 m and were measured for a lily. The
-            // span is a fact about the place as much as about the plant.
+            // **A lily in the pond holds one place**, as it did in the tank.
+            // The two it holds under glass are 0.31 m apart and a lotus's
+            // pads need more than one of them; the pond's open water is half
+            // a metre between places, measured for a lily. The span is a fact
+            // about the place as much as about the plant.
             'span' => self::isDry($slot['frame']) ? self::span($habit) : 1,
             'height' => $height, 'family' => $family, 'habit' => $habit,
             'nudgeX' => $jitter(26, 0.03), 'nudgeZ' => $jitter(27, 0.03),

@@ -6,7 +6,7 @@ declare(strict_types=1);
  *
  * `tools/reference/cold_frame_vectors.json` is what `ColdFrame.Ways` in
  * SeedCore does with five hundred real crossings, starting from a Cold Frame
- * that already has its ambassador, a lily, in the tank. This replays the same five hundred through `Server/.api/ColdFrame.php`
+ * that already has its ambassador, a lily, in the water. This replays the same five hundred through `Server/.api/ColdFrame.php`
  * and fails if any one of them lands anywhere else.
  *
  * **Why the whole five hundred rather than a sample.** The rule has two
@@ -45,6 +45,12 @@ declare(strict_types=1);
  * glass, while an older plot's frames hold everything dry, is the fault the
  * bigger tank was for, so the plots with anything under glass are counted.
  *
+ * **A pond since 2 October 2026**, with the tank's thirty-nine places: every
+ * place in the water is inside the pond's outline, a reed takes the open water
+ * only once the margin is full and a lily the margin only once the open water
+ * is, and every plant's variant and spot, mirrored for its plot, are the
+ * Swift's to the bit.
+ *
  *   php tools/reference/check_cold_frame.php
  */
 
@@ -72,13 +78,18 @@ foreach ($vectors as $n => $want) {
     $got = ColdFrame::plant($ways, $want['seed'], $want['height'], $want['family'], $want['habit']);
     $ways[] = $got;
     $checks++;
+    $variant = ColdFrame::variant($got['plot']);
+    $spot = ColdFrame::spotOn($got['plot'], $got['frame'], $got['rank'], $got['index'], $got['span'],
+                              $got['nudgeX'], $got['nudgeZ']);
     $same = $got['plot'] === $want['plot']
         && $got['frame'] === $want['frame']
         && $got['rank'] === $want['rank']
         && $got['index'] === $want['index']
         && $got['span'] === $want['span']
         && $got['nudgeX'] === $want['nudge'][0]
-        && $got['nudgeZ'] === $want['nudge'][1];
+        && $got['nudgeZ'] === $want['nudge'][1]
+        && [$variant['turn'], $variant['mirror'] ? 1 : 0, $variant['nudge']] === $want['variant']
+        && $spot[0] === (float) $want['spot'][0] && $spot[1] === (float) $want['spot'][1];
     if (!$same) {
         $failed[] = sprintf(
             'arrival %d (%s, %.3f m, colour %d, %s): SeedCore put it in plot %d frame %d rank %d place %d '
@@ -96,8 +107,19 @@ $claimed = 0;
 $full = 0;
 $ownRank = 0;
 $lotuses = 0;
-$tanks = [];
+$ponds = [];
 $glazed = 0;
+// The pond's outline, as the table draws it, and whether a point is in it.
+$pond = ColdFramePondTable::CURVES['pond'][0][1];
+$inPond = function (float $x, float $z) use ($pond): bool {
+    $hit = false;
+    for ($i = 0, $j = count($pond) - 1; $i < count($pond); $j = $i++) {
+        [$ax, $az] = $pond[$i];
+        [$bx, $bz] = $pond[$j];
+        if (($az > $z) !== ($bz > $z) && $x < ($bx - $ax) * ($z - $az) / ($bz - $az) + $ax) $hit = !$hit;
+    }
+    return $hit;
+};
 
 // And the shape of the place the two of them agree on, which is what a visitor
 // sees: every plant inside its own frame, a colour to a frame, each rank filled
@@ -113,13 +135,14 @@ foreach ($ways as $p) {
     [$x, $z] = ColdFrame::spot($p['frame'], $p['rank'], $p['index'], $p['span']);
     $atX = $x + $p['nudgeX'];
     $atZ = $z + $p['nudgeZ'];
-    $long = $wet ? ColdFrame::TANK_ACROSS : ColdFrame::FRAME_LENGTH;
-    $deep = $wet ? ColdFrame::TANK_DEEP : ColdFrame::FRAME_DEPTH;
-    if (abs($atX - $cx) >= $long / 2 || abs($atZ - $cz) >= $deep / 2) {
+    $outside = $wet
+        ? !$inPond($atX, $atZ)
+        : abs($atX - $cx) >= ColdFrame::FRAME_LENGTH / 2 || abs($atZ - $cz) >= ColdFrame::FRAME_DEPTH / 2;
+    if ($outside) {
         $failed[] = sprintf('%s stands at %.2f, %.2f — outside frame %d',
             substr($p['seed'], 0, 12), $atX, $atZ, $p['frame']);
     }
-    // **Everything that wants water is in the tank and nothing else is.** The
+    // **Everything that wants water is in the pond and nothing else is.** The
     // habit is a word, the same on the phone and here, so this cannot round.
     $checks++;
     if ($wet !== ColdFrame::wantsWater($p['habit'])) {
@@ -133,10 +156,10 @@ foreach ($ways as $p) {
     }
     if ($wet) {
         $inWater++;
-        // The tank has no ranks, so nothing is ever filed in its back one.
+        // The pond has no ranks, so nothing is ever filed in its back one.
         $checks++;
         if ($p['rank'] !== ColdFrame::FRONT) {
-            $failed[] = sprintf('%s is in the tank in rank %d', substr($p['seed'], 0, 12), $p['rank']);
+            $failed[] = sprintf('%s is in the pond in rank %d', substr($p['seed'], 0, 12), $p['rank']);
         }
     } else {
         $dry++;
@@ -151,8 +174,8 @@ foreach ($ways as $p) {
         if ($p['rank'] === ColdFrame::rank($p['height'])) $ownRank++;
     }
     // A lotus under glass holds two places and nothing else holds more than
-    // one; a lily in the tank holds one, because the tank's places are twice
-    // as far apart and were measured for its pads.
+    // one; a lily in the pond holds one, because the pond's places were
+    // measured for its pads.
     $checks++;
     $want = $wet ? 1 : ColdFrame::span($p['habit']);
     if ($p['span'] !== $want) {
@@ -211,16 +234,28 @@ for ($plot = 0; $plot < $plots; $plot++) {
         }
     }
 
-    // **The tank fills along its rows from the west**, without a gap and with
-    // nothing held twice, the way a rank does.
+    // **A reed takes the margin and a lily the open water**, each the other's
+    // only once its own is full, and no place in the pond is held twice.
     $water = array_values(array_filter($here, fn($p) => !ColdFrame::isDry($p['frame'])));
     $checks++;
     $taken = array_map(fn($p) => (int) $p['index'], $water);
-    sort($taken);
-    if ($taken !== [] && $taken !== range(0, count($taken) - 1)) {
-        $failed[] = sprintf('plot %d\'s tank is filled %s', $plot, implode(' ', $taken));
+    if (count(array_unique($taken)) !== count($taken)) {
+        $failed[] = sprintf('plot %d\'s pond holds a place twice: %s', $plot, implode(' ', $taken));
     }
-    $tanks[$plot] = count($water);
+    $kind = fn(int $index) => ColdFramePondTable::PLACES[0][$index][2];
+    $held = fn(int $kindOf) => count(array_filter($taken, fn($i) => $kind($i) === $kindOf));
+    $places = fn(int $kindOf) => count(array_filter(ColdFramePondTable::PLACES[0], fn($q) => $q[2] === $kindOf));
+    foreach ($water as $p) {
+        $mine = $p['habit'] === 'reed' ? ColdFrame::MARGIN : ColdFrame::OPEN;
+        if ($kind((int) $p['index']) === $mine) continue;
+        $checks++;
+        // Asked of the plot as it ended: its own water has to be full now.
+        if ($held($mine) < $places($mine)) {
+            $failed[] = sprintf('plot %d: a %s is out of its own water while there is room in it',
+                $plot, $p['habit']);
+        }
+    }
+    $ponds[$plot] = count($water);
     if (count($water) < count($here)) $glazed++;
 
     // **An unclaimed frame is never passed over.** A plant that cannot join a
@@ -228,7 +263,7 @@ for ($plot = 0; $plot < $plots; $plot++) {
     // one, so an older plot holding an unclaimed frame while a newer plot holds
     // a plant under glass is the rule having skipped a place it should have
     // taken. Since 27 September a plot can also be opened by a lily finding
-    // every tank full, which claims no frame at all — so the newer plot has to
+    // every pond full, which claims no frame at all — so the newer plot has to
     // hold something dry for this to mean anything.
     if ($plot < $plots - 1) {
         $laterDry = array_filter($ways,
@@ -254,17 +289,17 @@ for ($plot = 0; $plot < $plots; $plot++) {
 }
 
 // **A plot's water is full before the next plot's is used**, which is what
-// keeps the area from being a row of half-empty ponds: a lily takes the first
-// free place in the oldest tank, so at most one tank is part full and every
-// tank after it is empty.
+// keeps the area from being a row of half-empty ponds: a lily or a reed takes
+// a free place in the oldest pond, so at most one pond is part full and every
+// pond after it is empty.
 $short = null;
-foreach ($tanks as $plot => $count) {
+foreach ($ponds as $plot => $count) {
     $checks++;
     if ($short !== null && $count !== 0) {
-        $failed[] = sprintf('plot %d\'s tank was used although plot %d\'s holds only %d',
-            $plot, $short, $tanks[$short]);
+        $failed[] = sprintf('plot %d\'s pond was used although plot %d\'s holds only %d',
+            $plot, $short, $ponds[$short]);
     }
-    if ($short === null && $count < ColdFrame::TANK_PLACES) $short = $plot;
+    if ($short === null && $count < ColdFrame::POND_PLACES) $short = $plot;
 }
 
 if ($failed !== []) {

@@ -5,8 +5,10 @@ import Foundation
 #endif
 
 /// The Cold Frame: low glazed frames on gravel, each holding two ranks of
-/// young plants hardening off, their lids propped open by day, and a tank of
-/// water in front of them. Two frames since 29 September 2026; four until then.
+/// young plants hardening off, their lids propped open by day, and a pond in
+/// front of them, planted as a pond: reeds in clumps at its margin, lilies from
+/// its deepest water out. Two frames since 29 September 2026; four until then.
+/// The pond since 2 October 2026; a tank of staggered rows until then.
 /// `docs/WEB-GARDENS.md` §*The Cold Frame, built*.
 ///
 /// **The seventh area, and the first that draws a plant as something other
@@ -43,9 +45,16 @@ public enum ColdFrame {
 
     /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
     /// Marcus's decision of 2 October 2026). Mirrored only, so the frames stay at
-    /// the back under their high side. Declared but not yet read: the area's new
-    /// layout reads it.
+    /// the back under their high side: plot by plot the pond's bay leans east
+    /// and west in turn, and the frame a plot opens first is the west one or
+    /// the east one. Every planting's spot is its place mirrored for its plot
+    /// (`Planting.spot`).
     public static let variants = PlotVariant.Space(mirror: true)
+
+    /// The plot's variant: which way round its yard is laid.
+    public static func variant(of plot: Int) -> PlotVariant {
+        PlotVariant.of(plot: plot, area: .waiting)
+    }
 
     /// Two ranks of six in each frame: twelve a frame. Four frames of twelve,
     /// forty-eight a plot, was Marcus's choice on 23 September; **two frames,
@@ -79,67 +88,73 @@ public enum ColdFrame {
     /// to 2.2 m out, 0.4 m inside the plot's half, as the frames' ends are.
     public static let frameZ = 1.65
 
-    /// **The tank down the middle of the yard** (27 September 2026).
+    /// **The pond across the yard in front of the frames**, planted as a pond
+    /// (2 October 2026; Marcus, from the research's pictures:
+    /// `design/garden-layouts-2026-10-02/RESEARCH.md`, option A).
     ///
     /// **This is one of only two areas a water lily can be in, and that is
     /// not luck.** An area is chosen from a plant's genus head and the head is
     /// its archetype's own root, so the two are one fact: `Areas.genusHeads`
     /// sends `Nyx` here and `Lir` to the Seedbed, and those are the lotus's
-    /// two roots. Nothing else in the garden ever receives one. Until the
-    /// tank was sunk, the 274 lilies in every 501 arrivals here were sown in
-    /// dry compost, two places each, because a lily's pads are wider than one.
+    /// two roots. Nothing else in the garden ever receives one. Since 28
+    /// September the reed's root `Syr` is this area's too, and a reed wants
+    /// water as a lily does: two in three arrivals here go in the water.
     ///
-    /// It was sunk seven along the yard by three across, 0.62 m apart — the
-    /// gap two places in a frame gave a lotus, and the gap its pads were
-    /// measured against on 25 September. Twenty-one to a plot, until 29
-    /// September 2026.
+    /// **Thirty-nine places, as the tank had**: Marcus's choice of 29
+    /// September (*A bigger tank*), so the water and the two frames fill in
+    /// step, stands. What changed is where they are. The tank's six staggered
+    /// rows became a pond with a wandering, kidney outline, its bay toward the
+    /// frames, and two kinds of water in it (`PlaceTable.coldFramePond`):
     ///
-    /// **What it costs, measured rather than guessed**: five hundred arrivals
-    /// now fill fourteen plots where they filled eighteen, because a lily no
-    /// longer eats two places under glass. The frames are emptier for it —
-    /// about sixteen dry plants to a plot against forty-eight places — and
-    /// that is this area being mostly water rather than the rule failing.
-    /// Fewer frames and smaller frames were both measured and both are worse:
-    /// a frame holds one colour, so fewer frames strand more plots and smaller
-    /// frames are claimed faster and never fill. That was measured with the
-    /// water at about half of what arrives; at two in three it reverses.
+    /// - **the margin**, fifteen places in five clumps of three on the shallow
+    ///   shelf a hand in from the edge, where a reed stands;
+    /// - **the open water**, twenty-four on a sunflower from the deepest point,
+    ///   where a lily lies. A pond of three lilies is three in the middle,
+    ///   never three in a row.
     ///
-    /// **A bigger tank, Marcus, 29 September 2026: thirty-nine places, and the
-    /// front row of frames gives up its ground to it.** Since the re-roll the
-    /// water takes 343 of every 501 arrivals here and the glass 158, and at
-    /// twenty-one to a tank the water opened seventeen plots while the frames'
-    /// plants were all standing in the first five — frames empty in twelve
-    /// plots of seventeen. He asked for the two to fill in step. Measured on
-    /// this area's own five hundred (`ColdFrameTests`), the frames alone need
-    /// nine plots at two frames of twelve and five at four; the water fills
-    /// nine plots at thirty-nine a tank, and would need about seventy to be
-    /// in step with four frames, which is more water than a plot has ground.
-    /// So the front row went and the tank took its ground: the water fills
-    /// nine plots and the frames stand in all nine, where it was seventeen
-    /// plots and frames in five. Each frame is as it was, two ranks of six
-    /// under a pair of lights.
+    /// A reed goes to the margin and a lily to the open water, each falling
+    /// back to the other (`waterOrder`), so neither strands a plot: a plot's
+    /// water is full before the next plot's is used, as the tank's was.
     ///
-    /// **Six rows, seven and six in turn**, each row shifted half a place
-    /// from the one behind it, 0.57 m apart. Two places a row apart are then
-    /// `hypot(0.31, 0.57)`, 0.649 m, and two nudges pulling toward each other
-    /// along that slant take up to 0.081 m off it, leaving 0.567 — no closer
-    /// than two places 0.62 m apart along a row come, less the 0.06 m their
-    /// nudges take. At 0.54 m the slant came 0.02 m closer than that, which
-    /// `testNoTwoLiliesFloatCloserThanTheTankAllows` caught. Staggered rather than square
-    /// because a square lattice of six rows would not fit in front of the
-    /// frames, and because lilies in a grid read as a planting plan rather
-    /// than as a pond. The tank lies across the yard in front of the frames,
-    /// its middle `tankZ` toward the front.
-    public static let tankAcross = 4.4
-    public static let tankDeep = 3.16
-    public static let tankZ = 0.6
-    public static let tankGap = 0.62
-    public static let tankRowGap = 0.57
-    public static let tankWide = 7
-    public static let tankRows = 6
-    /// Seven in the rows at the back and every other row after it, six in the
-    /// rows between: thirty-nine.
-    public static let tankPlaces = (tankRows + 1) / 2 * tankWide + tankRows / 2 * (tankWide - 1)
+    /// **Half a metre between lilies** (`pondGap`), where the tank's rows
+    /// were 0.62 m apart: the research proposed it, a little closer than the
+    /// tank's diagonal, so a young lily's pads (0.31 m from its stem at the
+    /// median) lie against its neighbour's rather than floating apart.
+    /// **A lily in the pond holds one place**, as it did in the tank: the
+    /// two-place rule of 25 September is for places 0.31 m apart under glass,
+    /// and stands there.
+    public static let pondPlaces = 39
+    public static let pondGap = 0.50
+
+    /// **The pond's places and outline, made offline**
+    /// (`tools/layouts/tables/cold_frame_pond.py`): the margin's fifteen,
+    /// clump by clump, then the open water's twenty-four from the deepest
+    /// point out; the outline as `pond` and the shelf's inner edge as
+    /// `shelf`.
+    public static let table = PlaceTable.coldFramePond
+
+    /// The kinds of water a place in the pond is, as the table tags them.
+    public enum Water: Int, Sendable {
+        case margin = 0, open
+    }
+
+    /// Which kind of water the `index`-th place of the pond is.
+    public static func water(at index: Int) -> Water {
+        table.tag("kind", of: table.places(nudge: 0)[index]) == 0 ? .margin : .open
+    }
+
+    /// **The order a plant that wants water is offered the pond's places**:
+    /// a reed the margin, clump by clump, then the open water from its outer
+    /// edge in, so the middle stays for the lilies; a lily the open water from
+    /// the deepest point out, then the margin. Worked out once from the table.
+    public static func waterOrder(for traits: PlantTraits) -> [Int] {
+        traits.habit == Archetype.reed.rawValue ? reedOrder : lilyOrder
+    }
+
+    static let marginPlaces = (0..<pondPlaces).filter { water(at: $0) == .margin }
+    static let openPlaces = (0..<pondPlaces).filter { water(at: $0) == .open }
+    static let reedOrder = marginPlaces + openPlaces.reversed()
+    static let lilyOrder = openPlaces + marginPlaces
 
     /// The frames a plant can be set in: **the back row, since 29 September
     /// 2026.** The front row's two stay in `Frame`, retired, so a planting
@@ -180,45 +195,40 @@ public enum ColdFrame {
     /// 29 September 2026** (`frames`); the front row's two are retired and
     /// keep their numbers. **The back row is `z−`**, which is
     /// the side of the plot furthest from the eye before the page is turned.
-    /// **The tank is a fifth frame and not a frame**, for the reason
+    /// **The pond is a fifth frame and not a frame**, for the reason
     /// `QuietGarden.Corner.pool` is a fifth corner: a slot stays one set of
     /// numbers in the table and on the wire, and appending it leaves every
-    /// planting already filed decoding as it did.
+    /// planting already filed decoding as it did. It was the tank until 2
+    /// October 2026, and keeps the tank's number.
     public enum Frame: Int, Codable, CaseIterable, Sendable {
-        case backWest = 0, backEast, frontWest, frontEast, tank
+        case backWest = 0, backEast, frontWest, frontEast, pond
 
-        /// The middle of the frame, from the middle of the plot. The tank
-        /// lies across the yard in front of the frames. A retired front frame
-        /// keeps the place the formula gives it, which is in the water now:
-        /// what stands there is waiting to be replanted.
+        /// The middle of the frame, from the middle of the plot as the table
+        /// draws it. The pond's places are the table's own, from the plot's
+        /// middle, so its middle is the plot's. A retired front frame keeps
+        /// the place the formula gives it, which is in the water now: what
+        /// stands there is waiting to be replanted.
         public var centre: Spot {
-            if self == .tank { return Spot(x: 0, z: ColdFrame.tankZ) }
+            if self == .pond { return Spot(x: 0, z: 0) }
             return Spot(x: rawValue % 2 == 0 ? -ColdFrame.frameX : ColdFrame.frameX,
                         z: rawValue < 2 ? -ColdFrame.frameZ : ColdFrame.frameZ)
         }
 
         /// Whether plants that want dry compost are set here.
-        public var isDry: Bool { self != .tank }
+        public var isDry: Bool { self != .pond }
 
         /// How many places it holds: two ranks of six under a pair of lights,
-        /// or thirty-nine in open water.
-        public var places: Int { self == .tank ? ColdFrame.tankPlaces : ColdFrame.places }
+        /// or thirty-nine in the pond.
+        public var places: Int { self == .pond ? ColdFrame.pondPlaces : ColdFrame.places }
 
-        /// Where a place lies within it, from its own middle. **The tank's
-        /// rows are not ranks** — water is flat and a lily has no view to be
-        /// given, so every place in it is `.front` and the row comes out of
-        /// the index instead: thirteen to each pair of rows, seven in the one
-        /// behind and six in the one in front, shifted half a place.
+        /// Where a place lies within it, from its own middle. **The pond has
+        /// no ranks** — water is flat and a lily has no view to be given — so
+        /// every place in it is `.front` and the place is the table's. A pond
+        /// index past the table's end is a row written in a retired frame's
+        /// scheme, and stands on the pond's last place until the replant.
         public func at(_ index: Int, rank: Rank) -> Spot {
-            if self == .tank {
-                let pair = 2 * ColdFrame.tankWide - 1
-                let long = index % pair < ColdFrame.tankWide
-                let row = 2 * (index / pair) + (long ? 0 : 1)
-                let along = long ? index % pair : index % pair - ColdFrame.tankWide
-                let wide = long ? ColdFrame.tankWide : ColdFrame.tankWide - 1
-                return Spot(
-                    x: (Double(along) - Double(wide - 1) / 2) * ColdFrame.tankGap,
-                    z: (Double(row) - Double(ColdFrame.tankRows - 1) / 2) * ColdFrame.tankRowGap)
+            if self == .pond {
+                return ColdFrame.table.places(nudge: 0)[min(index, ColdFrame.pondPlaces - 1)].spot
             }
             return Spot(x: (Double(index) - Double(ColdFrame.places - 1) / 2) * ColdFrame.alongGap,
                         z: rank == .back ? -ColdFrame.rankFrom : ColdFrame.rankFrom)
@@ -321,8 +331,8 @@ public enum ColdFrame {
     }
 
     /// Every place in a plot, frame by frame, the front rank before the back.
-    /// The frames in use and then the tank; a retired front frame has none.
-    public static let slots: [Slot] = (frames + [.tank]).flatMap { frame in
+    /// The frames in use and then the pond; a retired front frame has none.
+    public static let slots: [Slot] = (frames + [.pond]).flatMap { frame in
         (frame.isDry ? Rank.allCases : [.front]).flatMap { rank in
             (0..<frame.places).map { Slot(frame: frame, rank: rank, index: $0) }
         }
@@ -396,17 +406,21 @@ public enum ColdFrame {
         /// Seedbed's across a drill.
         public var nudge: Spot
 
-        /// Where it stands: the middle of the places it holds, and its nudge.
-        /// **A lotus stands centred across its two**, half a place east of
-        /// its first. Worked out from a place counted in halves rather than
-        /// as the first place's spot moved along, so a plant holding one
-        /// place stands exactly where `Slot.spot` puts it, to the last bit.
+        /// Where it stands: the middle of the places it holds, and its nudge,
+        /// **mirrored as its plot is laid** (2 October 2026). **A lotus stands
+        /// centred across its two**, half a place east of its first. Worked
+        /// out from a place counted in halves rather than as the first
+        /// place's spot moved along, so a plant holding one place stands
+        /// exactly where `Slot.spot` puts it, to the last bit. The nudge is
+        /// added in the table's frame and the sum mirrored, which only
+        /// changes a sign, so every host agrees.
         public var spot: Spot {
             let centre = slot.frame.centre
             let first = slot.frame.at(slot.index, rank: slot.rank)
             let last = slot.frame.at(slot.index + span - 1, rank: slot.rank)
-            return Spot(x: centre.x + (first.x + last.x) / 2 + nudge.x,
-                        z: centre.z + (first.z + last.z) / 2 + nudge.z)
+            return ColdFrame.variant(of: plot).apply(
+                Spot(x: centre.x + (first.x + last.x) / 2 + nudge.x,
+                     z: centre.z + (first.z + last.z) / 2 + nudge.z))
         }
 
         /// Every place it holds, west to east.
@@ -489,19 +503,23 @@ public enum ColdFrame {
         /// plant of one place can still take it. A frame nobody has claimed
         /// and a new plot always have two.
         public func place(for traits: PlantTraits) -> (plot: Int, slot: Slot) {
-            // **What wants water goes in the tank, and nothing else does.**
+            // **What wants water goes in the pond, and nothing else does.**
             // The frames are sorted by colour and by height and a lily is
             // sorted by neither: it is in the water, which is where it has
             // belonged since its shape became a water lily's on 24 September.
-            // The tank fills along its rows, the way a frame's rank does.
+            // A reed is offered the margin first and a lily the open water,
+            // each the other after (`waterOrder`), and a plot's water is full
+            // before the next plot's is used, as the tank's was.
             if traits.wantsWater {
+                let order = ColdFrame.waterOrder(for: traits)
                 for plot in 0..<plots {
                     let taken = Set(self.plot(plot).flatMap(\.slots))
-                    if let free = ColdFrame.slots.first(where: {
-                        !$0.frame.isDry && !taken.contains($0)
-                    }) { return (plot, free) }
+                    for index in order {
+                        let slot = Slot(frame: .pond, rank: .front, index: index)
+                        if !taken.contains(slot) { return (plot, slot) }
+                    }
                 }
-                return (plots, Slot(frame: .tank, rank: .front, index: 0))
+                return (plots, Slot(frame: .pond, rank: .front, index: order[0]))
             }
             let own = ColdFrame.rank(height: traits.height)
             let span = ColdFrame.span(of: traits)
@@ -552,10 +570,11 @@ public enum ColdFrame {
                 guard bytes.count > i else { return 0 }
                 return (Double(bytes[i]) / 255 - 0.5) * 2 * reach
             }
-            // **A lily in the tank holds one place.** The two it holds under
-            // glass are 0.31 m apart and a lotus's pads need more than one of
-            // them; the tank's are 0.62 m and were measured for a lily. The
-            // span is a fact about the place as much as about the plant.
+            // **A lily in the pond holds one place**, as it did in the tank.
+            // The two it holds under glass are 0.31 m apart and a lotus's pads
+            // need more than one of them; the pond's open water is half a
+            // metre between places, measured for a lily. The span is a fact
+            // about the place as much as about the plant.
             let span = slot.frame.isDry ? ColdFrame.span(of: traits) : 1
             let planting = Planting(seed: seed.hex, plot: plot, slot: slot, span: span,
                                     traits: traits, nudge: Spot(x: jitter(26, 0.03), z: jitter(27, 0.03)))
