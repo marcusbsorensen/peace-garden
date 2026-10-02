@@ -44,13 +44,15 @@
   import { loadModule } from '/assets/js/plant.js';
   import { makePlotStage, plantArrivals, growPlots, growFromService, describe } from '/assets/js/longwalk.js';
   import { makeSky } from '/assets/js/sky.js';
+  import { longWalkDrifts } from '/assets/js/tables/long_walk_drifts.js';
 
   // ?arrivals=500&from=0&span=3 — how many plants have arrived, and which plots to look at.
+  // ?plot=3 is the same as ?from=3, as the other areas' workbenches say it.
   // ?source=service — draw what the plot service holds instead of planting here.
   const query = new URLSearchParams(location.search);
   const number = (name, fallback) => Math.max(0, parseInt(query.get(name) ?? '', 10) || fallback);
   const arrivals = number('arrivals', 500), span = Math.max(1, number('span', 3));
-  let from = number('from', 0);
+  let from = query.has('plot') ? number('plot', 0) : number('from', 0);
 
   const note = document.getElementById('note');
   const list = document.getElementById('plots');
@@ -114,9 +116,11 @@
   const planted = ((performance.now() - started) / 1000).toFixed(1);
 
   // What the rule did with each plot: its fill by tier, how many plants stand
-  // outside their own tier, and how many colours it holds.
+  // outside their own tier, how many colours it holds and how many of its
+  // twelve drifts are claimed.
   const tierOf = (height) => (height < 0.75 ? 0 : height < 1.18 ? 1 : 2);
-  const TIERS = ['edge', 'middle', 'back'], SLOTS = [20, 16, 12];
+  const TIERS = ['edge', 'middle', 'back'], SLOTS = [18, 18, 12];
+  const lensOf = longWalkDrifts.places[0].map((place) => place[3]);
   function summary(plot) {
     const here = describe(e, plot);
     const byTier = [0, 0, 0];
@@ -127,8 +131,9 @@
       if (tierOf(p.traits.height) !== tier) moved += 1;
     }
     const colours = new Set(here.map((p) => p.traits.family)).size;
+    const drifts = new Set(here.map((p) => lensOf[p.slot.index])).size;
     const fill = byTier.map((n, i) => `${TIERS[i]} ${n}/${SLOTS[i]}`).join(' · ');
-    return `Plot ${plot + 1}: ${here.length}/48 · ${fill} · ${moved} a tier from their own · ${colours} colours`;
+    return `Plot ${plot + 1}: ${here.length}/48 · ${fill} · ${moved} a tier from their own · ${colours} colours in ${drifts} of 12 drifts`;
   }
 
   async function show() {

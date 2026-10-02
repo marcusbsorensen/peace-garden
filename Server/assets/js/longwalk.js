@@ -12,10 +12,13 @@ import { castShadow } from './shadow.js';
 import { areasBeside } from './beside.js';
 import { raiseRill } from './water.js';
 import { RIM_DEPTH, STONES, STRATA, hangSide, sideShaders } from './slab.js';
+import { PLAIN, applyVariantToCurve, variantFromModule } from './variant.js';
+import { longWalkDrifts } from './tables/long_walk_drifts.js';
 
 export const SIDE = 5.2;    // LongWalk.plotSide, and QuietGarden.plotSide
 const PATH_HALF = 0.6;      // LongWalk.pathHalfWidth
 const HEDGE_FROM = 2.3;     // LongWalk.hedgeFrom
+const PLANTED = 4.8;        // LongWalk.plantedLength: the length of a plot its places stand in
 // GardenGround.rimDepth, which the slab's side (`slab.js`) is hung from.
 export { RIM_DEPTH };
 export const HEDGE = { thickness: 0.36, tall: 2.0, low: 0.7 };
@@ -100,6 +103,12 @@ export const COLOUR = {
   // stands in, which is the brightest ground in the garden — against that, the
   // yew read as a shadow rather than as a hedge.
   box: [0.288, 0.378, 0.226],
+  // **The Long Walk's border beds**, since the drifts of 2 October 2026: the
+  // dug ground a herbaceous border stands in, between the hedge and the grass
+  // verge, its front following the tips of the drifts. Loam, at about the
+  // turf's own brightness and browner: darker than the turf, it read as the
+  // hedge's shadow lying across the border rather than as ground.
+  bed: [0.262, 0.222, 0.165],
 };
 
 // Midday, GardenGround.swift. Read by the Coppice too, which lays a stool's
@@ -1138,9 +1147,23 @@ export function describe(e, plot) {
   return JSON.parse(new TextDecoder().decode(takeResult(e, length)));
 }
 
+// **Which plots the walk's ground is laid for**, since the drifts of 2 October
+// 2026: each plot's border beds follow its lenses, turned as the plot is, so the
+// ground is a fact about the plots on the stage and is dug again when they
+// change. Set by the two functions below before they grow anything; a stage
+// that was never told draws the walk from its first plot.
+let walkLaid = { first: 0, count: null };
+
+/// Lay the walk's ground for `count` plots from `first`, and dig it again.
+export function layWalk(stage, first, count) {
+  walkLaid = { first, count };
+  stage.rebuild();
+}
+
 // Grows `span` plots from `first`, laid end to end down the walk, one plant at a time.
 export async function growPlots(e, stage, first, span, report) {
   stage.clear();
+  layWalk(stage, first, span);
   let since = performance.now();
   for (let k = 0; k < span; k++) {
     const plot = first + k;
@@ -1168,6 +1191,7 @@ export async function growPlots(e, stage, first, span, report) {
 // lineage, from its seed.
 export async function growFromService(e, stage, first, span, report) {
   stage.clear();
+  layWalk(stage, first, span);
   const plots = [];
   let since = performance.now();
   for (let k = 0; k < span; k++) {
@@ -1259,7 +1283,7 @@ const SLICE = 16;
 // MARK: - The ground
 
 // Seeds for the walk's dressing, so it is the same shape on every visit.
-export const SEED = { ground: 2026, verge: 7, floor: 5, hedge: { '-1': 31, '1': 32 }, rill: 1621 };
+export const SEED = { ground: 2026, verge: 7, floor: 5, hedge: { '-1': 31, '1': 32 }, rill: 1621, bed: 4411 };
 
 // No straight line anywhere in the garden: the ground's outline, its sides,
 // the path's verges and the hedges all come from SeedCore's `Organic`, the
@@ -1283,6 +1307,9 @@ function buildGround(farSide, span, e) {
   // Its side: the slab every plot hangs from its outline (`slab.js`), the
   // floor seed saying how its lower edge undulates.
   const slab = hangSide(outline, { salt: SEED.floor });
+
+  // The borders' beds, under the drifts.
+  raiseBeds(e, vertex, outline, span);
 
   // The mown path: verges cut by eye, stripes that follow them, and ends that
   // wander across as well as along.
@@ -1348,6 +1375,155 @@ function buildGround(farSide, span, e) {
   }
   return { positions: new Float32Array(positions), normals: new Float32Array(normals), colours: new Float32Array(colours),
            casting: new Float32Array(casting), side: slab };
+}
+
+// MARK: - The borders' beds
+//
+// **The drifts drawn in the ground**, since 2 October 2026. Each border's
+// places stand in six slanting lenses (`tables/long_walk_drifts.js`), and a
+// herbaceous border is a dug bed, so each border is drawn as one: a band of
+// loam along the hedge, and from it each lens running out to the grass verge
+// by the path, so the bed's front is scalloped by the tips of the drifts and
+// the grass comes in between them. With nothing planted yet the slant of the
+// drifts is already on the ground, and a plot of ten plants is ten plants in a
+// bed laid out for more, rather than ten on a lawn.
+//
+// **Turned as each plot is.** The lenses come from the table and each plot's
+// variant from the module (`pg_plot_variant`), so the beds of a plot turned half
+// round slant the other way down the walk, exactly as its plants do.
+//
+// **No ruled edge.** The bed is a field — how far a point is inside the nearest
+// lens or the band along the hedge — read at the corners of a jittered lattice
+// and blended into the turf over a few centimetres, so its edge is wherever
+// that field crosses nothing, wandering as the lens outlines do.
+const BED = {
+  // How far the bed reaches past a lens's outline, so lens meets lens and the
+  // grass shows only at the front, between their tips.
+  grow: 0.06,
+  // How far from the middle of the path the band along the hedge begins.
+  back: 1.66,
+  // How soft the bed's edge is, either side of it: a cut edge, a little
+  // crumbled, not a blur.
+  soft: 0.018,
+  // The lattice it is drawn on.
+  cell: 0.055,
+};
+
+/// The lens outlines of the plots laid on the stage, each turned for its plot
+/// and moved to where its plot stands down the walk: `[{ side, loop, box }]`,
+/// and each plot's middle in `z`.
+function laidLenses(e, span) {
+  const count = walkLaid.count ?? span;
+  const names = Object.keys(longWalkDrifts.curves);
+  const lenses = [], middles = [];
+  for (let k = 0; k < count; k++) {
+    const along = (k - (count - 1) / 2) * SIDE;
+    const variant = (e.pg_plot_variant ? variantFromModule(e, 'travel', walkLaid.first + k) : null) ?? PLAIN;
+    middles.push(along);
+    for (const name of names) {
+      const loop = applyVariantToCurve(variant, longWalkDrifts.curves[name][0].points)
+        .map(([x, z]) => [x, z + along]);
+      let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity, sum = 0;
+      for (const [x, z] of loop) {
+        x0 = Math.min(x0, x); x1 = Math.max(x1, x); z0 = Math.min(z0, z); z1 = Math.max(z1, z); sum += x;
+      }
+      const reach = BED.grow + BED.soft;
+      lenses.push({ side: sum < 0 ? -1 : 1, loop, box: [x0 - reach, x1 + reach, z0 - reach, z1 + reach] });
+    }
+  }
+  return { lenses, middles };
+}
+
+/// How far a point is inside a closed loop: negative inside, positive outside,
+/// the distance to its nearest edge either way.
+function signedDistance(loop, x, z) {
+  let inside = false, best = Infinity;
+  for (let i = 0, j = loop.length - 1; i < loop.length; j = i++) {
+    const [ax, az] = loop[i], [bx, bz] = loop[j];
+    if ((az > z) !== (bz > z) && x < (bx - ax) * (z - az) / (bz - az) + ax) inside = !inside;
+    const ex = bx - ax, ez = bz - az, m = ex * ex + ez * ez || 1;
+    const t = Math.max(0, Math.min(1, ((x - ax) * ex + (z - az) * ez) / m));
+    const dx = x - ax - ex * t, dz = z - az - ez * t;
+    best = Math.min(best, dx * dx + dz * dz);
+  }
+  return (inside ? -1 : 1) * Math.sqrt(best);
+}
+
+function raiseBeds(e, vertex, outline, span) {
+  const { lenses, middles } = laidLenses(e, span);
+  if (!middles.length) return;
+  const onPlot = keepToPlot(outline);
+  const UP = [0, 1, 0];
+  const length = SIDE * span;
+  const wander = (along, side) => e.pg_verge(along, side, SEED.bed) / 0.14; // -1…1
+  // A plot's planted length, and a little: the band along the hedge stops
+  // where the plot's places stop, and the next plot's begins.
+  const reach = PLANTED / 2 + 0.12;
+
+  for (const side of [-1, 1]) {
+    const mine = lenses.filter((lens) => lens.side === side);
+    const from = PATH_HALF + 0.02, to = HEDGE_FROM + 0.08;
+    const cols = Math.ceil((to - from) / BED.cell);
+    const rows = Math.ceil(length / BED.cell);
+    // The lattice, jittered as the Seedbed's tilth is, and each corner's
+    // bedness and how deep in a drift it lies.
+    const at = [], bedness = [], depth = [];
+    for (let i = 0; i <= cols; i++) {
+      const row = [], bed = [], deep = [];
+      for (let j = 0; j <= rows; j++) {
+        const edge = i === 0 || j === 0 || i === cols || j === rows;
+        const shift = edge ? 0 : BED.cell * 0.32;
+        const out = from + i * BED.cell + shift * (hash(i * 7919 + j * 104729 + side * 31) - 0.5) * 2;
+        const z = -length / 2 + j * BED.cell + shift * (hash(i * 6733 + j * 92831 + side * 17) - 0.5) * 2;
+        const [px, pz] = onPlot(side * out, z);
+        // The band along the hedge, its front wandering, within a plot.
+        let field = BED.back + 0.07 * wander(pz * 0.8, side) - Math.abs(px);
+        let near = Infinity;
+        for (const middle of middles) near = Math.min(near, Math.abs(pz - middle));
+        field = Math.max(field, near - reach);
+        // And each lens, grown a little.
+        let inLens = 0;
+        for (const lens of mine) {
+          const [x0, x1, z0, z1] = lens.box;
+          if (px < x0 || px > x1 || pz < z0 || pz > z1) continue;
+          const d = signedDistance(lens.loop, px, pz);
+          field = Math.min(field, d - BED.grow);
+          inLens = Math.max(inLens, -d);
+        }
+        const u = Math.max(0, Math.min(1, (BED.soft - field) / (2 * BED.soft)));
+        row.push([px, pz]);
+        bed.push(u * u * (3 - 2 * u));
+        deep.push(Math.min(1, inLens / 0.16));
+      }
+      at.push(row); bedness.push(bed); depth.push(deep);
+    }
+    // **Loam, darker down the middle of a drift**, where the plants stand
+    // closest and shade it: so the slant of each lens shows in the bed when
+    // the drift is still part-sown. Each cell's own tone, as the tilth's
+    // crumbs have theirs.
+    const tone = (i, j) => {
+      const b = bedness[i][j];
+      const crumb = 0.86 + 0.28 * hash(i * 131 + j * 37 + side * 7 + SEED.bed);
+      const shade = 1 - 0.14 * depth[i][j];
+      return COLOUR.turf.map((t, c) => t + (COLOUR.bed[c] * crumb * shade - t) * b);
+    };
+    for (let i = 0; i < cols; i++) {
+      for (let j = 0; j < rows; j++) {
+        const most = Math.max(bedness[i][j], bedness[i + 1][j], bedness[i + 1][j + 1], bedness[i][j + 1]);
+        if (most < 0.002) continue;
+        const p = (a, b) => [at[a][b][0], 0.002, at[a][b][1]];
+        const A = p(i, j), B = p(i + 1, j), C = p(i + 1, j + 1), D = p(i, j + 1);
+        const ca = tone(i, j), cb = tone(i + 1, j), cc = tone(i + 1, j + 1), cd = tone(i, j + 1);
+        if (hash(i * 31 + j * 17 + side) < 0.5) {
+          vertex(A, UP, ca); vertex(B, UP, cb); vertex(C, UP, cc);
+          vertex(A, UP, ca); vertex(C, UP, cc); vertex(D, UP, cd);
+        } else {
+          vertex(A, UP, ca); vertex(B, UP, cb); vertex(D, UP, cd);
+          vertex(B, UP, cb); vertex(C, UP, cc); vertex(D, UP, cd);
+        }
+      }
+    }
+  }
 }
 
 // **A slab of the next area's ground, with nothing standing on it.**
