@@ -156,13 +156,13 @@ final class CoppiceStore
         $plantings = array_map(fn(array $row) => self::planting($row, $year), $query->fetchAll());
         if ($plot !== 0) return $plantings;
         $standing = Ambassadors::planting('renewal');
-        [$x, $z] = Coppice::spot($standing['coupe'], $standing['place'], $standing['index']);
         array_unshift($plantings, [
             'seed' => $standing['seed'],
             'parents' => [],
             'encounter' => null,
             'plot' => 0,
-            'spot' => [$x + $standing['nudgeX'], $z + $standing['nudgeZ']],
+            'spot' => Coppice::spot(0, $standing['coupe'], $standing['place'], $standing['index'],
+                                    $standing['nudgeX'], $standing['nudgeZ']),
             'stage' => $standing['place'] === Coppice::STOOL
                 ? Coppice::stage(0, $standing['coupe'], $year) : null,
         ]);
@@ -213,13 +213,15 @@ final class CoppiceStore
         $plot = (int) $row['plot'];
         $coupe = (int) $row['coupe'];
         $place = (int) $row['place'];
-        [$x, $z] = Coppice::spot($coupe, $place, (int) $row['slot_index']);
         return [
             'seed' => $row['seed'],
             'parents' => [$row['parent_a'], $row['parent_b']],
             'encounter' => $row['encounter'],
             'plot' => $plot,
-            'spot' => [$x + (float) $row['nudge_x'], $z + (float) $row['nudge_z']],
+            // Turned for its plot (`Coppice::spot`): where the table and the
+            // plot's variant put it.
+            'spot' => Coppice::spot($plot, $coupe, $place, (int) $row['slot_index'],
+                                    (float) $row['nudge_x'], (float) $row['nudge_z']),
             'stage' => $place === Coppice::STOOL ? Coppice::stage($plot, $coupe, $year) : null,
         ];
     }

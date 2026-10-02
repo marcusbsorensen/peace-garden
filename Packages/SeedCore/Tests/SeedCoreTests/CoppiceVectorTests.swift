@@ -25,11 +25,16 @@ final class CoppiceVectorTests: XCTestCase {
         var lines: [String] = []
         for (seed, traits) in CoppiceTests.arrivals() {
             let p = ways.plant(seed: seed, traits: traits)
+            // The plot's variant and the spot it puts the plant on, since the
+            // coupes went round a glade (2 October 2026): a table's place and a
+            // turn are exact, so the port has to land on the same number.
+            let v = Coppice.variant(ofPlot: p.plot)
             lines.append("""
                 {"seed":"\(seed.hex)","height":\(traits.height),"family":\(traits.family),\
                 "habit":"\(traits.habit)","plot":\(p.plot),"coupe":\(p.slot.coupe),\
                 "place":\(p.slot.place.rawValue),"floor":\(p.slot.place == .stool ? 0 : 1),\
-                "index":\(p.slot.index),"nudge":[\(p.nudge.x),\(p.nudge.z)]}
+                "index":\(p.slot.index),"nudge":[\(p.nudge.x),\(p.nudge.z)],\
+                "variant":[\(v.turn),\(v.mirror ? 1 : 0),\(v.nudge)],"spot":[\(p.spot.x),\(p.spot.z)]}
                 """)
         }
         // One JSON document, not one per line: see `SeedbedVectorTests`.

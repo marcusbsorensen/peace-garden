@@ -10,10 +10,13 @@ import SeedCore
 // before it is live, and the browser is where it can be looked at.
 //
 //   pg_coppice_plan()             the area's own numbers as JSON: its side, the
-//                                 coupes' middles, the rides' line, width and
-//                                 wander, where the stools and the floor's rows
-//                                 stand, how high a stool is, and what a plot
+//                                 rides' width and wander, how high and wide a
+//                                 stool is, the floor's cut, and what a plot
 //                                 holds — so the page keeps no copy of them
+//   pg_coppice_layout(p)          plot p as it is laid, as JSON: its variant, the
+//                                 glade's outline, the three rides' centre lines,
+//                                 each coupe's ground and the spring, all turned
+//                                 for the plot
 //   pg_coppice_arrive()           plants the next arrival; returns its plot
 //   pg_coppice_count(plot)        plantings in a plot so far
 //   pg_coppice_grow(plot, i, y)   grows the i-th planting of a plot as it stands
@@ -102,14 +105,35 @@ private func coppiceDrawn(_ stage: Int32) -> GrowthModel.State? {
 @_expose(wasm, "pg_coppice_plan")
 @_cdecl("pg_coppice_plan")
 public func pgCoppicePlan() -> Int32 {
-    let list = { (values: [Double]) in values.map { "\($0)" }.joined(separator: ",") }
     let json = """
-        {"plotSide":\(Coppice.plotSide),"coupeZ":[\(list(Coppice.coupeZ))],\
-        "rideZ":\(Coppice.rideZ),"rideWidth":\(Coppice.rideWidth),"rideWander":\(Coppice.rideWander),\
-        "stoolX":[\(list(Coppice.stoolX))],"floorX":[\(list(Coppice.floorX))],\
-        "rowFrom":\(Coppice.rowFrom),"stoolHeight":\(Coppice.stoolHeight),\
+        {"plotSide":\(Coppice.plotSide),"coupes":\(Coppice.coupes),\
+        "rideWidth":\(Coppice.rideWidth),"rideWander":\(Coppice.rideWander),\
+        "stoolHeight":\(Coppice.stoolHeight),\
         "stoolAcross":[\(Coppice.stoolAcross.lowerBound),\(Coppice.stoolAcross.upperBound)],\
         "backFrom":\(Coppice.backFrom),"slots":\(Coppice.slots.count)}
+        """
+    setResult(Array(json.utf8))
+    return Int32(json.utf8.count)
+}
+
+/// **Plot `plot` as it is laid**, as JSON, so the page draws the wood from the
+/// rule's own table rather than from a copy of it: the plot's variant
+/// (`[turn, mirror, nudge]`), the glade's outline, the three rides' centre
+/// lines (each from the glade's middle out past the rim), each coupe's ground
+/// and the spring's middle — every point already turned for the plot, as the
+/// service turns the plants'. A pure function of the plot's number.
+@_expose(wasm, "pg_coppice_layout")
+@_cdecl("pg_coppice_layout")
+public func pgCoppiceLayout(_ plot: Int32) -> Int32 {
+    let variant = Coppice.variant(ofPlot: Int(plot))
+    func point(_ s: Spot) -> String { "[\(s.x),\(s.z)]" }
+    func line(_ points: [Spot]) -> String { "[" + points.map(point).joined(separator: ",") + "]" }
+    let json = """
+        {"variant":[\(variant.turn),\(variant.mirror ? 1 : 0),\(variant.nudge)],\
+        "glade":\(line(Coppice.glade(on: variant))),\
+        "rides":[\(Coppice.rides(on: variant).map(line).joined(separator: ","))],\
+        "grounds":[\(Coppice.grounds(on: variant).map(line).joined(separator: ","))],\
+        "spring":\(point(Coppice.spring(on: variant)))}
         """
     setResult(Array(json.utf8))
     return Int32(json.utf8.count)

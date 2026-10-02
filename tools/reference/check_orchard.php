@@ -58,7 +58,30 @@ foreach ($vectors as $n => $want) {
             $got['plot'], $got['guild'], $got['index']
         );
         if (count($failed) >= 5) break;
+        continue;
     }
+    // **And where the service says it stands**, since the meadow orchard of
+    // 2 October 2026: the plot's variant, and the spot the table and the turn
+    // give. Both exact — a table's place is a literal and a turn only swaps
+    // and signs — so they are compared with no tolerance.
+    $checks++;
+    $variant = Orchard::variant($got['plot']);
+    $spot = Orchard::spot($got['plot'], $got['guild'], $got['index'], $got['nudgeX'], $got['nudgeZ']);
+    $wantVariant = [$want['variant'][0], $want['variant'][1] === 1, $want['variant'][2]];
+    if ([$variant['turn'], $variant['mirror'], $variant['nudge']] !== $wantVariant || $spot !== $want['spot']) {
+        $failed[] = sprintf('arrival %d (%s): SeedCore stands it at %s in variant %s, the service at %s in %s',
+            $n, substr($want['seed'], 0, 12), json_encode($want['spot']), json_encode($want['variant']),
+            json_encode($spot), json_encode($variant));
+        if (count($failed) >= 5) break;
+    }
+}
+
+// The space the port declares is the table's: as many feature variants as it
+// has places for.
+$checks++;
+if (Orchard::VARIANTS['nudges'] !== count(OrchardMeadowTable::PLACES)) {
+    $failed[] = sprintf('Orchard::VARIANTS says %d feature variants and the table has %d',
+        Orchard::VARIANTS['nudges'], count(OrchardMeadowTable::PLACES));
 }
 
 // And the shape of the place the two of them agree on, which is what a visitor
@@ -76,9 +99,7 @@ if ($full < $plots - 2) {
 
 foreach ($ways as $p) {
     $checks++;
-    [$x, $z] = Orchard::spot($p['guild'], $p['index']);
-    $atX = $x + $p['nudgeX'];
-    $atZ = $z + $p['nudgeZ'];
+    [$atX, $atZ] = Orchard::spot($p['plot'], $p['guild'], $p['index'], $p['nudgeX'], $p['nudgeZ']);
     if (max(abs($atX), abs($atZ)) >= Orchard::PLOT_SIDE / 2) {
         $failed[] = sprintf('%s stands at %.2f, %.2f — off the plot',
             substr($p['seed'], 0, 12), $atX, $atZ);
@@ -86,7 +107,7 @@ foreach ($ways as $p) {
     // Nothing may stand where a trunk is. The five trees are structures and a
     // plant sharing a place with one is two things in one spot.
     foreach ([0, 1, 2, 3, 4] as $guild) {
-        [$tx, $tz] = Orchard::trunk($guild);
+        [$tx, $tz] = Orchard::trunk($p['plot'], $guild);
         if (sqrt(($atX - $tx) ** 2 + ($atZ - $tz) ** 2) <= 0.3) {
             $failed[] = sprintf('%s stands at %.2f, %.2f — in the trunk of tree %d',
                 substr($p['seed'], 0, 12), $atX, $atZ, $guild);
