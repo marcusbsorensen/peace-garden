@@ -62,9 +62,9 @@ margin. Drawn young, one stem stood inside a lotus's pads, as before.
 ## A lotus takes two places — under glass
 
 The brief for this work said "a lotus takes two places, as already decided".
-That rule is kept exactly where it was decided, under glass. In the water, a lily holds one
-place, as the tank's did since 27 September: the pond's places were laid for a
-lily's pads.
+That rule is kept exactly where it was decided, under glass. In the water a
+lily holds one place, as in the tank since 27 September: the pond's places
+were laid for a lily's pads.
 
 The research proposed "about half a metre apart, a little closer than the
 tank's diagonal"; the pond's lilies are 0.53 m apart at the nearest. Two
