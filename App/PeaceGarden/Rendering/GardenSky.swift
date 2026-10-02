@@ -16,15 +16,105 @@ struct GardenSky: View {
     /// Where the screen's words are — the heading, the count under it, Close —
     /// in this canvas's coordinates. The sun and moon stand clear of them.
     var keepClear: [CGRect] = []
+    /// Which sky to draw. Left out, it is whichever the developer switch has
+    /// chosen, which outside a Debug build is always the one that ships.
+    /// `SkyLook` has the proposals of 2 October.
+    var look: SkyLook?
+    /// Draw what moves as it stands at `date`, in the one canvas, instead of
+    /// animating it. For the renders, which are stills.
+    var isStill = false
 
     var body: some View {
-        Canvas { context, size in
-            draw(in: &context, size: size)
+        let look = self.look ?? SkyLook.chosen
+        if look.moves, light.isDay, !isStill {
+            ZStack {
+                Canvas { context, size in
+                    draw(in: &context, size: size, look: look)
+                }
+                // What moves, in a canvas of its own, so a cloud sliding a
+                // fraction of a point does not repaint the whole sky under it.
+                TimelineView(SkyMotionSchedule(clouds: look.hasClouds, life: look.hasLife,
+                                               shift: SkyLook.clockShift,
+                                               latitude: Whereabouts.place(of: .current, at: date).latitude)) { timeline in
+                    Canvas { context, size in
+                        drawMotion(in: &context, size: size, look: look,
+                                   at: timeline.date.addingTimeInterval(SkyLook.clockShift))
+                    }
+                }
+            }
+            .allowsHitTesting(false)
+        } else {
+            Canvas { context, size in
+                draw(in: &context, size: size, look: look)
+            }
+            .allowsHitTesting(false)
         }
-        .allowsHitTesting(false)
     }
 
-    private func draw(in context: inout GraphicsContext, size: CGSize) {
+    private func draw(in context: inout GraphicsContext, size: CGSize, look: SkyLook) {
+        guard look.paintsTheHour else {
+            radial(in: &context, size: size)
+            stars(in: &context, size: size)
+            body(in: &context, size: size)
+            return
+        }
+
+        let scene = scene(in: size, look: look)
+        if light.isDay {
+            DaySky.paint(scene.palette, sun: scene.disc?.centre, in: &context, size: size)
+        } else {
+            radial(in: &context, size: size)
+            let depth = -SunPath.elevation(atHour: scene.hour)
+            if let set = onGlass(SunPath.direction(atHour: scene.hour)) {
+                DaySky.afterglow(depth: depth, sun: set, in: &context, size: size)
+            }
+        }
+        stars(in: &context, size: size)
+        if look.knowsTheSeason {
+            planet(in: &context, size: size, place: scene.place)
+            dayMoon(in: &context, size: size, scene: scene)
+        }
+        body(in: &context, size: size, disc: light.isDay ? scene.palette.disc : nil)
+
+        if isStill, light.isDay {
+            drawMotion(in: &context, size: size, look: look, at: date)
+        }
+    }
+
+    /// The clouds and the birds, as they stand at `moment`.
+    private func drawMotion(in context: inout GraphicsContext, size: CGSize, look: SkyLook, at moment: Date) {
+        let scene = scene(in: size, look: look)
+        if look.hasClouds {
+            SkyClouds.draw(at: moment, in: &context, size: size, palette: scene.palette,
+                           sun: scene.disc?.centre, up: light.up, keepClear: keepClear)
+        }
+        if look.hasLife {
+            SkyLife.draw(at: moment, latitude: scene.place.latitude, in: &context, size: size,
+                         palette: scene.palette, up: light.up, keepClear: keepClear)
+        }
+    }
+
+    /// What the proposed skies all need to know about this moment.
+    fileprivate struct Scene {
+        var hour: Double
+        var place: Place
+        var palette: SkyPalette
+        var disc: (centre: CGPoint, radius: Double)?
+    }
+
+    fileprivate func scene(in size: CGSize, look: SkyLook) -> Scene {
+        let hour = light.hourOfDay
+        let place = Whereabouts.place(of: .current, at: date)
+        let season = look.knowsTheSeason ? Season(date: date, place: place) : nil
+        let elevation = SunPath.elevation(atHour: hour, peak: season?.noon ?? 62)
+        return Scene(hour: hour, place: place,
+                     palette: SkyPalette.at(elevation: elevation, haze: season?.haze ?? 0),
+                     disc: disc(in: size))
+    }
+
+    /// The sky as it shipped, and still the night in every proposal: a radial
+    /// from a fixed point near the top.
+    private func radial(in context: inout GraphicsContext, size: CGSize) {
         let centre = CGPoint(x: size.width / 2, y: size.height * 0.24)
         let reach = max(size.width, size.height) * 1.6
 
@@ -37,9 +127,6 @@ struct GardenSky: View {
                 endRadius: reach
             )
         )
-
-        stars(in: &context, size: size)
-        body(in: &context, size: size)
     }
 
     // MARK: The sky itself
@@ -161,20 +248,14 @@ struct GardenSky: View {
     /// Placed by the light direction itself, so the shadows on the ground point
     /// away from the thing casting them without anything having to be kept in
     /// step by hand.
-    private func body(in context: inout GraphicsContext, size: CGSize) {
-        let along = view.point(x: light.direction.x, y: light.direction.y, z: light.direction.z)
-        let away = CGVector(dx: along.x - view.centre.x, dy: along.y - view.centre.y)
-        let span = (away.dx * away.dx + away.dy * away.dy).squareRoot()
-        guard span > 0.001 else { return }
-
-        let far = 340 * view.pointsPerMetre / 42
-        let placed = CGPoint(
-            x: view.centre.x + away.dx / span * far,
-            y: view.centre.y + away.dy / span * far
-        )
-        let radius = light.isDay ? 13.0 : 9.5
+    ///
+    /// `disc` is the proposals' sun colour, warmer as it gets lower; nil is
+    /// the colour it ships with.
+    private func body(in context: inout GraphicsContext, size: CGSize, disc colour: SIMD3<Double>? = nil) {
+        guard let placed = disc(in: size) else { return }
+        let centre = placed.centre, radius = placed.radius
         let glow = light.isDay ? 0.22 : 0.10
-        let centre = Self.clear(placed, of: keepClear, by: radius * 2.6, within: size)
+        let tint = colour.map { Color(sky: $0) } ?? self.tint
 
         context.fill(
             Path(ellipseIn: CGRect(x: centre.x - radius * 2.6, y: centre.y - radius * 2.6,
@@ -185,18 +266,41 @@ struct GardenSky: View {
             )
         )
 
-        let disc = CGRect(x: centre.x - radius, y: centre.y - radius,
+        let face = CGRect(x: centre.x - radius, y: centre.y - radius,
                           width: radius * 2, height: radius * 2)
 
         if light.isDay {
-            context.fill(Path(ellipseIn: disc), with: .color(tint))
+            context.fill(Path(ellipseIn: face), with: .color(tint))
         } else {
             // The dark limb keeps a trace of earthshine rather than going black,
             // which is what the eye actually sees on a crescent.
-            context.fill(Path(ellipseIn: disc), with: .color(tint.opacity(0.14)))
-            context.fill(MoonDisc(fraction: MoonPhase.fraction(on: date)).path(in: disc),
+            context.fill(Path(ellipseIn: face), with: .color(tint.opacity(0.14)))
+            context.fill(MoonDisc(fraction: MoonPhase.fraction(on: date)).path(in: face),
                          with: .color(tint))
         }
+    }
+
+    /// Where the disc is drawn, and how big: placed by the light, then moved
+    /// off the words.
+    private func disc(in size: CGSize) -> (centre: CGPoint, radius: Double)? {
+        guard let placed = onGlass(light.direction) else { return nil }
+        let radius = light.isDay ? 13.0 : 9.5
+        return (Self.clear(placed, of: keepClear, by: radius * 2.6, within: size), radius)
+    }
+
+    /// Where a direction in the plot's own axes stands in the sky on screen:
+    /// through the plot's projection, at a fixed distance from its middle.
+    private func onGlass(_ direction: SIMD3<Double>) -> CGPoint? {
+        let along = view.point(x: direction.x, y: direction.y, z: direction.z)
+        let away = CGVector(dx: along.x - view.centre.x, dy: along.y - view.centre.y)
+        let span = (away.dx * away.dx + away.dy * away.dy).squareRoot()
+        guard span > 0.001 else { return nil }
+
+        let far = 340 * view.pointsPerMetre / 42
+        return CGPoint(
+            x: view.centre.x + away.dx / span * far,
+            y: view.centre.y + away.dy / span * far
+        )
     }
 
     /// **The sun never sits on the words.** Placed by the light alone, the sun
@@ -227,6 +331,104 @@ struct GardenSky: View {
         light.isDay
             ? Color(red: 1.0, green: 0.96, blue: 0.86)
             : Color(red: 0.88, green: 0.91, blue: 0.98)
+    }
+}
+
+// MARK: - C: the real moon by day, and the brightest planet
+
+extension GardenSky {
+    /// The real moon, by day, when it is really up.
+    ///
+    /// **Pale, because it is.** By day the moon is the sky's own blue with
+    /// light added: the dark limb is not there at all, and the lit part is a
+    /// white thin enough to see the blue through. The few grey seas on it are
+    /// what make it read as the moon rather than as a smudge.
+    ///
+    /// **Its lit side faces the sun on the screen**, which is not where the
+    /// real sun is: the drawn sun keeps the orbit, for the shadows' sake.
+    /// Turning the lit limb towards the disc that is actually drawn keeps
+    /// right the one thing anybody would notice.
+    fileprivate func dayMoon(in context: inout GraphicsContext, size: CGSize, scene: Scene) {
+        guard light.isDay else { return }
+        // Near new it is lost in the sun's glare, as it is outside.
+        guard MoonPhase.lit(on: date) > 0.05 else { return }
+        let moon = RealSky.moon(at: date, place: scene.place)
+        let showing = SkyPalette.smooth((light.up - 0.03) / 0.12)
+            * SkyPalette.smooth((moon.altitude + 0.5) / 3)
+        guard showing > 0.01,
+              let spot = Self.onGlass(altitude: moon.altitude, azimuth: moon.azimuth,
+                                      latitude: scene.place.latitude, turn: view.turn, size: size)
+        else { return }
+
+        let radius = 9.5
+        let centre = Self.clear(spot, of: keepClear, by: radius * 1.6, within: size)
+        let fraction = MoonPhase.fraction(on: date)
+        let sun = scene.disc?.centre ?? CGPoint(x: centre.x + 1, y: centre.y)
+        // `MoonDisc` lights the right-hand side while waxing and the left
+        // while waning; turned so that side faces the drawn sun.
+        let towards = atan2(sun.y - centre.y, sun.x - centre.x)
+        let turn = fraction < 0.5 ? towards : towards - .pi
+        let local = CGRect(x: -radius, y: -radius, width: radius * 2, height: radius * 2)
+        let shape = MoonDisc(fraction: fraction).path(in: local)
+            .applying(CGAffineTransform(translationX: centre.x, y: centre.y).rotated(by: turn))
+
+        var lit = context
+        lit.blendMode = .screen
+        lit.fill(shape, with: .color(Color(sky: SIMD3(0.92, 0.94, 1.0), opacity: 0.46 * showing)))
+
+        // The seas, in the moon's own frame rather than turned with its phase.
+        var seas = context
+        seas.clip(to: shape)
+        let blue = SkyPalette.mix(scene.palette.zenith, scene.palette.horizon, 0.4)
+        let maria: [(x: Double, y: Double, r: Double, a: Double)] = [
+            (-0.32, -0.34, 0.30, 0.30), (0.22, -0.30, 0.17, 0.30), (0.30, 0.00, 0.21, 0.26),
+            (-0.52, 0.06, 0.30, 0.18), (-0.14, 0.40, 0.17, 0.20), (0.46, 0.30, 0.10, 0.20)
+        ]
+        for mare in maria {
+            let r = mare.r * radius
+            let at = CGPoint(x: centre.x + mare.x * radius, y: centre.y + mare.y * radius)
+            seas.fill(Path(ellipseIn: CGRect(x: at.x - r, y: at.y - r, width: r * 2, height: r * 2)),
+                      with: .radialGradient(Gradient(colors: [Color(sky: blue, opacity: mare.a * showing),
+                                                              Color(sky: blue, opacity: 0)]),
+                                            center: at, startRadius: 0, endRadius: r))
+        }
+    }
+
+    /// The brightest planet, coming out as the day goes and there all night.
+    ///
+    /// One point, a little warmer and steadier than the stars round it, and
+    /// placed by the same sky they are.
+    fileprivate func planet(in context: inout GraphicsContext, size: CGSize, place: Place) {
+        let showing = light.isDay ? 1 - SkyPalette.smooth((light.up - 0.06) / 0.28) : 1
+        guard showing > 0.01,
+              let planet = RealSky.brightestPlanet(at: date, place: place),
+              let spot = Self.onGlass(altitude: planet.altitude, azimuth: planet.azimuth,
+                                      latitude: place.latitude, turn: view.turn, size: size)
+        else { return }
+        // By day only above the horizon: the half under it is the night on
+        // the other side of the world, and the stars there are not out yet.
+        let risen = light.isDay ? SkyPalette.smooth((planet.altitude + 1) / 4) : 1
+        let keep = keepClear.reduce(1.0) { min($0, Self.dimming(at: spot, near: $1)) }
+        let alpha = showing * risen * keep * (planet.magnitude < -3 ? 0.95 : 0.8)
+        guard alpha > 0.01 else { return }
+
+        let tint = Color(red: 1.0, green: 0.97, blue: 0.90)
+        context.fill(Path(ellipseIn: CGRect(x: spot.x - 6, y: spot.y - 6, width: 12, height: 12)),
+                     with: .radialGradient(Gradient(colors: [tint.opacity(0.32 * alpha), tint.opacity(0)]),
+                                           center: spot, startRadius: 0, endRadius: 6))
+        context.fill(Path(ellipseIn: CGRect(x: spot.x - 1.6, y: spot.y - 1.6, width: 3.2, height: 3.2)),
+                     with: .color(tint.opacity(alpha)))
+    }
+
+    /// Where something at this altitude and azimuth stands on the glass, by
+    /// the same mapping the stars use, or nil if it is off the side.
+    static func onGlass(altitude: Double, azimuth: Double, latitude: Double, turn: Int,
+                        size: CGSize) -> CGPoint? {
+        let facing = StarField.facing(fromLatitude: latitude, turn: turn)
+        let across = Sky.offset(from: facing, to: azimuth)
+        guard abs(across) <= Sky.fieldOfView / 2 else { return nil }
+        return CGPoint(x: size.width * (0.5 + across / Sky.fieldOfView),
+                       y: size.height * (0.5 - altitude / 180))
     }
 }
 

@@ -1,0 +1,27 @@
+screen 420x912 pt, time zone Europe/London, latitude 51.51
+D 7: birds at 07:02:23
+BCD 7: birds at 07:02:23
+7: weather fair, moon at 62°, planet Venus -30°
+D 10: birds at 10:03:18
+BCD 10: birds at 10:03:18
+10: weather fair, moon at 37°, planet Venus -4°
+D 13: birds at 12:46:27
+BCD 13: birds at 12:46:27
+13: weather fair, moon at 11°, planet Venus 15°
+D 17: birds at 16:50:32
+BCD 17: birds at 16:50:32
+17: weather fair, moon at -10°, planet Venus 10°
+b-13-fair: 2026-10-03
+b-13-high: 2026-10-08
+b-13-mixed: 2026-11-05
+d-13-july: swifts at 2026-07-10 12:36:05
+
+frame costs at 10:00, ms of CoreGraphics at 3x, mean of 12 after a warm-up
+still canvas (redrawn every 20 s):
+  now: 11.9
+  A: 27.8
+  C: 27.8
+moving canvas (redrawn every frame while anything moves):
+  B clouds: 2.38
+  D birds, mid-crossing: 0.11
+  BCD both: 2.58

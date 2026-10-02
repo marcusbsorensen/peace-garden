@@ -59,6 +59,20 @@ final class Developer {
 
     private static let gridKey = "developer.showsTileGrid"
 
+    /// Which of the day skies proposed on 2 October the garden draws.
+    ///
+    ///     xcrun simctl launch <device> app.peacegarden -pgSky clouds
+    ///
+    /// Any of `SkyLook`'s names. Kept in `UserDefaults` for the same reason as
+    /// the grid: a sky is judged over days, on somebody's own garden, and the
+    /// choice has to survive the relaunch between one build and the next. A
+    /// launch argument wins over what was kept, for screenshots.
+    var skyLook: SkyLook {
+        didSet { UserDefaults.standard.set(skyLook.rawValue, forKey: Self.skyKey) }
+    }
+
+    private static let skyKey = "developer.skyLook"
+
     /// One of the four screens behind a mark, opened as the stage appears.
     ///
     ///     xcrun simctl launch <device> app.peacegarden -pgOpen settings
@@ -114,6 +128,9 @@ final class Developer {
     private init() {
         clockShift = UserDefaults.standard.double(forKey: Self.shiftKey)
         showsTileGrid = UserDefaults.standard.bool(forKey: Self.gridKey)
+        skyLook = (UserDefaults.standard.string(forKey: "pgSky")
+                   ?? UserDefaults.standard.string(forKey: Self.skyKey))
+            .flatMap(SkyLook.init(rawValue:)) ?? .now
         openOnLaunch = UserDefaults.standard.string(forKey: "pgOpen")
             .flatMap(Screen.init(rawValue:))
     }
@@ -225,6 +242,7 @@ struct DeveloperSection: View {
             clock
             meeting
             garden
+            sky
         }
     }
 
@@ -307,6 +325,31 @@ struct DeveloperSection: View {
             .pressable(isProminent: true)
 
             Text(verbatim: "Which screen the garden mark opens. The grid is what the plot replaced; it is kept here so the two can be compared on a real garden.")
+                .font(.system(size: 13, weight: .light))
+                .foregroundStyle(Chrome.muted)
+                .lineSpacing(4)
+        }
+    }
+
+    // MARK: The sky
+
+    /// One press steps to the next proposal and round again. The garden is
+    /// where it is judged, so this only chooses; the caption says which.
+    private var sky: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Button {
+                let all = SkyLook.allCases
+                let next = (all.firstIndex(of: developer.skyLook).map { $0 + 1 } ?? 0) % all.count
+                developer.skyLook = all[next]
+            } label: {
+                Text(verbatim: "Sky: \(developer.skyLook.letter)")
+            }
+            .buttonStyle(.plain)
+            .font(.system(size: 15, weight: .light))
+            .foregroundStyle(Chrome.ink)
+            .pressable(isProminent: true)
+
+            Text(verbatim: "\(developer.skyLook.caption). The day skies proposed on 2 October; the night is the same in all of them. Renders in design/app-sky-2026-10-02.")
                 .font(.system(size: 13, weight: .light))
                 .foregroundStyle(Chrome.muted)
                 .lineSpacing(4)
