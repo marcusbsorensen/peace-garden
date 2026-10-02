@@ -38,14 +38,31 @@ public enum Coppice {
     public static let plotSide = 5.2
 
     /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
-    /// Marcus's decision of 2 October 2026). Turned and mirrored; the glade's
-    /// places are feature variants to come. Declared but not yet read: the area's
-    /// new layout reads it.
-    public static let variants = PlotVariant.Space(turns: 4, mirror: true)
+    /// Marcus's decision of 2 October 2026): turned four ways, mirrored, and
+    /// one of the wood's three feature variants, each with its glade, its
+    /// rides' angles and its coupes' shares of the plot its own. Twenty-four
+    /// in all, so a block of twenty-four plots holds every one.
+    public static let variants = PlotVariant.Space(turns: 4, mirror: true, nudges: PlaceTable.coppiceGlade.nudges)
 
-    /// Three coupes of eleven: five stools down the middle of each, and three
-    /// places in the light either side of them, a back row and a front row.
-    /// Thirty-three a plot, Marcus's choice on 24 September.
+    /// **Where everything in a plot stands, worked out offline**: coupes round
+    /// a glade, as Marcus chose on 2 October 2026
+    /// (`design/garden-layouts-2026-10-02/RESEARCH.md` §*The Coppice*, option
+    /// A), written into SeedCore by `tools/layouts/generate.py` from
+    /// `tools/layouts/tables/coppice_glade.py`. Three rides meet at a small
+    /// sunny glade and bend out to the rim, dividing the plot into three
+    /// coupes of unequal size. Each coupe's stools stand together as a stand
+    /// in its outer ground, and its stars in two clumps of three, one by each
+    /// of its rides, where the light is. Its places are this file's slots,
+    /// tagged by coupe, place and index; its curves are the glade, the three
+    /// rides, each coupe's ground and the spring.
+    ///
+    /// Until 2 October 2026 the coupes were three straight bands side by side,
+    /// divided by two straight rides, with five stools down the middle of each
+    /// and the floor in rows either side.
+    public static let table = PlaceTable.coppiceGlade
+
+    /// Three coupes of eleven: five stools and a floor of six, three in front
+    /// and three behind. Thirty-three a plot, Marcus's choice on 24 September.
     ///
     /// **The stool share, 45%, is the template's one real number.** Swept
     /// from three to seven stools a coupe, every share between 43% and 47%
@@ -55,23 +72,44 @@ public enum Coppice {
     public static let stools = 5
     public static let floorRow = 3
 
-    /// The middles of the three coupes, in `z` from the middle of the plot.
-    /// **Coupe 0 is `z−`**, the far band before the page is turned, and the
-    /// coupes are cut in that order.
-    public static let coupeZ: [Double] = [-1.80, 0, 1.80]
-
-    /// The two rides between the coupes: their centrelines at `z` ±0.90, each
-    /// 0.48 m wide and wandering up to 0.08 m off its line. Drawn, never
-    /// planted; the places are set to clear them.
-    public static let rideZ = 0.90
+    /// A ride: 0.48 m wide, give or take 12% along its length, and its edges
+    /// wandering a few centimetres off its line as the page draws it. Drawn,
+    /// never planted; the places are set to clear it. A ride's line is the
+    /// table's (`rides(on:)`), and it bends.
     public static let rideWidth = 0.48
-    public static let rideWander = 0.08
+    public static let rideWander = 0.04
 
-    /// Along a coupe: the stools 0.9 m apart down its middle, and the floor's
-    /// three places 1.35 m apart, in rows 0.40 m either side of the stools.
-    public static let stoolX: [Double] = [-1.8, -0.9, 0, 0.9, 1.8]
-    public static let floorX: [Double] = [-1.35, 0, 1.35]
-    public static let rowFrom = 0.40
+    /// The variant a plot is laid in: `PlotVariant.of(plot:area:)` for the
+    /// Coppice. Plot 0 is the table as drawn.
+    public static func variant(ofPlot plot: Int) -> PlotVariant {
+        PlotVariant.of(plot: plot, area: .renewal)
+    }
+
+    /// The glade's outline on a plot laid as `variant`: where the three rides
+    /// meet, open and sunny, its litter lighter.
+    public static func glade(on variant: PlotVariant) -> [Spot] {
+        table.curve("glade", on: variant).points
+    }
+
+    /// The three rides' centre lines on a plot laid as `variant`, each from
+    /// the glade's middle out past the rim. Ride `c` runs between coupe `c − 1`
+    /// and coupe `c`.
+    public static func rides(on variant: PlotVariant) -> [[Spot]] {
+        (0..<coupes).map { table.curve("ride\($0)", on: variant).points }
+    }
+
+    /// Each coupe's ground on a plot laid as `variant`: the glade's middle, out
+    /// along one ride, round past the rim and back along the next. The page
+    /// lights a coupe by its stage from it.
+    public static func grounds(on variant: PlotVariant) -> [[Spot]] {
+        (0..<coupes).map { table.curve("coupe\($0)", on: variant).points }
+    }
+
+    /// Where the spring basin stands on a plot laid as `variant`: beside the
+    /// outer end of a ride, clear of every place by 0.62 m.
+    public static func spring(on variant: PlotVariant) -> Spot {
+        table.curve("spring", on: variant).points[0]
+    }
 
     /// How far a plant stands off its place, either way, from the seed.
     /// `Planting.nudge`.
@@ -89,6 +127,14 @@ public enum Coppice {
     /// as a clump, where filling from one end would make it a line. Which place
     /// a plant takes along its row changes no count, so none of this needed
     /// simulating.
+    ///
+    /// **Kept as the indices a row's places are numbered by**, since the
+    /// coupes went round a glade on 2 October 2026: the table gives the stool
+    /// numbered `stoolOrder[k]` the k-th place out from the middle of its
+    /// coupe's stand, and the floor place numbered `floorOrder[k]` the k-th of
+    /// its row to fill — the first clump's first, so a coupe's first stars
+    /// stand together. So the rule and every stored planting read as they did,
+    /// and a coupe of three stools is still a clump.
     public static let stoolOrder = [2, 1, 3, 0, 4]
     public static let floorOrder = [1, 0, 2]
 
@@ -110,8 +156,11 @@ public enum Coppice {
     public static let backFrom = 0.99
 
     /// Where a plant stands in a coupe: on a stool, or in one of the floor's
-    /// two rows. **The back row is `z−` of the stools**, further from the eye
-    /// before a turn, as the Cold Frame's back rank is.
+    /// two rows. **The front row is a ride's edge**, where the light is, and
+    /// **the back row stands behind it**, further from the ride: seen from
+    /// the ride, the shorter stars in front of the taller. (Until 2 October
+    /// 2026 the back row was `z−` of the stools, further from the eye before
+    /// a turn.)
     public enum Place: Int, Codable, CaseIterable, Sendable {
         case stool = 0, back, front
     }
@@ -130,8 +179,8 @@ public enum Coppice {
 
     // MARK: Slots
 
-    /// One place in one plot: which coupe, which row of it, and where along
-    /// the row, 0 at the `x−` end.
+    /// One place in one plot: which coupe, which row of it, and which place
+    /// of the row, numbered as `stoolOrder` and `floorOrder` fill them.
     public struct Slot: Codable, Equatable, Hashable, Sendable {
         public var coupe: Int
         public var place: Place
@@ -143,24 +192,38 @@ public enum Coppice {
             self.index = index
         }
 
-        /// Where the place is, in metres from the middle of its plot.
-        public var spot: Spot {
-            let z = Coppice.coupeZ[coupe]
-            switch place {
-            case .stool: return Spot(x: Coppice.stoolX[index], z: z)
-            case .back:  return Spot(x: Coppice.floorX[index], z: z - Coppice.rowFrom)
-            case .front: return Spot(x: Coppice.floorX[index], z: z + Coppice.rowFrom)
-            }
+        /// Where the place is in the table's frame for feature variant
+        /// `nudge`, before the plot is turned or mirrored: a literal, worked
+        /// out offline, so the same number on every host.
+        public func place(nudge: Int) -> Spot {
+            Coppice.table.places(nudge: nudge)[Coppice.tableIndex[self]!].spot
+        }
+
+        /// Where the place is on a plot laid as `variant`, in metres from the
+        /// middle of the plot. Exact on every host.
+        public func spot(on variant: PlotVariant) -> Spot {
+            variant.apply(place(nudge: variant.nudge))
         }
     }
 
     /// Every place in a plot, coupe by coupe: the stools, then the back row,
-    /// then the front, each from `x−`.
+    /// then the front, each by its index.
     public static let slots: [Slot] = (0..<coupes).flatMap { coupe in
         (0..<stools).map { Slot(coupe: coupe, place: .stool, index: $0) }
             + (0..<floorRow).map { Slot(coupe: coupe, place: .back, index: $0) }
             + (0..<floorRow).map { Slot(coupe: coupe, place: .front, index: $0) }
     }
+
+    /// Which of the table's places each slot is, read off the table's tags.
+    static let tableIndex: [Slot: Int] = {
+        var out: [Slot: Int] = [:]
+        for (i, p) in table.places(nudge: 0).enumerated() {
+            let slot = Slot(coupe: table.tag("coupe", of: p), place: Place(rawValue: table.tag("place", of: p))!,
+                            index: table.tag("index", of: p))
+            out[slot] = i
+        }
+        return out
+    }()
 
     // MARK: The rotation
 
@@ -250,12 +313,16 @@ public enum Coppice {
         /// reads first and no other reads at all.
         public var traits: PlantTraits
         /// A small offset from the place, from the seed: 0.06 m either way.
-        /// The nearest two places are 0.40 m apart, and a wood is planted by
+        /// The nearest two places are 0.50 m apart, and a wood is planted by
         /// eye.
         public var nudge: Spot
 
+        /// Where the plant stands: its place in the table's frame, the nudge
+        /// added there, and the sum turned for its plot.
         public var spot: Spot {
-            Spot(x: slot.spot.x + nudge.x, z: slot.spot.z + nudge.z)
+            let variant = Coppice.variant(ofPlot: plot)
+            let place = slot.place(nudge: variant.nudge)
+            return variant.apply(Spot(x: place.x + nudge.x, z: place.z + nudge.z))
         }
     }
 

@@ -23,6 +23,14 @@ import Foundation
 /// **Twenty plants in a 5.2 m plot**: five guilds of four. Between the Crossing's
 /// twenty-four and the Quiet Garden's ten, in the same square as both.
 ///
+/// **A meadow orchard since 2 October 2026** (Marcus's choice,
+/// `design/garden-layouts-2026-10-02/RESEARCH.md` §*The Orchard*, option A):
+/// each outer guild a crescent at its tree's drip line turned toward the
+/// middle tree, the middle tree's four in a ring, the outer trees nudged off
+/// the quincunx, one mown way through the long grass, and every plot turned,
+/// mirrored and nudged by its number (`variants`). The rule did not change;
+/// where its places stand did (`table`).
+///
 /// **The five trees belong to the garden, not to a gardener.** They are
 /// structures, like the Long Walk's hedges, the Quiet Garden's bench and the
 /// Crossing's paving: `Organic.tree` draws them, they stand in every plot from
@@ -45,62 +53,97 @@ public enum Orchard {
     public static let plotSide = 5.2
 
     /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
-    /// Marcus's decision of 2 October 2026). Turned and mirrored; the trees'
-    /// nudges are feature variants to come. Declared but not yet read: the area's
-    /// new layout reads it.
-    public static let variants = PlotVariant.Space(turns: 4, mirror: true)
+    /// Marcus's decision of 2 October 2026): turned four ways, mirrored, and
+    /// one of the meadow's three feature variants, each with its outer trees
+    /// nudged its own way and its mown way bent its own way. Twenty-four in
+    /// all, so a block of twenty-four plots holds every one.
+    public static let variants = PlotVariant.Space(turns: 4, mirror: true, nudges: PlaceTable.orchardMeadow.nudges)
+
+    /// **Where everything in a plot stands, worked out offline**: the meadow
+    /// orchard Marcus chose on 2 October 2026
+    /// (`design/garden-layouts-2026-10-02/RESEARCH.md` §*The Orchard*, option
+    /// A), written into SeedCore by `tools/layouts/generate.py` from
+    /// `tools/layouts/tables/orchard_meadow.py`. Its places are this file's
+    /// slots, guild by guild and index by index; its curves are the five
+    /// trunks, the mown way, the pond and each crescent's mown arc.
+    public static let table = PlaceTable.orchardMeadow
 
     /// How far out the four outer trees stand, on each axis, from the middle of
-    /// the plot. The fifth is at the middle itself.
+    /// the plot, before each is nudged by up to 0.08 m: **old orchards are never
+    /// true**. The fifth is at the middle itself and is never nudged. The
+    /// table's number, written here for the page and the tests.
     ///
-    /// **It is set by the one spacing that could go wrong.** The middle tree's
-    /// guild and an outer tree's guild lean toward each other, and at the first
-    /// spacing tried — trees 1.45 m out with guilds 0.88 m round them — the two
-    /// nearest plants of those two guilds stood 0.30 m apart, which is two plants
-    /// in one place. Pushing the trees out and drawing the guilds in leaves that
-    /// closest pair 0.90 m apart, which is wider than the Crossing's closest
-    /// neighbours at 0.53 m and the reason this area's nudge can be the Quiet
-    /// Garden's 0.13 rather than the Crossing's 0.11.
-    public static let treeFrom = 1.70
+    /// It is set by the one spacing that could go wrong, as it always was: the
+    /// middle tree's four and the near end of each crescent lean toward each
+    /// other, and at 1.74 m out, whatever the nudge, they stand 0.80 m apart
+    /// and more. (1.70 m until 2 October 2026, when a guild was a square of
+    /// four round its trunk and the closest two guilds stood 0.90 m apart.)
+    public static let treeFrom = 1.74
 
-    /// How far a guild's four places stand from their trunk.
-    ///
-    /// **Inside the canopy rather than at its edge.** `Organic.tree` spreads
-    /// 1.7 m, so a guild at 0.75 m is under the branches, which is what makes it
-    /// a guild rather than four plants arranged round a tree.
-    public static let guildRadius = 0.75
+    /// How far an outer guild's four places stand from their trunk: **at the
+    /// drip line**, a crescent just past the canopy's edge (`Organic.tree`
+    /// spreads up to 1.62 m). Until 2 October 2026 a guild stood 0.75 m from
+    /// its trunk on the trunk's four diagonals, a square round the tree.
+    public static let guildRadius = 0.90
+
+    /// How far the middle tree's four stand from it: on the diagonals, each
+    /// facing a crescent, under the canopy's edge — the old guild's 0.75 m,
+    /// and for the old reason: nearer the trunk the canopy's underside comes
+    /// down to 2.23 m, under the tallest plant the garden grows.
+    public static let middleRadius = 0.75
+
+    /// The variant a plot is laid in: `PlotVariant.of(plot:area:)` for the
+    /// Orchard. Plot 0 is the table as drawn.
+    public static func variant(ofPlot plot: Int) -> PlotVariant {
+        PlotVariant.of(plot: plot, area: .kinship)
+    }
+
+    /// The five trunks of a plot laid as `variant`: the middle first, then the
+    /// four outer ones in the order their guilds fill.
+    public static func trunks(on variant: PlotVariant) -> [Spot] {
+        table.curve("trunks", on: variant).points
+    }
+
+    /// The mown way's centre line on a plot laid as `variant`: in at one edge,
+    /// past the middle tree inside its mown disc, out at the other, and running
+    /// on past the rim at both ends so the drawing cuts it where the plot's own
+    /// edge is.
+    public static func way(on variant: PlotVariant) -> [Spot] {
+        table.curve("way", on: variant).points
+    }
+
+    /// Where the dipping pond lies on a plot laid as `variant`: in one of the
+    /// two pockets the crowns frame, clear of every place by 0.80 m.
+    public static func pond(on variant: PlotVariant) -> Spot {
+        table.curve("pond", on: variant).points[0]
+    }
+
+    /// An outer guild's mown arc on a plot laid as `variant`: the line its
+    /// crescent is mown along, a little longer than its four places.
+    public static func crescent(_ guild: Guild, on variant: PlotVariant) -> [Spot] {
+        precondition(guild != .middle, "the middle tree has a disc, not a crescent")
+        return table.curve("crescent\(guild.rawValue)", on: variant).points
+    }
 
     // MARK: The five guilds
 
     /// The five trees, in the order their guilds fill.
     ///
-    /// **The middle first, then the four outer ones going round.** The middle is
-    /// where a plot opens for a reason given under `Slot.rank`: it is the one
-    /// guild that can take any plant at all, so it is the right one to hand the
-    /// first four arrivals, whatever heights they happen to be.
+    /// **The middle first**, for a reason given under `Slot.rank`: it is the
+    /// one guild that can take any plant at all, so it is the right one to hand
+    /// the first four arrivals, whatever heights they happen to be. **Then the
+    /// four outer ones farthest-first** (Marcus, 2 October 2026: every count
+    /// looks finished): in the table as drawn, the far corner (`x−`, `z−`),
+    /// whose crescent faces the eye before a turn, then the near corner
+    /// opposite it, then the two at the sides. Until 2 October 2026 they went
+    /// round the plot, so a plot of twelve was dressed on one side.
     public enum Guild: Int, Codable, CaseIterable, Sendable {
         case middle = 0, first, second, third, fourth
 
-        /// Which way this guild lies from the middle of the plot: ±1 on each
-        /// axis. The middle's own is (1, 1), which points nowhere in particular
-        /// and is never read as a direction — its four places are equidistant
-        /// from the plot's centre whatever sign is applied.
-        public var lie: (x: Double, z: Double) {
-            switch self {
-            case .middle: return (1, 1)
-            case .first:  return (1, 1)
-            case .second: return (-1, 1)
-            case .third:  return (-1, -1)
-            case .fourth: return (1, -1)
-            }
-        }
-
-        /// Where this guild's trunk stands, in metres from the middle of the
-        /// plot.
-        public var trunk: Spot {
-            if self == .middle { return Spot(x: 0, z: 0) }
-            let lie = self.lie
-            return Spot(x: lie.x * Orchard.treeFrom, z: lie.z * Orchard.treeFrom)
+        /// Where this guild's trunk stands on a plot laid as `variant`, in
+        /// metres from the middle of the plot.
+        public func trunk(on variant: PlotVariant) -> Spot {
+            Orchard.trunks(on: variant)[rawValue]
         }
     }
 
@@ -157,8 +200,11 @@ public enum Orchard {
     /// One place in one plot: which guild, and where under that guild's tree.
     public struct Slot: Codable, Equatable, Hashable, Sendable {
         public var guild: Guild
-        /// 0 is the place nearest the middle of the plot, 1 and 2 are the two
-        /// beside the trunk, 3 is the one furthest out.
+        /// In an outer guild 0 is the understorey, on the line from the trunk
+        /// to the middle tree and so nearest the middle of the plot; 1 and 2 are
+        /// the flanks either side of it, at one distance from the middle; 3 is
+        /// the crown at the crescent's far horn, furthest out. Under the middle
+        /// tree the four are its fill order.
         public var index: Int
 
         public init(guild: Guild, index: Int) {
@@ -192,38 +238,40 @@ public enum Orchard {
             self.rank == nil || self.rank == rank
         }
 
-        /// Where the place is, in metres from the middle of its plot.
+        /// Where the place is in the table's frame for feature variant
+        /// `nudge`, before the plot is turned or mirrored.
         ///
-        /// **Written out rather than computed from an angle**, for the reason
-        /// `Organic.quarter` exists: a sine taken from a host's own library is
-        /// not the same number on every host, and a placement has to be the same
-        /// number in Swift and in PHP for ever. The four sit on the guild's own
-        /// diagonals rather than at its compass points, which is what puts one
-        /// of them squarely nearest the middle, one squarely furthest out, and
-        /// the other two at the same distance as each other — and two places at
-        /// one distance is what frees them from having to be in order.
-        public var spot: Spot {
-            let lie = guild.lie
-            let trunk = guild.trunk
-            let (x, z) = Slot.canonical[index]
-            return Spot(x: trunk.x + lie.x * x, z: trunk.z + lie.z * z)
+        /// **A literal, not an angle**, for the reason `Organic.quarter` exists:
+        /// a sine taken from a host's own library is not the same number on
+        /// every host, and a placement has to be the same number in Swift and
+        /// in PHP for ever. The crescents were drawn with angles once, offline,
+        /// and written down to the millimetre (`PlaceTable`).
+        public func place(nudge: Int) -> Spot {
+            Orchard.table.places(nudge: nudge)[Orchard.tableIndex[self]!].spot
         }
 
-        /// The four places under a tree, in the guild where both axes point
-        /// away from the middle. Every other guild is this one with a sign
-        /// flipped. 0.53 is `guildRadius` on the diagonal.
-        static let canonical: [(Double, Double)] = [
-            (-0.53, -0.53),   // 0  nearest the middle of the plot
-            (0.53, -0.53),    // 1  beside the trunk
-            (-0.53, 0.53),    // 2  beside the trunk, the same distance out as 1
-            (0.53, 0.53),     // 3  furthest out
-        ]
+        /// Where the place is on a plot laid as `variant`, in metres from the
+        /// middle of the plot. Exact on every host.
+        public func spot(on variant: PlotVariant) -> Spot {
+            variant.apply(place(nudge: variant.nudge))
+        }
     }
 
-    /// Every place in one plot, guild by guild and outward within each.
+    /// Every place in one plot, guild by guild and outward within each — the
+    /// order the rule scans a guild in, and the order the table lists them.
     public static let slots: [Slot] = Guild.allCases.flatMap { guild in
         (0..<4).map { Slot(guild: guild, index: $0) }
     }
+
+    /// Which of the table's places each slot is, read off the table's tags.
+    static let tableIndex: [Slot: Int] = {
+        var out: [Slot: Int] = [:]
+        for (i, place) in table.places(nudge: 0).enumerated() {
+            let guild = Guild(rawValue: table.tag("guild", of: place))!
+            out[Slot(guild: guild, index: table.tag("index", of: place))] = i
+        }
+        return out
+    }()
 
     // MARK: Planting
 
@@ -233,14 +281,20 @@ public enum Orchard {
         public var plot: Int
         public var slot: Slot
         public var traits: PlantTraits
-        /// A small offset from the place, from the seed. The Quiet Garden's
-        /// 0.13 rather than the Crossing's 0.11: the closest two plants in a
-        /// full plot here stand 0.90 m apart, where the Crossing's stand 0.53 m
-        /// apart, so there is room for it.
+        /// A small offset from the place, from the seed: 0.13 m either way.
+        /// Neighbours in a crescent stand 0.56 m apart, where the Crossing's
+        /// closest stand 0.53 m apart with a nudge of 0.11, so two can close
+        /// to about what the Crossing's can. (It was the Quiet Garden's 0.13
+        /// when the closest two stood 0.90 m apart, and was kept.)
         public var nudge: Spot
 
+        /// Where the plant stands: its place in the table's frame, the nudge
+        /// added there, and the sum turned for its plot — so a plot turned or
+        /// mirrored is the same plot seen another way round, nudges and all.
         public var spot: Spot {
-            Spot(x: slot.spot.x + nudge.x, z: slot.spot.z + nudge.z)
+            let variant = Orchard.variant(ofPlot: plot)
+            let place = slot.place(nudge: variant.nudge)
+            return variant.apply(Spot(x: place.x + nudge.x, z: place.z + nudge.z))
         }
     }
 
@@ -371,8 +425,9 @@ public enum Orchard {
     /// **The plant under the middle tree of the first plot.**
     ///
     /// *Vininora contorta* — `Ambassadors.of(.kinship)` — placed by this rule
-    /// into an empty Orchard, which puts it under the middle tree in the place
-    /// nearest the plot's own middle, because that is where a plot opens.
+    /// into an empty Orchard, which puts it under the middle tree in the
+    /// ring's first place, facing the first crescent, because that is where a
+    /// plot opens.
     ///
     /// **It is 1.93 m, the tallest of the ten ambassadors, and that decided
     /// something.** The finding from the walk on 20 September is that whatever

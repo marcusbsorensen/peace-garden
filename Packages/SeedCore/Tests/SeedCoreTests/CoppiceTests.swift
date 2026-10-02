@@ -111,48 +111,177 @@ final class CoppiceTests: XCTestCase {
         }
     }
 
-    /// **Every place clears the plot's rim and both rides**, at the worst nudge
-    /// and the worst wander: 0.18 m inside the rim and 0.12 m off a ride, the
-    /// numbers `simulate.py` checked before anything was built.
+    private static func distance(_ a: Spot, _ b: Spot) -> Double {
+        let dx = a.x - b.x, dz = a.z - b.z
+        return (dx * dx + dz * dz).squareRoot()
+    }
+
+    private static func distance(_ p: Spot, toLine line: [Spot]) -> Double {
+        zip(line, line.dropFirst()).map { a, b -> Double in
+            let dx = b.x - a.x, dz = b.z - a.z
+            let t = max(0, min(1, ((p.x - a.x) * dx + (p.z - a.z) * dz) / (dx * dx + dz * dz)))
+            return distance(p, Spot(x: a.x + dx * t, z: a.z + dz * t))
+        }.min()!
+    }
+
+    private static func plain(_ nudge: Int) -> PlotVariant { PlotVariant(turn: 0, mirror: false, nudge: nudge) }
+
+    /// **Every place clears the plot's rim and the rides**, at the worst nudge
+    /// and the widest ride, in every feature variant: 0.20 m inside the
+    /// rounded square the plot's wandering edge never comes in past
+    /// (`Organic.outline`: 2.38 m on a side, its corners round by 0.35 m);
+    /// a star 0.08 m clear of a ride's trodden edge, and a stool's middle
+    /// 0.19 m clear. The bands' rides were straight and left 0.12 m; these
+    /// bend, and a star stands at the ride's edge on purpose, where the light
+    /// is.
     func testEveryPlaceClearsTheRimAndTheRides() {
-        let rimWander = 0.16
-        let reach = Coppice.nudgeReach
-        var rim = Double.greatestFiniteMagnitude, ride = Double.greatestFiniteMagnitude
-        for slot in Coppice.slots {
-            let spot = slot.spot
-            rim = min(rim, Coppice.plotSide / 2 - rimWander - max(abs(spot.x), abs(spot.z)) - reach)
-            for centre in [-Coppice.rideZ, Coppice.rideZ] {
-                ride = min(ride, abs(spot.z - centre) - Coppice.rideWidth / 2 - Coppice.rideWander - reach)
+        let side = Coppice.plotSide / 2 - 0.22, round = 0.35
+        let reach = Coppice.nudgeReach * 2.squareRoot()
+        let half = Coppice.rideWidth / 2 * 1.12
+        var rim = Double.greatestFiniteMagnitude
+        var star = Double.greatestFiniteMagnitude, stool = Double.greatestFiniteMagnitude
+        for nudge in 0..<Coppice.table.nudges {
+            let rides = Coppice.rides(on: Self.plain(nudge))
+            for slot in Coppice.slots {
+                let p = slot.place(nudge: nudge)
+                let x = abs(p.x) + Coppice.nudgeReach, z = abs(p.z) + Coppice.nudgeReach
+                let c = side - round
+                let inside = x > c && z > c ? round - Self.distance(Spot(x: x, z: z), Spot(x: c, z: c)) : side - max(x, z)
+                rim = min(rim, inside)
+                let clear = rides.map { Self.distance(p, toLine: $0) }.min()! - half - reach
+                if slot.place == .stool { stool = min(stool, clear) } else { star = min(star, clear) }
             }
         }
-        XCTAssertEqual(rim, 0.18, accuracy: 1e-9)
-        XCTAssertEqual(ride, 0.12, accuracy: 1e-9)
+        XCTAssertGreaterThan(rim, 0.18, "a place is \(rim) m inside the rim")
+        XCTAssertGreaterThan(star, 0.08, "a star is \(star) m off a ride")
+        XCTAssertGreaterThan(stool, 0.19, "a stool is \(stool) m off a ride")
     }
 
     /// **The widest stool still leaves every floor place clear**, at the worst
-    /// nudge of both: 0.05 m at the closest.
+    /// nudge of both: 0.10 m at the closest (0.055 m in the bands).
     func testTheWidestStoolClearsTheFloor() {
         // Each nudge moves a plant up to `nudgeReach` along each axis, so two
         // plants can close by twice that along each.
         let closing = 2 * Coppice.nudgeReach
         var nearest = Double.greatestFiniteMagnitude
-        for stool in Coppice.slots where stool.place == .stool {
-            for floor in Coppice.slots where floor.place != .stool {
-                let dx = max(0, abs(stool.spot.x - floor.spot.x) - closing)
-                let dz = max(0, abs(stool.spot.z - floor.spot.z) - closing)
-                nearest = min(nearest, (dx * dx + dz * dz).squareRoot() - Coppice.stoolAcross.upperBound / 2)
+        for nudge in 0..<Coppice.table.nudges {
+            for stool in Coppice.slots where stool.place == .stool {
+                let s = stool.place(nudge: nudge)
+                for floor in Coppice.slots where floor.place != .stool {
+                    let f = floor.place(nudge: nudge)
+                    let dx = max(0, abs(s.x - f.x) - closing)
+                    let dz = max(0, abs(s.z - f.z) - closing)
+                    nearest = min(nearest, (dx * dx + dz * dz).squareRoot() - Coppice.stoolAcross.upperBound / 2)
+                }
             }
         }
-        XCTAssertEqual(nearest, 0.055, accuracy: 1e-9)
+        XCTAssertGreaterThan(nearest, 0.05, "the widest stool is \(nearest) m from a floor place")
     }
 
-    func testTheBackRowIsFurtherBackThanTheStoolsAndTheFrontNearer() {
-        for coupe in 0..<Coppice.coupes {
-            let z = { (place: Coppice.Place) in Coppice.Slot(coupe: coupe, place: place, index: 1).spot.z }
-            XCTAssertLessThan(z(.back), z(.stool))
-            XCTAssertLessThan(z(.stool), z(.front))
+    /// **The front row is the ride's edge and the back row behind it**: in
+    /// every coupe, every back place stands further from its nearest ride than
+    /// any front place does. That is what *front* means now, seen from the
+    /// ride.
+    func testTheFrontRowIsTheRidesEdgeAndTheBackRowBehindIt() {
+        for nudge in 0..<Coppice.table.nudges {
+            let rides = Coppice.rides(on: Self.plain(nudge))
+            for coupe in 0..<Coppice.coupes {
+                let off = { (place: Coppice.Place) in
+                    Coppice.slots.filter { $0.coupe == coupe && $0.place == place }
+                        .map { slot in rides.map { Self.distance(slot.place(nudge: nudge), toLine: $0) }.min()! }
+                }
+                XCTAssertLessThan(off(.front).max()!, off(.back).min()!, "coupe \(coupe) of variant \(nudge)")
+                XCTAssertLessThan(off(.front).max()!, 0.56)
+            }
         }
-        XCTAssertLessThan(Coppice.coupeZ[0], Coppice.coupeZ[2])
+    }
+
+    /// **The stars stand in clumps of three**, and each row's first place is
+    /// in its coupe's first clump, beside the other row's first: a coupe's
+    /// first two stars stand together whichever rows they take. **The stools
+    /// stand as a stand**, filling from its middle outward, as the bands' rows
+    /// did (2, 1, 3, 0, 4).
+    func testTheFloorFillsByClumpsAndTheStoolsFromTheMiddleOfTheirStand() {
+        for nudge in 0..<Coppice.table.nudges {
+            for coupe in 0..<Coppice.coupes {
+                let at = { (place: Coppice.Place, index: Int) in
+                    Coppice.Slot(coupe: coupe, place: place, index: index).place(nudge: nudge)
+                }
+                let first = Coppice.floorOrder[0]
+                XCTAssertLessThan(Self.distance(at(.front, first), at(.back, first)), 0.6)
+                let stools = Coppice.stoolOrder.map { at(.stool, $0) }
+                let middle = Spot(x: stools.map(\.x).reduce(0, +) / 5, z: stools.map(\.z).reduce(0, +) / 5)
+                let out = stools.map { Self.distance($0, middle) }
+                // To the table's millimetre: the stand's middle was found before
+                // its places were written down.
+                XCTAssertTrue(zip(out, out.dropFirst()).allSatisfy { $0 <= $1 + 0.002 },
+                              "coupe \(coupe) of variant \(nudge) does not fill from its middle: \(out)")
+            }
+        }
+    }
+
+    /// **Three rides meet at a glade and divide the plot into three coupes of
+    /// unequal size.** Measured on the plot: no two coupes within 5% of each
+    /// other's ground, and every place clear of the glade's middle by 0.75 m
+    /// and of the spring by 0.62 m.
+    func testTheCoupesAreOfUnequalSizeRoundTheGlade() {
+        for nudge in 0..<Coppice.table.nudges {
+            let plain = Self.plain(nudge)
+            let rides = Coppice.rides(on: plain)
+            let glade = rides[0][0]
+            for ride in rides { XCTAssertEqual(ride[0], glade) }
+            let grounds = Coppice.grounds(on: plain)
+            var area = [0, 0, 0]
+            for i in 0..<104 {
+                for j in 0..<104 {
+                    let x = -2.6 + (Double(i) + 0.5) * 0.05, z = -2.6 + (Double(j) + 0.5) * 0.05
+                    for (c, ground) in grounds.enumerated() where Organic.contains(ground, x: x, z: z) {
+                        area[c] += 1
+                    }
+                }
+            }
+            let sorted = area.sorted()
+            XCTAssertGreaterThan(Double(sorted[1]) / Double(sorted[0]), 1.05, "variant \(nudge): \(area)")
+            XCTAssertGreaterThan(Double(sorted[2]) / Double(sorted[1]), 1.05, "variant \(nudge): \(area)")
+            let spring = Coppice.spring(on: plain)
+            for slot in Coppice.slots {
+                let p = slot.place(nudge: nudge)
+                XCTAssertGreaterThan(Self.distance(p, glade), 0.75)
+                XCTAssertGreaterThan(Self.distance(p, spring), 0.62 - 0.001)
+                // A place in coupe c stands on coupe c's ground.
+                XCTAssertTrue(Organic.contains(grounds[slot.coupe], x: p.x, z: p.z), "\(slot) in variant \(nudge)")
+            }
+        }
+    }
+
+    /// **A plot turned or mirrored is the same plot seen another way round**,
+    /// and the plots dealt so far hold more than one variant.
+    func testEveryPlotIsTurnedByItsNumberAndItsPlantsWithIt() {
+        let ways = Self.full
+        var seen = Set<PlotVariant>()
+        for planting in ways.plantings {
+            let variant = Coppice.variant(ofPlot: planting.plot)
+            seen.insert(variant)
+            let place = planting.slot.place(nudge: variant.nudge)
+            let back = variant.undo(planting.spot)
+            XCTAssertEqual(back.x - planting.nudge.x, place.x, accuracy: 1e-12)
+            XCTAssertEqual(back.z - planting.nudge.z, place.z, accuracy: 1e-12)
+        }
+        XCTAssertEqual(Coppice.variant(ofPlot: 0), .plain)
+        XCTAssertGreaterThan(seen.count, 10, "only \(seen.count) variants in \(ways.plots) plots")
+        XCTAssertEqual(Coppice.variants.count, 24)
+        let table = Coppice.table
+        for nudge in 0..<table.nudges {
+            let slots = table.places(nudge: nudge).map {
+                Coppice.Slot(coupe: table.tag("coupe", of: $0), place: Coppice.Place(rawValue: table.tag("place", of: $0))!,
+                             index: table.tag("index", of: $0))
+            }
+            XCTAssertEqual(Set(slots), Set(Coppice.slots))
+            XCTAssertEqual(slots, table.places(nudge: 0).map {
+                Coppice.Slot(coupe: table.tag("coupe", of: $0), place: Coppice.Place(rawValue: table.tag("place", of: $0))!,
+                             index: table.tag("index", of: $0))
+            })
+        }
     }
 
     // MARK: The rule
