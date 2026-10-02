@@ -64,6 +64,16 @@ function postcard() {
 // gardeners' own words in their own script, so each runs in its own
 // direction; the month is written by the reader's browser in the page's
 // language.
+//
+// **Each of those words is isolated, and the line runs the page's way** (2
+// October 2026). With `dir="auto"` the first strong letter set the line, so
+// on a Japanese page a name in Hebrew turned the whole by-line right to left
+// and *が育てた* landed on the wrong side of it. FSI…PDI keeps each name and
+// the place to its own direction inside the line, and the line itself keeps
+// the direction `dress` gives it: the page's, or English's where the string
+// fell back.
+const isolated = (words) => `\u2068${words}\u2069`;
+
 function beside(plant, strings) {
   const shown = plant.shown;
   if (!shown || !strings) return [];
@@ -72,17 +82,16 @@ function beside(plant, strings) {
   if (names.length) {
     const key = names.length === 1 ? 'wildByOne' : 'wildByTwo';
     const line = text('p', 'plant-panel__ambassador',
-      strings.t(key, names.length === 1 ? { name: names[0] } : { a: names[0], b: names[1] }));
+      strings.t(key, names.length === 1
+        ? { name: isolated(names[0]) }
+        : { a: isolated(names[0]), b: isolated(names[1]) }));
     strings.dress(line, key);
-    line.dir = 'auto';
     lines.push(line);
   }
   const month = monthWords(shown.month);
-  const where = [shown.place, month].filter(Boolean).join(' · ');
+  const where = [shown.place && isolated(shown.place), month].filter(Boolean).join(' · ');
   if (where) {
-    const line = text('p', 'plant-panel__ambassador plant-panel__met', where);
-    line.dir = 'auto';
-    lines.push(line);
+    lines.push(text('p', 'plant-panel__ambassador plant-panel__met', where));
   }
   return lines;
 }

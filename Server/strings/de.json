@@ -85,7 +85,7 @@
   "privacy7": "Wenn Hinweise eingeschaltet sind, fragt die App bei jedem Start den Webgarten nach deinen geteilten Pflanzen und schickt dazu die Zufallszahlen aus deinen Begegnungen.",
   "privacy5": "Diese Website läuft bei einem Webhoster, ohne Werbung, ohne Analyse und ohne Cookies. Deine Sprachwahl wird in deinem eigenen Browser behalten. Um Missbrauch zu begrenzen, bewahrt der Webgarten bis zu einer Stunde lang eine verwürfelte Form deiner Internetadresse, und der Hoster führt seine üblichen Protokolle der Anfragen.",
   "wildTitle": "Wilde Felder",
-  "wildBody": "Wohin eine Pflanze geht, wenn sie freigelassen wird. Niemand ordnet die Wilden Felder: Jede Pflanze steht dort, wohin ihr eigener Samen sie stellt, und das Feld geht in alle Richtungen weiter. Neben einer Pflanze steht nur, was die beiden, die sie gezogen haben, zu zeigen gewählt haben. Zum Durchstreifen ziehen.",
+  "wildBody": "Wohin eine Pflanze geht, wenn sie freigelassen wird. Niemand ordnet die Wilden Felder: Jede Pflanze steht dort, wohin ihr eigener Samen sie stellt, und das Feld geht in alle Richtungen weiter. Neben einer Pflanze steht nur, wofür sich die beiden, die sie gezogen haben, entschieden haben. Zum Durchstreifen ziehen.",
   "wildEmpty": "Hier ist noch nichts freigelassen worden.",
   "wildAway": "Die Wilden Felder sind gerade nicht erreichbar.",
   "wildByOne": "Gezogen von {name}",
