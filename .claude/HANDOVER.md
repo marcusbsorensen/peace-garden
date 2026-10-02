@@ -14,13 +14,13 @@ Tonight's batch live and in build 6: the Wild Fields with water, worn paths and 
   - the reviewed translation fixes for the site and the app (REVIEW.md and APPLIED-app.md).
   - String, reference and wear/curate checks pass.
 - **Live**: `b104cf3` deployed 2 October, with wear on (`'wear' => true` in the live config.php). All 42 header checks and 17 pages are clean, and the wear POSTs return 200. Screenshots are in `out/deploy-2026-10-02b/`. Before this, `d7c5d48` was live; a rollback copy is in the session scratchpad at `live-d7c5d48`.
+- **Build 6 uploaded** (1.0 (6), delivery `b56c27e2-…`). Its 170 tests: 163 passed, 0 failed, 7 skipped (the opt-in renders); SeedCore 422 passed. The archive is `build/PeaceGarden-1.0-6.xcarchive` and the ipa is in `build/export-6/`. `project.yml` is at 6.
 - **Running**:
   - garden-layout research (worktree branch; output in `design/garden-layouts-2026-10-02/`);
-  - build 6 in a worktree branch (bump to 6, full suite, archive to `build/PeaceGarden-1.0-6.xcarchive`, upload).
 - **Then**:
   - Marcus tries /wild on his phone;
-  - merge the build 6 bump;
-  - clean up worktrees and the remote `worktree-agent-*` and `claude/*` branches;
+  - install build 6 from TestFlight on a real phone;
+  - delete the remote `worktree-agent-*` and `claude/*` branches (all merged; the local worktrees are already gone);
   - close PR #8.
 
 ## Decisions made, 2 October 2026 (Marcus)
