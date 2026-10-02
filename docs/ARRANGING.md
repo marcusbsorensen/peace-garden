@@ -275,7 +275,9 @@ arguing with it.
 So the edge comes back, and it is **drawn rather than hidden**: a square plot
 hanging in space, with the soil's depth showing at the cut and rock tapering
 away underneath. That is a different thing from a plane that merely stops, and it
-answers *what is off the side* by showing the answer.
+answers *what is off the side* by showing the answer. (The taper was first drawn
+on 2 October 2026, when the cut became a solid slab: see *A keel that tapers to
+nothing* below.)
 
 ### Isometric is a simplification, not only a look
 
@@ -411,19 +413,60 @@ already emphatic about why looking is not a convenience.
   see at all.** Looking down at thirty-five degrees, the plot's own surface hides
   everything under it, so the bulge below the middle is never drawn and the rim
   depth is the whole of what *thick* means. At the mockup's 0.40 m it reads as a
-  tile with a lip; at 0.95 m it reads as ground with a root. The cut is drawn as
-  a bank in cells rather than as two flat faces — humus for a hand's depth, earth
+  tile with a lip; at 0.95 m it reads as ground with a root. Until 2 October the
+  cut was drawn as a bank in cells rather than as two flat faces — humus for a hand's depth, earth
   through the middle, rock coming up from the bottom, stones scattered more
   thickly the deeper it goes, and a floor ragged by a few centimetres. Ground
   that ends in a ruled line is a tile again.
 
-  Two numbers matter and neither is obvious. The cells have to be **coarse**:
+  Two numbers mattered and neither was obvious. The cells had to be **coarse**:
   drawn at the terrain's own hundred and twenty-eight columns the variation came
   out as a comb of pinstripes three pixels wide, which reads as moiré rather than
   as soil. And the materials have to be **lighter than they look right in the
   hand**: a cut face is vertical, so it is lit by the sky and by almost none of
   the sun, and colours chosen on their own came out as a black band under the
   plot.
+
+  **Redrawn on 2 October 2026 as a solid slab** (Marcus: *less like it is
+  melting away with the soil below, and more like a solid slab of earth with
+  organic contours that is floating*). The cells were the melting: a floor
+  ragged a column at a time read as drips, a normal jittered cell by cell lit
+  the bank as noise rather than as a face, and bands laid in a grid ignored
+  the form. The side is now one function, `GardenGround.side`, which every
+  world and the flat plot hang from their rim:
+
+  - **Lit as planes.** Each stretch of side faces the way the rim does,
+    smoothed over eighteen centimetres either side, and is lit by the whole of
+    the sun or the moon, so the face turned to the light is bright as a whole
+    and the face turned away is dark as a whole. The materials are drawn 1.45
+    times lighter than they are (`sideLift`), which was measured: the face in
+    shade comes out as bright as the old bank did, at ten in the morning and at
+    midnight, and the face in the sun brighter than that.
+  - **Tapered, as this document promised on 17 September and nothing drew.**
+    The side leans in by 0.20 m (`taper`) on the way down, a little under the
+    rim and more toward the foot, so it meets its lower edge at an angle and
+    the edge is a firm one. The diamond's two side corners show it against the
+    sky.
+  - **One lower edge round the slab**: the outline drawn in by the taper,
+    undulating by about a tenth of the depth over a pace and a half
+    (`roundTheLoop`, which meets itself round the loop). Where the ground dips
+    at the rim — the ravine's mouth — the edge sags under it in a curve.
+  - **Strata as bands that follow the slab.** Humus a hand deep under the
+    surface, then earth, then rock: the bedrock with some stone in it, because
+    the side faces a little down by the time it reaches the rock and bedrock
+    alone came out the same brown as the earth. Each boundary wanders slowly
+    along the side, each band has faint layers in it, and a few angular stones
+    sit in the rock, close to it in tone — smooth round ones a shade lighter
+    read as rivets.
+
+  **The rim depth as seen is still 0.95 m; the side itself is 1.05 m.** A side
+  drawn in at its foot is a side whose foot has moved up the screen — by half
+  the taper on the two near sides — and at 0.95 m the slab read a fifth thinner
+  than the bank it replaced (94 points of side against 119, at three times the
+  garden's size). So the side is `sideDepth`, `rimDepth` and half the taper,
+  and what shows from the front is the 0.95 m argued for above, the room the
+  camera leaves, and the thickness of the website's upright sides. The
+  before-and-after renders are in `design/app-slab-2026-10-02/`.
 
 ### Three redrawn, on Marcus's word
 

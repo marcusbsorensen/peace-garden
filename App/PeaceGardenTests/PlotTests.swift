@@ -160,7 +160,8 @@ final class PlotTests: XCTestCase {
             SIMD3(0.20, 0.40, 0.95)
         ]
 
-        for base in tooBright + [GardenGround.turf, GardenGround.soil] {
+        for base in tooBright + [GardenGround.turf, GardenGround.humus, GardenGround.earth,
+                                 GardenGround.bedrock, GardenGround.stone] {
             var saturation: CGFloat = 0
             UIColor(GardenGround.underCeiling(base))
                 .getHue(nil, saturation: &saturation, brightness: nil, alpha: nil)
@@ -508,23 +509,22 @@ final class PlotTests: XCTestCase {
     /// it has to be soil at the top and rock at the bottom rather than one
     /// colour — and none of it may break the ceiling.
     func testTheCutIsSoilAtTheTopAndRockAtTheBottom() {
-        let top = GardenGround.cutColour(down: 0.02, grain: 0.5, stones: 0)
-        let middle = GardenGround.cutColour(down: 0.35, grain: 0.5, stones: 0)
-        let bottom = GardenGround.cutColour(down: 0.95, grain: 0.5, stones: 0)
+        func colour(_ down: Double) -> SIMD3<Double> {
+            GardenGround.sideColour(down: down, humusTo: 0.15, rockFrom: 0.55, bottom: 0.95)
+        }
+        let top = colour(0.02)
+        let middle = colour(0.35)
+        let bottom = colour(0.9)
 
         func warmth(_ c: SIMD3<Double>) -> Double { c.x - c.z }
         XCTAssertLessThan(top.x, middle.x, "the humus is not darker than the earth under it")
         XCTAssertLessThan(warmth(bottom), warmth(middle), "the rock is as brown as the soil")
 
-        for down in stride(from: 0.0, through: 1.0, by: 0.05) {
-            for grain in [0.0, 0.3, 0.7, 1.0] {
-                var saturation: CGFloat = 0
-                UIColor(GardenGround.underCeiling(
-                    GardenGround.cutColour(down: down, grain: grain, stones: grain)
-                )).getHue(nil, saturation: &saturation, brightness: nil, alpha: nil)
-                XCTAssertLessThanOrEqual(Double(saturation),
-                                         GardenGround.saturationCeiling + 1e-6)
-            }
+        for down in stride(from: 0.0, through: 0.95, by: 0.05) {
+            var saturation: CGFloat = 0
+            UIColor(GardenGround.underCeiling(colour(down)))
+                .getHue(nil, saturation: &saturation, brightness: nil, alpha: nil)
+            XCTAssertLessThanOrEqual(Double(saturation), GardenGround.saturationCeiling + 1e-6)
         }
     }
 
@@ -534,6 +534,61 @@ final class PlotTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(GardenGround.rimDepth, 0.9)
         XCTAssertEqual(GardenGround.cutDepth(x: 2.6, z: 0, plotSide: 5.2),
                        GardenGround.rimDepth, accuracy: 1e-9)
+    }
+
+    /// **The taper does not take the depth away** (2 October 2026). Drawn in
+    /// toward its lower edge, the side's foot moves up the screen by half the
+    /// taper on the two near sides; the side is made deeper by exactly that,
+    /// so what shows from the front is still `rimDepth`.
+    func testTheTaperGivesBackTheDepthItTakes() {
+        XCTAssertGreaterThan(GardenGround.taper, 0)
+        XCTAssertEqual(GardenGround.sideDepth - GardenGround.taper / 2, GardenGround.rimDepth,
+                       accuracy: 1e-12)
+    }
+
+    /// **The lower edge is one line round the slab.** What it undulates by
+    /// comes back to where it started at the end of the loop, and moves by
+    /// little from one centimetre to the next anywhere on it — so there is no
+    /// step where the rim begins, and nothing drips a column at a time.
+    func testTheLowerEdgeMeetsItselfAndNeverJumps() {
+        let perimeter = 18.7
+        for salt in 1...5 {
+            func wander(_ s: Double) -> Double {
+                GardenGround.roundTheLoop(s, perimeter: perimeter, wavelength: 1.7, salt: salt)
+            }
+            XCTAssertEqual(wander(0), wander(perimeter), accuracy: 1e-9)
+            var last = wander(0)
+            for step in 1...Int(perimeter * 100) {
+                let here = wander(Double(step) / 100)
+                XCTAssertLessThan(abs(here - last), 0.03, "a step in the lower edge at \(step) cm")
+                last = here
+            }
+        }
+    }
+
+    /// **The slab stays inside the frame the camera fits.** The side is deeper
+    /// than `rimDepth` and its lower edge undulates, and it is the taper that
+    /// keeps it inside the room `Isometric.fitting` leaves below the plot — on
+    /// a phone, a landscape iPad, where the height binds, and a Split View
+    /// column, at every turn.
+    func testTheSlabsSideStaysInsideTheFrame() {
+        let sizes = [CGSize(width: 390, height: 844), CGSize(width: 1024, height: 768),
+                     CGSize(width: 320, height: 900)]
+        for size in sizes {
+            for side in [Garden.smallestPlot, 5.2, 9.0] {
+                let rim = PlotOutline.of(plotSide: side).points.map { SIMD3($0.x, 0, $0.z) }
+                for turn in 0..<4 {
+                    var view = Isometric.fitting(plotSide: side, in: size,
+                                                 headroom: GardenSprites.tallestExpected,
+                                                 soilDepth: GardenGround.rimDepth)
+                    view.turn = turn
+                    let pieces = GardenGround.side(rim: rim, view: view, light: .noon)
+                    XCTAssertFalse(pieces.isEmpty)
+                    let lowest = pieces.flatMap(\.points).map(\.y).max() ?? 0
+                    XCTAssertLessThanOrEqual(lowest, size.height, "the side hangs off the bottom")
+                }
+            }
+        }
     }
 
     /// **A garden you cannot see is not a garden.** The moon's curve is right
