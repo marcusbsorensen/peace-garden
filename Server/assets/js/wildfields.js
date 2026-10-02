@@ -35,6 +35,7 @@
 import { ROLES, YOUNG, decode, takeResult, attribute, multiply } from './plant.js';
 import { PLANT_VERTEX, PLANT_FRAGMENT, COLOUR, program, upload, hash } from './longwalk.js';
 import { makeWildWater } from './wildwater.js';
+import { fieldInput, groundDetail } from './wildground.js';
 
 // SeedCore's `WildFields`, and the service's `WildFields.php`.
 export const SIDE = 64;
@@ -135,12 +136,11 @@ function groundColour(x, z) {
   for (const [i, j, p] of PATCHES) m += Math.cos((2 * Math.PI * (i * x + j * z)) / SIDE + p);
   m = 0.5 + m / 6;
   const h = groundHeight(x, z);
-  // Lusher in the hollows, where water would lie, and a grain of grass at the
-  // grid's own scale so the ground is a sward rather than a sheet.
+  // Lusher in the hollows, where water would lie. The grain the grid used to
+  // carry, a tone a vertex every 30 cm, is the ground's detail's now
+  // (`wildground.js`), finer and with no triangles in it.
   const wet = 0.94 + 0.10 * Math.max(-1, Math.min(1, -h / 0.8));
-  const ix = Math.round(mod(x, SIDE) / STEP), iz = Math.round(mod(z, SIDE) / STEP);
-  const grain = 0.90 + 0.18 * hash(ix * 7919 + iz * 104729);
-  return COLOUR.turf.map((t, k) => (t + (COLOUR.grass[k] - t) * m) * wet * grain * DUSK);
+  return COLOUR.turf.map((t, k) => (t + (COLOUR.grass[k] - t) * m) * wet * DUSK);
 }
 
 // **The fireflies' light, added to every light the plant shader already
@@ -164,6 +164,7 @@ vec3 fireflies(vec3 p, vec3 n) {
   return sum;
 }
 `;
+const FLY_UNIFORMS = ['flies', 'flyColour', 'flyReach'];
 const LIGHT_AT = 'vec3 lightAt(vec3 n) {';
 const LIGHT_SUM = 'return sky * hemi + bounce * (1.0 - hemi) + max(dot(n, sun), 0.0) * strength * sunColour;';
 
@@ -183,19 +184,9 @@ out vec3 vNormal; out vec3 vColour; out vec3 vWorld;
 void main() { vNormal = normal; vColour = colour; vWorld = position; gl_Position = viewProjection * vec4(position, 1.0); }`;
 
 // The ground's light is the plants' light: the same sum, the same encode.
-const GROUND_FRAGMENT = withFireflies(`#version 300 es
-precision highp float;
-in vec3 vNormal; in vec3 vColour; in vec3 vWorld;
-uniform vec3 sun, sunColour, sky, bounce;
-uniform float strength;
-vec3 lightAt(vec3 n) {
-  float hemi = 0.5 + 0.5 * n.y;
-  return sky * hemi + bounce * (1.0 - hemi) + max(dot(n, sun), 0.0) * strength * sunColour;
-}
-vec3 encode(vec3 linear) { return pow(max(linear, vec3(0.0)), vec3(1.0 / 2.2)); }
-vec3 toLinear(vec3 srgb) { return pow(max(srgb, vec3(0.0)), vec3(2.2)); }
-out vec4 outColour;
-void main() { outColour = vec4(encode(toLinear(vColour) * lightAt(normalize(vNormal))), 1.0); }`);
+// Its fragment shader is the ground's detail's (`groundFragment` in
+// `wildground.js`, 2 October 2026): the sward between the tufts and the earth
+// where it thins, and what the field's other layers say is worn or wet.
 
 // **The water** (`wildwater.js`, chosen 2 October 2026). The gardens' water
 // — their two colours, lit by the ground's own sum, fireflies and all — and
@@ -286,6 +277,12 @@ void main() {
 // so a shore is a curve and not a polygon of the field's 0.3 m cells.
 const FINE = 8;
 
+// The texture units the field's own textures are bound to. The plants use 0
+// and 1, and the worn paths 2 (`wear.js`); the wet is 3, and the sky the
+// water mirrors 4.
+const WET = 3;
+const STARLIGHT = 4;
+
 // **Where a plant meets the ground.** No sun, so no cast shadow — but grass
 // under a plant gets less of the sky than grass in the open, and without that
 // a plant reads as laid on the field rather than growing out of it. A soft
@@ -311,34 +308,49 @@ void main() {
 /// spot }`, the way `GET /api/wild/tile/{x}/{z}` does. `from` is the point of
 /// the field the window opens over, in metres.
 ///
+/// **The ground in detail** (2 October 2026; `wildground.js`): tufts of grass,
+/// pebbles, and the earth between them, in the pasture Marcus chose that day.
+/// What visitors have worn and what the water has wetted are its two inputs.
+///
 /// **Paths that visitors wear** (2 October 2026, on /dev only; `wear.js`):
-/// `wear`, when given, is the worn ground — it rewrites the ground's shader
-/// and binds what it draws from — and `looked(point)` is told the ground
-/// under the middle of the window each time the window moves or turns. The
-/// field knows nothing else about either.
+/// `wear`, when given, is the worn ground — GLSL defining `wearAt` over the
+/// field, with the texture it reads and a `bind` — and the ground's detail
+/// thins, flattens and gives way to bare earth where it says; and
+/// `looked(point)` is told the ground under the middle of the window each time
+/// the window moves or turns. The field knows nothing else about either.
+///
+/// **The wet is the water's own** (`wildwater.js`): 1 under a pond or a
+/// puddle, and towards that its margin's wet and mud, sampled into a texture
+/// the ground's detail reads (`fieldInput`), and sampled again whenever what
+/// has arrived changes the water.
 export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], report = () => {},
                                           wear = null, looked = () => {} }) {
   const gl = canvas.getContext('webgl2', { antialias: true, alpha: true, premultipliedAlpha: true });
   if (!gl) throw new Error('This browser has no WebGL2.');
-  const ground = program(gl, GROUND_VERTEX, wear ? wear.shader(GROUND_FRAGMENT) : GROUND_FRAGMENT,
-                         ['position', 'normal', 'colour'],
-                         ['flies', 'flyColour', 'flyReach', ...(wear ? wear.uniforms : [])]);
-  const waterProgram = program(gl, WATER_VERTEX, WATER_FRAGMENT, ['position', 'normal', 'colour', 'depth'],
-    ['flies', 'flyColour', 'flyReach', 'time', 'starlit', 'look', 'across', 'toward', 'screen', 'starlight']);
   // **The field's water** (`wildwater.js`): what the hollows hold near the
   // lotuses the service has answered so far, and its surface for the ground
   // as last built.
   const water = makeWildWater(e, { side: SIDE, height: groundHeight });
+  // The ground's detail stands on the floor the water has dug rather than over
+  // it, and reads how wet the ground is from the water.
+  const wet = fieldInput('wet', water.wetness, { unit: WET });
+  const detail = groundDetail(gl, { side: SIDE, height: water.floorAt, colour: groundColour, wear, wet,
+                                    light: withFireflies, lit: FLY_UNIFORMS });
+  const ground = program(gl, GROUND_VERTEX, withFireflies(detail.fragment), ['position', 'normal', 'colour'],
+                         [...FLY_UNIFORMS, ...detail.uniforms]);
+  const waterProgram = program(gl, WATER_VERTEX, WATER_FRAGMENT, ['position', 'normal', 'colour', 'depth'],
+    [...FLY_UNIFORMS, 'time', 'starlit', 'look', 'across', 'toward', 'screen', 'starlight']);
   let sheet = null;
   // The sky's canvas, which the water mirrors, as a texture: uploaded when the
   // page says the sky was drawn again, and once a minute, as the sky turns.
   let skySource = null, skyTexture = null, skyAt = -Infinity, skyStale = false;
   // What drawing has cost, for the workbench to report: each frame's work on
-  // this side of the GPU, and each time the ground was built again for water.
-  const cost = { frames: [], rebuilds: [], builds: [] };
+  // this side of the GPU, each time the ground was built again for water, and
+  // each time the wet was sampled again for it.
+  const cost = { frames: [], rebuilds: [], builds: [], wetted: [] };
   const plantProgram = program(gl, PLANT_VERTEX, withFireflies(PLANT_FRAGMENT),
                                ['position', 'normal', 'uv', 'age'],
-                               ['offset', 'colour', 'relief', 'young', 'look', 'flies', 'flyColour', 'flyReach']);
+                               ['offset', 'colour', 'relief', 'young', 'look', ...FLY_UNIFORMS]);
   const footProgram = program(gl, FOOT_VERTEX, FOOT_FRAGMENT, ['position', 'uv'], []);
 
   // Where the window opens, on the ground, and how it has moved since — in
@@ -518,13 +530,16 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
   // **When what has arrived changes the water, the ground is built again
   // where it stands**, and every plant is set again on what is now under it.
   // The window does not move, and nothing else is fetched or grown.
-  let builtFor = null, refreshed = -Infinity;
+  let builtFor = null, refreshed = -Infinity, wetFor = water.version;
   function refresh({ soon = false } = {}) {
-    if (!builtFor || builtFor.version === water.version) return;
+    const built = !builtFor || builtFor.version === water.version;
+    if (built && wetFor === water.version) return;
     // While a tile is still growing, no more than four times a second: a
     // lotus set on water the ground has not yet flooded waits that long.
     if (soon && performance.now() - refreshed < 250) return;
     refreshed = performance.now();
+    wetted();
+    if (built) return;
     // Only if it changed the water on the ground that is built: most lotuses
     // that arrive change water somewhere else.
     if (water.cells(...builtFor.box, STEP).key === builtFor.key) {
@@ -536,6 +551,19 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
     for (const plant of standing()) plant.y = water.footAt(plant.x, plant.z, plant.who);
     rebuildFeet();
     cost.rebuilds.push(performance.now() - started);
+  }
+
+  // **And the ground's detail is told how wet the field now is**: the wet
+  // sampled again from the water, wherever it changed, and the tufts and
+  // stones grown again on the floor it has dug — sedge at a pond's margin,
+  // nothing where the water is.
+  function wetted() {
+    if (wetFor === water.version) return;
+    const started = performance.now();
+    wetFor = water.version;
+    wet.set(water.wetness);
+    detail.changed({ regrow: true });
+    cost.wetted.push(performance.now() - started);
   }
 
   // **The ground again under 4 cm, where there is water** (`wildwater.js`).
@@ -858,6 +886,7 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
   // Each plant's foot, draped on the ground: a five-by-five sheet over its
   // radius, so it follows a slope rather than cutting into it.
   function rebuildFeet() {
+    detail.standing(standing());
     if (feet) { feet.buffers.forEach((b) => gl.deleteBuffer(b)); gl.deleteVertexArray(feet.vao); feet = null; }
     const positions = [], uvs = [], indices = [];
     for (const plant of standing()) {
@@ -1001,9 +1030,10 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
     drawn = viewProjection;
     const flies = litBy();
 
-    for (const p of [ground, plantProgram, waterProgram].filter(Boolean)) {
+    for (const p of [ground, plantProgram, waterProgram, ...detail.programs]) {
       gl.useProgram(p.program);
       gl.uniformMatrix4fv(p.at.viewProjection, false, viewProjection);
+      gl.uniform3fv(p.at.look, Z);
       gl.uniform3fv(p.at.sun, NIGHT.sun);
       gl.uniform3fv(p.at.sunColour, NIGHT.sunColour);
       gl.uniform3fv(p.at.sky, NIGHT.sky);
@@ -1015,7 +1045,7 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
     }
 
     gl.useProgram(ground.program);
-    wear?.bind(gl, ground.at);
+    detail.bindInputs(ground.at);
     groundMesh.draw();
 
     // The water: after the ground, over the floor it lies in, writing depth so
@@ -1029,9 +1059,9 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
       gl.uniform3fv(waterProgram.at.across, X);
       gl.uniform3fv(waterProgram.at.toward, normalise([Z[0], 0, Z[2]]));
       gl.uniform2f(waterProgram.at.screen, width, height);
-      gl.activeTexture(gl.TEXTURE2);
+      gl.activeTexture(gl.TEXTURE0 + STARLIGHT);
       gl.bindTexture(gl.TEXTURE_2D, skyTexture ?? darkness);
-      gl.uniform1i(waterProgram.at.starlight, 2);
+      gl.uniform1i(waterProgram.at.starlight, STARLIGHT);
       gl.activeTexture(gl.TEXTURE0);
       gl.enable(gl.BLEND);
       gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
@@ -1056,6 +1086,10 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
       gl.depthMask(true);
       gl.disable(gl.BLEND);
     }
+
+    // The tufts and the stones, over the ground and its feet, under the
+    // plants; by how much of the field a pixel of the canvas covers.
+    detail.draw(viewProjection, { around: [...builtRound, reach], metresPerPixel: w / width });
 
     gl.useProgram(plantProgram.program);
     gl.uniform1i(plantProgram.at.colour, 0);
@@ -1153,10 +1187,12 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
     // The sky's canvas, for the water to mirror: the page hands it over once
     // it is drawn, and again whenever it draws it afresh.
     reflect(sky) { skySource = sky; skyStale = true; if (sheet) draw(); },
-    // For the workbench: what drawing has cost, and where the hollows are.
+    // For the workbench: what drawing has cost, where the hollows are, and
+    // how much of the ground's detail is in sight.
     cost: () => ({ frames: [...cost.frames], rebuilds: [...cost.rebuilds], builds: [...cost.builds],
-                   rippling: Boolean(sheet) && !still.matches && inWindow(open) }),
+                   wetted: [...cost.wetted], rippling: Boolean(sheet) && !still.matches && inWindow(open) }),
     hollows: () => water.hollows(),
+    counts: () => detail.counts(),
   };
 }
 
