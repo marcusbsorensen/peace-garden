@@ -51,6 +51,12 @@ import Foundation
 ///   Neither order changes how many plants a drill holds.
 /// - **Plots alternate**, mirrored one to the next (`variants`), so the labels
 ///   stand at the west end of one plot and the east end of the next.
+/// - **The drills curve more, closer together**, later the same day: Marcus
+///   chose *curve more, narrower gaps*, so the drills are 0.60 m apart where
+///   they were 0.74 (`drillGap`), and each bows a third of a metre or more
+///   over its length, the dry ones included. On the tighter arcs a plant's
+///   nudge is laid along and across its drill where it stands (`along`)
+///   rather than along `x` and `z`.
 ///
 /// **Nothing here reads a height.** The drill comes from the kind and the
 /// element and the place in it from the order of arrival, so this is the only
@@ -77,15 +83,22 @@ public enum Seedbed {
     public static let variants = PlotVariant.Space(mirror: true)
 
     /// Six drills of eight, chosen by Marcus from three offers on 23 September.
-    /// Forty-eight is the Long Walk's number; at this plot it leaves 0.74 m
-    /// between drills, which is the width of the space a gardener kneels in.
+    /// Forty-eight is the Long Walk's number; at this plot it left 0.74 m
+    /// between drills, which is the width of the space a gardener kneels in,
+    /// until the drills curved more on 2 October 2026 (`drillGap`).
     public static let drills = 6
     public static let places = 8
 
     /// Across the bed, between one drill and the next, and along a drill
-    /// between one plant and the next: the straight bed's spacing, kept when
-    /// the drills curved (`tools/layouts/tables/seedbed_drills.py`).
-    public static let drillGap = 0.74
+    /// between one plant and the next (`tools/layouts/tables/seedbed_drills.py`).
+    ///
+    /// **0.60 between drills since 2 October 2026**, where the straight bed
+    /// and the first contour had 0.74. Marcus chose *curve more, narrower
+    /// gaps*: concentric drills 0.74 m apart fill the bed's depth and leave
+    /// room for only a gentle bow, so the dry drills read nearly straight.
+    /// At 0.60 every drill bows a third of a metre or more over its length.
+    /// Along a drill is unchanged.
+    public static let drillGap = 0.60
     public static let alongGap = 0.52
 
     /// The drills and their places, made offline.
@@ -139,6 +152,21 @@ public enum Seedbed {
     /// line, a third of a metre before its first place, at the west end.
     public static func label(of drill: Int) -> Spot {
         table.curve("drill\(drill)", on: PlotVariant.plain).points[0]
+    }
+
+    /// **Which way a drill runs at a place**, away from its label, as a unit
+    /// direction in the table: from the place before to the place after (a
+    /// drill's end to its neighbour), or across a lotus's two places. A
+    /// plant's nudge is laid along and across this, so a drill that curves
+    /// stays even across its width all the way round. Only a difference, a
+    /// square root and a division, so it is the same double on every host.
+    static func along(drill: Int, index: Int, span: Int) -> Spot {
+        let from = span == 2 ? index : max(0, index - 1)
+        let to = min(places - 1, index + 1)
+        let a = at[drill][from], b = at[drill][to]
+        let dx = b.x - a.x, dz = b.z - a.z
+        let length = (dx * dx + dz * dz).squareRoot()
+        return Spot(x: dx / length, z: dz / length)
     }
 
     /// One place in one plot: which drill, and how far along it.
@@ -201,15 +229,17 @@ public enum Seedbed {
         public var span: Int
         public var traits: PlantTraits
         /// A small offset from the place, from the seed, and the only area
-        /// whose two directions differ: 0.06 m along the drill, which runs
-        /// across the bed in `x` since 2 October 2026, and 0.035 m across it.
+        /// whose two directions differ: `x` is 0.06 m along the drill and `z`
+        /// 0.035 m across it, laid along the drill where the plant stands
+        /// (`Seedbed.along`) since the drills curved more on 2 October 2026.
         /// **A drill has to read as a line**, which is the whole of what a
         /// seedbed looks like, and a line survives being uneven along its
         /// length but not being uneven across it.
         public var nudge: Spot
 
-        /// Where it stands: the middle of the places it holds, and its nudge,
-        /// mirrored as its plot is. **A lotus stands centred across its two**,
+        /// Where it stands: the middle of the places it holds, and its nudge
+        /// laid along and across its drill there, mirrored as its plot is.
+        /// **A lotus stands centred across its two**,
         /// half a place further from the label than its first. A plant holding
         /// one place stands on its place, to the last bit.
         public var spot: Spot {
@@ -219,7 +249,10 @@ public enum Seedbed {
                 let b = Seedbed.at[slot.drill][slot.index + 1]
                 middle = Spot(x: (a.x + b.x) / 2, z: (a.z + b.z) / 2)
             }
-            return Seedbed.variant(of: plot).apply(Spot(x: middle.x + nudge.x, z: middle.z + nudge.z))
+            let along = Seedbed.along(drill: slot.drill, index: slot.index, span: span)
+            let x = middle.x + (nudge.x * along.x - nudge.z * along.z)
+            let z = middle.z + (nudge.x * along.z + nudge.z * along.x)
+            return Seedbed.variant(of: plot).apply(Spot(x: x, z: z))
         }
 
         /// Every place it holds, from the label outward.

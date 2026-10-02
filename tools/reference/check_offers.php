@@ -788,8 +788,13 @@ check('a lotus in the Seedbed floods a drill of its kind and holds two places in
       && (int) $sown['slot_index'] === $pair[0] && (int) $sown['slot_span'] === 2 && $sown['habit'] === 'lotus');
 [$x0, $z0] = Seedbed::at(5, $pair[0]);
 [$x1, $z1] = Seedbed::at(5, $pair[1]);
-check('and stands between them', abs($sownLotus['spot'][0] - ($x0 + $x1) / 2) <= 0.06 + 1e-9
-      && abs($sownLotus['spot'][1] - ($z0 + $z1) / 2) <= 0.035 + 1e-9);
+// Within its nudge of their middle, 0.06 m along the drill and 0.035 m across
+// it, measured along the drill since the drills curved more (2 October 2026).
+[$ax, $az] = Seedbed::along(5, $pair[0], 2);
+$offX = $sownLotus['spot'][0] - ($x0 + $x1) / 2;
+$offZ = $sownLotus['spot'][1] - ($z0 + $z1) / 2;
+check('and stands between them', abs($offX * $ax + $offZ * $az) <= 0.06 + 1e-9
+      && abs($offZ * $ax - $offX * $az) <= 0.035 + 1e-9);
 
 // A published plant's seed, parents and meeting are public. Offering it again
 // with two invented tokens must not hand back the real ones, or the stranger

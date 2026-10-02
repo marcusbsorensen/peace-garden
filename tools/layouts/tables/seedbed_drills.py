@@ -7,8 +7,18 @@ side, where the water kinds claim from, so the flooded drills lie together
 like paddies. Marcus chose this on 2 October 2026
 (`design/garden-layouts-2026-10-02/RESEARCH.md`, the Seedbed, option A).
 
-Eight places a drill, 0.52 m apart along it, and 0.74 m between drills, as
-the straight bed had. `index` is how far along its drill a place stands,
+Eight places a drill, 0.52 m apart along it, as the straight bed had, and
+0.60 m between drills since Marcus chose *curve more, narrower gaps* later
+the same day. At the straight bed's 0.74 m six concentric drills filled the
+bed's depth with room for only a gentle bow: 0.17 m at the top to 0.30 m at
+the foot, so the dry drills read nearly straight. At 0.60 m about a point
+4.8 m below the top drill, each drill bows a third of a metre or more over
+its length, the dry ones at the head included, and the flooded ones at the
+foot curve round like paddies; the foot drill's ends still stand inside the
+bed. Each drill is centred across the bed, so on the tighter arcs at the
+foot its ends come in, and the labels stand on a curve of their own.
+
+`index` is how far along its drill a place stands,
 0 nearest the label at the drill's west end. Each drill's places are listed in
 the order a dry drill is sown: the place nearest its middle first, then
 farthest-first, so a drill of one plant, three or five looks sown rather than
@@ -25,7 +35,7 @@ the line is what the rake draws and the water fills.
 import math
 
 from places import Layout, shapes, order
-from places.numbers import Rng, cos_sin, turn_of
+from places.numbers import Rng, cos_sin
 
 FIELDS = ('drill', 'index', 'pair')
 JS = True
@@ -35,30 +45,30 @@ BOUND = 2.06
 DRILLS = 6
 PLACES = 8
 ALONG = 0.52       # between places along a drill
-ACROSS = 0.74      # between drills
-CENTRE = (0.02, 7.4)   # the contours' middle, below the plot
+ACROSS = 0.60      # between drills: 0.74 until 2 October 2026
+RADIUS = 4.8       # the top drill's: 9.4 at 0.74 between drills
 TOP = -2.0         # where the top drill crosses x = CENTRE's
 LABEL = 0.34       # how far before its first place a drill's label stands
 TAIL = 0.26        # how far the drill runs on past its last place
+CENTRE = (0.02, TOP + RADIUS)   # the contours' middle, below the plot
+
+
+def radius(d):
+    """Drill d's radius about CENTRE: the top drill's, less a gap a drill."""
+    return RADIUS - ACROSS * d
 
 
 def drill_line(d):
-    """Drill d's line: an arc about CENTRE, wandering a few centimetres."""
+    """Drill d's line: an arc about CENTRE, centred on the bed, wandering a few centimetres."""
     cx, cz = CENTRE
-    r = cz - TOP - ACROSS * d
+    r = radius(d)
     rng = Rng('seedbed-drill', d)
-    # Where the drill's first place stands across the bed: the labels stand
-    # on a gentle curve rather than a ruled column, the middle drills
-    # beginning a little further in than the outer ones.
-    u = (d - (DRILLS - 1) / 2) / ((DRILLS - 1) / 2)
-    first_x = -1.80 + 0.13 * (1 - u * u) + rng.uniform(-0.02, 0.02)
+    # The drill is centred across the bed, so on the tighter arcs at the foot
+    # its ends come in and its labels stand on a curve of their own; a couple
+    # of centimetres either way along it, so the curve is hand-set.
     length = ALONG * (PLACES - 1)
-    # Turns about CENTRE of the label, the first place and the far end.
-    def turn_at_x(x):
-        dz = -math.sqrt(r * r - (x - cx) * (x - cx))
-        return turn_of(x - cx, dz)
-    t_first = turn_at_x(first_x)
     per_metre = 1 / (2 * math.pi * r)
+    t_first = 0.75 + (rng.uniform(-0.02, 0.02) - length / 2) * per_metre
     t_start = t_first - LABEL * per_metre
     t_end = t_first + (length + TAIL) * per_metre
     n = int(math.ceil((t_end - t_start) / per_metre / 0.05))

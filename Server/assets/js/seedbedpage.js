@@ -130,7 +130,7 @@ async function place() {
   // anything on the page — reading it means growing the plant and asking its
   // name. A service from before they went on the wire sends neither, and then
   // the drill is recovered from the spot, which is exact enough to be certain
-  // of (0.035 m of nudge across a 0.74 m gap), and the kind is known only for
+  // of (0.035 m of nudge across a 0.60 m gap), and the kind is known only for
   // the plant the module itself holds: `pg_seedbed_describe`, asked before
   // anything has been invented, is the Seedbed as it opened, and the
   // ambassador in its first drill is the same plant, by the same seed, that

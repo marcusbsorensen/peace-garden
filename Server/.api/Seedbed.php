@@ -72,8 +72,10 @@ final class Seedbed
 
     /**
      * Six drills of eight, chosen by Marcus from three offers on 23 September.
-     * Forty-eight is the Long Walk's number; at this plot it leaves 0.74 m
-     * between drills, which is the width of the space a gardener kneels in.
+     * Forty-eight is the Long Walk's number; at this plot it left 0.74 m
+     * between drills, which is the width of the space a gardener kneels in,
+     * until the drills curved more on 2 October 2026: 0.60 m since, from the
+     * table (`SeedbedDrillsTable`).
      */
     public const DRILLS = 6;
     public const PLACES = 8;
@@ -146,8 +148,9 @@ final class Seedbed
      * Where a plant holding `span` places from `index` of `drill` stands in
      * plot `plot`, with its nudge, in metres from the middle of its plot:
      * [x, z]. The middle of its places, so a lotus stands half a place further
-     * from the label than its first; then nudged, then mirrored as its plot is,
-     * in the Swift's order, so every spot is the same double.
+     * from the label than its first; then nudged along and across its drill
+     * where it stands (`along`), then mirrored as its plot is, in the Swift's
+     * order, so every spot is the same double.
      */
     public static function spot(int $plot, int $drill, int $index, int $span = 1,
                                 float $nudgeX = 0.0, float $nudgeZ = 0.0): array
@@ -158,7 +161,30 @@ final class Seedbed
             $x = ($x + $bx) / 2;
             $z = ($z + $bz) / 2;
         }
-        return PlotVariant::apply(self::variant($plot), $x + $nudgeX, $z + $nudgeZ);
+        [$ax, $az] = self::along($drill, $index, $span);
+        $x = $x + ($nudgeX * $ax - $nudgeZ * $az);
+        $z = $z + ($nudgeX * $az + $nudgeZ * $ax);
+        return PlotVariant::apply(self::variant($plot), $x, $z);
+    }
+
+    /**
+     * **Which way a drill runs at a place**, away from its label, as a unit
+     * [x, z] in the table: from the place before to the place after (a drill's
+     * end to its neighbour), or across a lotus's two places. The Swift's
+     * `Seedbed.along`: a plant's nudge is laid along and across this, so a drill
+     * that curves stays even across its width all the way round. Only a
+     * difference, a square root and a division, so the same double on every host.
+     */
+    public static function along(int $drill, int $index, int $span): array
+    {
+        $from = $span === 2 ? $index : max(0, $index - 1);
+        $to = min(self::PLACES - 1, $index + 1);
+        [$ax, $az] = self::at($drill, $from);
+        [$bx, $bz] = self::at($drill, $to);
+        $dx = $bx - $ax;
+        $dz = $bz - $az;
+        $length = sqrt($dx * $dx + $dz * $dz);
+        return [$dx / $length, $dz / $length];
     }
 
     /**
@@ -343,7 +369,8 @@ final class Seedbed
      * Plants one arrival and returns the planting; the area only grows.
      *
      * The nudge is the only area's whose two directions differ: 0.06 m along
-     * the drill, which runs across the bed in `x`, and 0.035 m across it. **A
+     * the drill and 0.035 m across it, `nudgeX` and `nudgeZ`, laid along the
+     * drill where the plant stands (`spot`). **A
      * drill has to read as a line**, which is the whole of what a seedbed looks
      * like, and a line survives being uneven along its length but not being
      * uneven across it.
