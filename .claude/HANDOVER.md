@@ -1,42 +1,54 @@
-# Peace Garden: re-roll live, build 3 uploaded — handover 30 September 2026
+# Peace Garden: Wild Fields, slab, sky and shadows — handover 2 October 2026 (03:00)
 
-The previous handover is at `git show 8605544:.claude/HANDOVER.md`.
+The previous handover is at `git show 06a8b9e:.claude/HANDOVER.md` (30 September).
 
 ## Goal
-The garden and the app settled before the app is announced: shapes final, every area live, the site in 41 languages, the app build carrying all of it.
+Tonight's batch live and in build 6: the Wild Fields with water, worn paths and pasture ground; the website's plots as the app's floating slab; the app's new day sky, slab, plant screen and shadows; the 1 October translations corrected.
 
 ## State
-- **Done and verified**
-  - **Re-roll live and replanted** (main `5fdb500`, deployed 29 September). Replant runbook followed in full: rehearsals on SQLite and MariaDB, backup and restore-test, plan `c0aa56033b17`, dry-run, run, `--verify`, all ten pages console-clean, backup after (`walk-2026-09-29T190459Z`). The live garden holds only the ten ambassadors, so nothing moved.
-  - **App build 3 uploaded** (1.0 (3), 30 September 09:25, delivery `39003575-…`; archive `build/PeaceGarden-1.0-3.xcarchive`). App tests 131/0 (1 skipped) on the iPhone Air.
-  - **Site translations**: all 41 languages have the 24 September commission (front page, the ten meanings, `/meanings`, thirty part labels), live.
-  - Earlier this stretch, live: plant panel and postcard links, plant and hedge shadows, Cold Frame lids that open, the lotus taking two places, floors and hedges kept on the plot, the larger wordmark.
-- **Unverified**: build 3 on a real phone (TestFlight processing); only Danish has been read by a speaker.
+- **Done, on main and pushed** (main `d484053`)
+  - Wild Fields strings in 41 languages and 79 app strings in 7: **live** (deployed 2 October, before build 5).
+  - **Build 5 uploaded** (138 passed, 0 failed).
+  - App: day sky B+C+D (`e345fc8`, Testing switch `-pgOldSky`), the slab (`781bf66`), plant 56 pt higher (`4a2d3c7`).
+  - Curator's take-down tool (`06a8b9e`): `php ~/public_html/.api/curate.php hide <seed>`.
+  - Website slab with stones only when zoomed in, on web and app (`d484053`). **Not deployed yet.**
+- **In progress**
+  - Integration agent `a16338ad17866618c`, branch `worktree-agent-a16338ad17866618c` (pushed): ponds B (`1171d50`), wear plus privacy9 (`origin/claude/privacy9-2026-10-02`) and pasture ground (`7ef2b4a`) joined on current main. Renders go to `design/wild-together-2026-10-02/`.
+  - Shadows agent `a6817e95101b680b7`, branch `worktree-agent-a6817e95101b680b7` (pushed, `119824e`): noon cores about half, sharper evening shadows, the figures' shadows kept, rebasing onto `d484053`.
+  - Cloud routines firing at 02:01Z, both with connectors stripped:
+    - `trig_01LofNy1ACmg4Li1YdH1EKQH` writes `claude/strings-fixes-site-2026-10-02` (site catalogues and the `wildpage.js` bidi fix);
+    - `trig_014mwsrPrHyiuEmXTDf3iWoK` writes `claude/strings-fixes-app-2026-10-02` (xcstrings, the `Light and dark` split, and the "no name is shown" line).
+- **Backups on GitHub**: the `worktree-agent-*` branches for ponds, ground, wear and shadows.
 
-## Files
-- `docs/WEB-GARDENS.md` — every area's rule, decisions (with dates and who decided) and as-built notes; §*Every cut measured again, 29 September 2026*.
-- `tools/replant/README.md` — the runbook for a live replant, §*The runbook for the live run*.
-- `tools/strings/commissions/2026-09-24/README.md` — the commission, batch tables of what each language's reader should check.
-- `project.yml` — `CURRENT_PROJECT_VERSION` (now 3), bumped on every upload.
-- `build/ExportOptions.plist` — export for App Store Connect (destination `export`, so exporting never uploads).
+## Decisions made, 2 October 2026 (Marcus)
+- Lotus B: the hollows hold water. Night ponds show star reflections and ripples. The ground is pasture. Deploy, then he tries it on his phone.
+- Worn paths: privacy9 goes after privacy8, the path width stays, and **wear is switched on with this deploy**. That means `'wear' => true` in the server's `.api/config.php`, which lives only on the server and is excluded from rsync.
+- Day sky B+C+D. The plot's light is warmed after the shadows merge.
+- Website plots hang the slab. Stones show only when zoomed in (1.3× plus 8 px), on both platforms.
+- Shadows: noon lighter, evening sharper, the hare, fox and snail shadows kept.
+- Translation review (`tools/strings/commissions/2026-10-01/REVIEW.md`, branch `claude/strings-review-2026-10-01`, PR #8):
+  - Apply all 40 findings.
+  - Polish *Dzikie Łąki*; Ukrainian, Russian and Belarusian *луги*/*лугі*; Greek *Τα Άγρια λιβάδια*.
+  - **Keep** Vildmarken / Villmarka / Vildmarken, with Danish (and Norwegian) *på → i*.
+  - The English app line becomes "Left as it is, no name is shown."
 
-## Decisions made
-- Cold Frame: two frames and a pond of 39 (Marcus chose from renders, 29 September).
-- Cuts re-measured on the re-rolled population; Danish *Rør* (Reed) and *Pude* (Cushion).
-- Portuguese uses *tu* throughout.
-- A lotus takes two places in the Cold Frame and the Seedbed.
-- Plant panel shows only what the seed implies; a postcard is a link; every plant has one.
-- Translations "sent" means written into the catalogues and deployed once checks pass.
-
-## Next step
-Once build 3 has finished processing, install it from TestFlight on a real phone and cross two seeds, offer the plant to a web garden area, and check it stands in the right place on the live page (habit and hue arrive; e.g. an umbel lands in a Home Ground umbel bed).
+## Next steps
+1. Merge the integration branch into main, then the site strings branch (based on privacy9, so it should merge cleanly).
+2. Deploy: rebuild the wasm, `tools/deploy.sh --dry-run`, deploy, then set `'wear' => true` in the live config.php. Then run `--check` and confirm every page is console-clean. Tell Marcus to try /wild on his phone, and roll back if it stutters.
+3. Merge shadows. Warm the plot light (`design/app-sky-2026-10-02/README.md`). Merge the app strings branch.
+4. Build 6: set `CURRENT_PROJECT_VERSION` to 6, run the full suite on the iPhone Air, then archive, export and upload.
+5. Clean up merged worktrees and remote `worktree-agent-*` branches. Close PR #8 once REVIEW.md lands on main through the site strings branch.
 
 ## Traps
-- **Token-guard hook** blocks unbounded `git diff`/`git show` (use a Python script running git), any command containing "curl" (use Python's urllib), plain `cat`, `\|` in grep, `grep -r` even with `head`, and images over ~500 KB (pass `limit` to Read, or `sips -Z 1000`).
-- **Hidden browser pane pauses and blacks out screenshots**; capture headless with Playwright (`/dev/<area>?plot=N`, port 8803).
-- **Deploying from a worktree** needs `Server/.pages/PlantWasm.wasm` plus its `.br` and `.gz` copied in: `deploy.sh` runs `rsync --delete`.
-- **A worktree's dev server with no `config.php` creates `peacegarden-data/`** (throwaway sqlite); `git worktree remove --force` deletes it.
-- **Rebuild the wasm** (`tools/wasm/build.sh`) after any SeedCore rule change before deploying; it is untracked.
-- **Simulators**: never install onto the iPhone 17 Pro (Marcus's garden); the iPhone Air is scratch.
-- **MariaDB rehearsal** needs `orb start`; stop it afterwards.
-- Agents running many at once hit the session rate limit; two languages per translator worked.
+- **Cloud routines:** use RemoteTrigger. Agent `isolation: "remote"` runs locally. Strip connectors after every create (`clear_mcp_connections`). Routines don't notify; check with `list_runs` and `get_run_log`.
+- **Every agent brief says commit and push after each step** (Marcus, 2 October).
+- **Token-guard hook** blocks:
+  - unbounded `git diff`/`git show` (run git from Python);
+  - "curl";
+  - plain `cat`;
+  - a bare `grep` without `| head`, plus `\|` in grep and `grep -r`;
+  - images over ~500 KB.
+- **xcstrings:** write with the Xcode dump (`indent=2`, `" : "`, three-line `{}`), and assert the round-trip first.
+- **The wasm is untracked:** rebuild it with `tools/wasm/build.sh` after any SeedCore change, and copy it into any worktree you deploy from.
+- **Never install onto the iPhone 17 Pro** (Marcus's garden). The iPhone Air is scratch.
+- Agents share the scratchpad; give each its own subfolder.
