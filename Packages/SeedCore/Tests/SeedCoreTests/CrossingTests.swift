@@ -137,37 +137,89 @@ final class CrossingTests: XCTestCase {
 
     // MARK: The slots themselves
 
-    /// Every plant stands inside its plot, off both paths, and clear of the
+    /// Every plant stands inside its plot, off every path, and clear of the
     /// paving the paths run into.
+    ///
+    /// **Measured against the paths as its plot lays them**, since the four
+    /// ways began turning in on 2 October 2026: each path's centre line from
+    /// the table, turned for the plot, and its half width where the plant is
+    /// nearest it. A plant's room, less its nudge, is what is left.
     func testNoPlantStandsOnAPathOrOnThePaving() {
         let ways = Self.filled()
-        let edge = Crossing.plotSide / 2
+        let edge = Crossing.plotSide / 2 - 0.3
+        var least = Double.infinity
         for planting in ways.plantings {
             let spot = planting.spot
-            XCTAssertLessThan(abs(spot.x), edge, "a plant is off the plot")
-            XCTAssertLessThan(abs(spot.z), edge, "a plant is off the plot")
-            XCTAssertGreaterThan(min(abs(spot.x), abs(spot.z)), Crossing.pathHalfWidth,
-                                 "a plant stands on a path")
+            XCTAssertLessThan(abs(spot.x), edge, "a plant is at the plot's edge")
+            XCTAssertLessThan(abs(spot.z), edge, "a plant is at the plot's edge")
+            let variant = Crossing.variant(of: planting.plot)
+            for q in 0..<4 {
+                for point in Crossing.table.curve("way\(q)", on: variant).points {
+                    let gap = hypot(spot.x - point.x, spot.z - point.z)
+                        - Crossing.pathHalfWidth(atRadius: hypot(point.x, point.z))
+                    least = min(least, gap)
+                }
+            }
             let fromMiddle = (spot.x * spot.x + spot.z * spot.z).squareRoot()
-            XCTAssertGreaterThan(fromMiddle, Crossing.roundelRadius,
+            XCTAssertGreaterThan(fromMiddle, Crossing.roundelRadius + 0.5,
                                  "a plant stands on the paving")
+        }
+        print("Crossing: the nearest plant stands \(least) m from a path's edge")
+        XCTAssertGreaterThan(least, 0.05, "a plant stands on a path")
+    }
+
+    /// **The four ways turn in**: each comes onto the plot near the middle of
+    /// its side and by the round has turned the same way as the others, so
+    /// they meet it turning rather than crossing.
+    func testTheFourWaysTurnTheSameWayIn() {
+        for q in 0..<4 {
+            let way = Crossing.table.curve("way\(q)", on: .plain).points
+            let side = Crossing.plotSide / 2
+            // Where it comes onto the plot: near the middle of its side.
+            let onto = way.min { abs(hypot($0.x, $0.z) - side) < abs(hypot($1.x, $1.z) - side) }!
+            let sideways = [onto.z, onto.x, onto.z, onto.x][q]
+            XCTAssertLessThan(abs(sideways), 0.15, "way \(q) comes onto the plot off its side's middle")
+            // Where it reaches the round: turned, and all four the same way.
+            let round = Crossing.roundelRadius
+            let at = way.min { abs(hypot($0.x, $0.z) - round) < abs(hypot($1.x, $1.z) - round) }!
+            let turned = atan2(at.z, at.x) - Double(q) * .pi / 2
+            let wrapped = atan2(sin(turned), cos(turned))
+            XCTAssertGreaterThan(wrapped, 0.8, "way \(q) does not turn in")
+            XCTAssertLessThan(wrapped, 1.2, "way \(q) turns too far")
         }
     }
 
     /// The three at the path rank share an arc, which is what frees them from
-    /// having to be in order with each other.
-    func testThePathRankIsAnArc() {
+    /// having to be in order with each other; so do the two behind them. In
+    /// every quarter, and the arcs run outward from the basin.
+    func testEachRankIsAnArcRoundTheBasin() {
         let radius = { (slot: Crossing.Slot) -> Double in
             let spot = slot.spot
             return (spot.x * spot.x + spot.z * spot.z).squareRoot()
         }
-        let bed = Crossing.slots.filter { $0.quarter == .first }
-        let path = bed.filter { $0.rank == .path }.map(radius)
-        for r in path { XCTAssertEqual(r, path[0], accuracy: 0.01) }
-        let middle = bed.filter { $0.rank == .middle }.map(radius)
-        for r in middle { XCTAssertEqual(r, middle[0], accuracy: 0.01) }
-        XCTAssertLessThan(path[0], middle[0])
-        XCTAssertLessThan(middle[0], radius(bed.first { $0.rank == .corner }!))
+        for quarter in Crossing.Quarter.allCases {
+            let bed = Crossing.slots.filter { $0.quarter == quarter }
+            for r in bed.filter({ $0.rank == .path }).map(radius) { XCTAssertEqual(r, 1.95, accuracy: 0.002) }
+            for r in bed.filter({ $0.rank == .middle }).map(radius) { XCTAssertEqual(r, 2.45, accuracy: 0.002) }
+            XCTAssertEqual(radius(bed.first { $0.rank == .corner }!), 2.80, accuracy: 0.002)
+        }
+    }
+
+    /// **Every plot is laid as its number says**: a plant stands at its place
+    /// and nudge, turned and mirrored for its plot, and the plots differ.
+    func testEveryPlotIsTurnedAsItsNumberSays() {
+        let ways = Self.filled()
+        var seen = Set<String>()
+        for planting in ways.plantings {
+            let v = Crossing.variant(of: planting.plot)
+            XCTAssertEqual(v, PlotVariant.of(plot: planting.plot, area: .meeting))
+            let plain = Spot(x: planting.slot.spot.x + planting.nudge.x,
+                             z: planting.slot.spot.z + planting.nudge.z)
+            XCTAssertEqual(planting.spot, v.apply(plain))
+            seen.insert("\(v.turn) \(v.mirror)")
+        }
+        XCTAssertEqual(Crossing.variant(of: 0), .plain)
+        XCTAssertEqual(seen.count, 8, "the plots are not laid all eight ways")
     }
 
     // MARK: The ambassador

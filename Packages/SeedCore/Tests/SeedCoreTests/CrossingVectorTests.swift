@@ -27,10 +27,16 @@ final class CrossingVectorTests: XCTestCase {
         var lines: [String] = []
         for (seed, traits) in CrossingTests.arrivals() {
             let p = ways.plant(seed: seed, traits: traits)
+            // **Where it stands, turned for its plot**, since 2 October 2026:
+            // the variant the plot's number deals it and the spot that gives.
+            // Both are exact on every host, so the service is held to them
+            // with no tolerance.
+            let v = Crossing.variant(of: p.plot)
             lines.append("""
                 {"seed":"\(seed.hex)","height":\(traits.height),"family":\(traits.family),\
                 "plot":\(p.plot),"quarter":\(p.slot.quarter.rawValue),"index":\(p.slot.index),\
-                "nudge":[\(p.nudge.x),\(p.nudge.z)]}
+                "nudge":[\(p.nudge.x),\(p.nudge.z)],\
+                "variant":[\(v.turn),\(v.mirror ? 1 : 0),\(v.nudge)],"spot":[\(p.spot.x),\(p.spot.z)]}
                 """)
         }
         return "[\n" + lines.joined(separator: ",\n") + "\n]\n"
