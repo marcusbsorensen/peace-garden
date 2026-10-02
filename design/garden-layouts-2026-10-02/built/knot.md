@@ -37,8 +37,8 @@ spot.
 
   | | Heart | Sides | Point |
   |---|---|---|---|
-  | Lens | 0.81 m | 1.17 m, 1.05 m apart | 1.22 m |
-  | Crescent | 1.74 m | 1.78 m, 1.30 m apart | 2.16 m |
+  | Lens | 0.805 m | 1.17 m, 1.05 m apart | 1.22 m |
+  | Crescent | 1.74 m | 1.78 m, 1.30 m apart | 2.155 m |
 
 - **The weave.** Going round the middle ring it is over, under, over,
   under, so each small ring is over at one of its two crossings and under at
