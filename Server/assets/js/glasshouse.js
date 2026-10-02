@@ -1,7 +1,14 @@
 // A plot of the Glasshouse, drawn the way the app draws a plot: a floating slab
-// of ground seen in true isometric, laid with quarry tiles, a span house of
-// painted bars and glass standing on it, slatted staging down its sunny side
-// with a clay pot under every plant on it, and a soil border along the back.
+// of ground seen in true isometric, laid with quarry tiles, a round house of
+// painted bars and glass standing on it, a ring of slatted staging round its
+// inside with a clay pot under every plant on it, and a round soil bed in the
+// middle under the crown of the dome.
+//
+// **The colour wheel, since 2 October 2026** (option A of
+// `design/garden-layouts-2026-10-02/RESEARCH.md`): the twelve bands of hue go
+// round the staging, blue-green just past the door to yellow just before it,
+// and the door is in the gap between, the green these plants avoid. It was a
+// span house with straight staging along its sunny side until then.
 //
 // **The first page whose plants do not all stand on the ground.** Three in four
 // of them are potted on the staging, 0.83 m off the floor, and the service says
@@ -15,14 +22,17 @@
 // depth, so everything under the roof is seen through it.
 //
 // The rule that decides where each plant stands is SeedCore's `Glasshouse`,
-// through the module. This file draws the ground, the house, the staging and
-// the pots, and puts each plant on the spot the service gives it; the plot's own
-// numbers come from `pg_glasshouse_plan` rather than being written down again.
+// through the module. This file draws the floor, the bed and the trough, sets
+// the module's house, staging and pots where they stand, and puts each plant on
+// the spot the service gives it. The plot's own numbers come from
+// `pg_glasshouse_plan`, and the outlines it draws to — the wall, the staging's
+// line and the bed — from the place table the rule reads its places from
+// (`tables/glasshouse_wheel.js`), so the floor cannot disagree with the house.
 
-import { raiseTrough } from './water.js';
 import { decode, takeResult } from './plant.js';
-import { SIDE, hash, keepToPlot, readOutline, readStructure } from './longwalk.js';
+import { COLOUR, SIDE, hash, keepToPlot, readOutline, readStructure } from './longwalk.js';
 import { hangSide } from './slab.js';
+import { glasshouseWheel } from './tables/glasshouse_wheel.js';
 
 // Seeds for this area's dressing, its own and not another area's.
 const GLASS_SEED = { ground: 6421, floor: 43, tile: 61, soil: 89, border: 97, frame: 1511,
@@ -38,12 +48,12 @@ const TILE = [0.433, 0.282, 0.210];
 /// the colour of the clay, and a tile has been walked on.
 const POT = [0.60, 0.355, 0.24];
 
-/// The compost in a pot, darker than the border's soil because it is kept
+/// The compost in a pot, darker than the bed's soil because it is kept
 /// watered.
 const COMPOST = [0.215, 0.170, 0.130];
 
-/// The border's soil: the Cold Frame's, a bed's own ground rather than the
-/// floor round it.
+/// The bed's soil: the Cold Frame's, a bed's own ground rather than the floor
+/// round it.
 const SOIL = [0.300, 0.240, 0.180];
 
 /// The staging: deal, weathered paler than the bench's oak, as the Cold Frame's
@@ -56,10 +66,16 @@ const BAR = [0.82, 0.81, 0.76];
 
 /// The glass: the sky it reflects, faint. The Cold Frame's at 7% had one layer
 /// of glass over its plants; here there are two or three between the eye and
-/// anything under the roof — the roof itself, and a side wall or a gable — so
-/// each is fainter, and the laps and the ripple are what show it is there.
+/// anything under the roof — the dome itself, and the wall on the near side
+/// and the far — so each is fainter, and the laps and the ripple are what show
+/// it is there.
 const GLASS = [0.78, 0.85, 0.92];
 const GLASS_OPACITY = 0.05;
+
+/// The trough under the staging: how wide it is across the ring, how thick its
+/// stone, how high it stands, and how far below its lip the water lies. Narrow
+/// enough to stand between the staging's legs.
+const TROUGH = { across: 0.24, wall: 0.045, height: 0.30, freeboard: 0.05, from: -1.1, to: 1.1 };
 
 export function plan(e) {
   const place = JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_glasshouse_plan())));
@@ -67,6 +83,33 @@ export function plan(e) {
   // grown; the page fills it and asks the stage to build its ground again.
   place.pots = [];
   return place;
+}
+
+// MARK: - The outlines
+
+/// A closed outline the table lays by turn — point `i` at turn `i / n` — read
+/// back as its radius at any turn, so the floor can ask how far out the wall or
+/// the bed is in any direction.
+function byTurn(points) {
+  const radii = points.map(([x, z]) => Math.hypot(x, z));
+  const n = radii.length;
+  return (turn) => {
+    const at = (((turn % 1) + 1) % 1) * n;
+    const i = Math.floor(at), t = at - i;
+    return radii[i % n] * (1 - t) + radii[(i + 1) % n] * t;
+  };
+}
+
+/// Which way a point lies from the middle, as a turn from `x+` toward `z+`.
+const turnOf = (x, z) => {
+  const t = Math.atan2(z, x) / (2 * Math.PI);
+  return t < 0 ? t + 1 : t;
+};
+
+/// The table's outlines: the wall, the bed, and the staging's middle line.
+export function outlines() {
+  const curve = (name) => glasshouseWheel.curves[name][0].points;
+  return { wall: byTurn(curve('house')), bed: byTurn(curve('bed')), line: curve('staging') };
 }
 
 // MARK: - The ground
@@ -80,6 +123,7 @@ export function makeGlasshouseGround(place) {
       tri(a, b, c, n, ca, cb, cc); tri(a, c, d, n, ca, cc, cd);
     };
     const UP = [0, 1, 0];
+    const { wall, bed, line } = outlines();
 
     const outline = readOutline(e, SIDE, SIDE, GLASS_SEED.ground);
     const n = outline.length;
@@ -88,89 +132,129 @@ export function makeGlasshouseGround(place) {
       tri([0, 0, 0], [a[0], 0, a[1]], [b[0], 0, b[1]], UP, TILE);
     }
 
-    // **The border's soil, and where it ends.** A strip along the back of the
-    // house, inside the glass, its edges cut by hand rather than ruled: each
-    // side wanders a few centimetres with the verge noise the walk's path is
-    // cut with.
-    const wander = (along, side) => e.pg_verge(along, side, GLASS_SEED.border) / 0.14;
-    const halfLength = place.length / 2 - 0.12;
-    const back = place.borderZ - 0.40, front = place.borderZ + 0.40;
-    const inBorder = (x, z) =>
-      Math.abs(x) < halfLength + 0.03 * wander(z * 3, 1)
-      && z > back + 0.03 * wander(x, 2)
-      && z < front + 0.04 * wander(x, 3);
-
-    // **The tiles: the Knot Garden's jittered lattice, a tone to a tile.** A
-    // quarry-tile floor is a grid by nature, and a ruled grid is the one thing
-    // this garden does not draw — so the corners are nudged off true, each tile
-    // takes its own tone, and the lines between them are where one tone meets
-    // the next rather than lines at all. A tile a little under a third of a
-    // metre, which is what a quarry tile is.
-    // **Laid a little wider than the plot and kept to it** (`keepToPlot`), since
-    // 25 September 2026: laid inside a 2.54 m square over an edge that comes in
-    // to 2.42 m, it ran past the slab with a ruled edge and four corners in the
-    // sky. Now it ends on the plot's own wandering edge.
-    const half = SIDE / 2 + 0.06;
-    const onPlot = keepToPlot(outline);
-    const lattice = (cell, from, to, jitter) => {
-      const stepsX = Math.ceil((to[0] - from[0]) / cell), stepsZ = Math.ceil((to[1] - from[1]) / cell);
-      const grid = [];
-      for (let i = 0; i <= stepsX; i++) {
-        const row = [];
-        for (let j = 0; j <= stepsZ; j++) {
-          const edge = i === 0 || j === 0 || i === stepsX || j === stepsZ;
-          const shift = edge ? 0 : cell * jitter;
-          row.push(onPlot(
-            Math.max(from[0], Math.min(to[0], from[0] + i * cell + shift * (hash(i * 7919 + j * 104729 + from[0] * 1e3) - 0.5) * 2)),
-            Math.max(from[1], Math.min(to[1], from[1] + j * cell + shift * (hash(i * 6733 + j * 92831 + from[1] * 1e3) - 0.5) * 2)),
-          ));
-        }
-        grid.push(row);
-      }
-      return grid;
-    };
-    const sheet = (grid, lift, tone, keep) => {
-      const at = (p) => [p[0], lift, p[1]];
-      for (let i = 0; i < grid.length - 1; i++) {
-        for (let j = 0; j < grid[0].length - 1; j++) {
-          const a = grid[i][j], b = grid[i + 1][j], c = grid[i + 1][j + 1], d = grid[i][j + 1];
-          if (!keep((a[0] + c[0]) / 2, (a[1] + c[1]) / 2)) continue;
-          if (hash(i * 31 + j * 17 + lift * 1e4) < 0.5) {
-            tri(at(a), at(b), at(c), UP, tone(i, j, 0, a)); tri(at(a), at(c), at(d), UP, tone(i, j, 1, c));
-          } else {
-            tri(at(a), at(b), at(d), UP, tone(i, j, 2, a)); tri(at(b), at(c), at(d), UP, tone(i, j, 3, c));
-          }
-        }
-      }
-    };
     const drift = (x, z) => 1
       + 0.05 * (e.pg_verge(x * 0.62, -1, GLASS_SEED.ground) / 0.14)
       + 0.05 * (e.pg_verge(z * 0.54, 1, GLASS_SEED.ground) / 0.14);
-    sheet(lattice(0.29, [-half, -half], [half, half], 0.12), 0.003,
-      (i, j, k, p) => TILE.map((v) => v * drift(p[0], p[1]) * (0.88 + 0.22 * hash(i * 131 + j * 37 + GLASS_SEED.tile))),
-      (x, z) => !inBorder(x, z));
-    sheet(lattice(0.045, [-halfLength - 0.1, back - 0.1], [halfLength + 0.1, front + 0.1], 0.34), 0.006,
-      (i, j, k, p) => SOIL.map((v) => v * drift(p[0], p[1]) * (0.92 + 0.14 * hash(i * 131 + j * 37 + k * 7 + GLASS_SEED.soil))),
-      inBorder);
+    const tileTone = (seed, p) => TILE.map((v) => v * drift(p[0], p[1]) * (0.88 + 0.22 * hash(seed + GLASS_SEED.tile)));
+    const inside = (x, z, edge) => Math.hypot(x, z) < edge(turnOf(x, z));
+
+    // **Outside the house: the Knot Garden's jittered lattice, a tone to a
+    // tile.** A quarry-tile floor is a grid by nature, and a ruled grid is the
+    // one thing this garden does not draw — so the corners are nudged off
+    // true, each tile takes its own tone, and the lines between them are where
+    // one tone meets the next rather than lines at all. A tile a little under
+    // a third of a metre, which is what a quarry tile is. **Laid a little
+    // wider than the plot and kept to it** (`keepToPlot`), and kept outside
+    // the wall, where the house's own floor takes over.
+    const half = SIDE / 2 + 0.06;
+    const onPlot = keepToPlot(outline);
+    const cell = 0.29, steps = Math.ceil((2 * half) / cell);
+    const grid = [];
+    for (let i = 0; i <= steps; i++) {
+      const row = [];
+      for (let j = 0; j <= steps; j++) {
+        const edge = i === 0 || j === 0 || i === steps || j === steps;
+        const shift = edge ? 0 : cell * 0.12;
+        row.push(onPlot(
+          Math.max(-half, Math.min(half, -half + i * cell + shift * (hash(i * 7919 + j * 104729 - half * 1e3) - 0.5) * 2)),
+          Math.max(-half, Math.min(half, -half + j * cell + shift * (hash(i * 6733 + j * 92831 - half * 1e3) - 0.5) * 2)),
+        ));
+      }
+      grid.push(row);
+    }
+    const flat = (p, lift) => [p[0], lift, p[1]];
+    for (let i = 0; i < steps; i++) {
+      for (let j = 0; j < steps; j++) {
+        const a = grid[i][j], b = grid[i + 1][j], c = grid[i + 1][j + 1], d = grid[i][j + 1];
+        if (inside((a[0] + c[0]) / 2, (a[1] + c[1]) / 2, (t) => wall(t) + 0.04)) continue;
+        const seed = i * 131 + j * 37;
+        if (hash(i * 31 + j * 17 + 30) < 0.5) {
+          tri(flat(a, 0.003), flat(b, 0.003), flat(c, 0.003), UP, tileTone(seed, a));
+          tri(flat(a, 0.003), flat(c, 0.003), flat(d, 0.003), UP, tileTone(seed + 1, c));
+        } else {
+          tri(flat(a, 0.003), flat(b, 0.003), flat(d, 0.003), UP, tileTone(seed + 2, a));
+          tri(flat(b, 0.003), flat(c, 0.003), flat(d, 0.003), UP, tileTone(seed + 3, c));
+        }
+      }
+    }
+
+    // **Inside: the same tiles laid in rings**, from the bed out to the wall,
+    // as a round floor is laid. Each ring follows the bed's wander on its
+    // inside and the wall's on its outside, so no two are the same width all
+    // the way round; each tile is cut where its own joint falls, a little off
+    // even, and the joints of one ring fall where they will against the next,
+    // as a floor laid by eye has them.
+    const rings = 5;
+    const at = (turn, f) => {
+      const r = bed(turn) + (wall(turn) - bed(turn)) * f;
+      return [Math.cos(turn * 2 * Math.PI) * r, Math.sin(turn * 2 * Math.PI) * r];
+    };
+    for (let k = 0; k < rings; k++) {
+      const f0 = k / rings, f1 = (k + 1) / rings;
+      const middle = place.bedRadius + (place.radius - place.bedRadius) * (f0 + f1) / 2;
+      const count = Math.max(8, Math.round((2 * Math.PI * middle) / 0.29));
+      const phase = hash(k * 977 + 5);
+      const joint = (j) => (j + phase + (j % count === 0 ? 0 : 0.3 * (hash(k * 389 + (j % count) * 53) - 0.5))) / count;
+      for (let j = 0; j < count; j++) {
+        const t0 = joint(j), t1 = joint(j + 1);
+        const tone = tileTone(k * 4099 + j * 61 + 7, at(t0, f0));
+        const pieces = Math.max(2, Math.ceil(((t1 - t0) * 2 * Math.PI * middle) / 0.06));
+        for (let s = 0; s < pieces; s++) {
+          const ta = t0 + ((t1 - t0) * s) / pieces, tb = t0 + ((t1 - t0) * (s + 1)) / pieces;
+          quad(flat(at(ta, f0), 0.004), flat(at(ta, f1), 0.004), flat(at(tb, f1), 0.004), flat(at(tb, f0), 0.004),
+               UP, tone);
+        }
+      }
+    }
+
+    // **The bed: soil, in a round in the middle**, its edge cut by hand: the
+    // table's wandering outline. Laid as the border's soil was, in small
+    // tones, on a fine jittered lattice kept to the bed.
+    const soilCell = 0.045, reach = place.bedRadius + 0.08, soilSteps = Math.ceil((2 * reach) / soilCell);
+    const soil = [];
+    for (let i = 0; i <= soilSteps; i++) {
+      const row = [];
+      for (let j = 0; j <= soilSteps; j++) {
+        const x = -reach + i * soilCell + soilCell * 0.34 * (hash(i * 7919 + j * 104729 + 17) - 0.5) * 2;
+        const z = -reach + j * soilCell + soilCell * 0.34 * (hash(i * 6733 + j * 92831 + 17) - 0.5) * 2;
+        // Pulled in to the bed's edge where it would run past it, so the bed
+        // ends on its own outline rather than on the lattice's steps.
+        const r = Math.hypot(x, z), edge = bed(turnOf(x, z));
+        row.push(r > edge ? [x * edge / r, z * edge / r] : [x, z]);
+      }
+      soil.push(row);
+    }
+    for (let i = 0; i < soilSteps; i++) {
+      for (let j = 0; j < soilSteps; j++) {
+        const a = soil[i][j], b = soil[i + 1][j], c = soil[i + 1][j + 1], d = soil[i][j + 1];
+        if (![a, b, c, d].some(([x, z]) => inside(x, z, (t) => bed(t) - 0.001))) continue;
+        for (const [k, [p, q, r]] of [[a, b, c], [a, c, d]].entries()) {
+          const tone = SOIL.map((v) => v * drift(p[0], p[1])
+            * (0.92 + 0.14 * hash(i * 131 + j * 37 + k * 7 + GLASS_SEED.soil)));
+          tri(flat(p, 0.006), flat(q, 0.006), flat(r, 0.006), UP, tone);
+        }
+      }
+    }
 
     // MARK: The house, the staging and the pots
     //
-    // Meshes from `Organic`, each set where it stands: the house's bars at the
-    // middle of the plot, the staging down the sunny side, and a pot and its
+    // Meshes from `Organic`, each built where it stands: the house round the
+    // middle of the plot, the staging round inside it, and a pot and its
     // compost under every potted plant in the plot on show. The glass is
     // gathered and handed back on its own.
     set(readStructure(takeResult(e, e.pg_glasshouse_frame(GLASS_SEED.frame))), [0, 0, 0], BAR, 0.06, vertex);
-    set(readStructure(takeResult(e, e.pg_glasshouse_staging(GLASS_SEED.staging))), [0, 0, place.stagingZ],
-      BOARD, 0.24, vertex);
+    set(readStructure(takeResult(e, e.pg_glasshouse_staging(GLASS_SEED.staging))), [0, 0, 0], BOARD, 0.24, vertex);
     // **A trough under the staging**, where a glasshouse keeps its water: at
-    // hand for the can, out of the way of the path, and warmed by the house so
+    // hand for the can, out of the way of the walk, and warmed by the house so
     // it is never cold on a seedling's roots. Stone and standing on the tiles,
     // because the Glasshouse is partway up the garden and water there is held
-    // rather than found. Low enough to clear the boards, and short of the
-    // staging's ends so its legs stand clear of it.
-    raiseTrough(e, { tri, quad }, {
-      at: [0, place.stagingZ], across: 2.4, deep: 0.42, seed: GLASS_SEED.trough, height: 0.30,
-    });
+    // rather than found. Bent to the ring, under its `x+` side, low enough to
+    // clear the boards and narrow enough to stand between the legs.
+    raiseRingTrough(e, { tri, quad }, line);
+    // **A threshold stone across the doorway**, half in and half out, worn
+    // to a rounded slab: where the floor is walked most, and what tells the
+    // eye from any side that the gap in the wall is the way in.
+    layThreshold(e, { tri, quad }, wall(place.doorTurn), place);
     // Three pots and three fillings, turned out of three seeds and handed out
     // by where each stands, so the staging is not one pot twenty-four times.
     const pots = [0, 1, 2].map((k) => readStructure(takeResult(e, e.pg_glasshouse_pot(GLASS_SEED.pot + k))));
@@ -208,6 +292,117 @@ export function makeGlasshouseGround(place) {
   return Object.assign(buildGlasshouseGround, { seat: { radius: 0.068, rise: 0.008 } });
 }
 
+/// The threshold: a slab of stone a little wider than the doorway, its outline
+/// a wandering oval, standing 3.5 cm proud of the tiles across the wall line.
+function layThreshold(e, { tri, quad }, wallAt, place) {
+  const a = place.doorTurn * 2 * Math.PI;
+  const out = [Math.cos(a), Math.sin(a)], along = [-out[1], out[0]];
+  const centre = [out[0] * wallAt, out[1] * wallAt];
+  const high = 0.035, steps = 40;
+  const rim = Array.from({ length: steps }, (_, k) => {
+    const t = (k / steps) * 2 * Math.PI;
+    const wander = 1 + 0.06 * (e.pg_verge(k * 0.31, 2, GLASS_SEED.trough + 7) / 0.14);
+    const u = Math.cos(t) * (place.doorHalf + 0.08) * wander, v = Math.sin(t) * 0.17 * wander;
+    return [centre[0] + along[0] * u + out[0] * v, centre[1] + along[1] * u + out[1] * v];
+  });
+  const top = COLOUR.stone.map((c) => c * 1.18), face = COLOUR.stone.map((c) => c * 0.95);
+  for (let k = 0; k < steps; k++) {
+    const p = rim[k], q = rim[(k + 1) % steps];
+    tri([centre[0], high, centre[1]], [q[0], high, q[1]], [p[0], high, p[1]], [0, 1, 0], top);
+    let nx = q[1] - p[1], nz = -(q[0] - p[0]);
+    const len = Math.hypot(nx, nz) || 1;
+    nx /= len; nz /= len;
+    if (nx * (p[0] - centre[0]) + nz * (p[1] - centre[1]) < 0) { nx = -nx; nz = -nz; }
+    quad([p[0], 0, p[1]], [q[0], 0, q[1]], [q[0], high, q[1]], [p[0], high, p[1]], [nx, 0, nz], face);
+  }
+}
+
+/// **The trough, bent to the ring of staging**: a channel of stone along the
+/// staging's middle line, `TROUGH.from` to `TROUGH.to` metres either side of
+/// the line's point nearest `x+`, its two ends rounded, its walls wandering a
+/// few millimetres as hewn stone does, and water a hand's width under the lip.
+/// `water.js`'s troughs are fanned from a middle and so cannot bend; this one is
+/// walked along its line instead.
+function raiseRingTrough(e, { tri, quad }, line) {
+  // The line walked by length, and the point on it nearest `x+`.
+  const run = [0];
+  for (let i = 1; i < line.length; i++) {
+    run.push(run[i - 1] + Math.hypot(line[i][0] - line[i - 1][0], line[i][1] - line[i - 1][1]));
+  }
+  let middle = 0;
+  for (let i = 1; i < line.length; i++) if (line[i][0] > line[middle][0]) middle = i;
+  const pointAt = (s) => {
+    let i = 1;
+    while (i < line.length - 1 && run[i] < s) i++;
+    const t = (s - run[i - 1]) / (run[i] - run[i - 1] || 1);
+    const [ax, az] = line[i - 1], [bx, bz] = line[i];
+    const x = ax + (bx - ax) * t, z = az + (bz - az) * t, r = Math.hypot(x, z);
+    return { x, z, ox: x / r, oz: z / r };
+  };
+  const steps = 36, cap = 8;
+  const from = run[middle] + TROUGH.from, to = run[middle] + TROUGH.to;
+  const hewn = (k, side) => 0.004 * (e.pg_verge(k * 0.07, side, GLASS_SEED.trough) / 0.14);
+  // Each side's points along the length, then each end round in a half circle:
+  // one closed loop at `half` from the line, read at a given width.
+  const loop = (half) => {
+    const out = [];
+    const side = (sign) => {
+      const pts = [];
+      for (let k = 0; k <= steps; k++) {
+        const p = pointAt(from + ((to - from) * k) / steps);
+        const w = half + hewn(k, sign);
+        pts.push([p.x + p.ox * w * sign, p.z + p.oz * w * sign]);
+      }
+      return pts;
+    };
+    const end = (s, sign) => {
+      const p = pointAt(s), ahead = pointAt(s + 0.01 * sign);
+      const tx = (ahead.x - p.x) / 0.01 * sign, tz = (ahead.z - p.z) / 0.01 * sign;
+      const len = Math.hypot(tx, tz) || 1;
+      const pts = [];
+      for (let k = 1; k < cap; k++) {
+        const a = (Math.PI * k) / cap;
+        const across = Math.cos(a) * half * sign, along = Math.sin(a) * half;
+        pts.push([p.x + p.ox * across + (tx / len) * along * sign, p.z + p.oz * across + (tz / len) * along * sign]);
+      }
+      return pts;
+    };
+    out.push(...side(1), ...end(to, 1), ...side(-1).reverse(), ...end(from, -1));
+    return out;
+  };
+  const outer = loop(TROUGH.across / 2), inner = loop(TROUGH.across / 2 - TROUGH.wall);
+  const lip = TROUGH.height, level = lip - TROUGH.freeboard;
+  const face = COLOUR.stone, foot = COLOUR.stone.map((c) => c * 0.82);
+  const top = COLOUR.stone.map((c) => c * 1.08), within = COLOUR.stone.map((c) => c * 0.7);
+  const m = outer.length;
+  for (let i = 0; i < m; i++) {
+    const a = outer[i], b = outer[(i + 1) % m], ai = inner[i], bi = inner[(i + 1) % m];
+    let nx = b[1] - a[1], nz = -(b[0] - a[0]);
+    const len = Math.hypot(nx, nz) || 1;
+    nx /= len; nz /= len;
+    // Outward from the loop: away from the inner loop's matching point.
+    if (nx * (a[0] - ai[0]) + nz * (a[1] - ai[1]) < 0) { nx = -nx; nz = -nz; }
+    quad([a[0], 0, a[1]], [b[0], 0, b[1]], [b[0], lip, b[1]], [a[0], lip, a[1]], [nx, 0, nz], foot, foot, face, face);
+    quad([a[0], lip, a[1]], [b[0], lip, b[1]], [bi[0], lip, bi[1]], [ai[0], lip, ai[1]], [0, 1, 0], top);
+    quad([ai[0], lip, ai[1]], [bi[0], lip, bi[1]], [bi[0], level, bi[1]], [ai[0], level, ai[1]], [-nx, 0, -nz], within);
+  }
+  // The water: a strip between the inner loop's two long sides, and a fan
+  // across each rounded end.
+  const sideA = inner.slice(0, steps + 1);
+  const sideB = inner.slice(steps + cap, 2 * steps + cap + 1).reverse();
+  const wet = (p) => [p[0], level, p[1]];
+  for (let k = 0; k < steps; k++) {
+    const a = sideA[k], b = sideA[k + 1], c = sideB[k + 1], d = sideB[k];
+    quad(wet(a), wet(b), wet(c), wet(d), [0, 1, 0], COLOUR.shallows, COLOUR.shallows, COLOUR.depths, COLOUR.depths);
+  }
+  for (const [startAt, endAt, pivot] of [[steps, steps + cap, sideA[steps]], [2 * steps + cap, inner.length, sideA[0]]]) {
+    for (let k = startAt; k < endAt; k++) {
+      const a = inner[k], b = inner[(k + 1) % inner.length];
+      tri([pivot[0], level, pivot[1]], [a[0], level, a[1]], [b[0], level, b[1]], [0, 1, 0], COLOUR.shallows);
+    }
+  }
+}
+
 /// A structure, moved to where it stands, with a grain across it read off where
 /// each vertex is in the world, as `frame.js` sets its boards. `grain` is how far
 /// the tone wanders: boards more, painted bars less, glass not at all.
@@ -230,7 +425,7 @@ const SLICE = 16;
 const breathe = () => new Promise((resume) => setTimeout(resume, 0));
 
 // Grows one plot from the plot service. A planting with no parents was minted
-// rather than crossed — the ambassador, in the border since 28 September 2026 — and grows from its seed
+// rather than crossed — the ambassador, in the middle of the bed — and grows from its seed
 // alone. The pots are set out first, from the plantings' lifts, so the plants
 // are grown into a staging that already has their pots on it.
 export async function growGlasshouseFromService(e, stage, place, plot, report) {

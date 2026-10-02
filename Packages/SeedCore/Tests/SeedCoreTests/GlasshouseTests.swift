@@ -66,46 +66,136 @@ final class GlasshouseTests: XCTestCase {
         XCTAssertEqual(Glasshouse.slots.count, 32)
         XCTAssertEqual(Set(Glasshouse.slots).count, 32)
         XCTAssertEqual(Glasshouse.slots.filter { $0.bed == .staging }.count, 24)
+        XCTAssertEqual(Glasshouse.table.places(nudge: 0).count, 32)
         let ways = Self.full
         for plot in 0..<ways.plots {
             let here = ways.plot(plot)
             XCTAssertLessThanOrEqual(here.count, 32, "plot \(plot) holds \(here.count)")
             XCTAssertEqual(Set(here.map(\.slot)).count, here.count, "two plants in one place in plot \(plot)")
-            // The border fills from the door, so its places are 0..<n.
+            // The bed fills in its order, so its places are 0..<n.
             let border = here.filter { $0.slot.bed == .border }.map(\.slot.index)
-            XCTAssertEqual(Set(border), Set(0..<border.count), "plot \(plot)'s border has a gap in it")
-            // And each position on the staging fills its glass row first.
+            XCTAssertEqual(Set(border), Set(0..<border.count), "plot \(plot)'s bed has a gap in it")
+            // And each band on the staging fills its row 0 first.
             for position in 0..<Glasshouse.positions {
                 let rows = here.filter { $0.slot.bed == .staging && $0.slot.index == position }.map(\.slot.row)
-                XCTAssertEqual(Set(rows), Set(0..<rows.count), "plot \(plot) position \(position) skips a row")
+                XCTAssertEqual(Set(rows), Set(0..<rows.count), "plot \(plot) band \(position) skips a row")
             }
         }
     }
 
-    func testEveryPlaceStandsInsideTheHouseAndClearOfItsGlass() {
-        let halfLength = Glasshouse.houseLength / 2, halfWidth = Glasshouse.houseWidth / 2
-        for slot in Glasshouse.slots {
-            let nudge = slot.bed == .staging ? 0.015 : 0.05
-            XCTAssertLessThan(abs(slot.spot.x) + nudge, halfLength - 0.3, "\(slot) is against a gable")
-            XCTAssertLessThan(abs(slot.spot.z) + nudge, halfWidth - 0.3, "\(slot) is against the side glass")
-        }
-        // A pot stands on the staging, and the staging stands on its side of the
-        // path; the border on the other.
-        for slot in Glasshouse.slots where slot.bed == .staging {
-            XCTAssertLessThan(abs(slot.spot.z - Glasshouse.stagingZ), Glasshouse.stagingDepth / 2 - 0.08)
-        }
-        XCTAssertLessThan(Glasshouse.borderZ, 0)
-        XCTAssertGreaterThan(Glasshouse.stagingZ, 0)
-        // The house stands inside the slab, clear of its worn edge.
-        XCTAssertLessThan(halfLength, Glasshouse.plotSide / 2 - 0.3)
-        XCTAssertLessThan(halfWidth, Glasshouse.plotSide / 2 - 0.3)
+    /// Which way a point lies from the middle of the house, as a turn from
+    /// `x+` toward `z+`, the way `Glasshouse.doorTurn` is measured.
+    private func turn(of spot: Spot) -> Double {
+        let t = atan2(spot.z, spot.x) / (2 * .pi)
+        return t < 0 ? t + 1 : t
     }
 
-    func testTheSpectrumRunsFromTheDoor() {
-        XCTAssertLessThan(Glasshouse.Slot(bed: .staging, index: 0).spot.x,
-                          Glasshouse.Slot(bed: .staging, index: 11).spot.x)
-        XCTAssertLessThan(Glasshouse.Slot(bed: .border, index: 0).spot.x,
-                          Glasshouse.Slot(bed: .border, index: 7).spot.x)
+    /// How far round from the door a point is, as a turn: 0 at the door,
+    /// going round toward `x−`.
+    private func fromDoor(_ spot: Spot) -> Double {
+        let t = turn(of: spot) - Glasshouse.doorTurn
+        return t < 0 ? t + 1 : t
+    }
+
+    private func radius(_ spot: Spot) -> Double { (spot.x * spot.x + spot.z * spot.z).squareRoot() }
+
+    /// **Every pot stands on the ring of staging, clear of the glass, and
+    /// every border place in the bed**, nudges and all; and the house stands
+    /// inside the slab, clear of its worn edge.
+    func testEveryPlaceStandsInsideTheHouseAndClearOfItsGlass() {
+        let bed = Glasshouse.table.curve("bed", on: .plain).points.map(radius)
+        for slot in Glasshouse.slots {
+            let r = radius(slot.spot)
+            switch slot.bed {
+            case .staging:
+                XCTAssertEqual(r, Glasshouse.stagingRadius, accuracy: 0.015, "\(slot) is off the staging's line")
+                XCTAssertLessThan(r + 0.015 + 0.09, Glasshouse.houseRadius - 0.2, "\(slot) is against the glass")
+                XCTAssertGreaterThan(r - 0.015 - 0.09, Glasshouse.stagingRadius - Glasshouse.stagingDepth / 2,
+                                     "\(slot) hangs off the staging's inside edge")
+            case .border:
+                // A nudge of 5 cm either way in x and in z, and a hand's
+                // breadth of soil beyond it.
+                XCTAssertLessThan(r + 0.05 * 2.0.squareRoot(), bed.min()! - 0.05, "\(slot) is at the bed's edge")
+            }
+        }
+        let house = Glasshouse.table.curve("house", on: .plain).points.map(radius)
+        XCTAssertGreaterThanOrEqual(house.min()!, Glasshouse.houseRadius - 0.001, "the wall wanders inward")
+        XCTAssertLessThan(house.max()! + Organic.houseBar, Glasshouse.plotSide / 2 - 0.25)
+        XCTAssertEqual(bed.min()!, Glasshouse.bedRadius, accuracy: 0.05)
+        XCTAssertEqual(bed.max()!, Glasshouse.bedRadius, accuracy: 0.05)
+        // The walk between the staging and the bed.
+        XCTAssertGreaterThan(Glasshouse.stagingRadius - Glasshouse.stagingDepth / 2 - bed.max()!, 0.7)
+    }
+
+    /// **The wheel**: the twelve bands go round the staging in order from the
+    /// door toward `x−`, band 0 just past the door and band 11 just before
+    /// it, and nothing stands in the doorway between them.
+    func testTheBandsRunRoundTheWheelFromTheDoor() {
+        let middles = (0..<Glasshouse.positions).map { band -> Double in
+            let both = (0..<Glasshouse.rows).map {
+                fromDoor(Glasshouse.Slot(bed: .staging, index: band, row: $0).spot)
+            }
+            return (both[0] + both[1]) / 2
+        }
+        XCTAssertEqual(middles, middles.sorted(), "the bands are not in order round the wheel")
+        XCTAssertLessThan(middles[0], 0.1)
+        XCTAssertGreaterThan(middles[11], 0.9)
+        // Band 0 lies toward x-, band 11 toward x+.
+        XCTAssertLessThan(Glasshouse.Slot(bed: .staging, index: 0).spot.x, 0)
+        XCTAssertGreaterThan(Glasshouse.Slot(bed: .staging, index: 11).spot.x, 0)
+        // The doorway: the door and a pot's width either side of the door.
+        let doorway = (Organic.doorHalf + 0.15) / (2 * .pi * Glasshouse.stagingRadius)
+        for slot in Glasshouse.slots where slot.bed == .staging {
+            let t = fromDoor(slot.spot)
+            XCTAssertTrue(t > doorway && t < 1 - doorway, "\(slot) stands in the doorway")
+        }
+        // The line the staging is laid along ends either side of the door.
+        let line = Glasshouse.table.curve("staging", on: .plain).points
+        XCTAssertGreaterThan(fromDoor(line.first!), Organic.doorHalf / (2 * .pi * Glasshouse.stagingRadius))
+        XCTAssertLessThan(fromDoor(line.last!), 1 - Organic.doorHalf / (2 * .pi * Glasshouse.stagingRadius))
+        // And the door is where the table's wall says it is: the wall's point
+        // a quarter of the way round is on `z+`.
+        let wall = Glasshouse.table.curve("house", on: .plain).points
+        XCTAssertEqual(wall.count % 4, 0)
+        XCTAssertEqual(turn(of: wall[Int(Double(wall.count) * Glasshouse.doorTurn)]), Glasshouse.doorTurn,
+                       accuracy: 0.0005)
+    }
+
+    /// **Pots 0.43 m apart round the ring**, against the span house's 0.30,
+    /// and the bed's places 0.45 m apart or more.
+    func testThePotsStandAPotGapApart() {
+        let pots = Glasshouse.slots.filter { $0.bed == .staging }.map(\.spot)
+            .sorted { fromDoor($0) < fromDoor($1) }
+        for (a, b) in zip(pots, pots.dropFirst()) {
+            let gap = ((a.x - b.x) * (a.x - b.x) + (a.z - b.z) * (a.z - b.z)).squareRoot()
+            XCTAssertEqual(gap, Glasshouse.potGap, accuracy: 0.005)
+        }
+        let bed = Glasshouse.bedSpots
+        for (i, a) in bed.enumerated() {
+            for b in bed[(i + 1)...] {
+                XCTAssertGreaterThan(((a.x - b.x) * (a.x - b.x) + (a.z - b.z) * (a.z - b.z)).squareRoot(), 0.44)
+            }
+        }
+    }
+
+    /// **Every count looks finished** (Marcus, 2 October 2026): the bed fills
+    /// from its middle, then farthest-first; a pale pot is offered the pot
+    /// opposite the door first, then farthest-first; and the offer order
+    /// holds every pot once, each band's row 0 before its row 1.
+    func testThePlacesAreOfferedFromTheFocalPlaceOutward() {
+        XCTAssertLessThan(radius(Glasshouse.bedSpots[0]), 0.05, "the bed does not start in its middle")
+        XCTAssertGreaterThan(radius(Glasshouse.bedSpots[1]), 0.4)
+        XCTAssertEqual(fromDoor(Glasshouse.paleOrder[0].spot), 0.5, accuracy: 0.03)
+        XCTAssertEqual(Set(Glasshouse.paleOrder).count, 24)
+        XCTAssertEqual(Set(Glasshouse.paleOrder), Set(Glasshouse.slots.filter { $0.bed == .staging }))
+        for band in 0..<Glasshouse.positions {
+            let first = Glasshouse.paleOrder.firstIndex(of: Glasshouse.Slot(bed: .staging, index: band, row: 0))!
+            let second = Glasshouse.paleOrder.firstIndex(of: Glasshouse.Slot(bed: .staging, index: band, row: 1))!
+            XCTAssertLessThan(first, second, "band \(band)'s row 1 is offered before its row 0")
+        }
+        // The first four pale pots are spread round the wheel, not bunched.
+        let four = Glasshouse.paleOrder.prefix(4).map { fromDoor($0.spot) }.sorted()
+        for (a, b) in zip(four, four.dropFirst()) { XCTAssertGreaterThan(b - a, 0.15) }
     }
 
     // MARK: The spectrum
@@ -226,19 +316,30 @@ final class GlasshouseTests: XCTestCase {
         XCTAssertFalse(ways.plantings.contains { $0.slot.index == 0 })
     }
 
-    func testAPalePlantTakesTheFirstFreePotFromTheDoor() {
+    func testAPalePlantTakesTheFirstFreePotInTheOfferOrder() {
         var ways = Glasshouse.Ways()
         let seed = { (n: Int) in SeedMint.mint(fromEntropy: Data("gh-pale-\(n)".utf8)) }
-        ways.plant(seed: seed(0), traits: PlantTraits(height: 0.8, family: 1, hue: 160.0 / 360))
+        let blueGreen = ways.plant(seed: seed(0), traits: PlantTraits(height: 0.8, family: 1, hue: 160.0 / 360))
+        XCTAssertEqual(blueGreen.slot, Glasshouse.Slot(bed: .staging, index: 0, row: 0))
         let pale = ways.plant(seed: seed(1), traits: PlantTraits(height: 0.8, family: LongWalk.paleFamily,
                                                                  hue: 0.5))
-        XCTAssertEqual(pale.slot, Glasshouse.Slot(bed: .staging, index: 0, row: 1))
+        XCTAssertEqual(pale.slot, Glasshouse.paleOrder[0])
         // A plant whose hue was never sent is placed as a pale one is.
         let unsent = ways.plant(seed: seed(2), traits: PlantTraits(height: 0.8, family: 3))
-        XCTAssertEqual(unsent.slot, Glasshouse.Slot(bed: .staging, index: 1, row: 0))
+        XCTAssertEqual(unsent.slot, Glasshouse.paleOrder[1])
+        // Pale pots alone fill a plot in the offer order, then open the next
+        // at its first pot.
+        var full = Glasshouse.Ways()
+        let pallid = PlantTraits(height: 0.8, family: LongWalk.paleFamily, hue: 0.5)
+        for n in 0..<24 { full.plant(seed: seed(10 + n), traits: pallid) }
+        XCTAssertEqual(full.plantings.map(\.slot), Glasshouse.paleOrder)
+        XCTAssertEqual(full.plots, 1)
+        let next = full.plant(seed: seed(40), traits: pallid)
+        XCTAssertEqual(next.plot, 1)
+        XCTAssertEqual(next.slot, Glasshouse.paleOrder[0])
     }
 
-    func testTheBorderFillsFromTheDoorWhateverItsColour() {
+    func testTheBorderFillsInItsOrderWhateverItsColour() {
         var ways = Glasshouse.Ways()
         let seed = { (n: Int) in SeedMint.mint(fromEntropy: Data("gh-border-\(n)".utf8)) }
         for n in 0..<9 {
@@ -265,12 +366,12 @@ final class GlasshouseTests: XCTestCase {
 
     // MARK: The ambassador
 
-    /// **The ambassador opens the border, first from the door**, since 28
-    /// September 2026. *Elora elata*, a star of 1.45 m, is over the border's
-    /// 1.14, so it is planted in the soil rather than potted, and the staging
-    /// opens empty. (*Aurea pallida*, 0.74 m, opened the staging at its own
-    /// band.)
-    func testTheAmbassadorOpensTheBorderFirstFromTheDoor() {
+    /// **The ambassador opens the border**, since 28 September 2026, and
+    /// since 2 October stands in the middle of the round bed, under the
+    /// crown. *Elora elata*, a star of 1.45 m, is over the border's 1.16, so
+    /// it is planted in the soil rather than potted, and the staging opens
+    /// empty. (*Aurea pallida*, 0.74 m, opened the staging at its own band.)
+    func testTheAmbassadorOpensTheBorderInTheMiddleOfTheBed() {
         let one = Glasshouse.ambassador
         let traits = LongWalk.traits(of: Ambassadors.of(.light).genome)
         XCTAssertGreaterThanOrEqual(traits.height, Glasshouse.borderFrom)
@@ -279,27 +380,28 @@ final class GlasshouseTests: XCTestCase {
         XCTAssertEqual(one.slot.index, 0)
         XCTAssertEqual(one.slot.row, 0)
         XCTAssertEqual(one.seed, Ambassadors.of(.light).seed.hex)
+        XCTAssertLessThan(radius(one.spot), 0.1)
     }
 
     // MARK: The roof
 
-    /// **Every plant stands under the roof above it**, grown and in flower,
+    /// **Every plant stands under the dome above it**, grown and in flower,
     /// with a tenth of a metre to spare — the measurement the house's eaves
-    /// and ridge were set by, held as a test.
+    /// and crown were set by, held as a test.
     func testEveryPlantStandsUnderTheRoof() {
         var nearest = Double.greatestFiniteMagnitude
         for planting in Self.full.plantings {
             let top = planting.slot.lift + planting.traits.height
-            let roof = Glasshouse.roof(atDepth: planting.spot.z)
+            let roof = Glasshouse.roof(atRadius: radius(planting.spot))
             nearest = min(nearest, roof - top)
             XCTAssertLessThan(top, roof - 0.1, "\(planting.seed) stands \(top) m under a roof at \(roof) m")
         }
         print("Glasshouse: the nearest plant to the roof is \(nearest) m under it")
     }
 
-    func testTheRoofRisesFromTheEavesToTheRidge() {
-        XCTAssertEqual(Glasshouse.roof(atDepth: 0), Glasshouse.ridge, accuracy: 1e-12)
-        XCTAssertEqual(Glasshouse.roof(atDepth: Glasshouse.houseWidth / 2), Glasshouse.eaves, accuracy: 1e-12)
-        XCTAssertEqual(Glasshouse.roof(atDepth: -Glasshouse.houseWidth / 2), Glasshouse.eaves, accuracy: 1e-12)
+    func testTheRoofRisesFromTheEavesToTheCrown() {
+        XCTAssertEqual(Glasshouse.roof(atRadius: 0), Glasshouse.crown, accuracy: 1e-12)
+        XCTAssertEqual(Glasshouse.roof(atRadius: Glasshouse.houseRadius), Glasshouse.eaves, accuracy: 1e-12)
+        XCTAssertLessThan(Glasshouse.roof(atRadius: 1.8), Glasshouse.roof(atRadius: 0.9))
     }
 }

@@ -20,7 +20,10 @@ declare(strict_types=1);
  * committed: the first parts company at arrival 26, the second at arrival 103.
  *
  * **Compared exactly, the hue included.** Plot, bed, place and row are integers
- * and the nudge is two bytes of the seed divided by 255. The hue is the seed's
+ * and the nudge is two bytes of the seed divided by 255. **And where each one
+ * stands**, since the house became round on 2 October 2026: the plot's variant
+ * (the plain plan, always, in this area) and the spot, the table's place plus
+ * the nudge — literals and one addition, so the same double here as there. The hue is the seed's
  * bytes through `+ − × ÷` and arrives as that double, so where it falls
  * against a band edge is the same here as in the Swift to the last bit. The
  * heights are compared only with the border's cut, and the Swift's own vector
@@ -40,8 +43,8 @@ $vectors = json_decode(
 $failed = [];
 $checks = 0;
 
-// The Glasshouse as it opened: the ambassador potted at its own band, which is
-// what the Swift placed these five hundred around.
+// The Glasshouse as it opened: the ambassador in the middle of the bed, which
+// is what the Swift placed these five hundred around.
 $standing = Ambassadors::planting('light');
 if ($standing === null) {
     fwrite(STDERR, "The service has no ambassador for the Glasshouse.\n");
@@ -53,12 +56,17 @@ foreach ($vectors as $n => $want) {
     $got = Glasshouse::plant($ways, $want['seed'], $want['height'], $want['family'], (float) $want['hue']);
     $ways[] = $got;
     $checks++;
+    $variant = PlotVariant::of($got['plot'], 'light', Glasshouse::VARIANTS);
+    $spot = Glasshouse::standing($got['plot'], $got['bed'], $got['index'], $got['row'],
+                                 $got['nudgeX'], $got['nudgeZ']);
     $same = $got['plot'] === $want['plot']
         && $got['bed'] === $want['bed']
         && $got['index'] === $want['index']
         && $got['row'] === $want['row']
         && $got['nudgeX'] === $want['nudge'][0]
-        && $got['nudgeZ'] === $want['nudge'][1];
+        && $got['nudgeZ'] === $want['nudge'][1]
+        && [$variant['turn'], $variant['mirror'], $variant['nudge']] === $want['variant']
+        && $spot === [(float) $want['spot'][0], (float) $want['spot'][1]];
     if (!$same) {
         $failed[] = sprintf(
             'arrival %d (%s, %.3f m, hue %.4f, colour %d): SeedCore put it in plot %d bed %d place %d row %d, '
@@ -77,16 +85,18 @@ $ownBand = 0;
 $hued = 0;
 
 // And the shape of the place the two of them agree on, which is what a visitor
-// sees: every plant inside the house, the tallest in the border and the rest in
-// pots, every pot in its own band or one beside it, the border filled from the
-// door, and no older plot passed over.
+// sees: every plant inside the round house, the tallest in the bed in the
+// middle and the rest in pots on the ring, every pot in its own band or one
+// beside it, the bed filled in its order, and no older plot passed over.
 foreach ($ways as $p) {
     $checks++;
-    [$x, $z] = Glasshouse::spot($p['bed'], $p['index'], $p['row']);
-    $atX = $x + $p['nudgeX'];
-    $atZ = $z + $p['nudgeZ'];
-    if (abs($atX) >= Glasshouse::HOUSE_LENGTH / 2 - 0.2 || abs($atZ) >= Glasshouse::HOUSE_WIDTH / 2 - 0.2) {
-        $failed[] = sprintf('%s stands at %.2f, %.2f — against the glass', substr($p['seed'], 0, 12), $atX, $atZ);
+    [$atX, $atZ] = Glasshouse::standing($p['plot'], $p['bed'], $p['index'], $p['row'], $p['nudgeX'], $p['nudgeZ']);
+    $r = sqrt($atX * $atX + $atZ * $atZ);
+    $where = $p['bed'] === Glasshouse::STAGING
+        ? abs($r - Glasshouse::STAGING_RADIUS) < Glasshouse::STAGING_DEPTH / 2 - 0.1
+        : $r < Glasshouse::BED_RADIUS - 0.05;
+    if (!$where || $r >= Glasshouse::HOUSE_RADIUS - 0.2) {
+        $failed[] = sprintf('%s stands at %.2f, %.2f — off its bed', substr($p['seed'], 0, 12), $atX, $atZ);
     }
     $checks++;
     if ($p['bed'] !== Glasshouse::bed($p['height'])) {
@@ -107,7 +117,7 @@ foreach ($ways as $p) {
 for ($plot = 0; $plot < $plots; $plot++) {
     $here = array_values(array_filter($ways, fn($p) => $p['plot'] === $plot));
 
-    // The border fills from the door: 0, 1, 2 and so on with nothing missing.
+    // The bed fills in its order: 0, 1, 2 and so on with nothing missing.
     $checks++;
     $border = array_map(fn($p) => $p['index'],
         array_values(array_filter($here, fn($p) => $p['bed'] === Glasshouse::BORDER)));
@@ -116,15 +126,15 @@ for ($plot = 0; $plot < $plots; $plot++) {
         $failed[] = sprintf('plot %d\'s border is filled %s', $plot, implode(' ', $border));
     }
 
-    // Each position on the staging fills its row by the glass first, and holds
-    // no more than two pots.
+    // Each band on the staging fills its row 0 first, and holds no more than
+    // two pots.
     for ($position = 0; $position < Glasshouse::POSITIONS; $position++) {
         $checks++;
         $rows = array_map(fn($p) => $p['row'], array_values(array_filter($here,
             fn($p) => $p['bed'] === Glasshouse::STAGING && $p['index'] === $position)));
         sort($rows);
         if ($rows !== [] && $rows !== range(0, count($rows) - 1)) {
-            $failed[] = sprintf('plot %d position %d holds rows %s', $plot, $position, implode(' ', $rows));
+            $failed[] = sprintf('plot %d band %d holds rows %s', $plot, $position, implode(' ', $rows));
         }
     }
 
