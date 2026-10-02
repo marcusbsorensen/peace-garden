@@ -1,7 +1,14 @@
 // A plot of the Crossing, drawn the way the app draws a plot: a floating slab
-// of ground seen in true isometric, grass all over it, two mown paths crossing
-// at a round of paving, and the planting standing in the rough grass of the
+// of ground seen in true isometric, grass all over it, four mown paths turning
+// in to a round of paving, and the planting standing in the rough grass of the
 // four quarters between them.
+//
+// **Four ways turning in, since 2 October 2026** (Marcus; `Crossing.swift`
+// says why). The paths come in from the middles of the sides and all turn the
+// same way to meet the round, narrowing as they go, so the quarters between
+// them are commas wrapped round the basin. Their centre lines are the table's
+// (`tables/crossing_ways.js`), turned and mirrored by the plot's number as the
+// plants are (`variantFromModule`); a mirror sets them turning the other way.
 //
 // **It is one place, so the page shows one plot.** The Long Walk draws three
 // end to end because a walk is a length you look down. A crossing is not: it is
@@ -17,12 +24,14 @@ import { raiseTrough } from './water.js';
 import { decode, takeResult } from './plant.js';
 import { COLOUR, SIDE, keepToPlot, readOutline, readStructure } from './longwalk.js';
 import { hangSide } from './slab.js';
+import { PLAIN, applyVariantToCurve, variantFromModule } from './variant.js';
+import { crossingWays } from './tables/crossing_ways.js';
 
 // Seeds for this area's dressing, so a plot is the same shape on every visit.
 // Its own, not the walk's or the room's: three areas drawing from one seed
 // would be three plots with the same wandering edge, which is the sort of thing
 // an eye catches without being able to say why.
-const CROSS = { ground: 5107, floor: 23, roundel: 61, rough: 71, mow: [37, 41], basin: 83 };
+const CROSS = { ground: 5107, floor: 23, roundel: 61, rough: 71, mow: [37, 41, 43, 47], basin: 83 };
 
 export function plan(e) {
   return JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_cross_plan())));
@@ -31,6 +40,9 @@ export function plan(e) {
 // MARK: - The ground
 
 export function makeCrossGround(place) {
+  // Which way round the plot is laid: the plot's, set by whoever grows it
+  // (`growCrossFromService`, `growInvented`) before the stage is rebuilt.
+  place.variant ??= PLAIN;
   return function buildCrossGround(farSide, span, e, eye) {
     const positions = [], normals = [], colours = [];
     const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
@@ -86,44 +98,64 @@ export function makeCrossGround(place) {
       }
     }
 
-    // **The two paths, mown and crossing.** Each is a run of stripes across its
-    // own width, alternating because a mower goes up and back, with both long
-    // edges wandering because the mower was steered by eye. Against the rough
-    // grass either side they are the lighter, tidier thing, which is how a path
-    // through grass reads from above. The walk's path is the same path; this
-    // one is simply crossed by another.
-    const wide = place.pathHalfWidth;
-    const stripe = 0.42;
-    const rows = Math.ceil(SIDE / stripe) + 1;
-    // 0.05 m of wander, scaled off `pg_verge`'s own range, as the room's mowing
-    // does.
-    const wander = (along, side, seed) => 0.05 * (e.pg_verge(along * 1.7, side, seed) / 0.14);
-
-    // **Each path runs to the plot's edge and stops on it.** It used to stop at
-    // the last whole stripe inside a 2.54 m square: a ruled end, short of the
-    // edge on one side and past it on another. Now the stripes run on past the
-    // plot and every corner is kept to it, the stripe cut across into narrow
-    // pieces so the end follows the edge's wander rather than cutting a chord.
+    // **The four paths, mown, turning in.** Each is a run of stripes across
+    // its own width, alternating because a mower goes up and back, with both
+    // long edges wandering because the mower was steered by eye. Against the
+    // rough grass either side they are the lighter, tidier thing, which is how
+    // a path through grass reads from above. Each follows its centre line from
+    // the table and narrows from `pathHalfWidth` where it comes onto the plot
+    // to `pathHalfWidthAtRound` where it meets the paving.
+    //
+    // **Each path runs to the plot's edge and stops on it**: every corner of
+    // every piece is kept to the plot, so its end follows the edge's wander
+    // rather than cutting a chord.
     const keep = keepToPlot(outline);
-    const pieces = 8;
-    for (const [axis, seed] of [[0, CROSS.mow[0]], [1, CROSS.mow[1]]]) {
+    const halfAt = (r) => {
+      const t = Math.min(1, Math.max(0, (r - place.roundelRadius) / (SIDE / 2 - place.roundelRadius)));
+      return place.pathHalfWidthAtRound
+        + (place.pathHalfWidth - place.pathHalfWidthAtRound) * t * t * (3 - 2 * t);
+    };
+    // 0.05 m of wander, scaled off `pg_verge`'s own range, as the room's
+    // mowing does.
+    const wander = (along, side, seed) => 0.05 * (e.pg_verge(along * 1.7, side, seed) / 0.14);
+    const stripe = 0.42;
+    const step = 0.06;
+    const pieces = 4;
+    for (let q = 0; q < 4; q++) {
+      const line = applyVariantToCurve(place.variant, crossingWays.curves[`way${q}`][0].points);
+      // Walked from the outside in, a step at a time by length.
+      const run = [0];
+      for (let i = 1; i < line.length; i++) {
+        run.push(run[i - 1] + Math.hypot(line[i][0] - line[i - 1][0], line[i][1] - line[i - 1][1]));
+      }
+      const total = run[run.length - 1];
+      const at = (s) => {
+        let i = 1;
+        while (i < line.length - 1 && run[i] < s) i++;
+        const t = (s - run[i - 1]) / (run[i] - run[i - 1] || 1);
+        const a = line[i - 1], b = line[i];
+        const dx = b[0] - a[0], dz = b[1] - a[1], l = Math.hypot(dx, dz) || 1;
+        return { x: a[0] + dx * t, z: a[1] + dz * t, nx: -dz / l, nz: dx / l };
+      };
+      const seed = CROSS.mow[q];
+      const rows = Math.ceil(total / step);
       for (let r = 0; r < rows; r++) {
-        const a0 = -SIDE / 2 + r * stripe;
-        if (a0 >= SIDE / 2) break;
-        const a1 = a0 + stripe;
-        const c = COLOUR.grass.map((v) => v * (r % 2 ? 1.05 : 0.95));
-        // The near and far edges of this stripe, each wandering along the
-        // path's own length.
-        const lo0 = -wide + wander(a0, -1, seed), lo1 = -wide + wander(a1, -1, seed);
-        const hi0 = wide + wander(a0, 1, seed), hi1 = wide + wander(a1, 1, seed);
-        const at = (along, across) => {
-          const [x, z] = keep(...(axis === 0 ? [across, along] : [along, across]));
-          return [x, 0.005, z];
+        const s0 = r * step, s1 = Math.min(total, (r + 1) * step);
+        const a = at(s0), b = at(s1);
+        const tone = Math.floor(((s0 + s1) / 2) / stripe) % 2;
+        const c = COLOUR.grass.map((v) => v * (tone ? 1.05 : 0.95));
+        // Each side of the path at each end of this piece, wandering along
+        // the path's own length.
+        const side = (p, s, sign) => {
+          const half = halfAt(Math.hypot(p.x, p.z)) + wander(s, sign, seed);
+          return [p.x + p.nx * half * sign, p.z + p.nz * half * sign];
         };
+        const a0 = side(a, s0, -1), a1 = side(a, s0, 1), b0 = side(b, s1, -1), b1 = side(b, s1, 1);
+        const mix = (p, q2, u) => [p[0] + (q2[0] - p[0]) * u, p[1] + (q2[1] - p[1]) * u];
+        const lift = (p) => { const [x, z] = keep(p[0], p[1]); return [x, 0.005, z]; };
         for (let k = 0; k < pieces; k++) {
           const u0 = k / pieces, u1 = (k + 1) / pieces;
-          quad(at(a0, lo0 + (hi0 - lo0) * u0), at(a0, lo0 + (hi0 - lo0) * u1),
-               at(a1, lo1 + (hi1 - lo1) * u1), at(a1, lo1 + (hi1 - lo1) * u0), UP, c);
+          quad(lift(mix(a0, a1, u0)), lift(mix(a0, a1, u1)), lift(mix(b0, b1, u1)), lift(mix(b0, b1, u0)), UP, c);
         }
       }
     }
@@ -194,9 +226,14 @@ const breathe = () => new Promise((resume) => setTimeout(resume, 0));
 // Grows one plot from the plot service. A planting with no parents was minted
 // rather than crossed — the ambassador, in the first quarter's middle rank since 28 September 2026 — and
 // grows from its seed alone.
-export async function growCrossFromService(e, stage, plot, report) {
+export async function growCrossFromService(e, stage, plot, report, place = null) {
   stage.clear();
   const { plantings } = await (await fetch(`/api/cross/plot/${plot}`)).json();
+  // The paths laid as this plot's number says, before anything is set by them.
+  if (place) {
+    place.variant = variantFromModule(e, 'meeting', plot) ?? PLAIN;
+    stage.rebuild();
+  }
   let since = performance.now();
   for (const [i, p] of plantings.entries()) {
     const lineage = p.parents ?? [];
@@ -239,9 +276,13 @@ export async function plantVisitors(e, total, report) {
   return e.pg_cross_plots();
 }
 
-export async function growInvented(e, stage, plot, report) {
+export async function growInvented(e, stage, plot, report, place = null) {
   stage.clear();
   const count = e.pg_cross_count(plot);
+  if (place) {
+    place.variant = variantFromModule(e, 'meeting', plot) ?? PLAIN;
+    stage.rebuild();
+  }
   let since = performance.now();
   for (let i = 0; i < count; i++) {
     const length = e.pg_cross_grow(plot, i);

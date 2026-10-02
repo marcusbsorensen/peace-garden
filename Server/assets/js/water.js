@@ -65,11 +65,74 @@ export const POOL = {
 ///
 /// One call gives a floor everything it needs, so the outline is read once and
 /// the caller passes the same options to `sinkPool`.
-export function rimOf(e, { at = [0, 0], across, deep = across, seed, round = false }) {
-  const grown = shapeOf(e, seed, round);
-  const rim = ringAt(grown, [(across + 2 * POOL.lip) / SIDE, (deep + 2 * POOL.lip) / SIDE], at);
+///
+/// **A pool laid out by hand** passes its own `outline` instead (2 October
+/// 2026): the water's edge, a closed loop of [x, z] on the plot, as an area's
+/// place table draws it and its plot's variant turns it — the Quiet Garden's
+/// pool off the middle, the Cold Frame's kidney pond. The rim is that loop
+/// pushed out by the lip all round, whichever way the loop runs; `across`,
+/// `seed` and `round` are not read. `at` is then where the dish falls to: the
+/// deepest water, which the loop has to be seen whole from.
+///
+/// `inWater(x, z)` says whether a point is inside the water's own edge, which
+/// is what an overlay drawn above the rim's lip has to keep out of: the lip
+/// lies over whatever reaches under it, and the water does not.
+export function rimOf(e, { at = [0, 0], across, deep = across, seed, round = false, outline = null }) {
+  let rim, edge;
+  if (outline) {
+    ({ rim, edge } = laidOut(outline));
+  } else {
+    const grown = shapeOf(e, seed, round);
+    rim = ringAt(grown, [(across + 2 * POOL.lip) / SIDE, (deep + 2 * POOL.lip) / SIDE], at);
+    edge = ringAt(grown, [across / SIDE, deep / SIDE], at);
+  }
   const loop = Array.from({ length: POOL.steps }, (_, i) => rim(i / POOL.steps));
-  return { rim, steps: POOL.steps, inside: (x, z) => encloses(loop, x, z) };
+  const water = Array.from({ length: POOL.steps }, (_, i) => edge(i / POOL.steps));
+  return { rim, steps: POOL.steps, inside: (x, z) => encloses(loop, x, z), inWater: (x, z) => encloses(water, x, z) };
+}
+
+/// A pool's own outline as its water's edge and its rim, each walked in
+/// `POOL.steps` points that pair off one to one: the edge resampled evenly
+/// along its length, and each of its points pushed out by the lip. Read by how
+/// far round, as `ringAt`'s loops are.
+function laidOut(outline) {
+  const along = ringAt(outline, [1, 1], [0, 0]);
+  const edge = Array.from({ length: POOL.steps }, (_, i) => along(i / POOL.steps));
+  const rim = pushedOut(edge, POOL.lip);
+  const at = (loop) => (u) => loop[((Math.round(u * POOL.steps) % POOL.steps) + POOL.steps) % POOL.steps];
+  return { edge: at(edge), rim: at(rim) };
+}
+
+/// A closed loop pushed out by `by` metres all round, each point along the
+/// outward normal there. Which way is out is read off which way the loop runs
+/// (its signed area), since a plot's mirror reverses it.
+function pushedOut(loop, by) {
+  const n = loop.length;
+  let twice = 0;
+  for (let i = 0; i < n; i++) {
+    const a = loop[i], b = loop[(i + 1) % n];
+    twice += a[0] * b[1] - b[0] * a[1];
+  }
+  const out = twice > 0 ? 1 : -1;
+  return loop.map((p, i) => {
+    const a = loop[(i + n - 1) % n], b = loop[(i + 1) % n];
+    const tx = b[0] - a[0], tz = b[1] - a[1], l = Math.hypot(tx, tz) || 1;
+    return [p[0] + (out * tz / l) * by, p[1] - (out * tx / l) * by];
+  });
+}
+
+/// The middle of the area a closed loop holds, for a dish to fall to when the
+/// caller has no deeper point to say.
+export function middleOf(loop) {
+  let twice = 0, cx = 0, cz = 0;
+  for (let i = 0, n = loop.length; i < n; i++) {
+    const a = loop[i], b = loop[(i + 1) % n];
+    const cross = a[0] * b[1] - b[0] * a[1];
+    twice += cross;
+    cx += (a[0] + b[0]) * cross;
+    cz += (a[1] + b[1]) * cross;
+  }
+  return [cx / (3 * twice), cz / (3 * twice)];
 }
 
 /// **A floor round a pool that is not in the middle of the plot.** `rimOf`'s
@@ -85,9 +148,12 @@ export function rimOf(e, { at = [0, 0], across, deep = across, seed, round = fal
 /// or a function of where on the floor, for a floor with its own mottle: a
 /// dressing laid over it stops a piece short of the rim, and the floor that
 /// shows there has to be the dressing's colour or it draws a halo.
-export function floorAround(e, { quad }, outline, { at, across, seed }, colour) {
+///
+/// A pool with its own `outline` (`rimOf`) is walked round that instead; its
+/// `at` has to see the whole of it, as a dish falling to it does.
+export function floorAround(e, { quad }, outline, { at, across, seed, outline: pool = null }, colour) {
   const tone = typeof colour === 'function' ? colour : () => colour;
-  const { rim, steps } = rimOf(e, { at, across, seed, round: true });
+  const { rim, steps } = rimOf(e, { at, across, seed, round: true, outline: pool });
   const out = (p) => {
     const dx = p[0] - at[0], dz = p[1] - at[1], l = Math.hypot(dx, dz) || 1;
     const r = rimReach(outline, at, dx / l, dz / l);
@@ -117,12 +183,20 @@ function encloses(loop, x, z) {
 /// a pool dug into the ground; stone for water that has been built — a rill's
 /// channel, a tank's kerb — where the ground climbs and has to be told where to
 /// hold its water.
+///
+/// `outline` is a pool laid out by hand, as `rimOf` takes it: the water's edge
+/// is that loop, and `at` is the deepest water the dish falls to.
 export function sinkPool(e, { tri, quad }, {
-  at = [0, 0], across, deep = across, seed, lining = COLOUR.silt, round = false, bank = null,
+  at = [0, 0], across, deep = across, seed, lining = COLOUR.silt, round = false, bank = null, outline = null,
 }) {
-  const grown = shapeOf(e, seed, round);
-  const edge = ringAt(grown, [across / SIDE, deep / SIDE], at);
-  const rim = ringAt(grown, [(across + 2 * POOL.lip) / SIDE, (deep + 2 * POOL.lip) / SIDE], at);
+  let edge, rim;
+  if (outline) {
+    ({ edge, rim } = laidOut(outline));
+  } else {
+    const grown = shapeOf(e, seed, round);
+    edge = ringAt(grown, [across / SIDE, deep / SIDE], at);
+    rim = ringAt(grown, [(across + 2 * POOL.lip) / SIDE, (deep + 2 * POOL.lip) / SIDE], at);
+  }
 
   // The rim: bare wet earth between the floor and the water, lying a whisker
   // over whatever the floor has drawn on it.

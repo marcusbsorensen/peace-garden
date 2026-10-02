@@ -36,8 +36,8 @@ import SeedCore
 // `ColdFrame.drawn` instead of at the plant's best. Where it stands was decided
 // by the height it will grow to; what the page shows is the height it is now.
 //
-// Opened rather than empty: it starts with the waiting ambassador, a lotus, in
-// the tank, the way the real one does.
+// Opened rather than empty: it starts with the waiting ambassador, a lotus, at
+// the pond's deepest point, the way the real one does.
 
 nonisolated(unsafe) private var frameWays = ColdFrame.Ways.opened()
 nonisolated(unsafe) private var grownInFrame: [String: Genome] = {
@@ -72,9 +72,10 @@ private func frameVisitor() -> (child: SeedID, genome: Genome) {
 public func pgFramePlan() -> Int32 {
     // Asked of the rule rather than worked out again here: where a frame
     // stands and where a place sits in it are `Frame.centre` and `Slot.spot`.
-    // The frames in use only: the back row since 29 September 2026. The tank
-    // is not a frame and is sent as its own thing, or the page would draw a
-    // box of boards over the water; a retired front frame is not sent at all.
+    // The frames in use only: the back row since 29 September 2026. The pond
+    // is not a frame and is not sent: its outline and places are the table's
+    // (`tables/cold_frame_pond.js`), and a plot's mirror is `pg_plot_variant`'s.
+    // A retired front frame is not sent at all.
     let frames = ColdFrame.frames
         .map { "[\($0.centre.x),\($0.centre.z)]" }
         .joined(separator: ",")
@@ -87,9 +88,7 @@ public func pgFramePlan() -> Int32 {
         "backWall":\(ColdFrame.backWall),"frontWall":\(ColdFrame.frontWall),\
         "propped":\(ColdFrame.propped),"places":\(ColdFrame.places),\
         "rankFrom":\(ColdFrame.rankFrom),"placeX":[\(placeX)],\
-        "backFrom":\(ColdFrame.backFrom),"slots":\(ColdFrame.slots.count),\
-        "tank":{"across":\(ColdFrame.tankAcross),"deep":\(ColdFrame.tankDeep),\
-        "at":[\(ColdFrame.Frame.tank.centre.x),\(ColdFrame.Frame.tank.centre.z)]}}
+        "backFrom":\(ColdFrame.backFrom),"slots":\(ColdFrame.slots.count)}
         """
     setResult(Array(json.utf8))
     return Int32(json.utf8.count)

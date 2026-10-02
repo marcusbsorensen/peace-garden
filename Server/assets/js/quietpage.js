@@ -55,7 +55,10 @@ async function room() {
   // page's own words. A single square room framed tight touches the sides of
   // its band; a quarter more than a plot's side is the margin that leaves air
   // round the hedge, so the room reads as a place rather than as a texture.
-  const stage = makePlotStage(el('stage'), 1.25, engine, makeRoomGround(plan(engine)));
+  // The room's plan is kept, so each plot can say which way round it is laid
+  // (`growRoomFromService`) and the ground be laid that way.
+  const room = plan(engine);
+  const stage = makePlotStage(el('stage'), 1.25, engine, makeRoomGround(room));
   // And the areas beside this one, as slabs out in the sky past the plot:
   // the same one word again, and `beside.js` reads the map from it.
   stage.beside(THEME);
@@ -87,7 +90,7 @@ async function room() {
     // area page, and a postcard to one of this area's plants lands here.
     plants: plantPanel({ theme: THEME, engine }),
     show: async (plot) => {
-      await growRoomFromService(engine, stage, plot, growing);
+      await growRoomFromService(engine, stage, plot, growing, room);
       note.hidden = true;
     },
     turned: () => sky?.draw(),

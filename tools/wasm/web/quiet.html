@@ -92,13 +92,13 @@
   let plots = 1;
   if (!fromService) plots = await plantVisitors(e, arrivals, report);
 
-  // What the rule did with this plot, in words: which corner holds what, so a
+  // What the rule did with this plot, in words: which group holds what, so a
   // clump that looks wrong can be read rather than guessed at.
   function say() {
     held.replaceChildren();
     if (fromService) return;
     const rows = describeRoom(e, plot);
-    ['bench', 'second', 'third', 'fourth'].forEach((name, c) => {
+    ['bench', 'five', 'three', 'echo'].forEach((name, c) => {
       const here = rows.filter((r) => r.slot.corner === c);
       const line = document.createElement('li');
       if (!here.length) {
@@ -116,8 +116,8 @@
     document.getElementById('back').disabled = plot === 0;
     document.getElementById('on').disabled = plot + 1 >= plots;
     const count = fromService
-      ? await growRoomFromService(e, stage, plot, report)
-      : await growInvented(e, stage, plot, report);
+      ? await growRoomFromService(e, stage, plot, report, room)
+      : await growInvented(e, stage, plot, report, room);
     report(`Plot ${plot + 1} of ${plots} — ${count} of ${room.slots}`);
     say();
     sky?.draw();

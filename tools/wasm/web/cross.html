@@ -119,8 +119,8 @@
     document.getElementById('back').disabled = plot === 0;
     document.getElementById('on').disabled = plot + 1 >= plots;
     const count = fromService
-      ? await growCrossFromService(e, stage, plot, report)
-      : await growInvented(e, stage, plot, report);
+      ? await growCrossFromService(e, stage, plot, report, place)
+      : await growInvented(e, stage, plot, report, place);
     report(`Plot ${plot + 1} of ${plots} — ${count} of ${place.slots}`);
     say();
     sky?.draw();

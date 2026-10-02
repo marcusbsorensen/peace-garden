@@ -7,9 +7,9 @@
 // page that can be asked by its own query string to show plants nobody grew is
 // a page that can be linked to as if those plants were real.
 //
-// **One plot at a time**, as every area but the walk is: a tank with its
+// **One plot at a time**, as every area but the walk is: a pond with its
 // frames behind it is a yard you look into, and two of them side by side are
-// two tanks in a yard with no reason to be one plot rather than another.
+// two ponds in a yard with no reason to be one plot rather than another.
 //
 // **No list under the paragraph.** The Seedbed writes its drills out because a
 // drill's kind cannot be drawn; here what claims a frame is a colour, and the
@@ -94,7 +94,7 @@ async function place() {
     show: async (plot) => {
       // Another plot's frames are shut: what was opened was opened here.
       lids.shut();
-      await growFrameFromService(engine, stage, plot, growing);
+      await growFrameFromService(engine, stage, plot, growing, frames);
       note.hidden = true;
     },
     turned: () => sky?.draw(),
