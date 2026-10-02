@@ -129,7 +129,8 @@ invents its own walk, so these are the same plants before and after:
     already slant.
 - `walk-before-full.jpg`, `walk-after-full.jpg`: plot 3 of 500, full.
 - `walk-before-three.jpg`, `walk-after-three.jpg`: plots 3, 4 and 5 end to end.
-  The middle plot is turned half round.
+  Plots 3 and 5 are mirrored; plot 4 is turned half round and mirrored, so its
+  drifts slant the other way down the walk.
 - `walk-after-plan-three.jpg`: the same three plots as a plan, from the rule as
   built on the area's own thousand plants. Plants are coloured by family and
   each lens is tinted by the colour that claimed it. The drifts read as drifts
