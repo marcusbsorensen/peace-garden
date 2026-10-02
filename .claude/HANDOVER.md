@@ -16,7 +16,18 @@ Tonight's batch live and in build 6: the Wild Fields with water, worn paths and 
 - **Live**: `b104cf3` deployed 2 October, with wear on (`'wear' => true` in the live config.php). All 42 header checks and 17 pages are clean, and the wear POSTs return 200. Screenshots are in `out/deploy-2026-10-02b/`. Before this, `d7c5d48` was live; a rollback copy is in the session scratchpad at `live-d7c5d48`.
 - **Build 6 uploaded** (1.0 (6), delivery `b56c27e2-…`). Its 170 tests: 163 passed, 0 failed, 7 skipped (the opt-in renders); SeedCore 422 passed. The archive is `build/PeaceGarden-1.0-6.xcarchive` and the ipa is in `build/export-6/`. `project.yml` is at 6.
 - **Running**:
-  - garden-layout research (worktree branch; output in `design/garden-layouts-2026-10-02/`);
+  - **New layouts for the ten areas.** Marcus took every recommendation in `design/garden-layouts-2026-10-02/RESEARCH.md`. The foundation is merged (`1dc6b50`, `tools/layouts/`): plot variants, offline place tables, fill orders, a harness on real plants, and `BASELINE.md`. Five area agents are building in worktrees and pushing `worktree-agent-*`:
+    - walk-seed (port 8811);
+    - water: Quiet, Crossing, Cold Frame and `water.js` (8812);
+    - trees: Orchard, Coppice (8813);
+    - beds: Knot, Home Ground (8814);
+    - glass: Glasshouse (8815).
+
+    Their brief is in the session scratchpad as `area-brief.md`. Each writes notes and renders to `design/garden-layouts-2026-10-02/built/`. Then:
+    - fold their notes into `docs/WEB-GARDENS.md`;
+    - show Marcus the renders;
+    - replant the live garden by the runbook;
+    - deploy.
 - **Then**:
   - Marcus tries /wild on his phone;
   - install build 6 from TestFlight on a real phone;

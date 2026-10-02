@@ -33,10 +33,15 @@ final class OrchardVectorTests: XCTestCase {
         var lines: [String] = []
         for (seed, traits) in OrchardTests.arrivals() {
             let p = ways.plant(seed: seed, traits: traits)
+            // The plot's variant and the spot it puts the plant on, since the
+            // meadow orchard (2 October 2026): a table's place and a turn are
+            // exact, so the port has to land on the same number.
+            let v = Orchard.variant(ofPlot: p.plot)
             lines.append("""
                 {"seed":"\(seed.hex)","height":\(traits.height),"family":\(traits.family),\
                 "plot":\(p.plot),"guild":\(p.slot.guild.rawValue),"index":\(p.slot.index),\
-                "nudge":[\(p.nudge.x),\(p.nudge.z)]}
+                "nudge":[\(p.nudge.x),\(p.nudge.z)],\
+                "variant":[\(v.turn),\(v.mirror ? 1 : 0),\(v.nudge)],"spot":[\(p.spot.x),\(p.spot.z)]}
                 """)
         }
         return "[\n" + lines.joined(separator: ",\n") + "\n]\n"

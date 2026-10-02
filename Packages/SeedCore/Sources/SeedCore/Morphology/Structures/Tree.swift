@@ -27,10 +27,12 @@ extension Organic {
     /// across a surface the edge lies on.
     ///
     /// **The canopy's underside clears the planting beneath it, completely.**
-    /// A guild stands `Orchard.guildRadius` from the trunk, which is exactly the
-    /// canopy's widest radius, so a guild plant stands at the drip line with the
-    /// whole canopy above it — its lower surface there is 2.5 m up and the
-    /// tallest plant this garden grows is 2.2 m.
+    /// The middle tree's four stand `Orchard.middleRadius` from its trunk,
+    /// which is the canopy's widest radius, so they stand at the drip line with
+    /// the whole canopy above them; an outer guild's crescent stands
+    /// `Orchard.guildRadius` out, just past it (since 2 October 2026). The
+    /// canopy's lower surface there is 2.35 m up and more, and the tallest
+    /// plant this garden grows is 2.2 m.
     ///
     /// **It was not so at the first size tried.** A 1.7 m spread on a 1.55 m
     /// crown put the canopies so low and so close that they covered the planting

@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/PlotVariant.php';
+require_once __DIR__ . '/tables/CoppiceGladeTable.php';
+
 /**
  * The Coppice's placement rule, ported from SeedCore's
  * `WebGardens/Coppice.swift` so the plot service can run it.
@@ -30,6 +33,14 @@ declare(strict_types=1);
  *
  * A planting here is an array: seed (hex), plot, coupe, place (0 a stool, 1 the
  * back row, 2 the front), index, height, family, habit, nudgeX, nudgeZ.
+ *
+ * **Where a place stands is the table's** since 2 October 2026, when the
+ * coupes went round a glade (`CoppiceGladeTable`, made by
+ * `tools/layouts/generate.py`): three rides meeting at the glade, a stand of
+ * stools in each coupe, the stars in clumps by the rides, and each plot turned,
+ * mirrored and given one of three glades by its number (`PlotVariant`). The
+ * rule never reads a place, so none of that touches where a plant goes, only
+ * where it is drawn — and `spot` is what the service sends.
  */
 final class Coppice
 {
@@ -38,28 +49,25 @@ final class Coppice
 
     /**
      * How this area's plots vary, from each plot's number (`PlotVariant.php`):
-     * the Swift's `variants`. Turned and mirrored; the glade's places are
-     * feature variants to come. Declared but not yet read.
+     * the Swift's `variants`. Turned four ways, mirrored, and one of the wood's
+     * three feature variants (`CoppiceGladeTable::PLACES`, one each).
      */
-    public const VARIANTS = ['turns' => 4, 'mirror' => true, 'nudges' => 1];
+    public const VARIANTS = ['turns' => 4, 'mirror' => true, 'nudges' => 3];
 
     /** Three coupes of eleven: five stools, and a back row and a front row of three. */
     public const COUPES = 3;
     public const STOOLS = 5;
     public const FLOOR_ROW = 3;
 
-    /** The coupes' middles in `z`; coupe 0 is `z−`, the far band before a turn. */
-    public const COUPE_Z = [-1.80, 0.0, 1.80];
-
-    /** Along a coupe: the stools and the floor places, and how far each floor row stands from the stools. */
-    public const STOOL_X = [-1.8, -0.9, 0.0, 0.9, 1.8];
-    public const FLOOR_X = [-1.35, 0.0, 1.35];
-    public const ROW_FROM = 0.40;
-
     /** How far a plant stands off its place, either way, from the seed. */
     public const NUDGE = 0.06;
 
-    /** A row fills from its middle outward. */
+    /**
+     * A row fills from its middle outward: the indices a row's places are
+     * numbered by, in the order they fill. The table gives the stool numbered
+     * `STOOL_ORDER[k]` the k-th place out from the middle of its coupe's stand,
+     * and a floor place numbered `FLOOR_ORDER[k]` the k-th of its row to fill.
+     */
     public const STOOL_ORDER = [2, 1, 3, 0, 4];
     public const FLOOR_ORDER = [1, 0, 2];
 
@@ -90,15 +98,42 @@ final class Coppice
         return $habit === 'fern';
     }
 
-    /** Where a place is, in metres from the middle of its plot: [x, z]. */
-    public static function spot(int $coupe, int $place, int $index): array
+    /** The variant plot `$plot` is laid in: the Swift's `Coppice.variant(ofPlot:)`. */
+    public static function variant(int $plot): array
     {
-        $z = self::COUPE_Z[$coupe];
-        return match ($place) {
-            self::STOOL => [self::STOOL_X[$index], $z],
-            self::BACK => [self::FLOOR_X[$index], $z - self::ROW_FROM],
-            default => [self::FLOOR_X[$index], $z + self::ROW_FROM],
-        };
+        return PlotVariant::of($plot, 'renewal', self::VARIANTS);
+    }
+
+    /**
+     * Where a place stands in the table's frame for feature variant `$nudge`,
+     * before the plot is turned: [x, z]. Found by its tags, which every feature
+     * variant lists in one order.
+     */
+    public static function tablePlace(int $nudge, int $coupe, int $place, int $index): array
+    {
+        static $at = null;
+        if ($at === null) {
+            $at = [];
+            foreach (CoppiceGladeTable::PLACES[0] as $i => [, , $c, $p, $n]) $at["$c:$p:$n"] = $i;
+        }
+        if (!isset($at["$coupe:$place:$index"])) {
+            throw new LogicException("the Coppice has no place $coupe:$place:$index");
+        }
+        $row = CoppiceGladeTable::PLACES[$nudge][$at["$coupe:$place:$index"]];
+        return [$row[0], $row[1]];
+    }
+
+    /**
+     * Where a planting stands on its plot: its place in the table's frame, its
+     * nudge added there, and the sum turned for the plot — the Swift's
+     * `Planting.spot`, exact on every host. With no nudge, where the place is.
+     */
+    public static function spot(int $plot, int $coupe, int $place, int $index,
+                                float $nudgeX = 0.0, float $nudgeZ = 0.0): array
+    {
+        $variant = self::variant($plot);
+        [$x, $z] = self::tablePlace($variant['nudge'], $coupe, $place, $index);
+        return PlotVariant::apply($variant, $x + $nudgeX, $z + $nudgeZ);
     }
 
     /** `(year − (3 × plot + coupe)) mod 3`: 0 cut this winter, 1 regrowing, 2 grown. */

@@ -157,9 +157,12 @@ final class OrganicTests: XCTestCase {
         }
 
         // **Nothing is drawn where a guild stands.** A plant sits
-        // `Orchard.guildRadius` from the trunk, and the canopy's lowest point
-        // out there has to be above the tallest plant this garden grows.
-        let reach = Float(Orchard.guildRadius)
+        // `Orchard.guildRadius` from an outer trunk, and the middle tree's four
+        // `Orchard.middleRadius` from theirs, further in under the canopy
+        // (since 2 October 2026); the canopy's lowest point out past the
+        // nearer of the two has to be above the tallest plant this garden
+        // grows.
+        let reach = Float(min(Orchard.guildRadius, Orchard.middleRadius))
         let overhead = tree.positions
             .filter { ($0.x * $0.x + $0.z * $0.z).squareRoot() > reach - 0.03 && $0.y > 1 }
             .map(\.y).min() ?? 0

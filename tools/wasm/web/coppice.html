@@ -129,7 +129,11 @@
     const count = fromService
       ? await growCoppiceFromService(e, stage, wood, plot, report)
       : await growInvented(e, stage, wood, plot, year, report);
-    report(`Plot ${plot + 1} of ${plots} — ${count} of ${wood.slots}`);
+    // The plot's variant too, since the coupes went round a glade: which way
+    // round it is laid and which of the three glades it takes.
+    const [turn, mirror, nudge] = wood.layout.variant;
+    report(`Plot ${plot + 1} of ${plots} — ${count} of ${wood.slots} — `
+      + `turned ${turn}${mirror ? ', mirrored' : ''}, glade ${nudge + 1}`);
     say();
     sky?.draw();
   }

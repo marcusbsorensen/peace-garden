@@ -6,9 +6,10 @@ declare(strict_types=1);
  *
  * `tools/reference/coppice_vectors.json` is what `Coppice.Ways` in SeedCore does
  * with five hundred real crossings, starting from a Coppice that already has its
- * ambassador standing in the first coupe's front row. This replays the same five
- * hundred through `Server/.api/Coppice.php` and fails if any one of them lands
- * anywhere else.
+ * ambassador standing on the first coupe's first stool. This replays the same
+ * five hundred through `Server/.api/Coppice.php` and fails if any one of them
+ * lands anywhere else, or is drawn anywhere else: since 2 October 2026 each
+ * row carries its plot's variant and its spot.
  *
  * **Why the whole five hundred rather than a sample.** The rule has steps that
  * agree with each other for a long while: a fern's stool, then the floor with
@@ -63,6 +64,35 @@ foreach ($vectors as $n => $want) {
             $got['plot'], $got['coupe'], $got['place'], $got['index']
         );
         if (count($failed) >= 5) break;
+        continue;
+    }
+    // **And where the service says it stands**, since the coupes went round a
+    // glade on 2 October 2026: the plot's variant, and the spot the table and
+    // the turn give. Both exact, so compared with no tolerance.
+    $checks++;
+    $variant = Coppice::variant($got['plot']);
+    $spot = Coppice::spot($got['plot'], $got['coupe'], $got['place'], $got['index'], $got['nudgeX'], $got['nudgeZ']);
+    $wantVariant = [$want['variant'][0], $want['variant'][1] === 1, $want['variant'][2]];
+    if ([$variant['turn'], $variant['mirror'], $variant['nudge']] !== $wantVariant || $spot !== $want['spot']) {
+        $failed[] = sprintf('arrival %d (%s): SeedCore stands it at %s in variant %s, the service at %s in %s',
+            $n, substr($want['seed'], 0, 12), json_encode($want['spot']), json_encode($want['variant']),
+            json_encode($spot), json_encode($variant));
+        if (count($failed) >= 5) break;
+    }
+}
+
+// The space the port declares is the table's: as many feature variants as it
+// has places for, each with every slot once.
+$checks++;
+if (Coppice::VARIANTS['nudges'] !== count(CoppiceGladeTable::PLACES)) {
+    $failed[] = sprintf('Coppice::VARIANTS says %d feature variants and the table has %d',
+        Coppice::VARIANTS['nudges'], count(CoppiceGladeTable::PLACES));
+}
+foreach (CoppiceGladeTable::PLACES as $nudge => $places) {
+    $checks++;
+    $tags = array_map(fn($row) => "{$row[2]}:{$row[3]}:{$row[4]}", $places);
+    if (count(array_unique($tags)) !== Coppice::COUPES * (Coppice::STOOLS + 2 * Coppice::FLOOR_ROW)) {
+        $failed[] = "the Coppice's table variant $nudge does not hold every slot once";
     }
 }
 
