@@ -13,8 +13,9 @@ Tonight's batch live and in build 6: the Wild Fields with water, worn paths and 
   - the app's shadows (Marcus's tweaks) and the warmer plot light;
   - the reviewed translation fixes for the site and the app (REVIEW.md and APPLIED-app.md).
   - String, reference and wear/curate checks pass.
+- **Live**: `b104cf3` deployed 2 October, with wear on (`'wear' => true` in the live config.php). All 42 header checks and 17 pages are clean, and the wear POSTs return 200. Screenshots are in `out/deploy-2026-10-02b/`. Before this, `d7c5d48` was live; a rollback copy is in the session scratchpad at `live-d7c5d48`.
 - **Running**:
-  - the deploy of `b104cf3` with wear switched on in the live config.php (deploy agent; screenshots go to `out/deploy-2026-10-02b/`);
+  - garden-layout research (worktree branch; output in `design/garden-layouts-2026-10-02/`);
   - build 6 in a worktree branch (bump to 6, full suite, archive to `build/PeaceGarden-1.0-6.xcarchive`, upload).
 - **Then**:
   - Marcus tries /wild on his phone;
@@ -42,6 +43,7 @@ Tonight's batch live and in build 6: the Wild Fields with water, worn paths and 
 5. Clean up merged worktrees and remote `worktree-agent-*` branches. Close PR #8 once REVIEW.md lands on main through the site strings branch.
 
 ## Traps
+- **The config backup won't survive a deploy:** `deploy.sh` protects only `.api/config.php`, so the next upload deletes `config.php.bak-2026-10-02`. To roll back, restore the config first, then redeploy.
 - **Cloud routines:** use RemoteTrigger. Agent `isolation: "remote"` runs locally. Strip connectors after every create (`clear_mcp_connections`). Routines don't notify; check with `list_runs` and `get_run_log`.
 - **Every agent brief says commit and push after each step** (Marcus, 2 October).
 - **Token-guard hook** blocks:
