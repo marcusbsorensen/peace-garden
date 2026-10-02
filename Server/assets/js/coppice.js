@@ -45,7 +45,7 @@ const COPPICE = { spring: 1609, ground: 7151, floor: 47, relief: 53, litter: 67,
 
 /// The glade: the litter there is lighter, the sun on it, and a little green
 /// comes through where the canopy is open.
-const GLADE = [0.330, 0.300, 0.170];
+const GLADE = [0.370, 0.345, 0.195];
 
 /// The leaf litter: the colour the map gives this area — `LOOK.renewal` in
 /// `gates.js`, brought down by the quarter a plot is lit up by, as the
@@ -218,7 +218,7 @@ export function makeCoppiceGround(place) {
       const worn = wornBy(field.out, rough);
       const moss = smooth(-0.008, -0.026, h + 0.012 * rough) * (1 - worn) * (1 - 0.6 * field.glade);
       const litter = mix(mix(LITTER, MOSS, moss), RIDE, worn);
-      return mix(litter, GLADE, 0.6 * field.glade * (1 - 0.5 * worn)).map((v) => v * field.open);
+      return mix(litter, GLADE, 0.85 * field.glade * (1 - 0.4 * worn)).map((v) => v * field.open);
     };
     const floor = (x, z, h, rough) => floorOf(fieldAt(x, z), h, rough);
 
