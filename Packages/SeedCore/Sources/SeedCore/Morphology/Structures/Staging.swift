@@ -19,47 +19,68 @@ import Foundation
 extension Organic {
 
     /// How many slats a staging is laid in, how wide each is and how thick.
-    static let stagingSlats = 5
-    static let stagingSlat = 0.105
+    static let stagingSlats = 4
+    static let stagingSlat = 0.085
     static let stagingSlatThick = 0.025
     static let stagingLeg = 0.05
 
-    /// The staging: slats along `x` on bearers across it, each bearer carried
-    /// on a pair of legs. It stands on `y = 0`, centred on the origin, its top
-    /// at `height`, `length` along `x` and `depth` across `z`.
+    /// **The staging, as a ring round the inside of the round house**: slats
+    /// curved along the table's `staging` line (`PlaceTable.glasshouseWheel`), on
+    /// bearers across it, each bearer carried on a pair of legs. It stands on
+    /// `y = 0` where the table lays it, its top at `Glasshouse.stagingTop`,
+    /// `Glasshouse.stagingDepth` across, and its two ends either side of the
+    /// door.
     ///
-    /// Five frames of legs over four metres, a metre apart, which is what a
-    /// run of slats a couple of centimetres thick will span loaded with wet
-    /// pots without sagging.
-    public static func staging(length: Double = Glasshouse.houseLength - 0.4,
-                               depth: Double = Glasshouse.stagingDepth,
-                               height: Double = Glasshouse.stagingTop, seed: UInt64) -> StructureMesh {
+    /// **The slats follow the line's wander**, a centimetre either way, so the
+    /// ring is laid by hand rather than turned; the pots stand on that line,
+    /// so every pot is on the staging. Twelve frames of legs round 10 m, a
+    /// little under a metre apart, which is what a run of slats a couple of
+    /// centimetres thick will span loaded with wet pots without sagging.
+    public static func ringStaging(seed: UInt64) -> StructureMesh {
         var mesh = StructureMesh()
+        let depth = Glasshouse.stagingDepth, height = Glasshouse.stagingTop
         let slats = stagingSlats, slat = stagingSlat, thick = stagingSlatThick, leg = stagingLeg
         let gap = (depth - Double(slats) * slat) / Double(slats - 1)
         var n: UInt64 = 40
         let next = { () -> UInt64 in n += 1; return mix64(seed &+ n) }
+        let line = Glasshouse.table.curve("staging", on: .plain).points.map { SIMD2($0.x, $0.z) }
+        // Outward from the middle of the house at each point of the line: the
+        // line runs round the middle, so across it is away from the middle.
+        let out = line.map { $0 / length($0) }
 
-        // The slats, running the staging's length.
-        for s in 0..<slats {
-            let z = -depth / 2 + slat / 2 + Double(s) * (slat + gap)
-            append(plank(length: length, width: slat, thickness: thick, lift: height - thick, seed: next()),
-                   to: &mesh, turned: true, at: SIMD3<Float>(0, 0, Float(z)))
+        // The slats, running round the ring.
+        for k in 0..<slats {
+            let off = -depth / 2 + slat / 2 + Double(k) * (slat + gap)
+            let path = line.indices.map { i -> SIMD3<Double> in
+                let p = line[i] + out[i] * off
+                return SIMD3(p.x, height - thick / 2, p.y)
+            }
+            append(rod(path, hint: { _ in SIMD3(0, 1, 0) }, width: slat, deep: thick), to: &mesh,
+                   turned: false, at: .zero)
         }
 
-        // The frames: a bearer across under the slats, on two legs.
-        let frames = 5
+        // The frames: a bearer across under the slats, on two legs, at even
+        // steps along the line from a little in from either end.
+        var run = [0.0]
+        for i in 1..<line.count { run.append(run[i - 1] + length(line[i] - line[i - 1])) }
+        let frames = 12
         let bearer = 0.06
         for f in 0..<frames {
-            let x = -length / 2 + 0.12 + Double(f) * (length - 0.24) / Double(frames - 1)
-            append(plank(length: depth - 0.02, width: leg, thickness: bearer,
-                         lift: height - thick - bearer, seed: next()),
-                   to: &mesh, turned: false, at: SIMD3<Float>(Float(x), 0, 0))
+            let want = 0.12 + (run[line.count - 1] - 0.24) * Double(f) / Double(frames - 1)
+            var i = 1
+            while i < line.count - 1 && run[i] < want { i += 1 }
+            let t = (want - run[i - 1]) / max(1e-12, run[i] - run[i - 1])
+            let at = line[i - 1] + (line[i] - line[i - 1]) * t
+            let o = at / length(at)
+            let across = { (by: Double) -> SIMD2<Double> in at + o * by }
+            let under = height - thick - bearer / 2
+            let a = across(-(depth / 2 - 0.01)), b = across(depth / 2 - 0.01)
+            append(bar(from: SIMD3(a.x, under, a.y), to: SIMD3(b.x, under, b.y), width: leg, deep: bearer,
+                       seed: next()), to: &mesh, turned: false, at: .zero)
             for side in [-1.0, 1.0] {
-                append(plank(length: leg, width: leg, thickness: height - thick - bearer, lift: 0,
-                             seed: next()),
-                       to: &mesh, turned: false,
-                       at: SIMD3<Float>(Float(x), 0, Float(side * (depth / 2 - leg / 2 - 0.02))))
+                let p = across(side * (depth / 2 - leg / 2 - 0.02))
+                append(bar(from: SIMD3(p.x, 0, p.y), to: SIMD3(p.x, height - thick - bearer, p.y),
+                           width: leg, deep: leg, seed: next()), to: &mesh, turned: false, at: .zero)
             }
         }
         mesh.computeNormals()

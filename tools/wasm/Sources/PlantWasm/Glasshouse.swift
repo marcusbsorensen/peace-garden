@@ -10,11 +10,14 @@ import SeedCore
 // before it is live, and the browser is where it can be looked at.
 //
 //   pg_glasshouse_plan()          the area's own numbers as JSON: its side, the
-//                                 house's length, width, eaves and ridge, the
-//                                 staging's middle, depth and top, how far a
-//                                 potted plant stands off the floor, the border's
-//                                 line, and what a plot holds — so the page
-//                                 keeps no copy of them
+//                                 house's radius, eaves and crown, where the
+//                                 door is, the ring of staging's radius, depth
+//                                 and top, how far a potted plant stands off the
+//                                 floor, the bed's radius, and what a plot
+//                                 holds — so the page keeps no copy of them.
+//                                 The outlines it draws to (the wall, the
+//                                 staging's line, the bed) are the place
+//                                 table's, `tables/glasshouse_wheel.js`
 //   pg_glasshouse_arrive()        plants the next arrival; returns its plot
 //   pg_glasshouse_count(plot)     plantings in a plot so far
 //   pg_glasshouse_grow(plot, i)   grows the i-th planting of a plot into the
@@ -22,9 +25,9 @@ import SeedCore
 //                                 then a plant buffer
 //   pg_glasshouse_plots()         plots opened so far
 //   pg_glasshouse_describe(p)     a plot's plantings as JSON: place and traits
-//   pg_glasshouse_frame(seed)     the house's bars and its open door,
-//   pg_glasshouse_glass(seed)     its glass,
-//   pg_glasshouse_staging(seed)   the staging,
+//   pg_glasshouse_frame(seed)     the round house's bars and its open door,
+//   pg_glasshouse_glass(seed)     its glass, wall and dome,
+//   pg_glasshouse_staging(seed)   the ring of staging,
 //   pg_glasshouse_pot(seed)       one clay pot,
 //   pg_glasshouse_soil(seed)      and the soil in it — each in the shape
 //                                 `pg_hedge` returns: vertex count, index count
@@ -34,7 +37,8 @@ import SeedCore
 // **The plants are grown at their best**, as everywhere but the Cold Frame, by
 // `pg_grow` and `pg_grow_hybrid` for the page drawing what the service holds.
 // What is new is where they stand: three in four of them in a pot on the
-// staging, 0.83 m off the floor, which is why a planting here carries a lift.
+// ring of staging, 0.83 m off the floor, which is why a planting here carries a
+// lift.
 //
 // Opened rather than empty: it starts with the light ambassador (in the
 // border since 28 September 2026), the way the real one does.
@@ -72,13 +76,14 @@ private func glasshouseVisitor() -> (child: SeedID, genome: Genome) {
 @_cdecl("pg_glasshouse_plan")
 public func pgGlasshousePlan() -> Int32 {
     let json = """
-        {"plotSide":\(Glasshouse.plotSide),"length":\(Glasshouse.houseLength),\
-        "width":\(Glasshouse.houseWidth),"eaves":\(Glasshouse.eaves),"ridge":\(Glasshouse.ridge),\
-        "stagingZ":\(Glasshouse.stagingZ),"stagingDepth":\(Glasshouse.stagingDepth),\
-        "stagingTop":\(Glasshouse.stagingTop),"lift":\(Glasshouse.stagingTop + Glasshouse.potSoil),\
-        "borderZ":\(Glasshouse.borderZ),"borderGap":\(Glasshouse.borderGap),\
-        "borderPlaces":\(Glasshouse.borderPlaces),"positions":\(Glasshouse.positions),\
-        "borderFrom":\(Glasshouse.borderFrom),"slots":\(Glasshouse.slots.count)}
+        {"plotSide":\(Glasshouse.plotSide),"radius":\(Glasshouse.houseRadius),\
+        "eaves":\(Glasshouse.eaves),"crown":\(Glasshouse.crown),"doorTurn":\(Glasshouse.doorTurn),\
+        "doorHalf":\(Organic.doorHalf),"stagingRadius":\(Glasshouse.stagingRadius),\
+        "stagingDepth":\(Glasshouse.stagingDepth),"stagingTop":\(Glasshouse.stagingTop),\
+        "lift":\(Glasshouse.stagingTop + Glasshouse.potSoil),"potGap":\(Glasshouse.potGap),\
+        "bedRadius":\(Glasshouse.bedRadius),"borderPlaces":\(Glasshouse.borderPlaces),\
+        "positions":\(Glasshouse.positions),"borderFrom":\(Glasshouse.borderFrom),\
+        "slots":\(Glasshouse.slots.count)}
         """
     setResult(Array(json.utf8))
     return Int32(json.utf8.count)
@@ -132,7 +137,7 @@ public func pgGlasshouseDescribe(_ plot: Int32) -> Int32 {
 @_expose(wasm, "pg_glasshouse_frame")
 @_cdecl("pg_glasshouse_frame")
 public func pgGlasshouseFrame(_ seed: UInt32) -> Int32 {
-    let out = glasshouseStructure(Organic.spanHouse(seed: UInt64(seed)))
+    let out = glasshouseStructure(Organic.roundHouse(seed: UInt64(seed)))
     setResult(out)
     return Int32(out.count)
 }
@@ -140,7 +145,7 @@ public func pgGlasshouseFrame(_ seed: UInt32) -> Int32 {
 @_expose(wasm, "pg_glasshouse_glass")
 @_cdecl("pg_glasshouse_glass")
 public func pgGlasshouseGlass(_ seed: UInt32) -> Int32 {
-    let out = glasshouseStructure(Organic.spanHouseGlass(seed: UInt64(seed)))
+    let out = glasshouseStructure(Organic.roundHouseGlass(seed: UInt64(seed)))
     setResult(out)
     return Int32(out.count)
 }
@@ -148,7 +153,7 @@ public func pgGlasshouseGlass(_ seed: UInt32) -> Int32 {
 @_expose(wasm, "pg_glasshouse_staging")
 @_cdecl("pg_glasshouse_staging")
 public func pgGlasshouseStaging(_ seed: UInt32) -> Int32 {
-    let out = glasshouseStructure(Organic.staging(seed: UInt64(seed)))
+    let out = glasshouseStructure(Organic.ringStaging(seed: UInt64(seed)))
     setResult(out)
     return Int32(out.count)
 }

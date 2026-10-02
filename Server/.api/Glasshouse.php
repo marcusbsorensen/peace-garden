@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/LongWalk.php';
+require_once __DIR__ . '/PlotVariant.php';
+require_once __DIR__ . '/tables/GlasshouseWheelTable.php';
 
 /**
  * The Glasshouse's placement rule, ported from SeedCore's
@@ -14,13 +16,21 @@ require_once __DIR__ . '/LongWalk.php';
  * them anywhere else. Change the Swift first, re-record, then bring this along.
  *
  * **Height picks the bed; then the staging sorts by hue and the border by
- * arrival.** A plant of 1.14 m or more stands in the soil border along the back,
- * in the next place from the door. Anything shorter goes in a pot on the
- * staging, which is a spectrum: twelve positions, each standing for a twelfth of
- * the area's hued plants, blue-green at the door and yellow at the far end. A
- * pot looks for its own band in every open plot, oldest first; then one band
- * off, the side its hue leans to first; then opens a new plot. A pale plant, or
- * one whose hue was never sent, takes the first free pot from the door.
+ * arrival.** A plant of 1.16 m or more stands in the round soil bed in the
+ * middle of the house, in the bed's next place (its middle first, then
+ * farthest-first). Anything shorter goes in a pot on the ring of staging,
+ * which is a colour wheel: twelve bands, each standing for a twelfth of the
+ * area's hued plants, blue-green just past the door and yellow just before it.
+ * A pot looks for its own band in every open plot, oldest first; then one band
+ * off, the side its hue leans to first, never across the door; then opens a
+ * new plot. A pale plant, or one whose hue was never sent, takes the first free
+ * pot in the table's offer order: the pot opposite the door, then
+ * farthest-first.
+ *
+ * **Where each place stands is a table made offline** (`GlasshouseWheelTable`,
+ * from `tools/layouts/tables/glasshouse_wheel.py`), the colour wheel Marcus
+ * chose on 2 October 2026: the same literals SeedCore reads, so a spot here is
+ * the same double as there.
  *
  * **The first rule here that reads a hue**, and the first number this service
  * compares that no host can round differently. A hue is the seed's bytes
@@ -44,13 +54,13 @@ final class Glasshouse
 
     /**
      * How this area's plots vary, from each plot's number (`PlotVariant.php`):
-     * the Swift's `variants`. Fixed: a colour wheel has one way round. Declared
-     * but not yet read.
+     * the Swift's `variants`. Fixed: a colour wheel has one way round. Read by
+     * `standing`, which lays every plot as the plan is drawn.
      */
     public const VARIANTS = ['turns' => 1, 'mirror' => false, 'nudges' => 1];
 
     /**
-     * Twelve positions along the staging with two pots at each, and a border of
+     * Twelve bands round the staging with two pots in each, and a border of
      * eight: thirty-two a plot, Marcus's choice on 23 September.
      */
     public const POSITIONS = 12;
@@ -58,22 +68,26 @@ final class Glasshouse
     public const BORDER_PLACES = 8;
 
     /**
-     * The house, in metres. Not read by the rule; here so the check can hold
-     * every place inside it.
+     * The house, in metres: its wall's radius (which wanders outward from this
+     * by up to 4 cm, never in), its eaves and its crown. Not read by the rule;
+     * here so the check can hold every place inside it and under it.
      */
-    public const HOUSE_LENGTH = 4.4;
-    public const HOUSE_WIDTH = 3.4;
+    public const HOUSE_RADIUS = 2.2;
+    public const EAVES = 2.2;
+    public const CROWN = 3.5;
 
-    /** The staging's middle, how far each row of pots stands from it, and the gap along it. */
-    public const STAGING_Z = 1.0;
-    public const ROW_FROM = 0.15;
-    public const ALONG_GAP = 0.33;
+    /** Where the door is, as a turn from `x+` toward `z+`: a quarter, `z+`. */
+    public const DOOR_TURN = 0.25;
+
+    /** The ring of staging: its middle's radius, its depth and its top; the soil in a pot. */
+    public const STAGING_RADIUS = 1.80;
+    public const STAGING_DEPTH = 0.40;
     public const STAGING_TOP = 0.70;
     public const POT_SOIL = 0.13;
+    public const POT_GAP = 0.43;
 
-    /** The border along the back, and the gap between its places. */
-    public const BORDER_Z = -1.15;
-    public const BORDER_GAP = 0.50;
+    /** The round bed in the middle. */
+    public const BED_RADIUS = 0.85;
 
     /** The two beds. */
     public const STAGING = 0;
@@ -110,7 +124,7 @@ final class Glasshouse
         return $hue >= self::CUT ? $hue - self::CUT : $hue - self::CUT + 1;
     }
 
-    /** The band a hue belongs to, 0 at the door to 11: how many edges it lies at or past. */
+    /** The band a hue belongs to, 0 just past the door to 11 just before it: how many edges it lies at or past. */
     public static function band(float $hue): int
     {
         $u = self::along($hue);
@@ -138,18 +152,59 @@ final class Glasshouse
     }
 
     /**
-     * Where a place is, in metres from the middle of its plot: [x, z]. Index 0
-     * is at the door, the house's `x−` end, in both beds.
+     * Where a place is, in metres from the middle of its plot, as the table
+     * has it: [x, z]. On the staging `index` is the band and `row` which of its
+     * two pots; in the border `index` is the place's turn in the bed's order.
      */
     public static function spot(int $bed, int $index, int $row): array
     {
-        if ($bed === self::BORDER) {
-            return [($index - (self::BORDER_PLACES - 1) / 2) * self::BORDER_GAP, self::BORDER_Z];
+        $at = self::places()[$bed][$index][$bed === self::STAGING ? $row : 0] ?? null;
+        if ($at === null) {
+            throw new InvalidArgumentException("The Glasshouse has no place $bed/$index/$row.");
         }
-        return [
-            ($index - (self::POSITIONS - 1) / 2) * self::ALONG_GAP,
-            self::STAGING_Z + ($row === 0 ? self::ROW_FROM : -self::ROW_FROM),
-        ];
+        return $at;
+    }
+
+    /**
+     * **Where a planting stands**: its place and its nudge, as the plot's
+     * variant lays them — which here is always the plan as drawn. The Swift's
+     * `Planting.spot`, in its order: the nudge added in the table's frame,
+     * then the sum turned.
+     */
+    public static function standing(int $plot, int $bed, int $index, int $row, float $nudgeX, float $nudgeZ): array
+    {
+        [$x, $z] = self::spot($bed, $index, $row);
+        return PlotVariant::apply(PlotVariant::of($plot, 'light', self::VARIANTS), $x + $nudgeX, $z + $nudgeZ);
+    }
+
+    /**
+     * **The order a pot with no place on the spectrum is offered the staging
+     * in**, as [index, row] pairs: the table's own order, the pot opposite the
+     * door first, then farthest-first.
+     */
+    public static function paleOrder(): array
+    {
+        static $order = null;
+        if ($order === null) {
+            $order = [];
+            foreach (GlasshouseWheelTable::PLACES[0] as [$x, $z, $bed, $index, $row]) {
+                if ($bed === self::STAGING) $order[] = [$index, $row];
+            }
+        }
+        return $order;
+    }
+
+    /** The table's places by bed, index and row: [bed][index][row] => [x, z]. */
+    private static function places(): array
+    {
+        static $places = null;
+        if ($places === null) {
+            $places = [];
+            foreach (GlasshouseWheelTable::PLACES[0] as [$x, $z, $bed, $index, $row]) {
+                $places[$bed][$index][$row] = [$x, $z];
+            }
+        }
+        return $places;
     }
 
     /** How far off the floor a plant in this bed stands: the soil in its pot, or none. */
@@ -169,11 +224,11 @@ final class Glasshouse
     /**
      * Where the next plant with these traits goes: [plot, slot].
      *
-     * The border: the next place from the door in the oldest plot with one, or
-     * a new plot. The staging: its own band in every open plot, oldest first;
-     * then one band off, never across the cut; then a new plot at its own band.
-     * A plant with no place on the spectrum takes the first free pot from the
-     * door, oldest plot first.
+     * The border: the bed's next place in the oldest plot with one, or a new
+     * plot. The staging: its own band in every open plot, oldest first; then
+     * one band off, never across the cut; then a new plot at its own band. A
+     * plant with no place on the spectrum takes the first free pot in
+     * `paleOrder`, oldest plot first, or a new plot at the first of them.
      */
     public static function place(array $ways, float $height, int $family, ?float $hue): array
     {
@@ -191,8 +246,8 @@ final class Glasshouse
             return [$opened, ['bed' => self::BORDER, 'index' => 0, 'row' => 0]];
         }
 
-        // The next free pot at this position in this plot, or null. A position
-        // fills its glass row first, so the row is how many stand there already.
+        // The next free pot in this band in this plot, or null. A band fills
+        // its row 0 first, so the row is how many stand there already.
         $free = function (int $position, int $plot) use ($byPlot): ?array {
             $taken = count(array_filter($byPlot[$plot],
                 fn($p) => (int) $p['bed'] === self::STAGING && (int) $p['index'] === $position));
@@ -201,11 +256,18 @@ final class Glasshouse
 
         if (self::isUnplaced($family, $hue)) {
             for ($plot = 0; $plot < $opened; $plot++) {
-                for ($position = 0; $position < self::POSITIONS; $position++) {
-                    if ($slot = $free($position, $plot)) return [$plot, $slot];
+                $taken = [];
+                foreach ($byPlot[$plot] as $p) {
+                    if ((int) $p['bed'] === self::STAGING) $taken[(int) $p['index'] . '/' . (int) $p['row']] = true;
+                }
+                foreach (self::paleOrder() as [$index, $row]) {
+                    if (!isset($taken["$index/$row"])) {
+                        return [$plot, ['bed' => self::STAGING, 'index' => $index, 'row' => $row]];
+                    }
                 }
             }
-            return [$opened, ['bed' => self::STAGING, 'index' => 0, 'row' => 0]];
+            [$index, $row] = self::paleOrder()[0];
+            return [$opened, ['bed' => self::STAGING, 'index' => $index, 'row' => $row]];
         }
 
         $own = self::band($hue);

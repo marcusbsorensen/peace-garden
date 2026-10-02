@@ -125,8 +125,9 @@ final class GlasshouseStore
             // anything else is here, **and it holds a place**. A reading that
             // left it out would hand that place to the next plant, and two
             // plants would be drawn standing in one. (Since 28 September 2026
-            // the place is the border's first from the door; it was a pot at
-            // the ambassador's own band of the staging.)
+            // the place is the border's first — the middle of the round bed
+            // since 2 October; it was a pot at the ambassador's own band of the
+            // staging.)
             $ways = array_merge(
                 [Ambassadors::planting('light')],
                 array_map([self::class, 'forRule'], $all->fetchAll())
@@ -153,8 +154,8 @@ final class GlasshouseStore
      *
      * Plot 0 opens with the ambassador, which is not a row, in the bed its
      * height gives it — since the re-roll of 28 September 2026 the border's
-     * first place from the door, where it was a pot at its own band of the
-     * staging — and lifted as that bed lifts it. It carries no parents and no meeting, because it was
+     * first place (the middle of the round bed since 2 October), where it was
+     * a pot at its own band of the staging — and lifted as that bed lifts it. It carries no parents and no meeting, because it was
      * minted rather than crossed, and an empty `parents` is how the wire says
      * so.
      */
@@ -165,13 +166,13 @@ final class GlasshouseStore
         $plantings = array_map([self::class, 'planting'], $query->fetchAll());
         if ($plot !== 0) return $plantings;
         $standing = Ambassadors::planting('light');
-        [$x, $z] = Glasshouse::spot($standing['bed'], $standing['index'], $standing['row']);
         array_unshift($plantings, [
             'seed' => $standing['seed'],
             'parents' => [],
             'encounter' => null,
             'plot' => 0,
-            'spot' => [$x + $standing['nudgeX'], $z + $standing['nudgeZ']],
+            'spot' => Glasshouse::standing(0, $standing['bed'], $standing['index'], $standing['row'],
+                                           $standing['nudgeX'], $standing['nudgeZ']),
             'lift' => Glasshouse::lift($standing['bed']),
         ]);
         return $plantings;
@@ -209,13 +210,13 @@ final class GlasshouseStore
     private static function planting(array $row): array
     {
         $bed = (int) $row['bed'];
-        [$x, $z] = Glasshouse::spot($bed, (int) $row['slot_index'], (int) $row['slot_row']);
         return [
             'seed' => $row['seed'],
             'parents' => [$row['parent_a'], $row['parent_b']],
             'encounter' => $row['encounter'],
             'plot' => (int) $row['plot'],
-            'spot' => [$x + (float) $row['nudge_x'], $z + (float) $row['nudge_z']],
+            'spot' => Glasshouse::standing((int) $row['plot'], $bed, (int) $row['slot_index'], (int) $row['slot_row'],
+                                           (float) $row['nudge_x'], (float) $row['nudge_z']),
             'lift' => Glasshouse::lift($bed),
         ];
     }
