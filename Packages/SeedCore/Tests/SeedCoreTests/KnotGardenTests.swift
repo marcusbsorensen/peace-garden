@@ -221,19 +221,21 @@ final class KnotGardenTests: XCTestCase {
             XCTAssertEqual(KnotGarden.over(at: i), i % 2 == 0 ? 0 : ring)
         }
         // Round the middle ring in order: each crossing a little further round
-        // than the one before, x+ toward z+, and all eight in one turn.
+        // than the one before, x+ toward z+, and all eight in one turn. The
+        // turn is read as a "diamond angle", 0 to 4 round the middle, which
+        // rises with the true angle and needs no host's arctangent.
         func turn(_ p: Spot) -> Double {
-            let a = atan2(p.z, p.x) / (2 * .pi)
-            return a < 0 ? a + 1 : a
+            if p.z >= 0 { return p.x >= 0 ? p.z / (p.x + p.z) : 1 - p.x / (-p.x + p.z) }
+            return p.x < 0 ? 2 - p.z / (-p.x - p.z) : 3 + p.x / (p.x - p.z)
         }
         var travelled = 0.0
         for i in 0..<8 {
             var step = turn(crossings[(i + 1) % 8]) - turn(crossings[i])
-            if step < 0 { step += 1 }
-            XCTAssertGreaterThan(step, 0.02, "crossings \(i) and \((i + 1) % 8) are out of order")
+            if step < 0 { step += 4 }
+            XCTAssertGreaterThan(step, 0.08, "crossings \(i) and \((i + 1) % 8) are out of order")
             travelled += step
         }
-        XCTAssertEqual(travelled, 1, accuracy: 1e-9, "the crossings go round more than once")
+        XCTAssertEqual(travelled, 4, accuracy: 1e-9, "the crossings go round more than once")
     }
 
     /// **No two bands touch but where they cross**: two small rings side by
