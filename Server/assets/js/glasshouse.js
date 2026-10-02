@@ -36,7 +36,7 @@ import { glasshouseWheel } from './tables/glasshouse_wheel.js';
 
 // Seeds for this area's dressing, its own and not another area's.
 const GLASS_SEED = { ground: 6421, floor: 43, tile: 61, soil: 89, border: 97, frame: 1511,
-  glass: 1523, staging: 1549, pot: 1571, trough: 1583 };
+  glass: 1523, staging: 1549, pot: 1571, trough: 1583, band: 1597 };
 
 /// The floor: quarry tiles, the colour the map gives this area — `LOOK.light` in
 /// `gates.js`, brought down by the quarter a plot is lit up by. A glasshouse
@@ -71,6 +71,23 @@ const BAR = [0.82, 0.81, 0.76];
 /// it is there.
 const GLASS = [0.78, 0.85, 0.92];
 const GLASS_OPACITY = 0.05;
+
+/// **The painted band along the staging** (Marcus, 2 October 2026): a thin
+/// strip of colour painted by hand along the top of the staging's outer slat,
+/// the one by the glass, under the pots' rims, shading through the twelve bands
+/// of hue round the ring in the order the pots stand in them. So the colour
+/// wheel reads at a glance with only a few plants on it, or none in flower.
+/// **On the outer slat, as the research's sketch drew it**: from the page's
+/// eye the near half of the ring shows its outer edge and the far half shows
+/// over its own staging, so the whole wheel reads; on the front slat the near
+/// half was hidden behind its own boards. Where it lies across the ring
+/// (`offset`, the outer slat's middle, from the staging's middle line), how
+/// wide its paint is either side of that, how far the paint feathers into the
+/// boards, how far each edge wanders, how far it stands off the slat, the step
+/// it is laid in, and how long it takes to thin to nothing at each end. How
+/// strong and how light its colour is: chalky, softer than the flowers it keys.
+const BAND = { offset: 0.1575, half: 0.024, feather: 0.009, wander: 0.006, lift: 0.0015,
+  step: 0.02, ends: 0.09, saturation: 0.50, value: 0.78 };
 
 /// The trough under the staging: how wide it is across the ring, how thick its
 /// stone, how high it stands, and how far below its lip the water lies. Narrow
@@ -251,6 +268,8 @@ export function makeGlasshouseGround(place) {
     // rather than found. Bent to the ring, under its `x+` side, low enough to
     // clear the boards and narrow enough to stand between the legs.
     raiseRingTrough(e, { tri, quad }, line);
+    // **The painted band**, along the staging by the glass, under the pots.
+    paintBand(e, { quad }, line, place);
     // **A threshold stone across the doorway**, half in and half out, worn
     // to a rounded slab: where the floor is walked most, and what tells the
     // eye from any side that the gap in the wall is the way in.
@@ -400,6 +419,106 @@ function raiseRingTrough(e, { tri, quad }, line) {
       const a = inner[k], b = inner[(k + 1) % inner.length];
       tri([pivot[0], level, pivot[1]], [a[0], level, a[1]], [b[0], level, b[1]], [0, 1, 0], COLOUR.shallows);
     }
+  }
+}
+
+/// A line walked by length: how long it is, and where it is a given length
+/// along, with the way out from the middle of the house there.
+function walk(line) {
+  const run = [0];
+  for (let i = 1; i < line.length; i++) {
+    run.push(run[i - 1] + Math.hypot(line[i][0] - line[i - 1][0], line[i][1] - line[i - 1][1]));
+  }
+  const at = (s) => {
+    let i = 1;
+    while (i < line.length - 1 && run[i] < s) i++;
+    const t = (s - run[i - 1]) / (run[i] - run[i - 1] || 1);
+    const [ax, az] = line[i - 1], [bx, bz] = line[i];
+    const x = ax + (bx - ax) * t, z = az + (bz - az) * t, r = Math.hypot(x, z);
+    return { x, z, ox: x / r, oz: z / r };
+  };
+  // How far along the line the point of it nearest `[x, z]` is.
+  const along = ([x, z]) => {
+    let best = Infinity, found = 0;
+    for (let i = 1; i < line.length; i++) {
+      const [ax, az] = line[i - 1], [bx, bz] = line[i];
+      const dx = bx - ax, dz = bz - az;
+      const t = Math.min(1, Math.max(0, ((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz || 1)));
+      const d = Math.hypot(ax + dx * t - x, az + dz * t - z);
+      if (d < best) { best = d; found = run[i - 1] + (run[i] - run[i - 1]) * t; }
+    }
+    return found;
+  };
+  return { total: run[run.length - 1], at, along };
+}
+
+/// A hue, a turn of the circle with red at 0 as a plant's is, as paint.
+function paint(hue, saturation, value) {
+  const h = (((hue % 1) + 1) % 1) * 6, k = Math.floor(h), f = h - k;
+  const p = value * (1 - saturation), q = value * (1 - saturation * f), t = value * (1 - saturation * (1 - f));
+  return [[value, t, p], [q, value, p], [p, value, t], [p, q, value], [t, p, value], [value, p, q]][k % 6];
+}
+
+/// **The band painted along the staging**: laid along the staging's middle
+/// line at the outer slat, a short step at a time, each step a hue. Where a
+/// step stands round the ring says which hue: each band of the twelve is at
+/// its middle hue midway between its two pots, and the colour shades evenly
+/// from one band's middle to the next, so the band runs blue-green past the
+/// door, through blue, violet, magenta, red and orange, to yellow before it,
+/// with no seam where one band of pots gives way to the next. The wheel's cut
+/// and its bands' edges are the rule's (`pg_glasshouse_plan`), and where the
+/// pots stand is the table's, so the paint cannot disagree with the pots.
+///
+/// **Painted by hand**: each edge of the paint wanders on its own by a few
+/// millimetres and feathers into the boards over the last centimetre, each
+/// step's tone is a little off the last, as a brush leaves it, and it thins
+/// to a rounded end a little in from each end of the staging.
+function paintBand(e, { quad }, line, place) {
+  const { total, at, along } = walk(line);
+  const bands = place.bandEdges.length + 1;
+  const edges = [0, ...place.bandEdges, 1];
+  const pots = Array.from({ length: bands }, () => []);
+  for (const [x, z, bed, band] of glasshouseWheel.places[0]) {
+    if (bed === 0) pots[band].push(along([x, z]));
+  }
+  // Knots: how far along the line, and how far round the wheel past its cut.
+  const knots = [[0, 0],
+    ...pots.map((ss, b) => [ss.reduce((a, v) => a + v, 0) / ss.length, (edges[b] + edges[b + 1]) / 2]),
+    [total, 1]];
+  const wheelAt = (s) => {
+    let i = 1;
+    while (i < knots.length - 1 && knots[i][0] < s) i++;
+    const [s0, u0] = knots[i - 1], [s1, u1] = knots[i];
+    return u0 + (u1 - u0) * Math.min(1, Math.max(0, (s - s0) / (s1 - s0 || 1)));
+  };
+  const noise = (s, side) => e.pg_verge(s * 2.3, side, GLASS_SEED.band) / 0.14;
+  const y = place.stagingTop + BAND.lift, UP = [0, 1, 0];
+  const from = 0.03, to = total - 0.03, steps = Math.ceil((to - from) / BAND.step);
+  let last = null;
+  for (let k = 0; k <= steps; k++) {
+    const s = from + ((to - from) * k) / steps;
+    const p = at(s);
+    // A rounded end: the half width a quarter ellipse over the last `ends`.
+    const t = Math.min(1, Math.min(s - from, to - s) / BAND.ends);
+    const taper = Math.sqrt(1 - (1 - t) * (1 - t));
+    const middle = BAND.offset + 0.5 * BAND.wander * noise(s, 3) * taper;
+    const inner = (BAND.half + BAND.wander * noise(s, -1)) * taper;
+    const outer = (BAND.half + BAND.wander * noise(s, 1)) * taper;
+    const feather = BAND.feather * taper;
+    const across = [middle - inner - feather, middle - inner, middle + outer, middle + outer + feather]
+      .map((o) => [p.x + p.ox * o, y, p.z + p.oz * o]);
+    const tone = 0.94 + 0.08 * hash(k * 389 + GLASS_SEED.band);
+    const colour = paint(place.cut + wheelAt(s), BAND.saturation, BAND.value).map((c) => c * tone);
+    const step = { across, colour };
+    if (last) {
+      const [a0, a1, a2, a3] = last.across, [b0, b1, b2, b3] = step.across;
+      const [ca, cb] = [last.colour, step.colour];
+      // Feathered edge, paint, feathered edge: board colour at the outside.
+      quad(a0, b0, b1, a1, UP, BOARD, BOARD, cb, ca);
+      quad(a1, b1, b2, a2, UP, ca, cb, cb, ca);
+      quad(a2, b2, b3, a3, UP, ca, cb, BOARD, BOARD);
+    }
+    last = step;
   }
 }
 

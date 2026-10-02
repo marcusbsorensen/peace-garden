@@ -14,10 +14,13 @@ import SeedCore
 //                                 door is, the ring of staging's radius, depth
 //                                 and top, how far a potted plant stands off the
 //                                 floor, the bed's radius, and what a plot
-//                                 holds — so the page keeps no copy of them.
-//                                 The outlines it draws to (the wall, the
-//                                 staging's line, the bed) are the place
-//                                 table's, `tables/glasshouse_wheel.js`
+//                                 holds, and where the wheel is cut and its
+//                                 bands' edges, which the painted band along
+//                                 the staging shades through — so the page
+//                                 keeps no copy of them. The outlines it draws
+//                                 to (the wall, the staging's line, the bed)
+//                                 are the place table's,
+//                                 `tables/glasshouse_wheel.js`
 //   pg_glasshouse_arrive()        plants the next arrival; returns its plot
 //   pg_glasshouse_count(plot)     plantings in a plot so far
 //   pg_glasshouse_grow(plot, i)   grows the i-th planting of a plot into the
@@ -83,7 +86,8 @@ public func pgGlasshousePlan() -> Int32 {
         "lift":\(Glasshouse.stagingTop + Glasshouse.potSoil),"potGap":\(Glasshouse.potGap),\
         "bedRadius":\(Glasshouse.bedRadius),"borderPlaces":\(Glasshouse.borderPlaces),\
         "positions":\(Glasshouse.positions),"borderFrom":\(Glasshouse.borderFrom),\
-        "slots":\(Glasshouse.slots.count)}
+        "slots":\(Glasshouse.slots.count),"cut":\(Glasshouse.cut),\
+        "bandEdges":[\(Glasshouse.bandEdges.map { "\($0)" }.joined(separator: ","))]}
         """
     setResult(Array(json.utf8))
     return Int32(json.utf8.count)
