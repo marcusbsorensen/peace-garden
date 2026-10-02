@@ -1,7 +1,7 @@
 // A plot of the Seedbed, drawn the way the app draws a plot: a floating slab of
 // ground seen in true isometric, a bed of fine tilth over it, six shallow drills
-// raked across it, a wooden label at the head of each, and the plants standing
-// along the drills in the order they were sown.
+// raked along the contour of it, a wooden label at the head of each, and the
+// plants standing along the drills.
 //
 // **It is a nursery bed, so the page shows one plot.** The Long Walk draws three
 // end to end because a walk is a length you look down. A bed is not: it is a
@@ -16,6 +16,12 @@
 // and paler on the crest between two, so there is a line under the plants
 // whether the drill holds eight of them or one.
 //
+// **The drills are on the contour since 2 October 2026** (`docs/WEB-GARDENS.md`,
+// the layouts of that day): six arcs across the bed, the water at the foot of
+// it, from the place table the rule reads (`tables/seedbed_drills.js`). So a
+// furrow follows its drill's line wherever the line goes, rather than a column
+// of `x`, and every other plot is the plan mirrored, its labels at the east end.
+//
 // **The tilth is the Knot's gravel problem again, at a finer grain.** A square
 // lattice of flat-toned faces draws a tiled floor however small the cells are,
 // because the grid is the only thing in the picture that repeats exactly. So the
@@ -27,12 +33,15 @@
 //
 // The rule that decides where each plant stands is SeedCore's `Seedbed`, through
 // the module — this file draws the ground and the labels and puts each plant on
-// the spot the service gives it. The plot's own numbers come from
-// `pg_seedbed_plan` rather than being written down again here.
+// the spot the service gives it. The bed's counts come from `pg_seedbed_plan`
+// and where its drills run from the table, rather than being written down again
+// here.
 
 import { decode, takeResult } from './plant.js';
 import { COLOUR, SIDE, hash, keepToPlot, readOutline, readStructure } from './longwalk.js';
 import { hangSide } from './slab.js';
+import { PLAIN, applyVariantToCurve } from './variant.js';
+import { seedbedDrills } from './tables/seedbed_drills.js';
 
 // Seeds for this area's dressing, so a bed is the same shape on every visit.
 // Its own, not the walk's, the room's, the crossing's, the orchard's or the
@@ -76,23 +85,60 @@ const LABEL_WOOD = [0.72, 0.65, 0.54];
 /// narrow enough to read as a deep furrow until you noticed the pads
 /// floating on it. The colours are the Cold Frame tank's and were never the
 /// problem; a dark band only reads as water once there is enough of it.
-const CHANNEL = { across: 0.54, deep: 0.13, surface: 0.035 };
+///
+/// `ends` is how far a trough runs on past the ends of its drill's line before
+/// its banks close, so the water ends in a rounded pool rather than a cut.
+const CHANNEL = { across: 0.54, deep: 0.13, surface: 0.035, ends: 0.12 };
+
+/// How far past the ends of a drill's line the rake fades out, so the bed is
+/// flat again where nothing was drawn out.
+const FADE = 0.3;
 
 export function plan(e) {
   return JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_seedbed_plan())));
 }
 
+/// **Where each drill runs on a plot laid with `variant`**: the table's lines,
+/// mirrored as the plot is. Each is a list of [x, z], its first point where
+/// the drill's label stands.
+export function drillLines(variant = PLAIN) {
+  return Array.from({ length: Object.keys(seedbedDrills.curves).length }, (_, d) =>
+    applyVariantToCurve(variant, seedbedDrills.curves[`drill${d}`][0].points));
+}
+
+/// How far a point is from a line, and how far past either end of it: the
+/// distance to the nearest segment, and how far beyond the first or last
+/// point the point projects (0 if it lies alongside).
+function fromLine(line, x, z) {
+  let best = Infinity, beyond = 0;
+  for (let k = 0; k + 1 < line.length; k++) {
+    const [ax, az] = line[k], [bx, bz] = line[k + 1];
+    const ex = bx - ax, ez = bz - az, m = ex * ex + ez * ez;
+    const raw = ((x - ax) * ex + (z - az) * ez) / m;
+    const t = Math.max(0, Math.min(1, raw));
+    const dx = x - ax - ex * t, dz = z - az - ez * t;
+    const d = dx * dx + dz * dz;
+    if (d < best) {
+      best = d;
+      const length = Math.sqrt(m);
+      beyond = k === 0 && raw < 0 ? -raw * length : k + 2 === line.length && raw > 1 ? (raw - 1) * length : 0;
+    }
+  }
+  return { d: Math.sqrt(best), beyond };
+}
+
 // MARK: - The ground
 
 /// The bed's ground. **`water` says which drills are flooded in the plot on
-/// the stage**, and is asked afresh every time the ground is built, because
-/// the answer is a fact about the plot rather than about the area: a page
-/// that moves to another plot calls `stage.rebuild()`. A page that never
-/// asks gets the bed as it was before the water, which is what the tests and
-/// any caller written earlier get.
-export function makeSeedbedGround(place, water = () => []) {
+/// the stage**, and **`variant` which way round it is laid**, and both are
+/// asked afresh every time the ground is built, because the answers are facts
+/// about the plot rather than about the area: a page that moves to another
+/// plot calls `stage.rebuild()`. A page that never asks gets the bed laid as
+/// drawn and dry, which is what the tests and any caller written earlier get.
+export function makeSeedbedGround(place, water = () => [], variant = () => PLAIN) {
   return function buildSeedbedGround(farSide, span, e, eye) {
     const flooded = new Set(water());
+    const lines = drillLines(variant() ?? PLAIN);
     const positions = [], normals = [], colours = [];
     const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
     // What throws a shadow on the tilth: the labels, handed to the stage as
@@ -148,85 +194,77 @@ export function makeSeedbedGround(place, water = () => []) {
       lattice.push(row);
     }
 
-    // **Where each drill runs, row of lattice by row of lattice.** A drill is
-    // straight in the rule — `Slot.spot` puts every place in it on one `x` — and
-    // drawn straight it would be the one ruled line in a garden that has none.
-    // So the furrow the plants stand in wanders by a few centimetres along its
-    // length, which is what a rake leaves and what the eye reads as a line drawn
-    // by a hand. The plants do not move: this is the soil, not the placement.
-    //
-    // Worked out once a lattice row rather than once a face: it is a call into
-    // the module apiece, and there are ten thousand faces.
-    const zOf = (j) => -half + j * cell;
-    const centres = [];
-    for (let j = 0; j <= steps; j++) {
-      const z = zOf(j);
-      centres.push(place.drillX.map((x, d) =>
-        x + 0.045 * (e.pg_verge(z * 0.9 + d * 4.3, 1, SEEDBED.furrow) / 0.14)));
-    }
-
     // A slow wander under the crumb, so a bed is damper in one corner and drier
     // in another. Without it, ten thousand crumbs of independent tone average
     // out to one flat brown at arm's length. Separable, so it is two calls a
     // lattice line instead of two a face.
+    const zOf = (j) => -half + j * cell;
     const driftX = [], driftZ = [];
     for (let i = 0; i <= steps; i++) {
       driftX.push(0.055 * (e.pg_verge(zOf(i) * 0.58, -1, SEEDBED.drift) / 0.14));
       driftZ.push(0.045 * (e.pg_verge(zOf(i) * 0.51, 1, SEEDBED.drift) / 0.14));
     }
 
-    // How the rake left this point: dark in the bottom of a drill, pale on the
-    // crest between two, and flat again beyond the ends of them, where nothing
-    // is sown and nothing was drawn out.
-    const rake = (x, j) => {
-      let nearest = Infinity;
-      for (const centre of centres[j]) nearest = Math.min(nearest, Math.abs(x - centre));
-      const across = Math.min(1, nearest / (place.drillGap / 2));
-      // Smoothed, then pulled toward the crest: a drill is a narrow trough with
-      // a broad shoulder either side, not a sine wave. Drawn as a sine wave the
-      // bed reads as corrugated iron.
-      const shape = Math.pow(across * across * (3 - 2 * across), 0.62);
-      const past = Math.min(1, Math.max(0, (Math.abs(zOf(j)) - (SIDE / 2 - 0.45)) / 0.3));
-      return 1 + (1 - past) * (-0.17 + 0.27 * shape);
-    };
-
-    // **How far the bed is dug away here**, 0 outside a flooded drill. The
-    // trough is a dish rather than a box: a cut edge would be the one ruled
-    // line the house rule forbids, and standing water does not have square
-    // sides anyway.
+    // **How the rake left each point, and how far the bed is dug away there**,
+    // worked out once a lattice point rather than once a face: the drills are
+    // curves now, and finding the nearest of six is the dearest sum in the
+    // drawing.
     const bank = CHANNEL.across / 2;
-    const sink = (x, j) => {
-      let deepest = 0;
-      for (const drill of flooded) {
-        const across = Math.abs(x - centres[j][drill]) / bank;
-        if (across >= 1) continue;
-        const dish = 1 - across * across;
-        deepest = Math.max(deepest, CHANNEL.deep * dish * dish * (3 - 2 * dish) / (2 - dish));
+    const rakeAt = [], sinkAt = [];
+    for (let i = 0; i <= steps; i++) {
+      const rakes = [], sinks = [];
+      for (let j = 0; j <= steps; j++) {
+        const [x, z] = lattice[i][j];
+        // How the rake left this point: dark in the bottom of a drill, pale
+        // on the crest between two, and flat again beyond the ends of them,
+        // where nothing is sown and nothing was drawn out.
+        let nearest = Infinity, past = 1, deepest = 0;
+        lines.forEach((line, d) => {
+          const { d: off, beyond } = fromLine(line, x, z);
+          if (off < nearest) { nearest = off; past = Math.min(1, beyond / FADE); }
+          // **How far the bed is dug away here**, 0 outside a flooded drill.
+          // The trough is a dish rather than a box: a cut edge would be the
+          // one ruled line the house rule forbids, and standing water does not
+          // have square sides anyway. Its ends close in a rounded pool.
+          if (flooded.has(d)) {
+            const across = Math.hypot(off, Math.max(0, beyond - CHANNEL.ends)) / bank;
+            if (across < 1) {
+              const dish = 1 - across * across;
+              deepest = Math.max(deepest, CHANNEL.deep * dish * dish * (3 - 2 * dish) / (2 - dish));
+            }
+          }
+        });
+        const along = Math.min(1, nearest / (place.drillGap / 2));
+        // Smoothed, then pulled toward the crest: a drill is a narrow trough
+        // with a broad shoulder either side, not a sine wave. Drawn as a sine
+        // wave the bed reads as corrugated iron.
+        const shape = Math.pow(along * along * (3 - 2 * along), 0.62);
+        rakes.push(1 + (1 - past) * (-0.17 + 0.27 * shape));
+        sinks.push(deepest);
       }
-      return deepest;
-    };
+      rakeAt.push(rakes);
+      sinkAt.push(sinks);
+    }
 
-    const crumb = (i, j, k, x) => {
-      const under = sink(x, j);
+    const crumb = (i, j, k, under, lit) => {
       // **Silt under water, tilth out of it.** Wet ground is darker and
       // greyer than the crumb beside it, and the deeper it lies the less of
       // the sky reaches it.
       const base = under > 0 ? COLOUR.silt : COLOUR.tilth;
-      const lit = under > 0 ? 1 - 1.9 * under : rake(x, j);
-      return base.map((v) => v * (1 + driftX[i] + driftZ[j]) * lit
+      const light = under > 0 ? 1 - 1.9 * under : lit;
+      return base.map((v) => v * (1 + driftX[i] + driftZ[j]) * light
         * (0.91 + 0.18 * hash(i * 131 + j * 37 + k * 7 + SEEDBED.crumb)));
     };
-    const up = (p, j) => [p[0], 0.003 - sink(p[0], j), p[1]];
+    const up = (i, j) => [lattice[i][j][0], 0.003 - sinkAt[i][j], lattice[i][j][1]];
     for (let i = 0; i < steps; i++) {
       for (let j = 0; j < steps; j++) {
-        const a = lattice[i][j], b = lattice[i + 1][j], c = lattice[i + 1][j + 1], d = lattice[i][j + 1];
-        const A = up(a, j), B = up(b, j), C = up(c, j + 1), D = up(d, j + 1);
+        const A = up(i, j), B = up(i + 1, j), C = up(i + 1, j + 1), D = up(i, j + 1);
         if (hash(i * 31 + j * 17 + SEEDBED.crumb) < 0.5) {
-          tri(A, B, C, UP, crumb(i, j, 0, a[0]));
-          tri(A, C, D, UP, crumb(i, j, 1, c[0]));
+          tri(A, B, C, UP, crumb(i, j, 0, sinkAt[i][j], rakeAt[i][j]));
+          tri(A, C, D, UP, crumb(i, j, 1, sinkAt[i + 1][j + 1], rakeAt[i + 1][j + 1]));
         } else {
-          tri(A, B, D, UP, crumb(i, j, 2, a[0]));
-          tri(B, C, D, UP, crumb(i, j, 3, c[0]));
+          tri(A, B, D, UP, crumb(i, j, 2, sinkAt[i][j], rakeAt[i][j]));
+          tri(B, C, D, UP, crumb(i, j, 3, sinkAt[i + 1][j + 1], rakeAt[i + 1][j + 1]));
         }
 
         // **The water over the hole.** One flat quad a cell, laid only where
@@ -235,19 +273,19 @@ export function makeSeedbedGround(place, water = () => []) {
         // which is what gives a flooded drill a wandering margin. Drawn
         // upward only: it is a surface, not a solid.
         if (flooded.size === 0) continue;
-        const under = [sink(a[0], j), sink(b[0], j), sink(c[0], j + 1), sink(d[0], j + 1)];
+        const under = [sinkAt[i][j], sinkAt[i + 1][j], sinkAt[i + 1][j + 1], sinkAt[i][j + 1]];
         if (Math.min(...under) <= CHANNEL.surface) continue;
-        const wet = (p) => [p[0], 0.003 - CHANNEL.surface, p[1]];
+        const wet = (p) => [p[0], 0.003 - CHANNEL.surface, p[2]];
         // **The tank's colours, not a second set.** A flooded drill is the
         // Cold Frame's water at a different shape: `depths` over the middle
         // of the channel and `shallows` where the dish comes up under it,
         // opaque, because this garden lights flat and still water is a
         // colour rather than a window (`water.js`).
-        const shade = (n) => {
-          const deep = Math.min(1, (under[n] - CHANNEL.surface) / (CHANNEL.deep - CHANNEL.surface));
-          return COLOUR.shallows.map((v, k) => v + (COLOUR.depths[k] - v) * deep);
+        const shade = (k) => {
+          const deep = Math.min(1, (under[k] - CHANNEL.surface) / (CHANNEL.deep - CHANNEL.surface));
+          return COLOUR.shallows.map((v, c) => v + (COLOUR.depths[c] - v) * deep);
         };
-        quad(wet(a), wet(b), wet(c), wet(d), UP, shade(0), shade(1), shade(2), shade(3));
+        quad(wet(A), wet(B), wet(C), wet(D), UP, shade(0), shade(1), shade(2), shade(3));
       }
     }
 
@@ -259,13 +297,20 @@ export function makeSeedbedGround(place, water = () => []) {
     // to another plot, because which drills are claimed is a fact about the
     // plants and not about the ground.
     //
+    // **Stood on the drill's line and turned to face out along it**, since the
+    // drills curved: a label faces out of the end of the bed its drill runs
+    // from, which is the west end, or the east on a mirrored plot. The labels
+    // of six drills of different lengths stand on a curve of their own.
+    //
     // Nothing is written on them — `Organic.rowLabel` says why: at this scale a
     // word is four pixels tall and fights the plants. What each drill holds is
     // named in the page's text, where it can be read and translated.
-    for (let d = 0; d < place.drills; d++) {
+    lines.forEach((line, d) => {
       const mesh = readStructure(takeResult(e, e.pg_seedbed_label(0.38, 0.19, SEEDBED.label + d)));
-      stand(mesh, [place.drillX[d], 0, place.labelAt], casts);
-    }
+      const [x0, z0] = line[0], [x1, z1] = line[Math.min(3, line.length - 1)];
+      const out = Math.hypot(x0 - x1, z0 - z1) || 1;
+      stand(mesh, [x0, 0, z0], [(x0 - x1) / out, (z0 - z1) / out], casts);
+    });
 
     // Its side: the slab every plot hangs from its outline (`slab.js`), the
     // floor seed saying how its lower edge undulates.
@@ -281,61 +326,69 @@ export function makeSeedbedGround(place, water = () => []) {
   };
 }
 
-/// A label, stood at the head of its drill, with the grain that keeps a single
-/// colour from reading as plastic.
+/// A label, stood at the head of its drill and turned to face `facing`, a unit
+/// direction on the ground, with the grain that keeps a single colour from
+/// reading as plastic.
 ///
-/// It needs no axis swap where the Knot's `lay` does: `pg_seedbed_label` returns
-/// a label already facing the way a row label faces, out of the end of the bed
-/// the drill fills from.
+/// `pg_seedbed_label` returns a label facing `z-`, as a row label faced out of
+/// the north end of the straight bed; it is turned about its stake to face
+/// along its drill, normals with it.
 ///
 /// The grain is read off where a vertex is in the world rather than where it is
 /// in its own label, so that six labels cut from the same mesh are not six
 /// identical pieces of wood.
-function stand(mesh, at, vertex) {
+function stand(mesh, at, facing, vertex) {
+  // Turning (0, -1) to `facing`: x' = x c - z s, z' = x s + z c, with
+  // s = facing.x and c = -facing.z.
+  const s = facing[0], c = -facing[1];
+  const turn = (x, z) => [x * c - z * s, x * s + z * c];
   for (let t = 0; t < mesh.indices.length; t += 3) {
     for (const k of [0, 1, 2]) {
       const v = mesh.indices[t + k];
-      const p = [mesh.positions[v * 3] + at[0],
-                 mesh.positions[v * 3 + 1] + at[1],
-                 mesh.positions[v * 3 + 2] + at[2]];
-      const n = [mesh.normals[v * 3], mesh.normals[v * 3 + 1], mesh.normals[v * 3 + 2]];
+      const [px, pz] = turn(mesh.positions[v * 3], mesh.positions[v * 3 + 2]);
+      const p = [px + at[0], mesh.positions[v * 3 + 1] + at[1], pz + at[2]];
+      const [nx, nz] = turn(mesh.normals[v * 3], mesh.normals[v * 3 + 2]);
+      const n = [nx, mesh.normals[v * 3 + 1], nz];
       const tone = 0.88 + 0.24 * hash(Math.round(p[0] * 53) * 131 + Math.round(p[2] * 47) + Math.round(p[1] * 71));
-      vertex(p, n, LABEL_WOOD.map((c) => c * tone));
+      vertex(p, n, LABEL_WOOD.map((col) => col * tone));
     }
   }
 }
 
 // MARK: - Reading a bed
 
-/// Which drill a plant is standing in, from where it stands.
+/// Which drill a plant is standing in, from where it stands on a plot laid
+/// with `variant`: the drill whose line passes nearest it.
 ///
-/// **The wire says where, not which.** `SeedbedStore::planting` sends a seed, its
-/// parents and a spot, the same five fields every area sends, and the drill is
-/// recovered from the spot rather than added to it — the nudge across a drill is
-/// 0.035 m against a 0.74 m gap between drills, so the nearest is never in
-/// doubt. Asked of `pg_seedbed_plan`'s own positions, so this cannot come to
-/// disagree with the rule about where a drill runs.
-export function drillAt(place, x) {
-  let best = 0;
-  for (let d = 1; d < place.drillX.length; d++) {
-    if (Math.abs(x - place.drillX[d]) < Math.abs(x - place.drillX[best])) best = d;
-  }
+/// **The wire says which since the kind went on it**: `SeedbedStore::planting`
+/// sends the drill beside the spot, and a page should read that. This is for a
+/// planting that does not carry one. The nudge across a drill is 0.035 m
+/// against 0.74 m between drills, so the nearest is never in doubt. Asked of
+/// the table the rule reads, so this cannot come to disagree with it about
+/// where a drill runs.
+export function drillAt(x, z, variant = PLAIN) {
+  const lines = drillLines(variant);
+  let best = 0, nearest = Infinity;
+  lines.forEach((line, d) => {
+    const { d: off } = fromLine(line, x, z);
+    if (off < nearest) { nearest = off; best = d; }
+  });
   return best;
 }
 
 /// The six drills of a plot: what claimed each one, and how many of its eight
 /// places are sown.
 ///
-/// `entries` are `{ drill, kind }` in the order they arrived, which is the order
-/// a drill fills in. **A drill is claimed by the first plant sown in it**, so the
-/// kind is read off that plant and off nothing else — the same reading the rule
-/// makes, rather than a second claim kept beside it.
+/// `entries` are `{ drill, kind, span }` in the order they arrived. **A drill
+/// is claimed by the first plant sown in it**, so the kind is read off that
+/// plant and off nothing else — the same reading the rule makes, rather than a
+/// second claim kept beside it.
 ///
 /// All six are returned, claimed or not. A bed is drawn out before it is sown
 /// and mostly stands part-sown afterwards, and an unclaimed drill left out of
 /// the list would make a bed of one row look like a full one.
 export function readDrills(place, entries) {
-  const drills = place.drillX.map((x, drill) => ({ drill, x, sown: 0, kind: null }));
+  const drills = Array.from({ length: place.drills }, (_, drill) => ({ drill, sown: 0, kind: null }));
   for (const entry of entries) {
     const here = drills[entry.drill];
     if (!here) continue;
@@ -357,7 +410,7 @@ const SLICE = 16;
 const breathe = () => new Promise((resume) => setTimeout(resume, 0));
 
 // Grows one plot from the plot service. A planting with no parents was minted
-// rather than crossed — the ambassador at the head of the first drill — and
+// rather than crossed — the ambassador in the first drill — and
 // grows from its seed alone.
 //
 // **It hands back the plantings where the other five hand back a count.** This

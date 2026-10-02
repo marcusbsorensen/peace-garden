@@ -26,9 +26,34 @@ import Foundation
 ///    repeats a variety. It repeats a colour instead: a drift, once full, is
 ///    left, and the same colour starts again further down the walk.
 ///
+/// **Interlocking drifts, since 2 October 2026** (Marcus, from
+/// `design/garden-layouts-2026-10-02/RESEARCH.md`, the Long Walk, option A).
+/// The tiers were two staggered straight rows each, so a border read as ranks.
+/// Now each border's twenty-four places stand in six long, thin lenses
+/// slanting from the hedge to the path's edge and overlapping like slates
+/// (`PlaceTable.longWalkDrifts`), and the three parts of the rule become:
+///
+/// 1. **A lens's back is back tier and its tip front tier**, so nothing stands
+///    in front of something shorter, by depth, as before.
+/// 2. **A lens is a drift.** It is claimed by the colour family of the first
+///    plant sown in it, as the Knot Garden claims a pair, and holds only that
+///    colour: five places or three, which is the old cap of five.
+/// 3. **The same colour never claims the lens beside its own**, in its plot or
+///    across the join with the next, so a colour starts again further down the
+///    walk.
+///
+/// **And each plot is graded cool–hot–cool**, as Jekyll's border at Munstead
+/// Wood was (Marcus answered yes to it): a warm colour claims the free lens
+/// nearest the plot's middle and a cool one the free lens nearest its ends, so
+/// the walk pulses plot by plot. That is also what makes a plot of ten plants
+/// look finished: ten strokes of colour round its middle and its ends rather
+/// than a row from its head.
+///
 /// **The plot is 5.2 m square**, the app's own, with the walk running down its
 /// `z` axis so that on the isometric screen the path runs away diagonally, the
-/// way a path is seen from above and to one side.
+/// way a path is seen from above and to one side. **Plots vary by their
+/// number** (`variants`): turned half round, mirrored, or both, so the path
+/// stays where it runs and the slant of the drifts changes plot to plot.
 public enum LongWalk {
 
     // MARK: The ground
@@ -39,8 +64,8 @@ public enum LongWalk {
 
     /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
     /// Marcus's decision of 2 October 2026). Half turns and mirrors only, so the
-    /// path stays where it runs down the walk. Declared but not yet read: the
-    /// area's new layout reads it.
+    /// path stays where it runs down the walk: four ways, every one of them
+    /// within any four plots in a row.
     public static let variants = PlotVariant.Space(turns: 2, mirror: true)
 
     /// The mown path, either side of `x = 0`. 1.2 m: two people abreast.
@@ -49,9 +74,12 @@ public enum LongWalk {
     /// Where each border's hedge begins, measured out from the middle of the path.
     public static let hedgeFrom = 2.3
 
-    /// The length of the walk a plot's slots are spread over, leaving a little
+    /// The length of the walk a plot's places are spread over, leaving a little
     /// at each end so one plot's last plant does not stand on the next plot's first.
     public static let plantedLength = 4.8
+
+    /// The borders' places, made offline: twelve lenses, middle first.
+    public static let table = PlaceTable.longWalkDrifts
 
     // MARK: Tiers
 
@@ -59,46 +87,17 @@ public enum LongWalk {
     public enum Tier: Int, Codable, CaseIterable, Sendable {
         case edge, middle, back
 
-        /// How far out from the middle of the path this tier stands, in metres.
-        public var depth: Double {
-            switch self {
-            case .edge: return 0.95
-            case .middle: return 1.45
-            case .back: return 1.95
-            }
-        }
-
-        /// Slots in this tier on one side of one plot, in two staggered rows.
-        /// Fewer at the back, where the plants are bigger and are spaced wider,
-        /// as in any border.
-        ///
-        /// **Doubled on 18 September**, from one row of 5, 4 and 3, after the
-        /// walk was looked at with 500 plants in it. One row read as single
-        /// stems standing on turf, about 1.4 plants a square metre; a border is
-        /// planted at three to five, and a drift of one colour only reads as a
-        /// drift when its plants touch. Two rows give about 2.8 and some depth.
-        /// The proportions are unchanged, so the tier cuts still fit.
-        public var slots: Int { 2 * perRow }
-
-        /// Slots in one of a tier's two rows.
-        public var perRow: Int {
-            switch self {
-            case .edge: return 5
-            case .middle: return 4
-            case .back: return 3
-            }
-        }
-
-        /// How far each row stands from the tier's line, in and out.
-        static let rowOffset = 0.13
+        /// Places in this tier on one side of one plot: a lens of five has one
+        /// back place, two middle and two front, a lens of three one of each,
+        /// so six, nine and nine.
+        public var slots: Int { LongWalk.slots.filter { $0.side == .left && $0.tier == self }.count }
     }
 
     /// The tier a grown plant belongs in.
     ///
-    ///
     /// **Measured, then set to fit the slots.** Across three hundred crossings
     /// of three hundred different pairs of parents, grown heights run 0.15 m to
-    /// 2.31 m with thirds at 0.70 m and 1.09 m. A side of a plot has five front
+    /// 2.31 m with thirds at 0.70 m and 1.09 m. A side of a plot had five front
     /// slots, four middle and three back a row, so the cuts are at the 42nd and 75th
     /// centiles instead, 0.77 m and 1.20 m: set at the thirds, the back rows
     /// filled first and every plot opened with its front edge half empty.
@@ -115,6 +114,12 @@ public enum LongWalk {
     /// 0.795, and the Knot Garden's own five hundred at 0.741, so three hundred
     /// is no longer enough to say a number to the centimetre. The heights now
     /// run 0.12 m to 2.47 m, with thirds at 0.62 m and 1.07 m.
+    ///
+    /// **Kept when the drifts came on 2 October 2026**, though a side now has
+    /// nine front places, nine middle and six back where it had ten, eight and
+    /// six: a plant that finds its own tier full in a plot stands in the tier
+    /// beside it where the heights around it still order, and the fill on the
+    /// area's own plants was better than the rows' (`tools/layouts`).
     ///
     /// Crossings of **one** person with forty others ran taller and were half
     /// bells, which is why the sample is three hundred different pairs.
@@ -143,6 +148,15 @@ public enum LongWalk {
         let turn = hue > 1 ? hue / 360 : hue
         let wrapped = turn - turn.rounded(.down)
         return min(5, Int(wrapped * 6))
+    }
+
+    /// **The warm colours**: the reds and oranges, the yellows, and the
+    /// magentas — families 0, 1 and 5. They claim lenses from the middle of a
+    /// plot out, and the cool ones — the greens, the blues, the violets and
+    /// the pale — from its ends in, so each plot runs cool–hot–cool, as
+    /// Jekyll's main border at Munstead Wood did.
+    public static func isWarm(_ family: Int) -> Bool {
+        family == 0 || family == 1 || family == 5
     }
 
     // MARK: A plant's traits
@@ -182,10 +196,14 @@ public enum LongWalk {
     }
 
     /// One place in one plot.
+    ///
+    /// **`index` is the place's number in the table** since 2 October 2026,
+    /// in the order the table offers them; the side and the tier are the
+    /// table's for that place, kept beside it because they are what the
+    /// service stores and what a reader of a planting asks first.
     public struct Slot: Codable, Equatable, Hashable, Sendable {
         public var side: Side
         public var tier: Tier
-        /// Down the walk, from the start of the plot.
         public var index: Int
 
         public init(side: Side, tier: Tier, index: Int) {
@@ -194,39 +212,58 @@ public enum LongWalk {
             self.index = index
         }
 
-        /// Where the slot is, in metres from the middle of its plot.
-        ///
-        /// Even indices are the tier's inner row and odd the outer, staggered
-        /// by half a space so that no plant stands straight behind another. The
-        /// three tiers have different numbers of slots, so they are staggered
-        /// against each other too — plants in straight ranks down a border read
-        /// as a nursery, not a garden.
-        public var spot: Spot {
-            let spacing = LongWalk.plantedLength / Double(tier.perRow)
-            let row = index % 2, along = index / 2
-            let depth = tier.depth + (row == 0 ? -Tier.rowOffset : Tier.rowOffset)
-            return Spot(x: Double(side.rawValue) * depth,
-                        z: -LongWalk.plantedLength / 2 + (Double(along) + 0.25 + 0.5 * Double(row)) * spacing)
+        /// The table's place `index`, with its side and tier.
+        public init(index: Int) {
+            let place = LongWalk.table.places(nudge: 0)[index]
+            self.init(side: Side(rawValue: LongWalk.table.tag("side", of: place))!,
+                      tier: Tier(rawValue: LongWalk.table.tag("tier", of: place))!,
+                      index: index)
         }
+
+        /// Which lens the place is in: its rank from the plot's middle.
+        public var lens: Int { LongWalk.lensOf[index] }
+
+        /// Where the place is in the table, before its plot is turned.
+        public var spot: Spot { LongWalk.table.places(nudge: 0)[index].spot }
     }
 
-    /// Every slot in one plot, in the order a tie is broken: down the walk
-    /// first, so a plot fills from its start and a visitor walking down it
-    /// meets the planted part first.
-    public static let slots: [Slot] = {
-        var all: [Slot] = []
-        for tier in Tier.allCases {
-            for index in 0..<tier.slots {
-                for side in Side.allCases {
-                    all.append(Slot(side: side, tier: tier, index: index))
-                }
-            }
-        }
-        return all.sorted { a, b in
-            if a.spot.z != b.spot.z { return a.spot.z < b.spot.z }
-            return a.side.rawValue < b.side.rawValue
-        }
-    }()
+    /// Every place in one plot, in the table's order: the lens nearest the
+    /// middle of the plot first, and in each lens its middle first.
+    public static let slots: [Slot] = (0..<table.places(nudge: 0).count).map { Slot(index: $0) }
+
+    /// How many lenses a plot has: six a border.
+    public static let lenses = 12
+
+    /// Each place's lens, and each lens's places in the table's order.
+    static let lensOf: [Int] = table.places(nudge: 0).map { table.tag("lens", of: $0) }
+    static let placesIn: [[Int]] = (0..<lenses).map { lens in slots.indices.filter { lensOf[$0] == lens } }
+
+    /// Each lens's side, and where it comes in its border from the head of
+    /// the plot, 0 to 5.
+    static let sideOf: [Int] = (0..<lenses).map { table.tag("side", of: table.places(nudge: 0)[placesIn[$0][0]]) }
+    static let alongOf: [Int] = (0..<lenses).map { table.tag("along", of: table.places(nudge: 0)[placesIn[$0][0]]) }
+
+    /// **The order a colour claims lenses in.** A warm colour takes the lenses
+    /// as the table numbers them, middle first; a cool one takes the same
+    /// groups of four the other way round, the two at each end first, then the
+    /// next two, then the middle.
+    static func claimOrder(warm: Bool) -> [Int] {
+        warm ? Array(0..<lenses) : [8, 9, 10, 11, 4, 5, 6, 7, 0, 1, 2, 3]
+    }
+
+    /// The variant a plot is laid with, from its number.
+    public static func variant(of plot: Int) -> PlotVariant {
+        PlotVariant.of(plot: plot, area: .travel)
+    }
+
+    /// **Where a lens is on the walk as drawn**: which side of the path, and
+    /// where it comes from the head of its plot, once the plot is turned. Read
+    /// by turning a point at the lens's side and its place along the border, so
+    /// it is exact: half-integers, turned by a sign.
+    static func onTheWalk(_ lens: Int, in plot: Int) -> (side: Int, along: Int) {
+        let at = variant(of: plot).apply(Spot(x: Double(sideOf[lens]), z: Double(alongOf[lens]) - 2.5))
+        return (at.x < 0 ? -1 : 1, Int(at.z + 2.5))
+    }
 
     // MARK: Planting
 
@@ -236,14 +273,24 @@ public enum LongWalk {
         public var plot: Int
         public var slot: Slot
         public var traits: Traits
-        /// A small offset from the slot, from the seed, so plants set by a rule
-        /// do not stand on a grid. Kept, like everything else here.
+        /// A small offset from the place, from the seed, so plants set by a
+        /// rule do not stand exactly where the table says. Kept, like
+        /// everything else here.
         public var nudge: Spot
 
-        /// Where it stands in its plot.
+        /// Where it stands in its plot: its place and its nudge, turned as its
+        /// plot is.
         public var spot: Spot {
-            Spot(x: slot.spot.x + nudge.x, z: slot.spot.z + nudge.z)
+            LongWalk.variant(of: plot).apply(Spot(x: slot.spot.x + nudge.x, z: slot.spot.z + nudge.z))
         }
+    }
+
+    /// One plot as the rule reads it: which places are taken, what claimed
+    /// each lens, and who stands where.
+    struct Plot {
+        var taken = Set<Int>()
+        var claims = [Int?](repeating: nil, count: LongWalk.lenses)
+        var here: [Planting] = []
     }
 
     /// The whole walk: every planting, in the order they arrived.
@@ -274,6 +321,24 @@ public enum LongWalk {
         /// Plots opened so far.
         public var plots: Int { (plantings.map(\.plot).max() ?? -1) + 1 }
 
+        /// The colour family that claimed a lens of a plot: the first plant
+        /// sown in it. Nil if nobody has. **Read off the plants rather than
+        /// stored**, as the Knot Garden's pairs and the Seedbed's drills are.
+        public func claim(of lens: Int, in plot: Int) -> Int? {
+            plantings.first { $0.plot == plot && $0.slot.lens == lens }?.traits.family
+        }
+
+        /// Every plot up to `count`, read in one pass over the plantings.
+        func read(_ count: Int) -> [Plot] {
+            var out = Array(repeating: Plot(), count: count)
+            for p in plantings where p.plot < count {
+                out[p.plot].taken.insert(p.slot.index)
+                if out[p.plot].claims[p.slot.lens] == nil { out[p.plot].claims[p.slot.lens] = p.traits.family }
+                out[p.plot].here.append(p)
+            }
+            return out
+        }
+
         /// Where the next plant with these traits would go, without planting it.
         ///
         /// **The rule is not "tall ones in the back row".** It is that nothing
@@ -283,40 +348,96 @@ public enum LongWalk {
         /// plot of its own, so the walk trailed off into beds holding six back-row
         /// plants each and nothing in front of them.
         ///
-        /// So, in order:
+        /// So, in each plot from the oldest, before the walk goes on:
         ///
-        /// 1. Its own tier, in the oldest plot with room, so gaps left behind
-        ///    are filled before the walk goes on.
-        /// 2. The tier next to its own, in the oldest plot with room, where
+        /// 1. A lens its colour has claimed, in its own tier.
+        /// 2. A lens nobody has claimed, in its own tier, taken in its colour's
+        ///    order — middle first if it is warm, ends first if it is cool —
+        ///    and never one beside a lens of its colour (`besideItsColour`).
+        /// 3. A lens its colour has claimed, in the tier beside its own, where
         ///    everything near it in front is shorter and everything behind is
         ///    taller.
-        /// 3. Its own tier in a new plot.
         ///
-        /// The ordering is checked for every placement, its own tier included,
-        /// so it holds everywhere and not on average.
+        /// Then a new plot, the first lens in its colour's order. In a lens a
+        /// plant takes the first free place of its tier in the table's order,
+        /// the lens's middle first. The ordering is checked for every placement,
+        /// its own tier included, so it holds everywhere and not on average.
         public func place(for traits: Traits) -> (plot: Int, slot: Slot) {
             let own = traits.tier
             let beside = Tier.allCases.filter { abs($0.rawValue - own.rawValue) == 1 }
+            let order = LongWalk.claimOrder(warm: LongWalk.isWarm(traits.family))
+            let count = plots
+            var state = read(count + 1)
 
-            for tiers in [[own], beside] {
-                for plot in 0..<plots {
-                    let taken = Set(plantings.filter { $0.plot == plot }.map(\.slot))
-                    let open = LongWalk.slots.filter {
-                        tiers.contains($0.tier) && !taken.contains($0)
-                            && inOrder(traits.height, at: $0, in: plot)
+            for plot in 0..<count {
+                for lens in order where state[plot].claims[lens] == traits.family {
+                    if let slot = open(lens, in: state[plot], tiers: [own], height: traits.height) {
+                        return (plot, slot)
                     }
-                    if let best = best(of: open, in: plot, for: traits) { return (plot, best) }
+                }
+                for lens in order where state[plot].claims[lens] == nil
+                    && !besideItsColour(lens, in: plot, family: traits.family, state: state) {
+                    if let slot = open(lens, in: state[plot], tiers: [own], height: traits.height) {
+                        return (plot, slot)
+                    }
+                }
+                for lens in order where state[plot].claims[lens] == traits.family {
+                    if let slot = open(lens, in: state[plot], tiers: beside, height: traits.height) {
+                        return (plot, slot)
+                    }
                 }
             }
-            let open = LongWalk.slots.filter { $0.tier == own }
-            return (plots, best(of: open, in: plots, for: traits) ?? open[0])
+            // A new plot. It is empty, so every lens has a place of every tier
+            // and the only thing that can refuse one is its colour beside it
+            // across the join.
+            state[count] = Plot()
+            for lens in order where !besideItsColour(lens, in: count, family: traits.family, state: state) {
+                if let slot = open(lens, in: state[count], tiers: [own], height: traits.height) {
+                    return (count, slot)
+                }
+            }
+            return (count, open(order[0], in: state[count], tiers: [own], height: traits.height)!)
+        }
+
+        /// The first free place of these tiers in a lens, in the table's order,
+        /// where a plant this tall stands in order with those around it.
+        func open(_ lens: Int, in plot: Plot, tiers: [Tier], height: Double) -> Slot? {
+            for index in LongWalk.placesIn[lens] where !plot.taken.contains(index) {
+                let slot = LongWalk.slots[index]
+                if tiers.contains(slot.tier) && inOrder(height, at: slot, among: plot.here) { return slot }
+            }
+            return nil
+        }
+
+        /// **Whether a lens is beside one its colour holds**: the lens before
+        /// or after it in its own border, or, at the end of a plot, the lens it
+        /// meets across the join with the plot before or after, as the walk is
+        /// drawn. A colour that took it would run two drifts into one, past
+        /// five, and the repetition down the walk is a colour starting again
+        /// somewhere else.
+        func besideItsColour(_ lens: Int, in plot: Int, family: Int, state: [Plot]) -> Bool {
+            let side = LongWalk.sideOf[lens], along = LongWalk.alongOf[lens]
+            for other in 0..<LongWalk.lenses where LongWalk.sideOf[other] == side
+                && abs(LongWalk.alongOf[other] - along) == 1 && state[plot].claims[other] == family {
+                return true
+            }
+            let drawn = LongWalk.onTheWalk(lens, in: plot)
+            for (neighbour, end, meets) in [(plot - 1, 0, 5), (plot + 1, 5, 0)]
+                where drawn.along == end && neighbour >= 0 && neighbour < state.count {
+                for other in 0..<LongWalk.lenses where state[neighbour].claims[other] == family {
+                    let there = LongWalk.onTheWalk(other, in: neighbour)
+                    if there.side == drawn.side && there.along == meets { return true }
+                }
+            }
+            return false
         }
 
         /// Whether a plant this tall can stand in this slot: shorter than what
-        /// is near it behind, taller than what is near it in front.
-        func inOrder(_ height: Double, at slot: Slot, in plot: Int) -> Bool {
-            for other in plantings where other.plot == plot
-                && other.slot.side == slot.side
+        /// is near it behind, taller than what is near it in front. Asked of
+        /// the table's places, before the plot is turned, which a turn moves
+        /// without changing how far apart they are.
+        func inOrder(_ height: Double, at slot: Slot, among here: [Planting]) -> Bool {
+            for other in here where other.slot.side == slot.side
                 && abs(other.slot.spot.z - slot.spot.z) <= Self.orderReach {
                 let behind = other.slot.tier.rawValue > slot.tier.rawValue
                 let inFront = other.slot.tier.rawValue < slot.tier.rawValue
@@ -336,7 +457,7 @@ public enum LongWalk {
                 return (Double(bytes[i]) / 255 - 0.5) * 2 * reach
             }
             let planting = Planting(seed: seed.hex, plot: plot, slot: slot, traits: traits,
-                                    nudge: Spot(x: jitter(20, 0.1), z: jitter(21, 0.14)))
+                                    nudge: Spot(x: jitter(20, Self.nudge), z: jitter(21, Self.nudge)))
             plantings.append(planting)
             return planting
         }
@@ -346,85 +467,15 @@ public enum LongWalk {
             plantings.filter { $0.plot == index }
         }
 
-        // MARK: Choosing among open slots
-
         /// How far along the walk "in front of" and "behind" reach, for the
         /// rule that nothing stands in front of something shorter.
         static let orderReach = 1.3
 
-        /// How near two plants must be to count as one drift: the plant
-        /// staggered beside it in the other row, or the nearest row of the tier
-        /// behind or in front. Set for two rows a tier; at one row it was 1.3 m
-        /// along and 0.6 m across, and with two it let drifts chain to seven.
-        static let driftReach = 0.85
-        static let driftDepth = 0.3
-
-        /// The best open slot for a plant of this colour:
-        ///
-        /// - **Beside a drift of its colour that is still short of five.** The
-        ///   larger the drift the better, so drifts finish rather than several
-        ///   starting and none reaching three.
-        /// - **Otherwise, away from any of its colour.** A drift that is full
-        ///   stays full, and a new one starts somewhere else down the walk —
-        ///   which is the repetition.
-        /// - **Never beside a full drift of its colour**, or between drifts that
-        ///   would join past five. Nil if that leaves nothing.
-        /// - Ties go down the walk, then left before right.
-        func best(of open: [Slot], in plot: Int, for traits: Traits) -> Slot? {
-            let here = plantings.filter { $0.plot == plot }
-            var bestSlot: Slot?
-            var bestScore = Int.min
-            for slot in open {
-                let near = here.filter {
-                    $0.slot.side == slot.side
-                        && abs($0.slot.spot.z - slot.spot.z) <= Self.driftReach
-                        && abs($0.slot.spot.x - slot.spot.x) <= Self.driftDepth
-                }
-                let kin = near.filter { $0.traits.family == traits.family }
-                let score: Int
-                if kin.isEmpty {
-                    score = 0
-                } else {
-                    // Every drift it would touch, joined: a slot between two
-                    // short drifts of one colour makes one long one.
-                    var joined: Set<Slot> = []
-                    for neighbour in kin { joined.formUnion(drift(from: neighbour, in: here)) }
-                    // Never past five: a slot that would make a longer drift
-                    // is no slot for this colour, and the rule looks in the
-                    // next tier or plot instead. Another colour will take it.
-                    guard joined.count < 5 else { continue }
-                    score = 10 + joined.count
-                }
-                if score > bestScore {
-                    bestScore = score
-                    bestSlot = slot
-                }
-            }
-            return bestSlot
-        }
-
-        /// How many plants of one colour are joined, neighbour to neighbour, to
-        /// this one.
-        func driftSize(from start: Planting, in here: [Planting]) -> Int {
-            drift(from: start, in: here).count
-        }
-
-        /// The slots of the plants in that drift.
-        func drift(from start: Planting, in here: [Planting]) -> Set<Slot> {
-            var seen: Set<Slot> = [start.slot]
-            var frontier = [start]
-            while let next = frontier.popLast() {
-                for other in here where !seen.contains(other.slot)
-                    && other.traits.family == start.traits.family
-                    && other.slot.side == next.slot.side
-                    && abs(other.slot.spot.z - next.slot.spot.z) <= Self.driftReach
-                    && abs(other.slot.spot.x - next.slot.spot.x) <= Self.driftDepth {
-                    seen.insert(other.slot)
-                    frontier.append(other)
-                }
-            }
-            return seen
-        }
+        /// **How far a plant is nudged from its place**, either way. 0.05 m
+        /// since the drifts: the places no longer stand on a grid for a nudge
+        /// to hide, and in a lens of five they stand 0.36 m apart, where the
+        /// rows' 0.1 m and 0.14 m would have stood two plants nearly touching.
+        static let nudge = 0.05
     }
 
     // MARK: The ambassador
@@ -438,7 +489,9 @@ public enum LongWalk {
     /// that it stands in the first one the rule filled. A double border's
     /// feature belongs at the end of its vista, and this walk has no end — its
     /// plots open end to end for as long as people go on meeting — so what it
-    /// has instead is a head, and the oldest plant in the area stands at it.
+    /// has instead is a first plot, and the oldest plant in the area stands in
+    /// it. **Since the drifts it stands in the middle of that plot**, at the tip
+    /// of the first lens a warm colour claims, because it is red.
     ///
     /// **It takes its own tier, like anything else.** *Zephea* is 0.52 m, which
     /// is the edge of a border rather than the back of one, and three of the

@@ -31,6 +31,7 @@ import { openWays } from './gates.js';
 import { openMovePad } from './movepad.js';
 import { plantPanel } from './plantpanel.js';
 import { showGathers } from './meanings.js';
+import { PLAIN, variantFromModule } from './variant.js';
 
 const el = (id) => document.getElementById(id);
 const note = el('note');
@@ -59,9 +60,10 @@ const say = async (key) => {
 /// sown.
 ///
 /// **A count drawn rather than written, the way the map draws how full an area
-/// is.** Eight marks, one a place, filled from the end the drill fills from — so
-/// a reader sees *three of eight* without the page owning a string that says
-/// three of eight in forty-three languages. The number itself is on the row's
+/// is.** Eight marks, one a place, as many filled as are sown — so a reader sees
+/// *three of eight* without the page owning a string that says three of eight in
+/// forty-three languages. A drill is sown from its middle since 2 October 2026,
+/// so the marks say how many and not which. The number itself is on the row's
 /// own label for anybody listening rather than looking, which is what
 /// `/g`'s cells do with theirs.
 ///
@@ -101,40 +103,38 @@ function writeDrills(list, drills, places) {
 
 async function place() {
   const engine = await loadModule(document.documentElement.dataset.module || '/plant.wasm');
-  // The bed's own numbers — where the six drills run, where the eight places sit
-  // along one, where a label stands — come from the module rather than being
-  // written down again here, so the page cannot disagree with the rule about
-  // where a drill is.
+  // The bed's own numbers come from the module, and where its six drills run
+  // from the place table the rule reads, rather than being written down again
+  // here, so the page cannot disagree with the rule about where a drill is.
   // **One plot, framed as though there were a little more than one**, the Quiet
   // Garden's margin: a single square framed tight touches the ends of its
   // drills, and a plot with air round it reads as a place you are looking into
   // rather than a texture filling the screen.
   const bed = plan(engine);
-  // **Which drills of the plot on the stage are flooded.** Held here rather
-  // than in the ground, because the ground is built once for the area and
-  // this changes with the plot: `growSeedbedFromService` sets it from the
-  // plot's own answer and `stage.rebuild()` digs the bed again.
+  // **Which drills of the plot on the stage are flooded, and which way round
+  // it is laid.** Held here rather than in the ground, because the ground is
+  // built once for the area and these change with the plot: `show` sets the
+  // variant from the plot's number, `growSeedbedFromService` the water from
+  // the plot's own answer, and `stage.rebuild()` digs the bed again. Every
+  // other plot is the plan mirrored, its labels at the east end.
   let flooded = [];
+  let laid = PLAIN;
   const stage = makePlotStage(el('stage'), 1.25, engine,
-                              makeSeedbedGround(bed, () => flooded));
+                              makeSeedbedGround(bed, () => flooded, () => laid));
   // And the areas beside this one, as slabs out in the sky past the plot:
   // the same one word again, and `beside.js` reads the map from it.
   stage.beside(THEME);
 
-  // **The wire says where a plant stands, not what it is.** `SeedbedStore` keeps
-  // the epithet in a column — the rule is built on it — and `planting` sends the
-  // five fields every area sends: a seed, its parents, its meeting and a spot.
-  // The drill is recovered from the spot, which is exact enough to be certain of
-  // (0.035 m of nudge across a 0.74 m gap), but the epithet cannot be recovered
-  // from anything, because reading it means growing the plant and asking its
-  // name.
-  //
-  // So the kinds this page can name are the ones the module itself holds: asked
-  // before anything has been invented, `pg_seedbed_describe` is the Seedbed as
-  // it opened, and the ambassador standing at the head of the first drill is the
-  // same plant, by the same seed, that the service sends. A drill claimed by an
-  // arrival is counted and left unnamed until the wire carries what the store
-  // already has.
+  // **The wire says which drill and what kind**: `SeedbedStore::planting`
+  // sends both beside the spot, because the epithet cannot be recovered from
+  // anything on the page — reading it means growing the plant and asking its
+  // name. A service from before they went on the wire sends neither, and then
+  // the drill is recovered from the spot, which is exact enough to be certain
+  // of (0.035 m of nudge across a 0.74 m gap), and the kind is known only for
+  // the plant the module itself holds: `pg_seedbed_describe`, asked before
+  // anything has been invented, is the Seedbed as it opened, and the
+  // ambassador in its first drill is the same plant, by the same seed, that
+  // the service sends.
   const kinds = new Map(describeSeedbed(engine, 0).map((p) => [p.seed, p.traits.kind]));
 
   let sky = null;
@@ -160,11 +160,12 @@ async function place() {
   // turning. `movepad.js`, the same on every area page.
   const growing = () => say('walkGrowing');
   const show = async (plot) => {
+    laid = variantFromModule(engine, THEME, plot) ?? PLAIN;
     const plantings = await growSeedbedFromService(engine, stage, plot, growing,
                                                    (water) => { flooded = water; });
     writeDrills(el('drills'), readDrills(bed, plantings.map((p) => ({
-      drill: drillAt(bed, p.spot[0]),
-      kind: kinds.get(p.seed),
+      drill: p.drill ?? drillAt(p.spot[0], p.spot[1], laid),
+      kind: p.kind ?? kinds.get(p.seed),
       span: p.span,
     }))), bed.places);
     note.hidden = true;

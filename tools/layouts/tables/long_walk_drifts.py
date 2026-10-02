@@ -9,21 +9,25 @@ on one side faces a lens of three on the other. Marcus chose this on
 option A), with each plot graded cool at its ends and hot in its middle.
 
 `side` is -1 for the border at x- and 1 for the one at x+. `lens` is the
-lens's rank from the plot's middle: lens 0 is the one a warm colour claims
-first, lens 11 the one a cool colour claims first, so the places are listed
-middle lens first. `tier` is 0 at the front of a border, 1 in the middle and
-2 at the back, read off how far the place stands from the path: a lens's back
-is back tier and its tip front tier, so nothing stands in front of something
-shorter by depth. Within a lens its places run from its middle outward,
-farthest-first. The curves are each lens's outline, `lens0` to `lens11` by
-rank, and each border's front edge, which follows the lenses' tips.
+lens's rank from the plot's middle, in groups of four: lenses 0 to 3 are the
+two each side nearest the middle, 4 to 7 the next, 8 to 11 the two at each
+end. A warm colour claims in that order and a cool one the groups the other
+way round, ends first, so the places are listed middle lens first.
+
+`tier` is 0 at the front of a border, 1 in the middle and 2 at the back: a
+lens's back is back tier and its tip front tier, so nothing stands in front
+of something shorter by depth. `along` is where the lens comes in its border,
+0 at the head of the plot (z-) to 5 at its foot, which is how the rule finds
+the lens beside another. Within a lens its places run from its middle
+outward, farthest-first. The curves are each lens's outline, `lens0` to
+`lens11` by rank.
 """
 import math
 
 from places import Layout, shapes, order
 from places.numbers import Rng
 
-FIELDS = ('side', 'lens', 'tier')
+FIELDS = ('side', 'lens', 'tier', 'along')
 JS = True
 MIN_SPACING = 0.33
 BOUND = 2.45
@@ -100,12 +104,16 @@ def build(nudge):
             tiers = TIERS[count]
             lenses.append(dict(side=side, k=k, zc=zc, count=count, spine=spine,
                                places=list(zip(places, tiers))))
-    # Middle first: by how far the lens's middle is from the plot's, the
-    # border at x- taking the first of each pair and the other the second, so
-    # a warm colour's first two lenses face each other across the path.
+    # Middle first, in groups of four: the two lenses each side nearest the
+    # plot's middle, then the next two each side, then the two at the ends.
+    # Within a group the lenses of five come before the lenses of three, and
+    # the head of the plot before its foot, so a warm colour's first two
+    # lenses are the big ones facing each other across the path, one a little
+    # up the walk and one a little down it. Lens 4g to 4g + 3 is group g, which
+    # is how the rule reads the ends-first order a cool colour claims in.
     def rank(lens):
-        far = round(abs(lens['zc']) / STEP)
-        return (far, lens['side'] * (1 if lens['zc'] < 0 else -1))
+        far = abs(2 * lens['k'] - 5) // 2
+        return (far, -lens['count'], lens['k'], lens['side'])
     lenses.sort(key=rank)
 
     layout = Layout()
@@ -114,6 +122,6 @@ def build(nudge):
         points = [p for p, _ in lens['places']]
         tier_of = {p: t for p, t in lens['places']}
         for p in order.focal_first(points, middle):
-            layout.add([p], side=lens['side'], lens=rank_, tier=tier_of[p])
+            layout.add([p], side=lens['side'], lens=rank_, tier=tier_of[p], along=lens['k'])
         layout.curve(f'lens{rank_}', lens_outline(lens['side'], lens['k'], lens['spine'], lens['count']))
     return layout

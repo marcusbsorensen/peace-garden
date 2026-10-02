@@ -59,6 +59,7 @@
   import { describeSeedbed, growInvented, growSeedbedFromService, makeSeedbedGround, plan,
            plantVisitors, readDrills } from '/assets/js/seedbed.js';
   import { makeSky } from '/assets/js/sky.js';
+  import { PLAIN, variantFromModule } from '/assets/js/variant.js';
 
   const query = new URLSearchParams(location.search);
   const number = (name, fallback) => Math.max(0, parseInt(query.get(name) ?? '', 10) || fallback);
@@ -74,11 +75,13 @@
   const MODULE = `/plant.wasm?dev=${Date.now()}`;
   const e = await loadModule(MODULE);
   const place = plan(e);
-  // Which drills of the plot on the stage are flooded, as the real page
-  // holds it: set before the plot is grown, and the ground dug again for it.
+  // Which drills of the plot on the stage are flooded, and which way round it
+  // is laid, as the real page holds them: set before the plot is grown, and
+  // the ground dug again for it.
   let flooded = [];
+  let laid = PLAIN;
   const stage = makePlotStage(document.getElementById('stage'), 1, e,
-                              makeSeedbedGround(place, () => flooded));
+                              makeSeedbedGround(place, () => flooded, () => laid));
 
   let sky = null;
   makeSky(document.getElementById('sky'), {
@@ -123,10 +126,15 @@
   async function show() {
     document.getElementById('back').disabled = plot === 0;
     document.getElementById('on').disabled = plot + 1 >= plots;
+    laid = variantFromModule(e, 'beginnings', plot) ?? PLAIN;
     if (!fromService) {
-      flooded = [...new Set(describeSeedbed(e, plot)
-        .filter((r) => r.traits.habit === 'lotus')
-        .map((r) => r.slot.drill))].sort((a, b) => a - b);
+      // A drill is flooded if the plant that claimed it wants water: a lily,
+      // or a reed since 28 September 2026.
+      const first = new Map();
+      for (const r of describeSeedbed(e, plot)) if (!first.has(r.slot.drill)) first.set(r.slot.drill, r);
+      flooded = [...first.values()]
+        .filter((r) => r.traits.habit === 'lotus' || r.traits.habit === 'reed')
+        .map((r) => r.slot.drill).sort((a, b) => a - b);
       stage.rebuild();
     }
     const count = fromService
