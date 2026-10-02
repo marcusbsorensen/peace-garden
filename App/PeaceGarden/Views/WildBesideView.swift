@@ -141,7 +141,7 @@ struct WildBesideView: View {
 
                     VStack(spacing: 16) {
                         fact("Anyone walking the field can come across it.")
-                        fact("Beside it stands only what each of you chooses. Left as it is, you stay anonymous.")
+                        fact("Beside it stands only what each of you chooses. Left as it is, no name is shown.")
                     }
                     .padding(.horizontal, 40)
                     .frame(maxWidth: Chrome.readableWidth)
