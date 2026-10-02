@@ -5,6 +5,27 @@ lamp) now throws a shadow on the ground. The shadow follows the sun or the moon
 at the hour. Before this, a plant's shadow was its own picture, blackened and
 sheared. Branch `worktree-agent-a6817e95101b680b7`, not merged.
 
+## Marcus's answers, 2 October 2026, and the final pictures
+
+- **Noon: lighter.** The darkest cores now lose about half the ground's light,
+  not three quarters. Two leaves over one another still read darker than one.
+- **Morning and evening: sharper.** The long low-sun shadows, roughly
+  06:00–08:00 and 16:00–18:00, are less blurred the longer they are, so stems
+  and flower heads read as shapes. The edges stay soft and irregular. Each
+  shadow is now worked out on a grid that lies along it: fine across the
+  shadow, longer cells along it.
+- **The hare, the fox and the snail** keep their shadows.
+- **New moon:** a fifth of the full moon's shadow remains.
+
+`final-08-close.png`, `final-12-close.png` and `final-17-close.png` show these
+answers in place. They are drawn on current main, with the new day sky and the
+solid slab. `final-sheets.png` shows the shadows on their own, each laid along
+its light with the foot at the left.
+
+Everything below was written before the answers. The `before-` and `after-`
+pictures are from the first version: darker at noon, softer in the evening, on
+the old sky and the old cut.
+
 ## The pictures
 
 The same plot, before and after, at 08:00, noon, 17:00 and midnight:
@@ -30,9 +51,10 @@ it again").
   light onto the ground and counted in layers. A tall thin stem therefore casts
   a long thin shadow, and a cushion a short broad one. Where leaves overlap,
   the shadow is darker. The plant shadows are gently dappled.
-- **Sharp at the foot, softer further out**, according to how far along the
-  ground each part lands. A five o'clock shadow is long and blurs out along its
-  length.
+- **Sharp at the foot, softer further out.** In this first version, softness
+  went by how far along the ground each part lands, so a five o'clock shadow
+  blurred out along its length. Since Marcus's answers, softness goes by height
+  (the website's way), and a long shadow is blurred less (see above).
 - **Multiplied into the ground and cut to its top surface.** All the shadows are
   one layer, drawn after the ground and before anything that stands on it. They
   stop at the rim, so nothing falls down the cut or over the sky. A lamp's pool
@@ -106,8 +128,8 @@ should be several times faster.
 
 - **Noon pools merge.** Under the cluster of large flowers, several shadows
   overlap into one heavy dark patch. That is physically right, but heavy.
-- **Five o'clock shadows read as shade more than as shapes.** They are long,
-  broad and soft, and on this dark ground the stems' lines mostly dissolve.
+- **Five o'clock shadows read as shade more than as shapes** (in the first
+  version). Marcus's answer sharpened them; see `final-17-close.png`.
 - **A shadow lands only on the ground**, never on a plant or a figure beside it.
   The website does the same.
 - **On a slope, a shadow lies on the plane of the ground at the foot.** Across a
@@ -119,15 +141,15 @@ should be several times faster.
 - **The Long Walk preview hedges keep their old shadow.** This only affects the
   developer preview.
 
-## Questions for Marcus
+## Questions for Marcus, as they were put
 
 1. Noon shadows take up to three quarters of the ground's light where they are
-   densest.
-   **Keep** (recommended), or lighter?
-2. At new moon, a fifth of the full-moon shadow remains. **Keep** (recommended),
-   or none?
+   densest. Keep, or lighter? *Lighter: about half.*
+2. At new moon, a fifth of the full-moon shadow remains. Keep, or none? *Keep.*
 3. The hare, fox and snail now have shadows, though they had none since build 3.
-   **Keep** (recommended), or take them away again?
+   Keep, or take them away again? *Keep.*
+
+He also asked for the long morning and evening shadows to be sharper.
 
 ## Running it again
 

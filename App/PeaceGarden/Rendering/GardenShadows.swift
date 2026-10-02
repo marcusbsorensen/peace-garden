@@ -93,11 +93,14 @@ final class GardenShadows: @unchecked Sendable {
     /// the moon there is far less direct light to take and it is faint, and on
     /// a slope turned from the light there is nothing to take at all.
     ///
-    /// **More than half again a hill's shade.** Under a plant the sky is partly
-    /// shut out as well as the sun — a hill's shade is open to the whole sky,
-    /// a pool under a leafy plant is not — and at the ground's own depth of
-    /// shade the shadows were there and could not be seen: by day the sky
-    /// lights this ground nearly as much as the sun does.
+    /// **More than half again a hill's shade, and never much more than half
+    /// the light.** Under a plant the sky is partly shut out as well as the
+    /// sun — a hill's shade is open to the whole sky, a pool under a leafy
+    /// plant is not — and at the ground's own depth of shade the shadows were
+    /// there and could not be seen. Taken all the way, though, the noon cores
+    /// lost three quarters of the ground's light, and Marcus asked for them
+    /// lighter (2 October 2026): full shade now takes a little over half, so a
+    /// pile of leaves reaches about half and one leaf about a third.
     ///
     /// The moon's is cooler again. Its light and the sky's are both blue at
     /// night, so the arithmetic alone takes them in near enough equal parts and
@@ -118,11 +121,11 @@ final class GardenShadows: @unchecked Sendable {
             // A low sun still throws a shadow that can be seen. The ground
             // takes most of its light from the sky by then, and the arithmetic
             // alone left a five o'clock shadow as a smudge.
-            taken = simd_max(taken, one * 0.5)
+            taken = simd_max(taken, one * 0.45)
         } else {
             taken *= SIMD3(1.12, 1.0, 0.72)
         }
-        return one - simd_min(one * 0.8, taken)
+        return one - simd_min(one * 0.55, taken)
     }
 
     /// How much more a shadow takes than the open shade of a hill.
@@ -536,39 +539,34 @@ struct ShadowCaster: Sendable {
 // MARK: - The shadow
 
 /// How a shadow is worked out: the website's numbers, kept together, and
-/// changed only where the app's ground asked for it.
+/// changed only where the app's ground or Marcus asked for it.
 struct ShadowLook: Sendable {
-    /// The grid's cell, in metres, at least; a long shadow gets coarser cells
-    /// rather than more of them, up to `most` a side.
-    var cell = 0.015
+    /// The grid's cell, in metres, at least. The grid lies along the shadow,
+    /// so a long one gets longer cells rather than more of them, up to `most`
+    /// a side, and keeps its fine ones across.
+    var cell = 0.012
     var most = 120
     /// How far what is low and what is high are blurred, in metres. Near the
     /// ground a shadow is sharp — a contact shadow, which is what the eye reads
     /// as standing on the ground — and higher up it softens.
+    ///
+    /// **Under a low sun, less.** The soft layer's blur is divided by the root
+    /// of how far a metre's height slides: by a quarter at eight in the
+    /// morning, by almost half at five in the afternoon. Softening a long
+    /// shadow by how far out it lands, as a real one does, left the evening's
+    /// stems and flower heads as a smudge, and Marcus wanted them to read
+    /// (2 October 2026).
     var near = 0.018
     var far = 0.07
-    /// How far out — its height, or under a low sun how far along the ground
-    /// it lands — a part has gone over to the soft layer, and how much it
-    /// counts there beside a low one.
+    /// The height by which a part has gone over to the soft layer, and how
+    /// much it counts there beside a low one.
     var high = 0.40
     var faint = 0.55
-    /// And a third layer, for what lands a long way out under a low sun: by
-    /// `further` along the ground a part is blurred `farthest` and counts
-    /// `fainter`. Two layers left the tip of a metre-long evening shadow as
-    /// sharp as its middle; a real one's edge softens all the way out.
-    var farthest = 0.12
-    var further = 1.4
-    var fainter = 0.6
     /// How quickly layers darken towards `darkest`, which a pile of leaves
-    /// approaches and does not pass: ten leaves are not ten times one.
-    ///
-    /// **Not the web's `0.42 × (1 − e^(−1.1 × layers))`.** There the 0.42 is
-    /// the whole of how dark a shadow gets; here how dark full shade is comes
-    /// from the light (`GardenShadows.fullShade`), and this says how much of
-    /// it the layers reach. One leaf reaches most of it, because on this
-    /// ground, which is darker than the web's and lit more by its sky, the
-    /// web's single leaf could not be seen.
-    var layers = 1.8
+    /// approaches and does not pass: ten leaves are not ten times one. The
+    /// web's 1.1, so that two leaves over one another read darker than one;
+    /// how dark full shade is comes from the light (`GardenShadows.fullShade`).
+    var layers = 1.1
     var darkest = 0.95
     /// How much the slide of anything above the ground wanders by where it
     /// is, as a share, and over how long a wave. A stake's shadow is otherwise
@@ -587,17 +585,31 @@ struct ShadowLook: Sendable {
 
 /// A shadow worked out: how much of the ground's light is taken, cell by cell,
 /// as the alpha of a picture, with where the grid lies about the foot.
+///
+/// **The grid lies along the shadow**, its rows running the way the light
+/// slides: a five o'clock shadow is three metres long and a hand wide, and a
+/// square grid over it spent its cells on bare ground and drew the stems three
+/// centimetres thick.
 struct ShadowSheet: @unchecked Sendable {
     let image: CGImage
-    /// The near corner of the first cell, in metres from the foot along the
-    /// plot's own `x` and `z`.
-    let x0: Double
-    let z0: Double
-    let cell: Double
+    /// The grid's two directions on the ground, in the plot's own `x` and
+    /// `z`: along the shadow, and across it.
+    let along: SIMD2<Double>
+    let across: SIMD2<Double>
+    /// The near corner of the first cell, in metres from the foot along each.
+    let start: SIMD2<Double>
+    /// A cell's length along the shadow and its width across it.
+    let cell: SIMD2<Double>
     /// Which way the light the shadow was worked out for came from, in the
     /// plot's axes — after the lowest light was raised to `longest`. Laying it
     /// on a slope needs it.
     let light: SIMD3<Double>
+
+    /// Where the middle of a cell is, in metres from the foot along the plot's
+    /// own `x` and `z`.
+    func ground(i: Int, j: Int) -> SIMD2<Double> {
+        along * (start.x + (Double(i) + 0.5) * cell.x) + across * (start.y + (Double(j) + 0.5) * cell.y)
+    }
 }
 
 extension ShadowCaster {
@@ -608,9 +620,8 @@ extension ShadowCaster {
     ///
     /// The website's `castShadow`, worked from pieces instead of triangles:
     /// every piece is slid along the light onto the ground and laid into a grid
-    /// with the area it shows the light — into a sharp layer if it lands near
-    /// the foot, a soft one further out, and a softer one further still; the
-    /// layers are blurred, counted into light lost,
+    /// with the area it shows the light, low pieces into a sharp layer and high
+    /// ones into a soft one; the layers are blurred, counted into light lost,
     /// and faded to nothing at the grid's own border so the sheet it is drawn
     /// on never shows. A piece is a centimetre tall, and under a low sun a
     /// centimetre of stem lies along several centimetres of ground, so a piece
@@ -645,12 +656,15 @@ extension ShadowCaster {
                 + 0.15 * sin(u * 11.3 + v * 9.1 + 0.3) + 0.2 * (Self.grain(u * 53.1 + v * 97.3) - 0.5))
         }
 
-        // Where everything lands, and how much of it.
+        // Where everything lands, and how much of it, in the grid's own
+        // directions: along the slide and across it.
+        let along = slideLength > 1e-6 ? slide / slideLength : SIMD2(1, 0)
+        let across = SIMD2(-along.y, along.x)
         let count = points.count
         var landed = [SIMD2<Double>](repeating: .zero, count: count)
         var heights = [Double](repeating: 0, count: count)
         var weights = [Double](repeating: 0, count: count)
-        var x0 = 0.0, z0 = 0.0, x1 = 0.0, z1 = 0.0, reaching = 0.0
+        var u0 = 0.0, v0 = 0.0, u1 = 0.0, v1 = 0.0
         for n in 0..<count {
             let p = points[n]
             let lx = Double(p.x) * scale, lz = Double(p.z) * scale
@@ -658,50 +672,42 @@ extension ShadowCaster {
             let y = max(0, Double(p.y) * scale)
             let reach = y * wander(lx, lz)
             let at = SIMD2(x + slide.x * reach, z + slide.y * reach)
-            landed[n] = at
+            let u = simd_dot(at, along), v = simd_dot(at, across)
+            landed[n] = SIMD2(u, v)
             heights[n] = y
-            reaching = max(reaching, y * max(1, slideLength))
             weights[n] = Double(simd_dot(faces[n], seen) * groundPerSeen)
-            x0 = min(x0, at.x); x1 = max(x1, at.x)
-            z0 = min(z0, at.y); z1 = max(z1, at.y)
+            u0 = min(u0, u); u1 = max(u1, u)
+            v0 = min(v0, v); v1 = max(v1, v)
         }
 
-        let far = look.far, near = look.near, farthest = look.farthest
-        // Room round it for the widest blur anything in it gets.
-        let room = 3 * (reaching > look.high * 1.5 ? max(far, farthest) : far) + 4 * look.cell
-        x0 -= room; z0 -= room; x1 += room; z1 += room
-        let cell = max(look.cell, max(x1 - x0, z1 - z0) / Double(look.most))
-        let w = max(4, Int(((x1 - x0) / cell).rounded(.up)))
-        let h = max(4, Int(((z1 - z0) / cell).rounded(.up)))
+        let near = look.near
+        let far = look.far / max(1, slideLength).squareRoot()
+        let room = 3 * far + 4 * look.cell
+        u0 -= room; v0 -= room; u1 += room; v1 += room
+        let cellU = max(look.cell, (u1 - u0) / Double(look.most))
+        let cellV = max(look.cell, (v1 - v0) / Double(look.most))
+        let w = max(4, Int(((u1 - u0) / cellU).rounded(.up)))
+        let h = max(4, Int(((v1 - v0) / cellV).rounded(.up)))
         var sharp = [Float](repeating: 0, count: w * h)
         var soft = [Float](repeating: 0, count: w * h)
-        var softest = [Float](repeating: 0, count: w * h)
-        let perCell = 1 / (cell * cell)
+        let perCell = 1 / (cellU * cellV)
 
-        // How many points a piece is laid at along its own slide.
+        // How many points a piece is laid at along its own slide, which is
+        // along the grid's rows.
         let spread = piece * slideLength
-        let parts = max(1, min(12, Int((spread / cell).rounded(.up))))
-        let dx = slide.x * piece, dz = slide.y * piece
+        let parts = max(1, min(12, Int((spread / cellU).rounded(.up))))
 
         for n in 0..<count {
             let layers = weights[n] * perCell / Double(parts)
             guard layers > 0 else { continue }
-            // Sharp near the foot and soft further out: by how far along the
-            // ground a piece lands, which under a high sun is about its height
-            // and under a low one several times it. A stem's shadow at five in
-            // the afternoon is a metre long and blurs out along it, rather
-            // than running across the plot as a ruled line.
-            let out = heights[n] * max(1, slideLength)
-            let t = GardenShadows.smooth(0, look.high, out)
-            let u2 = GardenShadows.smooth(look.high * 1.5, look.further, out)
-            let low = Float(layers * (1 - t)), high = Float(layers * t * (1 - u2) * look.faint)
-            let highest = Float(layers * t * u2 * look.fainter)
+            let t = GardenShadows.smooth(0, look.high, heights[n])
+            let low = Float(layers * (1 - t)), high = Float(layers * t * look.faint)
             for k in 0..<parts {
                 // Spread over the piece's own height, and not below the ground.
-                let along = parts == 1 ? 0 : (Double(k) + 0.5) / Double(parts) - 0.5
-                let lift = heights[n] + along * piece < 0 ? 0 : along
-                let u = (landed[n].x + dx * lift - x0) / cell - 0.5
-                let v = (landed[n].y + dz * lift - z0) / cell - 0.5
+                let share = parts == 1 ? 0 : (Double(k) + 0.5) / Double(parts) - 0.5
+                let lift = heights[n] + share * piece < 0 ? 0 : share
+                let u = (landed[n].x + spread * lift - u0) / cellU - 0.5
+                let v = (landed[n].y - v0) / cellV - 0.5
                 let i = Int(u.rounded(.down)), j = Int(v.rounded(.down))
                 let fu = Float(u - Double(i)), fv = Float(v - Double(j))
                 guard i >= 0, j >= 0, i + 1 < w, j + 1 < h else { continue }
@@ -711,16 +717,11 @@ extension ShadowCaster {
                 sharp[a + 1] += low * shares.1; soft[a + 1] += high * shares.1
                 sharp[a + w] += low * shares.2; soft[a + w] += high * shares.2
                 sharp[a + w + 1] += low * shares.3; soft[a + w + 1] += high * shares.3
-                if highest > 0 {
-                    softest[a] += highest * shares.0; softest[a + 1] += highest * shares.1
-                    softest[a + w] += highest * shares.2; softest[a + w + 1] += highest * shares.3
-                }
             }
         }
 
-        Self.blur(&sharp, w, h, max(1, Int((near / cell).rounded())))
-        Self.blur(&soft, w, h, max(1, Int((far / cell).rounded())))
-        Self.blur(&softest, w, h, max(1, Int((farthest / cell).rounded())))
+        Self.blur(&sharp, w, h, max(1, Int((near / cellU).rounded())), max(1, Int((near / cellV).rounded())))
+        Self.blur(&soft, w, h, max(1, Int((far / cellU).rounded())), max(1, Int((far / cellV).rounded())))
 
         // Layers to light lost, faded to nothing over the last cells.
         var bytes = [UInt8](repeating: 0, count: w * h * 4)
@@ -728,15 +729,14 @@ extension ShadowCaster {
         var any = false
         for j in 0..<h {
             let fj = GardenShadows.smooth(0, edge, Double(min(j, h - 1 - j)))
-            let z = z0 + (Double(j) + 0.5) * cell
             for i in 0..<w {
                 let fade = fj * GardenShadows.smooth(0, edge, Double(min(i, w - 1 - i)))
                 guard fade > 0 else { continue }
-                let layers = Double(sharp[j * w + i] + soft[j * w + i] + softest[j * w + i])
+                let layers = Double(sharp[j * w + i] + soft[j * w + i])
                 var lost = fade * look.darkest * (1 - exp(-look.layers * layers))
                 if look.dapple > 0, lost > 0.004 {
-                    let x = x0 + (Double(i) + 0.5) * cell
-                    let a = x + salt, b = z - salt
+                    let at = along * (u0 + (Double(i) + 0.5) * cellU) + across * (v0 + (Double(j) + 0.5) * cellV)
+                    let a = at.x + salt, b = at.y - salt
                     let light = 0.6 * Self.noise(a * 4.3 + b * 2.1, b * 4.3 - a * 2.1)
                         + 0.4 * Self.noise(a * 9.7 - b * 5.3 + 31, b * 9.7 + a * 5.3 + 17)
                     lost *= 1 - look.dapple * GardenShadows.smooth(0.4, 0.75, light)
@@ -749,7 +749,8 @@ extension ShadowCaster {
             }
         }
         guard any, let image = Self.image(bytes, width: w, height: h) else { return nil }
-        return ShadowSheet(image: image, x0: x0, z0: z0, cell: cell, light: towards)
+        return ShadowSheet(image: image, along: along, across: across, start: SIMD2(u0, v0),
+                           cell: SIMD2(cellU, cellV), light: towards)
     }
 
     /// Light lost as white at that much alpha, premultiplied, to be coloured
@@ -764,12 +765,15 @@ extension ShadowCaster {
     }
 
     /// Three box blurs each way, which is near enough a Gaussian and costs the
-    /// same whatever the radius. Nothing outside the grid is counted.
-    private static func blur(_ grid: inout [Float], _ w: Int, _ h: Int, _ r: Int) {
+    /// same whatever the radius: `along` cells along the rows and `across`
+    /// down the columns, because a cell need not be square. Nothing outside
+    /// the grid is counted.
+    private static func blur(_ grid: inout [Float], _ w: Int, _ h: Int, _ along: Int, _ across: Int) {
         var line = [Float](repeating: 0, count: max(w, h))
-        let scale = 1 / Float(2 * r + 1)
         for pass in 0..<2 {
             let count = pass == 0 ? h : w, length = pass == 0 ? w : h
+            let r = pass == 0 ? along : across
+            let scale = 1 / Float(2 * r + 1)
             for k in 0..<count {
                 func at(_ i: Int) -> Int { pass == 0 ? k * w + i : i * w + k }
                 for _ in 0..<3 {
@@ -1070,13 +1074,16 @@ struct GroundShadows: View {
         let alongX = view.point(x: 1, y: gx, z: 0), alongZ = view.point(x: 0, y: gz, z: 1)
         let ex = CGPoint(x: alongX.x - origin.x, y: alongX.y - origin.y)
         let ez = CGPoint(x: alongZ.x - origin.x, y: alongZ.y - origin.y)
-        let m11 = ex.x * s11 + ez.x * s21, m12 = ex.x * s12 + ez.x * s22
-        let m21 = ex.y * s11 + ez.y * s21, m22 = ex.y * s12 + ez.y * s22
-        let cell = sheet.cell
+        let n11 = ex.x * s11 + ez.x * s21, n12 = ex.x * s12 + ez.x * s22
+        let n21 = ex.y * s11 + ez.y * s21, n22 = ex.y * s12 + ez.y * s22
+        // And the grid, which lies along the shadow, onto the plot's axes.
+        let along = sheet.along, across = sheet.across
+        let m11 = n11 * along.x + n12 * along.y, m12 = n11 * across.x + n12 * across.y
+        let m21 = n21 * along.x + n22 * along.y, m22 = n21 * across.x + n22 * across.y
         let transform = CGAffineTransform(
-            a: m11 * cell, b: m21 * cell, c: m12 * cell, d: m22 * cell,
-            tx: cast.foot.x + m11 * sheet.x0 + m12 * sheet.z0,
-            ty: cast.foot.y + m21 * sheet.x0 + m22 * sheet.z0
+            a: m11 * sheet.cell.x, b: m21 * sheet.cell.x, c: m12 * sheet.cell.y, d: m22 * sheet.cell.y,
+            tx: cast.foot.x + m11 * sheet.start.x + m12 * sheet.start.y,
+            ty: cast.foot.y + m21 * sheet.start.x + m22 * sheet.start.y
         )
 
         return Laid(id: SheetID(cast: cast.id, step: step), image: sheet.image, transform: transform,

@@ -40,12 +40,32 @@ final class ShadowTests: XCTestCase {
     func testTheShadowLeansAwayFromTheLight() throws {
         let (genome, growth) = genome(3)
         let caster = ShadowCaster(mesh: PlantBuilder(genome: genome).mesh(growth: growth))
-        let light = GardenShadows.light(step: 18)
-        let sheet = try XCTUnwrap(caster.cast(toward: light.direction, turn: 0, scale: 1,
-                                              look: .plant, salt: 0))
-        let middle = try weightedMiddle(of: sheet)
-        let away = SIMD2(-light.direction.x, -light.direction.z)
-        XCTAssertGreaterThan(simd_dot(middle, away), 0.02, "the shadow's middle is toward the light")
+        // Mid-morning and late afternoon, so the light comes along both of
+        // the plot's axes between them.
+        for step in [18, 33] {
+            let light = GardenShadows.light(step: step)
+            let sheet = try XCTUnwrap(caster.cast(toward: light.direction, turn: 0, scale: 1,
+                                                  look: .plant, salt: 0))
+            let middle = try weightedMiddle(of: sheet)
+            let away = simd_normalize(SIMD2(-light.direction.x, -light.direction.z))
+            XCTAssertGreaterThan(simd_dot(middle, away), 0.02, "step \(step): the shadow is toward the light")
+            let sideways = abs(simd_dot(middle, SIMD2(-away.y, away.x)))
+            XCTAssertLessThan(sideways, simd_dot(middle, away), "step \(step): the shadow is off to one side")
+        }
+    }
+
+    /// Marcus, 2 October 2026: the noon cores lose about half the ground's
+    /// light, not three quarters, and two leaves over one another still read
+    /// darker than one.
+    func testNoonShadeIsAboutHalfAndOverlapsReadDarker() {
+        let noon = GardenShadows.fullShade(under: GardenGround.Light.at(hour: 12))
+        let look = ShadowLook.plant
+        func lost(_ layers: Double) -> Double {
+            look.darkest * (1 - exp(-look.layers * layers)) * (1 - noon.y)
+        }
+        XCTAssertLessThanOrEqual(lost(10), 0.56)
+        XCTAssertGreaterThan(lost(10), 0.45)
+        XCTAssertGreaterThan(lost(2) - lost(1), 0.08, "two leaves read darker than one")
     }
 
     /// At the moment the sun hands over to the moon there is no shadow at all,
@@ -64,7 +84,7 @@ final class ShadowTests: XCTestCase {
         let noon = GardenShadows.fullShade(under: GardenGround.Light.at(hour: 12))
         let midnight = GardenShadows.fullShade(under: GardenGround.Light.at(hour: 0))
         for channel in 0..<3 {
-            XCTAssertGreaterThanOrEqual(noon[channel], 0.19)
+            XCTAssertGreaterThanOrEqual(noon[channel], 0.44)
             XCTAssertLessThan(noon[channel], 0.8)
             XCTAssertGreaterThan(midnight[channel], noon[channel])
             XCTAssertLessThanOrEqual(midnight[channel], 1)
@@ -83,12 +103,9 @@ final class ShadowTests: XCTestCase {
         var sum = SIMD2<Double>(), total = 0.0
         for j in 0..<height {
             for i in 0..<width {
-                // A bitmap context's rows run bottom up.
-                let row = height - 1 - j
-                let alpha = Double(bytes[(row * width + i) * 4 + 3])
-                let x: Double = sheet.x0 + (Double(i) + 0.5) * sheet.cell
-                let z: Double = sheet.z0 + (Double(j) + 0.5) * sheet.cell
-                sum += SIMD2(x, z) * alpha
+                // The context's memory runs from the picture's top row.
+                let alpha = Double(bytes[(j * width + i) * 4 + 3])
+                sum += sheet.ground(i: i, j: j) * alpha
                 total += alpha
             }
         }

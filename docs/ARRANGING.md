@@ -848,7 +848,8 @@ in SwiftUI shapes would be clip art beside plants grown from a genome.
   said should not be there. So the hare, the fox and the snail had none. Now
   every figure's shadow is worked out from its model, as a plant's is
   (`GardenShadows.swift`): the hare's haunch is low and casts a short sharp
-  shadow beside it, and its ears are high and cast a long soft one.
+  shadow beside it, and its ears are high and cast a long soft one. Marcus
+  kept them, 2 October 2026.
 - **Painted accents, unlit.** Eyes, noses, the backs of the fox's ears, the
   moth's eyespots. They are black in the glow picture, so they hide the glow behind
   them. A white fox with no face was a cushion.
@@ -1093,6 +1094,19 @@ Two things it turns on, both in `GardenVisits`:
 - **The night has stars, and the moon carries its real phase for the date.**
 - **The sun and moon orbit the plot and cast**, so the ground is shipped as
   height and colour per cell and lit where it is drawn, rather than pre-rendered.
+- **Every plant and figure throws a shadow from its own shape, and Marcus set
+  how on 2 October 2026** (`GardenShadows.swift`, `design/app-shadows-2026-10-02/`):
+  - *Noon:* lighter than first built. The darkest cores lose about half the
+    ground's light, not three quarters, and two leaves over one another still
+    read darker than one.
+  - *Morning and evening:* the long low-sun shadows, roughly 06:00–08:00 and
+    16:00–18:00, are sharp enough that stems and flower heads read as shapes.
+    They are less blurred the longer they are, and their edges stay soft and
+    irregular.
+  - *The hare, the fox and the snail* keep the shadows they were given that
+    day, the first since build 3.
+  - *New moon:* a fifth of the full moon's shadow remains, because the ground
+    is still lit from where the moon is.
   The plants are rendered at eight points round the clock.
 - **A turned plot turns its plants: four renders each at ninety-degree steps**,
   not billboards. Settled 18 September. Billboards are the usual answer and are a
@@ -1177,9 +1191,10 @@ Two things it turns on, both in `GardenVisits`:
 - **Whether an arrangement survives a plant being released to the Wild Fields.**
   Releasing is the end of a plant's life here; a spot pointing at a plant that has
   gone is the kind of thing that decodes fine and draws nothing.
-- **Whether the shadows should be soft, and how soft.** Answered 2 October,
-  the web's way: sharp near the foot and softer further out, by how far along
-  the ground each part of the plant lands (`GardenShadows.swift`).
+- **Whether the shadows should be soft, and how soft.** Answered 2 October:
+  sharp near the foot and softer higher up, the web's way, and under a low sun
+  less soft the longer the shadow, so that an evening's stems still read
+  (Settled, above).
 - **What the growth rule actually is.** A little more world per meeting, at a
   rate that keeps a tall plant at roughly half the radius. Whether that is
   smooth or in steps, and whether a garden of two hundred plants is still one
