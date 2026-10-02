@@ -145,3 +145,13 @@ alone re-lays every room, but from stored slots chosen for groups of three:
   reader, behind the low hedge. That is the eight ways working.
 - The stepping stones are drawn on the page only; the app has no structure for
   them.
+
+## After Marcus's answers, 2 October 2026
+
+**The cut is 1.04 m**, in `QuietGarden.backFrom` and `QuietGarden::BACK_FROM`,
+the vectors re-recorded. On the harness's stream the settled rooms hold
+**100.0% at 100 and at 1,000, none empty**, with 101 rooms and 99.1% held at
+1,000, the baseline's. Re-recording moved 282 of the 500 vector rows' slots and
+165 of their plots; the 500 now take 43 rooms (44 at 1.08), every one full. The
+echo is the five's own colour in 22 of 43 rooms (20 at 1.08). Render:
+`quiet-after2-full.jpg`, room 3 of 500.

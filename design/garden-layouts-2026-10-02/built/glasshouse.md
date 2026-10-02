@@ -181,3 +181,18 @@ Also:
    first view.
 4. **The glyph.** It is a new drawing at 20 px, and wants a look beside the
    other nine.
+
+## After Marcus's answers, 2 October 2026
+
+- **The dome is kept**, eaves 2.2 m and crown 3.5 m.
+- **The painted band is added** (left open item 1): a thin band of paint along
+  the top of the staging's outer slat, by the glass, under the pots' rims,
+  shading round the ring from each hue band's middle hue to the next. Its edges
+  wander and feather into the boards, and it thins to a rounded end at each end
+  of the staging. The hues come from the rule: `pg_glasshouse_plan` now sends
+  the wheel's cut and the band edges. Drawn by `paintBand` in `glasshouse.js`;
+  page only. The front slat was tried first and hid the near half of the ring
+  behind its own boards.
+- Renders: `glasshouse-after2-10.jpg` (`?arrivals=10&plot=0`) and
+  `glasshouse-after2-full.jpg` (`?arrivals=500&plot=3`), cropped as the others.
+- The harness is unchanged: drawing only.

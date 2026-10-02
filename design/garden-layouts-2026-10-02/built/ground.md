@@ -89,3 +89,23 @@ Renders: `ground-before-10.jpg`, `ground-after-10.jpg` (plot 0, ten plants),
 `ground-before-full.jpg`, `ground-after-full.jpg` (plot 3 of the workbench's
 500, mirrored), and `ground-before-three.jpg`, `ground-after-three.jpg` (plots
 3, 4 and 5: mirrored, plain, mirrored).
+
+## After Marcus's answers, 2 October 2026
+
+**Paths of 0.40 m and a sway of 0.15 m.** The beds' middles stand 1.60 m apart
+(`_home_ground.py`, `HomeGround.bedX`, `HomeGround::BED_X`), so the outer beds
+have 0.18 m to sway in; at 0.15 m their outer edge, with the drawing's wander,
+comes to 2.377 m, inside 2.38. Tables regenerated, vectors re-recorded: every
+row keeps its plot, bed, crop, index and nudge, and 496 of 500 spots moved. The
+harness figures are unchanged.
+
+- **On the inside of a bend a row's outer places draw closer**: spires 0.348 m
+  at the closest (0.387 at 0.10), umbels 0.469 m, rosettes 0.275 m (0.333). The
+  specs' spacing floors came down with them (spires 0.34, rosettes 0.27), and
+  two test floors by a centimetre or two: a row's end place 0.20 m from the
+  bed's end (0.22), an outer bed's rows centred to 3.5 cm (3).
+- **The trough is turned to lie along its path** (left open above): over its
+  half metre beside the beds the path leans up to 8°, and square to the plot
+  it would have stood 5 cm up a bed's shoulder.
+- **The map's glyph** sways its three beds, the crop marks following.
+- Render: `ground-after2-three.jpg`, plots 3, 4 and 5.
