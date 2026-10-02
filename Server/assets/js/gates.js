@@ -94,9 +94,10 @@ export const LOOK = Object.freeze({
   // A square and a diamond woven through each other: the oldest knot there is.
   pattern: { ground: "#968b78",
     glyph: "M5 5H15V15H5ZM10 2.5L17.5 10L10 17.5L2.5 10Z" },
-  // A glasshouse end-on: a pitched roof and its glazing bars.
+  // A round glasshouse side-on: the wall, the dome on its eaves, the ribs
+  // curving up it, and the door. A pitched roof until 2 October 2026.
   light: { ground: "#8a5a43",
-    glyph: "M2.5 16.5H17.5M3.5 16.5V9L10 3.5L16.5 9V16.5M10 3.5V16.5M6.7 6.3V16.5M13.3 6.3V16.5" },
+    glyph: "M2.5 16.5H17.5M3.5 16.5V10.5A6.5 6.5 0 0 1 16.5 10.5V16.5M3.5 10.5H16.5M10 4V10.5M6.8 10.5Q7.3 5.6 10 4M13.2 10.5Q12.7 5.6 10 4M8.4 16.5V12.8H11.6V16.5" },
   // Four paths meeting at a round of paving.
   meeting: { ground: "#5b6648",
     glyph: `${ring(10, 10, 2.8)}M10 2.5V7.2M10 12.8V17.5M2.5 10H7.2M12.8 10H17.5` },

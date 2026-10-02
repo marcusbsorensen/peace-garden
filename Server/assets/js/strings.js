@@ -365,17 +365,19 @@ export const EN = Object.freeze({
   // `areaLight`, already commissioned in all forty-two.
   //
   // **It says the pots run as a spectrum, because a reader looking down on
-  // them may not see it.** Twenty-four pots in two rows read first as a crowd,
-  // and the order in them — blue-green at the door, yellow at the far end — is
-  // what this area is. It names the two ends and not the twelve places: the
-  // colours between them are there to be seen, and a list of twelve would be
-  // longer than the plot is wide.
+  // them may not see it.** Twenty-four pots read first as a crowd, and the
+  // order in them — a wheel of colour round the staging, blue-green just past
+  // the door, yellow just before it — is what this area is. It names the two
+  // ends and not the twelve places: the colours between them are there to be
+  // seen, and a list of twelve would be longer than the plot is wide. The
+  // house became round on 2 October 2026; until then the run was along the
+  // staging, from the door to the far end, and the border along the back.
   //
   // **"House", in the paging clause**, where the Cold Frame says *the next
   // four* and the Seedbed *the next bed*: a plot here is one glasshouse, and
   // that is the word a reader will have for it.
   glasshouseAbout:
-    "A glasshouse, its pots set out along the staging as a run of colour from blue-green at the door to yellow at the far end, and the tallest plants in a border along the back. Go on to the next house, or turn to see this one from another side.",
+    "A round glasshouse, its pots set out round the staging as a wheel of colour from blue-green just past the door to yellow just before it, and the tallest plants in a round bed in the middle. Go on to the next house, or turn to see this one from another side.",
   // The Glasshouse could not be drawn.
   glasshouseAway: "The Glasshouse cannot be reached just now.",
 

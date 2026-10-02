@@ -8,6 +8,11 @@ import XCTest
 /// **Five hundred plants of this area's own**, as `GlasshouseTests` draws them,
 /// because the border cut and the band edges were both measured over those.
 ///
+/// **And where each stands**, since the house became round on 2 October 2026:
+/// the plot's variant (always the plain plan here, a colour wheel having one
+/// way round) and the spot, the table's place plus the nudge. A spot from a
+/// table is exact on every host, so the check compares it with no tolerance.
+///
 /// **The hue is compared exactly, and the height is not.** A height comes out
 /// of a mesh built with `sin` and `pow`, and two hosts' C libraries may
 /// disagree about its last bits, which is what `VectorFile.height` absorbs. A
@@ -28,10 +33,12 @@ final class GlasshouseVectorTests: XCTestCase {
         var lines: [String] = []
         for (seed, traits) in GlasshouseTests.arrivals() {
             let p = ways.plant(seed: seed, traits: traits)
+            let v = PlotVariant.of(plot: p.plot, area: .light)
             lines.append("""
                 {"seed":"\(seed.hex)","height":\(traits.height),"family":\(traits.family),\
                 "hue":\(traits.hue ?? -1),"plot":\(p.plot),"bed":\(p.slot.bed.rawValue),\
-                "index":\(p.slot.index),"row":\(p.slot.row),"nudge":[\(p.nudge.x),\(p.nudge.z)]}
+                "index":\(p.slot.index),"row":\(p.slot.row),"nudge":[\(p.nudge.x),\(p.nudge.z)],\
+                "variant":[\(v.turn),\(v.mirror),\(v.nudge)],"spot":[\(p.spot.x),\(p.spot.z)]}
                 """)
         }
         // One JSON document, not one per line: see `SeedbedVectorTests`.

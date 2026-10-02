@@ -506,8 +506,9 @@ check('and the page is told how far off the floor it stands',
       ($served['lift'] ?? null) === Glasshouse::STAGING_TOP + Glasshouse::POT_SOIL);
 
 // A plant tall enough for the border goes there, whatever its colour — in the
-// next place from the door, since the ambassador, *Elora elata*, has held the
-// first since the re-roll of 28 September 2026.
+// bed's next place, since the ambassador, *Elora elata*, has held the first
+// since the re-roll of 28 September 2026 (the middle of the round bed since
+// 2 October 2026).
 $eleven = crossing(11);
 $mine11 = token('eleven/mine');
 $theirs11 = token('eleven/theirs');
@@ -515,11 +516,12 @@ $offers->offer($eleven['seed'], $theirs11, $mine11, $eleven['a'], $eleven['b'], 
                1.6, 4, $now, 'light', '', $violet);
 $offers->answer($eleven['seed'], $theirs11, true, $now);
 $tall = pottedAs($walk, $eleven['seed']);
-check('a tall one goes in the border, next from the door after the ambassador', $tall !== null
+check('a tall one goes in the border, next after the ambassador', $tall !== null
       && (int) $tall['bed'] === Glasshouse::BORDER && (int) $tall['slot_index'] === 1);
 
 // And an offer made without a hue — every offer made before the column
-// existed — still plants: in the first free pot from the door.
+// existed — still plants: in the first free pot the table offers, which is
+// the one opposite the door unless the violet pot already stands there.
 $twelve = crossing(12);
 $mine12 = token('twelve/mine');
 $theirs12 = token('twelve/theirs');
@@ -528,8 +530,10 @@ $offers->offer($twelve['seed'], $theirs12, $mine12, $twelve['a'], $twelve['b'], 
 $offers->answer($twelve['seed'], $theirs12, true, $now);
 $unhued = pottedAs($walk, $twelve['seed']);
 check('an offer with no hue still plants', $unhued !== null && $unhued['hue'] === null);
-check('in the first free pot from the door', $unhued !== null
-      && (int) $unhued['bed'] === Glasshouse::STAGING && (int) $unhued['slot_index'] === 0);
+$offered = array_values(array_filter(Glasshouse::paleOrder(), fn($p) => $p !== [Glasshouse::band($violet), 0]))[0];
+check('in the first free pot the table offers', $unhued !== null
+      && (int) $unhued['bed'] === Glasshouse::STAGING
+      && (int) $unhued['slot_index'] === $offered[0] && (int) $unhued['slot_row'] === $offered[1]);
 
 // The hue goes when the offer is settled, with the rest of the plant.
 $settled = $walk->connection()->prepare('SELECT hue, area FROM walk_offers WHERE seed = ?');

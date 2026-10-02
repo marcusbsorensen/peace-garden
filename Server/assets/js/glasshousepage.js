@@ -12,8 +12,8 @@
 // one plot rather than another.
 //
 // **No list under the paragraph.** What orders the staging is colour, and the
-// flowers in their pots already show it; the run from blue-green at the door to
-// yellow at the far end is there to be seen. What does sit under it is the block
+// flowers in their pots already show it; the wheel from blue-green just past
+// the door round to yellow just before it is there to be seen. What does sit under it is the block
 // every area has, saying what the plants here mean — see `meanings.js`.
 import { loadModule } from './plant.js';
 import { makePlotStage } from './longwalk.js';
@@ -49,8 +49,9 @@ const say = async (key) => {
 
 async function place() {
   const engine = await loadModule(document.documentElement.dataset.module || '/plant.wasm');
-  // Where the house, the staging and the border stand come from the module, so
-  // the page cannot disagree with the rule about where a pot is. **One plot,
+  // Where the house, the staging and the bed stand come from the module and
+  // the rule's own place table, so the page cannot disagree with the rule
+  // about where a pot is. **One plot,
   // framed as though there were a little more than one**, the Quiet Garden's
   // margin.
   const house = plan(engine);
