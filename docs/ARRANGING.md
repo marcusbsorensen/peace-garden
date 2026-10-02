@@ -1106,6 +1106,16 @@ Two things it turns on, both in `GardenVisits`:
   mockup's sky is nearly black at every hour because there the plot is the
   picture and the page around it is a page; in the app it is the whole screen
   behind a garden, and a noon that is dark navy says the garden is underground.
+- **The day sky is the real sky, chosen from renders.** Settled 2 October 2026,
+  by Marcus, from four proposals drawn behind a plot at five hours
+  (`design/app-sky-2026-10-02/`), after he called the old one "that slightly
+  petrol blue". He took B, C and D together on A: the real colour of the hour
+  (deep overhead, pale and luminous at the horizon behind the plot, gold and rose
+  when the sun is low); the day's clouds, dealt from the date; the real moon by
+  day, the season's sun height and the brightest planet at dusk; and, about once
+  an hour, a few of the season's birds very high. `docs/PLACE.md` §*And the day
+  is the real sky as well*. The night is unchanged, and so, for now, is the light
+  on the plot.
 - **An arrangement is told, not inherited.** Local, never transmitted, unable to
   reach the seed. No new promise, and no change to the sentence on Seed.
 - **One set of plants, several arrangements of it.** Every plant appears in every
