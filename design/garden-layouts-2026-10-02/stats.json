@@ -1,0 +1,192 @@
+{
+ "walk-a": {
+  "plots": 23,
+  "held": 95.3,
+  "plot_shown": 3,
+  "in_plot_shown": 47,
+  "capacity_shown": 48,
+  "first_plot_at_10": 10,
+  "plots_at_10": 1
+ },
+ "walk-b": {
+  "plots": 27,
+  "held": 80.2,
+  "plot_shown": 3,
+  "in_plot_shown": 46,
+  "capacity_shown": 48,
+  "first_plot_at_10": 10,
+  "plots_at_10": 1
+ },
+ "quiet-a": {
+  "plots": 101,
+  "held": 100.0,
+  "plot_shown": 3,
+  "in_plot_shown": 10,
+  "capacity_shown": 10,
+  "first_plot_at_10": 8,
+  "plots_at_10": 2
+ },
+ "quiet-b": {
+  "plots": 101,
+  "held": 100.0,
+  "plot_shown": 3,
+  "in_plot_shown": 10,
+  "capacity_shown": 10,
+  "first_plot_at_10": 8,
+  "plots_at_10": 2
+ },
+ "cross-a": {
+  "plots": 47,
+  "held": 90.1,
+  "plot_shown": 3,
+  "in_plot_shown": 24,
+  "capacity_shown": 24,
+  "first_plot_at_10": 10,
+  "plots_at_10": 1
+ },
+ "cross-b": {
+  "plots": 47,
+  "held": 90.1,
+  "plot_shown": 3,
+  "in_plot_shown": 24,
+  "capacity_shown": 24,
+  "first_plot_at_10": 10,
+  "plots_at_10": 1
+ },
+ "orchard-a": {
+  "plots": 51,
+  "held": 100.0,
+  "plot_shown": 3,
+  "in_plot_shown": 20,
+  "capacity_shown": 20,
+  "first_plot_at_10": 10,
+  "plots_at_10": 1
+ },
+ "orchard-b": {
+  "plots": 51,
+  "held": 99.6,
+  "plot_shown": 3,
+  "in_plot_shown": 20,
+  "capacity_shown": 20,
+  "first_plot_at_10": 10,
+  "plots_at_10": 1
+ },
+ "knot-a": {
+  "plots": 33,
+  "held": 98.5,
+  "plot_shown": 3,
+  "in_plot_shown": 32,
+  "capacity_shown": 32,
+  "first_plot_at_10": 9,
+  "plots_at_10": 2
+ },
+ "knot-b": {
+  "plots": 33,
+  "held": 98.5,
+  "plot_shown": 3,
+  "in_plot_shown": 32,
+  "capacity_shown": 32,
+  "first_plot_at_10": 9,
+  "plots_at_10": 2
+ },
+ "seedbed-a": {
+  "plots": 36,
+  "held": 81.6,
+  "plot_shown": 3,
+  "in_plot_shown": 47,
+  "capacity_shown": 48,
+  "first_plot_at_10": 10,
+  "plots_at_10": 2
+ },
+ "seedbed-b": {
+  "plots": 36,
+  "held": 81.6,
+  "plot_shown": 3,
+  "in_plot_shown": 47,
+  "capacity_shown": 48,
+  "first_plot_at_10": 10,
+  "plots_at_10": 2
+ },
+ "frame-a": {
+  "plots": 19,
+  "held": 91.3,
+  "plot_shown": 3,
+  "in_plot_shown": 62,
+  "capacity_shown": 62,
+  "first_plot_at_10": 10,
+  "plots_at_10": 1
+ },
+ "frame-b": {
+  "plots": 26,
+  "held": 78.7,
+  "plot_shown": 3,
+  "in_plot_shown": 50,
+  "capacity_shown": 50,
+  "first_plot_at_10": 10,
+  "plots_at_10": 1
+ },
+ "glasshouse-a": {
+  "plots": 37,
+  "held": 87.9,
+  "plot_shown": 3,
+  "in_plot_shown": 32,
+  "capacity_shown": 32,
+  "first_plot_at_10": 10,
+  "plots_at_10": 1
+ },
+ "glasshouse-b": {
+  "plots": 42,
+  "held": 87.9,
+  "plot_shown": 3,
+  "in_plot_shown": 28,
+  "capacity_shown": 28,
+  "first_plot_at_10": 10,
+  "plots_at_10": 1
+ },
+ "coppice-a": {
+  "plots": 32,
+  "held": 99.0,
+  "plot_shown": 3,
+  "in_plot_shown": 33,
+  "capacity_shown": 33,
+  "first_plot_at_10": 10,
+  "plots_at_10": 1
+ },
+ "coppice-b": {
+  "plots": 32,
+  "held": 99.0,
+  "plot_shown": 3,
+  "in_plot_shown": 33,
+  "capacity_shown": 33,
+  "first_plot_at_10": 10,
+  "plots_at_10": 1
+ },
+ "ground-a": {
+  "plots": 19,
+  "held": 100.0,
+  "plot_shown": 3,
+  "in_plot_shown": 69,
+  "capacity_shown": 69,
+  "first_plot_at_10": 10,
+  "plots_at_10": 1
+ },
+ "ground-b": {
+  "plots": 24,
+  "held": 100.0,
+  "plot_shown": 3,
+  "in_plot_shown": 49,
+  "capacity_shown": 49,
+  "first_plot_at_10": 10,
+  "plots_at_10": 1
+ },
+ "walk-now": {
+  "plots": 22,
+  "held": 99.0,
+  "first_plot_at_10": 10
+ },
+ "quiet-now": {
+  "plots": 101,
+  "held": 100.0,
+  "first_plot_at_10": 10
+ }
+}
