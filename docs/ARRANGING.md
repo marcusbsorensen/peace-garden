@@ -641,9 +641,12 @@ runs once a cell.
 
 ### The night is a night, and the moon is tonight's moon
 
-Stars, fixed rather than drifting — the one thing that would give away that they
-are drawn. They come out as the sun goes down and the plot occludes its own patch
-of sky, because it is drawn over them.
+Stars, and since 19–20 September the real ones: the Yale Bright Star Catalogue,
+placed by sidereal time for the city the phone's time zone names, so they wheel
+as the real sky does rather than being dealt once from a seed (`Sky`,
+`StarField`; `PLACE.md`, *The sky is a place too*). They come out as the sun
+goes down and the plot occludes its own patch of sky, because it is drawn over
+them.
 
 **The moon is in the phase it is actually in**, from one synodic month against a
 known new moon. The lit part of a disc is a semicircle plus a semi-ellipse whose

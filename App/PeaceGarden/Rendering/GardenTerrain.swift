@@ -14,9 +14,9 @@ import UIKit
 /// drawing and the cache, the screen appears immediately, and the ground arrives
 /// a beat later.
 ///
-/// The light does not move yet. When the sun and moon go round, this renders at
-/// the eight points round the clock the plants are already rendered at, and the
-/// same cache holds them.
+/// The light moves: the ground is drawn under the hour's own sun or moon
+/// (`GardenGround.Light.at(hour:)`), and the light is part of the cache's key,
+/// so each hour drawn is kept beside the others.
 actor GardenTerrain {
     static let shared = GardenTerrain()
 

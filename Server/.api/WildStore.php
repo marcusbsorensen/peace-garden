@@ -33,10 +33,13 @@ require_once __DIR__ . '/Keyed.php';
  * the same plant — a retry after a lost answer, or the other gardener letting
  * go of their own copy — is handed the planting that is already there.
  *
- * **`hidden` is for moderation, and nothing sets it yet.** A field nobody
- * curates still needs a way to take down a plant that should not be standing,
- * and adding the column later would be a migration on a live table. A hidden
- * row stays — it keeps the plant from being released again — and is not drawn.
+ * **`hidden` is for moderation, and only the curator's tool sets it**
+ * (`curate.php`, since 2 October 2026, run over ssh). A field nobody curates
+ * still needs a way to take down a plant that should not be standing. A hidden
+ * row stays — it keeps the plant from being released again, and the nightly
+ * copy carries it — and no public read serves it: not the counts, not a tile,
+ * and so not the names beside it. The flag is the whole of what hiding writes:
+ * no reason, no time, nobody's name.
  *
  * **Who stands beside it, since 1 October 2026** (`wild_names`, Marcus's
  * decision that day). Releasing stays one gardener's act, and the plant still
@@ -188,6 +191,63 @@ final class WildStore
         $query->execute();
         return array_map(fn (array $row) => [(int) $row['tile_x'], (int) $row['tile_z'], (int) $row['plants']],
                          $query->fetchAll());
+    }
+
+    /** Whether this plant has been released and then taken down. */
+    public function isHidden(string $seed): bool
+    {
+        $row = $this->row($seed);
+        return $row !== null && (int) $row['hidden'] !== 0;
+    }
+
+    // MARK: - The curator's
+
+    /**
+     * Every plant whose seed begins with `$prefix`, hidden or not, as the
+     * curator's tool shows it: the seed, both parents, the tile, whether it
+     * is hidden, and what is shown beside it. In the order of the seeds.
+     * `$prefix` is lowercase hex; the caller has checked.
+     */
+    public function matching(string $prefix): array
+    {
+        $query = $this->db->prepare('SELECT f.*, n.name_a, n.name_b, n.place, n.month
+            FROM wild_fields f LEFT JOIN wild_names n ON n.seed = f.seed
+            WHERE f.seed LIKE ? ORDER BY f.seed');
+        $query->execute([$prefix . '%']);
+        return array_map([self::class, 'curated'], $query->fetchAll());
+    }
+
+    /** Every hidden plant, as `matching` shows them. */
+    public function hiddenOnes(): array
+    {
+        $query = $this->db->prepare('SELECT f.*, n.name_a, n.name_b, n.place, n.month
+            FROM wild_fields f LEFT JOIN wild_names n ON n.seed = f.seed
+            WHERE f.hidden <> 0 ORDER BY f.seed');
+        $query->execute();
+        return array_map([self::class, 'curated'], $query->fetchAll());
+    }
+
+    /**
+     * Takes a plant down, or stands it again. Changes the one flag and nothing
+     * else; deletes nothing. Returns whether it changed — false for a plant
+     * already that way, or no such plant.
+     */
+    public function setHidden(string $seed, bool $hidden): bool
+    {
+        $update = $this->db->prepare('UPDATE wild_fields SET hidden = ? WHERE seed = ? AND hidden = ?');
+        $update->execute([$hidden ? 1 : 0, $seed, $hidden ? 0 : 1]);
+        return $update->rowCount() > 0;
+    }
+
+    private static function curated(array $row): array
+    {
+        return [
+            'seed' => (string) $row['seed'],
+            'parents' => [(string) $row['parent_a'], (string) $row['parent_b']],
+            'tile' => [(int) $row['tile_x'], (int) $row['tile_z']],
+            'hidden' => (int) $row['hidden'] !== 0,
+            'shown' => self::shownOf($row),
+        ];
     }
 
     private function row(string $seed): ?array
