@@ -63,7 +63,8 @@ actor GardenTerrain {
         let image = UIGraphicsImageRenderer(size: canvas, format: format).image { context in
             if let region { context.cgContext.translateBy(x: -region.minX, y: -region.minY) }
             Self.draw(world: world, plotSide: plotSide, view: view, detail: max(4, detail),
-                      light: light, region: region, into: context.cgContext)
+                      light: light, region: region, magnification: Double(sharpness),
+                      into: context.cgContext)
         }
 
         // A handful is enough: one for the plot and eight small ones for the row
@@ -90,6 +91,7 @@ actor GardenTerrain {
         detail mesh: Int,
         light: GardenGround.Light,
         region: CGRect? = nil,
+        magnification: Double = 1,
         into context: CGContext
     ) {
         let worlds = GardenWorlds.shared
@@ -163,7 +165,8 @@ actor GardenTerrain {
 
         // The side first: it hangs behind the surface, and the surface is what
         // closes the top of it.
-        drawSide(rim: rim(of: grid, detail: mesh), view: view, light: light, within: reach, into: context)
+        drawSide(rim: rim(of: grid, detail: mesh), view: view, light: light, within: reach,
+                 magnification: magnification, into: context)
 
         // Far to near along the anti-diagonals **of the view**, not of the plot.
         // Near is a fact about the screen: once the plot has been turned, the
@@ -324,13 +327,15 @@ actor GardenTerrain {
         view: Isometric,
         light: GardenGround.Light,
         within: CGRect?,
+        magnification: Double,
         into context: CGContext
     ) {
         context.saveGState()
         defer { context.restoreGState() }
         context.setLineWidth(0.7)
         context.setLineJoin(.bevel)
-        for piece in GardenGround.side(rim: rim, view: view, light: light, within: within) {
+        for piece in GardenGround.side(rim: rim, view: view, light: light, within: within,
+                                       magnification: magnification) {
             let colour = piece.colour
             context.setFillColor(red: colour.x, green: colour.y, blue: colour.z, alpha: 1)
             context.setStrokeColor(red: colour.x, green: colour.y, blue: colour.z, alpha: 1)

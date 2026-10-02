@@ -591,6 +591,30 @@ final class PlotTests: XCTestCase {
         }
     }
 
+    /// **Stones only when zoomed in** (Marcus, 2 October 2026). The whole plot
+    /// has none, at any size of screen; a close drawing has them; and a close
+    /// drawing too small to show one at `smallestStone` has none. A stone is
+    /// three pieces of nine corners, and a band is a run of an even number, so
+    /// the nine-cornered pieces are the stones.
+    func testStonesOnlyWhenZoomedIn() {
+        let side = 5.2
+        let rim = PlotOutline.of(plotSide: side).points.map { SIMD3($0.x, 0, $0.z) }
+        func stones(_ view: Isometric, within: CGRect?, magnification: Double = 1) -> Int {
+            GardenGround.side(rim: rim, view: view, light: .noon, within: within, magnification: magnification)
+                .filter { $0.points.count == 9 }.count
+        }
+        for size in [CGSize(width: 390, height: 844), CGSize(width: 1024, height: 768)] {
+            let view = Isometric.fitting(plotSide: side, in: size, headroom: GardenSprites.tallestExpected,
+                                         soilDepth: GardenGround.rimDepth)
+            XCTAssertEqual(stones(view, within: nil), 0, "stones on the whole plot at \(size)")
+            let everywhere = CGRect(origin: .zero, size: size).insetBy(dx: -size.width, dy: -size.height)
+            XCTAssertGreaterThan(stones(view, within: everywhere, magnification: 3), 0,
+                                 "no stones close up at \(size)")
+            XCTAssertEqual(stones(view, within: everywhere, magnification: 0.1), 0,
+                           "stones smaller than \(GardenGround.smallestStone) points at \(size)")
+        }
+    }
+
     /// **A garden you cannot see is not a garden.** The moon's curve is right
     /// and is still pinned above — 18:00 is the darkest hour of the day — and the
     /// Milky Way is what keeps that hour from being a black screen. Held as a
