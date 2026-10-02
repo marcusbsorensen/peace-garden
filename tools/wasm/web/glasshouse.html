@@ -44,9 +44,10 @@
   // is how docs/WEB-GARDENS.md says a template is judged. `?source=service`
   // draws what the local plot service holds instead.
   //
-  // **The thing to look at is the staging**: whether the pots read as a run of
-  // colour from the door, blue-green to yellow, and whether a plant on it stands
-  // clear of the roof. `?span=0.6` looks closer.
+  // **The thing to look at is the staging**: whether the pots read as a wheel
+  // of colour round the house, blue-green just past the door to yellow just
+  // before it, and whether a plant on it stands clear of the dome. `?span=0.6`
+  // looks closer.
   //
   // **It draws a different five hundred from the test suite's**, and that is
   // the point of it rather than a detail — see the Orchard's workbench.
@@ -93,10 +94,10 @@
   if (!fromService) plots = await plantVisitors(e, arrivals, report);
   else plots = (await (await fetch('/api/glasshouse')).json()).plots;
 
-  // What the rule did with this plot, in words: how many pots stand at each of
-  // the staging's twelve places, door first, and how full the border is.
-  // **The thing to watch is that no place goes bare while its neighbours
-  // crowd** — a run of empty places in a full plot is a band edge in the wrong
+  // What the rule did with this plot, in words: how many pots stand in each of
+  // the staging's twelve bands, round from the door, and how full the bed is.
+  // **The thing to watch is that no band goes bare while its neighbours
+  // crowd** — a run of empty bands in a full plot is a band edge in the wrong
   // place.
   function say() {
     held.replaceChildren();
@@ -105,8 +106,8 @@
     const pots = Array.from({ length: house.positions }, (_, p) =>
       rows.filter((r) => r.slot.bed === 0 && r.slot.index === p).length);
     const border = rows.filter((r) => r.slot.bed === 1).length;
-    for (const line of [`staging, door first: ${pots.join(' ')}`,
-                        `border: ${border} of ${house.borderPlaces}`]) {
+    for (const line of [`bands from the door: ${pots.join(' ')}`,
+                        `bed: ${border} of ${house.borderPlaces}`]) {
       const item = document.createElement('li');
       item.textContent = line;
       held.append(item);
