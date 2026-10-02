@@ -134,13 +134,13 @@ final class OrchardStore
         $plantings = array_map([self::class, 'planting'], $query->fetchAll());
         if ($plot !== 0) return $plantings;
         $standing = Ambassadors::planting('kinship');
-        [$x, $z] = Orchard::spot($standing['guild'], $standing['index']);
         array_unshift($plantings, [
             'seed' => $standing['seed'],
             'parents' => [],
             'encounter' => null,
             'plot' => 0,
-            'spot' => [$x + $standing['nudgeX'], $z + $standing['nudgeZ']],
+            'spot' => Orchard::spot(0, $standing['guild'], $standing['index'],
+                                    $standing['nudgeX'], $standing['nudgeZ']),
         ]);
         return $plantings;
     }
@@ -165,16 +165,21 @@ final class OrchardStore
         return max(1, (int) $query->fetchColumn());
     }
 
-    /** What the page needs to grow a planting and stand it in its place. */
+    /**
+     * What the page needs to grow a planting and stand it in its place. The
+     * spot is turned for its plot (`Orchard::spot`), so the page draws it where
+     * the rule's table and the plot's variant put it.
+     */
     private static function planting(array $row): array
     {
-        [$x, $z] = Orchard::spot((int) $row['guild'], (int) $row['slot_index']);
+        $plot = (int) $row['plot'];
         return [
             'seed' => $row['seed'],
             'parents' => [$row['parent_a'], $row['parent_b']],
             'encounter' => $row['encounter'],
-            'plot' => (int) $row['plot'],
-            'spot' => [$x + (float) $row['nudge_x'], $z + (float) $row['nudge_z']],
+            'plot' => $plot,
+            'spot' => Orchard::spot($plot, (int) $row['guild'], (int) $row['slot_index'],
+                                    (float) $row['nudge_x'], (float) $row['nudge_z']),
         ];
     }
 

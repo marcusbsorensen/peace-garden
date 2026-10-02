@@ -35,15 +35,16 @@ from places.numbers import Rng, cos_sin, turn_of
 
 FIELDS = ('guild', 'index')
 NUDGES = 3
-MIN_SPACING = 0.56
+MIN_SPACING = 0.55
 BOUND = 2.3
 
-TREE_FROM = 1.70        # how far out the outer trunks stand on each axis, before the nudge
+TREE_FROM = 1.74        # how far out the outer trunks stand on each axis, before the nudge
 TREE_NUDGE = 0.08       # how far a trunk may be nudged on each axis
-CRESCENT = 0.95         # how far a crescent's places stand from their trunk: the drip line
-MIDDLE = 0.60           # how far the middle tree's four stand from it
-FLANK = 35 / 360        # the flanks' turn either side of the line to the middle
-CROWN = 70 / 360        # the crown's turn, toward the pocket it frames
+CRESCENT = 0.90         # how far a crescent's places stand from their trunk: the drip line
+MIDDLE = 0.75           # how far the middle tree's four stand from it: under its canopy's edge,
+                        # where the underside is 2.35 m up and over the tallest plant grown
+FLANK = 36 / 360        # the flanks' turn either side of the line to the middle
+CROWN = 72 / 360        # the crown's turn, toward the pocket it frames
 PLANT_NUDGE = 0.13      # Orchard's nudge from the seed, each axis
 
 # The outer trees in the order their guilds fill: far, near, then the sides.
@@ -55,7 +56,7 @@ def _d(a, b):
     return math.sqrt(dx * dx + dz * dz)
 
 
-def _on_plot(p, half=2.16, corner=0.40):
+def _on_plot(p, half=2.20, corner=0.40):
     """Inside a rounded square the plot's wandering edge never comes in past,
     less a margin for the plant's nudge: `Organic.outline` comes in to 2.38 m
     on a side and rounds its corners by 0.35 m."""
@@ -139,8 +140,13 @@ def build(nudge):
             arcs.append(arc)
         every = middle + [p for g in guilds for p in g]
         ok = all(_on_plot(p) for p in every)
-        ok = ok and all(_d(a, b) >= MIN_SPACING + 0.01 for i, a in enumerate(every) for b in every[i + 1:])
+        ok = ok and all(_d(a, b) >= MIN_SPACING + 0.002 for i, a in enumerate(every) for b in every[i + 1:])
         ok = ok and all(_d(p, t) >= 0.55 for p in every for t in trunks)
+        # The middle tree's four and the near end of each crescent lean toward
+        # each other: no two guilds' places closer than 0.80 m.
+        groups = [middle] + guilds
+        ok = ok and all(_d(a, b) >= 0.80 for i, g in enumerate(groups) for h in groups[i + 1:]
+                        for a in g for b in h)
         if not ok:
             continue
         way = _way(rng)
