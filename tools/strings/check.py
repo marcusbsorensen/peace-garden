@@ -23,8 +23,8 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CATALOGUES = ROOT / "Server/strings"
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from commission import (AREAS, CLAIMS, FRONT, MEANINGS, PRIVACY, WILD,  # noqa: E402
-                        english)
+from commission import (AREAS, CLAIMS, FRONT, MEANINGS, PRIVACY, WEAR,  # noqa: E402
+                        WILD, english)
 
 # How much longer than the English a string may be before the layout is at risk.
 #
@@ -393,7 +393,7 @@ def main():
     app = json.loads(APP.read_text())["strings"]
     codes = sys.argv[1:] or sorted(p.stem for p in CATALOGUES.glob("*.json"))
     total, written, named, private, clean, been_read = 0, 0, 0, 0, 0, 0
-    fronted, meant = 0, 0
+    fronted, meant, worn = 0, 0, 0
     for code in codes:
         path = CATALOGUES / f"{code}.json"
         if not path.exists():
@@ -411,6 +411,9 @@ def main():
                for k in PRIVACY):
             private += 1
         if all(isinstance(strings.get(k), str) and strings[k].strip()
+               for k in WEAR):
+            worn += 1
+        if all(isinstance(strings.get(k), str) and strings[k].strip()
                for k in FRONT):
             fronted += 1
         if all(isinstance(strings.get(k), str) and strings[k].strip()
@@ -425,6 +428,11 @@ def main():
                                 "meanings")
                  + problems_for(code, catalogue, source, WILD,
                                 "Wild Fields")
+                 # The privacy page's ninth, on paths that visitors wear (2
+                 # October 2026): its own group, so a catalogue without it
+                 # is awaiting it rather than half-commissioned.
+                 + problems_for(code, catalogue, source, WEAR,
+                                "paths visitors wear")
                  + meaning_problems_for(code, catalogue, app)
                  + avoid_problems_for(code, catalogue, app)
                  + area_problems_for(catalogue, source))
@@ -438,7 +446,8 @@ def main():
     print(f"\n{written} of {total} catalogues have the prose"
           f"{f', {awaiting} still awaiting it' if awaiting else ''}. "
           f"{named} have all ten area names. {private} have the privacy "
-          f"page. {fronted} have the front page, {meant} what the names "
+          f"page, {worn} its paragraph on paths that visitors wear. "
+          f"{fronted} have the front page, {meant} what the names "
           f"mean. {clean} clean.")
     # **The count that matters and had nowhere to live.** Everything above is
     # what a machine can see. This is the one number that says whether anybody

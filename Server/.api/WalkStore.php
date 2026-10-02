@@ -14,6 +14,7 @@ require_once __DIR__ . '/GlasshouseStore.php';
 require_once __DIR__ . '/CoppiceStore.php';
 require_once __DIR__ . '/HomeGroundStore.php';
 require_once __DIR__ . '/WildStore.php';
+require_once __DIR__ . '/WildWear.php';
 require_once __DIR__ . '/Offers.php';
 require_once __DIR__ . '/TakenBack.php';
 
@@ -83,6 +84,9 @@ final class WalkStore
         // And the Wild Fields', which is not an area and has no rule to run,
         // for the same reason: it is in the nightly copy's list.
         $store->wild();
+        // And the wear on it (2 October 2026), made whether or not wear is on
+        // here, for the same reason again. Off, it is an empty table.
+        $store->wear();
         // And the asking's, for the same reason and one more: `offer_key` is
         // in the nightly copy's list, and mysqldump refuses a list naming a
         // table that is not there. Its migration is also the one that erases
@@ -333,6 +337,17 @@ final class WalkStore
     {
         static $wild = null;
         return $wild ??= new WildStore($this->db);
+    }
+
+    /**
+     * The paths visitors wear in the Wild Fields, on the same connection: a
+     * number per ground cell and nothing else (`WildWear.php`). Its routes
+     * answer only where wear is turned on (`router.php`).
+     */
+    public function wear(): WildWear
+    {
+        static $wear = null;
+        return $wear ??= new WildWear($this->db);
     }
 
     /**

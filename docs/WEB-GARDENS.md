@@ -1899,6 +1899,115 @@ keeps a number per cell and nothing else. That is aggregate footfall and not
 tracking. **Accepted by Marcus, 18 September, on exactly those terms**: counts
 per cell and nothing else, and the privacy page says so before it runs.
 
+#### Built on /dev, 2 October 2026
+
+**Built, and off on the live site.** Marcus approved it on 1 October. It runs
+only where `Server/.api/config.php` says `'wear' => true`. That file is
+git-ignored and written on the server, and the server's does not say so.
+Where wear is off, both routes answer 404 before the rate limit or the
+database is touched, `GET /api/wild` carries no `wear`, `/wild` never loads
+`wear.js`, so it counts, sends and draws nothing, and `/privacy` leaves out
+`privacy9`. The sweep fades the field only where wear is on.
+`tools/reference/check_wild_wear.php` asks a copy with no `config.php` for
+both routes and the privacy page, in CI, and expects 404 and eight
+paragraphs.
+
+- **The cells** are half a metre square, 128 to a side, so they come round
+  with the field. A path is about one cell wide.
+- **Walking** is the ground under the middle of the window, crossed while the
+  visitor drags the field or presses one of the pad's four directions
+  (`walkOn`, `wear.js`). A turn, closer or further, the glide home, going to a
+  plant and a postcard's arrival count nothing. Checked on the page: looking
+  about sent nothing, and a drag and three presses sent 9 and 32 cells.
+- **What is sent:** `POST /api/wild/wear` with `{cells: [[x, z], …]}`. Each
+  cell appears once, sorted so the batch is a set of places rather than a
+  route, at most 256 of them. A batch goes every half minute while walking,
+  and whatever is waiting goes when the page is put away. It is sent with no
+  credentials and no referrer. A batch that fails is dropped. The route is
+  rate-limited like every write, at the hourly 120 (110 a window), and stores
+  nothing new about the caller.
+- **What is kept** (`WildWear.php`): `wild_wear` holds the cell, its wear in
+  crossings, and how many it has counted today. That is all, and it is
+  `WITHOUT ROWID` on SQLite. **No cell carries a date.** Instead one row,
+  `wild_wear_day`, holds the day the whole field was last faded to. The first
+  batch of a day, or the sweep, fades every cell by the days since, clears
+  the counts, and deletes cells below half a crossing. This is stricter than
+  a per-cell last-decayed day would be, and no harder.
+- **The rule:** each crossing adds one. A cell counts at most **six a day**.
+  Wear **halves in thirty days**. The page draws nothing below **eight**, so
+  the most one visitor can add in a day shows nothing. Above eight it pales
+  on a logarithm, up to 160, a little short of the most a cell can ever hold
+  (six over a day's fading, about 260). The check holds the doc's sentence to
+  numbers. Walked once a day from June to September, a cell is a clear path
+  at 40. Walked as much as the cap allows and left on 1 October, it is down
+  to 4.6 by the spring equinox, below what is drawn.
+- **Drawn** in the ground's shader as its own colour: paler, drier and
+  browner, with the normal laid towards the sky, which makes it flatter. It is
+  never a mark on top. The wear is read as a smooth B-spline over the cells,
+  because read straight between them every edge was a run of half-metre
+  straight pieces (seen on a render). The read wanders on a slow noise and
+  frays at the edge from a stride down to a tuft. The rewrite is injected
+  into `GROUND_FRAGMENT` the way the fireflies are. `wildfields.js` itself
+  gains three things: a `wear` option, a `looked` callback, and finding the
+  ground under the middle of the window.
+- **The workbench:** `/dev/wild?wear=demo` invents 150 days of walking over
+  the invented field, by the service's own rule. Desire lines run from a hub
+  near the middle to its neighbours and on beyond them; one busy line is left
+  after fifty days to show fading; a thin web covers the rest; and four
+  strangers a day wander anywhere and should show nothing. The page opens
+  over the hub. `/dev/wild?source=service` draws the local service's wear and
+  sends what a drag crosses.
+- **Renders:** `design/wild-wear-2026-10-02/wide.png`, at the furthest look
+  over the hub, and `close.png`, at 2.2× on the busiest line.
+
+**Settled by Marcus, 2 October 2026**, on the draft and the renders:
+
+1. **The wording** of the privacy page's paragraph, his own:
+   > When you walk through the Wild Fields on this site, by dragging the field
+   > or pressing its arrows, the page notes which squares of ground the middle
+   > of your view crosses, each half a metre across. Every half minute or so,
+   > and when you leave the page, it sends the Wild Fields that list of squares
+   > alone, sorted. The Wild Fields keep one number for each square, for how
+   > worn it is, and draw the numbers as paths for everyone to see. Each square
+   > counts a few crossings a day at most, and every number halves each month,
+   > so a path stays only while people keep walking it. The numbers are all
+   > that is kept: a count for each square of ground, the same whoever walked
+   > it and whenever. Only walking counts; looking around, coming closer and
+   > opening a plant leave the ground as it was.
+2. **Its place:** `privacy9`, straight after `privacy8`, so the page reads 1,
+   2, 3, 4, 6, 7, 8, 9, 5 — and **only while wear is on**, so a deploy with
+   wear off never describes something that is not running. `index.php` keeps
+   the paragraph between its two `wear` marks only where `WildWear::on` says
+   so: the same switch, read the same way (`.api/settings.php`), as the routes.
+   Checked headless in English and Danish both ways: on, nine paragraphs, the
+   ninth in English under a Danish page; off, eight, and no trace of the ninth
+   in the page. In CI, `check_wild_wear.php` checks the off state.
+3. **The width:** about a metre is right as it is.
+
+`privacy9` is its own commission (`WEAR` in `tools/strings/commission.py`),
+printed by `commission.py --privacy <code>` after the eight, so the 41
+catalogues that already have the privacy page and the Wild Fields' strings
+are awaiting it rather than half-commissioned. `check.py` counts it.
+
+**Before it goes live:**
+
+1. `privacy9` is translated into every language the site speaks.
+2. The branch is merged and deployed, and `'wear' => true` is written into
+   the server's `config.php`, which turns on the routes, the page, the sweep's
+   fading and the privacy paragraph together. Nothing else changes.
+
+**What this build could not settle:**
+
+- **A daily walker is a crowd.** The cap stops a road being carved in a
+  day. Somebody who comes back every day and walks the same line is, to the
+  field, a few people a day, as they would be in a real field. Without
+  knowing who walks, nothing can tell the two apart.
+- **The middle of the window is not a pair of feet.** Different visitors'
+  routes between the same two plants will lie wider apart than footsteps do,
+  so real wear will be broader and slower to form than the invented lines. A
+  path is never drawn narrower than about 60 cm, because the cell is half a
+  metre. Worth judging again once there is real traffic.
+
 ### What had to be fixed before it opened
 
 All three were done on 1 October 2026, in the build below.
@@ -2133,6 +2242,8 @@ is optional.
   it is the first thing on the site that learns where people go, and the
   privacy page has to say so before it runs. The field is ready for it — wear
   would be per ground cell, and the ground is already on a fixed grid.
+  *Built on /dev on 2 October 2026 and off on the live site until the privacy
+  page says so: §Paths that visitors wear, *Built on /dev*.*
 - **Water under a lotus**: built 2 October 2026, below. Reeds, which want the
   same water, are not yet given it.
 - **Whether a released plant can be found again** is partly answered: a plant

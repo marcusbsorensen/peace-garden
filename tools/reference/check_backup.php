@@ -122,6 +122,11 @@ $store->wild()->release(str_repeat('3', 64), str_repeat('a', 64), str_repeat('b'
 // with no way left for either gardener to withdraw what they had shown.
 $store->wild()->beside(str_repeat('3', 64), str_repeat('5', 32), str_repeat('6', 32),
                        ['name' => 'Ash', 'place' => null, 'month' => null]);
+// And a path somebody wore across the field (since 2 October 2026), twice
+// over one cell. A copy without `wild_wear` would restore the field as grass;
+// one without `wild_wear_day` would not know how long it had been fading.
+$store->wear()->walked([[12, 34]], 1_700_000_000);
+$store->wear()->walked([[12, 34]], 1_700_000_000);
 unset($store);
 
 // MARK: Taking one
@@ -174,6 +179,8 @@ check('the copy holds the Home Ground', ($counts['home_ground'] ?? -1) === 1);
 check('the copy counts the Home Ground lock', ($counts['home_ground_lock'] ?? -1) === 1);
 check('the copy holds the Wild Fields', ($counts['wild_fields'] ?? -1) === 1);
 check('and who stands beside them', ($counts['wild_names'] ?? -1) === 1);
+check('and the paths worn across them', ($counts['wild_wear'] ?? -1) === 1
+      && ($counts['wild_wear_day'] ?? -1) === 1);
 
 // MARK: What a restore writes back
 
@@ -189,6 +196,7 @@ $restoredHabit = null;
 $restoredCrop = null;
 $restoredWild = null;
 $restoredName = null;
+$restoredWear = null;
 if ($copy !== '') {
     $whole = gzdecode((string) file_get_contents($copy)) ?: '';
     $marker = "-- A SQLite file follows, not SQL.\n";
@@ -215,6 +223,9 @@ if ($copy !== '') {
             $restoredWild = $wild === false ? null : [$wild['parent_a'], $wild['parent_b']];
             $named = $back->query('SELECT name_a FROM wild_names')->fetch(PDO::FETCH_ASSOC);
             $restoredName = $named === false ? null : $named['name_a'];
+            $worn = $back->query('SELECT cell_x, cell_z, wear FROM wild_wear')->fetch(PDO::FETCH_ASSOC);
+            $restoredWear = $worn === false ? null
+                : [(int) $worn['cell_x'], (int) $worn['cell_z'], (float) $worn['wear']];
             unset($back);
         } catch (Throwable) {
             // Left null, which is what the checks below report.
@@ -235,6 +246,7 @@ check('a restored Home Ground row still knows its crop, and the bed it claimed',
 check('a restored Wild Fields row still knows both its parents',
       $restoredWild === [str_repeat('a', 64), str_repeat('b', 64)]);
 check('and the name its releaser chose to show', $restoredName === 'Ash');
+check('a restored worn cell is the same cell, as worn', $restoredWear === [12, 34, 2.0]);
 
 // MARK: A table a deploy added
 

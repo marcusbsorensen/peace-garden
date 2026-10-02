@@ -310,11 +310,19 @@ void main() {
 /// `x` and `z` wrapped, 0 to `TILES` − 1 — as plantings `{ seed, parents,
 /// spot }`, the way `GET /api/wild/tile/{x}/{z}` does. `from` is the point of
 /// the field the window opens over, in metres.
-export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], report = () => {} }) {
+///
+/// **Paths that visitors wear** (2 October 2026, on /dev only; `wear.js`):
+/// `wear`, when given, is the worn ground — it rewrites the ground's shader
+/// and binds what it draws from — and `looked(point)` is told the ground
+/// under the middle of the window each time the window moves or turns. The
+/// field knows nothing else about either.
+export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], report = () => {},
+                                          wear = null, looked = () => {} }) {
   const gl = canvas.getContext('webgl2', { antialias: true, alpha: true, premultipliedAlpha: true });
   if (!gl) throw new Error('This browser has no WebGL2.');
-  const ground = program(gl, GROUND_VERTEX, GROUND_FRAGMENT, ['position', 'normal', 'colour'],
-                         ['flies', 'flyColour', 'flyReach']);
+  const ground = program(gl, GROUND_VERTEX, wear ? wear.shader(GROUND_FRAGMENT) : GROUND_FRAGMENT,
+                         ['position', 'normal', 'colour'],
+                         ['flies', 'flyColour', 'flyReach', ...(wear ? wear.uniforms : [])]);
   const waterProgram = program(gl, WATER_VERTEX, WATER_FRAGMENT, ['position', 'normal', 'colour', 'depth'],
     ['flies', 'flyColour', 'flyReach', 'time', 'starlit', 'look', 'across', 'toward', 'screen', 'starlight']);
   // **The field's water** (`wildwater.js`): what the hollows hold near the
@@ -405,6 +413,7 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
     Object.assign(look, held(wanted));
     draw();
     walked();
+    looked(groundUnder(look));
     return { ...look };
   }
 
@@ -413,6 +422,23 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
     turn = (turn + quarters + 4) % 4;
     Object.assign(look, over(kept, look.zoom));
     draw();
+    looked(groundUnder(look));
+  }
+
+  // The ground itself under the middle of a look, where `underMiddle` is a
+  // point at one height: down the line of sight until it meets the swells.
+  // Each step closes most of the gap, because no swell is as steep as the
+  // line of sight.
+  function groundUnder({ x, y }) {
+    const { x: X, y: Y, z: Z } = axes();
+    const sx = dot(origin, X) + x, sy = dot(origin, Y) + y;
+    let t = (origin[1] - sx * X[1] - sy * Y[1]) / Z[1];
+    const at = () => [0, 1, 2].map((i) => sx * X[i] + sy * Y[i] + t * Z[i]);
+    for (let k = 0; k < 8; k++) {
+      const p = at();
+      t += (groundHeight(p[0], p[2]) - p[1]) / Z[1];
+    }
+    return at();
   }
 
   // MARK: The ground
@@ -989,6 +1015,7 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
     }
 
     gl.useProgram(ground.program);
+    wear?.bind(gl, ground.at);
     groundMesh.draw();
 
     // The water: after the ground, over the floor it lies in, writing depth so
