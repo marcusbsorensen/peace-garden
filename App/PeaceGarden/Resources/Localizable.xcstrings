@@ -90,7 +90,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ har släppt ut växten ni odlade tillsammans på Vildmarken. Din stannar här."
+            "value" : "%@ har släppt ut växten ni odlade tillsammans. Nu står den på Vildmarken, och din stannar här."
           }
         }
       }
@@ -1942,49 +1942,49 @@
         }
       }
     },
-    "Beside it stands only what each of you chooses. Left as it is, you stay anonymous." : {
+    "Beside it stands only what each of you chooses. Left as it is, no name is shown." : {
       "comment" : "On the Wild Fields notice, above the three switches. Anonymous is the default.",
       "localizations" : {
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ved siden af den står kun det, hver af jer vælger. Lader du det være, forbliver du anonym."
+            "value" : "Ved siden af den står kun det, hver af jer vælger. Lader du det være, vises intet navn."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Junto a ella solo figura lo que elija cada uno. Si lo dejas como está, sigues en el anonimato."
+            "value" : "Junto a ella solo figura lo que elija cada uno. Si lo dejas como está, no se muestra ningún nombre."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À côté d’elle ne figure que ce que chacun de vous choisit. Si tu ne changes rien, tu restes anonyme."
+            "value" : "À côté d’elle ne figure que ce que chacun de vous choisit. Si tu ne changes rien, aucun nom n’est affiché."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Accanto a essa c'è solo ciò che sceglie ciascuno di voi. Se lasci tutto com'è, resti anonimo."
+            "value" : "Accanto a essa c'è solo ciò che sceglie ciascuno di voi. Se lasci tutto com'è, non viene mostrato alcun nome."
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ved siden av den står bare det hver av dere velger. Lar du det være som det er, forblir du anonym."
+            "value" : "Ved siden av den står bare det hver av dere velger. Lar du det være som det er, vises ikke noe navn."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Naast hem staat alleen wat ieder van jullie kiest. Laat je het zoals het is, dan blijf je anoniem."
+            "value" : "Naast hem staat alleen wat ieder van jullie kiest. Laat je het zoals het is, dan wordt er geen naam getoond."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bredvid den står bara det som var och en av er väljer. Lämnar du det som det är förblir du anonym."
+            "value" : "Bredvid den står bara det som var och en av er väljer. Lämnar du det som det är visas inget namn."
           }
         }
       }
@@ -3642,7 +3642,7 @@
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Brugernavn som gartner"
+            "value" : "Dit brugernavn"
           }
         },
         "es" : {
@@ -3666,7 +3666,7 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Brukernavn som gartner"
+            "value" : "Brukernavnet ditt"
           }
         },
         "nl" : {
@@ -4067,19 +4067,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cómo se dice el lugar"
+            "value" : "Cómo se indica el lugar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comment le lieu est dit"
+            "value" : "Comment le lieu est indiqué"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Come si dice il luogo"
+            "value" : "Come viene indicato il luogo"
           }
         },
         "nb" : {
@@ -4659,7 +4659,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "I mitten går sol och måne runt efter den riktiga klockan, så en trädgård du besöker på natten är en natträdgård. På vardera sidan stannar den i dag eller natt, vad klockan än är."
+            "value" : "I mitten går sol och måne runt efter den riktiga klockan, så en trädgård du besöker på natten är en natträdgård. På vardera sidan står den still på dag eller natt, vad klockan än är."
           }
         }
       }
@@ -5041,7 +5041,7 @@
         "da" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Den forlader din have og tager ud på Vildmarken. Den, du groede den sammen med, beholder sin, og alle andre planter bliver her, hvor de er."
+            "value" : "Den forlader din have og tager ud i Vildmarken. Den, du groede den sammen med, beholder sin, og alle andre planter bliver her, hvor de er."
           }
         },
         "es" : {
@@ -5065,7 +5065,7 @@
         "nb" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Den forlater hagen din og drar ut på Villmarka. Den du dyrket den fram sammen med, beholder sin, og alle andre planter blir her, der de er."
+            "value" : "Den forlater hagen din og drar ut i Villmarka. Den du dyrket den fram sammen med, beholder sin, og alle andre planter blir her, der de er."
           }
         },
         "nl" : {
@@ -5972,6 +5972,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ljus"
+          }
+        }
+      }
+    },
+    "Light and dark" : {
+      "comment" : "Heading in Settings over the day and night control, and the name the control is read out by. Light as in daylight, the noun, not the Light appearance just above it.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lys og mørke"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Luz y oscuridad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lumière et obscurité"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Luce e buio"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lys og mørke"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Licht en donker"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ljus och mörker"
           }
         }
       }
@@ -8241,7 +8288,7 @@
         "da" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Løssæt den på Vildmarken"
+            "value" : "Løssæt den i Vildmarken"
           }
         },
         "es" : {
@@ -8265,7 +8312,7 @@
         "nb" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Slipp den ut på Villmarka"
+            "value" : "Slipp den ut i Villmarka"
           }
         },
         "nl" : {
@@ -8288,7 +8335,7 @@
         "da" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Løssætte den på Vildmarken?"
+            "value" : "Løssætte den i Vildmarken?"
           }
         },
         "es" : {
@@ -8312,7 +8359,7 @@
         "nb" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Slippe den ut på Villmarka?"
+            "value" : "Slippe den ut i Villmarka?"
           }
         },
         "nl" : {
@@ -11225,7 +11272,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Väntar på att du tillåter plats."
+            "value" : "Väntar på att du ger tillgång till din plats."
           }
         }
       }
@@ -11305,7 +11352,7 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hva det skal stå"
+            "value" : "Hva som skal stå"
           }
         },
         "nl" : {
@@ -11317,7 +11364,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vad det står"
+            "value" : "Vad som står"
           }
         }
       }

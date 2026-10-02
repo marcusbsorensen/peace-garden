@@ -325,7 +325,7 @@ struct SettingsView: View {
             }
 
             VStack(alignment: .leading, spacing: 12) {
-                Text("Light")
+                Text("Light and dark")
                     .chromeLabel()
                     .foregroundStyle(Chrome.sectionLabel)
                     .accessibilityHidden(true)
@@ -819,7 +819,7 @@ struct LightToggle: View {
         .animation(.easeInOut(duration: 0.22), value: selection)
         .sensoryFeedback(.selection, trigger: selection)
         .accessibilityElement(children: .contain)
-        .accessibilityLabel(Text("Light"))
+        .accessibilityLabel(Text("Light and dark"))
     }
 
     private func segment(_ option: GardenDaylight) -> some View {
