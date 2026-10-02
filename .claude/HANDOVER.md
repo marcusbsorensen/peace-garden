@@ -6,24 +6,26 @@ The previous handover is at `git show 06a8b9e:.claude/HANDOVER.md` (30 September
 Tonight's batch live and in build 6: the Wild Fields with water, worn paths and pasture ground; the website's plots as the app's floating slab; the app's new day sky, slab, plant screen and shadows; the 1 October translations corrected.
 
 ## State
-- **Done, on main and pushed** (main `d484053`)
-  - Wild Fields strings in 41 languages and 79 app strings in 7: **live** (deployed 2 October, before build 5).
-  - **Build 5 uploaded** (138 passed, 0 failed).
-  - App: day sky B+C+D (`e345fc8`, Testing switch `-pgOldSky`), the slab (`781bf66`), plant 56 pt higher (`4a2d3c7`).
-  - Curator's take-down tool (`06a8b9e`): `php ~/public_html/.api/curate.php hide <seed>`.
-  - Website slab with stones only when zoomed in, on web and app (`d484053`). **Not deployed yet.**
-- **In progress**
-  - Integration agent `a16338ad17866618c`, branch `worktree-agent-a16338ad17866618c` (pushed): ponds B (`1171d50`), wear plus privacy9 (`origin/claude/privacy9-2026-10-02`) and pasture ground (`7ef2b4a`) joined on current main. Renders go to `design/wild-together-2026-10-02/`.
-  - Shadows agent `a6817e95101b680b7`, branch `worktree-agent-a6817e95101b680b7` (pushed, `119824e`): noon cores about half, sharper evening shadows, the figures' shadows kept, rebasing onto `d484053`.
-  - Cloud routines firing at 02:01Z, both with connectors stripped:
-    - `trig_01LofNy1ACmg4Li1YdH1EKQH` writes `claude/strings-fixes-site-2026-10-02` (site catalogues and the `wildpage.js` bidi fix);
-    - `trig_014mwsrPrHyiuEmXTDf3iWoK` writes `claude/strings-fixes-app-2026-10-02` (xcstrings, the `Light and dark` split, and the "no name is shown" line).
-- **Backups on GitHub**: the `worktree-agent-*` branches for ponds, ground, wear and shadows.
+- **On main and pushed (`b104cf3`)**:
+  - the website slab, with stones only when zoomed in;
+  - the Wild Fields joined: ponds B, pasture ground, worn paths and privacy9;
+  - the curate tool;
+  - the app's shadows (Marcus's tweaks) and the warmer plot light;
+  - the reviewed translation fixes for the site and the app (REVIEW.md and APPLIED-app.md).
+  - String, reference and wear/curate checks pass.
+- **Running**:
+  - the deploy of `b104cf3` with wear switched on in the live config.php (deploy agent; screenshots go to `out/deploy-2026-10-02b/`);
+  - build 6 in a worktree branch (bump to 6, full suite, archive to `build/PeaceGarden-1.0-6.xcarchive`, upload).
+- **Then**:
+  - Marcus tries /wild on his phone;
+  - merge the build 6 bump;
+  - clean up worktrees and the remote `worktree-agent-*` and `claude/*` branches;
+  - close PR #8.
 
 ## Decisions made, 2 October 2026 (Marcus)
 - Lotus B: the hollows hold water. Night ponds show star reflections and ripples. The ground is pasture. Deploy, then he tries it on his phone.
 - Worn paths: privacy9 goes after privacy8, the path width stays, and **wear is switched on with this deploy**. That means `'wear' => true` in the server's `.api/config.php`, which lives only on the server and is excluded from rsync.
-- Day sky B+C+D. The plot's light is warmed after the shadows merge.
+- Day sky B+C+D. Plot light warmed as built; the winter sun is not lowered; pre-dawn plants match the moonlit ground.
 - Website plots hang the slab. Stones show only when zoomed in (1.3× plus 8 px), on both platforms.
 - Shadows: noon lighter, evening sharper, the hare, fox and snail shadows kept.
 - Translation review (`tools/strings/commissions/2026-10-01/REVIEW.md`, branch `claude/strings-review-2026-10-01`, PR #8):
