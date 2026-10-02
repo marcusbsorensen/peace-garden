@@ -1,7 +1,16 @@
 // A plot of the Coppice, drawn the way the app draws a plot: a floating slab
 // of woodland floor seen in true isometric, leaf litter with moss in its
-// hollows, two rides trodden across it, and a stool of old wood under every
-// fern the rotation cuts.
+// hollows, three rides trodden out from a sunny glade to the rim, and a stool
+// of old wood under every fern the rotation cuts.
+//
+// **Coupes round a glade since 2 October 2026** (Marcus's choice,
+// `design/garden-layouts-2026-10-02/RESEARCH.md` §*The Coppice*, option A).
+// Three rides meet at a small glade and bend out to the edge, dividing the plot
+// into three coupes of unequal size; each coupe's stools stand together in a
+// stand, and its stars in clumps of three by its rides, where the light is.
+// Until then the coupes were three straight bands and the rides two straight
+// lines across. Where the glade, the rides and the coupes lie on a plot, turned
+// and varied by its number as its plants are, comes from `pg_coppice_layout`.
 //
 // **The first page that draws the year.** A fern on a stool is grown at its
 // coupe's stage — cut this winter, regrowing, or grown — which the service
@@ -32,7 +41,11 @@ import { footing, raiseTrough } from './water.js';
 
 // Seeds for this area's dressing, its own and not another area's.
 const COPPICE = { spring: 1609, ground: 7151, floor: 47, relief: 53, litter: 67, moss: 71, width: 89,
-  ride: { '-1': 79, '1': 83 } };
+  ride: [79, 83, 97] };
+
+/// The glade: the litter there is lighter, the sun on it, and a little green
+/// comes through where the canopy is open.
+const GLADE = [0.330, 0.300, 0.170];
 
 /// The leaf litter: the colour the map gives this area — `LOOK.renewal` in
 /// `gates.js`, brought down by the quarter a plot is lit up by, as the
@@ -63,6 +76,9 @@ const FACE = [[0.80, 0.68, 0.48], [0.55, 0.51, 0.44], [0.35, 0.35, 0.32]];
 /// service's `stages` are for. Gentle, because the plants are the page.
 const OPEN = [1.10, 1.0, 0.94];
 
+/// And the glade's light, open to the sky in every year.
+const OPEN_GLADE = 1.14;
+
 /// How far the floor rises and falls either side of level, at most.
 const RELIEF = 0.05;
 
@@ -72,6 +88,8 @@ export function plan(e) {
   // is grown; the page fills them and asks the stage to build its ground again.
   place.stools = [];
   place.stages = null;
+  // And the plot on show as it is laid: plot 0's until a plot is grown.
+  place.layout = layout(e, 0);
   // **The floor's height anywhere on the plot**, so the ground and the plants
   // agree on it. Level at the rim, where the slab's sides hang from, and rising
   // and falling inside it; the rim is where every other area's ground is.
@@ -81,6 +99,45 @@ export function plan(e) {
     return RELIEF * f * f * (3 - 2 * f) * e.pg_coppice_relief(x, z, COPPICE.relief);
   };
   return place;
+}
+
+// **Plot `plot` as it is laid**: its variant, the glade's outline, the three
+// rides' centre lines (each from the glade's middle out past the rim), each
+// coupe's ground and the spring, turned for the plot by the module from the
+// rule's own table.
+export function layout(e, plot) {
+  return JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_coppice_layout(plot))));
+}
+
+/// Whether a point is inside a closed outline: the even-odd rule.
+function encloses(loop, x, z) {
+  let within = false;
+  for (let i = 0, j = loop.length - 1; i < loop.length; j = i++) {
+    const a = loop[i], b = loop[j];
+    if ((a[1] > z) !== (b[1] > z) && x < (b[0] - a[0]) * (z - a[1]) / (b[1] - a[1]) + a[0]) within = !within;
+  }
+  return within;
+}
+
+/// The nearest point of a line to (x, z): how far, on which side (+1 the
+/// line's left as it runs), and how far along it.
+function nearestOn(line, x, z) {
+  let best = Infinity, side = 1, along = 0, walked = 0;
+  for (let i = 0; i + 1 < line.length; i++) {
+    const a = line[i], b = line[i + 1];
+    const dx = b[0] - a[0], dz = b[1] - a[1], l2 = dx * dx + dz * dz || 1;
+    const t = Math.min(1, Math.max(0, ((x - a[0]) * dx + (z - a[1]) * dz) / l2));
+    const px = a[0] + dx * t, pz = a[1] + dz * t;
+    const d = Math.hypot(x - px, z - pz);
+    const l = Math.sqrt(l2);
+    if (d < best) {
+      best = d;
+      side = dx * (z - a[1]) - dz * (x - a[0]) >= 0 ? 1 : -1;
+      along = walked + t * l;
+    }
+    walked += l;
+  }
+  return { distance: best, side, along };
 }
 
 // MARK: - The ground
@@ -99,40 +156,71 @@ export function makeCoppiceGround(place) {
     const outline = readOutline(e, SIDE, SIDE, COPPICE.ground);
     const n = outline.length;
 
-    // **The rides.** Each wanders off its line by up to `rideWander` and
-    // changes its width along its length by a few centimetres either way, with
-    // the verge noise the walk's path is cut with — but trodden, so there is no
-    // verge: the litter goes paler towards the middle of a ride and the edge is
-    // wherever the feet stopped.
+    const { rides, glade, grounds, spring: springAt } = place.layout;
+
+    // **The rides.** Each runs along the table's line from the glade out past
+    // the rim, wanders off it by up to `rideWander` and changes its width along
+    // its length by 12% either way, with the verge noise the walk's path is cut
+    // with — but trodden, so there is no verge: the litter goes paler towards
+    // the middle of a ride and the edge is wherever the feet stopped. Read as
+    // how far a place is out of its nearest ride, in that ride's half-widths:
+    // 0 on its line, 1 at its edge.
     const wander = (along, side, seed) => e.pg_verge(along, side, seed) / 0.14;
-    const rideLine = (x, side) => side * place.rideZ + place.rideWander * wander(x, side, COPPICE.ride[side]);
-    const rideHalf = (x, side) => place.rideWidth / 2 * (1 + 0.12 * wander(x * 1.3, side * 2, COPPICE.width));
-    const trodden = (x, z, rough) => {
-      let worn = 0;
-      for (const side of [-1, 1]) {
-        const out = Math.abs(z - rideLine(x, side)) / rideHalf(x, side) + rough;
-        worn = Math.max(worn, (1 - smooth(0.62, 1.04, out)) * (0.8 + 0.2 * (1 - Math.min(1, out))));
+    const nearestRide = (x, z) => {
+      let out = Infinity, ride = 0;
+      for (const [r, line] of rides.entries()) {
+        const near = nearestOn(line, x, z);
+        const half = place.rideWidth / 2 * (1 + 0.12 * wander(near.along * 1.3, 2 + r, COPPICE.width));
+        const off = near.distance * near.side - place.rideWander * wander(near.along, r, COPPICE.ride[r]);
+        const o = Math.abs(off) / half;
+        if (o < out) { out = o; ride = r; }
       }
-      return worn;
+      return { out, ride };
+    };
+    const wornBy = (out, rough) => {
+      const o = out + rough;
+      return (1 - smooth(0.62, 1.04, o)) * (0.8 + 0.2 * (1 - Math.min(1, o)));
     };
 
-    // **Which coupe a place is in, and how open it is**: a blend across the
-    // two rides, so the change from one band's light to the next happens under
-    // the feet on a ride and never along a drawn edge.
-    const open = (x, z) => {
+    // **The glade**, where the three rides meet: open to the sky, its litter
+    // lighter and greening, fading out over a hand's breadth either side of
+    // its outline so it has no drawn edge.
+    const gladeAt = (x, z) => {
+      const d = nearestOn([...glade, glade[0]], x, z).distance;
+      return smooth(-0.10, 0.22, encloses(glade, x, z) ? d : -d);
+    };
+
+    // **Which coupe a place is in, and how open it is.** A coupe is the ground
+    // between two rides; across a ride the light blends from one coupe's to the
+    // next, so the change happens under the feet and never along a drawn edge.
+    // Ride `r` runs between coupe `r − 1` and coupe `r`. The glade is open
+    // whatever the year.
+    const openAt = (x, z, ride, out) => {
       if (!place.stages) return 1;
-      const past = [-1, 1].map((side) => smooth(-rideHalf(x, side), rideHalf(x, side), z - rideLine(x, side)));
-      const share = [1 - past[0], past[0] - past[1], past[1]];
-      return share.reduce((sum, w, coupe) => sum + w * OPEN[place.stages[coupe]], 0);
+      let coupe = grounds.findIndex((ground) => encloses(ground, x, z));
+      if (coupe < 0) coupe = ride;
+      const other = coupe === ride ? (ride + 2) % 3 : ride;
+      const across = 0.5 * (1 - smooth(0, 1, out));
+      return OPEN[place.stages[coupe]] * (1 - across) + OPEN[place.stages[other]] * across;
+    };
+
+    // Everything the floor's colour reads at a place, worked out once a place.
+    const fieldAt = (x, z) => {
+      const { out, ride } = nearestRide(x, z);
+      const g = gladeAt(x, z);
+      return { out, open: openAt(x, z, ride, out) * (1 - g) + OPEN_GLADE * g, glade: g };
     };
 
     // The floor's colour at a place, before a leaf's own tone: litter, moss in
-    // the hollows, the rides worn over both, lit as its coupe is.
-    const floor = (x, z, h, rough) => {
-      const worn = trodden(x, z, rough);
-      const moss = smooth(-0.008, -0.026, h + 0.012 * rough) * (1 - worn);
-      return mix(mix(LITTER, MOSS, moss), RIDE, worn).map((v) => v * open(x, z));
+    // the hollows, the rides worn over both, the glade lighter, lit as its
+    // coupe is.
+    const floorOf = (field, h, rough) => {
+      const worn = wornBy(field.out, rough);
+      const moss = smooth(-0.008, -0.026, h + 0.012 * rough) * (1 - worn) * (1 - 0.6 * field.glade);
+      const litter = mix(mix(LITTER, MOSS, moss), RIDE, worn);
+      return mix(litter, GLADE, 0.6 * field.glade * (1 - 0.5 * worn)).map((v) => v * field.open);
     };
+    const floor = (x, z, h, rough) => floorOf(fieldAt(x, z), h, rough);
 
     // **The litter: the Knot Garden's jittered lattice, a tone to a leaf.** A
     // cell of six centimetres, which is a leaf fallen flat, over the whole
@@ -168,7 +256,9 @@ export function makeCoppiceGround(place) {
         let x = -half + i * cell + shift * (hash(i * 7919 + j * 104729 + 3.1) - 0.5) * 2;
         let z = -half + j * cell + shift * (hash(i * 6733 + j * 92831 + 5.7) - 0.5) * 2;
         if (!inside(x, z)) [x, z] = ontoRim(x, z);
-        row.push([x, place.height(x, z), z]);
+        // What the floor reads here, once a corner rather than once a leaf:
+        // a leaf takes the mean of its three corners'.
+        row.push([x, place.height(x, z), z, fieldAt(x, z)]);
       }
       grid.push(row);
     }
@@ -178,19 +268,24 @@ export function makeCoppiceGround(place) {
       const l = Math.hypot(...nn);
       if (l < 1e-12) return;
       const up = nn[1] < 0 ? -1 : 1;
-      const x = (a[0] + b[0] + c[0]) / 3, h = (a[1] + b[1] + c[1]) / 3, z = (a[2] + b[2] + c[2]) / 3;
+      const h = (a[1] + b[1] + c[1]) / 3;
+      const field = {
+        out: (a[3].out + b[3].out + c[3].out) / 3,
+        open: (a[3].open + b[3].open + c[3].open) / 3,
+        glade: (a[3].glade + b[3].glade + c[3].glade) / 3,
+      };
       const rough = 0.36 * (hash(key * 3.7 + COPPICE.litter) - 0.5);
-      const base = floor(x, z, h, rough);
+      const base = floorOf(field, h, rough);
       // A leaf's own tone: most of them the litter's brown a little lighter or
       // darker, one in eight still warm from the autumn and one in twelve
       // dark and wet. Less of all of it on a ride, where the leaves are broken.
-      const worn = trodden(x, z, 0);
+      const worn = wornBy(field.out, 0);
       const pick = hash(key * 1.3 + COPPICE.litter * 7);
       const leaf = pick < 0.125 ? [1.14, 0.95, 0.74] : pick < 0.21 ? [0.74, 0.74, 0.74] : [1, 1, 1];
       const spread = 0.34 - 0.2 * worn;
       const tone = 1 - spread / 2 + spread * hash(key * 5.3 + COPPICE.moss);
       const colour = base.map((v, k) => v * tone * (1 + (leaf[k] - 1) * (1 - worn)));
-      tri(a, b, c, nn.map((v) => up * v / l), colour);
+      tri(a.slice(0, 3), b.slice(0, 3), c.slice(0, 3), nn.map((v) => up * v / l), colour);
     };
     for (let i = 0; i < steps; i++) {
       for (let j = 0; j < steps; j++) {
@@ -231,11 +326,12 @@ export function makeCoppiceGround(place) {
       set(readStructure(takeResult(e, e.pg_coppice_face(seed))), [x, g, z], FACE[stage] ?? FACE[2], 0.08, vertex);
     }
 
-    // **A spring at the end of the near ride**, caught in a stone basin. The
-    // Coppice is high on the garden, where water is not found lying but comes
-    // up and has to be held, so it is contained, as the Crossing's is above
-    // it. At the ride's end rather than in it, because a ride is the way in.
-    const spring = { at: [2.0, 0.9], across: 0.54 };
+    // **A spring beside the outer end of a ride**, caught in a stone basin.
+    // The Coppice is high on the garden, where water is not found lying but
+    // comes up and has to be held, so it is contained, as the Crossing's is
+    // above it. At a ride's end rather than in it, because a ride is the way
+    // in; which ride, and where, the table says for the plot.
+    const spring = { at: springAt, across: 0.54 };
     raiseTrough(e, { tri, quad }, {
       ...spring, seed: COPPICE.spring, round: true, height: 0.15, base: footing(place.height, spring),
     });
@@ -298,10 +394,12 @@ const breathe = () => new Promise((resume) => setTimeout(resume, 0));
 // seed alone. **A planting with a stage stands on a stool** and is grown at that
 // stage; one without is a star, or a fern on the floor, and is grown at its
 // best. The stools are set out first, so the plants are grown into a floor that
-// already has them.
+// already has them, and the floor is laid for the plot — its glade, its rides
+// and its coupes turned by its number, as the service turned its plants.
 export async function growCoppiceFromService(e, stage, place, plot, report) {
   stage.clear();
   const { stages, plantings } = await (await fetch(`/api/coppice/plot/${plot}`)).json();
+  place.layout = layout(e, plot);
   place.stages = stages;
   place.stools = plantings.filter((p) => p.stage !== null && p.stage !== undefined)
     .map((p) => ({ spot: p.spot, stage: p.stage, seed: stoolSeed(p.seed) }));
@@ -366,6 +464,7 @@ export async function growInvented(e, stage, place, plot, year, report) {
     stage: new Float32Array(buffer.slice(8, 12))[0],
     seed: new Uint32Array(buffer.slice(12, 16))[0],
   }));
+  place.layout = layout(e, plot);
   place.stages = [0, 1, 2].map((coupe) => e.pg_coppice_stage(plot, coupe, year));
   place.stools = heads.filter((head) => head.stage >= 0);
   stage.rebuild();

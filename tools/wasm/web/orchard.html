@@ -48,7 +48,7 @@
   // than a length you look down.
   import { loadModule } from '/assets/js/plant.js';
   import { makePlotStage } from '/assets/js/longwalk.js';
-  import { describeOrchard, growOrchardFromService, growInvented, makeOrchardGround, plan, plantVisitors, trees }
+  import { describeOrchard, growOrchardFromService, growInvented, makeOrchardGround, plan, plantVisitors }
     from '/assets/js/orchard.js';
   import { makeSky } from '/assets/js/sky.js';
 
@@ -70,7 +70,7 @@
   const MODULE = `/plant.wasm?dev=${Date.now()}`;
   const e = await loadModule(MODULE);
   const place = plan(e);
-  const stage = makePlotStage(document.getElementById('stage'), 1, e, makeOrchardGround(place, trees(e)));
+  const stage = makePlotStage(document.getElementById('stage'), 1, e, makeOrchardGround(place));
 
   let sky = null;
   makeSky(document.getElementById('sky'), {
@@ -90,6 +90,7 @@
 
   let plots = 1;
   if (!fromService) plots = await plantVisitors(e, arrivals, report);
+  else plots = (await (await fetch('/api/orchard')).json()).plots;
 
   // What the rule did with this plot, in words: how many stand under each tree
   // and how that guild's ranks are filled, so a guild that looks wrong can be
@@ -132,9 +133,13 @@
     document.getElementById('back').disabled = plot === 0;
     document.getElementById('on').disabled = plot + 1 >= plots;
     const count = fromService
-      ? await growOrchardFromService(e, stage, plot, report)
-      : await growInvented(e, stage, plot, report);
-    report(`Plot ${plot + 1} of ${plots} — ${count} of ${place.slots}`);
+      ? await growOrchardFromService(e, stage, place, plot, report)
+      : await growInvented(e, stage, place, plot, report);
+    // The plot's variant too, since the meadow orchard: which way round it is
+    // laid and which of the three nudged quincunxes it takes.
+    const [turn, mirror, nudge] = place.layout.variant;
+    report(`Plot ${plot + 1} of ${plots} — ${count} of ${place.slots} — `
+      + `turned ${turn}${mirror ? ', mirrored' : ''}, meadow ${nudge + 1}`);
     say();
     sky?.draw();
   }

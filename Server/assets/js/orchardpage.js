@@ -14,7 +14,7 @@
 // rather than as five and five.
 import { loadModule } from './plant.js';
 import { makePlotStage } from './longwalk.js';
-import { growOrchardFromService, makeOrchardGround, plan, trees } from './orchard.js';
+import { growOrchardFromService, makeOrchardGround, plan } from './orchard.js';
 import { makeSky } from './sky.js';
 import { dressed, whenSettled } from './plain.js';
 import { openWays } from './gates.js';
@@ -48,15 +48,16 @@ const say = async (key) => {
 async function place() {
   const engine = await loadModule(document.documentElement.dataset.module || '/plant.wasm');
   // The plot's own numbers — how far out the trees stand, how far a guild sits
-  // from its trunk — and the five trunks themselves come from the module rather
-  // than being written down again here, so the page cannot disagree with the
-  // rule about the shape of the place or about where a tree is.
+  // from its trunk — and each plot's trunks, way and crescents, turned for the
+  // plot, come from the module rather than being written down again here, so
+  // the page cannot disagree with the rule about the shape of the place or
+  // about where a tree is.
   // **One plot, framed as though there were a little more than one**, the
   // Quiet Garden's margin: a single square framed tight touches the sides of
   // its band, and a plot with air round it reads as a place you are looking
   // into rather than a texture filling the screen.
-  const stage = makePlotStage(el('stage'), 1.25, engine,
-                              makeOrchardGround(plan(engine), trees(engine)));
+  const grove = plan(engine);
+  const stage = makePlotStage(el('stage'), 1.25, engine, makeOrchardGround(grove));
   // And the areas beside this one, as slabs out in the sky past the plot:
   // the same one word again, and `beside.js` reads the map from it.
   stage.beside(THEME);
@@ -88,7 +89,7 @@ async function place() {
     // area page, and a postcard to one of this area's plants lands here.
     plants: plantPanel({ theme: THEME, engine }),
     show: async (plot) => {
-      await growOrchardFromService(engine, stage, plot, growing);
+      await growOrchardFromService(engine, stage, grove, plot, growing);
       note.hidden = true;
     },
     turned: () => sky?.draw(),
