@@ -47,6 +47,12 @@ final class Developer {
     /// shipping code that the `#if` could not take back out.
     var wantsImaginaryMeeting = false
 
+    /// Leaves the plot's shadows out, for one reason: so `PlotRenderTests` can
+    /// time the same plot with and without them, a few frames of each in
+    /// turn, in one run. Timing two builds one after the other on a shared
+    /// machine measured the machine.
+    var hidesShadows = false
+
     /// Shows the tile grid where the plot would be.
     ///
     /// The grid is the only thing there is to judge the plot against, and the

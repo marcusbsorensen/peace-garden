@@ -296,6 +296,9 @@ final class GardenSprites {
         view.antialiasingMode = .multisampling4X
 
         let mesh = PlantBuilder(genome: genome).mesh(growth: growth)
+        // The shadow is worked out from this same mesh, so it is handed over
+        // while it is here rather than built again for it.
+        GardenShadows.shared.keep(mesh, as: .plant(genome.seed, growth: growth))
         let plant = PlantSceneBuilder.node(for: mesh, palette: genome.palette)
 
         // A plant's origin is its foot, so it stands at the middle of the frame
