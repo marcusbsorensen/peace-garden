@@ -722,7 +722,10 @@ function held(PDO $db, string $table, string $seed): ?array
 // The Cold Frame's tank holds its ambassador, a lotus, in its first place. A
 // young lotus joins it in the next, holding one place as everything in the
 // water does; a plant of the same colour that is not a lotus goes under glass,
-// in the frame no plant of its colour has claimed yet.
+// in the frame no plant of its colour has claimed yet. A pond since 2 October
+// 2026, whose open water a lily is offered first (`ColdFrame::waterOrder`):
+// the next place is the second of that order.
+$lilyNext = ColdFrame::waterOrder('lotus')[1];
 $seventeen = crossing(17);
 $mine17 = token('seventeen/mine');
 $theirs17 = token('seventeen/theirs');
@@ -731,8 +734,8 @@ $offers->offer($seventeen['seed'], $theirs17, $mine17, $seventeen['a'], $sevente
 $offers->answer($seventeen['seed'], $theirs17, true, $now);
 $pads = held($db, 'cold_frame', $seventeen['seed']);
 check('a lotus in the Cold Frame goes in the tank, after the ambassador, and holds one place', $pads !== null
-      && (int) (framedAs($walk, $seventeen['seed'])['frame'] ?? -1) === ColdFrame::TANK
-      && (int) $pads['slot_index'] === 1 && (int) $pads['slot_span'] === 1 && $pads['habit'] === 'lotus');
+      && (int) (framedAs($walk, $seventeen['seed'])['frame'] ?? -1) === ColdFrame::POND
+      && (int) $pads['slot_index'] === $lilyNext && (int) $pads['slot_span'] === 1 && $pads['habit'] === 'lotus');
 $eighteen = crossing(18);
 $mine18 = token('eighteen/mine');
 $theirs18 = token('eighteen/theirs');
@@ -743,7 +746,7 @@ $after = framedAs($walk, $eighteen['seed']);
 check('and a plant of its colour that is not a lotus goes under glass', $after !== null
       && (int) $after['frame'] === ColdFrame::BACK_EAST && (int) $after['slot_index'] === 0);
 $lotusAt = $walk->coldFrame()->plot(0)[1]['spot'] ?? [0.0, 0.0];
-[$tankX, $tankZ] = ColdFrame::spot(ColdFrame::TANK, ColdFrame::FRONT, 1);
+[$tankX, $tankZ] = ColdFrame::spot(ColdFrame::POND, ColdFrame::FRONT, $lilyNext);
 check('the page is sent its place in the water', abs($lotusAt[0] - $tankX) <= 0.03 + 1e-9
       && abs($lotusAt[1] - $tankZ) <= 0.03 + 1e-9);
 
@@ -753,8 +756,8 @@ $seventeenArrival = arrivalOf($db, 'cold_frame', $seventeen['seed']);
 $offers->withdraw($seventeen['seed'], $mine17, $now + 60);
 $lifted = arrival($db, 'cold_frame', (int) $seventeenArrival);
 check('a lotus taken back keeps its place and not its habit', $lifted !== null
-      && (int) $lifted['hidden'] === 1 && (int) $lifted['frame'] === ColdFrame::TANK
-      && (int) $lifted['slot_index'] === 1 && (int) $lifted['slot_span'] === 1 && $lifted['habit'] === '');
+      && (int) $lifted['hidden'] === 1 && (int) $lifted['frame'] === ColdFrame::POND
+      && (int) $lifted['slot_index'] === $lilyNext && (int) $lifted['slot_span'] === 1 && $lifted['habit'] === '');
 $nineteen = crossing(19);
 $mine19 = token('nineteen/mine');
 $theirs19 = token('nineteen/theirs');
@@ -762,7 +765,8 @@ $offers->offer($nineteen['seed'], $theirs19, $mine19, $nineteen['a'], $nineteen[
                0.30, 4, $now, 'waiting', '', null, 'lotus');
 $offers->answer($nineteen['seed'], $theirs19, true, $now);
 $later = held($db, 'cold_frame', $nineteen['seed']);
-check('and nothing is given its place', $later !== null && (int) $later['slot_index'] === 2);
+check('and nothing is given its place', $later !== null
+      && (int) $later['slot_index'] === ColdFrame::waterOrder('lotus')[2]);
 
 // The Seedbed's drill of *contorta* is dry, sown with two plants that sent no
 // habit. A lotus of that kind wants water, so it passes the dry drill by,

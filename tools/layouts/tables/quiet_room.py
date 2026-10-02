@@ -49,7 +49,7 @@ SPECIMEN_AT = (-1.95, -0.95)
 POOL_AT = (-0.30, -0.26)
 POOL_RADII = (1.06, 0.66)
 POOL_TURN = -0.125
-BAY = 0.20
+BAY = 0.30
 IN_THE_WATER = 0.45
 
 
@@ -102,8 +102,11 @@ def clump(centre, radii, turn, count, spacing, seed, corner, backs):
 
 def build(nudge):
     rim = pool()
-    five = clump((1.43, 1.43), (0.80, 0.50), -0.125, 5, 0.64, ('quiet-five',), (HEDGE, HEDGE), 2)
-    three = clump((1.52, -0.98), (0.46, 0.56), 0.0, 3, 0.66, ('quiet-three',), (HEDGE, -0.98), 1)
+    # The two groups' ground: wide enough that no two of a group stand closer
+    # than 0.6 m before their nudge, the room a clump's plants need not to
+    # stand in one another.
+    five = clump((1.35, 1.35), (1.10, 0.72), -0.125, 5, 0.70, ('quiet-five',), (HEDGE, HEDGE), 2)
+    three = clump((1.45, -0.95), (0.62, 0.66), 0.0, 3, 0.72, ('quiet-three', 2), (HEDGE, -0.98), 1)
     echo = [(-1.70, 1.36)]
     c, s = cos_sin(POOL_TURN)
     water = [(POOL_AT[0] + c * IN_THE_WATER, POOL_AT[1] + s * IN_THE_WATER),
