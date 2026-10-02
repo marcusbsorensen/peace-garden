@@ -86,7 +86,7 @@
   "wildTitle": "Les Champs Sauvages",
   "wildBody": "Là où va une plante quand on la relâche. Personne n'arrange les Champs Sauvages : chaque plante se tient là où sa propre graine la place, et le champ s'étend dans toutes les directions. À côté d'une plante ne figure que ce que les deux personnes qui l'ont fait pousser ont choisi de montrer. Faire glisser pour le parcourir.",
   "wildEmpty": "Rien n'a encore été relâché ici.",
-  "wildAway": "Les Champs Sauvages ne peuvent pas être atteints pour l'instant.",
+  "wildAway": "Impossible d'atteindre les Champs Sauvages pour l'instant.",
   "wildByOne": "Cultivée par {name}",
   "wildByTwo": "Cultivée par {a} et {b}",
   "wildPostcardText": "{name}, qui pousse dans les Champs Sauvages, dans Peace Garden.",
