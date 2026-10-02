@@ -120,6 +120,15 @@ struct PlotView: View {
         #endif
     }
 
+    /// Always, except while a test times the plot without them.
+    private var showsShadows: Bool {
+        #if DEBUG
+        return !Developer.shared.hidesShadows
+        #else
+        return true
+        #endif
+    }
+
     private var plotSide: Double {
         #if DEBUG
         if let fixed = Developer.shared.fixedPlotSide { return fixed }
@@ -164,6 +173,9 @@ struct PlotView: View {
 
                 let lamps = model.garden.arrangements.first?.allLamps ?? []
                 let glow = GardenLamps.glow(in: light)
+                // Worked out once a frame and read by both the shadows and
+                // what stands on them.
+                let standings = standing(plotSide: side, in: view)
 
                 ZStack(alignment: .topLeading) {
                     GardenSky(light: light, date: model.now, view: view,
@@ -183,6 +195,14 @@ struct PlotView: View {
                             }
                         }
 
+                        // Every shadow, multiplied into the ground and cut to
+                        // it, before anything stands on it.
+                        if showsShadows {
+                            GroundShadows(casts: casts(standings, plotSide: side, world: world, lamps: lamps, in: view),
+                                          view: view, world: world, plotSide: side, hour: hour,
+                                          date: model.now, size: proxy.size)
+                        }
+
                         // The lights' pools, under everything that stands, so
                         // a plant stands *in* the light rather than behind it.
                         ForEach(lamps) { lamp in
@@ -192,13 +212,13 @@ struct PlotView: View {
                         // Far to near, and nothing else decides what covers
                         // what — except something in hand, which is above
                         // everything until it is put down.
-                        ForEach(things(plotSide: side, world: world, lamps: lamps, in: view)) { thing in
+                        ForEach(things(standings, plotSide: side, world: world, lamps: lamps, in: view)) { thing in
                             switch thing {
                             case .plant(let standing):
                                 pool(for: standing, world: world, side: side, in: view)
                                 waiting(for: standing, world: world, side: side, in: view)
                                 plant(standing, world: world, side: side, in: view,
-                                      light: light, lamps: lamps, glow: glow)
+                                      lamps: lamps, glow: glow)
                             case .lamp(let lamp):
                                 self.lamp(lamp, world: world, side: side, in: view, glow: glow)
                             case .hedge(let piece):
@@ -555,9 +575,10 @@ struct PlotView: View {
             .position(x: foot.x, y: foot.y - size / 2)
     }
 
-    private func things(plotSide: Double, world: Int, lamps: [Lamp], in view: Isometric) -> [Thing] {
+    private func things(_ standings: [Standing], plotSide: Double, world: Int, lamps: [Lamp],
+                        in view: Isometric) -> [Thing] {
         let inHand: Set<UUID> = Set([held?.id, heldLamp?.id].compactMap { $0 })
-        let all = standing(plotSide: plotSide, in: view).map(Thing.plant)
+        let all = standings.map(Thing.plant)
             + lamps.filter { $0.known != nil }.map(Thing.lamp)
             + hedges(plotSide: plotSide, world: world, in: view).map(Thing.hedge)
 
@@ -566,6 +587,42 @@ struct PlotView: View {
             if inHand.contains(b.id) { return true }
             return view.depth(a.spot) < view.depth(b.spot)
         }
+    }
+
+    /// Everything standing on the plot that throws a shadow: the plants, and
+    /// the figures and lights that are modelled. Something in hand throws its
+    /// shadow where it is held, on the ground under it.
+    private func casts(_ standings: [Standing], plotSide: Double, world: Int, lamps: [Lamp],
+                       in view: Isometric) -> [ShadowCast] {
+        let quarter = Double(((turn % 4) + 4) % 4)
+        let plants = standings.map { standing -> ShadowCast in
+            let resting = view.point(standing.spot, y: standsAt(standing.spot, world: world, side: plotSide))
+            return ShadowCast(
+                id: standing.id,
+                thing: .plant(standing.record, standing.growth),
+                spot: standing.spot,
+                foot: held?.id == standing.id ? (held?.foot ?? resting) : resting,
+                turn: Double(GardenSprites.turn(for: standing.record.seed)),
+                scale: 1
+            )
+        }
+        let figures = lamps.compactMap { lamp -> ShadowCast? in
+            guard let kind = lamp.known, GardenCreatures.figure(of: kind) != nil else { return nil }
+            let resting = view.point(lamp.spot, y: standsAt(lamp.spot, world: world, side: plotSide))
+            let facing = GardenCreatures.facing(seed: Self.seed(of: lamp))
+            // The turn its picture is taken at, less the plot's own: what is
+            // left is how it stands on the ground.
+            let pivot = Double(GardenCreatures.turn(of: kind, facing: facing, quarter: turn))
+            return ShadowCast(
+                id: lamp.id,
+                thing: .figure(kind),
+                spot: lamp.spot,
+                foot: heldLamp?.id == lamp.id ? (heldLamp?.foot ?? resting) : resting,
+                turn: pivot - quarter * .pi / 2,
+                scale: lamp.drawnScale
+            )
+        }
+        return plants + figures
     }
 
     // MARK: The ground
@@ -592,8 +649,7 @@ struct PlotView: View {
     // MARK: The plants
 
     private func plant(_ standing: Standing, world: Int, side: Double,
-                       in view: Isometric, light: GardenGround.Light,
-                       lamps: [Lamp], glow: Double) -> some View {
+                       in view: Isometric, lamps: [Lamp], glow: Double) -> some View {
         let resting = view.point(standing.spot,
                                  y: standsAt(standing.spot, world: world, side: side))
         let inHand = held?.id == standing.id
@@ -603,7 +659,6 @@ struct PlotView: View {
             growth: standing.growth,
             foot: inHand ? (held?.foot ?? resting) : resting,
             pointsPerMetre: view.pointsPerMetre,
-            light: light,
             hour: hour,
             turn: turn,
             isHeld: inHand,
@@ -1281,7 +1336,6 @@ private struct GardenPlantSprite: View {
     let growth: GrowthModel.State
     let foot: CGPoint
     let pointsPerMetre: Double
-    let light: GardenGround.Light
     let hour: Double
     let turn: Int
     let isHeld: Bool
@@ -1312,7 +1366,6 @@ private struct GardenPlantSprite: View {
             if let sprite = before ?? after {
                 let size = GardenSprites.drawnSize(metres: sprite.metres,
                                                    pointsPerMetre: pointsPerMetre)
-                shadow(of: sprite, size: size)
 
                 // Two renders crossfaded rather than one snapped to. The plants
                 // are meshes nobody wants to rebuild at sixty frames a second,
@@ -1402,46 +1455,6 @@ private struct GardenPlantSprite: View {
                 .frame(width: size.width, height: size.height)
                 .opacity(opacity)
         }
-    }
-
-    /// The plant's own shadow, laid on the ground.
-    ///
-    /// **A shear of the picture, not a second drawing.** A point standing `v`
-    /// points up the sprite is a point `v / pointsPerMetre` metres up the plant,
-    /// and its shadow lands that height over the light's own slope away across
-    /// the ground — which the projection turns back into a screen offset. So the
-    /// whole shadow is one affine transform of the sprite, blackened.
-    ///
-    /// The light is in the plot's own axes, so it is turned with the plot before
-    /// the shear is worked out: the sun goes round the plot, not the screen.
-    ///
-    /// It goes flat twice a day. At noon and at midnight the body is at the
-    /// azimuth where the shadow runs exactly along the screen's horizontal, and
-    /// a shadow with no screen height is a line. That is not a fault — it is
-    /// what an isometric view of that moment is — and the blur is what keeps it
-    /// from reading as a drawn rule.
-    @ViewBuilder
-    private func shadow(of sprite: GardenSprites.Sprite, size: CGSize) -> some View {
-        let seen = light.turned(quarters: turn).direction
-        let rise = max(0.12, seen.y)
-        let across = -(seen.x - seen.z) * Isometric.cosThirty / rise
-        let down = -(seen.x + seen.z) * Isometric.sinThirty / rise
-        let height = size.height
-
-        Image(uiImage: sprite.image)
-            .resizable()
-            .renderingMode(.template)
-            .frame(width: size.width, height: size.height)
-            .foregroundStyle(.black)
-            .blur(radius: 0.30 + 0.34 * (1 - light.up))
-            .opacity(max(0.10, 0.42 * light.strength / 0.76))
-            .transformEffect(CGAffineTransform(
-                a: 1, b: 0,
-                c: -across, d: -down,
-                tx: across * height, ty: height * (1 + down)
-            ))
-            .position(x: foot.x, y: foot.y - height / 2)
-            .allowsHitTesting(false)
     }
 }
 

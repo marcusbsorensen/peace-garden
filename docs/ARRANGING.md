@@ -680,12 +680,13 @@ with, which is what makes them look like they are standing outside.
 
 ### Two things building it taught
 
-- **The shadow goes flat twice a day.** At noon and at midnight the body sits at
-  the azimuth where a shadow runs exactly along the screen's horizontal, and a
-  shadow with no screen height is a line. That is not a fault — it is what an
-  isometric view of that moment is — but it is worth knowing before somebody
-  goes looking for the bug. The blur is what keeps it from reading as a drawn
-  rule.
+- **The shadow went flat twice a day.** At noon and at midnight the body sits at
+  the azimuth where a shadow runs exactly along the screen's horizontal, and the
+  first shadow — the sprite sheared about its foot — had no screen height left
+  and was a line. Since 2 October a shadow is worked out from the plant's own
+  geometry and laid on the ground (`GardenShadows.swift`,
+  `design/app-shadows-2026-10-02/`), so at noon it is the plant's footprint
+  seen from the sun, lying beside it, and not a line.
 - **The override is not a nicety.** Drawn at half past six in the evening the
   garden is very nearly black, which is correct — moonrise is the darkest hour
   of the day — and it is also a garden you cannot look at. Seeing that is what
@@ -838,15 +839,16 @@ in SwiftUI shapes would be clip art beside plants grown from a genome.
   the ground, and what is nearer the camera than its foot is drawn below it; a
   fox with its foot on the edge loses its nose. Each frame reaches below the
   foot by a set fraction.
-- **A shadow only for what stands up off its foot.** The shadow is the
-  picture sheared about the foot, which reads every pixel as height. For the
-  moth's stake, as for a plant's stem, that is true. For the hare's long feet
-  and haunch, the fox and the snail, most of the picture is ground the figure
-  covers, and the shear threw it forward as a dark copy of the body under it —
-  the shadow under the hare that Marcus saw on build 3 and said should not be
-  there. So the hare, the fox and the snail have none. The moth keeps its, and
-  the lantern and the paper lamp, which stand on a post and a cane, now have
-  one.
+- **A shadow only for what stands up off its foot — until 2 October.** The
+  shadow was the picture sheared about the foot, which reads every pixel as
+  height. For the moth's stake, as for a plant's stem, that is true. For the
+  hare's long feet and haunch, the fox and the snail, most of the picture is
+  ground the figure covers, and the shear threw it forward as a dark copy of
+  the body under it — the shadow under the hare that Marcus saw on build 3 and
+  said should not be there. So the hare, the fox and the snail had none. Now
+  every figure's shadow is worked out from its model, as a plant's is
+  (`GardenShadows.swift`): the hare's haunch is low and casts a short sharp
+  shadow beside it, and its ears are high and cast a long soft one.
 - **Painted accents, unlit.** Eyes, noses, the backs of the fox's ears, the
   moth's eyespots. They are black in the glow picture, so they hide the glow behind
   them. A white fox with no face was a cushion.
@@ -1175,9 +1177,9 @@ Two things it turns on, both in `GardenVisits`:
 - **Whether an arrangement survives a plant being released to the Wild Fields.**
   Releasing is the end of a plant's life here; a spot pointing at a plant that has
   gone is the kind of thing that decodes fine and draws nothing.
-- **Whether the shadows should be soft, and how soft.** They are drawn hard
-  here, with a blur that widens as the light drops. A real shadow's edge softens
-  with distance from what cast it, which a single blur cannot say.
+- **Whether the shadows should be soft, and how soft.** Answered 2 October,
+  the web's way: sharp near the foot and softer further out, by how far along
+  the ground each part of the plant lands (`GardenShadows.swift`).
 - **What the growth rule actually is.** A little more world per meeting, at a
   rate that keeps a tall plant at roughly half the radius. Whether that is
   smooth or in steps, and whether a garden of two hundred plants is still one
