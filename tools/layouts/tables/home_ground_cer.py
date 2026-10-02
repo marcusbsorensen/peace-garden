@@ -13,7 +13,10 @@ from tables._home_ground import rows
 
 FIELDS = ('bed', 'index')
 NUDGES = 1
-MIN_SPACING = 0.36
+# On the inside of a bend a row's outer places draw closer to the next row's:
+# 0.348 m at the closest since the sway became 0.15 m (0.387 at 0.10; 0.45
+# down a straight bed).
+MIN_SPACING = 0.34
 
 
 def build(nudge):

@@ -155,7 +155,11 @@ final class HomeGroundTests: XCTestCase {
                 for middle in middles {
                     XCTAssertLessThan(fromLine(middle, line), 0.002, "bed \(bed) \(crop.rawValue): a row is off the line")
                 }
-                XCTAssertEqual(middles.first!.z + middles.last!.z, 0, accuracy: 0.03,
+                // An outer bed is the middle one's line moved square to it, so
+                // the half of it on the outside of its bend is the longer, and
+                // its rows, centred along the line, sit up to 1.6 cm toward
+                // that half (since the sway became 0.15 m).
+                XCTAssertEqual(middles.first!.z + middles.last!.z, 0, accuracy: 0.035,
                                "bed \(bed) \(crop.rawValue) is not centred down the plot")
             }
         }
@@ -178,9 +182,10 @@ final class HomeGroundTests: XCTestCase {
 
     /// **Every place stands inside its bed**, at the worst nudge: a plant's
     /// middle at least 0.14 m in from the bed's side (0.15 when the beds were
-    /// straight; the nudge is the table's x and z, and a row leans up to ten
-    /// degrees off x) and 0.22 m from its end (0.275: the rows near an end
-    /// lean too, and a lean takes a row's outer places a little toward it).
+    /// straight; the nudge is the table's x and z, and a row leans up to
+    /// fourteen degrees off x) and 0.20 m from its end (0.275 when straight,
+    /// 0.22 at a sway of 0.10 m: the rows near an end lean too, and a lean
+    /// takes a row's outer places a little toward it).
     func testEveryPlaceStandsInsideItsBed() {
         var side = Double.greatestFiniteMagnitude, end = Double.greatestFiniteMagnitude
         for bed in 0..<HomeGround.beds {
@@ -198,7 +203,7 @@ final class HomeGroundTests: XCTestCase {
             }
         }
         XCTAssertGreaterThan(side, 0.14)
-        XCTAssertGreaterThan(end, 0.22)
+        XCTAssertGreaterThan(end, 0.20)
     }
 
     /// **The beds stay on the slab however they sway.** A plot's outline
@@ -213,24 +218,25 @@ final class HomeGroundTests: XCTestCase {
         XCTAssertLessThan(reach + HomeGround.bedWidth / 2 + 0.025, HomeGround.plotSide / 2 - 0.22)
     }
 
-    /// **The beds sway together**, so the paths between them stay 0.45 m, give
-    /// or take what a spade leaves: 1 cm either side.
-    func testThePathsAreFortyFiveCentimetres() {
+    /// **The beds sway together**, so the paths between them stay 0.40 m (0.45
+    /// until 2 October 2026, when Marcus chose a bolder sway), give or take
+    /// what a spade leaves: 1 cm either side.
+    func testThePathsAreFortyCentimetres() {
         let lines = (0..<HomeGround.beds).map { HomeGround.line(of: $0) }
         for i in 1..<HomeGround.beds {
             for p in lines[i] {
                 let path = fromLine(p, lines[i - 1]) - HomeGround.bedWidth
-                XCTAssertEqual(path, 0.45, accuracy: 0.025, "the path west of bed \(i) at z \(p.z)")
+                XCTAssertEqual(path, 0.40, accuracy: 0.025, "the path west of bed \(i) at z \(p.z)")
             }
         }
     }
 
-    /// **The beds sway**: a bed's middle stands 0.10 m off its straight line at
-    /// most, and the three sway the same way at once.
+    /// **The beds sway**: a bed's middle stands 0.15 m off its straight line at
+    /// most (0.10 until 2 October 2026), and the three sway the same way at once.
     func testTheBedsSwayTogetherAsAnS() {
         for bed in 0..<HomeGround.beds {
             let off = HomeGround.line(of: bed).map { $0.x - HomeGround.bedX[bed] }
-            XCTAssertEqual(off.map(abs).max()!, 0.10, accuracy: 0.012, "bed \(bed)")
+            XCTAssertEqual(off.map(abs).max()!, 0.15, accuracy: 0.012, "bed \(bed)")
             // North half west of the line, south half east: the lazy S.
             let line = HomeGround.line(of: bed)
             let north = line.filter { $0.z < -0.5 && $0.z > -1.5 }.map { $0.x - HomeGround.bedX[bed] }

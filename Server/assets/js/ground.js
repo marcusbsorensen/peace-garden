@@ -48,10 +48,14 @@ const GROUND = { ground: 6173, floor: 59, crumb: 97, drift: 131, clod: 157, edge
 // the way in. The Home Ground is a step up from the foot of the garden and has
 // no ground to spare for a pond — the beds take it — so its water is held in
 // stone. Lengthways down the path between the middle bed and the one east of
-// it as the table draws the plot, which is 0.45 m wide, and ending inside the
+// it as the table draws the plot, which is 0.40 m wide, and ending inside the
 // plot's edge, which comes in no nearer than 2.42 m. Laid across the headland
-// instead it had room for 0.24 m of width and read as a block. The beds run
-// straight at their ends, so the path does where the trough stands.
+// instead it had room for 0.24 m of width and read as a block. **Turned to the
+// path**, since the sway became 0.15 m (2 October 2026): the beds leave each
+// end square to the headland, but over the half metre the trough runs beside
+// them the path leans up to eight degrees, and a trough laid square to the
+// plot would stand 5 cm up a bed's shoulder. It lies along the line through
+// the path's middle at its north end and at the beds' end.
 const TROUGH = { z: 1.98, across: 0.36, deep: 0.8 };
 
 /// The soil: the colour the map gives this area — `LOOK.ground` in `gates.js`,
@@ -176,7 +180,7 @@ export function plan(e) {
 }
 
 /// Which bed a plant is standing in, from where it stands. The wire says where,
-/// not which, as the Seedbed's does; the beds are 1.65 m apart and a plant is
+/// not which, as the Seedbed's does; the beds are 1.60 m apart and a plant is
 /// never more than 0.45 m from its bed's middle. Asked of the plot as it is
 /// laid, so `place.lay` the plot's variant first.
 export function bedOf(place, x, z) {
@@ -294,13 +298,30 @@ export function makeGroundGround(place) {
     }
 
     // In the path east of the middle bed as the table draws it, wherever the
-    // plot's variant puts that.
+    // plot's variant puts that, and turned to lie along it: `raiseTrough`
+    // builds it square to the plot, and every corner and face it makes is
+    // turned about its middle on the way to the ground.
+    const pathAt = (z) => (place.centre(1, z).x + place.centre(2, z).x) / 2;
+    const north = TROUGH.z - TROUGH.deep / 2, end = place.bedLength / 2;
+    const slope = (pathAt(north) - pathAt(end)) / (north - end);
+    const lean = Math.atan(slope), sin = Math.sin(lean), cos = Math.cos(lean);
     const trough = {
-      at: [(place.centre(1, TROUGH.z).x + place.centre(2, TROUGH.z).x) / 2, TROUGH.z],
+      at: [pathAt(end) + slope * (TROUGH.z - end), TROUGH.z],
       across: TROUGH.across, deep: TROUGH.deep,
     };
-    raiseTrough(e, { tri, quad }, {
-      ...trough, seed: GROUND.trough, height: 0.34, base: footing(place.height, trough),
+    const [ax, az] = trough.at;
+    const facing = ([x, y, z]) => [x * cos + z * sin, y, z * cos - x * sin];
+    const turn = ([x, y, z]) => {
+      const [dx, , dz] = facing([x - ax, 0, z - az]);
+      return [ax + dx, y, az + dz];
+    };
+    const turned = {
+      tri: (a, b, c, n, ...shade) => tri(turn(a), turn(b), turn(c), facing(n), ...shade),
+      quad: (a, b, c, d, n, ...shade) => quad(turn(a), turn(b), turn(c), turn(d), facing(n), ...shade),
+    };
+    const ground = (x, z) => { const p = turn([x, 0, z]); return place.height(p[0], p[2]); };
+    raiseTrough(e, turned, {
+      ...trough, seed: GROUND.trough, height: 0.34, base: footing(ground, trough),
     });
 
     // Its side: the slab every plot hangs from its outline (`slab.js`), the

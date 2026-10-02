@@ -55,17 +55,18 @@ public enum HomeGround {
     public static let variants = PlotVariant.Space(mirror: true)
 
     /// **Three beds, each 1.2 m wide and 4.2 m long**, running the length of
-    /// the plot, their middles swaying about `x` −1.65, 0 and +1.65. Paths of
-    /// 0.45 m between them and a headland of 0.5 m at each end. A bed is 1.2 m
+    /// the plot, their middles swaying about `x` −1.60, 0 and +1.60. Paths of
+    /// 0.40 m between them and a headland of 0.5 m at each end. A bed is 1.2 m
     /// so that no soil is ever stood on.
     ///
-    /// **They sway 0.10 m either way** (`tools/layouts/tables/_home_ground.py`),
-    /// which is as far as the beds and paths keeping their widths allows: the
-    /// outer beds have the 0.13 m between their straight edges and the nearest
+    /// **They sway 0.15 m either way** (`tools/layouts/tables/_home_ground.py`),
+    /// Marcus's choice of 2 October 2026 for a bolder S than the 0.10 m first
+    /// built. The paths narrowed from 0.45 m to 0.40 m to make the room: the
+    /// outer beds have the 0.18 m between their straight edges and the nearest
     /// any slab's edge comes to move in. `bedX` is the straight line each sways
     /// about; where a bed's middle really runs is `line(of:)`.
     public static let beds = 3
-    public static let bedX: [Double] = [-1.65, 0, 1.65]
+    public static let bedX: [Double] = [-1.60, 0, 1.60]
     public static let bedWidth = 1.2
     public static let bedLength = 4.2
 

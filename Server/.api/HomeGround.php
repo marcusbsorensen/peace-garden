@@ -51,9 +51,12 @@ final class HomeGround
      */
     public const VARIANTS = ['turns' => 1, 'mirror' => true, 'nudges' => 1];
 
-    /** Three beds, 1.2 m wide, swaying about these lines across the plot; north is `z−`. */
+    /**
+     * Three beds, 1.2 m wide, swaying 0.15 m about these lines across the
+     * plot, with paths of 0.40 m between (since 2 October 2026); north is `z−`.
+     */
     public const BEDS = 3;
-    public const BED_X = [-1.65, 0.0, 1.65];
+    public const BED_X = [-1.60, 0.0, 1.60];
 
     /** How far a plant stands off its place, from the seed: along the row, and down the bed. */
     public const NUDGE_ACROSS = 0.05;
