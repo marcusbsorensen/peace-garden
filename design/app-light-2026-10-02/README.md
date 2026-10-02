@@ -78,6 +78,10 @@ they brightened towards sunrise from three in the morning.
 
 ## Questions for Marcus
 
+**Answered by Marcus, 2 October 2026:** the warmth as built, not stronger; the
+winter sun stays where it is and only its colour warms; before dawn the plants
+match the moonlit ground.
+
 1. **How warm?** As built (`after-`) or all the way (`stronger-`)?
    *Recommended: as built.* Stronger turns the ground brown.
 2. **Should the winter sun stand lower as well**, with longer shadows and a
