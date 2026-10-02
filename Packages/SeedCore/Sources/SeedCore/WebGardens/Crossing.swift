@@ -4,8 +4,8 @@ import FoundationEssentials
 import Foundation
 #endif
 
-/// The Crossing: four paths meeting at a centre, four quarters planted round it,
-/// and a round paving where they cross. `docs/WEB-GARDENS.md`.
+/// The Crossing: four paths turning in to a centre, four quarters planted round
+/// it, and a round paving where they meet. `docs/WEB-GARDENS.md`.
 ///
 /// **The third area, and the first whose rule is about keeping four things
 /// level.** The Long Walk asks how to fill a border well and the Quiet Garden
@@ -17,10 +17,21 @@ import Foundation
 /// **Twenty-four plants in a 5.2 m plot**: four quarters of six, between the
 /// walk's forty-eight in the same square and the room's ten.
 ///
-/// **What a visitor should see**: grass, with two paths mown through it crossing
-/// at a round of paving, and in each of the four quarters planting that builds
-/// from low along the path edges to a single tall plant at the outer corner.
-/// Every quarter faces the middle, because the middle is what the place is.
+/// **What a visitor should see**: grass, with four paths mown through it that
+/// come in from the middles of the sides and all turn the same way to meet a
+/// round of paving, and in each of the four comma-shaped quarters between them
+/// planting on three arcs round the basin, from low on the inner arc to a single
+/// tall plant at the outer corner. Every quarter faces the middle, because the
+/// middle is what the place is.
+///
+/// **Four ways turning in, since 2 October 2026** (Marcus, from the research's
+/// pictures: `design/garden-layouts-2026-10-02/RESEARCH.md`, option A). Until
+/// then two straight paths crossed and each quarter was a 3-2-1 block, which
+/// from the page read as a chequerboard. The rule did not change: the places
+/// moved, onto arcs round the basin in the beds the turning paths leave, and
+/// they come from a table made offline (`PlaceTable.crossingWays`), so no
+/// host works out a sine. Each plot is turned and mirrored by its number
+/// (`variants`), and a mirror sets the four ways turning the other way.
 ///
 /// **The quarters are grass and not soil**, decided by Marcus on 21 September
 /// after looking at both. Bare beds with one plant standing in them read as a
@@ -41,14 +52,37 @@ public enum Crossing {
 
     /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
     /// Marcus's decision of 2 October 2026). Turned and mirrored: a mirror sets
-    /// the four ways turning in the other way. Declared but not yet read: the
-    /// area's new layout reads it.
+    /// the four ways turning in the other way. Every planting's spot is its
+    /// place turned for its plot (`Planting.spot`).
     public static let variants = PlotVariant.Space(turns: 4, mirror: true)
 
-    /// Half the width of a path, so the two paths are 1.2 m across. The Long
-    /// Walk's figure: it is the same mown path, and a second number would only
-    /// be a second thing to keep in step.
-    public static let pathHalfWidth = 0.6
+    /// The plot's variant: which way round its four ways are laid.
+    public static func variant(of plot: Int) -> PlotVariant {
+        PlotVariant.of(plot: plot, area: .meeting)
+    }
+
+    /// **The places and the paths, made offline** (`tools/layouts/tables/
+    /// crossing_ways.py`): six places a quarter in fill order, quarter by
+    /// quarter, and each path's centre line as `way0` to `way3`.
+    public static let table = PlaceTable.crossingWays
+
+    /// Half the width of a path where it comes onto the plot, and where it
+    /// reaches the round: a path narrows as it turns in. **0.45 and 0.35
+    /// since 2 October 2026**, where the straight paths were 0.6 all the way,
+    /// the Long Walk's figure. A path that turns crosses each arc at a slant
+    /// and covers more of it than one running straight across, and at 0.6 the
+    /// inner arc had no room for three: the research's own drawing stood them
+    /// on the mown grass.
+    public static let pathHalfWidth = 0.45
+    public static let pathHalfWidthAtRound = 0.35
+
+    /// A path's half width at `radius` metres from the middle: the two figures
+    /// above, eased between the round and the plot's edge. The drawing reads
+    /// the same, through `pg_cross_plan`.
+    public static func pathHalfWidth(atRadius radius: Double) -> Double {
+        let t = min(1, max(0, (radius - roundelRadius) / (plotSide / 2 - roundelRadius)))
+        return pathHalfWidthAtRound + (pathHalfWidth - pathHalfWidthAtRound) * t * t * (3 - 2 * t)
+    }
 
     /// The radius of the paving where the paths cross.
     ///
@@ -65,27 +99,20 @@ public enum Crossing {
     /// bed four times, and the rule's whole business is keeping them level.
     ///
     /// The turn of a plot — which quarter faces the visitor when they come down
-    /// onto it — is dressing and is chosen per plot, so nothing here decides
-    /// which quarter anybody sees first.
+    /// onto it — is the plot's variant, from its number, so nothing here decides
+    /// which quarter anybody sees first. In the table's own frame the first is
+    /// the south-east one, between the ways in from the east and the south, and
+    /// the others follow round.
     public enum Quarter: Int, Codable, CaseIterable, Sendable {
         case first = 0, second, third, fourth
-
-        /// Which way this quarter lies from the middle: ±1 on each axis.
-        public var lie: (x: Double, z: Double) {
-            switch self {
-            case .first:  return (1, 1)
-            case .second: return (-1, 1)
-            case .third:  return (-1, -1)
-            case .fourth: return (1, -1)
-            }
-        }
     }
 
     // MARK: What the rule reads off a plant
 
-    /// Where in a quarter a plant belongs, reading outward from the crossing:
-    /// the three along the path edges, the two behind them, or the one at the
-    /// outer corner.
+    /// Where in a quarter a plant belongs, reading outward from the basin: the
+    /// three on the inner arc, the two behind them, or the one at the outer
+    /// corner. `path` is the inner arc's name from when it ran along the path
+    /// edges, kept because it is a raw value on the wire.
     ///
     /// `Rank` is the Crossing's reading of a height, as `LongWalk.Tier` and
     /// `QuietGarden.Stand` are their areas'. The raw values run outward from
@@ -126,9 +153,9 @@ public enum Crossing {
     /// One place in one plot: which quarter, and where in that quarter's bed.
     public struct Slot: Codable, Equatable, Hashable, Sendable {
         public var quarter: Quarter
-        /// 0, 1 and 2 are the three along the path edges, 0 being the one on the
-        /// quarter's own diagonal, squarely facing the roundel. 3 and 4 stand
-        /// behind them, 5 at the outer corner.
+        /// 0, 1 and 2 are the three on the inner arc, 0 being the middle of it,
+        /// squarely facing the basin, and 1 and 2 its ends by the two paths. 3
+        /// and 4 stand behind them on the middle arc, 5 at the outer corner.
         public var index: Int
 
         public init(quarter: Quarter, index: Int) {
@@ -141,39 +168,35 @@ public enum Crossing {
             return index < 5 ? .middle : .corner
         }
 
-        /// Where the slot is, in metres from the middle of its plot.
+        /// Where the slot is, in metres from the middle of the plot **as the
+        /// table draws it**, before the plot is turned: `spot(on:)` turns it.
         ///
-        /// **Written out rather than computed from an angle**, for the reason
-        /// `Organic.quarter` exists: a sine taken from a host's own library is
-        /// not the same number on every host, and a placement has to be the same
-        /// number in Swift and in PHP for ever. These are three arcs at 1.90,
-        /// 2.42 and 2.95 m from the middle, rounded where they were written
-        /// down, and the arcs are what keeps the rule from having to say which
-        /// of three plants at the same rank stands in front of which.
+        /// **Read from a table rather than computed from an angle**, for the
+        /// reason `Organic.quarter` exists: a sine taken from a host's own
+        /// library is not the same number on every host, and a placement has
+        /// to be the same number in Swift and in PHP for ever. Three arcs at
+        /// 1.95, 2.45 and 2.80 m from the middle, since 2 October 2026 (1.90,
+        /// 2.42 and 2.95 before), and the arcs are what keeps the rule from
+        /// having to say which of three plants at the same rank stands in
+        /// front of which.
         public var spot: Spot {
-            let lie = quarter.lie
-            let (x, z) = Slot.canonical[index]
-            return Spot(x: lie.x * x, z: lie.z * z)
+            Crossing.table.places(nudge: 0)[quarter.rawValue * 6 + index].spot
         }
 
-        /// The six places in a quarter, in the quarter where both axes are
-        /// positive. Every other quarter is this one with a sign flipped.
-        static let canonical: [(Double, Double)] = [
-            (1.34, 1.34),   // 0  the path rank, on the quarter's own diagonal
-            (0.92, 1.66),   // 1  the path rank, along one path edge
-            (1.66, 0.92),   // 2  the path rank, along the other
-            (1.39, 1.98),   // 3  behind 1
-            (1.98, 1.39),   // 4  behind 2
-            (2.09, 2.09),   // 5  the corner, behind 0
-        ]
+        /// Where the slot is on a plot laid this way round.
+        public func spot(on variant: PlotVariant) -> Spot {
+            Crossing.table.spot(quarter.rawValue * 6 + index, on: variant)
+        }
     }
 
     /// Every slot in one plot, quarter by quarter and outward within each.
     ///
     /// **Slot 0 of quarter 0 is where a plot starts**, so a plot's oldest plant
-    /// stands on its own quarter's diagonal looking straight down it at the
-    /// paving — which is the same answer the other two areas gave to *where does
-    /// the first one stand*: where a visitor arriving meets it.
+    /// stands in the middle of its quarter's inner arc looking straight at the
+    /// basin — which is the same answer the other two areas gave to *where does
+    /// the first one stand*: where a visitor arriving meets it. Each rank is
+    /// listed its middle first, then its ends, so a quarter of one, two or
+    /// three plants is spread across its arc rather than begun at one end.
     public static let slots: [Slot] = Quarter.allCases.flatMap { quarter in
         (0..<6).map { Slot(quarter: quarter, index: $0) }
     }
@@ -191,13 +214,18 @@ public enum Crossing {
         public var plot: Int
         public var slot: Slot
         public var traits: PlantTraits
-        /// A small offset from the slot, from the seed. Smaller than the room's
-        /// 0.13, because a bed of six has neighbours 0.53 m apart at the closest
-        /// and a nudge that ate half of that would have plants touching.
+        /// A small offset from the slot, from the seed, in the table's frame.
+        /// Smaller than the room's 0.13, because a bed of six has neighbours
+        /// 0.55 m apart at the closest and a nudge that ate half of that would
+        /// have plants touching.
         public var nudge: Spot
 
+        /// **Where it stands**: its place and its nudge, turned and mirrored
+        /// as its plot is laid. The nudge is added in the table's frame and
+        /// the sum turned (`tools/layouts/README.md`), so a turn moves a plant
+        /// exactly and the same on every host.
         public var spot: Spot {
-            Spot(x: slot.spot.x + nudge.x, z: slot.spot.z + nudge.z)
+            Crossing.variant(of: plot).apply(Spot(x: slot.spot.x + nudge.x, z: slot.spot.z + nudge.z))
         }
     }
 
@@ -334,8 +362,9 @@ public enum Crossing {
     /// September 2026 — placed by this rule into an empty Crossing, which puts
     /// it in the middle rank because that is what its height, 1.20 m, reads
     /// as, and in slot 3 because that is where a quarter's middle rank starts:
-    /// behind slot 1, along the path edge. The diagonal in front of it waits
-    /// for the first arrival short enough for the path rank.
+    /// on the middle arc, behind the gap between the inner arc's middle and
+    /// one of its ends. The inner arc in front of it waits for the first
+    /// arrivals short enough for it.
     ///
     /// *Melyrina latifolia*, its ambassador until then, was a path-rank plant
     /// and stood in slot 0, looking straight down its quarter's diagonal at the

@@ -22,6 +22,13 @@ import SeedCore
 //
 // Opened rather than empty: the room starts with its ambassador (Bela caerulea
 // since 28 September 2026) beside the bench, the way the real one does.
+//
+// **Only this area's own plants arrive**, since 2 October 2026, as the Cold
+// Frame's workbench and `tools/layouts/harness` draw them: the crossings whose
+// names put them in the Quiet Garden, plumes and poppies. Before then every
+// crossing came here, and the pool held the lilies the live garden never
+// sends this area. The room's places, its pool and its stones are the table's
+// (`tables/quiet_room.js`), and a room's variant is `pg_plot_variant`'s.
 
 nonisolated(unsafe) private var room = QuietGarden.Room.opened()
 nonisolated(unsafe) private var grown: [String: Genome] = {
@@ -29,16 +36,23 @@ nonisolated(unsafe) private var grown: [String: Genome] = {
     return [one.seed.hex: one.genome]
 }()
 
-/// The n-th arrival: two parents who meet once, and the plant they make.
-private func visitor(_ n: Int) -> (child: SeedID, genome: Genome) {
-    let parentA = SeedMint.mint(fromEntropy: Data("quiet-garden-parent-\(n)-a".utf8))
-    let parentB = SeedMint.mint(fromEntropy: Data("quiet-garden-parent-\(n)-b".utf8))
-    let meeting = Pollination.encounterID(
-        seedA: parentA, seedB: parentB, nonceA: Data("a".utf8), nonceB: Data("b".utf8)
-    )
-    let child = Pollination.cross(seedA: parentA, seedB: parentB, encounterID: meeting)
-    return (child, Genome(seed: child,
-                          lineage: .crossed(parentA: parentA, parentB: parentB, encounterID: meeting)))
+nonisolated(unsafe) private var roomCrossings = 0
+
+/// The next arrival: the next crossing whose name puts it in the Quiet Garden.
+private func visitor() -> (child: SeedID, genome: Genome) {
+    while true {
+        let n = roomCrossings
+        roomCrossings += 1
+        let parentA = SeedMint.mint(fromEntropy: Data("quiet-garden-parent-\(n)-a".utf8))
+        let parentB = SeedMint.mint(fromEntropy: Data("quiet-garden-parent-\(n)-b".utf8))
+        let meeting = Pollination.encounterID(
+            seedA: parentA, seedB: parentB, nonceA: Data("a".utf8), nonceB: Data("b".utf8)
+        )
+        let child = Pollination.cross(seedA: parentA, seedB: parentB, encounterID: meeting)
+        let genome = Genome(seed: child,
+                            lineage: .crossed(parentA: parentA, parentB: parentB, encounterID: meeting))
+        if Area(genome: genome) == .peace { return (child, genome) }
+    }
 }
 
 @_expose(wasm, "pg_room_plan")
@@ -56,9 +70,7 @@ public func pgRoomPlan() -> Int32 {
 @_expose(wasm, "pg_room_arrive")
 @_cdecl("pg_room_arrive")
 public func pgRoomArrive() -> Int32 {
-    // Counted from the arrivals, not the plantings: the ambassador is in the
-    // room and is not an arrival.
-    let (child, genome) = visitor(room.plantings.count - 1)
+    let (child, genome) = visitor()
     let planting = room.plant(seed: child, traits: LongWalk.traits(of: genome))
     grown[planting.seed] = genome
     return Int32(planting.plot)

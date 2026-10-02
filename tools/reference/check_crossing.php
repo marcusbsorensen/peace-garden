@@ -43,11 +43,18 @@ foreach ($vectors as $n => $want) {
     $got = Crossing::plant($ways, $want['seed'], $want['height'], $want['family']);
     $ways[] = $got;
     $checks++;
+    // **And where it stands on its plot**, since the four ways began turning
+    // in on 2 October 2026: the variant the plot's number deals it, and its
+    // place and nudge turned by it. Exact, as the slot is.
+    $variant = Crossing::variant($got['plot']);
+    $spot = Crossing::spotOn($got['plot'], $got['quarter'], $got['index'], $got['nudgeX'], $got['nudgeZ']);
     $same = $got['plot'] === $want['plot']
         && $got['quarter'] === $want['quarter']
         && $got['index'] === $want['index']
         && $got['nudgeX'] === $want['nudge'][0]
-        && $got['nudgeZ'] === $want['nudge'][1];
+        && $got['nudgeZ'] === $want['nudge'][1]
+        && [$variant['turn'], $variant['mirror'] ? 1 : 0, $variant['nudge']] === $want['variant']
+        && $spot[0] === (float) $want['spot'][0] && $spot[1] === (float) $want['spot'][1];
     if (!$same) {
         $failed[] = sprintf(
             'arrival %d (%s, %.3f m, colour %d): SeedCore put it in plot %d quarter %d slot %d, '
@@ -74,16 +81,29 @@ if ($full < $plots - 2) {
     $failed[] = sprintf('only %d of %d plots are full: %s', $full, $plots, implode(' ', $holdings));
 }
 
+// The paths as each plot lays them: the table's centre lines, turned.
+$halfWidth = function (float $r): float {
+    $t = min(1.0, max(0.0, ($r - Crossing::ROUNDEL_RADIUS) / (Crossing::PLOT_SIDE / 2 - Crossing::ROUNDEL_RADIUS)));
+    return Crossing::PATH_HALF_WIDTH_AT_ROUND
+        + (Crossing::PATH_HALF_WIDTH - Crossing::PATH_HALF_WIDTH_AT_ROUND) * $t * $t * (3 - 2 * $t);
+};
 foreach ($ways as $p) {
     $checks++;
-    [$x, $z] = Crossing::spot($p['quarter'], $p['index']);
-    $atX = $x + $p['nudgeX'];
-    $atZ = $z + $p['nudgeZ'];
-    if (max(abs($atX), abs($atZ)) >= Crossing::PLOT_SIDE / 2) {
-        $failed[] = sprintf('%s stands at %.2f, %.2f — off the plot',
+    [$atX, $atZ] = Crossing::spotOn($p['plot'], $p['quarter'], $p['index'], $p['nudgeX'], $p['nudgeZ']);
+    if (max(abs($atX), abs($atZ)) >= Crossing::PLOT_SIDE / 2 - 0.3) {
+        $failed[] = sprintf('%s stands at %.2f, %.2f — at the edge of its plot',
             substr($p['seed'], 0, 12), $atX, $atZ);
     }
-    if (min(abs($atX), abs($atZ)) <= Crossing::PATH_HALF_WIDTH) {
+    $variant = Crossing::variant($p['plot']);
+    $room = INF;
+    foreach ([0, 1, 2, 3] as $q) {
+        [, $points] = CrossingWaysTable::CURVES["way$q"][0];
+        foreach ($points as [$wx, $wz]) {
+            [$wx, $wz] = PlotVariant::apply($variant, $wx, $wz);
+            $room = min($room, sqrt(($atX - $wx) ** 2 + ($atZ - $wz) ** 2) - $halfWidth(sqrt($wx * $wx + $wz * $wz)));
+        }
+    }
+    if ($room <= 0.05) {
         $failed[] = sprintf('%s stands at %.2f, %.2f — on a path',
             substr($p['seed'], 0, 12), $atX, $atZ);
     }
@@ -117,7 +137,7 @@ for ($plot = 0; $plot < $plots; $plot++) {
         $failed[] = sprintf('plot %d quarters hold %s, which is not four ways equally used',
             $plot, implode(' ', $counts));
     }
-    // A plot opens on its first quarter's diagonal, which is what makes the
+    // A plot opens in its first quarter, which is what makes the
     // ambassador the oldest plant of plot 0 without anything reserving a slot.
     $checks++;
     if (($here[0]['quarter'] ?? -1) !== 0) {

@@ -6,7 +6,7 @@ declare(strict_types=1);
  *
  * `tools/reference/knot_garden_vectors.json` is what `KnotGarden.Ways` in
  * SeedCore does with five hundred real crossings, starting from a Knot Garden
- * that already has its ambassador standing in the north compartment. This
+ * that already has its ambassador standing in the north-east lens. This
  * replays the same five hundred through `Server/.api/KnotGarden.php` and fails
  * if any one of them lands anywhere else.
  *
@@ -17,6 +17,10 @@ declare(strict_types=1);
  * 0, about most placements after that, and about every plot's total. It
  * diverges when a colour first runs out of room in the plot it started in,
  * which is a long way in.
+ *
+ * **And where each one stands**, since the rings of 2 October 2026: the place
+ * is a table made offline, which the port reads in its own copy, and the spot
+ * is that place plus the nudge, compared exactly.
  *
  *   php tools/reference/check_knot.php
  */
@@ -49,7 +53,11 @@ foreach ($vectors as $n => $want) {
         && $got['compartment'] === $want['compartment']
         && $got['index'] === $want['index']
         && $got['nudgeX'] === $want['nudge'][0]
-        && $got['nudgeZ'] === $want['nudge'][1];
+        && $got['nudgeZ'] === $want['nudge'][1]
+        && PlotVariant::of($got['plot'], 'pattern', KnotGarden::VARIANTS)
+            === ['turn' => $want['variant'][0], 'mirror' => $want['variant'][1], 'nudge' => $want['variant'][2]]
+        && KnotGarden::spotOf($got['plot'], $got['compartment'], $got['index'], $got['nudgeX'], $got['nudgeZ'])
+            === $want['spot'];
     if (!$same) {
         $failed[] = sprintf(
             'arrival %d (%s, %.3f m, colour %d): SeedCore put it in plot %d compartment %d place %d, '
@@ -68,25 +76,48 @@ foreach ($ways as $p) $holdings[$p['plot']]++;
 $full = count(array_filter($holdings, fn($n) => $n === count(KnotGarden::slots())));
 
 // And the shape of the place the two of them agree on, which is what a visitor
-// sees: every plant inside its own compartment, a colour to a pair, the two
-// compartments of a pair level with each other, and nothing standing in front
-// of something shorter.
+// sees: every plant inside its own compartment and clear of the box, a colour
+// to a pair, the two compartments of a pair level with each other, and nothing
+// standing in front of something shorter.
+$line = fn(string $name) => KnotGardenRingsTable::CURVES[$name][0][1];
+$inside = function (array $p, array $loop): bool {
+    $within = false;
+    for ($i = 0, $j = count($loop) - 1; $i < count($loop); $j = $i++) {
+        [$ax, $az] = $loop[$i];
+        [$bx, $bz] = $loop[$j];
+        if (($az > $p[1]) !== ($bz > $p[1]) && $p[0] < ($bx - $ax) * ($p[1] - $az) / ($bz - $az) + $ax) {
+            $within = !$within;
+        }
+    }
+    return $within;
+};
+$from = function (array $p, array $loop): float {
+    $best = INF;
+    for ($i = 0, $n = count($loop); $i < $n; $i++) {
+        [$ax, $az] = $loop[$i];
+        [$bx, $bz] = $loop[($i + 1) % $n];
+        $dx = $bx - $ax;
+        $dz = $bz - $az;
+        $m = $dx * $dx + $dz * $dz;
+        $t = $m == 0 ? 0.0 : max(0.0, min(1.0, (($p[0] - $ax) * $dx + ($p[1] - $az) * $dz) / $m));
+        $best = min($best, hypot($p[0] - $ax - $dx * $t, $p[1] - $az - $dz * $t));
+    }
+    return $best;
+};
+$bands = array_map($line, ['middle', 'ring0', 'ring1', 'ring2', 'ring3', 'edging']);
 foreach ($ways as $p) {
     $checks++;
-    [$x, $z] = KnotGarden::spot($p['compartment'], $p['index']);
-    $atX = $x + $p['nudgeX'];
-    $atZ = $z + $p['nudgeZ'];
-    $inner = KnotGarden::BAND_FROM + KnotGarden::BAND_HALF_THICKNESS;
-    $between = KnotGarden::BAND_FROM - KnotGarden::BAND_HALF_THICKNESS;
-    $outer = KnotGarden::EDGING_FROM - KnotGarden::BAND_HALF_THICKNESS;
-    $near = min(abs($atX), abs($atZ));
-    $far = max(abs($atX), abs($atZ));
-    $inside = KnotGarden::atCorner($p['compartment'])
-        ? ($near > $inner && $far < $outer)
-        : ($near < $between && $far > $inner && $far < $outer);
-    if (!$inside) {
+    $at = KnotGarden::spotOf($p['plot'], $p['compartment'], $p['index'], $p['nudgeX'], $p['nudgeZ']);
+    $inRing = $inside($at, $line('ring' . KnotGarden::ringOf($p['compartment'])));
+    $inMiddle = $inside($at, $line('middle'));
+    if (!$inRing || $inMiddle === KnotGarden::isCrescent($p['compartment'])) {
         $failed[] = sprintf('%s stands at %.2f, %.2f — outside compartment %d',
-            substr($p['seed'], 0, 12), $atX, $atZ, $p['compartment']);
+            substr($p['seed'], 0, 12), $at[0], $at[1], $p['compartment']);
+    }
+    $checks++;
+    $clear = min(array_map(fn($band) => $from($at, $band), $bands)) - KnotGarden::BAND_HALF_THICKNESS;
+    if ($clear < 0.03) {
+        $failed[] = sprintf('%s stands %.3f m from the box', substr($p['seed'], 0, 12), $clear);
     }
 }
 
@@ -148,11 +179,11 @@ for ($plot = 0; $plot < $plots; $plot++) {
         }
     }
 
-    // A plot opens in its north compartment, which is what makes the
+    // A plot opens in its north-east lens, which is what makes the
     // ambassador the oldest plant of plot 0 without anything reserving a place.
     $checks++;
-    if (($here[0]['compartment'] ?? -1) !== KnotGarden::NORTH) {
-        $failed[] = "plot $plot did not open in its north compartment";
+    if (($here[0]['compartment'] ?? -1) !== KnotGarden::NORTH_EAST_LENS) {
+        $failed[] = "plot $plot did not open in its north-east lens";
     }
 }
 

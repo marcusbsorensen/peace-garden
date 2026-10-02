@@ -1,7 +1,15 @@
 // A plot of the Cold Frame, drawn the way the app draws a plot: a floating slab
 // of ground seen in true isometric, gravel all over it, low frames of boards
 // standing on it with their lights propped open, young plants in two ranks
-// inside each, and a tank of water in front of them.
+// inside each, and a pond in front of them.
+//
+// **A pond planted as a pond, since 2 October 2026** (Marcus; `ColdFrame.swift`
+// says why): a wandering kidney of water with its bay toward the frames, reeds
+// in clumps at its margin and lilies from its deepest water out, where a tank
+// of staggered rows was. Its outline is the table's (`tables/cold_frame_pond.js`),
+// mirrored by the plot's number as the plants are (`variantFromModule`); the
+// frames stand where they stood, a mirror changing only which of them a plot
+// fills first.
 //
 // **The first page in the garden with something to see through.** The frames'
 // glass is handed to the stage as `glass`, which `makePlotStage` draws after the
@@ -23,10 +31,17 @@ import { decode, takeResult } from './plant.js';
 import { COLOUR, SIDE, hash, keepToPlot, readOutline, readStructure, rimReach } from './longwalk.js';
 import { hangSide } from './slab.js';
 import { rimOf, sinkPool } from './water.js';
+import { PLAIN, applyVariant, applyVariantToCurve, variantFromModule } from './variant.js';
+import { coldFramePond } from './tables/cold_frame_pond.js';
 
 // Seeds for this area's dressing, its own and not another area's, so seven
 // plots do not share one wandering edge.
-const FRAME = { ground: 5153, floor: 37, grain: 59, soil: 83, box: 1301, lights: 1361, glass: 1427, tank: 907 };
+const FRAME = { ground: 5153, floor: 37, grain: 59, soil: 83, box: 1301, lights: 1361, glass: 1427 };
+
+/// The pond's margin: a shelf a hand in from the edge where the reeds stand,
+/// drawn as a paler band of shallow water over it — `shelf` in the table is
+/// its inner edge.
+const SHELF = { lift: 0.003 };
 
 /// The frames' boards: deal, weathered paler than the bench's oak, as the
 /// Seedbed's labels are — a frame is knocked together from the same stock a
@@ -62,6 +77,9 @@ export function plan(e) {
 // `lids` is the frames' lights (`makeFrameLids`), which the page keeps so it
 // can open them; the workbench passes none and gets lights that stay shut.
 export function makeFrameGround(place, lids = makeFrameLids(place)) {
+  // Which way round the yard is laid: the plot's, set by whoever grows it
+  // (`growFrameFromService`, `growInvented`) before the stage is rebuilt.
+  place.variant ??= PLAIN;
   return function buildFrameGround(farSide, span, e, eye) {
     const positions = [], normals = [], colours = [];
     const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
@@ -77,24 +95,24 @@ export function makeFrameGround(place, lids = makeFrameLids(place)) {
     const UP = [0, 1, 0];
 
     const outline = readOutline(e, SIDE, SIDE, FRAME.ground);
-    // **The yard's gravel fans out from the tank's rim, not from the middle**,
-    // since the middle is now water (27 September 2026). A ring between two
-    // loops rather than a fan from a point, both walked by how far round them
-    // you are: see `water.js`, which had to teach the Quiet Garden's lawn the
-    // same thing.
+    // **The yard's gravel fans out from the water's rim, not from the
+    // middle**, since the middle is water (27 September 2026), walked round
+    // it as `floorAround` walks round a pool: each step of its rim, and the
+    // plot's edge straight out from the deepest water through it.
     //
-    // **Off the middle since 29 September 2026**, when the tank grew into the
-    // front row's ground and its middle moved toward the front. Two loops
-    // walked by how far round each is fold over one another once their middles
-    // part, so the ring is walked round the tank instead, as `floorAround`
-    // walks round a pool: each step of its rim, and the plot's edge straight
-    // out from the tank's middle through it.
-    const tank = { at: place.tank.at, across: place.tank.across, deep: place.tank.deep, seed: FRAME.tank };
-    const { rim, steps, inside: inTank } = rimOf(e, tank);
+    // **The pond, since 2 October 2026**: the table's outline, mirrored for
+    // the plot, and its deepest water the first place of its open water,
+    // which the sunflower of lilies grows out from. The kidney is drawn so
+    // that every point of its rim can be seen from there.
+    const variant = place.variant;
+    const line = applyVariantToCurve(variant, coldFramePond.curves.pond[0].points);
+    const deepest = coldFramePond.places[0].find((p) => p[2] === 1);
+    const pond = { outline: line, at: applyVariant(variant, deepest[0], deepest[1]) };
+    const { rim, steps, inside: inPond } = rimOf(e, pond);
     const out = (p) => {
-      const dx = p[0] - tank.at[0], dz = p[1] - tank.at[1], l = Math.hypot(dx, dz) || 1;
-      const r = rimReach(outline, tank.at, dx / l, dz / l);
-      return [tank.at[0] + (dx / l) * r, tank.at[1] + (dz / l) * r];
+      const dx = p[0] - pond.at[0], dz = p[1] - pond.at[1], l = Math.hypot(dx, dz) || 1;
+      const r = rimReach(outline, pond.at, dx / l, dz / l);
+      return [pond.at[0] + (dx / l) * r, pond.at[1] + (dz / l) * r];
     };
     for (let i = 0; i < steps; i++) {
       const u = i / steps, v = (i + 1) / steps;
@@ -155,14 +173,28 @@ export function makeFrameGround(place, lids = makeFrameLids(place)) {
     sheet(lattice(0.06, [-half, -half], [half, half]), 0.003,
       (i, j, k, p) => COLOUR.gravel.map((v) => v * drift(p[0], p[1]) * (0.87 + 0.25 * hash(i * 131 + j * 37 + k * 7 + FRAME.grain))),
       // And it stops at the water, as it stops at a frame's boards.
-      (x, z) => !inside(x, z) && !inTank(x, z));
+      (x, z) => !inside(x, z) && !inPond(x, z));
 
-    // The tank, sunk across the yard in front of the frames. After
-    // the gravel, so its rim lies over it: `water.js` cuts the floor rather
-    // than covering it, which is the one thing a sunk pool needs.
-    // With a bank: at three metres across, a dish falling to its middle would
-    // leave a wide ring of wet silt between the rim and the water (`water.js`).
-    sinkPool(e, { tri, quad }, { ...tank, bank: 0.25 });
+    // The pond, sunk across the yard in front of the frames. After the
+    // gravel, so its rim lies over it: `water.js` cuts the floor rather than
+    // covering it, which is the one thing a sunk pool needs. With a bank: at
+    // three metres across, a dish falling to its middle would leave a wide
+    // ring of wet silt between the rim and the water (`water.js`).
+    sinkPool(e, { tri, quad }, { ...pond, bank: 0.25 });
+
+    // **The margin's shelf**: a band of shallower water between the edge and
+    // the table's `shelf`, a little paler, where the reeds stand. Laid a
+    // hair over the water, between the two loops walked together: the shelf
+    // is the edge pushed in, so their points pair off.
+    const shelf = applyVariantToCurve(variant, coldFramePond.curves.shelf[0].points);
+    const n = Math.min(line.length, shelf.length);
+    const level = -0.05 + SHELF.lift;
+    const shallow = COLOUR.shallows.map((v, i) => v * 0.65 + COLOUR.depths[i] * 0.1 + 0.25 * COLOUR.silt[i] + 0.012);
+    for (let i = 0; i < n; i++) {
+      const a = line[i], b = line[(i + 1) % n], c = shelf[(i + 1) % n], d = shelf[i];
+      quad([a[0], level, a[1]], [b[0], level, b[1]], [c[0], level, c[1]], [d[0], level, d[1]], UP,
+           shallow, shallow, COLOUR.shallows, COLOUR.shallows);
+    }
 
     // **The soil in each frame**, finer and darker, and flat-toned per face as
     // the Seedbed's tilth is — crumbs, not a surface. Its spread is half the
@@ -603,11 +635,16 @@ const SLICE = 16;
 const breathe = () => new Promise((resume) => setTimeout(resume, 0));
 
 // Grows one plot from the plot service, every plant young. A planting with no
-// parents was minted rather than crossed — the ambassador, a lily in the tank —
-// and grows from its seed alone.
-export async function growFrameFromService(e, stage, plot, report) {
+// parents was minted rather than crossed — the ambassador, a lily in the pond —
+// and grows from its seed alone. `place` is the plan the ground was made from,
+// told which way round this plot is laid before the ground is laid again.
+export async function growFrameFromService(e, stage, plot, report, place = null) {
   stage.clear();
   const { plantings } = await (await fetch(`/api/frame/plot/${plot}`)).json();
+  if (place) {
+    place.variant = variantFromModule(e, 'waiting', plot) ?? PLAIN;
+    stage.rebuild();
+  }
   let since = performance.now();
   for (const [i, p] of plantings.entries()) {
     const lineage = p.parents ?? [];
@@ -650,9 +687,13 @@ export async function plantVisitors(e, total, report) {
   return e.pg_frame_plots();
 }
 
-export async function growInvented(e, stage, plot, report) {
+export async function growInvented(e, stage, plot, report, place = null) {
   stage.clear();
   const count = e.pg_frame_count(plot);
+  if (place) {
+    place.variant = variantFromModule(e, 'waiting', plot) ?? PLAIN;
+    stage.rebuild();
+  }
   let since = performance.now();
   for (let i = 0; i < count; i++) {
     const length = e.pg_frame_grow(plot, i);

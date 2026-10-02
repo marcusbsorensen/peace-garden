@@ -136,13 +136,13 @@ final class CrossStore
         $plantings = array_map([self::class, 'planting'], $query->fetchAll());
         if ($plot !== 0) return $plantings;
         $standing = Ambassadors::planting('meeting');
-        [$x, $z] = Crossing::spot($standing['quarter'], $standing['index']);
         array_unshift($plantings, [
             'seed' => $standing['seed'],
             'parents' => [],
             'encounter' => null,
             'plot' => 0,
-            'spot' => [$x + $standing['nudgeX'], $z + $standing['nudgeZ']],
+            'spot' => Crossing::spotOn(0, $standing['quarter'], $standing['index'],
+                                       $standing['nudgeX'], $standing['nudgeZ']),
         ]);
         return $plantings;
     }
@@ -170,13 +170,15 @@ final class CrossStore
     /** What the page needs to grow a planting and stand it in its place. */
     private static function planting(array $row): array
     {
-        [$x, $z] = Crossing::spot((int) $row['quarter'], (int) $row['slot_index']);
+        // Where it stands on its plot, turned as the plot is laid (2 October
+        // 2026). A row taken back has no nudge left, and stands on its place.
         return [
             'seed' => $row['seed'],
             'parents' => [$row['parent_a'], $row['parent_b']],
             'encounter' => $row['encounter'],
             'plot' => (int) $row['plot'],
-            'spot' => [$x + (float) $row['nudge_x'], $z + (float) $row['nudge_z']],
+            'spot' => Crossing::spotOn((int) $row['plot'], (int) $row['quarter'], (int) $row['slot_index'],
+                                       (float) $row['nudge_x'], (float) $row['nudge_z']),
         ];
     }
 

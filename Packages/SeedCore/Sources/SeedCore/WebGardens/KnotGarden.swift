@@ -4,9 +4,9 @@ import FoundationEssentials
 import Foundation
 #endif
 
-/// The Knot Garden: two bands of low clipped hedging woven over and under each
-/// other inside a square edging, and eight compartments filled with colour.
-/// `docs/WEB-GARDENS.md`.
+/// The Knot Garden: a ring of low clipped hedging round the middle and four
+/// rings woven through it, over and under in turn, inside a softened square
+/// edging, and eight compartments filled with colour. `docs/WEB-GARDENS.md`.
 ///
 /// **The fifth area, and the first whose rule reads a plant's colour.**
 /// `PlantTraits` has carried `family` since the Long Walk and no rule has ever
@@ -33,6 +33,14 @@ import Foundation
 /// reserved one would wait on a plant nobody has grown. A pair is claimed by the
 /// first plant to stand in it and filled by whoever of that colour arrives next.
 ///
+/// **Interlaced rings since 2 October 2026**, option A of the layouts Marcus
+/// approved that day (`design/garden-layouts-2026-10-02/RESEARCH.md`). The
+/// rule did not change: the eight compartments are now four lenses and four
+/// crescents rather than four sides and four corners, and every slot is the
+/// slot it was, so a plant standing in the old knot stands in the same
+/// compartment of the new one. Where the places are is a table made offline,
+/// `PlaceTable.knotGardenRings`, from `tools/layouts/tables/knot_garden_rings.py`.
+///
 /// The rule runs in SeedCore so the plot service, the website and the app read
 /// one copy. `Server/.api/KnotGarden.php` is the port, and
 /// `tools/reference/check_knot.php` holds them together.
@@ -45,12 +53,16 @@ public enum KnotGarden {
 
     /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
     /// Marcus's decision of 2 October 2026). **Fixed**: a knot is a pattern made
-    /// to be the same every time. Declared but not yet read: the area's new
-    /// layout reads it.
+    /// to be the same every time, so every plot is laid as the table draws it.
     public static let variants = PlotVariant.Space.fixed
 
-    /// Half the thickness of a run of hedging. The knot, the edging and every
-    /// compartment boundary are the same band.
+    /// **The knot, made offline**: where the thirty-two places are, and the
+    /// lines of the middle ring, the four small rings, the edging and the eight
+    /// crossings. `tools/layouts/tables/knot_garden_rings.py` says how each was laid.
+    public static let table = PlaceTable.knotGardenRings
+
+    /// Half the thickness of a run of hedging. The rings and the edging are all
+    /// the same band.
     ///
     /// **Thin, because knot hedging is.** The Long Walk's hedge is 0.36 m
     /// through and stands 2.0 m; this is clipped box at ankle height, and a knot
@@ -76,237 +88,149 @@ public enum KnotGarden {
     /// garden is for.
     public static let bandHeight = 0.17
 
-    /// Where the four runs of the knot lie, on each axis, from the middle of the
-    /// plot: two running one way at ±`bandFrom`, two running the other.
-    ///
-    /// **They cross four times, and that is the knot.** At each crossing one run
-    /// carries on through and the other stops against its face, and which does
-    /// which alternates round the weave, so every run is over at one of its two
-    /// crossings and under at the other. Two runs drawn simply overlapping are a
-    /// grid; the alternation is the difference between a grid and a knot, and it
-    /// is the thing this area exists to draw.
-    public static let bandFrom = 0.76
+    /// **Where a band rides over another it swells**, as a clipped hedge does
+    /// where two runs have grown into each other: this much thicker each side
+    /// and this much taller, over this far along it either way from the
+    /// crossing. That lump is what turns a band passing a broken one into a
+    /// band passing *over* it. In the rule because it takes room a plant might
+    /// otherwise stand in, and `clearance(x:z:)` has to count it.
+    public static let swellThicker = 0.0275
+    public static let swellTaller = 0.055
+    public static let swellReach = 0.29
 
-    /// How far the stretch of a run between its two crossings stands in toward
-    /// the middle of the plot, at its middle.
-    ///
-    /// **This is the difference between a knot and a parterre**, and the area
-    /// was laid out without it. Four straight bands woven over and under are a
-    /// weave, and a weave drawn with a ruler reads as a grid however honestly
-    /// it is interlaced: there is no line for the eye to follow through a
-    /// crossing. Bowed, the four inner stretches close round the empty middle
-    /// as a ring of four arcs and each band becomes a ribbon that goes
-    /// somewhere.
-    ///
-    /// **It bows into the middle because the middle is the one place with
-    /// room.** Nothing is planted there, so this number costs nothing: at 0.30
-    /// the nearest plant to any band is exactly as near as it was when every
-    /// band was straight. The compartments are full of plants, and a band that
-    /// bowed into one would stand where a plant already does.
-    ///
-    /// **No plant moves for this.** A bow is zero at both crossings, so every
-    /// compartment keeps the four corners it had and
-    /// `tools/reference/knot_garden_vectors.json` does not change.
-    ///
-    /// 0.30 m leaves a middle 0.74 m across, which still reads as a middle the
-    /// weave closes round rather than as four bands meeting.
-    public static let knotBow = 0.30
-
-    /// How far the stretch of a run from a crossing out to the edging stands
-    /// out, away from the middle of the plot, at its middle.
-    ///
-    /// **A band that bows one way and then the other is a ribbon**; one that
-    /// bows only between its crossings is a straight band with a curve let into
-    /// it. So the four arms of each run bow the other way from its inner
-    /// stretch, and a run leaves a crossing turning back.
-    ///
-    /// **0.05, and this one is paid for**, which is why it is a sixth of the
-    /// inner bow. An arm has a compartment on each side of it. The nearest
-    /// place to an arm is the one at 1.03 m in a corner compartment, 0.18 m
-    /// from the band's face when the band is straight; a plant stands up to
-    /// `Planting.nudge` — 0.09 m on an axis — off its place, so that 0.18 is
-    /// really 0.09. At
-    /// 0.05 the arm takes 0.04 of what is left and a nudged plant still stands
-    /// 0.048 m clear of ankle-high box, which is a planted block with its edge
-    /// against the hedge. `clearance(x:z:)` is where that is measured, and
-    /// `KnotGardenTests` is where it is held.
-    public static let armBow = 0.05
-
-    /// Where the square edging lies, from the middle of the plot. It is the same
-    /// band as the knot, closing the four corner compartments — without it they
-    /// are not compartments but the gravel round the outside.
-    public static let edgingFrom = 2.20
-
-    /// How far an under-run's cut end hides inside the band that crosses over
-    /// it. Enough that no daylight shows at the joint, little enough that the
-    /// two ends still read as one run diving under rather than as a band with a
-    /// lump in it.
+    /// How far an under-band's cut end hides inside the band that rides over
+    /// it, measured from the over-band's face. Enough that no daylight shows at
+    /// the joint, little enough that the two ends still read as one band diving
+    /// under rather than as a band with a lump in it.
     public static let tuck = 0.04
 
-    // MARK: The weave
+    /// How far a plant stands off its place, either way on each axis, from the
+    /// seed. **The smallest in the garden**: a compartment is meant to read as
+    /// a block rather than as four plants that have wandered.
+    public static let nudge = 0.09
 
-    /// One length of the knot's band: it runs along `x` or along `z`, from
-    /// `from` to `to` on that axis, stands at `at` on the other, and its middle
-    /// stands `bow` off the straight line between its two ends — away from the
-    /// middle of the plot where that is positive.
-    public struct Stretch: Sendable, Equatable {
-        public let alongX: Bool
-        public let at: Double
-        public let from: Double
-        public let to: Double
-        public let bow: Double
+    // MARK: The knot
 
-        /// Where the band's line stands on the axis it is fixed to, `along`
-        /// metres down the axis it runs on.
-        ///
-        /// `Organic.hedge`'s bow, which is `bow` at the middle and flat on the
-        /// straight line between the two ends — so a stretch's two ends are on
-        /// `at` however hard it bows, and a crossing does not move.
-        public func line(at along: Double) -> Double {
-            let fraction = 2 * (along - (from + to) / 2) / (to - from)
-            let hump = 1 - fraction * fraction
-            return at + bow * hump * hump
+    /// **The five rings and the edging, as lines**: the middle ring, the four
+    /// small rings in compartment order (north-east, south-east, south-west,
+    /// north-west), and the softened square. Each is closed and hand-laid,
+    /// straying off its true line by up to a centimetre.
+    public static var bands: [PlaceTable.Curve] {
+        ["middle", "ring0", "ring1", "ring2", "ring3", "edging"].map {
+            table.curve($0, on: .plain)
         }
     }
 
-    /// **The knot as lengths of band**: three to each of the four runs, and
-    /// four more for the square edging.
-    ///
-    /// A run along z at x = s dives under the run along x at z = −s; a run
-    /// along x at z = s dives under the run along z at x = s. Written as the
-    /// two rules rather than as a table of four, because what has to be true is
-    /// that each run is over at one of its two crossings and under at the
-    /// other, and a table is a thing that can be typed wrong without looking
-    /// wrong.
-    ///
-    /// **Each run is in three**: an arm, the stretch between its two crossings,
-    /// and the other arm. It is cut at its under-crossing because that gap is
-    /// the weave, and cut again at its over-crossing because the two stretches
-    /// meeting there bow opposite ways and one length of hedge bows one way.
-    /// That second cut does not show: `Organic.hedge` leaves a bow flat at both
-    /// ends, so the two stretches meet along the same line, which is the whole
-    /// reason the bow is shaped the way it is.
-    ///
-    /// **It is here rather than in the page** for the reason
-    /// `bandHalfThickness` is: a compartment's edges are where the bands' faces
-    /// are, so the shape of the bands is something the rule has to be able to
-    /// answer. The page draws these and keeps no copy of them.
-    public static var weave: [Stretch] {
-        var band: [Stretch] = []
-        for s in [bandFrom, -bandFrom] {
-            // Along z, standing at x = s, under the crossing at z = −s.
-            band += run(alongX: false, at: s, under: -s, over: s)
-            // Along x, standing at z = s, under the crossing at x = s.
-            band += run(alongX: true, at: s, under: s, over: -s)
-        }
-        // The square edging, straight: a knot's border is the frame the pattern
-        // is drawn in, and a frame that wandered would be a fifth band.
-        for s in [edgingFrom, -edgingFrom] {
-            band.append(Stretch(alongX: false, at: s, from: -edgingFrom, to: edgingFrom, bow: 0))
-            band.append(Stretch(alongX: true, at: s, from: -edgingFrom, to: edgingFrom, bow: 0))
-        }
-        return band
+    /// **The eight crossings**, in order round the middle ring from the
+    /// north-east ring's first. **The middle ring rides over at the even ones
+    /// and dives under at the odd**, so going round it the band is over, under,
+    /// over, under, and each small ring is over at one of its two crossings and
+    /// under at the other: that alternation is the difference between a knot
+    /// and five rings lying on top of each other.
+    public static var crossings: [Spot] {
+        table.curve("crossings", on: .plain).points
     }
 
-    /// One run of the weave in its three stretches, in the order they lie along
-    /// the axis it runs on.
-    ///
-    /// **Which crossing comes first is not the same for all four runs** — the
-    /// run at `+bandFrom` dives under at the near end and the one at
-    /// `-bandFrom` at the far end — so the three are cut out between the two
-    /// crossings sorted rather than between `under` and `over` in the order
-    /// they are named. Writing it the other way round gives two of the four
-    /// runs a stretch that spans the plot and one with its ends swapped, which
-    /// is a mistake the drawing very nearly hides.
-    ///
-    /// Only the under-crossing takes a bite out of the band: that gap is the
-    /// weave. At the over-crossing the two stretches meet, because one length
-    /// of hedge bows one way and they bow opposite ways.
-    private static func run(alongX: Bool, at: Double,
-                            under: Double, over: Double) -> [Stretch] {
-        let short = bandHalfThickness - tuck
-        let away = at > 0 ? 1.0 : -1.0
-        let first = min(under, over), second = max(under, over)
-        let gapBefore = { (crossing: Double) in crossing == under ? short : 0 }
-        return [
-            Stretch(alongX: alongX, at: at, from: -edgingFrom,
-                    to: first - gapBefore(first), bow: away * armBow),
-            Stretch(alongX: alongX, at: at, from: first + gapBefore(first),
-                    to: second - gapBefore(second), bow: -away * knotBow),
-            Stretch(alongX: alongX, at: at, from: second + gapBefore(second),
-                    to: edgingFrom, bow: away * armBow),
-        ]
-    }
+    /// Which band rides over at the `i`-th crossing: the middle ring at the even
+    /// ones, the small ring at the odd. Index into `bands`.
+    public static func over(at i: Int) -> Int { i % 2 == 0 ? 0 : 1 + i / 2 }
 
     /// How far a point on the ground stands from the nearest face of the
-    /// nearest band, in metres. Negative inside a band.
+    /// nearest band, in metres, the swellings counted. Negative inside a band.
     ///
-    /// Walked rather than solved, because the nearest point on `Stretch.line`
-    /// is a cubic to solve and this is asked by tests rather than by a page
-    /// drawing a frame.
-    public static func clearance(x: Double, z: Double, steps: Int = 400) -> Double {
+    /// Measured against the lines as laid rather than solved, because it is
+    /// asked by tests rather than by a page drawing a frame.
+    public static func clearance(x: Double, z: Double) -> Double {
+        let p = Spot(x: x, z: z)
         var nearest = Double.greatestFiniteMagnitude
-        for stretch in weave {
-            let length = stretch.to - stretch.from
-            for step in 0...steps {
-                let along = stretch.from + length * Double(step) / Double(steps)
-                let stands = stretch.line(at: along)
-                let dx = x - (stretch.alongX ? along : stands)
-                let dz = z - (stretch.alongX ? stands : along)
-                nearest = min(nearest, (dx * dx + dz * dz).squareRoot())
-            }
+        for band in bands {
+            nearest = min(nearest, distance(p, to: band.points, closed: band.closed) - bandHalfThickness)
         }
-        return nearest - bandHalfThickness
+        let all = bands
+        for (i, crossing) in crossings.enumerated() {
+            let swollen = all[over(at: i)].points.filter { distance(crossing, $0) <= swellReach }
+            nearest = min(nearest, distance(p, to: swollen, closed: false) - bandHalfThickness - swellThicker)
+        }
+        return nearest
+    }
+
+    static func distance(_ a: Spot, _ b: Spot) -> Double {
+        ((a.x - b.x) * (a.x - b.x) + (a.z - b.z) * (a.z - b.z)).squareRoot()
+    }
+
+    /// How far a point is from the nearest part of a line through `points`.
+    static func distance(_ p: Spot, to points: [Spot], closed: Bool) -> Double {
+        guard points.count > 1 else { return points.first.map { distance(p, $0) } ?? .greatestFiniteMagnitude }
+        var best = Double.greatestFiniteMagnitude
+        let spans = closed ? points.count : points.count - 1
+        for i in 0..<spans {
+            let a = points[i], b = points[(i + 1) % points.count]
+            let ax = b.x - a.x, az = b.z - a.z
+            let m = ax * ax + az * az
+            let t = m == 0 ? 0 : max(0, min(1, ((p.x - a.x) * ax + (p.z - a.z) * az) / m))
+            best = min(best, distance(p, Spot(x: a.x + ax * t, z: a.z + az * t)))
+        }
+        return best
     }
 
     // MARK: The eight compartments
 
-    /// The eight compartments: four at the sides of the plot and four at its
-    /// corners, with the weave between them and nothing planted in the middle.
+    /// The eight compartments: the four lenses where a small ring overlaps the
+    /// middle one, then the four crescents of the small rings outside it, each
+    /// four going round from the north-east. The basin in the middle and the
+    /// gravel round the rings hold no plant.
     ///
-    /// **Declared sides first, then corners**, so that `rawValue % 4` is the
-    /// number of quarter turns from the compartment's own canonical place and
+    /// **Declared lenses first, then crescents**, so that `rawValue % 4` is the
+    /// number of quarter turns from the compartment's north-east one and
     /// `rawValue ^ 2` is its mirror. Both come out of the declaration order
-    /// rather than out of a table that could disagree with it.
+    /// rather than out of a table that could disagree with it. The raw values
+    /// are the ones the four sides and four corners had, so a stored
+    /// compartment is the same compartment of the new knot.
     public enum Compartment: Int, Codable, CaseIterable, Sendable {
-        case north = 0, east, south, west
-        case northEast, southEast, southWest, northWest
+        case northEastLens = 0, southEastLens, southWestLens, northWestLens
+        case northEastCrescent, southEastCrescent, southWestCrescent, northWestCrescent
 
-        /// Whether this one sits at a corner of the plot rather than at a side.
-        /// The two kinds are different shapes — a corner compartment is a
-        /// square, a side one is wider than it is deep — so they have canonical
-        /// places of their own.
-        public var atCorner: Bool { rawValue >= 4 }
+        /// Whether this is one of the outer crescents rather than a lens. The
+        /// two kinds are different shapes, so each has its own four places.
+        public var isCrescent: Bool { rawValue >= 4 }
 
-        /// Quarter turns clockwise from the canonical compartment of its kind,
-        /// which is the north one and the north-east one.
+        /// Quarter turns from the north-east compartment of its kind.
         var turns: Int { rawValue % 4 }
 
         /// The compartment opposite this one, which holds the same colour.
         ///
         /// Two quarter turns, which for both kinds is the opposite side of the
-        /// plot: north against south, east against west, north-east against
-        /// south-west, south-east against north-west.
+        /// plot: the north-east lens against the south-west, the south-east
+        /// crescent against the north-west.
         public var mirror: Compartment { Compartment(rawValue: rawValue ^ 2)! }
 
         /// Which of the four pairs this compartment belongs to.
-        public var pair: Pair { Pair(rawValue: rawValue % 2 + (atCorner ? 2 : 0))! }
+        public var pair: Pair { Pair(rawValue: rawValue % 2 + (isCrescent ? 2 : 0))! }
+
+        /// Which small ring this compartment is part of: an index into the
+        /// rings, `ring0` to `ring3` of the table.
+        public var ring: Int { rawValue % 4 }
     }
 
     /// The four mirror pairs, each named for the lower-numbered of its two
     /// compartments. A pair is what a colour claims.
+    ///
+    /// **The lenses are claimed first, and they are nearest the basin**: the
+    /// first colours in a plot close round the middle as four ribbons, and the
+    /// crescents come after, so a plot of ten looks like a knot planted from
+    /// its heart rather than half of one.
     public enum Pair: Int, Codable, CaseIterable, Sendable {
-        case north = 0, east, northEast, southEast
+        case northEastLenses = 0, southEastLenses, northEastCrescents, southEastCrescents
 
         /// The two compartments of this pair, the named one first. A pair is
         /// opened in the first of them, which is what makes a plot's oldest
-        /// plant stand at its north side.
+        /// plant stand in its north-east lens.
         public var compartments: [Compartment] {
             switch self {
-            case .north:     return [.north, .south]
-            case .east:      return [.east, .west]
-            case .northEast: return [.northEast, .southWest]
-            case .southEast: return [.southEast, .northWest]
+            case .northEastLenses:    return [.northEastLens, .southWestLens]
+            case .southEastLenses:    return [.southEastLens, .northWestLens]
+            case .northEastCrescents: return [.northEastCrescent, .southWestCrescent]
+            case .southEastCrescents: return [.southEastCrescent, .northWestCrescent]
             }
         }
     }
@@ -314,8 +238,8 @@ public enum KnotGarden {
     // MARK: What the rule reads off a plant
 
     /// Where in a compartment a plant belongs, reading outward from the middle
-    /// of the plot: the one nearest the knot, the two to either side of it, or
-    /// the one at the outer edge.
+    /// of the plot: the one nearest the basin, the two to either side of it, or
+    /// the one farthest out.
     ///
     /// `Rank` is the Knot Garden's reading of a height, as `LongWalk.Tier`,
     /// `QuietGarden.Stand`, `Crossing.Rank` and `Orchard.Rank` are their areas'.
@@ -361,7 +285,7 @@ public enum KnotGarden {
     public struct Slot: Codable, Equatable, Hashable, Sendable {
         public var compartment: Compartment
         /// 0 is the place nearest the middle of the plot, 1 and 2 are the two
-        /// beside it at the same distance out, 3 is the one at the outer edge.
+        /// beside it at the same distance out, 3 is the one farthest out.
         public var index: Int
 
         public init(compartment: Compartment, index: Int) {
@@ -374,52 +298,23 @@ public enum KnotGarden {
             return index < 3 ? .side : .point
         }
 
-        /// Where the place is, in metres from the middle of its plot.
+        /// Where the place is, in metres from the middle of its plot: the
+        /// table's, which lists the compartments in order and four places to
+        /// each.
         ///
-        /// **Written out rather than computed from an angle**, for the reason
-        /// `Organic.quarter` exists: a sine taken from a host's own library is
-        /// not the same number on every host, and a placement has to be the same
-        /// number in Swift and in PHP for ever. Every compartment is one of two
-        /// canonical sets of four turned by a whole number of quarters, so the
-        /// turning is sign swaps and nothing else.
+        /// **Read from the table rather than computed from an angle**, for the
+        /// reason `Organic.quarter` exists: a sine taken from a host's own
+        /// library is not the same number on every host, and a placement has to
+        /// be the same number in Swift and in PHP for ever. Every compartment is
+        /// the north-east one of its kind turned by whole quarters, so a pair's
+        /// places are exactly opposite.
         ///
         /// The two at index 1 and 2 stand at one distance from the middle of the
         /// plot, which is what frees them from having to be in order with each
         /// other — the Crossing's three sharing an arc, and the Orchard's two
         /// flanking a trunk, asked of a compartment.
         public var spot: Spot {
-            let (x, z) = (compartment.atCorner ? Slot.corner : Slot.side)[index]
-            return KnotGarden.turned(x, z, by: compartment.turns)
-        }
-
-        /// The four places in the north compartment, which is 1.37 m across
-        /// and 1.29 m deep between the knot's two runs and the edging.
-        static let side: [(Double, Double)] = [
-            (0, 1.16),        // 0  nearest the knot's middle
-            (-0.43, 1.53),    // 1  beside it
-            (0.43, 1.53),     // 2  beside it, the same distance out as 1
-            (0, 1.89),        // 3  at the edging
-        ]
-
-        /// The four places in the north-east compartment, a 1.22 m square
-        /// between the two runs and the edging's corner. Graded along its own
-        /// diagonal, which is the direction the middle of the plot lies in.
-        static let corner: [(Double, Double)] = [
-            (1.09, 1.09),     // 0  nearest the knot's middle
-            (1.03, 1.72),     // 1  beside it
-            (1.72, 1.03),     // 2  beside it, the same distance out as 1
-            (1.80, 1.80),     // 3  at the edging's corner
-        ]
-    }
-
-    /// A point turned by `turns` quarter turns clockwise about the middle of the
-    /// plot. Sign swaps only, so every host agrees to the bit.
-    static func turned(_ x: Double, _ z: Double, by turns: Int) -> Spot {
-        switch turns % 4 {
-        case 1:  return Spot(x: z, z: -x)
-        case 2:  return Spot(x: -x, z: -z)
-        case 3:  return Spot(x: -z, z: x)
-        default: return Spot(x: x, z: z)
+            KnotGarden.table.spot(compartment.rawValue * 4 + index, on: .plain)
         }
     }
 
@@ -442,15 +337,20 @@ public enum KnotGarden {
         public var plot: Int
         public var slot: Slot
         public var traits: PlantTraits
-        /// A small offset from the place, from the seed. Smaller than every
-        /// other area's: the closest two places in a compartment stand 0.56 m
-        /// apart, tighter than the Crossing's 0.53 only by virtue of the
-        /// compartment walls, and a compartment is meant to read as a block
-        /// rather than as four plants that have wandered.
+        /// A small offset from the place, from the seed, up to
+        /// `KnotGarden.nudge` either way on each axis. Smaller than every
+        /// other area's: the closest two places in a compartment stand 0.42 m
+        /// apart, and a compartment is meant to read as a block rather than as
+        /// four plants that have wandered.
         public var nudge: Spot
 
+        /// Where the plant stands: its place and its nudge, the sum laid as
+        /// the plot is (`PlotVariant`), which here is always as the table
+        /// draws it.
         public var spot: Spot {
-            Spot(x: slot.spot.x + nudge.x, z: slot.spot.z + nudge.z)
+            let place = slot.spot
+            return PlotVariant.of(plot: plot, area: .pattern)
+                .apply(Spot(x: place.x + nudge.x, z: place.z + nudge.z))
         }
     }
 
@@ -462,8 +362,8 @@ public enum KnotGarden {
 
         public init() {}
 
-        /// **The Knot Garden as it opened**: the pattern ambassador in the north
-        /// compartment and nothing else. `KnotGarden.ambassador` is the planting.
+        /// **The Knot Garden as it opened**: the pattern ambassador in the
+        /// north-east lens and nothing else. `KnotGarden.ambassador` is the planting.
         public static func opened() -> Ways {
             var ways = Ways()
             let one = Ambassadors.of(.pattern)
@@ -504,7 +404,7 @@ public enum KnotGarden {
         ///    standing in front of something shorter than itself.
         /// 2. **A pair nobody has claimed**, in the oldest plot that has one,
         ///    claimed by this plant for its colour.
-        /// 3. A new plot, opened in the north compartment.
+        /// 3. A new plot, opened in its north-east lens.
         ///
         /// **Note the nesting in the first step: plot outside, rank inside.**
         /// That is the Orchard's order rather than the Crossing's, and for a
@@ -543,7 +443,7 @@ public enum KnotGarden {
                     return (plot, KnotGarden.firstSlot(of: own, in: pair.compartments[0]))
                 }
             }
-            return (opened, KnotGarden.firstSlot(of: own, in: .north))
+            return (opened, KnotGarden.firstSlot(of: own, in: .northEastLens))
         }
 
         /// A free place of this rank in this pair that this plant may stand in.
@@ -605,7 +505,8 @@ public enum KnotGarden {
                 return (Double(bytes[i]) / 255 - 0.5) * 2 * reach
             }
             let planting = Planting(seed: seed.hex, plot: plot, slot: slot, traits: traits,
-                                    nudge: Spot(x: jitter(26, 0.09), z: jitter(27, 0.09)))
+                                    nudge: Spot(x: jitter(26, KnotGarden.nudge),
+                                                z: jitter(27, KnotGarden.nudge)))
             plantings.append(planting)
             return planting
         }
@@ -627,15 +528,16 @@ public enum KnotGarden {
 
     // MARK: The ambassador
 
-    /// **The plant in the north compartment of the first plot.**
+    /// **The plant in the north-east lens of the first plot.**
     ///
     /// *Quinyria obscura* — `Ambassadors.of(.pattern)` since the re-roll of 28
     /// September 2026 — placed by this rule into an empty Knot Garden. An
     /// empty plot has no claimed pairs, so it claims the first one for its own
-    /// colour, family 4, and stands in the north compartment.
+    /// colour, family 4, and stands in the north-east lens (the north
+    /// compartment until the rings of 2 October 2026: the same slot).
     ///
     /// **It is 1.22 m, which reads as a point**, so it takes index 3: the
-    /// place at the compartment's outer edge. (*Quina caerulea*, until then,
+    /// place at the lens's outer edge, against the middle ring. (*Quina caerulea*, until then,
     /// was 1.0064 m, a side, and took index 1, beside the middle of its
     /// compartment.) There is nothing awkward in that, and it is worth having
     /// confirmed rather than assumed — the finding from the walk on 20 September
@@ -650,7 +552,7 @@ public enum KnotGarden {
 }
 
 /// The Knot Garden's reading of a plant: which of the three ranks of a
-/// compartment it belongs in, counting outward from the knot.
+/// compartment it belongs in, counting outward from the middle of the knot.
 extension PlantTraits {
     public var compartmentRank: KnotGarden.Rank { KnotGarden.rank(height: height) }
 }

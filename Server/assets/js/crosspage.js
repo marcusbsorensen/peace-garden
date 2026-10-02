@@ -54,7 +54,10 @@ async function place() {
   // Quiet Garden's margin: a single square framed tight touches the sides of
   // its band, and a plot with air round it reads as a place you are looking
   // into rather than a texture filling the screen.
-  const stage = makePlotStage(el('stage'), 1.25, engine, makeCrossGround(plan(engine)));
+  // The plot's plan is kept, so each plot can say which way round its paths
+  // are laid (`growCrossFromService`) and the ground be laid that way.
+  const place = plan(engine);
+  const stage = makePlotStage(el('stage'), 1.25, engine, makeCrossGround(place));
   // And the areas beside this one, as slabs out in the sky past the plot:
   // the same one word again, and `beside.js` reads the map from it.
   stage.beside(THEME);
@@ -86,7 +89,7 @@ async function place() {
     // area page, and a postcard to one of this area's plants lands here.
     plants: plantPanel({ theme: THEME, engine }),
     show: async (plot) => {
-      await growCrossFromService(engine, stage, plot, growing);
+      await growCrossFromService(engine, stage, plot, growing, place);
       note.hidden = true;
     },
     turned: () => sky?.draw(),

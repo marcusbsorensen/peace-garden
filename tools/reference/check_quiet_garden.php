@@ -46,11 +46,18 @@ foreach ($vectors as $n => $want) {
                               $want['habit'] ?? '');
     $room[] = $got;
     $checks++;
+    // **And where it stands in its room**, since the room was made
+    // asymmetric on 2 October 2026: the variant the plot's number deals it,
+    // and its place and nudge turned by it. Exact, as the slot is.
+    $variant = QuietGarden::variant($got['plot']);
+    $spot = QuietGarden::spotOn($got['plot'], $got['corner'], $got['index'], $got['nudgeX'], $got['nudgeZ']);
     $same = $got['plot'] === $want['plot']
         && $got['corner'] === $want['corner']
         && $got['index'] === $want['index']
         && $got['nudgeX'] === $want['nudge'][0]
-        && $got['nudgeZ'] === $want['nudge'][1];
+        && $got['nudgeZ'] === $want['nudge'][1]
+        && [$variant['turn'], $variant['mirror'] ? 1 : 0, $variant['nudge']] === $want['variant']
+        && $spot[0] === (float) $want['spot'][0] && $spot[1] === (float) $want['spot'][1];
     if (!$same) {
         $failed[] = sprintf(
             'arrival %d (%s, %.3f m, colour %d): SeedCore put it in plot %d corner %d slot %d, '
@@ -89,48 +96,81 @@ if ($full < $plots - 3) {
     $failed[] = sprintf('only %d of %d plots are full: %s', $full, $plots, implode(' ', $holdings));
 }
 
+// The pool as each room lays it: the table's outline, turned.
+$inside = function (array $p, array $loop): bool {
+    $hit = false;
+    for ($i = 0, $j = count($loop) - 1; $i < count($loop); $j = $i++) {
+        [$ax, $az] = $loop[$i];
+        [$bx, $bz] = $loop[$j];
+        if (($az > $p[1]) !== ($bz > $p[1]) && $p[0] < ($bx - $ax) * ($p[1] - $az) / ($bz - $az) + $ax) $hit = !$hit;
+    }
+    return $hit;
+};
+$distance = function (array $p, array $loop): float {
+    $best = INF;
+    for ($i = 0, $n = count($loop); $i < $n; $i++) {
+        [$ax, $az] = $loop[$i];
+        [$bx, $bz] = $loop[($i + 1) % $n];
+        $dx = $bx - $ax; $dz = $bz - $az;
+        $m = $dx * $dx + $dz * $dz;
+        $t = $m == 0 ? 0.0 : max(0.0, min(1.0, (($p[0] - $ax) * $dx + ($p[1] - $az) * $dz) / $m));
+        $best = min($best, sqrt(($p[0] - $ax - $dx * $t) ** 2 + ($p[1] - $az - $dz * $t) ** 2));
+    }
+    return $best;
+};
 foreach ($room as $p) {
     $checks++;
-    [$x, $z] = QuietGarden::spot($p['corner'], $p['index']);
-    $out = max(abs($x + $p['nudgeX']), abs($z + $p['nudgeZ']));
-    // A lily stands in the middle of the lawn on purpose, and the invariant
-    // for it is the same one from the other side: inside its own water.
+    $at = QuietGarden::spotOn($p['plot'], $p['corner'], $p['index'], $p['nudgeX'], $p['nudgeZ']);
+    $variant = QuietGarden::variant($p['plot']);
+    $pool = array_map(fn($q) => PlotVariant::apply($variant, $q[0], $q[1]), QuietRoomTable::CURVES['pool'][0][1]);
+    // A lily stands in the water on purpose, and the invariant for it is the
+    // same one from the other side: inside its own water.
     if (!QuietGarden::isDry($p['corner'])) {
-        if ($out >= QuietGarden::POOL_ACROSS / 2) {
+        if (!$inside($at, $pool)) {
             $failed[] = sprintf('%s stands at %.2f, %.2f — out of the water',
-                                substr($p['seed'], 0, 12), $x + $p['nudgeX'], $z + $p['nudgeZ']);
+                                substr($p['seed'], 0, 12), $at[0], $at[1]);
         }
         continue;
     }
-    if ($out <= 1.5 || $out >= QuietGarden::HEDGE_FROM) {
-        $failed[] = sprintf('%s stands at %.2f, %.2f — on the lawn or in the hedge',
-            substr($p['seed'], 0, 12), $x + $p['nudgeX'], $z + $p['nudgeZ']);
+    $out = max(abs($at[0]), abs($at[1]));
+    if ($inside($at, $pool) || $distance($at, $pool) <= 0.45 || $out >= QuietGarden::HEDGE_FROM - 0.15) {
+        $failed[] = sprintf('%s stands at %.2f, %.2f — at the water or in the hedge',
+            substr($p['seed'], 0, 12), $at[0], $at[1]);
     }
 }
 
 for ($plot = 0; $plot < $plots; $plot++) {
-    foreach ([1, 2, 3] as $corner) {
+    $five = null;
+    foreach ([QuietGarden::FIVE, QuietGarden::THREE, QuietGarden::ECHO] as $corner) {
         $group = array_values(array_filter(
             $room, fn($p) => $p['plot'] === $plot && $p['corner'] === $corner));
         if ($group === []) continue;
-        $founder = $group[0];
+        // The echo shows the five's colour, or a tone of it; a group, its own
+        // founder's.
+        $founder = $corner === QuietGarden::ECHO ? $five : $group[0];
+        if ($corner === QuietGarden::FIVE) $five = $group[0];
+        $checks++;
+        if ($founder === null) {
+            $failed[] = "plot $plot has an echo of nothing";
+            continue;
+        }
         $allowed = array_merge([$founder['family']], QuietGarden::near($founder['family']));
-        $back = null;
         foreach ($group as $p) {
             $checks++;
             if (!in_array($p['family'], $allowed, true)) {
-                $failed[] = sprintf('plot %d corner %d: a colour %d in a colour %d group',
+                $failed[] = sprintf('plot %d group %d: a colour %d where %d stands',
                     $plot, $corner, $p['family'], $founder['family']);
             }
-            if ($p['index'] === 0) $back = $p;
         }
-        if ($back === null) continue;
-        foreach ($group as $p) {
-            if ($p['index'] === 0) continue;
-            $checks++;
-            if ($p['height'] > $back['height']) {
-                $failed[] = sprintf('plot %d corner %d: a %.2f m arm in front of a %.2f m back',
-                    $plot, $corner, $p['height'], $back['height']);
+        foreach ($group as $back) {
+            if (QuietGarden::standOf($corner, $back['index']) !== QuietGarden::BACK) continue;
+            foreach ($group as $arm) {
+                if (QuietGarden::standOf($corner, $arm['index']) !== QuietGarden::ARM) continue;
+                $checks++;
+                if ($arm['height'] > $back['height']) {
+                    $failed[] = sprintf('plot %d group %d: a %.2f m arm in front of a %.2f m back',
+                        $plot, $corner, $arm['height'], $back['height']);
+                }
             }
         }
     }

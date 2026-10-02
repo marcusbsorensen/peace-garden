@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/LongWalk.php';
+require_once __DIR__ . '/PlotVariant.php';
+require_once __DIR__ . '/tables/CrossingWaysTable.php';
 
 /**
  * The Crossing's placement rule, ported from SeedCore's
@@ -19,6 +21,12 @@ require_once __DIR__ . '/LongWalk.php';
  * best-scoring one, and `<` rather than `<=` on the count is what keeps a tie on
  * the lowest-numbered quarter.
  *
+ * **Four ways turning in, since 2 October 2026** (Marcus; `Crossing.swift`
+ * says the rest). The rule is unchanged; the places moved onto arcs round the
+ * basin, and come from `tables/CrossingWaysTable.php`, made offline, so no
+ * host works out a sine. Each plot is turned and mirrored by its number
+ * (`PlotVariant.php`), and `spotOn` is where a planting stands on its plot.
+ *
  * A planting here is an array: seed (hex), plot, quarter (0-3), index (0-5),
  * height, family, nudgeX, nudgeZ.
  */
@@ -29,36 +37,21 @@ final class Crossing
     /**
      * How this area's plots vary, from each plot's number (`PlotVariant.php`):
      * the Swift's `variants`. Turned and mirrored: a mirror sets the four ways
-     * turning in the other way. Declared but not yet read.
+     * turning in the other way.
      */
     public const VARIANTS = ['turns' => 4, 'mirror' => true, 'nudges' => 1];
-    public const PATH_HALF_WIDTH = 0.6;
+    /** A path's half width at the plot's edge and at the round: 0.45 and 0.35 since 2 October 2026. */
+    public const PATH_HALF_WIDTH = 0.45;
+    public const PATH_HALF_WIDTH_AT_ROUND = 0.35;
     public const ROUNDEL_RADIUS = 0.85;
 
     /** The cuts, measured at the 50th and 83rd centiles of grown heights: 0.85 and 1.34 since 29 September 2026. */
     public const MIDDLE_FROM = 0.85;
     public const CORNER_FROM = 1.34;
 
-    /** Which way each quarter lies from the middle of the plot: [x, z]. */
-    public const LIE = [[1, 1], [-1, 1], [-1, -1], [1, -1]];
-
     public const PATH = 0;
     public const MIDDLE = 1;
     public const CORNER = 2;
-
-    /**
-     * The six places in a quarter, in the quarter where both axes are positive.
-     * Three arcs at 1.90, 2.42 and 2.95 m from the middle, written out rather
-     * than computed from an angle so that Swift and PHP hold the same number.
-     */
-    public const CANONICAL = [
-        [1.34, 1.34],   // 0  the path rank, on the quarter's own diagonal
-        [0.92, 1.66],   // 1  the path rank, along one path edge
-        [1.66, 0.92],   // 2  the path rank, along the other
-        [1.39, 1.98],   // 3  behind 1
-        [1.98, 1.39],   // 4  behind 2
-        [2.09, 2.09],   // 5  the corner, behind 0
-    ];
 
     /** Where in a quarter a plant of this height belongs. */
     public static function rank(float $height): int
@@ -95,12 +88,33 @@ final class Crossing
         return ['quarter' => $quarter, 'index' => $index];
     }
 
-    /** Where a slot is, in metres from the middle of its plot: [x, z]. */
+    /**
+     * Where a slot is, in metres from the middle of the plot **as the table
+     * draws it**, before the plot is turned: [x, z]. Six places a quarter,
+     * quarter by quarter, in `CrossingWaysTable::PLACES`.
+     */
     public static function spot(int $quarter, int $index): array
     {
-        [$lx, $lz] = self::LIE[$quarter];
-        [$x, $z] = self::CANONICAL[$index];
-        return [$lx * $x, $lz * $z];
+        $place = CrossingWaysTable::PLACES[0][$quarter * 6 + $index];
+        return [$place[0], $place[1]];
+    }
+
+    /** The variant of a plot: which way round its four ways are laid. */
+    public static function variant(int $plot): array
+    {
+        return PlotVariant::of($plot, 'meeting', self::VARIANTS);
+    }
+
+    /**
+     * **Where a planting stands on its plot**: its place and its nudge, the
+     * sum turned and mirrored as the plot is laid. The Swift's
+     * `Planting.spot`, to the bit: the nudge is added in the table's frame
+     * and the turn only swaps and negates.
+     */
+    public static function spotOn(int $plot, int $quarter, int $index, float $nudgeX, float $nudgeZ): array
+    {
+        [$x, $z] = self::spot($quarter, $index);
+        return PlotVariant::apply(self::variant($plot), $x + $nudgeX, $z + $nudgeZ);
     }
 
     /** Plots opened so far. */

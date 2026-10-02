@@ -100,7 +100,7 @@
   // is a cut in the wrong place. Since a lotus takes two places, a rank says
   // how many of its six places are held and how many lotuses hold them.
   // The back row only since 29 September 2026: the front row's ground is the
-  // tank's now, and its two frames are retired.
+  // water's now, and its two frames are retired.
   const FRAMES = ['back west', 'back east'];
   function say() {
     held.replaceChildren();
@@ -126,8 +126,8 @@
     document.getElementById('back').disabled = plot === 0;
     document.getElementById('on').disabled = plot + 1 >= plots;
     const count = fromService
-      ? await growFrameFromService(e, stage, plot, report)
-      : await growInvented(e, stage, plot, report);
+      ? await growFrameFromService(e, stage, plot, report, place)
+      : await growInvented(e, stage, plot, report, place);
     report(`Plot ${plot + 1} of ${plots} — ${count} of ${place.slots}`);
     say();
     sky?.draw();

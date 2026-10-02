@@ -20,13 +20,16 @@ declare(strict_types=1);
  * are words, and the nudge is two bytes of the seed divided by 255. A height is
  * compared only with its crop's cut, and the Swift's own vector test checked
  * that none of the five hundred stands close enough to one for a host's rounding
- * to matter.
+ * to matter. And since the lazy beds of 2 October 2026 each row's spot too:
+ * the place is a table's millimetres, the nudge added and the sum mirrored in
+ * alternate plots, which is exact on every host.
  *
  *   php tools/reference/check_home_ground.php
  */
 
 require_once __DIR__ . '/../../Server/.api/Ambassadors.php';
 require_once __DIR__ . '/../../Server/.api/HomeGround.php';
+require_once __DIR__ . '/../../Server/.api/tables/HomeGroundBedsTable.php';
 
 $vectors = json_decode(
     file_get_contents(__DIR__ . '/home_ground_vectors.json'), true, 512, JSON_THROW_ON_ERROR
@@ -56,7 +59,11 @@ foreach ($vectors as $n => $want) {
         && $got['crop'] === $want['crop']
         && $got['index'] === $want['index']
         && $got['nudgeX'] === $want['nudge'][0]
-        && $got['nudgeZ'] === $want['nudge'][1];
+        && $got['nudgeZ'] === $want['nudge'][1]
+        && PlotVariant::of($got['plot'], 'ground', HomeGround::VARIANTS)
+            === ['turn' => $want['variant'][0], 'mirror' => $want['variant'][1], 'nudge' => $want['variant'][2]]
+        && HomeGround::spotOf($got['plot'], $got['bed'], $got['crop'], $got['index'], $got['nudgeX'], $got['nudgeZ'])
+            === $want['spot'];
     if (!$same) {
         $failed[] = sprintf(
             'arrival %d (%s, a %s of %.3f m): SeedCore put it in plot %d bed %d (%s) index %d, '
@@ -117,13 +124,48 @@ for ($plot = 0; $plot < $plots; $plot++) {
     }
 }
 
-// The spacing: every crop's rows span the same 3.6 m, centred down the bed.
-foreach (HomeGround::CROPS as $crop => $s) {
-    $checks++;
-    [, $zFirst] = HomeGround::spot(1, $crop, 0);
-    [, $zLast] = HomeGround::spot(1, $crop, HomeGround::capacity($crop) - 1);
-    if (abs($zFirst + 1.8) > 1e-9 || abs($zLast - 1.8) > 1e-9) {
-        $failed[] = sprintf('a bed of %s runs from %.3f to %.3f, not -1.8 to 1.8', $crop, $zFirst, $zLast);
+// The spacing: in every bed, every crop's rows span the same 3.6 m of the
+// bed's line, each row's middle on the line and its places no further from it
+// than half the row.
+$fromLine = function (array $p, array $line): float {
+    $best = INF;
+    for ($i = 0; $i + 1 < count($line); $i++) {
+        [$ax, $az] = $line[$i];
+        [$bx, $bz] = $line[$i + 1];
+        $dx = $bx - $ax;
+        $dz = $bz - $az;
+        $t = max(0.0, min(1.0, (($p[0] - $ax) * $dx + ($p[1] - $az) * $dz) / ($dx * $dx + $dz * $dz)));
+        $best = min($best, hypot($p[0] - $ax - $dx * $t, $p[1] - $az - $dz * $t));
+    }
+    return $best;
+};
+for ($bed = 0; $bed < HomeGround::BEDS; $bed++) {
+    $line = HomeGroundBedsTable::CURVES['bed' . $bed][0][1];
+    foreach (HomeGround::CROPS as $crop => $s) {
+        $checks++;
+        $middles = [];
+        for ($row = 0; $row < $s['rows']; $row++) {
+            $x = $z = 0.0;
+            for ($c = 0; $c < $s['across']; $c++) {
+                [$px, $pz] = HomeGround::spot($bed, $crop, $row * $s['across'] + $c);
+                $x += $px / $s['across'];
+                $z += $pz / $s['across'];
+                if ($fromLine([$px, $pz], $line) > ($s['across'] - 1) / 2 * $s['gap'] + 0.001) {
+                    $failed[] = sprintf('bed %d of %s: a place stands off its row', $bed, $crop);
+                }
+            }
+            if ($fromLine([$x, $z], $line) > 0.002) {
+                $failed[] = sprintf('bed %d of %s: row %d is off the line', $bed, $crop, $row);
+            }
+            $middles[] = [$x, $z];
+        }
+        $span = 0.0;
+        for ($row = 1; $row < count($middles); $row++) {
+            $span += hypot($middles[$row][0] - $middles[$row - 1][0], $middles[$row][1] - $middles[$row - 1][1]);
+        }
+        if (abs($span - 3.6) > 0.01) {
+            $failed[] = sprintf('bed %d of %s spans %.3f m, not 3.6', $bed, $crop, $span);
+        }
     }
 }
 

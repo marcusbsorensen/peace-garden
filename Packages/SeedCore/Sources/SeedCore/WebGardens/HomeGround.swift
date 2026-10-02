@@ -29,6 +29,15 @@ import Foundation
 /// their new width; both ends; trodden-soil paths and mounded beds with no
 /// boards; the umbel's cut moved to 0.930 m.
 ///
+/// **Lazy beds that follow the land since 2 October 2026**, option A of the
+/// layouts Marcus approved that day (`design/garden-layouts-2026-10-02/RESEARCH.md`):
+/// the three beds sway together in a lazy S, as hand-dug ridges follow the
+/// ground, with the rows running square to the curve, and a plot is drawn
+/// mirrored or not by its number, so the sway alternates. The rule did not
+/// change: every slot is the slot it was, and only where it is drawn moved.
+/// Where the places are is four tables made offline
+/// (`tools/layouts/tables/home_ground_*.py`).
+///
 /// The rule runs in SeedCore so the plot service, the website and the app read
 /// one copy. `Server/.api/HomeGround.php` is the port, and
 /// `tools/reference/check_home_ground.php` holds them together.
@@ -40,20 +49,31 @@ public enum HomeGround {
     public static let plotSide = 5.2
 
     /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
-    /// Marcus's decision of 2 October 2026). Mirrored only, so north stays north,
-    /// and a space of two alternates plot by plot, as the beds' bow was asked to.
-    /// Declared but not yet read: the area's new layout reads it.
+    /// Marcus's decision of 2 October 2026). Mirrored only, so north stays north
+    /// and the tall end of every bed with it, and a space of two alternates plot
+    /// by plot: the beds sway one way in one plot and the other way in the next.
     public static let variants = PlotVariant.Space(mirror: true)
 
     /// **Three beds, each 1.2 m wide and 4.2 m long**, running the length of
-    /// the plot, their middles at `x` −1.65, 0 and +1.65. Paths of 0.45 m
-    /// between them and a headland of 0.5 m at each end; the outermost bed edge
-    /// is 0.35 m inside the plot, clear of the outline's 0.16 m wander. A bed
-    /// is 1.2 m so that no soil is ever stood on.
+    /// the plot, their middles swaying about `x` −1.65, 0 and +1.65. Paths of
+    /// 0.45 m between them and a headland of 0.5 m at each end. A bed is 1.2 m
+    /// so that no soil is ever stood on.
+    ///
+    /// **They sway 0.10 m either way** (`tools/layouts/tables/_home_ground.py`),
+    /// which is as far as the beds and paths keeping their widths allows: the
+    /// outer beds have the 0.13 m between their straight edges and the nearest
+    /// any slab's edge comes to move in. `bedX` is the straight line each sways
+    /// about; where a bed's middle really runs is `line(of:)`.
     public static let beds = 3
     public static let bedX: [Double] = [-1.65, 0, 1.65]
     public static let bedWidth = 1.2
     public static let bedLength = 4.2
+
+    /// A bed's middle as the plot's variant draws it: a line from its north end
+    /// to its south, a point every 5 cm.
+    public static func line(of bed: Int, on variant: PlotVariant = .plain) -> [Spot] {
+        PlaceTable.homeGroundBeds.curve("bed\(bed)", on: variant).points
+    }
 
     /// How far a plant stands off its place, from the seed: **0.05 m along the
     /// row and 0.025 m down the bed**. A row across a bed has to read as a row,
@@ -98,6 +118,16 @@ public enum HomeGround {
         /// How many plants a bed of this crop holds: 27 spires, 14 umbels, 30
         /// rosettes.
         public var capacity: Int { sown.across * sown.rows }
+
+        /// **Where a bed sown with this crop has its places**, made offline:
+        /// every bed's, bed by bed, each in the slots' order.
+        public var table: PlaceTable {
+            switch self {
+            case .cer:  return .homeGroundCer
+            case .fen:  return .homeGroundFen
+            case .pell: return .homeGroundPell
+            }
+        }
 
         /// **The height that sends a plant to the north end**: the crop's own
         /// median, measured over 2,000 Home Ground plants on the new shapes
@@ -164,7 +194,7 @@ public enum HomeGround {
     /// One place in one plot: which bed, the crop it is sown with, and where
     /// in it, numbered in reading order from the north end — row by row, west
     /// to east along a row — so place 0 is the north-west corner and the last
-    /// the south-east.
+    /// the south-east, as the table draws the plot.
     ///
     /// **The crop is in the slot because the spacing is**: the same index is a
     /// different spot in a bed of spires and a bed of rosettes.
@@ -182,12 +212,17 @@ public enum HomeGround {
         public var row: Int { index / crop.sown.across }
         public var column: Int { index % crop.sown.across }
 
-        /// Where the place is, in metres from the middle of its plot. **North
-        /// is `z−`**, the end the page's midday sun is behind.
+        /// Where the place is, in metres from the middle of its plot, as the
+        /// table draws the plot: a plot mirrored by its number draws it the
+        /// other way round (`HomeGround.Planting.spot`). **North is `z−`**, the
+        /// end the page's midday sun is behind.
+        ///
+        /// **Read from the crop's table**, bed by bed and in this order within
+        /// each: the row's place along the bed's line, square to it, `gap`
+        /// apart, worked out once with the curve and written down to the
+        /// millimetre, so every host holds the same number.
         public var spot: Spot {
-            let s = crop.sown
-            return Spot(x: HomeGround.bedX[bed] + (Double(column) - Double(s.across - 1) / 2) * s.gap,
-                        z: (Double(row) - Double(s.rows - 1) / 2) * s.rowGap)
+            crop.table.places(nudge: 0)[bed * crop.capacity + index].spot
         }
     }
 
@@ -209,8 +244,14 @@ public enum HomeGround {
         /// 0.025 m down the bed.
         public var nudge: Spot
 
+        /// **Where the plant stands**: its place and its nudge added as the
+        /// table draws the plot, then the sum mirrored if the plot is
+        /// (`PlotVariant`). In that order because the nudge is narrower one way
+        /// than the other, and it has to turn with its row.
         public var spot: Spot {
-            Spot(x: slot.spot.x + nudge.x, z: slot.spot.z + nudge.z)
+            let place = slot.spot
+            return PlotVariant.of(plot: plot, area: .ground)
+                .apply(Spot(x: place.x + nudge.x, z: place.z + nudge.z))
         }
     }
 

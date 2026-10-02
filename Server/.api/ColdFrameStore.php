@@ -182,9 +182,9 @@ final class ColdFrameStore
     /**
      * A plot's plantings, in the order they arrived. Hidden ones are not in it.
      *
-     * Plot 0 opens with the ambassador at the west end of the tank's first
-     * row, one place, since it is a lotus and a lotus is in the water — which
-     * is not a row. It carries no parents and no meeting,
+     * Plot 0 opens with the ambassador at the pond's deepest point, one
+     * place, since it is a lotus and a lotus is in the water — which is not a
+     * row. It carries no parents and no meeting,
      * because it was minted rather than crossed, and an empty `parents` is how
      * the wire says so.
      */
@@ -195,13 +195,13 @@ final class ColdFrameStore
         $plantings = array_map([self::class, 'planting'], $query->fetchAll());
         if ($plot !== 0) return $plantings;
         $standing = Ambassadors::planting('waiting');
-        [$x, $z] = ColdFrame::spot($standing['frame'], $standing['rank'], $standing['index'], $standing['span']);
         array_unshift($plantings, [
             'seed' => $standing['seed'],
             'parents' => [],
             'encounter' => null,
             'plot' => 0,
-            'spot' => [$x + $standing['nudgeX'], $z + $standing['nudgeZ']],
+            'spot' => ColdFrame::spotOn(0, $standing['frame'], $standing['rank'], $standing['index'],
+                                        $standing['span'], $standing['nudgeX'], $standing['nudgeZ']),
         ]);
         return $plantings;
     }
@@ -235,14 +235,16 @@ final class ColdFrameStore
      */
     private static function planting(array $row): array
     {
-        [$x, $z] = ColdFrame::spot((int) $row['frame'], (int) $row['slot_rank'], (int) $row['slot_index'],
-                                   (int) ($row['slot_span'] ?? 1));
+        // Where it stands on its plot, mirrored as the plot is laid (2 October
+        // 2026).
         return [
             'seed' => $row['seed'],
             'parents' => [$row['parent_a'], $row['parent_b']],
             'encounter' => $row['encounter'],
             'plot' => (int) $row['plot'],
-            'spot' => [$x + (float) $row['nudge_x'], $z + (float) $row['nudge_z']],
+            'spot' => ColdFrame::spotOn((int) $row['plot'], (int) $row['frame'], (int) $row['slot_rank'],
+                                        (int) $row['slot_index'], (int) ($row['slot_span'] ?? 1),
+                                        (float) $row['nudge_x'], (float) $row['nudge_z']),
         ];
     }
 

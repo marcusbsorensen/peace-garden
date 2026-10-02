@@ -2,6 +2,13 @@
 // slab of ground seen in true isometric, mown all over, a hedge round all four
 // sides of it, and a bench in one corner with a single plant beside it.
 //
+// **An asymmetric room, since 2 October 2026** (Marcus; `QuietGarden.swift`
+// says why). The pool lies off the middle toward the bench, with three
+// stepping stones from the seat to the water, and the whole room — bench,
+// pool, stones — is turned and mirrored by its plot's number, as the plants
+// are. Where they stand is the table's (`tables/quiet_room.js`); which way
+// round, the module's (`variantFromModule`).
+//
 // **It is a room, so the page shows one of them.** The Long Walk draws three
 // plots end to end because a walk is a length you look down. An enclosure is
 // not: you are inside one or you are in the next one, and three hedged rooms
@@ -15,26 +22,29 @@
 import { decode, takeResult } from './plant.js';
 import { COLOUR, HEDGE, SEED, SIDE, hash, hedgeToPlot, keepToPlot, pressNormal, readOutline, readStructure } from './longwalk.js';
 import { hangSide } from './slab.js';
-import { rimOf, sinkPool, walkRound } from './water.js';
+import { floorAround, middleOf, rimOf, sinkPool } from './water.js';
+import { PLAIN, applyVariant, applyVariantToCurve, variantFromModule } from './variant.js';
+import { quietRoom } from './tables/quiet_room.js';
 
 // Seeds for this area's dressing, so a room is the same shape on every visit.
 // Its own, not the walk's: two areas drawing from one seed would be two plots
 // with the same hedge wobble, which is the sort of thing an eye catches
 // without being able to say why.
-const ROOM = { ground: 4091, floor: 17, bench: 88, hedge: [211, 212, 213, 214], mow: 29, pool: 733 };
+const ROOM = { ground: 4091, floor: 17, bench: 88, hedge: [211, 212, 213, 214], mow: 29, pool: 733,
+               stones: 761 };
 
-// **The still pool, in the middle of the lawn** (27 September). The Quiet
-// Garden stands at the foot of the garden's slope — `COLUMN_RISE` in
-// `garden.js` — so this is where water gathers, and a room with a bench in one
-// corner and nothing in the middle was asking for something to sit and look
-// at.
+// **The still pool** (27 September). The Quiet Garden stands at the foot of
+// the garden's slope — `COLUMN_RISE` in `garden.js` — so this is where water
+// gathers, and a room with a bench in one corner was asking for something to
+// sit and look at. In the middle of the lawn until 2 October 2026; off it
+// toward the bench since, longer across the bench's view than along it, its
+// outline the table's `pool`. The live garden never sends this area a lily,
+// so it is still water.
 //
-// **2.2 m is `QuietGarden.poolAcross`**, and this has to be that number: the
-// rule stands two lilies 0.5 m either side of the middle and the drawing has
-// to put water under them. Written here rather than read from
-// `pg_room_plan`, which does not carry it — the first thing to fix if a third
-// place ever needs the figure.
-const POND = { across: 2.2 };
+// **The stepping stones**, three, from the seat to the water's bay: low flat
+// stones set into the lawn, each a hand-laid oval wandering at its edge, the
+// table's `stones` their middles.
+const STONE = { long: 0.19, wide: 0.15, rise: 0.025, steps: 20 };
 
 // How the four hedges stand. They are drawn low on the two sides nearest the
 // viewer for the reason the walk's are — Marcus, 18 September — because a 2 m
@@ -53,7 +63,11 @@ export function plan(e) {
 // MARK: - The ground
 
 export function makeRoomGround(room) {
+  // Which way round the room is laid: the plot's, set by whoever grows it
+  // (`growRoomFromService`, `growInvented`) before the stage is rebuilt.
+  room.variant ??= PLAIN;
   return function buildRoomGround(farSide, span, e, eye) {
+    const variant = room.variant;
     const positions = [], normals = [], colours = [];
     const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
     // What throws a shadow on the lawn: the hedge round and the bench, handed
@@ -69,18 +83,13 @@ export function makeRoomGround(room) {
     // filled from the middle. Square here, because a room is.
     const outline = readOutline(e, SIDE, SIDE, ROOM.ground);
     // **It fans out from the pool's rim and not from the middle**, since the
-    // middle is now water. A ring between two loops rather than a fan from a
-    // point: both are walked by how far round them you are, because they are
-    // outlines of different sizes and have different numbers of points.
-    const pond = { across: POND.across, seed: ROOM.pool };
-    const { rim, steps, inside: inPond } = rimOf(e, pond);
-    const round = walkRound(outline);
-    for (let i = 0; i < steps; i++) {
-      const u = i / steps, v = (i + 1) / steps;
-      const a = rim(u), b = rim(v), c = round(v), d = round(u);
-      quad([a[0], 0, a[1]], [b[0], 0, b[1]], [c[0], 0, c[1]], [d[0], 0, d[1]],
-           [0, 1, 0], COLOUR.turf);
-    }
+    // pool is there. Off the middle since 2 October 2026, so it is walked
+    // round the pool, each step of its rim straight out to the plot's edge
+    // (`floorAround`), as the Cold Frame's gravel is.
+    const poolLine = applyVariantToCurve(variant, quietRoom.curves.pool[0].points);
+    const pond = { outline: poolLine, at: middleOf(poolLine) };
+    const { inWater } = rimOf(e, pond);
+    floorAround(e, { quad }, outline, pond, COLOUR.turf);
 
     // **Mown all over, not in borders.** The walk stripes its path and leaves
     // its borders rough; here the grass is the garden, so the stripes run the
@@ -96,7 +105,7 @@ export function makeRoomGround(room) {
     const rows = Math.ceil(SIDE / stripe) + 1;
     const onPlot = keepToPlot(outline);
     const half = SIDE / 2 + 0.06;
-    const pieces = 40;
+    const pieces = 90;
     for (let r = 0; r < rows; r++) {
       const z0 = -SIDE / 2 + r * stripe, z1 = z0 + stripe;
       if (z0 >= SIDE / 2) break;
@@ -112,20 +121,33 @@ export function makeRoomGround(room) {
       for (let k = 0; k < pieces; k++) {
         const u0 = k / pieces, u1 = (k + 1) / pieces;
         // A stripe stops at the water. Piece by piece, so the edge it leaves
-        // is as ragged as a piece is wide — 13 cm, which the pool's 14 cm rim
-        // covers. Both corners tested, so a piece that only clips the rim goes
-        // too: better a hair of bare earth than a tongue of grass over water.
-        const [ax, , az] = at(u0, near), [bx, , bz] = at(u1, far);
-        if (inPond(ax, az) || inPond(bx, bz)) continue;
+        // is as ragged as a piece is wide — 6 cm, which the pool's 10 cm lip,
+        // drawn over the stripes, covers: a piece is left out only if a
+        // corner of it is in the water itself, and what of it lay on the
+        // lip's ground is under the lip anyway. Until 2 October 2026 a piece
+        // was 13 cm and left out if it touched the lip, which cut a stepped
+        // band of bare turf round the pool.
+        const corners = [at(u0, near), at(u1, near), at(u1, far), at(u0, far)];
+        if (corners.some(([x, , z]) => inWater(x, z))) continue;
         quad(at(u0, near), at(u1, near), at(u1, far), at(u0, far), [0, 1, 0], c);
       }
     }
 
-    // The pool, sunk into the middle of the mown lawn. After the stripes, so
-    // its rim lies over them rather than under: `water.js` lays a pool on the
-    // floor instead of cutting a hole in it, and the rim is what hides the
-    // grass it covers.
-    sinkPool(e, { tri, quad }, pond);
+    // The pool, sunk into the mown lawn. After the stripes, so its rim lies
+    // over them rather than under: `water.js` lays a pool on the floor instead
+    // of cutting a hole in it, and the rim is what hides the grass it covers.
+    // A bank, so the water comes to within a few centimetres of the rim along
+    // the whole of a pool two metres long rather than a fifth of the way in.
+    sinkPool(e, { tri, quad }, { ...pond, bank: 0.22 });
+
+    // **The stepping stones**, after the pool and the stripes so they lie on
+    // the grass. Low, flat, each its own oval, the long way along the step.
+    const stones = applyVariantToCurve(variant, quietRoom.curves.stones[0].points);
+    stones.forEach((at, k) => {
+      const next = stones[Math.min(k + 1, stones.length - 1)], last = stones[Math.max(k - 1, 0)];
+      const angle = Math.atan2(next[1] - last[1], next[0] - last[0]);
+      stone(e, { tri, quad }, at, angle, ROOM.stones + k);
+    });
 
     // Its side: the slab every plot hangs from its outline (`slab.js`), the
     // floor seed saying how its lower edge undulates.
@@ -160,8 +182,11 @@ export function makeRoomGround(room) {
     // It lies across its corner, along the diagonal, which is how a seat is
     // put into the angle of two hedges: the length of it faces the middle of
     // the lawn rather than one of the sides.
+    // Turned with the room: always in a corner, always looking across the
+    // water at the five.
+    const benchAt = applyVariant(variant, room.bench[0], room.bench[1]);
     const bench = readStructure(takeResult(e, e.pg_bench(1.5, 0.45, 0.42, ROOM.bench)));
-    placeTurned(bench, room.bench, Math.atan2(room.bench[1], room.bench[0]), COLOUR.timber, casts);
+    placeTurned(bench, benchAt, Math.atan2(benchAt[1], benchAt[0]), COLOUR.timber, casts);
 
     return {
       positions: new Float32Array(positions),
@@ -193,6 +218,32 @@ function place(mesh, turn, at, colour, vertex, onPlot = null) {
   }
 }
 
+/// A stepping stone: a low, flat oval at `at`, its long way along `angle`,
+/// its edge wandering by its own seed, standing `STONE.rise` proud of the
+/// lawn with a darker side down to it. Shaded flat, a face a tone, as the
+/// Crossing's paving is, so it reads as stone rather than as a lid.
+function stone(e, { tri, quad }, at, angle, seed) {
+  const c = Math.cos(angle), s = Math.sin(angle);
+  const edge = Array.from({ length: STONE.steps }, (_, i) => {
+    const t = (i / STONE.steps) * 2 * Math.PI;
+    const wander = 1 + 0.12 * (e.pg_verge(t * 0.9, 1, seed) / 0.14);
+    const x = Math.cos(t) * STONE.long * wander, z = Math.sin(t) * STONE.wide * wander;
+    return [at[0] + x * c - z * s, at[1] + x * s + z * c];
+  });
+  const top = COLOUR.stone.map((v) => v * (0.95 + 0.1 * hash(seed)));
+  const side = COLOUR.stone.map((v) => v * 0.72);
+  const h = STONE.rise;
+  for (let i = 0; i < STONE.steps; i++) {
+    const a = edge[i], b = edge[(i + 1) % STONE.steps];
+    tri([at[0], h, at[1]], [a[0], h, a[1]], [b[0], h, b[1]], [0, 1, 0],
+        top.map((v) => v * (0.97 + 0.06 * hash(seed * 31 + i))));
+    const nx = b[1] - a[1], nz = a[0] - b[0], l = Math.hypot(nx, nz) || 1;
+    const out = (nx * (a[0] - at[0]) + nz * (a[1] - at[1])) > 0 ? 1 : -1;
+    quad([a[0], 0.004, a[1]], [b[0], 0.004, b[1]], [b[0], h, b[1]], [a[0], h, a[1]],
+         [out * nx / l, 0, out * nz / l], side);
+  }
+}
+
 /// The same, turned by an arbitrary angle about y: the bench looks diagonally
 /// into the room, which no quarter turn gives.
 function placeTurned(mesh, at, angle, colour, vertex) {
@@ -221,9 +272,14 @@ const breathe = () => new Promise((resume) => setTimeout(resume, 0));
 // Grows one plot from the plot service. A planting with no parents was minted
 // rather than crossed — the ambassador beside the bench — and grows from its
 // seed alone.
-export async function growRoomFromService(e, stage, plot, report) {
+export async function growRoomFromService(e, stage, plot, report, room = null) {
   stage.clear();
   const { plantings } = await (await fetch(`/api/quiet/plot/${plot}`)).json();
+  // The room laid as this plot's number says, before anything is set in it.
+  if (room) {
+    room.variant = variantFromModule(e, 'peace', plot) ?? PLAIN;
+    stage.rebuild();
+  }
   let since = performance.now();
   for (const [i, p] of plantings.entries()) {
     const lineage = p.parents ?? [];
@@ -266,9 +322,13 @@ export async function plantVisitors(e, total, report) {
   return e.pg_room_plots();
 }
 
-export async function growInvented(e, stage, plot, report) {
+export async function growInvented(e, stage, plot, report, room = null) {
   stage.clear();
   const count = e.pg_room_count(plot);
+  if (room) {
+    room.variant = variantFromModule(e, 'peace', plot) ?? PLAIN;
+    stage.rebuild();
+  }
   let since = performance.now();
   for (let i = 0; i < count; i++) {
     const length = e.pg_room_grow(plot, i);
