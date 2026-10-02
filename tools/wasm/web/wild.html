@@ -44,21 +44,21 @@
   // field's density and its night, which is what this is for, and not anybody's
   // plants.
   //
-  // **Water under a lotus, a prototype (2 October 2026)**: `?water=a|b|c`
-  // draws one of three answers (`wildwater.js`); without it the field is the
-  // page's. `?lotus=x,z;x,z` adds a water lily at each of those points of the
-  // field — a seed minted until it is a lotus, with its first four bytes set
-  // to stand there, so it still stands where its seed puts it — and
-  // `?at=x,z`, `?zoom=` and `?turn=` set where and how close the window opens.
-  import { loadModule, decode, takeResult } from '/assets/js/plant.js';
+  // **Water lilies into a hollow, for renders** (2 October 2026):
+  // `?lotus=x,z;x,z` adds a water lily at each of those points of the field —
+  // a seed minted until it is a lotus, with its first four bytes set to stand
+  // there, so it still stands where its seed puts it — and `?at=x,z`,
+  // `?zoom=` and `?turn=` set where and how close the window opens. The
+  // deepest hollow's bottom is at 47.0, 55.75; `wild.stage.hollows()` lists
+  // them all. `wild.stage.cost()` is what drawing has cost.
+  import { loadModule } from '/assets/js/plant.js';
   import { makeSky } from '/assets/js/sky.js';
   import { SIDE, TILES, flyOver, makeWildStage, spotOf } from '/assets/js/wildfields.js';
-  import { LOTUS_HEADS, makeWildWater } from '/assets/js/wildwater.js';
+  import { isLotus } from '/assets/js/wildwater.js';
 
   const query = new URLSearchParams(location.search);
   const count = Math.max(0, parseInt(query.get('plants') ?? '', 10) || 400);
   const fromService = query.get('source') === 'service';
-  const kind = ['a', 'b', 'c'].includes(query.get('water')) ? query.get('water') : null;
   const points = (text) => (text ?? '').split(';').map((p) => p.split(',').map(Number))
     .filter((p) => p.length === 2 && p.every(Number.isFinite));
   const note = document.getElementById('note');
@@ -69,27 +69,6 @@
   // The module, never from the cache: see `/dev/quiet`.
   const e = await loadModule(`/plant.wasm?dev=${Date.now()}`);
 
-  function nameOf(seed) {
-    const words = new TextEncoder().encode(seed);
-    const pointer = e.pg_alloc(words.length);
-    new Uint8Array(e.memory.buffer, pointer, words.length).set(words);
-    const length = e.pg_name(pointer, words.length);
-    e.pg_free(pointer);
-    return length ? JSON.parse(new TextDecoder().decode(takeResult(e, length))) : null;
-  }
-  const isLotus = (seed) => LOTUS_HEADS.has(nameOf(seed)?.head);
-
-  // How far a plant's leaves lie from its stem, from the grown mesh's bounds.
-  function reachOf(seed) {
-    const words = new TextEncoder().encode(seed);
-    const pointer = e.pg_alloc(words.length);
-    new Uint8Array(e.memory.buffer, pointer, words.length).set(words);
-    const length = e.pg_grow(pointer, words.length);
-    e.pg_free(pointer);
-    const shape = decode(takeResult(e, length));
-    return Math.max(0.05, ...[0, 2].flatMap((i) => [Math.abs(shape.min[i]), Math.abs(shape.max[i])]));
-  }
-
   // A lotus standing at `[x, z]`: the place is the seed's first four bytes,
   // so those are set and the rest minted until the seed is a water lily.
   async function lotusAt([x, z], n) {
@@ -99,7 +78,7 @@
       const bytes = await digest(`wild lotus ${n} ${k}`);
       bytes[0] = across >> 8; bytes[1] = across & 255; bytes[2] = along >> 8; bytes[3] = along & 255;
       const seed = hex(bytes);
-      if (isLotus(seed)) return { seed, parents: [], spot: spotOf(seed) };
+      if (isLotus(e, { seed })) return { seed, parents: [], spot: spotOf(seed) };
     }
     throw new Error(`no lotus found for ${x}, ${z}`);
   }
@@ -125,36 +104,32 @@
   const source = fromService
     ? async (x, z) => (await (await fetch(`/api/wild/tile/${x}/${z}`)).json()).plantings
     : async (x, z) => invented.tiles.get(`${x},${z}`) ?? [];
-  const lotuses = kind && invented
-    ? invented.plants.filter((p) => isLotus(p.seed)).map((p) => ({ seed: p.seed, spot: p.spot, reach: reachOf(p.seed) }))
-    : [];
-  const water = kind ? makeWildWater(kind, lotuses) : null;
   const [at] = points(query.get('at'));
   const stage = makeWildStage(document.getElementById('stage'), e, {
     source,
-    water,
     ...(at ? { from: at } : {}),
     report: (growing) => { note.textContent = growing ? 'Growing…'
-      : `${fromService ? 'The local service' : `${count} invented plants`}`
-        + `${kind ? ` · water ${kind}, ${lotuses.length} lotuses` : ''} · drag to walk`; },
+      : `${fromService ? 'The local service' : `${count} invented plants`} · drag to walk`; },
   });
   flyOver(document.getElementById('flies'), stage);
+  const skyCanvas = document.getElementById('sky');
   let sky = null;
-  makeSky(document.getElementById('sky'), { milkyWay: true, quarterTurns: () => stage.turn() })
-    .then((made) => { sky = made; });
+  const skyReady = makeSky(skyCanvas, { milkyWay: true, quarterTurns: () => stage.turn() })
+    .then((made) => { sky = made; stage.reflect(skyCanvas); }).catch((trouble) => console.warn('no sky:', trouble));
 
   // Set the opening look, then say when everything in it has grown.
   (async () => {
     await stage.settled();
     const quarters = parseInt(query.get('turn') ?? '', 10);
-    if (quarters) { stage.turnBy(quarters); sky?.draw(); }
+    await skyReady;
+    if (quarters) { stage.turnBy(quarters); sky?.draw(); stage.reflect(skyCanvas); }
     const zoom = parseFloat(query.get('zoom') ?? '');
     if (zoom > 1) stage.lookAt({ zoom });
     await new Promise((go) => setTimeout(go, 50));
     await stage.settled();
     document.body.dataset.ready = '1';
   })();
-  window.wild = { stage, water, lotuses };
+  window.wild = { stage };
 
   const canvas = document.getElementById('stage');
   let held = null;
@@ -167,7 +142,7 @@
     held = [event.clientX, event.clientY];
   });
   canvas.addEventListener('pointerup', () => { held = null; });
-  const turn = (q) => { stage.turnBy(q); sky?.draw(); };
+  const turn = (q) => { stage.turnBy(q); sky?.draw(); stage.reflect(skyCanvas); };
   document.getElementById('left').onclick = () => turn(-1);
   document.getElementById('right').onclick = () => turn(1);
   document.getElementById('in').onclick = () => stage.lookAt({ zoom: stage.view().zoom * Math.SQRT2 });
