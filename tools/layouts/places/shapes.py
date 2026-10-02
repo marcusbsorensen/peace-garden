@@ -132,8 +132,17 @@ def _dist(a, b):
     return math.sqrt(dx * dx + dz * dz)
 
 
+def _total(values):
+    """Added left to right. Not `sum()`, which from Python 3.12 compensates
+    for rounding and so gives a different last bit from earlier Pythons."""
+    out = 0.0
+    for v in values:
+        out += v
+    return out
+
+
 def length(curve, closed=False):
-    total = sum(_dist(a, b) for a, b in zip(curve, curve[1:]))
+    total = _total(_dist(a, b) for a, b in zip(curve, curve[1:]))
     if closed and len(curve) > 1:
         total += _dist(curve[-1], curve[0])
     return total
@@ -224,12 +233,12 @@ def centroid(loop):
         cx += (x0 + x1) * cross
         cz += (z0 + z1) * cross
     if area2 == 0:
-        return (sum(p[0] for p in loop) / n, sum(p[1] for p in loop) / n)
+        return (_total(p[0] for p in loop) / n, _total(p[1] for p in loop) / n)
     return (cx / (3 * area2), cz / (3 * area2))
 
 
 def area(loop):
     """The area a closed curve holds, in square metres."""
     n = len(loop)
-    return abs(sum(loop[i][0] * loop[(i + 1) % n][1] - loop[(i + 1) % n][0] * loop[i][1]
+    return abs(_total(loop[i][0] * loop[(i + 1) % n][1] - loop[(i + 1) % n][0] * loop[i][1]
                    for i in range(n))) / 2

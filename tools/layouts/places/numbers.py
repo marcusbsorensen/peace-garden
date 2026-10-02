@@ -11,7 +11,9 @@ So nothing here calls them. Turning is a polynomial, as `Organic.quarter` is;
 an angle is found from a square root and a series; the only library function
 used is `math.sqrt`, which IEEE 754 requires to be correctly rounded and so is
 the same everywhere. Random numbers are SplitMix64 in Python's integers, not
-the `random` module, so a seed means the same stream in every Python.
+the `random` module, so a seed means the same stream in every Python. And
+floats are added left to right, never with `sum()`, whose rounding Python 3.12
+changed.
 """
 import math
 

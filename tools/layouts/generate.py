@@ -14,7 +14,7 @@ to write one; `tables/example.py` is one. For each spec this writes
     Server/assets/js/tables/<name>.js          (only if the spec says JS = True)
 
 and removes any generated file whose spec has gone. Standard library only, and
-the same bytes on any machine and any Python 3.10 or later: the arithmetic is
+the same bytes on any machine and any Python 3.9 or later: the arithmetic is
 `places.numbers`, which never asks the C library for a sine.
 
 `--check` also runs `php -l` and `node --check` over what it reads, where they
