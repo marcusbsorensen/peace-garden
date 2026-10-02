@@ -115,9 +115,12 @@ final class GardenCreatures {
         ((seed % 8) + 8) % 8
     }
 
-    nonisolated static func key(_ kind: LampKind, step: Int?, turn: Int, facing: Int) -> String {
+    /// The season is in it for a figure lit by the garden, because it colours
+    /// that light; a glow is its own light and has none.
+    nonisolated static func key(_ kind: LampKind, step: Int?, turn: Int, facing: Int,
+                                season: Season = .orbit) -> String {
         let quarter = ((turn % 4) + 4) % 4
-        return "\(kind.rawValue)-\(step.map(String.init) ?? "glow")-\(quarter)-\(facing)"
+        return "\(kind.rawValue)-\(step.map { "\($0)-\(season.key)" } ?? "glow")-\(quarter)-\(facing)"
     }
 
     // MARK: Rendering
@@ -125,23 +128,23 @@ final class GardenCreatures {
     /// A picture already taken, without taking it: what a figure starts from
     /// when it is drawn again, so a plot redrawn does not flash its figures
     /// empty for a frame while the same pictures are fetched.
-    func held(_ kind: LampKind, step: Int?, turn: Int, facing: Int) -> UIImage? {
-        cache.object(forKey: Self.key(kind, step: step, turn: turn, facing: facing) as NSString)
+    func held(_ kind: LampKind, step: Int?, turn: Int, facing: Int, season: Season = .orbit) -> UIImage? {
+        cache.object(forKey: Self.key(kind, step: step, turn: turn, facing: facing, season: season) as NSString)
     }
 
     /// The figure under the garden's light at one of the eight points round the
-    /// clock, or — with `step` nil — its glow alone.
-    func picture(_ kind: LampKind, step: Int?, turn: Int, facing: Int) -> UIImage? {
+    /// clock, in the season's colour, or — with `step` nil — its glow alone.
+    func picture(_ kind: LampKind, step: Int?, turn: Int, facing: Int, season: Season = .orbit) -> UIImage? {
         guard let figure = Self.figure(of: kind) else { return nil }
         let quarter = ((turn % 4) + 4) % 4
-        let key = Self.key(kind, step: step, turn: quarter, facing: facing) as NSString
+        let key = Self.key(kind, step: step, turn: quarter, facing: facing, season: season) as NSString
         if let held = cache.object(forKey: key) { return held }
 
         let glowing = step == nil
         let side = CGFloat(figure.metres) * Self.renderedPointsPerMetre
         let view = SCNView(frame: CGRect(x: 0, y: 0, width: side, height: side))
         view.scene = step.map {
-            GardenSprites.makeScene(lit: GardenGround.Light.at(step: $0).turned(quarters: quarter))
+            GardenSprites.makeScene(lit: GardenGround.Light.at(step: $0, season: season).turned(quarters: quarter))
         } ?? (figure.flame ? SCNScene() : Self.glowScene())
         view.backgroundColor = .clear
         view.isOpaque = false
@@ -623,23 +626,29 @@ struct ModelledFigure: View {
     let hour: Double
     let turn: Int
     let seed: Int
+    /// What colours the garden's light on it.
+    let season: Season
 
     @State private var before: UIImage?
     @State private var after: UIImage?
     @State private var shine: UIImage?
 
-    init(kind: LampKind, glow: Double, pointsPerMetre: Double, hour: Double, turn: Int, seed: Int) {
+    init(kind: LampKind, glow: Double, pointsPerMetre: Double, hour: Double, turn: Int, seed: Int,
+         season: Season = .orbit) {
         self.kind = kind
         self.glow = glow
         self.pointsPerMetre = pointsPerMetre
         self.hour = hour
         self.turn = turn
         self.seed = seed
+        self.season = season
         let facing = GardenCreatures.facing(seed: seed)
         let between = GardenGround.Light.steps(at: hour)
         let held = GardenCreatures.shared
-        _before = State(initialValue: held.held(kind, step: between.before, turn: turn, facing: facing))
-        _after = State(initialValue: held.held(kind, step: between.after, turn: turn, facing: facing))
+        _before = State(initialValue: held.held(kind, step: between.before, turn: turn, facing: facing,
+                                                season: season))
+        _after = State(initialValue: held.held(kind, step: between.after, turn: turn, facing: facing,
+                                               season: season))
         _shine = State(initialValue: held.held(kind, step: nil, turn: turn, facing: facing))
     }
 
@@ -691,11 +700,15 @@ struct ModelledFigure: View {
                         .blendMode(.plusLighter)
                 }
             }
-            .task(id: GardenCreatures.key(kind, step: between.before, turn: turn, facing: facing)) {
-                before = GardenCreatures.shared.picture(kind, step: between.before, turn: turn, facing: facing)
+            .task(id: GardenCreatures.key(kind, step: between.before, turn: turn, facing: facing,
+                                          season: season)) {
+                before = GardenCreatures.shared.picture(kind, step: between.before, turn: turn, facing: facing,
+                                                        season: season)
             }
-            .task(id: GardenCreatures.key(kind, step: between.after, turn: turn, facing: facing)) {
-                after = GardenCreatures.shared.picture(kind, step: between.after, turn: turn, facing: facing)
+            .task(id: GardenCreatures.key(kind, step: between.after, turn: turn, facing: facing,
+                                          season: season)) {
+                after = GardenCreatures.shared.picture(kind, step: between.after, turn: turn, facing: facing,
+                                                       season: season)
             }
             .task(id: GardenCreatures.key(kind, step: nil, turn: turn, facing: facing)) {
                 shine = GardenCreatures.shared.picture(kind, step: nil, turn: turn, facing: facing)

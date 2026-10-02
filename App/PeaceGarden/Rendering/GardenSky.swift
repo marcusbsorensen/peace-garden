@@ -26,10 +26,11 @@ import SeedCore
 /// - **Now and again, the season's birds** (`SkyLife`), very high and rare.
 ///
 /// **The night is the one he liked**, unchanged but for the last of the light
-/// after sunset and the one planet. **The light on the plot is not changed by
-/// any of it**: the orbit, the shadows and the plants read the same function
-/// as before. Warming the plot to match a low gold sun is a separate job, and
-/// `design/app-sky-2026-10-02/README.md` says where it would start.
+/// after sunset and the one planet. **Since the same day the plot is lit by
+/// this sky** (`design/app-light-2026-10-02/`): the sun's colour and the sky's
+/// light on the ground are taken from the palette painted here, for the
+/// light's own season, so the gold behind the plot is the gold on it. The
+/// orbit and the shadows are the orbit's, as before.
 struct GardenSky: View {
     let light: GardenGround.Light
     let date: Date
@@ -119,13 +120,16 @@ struct GardenSky: View {
         var disc: (centre: CGPoint, radius: Double)?
     }
 
+    /// The palette is the light's: the season it was worked out for, at the
+    /// hour it is for. The plot is warmed by the same palette, so the sky
+    /// reads its season off the light rather than off the date: two readings
+    /// would be two suns the moment anybody handed one of them a different
+    /// day.
     fileprivate func scene(in size: CGSize) -> Scene {
         let hour = light.hourOfDay
         let place = Whereabouts.place(of: .current, at: date)
-        let season = Season(date: date, place: place)
-        let elevation = SunPath.elevation(atHour: hour, peak: season.noon)
         return Scene(hour: hour, place: place,
-                     palette: SkyPalette.at(elevation: elevation, haze: season.haze),
+                     palette: SkyPalette.at(hour: hour, season: light.season),
                      disc: disc(in: size))
     }
 

@@ -12,7 +12,7 @@ import SeedCore
 enum SunPath {
     /// How high the sun is at an hour, in degrees, and negative under the
     /// horizon. `peak` is the orbit's sixty-two degrees unless the season
-    /// says otherwise: `Season.noon`.
+    /// says otherwise: `Season.noon`, through `SkyPalette.at(hour:season:)`.
     static func elevation(atHour hour: Double, peak: Double = 62) -> Double {
         sin(through(hour) * .pi) * peak
     }
@@ -123,8 +123,19 @@ struct SkyPalette: Equatable {
         return palette
     }
 
-    /// The sun's disc, warmer as it gets lower. The light on the plot does not
-    /// follow it yet: `design/app-sky-2026-10-02/README.md` says what would.
+    /// The sky at an hour, in a season: the sun as high as the season's noon
+    /// lets it climb on the orbit's arc.
+    ///
+    /// **The one place the sun's height becomes colour.** The day sky paints
+    /// this, and the plot's light is warmed by it
+    /// (`GardenGround.Light.at(hour:season:)`), so the gold in the sky and
+    /// the gold on the ground cannot come from two different suns.
+    static func at(hour: Double, season: Season) -> SkyPalette {
+        at(elevation: SunPath.elevation(atHour: hour, peak: season.noon), haze: season.haze)
+    }
+
+    /// The sun's disc, warmer as it gets lower. The light on the plot warms
+    /// with it, from the same palette, by `GardenGround.Light.sunlight`.
     var disc: SIMD3<Double> {
         Self.mix(SIMD3(1.0, 0.96, 0.86), SIMD3(1.0, 0.80, 0.56), low * low)
     }

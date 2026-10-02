@@ -178,6 +178,8 @@ struct LampFigure: View {
     /// by themselves. Fireflies are only their own light.
     var hour: Double = 12
     var turn: Int = 0
+    /// The season, which colours the garden's light on what is modelled.
+    var season: Season = .orbit
 
     var body: some View {
         let colour = GardenLamps.swiftUIColour(GardenLamps.colour(of: kind))
@@ -202,7 +204,7 @@ struct LampFigure: View {
             case .fireflies: Fireflies(colour: colour, glow: glow, metre: metre, seed: seed)
             case .lantern, .paperLamp, .hare, .fox, .moth, .snail:
                 ModelledFigure(kind: kind, glow: glow, pointsPerMetre: metre,
-                               hour: hour, turn: turn, seed: seed)
+                               hour: hour, turn: turn, seed: seed, season: season)
             }
         }
         .frame(width: 1.0 * metre, height: 1.2 * metre, alignment: .bottom)

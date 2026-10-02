@@ -75,6 +75,21 @@ enum GardenGround {
         ///
         /// See `GardenLight.galaxy`. Zero at noon, because the sky outshines it.
         var galaxy = SIMD3<Double>(repeating: 0)
+        /// The season this light was worked out for, which colours it by day.
+        ///
+        /// Carried so that everything lit by it, and the sky behind it, reads
+        /// one season: the sky paints its palette from this, and the plants,
+        /// the figures and the shadows are worked out at their own steps of
+        /// the clock in it.
+        var season: Season = .orbit
+
+        /// What anything drawn under this light is kept by: the hour, as the
+        /// strength and the direction have always said it, and the season,
+        /// which moves the colour and nothing else.
+        var key: String {
+            "\(Int((strength * 1000).rounded()))-\(Int((direction.x * 100).rounded()))"
+                + "-\(Int((direction.z * 100).rounded()))-\(season.key)"
+        }
 
         /// The sun at its highest, spelled out.
         ///

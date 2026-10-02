@@ -60,8 +60,11 @@ final class GardenShadows: @unchecked Sendable {
     /// Points round the clock a shadow is worked out at.
     static let steps = 48
 
-    static func light(step: Int) -> GardenGround.Light {
-        GardenGround.Light.at(hour: Double((step % steps + steps) % steps) / Double(steps) * 24)
+    /// The light at a step. The season colours it and does not move it, so a
+    /// sheet — which is only where the light falls — is the same in every
+    /// season, and only the shade it is laid in (`fullShade`) is not.
+    static func light(step: Int, season: Season = .orbit) -> GardenGround.Light {
+        GardenGround.Light.at(hour: Double((step % steps + steps) % steps) / Double(steps) * 24, season: season)
     }
 
     /// The two steps an hour falls between, and how far between them it is.
@@ -998,6 +1001,9 @@ struct GroundShadows: View {
     let world: Int
     let plotSide: Double
     let hour: Double
+    /// The season of the plot's light, which colours the shade a shadow is
+    /// laid in. `PlotView` hands over its light's own.
+    var season: Season = .orbit
     let date: Date
     let size: CGSize
 
@@ -1052,7 +1058,7 @@ struct GroundShadows: View {
 
     private func lay(_ cast: ShadowCast, step: Int, weight: Double, moon: Double) -> Laid? {
         guard weight > 0.002 else { return nil }
-        let light = GardenShadows.light(step: step)
+        let light = GardenShadows.light(step: step, season: season)
         let presence = GardenShadows.presence(of: light) * (light.isDay ? 1 : moon)
         guard presence > 0.002,
               let worked = GardenShadows.shared.sheet(cast.sheetKey(step: step)),
@@ -1093,9 +1099,11 @@ struct GroundShadows: View {
     /// The lie of the ground under a foot, as a plane, whether a hill keeps
     /// the light off it, and how dark full shade is there: asked of the
     /// heightmap and the light once for each place and step and kept, because
-    /// the plot is drawn every frame of a drag.
+    /// the plot is drawn every frame of a drag. The season is in it because
+    /// it colours the light, and so the shade.
     private struct Place: Hashable {
         let world: Int, x: Int, z: Int, side: Int, step: Int
+        let season: Season
     }
 
     private typealias Ground = (slope: SIMD2<Double>, inRelief: Bool, shade: Color)
@@ -1106,7 +1114,7 @@ struct GroundShadows: View {
     private static func ground(world: Int, at spot: Spot, plotSide: Double, step: Int,
                                light: GardenGround.Light) -> Ground {
         let place = Place(world: world, x: Int((spot.x * 1000).rounded()), z: Int((spot.z * 1000).rounded()),
-                          side: Int((plotSide * 1000).rounded()), step: step)
+                          side: Int((plotSide * 1000).rounded()), step: step, season: light.season)
         if let held = places[place] { return held }
         let worlds = GardenWorlds.shared
         let reach = 0.15

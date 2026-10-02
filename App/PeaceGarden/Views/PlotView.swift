@@ -108,6 +108,16 @@ struct PlotView: View {
         return (GardenDaylight(rawValue: daylightRaw) ?? .byTheClock).hour(when: actual)
     }
 
+    /// The season the garden is being looked at in, which colours its light.
+    ///
+    /// **Asked once and handed to everything lit**: the ground's light, and
+    /// so the sky behind the plot, which reads it off the light; the plants,
+    /// the figures and the shadows, which are worked out at their own steps
+    /// of the clock in it. One season, so one sun.
+    private var season: Season {
+        Season.here(at: model.now)
+    }
+
     /// The plot's side: the garden's own, unless a developer has fixed it to
     /// look at a web plot.
     /// Whether the plot is being looked at as a Long Walk plot, path and hedges
@@ -148,7 +158,7 @@ struct PlotView: View {
             Chrome.ground.ignoresSafeArea()
 
             GeometryReader { proxy in
-                let light = GardenGround.Light.at(hour: hour)
+                let light = GardenGround.Light.at(hour: hour, season: season)
                 let side = plotSide
                 let world = GardenWorlds.shared.resolve(model.garden.arrangements.first?.world)
                 // A hill lifts a plant above the far corner and a ravine hangs
@@ -200,7 +210,7 @@ struct PlotView: View {
                         if showsShadows {
                             GroundShadows(casts: casts(standings, plotSide: side, world: world, lamps: lamps, in: view),
                                           view: view, world: world, plotSide: side, hour: hour,
-                                          date: model.now, size: proxy.size)
+                                          season: light.season, date: model.now, size: proxy.size)
                         }
 
                         // The lights' pools, under everything that stands, so
@@ -570,7 +580,7 @@ struct PlotView: View {
         let foot = view.point(piece.spot, y: piece.line.pieces[piece.index].ground)
         let size = GardenStructures.figure(height: piece.line.height).metres * view.pointsPerMetre
         return HedgePiece(line: piece.line, index: piece.index, pointsPerMetre: view.pointsPerMetre,
-                          hour: hour, turn: turn)
+                          hour: hour, turn: turn, season: season)
             .allowsHitTesting(false)
             .position(x: foot.x, y: foot.y - size / 2)
     }
@@ -660,6 +670,7 @@ struct PlotView: View {
             foot: inHand ? (held?.foot ?? resting) : resting,
             pointsPerMetre: view.pointsPerMetre,
             hour: hour,
+            season: season,
             turn: turn,
             isHeld: inHand,
             isLeaving: inHand && Isometric.isOff(view.ground(at: held?.foot ?? resting),
@@ -771,7 +782,7 @@ struct PlotView: View {
             let foot = inHand ? (heldLamp?.foot ?? resting) : resting
 
             LampFigure(kind: kind, glow: glow, pointsPerMetre: metre, seed: Self.seed(of: lamp),
-                       hour: hour, turn: turn)
+                       hour: hour, turn: turn, season: season)
                 .allowsHitTesting(false)
                 // Only the light itself answers a finger, not the whole metre of
                 // air its frame takes up, or a lantern would steal every touch
@@ -1337,6 +1348,8 @@ private struct GardenPlantSprite: View {
     let foot: CGPoint
     let pointsPerMetre: Double
     let hour: Double
+    /// The season the light is coloured by, which is in each picture's key.
+    let season: Season
     let turn: Int
     let isHeld: Bool
     /// Held off the edge of the plot, where letting go sends it home. Faded, so
@@ -1410,14 +1423,14 @@ private struct GardenPlantSprite: View {
             }
         }
         .task(id: GardenSprites.key(genome: genome, growth: growth,
-                                    step: between.before, turn: turn)) {
+                                    step: between.before, turn: turn, season: season)) {
             before = GardenSprites.shared.sprite(genome: genome, growth: growth,
-                                                 step: between.before, turn: turn)
+                                                 step: between.before, turn: turn, season: season)
         }
         .task(id: GardenSprites.key(genome: genome, growth: growth,
-                                    step: between.after, turn: turn)) {
+                                    step: between.after, turn: turn, season: season)) {
             after = GardenSprites.shared.sprite(genome: genome, growth: growth,
-                                                step: between.after, turn: turn)
+                                                step: between.after, turn: turn, season: season)
         }
     }
 
@@ -1547,11 +1560,12 @@ private struct GardenGroundView: View {
     }
 
     /// The turn is in it, and the scale: the plot turned from the tray, or
-    /// framed smaller above it on a wide screen, is a different drawing.
+    /// framed smaller above it on a wide screen, is a different drawing. So
+    /// is the light's season, which colours it (`Light.key`).
     private var baseKey: String {
         "\(world)-\(Int(plotSide * 100))-\(Int(size.width))x\(Int(size.height))"
             + "-t\(((view.turn % 4) + 4) % 4)-\(Int(view.pointsPerMetre * 10))"
-            + "-\(Int(light.strength * 1000))-\(Int(light.direction.x * 100))"
+            + "-\(light.key)"
     }
 
     private var base: some View {

@@ -409,6 +409,161 @@ final class PlotTests: XCTestCase {
         XCTAssertEqual(sunset.z, -sunrise.x, accuracy: 0.002)
     }
 
+    // MARK: - Warmed by the sky
+
+    /// London on the longest and the shortest day of 2026.
+    private static func london(month: Int, day: Int) -> Season {
+        var parts = DateComponents()
+        parts.year = 2026; parts.month = month; parts.day = day; parts.hour = 12
+        let date = Calendar(identifier: .gregorian).date(from: parts)!
+        return Season(date: date, place: Place(latitude: 51.5, longitude: -0.12))
+    }
+
+    /// **The colour is pinned by its values, as the strength is**, and for the
+    /// same reason: the sun and the sky's light are two curves that have to
+    /// agree with each other and with the sky behind them, and a shape test
+    /// would pass two curves that had stopped agreeing. Under the orbit's own
+    /// season, warmed by the day sky of 2 October: noon as it always was, a
+    /// pale gold at seven and at five, and the orange of the disc at the
+    /// horizon.
+    func testTheLightWarmsAsTheSunGetsLower() {
+        let expected: [(hour: Double, colour: SIMD3<Double>, sky: SIMD3<Double>)] = [
+            (6, SIMD3(1, 0.6730, 0.4740), SIMD3(0.3475, 0.2218, 0.2378)),
+            (7, SIMD3(1, 0.9148, 0.7914), SIMD3(0.3270, 0.2986, 0.3328)),
+            (9, SIMD3(1, 0.9600, 0.8800), SIMD3(0.3479, 0.4121, 0.5255)),
+            (12, SIMD3(1, 0.9600, 0.8800), SIMD3(0.4000, 0.4800, 0.6000)),
+            (15, SIMD3(1, 0.9600, 0.8800), SIMD3(0.3479, 0.4121, 0.5255)),
+            (17, SIMD3(1, 0.9148, 0.7914), SIMD3(0.3270, 0.2986, 0.3328)),
+        ]
+        for (hour, colour, sky) in expected {
+            let light = GardenGround.Light.at(hour: hour)
+            XCTAssertEqual(simd_distance(light.colour, colour), 0, accuracy: 0.002, "the sun at \(hour):00")
+            XCTAssertEqual(simd_distance(light.sky, sky), 0, accuracy: 0.002, "the sky's light at \(hour):00")
+        }
+
+        // **Warmer, not darker.** The sky's light keeps the brightness the
+        // old curve gave it at every hour of the day; only its colour moves.
+        for quarter in 24..<72 {
+            let hour = Double(quarter) / 4
+            let light = GardenGround.Light.at(hour: hour, season: Self.london(month: 12, day: 21))
+            let warmth = 0.35 + 0.65 * light.up
+            let plain = GardenGround.Light.skyByNight
+                + (GardenGround.Light.skyByDay - GardenGround.Light.skyByNight) * warmth
+            XCTAssertEqual(GardenGround.Light.luminance(light.sky), GardenGround.Light.luminance(plain),
+                           accuracy: 1e-9, "at \(hour):00")
+        }
+    }
+
+    /// Marcus, 2 October 2026: once the shadows had landed, the plot warmed to
+    /// the new sky. **Noon stays close to what it was**, a summer's noon in
+    /// London most of all, and **five o'clock is warmer** — and a winter's
+    /// noon, fifteen degrees up, is warmer than a summer's.
+    func testNoonIsCloseToWhatItWasAndFiveIsWarmer() {
+        let before = (colour: SIMD3<Double>(1.00, 0.96, 0.88), noonSky: SIMD3<Double>(0.40, 0.48, 0.60),
+                      fiveSky: SIMD3<Double>(0.2555, 0.3114, 0.4169))
+        func warmth(_ c: SIMD3<Double>) -> Double { c.x / c.z }
+
+        for season in [Season.orbit, Self.london(month: 6, day: 21)] {
+            let noon = GardenGround.Light.at(hour: 12, season: season)
+            XCTAssertEqual(simd_distance(noon.colour, before.colour), 0, accuracy: 0.01, "\(season)")
+            XCTAssertEqual(simd_distance(noon.sky, before.noonSky), 0, accuracy: 0.03, "\(season)")
+            XCTAssertEqual(noon.strength, 0.76, accuracy: 1e-9)
+
+            let five = GardenGround.Light.at(hour: 17, season: season)
+            XCTAssertGreaterThan(warmth(five.colour), warmth(noon.colour) + 0.1, "the sun at five, \(season)")
+            XCTAssertGreaterThan(warmth(five.sky), warmth(before.fiveSky) + 0.2, "the sky's light at five, \(season)")
+            XCTAssertGreaterThan(warmth(five.sky), warmth(noon.sky) + 0.2, "\(season)")
+        }
+
+        let summer = GardenGround.Light.at(hour: 12, season: Self.london(month: 6, day: 21))
+        let winter = GardenGround.Light.at(hour: 12, season: Self.london(month: 12, day: 21))
+        XCTAssertGreaterThan(warmth(winter.colour), warmth(summer.colour) + 0.1)
+        XCTAssertGreaterThan(warmth(winter.sky), warmth(summer.sky) + 0.2)
+        // Coloured, not moved: the same sun in the same place, as strong.
+        XCTAssertEqual(simd_distance(winter.direction, summer.direction), 0, accuracy: 1e-12)
+        XCTAssertEqual(winter.strength, summer.strength, accuracy: 1e-12)
+    }
+
+    /// **The night is the moon's, and has no season.** Every hour of it is
+    /// lit as it was, whatever the date.
+    func testTheNightIsTheSameInEverySeason() {
+        for quarter in 0..<96 {
+            let hour = Double(quarter) / 4
+            let plain = GardenGround.Light.at(hour: hour)
+            guard !plain.isDay else { continue }
+            for season in [Self.london(month: 6, day: 21), Self.london(month: 12, day: 21)] {
+                let seasonal = GardenGround.Light.at(hour: hour, season: season)
+                XCTAssertEqual(seasonal.colour, plain.colour, "at \(hour):00")
+                XCTAssertEqual(seasonal.sky, plain.sky, "at \(hour):00")
+                XCTAssertEqual(seasonal.bounce, plain.bounce, "at \(hour):00")
+                XCTAssertEqual(seasonal.strength, plain.strength, "at \(hour):00")
+                XCTAssertEqual(seasonal.direction, plain.direction, "at \(hour):00")
+                XCTAssertEqual(seasonal.galaxy, plain.galaxy, "at \(hour):00")
+            }
+        }
+    }
+
+    /// **The sun in the sky and the sun on the plot are one.** The light's
+    /// warmth is the drawn sky's: the glow the day sky paints round its disc
+    /// at that hour, in that season.
+    func testTheLightIsWarmedByTheSkyThatIsDrawn() {
+        for season in [Season.orbit, Self.london(month: 6, day: 21), Self.london(month: 12, day: 21)] {
+            for hour in stride(from: 6.0, to: 18, by: 0.5) {
+                let light = GardenGround.Light.at(hour: hour, season: season)
+                let palette = SkyPalette.at(hour: hour, season: season)
+                XCTAssertEqual(light.season, season)
+                XCTAssertEqual(simd_distance(light.colour, GardenGround.Light.sunlight(under: palette)), 0,
+                               accuracy: 1e-12, "at \(hour):00")
+                // Gold where the palette is low, and white where it is not.
+                if palette.low < 0.001 {
+                    XCTAssertEqual(simd_distance(light.colour, GardenGround.Light.sunHigh), 0, accuracy: 1e-9)
+                } else {
+                    XCTAssertLessThan(light.colour.z, GardenGround.Light.sunHigh.z, "at \(hour):00")
+                }
+            }
+        }
+    }
+
+    /// **A change of season is a new picture.** The plants and the ground are
+    /// photographed in the light and kept, so the season the light was coloured
+    /// by has to be in what they are kept under, or a December garden would be
+    /// lit with June's pictures until the app was closed.
+    @MainActor
+    func testTheSeasonIsInEveryKeyTheLightIsIn() {
+        let plant = crossing("Ada", nonce: 2)
+        let growth = plant.growth(now: plant.birth.addingTimeInterval(400 * 86_400))
+        let summer = Self.london(month: 6, day: 21), winter = Self.london(month: 12, day: 21)
+
+        XCTAssertNotEqual(GardenSprites.key(genome: plant.genome, growth: growth, step: 4, season: summer),
+                          GardenSprites.key(genome: plant.genome, growth: growth, step: 4, season: winter))
+        XCTAssertEqual(GardenSprites.key(genome: plant.genome, growth: growth, step: 4, season: winter),
+                       GardenSprites.key(genome: plant.genome, growth: growth, step: 4, season: winter))
+        XCTAssertNotEqual(GardenCreatures.key(.hare, step: 4, turn: 0, facing: 1, season: summer),
+                          GardenCreatures.key(.hare, step: 4, turn: 0, facing: 1, season: winter))
+        // A glow is its own light, and has no season.
+        XCTAssertEqual(GardenCreatures.key(.hare, step: nil, turn: 0, facing: 1, season: summer),
+                       GardenCreatures.key(.hare, step: nil, turn: 0, facing: 1, season: winter))
+        XCTAssertNotEqual(GardenGround.Light.at(hour: 12, season: summer).key,
+                          GardenGround.Light.at(hour: 12, season: winter).key)
+        XCTAssertNotEqual(GardenGround.Light.at(hour: 12, season: winter).key,
+                          GardenGround.Light.at(hour: 12.5, season: winter).key)
+
+        // **A season that moved every minute would be a new picture every
+        // minute.** It moves by a degree of noon at a time, every few days.
+        let calendar = Calendar(identifier: .gregorian)
+        let london = Place(latitude: 51.5, longitude: -0.12)
+        var parts = DateComponents(); parts.year = 2026; parts.month = 6; parts.day = 21; parts.hour = 9
+        let solstice = calendar.date(from: parts)!
+        XCTAssertEqual(Season(date: solstice, place: london),
+                       Season(date: solstice.addingTimeInterval(8 * 3_600), place: london))
+        parts.month = 3; parts.day = 20
+        let equinox = calendar.date(from: parts)!
+        XCTAssertEqual(Season(date: equinox, place: london).noon,
+                       Season(date: equinox, place: london).noon.rounded())
+        XCTAssertNotEqual(Season(date: equinox, place: london),
+                          Season(date: equinox.addingTimeInterval(10 * 86_400), place: london))
+    }
+
     /// `noon` is written out because it is a default argument in a file the
     /// orbit is not in. This is what stops the two drifting apart.
     func testNoonIsTheSameLightWhicheverWayItIsAskedFor() {
@@ -421,8 +576,10 @@ final class PlotTests: XCTestCase {
         XCTAssertEqual(spelled.strength, computed.strength, accuracy: 1e-5)
         XCTAssertEqual(spelled.up, computed.up, accuracy: 1e-5)
         XCTAssertEqual(simd_distance(spelled.direction, computed.direction), 0, accuracy: 1e-5)
+        XCTAssertEqual(simd_distance(spelled.colour, computed.colour), 0, accuracy: 1e-5)
         XCTAssertEqual(simd_distance(spelled.sky, computed.sky), 0, accuracy: 1e-5)
         XCTAssertEqual(simd_distance(spelled.bounce, computed.bounce), 0, accuracy: 1e-5)
+        XCTAssertEqual(spelled.season, computed.season)
     }
 
     /// The moon carries its real phase for the date, from one synodic month

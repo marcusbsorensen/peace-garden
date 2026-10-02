@@ -61,8 +61,8 @@ final class GardenStructures {
         return built
     }
 
-    static func key(line: HedgeLine, piece: Int, step: Int, turn: Int) -> String {
-        "hedge-\(line.key)-\(piece)-\(step)-\(((turn % 4) + 4) % 4)"
+    static func key(line: HedgeLine, piece: Int, step: Int, turn: Int, season: Season = .orbit) -> String {
+        "hedge-\(line.key)-\(piece)-\(step)-\(((turn % 4) + 4) % 4)-\(season.key)"
     }
 
     /// One piece of a hedge, photographed standing on its own ground.
@@ -74,16 +74,17 @@ final class GardenStructures {
     /// square-ended boxes this replaces were square-ended because pieces with
     /// rounded ends each drew a dark seam at every joint; a piece of a
     /// continuous mesh has no end of its own to draw.
-    func hedge(_ line: HedgeLine, piece index: Int, step: Int, turn: Int) -> UIImage? {
+    func hedge(_ line: HedgeLine, piece index: Int, step: Int, turn: Int, season: Season = .orbit) -> UIImage? {
         let quarter = ((turn % 4) + 4) % 4
-        let key = Self.key(line: line, piece: index, step: step, turn: quarter) as NSString
+        let key = Self.key(line: line, piece: index, step: step, turn: quarter, season: season) as NSString
         if let held = cache.object(forKey: key) { return held }
         guard line.pieces.indices.contains(index) else { return nil }
 
         let figure = Self.figure(height: line.height)
         let side = CGFloat(figure.metres) * GardenCreatures.renderedPointsPerMetre / 2
         let view = SCNView(frame: CGRect(x: 0, y: 0, width: side, height: side))
-        view.scene = GardenSprites.makeScene(lit: GardenGround.Light.at(step: step).turned(quarters: quarter))
+        view.scene = GardenSprites.makeScene(lit: GardenGround.Light.at(step: step, season: season)
+            .turned(quarters: quarter))
         view.backgroundColor = .clear
         view.isOpaque = false
         view.antialiasingMode = .multisampling4X
@@ -325,6 +326,8 @@ struct HedgePiece: View {
     let pointsPerMetre: Double
     let hour: Double
     let turn: Int
+    /// What colours the garden's light on it.
+    var season: Season = .orbit
 
     @State private var before: UIImage?
     @State private var after: UIImage?
@@ -343,11 +346,15 @@ struct HedgePiece: View {
         }
         .frame(width: side, height: side)
         .offset(y: figure.lift * side)
-        .task(id: GardenStructures.key(line: line, piece: index, step: between.before, turn: turn)) {
-            before = GardenStructures.shared.hedge(line, piece: index, step: between.before, turn: turn)
+        .task(id: GardenStructures.key(line: line, piece: index, step: between.before, turn: turn,
+                                       season: season)) {
+            before = GardenStructures.shared.hedge(line, piece: index, step: between.before, turn: turn,
+                                                   season: season)
         }
-        .task(id: GardenStructures.key(line: line, piece: index, step: between.after, turn: turn)) {
-            after = GardenStructures.shared.hedge(line, piece: index, step: between.after, turn: turn)
+        .task(id: GardenStructures.key(line: line, piece: index, step: between.after, turn: turn,
+                                       season: season)) {
+            after = GardenStructures.shared.hedge(line, piece: index, step: between.after, turn: turn,
+                                                  season: season)
         }
     }
 }

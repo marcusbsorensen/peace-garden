@@ -250,14 +250,17 @@ enum RealSky {
     static func atan2d(_ y: Double, _ x: Double) -> Double { atan2(y, x) * degrees }
 }
 
-/// The season and the place, as the day sky reads them.
+/// The season and the place, as the day sky and the plot's light read them.
 ///
-/// **It leans the sky; it does not move the sun.** The orbit still has the
-/// sun up from six to six, because the light on the plot is the orbit's.
-/// What changes is how high the sky's colours behave as if it were: a London
-/// December sky stays low and golden all day, and a June noon is a high,
-/// clear blue. A noon in Lagos is higher still.
-struct Season: Equatable {
+/// **It leans the colours; it does not move the sun.** The orbit still has
+/// the sun up from six to six and at its own height, because the shadows and
+/// the shading of the ground are the orbit's. What changes is how high the
+/// colours behave as if it were: a London December sky stays low and golden
+/// all day, and a June noon is a high, clear blue. A noon in Lagos is higher
+/// still. Since 2 October the plot's light is warmed by the same palette
+/// (`GardenGround.Light.at(hour:season:)`), so the ground and the plants are
+/// lit by the sky they stand under.
+struct Season: Hashable, Sendable {
     /// The sun's real height at noon today, in degrees, held where the orbit
     /// can still make a day of it.
     let noon: Double
@@ -266,10 +269,38 @@ struct Season: Equatable {
     /// little season to speak of.
     let haze: Double
 
+    /// **Rounded, so that it can be a key.** The plants are photographed in
+    /// this light and kept, and a season that moved every minute would have
+    /// them photographed again every minute. A degree of noon and a twentieth
+    /// of haze move every few days at most, and the eye cannot tell either.
     init(date: Date, place: Place) {
         let declination = RealSky.sunDeclination(date)
-        noon = min(88, max(14, 90 - abs(place.latitude - declination)))
+        let height = min(88, max(14, 90 - abs(place.latitude - declination)))
         let summer = (place.latitude >= 0 ? 1.0 : -1.0) * declination / 23.44
-        haze = summer * min(1, abs(place.latitude) / 45)
+        noon = height.rounded()
+        haze = (summer * min(1, abs(place.latitude) / 45) * 20).rounded() / 20
+    }
+
+    init(noon: Double, haze: Double) {
+        self.noon = noon
+        self.haze = haze
+    }
+
+    /// Where this phone is, on this day: what the garden's sky and its light
+    /// are both drawn for.
+    static func here(at date: Date) -> Season {
+        Season(date: date, place: Whereabouts.place(of: .current, at: date))
+    }
+
+    /// **The orbit's own: no season at all.** The sun as high as the orbit
+    /// takes it, sixty-two degrees, in air with no summer or winter in it,
+    /// which is a London midsummer without the haze. What a light asked for
+    /// without a date is lit by, and what everything was lit by before
+    /// 2 October.
+    static let orbit = Season(noon: GardenGround.Light.peak * 180 / .pi, haze: 0)
+
+    /// What a picture lit in this season is kept under.
+    var key: String {
+        "n\(Int((noon * 10).rounded()))h\(Int((haze * 100).rounded()))"
     }
 }

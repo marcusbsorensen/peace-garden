@@ -37,12 +37,74 @@ extension GardenGround.Light {
         galaxyAtFullest * max(0, 1 - strength / 0.5)
     }
 
+    /// The sky's light on the plot at noon under the orbit's own sun. Through
+    /// the rest of the day it is mixed down towards `skyByNight` as the sun
+    /// sinks, and coloured by the sky that is actually drawn: `skylight`.
     static let skyByDay = SIMD3<Double>(0.40, 0.48, 0.60)
     static let skyByNight = SIMD3<Double>(0.10, 0.13, 0.22)
     static let bounceByDay = SIMD3<Double>(0.27, 0.25, 0.20)
     static let bounceByNight = SIMD3<Double>(0.06, 0.07, 0.10)
 
+    /// The sun's own colour high in a clear sky: a little warm of white.
+    static let sunHigh = SIMD3<Double>(1.00, 0.96, 0.88)
+
+    // MARK: Warmed by the sky it is under
+
+    /// The sun's light at the height this palette was drawn for.
+    ///
+    /// **Warmed by 2 October's sky, on Marcus's word.** He chose the day sky
+    /// that goes gold and rose as the sun gets low, and then asked for the
+    /// plot to be lit by it: until then the sky warmed through the evening
+    /// and the ground under it stayed noon-white. So the sun's colour is the
+    /// palette's own `glow` — the colour drawn round the sun's disc — taken
+    /// in by how low the palette says the sun is. Above thirty degrees that
+    /// is nothing, so a summer noon is the noon it always was; at five on a
+    /// summer evening, sixteen degrees up, it is a pale gold; on the horizon
+    /// it is the orange of the disc going down. A December noon in London
+    /// stands fifteen degrees up, and is lit like a summer evening.
+    static func sunlight(under palette: SkyPalette) -> SIMD3<Double> {
+        SkyPalette.mix(sunHigh, palette.glow, 0.7 * palette.low)
+    }
+
+    /// The sky's light on the plot: `plain` — the old curve, which says how
+    /// much of it there is — in the colour of the sky that is drawn.
+    ///
+    /// **The colour moves; the amount does not.** The sky's light is most of
+    /// what lights the ground once the sun is low — at five o'clock it is
+    /// three times the sun's — so a warm sun over a cold sky would not have
+    /// read as warm at all. The colour is the air half way between the drawn
+    /// zenith and the drawn horizon, measured against that same air under the
+    /// orbit's noon, so a summer noon keeps exactly the light it had. Its
+    /// brightness is then put back to `plain`'s, so an evening is no brighter
+    /// and no darker for being gold, and the shadows keep the depth Marcus
+    /// set for them against the ground around them.
+    static func skylight(under palette: SkyPalette, plain: SIMD3<Double>) -> SIMD3<Double> {
+        let tinted = plain * air(palette) / air(clearNoon)
+        let lum = luminance(tinted)
+        return lum > 1e-9 ? tinted * (luminance(plain) / lum) : plain
+    }
+
+    /// The sky's colour as the ground sees it: overhead and the horizon, half
+    /// and half.
+    private static func air(_ palette: SkyPalette) -> SIMD3<Double> {
+        (palette.zenith + palette.horizon) / 2
+    }
+
+    /// The sky the plot's light was set against: the orbit's noon, in no
+    /// season's air.
+    private static let clearNoon = SkyPalette.at(hour: 12, season: .orbit)
+
+    static func luminance(_ c: SIMD3<Double>) -> Double {
+        0.2126 * c.x + 0.7152 * c.y + 0.0722 * c.z
+    }
+
     /// The light at an hour of the day, `0..<24`.
+    ///
+    /// **The season colours it and does not move it.** The direction and the
+    /// strength are the orbit's, whatever the date, so the shadows and the
+    /// shading of the hills are as they were; the season moves only the
+    /// colour of the sun and of the sky's light, through the palette the day
+    /// sky is painted with. The night is the moon's and has no season.
     ///
     /// **The moon was brighter than the dawn**, and it is worth knowing why,
     /// because nothing was broken. The first pass had a full moon overhead at
@@ -60,7 +122,7 @@ extension GardenGround.Light {
     /// only when both were put on one slider. No test would have had an opinion
     /// about it, which is why the curve is pinned by its values rather than by
     /// its shape.
-    static func at(hour: Double) -> GardenGround.Light {
+    static func at(hour: Double, season: Season = .orbit) -> GardenGround.Light {
         let clock = ((hour.truncatingRemainder(dividingBy: 24)) + 24)
             .truncatingRemainder(dividingBy: 24)
         let isDay = clock >= 6 && clock < 18
@@ -81,15 +143,19 @@ extension GardenGround.Light {
 
         if isDay {
             let warmth = 0.35 + 0.65 * up
+            // The sky that is drawn behind the plot at this hour, from the
+            // same sun: see `SkyPalette.at(hour:season:)`.
+            let palette = SkyPalette.at(hour: clock, season: season)
             return GardenGround.Light(
                 direction: direction,
-                colour: SIMD3(1.00, 0.96, 0.88),
+                colour: sunlight(under: palette),
                 strength: 0.24 + 0.52 * up,
-                sky: skyByNight + (skyByDay - skyByNight) * warmth,
+                sky: skylight(under: palette, plain: skyByNight + (skyByDay - skyByNight) * warmth),
                 bounce: bounceByNight + (bounceByDay - bounceByNight) * warmth,
                 up: up,
                 isDay: true,
-                galaxy: galaxy(strength: 0.24 + 0.52 * up)
+                galaxy: galaxy(strength: 0.24 + 0.52 * up),
+                season: season
             )
         }
 
@@ -102,7 +168,8 @@ extension GardenGround.Light {
             bounce: bounceByNight * cool,
             up: up,
             isDay: false,
-            galaxy: galaxy(strength: 0.035 + 0.115 * up)
+            galaxy: galaxy(strength: 0.035 + 0.115 * up),
+            season: season
         )
     }
 
@@ -139,8 +206,8 @@ extension GardenGround.Light {
     /// plants are never lit from different hours.
     static let steps = 8
 
-    static func at(step: Int) -> GardenGround.Light {
-        at(hour: Double((step % steps + steps) % steps) / Double(steps) * 24)
+    static func at(step: Int, season: Season = .orbit) -> GardenGround.Light {
+        at(hour: Double((step % steps + steps) % steps) / Double(steps) * 24, season: season)
     }
 
     /// The two steps an hour falls between, and how far it is between them.

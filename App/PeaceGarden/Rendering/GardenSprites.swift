@@ -65,11 +65,12 @@ final class GardenSprites {
     }
 
     /// Bucketed the way a thumbnail is: a sprite does not need to follow growth
-    /// any more closely than the eye can see at this size.
+    /// any more closely than the eye can see at this size. The season is in it
+    /// because it colours the light the plant is photographed in.
     nonisolated static func key(genome: Genome, growth: GrowthModel.State,
-                                step: Int, turn: Int = 0) -> String {
+                                step: Int, turn: Int = 0, season: Season = .orbit) -> String {
         let bucket = Int(growth.overall * 24) * 10 + Int(growth.bloomOpen * 6)
-        return "\(genome.seed.hex)-\(bucket)-\(step)-\(((turn % 4) + 4) % 4)"
+        return "\(genome.seed.hex)-\(bucket)-\(step)-\(((turn % 4) + 4) % 4)-\(season.key)"
     }
 
     /// How many ways round a plant is drawn.
@@ -275,18 +276,21 @@ final class GardenSprites {
     ///   camera. The plant and the light are both rotated by it, which is what
     ///   the ground will do when the plot is turned, so a plant's near side stays
     ///   its near side and its light stays where the sun is.
+    /// - Parameter season: what colours the light, as it colours the ground's
+    ///   and the sky's (`GardenGround.Light.at(hour:season:)`).
     func sprite(genome: Genome, growth: GrowthModel.State,
-                step: Int, turn: Int = 0) -> Sprite? {
+                step: Int, turn: Int = 0, season: Season = .orbit) -> Sprite? {
         let quarter = ((turn % Self.turns) + Self.turns) % Self.turns
         let metres = frameMetres(for: genome)
-        let key = Self.key(genome: genome, growth: growth, step: step, turn: quarter) as NSString
+        let key = Self.key(genome: genome, growth: growth, step: step, turn: quarter,
+                           season: season) as NSString
         if let held = cache.object(forKey: key) {
             return Sprite(image: held.image, metres: metres, opaque: held.opaque, leaves: held.leaves)
         }
 
         let side = CGFloat(metres) * Self.renderedPointsPerMetre
         let view = SCNView(frame: CGRect(x: 0, y: 0, width: side, height: side))
-        view.scene = Self.makeScene(lit: GardenGround.Light.at(step: step)
+        view.scene = Self.makeScene(lit: GardenGround.Light.at(step: step, season: season)
             .turned(quarters: quarter))
         // Snapshotted with transparency so the ground shows through. If a plant
         // ever comes back as a black square, this is the pair of lines that did

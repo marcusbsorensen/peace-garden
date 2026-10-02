@@ -17,7 +17,7 @@ import XCTest
 /// through as `TEST_RUNNER_PG_RENDERS`. `PG_RENDERS_PREFIX` names the files
 /// (`plot` unless said), `PG_RENDERS_HOURS` the hours (8, 12, 17 and midnight
 /// unless said), `PG_RENDERS_WORLD` the ground (the first unless said) and
-/// `PG_RENDERS_TURN` the plot's quarter-turns.
+/// `PG_RENDERS_TURN` the plot's quarter-turns and `PG_RENDERS_DATE` the day.
 /// `PG_FRAMES`, also set, times frames while the clock is wound round.
 @MainActor
 final class PlotRenderTests: XCTestCase {
@@ -27,11 +27,21 @@ final class PlotRenderTests: XCTestCase {
 
     /// A night with the moon full, so the moon's shadows are at their
     /// strongest: 26 September 2026. The day ones are taken on the same date.
+    ///
+    /// `PG_RENDERS_DATE`, as `2026-06-21`, takes them on another day instead,
+    /// for the season's light: an hour before six is the morning after it.
     private static func date(hour: Int) -> Date {
+        let day = ProcessInfo.processInfo.environment["PG_RENDERS_DATE"]?
+            .split(separator: "-").compactMap { Int($0) }
         var parts = DateComponents()
-        parts.year = 2026; parts.month = 9; parts.day = hour < 6 ? 27 : 26
+        if let day, day.count == 3 {
+            parts.year = day[0]; parts.month = day[1]; parts.day = day[2]
+        } else {
+            parts.year = 2026; parts.month = 9; parts.day = 26
+        }
         parts.hour = hour; parts.minute = 0
-        return Calendar.current.date(from: parts)!
+        let date = Calendar.current.date(from: parts)!
+        return hour < 6 ? date.addingTimeInterval(86_400) : date
     }
 
     func testDrawThePlotRoundTheClock() async throws {

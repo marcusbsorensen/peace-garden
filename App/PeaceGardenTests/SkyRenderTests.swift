@@ -43,8 +43,9 @@ final class SkyRenderTests: XCTestCase {
         ]
 
         for hour in Self.hours {
-            let light = GardenGround.Light.at(hour: Double(hour))
             let when = Self.date(hour: hour)
+            // The sky reads its season off the light, as the plot's does.
+            let light = GardenGround.Light.at(hour: Double(hour), season: Season.here(at: when))
             let moment = Self.crossing(near: when, latitude: place.latitude) ?? when
             let ground = await GardenTerrain.shared.image(world: 0, plotSide: side, view: view,
                                                           size: frame.size, light: light)
@@ -211,7 +212,8 @@ final class SkyRenderTests: XCTestCase {
             let model = GrowthModel(genome: genome)
             let age = model.start(of: .mature) + 14 * 86_400
             let growth = model.state(birth: date.addingTimeInterval(-age), now: date)
-            guard let sprite = GardenSprites.shared.sprite(genome: genome, growth: growth, step: step) else { continue }
+            guard let sprite = GardenSprites.shared.sprite(genome: genome, growth: growth, step: step,
+                                                           season: Season.here(at: date)) else { continue }
             let y = GardenWorlds.shared.height(world: 0, x: spot.x, z: spot.z, plotSide: side)
             standing.append(Standing(
                 image: sprite.image,

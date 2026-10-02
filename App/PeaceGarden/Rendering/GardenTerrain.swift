@@ -47,11 +47,11 @@ actor GardenTerrain {
 
         // The light is part of what a drawing is, so it is part of the key. Six
         // minutes of clock is finer than the eye can tell on a hillside and
-        // coarse enough that a garden looked at for a while is drawn once.
+        // coarse enough that a garden looked at for a while is drawn once. The
+        // season is in it too, because it colours the light.
         let key = "\(world)-\(Int(size.width))x\(Int(size.height))"
             + "-\(Int(plotSide * 100))-\(Int(view.pointsPerMetre * 10))-\(detail)"
-            + "-\(Int(light.strength * 1000))-\(Int(light.direction.x * 100))"
-            + "-\(Int(light.direction.z * 100))-t\(((view.turn % 4) + 4) % 4)"
+            + "-\(light.key)-t\(((view.turn % 4) + 4) % 4)"
             + (region.map { "-r\(Int($0.minX)),\(Int($0.minY)),\(Int($0.width)),\(Int($0.height))" } ?? "")
             + "-s\(Int(sharpness * 10))"
         if let held = cache[key] { return held }
