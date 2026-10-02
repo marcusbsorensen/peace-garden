@@ -577,6 +577,14 @@ function route(string $method, string $path): never
             $beside = $theirs === null ? null : $store->wild()->answer($seed, $token, $shown);
             respond(200, ['planting' => $store->wild()->find($seed)] + ($beside ? ['beside' => $beside] : []));
         }
+        // **Taken down by the curator** (`curate.php`, since 2 October 2026):
+        // refused, before anything else is touched. Answered as a planting it
+        // would stand again, and a phone told its plant arrived lets it go —
+        // into a field that does not show it. Refused, the phone keeps it and
+        // says the field could not take it.
+        if ($store->wild()->isHidden($seed)) {
+            respond(410, ['error' => 'This plant cannot be released to the Wild Fields.']);
+        }
         if (!$store->offers()->letGo($seed, $token, time())) {
             // The same answer whether there was no token or the wrong one, as
             // `answer` and `withdraw` give, so the route says nothing about

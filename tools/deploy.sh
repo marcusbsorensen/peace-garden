@@ -188,6 +188,11 @@ check_path /strings/en.json     404 text/html
 # Server/README.md is for whoever deploys, not for the site.
 check_path /README.md           404 text/html
 
+# The curator's tool is run over ssh and never as a page. nginx's dot rule
+# refuses the whole of `.api/`; a 404 here would be PHP answering instead,
+# which means the rule has gone and only the tool's own guard is left.
+check_path /.api/curate.php     403 text/html
+
 echo
 echo "The association file iOS will actually read"
 aasa=$(curl -sS --max-time 25 "$BASE/.well-known/apple-app-site-association")

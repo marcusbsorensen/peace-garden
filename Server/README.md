@@ -42,6 +42,7 @@ peacegarden.app/
 │   ├── WildFields.php, WildStore.php  ← the Wild Fields' rule, and its table
 │   ├── Limits.php                     ← how often one caller may write
 │   ├── backup.php                     ← the nightly copy, from cron
+│   ├── curate.php                     ← taking a released plant down, over ssh
 │   └── config.example.php             ← copy to config.php, which git ignores
 ├── .htaccess                          ← for a host that reads one. This is not.
 ├── languages.json                     ← generated: tools/site/export.py
@@ -457,6 +458,9 @@ the service's own files unreachable, as it does `.pages/`.
     same *Alert me* switch.
   - Checked by `tools/reference/check_wild_fields.php`, in CI, against
     SeedCore's vectors.
+  - **Taking a plant down** is by hand, with `.api/curate.php` (below):
+    hidden, it is in no count and no tile, so neither are the names beside
+    it, and a second release of it answers `410`.
 - `POST /api/walk/plant` — **answers 403**: it is the one route that plants with
   nobody asked, and it exists for the reference check. A local copy opens it in
   `.api/config.php` (copy `config.example.php`; git ignores it and `deploy.sh`
@@ -502,6 +506,41 @@ anywhere is a way to send somebody's meetings somewhere else.
 `/.api/config.php` and the rest answer 403 from nginx's dot rule, so PHP-FPM
 never runs a service file directly. The service runs on the 20i MySQL database
 named in the server's `config.php`.
+
+## Taking a plant down
+
+Anybody can release a plant to the Wild Fields — a token carries consent, not
+authenticity — so a plant that should not stand is taken down by hand, over
+ssh, with `.api/curate.php` (since 2 October 2026):
+
+```
+ssh peacegarden
+php ~/public_html/.api/curate.php show 3fa9c1          # every plant beginning 3fa9c1; changes nothing
+php ~/public_html/.api/curate.php hide 3fa9c1          # takes it down, and prints what it took down
+php ~/public_html/.api/curate.php unhide 3fa9c1        # stands it again, exactly as it was
+php ~/public_html/.api/curate.php list                 # every plant taken down
+```
+
+A seed is read off the page; `hide` and `unhide` take the whole of it or any
+beginning of at least six characters that only one plant has. A beginning two
+plants share is refused, with both listed, and nothing changes.
+
+**Hiding sets `hidden` on the plant's row, and that is all it writes.** No
+public read serves a hidden plant: it is in no count at `/api/wild` and no
+tile at `/api/wild/tile/…`, and the names, place and month beside it are only
+ever served with it. The row stays, so its seed cannot be released again
+(`410`) or offered to an area (`410`), and the nightly copy carries it with
+the flag set. **Nothing is ever deleted**, and nothing is noted — no reason, no
+time, not who — because the field keeps no time and no name for anything. The
+two phones that grew it are not told: `pending` still answers them about it
+as before.
+
+It refuses to run as anything but a command (`PHP_SAPI !== 'cli'` answers 404),
+and is not a URL in the first place: nginx's dot rule answers 403 for
+everything under `/.api/` (checked by `tools/deploy.sh --check`), and the router
+serves only the `/api/` routes it names. Checked by
+`tools/reference/check_curate.php`, in CI, against a copy of the service
+served by PHP's own server.
 
 ## Keeping the walk
 

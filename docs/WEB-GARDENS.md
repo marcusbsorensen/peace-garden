@@ -1968,9 +1968,16 @@ to `Server/.api/WildFields.php` and held to it by
   child, as anybody can offer one; a token carries consent, not authenticity
   (§*The asking*). What is in front of that is the rate limit — release is the
   tightest write, nine a window, because it is the one nobody else agrees to
-  and nobody can undo — and a `hidden` column nothing sets yet, so a plant that
-  should not stand can be taken down by hand without a migration. The curator's
-  tool does not exist.
+  and nobody can undo — and a `hidden` column, so a plant that should not
+  stand can be taken down by hand without a migration. **Since 2 October 2026
+  the curator's tool exists**: `Server/.api/curate.php`, run over ssh (`hide`,
+  `unhide`, `show` and `list`, by seed or a beginning only one plant has;
+  `Server/README.md`, *Taking a plant down*). Hiding sets the flag and writes
+  nothing else — no reason, no time, not who — and deletes nothing. A hidden
+  plant is in no count and no tile, so neither are the names beside it; its
+  row stays, so the seed cannot be released again or offered to an area, and
+  the nightly copy keeps it. It will not run as a web page.
+  `tools/reference/check_curate.php` holds all of it, in CI.
 - `GET /api/wild` answers the field's size and how many plants stand in each
   tile that has any, which is what a page opens on; `GET /api/wild/tile/{x}/{z}`
   answers a tile's plantings, each its seed, parents and spot.
