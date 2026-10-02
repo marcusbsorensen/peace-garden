@@ -20,6 +20,13 @@
   1 October 2026, the day release began to send a plant to the Wild Fields,
   and is English in every language until it is commissioned.
 
+  **And a ninth, on walking the Wild Fields, only where it is true** (2
+  October 2026, Marcus's wording): the paths visitors wear run only where
+  `config.php` turns wear on, and `index.php` keeps the paragraph between its
+  two `wear` comments only there, so the page reads 1, 2, 3, 4, 6, 7, 8, 9, 5
+  where wear is on and is unchanged where it is off. English in every language
+  until it is commissioned, as the eighth was.
+
   Written in the reader's own language like everything else here. Marcus's call,
   6 September 2026: the reader of this page was handed a link by somebody they
   met and is wondering whether it is a scam, so it is the one page where falling
@@ -86,6 +93,7 @@
       <p class="body" data-s="privacy6"></p>
       <p class="body" data-s="privacy7"></p>
       <p class="body" data-s="privacy8"></p>
+      <!--wear--><p class="body" data-s="privacy9"></p><!--/wear-->
       <p class="body" data-s="privacy5"></p>
     </main>
 

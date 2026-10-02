@@ -53,7 +53,7 @@ try {
     // 2026), where wear is turned on: the first sweep of a day fades the
     // field, so a path nobody walks is grass again on time rather than when
     // the next visitor comes (`WildWear::settle`).
-    $grassed = ($config['wear'] ?? false) === true ? $store->wear()->settle($now) : 0;
+    $grassed = WildWear::on($config) ? $store->wear()->settle($now) : 0;
 } catch (Throwable $trouble) {
     fwrite(STDERR, gmdate('Y-m-d H:i:s') . '  no sweep: ' . $trouble->getMessage() . "\n");
     exit(1);

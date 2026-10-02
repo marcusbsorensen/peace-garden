@@ -44,7 +44,8 @@ declare(strict_types=1);
  * `'wear' => true` in `.api/config.php` (since 2 October 2026, `WildWear.php`).
  * The live site's `config.php` is written on the server and does not say so,
  * so there they answer 404 as any unknown route does, `GET /api/wild` says
- * nothing about wear, and the page records nothing and draws nothing. Wear
+ * nothing about wear, the page records nothing and draws nothing, and the
+ * privacy page leaves out the paragraph that describes it (`index.php`). Wear
  * is the first thing on the site that learns where people go, and it stays
  * off until the privacy page says so in every language
  * (`docs/WEB-GARDENS.md` §*Paths that visitors wear*).
@@ -102,6 +103,8 @@ require_once __DIR__ . '/Areas.php';
 require_once __DIR__ . '/Seeds.php';
 require_once __DIR__ . '/Limits.php';
 require_once __DIR__ . '/WalkStore.php';
+// `settings()`: `config.php` over the defaults, read the same way by the pages.
+require_once __DIR__ . '/settings.php';
 
 function respond(int $status, array $body): never
 {
@@ -117,21 +120,6 @@ function respond(int $status, array $body): never
     header('X-Content-Type-Options: nosniff');
     header('X-Robots-Tag: noindex');
     exit(json_encode($body, JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION));
-}
-
-function settings(): array
-{
-    $file = __DIR__ . '/config.php';
-    $given = is_file($file) ? require $file : [];
-    return $given + [
-        // Outside public_html, beside it, so the file is never a URL.
-        'dsn' => 'sqlite:' . dirname(__DIR__, 2) . '/peacegarden-data/walk.sqlite',
-        'user' => null,
-        'password' => null,
-        'open_for_planting' => false,
-        // Paths that visitors wear in the Wild Fields. Off; see above.
-        'wear' => false,
-    ];
 }
 
 /**
@@ -322,7 +310,7 @@ function route(string $method, string $path): never
     // **Wear, where it is off, is not there at all** — refused before the rate
     // limit, so a batch sent to a copy that has not turned it on is not even
     // counted against its sender.
-    if ($path === '/api/wild/wear' && $settings['wear'] !== true) {
+    if ($path === '/api/wild/wear' && !WildWear::on($settings)) {
         respond(404, ['error' => 'No such route.']);
     }
 
@@ -530,7 +518,7 @@ function route(string $method, string $path): never
         // `wear` only where wear is on: the cells' size and how many go
         // across, how many a batch may hold, and the least wear drawn — which
         // is how the page knows to record and draw it at all.
-        $wear = $settings['wear'] !== true ? [] : ['wear' => [
+        $wear = !WildWear::on($settings) ? [] : ['wear' => [
             'cell' => WildWear::CELL, 'cells' => WildWear::CELLS, 'most' => WildWear::MOST,
             'seen' => WildWear::SEEN,
         ]];

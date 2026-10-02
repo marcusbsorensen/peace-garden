@@ -1,44 +1,48 @@
 # The privacy page: paths that visitors wear
 
-Draft, 2 October 2026, English only. Not in `strings.js`: Marcus reads it
-first, then it is translated, and wear stays off on the live site until it has
-been (`docs/WEB-GARDENS.md` §*Paths that visitors wear*).
+**Settled by Marcus, 2 October 2026.** Drafted the same day in English; he
+rewrote it, and his wording is `privacy9` in `Server/assets/js/strings.js`,
+straight after `privacy8`. It is on the page only while wear is on
+(`Server/index.php`), and is commissioned on its own (`WEAR` in
+`tools/strings/commission.py`). The record is `docs/WEB-GARDENS.md`
+§*Paths that visitors wear*, *Built on /dev*. Nothing here is still open.
 
-## The paragraph
+## The paragraph, as settled
 
 > When you walk through the Wild Fields on this site, by dragging the field or
 > pressing its arrows, the page notes which squares of ground the middle of
 > your view crosses, each half a metre across. Every half minute or so, and
-> when you leave the page, it sends that list of squares to the Wild Fields, in
-> no particular order, and nothing with it. The Wild Fields keep one number for
-> each square, for how worn it is, and draw the numbers for everyone to see as
-> paths. Each square counts a few crossings a day at most, and every number
-> halves each month, so a path stays only while people keep walking it. The
-> numbers are all that is kept: they hold nothing about anyone, not who walked,
-> when, or where any one person went. Only walking counts: looking around,
-> coming closer and opening a plant send nothing.
+> when you leave the page, it sends the Wild Fields that list of squares
+> alone, sorted. The Wild Fields keep one number for each square, for how worn
+> it is, and draw the numbers as paths for everyone to see. Each square counts
+> a few crossings a day at most, and every number halves each month, so a path
+> stays only while people keep walking it. The numbers are all that is kept: a
+> count for each square of ground, the same whoever walked it and whenever.
+> Only walking counts; looking around, coming closer and opening a plant leave
+> the ground as it was.
 
 ## What each sentence rests on
 
 - *Dragging the field or pressing its arrows*, *the middle of your view*,
   *only walking counts*: `walkOn` in `Server/assets/js/wear.js`, which counts
   a drag and the pad's four directions, and nothing else.
-- *Every half minute or so, and when you leave*, *in no particular order*,
-  *nothing with it*: `EVERY`, the flush on `pagehide`, the sorted batch and
-  `sendCells` (no credentials, no referrer) in the same file.
+- *Every half minute or so, and when you leave the page*, *that list of
+  squares alone, sorted*: `EVERY`, the flush on `pagehide`, the sorted batch
+  and `sendCells` (no credentials, no referrer) in the same file.
 - *One number for each square*, *a few crossings a day*, *halves each month*:
-  `Server/.api/WildWear.php` — `wild_wear` is the cell, its wear and today's
-  count; `CAP` is six; `HALF_LIFE` is thirty days. The field's one date is
-  the day it was last faded, which is about the field, not any visit.
-- *Holds nothing about anyone*: no row per visitor or per batch, no time of
-  any visit, `WITHOUT ROWID` on SQLite. The address meets only the rate limit,
-  which `privacy5` already describes (a scrambled form, for up to an hour).
+  `Server/.api/WildWear.php`. `wild_wear` is the cell, its wear and today's
+  count, `CAP` is six, and `HALF_LIFE` is thirty days. The field's one date
+  is the day it was last faded, which is about the field, not any visit.
+- *A count for each square of ground, the same whoever walked it and
+  whenever*: no row per visitor or per batch, no time of any visit, and
+  `WITHOUT ROWID` on SQLite. The address meets only the rate limit, which
+  `privacy5` already describes.
 
-## Two choices for Marcus
+## The two choices, answered
 
-1. **Key and place.** Recommended: `privacy9`, read straight after `privacy8`,
-   so the two Wild Fields paragraphs sit together. Or: fold it into
-   `privacy8`, which is already the longest paragraph on the page.
-2. **Half a metre.** Recommended: keep it, because it tells a reader how
-   coarse the squares are, which is most of why they say nothing about a
-   person. Or: drop it, for a shorter first sentence.
+1. **Key and place:** `privacy9`, straight after `privacy8`, and shown only
+   while wear is on.
+2. **Half a metre:** kept.
+
+And the width of a path, judged on the renders: about a metre is right as it
+is.

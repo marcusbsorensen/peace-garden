@@ -262,10 +262,19 @@ if ($turnedOn) {
         $read = $ask('GET');
     }
     $sent = $ask('POST', '{"cells":[[1,2]]}');
+    // And the privacy page leaves out its paragraph on wear (2 October 2026),
+    // marks and all, so a site with wear off never describes it.
+    $privacy = (string) @file_get_contents("http://127.0.0.1:$port/privacy");
     proc_terminate($server);
     proc_close($server);
     check("where wear is not turned on, the field's wear cannot be read ($read)", $read === 404);
     check("nor a batch sent ($sent)", $sent === 404);
+    check('and the privacy page does not describe it',
+          str_contains($privacy, 'data-s="privacy8"') && !str_contains($privacy, 'privacy9')
+          && !str_contains($privacy, '<!--wear-->'));
+    $page = (string) file_get_contents(__DIR__ . '/../../Server/.pages/privacy');
+    check('though its paragraph is there for a site that has wear on',
+          str_contains($page, '<!--wear--><p class="body" data-s="privacy9"></p><!--/wear-->'));
 }
 
 unset($wear, $db);

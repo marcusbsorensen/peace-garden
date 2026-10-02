@@ -1901,10 +1901,12 @@ per cell and nothing else, and the privacy page says so before it runs.
 only where `Server/.api/config.php` says `'wear' => true`. That file is
 git-ignored and written on the server, and the server's does not say so.
 Where wear is off, both routes answer 404 before the rate limit or the
-database is touched, `GET /api/wild` carries no `wear`, and `/wild` never
-loads `wear.js`, so it counts, sends and draws nothing. The sweep fades the
-field only where wear is on. `tools/reference/check_wild_wear.php` asks a
-copy with no `config.php` for both routes, in CI, and expects 404.
+database is touched, `GET /api/wild` carries no `wear`, `/wild` never loads
+`wear.js`, so it counts, sends and draws nothing, and `/privacy` leaves out
+`privacy9`. The sweep fades the field only where wear is on.
+`tools/reference/check_wild_wear.php` asks a copy with no `config.php` for
+both routes and the privacy page, in CI, and expects 404 and eight
+paragraphs.
 
 - **The cells** are half a metre square, 128 to a side, so they come round
   with the field. A path is about one cell wide.
@@ -1954,13 +1956,41 @@ copy with no `config.php` for both routes, in CI, and expects 404.
 - **Renders:** `design/wild-wear-2026-10-02/wide.png`, at the furthest look
   over the hub, and `close.png`, at 2.2× on the busiest line.
 
+**Settled by Marcus, 2 October 2026**, on the draft and the renders:
+
+1. **The wording** of the privacy page's paragraph, his own:
+   > When you walk through the Wild Fields on this site, by dragging the field
+   > or pressing its arrows, the page notes which squares of ground the middle
+   > of your view crosses, each half a metre across. Every half minute or so,
+   > and when you leave the page, it sends the Wild Fields that list of squares
+   > alone, sorted. The Wild Fields keep one number for each square, for how
+   > worn it is, and draw the numbers as paths for everyone to see. Each square
+   > counts a few crossings a day at most, and every number halves each month,
+   > so a path stays only while people keep walking it. The numbers are all
+   > that is kept: a count for each square of ground, the same whoever walked
+   > it and whenever. Only walking counts; looking around, coming closer and
+   > opening a plant leave the ground as it was.
+2. **Its place:** `privacy9`, straight after `privacy8`, so the page reads 1,
+   2, 3, 4, 6, 7, 8, 9, 5 — and **only while wear is on**, so a deploy with
+   wear off never describes something that is not running. `index.php` keeps
+   the paragraph between its two `wear` marks only where `WildWear::on` says
+   so: the same switch, read the same way (`.api/settings.php`), as the routes.
+   Checked headless in English and Danish both ways: on, nine paragraphs, the
+   ninth in English under a Danish page; off, eight, and no trace of the ninth
+   in the page. In CI, `check_wild_wear.php` checks the off state.
+3. **The width:** about a metre is right as it is.
+
+`privacy9` is its own commission (`WEAR` in `tools/strings/commission.py`),
+printed by `commission.py --privacy <code>` after the eight, so the 41
+catalogues that already have the privacy page and the Wild Fields' strings
+are awaiting it rather than half-commissioned. `check.py` counts it.
+
 **Before it goes live:**
 
-1. Marcus reads `docs/drafts/privacy-wear.md`, the paragraph is added to
-   `strings.js` (proposed as `privacy9`), and it is translated into every
-   language the site speaks.
+1. `privacy9` is translated into every language the site speaks.
 2. The branch is merged and deployed, and `'wear' => true` is written into
-   the server's `config.php`. Nothing else changes.
+   the server's `config.php`, which turns on the routes, the page, the sweep's
+   fading and the privacy paragraph together. Nothing else changes.
 
 **What this build could not settle:**
 
@@ -1973,9 +2003,6 @@ copy with no `config.php` for both routes, in CI, and expects 404.
   so real wear will be broader and slower to form than the invented lines. A
   path is never drawn narrower than about 60 cm, because the cell is half a
   metre. Worth judging again once there is real traffic.
-- **The demo's busiest lines are about a metre wide** at the furthest look,
-  which may read as a track rather than a desire line. The renders are there
-  to decide from.
 
 ### What had to be fixed before it opened
 

@@ -461,7 +461,9 @@ the service's own files unreachable, as it does `.pages/`.
   - **Paths that visitors wear** (2 October 2026, `.api/WildWear.php`), **off
     unless `.api/config.php` says `'wear' => true`**, which the server's does
     not. Off, both routes answer 404 before the rate limit, `GET /api/wild`
-    carries no `wear`, and `/wild` does not load `wear.js`. On:
+    carries no `wear`, `/wild` does not load `wear.js`, and `/privacy` leaves
+    out `privacy9`, the paragraph that describes it (`index.php`, reading the
+    switch through `.api/settings.php` as the routes do). On:
     `GET /api/wild/wear` answers `[[x, z, wear], …]` for the field's
     half-metre cells, faded to today. `POST /api/wild/wear` takes
     `{cells: [[x, z], …]}`, at most 256, each counted once and at most six

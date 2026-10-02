@@ -112,6 +112,17 @@ final class WildWear
         )');
     }
 
+    /**
+     * Whether this copy has wear turned on: `'wear' => true` in `config.php`,
+     * and nothing else turns it on. Asked by the routes (`router.php`), the
+     * sweep (`sweep.php`) and the privacy page (`index.php`), so all three
+     * answer to the one switch.
+     */
+    public static function on(array $settings): bool
+    {
+        return ($settings['wear'] ?? false) === true;
+    }
+
     /** The day `$now` falls in, in whole days since 1970, UTC. */
     public static function day(int $now): int
     {
