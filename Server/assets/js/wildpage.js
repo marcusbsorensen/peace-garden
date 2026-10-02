@@ -122,6 +122,8 @@ async function field() {
   });
   flyOver(el('flies'), stage);
 
+  // The sky, which the field's ponds mirror: handed to the stage once it is
+  // drawn, and again each time it is drawn afresh for a turn.
   let sky = null;
   makeSky(el('sky'), {
     milkyWay: true,
@@ -129,7 +131,7 @@ async function field() {
     keepClear: () => [...document.querySelectorAll('.page .masthead')]
       .map((node) => node.getBoundingClientRect())
       .filter((box) => box.width > 0 && box.height > 0),
-  }).then((made) => { sky = made; }).catch((trouble) => {
+  }).then((made) => { sky = made; stage.reflect(el('sky')); }).catch((trouble) => {
     console.warn('no sky:', trouble);
   });
 
@@ -154,7 +156,7 @@ async function field() {
   await openMovePad({
     nav: el('keys'), canvas: el('stage'), stage, plots: 1, roam: true, plants,
     show: async () => { await stage.settled(); },
-    turned: () => sky?.draw(),
+    turned: () => { sky?.draw(); stage.reflect(el('sky')); },
   });
 }
 

@@ -19,6 +19,10 @@ parents without the other gardener's say — Marcus settled the same day: the
 plant goes as built, and release becomes a moment of contact, each gardener
 choosing what of theirs stands beside it (§*Who stands beside it*).
 
+On 2 October Marcus chose, from renders, how a water lily released there lies
+in water: the field's own hollows hold it, near a lotus (§*Water under a
+lotus*).
+
 ## The plants' shapes changed, 24 September 2026
 
 Every plant was narrow and tall, and Marcus chose to change their shape
@@ -2129,13 +2133,91 @@ is optional.
   it is the first thing on the site that learns where people go, and the
   privacy page has to say so before it runs. The field is ready for it — wear
   would be per ground cell, and the ground is already on a fixed grid.
-- **Water under a lotus.** A water lily released into the field lies on grass.
-  The Seedbed floods a drill for its lilies; whether the wild has ponds is a
-  question for a render.
+- **Water under a lotus**: built 2 October 2026, below. Reeds, which want the
+  same water, are not yet given it.
 - **Whether a released plant can be found again** is partly answered: a plant
   released with a meeting's tokens is kept as a note so its gardener can
   change what stands beside it, and *See it in the Wild Fields* finds it. A
   plant released without tokens still cannot be found by anyone.
+
+### Water under a lotus, chosen and built, 2 October 2026
+
+**Decided by Marcus on 2 October 2026, from renders**
+(`design/wild-lotus-2026-10-02/`): of three — a pool dug under every lotus
+(`a`), the land's own hollows holding water (`b`), and the gardens' pool dug
+under each lotus (`c`) — **the hollows**. The wild is unarranged and nobody
+digs it, so its water is found rather than made: it lies where the field's
+swells would hold it. The other two were prototypes and are not in the code;
+their renders stay beside the chosen one's.
+
+**The rule** is the page's (`wildwater.js`). SeedCore, the service and the
+vector files are unchanged, as the relief has only ever been drawn.
+
+- **The hollows are known before any plant is.** The swells are fixed
+  (§*Built*), so the field's fourteen hollows are too. Each holds a pond at the
+  deepest level up to 12 cm that keeps it inside the hollow and no wider than
+  22 m². Six hold the full 12 cm, four 8 to 11 cm, and four only 2.5 to 5.
+- **A hollow holds its pond once a lotus sheds water into it.** From the lotus
+  the way water runs downhill is followed, and if it ends in the hollow within
+  7 m, the pond is there. A lotus standing a little over the water, up to
+  20 cm above the hollow's bottom, raises the pond to 5 cm over its spot if the
+  hollow can hold that much.
+- **The same plants give the same water in any order**, so the field is the
+  same whichever tile came first: each lotus's claim is weighed against the
+  hollow's own pond, and the pond takes the highest it can hold.
+- **A lotus in a pond floats on it, and anywhere else it lies in a damp
+  patch**: the ground round it wet, and water standing in the low spots between
+  the tussocks. **Most lotuses are in damp patches**: 26 of 27 in an invented
+  field of 400, and 83 of 85 in one of 1,000, where thirteen ponds cover
+  190 m², a twentieth of the field. That was known when it was chosen.
+- **Any other plant whose seed puts it in a pond stands where it stands**
+  (§*The Wild Fields*), on a tussock that comes up 1.5 cm through the water
+  under it, lobed by its own seed. Its foot is seen and nothing of it is
+  drowned: it reads as a plant growing out of a tussock in the shallows.
+- **Reeds want the same water** (`Archetype.wantsWater`: a reed stands in the
+  shallows at a pool's edge as a lily lies on it). Not built: a reed released
+  into the field is drawn as any other plant is, on grass, or on a tussock if it
+  lands in a pond. Giving it a lotus's claim on a hollow, or a place at the
+  shore, is the next step.
+
+**At night, which out here is always, a pond shows the sky.** The gardens'
+water is a colour rather than a window, and under the field's light a pond of
+it read as a hole. The water keeps the gardens' two colours and adds:
+
+- **the stars, and the Milky Way's haze, that `sky.js` draws behind the
+  field**, read from that canvas and mirrored: the same column of the sky, at
+  an altitude that climbs toward the zenith the nearer the water is to the
+  reader, dimmed, and drawn out a little down the view. Plausible rather than
+  exact: an orthographic view has no one angle to mirror the sky at, and an
+  exact reflection would cost a second render pass;
+- **slow, low ripples** of three sizes, each turned its own way so nothing in
+  them runs straight. They make the stars waver and change how much sky the
+  water gives back, brighter where a ripple turns the surface from the eye,
+  and they hold still for a reader who has asked for less motion;
+- **the fireflies' light**, as on the grass, and a faint image of each firefly
+  over water, swaying and drawn out with the ripples.
+
+The sky comes in only with depth, so a damp patch's puddles show their floor
+rather than stars.
+
+**On the page.** Each tile's plantings are told to the water when the service
+answers it. When that changes the water on the ground already built, the
+ground is built again where it stands and every plant is set again on it, and
+the window does not move. Tiles out of sight round a hollow in sight are asked
+for, though not grown, so a pond does not depend on which way the reader
+walked to it. Near water the ground is drawn at 3.75 cm rather than 0.3 m,
+cell by cell, and each cell is kept for the water that reaches it.
+
+**What it costs**, measured headless in Chrome on a Mac (its own GPU, through
+Metal), 1400 × 900 at twice the pixels:
+
+- **The field is drawn again thirty times a second only while open water is
+  in the window**; otherwise it is drawn when it moves, as before. A frame is
+  0.25 ms of script and about 4 ms of GPU with a pond across a third of the
+  window, against 2 to 3.6 ms for a view with none (the GPU timer is noisy).
+- **Building the ground** takes 55 to 65 ms the first time a pond's cells are
+  worked out, 13 to 40 ms when a lotus arriving near it changes them, and 5 to
+  17 ms walking past it.
 
 ## What has to exist first
 
