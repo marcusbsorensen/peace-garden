@@ -5,17 +5,17 @@ import Foundation
 #endif
 
 /// A round glasshouse: the house the Glasshouse is since 2 October 2026, its
-/// wall a ring of glass, its roof a shallow dome of glass on curved ribs, a
-/// sliding door slid open round the outside of the wall. One of `Organic`'s
+/// wall a ring of glass, its roof a dome of glass on curved ribs, a sliding
+/// door slid open round the outside of the wall. One of `Organic`'s
 /// structures; the noise it wanders with is in `Organic`, and its bars are the
 /// bench's boards, swept along a curve.
 ///
 /// **Laid by hand, not turned on a lathe.** The wall follows the table's
-/// `house` curve (`PlaceTable.glasshouseWheel`), whose radius wanders outward by up
-/// to 4 cm, so the sill, the eaves and every ring up the dome wander with it;
-/// each post leans a few millimetres off true; and every bar is swept along a
-/// curve, so nothing in the house is a straight line (Marcus, 18 September).
-/// It was a span house with straight bars until then (`Organic.spanHouse`).
+/// `house` curve (`PlaceTable.glasshouseWheel`), whose radius wanders outward
+/// by up to 4 cm, so the sill, the eaves and every ring up the dome wander
+/// with it; each post leans a few millimetres off true; and every rib and ring
+/// is swept along a curve (Marcus, 18 September: no straight lines). It was a
+/// span house of straight bars until then, `Organic.spanHouse`, now gone.
 ///
 /// **In two pieces, because it is two materials**, as the cold frame's lights
 /// are: the painted bars, lit as the bench is, and the glass, which the page

@@ -103,7 +103,14 @@ plant 0.63 m under the dome.
 
 ## What a replant needs
 
-**Nothing it must have.**
+**A deploy re-lays the existing plots by itself.** The service stores a
+planting's slot (bed, band or bed place, row) and its nudge, not where it
+stands. It works the spot out when it serves the planting
+(`GlasshouseStore::planting` → `Glasshouse::standing`, from the table). So
+once the new port is deployed, every plant already in the live Glasshouse
+stands in the round house at its slot's new spot, with no data changed.
+
+**Nothing a replant must do.**
 - Capacities are unchanged.
 - Every slot an existing planting holds (bed, band or bed place, row) is a
   slot of the new house.
@@ -133,10 +140,9 @@ All minimal, and only this area's lines:
 - **`tools/reference/check_offers.php`**: the two Glasshouse expectations. An
   unhued offer takes the first pot the table offers; the bed's next place
   follows the ambassador.
-- **`tools/reference/check_curate.php`**: it copies `Server/.api/*.php` into a
-  scratch site and now copies `.api/tables/*.php` too. **Every area whose port
-  reads a table needs this**, or the copy cannot load the router. The other
-  area agents may make the same change.
+- `tools/reference/check_curate.php` is not changed here. It needs to copy
+  `.api/tables/` into its throwaway service, or any port that reads a table
+  fails it. Main's fix (`cd6e234`) is merged in.
 
 ## Renders
 
