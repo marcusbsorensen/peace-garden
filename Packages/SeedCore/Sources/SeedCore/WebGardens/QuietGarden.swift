@@ -157,12 +157,16 @@ public enum QuietGarden {
     /// group one way. The same plant is the middle of a border there and the
     /// back of a group here, which is what having two areas means.
     ///
-    /// **Kept at 1.08 when the groups became a five and a three** (2 October
-    /// 2026): three backs in eight group places is 37.5%, against the third
-    /// it was cut for, and the specimen and the echo take any height, so the
-    /// tallest third of ten places is still about right. The fill, measured on
-    /// SeedCore's own plants by `tools/layouts/harness`, is what says so.
-    public static let backFrom = 1.08
+    /// **1.04 since 2 October 2026, when the groups became a five and a
+    /// three.** The five has two backs where a group of three had one, so it
+    /// needs two tall plants of its colour or a tone of it. At 1.08 the
+    /// settled rooms held 99.5% at a thousand arrivals, and all five empty
+    /// places were backs of the five. 1.04 is the 67th centile of this area's
+    /// own thousand (plumes and poppies, as the Cold Frame measures its cut on
+    /// its own plants), and on `tools/layouts/harness`'s stream it fills the
+    /// settled rooms to 100% at a hundred and at a thousand, with plots and
+    /// places held unchanged. Marcus's decision, 2 October 2026.
+    public static let backFrom = 1.04
 
     public static func stand(height: Double) -> Stand {
         height < backFrom ? .arm : .back

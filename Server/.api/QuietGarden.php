@@ -45,8 +45,12 @@ final class QuietGarden
     public const VARIANTS = ['turns' => 4, 'mirror' => true, 'nudges' => 1];
     public const HEDGE_FROM = 2.3;
     public const AT_THE_HEDGE = 1.95;
-    /** The 67th centile of grown heights: 1.08 since 29 September 2026. */
-    public const BACK_FROM = 1.08;
+    /**
+     * The cut between back and arm: 1.04 since 2 October 2026, the 67th
+     * centile of this area's own plants, so the five's two backs fill (1.08
+     * from 29 September). The Swift's `backFrom`.
+     */
+    public const BACK_FROM = 1.04;
     /** Where the bench stands in the table's frame, on its corner's diagonal. */
     public const BENCH_SPOT = [-1.72, -1.72];
 
