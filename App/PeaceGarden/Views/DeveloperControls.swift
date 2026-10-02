@@ -59,6 +59,20 @@ final class Developer {
 
     private static let gridKey = "developer.showsTileGrid"
 
+    /// Draws the day as it was before 2 October — one radial in a petrol
+    /// blue — in place of the sky Marcus chose, to compare the two on a real
+    /// garden.
+    ///
+    ///     xcrun simctl launch <device> app.peacegarden -pgOldSky YES
+    ///
+    /// Kept in `UserDefaults` for the same reason as the grid. A launch
+    /// argument wins over what was kept, for screenshots.
+    var showsTheOldDay: Bool {
+        didSet { UserDefaults.standard.set(showsTheOldDay, forKey: Self.oldDayKey) }
+    }
+
+    private static let oldDayKey = "developer.showsTheOldDay"
+
     /// One of the four screens behind a mark, opened as the stage appears.
     ///
     ///     xcrun simctl launch <device> app.peacegarden -pgOpen settings
@@ -114,6 +128,9 @@ final class Developer {
     private init() {
         clockShift = UserDefaults.standard.double(forKey: Self.shiftKey)
         showsTileGrid = UserDefaults.standard.bool(forKey: Self.gridKey)
+        showsTheOldDay = UserDefaults.standard.object(forKey: "pgOldSky") != nil
+            ? UserDefaults.standard.bool(forKey: "pgOldSky")
+            : UserDefaults.standard.bool(forKey: Self.oldDayKey)
         openOnLaunch = UserDefaults.standard.string(forKey: "pgOpen")
             .flatMap(Screen.init(rawValue:))
     }
@@ -225,6 +242,7 @@ struct DeveloperSection: View {
             clock
             meeting
             garden
+            sky
         }
     }
 
@@ -307,6 +325,27 @@ struct DeveloperSection: View {
             .pressable(isProminent: true)
 
             Text(verbatim: "Which screen the garden mark opens. The grid is what the plot replaced; it is kept here so the two can be compared on a real garden.")
+                .font(.system(size: 13, weight: .light))
+                .foregroundStyle(Chrome.muted)
+                .lineSpacing(4)
+        }
+    }
+
+    // MARK: The sky
+
+    private var sky: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Button {
+                developer.showsTheOldDay.toggle()
+            } label: {
+                Text(verbatim: developer.showsTheOldDay ? "Sky: the old day" : "Sky: as chosen")
+            }
+            .buttonStyle(.plain)
+            .font(.system(size: 15, weight: .light))
+            .foregroundStyle(Chrome.ink)
+            .pressable(isProminent: true)
+
+            Text(verbatim: "The day sky Marcus chose on 2 October, or the petrol one it replaced, to compare the two. The night is the same in both.")
                 .font(.system(size: 13, weight: .light))
                 .foregroundStyle(Chrome.muted)
                 .lineSpacing(4)
