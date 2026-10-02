@@ -16,18 +16,12 @@ Tonight's batch live and in build 6: the Wild Fields with water, worn paths and 
 - **Live**: `b104cf3` deployed 2 October, with wear on (`'wear' => true` in the live config.php). All 42 header checks and 17 pages are clean, and the wear POSTs return 200. Screenshots are in `out/deploy-2026-10-02b/`. Before this, `d7c5d48` was live; a rollback copy is in the session scratchpad at `live-d7c5d48`.
 - **Build 6 uploaded** (1.0 (6), delivery `b56c27e2-…`). Its 170 tests: 163 passed, 0 failed, 7 skipped (the opt-in renders); SeedCore 422 passed. The archive is `build/PeaceGarden-1.0-6.xcarchive` and the ipa is in `build/export-6/`. `project.yml` is at 6.
 - **Running**:
-  - **New layouts for the ten areas.** Marcus took every recommendation in `design/garden-layouts-2026-10-02/RESEARCH.md`. The foundation is merged (`1dc6b50`, `tools/layouts/`): plot variants, offline place tables, fill orders, a harness on real plants, and `BASELINE.md`. Five area agents are building in worktrees and pushing `worktree-agent-*`:
-    - walk-seed (port 8811);
-    - water: Quiet, Crossing, Cold Frame and `water.js` (8812);
-    - trees: Orchard, Coppice (8813);
-    - beds: Knot, Home Ground (8814);
-    - glass: Glasshouse (8815).
-
-    Their brief is in the session scratchpad as `area-brief.md`. Each writes notes and renders to `design/garden-layouts-2026-10-02/built/`. Then:
-    - fold their notes into `docs/WEB-GARDENS.md`;
-    - show Marcus the renders;
-    - replant the live garden by the runbook;
-    - deploy.
+  - **New layouts for all ten areas: on main (`1650178`), not live.**
+    - All ten areas are built on option A, with Marcus's answers applied. Every check passes with all ten together, and `docs/WEB-GARDENS.md` has the built notes and decisions folded in.
+    - Harness at 1,000: no area is worse than the baseline. The Long Walk improves (22 plots, 98.9% held in settled plots); the Quiet Garden reaches 100%.
+    - Still running: the Seedbed agent, curving the drills more with narrower gaps (Marcus, 2 October).
+    - Renders are in `design/garden-layouts-2026-10-02/built/`.
+    - **Going live** needs a replant, using `tools/replant` and its runbook: the Long Walk (slot meanings changed), the Quiet Garden (full) and the Cold Frame's water. Every other area re-lays itself on deploy, because the service computes positions from the stored slot. Ask Marcus for the go before the live replant.
 - **Then**:
   - Marcus tries /wild on his phone;
   - install build 6 from TestFlight on a real phone;
