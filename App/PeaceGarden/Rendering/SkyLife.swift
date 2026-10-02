@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// D: now and again, a few birds crossing very high.
+/// Now and again, a few birds crossing very high.
 ///
 /// **A moment, not a screensaver.** Each quarter of an hour has about one
 /// chance in four of a crossing, and a crossing lasts half a minute. Somebody
@@ -238,11 +238,9 @@ enum SkyLife {
 ///
 /// **Nothing is drawn that has not moved.** Clouds drift a fraction of a
 /// point a frame, so twelve frames a second is smooth; a bird's wings need
-/// thirty; and with no clouds and no bird in the sky the next entry is the
+/// thirty; and on a clear day with no bird in the sky the next entry is the
 /// moment the next crossing sets out, so the canvas sleeps until then.
 struct SkyMotionSchedule: TimelineSchedule {
-    let clouds: Bool
-    let life: Bool
     /// The developer clock's shift, so the motion runs on the garden's clock.
     let shift: TimeInterval
     let latitude: Double
@@ -266,11 +264,11 @@ struct SkyMotionSchedule: TimelineSchedule {
     func after(_ date: Date, sparing: Bool) -> Date {
         if sparing { return date.addingTimeInterval(1) }
         let garden = date.addingTimeInterval(shift)
-        if life, SkyLife.flight(at: garden, latitude: latitude) != nil {
+        if SkyLife.flight(at: garden, latitude: latitude) != nil {
             return date.addingTimeInterval(1.0 / 30)
         }
-        if clouds { return date.addingTimeInterval(1.0 / 12) }
-        if life, let next = SkyLife.nextStart(after: garden, latitude: latitude) {
+        if !SkyClouds.day(garden).clouds.isEmpty { return date.addingTimeInterval(1.0 / 12) }
+        if let next = SkyLife.nextStart(after: garden, latitude: latitude) {
             return max(date.addingTimeInterval(1.0 / 30), next.addingTimeInterval(-shift))
         }
         return date.addingTimeInterval(60)

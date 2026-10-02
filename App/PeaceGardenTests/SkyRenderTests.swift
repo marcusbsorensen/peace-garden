@@ -4,24 +4,26 @@ import UIKit
 import XCTest
 @testable import PeaceGarden
 
-/// **The day skies of 2 October, drawn behind a plot the way the garden frames it.**
+/// **The day sky drawn behind a plot the way the garden frames it.**
 ///
 /// Skipped unless `PG_RENDER_SKY` names a folder (passed to the test runner as
 /// `TEST_RUNNER_PG_RENDER_SKY`). Nothing else draws the sky and the plot
 /// together, and a sky is judged by what it does behind a garden, so this
-/// writes the pictures rather than asserting anything about them: every
-/// `SkyLook` at 07, 10, 13, 17 and 19, a contact sheet an hour, and what each
-/// one costs to draw.
+/// writes the pictures rather than asserting anything about them — `final-07`,
+/// `final-13` and `final-17` on 2 October 2026, the day Marcus chose it — and
+/// what the sky costs to draw.
 ///
-/// The plot is world 0 at the web plot's 5.2 metres, with five plants standing
-/// on it, framed between the heading and the plus as `PlotView.framing` frames
-/// it, under the real heading and Close. Shadows are left out: they are being
-/// redrawn elsewhere, and this is about the sky.
+/// The plot is world 0 at the web plot's 5.2 metres, with five grown plants on
+/// it, framed between the heading and the plus as `PlotView.framing` frames it,
+/// under the real heading and Close. Shadows are left out: they are drawn
+/// elsewhere, and this is about the sky. The birds are rare, so each hour is
+/// drawn at the nearest moment a crossing is halfway over, with the light
+/// still the hour's; `notes.txt` says when.
 @MainActor
 final class SkyRenderTests: XCTestCase {
-    static let hours = [7, 10, 13, 17, 19]
+    static let hours = [7, 13, 17]
 
-    func testDrawEverySkyBehindThePlot() async throws {
+    func testDrawTheSkyBehindThePlot() async throws {
         guard let path = ProcessInfo.processInfo.environment["PG_RENDER_SKY"], !path.isEmpty else {
             throw XCTSkip("PG_RENDER_SKY is not set")
         }
@@ -30,8 +32,7 @@ final class SkyRenderTests: XCTestCase {
 
         let frame = Self.frame()
         let side = GardenWorlds.drawnForSide
-        let worlds = GardenWorlds.shared
-        let relief = worlds.relief(world: 0, plotSide: side)
+        let relief = GardenWorlds.shared.relief(world: 0, plotSide: side)
         let view = Isometric.fitting(plotSide: side, in: frame.size, area: frame.area,
                                      headroom: GardenSprites.tallestExpected + relief.high,
                                      soilDepth: GardenGround.rimDepth - relief.low)
@@ -41,130 +42,85 @@ final class SkyRenderTests: XCTestCase {
                 + "latitude \(place.latitude)"
         ]
 
-        var sheets: [Int: [(String, UIImage)]] = [:]
         for hour in Self.hours {
             let light = GardenGround.Light.at(hour: Double(hour))
             let when = Self.date(hour: hour)
+            let moment = Self.crossing(near: when, latitude: place.latitude) ?? when
             let ground = await GardenTerrain.shared.image(world: 0, plotSide: side, view: view,
                                                           size: frame.size, light: light)
             let plants = Self.plants(at: when, hour: Double(hour), view: view, side: side)
-
-            for look in SkyLook.allCases {
-                // D waits for a crossing: the nearest one to the hour, caught
-                // halfway over. The light is still the hour's.
-                var moment = when
-                if look.hasLife, light.isDay, let crossing = Self.crossing(near: when, latitude: place.latitude) {
-                    moment = crossing
-                    notes.append("\(look.letter) \(hour): birds at \(Self.clock(crossing))")
-                }
-                let image = render(light: light, date: moment, view: view, frame: frame, look: look,
-                                   ground: ground, plants: plants)
-                let name = "\(look.letter.lowercased())-\(String(format: "%02d", hour))"
-                try write(image, to: folder.appendingPathComponent("\(name).png"))
-                sheets[hour, default: []].append((look.letter, image))
-            }
-            if light.isDay {
-                notes.append("\(hour): weather \(SkyClouds.day(when).weather.rawValue), "
-                    + "moon at \(Self.round(RealSky.moon(at: when, place: place).altitude))°, "
-                    + "planet \(RealSky.brightestPlanet(at: when, place: place).map { "\($0.name) \(Self.round($0.altitude))°" } ?? "none")")
-            }
+            let image = render(light: light, date: moment, view: view, frame: frame,
+                               ground: ground, plants: plants)
+            try write(image, to: folder.appendingPathComponent("final-\(String(format: "%02d", hour)).png"))
+            notes.append("final-\(String(format: "%02d", hour)): \(SkyClouds.day(moment).weather.rawValue) day, "
+                + "birds (\(SkyLife.kind(on: moment, latitude: place.latitude).rawValue)) at \(Self.clock(moment)), "
+                + "moon at \(Self.round(RealSky.moon(at: moment, place: place).altitude))°")
         }
 
-        for (hour, panels) in sheets {
-            try write(Self.sheet(panels, hour: hour), to: folder.appendingPathComponent(
-                "sheet-\(String(format: "%02d", hour)).png"))
-        }
-
-        try await extras(into: folder, frame: frame, view: view, side: side, latitude: place.latitude, notes: &notes)
         notes.append(contentsOf: frameCosts(frame: frame, view: view, latitude: place.latitude))
         try notes.joined(separator: "\n").write(to: folder.appendingPathComponent("notes.txt"),
                                                 atomically: true, encoding: .utf8)
     }
 
-    // MARK: The other days
+    // MARK: What it costs
 
-    /// What one date cannot show: the other weathers B deals, and the swifts
-    /// D has in summer.
-    private func extras(into folder: URL, frame: Frame, view: Isometric, side: Double, latitude: Double,
-                        notes: inout [String]) async throws {
-        let hour = 13
-        let light = GardenGround.Light.at(hour: Double(hour))
-        let today = Self.date(hour: hour)
-        let plants = Self.plants(at: today, hour: Double(hour), view: view, side: side)
-
-        for weather in [SkyClouds.Weather.fair, .high, .mixed] {
-            guard let day = (1...60).lazy.map({ today.addingTimeInterval(Double($0) * 86_400) })
-                .first(where: { SkyClouds.day($0).weather == weather }) else { continue }
-            let image = render(light: light, date: day, view: view, frame: frame, look: .clouds,
-                               ground: nil, plants: plants, groundAsync: true)
-            try write(image, to: folder.appendingPathComponent("b-13-\(weather.rawValue).png"))
-            notes.append("b-13-\(weather.rawValue): \(Self.day(day))")
-        }
-
-        // The last of the light, which no hour on the list catches: the
-        // orbit's sun is sixteen degrees down by seven.
-        let dusk = Self.date(hour: 18, minute: 20)
-        let afterglow = GardenGround.Light.at(hour: 18 + 20.0 / 60)
-        let duskGround = await GardenTerrain.shared.image(world: 0, plotSide: side, view: view,
-                                                          size: frame.size, light: afterglow)
-        for look in [SkyLook.now, .hour] {
-            let image = render(light: afterglow, date: dusk, view: view, frame: frame, look: look,
-                               ground: duskGround, plants: Self.plants(at: dusk, hour: 18.33, view: view, side: side))
-            try write(image, to: folder.appendingPathComponent("\(look.letter.lowercased())-18-20.png"))
-        }
-
-        var summer = DateComponents()
-        summer.year = 2026; summer.month = 7; summer.day = 10; summer.hour = hour
-        if let july = Calendar.current.date(from: summer),
-           let crossing = Self.crossing(near: july, latitude: latitude) {
-            let image = render(light: light, date: crossing, view: view, frame: frame, look: .life,
-                               ground: nil, plants: plants, groundAsync: true)
-            try write(image, to: folder.appendingPathComponent("d-13-july.png"))
-            notes.append("d-13-july: swifts at \(Self.day(crossing)) \(Self.clock(crossing))")
-        }
-    }
-
-    // MARK: What each costs
-
-    /// What each sky costs to draw, at the phone's own scale, averaged.
+    /// What the sky costs to draw, at the phone's own scale, averaged.
     ///
     /// **These are the simulator's CPU rasterising into a CoreGraphics
     /// bitmap**, not the phone's GPU drawing a canvas, so they are for
-    /// comparing the options with each other and with `now`, not a promise
-    /// about a frame on a device.
+    /// comparing with each other and with the old sky, not a promise about a
+    /// frame on a device.
     ///
-    /// Two numbers, because the sky is two canvases. The still one — the
-    /// gradient, the stars, the bodies — is drawn again only when the
-    /// garden's clock ticks, every twenty seconds. Only the moving one —
-    /// clouds and birds — is drawn every frame, at twelve frames a second
-    /// for clouds, thirty during a crossing, and not at all otherwise.
+    /// Two canvases. The still one — the day's light, the stars, the bodies —
+    /// is drawn again when the garden's clock ticks, every twenty seconds, and
+    /// its picture is painted again at most once a minute. The moving one —
+    /// clouds and birds — is drawn every frame, at twelve frames a second for
+    /// clouds, thirty during a crossing, and not at all on a clear day between
+    /// crossings.
     private func frameCosts(frame: Frame, view: Isometric, latitude: Double) -> [String] {
+        let light = GardenGround.Light.at(hour: 10)
+        let keepClear = [frame.heading, frame.close]
+        // The still canvas alone: a day with no clouds, at a moment with no
+        // birds, so nothing that moves is drawn into it.
+        let calm = (0..<120).lazy
+            .map { Self.date(hour: 10).addingTimeInterval(Double($0) * 86_400) }
+            .first { SkyClouds.day($0).clouds.isEmpty && SkyLife.flight(at: $0, latitude: latitude) == nil }
+            ?? Self.date(hour: 10)
+
         var lines = ["", "frame costs at 10:00, ms of CoreGraphics at 3x, mean of 12 after a warm-up",
                      "still canvas (redrawn every 20 s):"]
-        let when = Self.date(hour: 10)
-        let light = GardenGround.Light.at(hour: 10)
-        let birds = Self.crossing(near: when, latitude: latitude) ?? when
-        let keepClear = [frame.heading, frame.close]
-
-        // B and D add nothing to the still canvas, so theirs is A's, and
-        // BCD's is C's.
-        for look in [SkyLook.now, .hour, .season] {
+        func still(_ name: String, asItWas: Bool, repaint: Bool) {
             let ms = Self.cost(size: frame.size) { index in
-                GardenSky(light: light, date: when.addingTimeInterval(Double(index) / 1000), view: view,
-                          keepClear: keepClear, look: look, isStill: true)
+                if repaint { DaySky.forget() }
+                return GardenSky(light: light, date: calm.addingTimeInterval(Double(index) / 1000), view: view,
+                                 keepClear: keepClear, asItWas: asItWas, isStill: true)
             }
-            lines.append("  \(look.letter): \(String(format: "%.1f", ms))")
+            lines.append("  \(name): \(String(format: "%.1f", ms))")
         }
+        still("the old day", asItWas: true, repaint: false)
+        still("chosen, picture kept (every redraw)", asItWas: false, repaint: false)
+        still("chosen, picture painted again (once a minute)", asItWas: false, repaint: true)
+
+        // What the picture saves: the same gradients painted at full size,
+        // which is what the still canvas did on every redraw before.
+        let palette = SkyPalette.at(elevation: SunPath.elevation(atHour: 10, peak: 35))
+        let sun = CGPoint(x: 12, y: 180)
+        var full: TimeInterval = 0
+        for _ in 0..<12 {
+            let start = Date()
+            _ = DaySky.paint(palette, sun: sun, size: frame.size, perPoint: 3)
+            full += Date().timeIntervalSince(start)
+        }
+        lines.append("  the day's gradients alone, painted full size: \(String(format: "%.1f", full / 12 * 1000))")
 
         lines.append("moving canvas (redrawn every frame while anything moves):")
-        let palette = SkyPalette.at(elevation: SunPath.elevation(atHour: 10))
-        let sun = CGPoint(x: 12, y: 180)
-        let moving: [(String, Bool, Bool)] = [("B clouds", true, false), ("D birds, mid-crossing", false, true),
-                                              ("BCD both", true, true)]
+        let busy = Self.crossing(near: Self.date(hour: 10), latitude: latitude) ?? Self.date(hour: 10)
+        let moving: [(String, Bool, Bool)] = [("clouds", true, false), ("birds, mid-crossing", false, true),
+                                              ("both", true, true)]
         for (name, clouds, life) in moving {
             let ms = Self.cost(size: frame.size) { index in
                 Canvas { context, size in
-                    let moment = birds.addingTimeInterval(Double(index) / 30)
+                    let moment = busy.addingTimeInterval(Double(index) / 30)
                     if clouds {
                         SkyClouds.draw(at: moment, in: &context, size: size, palette: palette, sun: sun,
                                        up: light.up, keepClear: keepClear)
@@ -266,16 +222,12 @@ final class SkyRenderTests: XCTestCase {
         return standing
     }
 
-    private func render(light: GardenGround.Light, date: Date, view: Isometric, frame: Frame, look: SkyLook,
-                        ground: UIImage?, plants: [Standing], groundAsync: Bool = false) -> UIImage {
-        var ground = ground
-        if ground == nil, groundAsync {
-            ground = Self.groundCache[Int(light.strength * 1000)]
-        }
+    private func render(light: GardenGround.Light, date: Date, view: Isometric, frame: Frame,
+                        ground: UIImage?, plants: [Standing]) -> UIImage {
         let content = ZStack(alignment: .topLeading) {
             Color.black
             GardenSky(light: light, date: date, view: view, keepClear: [frame.heading, frame.close],
-                      look: look, isStill: true)
+                      asItWas: false, isStill: true)
             if let ground {
                 Image(uiImage: ground).resizable().frame(width: frame.size.width, height: frame.size.height)
             }
@@ -307,42 +259,12 @@ final class SkyRenderTests: XCTestCase {
 
         let renderer = ImageRenderer(content: content)
         renderer.scale = 2
-        let image = renderer.uiImage ?? UIImage()
-        if let ground { Self.groundCache[Int(light.strength * 1000)] = ground }
-        return image
-    }
-
-    private static var groundCache: [Int: UIImage] = [:]
-
-    /// One hour, every sky side by side, each labelled.
-    static func sheet(_ panels: [(String, UIImage)], hour: Int) -> UIImage {
-        let panelWidth: CGFloat = 300
-        let first = panels.first?.1.size ?? CGSize(width: 420, height: 912)
-        let panelHeight = panelWidth * first.height / first.width
-        let gap: CGFloat = 10, label: CGFloat = 34
-        let size = CGSize(width: CGFloat(panels.count) * (panelWidth + gap) + gap,
-                          height: panelHeight + label + gap * 2)
-        let format = UIGraphicsImageRendererFormat()
-        format.scale = 1
-        return UIGraphicsImageRenderer(size: size, format: format).image { context in
-            UIColor(white: 0.06, alpha: 1).setFill()
-            context.fill(CGRect(origin: .zero, size: size))
-            let style: [NSAttributedString.Key: Any] = [
-                .font: UIFont.systemFont(ofSize: 20, weight: .light),
-                .foregroundColor: UIColor(white: 1, alpha: 0.85)
-            ]
-            for (index, panel) in panels.enumerated() {
-                let x = gap + CGFloat(index) * (panelWidth + gap)
-                ("\(panel.0)  \(String(format: "%02d", hour)):00" as NSString)
-                    .draw(at: CGPoint(x: x + 4, y: gap), withAttributes: style)
-                panel.1.draw(in: CGRect(x: x, y: gap + label, width: panelWidth, height: panelHeight))
-            }
-        }
+        return renderer.uiImage ?? UIImage()
     }
 
     // MARK: Dates
 
-    /// 2 October 2026, the day Marcus asked, at an hour in this time zone.
+    /// 2 October 2026, the day Marcus chose the sky, at an hour in this time zone.
     static func date(hour: Int, minute: Int = 0) -> Date {
         var parts = DateComponents()
         parts.year = 2026; parts.month = 10; parts.day = 2; parts.hour = hour; parts.minute = minute
@@ -366,11 +288,6 @@ final class SkyRenderTests: XCTestCase {
     private static func clock(_ date: Date) -> String {
         let parts = Calendar.current.dateComponents([.hour, .minute, .second], from: date)
         return String(format: "%02d:%02d:%02d", parts.hour ?? 0, parts.minute ?? 0, parts.second ?? 0)
-    }
-
-    private static func day(_ date: Date) -> String {
-        let parts = Calendar.current.dateComponents([.year, .month, .day], from: date)
-        return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
     }
 
     private static func round(_ value: Double) -> String { String(format: "%.0f", value) }

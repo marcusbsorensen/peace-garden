@@ -3,9 +3,9 @@ import simd
 import XCTest
 @testable import PeaceGarden
 
-/// The proposed day skies of 2 October: the arithmetic under them, which a
+/// The day sky chosen on 2 October: the arithmetic under it, which a
 /// render would show wrong without saying why.
-final class SkyLookTests: XCTestCase {
+final class DaySkyTests: XCTestCase {
 
     /// The sky is handed a light, not an hour, and has to get the hour back.
     func testTheHourComesBackOffTheLight() {
@@ -50,6 +50,15 @@ final class SkyLookTests: XCTestCase {
             let contrast = 1.05 / (luminance(zenith) + 0.05)
             XCTAssertGreaterThan(contrast, 5.5, "white on the zenith at \(elevation)°")
         }
+    }
+
+    /// **The day's light is painted at half a pixel a point** and kept, which
+    /// is what makes redrawing the sky cheap.
+    func testTheDaysPictureIsSmall() {
+        let image = DaySky.paint(SkyPalette.at(elevation: 30), sun: CGPoint(x: 40, y: 200),
+                                 size: CGSize(width: 420, height: 912), perPoint: DaySky.perPoint)
+        XCTAssertEqual(image?.width, 210)
+        XCTAssertEqual(image?.height, 456)
     }
 
     /// **Held to two eclipses**, which are the moments the sun and moon are

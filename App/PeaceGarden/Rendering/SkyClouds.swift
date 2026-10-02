@@ -2,7 +2,7 @@ import CoreImage
 import SwiftUI
 import UIKit
 
-/// B: the day's clouds.
+/// The day's clouds.
 ///
 /// **The same sky for everyone on a given day.** Which weather it is, how
 /// many clouds and of what shapes are all dealt from the local date, and

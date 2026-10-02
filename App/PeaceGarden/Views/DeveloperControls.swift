@@ -59,19 +59,19 @@ final class Developer {
 
     private static let gridKey = "developer.showsTileGrid"
 
-    /// Which of the day skies proposed on 2 October the garden draws.
+    /// Draws the day as it was before 2 October — one radial in a petrol
+    /// blue — in place of the sky Marcus chose, to compare the two on a real
+    /// garden.
     ///
-    ///     xcrun simctl launch <device> app.peacegarden -pgSky clouds
+    ///     xcrun simctl launch <device> app.peacegarden -pgOldSky YES
     ///
-    /// Any of `SkyLook`'s names. Kept in `UserDefaults` for the same reason as
-    /// the grid: a sky is judged over days, on somebody's own garden, and the
-    /// choice has to survive the relaunch between one build and the next. A
-    /// launch argument wins over what was kept, for screenshots.
-    var skyLook: SkyLook {
-        didSet { UserDefaults.standard.set(skyLook.rawValue, forKey: Self.skyKey) }
+    /// Kept in `UserDefaults` for the same reason as the grid. A launch
+    /// argument wins over what was kept, for screenshots.
+    var showsTheOldDay: Bool {
+        didSet { UserDefaults.standard.set(showsTheOldDay, forKey: Self.oldDayKey) }
     }
 
-    private static let skyKey = "developer.skyLook"
+    private static let oldDayKey = "developer.showsTheOldDay"
 
     /// One of the four screens behind a mark, opened as the stage appears.
     ///
@@ -128,9 +128,9 @@ final class Developer {
     private init() {
         clockShift = UserDefaults.standard.double(forKey: Self.shiftKey)
         showsTileGrid = UserDefaults.standard.bool(forKey: Self.gridKey)
-        skyLook = (UserDefaults.standard.string(forKey: "pgSky")
-                   ?? UserDefaults.standard.string(forKey: Self.skyKey))
-            .flatMap(SkyLook.init(rawValue:)) ?? .now
+        showsTheOldDay = UserDefaults.standard.object(forKey: "pgOldSky") != nil
+            ? UserDefaults.standard.bool(forKey: "pgOldSky")
+            : UserDefaults.standard.bool(forKey: Self.oldDayKey)
         openOnLaunch = UserDefaults.standard.string(forKey: "pgOpen")
             .flatMap(Screen.init(rawValue:))
     }
@@ -333,23 +333,19 @@ struct DeveloperSection: View {
 
     // MARK: The sky
 
-    /// One press steps to the next proposal and round again. The garden is
-    /// where it is judged, so this only chooses; the caption says which.
     private var sky: some View {
         VStack(alignment: .leading, spacing: 8) {
             Button {
-                let all = SkyLook.allCases
-                let next = (all.firstIndex(of: developer.skyLook).map { $0 + 1 } ?? 0) % all.count
-                developer.skyLook = all[next]
+                developer.showsTheOldDay.toggle()
             } label: {
-                Text(verbatim: "Sky: \(developer.skyLook.letter)")
+                Text(verbatim: developer.showsTheOldDay ? "Sky: the old day" : "Sky: as chosen")
             }
             .buttonStyle(.plain)
             .font(.system(size: 15, weight: .light))
             .foregroundStyle(Chrome.ink)
             .pressable(isProminent: true)
 
-            Text(verbatim: "\(developer.skyLook.caption). The day skies proposed on 2 October; the night is the same in all of them. Renders in design/app-sky-2026-10-02.")
+            Text(verbatim: "The day sky Marcus chose on 2 October, or the petrol one it replaced, to compare the two. The night is the same in both.")
                 .font(.system(size: 13, weight: .light))
                 .foregroundStyle(Chrome.muted)
                 .lineSpacing(4)

@@ -1,13 +1,35 @@
 import SwiftUI
 import SeedCore
 
-/// What is behind the plot: space, darkening with the hour, with the stars out
-/// at night and whichever body is up standing in it.
+/// What is behind the plot: a sky that is light by day and space by night,
+/// with whichever body is up standing in it.
 ///
 /// **There is no pool of light on a world.** `StageBackdrop`'s glow is a lamp
 /// behind a subject, which is right for a plant photographed for a box; a planet
 /// is lit by its own sun. So the background darkens with the hour rather than
 /// closing in.
+///
+/// **The day sky is the one Marcus chose on 2 October 2026**, from renders of
+/// four proposals in `design/app-sky-2026-10-02/`, having said the old one was
+/// "nowhere near as pleasing to look at as the night sky" — "that slightly
+/// petrol blue". He took three of them together, with the first as the ground
+/// under all three:
+///
+/// - **The real colour of the hour** (`SkyPalette`, `DaySky`): a deep zenith
+///   over a pale, luminous horizon behind the plot, a halo round the sun, and
+///   gold and rose as it gets low.
+/// - **The day's clouds** (`SkyClouds`), dealt from the date, so everybody has
+///   the same ones and some days none.
+/// - **The real moon by day, and the season** (`RealSky`, `Season`): the moon
+///   where it really is when it is really up, the sky's colours as high as
+///   today's real sun would make them, and the brightest planet at dusk.
+/// - **Now and again, the season's birds** (`SkyLife`), very high and rare.
+///
+/// **The night is the one he liked**, unchanged but for the last of the light
+/// after sunset and the one planet. **The light on the plot is not changed by
+/// any of it**: the orbit, the shadows and the plants read the same function
+/// as before. Warming the plot to match a low gold sun is a separate job, and
+/// `design/app-sky-2026-10-02/README.md` says where it would start.
 struct GardenSky: View {
     let light: GardenGround.Light
     let date: Date
@@ -16,52 +38,53 @@ struct GardenSky: View {
     /// Where the screen's words are — the heading, the count under it, Close —
     /// in this canvas's coordinates. The sun and moon stand clear of them.
     var keepClear: [CGRect] = []
-    /// Which sky to draw. Left out, it is whichever the developer switch has
-    /// chosen, which outside a Debug build is always the one that ships.
-    /// `SkyLook` has the proposals of 2 October.
-    var look: SkyLook?
+    /// The day as it was before 2 October, to compare against. Left out, it is
+    /// the developer switch's say, which outside a Debug build is always no.
+    var asItWas: Bool?
     /// Draw what moves as it stands at `date`, in the one canvas, instead of
     /// animating it. For the renders, which are stills.
     var isStill = false
 
     var body: some View {
-        let look = self.look ?? SkyLook.chosen
-        if look.moves, light.isDay, !isStill {
+        let old = asItWas ?? Self.developerWantsTheOldDay
+        if light.isDay, !old, !isStill {
             ZStack {
                 Canvas { context, size in
-                    draw(in: &context, size: size, look: look)
+                    draw(in: &context, size: size, old: false)
                 }
                 // What moves, in a canvas of its own, so a cloud sliding a
                 // fraction of a point does not repaint the whole sky under it.
-                TimelineView(SkyMotionSchedule(clouds: look.hasClouds, life: look.hasLife,
-                                               shift: SkyLook.clockShift,
+                TimelineView(SkyMotionSchedule(shift: Self.clockShift,
                                                latitude: Whereabouts.place(of: .current, at: date).latitude)) { timeline in
                     Canvas { context, size in
-                        drawMotion(in: &context, size: size, look: look,
-                                   at: timeline.date.addingTimeInterval(SkyLook.clockShift))
+                        drawMotion(in: &context, size: size,
+                                   at: timeline.date.addingTimeInterval(Self.clockShift))
                     }
                 }
             }
             .allowsHitTesting(false)
         } else {
             Canvas { context, size in
-                draw(in: &context, size: size, look: look)
+                draw(in: &context, size: size, old: old)
             }
             .allowsHitTesting(false)
         }
     }
 
-    private func draw(in context: inout GraphicsContext, size: CGSize, look: SkyLook) {
-        guard look.paintsTheHour else {
+    private func draw(in context: inout GraphicsContext, size: CGSize, old: Bool) {
+        guard !old else {
             radial(in: &context, size: size)
             stars(in: &context, size: size)
             body(in: &context, size: size)
             return
         }
 
-        let scene = scene(in: size, look: look)
+        let scene = scene(in: size)
         if light.isDay {
-            DaySky.paint(scene.palette, sun: scene.disc?.centre, in: &context, size: size)
+            // Painted small and kept, and only drawn here: see `DaySky`.
+            if let picture = DaySky.picture(scene.palette, sun: scene.disc?.centre, size: size) {
+                context.draw(picture, in: CGRect(origin: .zero, size: size))
+            }
         } else {
             radial(in: &context, size: size)
             let depth = -SunPath.elevation(atHour: scene.hour)
@@ -70,31 +93,25 @@ struct GardenSky: View {
             }
         }
         stars(in: &context, size: size)
-        if look.knowsTheSeason {
-            planet(in: &context, size: size, place: scene.place)
-            dayMoon(in: &context, size: size, scene: scene)
-        }
+        planet(in: &context, size: size, place: scene.place)
+        dayMoon(in: &context, size: size, scene: scene)
         body(in: &context, size: size, disc: light.isDay ? scene.palette.disc : nil)
 
         if isStill, light.isDay {
-            drawMotion(in: &context, size: size, look: look, at: date)
+            drawMotion(in: &context, size: size, at: date)
         }
     }
 
     /// The clouds and the birds, as they stand at `moment`.
-    private func drawMotion(in context: inout GraphicsContext, size: CGSize, look: SkyLook, at moment: Date) {
-        let scene = scene(in: size, look: look)
-        if look.hasClouds {
-            SkyClouds.draw(at: moment, in: &context, size: size, palette: scene.palette,
-                           sun: scene.disc?.centre, up: light.up, keepClear: keepClear)
-        }
-        if look.hasLife {
-            SkyLife.draw(at: moment, latitude: scene.place.latitude, in: &context, size: size,
-                         palette: scene.palette, up: light.up, keepClear: keepClear)
-        }
+    private func drawMotion(in context: inout GraphicsContext, size: CGSize, at moment: Date) {
+        let scene = scene(in: size)
+        SkyClouds.draw(at: moment, in: &context, size: size, palette: scene.palette,
+                       sun: scene.disc?.centre, up: light.up, keepClear: keepClear)
+        SkyLife.draw(at: moment, latitude: scene.place.latitude, in: &context, size: size,
+                     palette: scene.palette, up: light.up, keepClear: keepClear)
     }
 
-    /// What the proposed skies all need to know about this moment.
+    /// What the day sky needs to know about this moment.
     fileprivate struct Scene {
         var hour: Double
         var place: Place
@@ -102,18 +119,18 @@ struct GardenSky: View {
         var disc: (centre: CGPoint, radius: Double)?
     }
 
-    fileprivate func scene(in size: CGSize, look: SkyLook) -> Scene {
+    fileprivate func scene(in size: CGSize) -> Scene {
         let hour = light.hourOfDay
         let place = Whereabouts.place(of: .current, at: date)
-        let season = look.knowsTheSeason ? Season(date: date, place: place) : nil
-        let elevation = SunPath.elevation(atHour: hour, peak: season?.noon ?? 62)
+        let season = Season(date: date, place: place)
+        let elevation = SunPath.elevation(atHour: hour, peak: season.noon)
         return Scene(hour: hour, place: place,
-                     palette: SkyPalette.at(elevation: elevation, haze: season?.haze ?? 0),
+                     palette: SkyPalette.at(elevation: elevation, haze: season.haze),
                      disc: disc(in: size))
     }
 
-    /// The sky as it shipped, and still the night in every proposal: a radial
-    /// from a fixed point near the top.
+    /// The night, and the day as it was before 2 October: a radial from a
+    /// fixed point near the top.
     private func radial(in context: inout GraphicsContext, size: CGSize) {
         let centre = CGPoint(x: size.width / 2, y: size.height * 0.24)
         let reach = max(size.width, size.height) * 1.6
@@ -129,9 +146,30 @@ struct GardenSky: View {
         )
     }
 
+    /// Whether the developer switch wants the day as it was, for comparing.
+    private static var developerWantsTheOldDay: Bool {
+        #if DEBUG
+        return Developer.shared.showsTheOldDay
+        #else
+        return false
+        #endif
+    }
+
+    /// How far the developer clock has the garden wound on, so what moves runs
+    /// on the garden's clock rather than the wall's.
+    private static var clockShift: TimeInterval {
+        #if DEBUG
+        return Developer.shared.clockShift
+        #else
+        return 0
+        #endif
+    }
+
     // MARK: The sky itself
 
-    /// **A day sky that reads as sky, and a night that is not a black screen.**
+    /// **A night that is not a black screen**, and the day as it was until 2
+    /// October, which is kept only so the developer switch can put the two
+    /// side by side. The day is `DaySky` now.
     ///
     /// The first pass came off the mockup, where the sky is nearly black at every
     /// hour: the plot is the picture there, and the page around it is a page. In
@@ -249,8 +287,8 @@ struct GardenSky: View {
     /// away from the thing casting them without anything having to be kept in
     /// step by hand.
     ///
-    /// `disc` is the proposals' sun colour, warmer as it gets lower; nil is
-    /// the colour it ships with.
+    /// `disc` is the day sky's sun colour, warmer as it gets lower; nil is the
+    /// fixed colour the night's moon and the old day's sun are drawn in.
     private func body(in context: inout GraphicsContext, size: CGSize, disc colour: SIMD3<Double>? = nil) {
         guard let placed = disc(in: size) else { return }
         let centre = placed.centre, radius = placed.radius
@@ -334,7 +372,7 @@ struct GardenSky: View {
     }
 }
 
-// MARK: - C: the real moon by day, and the brightest planet
+// MARK: - The real moon by day, and the brightest planet
 
 extension GardenSky {
     /// The real moon, by day, when it is really up.

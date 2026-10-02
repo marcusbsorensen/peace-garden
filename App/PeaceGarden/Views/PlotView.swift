@@ -132,6 +132,7 @@ struct PlotView: View {
     /// The asking line's place on screen, so the stars keep off it too.
     @State private var askingFrame: CGRect = .null
     @State private var closeFrame: CGRect = .null
+    @State private var helpFrame: CGRect = .null
 
     var body: some View {
         ZStack {
@@ -166,7 +167,7 @@ struct PlotView: View {
 
                 ZStack(alignment: .topLeading) {
                     GardenSky(light: light, date: model.now, view: view,
-                              keepClear: [headingFrame, closeFrame, askingFrame])
+                              keepClear: [headingFrame, closeFrame, askingFrame, model.hybrids.isEmpty ? helpFrame : .null])
 
                     ZStack(alignment: .topLeading) {
                         plot(world: world, side: side, in: view, shift: shift,
@@ -231,7 +232,7 @@ struct PlotView: View {
                     // Measured on the screen, which is the sky's space too: the
                     // sky ignores the safe area and fills the glass from its corner.
                     .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { headingFrame = $0 }
-                if model.hybrids.isEmpty { empty }
+                if model.hybrids.isEmpty { empty.onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { helpFrame = $0 } }
                 Spacer(minLength: 0)
                 foot
                     .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { frame in

@@ -1,3 +1,24 @@
+The chosen sky, as built (final-07, final-13, final-17):
+
+screen 420x912 pt, time zone Europe/London, latitude 51.51
+final-07: fair day, birds (geese) at 07:02:23, moon at 61°
+final-13: fair day, birds (geese) at 12:46:27, moon at 13°
+final-17: fair day, birds (geese) at 16:50:32, moon at -10°
+
+frame costs at 10:00, ms of CoreGraphics at 3x, mean of 12 after a warm-up
+still canvas (redrawn every 20 s):
+  the old day: 12.0
+  chosen, picture kept (every redraw): 15.4
+  chosen, picture painted again (once a minute): 15.5
+  the day's gradients alone, painted full size: 23.8
+moving canvas (redrawn every frame while anything moves):
+  clouds: 2.34
+  birds, mid-crossing: 0.10
+  both: 2.42
+
+
+The proposals it was chosen from (now, a, b, c, d, bcd), whose "A" still canvas is the before figure:
+
 screen 420x912 pt, time zone Europe/London, latitude 51.51
 D 7: birds at 07:02:23
 BCD 7: birds at 07:02:23

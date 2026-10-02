@@ -2,7 +2,7 @@ import Foundation
 import SeedCore
 import simd
 
-/// The real sun, moon and planets, near enough to draw: C.
+/// The real sun, moon and planets, near enough to draw.
 ///
 /// **Paul Schlyter's low-precision elements** ("How to compute planetary
 /// positions"), which are good to a few arcminutes for the sun and planets
@@ -250,7 +250,7 @@ enum RealSky {
     static func atan2d(_ y: Double, _ x: Double) -> Double { atan2(y, x) * degrees }
 }
 
-/// The season and the place, as C reads them.
+/// The season and the place, as the day sky reads them.
 ///
 /// **It leans the sky; it does not move the sun.** The orbit still has the
 /// sun up from six to six, because the light on the plot is the orbit's.
