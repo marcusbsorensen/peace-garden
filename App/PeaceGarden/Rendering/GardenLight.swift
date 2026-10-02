@@ -50,6 +50,18 @@ extension GardenGround.Light {
 
     // MARK: Warmed by the sky it is under
 
+    /// How far the sun's colour goes to the drawn glow when the sun is on the
+    /// horizon. Not all the way: the glow is the air round the disc, and the
+    /// light that reaches the ground through it is a shade paler.
+    static let sunWarming = 0.85
+
+    /// How much of the drawn sky's change of colour the sky's light takes:
+    /// enough that the ground under a gold sky is warm, and short of all of
+    /// it, so the shade — which is lit by the sky alone — stays cooler than
+    /// the sunlit ground beside it. That difference is what lets a long
+    /// evening shadow read as shade rather than as a dark patch.
+    static let skyWarming = 0.6
+
     /// The sun's light at the height this palette was drawn for.
     ///
     /// **Warmed by 2 October's sky, on Marcus's word.** He chose the day sky
@@ -62,24 +74,34 @@ extension GardenGround.Light {
     /// summer evening, sixteen degrees up, it is a pale gold; on the horizon
     /// it is the orange of the disc going down. A December noon in London
     /// stands fifteen degrees up, and is lit like a summer evening.
+    ///
+    /// **Warmer, not darker.** Gold is white with blue taken out, and taken
+    /// out of a light that was already weak it read as dusk. So the colour
+    /// keeps the brightness the sun had high in the sky, which leaves its red
+    /// a little over one: the ground's arithmetic takes that as it is, and a
+    /// plant's lamp is handed it as a colour and an intensity
+    /// (`GardenSprites.makeScene`).
     static func sunlight(under palette: SkyPalette) -> SIMD3<Double> {
-        SkyPalette.mix(sunHigh, palette.glow, 0.7 * palette.low)
+        let warm = SkyPalette.mix(sunHigh, palette.glow, sunWarming * palette.low)
+        return warm * (luminance(sunHigh) / luminance(warm))
     }
 
     /// The sky's light on the plot: `plain` — the old curve, which says how
     /// much of it there is — in the colour of the sky that is drawn.
     ///
     /// **The colour moves; the amount does not.** The sky's light is most of
-    /// what lights the ground once the sun is low — at five o'clock it is
-    /// three times the sun's — so a warm sun over a cold sky would not have
-    /// read as warm at all. The colour is the air half way between the drawn
-    /// zenith and the drawn horizon, measured against that same air under the
-    /// orbit's noon, so a summer noon keeps exactly the light it had. Its
-    /// brightness is then put back to `plain`'s, so an evening is no brighter
-    /// and no darker for being gold, and the shadows keep the depth Marcus
-    /// set for them against the ground around them.
+    /// what lights the ground once the sun is low — at five o'clock between
+    /// two and three times the sun's — so a warm sun over a cold sky would
+    /// barely have read as warm. The colour is the air half way between the
+    /// drawn zenith and the drawn horizon, measured against that same air
+    /// under the orbit's noon, so a summer noon keeps exactly the light it
+    /// had, and taken in by `skyWarming`. Its brightness is then put back to
+    /// `plain`'s, so an evening is no brighter and no darker for being warm,
+    /// and the shadows keep the depth Marcus set for them.
     static func skylight(under palette: SkyPalette, plain: SIMD3<Double>) -> SIMD3<Double> {
-        let tinted = plain * air(palette) / air(clearNoon)
+        let shift = air(palette) / air(clearNoon)
+        let tint = SIMD3(pow(shift.x, skyWarming), pow(shift.y, skyWarming), pow(shift.z, skyWarming))
+        let tinted = plain * tint
         let lum = luminance(tinted)
         return lum > 1e-9 ? tinted * (luminance(plain) / lum) : plain
     }
@@ -206,9 +228,39 @@ extension GardenGround.Light {
     /// plants are never lit from different hours.
     static let steps = 8
 
+    /// **The two hand-overs, each seen from the side it is reached from.**
+    ///
+    /// At six the sun and the moon change places on opposite horizons, so the
+    /// step at six is two lights, not one. Until 2 October it was whichever
+    /// the clock said: six in the morning was the sun rising, six in the
+    /// evening the moon rising. So from three o'clock every afternoon a
+    /// plant was crossfaded towards a moonlit picture of itself, two thirds
+    /// moonlit by five, while the ground beside it was still in the sun; and
+    /// from three in the morning towards the dawn, while the ground was in
+    /// moonlight. Once the evening sun was gold that showed: a gold lawn and
+    /// moonlit flowers on it.
+    ///
+    /// So a step is read from the side of the hour that wants it. The last
+    /// afternoon step reaches towards `dusk`, the sun on the horizon as it
+    /// goes down; the last step before dawn reaches towards `dawn`, the moon
+    /// on the horizon as it goes down. Numbered past the eight, so that they
+    /// are kept under keys of their own. Plants and ground are now lit by one
+    /// body at every hour, and change together at six, as the ground always
+    /// has.
+    static let dusk = steps
+    static let dawn = steps + 1
+
     static func at(step: Int, season: Season = .orbit) -> GardenGround.Light {
-        at(hour: Double((step % steps + steps) % steps) / Double(steps) * 24, season: season)
+        switch step {
+        case dusk: return at(hour: 18 - edge, season: season)
+        case dawn: return at(hour: 6 - edge, season: season)
+        default: return at(hour: Double((step % steps + steps) % steps) / Double(steps) * 24, season: season)
+        }
     }
+
+    /// How far short of six a hand-over is seen from: as near as makes no
+    /// difference to the light, and on the right side of the clock.
+    private static let edge = 1e-6
 
     /// The two steps an hour falls between, and how far it is between them.
     static func steps(at hour: Double) -> (before: Int, after: Int, blend: Double) {
@@ -216,7 +268,10 @@ extension GardenGround.Light {
             .truncatingRemainder(dividingBy: 24)
         let raw = clock / 24 * Double(steps)
         let before = Int(raw.rounded(.down)) % steps
-        return (before, (before + 1) % steps, raw - raw.rounded(.down))
+        var after = (before + 1) % steps
+        if after == steps * 3 / 4 { after = dusk }
+        if after == steps / 4 { after = dawn }
+        return (before, after, raw - raw.rounded(.down))
     }
 }
 

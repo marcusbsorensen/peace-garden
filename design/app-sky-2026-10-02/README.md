@@ -30,6 +30,8 @@ The still canvas is redrawn when the garden's clock ticks, every 20 s. The day's
 
 ## Warming the plot to match — for after the shadow work merges
 
+*Done the same day, after the shadows merged: `design/app-light-2026-10-02/` has the renders and says where it went its own way (the sun's height stays the orbit's; the season colours the light and does not move it).*
+
 The light on the plot is untouched, on purpose. Marcus wants the plot warmed to match a low gold sun once the shadow work has merged. Where it would start:
 
 1. **The low-sun tint.** `GardenLight.swift`, `at(hour:)`: the day's `colour` is a constant `(1.00, 0.96, 0.88)`. Make it the sky's own: `mix((1.00, 0.96, 0.88), SkyPalette.at(elevation:).glow, 0.7 * palette.low)`. At 07 and 17 on the orbit (16° up, `low` ≈ 0.45, `glow` ≈ `(1.00, 0.82, 0.60)`) that is about `(1.00, 0.91, 0.79)`; at noon it is unchanged. The sun's disc in the sky already warms by `SkyPalette.disc`.

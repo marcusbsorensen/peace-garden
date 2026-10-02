@@ -343,12 +343,16 @@ final class GardenSprites {
     static func makeScene(lit light: GardenGround.Light) -> SCNScene {
         let scene = SCNScene()
 
+        // A low gold sun keeps its brightness, so its red is a little over
+        // one (`GardenGround.Light.sunlight`). A light's colour is a colour,
+        // so the excess goes into its intensity instead.
+        let over = max(1, light.colour.x, light.colour.y, light.colour.z)
         let sun = SCNNode()
         sun.light = SCNLight()
         sun.light?.type = .directional
-        sun.light?.color = UIColor(red: light.colour.x, green: light.colour.y,
-                                   blue: light.colour.z, alpha: 1)
-        sun.light?.intensity = 1400 * light.strength
+        sun.light?.color = UIColor(red: light.colour.x / over, green: light.colour.y / over,
+                                   blue: light.colour.z / over, alpha: 1)
+        sun.light?.intensity = 1400 * light.strength * over
         sun.light?.castsShadow = false
         // A directional light shines down its own negative z, so the node stands
         // off along the direction the light comes *from* and looks back at the

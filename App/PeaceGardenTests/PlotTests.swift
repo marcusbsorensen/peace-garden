@@ -425,15 +425,16 @@ final class PlotTests: XCTestCase {
     /// would pass two curves that had stopped agreeing. Under the orbit's own
     /// season, warmed by the day sky of 2 October: noon as it always was, a
     /// pale gold at seven and at five, and the orange of the disc at the
-    /// horizon.
+    /// horizon. The sun keeps its brightness as it goes gold, so its red runs
+    /// a little over one.
     func testTheLightWarmsAsTheSunGetsLower() {
         let expected: [(hour: Double, colour: SIMD3<Double>, sky: SIMD3<Double>)] = [
-            (6, SIMD3(1, 0.6730, 0.4740), SIMD3(0.3475, 0.2218, 0.2378)),
-            (7, SIMD3(1, 0.9148, 0.7914), SIMD3(0.3270, 0.2986, 0.3328)),
-            (9, SIMD3(1, 0.9600, 0.8800), SIMD3(0.3479, 0.4121, 0.5255)),
-            (12, SIMD3(1, 0.9600, 0.8800), SIMD3(0.4000, 0.4800, 0.6000)),
-            (15, SIMD3(1, 0.9600, 0.8800), SIMD3(0.3479, 0.4121, 0.5255)),
-            (17, SIMD3(1, 0.9148, 0.7914), SIMD3(0.3270, 0.2986, 0.3328)),
+            (6, SIMD3(1.4202, 0.8684, 0.5496), SIMD3(0.2844, 0.2361, 0.2816)),
+            (7, SIMD3(1.0513, 0.9516, 0.8121), SIMD3(0.2969, 0.3043, 0.3650)),
+            (9, SIMD3(1.0000, 0.9600, 0.8800), SIMD3(0.3459, 0.4126, 0.5264)),
+            (12, SIMD3(1.0000, 0.9600, 0.8800), SIMD3(0.4000, 0.4800, 0.6000)),
+            (15, SIMD3(1.0000, 0.9600, 0.8800), SIMD3(0.3459, 0.4126, 0.5264)),
+            (17, SIMD3(1.0513, 0.9516, 0.8121), SIMD3(0.2969, 0.3043, 0.3650)),
         ]
         for (hour, colour, sky) in expected {
             let light = GardenGround.Light.at(hour: hour)
@@ -441,8 +442,9 @@ final class PlotTests: XCTestCase {
             XCTAssertEqual(simd_distance(light.sky, sky), 0, accuracy: 0.002, "the sky's light at \(hour):00")
         }
 
-        // **Warmer, not darker.** The sky's light keeps the brightness the
-        // old curve gave it at every hour of the day; only its colour moves.
+        // **Warmer, not darker.** The sun and the sky's light keep the
+        // brightness they had at every hour of the day; only the colour moves.
+        let sunHigh = GardenGround.Light.luminance(GardenGround.Light.sunHigh)
         for quarter in 24..<72 {
             let hour = Double(quarter) / 4
             let light = GardenGround.Light.at(hour: hour, season: Self.london(month: 12, day: 21))
@@ -450,7 +452,9 @@ final class PlotTests: XCTestCase {
             let plain = GardenGround.Light.skyByNight
                 + (GardenGround.Light.skyByDay - GardenGround.Light.skyByNight) * warmth
             XCTAssertEqual(GardenGround.Light.luminance(light.sky), GardenGround.Light.luminance(plain),
-                           accuracy: 1e-9, "at \(hour):00")
+                           accuracy: 1e-9, "the sky's light at \(hour):00")
+            XCTAssertEqual(GardenGround.Light.luminance(light.colour), sunHigh,
+                           accuracy: 1e-9, "the sun at \(hour):00")
         }
     }
 
@@ -471,14 +475,17 @@ final class PlotTests: XCTestCase {
 
             let five = GardenGround.Light.at(hour: 17, season: season)
             XCTAssertGreaterThan(warmth(five.colour), warmth(noon.colour) + 0.1, "the sun at five, \(season)")
-            XCTAssertGreaterThan(warmth(five.sky), warmth(before.fiveSky) + 0.2, "the sky's light at five, \(season)")
-            XCTAssertGreaterThan(warmth(five.sky), warmth(noon.sky) + 0.2, "\(season)")
+            XCTAssertGreaterThan(warmth(five.sky), warmth(before.fiveSky) + 0.1, "the sky's light at five, \(season)")
+            XCTAssertGreaterThan(warmth(five.sky), warmth(noon.sky) + 0.1, "\(season)")
+            // And the sun warmer than the sky's light, so shade stays cooler
+            // than the sunlit ground round it.
+            XCTAssertGreaterThan(warmth(five.colour), warmth(five.sky) + 0.3, "\(season)")
         }
 
         let summer = GardenGround.Light.at(hour: 12, season: Self.london(month: 6, day: 21))
         let winter = GardenGround.Light.at(hour: 12, season: Self.london(month: 12, day: 21))
         XCTAssertGreaterThan(warmth(winter.colour), warmth(summer.colour) + 0.1)
-        XCTAssertGreaterThan(warmth(winter.sky), warmth(summer.sky) + 0.2)
+        XCTAssertGreaterThan(warmth(winter.sky), warmth(summer.sky) + 0.1)
         // Coloured, not moved: the same sun in the same place, as strong.
         XCTAssertEqual(simd_distance(winter.direction, summer.direction), 0, accuracy: 1e-12)
         XCTAssertEqual(winter.strength, summer.strength, accuracy: 1e-12)
@@ -518,10 +525,55 @@ final class PlotTests: XCTestCase {
                 if palette.low < 0.001 {
                     XCTAssertEqual(simd_distance(light.colour, GardenGround.Light.sunHigh), 0, accuracy: 1e-9)
                 } else {
-                    XCTAssertLessThan(light.colour.z, GardenGround.Light.sunHigh.z, "at \(hour):00")
+                    let high = GardenGround.Light.sunHigh
+                    XCTAssertLessThan(light.colour.z / light.colour.x, high.z / high.x, "at \(hour):00")
                 }
             }
         }
+    }
+
+    /// **A plant is lit by whichever body lights the ground under it.** The
+    /// pictures are taken at eight points round the clock and crossfaded, and
+    /// the step at six used to be one light for both sides of it: from three
+    /// every afternoon a plant faded towards a moonlit picture of itself
+    /// while the ground was still in the sun. Each hand-over is now two
+    /// pictures, one from each side, so at every hour both pictures a plant is
+    /// drawn from are lit by the body that is up.
+    func testAPlantIsLitByTheBodyThatIsUp() {
+        for minute in stride(from: 0, to: 24 * 60, by: 5) {
+            let hour = Double(minute) / 60
+            let up = GardenGround.Light.at(hour: hour).isDay
+            let between = GardenGround.Light.steps(at: hour)
+            XCTAssertEqual(GardenGround.Light.at(step: between.before).isDay, up, "at \(hour)")
+            if between.blend > 0 {
+                XCTAssertEqual(GardenGround.Light.at(step: between.after).isDay, up, "at \(hour)")
+            }
+        }
+
+        // Five o'clock reaches towards the sun going down, not the moon
+        // coming up; and the hours before dawn towards the moon going down.
+        let five = GardenGround.Light.steps(at: 17)
+        XCTAssertEqual(five.after, GardenGround.Light.dusk)
+        XCTAssertEqual(five.blend, 2.0 / 3, accuracy: 1e-9)
+        XCTAssertEqual(GardenGround.Light.steps(at: 5).after, GardenGround.Light.dawn)
+
+        // Each is on its horizon, at the corner its body sets at.
+        let dusk = GardenGround.Light.at(step: GardenGround.Light.dusk)
+        let dawn = GardenGround.Light.at(step: GardenGround.Light.dawn)
+        XCTAssertEqual(dusk.up, 0, accuracy: 1e-5)
+        XCTAssertEqual(dawn.up, 0, accuracy: 1e-5)
+        XCTAssertEqual(simd_distance(dusk.direction, GardenGround.Light.at(hour: 17.999).direction), 0,
+                       accuracy: 0.002)
+        XCTAssertEqual(simd_distance(dawn.direction, GardenGround.Light.at(hour: 5.999).direction), 0,
+                       accuracy: 0.002)
+
+        // And they are kept under keys of their own.
+        let plant = crossing("Ada", nonce: 2)
+        let growth = plant.growth(now: plant.birth.addingTimeInterval(400 * 86_400))
+        let keys = Set([6, GardenGround.Light.dusk, GardenGround.Light.dawn, 2].map {
+            GardenSprites.key(genome: plant.genome, growth: growth, step: $0)
+        })
+        XCTAssertEqual(keys.count, 4)
     }
 
     /// **A change of season is a new picture.** The plants and the ground are
