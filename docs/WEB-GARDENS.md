@@ -1800,10 +1800,9 @@ ones at the head included. Notes and renders:
   and a division, so a spot is still exact on every host.
 - **What is unchanged**: six drills of eight, every drill's capacity, which
   plot every plant goes to, which drill it claims and how many places it
-  holds, and the lotus's two places along a drill. The places within a drill
-  are sown in the same order of middle first, then farthest-first, but on
-  the re-centred drills 17 of the 500 vector rows take another place in the
-  same drill.
+  holds, and the lotus's two places along a drill. Every drill is sown in
+  the order it was but drill 1, whose fifth and sixth places swap on its new
+  arc, so 17 of the 500 vector rows take another place in that drill.
 - **The fill is the baseline's, to the place**: 36 plots at 1,000, 73.8% held,
   77.3% in settled plots. Where a drill lies cannot change which drills are
   claimed or how full they get.
