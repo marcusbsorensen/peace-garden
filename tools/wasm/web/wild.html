@@ -43,43 +43,128 @@
   // The invented plants are minted, not crossed: a field of them is the
   // field's density and its night, which is what this is for, and not anybody's
   // plants.
+  //
+  // **Water lilies into a hollow, for renders** (2 October 2026):
+  // `?lotus=x,z;x,z` adds a water lily at each of those points of the field —
+  // a seed minted until it is a lotus, with its first four bytes set to stand
+  // there, so it still stands where its seed puts it — and `?at=x,z`,
+  // `?zoom=` and `?turn=` set where and how close the window opens. The
+  // deepest hollow's bottom is at 47.0, 55.75; `wild.stage.hollows()` lists
+  // them all. `wild.stage.cost()` is what drawing has cost.
+  //
+  // **Paths that visitors wear** (2 October 2026): `?wear=demo` invents a
+  // summer's walking over the invented field — desire lines between its
+  // plants, worn by the service's own rule (`inventWear` in `wear.js`) — and
+  // opens over the busiest junction of them, so the wear can be judged before
+  // anybody has walked. With `?source=service`, the local service's wear is
+  // drawn instead, if its `config.php` turns wear on, and dragging here sends
+  // what it crosses, as the page does.
+  //
+  // **The ground in detail** (2 October 2026, `wildground.js`) is the pasture
+  // Marcus chose that day, and its two inputs are the worn paths above and the
+  // ponds' wet: `?wear=demo` with `?lotus=` judges all three together.
+  // `wild.stage.counts()` is how much of the detail is in sight.
   import { loadModule } from '/assets/js/plant.js';
   import { makeSky } from '/assets/js/sky.js';
   import { SIDE, TILES, flyOver, makeWildStage, spotOf } from '/assets/js/wildfields.js';
+  import { isLotus } from '/assets/js/wildwater.js';
 
   const query = new URLSearchParams(location.search);
   const count = Math.max(0, parseInt(query.get('plants') ?? '', 10) || 400);
   const fromService = query.get('source') === 'service';
+  const points = (text) => (text ?? '').split(';').map((p) => p.split(',').map(Number))
+    .filter((p) => p.length === 2 && p.every(Number.isFinite));
+  const demo = !fromService && query.get('wear') === 'demo';
   const note = document.getElementById('note');
 
-  async function invent(n) {
-    const tiles = new Map();
-    for (let i = 0; i < n; i++) {
-      const bytes = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`wild bench ${i}`)));
-      const seed = [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('');
-      const spot = spotOf(seed);
-      const key = `${Math.floor(spot[0] / (SIDE / TILES))},${Math.floor(spot[1] / (SIDE / TILES))}`;
-      if (!tiles.has(key)) tiles.set(key, []);
-      tiles.get(key).push({ seed, parents: [], spot });
-    }
-    return tiles;
-  }
+  const hex = (bytes) => [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('');
+  const digest = async (text) => new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)));
 
   // The module, never from the cache: see `/dev/quiet`.
   const e = await loadModule(`/plant.wasm?dev=${Date.now()}`);
+
+  // A lotus standing at `[x, z]`: the place is the seed's first four bytes,
+  // so those are set and the rest minted until the seed is a water lily.
+  async function lotusAt([x, z], n) {
+    const across = Math.max(0, Math.min(65535, Math.round((x / SIDE) * 65536 - 0.5)));
+    const along = Math.max(0, Math.min(65535, Math.round((z / SIDE) * 65536 - 0.5)));
+    for (let k = 0; k < 4000; k++) {
+      const bytes = await digest(`wild lotus ${n} ${k}`);
+      bytes[0] = across >> 8; bytes[1] = across & 255; bytes[2] = along >> 8; bytes[3] = along & 255;
+      const seed = hex(bytes);
+      if (isLotus(e, { seed })) return { seed, parents: [], spot: spotOf(seed) };
+    }
+    throw new Error(`no lotus found for ${x}, ${z}`);
+  }
+
+  async function invent(n) {
+    const plants = [];
+    for (let i = 0; i < n; i++) {
+      const seed = hex(await digest(`wild bench ${i}`));
+      plants.push({ seed, parents: [], spot: spotOf(seed) });
+    }
+    const asked = points(query.get('lotus'));
+    for (let i = 0; i < asked.length; i++) plants.push(await lotusAt(asked[i], i));
+    const tiles = new Map();
+    for (const p of plants) {
+      const key = `${Math.floor(p.spot[0] / (SIDE / TILES))},${Math.floor(p.spot[1] / (SIDE / TILES))}`;
+      if (!tiles.has(key)) tiles.set(key, []);
+      tiles.get(key).push(p);
+    }
+    return { tiles, plants };
+  }
+
   const invented = fromService ? null : await invent(count);
   const source = fromService
     ? async (x, z) => (await (await fetch(`/api/wild/tile/${x}/${z}`)).json()).plantings
-    : async (x, z) => invented.get(`${x},${z}`) ?? [];
+    : async (x, z) => invented.tiles.get(`${x},${z}`) ?? [];
+  const [at] = points(query.get('at'));
+
+  // The wear: invented, or the service's where it has wear on, or none — and
+  // `wear.js` loaded only for one of the first two, as the page loads it.
+  const service = fromService ? await (await fetch('/api/wild')).json() : null;
+  const { inventWear, walkOn, wearOfField, wornGround } = demo || service?.wear
+    ? await import('/assets/js/wear.js') : {};
+  const invention = demo ? inventWear(invented.plants.map((p) => p.spot)) : null;
+  const worn = demo || service?.wear ? wornGround({ seen: service?.wear?.seen }) : null;
+  if (invention) worn.set(invention.wear);
+  let walker = null;
+  const said = fromService ? 'The local service' : `${count} invented plants`;
+  const wearSaid = invention ? ` · ${invention.lines.length} invented desire lines`
+    : service?.wear ? ' · its wear' : '';
+
   const stage = makeWildStage(document.getElementById('stage'), e, {
     source,
-    report: (growing) => { note.textContent = growing ? 'Growing…'
-      : `${fromService ? 'The local service' : `${count} invented plants`} · drag to walk`; },
+    from: at ?? invention?.hub,
+    report: (growing) => { note.textContent = growing ? 'Growing…' : `${said}${wearSaid} · drag to walk`; },
+    wear: worn,
+    looked: (point) => walker?.looked(point),
   });
   flyOver(document.getElementById('flies'), stage);
+  if (service?.wear) {
+    walker = walkOn({ canvas: document.getElementById('stage'), nav: document.querySelector('nav') });
+    wearOfField().then((cells) => { worn.set(cells); stage.draw(); });
+  }
+  // For a render script to find its way about: the stage, and what was invented.
+  window.bench = { stage, invention };
+  const skyCanvas = document.getElementById('sky');
   let sky = null;
-  makeSky(document.getElementById('sky'), { milkyWay: true, quarterTurns: () => stage.turn() })
-    .then((made) => { sky = made; });
+  const skyReady = makeSky(skyCanvas, { milkyWay: true, quarterTurns: () => stage.turn() })
+    .then((made) => { sky = made; stage.reflect(skyCanvas); }).catch((trouble) => console.warn('no sky:', trouble));
+
+  // Set the opening look, then say when everything in it has grown.
+  (async () => {
+    await stage.settled();
+    const quarters = parseInt(query.get('turn') ?? '', 10);
+    await skyReady;
+    if (quarters) { stage.turnBy(quarters); sky?.draw(); stage.reflect(skyCanvas); }
+    const zoom = parseFloat(query.get('zoom') ?? '');
+    if (zoom > 1) stage.lookAt({ zoom });
+    await new Promise((go) => setTimeout(go, 50));
+    await stage.settled();
+    document.body.dataset.ready = '1';
+  })();
+  window.wild = { stage };
 
   const canvas = document.getElementById('stage');
   let held = null;
@@ -92,7 +177,7 @@
     held = [event.clientX, event.clientY];
   });
   canvas.addEventListener('pointerup', () => { held = null; });
-  const turn = (q) => { stage.turnBy(q); sky?.draw(); };
+  const turn = (q) => { stage.turnBy(q); sky?.draw(); stage.reflect(skyCanvas); };
   document.getElementById('left').onclick = () => turn(-1);
   document.getElementById('right').onclick = () => turn(1);
   document.getElementById('in').onclick = () => stage.lookAt({ zoom: stage.view().zoom * Math.SQRT2 });

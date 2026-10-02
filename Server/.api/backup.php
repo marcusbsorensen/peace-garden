@@ -31,6 +31,12 @@ declare(strict_types=1);
  *                    fingerprints that let each of the two answer. Lost, a
  *                    name somebody chose to show is gone and the two can no
  *                    longer withdraw what is left (since 1 October 2026)
+ *   wild_wear        the paths visitors have worn in the Wild Fields: a number
+ *                    per ground cell. Lost, every path is grass at once, which
+ *                    took months of walking to make (since 2 October 2026;
+ *                    empty wherever wear is off)
+ *   wild_wear_day    the day the field's wear was last faded to, without which
+ *                    a restored field would not know how much to fade
  *   walk_offers      consent in flight: who has asked whom, and what was said
  *   offer_key        the key a withdrawn offer's fingerprints are made under,
  *                    without which a restored table could no longer refuse a
@@ -76,7 +82,8 @@ const KEPT = ['long_walk', 'long_walk_lock', 'quiet_garden', 'quiet_garden_lock'
               'cold_frame', 'cold_frame_lock',
               'glasshouse', 'glasshouse_lock',
               'coppice', 'coppice_lock',
-              'home_ground', 'home_ground_lock', 'wild_fields', 'wild_names', 'walk_offers', 'offer_key'];
+              'home_ground', 'home_ground_lock', 'wild_fields', 'wild_names', 'wild_wear', 'wild_wear_day',
+              'walk_offers', 'offer_key'];
 
 /** How many copies stay on the server, at most. */
 const KEEP = 30;

@@ -543,9 +543,11 @@ export const EN = Object.freeze({
   // checked against the code it describes, and the comment above each names
   // that code, so the next change to the code knows which sentence it moves.
   //
-  // On the page in the order 1, 2, 3, 4, 6, 7, 5: the phone, the meeting, the
-  // storage, the link, then the web garden and the asking, and the website
-  // last. The numbers are the order the keys were made, not the order read.
+  // On the page in the order 1, 2, 3, 4, 6, 7, 8, 9, 5: the phone, the
+  // meeting, the storage, the link, then the web garden and the asking,
+  // releasing a plant and walking the Wild Fields, and the website last. The
+  // numbers are the order the keys were made, not the order read. The ninth is
+  // on the page only where wear is turned on (`Server/index.php`).
   privacyTitle: "Privacy",
   // The phone is where a garden lives. There is no account anywhere, in the
   // app or on the site; the site's tester latch is a shared word in
@@ -604,6 +606,18 @@ export const EN = Object.freeze({
   // and month until both have chosen the same.
   privacy8:
     "If you release a plant, the app sends it to the Wild Fields: its seed, the seeds of its two parents, the number for the meeting, the two random numbers from that meeting if it has them, and whatever you chose to show beside it. The Wild Fields keep the plant's seed and its parents' seeds, and no date. Beside the plant they show only what each of the two people who grew it chose: their username, and where and when they met once both chose those. Nothing is shown unless it is chosen, and either of you can withdraw what you chose at any time. So that each of you can answer for yourself, the Wild Fields keep a scrambled form of the two random numbers, and of the place and month each of you chose until both have. Its parents' seeds are the two seeds that met, so anyone who already knows one of them can tell the plant grew from it. If the plant was standing in the web garden, it is taken back from there first. Anyone can see a released plant, and the plant cannot be taken back.",
+  // Paths that visitors wear in the Wild Fields, since 2 October 2026, in
+  // Marcus's wording that day. **On the page only where `config.php` turns
+  // wear on**, the switch the routes answer to, so a site with wear off never
+  // describes something that is not running (`Server/index.php`). What is
+  // counted and sent is `walkOn` and `sendCells` in `wear.js`: the cells the
+  // middle of the window crosses while dragging or pressing the pad's four
+  // directions, sorted, half a minute apart and on leaving, with no
+  // credentials and no referrer. What is kept is `WildWear.php`: one number
+  // per half-metre cell and today's count, six a day at most, halving in
+  // thirty days, with no row per visitor and no time of any visit.
+  privacy9:
+    "When you walk through the Wild Fields on this site, by dragging the field or pressing its arrows, the page notes which squares of ground the middle of your view crosses, each half a metre across. Every half minute or so, and when you leave the page, it sends the Wild Fields that list of squares alone, sorted. The Wild Fields keep one number for each square, for how worn it is, and draw the numbers as paths for everyone to see. Each square counts a few crossings a day at most, and every number halves each month, so a path stays only while people keep walking it. The numbers are all that is kept: a count for each square of ground, the same whoever walked it and whenever. Only walking counts; looking around, coming closer and opening a plant leave the ground as it was.",
   // The website: `Limits.php` for the scrambled address and its hour — a
   // fifty-five-minute window and `sweep.php` every five minutes, which is what
   // keeps it inside the hour when nobody asks — `languages.js` for the

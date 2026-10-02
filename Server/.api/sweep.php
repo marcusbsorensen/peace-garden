@@ -49,13 +49,19 @@ try {
     $now = time();
     $windows = (new Limits($store->connection()))->sweep($now);
     $offers = $store->offers()->lapse($now);
+    // **And the paths visitors wear fade on a quiet day too** (2 October
+    // 2026), where wear is turned on: the first sweep of a day fades the
+    // field, so a path nobody walks is grass again on time rather than when
+    // the next visitor comes (`WildWear::settle`).
+    $grassed = WildWear::on($config) ? $store->wear()->settle($now) : 0;
 } catch (Throwable $trouble) {
     fwrite(STDERR, gmdate('Y-m-d H:i:s') . '  no sweep: ' . $trouble->getMessage() . "\n");
     exit(1);
 }
 
-if ($windows > 0 || $offers > 0) {
-    printf("%s  %d rate-limit window%s ended, %d offer%s lapsed\n", gmdate('Y-m-d H:i:s'),
-        $windows, $windows === 1 ? '' : 's', $offers, $offers === 1 ? '' : 's');
+if ($windows > 0 || $offers > 0 || $grassed > 0) {
+    printf("%s  %d rate-limit window%s ended, %d offer%s lapsed%s\n", gmdate('Y-m-d H:i:s'),
+        $windows, $windows === 1 ? '' : 's', $offers, $offers === 1 ? '' : 's',
+        $grassed > 0 ? sprintf(', %d worn cell%s grass again', $grassed, $grassed === 1 ? '' : 's') : '');
 }
 exit(0);

@@ -1006,6 +1006,65 @@ WILD = {
 }
 
 
+# Paths that visitors wear in the Wild Fields, built on 2 October 2026, and the
+# privacy page's paragraph about them, in Marcus's wording that day.
+#
+# **A group of its own, for the reason `privacy8` is in `WILD`.** Forty-one
+# catalogues already have the privacy page's eight and the Wild Fields', so a
+# ninth key in either would make every one of them half-commissioned the day
+# it was added. Alone, it is *still awaiting* until it arrives, and the page
+# reads it in English meanwhile. `--privacy` prints it after the eight.
+#
+# **On the page only where wear is turned on** (`Server/index.php`), so a
+# reader never meets it on a site where nothing is being counted.
+WEAR = {
+    "privacy9": {
+        "seen": "On /privacy straight after `privacy8`, the paragraph on "
+                "releasing a plant, and before the website's — only on a site "
+                "where paths are being worn.",
+        "must": [
+            "When you walk through the Wild Fields on the website, by dragging "
+            "the field or pressing its arrows, the page notes which squares of "
+            "ground the middle of your view crosses, each half a metre across.",
+            "About every half minute, and when you leave the page, it sends "
+            "the Wild Fields that list of squares and nothing else, sorted "
+            "(so the list does not say the order they were crossed in).",
+            "The Wild Fields keep one number for each square, for how worn it "
+            "is, and draw the numbers as paths that everyone can see.",
+            "Each square counts a few crossings a day at most, and every "
+            "number halves each month, so a path stays only while people keep "
+            "walking it.",
+            "The numbers are all that is kept: a count for each square, the "
+            "same whoever walked it and whenever they did.",
+            "Only walking counts: looking around, coming closer and opening a "
+            "plant change nothing.",
+        ],
+        "must not": [
+            "Say *nothing is sent* or *nothing is kept*. Squares are sent, "
+            "and a number for each is kept and shown.",
+            "Say or imply that it follows you, or that your route or your "
+            "visit is remembered. The squares go sorted, as a list and not a "
+            "route, and what is kept is a count for each square, the same "
+            "whoever walked.",
+            "Add a cookie, an identifier, a time or an address to what is "
+            "sent or kept. None of them is, and `privacy5` already says what "
+            "the website keeps of an address and for how long.",
+            "Turn *squares of ground* into *cells*, *tiles*, *pixels* or "
+            "*coordinates*. It is ground, said as a gardener would say it.",
+            "Make *a path* a road or a line drawn on the field. It is where "
+            "the grass has been walked on, and it fades.",
+            "Make *walk* a hike or a stroll anywhere but here. It is moving "
+            "about the field on the page, by dragging or with the arrows.",
+        ],
+        "note": "The Wild Fields as `wildTitle` names them. *A few crossings "
+                "a day* is six; keep it a few, not a number. *Halves each "
+                "month* is a half-life of thirty days, said as a gardener "
+                "would; *every number* is each square's, so it is not one "
+                "number for the whole field.",
+    },
+}
+
+
 def english():
     """The six, the thirteen and the ten, as `strings.js` has them today."""
     source = SOURCE.read_text()
@@ -1101,7 +1160,7 @@ def prose(catalogue, code, source):
 
 
 def privacy(catalogue, code, source):
-    """The eight strings on /privacy.
+    """The eight strings on /privacy, and the ninth that arrives on its own.
 
     Same brief as the six paragraphs — this is a translation, and the claims
     are the specification — so it prints `BRIEF.md` rather than a third one.
@@ -1119,22 +1178,38 @@ def privacy(catalogue, code, source):
     print("`privacy2` in particular, which is the one a reviewer asks about.\n")
 
     print("## The words this language has already chosen\n")
-    settled_words(theirs, source, code, [k for k in source if k not in PRIVACY])
+    settled_words(theirs, source, code,
+                  [k for k in source if k not in PRIVACY and k not in WEAR])
 
     print("\n## The eight\n")
     for key, claim in PRIVACY.items():
-        print(f"### `{key}`\n")
-        print(f"> {source[key]}\n")
-        print(f"*Where it is seen.* {claim['seen']}\n")
-        print("*It must say:*")
-        for line in claim["must"]:
-            print(f"  - {line}")
-        print("\n*It must not:*")
-        for line in claim["must not"]:
-            print(f"  - {line}")
-        if "note" in claim:
-            print(f"\n*Note.* {claim['note']}")
-        print()
+        claimed(key, claim, source)
+
+    # **And the ninth, since 2 October 2026**, which arrives on its own
+    # (`WEAR`). Printed here because it is the privacy page's, and after the
+    # eight because a language that already has them is being asked for this
+    # one alone.
+    print("## And the ninth, on paths that visitors wear\n")
+    print("Its own commission: a language that already has the eight writes")
+    print("this one and nothing above it.\n")
+    for key, claim in WEAR.items():
+        claimed(key, claim, source)
+
+
+def claimed(key, claim, source):
+    """One string of a commission: the English, where it is seen, its claims."""
+    print(f"### `{key}`\n")
+    print(f"> {source[key]}\n")
+    print(f"*Where it is seen.* {claim['seen']}\n")
+    print("*It must say:*")
+    for line in claim["must"]:
+        print(f"  - {line}")
+    print("\n*It must not:*")
+    for line in claim["must not"]:
+        print(f"  - {line}")
+    if "note" in claim:
+        print(f"\n*Note.* {claim['note']}")
+    print()
 
 
 def areas(catalogue, code, source):

@@ -238,6 +238,24 @@ if ($body === false) {
     exit("The page is missing from this server.\n");
 }
 
+// **A paragraph that is there only while what it describes is running.**
+//
+// Since 2 October 2026 the privacy page has a paragraph on the paths visitors
+// wear in the Wild Fields (`privacy9`), and wear runs only where `config.php`
+// turns it on. A page that described it on a site where it is off would be
+// saying something untrue about the site in front of the reader, so the page
+// marks the paragraph with a pair of `wear` comments and this keeps what is
+// between them only where wear is on — the same switch, read the same way,
+// as the routes (`WildWear::on`). Removed here rather than hidden by the
+// page's script, so where wear is off the words are not in the page at all.
+if (str_contains($body, '<!--wear-->')) {
+    require_once __DIR__ . '/.api/settings.php';
+    require_once __DIR__ . '/.api/WildWear.php';
+    $body = WildWear::on(settings())
+        ? preg_replace('#<!--/?wear-->#', '', $body)
+        : preg_replace('#[ \t]*<!--wear-->.*?<!--/wear-->\n?#s', '', $body);
+}
+
 // **The module's address carries which build it is.**
 //
 // `/plant.wasm` is eight megabytes at a path that never changes, so a browser

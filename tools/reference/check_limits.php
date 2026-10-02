@@ -147,7 +147,10 @@ check('the allowances are the hourly ones scaled to the window', array_map(
      // Release to the Wild Fields, since 1 October 2026: ten an hour.
      '/api/wild/release' => 10,
      // What stands beside a released plant, since 1 October 2026: sixty, as an answer.
-     '/api/wild/answer' => 60]));
+     '/api/wild/answer' => 60,
+     // The cells crossed in the Wild Fields, since 2 October 2026 and on /dev
+     // only: a batch every half a minute, a hundred and twenty an hour.
+     '/api/wild/wear' => 120]));
 
 $quiet = sys_get_temp_dir() . '/peacegarden-limits-quiet-' . getmypid() . '.sqlite';
 @unlink($quiet);
