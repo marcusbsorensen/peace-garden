@@ -38,6 +38,11 @@ public enum Glasshouse {
     /// The same square every area uses.
     public static let plotSide = 5.2
 
+    /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
+    /// Marcus's decision of 2 October 2026). **Fixed**: a colour wheel has one
+    /// way round. Declared but not yet read: the area's new layout reads it.
+    public static let variants = PlotVariant.Space.fixed
+
     /// Twelve positions along the staging with two pots at each, and a border
     /// of eight: thirty-two a plot, Marcus's choice on 23 September.
     public static let positions = 12

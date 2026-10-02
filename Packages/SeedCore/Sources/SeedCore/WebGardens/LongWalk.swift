@@ -37,6 +37,12 @@ public enum LongWalk {
     /// not grow with what is in it, because the next plot is where the walk goes on.
     public static let plotSide = 5.2
 
+    /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
+    /// Marcus's decision of 2 October 2026). Half turns and mirrors only, so the
+    /// path stays where it runs down the walk. Declared but not yet read: the
+    /// area's new layout reads it.
+    public static let variants = PlotVariant.Space(turns: 2, mirror: true)
+
     /// The mown path, either side of `x = 0`. 1.2 m: two people abreast.
     public static let pathHalfWidth = 0.6
 

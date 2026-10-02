@@ -32,6 +32,14 @@ final class HomeGround
     /** The same square every area uses. */
     public const PLOT_SIDE = 5.2;
 
+    /**
+     * How this area's plots vary, from each plot's number (`PlotVariant.php`):
+     * the Swift's `variants`. Mirrored only, so north stays north, and a space
+     * of two alternates plot by plot, as the beds' bow was asked to. Declared
+     * but not yet read.
+     */
+    public const VARIANTS = ['turns' => 1, 'mirror' => true, 'nudges' => 1];
+
     /** Three beds, 1.2 m wide, their middles across the plot; north is `z−`. */
     public const BEDS = 3;
     public const BED_X = [-1.65, 0.0, 1.65];

@@ -25,6 +25,13 @@ require_once __DIR__ . '/LongWalk.php';
 final class Crossing
 {
     public const PLOT_SIDE = 5.2;
+
+    /**
+     * How this area's plots vary, from each plot's number (`PlotVariant.php`):
+     * the Swift's `variants`. Turned and mirrored: a mirror sets the four ways
+     * turning in the other way. Declared but not yet read.
+     */
+    public const VARIANTS = ['turns' => 4, 'mirror' => true, 'nudges' => 1];
     public const PATH_HALF_WIDTH = 0.6;
     public const ROUNDEL_RADIUS = 0.85;
 

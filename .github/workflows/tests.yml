@@ -206,6 +206,15 @@ jobs:
       # plant takes the north end from its crop's cut up and the south below.
       - name: The Home Ground's rule is SeedCore's
         run: php tools/reference/check_home_ground.php
+      # How every area but the Knot Garden and the Glasshouse turns, mirrors
+      # and varies a plot from its number (2 October 2026). The deal is
+      # thirty-two-bit arithmetic, which PHP can only do in halves and
+      # JavaScript only through Math.imul, so a port that got one carry wrong
+      # would agree about plot 0 — which is always plain — and nothing after.
+      - name: A plot is turned where SeedCore turns it, in the service
+        run: php tools/reference/check_plot_variant.php
+      - name: A plot is turned where SeedCore turns it, in the browser
+        run: node tools/reference/check_plot_variant.mjs
       # And the asking above it: nothing reaches the walk until the second
       # gardener has said yes, and only the token an offer was addressed to
       # can say it. The walk itself has no way to tell, so this is where it

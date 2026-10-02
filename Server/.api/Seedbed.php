@@ -55,6 +55,13 @@ final class Seedbed
     public const PLOT_SIDE = 5.2;
 
     /**
+     * How this area's plots vary, from each plot's number (`PlotVariant.php`):
+     * the Swift's `variants`. Mirrored only, so the drills keep the side of the
+     * plot they were laid to. Declared but not yet read.
+     */
+    public const VARIANTS = ['turns' => 1, 'mirror' => true, 'nudges' => 1];
+
+    /**
      * Six drills of eight, chosen by Marcus from three offers on 23 September.
      * Forty-eight is the Long Walk's number; at this plot it leaves 0.74 m
      * between drills, which is the width of the space a gardener kneels in.

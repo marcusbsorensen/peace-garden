@@ -49,6 +49,12 @@ public enum Seedbed {
     /// ground are one piece of work rather than six.
     public static let plotSide = 5.2
 
+    /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
+    /// Marcus's decision of 2 October 2026). Mirrored only, so the drills keep
+    /// the side of the plot they were laid to. Declared but not yet read: the
+    /// area's new layout reads it.
+    public static let variants = PlotVariant.Space(mirror: true)
+
     /// Six drills of eight, chosen by Marcus from three offers on 23 September.
     /// Forty-eight is the Long Walk's number; at this plot it leaves 0.74 m
     /// between drills, which is the width of the space a gardener kneels in.

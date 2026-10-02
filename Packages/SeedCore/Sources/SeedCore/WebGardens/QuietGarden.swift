@@ -30,6 +30,12 @@ public enum QuietGarden {
     /// A web plot's side, the same square every area uses.
     public static let plotSide = 5.2
 
+    /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
+    /// Marcus's decision of 2 October 2026). Turned and mirrored eight ways, as
+    /// `quiet-a-rooms.png` turns the rooms. Declared but not yet read: the area's
+    /// new layout reads it.
+    public static let variants = PlotVariant.Space(turns: 4, mirror: true)
+
     /// Where the hedge's inner face stands, out from the middle of the plot, so
     /// the room is 4.6 m across. The Long Walk's figure, because it is the same
     /// hedge at the same thickness and a second number would only be a second

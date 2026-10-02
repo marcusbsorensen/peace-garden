@@ -22,6 +22,13 @@ declare(strict_types=1);
 final class LongWalk
 {
     public const PLANTED_LENGTH = 4.8;
+
+    /**
+     * How this area's plots vary, from each plot's number (`PlotVariant.php`):
+     * the Swift's `variants`. Half turns and mirrors only, so the path stays
+     * where it runs down the walk. Declared but not yet read.
+     */
+    public const VARIANTS = ['turns' => 2, 'mirror' => true, 'nudges' => 1];
     public const ORDER_REACH = 1.3;
     public const DRIFT_REACH = 0.85;
     public const DRIFT_DEPTH = 0.3;

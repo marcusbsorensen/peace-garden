@@ -44,6 +44,12 @@ public enum Orchard {
     /// A web plot's side, the same square every area uses.
     public static let plotSide = 5.2
 
+    /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
+    /// Marcus's decision of 2 October 2026). Turned and mirrored; the trees'
+    /// nudges are feature variants to come. Declared but not yet read: the area's
+    /// new layout reads it.
+    public static let variants = PlotVariant.Space(turns: 4, mirror: true)
+
     /// How far out the four outer trees stand, on each axis, from the middle of
     /// the plot. The fifth is at the middle itself.
     ///

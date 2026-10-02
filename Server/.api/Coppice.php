@@ -36,6 +36,13 @@ final class Coppice
     /** The same square every area uses. */
     public const PLOT_SIDE = 5.2;
 
+    /**
+     * How this area's plots vary, from each plot's number (`PlotVariant.php`):
+     * the Swift's `variants`. Turned and mirrored; the glade's places are
+     * feature variants to come. Declared but not yet read.
+     */
+    public const VARIANTS = ['turns' => 4, 'mirror' => true, 'nudges' => 1];
+
     /** Three coupes of eleven: five stools, and a back row and a front row of three. */
     public const COUPES = 3;
     public const STOOLS = 5;
