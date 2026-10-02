@@ -43,12 +43,14 @@ const TROUGH_AT = { at: [0.83, 1.98], across: 0.36, deep: 0.8 };
 /// The soil: the colour the map gives this area — `LOOK.ground` in `gates.js`,
 /// brought down by the quarter a plot is lit up by, as the Seedbed's tilth and
 /// the Coppice's litter are. Darker than the tilth, which is the same earth
-/// raked fine for sowing.
-const SOIL = [0.242, 0.185, 0.138];
+/// raked fine for sowing. The Wild Fields' earth starts from it too
+/// (`wildground.js`).
+export const SOIL = [0.242, 0.185, 0.138];
 
 /// A path: the same soil trodden flat, paler for it and a little greyer,
-/// because feet press the crumb together and dry its face.
-const PATH = [0.315, 0.262, 0.212];
+/// because feet press the crumb together and dry its face. And the Wild
+/// Fields' earth where visitors have worn it (`wildground.js`).
+export const PATH = [0.315, 0.262, 0.212];
 
 /// How high a bed stands over its paths, at its middle.
 const RAISED = 0.08;

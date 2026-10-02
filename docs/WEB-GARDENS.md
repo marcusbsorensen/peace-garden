@@ -9,6 +9,177 @@ Wild Fields, which nobody does.
 Nothing here is built. The website cannot yet draw a plant (§*What has to exist
 first*), and until it can, every decision below is a design and not a garden.
 
+## The Wild Fields' ground, close to, 2 October 2026
+
+Marcus, 2 October: *The textures of the earth have to be more realistic in the
+Wild Fields. So as appropriate, have more realistic tufts of grass, pebbles,
+grainy earth and so forth. Otherwise the difference between the landscape
+itself and the incredible detail of the plants is too jarring.* A released
+plant is grown from its seed with veined leaves and ribbed stems; the field it
+stood on was one smooth shaded sheet, so every plant read as laid on a cloth.
+Built in `wildground.js`, on `/wild` and `/dev/wild`; not merged or deployed.
+Renders, before and after, are in `design/wild-ground-2026-10-02/`.
+
+- **Tufts of grass are geometry**: one clump of blades drawn once and stood
+  wherever the field has one (instancing), each its own height, turned, combed
+  over by the wind so neighbours lean together, and coloured by the field's
+  own green where it stands — lusher where the grass is thick, each tuft a
+  little towards yellow or blue, some blades died back to straw. A few have
+  gone to seed: a stalk over the blades and a head the colour of ripe grass.
+  **Close to, the short grass between them is geometry too**, many times
+  denser and a few centimetres high, growing in as the reader comes closer
+  than about two millimetres to a pixel.
+- **Pebbles are geometry**: a lumpy ball, flattened and sunk a quarter to a
+  half into the turf, in the gardens' stones' colours (the slab's bedrock
+  darkened to flint, the Knot's gravel, the Crossing's paving, and the
+  gardens' earth for ironstone); a few anywhere, more on stony ground, now and
+  then a little scatter together, and kept mostly where the earth shows,
+  since under thick grass nobody would see them.
+- **The earth and the mat are the ground's own shader.** Where the tufts are
+  thick, the mat under them: the short grass's dark depths, mottled by the
+  clumps, with blades lying across it, combed the same way. Where they are
+  thin, earth, in gaps a hand or two across between tussocks rather than bald
+  patches: the Home Ground's soil (`SOIL`, greyed for the field), its crumb —
+  a jittered lattice, a tone to a crumb, wider where the soil is loose and
+  narrower where feet have pressed it — pushed about so the crumbs are lumps
+  and not a paving, clods, a grain of four millimetres, the odd pale grit, and
+  each crumb a little dome so the galaxy finds it. Moss in the damp hollows.
+- **Near and far go by zoom.** The view is true isometric, so nothing is
+  further off than anything else; what changes is how close the reader has
+  come. The tufts are drawn with 22, 15 or 10 blades by how much of the field
+  a pixel covers, and never thinner than a pixel; stones with 320 or 80
+  facets; and every grain of the earth fades to its own average once it is
+  smaller than a pixel, rather than shimmering. At the widest look the field
+  still reads as pasture, because the tufts are still there.
+- **Placed by where it is.** Every tuft and stone comes from the square metre
+  it stands in, by a hash of that square's number on the field, wrapped: the
+  same for everyone, and the field meets itself where it comes round (checked
+  on renders across the seam and the corner). How thick the grass is, and
+  where the earth shows, is one sum the page and the shader both work out
+  from integer hashes, so they agree and no tuft stands on bare earth. Every
+  noise lies on a lattice turned off the field's axes by a whole step, which
+  keeps it at an angle to everything and still lets it come round: no ruled
+  lines, no tile.
+- **Lit as the plants are**: the same sum (the galaxy, the night sky, the
+  bounce) with the fireflies added by the field, and under a plant the same
+  darkening its foot gives the ground. Beside a stem the tufts are shorter, so
+  a plant's lowest leaves are not drowned, and none stand at the stem itself.
+- **Two swards, for Marcus to choose from the renders.** `pasture` (the
+  default, and what this document has called the field): grazed short, 4 to
+  15 cm, earth showing between tussocks, rank patches left long to about
+  25 cm, a tenth of the tufts gone to seed, most of those in the rank grass.
+  `meadow`: uncut, 8 to 28 cm and rank to a third of a metre, thick, a
+  quarter of it seeding, hardly any earth. `/dev/wild?sward=meadow` draws the
+  second; `/wild` draws whichever `makeWildStage` is given (`sward`).
+- **Not built: sway.** The stage draws when the window moves and not
+  otherwise; grass that swayed would have the whole field, a thousand plants
+  with it, drawn thirty times a second to move blades a few millimetres. The
+  wind's combing is what stands for it, and costs nothing.
+
+**Two inputs, for the field's other layers, that default to nothing.** Each
+is GLSL defining `float wearAt(vec2 p)` or `float wetAt(vec2 p)` over the
+field's unwrapped metres, with the uniforms it needs and a `bind(gl, at)` that
+sets them; `makeWildStage` takes them as `wear` and `wet` and the detail binds
+them on the ground, the tufts and the stones. `fieldInput(name, at)` makes
+one from a function of the field sampled into a texture that repeats as the
+field does (`set(at)` samples it again). `/dev/wild?try=wear`, `?try=wet` and
+`?try=both` invent a path across the middle and a pond's margin beside it.
+
+- `wear`, 0 to 1: tufts thin out (each at its own place in the order of
+  giving way, so a path's edge is ragged), shorten and are pressed flat; the
+  ground goes to bare earth, the Home Ground's path colour, its crumb pressed
+  together; seed heads go first.
+- `wet`, 0 to 1: the grass grows taller, stiffer, broader and darker, like
+  sedge, from about a third; the earth darkens to the gardens' silt and
+  glistens from about a half; nothing grows past nine tenths, which is where
+  the water is.
+
+**How the worn paths meet it** (`worktree-agent-ae92f34eae33f3ae0`). Its
+`wornGround()` answers `{ shader, uniforms: ['wear'], bind, set }`, and
+`shader` rewrites the ground's old fragment shader at three anchors this one
+no longer has, so as it stands it would warn and draw no wear.
+
+1. `wear.js`: `wornGround()` answers `glsl` in place of `shader` —
+   `WEAR_GLSL` (its texture, its noise and `wornAt`) followed by
+   `float wearAt(vec2 p) { return wornAt(vec3(p.x, 0.0, p.y)); }`. `trodden`,
+   `flattened`, `withWear` and its anchors go: the detail does what they did,
+   and thins and flattens the tufts as well, which a rewrite of the ground's
+   colour could not.
+2. `wildfields.js`: keep this branch's `groundDetail` and `ground` lines and
+   drop theirs (`wear ? wear.shader(GROUND_FRAGMENT) : …`, `...(wear ?
+   wear.uniforms : [])`, `wear?.bind(gl, ground.at)`); keep their `looked`
+   option, `groundUnder` and the calls to `looked`.
+3. `wildpage.js` and `wild.html` pass `wear: worn` as they do now. It binds
+   texture unit 2; `fieldInput` defaults to 3; the plants use 0 and 1.
+   `?wear=demo` is theirs and `?try=wear` this branch's; theirs can replace it.
+
+**How the ponds meet it** (`worktree-agent-afbb63685ec62a87c`, Marcus's option
+B, drawn on `/wild` for every visitor). The stage there makes the water itself
+(`makeWildWater(e, { side, height })`), and the water's `sample` works out
+`wet` and `mud` at a point and paints them into the ground's vertex colours
+(`RUSH`, `SILT`).
+
+1. `wildwater.js`: `sample` answers `wet` and `mud` along with `floor`,
+   `level` and `colour`; and the water answers `wetness(x, z)` — 1 where its
+   level is over the floor, else the larger of `wet` and `mud` — and
+   `floorAt(x, z)`, `sample(x, z, height(x, z), [0, 0, 0]).floor`. The
+   `wet → RUSH` and `mud → SILT` mixes leave `sample` (the tussock tops'
+   `grass → RUSH` stays): the detail darkens to mud and grows sedge from
+   `wetAt`, and with both the margin is darkened twice.
+2. `wildfields.js`, in `makeWildStage`: make the water before the detail;
+   give the detail `height: (x, z) => water.floorAt(x, z)` in place of
+   `groundHeight`, so tufts and stones stand on a dug floor rather than over
+   it, and `wet: fieldInput('wet', water.wetness)` (256 to a side, a quarter
+   of a metre to a texel, which a margin a metre or two wide needs no finer
+   than). Where `refresh()` finds `water.version` changed, call the input's
+   `set(water.wetness)` and `detail.changed({ regrow: true })`. If sampling
+   the whole field again on every lotus that changes the water shows in a
+   profile, sample only that pond's box.
+3. Their `refine` draws the fine ground near the water with the same `ground`
+   program, so it has the detail as it is; the water's own program is not
+   touched.
+
+**What it costs**, measured headless in Chrome on the Mac's GPU (an M4 Max)
+on `/dev/wild`, before (24c45e5) and after, twice each. *Cost* is the
+stage's own work for a frame while the window moves every frame — drawing,
+and waiting for the GPU to finish — in milliseconds, median and 95th
+centile; *still* sways inside a metre, *walk* walks nine metres. Desktop is
+1440 × 900 at 2×; the phone is 390 × 844 at 3× with the CPU slowed four
+times (CDP). The frame rate held at sixty in every case (the median frame
+was 16.7 ms everywhere); *slow* is frames over 25 ms in the 300 of a walk.
+
+| | still, before | still, after | walk, before | walk, after | slow, before → after |
+|---|---|---|---|---|---|
+| desktop, 400 plants | 6.0–7.4 (p95 7.8–7.9) | 5.6–10.3 (p95 5.9–10.9) | 3.9–5.6 | 5.3–6.1 | 0 → 1–2 |
+| desktop, 1000 | 10.4 (p95 11.5–11.6) | 10.6–13.7 (p95 12.2–15.5) | 8.6–9.9 | 10.5–11.0 | 1 → 1 |
+| phone, 400 | 6.9–7.2 (p95 7.8–8.6) | 9.8–10.3 (p95 11.2–12.2) | 7.0–7.2 | 6.9–9.2 | 3 → 3 |
+| phone, 1000 | 13.2–13.5 (p95 15.2–15.8) | 13.7–13.9 (p95 15.5–16.1) | 10.8–12.9 | 13.3–13.7 | 4 → 5–6 |
+| phone, 1000, as close as it goes | 12.8 (p95 14.2) | 11.6 (p95 16.3) | 12.5 | 11.8 | 0 → 0 |
+| phone, 1000, meadow | — | 10.7 (p95 13.8) | — | 11.1 | 4 |
+
+Two runs of the same build differ by up to five milliseconds here, so read
+the ranges rather than the digits: the detail adds about one to three
+milliseconds to a frame's work, and at a thousand plants the plants are
+still most of it.
+
+- **At the opening look a phone draws about 14,000 tufts and 430 stones,**
+  a desktop 12,000 and 360 (the pasture; the meadow about 18,000), and as
+  close as the field goes 3,500 tufts and 6,800 of the short grass's.
+- **What is in sight is laid a metre past the screen, and each square keeps
+  its own run of the buffer while it is held.** A square coming into sight
+  is laid into a free run, one going out is blanked where it lies, and the
+  rest are not touched; it is laid again only when a square that is seen is
+  not there, a plant comes or goes in one, or the look comes closer or goes
+  further. Walking, that is about once every thirty frames, at about 2 ms on
+  the slowed phone, and about 5 ms more the first time those squares are
+  grown. Gathering everything again at every square's edge, as it first did,
+  was most of what walking cost.
+- **The GPU cannot be measured for a phone here.** On this Mac the ground's
+  shader costs about 0.17 ms a frame on a phone-sized canvas and the tufts
+  and stones about 0.14 ms (each drawn ten times over, blended, to make it
+  measurable); a phone's GPU is perhaps ten times slower, so about 3 ms of a
+  16.7 ms frame. It wants trying on a real phone before it goes live.
+
 ## The Wild Fields built, 1 October 2026
 
 Release sends a plant somewhere now. Marcus had released one believing it

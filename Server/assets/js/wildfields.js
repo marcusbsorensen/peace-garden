@@ -34,6 +34,7 @@
 
 import { ROLES, YOUNG, decode, takeResult, attribute, multiply } from './plant.js';
 import { PLANT_VERTEX, PLANT_FRAGMENT, COLOUR, program, upload, hash } from './longwalk.js';
+import { groundDetail } from './wildground.js';
 
 // SeedCore's `WildFields`, and the service's `WildFields.php`.
 export const SIDE = 64;
@@ -134,12 +135,11 @@ function groundColour(x, z) {
   for (const [i, j, p] of PATCHES) m += Math.cos((2 * Math.PI * (i * x + j * z)) / SIDE + p);
   m = 0.5 + m / 6;
   const h = groundHeight(x, z);
-  // Lusher in the hollows, where water would lie, and a grain of grass at the
-  // grid's own scale so the ground is a sward rather than a sheet.
+  // Lusher in the hollows, where water would lie. The grain the grid used to
+  // carry, a tone a vertex every 30 cm, is the ground's detail's now
+  // (`wildground.js`), finer and with no triangles in it.
   const wet = 0.94 + 0.10 * Math.max(-1, Math.min(1, -h / 0.8));
-  const ix = Math.round(mod(x, SIDE) / STEP), iz = Math.round(mod(z, SIDE) / STEP);
-  const grain = 0.90 + 0.18 * hash(ix * 7919 + iz * 104729);
-  return COLOUR.turf.map((t, k) => (t + (COLOUR.grass[k] - t) * m) * wet * grain * DUSK);
+  return COLOUR.turf.map((t, k) => (t + (COLOUR.grass[k] - t) * m) * wet * DUSK);
 }
 
 // **The fireflies' light, added to every light the plant shader already
@@ -163,6 +163,7 @@ vec3 fireflies(vec3 p, vec3 n) {
   return sum;
 }
 `;
+const FLY_UNIFORMS = ['flies', 'flyColour', 'flyReach'];
 const LIGHT_AT = 'vec3 lightAt(vec3 n) {';
 const LIGHT_SUM = 'return sky * hemi + bounce * (1.0 - hemi) + max(dot(n, sun), 0.0) * strength * sunColour;';
 
@@ -182,19 +183,9 @@ out vec3 vNormal; out vec3 vColour; out vec3 vWorld;
 void main() { vNormal = normal; vColour = colour; vWorld = position; gl_Position = viewProjection * vec4(position, 1.0); }`;
 
 // The ground's light is the plants' light: the same sum, the same encode.
-const GROUND_FRAGMENT = withFireflies(`#version 300 es
-precision highp float;
-in vec3 vNormal; in vec3 vColour; in vec3 vWorld;
-uniform vec3 sun, sunColour, sky, bounce;
-uniform float strength;
-vec3 lightAt(vec3 n) {
-  float hemi = 0.5 + 0.5 * n.y;
-  return sky * hemi + bounce * (1.0 - hemi) + max(dot(n, sun), 0.0) * strength * sunColour;
-}
-vec3 encode(vec3 linear) { return pow(max(linear, vec3(0.0)), vec3(1.0 / 2.2)); }
-vec3 toLinear(vec3 srgb) { return pow(max(srgb, vec3(0.0)), vec3(2.2)); }
-out vec4 outColour;
-void main() { outColour = vec4(encode(toLinear(vColour) * lightAt(normalize(vNormal))), 1.0); }`);
+// Its fragment shader is the ground's detail's (`groundFragment` in
+// `wildground.js`, 2 October 2026): the sward between the tufts and the earth
+// where it thins, and what the field's other layers say is worn or wet.
 
 // **Where a plant meets the ground.** No sun, so no cast shadow — but grass
 // under a plant gets less of the sky than grass in the open, and without that
@@ -220,14 +211,23 @@ void main() {
 /// `x` and `z` wrapped, 0 to `TILES` − 1 — as plantings `{ seed, parents,
 /// spot }`, the way `GET /api/wild/tile/{x}/{z}` does. `from` is the point of
 /// the field the window opens over, in metres.
-export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], report = () => {} }) {
+///
+/// **The ground in detail** (2 October 2026; `wildground.js`): tufts of grass,
+/// pebbles, and the earth between them. `sward` is `pasture` or `meadow`;
+/// `wear` and `wet` are what the field's other layers say is worn by walking
+/// or wet towards water, each GLSL defining `wearAt` or `wetAt` with its
+/// uniforms and a `bind`, and nothing until they are given.
+export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], report = () => {},
+                                          sward = 'pasture', wear = null, wet = null }) {
   const gl = canvas.getContext('webgl2', { antialias: true, alpha: true, premultipliedAlpha: true });
   if (!gl) throw new Error('This browser has no WebGL2.');
-  const ground = program(gl, GROUND_VERTEX, GROUND_FRAGMENT, ['position', 'normal', 'colour'],
-                         ['flies', 'flyColour', 'flyReach']);
+  const detail = groundDetail(gl, { side: SIDE, height: groundHeight, colour: groundColour, sward, wear, wet,
+                                    light: withFireflies, lit: FLY_UNIFORMS });
+  const ground = program(gl, GROUND_VERTEX, withFireflies(detail.fragment), ['position', 'normal', 'colour'],
+                         [...FLY_UNIFORMS, ...detail.uniforms]);
   const plantProgram = program(gl, PLANT_VERTEX, withFireflies(PLANT_FRAGMENT),
                                ['position', 'normal', 'uv', 'age'],
-                               ['offset', 'colour', 'relief', 'young', 'look', 'flies', 'flyColour', 'flyReach']);
+                               ['offset', 'colour', 'relief', 'young', 'look', ...FLY_UNIFORMS]);
   const footProgram = program(gl, FOOT_VERTEX, FOOT_FRAGMENT, ['position', 'uv'], []);
 
   // Where the window opens, on the ground, and how it has moved since — in
@@ -504,6 +504,7 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
   // Each plant's foot, draped on the ground: a five-by-five sheet over its
   // radius, so it follows a slope rather than cutting into it.
   function rebuildFeet() {
+    detail.standing(standing());
     if (feet) { feet.buffers.forEach((b) => gl.deleteBuffer(b)); gl.deleteVertexArray(feet.vao); feet = null; }
     const positions = [], uvs = [], indices = [];
     for (const plant of standing()) {
@@ -591,9 +592,10 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
     drawn = viewProjection;
     const flies = litBy();
 
-    for (const p of [ground, plantProgram]) {
+    for (const p of [ground, plantProgram, ...detail.programs]) {
       gl.useProgram(p.program);
       gl.uniformMatrix4fv(p.at.viewProjection, false, viewProjection);
+      gl.uniform3fv(p.at.look, Z);
       gl.uniform3fv(p.at.sun, NIGHT.sun);
       gl.uniform3fv(p.at.sunColour, NIGHT.sunColour);
       gl.uniform3fv(p.at.sky, NIGHT.sky);
@@ -605,6 +607,7 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
     }
 
     gl.useProgram(ground.program);
+    detail.bindInputs(ground.at);
     groundMesh.draw();
 
     if (feet) {
@@ -621,6 +624,10 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
       gl.depthMask(true);
       gl.disable(gl.BLEND);
     }
+
+    // The tufts and the stones, over the ground and its feet, under the
+    // plants; by how much of the field a pixel of the canvas covers.
+    detail.draw(viewProjection, { around: [...builtRound, reach], metresPerPixel: w / width });
 
     gl.useProgram(plantProgram.program);
     gl.uniform1i(plantProgram.at.colour, 0);
@@ -711,6 +718,8 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
   return {
     draw, turnBy, turn: () => turn, view, held, lookAt, carried, seams, onScreen, toScreen,
     drifts: () => drifts, pixelsPerMetre, standing, settled: () => fetching, pick, named, toward,
+    // How much of the ground's detail is in sight, for the workbench.
+    counts: () => detail.counts(),
   };
 }
 
