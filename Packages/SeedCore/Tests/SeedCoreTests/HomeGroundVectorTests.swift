@@ -12,6 +12,11 @@ import XCTest
 /// height comes out of a mesh built with `sin` and `pow`, which is what
 /// `VectorFile.height` absorbs; an archetype is picked from the seed's bytes,
 /// so it is the same word on every host.
+///
+/// **Each row carries its plot's variant and its spot** since the lazy beds
+/// of 2 October 2026: the place is a table's millimetres, the nudge added in
+/// the table's frame, and the sum mirrored in alternate plots, all exact on
+/// every host, so the spot is compared with no tolerance.
 final class HomeGroundVectorTests: XCTestCase {
     static var vectorsURL: URL {
         var url = URL(fileURLWithPath: #filePath)
@@ -26,11 +31,13 @@ final class HomeGroundVectorTests: XCTestCase {
         var lines: [String] = []
         for (seed, traits) in HomeGroundTests.arrivals() {
             let p = ways.plant(seed: seed, traits: traits)
+            let v = PlotVariant.of(plot: p.plot, area: .ground)
             lines.append("""
                 {"seed":"\(seed.hex)","height":\(traits.height),"family":\(traits.family),\
                 "habit":"\(traits.habit)","plot":\(p.plot),"bed":\(p.slot.bed),\
                 "crop":"\(p.slot.crop.rawValue)","index":\(p.slot.index),\
-                "nudge":[\(p.nudge.x),\(p.nudge.z)]}
+                "nudge":[\(p.nudge.x),\(p.nudge.z)],\
+                "variant":[\(v.turn),\(v.mirror),\(v.nudge)],"spot":[\(p.spot.x),\(p.spot.z)]}
                 """)
         }
         // One JSON document, not one per line: see `SeedbedVectorTests`.

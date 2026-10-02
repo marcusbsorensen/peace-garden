@@ -131,7 +131,7 @@ final class KnotStore
     /**
      * A plot's plantings, in the order they arrived. Hidden ones are not in it.
      *
-     * Plot 0 opens with the ambassador in the north compartment, which is not a
+     * Plot 0 opens with the ambassador in the north-east lens, which is not a
      * row. It carries no parents and no meeting, because it was minted rather
      * than crossed, and an empty `parents` is how the wire says so.
      */
@@ -142,13 +142,13 @@ final class KnotStore
         $plantings = array_map([self::class, 'planting'], $query->fetchAll());
         if ($plot !== 0) return $plantings;
         $standing = Ambassadors::planting('pattern');
-        [$x, $z] = KnotGarden::spot($standing['compartment'], $standing['index']);
         array_unshift($plantings, [
             'seed' => $standing['seed'],
             'parents' => [],
             'encounter' => null,
             'plot' => 0,
-            'spot' => [$x + $standing['nudgeX'], $z + $standing['nudgeZ']],
+            'spot' => KnotGarden::spotOf(0, $standing['compartment'], $standing['index'],
+                                         $standing['nudgeX'], $standing['nudgeZ']),
         ]);
         return $plantings;
     }
@@ -176,13 +176,13 @@ final class KnotStore
     /** What the page needs to grow a planting and stand it in its place. */
     private static function planting(array $row): array
     {
-        [$x, $z] = KnotGarden::spot((int) $row['compartment'], (int) $row['slot_index']);
         return [
             'seed' => $row['seed'],
             'parents' => [$row['parent_a'], $row['parent_b']],
             'encounter' => $row['encounter'],
             'plot' => (int) $row['plot'],
-            'spot' => [$x + (float) $row['nudge_x'], $z + (float) $row['nudge_z']],
+            'spot' => KnotGarden::spotOf((int) $row['plot'], (int) $row['compartment'], (int) $row['slot_index'],
+                                         (float) $row['nudge_x'], (float) $row['nudge_z']),
         ];
     }
 

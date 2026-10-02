@@ -2,6 +2,15 @@
 // slab of dark soil seen in true isometric, three raised beds mounded up out of
 // it with trodden paths between, and a crop standing in rows across each bed.
 //
+// **Lazy beds that follow the land**, since 2 October 2026 (option A of the
+// layouts Marcus approved that day): the three beds sway together in a lazy S,
+// as hand-dug ridges follow the ground, and the rows run square to the curve.
+// Each bed's line is the table's (`tables/home_ground_beds.js`, made offline),
+// and a plot is mirrored or not by its number (`pg_plot_variant`), so one plot
+// sways one way and the next the other. **A bold curve, finely wandering**:
+// the sway is the shape, and each side of a bed strays off it by no more than
+// a spade would.
+//
 // **Everything is soil, and nothing is ruled.** A bed is the ground's own
 // relief, 8 cm high with soft shoulders, as a no-dig bed is made; there are no
 // boards, because a board is a ruled line. The paths are the same soil trodden
@@ -29,6 +38,8 @@ import { decode, takeResult } from './plant.js';
 import { SIDE, hash, readOutline } from './longwalk.js';
 import { hangSide } from './slab.js';
 import { footing, raiseTrough } from './water.js';
+import { PLAIN, applyVariantToCurve, variantFromModule } from './variant.js';
+import { homeGroundBeds } from './tables/home_ground_beds.js';
 
 // Seeds for this area's dressing, its own and not another area's.
 const GROUND = { ground: 6173, floor: 59, crumb: 97, drift: 131, clod: 157, edge: 181, trough: 197 };
@@ -36,10 +47,12 @@ const GROUND = { ground: 6173, floor: 59, crumb: 97, drift: 131, clod: 157, edge
 // **A dipping trough at the near end of a path**, where the can is filled on
 // the way in. The Home Ground is a step up from the foot of the garden and has
 // no ground to spare for a pond — the beds take it — so its water is held in
-// stone. Lengthways down the path, which is 0.45 m between the beds, and ending
-// inside the plot's edge, which comes in no nearer than 2.42 m. Laid across
-// the headland instead it had room for 0.24 m of width and read as a block.
-const TROUGH_AT = { at: [0.83, 1.98], across: 0.36, deep: 0.8 };
+// stone. Lengthways down the path between the middle bed and the one east of
+// it as the table draws the plot, which is 0.45 m wide, and ending inside the
+// plot's edge, which comes in no nearer than 2.42 m. Laid across the headland
+// instead it had room for 0.24 m of width and read as a block. The beds run
+// straight at their ends, so the path does where the trough stands.
+const TROUGH = { z: 1.98, across: 0.36, deep: 0.8 };
 
 /// The soil: the colour the map gives this area — `LOOK.ground` in `gates.js`,
 /// brought down by the quarter a plot is lit up by, as the Seedbed's tilth and
@@ -57,7 +70,10 @@ export const PATH = [0.315, 0.262, 0.212];
 const RAISED = 0.08;
 
 /// How far a bed's side or end wanders off its line, either way, at most.
-const WANDER = 0.045;
+/// **2.5 cm, since the beds sway** (it was 4.5 when they ran straight): the
+/// sway is the bold curve and this is the fine wander on it, and a bed's side
+/// has only so far to go before the slab's edge.
+const WANDER = 0.025;
 
 /// How round a bed's corners are.
 const CORNER = 0.22;
@@ -67,6 +83,37 @@ export function plan(e) {
   // Which beds are sown in the plot on show. Empty until a plot is grown; the
   // page fills it and asks the stage to build its ground again.
   place.sown = new Set();
+
+  // **Each bed's line, as the plot on show is laid**: the table's, mirrored if
+  // the plot is, and read by z every centimetre, because the ground asks
+  // where a bed's middle is some forty thousand times. A line never doubles
+  // back down the plot, so z names one point of it.
+  const STEP = 0.01, FROM = -SIDE / 2;
+  const across = [];
+  place.lay = (variant = PLAIN) => {
+    place.variant = variant;
+    across.length = 0;
+    for (let b = 0; b < place.beds; b++) {
+      const line = applyVariantToCurve(variant, homeGroundBeds.curves[`bed${b}`][0].points);
+      const xs = [];
+      for (let z = FROM, k = 0; z <= -FROM + 1e-9; z = FROM + ++k * STEP) {
+        let i = 0;
+        while (i < line.length - 2 && line[i + 1][1] < z) i++;
+        const [ax, az] = line[i], [bx, bz] = line[i + 1];
+        const t = Math.min(1, Math.max(0, (z - az) / (bz - az)));
+        xs.push(ax + (bx - ax) * t);
+      }
+      across.push(xs);
+    }
+  };
+  place.lay(PLAIN);
+  // Where bed `b`'s middle is at `z`, and how far it leans there.
+  place.centre = (b, z) => {
+    const xs = across[b];
+    const k = Math.min(xs.length - 2, Math.max(0, (z - FROM) / STEP));
+    const i = Math.floor(k);
+    return { x: xs[i] + (xs[i + 1] - xs[i]) * (k - i), lean: (xs[i + 1] - xs[i]) / STEP };
+  };
 
   // **Each bed's four edges, wandering**: the west and east sides as a curve
   // down the bed, the north and south ends as a curve across it, each its own
@@ -92,9 +139,12 @@ export function plan(e) {
   }));
 
   // **How far a point is outside a bed's top**, negative inside it: a rounded
-  // box whose sides are the wandering edges above.
+  // box bent along the bed's line, whose sides are the wandering edges above.
+  // Across is measured square to the line, so a bed is 1.2 m wide where it
+  // leans as well as where it runs straight down the plot.
   const outside = (b, x, z) => {
-    const w = edges[b], across = x - place.bedX[b];
+    const w = edges[b], c = place.centre(b, z);
+    const across = (x - c.x) / Math.hypot(1, c.lean);
     const dx = Math.abs(across) - (place.bedWidth / 2 + (across < 0 ? w.west(z) : w.east(z)));
     const dz = Math.abs(z) - (place.bedLength / 2 + (z < 0 ? w.north(x) : w.south(x)));
     const qx = dx + CORNER, qz = dz + CORNER;
@@ -118,7 +168,8 @@ export function plan(e) {
   // level, as trodden soil is.
   place.height = (x, z) => {
     const { bed, outside: o } = place.bedAt(x, z);
-    const across = Math.min(1, Math.abs(x - place.bedX[bed]) / (place.bedWidth / 2));
+    const c = place.centre(bed, z);
+    const across = Math.min(1, Math.abs(x - c.x) / Math.hypot(1, c.lean) / (place.bedWidth / 2));
     return RAISED * (1 - smooth(-0.10, 0.06, o)) * (1 - 0.18 * across * across);
   };
   return place;
@@ -126,11 +177,12 @@ export function plan(e) {
 
 /// Which bed a plant is standing in, from where it stands. The wire says where,
 /// not which, as the Seedbed's does; the beds are 1.65 m apart and a plant is
-/// never more than 0.45 m from its bed's middle.
-export function bedOf(place, x) {
+/// never more than 0.45 m from its bed's middle. Asked of the plot as it is
+/// laid, so `place.lay` the plot's variant first.
+export function bedOf(place, x, z) {
   let best = 0;
-  for (let b = 1; b < place.bedX.length; b++) {
-    if (Math.abs(x - place.bedX[b]) < Math.abs(x - place.bedX[best])) best = b;
+  for (let b = 1; b < place.beds; b++) {
+    if (Math.abs(x - place.centre(b, z).x) < Math.abs(x - place.centre(best, z).x)) best = b;
   }
   return best;
 }
@@ -241,8 +293,14 @@ export function makeGroundGround(place) {
       }
     }
 
+    // In the path east of the middle bed as the table draws it, wherever the
+    // plot's variant puts that.
+    const trough = {
+      at: [(place.centre(1, TROUGH.z).x + place.centre(2, TROUGH.z).x) / 2, TROUGH.z],
+      across: TROUGH.across, deep: TROUGH.deep,
+    };
     raiseTrough(e, { tri, quad }, {
-      ...TROUGH_AT, seed: GROUND.trough, height: 0.34, base: footing(place.height, TROUGH_AT),
+      ...trough, seed: GROUND.trough, height: 0.34, base: footing(place.height, trough),
     });
 
     // Its side: the slab every plot hangs from its outline (`slab.js`), the
@@ -275,7 +333,8 @@ const breathe = () => new Promise((resume) => setTimeout(resume, 0));
 export async function growGroundFromService(e, stage, place, plot, report) {
   stage.clear();
   const { plantings } = await (await fetch(`/api/ground/plot/${plot}`)).json();
-  place.sown = new Set(plantings.map((p) => bedOf(place, p.spot[0])));
+  place.lay(variantFromModule(e, 'ground', plot) ?? PLAIN);
+  place.sown = new Set(plantings.map((p) => bedOf(place, p.spot[0], p.spot[1])));
   stage.rebuild();
   let since = performance.now();
   for (const [i, p] of plantings.entries()) {
@@ -326,7 +385,8 @@ export async function growInvented(e, stage, place, plot, report) {
   const grown = [];
   for (let i = 0; i < count; i++) grown.push(takeResult(e, e.pg_ground_grow(plot, i)));
   const spots = grown.map((buffer) => Array.from(new Float32Array(buffer.slice(0, 8))));
-  place.sown = new Set(spots.map(([x]) => bedOf(place, x)));
+  place.lay(variantFromModule(e, 'ground', plot) ?? PLAIN);
+  place.sown = new Set(spots.map(([x, z]) => bedOf(place, x, z)));
   stage.rebuild();
   let since = performance.now();
   for (const [i, buffer] of grown.entries()) {

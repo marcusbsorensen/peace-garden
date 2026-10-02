@@ -1,7 +1,9 @@
 // A plot of the Knot Garden, drawn the way the app draws a plot: a floating
-// slab of ground seen in true isometric, gravel all over it, two bands of low
-// clipped box woven over and under each other inside a square edging, and a
-// block of one colour standing in each of the eight compartments.
+// slab of ground seen in true isometric, gravel all over it, a ring of low
+// clipped box round the middle and four rings woven through it inside a
+// softened square edging, and a block of one colour standing in each of the
+// eight compartments: four lenses where the rings overlap, four crescents
+// outside them.
 //
 // **It is one pattern, so the page shows one plot.** The Long Walk draws three
 // end to end because a walk is a length you look down. A knot is not: it is a
@@ -9,22 +11,22 @@
 // one knot nor two.
 //
 // **The weave is the whole area, and it is drawn rather than implied.** At each
-// of the four crossings one band carries on through and swells a little, as a
+// of the eight crossings one band carries on through and swells a little, as a
 // clipped hedge does where two runs meet, and the other stops square against
-// its face and starts again on the far side. Which does which alternates round
-// the knot, so every run is over at one of its two crossings and under at the
-// other. Two bands simply overlapping would be a grid; the alternation is the
-// difference between a grid and a knot.
+// its face and starts again on the far side. Going round the middle ring it is
+// over, under, over, under, so every small ring is over at one of its two
+// crossings and under at the other. Five rings simply overlapping would be a
+// drawing of circles; the alternation is the difference between that and a
+// knot.
 //
-// **The bands curve, which is the other half of that difference.** Interlaced
-// straight runs are a weave, and a weave drawn with a ruler still reads as a
-// grid: there is no line for the eye to follow through a crossing. Each band
-// is in three stretches — an arm, the inner stretch between its two crossings,
-// and the other arm — and the inner one bows in toward the empty middle while
-// the arms bow out, so a band arrives at a crossing turning and leaves it
-// turning the same way. The four inner stretches close round the middle as a
-// ring of four arcs. The bows are zero at the crossings, so the crossings do
-// not move and neither does any plant.
+// **Every line is a curve, laid by hand.** Rings, as the research's sketch drew
+// them (option A, 2 October 2026): formal, but each strays off its true circle
+// by up to a centimetre, as box planted along a string line does, and the
+// edging is a squircle rather than a square. The lines are the table's
+// (`tables/knot_garden_rings.js`, made offline from
+// `tools/layouts/tables/knot_garden_rings.py`), which also says where each
+// crossing is and which band rides over there; this file sweeps a run of box
+// along each.
 //
 // It is also how a real knot garden is made. Living hedge cannot be woven, so a
 // Tudor knot is planted exactly this way — the under-band interrupted, the
@@ -36,21 +38,22 @@
 // `pg_knot_plan` rather than being written down again here.
 
 import { decode, takeResult } from './plant.js';
-import { COLOUR, SIDE, hash, keepToPlot, readOutline, readStructure } from './longwalk.js';
+import { COLOUR, SIDE, hash, keepToPlot, readOutline } from './longwalk.js';
 import { hangSide } from './slab.js';
 import { raiseTrough } from './water.js';
+import { knotGardenRings } from './tables/knot_garden_rings.js';
+
+// The basin in the middle of the knot. The small rings come no nearer the
+// middle than 0.54 m, and a band is 0.09 m either side of its line, which
+// leaves 0.45 m clear all round: a basin 0.60 m across stands 15 cm inside
+// that.
+const BASIN = { across: 0.60, height: 0.08 };
 
 // Seeds for this area's dressing, so a plot is the same shape on every visit.
 // Its own, not the walk's, the room's, the crossing's or the orchard's: five
 // areas drawing from one seed would be five plots with the same wandering edge,
 // which is the sort of thing an eye catches without being able to say why.
-// The basin in the middle of the knot. The four inner stretches bow in to
-// within 0.46 m of the middle, and a band is 0.09 m either side of its line,
-// which leaves 0.37 m clear all round: a basin 0.60 m across stands 7 cm
-// inside that.
-const BASIN = { across: 0.60, height: 0.08 };
-
-const KNOT = { ground: 7417, floor: 31, grain: 53, band: 601, edging: 641, bridge: 673, basin: 691 };
+const KNOT = { ground: 7417, floor: 31, grain: 53, basin: 691 };
 
 export function plan(e) {
   return JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_knot_plan())));
@@ -149,22 +152,17 @@ export function makeKnotGround(place) {
       }
     }
 
-    // **A basin in the empty middle**, which the four inner stretches close
-    // round. The Knot is halfway up the garden, where water is held rather
-    // than found, so it is a ring of stone standing on the gravel — low, a
-    // band's height and less, so it lies inside the knot rather than standing
-    // up out of it. Sunk flush, it read as a drain.
+    // **A basin in the empty middle**, which the four small rings close round.
+    // The Knot is halfway up the garden, where water is held rather than
+    // found, so it is a ring of stone standing on the gravel — low, a band's
+    // height and less, so it lies inside the knot rather than standing up out
+    // of it. Sunk flush, it read as a drain.
     raiseTrough(e, { tri, quad }, {
       across: BASIN.across, height: BASIN.height, seed: KNOT.basin, round: true,
     });
 
     // MARK: The knot
 
-    const band = place.bandHalfThickness * 2;
-    const from = place.bandFrom;
-    const high = place.bandHeight;
-
-    let mark = 0;
     // **What the box throws on the gravel**: every triangle of every run, handed
     // to the stage beside the ground as `casting`, which lays them down from
     // the sun's side. At ankle height that is a hand's width of shade on the
@@ -172,56 +170,7 @@ export function makeKnotGround(place) {
     // than on it.
     const casting = [];
     const cast = (p, nn, c) => { vertex(p, nn, c); casting.push(...p); };
-    // One run of hedging, along x or along z, from `a` to `b` on that axis and
-    // standing on the other at `fixed`. Its ends are cut square rather than
-    // domed — every one of them is buried, either in the edging or inside the
-    // band that crosses over it — which is what `domed: 0` is for, and the
-    // reason the Quiet Garden's enclosure needed it first.
-    // `bow` stands the stretch's middle off the straight line between its two
-    // ends, toward the axis it is fixed on — the same number in the mesh's own
-    // frame either way round, because `lay` puts a run's own x on whichever
-    // axis it is fixed to.
-    const run = (alongX, fixed, a, b, height, thickness, bow = 0) => {
-      const length = b - a, mid = (a + b) / 2;
-      const mesh = readStructure(
-        takeResult(e, e.pg_hedge(length, height, thickness, KNOT.band + mark++, 0, bow)));
-      lay(mesh, alongX, alongX ? [mid, 0, fixed] : [fixed, 0, mid], cast);
-    };
-
-    // **The knot, and the square edging round it**, as the rule lays them out:
-    // three stretches to each of the four runs, which is a run cut at the
-    // crossing it dives under and cut again at the crossing it rides over,
-    // where its two bows change hand. `KnotGarden.weave` says which is which
-    // and why, and the page draws what it is given — a second copy of a weave
-    // here is a thing that can drift from the rule a compartment is measured
-    // against without either of them looking wrong.
-    for (const b of place.weave) run(b.alongX, b.at, b.from, b.to, high, band, b.bow);
-
-    // **The swelling where a band rides over.** A clipped hedge is thicker and
-    // a little taller where two runs meet and have grown into each other, and
-    // that lump is what turns a band passing a broken one into a band passing
-    // *over* it. Without it the crossing reads as a gap in one hedge; with it
-    // the eye takes the continuous run as the near one and the knot closes.
-    //
-    // It is a piece of hedge and not a lift of the run itself, because a run is
-    // over at one of its crossings and under at the other: a run raised along
-    // its whole length would ride over both.
-    //
-    // It also sits on the joint where a band's inner stretch meets its arm,
-    // which is at the over-crossing and is where the two bows change hand.
-    // Nothing needs covering there — a bow leaves both its ends flat, so the
-    // two stretches meet along the same line — but a lump is welcome on a seam
-    // all the same.
-    //
-    // Straight, and it can be: a stretch is flat at its ends, so the band under
-    // the swell is running along its own axis and not across it.
-    const swellHigh = high + 0.055, swellThick = band + 0.055, swellLong = 0.58;
-    for (const s of [from, -from]) {
-      // The run along z at x = s is over at z = +s; the run along x at z = s is
-      // over at x = −s. The two sentences above, read the other way round.
-      run(false, s, s - swellLong / 2, s + swellLong / 2, swellHigh, swellThick);
-      run(true, s, -s - swellLong / 2, -s + swellLong / 2, swellHigh, swellThick);
-    }
+    for (const run of knotRuns(place)) sweepHedge(run, place, cast);
 
     // Its side: the slab every plot hangs from its outline (`slab.js`), the
     // floor seed saying how its lower edge undulates.
@@ -237,26 +186,213 @@ export function makeKnotGround(place) {
   };
 }
 
-/// A run of hedging, moved into place, with the grain that keeps a single
-/// colour from reading as plastic. `alongX` swaps the mesh's own length onto
-/// the other axis — `pg_hedge` runs along z and half of these run across.
+// MARK: - The runs of box
+
+/// **The knot as runs of box to sweep**: each one a line of points, closed or
+/// open, and how it is to swell. Read off the table: the middle ring, the four
+/// small rings and the edging as laid, and the eight crossings with which band
+/// rides over at each (`KnotGarden.over(at:)`: the middle ring at the even
+/// ones, the small ring at the odd).
 ///
-/// The grain is read off where a vertex is in the world rather than where it is
-/// in its own run, so that two runs meeting at a crossing do not show a seam of
-/// two different greens.
-function lay(mesh, alongX, at, vertex) {
-  for (let t = 0; t < mesh.indices.length; t += 3) {
-    for (const k of [0, 1, 2]) {
-      const v = mesh.indices[t + k];
-      const raw = [mesh.positions[v * 3], mesh.positions[v * 3 + 1], mesh.positions[v * 3 + 2]];
-      const rawN = [mesh.normals[v * 3], mesh.normals[v * 3 + 1], mesh.normals[v * 3 + 2]];
-      const p = alongX ? [raw[2], raw[1], raw[0]] : raw;
-      const nn = alongX ? [rawN[2], rawN[1], rawN[0]] : rawN;
-      const here = [p[0] + at[0], p[1] + at[1], p[2] + at[2]];
-      const tone = 0.9 + 0.2 * hash(Math.round(here[0] * 41) * 131 + Math.round(here[2] * 41) + Math.round(here[1] * 67));
-      vertex(here, nn, COLOUR.box.map((c) => c * tone));
+/// - **An under-band is cut**: it stops where its line comes within
+///   `bandHalfThickness − tuck` of the over-band's line, which is its end
+///   hidden that far inside the over-band's face, and starts again on the far
+///   side. So the middle ring is four runs and each small ring one, open.
+/// - **An over-band swells** at each crossing it rides: a short run along it,
+///   thicker and taller at the crossing and easing back to the band's own size
+///   `swellReach` along either way, so it merges with the band it lies on.
+/// - The edging is whole.
+export function knotRuns(place, table = knotGardenRings) {
+  const line = (name) => table.curves[name][0].points;
+  const bands = ['middle', 'ring0', 'ring1', 'ring2', 'ring3'].map(line);
+  const crossings = line('crossings');
+  const overAt = (i) => (i % 2 === 0 ? 0 : 1 + (i >> 1));
+  const underAt = (i) => (i % 2 === 0 ? 1 + (i >> 1) : 0);
+  const reach = place.bandHalfThickness - place.tuck;
+
+  const runs = [];
+  bands.forEach((points, b) => {
+    // Where this band dives under: the crossings it is the under-band at.
+    const dives = crossings.map((c, i) => ({ c, over: bands[overAt(i)] }))
+      .filter((_, i) => underAt(i) === b);
+    const n = points.length;
+    // A point of the band is cut away if it is near one of its dives and
+    // within `reach` of the band riding over there.
+    const cut = points.map((p) => dives.some(({ c, over }) =>
+      Math.hypot(p[0] - c[0], p[1] - c[1]) < 0.5 && distanceTo(p, over) < reach));
+    if (!cut.some(Boolean)) {
+      runs.push({ points, closed: true, kind: 'band' });
+      return;
+    }
+    // The runs between the cuts, starting just after one, each ended exactly
+    // where its line reaches `reach` from the band over it.
+    const start = cut.findIndex((c, i) => c && !cut[(i + 1) % n]);
+    let run = null;
+    for (let k = 1; k <= n; k++) {
+      const i = (start + k) % n;
+      const before = (i - 1 + n) % n;
+      if (!cut[i] && cut[before]) {
+        run = [edge(points[before], points[i], dives, reach)];
+      }
+      if (!cut[i]) run?.push(points[i]);
+      if (cut[i] && run && !cut[before]) {
+        run.push(edge(points[i], points[before], dives, reach));
+        runs.push({ points: run, closed: false, kind: 'band' });
+        run = null;
+      }
+    }
+  });
+
+  // The swellings, along the band that rides over at each crossing.
+  crossings.forEach((c, i) => {
+    const over = bands[overAt(i)];
+    const n = over.length;
+    let at = 0;
+    for (let k = 1; k < n; k++) {
+      if (Math.hypot(over[k][0] - c[0], over[k][1] - c[1]) < Math.hypot(over[at][0] - c[0], over[at][1] - c[1])) at = k;
+    }
+    // The stretch of it either side of the crossing that is within reach.
+    const near = (k) => {
+      const p = over[((k % n) + n) % n];
+      return Math.hypot(p[0] - c[0], p[1] - c[1]) <= place.swellReach;
+    };
+    let from = at;
+    while (near(from - 1) && at - from < n) from -= 1;
+    const points = [];
+    for (let k = from; near(k) && k - from < n; k++) points.push(over[((k % n) + n) % n]);
+    runs.push({ points, closed: false, kind: 'swell', at: c });
+  });
+
+  runs.push({ points: line('edging'), closed: true, kind: 'band' });
+  return runs;
+}
+
+/// How far a point is from the nearest part of a closed line.
+function distanceTo(p, points) {
+  let best = Infinity;
+  for (let i = 0, n = points.length; i < n; i++) {
+    const a = points[i], b = points[(i + 1) % n];
+    const dx = b[0] - a[0], dz = b[1] - a[1];
+    const m = dx * dx + dz * dz;
+    const t = m === 0 ? 0 : Math.min(1, Math.max(0, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dz) / m));
+    best = Math.min(best, Math.hypot(p[0] - a[0] - dx * t, p[1] - a[1] - dz * t));
+  }
+  return best;
+}
+
+/// The point between `inside` (cut away) and `outside` (kept) where the line
+/// is exactly `reach` from the band riding over it: halved down to a
+/// millimetre, so the cut end stands where the rule says rather than wherever
+/// the nearest of the table's points happened to fall.
+function edge(inside, outside, dives, reach) {
+  const away = (p) => Math.min(...dives.map(({ over }) => distanceTo(p, over)));
+  let a = inside, b = outside;
+  for (let k = 0; k < 8; k++) {
+    const m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    if (away(m) < reach) a = m; else b = m;
+  }
+  return b;
+}
+
+/// A run of clipped box swept along a line: soft-shouldered, its top an
+/// undulating line and its faces bulging a little where it has grown, as
+/// `Organic.hedge` draws a straight one, and of the same section. Closed
+/// runs meet themselves with no seam; open ones end square, because every end
+/// is buried inside the band it dives under.
+///
+/// The section turns with the line, so a ring keeps its thickness all the way
+/// round. A swelling (`kind: 'swell'`) is the same section grown thicker and
+/// taller toward the crossing it sits on.
+function sweepHedge(run, place, emit) {
+  const { points, closed } = run;
+  const n = points.length;
+  if (n < 2) return;
+  const half = place.bandHalfThickness, high = place.bandHeight;
+  const AROUND = 14;
+  // Distance along the run, for the noise to wander by.
+  const along = [0];
+  for (let i = 1; i < n; i++) {
+    along.push(along[i - 1] + Math.hypot(points[i][0] - points[i - 1][0], points[i][1] - points[i - 1][1]));
+  }
+  const total = along[n - 1] + (closed ? Math.hypot(points[0][0] - points[n - 1][0], points[0][1] - points[n - 1][1]) : 0);
+  const seed = Math.round((points[0][0] * 131 + points[0][1] * 71) * 100);
+  // Smooth value noise along the run, which on a closed run comes round to
+  // where it began.
+  const cells = closed ? Math.max(3, Math.round(total / 0.35)) : 0;
+  const noise = (s, salt) => {
+    const t = closed ? (s / total) * cells : s / 0.35;
+    const i = Math.floor(t), f = t - i, w = f * f * (3 - 2 * f);
+    const at = (k) => hash(((closed ? ((k % cells) + cells) % cells : k) * 7.31) + seed * 0.013 + salt) * 2 - 1;
+    return at(i) + (at(i + 1) - at(i)) * w;
+  };
+
+  const rings = points.map((p, i) => {
+    const a = closed ? points[(i - 1 + n) % n] : points[Math.max(0, i - 1)];
+    const b = closed ? points[(i + 1) % n] : points[Math.min(n - 1, i + 1)];
+    const tx = b[0] - a[0], tz = b[1] - a[1];
+    const l = Math.hypot(tx, tz) || 1;
+    // The side the section's first face is on: the line's direction turned
+    // a quarter back, as `Organic.hedge` has x+ beside a run along z+.
+    const sx = tz / l, sz = -tx / l;
+    let grow = 0;
+    if (run.kind === 'swell') {
+      const d = Math.hypot(p[0] - run.at[0], p[1] - run.at[1]) / place.swellReach;
+      grow = d >= 1 ? 0 : (1 - d * d) * (1 - d * d);
+    }
+    const width = half + place.swellThicker * grow;
+    const top = (high + place.swellTaller * grow) * (1 + 0.08 * noise(along[i], 3.1));
+    const out = [];
+    for (let k = 0; k <= AROUND; k++) {
+      const [ox, oy, nx, ny] = section(k / AROUND, width, top);
+      const bump = 1 + 0.035 * noise(along[i] * 2.7 + k * 0.9, 7.7) / Math.max(width, 0.05);
+      const across = ox * (oy === 0 ? 1 : bump);
+      const y = oy === 0 ? 0 : oy * (1 + 0.02 * noise(along[i] * 3.3, 5.3));
+      out.push({
+        p: [p[0] + sx * across, y, p[1] + sz * across],
+        n: [sx * nx, ny, sz * nx],
+      });
+    }
+    return out;
+  });
+
+  const tone = (q) => COLOUR.box.map((c) => c * (0.9 + 0.2 * hash(Math.round(q[0] * 41) * 131
+    + Math.round(q[2] * 41) + Math.round(q[1] * 67))));
+  const spans = closed ? n : n - 1;
+  for (let i = 0; i < spans; i++) {
+    const r0 = rings[i], r1 = rings[(i + 1) % n];
+    for (let k = 0; k < AROUND; k++) {
+      const a = r0[k], b = r0[k + 1], c = r1[k], d = r1[k + 1];
+      // Wound so the faces point outward, as `Organic.hedge`'s are.
+      for (const v of [a, b, c, b, d, c]) emit(v.p, v.n, tone(v.p));
     }
   }
+}
+
+/// `Organic.section`: a point round a hedge's cross-section, `t` running from
+/// the ground on one face, up, round the shoulder, across the top, and down to
+/// the ground on the other; and the outward normal there. [x, y, nx, ny].
+function section(t, halfWidth, height) {
+  const shoulder = Math.min(halfWidth * 0.8, height * 0.4);
+  const side = height - shoulder;
+  const across = 2 * (halfWidth - shoulder);
+  const arc = Math.PI / 2 * shoulder;
+  const total = 2 * side + 2 * arc + across;
+  let p = t * total;
+  if (p <= side) return [halfWidth, p, 1, 0];
+  p -= side;
+  if (p <= arc) {
+    const a = p / shoulder, c = Math.cos(a), s = Math.sin(a);
+    return [halfWidth - shoulder + shoulder * c, side + shoulder * s, c, s];
+  }
+  p -= arc;
+  if (p <= across) return [halfWidth - shoulder - p, height, 0, 1];
+  p -= across;
+  if (p <= arc) {
+    const a = p / shoulder, c = Math.cos(a), s = Math.sin(a);
+    return [-(halfWidth - shoulder) - shoulder * s, side + shoulder * c, -s, c];
+  }
+  p -= arc;
+  return [-halfWidth, Math.max(0, side - p), -1, 0];
 }
 
 // MARK: - Growing a plot
@@ -269,7 +405,7 @@ const SLICE = 16;
 const breathe = () => new Promise((resume) => setTimeout(resume, 0));
 
 // Grows one plot from the plot service. A planting with no parents was minted
-// rather than crossed — the ambassador in the north compartment — and grows
+// rather than crossed — the ambassador in the north-east lens — and grows
 // from its seed alone.
 export async function growKnotFromService(e, stage, plot, report) {
   stage.clear();

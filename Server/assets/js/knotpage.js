@@ -47,10 +47,11 @@ const say = async (key) => {
 
 async function place() {
   const engine = await loadModule(document.documentElement.dataset.module || '/plant.wasm');
-  // The plot's own numbers — where the knot's runs and the edging lie, how
-  // thick and how high a band is — come from the module rather than being
-  // written down again here, so the page cannot disagree with the rule about
-  // where a compartment begins.
+  // The plot's own numbers — how thick and how high a band is — come from the
+  // module, and the lines of the rings and the edging from the table the rule
+  // reads (`tables/knot_garden_rings.js`), rather than being written down again
+  // here, so the page cannot disagree with the rule about where a compartment
+  // begins.
   // **One plot, framed as though there were a little more than one**, the
   // Quiet Garden's margin: a single square framed tight touches the sides of
   // its band, and a plot with air round it reads as a place you are looking
