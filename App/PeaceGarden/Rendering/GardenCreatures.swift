@@ -67,32 +67,27 @@ final class GardenCreatures {
         let glow: SIMD3<Double>
         /// Whether its own light is paint or a flame. Paint comes up by the
         /// square of the lamps' glow, a flame by the glow itself.
-        var flame = false
-        /// Whether it is drawn with a shadow sheared from its own picture.
         ///
-        /// **Only what stands up off a foot, the way a plant does.** The shear
-        /// reads every pixel as height above the foot. For a stem, a stake or a
-        /// post that is true. For a figure lying along the ground most of the
-        /// picture is ground it covers, and the shear threw that forward as a
-        /// dark copy of the body under it — the shadow under the hare that
-        /// should not have been there. The hare's long feet and haunch, the
-        /// fox and the snail are all footprint; the moth's stake and the
-        /// lights' posts are not.
-        var shadow = false
+        /// Its shadow is the plot's to lay (`GroundShadows`), worked out from
+        /// the model itself. It was its own picture sheared about the foot,
+        /// and only for the moth and the lights: the shear read every pixel as
+        /// height, so a figure lying along the ground threw its own body
+        /// forward as a dark copy, and the hare, the fox and the snail went
+        /// without. From the model, a hare's haunch is low and casts a short
+        /// sharp shadow and its ears are high and cast a long soft one.
+        var flame = false
     }
 
     nonisolated static func figure(of kind: LampKind) -> Figure? {
         switch kind {
         case .hare: return Figure(metres: 0.80, lift: 0.20, glow: SIMD3(0.55, 1.00, 0.62))
         case .fox: return Figure(metres: 0.66, lift: 0.33, glow: SIMD3(0.45, 0.95, 0.88))
-        case .moth: return Figure(metres: 0.60, lift: 0.20, glow: SIMD3(0.64, 0.86, 1.00), shadow: true)
+        case .moth: return Figure(metres: 0.60, lift: 0.20, glow: SIMD3(0.64, 0.86, 1.00))
         case .snail: return Figure(metres: 0.44, lift: 0.26, glow: SIMD3(0.80, 1.00, 0.46))
         case .lantern:
-            return Figure(metres: 0.50, lift: 0.08, glow: GardenLamps.colour(of: kind),
-                          flame: true, shadow: true)
+            return Figure(metres: 0.50, lift: 0.08, glow: GardenLamps.colour(of: kind), flame: true)
         case .paperLamp:
-            return Figure(metres: 1.10, lift: 0.04, glow: GardenLamps.colour(of: kind),
-                          flame: true, shadow: true)
+            return Figure(metres: 1.10, lift: 0.04, glow: GardenLamps.colour(of: kind), flame: true)
         case .fireflies: return nil
         }
     }
@@ -152,17 +147,8 @@ final class GardenCreatures {
         view.isOpaque = false
         view.antialiasingMode = .multisampling4X
 
-        let paint = Paint(glowing: glowing, glow: figure.glow)
-        let body: SCNNode
-        switch kind {
-        case .hare: body = Self.hare(paint)
-        case .fox: body = Self.fox(paint)
-        case .moth: body = Self.moth(paint)
-        case .snail: body = Self.snail(paint)
-        case .lantern: body = Self.lantern(paint)
-        case .paperLamp: body = Self.paperLamp(paint)
-        case .fireflies: return nil
-        }
+        guard let body = Self.model(of: kind, paint: Paint(glowing: glowing, glow: figure.glow))
+        else { return nil }
 
         let pivot = SCNNode()
         pivot.eulerAngles.y = Self.turn(of: kind, facing: facing, quarter: quarter)
@@ -174,6 +160,24 @@ final class GardenCreatures {
         guard snapshot.size.width > 0 else { return nil }
         cache.setObject(snapshot, forKey: key)
         return snapshot
+    }
+
+    /// A figure as it is modelled, foot at the origin, facing its own way —
+    /// what its pictures are taken of, and what its shadow is worked out from.
+    /// Painted for the day unless asked otherwise; a shadow has no use for the
+    /// paint.
+    static func model(of kind: LampKind, paint: Paint? = nil) -> SCNNode? {
+        guard let figure = figure(of: kind) else { return nil }
+        let paint = paint ?? Paint(glowing: false, glow: figure.glow)
+        switch kind {
+        case .hare: return hare(paint)
+        case .fox: return fox(paint)
+        case .moth: return moth(paint)
+        case .snail: return snail(paint)
+        case .lantern: return lantern(paint)
+        case .paperLamp: return paperLamp(paint)
+        case .fireflies: return nil
+        }
     }
 
     /// The camera a plant is taken with, reaching below the foot.
@@ -655,9 +659,6 @@ struct ModelledFigure: View {
             let shown = figure.flame ? glow : glow * glow
 
             ZStack {
-                if figure.shadow, let before {
-                    FootShadow(image: before, side: side, lift: figure.lift, hour: hour, turn: turn)
-                }
                 if let before { Image(uiImage: before).resizable() }
                 if let after { Image(uiImage: after).resizable().opacity(between.blend) }
                 if let shine {
