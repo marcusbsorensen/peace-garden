@@ -558,6 +558,11 @@ carries over: the ground, the orbit, the shadows, the lights, the zoom.
 - **A plot is never re-laid.** Changing an area's template changes the plots
   opened after the change, never the ones already planted. A curator who wants
   an old bed to look different is asking to move plants, and plants do not move.
+  **Twice Marcus has chosen to re-lay the whole garden on purpose**, once for
+  the plants' new shapes (24 September 2026) and once for the new layouts (2
+  October 2026, §*The layouts of 2 October 2026*), each with one replant
+  (`tools/replant`) that places every arrival again in order. Neither is a plot
+  re-laid by a later arrival.
 - **The map is fixed as each plot opens.** The map of an area grows at its edge;
   what is already there stays where it is.
 
@@ -583,6 +588,138 @@ open slot in the newest plot takes the nearest slot that fits in the next one,
 not a wrong slot in this one. A gap in a bed is a gap a later plant will fill;
 a tall plant at the front is there for good.
 
+## The layouts of 2 October 2026
+
+**Decided by Marcus on 2 October 2026**, from the layout research
+(`design/garden-layouts-2026-10-02/RESEARCH.md`): *lovely research, please
+implement*. He took every recommendation:
+
+- **every area takes option A**, its own kind of garden laid out again with
+  curves, a focal point and the fill in mind;
+- **every count looks finished**: places are offered focal place first, then
+  farthest-first, so a plot of ten and a plot of a thousand both look composed;
+- **plots vary by their number**, everywhere but the Knot Garden and the
+  Glasshouse;
+- **the live garden is replanted to match later**, in one step.
+
+Each area's section below says what its new layout is, dated, after what it
+replaced. The built notes, with the renders before and after, are in
+`design/garden-layouts-2026-10-02/built/`.
+
+**Marcus's answers on the built layouts, the same day**, each recorded again in
+its area's section:
+
+1. **Cold Frame**: a lotus takes **one** place in the new pond. For this area
+   that replaces the rule of two places (25 September, kept with the bigger
+   tank on 29 September). The Seedbed's two places are untouched.
+2. **Crossing**: the narrower paths are kept, 0.9 m where a path comes onto the
+   plot, narrowing to 0.7 m at the paving.
+3. **Cold Frame**: five reed clumps of three are kept.
+4. **Knot Garden**: the small rings stay on the diagonals.
+5. **Glasshouse**: the dome is kept (eaves 2.2 m, crown 3.5 m), and a painted
+   band is added along the staging.
+6. **Quiet Garden**: the cut between back and arm is **1.04 m**.
+7. **Home Ground**: the paths are **0.40 m** and the beds sway **about 0.15 m**.
+
+### One foundation: `tools/layouts/`
+
+Built first, so ten areas could be laid out on one set of parts.
+`tools/layouts/README.md` says how to use it; this is what it is.
+
+- **Place tables, made offline.** An area's places are written by a spec in
+  Python (`tools/layouts/tables/<name>.py`) rather than worked out by the rule
+  as it runs: outlines (`shapes`: wandering blobs, splines, offsets), places
+  in them (`sample`: blue noise, a sunflower spiral, places along a curve), and
+  the order they are offered in (`order`). `generate.py` writes each as a
+  Swift `PlaceTable` (`WebGardens/Tables/`), a PHP class
+  (`Server/.api/tables/`) and, where the page draws from it, a JavaScript
+  module (`Server/assets/js/tables/`). A table also carries the curves its
+  drawing follows, a pond's outline or a path's line, so the page cannot
+  disagree with the rule about where the water is.
+- **Exact on every host.** Places are written to the millimetre, and a spec
+  uses the foundation's own arithmetic (`places.numbers`), never the C
+  library's `sin` or `atan2`, so Linux and a Mac write the same bytes. A spot
+  from a table is exact everywhere, so every area's vector file compares it
+  with no tolerance. **A generated file is never edited by hand**:
+  `generate.py --check`, in CI, fails on any byte its spec would not make.
+- **Plot variants.** A plot is turned, mirrored and given a feature variant by
+  its number (`PlotVariant` in Swift, `PlotVariant.php`, `variant.js`), so a
+  thousand plots are not one plot a thousand times. Plot 0 is always the plan
+  as drawn, no plot is laid as the plot before it, and every block of plots
+  holds every variant. Each area declares its own space:
+
+  | Space | Areas |
+  | --- | --- |
+  | fixed | Knot Garden, Glasshouse: a knot and a colour wheel have one way round |
+  | four turns and a mirror, eight ways | Quiet Garden, Crossing |
+  | four turns, a mirror and three feature variants, 24 ways | Orchard, Coppice |
+  | a half turn and a mirror, four ways, so the path stays where it runs | Long Walk |
+  | mirrored only, so plots alternate | Seedbed, Cold Frame, Home Ground |
+
+- **A slot is stored, a spot is worked out.** The service stores a planting's
+  slot and its nudge, never where it stands, and works the spot out each time
+  it serves it: the table's place plus the nudge, turned for the plot. The
+  nudge is added in the table's frame and then turned, so a nudge narrower one
+  way turns with its row. That is why most areas' existing plots are re-laid
+  by a deploy alone.
+- **Fill order is the table's.** *Every count looks finished* is an order, not
+  a rule: a rule takes the first free place in table order that it may stand
+  in, and a table lists its places focal first and then farthest-first
+  (`order.focal_first`), or centre first for a spiral. Where a rule picks a
+  group first (a guild, a coupe, a lens), the order runs within the group.
+- **The fill harness**, `tools/layouts/harness/`, grows each area's own
+  thousand arrivals from SeedCore and places them with the rule as it is in
+  the checkout, counting plots, places held and how full the settled plots are
+  at 10, 100 and 1,000, against `baseline.json`: the rules of 1 October
+  (`tools/layouts/BASELINE.md`). **At 1,000, no worse than the baseline** was
+  every area's bar.
+
+### What the ten hold, measured with all ten merged
+
+The harness at 1,000 arrivals, on each area's own plants, with Marcus's
+answers above applied. A figure that moved is shown as new (baseline).
+
+| Area | Plots | Places held | Held in settled plots | Empty in settled plots |
+| --- | --- | --- | --- | --- |
+| Long Walk | **22** (24) | **94.8%** (86.9%) | **98.9%** (92.2%) | **11** (82) |
+| Quiet Garden | 101 | 99.1% | **100.0%** (99.7%) | **0** (3) |
+| Crossing | 46 | 90.7% | 92.6% | 78 |
+| Orchard | 51 | 98.1% | 99.9% | 1 |
+| Knot Garden | 33 | 94.8% | 99.1% | 9 |
+| Seedbed | 36 | 73.8% | 77.3% | 370 |
+| Cold Frame | 18 | 88.3% | 94.4% | 56 |
+| Glasshouse | 33 | 94.8% | 98.7% | 13 |
+| Coppice | 31 | 97.8% | 100.0% | 0 |
+| Home Ground | 16 | 96.3% | 100.0% | 0 |
+
+Two areas fill better and none worse. The Long Walk's rule and the Quiet
+Garden's groups changed, and with them which plot a plant goes to. The
+Glasshouse's pale pots take a different pot, which moves a few plants to
+another plot, and the Seedbed and the Cold Frame offer a plot's places in a new
+order. In the Orchard, the Coppice, the Crossing, the Knot Garden and the Home
+Ground the same plants land in the same slots, and only where a slot stands
+moved.
+
+**What the replant needs**, area by area:
+
+- **A deploy re-lays these by itself, with no row changed**: the Orchard, the
+  Coppice, the Crossing, the Knot Garden and the Home Ground. Capacities and
+  plot assignment are unchanged.
+- **The Glasshouse** is re-laid by a deploy too; only its pale pots would sit
+  where the old rule put them until a replant.
+- **The Quiet Garden and the Cold Frame** are re-laid by a deploy onto their
+  old slot numbers, which now mean other places: a group of three standing in
+  three of the five's places, reeds in the open water and lilies in the reed
+  clumps. The replant puts them right.
+- **The Seedbed** is re-laid by a deploy onto its curved drills, each plant at
+  its old place along its drill; its old plots keep their old claims and their
+  sowing from the label until the replant gives them the new order.
+- **The Long Walk must be deployed and replanted together**: a stored
+  `slot_index` now means a place in the table, and an old row served after a
+  deploy would stand in another tier.
+
+`tools/replant` needs nothing new for any of them: no column changed.
+
 ## The ten areas, and what each is laid out as
 
 Each area already has a name and a theme (`WEBSITE.md`, `strings.js`), and each
@@ -593,16 +730,16 @@ a border with a knot garden's name.
 
 | Area | Theme | How it is laid out | Ground | Structures |
 | --- | --- | --- | --- | --- |
-| **The Cold Frame** | waiting | Four low glazed frames, two ranks of six young plants in each, hardening off. **Every plant drawn young** — the young stages of what grows elsewhere — and nobody turned away. **Forty-eight a plot; colour claims a frame and the height a plant will grow to orders its ranks**, tallest-to-be at the back under the high side of the glass. | Flat, gravel between, soil inside the frames | Frames of boards, their lights propped open by day |
-| **The Home Ground** | ground | The kitchen garden: rectangular beds 1.2 m wide, so no soil is ever stood on, paths between, crops in rows across each bed. | Dark soil, mounded into beds, no boards | None: the beds are the ground's relief |
-| **The Seedbed** | beginnings | Straight parallel drills, a label at the end of each row. One plant repeated along a drill, not mixed. | Fine tilth, flat | Row labels |
-| **The Coppice** | renewal | Stools in blocks, each block cut in its year of the rotation, so every stage stands at once, from cut stumps to full poles. Woodland flowers in the light between. | Woodland floor, gentle relief | Stools, the cut and the uncut |
-| **The Long Walk** | travel | A double border either side of a path: tall at the back, graded to the front, drifts of three and five, the same colour repeated down its length for rhythm. The walk goes on; plots open end to end. | Level, a mown path | The path, a hedge behind each border |
-| **The Quiet Garden** | peace | An enclosure: hedged, one tree, one bench, and more lawn than planting. **The fewest plants per plot of any area, by rule.** Room is what it is for. | Lawn | A hedge round, a bench |
-| **The Orchard** | kinship | Five trees on a quincunx, meadow beneath, and a guild of four under each. **Twenty a plot, and an arrival goes under the earliest tree with a place left**, so trees are dressed one at a time rather than five at once. The first area whose tallest thing is not something anybody grew. | Meadow, mown into a disc under each tree | The five trees |
-| **The Knot Garden** | pattern | Low clipped hedging, curving, woven over and under itself inside a square edging, and eight compartments — four at the sides, four at the corners — each filled with one colour. **Thirty-two a plot, and a plant's colour decides which pair of opposite compartments it stands in**, its height where in the block. The first area whose rule reads anything but a height. | Flat, gravel | The woven hedging and its edging |
-| **The Glasshouse** | light | Staging along the sides, pots on it, a central aisle. Tender plants, set close to the glass for the light. | Floor tiles | The benches, the glass |
-| **The Crossing** | meeting | Four paths meeting at a centre, four quarters, one feature where they cross: the quadripartite garden, one of the oldest plans there is for a meeting place. Plants face the centre. **Twenty-four a plot, and an arrival goes wherever there is least**, so the four quarters grow together. | Grass, with two paths mown through it | The paths, a round of paving where they cross |
+| **The Cold Frame** | waiting | Two low glazed frames at the back, two ranks of six young plants in each, hardening off, and in front of them a pond planted as a pond: reeds in clumps on its margin, lilies in its open water (since 2 October 2026; four frames until 29 September, then a tank). **Every plant drawn young** — the young stages of what grows elsewhere — and nobody turned away. **Sixty-three a plot, 24 under glass and 39 in the water; what wants water goes in the pond, colour claims a frame and the height a plant will grow to orders its ranks**, tallest-to-be at the back under the high side of the glass. | Flat, gravel round the pond, soil inside the frames | Frames of boards, their lights propped open by day; the pond and its shelf |
+| **The Home Ground** | ground | The kitchen garden: three beds 1.2 m wide, so no soil is ever stood on, swaying together in a lazy S (since 2 October 2026), paths of 0.40 m between, crops in rows square to each bed. | Dark soil, mounded into beds, no boards | None: the beds are the ground's relief. A stone trough at the foot of a path |
+| **The Seedbed** | beginnings | Six drills of eight laid on the contour, each a gentle arc (straight until 2 October 2026), a label at the head of each, sown from its middle out. One kind repeated along a drill, not mixed; a drill of water lilies is flooded, and the water lies at the foot of the bed. | Fine tilth | Row labels |
+| **The Coppice** | renewal | Three coupes of unequal size round a small sunny glade, divided by three bending rides (three bands until 2 October 2026), each coupe cut in its year of the rotation, so every stage stands at once. Stools scattered as a stand; woodland flowers in clumps along the ride edges, where the light is. | Woodland floor, gentle relief, a glade | Stools, the cut and the uncut |
+| **The Long Walk** | travel | A double border either side of a path: interlocking drifts of five and three, each a lens slanting from the hedge to the path and holding one colour, tall at the back, graded cool–hot–cool along each plot (since 2 October 2026; rows in three tiers until then). The walk goes on; plots open end to end. | Level, a mown path, a bed of loam along each hedge | The path, a hedge behind each border |
+| **The Quiet Garden** | peace | An enclosure: hedged, one bench, and more lawn than planting. A specimen by the bench, across a still pool a group of five, a group of three to one side, and one plant alone echoing the five (since 2 October 2026; groups of three in the corners until then). **The fewest plants per plot of any area, by rule.** Room is what it is for. | Lawn, a pool off the middle | A hedge round, a bench, stepping stones |
+| **The Orchard** | kinship | Five trees on a quincunx, meadow beneath, and a guild of four under each: under an outer tree a crescent at its drip line turned toward the middle tree, under the middle tree a ring (since 2 October 2026). **Twenty a plot, and an arrival goes under the earliest tree with a place left**, so trees are dressed one at a time rather than five at once. The first area whose tallest thing is not something anybody grew. | Meadow, mown into a crescent under each outer tree, a disc under the middle one, and one way through | The five trees, a dipping pond |
+| **The Knot Garden** | pattern | Low clipped hedging laid as interlaced rings, a ring round the middle and four small rings woven over and under through it on the diagonals, inside a softened square edging (since 2 October 2026; two bands each way until then), and eight compartments — four lenses and four crescents — each filled with one colour. **Thirty-two a plot, and a plant's colour decides which pair of opposite compartments it stands in**, its height where in the block. The first area whose rule reads anything but a height. | Flat, gravel | The woven hedging and its edging |
+| **The Glasshouse** | light | A round house of glass (a span house until 2 October 2026): a ring of staging round its inside, its pots going round it as a colour wheel and a band of the hues painted along it, and a round bed in the middle under the dome for the tallest. Tender plants, set close to the glass for the light. | Floor tiles | The round house, the ring of staging, its pots |
+| **The Crossing** | meeting | Four paths meeting at a centre, four quarters, one feature where they meet: the quadripartite garden, one of the oldest plans there is for a meeting place. Since 2 October 2026 each path turns in as it comes, all four the same way, so they meet the round rather than crossing it and each quarter wraps round the centre. Plants face the centre. **Twenty-four a plot, and an arrival goes wherever there is least**, so the four quarters grow together. | Grass, with four paths mown through it | The paths, a round of paving where they meet |
 
 Three things follow from the table:
 
@@ -653,9 +790,11 @@ the website and the app can all read it. Built 18 September, with
 `LongWalkTests`.
 
 - **The plot:** a 1.2 m mown path down the middle, a border each side, a hedge
-  from 2.3 m out. Three tiers each side, each in two staggered rows of five
-  front slots, four middle and three back, so 48 plants a plot. The tiers have
-  different spacings, so they stagger against each other too.
+  from 2.3 m out, and 48 plants a plot. **Since 2 October 2026 each border is
+  six interlocking drifts** (§*Interlocking drifts, 2 October 2026*, below).
+  Until then each side had three tiers, each in two staggered rows of five
+  front slots, four middle and three back, the tiers at different spacings so
+  they staggered against each other too.
 - **Tiers from measurement.** Across 300 crossings of 300 different pairs of
   parents, grown heights run 0.15 to 2.31 m, with thirds at 0.70 and 1.09 m. The
   cuts are at 0.77 m and 1.20 m instead, to match the number of slots in each
@@ -670,10 +809,12 @@ the website and the app can all read it. Built 18 September, with
   few more tall plants than back slots left eleven of fifteen plots holding
   six to nine plants. Now every plot but the newest four is full.
 - **Drifts of colour, capped at five**, then the same colour starts again
-  further down the walk. The cap is kept by refusing a slot that would join
-  drifts past five, not by scoring it low: at two rows a tier, scoring let a
-  plant between two short drifts make one of six. Every plant is unique, so a border here cannot repeat
-  a plant; it repeats a colour.
+  further down the walk. Every plant is unique, so a border here cannot repeat
+  a plant; it repeats a colour. **Since 2 October 2026 a drift is a lens of the
+  table and the cap is the lens**: five places or three, one colour. Until
+  then the cap was kept by refusing a slot that would join drifts past five,
+  not by scoring it low: at two rows a tier, scoring let a plant between two
+  short drifts make one of six.
 - **A developer preview**: `-pgPlotSide 5.2` fixes the app's plot at a web
   plot's size, so a Long Walk plot can be looked at in the app's own renderer
   before the website can draw one.
@@ -717,6 +858,77 @@ not dressing; they are how a visitor can see the rule.
   already follows: a vertical face gets the sky and little of the sun, and at
   yew's own darkness the face towards the path was black at midday. Brighter
   alone made it toy-green in the sun, so it is also greyed towards blue.
+
+### Interlocking drifts, 2 October 2026
+
+Option A of the layouts Marcus chose on 2 October 2026, with each plot graded
+cool–hot–cool (his yes to the research's question 5). **The rule changed**: the
+tiers' two staggered rows are gone, and three parts of the old rule became
+rules about lenses. Notes and renders: `design/garden-layouts-2026-10-02/built/walk.md`.
+
+- **The table**, `tools/layouts/tables/long_walk_drifts.py`
+  (`PlaceTable.longWalkDrifts`, `LongWalkDriftsTable`,
+  `tables/long_walk_drifts.js`): 48 places in twelve lenses, six to a border,
+  5, 3, 5, 3, 5, 3 on the `x−` border and 3, 5, 3, 5, 3, 5 on the `x+`, so a
+  lens of five faces a lens of three. Each lens slants from its back at the
+  hedge, up the walk, to its tip at the path's edge, down the walk; it is
+  1.3 m long along the walk, overlaps the next like slates, and its spine is
+  bowed about 5 cm.
+- **Tiers by depth along a lens.** A lens of five is back, middle, middle,
+  front, front; a lens of three back, middle, front. A plot has 18 front, 18
+  middle and 12 back places (the rows had 20, 16 and 12): front 0.90–1.22 m
+  from the path's middle, middle 1.33–1.69 m, back 1.78–1.94 m. **The cuts are
+  unchanged**, 0.75 m and 1.18 m.
+- **The rule** (`LongWalk.Walk.place`, `LongWalk::place`), plot by plot from
+  the oldest: a lens its colour has claimed, in its own tier; else a lens
+  nobody has claimed, in its own tier; else a lens its colour has claimed, in
+  the tier beside its own; only then a new plot. In a lens a plant takes the
+  first free place of its tier in table order, the lens's middle first.
+  - **A lens is a drift**, claimed by the colour family of its first plant and
+    read off the plants. It holds only that colour.
+  - **Cool–hot–cool**: a warm colour (families 0, 1 and 5) claims free lenses
+    from the plot's middle out, a cool one the same groups of four ends first.
+  - **Repetition**: a colour never claims a lens beside one it already holds,
+    in its border or across the join with the plot before or after.
+  - **Nothing stands in front of something shorter**, as before: by tier,
+    within 1.3 m along the walk on one side.
+- **Plots vary by number**, a half turn, a mirror or both (`LongWalk.variants`),
+  so the path stays where it runs and the drifts slant one way and then the
+  other.
+- **The nudge is ±0.05 m** both ways, where it was ±0.10 m and ±0.14 m: the
+  places no longer sit on a grid that needs hiding. The nearest two places are
+  0.365 m apart, 0.22 m at the worst nudge; in the rows two plants could stand
+  on one spot.
+- **The page** (`longwalk.js`) lays each border as a bed of loam along the
+  hedge, each lens running out from it to the grass verge, so the bed's front
+  is scalloped by the drifts' tips, darker down each lens's middle so a
+  part-sown drift's slant shows. The path, the rill and the hedges are as they
+  were. The workbench takes `?plot=`.
+- **The stored shape is the same**: `side`, `tier` and `slot_index`, the last
+  now a place in the table (0–47) where it was a place in a tier's rows (0–9).
+
+**The fill, at 1,000 of the area's own: 22 plots where the baseline took 24,
+94.8% of places held (86.9%), 98.9% in settled plots (92.2%), and 11 settled
+places empty where there were 82.** Every figure is better. On the area's own
+thousand, no colour stands in two lenses side by side or runs across a join;
+70% of the plants in the four lenses nearest a plot's middle are warm and 59%
+in the four at its ends are cool.
+
+**Deploy and replant together.** A stored `slot_index` served after a deploy
+would stand at whichever table place has its number, often in another tier.
+`tools/replant` writes the same columns, with no schema change. Capacity is
+unchanged; plot assignment is not, and the live walk will take fewer plots.
+
+**Left open:**
+- **More plants stand a tier from their own**: 11.5% of settled plants against
+  2.5% in the rows, every one still in order. The rule tries the tier beside
+  in an old plot before opening a new one, which is what fills the plots. A
+  plant trying its own tier in every plot first measured 24 plots and 91.9%
+  held in settled plots, the baseline's plot count with 0.3 points fewer held,
+  so it was not built.
+- **The near border's bed is mostly hidden** behind the low hedge from the
+  page's eye, as its plants always were.
+- **The path is unchanged**; bending it was option B.
 
 ## The ambassador, standing
 
@@ -762,6 +974,12 @@ plot service, held to each other by `tools/reference/check_ambassador.php`.
 before: the walk is append-only, so the ambassador could be its first planting
 only until somebody else's plant arrived. It had none.
 
+**Since 2 October 2026 the walk's ambassador** (*Zephea pallida* since the
+re-roll of 28 September, red, front tier) **stands at the tip of the first warm
+lens, in the middle of plot 0**, rather than at the plot's head: the drifts are
+graded hot in the middle. It is still derived rather than stored, so it moved
+by itself; `ambassador_vectors.json` was re-recorded for its one line.
+
 ## The Quiet Garden, built
 
 The rule is in `SeedCore` (`WebGardens/QuietGarden.swift`), where the plot
@@ -770,10 +988,14 @@ service, the website and the app can all read it. Built 21 September, with
 `tools/reference/check_quiet_garden.php`. Live at `/quiet`.
 
 - **The plot:** a 5.2 m square with a hedge round all four sides, its inner face
-  2.3 m out, so the room is 4.6 m across. A bench lies across one corner, one
-  plant stands beside it, and each of the other three corners holds a group of
-  three at the foot of the hedge. **Ten plants a plot**, against the walk's
-  forty-eight in the same square. The middles of all four sides stay grass.
+  2.3 m out, so the room is 4.6 m across. A bench lies across one corner and
+  one plant stands beside it. **Ten plants a plot**, against the walk's
+  forty-eight in the same square. **Since 2 October 2026** the other nine are a
+  group of five across the water from the bench, a group of three along one
+  side and one plant alone echoing the five (§*An asymmetric room, 2 October
+  2026*, below). Until then each of the other three corners held a group of
+  three at the foot of the hedge, and the middles of all four sides stayed
+  grass.
 - **A still pool in the middle, from 27 September, and two lilies in it.** The
   garden had no water anywhere, though `Archetype.lotus` has been modelled as a
   water lily since the shapes changed on the 24th — pads lying one against
@@ -783,14 +1005,16 @@ service, the website and the app can all read it. Built 21 September, with
     seed's theme and not from the plant's shape, so a lotus lands in whichever
     of the ten its own seed names. One pond would catch a tenth of them.
   - The Quiet Garden is at the foot of the garden's slope (`COLUMN_RISE`), so
-    this is where the water gathers. 2.2 m across; the nearest plant to the
-    middle is the specimen at 2.17 m, which leaves 0.97 m of lawn against the
-    0.13 m a nudge can spend, so nothing dry can drift in.
+    this is where the water gathers. It was 2.2 m across in the middle of the
+    lawn; **since 2 October 2026 it lies off the middle toward the bench, 2.1 m
+    long and 1.2 m wide**, longer across the bench's line of sight than along
+    it, and the nearest dry place is 0.87 m from the water (0.73 m after the
+    largest nudge in five hundred), so nothing dry can drift in.
   - **Two lilies, and the number is the lilies' not the room's**: grown here a
-    lotus's pads reach a median 0.51 m from the stem, so two at 0.5 m either
-    side of the middle lie against each other, which is what a lily's pads do.
-    A third would be a lily under a lily. They stand on the bench's own
-    diagonal, so somebody sitting on it looks along the water.
+    lotus's pads reach a median 0.51 m from the stem, so two side by side lie
+    against each other, which is what a lily's pads do. A third would be a lily
+    under a lily. They lie along the pool's length, so somebody sitting on the
+    bench looks across the water at them.
   - **A lily takes no nudge.** The nudge makes a group of three read as a clump
     rather than a planting plan; two lilies in a small pool are neither.
   - **The room is two larger, not two rearranged.** The pool went in the middle
@@ -817,20 +1041,29 @@ service, the website and the app can all read it. Built 21 September, with
   standing alone in grass beside a seat has no height to live up to.
 - **A group is one colour, or a tone of it.** A group's colour is set by its
   first plant. An arriving plant takes a group of its own colour, else opens an
-  unplanted corner, else joins a group of a colour near its own — the two arcs
-  either side, or pale. **The near-colour fallback is not a nicety.** The seven
+  unplanted group, else joins a group of a colour near its own — the two arcs
+  either side, or pale. (Since 2 October 2026 the groups are the five, the
+  three and the echo, tried in that order; the echo is never opened on its
+  own, it waits for the five's colour.) **The near-colour fallback is not a
+  nicety.** The seven
   families are nothing like evenly drawn: measured over three hundred crossings,
   two of them take 43% of plants between them and pale takes 3.7%, so own-colour
   alone would leave pale groups that never filled and plots that opened for want
   of a match.
 - **Nothing stands in front of something shorter**, as on the walk, at the scale
-  of a group of three: the back of a group is at least as tall as either arm.
-  The cut between back and arm is 1.09 m (**1.08 since 29 September 2026**), the
-  67th centile of the measured spread, because a group is one back and two arms. It is not the walk's 1.20 m
-  and should not be — that one divides three tiers in the proportion 5:4:3.
+  of a group: every back of a group is at least as tall as every arm. The cut
+  between back and arm was 1.09 m (1.08 from 29 September 2026), the 67th
+  centile of the measured spread, because a group was one back and two arms.
+  **1.04 since 2 October 2026, Marcus's decision**: the group of five has two
+  backs where a group of three had one, and 1.04 is the 67th centile of this
+  area's own plants, as the Cold Frame measures its cut on its own. It is not
+  the walk's 1.20 m and should not be — that one divides three tiers in the
+  proportion 5:4:3.
 - **How it fills, at five hundred:** 51 plots, 49 of them full, the two at the
   growing end holding seven and four. Of the plants that joined an existing
-  group, 188 matched its colour exactly and 109 were a tone of it.
+  group, 188 matched its colour exactly and 109 were a tone of it. (Measured on
+  any crossings, before the rooms of 2 October; below is the fill now, on the
+  area's own plants.)
 - **The hedge's ends are cut square, not domed.** A free-standing run ends in a
   long shoulder falling to the ground over half its height — a metre on the tall
   ones — which leaves a notch at every corner you can see the sky through. Round
@@ -860,6 +1093,71 @@ looking *did* change was the drawing: the corner notches, the bench lying along
 its corner's diagonal instead of across it, and a room framed so tight that the
 page's own prose landed on the lawn.
 
+### An asymmetric room, 2 October 2026
+
+Option A of the layouts Marcus chose on 2 October 2026. Notes and renders:
+`design/garden-layouts-2026-10-02/built/quiet.md`, and
+`quiet-after2-full.jpg` for a full room at the new cut.
+
+- **The ten became one, five, three and one**, from a table
+  (`tools/layouts/tables/quiet_room.py`, `PlaceTable.quietRoom`,
+  `QuietRoomTable`), twelve places in fill order:
+  - **the specimen** by the bench, where it has stood since 21 September;
+  - **a group of five** in the far corner, across the water: what the bench
+    looks at. Two backs toward the corner and three arms;
+  - **a group of three** along the side to the bench's left, a third of the
+    way down it: one back and two arms, a scalene triangle;
+  - **the echo**, one plant alone across the lawn from the five, showing the
+    five's colour;
+  - **the pool's two places**, along its length.
+
+  Each group's places are blue noise in a blob at the hedge's foot, nearest
+  the corner first, then farthest-first. The groups ride in the old corners'
+  numbers (`five` is what `second` was, `three` what `third` was, `echo` what
+  `fourth` was), so a slot is still `corner` and `index` in the store, on the
+  wire and in the replant.
+- **The rule** (`QuietGarden.Room.place`, `QuietGarden::place`): own colour
+  (the five, the three, then the echo); a group nobody has planted (the five,
+  then the three); a colour near its own (a group whose colour is a tone of
+  it, and the echo if it is a tone of the five's); else a new room, opened by
+  the specimen. *Nothing stands in front of something shorter* is asked by
+  stand rather than by index: every back of a group is at least as tall as
+  every arm. A lily still goes to the pool and nowhere else; the live garden
+  never sends this area one.
+- **Three stepping stones** run from the seat to the pool's bay on the bench's
+  side: low flat ovals drawn on the page only, with no structure in the app.
+- **Every room is turned and mirrored by its number**, eight ways. The bench is
+  always in a corner looking across the water at the five; the three falls on
+  either hand. The service sends the turned spot (`QuietGarden::spotOn`).
+- **The page rebuilds the ground for each room**: the pool from the table's
+  outline, turned, with a bank; the lawn walked round it; a mown stripe
+  stopping at the water's own edge in 6 cm pieces. The workbench draws only
+  the area's own plants (`pg_room_arrive`), plumes and poppies.
+- Nearest two of the five 0.61 m apart, of the three 0.60 m (0.85 m in the
+  old groups of three); a plant's nudge 0.13 m, unchanged.
+
+**The cut, decided by Marcus on 2 October 2026: 1.04 m.** Built at 1.08, the
+settled rooms held 99.5% at a thousand arrivals against the baseline's 99.7%,
+and all five empty places were backs of the five, which needs two tall plants
+of its colour where a group of three needed one. At 1.04, re-recorded in the
+Swift and the port, **the settled rooms hold 100% at 100 and at 1,000 with none
+empty**, and plots and places held are the baseline's: 101 rooms, 99.1% held at
+1,000. At ten arrivals room 0 holds six plants and room 1 five, both composed: a
+room has two groups a colour can open where it had three, so a third colour
+opens the next room sooner.
+
+**The replant is needed.** Capacities are unchanged (ten on the ground, two in
+the pool), but plot assignment is not. Served from slots chosen for groups of
+three, a deploy alone would stand corner 1's three in three of the five's
+places and corner 3's three all on the echo's one place. `tools/replant` needs
+nothing new.
+
+**Left open:** the echo is the five's own colour in 22 of 43 rooms at 500 (20
+of 43 at 1.08) and a tone of it in the rest, because a tone can reach the echo
+before a plant of the five's own colour does, and keeping it longer for its
+own colour would cost fill; in some turns the bench is in the near corner with its
+back to the reader, behind the low hedge, which is the eight ways working.
+
 ## The Orchard, built
 
 21 September, the same day as the other three. `SeedCore/WebGardens/Orchard.swift`,
@@ -870,7 +1168,10 @@ page's own prose landed on the lawn.
 - **Twenty a plot: five guilds of four.** Between the crossing's twenty-four and
   the room's ten. Four is one place nearest the middle of the plot, two beside
   the trunk and one furthest out, so a guild faces the middle exactly as a
-  crossing's quarter does.
+  crossing's quarter does. **Since 2 October 2026 an outer guild is a crescent
+  at its tree's drip line**, turned toward the middle tree, and the ranks
+  still read outward (§*A meadow orchard, 2 October 2026*, below); until then
+  it was a square of four about its trunk.
 - **The rule is *finish one guild, then start the next*** — the Crossing's rule
   turned inside out, and the reason to build a fourth area at all. What it
   guarantees is that **no guild is started while an earlier one stands empty**,
@@ -941,10 +1242,12 @@ page's own prose landed on the lawn.
     smoothly off each vertex's own height, and it is gone. Both are the same
     fault the roundel had in its third pass: **the mesh showing through its own
     shading.**
-- **The mown disc under each tree is the guild made visible.** Grass left long
-  between the trees and cut back round each trunk is what an orchard is, and it
-  is also the only thing on the page that says which four plants belong to which
-  tree — without a line being drawn anywhere.
+- **The mown ground under each tree is the guild made visible.** Grass left
+  long between the trees and cut back round each trunk is what an orchard is,
+  and it is also the only thing on the page that says which four plants belong
+  to which tree — without a line being drawn anywhere. A disc under every tree
+  until 2 October 2026; since then a mown crescent along each outer guild's
+  arc and a disc under the middle tree, with one mown way through.
 - **The discs and the meadow stay on the slab** (25 September 2026). Marcus
   saw the grass under the four outer trees overflowing the plot's edge. The
   outer trunks stand 1.70 m out and the wandering edge is 0.74–0.78 m beyond
@@ -987,6 +1290,60 @@ page's own prose landed on the lawn.
   each area, at every turn: every hedge point on the plot, no plant inside a
   hedge, and the nearest plant exactly as far from a hedge as before (0.11 m
   on the walk, 0.20 m in the room).
+
+### A meadow orchard, 2 October 2026
+
+Option A of the layouts Marcus chose on 2 October 2026. Notes and renders:
+`design/garden-layouts-2026-10-02/built/orchard.md`.
+
+**The rule did not change**: five guilds of four, one finished before the next
+is begun, a guild's places graded outward from the middle of the plot, the
+middle tree's four rankless. Re-recorded, the 500 vector rows keep every plot,
+slot and nudge they had and gain only their plot's variant and spot. What
+changed is where a slot stands.
+
+- **The table**, `tools/layouts/tables/orchard_meadow.py`
+  (`PlaceTable.orchardMeadow`, `OrchardMeadowTable`): three feature variants,
+  20 places each, in fill order.
+- **The trees stay on the quincunx**, each outer one nudged by up to 0.08 m a
+  way, differently in each feature variant: the outer trunks stand 1.74 m out
+  (1.70 before). The middle tree is never nudged.
+- **An outer guild is a crescent at its tree's drip line**, turned toward the
+  middle tree, its four places 0.90 m from the trunk: the understorey on the
+  line to the middle tree, the two flanks 36° either side of it, the crown at
+  the far horn, 72° round. So the ranks still read outward: understorey 1.56 m
+  from the plot's middle, flanks 1.81 m, crown 2.34 m. The crowns horn toward
+  the two pockets on the `z` axis, framing each with two tall crowns, and the
+  two `x` pockets stay low and open for the way.
+- **The middle tree keeps its ring of four**, on the diagonals, each facing a
+  crescent, 0.75 m from the trunk; the canopy's underside comes down to 2.23 m
+  there, and `OrganicTests` checks the clearance at the nearer radius.
+- **Every count looks finished**: the ring fills facing the first crescent,
+  then opposite, then the other two; the guilds fill far corner, near corner,
+  then the two sides. At ten plants that is the ring and the far crescent, and
+  two of the near one.
+- **Plots vary by number**: four turns, a mirror and three feature variants,
+  24 ways (`Orchard.variants`). The service sends the turned spot
+  (`Orchard::spot`).
+- **The page** (`orchard.js`, from `pg_orchard_layout(plot)`) draws the five
+  trunks, a mown crescent along each outer guild's arc, the middle tree's
+  disc, **one mown way** in at one edge, through the middle disc and out at the
+  other, and the dipping pond (0.64 m now, 0.70 before) in a pocket between two
+  crowns, 0.81 m or more from every place.
+- A crescent's neighbours are 0.556 m apart (0.90 m in the old squares, about
+  the Crossing's 0.53); guilds come no nearer than 0.80 m; the nudge stays
+  0.13 m, and at its worst a place stays 6 cm inside the plot, where a crown in
+  a corner could stand 12 cm past the worst rim.
+
+**The fill is the baseline's, every figure**: 51 plots at 1,000, 98.1% held,
+99.9% in settled plots, one settled place empty. **A deploy re-lays every
+existing plot at once with no row changed**; the replant would write the rows
+it reads.
+
+**Left open:** the near tree still hides part of the middle tree's ring before
+a turn, as it did; the pond falls in the `z+` pocket in all three feature
+variants, though turns and mirrors put it in every pocket across plots; the
+mown way always crosses on the table's `x` axis, which turns put on either.
 
 ## The Knot Garden, built
 
@@ -1049,16 +1406,21 @@ though `Organic.hedge` learned to bend for it.
   *which of the two was emptier* is a fact about the moment and the finished
   plot cannot say. At five hundred none of the sixty-six ends more than one
   apart (one did before 24 September 2026).
-- **The pattern is a weave.** Two bands each way, crossing four times, inside a
+- **The pattern is a weave.** **Since 2 October 2026 it is interlaced rings**: a
+  ring round the middle and four small rings woven through it on the
+  diagonals, inside a softened square edging, the four sides now four lenses
+  and the four corners four crescents (§*Interlaced rings, 2 October 2026*,
+  below). Until then it was two bands each way, crossing four times, inside a
   square edging: four compartments at the sides, four at the corners, and the
-  weave closing round a middle that holds no plant. It is a real knot-garden
-  plan and it gives eight compartments of one size, which is what a mirror pair
+  weave closing round a middle that holds no plant. That was a real knot-garden
+  plan and it gave eight compartments of one size, which is what a mirror pair
   needs to read as a mirror — the alternative considered, an octagram of a
   square and a diamond, puts the compartments in the star's points, and a
   regular octagram's points are 0.45 m² each, which will not hold four plants at
   any scale that fits a 5.2 m plot.
-- **The bands curve, and that is what stopped it reading as a grid** — added on
-  23 September, one day after the area opened, because straight interlaced runs
+- **The bands curved, and that is what stopped it reading as a grid** (the
+  bands' layout until 2 October 2026) — added on 23 September, one day after
+  the area opened, because straight interlaced runs
   are a weave the eye has nothing to follow through. `KnotGarden.weave` cuts
   each run into three: an arm, the stretch between its two crossings, and the
   other arm. The inner stretch bows 0.30 m in toward the empty middle, so the
@@ -1079,7 +1441,8 @@ though `Organic.hedge` learned to bend for it.
   square against the over-band's face and starts again beyond it, while the
   over-band carries on through and swells where the two have grown into each
   other. Which does which alternates round the knot, so every run is over at one
-  of its two crossings and under at the other.
+  of its two crossings and under at the other. The rings of 2 October keep all
+  of this: going round the middle ring it is over, under, over, under.
 - **What looking found was all in the band and the ground**, and took three
   passes:
   - **The bands were walls.** 0.22 m through and 0.32 m tall drew nine boxes
@@ -1107,6 +1470,59 @@ though `Organic.hedge` learned to bend for it.
   which is worth having confirmed rather than assumed, given what the Orchard's
   1.34 m ambassador cost.
 
+### Interlaced rings, 2 October 2026
+
+Option A of the layouts Marcus chose on 2 October 2026, laid one way in every
+plot, as decided. Notes and renders:
+`design/garden-layouts-2026-10-02/built/knot.md`.
+
+**The rule did not change**: colour picks the pair, height picks the place, a
+pair's two compartments fill together, nothing reserved. The eight
+compartments keep their numbers, the four sides now the four lenses and the
+four corners the four crescents, and a pair is still the opposite two.
+Re-recorded, the 500 vector rows keep every plot, compartment, index and nudge
+they had and gain only their variant (always plain) and their spot.
+
+- **The knot**: a ring round the middle, radius 1.48 m, and four small rings of
+  0.94 m woven through it, each crossing it twice, inside a squircle edging of
+  half side 2.25 m. Every line strays off its true curve by up to a
+  centimetre: formal, but hand-laid, with nothing straight.
+- **The small rings stand on the diagonals, not on the axes as the research's
+  sketch drew them.** Measured: on the axes a small ring can be no bigger than
+  0.74 m before it meets its neighbour or the edging, and a lens then holds its
+  four plants 0.22 m apart; on the diagonals the rings reach into the square's
+  corners and a lens holds them 0.42 m apart, with the 9 cm nudge kept.
+  **Marcus kept the rings on the diagonals, 2 October 2026.**
+- **The table**, `tools/layouts/tables/knot_garden_rings.py`
+  (`PlaceTable.knotGardenRings`, `KnotGardenRingsTable`,
+  `tables/knot_garden_rings.js`): 32 places compartment by compartment, the
+  north-east lens and crescent turned by whole quarters, so a pair's places are
+  exactly opposite; its curves are the five rings, the edging, and the eight
+  crossings in order round the middle ring.
+- **Each compartment is still graded outward**, heart nearest the basin, point
+  farthest out: in a lens the heart 0.805 m from the plot's middle, the sides
+  1.17 m, the point 1.22 m; in a crescent 1.74 m, 1.78 m and 2.155 m.
+- **The weave**: an under-band stops 4 cm inside the over-band's face, and the
+  over-band swells there, 2.75 cm thicker each side and 5.5 cm taller, easing
+  out over 0.29 m.
+- **Every count looks finished**: the lenses are claimed first and close round
+  the basin, so a plot's first two colours are four ribbons round its heart;
+  the crescents come after.
+- **The page** (`knot.js`) sweeps a run of box along each line with
+  `Organic.hedge`'s section, cut where it dives under and swollen where it
+  rides over (`knotRuns`). The basin is as it was.
+- Closest two places 0.42 m (0.56 before); a plant pushed as hard as its seed
+  can push it stands at least 3 cm clear of the box; the edging's outer face
+  comes to 2.34 m at most, inside the 2.38 m any slab's edge comes to.
+
+**The fill is the baseline's, every figure**: 33 plots at 1,000, 94.8% held,
+99.1% in settled plots. **A deploy re-lays every existing plot by itself**;
+the replant would put every plant back in the slot it holds.
+
+**The map's glyph** (`gates.js`, `LOOK.pattern`) is the knot's now: the middle
+ring and the four small rings, broken where a band goes under. A square and a
+diamond until 2 October 2026.
+
 ## The Seedbed, built
 
 The sixth area, `beginnings`, and **the first rule in the garden that groups by
@@ -1119,7 +1535,10 @@ drill sown with one kind is the plainest possible answer to it.
 Marcus answered the three questions on 23 September before any code existed:
 **six drills of eight**, forty-eight a plot; **a drill is claimed by the kind of
 the first plant sown in it**, and only that kind may join it; **a place is taken
-in the order of arrival**, filling from the labelled end.
+in the order of arrival**, filling from the labelled end. The third answer was
+changed on purpose on 2 October 2026, by his yes to *every count looks
+finished*: **a drill is sown from its middle** (§*Drills on the contour, 2
+October 2026*, below).
 
 ### A kind is the epithet, and that was measured rather than chosen
 
@@ -1147,8 +1566,10 @@ botany.**
 
 Three steps, oldest plot first: a drill already sown with this kind and not yet
 full; failing that the first drill nobody has claimed; failing that a new plot,
-first drill. A drill fills from index 0 outward, so reading a drill from its
-label is reading it in the order it was sown.
+first drill. A drill filled from index 0 outward until 2 October 2026, so
+reading a drill from its label was reading it in the order it was sown; since
+then it fills from its middle, and the first drill nobody has claimed is the
+highest for a dry kind and the lowest for a water one.
 
 - **A drill is claimed, never reserved**, as the Knot Garden's pairs are, and
   read off the plants rather than stored in a column — a claim that cannot go
@@ -1278,6 +1699,79 @@ drills where it took one, so 124 are claimed where 112 were and 57 fill where
 two places of water. Water is 48% of the claimed drills, against the 35% of
 arrivals that are lilies, because a flooded drill fills more slowly.
 
+### Drills on the contour, 2 October 2026
+
+Option A of the layouts Marcus chose on 2 October 2026. Notes and renders:
+`design/garden-layouts-2026-10-02/built/seedbed.md`.
+
+**These stand as they were**: six drills of eight, 0.74 m between drills and
+0.52 m between places along one; a drill claimed by kind and by element, read
+off its first plant; **a lotus taking two places and standing centred across
+them** (25 September 2026, untouched by the Cold Frame's answer of 2 October);
+a drill's last odd place waiting for a plant of one place.
+
+- **The table**, `tools/layouts/tables/seedbed_drills.py`
+  (`PlaceTable.seedbedDrills`, `SeedbedDrillsTable`, `tables/seedbed_drills.js`),
+  48 places. The bed falls toward `z+`, so each drill is a contour: an arc
+  about a point 7.4 m below the plot's middle, wandering 2.5 cm, bowing 0.17 m
+  (the top drill) to 0.30 m (the foot) over its length. The drills now run
+  across the bed in `x` and are stacked down it in `z`; drill 0 is the top.
+  The middle drills begin a little further in than the outer ones, so the
+  labels stand on a curve rather than in a ruled column. Each drill's line is
+  in the table, its first point where its label stands.
+- **The water lies low.** A dry kind claims the highest drill nobody has sown,
+  and a lily or a reed the lowest: the flooded drills gather at the foot of the
+  bed and the dry ones at its head.
+- **A drill is sown from its middle**, Marcus's answer of 23 September changed
+  on purpose. A dry drill takes the place nearest its middle first, then
+  farthest-first, so one plant stands in the middle and three at the middle
+  and both ends. A flooded drill is sown in pairs the same way, because a lily
+  takes two places; a reed takes the first free place in that order, so two
+  reeds share a pair before a third opens another.
+- **Plots alternate**, mirrored one to the next (`Seedbed.variants`): the labels
+  stand at the west end of even plots and the east of odd ones, and the water
+  stays low in both.
+- **The nudge** is still 0.06 m along a drill and 0.035 m across it, now along
+  `x` and across `z`.
+- **The stored shape is the same**: `drill`, `slot_index` (how far along the
+  drill from the label) and `slot_span`. `Seedbed::spot` works the spot out
+  when it serves a planting: the middle of its places, the nudge, the mirror.
+- **The checks**: the vector rows gain `variant` and `spot`, compared exactly;
+  *filled from the label with no gap* became three checks (a dry drill is a
+  prefix of its order, a flooded drill's pairs a prefix of its pair order, and
+  each drill claimed was the first on its own side of the bed); `SeedbedTests`
+  proves that sowing in pairs lets in and turns away exactly the plants that
+  sowing from the label did, for every mix of reeds and lilies up to nine.
+- **The drawing** (`seedbed.js`): each furrow follows its drill's line, dark in
+  the bottom, pale on the crest; a flooded drill's trough is dug along its arc
+  and closes in a rounded pool at each end; each label stands on its line's
+  first point, turned to face along the drill. A drill claimed by a reed is now
+  drawn flooded on the workbench too, as the service draws it.
+
+**The fill is the baseline's, to the place**: 36 plots at 1,000, 73.8% held,
+77.3% in settled plots, 370 settled places empty. Claiming by side changes
+which drill a kind claims, never whether a plot has one free, and sowing in
+pairs takes a lily while a whole pair is free, which is the same count.
+**Option A cannot honestly reduce the 370**: they are drills claimed by kinds
+that come rarely, and which drills are claimed depends only on the arrivals
+and the claim rule. Eight drills of six would leave 239, in 33 plots rather
+than 36, but eight drills at 0.74 m do not fit the bed; letting kinds share a
+drill is the rule Marcus chose against. Neither was built.
+
+**A deploy re-lays every plot by itself**, each planting onto its place on the
+curved drill, odd plots mirrored, none colliding and none changing drill; but
+only the replant gives the old plots the new claims and the new order. Plot
+assignment is unchanged.
+
+**Left open:** the drills curve gently, 0.17–0.30 m over 3.6 m, because six
+drills 0.74 m apart fill 3.7 m of the bed's depth and leave no room for more
+bow; seen from the page's eye the flooded drills read as arcs and the dry ones
+nearly straight, and a stronger curve needs a narrower gap between drills,
+which is Marcus's number. A drill of two looks lopsided, the middle and one
+end, which is what focal-first gives on a row; from three up it is balanced.
+Three stems in five hundred stand inside a lotus's pads (one before): two are
+reeds beside a lily's pair, each nudged toward it, under the test's bar of 1%.
+
 ## The Cold Frame, built
 
 The seventh area, `waiting`, 23 September. `SeedCore/WebGardens/ColdFrame.swift`,
@@ -1289,7 +1783,9 @@ a plant as something other than what it will be.**
 Marcus answered its three questions on 23 September, after a measurement that
 changed the first one: **every plant, drawn young; four frames of twelve; colour
 claims a frame and the grown height orders its ranks.** (Two frames of twelve
-and a tank of thirty-nine since 29 September 2026: *A bigger tank*, below.)
+and a tank of thirty-nine since 29 September 2026: *A bigger tank*, below. The
+tank became a pond of the same thirty-nine places on 2 October 2026: *A pond
+planted as a pond*, below.)
 
 ### Nobody is turned away, and that was measured
 
@@ -1422,7 +1918,9 @@ the ninetieth percentile) — exactly the 0.31 m between places along a rank —
 and **a quarter of the Cold Frame's plants stood with their stem inside a
 lotus's pads**. Simulated beforehand, the rule took that to none, at the cost
 of **twelve plots becoming eighteen**. A narrower front rank, fewer places a
-rank, and pads drawn smaller were the options set aside.
+rank, and pads drawn smaller were the options set aside. **Replaced for this
+area on 2 October 2026**: Marcus decided that a lotus takes one place in the
+pond (*A pond planted as a pond*, below). The Seedbed keeps its two.
 
 **As built.** `ColdFrame.span(of:)`, `Planting.span` and `slots`, `slot_span`
 and `habit` in `ColdFrameStore`, `ColdFrame::span` and `::next` in the port. The
@@ -1566,6 +2064,76 @@ tank — a frame waits for its colour, and the first plot's frames are full at
 about arrival 250 where its tank is full at about 50 — but no plot's frames
 stand empty while its water is used, and `ColdFrameTests` holds that.
 
+### A pond planted as a pond, 2 October 2026
+
+Option A of the layouts Marcus chose on 2 October 2026. Notes and renders:
+`design/garden-layouts-2026-10-02/built/frame.md`.
+
+**The tank became a pond, and kept its thirty-nine places.** The choice of 29
+September stands: two frames and thirty-nine places of water, so the water and
+the glass fill in step. The frames, the glass, the lids and everything under
+glass are as they were, and straight.
+
+- **The table**, `tools/layouts/tables/cold_frame_pond.py`
+  (`PlaceTable.coldFramePond`, `ColdFramePondTable`), holds the pond's outline,
+  the inner edge of its shelf and thirty-nine places:
+  - **the margin**, fifteen places in **five clumps of three** on the shelf,
+    0.26 m in from the edge, each clump a small scalene triangle about 0.26 m
+    across, the west clump first, then farthest-first round the pond;
+  - **the open water**, twenty-four on a sunflower from the deepest point,
+    centre first, so a pond of three lilies is three in the middle, never
+    three in a row.
+- **The pond** is a wandering kidney 4.6 m by 3.2 m (12.8 m²; the tank was 4.4
+  by 3.16), its bay toward the frames and 0.15 m short of their fronts.
+- **The rule** (`ColdFrame.Ways.place`, `ColdFrame::place`): what wants water
+  goes in the pond and nothing else does, oldest plot first, as before. A reed
+  is offered the margin clump by clump, then the open water from its outer
+  edge in, so the middle stays for the lilies; a lily is offered the open
+  water from the deepest point out, then the margin. A plot's water is full
+  before the next plot's is used. `Frame.tank` is now `Frame.pond`, the same
+  raw value, 4.
+- **Plots alternate**, mirrored only (`ColdFrame.variants`): the bay leans east
+  and west in turn, the frames stay at the back, and a mirror changes only
+  which of the two a plot fills first. The service sends the mirrored spot
+  (`ColdFrame::spotOn`).
+- **The page** (`frame.js`) sinks the pond from the table's outline, mirrored,
+  with its bank, a paler band of shallower water over the shelf, and the gravel
+  walked round it from the deepest point.
+- Nearest two lilies' places 0.53 m (the tank's rows were 0.62 m apart); a
+  lily's place 0.36 m at least from a reed's and 0.24 m from the water's edge;
+  a reed's 0.11 m from the edge.
+
+**Decided by Marcus, 2 October 2026:**
+
+- **A lotus takes one place in the pond.** For the Cold Frame this replaces the
+  rule of two places decided on 25 September and kept with the bigger tank on
+  29 September; a lily held one place in the tank from 27 September, and the
+  pond's places were laid for one lily's pads. Two places a lotus would have
+  needed about 27 plots at 1,000 rather than 18, and the frames would have
+  stood empty in about half of them. **The Seedbed's two places are
+  untouched**: `Seedbed.span(of:)` still gives a lotus two, and nothing of this
+  area's reaches it.
+- **Five reed clumps of three are kept.** Reeds are 46% of the water here and
+  the margin 38% of its places, so about two reeds a plot spill into the open
+  water (18 of 150 at 500); six clumps, with twenty-one in the open water,
+  would match the plants better. The research's picture had five.
+
+**The fill is the baseline's, every figure**: 18 plots at 1,000, 88.3% held,
+94.4% in settled plots, 56 settled places empty. Every plant goes to the plot
+it went to and every frame fills as it did; only which of a pond's places a
+water plant takes has changed.
+
+**A replant of the water, and nothing else.** Capacities are unchanged (24
+under glass, 39 in the water) and so is plot assignment, but a water place's
+number now means the pond's *n*th place: the margin for the first fifteen, the
+open water after. Of the 500 vector arrivals only 22 of the 342 in the water
+keep their index on replay, so a deploy alone would stand reeds in the open
+water and lilies in the clumps until `tools/replant` re-files them. It needs
+nothing new.
+
+**Left open:** the frames are not set askew, as the research drew them; that
+would turn their places, boxes, lights, glass and lids with them.
+
 ## Water as scenery in the other eight, 27 September 2026
 
 **Prototype, on the branch `water/scenery`, waiting for Marcus to see it.**
@@ -1579,12 +2147,12 @@ be carried and held — read against `COLUMN_RISE`:
 
 | Rise | Area | Water | Where |
 | --- | --- | --- | --- |
-| 0 m | Quiet Garden | pool, dug (already built) | the middle of the lawn |
-| 1.2 m | Orchard | dipping pond, dug, 0.70 m | the near meadow pocket, (0, 1.72), clear of every mown disc |
-| 1.2 m | Home Ground | stone trough, 0.36 × 0.80 m | lengthways at the near end of a path, (0.83, 1.98) |
-| 2.4 m | Knot Garden | low stone basin, 0.60 m | the empty middle the four inner stretches close round |
-| 3.6 m | Glasshouse | stone trough, 2.4 × 0.42 m | on the tiles under the staging |
-| 3.6 m | Coppice | spring basin, round, 0.54 m | at the end of the near ride, (2.0, 0.9) |
+| 0 m | Quiet Garden | pool, dug (already built) | the middle of the lawn; since 2 October 2026 off the middle toward the bench, 2.1 × 1.2 m, holding the room's two lily places |
+| 1.2 m | Orchard | dipping pond, dug, 0.70 m | the near meadow pocket, (0, 1.72), clear of every mown disc; since 2 October 2026 0.64 m, in a pocket between two crowns |
+| 1.2 m | Home Ground | stone trough, 0.36 × 0.80 m | lengthways at the near end of a path, (0.83, 1.98); since 2 October 2026 turned to lie along its path, which sways |
+| 2.4 m | Knot Garden | low stone basin, 0.60 m | the empty middle the four inner stretches close round; since 2 October 2026 the middle ring's heart |
+| 3.6 m | Glasshouse | stone trough, 2.4 × 0.42 m | on the tiles under the staging; since 2 October 2026 bent to the ring of staging, 0.24 m across, under its `x+` side |
+| 3.6 m | Coppice | spring basin, round, 0.54 m | at the end of the near ride, (2.0, 0.9); since 2 October 2026 beside the outer end of a ride the table chooses |
 | 4.8 m | Crossing | raised basin, round | on the roundel where the four paths meet |
 | 4.8 m | Long Walk | stone rill | down the path, meandering across it, stopping short of both ends |
 
@@ -1693,6 +2261,10 @@ whatever its colour. Anything shorter is potted on the staging:
 
 A pale plant, or one whose hue was never sent, takes the first free pot from
 the door. A position fills its row by the glass before its row by the path.
+(Since 2 October 2026 a pale plant takes the first free pot in the table's
+order, the pot opposite the door and then farthest-first, and a band's two
+pots are its first and second in that order: §*The colour wheel, 2 October
+2026*, below.)
 
 - **The band edges were set from 2,864 hued plants** of the area's own (3,000
   out of 23,259 crossings, less 136 pale), under a label the tests do not use,
@@ -1728,6 +2300,8 @@ the door. A position fills its row by the glass before its row by the path.
 
 ### The house
 
+**The house of 24 September to 2 October 2026**; since then it is round (§*The
+colour wheel*, below), and `SpanHouse.swift` is gone.
 `Organic.spanHouse` and `spanHouseGlass`: a span house 4.4 m by 3.4 m, eaves
 at 2.1 m and ridge at 2.9 m, glazed to the ground, with its sliding door slid
 open in the `x−` gable — the end the spectrum and the border both count from.
@@ -1747,6 +2321,100 @@ Frame's pass at 5% rather than 7%, because two or three layers of it stand
 between the eye and a pot. The floor is quarry tiles, the map's `LOOK.light`
 ground, laid on the Knot Garden's jittered lattice with a tone to a tile, so
 the grid a tiled floor is shows as tone rather than as ruled lines.
+
+### The colour wheel, 2 October 2026
+
+Option A of the layouts Marcus chose on 2 October 2026. The plot does not vary:
+a colour wheel has one way round (`Glasshouse.variants` is `.fixed`, and is
+read, so a spot is found the way every other area's is). Notes and renders:
+`design/garden-layouts-2026-10-02/built/glasshouse.md`, with
+`glasshouse-after2-10.jpg` and `glasshouse-after2-full.jpg` for the painted
+band.
+
+- **The house is round** (`Morphology/Structures/RoundHouse.swift`): a wall of
+  glass 2.2 m in radius, laid by hand, its radius wandering outward by up to
+  4 cm and never inward, so nothing stands under a roof lower than
+  `Glasshouse.roof`. Fourteen bays and a doorway, a post at each, and a rib
+  curving up a parabolic dome from every post to a ring at the crown, with a
+  second ring partway up and a turned cap. **Eaves 2.2 m, crown 3.5 m.** Every
+  bar is the bench's board section swept along a curve, and each post leans a
+  few millimetres off true.
+- **The door is in the green gap**, at `z+`, between the staging's two ends,
+  slid open round the outside toward `x+`, with a threshold stone across the
+  doorway, half in and half out.
+- **The staging is a ring** (`Structures/Staging.swift`, `ringStaging`) of four
+  curved slats on twelve frames of legs, 0.40 m deep, its middle 1.8 m out.
+  **24 pots stand on it 0.43 m apart**, two to each of the twelve hue bands,
+  where the span house's stood 0.30 m apart and 99% of these plants were wider
+  than that. Band 0 (blue-green) is just past the door going round toward `x−`,
+  band 11 (yellow) just before it; from the page's first view the warm half is
+  nearest.
+- **The border is a round bed of eight in the middle**, under the crown, filled
+  from its middle and then farthest-first. The ambassador, *Elora elata*,
+  stands in the middle of it.
+- **The floor**: outside the wall the jittered lattice of tiles; inside, five
+  rings of tiles from the bed to the wall, each following the bed's wander on
+  its inside and the wall's on its outside.
+- **The trough** stays under the staging, bent to the ring under its `x+` side,
+  0.24 m across, to stand between the legs; `glasshouse.js` walks it along the
+  staging's line, because `water.js`'s troughs are fanned from a middle.
+- **The rule is unchanged where it was settled**: the height cut at 1.16 m, the
+  band edges and the hue rule as pinned, a pot trying its own band in every
+  plot, then one band off on the side its hue leans to, never across the cut,
+  then a new plot. Thirty-two places a plot, 24 and 8. **One placement
+  changed**: a pale or unsent pot takes the first free pot in the table's
+  order, the pot opposite the door and then farthest-first, where it took the
+  first free pot from the door, which stood every pale pot in band 0 or 1.
+- **The table**, `tools/layouts/tables/glasshouse_wheel.py`
+  (`PlaceTable.glasshouseWheel`, `GlasshouseWheelTable`,
+  `tables/glasshouse_wheel.js`), carries the wall, the staging's line and the
+  bed. Named `glasshouse_wheel` because a generated `Glasshouse.swift` cannot
+  sit beside the rule's file.
+- **The app does not draw the Glasshouse**: its structures are in SeedCore, and
+  only the plant module calls them.
+
+**Decided by Marcus, 2 October 2026: the dome is kept, and a painted band is
+added.** The dome's height was set for the eye, not the plants: a dome rising
+less than about 1.3 m over its eaves hides inside the ellipse its own eaves
+make and reads as a drum with a lid. The band answers the open question of
+whether the wheel reads, because colour shows only through flowers, which are
+small beside the leaves:
+
+- **A thin band of paint along the top of the staging's outer slat**, the one
+  by the glass, under the pots' rims, as the research's sketch drew it. From
+  the page's eye the near half of the ring shows its outer edge and the far
+  half shows over its own staging, so the whole wheel reads; on the front slat,
+  tried first, the near half was hidden behind its own boards.
+- **It shades through the hues round the ring**: each band of the twelve is at
+  its middle hue midway between its two pots, and the colour shades evenly from
+  one band's middle to the next, blue-green past the door through blue, violet,
+  magenta, red and orange to yellow, with no seam between bands. Its ends,
+  toward the door, run on into the green of the gap. The cut and the band edges
+  are the rule's, sent by `pg_glasshouse_plan`, and where the pots stand is the
+  table's, so the paint cannot disagree with the pots.
+- **Hand-painted, with an organic edge**: chalky, softer than the flowers it
+  keys; each edge wanders on its own by a few millimetres and feathers into the
+  boards over a centimetre; each step's tone is a little off the last, as a
+  brush leaves it; and it thins to a rounded end at each end of the staging.
+  The staging's line already wanders a centimetre, so the band is no
+  machine-perfect circle. Page only (`paintBand` in `glasshouse.js`).
+
+**The fill, at 1,000, is the baseline's exactly**: 33 plots, 94.8% held, 98.7%
+in settled plots; only where a pale pot goes changed. At 100 the settled plots
+are a little fuller, 98.4% against 96.9%.
+
+**A deploy re-lays the existing plots by itself.** The service stores a
+planting's slot (bed, band or bed place, row) and its nudge, and works the spot
+out from the table when it serves it, so every plant already in the live
+Glasshouse stands in the round house at its slot's new spot with no data
+changed. Only the pale pots differ from a replant's answer: re-recording the
+vectors moved 161 of 500 placements and changed the plot of 72, each a pale pot
+taking a different pot or a hued pot taking the place a pale one left.
+`slot_row` changes meaning harmlessly, from by the glass or by the path to a
+band's first or second pot.
+
+**The map's glyph** is a round house with a dome, ribs and a door (a pitched
+roof until 2 October 2026).
 
 ## The Coppice, chosen
 
@@ -1842,7 +2510,9 @@ fern grows out of (§*The stool*). The fern is what the stool grows.
 **Thirty-three a plot: three coupes of eleven.** That is five stools down the
 middle of each band and three places in the light on either side, a back row
 and a front row. The Glasshouse has thirty-two in the same square and the Long
-Walk forty-eight.
+Walk forty-eight. **The bands below are the layout of 24 September to 2 October
+2026**; since then the three coupes lie round a glade, with the same counts,
+rows and indices (§*Coupes round a glade, 2 October 2026*, below).
 
 | | Where, in metres from the middle of the plot |
 | --- | --- |
@@ -1985,8 +2655,9 @@ clear at the worst nudge.
   in the plot is a straight line**: not the rides, not a stool's outline, not a
   shadow. A stool's shadow is its footprint moved away from the light, as a
   hedge's is.
-- **Seen at the page's angle, the three bands run corner to corner** across the
-  diamond of the plot, one of them open. The cut coupe shows pale stool faces
+- **Seen at the page's angle, the three bands ran corner to corner** across the
+  diamond of the plot, one of them open (until 2 October 2026; the coupes now
+  lie round a glade, and the cut one lies round it too). The cut coupe shows pale stool faces
   and croziers under a stand of stars in flower. The next shows ferns
   half-grown, and the third ferns grown, still under the flowers. The cut moves
   one band a year, so from the page's first view the open band is the far one
@@ -2165,6 +2836,62 @@ button, since the service stays in year 0 until 21 December 2026).
   faces say which band it is. The page's two new strings, `coppiceAbout` and
   `coppiceAway`, are English only for now, as the Glasshouse's were.
 
+### Coupes round a glade, 2 October 2026
+
+Option A of the layouts Marcus chose on 2 October 2026. Notes and renders:
+`design/garden-layouts-2026-10-02/built/coppice.md`.
+
+**The rule did not change**: thirty-three a plot, three coupes of eleven, five
+stools and a floor of six; ferns to stools in the coupe with fewest, stars to
+their own row, one fern at most on a coupe's floor; the Crossing's loops; the
+rotation, one coupe cut a winter. Re-recorded, the 500 vector rows keep every
+plot, slot and nudge and gain only their variant and spot.
+
+- **The table**, `tools/layouts/tables/coppice_glade.py`
+  (`PlaceTable.coppiceGlade`, `CoppiceGladeTable`): three feature variants, 33
+  places each.
+- **Three rides meet at a small sunny glade** and bend out past the rim, by up
+  to 18° by their far end, dividing the plot into **three coupes of unequal
+  size**: each takes 27–42% of the turn round the glade, and no two are alike
+  (30%, 32% and 37% of the plot in variant 0). Each feature variant moves the
+  glade, the rides' angles and the coupes' shares.
+- **The stools stand scattered, as a stand**: blue noise over the coupe, the
+  five nearest its heart kept, at least 0.55 m from each other and from a
+  ride's line, 0.45 m from a star's place and 0.85 m from the glade's middle. A
+  stand strung out in a line is refused. **The old order 2, 1, 3, 0, 4 is kept
+  as the index a stool is numbered by**, now from the stand's middle out, so a
+  coupe of three stools is still a clump and every stored planting still
+  means the place it meant.
+- **The stars stand in clumps of three along the ride edges, where the light
+  is**: the front row at the ride's edge, 0.48 m from its line, for the shorter
+  stars, the back row 0.90 m from it for the taller, so from the ride short
+  stands in front of tall. One clump by each of the coupe's two rides; each
+  row's first place is in the first clump, so a coupe's first two stars stand
+  together. `floorOrder` (1, 0, 2) is kept as the indices.
+- **Plots vary by number**: four turns, a mirror and three feature variants,
+  24 ways (`Coppice.variants`). The service sends the turned spot
+  (`Coppice::spot`).
+- **The page** (`coppice.js`, from `pg_coppice_layout(plot)`): the three rides
+  trodden 0.48 m wide (±12%), edges wandering 4 cm; the glade lighter, sunlit
+  and greening, with no drawn edge; each coupe lit by its stage, blended across
+  a ride, the glade open in every year; the spring basin beside a ride's outer
+  end. What the litter reads is worked out at each lattice corner and averaged
+  over a leaf.
+- Nearest two places 0.46 m (0.40 m in the bands); the widest stool still
+  leaves every floor place more than 0.05 m clear at the worst nudge of both;
+  at the worst nudge and the widest ride a star stands 0.09 m clear of a ride's
+  trodden edge, where the bands' straight rides left 0.12 m.
+
+**The fill is the baseline's, every figure**: 31 plots at 1,000, 97.8% held,
+100% in settled plots. **A deploy re-lays every plot at once with no row
+changed**; a coupe's stage is unchanged, so each plot's cut coupe is the same
+coupe, lying round the glade rather than across the plot.
+
+**Left open:** the ride edges are 3 cm nearer a star than the bands' were, on
+purpose; if a render shows a star's leaves on a ride the front row can move out
+to 0.52 m. The spring stands beside a ride's outer end chosen by the table, so
+it is not always the near one before a turn.
+
 ## The Crossing, built
 
 21 September, the same day as the Quiet Garden. `SeedCore/WebGardens/Crossing.swift`,
@@ -2172,9 +2899,10 @@ button, since the service stays in year 0 until 21 December 2026).
 `/cross`, `/dev/cross`, `tools/reference/check_crossing.php`.
 
 - **Twenty-four a plot: four quarters of six.** Between the walk's forty-eight
-  in the same square and the room's ten. Six is three along the path edges, two
+  in the same square and the room's ten. Six is three nearest the middle, two
   behind them and one at the outer corner, so a quarter builds outward from the
-  middle of the place.
+  middle of the place: along the path edges until 2 October 2026, on three arcs
+  round the basin since (§*Four ways turning in, 2 October 2026*, below).
 - **The rule is *wherever there is least*.** An arriving plant goes to the
   emptiest quarter of the oldest plot that has a slot it fits, and a tie goes to
   the lowest-numbered quarter. That is the whole of it, and it is what the area
@@ -2215,6 +2943,64 @@ too smooth — **smooth normals over a cambered disc take one broad highlight an
 read as a polished cover.** It is the one thing on the page shaded flat, one
 normal and one tone a triangle, which is what makes it faces rather than a
 surface.
+
+### Four ways turning in, 2 October 2026
+
+Option A of the layouts Marcus chose on 2 October 2026. Notes and renders:
+`design/garden-layouts-2026-10-02/built/cross.md`.
+
+**The rule did not change**: a plant goes to the emptiest quarter of the oldest
+plot with a slot of its rank, `<` not `<=`, the rank beside its own if it must.
+Re-recorded, the 500 vector rows keep every plot, quarter, index and nudge, and
+gain only their variant and spot. What changed is where a slot stands, and the
+paths.
+
+- **The table**, `tools/layouts/tables/crossing_ways.py`
+  (`PlaceTable.crossingWays`, `CrossingWaysTable`): 24 places, six to a
+  quarter, and the four paths' centre lines.
+- **The four paths turn in.** Each comes onto the plot at the middle of its
+  side and turns evenly, 56° by the time it reaches the paving, all four the
+  same way, so they meet the round turning rather than crossing it, and each
+  quarter is a comma of rough grass wrapped round the basin. Each centre line
+  wanders 3.5 cm by its own seed, so the four are not one path turned four
+  ways.
+- **The paths are narrower, and narrow as they turn in**: 0.9 m across where
+  they come onto the plot, 0.7 m at the round (`Crossing.pathHalfWidth`, 0.45,
+  and `pathHalfWidthAtRound`, 0.35). They were 1.2 m all the way, the Long
+  Walk's figure, a settled number: a path that turns crosses each arc at a
+  slant and covers more of it, and at 1.2 m the inner arc had no room for
+  three. **Marcus kept the narrower paths, 2 October 2026.**
+- **Six places a quarter on three arcs round the basin**: three at 1.95 m, two
+  at 2.45 m, one at 2.80 m (1.90, 2.42 and 2.95 before), all facing in, each
+  arc's places 0.23 m clear of both paths. The inner arc is listed middle
+  first, then its ends; slot 0 is the middle of the inner arc, 3 and 4 the
+  middle arc, 5 the corner. The ambassador still opens quarter 0 at slot 3.
+- **Plots vary by number**: four turns and a mirror, eight ways
+  (`Crossing.variants`); a mirror sets the four ways turning the other way.
+  The service sends the turned spot (`Crossing::spotOn`), and
+  `check_crossing.php` measures every plant against the paths as its plot lays
+  them.
+- **The page** (`crossing.js`) mows four paths along the table's centre lines,
+  turned for the plot, striped across their width and kept to the plot's own
+  edge; the paving and the basin are as built. The workbench draws only the
+  area's own plants (`pg_cross_arrive`): orchids, bells and cushions.
+- Nearest two places 0.55 m (0.53 m before); the nearest plant to a path's
+  edge, after its nudge, 0.08 m; every plant at least 0.3 m inside the plot's
+  edge.
+
+**The fill is the baseline's, every figure**: 46 plots at 1,000, 90.7% held,
+92.6% in settled plots, 78 settled places empty. The 78 are today's rule's
+(`tools/layouts/BASELINE.md`); this layout neither causes nor fixes them.
+**A deploy re-lays every plot at once with no row changed.**
+
+**Left open:** the commas read gently at the page's scale, the mown paths only
+a little lighter than the rough grass, their turn clearest in the inner metre;
+the inner arc stands at 1.95 m, not the research's 1.32 m, which stood plants
+on the paths, so ten plants make a ring a little wider than the research drew.
+
+**The map's glyph** (`gates.js`, `LOOK.meeting`) draws the four paths turning
+in to the round, read off the table's lines. Four straight paths until 2
+October 2026.
 
 ## The dressing: what we place by hand
 
@@ -2934,7 +3720,9 @@ plant's name and also something a visitor can see without being told.
 - **Three beds, each 1.2 m wide and 4.2 m long**, running the length of the plot
   from −z to +z, their middles at x = −1.65, 0 and +1.65 m. Paths of 0.45 m
   between them and a headland of 0.5 m at each end; the outermost bed edge is
-  0.35 m inside the plot, clear of the outline's 0.16 m wander.
+  0.35 m inside the plot, clear of the outline's 0.16 m wander. **Superseded on
+  2 October 2026**: the beds sway together in a lazy S about x = −1.60, 0 and
+  +1.60 m, with paths of 0.40 m (§*Lazy beds, 2 October 2026*, below).
 - **North is −z**, the end away from the page's midday sun, which lights the
   plot from (−x, +z). A tall row there shades nothing but the headland. A
   kitchen garden puts its runner beans and its sweetcorn at the north end for
@@ -3156,6 +3944,7 @@ Marcus took all five recommendations.
 5. **The map's glyph shows three beds**, redrawn the same day in `gates.js`
    `LOOK.ground`: three bed outlines, with short upright strokes for the
    spires, flat bars for the umbels' heads and close dots for the rosettes.
+   Since 2 October 2026 the beds in it sway in a lazy S and the marks follow.
 
 Then, on the new shapes, two more, both on the recommendation:
 
@@ -3231,13 +4020,73 @@ numbers and a crop is a word.
   litter are, on the jittered lattice with a tone to a crumb.
 - **A bed is the ground's own relief**: 8 cm high, domed a little across its
   top, a shoulder 16 cm wide down to the path, corners rounded, and each side
-  and end wandering by up to 4.5 cm on its own. No boards. Plants stand on it:
-  each is lifted by the ground's height at its spot.
+  and end wandering by up to 4.5 cm on its own (2.5 cm since 2 October 2026,
+  when the beds began to sway: the sway is the bold curve and this the fine
+  wander on it). No boards. Plants stand on it: each is lifted by the ground's
+  height at its spot.
 - **Paths are the same soil trodden paler**, with less spread in the crumb.
 - **A sown bed is raked, an unsown one dug**: rougher, in clods of up to
   1.5 cm. Which beds are sown is read off the plantings' spots.
 - **No words for the crops.** Three shapes nobody takes for each other say it.
   `groundAbout` and `groundAway` are English only for now.
+
+### Lazy beds, 2 October 2026
+
+Option A of the layouts Marcus chose on 2 October 2026: lazy beds that follow
+the land. Plots vary by their number, mirrored only. Notes and renders:
+`design/garden-layouts-2026-10-02/built/ground.md`, with
+`ground-after2-three.jpg` for the bolder sway.
+
+**The rule did not change**: the crop claims the bed, tall plants come from the
+north end and short from the south, a crop's own spacing, 27 spires, 14 umbels
+or 30 rosettes to a bed. Re-recorded, the 500 vector rows keep every plot, bed,
+crop, index and nudge and gain only their variant and spot.
+
+- **The beds sway together in a lazy S**, west in the north half and east in
+  the south, straight at the two ends and the middle, shaped `u (1 − u²)²` so
+  they leave each headland square to it. The middle bed sways; the other two
+  are its line moved sideways, square to it all the way, so the paths keep
+  their width where the beds lean as well as where they run straight. Each bed
+  then strays up to 1 cm off the S on its own, as a spade leaves a ridge.
+- **Decided by Marcus, 2 October 2026: paths of 0.40 m and a sway of about
+  0.15 m.** As first built the beds swayed 0.10 m, as far as they could with
+  the beds and paths as wide as they were (paths 0.45 m, settled on 24
+  September). Marcus asked for a bolder sway, and the paths narrowed to make
+  the room: the beds' middles stand 1.60 m apart, so the outer beds have 0.18 m
+  between their straight edges and the nearest any slab's edge comes, and at
+  0.15 m their outer edge, wandering as the page draws it, comes to 2.377 m,
+  inside the 2.38 m the slab allows. The paths measure 0.39–0.41 m along their
+  length, and a bed leans at most 14°.
+- **Rows run square to the curve**, `rowGap` apart along the bed's line,
+  centred on it, so every crop's rows still span 3.6 m of it and three beds of
+  three crops end level. On the inside of a bend a row's outer places draw
+  closer to the next row's: at 0.15 m the closest spires stand 0.348 m apart
+  (0.387 at 0.10, 0.45 down a straight bed), umbels 0.469 m (0.60), rosettes
+  0.275 m (0.40). The rows near an end lean too, so a row's end place comes to
+  0.20 m from the bed's end (0.22 at 0.10, 0.275 straight), and an outer bed's
+  rows sit up to 1.6 cm toward the half of it on the outside of its bend.
+- **The tables**: one per crop (`tools/layouts/tables/home_ground_{cer,fen,pell}.py`),
+  because two crops' places can fall on one point and a table holds a point
+  once, and `home_ground_beds.py`, each bed's middle and line, which the page
+  reads. The geometry is shared in `_home_ground.py`.
+- **Plots alternate, mirrored and not** (`HomeGround.variants`): one plot sways
+  one way and the next the other, north staying north, so every bed's tall end
+  does. The nudge is added before the mirror, in the table's frame, so the
+  narrower nudge down the bed turns with its row.
+- **The page** (`ground.js`) raises each bed along its line, its width square to
+  it, laid as the plot's variant. A bed's side wanders 2.5 cm, not 4.5: the S
+  is the bold curve and this is the fine wander on it. **The trough is turned
+  to lie along its path**: the beds leave each end square to the headland, but
+  over the half metre the trough runs beside them the path leans up to 8°, and
+  a trough laid square to the plot would have stood 5 cm up a bed's shoulder.
+- **The map's glyph** sways its three beds, the crop marks following.
+
+**The fill is the baseline's, every figure, at both sways**: 16 plots at
+1,000, 96.3% held, 100% in settled plots. **Nothing for a replant to do**:
+capacities and plot assignment are unchanged, and the service works each spot
+out from the plot, bed, crop, slot and nudge it stores
+(`HomeGroundStore::planting`), so a deploy re-lays every plot, mirrored plots
+included.
 
 ## A plant's panel, decided
 
@@ -3408,7 +4257,9 @@ It is about **how a full garden reads**, not about throughput. Every item is a
 3. **Make the colour rules visible.** The Knot Garden's compartment-per-colour,
    the Glasshouse's spectrum along the staging, the Quiet Garden's one-colour
    groups — rules that only become legible across many plots, and that nobody
-   has yet seen doing their work.
+   has yet seen doing their work. **The Glasshouse's is answered on 2 October
+   2026**: a colour wheel round a ring of staging, with a band of the hues
+   painted along it, so the wheel reads with few plants (§*The colour wheel*).
 4. **The Quiet Garden's near-empty rooms.** It is the one area whose rule is
    *fewer*: 10 places a plot, so it opens more plots than anything else — 51 at
    five hundred arrivals against the Long Walk's 11. At its share of 10,000
@@ -3417,7 +4268,8 @@ It is about **how a full garden reads**, not about throughput. Every item is a
    repeated, so the gaps are structural, not a placement fault: 73% of places
    held at five hundred.
 6. **The crowded Glasshouse staging.** 99% of its plants are wider than the
-   0.30 m gap between pots. Deferred into this work on purpose.
+   0.30 m gap between pots. Deferred into this work on purpose. **Eased on 2
+   October 2026**: the ring of staging stands its pots 0.43 m apart.
 
 **How to see any of it**: every workbench takes `?arrivals=N`, and the
 simulations already run well past five hundred — the Coppice is tabulated out
