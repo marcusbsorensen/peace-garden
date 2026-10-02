@@ -49,8 +49,10 @@ const say = async (key) => {
 
 async function place() {
   const engine = await loadModule(document.documentElement.dataset.module || '/plant.wasm');
-  // Where the beds stand and how each crop is spaced come from the module, so
-  // the page cannot disagree with the rule about where a row runs. **One plot,
+  // How each crop is spaced comes from the module, and the line each bed runs
+  // along from the table the rule reads (`tables/home_ground_beds.js`), laid
+  // as each plot's number says, so the page cannot disagree with the rule
+  // about where a row runs. **One plot,
   // framed as though there were a little more than one**, the Quiet Garden's
   // margin.
   const ground = plan(engine);
