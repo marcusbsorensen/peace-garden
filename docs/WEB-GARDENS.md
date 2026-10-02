@@ -9,6 +9,104 @@ Wild Fields, which nobody does.
 Nothing here is built. The website cannot yet draw a plant (§*What has to exist
 first*), and until it can, every decision below is a design and not a garden.
 
+## The plot's side as a solid slab, 2 October 2026
+
+The night the app's plot became a solid floating slab (`ARRANGING.md` §*A keel
+that tapers to nothing*), Marcus approved it and asked on 2 October 2026 for the
+website's plots to match it, so that a plot on the phone and a plot in the
+browser read as the same object. Every plot on the site hangs it now: the ten
+areas' own and the neighbours seen past them through the gateways. The Wild
+Fields have no slab and did not change.
+
+**One function, as in the app.** `hangSide` in `Server/assets/js/slab.js` hangs
+the side from the plot's outline, which is still SeedCore's (`Organic.outline`,
+through the module), so both start from the same rim. Every ground builder
+hands it back as `side` and the stage draws it with a program of its own. The
+upright bank had been written out eleven times — the walk's, the neighbours',
+and one in each of the other nine areas — and is now one line in each.
+
+What is the app's, number for number:
+
+- **1.05 m deep, leaning in 0.20 m**, a little under the rim and more toward the
+  foot, so it meets its lower edge at an angle and the near side still shows
+  0.95 m from the front.
+- **One lower edge**, undulating by about a tenth of the depth over a pace and a
+  half and meeting itself round the loop; the old floor had a seam where the
+  outline starts. The sag under a dip in the rim is there too and does nothing
+  yet, because every plot on the website is level at its rim.
+- **Lit as planes**: the facing smoothed over 18 cm either side, turned down by
+  the lean, and lit by the whole of the light. The old bank took a normal per
+  8 cm of rim and was lit in stripes.
+- **Strata as bands**: humus a hand deep, earth, then rock (bedrock with some
+  stone in it), each boundary wandering on its own, each band graded as the app
+  grades it with faint layers in it, and a few angular stones in the rock with
+  nine corners each, close to it in tone, drawn as the shadow each sits in, a
+  body and an upper face.
+
+What is different here, and why:
+
+- **Drawn in along the way the rim faces, not toward the middle.** The app's
+  plot is square, and so are nine of these, but the Long Walk is three plots
+  end to end: drawn toward the middle, its long sides would have leant in
+  barely 7 cm near its ends. Along the facing every side leans the whole
+  20 cm; on a square plot that is within 5 cm of the app's anywhere and the
+  same at the middle of each side and at each corner.
+- **The website's light, and a lift measured against it.** The side is lit by
+  `LIGHT`, the fixed noon sun, gamma-correct, and drawn 1.2 times lighter than
+  its materials (`LIFT`) rather than the app's 1.45. Leaning in costs a face
+  under a sun 62° up a fifth of its light; at 1.2 the face in the sun is as
+  bright as the upright bank was (51 against 52 of 255, averaged down the face)
+  and the face in shade a little brighter (33 against 27).
+- **A stone's upper face is turned to the sky by 0.08, not 0.22.** At 0.22 it
+  turned into the noon sun and came out two fifths brighter than the rock
+  round it, and the stones on the face in the light read as the row of rivets
+  the app's note warns about.
+- **The bands are worked out per pixel.** The mesh is eight rows down and a
+  column per point of the rim, a few thousand triangles; the shader works out
+  the bands, their edges (softened over a pixel and a half) and the layers from
+  where on the side each pixel is, so they stay sharp at the closest zoom.
+- **Hung once a plot.** The side is the same from every quarter, so a turn,
+  which builds the ground again, finds it already hung.
+- `COLOUR`'s humus, earth and bedrock are read from `slab.js`, and `RIM_DEPTH`
+  lives there, exported by `longwalk.js` as before. `BESIDE.deepest` did not
+  move: the new lower edge comes less far down the screen than the old floor
+  did, so the neighbours stand where Marcus last saw them.
+
+**Measured** in headless Chrome on an M4 Max (ANGLE on Metal): one frame's
+drawing and the wait for the GPU, median of three runs, before and after. At
+1440×900 on a 2× screen the Knot Garden 3.0 → 3.1 ms, the same zoomed 2.5× onto
+a side 3.0 → 3.8, the Orchard with its three neighbours 1.5 → 1.7, the Long Walk
+7.8 → 9.0. At 390×844 on a 3× screen with the processor slowed four times, the
+Knot Garden 3.5 → 3.0, the Orchard 1.5 → 1.7, the Long Walk 7.7 → 7.8. Every
+view held sixty frames a second before and after, and a turn costs what it did.
+The renders are in `design/web-slab-2026-10-02/`.
+
+### Decided, 2 October 2026
+
+Marcus's two answers, from the renders:
+
+- **Deploy it now**, as built, with the one change below.
+- **Stones only when zoomed in, on the website and in the app alike.** On the
+  whole plot they were a sprinkle of pale flecks along the side; a stone is
+  for a close look. So the whole plot has none, and close up none is drawn
+  under eight points across as it is seen (CSS pixels on the website).
+  - **Website:** none until the look is 1.3 times closer than the whole plot,
+    which one press of the pad passes (`STONES` in `slab.js`, set by the stage
+    as `stonesFrom`). Eight pixels alone would not have done it: a desktop
+    window shows the whole plot at 100 to 140 pixels a metre, where the largest
+    stones are 13 to 18 across, and only a phone's whole plot is small enough
+    to lose them all.
+  - **App:** none on the whole plot, only in the close drawing that is made
+    once the plot is zoomed past 1.3, and there none under eight points at the
+    zoom it is drawn for (`GardenGround.smallestStone`). It had been three
+    points at whatever size the plot was drawn, so the larger stones showed on
+    the whole plot. `PlotTests.testStonesOnlyWhenZoomedIn` holds it on a phone
+    and an iPad.
+
+`design/web-slab-2026-10-02/` has the website's whole Knot Garden with none and
+the close view with them, and the app's 17:00 wide and close views
+(`app-after-stones-…`).
+
 ## The Wild Fields built, 1 October 2026
 
 Release sends a plant somewhere now. Marcus had released one believing it
@@ -2077,9 +2175,16 @@ to `Server/.api/WildFields.php` and held to it by
   child, as anybody can offer one; a token carries consent, not authenticity
   (§*The asking*). What is in front of that is the rate limit — release is the
   tightest write, nine a window, because it is the one nobody else agrees to
-  and nobody can undo — and a `hidden` column nothing sets yet, so a plant that
-  should not stand can be taken down by hand without a migration. The curator's
-  tool does not exist.
+  and nobody can undo — and a `hidden` column, so a plant that should not
+  stand can be taken down by hand without a migration. **Since 2 October 2026
+  the curator's tool exists**: `Server/.api/curate.php`, run over ssh (`hide`,
+  `unhide`, `show` and `list`, by seed or a beginning only one plant has;
+  `Server/README.md`, *Taking a plant down*). Hiding sets the flag and writes
+  nothing else — no reason, no time, not who — and deletes nothing. A hidden
+  plant is in no count and no tile, so neither are the names beside it; its
+  row stays, so the seed cannot be released again or offered to an area, and
+  the nightly copy keeps it. It will not run as a web page.
+  `tools/reference/check_curate.php` holds all of it, in CI.
 - `GET /api/wild` answers the field's size and how many plants stand in each
   tile that has any, which is what a page opens on; `GET /api/wild/tile/{x}/{z}`
   answers a tile's plantings, each its seed, parents and spot.

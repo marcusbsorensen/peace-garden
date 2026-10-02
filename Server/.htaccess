@@ -26,6 +26,10 @@
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    # The plot service's own files, `curate.php` and `backup.php` among them,
+    # are never a URL. nginx refuses the dot-directory itself; this is for a
+    # host that does not, and each of those scripts refuses a web request too.
+    RewriteRule ^\.api(/|$) - [F,L]
     RewriteRule ^(s|g|t)$ index.php [L]
     RewriteRule ^\.well-known/apple-app-site-association$ index.php [L]
 </IfModule>

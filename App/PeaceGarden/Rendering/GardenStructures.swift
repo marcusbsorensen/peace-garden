@@ -352,42 +352,6 @@ struct HedgePiece: View {
     }
 }
 
-/// The shadow something casts, sheared about its foot.
-///
-/// The shear is `GardenPlantSprite`'s, with the foot line moved up to where the
-/// foot is in a picture that reaches below it. What lies nearer than the foot
-/// shears the wrong way by a little, which on something lying on the ground is
-/// under it anyway. Shared by the figures and the hedges: by day a thing with no
-/// shadow stood on the grass like a sticker, beside plants that each had theirs.
-struct FootShadow: View {
-    let image: UIImage
-    let side: Double
-    let lift: Double
-    let hour: Double
-    let turn: Int
-
-    var body: some View {
-        let light = GardenGround.Light.at(hour: hour)
-        let seen = light.turned(quarters: turn).direction
-        let rise = max(0.12, seen.y)
-        let across = -(seen.x - seen.z) * Isometric.cosThirty / rise
-        let down = -(seen.x + seen.z) * Isometric.sinThirty / rise
-        let foot = side * (1 - lift)
-
-        Image(uiImage: image)
-            .resizable()
-            .renderingMode(.template)
-            .foregroundStyle(.black)
-            .blur(radius: 0.30 + 0.34 * (1 - light.up))
-            .opacity(max(0.10, 0.42 * light.strength / 0.76))
-            .transformEffect(CGAffineTransform(
-                a: 1, b: 0,
-                c: -across, d: -down,
-                tx: across * foot, ty: foot * (1 + down)
-            ))
-    }
-}
-
 /// The Long Walk's mown path, in stripes the way a mower leaves a lawn: each
 /// pass lays the grass one way and the next lays it back, so the light catches
 /// alternate bands. **Along the path, not across it**: a mower goes up and down

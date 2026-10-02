@@ -217,3 +217,29 @@ than of this code. So those carry a stated tolerance — a billionth of a degree
 which is ten million times finer than anything that could show on a screen — and
 the check prints the furthest the two skies ever drift, which today is a tenth of
 a trillionth of a pixel.
+
+### And the day is the real sky as well
+
+**2 October 2026.** The day sky was a single petrol blue — Marcus: "nowhere
+near as pleasing to look at as the night sky". Four proposals were drawn behind
+a plot at five hours (`design/app-sky-2026-10-02/`), and from the renders he
+chose three of them together, on the first as their ground:
+
+- **The real colour of the hour.** A deep blue overhead and a pale, luminous
+  band at the horizon behind the plot, a halo round the sun, gold and rose as
+  it gets low. Coloured by how high the sun is, not by the clock.
+- **The day's clouds.** Soft heaps or high wisps, dealt from the local date, so
+  everybody in a time zone has the same ones and some days none. There is no
+  weather report behind them: the app makes no request it was not asked for.
+- **The real moon by day, and the season.** The moon stands where it really is,
+  for the same city the stars use, whenever it is really up; the sky's colours
+  are as high as today's real sun would make them at this latitude, so a London
+  December is low and golden all day; and the brightest planet comes out at dusk.
+- **Now and again, the season's birds.** A few, very high, about once an hour:
+  geese in autumn and late winter, swifts in summer, the months turned round
+  south of the equator.
+
+It asks for exactly what the stars ask for, which is nothing: the time zone's
+city and the clock. The night is unchanged. The light on the plot is not yet
+matched to it — warming the plot under a low gold sun waits for the shadow work,
+and the README beside the renders says where it would start.

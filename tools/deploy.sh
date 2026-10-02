@@ -173,6 +173,9 @@ check_path /assets/js/plantpanel.js     200 application/javascript
 # The shadows under every plant and beside every hedge, which the stage
 # imports: a page that cannot load it cannot load at all.
 check_path /assets/js/shadow.js         200 application/javascript
+# The slab every plot hangs, which the stage and every area's ground import:
+# the same again.
+check_path /assets/js/slab.js           200 application/javascript
 check_path /assets/places.json    200 application/json
 check_path /assets/stars.bin      200 application/octet-stream
 check_path /assets/icon.svg     200 image/svg+xml
@@ -187,6 +190,11 @@ check_path /strings/en.json     404 text/html
 
 # Server/README.md is for whoever deploys, not for the site.
 check_path /README.md           404 text/html
+
+# The curator's tool is run over ssh and never as a page. nginx's dot rule
+# refuses the whole of `.api/`; a 404 here would be PHP answering instead,
+# which means the rule has gone and only the tool's own guard is left.
+check_path /.api/curate.php     403 text/html
 
 echo
 echo "The association file iOS will actually read"

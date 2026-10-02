@@ -275,7 +275,9 @@ arguing with it.
 So the edge comes back, and it is **drawn rather than hidden**: a square plot
 hanging in space, with the soil's depth showing at the cut and rock tapering
 away underneath. That is a different thing from a plane that merely stops, and it
-answers *what is off the side* by showing the answer.
+answers *what is off the side* by showing the answer. (The taper was first drawn
+on 2 October 2026, when the cut became a solid slab: see *A keel that tapers to
+nothing* below.)
 
 ### Isometric is a simplification, not only a look
 
@@ -411,19 +413,67 @@ already emphatic about why looking is not a convenience.
   see at all.** Looking down at thirty-five degrees, the plot's own surface hides
   everything under it, so the bulge below the middle is never drawn and the rim
   depth is the whole of what *thick* means. At the mockup's 0.40 m it reads as a
-  tile with a lip; at 0.95 m it reads as ground with a root. The cut is drawn as
-  a bank in cells rather than as two flat faces — humus for a hand's depth, earth
+  tile with a lip; at 0.95 m it reads as ground with a root. Until 2 October the
+  cut was drawn as a bank in cells rather than as two flat faces — humus for a hand's depth, earth
   through the middle, rock coming up from the bottom, stones scattered more
   thickly the deeper it goes, and a floor ragged by a few centimetres. Ground
   that ends in a ruled line is a tile again.
 
-  Two numbers matter and neither is obvious. The cells have to be **coarse**:
+  Two numbers mattered and neither was obvious. The cells had to be **coarse**:
   drawn at the terrain's own hundred and twenty-eight columns the variation came
   out as a comb of pinstripes three pixels wide, which reads as moiré rather than
   as soil. And the materials have to be **lighter than they look right in the
   hand**: a cut face is vertical, so it is lit by the sky and by almost none of
   the sun, and colours chosen on their own came out as a black band under the
   plot.
+
+  **Redrawn on 2 October 2026 as a solid slab** (Marcus: *less like it is
+  melting away with the soil below, and more like a solid slab of earth with
+  organic contours that is floating*). The cells were the melting: a floor
+  ragged a column at a time read as drips, a normal jittered cell by cell lit
+  the bank as noise rather than as a face, and bands laid in a grid ignored
+  the form. The side is now one function, `GardenGround.side`, which every
+  world and the flat plot hang from their rim:
+
+  - **Lit as planes.** Each stretch of side faces the way the rim does,
+    smoothed over eighteen centimetres either side, and is lit by the whole of
+    the sun or the moon, so the face turned to the light is bright as a whole
+    and the face turned away is dark as a whole. The materials are drawn 1.45
+    times lighter than they are (`sideLift`), which was measured: the face in
+    shade comes out as bright as the old bank did, at ten in the morning and at
+    midnight, and the face in the sun brighter than that.
+  - **Tapered, as this document promised on 17 September and nothing drew.**
+    The side leans in by 0.20 m (`taper`) on the way down, a little under the
+    rim and more toward the foot, so it meets its lower edge at an angle and
+    the edge is a firm one. The diamond's two side corners show it against the
+    sky.
+  - **One lower edge round the slab**: the outline drawn in by the taper,
+    undulating by about a tenth of the depth over a pace and a half
+    (`roundTheLoop`, which meets itself round the loop). Where the ground dips
+    at the rim — the ravine's mouth — the edge sags under it in a curve.
+  - **Strata as bands that follow the slab.** Humus a hand deep under the
+    surface, then earth, then rock: the bedrock with some stone in it, because
+    the side faces a little down by the time it reaches the rock and bedrock
+    alone came out the same brown as the earth. Each boundary wanders slowly
+    along the side, each band has faint layers in it, and a few angular stones
+    sit in the rock, close to it in tone — smooth round ones a shade lighter
+    read as rivets. **Only when zoomed in** (Marcus, the same day, for the app
+    and the website alike): the whole plot has none, and a close drawing none
+    under eight points across as it is seen (`smallestStone`).
+
+  **The rim depth as seen is still 0.95 m; the side itself is 1.05 m.** A side
+  drawn in at its foot is a side whose foot has moved up the screen — by half
+  the taper on the two near sides — and at 0.95 m the slab read a fifth thinner
+  than the bank it replaced (94 points of side against 119, at three times the
+  garden's size). So the side is `sideDepth`, `rimDepth` and half the taper,
+  and what shows from the front is the 0.95 m argued for above, the room the
+  camera leaves, and the thickness the website's upright sides had. The
+  before-and-after renders are in `design/app-slab-2026-10-02/`.
+
+  **The website's plots hang the same slab**, from the same night (Marcus,
+  2 October 2026: both should read as the same object). `Server/assets/js/slab.js`
+  is this function in WebGL; `WEB-GARDENS.md` §*The plot's side as a solid
+  slab* says what it does differently and why.
 
 ### Three redrawn, on Marcus's word
 
@@ -598,9 +648,12 @@ runs once a cell.
 
 ### The night is a night, and the moon is tonight's moon
 
-Stars, fixed rather than drifting — the one thing that would give away that they
-are drawn. They come out as the sun goes down and the plot occludes its own patch
-of sky, because it is drawn over them.
+Stars, and since 19–20 September the real ones: the Yale Bright Star Catalogue,
+placed by sidereal time for the city the phone's time zone names, so they wheel
+as the real sky does rather than being dealt once from a seed (`Sky`,
+`StarField`; `PLACE.md`, *The sky is a place too*). They come out as the sun
+goes down and the plot occludes its own patch of sky, because it is drawn over
+them.
 
 **The moon is in the phase it is actually in**, from one synodic month against a
 known new moon. The lit part of a disc is a semicircle plus a semi-ellipse whose
@@ -627,12 +680,13 @@ with, which is what makes them look like they are standing outside.
 
 ### Two things building it taught
 
-- **The shadow goes flat twice a day.** At noon and at midnight the body sits at
-  the azimuth where a shadow runs exactly along the screen's horizontal, and a
-  shadow with no screen height is a line. That is not a fault — it is what an
-  isometric view of that moment is — but it is worth knowing before somebody
-  goes looking for the bug. The blur is what keeps it from reading as a drawn
-  rule.
+- **The shadow went flat twice a day.** At noon and at midnight the body sits at
+  the azimuth where a shadow runs exactly along the screen's horizontal, and the
+  first shadow — the sprite sheared about its foot — had no screen height left
+  and was a line. Since 2 October a shadow is worked out from the plant's own
+  geometry and laid on the ground (`GardenShadows.swift`,
+  `design/app-shadows-2026-10-02/`), so at noon it is the plant's footprint
+  seen from the sun, lying beside it, and not a line.
 - **The override is not a nicety.** Drawn at half past six in the evening the
   garden is very nearly black, which is correct — moonrise is the darkest hour
   of the day — and it is also a garden you cannot look at. Seeing that is what
@@ -785,15 +839,17 @@ in SwiftUI shapes would be clip art beside plants grown from a genome.
   the ground, and what is nearer the camera than its foot is drawn below it; a
   fox with its foot on the edge loses its nose. Each frame reaches below the
   foot by a set fraction.
-- **A shadow only for what stands up off its foot.** The shadow is the
-  picture sheared about the foot, which reads every pixel as height. For the
-  moth's stake, as for a plant's stem, that is true. For the hare's long feet
-  and haunch, the fox and the snail, most of the picture is ground the figure
-  covers, and the shear threw it forward as a dark copy of the body under it —
-  the shadow under the hare that Marcus saw on build 3 and said should not be
-  there. So the hare, the fox and the snail have none. The moth keeps its, and
-  the lantern and the paper lamp, which stand on a post and a cane, now have
-  one.
+- **A shadow only for what stands up off its foot — until 2 October.** The
+  shadow was the picture sheared about the foot, which reads every pixel as
+  height. For the moth's stake, as for a plant's stem, that is true. For the
+  hare's long feet and haunch, the fox and the snail, most of the picture is
+  ground the figure covers, and the shear threw it forward as a dark copy of
+  the body under it — the shadow under the hare that Marcus saw on build 3 and
+  said should not be there. So the hare, the fox and the snail had none. Now
+  every figure's shadow is worked out from its model, as a plant's is
+  (`GardenShadows.swift`): the hare's haunch is low and casts a short sharp
+  shadow beside it, and its ears are high and cast a long soft one. Marcus
+  kept them, 2 October 2026.
 - **Painted accents, unlit.** Eyes, noses, the backs of the fox's ears, the
   moth's eyespots. They are black in the glow picture, so they hide the glow behind
   them. A white fox with no face was a cushion.
@@ -1038,6 +1094,19 @@ Two things it turns on, both in `GardenVisits`:
 - **The night has stars, and the moon carries its real phase for the date.**
 - **The sun and moon orbit the plot and cast**, so the ground is shipped as
   height and colour per cell and lit where it is drawn, rather than pre-rendered.
+- **Every plant and figure throws a shadow from its own shape, and Marcus set
+  how on 2 October 2026** (`GardenShadows.swift`, `design/app-shadows-2026-10-02/`):
+  - *Noon:* lighter than first built. The darkest cores lose about half the
+    ground's light, not three quarters, and two leaves over one another still
+    read darker than one.
+  - *Morning and evening:* the long low-sun shadows, roughly 06:00–08:00 and
+    16:00–18:00, are sharp enough that stems and flower heads read as shapes.
+    They are less blurred the longer they are, and their edges stay soft and
+    irregular.
+  - *The hare, the fox and the snail* keep the shadows they were given that
+    day, the first since build 3.
+  - *New moon:* a fifth of the full moon's shadow remains, because the ground
+    is still lit from where the moon is.
   The plants are rendered at eight points round the clock.
 - **A turned plot turns its plants: four renders each at ninety-degree steps**,
   not billboards. Settled 18 September. Billboards are the usual answer and are a
@@ -1058,6 +1127,16 @@ Two things it turns on, both in `GardenVisits`:
   mockup's sky is nearly black at every hour because there the plot is the
   picture and the page around it is a page; in the app it is the whole screen
   behind a garden, and a noon that is dark navy says the garden is underground.
+- **The day sky is the real sky, chosen from renders.** Settled 2 October 2026,
+  by Marcus, from four proposals drawn behind a plot at five hours
+  (`design/app-sky-2026-10-02/`), after he called the old one "that slightly
+  petrol blue". He took B, C and D together on A: the real colour of the hour
+  (deep overhead, pale and luminous at the horizon behind the plot, gold and rose
+  when the sun is low); the day's clouds, dealt from the date; the real moon by
+  day, the season's sun height and the brightest planet at dusk; and, about once
+  an hour, a few of the season's birds very high. `docs/PLACE.md` §*And the day
+  is the real sky as well*. The night is unchanged, and so, for now, is the light
+  on the plot.
 - **An arrangement is told, not inherited.** Local, never transmitted, unable to
   reach the seed. No new promise, and no change to the sentence on Seed.
 - **One set of plants, several arrangements of it.** Every plant appears in every
@@ -1112,9 +1191,10 @@ Two things it turns on, both in `GardenVisits`:
 - **Whether an arrangement survives a plant being released to the Wild Fields.**
   Releasing is the end of a plant's life here; a spot pointing at a plant that has
   gone is the kind of thing that decodes fine and draws nothing.
-- **Whether the shadows should be soft, and how soft.** They are drawn hard
-  here, with a blur that widens as the light drops. A real shadow's edge softens
-  with distance from what cast it, which a single blur cannot say.
+- **Whether the shadows should be soft, and how soft.** Answered 2 October:
+  sharp near the foot and softer higher up, the web's way, and under a low sun
+  less soft the longer the shadow, so that an evening's stems still read
+  (Settled, above).
 - **What the growth rule actually is.** A little more world per meeting, at a
   rate that keeps a tall plant at roughly half the radius. Whether that is
   smooth or in steps, and whether a garden of two hundred plants is still one

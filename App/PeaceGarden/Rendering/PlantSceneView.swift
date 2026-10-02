@@ -134,13 +134,38 @@ struct PlantSceneView: UIViewRepresentable {
         /// the plant stands on it and the composition follows from that instead.
         static let settle: Float = 0.08
 
-        /// How far above the band the plant stands, in points.
+        /// How far above the band the plant is framed to stand, in points.
         ///
         /// A plant whose base met the top of its own name would read as one
-        /// thing rather than two. This is the gap that keeps them apart, and it
-        /// is small on purpose: the plant is still growing out of the foot of
-        /// the screen, not hanging above it.
+        /// thing rather than two. This is the gap the plant is sized against;
+        /// `rise` is how much higher than it the plant is then drawn.
         static let clearance: CGFloat = 14
+
+        /// How much higher than `clearance` the plant stands, in points —
+        /// moved up the screen, not made smaller.
+        ///
+        /// **Raised on 2 October 2026, at Marcus's asking.** Fourteen points
+        /// did not keep a plant off its name. The camera stands level with a
+        /// point well above the plant's base, so the near side of anything
+        /// broad at the foot sits lower on the screen than its stem; and the
+        /// stage tilts about that same point, so a tilted plant swings its near
+        /// side lower still. A lotus's pads or a cushion's rosettes went
+        /// straight through the name. Measured over a thousand minted plants,
+        /// turned all the way round: tilted to the limit, more than a third of
+        /// them reached into the name's line, by up to forty-three points on
+        /// an iPhone Air and fifty-three on an SE, and a fifth or more did
+        /// standing upright.
+        ///
+        /// Fifty-six more and none does upright. Tilted to the limit, none of
+        /// the thousand reaches the letters on an Air, and nine do on an SE.
+        ///
+        /// Spent on the aim alone, not on the space the plant is fitted into,
+        /// so the plant keeps its size. There was headroom to spend: a grown
+        /// plant fills about seven tenths of the height above the band, and
+        /// the tallest of the thousand, tilted, still stops some forty points
+        /// short of the safe area at the top of an Air and thirty short of
+        /// the clock on an SE.
+        static let rise: CGFloat = 56
 
         /// The height of the screen the plant does not have, as a fraction.
         ///
@@ -297,10 +322,10 @@ struct PlantSceneView: UIViewRepresentable {
             // is off it would swing the whole frame round as the turntable went.
             let distance = framing.distance * 1.12
             let halfWorldHeight = distance * tan(PlantSceneBuilder.verticalHalfAngle)
-            // **The base of the plant is put on the standing line**, and the
-            // rest of the composition follows from that. Raising the aim is
-            // what lowers the picture, so the aim is however far above the base
-            // puts the base where it belongs.
+            // **The base of the plant is put `rise` above the standing line**,
+            // and the rest of the composition follows from that. Raising the
+            // aim is what lowers the picture, so the aim is however far above
+            // the base puts the base where it belongs.
             //
             // Anchored on the base rather than on the plant's middle, which is
             // what a plant does: a seedling stands on the same line a mature
@@ -314,7 +339,12 @@ struct PlantSceneView: UIViewRepresentable {
             // of a tall frame reads as high.
             let aim: Float
             if let standingLine {
-                aim = here.min.y - (2 * standingLine - 1) * halfWorldHeight
+                // Never more than a quarter of the height above the band, which
+                // no phone comes near. It is for a short window on an iPad,
+                // where fifty-six points could put a grown plant's crown off
+                // the top: the framing leaves it just over a quarter.
+                let rise = min(Float(Self.rise / viewSize.height), (1 - standingLine) * 0.25)
+                aim = here.min.y - (2 * (standingLine + rise) - 1) * halfWorldHeight
             } else {
                 aim = (here.min.y + here.max.y) * 0.5 + Self.settle * halfWorldHeight
             }
