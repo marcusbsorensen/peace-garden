@@ -1,27 +1,33 @@
 // A plot of the Orchard, drawn the way the app draws a plot: a floating slab of
-// ground seen in true isometric, meadow grass all over it, five trees standing
-// in a quincunx, a mown disc under each, and the planting of a guild standing in
-// the mown grass round every trunk.
+// ground seen in true isometric, a meadow of long grass, five trees on a
+// quincunx each nudged a little off it, a mown crescent under each outer tree
+// and a mown disc under the middle one, one mown way wandering through, and the
+// planting of each guild standing in its mown grass.
 //
 // **It is one place, so the page shows one plot.** The Long Walk draws three end
 // to end because a walk is a length you look down. An orchard is not: it is a
 // pattern you look into, and five trees in a quincunx is the whole of what there
 // is to see.
 //
-// **The mown discs are the guilds made visible.** Grass is left long between the
-// trees, as an orchard's is, and cut back round each trunk, as an orchard's is —
-// so the same thing that is right horticulturally is the thing that shows a
-// visitor which four plants belong to which tree, without a line being drawn
-// anywhere. A guild stands inside its own disc.
+// **A meadow orchard since 2 October 2026** (Marcus's choice,
+// `design/garden-layouts-2026-10-02/RESEARCH.md` §*The Orchard*, option A).
+// The mown grass is still the guilds made visible — grass left long between the
+// trees and cut where the planting stands, so a visitor sees which four belong
+// to which tree without a line drawn anywhere — but an outer guild is now a
+// crescent at its tree's drip line, turned toward the middle tree, and its mown
+// grass is a crescent too. The middle tree keeps its ring and its disc. One mown
+// way joins them, in at one edge and out at the other: the households turned
+// toward each other, and a way that leads on out of the plot.
 //
 // The rule that decides where each plant stands is SeedCore's `Orchard`, through
 // the module — this file draws the ground and puts each plant on the spot the
-// service gives it. The plot's own numbers, and where the five trunks stand,
-// come from `pg_orchard_plan` and `pg_orchard_trees` rather than being written
-// down again here.
+// service gives it. The plot's own numbers come from `pg_orchard_plan`, and
+// where this plot's trunks, way, pond and crescents lie, turned for the plot as
+// its plants are, from `pg_orchard_layout`, rather than being written down
+// again here.
 
 import { decode, takeResult } from './plant.js';
-import { COLOUR, SIDE, readOutline, readStructure, rimReach } from './longwalk.js';
+import { COLOUR, SIDE, keepToPlot, readOutline, readStructure, rimReach } from './longwalk.js';
 import { hangSide } from './slab.js';
 import { floorAround, rimOf, sinkPool } from './water.js';
 
@@ -29,29 +35,39 @@ import { floorAround, rimOf, sinkPool } from './water.js';
 // Its own, not the walk's, the room's or the crossing's: four areas drawing from
 // one seed would be four plots with the same wandering edge, which is the sort
 // of thing an eye catches without being able to say why.
-const GROVE = { ground: 6301, floor: 29, rough: 83, mow: 97, tree: 1103, pond: 1117 };
+const GROVE = { ground: 6301, floor: 29, rough: 83, mow: 97, tree: 1103, pond: 1117, way: 1129 };
 
-// **A dipping pond in the meadow**, in the pocket on the near side between
-// the middle tree and the two in front of it: the one stretch of ground under
-// the canopy that no guild and no mown disc reaches. The Orchard is one step
-// up from the foot of the garden, where water still lies open, so it is dug
-// and not built. 0.70 m of water and its 0.10 m of wet earth come to within a
-// few centimetres of the nearest discs, which wander by a tenth.
-const POND = { at: [0, 1.72], across: 0.70 };
+// **A dipping pond in the meadow**, in one of the two pockets the crowns
+// frame, which the table chose clear of every place by 0.80 m. The Orchard is
+// one step up from the foot of the garden, where water still lies open, so it
+// is dug and not built. 0.64 m of water and its 0.10 m of wet earth.
+const POND = { across: 0.64 };
+
+// How wide the mown grass is either side of a crescent's line, and of the
+// way's: wide enough that a crescent's plants stand in cut grass, and the way
+// a path for one.
+const MOWN = { crescent: 0.34, way: 0.25, disc: 0.32 };
 
 export function plan(e) {
-  return JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_orchard_plan())));
+  const place = JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_orchard_plan())));
+  // The plot on show, as it is laid: plot 0 until a plot is grown, when the
+  // page asks for that plot's and builds its ground again.
+  place.layout = layout(e, 0);
+  return place;
 }
 
-// Where the five trunks stand, from the rule rather than from a copy of it.
-export function trees(e) {
-  return JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_orchard_trees())));
+// **Plot `plot` as it is laid**: its variant, its five trunks (the middle
+// first), its mown way, its pond and each outer guild's mown arc, turned for
+// the plot by the module from the rule's own table.
+export function layout(e, plot) {
+  return JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_orchard_layout(plot))));
 }
 
 // MARK: - The ground
 
-export function makeOrchardGround(place, trunks) {
+export function makeOrchardGround(place) {
   return function buildOrchardGround(farSide, span, e, eye) {
+    const { trunks, way, pond: pondAt, crescents } = place.layout;
     const positions = [], normals = [], colours = [];
     const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
     const tri = (a, b, c, n, ca, cb = ca, cc = ca) => { vertex(a, n, ca); vertex(b, n, cb); vertex(c, n, cc); };
@@ -64,7 +80,7 @@ export function makeOrchardGround(place, trunks) {
     const n = outline.length;
     // Walked out from the pond's rim rather than fanned from the middle, so
     // the pond has a hole to lie in. See `floorAround`.
-    const pond = { at: POND.at, across: POND.across, seed: GROVE.pond, round: true };
+    const pond = { at: pondAt, across: POND.across, seed: GROVE.pond, round: true };
     const { inside: inPond } = rimOf(e, pond);
 
     // **Meadow grass, mottled.** The Crossing's arithmetic exactly, because it
@@ -108,9 +124,48 @@ export function makeOrchardGround(place, trunks) {
       return Math.min(a, b) - h * h * k / 4;
     };
 
-    // **A mown disc under each tree**, a little wider than the guild that stands
-    // in it so the planting is inside the cut rather than on its edge. Its rim
-    // wanders, because a mower goes round a trunk by eye.
+    // Cut grass is brighter than the meadow round it, and each patch is mown a
+    // fraction differently, so the cuts are not copies of each other.
+    const cutTone = (t) => COLOUR.grass.map((v) => v * (0.96 + 0.07 * ((t * 7) % 5) / 4));
+
+    // **The mown way**, first and lowest, so where it meets a crescent or the
+    // middle disc the two cuts run together. A path for one, its edges
+    // wandering and its width breathing by a tenth, as a mower is walked by
+    // eye; and it stops on the plot's edge, where the table's line runs on past
+    // it into the sky.
+    const keep = keepToPlot(outline);
+    const inPlot = (x, z) => {
+      let within = false;
+      for (let i = 0, j = n - 1; i < n; j = i++) {
+        const a = outline[i], b = outline[j];
+        if ((a[1] > z) !== (b[1] > z) && x < (b[0] - a[0]) * (z - a[1]) / (b[1] - a[1]) + a[0]) within = !within;
+      }
+      return within;
+    };
+    const onPlot = [];
+    for (let i = 0; i < way.length; i++) {
+      const [x, z] = way[i];
+      if (inPlot(x, z)) {
+        if (!onPlot.length && i > 0) onPlot.push(way[i - 1]);
+        onPlot.push(way[i]);
+      } else if (onPlot.length) {
+        onPlot.push(way[i]);
+        break;
+      }
+    }
+    mowAlong(onPlot, MOWN.way, 0.0045, cutTone(5), GROVE.way, false);
+
+    // **A mown crescent under each outer tree**, along the table's arc through
+    // its four places and a little past them, its ends rounded, its edges
+    // wandering. Mown to the plot's edge and stopping on it where a crown's
+    // horn comes near the rim.
+    for (const [g, arc] of crescents.entries()) {
+      mowAlong(arc, MOWN.crescent, 0.0052, cutTone(g + 1), GROVE.mow + g + 1, true);
+    }
+
+    // **A mown disc under the middle tree**, a little wider than the ring that
+    // stands in it so the planting is inside the cut rather than on its edge.
+    // Its rim wanders, because a mower goes round a trunk by eye.
     //
     // The wander is read off **where a point on the rim actually is**, not off
     // how far round it is. An angle wraps from one back to zero and leaves a
@@ -118,39 +173,78 @@ export function makeOrchardGround(place, trunks) {
     // does the noise it is sampled from. `Organic.tree` does the same thing for
     // the same reason.
     //
-    // **And it stays on the plot.** The four outer trunks stand 1.70 m out and
-    // the plot's edge is only 0.74–0.78 m beyond them, so a disc of 1.07 m
-    // radius hung a third of a metre over the slab's side into the sky. Where
-    // the edge is nearer than the disc, the cut now runs to the edge and stops
-    // on it, as a lawn is mown to the lip of a bank — on the plot's own
-    // wandering edge, and rounded where the circle turns onto it, so the rim
-    // has no corner. It stops *on* the edge, not short of it: a guild's outer
-    // plant can stand within a centimetre of the edge (6 mm, in the workbench's
-    // five hundred), and a strip of meadow left there
-    // would put it out of its own disc, or draw a ruled-looking hairline round
-    // the slab where it is thin. (The 4 mm is what a chord between two rim
-    // points bows past the edge where it dents inward.)
-    const discRadius = place.guildRadius + 0.32;
+    // **And it stays on the plot**, as every disc did since 25 September 2026:
+    // where the edge is nearer than the disc, the cut runs to the edge and
+    // stops on it, rounded where the circle turns onto it. The middle tree's is
+    // never near the edge, but the rule is the plot's.
+    const discRadius = place.middleRadius + MOWN.disc;
     const fan = 96;
-    for (const [t, trunk] of trunks.entries()) {
+    {
+      const trunk = trunks[0];
       const rim = [];
       for (let a = 0; a <= fan; a++) {
         const turn = (a / fan) * Math.PI * 2;
         const cx = Math.cos(turn), cz = Math.sin(turn);
         const wander = 1
-          + 0.07 * (e.pg_verge(cx * 1.4, -1, GROVE.mow + t) / 0.14)
-          + 0.06 * (e.pg_verge(cz * 1.2, 1, GROVE.mow + t) / 0.14);
+          + 0.07 * (e.pg_verge(cx * 1.4, -1, GROVE.mow) / 0.14)
+          + 0.06 * (e.pg_verge(cz * 1.2, 1, GROVE.mow) / 0.14);
         const r = softer(discRadius * wander, rimReach(outline, trunk, cx, cz) - 0.004, 0.12);
         rim.push([trunk[0] + r * cx, trunk[1] + r * cz]);
       }
-      // Cut grass is brighter than the meadow round it, and each disc is mown a
-      // fraction differently, so five discs are not five copies.
-      const tone = 0.96 + 0.07 * ((t * 7) % 5) / 4;
-      const cut = COLOUR.grass.map((v) => v * tone);
+      const cut = cutTone(0);
       for (let a = 0; a < fan; a++) {
         tri([trunk[0], 0.006, trunk[1]],
             [rim[a][0], 0.006, rim[a][1]],
             [rim[a + 1][0], 0.006, rim[a + 1][1]], UP, cut);
+      }
+    }
+
+    // **A strip of mown grass along a line**: `half` either side of it, the
+    // width breathing by a tenth and each edge wandering a few centimetres, by
+    // the verge noise read off how far along the line it is — which never
+    // wraps, because a line has two ends. `capped` rounds each end with a
+    // fan, so a crescent's horns are cut round rather than square. Every point
+    // is kept on the plot (`keepToPlot`): past the edge it is pulled straight
+    // in onto it.
+    function mowAlong(line, half, y, colour, seed, capped) {
+      if (line.length < 2) return;
+      let along = 0;
+      const left = [], right = [], centre = [];
+      for (let i = 0; i < line.length; i++) {
+        const [x, z] = line[i];
+        if (i) along += Math.hypot(x - line[i - 1][0], z - line[i - 1][1]);
+        const a = line[Math.max(0, i - 1)], b = line[Math.min(line.length - 1, i + 1)];
+        const tl = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+        const nx = -(b[1] - a[1]) / tl, nz = (b[0] - a[0]) / tl;
+        const breathe = half * (1 + 0.10 * (e.pg_verge(along * 1.1, 2, seed) / 0.14));
+        const l = breathe + 0.03 * (e.pg_verge(along * 1.7, -1, seed) / 0.14);
+        const r = breathe + 0.03 * (e.pg_verge(along * 1.7, 1, seed) / 0.14);
+        left.push(keep(x + nx * l, z + nz * l));
+        right.push(keep(x - nx * r, z - nz * r));
+        centre.push(keep(x, z));
+      }
+      const at = (p) => [p[0], y, p[1]];
+      for (let i = 0; i + 1 < line.length; i++) {
+        quad(at(left[i]), at(left[i + 1]), at(right[i + 1]), at(right[i]), UP, colour);
+      }
+      if (!capped) return;
+      for (const [end, toward] of [[0, 1], [line.length - 1, line.length - 2]]) {
+        const [x, z] = line[end];
+        const dx = x - line[toward][0], dz = z - line[toward][1], dl = Math.hypot(dx, dz) || 1;
+        const ox = dx / dl, oz = dz / dl;
+        const from = left[end], to = right[end];
+        const fanAt = [];
+        const steps = 10;
+        for (let k = 0; k <= steps; k++) {
+          // Round from the left edge, out past the end, to the right edge.
+          const t = (k / steps) * Math.PI;
+          const lx = from[0] - x, lz = from[1] - z, rx = to[0] - x, rz = to[1] - z;
+          const w = (Math.hypot(lx, lz) + Math.hypot(rx, rz)) / 2;
+          const sx = Math.cos(t) * (lx / (Math.hypot(lx, lz) || 1)) + Math.sin(t) * ox;
+          const sz = Math.cos(t) * (lz / (Math.hypot(lx, lz) || 1)) + Math.sin(t) * oz;
+          fanAt.push(keep(x + sx * w, z + sz * w));
+        }
+        for (let k = 0; k < steps; k++) tri(at(centre[end]), at(fanAt[k]), at(fanAt[k + 1]), UP, colour);
       }
     }
 
@@ -243,10 +337,13 @@ const breathe = () => new Promise((resume) => setTimeout(resume, 0));
 
 // Grows one plot from the plot service. A planting with no parents was minted
 // rather than crossed — the ambassador under the middle tree — and grows from
-// its seed alone.
-export async function growOrchardFromService(e, stage, plot, report) {
+// its seed alone. **The ground is laid for the plot first**, turned and nudged
+// by its number as the service turned its plants.
+export async function growOrchardFromService(e, stage, place, plot, report) {
   stage.clear();
   const { plantings } = await (await fetch(`/api/orchard/plot/${plot}`)).json();
+  place.layout = layout(e, plot);
+  stage.rebuild();
   let since = performance.now();
   for (const [i, p] of plantings.entries()) {
     const lineage = p.parents ?? [];
@@ -289,8 +386,10 @@ export async function plantVisitors(e, total, report) {
   return e.pg_orchard_plots();
 }
 
-export async function growInvented(e, stage, plot, report) {
+export async function growInvented(e, stage, place, plot, report) {
   stage.clear();
+  place.layout = layout(e, plot);
+  stage.rebuild();
   const count = e.pg_orchard_count(plot);
   let since = performance.now();
   for (let i = 0; i < count; i++) {

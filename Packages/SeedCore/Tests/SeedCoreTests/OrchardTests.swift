@@ -78,49 +78,160 @@ final class OrchardTests: XCTestCase {
         }
     }
 
+    private static func distance(_ a: Spot, _ b: Spot) -> Double {
+        let dx = a.x - b.x, dz = a.z - b.z
+        return (dx * dx + dz * dz).squareRoot()
+    }
+
     /// The geometry the ranks are a reading of: a place's rank has to agree with
     /// how far out it actually is, or `inOrder` is ordering plants by a fiction.
+    /// In every feature variant, because each nudges its trees its own way.
+    ///
+    /// **The two flanks stand at one distance from the middle**, which is
+    /// what frees them from having to be in order with each other. To the
+    /// millimetre, which is what the table is written in: they were drawn
+    /// either side of the line from their trunk to the middle tree.
     func testRankAgreesWithDistanceFromTheMiddleOfThePlot() {
-        func radius(_ slot: Orchard.Slot) -> Double {
-            let s = slot.spot
-            return (s.x * s.x + s.z * s.z).squareRoot()
+        let middleOfPlot = Spot(x: 0, z: 0)
+        for nudge in 0..<Orchard.table.nudges {
+            func radius(_ slot: Orchard.Slot) -> Double { Self.distance(slot.place(nudge: nudge), middleOfPlot) }
+            for guild in Orchard.Guild.allCases where guild != .middle {
+                let under = Orchard.slots.filter { $0.guild == guild }
+                let near = under.first { $0.rank == .understorey }!
+                let flanks = under.filter { $0.rank == .flank }
+                let far = under.first { $0.rank == .crown }!
+                XCTAssertLessThan(radius(near), radius(flanks[0]))
+                XCTAssertEqual(radius(flanks[0]), radius(flanks[1]), accuracy: 0.002)
+                XCTAssertLessThan(radius(flanks[0]), radius(far))
+            }
+            // And the middle guild's four are all at one distance, which is why
+            // they have no rank at all.
+            let middle = Orchard.slots.filter { $0.guild == .middle }.map(radius)
+            for r in middle { XCTAssertEqual(r, Orchard.middleRadius, accuracy: 0.001) }
         }
-        for guild in Orchard.Guild.allCases where guild != .middle {
-            let under = Orchard.slots.filter { $0.guild == guild }
-            let near = under.first { $0.rank == .understorey }!
-            let flanks = under.filter { $0.rank == .flank }
-            let far = under.first { $0.rank == .crown }!
-            XCTAssertLessThan(radius(near), radius(flanks[0]))
-            // The two flanks stand at one distance, which is what frees them
-            // from having to be in order with each other.
-            XCTAssertEqual(radius(flanks[0]), radius(flanks[1]), accuracy: 1e-9)
-            XCTAssertLessThan(radius(flanks[0]), radius(far))
-        }
-        // And the middle guild's four are all at one distance, which is why
-        // they have no rank at all.
-        let middle = Orchard.slots.filter { $0.guild == .middle }.map(radius)
-        for r in middle { XCTAssertEqual(r, middle[0], accuracy: 1e-9) }
     }
 
-    /// Two plants in one plot may not stand on top of each other. The spacing
-    /// that decided `treeFrom` is the middle guild against an outer one.
-    func testNoTwoPlacesInAPlotAreTooCloseTogether() {
-        var closest = Double.greatestFiniteMagnitude
-        for (i, a) in Orchard.slots.enumerated() {
-            for b in Orchard.slots.dropFirst(i + 1) {
-                let dx = a.spot.x - b.spot.x, dz = a.spot.z - b.spot.z
-                closest = min(closest, (dx * dx + dz * dz).squareRoot())
+    /// **A crescent at the drip line, turned toward the middle tree**: an
+    /// outer guild's four all stand `guildRadius` from their own trunk, and its
+    /// understorey is the one nearest the middle tree.
+    func testAnOuterGuildIsACrescentTurnedTowardTheMiddleTree() {
+        for nudge in 0..<Orchard.table.nudges {
+            let trunks = Orchard.trunks(on: PlotVariant(turn: 0, mirror: false, nudge: nudge))
+            XCTAssertEqual(trunks.count, 5)
+            XCTAssertEqual(trunks[0].x, 0)
+            XCTAssertEqual(trunks[0].z, 0)
+            for guild in Orchard.Guild.allCases where guild != .middle {
+                let trunk = trunks[guild.rawValue]
+                // Off the quincunx by no more than 0.08 m each way.
+                XCTAssertEqual(abs(trunk.x), Orchard.treeFrom, accuracy: 0.081)
+                XCTAssertEqual(abs(trunk.z), Orchard.treeFrom, accuracy: 0.081)
+                let under = Orchard.slots.filter { $0.guild == guild }
+                for slot in under {
+                    XCTAssertEqual(Self.distance(slot.place(nudge: nudge), trunk), Orchard.guildRadius, accuracy: 0.001)
+                }
+                let nearest = under.min { Self.distance($0.place(nudge: nudge), trunks[0])
+                    < Self.distance($1.place(nudge: nudge), trunks[0]) }!
+                XCTAssertEqual(nearest.rank, .understorey)
             }
         }
-        // 0.90 m before the nudge, which reaches 0.13 either way.
-        XCTAssertGreaterThan(closest, 0.85, "closest two places are \(closest) m apart")
     }
 
+    /// Two plants in one plot may not stand on top of each other. The closest
+    /// two places are neighbours in a crescent, 0.56 m apart, and the spacing
+    /// that decided `treeFrom` — the middle tree's four against the near end
+    /// of a crescent — leaves those 0.80 m apart and more. Nothing stands in a
+    /// trunk.
+    func testNoTwoPlacesInAPlotAreTooCloseTogether() {
+        var closest = Double.greatestFiniteMagnitude
+        var acrossGuilds = Double.greatestFiniteMagnitude
+        var trunk = Double.greatestFiniteMagnitude
+        for nudge in 0..<Orchard.table.nudges {
+            let trunks = Orchard.trunks(on: PlotVariant(turn: 0, mirror: false, nudge: nudge))
+            for (i, a) in Orchard.slots.enumerated() {
+                for b in Orchard.slots.dropFirst(i + 1) {
+                    let d = Self.distance(a.place(nudge: nudge), b.place(nudge: nudge))
+                    closest = min(closest, d)
+                    if a.guild != b.guild { acrossGuilds = min(acrossGuilds, d) }
+                }
+                for t in trunks { trunk = min(trunk, Self.distance(a.place(nudge: nudge), t)) }
+            }
+        }
+        XCTAssertGreaterThan(closest, 0.55, "closest two places are \(closest) m apart")
+        XCTAssertGreaterThanOrEqual(acrossGuilds, 0.80 - 0.001, "two guilds' places are \(acrossGuilds) m apart")
+        XCTAssertGreaterThanOrEqual(trunk, Orchard.middleRadius - 0.001, "a place is \(trunk) m from a trunk")
+    }
+
+    /// **Every place is on the plot at the worst nudge**: inside the rounded
+    /// square the plot's wandering edge never comes in past (`Organic.outline`:
+    /// 2.38 m on a side, its corners round by 0.35 m), with the 0.13 m nudge
+    /// added each way.
     func testEveryPlaceIsInsideThePlot() {
-        let half = Orchard.plotSide / 2
-        for slot in Orchard.slots {
-            XCTAssertLessThan(abs(slot.spot.x) + 0.13, half)
-            XCTAssertLessThan(abs(slot.spot.z) + 0.13, half)
+        let side = Orchard.plotSide / 2 - 0.22, round = 0.35, reach = 0.13
+        for nudge in 0..<Orchard.table.nudges {
+            for slot in Orchard.slots {
+                let p = slot.place(nudge: nudge)
+                let x = abs(p.x) + reach, z = abs(p.z) + reach
+                XCTAssertLessThan(max(x, z), side, "\(slot) in variant \(nudge)")
+                let c = side - round
+                if x > c, z > c {
+                    XCTAssertLessThan(Self.distance(Spot(x: x, z: z), Spot(x: c, z: c)), round,
+                                      "\(slot) in variant \(nudge) is off the corner")
+                }
+            }
+        }
+    }
+
+    /// **The pond and the way keep clear of the planting.** The pond's middle
+    /// is 0.80 m from every place, so 0.64 m of water and its wet rim leave a
+    /// plant's leaves on the grass; the mown way's line passes 0.55 m from
+    /// every outer guild's place, and wanders through the middle tree's mown
+    /// disc, where its four stand in mown grass anyway.
+    func testThePondAndTheWayKeepClearOfThePlanting() {
+        for nudge in 0..<Orchard.table.nudges {
+            let plain = PlotVariant(turn: 0, mirror: false, nudge: nudge)
+            let pond = Orchard.pond(on: plain)
+            let way = Orchard.way(on: plain)
+            for slot in Orchard.slots {
+                let p = slot.place(nudge: nudge)
+                XCTAssertGreaterThanOrEqual(Self.distance(p, pond), 0.80 - 0.001)
+                guard slot.guild != .middle else { continue }
+                let near = zip(way, way.dropFirst()).map { a, b -> Double in
+                    let dx = b.x - a.x, dz = b.z - a.z
+                    let t = max(0, min(1, ((p.x - a.x) * dx + (p.z - a.z) * dz) / (dx * dx + dz * dz)))
+                    return Self.distance(p, Spot(x: a.x + dx * t, z: a.z + dz * t))
+                }.min()!
+                XCTAssertGreaterThan(near, 0.54, "\(slot) is \(near) m from the way in variant \(nudge)")
+            }
+        }
+    }
+
+    /// **A plot turned or mirrored is the same plot seen another way round.**
+    /// Every planting's spot is its place in the table's frame with its nudge
+    /// added there, turned for its plot; and the plots dealt so far hold more
+    /// than one variant.
+    func testEveryPlotIsTurnedByItsNumberAndItsPlantsWithIt() {
+        let ways = Self.filled()
+        var seen = Set<PlotVariant>()
+        for planting in ways.plantings {
+            let variant = Orchard.variant(ofPlot: planting.plot)
+            seen.insert(variant)
+            let place = planting.slot.place(nudge: variant.nudge)
+            let back = variant.undo(planting.spot)
+            XCTAssertEqual(back.x - planting.nudge.x, place.x, accuracy: 1e-12)
+            XCTAssertEqual(back.z - planting.nudge.z, place.z, accuracy: 1e-12)
+        }
+        XCTAssertEqual(Orchard.variant(ofPlot: 0), .plain)
+        XCTAssertGreaterThan(seen.count, 12, "only \(seen.count) variants in \(ways.plots) plots")
+        XCTAssertEqual(Orchard.variants.count, 24)
+    }
+
+    /// The table's places carry the same tags in the same order in every
+    /// feature variant, so a slot is the same place of every one.
+    func testEveryFeatureVariantListsTheSlotsAlike() {
+        let table = Orchard.table
+        for nudge in 0..<table.nudges {
+            let tags = table.places(nudge: nudge).map { [table.tag("guild", of: $0), table.tag("index", of: $0)] }
+            XCTAssertEqual(tags, Orchard.slots.map { [$0.guild.rawValue, $0.index] })
         }
     }
 

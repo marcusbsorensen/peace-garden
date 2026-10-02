@@ -11,9 +11,13 @@ import SeedCore
 // at.
 //
 //   pg_orchard_plan()        the plot's own numbers as JSON: its side, how far
-//                            out the trees stand, how far a guild sits from its
-//                            trunk, and what a plot holds — so the page keeps no
-//                            copy of them
+//                            out the trees stand, how far a crescent and the
+//                            middle tree's four sit from their trunks, and what
+//                            a plot holds — so the page keeps no copy of them
+//   pg_orchard_layout(p)     plot p as it is laid, as JSON: its variant, the
+//                            five trunks, the mown way, the pond and each outer
+//                            guild's mown arc, all turned for the plot — so the
+//                            page draws the meadow from the rule's own table
 //   pg_orchard_arrive()      plants the next arrival; returns its plot
 //   pg_orchard_count(plot)   plantings in a plot so far
 //   pg_orchard_grow(plot, i) grows the i-th planting of a plot into the result:
@@ -49,8 +53,8 @@ private func orchardVisitor(_ n: Int) -> (child: SeedID, genome: Genome) {
 public func pgOrchardPlan() -> Int32 {
     let json = """
         {"plotSide":\(Orchard.plotSide),"treeFrom":\(Orchard.treeFrom),\
-        "guildRadius":\(Orchard.guildRadius),"slots":\(Orchard.slots.count),\
-        "guilds":\(Orchard.Guild.allCases.count)}
+        "guildRadius":\(Orchard.guildRadius),"middleRadius":\(Orchard.middleRadius),\
+        "slots":\(Orchard.slots.count),"guilds":\(Orchard.Guild.allCases.count)}
         """
     setResult(Array(json.utf8))
     return Int32(json.utf8.count)
@@ -103,13 +107,25 @@ public func pgOrchardDescribe(_ plot: Int32) -> Int32 {
     return Int32(json.count)
 }
 
-/// Where the five trunks stand in a plot, as JSON — so the page draws the
-/// quincunx from the rule rather than from a copy of it.
-@_expose(wasm, "pg_orchard_trees")
-@_cdecl("pg_orchard_trees")
-public func pgOrchardTrees() -> Int32 {
-    let trees = Orchard.Guild.allCases.map { "[\($0.trunk.x),\($0.trunk.z)]" }
-    let json = "[" + trees.joined(separator: ",") + "]"
+/// **Plot `plot` as it is laid**, as JSON, so the page draws the meadow from
+/// the rule's own table rather than from a copy of it: the plot's variant
+/// (`[turn, mirror, nudge]`), the five trunks (the middle first, then by
+/// guild), the mown way's centre line, the pond's middle, and each outer
+/// guild's mown arc — every point already turned for the plot, exactly as the
+/// service turns the plants'. A pure function of the plot's number, so the page
+/// asks it of a plot the service holds as readily as of one invented here.
+@_expose(wasm, "pg_orchard_layout")
+@_cdecl("pg_orchard_layout")
+public func pgOrchardLayout(_ plot: Int32) -> Int32 {
+    let variant = Orchard.variant(ofPlot: Int(plot))
+    func point(_ s: Spot) -> String { "[\(s.x),\(s.z)]" }
+    func line(_ points: [Spot]) -> String { "[" + points.map(point).joined(separator: ",") + "]" }
+    let crescents = Orchard.Guild.allCases.filter { $0 != .middle }.map { line(Orchard.crescent($0, on: variant)) }
+    let json = """
+        {"variant":[\(variant.turn),\(variant.mirror ? 1 : 0),\(variant.nudge)],\
+        "trunks":\(line(Orchard.trunks(on: variant))),"way":\(line(Orchard.way(on: variant))),\
+        "pond":\(point(Orchard.pond(on: variant))),"crescents":[\(crescents.joined(separator: ","))]}
+        """
     setResult(Array(json.utf8))
     return Int32(json.utf8.count)
 }

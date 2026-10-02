@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/LongWalk.php';
+require_once __DIR__ . '/PlotVariant.php';
+require_once __DIR__ . '/tables/OrchardMeadowTable.php';
 
 /**
  * The Orchard's placement rule, ported from SeedCore's
@@ -23,6 +25,14 @@ require_once __DIR__ . '/LongWalk.php';
  *
  * A planting here is an array: seed (hex), plot, guild (0-4), index (0-3),
  * height, family, nudgeX, nudgeZ.
+ *
+ * **Where a place stands is the table's** since 2 October 2026, when the
+ * Orchard became a meadow orchard (`OrchardMeadowTable`, made by
+ * `tools/layouts/generate.py`): crescents turned toward the middle tree, the
+ * middle tree's ring of four, and each plot turned, mirrored and nudged by its
+ * number (`PlotVariant`). The rule never reads a place, so none of that touches
+ * where a plant goes, only where it is drawn — and `spot` is what the service
+ * sends.
  */
 final class Orchard
 {
@@ -30,44 +40,24 @@ final class Orchard
 
     /**
      * How this area's plots vary, from each plot's number (`PlotVariant.php`):
-     * the Swift's `variants`. Turned and mirrored; the trees' nudges are feature
-     * variants to come. Declared but not yet read.
+     * the Swift's `variants`. Turned four ways, mirrored, and one of the
+     * meadow's three feature variants (`OrchardMeadowTable::PLACES`, one each).
      */
-    public const VARIANTS = ['turns' => 4, 'mirror' => true, 'nudges' => 1];
-    public const TREE_FROM = 1.70;
-    public const GUILD_RADIUS = 0.75;
+    public const VARIANTS = ['turns' => 4, 'mirror' => true, 'nudges' => 3];
+    /** The table's numbers, for reading: the outer trunks before their nudge, a crescent's radius, the middle ring's. */
+    public const TREE_FROM = 1.74;
+    public const GUILD_RADIUS = 0.90;
+    public const MIDDLE_RADIUS = 0.75;
 
     /** The cuts, measured at the 25th and 75th centiles of grown heights: 0.48 and 1.18 since 29 September 2026. */
     public const FLANK_FROM = 0.48;
     public const CROWN_FROM = 1.18;
-
-    /**
-     * Which way each guild lies from the middle of the plot: [x, z]. The middle
-     * guild's is [1, 1] and is never read as a direction — its four places are
-     * the same distance from the plot's centre whatever sign is applied.
-     */
-    public const LIE = [[1, 1], [1, 1], [-1, 1], [-1, -1], [1, -1]];
 
     public const MIDDLE = 0;
 
     public const UNDERSTOREY = 0;
     public const FLANK = 1;
     public const CROWN = 2;
-
-    /**
-     * The four places under a tree, in the guild where both axes point away
-     * from the middle. On the guild's own diagonals rather than at its compass
-     * points, so that one is squarely nearest the plot's middle, one squarely
-     * furthest out, and the other two the same distance as each other. 0.53 is
-     * GUILD_RADIUS on the diagonal, written out rather than computed from an
-     * angle so that Swift and PHP hold the same number.
-     */
-    public const CANONICAL = [
-        [-0.53, -0.53],   // 0  nearest the middle of the plot
-        [0.53, -0.53],    // 1  beside the trunk
-        [-0.53, 0.53],    // 2  beside the trunk, the same distance out as 1
-        [0.53, 0.53],     // 3  furthest out
-    ];
 
     /** Where in an outer guild a plant of this height belongs. */
     public static function rank(float $height): int
@@ -109,21 +99,45 @@ final class Orchard
         return $slots;
     }
 
-    /** Where a guild's trunk stands, in metres from the middle of the plot. */
-    public static function trunk(int $guild): array
+    /** The variant plot `$plot` is laid in: the Swift's `Orchard.variant(ofPlot:)`. */
+    public static function variant(int $plot): array
     {
-        if ($guild === self::MIDDLE) return [0.0, 0.0];
-        [$lx, $lz] = self::LIE[$guild];
-        return [$lx * self::TREE_FROM, $lz * self::TREE_FROM];
+        return PlotVariant::of($plot, 'kinship', self::VARIANTS);
     }
 
-    /** Where a place is, in metres from the middle of its plot: [x, z]. */
-    public static function spot(int $guild, int $index): array
+    /**
+     * Where a place stands in the table's frame for feature variant `$nudge`,
+     * before the plot is turned: [x, z]. The table lists the places guild by
+     * guild and index by index, as `slots()` does, and says so in its tags.
+     */
+    public static function tablePlace(int $nudge, int $guild, int $index): array
     {
-        [$tx, $tz] = self::trunk($guild);
-        [$lx, $lz] = self::LIE[$guild];
-        [$x, $z] = self::CANONICAL[$index];
-        return [$tx + $lx * $x, $tz + $lz * $z];
+        $row = OrchardMeadowTable::PLACES[$nudge][$guild * 4 + $index];
+        if ($row[2] !== $guild || $row[3] !== $index) {
+            throw new LogicException("the Orchard's table has {$row[2]}/{$row[3]} where $guild/$index belongs");
+        }
+        return [$row[0], $row[1]];
+    }
+
+    /**
+     * Where a planting stands on its plot: its place in the table's frame, its
+     * nudge added there, and the sum turned for the plot — the Swift's
+     * `Planting.spot`, exact on every host. With no nudge, where the place is.
+     */
+    public static function spot(int $plot, int $guild, int $index, float $nudgeX = 0.0, float $nudgeZ = 0.0): array
+    {
+        $variant = self::variant($plot);
+        [$x, $z] = self::tablePlace($variant['nudge'], $guild, $index);
+        return PlotVariant::apply($variant, $x + $nudgeX, $z + $nudgeZ);
+    }
+
+    /** Where a guild's trunk stands on plot `$plot`, in metres from the middle of the plot. */
+    public static function trunk(int $plot, int $guild): array
+    {
+        $variant = self::variant($plot);
+        [, $points] = OrchardMeadowTable::CURVES['trunks'][$variant['nudge']];
+        [$x, $z] = $points[$guild];
+        return PlotVariant::apply($variant, $x, $z);
     }
 
     /** Plots opened so far. */
