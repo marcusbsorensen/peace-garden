@@ -43,6 +43,13 @@ final class Glasshouse
     public const PLOT_SIDE = 5.2;
 
     /**
+     * How this area's plots vary, from each plot's number (`PlotVariant.php`):
+     * the Swift's `variants`. Fixed: a colour wheel has one way round. Declared
+     * but not yet read.
+     */
+    public const VARIANTS = ['turns' => 1, 'mirror' => false, 'nudges' => 1];
+
+    /**
      * Twelve positions along the staging with two pots at each, and a border of
      * eight: thirty-two a plot, Marcus's choice on 23 September.
      */

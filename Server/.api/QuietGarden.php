@@ -27,6 +27,13 @@ require_once __DIR__ . '/LongWalk.php';
 final class QuietGarden
 {
     public const PLOT_SIDE = 5.2;
+
+    /**
+     * How this area's plots vary, from each plot's number (`PlotVariant.php`):
+     * the Swift's `variants`. Turned and mirrored eight ways, as `quiet-a-
+     * rooms.png` turns the rooms. Declared but not yet read.
+     */
+    public const VARIANTS = ['turns' => 4, 'mirror' => true, 'nudges' => 1];
     public const HEDGE_FROM = 2.3;
     public const AT_THE_HEDGE = 1.95;
     public const ALONG_THE_HEDGE = 1.10;

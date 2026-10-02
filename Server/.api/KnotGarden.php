@@ -32,6 +32,13 @@ require_once __DIR__ . '/Orchard.php';
 final class KnotGarden
 {
     public const PLOT_SIDE = 5.2;
+
+    /**
+     * How this area's plots vary, from each plot's number (`PlotVariant.php`):
+     * the Swift's `variants`. Fixed: a knot is a pattern made to be the same
+     * every time. Declared but not yet read.
+     */
+    public const VARIANTS = ['turns' => 1, 'mirror' => false, 'nudges' => 1];
     public const BAND_HALF_THICKNESS = 0.09;
     public const BAND_HEIGHT = 0.17;
     public const BAND_FROM = 0.76;

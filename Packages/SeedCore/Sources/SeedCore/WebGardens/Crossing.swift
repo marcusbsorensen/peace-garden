@@ -39,6 +39,12 @@ public enum Crossing {
     /// A web plot's side, the same square every area uses.
     public static let plotSide = 5.2
 
+    /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
+    /// Marcus's decision of 2 October 2026). Turned and mirrored: a mirror sets
+    /// the four ways turning in the other way. Declared but not yet read: the
+    /// area's new layout reads it.
+    public static let variants = PlotVariant.Space(turns: 4, mirror: true)
+
     /// Half the width of a path, so the two paths are 1.2 m across. The Long
     /// Walk's figure: it is the same mown path, and a second number would only
     /// be a second thing to keep in step.

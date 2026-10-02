@@ -1,0 +1,322 @@
+{
+  "beginnings" : {
+    "10" : {
+      "arrivals" : 10,
+      "held" : 11,
+      "places" : 96,
+      "plants" : 11,
+      "plots" : 2,
+      "settledHeld" : 0,
+      "settledPlaces" : 0,
+      "settledPlots" : 0
+    },
+    "100" : {
+      "arrivals" : 100,
+      "held" : 131,
+      "places" : 384,
+      "plants" : 101,
+      "plots" : 8,
+      "settledHeld" : 111,
+      "settledPlaces" : 288,
+      "settledPlots" : 6
+    },
+    "1000" : {
+      "arrivals" : 1000,
+      "held" : 1275,
+      "places" : 1728,
+      "plants" : 1001,
+      "plots" : 36,
+      "settledHeld" : 1262,
+      "settledPlaces" : 1632,
+      "settledPlots" : 34
+    }
+  },
+  "ground" : {
+    "10" : {
+      "arrivals" : 10,
+      "held" : 11,
+      "places" : 71,
+      "plants" : 11,
+      "plots" : 1,
+      "settledHeld" : 0,
+      "settledPlaces" : 0,
+      "settledPlots" : 0
+    },
+    "100" : {
+      "arrivals" : 100,
+      "held" : 101,
+      "places" : 129,
+      "plants" : 101,
+      "plots" : 2,
+      "settledHeld" : 0,
+      "settledPlaces" : 0,
+      "settledPlots" : 0
+    },
+    "1000" : {
+      "arrivals" : 1000,
+      "held" : 1001,
+      "places" : 1039,
+      "plants" : 1001,
+      "plots" : 16,
+      "settledHeld" : 897,
+      "settledPlaces" : 897,
+      "settledPlots" : 14
+    }
+  },
+  "kinship" : {
+    "10" : {
+      "arrivals" : 10,
+      "held" : 11,
+      "places" : 20,
+      "plants" : 11,
+      "plots" : 1,
+      "settledHeld" : 0,
+      "settledPlaces" : 0,
+      "settledPlots" : 0
+    },
+    "100" : {
+      "arrivals" : 100,
+      "held" : 101,
+      "places" : 120,
+      "plants" : 101,
+      "plots" : 6,
+      "settledHeld" : 79,
+      "settledPlaces" : 80,
+      "settledPlots" : 4
+    },
+    "1000" : {
+      "arrivals" : 1000,
+      "held" : 1001,
+      "places" : 1020,
+      "plants" : 1001,
+      "plots" : 51,
+      "settledHeld" : 979,
+      "settledPlaces" : 980,
+      "settledPlots" : 49
+    }
+  },
+  "light" : {
+    "10" : {
+      "arrivals" : 10,
+      "held" : 11,
+      "places" : 32,
+      "plants" : 11,
+      "plots" : 1,
+      "settledHeld" : 0,
+      "settledPlaces" : 0,
+      "settledPlots" : 0
+    },
+    "100" : {
+      "arrivals" : 100,
+      "held" : 101,
+      "places" : 128,
+      "plants" : 101,
+      "plots" : 4,
+      "settledHeld" : 62,
+      "settledPlaces" : 64,
+      "settledPlots" : 2
+    },
+    "1000" : {
+      "arrivals" : 1000,
+      "held" : 1001,
+      "places" : 1056,
+      "plants" : 1001,
+      "plots" : 33,
+      "settledHeld" : 979,
+      "settledPlaces" : 992,
+      "settledPlots" : 31
+    }
+  },
+  "meeting" : {
+    "10" : {
+      "arrivals" : 10,
+      "held" : 11,
+      "places" : 24,
+      "plants" : 11,
+      "plots" : 1,
+      "settledHeld" : 0,
+      "settledPlaces" : 0,
+      "settledPlots" : 0
+    },
+    "100" : {
+      "arrivals" : 100,
+      "held" : 101,
+      "places" : 144,
+      "plants" : 101,
+      "plots" : 6,
+      "settledHeld" : 84,
+      "settledPlaces" : 96,
+      "settledPlots" : 4
+    },
+    "1000" : {
+      "arrivals" : 1000,
+      "held" : 1001,
+      "places" : 1104,
+      "plants" : 1001,
+      "plots" : 46,
+      "settledHeld" : 978,
+      "settledPlaces" : 1056,
+      "settledPlots" : 44
+    }
+  },
+  "pattern" : {
+    "10" : {
+      "arrivals" : 10,
+      "held" : 11,
+      "places" : 32,
+      "plants" : 11,
+      "plots" : 1,
+      "settledHeld" : 0,
+      "settledPlaces" : 0,
+      "settledPlots" : 0
+    },
+    "100" : {
+      "arrivals" : 100,
+      "held" : 101,
+      "places" : 160,
+      "plants" : 101,
+      "plots" : 5,
+      "settledHeld" : 80,
+      "settledPlaces" : 96,
+      "settledPlots" : 3
+    },
+    "1000" : {
+      "arrivals" : 1000,
+      "held" : 1001,
+      "places" : 1056,
+      "plants" : 1001,
+      "plots" : 33,
+      "settledHeld" : 983,
+      "settledPlaces" : 992,
+      "settledPlots" : 31
+    }
+  },
+  "peace" : {
+    "10" : {
+      "arrivals" : 10,
+      "held" : 11,
+      "places" : 20,
+      "plants" : 11,
+      "plots" : 2,
+      "settledHeld" : 0,
+      "settledPlaces" : 0,
+      "settledPlots" : 0
+    },
+    "100" : {
+      "arrivals" : 100,
+      "held" : 101,
+      "places" : 110,
+      "plants" : 101,
+      "plots" : 11,
+      "settledHeld" : 88,
+      "settledPlaces" : 90,
+      "settledPlots" : 9
+    },
+    "1000" : {
+      "arrivals" : 1000,
+      "held" : 1001,
+      "places" : 1010,
+      "plants" : 1001,
+      "plots" : 101,
+      "settledHeld" : 987,
+      "settledPlaces" : 990,
+      "settledPlots" : 99
+    }
+  },
+  "renewal" : {
+    "10" : {
+      "arrivals" : 10,
+      "held" : 11,
+      "places" : 33,
+      "plants" : 11,
+      "plots" : 1,
+      "settledHeld" : 0,
+      "settledPlaces" : 0,
+      "settledPlots" : 0
+    },
+    "100" : {
+      "arrivals" : 100,
+      "held" : 101,
+      "places" : 132,
+      "plants" : 101,
+      "plots" : 4,
+      "settledHeld" : 66,
+      "settledPlaces" : 66,
+      "settledPlots" : 2
+    },
+    "1000" : {
+      "arrivals" : 1000,
+      "held" : 1001,
+      "places" : 1023,
+      "plants" : 1001,
+      "plots" : 31,
+      "settledHeld" : 957,
+      "settledPlaces" : 957,
+      "settledPlots" : 29
+    }
+  },
+  "travel" : {
+    "10" : {
+      "arrivals" : 10,
+      "held" : 11,
+      "places" : 48,
+      "plants" : 11,
+      "plots" : 1,
+      "settledHeld" : 0,
+      "settledPlaces" : 0,
+      "settledPlots" : 0
+    },
+    "100" : {
+      "arrivals" : 100,
+      "held" : 101,
+      "places" : 144,
+      "plants" : 101,
+      "plots" : 3,
+      "settledHeld" : 48,
+      "settledPlaces" : 48,
+      "settledPlots" : 1
+    },
+    "1000" : {
+      "arrivals" : 1000,
+      "held" : 1001,
+      "places" : 1152,
+      "plants" : 1001,
+      "plots" : 24,
+      "settledHeld" : 974,
+      "settledPlaces" : 1056,
+      "settledPlots" : 22
+    }
+  },
+  "waiting" : {
+    "10" : {
+      "arrivals" : 10,
+      "held" : 11,
+      "places" : 126,
+      "plants" : 11,
+      "plots" : 2,
+      "settledHeld" : 0,
+      "settledPlaces" : 0,
+      "settledPlots" : 0
+    },
+    "100" : {
+      "arrivals" : 100,
+      "held" : 101,
+      "places" : 252,
+      "plants" : 101,
+      "plots" : 4,
+      "settledHeld" : 87,
+      "settledPlaces" : 126,
+      "settledPlots" : 2
+    },
+    "1000" : {
+      "arrivals" : 1000,
+      "held" : 1001,
+      "places" : 1134,
+      "plants" : 1001,
+      "plots" : 18,
+      "settledHeld" : 952,
+      "settledPlaces" : 1008,
+      "settledPlots" : 16
+    }
+  }
+}

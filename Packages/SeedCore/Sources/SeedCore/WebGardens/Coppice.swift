@@ -37,6 +37,12 @@ public enum Coppice {
     /// The same square every area uses.
     public static let plotSide = 5.2
 
+    /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
+    /// Marcus's decision of 2 October 2026). Turned and mirrored; the glade's
+    /// places are feature variants to come. Declared but not yet read: the area's
+    /// new layout reads it.
+    public static let variants = PlotVariant.Space(turns: 4, mirror: true)
+
     /// Three coupes of eleven: five stools down the middle of each, and three
     /// places in the light either side of them, a back row and a front row.
     /// Thirty-three a plot, Marcus's choice on 24 September.

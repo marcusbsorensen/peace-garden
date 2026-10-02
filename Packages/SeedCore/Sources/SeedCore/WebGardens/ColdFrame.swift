@@ -41,6 +41,12 @@ public enum ColdFrame {
     /// The same square every area uses.
     public static let plotSide = 5.2
 
+    /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
+    /// Marcus's decision of 2 October 2026). Mirrored only, so the frames stay at
+    /// the back under their high side. Declared but not yet read: the area's new
+    /// layout reads it.
+    public static let variants = PlotVariant.Space(mirror: true)
+
     /// Two ranks of six in each frame: twelve a frame. Four frames of twelve,
     /// forty-eight a plot, was Marcus's choice on 23 September; **two frames,
     /// twenty-four, since 29 September 2026**, when the tank grew into the

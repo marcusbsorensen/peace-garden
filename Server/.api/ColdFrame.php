@@ -62,6 +62,13 @@ final class ColdFrame
     public const PLOT_SIDE = 5.2;
 
     /**
+     * How this area's plots vary, from each plot's number (`PlotVariant.php`):
+     * the Swift's `variants`. Mirrored only, so the frames stay at the back
+     * under their high side. Declared but not yet read.
+     */
+    public const VARIANTS = ['turns' => 1, 'mirror' => true, 'nudges' => 1];
+
+    /**
      * Two ranks of six in each frame. Four frames of twelve was Marcus's
      * choice on 23 September; two, since 29 September 2026.
      */

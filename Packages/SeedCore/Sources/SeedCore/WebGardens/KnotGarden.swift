@@ -43,6 +43,12 @@ public enum KnotGarden {
     /// A web plot's side, the same square every area uses.
     public static let plotSide = 5.2
 
+    /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
+    /// Marcus's decision of 2 October 2026). **Fixed**: a knot is a pattern made
+    /// to be the same every time. Declared but not yet read: the area's new
+    /// layout reads it.
+    public static let variants = PlotVariant.Space.fixed
+
     /// Half the thickness of a run of hedging. The knot, the edging and every
     /// compartment boundary are the same band.
     ///

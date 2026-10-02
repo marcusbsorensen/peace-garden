@@ -39,6 +39,12 @@ public enum HomeGround {
     /// The same square every area uses.
     public static let plotSide = 5.2
 
+    /// **How this area's plots vary**, from each plot's number (`PlotVariant`,
+    /// Marcus's decision of 2 October 2026). Mirrored only, so north stays north,
+    /// and a space of two alternates plot by plot, as the beds' bow was asked to.
+    /// Declared but not yet read: the area's new layout reads it.
+    public static let variants = PlotVariant.Space(mirror: true)
+
     /// **Three beds, each 1.2 m wide and 4.2 m long**, running the length of
     /// the plot, their middles at `x` −1.65, 0 and +1.65. Paths of 0.45 m
     /// between them and a headland of 0.5 m at each end; the outermost bed edge

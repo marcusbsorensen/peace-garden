@@ -27,6 +27,13 @@ require_once __DIR__ . '/LongWalk.php';
 final class Orchard
 {
     public const PLOT_SIDE = 5.2;
+
+    /**
+     * How this area's plots vary, from each plot's number (`PlotVariant.php`):
+     * the Swift's `variants`. Turned and mirrored; the trees' nudges are feature
+     * variants to come. Declared but not yet read.
+     */
+    public const VARIANTS = ['turns' => 4, 'mirror' => true, 'nudges' => 1];
     public const TREE_FROM = 1.70;
     public const GUILD_RADIUS = 0.75;
 
