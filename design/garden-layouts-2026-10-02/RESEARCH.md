@@ -691,6 +691,10 @@ against about 69.
 
 Each question has the recommendation first. The pictures are in `index.html`.
 
+**Answered by Marcus, 2 October 2026 ("lovely research, please implement"):** every recommendation.
+Every area takes option A. Every count looks finished. Plots vary by number, except in the Knot Garden and the Glasshouse.
+The live garden is replanted to match once the layouts are built, with the runbook followed and Marcus shown renders first.
+
 **For every area**
 
 1. Fill so every count looks finished (focal place first, then farthest-first)?
