@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/PlotVariant.php';
+require_once __DIR__ . '/tables/HomeGroundCerTable.php';
+require_once __DIR__ . '/tables/HomeGroundFenTable.php';
+require_once __DIR__ . '/tables/HomeGroundPellTable.php';
+
 /**
  * The Home Ground's placement rule, ported from SeedCore's
  * `WebGardens/HomeGround.swift` so the plot service can run it.
@@ -24,6 +29,13 @@ declare(strict_types=1);
  * habit is a word, exact on every host. Nothing about a plant already standing
  * is read but where it stands and the crop of its bed.
  *
+ * **Lazy beds since 2 October 2026**: the beds sway together in a lazy S with
+ * the rows square to it, and a plot is mirrored or not by its number, so the
+ * sway alternates. Where each place stands is a crop's table made offline
+ * (`tables/HomeGround{Cer,Fen,Pell}Table.php`, from
+ * `tools/layouts/tables/home_ground_*.py`). The rule did not change, so every
+ * slot is the slot it was.
+ *
  * A planting here is an array: seed (hex), plot, bed, crop, index, height,
  * family, habit, nudgeX, nudgeZ.
  */
@@ -35,12 +47,11 @@ final class HomeGround
     /**
      * How this area's plots vary, from each plot's number (`PlotVariant.php`):
      * the Swift's `variants`. Mirrored only, so north stays north, and a space
-     * of two alternates plot by plot, as the beds' bow was asked to. Declared
-     * but not yet read.
+     * of two alternates plot by plot: the beds sway one way and then the other.
      */
     public const VARIANTS = ['turns' => 1, 'mirror' => true, 'nudges' => 1];
 
-    /** Three beds, 1.2 m wide, their middles across the plot; north is `z−`. */
+    /** Three beds, 1.2 m wide, swaying about these lines across the plot; north is `z−`. */
     public const BEDS = 3;
     public const BED_X = [-1.65, 0.0, 1.65];
 
@@ -83,14 +94,32 @@ final class HomeGround
         return $height >= self::CROPS[$crop]['cut'];
     }
 
-    /** Where a place is, in metres from the middle of its plot: [x, z]. */
+    /**
+     * Where a place is, in metres from the middle of its plot, as the table
+     * draws the plot: [x, z]. The crop's table holds every bed's places, bed
+     * by bed, each in the slots' order, to the millimetre.
+     */
     public static function spot(int $bed, string $crop, int $index): array
     {
-        $s = self::CROPS[$crop];
-        $row = intdiv($index, $s['across']);
-        $column = $index % $s['across'];
-        return [self::BED_X[$bed] + ($column - ($s['across'] - 1) / 2) * $s['gap'],
-                ($row - ($s['rows'] - 1) / 2) * $s['rowGap']];
+        $places = match ($crop) {
+            'Cer' => HomeGroundCerTable::PLACES[0],
+            'Pell' => HomeGroundPellTable::PLACES[0],
+            default => HomeGroundFenTable::PLACES[0],
+        };
+        $place = $places[$bed * self::capacity($crop) + $index];
+        return [$place[0], $place[1]];
+    }
+
+    /**
+     * Where a planting stands: its place and its nudge added as the table draws
+     * the plot, then the sum mirrored if the plot is (`PlotVariant.php`). In
+     * that order because the nudge is narrower one way than the other, and it
+     * turns with its row.
+     */
+    public static function spotOf(int $plot, int $bed, string $crop, int $index, float $nudgeX, float $nudgeZ): array
+    {
+        [$x, $z] = self::spot($bed, $crop, $index);
+        return PlotVariant::apply(PlotVariant::of($plot, 'ground', self::VARIANTS), $x + $nudgeX, $z + $nudgeZ);
     }
 
     /** Plots opened so far. */

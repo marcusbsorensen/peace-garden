@@ -95,20 +95,69 @@ final class HomeGroundTests: XCTestCase {
         XCTAssertEqual(HomeGround.Crop.cer.capacity, 27)
         XCTAssertEqual(HomeGround.Crop.fen.capacity, 14)
         XCTAssertEqual(HomeGround.Crop.pell.capacity, 30)
+    }
+
+    /// **Each crop's table holds every bed's places in the slots' order**, so
+    /// `Slot.spot` reading place `bed × capacity + index` reads the place the
+    /// table tagged with that bed and that index.
+    func testEachCropsTableIsInTheSlotsOrder() {
         for crop in HomeGround.Crop.allCases {
-            let slots = HomeGround.slots(bed: 1, crop: crop)
-            XCTAssertEqual(Set(slots.map(\.spot.x)).count, crop.sown.across)
-            XCTAssertEqual(Set(slots.map(\.spot.z)).count, crop.sown.rows)
+            let table = crop.table
+            XCTAssertEqual(table.nudges, 1, "a crop's places do not change with the plot; the mirror does")
+            let places = table.places(nudge: 0)
+            XCTAssertEqual(places.count, HomeGround.beds * crop.capacity, crop.rawValue)
+            for bed in 0..<HomeGround.beds {
+                for slot in HomeGround.slots(bed: bed, crop: crop) {
+                    let place = places[bed * crop.capacity + slot.index]
+                    XCTAssertEqual(table.tag("bed", of: place), bed)
+                    XCTAssertEqual(table.tag("index", of: place), slot.index)
+                    XCTAssertEqual(slot.spot, place.spot)
+                }
+            }
         }
     }
 
-    /// **Every crop's rows span the same 3.6 m**, centred on the bed, so three
-    /// beds of three crops end level at the headlands.
-    func testEveryCropsRowsSpanTheSameLength() {
-        for crop in HomeGround.Crop.allCases {
-            let z = HomeGround.slots(bed: 0, crop: crop).map(\.spot.z)
-            XCTAssertEqual(z.min()!, -1.8, accuracy: 1e-9, crop.rawValue)
-            XCTAssertEqual(z.max()!, 1.8, accuracy: 1e-9, crop.rawValue)
+    /// The middle of each row of a bed sown with this crop, north end first.
+    private func rowMiddles(bed: Int, crop: HomeGround.Crop) -> [Spot] {
+        let slots = HomeGround.slots(bed: bed, crop: crop)
+        let across = crop.sown.across
+        return stride(from: 0, to: slots.count, by: across).map { first in
+            let row = slots[first..<(first + across)].map(\.spot)
+            return Spot(x: row.map(\.x).reduce(0, +) / Double(across), z: row.map(\.z).reduce(0, +) / Double(across))
+        }
+    }
+
+    /// How far a point is from the nearest part of a bed's line.
+    private func fromLine(_ p: Spot, _ line: [Spot]) -> Double {
+        var best = Double.greatestFiniteMagnitude
+        for (a, b) in zip(line, line.dropFirst()) {
+            let dx = b.x - a.x, dz = b.z - a.z
+            let t = max(0, min(1, ((p.x - a.x) * dx + (p.z - a.z) * dz) / (dx * dx + dz * dz)))
+            best = min(best, ((p.x - a.x - dx * t) * (p.x - a.x - dx * t) + (p.z - a.z - dz * t) * (p.z - a.z - dz * t)).squareRoot())
+        }
+        return best
+    }
+
+    /// **Every crop's rows span the same 3.6 m of the bed's line**, centred on
+    /// it, so three beds of three crops end level at the headlands; each row's
+    /// middle is on the line, and its places run square to it.
+    func testEveryCropsRowsSpanTheSameLengthOfTheLine() {
+        for bed in 0..<HomeGround.beds {
+            let line = HomeGround.line(of: bed)
+            for crop in HomeGround.Crop.allCases {
+                let middles = rowMiddles(bed: bed, crop: crop)
+                var span = 0.0
+                for (a, b) in zip(middles, middles.dropFirst()) {
+                    span += ((b.x - a.x) * (b.x - a.x) + (b.z - a.z) * (b.z - a.z)).squareRoot()
+                }
+                // Chords, a little shorter than the curve between them.
+                XCTAssertEqual(span, 3.6, accuracy: 0.01, "bed \(bed) \(crop.rawValue)")
+                for middle in middles {
+                    XCTAssertLessThan(fromLine(middle, line), 0.002, "bed \(bed) \(crop.rawValue): a row is off the line")
+                }
+                XCTAssertEqual(middles.first!.z + middles.last!.z, 0, accuracy: 0.03,
+                               "bed \(bed) \(crop.rawValue) is not centred down the plot")
+            }
         }
     }
 
@@ -117,40 +166,95 @@ final class HomeGroundTests: XCTestCase {
     func testABedIsNumberedFromItsNorthWestCorner() {
         for crop in HomeGround.Crop.allCases {
             let slots = HomeGround.slots(bed: 2, crop: crop)
-            let first = slots.first!.spot, last = slots.last!.spot
-            XCTAssertEqual(first.z, slots.map(\.spot.z).min()!)
-            XCTAssertEqual(first.x, slots.map(\.spot.x).min()!)
-            XCTAssertEqual(last.z, slots.map(\.spot.z).max()!)
-            XCTAssertEqual(last.x, slots.map(\.spot.x).max()!)
-            XCTAssertLessThan(slots[0].spot.x, slots[1].spot.x)
-            XCTAssertEqual(slots[0].spot.z, slots[1].spot.z)
+            let middles = rowMiddles(bed: 2, crop: crop)
+            XCTAssertEqual(middles.map(\.z), middles.map(\.z).sorted(), "\(crop.rawValue): rows are not north to south")
+            let across = crop.sown.across
+            for first in stride(from: 0, to: slots.count, by: across) {
+                let row = slots[first..<(first + across)].map(\.spot.x)
+                XCTAssertEqual(row, row.sorted(), "\(crop.rawValue): a row does not run west to east")
+            }
         }
     }
 
-    /// **Every place stands inside its bed**, at the worst nudge: the outermost
-    /// plant's middle is at least 0.15 m in from the bed's side and 0.28 m from
-    /// its end, and every bed is 0.35 m inside the plot.
+    /// **Every place stands inside its bed**, at the worst nudge: a plant's
+    /// middle at least 0.14 m in from the bed's side (0.15 when the beds were
+    /// straight; the nudge is the table's x and z, and a row leans up to ten
+    /// degrees off x) and 0.22 m from its end (0.275: the rows near an end
+    /// lean too, and a lean takes a row's outer places a little toward it).
     func testEveryPlaceStandsInsideItsBed() {
         var side = Double.greatestFiniteMagnitude, end = Double.greatestFiniteMagnitude
         for bed in 0..<HomeGround.beds {
+            let line = HomeGround.line(of: bed)
             for crop in HomeGround.Crop.allCases {
                 for slot in HomeGround.slots(bed: bed, crop: crop) {
-                    let spot = slot.spot
-                    side = min(side, HomeGround.bedWidth / 2 - abs(spot.x - HomeGround.bedX[bed]) - HomeGround.nudgeAcross)
-                    end = min(end, HomeGround.bedLength / 2 - abs(spot.z) - HomeGround.nudgeDown)
+                    for dx in [-HomeGround.nudgeAcross, HomeGround.nudgeAcross] {
+                        for dz in [-HomeGround.nudgeDown, HomeGround.nudgeDown] {
+                            let p = Spot(x: slot.spot.x + dx, z: slot.spot.z + dz)
+                            side = min(side, HomeGround.bedWidth / 2 - fromLine(p, line))
+                            end = min(end, HomeGround.bedLength / 2 - abs(p.z))
+                        }
+                    }
                 }
             }
         }
-        XCTAssertEqual(side, 0.15, accuracy: 1e-9)
-        XCTAssertEqual(end, 0.275, accuracy: 1e-9)
-        let outer = HomeGround.bedX.map(abs).max()! + HomeGround.bedWidth / 2
-        XCTAssertEqual(HomeGround.plotSide / 2 - outer, 0.35, accuracy: 1e-9)
+        XCTAssertGreaterThan(side, 0.14)
+        XCTAssertGreaterThan(end, 0.22)
     }
 
-    /// The paths between beds are 0.45 m.
+    /// **The beds stay on the slab however they sway.** A plot's outline
+    /// wanders inward by up to 0.22 m from the 5.2 m square (`Organic.outline`),
+    /// so no slab's edge comes nearer than 2.38 m; a bed's side, wandering by
+    /// up to 2.5 cm as the page draws it, stays inside that.
+    func testTheBedsStayOnTheSlab() {
+        var reach = 0.0
+        for bed in 0..<HomeGround.beds {
+            reach = max(reach, HomeGround.line(of: bed).map { abs($0.x) }.max()!)
+        }
+        XCTAssertLessThan(reach + HomeGround.bedWidth / 2 + 0.025, HomeGround.plotSide / 2 - 0.22)
+    }
+
+    /// **The beds sway together**, so the paths between them stay 0.45 m, give
+    /// or take what a spade leaves: 1 cm either side.
     func testThePathsAreFortyFiveCentimetres() {
+        let lines = (0..<HomeGround.beds).map { HomeGround.line(of: $0) }
         for i in 1..<HomeGround.beds {
-            XCTAssertEqual(HomeGround.bedX[i] - HomeGround.bedX[i - 1] - HomeGround.bedWidth, 0.45, accuracy: 1e-9)
+            for p in lines[i] {
+                let path = fromLine(p, lines[i - 1]) - HomeGround.bedWidth
+                XCTAssertEqual(path, 0.45, accuracy: 0.025, "the path west of bed \(i) at z \(p.z)")
+            }
+        }
+    }
+
+    /// **The beds sway**: a bed's middle stands 0.10 m off its straight line at
+    /// most, and the three sway the same way at once.
+    func testTheBedsSwayTogetherAsAnS() {
+        for bed in 0..<HomeGround.beds {
+            let off = HomeGround.line(of: bed).map { $0.x - HomeGround.bedX[bed] }
+            XCTAssertEqual(off.map(abs).max()!, 0.10, accuracy: 0.012, "bed \(bed)")
+            // North half west of the line, south half east: the lazy S.
+            let line = HomeGround.line(of: bed)
+            let north = line.filter { $0.z < -0.5 && $0.z > -1.5 }.map { $0.x - HomeGround.bedX[bed] }
+            let south = line.filter { $0.z > 0.5 && $0.z < 1.5 }.map { $0.x - HomeGround.bedX[bed] }
+            XCTAssertLessThan(north.max()!, 0)
+            XCTAssertGreaterThan(south.min()!, 0)
+        }
+    }
+
+    /// **A plot is mirrored or not by its number, alternately**, and a planting
+    /// stands where its place and nudge are, mirrored with it: the nudge is
+    /// added before the mirror, so it turns with its row.
+    func testAlternatePlotsAreMirrored() {
+        for plot in 0..<12 {
+            let v = PlotVariant.of(plot: plot, area: .ground)
+            XCTAssertEqual(v.turn, 0, "north stays north")
+            XCTAssertEqual(v.mirror, plot % 2 == 1, "plot \(plot)")
+        }
+        let ways = Self.filled()
+        for planting in ways.plantings {
+            let place = planting.slot.spot
+            let x = place.x + planting.nudge.x, z = place.z + planting.nudge.z
+            XCTAssertEqual(planting.spot.x, planting.plot % 2 == 1 ? 0 - x : x, accuracy: 0)
+            XCTAssertEqual(planting.spot.z, z, accuracy: 0)
         }
     }
 

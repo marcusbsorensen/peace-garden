@@ -10,10 +10,14 @@ import SeedCore
 // five hundred plants before it is live, and the browser is where it can be
 // looked at.
 //
-//   pg_ground_plan()          the area's own numbers as JSON: its side, where the
-//                             three beds stand and how wide and long they are,
-//                             and each crop's spacing and cut — so the page
-//                             keeps no copy of them
+//   pg_ground_plan()          the area's own numbers as JSON: its side, the
+//                             straight lines the three beds sway about and how
+//                             wide and long they are, and each crop's spacing
+//                             and cut — so the page keeps no copy of them. The
+//                             line each bed really runs along is the table's,
+//                             which the page imports as it is
+//                             (`tables/home_ground_beds.js`), and which way
+//                             round a plot is laid is `pg_plot_variant`'s
 //   pg_ground_arrive()        plants the next arrival; returns its plot
 //   pg_ground_count(plot)     plantings in a plot so far
 //   pg_ground_grow(plot, i)   grows the i-th planting of a plot into the result:
@@ -69,18 +73,13 @@ private func groundVisitor(_ n: Int) -> (child: SeedID, parentA: SeedID, parentB
 @_cdecl("pg_ground_plan")
 public func pgGroundPlan() -> Int32 {
     let list = { (values: [Double]) in values.map { "\($0)" }.joined(separator: ",") }
-    // Each crop's spacing, asked of the rule: where its rows run and where its
-    // places sit across a bed are `Slot.spot`'s business, and two copies of
-    // that sum drift.
+    // Each crop's spacing, asked of the rule. Where its places are is the
+    // crop's table, which the service reads; the page is sent each spot.
     let crops = HomeGround.Crop.allCases.map { crop -> String in
         let s = crop.sown
-        let slots = HomeGround.slots(bed: 1, crop: crop)
-        let across = slots.prefix(s.across).map(\.spot.x)
-        let rows = stride(from: 0, to: slots.count, by: s.across).map { slots[$0].spot.z }
         return """
             "\(crop.rawValue)":{"across":\(s.across),"gap":\(s.gap),"rows":\(s.rows),\
-            "rowGap":\(s.rowGap),"cut":\(crop.cut),"capacity":\(crop.capacity),\
-            "placeX":[\(list(across))],"rowZ":[\(list(rows))]}
+            "rowGap":\(s.rowGap),"cut":\(crop.cut),"capacity":\(crop.capacity)}
             """
     }.joined(separator: ",")
     let json = """

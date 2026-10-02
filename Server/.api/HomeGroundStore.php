@@ -139,13 +139,13 @@ final class HomeGroundStore
         $plantings = array_map([self::class, 'planting'], $query->fetchAll());
         if ($plot !== 0) return $plantings;
         $standing = Ambassadors::planting('ground');
-        [$x, $z] = HomeGround::spot($standing['bed'], $standing['crop'], $standing['index']);
         array_unshift($plantings, [
             'seed' => $standing['seed'],
             'parents' => [],
             'encounter' => null,
             'plot' => 0,
-            'spot' => [$x + $standing['nudgeX'], $z + $standing['nudgeZ']],
+            'spot' => HomeGround::spotOf(0, $standing['bed'], $standing['crop'], $standing['index'],
+                                         $standing['nudgeX'], $standing['nudgeZ']),
         ]);
         return $plantings;
     }
@@ -173,13 +173,13 @@ final class HomeGroundStore
     /** What the page needs to grow a planting and stand it in its place: the five fields every area sends. */
     private static function planting(array $row): array
     {
-        [$x, $z] = HomeGround::spot((int) $row['bed'], (string) $row['crop'], (int) $row['slot_index']);
         return [
             'seed' => $row['seed'],
             'parents' => [$row['parent_a'], $row['parent_b']],
             'encounter' => $row['encounter'],
             'plot' => (int) $row['plot'],
-            'spot' => [$x + (float) $row['nudge_x'], $z + (float) $row['nudge_z']],
+            'spot' => HomeGround::spotOf((int) $row['plot'], (int) $row['bed'], (string) $row['crop'],
+                                         (int) $row['slot_index'], (float) $row['nudge_x'], (float) $row['nudge_z']),
         ];
     }
 
