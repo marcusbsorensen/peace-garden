@@ -10,11 +10,13 @@ import SeedCore
 // to be judged at five hundred plants before it is live, and the browser is
 // where it can be looked at.
 //
-//   pg_knot_plan()        the plot's own numbers as JSON: its side, where the
-//                         knot's runs and the edging lie, how thick and how
-//                         high a band is, every stretch of the weave with the
-//                         bow it takes, and what a plot holds — so the page
-//                         keeps no copy of them
+//   pg_knot_plan()        the plot's own numbers as JSON: its side, how thick
+//                         and how high a band is, how a band swells where it
+//                         rides over and how far an under-band's end tucks
+//                         into it, and what a plot holds — so the page keeps
+//                         no copy of them. The lines of the rings are the
+//                         table's, which the page imports as it is
+//                         (`tables/knot_garden_rings.js`)
 //   pg_knot_arrive()      plants the next arrival; returns its plot
 //   pg_knot_count(plot)   plantings in a plot so far
 //   pg_knot_grow(plot, i) grows the i-th planting of a plot into the result:
@@ -25,7 +27,7 @@ import SeedCore
 //                         and fill as a mirror
 //
 // Opened rather than empty: it starts with its ambassador (Quinyria obscura
-// since 28 September 2026) in the north compartment, the way the real one does — which means the first pair is
+// since 28 September 2026) in the north-east lens, the way the real one does — which means the first pair is
 // already claimed for family 4 before a single arrival, exactly as the service
 // has it.
 
@@ -50,18 +52,12 @@ private func knotVisitor(_ n: Int) -> (child: SeedID, genome: Genome) {
 @_expose(wasm, "pg_knot_plan")
 @_cdecl("pg_knot_plan")
 public func pgKnotPlan() -> Int32 {
-    let weave = KnotGarden.weave.map {
-        """
-        {"alongX":\($0.alongX),"at":\($0.at),"from":\($0.from),\
-        "to":\($0.to),"bow":\($0.bow)}
-        """
-    }.joined(separator: ",")
     let json = """
-        {"plotSide":\(KnotGarden.plotSide),"bandFrom":\(KnotGarden.bandFrom),\
-        "edgingFrom":\(KnotGarden.edgingFrom),\
+        {"plotSide":\(KnotGarden.plotSide),\
         "bandHalfThickness":\(KnotGarden.bandHalfThickness),\
         "bandHeight":\(KnotGarden.bandHeight),\
-        "weave":[\(weave)],\
+        "swellThicker":\(KnotGarden.swellThicker),"swellTaller":\(KnotGarden.swellTaller),\
+        "swellReach":\(KnotGarden.swellReach),"tuck":\(KnotGarden.tuck),\
         "slots":\(KnotGarden.slots.count),\
         "compartments":\(KnotGarden.Compartment.allCases.count)}
         """

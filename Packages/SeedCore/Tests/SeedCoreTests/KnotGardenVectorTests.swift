@@ -19,8 +19,14 @@ import XCTest
 ///
 /// **The Knot Garden is opened rather than empty**, so its ambassador —
 /// *Quinyria obscura* since 28 September 2026 — is
-/// standing in the north compartment before the first arrival and has already
+/// standing in the north-east lens before the first arrival and has already
 /// claimed that pair for family 4 — which is how the service places them too.
+///
+/// **Each row carries its spot** since the rings of 2 October 2026, and the
+/// plot's variant, which here is always the plain one: where a place stands
+/// is a table now (`PlaceTable.knotGardenRings`), and the port reads its own
+/// copy of it. A spot is a table's millimetres plus the nudge, exact on every
+/// host, so it is compared with no tolerance.
 final class KnotGardenVectorTests: XCTestCase {
     static var vectorsURL: URL {
         var url = URL(fileURLWithPath: #filePath)
@@ -36,10 +42,12 @@ final class KnotGardenVectorTests: XCTestCase {
         var lines: [String] = []
         for (seed, traits) in KnotGardenTests.arrivals() {
             let p = ways.plant(seed: seed, traits: traits)
+            let v = PlotVariant.of(plot: p.plot, area: .pattern)
             lines.append("""
                 {"seed":"\(seed.hex)","height":\(traits.height),"family":\(traits.family),\
                 "plot":\(p.plot),"compartment":\(p.slot.compartment.rawValue),"index":\(p.slot.index),\
-                "nudge":[\(p.nudge.x),\(p.nudge.z)]}
+                "nudge":[\(p.nudge.x),\(p.nudge.z)],\
+                "variant":[\(v.turn),\(v.mirror),\(v.nudge)],"spot":[\(p.spot.x),\(p.spot.z)]}
                 """)
         }
         return "[\n" + lines.joined(separator: ",\n") + "\n]\n"

@@ -71,17 +71,16 @@ final class KnotGardenTests: XCTestCase {
         }
     }
 
-    /// Four compartments at the sides of the plot and four at its corners, and
-    /// each one's mirror is the one opposite. Both fall out of the declaration
-    /// order rather than out of a table, so this is what says the order is load
-    /// bearing.
-    func testTheEightAreFourSidesFourCornersAndFourMirrorPairs() {
-        XCTAssertEqual(KnotGarden.Compartment.allCases.filter(\.atCorner).count, 4)
-        XCTAssertEqual(KnotGarden.Compartment.allCases.filter { !$0.atCorner }.count, 4)
+    /// Four lenses and four crescents, and each one's mirror is the one
+    /// opposite. Both fall out of the declaration order rather than out of a
+    /// table, so this is what says the order is load bearing.
+    func testTheEightAreFourLensesFourCrescentsAndFourMirrorPairs() {
+        XCTAssertEqual(KnotGarden.Compartment.allCases.filter(\.isCrescent).count, 4)
+        XCTAssertEqual(KnotGarden.Compartment.allCases.filter { !$0.isCrescent }.count, 4)
         for compartment in KnotGarden.Compartment.allCases {
             XCTAssertEqual(compartment.mirror.mirror, compartment)
             XCTAssertNotEqual(compartment.mirror, compartment)
-            XCTAssertEqual(compartment.mirror.atCorner, compartment.atCorner,
+            XCTAssertEqual(compartment.mirror.isCrescent, compartment.isCrescent,
                            "\(compartment) is mirrored by a compartment of the other kind")
             XCTAssertEqual(compartment.pair, compartment.mirror.pair)
         }
@@ -91,19 +90,39 @@ final class KnotGardenTests: XCTestCase {
             for compartment in pair.compartments { XCTAssertEqual(compartment.pair, pair) }
         }
         XCTAssertEqual(Set(KnotGarden.Compartment.allCases.map(\.pair)).count, 4)
+        // The lenses are claimed before the crescents.
+        XCTAssertEqual(KnotGarden.Pair.allCases.map { $0.compartments[0].isCrescent },
+                       [false, false, true, true])
+    }
+
+    /// **The table holds the places in the rule's order**: compartment by
+    /// compartment, four to each, so `Slot.spot` reading place
+    /// `compartment × 4 + index` reads the place the table tagged with that
+    /// compartment and that index.
+    func testTheTableIsInTheRulesOrder() {
+        let table = KnotGarden.table
+        XCTAssertEqual(table.nudges, 1, "the knot is laid one way")
+        let places = table.places(nudge: 0)
+        XCTAssertEqual(places.count, KnotGarden.slots.count)
+        for (i, slot) in KnotGarden.slots.enumerated() {
+            XCTAssertEqual(table.tag("compartment", of: places[i]), slot.compartment.rawValue)
+            XCTAssertEqual(table.tag("index", of: places[i]), slot.index)
+            XCTAssertEqual(slot.spot, places[i].spot)
+        }
     }
 
     /// A mirror pair stands opposite across the middle of the plot: the two
     /// places at one index are the same point turned half round. That is what
     /// makes a colour read as symmetric rather than as two blocks that happen
-    /// to match.
+    /// to match. **Exactly**: the generator turns the north-east compartment by
+    /// whole quarters after rounding it to the millimetre.
     func testAMirrorPairsPlacesAreOppositeAcrossTheMiddle() {
         for compartment in KnotGarden.Compartment.allCases {
             for index in 0..<4 {
                 let here = KnotGarden.Slot(compartment: compartment, index: index).spot
                 let there = KnotGarden.Slot(compartment: compartment.mirror, index: index).spot
-                XCTAssertEqual(there.x, -here.x, accuracy: 1e-9)
-                XCTAssertEqual(there.z, -here.z, accuracy: 1e-9)
+                XCTAssertEqual(there.x, -here.x, accuracy: 0)
+                XCTAssertEqual(there.z, -here.z, accuracy: 0)
             }
         }
     }
@@ -128,45 +147,46 @@ final class KnotGardenTests: XCTestCase {
         }
     }
 
-    /// Every place stands inside its own compartment, between the knot's bands
-    /// and the edging, with room for the nudge. **This is what says the
-    /// canonical numbers are right** — they are written out by hand, so nothing
-    /// derives them and nothing else would catch one mistyped.
+    /// Whether a point is inside a closed line, by the even-odd rule.
+    private func inside(_ p: Spot, _ line: [Spot]) -> Bool {
+        var within = false
+        var j = line.count - 1
+        for i in line.indices {
+            let a = line[i], b = line[j]
+            if (a.z > p.z) != (b.z > p.z), p.x < (b.x - a.x) * (p.z - a.z) / (b.z - a.z) + a.x {
+                within.toggle()
+            }
+            j = i
+        }
+        return within
+    }
+
+    /// **Every place stands inside its own compartment**: a lens's inside its
+    /// small ring and the middle one, a crescent's inside its small ring and
+    /// outside the middle one, nudged however the seed can push it.
     func testEveryPlaceIsInsideItsOwnCompartment() {
-        let nudge = 0.09
-        let inner = KnotGarden.bandFrom + KnotGarden.bandHalfThickness   // 0.87
-        let between = KnotGarden.bandFrom - KnotGarden.bandHalfThickness // 0.65
-        let outer = KnotGarden.edgingFrom - KnotGarden.bandHalfThickness // 2.09
+        let bands = KnotGarden.bands
+        let middle = bands[0].points
         for slot in KnotGarden.slots {
-            let s = slot.spot
-            if slot.compartment.atCorner {
-                // A corner compartment is the square between the two bands and
-                // the edging's corner.
-                XCTAssertGreaterThan(min(abs(s.x), abs(s.z)) - nudge, inner, "\(slot)")
-                XCTAssertLessThan(max(abs(s.x), abs(s.z)) + nudge, outer, "\(slot)")
-            } else {
-                // A side compartment lies between the two bands running one way
-                // and reaches from the crossing band out to the edging. Which
-                // axis is which depends on the quarter turn, and the shorter of
-                // the two distances is always the across-the-compartment one.
-                let across = min(abs(s.x), abs(s.z)), along = max(abs(s.x), abs(s.z))
-                XCTAssertLessThan(across + nudge, between, "\(slot)")
-                XCTAssertGreaterThan(along - nudge, inner, "\(slot)")
-                XCTAssertLessThan(along + nudge, outer, "\(slot)")
+            let ring = bands[1 + slot.compartment.ring].points
+            for dx in [-KnotGarden.nudge, 0, KnotGarden.nudge] {
+                for dz in [-KnotGarden.nudge, 0, KnotGarden.nudge] {
+                    let p = Spot(x: slot.spot.x + dx, z: slot.spot.z + dz)
+                    XCTAssertTrue(inside(p, ring), "\(slot) nudged \(dx), \(dz) is outside its ring")
+                    XCTAssertEqual(inside(p, middle), !slot.compartment.isCrescent,
+                                   "\(slot) nudged \(dx), \(dz) is on the wrong side of the middle ring")
+                }
             }
         }
     }
 
-    /// **No plant stands in the hedge, however it is nudged.** The bands bow
-    /// now, and a bow eats into the room between a place and the band beside
-    /// it — which is the whole price of curving the weave, and the number that
-    /// says how far the arms may go.
-    ///
-    /// The margin the straight weave left was 0.18 m, and the nudge spends
-    /// half of it. What is asserted here is what is left after both: a plant
-    /// pushed as hard as the seed can push it still stands clear of the box.
+    /// **No plant stands in the hedge, however it is nudged.** The bands are
+    /// curves now and swell where they ride over, and both eat into the room
+    /// between a place and the band beside it: what is asserted is what is
+    /// left after the nudge as well. A plant pushed as hard as the seed can
+    /// push it still stands clear of the box.
     func testNoPlaceStandsInABandHoweverItIsNudged() {
-        let nudge = 0.09
+        let nudge = KnotGarden.nudge
         var tightest = (Double.greatestFiniteMagnitude, "")
         for slot in KnotGarden.slots {
             let spot = slot.spot
@@ -182,63 +202,73 @@ final class KnotGardenTests: XCTestCase {
                              "a nudged plant stands \(tightest.0) m from a band: \(tightest.1)")
     }
 
-    /// **Each run is three stretches end to end with one gap in it**, and the
-    /// gap is at the crossing it dives under. Which of a run's two crossings
-    /// that is differs between the run at `+bandFrom` and the one at
-    /// `-bandFrom`, so this is the assertion that catches a run cut in the
-    /// order its crossings are named rather than the order they lie in — which
-    /// gives a stretch that spans the plot and one with its ends swapped, and
-    /// still draws something that looks nearly right.
-    func testEachRunIsThreeStretchesEndToEndWithOneGap() {
-        let gap = 2 * (KnotGarden.bandHalfThickness - KnotGarden.tuck)
-        var runs: [String: [KnotGarden.Stretch]] = [:]
-        for stretch in KnotGarden.weave where abs(stretch.at) == KnotGarden.bandFrom {
-            runs["\(stretch.alongX) \(stretch.at)", default: []].append(stretch)
+    /// **The knot is woven over and under in turn.** Eight crossings, each on
+    /// the middle ring and on its own small ring; going round the middle ring
+    /// they come in order, the middle ring over at one and under at the next;
+    /// and each small ring is over at one of its two and under at the other.
+    /// Two rings simply lying on each other would be a drawing of circles; the
+    /// alternation is the knot.
+    func testTheKnotIsWovenOverAndUnderInTurn() {
+        let bands = KnotGarden.bands
+        let crossings = KnotGarden.crossings
+        XCTAssertEqual(crossings.count, 8)
+        for (i, crossing) in crossings.enumerated() {
+            let ring = 1 + i / 2
+            XCTAssertLessThan(KnotGarden.distance(crossing, to: bands[0].points, closed: true), 0.002,
+                              "crossing \(i) is not on the middle ring")
+            XCTAssertLessThan(KnotGarden.distance(crossing, to: bands[ring].points, closed: true), 0.002,
+                              "crossing \(i) is not on ring \(ring - 1)")
+            XCTAssertEqual(KnotGarden.over(at: i), i % 2 == 0 ? 0 : ring)
         }
-        XCTAssertEqual(runs.count, 4, "the knot is not four runs")
-        for (name, stretches) in runs {
-            XCTAssertEqual(stretches.count, 3, "\(name) is not in three")
-            for stretch in stretches {
-                XCTAssertGreaterThan(stretch.to - stretch.from, 0.5,
-                                     "\(name) has a stretch of \(stretch.to - stretch.from) m")
-            }
-            XCTAssertEqual(stretches.first!.from, -KnotGarden.edgingFrom, accuracy: 0)
-            XCTAssertEqual(stretches.last!.to, KnotGarden.edgingFrom, accuracy: 0)
-            let gaps = zip(stretches, stretches.dropFirst()).map { $1.from - $0.to }
-            XCTAssertEqual(gaps.filter { $0 > 1e-9 }.count, 1,
-                           "\(name) is cut \(gaps.filter { $0 > 1e-9 }.count) times, not once")
-            XCTAssertEqual(gaps.max()!, gap, accuracy: 1e-12, "\(name)'s gap is the wrong width")
-            XCTAssertEqual(gaps.min()!, 0, accuracy: 1e-12, "\(name) has a second gap")
+        // Round the middle ring in order: each crossing a little further round
+        // than the one before, x+ toward z+, and all eight in one turn.
+        func turn(_ p: Spot) -> Double {
+            let a = atan2(p.z, p.x) / (2 * .pi)
+            return a < 0 ? a + 1 : a
         }
+        var travelled = 0.0
+        for i in 0..<8 {
+            var step = turn(crossings[(i + 1) % 8]) - turn(crossings[i])
+            if step < 0 { step += 1 }
+            XCTAssertGreaterThan(step, 0.02, "crossings \(i) and \((i + 1) % 8) are out of order")
+            travelled += step
+        }
+        XCTAssertEqual(travelled, 1, accuracy: 1e-9, "the crossings go round more than once")
     }
 
-    /// **A bow is zero at every crossing**, which is what keeps the compartments
-    /// where they were when the bands were straight — and therefore what keeps
-    /// every plant already in the ground standing where it stands.
-    func testTheBandsAreWhereTheyWereAtEveryCrossing() {
-        for stretch in KnotGarden.weave {
-            for end in [stretch.from, stretch.to] {
-                XCTAssertEqual(stretch.line(at: end), stretch.at, accuracy: 0,
-                               "a stretch stands off its own line at an end")
-            }
-            XCTAssertEqual(stretch.line(at: (stretch.from + stretch.to) / 2),
-                           stretch.at + stretch.bow, accuracy: 0,
-                           "a stretch does not stand off by its bow in the middle")
+    /// **No two bands touch but where they cross**: two small rings side by
+    /// side, a small ring and the edging, the middle ring and the edging. Two
+    /// runs of box with no gravel between them read as one wide band, and the
+    /// knot as a blot.
+    func testNoTwoBandsTouchButWhereTheyCross() {
+        let bands = KnotGarden.bands
+        func gap(_ a: Int, _ b: Int) -> Double {
+            bands[a].points.map { KnotGarden.distance($0, to: bands[b].points, closed: true) }.min()!
+                - 2 * KnotGarden.bandHalfThickness
         }
-        // The four inner stretches are the ones that bow in, and each of them
-        // runs between the two crossings on one of the rule's own two lines.
-        let inner = KnotGarden.weave.filter { abs($0.bow) == KnotGarden.knotBow }
-        XCTAssertEqual(inner.count, 4, "the knot is not four inner stretches")
-        for stretch in inner {
-            XCTAssertEqual(abs(stretch.at), KnotGarden.bandFrom, accuracy: 0)
-            XCTAssertLessThan(stretch.bow * stretch.at, 0, "an inner stretch bows outward")
+        for k in 0..<4 {
+            XCTAssertGreaterThan(gap(1 + k, 1 + (k + 1) % 4), 0.03, "rings \(k) and \((k + 1) % 4) touch")
+            XCTAssertGreaterThan(gap(1 + k, 5), 0.03, "ring \(k) touches the edging")
         }
+        XCTAssertGreaterThan(gap(0, 5), 0.03, "the middle ring touches the edging")
     }
 
-    /// Two plants in one plot may not stand on top of each other. The closest
-    /// pair here is tighter than any other area's, which is the price of
-    /// thirty-two in the square — and the reason the nudge is the smallest in
-    /// the garden.
+    /// **The edging stands on the slab.** The plot's outline wanders inward by
+    /// up to 0.22 m from the 5.2 m square (`Organic.outline`), so no part of
+    /// the edging's outer face may stand further out than 2.38 m on either
+    /// axis; it is held 3 cm inside that, and 7 cm inside where this slab comes
+    /// nearest.
+    func testTheEdgingStandsOnTheSlab() {
+        let edging = KnotGarden.bands[5].points
+        let reach = edging.map { max(abs($0.x), abs($0.z)) }.max()! + KnotGarden.bandHalfThickness
+        XCTAssertLessThan(reach, KnotGarden.plotSide / 2 - 0.22 - 0.03)
+    }
+
+    /// Two plants in one plot may not stand on top of each other. **0.42 m**,
+    /// the depth of a lens less the band and the nudge on both sides of it:
+    /// tighter than the 0.56 m the sides and corners allowed, and why the
+    /// rings stand on the diagonals, where on the axes the lenses held their
+    /// four 0.22 m apart.
     func testNoTwoPlacesInAPlotAreTooCloseTogether() {
         var closest = Double.greatestFiniteMagnitude
         for (i, a) in KnotGarden.slots.enumerated() {
@@ -247,7 +277,7 @@ final class KnotGardenTests: XCTestCase {
                 closest = min(closest, (dx * dx + dz * dz).squareRoot())
             }
         }
-        XCTAssertGreaterThan(closest, 0.55, "closest two places are \(closest) m apart")
+        XCTAssertGreaterThan(closest, 0.40, "closest two places are \(closest) m apart")
     }
 
     // MARK: The rule the area is for
@@ -363,15 +393,15 @@ final class KnotGardenTests: XCTestCase {
 
     // MARK: The ambassador
 
-    func testTheAmbassadorStandsInTheNorthCompartment() {
+    func testTheAmbassadorStandsInTheNorthEastLens() {
         let one = KnotGarden.ambassador
         XCTAssertEqual(one.plot, 0)
-        XCTAssertEqual(one.slot.compartment, .north)
-        XCTAssertEqual(one.slot.compartment.pair, .north)
+        XCTAssertEqual(one.slot.compartment, .northEastLens)
+        XCTAssertEqual(one.slot.compartment.pair, .northEastLenses)
         XCTAssertEqual(one.seed, Ambassadors.of(.pattern).seed.hex)
         // *Quinyria obscura*, since 28 September 2026, is 1.22 m: over the
         // 1.20 cut, so it reads as a point and takes index 3, the place at
-        // the compartment's outer edge. (*Quina caerulea* was a side, index 1.)
+        // the lens's outer edge. (*Quina caerulea* was a side, index 1.)
         XCTAssertEqual(KnotGarden.rank(height: one.traits.height), .point)
         XCTAssertEqual(one.slot.index, 3)
         XCTAssertEqual(one.traits.family, 4)
@@ -388,8 +418,8 @@ final class KnotGardenTests: XCTestCase {
     /// quietly re-claimed is a pair of two colours.
     func testTheAmbassadorsPairIsItsOwnColour() {
         let ways = Self.filled()
-        XCTAssertEqual(ways.family(of: .north, in: 0), 4)
-        for planting in ways.plot(0) where planting.slot.compartment.pair == .north {
+        XCTAssertEqual(ways.family(of: .northEastLenses, in: 0), 4)
+        for planting in ways.plot(0) where planting.slot.compartment.pair == .northEastLenses {
             XCTAssertEqual(planting.traits.family, 4)
         }
     }

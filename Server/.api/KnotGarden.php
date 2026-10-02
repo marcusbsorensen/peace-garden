@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/LongWalk.php';
 require_once __DIR__ . '/Orchard.php';
+require_once __DIR__ . '/PlotVariant.php';
+require_once __DIR__ . '/tables/KnotGardenRingsTable.php';
 
 /**
  * The Knot Garden's placement rule, ported from SeedCore's
@@ -26,6 +28,12 @@ require_once __DIR__ . '/Orchard.php';
  * Orchard's nesting rather than the Crossing's, because what this area is for
  * is that a compartment reads as one colour.
  *
+ * **Interlaced rings since 2 October 2026**: the eight compartments are four
+ * lenses and four crescents, and where each place stands is the table made
+ * offline (`tables/KnotGardenRingsTable.php`, from
+ * `tools/layouts/tables/knot_garden_rings.py`). The rule did not change, so
+ * every slot is the slot it was.
+ *
  * A planting here is an array: seed (hex), plot, compartment (0-7), index
  * (0-3), height, family, nudgeX, nudgeZ.
  */
@@ -36,13 +44,14 @@ final class KnotGarden
     /**
      * How this area's plots vary, from each plot's number (`PlotVariant.php`):
      * the Swift's `variants`. Fixed: a knot is a pattern made to be the same
-     * every time. Declared but not yet read.
+     * every time, so every plot is laid as the table draws it.
      */
     public const VARIANTS = ['turns' => 1, 'mirror' => false, 'nudges' => 1];
     public const BAND_HALF_THICKNESS = 0.09;
     public const BAND_HEIGHT = 0.17;
-    public const BAND_FROM = 0.76;
-    public const EDGING_FROM = 2.20;
+
+    /** How far a plant stands off its place, either way on each axis, from the seed. */
+    public const NUDGE = 0.09;
 
     /**
      * The Orchard's cuts, named as the Orchard's rather than written out again.
@@ -58,35 +67,26 @@ final class KnotGarden
     public const SIDE = 1;
     public const POINT = 2;
 
-    /** The eight compartments: four at the sides of the plot, then four at its corners. */
-    public const NORTH = 0;
+    /**
+     * The eight compartments: the four lenses, north-east, south-east,
+     * south-west and north-west, then the four crescents the same way round.
+     * The numbers the four sides and four corners had, so a stored
+     * compartment is the same compartment of the rings.
+     */
+    public const NORTH_EAST_LENS = 0;
     public const COMPARTMENTS = [0, 1, 2, 3, 4, 5, 6, 7];
     public const PAIRS = [0, 1, 2, 3];
 
-    /**
-     * The four places in the north compartment, 1.37 m across and 1.29 m deep
-     * between the knot's two runs and the edging. Written out rather than
-     * computed from an angle, for the reason `Organic::quarter` exists.
-     */
-    public const SIDE_PLACES = [
-        [0.0, 1.16],      // 0  nearest the knot's middle
-        [-0.43, 1.53],    // 1  beside it
-        [0.43, 1.53],     // 2  beside it, the same distance out as 1
-        [0.0, 1.89],      // 3  at the edging
-    ];
-
-    /** The four places in the north-east compartment, a 1.29 m square. */
-    public const CORNER_PLACES = [
-        [1.09, 1.09],
-        [1.03, 1.72],
-        [1.72, 1.03],
-        [1.80, 1.80],
-    ];
-
-    /** Whether a compartment sits at a corner of the plot rather than at a side. */
-    public static function atCorner(int $compartment): bool
+    /** Whether a compartment is one of the outer crescents rather than a lens. */
+    public static function isCrescent(int $compartment): bool
     {
         return $compartment >= 4;
+    }
+
+    /** Which small ring a compartment is part of: `ring0` to `ring3` of the table. */
+    public static function ringOf(int $compartment): int
+    {
+        return $compartment % 4;
     }
 
     /** The compartment opposite this one, which holds the same colour. */
@@ -98,7 +98,7 @@ final class KnotGarden
     /** Which of the four mirror pairs a compartment belongs to. */
     public static function pairOf(int $compartment): int
     {
-        return $compartment % 2 + (self::atCorner($compartment) ? 2 : 0);
+        return $compartment % 2 + (self::isCrescent($compartment) ? 2 : 0);
     }
 
     /** The two compartments of a pair, the one it is named for first. */
@@ -137,23 +137,24 @@ final class KnotGarden
     }
 
     /**
-     * Where a place is, in metres from the middle of its plot: [x, z].
-     *
-     * Every compartment is one of the two canonical sets of four turned by a
-     * whole number of quarters, and a quarter turn here is a sign swap — no
-     * host's trigonometry is involved, so every host holds the same number.
+     * Where a place is, in metres from the middle of its plot: [x, z]. The
+     * table's, which lists the compartments in order and four places to each,
+     * written to the millimetre, so every host holds the same number.
      */
     public static function spot(int $compartment, int $index): array
     {
-        [$x, $z] = self::atCorner($compartment)
-            ? self::CORNER_PLACES[$index]
-            : self::SIDE_PLACES[$index];
-        return match ($compartment % 4) {
-            1 => [$z, -$x],
-            2 => [-$x, -$z],
-            3 => [-$z, $x],
-            default => [$x, $z],
-        };
+        $place = KnotGardenRingsTable::PLACES[0][$compartment * 4 + $index];
+        return [$place[0], $place[1]];
+    }
+
+    /**
+     * Where a planting stands: its place and its nudge, the sum laid as the
+     * plot is (`PlotVariant.php`), which here is always as the table draws it.
+     */
+    public static function spotOf(int $plot, int $compartment, int $index, float $nudgeX, float $nudgeZ): array
+    {
+        [$x, $z] = self::spot($compartment, $index);
+        return PlotVariant::apply(PlotVariant::of($plot, 'pattern', self::VARIANTS), $x + $nudgeX, $z + $nudgeZ);
     }
 
     /** The first place of a rank, used to open a compartment nobody has planted. */
@@ -199,7 +200,7 @@ final class KnotGarden
      *
      * A pair already holding this colour, in the oldest plot that has one with
      * room; then a pair nobody has claimed, in the oldest plot that has one;
-     * then a new plot, opened in the north compartment.
+     * then a new plot, opened in its north-east lens.
      */
     public static function place(array $ways, float $height, int $family): array
     {
@@ -225,7 +226,7 @@ final class KnotGarden
                 return [$plot, self::firstSlot($own, self::compartmentsOf($pair)[0])];
             }
         }
-        return [$plots, self::firstSlot($own, self::NORTH)];
+        return [$plots, self::firstSlot($own, self::NORTH_EAST_LENS)];
     }
 
     /** Plants one arrival and returns the planting; the area only grows. */
@@ -238,7 +239,7 @@ final class KnotGarden
             'seed' => $seedHex, 'plot' => $plot,
             'compartment' => $slot['compartment'], 'index' => $slot['index'],
             'height' => $height, 'family' => $family,
-            'nudgeX' => $jitter(26, 0.09), 'nudgeZ' => $jitter(27, 0.09),
+            'nudgeX' => $jitter(26, self::NUDGE), 'nudgeZ' => $jitter(27, self::NUDGE),
         ];
     }
 
