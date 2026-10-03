@@ -76,13 +76,17 @@ if [ "$upload" = yes ]; then
         exit 1
     fi
 
-    rsync -a $dry --delete --stats \
+    # `-i`, because rsync names nothing it deletes without it (or `-v`), and the
+    # sed then shows a clean run over a deletion: a dry run said nothing about
+    # a `.api/config.php.bak` it was about to remove. Each deletion is a
+    # `*deleting` line; the line `-i` also prints per changed file is dropped.
+    rsync -a -i $dry --delete --stats \
         --exclude='.DS_Store' \
         --filter='-s /README.md' \
         --exclude='/.well-known/' \
         --exclude='/.api/config.php' \
         -e "ssh -o ConnectTimeout=20" \
-        "$HERE/Server/" "$HOST:$ROOT/" | sed -n '/^deleting/p; /Number of files transferred/p'
+        "$HERE/Server/" "$HOST:$ROOT/" | sed -n '/^\*deleting/p; /Number of files transferred/p'
 
     if [ -z "$dry" ]; then
         # One-off left over from the upload that predates `index.php`: a static
