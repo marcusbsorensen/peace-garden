@@ -50,12 +50,19 @@ function sow(string $dsn, ?string $user, ?string $password, int $arrivals): void
     for ($i = 0; $i < $arrivals; $i++) {
         $seed = hash('sha256', "peace garden rehearsal seed $i");
         $sown[] = $seed;
+        // **Heights a plant could have.** A grown height is a 32-bit float
+        // widened (`LongWalk.traits(of:)` in SeedCore), so it stands on a cut
+        // or a good 10⁻⁸ m off it, and the fourteen digits a height is stored
+        // to (`GlasshouseStore::exactly`) cannot carry it across. Worked out
+        // in doubles, the sixteenth was 0.7499999999999997, which no plant
+        // can be: placed below the cut of 29 September, stored as 0.75 above
+        // it, and so replayed a tier up.
         $store->plant(
             $seed,
             hash('sha256', "parent a $i"),
             hash('sha256', "parent b $i"),
             hash('sha256', "encounter $i"),
-            0.6 + fmod($i * 0.37, 1.8),
+            unpack('g', pack('g', 0.6 + fmod($i * 0.37, 1.8)))[1],
             $i % 3
         );
     }
