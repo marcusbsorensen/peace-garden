@@ -1,5 +1,8 @@
 # The gateways, 10 October 2026
 
+Later the same evening the glyphs on the gateways gave way to miniatures of
+each area's own layout: see *The miniatures* at the end, and `minis/`.
+
 Marcus, on the small slabs at the edges of an area's view that stand for the
 neighbouring areas: they "don't appear to be positioned as per the mini map",
 and the brown, terracotta and green they are told apart by are no use to a
@@ -133,3 +136,140 @@ All four as recommended, so everything stays as built:
 - no sky is added under the plots;
 - both maps read left to right in Arabic and Hebrew;
 - the two neighbours behind walls stay hidden.
+
+
+## The miniatures, later on 10 October
+
+Marcus, on the glyphs on the small plots round the garden section: the mix of
+visual languages did not work as he had hoped. He asked for a very simplified
+version of each area's actual layout on those slabs instead, so that symbols
+and the main view's 3D rendering are not mixed.
+
+So each gateway now shows its area as it is, in the plot's own light and at
+the slab's own size: a neighbouring plot seen from further off. The map at
+the foot of the page keeps its symbolic glyphs, as decided on 28 September.
+
+### The ones to look at first
+
+- `minis/ten.png`: all ten miniatures side by side, at the gateways' half light.
+- `minis/compare-knot-laptop.png`: before above, after below. The Orchard's trees,
+  the Seedbed's drills and the Glasshouse's round house beside the Knot Garden.
+- `minis/compare-knot-phone.png` and `minis/compare-frame-phone.png`: a phone, before and after.
+- `minis/compare-walk-turned.png`: the weakest case, shown so you can judge it. The Long Walk's two
+  neighbours show least of themselves: the Coppice beside its yew and the
+  Crossing below.
+- `minis/cvd.png`: the ten as normal vision, protanopia, deuteranopia and
+  tritanopia see them.
+
+Every capture is in `minis/` as `<area>-<view>-<before|after>.png`. The areas
+are the Knot Garden, the Cold Frame and the Long Walk, as above, and the
+views are `laptop` (1280 × 900), `turned` (a quarter turn clockwise) and
+`phone` (390 × 844).
+
+### What each one shows
+
+Each is taken from its area's own plan, never drawn again by hand. The area's
+module says its miniature beside its `plan`, from the same plan export and
+place table its own page draws from. Plants are left out, and there is no
+text.
+
+| Area | On its gateway | Told apart by |
+| --- | --- | --- |
+| Knot Garden | gravel; the middle ring, four small rings and the edging as low box; the basin | five rings in a softened square |
+| Glasshouse | its tiles; the round house, ribs pale on panes the colour of its inside | the dome |
+| Cold Frame | gravel; the kidney of water, deep in the middle; two frames with their glazing bars | the kidney |
+| Seedbed | tilth; the six drills | curved drills |
+| Orchard | meadow; the five trees; the four mown crescents; the dipping pond | five trees |
+| Coppice | leaf litter; the glade; the three rides; the spring in its basin | three rides meeting at a glade |
+| Crossing | lawn; the four mown ways turning in to the round of paving; the basin | a pinwheel round a ring |
+| Quiet Garden | lawn; the four hedges, tall on the far sides; the pool; the bench | a room with a pool |
+| Home Ground | trodden paths; the three S-beds of dark soil; the trough | three S-beds |
+| Long Walk | turf; the yew, tall on the far side, and the low hedge; the path and its rill; the drifts | a walled walk |
+
+### What changed
+
+- **`mini.js`** lays a miniature from a few kinds of shape: a patch of ground,
+  a ribbon along a line, a raised ridge, a round house, a tree and a box. Every
+  edge wanders by a seeded noise, so there are no straight lines.
+- **Each area's module** says its `miniature` beside its `plan`. A page loads
+  only the modules of the areas beside it, once, and the slabs come in whole a
+  moment after the plot. The Long Walk's yew and the Quiet Garden's hedges are
+  tall on the far side, so those two are laid again for each new turn, and
+  kept.
+- **The glyph code is gone from the slabs**: its texture, its placement, and
+  the cover it was kept clear by. The slabs, their places, the phone's extra
+  sky at the sides and the lap below are all unchanged.
+- **`check_gateways.mjs`** keeps every direction pin. The glyph checks became
+  one check: every open area has a miniature that its own module says.
+
+### Colour blindness
+
+The simulations are Machado (2009) at full severity, in linear sRGB, on the
+ten miniatures at the gateways' half light. The figure is how far a
+miniature's shapes stand from its own ground in lightness: the median, over
+the shapes' pixels, of the difference in CIE L*.
+
+| | normal | protanopia | deuteranopia | tritanopia |
+| --- | --- | --- | --- | --- |
+| Knot Garden | 7.8 | 7.2 | 8.1 | 7.8 |
+| Glasshouse | 4.7 | 4.2 | 5.0 | 4.7 |
+| Cold Frame | 16.6 | 16.1 | 16.9 | 16.5 |
+| Seedbed | 6.9 | 6.7 | 7.0 | 6.8 |
+| Orchard | 4.6 | 4.6 | 4.6 | 4.6 |
+| Coppice | 5.0 | 5.0 | 5.0 | 5.0 |
+| Crossing | 4.1 | 4.1 | 4.2 | 4.1 |
+| Quiet Garden | 6.8 | 7.0 | 6.6 | 6.8 |
+| Home Ground | 4.6 | 4.6 | 4.6 | 4.6 |
+| Long Walk | 5.0 | 5.0 | 4.9 | 5.0 |
+
+**Every neighbour is recognisable by its form alone.** No simulation moves a
+miniature's contrast with its own ground by as much as one L* unit, so
+whatever shape a reader with full colour vision sees, a colour-blind reader
+sees too. The ten differ by shape, as the table above says.
+
+The contrast is a plot's own and not a symbol's. The pale glyph stood at
+7 : 1; these stand 4 to 17 L* off their ground, and the Coppice, the
+Crossing, the Home Ground and the Long Walk are the faintest at 4 to 5. The
+domes, trees and hedges also stand out against the night.
+
+### Frame time
+
+The frames below are from a phone-sized canvas (390 × 844 at 3×), headless
+Chrome on an M4 Max, with main and this branch alternated in one browser.
+Each figure is the median of 1,200 draws, each with a one-pixel read so the
+GPU's work is counted.
+
+| | main | now |
+| --- | --- | --- |
+| Knot Garden | 3.2 ms | 0.6 ms |
+| Orchard | 3.0 ms | 0.5 ms |
+| Long Walk | 2.5 ms | 1.0 ms |
+| Crossing | 2.2 ms | 0.6 ms |
+| Cold Frame | 2.8 ms | 0.6 ms |
+
+Main searched again for where each glyph would fit on every frame, which was
+most of the frame. A miniature is built once and drawn with its slab. It is
+520 to 4,131 triangles, the Cold Frame least and the Knot Garden most. A
+quarter turn takes what it took on main, within the noise. Nothing drawn
+touches the canvas's edge on any of the ten pages, at five window sizes and
+four turns.
+
+### Known
+
+- Two miniatures are hidden behind walls, as you decided this evening: the
+  Quiet Garden's upper neighbour, behind its yew, and the Glasshouse's,
+  behind the house.
+- On a phone, at two of the four turns, the Coppice shows only a sliver past
+  the Long Walk's yew.
+- Below a top-row plot only about 40 cm of the slab's top shows past the rim,
+  so all you see of that miniature is its near edge.
+
+### Open question
+
+1. **How bright the gateways are drawn.** `minis/light-knot-laptop.png` shows
+   both.
+   - **a. Keep them at half light.** Recommended: half light is what says
+     *further off*, and every form can still be seen.
+   - b. Draw them at 0.7. The faint four, the Coppice, the Crossing, the Home
+     Ground and the Long Walk, read more clearly, but the neighbours compete
+     more with the plot.

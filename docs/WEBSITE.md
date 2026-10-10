@@ -1289,9 +1289,10 @@ another.
   to. So each open neighbour is a second slab of ground floating past the plot,
   on the side the key that reaches it points to: `beside.js` reads which areas
   lie which way from `garden.js` and their grounds from `gates.js` `LOOK` — one
-  map, still — and `longwalk.js` builds and draws them. Ground only: the same
-  `Organic` outline a plot has and the same strata under it, in that area's own
-  colour, with no plants, no structures and no shadow. A slab is 0.5 of a plot
+  map, still — and `longwalk.js` builds and draws them. The same `Organic`
+  outline a plot has and the same strata under it, in that area's own colour,
+  with no plants and no shadow, and since 10 October a very simplified
+  miniature of that area's own layout on it (below). A slab is 0.5 of a plot
   and drawn at half its light, because an orthographic projection shrinks
   nothing with distance and *further off* has to be drawn; it is held at the
   plot's own attitude, so it turns as the plot turns, while **where** it stands
@@ -1347,34 +1348,69 @@ another.
     slab was, which is the next point. Neither the camera's turn nor a plot's
     variant enters into it, rightly: a turn is the camera and not the garden,
     and a variant turns a plot's own layout, not the map.
-  - **Each gateway carries its area's glyph, laid on its ground**, the same
-    drawing as its cell on the map (`GLYPH` in `longwalk.js`). The slabs had
-    only their colour to say which area they were, and at half their light
-    the browns, the terracotta and the greens are near enough one colour:
-    under protanopia the Glasshouse's terracotta and the Crossing's green are
-    1 apart in CIE76 ΔE, and 34 of the 43 pairs of different grounds are
-    under 10. A pale glyph ringed in shade is at least 7.3 to 1 against its
-    slab under every kind of colour blindness simulated, so shape carries the
-    identity. It lies flat on the slab's top, foreshortened by the camera as
-    the ground is, upright on the screen at every turn, and as large as fits
-    — up to 1.15 m — on the part of the slab the plot does not hide, clear of
-    the plot's own walls, trees and frames (`coverOf`) and kept inside the
-    slab's wandering edge by the stencil. Under 18 CSS pixels it is left out.
-    The minimap's glyphs took the same faint ring, since white on the two
-    gravel grounds was 3 to 1.
+  - **Each gateway carried its area's glyph for a day**, the same drawing as
+    its cell on the map, laid pale and ringed on the slab's top, because the
+    slabs had only their colour to say which area they were and at half
+    their light the browns, the terracotta and the greens are near enough
+    one colour: under protanopia the Glasshouse's terracotta and the
+    Crossing's green are 1 apart in CIE76 ΔE, and 34 of the 43 pairs of
+    different grounds are under 10. The minimap's glyphs took the same faint
+    ring of shade, since white on the two gravel grounds was 3 to 1, and
+    keep it.
+  - **Each gateway carries a miniature of its area instead, the same
+    evening.** Marcus: a white symbol lying on ground lit like the plot
+    mixed two kinds of drawing. So a slab now shows what is there — its
+    area's own layout, very simplified, lit and shaded as the plot beside it
+    is (`mini.js`): the Knot Garden's five rings and edging as low box round
+    its basin; the Glasshouse's round house, ribs painted pale on panes the
+    colour of its inside; the Cold Frame's kidney of water and its two
+    frames with their glazing bars; the Seedbed's six drills; the Orchard's
+    five trees, its crescents and its pond; the Coppice's three rides, its
+    glade and its spring; the Crossing's four ways turning in to the round
+    and its basin; the Quiet Garden's room of hedges, its pool and its
+    bench; the Home Ground's three S-beds and its trough; and one plot of
+    the Long Walk, its yew, path, rill and drifts. Plants are left out, and
+    there is no text. **Each is read from its area's own plan, never drawn
+    again by hand**: the area's module says its miniature beside its `plan`
+    (`miniature`), from the same plan export and place table its own page
+    draws from, and `mini.js` lays the few kinds of shape they are made of
+    — a patch, a ribbon, a ridge, a round house, a tree, a box — every edge
+    wandering by a seeded noise. A page loads only the modules of the areas
+    beside it, once, and the slabs come in whole a moment after the plot.
+    The Long Walk's yew and the Quiet Garden's hedges are tall on the far
+    side, so those two are laid again for a turn they have not been seen at,
+    and kept. The minimap's glyphs stay symbols (28 September): the map is a
+    diagram and the view is not.
+  - **Shape still carries identity**, because the ten layouts differ by
+    shape, and the three Machado simulations move each miniature's contrast
+    with its own ground by less than one CIE L* unit: whatever a reader with
+    full colour vision sees of a miniature's shape, a reader without red,
+    green or blue cones sees too. The contrast is a plot's own and not a
+    symbol's: at the gateways' half light each miniature's shapes stand 4 to
+    17 L* off their ground, where the pale glyph stood at 7 : 1, and the
+    domes, trees and hedges stand against the sky as well.
+  - **A frame costs less than it did with the glyph.** Where a glyph would
+    fit was searched for again on every frame (`fitGlyph`, a few thousand
+    box tests), which was most of a frame's time on the page; a miniature is
+    built once and drawn in the slab's own pass, a few hundred to four
+    thousand triangles. On a phone-sized canvas a frame on the Knot Garden,
+    the Orchard, the Long Walk, the Crossing and the Cold Frame took 2.2 to
+    3.2 ms with the glyphs and takes 0.5 to 1.0 ms now (headless Chrome on an
+    M4 Max, the two alternated in one browser); a quarter turn is unchanged
+    within the noise.
   - **A phone keeps a metre of sky at each side for them** (`BESIDE.room`),
     since a phone's window was fitted so close to the plot that the side
     gateways showed a wedge too narrow for any glyph; the plot draws about 6%
     smaller there and nowhere else. And the slab below laps 1.25 m rather than
     1.7 where the window has room, which on a phone is enough to show its
-    glyph and on a laptop is not.
-  - **Known**: three glyphs are hidden as their slabs are. The Quiet Garden's
-    upper neighbour is behind its yew (kept, 27 September) and the
-    Glasshouse's behind the house's ribs; on a phone at two of the four turns
-    the Coppice shows too little past the Long Walk's yew. And only about
-    40 cm of the slab below a top-row plot shows its top past the plot's rim,
-    so its glyph is small on a laptop (about 20 px) and left out of an
-    800-pixel window.
+    glyph and on a laptop is not. Both were bought for the glyphs and Marcus
+    kept both; they show more of each miniature now.
+  - **Known**: two miniatures are hidden as their slabs are, which Marcus
+    kept on 10 October: the Quiet Garden's upper neighbour is behind its yew
+    and the Glasshouse's behind the house. On a phone at two of the four
+    turns the Coppice shows only a sliver past the Long Walk's yew. And only
+    about 40 cm of the slab below a top-row plot shows its top past the
+    plot's rim, so what shows of that miniature is its near edge.
 - **Turning is called turning.** The camera keys were *left* and *right*, which
   are the words a visitor reaches for to mean walking somewhere else.
 - **A minimap to travel by**: the garden's own 5×2 map, read from `garden.js`
