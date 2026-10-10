@@ -193,6 +193,29 @@ void main() {
   outColour = vec4(shade(vColour, normalize(vNormal)) * opacity, opacity);
 }`;
 
+// **A gateway's glyph** (`GLYPH`): a square on the slab's top, `across` and
+// `toward` its half-sides in the world — level, one along the screen and one
+// running away up it — and `centre` its middle. The texture is premultiplied,
+// as the canvas is.
+const GLYPH_VERTEX = `#version 300 es
+in vec2 corner;
+uniform mat4 viewProjection;
+uniform vec3 centre; uniform vec3 across; uniform vec3 toward;
+out vec2 vUv;
+void main() {
+  vUv = corner;
+  vec3 p = centre + (corner.x * 2.0 - 1.0) * across + (1.0 - corner.y * 2.0) * toward;
+  gl_Position = viewProjection * vec4(p, 1.0);
+}`;
+
+const GLYPH_FRAGMENT = `#version 300 es
+precision highp float;
+in vec2 vUv;
+uniform sampler2D glyph;
+uniform float opacity;
+out vec4 outColour;
+void main() { outColour = texture(glyph, vUv) * opacity; }`;
+
 // **The slab's side has a program of its own** (`slab.js`), since 2 October
 // 2026: its bands and the faint layers in them are worked out per pixel from
 // where on the side a pixel is, which a colour per vertex could only carry on
@@ -404,6 +427,7 @@ const BESIDE = {
   dim: 0.5,
   depth: 14,
   lap: 1.7,
+  lapBelow: 1.25,
   least: 0.35,
   closest: 1.2,
   // How far a slab's underside can hang below `RIM_DEPTH`, for the box a
@@ -413,13 +437,65 @@ const BESIDE = {
   // lifts it by — so it is left as it was, and the neighbours stand where
   // Marcus last saw them.
   deepest: 1.22,
+  // How much sky a window keeps past the plot at each side, in metres, so a
+  // slab there shows enough of itself to carry its glyph (`frame`).
+  room: 1.0,
 };
 
-// Which way a direction lies on the screen: the axis — across, then up — and
-// which end of it. **The screen's axes and not the plot's**, because the pad's
-// are, and a slab that disagreed with the pad would be lying about where a key
-// goes.
-const BESIDE_WAY = { left: [0, -1], right: [0, 1], up: [1, 1], down: [1, -1] };
+// **Which way a slab goes is not written here.** It is `way` on each of
+// `areasBeside`'s answers, `[across, up]` from `screenWay` in `garden.js`,
+// which is also where the map at the foot of the page takes its own way round
+// from. Until 10 October 2026 this file kept a table of its own, and the map's
+// followed the writing direction while this one did not. **The screen's axes
+// and not the plot's**, because the pad's are, and a slab that disagreed with
+// the pad would be lying about where a key goes.
+
+// **Each gateway carries its area's glyph, laid on its ground** (10 October
+// 2026). Marcus: the slabs did not seem to stand where the map said, and a
+// reader who cannot tell a dimmed terracotta from a dimmed brown or green —
+// which is a lot of readers — had nothing else to go on. So the drawing from
+// that area's cell on the map (`LOOK` in `gates.js`) is laid flat on the
+// slab's top, in the same plane as its ground, and the camera foreshortens it
+// as it does the ground: it reads as something marked out on the land, and it
+// is the same shape as the cell, which is how a reader matches the two.
+//
+// - **Upright on the screen**, as it is on the map: its top runs away from
+//   the eye, whichever way the plot is turned, so a turn foreshortens it the
+//   same and never stands it on its side.
+// - **On the part of the slab that shows**, and whole. A slab is mostly
+//   behind the plot (`lap`), so the glyph goes where the most of it is clear
+//   of the plot and inside the slab's own edge, as large as fits up to `most`
+//   — and where less than `least` CSS pixels would fit, it is not drawn,
+//   because a glyph cut by the plot's edge, or too small to read, says less
+//   than none.
+// - **Pale, ringed in shade.** The slabs are all dark at half their light, and
+//   a pale line on dark ground is the one contrast that survives every kind of
+//   colour blindness; the ring keeps it off the two light grounds, the Knot
+//   Garden's and the Cold Frame's gravel. `ink` and `halo` are its two
+//   strokes, in the glyph's own 20-unit square, and `opacity` how much of it
+//   shows over its slab.
+// - **No straight edge.** The quad it is drawn on is clear outside the
+//   strokes, and the slab under it keeps its own wandering outline.
+const GLYPH = {
+  most: 1.15,
+  least: 18,
+  ink: { width: 1.45, colour: 'rgba(255, 252, 244, 0.94)' },
+  halo: { width: 3.3, colour: 'rgba(12, 10, 8, 0.5)' },
+  opacity: 0.92,
+  // How far in from the slab's square the glyph keeps, in metres at the
+  // slab's size. Less than the wander of its outline (`Organic.outline`'s
+  // 22 cm, at half), because the glyph is kept to the slab's top by the
+  // stencil: where the edge wanders in, it takes the corner of the halo and
+  // not the glyph.
+  inset: 0.05,
+  // How far it keeps from the plot on the screen, in metres.
+  clear: 0.03,
+  // The glyph's square is drawn with this many of its units round it for the
+  // halo.
+  pad: 0.8,
+  // Lifted off the slab's top by a millimetre, so the depth test keeps it on.
+  lift: 0.002,
+};
 
 // **The stage is not the walk's.** Everything in it — the GL plumbing, the
 // isometric camera, the quarter turns, the plant program — is what a plot is,
@@ -438,6 +514,13 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   const shadowProgram = program(gl, SHADOW_VERTEX, SHADOW_FRAGMENT, ['position', 'uv', 'fade'], ['loss']);
   const sideProgram = program(gl, SIDE_SHADERS.vertex, SIDE_SHADERS.fragment,
                               ['position', 'normal', 'place', 'hang'], ['offset', 'opacity', 'stonesFrom']);
+  // The glyph on each gateway (`GLYPH`): one square, placed by its uniforms.
+  const glyphProgram = program(gl, GLYPH_VERTEX, GLYPH_FRAGMENT, ['corner'],
+                               ['centre', 'across', 'toward', 'glyph', 'opacity']);
+  const glyphQuad = gl.createVertexArray();
+  gl.bindVertexArray(glyphQuad);
+  attribute(gl, glyphProgram.at.corner, new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]), 2);
+  gl.bindVertexArray(null);
   // **What a plant's shadow lies on.** An area whose floor is not level says
   // how high it is anywhere (`height`, on the builder it hands the stage), so
   // a shadow on a bed's shoulder or a hollow in the litter follows it rather
@@ -482,12 +565,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   const look = { zoom: 1, x: 0, y: 0 };
   let aspect = 1;
 
-  // The camera looks down (1, 1, 1), turned in quarter turns about the plot.
-  function eye() {
-    const angle = turn * Math.PI / 2;
-    const c = Math.cos(angle), s = Math.sin(angle);
-    return [c + s, 1, -s + c].map((v) => v / Math.sqrt(3));
-  }
+  function eye() { return eyeAt(turn); }
 
   function rebuildGround() {
     if (groundMesh) groundMesh.release();
@@ -566,7 +644,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     // The areas beside this one, out past the plot and behind it. Before the
     // plot, dimmed, and depth-tested like everything else — the plot is drawn
     // over whatever it covers, which is how a nearer slab behaves.
-    drawBeside(view, all);
+    drawBeside(viewProjection);
     gl.uniform1f(ground.at.opacity, 1);
     gl.uniform3fv(ground.at.offset, HERE);
     groundMesh.draw();
@@ -651,90 +729,65 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     }
   }
 
-  // **Where the slabs beside the plot stand, and whether each is drawn.**
-  //
-  // In metres across the screen and up it, the window's own frame and the one
-  // `frame` answers in, turned into a place in the world at the very end:
-  // on an orthographic projection an offset along the view's own axes lands
-  // exactly where it was asked to. The across axis is level, so a slab sent
-  // left or right stays on the plot's own ground plane; one sent up or down is
-  // lifted clear of it, which is a thing this projection cannot show and so
-  // does not have to be paid for.
-  //
-  // Where it goes is measured off the plot and not off the window, so it holds
-  // its place against the plot's edge as a reader comes closer rather than
-  // sliding about the screen with the zoom. What that costs is that one can
-  // fall off the edge of the canvas on the way in, and then it is not drawn.
-  function drawBeside(view, all) {
+  // **Where the slabs beside the plot stand, and whether each is drawn**:
+  // `placeBeside`, below and outside the stage, so `check_gateways.mjs` can
+  // hold it to the map with no GL. This draws what it answers: each slab's
+  // top, each one's side, and then each one's glyph laid on its top.
+  function drawBeside(viewProjection) {
     if (!besides.length || look.zoom > BESIDE.closest) return;
-    const plot = corners(view, extent.x, extent.z, -RIM_DEPTH * BESIDE.deepest, 0);
-    const half = (SIDE * BESIDE.scale) / 2;
-    const box = spread(corners(view, half, half, -RIM_DEPTH * BESIDE.deepest * BESIDE.scale, 0));
-    const size = [[box.minX, box.maxX], [box.minY, box.maxY]];
-    const wide = all.w / look.zoom / 2, tall = all.h / look.zoom / 2;
-    const pane = [[all.cx + look.x - wide, all.cx + look.x + wide],
-                  [all.cy + look.y - tall, all.cy + look.y + tall]];
-    const { x: across, y: up, z: back } = axes(view);
-
-    const placed = [];
-    for (const slab of besides) {
-      const [axis, sign] = BESIDE_WAY[slab.direction];
-      const [low, high] = size[axis];
-      const [near, far] = sign > 0 ? [low, high] : [high, low];
-      // How far the plot comes this way, over the band of screen the slab
-      // stands in rather than corner to corner (`reachOver`).
-      const band = reachOver(plot, 1 - axis, size[1 - axis][0], size[1 - axis][1]);
-      const reach = sign > 0 ? band.max : band.min;
-      const at = [0, 0];
-      // **Its near edge sits `lap` inside the plot's**, and the plot, being
-      // nearer, hides that much of it. There is no sky to share out and no
-      // distance to choose — except that the canvas can insist: a slab goes as
-      // far out as there is room for and no further out than `lap` says, so on
-      // a phone, where a plot fills all but a few per cent of the width, the
-      // ones to the side lap further and show a wedge rather than nothing.
-      at[axis] = reach - sign * BESIDE.lap - near;
-      const most = pane[axis][sign > 0 ? 1 : 0] - far;
-      if (sign * (at[axis] - most) > 0) at[axis] = most;
-      // **And enough of it must still come out the other side.** A slab and
-      // the plot are the same shape at the same attitude, so their edges on
-      // the screen are parallel and what shows past the plot is a strip of one
-      // width all along — which makes this a straight subtraction, the slab's
-      // own reach less the lap, and constant for a given direction. It can
-      // still fail: a slab is shorter across the screen than up it on this
-      // projection, so a lap that leaves a margin sideways can swallow one
-      // whole going up.
-      if (sign * (at[axis] + far - reach) < BESIDE.least) continue;
-      // **Whole on the canvas, on both axes, or not drawn at all** — because
-      // the edge of a canvas is a straight line and this garden has none of
-      // those. With nothing to spare: the line above has already pulled it in
-      // as far as it will go, and a margin on top of that would refuse the
-      // slab below the plot the sky `UNDER` was bought for.
-      // **And then it stands on its own terrace.** The garden falls along the
-      // map's long axis, so a neighbour to one side is up a step and the other
-      // down one. A rise is world height, and this projection sends world
-      // height straight up the screen and nowhere else — the across axis is
-      // level — so adding it to the screen offset is the same picture as
-      // lifting the slab, and it keeps every test below honest about where the
-      // slab actually ends up. Only the sides are ever off the level: up and
-      // down lead to the other row of the same column, which is level ground.
-      at[1] += slab.rise * up[1];
-      if (at[axis] + low < pane[axis][0] || at[axis] + high > pane[axis][1]) continue;
-      if (at[1 - axis] + size[1 - axis][0] < pane[1 - axis][0]
-          || at[1 - axis] + size[1 - axis][1] > pane[1 - axis][1]) continue;
-      placed.push([slab, [0, 1, 2].map((i) => at[0] * across[i] + at[1] * up[i] - BESIDE.depth * back[i])]);
-    }
+    const placed = placeBeside(besides, { turn, aspect, span, look, width: canvas.clientWidth });
     // Each slab's top with the ground's program and then each one's side with
     // the side's, so the page changes program twice and not twice a slab.
+    // The tops mark the stencil, which keeps each glyph to the slab it lies on
+    // and so inside that slab's own wandering edge; the shadows clear it again
+    // before they use it.
+    gl.clear(gl.STENCIL_BUFFER_BIT);
+    gl.enable(gl.STENCIL_TEST);
+    gl.stencilFunc(gl.ALWAYS, 2, 0xff);
+    gl.stencilOp(gl.KEEP, gl.KEEP, gl.REPLACE);
     gl.uniform1f(ground.at.opacity, BESIDE.dim);
-    for (const [slab, offset] of placed) {
+    for (const { slab, offset } of placed) {
       gl.uniform3fv(ground.at.offset, offset);
       slab.mesh.draw();
     }
+    gl.disable(gl.STENCIL_TEST);
     gl.useProgram(sideProgram.program);
     gl.uniform1f(sideProgram.at.opacity, BESIDE.dim);
-    for (const [slab, offset] of placed) {
+    for (const { slab, offset } of placed) {
       gl.uniform3fv(sideProgram.at.offset, offset);
       slab.side.draw();
+    }
+    // **The glyphs, over the tops they lie on.** Blended, because the halo
+    // and the strokes' own edges are partly clear; depth-tested against the
+    // slab's top a millimetre under them, and not written, so the plot drawn
+    // next covers a glyph exactly where it covers the slab.
+    const marked = placed.filter((p) => p.glyph);
+    if (marked.length) {
+      gl.useProgram(glyphProgram.program);
+      gl.uniformMatrix4fv(glyphProgram.at.viewProjection, false, viewProjection);
+      gl.uniform1i(glyphProgram.at.glyph, 0);
+      gl.uniform1f(glyphProgram.at.opacity, GLYPH.opacity);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+      gl.depthMask(false);
+      gl.depthFunc(gl.LEQUAL);
+      gl.enable(gl.STENCIL_TEST);
+      gl.stencilFunc(gl.EQUAL, 2, 0xff);
+      gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
+      gl.bindVertexArray(glyphQuad);
+      for (const { slab, offset, glyph } of marked) {
+        gl.uniform3fv(glyphProgram.at.centre, glyph.centre.map((v, i) => v + offset[i]));
+        gl.uniform3fv(glyphProgram.at.across, glyph.across);
+        gl.uniform3fv(glyphProgram.at.toward, glyph.toward);
+        gl.bindTexture(gl.TEXTURE_2D, slab.glyph);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      }
+      gl.bindVertexArray(null);
+      gl.disable(gl.STENCIL_TEST);
+      gl.depthFunc(gl.LESS);
+      gl.depthMask(true);
+      gl.disable(gl.BLEND);
     }
     gl.useProgram(ground.program);
   }
@@ -747,11 +800,15 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   // Built here and once. A turn moves them about the screen and does not
   // change them, so nothing is rebuilt on a turn.
   function beside(theme) {
-    for (const slab of besides) { slab.mesh.release(); slab.side.release(); }
+    for (const slab of besides) { slab.mesh.release(); slab.side.release(); gl.deleteTexture(slab.glyph); }
     besides = areasBeside(theme).map((area) => {
       const built = besideGround(e, area.seed, area.ground);
       return {
         direction: area.direction,
+        way: area.way,
+        // Its glyph, drawn once into a texture: a turn moves where it lies
+        // and not what it is.
+        glyph: glyphTexture(gl, area.glyph),
         // The terrace, at the slab's own size: a neighbour drawn half a plot
         // across stands half a step higher, or the ground would disagree with
         // itself about how far away it is.
@@ -1526,6 +1583,274 @@ function raiseBeds(e, vertex, outline, span) {
   }
 }
 
+// **Where the slabs beside the plot stand, whether each is drawn, and where
+// its glyph lies on it.** Outside the stage and without GL, so that
+// `tools/reference/check_gateways.mjs` can hold it to the map at every turn;
+// the stage draws what this answers.
+//
+// `slabs` are anything with `areasBeside`'s `way` and a `rise` at the slab's
+// size; `turn`, `aspect`, `span` and `look` are the stage's own, and `width`
+// is how many CSS pixels wide the canvas is. Each answer is `{ slab, at,
+// offset, glyph }`: `at` where the slab's middle is on the screen against the
+// plot's, in metres across and up; `offset` that as a place in the world; and
+// `glyph` where its glyph lies on its top, or null (`fitGlyph`).
+//
+// In metres across the screen and up it, the window's own frame and the one
+// `frame` answers in, turned into a place in the world at the very end:
+// on an orthographic projection an offset along the view's own axes lands
+// exactly where it was asked to. The across axis is level, so a slab sent
+// left or right stays on the plot's own ground plane; one sent up or down is
+// lifted clear of it, which is a thing this projection cannot show and so
+// does not have to be paid for.
+//
+// Where it goes is measured off the plot and not off the window, so it holds
+// its place against the plot's edge as a reader comes closer rather than
+// sliding about the screen with the zoom. What that costs is that one can
+// fall off the edge of the canvas on the way in, and then it is not drawn.
+export function placeBeside(slabs, { turn = 0, aspect = 1, span = 1, look = { zoom: 1, x: 0, y: 0 }, width = Infinity } = {}) {
+  const view = lookAlong(eyeAt(turn));
+  const all = frame(view, aspect, span);
+  // CSS pixels to a metre across the window, for the smallest glyph worth
+  // drawing.
+  const pixels = width / (all.w / look.zoom);
+  const extent = { x: SIDE / 2, z: (SIDE * Math.max(1, Math.floor(span))) / 2 };
+  const plot = corners(view, extent.x, extent.z, -RIM_DEPTH * BESIDE.deepest, 0);
+  const half = (SIDE * BESIDE.scale) / 2;
+  const box = spread(corners(view, half, half, -RIM_DEPTH * BESIDE.deepest * BESIDE.scale, 0));
+  const size = [[box.minX, box.maxX], [box.minY, box.maxY]];
+  const wide = all.w / look.zoom / 2, tall = all.h / look.zoom / 2;
+  const pane = [[all.cx + look.x - wide, all.cx + look.x + wide],
+                [all.cy + look.y - tall, all.cy + look.y + tall]];
+  const { x: across, y: up, z: back } = axes(view);
+  // The plot as the screen has it, for keeping each glyph clear of it.
+  const outline = convexHull(plot);
+
+  const placed = [];
+  for (const slab of slabs) {
+    // Which axis — across, then up — and which end of it.
+    const axis = slab.way[0] !== 0 ? 0 : 1;
+    const sign = slab.way[axis];
+    const [low, high] = size[axis];
+    const [near, far] = sign > 0 ? [low, high] : [high, low];
+    // How far the plot comes this way, over the band of screen the slab
+    // stands in rather than corner to corner (`reachOver`).
+    const band = reachOver(plot, 1 - axis, size[1 - axis][0], size[1 - axis][1]);
+    const reach = sign > 0 ? band.max : band.min;
+    const at = [0, 0];
+    // **Its near edge sits `lap` inside the plot's**, and the plot, being
+    // nearer, hides that much of it. There is no sky to share out and no
+    // distance to choose — except that the canvas can insist: a slab goes as
+    // far out as there is room for and no further out than `lap` says, so on
+    // a phone, where a plot fills all but a few per cent of the width, the
+    // ones to the side lap further and show a wedge rather than nothing.
+    at[axis] = reach - sign * (axis === 1 && sign < 0 ? BESIDE.lapBelow : BESIDE.lap) - near;
+    const most = pane[axis][sign > 0 ? 1 : 0] - far;
+    if (sign * (at[axis] - most) > 0) at[axis] = most;
+    // **And enough of it must still come out the other side.** A slab and
+    // the plot are the same shape at the same attitude, so their edges on
+    // the screen are parallel and what shows past the plot is a strip of one
+    // width all along — which makes this a straight subtraction, the slab's
+    // own reach less the lap, and constant for a given direction. It can
+    // still fail: a slab is shorter across the screen than up it on this
+    // projection, so a lap that leaves a margin sideways can swallow one
+    // whole going up.
+    const shows = sign * (at[axis] + far - reach);
+    if (shows < BESIDE.least) continue;
+    // **Whole on the canvas, on both axes, or not drawn at all** — because
+    // the edge of a canvas is a straight line and this garden has none of
+    // those. With nothing to spare: the line above has already pulled it in
+    // as far as it will go, and a margin on top of that would refuse the
+    // slab below the plot the sky `UNDER` was bought for.
+    // **And then it stands on its own terrace.** The garden falls along the
+    // map's long axis, so a neighbour to one side is up a step and the other
+    // down one. A rise is world height, and this projection sends world
+    // height straight up the screen and nowhere else — the across axis is
+    // level — so adding it to the screen offset is the same picture as
+    // lifting the slab, and it keeps every test below honest about where the
+    // slab actually ends up. Only the sides are ever off the level: up and
+    // down lead to the other row of the same column, which is level ground.
+    at[1] += slab.rise * up[1];
+    if (at[axis] + low < pane[axis][0] || at[axis] + high > pane[axis][1]) continue;
+    if (at[1 - axis] + size[1 - axis][0] < pane[1 - axis][0]
+        || at[1 - axis] + size[1 - axis][1] > pane[1 - axis][1]) continue;
+    placed.push({
+      slab,
+      at,
+      shows,
+      offset: [0, 1, 2].map((i) => at[0] * across[i] + at[1] * up[i] - BESIDE.depth * back[i]),
+      glyph: fitGlyph(view, at, outline, pixels),
+    });
+  }
+  return placed;
+}
+
+// **Where a gateway's glyph lies on its slab, and how large** (`GLYPH`): at
+// the place on the slab's top with the most room clear of the plot and inside
+// the slab's own edge, as large as fits there up to `most`. Null where that
+// is less than `least` CSS pixels.
+//
+// Looked for over a grid of places on the top rather than solved. What shows
+// of a slab is a band round its far corner, a chevron as wide as the window
+// allows, with its terrace lifting it off the middle; nine by nine places and
+// a halving search for the size at each is a few thousand tests of a box
+// against two convex outlines, while the slabs are drawn at all.
+//
+// The answer is in the slab's own frame, with its top at nought: `centre`,
+// and `across` and `toward` the glyph's half-sides — `across` level along the
+// screen, `toward` level and running away up it, so the glyph is upright on
+// the screen, as the map draws it, and foreshortened as the ground is.
+function fitGlyph(view, at, outline, pixels) {
+  const { x: across, y: up } = axes(view);
+  let toward = normalise3([-across[2], 0, across[0]]);
+  if (dot3(toward, up) < 0) toward = toward.map((v) => -v);
+  // How much of a metre along `toward` shows up the screen.
+  const short = dot3(toward, up);
+  const onScreen = (p) => [dot3(p, across) + at[0], dot3(p, up) + at[1]];
+  const edge = (SIDE * BESIDE.scale) / 2 - GLYPH.inset;
+  const top = [[-edge, -edge], [edge, -edge], [edge, edge], [-edge, edge]].map(([x, z]) => onScreen([x, 0, z]));
+  // The square drawn is the glyph's twenty units with `pad` all round, and it
+  // is that square which has to fit.
+  const padded = (20 + 2 * GLYPH.pad) / 20;
+  const largest = (GLYPH.most / 2) * padded;
+  const fits = (c, h) => {
+    const hy = h * short;
+    const box = [[c[0] - h, c[1] - hy], [c[0] + h, c[1] - hy], [c[0] + h, c[1] + hy], [c[0] - h, c[1] + hy]];
+    return box.every((p) => inside(top, p)) && apart(outline, box, GLYPH.clear);
+  };
+  // How much room there is at one place on the top: a halving search.
+  const roomAt = (local) => {
+    const c = onScreen(local);
+    if (!fits(c, 0)) return -1;
+    let lo = 0, hi = 2 * largest;
+    for (let k = 0; k < 12; k++) {
+      const mid = (lo + hi) / 2;
+      if (fits(c, mid)) lo = mid; else hi = mid;
+    }
+    return lo;
+  };
+  // Nine by nine over the top, and then three rounds of five by five round
+  // the best, each half as far apart: what shows is a narrow band, and the
+  // best place in it is seldom on the first grid.
+  let best = null;
+  let spacing = (2 * edge) / 8;
+  const look = (cx, cz, count) => {
+    for (let i = 0; i < count; i++) {
+      for (let j = 0; j < count; j++) {
+        const x = cx + (i - (count - 1) / 2) * spacing, z = cz + (j - (count - 1) / 2) * spacing;
+        if (Math.abs(x) > edge || Math.abs(z) > edge) continue;
+        const room = roomAt([x, 0, z]);
+        if (room >= 0 && (!best || room > best.room)) best = { local: [x, 0, z], room };
+      }
+    }
+  };
+  look(0, 0, 9);
+  for (let round = 0; round < 3 && best; round++) {
+    spacing /= 2;
+    look(best.local[0], best.local[2], 5);
+  }
+  if (!best) return null;
+  const h = Math.min(best.room, largest);
+  const width = (2 * h) / padded;
+  if (width * pixels < GLYPH.least) return null;
+  return {
+    centre: [best.local[0], GLYPH.lift, best.local[2]],
+    across: across.map((v) => v * h),
+    toward: toward.map((v) => v * h),
+    width,
+  };
+}
+
+// Whether `p` is inside the convex polygon `points`, either way round.
+function inside(points, p) {
+  let sign = 0;
+  for (let i = 0; i < points.length; i++) {
+    const a = points[i], b = points[(i + 1) % points.length];
+    const turn = (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0]);
+    if (Math.abs(turn) < 1e-12) continue;
+    if (sign === 0) sign = Math.sign(turn);
+    else if (Math.sign(turn) !== sign) return false;
+  }
+  return true;
+}
+
+// Whether two convex outlines on the screen are at least `gap` apart: some
+// axis — either screen axis or square to an edge of `a` — on which they do
+// not come within `gap` of each other. `b` is a box, so its own edges are
+// the screen's axes and need no others.
+function apart(a, b, gap) {
+  const tries = [[1, 0], [0, 1]];
+  for (let i = 0; i < a.length; i++) {
+    const p = a[i], q = a[(i + 1) % a.length];
+    const length = Math.hypot(q[0] - p[0], q[1] - p[1]);
+    if (length > 1e-9) tries.push([(q[1] - p[1]) / length, -(q[0] - p[0]) / length]);
+  }
+  for (const [nx, ny] of tries) {
+    const along = (points) => points.map(([x, y]) => x * nx + y * ny);
+    const one = along(a), other = along(b);
+    if (Math.min(...other) > Math.max(...one) + gap || Math.min(...one) > Math.max(...other) + gap) return true;
+  }
+  return false;
+}
+
+// The convex hull of points on the screen, round in one direction.
+function convexHull(points) {
+  const sorted = [...points].sort((p, q) => p[0] - q[0] || p[1] - q[1]);
+  const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const lower = [], upper = [];
+  for (const p of sorted) {
+    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) lower.pop();
+    lower.push(p);
+  }
+  for (const p of [...sorted].reverse()) {
+    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) upper.pop();
+    upper.push(p);
+  }
+  return [...lower.slice(0, -1), ...upper.slice(0, -1)];
+}
+
+// **A glyph drawn once into a texture**: the twenty-unit square `LOOK` draws
+// it on, with `GLYPH.pad` all round for the halo, stroked as the map's cell
+// strokes it — monoline, round ends — first in the halo and then the ink. A
+// dot on the map is a stroke of no length, which a round cap draws as a dot;
+// a canvas need not, so each is given a thousandth of a unit here and every
+// engine draws the same dot.
+function glyphTexture(gl, d) {
+  const side = 256;
+  const scale = side / (20 + 2 * GLYPH.pad);
+  const canvas = document.createElement('canvas');
+  canvas.width = side;
+  canvas.height = side;
+  const c = canvas.getContext('2d');
+  c.setTransform(scale, 0, 0, scale, GLYPH.pad * scale, GLYPH.pad * scale);
+  const path = new Path2D(d.replace(/h0(?![\d.])/g, 'h0.001'));
+  c.lineCap = 'round';
+  c.lineJoin = 'round';
+  for (const { width, colour } of [GLYPH.halo, GLYPH.ink]) {
+    c.lineWidth = width;
+    c.strokeStyle = colour;
+    c.stroke(path);
+  }
+  const texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+  gl.generateMipmap(gl.TEXTURE_2D);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  // Lying on the ground, it is seen at a slant, and a slant is what
+  // anisotropic filtering is for: without it the strokes running across the
+  // screen blur first.
+  const slant = gl.getExtension('EXT_texture_filter_anisotropic');
+  if (slant) {
+    gl.texParameterf(gl.TEXTURE_2D, slant.TEXTURE_MAX_ANISOTROPY_EXT,
+                     Math.min(4, gl.getParameter(slant.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));
+  }
+  return texture;
+}
+
 // **A slab of the next area's ground, with nothing standing on it.**
 //
 // Grown the way an area's own builder grows its floor — the same `Organic`
@@ -1752,6 +2077,13 @@ function withPieces(gl, p, mesh, pieces, which) {
   };
 }
 
+// The camera looks down (1, 1, 1), turned in quarter turns about the plot.
+export function eyeAt(turn) {
+  const angle = turn * Math.PI / 2;
+  const c = Math.cos(angle), s = Math.sin(angle);
+  return [c + s, 1, -s + c].map((v) => v / Math.sqrt(3));
+}
+
 // A view looking along -direction at the plot's middle, y up.
 function lookAlong(direction) {
   const z = direction;
@@ -1772,7 +2104,18 @@ function frame(view, aspect, span) {
     spread(corners(view, SIDE / 2, (SIDE * span) / 2, -RIM_DEPTH - UNDER, 2.3));
   const margin = 1.06;
   const contentW = (maxX - minX) * margin, contentH = (maxY - minY) * margin;
-  let w = contentW, hgt = contentH;
+  // **Sky at each side for the gateways there**, at least `BESIDE.room` past
+  // the plot over the band a side slab stands in (10 October 2026). Only a
+  // window about as tall as it is wide — a phone's — is ever short of it: a
+  // wide one is fitted to the plot's height and has sky to spare. Fitted to
+  // the plot alone, a phone left 0.7 m at each side, which showed a wedge of
+  // the area beside and no room on it for its glyph; this is the window a
+  // little wider there, and nothing else. The look's `content` is not
+  // widened, so a reader closer in cannot pan out into it.
+  const plot = corners(view, SIDE / 2, (SIDE * Math.max(1, Math.floor(span))) / 2, -RIM_DEPTH * BESIDE.deepest, 0);
+  const slab = spread(corners(view, SIDE * BESIDE.scale / 2, SIDE * BESIDE.scale / 2, -RIM_DEPTH * BESIDE.deepest * BESIDE.scale, 0));
+  const band = reachOver(plot, 1, slab.minY, slab.maxY);
+  let w = Math.max(contentW, 2 * (Math.max(band.max, -band.min) + BESIDE.room)), hgt = contentH;
   if (w / hgt > aspect) hgt = w / aspect; else w = hgt * aspect;
   const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
   return { cx, cy, w, h: hgt, content: { w: contentW, h: contentH } };
