@@ -22,6 +22,10 @@ struct PeaceGardenApp: App {
             RootView()
                 .environment(model)
                 .environment(place)
+                // The loading animation, over the app as it opens — and nothing
+                // when `loading.style.v1` is `off`, or Reduce Motion is on. Above
+                // the colour scheme so that it inherits it. See `LaunchMoment`.
+                .overlay { LaunchMomentHost() }
                 .preferredColorScheme(appearance.colorScheme)
                 .statusBarHidden()
                 // A seed can arrive from anywhere: a scanned code, a message,

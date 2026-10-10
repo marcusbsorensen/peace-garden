@@ -184,6 +184,8 @@ struct WildBesideView: View {
             .opacity(working ? 0.4 : 1)
             .allowsHitTesting(!working)
             .animation(Chrome.fadeIn, value: working)
+            // Dimmed and dead while the request is out; see `ShowInGardenView`.
+            .busyMark(working)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

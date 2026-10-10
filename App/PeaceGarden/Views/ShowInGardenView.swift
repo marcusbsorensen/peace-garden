@@ -197,6 +197,10 @@ struct ShowInGardenView: View {
             .opacity(working ? 0.4 : 1)
             .allowsHitTesting(!working)
             .animation(Chrome.fadeIn, value: working)
+            // The request can be out for up to twenty seconds and the buttons
+            // only dimmed, which is a screen that has stopped answering and does
+            // not say why. After 400 ms, the waiting mark.
+            .busyMark(working)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
