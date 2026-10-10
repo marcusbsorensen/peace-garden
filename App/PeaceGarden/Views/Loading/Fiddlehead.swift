@@ -42,10 +42,13 @@ enum Fiddlehead {
     }
 
     /// Drawn in a 100 × 130 frame and fitted to its own ink, so these are
-    /// proportions and not sizes. **`taper` is 3.0 where the backdrop's is 5.5.**
-    /// At the backdrop's value the stem is a ruler for two thirds of its length,
-    /// which is fine as a ghost the height of a screen and wrong for a mark: a
-    /// straight stem is the one thing this app does not draw.
+    /// proportions and not sizes. **`taper` is 3.0 where the backdrop's is 5.5,
+    /// and the stem sways.** At the backdrop's value the stem is a ruler for two
+    /// thirds of its length, which is fine as a ghost the height of a screen and
+    /// wrong for a mark: a straight stem is the one thing this app does not draw.
+    /// At 3.0 the base was still within three degrees of straight for a third of
+    /// its length, so it leans the other way a little on the way up and comes back
+    /// (`LoadingTests.testNeitherDrawingHasAStraightRun`).
     static let plan = Plan(length: 0.82, taper: 3.0, turnOpen: 0.7, turnFurled: 2.7,
                            rootX: 0.68, rootY: 1.0, hand: -1, bract: 0.24, sway: 0.2)
 

@@ -23,7 +23,9 @@ import UIKit
 /// of UnCubed's choice and deliberate. UnCubed withholds its root so that nothing
 /// behind the splash can claim a one-off while nobody can see it; here the point
 /// of the moment is the first frame of the stage — Metal compiling the plant's
-/// shaders — happening *behind* it and not after it. What could claim a one-off
+/// shaders — happening *behind* it and not after it. (That the hitch is gone is
+/// the intention and has not been measured: not on a device, and the
+/// simulator's GPU would say nothing true.) What could claim a one-off
 /// early is `RootView`'s `hearNext()`, which may raise a sheet for a released
 /// plant. That sheet is presented above this overlay, so in that one case the
 /// moment is covered rather than the sheet delayed. Recorded as the known edge.
@@ -94,7 +96,7 @@ struct LaunchMoment: View {
             UnwindingMarkView(pose: UnwindingMark.pose(atMoment: t), dress: .brand)
         case .frond:
             // Gold on the dark ground, as the backdrop's; on the light ground gold
-            // would be 1.9:1, so the app's ink carries the line and the gold stays
+            // would be 1.8:1, so the app's ink carries the line and the gold stays
             // as the halo it sits in.
             FiddleheadView(pose: Fiddlehead.pose(atMoment: t),
                            ink: colorScheme == .dark ? Fiddlehead.gold.opacity(0.95) : Chrome.ink.opacity(0.8),
