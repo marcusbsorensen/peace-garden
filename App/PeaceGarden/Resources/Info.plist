@@ -22,10 +22,17 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<!-- Variant A's launch screen, and the one change that cannot sit behind
+	     the loading switch: the suite's ground, `#0D0D1F`, the same value in both
+	     appearances, so the loading moment's ground is the colour iOS has already
+	     been painting since the icon was tapped. Left empty it is white on a
+	     phone in light appearance and the moment rises out of white. Revert this
+	     and `LaunchGround.colorset` together if variant B is chosen, whose ground
+	     is the app's own. -->
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
-		<string></string>
+		<string>LaunchGround</string>
 	</dict>
 	<key>UIUserInterfaceStyle</key>
 	<string>Automatic</string>
