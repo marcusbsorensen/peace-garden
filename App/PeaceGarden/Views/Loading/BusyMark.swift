@@ -1,50 +1,52 @@
 import SwiftUI
 
-/// **The waiting mark: the same drawing as the launch moment, small, repeating,
-/// for a wait the person started.**
+/// **The waiting mark: the same fiddlehead as the launch moment, smaller, for a
+/// wait the person started.**
 ///
 /// UnCubed is the one suite app with a counterpart (`BusyMark`, `CheckingRing`),
 /// and what it settled is what this takes: show nothing for the first 400 ms; draw
 /// a mark in the app's own idiom that is *built and rebuilt* rather than a
-/// spinner; keep it small and in ink; and under Reduce Motion keep the statement
-/// and lose the movement — the same drawing, held still.
+/// spinner; keep it small; and under Reduce Motion keep the statement and lose the
+/// movement — the same drawing, held still.
 ///
-/// **In ink, not in the arc's colours, in both variants.** UnCubed's brand rule
-/// is that the arc's values are on the mark's own stroke and nowhere else, and
-/// this app's chrome is white at four opacities with colour reserved for the
-/// plants. The brand dress belongs to the moment, which is on the suite's own
-/// ground. On the app's ground, in either appearance, the mark is one colour.
+/// **A smaller version of the same thing.** The tip comes up out of the soil,
+/// uncurls a little and settles back, over `LoadingTiming.breath`; it never rises
+/// as far as the launch moment's stem or opens as far.
+///
+/// **It follows the app's own appearance** — Marcus's choice on 10 October 2026 —
+/// because it sits inside the app's screens, on the app's ground, and not on the
+/// launch ground. On the dark ground it is the icon's greens and white bract; on
+/// the light ground the same hues solved to 4.5:1 and the app's ink for the leaf
+/// (`Fiddlehead.Palette`), since the icon's own values would be 1.4:1 there.
 struct LoadingBusyMark: View {
 
-    let style: LoadingStyle
+    /// The mark's height; its width follows, the soil being wider than the stem.
     var size: CGFloat = 40
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorScheme) private var colorScheme
     @State private var startedAt = Date()
 
+    /// The frame it is drawn in: wider than tall, because the soil is.
+    static func frame(forSize size: CGFloat) -> CGSize {
+        CGSize(width: size * 2.1, height: size * 1.6)
+    }
+
     var body: some View {
-        switch style {
-        case .off:
-            EmptyView()
-        case .unwinding:
-            TimelineView(.animation(paused: reduceMotion)) { timeline in
-                UnwindingMarkView(pose: pose(UnwindingMark.pose(atBreath:), still: UnwindingMark.still, at: timeline.date),
-                                  dress: .ink(Chrome.ink))
-                    .frame(width: size, height: size)
-            }
-        case .frond:
-            TimelineView(.animation(paused: reduceMotion)) { timeline in
-                FiddleheadView(pose: pose(Fiddlehead.pose(atBreath:), still: Fiddlehead.still, at: timeline.date),
-                               ink: Chrome.ink.opacity(0.85), weight: 1.5, halo: 0)
-                    .frame(width: size * 0.8, height: size)
-            }
+        TimelineView(.animation(paused: reduceMotion)) { timeline in
+            FiddleheadView(pose: pose(at: timeline.date), palette: palette, weight: 1.5, halo: 0)
+                .frame(width: Self.frame(forSize: size).width, height: Self.frame(forSize: size).height)
         }
     }
 
-    /// Which pose to draw: the breath at this instant, or the still one.
-    private func pose<P>(_ breathing: (Double) -> P, still: P, at date: Date) -> P {
-        guard !reduceMotion else { return still }
-        return breathing(LoadingTiming.breathPhase(elapsed: date.timeIntervalSince(startedAt)))
+    private var palette: Fiddlehead.Palette {
+        (colorScheme == .dark ? Fiddlehead.Palette.onDark : Fiddlehead.Palette.onLight).small
+    }
+
+    /// The breath at this instant, or the still pose when motion is off.
+    private func pose(at date: Date) -> Fiddlehead.Pose {
+        guard !reduceMotion else { return Fiddlehead.still }
+        return Fiddlehead.pose(atBreath: LoadingTiming.breathPhase(elapsed: date.timeIntervalSince(startedAt)))
     }
 }
 
@@ -57,14 +59,13 @@ struct LoadingBusyMark: View {
 private struct BusyMarkModifier: ViewModifier {
 
     let isBusy: Bool
-    let style: LoadingStyle
     @State private var showing = false
 
     func body(content: Content) -> some View {
         content
             .overlay {
                 if showing {
-                    LoadingBusyMark(style: style)
+                    LoadingBusyMark()
                         .transition(.opacity)
                         .allowsHitTesting(false)
                 }
@@ -86,6 +87,6 @@ extension View {
     /// The waiting mark, after the threshold. Nothing at all while the switch
     /// says `off`, which is the app exactly as it was.
     func busyMark(_ isBusy: Bool, style: LoadingStyle = LoadingSwitch.style()) -> some View {
-        modifier(BusyMarkModifier(isBusy: isBusy && style != .off, style: style))
+        modifier(BusyMarkModifier(isBusy: isBusy && style != .off))
     }
 }

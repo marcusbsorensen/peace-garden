@@ -1,8 +1,8 @@
 import SwiftUI
 import UIKit
 
-/// **The launch moment: the chosen loading animation, played once over the app
-/// as it opens.**
+/// **The launch moment: the fiddlehead growing up out of the ground, played once
+/// over the app as it opens.**
 ///
 /// Everything about *how* it behaves is the Interfulgent pattern, and the sources
 /// are named so that none of it is this file's invention:
@@ -19,22 +19,25 @@ import UIKit
 /// - **Reduce Motion gets nothing at all** (all three): not a shorter moment. A
 ///   120 ms curtain would still be a curtain. See `LaunchMomentHost`.
 ///
+/// **On the suite's dark ground in both appearances** — Marcus's choice on 10
+/// October 2026. The ground is `LaunchGround`, the asset the launch screen is
+/// painted from (`Info.plist`'s `UILaunchScreen`), read here by name rather than
+/// typed again, so that the icon being tapped, the launch screen and the moment
+/// are one colour and cannot drift: the one seam a splash exists to hide.
+///
 /// **It is an overlay and the app is built underneath it**, which is the opposite
 /// of UnCubed's choice and deliberate. UnCubed withholds its root so that nothing
 /// behind the splash can claim a one-off while nobody can see it; here the point
 /// of the moment is the first frame of the stage — Metal compiling the plant's
 /// shaders — happening *behind* it and not after it. (That the hitch is gone is
 /// the intention and has not been measured: not on a device, and the
-/// simulator's GPU would say nothing true.) What could claim a one-off
-/// early is `RootView`'s `hearNext()`, which may raise a sheet for a released
-/// plant. That sheet is presented above this overlay, so in that one case the
-/// moment is covered rather than the sheet delayed. Recorded as the known edge.
+/// simulator's GPU would say nothing true.) What could claim a one-off early is
+/// `RootView`'s `hearNext()`, which may raise a sheet for a released plant. That
+/// sheet is presented above this overlay, so in that one case the moment is
+/// covered rather than the sheet delayed. Recorded as the known edge.
 struct LaunchMoment: View {
 
-    let style: LoadingStyle
     let onGone: () -> Void
-
-    @Environment(\.colorScheme) private var colorScheme
 
     /// Fixed when this is first built, so the first frame drawn is the moment's
     /// first frame.
@@ -43,14 +46,21 @@ struct LaunchMoment: View {
     @State private var fieldOpacity = 1.0
     @State private var isLeaving = false
 
+    /// The ground, by the name the launch screen's plist key uses.
+    static let ground = Color("LaunchGround")
+
     var body: some View {
         GeometryReader { proxy in
-            let frame = Self.markFrame(for: style, short: min(proxy.size.width, proxy.size.height))
+            let frame = Self.markFrame(short: min(proxy.size.width, proxy.size.height))
             ZStack {
-                ground.ignoresSafeArea()
+                Self.ground.ignoresSafeArea()
                 TimelineView(.animation(paused: isLeaving && markOpacity == 0)) { timeline in
                     let t = LoadingTiming.progress(elapsed: timeline.date.timeIntervalSince(startedAt))
-                    mark(at: t)
+                    // The icon's own colours, on the dark ground that is the
+                    // same in both appearances: the contrast is measured against
+                    // `#0D0D1F` and not against whatever the app's ground is.
+                    FiddleheadView(pose: Fiddlehead.pose(atMoment: t), palette: .onDark,
+                                   weight: 1.8, halo: 10)
                         .frame(width: frame.width, height: frame.height)
                 }
                 .opacity(markOpacity)
@@ -65,45 +75,18 @@ struct LaunchMoment: View {
             try? await Task.sleep(for: .seconds(LoadingTiming.moment))
             leave()
         }
-        // Sixty-odd frames of a decoration, with nothing in them for VoiceOver to
+        // Two seconds of a decoration, with nothing in it for VoiceOver to
         // say. Its focus belongs on the app that is about to be there.
         .accessibilityHidden(true)
     }
 
-    /// **How big the mark is, from the shorter side of the screen.** Not typed per
-    /// device: 46 % of the short side, capped at 320 pt so an iPad does not get a
-    /// poster. The frond is a tall thin drawing and is given a taller frame, so
-    /// that its hairline and its leaf are as present as the coil is.
-    static func markFrame(for style: LoadingStyle, short: CGFloat) -> CGSize {
+    /// **How big the drawing is, from the shorter side of the screen.** Not typed
+    /// per device: 46 % of the short side, capped at 320 pt so an iPad does not get
+    /// a poster, and wider than it is tall because the soil it comes up out of is
+    /// wider than the stem is.
+    static func markFrame(short: CGFloat) -> CGSize {
         let side = min(short * 0.46, 320)
-        switch style {
-        case .frond: return CGSize(width: side * 0.9, height: side * 1.25)
-        case .unwinding, .off: return CGSize(width: side, height: side)
-        }
-    }
-
-    private var ground: Color {
-        switch style {
-        case .unwinding: return UnwindingMark.ground
-        case .frond, .off: return Chrome.ground
-        }
-    }
-
-    @ViewBuilder
-    private func mark(at t: Double) -> some View {
-        switch style {
-        case .unwinding:
-            UnwindingMarkView(pose: UnwindingMark.pose(atMoment: t), dress: .brand)
-        case .frond:
-            // Gold on the dark ground, as the backdrop's; on the light ground gold
-            // would be 1.8:1, so the app's ink carries the line and the gold stays
-            // as the halo it sits in.
-            FiddleheadView(pose: Fiddlehead.pose(atMoment: t),
-                           ink: colorScheme == .dark ? Fiddlehead.gold.opacity(0.95) : Chrome.ink.opacity(0.8),
-                           weight: 1.8, halo: 10)
-        case .off:
-            EmptyView()
-        }
+        return CGSize(width: side * 1.6, height: side * 1.25)
     }
 
     /// One place the moment begins to go, so a touch and the clock arriving in
@@ -127,10 +110,8 @@ struct LaunchMoment: View {
 struct LaunchMomentHost: View {
 
     @State private var shown: Bool
-    private let style: LoadingStyle
 
     init(style: LoadingStyle = LoadingSwitch.style()) {
-        self.style = style
         let plays = Self.plays(style: style, reduceMotion: UIAccessibility.isReduceMotionEnabled,
                                alreadyPlayed: LaunchMomentLedger.played)
         _shown = State(initialValue: plays)
@@ -139,7 +120,7 @@ struct LaunchMomentHost: View {
 
     var body: some View {
         if shown {
-            LaunchMoment(style: style) { shown = false }
+            LaunchMoment { shown = false }
         }
     }
 

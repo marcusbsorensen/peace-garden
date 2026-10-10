@@ -1,45 +1,120 @@
 # A loading animation for Peace Garden — 10 October 2026
 
-Two variants, drawn and wired, for Marcus to choose between from the pictures in
-this folder. **Variant A is recommended.** Nothing is merged to `main`; the work is
-on branch `worktree-agent-a944b9f3f00872bf1`.
+The app now carries **one** loading animation: a fiddlehead that grows up out of
+the ground while its coil lets go and a leaf opens at the top, in the app's own
+colours. Marcus chose it on 10 October 2026 from two variants. Nothing is merged to
+`main`; the work is on branch `worktree-agent-a944b9f3f00872bf1`.
 
-| | A — the mark unwinds (recommended) | B — the fiddlehead |
+## Decided — Marcus, 10 October 2026
+
+1. **Variant B, the fiddlehead, "but in the app's colours".** The gold is gone. The
+   stem carries the icon's three greens from root to tip (forest green, lime,
+   yellow: `tools/icon/icon.svg`, `docs/BRAND.md`), the leaf is the icon's white
+   bract, and the soil line is the app's own white at about its hairline opacity (0.34; `Chrome.hairline` is 0.24). The
+   hairline weight and the no-straight-lines rule stay. `frond` is the default
+   style, and variant A's code and tests are removed; its pictures stay in this
+   folder for the record (last section).
+2. **2.0 s** for the launch moment, as FlagFans.
+3. **Launch ground `#0D0D1F` in both appearances.** Commit `19d3e7b` (the colour set
+   and the plist key) is kept. The moment is drawn on that same colour, read from
+   the same asset by name, so the tap, the launch screen and the moment are one
+   colour.
+4. **The waiting mark** (web-garden request screens) is the same fiddlehead in the
+   app's colours, and it **follows the app's own light and dark**, because it sits
+   inside the app's screens.
+5. **The exchange screen's `BreathingDot` is left as it is.**
+6. **Reduce Motion:** no launch moment, and a still waiting mark, as the suite does.
+7. **The first garden draw is not wired.** See the follow-up note below.
+
+**And one more, the same day: it must grow up out of the ground while it
+unfurls.** At the start it is a small curled tip just breaking the soil. Over the
+2.0 s the stem lengthens upward while the crozier uncoils, so the leaf opens at
+the top as the top arrives. Rising and unfurling overlap and are not two steps
+(`LoadingTests.testRisingAndUnfurlingOverlap` holds them to it: by the time the
+stem is half risen the coil is already letting go, and the two halves land within a
+tenth of the moment of each other). The ground is a gentle, organic swell of
+soil, not a horizon: a mound where the stem comes up and a few quiet waves either
+side, faded out at both ends so it has no edge. The waiting mark is a smaller
+version: the tip emerges, uncurls a little, and settles back as it breathes.
+
+## What it is now
+
+| | Launch moment | Waiting mark |
 | --- | --- | --- |
-| What it is | The app's own mark, furled, lets go of its coil; the white bract opens like a bud; one band of light crosses it once; it rests on the exact icon drawing | The garden's own gesture, alone: a gold hairline stem lets go of its curl and a leaf opens at the tip |
-| Ground | `#0D0D1F`, the suite's, in both appearances | The app's own ground, following light and dark |
-| Colour | The mark's own: forest green, lime, yellow, white bract | Gold hairline (the backdrop's gold in the dark, the app's ink in the light) |
-| Launch moment | 1.2 s, then the suite's 120 ms / 180 ms hand-over | 1.2 s, then the same hand-over |
-| Waiting mark | The coil breathing, in the app's ink, 2.4 s | The frond breathing, in the app's ink, 2.4 s |
-| Needs | A launch screen of `#0D0D1F`, to be seamless (question 3) | Nothing |
-| Code | `App/PeaceGarden/Views/Loading/UnwindingMark.swift`, `UnwindingMarkGeometry.swift` | `App/PeaceGarden/Views/Loading/Fiddlehead.swift` |
+| Where | Over the app as it opens (`PeaceGardenApp`), the app built underneath | Over `ShowInGardenView` and `WildBesideView` while a request is out, after 400 ms |
+| Length | 2.0 s, then the suite's 120 ms (mark) and 180 ms (ground) hand-over | One breath of 2.4 s, repeating |
+| Ground | `LaunchGround`, `#0D0D1F`, in both appearances | The app's own: black, or the light stage |
+| Colour | Icon greens root to tip, white bract, white soil line | Dark: the same. Light: the same three hues solved to 4.5:1, and the app's ink for the leaf |
+| Motion | The stem grows from the soil while the coil lets go and the leaf opens | The tip comes up, uncurls a little, settles back |
+| Reduce Motion | None at all | The mark held still, standing and half open |
+| Code | `App/PeaceGarden/Views/Loading/LaunchMoment.swift` | `App/PeaceGarden/Views/Loading/BusyMark.swift` |
+
+The drawing is `Fiddlehead.swift`; the clocks and the switch are
+`LoadingTiming.swift`.
+
+### Colour, and whether it can be read
+
+| Surface | Stem | Leaf | Measured |
+| --- | --- | --- | --- |
+| Launch moment, on `#0D0D1F` | `#06F556` → `#55F306` → `#DCDC06`, the icon's | `#FFFFFF`, the icon's bract | 13.0:1 for each stop (isoluminant by construction), 19.2:1 for the leaf |
+| Waiting mark, dark appearance (app ground black) | the same | the same | further from black than from `#0D0D1F`, so higher |
+| Waiting mark, light appearance (`Chrome.ground` 0.965) | `#03842E` → `#2E8203` → `#757503`: the same hues, lightness solved per hue to 4.5:1 by `make_icon.py`'s own method | `Chrome.ink`, 0.07 white | 4.5:1 for each stop, about 17:1 for the leaf. The icon's own yellow is 1.4:1 here |
+
+The cost of the light palette is stated rather than hidden: solved to 4.5:1 the
+yellow becomes an olive, which `tools/icon/make_icon.py`'s notes record at 9.1:1
+too. `LoadingTests.testTheLaunchMomentIsLegibleOnTheLaunchGround` and
+`testTheWaitingMarkIsLegibleOnTheLightGround` hold both.
 
 ## The pictures
 
-Each is a crop of frames the shipped SwiftUI views drew (`ImageRenderer`, in
-`LoadingTests.testWriteTheLoadingFrames`), at 30 frames a second, over the app's own
-`StageBackdrop` and a grown plant so that the hand-over is seen against what it
-hands over to. In every filmstrip the top row is the dark appearance and the bottom
-row the light.
+All of these are crops of frames the shipped SwiftUI views drew (`ImageRenderer`,
+`LoadingTests.testWriteTheLoadingFrames`) at 30 frames a second, over the app's own
+`StageBackdrop` and a grown plant, so that the hand-over is seen against what it
+hands over to.
 
-| | A | B |
-| --- | --- | --- |
-| **Launch, twelve frames** (the 1.2 s moment, then the hand-over) | ![](a-launch-filmstrip.png) | ![](b-launch-filmstrip.png) |
-| **Launch, moving**, dark beside light | [`a-launch.gif`](a-launch.gif) · [`a-launch.mp4`](a-launch.mp4) | [`b-launch.gif`](b-launch.gif) · [`b-launch.mp4`](b-launch.mp4) |
-| **The waiting mark, one 2.4 s breath**, over a dimmed screen | ![](a-waiting-filmstrip.png) | ![](b-waiting-filmstrip.png) |
-| **The waiting mark, moving** | [`a-waiting.gif`](a-waiting.gif) · [`a-waiting.mp4`](a-waiting.mp4) | [`b-waiting.gif`](b-waiting.gif) · [`b-waiting.mp4`](b-waiting.mp4) |
+**Launch, twelve frames from 0.10 s to the hand-over at 2.07 s.** The moment is on
+the dark ground in both appearances, so the two rows differ only at the hand-over:
+the dark stage above and the light stage below.
 
-**The resting frames side by side** (A dark, A light, B dark, B light) — what is on
-screen just before the hand-over:
+![](final-launch-filmstrip.png)
 
-![](compare-resting-frames.png)
+Moving, dark stage beside light stage: [`final-launch.gif`](final-launch.gif),
+[`final-launch.mp4`](final-launch.mp4).
 
-**And the real app**, not a render: a cold launch recorded on a scratch iPhone Air
-simulator, from the icon being tapped. Top row A, bottom row B. The first two or
-three frames are iOS's own launch zoom. Moving: [`real-launch-a.mp4`](real-launch-a.mp4),
-[`real-launch-b.mp4`](real-launch-b.mp4).
+**The waiting mark, one 2.4 s breath over a dimmed screen: the light appearance
+above, the dark below.**
 
-![](real-launch-filmstrip.png)
+![](final-waiting-filmstrip.png)
+
+Moving: [`final-waiting.gif`](final-waiting.gif),
+[`final-waiting.mp4`](final-waiting.mp4). What Reduce Motion gets, light then dark:
+
+![](final-waiting-reduce-motion.png)
+
+**And the real app, not a render:** a cold launch of the default build on a new
+scratch iPhone Air simulator (since deleted), from the icon being tapped. The first
+frame is iOS's own launch zoom, on `#0D0D1F`; the 2.0 s is real time.
+
+![](final-real-launch-filmstrip.png)
+
+Moving: [`final-real-launch.mp4`](final-real-launch.mp4).
+
+*A note on checking it.* `simctl io recordVideo` is not a clock. One of my three
+captures showed the moment ending after about a second, and I did not trust it or
+discard it blindly: a debug log of the app's own clock showed the moment running
+2.047 s, screenshots at fixed delays after launch (0.6, 1.2, 1.6, 1.9 s) showed the
+stem at the poses the clock gives, and a second capture on a quiet machine showed
+2.0 s visible. That capture is the one used.
+
+## Follow-up: the first garden draw — measure on a device first
+
+Not wired, as decided. `GardenSprites.sprite(…)` renders every plant through an
+`SCNView` snapshot on the main actor, twice per plant, and caches 120, so on the
+first open of the garden plants arrive as each render finishes. Holding the plot's
+own ground behind one waiting mark until the first row is in is the likely shape of
+a fix, but nobody has measured how long the first draw actually takes. The
+simulator's GPU is not the phone's, so a figure from it would mislead. Measure on a
+device first, then decide whether it needs a mark at all, or a faster draw.
 
 ## 1. What the suite does (read from the three apps; nothing in them changed)
 
@@ -64,14 +139,15 @@ three frames are iOS's own launch zoom. Moving: [`real-launch-a.mp4`](real-launc
 - FlagFans — `flagfans/src/components/LaunchSplash.tsx`; `docs/design/launch-screen/ff-launch-mockup-approved-2026-10-09.html` and its frames; `capacitor.config.ts` (the native launch image is the same ground).
 - Brand — `uncubed-integration/docs/design/suite-brand.md` §3 (one ground, one stroke, one gradient, the hue allocation, Peace Garden's 140° to 60° segment) says nothing about loading. `interfulgent-hub` has no loading or motion rule. The two frames folders (`uncubed-entry-animation-frames`, `uncubed-arrowfit-frames`) are review stills for the cube entry and the arrow fit, not loading assets; they show the working method this folder follows, which is deciding from renders.
 
-**What Peace Garden takes and what it leaves.** It takes the whole of the shared
-column, and from UnCubed the waiting mark with its 400 ms threshold. It leaves the
-launch work (it has none to await), FlagFans's status line and footer (words, and
-forty-two translations each), and every colour that is not its own. Its own are the
-drawing, the length (the app's own 1.2 s for one arrival, from
-`design/Motion.dc.html`, as UnCubed took 0.6 s from its `m-turn`) and the gesture:
-`design/Motion.dc.html` says *a tendril opens by its curvature falling away, and
-trimming a fixed spiral reads as a line being drawn on*, so nothing is drawn on.
+**What Peace Garden takes and what it leaves.** It takes the shared column — the
+dark ground that is also the launch screen's, the hand-over, clock-only phase, any
+touch skips, Reduce Motion meaning nothing — and from UnCubed the waiting mark with
+its 400 ms threshold. It leaves the launch work (it has none to await), FlagFans's
+status line and footer (words, and forty-two translations each), and the band of
+light: the suite's mark is crossed by light because it is a finished mark at rest,
+and this one is something opening, which the app's motion document says is the
+gesture (*a tendril opens by its curvature falling away; trimming a fixed spiral
+reads as a line being drawn on*). The length is FlagFans's, by choice.
 
 ## 2. Where Peace Garden waits
 
@@ -79,47 +155,53 @@ trimming a fixed spiral reads as a line being drawn on*, so nothing is drawn on.
 | --- | --- | --- |
 | **Launch.** `GardenModel()` reads the garden file, then `PlantStageView` builds its SceneKit view | The system's blank launch screen (the plist's `UIColorName` was empty), then the stage | **Yes**: the launch moment, an overlay with the app built underneath it (`PeaceGardenApp`) |
 | **A request to the web garden** (`ShowInGardenView` asking and answering, `WildBesideView`), timeouts 8 s and 20 s | The two buttons dim to 40 % and stop answering, with nothing to say why: UnCubed's *"I could not tell whether my tap had registered"* | **Yes**: the waiting mark after 400 ms, on both screens |
-| **The first draw of the garden.** `GardenSprites.sprite(…)` renders every plant through an `SCNView` snapshot on the main actor, twice per plant, and caches 120 | Plants appear as each render finishes | No. A mark per plant is the wrong shape and `PlotView` is 1,639 lines (question 4) |
+| **The first draw of the garden** | Plants appear as each render finishes | No: follow-up, measure on a device first |
 | **Growing a plant's 3D scene** (`PlantSceneView`) | Black until the first frame | No. Covered at launch only |
-| **An exchange between two phones** | `BreathingDot` and a sentence, while searching and while waiting for the other phone's knock | No. It has a waiting mark already and the sentence is the news (question 5) |
+| **An exchange between two phones** | `BreathingDot` and a sentence | No, left as it is, as decided |
 | **Releasing a plant** (`PlantDetailView`) | A sentence | No. Same reason |
 | **First light** | `BreathingDot`, four lines arriving, `SproutingRule` | No. It is staged to be read, not a wait |
 
-I did not measure any of these on a device, and the simulator's GPU is not the
-phone's, so I have not claimed that the moment removes a hitch from the first
-frame: that is the intention and it is untested.
+I did not measure any of these on a device, so I have not claimed that the moment
+removes a hitch from the first frame: that is the intention and it is untested.
 
 ## 3. How it is built and how it behaves
 
-- **SwiftUI `Canvas`, no dependencies.** The drawing is a port of `tools/icon/make_icon.py` (every dial keeps its name), held to the icon by `LoadingTests.testTheMarkAtRestIsTheIconAtRest`, which pins the mouth of the bract, the tip of the coil, the stroke and the sweep's axis to the numbers in `tools/icon/icon.svg`.
-- **Clock-only.** `TimelineView(.animation)` with a pose that is a pure function of elapsed time (`LoadingTiming.progress`, `UnwindingMark.pose(atMoment:)`). Nothing the app is doing can retarget it.
-- **Light and dark.** A is the suite's dark ground in both, as the three suite apps are, with the mark in its own colours; its waiting form is in the app's ink, because the arc's colours belong on the mark and nowhere else (UnCubed's rule), and the mark's yellow on the app's light ground is 1.4:1. B follows the appearance, in gold on dark and the app's ink on light, because the backdrop's gold on the light ground is 1.8:1.
-- **Reduce Motion.** No launch moment at all, as in all three suite apps. The waiting mark stays and holds still: A as the mark itself, B as the frond half open (`design/Motion.dc.html`: *a tendril rests half open*). The still frames are in the test output, not in this folder.
-- **Organic edges.** No straight line in either drawing: `LoadingTests.testNeitherDrawingHasAStraightRun` measures the total turning in every fifth of the coil, the stem and the bract's spine. It is a test because the stem nearly failed: at the backdrop's taper it is a ruler for two thirds of its length.
-- **No new words.** Nothing is said, so nothing is translated. The waiting mark is hidden from VoiceOver and has no spoken label; UnCubed says *Working it out*, which is a string, so that is left for a decision.
+- **SwiftUI `Canvas`, no dependencies.** `Fiddlehead.figure(open:rise:)` builds the stem and the leaf as points, from `Frond.path(in:)`'s own construction, and `Fiddlehead.draw` strokes them: the stem in a vertical gradient of the icon's greens, the leaf in white, the soil as a fading line and a soft pool.
+- **Grows, not trims.** The stem's arc length is `emerging + (1 − emerging) × rise` of its full length, with `emerging = 0.16`: unlike the backdrop's frond, whose length never changes, this one is longer the higher it has risen, and its root never moves. The turning is measured along it as a fraction of itself, so a short stem is a small tight crozier and a long one is a large open one.
+- **Clock-only.** `TimelineView(.animation)` with a pose that is a pure function of elapsed time (`LoadingTiming.progress`, `Fiddlehead.pose(atMoment:)`). Nothing the app is doing can retarget it.
+- **Reduce Motion.** No launch moment at all, as in all three suite apps. The waiting mark stays and holds still: standing, and a tendril half open (`design/Motion.dc.html`: *a tendril rests half open*).
+- **Organic edges.** No straight line anywhere. `LoadingTests.testTheStemHasNoStraightRun` measures the total turning in every fifth of the stem at nine risings and openings; `testTheSoilIsASwellAndNotAHorizon` holds every 20 units of the soil line at least a third of a unit off its own chord. The stem is a test because it nearly failed: at the backdrop's taper it is a ruler for two thirds of its length.
+- **No new words.** Nothing is said, so nothing is translated. The waiting mark is hidden from VoiceOver and has no spoken label; UnCubed says *Working it out*, which is a string.
 - **Any touch ends the launch moment**, as in the suite. A second window or a reconnecting scene is not a launch: it plays once a process.
-- **The switch.** `loading.style.v1` is `unwinding` (the default, so a build of this branch shows A), `frond` or `off`. `off` is the app exactly as it was. It is a launch argument and not a setting, because a settings row is words: `xcrun simctl launch <device> app.peacegarden -loading.style.v1 frond`, or *Edit Scheme › Arguments* in Xcode.
+- **The switch.** `loading.style.v1` is `frond` (the default) or `off`; `off` is the app exactly as it was. It is a launch argument and not a setting, because a settings row is words: `xcrun simctl launch <device> app.peacegarden -loading.style.v1 off`, or *Edit Scheme › Arguments* in Xcode. A stored `unwinding`, from the first round, reads as the default.
 
 **Known edges.**
 
-- **A begins furled and ends at rest.** The suite's three apps begin with the mark already at rest and bring light over it. A begins from the blank launch screen, where nothing is on screen to be at rest, and arrives the way the app's motion table says things arrive. The last frame is the mark exactly, which is the suite's real requirement.
 - **A sheet can cover it.** `RootView.hearNext()` may raise a sheet for a released plant at launch. A sheet is presented above the overlay, so in that one case the moment is covered rather than the sheet delayed.
-- **The launch screen is cached by iOS.** Changing it is invisible until the app is deleted and the device restarted. It cost me three recordings to find that out: with the colour set, the first three still showed the white launch screen, including one after a reinstall; the fourth, after restarting the simulator, showed `#0D0D1F`.
-- **Variant B with commit `19d3e7b` kept**, and the app set to its light stage (Settings, appearance), would show a dark launch screen and then a light ground. The default is the dark stage, where the step from `#0D0D1F` to black is not visible. Revert the commit with B.
-- **Reduce Motion and a light stage, either variant.** No moment is shown, so with `19d3e7b` kept the launch screen is `#0D0D1F` and the app then arrives on its light ground: a dark flash that today is a white one.
+- **The launch screen is cached by iOS.** Changing it is invisible until the app is deleted and the device restarted. It cost me three recordings in the first round to find that out: with the colour set, the first three still showed the white launch screen, including one after a reinstall; the fourth, after restarting the simulator, showed `#0D0D1F`. On a real phone: delete the app and restart it.
+- **Reduce Motion and the light stage.** No moment is shown, so with the launch screen at `#0D0D1F` the app then arrives on its light ground: a dark flash where today it is a white one. The default stage is dark, where it is invisible.
+- **The leaf is small on the waiting mark.** At 40 pt it is a white or inked lens a few points across: it reads as a leaf in the filmstrip, but it is the first thing to go at a smaller size.
 
-## 4. Decisions for Marcus
+## The first round, kept for the record
 
-Recommendation first in each.
+Two variants were drawn first and are still here as pictures. Their code is not:
+variant A's drawing (the app's own mark unwinding, crossed by one band of light)
+and its tests were removed at Marcus's decision, and the first fiddlehead, in gold
+with no ground, was replaced by the one above. The code of the first round is at
+commit `ada12fe` on this branch, and `make-assets-first-round.py` rebuilt these
+from it.
 
-1. **Which variant?** **A** (the app's own mark, in the suite's own pattern, 1.2 s) · B (the garden's fiddlehead, quieter, no launch-screen change) · neither.
-2. **How long is the launch moment?** **1.2 s**, the app's own length for one arrival · 0.6 s, as UnCubed and Pfish · 2.0 s, as FlagFans. It is every launch; any touch ends it.
-3. **Launch screen ground, if A.** **`#0D0D1F` in both appearances**, as UnCubed and FlagFans do; it is the separate commit `19d3e7b` (a colour set and one plist key), already on this branch · leave it system (white on a light phone, so the moment rises out of white, which I recorded). The cost of the first is in the known edges: a dark launch screen before a light stage when no moment plays.
-4. **The first draw of the garden.** **A follow-up job**: hold the plot's own ground behind one waiting mark until the first row of plants is rendered, instead of plants arriving one at a time; it needs a measurement on a device first, and `PlotView` is large · never · now, in this branch.
-5. **The exchange screen's `BreathingDot`.** **Leave it**: it has a sentence beside it, the sentence is the news, and the dot is the app's own heartbeat · swap it for the waiting mark · swap it only if A is chosen.
-6. **Reduce Motion.** **No launch moment, still waiting mark**, as the suite does · no waiting mark either.
+| | A — the mark unwinds | B — the gold fiddlehead |
+| --- | --- | --- |
+| Launch, twelve frames | `a-launch-filmstrip.png` | `b-launch-filmstrip.png` |
+| Launch, moving | `a-launch.gif`, `a-launch.mp4` | `b-launch.gif`, `b-launch.mp4` |
+| Waiting mark | `a-waiting-filmstrip.png`, `a-waiting.gif`, `a-waiting.mp4` | `b-waiting-filmstrip.png`, `b-waiting.gif`, `b-waiting.mp4` |
+| Resting frames, side by side | `compare-resting-frames.png` | |
+| The real app, cold launch | `real-launch-filmstrip.png`, `real-launch-a.mp4` | `real-launch-b.mp4` |
 
-## 5. Making the pictures again
+The first-round launch was 1.2 s. Everything named `final-` is the current state.
+
+## Making the pictures again
 
 ```
 TEST_RUNNER_PG_RENDER_LOADING=/some/folder xcodebuild test -project PeaceGarden.xcodeproj \
@@ -128,6 +210,7 @@ TEST_RUNNER_PG_RENDER_LOADING=/some/folder xcodebuild test -project PeaceGarden.
 python3 design/loading-2026-10-10/make-assets.py /some/folder
 ```
 
-The seventeen tests in `LoadingTests` run in under three seconds. The real launches
-were recorded with `xcrun simctl io <device> recordVideo` on a freshly created iPhone
-Air, which has since been deleted; the iPhone 17 Pro was not touched.
+The twenty-two tests in `LoadingTests` run in under three seconds; `WildBesideTests`,
+the one existing suite beside the two screens that were edited, was run too. The
+real launch was recorded with `xcrun simctl io <device> recordVideo` on a freshly
+created iPhone Air, which has been deleted; the iPhone 17 Pro was not touched.

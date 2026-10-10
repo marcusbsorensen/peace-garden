@@ -1,26 +1,30 @@
 import SwiftUI
 
-/// **Variant B, drawn: the garden's own fiddlehead lets go of its curl and a leaf
-/// opens at the tip.**
+/// **The loading animation: a fiddlehead grows up out of the ground while its curl
+/// lets go, and a leaf opens at the top as it arrives.**
 ///
-/// Where `UnwindingMark` is the suite's pattern in the app's brand, this is the
-/// app's own idiom with the suite's manners. The gesture is the one
-/// `UnfurlingBackdrop` runs behind the seed-making screens and `SproutingRule`
-/// runs at the ends of a rule — *the coil relaxes, the arc length does not
-/// change, the tip travels because the curl lets go* — drawn once, alone, with a
-/// peace lily's spathe on the end of it as the mark builds it. It is in gold
-/// hairline on the app's own ground and follows the appearance, so it needs no
-/// change to the launch screen and no separate dress.
+/// The gesture is the one `UnfurlingBackdrop` runs behind the seed-making screens
+/// and `SproutingRule` runs at the ends of a rule — *the coil relaxes, the tip
+/// travels because the curl lets go* — drawn once, alone, with a peace lily's
+/// spathe on the end of it as the mark builds it. Marcus chose it on 10 October
+/// 2026 and asked for two things on top of the first drawing:
 ///
-/// What it takes from the suite is the manners: a phase that is a function of the
-/// clock alone, a composed resting state, a hand-over where the drawing leaves
-/// before the ground does, and nothing at all under Reduce Motion.
+/// - **Rising and unfurling overlap; they are not two steps.** It begins as a
+///   small tight curl just breaking the soil and over the moment the stem lengthens
+///   upward while the crozier uncoils, so the leaf is opening at the top as the top
+///   arrives (`pose(atMoment:)`, whose two beats share most of their length).
+/// - **The ground is a gentle swell of soil, not a horizon** (`Soil`): a mound
+///   where the stem comes up and a few quiet waves either side, drawn as a line
+///   that fades out at both ends so that it has no edge.
+///
+/// It is in the app's own colours: the icon's greens along the stem, bottom to
+/// tip, and the icon's white bract for the leaf. See `Palette`.
 ///
 /// **It is not a seed sprouting, deliberately.** That was the obvious subject and
 /// it is already the one performance this app has — `GerminationView`, six
-/// seconds, once, on the day a seed is sown. A cheaper sprout on every launch
-/// would spend that moment, and the mark's own argument (`docs/BRAND.md`, §3.5)
-/// is that the plant is what the app *gives* and not what it is about.
+/// seconds, once, on the day a seed is sown. The mark's own argument
+/// (`docs/BRAND.md`, §3.5) is that the plant is what the app *gives* and not what
+/// it is about; this is the medium the app works in, which is something opening.
 enum Fiddlehead {
 
     /// How the stem leaves and curls. The field names are `Frond.Plan`'s, and the
@@ -54,25 +58,39 @@ enum Fiddlehead {
 
     static let frame = CGSize(width: 100, height: 130)
 
+    /// **How much of the stem is there at `rise == 0`**, as a share of its full
+    /// length: enough that what breaks the soil is a curl and not a dot. The whole
+    /// stem is the same shape at every length — the turning is measured along it as
+    /// a fraction of itself — so a short one is a small tight crozier and a long one
+    /// is a large one, which is how a fiddlehead grows.
+    static let emerging = 0.16
+
     /// What is drawn: the stem as a run of points and the bract as a closed outline.
     struct Figure {
         var stem: [CGPoint]
         var bract: [CGPoint]
     }
 
-    /// The figure at `open`, 0 (furled) to 1 (as open as the plan goes), in the
-    /// 100 × 130 frame.
+    /// The figure, in the 100 × 130 frame, with its root fixed where it leaves the
+    /// ground.
     ///
-    /// **The bract opens with the coil and not after it**, which is the difference
-    /// from the backdrop's. There it is a fixed shape parked on the tip, and when
-    /// the coil is tight it lies across the curl as an outline drawn over an
-    /// outline. Here its width follows `open`, so a furled frond carries a closed
-    /// bud in its curl and an open one carries a leaf.
-    static func figure(open: Double, plan: Plan = Fiddlehead.plan) -> Figure {
+    /// - Parameters:
+    ///   - open: 0 (furled) to 1 (as open as the plan goes).
+    ///   - rise: 0 (the tip just breaking the soil) to 1 (fully grown). The arc
+    ///     length changes with it, so unlike the backdrop's frond this one *does*
+    ///     grow, and the root does not move.
+    ///
+    /// **The bract opens with the coil and not after it.** There it is a fixed
+    /// shape parked on the tip, and when the coil is tight it lies across the curl
+    /// as an outline drawn over an outline. Here it is a bud scaled about its mouth
+    /// by `open`, so a furled frond carries a closed bud in its curl and an open one
+    /// carries a leaf.
+    static func figure(open: Double, rise: Double = 1, plan: Plan = Fiddlehead.plan) -> Figure {
         let held = min(max(open, 0), 1)
+        let grown = emerging + (1 - emerging) * min(max(rise, 0), 1)
         let steps = 130
         let turn = Double.pi * (plan.turnOpen + (plan.turnFurled - plan.turnOpen) * (1 - held))
-        let length = frame.height * plan.length
+        let length = frame.height * plan.length * grown
         let step = length / Double(steps)
 
         var point = CGPoint(x: frame.width * plan.rootX, y: frame.height * plan.rootY)
@@ -90,7 +108,7 @@ enum Fiddlehead {
         // The spathe, leaving on the tangent the stem actually ends on and
         // continuing the same way round — the mark's own construction.
         let ribs = 20
-        let bractLength = frame.height * plan.bract
+        let bractLength = frame.height * plan.bract * grown
         let sweep = 0.34 * plan.hand
         var spine: [CGPoint] = [point]
         var tip = point
@@ -128,102 +146,292 @@ enum Fiddlehead {
         return Figure(stem: stem, bract: outline)
     }
 
-    /// The box the figure occupies over its whole travel, so the drawing is fitted
-    /// to what it does and the mark does not drift as it opens.
+    /// The box the figure occupies over its whole travel — every rise and every
+    /// opening — so the drawing is fitted to what it does and the mark does not
+    /// drift as it grows. The root is the bottom of it.
     static let travel: CGRect = {
         var minX = Double.infinity, minY = Double.infinity
         var maxX = -Double.infinity, maxY = -Double.infinity
-        for index in 0...20 {
-            let figure = figure(open: Double(index) / 20)
-            for p in figure.stem + figure.bract {
-                minX = min(minX, p.x); maxX = max(maxX, p.x)
-                minY = min(minY, p.y); maxY = max(maxY, p.y)
+        for rise in 0...10 {
+            for open in 0...10 {
+                let figure = figure(open: Double(open) / 10, rise: Double(rise) / 10)
+                for p in figure.stem + figure.bract {
+                    minX = min(minX, p.x); maxX = max(maxX, p.x)
+                    minY = min(minY, p.y); maxY = max(maxY, p.y)
+                }
             }
         }
         return CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY)
     }()
 
+    // MARK: - The soil
+
+    /// **The ground the stem comes up out of: a swell and not a horizon.**
+    ///
+    /// Marcus's rule is that every edge in the app is organic, and a straight
+    /// ground line under a delicate stem is exactly the jarring thing it was made
+    /// for. A mound where the stem comes up, and three sines of unrelated
+    /// wavelength either side of it, all a few units high in a frame 100 wide.
+    /// Deterministic — the same constants every time, as every other shape in the
+    /// garden is — and passing exactly through the root, which is what the stem
+    /// is fastened to.
+    enum Soil {
+        static let moundHeight = 3.2
+        static let moundReach = 11.0
+
+        /// The swell at frame `x`, in frame units, negative being up.
+        static func swell(at x: Double, root: Double) -> Double {
+            let mound = -moundHeight * exp(-pow((x - root) / moundReach, 2))
+            let waves = 1.6 * sin(0.11 * x + 0.8) + 1.0 * sin(0.27 * x + 2.1) + 0.6 * sin(0.05 * x + 0.3)
+            return mound + waves
+        }
+
+        /// The ground's height at `x` relative to the root, which it passes through.
+        static func line(at x: Double, root: Double) -> Double {
+            swell(at: x, root: root) - swell(at: root, root: root)
+        }
+
+        static let rootX = Fiddlehead.frame.width * Fiddlehead.plan.rootX
+    }
+
     // MARK: - Poses
 
     struct Pose: Equatable {
         var open: Double
+        var rise: Double
         var appear: Double = 1
     }
 
-    /// **Where the moment ends: 0.9, not 1.** Past about 0.9 the coil has let go
-    /// entirely and what is left reads as a stray hook; `SproutingRule` stops short
-    /// of full for the same reason. It is the composed state, and it is where the
-    /// hand-over finds it.
+    /// **Where the moment ends: open 0.9, not 1.** Past about 0.9 the coil has let
+    /// go entirely and what is left reads as a stray hook; `SproutingRule` stops
+    /// short of full for the same reason. It is the composed state, and it is
+    /// where the hand-over finds it.
     static let composed = 0.9
 
+    /// The launch moment at `t`, 0…1 across `LoadingTiming.moment`.
+    ///
+    /// **Rising and opening share almost all of their length**: the stem is
+    /// growing from the first beat to the last and the curl is letting go from
+    /// just after the first, so there is no moment at which one has finished and
+    /// the other is about to start.
     static func pose(atMoment t: Double) -> Pose {
-        Pose(open: composed * LoadingTiming.beat(t, 0.04...0.94),
-             appear: LoadingTiming.beat(t, 0...0.10))
+        Pose(open: composed * LoadingTiming.beat(t, 0.06...0.96),
+             rise: LoadingTiming.beat(t, 0.02...0.94),
+             appear: LoadingTiming.beat(t, 0...0.08))
     }
 
-    /// The waiting form: it never furls all the way, for the reason the other
-    /// variant's does not — the tightest the coil gets is still a coil.
+    /// **The waiting form: a smaller version of the same thing.** The tip comes
+    /// up, uncurls a little and settles back, and never rises far or opens far —
+    /// the tightest it gets is still a curl and the highest it gets is still
+    /// short.
     static func pose(atBreath phase: Double) -> Pose {
-        Pose(open: 0.2 + 0.7 * LoadingTiming.openness(atBreath: phase))
+        pose(openness: LoadingTiming.openness(atBreath: phase))
+    }
+
+    static func pose(openness: Double) -> Pose {
+        Pose(open: 0.15 + 0.55 * openness, rise: 0.42 + 0.4 * openness)
     }
 
     /// **Where it rests when motion is off** — a tendril half open, which is
-    /// `design/Motion.dc.html`'s own sentence for Reduce Motion.
-    static let still = Pose(open: 0.7)
+    /// `design/Motion.dc.html`'s own sentence for Reduce Motion, and standing.
+    static let still = Pose(open: 0.7, rise: 0.8)
+
+    // MARK: - Colour
+
+    /// **The app's own colours, and what they are measured against.**
+    ///
+    /// The stem carries the icon's three greens bottom to tip — forest green,
+    /// lime, yellow, 140° → 60°, isoluminant, 13.00:1 on the suite's ground
+    /// (`docs/BRAND.md`, `tools/icon/make_icon.py`) — and the leaf is the icon's
+    /// white bract. Marcus asked for this on 10 October 2026 in place of the gold
+    /// the first drawing used.
+    ///
+    /// **Two palettes, because the contrast is a property of the ground.** The
+    /// launch moment is always on `#0D0D1F`, in both appearances, so it takes the
+    /// icon's own values. The waiting mark sits inside the app's screens and
+    /// follows the app's appearance, and on the light ground the icon's yellow is
+    /// 1.4:1, which is a mark nobody can see. So on light the same three hues are
+    /// solved to 4.5:1 against the ground, by the script's own method
+    /// (`stop_at`: lightness solved per hue at its saturation, not chosen) — which
+    /// takes the yellow to an olive, the cost the script's own notes record at
+    /// 9.1:1 — and the leaf, which cannot be white on near-white, is the app's ink.
+    struct Palette: Sendable {
+        struct RGB: Sendable, Equatable {
+            var r: Double, g: Double, b: Double
+
+            init(_ r: Double, _ g: Double, _ b: Double) {
+                self.r = r; self.g = g; self.b = b
+            }
+
+            init(hex: UInt32) {
+                self.init(Double((hex >> 16) & 0xFF) / 255, Double((hex >> 8) & 0xFF) / 255,
+                          Double(hex & 0xFF) / 255)
+            }
+
+            var color: Color { Color(.sRGB, red: r, green: g, blue: b, opacity: 1) }
+
+            /// WCAG relative luminance.
+            var luminance: Double {
+                func channel(_ v: Double) -> Double {
+                    v <= 0.03928 ? v / 12.92 : pow((v + 0.055) / 1.055, 2.4)
+                }
+                return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b)
+            }
+
+            /// WCAG contrast ratio against `other`.
+            func contrast(with other: RGB) -> Double {
+                let a = luminance, b = other.luminance
+                return (max(a, b) + 0.05) / (min(a, b) + 0.05)
+            }
+        }
+
+        /// Root to tip, evenly spaced.
+        var stem: [RGB]
+        var leaf: RGB
+        /// The soil line and the soft shade under it.
+        var soil: RGB
+        var soilLine: Double
+        var soilShade: Double
+        /// The wide faint pass the stem sits in, as the backdrop gives its hairline
+        /// something to sit in. Zero for the small form, where it only blurs.
+        var halo: Double
+
+        /// The suite's ground, `#0D0D1F`, which `Assets.xcassets/LaunchGround` is
+        /// and which the launch screen paints. The moment is drawn on it in both
+        /// appearances.
+        static let launchGround = RGB(hex: 0x0D0D1F)
+        /// `Chrome.ground` in the light appearance: white 0.965.
+        static let lightGround = RGB(0.965, 0.965, 0.965)
+        /// `Chrome.ink` in the light appearance: white 0.07.
+        static let lightInk = RGB(0.07, 0.07, 0.07)
+
+        /// On the dark ground — the launch moment, and the waiting mark in the
+        /// dark appearance, where the app's ground is black and every one of
+        /// these is further from it than from `#0D0D1F`.
+        static let onDark = Palette(
+            stem: [RGB(hex: 0x06F556), RGB(hex: 0x55F306), RGB(hex: 0xDCDC06)],
+            leaf: RGB(1, 1, 1),
+            soil: RGB(1, 1, 1), soilLine: 0.34, soilShade: 0.08, halo: 0.07)
+
+        /// On the light ground: the icon's hues at 4.5:1, and the app's ink.
+        static let onLight = Palette(
+            stem: [RGB(hex: 0x03842E), RGB(hex: 0x2E8203), RGB(hex: 0x757503)],
+            leaf: lightInk,
+            soil: lightInk, soilLine: 0.30, soilShade: 0.06, halo: 0)
+
+        /// The same two with the halo taken off, for the small form.
+        var small: Palette {
+            var copy = self
+            copy.halo = 0
+            return copy
+        }
+    }
 
     // MARK: - Drawing
 
-    /// The gold the backdrop already uses behind the seed-making screens: *warm,
-    /// unsaturated, and never bright*.
-    static let gold = Color(red: 0.86, green: 0.71, blue: 0.44)
-
     /// - Parameters:
     ///   - weight: the hairline, in points.
-    ///   - halo: a wider, fainter pass under it, as the backdrop gives its hairline
-    ///     something to sit in. Zero for the small form, where it only blurs.
-    static func draw(_ pose: Pose, ink: Color, weight: CGFloat, halo: CGFloat,
+    ///   - halo: width of the faint pass under it, in points. Ignored when the
+    ///     palette's `halo` is zero.
+    static func draw(_ pose: Pose, palette: Palette, weight: CGFloat, halo: CGFloat,
                      in context: inout GraphicsContext, size: CGSize) {
         let box = travel
-        let scale = min(size.width / box.width, size.height / box.height)
-        let origin = CGPoint(x: (size.width - box.width * scale) / 2 - box.minX * scale,
-                             y: (size.height - box.height * scale) / 2 - box.minY * scale)
+        let scale = min(size.height * 0.8 / box.height, size.width * 0.62 / box.width)
+        let groundY = size.height * 0.86
+        func place(_ p: CGPoint) -> CGPoint {
+            CGPoint(x: (p.x - box.midX) * scale + size.width / 2, y: (p.y - box.maxY) * scale + groundY)
+        }
         func path(_ points: [CGPoint], closed: Bool) -> Path {
             var path = Path()
             guard let first = points.first else { return path }
-            path.move(to: CGPoint(x: first.x * scale + origin.x, y: first.y * scale + origin.y))
-            for p in points.dropFirst() {
-                path.addLine(to: CGPoint(x: p.x * scale + origin.x, y: p.y * scale + origin.y))
-            }
+            path.move(to: place(first))
+            for p in points.dropFirst() { path.addLine(to: place(p)) }
             if closed { path.closeSubpath() }
             return path
         }
-        let figure = Fiddlehead.figure(open: pose.open)
+
+        let figure = Fiddlehead.figure(open: pose.open, rise: pose.rise)
         let stem = path(figure.stem, closed: false)
         let bract = path(figure.bract, closed: true)
+        let rootCanvas = place(figure.stem[0])
+
+        // The soil: a line along the swell, faded out at both ends so it has no
+        // edge, and a soft shade below it that is a radial pool and not a slab.
+        var line = Path()
+        var shade = Path()
+        let step: CGFloat = 2
+        var x: CGFloat = 0
+        var first = true
+        while x <= size.width + step {
+            let frameX = Double((x - size.width / 2) / scale) + box.midX
+            let y = groundY + CGFloat(Soil.line(at: frameX, root: Soil.rootX)) * scale
+            if first { line.move(to: CGPoint(x: x, y: y)); shade.move(to: CGPoint(x: x, y: y)); first = false }
+            else { line.addLine(to: CGPoint(x: x, y: y)); shade.addLine(to: CGPoint(x: x, y: y)) }
+            x += step
+        }
+        shade.addLine(to: CGPoint(x: size.width + step, y: size.height))
+        shade.addLine(to: CGPoint(x: 0, y: size.height))
+        shade.closeSubpath()
 
         context.opacity = pose.appear
-        if halo > 0 {
+        let soil = palette.soil.color
+        // **A pool, not a slab**: an ellipse of shade centred on the root, wide
+        // across and only as deep as the room under the line, so that it has faded
+        // to nothing before it reaches the bottom of the frame. Filled as a circle
+        // in a squashed space, clipped to below the line. The first version filled
+        // the whole region under the line and its straight bottom edge showed.
+        let pool = size.width * 0.5
+        let depth = max(size.height - groundY, 1) * 0.95
+        var shaded = context
+        shaded.clip(to: shade)
+        shaded.translateBy(x: rootCanvas.x, y: groundY)
+        shaded.scaleBy(x: 1, y: depth / pool)
+        shaded.fill(Path(ellipseIn: CGRect(x: -pool, y: -pool, width: pool * 2, height: pool * 2)),
+                    with: .radialGradient(
+                        Gradient(colors: [soil.opacity(palette.soilShade), soil.opacity(0)]),
+                        center: .zero, startRadius: 0, endRadius: pool))
+
+        let fades = Gradient(stops: [
+            .init(color: soil.opacity(0), location: 0),
+            .init(color: soil.opacity(palette.soilLine), location: 0.22),
+            .init(color: soil.opacity(palette.soilLine), location: 0.78),
+            .init(color: soil.opacity(0), location: 1),
+        ])
+
+        // The stem's colour runs bottom to tip along the height it can reach, so a
+        // short stem is the green end of it and a grown one reaches the yellow.
+        let ramp = Gradient(stops: palette.stem.enumerated().map { index, rgb in
+            Gradient.Stop(color: rgb.color, location: Double(index) / Double(palette.stem.count - 1))
+        })
+        let bottom = CGPoint(x: size.width / 2, y: groundY)
+        let top = CGPoint(x: size.width / 2, y: groundY - box.height * scale)
+
+        if palette.halo > 0, halo > 0 {
             let style = StrokeStyle(lineWidth: halo, lineCap: .round, lineJoin: .round)
-            context.stroke(stem, with: .color(gold.opacity(0.07)), style: style)
-            context.stroke(bract, with: .color(gold.opacity(0.07)), style: style)
+            let glow = palette.stem[palette.stem.count / 2].color.opacity(palette.halo)
+            context.stroke(stem, with: .color(glow), style: style)
+            context.stroke(bract, with: .color(glow), style: style)
         }
         let style = StrokeStyle(lineWidth: weight, lineCap: .round, lineJoin: .round)
-        context.stroke(stem, with: .color(ink), style: style)
-        context.stroke(bract, with: .color(ink), style: style)
+        context.stroke(stem, with: .linearGradient(ramp, startPoint: bottom, endPoint: top), style: style)
+        context.stroke(bract, with: .color(palette.leaf.color), style: style)
+        context.stroke(line, with: .linearGradient(fades, startPoint: CGPoint(x: 0, y: groundY),
+                                                   endPoint: CGPoint(x: size.width, y: groundY)),
+                       style: StrokeStyle(lineWidth: max(weight * 0.8, 1), lineCap: .round, lineJoin: .round))
     }
 }
 
-/// The frond, at a pose, in a frame. A still picture, for the reason
-/// `UnwindingMarkView` is.
+/// The fiddlehead, at a pose, in a frame. A still picture: whatever is moving it is
+/// the caller's, which is what lets a test draw frame 17 of 60 without waiting.
 struct FiddleheadView: View {
     let pose: Fiddlehead.Pose
-    var ink: Color
-    var weight: CGFloat = 1.6
-    var halo: CGFloat = 9
+    var palette: Fiddlehead.Palette
+    var weight: CGFloat = 1.8
+    var halo: CGFloat = 10
 
     var body: some View {
         Canvas { context, size in
-            Fiddlehead.draw(pose, ink: ink, weight: weight, halo: halo, in: &context, size: size)
+            Fiddlehead.draw(pose, palette: palette, weight: weight, halo: halo, in: &context, size: size)
         }
         .accessibilityHidden(true)
     }
