@@ -228,6 +228,9 @@ TEST_RUNNER_PG_RENDER_LOADING=/some/folder xcodebuild test -project PeaceGarden.
 python3 design/loading-2026-10-10/make-assets.py /some/folder
 ```
 
-The twenty-four tests in `LoadingTests` run in under four seconds, and `LoadingTests`
-alone was run for this round, as asked. The pictures were rendered on a scratch
-iPhone Air simulator, which has been deleted; the iPhone 17 Pro was not touched.
+The twenty-three tests in `LoadingTests` run in under four seconds, and `LoadingTests`
+alone was run for this round, as asked, on the branch after `main` was merged into it
+(`ad75e0d`, no conflicts). Running the script above on the frames from that run
+reproduces `v2-launch*` and `final-waiting*` byte for byte. The pictures were rendered
+on a scratch iPhone Air simulator, which has been deleted; the iPhone 17 Pro was not
+touched.
