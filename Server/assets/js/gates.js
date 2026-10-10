@@ -17,7 +17,7 @@
 // to disagree about which ten are open.
 
 import { AREA_KEYS } from "./strings.js";
-import { AREAS, COLUMN_RISE, DIRECTIONS, areaFor, neighbouringArea } from "./garden.js";
+import { AREAS, COLUMN_RISE, areaFor, neighboursOf } from "./garden.js";
 
 /// The areas with a page of their own, by theme.
 ///
@@ -56,6 +56,12 @@ export const BUILT = Object.freeze({
 /// size a word would be the loudest thing there. Glyphs do not mirror under a
 /// right-to-left language — a cold frame is higher at its back whichever way a
 /// page is read.
+///
+/// **The same glyph lies on the area's gateway** out past a neighbouring plot
+/// (`GLYPH` in `longwalk.js`, since 10 October 2026), so a reader matches a
+/// cell to a gateway by its shape. That is the whole of what a reader who
+/// cannot tell these grounds apart has to go on, and at the gateways' half
+/// light most of the ten are one dark olive under protanopia or deuteranopia.
 const ring = (cx, cy, r) =>
   `M${cx - r} ${cy}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
 const dot = (x, y) => `M${x} ${y}h0`;
@@ -154,9 +160,15 @@ export function openWays(theme, strings) {
 /// anybody, and a place in the tab order that goes nowhere is worse than none.
 ///
 /// Placed by `x` and `y` on a CSS grid rather than by the order they are
-/// written in, so the picture is the table and cannot drift from it — and a
-/// grid's columns follow the writing direction, so under Arabic or Hebrew the
-/// map mirrors exactly as `/g`'s does.
+/// written in, so the picture is the table and cannot drift from it.
+///
+/// **The same way round in every language** (`screenWay` in `garden.js`).
+/// Until 10 October 2026 the grid's columns followed the writing direction,
+/// so under Arabic or Hebrew this map mirrored while the gateways in the
+/// canvas above it and the pad's arrows did not: the Orchard was drawn to the
+/// Knot Garden's right in the corner and to its left in the canvas, and Left
+/// went to it. The stylesheet pins the grid left to right now (`.minimap`),
+/// as it does the hub's, and the glyphs in it never mirrored.
 ///
 /// **Names without words on the page.** Each lit cell is named for a screen
 /// reader and in its tooltip by the area's own name from `AREA_KEYS`, which is
@@ -164,38 +176,25 @@ export function openWays(theme, strings) {
 /// cell, because at this size a name would be the loudest thing on the page.
 function drawMap(map, theme, strings) {
   map.replaceChildren();
-  // **The ones standing beside the reader in the viewport**, marked so that
-  // the corner and the canvas are plainly the same garden: the slab out to the
-  // left of the plot is this cell, and a reader who looks from one to the
-  // other should not have to work that out.
-  //
-  // The same test `areasBeside` makes in `beside.js`, made again here in four
-  // lines rather than imported, because that module reads `BUILT` and `LOOK`
-  // from this one and importing it back would close a cycle. `BUILT` is the
-  // whole of the rule and it is defined at the top of this file.
-  const beside = new Set(Object.keys(DIRECTIONS)
-    .map((direction) => neighbouringArea(theme, direction)?.theme)
-    .filter((next) => next && BUILT[next]));
   // Named, and not dressed. `dress` marks a borrowed English label `dir="ltr"`
-  // as well as `lang="en"`, and on the map itself that would pin the grid left
-  // to right under Arabic or Hebrew — the one thing the map must not do.
+  // as well as `lang="en"`, and that is the stylesheet's to say, once, for
+  // every language — not a side effect of which label happened to be borrowed.
   map.setAttribute("aria-label", strings.t("gardenTitle"));
   // How far the garden falls end to end, so the stylesheet can leave room at
   // the top for the lift without the number being written down twice.
   map.style.setProperty("--map-fall", String(Math.max(...COLUMN_RISE)));
 
-  for (const area of AREAS) {
-    const here = area.theme === theme;
-    const href = BUILT[area.theme];
+  for (const placed of mapCells(theme)) {
+    const { area, here, href } = placed;
     const cell = document.createElement(href && !here ? "a" : "span");
     cell.className = "minimap__cell";
-    cell.style.gridColumn = String(area.x + 1);
-    cell.style.gridRow = String(area.y + 1);
+    cell.style.gridColumn = String(placed.column);
+    cell.style.gridRow = String(placed.row);
     // How high this column stands, in metres, for the stylesheet to lift the
     // cell by. The map is the garden's ground and the garden's ground falls
     // from one end to the other, so the picture in the corner is a slope.
-    cell.style.setProperty("--rise", String(COLUMN_RISE[area.x]));
-    if (beside.has(area.theme)) cell.classList.add("minimap__cell--beside");
+    cell.style.setProperty("--rise", String(placed.rise));
+    if (placed.beside) cell.classList.add("minimap__cell--beside");
     const look = LOOK[area.theme];
     cell.style.setProperty("--area-ground", look.ground);
     cell.append(glyph(look.glyph));
@@ -222,6 +221,31 @@ function drawMap(map, theme, strings) {
     map.append(cell);
   }
   map.hidden = false;
+}
+
+/// Where the map at the foot of `theme`'s page puts each of the ten cells, and
+/// what each is: its grid column and row, counted from the left and the top
+/// (the grid is pinned left to right), how high its column stands, and whether
+/// it is the reader's own, a neighbour drawn as a gateway in the canvas, or
+/// not open. Written apart from the drawing so `check_gateways.mjs` can hold
+/// it to the gateways with no browser.
+///
+/// **`beside` is the gateways' own list** (`neighboursOf`, filtered as
+/// `areasBeside` filters it, by `BUILT`), so the cells marked here are the
+/// slabs drawn out past the plot and on the same sides of it.
+export function mapCells(theme) {
+  const beside = new Set(neighboursOf(theme)
+    .filter(({ area }) => BUILT[area.theme])
+    .map(({ area }) => area.theme));
+  return AREAS.map((area) => Object.freeze({
+    area,
+    column: area.x + 1,
+    row: area.y + 1,
+    rise: COLUMN_RISE[area.x],
+    here: area.theme === theme,
+    beside: beside.has(area.theme),
+    href: BUILT[area.theme] ?? null,
+  }));
 }
 
 /// One area's glyph, drawn as the pad's are and hidden from a screen reader:

@@ -138,6 +138,37 @@ export function neighbouringArea(theme, direction) {
   return AREAS.find((area) => area.x === x && area.y === y) ?? null;
 }
 
+/// **Which way a direction lies on a screen**, as `[across, up]`: one of the
+/// two is 1 or -1 and the other 0, right and up the screen positive.
+///
+/// **The map is drawn one way round, everywhere.** Its x runs to the right and
+/// its y down the page, as the table above is written — on the map at the foot
+/// of an area page, on the hub, and out past the plot, where each neighbour's
+/// gateway stands on the side of the screen this names. Not in the reading
+/// direction: under Arabic or Hebrew the map is the same picture, as the pad's
+/// arrows are the same arrows, because a map is a drawing of a place and not a
+/// line of text. Not in the camera's frame either: a reader who turns the plot
+/// has turned the camera and not the garden, and the map in the corner, which
+/// does not turn, is what this has to agree with.
+///
+/// The two places that draw a neighbour both ask this — `gates.js` for the
+/// map's cells and `longwalk.js` for the gateways — rather than each keeping a
+/// table of its own. They kept one apiece until 10 October 2026, and the map's
+/// followed the writing direction while the gateways' did not.
+export function screenWay(direction) {
+  const step = DIRECTIONS[direction];
+  return step ? Object.freeze([step.dx, -step.dy]) : null;
+}
+
+/// The areas next to `theme` on the map, open or not: which way each lies,
+/// the area itself, and where that is on a screen (`screenWay`).
+export function neighboursOf(theme) {
+  return Object.keys(DIRECTIONS).flatMap((direction) => {
+    const area = neighbouringArea(theme, direction);
+    return area ? [Object.freeze({ direction, area, way: screenWay(direction) })] : [];
+  });
+}
+
 /// The nearest plant in a direction, within one area.
 ///
 /// `occupied` is the area's plants as `{ x, y, … }`; the service supplies it and
@@ -234,6 +265,15 @@ export function selfTest() {
   if (neighbouringArea("waiting", "right")?.theme !== "ground") fail("wrong neighbour");
   if (neighbouringArea("waiting", "down")?.theme !== "peace") fail("wrong neighbour");
   if (neighbouringArea("meeting", "right") !== null) fail("the map wrapped");
+
+  // Up the map is up the screen, and right is right, whoever is reading.
+  const ways = Object.fromEntries(Object.keys(DIRECTIONS).map((d) => [d, screenWay(d).join(" ")]));
+  if (ways.up !== "0 1" || ways.down !== "0 -1" || ways.left !== "-1 0" || ways.right !== "1 0") {
+    fail("a direction lies the wrong way on the screen");
+  }
+  if (neighboursOf("pattern").map((n) => n.area.theme).join(" ") !== "beginnings kinship light") {
+    fail("the Knot Garden's neighbours moved");
+  }
 
   // A walk goes the way it was pointed.
   const plants = [

@@ -613,12 +613,24 @@ body[data-loading]:not([data-ready]) .page {
    the one to its right, and the map a reader learns the garden from is a
    hillside rather than a table. The room for the lift is added at the top, so
    nothing moves but the cells. */
+/* **Left to right in every language**, since 10 October 2026. A grid's columns
+   follow the writing direction, so under Arabic or Hebrew this map used to
+   mirror while the arrow keys went on following the true one: Left from the
+   Knot Garden went to the Orchard, drawn on the right. The map is a drawing
+   of a place, as the pad's arrows are arrows (`screenWay` in garden.js), so
+   the grid is pinned and each card's name is put back in the reader's own
+   direction. */
 .garden-grid {
   display: grid;
+  direction: ltr;
   grid-template-columns: repeat(5, 1fr);
   gap: 10px;
   --map-rise-px: 6.7px;
   padding-block-start: calc(var(--map-fall, 4.8) * var(--map-rise-px));
+}
+
+[dir="rtl"] .garden-cell {
+  direction: rtl;
 }
 
 /* On a narrow screen the map scrolls sideways rather than wrapping.
@@ -1473,8 +1485,12 @@ a.quiet-button {
    that sits under the words without competing with the plot — the plot is
    the page, and this is how to leave it.
 
-   Each cell is a hit area of forty-eight by forty. The grid follows the writing direction, so the
-   map mirrors under a right-to-left language as the hub's does. */
+   Each cell is a hit area of forty-eight by forty. **The grid is left to right
+   in every language** (since 10 October 2026): it used to follow the writing
+   direction and mirror under Arabic or Hebrew, while the gateways in the
+   canvas above it and the pad's arrows did not, so the corner put the Orchard
+   on the Knot Garden's right and the canvas on its left. One way round, read
+   from `screenWay` in garden.js by both. Nothing in a cell is text. */
 /* The map is the garden's ground, and the garden's ground falls from the Cold
    Frame end to the Crossing — so the map is a slope and not a grid. Each cell
    is lifted by its own column's rise (`--rise`, in metres, set in gates.js
@@ -1483,6 +1499,7 @@ a.quiet-button {
    five by two is not. */
 .minimap {
   display: grid;
+  direction: ltr;
   grid-template-columns: repeat(5, 48px);
   grid-template-rows: repeat(2, 40px);
   padding-block-start: calc(var(--map-fall, 4.8) * var(--map-rise-px, 4.2px));
@@ -1511,6 +1528,11 @@ a.quiet-button {
   transition: box-shadow 200ms ease-out, filter 200ms ease-out;
 }
 
+/* Ringed in a little shade, as the same glyph is where it lies on a gateway
+   in the canvas (10 October 2026). White on the two light grounds — the Knot
+   Garden's gravel and the Cold Frame's — was 3 to 1, and the glyph is what a
+   reader who cannot tell these greens and browns apart matches the corner to
+   the canvas by. */
 .minimap__glyph {
   position: relative;
   inline-size: 20px;
@@ -1520,6 +1542,7 @@ a.quiet-button {
   stroke-width: 1.25;
   stroke-linecap: round;
   stroke-linejoin: round;
+  filter: drop-shadow(0 0 0.8px rgba(0, 0, 0, 0.75));
 }
 
 a.minimap__cell:hover::before {

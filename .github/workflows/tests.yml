@@ -215,6 +215,13 @@ jobs:
         run: php tools/reference/check_plot_variant.php
       - name: A plot is turned where SeedCore turns it, in the browser
         run: node tools/reference/check_plot_variant.mjs
+      # An area page shows its neighbours twice: as cells on the map at its
+      # foot and as gateways out past the plot, each with its area's glyph.
+      # Until 10 October 2026 the map mirrored under Arabic and Hebrew and
+      # the gateways did not. This holds both to the map, at every turn and
+      # on a phone's canvas as well as a laptop's.
+      - name: The map and the gateways put each neighbour on the same side
+        run: node tools/reference/check_gateways.mjs
       # The areas' places are made offline by tools/layouts and written into
       # SeedCore, the service and the page as literal numbers, so no host
       # works out a sine at run time. This makes every table again from its

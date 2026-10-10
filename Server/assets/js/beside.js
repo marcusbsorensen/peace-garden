@@ -14,15 +14,21 @@
 // answer and records it.
 //
 // **There is one map and this reads it.** `garden.js` says which area lies
-// which way, `gates.js` whether it is open and what colour its ground is.
-// Neither is written down here a second time, and this file is the third to
-// read that pair after `walk.js` and `movepad.js`.
+// which way and where that way is on a screen (`neighboursOf`), `gates.js`
+// whether it is open, what colour its ground is and what its glyph is.
+// None of it is written down here a second time, and the map at the foot of
+// the page marks the same neighbours from the same call — so the corner and
+// the canvas cannot come to disagree about which area is on which side, which
+// they did under a right-to-left language until 10 October 2026.
 //
 // **Not a word of it is a word.** A named slab is forty-one translations, and
 // the reader already has every area's name — in their own language — on the
-// map at the foot of the page, which is also where they can press one.
+// map at the foot of the page, which is also where they can press one. Since
+// 10 October each gateway carries its area's glyph instead (`glyph` below):
+// the same drawing as that area's cell on the map, so a reader matches the two
+// by shape, and nobody has to tell a dimmed terracotta from a dimmed brown.
 
-import { DIRECTIONS, MAP_WIDTH, neighbouringArea, riseBetween } from './garden.js';
+import { MAP_WIDTH, neighboursOf, riseBetween } from './garden.js';
 import { BUILT, LOOK } from './gates.js';
 
 // **`LOOK`'s colours are grounds as the eye sees them and the shader wants
@@ -44,14 +50,19 @@ const LIT = 1.25;
 /// a slab a hundred and forty pixels wide would load the whole garden to show
 /// the edge of it.
 export function areasBeside(theme) {
-  return Object.keys(DIRECTIONS).flatMap((direction) => {
-    const area = neighbouringArea(theme, direction);
-    if (!area || !BUILT[area.theme]) return [];
+  return neighboursOf(theme).flatMap(({ direction, area, way }) => {
+    if (!BUILT[area.theme]) return [];
     return [{
       direction,
       theme: area.theme,
+      // Where on the screen it stands, `[across, up]`: the map's own way
+      // round, which is the one the map in the corner is drawn.
+      way,
       seed: area.y * MAP_WIDTH + area.x,
       ground: albedo(LOOK[area.theme].ground),
+      // The area's glyph, as its cell on the map draws it, to be laid on the
+      // gateway's ground.
+      glyph: LOOK[area.theme].glyph,
       // How much higher that ground stands than this, in metres. The garden
       // falls from the Cold Frame end to the Crossing, so the neighbour to one
       // side is up a terrace and the one to the other is down one.
