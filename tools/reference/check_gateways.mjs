@@ -20,9 +20,10 @@
 // - the map at the foot of the page marks exactly those that are open as
 //   beside it, each drawn that way from the reader's own cell;
 // - the gateways are those same areas, each with its own glyph from `LOOK`;
-// - at every quarter turn and at a phone's, a laptop's and a small window's
+// - at every quarter turn and on a phone's, a laptop's and a tablet's
 //   canvas, each gateway is drawn, stands that way from the plot — more that
-//   way than across it — and carries a glyph;
+//   way than across it — and carries a glyph, but for the two a wall hides
+//   (`HIDDEN`);
 // - and the stylesheet pins both maps' grids left to right, which is the
 //   half of the fault that lived in CSS.
 
@@ -57,9 +58,22 @@ const WAY = { up: [0, 1], down: [0, -1], left: [-1, 0], right: [1, 0] };
 // more for air.
 const SPAN = { travel: 3 };
 
+// How tall the walls along each area's far edges are, in metres: the ground
+// builders' `walls`, the yew round the Quiet Garden and behind the Long
+// Walk's far border. Everywhere else nothing taller than a person's knee
+// stands at the edge.
+const WALLS = { travel: 2.0, peace: 2.0 };
+
 // Canvases the gateways must work in, in CSS pixels: a phone, two laptops,
 // a tablet held upright.
 const CANVASES = [['a phone', 390, 388], ['a laptop', 1280, 495], ['a wide laptop', 1512, 540], ['a tablet', 768, 563]];
+
+// **The two glyphs a wall hides**, and only these. The Quiet Garden's upper
+// neighbour stands wholly behind its yew, which Marcus saw and kept on 27
+// September 2026 (what a wall does to what is beyond it); the slab is still
+// drawn. And on a phone, at the two turns that put the Long Walk's yew at its
+// left-hand end, the Coppice shows too little below the yew for a glyph.
+const HIDDEN = new Set(['peace up', 'travel left a phone 0', 'travel left a phone 2']);
 
 let checks = 0;
 const failures = [];
@@ -114,7 +128,7 @@ for (const { theme } of AREAS) {
   const span = SPAN[theme] ?? 1.25;
   for (const [canvas, width, height] of CANVASES) {
     for (const turn of [0, 1, 2, 3]) {
-      const placed = placeBeside(slabs, { turn, aspect: width / height, span, width });
+      const placed = placeBeside(slabs, { turn, aspect: width / height, span, width, walls: WALLS[theme] ?? 0 });
       for (const slab of slabs) {
         const where = `${theme}'s ${slab.direction} gateway on ${canvas}, turned ${turn}`;
         const p = placed.find((q) => q.slab === slab);
@@ -125,8 +139,10 @@ for (const { theme } of AREAS) {
         const aside = Math.abs(p.at[0] * up - p.at[1] * across);
         checks++;
         if (!(along > aside)) fail(`${where} stands at ${p.at.map((v) => v.toFixed(2))}, not ${slab.direction} of the plot`);
+        const hidden = HIDDEN.has(`${theme} ${slab.direction}`) || HIDDEN.has(`${theme} ${slab.direction} ${canvas} ${turn}`);
         checks++;
-        if (!p.glyph) fail(`${where} has no room for its glyph`);
+        if (!p.glyph && !hidden) fail(`${where} has no room for its glyph`);
+        if (p.glyph && hidden) fail(`${where} has a glyph where its wall was thought to hide it: take it off HIDDEN`);
       }
     }
   }

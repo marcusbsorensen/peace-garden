@@ -66,7 +66,11 @@ export function makeRoomGround(room) {
   // Which way round the room is laid: the plot's, set by whoever grows it
   // (`growRoomFromService`, `growInvented`) before the stage is rebuilt.
   room.variant ??= PLAIN;
-  return function buildRoomGround(farSide, span, e, eye) {
+  // The hedge is tall on the two sides away from the viewer, and a gateway
+  // past them is seen over it (`placeBeside`).
+  buildRoomGround.walls = HEDGE.tall;
+  return buildRoomGround;
+  function buildRoomGround(farSide, span, e, eye) {
     const variant = room.variant;
     const positions = [], normals = [], colours = [];
     const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
@@ -195,7 +199,7 @@ export function makeRoomGround(room) {
       side: slab,
       casting: new Float32Array(casting),
     };
-  };
+  }
 }
 
 /// A structure's triangles, moved into place, with the grain that keeps a

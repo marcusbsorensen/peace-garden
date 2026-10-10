@@ -1330,6 +1330,51 @@ another.
     does buy it back at full size, and Marcus was shown both: it turns the
     neighbour below into a dark band at the plot's near edge rather than a
     place, and he kept the sky.
+  - **The map and the gateways read one way round, 10 October 2026.**
+    Marcus: the squares for the other sections did not seem to stand where
+    the map said. Under Arabic or Hebrew they did not: the map at the foot of
+    the page was a CSS grid, and a grid's columns follow the writing
+    direction, so it mirrored, while the gateways and the pad's arrows did
+    not — the Orchard to the Knot Garden's right in the corner, to its left in
+    the canvas, and Left went to it. The hub's map had the same fault against
+    its own arrow keys. Each half also kept its own table of which way a
+    direction lies. Now `screenWay` in `garden.js` is the one answer, `[across,
+    up]`; the minimap's cells (`mapCells` in `gates.js`) and the gateways
+    (`areasBeside`, `placeBeside`) both read it, both grids are pinned left to
+    right, and `tools/reference/check_gateways.mjs` holds all of it to the map
+    at four turns on four canvases. In English nothing moved: the two already
+    agreed on direction, and what they could not do was say **which** area a
+    slab was, which is the next point. Neither the camera's turn nor a plot's
+    variant enters into it, rightly: a turn is the camera and not the garden,
+    and a variant turns a plot's own layout, not the map.
+  - **Each gateway carries its area's glyph, laid on its ground**, the same
+    drawing as its cell on the map (`GLYPH` in `longwalk.js`). The slabs had
+    only their colour to say which area they were, and at half their light
+    the browns, the terracotta and the greens are near enough one colour:
+    under protanopia the Glasshouse's terracotta and the Crossing's green are
+    1 apart in CIE76 ΔE, and 34 of the 43 pairs of different grounds are
+    under 10. A pale glyph ringed in shade is at least 7.3 to 1 against its
+    slab under every kind of colour blindness simulated, so shape carries the
+    identity. It lies flat on the slab's top, foreshortened by the camera as
+    the ground is, upright on the screen at every turn, and as large as fits
+    — up to 1.15 m — on the part of the slab the plot does not hide, clear of
+    the plot's own walls, trees and frames (`coverOf`) and kept inside the
+    slab's wandering edge by the stencil. Under 18 CSS pixels it is left out.
+    The minimap's glyphs took the same faint ring, since white on the two
+    gravel grounds was 3 to 1.
+  - **A phone keeps a metre of sky at each side for them** (`BESIDE.room`),
+    since a phone's window was fitted so close to the plot that the side
+    gateways showed a wedge too narrow for any glyph; the plot draws about 6%
+    smaller there and nowhere else. And the slab below laps 1.25 m rather than
+    1.7 where the window has room, which on a phone is enough to show its
+    glyph and on a laptop is not.
+  - **Known**: three glyphs are hidden as their slabs are. The Quiet Garden's
+    upper neighbour is behind its yew (kept, 27 September) and the
+    Glasshouse's behind the house's ribs; on a phone at two of the four turns
+    the Coppice shows too little past the Long Walk's yew. And only about
+    40 cm of the slab below a top-row plot shows its top past the plot's rim,
+    so its glyph is small on a laptop (about 20 px) and left out of an
+    800-pixel window.
 - **Turning is called turning.** The camera keys were *left* and *right*, which
   are the words a visitor reaches for to mean walking somewhere else.
 - **A minimap to travel by**: the garden's own 5×2 map, read from `garden.js`

@@ -1528,6 +1528,11 @@ a.quiet-button {
   transition: box-shadow 200ms ease-out, filter 200ms ease-out;
 }
 
+/* Ringed in a little shade, as the same glyph is where it lies on a gateway
+   in the canvas (10 October 2026). White on the two light grounds — the Knot
+   Garden's gravel and the Cold Frame's — was 3 to 1, and the glyph is what a
+   reader who cannot tell these greens and browns apart matches the corner to
+   the canvas by. */
 .minimap__glyph {
   position: relative;
   inline-size: 20px;
@@ -1537,6 +1542,7 @@ a.quiet-button {
   stroke-width: 1.25;
   stroke-linecap: round;
   stroke-linejoin: round;
+  filter: drop-shadow(0 0 0.8px rgba(0, 0, 0, 0.75));
 }
 
 a.minimap__cell:hover::before {

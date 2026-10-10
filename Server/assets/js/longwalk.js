@@ -427,6 +427,11 @@ const BESIDE = {
   dim: 0.5,
   depth: 14,
   lap: 1.7,
+  // The slab below laps less, where the window has room for it (10 October
+  // 2026): what shows of it past the plot's rim is half its own side, which
+  // left 40 cm of its top for its glyph. A phone has the room and shows it,
+  // and so does the Long Walk anywhere; one plot in a laptop's window is
+  // fitted to its height, and that slab stays where it was.
   lapBelow: 1.25,
   least: 0.35,
   closest: 1.2,
@@ -530,6 +535,9 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   // An area with low structures hands back `casting` beside its ground mesh:
   // the triangles that throw a shadow on the floor, drawn as one (`hedges`).
   const floorAt = buildTheGround.height ?? (() => 0);
+  // How tall what stands along the plot's far edges is, for laying a
+  // gateway's glyph where it is not hidden (`placeBeside`).
+  const walls = buildTheGround.walls ?? 0;
   const seat = buildTheGround.seat ?? { radius: 0.1, rise: 0.01 };
 
   const plants = [];
@@ -553,6 +561,10 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   // slabs on every quarter turn would have made turning cost four times what
   // it costs.
   let besides = [];
+  // Where on the screen the plot's own raised things stand — hedges, trees,
+  // frames, a dome's ribs — so a gateway's glyph is laid where they do not
+  // hide it (`coverOf`). Worked out with the ground, once a turn.
+  let cover = null;
   // The last frame's view and projection together, which `pick` reads.
   let drawn = null;
 
@@ -575,6 +587,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     // know which two of them are the near ones and a single sign cannot say.
     const built = buildTheGround(farSide, span, e, eye());
     groundMesh = withPieces(gl, ground, upload(gl, ground, built), built.pieces, 'opaque');
+    cover = coverOf(lookAlong(eye()), built.positions);
     if (sideMesh) sideMesh.release();
     sideMesh = built.side ? uploadSide(gl, sideProgram, built.side) : null;
     if (glassMesh) glassMesh.release();
@@ -735,7 +748,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   // top, each one's side, and then each one's glyph laid on its top.
   function drawBeside(viewProjection) {
     if (!besides.length || look.zoom > BESIDE.closest) return;
-    const placed = placeBeside(besides, { turn, aspect, span, look, width: canvas.clientWidth });
+    const placed = placeBeside(besides, { turn, aspect, span, look, width: canvas.clientWidth, walls, cover });
     // Each slab's top with the ground's program and then each one's side with
     // the side's, so the page changes program twice and not twice a slab.
     // The tops mark the stencil, which keeps each glyph to the slab it lies on
@@ -1340,6 +1353,10 @@ const SLICE = 16;
 // Seeds for the walk's dressing, so it is the same shape on every visit.
 export const SEED = { ground: 2026, verge: 7, floor: 5, hedge: { '-1': 31, '1': 32 }, rill: 1621, bed: 4411 };
 
+// The yew along the far border is what a gateway past that side is seen over
+// (`placeBeside`).
+buildGround.walls = HEDGE.tall;
+
 // No straight line anywhere in the garden: the ground's outline, its sides,
 // the path's verges and the hedges all come from SeedCore's `Organic`, the
 // shapes the app draws, through the module.
@@ -1587,8 +1604,13 @@ function raiseBeds(e, vertex, outline, span) {
 // the stage draws what this answers.
 //
 // `slabs` are `areasBeside`'s answers, or anything with their `way` and
-// `rise`; `turn`, `aspect`, `span` and `look` are the stage's own, and `width`
-// is how many CSS pixels wide the canvas is. Each answer is `{ slab, at,
+// `rise`; `turn`, `aspect`, `span` and `look` are the stage's own, `width` is
+// how many CSS pixels wide the canvas is, and `walls` how tall what stands
+// along the plot's far edges is, in metres (a ground builder's `walls`): the
+// Long Walk's yew and the Quiet Garden's hedge stand in front of what lies
+// beyond them, and a glyph is laid where they do not. On the page, `cover`
+// says where everything raised on the plot is (`coverOf`), trees and domes as
+// well as walls; with no GL to build the ground, the check has `walls` alone. Each answer is `{ slab, at,
 // offset, glyph }`: `at` where the slab's middle is on the screen against the
 // plot's, in metres across and up; `offset` that as a place in the world; and
 // `glyph` where its glyph lies on its top, or null (`fitGlyph`).
@@ -1605,7 +1627,7 @@ function raiseBeds(e, vertex, outline, span) {
 // its place against the plot's edge as a reader comes closer rather than
 // sliding about the screen with the zoom. What that costs is that one can
 // fall off the edge of the canvas on the way in, and then it is not drawn.
-export function placeBeside(slabs, { turn = 0, aspect = 1, span = 1, look = { zoom: 1, x: 0, y: 0 }, width = Infinity } = {}) {
+export function placeBeside(slabs, { turn = 0, aspect = 1, span = 1, look = { zoom: 1, x: 0, y: 0 }, width = Infinity, walls = 0, cover = null } = {}) {
   const view = lookAlong(eyeAt(turn));
   const all = frame(view, aspect, span);
   // CSS pixels to a metre across the window, for the smallest glyph worth
@@ -1620,8 +1642,14 @@ export function placeBeside(slabs, { turn = 0, aspect = 1, span = 1, look = { zo
   const pane = [[all.cx + look.x - wide, all.cx + look.x + wide],
                 [all.cy + look.y - tall, all.cy + look.y + tall]];
   const { x: across, y: up, z: back } = axes(view);
-  // The plot as the screen has it, for keeping each glyph clear of it.
-  const outline = convexHull(plot);
+  // The plot as the screen has it, for keeping each glyph clear of it: its
+  // box, and its soil's corners raised by `walls` — all but the nearest,
+  // since walls stand on the far sides. A slab is only ever drawn behind the
+  // plot, so this is what can stand in front of one.
+  const soil = corners(view, extent.x, extent.z, 0, 0);
+  const nearest = Math.min(...soil.map((p) => p[1]));
+  const raised = soil.filter((p) => p[1] > nearest + 1e-6).map((p) => [p[0], p[1] + walls * up[1]]);
+  const outline = convexHull([...plot, ...raised]);
 
   const placed = [];
   for (const slab of slabs) {
@@ -1679,7 +1707,7 @@ export function placeBeside(slabs, { turn = 0, aspect = 1, span = 1, look = { zo
       at,
       shows,
       offset: [0, 1, 2].map((i) => at[0] * across[i] + at[1] * up[i] - BESIDE.depth * back[i]),
-      glyph: fitGlyph(view, at, outline, pixels),
+      glyph: fitGlyph(view, at, outline, pixels, cover),
     });
   }
   return placed;
@@ -1700,7 +1728,7 @@ export function placeBeside(slabs, { turn = 0, aspect = 1, span = 1, look = { zo
 // and `across` and `toward` the glyph's half-sides — `across` level along the
 // screen, `toward` level and running away up it, so the glyph is upright on
 // the screen, as the map draws it, and foreshortened as the ground is.
-function fitGlyph(view, at, outline, pixels) {
+function fitGlyph(view, at, outline, pixels, cover) {
   const { x: across, y: up } = axes(view);
   let toward = normalise3([-across[2], 0, across[0]]);
   if (dot3(toward, up) < 0) toward = toward.map((v) => -v);
@@ -1716,7 +1744,8 @@ function fitGlyph(view, at, outline, pixels) {
   const fits = (c, h) => {
     const hy = h * short;
     const box = [[c[0] - h, c[1] - hy], [c[0] + h, c[1] - hy], [c[0] + h, c[1] + hy], [c[0] - h, c[1] + hy]];
-    return box.every((p) => inside(top, p)) && apart(outline, box, GLYPH.clear);
+    return box.every((p) => inside(top, p)) && apart(outline, box, GLYPH.clear)
+      && !(cover && cover(c[0] - h - GLYPH.clear, c[1] - hy - GLYPH.clear, c[0] + h + GLYPH.clear, c[1] + hy + GLYPH.clear));
   };
   // How much room there is at one place on the top: a halving search.
   const roomAt = (local) => {
@@ -1758,6 +1787,79 @@ function fitGlyph(view, at, outline, pixels) {
     across: across.map((v) => v * h),
     toward: toward.map((v) => v * h),
     width,
+  };
+}
+
+// **Where the plot's raised things cover the screen**, as a question: is
+// anything there in this box, `(x0, y0)` to `(x1, y1)` in the view's metres?
+// Every triangle of the ground's mesh that rises more than `COVER.above` off
+// the soil is laid onto a grid `COVER.cell` on a side, and the grid summed so
+// any box is four reads. The soil itself is the plot's outline, which
+// `placeBeside` keeps clear of already.
+//
+// It depends on the view and nothing else — not the window, not the zoom —
+// so it is made once a turn with the ground.
+const COVER = { cell: 0.04, above: 0.25 };
+
+function coverOf(view, positions) {
+  const { x: across, y: up } = axes(view);
+  const raised = [];
+  for (let i = 0; i < positions.length; i += 9) {
+    if (Math.max(positions[i + 1], positions[i + 4], positions[i + 7]) < COVER.above) continue;
+    const tri = [0, 3, 6].map((k) => {
+      const p = [positions[i + k], positions[i + k + 1], positions[i + k + 2]];
+      return [dot3(p, across), dot3(p, up)];
+    });
+    raised.push(tri);
+  }
+  if (!raised.length) return null;
+  // Counted out rather than spread into `Math.min`: a glasshouse is more
+  // points than a call can take as arguments.
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const tri of raised) {
+    for (const [x, y] of tri) {
+      minX = Math.min(minX, x); maxX = Math.max(maxX, x);
+      minY = Math.min(minY, y); maxY = Math.max(maxY, y);
+    }
+  }
+  const cols = Math.ceil((maxX - minX) / COVER.cell) + 1;
+  const rows = Math.ceil((maxY - minY) / COVER.cell) + 1;
+  const grid = new Uint8Array(cols * rows);
+  const cellOf = (v, from, count) => Math.min(count - 1, Math.max(0, Math.floor((v - from) / COVER.cell)));
+  for (const [a, b, c] of raised) {
+    // A triangle smaller than a cell covers no cell's middle, so its corners
+    // are marked as well.
+    for (const p of [a, b, c]) grid[cellOf(p[1], minY, rows) * cols + cellOf(p[0], minX, cols)] = 1;
+    const area = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+    if (Math.abs(area) < 1e-12) continue;
+    const c0 = cellOf(Math.min(a[0], b[0], c[0]), minX, cols), c1 = cellOf(Math.max(a[0], b[0], c[0]), minX, cols);
+    const r0 = cellOf(Math.min(a[1], b[1], c[1]), minY, rows), r1 = cellOf(Math.max(a[1], b[1], c[1]), minY, rows);
+    for (let r = r0; r <= r1; r++) {
+      const y = minY + (r + 0.5) * COVER.cell;
+      for (let q = c0; q <= c1; q++) {
+        const x = minX + (q + 0.5) * COVER.cell;
+        const w0 = (b[0] - a[0]) * (y - a[1]) - (b[1] - a[1]) * (x - a[0]);
+        const w1 = (c[0] - b[0]) * (y - b[1]) - (c[1] - b[1]) * (x - b[0]);
+        const w2 = (a[0] - c[0]) * (y - c[1]) - (a[1] - c[1]) * (x - c[0]);
+        if ((w0 >= 0 && w1 >= 0 && w2 >= 0) || (w0 <= 0 && w1 <= 0 && w2 <= 0)) grid[r * cols + q] = 1;
+      }
+    }
+  }
+  // Summed, so a box is four reads.
+  const sum = new Uint32Array((cols + 1) * (rows + 1));
+  for (let r = 0; r < rows; r++) {
+    for (let q = 0; q < cols; q++) {
+      sum[(r + 1) * (cols + 1) + q + 1] = grid[r * cols + q] + sum[r * (cols + 1) + q + 1]
+        + sum[(r + 1) * (cols + 1) + q] - sum[r * (cols + 1) + q];
+    }
+  }
+  return (x0, y0, x1, y1) => {
+    const q0 = Math.floor((x0 - minX) / COVER.cell), q1 = Math.floor((x1 - minX) / COVER.cell);
+    const r0 = Math.floor((y0 - minY) / COVER.cell), r1 = Math.floor((y1 - minY) / COVER.cell);
+    if (q1 < 0 || r1 < 0 || q0 >= cols || r0 >= rows) return false;
+    const a = Math.max(0, q0), b = Math.min(cols - 1, q1), c = Math.max(0, r0), d = Math.min(rows - 1, r1);
+    const at = (r, q) => sum[r * (cols + 1) + q];
+    return at(d + 1, b + 1) - at(c, b + 1) - at(d + 1, a) + at(c, a) > 0;
   };
 }
 
