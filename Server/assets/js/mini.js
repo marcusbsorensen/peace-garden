@@ -96,11 +96,18 @@ export function layMiniature(shapes, { keep = (x, z) => [x, z], scale = 1 } = {}
   return { positions: new Float32Array(positions), normals: new Float32Array(normals), colours: new Float32Array(colours) };
 }
 
-/// A circle as a closed line, `n` points round, for the shapes that are round.
+/// A round as a closed line, `n` points round, for the shapes that are round:
+/// wandering off its true circle by a few per cent, as a dug pond or a laid
+/// basin does (`raiseTrough`'s `round`), the same way on every visit.
 export function circle([x, z], r, n = 40) {
+  const seed = Math.round((x * 131 + z * 71 + r * 37) * 100);
   return Array.from({ length: n }, (_, i) => {
     const a = (i / n) * 2 * Math.PI;
-    return [x + r * Math.cos(a), z + r * Math.sin(a)];
+    // Round the loop's own length, so the wander comes back to where it began.
+    const k = i / n * 6, j = Math.floor(k), f = k - j, w = f * f * (3 - 2 * f);
+    const at = (m) => hash((m % 6) * 7.31 + seed * 0.0131) * 2 - 1;
+    const wobble = 1 + 0.03 * (at(j) + (at(j + 1) - at(j)) * w);
+    return [x + r * wobble * Math.cos(a), z + r * wobble * Math.sin(a)];
   });
 }
 
