@@ -29,11 +29,10 @@ final class LoadingTests: XCTestCase {
 
     // MARK: - It grows, and it unfurls while it grows
 
-    /// The stem is fastened to the ground: at every rise and every opening it
-    /// leaves the same point, and the ground passes through that point.
-    func testTheRootStaysWhereItLeavesTheGround() {
-        let root = CGPoint(x: Fiddlehead.frame.width * Fiddlehead.plan.rootX,
-                           y: Fiddlehead.frame.height * Fiddlehead.plan.rootY)
+    /// The root is a fixed point: at every rise and every opening the stem leaves the
+    /// same place, whichever anchor puts that place on the screen.
+    func testTheRootStaysWhereItLeaves() {
+        let root = Fiddlehead.rootPoint
         for rise in [0.0, 0.3, 0.7, 1.0] {
             for open in [0.0, 0.5, 1.0] {
                 let stem = Fiddlehead.figure(open: open, rise: rise).stem
@@ -41,7 +40,69 @@ final class LoadingTests: XCTestCase {
                 XCTAssertEqual(stem.first!.y, root.y, accuracy: 1e-9)
             }
         }
-        XCTAssertEqual(Fiddlehead.Soil.line(at: root.x, root: Fiddlehead.Soil.rootX), 0, accuracy: 1e-12)
+    }
+
+    /// **Variant 1**: the stem enters from the very bottom edge of the screen. At the
+    /// first moment its tip is at the edge and nothing is on the screen; at the end
+    /// it is still entering from the edge, and the whole plant is on the screen,
+    /// across and up.
+    func testTheEdgeAnchorEntersFromTheBottomOfTheScreen() {
+        for screen in [CGSize(width: 390, height: 844), CGSize(width: 440, height: 956),
+                       CGSize(width: 820, height: 1180)] {
+            let placement = Fiddlehead.Placement.bottomEdge(in: screen)
+            func canvas(_ open: Double, _ rise: Double) -> [CGPoint] {
+                let figure = Fiddlehead.figure(open: open, rise: rise)
+                return (figure.stem + figure.bract).map(placement.place)
+            }
+            // The first moment: the highest point is at the edge, to a hair.
+            let start = canvas(0, 0)
+            XCTAssertEqual(start.map(\.y).min()!, screen.height, accuracy: 0.01, "\(screen)")
+            // The root is below the edge at every moment, so the stem always comes in
+            // through it, and the edge is the only thing it is fastened to.
+            XCTAssertGreaterThanOrEqual(placement.place(Fiddlehead.rootPoint).y, screen.height)
+            // And it comes up through the edge: by the time it is half grown its tip
+            // is well on the screen.
+            XCTAssertLessThan(canvas(0.5, 0.5).map(\.y).min()!, screen.height * 0.9)
+            // The grown plant is on the screen, and centred across it within a tenth.
+            let grown = canvas(Fiddlehead.composed, 1)
+            XCTAssertGreaterThan(grown.map(\.x).min()!, 0, "\(screen)")
+            XCTAssertLessThan(grown.map(\.x).max()!, screen.width, "\(screen)")
+            XCTAssertGreaterThan(grown.map(\.y).min()!, 0, "\(screen)")
+            let middle = (grown.map(\.x).min()! + grown.map(\.x).max()!) / 2
+            XCTAssertEqual(middle, screen.width / 2, accuracy: screen.width * 0.1, "\(screen)")
+            // And it is tall: at least a third of the screen.
+            XCTAssertGreaterThan(screen.height - grown.map(\.y).min()!, screen.height / 3, "\(screen)")
+        }
+    }
+
+    /// **Variant 2**: a fixed point in space with nothing beneath it. The root does
+    /// not move on the canvas, and nothing at any pose leaves the frame it is given.
+    func testTheFixedAnchorIsAPointThatDoesNotMove() {
+        let frame = CGSize(width: 187, height: 280)
+        let placement = Fiddlehead.Placement.fixedPoint(in: frame)
+        let root = placement.place(Fiddlehead.rootPoint)
+        var lowest = -Double.infinity
+        for rise in stride(from: 0.0, through: 1.0, by: 0.25) {
+            for open in stride(from: 0.0, through: 1.0, by: 0.25) {
+                let figure = Fiddlehead.figure(open: open, rise: rise)
+                XCTAssertEqual(placement.place(figure.stem[0]).x, root.x, accuracy: 1e-9)
+                XCTAssertEqual(placement.place(figure.stem[0]).y, root.y, accuracy: 1e-9)
+                for p in (figure.stem + figure.bract).map(placement.place) {
+                    XCTAssertGreaterThanOrEqual(p.x, 0)
+                    XCTAssertLessThanOrEqual(p.x, frame.width)
+                    XCTAssertGreaterThanOrEqual(p.y, 0)
+                    XCTAssertLessThanOrEqual(p.y, frame.height)
+                    lowest = max(lowest, Double(p.y))
+                }
+            }
+        }
+        // Nothing is drawn below the root: it is the lowest thing there is.
+        XCTAssertEqual(lowest, Double(root.y), accuracy: 1e-6)
+        // And the plant is centred in its frame as a whole.
+        XCTAssertEqual(placement.place(CGPoint(x: Fiddlehead.travel.midX, y: Fiddlehead.travel.midY)).x,
+                       frame.width / 2, accuracy: 1e-9)
+        XCTAssertEqual(placement.place(CGPoint(x: Fiddlehead.travel.midX, y: Fiddlehead.travel.midY)).y,
+                       frame.height / 2, accuracy: 1e-9)
     }
 
     /// It *grows*: unlike the backdrop's frond, whose arc length never changes, this
@@ -64,14 +125,14 @@ final class LoadingTests: XCTestCase {
         }
     }
 
-    /// *"At the start it is a curled tip just breaking the soil."*
-    func testItStartsAsASmallCurlJustAboveTheSoil() {
+    /// *"At the start it is a curled tip just emerging."*
+    func testItStartsAsASmallCurl() {
         let start = Fiddlehead.figure(open: 0, rise: 0).stem
         let grown = Fiddlehead.figure(open: Fiddlehead.composed, rise: 1).stem
         let root = start[0].y
         let startHeight = root - start.map(\.y).min()!
         let grownHeight = root - grown.map(\.y).min()!
-        XCTAssertGreaterThan(startHeight, 0, "it must stand above the soil, not in it")
+        XCTAssertGreaterThan(startHeight, 0, "it must stand up from its root")
         XCTAssertLessThan(startHeight, grownHeight * 0.25)
         // A curl and not a stick: the stem has turned through more than a turn.
         let end = start.suffix(2)
@@ -162,7 +223,7 @@ final class LoadingTests: XCTestCase {
             let pose = Fiddlehead.pose(atBreath: Double(step) / 24)
             XCTAssertLessThan(pose.rise, ends.rise)
             XCTAssertLessThan(pose.open, ends.open)
-            XCTAssertGreaterThan(pose.rise, 0.3, "the tip is always out of the soil")
+            XCTAssertGreaterThan(pose.rise, 0.3, "the tip is always up")
             XCTAssertGreaterThan(pose.open, 0.1, "and always a curl")
         }
         let low = Fiddlehead.pose(atBreath: 0), high = Fiddlehead.pose(atBreath: 0.5)
@@ -197,27 +258,56 @@ final class LoadingTests: XCTestCase {
         }
     }
 
-    /// The soil is the other line in the picture, and it must not be a horizon:
-    /// over every 20 units of it the line stands off its own chord by a third of a
-    /// unit at least.
-    func testTheSoilIsASwellAndNotAHorizon() {
-        let root = Fiddlehead.Soil.rootX
-        for start in stride(from: -20.0, through: 100.0, by: 2.0) {
-            var xs: [Double] = []
-            var x = start
-            while x <= start + 20 { xs.append(x); x += 0.5 }
-            let ys = xs.map { Fiddlehead.Soil.line(at: $0, root: root) }
-            XCTAssertTrue(ys.allSatisfy(\.isFinite))
-            var deviation = 0.0
-            for (x, y) in zip(xs, ys) {
-                let chord = ys.first! + (ys.last! - ys.first!) * (x - xs.first!) / (xs.last! - xs.first!)
-                deviation = max(deviation, abs(y - chord))
+    /// **There is no ground.** Marcus took the soil out on 10 October 2026: every
+    /// plant in the app is attached to a 3D ground, floating, or 2D with no soil, and
+    /// a drawn line matched none. Asked of the pixels rather than of the code: in both
+    /// variants, nothing is lit below the root, and at the screen's bottom edge only
+    /// the stem is, a few pixels of it and not a line across.
+    func testNothingIsDrawnBelowTheStem() throws {
+        func lit(_ view: some View, width: Int, height: Int) throws -> [[Bool]] {
+            let renderer = ImageRenderer(content: view.frame(width: CGFloat(width), height: CGFloat(height)))
+            renderer.scale = 1
+            let image = try XCTUnwrap(renderer.uiImage?.cgImage)
+            let data = try XCTUnwrap(image.dataProvider?.data)
+            let bytes = CFDataGetBytePtr(data)!
+            let ground = (Int(bytes[0]), Int(bytes[1]), Int(bytes[2]))
+            var rows: [[Bool]] = []
+            for y in 0..<image.height {
+                var row: [Bool] = []
+                for x in 0..<image.width {
+                    let i = (y * image.width + x) * 4
+                    let d = abs(Int(bytes[i]) - ground.0) + abs(Int(bytes[i + 1]) - ground.1)
+                        + abs(Int(bytes[i + 2]) - ground.2)
+                    row.append(d > 30)
+                }
+                rows.append(row)
             }
-            XCTAssertGreaterThan(deviation, 0.3, "from \(start)")
+            return rows
         }
-        // And there is a mound where the stem comes up, standing out of the waves.
-        XCTAssertGreaterThan(Fiddlehead.Soil.moundHeight, 2)
-        XCTAssertGreaterThan(Fiddlehead.Soil.moundReach, 5)
+
+        // Variant 2: a fixed point. The lowest lit row is the root's, give or take
+        // the half stroke and the halo.
+        let frame = CGSize(width: 200, height: 300)
+        let fixed = try lit(ZStack {
+            LaunchMoment.ground
+            FiddleheadView(pose: Fiddlehead.pose(atMoment: 1), palette: .onDark, weight: 1.8, halo: 10,
+                           anchor: .fixedPoint)
+        }, width: 200, height: 300)
+        let root = Fiddlehead.Placement.fixedPoint(in: frame).place(Fiddlehead.rootPoint)
+        let lowest = fixed.lastIndex { $0.contains(true) }!
+        XCTAssertLessThanOrEqual(Double(lowest), Double(root.y) + 7, "nothing below the root")
+
+        // Variant 1: the screen's edge. In the last rows only the stem is lit.
+        let edge = try lit(ZStack {
+            LaunchMoment.ground
+            FiddleheadView(pose: Fiddlehead.pose(atMoment: 1), palette: .onDark, weight: 2.0, halo: 10,
+                           anchor: .bottomEdge)
+        }, width: 195, height: 422)
+        for row in edge.suffix(4) {
+            let count = row.filter { $0 }.count
+            XCTAssertGreaterThan(count, 0, "the stem comes in through the edge")
+            XCTAssertLessThan(count, 24, "and only the stem does: that row is not a line across")
+        }
     }
 
     /// The bract is stroked at the mark's weight, so a bract that was merely
@@ -269,8 +359,6 @@ final class LoadingTests: XCTestCase {
             XCTAssertEqual(stop.contrast(with: ground), 13.0, accuracy: 0.1, "stop \(index)")
         }
         XCTAssertGreaterThan(Fiddlehead.Palette.onDark.leaf.contrast(with: ground), 18)
-        // The soil is a hairline at 0.34: it reads as ground and not as drawing.
-        XCTAssertGreaterThan(Fiddlehead.Palette.onDark.soilLine, Fiddlehead.Palette.onDark.soilShade)
     }
 
     /// The waiting mark follows the app's appearance. On the light ground the
@@ -312,11 +400,13 @@ final class LoadingTests: XCTestCase {
 
     /// All three suite apps give Reduce Motion no moment at all, not a shorter one.
     func testReduceMotionAndOffTakeTheMomentAway() {
-        XCTAssertTrue(LaunchMomentHost.plays(style: .frond, reduceMotion: false, alreadyPlayed: false))
-        XCTAssertFalse(LaunchMomentHost.plays(style: .frond, reduceMotion: true, alreadyPlayed: false))
+        for style in [LoadingStyle.edge, .fixed] {
+            XCTAssertTrue(LaunchMomentHost.plays(style: style, reduceMotion: false, alreadyPlayed: false))
+            XCTAssertFalse(LaunchMomentHost.plays(style: style, reduceMotion: true, alreadyPlayed: false))
+            XCTAssertFalse(LaunchMomentHost.plays(style: style, reduceMotion: false, alreadyPlayed: true),
+                           "a second window is not a launch")
+        }
         XCTAssertFalse(LaunchMomentHost.plays(style: .off, reduceMotion: false, alreadyPlayed: false))
-        XCTAssertFalse(LaunchMomentHost.plays(style: .frond, reduceMotion: false, alreadyPlayed: true),
-                       "a second window is not a launch")
     }
 
     /// Still, not blank: standing, and a tendril half open or more.
@@ -326,22 +416,29 @@ final class LoadingTests: XCTestCase {
         XCTAssertGreaterThan(Fiddlehead.still.rise, 0.5)
     }
 
-    func testTheSwitchDefaultsToTheFrondAndReadsALaunchArgument() throws {
+    /// Both launch variants are behind the switch until Marcus picks. The recommended
+    /// one is the default; a launch argument names either, or `off`; and a value from
+    /// an earlier round reads as the default rather than as nothing.
+    func testTheSwitchHoldsBothVariantsAndReadsALaunchArgument() throws {
         let suite = "loading-tests-\(UUID().uuidString)"
         let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
         defer { defaults.removePersistentDomain(forName: suite) }
 
-        XCTAssertEqual(LoadingSwitch.style(in: defaults), .frond)
+        XCTAssertEqual(LoadingSwitch.style(in: defaults), LoadingSwitch.fallback)
+        XCTAssertEqual(LoadingSwitch.fallback, .fixed, "the recommendation: README, 10 October 2026")
         for style in LoadingStyle.allCases {
             defaults.set(style.rawValue, forKey: LoadingSwitch.key)
             XCTAssertEqual(LoadingSwitch.style(in: defaults), style)
         }
-        // The first round had an `unwinding` variant; a launch argument that still
-        // names it reads as the default rather than as nothing.
-        defaults.set("unwinding", forKey: LoadingSwitch.key)
-        XCTAssertEqual(LoadingSwitch.style(in: defaults), .frond)
+        for earlier in ["unwinding", "frond", "not a variant"] {
+            defaults.set(earlier, forKey: LoadingSwitch.key)
+            XCTAssertEqual(LoadingSwitch.style(in: defaults), LoadingSwitch.fallback, earlier)
+        }
         XCTAssertEqual(LoadingSwitch.key, "loading.style.v1")
-        XCTAssertEqual(LoadingStyle.allCases.count, 2)
+        XCTAssertEqual(Set(LoadingStyle.allCases), [.off, .edge, .fixed])
+        XCTAssertNil(LoadingStyle.off.launchAnchor)
+        XCTAssertEqual(LoadingStyle.edge.launchAnchor, .bottomEdge)
+        XCTAssertEqual(LoadingStyle.fixed.launchAnchor, .fixedPoint)
     }
 
     // MARK: - It draws something
@@ -385,8 +482,10 @@ final class LoadingTests: XCTestCase {
     /// ground, then the fiddlehead at the pose the clock gives — over a stand-in
     /// for the stage: the app's own `StageBackdrop` and a grown plant, in both
     /// appearances, so that the hand-over is seen against what it hands over to.
-    /// 30 frames a second, the 2.0 s and then the 180 ms dissolve. The waiting mark
-    /// is one 2.4 s breath over a dimmed screen, in each appearance.
+    /// 30 frames a second, the 2.0 s and then the 180 ms dissolve, for variant 1
+    /// (`v1-`, the bottom edge) and variant 2 (`v2-`, a fixed point). The waiting
+    /// mark is one 2.4 s breath over a dimmed screen, in each appearance, and is the
+    /// fixed-point drawing in both.
     func testWriteTheLoadingFrames() async throws {
         guard let path = ProcessInfo.processInfo.environment["PG_RENDER_LOADING"], !path.isEmpty else {
             throw XCTSkip("PG_RENDER_LOADING is not set")
@@ -423,36 +522,39 @@ final class LoadingTests: XCTestCase {
             try XCTUnwrap(XCTUnwrap(image).pngData()).write(to: folder.appendingPathComponent("\(name).png"))
         }
 
-        let markFrame = LaunchMoment.markFrame(short: min(phone.width, phone.height))
-        for (scheme, mode) in [(ColorScheme.dark, "dark"), (ColorScheme.light, "light")] {
-            for index in 0...(momentFrames + dissolveFrames) {
-                let moment = min(index, momentFrames)
-                let t = Double(moment) / Double(momentFrames)
-                var markOpacity = 1.0, fieldOpacity = 1.0
-                if index > momentFrames {
-                    let seconds = Double(index - momentFrames) / fps
-                    // easeOut for the mark and easeInOut for the ground, as
-                    // `LaunchMoment.leave()` asks for; approximated by their
-                    // quadratic and smoothstep cousins.
-                    let leaving = min(seconds / LoadingTiming.markFade, 1)
-                    markOpacity = (1 - leaving) * (1 - leaving)
-                    fieldOpacity = 1 - LoadingTiming.smooth(seconds / LoadingTiming.dissolve)
-                }
-                let content = ZStack {
-                    stage(scheme)
-                    ZStack {
-                        LaunchMoment.ground
-                        FiddleheadView(pose: Fiddlehead.pose(atMoment: t), palette: .onDark, weight: 1.8, halo: 10)
-                            .frame(width: markFrame.width, height: markFrame.height)
-                            .opacity(markOpacity)
+        // Both launch variants, each over both stages: v1 enters from the screen's
+        // bottom edge, v2 grows from a fixed point. Drawn by `LaunchMoment.mark`, the
+        // same function the app draws them with.
+        for (style, variant) in [(LoadingStyle.edge, "v1"), (LoadingStyle.fixed, "v2")] {
+            for (scheme, mode) in [(ColorScheme.dark, "dark"), (ColorScheme.light, "light")] {
+                for index in 0...(momentFrames + dissolveFrames) {
+                    let moment = min(index, momentFrames)
+                    let t = Double(moment) / Double(momentFrames)
+                    var markOpacity = 1.0, fieldOpacity = 1.0
+                    if index > momentFrames {
+                        let seconds = Double(index - momentFrames) / fps
+                        // easeOut for the mark and easeInOut for the ground, as
+                        // `LaunchMoment.leave()` asks for; approximated by their
+                        // quadratic and smoothstep cousins.
+                        let leaving = min(seconds / LoadingTiming.markFade, 1)
+                        markOpacity = (1 - leaving) * (1 - leaving)
+                        fieldOpacity = 1 - LoadingTiming.smooth(seconds / LoadingTiming.dissolve)
                     }
-                    .opacity(fieldOpacity)
+                    let content = ZStack {
+                        stage(scheme)
+                        ZStack {
+                            LaunchMoment.ground
+                            LaunchMoment.mark(style, at: t, in: phone)
+                                .opacity(markOpacity)
+                        }
+                        .opacity(fieldOpacity)
+                    }
+                    .frame(width: phone.width, height: phone.height)
+                    .environment(\.colorScheme, scheme)
+                    let renderer = ImageRenderer(content: content)
+                    renderer.scale = 2
+                    try write(renderer.uiImage, "\(variant)-\(mode)-\(String(format: "%03d", index))")
                 }
-                .frame(width: phone.width, height: phone.height)
-                .environment(\.colorScheme, scheme)
-                let renderer = ImageRenderer(content: content)
-                renderer.scale = 2
-                try write(renderer.uiImage, "\(mode)-\(String(format: "%03d", index))")
             }
         }
 
@@ -473,7 +575,7 @@ final class LoadingTests: XCTestCase {
                     FiddleheadView(pose: pose, palette: palette, weight: 1.5, halo: 0)
                         .frame(width: markSize.width, height: markSize.height)
                 }
-                .frame(width: 260, height: 190)
+                .frame(width: 200, height: 150)
                 .environment(\.colorScheme, scheme)
             }
             for index in 0..<breathFrames {

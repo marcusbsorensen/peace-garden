@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Builds the final filmstrips, GIFs and MP4s in this folder from the frames
+Builds the current filmstrips, GIFs and MP4s in this folder from the frames
 `LoadingTests.testWriteTheLoadingFrames` writes. Nothing here draws the
 animation: every picture is a crop of a frame the shipped SwiftUI view drew.
 
@@ -8,9 +8,17 @@ animation: every picture is a crop of a frame the shipped SwiftUI view drew.
         -only-testing:PeaceGardenTests/LoadingTests/testWriteTheLoadingFrames
     python3 design/loading-2026-10-10/make-assets.py /some/folder
 
-Needs Pillow, and ffmpeg for the MP4s. The first round's pictures (`a-*`, `b-*`,
-`compare-resting-frames.png`, `real-launch-*`) were made by
-`make-assets-first-round.py` from code that has since been removed.
+Needs Pillow, and ffmpeg for the MP4s.
+
+What it makes: `v1-launch-filmstrip.png`, `v1-launch.gif`, `v1-launch.mp4` (the stem
+enters from the screen's bottom edge), the same three for `v2-` (a fixed point),
+and `final-waiting-filmstrip.png`, `final-waiting.gif`, `final-waiting.mp4` and
+`final-waiting-reduce-motion.png` (the waiting mark, with no soil).
+
+Earlier pictures were made by earlier versions of this script from code that has
+since changed: `make-assets-first-round.py` for `a-*`, `b-*`, `compare-resting-frames.png`
+and `real-launch-*`; the `soil-*` set, with the drawn ground Marcus removed on
+10 October 2026, was made by the version of this file at commit `73e7d06`.
 """
 
 import subprocess
@@ -35,16 +43,9 @@ def load(name):
     return Image.open(FRAMES / name).convert("RGB")
 
 
-def central(im, share):
-    """The middle of a phone-shaped frame: where the drawing is, and the plant."""
-    w, h = im.size
-    top = int(h * (0.5 - share / 2))
-    return im.crop((0, top, w, top + int(h * share)))
-
-
 def label(im, text):
     d = ImageDraw.Draw(im)
-    d.text((8, 6), text, fill=(140, 140, 160), font=FONT)
+    d.text((6, 5), text, fill=(140, 140, 160), font=FONT)
     return im
 
 
@@ -52,13 +53,15 @@ def scaled(im, k):
     return im.resize((int(im.width * k), int(im.height * k)), Image.LANCZOS)
 
 
-def launch_strip():
-    """Twelve frames of the launch moment and its hand-over: dark stage above, light below."""
+def launch_strip(variant):
+    """Twelve frames of the launch moment and its hand-over, whole screens: the dark
+    stage above and the light stage below. The moment is on the dark ground in both
+    appearances, so the rows differ only at the hand-over."""
     rows = []
     for mode in ("dark", "light"):
         row = []
         for index in LABELLED:
-            im = scaled(central(load(f"{mode}-{index:03d}.png"), 0.36), 0.3)
+            im = scaled(load(f"{variant}-{mode}-{index:03d}.png"), 0.25)
             row.append(label(im, f"{index / FPS:.2f} s"))
         rows.append(row)
     w, h = rows[0][0].size
@@ -69,30 +72,11 @@ def launch_strip():
     return sheet
 
 
-def waiting_crop(im):
-    w, h = im.size
-    return im.crop((int(w * 0.2), int(h * 0.12), int(w * 0.8), int(h * 0.95)))
-
-
-def waiting_strip():
-    """One breath, twelve frames: the light appearance above and the dark below."""
-    rows = []
-    for mode in ("light", "dark"):
-        row = [scaled(waiting_crop(load(f"busy-{mode}-{i:02d}.png")), 0.34) for i in range(BREATH)]
-        rows.append(row)
-    w, h = rows[0][0].size
-    sheet = Image.new("RGB", (w * BREATH + 2 * (BREATH - 1), h * 2 + 2), GAP)
-    for r, row in enumerate(rows):
-        for c, im in enumerate(row):
-            sheet.paste(im, (c * (w + 2), r * (h + 2)))
-    return sheet
-
-
-def launch_frames():
+def launch_frames(variant):
     """The whole launch, dark stage beside light stage, with a held frame at each end."""
     out = []
     for index in range(TOTAL):
-        pair = [scaled(central(load(f"{mode}-{index:03d}.png"), 0.36), 0.36) for mode in ("dark", "light")]
+        pair = [scaled(load(f"{variant}-{mode}-{index:03d}.png"), 0.2) for mode in ("dark", "light")]
         w, h = pair[0].size
         both = Image.new("RGB", (w * 2 + 4, h), GAP)
         both.paste(pair[0], (0, 0))
@@ -102,10 +86,28 @@ def launch_frames():
     return [out[0]] * 6 + out + [out[-1]] * 12
 
 
+def waiting_crop(im):
+    w, h = im.size
+    return im.crop((int(w * 0.25), int(h * 0.1), int(w * 0.75), int(h * 0.98)))
+
+
+def waiting_strip():
+    """One breath, twelve frames: the light appearance above and the dark below."""
+    rows = []
+    for mode in ("light", "dark"):
+        rows.append([scaled(waiting_crop(load(f"busy-{mode}-{i:02d}.png")), 0.42) for i in range(BREATH)])
+    w, h = rows[0][0].size
+    sheet = Image.new("RGB", (w * BREATH + 2 * (BREATH - 1), h * 2 + 2), GAP)
+    for r, row in enumerate(rows):
+        for c, im in enumerate(row):
+            sheet.paste(im, (c * (w + 2), r * (h + 2)))
+    return sheet
+
+
 def waiting_frames(loops=3):
     cells = []
     for index in range(BREATH):
-        row = [scaled(waiting_crop(load(f"busy-{mode}-{index:02d}.png")), 0.4) for mode in ("light", "dark")]
+        row = [scaled(waiting_crop(load(f"busy-{mode}-{index:02d}.png")), 0.42) for mode in ("light", "dark")]
         w, h = row[0].size
         both = Image.new("RGB", (w * 2 + 4, h), GAP)
         both.paste(row[0], (0, 0))
@@ -114,7 +116,7 @@ def waiting_frames(loops=3):
     return cells * loops
 
 
-def save_gif(frames, path, fps, colours=160):
+def save_gif(frames, path, fps, colours=128):
     # One palette for the whole animation, taken from a mosaic of frames across it.
     # Taken from the first frame alone it is the blank ground and nothing else, and
     # every colour that arrives later is thrown away.
@@ -144,23 +146,26 @@ def save_mp4(frames, path, fps, workdir):
 def main():
     work = FRAMES / "_video"
     work.mkdir(exist_ok=True)
-    launch_strip().save(OUT / "final-launch-filmstrip.png", optimize=True)
+    made = []
+    for variant in ("v1", "v2"):
+        launch_strip(variant).save(OUT / f"{variant}-launch-filmstrip.png", optimize=True)
+        frames = launch_frames(variant)
+        save_gif(frames, OUT / f"{variant}-launch.gif", FPS)
+        save_mp4(frames, OUT / f"{variant}-launch.mp4", FPS, work)
+        made += [f"{variant}-launch-filmstrip.png", f"{variant}-launch.gif", f"{variant}-launch.mp4"]
     waiting_strip().save(OUT / "final-waiting-filmstrip.png", optimize=True)
-    frames = launch_frames()
-    save_gif(frames, OUT / "final-launch.gif", FPS)
-    save_mp4(frames, OUT / "final-launch.mp4", FPS, work)
     loops = waiting_frames()
     save_gif(loops, OUT / "final-waiting.gif", FPS / 2)
     save_mp4(loops, OUT / "final-waiting.mp4", FPS / 2, work)
     # The two still frames Reduce Motion gets, side by side, light then dark.
-    pair = [scaled(waiting_crop(load(f"busy-still-{mode}.png")), 0.5) for mode in ("light", "dark")]
+    pair = [scaled(waiting_crop(load(f"busy-still-{mode}.png")), 0.6) for mode in ("light", "dark")]
     w, h = pair[0].size
     sheet = Image.new("RGB", (w * 2 + 4, h), GAP)
     sheet.paste(pair[0], (0, 0))
     sheet.paste(pair[1], (w + 4, 0))
     sheet.save(OUT / "final-waiting-reduce-motion.png", optimize=True)
-    for name in ("final-launch-filmstrip.png", "final-waiting-filmstrip.png", "final-waiting-reduce-motion.png",
-                 "final-launch.gif", "final-launch.mp4", "final-waiting.gif", "final-waiting.mp4"):
+    made += ["final-waiting-filmstrip.png", "final-waiting.gif", "final-waiting.mp4", "final-waiting-reduce-motion.png"]
+    for name in made:
         print(name, f"{(OUT / name).stat().st_size / 1024:.0f} KB")
 
 

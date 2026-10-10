@@ -1,8 +1,13 @@
 import SwiftUI
 import UIKit
 
-/// **The launch moment: the fiddlehead growing up out of the ground, played once
-/// over the app as it opens.**
+/// **The launch moment: the fiddlehead growing upward, played once over the app as
+/// it opens.**
+///
+/// There is no ground in the picture, so there are two ways for the stem to begin
+/// (`Fiddlehead.Anchor`), and the style switch holds both until Marcus picks:
+/// *edge*, where it enters from the screen's bottom edge, and *fixed*, where it
+/// grows from a point in space with nothing beneath it.
 ///
 /// Everything about *how* it behaves is the Interfulgent pattern, and the sources
 /// are named so that none of it is this file's invention:
@@ -37,6 +42,7 @@ import UIKit
 /// covered rather than the sheet delayed. Recorded as the known edge.
 struct LaunchMoment: View {
 
+    let style: LoadingStyle
     let onGone: () -> Void
 
     /// Fixed when this is first built, so the first frame drawn is the moment's
@@ -51,17 +57,11 @@ struct LaunchMoment: View {
 
     var body: some View {
         GeometryReader { proxy in
-            let frame = Self.markFrame(short: min(proxy.size.width, proxy.size.height))
             ZStack {
                 Self.ground.ignoresSafeArea()
                 TimelineView(.animation(paused: isLeaving && markOpacity == 0)) { timeline in
                     let t = LoadingTiming.progress(elapsed: timeline.date.timeIntervalSince(startedAt))
-                    // The icon's own colours, on the dark ground that is the
-                    // same in both appearances: the contrast is measured against
-                    // `#0D0D1F` and not against whatever the app's ground is.
-                    FiddleheadView(pose: Fiddlehead.pose(atMoment: t), palette: .onDark,
-                                   weight: 1.8, halo: 10)
-                        .frame(width: frame.width, height: frame.height)
+                    Self.mark(style, at: t, in: proxy.size)
                 }
                 .opacity(markOpacity)
             }
@@ -80,13 +80,35 @@ struct LaunchMoment: View {
         .accessibilityHidden(true)
     }
 
-    /// **How big the drawing is, from the shorter side of the screen.** Not typed
-    /// per device: 46 % of the short side, capped at 320 pt so an iPad does not get
-    /// a poster, and wider than it is tall because the soil it comes up out of is
-    /// wider than the stem is.
+    /// The drawing at `t`, in the icon's own colours on the dark ground that is the
+    /// same in both appearances: the contrast is measured against `#0D0D1F` and not
+    /// against whatever the app's ground is.
+    ///
+    /// *Edge* is drawn across the whole screen, because the screen's bottom edge is
+    /// what it grows from. *Fixed* is drawn in a frame in the middle of it.
+    @ViewBuilder
+    static func mark(_ style: LoadingStyle, at t: Double, in screen: CGSize) -> some View {
+        let pose = Fiddlehead.pose(atMoment: t)
+        switch style.launchAnchor {
+        case .bottomEdge?:
+            FiddleheadView(pose: pose, palette: .onDark, weight: 2.0, halo: 10, anchor: .bottomEdge)
+                .frame(width: screen.width, height: screen.height)
+        case .fixedPoint?:
+            let frame = markFrame(short: min(screen.width, screen.height))
+            FiddleheadView(pose: pose, palette: .onDark, weight: 1.8, halo: 10, anchor: .fixedPoint)
+                .frame(width: frame.width, height: frame.height)
+        case nil:
+            EmptyView()
+        }
+    }
+
+    /// **How big the fixed-point drawing is, from the shorter side of the screen.**
+    /// Not typed per device: 55 % of the short side wide, capped at 340 pt so an
+    /// iPad does not get a poster, and half as tall again, because the plant is a
+    /// tall thing.
     static func markFrame(short: CGFloat) -> CGSize {
-        let side = min(short * 0.46, 320)
-        return CGSize(width: side * 1.6, height: side * 1.25)
+        let side = min(short * 0.55, 340)
+        return CGSize(width: side, height: side * 1.5)
     }
 
     /// One place the moment begins to go, so a touch and the clock arriving in
@@ -110,8 +132,10 @@ struct LaunchMoment: View {
 struct LaunchMomentHost: View {
 
     @State private var shown: Bool
+    private let style: LoadingStyle
 
     init(style: LoadingStyle = LoadingSwitch.style()) {
+        self.style = style
         let plays = Self.plays(style: style, reduceMotion: UIAccessibility.isReduceMotionEnabled,
                                alreadyPlayed: LaunchMomentLedger.played)
         _shown = State(initialValue: plays)
@@ -120,7 +144,7 @@ struct LaunchMomentHost: View {
 
     var body: some View {
         if shown {
-            LaunchMoment { shown = false }
+            LaunchMoment(style: style) { shown = false }
         }
     }
 

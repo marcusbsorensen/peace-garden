@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// **The loading animation: a fiddlehead grows up out of the ground while its curl
-/// lets go, and a leaf opens at the top as it arrives.**
+/// **The loading animation: a fiddlehead grows upward while its curl lets go, and a
+/// leaf opens at the top as it arrives.**
 ///
 /// The gesture is the one `UnfurlingBackdrop` runs behind the seed-making screens
 /// and `SproutingRule` runs at the ends of a rule — *the coil relaxes, the tip
@@ -10,12 +10,15 @@ import SwiftUI
 /// 2026 and asked for two things on top of the first drawing:
 ///
 /// - **Rising and unfurling overlap; they are not two steps.** It begins as a
-///   small tight curl just breaking the soil and over the moment the stem lengthens
+///   small tight curl just emerging and over the moment the stem lengthens
 ///   upward while the crozier uncoils, so the leaf is opening at the top as the top
 ///   arrives (`pose(atMoment:)`, whose two beats share most of their length).
-/// - **The ground is a gentle swell of soil, not a horizon** (`Soil`): a mound
-///   where the stem comes up and a few quiet waves either side, drawn as a line
-///   that fades out at both ends so that it has no edge.
+/// - **There is no ground.** The first drawing had a swell of soil under the stem
+///   and Marcus took it out (10 October 2026): every plant in the app is 3D and
+///   attached to a 3D ground, or 3D and floating in space (the main plant view),
+///   or 2D with no soil below, and a drawn line matches none of them. What
+///   replaces it is a choice of two anchors (`Anchor`), both with nothing under
+///   the stem.
 ///
 /// It is in the app's own colours: the icon's greens along the stem, bottom to
 /// tip, and the icon's white bract for the leaf. See `Palette`.
@@ -59,7 +62,7 @@ enum Fiddlehead {
     static let frame = CGSize(width: 100, height: 130)
 
     /// **How much of the stem is there at `rise == 0`**, as a share of its full
-    /// length: enough that what breaks the soil is a curl and not a dot. The whole
+    /// length: enough that what first appears is a curl and not a dot. The whole
     /// stem is the same shape at every length — the turning is measured along it as
     /// a fraction of itself — so a short one is a small tight crozier and a long one
     /// is a large one, which is how a fiddlehead grows.
@@ -76,7 +79,7 @@ enum Fiddlehead {
     ///
     /// - Parameters:
     ///   - open: 0 (furled) to 1 (as open as the plan goes).
-    ///   - rise: 0 (the tip just breaking the soil) to 1 (fully grown). The arc
+    ///   - rise: 0 (the tip just emerging) to 1 (fully grown). The arc
     ///     length changes with it, so unlike the backdrop's frond this one *does*
     ///     grow, and the root does not move.
     ///
@@ -164,34 +167,68 @@ enum Fiddlehead {
         return CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY)
     }()
 
-    // MARK: - The soil
+    /// Where the stem leaves, in the 100 × 130 frame.
+    static var rootPoint: CGPoint {
+        CGPoint(x: frame.width * plan.rootX, y: frame.height * plan.rootY)
+    }
 
-    /// **The ground the stem comes up out of: a swell and not a horizon.**
-    ///
-    /// Marcus's rule is that every edge in the app is organic, and a straight
-    /// ground line under a delicate stem is exactly the jarring thing it was made
-    /// for. A mound where the stem comes up, and three sines of unrelated
-    /// wavelength either side of it, all a few units high in a frame 100 wide.
-    /// Deterministic — the same constants every time, as every other shape in the
-    /// garden is — and passing exactly through the root, which is what the stem
-    /// is fastened to.
-    enum Soil {
-        static let moundHeight = 3.2
-        static let moundReach = 11.0
+    // MARK: - Where it is anchored
 
-        /// The swell at frame `x`, in frame units, negative being up.
-        static func swell(at x: Double, root: Double) -> Double {
-            let mound = -moundHeight * exp(-pow((x - root) / moundReach, 2))
-            let waves = 1.6 * sin(0.11 * x + 0.8) + 1.0 * sin(0.27 * x + 2.1) + 0.6 * sin(0.05 * x + 0.3)
-            return mound + waves
+    /// **What the stem grows from, now that there is no ground.** Marcus's note of
+    /// 10 October 2026 offered two, and both are kept behind the style switch until
+    /// he picks.
+    enum Anchor: Sendable {
+        /// *The stem enters from the very bottom edge of the screen* and grows
+        /// upward as it unfurls. The screen edge is the only ground, and nothing is
+        /// drawn there. The root is below the edge, so that the curl that begins
+        /// the moment is just out of sight and rises into view through it.
+        case bottomEdge
+        /// *A fixed point in space, with nothing beneath it*, like the app's 2D
+        /// plants. The root is a point that does not move, placed so that the grown
+        /// plant is centred in its frame, and the stem lengthens upward from it.
+        case fixedPoint
+    }
+
+    /// Where the 100 × 130 frame lands on the canvas: a scale and an origin.
+    struct Placement: Equatable {
+        var scale: CGFloat
+        var origin: CGPoint
+
+        func place(_ p: CGPoint) -> CGPoint {
+            CGPoint(x: p.x * scale + origin.x, y: p.y * scale + origin.y)
         }
 
-        /// The ground's height at `x` relative to the root, which it passes through.
-        static func line(at x: Double, root: Double) -> Double {
-            swell(at: x, root: root) - swell(at: root, root: root)
+        /// The drawing's whole travel — every rising and every opening — centred in
+        /// `size`, so the root is a fixed point and the grown plant fills the frame.
+        static func fixedPoint(in size: CGSize, margin: CGFloat = 0.92) -> Placement {
+            let box = Fiddlehead.travel
+            let scale = min(size.height * margin / box.height, size.width * margin / box.width)
+            return Placement(scale: scale, origin: CGPoint(x: size.width / 2 - box.midX * scale,
+                                                           y: size.height / 2 - box.midY * scale))
         }
 
-        static let rootX = Fiddlehead.frame.width * Fiddlehead.plan.rootX
+        /// The whole screen, with the root below its bottom edge by exactly the height
+        /// the curl has when it begins, so at the first moment the tip is at the edge
+        /// and nothing is on the screen. The grown plant is centred across, and is as
+        /// wide as 86 % of the screen or as tall as 95 % of it, whichever comes first
+        /// — on a phone, the width: the plant ends about half way up the screen.
+        static func bottomEdge(in size: CGSize) -> Placement {
+            let box = Fiddlehead.travel
+            let scale = min(size.height * 0.95 / box.height, size.width * 0.86 / box.width)
+            let root = Fiddlehead.rootPoint
+            let first = Fiddlehead.figure(open: 0, rise: 0)
+            let tip = (first.stem + first.bract).map(\.y).min() ?? root.y
+            let entry = CGFloat(root.y - tip) * scale
+            return Placement(scale: scale, origin: CGPoint(x: size.width / 2 - box.midX * scale,
+                                                           y: size.height + entry - root.y * scale))
+        }
+
+        static func make(_ anchor: Anchor, in size: CGSize) -> Placement {
+            switch anchor {
+            case .bottomEdge: return bottomEdge(in: size)
+            case .fixedPoint: return fixedPoint(in: size)
+            }
+        }
     }
 
     // MARK: - Poses
@@ -288,10 +325,6 @@ enum Fiddlehead {
         /// Root to tip, evenly spaced.
         var stem: [RGB]
         var leaf: RGB
-        /// The soil line and the soft shade under it.
-        var soil: RGB
-        var soilLine: Double
-        var soilShade: Double
         /// The wide faint pass the stem sits in, as the backdrop gives its hairline
         /// something to sit in. Zero for the small form, where it only blurs.
         var halo: Double
@@ -311,13 +344,13 @@ enum Fiddlehead {
         static let onDark = Palette(
             stem: [RGB(hex: 0x06F556), RGB(hex: 0x55F306), RGB(hex: 0xDCDC06)],
             leaf: RGB(1, 1, 1),
-            soil: RGB(1, 1, 1), soilLine: 0.34, soilShade: 0.08, halo: 0.07)
+            halo: 0.07)
 
         /// On the light ground: the icon's hues at 4.5:1, and the app's ink.
         static let onLight = Palette(
             stem: [RGB(hex: 0x03842E), RGB(hex: 0x2E8203), RGB(hex: 0x757503)],
             leaf: lightInk,
-            soil: lightInk, soilLine: 0.30, soilShade: 0.06, halo: 0)
+            halo: 0)
 
         /// The same two with the halo taken off, for the small form.
         var small: Palette {
@@ -333,19 +366,15 @@ enum Fiddlehead {
     ///   - weight: the hairline, in points.
     ///   - halo: width of the faint pass under it, in points. Ignored when the
     ///     palette's `halo` is zero.
-    static func draw(_ pose: Pose, palette: Palette, weight: CGFloat, halo: CGFloat,
+    ///   - anchor: what the stem grows from. See `Anchor`.
+    static func draw(_ pose: Pose, palette: Palette, weight: CGFloat, halo: CGFloat, anchor: Anchor,
                      in context: inout GraphicsContext, size: CGSize) {
-        let box = travel
-        let scale = min(size.height * 0.8 / box.height, size.width * 0.62 / box.width)
-        let groundY = size.height * 0.86
-        func place(_ p: CGPoint) -> CGPoint {
-            CGPoint(x: (p.x - box.midX) * scale + size.width / 2, y: (p.y - box.maxY) * scale + groundY)
-        }
+        let placement = Placement.make(anchor, in: size)
         func path(_ points: [CGPoint], closed: Bool) -> Path {
             var path = Path()
             guard let first = points.first else { return path }
-            path.move(to: place(first))
-            for p in points.dropFirst() { path.addLine(to: place(p)) }
+            path.move(to: placement.place(first))
+            for p in points.dropFirst() { path.addLine(to: placement.place(p)) }
             if closed { path.closeSubpath() }
             return path
         }
@@ -353,58 +382,16 @@ enum Fiddlehead {
         let figure = Fiddlehead.figure(open: pose.open, rise: pose.rise)
         let stem = path(figure.stem, closed: false)
         let bract = path(figure.bract, closed: true)
-        let rootCanvas = place(figure.stem[0])
-
-        // The soil: a line along the swell, faded out at both ends so it has no
-        // edge, and a soft shade below it that is a radial pool and not a slab.
-        var line = Path()
-        var shade = Path()
-        let step: CGFloat = 2
-        var x: CGFloat = 0
-        var first = true
-        while x <= size.width + step {
-            let frameX = Double((x - size.width / 2) / scale) + box.midX
-            let y = groundY + CGFloat(Soil.line(at: frameX, root: Soil.rootX)) * scale
-            if first { line.move(to: CGPoint(x: x, y: y)); shade.move(to: CGPoint(x: x, y: y)); first = false }
-            else { line.addLine(to: CGPoint(x: x, y: y)); shade.addLine(to: CGPoint(x: x, y: y)) }
-            x += step
-        }
-        shade.addLine(to: CGPoint(x: size.width + step, y: size.height))
-        shade.addLine(to: CGPoint(x: 0, y: size.height))
-        shade.closeSubpath()
 
         context.opacity = pose.appear
-        let soil = palette.soil.color
-        // **A pool, not a slab**: an ellipse of shade centred on the root, wide
-        // across and only as deep as the room under the line, so that it has faded
-        // to nothing before it reaches the bottom of the frame. Filled as a circle
-        // in a squashed space, clipped to below the line. The first version filled
-        // the whole region under the line and its straight bottom edge showed.
-        let pool = size.width * 0.5
-        let depth = max(size.height - groundY, 1) * 0.95
-        var shaded = context
-        shaded.clip(to: shade)
-        shaded.translateBy(x: rootCanvas.x, y: groundY)
-        shaded.scaleBy(x: 1, y: depth / pool)
-        shaded.fill(Path(ellipseIn: CGRect(x: -pool, y: -pool, width: pool * 2, height: pool * 2)),
-                    with: .radialGradient(
-                        Gradient(colors: [soil.opacity(palette.soilShade), soil.opacity(0)]),
-                        center: .zero, startRadius: 0, endRadius: pool))
-
-        let fades = Gradient(stops: [
-            .init(color: soil.opacity(0), location: 0),
-            .init(color: soil.opacity(palette.soilLine), location: 0.22),
-            .init(color: soil.opacity(palette.soilLine), location: 0.78),
-            .init(color: soil.opacity(0), location: 1),
-        ])
 
         // The stem's colour runs bottom to tip along the height it can reach, so a
         // short stem is the green end of it and a grown one reaches the yellow.
         let ramp = Gradient(stops: palette.stem.enumerated().map { index, rgb in
             Gradient.Stop(color: rgb.color, location: Double(index) / Double(palette.stem.count - 1))
         })
-        let bottom = CGPoint(x: size.width / 2, y: groundY)
-        let top = CGPoint(x: size.width / 2, y: groundY - box.height * scale)
+        let root = placement.place(rootPoint)
+        let top = placement.place(CGPoint(x: rootPoint.x, y: travel.minY))
 
         if palette.halo > 0, halo > 0 {
             let style = StrokeStyle(lineWidth: halo, lineCap: .round, lineJoin: .round)
@@ -413,11 +400,8 @@ enum Fiddlehead {
             context.stroke(bract, with: .color(glow), style: style)
         }
         let style = StrokeStyle(lineWidth: weight, lineCap: .round, lineJoin: .round)
-        context.stroke(stem, with: .linearGradient(ramp, startPoint: bottom, endPoint: top), style: style)
+        context.stroke(stem, with: .linearGradient(ramp, startPoint: root, endPoint: top), style: style)
         context.stroke(bract, with: .color(palette.leaf.color), style: style)
-        context.stroke(line, with: .linearGradient(fades, startPoint: CGPoint(x: 0, y: groundY),
-                                                   endPoint: CGPoint(x: size.width, y: groundY)),
-                       style: StrokeStyle(lineWidth: max(weight * 0.8, 1), lineCap: .round, lineJoin: .round))
     }
 }
 
@@ -428,10 +412,12 @@ struct FiddleheadView: View {
     var palette: Fiddlehead.Palette
     var weight: CGFloat = 1.8
     var halo: CGFloat = 10
+    var anchor: Fiddlehead.Anchor = .fixedPoint
 
     var body: some View {
         Canvas { context, size in
-            Fiddlehead.draw(pose, palette: palette, weight: weight, halo: halo, in: &context, size: size)
+            Fiddlehead.draw(pose, palette: palette, weight: weight, halo: halo, anchor: anchor,
+                            in: &context, size: size)
         }
         .accessibilityHidden(true)
     }

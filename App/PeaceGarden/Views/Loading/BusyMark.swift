@@ -9,7 +9,7 @@ import SwiftUI
 /// spinner; keep it small; and under Reduce Motion keep the statement and lose the
 /// movement — the same drawing, held still.
 ///
-/// **A smaller version of the same thing.** The tip comes up out of the soil,
+/// **A smaller version of the same thing.** The tip comes up out of nothing,
 /// uncurls a little and settles back, over `LoadingTiming.breath`; it never rises
 /// as far as the launch moment's stem or opens as far.
 ///
@@ -20,16 +20,18 @@ import SwiftUI
 /// (`Fiddlehead.Palette`), since the icon's own values would be 1.4:1 there.
 struct LoadingBusyMark: View {
 
-    /// The mark's height; its width follows, the soil being wider than the stem.
+    /// The mark's width; its height is half as much again, a plant being tall.
     var size: CGFloat = 40
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorScheme) private var colorScheme
     @State private var startedAt = Date()
 
-    /// The frame it is drawn in: wider than tall, because the soil is.
+    /// The frame it is drawn in. **Always the fixed-point drawing**, whichever
+    /// launch variant is chosen: this sits inside a screen and cannot touch the
+    /// screen's edge, and Marcus asked for it that way on 10 October 2026.
     static func frame(forSize size: CGFloat) -> CGSize {
-        CGSize(width: size * 2.1, height: size * 1.6)
+        CGSize(width: size, height: size * 1.5)
     }
 
     var body: some View {

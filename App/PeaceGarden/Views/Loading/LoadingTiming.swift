@@ -1,24 +1,42 @@
 import Foundation
 
-/// **Whether the app wears its loading animation, and the one switch that decides.**
+/// **Which launch moment the app wears, and the one switch that decides.**
 ///
-/// Marcus chose the fiddlehead on 10 October 2026, so the app carries one
-/// loading animation and this has two states: it is drawn, or it is not.
+/// Marcus chose the fiddlehead on 10 October 2026 and then took the drawn soil
+/// out of it, leaving two ways for the stem to grow from nothing. Both are kept
+/// behind this switch until he picks, and then the loser is removed.
 ///
-/// - `frond` — the fiddlehead, growing up out of the ground as it unfurls. The
-///   launch moment and the waiting mark are both this one drawing.
+/// - `edge` — **variant 1**: the stem enters from the very bottom edge of the
+///   screen and grows upward as it unfurls. The screen edge is the only ground and
+///   nothing is drawn there.
+/// - `fixed` — **variant 2**: the stem grows from a fixed point in space with
+///   nothing beneath it, like the app's 2D plants.
 /// - `off` — nothing is drawn and nothing waits: exactly the app as it was.
+///
+/// **The waiting mark is the fixed-point drawing in both**, because it sits inside
+/// a screen and cannot touch the screen's edge; the switch decides only whether it
+/// is there.
 ///
 /// **A launch argument rather than a setting.** Settings rows need words, and
 /// every word is forty-two translations for a switch that exists so that one
-/// person can compare the two. From Xcode: *Edit Scheme › Arguments*, or
-/// `xcrun simctl launch <device> app.peacegarden -loading.style.v1 off`
+/// person can compare two. From Xcode: *Edit Scheme › Arguments*, or
+/// `xcrun simctl launch <device> app.peacegarden -loading.style.v1 edge`
 /// (UserDefaults reads launch arguments of this shape as its own). A stored value
-/// that no longer names a case — the first round of this work had an
-/// `unwinding` variant, since removed — reads as the default.
+/// that no longer names a case — earlier rounds had `unwinding` and `frond` —
+/// reads as the default.
 enum LoadingStyle: String, CaseIterable, Sendable {
     case off
-    case frond
+    case edge
+    case fixed
+
+    /// The anchor the launch moment grows from, or `nil` when nothing is drawn.
+    var launchAnchor: Fiddlehead.Anchor? {
+        switch self {
+        case .off: return nil
+        case .edge: return .bottomEdge
+        case .fixed: return .fixedPoint
+        }
+    }
 }
 
 enum LoadingSwitch {
@@ -26,7 +44,7 @@ enum LoadingSwitch {
     /// this one behind.
     static let key = "loading.style.v1"
 
-    static let fallback = LoadingStyle.frond
+    static let fallback = LoadingStyle.fixed
 
     static func style(in defaults: UserDefaults = .standard) -> LoadingStyle {
         defaults.string(forKey: key).flatMap(LoadingStyle.init(rawValue:)) ?? fallback
