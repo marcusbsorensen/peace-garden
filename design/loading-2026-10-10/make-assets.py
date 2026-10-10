@@ -10,15 +10,17 @@ animation: every picture is a crop of a frame the shipped SwiftUI view drew.
 
 Needs Pillow, and ffmpeg for the MP4s.
 
-What it makes: `v1-launch-filmstrip.png`, `v1-launch.gif`, `v1-launch.mp4` (the stem
-enters from the screen's bottom edge), the same three for `v2-` (a fixed point),
-and `final-waiting-filmstrip.png`, `final-waiting.gif`, `final-waiting.mp4` and
-`final-waiting-reduce-motion.png` (the waiting mark, with no soil).
+What it makes: `v2-launch-filmstrip.png`, `v2-launch.gif`, `v2-launch.mp4` (the launch
+moment, a stem growing from a fixed point: the variant Marcus chose on 10 October
+2026, named `v2` for the round in which it stood beside a stem that entered from the
+screen's bottom edge), and `final-waiting-filmstrip.png`, `final-waiting.gif`,
+`final-waiting.mp4` and `final-waiting-reduce-motion.png` (the waiting mark).
 
 Earlier pictures were made by earlier versions of this script from code that has
-since changed: `make-assets-first-round.py` for `a-*`, `b-*`, `compare-resting-frames.png`
-and `real-launch-*`; the `soil-*` set, with the drawn ground Marcus removed on
-10 October 2026, was made by the version of this file at commit `73e7d06`.
+since changed or been removed: `make-assets-first-round.py` for `a-*`, `b-*`,
+`compare-resting-frames.png` and `real-launch-*`; the `soil-*` set, with the drawn
+ground Marcus removed, by this file at commit `73e7d06`; and `v1-launch*`, the
+removed bottom-edge variant, by this file at commit `53d68e9`.
 """
 
 import subprocess
@@ -53,7 +55,7 @@ def scaled(im, k):
     return im.resize((int(im.width * k), int(im.height * k)), Image.LANCZOS)
 
 
-def launch_strip(variant):
+def launch_strip():
     """Twelve frames of the launch moment and its hand-over, whole screens: the dark
     stage above and the light stage below. The moment is on the dark ground in both
     appearances, so the rows differ only at the hand-over."""
@@ -61,7 +63,7 @@ def launch_strip(variant):
     for mode in ("dark", "light"):
         row = []
         for index in LABELLED:
-            im = scaled(load(f"{variant}-{mode}-{index:03d}.png"), 0.25)
+            im = scaled(load(f"launch-{mode}-{index:03d}.png"), 0.25)
             row.append(label(im, f"{index / FPS:.2f} s"))
         rows.append(row)
     w, h = rows[0][0].size
@@ -72,11 +74,11 @@ def launch_strip(variant):
     return sheet
 
 
-def launch_frames(variant):
+def launch_frames():
     """The whole launch, dark stage beside light stage, with a held frame at each end."""
     out = []
     for index in range(TOTAL):
-        pair = [scaled(load(f"{variant}-{mode}-{index:03d}.png"), 0.2) for mode in ("dark", "light")]
+        pair = [scaled(load(f"launch-{mode}-{index:03d}.png"), 0.2) for mode in ("dark", "light")]
         w, h = pair[0].size
         both = Image.new("RGB", (w * 2 + 4, h), GAP)
         both.paste(pair[0], (0, 0))
@@ -147,12 +149,11 @@ def main():
     work = FRAMES / "_video"
     work.mkdir(exist_ok=True)
     made = []
-    for variant in ("v1", "v2"):
-        launch_strip(variant).save(OUT / f"{variant}-launch-filmstrip.png", optimize=True)
-        frames = launch_frames(variant)
-        save_gif(frames, OUT / f"{variant}-launch.gif", FPS)
-        save_mp4(frames, OUT / f"{variant}-launch.mp4", FPS, work)
-        made += [f"{variant}-launch-filmstrip.png", f"{variant}-launch.gif", f"{variant}-launch.mp4"]
+    launch_strip().save(OUT / "v2-launch-filmstrip.png", optimize=True)
+    frames = launch_frames()
+    save_gif(frames, OUT / "v2-launch.gif", FPS)
+    save_mp4(frames, OUT / "v2-launch.mp4", FPS, work)
+    made += ["v2-launch-filmstrip.png", "v2-launch.gif", "v2-launch.mp4"]
     waiting_strip().save(OUT / "final-waiting-filmstrip.png", optimize=True)
     loops = waiting_frames()
     save_gif(loops, OUT / "final-waiting.gif", FPS / 2)

@@ -27,9 +27,10 @@ struct LoadingBusyMark: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var startedAt = Date()
 
-    /// The frame it is drawn in. **Always the fixed-point drawing**, whichever
-    /// launch variant is chosen: this sits inside a screen and cannot touch the
-    /// screen's edge, and Marcus asked for it that way on 10 October 2026.
+    /// The frame it is drawn in: the same fixed-point drawing as the launch moment.
+    /// It sits inside a screen, and Marcus asked for it that way on 10 October 2026,
+    /// when the launch moment still had a second variant that entered from the
+    /// screen's bottom edge, which a mark inside a screen could not do.
     static func frame(forSize size: CGFloat) -> CGSize {
         CGSize(width: size, height: size * 1.5)
     }

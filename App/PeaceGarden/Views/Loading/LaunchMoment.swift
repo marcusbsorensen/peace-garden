@@ -4,10 +4,9 @@ import UIKit
 /// **The launch moment: the fiddlehead growing upward, played once over the app as
 /// it opens.**
 ///
-/// There is no ground in the picture, so there are two ways for the stem to begin
-/// (`Fiddlehead.Anchor`), and the style switch holds both until Marcus picks:
-/// *edge*, where it enters from the screen's bottom edge, and *fixed*, where it
-/// grows from a point in space with nothing beneath it.
+/// There is no ground in the picture: the stem grows from a fixed point in space
+/// with nothing beneath it, like the app's 2D plants. Marcus chose that on 10
+/// October 2026 over a stem entering from the screen's bottom edge, which is removed.
 ///
 /// Everything about *how* it behaves is the Interfulgent pattern, and the sources
 /// are named so that none of it is this file's invention:
@@ -42,7 +41,6 @@ import UIKit
 /// covered rather than the sheet delayed. Recorded as the known edge.
 struct LaunchMoment: View {
 
-    let style: LoadingStyle
     let onGone: () -> Void
 
     /// Fixed when this is first built, so the first frame drawn is the moment's
@@ -61,7 +59,7 @@ struct LaunchMoment: View {
                 Self.ground.ignoresSafeArea()
                 TimelineView(.animation(paused: isLeaving && markOpacity == 0)) { timeline in
                     let t = LoadingTiming.progress(elapsed: timeline.date.timeIntervalSince(startedAt))
-                    Self.mark(style, at: t, in: proxy.size)
+                    Self.mark(at: t, in: proxy.size)
                 }
                 .opacity(markOpacity)
             }
@@ -83,23 +81,11 @@ struct LaunchMoment: View {
     /// The drawing at `t`, in the icon's own colours on the dark ground that is the
     /// same in both appearances: the contrast is measured against `#0D0D1F` and not
     /// against whatever the app's ground is.
-    ///
-    /// *Edge* is drawn across the whole screen, because the screen's bottom edge is
-    /// what it grows from. *Fixed* is drawn in a frame in the middle of it.
-    @ViewBuilder
-    static func mark(_ style: LoadingStyle, at t: Double, in screen: CGSize) -> some View {
-        let pose = Fiddlehead.pose(atMoment: t)
-        switch style.launchAnchor {
-        case .bottomEdge?:
-            FiddleheadView(pose: pose, palette: .onDark, weight: 2.0, halo: 10, anchor: .bottomEdge)
-                .frame(width: screen.width, height: screen.height)
-        case .fixedPoint?:
-            let frame = markFrame(short: min(screen.width, screen.height))
-            FiddleheadView(pose: pose, palette: .onDark, weight: 1.8, halo: 10, anchor: .fixedPoint)
-                .frame(width: frame.width, height: frame.height)
-        case nil:
-            EmptyView()
-        }
+    /// It is drawn in a frame in the middle of the screen.
+    static func mark(at t: Double, in screen: CGSize) -> some View {
+        let frame = markFrame(short: min(screen.width, screen.height))
+        return FiddleheadView(pose: Fiddlehead.pose(atMoment: t), palette: .onDark, weight: 1.8, halo: 10)
+            .frame(width: frame.width, height: frame.height)
     }
 
     /// **How big the fixed-point drawing is, from the shorter side of the screen.**
@@ -132,10 +118,8 @@ struct LaunchMoment: View {
 struct LaunchMomentHost: View {
 
     @State private var shown: Bool
-    private let style: LoadingStyle
 
     init(style: LoadingStyle = LoadingSwitch.style()) {
-        self.style = style
         let plays = Self.plays(style: style, reduceMotion: UIAccessibility.isReduceMotionEnabled,
                                alreadyPlayed: LaunchMomentLedger.played)
         _shown = State(initialValue: plays)
@@ -144,7 +128,7 @@ struct LaunchMomentHost: View {
 
     var body: some View {
         if shown {
-            LaunchMoment(style: style) { shown = false }
+            LaunchMoment { shown = false }
         }
     }
 

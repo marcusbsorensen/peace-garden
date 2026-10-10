@@ -30,7 +30,7 @@ final class LoadingTests: XCTestCase {
     // MARK: - It grows, and it unfurls while it grows
 
     /// The root is a fixed point: at every rise and every opening the stem leaves the
-    /// same place, whichever anchor puts that place on the screen.
+    /// same place in the drawing's own frame.
     func testTheRootStaysWhereItLeaves() {
         let root = Fiddlehead.rootPoint
         for rise in [0.0, 0.3, 0.7, 1.0] {
@@ -42,42 +42,10 @@ final class LoadingTests: XCTestCase {
         }
     }
 
-    /// **Variant 1**: the stem enters from the very bottom edge of the screen. At the
-    /// first moment its tip is at the edge and nothing is on the screen; at the end
-    /// it is still entering from the edge, and the whole plant is on the screen,
-    /// across and up.
-    func testTheEdgeAnchorEntersFromTheBottomOfTheScreen() {
-        for screen in [CGSize(width: 390, height: 844), CGSize(width: 440, height: 956),
-                       CGSize(width: 820, height: 1180)] {
-            let placement = Fiddlehead.Placement.bottomEdge(in: screen)
-            func canvas(_ open: Double, _ rise: Double) -> [CGPoint] {
-                let figure = Fiddlehead.figure(open: open, rise: rise)
-                return (figure.stem + figure.bract).map(placement.place)
-            }
-            // The first moment: the highest point is at the edge, to a hair.
-            let start = canvas(0, 0)
-            XCTAssertEqual(start.map(\.y).min()!, screen.height, accuracy: 0.01, "\(screen)")
-            // The root is below the edge at every moment, so the stem always comes in
-            // through it, and the edge is the only thing it is fastened to.
-            XCTAssertGreaterThanOrEqual(placement.place(Fiddlehead.rootPoint).y, screen.height)
-            // And it comes up through the edge: by the time it is half grown its tip
-            // is well on the screen.
-            XCTAssertLessThan(canvas(0.5, 0.5).map(\.y).min()!, screen.height * 0.9)
-            // The grown plant is on the screen, and centred across it within a tenth.
-            let grown = canvas(Fiddlehead.composed, 1)
-            XCTAssertGreaterThan(grown.map(\.x).min()!, 0, "\(screen)")
-            XCTAssertLessThan(grown.map(\.x).max()!, screen.width, "\(screen)")
-            XCTAssertGreaterThan(grown.map(\.y).min()!, 0, "\(screen)")
-            let middle = (grown.map(\.x).min()! + grown.map(\.x).max()!) / 2
-            XCTAssertEqual(middle, screen.width / 2, accuracy: screen.width * 0.1, "\(screen)")
-            // And it is tall: at least a third of the screen.
-            XCTAssertGreaterThan(screen.height - grown.map(\.y).min()!, screen.height / 3, "\(screen)")
-        }
-    }
-
-    /// **Variant 2**: a fixed point in space with nothing beneath it. The root does
-    /// not move on the canvas, and nothing at any pose leaves the frame it is given.
-    func testTheFixedAnchorIsAPointThatDoesNotMove() {
+    /// **A fixed point in space with nothing beneath it** — Marcus's choice of 10
+    /// October 2026. The root does not move on the canvas, nothing at any pose leaves
+    /// the frame it is given, and the root is the lowest thing there is.
+    func testTheRootIsAFixedPointWithNothingBelowIt() {
         let frame = CGSize(width: 187, height: 280)
         let placement = Fiddlehead.Placement.fixedPoint(in: frame)
         let root = placement.place(Fiddlehead.rootPoint)
@@ -260,9 +228,8 @@ final class LoadingTests: XCTestCase {
 
     /// **There is no ground.** Marcus took the soil out on 10 October 2026: every
     /// plant in the app is attached to a 3D ground, floating, or 2D with no soil, and
-    /// a drawn line matched none. Asked of the pixels rather than of the code: in both
-    /// variants, nothing is lit below the root, and at the screen's bottom edge only
-    /// the stem is, a few pixels of it and not a line across.
+    /// a drawn line matched none. Asked of the pixels rather than of the code: nothing
+    /// is lit below the root.
     func testNothingIsDrawnBelowTheStem() throws {
         func lit(_ view: some View, width: Int, height: Int) throws -> [[Bool]] {
             let renderer = ImageRenderer(content: view.frame(width: CGFloat(width), height: CGFloat(height)))
@@ -285,29 +252,17 @@ final class LoadingTests: XCTestCase {
             return rows
         }
 
-        // Variant 2: a fixed point. The lowest lit row is the root's, give or take
-        // the half stroke and the halo.
+        // The lowest lit row is the root's, give or take the half stroke and the halo.
         let frame = CGSize(width: 200, height: 300)
-        let fixed = try lit(ZStack {
+        let drawn = try lit(ZStack {
             LaunchMoment.ground
-            FiddleheadView(pose: Fiddlehead.pose(atMoment: 1), palette: .onDark, weight: 1.8, halo: 10,
-                           anchor: .fixedPoint)
+            FiddleheadView(pose: Fiddlehead.pose(atMoment: 1), palette: .onDark, weight: 1.8, halo: 10)
         }, width: 200, height: 300)
         let root = Fiddlehead.Placement.fixedPoint(in: frame).place(Fiddlehead.rootPoint)
-        let lowest = fixed.lastIndex { $0.contains(true) }!
+        let lowest = drawn.lastIndex { $0.contains(true) }!
         XCTAssertLessThanOrEqual(Double(lowest), Double(root.y) + 7, "nothing below the root")
-
-        // Variant 1: the screen's edge. In the last rows only the stem is lit.
-        let edge = try lit(ZStack {
-            LaunchMoment.ground
-            FiddleheadView(pose: Fiddlehead.pose(atMoment: 1), palette: .onDark, weight: 2.0, halo: 10,
-                           anchor: .bottomEdge)
-        }, width: 195, height: 422)
-        for row in edge.suffix(4) {
-            let count = row.filter { $0 }.count
-            XCTAssertGreaterThan(count, 0, "the stem comes in through the edge")
-            XCTAssertLessThan(count, 24, "and only the stem does: that row is not a line across")
-        }
+        // And the stem is there at all, so the row above is not an empty picture.
+        XCTAssertGreaterThan(drawn.filter { $0.contains(true) }.count, 100)
     }
 
     /// The bract is stroked at the mark's weight, so a bract that was merely
@@ -400,12 +355,10 @@ final class LoadingTests: XCTestCase {
 
     /// All three suite apps give Reduce Motion no moment at all, not a shorter one.
     func testReduceMotionAndOffTakeTheMomentAway() {
-        for style in [LoadingStyle.edge, .fixed] {
-            XCTAssertTrue(LaunchMomentHost.plays(style: style, reduceMotion: false, alreadyPlayed: false))
-            XCTAssertFalse(LaunchMomentHost.plays(style: style, reduceMotion: true, alreadyPlayed: false))
-            XCTAssertFalse(LaunchMomentHost.plays(style: style, reduceMotion: false, alreadyPlayed: true),
-                           "a second window is not a launch")
-        }
+        XCTAssertTrue(LaunchMomentHost.plays(style: .fixed, reduceMotion: false, alreadyPlayed: false))
+        XCTAssertFalse(LaunchMomentHost.plays(style: .fixed, reduceMotion: true, alreadyPlayed: false))
+        XCTAssertFalse(LaunchMomentHost.plays(style: .fixed, reduceMotion: false, alreadyPlayed: true),
+                       "a second window is not a launch")
         XCTAssertFalse(LaunchMomentHost.plays(style: .off, reduceMotion: false, alreadyPlayed: false))
     }
 
@@ -416,29 +369,27 @@ final class LoadingTests: XCTestCase {
         XCTAssertGreaterThan(Fiddlehead.still.rise, 0.5)
     }
 
-    /// Both launch variants are behind the switch until Marcus picks. The recommended
-    /// one is the default; a launch argument names either, or `off`; and a value from
-    /// an earlier round reads as the default rather than as nothing.
-    func testTheSwitchHoldsBothVariantsAndReadsALaunchArgument() throws {
+    /// The fixed point is the default, a launch argument can name it or `off`, and a
+    /// value from an earlier round — `unwinding`, `frond`, or `edge`, the variant that
+    /// entered from the screen's bottom edge and was removed — reads as the default
+    /// rather than as nothing.
+    func testTheSwitchIsFixedOrOffAndEarlierValuesReadAsTheDefault() throws {
         let suite = "loading-tests-\(UUID().uuidString)"
         let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
         defer { defaults.removePersistentDomain(forName: suite) }
 
-        XCTAssertEqual(LoadingSwitch.style(in: defaults), LoadingSwitch.fallback)
-        XCTAssertEqual(LoadingSwitch.fallback, .fixed, "the recommendation: README, 10 October 2026")
+        XCTAssertEqual(LoadingSwitch.style(in: defaults), .fixed)
+        XCTAssertEqual(LoadingSwitch.fallback, .fixed, "Marcus, 10 October 2026: the fixed point")
         for style in LoadingStyle.allCases {
             defaults.set(style.rawValue, forKey: LoadingSwitch.key)
             XCTAssertEqual(LoadingSwitch.style(in: defaults), style)
         }
-        for earlier in ["unwinding", "frond", "not a variant"] {
+        for earlier in ["unwinding", "frond", "edge", "not a variant"] {
             defaults.set(earlier, forKey: LoadingSwitch.key)
-            XCTAssertEqual(LoadingSwitch.style(in: defaults), LoadingSwitch.fallback, earlier)
+            XCTAssertEqual(LoadingSwitch.style(in: defaults), .fixed, earlier)
         }
         XCTAssertEqual(LoadingSwitch.key, "loading.style.v1")
-        XCTAssertEqual(Set(LoadingStyle.allCases), [.off, .edge, .fixed])
-        XCTAssertNil(LoadingStyle.off.launchAnchor)
-        XCTAssertEqual(LoadingStyle.edge.launchAnchor, .bottomEdge)
-        XCTAssertEqual(LoadingStyle.fixed.launchAnchor, .fixedPoint)
+        XCTAssertEqual(Set(LoadingStyle.allCases), [.off, .fixed])
     }
 
     // MARK: - It draws something
@@ -482,10 +433,9 @@ final class LoadingTests: XCTestCase {
     /// ground, then the fiddlehead at the pose the clock gives — over a stand-in
     /// for the stage: the app's own `StageBackdrop` and a grown plant, in both
     /// appearances, so that the hand-over is seen against what it hands over to.
-    /// 30 frames a second, the 2.0 s and then the 180 ms dissolve, for variant 1
-    /// (`v1-`, the bottom edge) and variant 2 (`v2-`, a fixed point). The waiting
-    /// mark is one 2.4 s breath over a dimmed screen, in each appearance, and is the
-    /// fixed-point drawing in both.
+    /// 30 frames a second, the 2.0 s and then the 180 ms dissolve (`launch-`). The
+    /// waiting mark is one 2.4 s breath over a dimmed screen, in each appearance
+    /// (`busy-`), and is the same fixed-point drawing.
     func testWriteTheLoadingFrames() async throws {
         guard let path = ProcessInfo.processInfo.environment["PG_RENDER_LOADING"], !path.isEmpty else {
             throw XCTSkip("PG_RENDER_LOADING is not set")
@@ -522,39 +472,36 @@ final class LoadingTests: XCTestCase {
             try XCTUnwrap(XCTUnwrap(image).pngData()).write(to: folder.appendingPathComponent("\(name).png"))
         }
 
-        // Both launch variants, each over both stages: v1 enters from the screen's
-        // bottom edge, v2 grows from a fixed point. Drawn by `LaunchMoment.mark`, the
-        // same function the app draws them with.
-        for (style, variant) in [(LoadingStyle.edge, "v1"), (LoadingStyle.fixed, "v2")] {
-            for (scheme, mode) in [(ColorScheme.dark, "dark"), (ColorScheme.light, "light")] {
-                for index in 0...(momentFrames + dissolveFrames) {
-                    let moment = min(index, momentFrames)
-                    let t = Double(moment) / Double(momentFrames)
-                    var markOpacity = 1.0, fieldOpacity = 1.0
-                    if index > momentFrames {
-                        let seconds = Double(index - momentFrames) / fps
-                        // easeOut for the mark and easeInOut for the ground, as
-                        // `LaunchMoment.leave()` asks for; approximated by their
-                        // quadratic and smoothstep cousins.
-                        let leaving = min(seconds / LoadingTiming.markFade, 1)
-                        markOpacity = (1 - leaving) * (1 - leaving)
-                        fieldOpacity = 1 - LoadingTiming.smooth(seconds / LoadingTiming.dissolve)
-                    }
-                    let content = ZStack {
-                        stage(scheme)
-                        ZStack {
-                            LaunchMoment.ground
-                            LaunchMoment.mark(style, at: t, in: phone)
-                                .opacity(markOpacity)
-                        }
-                        .opacity(fieldOpacity)
-                    }
-                    .frame(width: phone.width, height: phone.height)
-                    .environment(\.colorScheme, scheme)
-                    let renderer = ImageRenderer(content: content)
-                    renderer.scale = 2
-                    try write(renderer.uiImage, "\(variant)-\(mode)-\(String(format: "%03d", index))")
+        // The launch moment over both stages, drawn by `LaunchMoment.mark`, the same
+        // function the app draws it with.
+        for (scheme, mode) in [(ColorScheme.dark, "dark"), (ColorScheme.light, "light")] {
+            for index in 0...(momentFrames + dissolveFrames) {
+                let moment = min(index, momentFrames)
+                let t = Double(moment) / Double(momentFrames)
+                var markOpacity = 1.0, fieldOpacity = 1.0
+                if index > momentFrames {
+                    let seconds = Double(index - momentFrames) / fps
+                    // easeOut for the mark and easeInOut for the ground, as
+                    // `LaunchMoment.leave()` asks for; approximated by their
+                    // quadratic and smoothstep cousins.
+                    let leaving = min(seconds / LoadingTiming.markFade, 1)
+                    markOpacity = (1 - leaving) * (1 - leaving)
+                    fieldOpacity = 1 - LoadingTiming.smooth(seconds / LoadingTiming.dissolve)
                 }
+                let content = ZStack {
+                    stage(scheme)
+                    ZStack {
+                        LaunchMoment.ground
+                        LaunchMoment.mark(at: t, in: phone)
+                            .opacity(markOpacity)
+                    }
+                    .opacity(fieldOpacity)
+                }
+                .frame(width: phone.width, height: phone.height)
+                .environment(\.colorScheme, scheme)
+                let renderer = ImageRenderer(content: content)
+                renderer.scale = 2
+                try write(renderer.uiImage, "launch-\(mode)-\(String(format: "%03d", index))")
             }
         }
 

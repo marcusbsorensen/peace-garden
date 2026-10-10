@@ -1,64 +1,75 @@
 # A loading animation for Peace Garden — 10 October 2026
 
-The app carries one loading animation: a fiddlehead that grows upward while its coil
-lets go and a leaf opens at the top, in the app's own colours. Marcus chose it on
-10 October 2026 from two variants, and the same day took the drawn soil out of it.
-That left two ways for the stem to begin, and **both are rendered and both are
-behind the style switch until he picks**; then the loser is removed. Nothing is
-merged to `main`; the work is on branch `worktree-agent-a944b9f3f00872bf1`.
+The app carries one loading animation: a fiddlehead that grows upward from a fixed
+point in space while its coil lets go and a leaf opens at the top, in the app's own
+colours, over 2.0 s on the suite's dark ground, with a smaller version as the
+waiting mark. It was decided in four steps on 10 October 2026, recorded below in
+order. Nothing is merged to `main`; the work is on branch
+`worktree-agent-a944b9f3f00872bf1`.
 
-## Marcus's note, 10 October 2026: the soil goes
+## Decided — Marcus, 10 October 2026: variant 2, the fixed point
+
+Marcus chose **variant 2, the fixed point**, over variant 1, a stem entering from the
+screen's bottom edge. Variant 1 is removed: its code (`Fiddlehead.Anchor`,
+`Placement.bottomEdge`), its switch value (`edge`) and its test are gone. A stored
+`edge` reads as the default, and so do the earlier `unwinding` and `frond`. Its
+renders stay in this folder for the record (`v1-launch-filmstrip.png`,
+`v1-launch.gif`, `v1-launch.mp4`), and so do the first rounds' (last section).
+
+What the choice leaves, in one place:
+
+- **The stem grows from a fixed point in space with nothing beneath it**, like the
+  app's 2D plants: a root that does not move on the screen, a stem that lengthens
+  upward from it while the crozier uncoils, the leaf opening at the top as it arrives.
+  (`Fiddlehead.Placement.fixedPoint`.)
+- **Nothing is drawn beneath it**, in the launch moment or the waiting mark.
+- **The waiting mark is the same drawing**, smaller, and follows the app's own light
+  and dark.
+- **The switch** `loading.style.v1` is now `fixed` (the default) or `off`; `off` is the
+  app exactly as it was.
+
+Variant 2 is the one in `v2-launch-filmstrip.png`, `v2-launch.gif` and
+`v2-launch.mp4`:
+
+![](v2-launch-filmstrip.png)
+
+The dark stage is above and the light stage below; the moment is on the dark ground
+in both appearances, so the rows differ only at the hand-over. Moving:
+[`v2-launch.gif`](v2-launch.gif), [`v2-launch.mp4`](v2-launch.mp4).
+
+### Why it was the one to recommend, kept as the record of the reasoning
+
+1. **It is the app's own kind of plant.** The main plant view is a plant floating in
+   space, centred on a black screen; the 2D plants have nothing below them. This is
+   that plant, growing, handing over to a stage whose plant is in the middle of the
+   screen too.
+2. **The bottom-edge variant was the first of Marcus's three kinds in disguise.** A
+   stem that comes up through the screen's bottom edge is rooted in something just off
+   the screen: a ground, undrawn.
+3. **It cost one thing**, and it is still true: the stem's lower end is a free,
+   round-capped end hanging in space. In the filmstrip it reads as a stem and not as a
+   cut one.
+
+## Marcus's note earlier the same day: the soil goes
 
 > The animation is "much better", but the drawn soil line has to go. Every plant in
 > the app is one of three kinds: 3D and attached to a 3D ground; 3D and floating in
 > space (the main plant view); or 2D with no soil below. A drawn ground line matches
 > none of them.
 
-The soil swell and the mound are removed entirely, from the launch moment and the
-waiting mark: no line, no shade, and nothing in the palette for them. Two variants
-for the launch moment:
+The soil swell and the mound were removed entirely, from the launch moment and the
+waiting mark: no line, no shade, and nothing in the palette for them. The two variants
+that followed:
 
-| | Variant 1 — anchored to the screen's bottom edge | Variant 2 — a fixed point |
+| | Variant 1 — anchored to the screen's bottom edge (removed) | Variant 2 — a fixed point (chosen) |
 | --- | --- | --- |
-| The stem | Enters from the very bottom edge of the screen and grows upward as it unfurls, the leaf opening as it arrives. The screen edge is the only "ground"; nothing is drawn there | Grows from a fixed point in space with nothing beneath it, like the app's 2D plants; lengthens upward from that point while the crozier uncoils |
-| Where it starts | The curl is just below the edge and rises into view through it | A tiny curl at the fixed point, which does not move |
-| Where it ends | A tall plant, centred across the screen, standing about half its height | The same plant, smaller, centred in the screen |
-| Switch | `-loading.style.v1 edge` | `-loading.style.v1 fixed` (the default) |
+| The stem | Entered from the very bottom edge of the screen and grew upward as it unfurled, the leaf opening as it arrived. The screen edge was the only "ground"; nothing was drawn there | Grows from a fixed point in space with nothing beneath it, like the app's 2D plants; lengthens upward from that point while the crozier uncoils |
+| Where it started | The curl just below the edge, rising into view through it | A tiny curl at the fixed point, which does not move |
+| Where it ended | A tall plant, centred across the screen, standing about half its height | The same plant, smaller, centred in the screen |
 | Pictures | `v1-launch-filmstrip.png`, `v1-launch.gif`, `v1-launch.mp4` | `v2-launch-filmstrip.png`, `v2-launch.gif`, `v2-launch.mp4` |
 
-**The waiting mark uses the fixed-point drawing in both variants**, because it sits
-inside a screen and cannot touch the screen's edge. Everything else stays: the
-app's colours, 2.0 s, the dark launch ground, Reduce Motion giving no moment and a
-still waiting mark, and the overlap of rising and unfurling.
-
-### Recommendation: variant 2, the fixed point
-
-1. **It is the app's own kind of plant.** The main plant view is a plant floating in
-   space, centred on a black screen; the 2D plants have nothing below them. Variant 2
-   is that plant, growing. The moment hands over to a stage whose plant is in the middle of the
-   screen too, so the end of the animation and the start of the app are close to one
-   composition.
-2. **Variant 1 is the first of Marcus's three kinds in disguise.** A stem that comes
-   up through the screen's bottom edge is rooted in something just off the screen: a
-   ground, undrawn. It is the more dramatic of the two and uses the whole launch
-   screen, but the soil objection was that a ground matches none of the app's plants,
-   and an invisible one is still the one the stem is attached to.
-3. **Variant 1 ends in a different place from the app.** Its plant stands on the
-   bottom edge and fills the lower half of the screen; the stage's plant floats in the
-   middle. The hand-over has to swap one composition for another.
-4. **What variant 2 costs.** The stem's lower end is a free, round-capped end hanging
-   in space. In the filmstrip it reads as a stem and not as a cut one, but it is the
-   one place a drawn ground was doing something. If that bothers, variant 1 does not
-   have it.
-
-The default is variant 2 (`LoadingSwitch.fallback`; `testTheSwitchHoldsBothVariantsAndReadsALaunchArgument`
-holds it). A stored `frond` or `unwinding` from earlier rounds reads as the default.
-
-### Decision for Marcus
-
-1. **Which launch moment?** **Variant 2, the fixed point** · variant 1, the bottom
-   edge. Then the loser, and `LoadingStyle.edge` or `.fixed` with its anchor and test,
-   are removed.
+The waiting mark used the fixed-point drawing in both, because it sits inside a
+screen and cannot touch the screen's edge.
 
 ## What it is now
 
@@ -67,39 +78,17 @@ holds it). A stored `frond` or `unwinding` from earlier rounds reads as the defa
 | Where | Over the app as it opens (`PeaceGardenApp`), the app built underneath | Over `ShowInGardenView` and `WildBesideView` while a request is out, after 400 ms |
 | Length | 2.0 s, then the suite's 120 ms (mark) and 180 ms (ground) hand-over | One breath of 2.4 s, repeating |
 | Ground | `LaunchGround`, `#0D0D1F`, in both appearances | The app's own: black, or the light stage |
-| Anchor | Variant 1 or 2, by the switch | The fixed point, always |
 | Colour | Icon greens root to tip, white bract | Dark: the same. Light: the same three hues solved to 4.5:1, and the app's ink for the leaf |
 | Motion | The stem grows while the coil lets go and the leaf opens | The tip comes up, uncurls a little, settles back |
 | Reduce Motion | None at all | The mark held still, standing and half open |
 | Code | `LaunchMoment.swift` | `BusyMark.swift` |
 
-The drawing is `Fiddlehead.swift` (`Fiddlehead.Anchor` and `Fiddlehead.Placement` are
-the two variants); the clocks and the switch are `LoadingTiming.swift`.
+The drawing is `Fiddlehead.swift`; the clocks and the switch are `LoadingTiming.swift`.
 
-## The pictures
+## The waiting mark
 
-All are crops of frames the shipped SwiftUI views drew (`ImageRenderer`,
-`LoadingTests.testWriteTheLoadingFrames`, through `LaunchMoment.mark`, the function
-the app draws them with) at 30 frames a second, over the app's own `StageBackdrop`
-and a grown plant, so the hand-over is seen against what it hands over to. In each
-filmstrip the dark stage is above and the light stage below, and since the moment is
-on the dark ground in both appearances the rows differ only at the hand-over.
-
-**Variant 1, anchored to the bottom edge** — twelve whole screens from 0.10 s to the
-hand-over at 2.07 s:
-
-![](v1-launch-filmstrip.png)
-
-Moving: [`v1-launch.gif`](v1-launch.gif), [`v1-launch.mp4`](v1-launch.mp4).
-
-**Variant 2, a fixed point:**
-
-![](v2-launch-filmstrip.png)
-
-Moving: [`v2-launch.gif`](v2-launch.gif), [`v2-launch.mp4`](v2-launch.mp4).
-
-**The waiting mark, with no soil, one 2.4 s breath over a dimmed screen: the light
-appearance above, the dark below.**
+The waiting mark, with no soil, one 2.4 s breath over a dimmed screen: the light
+appearance above, the dark below.
 
 ![](final-waiting-filmstrip.png)
 
@@ -108,10 +97,12 @@ What Reduce Motion gets, light then dark:
 
 ![](final-waiting-reduce-motion.png)
 
-Every image is under 450 KB. **Not re-recorded:** the real-device-style launch
-recording (`soil-real-launch-*`) is of the version with the soil. The two edges are
-checked by tests instead — see below — and a real launch of each variant is one
-`simctl launch` with the argument named in the table.
+All pictures here are crops of frames the shipped SwiftUI views drew (`ImageRenderer`,
+`LoadingTests.testWriteTheLoadingFrames`, through `LaunchMoment.mark`, the function
+the app draws the moment with) at 30 frames a second, over the app's own
+`StageBackdrop` and a grown plant, so the hand-over is seen against what it hands
+over to. Every image is under 450 KB. **Not re-recorded:** the real cold-launch
+recording (`soil-real-launch-*`) is of the version with the soil.
 
 ## Decided earlier the same day, and still true
 
@@ -202,20 +193,19 @@ removes a hitch from the first frame: that is the intention and it is untested.
 ## 3. How it is built and how it behaves
 
 - **SwiftUI `Canvas`, no dependencies.** `Fiddlehead.figure(open:rise:)` builds the stem and the leaf as points, from `Frond.path(in:)`'s own construction, and `Fiddlehead.draw` strokes them: the stem in a vertical gradient of the icon's greens, the leaf in white. Nothing else is drawn.
-- **Two anchors, one drawing.** `Fiddlehead.Placement` says where the 100 × 130 frame lands on the canvas. `bottomEdge` puts the root below the screen's bottom edge by exactly the height the curl has when it begins, so at the first moment the tip is at the edge and nothing is on screen, and scales the plant's whole travel to at most 86 % of the width or 95 % of the height, which on a phone is the width. `fixedPoint` centres the whole travel in its frame, so the root is a point that does not move. `testTheEdgeAnchorEntersFromTheBottomOfTheScreen` and `testTheFixedAnchorIsAPointThatDoesNotMove` hold them to it, on three screen sizes for the edge.
-- **Nothing is drawn beneath it.** `testNothingIsDrawnBelowTheStem` asks the pixels: in the fixed variant nothing is lit below the root, and in the edge variant the last rows of the screen hold a few pixels of stem and not a line across.
+- **A fixed point.** `Fiddlehead.Placement.fixedPoint` says where the 100 × 130 frame lands on the canvas: it centres the drawing's whole travel — every rising and every opening — in its frame, so the root is a point that does not move and the grown plant fills the frame. `testTheRootIsAFixedPointWithNothingBelowIt` holds it to that: the root is the same canvas point at every pose, nothing leaves the frame, and the root is the lowest thing there is.
+- **Nothing is drawn beneath it.** `testNothingIsDrawnBelowTheStem` asks the pixels: nothing is lit below the root.
 - **Grows, not trims.** The stem's arc length is `emerging + (1 − emerging) × rise` of its full length, with `emerging = 0.16`: unlike the backdrop's frond, whose length never changes, this one is longer the higher it has risen, and its root never moves. The turning is measured along it as a fraction of itself, so a short stem is a small tight crozier and a long one is a large open one.
 - **Clock-only.** `TimelineView(.animation)` with a pose that is a pure function of elapsed time (`LoadingTiming.progress`, `Fiddlehead.pose(atMoment:)`). Nothing the app is doing can retarget it.
 - **Reduce Motion.** No launch moment at all, as in all three suite apps. The waiting mark stays and holds still: standing, and a tendril half open (`design/Motion.dc.html`: *a tendril rests half open*).
 - **Organic edges.** No straight line anywhere. `testTheStemHasNoStraightRun` measures the total turning in every fifth of the stem at nine risings and openings. The stem is a test because it nearly failed: at the backdrop's taper it is a ruler for two thirds of its length.
 - **No new words.** Nothing is said, so nothing is translated. The waiting mark is hidden from VoiceOver and has no spoken label; UnCubed says *Working it out*, which is a string.
 - **Any touch ends the launch moment**, as in the suite. A second window or a reconnecting scene is not a launch: it plays once a process.
-- **The switch.** `loading.style.v1` is `fixed` (the default), `edge` or `off`; `off` is the app exactly as it was. It is a launch argument and not a setting, because a settings row is words: `xcrun simctl launch <device> app.peacegarden -loading.style.v1 edge`, or *Edit Scheme › Arguments* in Xcode.
+- **The switch.** `loading.style.v1` is `fixed` (the default) or `off`; `off` is the app exactly as it was; a stored `edge`, `frond` or `unwinding` reads as the default. It is a launch argument and not a setting, because a settings row is words: `xcrun simctl launch <device> app.peacegarden -loading.style.v1 off`, or *Edit Scheme › Arguments* in Xcode.
 
 **Known edges.**
 
-- **Variant 1 on a phone with a rounded display and a home indicator.** The root is exactly at the bottom of the screen's full height, so the stem enters at the physical edge, behind the home indicator's strip. The geometry is held by tests on three screen sizes; it has not been seen on a device.
-- **Variant 2's free end.** The stem's lower end is a round-capped hairline end in mid-air. It is the price of having nothing beneath it.
+- **The stem's free end.** The lower end is a round-capped hairline end in mid-air. It is the price of having nothing beneath it, and Marcus chose it knowing that.
 - **A sheet can cover it.** `RootView.hearNext()` may raise a sheet for a released plant at launch. A sheet is presented above the overlay, so in that one case the moment is covered rather than the sheet delayed.
 - **The launch screen is cached by iOS.** Changing it is invisible until the app is deleted and the device restarted. On a real phone: delete the app and restart it.
 - **Reduce Motion and the light stage.** No moment is shown, so with the launch screen at `#0D0D1F` the app then arrives on its light ground: a dark flash where today it is a white one. The default stage is dark, where it is invisible.
@@ -225,6 +215,7 @@ removes a hitch from the first frame: that is the intention and it is untested.
 
 | Set | What it shows | Files |
 | --- | --- | --- |
+| `v1-` | The bottom-edge variant, removed on Marcus's choice of the fixed point: the stem entering from the very bottom edge of the screen, 2.0 s, no soil. The code is at commit `53d68e9` | `v1-launch-filmstrip.png`, `v1-launch.gif`, `v1-launch.mp4` |
 | `soil-` | The final version before Marcus's note: the fiddlehead growing out of a drawn swell of soil, 2.0 s. Superseded; the code that drew it is at commit `73e7d06` | `soil-launch-filmstrip.png`, `soil-launch.gif`, `soil-launch.mp4`, `soil-waiting-filmstrip.png`, `soil-waiting.gif`, `soil-waiting.mp4`, `soil-waiting-reduce-motion.png`, `soil-real-launch-filmstrip.png`, `soil-real-launch.mp4` (a real cold launch on a scratch iPhone Air) |
 | `a-`, `b-`, `real-launch-` | The first round, 1.2 s: variant A (the app's own mark unwinding, crossed by one band of light; removed at Marcus's decision) and variant B in gold with no ground. The code is at commit `ada12fe`, and `make-assets-first-round.py` rebuilt them | `a-launch-filmstrip.png`, `a-launch.gif`, `a-launch.mp4`, `a-waiting-*`, `b-launch-*`, `b-waiting-*`, `compare-resting-frames.png`, `real-launch-filmstrip.png`, `real-launch-a.mp4`, `real-launch-b.mp4` |
 

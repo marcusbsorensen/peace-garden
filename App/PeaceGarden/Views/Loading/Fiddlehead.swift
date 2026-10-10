@@ -16,9 +16,10 @@ import SwiftUI
 /// - **There is no ground.** The first drawing had a swell of soil under the stem
 ///   and Marcus took it out (10 October 2026): every plant in the app is 3D and
 ///   attached to a 3D ground, or 3D and floating in space (the main plant view),
-///   or 2D with no soil below, and a drawn line matches none of them. What
-///   replaces it is a choice of two anchors (`Anchor`), both with nothing under
-///   the stem.
+///   or 2D with no soil below, and a drawn line matches none of them. The stem
+///   grows from a fixed point in space with nothing beneath it, like the 2D
+///   plants (`Placement`); a variant that entered from the screen's bottom edge
+///   was drawn beside it and Marcus chose this one.
 ///
 /// It is in the app's own colours: the icon's greens along the stem, bottom to
 /// tip, and the icon's white bract for the leaf. See `Palette`.
@@ -172,24 +173,14 @@ enum Fiddlehead {
         CGPoint(x: frame.width * plan.rootX, y: frame.height * plan.rootY)
     }
 
-    // MARK: - Where it is anchored
-
-    /// **What the stem grows from, now that there is no ground.** Marcus's note of
-    /// 10 October 2026 offered two, and both are kept behind the style switch until
-    /// he picks.
-    enum Anchor: Sendable {
-        /// *The stem enters from the very bottom edge of the screen* and grows
-        /// upward as it unfurls. The screen edge is the only ground, and nothing is
-        /// drawn there. The root is below the edge, so that the curl that begins
-        /// the moment is just out of sight and rises into view through it.
-        case bottomEdge
-        /// *A fixed point in space, with nothing beneath it*, like the app's 2D
-        /// plants. The root is a point that does not move, placed so that the grown
-        /// plant is centred in its frame, and the stem lengthens upward from it.
-        case fixedPoint
-    }
+    // MARK: - Where it is placed
 
     /// Where the 100 × 130 frame lands on the canvas: a scale and an origin.
+    ///
+    /// **A fixed point in space, with nothing beneath it**, like the app's 2D plants.
+    /// Marcus chose it on 10 October 2026 over a stem that entered from the screen's
+    /// bottom edge, which is a ground just off the screen, undrawn. The root is a
+    /// point that does not move, and the stem lengthens upward from it.
     struct Placement: Equatable {
         var scale: CGFloat
         var origin: CGPoint
@@ -205,29 +196,6 @@ enum Fiddlehead {
             let scale = min(size.height * margin / box.height, size.width * margin / box.width)
             return Placement(scale: scale, origin: CGPoint(x: size.width / 2 - box.midX * scale,
                                                            y: size.height / 2 - box.midY * scale))
-        }
-
-        /// The whole screen, with the root below its bottom edge by exactly the height
-        /// the curl has when it begins, so at the first moment the tip is at the edge
-        /// and nothing is on the screen. The grown plant is centred across, and is as
-        /// wide as 86 % of the screen or as tall as 95 % of it, whichever comes first
-        /// — on a phone, the width: the plant ends about half way up the screen.
-        static func bottomEdge(in size: CGSize) -> Placement {
-            let box = Fiddlehead.travel
-            let scale = min(size.height * 0.95 / box.height, size.width * 0.86 / box.width)
-            let root = Fiddlehead.rootPoint
-            let first = Fiddlehead.figure(open: 0, rise: 0)
-            let tip = (first.stem + first.bract).map(\.y).min() ?? root.y
-            let entry = CGFloat(root.y - tip) * scale
-            return Placement(scale: scale, origin: CGPoint(x: size.width / 2 - box.midX * scale,
-                                                           y: size.height + entry - root.y * scale))
-        }
-
-        static func make(_ anchor: Anchor, in size: CGSize) -> Placement {
-            switch anchor {
-            case .bottomEdge: return bottomEdge(in: size)
-            case .fixedPoint: return fixedPoint(in: size)
-            }
         }
     }
 
@@ -366,10 +334,9 @@ enum Fiddlehead {
     ///   - weight: the hairline, in points.
     ///   - halo: width of the faint pass under it, in points. Ignored when the
     ///     palette's `halo` is zero.
-    ///   - anchor: what the stem grows from. See `Anchor`.
-    static func draw(_ pose: Pose, palette: Palette, weight: CGFloat, halo: CGFloat, anchor: Anchor,
+    static func draw(_ pose: Pose, palette: Palette, weight: CGFloat, halo: CGFloat,
                      in context: inout GraphicsContext, size: CGSize) {
-        let placement = Placement.make(anchor, in: size)
+        let placement = Placement.fixedPoint(in: size)
         func path(_ points: [CGPoint], closed: Bool) -> Path {
             var path = Path()
             guard let first = points.first else { return path }
@@ -412,12 +379,10 @@ struct FiddleheadView: View {
     var palette: Fiddlehead.Palette
     var weight: CGFloat = 1.8
     var halo: CGFloat = 10
-    var anchor: Fiddlehead.Anchor = .fixedPoint
 
     var body: some View {
         Canvas { context, size in
-            Fiddlehead.draw(pose, palette: palette, weight: weight, halo: halo, anchor: anchor,
-                            in: &context, size: size)
+            Fiddlehead.draw(pose, palette: palette, weight: weight, halo: halo, in: &context, size: size)
         }
         .accessibilityHidden(true)
     }
