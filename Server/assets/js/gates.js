@@ -57,11 +57,16 @@ export const BUILT = Object.freeze({
 /// right-to-left language — a cold frame is higher at its back whichever way a
 /// page is read.
 ///
-/// **The same glyph lies on the area's gateway** out past a neighbouring plot
-/// (`GLYPH` in `longwalk.js`, since 10 October 2026), so a reader matches a
-/// cell to a gateway by its shape. That is the whole of what a reader who
-/// cannot tell these grounds apart has to go on, and at the gateways' half
-/// light most of the ten are one dark olive under protanopia or deuteranopia.
+/// **The glyphs stay on the map, and the view draws what is there.** For a
+/// day, 10 October 2026, the same glyph lay on each area's gateway out past a
+/// neighbouring plot; Marcus found a symbol on lit ground mixed two kinds of
+/// drawing, and the gateway now carries a very simplified miniature of the
+/// area's own layout instead (`mini.js`). A reader matches a cell to a
+/// gateway by shape all the same — the rings, the round house, the kidney of
+/// water are what the glyphs were drawn from — which is the whole of what a
+/// reader who cannot tell these grounds apart has to go on: at the gateways'
+/// half light most of the ten are one dark olive under protanopia or
+/// deuteranopia.
 const ring = (cx, cy, r) =>
   `M${cx - r} ${cy}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
 const dot = (x, y) => `M${x} ${y}h0`;

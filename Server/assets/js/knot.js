@@ -42,6 +42,7 @@ import { COLOUR, SIDE, hash, keepToPlot, readOutline } from './longwalk.js';
 import { hangSide } from './slab.js';
 import { raiseTrough } from './water.js';
 import { knotGardenRings } from './tables/knot_garden_rings.js';
+import { basin } from './mini.js';
 
 // The basin in the middle of the knot. The small rings come no nearer the
 // middle than 0.54 m, and a band is 0.09 m either side of its line, which
@@ -393,6 +394,29 @@ function section(t, halfWidth, height) {
   }
   p -= arc;
   return [-halfWidth, Math.max(0, side - p), -1, 0];
+}
+
+// MARK: - Its miniature
+
+/// **The Knot Garden as a gateway shows it** (`mini.js`): its gravel, the
+/// middle ring, the four small rings and the edging as low box, and the basin
+/// in the middle — the table's own lines at the module's own band. Unwoven: at
+/// a slab's size a crossing is a pixel or two, and five rings in a softened
+/// square are what says knot.
+export function miniature(e) {
+  const place = plan(e);
+  const line = (name) => knotGardenRings.curves[name][0].points;
+  const band = (name) => ({
+    kind: 'ridge', line: line(name), closed: true, colour: COLOUR.box,
+    half: place.bandHalfThickness, height: place.bandHeight, step: 0.15, around: 6,
+  });
+  return {
+    floor: COLOUR.gravel,
+    shapes: [
+      ...['middle', 'ring0', 'ring1', 'ring2', 'ring3', 'edging'].map(band),
+      ...basin([0, 0], BASIN.across, BASIN.height, COLOUR),
+    ],
+  };
 }
 
 // MARK: - Growing a plot

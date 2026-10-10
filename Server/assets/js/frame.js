@@ -628,6 +628,32 @@ function inside(x, y, points) {
 
 function dot(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
 
+// MARK: - Its miniature
+
+/// **The Cold Frame as a gateway shows it** (`mini.js`): its gravel, the
+/// kidney of water the table lays, deep from the place the table says is
+/// deepest and shallow at its rim, and the two frames at the back where the
+/// module stands them, high at the back and low at the front, their lights
+/// shut: the soil seen through the glass, and the pale glazing bars.
+const LIGHTS = SOIL.map((v, i) => v * 0.65 + GLASS[i] * 0.35);
+
+export function miniature(e) {
+  const place = plan(e);
+  const deepest = coldFramePond.places[0].find((p) => p[2] === 1);
+  return {
+    floor: COLOUR.gravel,
+    shapes: [
+      { kind: 'patch', loop: coldFramePond.curves.pond[0].points, at: [deepest[0], deepest[1]],
+        colour: COLOUR.depths, rim: COLOUR.shallows },
+      ...place.frames.map(([x, z]) => ({
+        kind: 'box', at: [x, z], size: [place.length, place.depth],
+        back: place.backWall, front: place.frontWall, colour: BOARD, top: LIGHTS,
+        bars: { count: 4, width: 0.07, colour: BAR },
+      })),
+    ],
+  };
+}
+
 // MARK: - Growing a plot
 
 // **Letting go of the thread** between plants, the way the other six do.

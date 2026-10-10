@@ -537,6 +537,26 @@ function set(mesh, at, colour, grain, vertex) {
   }
 }
 
+// MARK: - Its miniature
+
+/// **The Glasshouse as a gateway shows it** (`mini.js`): its tiles, and the
+/// round house on them — the table's wall, the module's eaves and crown, the
+/// frame's ribs painted pale on panes the colour of its inside seen through
+/// glass. The staging, the bed and the pots are under the dome and go
+/// unseen at this size, as most of them do from outside the real one.
+const PANES = SOIL.map((v, i) => v * 0.6 + TILE[i] * 0.25 + GLASS[i] * 0.15);
+
+export function miniature(e) {
+  const place = plan(e);
+  const { wall } = outlines();
+  return {
+    floor: TILE,
+    shapes: [
+      { kind: 'house', radiusAt: wall, eaves: place.eaves, crown: place.crown, colour: PANES, rib: BAR, ribs: 16 },
+    ],
+  };
+}
+
 // MARK: - Growing a plot
 
 // **Letting go of the thread** between plants, the way the other seven do.

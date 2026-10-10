@@ -30,6 +30,7 @@ import { decode, takeResult } from './plant.js';
 import { COLOUR, SIDE, keepToPlot, readOutline, readStructure, rimReach } from './longwalk.js';
 import { hangSide } from './slab.js';
 import { floorAround, rimOf, sinkPool } from './water.js';
+import { circle } from './mini.js';
 
 // Seeds for this area's dressing, so a plot is the same shape on every visit.
 // Its own, not the walk's, the room's or the crossing's: four areas drawing from
@@ -47,6 +48,12 @@ const POND = { across: 0.64 };
 // way's: wide enough that a crescent's plants stand in cut grass, and the way
 // a path for one.
 const MOWN = { crescent: 0.34, way: 0.25, disc: 0.32 };
+
+// How high a tree's crown begins, and how tall and wide the `t`th tree is:
+// siblings, a little different, as the ground's trees and the gateway's
+// miniature both draw them.
+const CROWN_BASE = 2.10;
+const treeSize = (t) => ({ tall: 3.15 + 0.26 * ((t * 11) % 7) / 6, wide: 1.44 + 0.18 * ((t * 5) % 4) / 3 });
 
 export function plan(e) {
   const place = JSON.parse(new TextDecoder().decode(takeResult(e, e.pg_orchard_plan())));
@@ -254,13 +261,11 @@ export function makeOrchardGround(place) {
     // **The five trees.** Each is `Organic.tree` through the module, standing on
     // the trunk the rule gives. They vary — a quincunx of five identical trees
     // is a diagram — but they vary by a little, because an orchard is planted
-    // in one season from one stock and its trees are siblings.
-    const CROWN_BASE = 2.10;
+    // in one season from one stock and its trees are siblings (`treeSize`).
     const casting = [], canopy = [];
     for (const [t, trunk] of trunks.entries()) {
       const wobbleSeed = GROVE.tree + t * 17;
-      const tall = 3.15 + 0.26 * ((t * 11) % 7) / 6;
-      const wide = 1.44 + 0.18 * ((t * 5) % 4) / 3;
+      const { tall, wide } = treeSize(t);
       const mesh = readStructure(takeResult(e, e.pg_tree(tall, wide, CROWN_BASE, wobbleSeed)));
       // **Shaded flat, which is what the roundel taught.** Smooth normals over a
       // lumpy canopy average the lumps away and give one broad highlight: a
@@ -324,6 +329,27 @@ export function makeOrchardGround(place) {
       casting: new Float32Array(casting),
       canopy: new Float32Array(canopy),
     };
+  };
+}
+
+// MARK: - Its miniature
+
+/// **The Orchard as a gateway shows it** (`mini.js`): its meadow, the five
+/// trees on the trunks the rule gives, each as tall and wide as the ground
+/// grows it, the four mown crescents round the outer trees and the dipping
+/// pond. The way and the middle tree's mown disc are left to the full view.
+export function miniature(e) {
+  const place = plan(e);
+  const { trunks, pond, crescents } = place.layout;
+  return {
+    floor: COLOUR.turf,
+    shapes: [
+      ...crescents.map((line) => ({ kind: 'ribbon', line, half: MOWN.crescent, colour: COLOUR.grass })),
+      { kind: 'patch', loop: circle(pond, POND.across / 2), colour: COLOUR.depths, rim: COLOUR.shallows },
+      ...trunks.map((at, t) => ({
+        kind: 'tree', at, trunk: 0.09, base: CROWN_BASE, ...treeSize(t), leaf: COLOUR.leaf, bark: COLOUR.bark,
+      })),
+    ],
   };
 }
 

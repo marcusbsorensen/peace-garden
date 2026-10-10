@@ -42,6 +42,7 @@ import { COLOUR, SIDE, hash, keepToPlot, readOutline, readStructure } from './lo
 import { hangSide } from './slab.js';
 import { PLAIN, applyVariantToCurve } from './variant.js';
 import { seedbedDrills } from './tables/seedbed_drills.js';
+import { tone } from './mini.js';
 
 // Seeds for this area's dressing, so a bed is the same shape on every visit.
 // Its own, not the walk's, the room's, the crossing's, the orchard's or the
@@ -402,6 +403,21 @@ export function readDrills(place, entries) {
     here.sown += entry.span ?? 1;
   }
   return drills;
+}
+
+// MARK: - Its miniature
+
+/// **The Seedbed as a gateway shows it** (`mini.js`): its tilth, and the six
+/// drills curving across it as the table lays them, each a furrow darker than
+/// the raked ground between. The labels at their heads are a pixel at this
+/// size and are left out.
+export function miniature() {
+  return {
+    floor: COLOUR.tilth,
+    shapes: drillLines().map((line) => ({
+      kind: 'ribbon', line, half: CHANNEL.across / 4, colour: tone(COLOUR.tilth, 0.6),
+    })),
+  };
 }
 
 // MARK: - Growing a plot

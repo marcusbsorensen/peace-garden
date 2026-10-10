@@ -5,7 +5,8 @@
 //
 // An area page shows the garden's neighbours twice: as cells on the small map
 // at its foot (`gates.js`), and as slabs of their ground out past the plot,
-// each carrying its area's glyph (`beside.js`, `longwalk.js`). Marcus found
+// each carrying a miniature of its area's own layout (`beside.js`,
+// `longwalk.js`, `mini.js`). Marcus found
 // on 10 October 2026 that the two did not seem to agree. Under Arabic or
 // Hebrew they did not: the map's grid followed the writing direction and
 // mirrored, and the gateways, like the pad's arrows, did not. Both now take
@@ -19,19 +20,22 @@
 // - `garden.js` has the neighbours below, each the way below;
 // - the map at the foot of the page marks exactly those that are open as
 //   beside it, each drawn that way from the reader's own cell;
-// - the gateways are those same areas, each with its own glyph from `LOOK`;
+// - the gateways are those same areas, and every open area has a miniature
+//   its own module says (`MINIATURES` in `mini.js`, `miniature` beside the
+//   area's `plan`) — read from the source, since a miniature is built from
+//   the plant module's plans and this runs without it;
 // - at every quarter turn and on a phone's, a laptop's and a tablet's
-//   canvas, each gateway is drawn, stands that way from the plot — more that
-//   way than across it — and carries a glyph, but for the two a wall hides
-//   (`HIDDEN`);
+//   canvas, each gateway is drawn and stands that way from the plot — more
+//   that way than across it;
 // - and the stylesheet pins both maps' grids left to right, which is the
 //   half of the fault that lived in CSS.
 
 import { readFile } from 'node:fs/promises';
 import { AREAS, neighboursOf, screenWay } from '../../Server/assets/js/garden.js';
-import { BUILT, LOOK, mapCells } from '../../Server/assets/js/gates.js';
+import { BUILT, mapCells } from '../../Server/assets/js/gates.js';
 import { areasBeside } from '../../Server/assets/js/beside.js';
 import { placeBeside } from '../../Server/assets/js/longwalk.js';
+import { MINIATURES } from '../../Server/assets/js/mini.js';
 
 // The map, five by two (docs/WEBSITE.md):
 //
@@ -58,22 +62,9 @@ const WAY = { up: [0, 1], down: [0, -1], left: [-1, 0], right: [1, 0] };
 // more for air.
 const SPAN = { travel: 3 };
 
-// How tall the walls along each area's far edges are, in metres: the ground
-// builders' `walls`, the yew round the Quiet Garden and behind the Long
-// Walk's far border. Everywhere else nothing taller than a person's knee
-// stands at the edge.
-const WALLS = { travel: 2.0, peace: 2.0 };
-
 // Canvases the gateways must work in, in CSS pixels: a phone, two laptops,
 // a tablet held upright.
 const CANVASES = [['a phone', 390, 388], ['a laptop', 1280, 495], ['a wide laptop', 1512, 540], ['a tablet', 768, 563]];
-
-// **The two glyphs a wall hides**, and only these. The Quiet Garden's upper
-// neighbour stands wholly behind its yew, which Marcus saw and kept on 27
-// September 2026 (what a wall does to what is beyond it); the slab is still
-// drawn. And on a phone, at the two turns that put the Long Walk's yew at its
-// left-hand end, the Coppice shows too little below the yew for a glyph.
-const HIDDEN = new Set(['peace up', 'travel left a phone 0', 'travel left a phone 2']);
 
 let checks = 0;
 const failures = [];
@@ -115,20 +106,18 @@ for (const { theme } of AREAS) {
     same(`the map at the foot of ${theme}'s page`, sorted(open), sorted(marked));
   }
 
-  // The gateways: which, which way, and which glyph.
+  // The gateways: which, and which way.
   const slabs = areasBeside(theme);
   same(`${theme}'s gateways`, sorted(open), sorted(Object.fromEntries(slabs.map((s) => [s.direction, s.theme]))));
   for (const slab of slabs) {
     same(`the way ${theme}'s ${slab.direction} gateway carries`, WAY[slab.direction], [...slab.way]);
-    checks++;
-    if (slab.glyph !== LOOK[slab.theme]?.glyph) fail(`${theme}'s ${slab.direction} gateway carries another area's glyph`);
   }
 
   // Where they are drawn, at every turn, on every canvas.
   const span = SPAN[theme] ?? 1.25;
   for (const [canvas, width, height] of CANVASES) {
     for (const turn of [0, 1, 2, 3]) {
-      const placed = placeBeside(slabs, { turn, aspect: width / height, span, width, walls: WALLS[theme] ?? 0 });
+      const placed = placeBeside(slabs, { turn, aspect: width / height, span });
       for (const slab of slabs) {
         const where = `${theme}'s ${slab.direction} gateway on ${canvas}, turned ${turn}`;
         const p = placed.find((q) => q.slab === slab);
@@ -139,13 +128,20 @@ for (const { theme } of AREAS) {
         const aside = Math.abs(p.at[0] * up - p.at[1] * across);
         checks++;
         if (!(along > aside)) fail(`${where} stands at ${p.at.map((v) => v.toFixed(2))}, not ${slab.direction} of the plot`);
-        const hidden = HIDDEN.has(`${theme} ${slab.direction}`) || HIDDEN.has(`${theme} ${slab.direction} ${canvas} ${turn}`);
-        checks++;
-        if (!p.glyph && !hidden) fail(`${where} has no room for its glyph`);
-        if (p.glyph && hidden) fail(`${where} has a glyph where its wall was thought to hide it: take it off HIDDEN`);
       }
     }
   }
+}
+
+// **Every open area has a miniature, said by its own module.** The table names
+// the module, and the module says `miniature` beside the `plan` it is built
+// from — the Long Walk's beside its own ground, which has no plan export.
+same('the areas with a miniature', Object.keys(BUILT).sort(), Object.keys(MINIATURES).sort());
+for (const [theme, file] of Object.entries(MINIATURES)) {
+  checks++;
+  const source = await readFile(new URL(`../../Server/assets/js/${file.replace('./', '')}`, import.meta.url), 'utf8')
+    .catch(() => '');
+  if (!/\nexport function miniature\(/.test(source)) fail(`${file} says no miniature for ${theme}`);
 }
 
 // The half that lived in the stylesheet: a grid follows the writing direction
@@ -161,7 +157,7 @@ if (failures.length) {
   console.error('The map and the gateways disagree about where the neighbours are:');
   for (const line of failures) console.error(`  ${line}`);
   console.error('\nThe way round is screenWay in Server/assets/js/garden.js; the map is mapCells in gates.js,'
-    + '\nthe gateways areasBeside in beside.js and placeBeside in longwalk.js.');
+    + '\nthe gateways areasBeside in beside.js and placeBeside in longwalk.js, their miniatures mini.js.');
   process.exit(1);
 }
 

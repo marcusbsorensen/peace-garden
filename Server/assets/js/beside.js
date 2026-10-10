@@ -11,11 +11,13 @@
 // `longwalk.js` builds and draws it, and this says what there is to draw.
 // They stood clear of the plot for a day, and read as four objects floating
 // apart rather than as one garden — `BESIDE.lap` in `longwalk.js` is the
-// answer and records it.
+// answer and records it. Since 10 October each one carries a very simplified
+// miniature of that area's own layout (`mini.js`), so it says not only that
+// the garden goes on but what is there.
 //
 // **There is one map and this reads it.** `garden.js` says which area lies
 // which way and where that way is on a screen (`neighboursOf`), `gates.js`
-// whether it is open, what colour its ground is and what its glyph is.
+// whether it is open and what colour its ground is.
 // None of it is written down here a second time, and the map at the foot of
 // the page marks the same neighbours from the same call — so the corner and
 // the canvas cannot come to disagree about which area is on which side, which
@@ -23,10 +25,10 @@
 //
 // **Not a word of it is a word.** A named slab is forty-one translations, and
 // the reader already has every area's name — in their own language — on the
-// map at the foot of the page, which is also where they can press one. Since
-// 10 October each gateway carries its area's glyph instead (`glyph` below):
-// the same drawing as that area's cell on the map, so a reader matches the two
-// by shape, and nobody has to tell a dimmed terracotta from a dimmed brown.
+// map at the foot of the page, which is also where they can press one. A
+// gateway is told from the others by its miniature, by shape, so nobody has
+// to tell a dimmed terracotta from a dimmed brown. For a day it carried its
+// area's map glyph; the map keeps those, and the view draws what is there.
 
 import { MAP_WIDTH, neighboursOf, riseBetween } from './garden.js';
 import { BUILT, LOOK } from './gates.js';
@@ -59,10 +61,9 @@ export function areasBeside(theme) {
       // round, which is the one the map in the corner is drawn.
       way,
       seed: area.y * MAP_WIDTH + area.x,
+      // Its ground until its miniature says its own (`mini.js`), and if that
+      // cannot be had.
       ground: albedo(LOOK[area.theme].ground),
-      // The area's glyph, as its cell on the map draws it, to be laid on the
-      // gateway's ground.
-      glyph: LOOK[area.theme].glyph,
       // How much higher that ground stands than this, in metres. The garden
       // falls from the Cold Frame end to the Crossing, so the neighbour to one
       // side is up a terrace and the one to the other is down one.
