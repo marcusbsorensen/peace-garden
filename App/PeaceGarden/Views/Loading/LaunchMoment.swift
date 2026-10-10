@@ -43,14 +43,13 @@ struct LaunchMoment: View {
 
     var body: some View {
         GeometryReader { proxy in
-            let short = min(proxy.size.width, proxy.size.height)
-            let side = min(short * 0.46, 320)
+            let frame = Self.markFrame(for: style, short: min(proxy.size.width, proxy.size.height))
             ZStack {
                 ground.ignoresSafeArea()
                 TimelineView(.animation(paused: isLeaving && markOpacity == 0)) { timeline in
                     let t = LoadingTiming.progress(elapsed: timeline.date.timeIntervalSince(startedAt))
                     mark(at: t)
-                        .frame(width: side, height: side)
+                        .frame(width: frame.width, height: frame.height)
                 }
                 .opacity(markOpacity)
             }
@@ -67,6 +66,18 @@ struct LaunchMoment: View {
         // Sixty-odd frames of a decoration, with nothing in them for VoiceOver to
         // say. Its focus belongs on the app that is about to be there.
         .accessibilityHidden(true)
+    }
+
+    /// **How big the mark is, from the shorter side of the screen.** Not typed per
+    /// device: 46 % of the short side, capped at 320 pt so an iPad does not get a
+    /// poster. The frond is a tall thin drawing and is given a taller frame, so
+    /// that its hairline and its leaf are as present as the coil is.
+    static func markFrame(for style: LoadingStyle, short: CGFloat) -> CGSize {
+        let side = min(short * 0.46, 320)
+        switch style {
+        case .frond: return CGSize(width: side * 0.9, height: side * 1.25)
+        case .unwinding, .off: return CGSize(width: side, height: side)
+        }
     }
 
     private var ground: Color {

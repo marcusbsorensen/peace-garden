@@ -101,8 +101,12 @@ enum Fiddlehead {
         var far: [CGPoint] = []
         for index in 0...ribs {
             let s = Double(index) / Double(ribs)
-            // Widest a third of the way along, per the mark's construction.
-            let half = 0.30 * bractLength * sin(.pi * pow(s, 0.60))
+            // The mark's construction, with the profile's exponent eased from
+            // 0.60 to 0.85. At 0.60 the outline leaves its mouth almost square,
+            // which the mark hides under the end of a coil 48 units wide; on a
+            // hairline stem it showed as a flat cap on the leaf, and a flat cap
+            // is a short straight line.
+            let half = 0.30 * bractLength * sin(.pi * pow(s, 0.85))
             let j = min(index, ribs - 1)
             let angle = atan2(spine[j + 1].y - spine[j].y, spine[j + 1].x - spine[j].x)
             near.append(CGPoint(x: spine[index].x - sin(angle) * half,

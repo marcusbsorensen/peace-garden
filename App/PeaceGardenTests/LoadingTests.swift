@@ -158,7 +158,7 @@ final class LoadingTests: XCTestCase {
     /// The coil goes first, the bract after it and the taper last, and the light
     /// crosses the mark that has opened rather than the one that is opening.
     func testTheBeatsRunInOrder() {
-        let early = UnwindingMark.pose(atMoment: 0.3)
+        let early = UnwindingMark.pose(atMoment: 0.5)
         XCTAssertGreaterThan(early.coil, early.bract)
         XCTAssertGreaterThan(early.bract, early.spike)
         XCTAssertNil(early.sheen, "no light before the mark has opened")
@@ -332,7 +332,7 @@ final class LoadingTests: XCTestCase {
 
         func frame(_ name: String, style: LoadingStyle, scheme: ColorScheme, t: Double,
                    markOpacity: Double, fieldOpacity: Double) throws {
-            let side = min(min(phone.width, phone.height) * 0.46, 320)
+            let markFrame = LaunchMoment.markFrame(for: style, short: min(phone.width, phone.height))
             let content = ZStack {
                 stage(scheme)
                 ZStack {
@@ -340,13 +340,13 @@ final class LoadingTests: XCTestCase {
                     switch style {
                     case .unwinding:
                         UnwindingMarkView(pose: UnwindingMark.pose(atMoment: t), dress: .brand)
-                            .frame(width: side, height: side)
+                            .frame(width: markFrame.width, height: markFrame.height)
                             .opacity(markOpacity)
                     case .frond:
                         FiddleheadView(pose: Fiddlehead.pose(atMoment: t),
                                        ink: scheme == .dark ? Fiddlehead.gold.opacity(0.95) : Chrome.ink.opacity(0.8),
                                        weight: 1.8, halo: 10)
-                            .frame(width: side, height: side)
+                            .frame(width: markFrame.width, height: markFrame.height)
                             .opacity(markOpacity)
                     case .off:
                         EmptyView()
