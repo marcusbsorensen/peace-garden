@@ -587,7 +587,9 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     // know which two of them are the near ones and a single sign cannot say.
     const built = buildTheGround(farSide, span, e, eye());
     groundMesh = withPieces(gl, ground, upload(gl, ground, built), built.pieces, 'opaque');
-    cover = coverOf(lookAlong(eye()), built.positions);
+    const seen = lookAlong(eye());
+    cover = coverOf(seen, built.positions,
+                    convexHull(corners(seen, extent.x, extent.z, -RIM_DEPTH * BESIDE.deepest, 0)));
     if (sideMesh) sideMesh.release();
     sideMesh = built.side ? uploadSide(gl, sideProgram, built.side) : null;
     if (glassMesh) glassMesh.release();
@@ -1794,53 +1796,72 @@ function fitGlyph(view, at, outline, pixels, cover) {
 // anything there in this box, `(x0, y0)` to `(x1, y1)` in the view's metres?
 // Every triangle of the ground's mesh that rises more than `COVER.above` off
 // the soil is laid onto a grid `COVER.cell` on a side, and the grid summed so
-// any box is four reads. The soil itself is the plot's outline, which
-// `placeBeside` keeps clear of already.
+// any box is four reads. A triangle wholly inside `inner` — the plot's own
+// outline on the screen, which `placeBeside` keeps every glyph clear of
+// already — is passed over, which is most of a hedge and all of a bed.
 //
 // It depends on the view and nothing else — not the window, not the zoom —
-// so it is made once a turn with the ground.
-const COVER = { cell: 0.04, above: 0.25 };
+// so it is made once a turn with the ground: no array a triangle, and a grid
+// about a tenth of a glyph across.
+const COVER = { cell: 0.06, above: 0.25 };
 
-function coverOf(view, positions) {
-  const { x: across, y: up } = axes(view);
-  const raised = [];
-  for (let i = 0; i < positions.length; i += 9) {
-    if (Math.max(positions[i + 1], positions[i + 4], positions[i + 7]) < COVER.above) continue;
-    const tri = [0, 3, 6].map((k) => {
-      const p = [positions[i + k], positions[i + k + 1], positions[i + k + 2]];
-      return [dot3(p, across), dot3(p, up)];
-    });
-    raised.push(tri);
-  }
-  if (!raised.length) return null;
-  // Counted out rather than spread into `Math.min`: a glasshouse is more
-  // points than a call can take as arguments.
+function coverOf(view, positions, inner) {
+  const ax = view[0], ay = view[4], az = view[8];
+  const ux = view[1], uy = view[5], uz = view[9];
+  // `inner` is round anticlockwise (`convexHull`), so a point inside it is on
+  // the left of every edge.
+  const n = inner.length;
+  const within = (x, y) => {
+    for (let k = 0; k < n; k++) {
+      const p = inner[k], q = inner[(k + 1) % n];
+      if ((q[0] - p[0]) * (y - p[1]) - (q[1] - p[1]) * (x - p[0]) < 0) return false;
+    }
+    return true;
+  };
+  const kept = [];
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  for (const tri of raised) {
-    for (const [x, y] of tri) {
-      minX = Math.min(minX, x); maxX = Math.max(maxX, x);
-      minY = Math.min(minY, y); maxY = Math.max(maxY, y);
+  for (let i = 0; i < positions.length; i += 9) {
+    if (positions[i + 1] < COVER.above && positions[i + 4] < COVER.above && positions[i + 7] < COVER.above) continue;
+    let all = true;
+    const at = kept.length;
+    for (let k = 0; k < 9; k += 3) {
+      const px = positions[i + k], py = positions[i + k + 1], pz = positions[i + k + 2];
+      const x = px * ax + py * ay + pz * az, y = px * ux + py * uy + pz * uz;
+      kept.push(x, y);
+      if (all && !within(x, y)) all = false;
+    }
+    if (all) { kept.length = at; continue; }
+    for (let k = at; k < at + 6; k += 2) {
+      if (kept[k] < minX) minX = kept[k];
+      if (kept[k] > maxX) maxX = kept[k];
+      if (kept[k + 1] < minY) minY = kept[k + 1];
+      if (kept[k + 1] > maxY) maxY = kept[k + 1];
     }
   }
-  const cols = Math.ceil((maxX - minX) / COVER.cell) + 1;
-  const rows = Math.ceil((maxY - minY) / COVER.cell) + 1;
+  if (!kept.length) return null;
+  const cell = COVER.cell;
+  const cols = Math.ceil((maxX - minX) / cell) + 1;
+  const rows = Math.ceil((maxY - minY) / cell) + 1;
   const grid = new Uint8Array(cols * rows);
-  const cellOf = (v, from, count) => Math.min(count - 1, Math.max(0, Math.floor((v - from) / COVER.cell)));
-  for (const [a, b, c] of raised) {
+  const column = (v) => Math.min(cols - 1, Math.max(0, Math.floor((v - minX) / cell)));
+  const row = (v) => Math.min(rows - 1, Math.max(0, Math.floor((v - minY) / cell)));
+  for (let i = 0; i < kept.length; i += 6) {
+    const x0 = kept[i], y0 = kept[i + 1], x1 = kept[i + 2], y1 = kept[i + 3], x2 = kept[i + 4], y2 = kept[i + 5];
     // A triangle smaller than a cell covers no cell's middle, so its corners
     // are marked as well.
-    for (const p of [a, b, c]) grid[cellOf(p[1], minY, rows) * cols + cellOf(p[0], minX, cols)] = 1;
-    const area = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
-    if (Math.abs(area) < 1e-12) continue;
-    const c0 = cellOf(Math.min(a[0], b[0], c[0]), minX, cols), c1 = cellOf(Math.max(a[0], b[0], c[0]), minX, cols);
-    const r0 = cellOf(Math.min(a[1], b[1], c[1]), minY, rows), r1 = cellOf(Math.max(a[1], b[1], c[1]), minY, rows);
+    grid[row(y0) * cols + column(x0)] = 1;
+    grid[row(y1) * cols + column(x1)] = 1;
+    grid[row(y2) * cols + column(x2)] = 1;
+    const c0 = column(Math.min(x0, x1, x2)), c1 = column(Math.max(x0, x1, x2));
+    const r0 = row(Math.min(y0, y1, y2)), r1 = row(Math.max(y0, y1, y2));
+    if (c0 === c1 && r0 === r1) continue;
     for (let r = r0; r <= r1; r++) {
-      const y = minY + (r + 0.5) * COVER.cell;
+      const y = minY + (r + 0.5) * cell;
       for (let q = c0; q <= c1; q++) {
-        const x = minX + (q + 0.5) * COVER.cell;
-        const w0 = (b[0] - a[0]) * (y - a[1]) - (b[1] - a[1]) * (x - a[0]);
-        const w1 = (c[0] - b[0]) * (y - b[1]) - (c[1] - b[1]) * (x - b[0]);
-        const w2 = (a[0] - c[0]) * (y - c[1]) - (a[1] - c[1]) * (x - c[0]);
+        const x = minX + (q + 0.5) * cell;
+        const w0 = (x1 - x0) * (y - y0) - (y1 - y0) * (x - x0);
+        const w1 = (x2 - x1) * (y - y1) - (y2 - y1) * (x - x1);
+        const w2 = (x0 - x2) * (y - y2) - (y0 - y2) * (x - x2);
         if ((w0 >= 0 && w1 >= 0 && w2 >= 0) || (w0 <= 0 && w1 <= 0 && w2 <= 0)) grid[r * cols + q] = 1;
       }
     }
@@ -1854,8 +1875,8 @@ function coverOf(view, positions) {
     }
   }
   return (x0, y0, x1, y1) => {
-    const q0 = Math.floor((x0 - minX) / COVER.cell), q1 = Math.floor((x1 - minX) / COVER.cell);
-    const r0 = Math.floor((y0 - minY) / COVER.cell), r1 = Math.floor((y1 - minY) / COVER.cell);
+    const q0 = Math.floor((x0 - minX) / cell), q1 = Math.floor((x1 - minX) / cell);
+    const r0 = Math.floor((y0 - minY) / cell), r1 = Math.floor((y1 - minY) / cell);
     if (q1 < 0 || r1 < 0 || q0 >= cols || r0 >= rows) return false;
     const a = Math.max(0, q0), b = Math.min(cols - 1, q1), c = Math.max(0, r0), d = Math.min(rows - 1, r1);
     const at = (r, q) => sum[r * (cols + 1) + q];
