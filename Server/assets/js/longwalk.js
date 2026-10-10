@@ -795,7 +795,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
         gl.uniform3fv(glyphProgram.at.centre, glyph.centre.map((v, i) => v + offset[i]));
         gl.uniform3fv(glyphProgram.at.across, glyph.across);
         gl.uniform3fv(glyphProgram.at.toward, glyph.toward);
-        gl.bindTexture(gl.TEXTURE_2D, slab.glyph);
+        gl.bindTexture(gl.TEXTURE_2D, slab.texture);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       }
       gl.bindVertexArray(null);
@@ -815,7 +815,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   // Built here and once. A turn moves them about the screen and does not
   // change them, so nothing is rebuilt on a turn.
   function beside(theme) {
-    for (const slab of besides) { slab.mesh.release(); slab.side.release(); gl.deleteTexture(slab.glyph); }
+    for (const slab of besides) { slab.mesh.release(); slab.side.release(); gl.deleteTexture(slab.texture); }
     besides = areasBeside(theme).map((area) => {
       const built = besideGround(e, area.seed, area.ground);
       return {
@@ -823,7 +823,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
         way: area.way,
         // Its glyph, drawn once into a texture: a turn moves where it lies
         // and not what it is.
-        glyph: glyphTexture(gl, area.glyph),
+        texture: glyphTexture(gl, area.glyph),
         // The terrace, in metres; `placeBeside` takes it to the slab's size.
         rise: area.rise,
         mesh: upload(gl, ground, built),
