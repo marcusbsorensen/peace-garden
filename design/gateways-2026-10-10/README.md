@@ -124,3 +124,12 @@ Three glyphs stay hidden because their slabs are hidden:
    Glasshouse.
    - **a. Leave them hidden.** Recommended.
    - b. Lift those two gateways clear above the wall, as ground seen over it.
+
+
+## Answered by Marcus, 10 October 2026
+
+All four as recommended, so everything stays as built:
+- the phone's extra side sky is kept;
+- no sky is added under the plots;
+- both maps read left to right in Arabic and Hebrew;
+- the two neighbours behind walls stay hidden.
