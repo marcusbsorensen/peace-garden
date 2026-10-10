@@ -809,10 +809,8 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
         // Its glyph, drawn once into a texture: a turn moves where it lies
         // and not what it is.
         glyph: glyphTexture(gl, area.glyph),
-        // The terrace, at the slab's own size: a neighbour drawn half a plot
-        // across stands half a step higher, or the ground would disagree with
-        // itself about how far away it is.
-        rise: area.rise * BESIDE.scale,
+        // The terrace, in metres; `placeBeside` takes it to the slab's size.
+        rise: area.rise,
         mesh: upload(gl, ground, built),
         side: uploadSide(gl, sideProgram, built.side),
       };
@@ -1588,8 +1586,8 @@ function raiseBeds(e, vertex, outline, span) {
 // `tools/reference/check_gateways.mjs` can hold it to the map at every turn;
 // the stage draws what this answers.
 //
-// `slabs` are anything with `areasBeside`'s `way` and a `rise` at the slab's
-// size; `turn`, `aspect`, `span` and `look` are the stage's own, and `width`
+// `slabs` are `areasBeside`'s answers, or anything with their `way` and
+// `rise`; `turn`, `aspect`, `span` and `look` are the stage's own, and `width`
 // is how many CSS pixels wide the canvas is. Each answer is `{ slab, at,
 // offset, glyph }`: `at` where the slab's middle is on the screen against the
 // plot's, in metres across and up; `offset` that as a place in the world; and
@@ -1669,7 +1667,10 @@ export function placeBeside(slabs, { turn = 0, aspect = 1, span = 1, look = { zo
     // lifting the slab, and it keeps every test below honest about where the
     // slab actually ends up. Only the sides are ever off the level: up and
     // down lead to the other row of the same column, which is level ground.
-    at[1] += slab.rise * up[1];
+    // At the slab's own size: a neighbour drawn half a plot across stands
+    // half a step higher, or the ground would disagree with itself about how
+    // far away it is.
+    at[1] += slab.rise * BESIDE.scale * up[1];
     if (at[axis] + low < pane[axis][0] || at[axis] + high > pane[axis][1]) continue;
     if (at[1 - axis] + size[1 - axis][0] < pane[1 - axis][0]
         || at[1 - axis] + size[1 - axis][1] > pane[1 - axis][1]) continue;
