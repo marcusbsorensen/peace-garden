@@ -183,6 +183,7 @@ check_path /assets/js/slab.js           200 application/javascript
 check_path /assets/places.json    200 application/json
 check_path /assets/stars.bin      200 application/octet-stream
 check_path /assets/icon.svg     200 image/svg+xml
+check_path /assets/favicon.svg  200 image/svg+xml
 check_path /assets/mark-dark.svg  200 image/svg+xml
 check_path /assets/mark-light.svg 200 image/svg+xml
 check_path /languages.json      200 application/json
