@@ -8,28 +8,37 @@ owns, and what is therefore not a choice made here:
   §3.1  One ground: #0D0D1F, flat. No gradient, no texture.
   §3.2  Monoline strokes, never arbitrary filled shapes. Free ends round.
         No gradient on the ground, no shadow, no bevel, no drawn squircle.
+  §3.2a Deliberate stroke modulation, under conditions, with a small variant
+        that dials it back below about 24 px.
   §3.3  One continuous gradient along the stroke, bottom-left to top-right.
         A mark of one continuous stroke takes an even sweep.
   §3.4  Each app owns a segment of a shared hue arc.
-  §3.5  Marks are symbolic, never pictorial: a mark may not depict what the
-        app is *about*.
+  §3.6  A white secondary accent.
 
 Peace Garden's own construction — the glyph and its geometry — is §4's "what each
 app owns", and is recorded in `docs/BRAND.md` beside the measured numbers.
 
   python3 tools/icon/make_icon.py
 
-Writes `icon.svg` next to this file as the canonical drawing, and the 1024 PNG the
-asset catalogue needs. Both come off the same flattened polyline, so the two cannot
-drift — the same reason UnCubed's generator flattens rather than rasterises.
+**The mark is the fiddlehead Marcus chose on 11 October 2026**: round two's
+D-suite (`design/logo-2026-10-11/`), a stem and a crozier from one root, the stem
+opening into a warm white leaf, with T2's taper, C2's extra half turn in the coil,
+and variant A's lower fork and earlier taper (`d-taper/coil2-a/`). This file is
+now the single source of truth for it and imports nothing from `design/`; the
+design scripts are the record of how it was reached, not a dependency. The port
+is checked against their files by `check_port.py`.
 
-It also writes the website's files: the tiled icon, its touch icon and favicon,
-and the bare mark the site's bar carries, once for a dark ground and once for a
-light one. See `main` for which is which.
+Writes `icon.svg` next to this file as the canonical drawing, and the 1024 PNG the
+asset catalogue needs. Both come off the same paths — the SVG writes them as
+curves and the PNG flattens the same curves finely — so the two cannot drift.
+
+It also writes the website's files: the tiled icon and its touch icon, the
+favicon, and the bare mark the site's bar carries, once for a dark ground and once
+for a light one. See `main` for which is which.
 
 **The drawing and its painting are separate halves.** Everything above
-`# --- colour` is dials; `spiral()` and `fitted()` turn them into polylines on the
-1024 grid; everything under `# --- output` paints whatever those return, on a
+`# --- colour` is dials; `plant()` and `fitted()` turn them into placed paths on
+the 1024 grid; everything under `# --- output` paints whatever those return, on a
 tile or bare, on dark or on light. A new drawing replaces the dials and the
 geometry and leaves the painting alone.
 
@@ -39,6 +48,7 @@ geometry and leaves the painting alone.
 import colorsys
 import json
 import math
+from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
@@ -50,109 +60,125 @@ CATALOGUE = ROOT / "App/PeaceGarden/Resources/Assets.xcassets/AppIcon.appiconset
 SITE = ROOT / "Server"
 
 TILE = 1024
-SUPERSAMPLE = 3
 
 # §3.1. Cool, not warm: red minus blue is −18.
 GROUND = "#0D0D1F"
 
-# §3.4. Peace Garden's segment, allocated 2026-08-30 — yellow through lime to
-# forest green. It sits *below* the 150°–340° arc the suite document calls usable,
-# so it extends the arc rather than taking an allocation within it, and that was
-# the owner's decision rather than this script's. 10° of clearance under Pfish's
-# 150°, and no overlap with anything.
-HUE_FROM = 140.0  # forest green, at the bottom-left of the sweep
-HUE_TO = 60.0     # yellow, at the top-right
-SATURATION = 0.95  # neon
+# §3.4. Peace Garden's segment, amended by the owner on 11 October 2026 within
+# its own band: sage through moss to green-gold, calm rather than the neon forest
+# green, lime and yellow of 30 August. One hue and one saturation per stop, bottom-
+# left to top-right. The top stops at 76° rather than 60° to clear FlagFans'
+# #F0C24E (ΔE2000 19.5), and the bottom starts at 124°, 26° under Pfish's 150°.
+HUES = (124.0, 98.0, 76.0)
+SATURATION = (0.24, 0.34, 0.44)
 
 # Every stop is held to one luminance, because §3.4's load-bearing property is
 # isoluminance and not the hues: an unequal triad becomes a value staircase in
 # greyscale, which reads as a printing fault.
 #
-# 13:1 rather than Pfish's ~9.1:1, and the number is chosen rather than inherited.
-# Holding a triad isoluminant costs the naturally-bright hues their chroma —
-# yellow is the extreme case, and at 9.1:1 it lands on #B9B905, an olive. 13:1 is
-# the highest target at which the green end still sits at full chroma; above it
-# the greens climb past it and wash out to pastel. So it is the most saturated
-# isoluminant triad this span can carry, which is what "neon" asks for.
-TARGET_CONTRAST = 13.0
-STOP_COUNT = 3
-
-# The stroke. One weight — the mark is monoline, so §3.2a's modulation terms and
-# the recorded contrast ratio they require do not apply and must not be reached for.
-STROKE = 48.0
-
-# The spiral is logarithmic, so it is genuinely tighter at the centre and opens as
-# it turns. An Archimedean one holds the same gap the whole way out and reads as
-# evenly wound rather than as growing. `GROWTH_PER_TURN` is the factor each turn
-# multiplies the radius by.
-#
-# Two constraints, asserted in `spiral()` rather than left as lore, because both
-# were found by drawing them wrong: the start radius must clear half the stroke or
-# the innermost turn paints over its own centre, and the innermost turn's radial
-# gain must clear a whole stroke or consecutive turns merge — and they merge first
-# at the smallest size, which is the one that matters most.
-TURNS = 2.0
-START_RADIUS = 48.0
-GROWTH_PER_TURN = 2.55
-# Where the outer end points, measured anticlockwise from east. 45° puts it up and
-# to the right, so the mark's own reading order runs the same way as the gradient —
-# the argument §10.4 makes for `un³`.
-END_BEARING = 45.0
-
-# The spathe — a peace lily's bract, carried on the end of the line. It leaves on
-# the spiral's own tangent and keeps turning the same way, so it follows the
-# trajectory rather than being parked at the end of it.
-#
-# The turn is a dial and not the spiral's own continuation, which was tried first:
-# over the length a bract needs, the spiral turns through nearly 50° and the blade
-# curls back across the coil, closing a loop and reading as a bean. A spathe is a
-# long sail with a gentle bend and a drawn-out point.
-SPATHE_LENGTH = 0.92  # against the spiral's final radius
-SPATHE_TURN = 0.30    # radians, continuing the spiral's sense
-SPATHE_WIDTH = 0.28   # half-width, against the spathe's own length
-
-# **The bract is white, and the coil's colour runs on into it and dies away.**
-#
-# It was the other way round until 4 September: the bract took the sweep and a
-# flat white spadix stood inside it, which is the suite's own habit — Pfish
-# carries two white bubble rings beside a fish that graduates, at the fish's own
-# weight and in flat #FFFFFF. Marcus asked for the inversion, and it says more
-# about the app than the arrangement it replaces: the white is what has opened,
-# and the colour is the unfolding still travelling through it.
-#
-# §3.2 is untouched. The bract is still an outline at the main weight, and the
-# taper is a fill rather than a stroke only because a stroke cannot narrow, and
-# this one has to reach nothing at its point.
-BRACT = "#FFFFFF"
-
-# The taper leaves the coil at exactly the stroke's half-width, so there is no
-# seam at the mouth of the bract, and it reaches nothing well short of the
-# bract's own tip — colour running the whole length would read as a filled leaf
-# rather than as something arriving in an open one.
-TAPER_TO = 0.58        # along the bract's spine
-TAPER_POWER = 1.7      # above 1: full at the mouth, thin early, long in the point
-TAPER_SEAM = 0.20      # below this the taper and the outline share ink, on purpose
-TAPER_CLEARANCE = 8.0  # construction units, each side, past the seam
-TAPER_TURNS_AT = 0.38  # how far along the taper the yellow has fully arrived
-
-MARGIN = 190.0
+# 9.7:1, down from the neon ramp's 13:1. That number was set to keep yellow at
+# full chroma, which a calm ramp no longer wants. Solved, the stops are #9CC29E,
+# #9DC386 and #A9C263.
+TARGET_CONTRAST = 9.7
 
 # **The site's light ground, for the bare mark.** The tile carries its own ground
 # and so has no light and dark pair; the bare mark on the site's bar has no ground
 # of its own and stands on the page's, which follows the reader. So it is drawn
-# twice. On dark it is the tile's drawing exactly, ramp and white bract and all.
-# On light the ramp is solved again, per hue, to `LIGHT_CONTRAST` against
-# `LIGHT_GROUND`, and the white is drawn in `LIGHT_INK` — the method round two's
-# `design/logo-2026-10-11/colour.py` uses (`on_light`), and the same numbers.
+# twice. On dark it is the tile's drawing exactly. On light the ramp is solved
+# again, per stop, to `LIGHT_CONTRAST` against `LIGHT_GROUND`, with saturation
+# lifted so the darker stops keep their hue, and the leaf is drawn in `LIGHT_INK`.
+# Solved, the stops are #397E3D, #467D25 and #60781E.
 #
-# 4.6:1 rather than the tile's 13:1, because on a near-white ground 13:1 is black:
-# the stops would lose their hue to reach it. 4.6 clears WCAG's 4.5 for text with a
-# little to spare, which is the most a coloured mark can carry on that ground and
-# stay coloured.
+# 4.6:1 rather than the tile's 9.7:1, because on a near-white ground 9.7:1 is
+# nearly black: the stops would lose their hue to reach it. 4.6 clears WCAG's 4.5
+# for text with a little to spare.
 LIGHT_GROUND = "#F6F6F6"         # `site.css`, the light `--ground`
-LIGHT_INK = "#121212"            # `site.css`, the light `--ink`; the bract on light
+LIGHT_INK = "#121212"            # `site.css`, the light `--ink`; the leaf on light
 LIGHT_CONTRAST = 4.6
-LIGHT_SATURATION = SATURATION    # round two lifts it on light; this drawing does not
+LIGHT_SATURATION = (0.38, 0.54, 0.60)
+
+# The leaf: the suite's warm white (UnCubed's exponent), a stroked outline and
+# never a fill, at less than the stem's weight. The suite's accents run 0.40
+# (Animal Rescue Centre) to 0.82 (UnCubed).
+LEAF = "#F4F3EF"
+LEAF_WEIGHT = 0.72               # the leaf's stroke against the stem's at its root
+
+# The stroke at the root, as a share of the tile: the suite's median when it was
+# measured on 11 October (Pfish 0.052 to Animal Rescue Centre 0.079). The ink
+# stands this share of the tile high, centred: the suite's median fill.
+STROKE = 0.0654
+INK_HEIGHT = 0.70
+
+# --------------------------------------------------------------- the plant
+#
+# Construction units: 100 wide, y down, the root at (50, 130). Every line is
+# integrated from a heading that varies smoothly along it, so every line is a
+# curve by construction; there is no straight segment and no ground line.
+
+ROOT_POINT = (50.0, 130.0)
+STEM_LENGTH = 86.0
+
+
+def stem_heading(s):
+    """The tall stem: up, leaning left as it rises, with a slight swell."""
+    return -math.pi / 2 - 0.08 - 0.36 * s ** 1.5 + 0.12 * math.sin(math.pi * s)
+
+
+# The tendril leaves the stem `FORK` of its 120 steps up — 14, lowered from round
+# two's 22 because Marcus asked for it to split further down. A lower fork alone
+# barely moves the visible split, since the stalk leaves almost parallel to the
+# stem, so it also leaves a little wider and bends a little less: heading
+# −90° + 0.24 + 0.32 s over 52 units.
+FORK = 14
+STALK = (0.24, 0.32, 52.0)       # (heading offset, bend, length)
+
+# The crozier's head: a logarithmic spiral, entered on the stalk's own heading,
+# its radius falling from 27 to 10 units over 1.35 turns. C2's half turn more
+# than round two's 0.85, wound faster (2.1 times a turn) so the turns do not
+# merge, and two units smaller than C2's 29 because the thinner turns need less
+# room. The inner radius holds the eye open at about two tip widths.
+COIL = (1.35, 27.0, 10.0)        # (turns, outer radius, inner radius)
+
+# The leaf, as the loading fiddlehead draws it: it leaves on the stem's own
+# tangent and keeps turning the same way, its half-width `sin(π s^0.85)` of its
+# length times `LEAF_WIDTH`.
+LEAF_LENGTH = 40.0
+LEAF_WIDTH = 0.32
+LEAF_SWEEP = 0.34                # radians, turning against the stem's lean
+LEAF_RIBS = 24
+
+# **The taper**, §3.2a under the growth clause proposed in round two and a half:
+# each line is thickest where it grows from and thins towards its free end, and
+# neither thickens again. One strength, `TAU`: the crozier's tip is 1 − τ of the
+# root's stroke (0.42), the stem's neck at the leaf 1 − 0.43 τ (0.75).
+TAU = 0.58
+STEM_SHARE = 0.43
+# The crozier thins along an ease-out from the fork, 1 − (1 − u)^2.5, which
+# front-loads the thinning: by the top of its rise it is 0.69 of the root, lighter
+# than the stem beside it. The stem stays full to where round two's fork was,
+# 22 of its 120 steps, and then eases to its neck along a smoothstep.
+TENDRIL_EASE = 2.5
+STEM_TAPER_FROM = 22 / 120
+# The outline is sampled every this share of the root's stroke along each line.
+STEP = 0.2
+
+# **The small drawing**, for 16, 32 and 48 px, is round two's and is not tapered:
+# §3.2a(5) requires the small variant, because below about 24 px the thin end
+# nears a device pixel and the line reads as broken. It is heavier by
+# `SMALL_WEIGHT`, with a fatter leaf so its eye stays open and less coil, and it
+# forks where round two forked. A lower fork was tried in it; the hook then sits
+# level with its own fork, which is not better.
+SMALL_WEIGHT = 1.35
+SMALL_FORK = 22
+SMALL_STALK = (0.16, 0.42, 50.0)
+SMALL_COIL = (0.62, 26.0, 20.0)
+SMALL_LEAF = (42.0, 0.38)        # (length, width)
+
+# The favicon is the small drawing on the rounded ground tile, as the suite's
+# are, on a 100-unit frame: the ink in this box, the tile's corners this round.
+FAVICON_BOX = (17.0, 13.0, 74.0, 74.0)
+FAVICON_RADIUS = 22.0
+FAVICON_SIZES = (16, 32, 48)
 
 # The bare mark's box. No tile, no ground and no margin for one: the drawing is
 # cropped to its own ink, squared about its centre, with this much of the box left
@@ -185,17 +211,15 @@ def from_hex(value):
 
 
 def to_hex(rgb):
-    return "#" + "".join(f"{round(c * 255):02X}" for c in rgb)
+    return "#" + "".join(f"{round(min(max(c, 0), 1) * 255):02X}" for c in rgb)
 
 
-def stop_at(hue, target_luminance, saturation=SATURATION):
+def stop_at(hue, target_luminance, saturation):
     """
-    The colour at `hue` whose luminance is `target_luminance`.
+    The colour at `hue` and `saturation` whose luminance is `target_luminance`.
 
     Lightness is solved rather than chosen, which is what holds the triad
-    isoluminant across hues of very different natural brightness — yellow and
-    forest green are the extreme case, and eyeballing them is how a sweep becomes
-    a staircase.
+    isoluminant across hues of very different natural brightness.
     """
     low, high = 0.0, 1.0
     for _ in range(60):
@@ -210,356 +234,501 @@ def stop_at(hue, target_luminance, saturation=SATURATION):
 
 def ramp(light=False):
     """
-    The gradient's stops, bottom-left to top-right.
+    The gradient's stops, bottom-left to top-right, as (hue, rgb), each rounded to
+    the 8-bit colour it is written as, so the SVG and the PNG paint the same one.
 
     On the tile's ground by default; with `light`, on the site's light ground,
     where a stop has to be darker than the ground rather than lighter.
     """
-    hues = [HUE_FROM + (HUE_TO - HUE_FROM) * i / (STOP_COUNT - 1)
-            for i in range(STOP_COUNT)]
     if light:
         ground = from_hex(LIGHT_GROUND)
         # The luminance that puts a stop at LIGHT_CONTRAST *below* the ground.
         target = (relative_luminance(ground) + 0.05) / LIGHT_CONTRAST - 0.05
-        return [(hue, stop_at(hue, target, LIGHT_SATURATION)) for hue in hues]
-    ground = from_hex(GROUND)
-    # The luminance that puts a stop at TARGET_CONTRAST against the ground.
-    target = TARGET_CONTRAST * (relative_luminance(ground) + 0.05) - 0.05
-    return [(hue, stop_at(hue, target)) for hue in hues]
+        saturations = LIGHT_SATURATION
+    else:
+        ground = from_hex(GROUND)
+        # The luminance that puts a stop at TARGET_CONTRAST against the ground.
+        target = TARGET_CONTRAST * (relative_luminance(ground) + 0.05) - 0.05
+        saturations = SATURATION
+    return [(hue, from_hex(to_hex(stop_at(hue, target, saturation))))
+            for hue, saturation in zip(HUES, saturations)]
 
 
 # ----------------------------------------------------------------- geometry
 
-def spiral():
+def grow(root, length, heading, n=120):
+    """A line integrated from `heading(s)`, s from 0 to 1, in `n` equal steps."""
+    x, y = root
+    points = [(x, y)]
+    for i in range(1, n + 1):
+        h = heading(i / n)
+        x += math.cos(h) * length / n
+        y += math.sin(h) * length / n
+        points.append((x, y))
+    return points, heading(1.0)
+
+
+def curl(root, start_heading, r_out, r_in, turns, hand, n):
     """
-    One continuous stroke, unwinding.
-
-    §3.5 is the reason this is not a plant. A mark may not depict what the app is
-    about, and the app is about a seed and what grows from it — so a leaf, a
-    shoot, a flower and a seed are all the forbidden case, in the way that "a flag
-    is a flag" is for FlagFans. What is drawn instead is the medium the app works
-    in, which is unfolding over time: the same move FreqShift makes by drawing a
-    waveform rather than a voice.
+    A crozier's head: a logarithmic spiral entered on `start_heading`, its radius
+    falling from `r_out` to `r_in` over `turns` turns.
     """
-    assert START_RADIUS > STROKE / 2, "the innermost turn would fill its own centre"
-    assert START_RADIUS * (GROWTH_PER_TURN - 1) > STROKE, "consecutive turns would merge"
-
-    sweep = TURNS * 2 * math.pi
-    # Solve the phase so the outer end lands on END_BEARING.
-    phase = math.radians(END_BEARING) - sweep
-
-    def at(theta):
-        radius = START_RADIUS * GROWTH_PER_TURN ** (theta / (2 * math.pi))
-        angle = theta + phase
-        # Screen space: y grows downward, so the sine is negated.
-        return np.array([radius * math.cos(angle), -radius * math.sin(angle)])
-
-    line = np.array([at(sweep * i / 512) for i in range(513)])
-
-    # Leave on the tangent the spiral actually ends on, taken from the drawn
-    # points rather than differentiated by hand.
-    heading = line[-1] - line[-2]
-    heading /= np.linalg.norm(heading)
-    length = SPATHE_LENGTH * START_RADIUS * GROWTH_PER_TURN ** TURNS
-
-    steps = 160
-    spine = [line[-1]]
-    for index in range(1, steps + 1):
-        # The turn accumulates along the blade, so the bend is gentle at the base
-        # and the tip is the part that has swung.
-        angle = SPATHE_TURN * index / steps
-        direction = np.array([
-            heading[0] * math.cos(angle) - heading[1] * math.sin(angle),
-            heading[0] * math.sin(angle) + heading[1] * math.cos(angle),
-        ])
-        spine.append(spine[-1] + direction * (length / steps))
-    spine = np.array(spine)
-    blade, room, axis = taper(spine)
-    return line, spathe(spine), blade, room, axis
+    total = 2 * math.pi * turns
+    x, y = root
+    points = [(x, y)]
+    for i in range(1, n + 1):
+        t = total * (i - 0.5) / n
+        r = r_out * (r_in / r_out) ** (t / total)
+        h = start_heading + hand * t
+        x += math.cos(h) * r * total / n
+        y += math.sin(h) * r * total / n
+        points.append((x, y))
+    return points
 
 
-def spathe_half_width(s, length):
-    """The bract's half-width at `s` along its spine. Zero at both ends."""
-    return np.sin(np.pi * s ** 0.62) ** 0.85 * SPATHE_WIDTH * length
-
-
-def taper_half_width(s):
-    """The taper's half-width at `s` along the bract's spine, reaching nothing."""
-    return np.clip(1 - s / TAPER_TO, 0, 1) ** TAPER_POWER * STROKE / 2
-
-
-def taper(spine):
+def leaf(mouth, heading, length, width):
     """
-    The coil's colour carried into the bract, as an outline to be filled.
-
-    Built the same way the bract is — out along one edge and back along the
-    other — so the two shapes are the same construction and cannot drift apart.
-
-    Returns the outline and the tightest room it leaves inside the bract, which
-    `main` reports beside the other clearances rather than leaving to be
-    squinted at.
+    The leaf's outline: out along one edge from the mouth and back along the
+    other. Its width is nothing at the mouth, so it leaves the stem exactly as
+    wide as the stem, and nothing at the tip, because it is drawn to a point.
     """
-    length = float(np.sum(np.linalg.norm(np.diff(spine, axis=0), axis=1)))
-    s = np.linspace(0, 1, len(spine))
-    keep = s <= TAPER_TO
-    spine, s = spine[keep], s[keep]
-
-    tangents = np.gradient(spine, axis=0)
-    tangents /= np.maximum(np.linalg.norm(tangents, axis=1, keepdims=True), 1e-9)
-    normals = np.stack([-tangents[:, 1], tangents[:, 0]], axis=1)
-    width = taper_half_width(s)[:, None]
-
-    # **Past the seam the taper has to sit inside the bract's hollow. At the
-    # mouth the two share ink deliberately** — that shared ink is the whole of
-    # what makes the colour read as running on, rather than as a second mark
-    # that happens to be standing nearby.
-    past = s > TAPER_SEAM
-    room = float((spathe_half_width(s[past], length) - STROKE / 2
-                  - taper_half_width(s[past])).min())
-    assert room >= TAPER_CLEARANCE, (
-        f"the taper leaves {room:.1f} units of clearance, wanted {TAPER_CLEARANCE}"
-    )
-    return (np.concatenate([spine + normals * width,
-                            (spine - normals * width)[::-1]]),
-            room, np.array([spine[0], spine[-1]]))
+    spine = [mouth]
+    x, y = mouth
+    for i in range(1, LEAF_RIBS + 1):
+        a = heading - LEAF_SWEEP * i / LEAF_RIBS
+        x += math.cos(a) * length / LEAF_RIBS
+        y += math.sin(a) * length / LEAF_RIBS
+        spine.append((x, y))
+    near, far = [], []
+    for i in range(LEAF_RIBS + 1):
+        half = width * length * math.sin(math.pi * (i / LEAF_RIBS) ** 0.85)
+        j = min(i, LEAF_RIBS - 1)
+        a = math.atan2(spine[j + 1][1] - spine[j][1], spine[j + 1][0] - spine[j][0])
+        near.append((spine[i][0] - math.sin(a) * half, spine[i][1] + math.cos(a) * half))
+        far.append((spine[i][0] + math.sin(a) * half, spine[i][1] - math.cos(a) * half))
+    return near + far[::-1]
 
 
-def spathe(spine):
+def plant(small=False):
     """
-    The bract, as an outline around a spine.
+    The fiddlehead in construction units: (tendril, stem, leaf) as polylines.
 
-    Its width closes to nothing at both ends: at the base so the outline leaves the
-    stroke exactly as wide as the stroke, with no seam, and at the tip because a
-    peace lily's spathe is drawn to a point. Widest at about a third along, which
-    is what makes it a spathe rather than a leaf.
+    Two fronds from one root. The tall one opens into the leaf, held up and to
+    the left; the second leaves it low down and is still a crozier, its coil
+    carried above the fork and rolling outward to the right. No part of the
+    crozier drops below the point it grew from.
     """
-    tangents = np.gradient(spine, axis=0)
-    tangents /= np.maximum(np.linalg.norm(tangents, axis=1, keepdims=True), 1e-9)
-    normals = np.stack([-tangents[:, 1], tangents[:, 0]], axis=1)
-
-    length = float(np.sum(np.linalg.norm(np.diff(spine, axis=0), axis=1)))
-    s = np.linspace(0, 1, len(spine))
-    width = spathe_half_width(s, length)[:, None]
-
-    # Out along one edge and back along the other, so the whole mark stays one path.
-    return np.concatenate([spine + normals * width, (spine - normals * width)[::-1]])
+    stem, top = grow(ROOT_POINT, STEM_LENGTH, stem_heading)
+    fork, (h0, bend, length), (turns, r_out, r_in) = (
+        (SMALL_FORK, SMALL_STALK, SMALL_COIL) if small else (FORK, STALK, COIL))
+    blade = leaf(stem[-1], top, *(SMALL_LEAF if small else (LEAF_LENGTH, LEAF_WIDTH)))
+    rise, heading = grow(stem[fork], length, lambda s: -math.pi / 2 + h0 + bend * s)
+    head = curl(rise[-1], heading, r_out, r_in, turns, +1,
+                n=round(180 * max(1.0, turns / 0.85)))
+    return rise + head[1:], stem, blade
 
 
-def ink_bounds(points, stroke):
+def bounds(lines, halves):
+    """The box around `lines`, each widened by its own half-width."""
+    xs0, ys0, xs1, ys1 = [], [], [], []
+    for line, half in zip(lines, halves):
+        xs, ys = [p[0] for p in line], [p[1] for p in line]
+        xs0.append(min(xs) - half)
+        ys0.append(min(ys) - half)
+        xs1.append(max(xs) + half)
+        ys1.append(max(ys) + half)
+    return min(xs0), min(ys0), max(xs1), max(ys1)
+
+
+def place(lines, box, stroke):
     """
-    The smallest box containing the drawn ink.
-
-    Taken from the flattened points plus half a stroke, which is exact rather than
-    conservative for round caps and joins — they extend exactly half the weight
-    beyond the centreline in every direction. `BrandMark.swift` computes it the
-    same way, deliberately.
+    Scales the drawing so its ink, half a stroke included on every side, fits
+    `box` (x, y, w, h), centred. Computed from the drawn bounds rather than typed,
+    so changing a dial cannot silently break a relationship somebody set.
     """
-    xs = [p[0] for p in points]
-    ys = [p[1] for p in points]
-    half = stroke / 2
-    return min(xs) - half, min(ys) - half, max(xs) + half, max(ys) + half
+    bx, by, bw, bh = box
+    x0, y0, x1, y1 = bounds(lines, [0] * len(lines))
+    k = min((bw - stroke) / (x1 - x0), (bh - stroke) / (y1 - y0))
+    ox = bx + (bw - (x1 - x0) * k) / 2 - x0 * k
+    oy = by + (bh - (y1 - y0) * k) / 2 - y0 * k
+    return [[(ox + x * k, oy + y * k) for x, y in line] for line in lines]
+
+
+# The paths. A path is a list of segments in absolute coordinates: ("M", p),
+# ("C", c1, c2, p) or ("A", r, large, sweep, p). The SVG writes them as they are;
+# the PNG flattens the same segments, so the two draw the same curve.
+
+def thin(points, every):
+    out = points[::every]
+    if out[-1] != points[-1]:
+        out.append(points[-1])
+    return out
+
+
+def spline(points, closed):
+    """Catmull–Rom through `points` as cubic Béziers: every segment curved."""
+    p = []
+    for q in points:   # coincident points (the leaf's mouth and tip) kink a spline
+        q = (float(q[0]), float(q[1]))
+        if not p or math.hypot(q[0] - p[-1][0], q[1] - p[-1][1]) > 1e-3:
+            p.append(q)
+    if closed:
+        p = p[:-1] if p[0] == p[-1] else p
+        n = len(p)
+        get = lambda i: p[i % n]         # noqa: E731
+        span = range(n)
+    else:
+        n = len(p)
+        get = lambda i: p[min(max(i, 0), n - 1)]   # noqa: E731
+        span = range(n - 1)
+    path = [("M", p[0])]
+    for i in span:
+        p0, p1, p2, p3 = get(i - 1), get(i), get(i + 1), get(i + 2)
+        c1 = (p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6)
+        c2 = (p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6)
+        path.append(("C", c1, c2, p2))
+    if closed:
+        path.append(("Z",))
+    return path
+
+
+def smoothstep(u):
+    u = np.clip(u, 0.0, 1.0)
+    return u * u * (3 - 2 * u)
+
+
+def arclength(p):
+    return np.concatenate([[0.0], np.cumsum(np.hypot(*np.diff(p, axis=0).T))])
+
+
+def outline(points, width_at, step):
+    """
+    A tapered line as a closed outline, to be filled. `width_at(u)` gives the full
+    width at the fraction `u` of the line's length.
+
+    A stroke-width cannot vary along a path, so this is how a taper is drawn. The
+    centreline is resampled every `step`, and each side is offset by half the
+    local width on the envelope of the circles of that width, so each round end is
+    a true circle tangent to both sides. The sides are splines and the ends arcs,
+    so nothing is straight.
+    """
+    p = np.asarray(points, float)
+    s = arclength(p)
+    n = max(3, int(math.ceil(s[-1] / step)) + 1)
+    t = np.linspace(0.0, s[-1], n)
+    p = np.column_stack([np.interp(t, s, p[:, 0]), np.interp(t, s, p[:, 1])])
+    s = t
+    r = width_at(s / s[-1]) / 2
+    tangent = np.gradient(p, axis=0)
+    tangent /= np.hypot(tangent[:, 0], tangent[:, 1])[:, None]
+    normal = np.column_stack([-tangent[:, 1], tangent[:, 0]])
+    dr = np.gradient(r, s)
+    q = np.sqrt(np.clip(1 - dr ** 2, 0, 1))
+    a = p + r[:, None] * (-dr[:, None] * tangent + q[:, None] * normal)
+    b = p + r[:, None] * (-dr[:, None] * tangent - q[:, None] * normal)
+    tip_span = 2 * math.atan2(q[-1], -dr[-1])
+    root_span = 2 * math.pi - 2 * math.atan2(q[0], -dr[0])
+    side_a = spline([tuple(v) for v in a], False)
+    side_b = spline([tuple(v) for v in b[::-1]], False)
+    return (side_a + [("A", r[-1], tip_span > math.pi, False, tuple(b[-1]))]
+            + side_b[1:] + [("A", r[0], root_span > math.pi, False, tuple(a[0])), ("Z",)])
+
+
+def profiles(tendril, stem, stroke):
+    """
+    The width along each line, as functions of the fraction of its length. The
+    stem is full from the root to `STEM_TAPER_FROM`, then eases to its neck; the
+    crozier is full at the fork and eases out to its tip.
+    """
+    stem_end = 1 - STEM_SHARE * TAU
+    tip = 1 - TAU
+
+    def stem_width(u):
+        return stroke * (1 - (1 - stem_end) * smoothstep(
+            (u - STEM_TAPER_FROM) / (1 - STEM_TAPER_FROM)))
+
+    def tendril_width(u):
+        ease = 1 - (1 - np.clip(u, 0.0, 1.0)) ** TENDRIL_EASE
+        return stroke * (1 - (1 - tip) * ease)
+
+    return tendril_width, stem_width
+
+
+@dataclass
+class Part:
+    """One thing painted: a path, filled or stroked, in the sweep or the leaf's ink."""
+    path: list
+    paint: str              # "sweep" or "leaf"
+    width: float = 0.0      # 0 fills the path; otherwise a round-capped stroke
+
+
+@dataclass
+class Mark:
+    """A drawing placed on its frame, ready to paint."""
+    parts: list
+    sweep: tuple            # the ink box the gradient spans, (x0, y0, x1, y1)
+    stroke: float           # the stroke at the root, in the frame's units
+    lines: tuple            # the placed centrelines, for the measures
+
+
+def drawn(small, box, stroke):
+    """
+    The plant placed in `box` at `stroke`, and its paint order: the crozier, then
+    the stem, then the leaf. The crozier's fill starts inside the stem's at the
+    fork, and both carry the one gradient in the same coordinates, so the overlap
+    cannot show.
+    """
+    tendril, stem, blade = place(plant(small), box, stroke)
+    # §3.3: one even sweep, bottom-left to top-right, across the ink box of the
+    # whole drawing as round two measured it — the stems at their root weight and
+    # the leaf at its own — so the colour does not move with the taper.
+    sweep = bounds([tendril, stem, blade], [stroke / 2, stroke / 2, stroke * LEAF_WEIGHT / 2])
+    leaf_part = Part(spline(thin(blade, 3), True), "leaf", stroke * LEAF_WEIGHT)
+    if small:
+        parts = [Part(spline(thin(tendril, 4), False), "sweep", stroke),
+                 Part(spline(thin(stem, 4), False), "sweep", stroke), leaf_part]
+    else:
+        tendril_width, stem_width = profiles(tendril, stem, stroke)
+        parts = [Part(outline(tendril, tendril_width, STEP * stroke), "sweep"),
+                 Part(outline(stem, stem_width, STEP * stroke), "sweep"), leaf_part]
+    return Mark(parts, sweep, stroke, (tendril, stem, blade))
 
 
 def fitted():
     """
-    The polyline placed on the 1024 grid, and the stroke weight it is drawn at.
+    The mark placed on the 1024 grid: its paths, the box its sweep spans, and the
+    stroke at the root, 0.0654 of the tile.
 
-    The fit is computed from the drawn bounds rather than typed, so changing a
-    dial above cannot silently break a relationship somebody set on purpose.
+    The ink stands `INK_HEIGHT` of the tile high, centred. Full bleed: iOS applies
+    the mask.
     """
-    coil, bract, spike, room, axis = spiral()
-    # The taper sits inside the bract, so it cannot extend the bounds — but it is
-    # measured with everything else rather than assumed not to.
-    min_x, min_y, max_x, max_y = ink_bounds(
-        list(coil) + list(bract) + list(spike), STROKE)
-    available = TILE - 2 * MARGIN
-    scale = available / max(max_x - min_x, max_y - min_y)
-
-    # Centred on the drawn bounds. Unlike `un³` there is no open side wanting an
-    # optical bias: the mark's ink is distributed about its own centre.
-    width, height = (max_x - min_x) * scale, (max_y - min_y) * scale
-    offset_x = (TILE - width) / 2 - min_x * scale
-    offset_y = (TILE - height) / 2 - min_y * scale
-
-    def place(run):
-        return [(x * scale + offset_x, y * scale + offset_y) for x, y in run]
-
-    return (place(coil), place(bract), place(spike), place(axis),
-            room * scale, STROKE * scale)
+    h = INK_HEIGHT * TILE
+    return drawn(False, ((TILE - h) / 2, (TILE - h) / 2, h, h), STROKE * TILE)
 
 
-# ------------------------------------------------------------------- output
-
-def sweep_at(point, box, stops):
-    """The colour the sweep has reached at `point`, so the taper can join it."""
-    start = np.array([box[0], box[3]])
-    axis = np.array([box[2], box[1]]) - start
-    t = float(np.clip((np.array(point) - start) @ axis / (axis @ axis), 0, 1))
-    position = t * (len(stops) - 1)
-    lower = int(min(max(math.floor(position), 0), len(stops) - 2))
-    blend = position - lower
-    return tuple(stops[lower][1][i] * (1 - blend) + stops[lower + 1][1][i] * blend
-                 for i in range(3))
+def small_fitted():
+    """
+    The small drawing on the favicon's 100-unit frame, at `SMALL_WEIGHT` times the
+    stroke, held as a share of the ink's height as the icon's is.
+    """
+    box = FAVICON_BOX
+    return drawn(True, box, STROKE / INK_HEIGHT * SMALL_WEIGHT * box[3])
 
 
-def path_data(points):
-    return "M " + " L ".join(f"{x:.2f} {y:.2f}" for x, y in points)
-
-
-def bare_view(coil, bract, spike, stroke):
+def bare_view(mark):
     """
     The bare mark's viewBox: the drawn ink, squared about its centre, with
     `BARE_INSET` of the box clear on each side.
 
-    Cropped from the tile's own coordinates rather than fitted again, so the bare
-    mark and the tile are the same polylines and cannot differ by a rounding.
+    The ink is the centrelines plus half the root's stroke, which is exact for
+    round ends and conservative where a line has thinned. Cropped from the tile's
+    own coordinates rather than fitted again, so the bare mark and the tile are the
+    same paths and cannot differ by a rounding.
     """
-    min_x, min_y, max_x, max_y = ink_bounds(list(coil) + list(bract) + list(spike),
-                                            stroke)
+    min_x, min_y, max_x, max_y = bounds(mark.lines, [mark.stroke / 2] * len(mark.lines))
     side = max(max_x - min_x, max_y - min_y) / (1 - 2 * BARE_INSET)
     return ((min_x + max_x - side) / 2, (min_y + max_y - side) / 2, side)
 
 
-def svg(coil, bract, spike, axis, stroke, stops,
-        ground=GROUND, bract_ink=BRACT, view=None):
+# ------------------------------------------------------------------- output
+
+def number(value):
+    """A coordinate to two places, without trailing zeros."""
+    return f"{value:.2f}".rstrip("0").rstrip(".")
+
+
+def path_data(path):
+    out = []
+    for segment in path:
+        kind = segment[0]
+        if kind == "M":
+            out.append(f"M{segment[1][0]:.2f} {segment[1][1]:.2f}")
+        elif kind == "C":
+            (a, b), (c, d), (x, y) = segment[1:]
+            out.append(f"C{a:.2f} {b:.2f} {c:.2f} {d:.2f} {x:.2f} {y:.2f}")
+        elif kind == "A":
+            r, large, sweep, (x, y) = segment[1:]
+            out.append(f"A{r:.2f} {r:.2f} 0 {int(large)} {int(sweep)} {x:.2f} {y:.2f}")
+        else:
+            out.append("Z")
+    return "".join(out)
+
+
+def svg(mark, stops, ground=GROUND, leaf_ink=LEAF, frame=(0.0, 0.0, TILE),
+        size=TILE, radius=None, title="Peace Garden"):
     """
-    The drawing as SVG: on its tile by default, or bare — no ground, cropped to
-    `view` — for the site's bar.
+    The drawing as SVG: on its ground by default, or bare — `ground` None — for the
+    site's bar. `frame` is the square of the mark's own coordinates to show,
+    (x, y, side), and `radius` rounds the ground's corners, for the favicon.
     """
-    # **The sweep spans the ink that takes it, which is the coil and the taper —
-    # not the bract.** With the bract white, measuring across it spends the top
-    # of the ramp on ink that is not drawn in it: the yellow landed inside the
-    # leaf's white outline, and the coil was left showing only the green half of
-    # its own gradient. Measured across the coloured run, the spiral goes green
-    # to yellow along its own length and the taper is the yellow end of it.
-    box = ink_bounds(list(coil) + list(spike), stroke)
-    # Bottom-left to top-right, across the drawn ink. In SVG's coordinates the
-    # bottom is the larger y.
-    x1, y1, x2, y2 = box[0], box[3], box[2], box[1]
+    x0, y0, x1, y1 = mark.sweep
     marks = "".join(
-        f'<stop offset="{index / (len(stops) - 1):.4f}" stop-color="{to_hex(rgb)}"/>'
-        for index, (_, rgb) in enumerate(stops)
-    )
-    # The bract first, then the coil, then the taper. The order is what puts the
-    # colour over the white where they share ink at the mouth, which is the
-    # junction reading as one stroke running on rather than as two meeting.
-    # **The taper takes the ramp's last stop, and blends to it only at the
-    # mouth.** The sweep is spatial — bottom-left to top-right, per §3.3 — and
-    # the taper sits at the top *middle* of the mark rather than in that corner,
-    # so left on the sweep it comes out mid-ramp green however the box is drawn.
-    # It carries the yellow instead, joining the coil in the colour the coil has
-    # arrived at, so the run still reads as one.
-    (ax, ay), (bx, by) = axis[0], axis[1]
-    hot = (f'<stop offset="0" stop-color="{to_hex(sweep_at(axis[0], box, stops))}"/>'
-           f'<stop offset="{TAPER_TURNS_AT}" stop-color="{to_hex(stops[-1][1])}"/>'
-           f'<stop offset="1" stop-color="{to_hex(stops[-1][1])}"/>')
-    if view is None:
-        frame = f'width="{TILE}" height="{TILE}" viewBox="0 0 {TILE} {TILE}"'
-    else:
-        vx, vy, side = view
-        frame = (f'width="{BARE_SIZE}" height="{BARE_SIZE}" '
-                 f'viewBox="{vx:.2f} {vy:.2f} {side:.2f} {side:.2f}"')
-    tile = "" if ground is None else f'<rect width="{TILE}" height="{TILE}" fill="{ground}"/>\n'
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" {frame}>
-<defs><linearGradient id="sweep" gradientUnits="userSpaceOnUse" \
-x1="{x1:.2f}" y1="{y1:.2f}" x2="{x2:.2f}" y2="{y2:.2f}">{marks}</linearGradient>
-<linearGradient id="point" gradientUnits="userSpaceOnUse" \
-x1="{ax:.2f}" y1="{ay:.2f}" x2="{bx:.2f}" y2="{by:.2f}">{hot}</linearGradient></defs>
-{tile}<path d="{path_data(bract)}" fill="none" stroke="{bract_ink}" \
-stroke-width="{stroke:.2f}" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="{path_data(coil)}" fill="none" stroke="url(#sweep)" \
-stroke-width="{stroke:.2f}" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="{path_data(spike)} Z" fill="url(#point)" stroke="none"/>
-</svg>
-"""
+        f'<stop offset="{index / (len(stops) - 1):g}" stop-color="{to_hex(rgb)}"/>'
+        for index, (_, rgb) in enumerate(stops))
+    vx, vy, side = frame
+    view = " ".join(number(v) for v in (vx, vy, side, side))
+    tile = ""
+    if ground is not None:
+        corner = "" if radius is None else f' rx="{radius:g}"'
+        tile = (f'<rect x="{number(vx)}" y="{number(vy)}" width="{number(side)}" '
+                f'height="{number(side)}"{corner} fill="{ground}"/>\n')
+    body = []
+    for part in mark.parts:
+        paint = "url(#sweep)" if part.paint == "sweep" else leaf_ink
+        if part.width:
+            body.append(f'<path d="{path_data(part.path)}" fill="none" stroke="{paint}" '
+                        f'stroke-width="{part.width:.2f}" stroke-linecap="round" '
+                        f'stroke-linejoin="round"/>')
+        else:
+            body.append(f'<path d="{path_data(part.path)}" fill="{paint}"/>')
+    # Bottom-left to top-right, across the ink box. In SVG's coordinates the
+    # bottom is the larger y.
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" '
+            f'viewBox="{view}">\n<title>{title}</title>\n'
+            f'<defs><linearGradient id="sweep" gradientUnits="userSpaceOnUse" '
+            f'x1="{x0:.2f}" y1="{y1:.2f}" x2="{x1:.2f}" y2="{y0:.2f}">{marks}</linearGradient></defs>\n'
+            + tile + "\n".join(body) + "\n</svg>\n")
 
 
-def stroke_mask(points, stroke):
-    """A round-capped, round-joined stroke, as a coverage mask."""
-    canvas = TILE * SUPERSAMPLE
+def flatten(path, per_curve=16):
+    """
+    The path as polylines, one per subpath, with each Bézier cut into `per_curve`
+    pieces and each arc into pieces of at most 3°: well under a pixel from the
+    curve at every size this draws.
+    """
+    runs, run, here = [], [], None
+    for segment in path:
+        kind = segment[0]
+        if kind == "M":
+            if run:
+                runs.append(run)
+            here = np.array(segment[1])
+            run = [here]
+        elif kind == "C":
+            p0, p1, p2, p3 = here, *(np.array(v) for v in segment[1:])
+            t = np.linspace(0, 1, per_curve + 1)[1:, None]
+            run.extend(((1 - t) ** 3) * p0 + 3 * ((1 - t) ** 2) * t * p1
+                       + 3 * (1 - t) * t ** 2 * p2 + t ** 3 * p3)
+            here = p3
+        elif kind == "A":
+            r, large, sweep, end = segment[1:]
+            end = np.array(end)
+            run.extend(arc_points(here, end, r, large, sweep))
+            here = end
+    if run:
+        runs.append(run)
+    return [np.array(r) for r in runs]
+
+
+def arc_points(start, end, r, large, sweep):
+    """A circular SVG arc as points after `start`, by the SVG spec's centre form."""
+    half = (start - end) / 2
+    d2 = float(half @ half)
+    r = max(r, math.sqrt(d2))          # the spec scales a short radius up
+    factor = math.sqrt(max(r * r - d2, 0.0) / d2) if d2 else 0.0
+    if large == sweep:
+        factor = -factor
+    centre = (start + end) / 2 + factor * np.array([half[1], -half[0]])
+    a0 = math.atan2(*(start - centre)[::-1])
+    a1 = math.atan2(*(end - centre)[::-1])
+    delta = a1 - a0
+    if sweep and delta < 0:
+        delta += 2 * math.pi
+    elif not sweep and delta > 0:
+        delta -= 2 * math.pi
+    steps = max(2, int(math.ceil(abs(math.degrees(delta)) / 3)))
+    angles = a0 + delta * np.linspace(0, 1, steps + 1)[1:]
+    return list(centre + r * np.column_stack([np.cos(angles), np.sin(angles)]))
+
+
+def coverage(part, to_canvas, canvas, scale):
+    """
+    A part's coverage, drawn at `canvas` pixels square. A fill is one polygon per
+    subpath; a stroke is the union of one quad per segment and one disc per vertex,
+    which gives round caps and joins and, every piece being convex, never ties
+    itself in a knot where a path turns back on itself.
+    """
     mask = Image.new("L", (canvas, canvas), 0)
     draw = ImageDraw.Draw(mask)
-    scaled = np.array([(x * SUPERSAMPLE, y * SUPERSAMPLE) for x, y in points])
-    half = stroke * SUPERSAMPLE / 2
-
-    # The stroke as the union of one quad per segment and one disc per vertex.
-    #
-    # Two rejected alternatives, both of which were drawn. PIL's own jointed thick
-    # line leaves a serrated fringe along a curve this finely sampled. Offsetting
-    # the whole centreline into a single outline polygon is clean on the spiral but
-    # ties itself in a knot at the spathe's tip, where the path reverses through
-    # 180° — the offset self-intersects and an even-odd fill punches a hole in the
-    # point. Per-primitive union has neither problem: each piece is convex, and
-    # overdrawing is the union.
-    for a, b in zip(scaled, scaled[1:]):
-        direction = b - a
-        length = float(np.linalg.norm(direction))
-        if length < 1e-9:
+    for run in flatten(part.path):
+        points = to_canvas(run)
+        if not part.width:
+            draw.polygon([tuple(p) for p in points], fill=255)
             continue
-        offset = np.array([-direction[1], direction[0]]) / length * half
-        draw.polygon([tuple(a + offset), tuple(b + offset),
-                      tuple(b - offset), tuple(a - offset)], fill=255)
-    for point in scaled:
-        draw.ellipse([point[0] - half, point[1] - half,
-                      point[0] + half, point[1] + half], fill=255)
-    return (np.asarray(mask, dtype=np.float32) / 255.0)[..., None]
+        half = part.width * scale / 2
+        for a, b in zip(points, points[1:]):
+            direction = b - a
+            length = float(np.linalg.norm(direction))
+            if length < 1e-9:
+                continue
+            offset = np.array([-direction[1], direction[0]]) / length * half
+            draw.polygon([tuple(a + offset), tuple(b + offset),
+                          tuple(b - offset), tuple(a - offset)], fill=255)
+        for p in points:
+            draw.ellipse([p[0] - half, p[1] - half, p[0] + half, p[1] + half], fill=255)
+    return mask
 
 
-def fill_mask(points):
-    """A filled polygon, as a coverage mask. The taper's, and only the taper's."""
-    canvas = TILE * SUPERSAMPLE
-    mask = Image.new("L", (canvas, canvas), 0)
-    ImageDraw.Draw(mask).polygon(
-        [(x * SUPERSAMPLE, y * SUPERSAMPLE) for x, y in points], fill=255)
-    return (np.asarray(mask, dtype=np.float32) / 255.0)[..., None]
+def render(mark, stops, size, ground=GROUND, leaf_ink=LEAF, frame=(0.0, 0.0, TILE),
+           radius=None):
+    """
+    The drawing as pixels, `size` square: the SVG's own painting, part by part.
 
+    Each part's coverage is drawn supersampled and averaged down, then laid over
+    what is already there in its paint, as an SVG renderer composites one path at a
+    time. With a ground the image is opaque RGB, as an app icon must be; bare, or
+    on a rounded tile, it carries alpha.
+    """
+    vx, vy, side = frame
+    supersample = max(6, round(2048 / size))
+    canvas = size * supersample
+    scale = canvas / side
 
-def png(coil, bract, spike, spine_axis, stroke, stops):
-    canvas = TILE * SUPERSAMPLE
+    def to_canvas(points):
+        return (np.asarray(points) - np.array([vx, vy])) * scale
 
-    box = ink_bounds(list(coil) + list(spike), stroke)   # see `svg`
-    start = np.array([box[0], box[3]])          # bottom-left
-    axis = np.array([box[2], box[1]]) - start   # to top-right
-    ys, xs = np.mgrid[0:canvas, 0:canvas].astype(np.float32) / SUPERSAMPLE
+    # The sweep at each pixel's centre, padded beyond the ends, as an SVG
+    # linearGradient is. An even sweep: the mark is one continuous run of colour,
+    # so §3.3's rule about putting the transitions in the gaps does not apply.
+    x0, y0, x1, y1 = mark.sweep
+    start = np.array([x0, y1])                     # bottom-left
+    axis = np.array([x1, y0]) - start              # to top-right
+    centres = (np.arange(size) + 0.5) * side / size
+    ys, xs = np.meshgrid(vy + centres, vx + centres, indexing="ij")
     t = np.clip(((xs - start[0]) * axis[0] + (ys - start[1]) * axis[1])
                 / float(axis @ axis), 0, 1)
-
-    # An even sweep: the coil and the taper are one continuous run of colour, so
-    # §3.3's rule about putting the transitions in the gaps does not apply.
-    colours = np.array([rgb for _, rgb in stops], dtype=np.float32)
+    colours = np.array([rgb for _, rgb in stops], dtype=np.float64)
     position = t * (len(stops) - 1)
     lower = np.clip(np.floor(position), 0, len(stops) - 2).astype(np.int32)
     blend = (position - lower)[..., None]
     gradient = colours[lower] * (1 - blend) + colours[lower + 1] * blend
 
-    image = np.array(from_hex(GROUND), dtype=np.float32) * np.ones_like(gradient)
+    # Premultiplied colour and alpha.
+    colour = np.zeros((size, size, 3))
+    alpha = np.zeros((size, size, 1))
+    if ground is not None:
+        tile = Image.new("L", (canvas, canvas), 0)
+        if radius is None:
+            tile.paste(255, (0, 0, canvas, canvas))
+        else:
+            ImageDraw.Draw(tile).rounded_rectangle(
+                [0, 0, canvas - 1, canvas - 1], radius=radius * scale, fill=255)
+        cover = np.asarray(tile.reduce(supersample), dtype=np.float64)[..., None] / 255
+        colour = np.array(from_hex(ground)) * cover
+        alpha = cover
+    ink = np.array(from_hex(leaf_ink))
+    for part in mark.parts:
+        mask = coverage(part, to_canvas, canvas, scale).reduce(supersample)
+        cover = np.asarray(mask, dtype=np.float64)[..., None] / 255
+        paint = gradient if part.paint == "sweep" else ink
+        colour = colour * (1 - cover) + paint * cover
+        alpha = alpha * (1 - cover) + cover
 
-    # Bract, coil, taper — the same order the SVG draws them in, for the same
-    # reason. The two have to agree: they come off one flattened polyline and a
-    # difference between them would be a difference nobody is looking for.
-    white = np.array(from_hex(BRACT), dtype=np.float32)
-    bract_coverage = stroke_mask(bract, stroke)
-    image = image * (1 - bract_coverage) + white * bract_coverage
-
-    coil_coverage = stroke_mask(coil, stroke)
-    image = image * (1 - coil_coverage) + gradient * coil_coverage
-
-    # The taper carries the ramp's last stop. See the note in `svg`; the two
-    # renderings have to agree.
-    base = np.array(sweep_at(spine_axis[0], box, stops), dtype=np.float32)
-    tip = np.array(stops[-1][1], dtype=np.float32)
-    run = np.array(spine_axis[1]) - np.array(spine_axis[0])
-    u = np.clip(((xs - spine_axis[0][0]) * run[0]
-                 + (ys - spine_axis[0][1]) * run[1])
-                / float(run @ run), 0, 1)
-    u = np.clip(u / TAPER_TURNS_AT, 0, 1)[..., None]
-    hot = base * (1 - u) + tip * u
-
-    spike_coverage = fill_mask(spike)
-    image = image * (1 - spike_coverage) + hot * spike_coverage
-
-    out = Image.fromarray((np.clip(image, 0, 1) * 255).astype(np.uint8), "RGB")
-    return out.resize((TILE, TILE), Image.LANCZOS)
+    if ground is not None and radius is None:
+        return Image.fromarray(np.round(np.clip(colour, 0, 1) * 255).astype(np.uint8), "RGB")
+    straight = np.where(alpha > 0, colour / np.maximum(alpha, 1e-9), 0)
+    rgba = np.concatenate([straight, alpha], axis=2)
+    return Image.fromarray(np.round(np.clip(rgba, 0, 1) * 255).astype(np.uint8), "RGBA")
 
 
 def save_raster(image, path, **options):
@@ -572,7 +741,18 @@ def save_raster(image, path, **options):
     all three rasters with not one pixel different. A diff of three binaries
     that changed nothing is noise somebody has to rule out by hand, and it hides
     the run that did change one.
+
+    An .ico takes one drawing per size through `append_images`, and each size is
+    compared against the one this run would write.
     """
+    provided = [image] + list(options.get("append_images", []))
+
+    def wanted_at(size):
+        for candidate in provided:
+            if candidate.size == size:
+                return candidate
+        return image.resize(size, Image.LANCZOS)
+
     if path.exists():
         with Image.open(path) as existing:
             # An .ico carries several sizes and opens on the largest; each is
@@ -581,8 +761,11 @@ def save_raster(image, path, **options):
             same = True
             for size in sizes:
                 if path.suffix == ".ico":
+                    if size not in existing.info.get("sizes", {size}):
+                        same = False
+                        break
                     existing.size = size
-                    wanted = image.resize(size, Image.LANCZOS)
+                    wanted = wanted_at(size)
                 else:
                     wanted = image
                 if (existing.size != wanted.size or existing.mode != wanted.mode
@@ -603,106 +786,109 @@ CONTENTS = {
 }
 
 
-def clearances(coil, bract, room, stroke):
+def measures(mark):
     """
-    The tightest gaps in the mark, in tile units.
+    The widths and the tightest gap that decide whether the mark holds at small
+    sizes, in tile units.
 
-    A mark that merges at small sizes does it at one specific place, and it is
-    cheaper to measure that place than to squint at a downsample. Reported at the
-    sizes the icon is actually seen at rather than on the 1024 grid, because a
-    gap is legible or not in device pixels.
+    The coil's mouth is the gap from the tip's round end to the nearest other ink
+    — the turn outside it — leaving out the tip's own last two strokes of length,
+    which it cannot touch. It is the tightest gap in the coil, and it is legible
+    or not in device pixels, so `main` reports it at the sizes the icon is seen at.
     """
-    scale = stroke / STROKE
-
-    # Consecutive turns. The innermost pair is always the tightest: the radial
-    # gain per turn grows with the radius, and the stroke does not.
-    turns = (START_RADIUS * (GROWTH_PER_TURN - 1) - STROKE) * scale
-
-    # The bract against the coil it rises from. The junction is skipped at both
-    # ends — they meet there on purpose, and a measurement across a join is not a
-    # clearance. The bract's outline starts and ends at that junction, being one
-    # run out and back, so both of its ends are trimmed.
-    body = np.array(coil[:400])
-    edge = np.array(bract[47:-47])
-    gaps = np.linalg.norm(edge[:, None, :] - body[None, :, :], axis=2)
-    bract_to_coil = float(gaps.min()) - stroke
-
-    # The taper inside the bract, measured where `taper` measured it: past the
-    # seam, since at the mouth the two share ink on purpose.
-    return {"between turns": turns, "bract to coil": bract_to_coil,
-            "taper in bract": room}
+    tendril, stem, blade = (np.asarray(line) for line in mark.lines)
+    tendril_width, stem_width = profiles(tendril, stem, mark.stroke)
+    st, ss = arclength(tendril), arclength(stem)
+    wt, ws = tendril_width(st / st[-1]), stem_width(ss / ss[-1])
+    far = st < st[-1] - 2.0 * mark.stroke
+    points = np.vstack([tendril[far], stem, blade])
+    widths = np.concatenate([wt[far], ws, np.full(len(blade), mark.stroke * LEAF_WEIGHT)])
+    tip = tendril[-1]
+    mouth = float(np.min(np.hypot(*(points - tip).T) - widths / 2) - wt[-1] / 2)
+    return {"root": mark.stroke, "crozier tip": float(wt[-1]),
+            "stem neck": float(ws[-1]), "leaf": mark.stroke * LEAF_WEIGHT,
+            "coil mouth": mouth}
 
 
 def main():
-    stops = ramp()
-    coil, bract, spike, axis, room, stroke = fitted()
+    stops, light = ramp(), ramp(light=True)
+    mark = fitted()
+    small = small_fitted()
 
     CATALOGUE.mkdir(parents=True, exist_ok=True)
-    (HERE / "icon.svg").write_text(svg(coil, bract, spike, axis, stroke, stops))
+    icon = svg(mark, stops, title="Peace Garden")
+    (HERE / "icon.svg").write_text(icon)
     # An app icon may not carry an alpha channel. The ground travels with the
     # mark — §10.4's "no light and dark pair" — so one drawing covers every
-    # appearance and every size.
-    save_raster(png(coil, bract, spike, axis, stroke, stops), CATALOGUE / "icon.png")
+    # appearance and every size, and the catalogue has one entry, with no dark
+    # or tinted variant.
+    tile = render(mark, stops, TILE)
+    save_raster(tile, CATALOGUE / "icon.png")
     (CATALOGUE / "Contents.json").write_text(json.dumps(CONTENTS, indent=2) + "\n")
 
-    # **The site's favicon is this drawing, not a second one** — and neither is
-    # the mark at the head of each page. Both used to point at `mark.svg`, which
-    # was described as a copy of this drawing and kept in step by hand. It was
-    # not: this file inverted the bract on 4 September and the copy stayed as it
-    # was, so `/s`, `/g` and `/t` each showed the old mark in the header and the
-    # new one in the tab, at the same time, and nothing failed. The copy is gone
-    # and the pages point here, which is the only version of "cannot drift" that
-    # does not depend on somebody remembering — the same bargain the SVG and the
-    # PNG already strike with each other.
+    # **The site's tab and home-screen icons are this drawing, not a second one**
+    # — and neither is the mark at the head of each page. Both used to point at
+    # `mark.svg`, which was described as a copy of this drawing and kept in step
+    # by hand. It was not: this file inverted the bract on 4 September and the
+    # copy stayed as it was, so `/s`, `/g` and `/t` each showed the old mark in the
+    # header and the new one in the tab, at the same time, and nothing failed. The
+    # copy is gone and the pages point here, which is the only version of "cannot
+    # drift" that does not depend on somebody remembering.
     #
     # Three files, because a favicon is three questions. The SVG is what a
     # current browser takes and the only one that stays sharp. The 180 is what
     # iOS puts on a home screen, and this is a site people open on a phone. The
     # .ico is at the root because a browser asks for /favicon.ico whether or not
-    # it has been told to, and a 404 in everybody's console is a thing somebody
-    # will one day spend an afternoon on.
-    tile = png(coil, bract, spike, axis, stroke, stops)
-    (SITE / "assets/icon.svg").write_text(svg(coil, bract, spike, axis, stroke, stops))
-    save_raster(tile.resize((180, 180), Image.LANCZOS), SITE / "assets/icon-180.png")
-    save_raster(tile.resize((64, 64), Image.LANCZOS), SITE / "favicon.ico",
-                sizes=[(16, 16), (32, 32), (48, 48)])
+    # it has been told to; it carries the small drawing on its rounded tile, drawn
+    # at each of its sizes rather than scaled from one.
+    (SITE / "assets/icon.svg").write_text(icon)
+    save_raster(render(mark, stops, 180), SITE / "assets/icon-180.png")
+    frame = (0.0, 0.0, 100.0)
+    favicons = [render(small, stops, size, frame=frame, radius=FAVICON_RADIUS)
+                for size in FAVICON_SIZES]
+    save_raster(favicons[-1], SITE / "favicon.ico",
+                sizes=[(s, s) for s in FAVICON_SIZES], append_images=favicons[:-1])
 
     # **The bar carries the bare mark, not the tile**, since 11 October: the
     # drawing beside the wordmark with no dark square behind it. Without its
     # ground it has to be drawn for the ground it lands on, so there are two:
     # `mark-dark.svg` is this drawing exactly, and `mark-light.svg` is the same
-    # polylines with the ramp solved for the site's light ground and the white in
+    # paths with the ramp solved for the site's light ground and the leaf in
     # ink. Pages that follow the reader switch between them with `<picture>`;
-    # the areas, which are always night, carry only the dark one. Not `mark.svg`,
-    # which was the hand-kept copy that drifted, and is gone.
-    view = bare_view(coil, bract, spike, stroke)
-    light = ramp(light=True)
+    # the areas, which are always night, carry only the dark one.
+    view = bare_view(mark)
     (SITE / "assets/mark-dark.svg").write_text(
-        svg(coil, bract, spike, axis, stroke, stops, ground=None, view=view))
+        svg(mark, stops, ground=None, frame=view, size=BARE_SIZE,
+            title="Peace Garden, for dark grounds"))
     (SITE / "assets/mark-light.svg").write_text(
-        svg(coil, bract, spike, axis, stroke, light,
-            ground=None, bract_ink=LIGHT_INK, view=view))
+        svg(mark, light, ground=None, leaf_ink=LIGHT_INK, frame=view, size=BARE_SIZE,
+            title="Peace Garden, for light grounds"))
 
     ground = from_hex(GROUND)
-    print(f"ground {GROUND}   stroke {stroke:.2f}   span {HUE_FROM:.0f}°→{HUE_TO:.0f}°")
+    print(f"ground {GROUND}   root stroke {mark.stroke:.2f}   "
+          f"hues {' → '.join(f'{h:g}°' for h in HUES)}")
     luminances = []
-    for hue, rgb in stops:
+    for (hue, rgb), saturation in zip(stops, SATURATION):
         luminances.append(relative_luminance(rgb))
-        print(f"  {hue:5.1f}°  {to_hex(rgb)}  "
+        print(f"  {hue:5.1f}°  s {saturation:.2f}  {to_hex(rgb)}  "
               f"contrast {contrast(rgb, ground):.2f}:1  luminance {luminances[-1]:.4f}")
     spread = (max(luminances) - min(luminances)) / max(luminances) * 100
-    print(f"  isoluminance spread {spread:.3f}%")
+    print(f"  isoluminance spread {spread:.2f}% (8-bit rounding)")
+    print(f"  leaf {LEAF}  contrast {contrast(from_hex(LEAF), ground):.2f}:1")
 
     lit = from_hex(LIGHT_GROUND)
-    print(f"bare mark on the light ground {LIGHT_GROUND}, bract in {LIGHT_INK} "
+    print(f"bare mark on the light ground {LIGHT_GROUND}, leaf in {LIGHT_INK} "
           f"({contrast(from_hex(LIGHT_INK), lit):.2f}:1)")
-    for hue, rgb in light:
-        print(f"  {hue:5.1f}°  {to_hex(rgb)}  contrast {contrast(rgb, lit):.2f}:1")
+    for (hue, rgb), saturation in zip(light, LIGHT_SATURATION):
+        print(f"  {hue:5.1f}°  s {saturation:.2f}  {to_hex(rgb)}  "
+              f"contrast {contrast(rgb, lit):.2f}:1")
 
-    print("clearances, as drawn on the tile and as rendered:")
-    for name, gap in clearances(coil, bract, room, stroke).items():
-        print(f"  {name:>16}  {gap:6.1f} u   "
-              f"{gap * 120 / TILE:4.2f} px @40pt·3x   {gap * 40 / TILE:4.2f} px @40px")
+    print("widths and the coil's mouth, on the tile and as rendered:")
+    for name, value in measures(mark).items():
+        print(f"  {name:>12}  {value:6.1f} u  {value / mark.stroke:4.2f} of the root   "
+              + "   ".join(f"{value * px / TILE:5.2f} px @{px}" for px in (180, 60, 40)))
+    print("the small drawing's stroke on the favicon (untapered, §3.2a(5)):  "
+          + "   ".join(f"{small.stroke * px / 100:4.2f} px @{px}" for px in FAVICON_SIZES))
 
 
 if __name__ == "__main__":
