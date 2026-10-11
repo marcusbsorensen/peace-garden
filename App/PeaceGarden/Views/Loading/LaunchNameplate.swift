@@ -21,7 +21,7 @@ import SwiftUI
 ///   white at the chrome's two text levels, `muted` 0.72 for the name and
 ///   `faint` 0.56 for the version, 9.1:1 and 5.9:1 on `#0D0D1F`.
 /// - **Dynamic Type moves it, within limits.** Both sizes scale, and stop at
-///   `xxxLarge`, where the name is 17 pt: past that a caption would start to
+///   `xxxLarge`, about 1.3 times the default: past that a caption would start to
 ///   compete with the plant it is under, and an accessibility size gains
 ///   nothing on a picture that is gone in two seconds.
 /// - **VoiceOver hears it once, as one label**, *Peace Garden 1.0 (7)*. The
