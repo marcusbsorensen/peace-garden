@@ -35,7 +35,7 @@
 // rather than being written down again.
 
 import { decode, takeResult } from './plant.js';
-import { SIDE, hash, readOutline } from './longwalk.js';
+import { COLOUR, SIDE, hash, readOutline } from './longwalk.js';
 import { hangSide } from './slab.js';
 import { footing, raiseTrough } from './water.js';
 import { PLAIN, applyVariantToCurve, variantFromModule } from './variant.js';
@@ -298,17 +298,12 @@ export function makeGroundGround(place) {
     }
 
     // In the path east of the middle bed as the table draws it, wherever the
-    // plot's variant puts that, and turned to lie along it: `raiseTrough`
-    // builds it square to the plot, and every corner and face it makes is
-    // turned about its middle on the way to the ground.
-    const pathAt = (z) => (place.centre(1, z).x + place.centre(2, z).x) / 2;
-    const north = TROUGH.z - TROUGH.deep / 2, end = place.bedLength / 2;
-    const slope = (pathAt(north) - pathAt(end)) / (north - end);
-    const lean = Math.atan(slope), sin = Math.sin(lean), cos = Math.cos(lean);
-    const trough = {
-      at: [pathAt(end) + slope * (TROUGH.z - end), TROUGH.z],
-      across: TROUGH.across, deep: TROUGH.deep,
-    };
+    // plot's variant puts that, and turned to lie along it (`troughOf`):
+    // `raiseTrough` builds it square to the plot, and every corner and face it
+    // makes is turned about its middle on the way to the ground.
+    const { at: troughAt, lean } = troughOf(place);
+    const sin = Math.sin(lean), cos = Math.cos(lean);
+    const trough = { at: troughAt, across: TROUGH.across, deep: TROUGH.deep };
     const [ax, az] = trough.at;
     const facing = ([x, y, z]) => [x * cos + z * sin, y, z * cos - x * sin];
     const turn = ([x, y, z]) => {
@@ -338,6 +333,37 @@ export function makeGroundGround(place) {
   // **The stage's plant shadows lie on this soil too**, so it is told how high
   // the soil is: a shadow on a bed's shoulder follows the shoulder down.
   return Object.assign(buildHomeGround, { height: place.height });
+}
+
+/// Where the trough stands — in the path east of the middle bed, at its north
+/// end — and how far it leans to lie along that path.
+function troughOf(place) {
+  const pathAt = (z) => (place.centre(1, z).x + place.centre(2, z).x) / 2;
+  const north = TROUGH.z - TROUGH.deep / 2, end = place.bedLength / 2;
+  const slope = (pathAt(north) - pathAt(end)) / (north - end);
+  return { at: [pathAt(end) + slope * (TROUGH.z - end), TROUGH.z], lean: Math.atan(slope) };
+}
+
+// MARK: - Its miniature
+
+/// **The Home Ground as a gateway shows it** (`mini.js`): its trodden paths,
+/// the three beds swaying together in their lazy S as the table lays them, in
+/// the dark soil the beds are dug in, their corners rounded as the plot's
+/// are, and the trough at the head of the path east of the middle one.
+export function miniature(e) {
+  const place = plan(e);
+  const { at, lean } = troughOf(place);
+  return {
+    floor: PATH,
+    shapes: [
+      ...Array.from({ length: place.beds }, (_, b) => ({
+        kind: 'ribbon', line: homeGroundBeds.curves[`bed${b}`][0].points, half: place.bedWidth / 2,
+        corner: CORNER, colour: SOIL,
+      })),
+      { kind: 'box', at, size: [TROUGH.across, TROUGH.deep], angle: -lean, back: 0.34, front: 0.34,
+        colour: COLOUR.stone, top: COLOUR.depths },
+    ],
+  };
 }
 
 // MARK: - Growing a plot

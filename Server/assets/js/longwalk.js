@@ -10,10 +10,11 @@
 import { ROLES, YOUNG, decode, takeResult, link, attribute, multiply } from './plant.js';
 import { castShadow } from './shadow.js';
 import { areasBeside } from './beside.js';
-import { raiseRill } from './water.js';
+import { RILL, raiseRill } from './water.js';
 import { RIM_DEPTH, STONES, STRATA, hangSide, sideShaders } from './slab.js';
 import { PLAIN, applyVariantToCurve, variantFromModule } from './variant.js';
 import { longWalkDrifts } from './tables/long_walk_drifts.js';
+import { layMiniature, miniatureOf } from './mini.js';
 
 export const SIDE = 5.2;    // LongWalk.plotSide, and QuietGarden.plotSide
 const PATH_HALF = 0.6;      // LongWalk.pathHalfWidth
@@ -193,29 +194,6 @@ void main() {
   outColour = vec4(shade(vColour, normalize(vNormal)) * opacity, opacity);
 }`;
 
-// **A gateway's glyph** (`GLYPH`): a square on the slab's top, `across` and
-// `toward` its half-sides in the world — level, one along the screen and one
-// running away up it — and `centre` its middle. The texture is premultiplied,
-// as the canvas is.
-const GLYPH_VERTEX = `#version 300 es
-in vec2 corner;
-uniform mat4 viewProjection;
-uniform vec3 centre; uniform vec3 across; uniform vec3 toward;
-out vec2 vUv;
-void main() {
-  vUv = corner;
-  vec3 p = centre + (corner.x * 2.0 - 1.0) * across + (1.0 - corner.y * 2.0) * toward;
-  gl_Position = viewProjection * vec4(p, 1.0);
-}`;
-
-const GLYPH_FRAGMENT = `#version 300 es
-precision highp float;
-in vec2 vUv;
-uniform sampler2D glyph;
-uniform float opacity;
-out vec4 outColour;
-void main() { outColour = texture(glyph, vUv) * opacity; }`;
-
 // **The slab's side has a program of its own** (`slab.js`), since 2 October
 // 2026: its bands and the faint layers in them are worked out per pixel from
 // where on the side a pixel is, which a colour per vertex could only carry on
@@ -370,10 +348,11 @@ const SHADOW = {
 };
 
 // **The areas beside this one, out in the sky past the plot.** One slab per
-// open neighbour on the map (`beside.js`), ground only: the wandering outline
-// a plot has, the strata under it and that area's own colour, with nothing
-// standing on it. A glimpse, so that a reader can see the garden goes on and
-// which way, without leaving.
+// open neighbour on the map (`beside.js`): the wandering outline a plot has,
+// the strata under it, that area's own ground, and on it a very simplified
+// miniature of that area's own layout (`mini.js`). A glimpse, so that a
+// reader can see the garden goes on, which way, and to where, without
+// leaving.
 //
 // **Where it stands is the screen's business and how it is held is the
 // camera's**, and those are two different sentences. A slab goes out in the
@@ -428,9 +407,9 @@ const BESIDE = {
   depth: 14,
   lap: 1.7,
   // The slab below laps less, where the window has room for it (10 October
-  // 2026): what shows of it past the plot's rim is half its own side, which
-  // left 40 cm of its top for its glyph. A phone has the room and shows it,
-  // and so does the Long Walk anywhere; one plot in a laptop's window is
+  // 2026): what shows of it past the plot's rim was half its own side, which
+  // left 40 cm of its top to show what it is. A phone has the room and shows
+  // it, and so does the Long Walk anywhere; one plot in a laptop's window is
   // fitted to its height, and that slab stays where it was.
   lapBelow: 1.25,
   least: 0.35,
@@ -443,7 +422,8 @@ const BESIDE = {
   // Marcus last saw them.
   deepest: 1.22,
   // How much sky a window keeps past the plot at each side, in metres, so a
-  // slab there shows enough of itself to carry its glyph (`frame`).
+  // slab there shows enough of its miniature to say which area it is
+  // (`frame`). Bought for the glyphs on 10 October 2026, and kept by Marcus.
   room: 1.0,
 };
 
@@ -455,52 +435,16 @@ const BESIDE = {
 // and not the plot's**, because the pad's are, and a slab that disagreed with
 // the pad would be lying about where a key goes.
 
-// **Each gateway carries its area's glyph, laid on its ground** (10 October
-// 2026). Marcus: the slabs did not seem to stand where the map said, and a
-// reader who cannot tell a dimmed terracotta from a dimmed brown or green —
-// which is a lot of readers — had nothing else to go on. So the drawing from
-// that area's cell on the map (`LOOK` in `gates.js`) is laid flat on the
-// slab's top, in the same plane as its ground, and the camera foreshortens it
-// as it does the ground: it reads as something marked out on the land, and it
-// is the same shape as the cell, which is how a reader matches the two.
-//
-// - **Upright on the screen**, as it is on the map: its top runs away from
-//   the eye, whichever way the plot is turned, so a turn foreshortens it the
-//   same and never stands it on its side.
-// - **On the part of the slab that shows**, and whole. A slab is mostly
-//   behind the plot (`lap`), so the glyph goes where the most of it is clear
-//   of the plot and inside the slab's own edge, as large as fits up to `most`
-//   — and where less than `least` CSS pixels would fit, it is not drawn,
-//   because a glyph cut by the plot's edge, or too small to read, says less
-//   than none.
-// - **Pale, ringed in shade.** The slabs are all dark at half their light, and
-//   a pale line on dark ground is the one contrast that survives every kind of
-//   colour blindness; the ring keeps it off the two light grounds, the Knot
-//   Garden's and the Cold Frame's gravel. `ink` and `halo` are its two
-//   strokes, in the glyph's own 20-unit square, and `opacity` how much of it
-//   shows over its slab.
-// - **No straight edge.** The quad it is drawn on is clear outside the
-//   strokes, and the slab under it keeps its own wandering outline.
-const GLYPH = {
-  most: 1.15,
-  least: 18,
-  ink: { width: 1.45, colour: 'rgba(255, 252, 244, 0.94)' },
-  halo: { width: 3.3, colour: 'rgba(12, 10, 8, 0.5)' },
-  opacity: 0.92,
-  // How far in from the slab's square the glyph keeps, in metres at the
-  // slab's size. Less than the wander of its outline (`Organic.outline`'s
-  // 22 cm, at half), because the glyph is kept to the slab's top by the
-  // stencil: where the edge wanders in, it takes the corner of the halo and
-  // not the glyph.
-  inset: 0.05,
-  // How far it keeps from the plot on the screen, in metres.
-  clear: 0.03,
-  // The glyph's square is drawn with this many of its units round it for the
-  // halo.
-  pad: 0.8,
-  // Lifted off the slab's top by a millimetre, so the depth test keeps it on.
-  lift: 0.002,
-};
+// **Each gateway carries a miniature of its area** (`mini.js`, 10 October
+// 2026): that area's own layout, very simplified — its ground, its beds and
+// paths and water, its hedges and its one structure — built from its own
+// plan and lit and shaded as the plot beside it is. A slab is told from the
+// others by that, and by shape before colour, since at half light most of
+// the ten grounds are one dark olive to a reader without red or green. It
+// lies on the slab at the slab's own attitude, so it turns as the plot turns,
+// and the plot hides what the plot covers. For a day it carried the area's
+// map glyph instead, a pale symbol laid flat on the ground; two kinds of
+// drawing in one picture, Marcus said, and it went.
 
 // **The stage is not the walk's.** Everything in it — the GL plumbing, the
 // isometric camera, the quarter turns, the plant program — is what a plot is,
@@ -519,13 +463,6 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   const shadowProgram = program(gl, SHADOW_VERTEX, SHADOW_FRAGMENT, ['position', 'uv', 'fade'], ['loss']);
   const sideProgram = program(gl, SIDE_SHADERS.vertex, SIDE_SHADERS.fragment,
                               ['position', 'normal', 'place', 'hang'], ['offset', 'opacity', 'stonesFrom']);
-  // The glyph on each gateway (`GLYPH`): one square, placed by its uniforms.
-  const glyphProgram = program(gl, GLYPH_VERTEX, GLYPH_FRAGMENT, ['corner'],
-                               ['centre', 'across', 'toward', 'glyph', 'opacity']);
-  const glyphQuad = gl.createVertexArray();
-  gl.bindVertexArray(glyphQuad);
-  attribute(gl, glyphProgram.at.corner, new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]), 2);
-  gl.bindVertexArray(null);
   // **What a plant's shadow lies on.** An area whose floor is not level says
   // how high it is anywhere (`height`, on the builder it hands the stage), so
   // a shadow on a bed's shoulder or a hollow in the litter follows it rather
@@ -535,9 +472,6 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   // An area with low structures hands back `casting` beside its ground mesh:
   // the triangles that throw a shadow on the floor, drawn as one (`hedges`).
   const floorAt = buildTheGround.height ?? (() => 0);
-  // How tall what stands along the plot's far edges is, for laying a
-  // gateway's glyph where it is not hidden (`placeBeside`).
-  const walls = buildTheGround.walls ?? 0;
   const seat = buildTheGround.seat ?? { radius: 0.1, rise: 0.01 };
 
   const plants = [];
@@ -559,12 +493,9 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   // stands (`beside`). One mesh apiece, built once: a turn moves them about
   // the screen but does not change their shape, and a page that rebuilt three
   // slabs on every quarter turn would have made turning cost four times what
-  // it costs.
+  // it costs. A miniature that depends on where the eye is is laid once for
+  // each turn it is seen at, and kept.
   let besides = [];
-  // Where on the screen the plot's own raised things stand — hedges, trees,
-  // frames, a dome's ribs — so a gateway's glyph is laid where they do not
-  // hide it (`coverOf`). Worked out with the ground, once a turn.
-  let cover = null;
   // The last frame's view and projection together, which `pick` reads.
   let drawn = null;
 
@@ -587,9 +518,6 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     // know which two of them are the near ones and a single sign cannot say.
     const built = buildTheGround(farSide, span, e, eye());
     groundMesh = withPieces(gl, ground, upload(gl, ground, built), built.pieces, 'opaque');
-    const seen = lookAlong(eye());
-    cover = coverOf(seen, built.positions,
-                    convexHull(corners(seen, extent.x, extent.z, -RIM_DEPTH * BESIDE.deepest, 0)));
     if (sideMesh) sideMesh.release();
     sideMesh = built.side ? uploadSide(gl, sideProgram, built.side) : null;
     if (glassMesh) glassMesh.release();
@@ -659,7 +587,7 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
     // The areas beside this one, out past the plot and behind it. Before the
     // plot, dimmed, and depth-tested like everything else — the plot is drawn
     // over whatever it covers, which is how a nearer slab behaves.
-    drawBeside(viewProjection);
+    drawBeside();
     gl.uniform1f(ground.at.opacity, 1);
     gl.uniform3fv(ground.at.offset, HERE);
     groundMesh.draw();
@@ -747,62 +675,24 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   // **Where the slabs beside the plot stand, and whether each is drawn**:
   // `placeBeside`, below and outside the stage, so `check_gateways.mjs` can
   // hold it to the map with no GL. This draws what it answers: each slab's
-  // top, each one's side, and then each one's glyph laid on its top.
-  function drawBeside(viewProjection) {
+  // top with its miniature on it, and then each one's side.
+  function drawBeside() {
     if (!besides.length || look.zoom > BESIDE.closest) return;
-    const placed = placeBeside(besides, { turn, aspect, span, look, width: canvas.clientWidth, walls, cover });
-    // Each slab's top with the ground's program and then each one's side with
-    // the side's, so the page changes program twice and not twice a slab.
-    // The tops mark the stencil, which keeps each glyph to the slab it lies on
-    // and so inside that slab's own wandering edge; the shadows clear it again
-    // before they use it.
-    gl.clear(gl.STENCIL_BUFFER_BIT);
-    gl.enable(gl.STENCIL_TEST);
-    gl.stencilFunc(gl.ALWAYS, 2, 0xff);
-    gl.stencilOp(gl.KEEP, gl.KEEP, gl.REPLACE);
+    const placed = placeBeside(besides, { turn, aspect, span, look });
+    // Each slab's top and miniature with the ground's program and then each
+    // one's side with the side's, so the page changes program twice and not
+    // twice a slab.
     gl.uniform1f(ground.at.opacity, BESIDE.dim);
     for (const { slab, offset } of placed) {
       gl.uniform3fv(ground.at.offset, offset);
       slab.mesh.draw();
+      slab.miniature(turn)?.draw();
     }
-    gl.disable(gl.STENCIL_TEST);
     gl.useProgram(sideProgram.program);
     gl.uniform1f(sideProgram.at.opacity, BESIDE.dim);
     for (const { slab, offset } of placed) {
       gl.uniform3fv(sideProgram.at.offset, offset);
       slab.side.draw();
-    }
-    // **The glyphs, over the tops they lie on.** Blended, because the halo
-    // and the strokes' own edges are partly clear; depth-tested against the
-    // slab's top a millimetre under them, and not written, so the plot drawn
-    // next covers a glyph exactly where it covers the slab.
-    const marked = placed.filter((p) => p.glyph);
-    if (marked.length) {
-      gl.useProgram(glyphProgram.program);
-      gl.uniformMatrix4fv(glyphProgram.at.viewProjection, false, viewProjection);
-      gl.uniform1i(glyphProgram.at.glyph, 0);
-      gl.uniform1f(glyphProgram.at.opacity, GLYPH.opacity);
-      gl.activeTexture(gl.TEXTURE0);
-      gl.enable(gl.BLEND);
-      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-      gl.depthMask(false);
-      gl.depthFunc(gl.LEQUAL);
-      gl.enable(gl.STENCIL_TEST);
-      gl.stencilFunc(gl.EQUAL, 2, 0xff);
-      gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
-      gl.bindVertexArray(glyphQuad);
-      for (const { slab, offset, glyph } of marked) {
-        gl.uniform3fv(glyphProgram.at.centre, glyph.centre.map((v, i) => v + offset[i]));
-        gl.uniform3fv(glyphProgram.at.across, glyph.across);
-        gl.uniform3fv(glyphProgram.at.toward, glyph.toward);
-        gl.bindTexture(gl.TEXTURE_2D, slab.texture);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      }
-      gl.bindVertexArray(null);
-      gl.disable(gl.STENCIL_TEST);
-      gl.depthFunc(gl.LESS);
-      gl.depthMask(true);
-      gl.disable(gl.BLEND);
     }
     gl.useProgram(ground.program);
   }
@@ -812,22 +702,50 @@ export function makePlotStage(canvas, span, e, buildTheGround = buildGround) {
   // it to the bar, to the minimap and to the pad, and everything the slabs
   // beside the plot are follows from that word (`beside.js`).
   //
-  // Built here and once. A turn moves them about the screen and does not
-  // change them, so nothing is rebuilt on a turn.
-  function beside(theme) {
-    for (const slab of besides) { slab.mesh.release(); slab.side.release(); gl.deleteTexture(slab.texture); }
-    besides = areasBeside(theme).map((area) => {
-      const built = besideGround(e, area.seed, area.ground);
+  // Built here and once: each slab, and on it its area's miniature, which
+  // that area's own module says (`mini.js`) and which is fetched with it, so
+  // the slabs come in a moment after the plot does, whole. A turn moves them
+  // about the screen and does not change them. The two miniatures that depend
+  // on where the eye is — the Long Walk's yew and the Quiet Garden's hedges
+  // are tall on the far side — are laid once for each turn they are seen at,
+  // and kept.
+  let asked = 0;
+  async function beside(theme) {
+    const mine = ++asked;
+    const areas = areasBeside(theme);
+    const said = await Promise.all(areas.map((area) => miniatureOf(e, area.theme).catch((trouble) => {
+      // A module that cannot be had leaves its slab bare rather than the
+      // page without its neighbours.
+      console.warn('no miniature of', area.theme, trouble);
+      return null;
+    })));
+    if (mine !== asked) return;
+    for (const slab of besides) slab.release();
+    besides = areas.map((area, k) => {
+      const shown = said[k];
+      const built = besideGround(e, area.seed, shown?.floor ?? area.ground);
+      const keep = keepToPlot(built.outline);
+      const laid = new Map();
+      const mesh = upload(gl, ground, built);
+      const side = uploadSide(gl, sideProgram, built.side);
       return {
         direction: area.direction,
         way: area.way,
-        // Its glyph, drawn once into a texture: a turn moves where it lies
-        // and not what it is.
-        texture: glyphTexture(gl, area.glyph),
         // The terrace, in metres; `placeBeside` takes it to the slab's size.
         rise: area.rise,
-        mesh: upload(gl, ground, built),
-        side: uploadSide(gl, sideProgram, built.side),
+        mesh,
+        side,
+        miniature(quarter) {
+          if (!shown) return null;
+          const turns = typeof shown.shapes === 'function';
+          const key = turns ? quarter : 0;
+          if (!laid.has(key)) {
+            const shapes = turns ? shown.shapes(eyeAt(quarter)) : shown.shapes;
+            laid.set(key, upload(gl, ground, layMiniature(shapes, { keep, scale: BESIDE.scale })));
+          }
+          return laid.get(key);
+        },
+        release() { mesh.release(); side.release(); for (const m of laid.values()) m.release(); },
       };
     });
     draw();
@@ -1355,10 +1273,6 @@ const SLICE = 16;
 // Seeds for the walk's dressing, so it is the same shape on every visit.
 export const SEED = { ground: 2026, verge: 7, floor: 5, hedge: { '-1': 31, '1': 32 }, rill: 1621, bed: 4411 };
 
-// The yew along the far border is what a gateway past that side is seen over
-// (`placeBeside`).
-buildGround.walls = HEDGE.tall;
-
 // No straight line anywhere in the garden: the ground's outline, its sides,
 // the path's verges and the hedges all come from SeedCore's `Organic`, the
 // shapes the app draws, through the module.
@@ -1600,22 +1514,53 @@ function raiseBeds(e, vertex, outline, span) {
   }
 }
 
-// **Where the slabs beside the plot stand, whether each is drawn, and where
-// its glyph lies on it.** Outside the stage and without GL, so that
+// MARK: - Its miniature
+
+/// **The Long Walk as a gateway shows it** (`mini.js`): one plot of it — its
+/// turf, the mown path down the middle between the verges the module lays,
+/// the rill wandering in it, the drifts of the border beds either side as the
+/// table lays them, and the two hedges: the yew tall on the side away from
+/// the eye and the low hedge on the near, as the walk stands them, so a turn
+/// lays it again.
+export function miniature(e) {
+  const start = -SIDE / 2 + 0.32, end = SIDE / 2 - 0.32;
+  const middleAt = (z) => (e.pg_verge(z, -1, SEED.verge) + e.pg_verge(z, 1, SEED.verge)) / 2;
+  const path = [], rill = [];
+  for (let z = start; z <= end + 1e-9; z += 0.2) {
+    path.push([middleAt(z), z]);
+    if (z >= start + 0.9 && z <= end - 0.9) rill.push([middleAt(z) + 0.2 * (e.pg_verge(z * 0.45, 5, SEED.rill) / 0.14), z]);
+  }
+  const drifts = Object.values(longWalkDrifts.curves).map((curve) => curve[0].points);
+  const reach = SIDE / 2 - 0.45;
+  return {
+    floor: COLOUR.turf,
+    shapes: (eye) => {
+      const farSide = eye[0] > 0 ? -1 : 1;
+      return [
+        ...drifts.map((loop) => ({ kind: 'patch', loop, colour: COLOUR.bed })),
+        { kind: 'ribbon', line: path, half: PATH_HALF, colour: COLOUR.grass.map((v) => v * 1.07) },
+        { kind: 'ribbon', line: rill, half: RILL.water / 2 + RILL.kerb, colour: COLOUR.stone, rise: 0.012 },
+        { kind: 'ribbon', line: rill, half: RILL.water / 2, colour: COLOUR.depths, rise: 0.016 },
+        ...[-1, 1].map((side) => {
+          const x = side * (HEDGE_FROM + HEDGE.thickness / 2);
+          return { kind: 'ridge', line: [[x, -reach], [x, reach]], half: HEDGE.thickness / 2,
+                   height: side === farSide ? HEDGE.tall : HEDGE.low, colour: COLOUR.yew };
+        }),
+      ];
+    },
+  };
+}
+
+// **Where the slabs beside the plot stand, and whether each is drawn.**
+// Outside the stage and without GL, so that
 // `tools/reference/check_gateways.mjs` can hold it to the map at every turn;
 // the stage draws what this answers.
 //
 // `slabs` are `areasBeside`'s answers, or anything with their `way` and
-// `rise`; `turn`, `aspect`, `span` and `look` are the stage's own, `width` is
-// how many CSS pixels wide the canvas is, and `walls` how tall what stands
-// along the plot's far edges is, in metres (a ground builder's `walls`): the
-// Long Walk's yew and the Quiet Garden's hedge stand in front of what lies
-// beyond them, and a glyph is laid where they do not. On the page, `cover`
-// says where everything raised on the plot is (`coverOf`), trees and domes as
-// well as walls; with no GL to build the ground, the check has `walls` alone. Each answer is `{ slab, at,
-// offset, glyph }`: `at` where the slab's middle is on the screen against the
-// plot's, in metres across and up; `offset` that as a place in the world; and
-// `glyph` where its glyph lies on its top, or null (`fitGlyph`).
+// `rise`; `turn`, `aspect`, `span` and `look` are the stage's own. Each answer
+// is `{ slab, at, shows, offset }`: `at` where the slab's middle is on the
+// screen against the plot's, in metres across and up; `shows` how much of it
+// comes out past the plot; and `offset` that as a place in the world.
 //
 // In metres across the screen and up it, the window's own frame and the one
 // `frame` answers in, turned into a place in the world at the very end:
@@ -1629,12 +1574,9 @@ function raiseBeds(e, vertex, outline, span) {
 // its place against the plot's edge as a reader comes closer rather than
 // sliding about the screen with the zoom. What that costs is that one can
 // fall off the edge of the canvas on the way in, and then it is not drawn.
-export function placeBeside(slabs, { turn = 0, aspect = 1, span = 1, look = { zoom: 1, x: 0, y: 0 }, width = Infinity, walls = 0, cover = null } = {}) {
+export function placeBeside(slabs, { turn = 0, aspect = 1, span = 1, look = { zoom: 1, x: 0, y: 0 } } = {}) {
   const view = lookAlong(eyeAt(turn));
   const all = frame(view, aspect, span);
-  // CSS pixels to a metre across the window, for the smallest glyph worth
-  // drawing.
-  const pixels = width / (all.w / look.zoom);
   const extent = { x: SIDE / 2, z: (SIDE * Math.max(1, Math.floor(span))) / 2 };
   const plot = corners(view, extent.x, extent.z, -RIM_DEPTH * BESIDE.deepest, 0);
   const half = (SIDE * BESIDE.scale) / 2;
@@ -1644,14 +1586,6 @@ export function placeBeside(slabs, { turn = 0, aspect = 1, span = 1, look = { zo
   const pane = [[all.cx + look.x - wide, all.cx + look.x + wide],
                 [all.cy + look.y - tall, all.cy + look.y + tall]];
   const { x: across, y: up, z: back } = axes(view);
-  // The plot as the screen has it, for keeping each glyph clear of it: its
-  // box, and its soil's corners raised by `walls` — all but the nearest,
-  // since walls stand on the far sides. A slab is only ever drawn behind the
-  // plot, so this is what can stand in front of one.
-  const soil = corners(view, extent.x, extent.z, 0, 0);
-  const nearest = Math.min(...soil.map((p) => p[1]));
-  const raised = soil.filter((p) => p[1] > nearest + 1e-6).map((p) => [p[0], p[1] + walls * up[1]]);
-  const outline = convexHull([...plot, ...raised]);
 
   const placed = [];
   for (const slab of slabs) {
@@ -1709,273 +1643,12 @@ export function placeBeside(slabs, { turn = 0, aspect = 1, span = 1, look = { zo
       at,
       shows,
       offset: [0, 1, 2].map((i) => at[0] * across[i] + at[1] * up[i] - BESIDE.depth * back[i]),
-      glyph: fitGlyph(view, at, outline, pixels, cover),
     });
   }
   return placed;
 }
 
-// **Where a gateway's glyph lies on its slab, and how large** (`GLYPH`): at
-// the place on the slab's top with the most room clear of the plot and inside
-// the slab's own edge, as large as fits there up to `most`. Null where that
-// is less than `least` CSS pixels.
-//
-// Looked for over a grid of places on the top rather than solved. What shows
-// of a slab is a band round its far corner, a chevron as wide as the window
-// allows, with its terrace lifting it off the middle; nine by nine places and
-// a halving search for the size at each is a few thousand tests of a box
-// against two convex outlines, while the slabs are drawn at all.
-//
-// The answer is in the slab's own frame, with its top at nought: `centre`,
-// and `across` and `toward` the glyph's half-sides — `across` level along the
-// screen, `toward` level and running away up it, so the glyph is upright on
-// the screen, as the map draws it, and foreshortened as the ground is.
-function fitGlyph(view, at, outline, pixels, cover) {
-  const { x: across, y: up } = axes(view);
-  let toward = normalise3([-across[2], 0, across[0]]);
-  if (dot3(toward, up) < 0) toward = toward.map((v) => -v);
-  // How much of a metre along `toward` shows up the screen.
-  const short = dot3(toward, up);
-  const onScreen = (p) => [dot3(p, across) + at[0], dot3(p, up) + at[1]];
-  const edge = (SIDE * BESIDE.scale) / 2 - GLYPH.inset;
-  const top = [[-edge, -edge], [edge, -edge], [edge, edge], [-edge, edge]].map(([x, z]) => onScreen([x, 0, z]));
-  // The square drawn is the glyph's twenty units with `pad` all round, and it
-  // is that square which has to fit.
-  const padded = (20 + 2 * GLYPH.pad) / 20;
-  const largest = (GLYPH.most / 2) * padded;
-  const fits = (c, h) => {
-    const hy = h * short;
-    const box = [[c[0] - h, c[1] - hy], [c[0] + h, c[1] - hy], [c[0] + h, c[1] + hy], [c[0] - h, c[1] + hy]];
-    return box.every((p) => inside(top, p)) && apart(outline, box, GLYPH.clear)
-      && !(cover && cover(c[0] - h - GLYPH.clear, c[1] - hy - GLYPH.clear, c[0] + h + GLYPH.clear, c[1] + hy + GLYPH.clear));
-  };
-  // How much room there is at one place on the top: a halving search.
-  const roomAt = (local) => {
-    const c = onScreen(local);
-    if (!fits(c, 0)) return -1;
-    let lo = 0, hi = 2 * largest;
-    for (let k = 0; k < 12; k++) {
-      const mid = (lo + hi) / 2;
-      if (fits(c, mid)) lo = mid; else hi = mid;
-    }
-    return lo;
-  };
-  // Nine by nine over the top, and then three rounds of five by five round
-  // the best, each half as far apart: what shows is a narrow band, and the
-  // best place in it is seldom on the first grid.
-  let best = null;
-  let spacing = (2 * edge) / 8;
-  const look = (cx, cz, count) => {
-    for (let i = 0; i < count; i++) {
-      for (let j = 0; j < count; j++) {
-        const x = cx + (i - (count - 1) / 2) * spacing, z = cz + (j - (count - 1) / 2) * spacing;
-        if (Math.abs(x) > edge || Math.abs(z) > edge) continue;
-        const room = roomAt([x, 0, z]);
-        if (room >= 0 && (!best || room > best.room)) best = { local: [x, 0, z], room };
-      }
-    }
-  };
-  look(0, 0, 9);
-  for (let round = 0; round < 3 && best; round++) {
-    spacing /= 2;
-    look(best.local[0], best.local[2], 5);
-  }
-  if (!best) return null;
-  const h = Math.min(best.room, largest);
-  const width = (2 * h) / padded;
-  if (width * pixels < GLYPH.least) return null;
-  return {
-    centre: [best.local[0], GLYPH.lift, best.local[2]],
-    across: across.map((v) => v * h),
-    toward: toward.map((v) => v * h),
-    width,
-  };
-}
-
-// **Where the plot's raised things cover the screen**, as a question: is
-// anything there in this box, `(x0, y0)` to `(x1, y1)` in the view's metres?
-// Every triangle of the ground's mesh that rises more than `COVER.above` off
-// the soil is laid onto a grid `COVER.cell` on a side, and the grid summed so
-// any box is four reads. A triangle wholly inside `inner` — the plot's own
-// outline on the screen, which `placeBeside` keeps every glyph clear of
-// already — is passed over, which is most of a hedge and all of a bed.
-//
-// It depends on the view and nothing else — not the window, not the zoom —
-// so it is made once a turn with the ground: no array a triangle, and a grid
-// about a tenth of a glyph across.
-const COVER = { cell: 0.06, above: 0.25 };
-
-function coverOf(view, positions, inner) {
-  const ax = view[0], ay = view[4], az = view[8];
-  const ux = view[1], uy = view[5], uz = view[9];
-  // `inner` is round anticlockwise (`convexHull`), so a point inside it is on
-  // the left of every edge.
-  const n = inner.length;
-  const within = (x, y) => {
-    for (let k = 0; k < n; k++) {
-      const p = inner[k], q = inner[(k + 1) % n];
-      if ((q[0] - p[0]) * (y - p[1]) - (q[1] - p[1]) * (x - p[0]) < 0) return false;
-    }
-    return true;
-  };
-  const kept = [];
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  for (let i = 0; i < positions.length; i += 9) {
-    if (positions[i + 1] < COVER.above && positions[i + 4] < COVER.above && positions[i + 7] < COVER.above) continue;
-    let all = true;
-    const at = kept.length;
-    for (let k = 0; k < 9; k += 3) {
-      const px = positions[i + k], py = positions[i + k + 1], pz = positions[i + k + 2];
-      const x = px * ax + py * ay + pz * az, y = px * ux + py * uy + pz * uz;
-      kept.push(x, y);
-      if (all && !within(x, y)) all = false;
-    }
-    if (all) { kept.length = at; continue; }
-    for (let k = at; k < at + 6; k += 2) {
-      if (kept[k] < minX) minX = kept[k];
-      if (kept[k] > maxX) maxX = kept[k];
-      if (kept[k + 1] < minY) minY = kept[k + 1];
-      if (kept[k + 1] > maxY) maxY = kept[k + 1];
-    }
-  }
-  if (!kept.length) return null;
-  const cell = COVER.cell;
-  const cols = Math.ceil((maxX - minX) / cell) + 1;
-  const rows = Math.ceil((maxY - minY) / cell) + 1;
-  const grid = new Uint8Array(cols * rows);
-  const column = (v) => Math.min(cols - 1, Math.max(0, Math.floor((v - minX) / cell)));
-  const row = (v) => Math.min(rows - 1, Math.max(0, Math.floor((v - minY) / cell)));
-  for (let i = 0; i < kept.length; i += 6) {
-    const x0 = kept[i], y0 = kept[i + 1], x1 = kept[i + 2], y1 = kept[i + 3], x2 = kept[i + 4], y2 = kept[i + 5];
-    // A triangle smaller than a cell covers no cell's middle, so its corners
-    // are marked as well.
-    grid[row(y0) * cols + column(x0)] = 1;
-    grid[row(y1) * cols + column(x1)] = 1;
-    grid[row(y2) * cols + column(x2)] = 1;
-    const c0 = column(Math.min(x0, x1, x2)), c1 = column(Math.max(x0, x1, x2));
-    const r0 = row(Math.min(y0, y1, y2)), r1 = row(Math.max(y0, y1, y2));
-    if (c0 === c1 && r0 === r1) continue;
-    for (let r = r0; r <= r1; r++) {
-      const y = minY + (r + 0.5) * cell;
-      for (let q = c0; q <= c1; q++) {
-        const x = minX + (q + 0.5) * cell;
-        const w0 = (x1 - x0) * (y - y0) - (y1 - y0) * (x - x0);
-        const w1 = (x2 - x1) * (y - y1) - (y2 - y1) * (x - x1);
-        const w2 = (x0 - x2) * (y - y2) - (y0 - y2) * (x - x2);
-        if ((w0 >= 0 && w1 >= 0 && w2 >= 0) || (w0 <= 0 && w1 <= 0 && w2 <= 0)) grid[r * cols + q] = 1;
-      }
-    }
-  }
-  // Summed, so a box is four reads.
-  const sum = new Uint32Array((cols + 1) * (rows + 1));
-  for (let r = 0; r < rows; r++) {
-    for (let q = 0; q < cols; q++) {
-      sum[(r + 1) * (cols + 1) + q + 1] = grid[r * cols + q] + sum[r * (cols + 1) + q + 1]
-        + sum[(r + 1) * (cols + 1) + q] - sum[r * (cols + 1) + q];
-    }
-  }
-  return (x0, y0, x1, y1) => {
-    const q0 = Math.floor((x0 - minX) / cell), q1 = Math.floor((x1 - minX) / cell);
-    const r0 = Math.floor((y0 - minY) / cell), r1 = Math.floor((y1 - minY) / cell);
-    if (q1 < 0 || r1 < 0 || q0 >= cols || r0 >= rows) return false;
-    const a = Math.max(0, q0), b = Math.min(cols - 1, q1), c = Math.max(0, r0), d = Math.min(rows - 1, r1);
-    const at = (r, q) => sum[r * (cols + 1) + q];
-    return at(d + 1, b + 1) - at(c, b + 1) - at(d + 1, a) + at(c, a) > 0;
-  };
-}
-
-// Whether `p` is inside the convex polygon `points`, either way round.
-function inside(points, p) {
-  let sign = 0;
-  for (let i = 0; i < points.length; i++) {
-    const a = points[i], b = points[(i + 1) % points.length];
-    const turn = (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0]);
-    if (Math.abs(turn) < 1e-12) continue;
-    if (sign === 0) sign = Math.sign(turn);
-    else if (Math.sign(turn) !== sign) return false;
-  }
-  return true;
-}
-
-// Whether two convex outlines on the screen are at least `gap` apart: some
-// axis — either screen axis or square to an edge of `a` — on which they do
-// not come within `gap` of each other. `b` is a box, so its own edges are
-// the screen's axes and need no others.
-function apart(a, b, gap) {
-  const tries = [[1, 0], [0, 1]];
-  for (let i = 0; i < a.length; i++) {
-    const p = a[i], q = a[(i + 1) % a.length];
-    const length = Math.hypot(q[0] - p[0], q[1] - p[1]);
-    if (length > 1e-9) tries.push([(q[1] - p[1]) / length, -(q[0] - p[0]) / length]);
-  }
-  for (const [nx, ny] of tries) {
-    const along = (points) => points.map(([x, y]) => x * nx + y * ny);
-    const one = along(a), other = along(b);
-    if (Math.min(...other) > Math.max(...one) + gap || Math.min(...one) > Math.max(...other) + gap) return true;
-  }
-  return false;
-}
-
-// The convex hull of points on the screen, round in one direction.
-function convexHull(points) {
-  const sorted = [...points].sort((p, q) => p[0] - q[0] || p[1] - q[1]);
-  const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
-  const lower = [], upper = [];
-  for (const p of sorted) {
-    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) lower.pop();
-    lower.push(p);
-  }
-  for (const p of [...sorted].reverse()) {
-    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) upper.pop();
-    upper.push(p);
-  }
-  return [...lower.slice(0, -1), ...upper.slice(0, -1)];
-}
-
-// **A glyph drawn once into a texture**: the twenty-unit square `LOOK` draws
-// it on, with `GLYPH.pad` all round for the halo, stroked as the map's cell
-// strokes it — monoline, round ends — first in the halo and then the ink. A
-// dot on the map is a stroke of no length, which a round cap draws as a dot;
-// a canvas need not, so each is given a thousandth of a unit here and every
-// engine draws the same dot.
-function glyphTexture(gl, d) {
-  const side = 256;
-  const scale = side / (20 + 2 * GLYPH.pad);
-  const canvas = document.createElement('canvas');
-  canvas.width = side;
-  canvas.height = side;
-  const c = canvas.getContext('2d');
-  c.setTransform(scale, 0, 0, scale, GLYPH.pad * scale, GLYPH.pad * scale);
-  const path = new Path2D(d.replace(/h0(?![\d.])/g, 'h0.001'));
-  c.lineCap = 'round';
-  c.lineJoin = 'round';
-  for (const { width, colour } of [GLYPH.halo, GLYPH.ink]) {
-    c.lineWidth = width;
-    c.strokeStyle = colour;
-    c.stroke(path);
-  }
-  const texture = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
-  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
-  gl.generateMipmap(gl.TEXTURE_2D);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  // Lying on the ground, it is seen at a slant, and a slant is what
-  // anisotropic filtering is for: without it the strokes running across the
-  // screen blur first.
-  const slant = gl.getExtension('EXT_texture_filter_anisotropic');
-  if (slant) {
-    gl.texParameterf(gl.TEXTURE_2D, slant.TEXTURE_MAX_ANISOTROPY_EXT,
-                     Math.min(4, gl.getParameter(slant.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));
-  }
-  return texture;
-}
-
-// **A slab of the next area's ground, with nothing standing on it.**
+// **A slab of the next area's ground**, which its miniature is laid on.
 //
 // Grown the way an area's own builder grows its floor — the same `Organic`
 // outline, the same strata hanging off it — at a plot's own size, and then
@@ -1985,10 +1658,11 @@ function glyphTexture(gl, d) {
 // kind of thing. What this draws is a plot of this garden, seen from further
 // off.
 //
-// **And nothing else comes with it.** No plants, no structures, no shadow: a
-// slab a hundred and forty pixels across has no room for any of them, and a
-// page that grew them would pay for three more gardens to show the edges of
-// three.
+// **No plants and no shadows come with it.** A slab a hundred and forty
+// pixels across has no room for them, and a page that grew them would pay for
+// three more gardens to show the edges of three. What does come is the area's
+// miniature (`mini.js`), laid separately on the outline as it was grown,
+// which this hands back for it (`outline`, in plot metres).
 function besideGround(e, seed, ground) {
   const positions = [], normals = [], colours = [];
   const vertex = (p, n, c) => { positions.push(...p); normals.push(...n); colours.push(...c); };
@@ -2008,7 +1682,7 @@ function besideGround(e, seed, ground) {
   // wanders at a plot's own rate round it rather than at twice it, and its
   // bands and stones are a plot's, seen from further off.
   return { positions: new Float32Array(positions), normals: new Float32Array(normals),
-           colours: new Float32Array(colours), side: hangSide(grown, { salt: seed, scale }) };
+           colours: new Float32Array(colours), side: hangSide(grown, { salt: seed, scale }), outline: grown };
 }
 
 export function readOutline(e, width, length, seed) {

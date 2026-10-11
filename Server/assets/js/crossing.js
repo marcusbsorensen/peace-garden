@@ -26,6 +26,7 @@ import { COLOUR, SIDE, keepToPlot, readOutline, readStructure } from './longwalk
 import { hangSide } from './slab.js';
 import { PLAIN, applyVariantToCurve, variantFromModule } from './variant.js';
 import { crossingWays } from './tables/crossing_ways.js';
+import { basin, circle, tone } from './mini.js';
 
 // Seeds for this area's dressing, so a plot is the same shape on every visit.
 // Its own, not the walk's or the room's: three areas drawing from one seed
@@ -212,6 +213,26 @@ export function makeCrossGround(place) {
       colours: new Float32Array(colours),
       side: slab,
     };
+  };
+}
+
+// MARK: - Its miniature
+
+/// **The Crossing as a gateway shows it** (`mini.js`): its lawn, the four
+/// mown ways turning in to the round of paving as the table lays them, all
+/// four the same way, and the basin standing in the middle of the round. The
+/// ways keep one width here; the full view narrows them toward the round.
+export function miniature(e) {
+  const place = plan(e);
+  return {
+    floor: COLOUR.turf,
+    shapes: [
+      ...[0, 1, 2, 3].map((q) => ({
+        kind: 'ribbon', line: crossingWays.curves[`way${q}`][0].points, half: place.pathHalfWidth, colour: tone(COLOUR.grass, 1.05),
+      })),
+      { kind: 'patch', loop: circle([0, 0], place.roundelRadius), colour: COLOUR.stone, rise: 0.012 },
+      ...basin([0, 0], place.roundelRadius * 1.15, 0.2, COLOUR),
+    ],
   };
 }
 

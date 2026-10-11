@@ -35,9 +35,10 @@
 // from `pg_coppice_plan` rather than being written down again.
 
 import { decode, takeResult } from './plant.js';
-import { LIGHT, SIDE, hash, readOutline, readStructure } from './longwalk.js';
+import { COLOUR, LIGHT, SIDE, hash, readOutline, readStructure } from './longwalk.js';
 import { hangSide } from './slab.js';
 import { footing, raiseTrough } from './water.js';
+import { basin, tone } from './mini.js';
 
 // Seeds for this area's dressing, its own and not another area's.
 const COPPICE = { spring: 1609, ground: 7151, floor: 47, relief: 53, litter: 67, moss: 71, width: 89,
@@ -382,6 +383,26 @@ function set(mesh, at, colour, grain, vertex) {
 /// seed, as `Coppice.Planting.stoolSeed` reads them, so the stool here is the
 /// one drawn anywhere else.
 const stoolSeed = (hex) => parseInt(hex.slice(0, 8), 16) >>> 0;
+
+// MARK: - Its miniature
+
+/// **The Coppice as a gateway shows it** (`mini.js`): its leaf litter, the
+/// glade the module lays open in the middle, the three rides worn through the
+/// wood to it, and the spring in its basin. The stools stand where the
+/// plantings are and the plan has none of them, so they are left to the full
+/// view.
+export function miniature(e) {
+  const place = plan(e);
+  const { rides, glade, spring } = place.layout;
+  return {
+    floor: LITTER,
+    shapes: [
+      { kind: 'patch', loop: glade, colour: tone(GLADE, OPEN_GLADE) },
+      ...rides.map((line) => ({ kind: 'ribbon', line, half: place.rideWidth / 2, colour: RIDE })),
+      ...basin(spring, 0.54, 0.15, COLOUR),
+    ],
+  };
+}
 
 // MARK: - Growing a plot
 

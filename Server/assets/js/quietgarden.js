@@ -66,9 +66,6 @@ export function makeRoomGround(room) {
   // Which way round the room is laid: the plot's, set by whoever grows it
   // (`growRoomFromService`, `growInvented`) before the stage is rebuilt.
   room.variant ??= PLAIN;
-  // The hedge is tall on the two sides away from the viewer, and a gateway
-  // past them is seen over it (`placeBeside`).
-  buildRoomGround.walls = HEDGE.tall;
   return buildRoomGround;
   function buildRoomGround(farSide, span, e, eye) {
     const variant = room.variant;
@@ -263,6 +260,32 @@ function placeTurned(mesh, at, angle, colour, vertex) {
       vertex(here, nn, colour.map((x) => x * tone));
     }
   }
+}
+
+// MARK: - Its miniature
+
+/// **The Quiet Garden as a gateway shows it** (`mini.js`): its lawn, the four
+/// hedges round it — tall on the two sides away from the eye and low on the
+/// two toward it, as the room itself stands them, so a turn lays it again —
+/// the still pool the table lays, and the bench in its corner.
+export function miniature(e) {
+  const room = plan(e);
+  const pool = quietRoom.curves.pool[0].points;
+  const from = room.hedgeFrom + HEDGE.thickness / 2;
+  const reach = past(room.hedgeFrom) / 2;
+  return {
+    floor: COLOUR.turf,
+    shapes: (eye) => [
+      { kind: 'patch', loop: pool, at: middleOf(pool), colour: COLOUR.depths, rim: COLOUR.shallows },
+      { kind: 'box', at: room.bench, size: [1.5, 0.45], angle: Math.atan2(room.bench[1], room.bench[0]) + Math.PI / 2,
+        back: 0.42, front: 0.42, colour: COLOUR.timber, top: COLOUR.timber },
+      ...[[false, -from], [false, from], [true, -from], [true, from]].map(([across, at]) => ({
+        kind: 'ridge', colour: COLOUR.yew, half: HEDGE.thickness / 2,
+        line: across ? [[-reach, at], [reach, at]] : [[at, -reach], [at, reach]],
+        height: (across ? at * eye[2] : at * eye[0]) > 0 ? HEDGE.low : HEDGE.tall,
+      })),
+    ],
+  };
 }
 
 // MARK: - Growing a room
