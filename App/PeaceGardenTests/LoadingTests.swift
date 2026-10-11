@@ -7,9 +7,11 @@ import XCTest
 /// **The loading animation: what it is made of, how long it runs, that it can be
 /// read on the ground it is drawn on, and that it stays quiet when asked.**
 ///
-/// Marcus chose the fiddlehead on 10 October 2026, in the app's colours, growing
-/// up out of the ground as it unfurls, over 2.0 s, on the suite's dark ground in
-/// both appearances. What is pinned here is what those choices cannot lose.
+/// Marcus chose the fiddlehead on 10 October 2026, growing up from a fixed point as
+/// it unfurls, over 2.0 s, on the suite's dark ground in both appearances. On 11
+/// October it took the chosen logo's colours (D-suite) and its leaf was made to
+/// finish lifted, up and a little outward. What is pinned here is what those
+/// choices cannot lose.
 ///
 /// The last test writes pictures and asserts nothing. It is skipped unless
 /// `PG_RENDER_LOADING` names a folder (passed to the test runner as
@@ -71,6 +73,38 @@ final class LoadingTests: XCTestCase {
                        frame.width / 2, accuracy: 1e-9)
         XCTAssertEqual(placement.place(CGPoint(x: Fiddlehead.travel.midX, y: Fiddlehead.travel.midY)).y,
                        frame.height / 2, accuracy: 1e-9)
+    }
+
+    /// The same of the launch moment, which is fitted to its own travel because
+    /// the lifted plant stands taller than anything the waiting mark does: every
+    /// pose it passes through stays in the frame, the root does not move and is
+    /// the lowest thing there is, and the plant it ends on — what the hand-over
+    /// finds — is centred across the frame.
+    func testTheMomentStaysInItsFrameAndEndsCentred() {
+        let frame = LaunchMoment.markFrame(short: 390)
+        let placement = Fiddlehead.Placement.fixedPoint(in: frame, fit: .moment)
+        let root = placement.place(Fiddlehead.rootPoint)
+        var lowest = -Double.infinity
+        for step in 0...200 {
+            let pose = Fiddlehead.pose(atMoment: Double(step) / 200)
+            let figure = Fiddlehead.figure(open: pose.open, rise: pose.rise, lift: pose.lift)
+            XCTAssertEqual(placement.place(figure.stem[0]).x, root.x, accuracy: 1e-9)
+            XCTAssertEqual(placement.place(figure.stem[0]).y, root.y, accuracy: 1e-9)
+            for p in (figure.stem + figure.bract).map(placement.place) {
+                XCTAssertGreaterThanOrEqual(p.x, 0, "step \(step)")
+                XCTAssertLessThanOrEqual(p.x, frame.width, "step \(step)")
+                XCTAssertGreaterThanOrEqual(p.y, 0, "step \(step)")
+                XCTAssertLessThanOrEqual(p.y, frame.height, "step \(step)")
+                lowest = max(lowest, Double(p.y))
+            }
+        }
+        XCTAssertEqual(lowest, Double(root.y), accuracy: 1e-6)
+        let end = Fiddlehead.composedBounds
+        XCTAssertEqual(placement.place(CGPoint(x: end.midX, y: end.midY)).x, frame.width / 2, accuracy: 1e-9)
+        // The waiting mark keeps its own fit, so it is no smaller for a pose it
+        // never takes.
+        XCTAssertEqual(Fiddlehead.Fit.waiting.travel, Fiddlehead.travel)
+        XCTAssertGreaterThan(Fiddlehead.momentTravel.height, Fiddlehead.travel.height)
     }
 
     /// It *grows*: unlike the backdrop's frond, whose arc length never changes, this
@@ -154,21 +188,80 @@ final class LoadingTests: XCTestCase {
         XCTAssertEqual(first.appear, 0, "the first frame is the ground and nothing else")
         XCTAssertEqual(first.rise, 0)
         XCTAssertEqual(first.open, 0)
+        XCTAssertEqual(first.lift, 0)
         let last = Fiddlehead.pose(atMoment: 1)
         XCTAssertEqual(last.rise, 1, accuracy: 1e-12)
         XCTAssertEqual(last.open, Fiddlehead.composed, accuracy: 1e-12)
+        XCTAssertEqual(last.lift, 1, accuracy: 1e-12, "it ends lifted")
         XCTAssertEqual(last.appear, 1)
         XCTAssertEqual(Fiddlehead.pose(atMoment: 2), last, "clamped, not extrapolated")
         XCTAssertLessThan(Fiddlehead.composed, 1)
 
-        var previousRise = -1.0, previousOpen = -1.0
+        var previousRise = -1.0, previousOpen = -1.0, previousLift = -1.0
         for step in 0...40 {
             let pose = Fiddlehead.pose(atMoment: Double(step) / 40)
             XCTAssertGreaterThanOrEqual(pose.rise, previousRise)
             XCTAssertGreaterThanOrEqual(pose.open, previousOpen)
+            XCTAssertGreaterThanOrEqual(pose.lift, previousLift)
             previousRise = pose.rise
             previousOpen = pose.open
+            previousLift = pose.lift
         }
+    }
+
+    // MARK: - The leaf ends lifted
+
+    /// The leaf's axis, mouth to the far end of the outline, as degrees from
+    /// straight up: positive to the right, negative to the left.
+    private func leafAxis(_ figure: Fiddlehead.Figure) -> (degrees: Double, mouth: CGPoint, tip: CGPoint) {
+        let mouth = figure.stem.last!
+        let tip = figure.bract.max { hypot($0.x - mouth.x, $0.y - mouth.y) < hypot($1.x - mouth.x, $1.y - mouth.y) }!
+        return (atan2(tip.x - mouth.x, mouth.y - tip.y) * 180 / .pi, mouth, tip)
+    }
+
+    /// **The leaf finishes lifted, up and a little outward** — Marcus, 11 October
+    /// 2026, with the logo's D-suite, whose tall frond carries its leaf so (its
+    /// leaf points 35° off upright). On 10 October it ended hanging from the
+    /// hook, which is the downward-facing flower that round one's logo was
+    /// turned down for, because it looks sad.
+    func testTheLeafEndsLiftedUpAndOutward() {
+        let end = Fiddlehead.pose(atMoment: 1)
+        let lifted = leafAxis(Fiddlehead.figure(open: end.open, rise: end.rise, lift: end.lift))
+        let length = hypot(lifted.tip.x - lifted.mouth.x, lifted.tip.y - lifted.mouth.y)
+        // Up: the far end is well above the mouth.
+        XCTAssertGreaterThan(lifted.mouth.y - lifted.tip.y, length * 0.7)
+        // And a little outward, the way the curl turned (`hand`), not sideways.
+        let outward = lifted.degrees * Fiddlehead.plan.hand
+        XCTAssertGreaterThan(outward, 15)
+        XCTAssertLessThan(outward, 45)
+        // The 10 October ending, for the record: the same plant without the lift
+        // hangs its leaf below the stem's tip.
+        let hanging = leafAxis(Fiddlehead.figure(open: Fiddlehead.composed, rise: 1, lift: 0))
+        XCTAssertGreaterThan(hanging.tip.y, hanging.mouth.y, "on 10 October the leaf hung down")
+    }
+
+    /// **Calm: the lift settles, it does not bounce.** The leaf turns one way only
+    /// from the moment the lift begins to the end — no overshoot to come back
+    /// from — and the last frames are still.
+    func testTheLeafSettlesWithoutABounce() {
+        var angles: [Double] = []
+        let start = Fiddlehead.liftBeat.lowerBound
+        for step in 0...600 {
+            let t = start + (1 - start) * Double(step) / 600
+            let pose = Fiddlehead.pose(atMoment: t)
+            var angle = leafAxis(Fiddlehead.figure(open: pose.open, rise: pose.rise, lift: pose.lift)).degrees
+            if let previous = angles.last {
+                while angle - previous > 180 { angle -= 360 }
+                while angle - previous < -180 { angle += 360 }
+            }
+            angles.append(angle)
+        }
+        let direction = (angles.last! - angles.first!).sign
+        for index in 1..<angles.count {
+            let turned = angles[index] - angles[index - 1]
+            XCTAssertTrue(turned == 0 || turned.sign == direction, "it turned back at step \(index)")
+        }
+        XCTAssertEqual(Fiddlehead.pose(atMoment: 0.99), Fiddlehead.pose(atMoment: 1), "the last frames are still")
     }
 
     /// UnCubed's argument for why a splash cannot report anything: the pose is a
@@ -206,24 +299,41 @@ final class LoadingTests: XCTestCase {
     /// failed, so it is measured at several risings and openings: the total turning
     /// in every fifth of it, which does not let an S-bend whose halves cancel pass
     /// as straight.
+    ///
+    /// **A standing stem is the hard case**, so since 11 October it is asked of
+    /// the lifted stem, of the way there, and of every pose the moment passes
+    /// through (`Fiddlehead.Lift` says why the lifted sway is 0.4).
     func testTheStemHasNoStraightRun() {
+        func gentlestFifth(_ points: [CGPoint]) -> Double {
+            let window = points.count / 5
+            var headings: [Double] = []
+            for i in 1..<points.count {
+                headings.append(atan2(points[i].y - points[i - 1].y, points[i].x - points[i - 1].x))
+            }
+            var smallest = Double.infinity
+            for start in stride(from: 0, to: headings.count - window, by: 4) {
+                var variation = 0.0
+                for i in start..<(start + window - 1) { variation += abs(headings[i + 1] - headings[i]) }
+                smallest = min(smallest, variation)
+            }
+            return smallest * 180 / .pi
+        }
         for rise in [0.0, 0.5, 1.0] {
             for open in [0.0, 0.5, 1.0] {
-                let points = Fiddlehead.figure(open: open, rise: rise).stem
-                let window = points.count / 5
-                var headings: [Double] = []
-                for i in 1..<points.count {
-                    headings.append(atan2(points[i].y - points[i - 1].y, points[i].x - points[i - 1].x))
+                for lift in [0.0, 0.5, 1.0] {
+                    let points = Fiddlehead.figure(open: open, rise: rise, lift: lift).stem
+                    XCTAssertGreaterThan(gentlestFifth(points), 2, "stem at open \(open), rise \(rise), lift \(lift)")
                 }
-                var smallest = Double.infinity
-                for start in stride(from: 0, to: headings.count - window, by: 4) {
-                    var variation = 0.0
-                    for i in start..<(start + window - 1) { variation += abs(headings[i + 1] - headings[i]) }
-                    smallest = min(smallest, variation)
-                }
-                XCTAssertGreaterThan(smallest * 180 / .pi, 2, "stem at open \(open), rise \(rise)")
             }
         }
+        for step in 0...40 {
+            let pose = Fiddlehead.pose(atMoment: Double(step) / 40)
+            let points = Fiddlehead.figure(open: pose.open, rise: pose.rise, lift: pose.lift).stem
+            XCTAssertGreaterThan(gentlestFifth(points), 2, "stem at moment \(step)/40")
+        }
+        let still = Fiddlehead.still
+        XCTAssertGreaterThan(gentlestFifth(Fiddlehead.figure(open: still.open, rise: still.rise, lift: still.lift).stem), 2,
+                             "the Reduce Motion still")
     }
 
     /// **There is no ground.** Marcus took the soil out on 10 October 2026: every
@@ -256,9 +366,9 @@ final class LoadingTests: XCTestCase {
         let frame = CGSize(width: 200, height: 300)
         let drawn = try lit(ZStack {
             LaunchMoment.ground
-            FiddleheadView(pose: Fiddlehead.pose(atMoment: 1), palette: .onDark, weight: 1.8, halo: 10)
+            FiddleheadView(pose: Fiddlehead.pose(atMoment: 1), palette: .onDark, weight: 1.8, halo: 10, fit: .moment)
         }, width: 200, height: 300)
-        let root = Fiddlehead.Placement.fixedPoint(in: frame).place(Fiddlehead.rootPoint)
+        let root = Fiddlehead.Placement.fixedPoint(in: frame, fit: .moment).place(Fiddlehead.rootPoint)
         let lowest = drawn.lastIndex { $0.contains(true) }!
         XCTAssertLessThanOrEqual(Double(lowest), Double(root.y) + 7, "nothing below the root")
         // And the stem is there at all, so the row above is not an empty picture.
@@ -306,29 +416,38 @@ final class LoadingTests: XCTestCase {
 
     // MARK: - The colours can be read on the ground they are drawn on
 
-    /// The icon's own greens on the suite's ground are 13.00:1 by construction;
-    /// this holds the palette to it, and the white bract to more.
+    /// The chosen logo's stops (D-suite, 11 October 2026) on the suite's ground
+    /// are isoluminant at 9.7:1 (`design/logo-2026-10-11/README.md` §3); this
+    /// holds the palette to them, and the warm white leaf to its 17.3:1. Until
+    /// 11 October these were the old icon's neon greens at 13:1.
     func testTheLaunchMomentIsLegibleOnTheLaunchGround() {
         let ground = Fiddlehead.Palette.launchGround
-        for (index, stop) in Fiddlehead.Palette.onDark.stem.enumerated() {
-            XCTAssertEqual(stop.contrast(with: ground), 13.0, accuracy: 0.1, "stop \(index)")
+        let stops = Fiddlehead.Palette.onDark.stem
+        XCTAssertEqual(stops, [RGB(hex: 0x9CC29E), RGB(hex: 0x9DC386), RGB(hex: 0xA9C263)], "the logo's own")
+        for (index, stop) in stops.enumerated() {
+            XCTAssertEqual(stop.contrast(with: ground), 9.7, accuracy: 0.1, "stop \(index)")
         }
-        XCTAssertGreaterThan(Fiddlehead.Palette.onDark.leaf.contrast(with: ground), 18)
+        XCTAssertEqual(Fiddlehead.Palette.onDark.leaf, RGB(hex: 0xF4F3EF))
+        XCTAssertGreaterThan(Fiddlehead.Palette.onDark.leaf.contrast(with: ground), 17)
+        // A breath of colour under the hairline, lowered for a pale sage.
+        XCTAssertGreaterThan(Fiddlehead.Palette.onDark.halo, 0)
+        XCTAssertLessThan(Fiddlehead.Palette.onDark.halo, 0.07)
     }
 
     /// The waiting mark follows the app's appearance. On the light ground the
-    /// icon's own values would not be seen, so the same hues are solved to 4.5:1
-    /// and the leaf is the app's ink.
+    /// dark-ground stops would not be seen, so it takes the logo's light-ground
+    /// stops, 4.6:1, and the leaf is the app's ink.
     func testTheWaitingMarkIsLegibleOnTheLightGround() {
         let ground = Fiddlehead.Palette.lightGround
-        let icons = Fiddlehead.Palette.onDark.stem
-        XCTAssertLessThan(icons.last!.contrast(with: ground), 2, "the icon's yellow is a mark nobody can see here")
+        let launch = Fiddlehead.Palette.onDark.stem
+        XCTAssertLessThan(launch.last!.contrast(with: ground), 2, "the green-gold is a mark nobody can see here")
+        XCTAssertEqual(Fiddlehead.Palette.onLight.stem, [RGB(hex: 0x397E3D), RGB(hex: 0x467D25), RGB(hex: 0x60781E)])
         for (index, stop) in Fiddlehead.Palette.onLight.stem.enumerated() {
-            XCTAssertGreaterThanOrEqual(stop.contrast(with: ground), 4.45, "stop \(index)")
+            XCTAssertEqual(stop.contrast(with: ground), 4.6, accuracy: 0.05, "stop \(index)")
         }
         XCTAssertGreaterThan(Fiddlehead.Palette.onLight.leaf.contrast(with: ground), 12)
-        // The same three hues, in the same order: forest green, then lime, then
-        // yellow, which is to say the red channel rises along the stem.
+        // The same three hues, in the same order: sage, then moss, then
+        // green-gold, which is to say the red channel rises along the stem.
         let reds = Fiddlehead.Palette.onLight.stem.map(\.r)
         XCTAssertEqual(reds, reds.sorted())
     }
@@ -362,11 +481,34 @@ final class LoadingTests: XCTestCase {
         XCTAssertFalse(LaunchMomentHost.plays(style: .off, reduceMotion: false, alreadyPlayed: false))
     }
 
-    /// Still, not blank: standing, and a tendril half open or more.
-    func testTheWaitingMarkHoldsStillWithTheStatementKept() {
-        XCTAssertGreaterThanOrEqual(Fiddlehead.still.open, 0.5)
-        XCTAssertLessThan(Fiddlehead.still.open, 1)
-        XCTAssertGreaterThan(Fiddlehead.still.rise, 0.5)
+    /// Still, not blank: **a small standing sprout with its leaf lifted** — Marcus,
+    /// 11 October 2026, in place of the half-open tendril whose leaf hung from the
+    /// hook. Up and a little outward as the moment's end is, smaller than it, and
+    /// inside the waiting mark's own frame with nothing below its root.
+    func testTheStillIsASmallSproutWithItsLeafLifted() {
+        let still = Fiddlehead.still
+        XCTAssertEqual(still.lift, 1, "lifted")
+        XCTAssertGreaterThan(still.open, 0.5, "the leaf open")
+        XCTAssertLessThan(still.open, 1)
+        XCTAssertGreaterThan(still.rise, 0.3, "standing, not a bud")
+        XCTAssertLessThan(still.rise, Fiddlehead.pose(atMoment: 1).rise, "smaller than the plant the moment ends on")
+
+        let figure = Fiddlehead.figure(open: still.open, rise: still.rise, lift: still.lift)
+        let leaf = leafAxis(figure)
+        let length = hypot(leaf.tip.x - leaf.mouth.x, leaf.tip.y - leaf.mouth.y)
+        XCTAssertGreaterThan(leaf.mouth.y - leaf.tip.y, length * 0.7, "the leaf points up")
+        XCTAssertGreaterThan(leaf.degrees * Fiddlehead.plan.hand, 15, "and a little outward")
+        XCTAssertLessThan(leaf.degrees * Fiddlehead.plan.hand, 45)
+
+        let frame = LoadingBusyMark.frame(forSize: 40)
+        let placement = Fiddlehead.Placement.fixedPoint(in: frame)
+        let root = placement.place(Fiddlehead.rootPoint)
+        for p in (figure.stem + figure.bract).map(placement.place) {
+            XCTAssertGreaterThanOrEqual(p.x, 0)
+            XCTAssertLessThanOrEqual(p.x, frame.width)
+            XCTAssertGreaterThanOrEqual(p.y, 0)
+            XCTAssertLessThanOrEqual(p.y, root.y + 1e-9, "nothing below the root")
+        }
     }
 
     /// The fixed point is the default, a launch argument can name it or `off`, and a
@@ -392,6 +534,35 @@ final class LoadingTests: XCTestCase {
         XCTAssertEqual(Set(LoadingStyle.allCases), [.off, .fixed])
     }
 
+    /// The two choices left open on 11 October are launch arguments of the same
+    /// kind, each defaulting to the recommendation, and a value that names
+    /// nothing reads as the recommendation too.
+    func testTheTwoOpenChoicesDefaultToTheRecommendation() throws {
+        let suite = "loading-tests-\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+
+        XCTAssertEqual(LoadingSwitch.drawing(in: defaults), Fiddlehead.Style.standard)
+        XCTAssertEqual(Fiddlehead.Style.standard, .init(stem: LoadingSwitch.stemFallback, leaf: LoadingSwitch.leafFallback))
+        for stem in LoadingStem.allCases {
+            defaults.set(stem.rawValue, forKey: LoadingSwitch.stemKey)
+            XCTAssertEqual(LoadingSwitch.stem(in: defaults), stem)
+        }
+        for leaf in LoadingLeaf.allCases {
+            defaults.set(leaf.rawValue, forKey: LoadingSwitch.leafKey)
+            XCTAssertEqual(LoadingSwitch.leaf(in: defaults), leaf)
+        }
+        defaults.set("not a choice", forKey: LoadingSwitch.stemKey)
+        defaults.set("not a choice", forKey: LoadingSwitch.leafKey)
+        XCTAssertEqual(LoadingSwitch.drawing(in: defaults), Fiddlehead.Style.standard)
+        XCTAssertEqual(LoadingSwitch.stemKey, "loading.stem.v1")
+        XCTAssertEqual(LoadingSwitch.leafKey, "loading.leaf.v1")
+        // An even stem is 10 October's hairline; the taper is gentle.
+        XCTAssertEqual(Fiddlehead.Style(stem: .even, leaf: .outline).tipShare, 1)
+        XCTAssertEqual(Fiddlehead.Style(stem: .tapered, leaf: .outline).tipShare, Fiddlehead.Style.taperedTip)
+        XCTAssertGreaterThanOrEqual(Fiddlehead.Style.taperedTip, 0.5)
+    }
+
     // MARK: - It draws something
 
     /// A smoke test: the drawing puts ink on the ground in each of its dresses, and
@@ -414,13 +585,28 @@ final class LoadingTests: XCTestCase {
             }
             return Double(different) / Double(count)
         }
-        let dark = try lit(FiddleheadView(pose: Fiddlehead.pose(atMoment: 1), palette: .onDark), over: LaunchMoment.ground)
+        let dark = try lit(FiddleheadView(pose: Fiddlehead.pose(atMoment: 1), palette: .onDark, fit: .moment),
+                           over: LaunchMoment.ground)
+        func dressed(_ stem: LoadingStem, _ leaf: LoadingLeaf) throws -> Double {
+            try lit(FiddleheadView(pose: Fiddlehead.pose(atMoment: 1), palette: .onDark,
+                                   style: .init(stem: stem, leaf: leaf), fit: .moment),
+                    over: LaunchMoment.ground)
+        }
+        let tapered = try dressed(.tapered, .outline)
+        let outlined = try dressed(.even, .outline)
+        let filled = try dressed(.even, .filled)
         let light = try lit(FiddleheadView(pose: Fiddlehead.still, palette: Fiddlehead.Palette.onLight.small, weight: 1.5, halo: 0),
                             over: Color(white: 0.965))
         let nothing = try lit(FiddleheadView(pose: Fiddlehead.pose(atMoment: 0), palette: .onDark),
                               over: LaunchMoment.ground)
         XCTAssertGreaterThan(dark, 0.002)
         XCTAssertGreaterThan(light, 0.002)
+        // Both dials draw: the tapered stem is a filled outline and not nothing,
+        // it is lighter than the even one, and a filled leaf puts more ink down
+        // than an outlined one.
+        XCTAssertGreaterThan(tapered, 0.002)
+        XCTAssertLessThan(tapered, outlined)
+        XCTAssertGreaterThan(filled, outlined)
         XCTAssertEqual(nothing, 0, accuracy: 1e-9, "the first frame is the ground and nothing else")
     }
 
@@ -492,7 +678,7 @@ final class LoadingTests: XCTestCase {
                     stage(scheme)
                     ZStack {
                         LaunchMoment.ground
-                        LaunchMoment.mark(at: t, in: phone)
+                        LaunchMoment.mark(at: t, in: phone, style: .standard)
                             .opacity(markOpacity)
                     }
                     .opacity(fieldOpacity)
@@ -511,7 +697,7 @@ final class LoadingTests: XCTestCase {
         let markSize = LoadingBusyMark.frame(forSize: 40)
         for (scheme, mode) in [(ColorScheme.dark, "dark"), (ColorScheme.light, "light")] {
             let palette = (scheme == .dark ? Fiddlehead.Palette.onDark : Fiddlehead.Palette.onLight).small
-            func panel(_ pose: Fiddlehead.Pose) -> some View {
+            func panel(_ pose: Fiddlehead.Pose, style: Fiddlehead.Style = .standard) -> some View {
                 ZStack {
                     Chrome.ground
                     VStack(spacing: 6) {
@@ -519,7 +705,7 @@ final class LoadingTests: XCTestCase {
                         QuietButton(title: "Done") {}
                     }
                     .opacity(0.4)
-                    FiddleheadView(pose: pose, palette: palette, weight: 1.5, halo: 0)
+                    FiddleheadView(pose: pose, palette: palette, weight: 1.5, halo: 0, style: style)
                         .frame(width: markSize.width, height: markSize.height)
                 }
                 .frame(width: 200, height: 150)
@@ -533,9 +719,78 @@ final class LoadingTests: XCTestCase {
             let still = ImageRenderer(content: panel(Fiddlehead.still))
             still.scale = 3
             try write(still.uiImage, "busy-still-\(mode)")
+
+            // The two open choices on the waiting mark, at 3×, a phone's own
+            // pixels: three points of the breath and the still, in each dress.
+            for (style, name) in Self.dresses {
+                for (index, phase) in [0.0, 0.25, 0.5].enumerated() {
+                    let renderer = ImageRenderer(content: panel(Fiddlehead.pose(atBreath: phase), style: style))
+                    renderer.scale = 3
+                    try write(renderer.uiImage, "choice-busy-\(name)-\(mode)-\(index)")
+                }
+                let held = ImageRenderer(content: panel(Fiddlehead.still, style: style))
+                held.scale = 3
+                try write(held.uiImage, "choice-busy-\(name)-\(mode)-still")
+            }
+        }
+
+        // The launch moment alone on its ground, in the mark's own frame at 3×:
+        // the plant it ends on in each dress and at three halos, and five points
+        // of the moment in each dress, for the choices.
+        let markFrame = LaunchMoment.markFrame(short: phone.width)
+        func alone(_ t: Double, style: Fiddlehead.Style, halo: Double? = nil) -> some View {
+            var palette = Fiddlehead.Palette.onDark
+            if let halo { palette.halo = halo }
+            return ZStack {
+                LaunchMoment.ground
+                FiddleheadView(pose: Fiddlehead.pose(atMoment: t), palette: palette, weight: 1.8, halo: 10,
+                               style: style, fit: .moment)
+            }
+            .frame(width: markFrame.width, height: markFrame.height)
+        }
+        for (style, name) in Self.dresses {
+            let end = ImageRenderer(content: alone(1, style: style))
+            end.scale = 3
+            try write(end.uiImage, "final-\(name)")
+            for (index, t) in [0.25, 0.45, 0.6, 0.75, 1.0].enumerated() {
+                let renderer = ImageRenderer(content: alone(t, style: style))
+                renderer.scale = 2
+                try write(renderer.uiImage, "choice-moment-\(name)-\(index)")
+            }
+        }
+        for halo in [0.07, 0.04, 0.0] {
+            let renderer = ImageRenderer(content: alone(1, style: .standard, halo: halo))
+            renderer.scale = 3
+            try write(renderer.uiImage, "final-halo-\(String(format: "%03d", Int((halo * 100).rounded())))")
+        }
+
+        // A question for Marcus, not a change: the lifted plant stands taller than
+        // the 10 October arch, so in the same frame everything before the end is
+        // drawn smaller. The same whole screens with the frame 1.8 times as tall
+        // as it is wide instead of 1.5, at the frames the before-and-after uses.
+        let taller = CGSize(width: markFrame.width, height: markFrame.width * 1.8)
+        for index in [9, 21, 30, 39, 45, 51, 60] {
+            let content = ZStack {
+                LaunchMoment.ground
+                FiddleheadView(pose: Fiddlehead.pose(atMoment: Double(index) / Double(momentFrames)),
+                               palette: .onDark, weight: 1.8, halo: 10, style: .standard, fit: .moment)
+                    .frame(width: taller.width, height: taller.height)
+            }
+            .frame(width: phone.width, height: phone.height)
+            let renderer = ImageRenderer(content: content)
+            renderer.scale = 2
+            try write(renderer.uiImage, "taller-dark-\(String(format: "%03d", index))")
         }
 
         try notes.joined(separator: "\n").write(to: folder.appendingPathComponent("notes.txt"),
                                                 atomically: true, encoding: .utf8)
     }
+
+    /// The four dresses the two open choices make, named as the pictures are.
+    private static let dresses: [(Fiddlehead.Style, String)] = [
+        (.init(stem: .even, leaf: .outline), "even-outline"),
+        (.init(stem: .tapered, leaf: .outline), "tapered-outline"),
+        (.init(stem: .even, leaf: .filled), "even-filled"),
+        (.init(stem: .tapered, leaf: .filled), "tapered-filled"),
+    ]
 }

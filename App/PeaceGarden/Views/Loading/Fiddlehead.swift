@@ -21,8 +21,12 @@ import SwiftUI
 ///   plants (`Placement`); a variant that entered from the screen's bottom edge
 ///   was drawn beside it and Marcus chose this one.
 ///
-/// It is in the app's own colours: the icon's greens along the stem, bottom to
-/// tip, and the icon's white bract for the leaf. See `Palette`.
+/// It is in the colours of the logo Marcus chose on 11 October 2026 (D-suite,
+/// `design/logo-2026-10-11/`): its calm sage, moss and green-gold along the stem,
+/// bottom to tip, and its warm white for the leaf. See `Palette`. The same day
+/// the leaf was made to **finish lifted, up and a little outward**, as the
+/// logo's tall frond carries its leaf, where on 10 October it ended hanging from
+/// the hook (`Lift`, `Pose.lift`).
 ///
 /// **It is not a seed sprouting, deliberately.** That was the obvious subject and
 /// it is already the one performance this app has — `GerminationView`, six
@@ -69,6 +73,34 @@ enum Fiddlehead {
     /// is a large one, which is how a fiddlehead grows.
     static let emerging = 0.16
 
+    /// **Where the stem goes once the leaf has lifted** — Marcus, 11 October 2026,
+    /// with the logo's D-suite: its tall frond carries the leaf up and outward, and
+    /// round one's leaf hanging head-down from a hook was rejected because a flower
+    /// facing the ground looks sad. On 10 October this drawing ended exactly
+    /// there, the leaf hanging from the hook at open 0.9.
+    ///
+    /// A second heading for the stem, which `figure(open:rise:lift:)` moves
+    /// towards as `lift` goes from 0 to 1. It turns the same way round as the curl
+    /// but only `turn` radians, so the tip ends pointing up and a little outward
+    /// and the leaf, which leaves on the tip's tangent, points the same way. The
+    /// whole stem `lean`s the leaf's way about its root, so the lifted plant
+    /// stands over its root rather than off to one side of it.
+    ///
+    /// **`sway` is twice the plan's, and it has to be.** A stem that stands up is
+    /// most of the way to a ruler, and at the plan's 0.2 the stretch where its
+    /// lean turns into its curl turned 1.6° in a fifth of its length, which the
+    /// straight-run test (2°) rightly fails. At 0.4 the gentlest fifth turns
+    /// 2.4°. The sway keeps the plan's sign, so on the way from curled to lifted
+    /// it never passes through zero and leaves the base straight for a frame.
+    struct Lift {
+        var turn: Double
+        var taper: Double
+        var sway: Double
+        var lean: Double
+    }
+
+    static let lifted = Lift(turn: 0.2, taper: 3.0, sway: 0.4, lean: 0.25)
+
     /// What is drawn: the stem as a run of points and the bract as a closed outline.
     struct Figure {
         var stem: [CGPoint]
@@ -83,15 +115,20 @@ enum Fiddlehead {
     ///   - rise: 0 (the tip just emerging) to 1 (fully grown). The arc
     ///     length changes with it, so unlike the backdrop's frond this one *does*
     ///     grow, and the root does not move.
+    ///   - lift: 0 (the stem wherever the curl leaves it) to 1 (standing, the
+    ///     leaf up and a little outward, `lifted`). The length does not change
+    ///     with it; only where the stem heads.
     ///
     /// **The bract opens with the coil and not after it.** There it is a fixed
     /// shape parked on the tip, and when the coil is tight it lies across the curl
     /// as an outline drawn over an outline. Here it is a bud scaled about its mouth
     /// by `open`, so a furled frond carries a closed bud in its curl and an open one
     /// carries a leaf.
-    static func figure(open: Double, rise: Double = 1, plan: Plan = Fiddlehead.plan) -> Figure {
+    static func figure(open: Double, rise: Double = 1, lift: Double = 0,
+                       plan: Plan = Fiddlehead.plan, lifted: Lift = Fiddlehead.lifted) -> Figure {
         let held = min(max(open, 0), 1)
         let grown = emerging + (1 - emerging) * min(max(rise, 0), 1)
+        let raised = min(max(lift, 0), 1)
         let steps = 130
         let turn = Double.pi * (plan.turnOpen + (plan.turnFurled - plan.turnOpen) * (1 - held))
         let length = frame.height * plan.length * grown
@@ -104,6 +141,11 @@ enum Fiddlehead {
         for index in 1...steps {
             let s = Double(index) / Double(steps)
             heading = base + plan.hand * turn * pow(s, plan.taper) + plan.sway * sin(.pi * s)
+            if raised > 0 {
+                let standing = base + plan.hand * (lifted.lean + lifted.turn * pow(s, lifted.taper))
+                    + lifted.sway * sin(.pi * s)
+                heading += (standing - heading) * raised
+            }
             point.x += cos(heading) * step
             point.y += sin(heading) * step
             stem.append(point)
@@ -151,22 +193,36 @@ enum Fiddlehead {
     }
 
     /// The box the figure occupies over its whole travel — every rise and every
-    /// opening — so the drawing is fitted to what it does and the mark does not
-    /// drift as it grows. The root is the bottom of it.
-    static let travel: CGRect = {
+    /// opening, with the leaf where the curl leaves it — so the drawing is fitted
+    /// to what it does and the mark does not drift as it grows. The root is the
+    /// bottom of it. The waiting mark is fitted to this: it never lifts.
+    static let travel: CGRect = bounds(of: (0...10).flatMap { rise in
+        (0...10).map { open in Pose(open: Double(open) / 10, rise: Double(rise) / 10) }
+    })
+
+    /// **The launch moment's own travel**: every pose it passes through, at 240
+    /// a moment, so twice the frames of a 120 Hz screen. It is its own box
+    /// because the lifted plant stands taller than anything the waiting mark
+    /// does, and fitting the waiting mark to it would shrink a 40 pt drawing
+    /// for a pose it never takes.
+    static let momentTravel: CGRect = bounds(of: (0...240).map { pose(atMoment: Double($0) / 240) })
+
+    /// The box of the plant where the moment ends, which is what the hand-over
+    /// finds and so what is centred across the screen.
+    static let composedBounds: CGRect = bounds(of: [pose(atMoment: 1)])
+
+    private static func bounds(of poses: [Pose]) -> CGRect {
         var minX = Double.infinity, minY = Double.infinity
         var maxX = -Double.infinity, maxY = -Double.infinity
-        for rise in 0...10 {
-            for open in 0...10 {
-                let figure = figure(open: Double(open) / 10, rise: Double(rise) / 10)
-                for p in figure.stem + figure.bract {
-                    minX = min(minX, p.x); maxX = max(maxX, p.x)
-                    minY = min(minY, p.y); maxY = max(maxY, p.y)
-                }
+        for pose in poses {
+            let figure = figure(open: pose.open, rise: pose.rise, lift: pose.lift)
+            for p in figure.stem + figure.bract {
+                minX = min(minX, p.x); maxX = max(maxX, p.x)
+                minY = min(minY, p.y); maxY = max(maxY, p.y)
             }
         }
         return CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY)
-    }()
+    }
 
     /// Where the stem leaves, in the 100 × 130 frame.
     static var rootPoint: CGPoint {
@@ -189,14 +245,31 @@ enum Fiddlehead {
             CGPoint(x: p.x * scale + origin.x, y: p.y * scale + origin.y)
         }
 
-        /// The drawing's whole travel — every rising and every opening — centred in
-        /// `size`, so the root is a fixed point and the grown plant fills the frame.
-        static func fixedPoint(in size: CGSize, margin: CGFloat = 0.92) -> Placement {
-            let box = Fiddlehead.travel
+        /// The drawing's whole travel fitted to `size`, so the root is a fixed point
+        /// and the grown plant fills the frame: centred top to bottom, and across on
+        /// `fit.centre`, as far as the whole travel can stay inside the frame.
+        static func fixedPoint(in size: CGSize, fit: Fit = .waiting, margin: CGFloat = 0.92) -> Placement {
+            let box = fit.travel
             let scale = min(size.height * margin / box.height, size.width * margin / box.width)
-            return Placement(scale: scale, origin: CGPoint(x: size.width / 2 - box.midX * scale,
-                                                           y: size.height / 2 - box.midY * scale))
+            var x = size.width / 2 - fit.centre.midX * scale
+            x = min(max(x, -box.minX * scale), size.width - box.maxX * scale)
+            return Placement(scale: scale, origin: CGPoint(x: x, y: size.height / 2 - box.midY * scale))
         }
+    }
+
+    /// **What a drawing is fitted to, and what it centres across its frame.**
+    ///
+    /// The waiting mark is fitted to `travel` and centres it, as on 10 October.
+    /// The launch moment is fitted to its own travel and centres the plant it
+    /// ends on: the lifted plant stands over its root, while the hook it passes
+    /// through on the way reaches out to the leaf's side, so centring the whole
+    /// travel would leave the plant the hand-over finds off to one side.
+    struct Fit: Equatable {
+        var travel: CGRect
+        var centre: CGRect
+
+        static let waiting = Fit(travel: Fiddlehead.travel, centre: Fiddlehead.travel)
+        static let moment = Fit(travel: Fiddlehead.momentTravel, centre: Fiddlehead.composedBounds)
     }
 
     // MARK: - Poses
@@ -205,24 +278,36 @@ enum Fiddlehead {
         var open: Double
         var rise: Double
         var appear: Double = 1
+        /// 0, the leaf where the curl leaves it, to 1, lifted (`Lift`).
+        var lift: Double = 0
     }
 
-    /// **Where the moment ends: open 0.9, not 1.** Past about 0.9 the coil has let
-    /// go entirely and what is left reads as a stray hook; `SproutingRule` stops
-    /// short of full for the same reason. It is the composed state, and it is
-    /// where the hand-over finds it.
+    /// **How far the curl itself lets go: open 0.9, not 1.** Past about 0.9 the
+    /// coil has let go entirely and what is left reads as a stray hook;
+    /// `SproutingRule` stops short of full for the same reason. On 10 October
+    /// this was where the moment ended, the leaf hanging from that hook; since 11
+    /// October the lift carries the stem on from it to standing.
     static let composed = 0.9
+
+    /// **When the leaf lifts: from 40 % of the moment to 98 %**, the second half
+    /// of the gesture and not a step after it. It starts while the curl is still
+    /// letting go, so the tip that the uncoiling carries round keeps travelling
+    /// the same way until it points up, and it ends with the other beats, eased
+    /// to a standstill (smoothstep), so it settles and does not bounce. The last
+    /// 40 ms are still.
+    static let liftBeat = 0.4...0.98
 
     /// The launch moment at `t`, 0…1 across `LoadingTiming.moment`.
     ///
     /// **Rising and opening share almost all of their length**: the stem is
     /// growing from the first beat to the last and the curl is letting go from
     /// just after the first, so there is no moment at which one has finished and
-    /// the other is about to start.
+    /// the other is about to start. The lift overlaps the second half of both.
     static func pose(atMoment t: Double) -> Pose {
         Pose(open: composed * LoadingTiming.beat(t, 0.06...0.96),
              rise: LoadingTiming.beat(t, 0.02...0.94),
-             appear: LoadingTiming.beat(t, 0...0.08))
+             appear: LoadingTiming.beat(t, 0...0.08),
+             lift: LoadingTiming.beat(t, liftBeat))
     }
 
     /// **The waiting form: a smaller version of the same thing.** The tip comes
@@ -237,29 +322,42 @@ enum Fiddlehead {
         Pose(open: 0.15 + 0.55 * openness, rise: 0.42 + 0.4 * openness)
     }
 
-    /// **Where it rests when motion is off** — a tendril half open, which is
-    /// `design/Motion.dc.html`'s own sentence for Reduce Motion, and standing.
-    static let still = Pose(open: 0.7, rise: 0.8)
+    /// **Where it rests when motion is off: a small standing sprout with its leaf
+    /// lifted** — Marcus, 11 October 2026. Until then it was a tendril half open
+    /// (`open: 0.7, rise: 0.8`, `design/Motion.dc.html`'s own sentence for Reduce
+    /// Motion), and at rest that hung the leaf head-down from the hook: the sad
+    /// face the logo was turned down for, held for the whole wait. Now it is the
+    /// plant the launch moment ends on, at half its growth, so it stays inside the
+    /// waiting mark's own fit and the mark is no smaller for it.
+    static let still = Pose(open: 0.9, rise: 0.5, lift: 1)
 
     // MARK: - Colour
 
-    /// **The app's own colours, and what they are measured against.**
+    /// **The logo's colours, and what they are measured against.**
     ///
-    /// The stem carries the icon's three greens bottom to tip — forest green,
-    /// lime, yellow, 140° → 60°, isoluminant, 13.00:1 on the suite's ground
-    /// (`docs/BRAND.md`, `tools/icon/make_icon.py`) — and the leaf is the icon's
-    /// white bract. Marcus asked for this on 10 October 2026 in place of the gold
-    /// the first drawing used.
+    /// The stem carries the chosen logo's three stops bottom to tip — sage
+    /// `#9CC29E`, moss `#9DC386`, green-gold `#A9C263`, 123° → 76°, saturation
+    /// 0.24 → 0.44, isoluminant at 9.7:1 on the suite's ground — and the leaf is
+    /// its warm white, `#F4F3EF`, 17.3:1 (`design/logo-2026-10-11/README.md`
+    /// §3 and §6, D-suite, chosen by Marcus on 11 October 2026). On 10 October
+    /// these were the old icon's neon greens, 13:1, and its pure white bract.
     ///
     /// **Two palettes, because the contrast is a property of the ground.** The
     /// launch moment is always on `#0D0D1F`, in both appearances, so it takes the
-    /// icon's own values. The waiting mark sits inside the app's screens and
-    /// follows the app's appearance, and on the light ground the icon's yellow is
-    /// 1.4:1, which is a mark nobody can see. So on light the same three hues are
-    /// solved to 4.5:1 against the ground, by the script's own method
-    /// (`stop_at`: lightness solved per hue at its saturation, not chosen) — which
-    /// takes the yellow to an olive, the cost the script's own notes record at
-    /// 9.1:1 — and the leaf, which cannot be white on near-white, is the app's ink.
+    /// logo's own values. The waiting mark sits inside the app's screens and
+    /// follows the app's appearance, and on the light ground the logo's
+    /// green-gold is 1.8:1, which is a mark nobody can see. So on light it takes
+    /// the logo's own light-ground version: the same three hues darkened to 4.6:1
+    /// on `#F6F6F6`, which is `lightGround`, and the leaf, which cannot be warm
+    /// white on near-white, is the app's ink.
+    ///
+    /// **The halo is 0.04, lowered from 0.07.** It is a flat band ten points wide,
+    /// not a blur, and in the old neon green at 0.07 that band read as a glow.
+    /// In the pale sage at 0.07 it reads as a grey casing round the line, a
+    /// second edge; at 0.04 it is half as far from the ground (about six levels
+    /// in each channel) and stays a softness the line sits in, which is what the
+    /// pass is for (`design/loading-2026-10-11/option-halo.png`, which shows
+    /// 0.07, 0.04 and none).
     struct Palette: Sendable {
         struct RGB: Sendable, Equatable {
             var r: Double, g: Double, b: Double
@@ -310,13 +408,14 @@ enum Fiddlehead {
         /// dark appearance, where the app's ground is black and every one of
         /// these is further from it than from `#0D0D1F`.
         static let onDark = Palette(
-            stem: [RGB(hex: 0x06F556), RGB(hex: 0x55F306), RGB(hex: 0xDCDC06)],
-            leaf: RGB(1, 1, 1),
-            halo: 0.07)
+            stem: [RGB(hex: 0x9CC29E), RGB(hex: 0x9DC386), RGB(hex: 0xA9C263)],
+            leaf: RGB(hex: 0xF4F3EF),
+            halo: 0.04)
 
-        /// On the light ground: the icon's hues at 4.5:1, and the app's ink.
+        /// On the light ground: the logo's light-ground stops, 4.6:1, and the
+        /// app's ink.
         static let onLight = Palette(
-            stem: [RGB(hex: 0x03842E), RGB(hex: 0x2E8203), RGB(hex: 0x757503)],
+            stem: [RGB(hex: 0x397E3D), RGB(hex: 0x467D25), RGB(hex: 0x60781E)],
             leaf: lightInk,
             halo: 0)
 
@@ -328,15 +427,49 @@ enum Fiddlehead {
         }
     }
 
+    // MARK: - The stem's taper and the leaf's fill
+
+    /// **Two choices Marcus made on 11 October 2026, from renders: the stem
+    /// tapered and the leaf outlined.** Each stays a launch argument
+    /// (`LoadingSwitch`), so the other value can still be seen beside it.
+    ///
+    /// - `stem`: the logo's coil thins as it spirals in and its stem thins a
+    ///   little towards the leaf, so the leaf reads chunkier. `tapered` is a
+    ///   gentle version of that here, root to tip; `even` is 10 October's
+    ///   hairline.
+    /// - `leaf`: the logo's leaf is a stroked outline, and so is this one;
+    ///   `filled` fills it, the alternative that was drawn beside it.
+    struct Style: Equatable, Sendable {
+        var stem: LoadingStem
+        var leaf: LoadingLeaf
+
+        /// Marcus's choice, which is what the app draws unless a launch argument
+        /// says otherwise.
+        static let standard = Style(stem: LoadingSwitch.stemFallback, leaf: LoadingSwitch.leafFallback)
+
+        /// **The tapered stem ends at 0.6 of its root's width.** Gentle on
+        /// purpose: at the launch moment's 1.8 pt the tip is 1.1 pt, and at the
+        /// waiting mark's 1.5 pt it is 0.9 pt, three pixels on a 3× screen,
+        /// which is as fine as a line can go there and still be a line.
+        static let taperedTip: CGFloat = 0.6
+
+        /// The stem's width at its tip as a share of its width at the root.
+        var tipShare: CGFloat { stem == .tapered ? Self.taperedTip : 1 }
+    }
+
     // MARK: - Drawing
 
     /// - Parameters:
-    ///   - weight: the hairline, in points.
+    ///   - weight: the hairline, in points: the stem's width at its root.
     ///   - halo: width of the faint pass under it, in points. Ignored when the
     ///     palette's `halo` is zero.
+    ///   - style: the two open choices (`Style`).
+    ///   - fit: what the drawing is fitted to: the moment's travel or the
+    ///     waiting mark's.
     static func draw(_ pose: Pose, palette: Palette, weight: CGFloat, halo: CGFloat,
+                     style: Style = .standard, fit: Fit = .waiting,
                      in context: inout GraphicsContext, size: CGSize) {
-        let placement = Placement.fixedPoint(in: size)
+        let placement = Placement.fixedPoint(in: size, fit: fit)
         func path(_ points: [CGPoint], closed: Bool) -> Path {
             var path = Path()
             guard let first = points.first else { return path }
@@ -346,19 +479,20 @@ enum Fiddlehead {
             return path
         }
 
-        let figure = Fiddlehead.figure(open: pose.open, rise: pose.rise)
+        let figure = Fiddlehead.figure(open: pose.open, rise: pose.rise, lift: pose.lift)
         let stem = path(figure.stem, closed: false)
         let bract = path(figure.bract, closed: true)
 
         context.opacity = pose.appear
 
         // The stem's colour runs bottom to tip along the height it can reach, so a
-        // short stem is the green end of it and a grown one reaches the yellow.
+        // short stem is the sage end of it and a grown one reaches the green-gold.
         let ramp = Gradient(stops: palette.stem.enumerated().map { index, rgb in
             Gradient.Stop(color: rgb.color, location: Double(index) / Double(palette.stem.count - 1))
         })
         let root = placement.place(rootPoint)
-        let top = placement.place(CGPoint(x: rootPoint.x, y: travel.minY))
+        let top = placement.place(CGPoint(x: rootPoint.x, y: fit.travel.minY))
+        let shading = GraphicsContext.Shading.linearGradient(ramp, startPoint: root, endPoint: top)
 
         if palette.halo > 0, halo > 0 {
             let style = StrokeStyle(lineWidth: halo, lineCap: .round, lineJoin: .round)
@@ -366,9 +500,55 @@ enum Fiddlehead {
             context.stroke(stem, with: .color(glow), style: style)
             context.stroke(bract, with: .color(glow), style: style)
         }
-        let style = StrokeStyle(lineWidth: weight, lineCap: .round, lineJoin: .round)
-        context.stroke(stem, with: .linearGradient(ramp, startPoint: root, endPoint: top), style: style)
-        context.stroke(bract, with: .color(palette.leaf.color), style: style)
+        let line = StrokeStyle(lineWidth: weight, lineCap: .round, lineJoin: .round)
+        if style.tipShare < 1 {
+            context.fill(ribbon(figure.stem.map(placement.place), from: weight, to: weight * style.tipShare),
+                         with: shading)
+        } else {
+            context.stroke(stem, with: shading, style: line)
+        }
+        if style.leaf == .filled {
+            context.fill(bract, with: .color(palette.leaf.color))
+        }
+        context.stroke(bract, with: .color(palette.leaf.color), style: line)
+    }
+
+    /// **A stroke whose weight changes along it**: the stem as one filled outline,
+    /// `start` wide at the root and `end` wide at the tip, with round ends, so
+    /// it is one shape and one fill and nothing is drawn over itself. Each side
+    /// is the stem's own points moved out along the normal by half the width
+    /// there, which is the construction the leaf's outline already uses.
+    static func ribbon(_ points: [CGPoint], from start: CGFloat, to end: CGFloat) -> Path {
+        var path = Path()
+        guard points.count > 1 else { return path }
+        let last = points.count - 1
+        var left: [CGPoint] = []
+        var right: [CGPoint] = []
+        var headings: [Double] = []
+        for index in 0...last {
+            let a = points[max(index - 1, 0)], b = points[min(index + 1, last)]
+            let heading = atan2(Double(b.y - a.y), Double(b.x - a.x))
+            let half = Double(start + (end - start) * CGFloat(index) / CGFloat(last)) / 2
+            left.append(CGPoint(x: points[index].x - sin(heading) * half, y: points[index].y + cos(heading) * half))
+            right.append(CGPoint(x: points[index].x + sin(heading) * half, y: points[index].y - cos(heading) * half))
+            headings.append(heading)
+        }
+        // Half a turn of a circle about `centre`, from `angle` round through the
+        // way the stem is leaving: the round end, as points.
+        func cap(_ centre: CGPoint, _ radius: Double, from angle: Double) -> [CGPoint] {
+            (1..<12).map { k in
+                let a = angle - .pi * Double(k) / 12
+                return CGPoint(x: centre.x + cos(a) * radius, y: centre.y + sin(a) * radius)
+            }
+        }
+        let outline = left
+            + cap(points[last], Double(end) / 2, from: headings[last] + .pi / 2)
+            + right.reversed()
+            + cap(points[0], Double(start) / 2, from: headings[0] - .pi / 2)
+        path.move(to: outline[0])
+        for p in outline.dropFirst() { path.addLine(to: p) }
+        path.closeSubpath()
+        return path
     }
 }
 
@@ -379,10 +559,13 @@ struct FiddleheadView: View {
     var palette: Fiddlehead.Palette
     var weight: CGFloat = 1.8
     var halo: CGFloat = 10
+    var style: Fiddlehead.Style = .standard
+    var fit: Fiddlehead.Fit = .waiting
 
     var body: some View {
         Canvas { context, size in
-            Fiddlehead.draw(pose, palette: palette, weight: weight, halo: halo, in: &context, size: size)
+            Fiddlehead.draw(pose, palette: palette, weight: weight, halo: halo, style: style, fit: fit,
+                            in: &context, size: size)
         }
         .accessibilityHidden(true)
     }
