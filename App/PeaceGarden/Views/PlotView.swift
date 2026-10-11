@@ -1158,7 +1158,7 @@ struct PlotView: View {
     }
 
     /// The foot of the screen: the asking line, the tray when it is open, and
-    /// the plus that opens it.
+    /// under them the row that is always there.
     private var foot: some View {
         VStack(alignment: .leading, spacing: 0) {
             asking
@@ -1167,13 +1167,37 @@ struct PlotView: View {
                     .padding(.bottom, 10)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
+            controls
+                .padding(.bottom, 12)
+        }
+    }
+
+    /// The plus in the bottom left and the two quarter-turns in the bottom
+    /// right, **at all times** (Marcus, 11 October).
+    ///
+    /// The turns lived in the tray until then, behind the plus, which put the
+    /// one control for looking at the garden behind the control for changing
+    /// it. They are how the plot is seen, so they stand beside the plus with
+    /// the tray shut, and stay where they are when it opens.
+    ///
+    /// **One way round in every language.** The row is pinned left to right,
+    /// as the web garden's pad and map are (`docs/WEBSITE.md`, *Nothing
+    /// mirrors under a right-to-left language*): a turn's direction is the
+    /// screen's, not the reading's, so anticlockwise stays on the left of
+    /// clockwise, and the pair stays where Marcus put it. Mirrored, the pair
+    /// would swap ends with the plus and swap round in itself, and a hand that
+    /// has learnt the corner would find the plus there.
+    private var controls: some View {
+        HStack(spacing: 0) {
             TrayToggle(isOpen: trayOpen) {
                 tending = nil
                 withAnimation(.smooth(duration: 0.4)) { trayOpen.toggle() }
             }
-            .frame(maxWidth: .infinity)
-            .padding(.bottom, 12)
+            .accessibilityIdentifier(PlotControls.tray)
+            Spacer(minLength: 12)
+            turns
         }
+        .environment(\.layoutDirection, .leftToRight)
     }
 
     /// What the tray holds, in the order Marcus asked for on 1 October: **the
@@ -1201,7 +1225,7 @@ struct PlotView: View {
     /// and added where it can be seen, then carried to where it is wanted.
     private var figures: some View {
         ContinuingRow {
-            HStack(spacing: 10) {
+            HStack(spacing: FigurePlate.current.spacing) {
                 ForEach(LampKind.allCases, id: \.self) { kind in
                     Button {
                         withAnimation(.spring(duration: 0.3)) {
@@ -1228,14 +1252,19 @@ struct PlotView: View {
                                     .padding(EdgeInsets(top: -7, leading: -5, bottom: -3, trailing: -5))
                                     .blur(radius: 3)
                             }
+                            // What says it can be picked up: see `FigurePlate`.
+                            .background { FigurePlate.current.plate }
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }
             }
             // Room above for that halo inside the scrolling row, which clips
-            // square at its own edge.
+            // square at its own edge, and for the plate's reach past the
+            // button at either end.
             .padding(.top, 8)
             .padding(.bottom, 4)
+            .padding(.horizontal, FigurePlate.current.reach.leading)
         }
     }
 
@@ -1261,31 +1290,47 @@ struct PlotView: View {
                                        isChosen: world == chosen)
                         }
                         .buttonStyle(.plain)
+                        // Which one is chosen is drawn, and said: VoiceOver
+                        // reads *selected* on it.
+                        .accessibilityAddTraits(world == chosen ? .isSelected : [])
                     }
                 }
                 .padding(.vertical, 4)
+                .padding(.bottom, GroundMarking.current.footRoom)
             }
         }
     }
 
-    /// Turning the plot and putting the view back, for anybody who has not
-    /// found the two-finger turn — or who has, and has lost their way.
+    /// Turning the plot, for anybody who has not found the two-finger turn.
     ///
     /// Stepped exactly as the gesture is, a quarter at a time, for the reason
     /// `turn` gives.
-    private var seeing: some View {
+    private var turns: some View {
         HStack(spacing: 8) {
             TrayMark(glyph: TurnGlyph(clockwise: false, aroundPlot: true), says: "rotate.left") {
                 turnPlot(by: 1)
             }
+            .accessibilityIdentifier(PlotControls.turnAnticlockwise)
             TrayMark(glyph: TurnGlyph(clockwise: true, aroundPlot: true), says: "rotate.right") {
                 turnPlot(by: -1)
             }
-            TrayMark(glyph: FramedPlotGlyph(), says: "arrow.counterclockwise",
-                     isEnabled: viewIsMoved) {
-                resetView()
-            }
+            .accessibilityIdentifier(PlotControls.turnClockwise)
         }
+    }
+
+    /// Putting the view back — turn, zoom and pan — for anybody who has found
+    /// the gestures and lost their way.
+    ///
+    /// **Still in the tray**, though the turns it stood beside have gone to the
+    /// foot: it is disabled until the view has moved, and a faint mark standing
+    /// in the corner of every visit is a control that does nothing most of the
+    /// time.
+    private var seeing: some View {
+        TrayMark(glyph: FramedPlotGlyph(), says: "arrow.counterclockwise",
+                 isEnabled: viewIsMoved) {
+            resetView()
+        }
+        .accessibilityIdentifier(PlotControls.reset)
     }
 
     /// Day, the clock, or night: Settings' own control, on the same setting.
@@ -1617,6 +1662,8 @@ private struct GroundMark: View {
 
     @State private var image: UIImage?
 
+    private var marking: GroundMarking { GroundMarking.current }
+
     var body: some View {
         ZStack {
             if let image {
@@ -1627,9 +1674,31 @@ private struct GroundMark: View {
                 Color.clear.frame(width: Self.size.width, height: Self.size.height)
             }
         }
-        // The chosen one is brighter and the rest stand back, rather than a tick
-        // or a ring — a border round a landscape is a stamp on a picture.
-        .opacity(isChosen ? 1 : 0.42)
+        // The chosen one said without a tick or a ring — a border round a
+        // landscape is a stamp on a picture. Until 11 October it was said by
+        // the rest standing back at 0.42, which left them too dark to tell
+        // apart: see `GroundMarking`.
+        .opacity(isChosen ? 1 : marking.others)
+        .background(alignment: .bottom) {
+            if isChosen, marking == .pool {
+                Ellipse()
+                    .fill(EllipticalGradient(colors: [Chrome.ink.opacity(0.30), Chrome.ink.opacity(0)],
+                                             center: .center, startRadiusFraction: 0,
+                                             endRadiusFraction: 0.5))
+                    .frame(width: Self.size.width * 1.4, height: Self.size.height * 0.7)
+                    .offset(y: Self.size.height * 0.16)
+                    .allowsHitTesting(false)
+            }
+        }
+        .overlay(alignment: .bottom) {
+            if isChosen, marking == .bar {
+                Capsule()
+                    .fill(Chrome.ink.opacity(0.9))
+                    .frame(width: GroundMarking.barSize.width, height: GroundMarking.barSize.height)
+                    .offset(y: GroundMarking.barSize.height + GroundMarking.barGap)
+                    .allowsHitTesting(false)
+            }
+        }
         .task {
             let view = Isometric.fitting(
                 plotSide: plotSide,
