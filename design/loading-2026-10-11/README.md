@@ -4,9 +4,13 @@ The fiddlehead now wears the logo Marcus chose this morning (D-suite,
 [`design/logo-2026-10-11/`](../logo-2026-10-11/README.md)), and its leaf finishes lifted,
 up and a little outward, as the logo's tall frond carries its leaf. On 10 October it ended
 hanging head-down from the hook, which is the downward-facing flower that round one's logo
-was turned down for. Duration, ground, hand-over, the waiting mark's breath, Reduce Motion
-and the exchange screen's `BreathingDot` are as they were. Branch
+was turned down for. Reduce Motion's still is now a small standing sprout with its leaf
+lifted. Duration, ground, hand-over, the waiting mark's breath, Reduce Motion's rules and
+the exchange screen's `BreathingDot` are as they were. Branch
 `claude/fiddlehead-2026-10-11`; nothing is merged.
+
+**Decided — Marcus, 11 October 2026: everything as recommended, and the still lifted too.**
+The answers are recorded under each question at the end.
 
 ![](launch-filmstrip.png)
 
@@ -44,10 +48,15 @@ last 40 ms still. Tests hold all three (`testTheLeafEndsLiftedUpAndOutward`,
 - **The launch moment is fitted to its own travel** (`Fiddlehead.Fit.moment`) and centres
   the plant it ends on, because the hook it passes through reaches out to the leaf's side.
   The root now sits a little right of centre and does not move.
-- **The waiting mark does not lift.** It is a curl breathing, keeps its 10 October fit and
-  size, and only changes colour ([`waiting-filmstrip.png`](waiting-filmstrip.png),
-  [`waiting.gif`](waiting.gif)). Reduce Motion's still is unchanged
-  ([`reduce-motion.png`](reduce-motion.png)); question 6 asks whether it should lift too.
+- **The waiting mark's breath does not lift.** It is a curl breathing, keeps its 10 October
+  fit and size, and only changes colour ([`waiting-filmstrip.png`](waiting-filmstrip.png),
+  [`waiting.gif`](waiting.gif)).
+- **Reduce Motion's still lifts** (question 6). It was a tendril half open (open 0.7, rise
+  0.8), which at rest hung the leaf from the hook for the whole wait. It is now the plant the
+  moment ends on at half its growth (`Fiddlehead.still`: open 0.9, rise 0.5, lift 1): the
+  leaf 36° outward, inside the waiting mark's own fit, on the same root as the breath, with
+  nothing below it and no straight run. [`reduce-motion.png`](reduce-motion.png) shows it in
+  light and dark; [`still-before-after.png`](still-before-after.png) against 10 October.
 
 **3. The halo: 0.04.** It is a flat band 10 pt wide, not a blur. In the old neon at 0.07 it
 read as a glow; in the pale sage at 0.07 it reads as a grey casing, a second edge round the
@@ -55,7 +64,8 @@ line. At 0.04 it is about six levels from the ground in each channel and stays a
 line sits in. With none, the line is crisp and closest to the logo, which has no halo.
 [`option-halo.png`](option-halo.png) shows all three at 1:1.
 
-**4. Two dials**, launch arguments like `loading.style.v1`, defaulting to the recommendation:
+**4. Two dials**, launch arguments like `loading.style.v1`, defaulting to Marcus's choice
+(questions 2 and 3); the other values stay so they can be seen beside it:
 
 | Dial | Values | Default |
 | --- | --- | --- |
@@ -70,6 +80,10 @@ line sits in. With none, the line is crisp and closest to the logo, which has no
 and the stem thins under the leaf, so the leaf reads a little heavier, which is what Marcus
 asked of the logo. It is gentle: the difference shows in the 1:1 crop of the end and hardly
 at 40 pt, where the tip is 0.9 pt, three pixels on a 3× phone, and still reads as a line.
+The logo's §8 keeps its 16–48 px drawings untapered because there the thin end nears one
+device pixel (`suite-brand.md` §3.2a); the waiting mark's thinnest point is 2.7 device pixels
+on a 3× phone and 1.8 on a 2× one, so it stays tapered. Its width runs linearly from root
+to tip, where the logo's eases on a smoothstep; at a hairline the two cannot be told apart.
 
 **The leaf: outline** ([`option-leaf.png`](option-leaf.png)). It is the logo's leaf. Honestly
 at 40 pt: at the top of the breath, and in the still, the waiting mark's leaf is about 12 by
@@ -86,7 +100,7 @@ outweighs the hairline stem and is not the logo.
   is drawn at 65 % of 10 October's size. The plant it ends on is the same height on the screen
   as before (about 296 pt on a 390 pt phone). [`question-frame.png`](question-frame.png) also
   shows a frame 1.8 times as tall as it is wide, which brings the curl back to 78 % and makes
-  the final plant about 355 pt. Question 5.
+  the final plant about 355 pt. Marcus kept the frame as built (question 5).
 - **Quieter.** The logo's sage at 9.7:1 and saturation 0.33 has much less presence on the dark
   ground than the neon at 13:1 and 0.95, and the tapered hairline is finer still. That is the
   logo's calm, chosen; `before-after.png` shows how much.
@@ -96,30 +110,43 @@ outweighs the hairline stem and is not the logo.
 
 ## Decisions for Marcus
 
+All six answered by Marcus on 11 October 2026, each as recommended.
+
 1. **The lifted ending, leaf 36° off upright on a standing stem with a gentle S?** Yes, as
    built (recommended) · lift it less, the leaf ending further out, about 50° · keep 10
    October's hanging leaf.
+   **Decided, 11 October 2026: yes, as built.**
 2. **The stem?** Tapered to 0.6 (recommended) · even, as on 10 October · tapered further, to
    0.45.
+   **Decided, 11 October 2026: tapered to 0.6** (`loading.stem.v1` defaults to `tapered`).
 3. **The leaf?** Outline, as the logo's (recommended) · filled.
+   **Decided, 11 October 2026: outline** (`loading.leaf.v1` defaults to `outline`).
 4. **The halo?** 0.04 (recommended) · none · 0.07, as on 10 October.
+   **Decided, 11 October 2026: 0.04.**
 5. **The launch frame, now that the plant ends taller?** As built, half as tall again as it is
    wide, so the final plant is 10 October's height on screen (recommended) · 1.8 times as tall,
    so the curl is bigger and the final plant larger.
+   **Decided, 11 October 2026: as built**, half as tall again as it is wide. The 1.8 render
+   stays in `question-frame.png` for the record.
 6. **Reduce Motion's still: the leaf hangs from the hook, as on 10 October. Lift it too?**
-   Yes, a small standing sprout with its leaf up, as in the lower row of
-   [`question-still.png`](question-still.png) (recommended; not built, a change to
-   `Fiddlehead.still` and its test) · keep the half-open tendril.
+   Yes, a small standing sprout with its leaf up (recommended) · keep the half-open tendril.
+   **Decided, 11 October 2026: yes, lifted.** Built as `Fiddlehead.still` (open 0.9, rise 0.5,
+   lift 1), the pose drawn in the question's render; see
+   [`reduce-motion.png`](reduce-motion.png) and [`still-before-after.png`](still-before-after.png).
 
 ## Tests
 
-`LoadingTests` alone, 27 tests, all pass (23 before; the four new ones are the moment's own
-fit, the lifted leaf, the settle without a bounce, and the two dials). Pins changed
-knowingly: the launch stops from 13.0:1 to 9.7:1 and pinned to the logo's hex values; the
-leaf from more than 18:1 to more than 17:1; the light stops pinned to the logo's light-ground
-values at 4.6:1; the halo held below 0.07; the straight-run test now asks the lifted stem and
-every pose of the moment too. No test pins render bytes. This branch no longer reproduces
-`design/loading-2026-10-10/`'s pictures: they come from commit `a605bae`.
+`LoadingTests` alone, 27 tests, all pass, on the branch rebased onto `origin/main` (23
+before; the four new ones are the moment's own fit, the lifted leaf, the settle without a
+bounce, and the two dials). Pins changed knowingly: the launch stops from 13.0:1 to 9.7:1
+and pinned to the logo's hex values; the leaf from more than 18:1 to more than 17:1; the
+light stops pinned to the logo's light-ground values at 4.6:1; the halo held below 0.07; the
+straight-run test now asks the lifted stem, every pose of the moment and the still too; and
+the still's test, which held a half-open tendril, now holds a lifted sprout: leaf up and
+outward, smaller than the moment's end, inside the waiting mark's frame, nothing below its
+root (`testTheStillIsASmallSproutWithItsLeafLifted`). No test pins render bytes. This branch
+no longer reproduces `design/loading-2026-10-10/`'s pictures: they come from commit
+`a605bae`.
 
 ## Making the pictures again
 

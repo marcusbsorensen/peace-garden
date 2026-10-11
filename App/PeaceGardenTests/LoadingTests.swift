@@ -331,6 +331,9 @@ final class LoadingTests: XCTestCase {
             let points = Fiddlehead.figure(open: pose.open, rise: pose.rise, lift: pose.lift).stem
             XCTAssertGreaterThan(gentlestFifth(points), 2, "stem at moment \(step)/40")
         }
+        let still = Fiddlehead.still
+        XCTAssertGreaterThan(gentlestFifth(Fiddlehead.figure(open: still.open, rise: still.rise, lift: still.lift).stem), 2,
+                             "the Reduce Motion still")
     }
 
     /// **There is no ground.** Marcus took the soil out on 10 October 2026: every
@@ -478,11 +481,34 @@ final class LoadingTests: XCTestCase {
         XCTAssertFalse(LaunchMomentHost.plays(style: .off, reduceMotion: false, alreadyPlayed: false))
     }
 
-    /// Still, not blank: standing, and a tendril half open or more.
-    func testTheWaitingMarkHoldsStillWithTheStatementKept() {
-        XCTAssertGreaterThanOrEqual(Fiddlehead.still.open, 0.5)
-        XCTAssertLessThan(Fiddlehead.still.open, 1)
-        XCTAssertGreaterThan(Fiddlehead.still.rise, 0.5)
+    /// Still, not blank: **a small standing sprout with its leaf lifted** — Marcus,
+    /// 11 October 2026, in place of the half-open tendril whose leaf hung from the
+    /// hook. Up and a little outward as the moment's end is, smaller than it, and
+    /// inside the waiting mark's own frame with nothing below its root.
+    func testTheStillIsASmallSproutWithItsLeafLifted() {
+        let still = Fiddlehead.still
+        XCTAssertEqual(still.lift, 1, "lifted")
+        XCTAssertGreaterThan(still.open, 0.5, "the leaf open")
+        XCTAssertLessThan(still.open, 1)
+        XCTAssertGreaterThan(still.rise, 0.3, "standing, not a bud")
+        XCTAssertLessThan(still.rise, Fiddlehead.pose(atMoment: 1).rise, "smaller than the plant the moment ends on")
+
+        let figure = Fiddlehead.figure(open: still.open, rise: still.rise, lift: still.lift)
+        let leaf = leafAxis(figure)
+        let length = hypot(leaf.tip.x - leaf.mouth.x, leaf.tip.y - leaf.mouth.y)
+        XCTAssertGreaterThan(leaf.mouth.y - leaf.tip.y, length * 0.7, "the leaf points up")
+        XCTAssertGreaterThan(leaf.degrees * Fiddlehead.plan.hand, 15, "and a little outward")
+        XCTAssertLessThan(leaf.degrees * Fiddlehead.plan.hand, 45)
+
+        let frame = LoadingBusyMark.frame(forSize: 40)
+        let placement = Fiddlehead.Placement.fixedPoint(in: frame)
+        let root = placement.place(Fiddlehead.rootPoint)
+        for p in (figure.stem + figure.bract).map(placement.place) {
+            XCTAssertGreaterThanOrEqual(p.x, 0)
+            XCTAssertLessThanOrEqual(p.x, frame.width)
+            XCTAssertGreaterThanOrEqual(p.y, 0)
+            XCTAssertLessThanOrEqual(p.y, root.y + 1e-9, "nothing below the root")
+        }
     }
 
     /// The fixed point is the default, a launch argument can name it or `off`, and a
@@ -693,11 +719,6 @@ final class LoadingTests: XCTestCase {
             let still = ImageRenderer(content: panel(Fiddlehead.still))
             still.scale = 3
             try write(still.uiImage, "busy-still-\(mode)")
-            // A question for Marcus, not a change: the still with its leaf lifted
-            // too, small enough to stay inside the waiting mark's own fit.
-            let lifted = ImageRenderer(content: panel(Fiddlehead.Pose(open: 0.9, rise: 0.5, lift: 1)))
-            lifted.scale = 3
-            try write(lifted.uiImage, "busy-still-lifted-\(mode)")
 
             // The two open choices on the waiting mark, at 3×, a phone's own
             // pixels: three points of the breath and the still, in each dress.

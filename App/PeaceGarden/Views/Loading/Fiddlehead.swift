@@ -322,9 +322,14 @@ enum Fiddlehead {
         Pose(open: 0.15 + 0.55 * openness, rise: 0.42 + 0.4 * openness)
     }
 
-    /// **Where it rests when motion is off** — a tendril half open, which is
-    /// `design/Motion.dc.html`'s own sentence for Reduce Motion, and standing.
-    static let still = Pose(open: 0.7, rise: 0.8)
+    /// **Where it rests when motion is off: a small standing sprout with its leaf
+    /// lifted** — Marcus, 11 October 2026. Until then it was a tendril half open
+    /// (`open: 0.7, rise: 0.8`, `design/Motion.dc.html`'s own sentence for Reduce
+    /// Motion), and at rest that hung the leaf head-down from the hook: the sad
+    /// face the logo was turned down for, held for the whole wait. Now it is the
+    /// plant the launch moment ends on, at half its growth, so it stays inside the
+    /// waiting mark's own fit and the mark is no smaller for it.
+    static let still = Pose(open: 0.9, rise: 0.5, lift: 1)
 
     // MARK: - Colour
 
@@ -422,23 +427,24 @@ enum Fiddlehead {
         }
     }
 
-    // MARK: - The two open choices
+    // MARK: - The stem's taper and the leaf's fill
 
-    /// **The two things Marcus has still to choose, 11 October 2026**, each a
-    /// launch argument (`LoadingSwitch`) that defaults to the recommendation.
+    /// **Two choices Marcus made on 11 October 2026, from renders: the stem
+    /// tapered and the leaf outlined.** Each stays a launch argument
+    /// (`LoadingSwitch`), so the other value can still be seen beside it.
     ///
     /// - `stem`: the logo's coil thins as it spirals in and its stem thins a
     ///   little towards the leaf, so the leaf reads chunkier. `tapered` is a
     ///   gentle version of that here, root to tip; `even` is 10 October's
     ///   hairline.
     /// - `leaf`: the logo's leaf is a stroked outline, and so is this one;
-    ///   `filled` fills it, for the case where an outline closes up small.
+    ///   `filled` fills it, the alternative that was drawn beside it.
     struct Style: Equatable, Sendable {
         var stem: LoadingStem
         var leaf: LoadingLeaf
 
-        /// The recommendation, which is what the app draws unless a launch
-        /// argument says otherwise.
+        /// Marcus's choice, which is what the app draws unless a launch argument
+        /// says otherwise.
         static let standard = Style(stem: LoadingSwitch.stemFallback, leaf: LoadingSwitch.leafFallback)
 
         /// **The tapered stem ends at 0.6 of its root's width.** Gentle on

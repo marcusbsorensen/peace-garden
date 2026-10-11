@@ -17,9 +17,9 @@ import Foundation
 /// Arguments*, or `xcrun simctl launch <device> app.peacegarden -loading.style.v1 off`
 /// (UserDefaults reads launch arguments of this shape as its own). A stored value
 /// that no longer names a case — earlier rounds had `unwinding`, `frond` and `edge`
-/// — reads as the default. The two choices left open on 11 October, the stem's
-/// taper and the leaf's fill, are launch arguments of the same kind
-/// (`LoadingStem`, `LoadingLeaf`).
+/// — reads as the default. The stem's taper and the leaf's fill, which Marcus
+/// chose on 11 October, are launch arguments of the same kind (`LoadingStem`,
+/// `LoadingLeaf`).
 enum LoadingStyle: String, CaseIterable, Sendable {
     case off
     case fixed
@@ -36,15 +36,15 @@ enum LoadingSwitch {
         defaults.string(forKey: key).flatMap(LoadingStyle.init(rawValue:)) ?? fallback
     }
 
-    // MARK: - The two open choices of 11 October 2026
+    // MARK: - The stem's taper and the leaf's fill, chosen 11 October 2026
 
     /// `-loading.stem.v1 tapered` or `even`. See `Fiddlehead.Style`.
     static let stemKey = "loading.stem.v1"
     /// `-loading.leaf.v1 outline` or `filled`. See `Fiddlehead.Style`.
     static let leafKey = "loading.leaf.v1"
 
-    /// The recommendations, which are what a stored value that names nothing
-    /// reads as.
+    /// Marcus's choices, 11 October 2026, which are also what a stored value
+    /// that names nothing reads as.
     static let stemFallback = LoadingStem.tapered
     static let leafFallback = LoadingLeaf.outline
 

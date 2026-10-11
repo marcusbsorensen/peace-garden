@@ -222,15 +222,17 @@ def frame_question():
                    "it is wide), and 11 October with the frame 1.8 times as tall."])
 
 
-def still_question():
+def still_before_after():
+    """Reduce Motion's still: 10 October's half-open tendril above, Marcus's choice of
+    11 October below, a small standing sprout with its leaf lifted."""
     rows = []
-    for prefix, name in (("busy-still", "as built: a tendril half open"), ("busy-still-lifted", "lifted, a question")):
-        rows.append([label(scaled(waiting_crop(load(f"{prefix}-{mode}.png")), 0.8), f"{name}", fill=(120, 120, 130))
-                     for mode in ("light", "dark")])
+    for folder, name in ((BEFORE, "10 October: a tendril half open"), (NEW, "11 October: lifted")):
+        rows.append([label(scaled(waiting_crop(load(f"busy-still-{mode}.png", folder)), 0.8), name,
+                           fill=(120, 120, 130)) for mode in ("light", "dark")])
     return titled(grid(rows), "Reduce Motion's still",
-                  ["Above, as built, as on 10 October.",
-                   "Below, the leaf lifted too: open 0.9, rise 0.5,",
-                   "inside the waiting mark's own fit."])
+                  ["Above, 10 October. Below, chosen on 11 October:",
+                   "open 0.9, rise 0.5, lifted, inside the waiting",
+                   "mark's own fit and on the same root."])
 
 
 def halo_sheet():
@@ -284,7 +286,8 @@ def main():
     if BEFORE:
         made.append(save_png(before_after(), "before-after.png"))
     made.append(save_png(frame_question(), "question-frame.png"))
-    made.append(save_png(still_question(), "question-still.png"))
+    if BEFORE:
+        made.append(save_png(still_before_after(), "still-before-after.png"))
     made.append(save_png(halo_sheet(), "option-halo.png"))
     made.append(save_png(choice_sheet(
         ["even-outline", "tapered-outline"], ["even", "tapered"],

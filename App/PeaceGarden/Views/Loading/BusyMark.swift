@@ -20,9 +20,11 @@ import SwiftUI
 /// app's ink for the leaf (`Fiddlehead.Palette`), since the dark-ground green-gold
 /// would be 1.8:1 there.
 ///
-/// **It does not lift.** The leaf lifting is how the launch moment ends; the
-/// waiting mark is a curl breathing and stays one, fitted to its own travel
-/// (`Fiddlehead.Fit.waiting`), so it is no smaller than it was.
+/// **Its breath does not lift.** The leaf lifting is how the launch moment ends;
+/// the breathing mark is a curl and stays one, fitted to its own travel
+/// (`Fiddlehead.Fit.waiting`), so it is no smaller than it was. Under Reduce
+/// Motion it holds still as a small standing sprout with its leaf lifted
+/// (`Fiddlehead.still`, Marcus, 11 October 2026), inside the same fit.
 struct LoadingBusyMark: View {
 
     /// The mark's width; its height is half as much again, a plant being tall.
