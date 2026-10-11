@@ -273,3 +273,8 @@ four turns.
    - b. Draw them at 0.7. The faint four, the Coppice, the Crossing, the Home
      Ground and the Long Walk, read more clearly, but the neighbours compete
      more with the plot.
+
+
+## Miniatures: answered by Marcus, 11 October 2026
+
+The miniatures are drawn at half light, as recommended. He said deploy.
