@@ -1,84 +1,81 @@
-# Peace Garden: Wild Fields, slab, sky and shadows — handover 2 October 2026 (03:00)
+# Peace Garden: logo redesign, then build 7 — handover 11 October 2026
 
-The previous handover is at `git show 06a8b9e:.claude/HANDOVER.md` (30 September).
+This session covered too much: layouts, gateways, the loading animation and the logo. The previous, longer note is at `git show 94e658a:.claude/HANDOVER.md`.
 
 ## Goal
-Tonight's batch live and in build 6: the Wild Fields with water, worn paths and pasture ground; the website's plots as the app's floating slab; the app's new day sky, slab, plant screen and shadows; the 1 October translations corrected.
+Make the app's logo and loading animation fit the app's own calm, finely drawn look and the Interfulgent app suite. Then ship them in build 7.
 
 ## State
-- **On main and pushed (`b104cf3`)**:
-  - the website slab, with stones only when zoomed in;
-  - the Wild Fields joined: ponds B, pasture ground, worn paths and privacy9;
-  - the curate tool;
-  - the app's shadows (Marcus's tweaks) and the warmer plot light;
-  - the reviewed translation fixes for the site and the app (REVIEW.md and APPLIED-app.md).
-  - String, reference and wear/curate checks pass.
-- **Live**: `b104cf3` deployed 2 October, with wear on (`'wear' => true` in the live config.php). All 42 header checks and 17 pages are clean, and the wear POSTs return 200. Screenshots are in `out/deploy-2026-10-02b/`. Before this, `d7c5d48` was live; a rollback copy is in the session scratchpad at `live-d7c5d48`.
-- **Build 6 uploaded** (1.0 (6), delivery `b56c27e2-…`). Its 170 tests: 163 passed, 0 failed, 7 skipped (the opt-in renders); SeedCore 422 passed. The archive is `build/PeaceGarden-1.0-6.xcarchive` and the ipa is in `build/export-6/`. `project.yml` is at 6.
-- **Running**:
-  - **New layouts for all ten areas: LIVE** (`4bba1e5`, deployed 2 October).
-    - The replant ran by the runbook as plan `9076d6695467`, then verified. The live garden held only the ten ambassadors, so no plant moved.
-    - Backups: `walk-2026-10-02T172205Z` before, `walk-2026-10-02T173212Z` after.
-    - Rollback: `b104cf3` plus its wasm, at `golive/live-b104cf3/` in the session scratchpad.
-    - All 28 live page loads are clean; screenshots in `out/deploy-2026-10-02c/`. Wear is still on.
-    - Known: the Long Walk opens its second plot before the first is full, because the drifts claim by colour.
-    - Known: `deploy.sh --dry-run` doesn't list deletions.
-- **Then**:
-  - Marcus tries /wild on his phone;
-  - install build 6 from TestFlight on a real phone;
-  - delete the remote `worktree-agent-*` and `claude/*` branches (all merged; the local worktrees are already gone);
-  - close PR #8.
+- **Live and verified**
+  - The site serves `fd4e995`'s `Server/` (deployed 11 October). This includes:
+    - the new layouts for all ten areas;
+    - neighbour gateways with miniatures of each neighbour's real layout;
+    - Wild Fields worn paths switched on (`'wear' => true` in the server's `.api/config.php`).
+  - The replant ran by the runbook. The live garden holds only the ambassadors, so nothing moved.
+- **App: build 6** is uploaded to App Store Connect as 1.0 (6). `project.yml` `CURRENT_PROJECT_VERSION` is 6.
+- **On main, not yet in any build:** the loading animation in `App/PeaceGarden/Views/Loading/`. A fiddlehead grows from a fixed point over 2.0 s, on a dark `#0D0D1F` launch ground. `LoadingTests` pass. The full app suite has not been run since it went in.
+- **Logo round 2: running in the cloud, unchecked.**
+  - Routine `trig_01H2KVZLsUTPw7ZSgFf7brd6`, due at 01:20Z on 11 October.
+  - It pushes branch `claude/logo-2026-10-11` (D and E at two weights, `suite-row.png`, `hue-map.png`).
+  - The old routine `trig_01694nUqyCRsYyQCqVT8WNc5` is disabled. It compared against the wrong suite.
 
-## Decisions made, 2 October 2026 (Marcus)
-- Lotus B: the hollows hold water. Night ponds show star reflections and ripples. The ground is pasture. Deploy, then he tries it on his phone.
-- Worn paths: privacy9 goes after privacy8, the path width stays, and **wear is switched on with this deploy**. That means `'wear' => true` in the server's `.api/config.php`, which lives only on the server and is excluded from rsync.
-- Day sky B+C+D. Plot light warmed as built; the winter sun is not lowered; pre-dawn plants match the moonlit ground.
-- Website plots hang the slab. Stones show only when zoomed in (1.3× plus 8 px), on both platforms.
-- Shadows: noon lighter, evening sharper, the hare, fox and snail shadows kept.
-- Translation review (`tools/strings/commissions/2026-10-01/REVIEW.md`, branch `claude/strings-review-2026-10-01`, PR #8):
-  - Apply all 40 findings.
-  - Polish *Dzikie Łąki*; Ukrainian, Russian and Belarusian *луги*/*лугі*; Greek *Τα Άγρια λιβάδια*.
-  - **Keep** Vildmarken / Villmarka / Vildmarken, with Danish (and Norwegian) *på → i*.
-  - The English app line becomes "Left as it is, no name is shown."
+## Files
+- `design/logo-2026-10-10/README.md`: logo round 1, with the generator `make_sheets.py`.
+- `design/loading-2026-10-10/README.md`: the loading animation's decisions, with its renders.
+- `design/gateways-2026-10-10/README.md`: the gateways and miniatures, and Marcus's answers on them.
+- `docs/WEB-GARDENS.md`: every area's rules and dated decisions, plus the new layouts.
+- `tools/layouts/README.md`: plot variants, place tables and the fill harness (`BASELINE.md`).
+- `tools/replant/README.md`: the runbook for a live replant.
+- `tools/icon/make_icon.py` and `icon.svg`: how today's app icon is made.
+- Suite brand guide: `docs/design/suite-brand.md` on UnCubed's main branch (`~/Projects/uncubed-integration`).
 
-## Next steps
-1. Merge the integration branch into main, then the site strings branch (based on privacy9, so it should merge cleanly).
-2. Deploy: rebuild the wasm, `tools/deploy.sh --dry-run`, deploy, then set `'wear' => true` in the live config.php. Then run `--check` and confirm every page is console-clean. Tell Marcus to try /wild on his phone, and roll back if it stutters.
-3. Merge shadows. Warm the plot light (`design/app-sky-2026-10-02/README.md`). Merge the app strings branch.
-4. Build 6: set `CURRENT_PROJECT_VERSION` to 6, run the full suite on the iPhone Air, then archive, export and upload.
-5. Clean up merged worktrees and remote `worktree-agent-*` branches. Close PR #8 once REVIEW.md lands on main through the site strings branch.
+## Decisions made
+- **Logo direction.** D (two fronds) or E (upward flower head). A was rejected because a downward flower looks sad.
+- **Logo line weight** must match the suite's app icons: Pfish, UnCubed, Animal Rescue Centre, FlagFans and FreqShift. It is not matched to the Institute marks, because the suite brand guide keeps the Institute out of the apps.
+- **Logo colours.**
+  - Peace Garden's existing suite-guide entry reserves lime green for it. It moves to calmer sage and moss within that band.
+  - Keep clear of Pfish (light green to turquoise to light blue) and FlagFans (light brown to ochre).
+  - The leaf is warm white `#F4F3EF`.
+  - On the website, a bare mark without a tile.
+- **Loading animation.**
+  - Grows from a fixed point. No drawn soil, ever (see memory `no-drawn-soil`).
+  - Lasts 2.0 s, on a dark launch ground in both appearances.
+  - With Reduce Motion: no launch moment, but a still waiting mark.
+  - The exchange screen keeps its `BreathingDot`.
+  - Still to do: take the chosen logo's colours, and lift the leaf upward at the end.
+- **Layouts.** All ten areas use option A, with Marcus's answers recorded in `docs/WEB-GARDENS.md`. In the Cold Frame pond a lotus takes one place.
+- **Gateways.** Neighbours show as miniatures at half light. The minimap keeps its symbolic glyphs. Maps read left to right in Arabic and Hebrew too.
+- **First garden draw.** Only add a waiting mark after measuring the real delay on a device.
+
+## Next step
+Check the logo routine (`RemoteTrigger list_runs`, `git ls-remote origin claude/logo-2026-10-11`). Then:
+1. Merge its branch into main.
+2. Send Marcus `suite-row.png`, `hue-map.png` and the two best `in-context.png` files.
+3. Ask him to choose between D and E, and between the suite weight and the light weight.
+
+Once he has chosen, give one agent the whole job:
+- apply the logo to the app icon set, `make_icon.py`, and the website favicon and wordmark;
+- recolour the fiddlehead and lift its leaf;
+- set `CURRENT_PROJECT_VERSION` to 7, then run the full suite once;
+- archive and upload build 7;
+- deploy the website.
 
 ## Traps
-- **The config backup won't survive a deploy:** `deploy.sh` protects only `.api/config.php`, so the next upload deletes `config.php.bak-2026-10-02`. To roll back, restore the config first, then redeploy.
-- **Cloud routines:** use RemoteTrigger. Agent `isolation: "remote"` runs locally. Strip connectors after every create (`clear_mcp_connections`). Routines don't notify; check with `list_runs` and `get_run_log`.
-- **Every agent brief says commit and push after each step** (Marcus, 2 October).
-- **Token-guard hook** blocks:
-  - unbounded `git diff`/`git show` (run git from Python);
+- **Usage rules** (`~/.claude/CLAUDE.md`):
+  - at most 2 local agents at a time;
+  - Sonnet for routine work, Opus only for hard design, and set the model on every dispatch;
+  - exploratory design goes to cloud routines;
+  - strip connectors after every routine create;
+  - routines don't notify, so check them yourself.
+- **Token guard** blocks:
+  - a bare `grep` without `| head`;
+  - plain or heredoc `cat`;
   - "curl";
-  - plain `cat`;
-  - a bare `grep` without `| head`, plus `\|` in grep and `grep -r`;
-  - images over ~500 KB.
-- **xcstrings:** write with the Xcode dump (`indent=2`, `" : "`, three-line `{}`), and assert the round-trip first.
-- **The wasm is untracked:** rebuild it with `tools/wasm/build.sh` after any SeedCore change, and copy it into any worktree you deploy from.
-- **Never install onto the iPhone 17 Pro** (Marcus's garden). The iPhone Air is scratch.
-- Agents share the scratchpad; give each its own subfolder.
-
-## 10–11 October 2026
-- **Gateways** (main `fd4e995`):
-  - Direction fix: `garden.js` is the single source; the maps read left to right in every language; `check_gateways.mjs` is in CI.
-  - Each neighbouring plot shows a miniature of that area's real layout (`mini.js`), drawn at half light.
-  - Marcus kept all four answers as recommended. A deploy by a Sonnet agent is running; screenshots go to `out/deploy-2026-10-11/`.
-- **Loading animation** (on main, ships in build 7):
-  - A fiddlehead that grows from a fixed point and unfurls over 2.0 s, with no soil, on a dark `#0D0D1F` launch ground in both appearances.
-  - The waiting mark sits on the web-garden request screens.
-  - Switch: `loading.style.v1` = `fixed` or `off`.
-  - **Still to do:** recolour it to the chosen logo's calm ramp, and lift the leaf upward at the end. Marcus said yes to both on 11 October; do them once the logo is chosen.
-- **Logo:**
-  - Round one is in `design/logo-2026-10-10/`. Marcus rejected A, because a downward flower looks sad. He likes D (two fronds) or E (an upward flower head).
-  - He chose the calm sage, moss and straw ramp, a warm-white leaf `#F4F3EF`, and a bare mark on the website. Line weight should match the suite's logos.
-  - Round two is running as cloud routine `trig_01694nUqyCRsYyQCqVT8WNc5` and pushes `claude/logo-2026-10-11`.
-- **Rules from Marcus:**
-  - At most 2 local agents at a time.
-  - Sonnet for routine work; Opus for hard design. Set the model on every dispatch.
-  - Use cloud routines for exploratory design.
-  - No drawn soil under 2D plants (memory `no-drawn-soil`).
+  - unbounded `git diff` or `git show`;
+  - images over about 500 KB.
+- **Wasm build:** use the swift.org toolchain. If new place tables are missed, delete `tools/wasm/.build/release.yaml` and `description.json`.
+- **Simulators:** never use the iPhone 17 Pro (Marcus's garden). Make scratch iPhone Air simulators and delete them afterwards.
+- **Worktrees:** worktrees locked by this session need `git worktree remove --force --force`. Don't remove an agent's worktree while you might still resume it.
+- **Working directory:** don't `cd` into a worktree in Bash; it moves the session's working directory.
+- **`deploy.sh`** protects only `.api/config.php`. Python Playwright isn't installed; the Node `playwright-core` in the npx cache works.
+- **SourceKit "No such module" diagnostics** are noise.
