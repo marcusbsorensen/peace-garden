@@ -66,16 +66,19 @@ final class UpdateCheckTests: XCTestCase {
 
     // MARK: - The question
 
-    /// It names the app and nothing else: Apple's lookup by this app's own
-    /// bundle id, with no cookies, no cache, a user agent that is the app's name
-    /// alone and a fixed language, and it gives up inside the moment.
+    /// It names the app and the store and nothing else: Apple's lookup by this
+    /// app's own bundle id, in the store of the country given, with no cookies,
+    /// no cache, a user agent that is the app's name alone and a fixed language,
+    /// and it gives up inside the moment.
     func testTheLookupAsksAboutThisAppAndNothingElse() async throws {
         XCTAssertEqual(UpdateCheck.bundleID, Bundle.main.bundleIdentifier)
-        let components = try XCTUnwrap(URLComponents(url: UpdateCheck.lookup, resolvingAgainstBaseURL: false))
+        let lookup = UpdateCheck.lookup(country: "dk")
+        let components = try XCTUnwrap(URLComponents(url: lookup, resolvingAgainstBaseURL: false))
         XCTAssertEqual(components.scheme, "https")
         XCTAssertEqual(components.host, "itunes.apple.com")
         XCTAssertEqual(components.path, "/lookup")
-        XCTAssertEqual(components.queryItems, [URLQueryItem(name: "bundleId", value: "app.peacegarden")])
+        XCTAssertEqual(components.queryItems, [URLQueryItem(name: "bundleId", value: "app.peacegarden"),
+                                               URLQueryItem(name: "country", value: "dk")])
 
         let configuration = UpdateCheck.configuration()
         XCTAssertNil(configuration.httpCookieStorage)
@@ -89,12 +92,64 @@ final class UpdateCheckTests: XCTestCase {
         XCTAssertEqual(headers?["Accept-Language"], "en")
 
         answer(#"{"resultCount":0,"results":[]}"#)
-        _ = await UpdateCheck.ask(session: session(), current: "1.0")
+        _ = await UpdateCheck.ask(session: session(), current: "1.0", country: "dk")
         let sent = try XCTUnwrap(StubbedStore.seen.first)
-        XCTAssertEqual(sent.url, UpdateCheck.lookup)
+        XCTAssertEqual(sent.url, lookup)
         XCTAssertEqual(sent.httpMethod ?? "GET", "GET")
         XCTAssertNil(sent.httpBody)
         XCTAssertNil(sent.value(forHTTPHeaderField: "Cookie"))
+    }
+
+    // MARK: - The person's own store
+
+    /// Marcus, 11 October 2026: the person's own App Store, never the US one by
+    /// default. The check asks in the storefront's country, as two letters.
+    func testItAsksTheStorefrontsOwnCountry() async throws {
+        for (storefront, country) in [("DNK", "dk"), ("GBR", "gb"), ("JPN", "jp")] {
+            StubbedStore.reset()
+            answer(#"{"resultCount":1,"results":[{"version":"1.1","trackId":6700000001}]}"#)
+            let page = await UpdateCheck.check(session: session(), current: "1.0") { storefront }
+            XCTAssertEqual(page, URL(string: "https://apps.apple.com/app/id6700000001"), storefront)
+            let sent = try XCTUnwrap(StubbedStore.seen.first?.url)
+            let items = URLComponents(url: sent, resolvingAgainstBaseURL: false)?.queryItems ?? []
+            XCTAssertEqual(items.first { $0.name == "country" }?.value, country, storefront)
+            XCTAssertEqual(StubbedStore.seen.count, 1)
+        }
+    }
+
+    /// No storefront (signed out, unavailable) or one whose code does not
+    /// convert: no request at all, and so no glyph. Never the US store instead.
+    func testNoStorefrontMeansNoRequest() async throws {
+        answer(#"{"resultCount":1,"results":[{"version":"9.0","trackId":6700000001}]}"#)
+        for storefront in [nil, "", "ZZZ", "XKX", "US", "GB1"] as [String?] {
+            let page = await UpdateCheck.check(session: session(), current: "1.0") { storefront }
+            XCTAssertNil(page, storefront ?? "nil")
+        }
+        XCTAssertTrue(StubbedStore.seen.isEmpty, "not one request")
+
+        let check = UpdateCheck(session: session(), current: "1.0", asks: true) { nil }
+        check.start()
+        try await Task.sleep(for: .milliseconds(100))
+        XCTAssertNil(check.storePage)
+        XCTAssertTrue(StubbedStore.seen.isEmpty)
+    }
+
+    /// StoreKit's three letters to the lookup's two, by Foundation's own region
+    /// aliases rather than a table: a sample across the world, and what is
+    /// refused.
+    func testStorefrontCodesConvertToTheLookupsTwoLetters() {
+        let samples = ["DNK": "dk", "GBR": "gb", "USA": "us", "DEU": "de", "FRA": "fr", "NOR": "no",
+                       "SWE": "se", "ISL": "is", "GRL": "gl", "FRO": "fo", "JPN": "jp", "CHN": "cn",
+                       "TWN": "tw", "HKG": "hk", "KOR": "kr", "IND": "in", "BRA": "br", "MEX": "mx",
+                       "ZAF": "za", "NGA": "ng", "EGY": "eg", "ARE": "ae", "ISR": "il", "PSE": "ps",
+                       "TUR": "tr", "UKR": "ua", "AUS": "au", "NZL": "nz", "CAN": "ca", "IRL": "ie",
+                       "dnk": "dk"]
+        for (alpha3, alpha2) in samples {
+            XCTAssertEqual(StoreCountry.alpha2(fromAlpha3: alpha3), alpha2, alpha3)
+        }
+        for refused in ["", "DK", "DNKX", "ZZZ", "XKX", "D1K", "Dnk ", "ÆØÅ", "123"] {
+            XCTAssertNil(StoreCountry.alpha2(fromAlpha3: refused), refused)
+        }
     }
 
     // MARK: - The answer
@@ -103,7 +158,7 @@ final class UpdateCheckTests: XCTestCase {
     /// builds are not in it — and there is no glyph.
     func testNoResultsMeansNoGlyph() async {
         answer(#"{"resultCount":0,"results":[]}"#)
-        let page = await UpdateCheck.ask(session: session(), current: "1.0")
+        let page = await UpdateCheck.ask(session: session(), current: "1.0", country: "dk")
         XCTAssertNil(page)
     }
 
@@ -111,7 +166,7 @@ final class UpdateCheckTests: XCTestCase {
     /// store's numeric id and not taken from the answer as a link.
     func testANewerVersionOpensItsStorePage() async {
         answer(#"{"resultCount":1,"results":[{"version":"1.1","trackId":6700000001,"trackViewUrl":"https://elsewhere.example/"}]}"#)
-        let page = await UpdateCheck.ask(session: session(), current: "1.0")
+        let page = await UpdateCheck.ask(session: session(), current: "1.0", country: "dk")
         XCTAssertEqual(page, URL(string: "https://apps.apple.com/app/id6700000001"))
     }
 
@@ -120,7 +175,7 @@ final class UpdateCheckTests: XCTestCase {
     func testTheSameOrAnOlderVersionShowsNothing() async {
         for store in ["1.0", "1", "0.9"] {
             answer(#"{"resultCount":1,"results":[{"version":"\#(store)","trackId":6700000001}]}"#)
-            let page = await UpdateCheck.ask(session: session(), current: "1.0")
+            let page = await UpdateCheck.ask(session: session(), current: "1.0", country: "dk")
             XCTAssertNil(page, store)
         }
     }
@@ -128,16 +183,16 @@ final class UpdateCheckTests: XCTestCase {
     /// Every way of failing ends the same way: in silence.
     func testFailingIsSilent() async {
         answer(#"{"resultCount":1,"results":[{"version":"9.0","trackId":6700000001}]}"#, status: 503)
-        let refused = await UpdateCheck.ask(session: session(), current: "1.0")
+        let refused = await UpdateCheck.ask(session: session(), current: "1.0", country: "dk")
         XCTAssertNil(refused, "not a 200")
         answer("<html>not json</html>")
-        let unreadable = await UpdateCheck.ask(session: session(), current: "1.0")
+        let unreadable = await UpdateCheck.ask(session: session(), current: "1.0", country: "dk")
         XCTAssertNil(unreadable)
         answer(#"{"resultCount":1,"results":[{"version":"9.0"}]}"#)
-        let noID = await UpdateCheck.ask(session: session(), current: "1.0")
+        let noID = await UpdateCheck.ask(session: session(), current: "1.0", country: "dk")
         XCTAssertNil(noID, "no store id, nowhere to send anyone")
         StubbedStore.reply = .failure(URLError(.notConnectedToInternet))
-        let offline = await UpdateCheck.ask(session: session(), current: "1.0")
+        let offline = await UpdateCheck.ask(session: session(), current: "1.0", country: "dk")
         XCTAssertNil(offline)
     }
 
@@ -145,7 +200,7 @@ final class UpdateCheckTests: XCTestCase {
     /// for the session.
     func testItAsksOnceALaunchAndKeepsTheAnswer() async throws {
         answer(#"{"resultCount":1,"results":[{"version":"1.1","trackId":6700000001}]}"#)
-        let check = UpdateCheck(session: session(), current: "1.0", asks: true)
+        let check = UpdateCheck(session: session(), current: "1.0", asks: true) { "DNK" }
         check.start()
         check.start()
         for _ in 0..<200 where check.storePage == nil {
@@ -161,7 +216,7 @@ final class UpdateCheckTests: XCTestCase {
     /// the launch moment plays in the test host.
     func testATestRunAsksNothing() async throws {
         XCTAssertTrue(UpdateCheck.isHostingTests)
-        let check = UpdateCheck(session: session(), current: "1.0")
+        let check = UpdateCheck(session: session(), current: "1.0") { "DNK" }
         check.start()
         try await Task.sleep(for: .milliseconds(50))
         XCTAssertTrue(StubbedStore.seen.isEmpty)

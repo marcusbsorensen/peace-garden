@@ -3,9 +3,12 @@
 Marcus: *"fix the recycling glyph to match the new logo".* Branch
 `claude/launch-glyph-2026-10-11`; nothing is merged.
 
+**Decided — Marcus, 11 October 2026: A**, a turn of coil and a start almost twice the
+stroke. Recorded under the question at the end.
+
 ![](choice.png)
 
-**Decide from [`choice.png`](choice.png).** Each column is one frond: on the Settings row
+**[`choice.png`](choice.png)**, which Marcus decided from. Each column is one frond: on the Settings row
 in the app, in dark and light (simulator screenshots); in a plant's row of marks; at its
 true sizes on both grounds at a phone's 3× pixels, with the 15 pt one enlarged 4× to show
 those pixels; and the 28 pt drawing enlarged 12×. The last column is the glyph as it was.
@@ -38,7 +41,7 @@ is the hairline every other glyph is drawn in, so it never falls under a pixel, 
 what keeps the logo's own 16–48 px drawings untapered (§3.2a(5)). The ink is the caller's,
 unchanged.
 
-## The three, recommendation first
+## The three, as drawn for the choice
 
 Measured at 15 pt, the smallest size it is drawn: the tightest gap between two parts of the
 drawing that are not neighbours along one line (a coil and the turn outside it, or a coil and
@@ -63,20 +66,33 @@ the next frond's start), with each line at its full width. A device pixel on a 3
 - **C** is the logo's small drawing, a hook of 0.62 turns, with Pfish's gentle taper. The
   most open at 15 pt, and the least like a coil: three crooks.
 
-`CycleGlyph.Frond.chosen` is the switch, A until Marcus says otherwise. Debug builds take
-`-pgCycleFrond b` or `c` to show another in the app without a rebuild.
+**A is now the only frond in the code**, as `CycleGlyph.Frond.chosen`; B, C and the debug
+switch between them were removed once Marcus chose. The struct's dials stay, so either is a
+one-line change, with these values (arc in radians; coil turns, then the radius of
+curvature it enters and ends at, in units of the circle's radius; band in points; ease the
+logo's ease-out exponent):
+
+| | arc | turns | entry | eye | band | ease |
+| --- | --- | --- | --- | --- | --- | --- |
+| **A**, chosen | 1.2 | 0.95 | 0.44 | 0.16 | 1.0 | 2.5 |
+| B | 1.1 | 1.2 | 0.52 | 0.153 | 1.3 | 2.5 |
+| C | 1.35 | 0.62 | 0.36 | 0.13 | 0.6 | 2.5 |
+
+B's band is wider than the stroke, so `CycleGlyph` strokes a centreline inside it too;
+that code stays, for the same reason.
 
 ## Decision for Marcus
 
 1. **Which frond?** A, a turn of coil and a start twice the stroke (recommended) ·
    B, more coil and a heavier start, crowded at 15 pt · C, the logo's small-drawing hook.
+   **Decided, 11 October 2026: A.**
 
 ## Tests
 
-`CycleGlyphTests`, five tests and one picture writer: curves only, with each outline
-closing where it began; inside its box with its stroke, and filling it; each frond thinning
-one way to the hairline; the three one turning (each the last turned a third of the way
-round); and the gaps above held at 15 and 28 pt. Settings and the plant's row are
+`CycleGlyphTests`, five tests and one picture writer, now on A alone: curves only, with
+each outline closing where it began; inside its box with its stroke, and filling it; each
+frond thinning one way to the hairline; the three one turning (each the last turned a third
+of the way round); and the gaps above held at 15 and 28 pt. Settings and the plant's row are
 otherwise untouched, and nothing else draws the glyph.
 
 ## Making the picture again
@@ -88,7 +104,9 @@ TEST_RUNNER_PG_RENDER_CYCLE=/some/renders xcodebuild test -project PeaceGarden.x
 python3 design/recycle-glyph-2026-10-11/make-choice.py /some/renders /some/screenshots
 ```
 
-The screenshots are Settings on a scratch iPhone Air simulator, scrolled to *Starting
+`choice.png` was made this way at commit `6342216`, when B, C and `-pgCycleFrond` were still
+in the code; the picture writer now draws A and the old glyph alone. The screenshots are
+Settings on a scratch iPhone Air simulator, scrolled to *Starting
 again*: `-pgOpen settings -pgCycleFrond <x> -stage.appearance.v1 <dark|light>`, and the old
 glyph from the build before the change. The plant's row is drawn by `ChromeMark` in the
 test rather than captured, because a plant standing in the web garden is not something a

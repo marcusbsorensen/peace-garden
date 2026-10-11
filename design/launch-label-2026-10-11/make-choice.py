@@ -9,7 +9,9 @@ writes to (`TEST_RUNNER_PG_RENDER_LOADING`): the end of the launch moment on a
 the foot.
 
 - `choice.png`: A, B and C, each as the whole screen, its lower part at 2x, and
-  its foot at the phone's own 3x pixels with the update arrow showing.
+  its foot at the phone's own 3x pixels with the update arrow showing. Only from
+  renders made at commit 6342216: Marcus chose A on 11 October 2026 and the
+  harness no longer draws B and C, so without their frames this is skipped.
 - `update-glyph.png`: the recommendation's foot at 3x, without and with the
   arrow, under right to left, at the largest text size and in the light
   appearance.
@@ -105,5 +107,6 @@ def update_glyph():
 
 
 if __name__ == "__main__":
-    choice()
+    if (RENDERS / "label-line.png").exists():
+        choice()
     update_glyph()

@@ -616,7 +616,8 @@ final class LoadingTests: XCTestCase {
     /// unless `PG_RENDER_LOADING` names a folder.
     ///
     /// The launch moment is drawn the way `LaunchMoment` draws it — the launch
-    /// ground, then the fiddlehead at the pose the clock gives — over a stand-in
+    /// ground, then the fiddlehead at the pose the clock gives, and since 11
+    /// October 2026 the name and version at the foot — over a stand-in
     /// for the stage: the app's own `StageBackdrop` and a grown plant, in both
     /// appearances, so that the hand-over is seen against what it hands over to.
     /// 30 frames a second, the 2.0 s and then the 180 ms dissolve (`launch-`). The
@@ -674,12 +675,19 @@ final class LoadingTests: XCTestCase {
                     markOpacity = (1 - leaving) * (1 - leaving)
                     fieldOpacity = 1 - LoadingTiming.smooth(seconds / LoadingTiming.dissolve)
                 }
+                // The name and version, since 11 October 2026: in over the first
+                // 180 ms as `LaunchMoment` fades them in, out with the mark, over a
+                // 34-point home indicator as a Face ID phone has.
+                let arrived = LoadingTiming.smooth(Double(index) / fps / LoadingTiming.busyFade)
                 let content = ZStack {
                     stage(scheme)
                     ZStack {
                         LaunchMoment.ground
                         LaunchMoment.mark(at: t, in: phone, style: .standard)
                             .opacity(markOpacity)
+                        LaunchNameplateFoot()
+                            .padding(.bottom, 34)
+                            .opacity(markOpacity * arrived)
                     }
                     .opacity(fieldOpacity)
                 }

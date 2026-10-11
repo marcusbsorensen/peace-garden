@@ -27,23 +27,11 @@ import SwiftUI
 /// - **VoiceOver hears it once, as one label**, *Peace Garden 1.0 (7)*. The
 ///   drawing beside it says nothing (`LaunchMoment`), and the update glyph is a
 ///   button of its own.
+///
+/// **Where it stands is Marcus's choice, 11 October 2026**: A of three, the name
+/// over the version, centred, low (`design/launch-label-2026-10-11/`). The other
+/// two, one line at the foot and the name under the plant, are recorded there.
 enum LaunchNameplate {
-
-    /// **Where it stands and how big it is**, the three options in
-    /// `design/launch-label-2026-10-11/choice.png`. `chosen` is the one drawn.
-    enum Placement: String, CaseIterable, Sendable {
-        /// A, recommended: the name over the version, centred, a little above
-        /// the bottom of the screen. Name 13 pt, version 11 pt.
-        case stacked
-        /// B: one line at the foot, the name and the version side by side,
-        /// both 11 pt. The quietest.
-        case line
-        /// C: the name under the plant at 17 pt, a caption to it, and the
-        /// version alone at the foot.
-        case underPlant
-    }
-
-    static let chosen = Placement.stacked
 
     /// The name, which is the same in every language.
     static let name = "Peace Garden"
@@ -74,14 +62,7 @@ enum LaunchNameplate {
     // MARK: - Size and place
 
     /// Points, at the default text size, before Dynamic Type.
-    static func nameSize(_ placement: Placement) -> CGFloat {
-        switch placement {
-        case .stacked: 13
-        case .line: 11
-        case .underPlant: 17
-        }
-    }
-
+    static let nameSize: CGFloat = 13
     static let versionSize: CGFloat = 11
 
     /// How far the letters stand apart, as a share of the size: the wordmark's
@@ -91,54 +72,29 @@ enum LaunchNameplate {
     /// The largest text size it follows. See the type's note.
     static let largestType = DynamicTypeSize.xxxLarge
 
-    /// How far above the bottom of the safe area the lowest line sits.
-    static func foot(_ placement: Placement) -> CGFloat {
-        switch placement {
-        case .stacked: 28
-        case .line, .underPlant: 14
-        }
-    }
-
-    /// For `underPlant`: how far under the launch frame's foot the name stands.
-    static let underPlantGap: CGFloat = 22
+    /// How far above the bottom of the safe area the version sits.
+    static let foot: CGFloat = 28
 }
 
-// MARK: - The two layers
+// MARK: - The nameplate
 
-/// **The part at the foot of the screen**, laid out inside the safe area, so
-/// that it stands above the home indicator. Carries the one accessibility
-/// label whatever the placement.
+/// **The name over the version, at the foot of the screen**, laid out inside the
+/// safe area, so that it stands above the home indicator.
 struct LaunchNameplateFoot<Accessory: View>: View {
-    var placement: LaunchNameplate.Placement = LaunchNameplate.chosen
     var version: AppVersion = .current
     @ViewBuilder var accessory: () -> Accessory
 
     var body: some View {
         VStack(spacing: 0) {
             Spacer(minLength: 0)
-            content
-                .padding(.bottom, LaunchNameplate.foot(placement))
+            VStack(spacing: 6) {
+                LaunchName(size: LaunchNameplate.nameSize)
+                versionRow
+            }
+            .padding(.bottom, LaunchNameplate.foot)
         }
         .frame(maxWidth: .infinity)
         .dynamicTypeSize(...LaunchNameplate.largestType)
-    }
-
-    @ViewBuilder
-    private var content: some View {
-        switch placement {
-        case .stacked:
-            VStack(spacing: 6) {
-                LaunchName(size: LaunchNameplate.nameSize(.stacked))
-                versionRow
-            }
-        case .line:
-            HStack(spacing: 12) {
-                LaunchName(size: LaunchNameplate.nameSize(.line))
-                versionRow
-            }
-        case .underPlant:
-            versionRow
-        }
     }
 
     /// The version, and the accessory on its trailing side. The version is
@@ -155,28 +111,8 @@ struct LaunchNameplateFoot<Accessory: View>: View {
 }
 
 extension LaunchNameplateFoot where Accessory == EmptyView {
-    init(placement: LaunchNameplate.Placement = LaunchNameplate.chosen, version: AppVersion = .current) {
-        self.init(placement: placement, version: version) { EmptyView() }
-    }
-}
-
-/// **The part under the plant**, for `underPlant` alone: drawn in the moment's
-/// full-screen layer, where the launch frame's foot is known. VoiceOver hears
-/// the name with the version, at the foot, so this one is hidden.
-struct LaunchNameplateUnderPlant: View {
-    let screen: CGSize
-    var placement: LaunchNameplate.Placement = LaunchNameplate.chosen
-
-    var body: some View {
-        if placement == .underPlant {
-            let frame = LaunchMoment.markFrame(short: min(screen.width, screen.height))
-            LaunchName(size: LaunchNameplate.nameSize(.underPlant))
-                .dynamicTypeSize(...LaunchNameplate.largestType)
-                .fixedSize()
-                .position(x: screen.width / 2,
-                          y: screen.height / 2 + frame.height / 2 + LaunchNameplate.underPlantGap)
-                .accessibilityHidden(true)
-        }
+    init(version: AppVersion = .current) {
+        self.init(version: version) { EmptyView() }
     }
 }
 

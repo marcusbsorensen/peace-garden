@@ -624,14 +624,18 @@ export const EN = Object.freeze({
   // The App Store's update check, since 11 October 2026 (Marcus's choice that
   // day): `UpdateCheck` in the app, started by `LaunchMoment` as it plays, which
   // is why Reduce Motion has neither. One GET to Apple's public lookup,
-  // `itunes.apple.com/lookup?bundleId=app.peacegarden`, from a session with no
+  // `itunes.apple.com/lookup?bundleId=app.peacegarden&country=dk`, in the store
+  // of the phone's own country (StoreKit's `Storefront.current`, Marcus's choice
+  // the same day, so nobody is sent to the US store), from a session with no
   // cookies and no cache, a user agent that is the app's name alone and a fixed
-  // language; *names the app alone* is that. *As it does any request* is the
-  // address, which Apple sees for any request and this one adds nothing to.
-  // The arrow is `LaunchUpdateGlyph`, shown only when the store's version is
-  // newer, and it opens the app's App Store page.
+  // language; *only that country and the app's id* is that. *Skips the
+  // question* is no storefront, or one whose code does not convert: no request,
+  // and never the US store instead. *As it does any request* is the address,
+  // which Apple sees for any request and this one adds nothing to. The arrow is
+  // `LaunchUpdateGlyph`, shown only when the store's version is newer, and it
+  // opens the app's App Store page.
   privacy10:
-    "When the app opens, it shows its name and version for a moment and asks Apple's App Store whether there is a newer version of Peace Garden. The question names the app alone, and Apple receives it from your internet address, as it does any request. If there is a newer version, a small arrow appears beside the version number, and touching it opens the App Store. With Reduce Motion on, the app opens straight into your garden, without the name or the question.",
+    "When the app opens, it shows its name and version for a moment and asks the App Store of your own country whether there is a newer version of Peace Garden. The question carries only that country and the app's id, and Apple receives it from your internet address, as it does any request. If there is a newer version, a small arrow appears beside the version number, and touching it opens the App Store. When the phone cannot say which country's App Store it uses, the app skips the question. With Reduce Motion on, the app opens straight into your garden, without the name or the question.",
   // The website: `Limits.php` for the scrambled address and its hour — a
   // fifty-five-minute window and `sweep.php` every five minutes, which is what
   // keeps it inside the hour when nobody asks — `languages.js` for the

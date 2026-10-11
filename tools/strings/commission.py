@@ -1075,12 +1075,15 @@ UPDATE = {
                 "asking, since both happen as the app opens.",
         "must": [
             "When the app opens, it shows its name and version for a moment "
-            "and asks Apple's App Store whether there is a newer version of "
-            "Peace Garden.",
-            "The question names the app and nothing more, and Apple receives "
-            "it from your internet address, as it does any request.",
+            "and asks the App Store of the reader's own country whether there "
+            "is a newer version of Peace Garden.",
+            "The question carries only that country and the app's id, and "
+            "Apple receives it from your internet address, as it does any "
+            "request.",
             "If there is a newer version, a small arrow appears beside the "
             "version number, and touching it opens the App Store.",
+            "When the phone cannot say which country's App Store it uses, the "
+            "app skips the question.",
             "With Reduce Motion on, the app opens straight into the garden, "
             "and neither the name nor the question happens.",
         ],
@@ -1090,14 +1093,18 @@ UPDATE = {
             "tells anyone it was opened. It asks, and an arrow may appear.",
             "Name the developer or the web garden as receiving it. It goes to "
             "Apple alone.",
+            "Say or imply that the question goes to an American store, or to "
+            "any store but the reader's own. When the phone has no store "
+            "country, there is no question at all.",
             "Translate *App Store* or *Peace Garden*. Both are names.",
             "Call Reduce Motion anything but the setting's own name in the "
             "phone's language, as the phone's Accessibility settings write it.",
         ],
-        "note": "*The question names the app alone* is the lookup by the app's "
-                "bundle id: nothing in it is about the reader. *As it does any "
-                "request* says the address is not something this question "
-                "adds.",
+        "note": "*Only that country and the app's id* is the lookup by the "
+                "app's bundle id in the phone's own App Store country: the "
+                "country is the one thing in it about the reader, and the store "
+                "already knows it. *As it does any request* says the address "
+                "is not something this question adds.",
     },
 }
 

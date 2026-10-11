@@ -77,8 +77,6 @@ struct LaunchMoment: View {
                         Self.mark(at: t, in: proxy.size, style: style)
                     }
                     .opacity(markOpacity)
-                    LaunchNameplateUnderPlant(screen: proxy.size)
-                        .opacity(markOpacity * nameplateOpacity)
                 }
                 .frame(width: proxy.size.width, height: proxy.size.height)
             }

@@ -12,6 +12,10 @@ simulator screenshots of Settings scrolled to *Starting again*, x in a, b, c,
 old, mode in dark, light: the app launched with `-pgOpen settings
 -pgCycleFrond <x> -stage.appearance.v1 <mode>`, and `old` from the build
 before the change.
+
+Run at commit 6342216: Marcus chose A on 11 October 2026, after which B, C and
+`-pgCycleFrond` left the code and the picture writer draws A and the old glyph
+alone.
 """
 import pathlib
 import sys

@@ -1091,8 +1091,10 @@ struct GardenGlyph: Shape {
 /// Curves only: the sides and the centreline are Catmull–Rom splines, as the
 /// logo's are, and the outline closes on its own first point.
 ///
-/// **Three fronds, one switch.** `Frond.chosen` is the one drawn; the others
-/// are in `design/recycle-glyph-2026-10-11/choice.png`.
+/// **The frond is Marcus's choice, 11 October 2026**: A of three, a turn of
+/// coil and a start almost twice the stroke. The other two, more coil and a
+/// heavier start (B) and the logo's small-drawing hook (C), are recorded with
+/// their dials in `design/recycle-glyph-2026-10-11/`.
 struct CycleGlyph: Shape {
     var frond: Frond = .chosen
 
@@ -1112,34 +1114,10 @@ struct CycleGlyph: Shape {
         /// frond's length, front-loading the thinning (`TENDRIL_EASE`).
         var ease: Double
 
-        /// **A, recommended**: a turn of coil, and a start almost twice the
+        /// **Marcus's choice, A**: a turn of coil, and a start almost twice the
         /// stroke, 2.2 pt thinning to the tip's 1.2. Its tightest gap at 15 pt
         /// is 0.49 pt, a pixel and a half on a 3× phone.
-        static let a = Frond(arc: 1.2, turns: 0.95, entry: 0.44, eye: 0.16, band: 1.0, ease: 2.5)
-        /// B: more coil, 1.2 turns, and a heavier start, 2.5 pt to 1.2, the tip
-        /// 0.48 of the start against the logo's 0.42. The closest to the logo
-        /// this pen can draw; at 15 pt its turns come within 0.29 pt of each
-        /// other, under a pixel. The logo's own 1.35 turns do not fit at 15 pt
-        /// at all: with a tip no finer than the stroke, the turns merge.
-        static let b = Frond(arc: 1.1, turns: 1.2, entry: 0.52, eye: 0.153, band: 1.3, ease: 2.5)
-        /// C: the logo's small drawing, a hook of 0.62 turns, and a gentle
-        /// taper, 1.8 pt to 1.2, Pfish's 0.67. The most open at 15 pt, 0.88 pt
-        /// at its tightest, and the least like a coil.
-        static let c = Frond(arc: 1.35, turns: 0.62, entry: 0.36, eye: 0.13, band: 0.6, ease: 2.5)
-
-        /// **The switch**: the one drawn. Debug builds also take
-        /// `-pgCycleFrond b` (or `c`) on the command line, so the three can be
-        /// seen in place without a rebuild.
-        static var chosen: Frond {
-            #if DEBUG
-            switch UserDefaults.standard.string(forKey: "pgCycleFrond") {
-            case "b": return b
-            case "c": return c
-            default: break
-            }
-            #endif
-            return a
-        }
+        static let chosen = Frond(arc: 1.2, turns: 0.95, entry: 0.44, eye: 0.16, band: 1.0, ease: 2.5)
     }
 
     func path(in rect: CGRect) -> Path {

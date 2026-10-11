@@ -265,10 +265,11 @@ same rule the app icon is drawn to, and the same stroke weight as the cog.
   band, 1 pt wide at its start and nothing at its tip, and the row's 1.2pt
   monoline stroke round it makes a line 2.2pt thick that thins to the hairline
   every other glyph is drawn in. It keeps the row's crimson, and the plant's
-  muted grey. Three fronds were drawn — a turn of coil (A, chosen), more coil
-  and a heavier start (B), and the logo's small-drawing hook (C) — and
-  `CycleGlyph.Frond.chosen` is the switch between them;
-  `design/recycle-glyph-2026-10-11/` has the pictures.
+  muted grey. Three fronds were drawn — a turn of coil (A), more coil and a
+  heavier start (B), and the logo's small-drawing hook (C) — and Marcus chose
+  A on 11 October 2026. It is `CycleGlyph.Frond.chosen`;
+  `design/recycle-glyph-2026-10-11/` has the pictures and the other two's
+  dials.
 - **The middle row**, *Empty the garden*, takes `GardenGlyph` — the Garden
   mark from the foot of the stage: a flower of five lobes on one closed
   outline, on a stem, beside a tuft of three grass blades, both standing on a

@@ -15,7 +15,9 @@ import XCTest
 @MainActor
 final class CycleGlyphTests: XCTestCase {
 
-    private let fronds: [(String, CycleGlyph.Frond)] = [("a", .a), ("b", .b), ("c", .c)]
+    /// Marcus chose A on 11 October 2026; B and C are recorded in
+    /// `design/recycle-glyph-2026-10-11/` with their dials.
+    private let fronds: [(String, CycleGlyph.Frond)] = [("a", .chosen)]
     /// The sizes it is drawn at: the Settings row and the plant's mark row.
     private let sizes: [CGFloat] = [15, 28]
 
@@ -80,7 +82,6 @@ final class CycleGlyphTests: XCTestCase {
             XCTAssertGreaterThan(frond.band, 0.4, name)
             XCTAssertLessThanOrEqual(frond.band, 2 * Chrome.monoline.lineWidth, name)
         }
-        XCTAssertEqual(CycleGlyph.Frond.chosen, .a, "A is the one drawn")
     }
 
     /// Three fronds, each the last turned a third of the way round: it is one
@@ -107,9 +108,8 @@ final class CycleGlyphTests: XCTestCase {
     /// **It reads at 15 pt.** The clearest gap between any two parts of the
     /// drawing that are not neighbours along one line — a coil and the turn
     /// outside it, a coil and the next frond's start — with each line at its
-    /// full width (the stroke and the band). A and C keep more than a device
-    /// pixel on a 3× phone (1/3 pt); B, the most coiled, is the one that comes
-    /// closer, and is held to what it was drawn with.
+    /// full width (the stroke and the band). It keeps more than a device pixel
+    /// on a 3× phone (1/3 pt): 0.49 pt as drawn.
     func testItReadsAtItsSmallestSize() {
         func clearance(_ frond: CycleGlyph.Frond, size: CGFloat) -> CGFloat {
             let stroke = Chrome.monoline.lineWidth
@@ -131,9 +131,7 @@ final class CycleGlyphTests: XCTestCase {
             }
             return best
         }
-        XCTAssertGreaterThan(clearance(.a, size: 15), 0.45)
-        XCTAssertGreaterThan(clearance(.c, size: 15), 0.8)
-        XCTAssertGreaterThan(clearance(.b, size: 15), 0.25)
+        XCTAssertGreaterThan(clearance(.chosen, size: 15), 0.45)
         for (name, frond) in fronds {
             XCTAssertGreaterThan(clearance(frond, size: 28), 1.5, "\(name) at 28")
         }
@@ -141,7 +139,7 @@ final class CycleGlyphTests: XCTestCase {
 
     // MARK: - The pictures
 
-    /// The three fronds and the old glyph at the sizes they are drawn, in the
+    /// The chosen frond and the old glyph at the sizes they are drawn, in the
     /// inks they are drawn in, in both appearances, and enlarged; and the
     /// plant's row of marks with each, as `ChromeMark` draws it. Skipped unless
     /// `PG_RENDER_CYCLE` names a folder.

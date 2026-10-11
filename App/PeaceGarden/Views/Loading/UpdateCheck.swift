@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import StoreKit
 
 /// **The version this copy of the app is, as the launch moment writes it:
 /// `1.0 (7)`.** `CFBundleShortVersionString` and `CFBundleVersion`, which
@@ -45,13 +46,22 @@ struct AppVersion: Equatable, Sendable {
 ///   2 s, the length of the moment, because an answer after that has nowhere to
 ///   be shown. Offline, slow, refused or unreadable all end the same way, in
 ///   silence.
-/// - **It sends nothing about the person.** Apple's public lookup by bundle id,
-///   `itunes.apple.com/lookup?bundleId=app.peacegarden`, which names the app
-///   and nothing else. The session keeps no cookies and no cache, and the two
-///   headers a phone adds on its own are replaced: the user agent, which names
-///   the system's version, by the app's name alone, and the preferred languages
-///   by `en`, since the answer is read for two numbers and no words. Low Data
-///   Mode is honoured: the question is not asked on a constrained network.
+/// - **It asks the person's own App Store**, Marcus, 11 October 2026: *"we do
+///   NOT want to be US dependent or force people from non-US-friendly countries
+///   to have to check with a US app store in case their web traffic is
+///   tracked."* The country is StoreKit's `Storefront.current`, the store this
+///   phone already uses, turned from its three letters into the lookup's two
+///   (`StoreCountry`). **With no storefront there is no question**: signed out,
+///   unavailable, or a code that does not convert, it skips the check silently
+///   and never falls back to the US store, which is the lookup's own default.
+/// - **It sends nothing about the person beyond that country.** Apple's public
+///   lookup, `itunes.apple.com/lookup?bundleId=app.peacegarden&country=dk`,
+///   names the app and the store and nothing else. The session keeps no cookies
+///   and no cache, and the two headers a phone adds on its own are replaced: the
+///   user agent, which names the system's version, by the app's name alone, and
+///   the preferred languages by `en`, since the answer is read for two numbers
+///   and no words. Low Data Mode is honoured: the question is not asked on a
+///   constrained network.
 /// - **Once a launch.** The answer is kept for the rest of the session in
 ///   `storePage`.
 /// - **No results, no glyph.** Until the app is publicly released the lookup
@@ -74,15 +84,19 @@ final class UpdateCheck {
     @ObservationIgnored private let session: URLSession
     @ObservationIgnored private let current: String
     @ObservationIgnored private let asks: Bool
+    @ObservationIgnored private let storefront: @Sendable () async -> String?
 
     /// `asks` is false inside a unit-test run, whose host is this app: the
     /// launch moment plays there too, and a test run asks nothing of the
-    /// network unless a test hands this its own session.
+    /// network unless a test hands this its own session. `storefront` gives the
+    /// App Store's country as StoreKit writes it, three letters, or nil.
     init(session: URLSession = UpdateCheck.session, current: String = AppVersion.current.short,
-         asks: Bool = !UpdateCheck.isHostingTests) {
+         asks: Bool = !UpdateCheck.isHostingTests,
+         storefront: @escaping @Sendable () async -> String? = { await Storefront.current?.countryCode }) {
         self.session = session
         self.current = current
         self.asks = asks
+        self.storefront = storefront
     }
 
     /// The app's own bundle id, typed rather than read so the one question this
@@ -90,7 +104,15 @@ final class UpdateCheck {
     /// to `Bundle.main`.
     nonisolated static let bundleID = "app.peacegarden"
 
-    nonisolated static let lookup = URL(string: "https://itunes.apple.com/lookup?bundleId=\(bundleID)")!
+    /// The question, in the store of `country`, two lowercase letters. The
+    /// country is always given: the lookup would otherwise answer from the US
+    /// store.
+    nonisolated static func lookup(country: String) -> URL {
+        var components = URLComponents(string: "https://itunes.apple.com/lookup")!
+        components.queryItems = [URLQueryItem(name: "bundleId", value: bundleID),
+                                 URLQueryItem(name: "country", value: country)]
+        return components.url!
+    }
 
     /// The debug override's launch argument.
     nonisolated static let showKey = "pgUpdateGlyph"
@@ -130,16 +152,31 @@ final class UpdateCheck {
         }
         #endif
         guard asks else { return }
-        let session = session, current = current
+        let session = session, current = current, storefront = storefront
+        // An answer that comes after the moment has gone has nowhere to be
+        // shown, wherever the time went: the storefront or the request.
+        let deadline = Date().addingTimeInterval(LoadingTiming.moment)
         Task {
-            storePage = await Self.ask(session: session, current: current)
+            let page = await Self.check(session: session, current: current, storefront: storefront)
+            if Date() < deadline { storePage = page }
         }
     }
 
-    /// One question and its answer: the App Store page if the store has a newer
-    /// version than `current`, and nil for every other outcome.
-    nonisolated static func ask(session: URLSession, current: String, url: URL = lookup) async -> URL? {
-        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData,
+    /// The whole check: the storefront's country, and then the question in its
+    /// store. No country, no question.
+    nonisolated static func check(session: URLSession, current: String,
+                                  storefront: @Sendable () async -> String?) async -> URL? {
+        guard let code = await storefront(), let country = StoreCountry.alpha2(fromAlpha3: code) else {
+            return nil
+        }
+        return await ask(session: session, current: current, country: country)
+    }
+
+    /// One question and its answer: the App Store page if the store of
+    /// `country` has a newer version than `current`, and nil for every other
+    /// outcome.
+    nonisolated static func ask(session: URLSession, current: String, country: String) async -> URL? {
+        var request = URLRequest(url: lookup(country: country), cachePolicy: .reloadIgnoringLocalCacheData,
                                  timeoutInterval: LoadingTiming.moment)
         request.httpShouldHandleCookies = false
         guard let (data, response) = try? await session.data(for: request),
@@ -165,6 +202,22 @@ final class UpdateCheck {
               entry.trackId > 0,
               StoreVersion.isNewer(entry.version, than: current) else { return nil }
         return URL(string: "https://apps.apple.com/app/id\(entry.trackId)")
+    }
+}
+
+/// **The App Store's country, from the three letters StoreKit gives to the two
+/// the lookup takes**: `DNK` to `dk`. Foundation does the converting, through the
+/// region aliases every locale carries (`und_DNK` reads as the region `DK`), so
+/// there is no table here to fall out of date; what comes back is accepted only
+/// if it is two letters and an ISO region Foundation knows. Anything else is
+/// nil, and nil means the check is skipped.
+enum StoreCountry {
+    static func alpha2(fromAlpha3 code: String) -> String? {
+        guard code.count == 3, code.allSatisfy({ $0.isASCII && $0.isLetter }) else { return nil }
+        guard let region = Locale(identifier: "und_\(code.uppercased())").region?.identifier,
+              region.count == 2, region.allSatisfy({ $0.isASCII && $0.isUppercase }),
+              Locale.Region.isoRegions.contains(Locale.Region(region)) else { return nil }
+        return region.lowercased()
     }
 }
 
