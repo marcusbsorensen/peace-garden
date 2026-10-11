@@ -51,7 +51,7 @@ repeated at every wait, over the screen somebody is using. A still nameplate at 
 instead would be a curtain, and Reduce Motion's rule, the suite's, is no curtain, not a
 shorter one. So with Reduce Motion on there is no name, no version and no question to the App
 Store, and the privacy page says so. If the version should be reachable with Reduce Motion
-on, the place for it is the foot of Settings, not the waiting mark: see the open question.
+on, the place for it is the foot of Settings, not the waiting mark: question 2 below.
 
 ## The update check (option A, as Marcus chose)
 
@@ -136,7 +136,9 @@ plant's lowest ink, its root, is at 571 pt.
   It is the most present of the three and the nearest to competing with the fiddlehead, and
   the version is left alone at the foot.
 
-`LaunchNameplate.chosen` is the switch, A until Marcus says otherwise.
+`LaunchNameplate.chosen` is the switch, A until Marcus says otherwise. The loading
+harness's filmstrip frames (`LoadingTests.testWriteTheLoadingFrames`) still draw the moment
+without the label; they can take it once the placement is chosen.
 
 ## Decisions for Marcus
 
