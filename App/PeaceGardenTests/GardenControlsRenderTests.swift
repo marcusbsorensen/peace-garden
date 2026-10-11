@@ -34,6 +34,16 @@ final class GardenControlsRenderTests: XCTestCase {
         defaults.set(true, forKey: "pgTray")
 
         for light in [GardenDaylight.alwaysNight, .always] {
+            // Once through first and thrown away: the first window in a light
+            // draws the plot in it and all eight grounds from nothing, one
+            // after the other on the terrain's actor, and six seconds is not
+            // long enough for that on a simulator. Every window after it is
+            // handed them drawn.
+            defaults.set(light.rawValue, forKey: Chrome.daylightKey)
+            let warming = try Self.window(showing: PlotView().environment(Self.model()))
+            try await Task.sleep(for: .seconds(20))
+            warming.isHidden = true
+
             for marking in GroundMarking.allCases {
                 defaults.set(light.rawValue, forKey: Chrome.daylightKey)
                 defaults.set(marking.rawValue, forKey: "pgGrounds")
@@ -51,23 +61,27 @@ final class GardenControlsRenderTests: XCTestCase {
         }
     }
 
+    /// Fourteen plants, because a ground in the row is drawn as the plot it
+    /// would be, and fourteen is a plot of 5.2 m, the size the web garden's are.
     private static func model() -> GardenModel {
-        let a = SeedID(bytes: seedDigest(SeedDomain.seed, Data("grounds-a".utf8)))!
-        let b = SeedID(bytes: seedDigest(SeedDomain.seed, Data("grounds-b".utf8)))!
-        let encounter = Pollination.encounterID(seedA: a, seedB: b,
-                                                nonceA: Data("na".utf8), nonceB: Data("nb".utf8))
         let met = Date(timeIntervalSince1970: 1_780_000_000)
-        let plant = PlantRecord(
-            id: UUID(),
-            seed: Pollination.cross(seedA: a, seedB: b, encounterID: encounter),
-            lineage: .crossed(parentA: a, parentB: b, encounterID: encounter),
-            birth: met, savedAt: met,
-            encounter: EncounterNote(peerDisplayName: "Ash", happenedAt: met, place: "Here")
-        )
+        let plants = (0..<14).map { n -> PlantRecord in
+            let a = SeedID(bytes: seedDigest(SeedDomain.seed, Data("grounds-a-\(n)".utf8)))!
+            let b = SeedID(bytes: seedDigest(SeedDomain.seed, Data("grounds-b-\(n)".utf8)))!
+            let encounter = Pollination.encounterID(seedA: a, seedB: b,
+                                                    nonceA: Data("na\(n)".utf8), nonceB: Data("nb\(n)".utf8))
+            return PlantRecord(
+                id: UUID(),
+                seed: Pollination.cross(seedA: a, seedB: b, encounterID: encounter),
+                lineage: .crossed(parentA: a, parentB: b, encounterID: encounter),
+                birth: met, savedAt: met,
+                encounter: EncounterNote(peerDisplayName: "Ash", happenedAt: met, place: "Here")
+            )
+        }
         let file = FileManager.default.temporaryDirectory
             .appendingPathComponent("grounds-\(UUID().uuidString).json")
         let store = GardenStore(fileURL: file)
-        try? store.save(Garden(identity: nil, plants: [plant], beds: [Bed(name: "", world: 0)]))
+        try? store.save(Garden(identity: nil, plants: plants, beds: [Bed(name: "", world: 0)]))
         return GardenModel(store: store)
     }
 
