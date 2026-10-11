@@ -262,8 +262,22 @@ body {
 }
 
 
-/* The ground travels with the mark, so there is no light and dark pair. It is
-   an app icon and is drawn as one.
+/* **The bare mark, with no tile, since 11 October**, so there is now a light and
+   dark pair. The tile carried its own ground and so needed none; without it the
+   drawing stands on the page's ground and has to be drawn for it.
+   `tools/icon/make_icon.py` writes both from the icon's own dials, beside the
+   icon and never by hand: `mark-dark.svg` is the icon's drawing exactly, and
+   `mark-light.svg` is the same lines with the ramp darkened to 4.6:1 on the
+   light ground and the white bract in ink. A page that follows the reader picks
+   between them with a `<picture>`; an area is always night, so it carries the
+   dark one alone, and a light source there would put the dark-ground drawing's
+   opposite on a black page. The tab and the home screen keep the tiled
+   `icon.svg` and `icon-180.png`, where a ground is wanted.
+
+   No rounded corner any more: there is no tile to round, and a radius on the
+   box would only shave the drawing's own ink. The drawing fills the box to its
+   ink, less a 4 % inset, where the icon kept it inside the tile's margin, so it
+   reads larger at the same 60 px.
 
    **Larger since 24 September**, with the wordmark: at 44 px and 12 px, light and grey, the
    name sat small over a page of full-width plots and bold headings,
@@ -271,7 +285,6 @@ body {
 .mark {
   inline-size: 60px;
   block-size: 60px;
-  border-radius: 22%;
   display: block;
 }
 
