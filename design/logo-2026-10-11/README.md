@@ -257,3 +257,241 @@ Run them in that order: `make_logos.py`, then `measure.py`, then `make_sheets.py
 render with **cairosvg** 2.9 and Pillow (`pip install cairosvg pillow numpy scipy`). The
 wordmark falls back to Inter here, since SF is not installed; on Apple devices the SVGs ask
 for the system font first. **Every PNG is under 450 KB.**
+
+## 8. Round two and a half: D-suite with tapers
+
+*Added 11 October 2026 on branch `claude/logo-taper-2026-10-11`. Still design exploration
+only: no live asset has changed. Everything is in [`d-taper/`](d-taper/).*
+
+**Start with [`d-taper/compare.png`](d-taper/compare.png)**: round two's D-suite beside T1,
+T2 and T3 at 360, 180 and 60 px on both home-screen grounds, then 60 px enlarged 4×, then
+1:1 crops of the 1024 px icon at the coil, where the stem meets the leaf, and at the fork.
+Then [`suite-row.png`](d-taper/suite-row.png), [`small-sizes.png`](d-taper/small-sizes.png)
+and each strength's `in-context.png` ([T1](d-taper/t1/in-context.png),
+[T2](d-taper/t2/in-context.png), [T3](d-taper/t3/in-context.png)).
+
+### What Marcus asked
+
+He chose D-suite as round two drew it: D at the suite's median stroke of 0.0654 of the
+tile, the sage → moss → green-gold ramp, and the leaf as a warm white outline. Then, in his
+words:
+
+> I would like the curling frond on the right to taper off to a thinner size as it spirals
+> inwards, and I'm wondering if we should have a slightly thinner taper towards the
+> ascending stem that meets the flower, so that the flower looks a bit more chunky by
+> comparison to what's just below it.
+
+"The flower" is the white leaf. So:
+
+- **The coil** keeps the full stroke where it leaves the fork and thins as it winds in, to
+  a thinner round end at its eye.
+- **The stem** thins a little towards the leaf, so the leaf reads chunkier than the stem
+  just below it.
+- **Unchanged**: the root at the full 0.0654, so the mark still matches the suite where it
+  is heaviest; the ramp; the leaf's outline at 0.72 of the base stroke; round ends; curves
+  only; no ground line.
+
+### How the taper is drawn
+
+- **A filled outline, not a stroke.** A stroke-width cannot vary along a path. Each tapered
+  line is resampled every 0.2 strokes along its centreline, offset by half the local width
+  on both sides, and closed at each end by a circular arc at the local width. The offsets
+  lie on the envelope of those circles, so each side meets its round end on a tangent. The
+  sides are Catmull–Rom curves through round one's `path_d` and the ends are SVG arcs, so
+  nothing is straight.
+- **The same colour.** The outlines are filled with round two's one even sweep, its vector
+  taken from round two's own `bounds()`. The measured hue band is 86°–110° in round two and
+  in all three strengths.
+- **The width profile is a smoothstep**, 3u² − 2u³. Its slope is zero at both ends, so the
+  thinning starts at the fork without a kink and settles into the tip without a pointed
+  wedge. The crozier eases from full weight at the fork to its tip over its whole length,
+  which puts most of the thinning in the coil. The stem stays full from the root to the
+  fork, then eases to its neck at the leaf.
+- **One strength parameter, τ.** The coil's tip is 1 − τ of the base stroke and the stem's
+  neck 1 − 0.43τ, so the two tapers move together. That meets §3.2a's third condition, one
+  taper parameter applied to a profile in code.
+- **The leaf stays a stroke**, at 0.72 of the base, as round two drew it.
+- **The fork.** The crozier's fill lies over the stem's and starts inside it, as round two's
+  strokes did, and both carry the same gradient in the same coordinates, so the overlap
+  cannot show. At 1024 px, below the fork, the tapered icons match round two's pixels
+  exactly inside the stem and to within 4 levels at its anti-aliased edges. The fork row of
+  `compare.png` shows no seam, notch or overlap.
+- **The generator.** [`d-taper/make_taper.py`](d-taper/make_taper.py) imports
+  `make_logos.py`, `make_sheets.py` and `measure.py` and copies nothing from them. It hands
+  round two's `write_candidate()` a tapered `drawing()` for the length of each call, so the
+  geometry, placement, ramp and file set are round two's. Change its dials; do not
+  hand-edit the SVGs.
+
+### The three strengths
+
+| | τ | Coil tip ÷ base | Stem neck ÷ base | Leaf ÷ base | Contrast, thickest ÷ thinnest (§3.2a(2)) | Coil tip at 180 · 60 · 40 px |
+|---|---|---|---|---|---|---|
+| D-suite, round two | 0 | 1 | 1 | 0.72 | 1 | 11.8 · 3.9 · 2.6 |
+| **T1, gentle** | 0.45 | 0.55 | 0.81 | 0.72 | 1.82 | 6.5 · 2.2 · 1.4 |
+| **T2, medium** | 0.58 | 0.42 | 0.75 | 0.72 | 2.38 | 4.9 · 1.6 · 1.1 |
+| **T3, strong** | 0.70 | 0.30 | 0.70 | 0.72 | 3.33 | 3.5 · 1.2 · 0.8 |
+
+The coil tips are the brief's starting points. The stem necks were fitted to the one
+parameter through T2's pair, so T1's neck is 0.81 rather than 0.85 and T3's 0.70 rather
+than 0.65. Pfish's contrast, for comparison, is 1.49. The 40 px column matters because the
+app ships one 1024 image and iOS scales it down: 40 px is the smallest an iPhone draws it
+(a notification on a 2× screen).
+
+### Measured
+
+Round two's `measure()` on each rendered icon, with the stroke at the root taken by round
+two's `widths()` on the ink below the fork. Written to
+[`d-taper/measurements.json`](d-taper/measurements.json).
+
+| | Stroke at root | Median stroke | Ink box (w × h) | Ink area | Leaf share | Coil at 180 px: clear radius · mouth gap | At 60 px |
+|---|---|---|---|---|---|---|---|
+| D-suite, round two | 0.0654 | 0.0646 | 0.564 × 0.692 | 0.107 | 23.1 % | 9.8 · 2.8 px | 3.3 · 0.9 px |
+| T1 | 0.0654 | 0.0518 | 0.554 × 0.692 | 0.091 | 27.1 % | 12.4 · 5.8 px | 4.1 · 2.0 px |
+| T2 | 0.0654 | 0.0459 | 0.551 × 0.692 | 0.087 | 28.4 % | 13.2 · 6.7 px | 4.4 · 2.2 px |
+| T3 | 0.0654 | 0.0420 | 0.547 × 0.692 | 0.083 | 29.8 % | 13.9 · 7.5 px | 4.6 · 2.5 px |
+| *The suite (§1)* | | *0.052–0.079, median 0.065* | *long side 0.55–0.82* | *0.09–0.14, median 0.11* | *17–24 %* | | |
+
+The clear radius runs from the coil's centre at its tip to the nearest ink. The mouth gap
+runs from the tip's round end to the nearest other ink, which is the crozier's own rising
+stalk.
+
+- **The root holds the suite's weight in all three**, at 0.0654.
+- **The median stroke falls with the taper.** T1 lands on Pfish's 0.052, the lightest in
+  the suite. T2 (0.046) and T3 (0.042) fall below the suite's range, T3 almost back to
+  today's 0.040.
+- **Ink area.** T1's 0.091 stays inside the suite's 0.09–0.14; T2 and T3 fall just under.
+- **The leaf's share rises from 23 % to 27–30 %, though the leaf has not changed**: the
+  stems lose a fifth (T1) to nearly a third (T3) of their ink. This is the measurable form of "chunkier by
+  comparison". It also takes the white past the suite's measured 17–24 %, and past E's
+  25.5 %, which round two called the top of the range. §3.6 sets no number.
+- **The coil's eye opens.** Round two holds the inner radius at 1.33 strokes; against the
+  thinner tip that is 2.4 tip widths in T1, 3.2 in T2 and 4.4 in T3. At 60 px round two's
+  tip came within 0.9 px of its own stalk, and the taper more than doubles that gap.
+
+### A heavier leaf: tried, not offered
+
+T2 was drawn with the leaf at 0.85 and at 1.0 of the base stroke. Neither reads better.
+At 60 px the leaf's eye, about three pixels across at 0.72, narrows to two at 0.85 and to
+a one-pixel slit at 1.0, where the leaf starts to read as a solid white shape. The leaf's
+share goes to 32 % and 36 %. The taper alone already makes the leaf the
+heaviest-looking element, so the leaf stays at round two's 0.72 and there is no separate
+option.
+
+### Small sizes: untapered
+
+**The small drawing (16, 32 and 48 px) and the favicon are round two's, untapered, for every
+strength.** Their files are identical to `d-suite`'s apart from their titles.
+
+- **§3.2a requires it.** Its fifth condition makes a small variant with the taper dialled
+  back "required, not optional", because below about 24 px the thin section nears one
+  device pixel and the stroke reads as broken.
+- **The numbers.** On the 16 px favicon the base stroke is 1.49 px. Carried down, the coil's
+  tip would be 0.82 px (T1), 0.63 px (T2) or 0.45 px (T3); at 32 px, 1.64, 1.25 or 0.90 px.
+  The rows beneath the chosen one in `small-sizes.png` show each.
+- **Why not a gentler taper.** Holding the tip to a pixel at 16 px allows a tip of at most
+  0.67 of the base, Pfish's own ratio. At 16 px a stroke going from 1.5 to 1.0 px shows only
+  as a greyer tip, and at 32 px it does not earn a second drawing. Untapered keeps the
+  favicon the same whichever strength is chosen, and it is what Pfish does.
+
+### At 60 px: what reads well and what does not
+
+The 60 px row, enlarged 4×, in `compare.png` shows both.
+
+- **Well: T1 and T2.** The coil is open, with a 2 px gap at its mouth, so it reads as a
+  crozier uncurling. Round two's coil at the same size nearly closes on its own stalk into a
+  "p" with a blob at its eye. The taper mends that.
+- **Badly: T3.** Its last quarter turn is about 1.2 px wide and lights as a one-pixel line,
+  partly grey, that fades into the eye. The round end is lost and the coil looks drawn with
+  a finer pen than the rest. At 40 px it drops below a pixel. It is kept as the bracket that
+  shows where the taper stops working, not as a candidate.
+- **The stem's taper does not show at 60 px in any strength.** The neck is 3.2, 2.9 or
+  2.7 px against 3.9 at the root, under a pixel of difference. At that size the leaf reads
+  chunkier because the coil is lighter, not because of the neck. The neck shows at 180 px
+  and above, and in the crops.
+- **Beside the suite** (`suite-row.png`), T1's ink area (0.091) matches FlagFans' (0.09),
+  and it holds its place in the row at 60 px. T2 and T3 are a shade lighter than everything
+  beside them, which shows most next to UnCubed and Animal Rescue Centre.
+
+### Recommendation: T2
+
+- **It does what Marcus asked at the sizes he will see it.** The coil thins visibly at 360,
+  180 and 60 px. The stem reaches the leaf at about the leaf's own line (0.75 against 0.72),
+  so the leaf, a closed shape at the weight of the line that meets it, is the chunkiest
+  thing in the mark. T1's neck (0.81) is still heavier than the leaf's line; T3's (0.70) is
+  lighter, and its coil breaks up.
+- **It holds at 60 px**: the tip is 1.6 px and the mouth gap 2.2 px. At 40 px the tip is
+  still 1.1 px.
+- **Its costs are known.** The median stroke (0.046) and ink area (0.087) sit just under the
+  suite's measured ranges, and the leaf takes 28 % of the ink. The root keeps the suite's
+  weight, which is where the brief asked the match to hold.
+
+**T1 is the fallback** if keeping every suite measurement inside its range matters more
+than the strength of the effect: its median stroke is Pfish's, its ink area is in range,
+and its coil still visibly tapers. T3 is not recommended.
+
+### The decision for Marcus
+
+1. **Which strength?** T2, medium (recommended) · T1, gentle · T3, strong · none: keep
+   round two's untapered D-suite.
+2. **The small drawing and favicon untapered for every strength, per §3.2a's fifth
+   condition?** Yes (recommended) · a gentle taper to Pfish's 0.67.
+3. **Shall I make the §3.2a amendment below on `uncubed` `integration` once you have
+   chosen?** Yes (recommended) · I'll do it.
+
+### Proposed amendment to `suite-brand.md` §3.2a
+
+A proposal only: nothing in `uncubed` has been touched.
+
+**Why it is needed.** §3.2a's first condition asks for modulation mirrored about the mark's
+own axis. A growth taper is not mirrored: each stroke thins one way, from where it grows to
+its tip. As written, Peace Garden's taper fails the first condition and meets the other
+four. The amendment adds a second admissible kind rather than loosening "mirrored", so
+irregular modulation stays excluded.
+
+**§3.2, first bullet.** "A mark may carry **deliberate, mirrored stroke modulation** where
+it earns it" becomes:
+
+> A mark may carry **deliberate stroke modulation, mirrored or following growth,** where it
+> earns it — see §3.2a, which sets the conditions and is not optional.
+
+**§3.2a, condition 1** becomes:
+
+> 1. **It is mirrored about the mark's own axis, or it follows growth.** Mirrored: whatever
+>    the top of the form does, the bottom does. Following growth: in a mark drawn as
+>    something growing, each modulated stroke is thickest where it grows from and thins
+>    steadily towards its free end, and no stroke thickens again. Modulation that is merely
+>    irregular is covered by neither.
+
+**§3.2a, Pfish's heading**, "Pfish, the first and so far only app to use it", becomes
+"Pfish, the first app to use it", and a second record follows Pfish's:
+
+> **Peace Garden, the second app to use it and the first under the growth clause**
+> (Recorded, 2026-10-__):
+>
+> | | |
+> |---|---|
+> | Taper strength | τ = 0.58: the crozier's tip at 1 − τ of the base stroke, the stem's neck at 1 − 0.43 τ |
+> | Contrast | **2.38** on the crozier (thinnest 0.027, thickest 0.065 of the tile); **1.33** on the stem |
+> | Profile | smoothstep along each stroke's length; full weight from the root to the fork; the crozier thins to its eye, the stem to the leaf; follows growth, not mirrored |
+> | Small-size variant | the untapered drawing at 16, 32 and 48 px; carried down, the crozier's tip would be **0.63 device pixels** on a 16 px favicon |
+> | Weight | still a number: the outline is generated from the centreline and the profile, so a new base stroke is a rerun, not a redraw |
+
+**Knock-on edits to the amendment proposed in §6**, if T2 is chosen: the §3.4 block's
+"The stroke is 0.065 of the tile" gains "at the root, tapering under §3.2a"; the §3.6 row's
+"about a quarter of the ink" becomes "about 28 % of the ink, 23 % before the taper".
+
+### Files in `d-taper/`
+
+- [`make_taper.py`](d-taper/make_taper.py) writes everything below. Run it alone from the
+  worktree root: `python3 design/logo-2026-10-11/d-taper/make_taper.py`. Round two's scripts
+  are unchanged.
+- `t1/`, `t2/`, `t3/`: each holds `icon-1024.svg`; `d-taper-tN.svg` and
+  `d-taper-tN-light-ground.svg`; `d-taper-tN-small.svg` and
+  `d-taper-tN-small-light-ground.svg`; `d-taper-tN-favicon.svg`;
+  `d-taper-tN-one-colour.svg`; `d-taper-tN-lockup.svg` and
+  `d-taper-tN-lockup-light-ground.svg`; and `in-context.png`. There is no contact sheet this
+  round; the lockups are in the SVGs.
+- `compare.png`, `suite-row.png`, `small-sizes.png` and `measurements.json`.
+
+The sheets were rendered on a Mac without Inter, so their labels are set in the system's SF.
+**Every PNG is under 450 KB.**

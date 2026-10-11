@@ -43,7 +43,7 @@ import math
 import sys
 import tempfile
 from contextlib import contextmanager
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -69,6 +69,9 @@ for _f in (R1.FONT, "/System/Library/Fonts/SFNS.ttf",
 
 # ------------------------------------------------------------------ dials
 
+# The brief's starting pairs (stem neck, coil tip) were 0.85/0.55, 0.75/0.42
+# and 0.65/0.30. Fitted to one parameter through T2's pair, T1's neck lands at
+# 0.81 and T3's at 0.70; the coil tips are as briefed.
 STEM_SHARE = 0.43    # the stem's neck thins by this share of the coil's taper
 SMALL = None         # the small drawing (16, 32 and 48 px): untapered, §3.2a(5)
 
@@ -241,19 +244,12 @@ def icon_frame(small=False):
     return ML.place(ML.meeting(small), box, ML.TILE_STROKE["suite"] / ML.INK_HEIGHT)
 
 
-def favicon_frame(size):
-    """The small drawing placed as the favicon, in device pixels at `size`."""
-    placed, stroke = ML.place(ML.meeting(True), (17, 13, 74, 74),
-                              ML.TILE_STROKE["suite"] / ML.INK_HEIGHT * 1.35)
-    k = size / 100
-    return [([(x * k, y * k) for x, y in pts], r, c) for pts, r, c in placed], stroke * k
-
-
 def eye(taper, size):
     """The coil's eye at `size` px. Returns (clear radius, mouth gap) in px:
     the clear radius is from the coil's centre of curvature at its tip to the
     nearest ink; the mouth gap is from the tip's round end to the nearest
-    other ink of the crozier. Both must stay above about a pixel at 60."""
+    other ink, leaving out the tip's own last two strokes of length. Both
+    must stay above about a pixel at 60."""
     placed, stroke = icon_frame()
     k = size / 1024
     crozier = np.asarray(placed[0][0]) * k
