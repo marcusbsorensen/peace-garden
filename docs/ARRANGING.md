@@ -977,6 +977,18 @@ switch on the screen makes the hour a thing you set. That was outweighed:
 Settings cannot be reached from the garden, and somebody who wants to see their
 lanterns lit is looking at the lanterns. The clock is still the default.
 
+**Superseded 11 October: the turns are out of the tray** (Marcus). The plus is in
+the bottom left and the two quarter-turns in the bottom right, on one row at the
+foot, whether the tray is open or shut; the tray opens above them. Putting the
+view back stays in the tray beside the light, because it is disabled until the
+view has moved. The row is pinned left to right in every language, and so is the
+plot itself, which until then mirrored its plants' positions (and not its ground)
+under a right-to-left layout. A turn is the screen's direction, as the web
+garden's pad is. The same day the figures in the tray gained a blurred plate
+each, so they stop passing for stars at night, and the grounds came up from 0.42
+to full strength with a short bar under the chosen one.
+`design/garden-controls-2026-10-11/` has the pictures and the choices still open.
+
 **The turn is remembered, on the phone.** Marcus wants to choose a favourite
 side and have the garden open on it. It is kept in the phone's own settings
 rather than on the bed, because it is how somebody likes to look at their
