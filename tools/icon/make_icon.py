@@ -355,7 +355,7 @@ def place(lines, box, stroke):
 
 
 # The paths. A path is a list of segments in absolute coordinates: ("M", p),
-# ("C", c1, c2, p) or ("A", r, large, sweep, p). The SVG writes them as they are;
+# ("L", p), ("C", c1, c2, p), ("A", r, large, sweep, p) or ("Z",). The SVG writes them as they are;
 # the PNG flattens the same segments, so the two draw the same curve.
 
 def thin(points, every):
@@ -426,12 +426,21 @@ def outline(points, width_at, step):
     q = np.sqrt(np.clip(1 - dr ** 2, 0, 1))
     a = p + r[:, None] * (-dr[:, None] * tangent + q[:, None] * normal)
     b = p + r[:, None] * (-dr[:, None] * tangent - q[:, None] * normal)
-    tip_span = 2 * math.atan2(q[-1], -dr[-1])
-    root_span = 2 * math.pi - 2 * math.atan2(q[0], -dr[0])
+    # **Each round end is two quarter arcs, through the point straight ahead of
+    # the line's end, not one half arc.** Where the width is not changing — the
+    # root, and the tip, where both profiles arrive flat — the end is an exact
+    # semicircle, and one SVG arc across a diameter is ill-posed: which of the
+    # two arcs is drawn hangs on a flag decided by rounding, and a radius
+    # written to two places a hair longer than half the chord flattens the end
+    # by up to a pixel. The design files carry that flattening; split, the end
+    # is round whatever the rounding.
+    tip = tuple(p[-1] + r[-1] * tangent[-1])
+    root = tuple(p[0] - r[0] * tangent[0])
     side_a = spline([tuple(v) for v in a], False)
     side_b = spline([tuple(v) for v in b[::-1]], False)
-    return (side_a + [("A", r[-1], tip_span > math.pi, False, tuple(b[-1]))]
-            + side_b[1:] + [("A", r[0], root_span > math.pi, False, tuple(a[0])), ("Z",)])
+    return (side_a + [("A", r[-1], False, False, tip), ("A", r[-1], False, False, tuple(b[-1]))]
+            + side_b[1:]
+            + [("A", r[0], False, False, root), ("A", r[0], False, False, tuple(a[0])), ("Z",)])
 
 
 def profiles(tendril, stem, stroke):
@@ -543,6 +552,8 @@ def path_data(path):
         kind = segment[0]
         if kind == "M":
             out.append(f"M{segment[1][0]:.2f} {segment[1][1]:.2f}")
+        elif kind == "L":
+            out.append(f"L{segment[1][0]:.2f} {segment[1][1]:.2f}")
         elif kind == "C":
             (a, b), (c, d), (x, y) = segment[1:]
             out.append(f"C{a:.2f} {b:.2f} {c:.2f} {d:.2f} {x:.2f} {y:.2f}")
@@ -604,6 +615,9 @@ def flatten(path, per_curve=16):
                 runs.append(run)
             here = np.array(segment[1])
             run = [here]
+        elif kind == "L":
+            here = np.array(segment[1])
+            run.append(here)
         elif kind == "C":
             p0, p1, p2, p3 = here, *(np.array(v) for v in segment[1:])
             t = np.linspace(0, 1, per_curve + 1)[1:, None]
@@ -639,6 +653,18 @@ def arc_points(start, end, r, large, sweep):
     steps = max(2, int(math.ceil(abs(math.degrees(delta)) / 3)))
     angles = a0 + delta * np.linspace(0, 1, steps + 1)[1:]
     return list(centre + r * np.column_stack([np.cos(angles), np.sin(angles)]))
+
+
+def tile_path(frame, radius):
+    """The ground's square, its corners rounded by `radius`, as a path, clockwise."""
+    x, y, side = frame
+    right, bottom, c = x + side, y + side, radius
+    path = [("M", (x + c, y)),
+            ("L", (right - c, y)), ("A", c, False, True, (right, y + c)),
+            ("L", (right, bottom - c)), ("A", c, False, True, (right - c, bottom)),
+            ("L", (x + c, bottom)), ("A", c, False, True, (x, bottom - c)),
+            ("L", (x, y + c)), ("A", c, False, True, (x + c, y)), ("Z",)]
+    return [segment for segment in path if segment[0] != "A" or c]
 
 
 def coverage(part, to_canvas, canvas, scale):
@@ -707,13 +733,11 @@ def render(mark, stops, size, ground=GROUND, leaf_ink=LEAF, frame=(0.0, 0.0, TIL
     colour = np.zeros((size, size, 3))
     alpha = np.zeros((size, size, 1))
     if ground is not None:
-        tile = Image.new("L", (canvas, canvas), 0)
-        if radius is None:
-            tile.paste(255, (0, 0, canvas, canvas))
-        else:
-            ImageDraw.Draw(tile).rounded_rectangle(
-                [0, 0, canvas - 1, canvas - 1], radius=radius * scale, fill=255)
-        cover = np.asarray(tile.reduce(supersample), dtype=np.float64)[..., None] / 255
+        # The tile is a path like any other, so its corners are drawn by the
+        # same rasteriser as the mark.
+        tile = Part(tile_path(frame, radius or 0.0), "ground")
+        mask = coverage(tile, to_canvas, canvas, scale).reduce(supersample)
+        cover = np.asarray(mask, dtype=np.float64)[..., None] / 255
         colour = np.array(from_hex(ground)) * cover
         alpha = cover
     ink = np.array(from_hex(leaf_ink))
