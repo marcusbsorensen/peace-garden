@@ -124,6 +124,9 @@ def main():
         for ground in (DARK, LIGHT):
             checks.append((f"favicon, favicon.ico", lambda s: raster_file(SITE / "favicon.ico", s),
                            DESIGN / "d-taper-coil2-a-favicon.svg", size, ground))
+            checks.append((f"favicon, assets/favicon.svg",
+                           lambda s: raster_svg(SITE / "assets/favicon.svg", s),
+                           DESIGN / "d-taper-coil2-a-favicon.svg", size, ground))
     results = [compare(name, ours(size), raster_svg(reference, size), size, ground)
                for name, ours, reference, size, ground in checks]
     failed = results.count(False)
