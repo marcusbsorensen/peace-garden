@@ -5,6 +5,154 @@ import SwiftUI
 // opens on a light. `PlotView` lays them out; these are only what they are.
 // `docs/ARRANGING.md` §*The tray, and turning a figure*.
 
+/// What the garden screen's controls are found by in a test. Never shown, and
+/// never read aloud: VoiceOver reads each control's label.
+enum PlotControls {
+    static let tray = "garden.tray"
+    static let turnAnticlockwise = "garden.turn.anticlockwise"
+    static let turnClockwise = "garden.turn.clockwise"
+    static let reset = "garden.reset"
+}
+
+/// The backing each figure in the tray stands on.
+///
+/// **Why there is one** (Marcus, 11 October): at night a lantern's flame or a
+/// glowing hare in the row is a bright point on a sky full of them, and which
+/// bright points could be put on the garden was hard to tell. By day the
+/// clouds drift behind the row the same way. A plate under each figure takes
+/// the sky out from behind it and says *this is a thing to pick up*.
+///
+/// **A blurred material rather than a flat fill.** Behind a blur the stars
+/// and the clouds go to nothing, which is the whole job, while the sky's own
+/// colour still comes through, so the plate is a piece of the sky made quiet
+/// rather than a hole cut in it. A rounded rectangle, because the tray is
+/// chrome and not the scene, and its corners are the radius every plate and
+/// capsule in the app's chrome already has.
+///
+/// Three strengths were drawn and Marcus is choosing between them
+/// (`design/garden-controls-2026-10-11/`); `chosen` is the one built, and the
+/// others, and the row as it was, are a word away.
+enum FigurePlate: String, CaseIterable {
+    /// **A**: a thin blur, darkened a little, with a hairline edge.
+    case soft
+    /// **B**: the thinnest blur and nothing else, no edge.
+    case faint
+    /// **C**: a thicker blur, darker, with the edge.
+    case firm
+    /// No plate: the row as it was until 11 October.
+    case none
+
+    static let chosen: FigurePlate = .soft
+
+    /// What is drawn: `chosen`, or in a Debug build whatever `-pgPlate` names,
+    /// so the three can be photographed from one build.
+    static var current: FigurePlate {
+        #if DEBUG
+        if let tried = UserDefaults.standard.string(forKey: "pgPlate").flatMap(FigurePlate.init(rawValue:)) {
+            return tried
+        }
+        #endif
+        return chosen
+    }
+
+    private var material: Material {
+        switch self {
+        case .faint, .soft, .none: return .ultraThinMaterial
+        case .firm: return .thinMaterial
+        }
+    }
+
+    /// The ground's colour laid over the blur, so a glowing figure has
+    /// something darker than itself to glow against.
+    private var tint: Double {
+        switch self {
+        case .faint, .none: return 0
+        case .soft: return 0.22
+        case .firm: return 0.42
+        }
+    }
+
+    private var hasEdge: Bool { self == .soft || self == .firm }
+
+    /// How far the plate reaches past the figure's button: enough above for
+    /// the paper lamp's halo, which hangs past the top.
+    var reach: EdgeInsets {
+        self == .none ? EdgeInsets() : EdgeInsets(top: 6, leading: 3, bottom: 2, trailing: 3)
+    }
+
+    /// Between one button and the next, so the plates stand apart rather than
+    /// running into one bar.
+    var spacing: CGFloat { self == .none ? 10 : 12 }
+
+    private static let corner: CGFloat = 13
+
+    @ViewBuilder
+    var plate: some View {
+        if self != .none {
+            let shape = RoundedRectangle(cornerRadius: Self.corner, style: .continuous)
+            shape
+                .fill(material)
+                .overlay(shape.fill(Chrome.ground.opacity(tint)))
+                .overlay(shape.strokeBorder(Chrome.hairline.opacity(hasEdge ? 0.7 : 0), lineWidth: 0.75))
+                .padding(EdgeInsets(top: -reach.top, leading: -reach.leading,
+                                    bottom: -reach.bottom, trailing: -reach.trailing))
+                .allowsHitTesting(false)
+                .accessibilityHidden(true)
+        }
+    }
+}
+
+/// How the row of grounds says which one the garden stands on.
+///
+/// **Until 11 October the rest stood back at 0.42**, and Marcus could not tell
+/// them apart: a landscape at under half strength on a night sky is a dark
+/// lozenge, and by day the sky's blue came through every one of them alike.
+/// Each treatment brings them up; they differ in how the chosen one is still
+/// told apart. Being decided, as `FigurePlate` is.
+enum GroundMarking: String, CaseIterable {
+    /// **A**: every ground at full strength, and a short bar under the chosen
+    /// one — the mark a row of tabs uses for *this one*. A bar and not a dot,
+    /// because at night a white dot under a landscape is one more star.
+    case bar
+    /// **B**: the rest brought up to three quarters, and nothing added.
+    case brighter
+    /// **C**: every ground at full strength, and the chosen one standing in a
+    /// pool of light, the garden's own way of saying *look here*.
+    case pool
+    /// The rest at 0.42: the row as it was until 11 October.
+    case standBack
+
+    static let chosen: GroundMarking = .bar
+
+    /// `chosen`, or in a Debug build whatever `-pgGrounds` names.
+    static var current: GroundMarking {
+        #if DEBUG
+        if let tried = UserDefaults.standard.string(forKey: "pgGrounds").flatMap(GroundMarking.init(rawValue:)) {
+            return tried
+        }
+        #endif
+        return chosen
+    }
+
+    /// How strongly the grounds that are not chosen are drawn.
+    var others: Double {
+        switch self {
+        case .bar, .pool: return 1
+        case .brighter: return 0.75
+        case .standBack: return 0.42
+        }
+    }
+
+    /// The bar: as long as a word is tall, and as thick as a stroke.
+    static let barSize = CGSize(width: 14, height: 2.5)
+
+    /// Between the foot of a ground and the top of its bar.
+    static let barGap: CGFloat = 5
+
+    /// Room under the row for the bar.
+    var footRoom: CGFloat { self == .bar ? Self.barSize.height + Self.barGap + 2 : 0 }
+}
+
 /// The plus at the foot of the garden that opens the tray, and the minus that
 /// shuts it again.
 ///

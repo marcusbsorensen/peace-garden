@@ -519,6 +519,68 @@ struct TurnGlyph: Shape {
     var clockwise = true
     var aroundPlot = false
 
+    /// **A turn is the screen's, not the reading's.** Clockwise is clockwise
+    /// in Hebrew too, and SwiftUI mirrors a custom `Shape` under a right-to-left
+    /// layout unless it is told not to — which drew the anticlockwise mark on
+    /// the button that turns the plot clockwise.
+    var layoutDirectionBehavior: LayoutDirectionBehavior { .fixed }
+
+    /// Screen angles grow clockwise. The gap is at the top: the stroke runs
+    /// from just right of it, round the bottom, to just left of it, and the
+    /// head points back across the gap the way it is going.
+    static let start = Double.pi * 1.70, end = Double.pi * 3.30
+
+    /// How far the head reaches back along the stroke and out to either side
+    /// of it, in radii of the circle. **Shorter than it was** (0.55 and 0.42
+    /// until 11 October): once the head sat square on the stroke, its inner
+    /// barb pointed down at the plot's corner and touched it, and an eighth off
+    /// the head and the plot gives back the clearance there was.
+    static let back = 0.50, spread = 0.34
+
+    /// Half the plot's width in the middle, in radii. 0.62 until 11 October,
+    /// for the same reason.
+    static let plotHalfWidth = 0.54
+
+    /// How far the head is turned in from the tangent at the tip, towards the
+    /// centre.
+    ///
+    /// **Why it is turned at all** (Marcus, 11 October: the heads *look kinked
+    /// inward*). Square to the tangent at the tip, the head is symmetric about
+    /// a straight line, and the stroke behind the tip is not straight: it curves
+    /// away inwards. So the inner barb ran alongside the stroke, a fifth of a
+    /// radius off it, and the outer one stood half a radius out — a head bent
+    /// in towards the middle. Turned in, both free ends stand the same distance
+    /// from the circle and the barbs stay one length.
+    ///
+    /// For a unit circle with the tip at `(1, 0)`, a barb end at `back` and
+    /// `±spread` in a frame turned by `lean` is `1 + b² + s² − 2b·sin(lean) ±
+    /// 2s·cos(lean)` from the centre, squared. Setting the outer end as far
+    /// outside the circle as the inner is inside it comes to
+    /// `sin(lean) = b(1 − √(1 − s²)) / s²` — very nearly half the angle the
+    /// stroke turns through over the head's length, which is the chord's
+    /// direction. `design/garden-controls-2026-10-11/measure-arrowheads.py`
+    /// has the numbers.
+    static var lean: Double {
+        asin(back * (1 - (1 - spread * spread).squareRoot()) / (spread * spread))
+    }
+
+    /// The tip and the two barbs' free ends, outer first, for the clockwise mark
+    /// on a circle of `radius` round `centre`.
+    static func head(centre: CGPoint, radius: CGFloat) -> (tip: CGPoint, ends: [CGPoint]) {
+        let tip = CGPoint(x: centre.x + radius * cos(end), y: centre.y + radius * sin(end))
+        let along = CGVector(dx: -sin(end), dy: cos(end))
+        let out = CGVector(dx: cos(end), dy: sin(end))
+        let s = sin(lean), c = cos(lean)
+        // Backwards along the stroke, turned in by `lean`, and square to that.
+        let backwards = CGVector(dx: -along.dx * c - out.dx * s, dy: -along.dy * c - out.dy * s)
+        let outwards = CGVector(dx: out.dx * c - along.dx * s, dy: out.dy * c - along.dy * s)
+        let ends = [1.0, -1.0].map { side in
+            CGPoint(x: tip.x + (backwards.dx * back + outwards.dx * spread * side) * radius,
+                    y: tip.y + (backwards.dy * back + outwards.dy * spread * side) * radius)
+        }
+        return (tip, ends)
+    }
+
     func path(in rect: CGRect) -> Path {
         let box = markBox(rect, 1)
         let centre = CGPoint(x: box.midX, y: box.midY)
@@ -527,33 +589,25 @@ struct TurnGlyph: Shape {
             clockwise ? point : CGPoint(x: 2 * centre.x - point.x, y: point.y)
         }
 
-        // Screen angles grow clockwise. The gap is at the top: the stroke runs
-        // from just right of it, round the bottom, to just left of it, and the
-        // head points back across the gap the way it is going.
-        let start = Double.pi * 1.70, end = Double.pi * 3.30
         let steps = 32
         var path = Path()
         for step in 0...steps {
-            let angle = start + (end - start) * Double(step) / Double(steps)
+            let angle = Self.start + (Self.end - Self.start) * Double(step) / Double(steps)
             let point = mirrored(CGPoint(x: centre.x + radius * cos(angle),
                                          y: centre.y + radius * sin(angle)))
             if step == 0 { path.move(to: point) } else { path.addLine(to: point) }
         }
 
         // The head: two short strokes back from the tip, either side of the
-        // way it is travelling.
-        let tip = CGPoint(x: centre.x + radius * cos(end), y: centre.y + radius * sin(end))
-        let along = CGVector(dx: -sin(end), dy: cos(end))
-        let out = CGVector(dx: cos(end), dy: sin(end))
-        let back = radius * 0.55, spread = radius * 0.42
-        for side in [-1.0, 1.0] {
-            path.move(to: mirrored(CGPoint(x: tip.x - along.dx * back + out.dx * spread * side,
-                                           y: tip.y - along.dy * back + out.dy * spread * side)))
-            path.addLine(to: mirrored(tip))
+        // way the stroke is travelling where they reach.
+        let head = Self.head(centre: centre, radius: radius)
+        for end in head.ends {
+            path.move(to: mirrored(end))
+            path.addLine(to: mirrored(head.tip))
         }
 
         if aroundPlot {
-            let w = radius * 0.62, h = w * 0.58
+            let w = radius * Self.plotHalfWidth, h = w * 0.58
             path.move(to: CGPoint(x: centre.x, y: centre.y - h))
             path.addLine(to: CGPoint(x: centre.x + w, y: centre.y))
             path.addLine(to: CGPoint(x: centre.x, y: centre.y + h))
