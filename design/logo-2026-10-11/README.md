@@ -616,9 +616,111 @@ because the coil takes over the mark and blurs at 40 px.
 2. **The small drawing and favicon?** Keep round two's (recommended) · take the extra curl
    with a bigger coil.
 
+**Decided: Marcus chose C2, 11 October**, with an earlier taper and a lower fork; see the
+next subsection.
+
 **Files.** `make_coil.py` writes `c1/`, `c2/` and `c3/` (T2's file set, prefixed
 `d-taper-cN`, with `in-context.png` in `c2/` only), `curl-compare.png`,
 `curl-suite-row.png`, `curl-small-sizes.png` and `coil-measurements.json`. Run it after
 `make_taper.py`, from the worktree root. `make_taper.py`'s sheet functions now take their
 columns and outputs as arguments; its own files come out byte-identical. **Every PNG is
 under 450 KB.**
+
+### Round two and seven-eighths: earlier taper, lower fork
+
+**Marcus chose C2, 11 October**, and asked for two changes. In his words:
+
+> We will need to introduce the taper faster so that we don't have the very thick line all
+> the way through to the top of that tendril and only narrowing at that point, as it looks
+> too heavy in comparison to the relatively small flower head on the left. So perhaps also
+> move that tendril a bit down so it splits from the main stem further down, and start the
+> taper sooner, on the basis of the extra half turn option.
+
+**Decide from [`d-taper/coil2-choice.png`](d-taper/coil2-choice.png).** It shows A, B and C,
+then D (C2 as it is now), then today's icon for reference, on both home-screen grounds, at
+240 px and at 60 px. The 1024 px crops of each coil and fork are in
+[`coil2-compare.png`](d-taper/coil2-compare.png), and A beside the app is in
+[`coil2-a/in-context.png`](d-taper/coil2-a/in-context.png).
+
+**He was right about the weight.** In C2 the tendril is still 0.91 of the base stroke at the
+top of its rise, where the stem beside it has already thinned to 0.81. The tendril was the
+heavier line at that height.
+
+**What changed, in the tendril only.** The stem, its own taper (neck 0.75) and the leaf are
+C2's, point for point.
+
+- **An earlier taper.** The tendril now thins along an ease-out, 1 − (1 − u)^2.5 over its
+  length u, starting at the fork. That front-loads the thinning, where round two and a
+  half's smoothstep left most of it to the coil. By the top of its rise the tendril is 0.69
+  of the base, against the stem's 0.81–0.88 at the same height. It then settles into the
+  same tip, 0.42 of the base, without a wedge. A thinner tip would fall under a pixel at
+  40 px, so the tip stays at 0.42.
+- **A lower fork.** Round two takes the fork 22 of the stem's 120 steps up. Lowering the fork
+  alone barely moves the visible split, because the tendril leaves almost parallel to the
+  stem. So in A and B it also leaves a little wider and bends a little less, entering the
+  coil on much the same heading.
+- **A slightly smaller coil.** The thinner turns need less room, so the half turn more fits
+  an outer radius of 27 units, not C2's 29. The coil is now about T2's size.
+
+| | Fork (steps of 120) | Fork, above the root's end | Visible split, above the root's end | How the tendril leaves | Taper | Tendril at the top of its rise (stem there) | Tip |
+|---|---|---|---|---|---|---|---|
+| **A, lower fork** | 14 | 13 % of the mark's height | 34 % | 14° off the stem's line, bending 18° over 52 units | ease-out from the fork | 0.69 (0.84) | 0.42 |
+| **B, lowest fork** | 10 | 10 % | 29 % | 17°, bending 17° over 48 units | ease-out from the fork | 0.70 (0.88) | 0.42 |
+| **C, fork as now** | 22 | 17 % | 42 % | 8°, bending 23° over 52 units, as C2 | ease-out from the fork | 0.69 (0.81) | 0.42 |
+| D, C2 as now | 22 | 17 % | 43 % | as C2 | smoothstep | 0.91 (0.81) | 0.42 |
+
+The visible split is the first point up the tendril whose edge clears the stem's. The angles
+are the stalk's headings off vertical, round two's 0.14 and 0.40 radians in C and D.
+
+| | Mouth gap at 180 · 60 · 40 px | Eye at 180 · 60 px | Coil to stem · to leaf at 60 px | Coil's lowest ink above its fork | Coil (w × h) | Median stroke | Ink area | Leaf share |
+|---|---|---|---|---|---|---|---|---|
+| A | 5.0 · 1.7 · 1.1 | 7.2 · 2.4 | 4.6 · 10.9 px | 0.093 of the tile | 0.277 × 0.251 | 0.034 | 0.090 | 27.5 % |
+| B | 5.0 · 1.7 · 1.1 | 7.2 · 2.4 | 4.5 · 12.6 px | 0.062 | 0.276 × 0.253 | 0.035 | 0.090 | 27.6 % |
+| C | 5.0 · 1.7 · 1.1 | 7.2 · 2.4 | 4.1 · 8.7 px | 0.101 | 0.278 × 0.251 | 0.035 | 0.089 | 27.8 % |
+| D | 5.0 · 1.7 · 1.1 | 7.2 · 2.4 | 3.6 · 8.3 px | 0.092 | 0.306 × 0.272 | 0.046 | 0.099 | 25.1 % |
+
+- **The coil's gaps are C2's.** The mouth is 1.7 px at 60 and 1.1 at 40, the eye 2.4 px at
+  60, and the tip 1.65 px at 60 and 1.10 at 40.
+- **Nothing crowds.** Every coil sits further from the stem than C2's, and further from the
+  leaf. Each stays above its own fork, B closest at 0.062 of the tile.
+- **The root stays at the suite's 0.0654.** The median stroke falls to about 0.034, half the
+  root's, because most of the tendril is now thin. That is under the suite's measured range
+  of 0.052–0.079, and it is the measurable form of a lighter tendril.
+- **The leaf's share returns to about 27.5 %,** close to T2's, so the leaf again reads
+  chunkier than what is below it.
+
+**What reads well and what does not.**
+
+- **Well:** in A, B and C the tendril is plainly the lighter line, and the leaf is the
+  heaviest-looking thing in the mark, as Marcus wanted. A's split sits about a fifth lower
+  than C2's (34 % of the mark's height, against 43 %), and the tendril leaves at a clearer
+  angle.
+- **C** shows the earlier taper alone. The tendril is lighter, but it still splits as high
+  as C2's, so it answers the first request and not the second.
+- **Weak, B:** its fork sits about one stroke above the root's end, the nearest of the three.
+  Its coil sits lowest, 46 px below A's at 1024, so the mark's weight moves down. The tendril
+  starts to look like a second shoot from the base rather than a branch of the stem.
+- **Weak, all three at 40 px:** the coil's gaps are C2's, 1.1 px, so the inner turn still
+  blurs into the one outside it in places.
+
+**The small drawing and favicon stay as round two drew them.** They are untapered, by
+§3.2a's fifth condition, so the earlier taper does not apply. A lower fork was tried in the
+small drawing: at 16 and 32 px it opens the crotch slightly, but the hook then sits level
+with its own fork at a fork of 14 steps, and drops below it at 10. That is not better.
+
+**Recommendation: A.** It answers both requests. The tendril is lighter from the fork up and
+splits a fifth lower, and the coil keeps C2's half turn at about T2's size. The fork stays
+well clear of the root's end, which B does not, and C leaves the split where it was.
+
+**The decision for Marcus.**
+
+1. **Which tendril?** A, lower fork and earlier taper (recommended) · B, lowest fork ·
+   C, fork as now with the earlier taper · D, C2 as it is now.
+
+**Files.** [`make_coil2.py`](d-taper/make_coil2.py) writes `coil2-a/`, `coil2-b/` and
+`coil2-c/` (T2's file set, prefixed `d-taper-coil2-x`, with `in-context.png` in `coil2-a/`
+only), `coil2-choice.png`, `coil2-compare.png` and `coil2-measurements.json`. Run it after
+`make_taper.py` and `make_coil.py`. `make_taper.py`'s `Taper` gained two dials: the
+tendril's ease-out, and where the stem's taper starts when the fork moves. Its root measure
+also gained a fallback for a fork too low for `widths()`. Every earlier file comes out
+byte-identical. **Every PNG is under 450 KB.**

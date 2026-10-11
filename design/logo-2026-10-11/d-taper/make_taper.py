@@ -44,6 +44,7 @@ import sys
 import tempfile
 from contextlib import contextmanager
 from dataclasses import dataclass
+from typing import Optional
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -81,6 +82,13 @@ class Taper:
     tau: float                      # the one strength parameter
     leaf: float = ML.LEAF_WEIGHT    # the leaf's stroke against the stem's base
     stem_share: float = STEM_SHARE
+    # The crozier's profile. 0 is round two and a half's smoothstep, which
+    # leaves most of the thinning to the coil. p > 0 is an ease-out,
+    # 1 − (1 − v)^p, which starts thinning at the fork and front-loads it.
+    coil_ease_out: float = 0.0
+    # Where the stem's own taper starts, as a share of its length. None starts
+    # it at the fork; a number holds it there when the fork moves.
+    stem_taper_from: Optional[float] = None
 
     @property
     def coil_end(self):
@@ -160,12 +168,17 @@ def profiles(strokes, stroke, taper):
     fork = int(np.argmin(np.hypot(*(stem - crozier[0]).T)))
     s = _arclength(stem)
     u_fork = s[fork] / s[-1]
+    u_stem = u_fork if taper.stem_taper_from is None else taper.stem_taper_from
 
     def stem_w(u):
-        return stroke * (1 - (1 - taper.stem_end) * smoothstep((u - u_fork) / (1 - u_fork)))
+        return stroke * (1 - (1 - taper.stem_end) * smoothstep((u - u_stem) / (1 - u_stem)))
 
     def coil_w(u):
-        return stroke * (1 - (1 - taper.coil_end) * smoothstep(u))
+        if taper.coil_ease_out:
+            ease = 1 - (1 - np.clip(u, 0.0, 1.0)) ** taper.coil_ease_out
+        else:
+            ease = smoothstep(u)
+        return stroke * (1 - (1 - taper.coil_end) * ease)
 
     return coil_w, stem_w, u_fork
 
@@ -300,6 +313,13 @@ def measure_icon(path, draw=None):
     band = np.zeros_like(ink)
     band[int(math.ceil(fork_y)):] = True
     w = ME.widths(ink & band)
+    if w is None:
+        # A fork this low leaves too short a band for `widths()`'s ridge, so
+        # take the same ridge from the whole ink and keep the part in the band.
+        from scipy import ndimage
+        dt = ndimage.distance_transform_edt(ink)
+        ridge = (dt == ndimage.maximum_filter(dt, size=3)) & (dt >= 1.5) & band
+        w = (float(np.median(dt[ridge]) * 2 - 1),)
     m["stroke_root"] = round(w[0] / 1024, 4)
     return m
 
