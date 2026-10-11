@@ -98,7 +98,7 @@
       -->
       <header class="masthead bar">
         <a class="bar__home" href="/">
-          <img class="mark" src="/assets/icon.svg" alt="" width="44" height="44" />
+          <img class="mark" src="/assets/mark-dark.svg" alt="" width="44" height="44" />
           <span class="wordmark">Peace Garden</span>
         </a>
         <!--
