@@ -693,6 +693,11 @@ final class LoadingTests: XCTestCase {
             let still = ImageRenderer(content: panel(Fiddlehead.still))
             still.scale = 3
             try write(still.uiImage, "busy-still-\(mode)")
+            // A question for Marcus, not a change: the still with its leaf lifted
+            // too, small enough to stay inside the waiting mark's own fit.
+            let lifted = ImageRenderer(content: panel(Fiddlehead.Pose(open: 0.9, rise: 0.5, lift: 1)))
+            lifted.scale = 3
+            try write(lifted.uiImage, "busy-still-lifted-\(mode)")
 
             // The two open choices on the waiting mark, at 3×, a phone's own
             // pixels: three points of the breath and the still, in each dress.
@@ -736,6 +741,24 @@ final class LoadingTests: XCTestCase {
             let renderer = ImageRenderer(content: alone(1, style: .standard, halo: halo))
             renderer.scale = 3
             try write(renderer.uiImage, "final-halo-\(String(format: "%03d", Int((halo * 100).rounded())))")
+        }
+
+        // A question for Marcus, not a change: the lifted plant stands taller than
+        // the 10 October arch, so in the same frame everything before the end is
+        // drawn smaller. The same whole screens with the frame 1.8 times as tall
+        // as it is wide instead of 1.5, at the frames the before-and-after uses.
+        let taller = CGSize(width: markFrame.width, height: markFrame.width * 1.8)
+        for index in [9, 21, 30, 39, 45, 51, 60] {
+            let content = ZStack {
+                LaunchMoment.ground
+                FiddleheadView(pose: Fiddlehead.pose(atMoment: Double(index) / Double(momentFrames)),
+                               palette: .onDark, weight: 1.8, halo: 10, style: .standard, fit: .moment)
+                    .frame(width: taller.width, height: taller.height)
+            }
+            .frame(width: phone.width, height: phone.height)
+            let renderer = ImageRenderer(content: content)
+            renderer.scale = 2
+            try write(renderer.uiImage, "taller-dark-\(String(format: "%03d", index))")
         }
 
         try notes.joined(separator: "\n").write(to: folder.appendingPathComponent("notes.txt"),

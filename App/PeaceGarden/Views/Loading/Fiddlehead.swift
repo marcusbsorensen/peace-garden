@@ -346,11 +346,13 @@ enum Fiddlehead {
     /// on `#F6F6F6`, which is `lightGround`, and the leaf, which cannot be warm
     /// white on near-white, is the app's ink.
     ///
-    /// **The halo is 0.04, lowered from 0.07.** At 0.07 the old neon green made
-    /// a glow; the pale sage at 0.07 makes a grey-green haze ten points wide that
-    /// reads as a smudge beside the hairline rather than light coming off it.
-    /// At 0.04 it is a breath of the colour, which is what the backdrop's pass is
-    /// for (`design/loading-2026-10-11/option-halo.png`).
+    /// **The halo is 0.04, lowered from 0.07.** It is a flat band ten points wide,
+    /// not a blur, and in the old neon green at 0.07 that band read as a glow.
+    /// In the pale sage at 0.07 it reads as a grey casing round the line, a
+    /// second edge; at 0.04 it is half as far from the ground (about six levels
+    /// in each channel) and stays a softness the line sits in, which is what the
+    /// pass is for (`design/loading-2026-10-11/option-halo.png`, which shows
+    /// 0.07, 0.04 and none).
     struct Palette: Sendable {
         struct RGB: Sendable, Equatable {
             var r: Double, g: Double, b: Double

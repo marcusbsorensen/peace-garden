@@ -206,6 +206,33 @@ def before_after():
                    "at a phone's own 3x pixels."])
 
 
+def frame_question():
+    """The cost of the lifted ending, and one way to win some of it back: the launch
+    moment at seven points, whole-screen crops at one scale, so sizes compare."""
+    times = [9, 21, 30, 39, 45, 51, 60]
+    rows = []
+    for folder, prefix, name in ((BEFORE, "launch-dark", "10 October"), (NEW, "launch-dark", "frame 1.5x, as built"),
+                                 (NEW, "taller-dark", "frame 1.8x")):
+        if folder is None:
+            continue
+        rows.append([label(scaled(load(f"{prefix}-{i:03d}.png", folder).crop((130, 400, 650, 1288)), 0.4),
+                           f"{name} · {i / FPS:.1f} s") for i in times])
+    return titled(grid(rows), "The lifted plant is taller, so in the same frame the curl is drawn smaller",
+                  ["Whole-screen crops at one scale: 10 October, 11 October as built (the frame half as tall again as "
+                   "it is wide), and 11 October with the frame 1.8 times as tall."])
+
+
+def still_question():
+    rows = []
+    for prefix, name in (("busy-still", "as built: a tendril half open"), ("busy-still-lifted", "lifted, a question")):
+        rows.append([label(scaled(waiting_crop(load(f"{prefix}-{mode}.png")), 0.8), f"{name}", fill=(120, 120, 130))
+                     for mode in ("light", "dark")])
+    return titled(grid(rows), "Reduce Motion's still",
+                  ["Above, as built, as on 10 October.",
+                   "Below, the leaf lifted too: open 0.9, rise 0.5,",
+                   "inside the waiting mark's own fit."])
+
+
 def halo_sheet():
     cells = []
     for value, words in (("007", "halo 0.07, as on 10 October"), ("004", "halo 0.04, chosen"), ("000", "no halo")):
@@ -256,6 +283,8 @@ def main():
     made.append(save_png(final_frame(), "final-frame.png"))
     if BEFORE:
         made.append(save_png(before_after(), "before-after.png"))
+    made.append(save_png(frame_question(), "question-frame.png"))
+    made.append(save_png(still_question(), "question-still.png"))
     made.append(save_png(halo_sheet(), "option-halo.png"))
     made.append(save_png(choice_sheet(
         ["even-outline", "tapered-outline"], ["even", "tapered"],
