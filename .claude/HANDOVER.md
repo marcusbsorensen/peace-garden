@@ -62,3 +62,23 @@ Tonight's batch live and in build 6: the Wild Fields with water, worn paths and 
 - **The wasm is untracked:** rebuild it with `tools/wasm/build.sh` after any SeedCore change, and copy it into any worktree you deploy from.
 - **Never install onto the iPhone 17 Pro** (Marcus's garden). The iPhone Air is scratch.
 - Agents share the scratchpad; give each its own subfolder.
+
+## 10–11 October 2026
+- **Gateways** (main `fd4e995`):
+  - Direction fix: `garden.js` is the single source; the maps read left to right in every language; `check_gateways.mjs` is in CI.
+  - Each neighbouring plot shows a miniature of that area's real layout (`mini.js`), drawn at half light.
+  - Marcus kept all four answers as recommended. A deploy by a Sonnet agent is running; screenshots go to `out/deploy-2026-10-11/`.
+- **Loading animation** (on main, ships in build 7):
+  - A fiddlehead that grows from a fixed point and unfurls over 2.0 s, with no soil, on a dark `#0D0D1F` launch ground in both appearances.
+  - The waiting mark sits on the web-garden request screens.
+  - Switch: `loading.style.v1` = `fixed` or `off`.
+  - **Still to do:** recolour it to the chosen logo's calm ramp, and lift the leaf upward at the end. Marcus said yes to both on 11 October; do them once the logo is chosen.
+- **Logo:**
+  - Round one is in `design/logo-2026-10-10/`. Marcus rejected A, because a downward flower looks sad. He likes D (two fronds) or E (an upward flower head).
+  - He chose the calm sage, moss and straw ramp, a warm-white leaf `#F4F3EF`, and a bare mark on the website. Line weight should match the suite's logos.
+  - Round two is running as cloud routine `trig_01694nUqyCRsYyQCqVT8WNc5` and pushes `claude/logo-2026-10-11`.
+- **Rules from Marcus:**
+  - At most 2 local agents at a time.
+  - Sonnet for routine work; Opus for hard design. Set the model on every dispatch.
+  - Use cloud routines for exploratory design.
+  - No drawn soil under 2D plants (memory `no-drawn-soil`).
