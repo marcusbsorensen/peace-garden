@@ -724,3 +724,5 @@ only), `coil2-choice.png`, `coil2-compare.png` and `coil2-measurements.json`. Ru
 tendril's ease-out, and where the stem's taper starts when the fork moves. Its root measure
 also gained a fallback for a fork too low for `widths()`. Every earlier file comes out
 byte-identical. **Every PNG is under 450 KB.**
+
+Marcus chose A, 11 October 2026; ported to `tools/icon/make_icon.py` on branch `claude/icon-port-2026-10-11`.

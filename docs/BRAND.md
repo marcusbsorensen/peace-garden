@@ -10,14 +10,27 @@ glyph, its geometry, and the numbers this app measured.
 
 ## The mark
 
-**An unwinding spiral carrying a peace lily's spathe, with its spadix inside.** One
-continuous monoline stroke — a logarithmic coil, tight at its centre, opening as it
-turns, and leaving on its own tangent into the bract it holds at the top — plus one
-short white stroke that does not take the gradient.
+**A fiddlehead: two fronds from one root, the tall one opening into a warm white
+leaf, the other still a crozier, its coil carried above the fork and rolling
+outward.** Chosen by Marcus on 11 October 2026, after two rounds of drawing
+recorded in `design/logo-2026-10-11/README.md`: round two's D, *Meeting*, at the
+suite's weight, with a growth taper (T2), half a turn more in the coil (C2), and
+then a lower fork and an earlier taper on the crozier (variant A of "round two and
+seven-eighths"). It replaced the unwinding spiral with a peace lily's spathe that
+the app carried from 30 August.
 
-The spathe is not parked on the end of the line. It **leaves on the tangent the
-spiral actually ends on** and keeps turning the same way, so the whole mark is one
-gesture rather than two shapes introduced to each other.
+Every line is a curve, integrated from a heading that varies smoothly along it.
+There is no straight segment and no ground line, and the plant grows from a free
+round end. Nothing in the crozier drops below the point it grew from.
+
+The two fronds are drawn in the one gradient. The leaf is an outline in the
+suite's warm white, `#F4F3EF`, at 0.72 of the stem's weight; it does not take the
+gradient. **The taper follows growth**: each frond is thickest where it grows from
+and thins towards its free end, and neither thickens again. The stem keeps its
+full weight to just above the fork and eases to three-quarters of it where it
+meets the leaf, so the leaf reads as the chunkiest thing in the mark. The crozier
+starts thinning at the fork and is already lighter than the stem beside it by the
+top of its rise, then winds into its coil and ends at 0.42 of the root.
 
 ### The white element, and the suite's habit of having one
 
@@ -27,19 +40,18 @@ Measured off the shipped artefacts rather than recalled:
 |---|---|---|
 | **Pfish** | two bubble rings, **`#FFFFFF`**, at the fish's own stroke weight | separate elements, outside the sweep |
 | **UnCubed** | the exponent finishing on **`#F4F3EF`** | not a separate element — the sweep's last stop |
-| **Peace Garden** | the spadix, **`#FFFFFF`**, at **48%** of the stroke | separate element, outside the sweep |
+| **Peace Garden** | the leaf, **`#F4F3EF`**, an outline at **0.72** of the stem's root | separate element, outside the sweep |
 
-**These are two different devices and the suite has not said which it prefers.**
-Pfish sets flat white beside a mark that graduates; UnCubed resolves the graduation
-onto a warm off-white. Peace Garden follows Pfish, because a spadix is a distinct
-organ and not the end of the bract. Worth noting that **the suite therefore has two
-whites in it** — `#FFFFFF` and `#F4F3EF` — and nothing yet says that is deliberate.
+Peace Garden follows Pfish in setting the white apart from the gradient, because
+the leaf is a distinct organ and not the end of the stem, and takes UnCubed's warm
+white rather than `#FFFFFF`. Until 11 October its white was `#FFFFFF`, so the
+suite had two whites in it; it now uses the warmer one, as UnCubed does.
 
-The spadix runs **lighter than the stroke it sits inside**. At full weight it fills
-the bract's hollow and the spathe stops reading as an enclosed form. `un³` has the
-precedent for a secondary element at a reduced weight: its exponent runs at 82% of
-the letters, and §10.4 calls the choice deliberate for the same reason — a
-superscript at full weight closes its counters into a blot.
+The leaf runs **lighter than the stroke at the root**, and it is about 27.5 % of
+the ink, above the suite's measured 17–24 %. That is the measurable form of what
+Marcus asked for, a leaf that reads chunkier than the thinner line just below it.
+At full weight the leaf's eye closes to a one-pixel slit at 60 px and the leaf
+reads as a solid white shape; 0.85 and 1.0 were drawn and rejected for that.
 
 ### Where this stands against §3.5, which is the question anyone will ask
 
@@ -50,22 +62,22 @@ argument matters more than the conclusion.**
 
 - **Read as "the app is about a seed and what grows from it"**, every plant form is
   the forbidden case — a leaf, a shoot, a flower and a seed all become "a flag is a
-  flag", and a spathe with them. This was the first reading taken here, and it is
-  why the mark began as a bare spiral with no botany in it at all.
+  flag". This was the first reading taken here, and it is why the mark began on
+  30 August as a bare spiral with no botany in it at all.
 - **Read as "the app is about an encounter and the passage of time, and the plant is
-  what it hands you in exchange"**, the spathe sits exactly where Pfish's fish sits:
+  what it hands you in exchange"**, the plant sits exactly where Pfish's fish sits:
   the reward, not the subject. §3.5's own table admits Pfish on precisely that
   reasoning.
 
-**The mark as drawn depends on the second reading.** That reading is defensible and
-is the owner's, but it is not the one §3.5's table records, and the two are not
+**The mark as drawn depends on the second reading**, more plainly than the spiral
+did: a fiddlehead with a leaf is a plant. That reading is defensible and is the
+owner's, but it is not the one §3.5's table records, and the two are not
 interchangeable — so a reader who assumes the first will think this mark is a
 breach. If the second reading is right, it belongs in §3.5's table beside Pfish's
 row rather than being inferred from this document.
 
-The spiral carries the argument either way: it depicts the *medium* the app works
-in, which is unfolding over real time, in the way FreqShift draws a waveform rather
-than a voice.
+The crozier still carries something of the old argument: a frond uncurling is
+unfolding over real time, which is the medium the app works in.
 
 > **What was drawn first, and rejected.** A luminous flower on a pool of light:
 > filled shapes with shading, a glow, a radial gradient ground, no stroke anywhere.
@@ -75,121 +87,140 @@ than a voice.
 
 ## Construction — 1024 × 1024, ground `#0D0D1F`
 
+The drawing is built in construction units, 100 wide with y down and the root at
+(50, 130), then placed so its ink stands **0.70** of the tile high, centred, the
+suite's median fill. The ink measures **0.58 × 0.69** of the tile, about 210 px
+clear to left and right and 155 px top and bottom.
+
 | Dial | Value |
 |---|---|
-| Turns | **2.0** |
-| Start radius | **48** (construction units) |
-| Growth per turn | **× 2.55** — logarithmic, not Archimedean |
-| Stroke | **41.47** rendered |
-| End bearing | **45°**, up and to the right |
-| Spathe length | **0.92** of the spiral's final radius |
-| Spathe turn | **0.30 rad**, continuing the spiral's sense |
-| Spathe half-width | **0.28** of its own length, widest at ⅓ along |
-| Spadix weight | **48%** of the stroke |
-| Spadix run | **0.26 → 0.55** along the spathe's spine |
-| Spadix clearance | **≥ 8** units each side, asserted |
-| Margin | **190** |
+| Stroke at the root | **0.0654** of the tile, **66.97** rendered: the suite's median (Pfish 0.052 to Animal Rescue Centre 0.079) |
+| Stem | **86** units, heading −90° − 0.08 − 0.36 s^1.5 + 0.12 sin(π s) |
+| Fork | **14** of the stem's 120 steps up, lowered from round two's 22 |
+| Crozier's rise | **52** units, heading −90° + 0.24 + 0.32 s |
+| Crozier's coil | logarithmic, **1.35** turns, radius **27 → 10** units, entered on the rise's own heading |
+| Leaf | **40** units long, half-width **0.32** of its length, profile sin(π s^0.85), turning **0.34** rad against the stem's lean |
+| Leaf's stroke | **0.72** of the root, `#F4F3EF`, an outline, never a fill |
+| Taper strength | **τ 0.58**: the crozier's tip at 1 − τ (**0.42**), the stem's neck at 1 − 0.43 τ (**0.75**) |
+| Crozier's profile | ease-out from the fork, 1 − (1 − u)^**2.5** over its length |
+| Stem's profile | full to **22/120** of its length, then smoothstep to its neck |
 
-**The spiral is logarithmic on purpose.** An Archimedean one holds the same gap the
-whole way out, which reads as evenly wound rather than as growing, and it cannot be
-tight at the centre and open at the rim at the same time.
+**How a taper is drawn.** A stroke-width cannot vary along a path, so each frond
+is a filled outline: the centreline is resampled every 0.2 of the root's stroke,
+offset by half the local width on both sides, on the envelope of the circles of
+that width, and closed at each end by a circular arc, so each round end is tangent
+to both sides. The sides are Catmull–Rom curves and the ends arcs, so nothing is
+straight. The crozier's fill starts inside the stem's at the fork and both carry
+the same gradient in the same coordinates, so the overlap cannot show.
 
-### Clearances, which are the thing that fails first
+### Widths and gaps, which are the thing that fails first
 
-A spiral is the one mark shape that packs its own stroke against itself, so what
-limits it at small sizes is not weight but the gap between consecutive turns. The
-generator measures and prints these; they are not eyeballed off a downsample.
+The generator measures and prints these; they are not eyeballed off a downsample.
+The app ships one 1024 image and iOS scales it down, so 40 px (a notification on a
+2× iPhone) is the smallest it is drawn.
 
-| | On the tile | At 40 pt · 3× | At 40 px |
-|---|---|---|---|
-| Between turns | 22.8 u | **2.67 px** | 0.89 px |
-| Bract to coil | 72.3 u | 8.47 px | 2.82 px |
-| Spadix in bract | 24.3 u | 2.85 px | 0.95 px |
+| | On the tile | At 180 px | At 60 px | At 40 px |
+|---|---|---|---|---|
+| Stroke at the root | 67.0 u | 11.8 px | 3.9 px | 2.6 px |
+| Stem's neck | 50.3 u | 8.8 px | 2.9 px | 2.0 px |
+| Leaf's stroke | 48.2 u | 8.5 px | 2.8 px | 1.9 px |
+| Crozier's tip | 28.1 u | 4.9 px | 1.6 px | 1.1 px |
+| Coil's mouth, the tightest gap | 28.3 u | 5.0 px | 1.7 px | 1.1 px |
 
-**The tightest gap is always the innermost pair of turns**, because the radial gain
-per turn grows with the radius and the stroke does not — so it is
-`START_RADIUS × (GROWTH_PER_TURN − 1) − STROKE`, and no other pair can be worse.
+**The tightest gap is the coil's mouth**, from the tip's round end to the turn
+outside it. **The tip stays at 0.42 of the root** because a thinner one falls under
+a pixel at 40 px. At 40 px the inner turn and the one outside it blur into one
+band in places; that was known and accepted when the coil was chosen.
 
-> **What this cost, recorded because the first answer was wrong.** The mark was
-> drawn at a stroke of 58 with a growth of ×2.3, which left **0.53 px between the
-> innermost turns at 40 pt** — they merged into a solid core, and the centre of the
-> spiral stopped existing. Thinning the stroke alone reaches 2.5 px only at about
-> 42, which is spindly. Opening the spiral slightly does the rest of the work, so
-> the fix is both: **stroke 58 → 48, growth ×2.3 → ×2.55.**
+**On weight against the rest of the suite.** The root holds the suite's median, so
+the mark matches the suite where it is heaviest. The median stroke across the whole
+drawing is about 0.034 of the tile, under the suite's measured 0.052–0.079,
+because most of the crozier is thin; that is the lighter tendril Marcus asked for.
+The ink area, 0.090 of the tile, is inside the suite's 0.09–0.14.
 
-**On weight against the rest of the suite.** Rendered at **41.47**, which is
-UnCubed's letter weight (42.46) almost exactly, and lighter than Pfish's ~55 —
-measured off the shipped PNG at the 10th percentile of scanline runs, which
-approximates a perpendicular crossing where the median does not. The suite has no
-shared stroke weight and never claimed one; §3.2 asks for even weight *within* a
-mark. A spiral has a reason to sit at the lighter end that a fish outline does not.
-
-Two constraints are asserted in the generator rather than left as lore, because
-both were discovered by drawing them wrong:
-
-- **The start radius must clear half the stroke.** Below that the innermost turn
-  paints over its own centre and the mark is a blob with a tail.
-- **The innermost turn's radial gain must clear a whole stroke.** Below that
-  consecutive turns merge, and they merge first at the smallest size.
-- **The spadix must leave clearance inside the bract's hollow.** The hollow is the
-  spathe's half-width less half the outline's own stroke, and it is checked at the
-  narrow end of the spadix's run, which is where it runs out of room first.
-
-The fit is computed from the drawn bounds — the flattened polyline plus half a
-stroke, which is exact for round caps — and not typed. Centred, with no optical
-bias: the mark has no open side wanting one, and the render measures **286 px** clear
-to left and right and **189 px** clear top and bottom, ink at 44% × 63% of the tile.
+The fit is computed from the drawn bounds — the centrelines plus half the root's
+stroke — and not typed. Changing a dial cannot silently break a relationship
+somebody set on purpose.
 
 ## Colour
 
-§3.4's segment for this app is **yellow → lime → forest green**, allocated by the
-owner on 2026-08-30. Three stops, bottom-left to top-right:
+§3.4's segment for this app was allocated by the owner on 2026-08-30 and amended
+within its own band on 2026-10-11: **sage → moss → green-gold**, calm where the
+first ramp was neon. Three stops, bottom-left to top-right:
 
-| Hue | | Contrast on ground | Luminance |
-|---|---|---|---|
-| **140°** forest green | `#06F556` | 13.00 : 1 | 0.6614 |
-| **100°** lime | `#55F306` | 13.00 : 1 | 0.6614 |
-| **60°** yellow | `#DCDC06` | 13.00 : 1 | 0.6614 |
+| Hue | Saturation | On `#0D0D1F` | Contrast | On `#F6F6F6` (the site's light ground) | Contrast |
+|---|---|---|---|---|---|
+| **124°** sage | 0.24 · 0.38 | `#9CC29E` | 9.71 : 1 | `#397E3D` | 4.60 : 1 |
+| **98°** moss | 0.34 · 0.54 | `#9DC386` | 9.67 : 1 | `#467D25` | 4.60 : 1 |
+| **76°** green-gold | 0.44 · 0.60 | `#A9C263` | 9.67 : 1 | `#60781E` | 4.62 : 1 |
 
-**Isoluminance spread: 0.000%.** Lightness is solved per hue against a luminance
-target rather than chosen, which is what holds a triad level across hues of very
-different natural brightness. Yellow is the extreme case and the reason it has to
-be solved: eyeballing it is how the sweep becomes a value staircase in greyscale.
+The first saturation is the dark ramp's and the second the light one's. The leaf
+is `#F4F3EF` on dark, 17.3 : 1, and the site's ink `#121212` on light, 17.3 : 1.
 
-**13:1 rather than Pfish's ~9.1:1, and the number is chosen rather than inherited.**
-Holding a triad isoluminant costs the naturally-bright hues their chroma. At 9.1:1
-this span's yellow lands on `#B9B905`, an olive. 13:1 is the highest target at which
-the green end still sits at full chroma — above it the greens climb past it and wash
-out to pastel — so it is the most saturated isoluminant triad this span can carry,
-which is what *neon* asks for.
+**Isoluminant at 9.7 : 1 on the ground**, to within the rounding of an 8-bit colour.
+Lightness is solved per stop against a luminance target rather than chosen, which
+is what holds the triad level across hues of very different natural brightness;
+eyeballing it is how a sweep becomes a value staircase in greyscale. The 13 : 1 of
+the first ramp was set to keep yellow at full chroma, which a calm ramp no longer
+wants.
 
-An even sweep, because the mark is one continuous stroke: §3.3's rule about putting
-the transitions in the gaps applies to marks made of separate elements, and this is
-not one.
+**Both ends were moved to clear a neighbour, and measured.** The top stops at 76°,
+not 60°: a 60° straw at this saturation was ΔE2000 14.2 from FlagFans' `#F0C24E`,
+and 76° is 19.5. The bottom starts at 124°, not 140°, which widens the clearance
+under Pfish's 150° from 10° to 26°. Peace Garden is now the least saturated mark in
+the suite.
+
+**On light, 4.6 : 1 rather than 9.7 : 1**, because on a near-white ground 9.7 : 1 is
+nearly black and the stops would lose their hue to reach it. 4.6 clears WCAG's 4.5
+for text with a little to spare. Saturation is lifted on light so the darker stops
+keep their hue. Only the site's bare mark is drawn on light; the icon carries its
+own ground.
+
+An even sweep, because the fronds are one continuous run of colour: §3.3's rule
+about putting the transitions in the gaps applies to marks made of separate
+elements. The sweep spans the whole drawing's ink box as round two measured it, so
+the colour does not move with the taper; the measured hue band on the icon is
+86°–110°.
 
 ## Sizes
 
-One drawing covers every app-icon size down to 40 px, where the spiral still reads
-as a spiral. The ground travels with the mark, so there is no light and dark pair
-and no tinted variant — matching `ui-design-system.md` §10.4.
+One drawing covers every app-icon size down to 40 px. The ground travels with the
+mark, so there is no light and dark pair and no tinted variant — matching
+`ui-design-system.md` §10.4 — and the asset catalogue has one 1024 entry.
+
+**Below 48 px the mark is a second drawing, untapered**, as §3.2a(5) requires of
+modulated marks: below about 24 px the thin end nears a device pixel and the line
+reads as broken. Carried down, the crozier's tip would be 0.63 px on a 16 px
+favicon. The small drawing is round two's: the same figure, 1.35 times heavier,
+with a fatter leaf and less coil, forking where round two forked. Its stroke is
+1.5 px at 16, 3.0 at 32 and 4.5 at 48. A lower fork and more curl were both tried
+in it and are not better at 16 and 32 px. **The favicon is the small drawing on the
+rounded ground tile**, drawn at each of its three sizes rather than scaled.
 
 ## Reproducing it
 
 `tools/icon/make_icon.py`, with no arguments. It writes `tools/icon/icon.svg` as the
-canonical drawing and the 1024 PNG in the asset catalogue, both off the same
-flattened polyline so the two cannot drift. **Change the dials; do not hand-edit
-either output, and do not trace the SVG.**
+canonical drawing, the 1024 PNG in the asset catalogue, and the website's icon,
+touch icon, favicon and bare marks. The SVG writes each path as curves and the PNG
+flattens the same curves, so the two cannot drift. **Change the dials; do not
+hand-edit any output, and do not trace the SVG.** The generator imports nothing
+from `design/`; the design scripts are the record of how the drawing was reached.
+
+`tools/icon/check_port.py` rasterises each output beside the design file it was
+ported from (`design/logo-2026-10-11/d-taper/coil2-a/`) and compares pixels. Run it
+after the generator. They match apart from antialiasing, and two deliberate
+differences the script describes: the port draws each round end of a taper as two
+quarter arcs, because one arc across a diameter is flattened by rounding in the
+design files, and the check draws the favicon's rounded tile as arcs, because
+CairoSVG draws a rounded `<rect>` with uneven corners.
 
 > **Two rasteriser traps, both found by drawing them.** PIL's jointed thick line
-> leaves a serrated fringe along a finely-sampled curve. Offsetting the whole
-> centreline into a single outline polygon fixes that, and then ties itself in a
-> knot at the spathe's tip, where the path reverses through 180°: the offset
-> self-intersects and an even-odd fill punches a hole in the point. The PNG builds
-> the stroke as the union of one quad per segment and one disc per vertex, which
-> has neither problem because every piece is convex. An SVG renderer shares neither
-> artefact, so in both cases the two outputs would have disagreed about the same
-> polyline — the failure `ui-design-system.md` §10.4 describes as looking wrong only
-> in the render.
+> leaves a serrated fringe along a finely sampled curve, and offsetting a whole
+> centreline into one outline polygon ties itself in a knot wherever the path turns
+> back on itself. The PNG builds each stroke — the leaf, and the small drawing's
+> fronds — as the union of one quad per segment and one disc per vertex, which has
+> neither problem because every piece is convex. The tapered fronds are outlines
+> by construction, and are filled as they are.
 
 ## Four things the suite document has to decide, and this app cannot
 
@@ -211,12 +242,13 @@ question rather than closed by the act of adding a row.
    rather than discovering it in a trade mark examination.
 
 3. **§3.5's table needs a Peace Garden row, and the mark depends on what it says.**
-   The spathe is permitted under the reading that the plant is what the app *gives*
+   The plant is permitted under the reading that it is what the app *gives*
    you, and forbidden under the reading that it is what the app is *about* — see
    the section above. The table is where that gets settled; leaving it unwritten
    leaves the mark resting on an argument nobody has ratified.
 
 4. **The hue span extends the arc rather than dividing it.** §3.4 puts the usable
-   arc at roughly 150°–340°; 60°–140° sits below it. That is a widening of the
+   arc at roughly 150°–340°; 60°–140° sat below it, and since 11 October 76°–124°
+   still does. That is a widening of the
    system — reasonable, and the owner's call — but §3.4's text still says 150°, and
    the two now disagree.

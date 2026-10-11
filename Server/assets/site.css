@@ -268,7 +268,7 @@ body {
    `tools/icon/make_icon.py` writes both from the icon's own dials, beside the
    icon and never by hand: `mark-dark.svg` is the icon's drawing exactly, and
    `mark-light.svg` is the same lines with the ramp darkened to 4.6:1 on the
-   light ground and the white bract in ink. A page that follows the reader picks
+   light ground and the warm white leaf in ink. A page that follows the reader picks
    between them with a `<picture>`; an area is always night, so it carries the
    dark one alone, and a light source there would put the dark-ground drawing's
    opposite on a black page. The tab and the home screen keep the tiled
