@@ -1063,37 +1063,205 @@ struct GardenGlyph: Shape {
     }
 }
 
-/// A recycling turn, without the corporate triangle.
+/// A recycling turn, without the corporate triangle, in the logo's hand.
 ///
 /// Three arrows meeting at right angles is a glyph from another visual system
-/// and this app has none of those angles. Three logarithmic fronds chasing one
-/// another round is the app's own spiral said three times, and it carries the
-/// meaning worth having — that the material returns, rather than that it is
-/// destroyed.
+/// and this app has none of those angles. **Since 11 October 2026 it is the
+/// new logo's second frond said three times** (Marcus: *"fix the recycling
+/// glyph to match the new logo"*): each frond grows from a thick start on a
+/// circle, runs a third of the way round it, and winds inward into a coil,
+/// thinning as it goes, as the logo's crozier does (`tools/icon/make_icon.py`,
+/// `curl()` and `profiles()`). Each coil turns in just short of where the next
+/// frond starts, so the three read as one turning, and it keeps the meaning
+/// worth having — that the material returns, rather than that it is destroyed.
+/// Until then it was three logarithmic spirals opening outward from the
+/// centre, the old icon's spiral repeated.
+///
+/// **A taper drawn with the chrome's own pen.** Every caller strokes a glyph
+/// with `Chrome.monoline`, one width, in its own ink, and a stroke cannot vary
+/// along a path. So each frond is the closed outline of a band that is
+/// `Frond.band` wide at its start and nothing at its tip, and the caller's
+/// stroke round that outline makes the line: `monoline + band` at the start,
+/// exactly `monoline` at the tip. The thinnest point is the hairline every other
+/// glyph is drawn in, so it never falls under a pixel the way the logo's tip
+/// would at this size (`suite-brand.md` §3.2a(5)), and the ink is whatever the
+/// caller already strokes with. A band wider than the stroke would leave a
+/// hollow down its middle, so past that a centreline is stroked inside it too.
+///
+/// Curves only: the sides and the centreline are Catmull–Rom splines, as the
+/// logo's are, and the outline closes on its own first point.
+///
+/// **Three fronds, one switch.** `Frond.chosen` is the one drawn; the others
+/// are in `design/recycle-glyph-2026-10-11/choice.png`.
 struct CycleGlyph: Shape {
-    func path(in rect: CGRect) -> Path {
-        let centre = CGPoint(x: rect.midX, y: rect.midY)
-        let outer = min(rect.width, rect.height) / 2 - 0.7
-        let inner = outer * 0.34
-        // Each frond overruns its own third of the circle, so its open tip
-        // reaches past the tight start of the next one and the three read as
-        // chasing rather than as three separate marks.
-        let sweep = Double.pi * 140 / 180
-        let steps = 26
+    var frond: Frond = .chosen
 
+    /// One frond's shape: how far it runs round the circle, how it coils, and
+    /// how heavy its start is. In units of the circle's radius, except `band`,
+    /// which is points, as the stroke is.
+    struct Frond: Equatable, Sendable {
+        /// How far round the circle it runs before it turns in, in radians.
+        var arc: Double
+        /// The coil: turns, and the radius of curvature it enters and ends at.
+        var turns: Double
+        var entry: Double
+        var eye: Double
+        /// How much wider than the stroke the start is, in points.
+        var band: CGFloat
+        /// The logo's ease-out: the band falls as `(1 − u)^ease` along the
+        /// frond's length, front-loading the thinning (`TENDRIL_EASE`).
+        var ease: Double
+
+        /// **A, recommended**: a turn of coil, and a start almost twice the
+        /// stroke, 2.2 pt thinning to the tip's 1.2. Its tightest gap at 15 pt
+        /// is 0.49 pt, a pixel and a half on a 3× phone.
+        static let a = Frond(arc: 1.2, turns: 0.95, entry: 0.44, eye: 0.16, band: 1.0, ease: 2.5)
+        /// B: more coil, 1.2 turns, and a heavier start, 2.5 pt to 1.2, the tip
+        /// 0.48 of the start against the logo's 0.42. The closest to the logo
+        /// this pen can draw; at 15 pt its turns come within 0.29 pt of each
+        /// other, under a pixel. The logo's own 1.35 turns do not fit at 15 pt
+        /// at all: with a tip no finer than the stroke, the turns merge.
+        static let b = Frond(arc: 1.1, turns: 1.2, entry: 0.52, eye: 0.153, band: 1.3, ease: 2.5)
+        /// C: the logo's small drawing, a hook of 0.62 turns, and a gentle
+        /// taper, 1.8 pt to 1.2, Pfish's 0.67. The most open at 15 pt, 0.88 pt
+        /// at its tightest, and the least like a coil.
+        static let c = Frond(arc: 1.35, turns: 0.62, entry: 0.36, eye: 0.13, band: 0.6, ease: 2.5)
+
+        /// **The switch**: the one drawn. Debug builds also take
+        /// `-pgCycleFrond b` (or `c`) on the command line, so the three can be
+        /// seen in place without a rebuild.
+        static var chosen: Frond {
+            #if DEBUG
+            switch UserDefaults.standard.string(forKey: "pgCycleFrond") {
+            case "b": return b
+            case "c": return c
+            default: break
+            }
+            #endif
+            return a
+        }
+    }
+
+    func path(in rect: CGRect) -> Path {
         var path = Path()
-        for frond in 0..<3 {
-            let start = Double(frond) * 2 * .pi / 3 - .pi / 2
-            for step in 0...steps {
-                let along = Double(step) / Double(steps)
-                // Logarithmic, like the mark: tight at the centre, opening as
-                // it turns. An even gain reads as wound rather than as growing.
-                let radius = inner * pow(outer / inner, along)
-                let point = polar(centre, radius, start + sweep * along)
-                if step == 0 { path.move(to: point) } else { path.addLine(to: point) }
+        let stroke = Chrome.monoline.lineWidth
+        for line in Self.fronds(frond, in: rect) {
+            let count = line.count
+            // The band's two sides, the tip where they meet, and a round end
+            // at the start, as one closed outline.
+            var sideA: [CGPoint] = [], sideB: [CGPoint] = []
+            for (index, sample) in line.enumerated() {
+                let previous = line[max(index - 1, 0)].point, next = line[min(index + 1, count - 1)].point
+                let length = max(hypot(next.x - previous.x, next.y - previous.y), 1e-9)
+                let normal = CGPoint(x: -(next.y - previous.y) / length, y: (next.x - previous.x) / length)
+                let half = sample.band / 2
+                sideA.append(CGPoint(x: sample.point.x + normal.x * half, y: sample.point.y + normal.y * half))
+                sideB.append(CGPoint(x: sample.point.x - normal.x * half, y: sample.point.y - normal.y * half))
+            }
+            let start = line[0].point, along = line[1].point
+            let heading = atan2(along.y - start.y, along.x - start.x)
+            let radius = line[0].band / 2
+            // From side B's start, round the back, to side A's.
+            let cap = (1..<6).map { step -> CGPoint in
+                let angle = heading + 1.5 * .pi - .pi * Double(step) / 6
+                return CGPoint(x: start.x + radius * cos(angle), y: start.y + radius * sin(angle))
+            }
+            addSpline(sideA + Array(sideB.reversed().dropFirst()) + cap, closed: true, to: &path)
+            if line[0].band > stroke {
+                addSpline(line.map(\.point), closed: false, to: &path)
             }
         }
         return path
+    }
+
+    /// One point of a frond's centreline and the band's width there.
+    struct Sample {
+        var point: CGPoint
+        var band: CGFloat
+    }
+
+    /// The three centrelines in `rect`, evenly resampled, start to tip, each
+    /// with its band. Exposed so a test can measure the gaps the drawing keeps.
+    static func fronds(_ frond: Frond, in rect: CGRect, samples: Int = 70) -> [[Sample]] {
+        let stroke = Chrome.monoline.lineWidth
+        let centre = CGPoint(x: rect.midX, y: rect.midY)
+        // The circle, leaving room for the heaviest line's outer edge.
+        let ring = min(rect.width, rect.height) / 2 - (stroke + frond.band) / 2 - 0.1
+        return (0..<3).map { index in
+            let start = -Double.pi / 2 + Double(index) * 2 * .pi / 3
+            var raw: [CGPoint] = []
+            // Round the circle, clockwise on the screen.
+            let arcSteps = 40
+            for step in 0...arcSteps {
+                let angle = start + frond.arc * Double(step) / Double(arcSteps)
+                raw.append(CGPoint(x: centre.x + ring * cos(angle), y: centre.y + ring * sin(angle)))
+            }
+            // Then the coil: a logarithmic spiral entered on the circle's own
+            // heading, its radius of curvature falling from `entry` to `eye`,
+            // as `make_icon.py`'s `curl()` integrates it.
+            let total = 2 * Double.pi * frond.turns
+            let coilSteps = 80
+            var heading = start + frond.arc + .pi / 2
+            var point = raw[raw.count - 1]
+            for step in 1...coilSteps {
+                let t = total * (Double(step) - 0.5) / Double(coilSteps)
+                let curvature = frond.entry * pow(frond.eye / frond.entry, t / total) * ring
+                heading = start + frond.arc + .pi / 2 + t
+                point.x += cos(heading) * curvature * total / Double(coilSteps)
+                point.y += sin(heading) * curvature * total / Double(coilSteps)
+                raw.append(point)
+            }
+            return resample(raw, count: samples).enumerated().map { offset, point in
+                let u = Double(offset) / Double(samples - 1)
+                return Sample(point: point, band: frond.band * CGFloat(pow(1 - u, frond.ease)))
+            }
+        }
+    }
+
+    /// `count` points evenly spaced along the polyline through `points`.
+    private static func resample(_ points: [CGPoint], count: Int) -> [CGPoint] {
+        var lengths: [CGFloat] = [0]
+        for index in 1..<points.count {
+            let a = points[index - 1], b = points[index]
+            lengths.append(lengths[index - 1] + hypot(b.x - a.x, b.y - a.y))
+        }
+        let total = lengths[lengths.count - 1]
+        var out: [CGPoint] = []
+        var segment = 1
+        for step in 0..<count {
+            let target = total * CGFloat(step) / CGFloat(count - 1)
+            while segment < points.count - 1 && lengths[segment] < target { segment += 1 }
+            let span = max(lengths[segment] - lengths[segment - 1], 1e-9)
+            let f = min(max((target - lengths[segment - 1]) / span, 0), 1)
+            let a = points[segment - 1], b = points[segment]
+            out.append(CGPoint(x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f))
+        }
+        return out
+    }
+
+    /// Catmull–Rom through `points` as cubic Béziers, so every segment is a
+    /// curve; points closer than a thousandth of a point, where the two sides
+    /// meet at the tip, are taken once. Closed, it ends on its own first point.
+    private func addSpline(_ input: [CGPoint], closed: Bool, to path: inout Path) {
+        var p: [CGPoint] = []
+        for point in input where p.last.map({ hypot(point.x - $0.x, point.y - $0.y) > 1e-3 }) ?? true {
+            p.append(point)
+        }
+        if closed, p.count > 1, hypot(p[0].x - p[p.count - 1].x, p[0].y - p[p.count - 1].y) <= 1e-3 {
+            p.removeLast()
+        }
+        let n = p.count
+        guard n > 2 else { return }
+        func at(_ i: Int) -> CGPoint { closed ? p[(i % n + n) % n] : p[min(max(i, 0), n - 1)] }
+        path.move(to: p[0])
+        for i in 0..<(closed ? n : n - 1) {
+            let p0 = at(i - 1), p1 = at(i), p2 = at(i + 1), p3 = at(i + 2)
+            path.addCurve(to: p2,
+                          control1: CGPoint(x: p1.x + (p2.x - p0.x) / 6, y: p1.y + (p2.y - p0.y) / 6),
+                          control2: CGPoint(x: p2.x - (p3.x - p1.x) / 6, y: p2.y - (p3.y - p1.y) / 6))
+        }
+        // Already back on its first point, so this closes a gap of nothing.
+        if closed { path.closeSubpath() }
     }
 }
 
