@@ -42,6 +42,14 @@ struct PeaceGardenApp: App {
                 .task {
                     await model.catchUpOnTheAsking()
                 }
+                // Whether this copy shows the developer controls: asked of
+                // StoreKit once, and only by a Release build. The garden's
+                // clock is read again after, since a TestFlight copy's may be
+                // wound on. See `Developer.isAvailable`.
+                .task {
+                    await Developer.shared.checkAvailability()
+                    model.refreshNow()
+                }
         }
     }
 }

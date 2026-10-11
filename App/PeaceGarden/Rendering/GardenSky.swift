@@ -151,22 +151,16 @@ struct GardenSky: View {
     }
 
     /// Whether the developer switch wants the day as it was, for comparing.
+    /// Never in an App Store copy (`Developer.isAvailable`).
     private static var developerWantsTheOldDay: Bool {
-        #if DEBUG
-        return Developer.shared.showsTheOldDay
-        #else
-        return false
-        #endif
+        Developer.shared.showsTheOldDay
     }
 
     /// How far the developer clock has the garden wound on, so what moves runs
-    /// on the garden's clock rather than the wall's.
+    /// on the garden's clock rather than the wall's. Nothing in an App Store
+    /// copy.
     private static var clockShift: TimeInterval {
-        #if DEBUG
-        return Developer.shared.clockShift
-        #else
-        return 0
-        #endif
+        Developer.shared.clockShift
     }
 
     // MARK: The sky itself

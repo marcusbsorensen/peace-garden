@@ -95,15 +95,19 @@ final class PollenExchangeService: NSObject {
 
     private static let searchTimeoutSeconds: UInt64 = 90
 
-#if DEBUG
     /// Whether the other side of this meeting is nobody. See
-    /// `meetAnImaginaryGardener(as:place:)`.
+    /// `meetAnImaginaryGardener(as:place:)`. Only ever true where the
+    /// developer controls are (`Developer.isAvailable`).
     private var isImaginary = false
-#endif
 
     /// Real time, except in a debug build where the garden's clock may have
     /// been wound forward. A plant made now should be a seedling now, whenever
     /// now has been set to.
+    ///
+    /// **Real time in every Release build, TestFlight included**: the meeting's
+    /// date is kept with the plant and its month can be sent beside it to the
+    /// Wild Fields, and the developer clock there never writes. See
+    /// `Developer.now`.
     private static var now: Date {
 #if DEBUG
         Developer.now
@@ -205,9 +209,7 @@ final class PollenExchangeService: NSObject {
         localResult = nil
         remoteChecksum = nil
         hasFeltLocalTouch = false
-#if DEBUG
         isImaginary = false
-#endif
     }
 
     func reset() {
@@ -215,7 +217,6 @@ final class PollenExchangeService: NSObject {
         phase = .idle
     }
 
-#if DEBUG
     /// Stands in for the knock.
     ///
     /// A simulator can do everything else in a meeting — advertise, browse,
@@ -223,20 +224,24 @@ final class PollenExchangeService: NSObject {
     /// hardware for, which left the crossing and the passage after it
     /// unwatchable for three sessions.
     ///
-    /// **`#if DEBUG` rather than `#if targetEnvironment(simulator)`**, because
-    /// a phone needs it too now, for one path only: an imaginary gardener
+    /// **A phone needs it too, for one path only**: an imaginary gardener
     /// knocks the instant you do, and a knock firm enough to register while
     /// you are watching the screen is a knack a developer control should not
     /// require. `ExchangeView` calls this on a device only while the meeting
-    /// is imaginary. Either way it is compiled out of every build that could
-    /// reach the App Store, so the shipping app still holds the line that the
-    /// tap is a gesture and not a button.
+    /// is imaginary.
+    ///
+    /// **And this refuses anything else**, which is the line the shipping app
+    /// holds: the tap is a gesture and not a button. It was compiled out of
+    /// Release builds until 12 October 2026; now that TestFlight copies meet
+    /// imaginary gardeners it is compiled in, and stands in only where there
+    /// is nothing to feel a knock with, or nobody to knock back. An App Store
+    /// copy can never start an imaginary meeting, so on a phone from the App
+    /// Store this does nothing.
     func standInForTouch() {
+        guard isImaginary || !canFeelTouch else { return }
         registerLocalTouch()
     }
-#endif
 
-#if DEBUG
     /// Meets somebody who is not there.
     ///
     /// A meeting needs two phones, which makes everything after the knock —
@@ -257,8 +262,13 @@ final class PollenExchangeService: NSObject {
     /// what the touch window is there to insist on. On a simulator the existing
     /// stand-in serves, since there is nothing to feel it with.
     ///
-    /// Debug builds only, so a shipped app has no idea this exists.
+    /// **A Debug build or a TestFlight copy only** (`Developer.isAvailable`).
+    /// Anywhere else this is an ordinary meeting, looking for a real phone.
     func meetAnImaginaryGardener(as identity: Identity, place: PlaceKeeping? = nil) {
+        guard Developer.isAvailable else {
+            start(identity: identity, place: place)
+            return
+        }
         stop()
         isImaginary = true
 
@@ -313,7 +323,6 @@ final class PollenExchangeService: NSObject {
         }
         phase = .awaitingTouch(peerName: stranger.displayName)
     }
-#endif
 
     // MARK: - The exchange, step by step
 
@@ -321,11 +330,9 @@ final class PollenExchangeService: NSObject {
         guard case .awaitingTouch = phase else { return }
         localTouchAt = Date()
         hasFeltLocalTouch = true
-#if DEBUG
         // An imaginary gardener knocks at exactly the moment you do, so the
         // touch window is satisfied by the gesture rather than around it.
         if isImaginary { remoteTouchAt = localTouchAt }
-#endif
         send(.touch())
         advanceIfBothTouched()
     }
@@ -433,12 +440,10 @@ final class PollenExchangeService: NSObject {
         )
         localResult = result
         send(.confirm(checksum: result.checksum))
-#if DEBUG
         // The other side would send back a checksum over the same four values,
         // so it can only be this one. Computing it rather than asserting it
         // keeps the comparison below doing its real work.
         if isImaginary { remoteChecksum = result.checksum }
-#endif
         finishIfAgreed()
     }
 
@@ -477,6 +482,9 @@ final class PollenExchangeService: NSObject {
                 tokens: Self.tokens(ours: card?.contactToken, theirs: remoteCard.contactToken)
             )
         )
+        // Written down whether or not the plant is kept, so it can be told
+        // from a real one later. See `Developer.rememberImaginary`.
+        if isImaginary { Developer.shared.rememberImaginary(localResult.childSeed) }
         // Hold the connection open briefly so the other side's confirm is not
         // cut off mid-flight, then let it go.
         Task { [weak self] in
