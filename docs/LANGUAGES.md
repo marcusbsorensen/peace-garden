@@ -114,12 +114,17 @@ switched to another.
 ### What is deliberately not in the catalogue
 
 - **The developer controls.** Everything in `DeveloperControls.swift` is
-  `Text(verbatim:)`. Not because developers read English, but because the file
-  is inside `#if DEBUG`: a catalogue synced from a Release build would mark
-  those strings stale and a Debug build would bring them back. Verbatim makes
-  the builds agree, and that is checked rather than assumed: a Debug simulator
-  build, a Debug device build and a Release device build were each synced into
-  the catalogue in turn and **none of the three changed a byte of it**.
+  `Text(verbatim:)`. Not because developers read English, but because nobody
+  else is shown it. Until 12 October 2026 the file was inside `#if DEBUG`, and
+  a catalogue synced from a Release build would have marked those strings stale
+  and a Debug build brought them back; verbatim made the builds agree, and that
+  was checked rather than assumed: a Debug simulator build, a Debug device
+  build and a Release device build were each synced into the catalogue in turn
+  and **none of the three changed a byte of it**. Since then the controls are
+  compiled into Release builds too and shown only in a TestFlight copy
+  (`Developer.isAvailable`), folded until the Settings heading is held for two
+  seconds. Still verbatim: forty-odd translations of *Wind the garden on* would
+  be read by nobody. Launch arguments such as `-pgOpen` stay Debug-only.
 - **The simulator's stand-in for the knock**, for the same reason.
 - **`#Preview` captions**, for the same reason.
 - **The abort reason on the wire** — `"same seed"`, `"checksum mismatch"`. It
