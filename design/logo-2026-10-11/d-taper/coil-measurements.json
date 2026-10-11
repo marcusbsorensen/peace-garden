@@ -160,49 +160,57 @@
       "mouth_px": 1.18,
       "tightest_px": 1.18,
       "eye_px": 0.94,
-      "stroke_px": 1.49
+      "stroke_px": 1.49,
+      "above_fork_px": 0.52
     },
     "32": {
       "mouth_px": 2.37,
       "tightest_px": 2.37,
       "eye_px": 1.87,
-      "stroke_px": 2.99
+      "stroke_px": 2.99,
+      "above_fork_px": 1.03
     },
     "48": {
       "mouth_px": 3.55,
       "tightest_px": 3.55,
       "eye_px": 2.81,
-      "stroke_px": 4.48
+      "stroke_px": 4.48,
+      "above_fork_px": 1.55
     },
     "dials": [
       0.62,
       26.0,
       20.0
-    ]
+    ],
+    "coil_width_vs_round_two": 1.0
   },
   "small, tried": {
     "16": {
       "mouth_px": 1.19,
       "tightest_px": 1.19,
       "eye_px": 0.98,
-      "stroke_px": 1.49
+      "stroke_px": 1.49,
+      "above_fork_px": 0.12
     },
     "32": {
       "mouth_px": 2.37,
       "tightest_px": 2.37,
       "eye_px": 1.96,
-      "stroke_px": 2.99
+      "stroke_px": 2.99,
+      "above_fork_px": 0.23
     },
     "48": {
       "mouth_px": 3.56,
       "tightest_px": 3.56,
       "eye_px": 2.94,
-      "stroke_px": 4.48
+      "stroke_px": 4.48,
+      "above_fork_px": 0.35
     },
     "dials": [
       0.77,
       33.0,
       20.0
-    ]
+    ],
+    "coil_width_vs_round_two": 1.16
   }
 }

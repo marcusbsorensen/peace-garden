@@ -166,11 +166,12 @@ NAMES = {"t2": "T2, as chosen", "c1": "C1, +¼ turn", "c2": "C2, +½ turn", "c3"
 
 
 def today_centre():
-    """The centre of today's spiral at 1024: the box of its green ink."""
+    """The centre of today's spiral at 1024: the centroid of its green ink,
+    which the coil's turns outweigh the tail running up to the bract."""
     rgb = np.asarray(T.R1.render(MS.CURRENT, 1024).convert("RGB")).astype(int)
     green = (rgb[..., 1] > 120) & (rgb[..., 1] - rgb[..., 2] > 80)
     ys, xs = np.nonzero(green)
-    return ((xs.min() + xs.max()) / 2, (ys.min() + ys.max()) / 2)
+    return (float(xs.mean()), float(ys.mean()))
 
 
 def coil_compare():
@@ -193,12 +194,14 @@ def coil_suite_row():
 
 def coil_small_sizes():
     tried = coiled(T2_COIL, SMALL_TRIED)
+    base = analyse(coiled(T2_COIL), small=True, taper=None)["coil_box"][0]
     rows = []
     for caption, meeting, dials in (("Round two's small drawing", None, ROUND_TWO_SMALL),
                                     ("With a little more curl", tried, SMALL_TRIED)):
         m = analyse(coiled(T2_COIL, dials), small=True, taper=None)
         chosen = (SMALL_COIL or ROUND_TWO_SMALL) == dials
-        note = (f"{'Chosen' if chosen else 'Not chosen'}: {caption.lower()}, {dials[0]:.2f} turns. "
+        note = (f"{'Chosen' if chosen else 'Not chosen'}: {caption.lower()}, {dials[0]:.2f} turns, "
+                f"coil ×{m['coil_box'][0] / base:.2f} wide. "
                 f"Mouth gap on the favicon {at(m, 'mouth', 16):.2f} px at 16, {at(m, 'mouth', 32):.2f} at 32; "
                 f"eye {at(m, 'eye', 16):.2f} and {at(m, 'eye', 32):.2f} px")
 
@@ -252,12 +255,15 @@ def main():
               f"stem {r['to_stem_px_60']} leaf {r['to_leaf_px_60']} above fork {r['above_fork_of_tile']}  "
               f"median {r['stroke_colour']} box {r['ink_box_w']}×{r['ink_box_h']} area {r['ink_area']} "
               f"leaf share {r['accent_share']}")
+    small_base = analyse(coiled(T2_COIL), small=True, taper=None)["coil_box"][0]
     for name, dials in (("small, round two", ROUND_TWO_SMALL), ("small, tried", SMALL_TRIED)):
         m = analyse(coiled(T2_COIL, dials), small=True, taper=None)
         out[name] = {s: {"mouth_px": round(at(m, "mouth", s), 2), "tightest_px": round(at(m, "tightest", s), 2),
-                         "eye_px": round(at(m, "eye", s), 2), "stroke_px": round(at(m, "stroke", s), 2)}
+                         "eye_px": round(at(m, "eye", s), 2), "stroke_px": round(at(m, "stroke", s), 2),
+                         "above_fork_px": round(at(m, "above_fork", s), 2)}
                      for s in (16, 32, 48)}
         out[name]["dials"] = dials
+        out[name]["coil_width_vs_round_two"] = round(m["coil_box"][0] / small_base, 2)
         print(name, out[name])
     (HERE / "coil-measurements.json").write_text(json.dumps(out, indent=2, default=float) + "\n")
     print("compare", coil_compare())
