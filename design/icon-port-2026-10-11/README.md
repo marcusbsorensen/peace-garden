@@ -105,3 +105,5 @@ about 0.6 px. Two ways to make the tab show the favicon: write the small drawing
 `assets/favicon.svg` and point the pages' `rel="icon"` at it (18 pages, one line each), or
 drop the SVG link and let browsers take `favicon.ico`. Neither is done here, because both
 change pages and the brief named the files to write.
+
+Marcus chose the small drawing for tabs, 11 October 2026; written as `assets/favicon.svg`.

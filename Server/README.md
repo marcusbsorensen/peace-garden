@@ -53,6 +53,7 @@ peacegarden.app/
 └── assets/
     ├── site.css
     ├── icon.svg, icon-180.png         ← generated, from the same drawing
+    ├── favicon.svg                    ← generated: the tab's icon, the small drawing
     ├── mark-dark.svg, mark-light.svg  ← generated: the bar's bare mark, per ground
     ├── stars.bin, places.json         ← generated: tools/sky/pack.py, for sky.js
     └── js/
@@ -161,18 +162,22 @@ site has nobody to log in. It is `noindex, nofollow`, it guards nothing, and it
 can ship or be left out of an upload without anything else noticing.
 
 **There is one drawing.** `tools/icon/make_icon.py` writes `assets/icon.svg`,
-`assets/icon-180.png`, `favicon.ico`, `assets/mark-dark.svg` and
-`assets/mark-light.svg` from the same dials. Change the dials and re-run the
+`assets/icon-180.png`, `favicon.ico`, `assets/favicon.svg`, `assets/mark-dark.svg`
+and `assets/mark-light.svg` from the same dials. Change the dials and re-run the
 generator; hand-edit none of them.
 
 The drawing is the fiddlehead chosen on 11 October 2026: a stem and a crozier
 from one root, the stem opening into a warm white leaf, the crozier tapering into
 its coil. `docs/BRAND.md` has its construction and colours.
 
-The first three are for the tab and the home screen. `icon.svg` and
+The first four are for the tab and the home screen. `icon.svg` and
 `icon-180.png` are the icon on its tile. `favicon.ico` is the small drawing, the
 same figure heavier and untapered, on a rounded tile at 16, 32 and 48 px, since
-at those sizes the taper's thin end would fall under a device pixel. The
+at those sizes the taper's thin end would fall under a device pixel.
+`favicon.svg` is the same small drawing as curves, and is what every page's
+`rel="icon"` names: a browser prefers the SVG to the .ico, and a tab is
+16 px, so the tab has to be the small drawing too, as Marcus chose on
+11 October. `/favicon.ico` stays for browsers that take no SVG. The
 last two are the bar's: since 11 October every page carries the drawing bare
 beside the wordmark, with no tile behind it. A tile carries its own ground, so
 the icon needed no light and dark pair; a bare mark stands on the page's ground,
