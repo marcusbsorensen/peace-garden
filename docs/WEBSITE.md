@@ -1001,7 +1001,7 @@ Short, because [BRAND.md](BRAND.md) and the app already decide it.
   pool of light tinted a few percent toward its own colour, drawn in screen space
   behind a transparent canvas for the reason ARCHITECTURE.md gives.
 - **Colour belongs to the plants.** Chrome is white at four opacities, as in the
-  app. The icon's yellow-lime-green sweep is the mark's and stays on the mark.
+  app. The icon's sage-moss-green-gold sweep is the mark's and stays on the mark.
 - **Every drawn thing is monoline** — even weight, round free ends, no filled
   shapes, per BRAND.md §3.2, the rule the app icon and every chrome glyph are
   drawn to. That governs the report link's mark, the share mark, and — if a map is
