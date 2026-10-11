@@ -23,6 +23,22 @@
 	     anybody. It is the one line a reviewer might ask about, so it is named
 	     here rather than left to be discovered. -->
 
+	<!-- The App Store's update check, since 11 October 2026: as the launch
+	     moment plays, `UpdateCheck` asks Apple's public lookup,
+	     itunes.apple.com/lookup?bundleId=app.peacegarden&country=dk, whether
+	     there is a newer version, in the store of the phone's own country
+	     (StoreKit's `Storefront.current`; with no storefront it asks nothing).
+	     It carries that country and the app's id alone, from a session with no
+	     cookies and no cache, a user agent that is the app's name and a fixed
+	     language, and its answer goes nowhere but the glyph beside the version.
+	     The country is the App Store's own, sent to the App Store, and nothing
+	     it sends reaches the developer or a partner, so it adds nothing to
+	     `NSPrivacyCollectedDataTypes`, and it is not tracking, so its domain is
+	     not a tracking domain. The web garden
+	     (24 September) and this check have each made the sentence above about
+	     no network request of the app's own untrue; it is the privacy page,
+	     /privacy, that says in full what the app sends. -->
+
 	<key>NSPrivacyTracking</key>
 	<false/>
 	<key>NSPrivacyTrackingDomains</key>

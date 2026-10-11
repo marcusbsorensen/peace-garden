@@ -250,12 +250,26 @@ same rule the app icon is drawn to, and the same stroke weight as the cog.
   inside one flank. It began as an ovoid broad at the crown and tapering to a
   point; the seam went first, and then the taper. See *[What the drawing
   changed](#what-the-drawing-changed)*.
-- **A recycling turn**, on *Reset everything*. Three arrows in a triangle is a
-  corporate glyph and this app has no right angles; it is drawn instead as
-  three curved fronds chasing one another round, each unwinding into the next,
-  which is the app's own spiral repeated three times. The meaning is worth
-  having — *recycling* says the material returns rather than that it is
-  destroyed, which is true here and is the kinder and more accurate word for it.
+- **A recycling turn**, on *Reset everything*, and on a plant's *Take it back*
+  mark at 28pt. Three arrows in a triangle is a corporate glyph and this app
+  has no right angles; it is drawn instead as three fronds turning round a
+  circle, each one the new logo's second frond: thick where it starts, running
+  a third of the way round, and thinning as it winds inward into a coil just
+  short of where the next one starts. The meaning is worth having —
+  *recycling* says the material returns rather than that it is destroyed, which
+  is true here and is the kinder and more accurate word for it.
+  **Redrawn 11 October 2026** to match the new logo (Marcus: *"fix the
+  recycling glyph to match the new logo"*). Until then it was three spirals
+  opening outward from the centre, the old icon's spiral repeated three times.
+  The taper is drawn with the chrome's own pen: each frond is the outline of a
+  band, 1 pt wide at its start and nothing at its tip, and the row's 1.2pt
+  monoline stroke round it makes a line 2.2pt thick that thins to the hairline
+  every other glyph is drawn in. It keeps the row's crimson, and the plant's
+  muted grey. Three fronds were drawn — a turn of coil (A), more coil and a
+  heavier start (B), and the logo's small-drawing hook (C) — and Marcus chose
+  A on 11 October 2026. It is `CycleGlyph.Frond.chosen`;
+  `design/recycle-glyph-2026-10-11/` has the pictures and the other two's
+  dials.
 - **The middle row**, *Empty the garden*, takes `GardenGlyph` — the Garden
   mark from the foot of the stage: a flower of five lobes on one closed
   outline, on a stem, beside a tuft of three grass blades, both standing on a

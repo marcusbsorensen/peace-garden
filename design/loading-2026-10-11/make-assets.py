@@ -12,6 +12,11 @@ animation: every picture is a crop of a frame the shipped SwiftUI view drew.
 (commit a605bae, the merge before this round), for `before-after.png`. Without
 it, that one sheet is skipped.
 
+    python3 design/loading-2026-10-11/make-assets.py /some/new --launch
+
+rebuilds the launch moment's filmstrip, GIF and MP4 alone: what changed when
+the harness began to draw the name and version at the foot (11 October 2026).
+
 Needs Pillow, and ffmpeg for the MP4s.
 """
 
@@ -21,8 +26,10 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-NEW = Path(sys.argv[1])
-BEFORE = Path(sys.argv[2]) if len(sys.argv) > 2 else None
+ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]
+LAUNCH_ONLY = "--launch" in sys.argv[1:]
+NEW = Path(ARGS[0])
+BEFORE = Path(ARGS[1]) if len(ARGS) > 1 else None
 OUT = Path(__file__).resolve().parent
 FPS = 30
 MOMENT = 60     # frames in the 2.0 s moment, 0 to 60 inclusive
@@ -276,6 +283,10 @@ def main():
     save_gif(frames, OUT / "launch.gif", FPS)
     save_mp4(frames, OUT / "launch.mp4", FPS, work)
     made += ["launch.gif", "launch.mp4"]
+    if LAUNCH_ONLY:
+        for name in made:
+            print(name, f"{(OUT / name).stat().st_size / 1024:.0f} KB")
+        return
     made.append(save_png(waiting_strip(), "waiting-filmstrip.png"))
     loops = waiting_frames()
     save_gif(loops, OUT / "waiting.gif", FPS / 2)

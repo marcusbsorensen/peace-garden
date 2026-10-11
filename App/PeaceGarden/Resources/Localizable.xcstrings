@@ -6680,6 +6680,17 @@
         }
       }
     },
+    "Newer version in the App Store" : {
+      "comment" : "VoiceOver only. The small arrow beside the version on the opening picture, shown when the App Store has a newer version of the app. Opens the App Store.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nyere version i App Store"
+          }
+        }
+      }
+    },
     "No one nearby. Both phones need this screen open." : {
       "comment" : "Shown when the search timed out.",
       "localizations" : {
