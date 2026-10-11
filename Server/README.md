@@ -53,6 +53,7 @@ peacegarden.app/
 └── assets/
     ├── site.css
     ├── icon.svg, icon-180.png         ← generated, from the same drawing
+    ├── mark-dark.svg, mark-light.svg  ← generated: the bar's bare mark, per ground
     ├── stars.bin, places.json         ← generated: tools/sky/pack.py, for sky.js
     └── js/
         ├── frontpage.js               ← the / page: grows the front plant, draws the cards
@@ -160,9 +161,21 @@ site has nobody to log in. It is `noindex, nofollow`, it guards nothing, and it
 can ship or be left out of an upload without anything else noticing.
 
 **There is one drawing.** `tools/icon/make_icon.py` writes `assets/icon.svg`,
-`assets/icon-180.png` and `favicon.ico` from the same dials, and every page
-points the `<img>` in its bar at that same `icon.svg`. Change the dials and
-re-run the generator; hand-edit none of them.
+`assets/icon-180.png`, `favicon.ico`, `assets/mark-dark.svg` and
+`assets/mark-light.svg` from the same dials. Change the dials and re-run the
+generator; hand-edit none of them.
+
+The first three are the icon on its tile, for the tab and the home screen. The
+last two are the bar's: since 11 October every page carries the drawing bare
+beside the wordmark, with no tile behind it. A tile carries its own ground, so
+the icon needed no light and dark pair; a bare mark stands on the page's ground,
+which follows the reader, so it now has one. `mark-dark.svg` is the icon's
+drawing exactly. `mark-light.svg` is the same lines with each stop of the ramp
+solved again, per hue, to 4.6:1 on the light ground `#F6F6F6`, and the white
+bract drawn in ink `#121212`. A page that follows the reader switches between
+them with a `<picture>` and a `prefers-color-scheme: light` source; the areas
+(`.night`) are dark whatever the reader's system says, so they carry
+`mark-dark.svg` alone.
 
 There used to be a second file, `assets/mark.svg`, described here as a copy of
 the canonical drawing and kept in step by hand. It was not: the icon was
