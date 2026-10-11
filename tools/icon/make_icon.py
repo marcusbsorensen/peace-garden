@@ -579,10 +579,14 @@ def svg(mark, stops, ground=GROUND, leaf_ink=LEAF, frame=(0.0, 0.0, TILE),
     vx, vy, side = frame
     view = " ".join(number(v) for v in (vx, vy, side, side))
     tile = ""
-    if ground is not None:
-        corner = "" if radius is None else f' rx="{radius:g}"'
+    if ground is not None and radius is None:
         tile = (f'<rect x="{number(vx)}" y="{number(vy)}" width="{number(side)}" '
-                f'height="{number(side)}"{corner} fill="{ground}"/>\n')
+                f'height="{number(side)}" fill="{ground}"/>\n')
+    elif ground is not None:
+        # A rounded ground is written as the path `render` fills, not as a
+        # `<rect rx>`, which some renderers round unevenly: the SVG and the .ico
+        # then have the same corners.
+        tile = f'<path d="{path_data(tile_path(frame, radius))}" fill="{ground}"/>\n'
     body = []
     for part in mark.parts:
         paint = "url(#sweep)" if part.paint == "sweep" else leaf_ink
@@ -860,7 +864,8 @@ def main():
     # drift" that does not depend on somebody remembering.
     #
     # Three files, because a favicon is three questions. The SVG is what a
-    # current browser takes and the only one that stays sharp. The 180 is what
+    # current browser takes and the only one that stays sharp; for the tab it is
+    # `favicon.svg`, below, and `icon.svg` stays for where the tile is wanted. The 180 is what
     # iOS puts on a home screen, and this is a site people open on a phone. The
     # .ico is at the root because a browser asks for /favicon.ico whether or not
     # it has been told to; it carries the small drawing on its rounded tile, drawn
@@ -872,6 +877,11 @@ def main():
                 for size in FAVICON_SIZES]
     save_raster(favicons[-1], SITE / "favicon.ico",
                 sizes=[(s, s) for s in FAVICON_SIZES], append_images=favicons[:-1])
+    # **The tab takes `favicon.svg`**, Marcus's choice of 11 October: the .ico's
+    # drawing as curves. `icon.svg` in a tab is the tapered mark at 16 px, its
+    # crozier's tip about 0.6 px, which §3.2a(5) is there to prevent.
+    (SITE / "assets/favicon.svg").write_text(
+        svg(small, stops, frame=frame, size=100, radius=FAVICON_RADIUS))
 
     # **The bar carries the bare mark, not the tile**, since 11 October: the
     # drawing beside the wordmark with no dark square behind it. Without its
