@@ -68,7 +68,7 @@ def measure(path):
     # rounded tile on a darker page. Normalise to the tile, not the image.
     page = rgb[1, 1]
     tile = np.abs(rgb - page).sum(axis=2) > 25
-    if tile.mean() < 0.95:
+    if np.abs(ground_of(rgb) - page).sum() > 25:
         ys, xs = np.nonzero(tile)
         rgb = rgb[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
     size = (rgb.shape[0] + rgb.shape[1]) / 2
@@ -114,10 +114,23 @@ def measure(path):
     }
 
 
+CANDIDATES = ["d-suite", "d-light", "e-suite", "e-light"]
+
+
+def rendered(folder):
+    """A candidate's icon, rendered to a PNG beside the suite copies' measure."""
+    import io
+    import cairosvg
+    png = cairosvg.svg2png(url=str(HERE / folder / "icon-1024.svg"), output_width=1024)
+    return io.BytesIO(png)
+
+
 def main():
     out = {}
-    for key, name, f in APPS:
-        m = measure(ICONS / f)
+    rows = [(k, n, ICONS / f) for k, n, f in APPS]
+    rows += [(c, f"Candidate {c}", rendered(c)) for c in CANDIDATES if (HERE / c).exists()]
+    for key, name, f in rows:
+        m = measure(f)
         m["name"] = name
         out[key] = m
         print(f"{name:22s} stroke {m['stroke_colour']}  accent {m['stroke_accent']}  "
