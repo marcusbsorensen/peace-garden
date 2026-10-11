@@ -264,6 +264,13 @@ struct PlotView: View {
                 .gesture(looking(in: proxy.size))
                 .simultaneousGesture(panGesture(in: proxy.size))
             }
+            // **The garden is a map, and a map reads one way round** — the web
+            // garden's rule (`docs/WEBSITE.md`). Under a right-to-left layout
+            // SwiftUI mirrors every `position` in here and no image, so the
+            // plants were set down on the other side of a ground that stayed
+            // put, and a turn of the plot went the opposite way to the arrow
+            // on the button that made it (11 October).
+            .environment(\.layoutDirection, .leftToRight)
             .ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 0) {
