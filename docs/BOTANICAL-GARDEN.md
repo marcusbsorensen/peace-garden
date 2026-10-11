@@ -46,7 +46,7 @@ would find odd. The projection proposes; a person disposes.
 
 - **Arrives at a map**, not a list. Ten areas, paths between them, drawn in the
   Interfulgent line — organic, unfolding, frond-like, the same vocabulary as
-  `UnfurlingBackdrop` and the app icon's spiral. The paths are the interesting
+  `UnfurlingBackdrop` and the app icon's fiddlehead. The paths are the interesting
   drawing problem: a path between *kinship* and *peace* should look like it
   grew there.
 - **Walks into an area** and finds the plants whose passage came from that

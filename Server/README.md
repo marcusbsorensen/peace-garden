@@ -165,14 +165,21 @@ can ship or be left out of an upload without anything else noticing.
 `assets/mark-light.svg` from the same dials. Change the dials and re-run the
 generator; hand-edit none of them.
 
-The first three are the icon on its tile, for the tab and the home screen. The
+The drawing is the fiddlehead chosen on 11 October 2026: a stem and a crozier
+from one root, the stem opening into a warm white leaf, the crozier tapering into
+its coil. `docs/BRAND.md` has its construction and colours.
+
+The first three are for the tab and the home screen. `icon.svg` and
+`icon-180.png` are the icon on its tile. `favicon.ico` is the small drawing, the
+same figure heavier and untapered, on a rounded tile at 16, 32 and 48 px, since
+at those sizes the taper's thin end would fall under a device pixel. The
 last two are the bar's: since 11 October every page carries the drawing bare
 beside the wordmark, with no tile behind it. A tile carries its own ground, so
 the icon needed no light and dark pair; a bare mark stands on the page's ground,
 which follows the reader, so it now has one. `mark-dark.svg` is the icon's
 drawing exactly. `mark-light.svg` is the same lines with each stop of the ramp
-solved again, per hue, to 4.6:1 on the light ground `#F6F6F6`, and the white
-bract drawn in ink `#121212`. A page that follows the reader switches between
+solved again, per hue, to 4.6:1 on the light ground `#F6F6F6`, and the warm
+white leaf drawn in ink `#121212`. A page that follows the reader switches between
 them with a `<picture>` and a `prefers-color-scheme: light` source; the areas
 (`.night`) are dark whatever the reader's system says, so they carry
 `mark-dark.svg` alone.
