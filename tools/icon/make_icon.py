@@ -23,6 +23,16 @@ Writes `icon.svg` next to this file as the canonical drawing, and the 1024 PNG t
 asset catalogue needs. Both come off the same flattened polyline, so the two cannot
 drift — the same reason UnCubed's generator flattens rather than rasterises.
 
+It also writes the website's files: the tiled icon, its touch icon and favicon,
+and the bare mark the site's bar carries, once for a dark ground and once for a
+light one. See `main` for which is which.
+
+**The drawing and its painting are separate halves.** Everything above
+`# --- colour` is dials; `spiral()` and `fitted()` turn them into polylines on the
+1024 grid; everything under `# --- output` paints whatever those return, on a
+tile or bare, on dark or on light. A new drawing replaces the dials and the
+geometry and leaves the painting alone.
+
   pip install numpy pillow
 """
 
@@ -127,6 +137,30 @@ TAPER_TURNS_AT = 0.38  # how far along the taper the yellow has fully arrived
 
 MARGIN = 190.0
 
+# **The site's light ground, for the bare mark.** The tile carries its own ground
+# and so has no light and dark pair; the bare mark on the site's bar has no ground
+# of its own and stands on the page's, which follows the reader. So it is drawn
+# twice. On dark it is the tile's drawing exactly, ramp and white bract and all.
+# On light the ramp is solved again, per hue, to `LIGHT_CONTRAST` against
+# `LIGHT_GROUND`, and the white is drawn in `LIGHT_INK` — the method round two's
+# `design/logo-2026-10-11/colour.py` uses (`on_light`), and the same numbers.
+#
+# 4.6:1 rather than the tile's 13:1, because on a near-white ground 13:1 is black:
+# the stops would lose their hue to reach it. 4.6 clears WCAG's 4.5 for text with a
+# little to spare, which is the most a coloured mark can carry on that ground and
+# stay coloured.
+LIGHT_GROUND = "#F6F6F6"         # `site.css`, the light `--ground`
+LIGHT_INK = "#121212"            # `site.css`, the light `--ink`; the bract on light
+LIGHT_CONTRAST = 4.6
+LIGHT_SATURATION = SATURATION    # round two lifts it on light; this drawing does not
+
+# The bare mark's box. No tile, no ground and no margin for one: the drawing is
+# cropped to its own ink, squared about its centre, with this much of the box left
+# clear on each side so a round cap is never shaved by the edge. Round two's
+# website marks leave 4 of 100.
+BARE_INSET = 0.04
+BARE_SIZE = 100                  # the SVG's nominal size; it scales to its box
+
 
 # ------------------------------------------------------------------- colour
 
@@ -154,7 +188,7 @@ def to_hex(rgb):
     return "#" + "".join(f"{round(c * 255):02X}" for c in rgb)
 
 
-def stop_at(hue, target_luminance):
+def stop_at(hue, target_luminance, saturation=SATURATION):
     """
     The colour at `hue` whose luminance is `target_luminance`.
 
@@ -166,21 +200,31 @@ def stop_at(hue, target_luminance):
     low, high = 0.0, 1.0
     for _ in range(60):
         middle = (low + high) / 2
-        rgb = colorsys.hls_to_rgb(hue / 360.0, middle, SATURATION)
+        rgb = colorsys.hls_to_rgb(hue / 360.0, middle, saturation)
         if relative_luminance(rgb) < target_luminance:
             low = middle
         else:
             high = middle
-    return colorsys.hls_to_rgb(hue / 360.0, (low + high) / 2, SATURATION)
+    return colorsys.hls_to_rgb(hue / 360.0, (low + high) / 2, saturation)
 
 
-def ramp():
-    """The gradient's stops, bottom-left to top-right."""
+def ramp(light=False):
+    """
+    The gradient's stops, bottom-left to top-right.
+
+    On the tile's ground by default; with `light`, on the site's light ground,
+    where a stop has to be darker than the ground rather than lighter.
+    """
+    hues = [HUE_FROM + (HUE_TO - HUE_FROM) * i / (STOP_COUNT - 1)
+            for i in range(STOP_COUNT)]
+    if light:
+        ground = from_hex(LIGHT_GROUND)
+        # The luminance that puts a stop at LIGHT_CONTRAST *below* the ground.
+        target = (relative_luminance(ground) + 0.05) / LIGHT_CONTRAST - 0.05
+        return [(hue, stop_at(hue, target, LIGHT_SATURATION)) for hue in hues]
     ground = from_hex(GROUND)
     # The luminance that puts a stop at TARGET_CONTRAST against the ground.
     target = TARGET_CONTRAST * (relative_luminance(ground) + 0.05) - 0.05
-    hues = [HUE_FROM + (HUE_TO - HUE_FROM) * i / (STOP_COUNT - 1)
-            for i in range(STOP_COUNT)]
     return [(hue, stop_at(hue, target)) for hue in hues]
 
 
@@ -362,7 +406,26 @@ def path_data(points):
     return "M " + " L ".join(f"{x:.2f} {y:.2f}" for x, y in points)
 
 
-def svg(coil, bract, spike, axis, stroke, stops):
+def bare_view(coil, bract, spike, stroke):
+    """
+    The bare mark's viewBox: the drawn ink, squared about its centre, with
+    `BARE_INSET` of the box clear on each side.
+
+    Cropped from the tile's own coordinates rather than fitted again, so the bare
+    mark and the tile are the same polylines and cannot differ by a rounding.
+    """
+    min_x, min_y, max_x, max_y = ink_bounds(list(coil) + list(bract) + list(spike),
+                                            stroke)
+    side = max(max_x - min_x, max_y - min_y) / (1 - 2 * BARE_INSET)
+    return ((min_x + max_x - side) / 2, (min_y + max_y - side) / 2, side)
+
+
+def svg(coil, bract, spike, axis, stroke, stops,
+        ground=GROUND, bract_ink=BRACT, view=None):
+    """
+    The drawing as SVG: on its tile by default, or bare — no ground, cropped to
+    `view` — for the site's bar.
+    """
     # **The sweep spans the ink that takes it, which is the coil and the taper —
     # not the bract.** With the bract white, measuring across it spends the top
     # of the ramp on ink that is not drawn in it: the yellow landed inside the
@@ -390,14 +453,19 @@ def svg(coil, bract, spike, axis, stroke, stops):
     hot = (f'<stop offset="0" stop-color="{to_hex(sweep_at(axis[0], box, stops))}"/>'
            f'<stop offset="{TAPER_TURNS_AT}" stop-color="{to_hex(stops[-1][1])}"/>'
            f'<stop offset="1" stop-color="{to_hex(stops[-1][1])}"/>')
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{TILE}" height="{TILE}" \
-viewBox="0 0 {TILE} {TILE}">
+    if view is None:
+        frame = f'width="{TILE}" height="{TILE}" viewBox="0 0 {TILE} {TILE}"'
+    else:
+        vx, vy, side = view
+        frame = (f'width="{BARE_SIZE}" height="{BARE_SIZE}" '
+                 f'viewBox="{vx:.2f} {vy:.2f} {side:.2f} {side:.2f}"')
+    tile = "" if ground is None else f'<rect width="{TILE}" height="{TILE}" fill="{ground}"/>\n'
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" {frame}>
 <defs><linearGradient id="sweep" gradientUnits="userSpaceOnUse" \
 x1="{x1:.2f}" y1="{y1:.2f}" x2="{x2:.2f}" y2="{y2:.2f}">{marks}</linearGradient>
 <linearGradient id="point" gradientUnits="userSpaceOnUse" \
 x1="{ax:.2f}" y1="{ay:.2f}" x2="{bx:.2f}" y2="{by:.2f}">{hot}</linearGradient></defs>
-<rect width="{TILE}" height="{TILE}" fill="{GROUND}"/>
-<path d="{path_data(bract)}" fill="none" stroke="{BRACT}" \
+{tile}<path d="{path_data(bract)}" fill="none" stroke="{bract_ink}" \
 stroke-width="{stroke:.2f}" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="{path_data(coil)}" fill="none" stroke="url(#sweep)" \
 stroke-width="{stroke:.2f}" stroke-linecap="round" stroke-linejoin="round"/>
@@ -494,6 +562,38 @@ def png(coil, bract, spike, spine_axis, stroke, stops):
     return out.resize((TILE, TILE), Image.LANCZOS)
 
 
+def save_raster(image, path, **options):
+    """
+    Saves `image` to `path`, unless the file there already decodes to the same
+    pixels.
+
+    The same pixels do not always encode to the same bytes: Pillow's PNG and ICO
+    writers have changed between versions, and a run on another machine rewrote
+    all three rasters with not one pixel different. A diff of three binaries
+    that changed nothing is noise somebody has to rule out by hand, and it hides
+    the run that did change one.
+    """
+    if path.exists():
+        with Image.open(path) as existing:
+            # An .ico carries several sizes and opens on the largest; each is
+            # compared, at the sizes this run would write.
+            sizes = options.get("sizes") or [existing.size]
+            same = True
+            for size in sizes:
+                if path.suffix == ".ico":
+                    existing.size = size
+                    wanted = image.resize(size, Image.LANCZOS)
+                else:
+                    wanted = image
+                if (existing.size != wanted.size or existing.mode != wanted.mode
+                        or existing.tobytes() != wanted.tobytes()):
+                    same = False
+                    break
+        if same:
+            return
+    image.save(path, **options)
+
+
 CONTENTS = {
     "images": [
         {"filename": "icon.png", "idiom": "universal",
@@ -542,7 +642,7 @@ def main():
     # An app icon may not carry an alpha channel. The ground travels with the
     # mark — §10.4's "no light and dark pair" — so one drawing covers every
     # appearance and every size.
-    png(coil, bract, spike, axis, stroke, stops).save(CATALOGUE / "icon.png")
+    save_raster(png(coil, bract, spike, axis, stroke, stops), CATALOGUE / "icon.png")
     (CATALOGUE / "Contents.json").write_text(json.dumps(CONTENTS, indent=2) + "\n")
 
     # **The site's favicon is this drawing, not a second one** — and neither is
@@ -563,9 +663,25 @@ def main():
     # will one day spend an afternoon on.
     tile = png(coil, bract, spike, axis, stroke, stops)
     (SITE / "assets/icon.svg").write_text(svg(coil, bract, spike, axis, stroke, stops))
-    tile.resize((180, 180), Image.LANCZOS).save(SITE / "assets/icon-180.png")
-    tile.resize((64, 64), Image.LANCZOS).save(
-        SITE / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
+    save_raster(tile.resize((180, 180), Image.LANCZOS), SITE / "assets/icon-180.png")
+    save_raster(tile.resize((64, 64), Image.LANCZOS), SITE / "favicon.ico",
+                sizes=[(16, 16), (32, 32), (48, 48)])
+
+    # **The bar carries the bare mark, not the tile**, since 11 October: the
+    # drawing beside the wordmark with no dark square behind it. Without its
+    # ground it has to be drawn for the ground it lands on, so there are two:
+    # `mark-dark.svg` is this drawing exactly, and `mark-light.svg` is the same
+    # polylines with the ramp solved for the site's light ground and the white in
+    # ink. Pages that follow the reader switch between them with `<picture>`;
+    # the areas, which are always night, carry only the dark one. Not `mark.svg`,
+    # which was the hand-kept copy that drifted, and is gone.
+    view = bare_view(coil, bract, spike, stroke)
+    light = ramp(light=True)
+    (SITE / "assets/mark-dark.svg").write_text(
+        svg(coil, bract, spike, axis, stroke, stops, ground=None, view=view))
+    (SITE / "assets/mark-light.svg").write_text(
+        svg(coil, bract, spike, axis, stroke, light,
+            ground=None, bract_ink=LIGHT_INK, view=view))
 
     ground = from_hex(GROUND)
     print(f"ground {GROUND}   stroke {stroke:.2f}   span {HUE_FROM:.0f}°→{HUE_TO:.0f}°")
@@ -576,6 +692,12 @@ def main():
               f"contrast {contrast(rgb, ground):.2f}:1  luminance {luminances[-1]:.4f}")
     spread = (max(luminances) - min(luminances)) / max(luminances) * 100
     print(f"  isoluminance spread {spread:.3f}%")
+
+    lit = from_hex(LIGHT_GROUND)
+    print(f"bare mark on the light ground {LIGHT_GROUND}, bract in {LIGHT_INK} "
+          f"({contrast(from_hex(LIGHT_INK), lit):.2f}:1)")
+    for hue, rgb in light:
+        print(f"  {hue:5.1f}°  {to_hex(rgb)}  contrast {contrast(rgb, lit):.2f}:1")
 
     print("clearances, as drawn on the tile and as rendered:")
     for name, gap in clearances(coil, bract, room, stroke).items():
