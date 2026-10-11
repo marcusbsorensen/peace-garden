@@ -78,8 +78,17 @@ struct PlotView: View {
 
     // MARK: The tray
 
-    /// Whether the tray at the foot is open. Shut every time the garden opens.
-    @State private var trayOpen = false
+    /// Whether the tray at the foot is open. Shut every time the garden opens —
+    /// except in a Debug build launched with `-pgTray YES`, for screenshots of
+    /// it: an injected tap on a simulator needs somebody to hand the simulator
+    /// over, and a launch argument does not.
+    @State private var trayOpen: Bool = {
+        #if DEBUG
+        return UserDefaults.standard.bool(forKey: "pgTray")
+        #else
+        return false
+        #endif
+    }()
     /// Where the foot of the screen begins — the asking line, the tray and its
     /// plus — so the plot is framed in the sky above it.
     @State private var footFrame: CGRect = .null
