@@ -438,6 +438,9 @@ and its coil still visibly tapers. T3 is not recommended.
 3. **Shall I make the §3.2a amendment below on `uncubed` `integration` once you have
    chosen?** Yes (recommended) · I'll do it.
 
+**Decided: Marcus chose T2, 11 October.** He then asked for a little more curl in the
+coil; see the last subsection of this section.
+
 ### Proposed amendment to `suite-brand.md` §3.2a
 
 A proposal only: nothing in `uncubed` has been touched.
@@ -495,3 +498,127 @@ it earns it" becomes:
 
 The sheets were rendered on a Mac without Inter, so their labels are set in the system's SF.
 **Every PNG is under 450 KB.**
+
+### Round two and three-quarters: more curl
+
+*Added 11 October 2026. T2's files are unchanged. The three amounts are in `d-taper/c1/`,
+`c2/` and `c3/`, written by [`d-taper/make_coil.py`](d-taper/make_coil.py).*
+
+**Start with [`d-taper/curl-compare.png`](d-taper/curl-compare.png)**: T2 as chosen, then
+C1, C2 and C3, then today's spiral icon, at 360, 180 and 60 px on both home-screen grounds,
+60 px enlarged 4×, and each coil at 1024 px. Then
+[`curl-suite-row.png`](d-taper/curl-suite-row.png),
+[`c2/in-context.png`](d-taper/c2/in-context.png) and
+[`curl-small-sizes.png`](d-taper/curl-small-sizes.png).
+
+**What Marcus asked.** Having chosen T2, he asked, in his words:
+
+> Just try giving it a little bit more of an inward spiralling curl so it's got a tiny more
+> similarity to the original app logo.
+
+The original is today's icon, a logarithmic spiral of two turns whose radius grows 2.55
+times a turn (`tools/icon/make_icon.py`).
+
+**What changes: the crozier's head, nothing else.** Round two's `meeting()` runs unchanged,
+with its one call to `curl()` given new dials. The stalk, the fork, the stem, the leaf, T2's
+taper (τ 0.58: coil tip 0.42, stem neck 0.75, leaf 0.72), the ramp, the placement and the
+file set are all T2's. The taper still runs from the fork to the tip, so the tip is still the
+thinnest point.
+
+**Why the coil grows.** T2's head is a logarithmic spiral whose radius falls from 24 to 16
+units over 0.85 turns, 1.61 times a turn. Wound on at that rate, a quarter turn more brings
+the tip within 0.4 px of its own stalk at 60 px, and half a turn within 0.3 px: the turns
+merge. So each amount winds faster, 2.15 to 2.3 times a turn, towards today's 2.55. The inner
+radius is held at 10 units (0.83 strokes, about two tip widths) in all three, so the eye is
+the same in each, and the outer radius grows so the first turn keeps its room. C1 stays T2's
+size. C2 grows by a seventh and C3 by a third, to the right, which shifts the centred mark a
+little to the left (see the 360 px row).
+
+| | Turns | Radius, outer → inner | Inner radius ÷ stroke | Radius gain per turn | Coil size against T2 |
+|---|---|---|---|---|---|
+| T2, as chosen | 0.85 | 24 → 16 units | 1.33 | 1.61 | 1 |
+| **C1, +¼ turn** | 1.10 | 25 → 10 units | 0.83 | 2.30 | 0.99 |
+| **C2, +½ turn** | 1.35 | 29 → 10 units | 0.83 | 2.20 | 1.14 |
+| **C3, +¾ turn** | 1.60 | 34 → 10 units | 0.83 | 2.15 | 1.32 |
+
+Measured as before, in device pixels. The tip is 1.65 px at 60 px and 1.10 px at 40 px in
+all four, since the taper has not changed. The mouth gap runs from the tip's round end to
+the nearest other ink: the stalk in T2 and C1, the turn outside it in C2 and C3. In all four
+it is the tightest gap in the coil. The eye is measured from the spiral's centre to the
+nearest ink. By this measure T2's eye is 4.3 px at 60; §8's 4.4 measured from the tip's
+centre of curvature.
+
+| | Mouth gap at 180 · 60 · 40 px | Eye at 180 · 60 · 40 px | Coil to stem · to leaf at 60 px | Coil's lowest ink above the fork |
+|---|---|---|---|---|
+| T2 | 6.7 · 2.2 · 1.5 | 12.8 · 4.3 · 2.8 | 3.7 · 8.4 px | 0.097 of the tile |
+| C1 | 5.3 · 1.8 · 1.2 | 7.2 · 2.4 · 1.6 | 3.7 · 8.4 px | 0.118 |
+| C2 | 5.0 · 1.7 · 1.1 | 7.2 · 2.4 · 1.6 | 3.6 · 8.3 px | 0.092 |
+| C3 | 5.0 · 1.7 · 1.1 | 7.2 · 2.4 · 1.6 | 3.6 · 8.2 px | 0.061 |
+
+| | Stroke at root | Median stroke | Ink box (w × h) | Ink area | Leaf share |
+|---|---|---|---|---|---|
+| T2 | 0.0654 | 0.0459 | 0.551 × 0.692 | 0.087 | 28.4 % |
+| C1 | 0.0654 | 0.0479 | 0.546 × 0.692 | 0.089 | 27.8 % |
+| C2 | 0.0654 | 0.0460 | 0.585 × 0.692 | 0.099 | 25.1 % |
+| C3 | 0.0654 | 0.0459 | 0.632 × 0.692 | 0.110 | 22.4 % |
+
+- **No coil touches or crowds anything.** Every coil keeps 3.6 px from the stem and 8 px
+  from the leaf at 60 px, and stays above the fork it grows from.
+- **The eye stays open** at 180 and 60 px: 2.4 px from the centre to the nearest ink at 60.
+  It is smaller than T2's 4.3, because the tip now winds in towards the centre.
+- **The bigger coils give back some of the ink the taper took.** C3's ink area, 0.110, is the
+  suite's median, and its leaf share, 22 %, is back inside the suite's 17–24 %. The same fact
+  cuts the other way: the leaf reads less chunky beside a bigger coil, and that contrast was
+  why Marcus chose T2.
+- The hue band is unchanged, 86°–110°. C3's starts at 85° because its wider box stretches
+  the one sweep.
+
+**The small drawing stays round two's.** Its untapered stroke, 1.35 times heavier, leaves no
+room for more turns. A fifth of a turn more closes the mouth to 0.27 px on the 16 px favicon.
+Keeping the mouth open needs a faster wind and a bigger coil: the best found, a sixth of a
+turn more, makes the coil 16 % wider and brings it to 0.1 px above the fork at 16 px. At 16
+and 32 px it then reads as a bigger hook, not as more curl. `curl-small-sizes.png` shows
+both rows. The small and favicon files in `c1/` to `c3/` are round two's, apart from their
+titles.
+
+**What reads well and what does not.**
+
+- **Well, at 360 and 180 px:** C2 and C3 read as spirals, with one full winding inside the
+  outer turn, and that is what today's icon is. C1's tip tucks inside the stalk, so the coil
+  closes round its eye, but it still reads as T2's curl with the tip turned in.
+- **At 60 px** all three hold: no gap is under 1.66 px. C1's inner loop is small, and at
+  this size its likeness to today's spiral barely shows.
+- **Weak, at 40 px** (a notification on a 2× iPhone, the smallest the icon is drawn): in C2
+  and C3 the inner turn runs 1.1 px from the turn outside it, and the two blur into one grey
+  band in places. C1 has one such place, near the stalk, where C2 and C3 have half a turn of
+  it.
+- **Weak, in C3 at every size:** the coil grows by a third and leads the mark; the spiral
+  outweighs the leaf.
+
+**Recommendation: C2.**
+
+- It is the smallest amount at which the coil reads as a spiral rather than a hook at 180
+  and 60 px, with one full inward winding as today's icon has. That is the likeness Marcus
+  asked for.
+- It costs a coil a seventh larger, and the gaps hold at 60 px: the mouth is 1.7 px and the
+  eye 2.4 px.
+- The leaf keeps 25 % of the ink, still above the suite's 17–24 %, so T2's chunkier leaf
+  survives.
+
+**C1 is the fallback** if "a little bit more" should stay that small: the same size as T2,
+and the safest at 40 px, but the likeness barely shows on a phone. C3 is not recommended,
+because the coil takes over the mark and blurs at 40 px.
+
+**The decision for Marcus.**
+
+1. **How much more curl?** C2, half a turn more (recommended) · C1, a quarter turn ·
+   C3, three-quarters · none, keep T2's coil.
+2. **The small drawing and favicon?** Keep round two's (recommended) · take the extra curl
+   with a bigger coil.
+
+**Files.** `make_coil.py` writes `c1/`, `c2/` and `c3/` (T2's file set, prefixed
+`d-taper-cN`, with `in-context.png` in `c2/` only), `curl-compare.png`,
+`curl-suite-row.png`, `curl-small-sizes.png` and `coil-measurements.json`. Run it after
+`make_taper.py`, from the worktree root. `make_taper.py`'s sheet functions now take their
+columns and outputs as arguments; its own files come out byte-identical. **Every PNG is
+under 450 KB.**

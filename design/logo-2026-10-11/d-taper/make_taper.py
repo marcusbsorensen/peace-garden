@@ -219,17 +219,18 @@ def patched(module, **attrs):
             setattr(module, k, v)
 
 
-def write_strength(folder, label, word, taper):
+def write_strength(folder, label, word, taper, draw=None, prefix=None, title=None):
     """Round two's `write_candidate()`, unchanged, with the tapered drawing
     patched in. It writes into a scratch folder named for the prefix, and the
-    files move into `d-taper/<folder>/`."""
-    prefix = f"d-taper-{folder}"
-    title = f"D-suite with taper {label} ({word})"
+    files move into `d-taper/<folder>/`. `draw` stands in for round two's
+    `meeting()` (`make_coil.py` passes one with more curl)."""
+    prefix = prefix or f"d-taper-{folder}"
+    title = title or f"D-suite with taper {label} ({word})"
     out = HERE / folder
     out.mkdir(exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
         with patched(ML, HERE=Path(tmp), drawing=taper_drawing(taper)):
-            ML.write_candidate(prefix, title, ML.meeting, "suite")
+            ML.write_candidate(prefix, title, draw or ML.meeting, "suite")
         for f in sorted((Path(tmp) / prefix).iterdir()):
             (out / f.name).write_text(f.read_text())
     return out
@@ -237,11 +238,11 @@ def write_strength(folder, label, word, taper):
 
 # ------------------------------------------------------------ the 1024 frame
 
-def icon_frame(small=False):
+def icon_frame(small=False, draw=None):
     """The drawing placed as `write_candidate()` places the app icon."""
     h = ML.INK_HEIGHT * 1024
     box = ((1024 - h) / 2, (1024 - h) / 2, h, h)
-    return ML.place(ML.meeting(small), box, ML.TILE_STROKE["suite"] / ML.INK_HEIGHT)
+    return ML.place((draw or ML.meeting)(small), box, ML.TILE_STROKE["suite"] / ML.INK_HEIGHT)
 
 
 def eye(taper, size):
@@ -285,7 +286,7 @@ def render_svg(svg_text, size, bg=None):
     return Image.open(io.BytesIO(png)).convert("RGBA")
 
 
-def measure_icon(path):
+def measure_icon(path, draw=None):
     """Round two's `measure()` on the rendered icon, plus the stroke at the
     root: round two's `widths()` on the ink between the root and the fork."""
     png = cairosvg.svg2png(url=str(path), output_width=1024)
@@ -294,7 +295,7 @@ def measure_icon(path):
     ink = np.abs(rgb - ME.ground_of(rgb)).sum(axis=2) > 90
     # Below the fork only the stem is drawn (the crozier's round start sits
     # inside it), so this band is the root's stroke and nothing else.
-    placed, _ = icon_frame()
+    placed, _ = icon_frame(draw=draw)
     fork_y = float(np.asarray(placed[0][0])[0][1])
     band = np.zeros_like(ink)
     band[int(math.ceil(fork_y)):] = True
@@ -330,17 +331,22 @@ def columns():
     return cols
 
 
-def compare():
-    cols = columns()
+def compare(cols=None, crops=None, out=None,
+            title="D-suite with tapers: round two's untapered D-suite beside T1, T2 and T3"):
+    """`cols` is [(name, icon path)]; `crops` is [(caption, [centre per column])]."""
+    cols = cols or columns()
     cw = 420
     W = 40 + cw * len(cols) + 20
     band_h = 600
-    crops = (("coil", "The coil at 1024 px, 1:1"), ("neck", "The stem meeting the leaf at 1024 px, 1:1"),
-             ("fork", "The fork at 1024 px, 1:1: the crozier's fill over the stem's, one gradient"))
+    if crops is None:
+        boxes = crop_boxes()
+        crops = [(text, [boxes[key]] * len(cols)) for key, text in (
+            ("coil", "The coil at 1024 px, 1:1"), ("neck", "The stem meeting the leaf at 1024 px, 1:1"),
+            ("fork", "The fork at 1024 px, 1:1: the crozier's fill over the stem's, one gradient"))]
     H = 130 + 2 * band_h + 330 + len(crops) * 440
     sheet = Image.new("RGBA", (W, H), MS.SHEET_BG)
     dr = ImageDraw.Draw(sheet)
-    MS.label(dr, (40, 24), "D-suite with tapers: round two's untapered D-suite beside T1, T2 and T3", 30)
+    MS.label(dr, (40, 24), title, 30)
     MS.label(dr, (40, 66), "360, 180 and 60 px under the iOS mask, on the home screen's dark (#1C1C1E) and "
                            "light (#F2F2F7) grounds; then 60 px enlarged 4×, nearest neighbour; then 1:1 crops "
                            "of the 1024 px icon", 17)
@@ -362,17 +368,18 @@ def compare():
         bg.alpha_composite(im)
         sheet.alpha_composite(bg.resize((240, 240), Image.NEAREST), (40 + i * cw + 10, y0 + 36))
         sheet.alpha_composite(bg, (40 + i * cw + 270, y0 + 216))
-    boxes = crop_boxes()
-    for row, (key, text) in enumerate(crops):
+    for row, (text, centres) in enumerate(crops):
         y = 136 + 2 * band_h + 330 + row * 440
         MS.label(dr, (40, y), text)
         for i, (name, path) in enumerate(cols):
-            sheet.alpha_composite(crop(path, boxes[key]), (40 + i * cw + 10, y + 34))
-    return MS.save(sheet, HERE / "compare.png")
+            sheet.alpha_composite(crop(path, centres[i]), (40 + i * cw + 10, y + 34))
+    return MS.save(sheet, out or HERE / "compare.png")
 
 
-def suite_row():
-    cols = [(n, "svg", p) for n, p in columns()]
+def suite_row(pg=None, out=None, title="D-suite with tapers beside the suite: round two's D-suite, T1, T2 "
+                                        "and T3, the five suite apps' real icons, then today's Peace Garden icon"):
+    pg = pg or columns()
+    cols = [(n, "svg", p) for n, p in pg]
     cols += [(n, "png", MS.ICONS / f) for n, f in MS.SUITE]
     cols += [("Peace Garden today", "svg", MS.CURRENT)]
     cw = 214
@@ -380,8 +387,7 @@ def suite_row():
     H = 120 + 2 * 420
     sheet = Image.new("RGBA", (W, H), MS.SHEET_BG)
     dr = ImageDraw.Draw(sheet)
-    MS.label(dr, (40, 24), "D-suite with tapers beside the suite: round two's D-suite, T1, T2 and T3, "
-                           "the five suite apps' real icons, then today's Peace Garden icon", 30)
+    MS.label(dr, (40, 24), title, 30)
     MS.label(dr, (40, 66), "180 px and 60 px, on the iOS home screen's dark (#1C1C1E) and light (#F2F2F7) "
                            "grounds. FreqShift's only icon in its repository is a 162 px web logo, upscaled here.", 17)
     short = {"D-suite, round two": "D-suite", "Animal Rescue Centre": "A.R.C.", "Peace Garden today": "Today"}
@@ -391,31 +397,33 @@ def suite_row():
         d = ImageDraw.Draw(sheet)
         for i, (name, kind, ref) in enumerate(cols):
             x = 40 + i * cw + (cw - 180) // 2
-            if i in (4, 9):  # hairlines around the suite
+            if i in (len(pg), len(pg) + 5):  # hairlines around the suite
                 d.line((40 + i * cw - 4, y0 + 20, 40 + i * cw - 4, y0 + 380), fill=(128, 128, 136), width=1)
             sheet.alpha_composite(MS.any_icon(kind, ref, 180), (x, y0 + 24))
             d.text((x + 90, y0 + 214), short.get(name, name), fill=ink, font=MS.font(17), anchor="ma")
             sheet.alpha_composite(MS.any_icon(kind, ref, 60), (x + 60, y0 + 262))
             d.text((x + 90, y0 + 330), short.get(name, name), fill=ink, font=MS.font(12), anchor="ma")
-    return MS.save(sheet, HERE / "suite-row.png")
+    return MS.save(sheet, out or HERE / "suite-row.png")
 
 
-def in_context(folder, label, word):
+def in_context(folder, label, word, name=None):
     key = f"d-taper/{folder}"
-    with patched(MS, NAMES={**MS.NAMES, key: f"D-suite, taper {label} ({word})"}):
+    with patched(MS, NAMES={**MS.NAMES, key: name or f"D-suite, taper {label} ({word})"}):
         return MS.in_context(key)
 
 
-def small_svg(taper, ground):
+def small_svg(taper, ground, meeting=None):
     """The favicon or the small drawing, with `taper` carried into it, as an
-    SVG string (for the rejected rows of small-sizes.png)."""
+    SVG string (for the rejected rows of small-sizes.png). `meeting` stands
+    in for round two's drawing."""
     stops, leaf = (ML.ramp(False), ML.LEAF) if ground != "light" else (ML.ramp(True), ML.INK)
     draw = taper_drawing(taper, small_taper=taper)
+    meeting = meeting or ML.meeting
     if ground == "favicon":
-        d, g = draw(ML.meeting, True, (17, 13, 74, 74), ML.TILE_STROKE["suite"] / ML.INK_HEIGHT * 1.35,
+        d, g = draw(meeting, True, (17, 13, 74, 74), ML.TILE_STROKE["suite"] / ML.INK_HEIGHT * 1.35,
                     stops, leaf)
         return ML.svg(100, 100, "favicon", d + f'<rect width="100" height="100" rx="22" fill="{ML.GROUND}"/>' + g)
-    d, g = draw(ML.meeting, True, (4, 4, 92, 92), ML.TILE_STROKE["suite"] / ML.INK_HEIGHT * 1.35, stops, leaf)
+    d, g = draw(meeting, True, (4, 4, 92, 92), ML.TILE_STROKE["suite"] / ML.INK_HEIGHT * 1.35, stops, leaf)
     return ML.svg(100, 100, "small", d + g)
 
 
@@ -426,10 +434,34 @@ def thinnest_px(taper, size, favicon=True):
     return stroke * size / 100 * (taper.coil_end if taper else 1.0)
 
 
+SMALL_SIZES = (16, 32, 48)
+SMALL_FILES = {"favicon": "-favicon", "dark": "-small", "light": "-small-light-ground"}
+
+
 def small_sizes():
-    rows = [("Chosen for T1, T2 and T3: untapered, round two's small drawing (§3.2a(5))", None, None)]
-    rows += [(f"Not chosen: {lab}'s taper carried into the small drawing", t, f) for f, lab, _, t in STRENGTHS]
-    sizes = (16, 32, 48)
+    rows = [("Chosen for T1, T2 and T3: untapered, round two's small drawing (§3.2a(5))", None)]
+    rows += [(f"Not chosen: {lab}'s taper carried into the small drawing", t) for f, lab, _, t in STRENGTHS]
+    sheet_rows = []
+    for text, taper in rows:
+        px = ", ".join(f"{s} px {thinnest_px(taper, s):.2f}" for s in SMALL_SIZES)
+        if taper is None:
+            def src(kind):
+                return (HERE / "t2" / f"d-taper-t2{SMALL_FILES[kind]}.svg").read_text()
+        else:
+            def src(kind, taper=taper):
+                return small_svg(taper, kind)
+        sheet_rows.append((f"{text}.  Thinnest stroke on the favicon: {px} px", src))
+    return small_sheet(
+        sheet_rows, HERE / "small-sizes.png",
+        "Small sizes: the favicon and the small drawing at 16, 32 and 48 px, "
+        "enlarged 4× (nearest neighbour) with the true size beneath",
+        "The small drawing is round two's, untapered, for every strength. The rows beneath "
+        "show what each strength's taper would do if it were carried down.")
+
+
+def small_sheet(rows, out, title, subtitle):
+    """`rows` is [(caption, src(kind) → SVG text)], kind one of favicon, dark, light."""
+    sizes = SMALL_SIZES
     groups = (("favicon", MS.HOME_DARK, "Favicon on a dark tab bar"),
               ("favicon", MS.HOME_LIGHT, "Favicon on a light tab bar"),
               ("dark", ML.GROUND, "Small drawing on #0D0D1F"),
@@ -440,22 +472,15 @@ def small_sizes():
     H = 120 + rh * len(rows)
     sheet = Image.new("RGBA", (W, H), MS.SHEET_BG)
     dr = ImageDraw.Draw(sheet)
-    MS.label(dr, (40, 24), "Small sizes: the favicon and the small drawing at 16, 32 and 48 px, "
-                           "enlarged 4× (nearest neighbour) with the true size beneath", 30)
-    MS.label(dr, (40, 66), "The small drawing is round two's, untapered, for every strength. The rows beneath "
-                           "show what each strength's taper would do if it were carried down.", 17)
-    for r, (text, taper, folder) in enumerate(rows):
+    MS.label(dr, (40, 24), title, 30)
+    MS.label(dr, (40, 66), subtitle, 17)
+    for r, (text, src_of) in enumerate(rows):
         y = 110 + r * rh
-        px = ", ".join(f"{s} px {thinnest_px(taper, s):.2f}" for s in sizes)
-        MS.label(dr, (40, y), f"{text}.  Thinnest stroke on the favicon: {px} px", 18)
+        MS.label(dr, (40, y), text, 18)
         for g, (kind, bg, gname) in enumerate(groups):
             x = 40 + g * gw
             MS.label(dr, (x, y + 30), gname, 15)
-            if taper is None:
-                name = {"favicon": "-favicon", "dark": "-small", "light": "-small-light-ground"}[kind]
-                src = (HERE / "t2" / f"d-taper-t2{name}.svg").read_text()
-            else:
-                src = small_svg(taper, kind)
+            src = src_of(kind)
             xx = x
             for s in sizes:
                 im = render_svg(src, s)
@@ -464,7 +489,7 @@ def small_sizes():
                 sheet.alpha_composite(tile.resize((s * 4, s * 4), Image.NEAREST), (xx, y + 58 + (192 - s * 4)))
                 sheet.alpha_composite(tile, (xx, y + 264))
                 xx += s * 4 + 16
-    return MS.save(sheet, HERE / "small-sizes.png")
+    return MS.save(sheet, out)
 
 
 # ---------------------------------------------------------------------- main
