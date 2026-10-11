@@ -315,12 +315,12 @@ def crop_boxes():
     crozier, stem = np.asarray(placed[0][0]), np.asarray(placed[1][0])
     coil = crozier[-180:]
     cc = (coil.min(axis=0) + coil.max(axis=0)) / 2
-    neck = stem[-1] + np.array([0.0, 60.0])
-    fork = crozier[0] + np.array([30.0, -60.0])
+    neck = stem[-1] + np.array([-30.0, 30.0])
+    fork = crozier[0] + np.array([15.0, -90.0])
     return {"coil": cc, "neck": neck, "fork": fork}
 
 
-def crop(path, centre, size=380):
+def crop(path, centre, size=400):
     im = R1.render(path, 1024)
     x, y = (int(round(v - size / 2)) for v in centre)
     x = min(max(x, 0), 1024 - size)
