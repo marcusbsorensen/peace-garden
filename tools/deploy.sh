@@ -86,7 +86,7 @@ if [ "$upload" = yes ]; then
         --exclude='/.well-known/' \
         --exclude='/.api/config.php' \
         -e "ssh -o ConnectTimeout=20" \
-        "$HERE/Server/" "$HOST:$ROOT/" | sed -n '/^\*deleting/p; /Number of files transferred/p'
+        "$HERE/Server/" "$HOST:$ROOT/" | sed -n '/^\*deleting/p; /Number of .*files transferred/p'
 
     if [ -z "$dry" ]; then
         # One-off left over from the upload that predates `index.php`: a static
