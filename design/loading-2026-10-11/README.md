@@ -19,6 +19,13 @@ The launch moment, 2.0 s on `#0D0D1F`, over the dark stage (above) and the light
 on, at a phone's own 3× pixels: [`final-frame.png`](final-frame.png). Against 10 October:
 [`before-after.png`](before-after.png).
 
+**Since Marcus's choice later on 11 October, the name and version stand at the foot of the
+moment** ([`design/launch-label-2026-10-11/`](../launch-label-2026-10-11/README.md)). The
+harness draws them, and the launch filmstrip, `launch.gif` and `launch.mp4` were rebuilt with
+them (`make-assets.py <renders> --launch`), fading in over the first 180 ms. The final frame
+is the plant's own frame, which the name stands below, so it is unchanged, as is every other
+picture here.
+
 ## What changed
 
 **1. The colours**, exactly as the logo's §6 asks (`Fiddlehead.Palette`):
