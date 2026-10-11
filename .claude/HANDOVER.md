@@ -1,4 +1,4 @@
-# Peace Garden: new logo done, build 7 ready to upload — handover 11 October 2026 (evening)
+# Peace Garden: new logo live, build 7 uploaded — handover 11 October 2026 (evening)
 
 Previous note: `git show 7a067c8:.claude/HANDOVER.md`. This session ran on Marcus's work account (hello@uncubed.app). Memory lives in the personal account's folder, `~/.claude/projects/-Users-marcus-Projects-peace-garden/memory/`.
 
@@ -12,23 +12,23 @@ Ship the new logo and the recoloured loading animation in build 7, and deploy th
 - **Website (main, not deployed).**
   - The bar shows the bare mark, with no tile: the light version on light pages, the dark version on dark pages, and the dark one always on the areas.
   - Tabs use `assets/favicon.svg`, the untapered small drawing.
-  - The live site still serves `fd4e995`.
+  - **Deployed 11 October, about 20:20 BST**, from `4c85d1c`: 25 files, no deletions. `deploy.sh --check` was all ok, and the live header was checked in a browser.
 - **Fiddlehead (main).** The logo's colours, the leaf lifting to 36°, a tapered stem, an outlined leaf, a 0.04 halo, and Reduce Motion's still lifted. All six of Marcus's answers are in `design/loading-2026-10-11/README.md`.
 - **Build 7.**
   - `project.yml` is at 7.
   - The full suite passed: 197 tests, 0 failed, 8 skipped. SeedCore passed too.
   - It is archived at `build/PeaceGarden-1.0-7.xcarchive`, and the ipa is `build/export-7/PeaceGarden.ipa`.
-  - **It has not been uploaded yet.**
-- **uncubed `suite-brand.md`.** `main` is done (`7d23ed82`). `integration` is still waiting on Marcus to push `claude/suite-brand-pg-onto-integration-2026-10-11`, a fast-forward from `018f7fb7`. If `integration` has moved again, cherry-pick `ea337030` and `162b376a` onto it.
+  - **Uploaded 11 October with `tools/upload-build.sh 7`**, run by Marcus. The upload goes through Xcode's signed-in account and reads no key file.
+  - App Store Connect warned that `UIRequiredDeviceCapabilities` includes `accelerometer`, so the app won't be offered on visionOS. This is informational.
+- **uncubed `suite-brand.md`:** done on both branches, `main` at `7d23ed82` and `integration` at `9e2ba859`, with identical copies. The leftover `claude/suite-brand-*` branches there can be deleted.
 
 ## Next steps
-1. **Upload build 7.** Marcus was asked: A, Transporter, by him (recommended); B, a permission rule so Claude can do it; C, altool. The auto-mode classifier blocks the upload, and the key search, for Claude.
-2. **Deploy the site:** `tools/deploy.sh` (or `--dry-run` first), then `--check`. The same classifier block applies, so Marcus runs it unless he adds a rule.
-3. **After the upload:** install build 7 from TestFlight on a real phone. Check the icon, the launch moment, and Reduce Motion's still.
-4. **Open, not urgent:**
+1. Install build 7 from TestFlight on a real phone once it has processed. Check the icon on the home screen, the launch moment (the leaf lifting) and Reduce Motion's still.
+2. **Open, not urgent:**
    - the recycling glyph in `Chrome.swift` still echoes the old spiral (see `design/icon-port-2026-10-11/README.md`);
    - the two wasm prototype pages still use `icon.svg`;
    - FreqShift's real icon isn't in its repo (logo round two README, question 7).
+3. **Uploads and deploys.** The auto-mode classifier blocks Claude from both, and from editing its own permissions. Marcus runs `sh tools/upload-build.sh N` and `tools/deploy.sh` himself, or adds `Bash(sh tools/upload-build.sh:*)` and `Bash(tools/deploy.sh:*)` to `.claude/settings.local.json`. Run the deploy in a real terminal with `; echo "exit=$?"`: through the session's shell input, the dry run once stopped after its first line.
 
 ## Traps
 - **Token guard:**
