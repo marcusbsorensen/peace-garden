@@ -17,7 +17,9 @@ import Foundation
 /// Arguments*, or `xcrun simctl launch <device> app.peacegarden -loading.style.v1 off`
 /// (UserDefaults reads launch arguments of this shape as its own). A stored value
 /// that no longer names a case — earlier rounds had `unwinding`, `frond` and `edge`
-/// — reads as the default.
+/// — reads as the default. The two choices left open on 11 October, the stem's
+/// taper and the leaf's fill, are launch arguments of the same kind
+/// (`LoadingStem`, `LoadingLeaf`).
 enum LoadingStyle: String, CaseIterable, Sendable {
     case off
     case fixed
@@ -33,6 +35,50 @@ enum LoadingSwitch {
     static func style(in defaults: UserDefaults = .standard) -> LoadingStyle {
         defaults.string(forKey: key).flatMap(LoadingStyle.init(rawValue:)) ?? fallback
     }
+
+    // MARK: - The two open choices of 11 October 2026
+
+    /// `-loading.stem.v1 tapered` or `even`. See `Fiddlehead.Style`.
+    static let stemKey = "loading.stem.v1"
+    /// `-loading.leaf.v1 outline` or `filled`. See `Fiddlehead.Style`.
+    static let leafKey = "loading.leaf.v1"
+
+    /// The recommendations, which are what a stored value that names nothing
+    /// reads as.
+    static let stemFallback = LoadingStem.tapered
+    static let leafFallback = LoadingLeaf.outline
+
+    static func stem(in defaults: UserDefaults = .standard) -> LoadingStem {
+        defaults.string(forKey: stemKey).flatMap(LoadingStem.init(rawValue:)) ?? stemFallback
+    }
+
+    static func leaf(in defaults: UserDefaults = .standard) -> LoadingLeaf {
+        defaults.string(forKey: leafKey).flatMap(LoadingLeaf.init(rawValue:)) ?? leafFallback
+    }
+
+    /// Both choices, as the drawing takes them.
+    static func drawing(in defaults: UserDefaults = .standard) -> Fiddlehead.Style {
+        Fiddlehead.Style(stem: stem(in: defaults), leaf: leaf(in: defaults))
+    }
+}
+
+/// **How the stem is drawn along its length**: Marcus asked on 11 October 2026 for
+/// the logo's coil to thin as it spirals in and its stem to thin slightly towards
+/// the leaf, and this is the same choice for the loading animation.
+enum LoadingStem: String, CaseIterable, Sendable {
+    /// Thinning gently from the root to the tip (`Fiddlehead.Style.taperedTip`).
+    case tapered
+    /// One even hairline, as on 10 October.
+    case even
+}
+
+/// **How the leaf is drawn**: the logo's leaf is a stroked outline, and so has this
+/// one been since 10 October.
+enum LoadingLeaf: String, CaseIterable, Sendable {
+    /// A stroked outline, as the logo's.
+    case outline
+    /// The same outline, filled.
+    case filled
 }
 
 /// **When things happen, and every figure is a figure this app, or the suite it

@@ -15,13 +15,21 @@ import SwiftUI
 ///
 /// **It follows the app's own appearance** — Marcus's choice on 10 October 2026 —
 /// because it sits inside the app's screens, on the app's ground, and not on the
-/// launch ground. On the dark ground it is the icon's greens and white bract; on
-/// the light ground the same hues solved to 4.5:1 and the app's ink for the leaf
-/// (`Fiddlehead.Palette`), since the icon's own values would be 1.4:1 there.
+/// launch ground. On the dark ground it is the logo's sage-to-green-gold and warm
+/// white leaf; on the light ground the logo's light-ground stops, 4.6:1, and the
+/// app's ink for the leaf (`Fiddlehead.Palette`), since the dark-ground green-gold
+/// would be 1.8:1 there.
+///
+/// **It does not lift.** The leaf lifting is how the launch moment ends; the
+/// waiting mark is a curl breathing and stays one, fitted to its own travel
+/// (`Fiddlehead.Fit.waiting`), so it is no smaller than it was.
 struct LoadingBusyMark: View {
 
     /// The mark's width; its height is half as much again, a plant being tall.
     var size: CGFloat = 40
+    /// The stem's taper and the leaf's fill: the launch arguments, or the
+    /// recommendation (`Fiddlehead.Style`).
+    var style: Fiddlehead.Style = LoadingSwitch.drawing()
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorScheme) private var colorScheme
@@ -37,7 +45,7 @@ struct LoadingBusyMark: View {
 
     var body: some View {
         TimelineView(.animation(paused: reduceMotion)) { timeline in
-            FiddleheadView(pose: pose(at: timeline.date), palette: palette, weight: 1.5, halo: 0)
+            FiddleheadView(pose: pose(at: timeline.date), palette: palette, weight: 1.5, halo: 0, style: style)
                 .frame(width: Self.frame(forSize: size).width, height: Self.frame(forSize: size).height)
         }
     }

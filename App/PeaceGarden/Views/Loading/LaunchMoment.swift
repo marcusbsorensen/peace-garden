@@ -49,6 +49,8 @@ struct LaunchMoment: View {
     @State private var markOpacity = 1.0
     @State private var fieldOpacity = 1.0
     @State private var isLeaving = false
+    /// Read once, so the moment does not ask the defaults sixty times a second.
+    private let style = LoadingSwitch.drawing()
 
     /// The ground, by the name the launch screen's plist key uses.
     static let ground = Color("LaunchGround")
@@ -59,7 +61,7 @@ struct LaunchMoment: View {
                 Self.ground.ignoresSafeArea()
                 TimelineView(.animation(paused: isLeaving && markOpacity == 0)) { timeline in
                     let t = LoadingTiming.progress(elapsed: timeline.date.timeIntervalSince(startedAt))
-                    Self.mark(at: t, in: proxy.size)
+                    Self.mark(at: t, in: proxy.size, style: style)
                 }
                 .opacity(markOpacity)
             }
@@ -78,13 +80,16 @@ struct LaunchMoment: View {
         .accessibilityHidden(true)
     }
 
-    /// The drawing at `t`, in the icon's own colours on the dark ground that is the
+    /// The drawing at `t`, in the logo's colours on the dark ground that is the
     /// same in both appearances: the contrast is measured against `#0D0D1F` and not
     /// against whatever the app's ground is.
-    /// It is drawn in a frame in the middle of the screen.
-    static func mark(at t: Double, in screen: CGSize) -> some View {
+    /// It is drawn in a frame in the middle of the screen, fitted to the moment's
+    /// own travel with the plant it ends on centred across it (`Fiddlehead.Fit`).
+    static func mark(at t: Double, in screen: CGSize,
+                     style: Fiddlehead.Style = LoadingSwitch.drawing()) -> some View {
         let frame = markFrame(short: min(screen.width, screen.height))
-        return FiddleheadView(pose: Fiddlehead.pose(atMoment: t), palette: .onDark, weight: 1.8, halo: 10)
+        return FiddleheadView(pose: Fiddlehead.pose(atMoment: t), palette: .onDark, weight: 1.8, halo: 10,
+                              style: style, fit: .moment)
             .frame(width: frame.width, height: frame.height)
     }
 
