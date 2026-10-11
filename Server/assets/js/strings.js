@@ -545,9 +545,10 @@ export const EN = Object.freeze({
   // checked against the code it describes, and the comment above each names
   // that code, so the next change to the code knows which sentence it moves.
   //
-  // On the page in the order 1, 2, 3, 4, 6, 7, 8, 9, 5: the phone, the
-  // meeting, the storage, the link, then the web garden and the asking,
-  // releasing a plant and walking the Wild Fields, and the website last. The
+  // On the page in the order 1, 2, 3, 4, 6, 7, 10, 8, 9, 5: the phone, the
+  // meeting, the storage, the link, then the web garden and the asking, the
+  // App Store's update check, releasing a plant and walking the Wild Fields,
+  // and the website last. The
   // numbers are the order the keys were made, not the order read. The ninth is
   // on the page only where wear is turned on (`Server/index.php`).
   privacyTitle: "Privacy",
@@ -620,6 +621,17 @@ export const EN = Object.freeze({
   // thirty days, with no row per visitor and no time of any visit.
   privacy9:
     "When you walk through the Wild Fields on this site, by dragging the field or pressing its arrows, the page notes which squares of ground the middle of your view crosses, each half a metre across. Every half minute or so, and when you leave the page, it sends the Wild Fields that list of squares alone, sorted. The Wild Fields keep one number for each square, for how worn it is, and draw the numbers as paths for everyone to see. Each square counts a few crossings a day at most, and every number halves each month, so a path stays only while people keep walking it. The numbers are all that is kept: a count for each square of ground, the same whoever walked it and whenever. Only walking counts; looking around, coming closer and opening a plant leave the ground as it was.",
+  // The App Store's update check, since 11 October 2026 (Marcus's choice that
+  // day): `UpdateCheck` in the app, started by `LaunchMoment` as it plays, which
+  // is why Reduce Motion has neither. One GET to Apple's public lookup,
+  // `itunes.apple.com/lookup?bundleId=app.peacegarden`, from a session with no
+  // cookies and no cache, a user agent that is the app's name alone and a fixed
+  // language; *names the app alone* is that. *As it does any request* is the
+  // address, which Apple sees for any request and this one adds nothing to.
+  // The arrow is `LaunchUpdateGlyph`, shown only when the store's version is
+  // newer, and it opens the app's App Store page.
+  privacy10:
+    "When the app opens, it shows its name and version for a moment and asks Apple's App Store whether there is a newer version of Peace Garden. The question names the app alone, and Apple receives it from your internet address, as it does any request. If there is a newer version, a small arrow appears beside the version number, and touching it opens the App Store. With Reduce Motion on, the app opens straight into your garden, without the name or the question.",
   // The website: `Limits.php` for the scrambled address and its hour — a
   // fifty-five-minute window and `sweep.php` every five minutes, which is what
   // keeps it inside the hour when nobody asks — `languages.js` for the

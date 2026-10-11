@@ -1065,6 +1065,43 @@ WEAR = {
 }
 
 
+# The App Store's update check, built on 11 October 2026 (Marcus's choice that
+# day), and the privacy page's paragraph about it. **A group of its own, for
+# the reason `WEAR` is one**: every catalogue that has the page would otherwise
+# be half-commissioned the day it was added. Danish was written with it.
+UPDATE = {
+    "privacy10": {
+        "seen": "On /privacy straight after `privacy7`, the paragraph on the "
+                "asking, since both happen as the app opens.",
+        "must": [
+            "When the app opens, it shows its name and version for a moment "
+            "and asks Apple's App Store whether there is a newer version of "
+            "Peace Garden.",
+            "The question names the app and nothing more, and Apple receives "
+            "it from your internet address, as it does any request.",
+            "If there is a newer version, a small arrow appears beside the "
+            "version number, and touching it opens the App Store.",
+            "With Reduce Motion on, the app opens straight into the garden, "
+            "and neither the name nor the question happens.",
+        ],
+        "must not": [
+            "Say *nothing is sent*. A question is sent, to Apple.",
+            "Say or imply that the app updates itself, downloads anything or "
+            "tells anyone it was opened. It asks, and an arrow may appear.",
+            "Name the developer or the web garden as receiving it. It goes to "
+            "Apple alone.",
+            "Translate *App Store* or *Peace Garden*. Both are names.",
+            "Call Reduce Motion anything but the setting's own name in the "
+            "phone's language, as the phone's Accessibility settings write it.",
+        ],
+        "note": "*The question names the app alone* is the lookup by the app's "
+                "bundle id: nothing in it is about the reader. *As it does any "
+                "request* says the address is not something this question "
+                "adds.",
+    },
+}
+
+
 def english():
     """The six, the thirteen and the ten, as `strings.js` has them today."""
     source = SOURCE.read_text()
@@ -1179,7 +1216,8 @@ def privacy(catalogue, code, source):
 
     print("## The words this language has already chosen\n")
     settled_words(theirs, source, code,
-                  [k for k in source if k not in PRIVACY and k not in WEAR])
+                  [k for k in source if k not in PRIVACY and k not in WEAR
+                   and k not in UPDATE])
 
     print("\n## The eight\n")
     for key, claim in PRIVACY.items():
@@ -1193,6 +1231,13 @@ def privacy(catalogue, code, source):
     print("Its own commission: a language that already has the eight writes")
     print("this one and nothing above it.\n")
     for key, claim in WEAR.items():
+        claimed(key, claim, source)
+
+    # **And the tenth, since 11 October 2026** (`UPDATE`), on its own for the
+    # same reason.
+    print("## And the tenth, on the App Store's update check\n")
+    print("Its own commission, as the ninth is.\n")
+    for key, claim in UPDATE.items():
         claimed(key, claim, source)
 
 

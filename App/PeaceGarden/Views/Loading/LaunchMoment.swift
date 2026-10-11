@@ -39,6 +39,13 @@ import UIKit
 /// `RootView`'s `hearNext()`, which may raise a sheet for a released plant. That
 /// sheet is presented above this overlay, so in that one case the moment is
 /// covered rather than the sheet delayed. Recorded as the known edge.
+///
+/// **The app's name and version stand low on it**, since 11 October 2026
+/// (`LaunchNameplate`), and as it starts it asks the App Store once whether
+/// there is a newer version (`UpdateCheck`), showing a small arrow beside the
+/// version if there is. Neither holds the moment up. Under Reduce Motion there
+/// is no moment, so there is neither: the waiting mark's still is not a launch,
+/// and a name on it would be repeated at every wait.
 struct LaunchMoment: View {
 
     let onGone: () -> Void
@@ -49,35 +56,66 @@ struct LaunchMoment: View {
     @State private var markOpacity = 1.0
     @State private var fieldOpacity = 1.0
     @State private var isLeaving = false
+    /// The name and version come in over the launch screen's ground, which is
+    /// already there, so they fade rather than arrive (`LoadingTiming.busyFade`).
+    @State private var nameplateOpacity = 0.0
     /// Read once, so the moment does not ask the defaults sixty times a second.
     private let style = LoadingSwitch.drawing()
+    private let updates = UpdateCheck.shared
+    @Environment(\.openURL) private var openURL
 
     /// The ground, by the name the launch screen's plist key uses.
     static let ground = Color("LaunchGround")
 
     var body: some View {
-        GeometryReader { proxy in
-            ZStack {
-                Self.ground.ignoresSafeArea()
-                TimelineView(.animation(paused: isLeaving && markOpacity == 0)) { timeline in
-                    let t = LoadingTiming.progress(elapsed: timeline.date.timeIntervalSince(startedAt))
-                    Self.mark(at: t, in: proxy.size, style: style)
+        ZStack {
+            GeometryReader { proxy in
+                ZStack {
+                    Self.ground.ignoresSafeArea()
+                    TimelineView(.animation(paused: isLeaving && markOpacity == 0)) { timeline in
+                        let t = LoadingTiming.progress(elapsed: timeline.date.timeIntervalSince(startedAt))
+                        Self.mark(at: t, in: proxy.size, style: style)
+                    }
+                    .opacity(markOpacity)
+                    LaunchNameplateUnderPlant(screen: proxy.size)
+                        .opacity(markOpacity * nameplateOpacity)
                 }
-                .opacity(markOpacity)
+                .frame(width: proxy.size.width, height: proxy.size.height)
             }
-            .frame(width: proxy.size.width, height: proxy.size.height)
+            .ignoresSafeArea()
+            // Any touch ends it, anywhere on the screen. The name and the
+            // version take no touch of their own, so a touch on them falls
+            // through to here; only the update glyph keeps its own.
+            .contentShape(Rectangle())
+            .onTapGesture { leave() }
+            // Two seconds of a decoration, with nothing in it for VoiceOver to
+            // say. Its focus belongs on the app that is about to be there.
+            .accessibilityHidden(true)
+
+            // The name and the version, inside the safe area so they stand
+            // above the home indicator: the one thing here VoiceOver reads.
+            LaunchNameplateFoot {
+                if let page = updates.storePage {
+                    LaunchUpdateGlyph {
+                        openURL(page)
+                        leave()
+                    }
+                    .transition(.opacity)
+                }
+            }
+            .animation(.easeInOut(duration: LoadingTiming.busyFade), value: updates.storePage)
+            .opacity(markOpacity * nameplateOpacity)
         }
-        .ignoresSafeArea()
         .opacity(fieldOpacity)
-        .contentShape(Rectangle())
-        .onTapGesture { leave() }
+        .onAppear {
+            withAnimation(.easeIn(duration: LoadingTiming.busyFade)) { nameplateOpacity = 1 }
+        }
         .task {
+            // Asked as the moment starts and never waited for (`UpdateCheck`).
+            updates.start()
             try? await Task.sleep(for: .seconds(LoadingTiming.moment))
             leave()
         }
-        // Two seconds of a decoration, with nothing in it for VoiceOver to
-        // say. Its focus belongs on the app that is about to be there.
-        .accessibilityHidden(true)
     }
 
     /// The drawing at `t`, in the logo's colours on the dark ground that is the

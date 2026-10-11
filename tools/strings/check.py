@@ -23,8 +23,8 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CATALOGUES = ROOT / "Server/strings"
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from commission import (AREAS, CLAIMS, FRONT, MEANINGS, PRIVACY, WEAR,  # noqa: E402
-                        WILD, english)
+from commission import (AREAS, CLAIMS, FRONT, MEANINGS, PRIVACY, UPDATE,  # noqa: E402
+                        WEAR, WILD, english)
 
 # How much longer than the English a string may be before the layout is at risk.
 #
@@ -433,6 +433,10 @@ def main():
                  # is awaiting it rather than half-commissioned.
                  + problems_for(code, catalogue, source, WEAR,
                                 "paths visitors wear")
+                 # And the tenth, on the App Store's update check (11 October
+                 # 2026), a group of its own as the ninth is.
+                 + problems_for(code, catalogue, source, UPDATE,
+                                "the update check")
                  + meaning_problems_for(code, catalogue, app)
                  + avoid_problems_for(code, catalogue, app)
                  + area_problems_for(catalogue, source))
