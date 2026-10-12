@@ -34,12 +34,12 @@ Ship build 8 to TestFlight with the requests Marcus made on 12 October, and depl
   - the final run on `d54c662` (status bar merged) passed 240 tests, with 0 failures and 11 skipped. xcodebuild still exited 133: its simulator-diagnostics collection timed out after the tests had finished, which is harmless but stops a chained `&&`;
   - SeedCore passed, and `Packages/` hasn't changed since.
 - The archive goes to `build/PeaceGarden-1.0-8.xcarchive`, and the ipa to `build/export-8/`.
-- **Site:** `Server/.pages/privacy`, `strings.js` and `da.json` have changed since the last deploy (`4c85d1c`). These are the update-check paragraph, `privacy10`. Not yet deployed.
+- **Site:** deployed 12 October with the update-check paragraph, `privacy10`.
 
 ## Next steps (Marcus runs these; the classifier blocks Claude from all three)
 1. ~~`git push origin main`~~ done, `6b88f54`.
 2. ~~Upload build 8~~ done 12 October, through the Organizer's Distribute App (the script failed first, see Traps). The usual visionOS/accelerometer warning appeared.
-3. `tools/deploy.sh --dry-run; echo "exit=$?"`, then `tools/deploy.sh`
+3. ~~Deploy~~ done 12 October: 3 files (the privacy page, `strings.js`, `da.json`), and every check in `deploy.sh --check` was ok.
 4. On the phone, from TestFlight, check:
    - the version label on the launch moment;
    - holding the Settings heading opens Testing (this is the first real check of the StoreKit gate);
@@ -49,7 +49,7 @@ Ship build 8 to TestFlight with the requests Marcus made on 12 October, and depl
 ## Open, not urgent
 - **Right to left:** `ContinuingRow`'s edge fade may hide the start of the tray rows (seen before the tray rewrite; recheck).
 - **String catalogue is behind main.** `tools/strings/sync.sh` would bring in about 20 keys from the web garden and Wild Fields work. "Reset view" was added by hand.
-- **Dead answer sheet, for build 9.** The garden's own answer sheet has had nothing to open it since 20 September (`d2a2930`), when the notice was changed to open the plant first. Its removal is on `claude/remove-dead-answer-sheet-2026-10-12` (`146d8d3`). It compiles, and GardenControlsTests and PlotTests pass (56 of 56). It's pushed; merge it after build 8 is uploaded (Marcus: 1A 2A 3A). `ShowInGardenView` itself is live: a plant's screen opens it from its Answer mark.
+- **Dead answer sheet, for build 9.** The garden's own answer sheet has had nothing to open it since 20 September (`d2a2930`), when the notice was changed to open the plant first. Its removal is on `claude/remove-dead-answer-sheet-2026-10-12` (`146d8d3`). It compiles, and GardenControlsTests and PlotTests pass (56 of 56). Merged into main after build 8 was uploaded (Marcus: 1A 2A 3A). `ShowInGardenView` itself is live: a plant's screen opens it from its Answer mark.
 - The two wasm prototype pages still use `icon.svg`.
 - FreqShift's icon isn't in its repo.
 - Leftover `claude/*` branches on origin, here and in uncubed, can be deleted.
