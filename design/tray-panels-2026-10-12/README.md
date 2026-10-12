@@ -12,12 +12,12 @@ six figures), at night (*Always night*) and by day (*Always day*).
 behind the whole row of figures, and one behind the whole row of plot types. Each is a single
 rounded rectangle inside the screen's margins, the same for everything in the row and wherever
 the row has been scrolled to. The sky behind it is blurred, which takes the stars and clouds
-out from behind the row, and darkened a little by the screen's own ground. The row scrolls
+out from behind the row, and darkened a little with the screen's own background colour. The row scrolls
 inside its panel and fades at the panel's ends, and the double chevron stands just inside the
 panel's edge. The plates, their three options and `-pgPlate` are gone; `PlotTray.swift` is
 105 lines shorter (349 to 244).
 
-**2. The plot types: your B, with C's pool of light.** The ones not chosen stand at 0.75
+**2. The plot types: Marcus's B, with C's pool of light.** The ones not chosen stand at 0.75
 (0.42 before 11 October, full strength since); the chosen one is at full strength in a soft
 pool of light. VoiceOver still reads *selected* on it. The bar, the other options and
 `-pgGrounds` are gone; one constant, `GroundMark.others`, holds the 0.75.
@@ -25,7 +25,7 @@ pool of light. VoiceOver still reads *selected* on it. The bar, the other option
 ![](grounds.png)
 
 **3. *Reset view*.** VoiceOver now says *Reset view* for the mark in the tray, instead of a
-system symbol's name, and every comment, test and doc that said *put the view back* says
+system symbol's name, and every comment, test and doc that names the control says
 *Reset view*. It was not a string before, so it is one new key in `Localizable.xcstrings`:
 
 | Language | Text | State |
@@ -51,11 +51,15 @@ read before Foundation is asked. Still never the US store.
 
 ![](panels-ABC.png)
 
-- **A** — the screen's ground at 0.35 over a light blur. *Recommended, built.*
-- **B** — lighter, 0.2.
-- **C** — darker, 0.55.
+- **A** — darkened 35% over a light blur. *Recommended, built.* By day the rows read as two
+  darker bands of sky without becoming slabs.
+- **B** — darkened 20%. By day the panels come close to melting into the sky.
+- **C** — darkened 55%. The strongest contrast, and by day two heavy dark bars across the foot
+  of the sky.
 
-The last row, unlettered, is 11 October's plate behind each figure, for reference.
+At night the three look much alike: the night sky is nearly as dark as the panel, and the blur,
+which takes the stars out from behind the rows, does the work. The last row, unlettered, is
+11 October's plate behind each figure, for reference.
 
 To change it, change `ContinuingRow.shade` in `App/PeaceGarden/Views/PlotTray.swift`.
 

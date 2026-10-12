@@ -994,8 +994,8 @@ figure** (Marcus). What he had asked for was contrast, not tiles: one slightly
 opaque panel behind the whole row of figures and one behind the whole row of
 grounds, so both read against the sky whatever it is doing. Each is a rounded
 rectangle inside the screen's margins, the sky behind it blurred and darkened a
-little by the screen's ground (`ContinuingRow`); the row scrolls inside it and
-fades at its ends. The grounds not chosen stand back a little, at 0.75, and the
+little with the screen's background colour (`ContinuingRow`); the row scrolls
+inside it and fades at its ends. The grounds not chosen stand back a little, at 0.75, and the
 chosen one stands in a pool of light rather than over a bar. VoiceOver calls the
 mark that resets the view *Reset view*. `design/tray-panels-2026-10-12/` has the
 pictures.

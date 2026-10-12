@@ -49,9 +49,9 @@ struct TrayToggle: View {
 /// each figure had a plate of its own, which was seven more things to look at
 /// where the point was contrast. The sky behind the panel is blurred, which
 /// takes the stars and the clouds out from behind the row, and darkened a
-/// little by the screen's own ground. A rounded rectangle, because the tray is
-/// chrome and not the scene, inside the screen's margins; the row scrolls
-/// inside it and fades at its ends.
+/// little with the screen's own background, `Chrome.ground`. A rounded
+/// rectangle, because the tray is chrome and not the scene, inside the
+/// screen's margins; the row scrolls inside it and fades at its ends.
 ///
 /// **Marcus's double chevron**, 1 October: the row of grounds ran off the edge
 /// of the screen and nothing said there were more of them. The row's far end
@@ -71,7 +71,7 @@ struct ContinuingRow<Content: View>: View {
 
     private static var fade: CGFloat { 30 }
 
-    /// How much of the screen's ground lies over the blur: *slightly opaque*,
+    /// How much of `Chrome.ground` lies over the blur: *slightly opaque*,
     /// in Marcus's words. `design/tray-panels-2026-10-12/` has it beside 0.2
     /// and 0.55.
     static var shade: Double { 0.35 }
