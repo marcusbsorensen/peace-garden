@@ -104,6 +104,62 @@ final class GardenControlsTests: XCTestCase {
         try assertTheFootRow(found)
     }
 
+    // MARK: Drawn as in Dark
+
+    /// **The garden screen draws its controls as in Dark, whatever the
+    /// appearance** (Marcus, 12 October, 3A). Under *Light* at night the plus
+    /// and the turns were dark ink on the dark sky, and vanished. Hosted in a
+    /// window set to Light, at night, each of them has a run of light pixels
+    /// where its glyph is drawn, as it has under Dark.
+    ///
+    /// Measured 12 October at 2×: the plus 93 light pixels, each turn about
+    /// 290; with the dark ink of Light, 0 to 5. The floors stand at about two
+    /// thirds of the first, well clear of a bright star that happens to be
+    /// behind a control, which can make 40 or so.
+    func testTheFootRowIsDrawnLightUnderTheLightAppearanceAtNight() async throws {
+        XCTAssertEqual(PlotView.scheme, .dark)
+        let defaults = UserDefaults.standard
+        let daylightBefore = defaults.string(forKey: Chrome.daylightKey)
+        defer { defaults.set(daylightBefore, forKey: Chrome.daylightKey) }
+        defaults.set(GardenDaylight.alwaysNight.rawValue, forKey: Chrome.daylightKey)
+
+        let found = try await controls(of: PlotView(), style: .light, photographed: true)
+        let picture = try XCTUnwrap(lastPicture)
+        for (name, id, least) in [("the plus", PlotControls.tray, 60),
+                                  ("the anticlockwise turn", PlotControls.turnAnticlockwise, 180),
+                                  ("the clockwise turn", PlotControls.turnClockwise, 180)] {
+            let frame = try XCTUnwrap(found[id], name)
+            XCTAssertGreaterThan(Self.lightPixels(in: picture, within: frame), least,
+                                 "\(name) is drawn in light ink under Light at night")
+        }
+    }
+
+    /// How many pixels inside `frame` are light: every channel over 140 of 255.
+    /// The ink is white at 0.75 to 0.8 over the night sky, about 195; dark ink
+    /// over it, and the sky itself, stay well under.
+    private static func lightPixels(in picture: UIImage, within frame: CGRect) -> Int {
+        guard let image = picture.cgImage else { return 0 }
+        let scale = picture.scale
+        let area = CGRect(x: frame.minX * scale, y: frame.minY * scale,
+                          width: frame.width * scale, height: frame.height * scale).integral
+        guard let crop = image.cropping(to: area) else { return 0 }
+        let width = crop.width, height = crop.height
+        var pixels = [UInt8](repeating: 0, count: width * height * 4)
+        pixels.withUnsafeMutableBytes { buffer in
+            let context = CGContext(data: buffer.baseAddress, width: width, height: height,
+                                    bitsPerComponent: 8, bytesPerRow: width * 4,
+                                    space: CGColorSpaceCreateDeviceRGB(),
+                                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+            context?.draw(crop, in: CGRect(x: 0, y: 0, width: width, height: height))
+        }
+        var light = 0
+        for index in stride(from: 0, to: pixels.count, by: 4)
+        where min(pixels[index], pixels[index + 1], pixels[index + 2]) > 140 {
+            light += 1
+        }
+        return light
+    }
+
     private func assertTheFootRow(_ found: [String: CGRect], file: StaticString = #filePath,
                                   line: UInt = #line) throws {
         let plus = try XCTUnwrap(found[PlotControls.tray], "the plus", file: file, line: line)
@@ -136,6 +192,8 @@ final class GardenControlsTests: XCTestCase {
     private var lastSafeArea = UIEdgeInsets.zero
     /// What VoiceOver says for each control, read alongside its frame.
     private var lastLabels: [String: String] = [:]
+    /// The window as drawn, when it was asked to be photographed.
+    private var lastPicture: UIImage?
 
     /// **SwiftUI builds its accessibility tree only for somebody reading it.**
     /// With no VoiceOver and no UI test attached, a hosting view answers that
@@ -165,12 +223,18 @@ final class GardenControlsTests: XCTestCase {
 
     /// The garden screen in a window, and the frame of every control with an
     /// identifier, read from the accessibility tree once it has settled.
-    private func controls(of view: some View) async throws -> [String: CGRect] {
+    ///
+    /// `style` is the appearance the window is in, as Settings' choice puts
+    /// the app's window in it; `photographed` keeps the window as drawn in
+    /// `lastPicture`.
+    private func controls(of view: some View, style: UIUserInterfaceStyle = .unspecified,
+                          photographed: Bool = false) async throws -> [String: CGRect] {
         let scene = try XCTUnwrap(UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }.first)
         let window = UIWindow(windowScene: scene)
         window.frame = CGRect(origin: .zero, size: Self.screen)
         window.windowLevel = .alert + 1
+        window.overrideUserInterfaceStyle = style
         window.rootViewController = UIHostingController(rootView: view.environment(Self.model()))
         window.makeKeyAndVisible()
         defer { window.isHidden = true }
@@ -178,6 +242,15 @@ final class GardenControlsTests: XCTestCase {
         try await Task.sleep(for: .milliseconds(800))
         window.layoutIfNeeded()
         lastSafeArea = window.safeAreaInsets
+        lastPicture = nil
+        if photographed {
+            let format = UIGraphicsImageRendererFormat()
+            format.scale = 2
+            format.opaque = true
+            lastPicture = UIGraphicsImageRenderer(size: window.bounds.size, format: format).image { _ in
+                window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+            }
+        }
 
         var found: [String: CGRect] = [:]
         var stack: [NSObject] = [window]
