@@ -1,45 +1,67 @@
-# Peace Garden: new logo live, build 7 uploaded — handover 11 October 2026 (evening)
+# Peace Garden: build 8 assembled — handover 12 October 2026
 
-Previous note: `git show 7a067c8:.claude/HANDOVER.md`. This session ran on Marcus's work account (hello@uncubed.app). Memory lives in the personal account's folder, `~/.claude/projects/-Users-marcus-Projects-peace-garden/memory/`.
+Previous note: `git show a553669:.claude/HANDOVER.md`, about build 7 and the new logo. This session ran on Marcus's work account (hello@uncubed.app). Memory lives in the personal account's folder, `~/.claude/projects/-Users-marcus-Projects-peace-garden/memory/`.
 
 ## Goal
-Ship the new logo and the recoloured loading animation in build 7, and deploy the website with the new marks.
+Ship build 8 to TestFlight with the requests Marcus made on 12 October, and deploy the privacy page that describes the new update check.
+
+## What's in build 8 (all on local `main`, 23 commits ahead of origin)
+- **Launch moment.** It shows "Peace Garden" and the version, and checks for an update once per launch.
+  - The check asks the App Store in the person's own storefront only. There is no US fallback (memory `no-us-default`), and Kosovo's `XKS` maps to `xk`.
+  - Limits: a 2 s timeout, silent on failure, no cookies, Low Data Mode respected.
+  - When an update exists, the version label gains `arrow.up.circle`.
+- **Recycling glyph** redrawn to match the new logo (`CycleGlyph`, Frond A).
+- **Garden screen.**
+  - The (+) sits bottom left and the turns bottom right, at all times. The arrowheads are now square to the circle.
+  - The tray has **one panel per row**, darkened 20% over a thin blur. There are no plates per item (memory `one-panel-not-many`).
+  - Plot types: the seven not chosen are at 0.85, and the chosen one sits in a soft pool of light.
+  - The control is called **"Reset view"** (Danish "Nulstil visning"). The six other drafts are `needs_review`.
+  - The garden screen draws its controls and status bar as in Dark, whichever appearance is chosen (3A, then 1A). The plant's screen, opened from the garden, still follows the chosen appearance (`inTheAppearance()` in `Chrome.swift`).
+  - Pictures: `design/tray-panels-2026-10-12/` (`panels-ABC`, `grounds`, `panels-light-AB`, `answers-final`, `status-bar`).
+- **Developer controls in TestFlight.** Open Settings with the cog, then hold the "Settings" heading for 2 s. A Testing section opens with:
+  - the imaginary meeting;
+  - the clock wind (+6h/+1d/+1w/+1m);
+  - tile grid or plot;
+  - old sky.
+
+  How the gate works: `Developer.isAvailable` is true in Debug, and true in Release only when `AppTransaction` reports `.sandbox` (TestFlight). App Store copies never show it. In TestFlight, the clock moves only what's shown and never a saved date.
+- **Imaginary plants go public when released** (Marcus's choice, 1C; memory `imaginary-plants-public`). Don't add a guard. Removing one takes `curate.php hide` over ssh.
 
 ## State
-- **Final mark chosen and ported.** D (Meeting) with T2's taper, C2's extra half turn, and variant A's lower fork and earlier taper. The record is in `design/logo-2026-10-11/README.md` §8 and its subsections.
-  - `tools/icon/make_icon.py` is now the single source. It writes the app icon, `tools/icon/icon.svg`, `Server/assets/icon.svg`, `icon-180.png`, `favicon.ico`, `mark-dark.svg`, `mark-light.svg` and `favicon.svg`.
-  - `tools/icon/check_port.py` compares every output with the design files; 18 of 18 match.
-- **Website (main, not deployed).**
-  - The bar shows the bare mark, with no tile: the light version on light pages, the dark version on dark pages, and the dark one always on the areas.
-  - Tabs use `assets/favicon.svg`, the untapered small drawing.
-  - **Deployed 11 October, about 20:20 BST**, from `4c85d1c`: 25 files, no deletions. `deploy.sh --check` was all ok, and the live header was checked in a browser.
-- **Fiddlehead (main).** The logo's colours, the leaf lifting to 36°, a tapered stem, an outlined leaf, a 0.04 halo, and Reduce Motion's still lifted. All six of Marcus's answers are in `design/loading-2026-10-11/README.md`.
-- **Build 7.**
-  - `project.yml` is at 7.
-  - The full suite passed: 197 tests, 0 failed, 8 skipped. SeedCore passed too.
-  - It is archived at `build/PeaceGarden-1.0-7.xcarchive`, and the ipa is `build/export-7/PeaceGarden.ipa`.
-  - **Uploaded 11 October with `tools/upload-build.sh 7`**, run by Marcus. The upload goes through Xcode's signed-in account and reads no key file.
-  - App Store Connect warned that `UIRequiredDeviceCapabilities` includes `accelerometer`, so the app won't be offered on visionOS. This is informational.
-- **uncubed `suite-brand.md`:** done on both branches, `main` at `7d23ed82` and `integration` at `9e2ba859`, with identical copies. The leftover `claude/suite-brand-*` branches there can be deleted.
+- `project.yml` is at **8**.
+- Tests:
+  - the full suite passed on `f8424f0` and on `977990c`;
+  - the final run on `d54c662` (status bar merged) passed 240 tests, with 0 failures and 11 skipped. xcodebuild still exited 133: its simulator-diagnostics collection timed out after the tests had finished, which is harmless but stops a chained `&&`;
+  - SeedCore passed, and `Packages/` hasn't changed since.
+- The archive goes to `build/PeaceGarden-1.0-8.xcarchive`, and the ipa to `build/export-8/`.
+- **Site:** `Server/.pages/privacy`, `strings.js` and `da.json` have changed since the last deploy (`4c85d1c`). These are the update-check paragraph, `privacy10`. Not yet deployed.
 
-## Next steps
-1. Install build 7 from TestFlight on a real phone once it has processed. Check the icon on the home screen, the launch moment (the leaf lifting) and Reduce Motion's still.
-2. **Open, not urgent:**
-   - the recycling glyph in `Chrome.swift` still echoes the old spiral (see `design/icon-port-2026-10-11/README.md`);
-   - the two wasm prototype pages still use `icon.svg`;
-   - FreqShift's real icon isn't in its repo (logo round two README, question 7).
-3. **Uploads and deploys.** The auto-mode classifier blocks Claude from both, and from editing its own permissions. Marcus runs `sh tools/upload-build.sh N` and `tools/deploy.sh` himself, or adds `Bash(sh tools/upload-build.sh:*)` and `Bash(tools/deploy.sh:*)` to `.claude/settings.local.json`. Run the deploy in a real terminal with `; echo "exit=$?"`: through the session's shell input, the dry run once stopped after its first line.
+## Next steps (Marcus runs these; the classifier blocks Claude from all three)
+1. `git push origin main`
+2. `sh tools/upload-build.sh 8`
+3. `tools/deploy.sh --dry-run; echo "exit=$?"`, then `tools/deploy.sh`
+4. On the phone, from TestFlight, check:
+   - the version label on the launch moment;
+   - holding the Settings heading opens Testing (this is the first real check of the StoreKit gate);
+   - an imaginary meeting;
+   - the tray panels in both appearances.
+
+## Open, not urgent
+- **Right to left:** `ContinuingRow`'s edge fade may hide the start of the tray rows (seen before the tray rewrite; recheck).
+- **String catalogue is behind main.** `tools/strings/sync.sh` would bring in about 20 keys from the web garden and Wild Fields work. "Reset view" was added by hand.
+- **`ShowInGardenView` is unreachable,** because `PlotView.answering` is never set. A task chip was offered to investigate.
+- The two wasm prototype pages still use `icon.svg`.
+- FreqShift's icon isn't in its repo.
+- Leftover `claude/*` branches on origin, here and in uncubed, can be deleted.
 
 ## Traps
 - **Token guard:**
-  - it blocks any shell command containing the word c-u-r-l, file names included (for example `curl-compare.png`), so use globs or the Read tool;
-  - it also blocks bare `cat`, `grep` without `| head`, unbounded `git show`/`git diff` (put `| head -n N` straight after), and images over about 100 KB, so downscale with `sips` first.
-- **Xcode export fails with "Copy failed"** when Homebrew's rsync 3.5 comes first on PATH. Run it with `env PATH=/usr/bin:/bin:/usr/sbin:/sbin:/Applications/Xcode.app/Contents/Developer/usr/bin` (memory: `xcode-export-rsync`).
-- **The Xcode project is gitignored.** After pulling new Swift files, run `xcodegen generate`, or the build can't find types such as `busyMark`.
-- **Cloud routines on this account:**
-  - use environment `env_01XEuhfALG2Bm8UZiSSGr96Q`, not the personal one;
-  - strip the connectors after creating each routine;
-  - routines don't notify, so watch with a background `git ls-remote` loop (memory: `work-account-routines-github`).
-- **Questions to Marcus:** number them, letter the options A/B/C with the recommendation first, and put visual choices on screen with matching letters (memory: `numbered-lettered-questions`).
-- **The disk is about full** (around 9 GB free). Don't keep derived data or scratch clones.
-- **Simulators:** never use the iPhone 17 Pro. Make scratch iPhone Air simulators and delete them afterwards (this session's is deleted).
+  - It blocks any shell command containing c-u-r-l (file and branch names included), bare `cat`, and unbounded `git show`/`git diff` (put `| head -n N` straight after).
+  - It blocks `grep` without `| head`. **It also misreads `\|` or a quoted `|` in a grep pattern as a pipe, so use separate `-e` flags.**
+  - Images over about 100 KB must be downscaled with `sips`.
+- **Xcode export "Copy failed":** Homebrew rsync 3.5 is on PATH. Export with `env PATH=/usr/bin:/bin:/usr/sbin:/sbin:/Applications/Xcode.app/Contents/Developer/usr/bin` (memory `xcode-export-rsync`).
+- **The Xcode project is gitignored.** Run `xcodegen generate` after every merge that adds Swift files.
+- **Cloud routines on this account** use `env_01XEuhfALG2Bm8UZiSSGr96Q`. Strip the connectors, and watch with `git ls-remote` (memory `work-account-routines-github`).
+- **Questions to Marcus:** numbered, with A/B/C options and the recommendation first. Visual choices go on screen with matching letters.
+- **Simulators:** never the iPhone 17 Pro. Use scratch iPhone Airs, and delete them afterwards.
+- **Disk:** about 38 GB free after cleanup. Delete derived data and scratch clones when done.
