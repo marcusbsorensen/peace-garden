@@ -49,7 +49,9 @@ struct TrayToggle: View {
 /// each figure had a plate of its own, which was seven more things to look at
 /// where the point was contrast. The sky behind the panel is blurred, which
 /// takes the stars and the clouds out from behind the row, and darkened a
-/// little with the screen's own background, `Chrome.ground`. A rounded
+/// little with the screen's own background, `Chrome.ground` — black in any
+/// appearance, since the garden screen is drawn as in Dark
+/// (`PlotView.scheme`), so the blur is Dark's too. A rounded
 /// rectangle, because the tray is chrome and not the scene, inside the
 /// screen's margins; the row scrolls inside it and fades at its ends.
 ///

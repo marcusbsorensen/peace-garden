@@ -16,6 +16,23 @@ struct PlotView: View {
     @Environment(GardenModel.self) private var model
     @Environment(\.dismiss) private var dismiss
 
+    /// The appearance the garden screen's controls are drawn in: **Dark,
+    /// whichever appearance somebody chose in Settings** (Marcus, 12 October).
+    ///
+    /// The garden's own sky does not follow the appearance — it is night or
+    /// day by the garden's light — so its controls cannot either. Under
+    /// *Light* the title, the plus, the turns and the light switch were dark
+    /// ink, and at night they vanished into the sky; the tray's panels were
+    /// pale, and the figures' glows and the pale figures were lost on them.
+    /// Dark's chrome already reads over both the night sky and the day sky.
+    ///
+    /// The garden screen only: everything presented from it (a plant's own
+    /// screen, the answer to an asking) stands on its own ground rather than
+    /// over the sky, and follows the appearance as every other screen does.
+    /// The garden itself — sky, ground, plants, figures — reads no appearance,
+    /// so it is drawn exactly as it was.
+    static let scheme: ColorScheme = .dark
+
     @State private var selected: PlantRecord?
     /// The plant somebody else has asked about, while it is being answered.
     @State private var answering: PlantRecord?
@@ -301,6 +318,9 @@ struct PlotView: View {
                 .padding(.trailing, 12)
                 .padding(.top, 12)
         }
+        // Dark, whatever Settings says: see `scheme`. Inside the sheet and the
+        // cover below, so what they present follows the appearance.
+        .environment(\.colorScheme, Self.scheme)
         .sensoryFeedback(.impact(weight: .medium), trigger: lifts)
         .sensoryFeedback(.selection, trigger: turn)
         .sheet(item: $answering) { record in
