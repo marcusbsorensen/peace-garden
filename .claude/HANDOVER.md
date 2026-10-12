@@ -37,8 +37,8 @@ Ship build 8 to TestFlight with the requests Marcus made on 12 October, and depl
 - **Site:** `Server/.pages/privacy`, `strings.js` and `da.json` have changed since the last deploy (`4c85d1c`). These are the update-check paragraph, `privacy10`. Not yet deployed.
 
 ## Next steps (Marcus runs these; the classifier blocks Claude from all three)
-1. `git push origin main`
-2. `sh tools/upload-build.sh 8`
+1. ~~`git push origin main`~~ done, `6b88f54`.
+2. ~~Upload build 8~~ done 12 October, through the Organizer's Distribute App (the script failed first, see Traps). The usual visionOS/accelerometer warning appeared.
 3. `tools/deploy.sh --dry-run; echo "exit=$?"`, then `tools/deploy.sh`
 4. On the phone, from TestFlight, check:
    - the version label on the launch moment;
@@ -49,7 +49,7 @@ Ship build 8 to TestFlight with the requests Marcus made on 12 October, and depl
 ## Open, not urgent
 - **Right to left:** `ContinuingRow`'s edge fade may hide the start of the tray rows (seen before the tray rewrite; recheck).
 - **String catalogue is behind main.** `tools/strings/sync.sh` would bring in about 20 keys from the web garden and Wild Fields work. "Reset view" was added by hand.
-- **Dead answer sheet, for build 9.** The garden's own answer sheet has had nothing to open it since 20 September (`d2a2930`), when the notice was changed to open the plant first. Its removal is on `claude/remove-dead-answer-sheet-2026-10-12` (`146d8d3`). Build it and run GardenControlsTests, then merge it after build 8 is uploaded (Marcus: 1A 2A 3A). `ShowInGardenView` itself is live: a plant's screen opens it from its Answer mark.
+- **Dead answer sheet, for build 9.** The garden's own answer sheet has had nothing to open it since 20 September (`d2a2930`), when the notice was changed to open the plant first. Its removal is on `claude/remove-dead-answer-sheet-2026-10-12` (`146d8d3`). It compiles, and GardenControlsTests and PlotTests pass (56 of 56). It's pushed; merge it after build 8 is uploaded (Marcus: 1A 2A 3A). `ShowInGardenView` itself is live: a plant's screen opens it from its Answer mark.
 - The two wasm prototype pages still use `icon.svg`.
 - FreqShift's icon isn't in its repo.
 - Leftover `claude/*` branches on origin, here and in uncubed, can be deleted.
@@ -59,6 +59,7 @@ Ship build 8 to TestFlight with the requests Marcus made on 12 October, and depl
   - It blocks any shell command containing c-u-r-l (file and branch names included), bare `cat`, and unbounded `git show`/`git diff` (put `| head -n N` straight after).
   - It blocks `grep` without `| head`. **It also misreads `\|` or a quoted `|` in a grep pattern as a pipe, so use separate `-e` flags.**
   - Images over about 100 KB must be downscaled with `sips`.
+- **Upload "Failed to Use Accounts"** (`IDEDistributionUploadAccountStep`: no account with App Store Connect access for R94VDZ56RY): Xcode's Apple sign-in has lapsed. Marcus signs in again in Xcode → Settings → Accounts, or distributes from the Organizer (`open build/PeaceGarden-1.0-N.xcarchive`), which asks on the way.
 - **Xcode export "Copy failed":** Homebrew rsync 3.5 is on PATH. Export with `env PATH=/usr/bin:/bin:/usr/sbin:/sbin:/Applications/Xcode.app/Contents/Developer/usr/bin` (memory `xcode-export-rsync`).
 - **The Xcode project is gitignored.** Run `xcodegen generate` after every merge that adds Swift files.
 - **Cloud routines on this account** use `env_01XEuhfALG2Bm8UZiSSGr96Q`. Strip the connectors, and watch with `git ls-remote` (memory `work-account-routines-github`).
