@@ -31,15 +31,14 @@ struct PlotView: View {
     /// faint over the night sky. It stays on screen.
     ///
     /// The garden screen only: everything presented from it (a plant's own
-    /// screen, the answer to an asking) stands on its own ground rather than
-    /// over the sky, and follows the appearance as every other screen does.
+    /// screen, and from there the answer to an asking) stands on its own
+    /// ground rather than over the sky, and follows the appearance as every
+    /// other screen does.
     /// The garden itself — sky, ground, plants, figures — reads no appearance,
     /// so it is drawn exactly as it was.
     static let scheme: ColorScheme = .dark
 
     @State private var selected: PlantRecord?
-    /// The plant somebody else has asked about, while it is being answered.
-    @State private var answering: PlantRecord?
     /// Which outstanding invitation the notice at the foot opens next.
     ///
     /// It steps rather than always opening the first, so a garden with three
@@ -334,12 +333,6 @@ struct PlotView: View {
         .sensoryFeedback(.selection, trigger: turn)
         // What the garden presents inherits its Dark, and is handed the
         // appearance back: see `inTheAppearance()`.
-        .sheet(item: $answering) { record in
-            ShowInGardenView(record: record)
-                .environment(model)
-                .presentationBackground(Chrome.ground)
-                .inTheAppearance()
-        }
         .fullScreenCover(item: $selected) { record in
             PlantDetailView(record: record)
                 .environment(model)
@@ -1168,8 +1161,11 @@ struct PlotView: View {
     ///
     /// It goes to the plant rather than straight to the question, because the
     /// plant is what is being asked about and answering without looking at it
-    /// is the thing this whole screen exists to avoid. The answer is one mark
-    /// away from there, and the chevrons carry on through the rest.
+    /// is the thing this whole screen exists to avoid. From there the answer is
+    /// a tap on the plant, for its words, and then its Answer mark; the
+    /// chevrons carry on through the rest. (Until 20 September the notice
+    /// opened the answer directly, from a sheet here; that sheet went on
+    /// 12 October, having had nothing to open it since.)
     private func openTheNextAsked(of waiting: [PlantRecord]) {
         guard !waiting.isEmpty else { return }
         let next = waiting[askedStep % waiting.count]
