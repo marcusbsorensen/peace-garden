@@ -19,6 +19,13 @@ fix to the update check. Branch `claude/tray-panels-2026-10-12`; nothing is merg
 
 ![](answers-final.png)
 
+The real app on an iPhone Air simulator, tray open, over a full garden (fourteen plants, six
+figures). Below the status bar the Light frames match the Dark ones, apart from what moves (the
+fireflies, the stars' twinkle). **The status bar is the one thing left that follows the
+appearance**: the time, signal and battery along the top are the phone's own, drawn dark under
+*Light*, so at night they are faint. The app hides the status bar on its first screen, and the
+garden, which is presented over it, shows it; hiding it on the garden too would settle it.
+
 The questions below are kept as they were asked.
 
 Every picture is the real app on an iPhone Air simulator with a full garden (fourteen plants,
