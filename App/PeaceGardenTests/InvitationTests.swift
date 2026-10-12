@@ -33,6 +33,37 @@ final class InvitationTests: XCTestCase {
         XCTAssertFalse(PlotView.gardenersAsking(waiting)[0].isEmpty)
     }
 
+    @MainActor
+    func testAMeetingWithNoNameIsListedLastSoItNeverOpensTheSentence() {
+        let waiting = [invitation(from: nil), invitation(from: "Cai")]
+        XCTAssertEqual(PlotView.gardenersAsking(waiting), ["Cai", String(localized: "the other gardener")])
+    }
+
+    @MainActor
+    func testWithNobodyNamedTheNoticeIsASentenceOfItsOwn() {
+        // Not *the other gardener* in the name's slot: see `OtherGardener`.
+        XCTAssertEqual(
+            key(PlotView.asked(by: [invitation(from: nil)])),
+            "The other gardener has asked to show a plant you grew together"
+        )
+        XCTAssertEqual(
+            key(PlotView.asked(by: [invitation(from: nil), invitation(from: nil)])),
+            "The other gardener has asked to show plants you grew together"
+        )
+    }
+
+    @MainActor
+    func testWithSomebodyNamedTheNoticeNamesThem() {
+        XCTAssertEqual(
+            key(PlotView.asked(by: [invitation(from: "Cai")])),
+            "%@ has asked to show a plant you grew together"
+        )
+        XCTAssertEqual(
+            key(PlotView.asked(by: [invitation(from: nil), invitation(from: "Cai")])),
+            "%@ have asked to show plants you grew together"
+        )
+    }
+
     // MARK: The chevrons
 
     func testAChevronPointsTheWayItSaysItDoes() {
@@ -53,6 +84,11 @@ final class InvitationTests: XCTestCase {
     }
 
     // MARK: Fixtures
+
+    /// The catalogue key a `LocalizedStringKey` looks up.
+    private func key(_ key: LocalizedStringKey) -> String? {
+        Mirror(reflecting: key).children.first { $0.label == "key" }?.value as? String
+    }
 
     private func seed(_ of: String) -> SeedID {
         SeedID(bytes: seedDigest(SeedDomain.seed, Data(of.utf8)))!
