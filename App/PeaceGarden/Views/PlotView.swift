@@ -1097,7 +1097,7 @@ struct PlotView: View {
         let waiting = model.invited
         if !waiting.isEmpty {
             Button { openTheNextAsked(of: waiting) } label: {
-                Text(asked(by: waiting))
+                Text(Self.asked(by: waiting))
                     .chromeLabel()
                     .foregroundStyle(Chrome.pinkGold)
                     .multilineTextAlignment(.center)
@@ -1134,7 +1134,16 @@ struct PlotView: View {
     /// would refuse — and both are a whole sentence for a translator to move
     /// around. `ListFormatter` puts the names in the reader's own language,
     /// with that language's own word for *and*.
-    private func asked(by waiting: [PlantRecord]) -> LocalizedStringKey {
+    ///
+    /// **Nobody named is a sentence of its own**, as everywhere a sentence
+    /// names the other gardener (`OtherGardener`): the phrase in the slot
+    /// opened the sentence with a small *the* in every language.
+    static func asked(by waiting: [PlantRecord]) -> LocalizedStringKey {
+        guard waiting.contains(where: { OtherGardener($0).name != nil }) else {
+            return waiting.count == 1
+                ? "The other gardener has asked to show a plant you grew together"
+                : "The other gardener has asked to show plants you grew together"
+        }
         let who = ListFormatter.localizedString(byJoining: Self.gardenersAsking(waiting))
         // One *plant*, not one person: two plants from the same meeting are two
         // questions, and the sentence has to agree with the plants.
@@ -1148,12 +1157,24 @@ struct PlotView: View {
     /// Once, because two plants from one meeting are two questions and one
     /// person, and a notice that said *Cai and Cai* would be counting plants
     /// while appearing to count people.
+    ///
+    /// **A meeting with no name is *the other gardener*, and last**, whenever
+    /// its plant arrived. Last because the list is the sentence's subject, and
+    /// the phrase at its head would open the sentence with a small *the*;
+    /// after *and*, it needs nothing from the words around it in any of the
+    /// app's languages. With nobody named at all, `asked(by:)` has a sentence
+    /// of its own and does not ask for this list.
     static func gardenersAsking(_ waiting: [PlantRecord]) -> [String] {
         var names: [String] = []
+        var someoneUnnamed = false
         for record in waiting {
-            let name = record.encounter?.peerDisplayName ?? String(localized: "the other gardener")
+            guard let name = OtherGardener(record).name else {
+                someoneUnnamed = true
+                continue
+            }
             if !names.contains(name) { names.append(name) }
         }
+        if someoneUnnamed { names.append(String(localized: "the other gardener")) }
         return names
     }
 

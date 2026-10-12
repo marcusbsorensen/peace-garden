@@ -1613,6 +1613,53 @@
         }
       }
     },
+    "Ask the other gardener" : {
+      "comment" : "The button that asks the other person from the meeting whether this plant may stand in the public website garden. Used when the app has no name for them; with a name it is 'Ask %@'. A whole sentence of its own rather than 'the other gardener' put into 'Ask %@', so it can take whatever form the words around it need (Italian 'all'altra persona').",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spørg den anden gartner"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Preguntar a la otra persona"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Demander à l’autre jardinier"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiedi all'altra persona"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Spør den andre gartneren"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vraag het de andere tuinier"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Fråga den andra trädgårdsmästaren"
+          }
+        }
+      }
+    },
     "Ask them to open Meet on their phone too." : {
       "comment" : "Under that title. 'Meet' is the screen's name — use whatever the mark label 'Meet' was translated as.",
       "localizations" : {
@@ -4943,6 +4990,9 @@
         }
       }
     },
+    "It goes on growing here meanwhile, and you can ask the other gardener the day its area opens." : {
+      "comment" : "When this plant's area of the public website garden is not planted yet. Used when the app has no name for the other person from the meeting; with a name it is the same sentence with %@."
+    },
     "It grew from your seed and %@'s together, so the garden carries both. That is why you are being asked." : {
       "localizations" : {
         "da" : {
@@ -5031,6 +5081,100 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Den växte fram ur ditt frö och %@:s tillsammans, så trädgården bär båda. De tillfrågas innan den hamnar någonstans."
+          }
+        }
+      }
+    },
+    "It grew from your seed and the other gardener's together, so the garden carries both. That is why you are being asked." : {
+      "comment" : "Shown to the person being asked whether a plant may stand in the public website garden. Used when the app has no name for the other person from the meeting; with a name it is the same sentence with %@.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den groede frem af dit frø og frøet fra den anden gartner sammen, så haven rummer dem begge. Det er derfor, du bliver spurgt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Creció de tu semilla y de la de la otra persona juntas, así que el jardín lleva las dos. Por eso se te pregunta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Elle a poussé de ta graine et de celle de l’autre jardinier ensemble, donc le jardin porte les deux. C’est pourquoi on te le demande."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "È cresciuta dal tuo seme e da quello dell'altra persona insieme, quindi il giardino li porta entrambi. Per questo ti viene chiesto."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den vokste fram av frøet ditt og frøet til den andre gartneren sammen, så hagen bærer begge. Det er derfor du blir spurt."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hij groeide uit jouw zaadje en dat van de andere tuinier samen, dus de tuin draagt ze allebei. Daarom wordt het jou gevraagd."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den växte fram ur ditt frö och den andra trädgårdsmästarens tillsammans, så trädgården bär båda. Därför blir du tillfrågad."
+          }
+        }
+      }
+    },
+    "It grew from your seed and the other gardener's together, so the garden carries both. They are asked before it goes anywhere." : {
+      "comment" : "Shown to the person offering a plant to the public website garden; 'they' is the other person from the meeting. Used when the app has no name for them; with a name it is the same sentence with %@.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den groede frem af dit frø og frøet fra den anden gartner sammen, så haven rummer dem begge. De bliver spurgt, før den kommer nogen steder hen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Creció de tu semilla y de la de la otra persona juntas, así que el jardín lleva las dos. A esa persona se le pregunta antes de que la planta vaya a ningún sitio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Elle a poussé de ta graine et de celle de l’autre jardinier ensemble, donc le jardin porte les deux. L’autre personne est consultée avant qu’elle n’aille où que ce soit."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "È cresciuta dal tuo seme e da quello dell'altra persona insieme, quindi il giardino li porta entrambi. All'altra persona viene chiesto prima che la pianta vada da qualsiasi parte."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den vokste fram av frøet ditt og frøet til den andre gartneren sammen, så hagen bærer begge. De blir spurt før den havner noe sted."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hij groeide uit jouw zaadje en dat van de andere tuinier samen, dus de tuin draagt ze allebei. De ander wordt gevraagd voordat hij ergens heen gaat."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den växte fram ur ditt frö och den andra trädgårdsmästarens tillsammans, så trädgården bär båda. De tillfrågas innan den hamnar någonstans."
           }
         }
       }
@@ -10255,6 +10399,62 @@
         }
       }
     },
+    "The other gardener has asked to show a plant you grew together" : {
+      "comment" : "A notice in the garden: the other person from a meeting has asked for a plant you grew together to stand in the public website garden. Used when the app has no name for them; with a name it is '%@ has asked to show a plant you grew together'."
+    },
+    "The other gardener has asked to show plants you grew together" : {
+      "comment" : "The same notice when more than one plant is waiting on an answer. Used when the app has no name for anyone asking; with names it is '%@ have asked to show plants you grew together'. It carries no number on purpose."
+    },
+    "The other gardener let it go into the Wild Fields" : {
+      "comment" : "A small line on a plant's screen when the other person from the meeting released their copy into the Wild Fields; this person's copy stays. Used when the app has no name for them; with a name it is '%@ let it go into the Wild Fields'. Use the same name as 'Release to the Wild Fields'.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den anden gartner slap den ud i Vildmarken"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "La otra persona la soltó en los Campos Silvestres"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "L’autre jardinier l’a relâchée dans les Champs Sauvages"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'altra persona l'ha lasciata andare nei Campi Selvatici"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den andre gartneren slapp den ut i Villmarka"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "De andere tuinier liet hem los in de Wilde Velden"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den andra trädgårdsmästaren släppte ut den på Vildmarken"
+          }
+        }
+      }
+    },
+    "The other gardener would like this plant to stand in the public website garden." : {
+      "comment" : "The headline when the other person from the meeting has asked for this plant to stand in the public website garden. Used when the app has no name for them; with a name it is '%@ would like this plant to stand in the public website garden.'"
+    },
     "The other phone is running a different version of Peace Garden." : {
       "comment" : "A failure. 'Peace Garden' is the app's name and stays as it is.",
       "localizations" : {
@@ -11377,6 +11577,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Väntar på %@"
+          }
+        }
+      }
+    },
+    "Waiting on the other gardener" : {
+      "comment" : "A small line on a plant's screen: it has been offered to the public website garden and the other person from the meeting has not answered yet. Used when the app has no name for them; with a name it is 'Waiting on %@'.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Venter på den anden gartner"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esperando a la otra persona"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "En attente de l’autre jardinier"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In attesa dell'altra persona"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Venter på den andre gartneren"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Wacht op de andere tuinier"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Väntar på den andra trädgårdsmästaren"
           }
         }
       }

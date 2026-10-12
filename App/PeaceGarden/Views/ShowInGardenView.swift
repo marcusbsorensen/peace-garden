@@ -59,9 +59,9 @@ struct ShowInGardenView: View {
         isBeingAsked || (open ?? .builtIn).has(Arrangement.area(of: record))
     }
 
-    private var peer: String {
-        record.encounter?.peerDisplayName ?? String(localized: "the other gardener")
-    }
+    /// Who the other gardener is, in the sentences that name them — each a
+    /// whole sentence of its own when there is no name (see `OtherGardener`).
+    private var other: OtherGardener { OtherGardener(record) }
 
     var body: some View {
         ZStack {
@@ -111,7 +111,7 @@ struct ShowInGardenView: View {
                     if !areaIsOpen {
                         headline("The garden is being planted an area at a time, and this plant's area comes later.")
                     } else if isBeingAsked {
-                        headline("\(peer) would like this plant to stand in the public website garden.")
+                        headline(other.wouldLikeItShown)
                     } else {
                         headline("Show this plant in the public website garden.")
                     }
@@ -127,7 +127,7 @@ struct ShowInGardenView: View {
                             // opened, which is the thing this screen has just
                             // stopped doing.
                             fact("A plant stands in the area its own name belongs to, and the areas are being planted one at a time.")
-                            fact("It goes on growing here meanwhile, and you can ask \(peer) the day its area opens.")
+                            fact(other.askWhenTheAreaOpens)
                         }
                         .padding(.horizontal, 40)
                         .frame(maxWidth: Chrome.readableWidth)
@@ -138,11 +138,7 @@ struct ShowInGardenView: View {
                             fact("Your name, what you wrote about the meeting and the day it happened stay on this phone.")
                             // The load-bearing one, and the reason there is a second
                             // gardener to ask at all.
-                            if isBeingAsked {
-                                fact("It grew from your seed and \(peer)'s together, so the garden carries both. That is why you are being asked.")
-                            } else {
-                                fact("It grew from your seed and \(peer)'s together, so the garden carries both. They are asked before it goes anywhere.")
-                            }
+                            fact(other.grewFromBoth(beingAsked: isBeingAsked))
                         }
                         .padding(.horizontal, 40)
                         .frame(maxWidth: Chrome.readableWidth)
@@ -182,7 +178,7 @@ struct ShowInGardenView: View {
                         .padding(.horizontal, 40)
                         .padding(.top, 6)
                 } else {
-                    QuietButton(title: "Ask \(peer)", isProminent: true) { ask() }
+                    QuietButton(title: other.ask, isProminent: true) { ask() }
                     QuietButton(title: "Not now") { dismiss() }
                     Text("It appears in the garden only once they say yes.")
                         .font(.system(size: 12, weight: .light))

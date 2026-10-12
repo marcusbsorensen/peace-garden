@@ -351,7 +351,7 @@ struct PlantDetailView: View {
     private var standing: some View {
         switch live.standingOrHere.state {
         case .asked:
-            standingLine("Waiting on \(live.encounter?.peerDisplayName ?? String(localized: "the other gardener"))")
+            standingLine(OtherGardener(live).waitingOn)
         case .shown:
             standingLine("In the public website garden")
         // One line for both endings. They are different events — the other
@@ -368,7 +368,7 @@ struct PlantDetailView: View {
         // it is the release they chose to be a moment of contact, and nothing
         // the field shows of either of them is decided by this line.
         if live.wild != nil {
-            standingLine("\(live.encounter?.peerDisplayName ?? String(localized: "the other gardener")) let it go into the Wild Fields")
+            standingLine(OtherGardener(live).letItGo)
         }
     }
 
