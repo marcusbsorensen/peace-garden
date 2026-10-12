@@ -72,9 +72,10 @@ struct ContinuingRow<Content: View>: View {
     private static var fade: CGFloat { 30 }
 
     /// How much of `Chrome.ground` lies over the blur: *slightly opaque*,
-    /// in Marcus's words. `design/tray-panels-2026-10-12/` has it beside 0.2
-    /// and 0.55.
-    static var shade: Double { 0.35 }
+    /// in Marcus's words, and lighter still on his answer of 12 October (B):
+    /// 0.2, where it was built at 0.35. `design/tray-panels-2026-10-12/` has
+    /// the three side by side, with 0.55.
+    static var shade: Double { 0.20 }
 
     /// Between the panel's edge and the row, before it is scrolled.
     private static var inset: CGFloat { 10 }

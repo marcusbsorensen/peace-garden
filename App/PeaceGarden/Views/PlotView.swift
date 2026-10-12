@@ -1673,8 +1673,10 @@ private struct GroundMark: View {
 
     private static let size = CGSize(width: 64, height: 46)
 
-    /// How strongly the grounds that are not chosen are drawn.
-    static let others = 0.75
+    /// How strongly the grounds that are not chosen are drawn: 0.85, Marcus's
+    /// answer of 12 October, where they were built at 0.75. A little back
+    /// from the chosen one, which its pool of light already picks out.
+    static let others = 0.85
 
     @State private var image: UIImage?
 
