@@ -49,7 +49,7 @@ Ship build 8 to TestFlight with the requests Marcus made on 12 October, and depl
 ## Open, not urgent
 - **Right to left:** `ContinuingRow`'s edge fade may hide the start of the tray rows (seen before the tray rewrite; recheck).
 - **String catalogue is behind main.** `tools/strings/sync.sh` would bring in about 20 keys from the web garden and Wild Fields work. "Reset view" was added by hand.
-- **`ShowInGardenView` is unreachable,** because `PlotView.answering` is never set. A task chip was offered to investigate.
+- **Dead answer sheet, for build 9.** The garden's own answer sheet has had nothing to open it since 20 September (`d2a2930`), when the notice was changed to open the plant first. Its removal is on `claude/remove-dead-answer-sheet-2026-10-12` (`146d8d3`). Build it and run GardenControlsTests, then merge it after build 8 is uploaded (Marcus: 1A 2A 3A). `ShowInGardenView` itself is live: a plant's screen opens it from its Answer mark.
 - The two wasm prototype pages still use `icon.svg`.
 - FreqShift's icon isn't in its repo.
 - Leftover `claude/*` branches on origin, here and in uncubed, can be deleted.
