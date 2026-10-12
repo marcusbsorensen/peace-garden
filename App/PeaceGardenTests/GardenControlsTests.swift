@@ -76,19 +76,21 @@ final class GardenControlsTests: XCTestCase {
     func testThePlusAndTheTurnsStandInTheBottomCornersWithTheTrayShut() async throws {
         let found = try await controls(of: PlotView())
         try assertTheFootRow(found)
-        XCTAssertNil(found[PlotControls.reset], "putting the view back is in the tray, which is shut")
+        XCTAssertNil(found[PlotControls.reset], "Reset view is in the tray, which is shut")
     }
 
     /// **With the tray open**, the turns stay where they were, under it, and
-    /// putting the view back is in the tray above them.
+    /// *Reset view* is in the tray above them, and says so to VoiceOver.
     func testTheTurnsStayInTheCornerWithTheTrayOpen() async throws {
         UserDefaults.standard.set(true, forKey: "pgTray")
         defer { UserDefaults.standard.removeObject(forKey: "pgTray") }
         let found = try await controls(of: PlotView())
         try assertTheFootRow(found)
-        let reset = try XCTUnwrap(found[PlotControls.reset], "putting the view back is in the open tray")
+        let reset = try XCTUnwrap(found[PlotControls.reset], "Reset view is in the open tray")
         let clockwise = try XCTUnwrap(found[PlotControls.turnClockwise])
         XCTAssertLessThan(reset.maxY, clockwise.minY, "the tray stands above the row at the foot")
+        // Marcus's name for it, 12 October, rather than a system symbol's.
+        XCTAssertEqual(lastLabels[PlotControls.reset], "Reset view")
     }
 
     /// **One way round in every language**, the web garden's rule for its pad:
@@ -132,6 +134,8 @@ final class GardenControlsTests: XCTestCase {
     // MARK: Hosting it
 
     private var lastSafeArea = UIEdgeInsets.zero
+    /// What VoiceOver says for each control, read alongside its frame.
+    private var lastLabels: [String: String] = [:]
 
     /// **SwiftUI builds its accessibility tree only for somebody reading it.**
     /// With no VoiceOver and no UI test attached, a hosting view answers that
@@ -188,6 +192,7 @@ final class GardenControlsTests: XCTestCase {
                let id = node.perform(identifier)?.takeUnretainedValue() as? String,
                !id.isEmpty, found[id] == nil {
                 found[id] = node.accessibilityFrame
+                lastLabels[id] = node.accessibilityLabel
             }
             if let elements = node.accessibilityElements as? [NSObject] {
                 stack.append(contentsOf: elements)

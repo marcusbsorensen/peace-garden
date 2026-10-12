@@ -7,6 +7,10 @@ stars at night; and plot types that can be told apart. All four are built, each 
 recommended option (A) as the default and the others one constant away. Branch
 `claude/garden-controls-2026-10-11`; nothing is merged.
 
+**Answered 12 October** (`../tray-panels-2026-10-12/`): one panel behind each whole row
+replaced the plates, the grounds not chosen stand at 0.75 with a pool of light under the
+chosen one, and `FigurePlate`, `GroundMarking`, `-pgPlate` and `-pgGrounds` are gone.
+
 Every picture here is the real app on an iPhone Air simulator with a full garden: fourteen
 plants and six figures, at night (*Always night*) and by day (*Always day*).
 
@@ -21,7 +25,7 @@ plants and six figures, at night (*Always night*) and by day (*Always day*).
 **1. The plus bottom left, the two turns bottom right, at all times.** They used to be in the
 tray, behind the plus. They now share one row at the foot with it, above the home indicator
 and inside the 26 pt margin the screen already keeps, and they stay there with the tray open
-(the tray opens above them). *Putting the view back* stays in the tray, beside day / clock /
+(the tray opens above them). *Reset view* stays in the tray, beside day / clock /
 night: it is disabled until the view has moved, and a faint mark in the corner of every visit
 would be a control that does nothing most of the time.
 
@@ -110,7 +114,7 @@ tray on launch.
 
 ## Not asked, worth knowing
 
-- **Putting the view back stayed in the tray** (see 1). If Marcus wants it beside the turns,
+- **Reset view stayed in the tray** (see 1). If Marcus wants it beside the turns,
   it is a three-line move, and it would need its own picture first.
 - **Dynamic Type does not reach this row.** Every size on the screen is a fixed
   `.system(size:)`, as `docs/CHROME-AND-SETTINGS.md` records. The tests run the row at the
@@ -127,7 +131,7 @@ tray on launch.
   accessibility tree:
   - the plus bottom left and the turns bottom right, anticlockwise first;
   - all three on one row, inside the safe area, at least 40 pt wide;
-  - true with the tray shut, with it open (where *putting the view back* is above the row), and
+  - true with the tray shut, with it open (where *Reset view* is above the row), and
     under right to left at the largest type.
 - **The head's geometry:** equal gaps either side of the circle, equal barbs, the tip on the
   circle, clearance from the diamond, and the mark not mirroring.

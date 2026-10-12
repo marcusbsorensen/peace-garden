@@ -4,8 +4,8 @@ import UIKit
 import XCTest
 @testable import PeaceGarden
 
-/// **The whole row of grounds, in each of the ways it can say which is
-/// chosen** — to be looked at, not asserted: `GroundMarking`.
+/// **The whole row of grounds on its panel, the chosen one in its pool of
+/// light** — to be looked at, not asserted: `GroundMark`.
 ///
 /// A phone's row shows five of the eight and scrolls for the rest, so this
 /// hosts the real `PlotView`, tray open, in a window wide enough for all of
@@ -18,7 +18,7 @@ final class GardenControlsRenderTests: XCTestCase {
 
     private static let window = CGSize(width: 760, height: 912)
 
-    func testDrawTheRowOfGroundsEachWay() async throws {
+    func testDrawTheRowOfGrounds() async throws {
         guard let folder = ProcessInfo.processInfo.environment["PG_RENDERS"], !folder.isEmpty else {
             throw XCTSkip("PG_RENDERS is not set")
         }
@@ -29,7 +29,7 @@ final class GardenControlsRenderTests: XCTestCase {
         let daylightBefore = defaults.string(forKey: Chrome.daylightKey)
         defer {
             defaults.set(daylightBefore, forKey: Chrome.daylightKey)
-            for key in ["pgTray", "pgGrounds", "pgPlate"] { defaults.removeObject(forKey: key) }
+            defaults.removeObject(forKey: "pgTray")
         }
         defaults.set(true, forKey: "pgTray")
 
@@ -37,27 +37,20 @@ final class GardenControlsRenderTests: XCTestCase {
             // Once through first and thrown away: the first window in a light
             // draws the plot in it and all eight grounds from nothing, one
             // after the other on the terrain's actor, and six seconds is not
-            // long enough for that on a simulator. Every window after it is
+            // long enough for that on a simulator. The window after it is
             // handed them drawn.
             defaults.set(light.rawValue, forKey: Chrome.daylightKey)
             let warming = try Self.window(showing: PlotView().environment(Self.model()))
             try await Task.sleep(for: .seconds(20))
             warming.isHidden = true
 
-            for marking in GroundMarking.allCases {
-                defaults.set(light.rawValue, forKey: Chrome.daylightKey)
-                defaults.set(marking.rawValue, forKey: "pgGrounds")
-                // Today's row had no plates either.
-                defaults.set(marking == .standBack ? FigurePlate.none.rawValue : FigurePlate.chosen.rawValue,
-                             forKey: "pgPlate")
-                let window = try Self.window(showing: PlotView().environment(Self.model()))
-                try await Task.sleep(for: .seconds(6))
-                let name = "grounds-\(light == .always ? "day" : "night")-\(marking.rawValue).png"
-                try Self.write(window, to: URL(fileURLWithPath: folder).appendingPathComponent(name),
-                               crop: CGRect(x: 0, y: Self.window.height - 330,
-                                            width: Self.window.width, height: 330))
-                window.isHidden = true
-            }
+            let window = try Self.window(showing: PlotView().environment(Self.model()))
+            try await Task.sleep(for: .seconds(6))
+            let name = "grounds-\(light == .always ? "day" : "night").png"
+            try Self.write(window, to: URL(fileURLWithPath: folder).appendingPathComponent(name),
+                           crop: CGRect(x: 0, y: Self.window.height - 330,
+                                        width: Self.window.width, height: 330))
+            window.isHidden = true
         }
     }
 

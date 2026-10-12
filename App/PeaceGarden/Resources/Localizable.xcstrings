@@ -8528,6 +8528,53 @@
         }
       }
     },
+    "Reset view" : {
+      "comment" : "Spoken by VoiceOver, never drawn: the mark in the garden's tray that turns, zooms and pans the garden back to how it opened. 'View' is a noun, how the garden is being looked at. Word it as this language's own settings word 'Reset'.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nulstil visning"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Restablecer vista"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Réinitialiser la vue"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Reimposta vista"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nullstill visning"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Weergave herstellen"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Återställ vyn"
+          }
+        }
+      }
+    },
     "See it in the Wild Fields" : {
       "comment" : "Opens the website's Wild Fields at this plant. The Wild Fields is the place a released plant goes; use the same name as 'Release to the Wild Fields'.",
       "localizations" : {

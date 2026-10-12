@@ -1232,7 +1232,7 @@ struct PlotView: View {
     /// and added where it can be seen, then carried to where it is wanted.
     private var figures: some View {
         ContinuingRow {
-            HStack(spacing: FigurePlate.current.spacing) {
+            HStack(spacing: 10) {
                 ForEach(LampKind.allCases, id: \.self) { kind in
                     Button {
                         withAnimation(.spring(duration: 0.3)) {
@@ -1259,19 +1259,15 @@ struct PlotView: View {
                                     .padding(EdgeInsets(top: -7, leading: -5, bottom: -3, trailing: -5))
                                     .blur(radius: 3)
                             }
-                            // What says it can be picked up: see `FigurePlate`.
-                            .background { FigurePlate.current.plate }
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }
             }
             // Room above for that halo inside the scrolling row, which clips
-            // square at its own edge, and for the plate's reach past the
-            // button at either end.
+            // square at its own edge.
             .padding(.top, 8)
             .padding(.bottom, 4)
-            .padding(.horizontal, FigurePlate.current.reach.leading)
         }
     }
 
@@ -1302,8 +1298,10 @@ struct PlotView: View {
                         .accessibilityAddTraits(world == chosen ? .isSelected : [])
                     }
                 }
-                .padding(.vertical, 4)
-                .padding(.bottom, GroundMarking.current.footRoom)
+                // Room under the chosen one for its pool of light, which the
+                // scrolling row would otherwise cut square.
+                .padding(.top, 4)
+                .padding(.bottom, 8)
             }
         }
     }
@@ -1314,27 +1312,27 @@ struct PlotView: View {
     /// `turn` gives.
     private var turns: some View {
         HStack(spacing: 8) {
-            TrayMark(glyph: TurnGlyph(clockwise: false, aroundPlot: true), says: "rotate.left") {
+            TrayMark(glyph: TurnGlyph(clockwise: false, aroundPlot: true), says: .symbol("rotate.left")) {
                 turnPlot(by: 1)
             }
             .accessibilityIdentifier(PlotControls.turnAnticlockwise)
-            TrayMark(glyph: TurnGlyph(clockwise: true, aroundPlot: true), says: "rotate.right") {
+            TrayMark(glyph: TurnGlyph(clockwise: true, aroundPlot: true), says: .symbol("rotate.right")) {
                 turnPlot(by: -1)
             }
             .accessibilityIdentifier(PlotControls.turnClockwise)
         }
     }
 
-    /// Putting the view back — turn, zoom and pan — for anybody who has found
-    /// the gestures and lost their way.
+    /// **Reset view**: turn, zoom and pan as the garden opened, for anybody who
+    /// has found the gestures and lost their way. Its name is Marcus's, 12
+    /// October, and it is what VoiceOver says.
     ///
     /// **Still in the tray**, though the turns it stood beside have gone to the
     /// foot: it is disabled until the view has moved, and a faint mark standing
     /// in the corner of every visit is a control that does nothing most of the
     /// time.
     private var seeing: some View {
-        TrayMark(glyph: FramedPlotGlyph(), says: "arrow.counterclockwise",
-                 isEnabled: viewIsMoved) {
+        TrayMark(glyph: FramedPlotGlyph(), says: Text("Reset view"), isEnabled: viewIsMoved) {
             resetView()
         }
         .accessibilityIdentifier(PlotControls.reset)
@@ -1660,6 +1658,14 @@ private struct GardenGroundView: View {
 }
 
 /// One ground in the row, drawn as itself rather than described.
+///
+/// **The chosen one stands in a pool of light, and the rest stand back a
+/// little** (Marcus, 12 October). Not a tick or a ring: a border round a
+/// landscape is a stamp on a picture. The pool is the garden's own way of
+/// saying *look here*. Until 11 October the rest stood back at 0.42, which at
+/// night left them dark lozenges too alike to tell apart and by day let the
+/// sky's blue through all of them; for a day after that they were at full
+/// strength, with a bar under the chosen one.
 private struct GroundMark: View {
     let world: Int
     let plotSide: Double
@@ -1667,9 +1673,10 @@ private struct GroundMark: View {
 
     private static let size = CGSize(width: 64, height: 46)
 
-    @State private var image: UIImage?
+    /// How strongly the grounds that are not chosen are drawn.
+    static let others = 0.75
 
-    private var marking: GroundMarking { GroundMarking.current }
+    @State private var image: UIImage?
 
     var body: some View {
         ZStack {
@@ -1681,28 +1688,15 @@ private struct GroundMark: View {
                 Color.clear.frame(width: Self.size.width, height: Self.size.height)
             }
         }
-        // The chosen one said without a tick or a ring — a border round a
-        // landscape is a stamp on a picture. Until 11 October it was said by
-        // the rest standing back at 0.42, which left them too dark to tell
-        // apart: see `GroundMarking`.
-        .opacity(isChosen ? 1 : marking.others)
+        .opacity(isChosen ? 1 : Self.others)
         .background(alignment: .bottom) {
-            if isChosen, marking == .pool {
+            if isChosen {
                 Ellipse()
                     .fill(EllipticalGradient(colors: [Chrome.ink.opacity(0.30), Chrome.ink.opacity(0)],
                                              center: .center, startRadiusFraction: 0,
                                              endRadiusFraction: 0.5))
                     .frame(width: Self.size.width * 1.4, height: Self.size.height * 0.7)
                     .offset(y: Self.size.height * 0.16)
-                    .allowsHitTesting(false)
-            }
-        }
-        .overlay(alignment: .bottom) {
-            if isChosen, marking == .bar {
-                Capsule()
-                    .fill(Chrome.ink.opacity(0.9))
-                    .frame(width: GroundMarking.barSize.width, height: GroundMarking.barSize.height)
-                    .offset(y: GroundMarking.barSize.height + GroundMarking.barGap)
                     .allowsHitTesting(false)
             }
         }

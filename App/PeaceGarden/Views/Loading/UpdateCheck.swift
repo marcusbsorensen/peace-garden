@@ -211,9 +211,18 @@ final class UpdateCheck {
 /// there is no table here to fall out of date; what comes back is accepted only
 /// if it is two letters and an ISO region Foundation knows. Anything else is
 /// nil, and nil means the check is skipped.
+///
+/// **One code is Apple's own, and is read before Foundation is asked.**
+/// Kosovo's storefront is `XKS`. ISO 3166 has no code for Kosovo, so Foundation
+/// refuses it and a phone in Kosovo would never be asked; its App Store is `xk`,
+/// from the user-assigned range Apple and the EU use for it.
 enum StoreCountry {
+    /// Apple's storefront codes that are not ISO's, to the lookup's two letters.
+    static let notISO = ["XKS": "xk"]
+
     static func alpha2(fromAlpha3 code: String) -> String? {
         guard code.count == 3, code.allSatisfy({ $0.isASCII && $0.isLetter }) else { return nil }
+        if let country = notISO[code.uppercased()] { return country }
         guard let region = Locale(identifier: "und_\(code.uppercased())").region?.identifier,
               region.count == 2, region.allSatisfy({ $0.isASCII && $0.isUppercase }),
               Locale.Region.isoRegions.contains(Locale.Region(region)) else { return nil }

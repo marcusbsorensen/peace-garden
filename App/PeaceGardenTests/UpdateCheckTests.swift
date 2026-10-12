@@ -152,6 +152,24 @@ final class UpdateCheckTests: XCTestCase {
         }
     }
 
+    /// **Kosovo's storefront is Apple's own code**, `XKS`, which is not ISO's:
+    /// Foundation alone refuses it, and a phone in Kosovo skipped the check. The
+    /// one alias asks Kosovo's own store, `xk`, and never the US one.
+    /// (`XKX`, the code some others use for Kosovo, is not Apple's and is still
+    /// refused above.)
+    func testKosovosStorefrontAsksKosovosStore() async throws {
+        XCTAssertEqual(StoreCountry.alpha2(fromAlpha3: "XKS"), "xk")
+        XCTAssertEqual(StoreCountry.alpha2(fromAlpha3: "xks"), "xk")
+
+        answer(#"{"resultCount":1,"results":[{"version":"1.1","trackId":6700000001}]}"#)
+        let page = await UpdateCheck.check(session: session(), current: "1.0") { "XKS" }
+        XCTAssertEqual(page, URL(string: "https://apps.apple.com/app/id6700000001"))
+        let sent = try XCTUnwrap(StubbedStore.seen.first?.url)
+        let items = URLComponents(url: sent, resolvingAgainstBaseURL: false)?.queryItems ?? []
+        XCTAssertEqual(items.first { $0.name == "country" }?.value, "xk")
+        XCTAssertEqual(StubbedStore.seen.count, 1)
+    }
+
     // MARK: - The answer
 
     /// Until the app is publicly released the lookup finds nothing — TestFlight

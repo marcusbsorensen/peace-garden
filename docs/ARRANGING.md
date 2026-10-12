@@ -969,8 +969,8 @@ that has ended points at nothing. Scrolled along, the near end gets one too.
 
 **How the plot is seen is in the tray as well.** A quarter-turn either way, the
 same step as the two-finger gesture, for anybody who has not found the gesture;
-and a mark that puts the view back — turn, zoom and pan — for anybody who has,
-and has lost their way. Beside them, day, the clock or night: Settings' own
+and *Reset view*, a mark that returns turn, zoom and pan to how the garden
+opened, for anybody who has found it and lost their way. Beside them, day, the clock or night: Settings' own
 control on the same stored setting, so it is one setting in two places rather
 than two that disagree. It had been kept off the garden on the grounds that a
 switch on the screen makes the hour a thing you set. That was outweighed:
@@ -979,15 +979,26 @@ lanterns lit is looking at the lanterns. The clock is still the default.
 
 **Superseded 11 October: the turns are out of the tray** (Marcus). The plus is in
 the bottom left and the two quarter-turns in the bottom right, on one row at the
-foot, whether the tray is open or shut; the tray opens above them. Putting the
-view back stays in the tray beside the light, because it is disabled until the
-view has moved. The row is pinned left to right in every language, and so is the
+foot, whether the tray is open or shut; the tray opens above them. *Reset view*
+stays in the tray beside the light, because it is disabled until the view has
+moved. The row is pinned left to right in every language, and so is the
 plot itself, which until then mirrored its plants' positions (and not its ground)
 under a right-to-left layout. A turn is the screen's direction, as the web
 garden's pad is. The same day the figures in the tray gained a blurred plate
 each, so they stop passing for stars at night, and the grounds came up from 0.42
 to full strength with a short bar under the chosen one.
-`design/garden-controls-2026-10-11/` has the pictures and the choices still open.
+`design/garden-controls-2026-10-11/` has the pictures.
+
+**Superseded 12 October: one panel behind each row, not a plate behind each
+figure** (Marcus). What he had asked for was contrast, not tiles: one slightly
+opaque panel behind the whole row of figures and one behind the whole row of
+grounds, so both read against the sky whatever it is doing. Each is a rounded
+rectangle inside the screen's margins, the sky behind it blurred and darkened a
+little with the screen's background colour (`ContinuingRow`); the row scrolls
+inside it and fades at its ends. The grounds not chosen stand back a little, at 0.75, and the
+chosen one stands in a pool of light rather than over a bar. VoiceOver calls the
+mark that resets the view *Reset view*. `design/tray-panels-2026-10-12/` has the
+pictures.
 
 **The turn is remembered, on the phone.** Marcus wants to choose a favourite
 side and have the garden open on it. It is kept in the phone's own settings
@@ -1037,7 +1048,8 @@ still counts as still. Touching anywhere else shuts the panel.
 **Marks, not words.** Every mark in the tray and the panel is drawn in the
 garden's own monoline hand and labelled for VoiceOver by a system symbol's own
 name for the same action, in the phone's own language. None of it added a
-string to translate.
+string to translate, until *Reset view* (12 October): Marcus named it, and no
+symbol's name says it.
 
 ## The light is rebuilt, not filtered
 
