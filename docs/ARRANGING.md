@@ -1009,7 +1009,7 @@ title and the row at the foot were dark ink that vanished into the night sky,
 while the panels went pale under the figures. Dark's chrome reads over the
 night sky and the day sky alike. The garden itself was never drawn by the
 appearance, so it is unchanged; what is presented from the garden — a plant's
-own screen, the answer to an asking — stands on its own ground and follows the
+own screen, and from there the answer to an asking — stands on its own ground and follows the
 appearance, as every other screen does.
 
 **The turn is remembered, on the phone.** Marcus wants to choose a favourite

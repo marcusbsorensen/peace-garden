@@ -173,7 +173,7 @@ the tray and its panels, a light's panel, and Close. Its sky is the garden's
 own, night or day by the garden's light, and does not follow the appearance;
 under *Light* the chrome was dark ink that vanished into the night sky, and the
 tray's panels went pale under the figures. What the garden presents — a plant's
-own screen, the answer to an asking — stands on its own ground and follows the
+own screen, and from there the answer to an asking — stands on its own ground and follows the
 appearance like every other screen. The status bar over the garden is drawn
 light in either appearance and stays on screen (Marcus, 1A): the garden's whole
 presentation is Dark (`.preferredColorScheme`), and what it presents is handed

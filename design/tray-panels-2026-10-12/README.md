@@ -29,7 +29,7 @@ garden, which is presented over it, shows it; hiding it on the garden too would 
 **Answered 12 October, 1A: the status bar drawn light on the garden screen**, as Dark already
 drew it, in either appearance, and kept on screen. Built on `claude/garden-status-bar-2026-10-12`:
 the garden's whole presentation is Dark (`PlotView.scheme`, now also `.preferredColorScheme`), and
-what it presents — a plant's own screen, the answer to an asking — is handed the appearance back
+what it presents — a plant's own screen, and from there the answer to an asking — is handed the appearance back
 (`inTheAppearance()`). The screen under the garden is in the appearance again once it is closed.
 
 ![](status-bar.png)
