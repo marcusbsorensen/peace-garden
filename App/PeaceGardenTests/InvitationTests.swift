@@ -64,6 +64,51 @@ final class InvitationTests: XCTestCase {
         )
     }
 
+    // The verb agrees with the people and the rest with the plants (Marcus,
+    // 12 October: 3A). Until then the plants decided both, and one person
+    // asking about two plants read *Cai have asked*.
+
+    @MainActor
+    func testOnePersonAndOnePlant() {
+        XCTAssertEqual(
+            key(PlotView.asked(by: [invitation(from: "Cai")])),
+            "%@ has asked to show a plant you grew together"
+        )
+    }
+
+    @MainActor
+    func testOnePersonAndSeveralPlantsHasAskedToShowPlants() {
+        XCTAssertEqual(
+            key(PlotView.asked(by: [invitation(from: "Cai"), invitation(from: "Cai")])),
+            "%@ has asked to show plants you grew together"
+        )
+    }
+
+    @MainActor
+    func testSeveralPeopleAndOnePlantHaveAskedToShowAPlant() {
+        XCTAssertEqual(
+            key(PlotView.asked(by: [OtherGardener(name: "Cai"), OtherGardener(name: "Nadia")], plants: 1)),
+            "%@ have asked to show a plant you grew together"
+        )
+    }
+
+    @MainActor
+    func testSeveralPeopleAndSeveralPlants() {
+        XCTAssertEqual(
+            key(PlotView.asked(by: [invitation(from: "Cai"), invitation(from: "Nadia")])),
+            "%@ have asked to show plants you grew together"
+        )
+    }
+
+    @MainActor
+    func testSomebodyUnnamedIsAPersonForTheVerb() {
+        // Cai, and the other gardener after *and*: two people.
+        XCTAssertEqual(
+            key(PlotView.asked(by: [OtherGardener(name: nil), OtherGardener(name: "Cai")], plants: 1)),
+            "%@ have asked to show a plant you grew together"
+        )
+    }
+
     // MARK: The chevrons
 
     func testAChevronPointsTheWayItSaysItDoes() {
