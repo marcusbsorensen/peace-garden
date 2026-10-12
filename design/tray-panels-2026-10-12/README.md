@@ -61,4 +61,27 @@ To change it, change `ContinuingRow.shade` in `App/PeaceGarden/Views/PlotTray.sw
 
 ## Not asked, worth knowing
 
+- **The blur is cheap here.** Two of the system's thinnest blur, where 11 October had seven
+  plates each with its own. The night sky behind them is still, and the day sky's clouds
+  redraw at most twelve times a second.
+- **Under Settings' *Light* appearance the panels are pale, not dark.** They are shaded with the
+  screen's own ground, which is near-white in that appearance, so the ink on them still has
+  something to stand against. Not photographed; the pictures are the default, *Dark*.
+- **The app's string catalogue is behind its source on `main`.** Syncing it after a build
+  (`tools/strings/sync.sh`) would also bring in about twenty keys from other work (the public
+  website garden's wording, the Wild Fields messages) and mark several stale. Only *Reset
+  view* was added here, by hand, in Xcode's own layout; the rest is for whoever owns that work.
+- **Debug flags.** `-pgTray YES` still opens the tray on launch. `-pgPlate` and `-pgGrounds`
+  went with the options they chose between.
+
 ## Tests
+
+- `GardenControlsTests` now also reads what VoiceOver says for the tray's reset mark and
+  expects *Reset view*.
+- `GardenControlsRenderTests` draws the plot-type row as built, at night and by day, for
+  `grounds.png` (skipped unless `PG_RENDERS` is set).
+- `UpdateCheckTests.testKosovosStorefrontAsksKosovosStore`: `XKS` and `xks` give `xk`, and the
+  check asks in `country=xk`. `XKX`, which is not Apple's code, is still refused.
+
+`panels-ABC.png` is three builds of the app differing only in `ContinuingRow.shade`, each
+photographed on the simulator; the reference row is 11 October's photographs of the plates.
