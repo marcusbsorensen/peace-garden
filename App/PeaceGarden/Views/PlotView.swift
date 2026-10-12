@@ -1129,11 +1129,14 @@ struct PlotView: View {
     /// could be a question, a message or a query; what was actually asked is
     /// for the plant to be shown where anyone can come across it.
     ///
-    /// **Two counts and four keys rather than a plural rule.** The verb agrees
+    /// **Two counts and three keys rather than a plural rule.** The verb agrees
     /// with the people and the rest of the sentence with the plants (Marcus,
     /// 12 October: 3A), so *Cai has asked to show plants* and *Cai and Ines
     /// have asked to show plants*. Until then the plants decided both, and one
-    /// person asking about two plants read *Cai have asked*. The counts decide
+    /// person asking about two plants read *Cai have asked*. There is no
+    /// *have asked to show a plant*: each plant has one other gardener, so
+    /// more than one person always means more than one plant, and Marcus
+    /// chose (1A) not to keep a sentence nobody could see. The counts decide
     /// which sentence is looked up, so none carries a numeral — which
     /// `tools/strings/app_check.py` would refuse — and each is a whole
     /// sentence for a translator to move around. `ListFormatter` puts the
@@ -1159,12 +1162,10 @@ struct PlotView: View {
         }
         let people = Self.gardenersAsking(gardeners)
         let who = ListFormatter.localizedString(byJoining: people)
-        switch (people.count == 1, plants == 1) {
-        case (true, true): return "\(who) has asked to show a plant you grew together"
-        case (true, false): return "\(who) has asked to show plants you grew together"
-        case (false, true): return "\(who) have asked to show a plant you grew together"
-        case (false, false): return "\(who) have asked to show plants you grew together"
-        }
+        if people.count > 1 { return "\(who) have asked to show plants you grew together" }
+        return plants == 1
+            ? "\(who) has asked to show a plant you grew together"
+            : "\(who) has asked to show plants you grew together"
     }
 
     /// Who is asking, each of them once, in the order their plants arrived.

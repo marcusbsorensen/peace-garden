@@ -103,7 +103,9 @@ gardener` stays, as a list item in the garden's notice.
 
 Also on 12 October (branch `claude/asked-agreement-2026-10-12`, Marcus: 3A): the garden's notice
 now chooses *has* or *have* by the number of people asking, and *a plant* or *plants* by the
-number of plants. Before this, one person with two plants read *Cai have asked*. There are four
-named sentences. Two new keys, `%@ has asked to show plants you grew together` and `%@ have asked
-to show a plant you grew together`, have an English comment only. Under 2A they wait for the next
-translation round, together with their two named siblings, which are not in the catalogue yet.
+number of plants. Before this, one person with two plants read *Cai have asked*. There are three
+named sentences: *have asked to show a plant* was added and then dropped the same day (Marcus: 1A),
+because each plant has one other gardener, so more than one person always means more than one
+plant. One new key, `%@ has asked to show plants you grew together`, has an English comment only.
+Under 2A it waits for the next translation round, together with its two named siblings, which are
+not in the catalogue yet.

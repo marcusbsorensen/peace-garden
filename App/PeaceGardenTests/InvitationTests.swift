@@ -85,14 +85,6 @@ final class InvitationTests: XCTestCase {
     }
 
     @MainActor
-    func testSeveralPeopleAndOnePlantHaveAskedToShowAPlant() {
-        XCTAssertEqual(
-            key(PlotView.asked(by: [OtherGardener(name: "Cai"), OtherGardener(name: "Nadia")], plants: 1)),
-            "%@ have asked to show a plant you grew together"
-        )
-    }
-
-    @MainActor
     func testSeveralPeopleAndSeveralPlants() {
         XCTAssertEqual(
             key(PlotView.asked(by: [invitation(from: "Cai"), invitation(from: "Nadia")])),
@@ -102,10 +94,10 @@ final class InvitationTests: XCTestCase {
 
     @MainActor
     func testSomebodyUnnamedIsAPersonForTheVerb() {
-        // Cai, and the other gardener after *and*: two people.
+        // Cai, and the other gardener after *and*: two people, so two plants.
         XCTAssertEqual(
-            key(PlotView.asked(by: [OtherGardener(name: nil), OtherGardener(name: "Cai")], plants: 1)),
-            "%@ have asked to show a plant you grew together"
+            key(PlotView.asked(by: [OtherGardener(name: nil), OtherGardener(name: "Cai")], plants: 2)),
+            "%@ have asked to show plants you grew together"
         )
     }
 

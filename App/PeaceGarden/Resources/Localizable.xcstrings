@@ -49,7 +49,7 @@
       }
     },
     "%@ has asked to show plants you grew together" : {
-      "comment" : "A notice in the garden: one person (%@ is their name) has asked for more than one plant you grew together to stand in the public website garden. One of four sentences with names; the others are '%@ has asked to show a plant you grew together', '%@ have asked to show a plant you grew together' and '%@ have asked to show plants you grew together'. The verb follows the number of people asking and the object follows the number of plants. It carries no number on purpose."
+      "comment" : "A notice in the garden: one person (%@ is their name) has asked for more than one plant you grew together to stand in the public website garden. One of three sentences with names; the others are '%@ has asked to show a plant you grew together' and '%@ have asked to show plants you grew together' (more than one person, who always means more than one plant, since each plant has one other gardener). The verb follows the number of people asking and the object follows the number of plants. It carries no number on purpose."
     },
     "%@ has let the plant you grew together go into the Wild Fields. Yours stays here." : {
       "comment" : "Heading of the notice shown once when the other gardener (%@) releases a plant the two grew together. A moment of contact, not an alarm: gentle and plain.",
@@ -97,9 +97,6 @@
           }
         }
       }
-    },
-    "%@ have asked to show a plant you grew together" : {
-      "comment" : "A notice in the garden: more than one person has asked for a plant you grew together to stand in the public website garden. %@ is their names, already joined as a list in your language (for example 'Cai and Ines'); when one of them has no name, the list ends with 'the other gardener'. One of four sentences with names; the others are '%@ has asked to show a plant you grew together', '%@ has asked to show plants you grew together' and '%@ have asked to show plants you grew together'. The verb follows the number of people asking and the object follows the number of plants. It carries no number on purpose."
     },
     "%@ is here. A light tap, top to top." : {
       "comment" : "Under that title. %@ is the other person's name.",
