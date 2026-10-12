@@ -83,6 +83,9 @@ struct SettingsView: View {
             Text("Settings")
                 .chromeHeading()
                 .foregroundStyle(Chrome.ink)
+                // Held two seconds, opens Testing at the foot, where the
+                // developer controls are available. See `Developer.showsSection`.
+                .unfoldsDeveloperSection()
             Spacer(minLength: 12)
             CloseButton { close() }
         }
@@ -121,11 +124,13 @@ struct SettingsView: View {
                     section("Joint seeds") { jointSeeds }
                     Hairline()
                     startingAgain
-#if DEBUG
-                    Hairline()
-                    DeveloperSection(close: close)
-                        .environment(model)
-#endif
+                    // A Debug build or a TestFlight copy, and folded in the
+                    // second until it is asked for. Never in an App Store copy.
+                    if Developer.shared.showsSection {
+                        Hairline()
+                        DeveloperSection(close: close)
+                            .environment(model)
+                    }
                 }
                 .padding(.horizontal, 30)
                 .padding(.top, 18)

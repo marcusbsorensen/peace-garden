@@ -10,16 +10,15 @@ import SwiftUI
 /// replaced, kept behind the developer switch while the plot is being judged on
 /// real gardens. This view exists so that the swap is one line rather than a
 /// change at every place the garden is opened from.
+///
+/// The switch reads as off in an App Store copy (`Developer.isAvailable`), so
+/// there this is always the plot.
 struct GardenView: View {
     var body: some View {
-        #if DEBUG
         if Developer.shared.showsTileGrid {
             GardenGridView()
         } else {
             PlotView()
         }
-        #else
-        PlotView()
-        #endif
     }
 }

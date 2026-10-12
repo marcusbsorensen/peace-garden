@@ -12,6 +12,11 @@ final class GardenModel {
 
     /// Ticked on a timer so plants visibly move on without every view holding
     /// its own clock.
+    ///
+    /// **The developer clock's, wherever that runs** (`Developer.now`): every
+    /// build in Debug, and a TestFlight copy in Release. In an App Store copy it
+    /// is the wall clock. What this measures is what is shown; what is written
+    /// down is `currentDate()`'s.
     private(set) var now: Date = Date()
 
     private let store: GardenStore
@@ -53,16 +58,20 @@ final class GardenModel {
             Developer.shared.wind(to: stage, genome: identity.genome, birth: identity.birth)
         }
 #endif
-        now = Self.currentDate()
+        now = Developer.now
         startClock()
     }
 
     /// The wall clock, and in a debug build the developer clock over the top of
-    /// it. Every date this app writes down or measures against goes through
-    /// here, so winding the garden on moves all of it together rather than
+    /// it. Every date this app writes down goes through here, so in a Debug
+    /// build winding the garden on moves all of it together rather than
     /// leaving a plant sown after the shift instantly middle-aged.
     ///
-    /// In a Release build `Developer` does not exist and this is `Date()`.
+    /// **In a Release build this is `Date()`, TestFlight included.** There the
+    /// developer clock moves `now`, what is shown, and never a date that is
+    /// kept or sent: a meeting's month can stand beside a plant in the Wild
+    /// Fields, and a wound one would be a wrong date on a public page. See
+    /// `Developer.now`.
     static func currentDate() -> Date {
 #if DEBUG
         Developer.now
@@ -840,12 +849,12 @@ final class GardenModel {
             while !Task.isCancelled {
                 try? await Task.sleep(for: Self.tickInterval)
                 guard let self else { return }
-                self.now = Self.currentDate()
+                self.now = Developer.now
             }
         }
     }
 
     func refreshNow() {
-        now = Self.currentDate()
+        now = Developer.now
     }
 }

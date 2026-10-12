@@ -22,12 +22,12 @@ struct ExchangeView: View {
     /// repeated at every meeting has stopped being an offer.
     @State private var offeringPlace = false
     @State private var draftName = ""
-#if DEBUG
     /// Whether this whole visit to Meet is against a gardener who is not there.
     /// Claimed once, on appearance, so that leaving and reopening Meet finds it
-    /// looking for a real phone again. See `startSearching`.
+    /// looking for a real phone again. See `startSearching`. Never true in an
+    /// App Store copy: `Developer.wantsImaginaryMeeting` reads as unasked
+    /// wherever the developer controls are not available.
     @State private var isImaginary = false
-#endif
     @FocusState private var nameFocused: Bool
 
     var body: some View {
@@ -63,12 +63,10 @@ struct ExchangeView: View {
             SeedOfferView().environment(model)
         }
         .onAppear {
-#if DEBUG
             if Developer.shared.wantsImaginaryMeeting {
                 Developer.shared.wantsImaginaryMeeting = false
                 isImaginary = true
             }
-#endif
             if model.hasChosenName {
                 beginAfterNaming()
             } else {
@@ -126,7 +124,6 @@ struct ExchangeView: View {
     private func startSearching() {
         offeringPlace = false
         guard let identity = model.identity else { return }
-#if DEBUG
         // Asked for on the settings screen, three presentations away.
         //
         // **Read once on appearance, held here, and used every time.** It used
@@ -143,7 +140,6 @@ struct ExchangeView: View {
             service.meetAnImaginaryGardener(as: identity, place: place)
             return
         }
-#endif
         service.start(identity: identity, place: place)
     }
 
@@ -294,15 +290,18 @@ struct ExchangeView: View {
             knockWaiting(peerName: peerName, felt: felt)
         }
 #else
-        knockWaiting(peerName: peerName, felt: felt)
-#if DEBUG
+        if isImaginary {
             // A phone can feel a knock, so it gets the real gesture — but a
             // developer control must never strand anybody, and a knock firm
             // enough to register while looking at the screen is a knack. Tap
-            // to stand in, on this path only.
-            .contentShape(Rectangle())
-            .onTapGesture { if isImaginary { service.standInForTouch() } }
-#endif
+            // to stand in, on this path only. A real meeting gets the screen
+            // exactly as it always was, with nothing to tap.
+            knockWaiting(peerName: peerName, felt: felt)
+                .contentShape(Rectangle())
+                .onTapGesture { service.standInForTouch() }
+        } else {
+            knockWaiting(peerName: peerName, felt: felt)
+        }
 #endif
     }
 
