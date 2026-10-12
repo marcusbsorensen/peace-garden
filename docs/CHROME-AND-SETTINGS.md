@@ -164,6 +164,19 @@ the place is said*: a menu of figurative places and a switch that wrote down a
 coordinate were two answers to one question, and only one of them can be the
 answer.
 
+**Appearance reaches every screen but the garden's** (Marcus, 12 October).
+*Dark*, *Light* or *Follow the phone* is applied once, at the top of the app
+(`PeaceGardenApp`, `.preferredColorScheme`), and every colour in `Chrome`
+resolves against it. The garden screen (`PlotView`) sets its own `colorScheme`
+to Dark (`PlotView.scheme`) over all its chrome: the title, the row at the foot,
+the tray and its panels, a light's panel, and Close. Its sky is the garden's
+own, night or day by the garden's light, and does not follow the appearance;
+under *Light* the chrome was dark ink that vanished into the night sky, and the
+tray's panels went pale under the figures. What the garden presents — a plant's
+own screen, the answer to an asking — stands on its own ground and follows the
+appearance like every other screen. `design/tray-panels-2026-10-12/` has the
+pictures.
+
 **The section labels are `Chrome.sectionLabel`, not `Chrome.faint`.** At 0.28
 they all but vanished. `faint` is right for a label standing beside the value it
 explains, where the value should win; it is wrong for a heading somebody is

@@ -3,6 +3,24 @@
 Marcus's answers to the 11 October pictures (`../garden-controls-2026-10-11/`), built, and one
 fix to the update check. Branch `claude/tray-panels-2026-10-12`; nothing is merged.
 
+**Answered 12 October** (Marcus: *1B 2B (the 7 others at 85%) 3A*), built on
+`claude/tray-answers-2026-10-12`:
+
+- **1B, lighter panels.** The row panels are darkened 20%, not 35%, over the same thin blur
+  (`ContinuingRow.shade`, 0.20).
+- **2B, the plot types not chosen at 0.85**, not 0.75 (`GroundMark.others`). The chosen one keeps
+  its soft pool of light.
+- **3A, the garden screen's controls always as in Dark**, whichever appearance is chosen in
+  Settings (`PlotView.scheme`). The title, the row at the foot, the tray and its panels, a light's
+  panel and Close are drawn as in Dark; under *Light* at night the foot row and the title had
+  vanished into the sky. The garden itself is drawn as before, and every other screen follows the
+  appearance — including what the garden presents (a plant's own screen, the answer to an
+  asking), which stands on its own ground rather than over the sky.
+
+![](answers-final.png)
+
+The questions below are kept as they were asked.
+
 Every picture is the real app on an iPhone Air simulator with a full garden (fourteen plants,
 six figures), at night (*Always night*) and by day (*Always day*).
 

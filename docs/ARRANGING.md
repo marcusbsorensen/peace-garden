@@ -212,7 +212,7 @@ about. That is the same property, drawn instead of described.
 
 | | |
 | --- | --- |
-| **Appearance** | Light or dark, which `Chrome` already resolves against the system ([`Chrome.swift:34`](../App/PeaceGarden/Views/Chrome.swift#L34)). Nothing here changes it. |
+| **Appearance** | Light or dark, which `Chrome` already resolves against the system ([`Chrome.swift:34`](../App/PeaceGarden/Views/Chrome.swift#L34)). Nothing here changes it — and since 12 October the garden screen draws its own controls as in Dark whatever it says (`PlotView.scheme`), because the garden's sky does not follow it. |
 | **A night garden** | A bed on the Night-and-day template. A *selection* — which plants, and where they stand. |
 | **Night falling** | The same bed, lit differently, because it is night. A *time of day*. |
 
@@ -999,6 +999,18 @@ inside it and fades at its ends. The grounds not chosen stand back a little, at 
 chosen one stands in a pool of light rather than over a bar. VoiceOver calls the
 mark that resets the view *Reset view*. `design/tray-panels-2026-10-12/` has the
 pictures.
+
+**Answered 12 October** (Marcus, *1B 2B 3A*). The panels are darkened 20%, not
+35% (`ContinuingRow.shade`); the grounds not chosen stand at 0.85, not 0.75
+(`GroundMark.others`). And **the garden screen draws its controls as in Dark,
+whichever appearance is chosen in Settings** (`PlotView.scheme`): the sky is
+the garden's own and does not follow the appearance, and under *Light* the
+title and the row at the foot were dark ink that vanished into the night sky,
+while the panels went pale under the figures. Dark's chrome reads over the
+night sky and the day sky alike. The garden itself was never drawn by the
+appearance, so it is unchanged; what is presented from the garden — a plant's
+own screen, the answer to an asking — stands on its own ground and follows the
+appearance, as every other screen does.
 
 **The turn is remembered, on the phone.** Marcus wants to choose a favourite
 side and have the garden open on it. It is kept in the phone's own settings
