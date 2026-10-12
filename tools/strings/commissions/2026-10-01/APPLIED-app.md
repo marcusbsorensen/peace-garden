@@ -71,7 +71,7 @@ Vildmarken* in every string, so it needed no change.
 - **it `the other gardener`** (*a l'altra persona*): not applied. The fix in the review is a
   code change. `PlantDetailView.swift:354` and `:371` and the templates `Chiedi a %@` and
   `In attesa di %@` would need fallback variants, and those files are outside this job. The
-  string is unchanged and the problem is still open.
+  string is unchanged and the problem is still open. *Fixed on 12 October: see below.*
 - **nl *ze/haar* on the site against *hij/hem* in the app**: no app change. The review suggests
   keeping *hij*, which is what the app already uses, so any change falls on the site.
 - **fr `wildAway`** and every other site finding: these are site strings and belong to the
@@ -89,3 +89,14 @@ Vildmarken* in every string, so it needed no change.
   count.
 - `git diff --diff-algorithm=histogram --stat`: the xcstrings changes by 74 insertions and 27
   deletions.
+
+## Applied on 12 October 2026: it `the other gardener`
+
+Fixed for build 9 (branch `claude/italian-other-gardener-2026-10-12`), in code and for every
+language. With no name, a sentence now has a whole key of its own (`OtherGardener.swift`), so
+Italian reads *Chiedi all'altra persona* and *In attesa dell'altra persona*. The same fallback sat
+in six more sentences, and they were fixed the same way. Swedish *trädgårdsmästaren:s* and the
+small *the* that opened sentences in English went too. Nine new keys. Five are filled in all seven
+languages: da and it `translated`, es, fr, nb, nl and sv `needs_review`. The other four have an
+English comment only, because their named sentences are not in the catalogue yet. `the other
+gardener` stays, as a list item in the garden's notice.
