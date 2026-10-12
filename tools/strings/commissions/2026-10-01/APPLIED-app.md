@@ -100,3 +100,10 @@ small *the* that opened sentences in English went too. Nine new keys. Five are f
 languages: da and it `translated`, es, fr, nb, nl and sv `needs_review`. The other four have an
 English comment only, because their named sentences are not in the catalogue yet. `the other
 gardener` stays, as a list item in the garden's notice.
+
+Also on 12 October (branch `claude/asked-agreement-2026-10-12`, Marcus: 3A): the garden's notice
+now chooses *has* or *have* by the number of people asking, and *a plant* or *plants* by the
+number of plants. Before this, one person with two plants read *Cai have asked*. There are four
+named sentences. Two new keys, `%@ has asked to show plants you grew together` and `%@ have asked
+to show a plant you grew together`, have an English comment only. Under 2A they wait for the next
+translation round, together with their two named siblings, which are not in the catalogue yet.

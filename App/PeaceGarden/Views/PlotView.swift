@@ -1129,34 +1129,50 @@ struct PlotView: View {
     /// could be a question, a message or a query; what was actually asked is
     /// for the plant to be shown where anyone can come across it.
     ///
-    /// **Two keys rather than a plural rule.** The count decides which sentence
-    /// is looked up, so neither carries a numeral — which `tools/strings/app_check.py`
-    /// would refuse — and both are a whole sentence for a translator to move
-    /// around. `ListFormatter` puts the names in the reader's own language,
-    /// with that language's own word for *and*.
+    /// **Two counts and four keys rather than a plural rule.** The verb agrees
+    /// with the people and the rest of the sentence with the plants (Marcus,
+    /// 12 October: 3A), so *Cai has asked to show plants* and *Cai and Ines
+    /// have asked to show plants*. Until then the plants decided both, and one
+    /// person asking about two plants read *Cai have asked*. The counts decide
+    /// which sentence is looked up, so none carries a numeral — which
+    /// `tools/strings/app_check.py` would refuse — and each is a whole
+    /// sentence for a translator to move around. `ListFormatter` puts the
+    /// names in the reader's own language, with that language's own word for
+    /// *and*.
     ///
     /// **Nobody named is a sentence of its own**, as everywhere a sentence
     /// names the other gardener (`OtherGardener`): the phrase in the slot
-    /// opened the sentence with a small *the* in every language.
+    /// opened the sentence with a small *the* in every language. It is one
+    /// person, however many meetings: the plants decide its sentence alone.
     static func asked(by waiting: [PlantRecord]) -> LocalizedStringKey {
-        guard waiting.contains(where: { OtherGardener($0).name != nil }) else {
-            return waiting.count == 1
+        asked(by: waiting.map { OtherGardener($0) }, plants: waiting.count)
+    }
+
+    /// The sentence from who asked, once for each plant or once each, and how
+    /// many plants are waiting. Apart from `asked(by:)` so that the counts can
+    /// be set one at a time.
+    static func asked(by gardeners: [OtherGardener], plants: Int) -> LocalizedStringKey {
+        guard gardeners.contains(where: { $0.name != nil }) else {
+            return plants == 1
                 ? "The other gardener has asked to show a plant you grew together"
                 : "The other gardener has asked to show plants you grew together"
         }
-        let who = ListFormatter.localizedString(byJoining: Self.gardenersAsking(waiting))
-        // One *plant*, not one person: two plants from the same meeting are two
-        // questions, and the sentence has to agree with the plants.
-        return waiting.count == 1
-            ? "\(who) has asked to show a plant you grew together"
-            : "\(who) have asked to show plants you grew together"
+        let people = Self.gardenersAsking(gardeners)
+        let who = ListFormatter.localizedString(byJoining: people)
+        switch (people.count == 1, plants == 1) {
+        case (true, true): return "\(who) has asked to show a plant you grew together"
+        case (true, false): return "\(who) has asked to show plants you grew together"
+        case (false, true): return "\(who) have asked to show a plant you grew together"
+        case (false, false): return "\(who) have asked to show plants you grew together"
+        }
     }
 
     /// Who is asking, each of them once, in the order their plants arrived.
     ///
     /// Once, because two plants from one meeting are two questions and one
     /// person, and a notice that said *Cai and Cai* would be counting plants
-    /// while appearing to count people.
+    /// while appearing to count people. The length of this list is the number
+    /// of people the notice's verb agrees with.
     ///
     /// **A meeting with no name is *the other gardener*, and last**, whenever
     /// its plant arrived. Last because the list is the sentence's subject, and
@@ -1165,10 +1181,14 @@ struct PlotView: View {
     /// app's languages. With nobody named at all, `asked(by:)` has a sentence
     /// of its own and does not ask for this list.
     static func gardenersAsking(_ waiting: [PlantRecord]) -> [String] {
+        gardenersAsking(waiting.map { OtherGardener($0) })
+    }
+
+    static func gardenersAsking(_ gardeners: [OtherGardener]) -> [String] {
         var names: [String] = []
         var someoneUnnamed = false
-        for record in waiting {
-            guard let name = OtherGardener(record).name else {
+        for gardener in gardeners {
+            guard let name = gardener.name else {
                 someoneUnnamed = true
                 continue
             }
