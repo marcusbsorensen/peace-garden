@@ -52,7 +52,13 @@ Ship build 8 to TestFlight with the requests Marcus made on 12 October, and depl
 - **Dead answer sheet, for build 9.** The garden's own answer sheet has had nothing to open it since 20 September (`d2a2930`), when the notice was changed to open the plant first. Its removal is on `claude/remove-dead-answer-sheet-2026-10-12` (`146d8d3`). It compiles, and GardenControlsTests and PlotTests pass (56 of 56). Merged into main after build 8 was uploaded (Marcus: 1A 2A 3A). `ShowInGardenView` itself is live: a plant's screen opens it from its Answer mark.
 - The two wasm prototype pages still use `icon.svg`.
 - FreqShift's icon isn't in its repo.
-- Leftover `claude/*` branches on origin, here and in uncubed, can be deleted.
+- **Done for build 9, besides the dead sheet:**
+  - the restore rehearsal's test heights, rounded through a 32-bit float (`check_restore.php`);
+  - "the other gardener" as whole sentences when there's no name (`OtherGardener.swift`). This fixes Italian elision and Swedish "trädgårdsmästaren:s". Danish and Italian are final; es, fr, nb, nl and sv are `needs_review`.
+- **For the next translation round** (Marcus, 2A: leave until then):
+  - four "the other gardener …" sentences and two "%@ has/have asked …" sentences are English only, as are their named siblings, which aren't in the catalogue yet;
+  - Basque `wildTitle` and Dutch site "ze/haar" against the app's "hij" each need a native reader.
+- **Branches:** every `claude/*` branch on this repo's origin is deleted (12 October). The leftover `claude/suite-brand-*` branches in uncubed can still go.
 
 ## Traps
 - **Token guard:**
