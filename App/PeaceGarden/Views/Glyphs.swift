@@ -621,7 +621,8 @@ struct TurnGlyph: Shape {
 /// The plot as it was first seen: its diamond, in the middle of four corners
 /// that frame it.
 ///
-/// For putting the view back — turn, zoom and pan — after it has been moved.
+/// For *Reset view*: turn, zoom and pan as the garden opened, once any of them
+/// has moved.
 /// A frame round the thing is what *fit it to the screen* has looked like
 /// since viewfinders, and it says nothing about undoing anything else.
 struct FramedPlotGlyph: Shape {
