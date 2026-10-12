@@ -12,6 +12,9 @@ struct PlantStageView: View {
     @Environment(PlaceKeeping.self) private var place
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityVoiceOverEnabled) private var voiceOver
+    /// The appearance chosen in Settings, as it comes out on this screen —
+    /// *Follow the phone* included. Handed to the garden; see `appearanceScheme`.
+    @Environment(\.colorScheme) private var colorScheme
 
     /// On a device the row is hidden until the plant is tapped, so that a
     /// plant is the only thing on screen until somebody asks for more.
@@ -123,7 +126,12 @@ struct PlantStageView: View {
             ExchangeView().environment(model)
         }
         .fullScreenCover(isPresented: $showingGarden) {
-            GardenView().environment(model)
+            // The appearance as it comes out here, for the garden to hand back
+            // to what it presents: the garden is Dark whatever it is. See
+            // `appearanceScheme`.
+            GardenView()
+                .environment(model)
+                .environment(\.appearanceScheme, colorScheme)
         }
         .sheet(isPresented: $showingSeed) {
             SeedView()

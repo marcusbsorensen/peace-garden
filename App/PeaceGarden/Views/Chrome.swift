@@ -226,6 +226,45 @@ enum StageAppearance: String, CaseIterable, Sendable {
     }
 }
 
+extension EnvironmentValues {
+    /// The colour scheme the appearance came to on the screen that opened this
+    /// one, carried into a screen that draws itself in a scheme of its own —
+    /// the garden's, which is Dark (`PlotView.scheme`). `nil` everywhere else.
+    ///
+    /// **The scheme as it came out, not the setting.** *Follow the phone* is no
+    /// scheme at all until the phone answers, and inside the garden the phone's
+    /// answer can no longer be asked: everything there, and everything it
+    /// presents, inherits Dark. So it is read where the garden is opened from,
+    /// which is still in the appearance, and handed in. Read there, it also
+    /// follows the phone turning dark at dusk while the garden is open.
+    @Entry var appearanceScheme: ColorScheme? = nil
+}
+
+extension View {
+    /// A screen presented from one drawn in a scheme of its own, back in the
+    /// appearance chosen in Settings — with the status bar over it, when it
+    /// covers the screen. Nothing at all outside such a screen.
+    ///
+    /// A presentation inherits the scheme of the one that presented it, so a
+    /// plant's own screen opened from the garden would otherwise be Dark, and
+    /// every screen it opened in turn.
+    func inTheAppearance() -> some View {
+        modifier(InTheAppearance())
+    }
+}
+
+private struct InTheAppearance: ViewModifier {
+    @Environment(\.appearanceScheme) private var scheme
+
+    func body(content: Content) -> some View {
+        content
+            // Straight away, for the first frame; the preference reaches the
+            // presentation itself a moment later, and sets its status bar.
+            .transformEnvironment(\.colorScheme) { if let scheme { $0 = scheme } }
+            .preferredColorScheme(scheme)
+    }
+}
+
 /// Whether the garden's own sky follows the clock.
 ///
 /// **Night falls by the clock, and there is an override.** A garden that is dark

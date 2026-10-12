@@ -134,6 +134,49 @@ final class GardenControlsTests: XCTestCase {
         }
     }
 
+    // MARK: The status bar
+
+    /// **The garden's whole presentation is Dark, so the status bar over it is
+    /// drawn light** (Marcus, 12 October, 1A). Opened from the stage as the
+    /// garden mark opens it, in a window set to Light: the garden's own
+    /// controller is Dark, which is what a status bar left to its default
+    /// reads, and the stage under it stays Light — the preference is the
+    /// garden's, and does not reach the window.
+    func testTheGardenIsPresentedInDarkOverAStageInLight() async throws {
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }.first)
+        let window = UIWindow(windowScene: scene)
+        window.frame = CGRect(origin: .zero, size: Self.screen)
+        window.windowLevel = .alert + 1
+        window.overrideUserInterfaceStyle = .light
+        let stage = UIHostingController(rootView: PlantStageView()
+            .environment(Self.model())
+            .environment(PlaceKeeping()))
+        window.rootViewController = stage
+        Developer.shared.openOnLaunch = .garden
+        defer { Developer.shared.openOnLaunch = nil }
+        window.makeKeyAndVisible()
+        defer { window.isHidden = true }
+
+        var garden: UIViewController?
+        for _ in 0..<30 where garden == nil {
+            try await Task.sleep(for: .milliseconds(100))
+            garden = stage.presentedViewController
+        }
+        let presented = try XCTUnwrap(garden, "the garden opens over the stage")
+        try await Task.sleep(for: .milliseconds(500))
+
+        XCTAssertTrue(presented.modalPresentationCapturesStatusBarAppearance,
+                      "the garden decides the status bar over it")
+        XCTAssertEqual(presented.traitCollection.userInterfaceStyle, .dark,
+                       "the garden's presentation is Dark, so its status bar is light")
+        XCTAssertNotEqual(presented.preferredStatusBarStyle, .darkContent)
+        XCTAssertEqual(stage.traitCollection.userInterfaceStyle, .light, "the stage under it is not")
+        XCTAssertEqual(window.traitCollection.userInterfaceStyle, .light, "nor is the window")
+
+        presented.dismiss(animated: false)
+    }
+
     /// How many pixels inside `frame` are light: every channel over 140 of 255.
     /// The ink is white at 0.75 to 0.8 over the night sky, about 195; dark ink
     /// over it, and the sky itself, stay well under.

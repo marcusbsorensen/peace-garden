@@ -26,6 +26,10 @@ struct PlotView: View {
     /// pale, and the figures' glows and the pale figures were lost on them.
     /// Dark's chrome already reads over both the night sky and the day sky.
     ///
+    /// **The status bar too** (Marcus, 12 October, 1A): the time and battery
+    /// along the top are drawn light, as under Dark, rather than dark and
+    /// faint over the night sky. It stays on screen.
+    ///
     /// The garden screen only: everything presented from it (a plant's own
     /// screen, the answer to an asking) stands on its own ground rather than
     /// over the sky, and follows the appearance as every other screen does.
@@ -318,18 +322,28 @@ struct PlotView: View {
                 .padding(.trailing, 12)
                 .padding(.top, 12)
         }
-        // Dark, whatever Settings says: see `scheme`. Inside the sheet and the
-        // cover below, so what they present follows the appearance.
+        // Dark, whatever Settings says: see `scheme`. The environment draws
+        // the chrome Dark from the first frame; the preference puts the
+        // garden's whole presentation in Dark, which is what draws the status
+        // bar light over the sky (Marcus, 12 October, 1A). It ends with the
+        // presentation, so the screen under the garden is in the appearance
+        // again once the garden is closed.
         .environment(\.colorScheme, Self.scheme)
+        .preferredColorScheme(Self.scheme)
         .sensoryFeedback(.impact(weight: .medium), trigger: lifts)
         .sensoryFeedback(.selection, trigger: turn)
+        // What the garden presents inherits its Dark, and is handed the
+        // appearance back: see `inTheAppearance()`.
         .sheet(item: $answering) { record in
             ShowInGardenView(record: record)
                 .environment(model)
                 .presentationBackground(Chrome.ground)
+                .inTheAppearance()
         }
         .fullScreenCover(item: $selected) { record in
-            PlantDetailView(record: record).environment(model)
+            PlantDetailView(record: record)
+                .environment(model)
+                .inTheAppearance()
         }
         .onAppear {
             visits.forget(absentFrom: model.hybrids)

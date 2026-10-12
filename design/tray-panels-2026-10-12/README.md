@@ -26,6 +26,14 @@ appearance**: the time, signal and battery along the top are the phone's own, dr
 *Light*, so at night they are faint. The app hides the status bar on its first screen, and the
 garden, which is presented over it, shows it; hiding it on the garden too would settle it.
 
+**Answered 12 October, 1A: the status bar drawn light on the garden screen**, as Dark already
+drew it, in either appearance, and kept on screen. Built on `claude/garden-status-bar-2026-10-12`:
+the garden's whole presentation is Dark (`PlotView.scheme`, now also `.preferredColorScheme`), and
+what it presents — a plant's own screen, the answer to an asking — is handed the appearance back
+(`inTheAppearance()`). The screen under the garden is in the appearance again once it is closed.
+
+![](status-bar.png)
+
 The questions below are kept as they were asked.
 
 Every picture is the real app on an iPhone Air simulator with a full garden (fourteen plants,
