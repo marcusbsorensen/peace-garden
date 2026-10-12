@@ -63,6 +63,30 @@ which takes the stars out from behind the rows, does the work. The last row, unl
 
 To change it, change `ContinuingRow.shade` in `App/PeaceGarden/Views/PlotTray.swift`.
 
+## Light appearance
+
+**Should the panels follow Settings' *Light* appearance?** The pictures above are the default,
+*Dark*. Under *Light* the panel's fill, `Chrome.ground`, is near-white, so the panels become a
+pale veil over the garden's night or day sky.
+
+![](panels-light-AB.png)
+
+- **A** — *Always dark*: the panels keep black at 35% in either appearance. *Recommended.* The
+  panel exists for contrast against the garden's own sky, and the sky does not change with the
+  appearance: the figures' glows and the pale figures (the moth, the rabbit, the snail) stand on
+  a dark panel as they do in *Dark*, by night and by day.
+- **B** — *Follow the appearance*: pale in *Light*. *As built now.* Dark ink has a pale panel to
+  stand on, but the figures lose it: the green glows, the white moth and the pale rabbit sit
+  light on light, at night as much as by day.
+
+Both are the real app on an iPhone Air simulator with *Light* set, tray open, over the same full
+garden. A is made by changing the panel fill to `Color.black.opacity(Self.shade)` in
+`ContinuingRow`; that change is not committed. Two things it leaves, if A is chosen: the blur
+under the fill is the system's material, which is lighter in *Light* than in *Dark*, so the panel
+reads as a mid grey and not as dark as the pictures above; and the double chevron is drawn in
+the appearance's own ink, which is dark in *Light*, so on a dark panel it is faint. Pinning the
+whole row to the dark appearance is the way to settle both; not tried here.
+
 ## Not asked, worth knowing
 
 - **The blur is cheap here.** Two of the system's thinnest blur, where 11 October had seven
@@ -70,7 +94,8 @@ To change it, change `ContinuingRow.shade` in `App/PeaceGarden/Views/PlotTray.sw
   redraw at most twelve times a second.
 - **Under Settings' *Light* appearance the panels are pale, not dark.** They are shaded with the
   screen's own ground, which is near-white in that appearance, so the ink on them still has
-  something to stand against. Not photographed; the pictures are the default, *Dark*.
+  something to stand against. Photographed under *Light appearance* above; the other pictures
+  are the default, *Dark*.
 - **The app's string catalogue is behind its source on `main`.** Syncing it after a build
   (`tools/strings/sync.sh`) would also bring in about twenty keys from other work (the public
   website garden's wording, the Wild Fields messages) and mark several stale. Only *Reset
