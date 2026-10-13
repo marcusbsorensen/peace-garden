@@ -154,9 +154,7 @@ final class TimeLapsePlayer {
 
         if let stopping {
             let since = clock - stopping.at
-            let skyLeft = 1 - TimeLapse.smooth(since / TimeLapse.stopSkyFade)
-            sky = TimeLapseSky.Moment(elevation: stopping.sky.elevation,
-                                      presence: stopping.sky.presence * skyLeft)
+            sky = TimeLapse.sky(stoppedAt: stopping.sky, since: since)
             let half = TimeLapse.stopPlantFade / 2
             stage.replayRoot.opacity = CGFloat(stopping.replay * (1 - TimeLapse.smooth(since / half)))
             stage.livePlantOpacity = CGFloat(stopping.live

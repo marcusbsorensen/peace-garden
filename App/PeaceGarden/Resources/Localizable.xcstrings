@@ -8205,6 +8205,53 @@
         }
       }
     },
+    "Play time-lapse" : {
+      "comment" : "VoiceOver label for the play glyph on a plant's screen, top left: plays the plant's life from its first sprouting to now in twelve seconds, in place. 'Time-lapse' as the Camera app's mode is called in this language.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afspil time-lapse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Reproducir time-lapse"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lire l’accéléré"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Riproduci time-lapse"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Spill av time-lapse"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Speel time-lapse af"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Spela upp time-lapse"
+          }
+        }
+      }
+    },
     "Plume" : {
       "comment" : "A plant form: a feathery, many-branched head. A panicle.",
       "localizations" : {
@@ -9792,6 +9839,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Börja om"
+          }
+        }
+      }
+    },
+    "Stop time-lapse" : {
+      "comment" : "VoiceOver label for the same glyph while the time-lapse plays: stops it and goes back to the plant as it is now.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop time-lapse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Detener time-lapse"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Arrêter l’accéléré"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Interrompi time-lapse"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Stopp time-lapse"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Stop time-lapse"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Stoppa time-lapse"
           }
         }
       }

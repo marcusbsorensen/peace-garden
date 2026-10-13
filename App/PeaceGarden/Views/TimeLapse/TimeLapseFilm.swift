@@ -41,6 +41,8 @@ enum TimeLapseFilm {
         /// Turns on the turntable as the stage does, a little over a seventh
         /// of a turn in the run.
         var turns = true
+        /// Whose hour the sky ends on. The phone's own.
+        var calendar: Calendar = .current
 
         init() {}
     }
@@ -65,7 +67,7 @@ enum TimeLapseFilm {
     /// best part of three gigabytes of pixels.
     static func render(_ record: PlantRecord, now: Date, options: Options = Options(),
                        frame body: (Frame) async throws -> Void) async throws {
-        let lapse = TimeLapse(record: record, now: now, drift: options.drift)
+        let lapse = TimeLapse(record: record, now: now, drift: options.drift, calendar: options.calendar)
         let studio = try Studio(record: record, lapse: lapse, options: options)
         let count = Int((TimeLapse.duration * Double(options.fps)).rounded())
         for index in 0...count {
@@ -146,6 +148,7 @@ enum TimeLapseFilm {
         let ground: CGImage
         let look: TimeLapseSky.Look
         let pixels: CGSize
+        private var kept: (growth: GrowthModel.State, node: SCNNode)?
 
         init(record: PlantRecord, lapse: TimeLapse, options: Options) throws {
             self.lapse = lapse
@@ -209,7 +212,15 @@ enum TimeLapseFilm {
             live?.opacity = options.opensOnThePlant ? CGFloat(moment.live) : 0
             replay.opacity = CGFloat(moment.replay)
             for node in replay.childNodes { node.removeFromParentNode() }
-            let held = nodes.node(for: moment.growth)
+            // The arriving and the resting are one plant held still: built once.
+            let held: SCNNode
+            if let kept, kept.growth == moment.growth {
+                held = kept.node
+            } else {
+                held = nodes.node(for: moment.growth)
+                kept = (moment.growth, held)
+            }
+            held.opacity = 1
             replay.addChildNode(held)
             if let dissolve = moment.dissolve {
                 let incoming = nodes.node(for: dissolve.growth)

@@ -286,6 +286,13 @@ struct TimeLapse: Sendable {
                                    presence: presence)
     }
 
+    /// The sky `since` seconds after a run was stopped with the sky at `sky`:
+    /// held where it was, and leaving over `stopSkyFade`.
+    static func sky(stoppedAt sky: TimeLapseSky.Moment, since: TimeInterval) -> TimeLapseSky.Moment {
+        TimeLapseSky.Moment(elevation: sky.elevation,
+                            presence: sky.presence * (1 - smooth(since / stopSkyFade)))
+    }
+
     /// Every frame of the run at `fps`, from the first to the last.
     func frames(fps: Int, reduceMotion: Bool = false) -> [Frame] {
         let count = Int((Self.duration * Double(fps)).rounded())
