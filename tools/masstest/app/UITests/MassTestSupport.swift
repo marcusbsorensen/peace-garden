@@ -77,13 +77,18 @@ enum MassTest {
     static func elements(of app: XCUIApplication) -> [[String: Any]] {
         guard let root = try? app.snapshot() else { return [] }
         var out: [[String: Any]] = []
-        func walk(_ node: XCUIElementSnapshot, depth: Int) {
+        @MainActor func walk(_ node: XCUIElementSnapshot, depth: Int) {
+            // Read into locals first: `||` takes its right side as a closure,
+            // and a snapshot captured by one is a data race to Swift 6.
             let frame = node.frame
-            if node.elementType != .other || !node.label.isEmpty || !node.identifier.isEmpty {
+            let type = node.elementType
+            let label = node.label
+            let identifier = node.identifier
+            if type != .other || !label.isEmpty || !identifier.isEmpty {
                 out.append([
-                    "type": Self.name(of: node.elementType),
-                    "label": node.label,
-                    "id": node.identifier,
+                    "type": Self.name(of: type),
+                    "label": label,
+                    "id": identifier,
                     "value": (node.value as? String) ?? "",
                     "x": Double(frame.minX), "y": Double(frame.minY),
                     "w": Double(frame.width), "h": Double(frame.height),
