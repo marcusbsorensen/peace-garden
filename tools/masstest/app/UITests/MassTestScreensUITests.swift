@@ -102,8 +102,12 @@ final class MassTestScreensUITests: XCTestCase {
                 // Photographed anyway, so the failure can be seen.
                 note["error"] = "no plant answered a tap"
             }
-            // The words under the plant unfold after it, over seconds.
-            MassTest.pause(8)
+            // The words are behind a veil until the plant is tapped; the tap
+            // is the scene's own recogniser, which a synthesised tap may or
+            // may not reach. Either way the words are in the element tree.
+            MassTest.pause(3)
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.42)).tap()
+            MassTest.pause(3)
         case "firstlight", "meet":
             MassTest.pause(6)
         default:
