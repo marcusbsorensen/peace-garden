@@ -55,7 +55,7 @@ async function measure(page, cdp, url) {
   await page.waitForLoadState('networkidle', { timeout: 60000 }).catch(() => {});
   const idle = Date.now() - t0;
   await page.waitForTimeout(1500);
-  const pg = await page.evaluate(() => ({ lcp: window.__pg.lcp, lcpElement: window.__pg.lcpElement, cls: window.__pg.cls, shifts: window.__pg.shifts, fcp: window.__pg.fcp,
+  const pg = await page.evaluate(() => ({ langAt: window.__pg.langAt, lcp: window.__pg.lcp, lcpElement: window.__pg.lcpElement, cls: window.__pg.cls, shifts: window.__pg.shifts, fcp: window.__pg.fcp,
     wasm: window.__pg.wasm.map((w) => ({ ok: w.ok, ready: w.t + (w.ms || 0) })) }));
   const list = [...requests.values()];
   const biggest = list.filter((r) => r.bytes).sort((a, b) => b.bytes - a.bytes).slice(0, 4)

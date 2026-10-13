@@ -18,6 +18,7 @@
 //   --axe 1                 run axe-core on every page (0 to skip)
 //   --shots 1               keep a JPEG of every page (0 for none)
 //   --settle 1200           ms to wait after the network goes quiet
+//   --redo                  visit again the pages read before they settled (see below)
 //   --live                  the base is the read-only proxy (proxy.mjs): every
 //                           request that is not a GET to the base is refused
 //                           in the browser before it leaves, and recorded
@@ -50,10 +51,22 @@ const schemes = (args.schemes || 'light,dark').split(',');
 await mkdir(join(out, 'shots'), { recursive: true });
 const resultsFile = join(out, 'results.jsonl');
 const done = new Set();
+// `--redo`: visit again, slowly, every page that was read before it had
+// settled — its chooser still empty, or its document not yet in the language
+// asked for — and append the new reading (analyse.mjs keeps the last one per
+// page). /t is English by design and is never counted as unsettled.
+const redo = args.redo === '1';
+const unsettled = new Set();
 if (existsSync(resultsFile)) {
   for (const line of (await readFile(resultsFile, 'utf8')).split('\n')) {
     if (!line) continue;
-    try { done.add(JSON.parse(line).job.key); } catch { /* a torn last line */ }
+    try {
+      const r = JSON.parse(line);
+      done.add(r.job.key);
+      const a = r.audit;
+      if (r.job.page !== 't' && (r.crash || (a && ((a.chooser && a.chooser.options === 0) || (r.job.lang !== 'en' && a.lang !== r.job.lang))))) unsettled.add(r.job.key);
+      else unsettled.delete(r.job.key);
+    } catch { /* a torn last line */ }
   }
 }
 
@@ -71,7 +84,7 @@ const SAMPLE = (args.sample || 'en,ar,he,da,de,fi,ja,kl').split(',');
 const jobs = [];
 const add = (job) => {
   job.key = [job.variant, job.page.id, job.lang, job.width, job.scheme, job.motion].join('|');
-  if (!done.has(job.key)) jobs.push(job);
+  if (redo ? unsettled.has(job.key) : !done.has(job.key)) jobs.push(job);
 };
 if (variants.has('plain')) {
   for (const lang of langs) for (const page of pages) for (const width of widths) for (const scheme of schemes) {
@@ -237,6 +250,7 @@ async function visit(job) {
   } finally {
     await page.close().catch(() => {});
   }
+  if (redo) rec.retry = true;
   await appendFile(resultsFile, JSON.stringify(rec) + '\n');
   return rec;
 }

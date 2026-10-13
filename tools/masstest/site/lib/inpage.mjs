@@ -22,6 +22,9 @@ export function initScript() {
       );
     };
   }
+  // When the document first takes the language it was asked for.
+  new MutationObserver(() => { if (pg.langAt === undefined) pg.langAt = Math.round(performance.now()); })
+    .observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
   const getContext = HTMLCanvasElement.prototype.getContext;
   HTMLCanvasElement.prototype.getContext = function (type, ...rest) {
     const ctx = getContext.call(this, type, ...rest);
@@ -315,7 +318,7 @@ export function audit(opts) {
 
   // What the init script saw.
   const pg = window.__pg || {};
-  out.pg = { wasm: pg.wasm, gl: pg.gl, glLost: pg.glLost, rejections: pg.rejections, lcp: pg.lcp, lcpElement: pg.lcpElement, cls: Math.round((pg.cls || 0) * 1000) / 1000, shifts: pg.shifts, fcp: pg.fcp, raf: pg.raf };
+  out.pg = { langAt: pg.langAt, wasm: pg.wasm, gl: pg.gl, glLost: pg.glLost, rejections: pg.rejections, lcp: pg.lcp, lcpElement: pg.lcpElement, cls: Math.round((pg.cls || 0) * 1000) / 1000, shifts: pg.shifts, fcp: pg.fcp, raf: pg.raf };
   out.canvases = [...document.querySelectorAll('canvas')].filter(shown).map((c) => `${c.width}x${c.height}`);
   out.animations = document.getAnimations ? document.getAnimations().filter((a) => a.playState === 'running').length : null;
   out.viewport = { w: vw, h: vh };
