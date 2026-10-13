@@ -1,0 +1,161 @@
+
+=== Air: 18 configurations, 144 screens
+  offscreen: 0 (0 distinct)
+  overlap: 132 (58 distinct)
+       6x settings      'Seed / Follows the hour'
+       6x settings      'Meet / Always night'
+       6x settings-end  'Zephessea paniculata / Empty the garden, Empty the garden'
+       6x settings-end  'MATURE / Reset everything, Reset everything'
+       6x settings-end  'Seed / Reset everything, Reset everything'
+       6x settings-end  'Meet / Reset everything, Reset everything'
+       6x settings-end  'When you meet someone, your phones connect directly, encrypt / Close'
+       3x settings      'Matura / Sempre notte'
+       3x settings      "Seme / Segue l'ora"
+       3x settings      "Seme / Al centro, il sole e la luna girano secondo l'orologio vero,"
+       3x settings      'Incontro / Sempre notte'
+       3x settings      "Incontro / Al centro, il sole e la luna girano secondo l'orologio vero,"
+  notLocalised: 6 (2 distinct)
+       3x plant         '5 June 2026 at 20:23'
+       3x seed          '17 Dec 2025 at 12:00'
+  untranslated: 18 (2 distinct)
+       9x settings      'When you meet someone, your phones connect directly, encrypted, and each hands t'
+       9x settings-end  'When you meet someone, your phones connect directly, encrypted, and each hands t'
+  notMirrored: 3 (1 distinct)
+       3x garden        'Done'
+  dynamicType: texts that grew 0, did not 599
+  audit: 1793 issues; by type {'contrast': 205, 'dynamicType': 876, 'sufficientElementDescription': 611, 'textClipped': 101}
+   textClipped:
+      13x seed          'Zephessea paniculata'
+       9x seed          '17 Dec 2025 at 12:00'
+       6x seed          'By day'
+       6x seed          'When 9 days old'
+       6x seed          'FIRST BLOOM'
+       3x firstlight    'UN SEME UNICO STA PRENDENDO FORMA PER TE.'
+       3x seed          'SI APRE'
+       3x seed          'PRIMA FIORITURA'
+       3x seed          'A 9 giorni di vita'
+       3x seed          '10 su 2'
+   contrast:
+      13x settings-end  'Zephessea paniculata'
+       6x meet          'A meeting can log the coordinates of the spot it happened in. They stay on this '
+       6x meet          'NOT NOW'
+       6x meet          'CANCEL'
+       6x garden        '14 GROWN FROM MEETINGS'
+       6x plant         'with Ines'
+       6x settings-end  'MATURE'
+       6x stage         'MATURE'
+       6x seed          'PLUME'
+       6x seed          'SEED'
+   sufficientElementDescription:
+     611x garden        ''
+
+=== ProMax: 11 configurations, 88 screens
+  offscreen: 0 (0 distinct)
+  overlap: 84 (74 distinct)
+       3x settings      'Zephessea paniculata / Always night'
+       3x settings-end  'Seed / Reset everything, Reset everything'
+       3x settings-end  'Meet / Reset everything, Reset everything'
+       3x settings-end  'Shown when a seed is exchanged with another, as the place wh / SETTINGS'
+       2x settings      'Mature / Always night'
+       2x settings      'Zephessea paniculata / Alltid natt'
+       1x settings      'Zephessea paniculata / Altid nat'
+       1x settings      'Udvokset / Altid nat'
+       1x settings      'Frø / I midten går sol og måne rundt efter det rigtige ur, så en h'
+       1x settings      'Møde / I midten går sol og måne rundt efter det rigtige ur, så en h'
+       1x settings      'Have / I midten går sol og måne rundt efter det rigtige ur, så en h'
+       1x settings      'Indstillinger / I midten går sol og måne rundt efter det rigtige ur, så en h'
+  notLocalised: 2 (2 distinct)
+       1x plant         '5 June 2026 at 20:23'
+       1x seed          '17 Dec 2025 at 12:00'
+  untranslated: 14 (2 distinct)
+       7x settings      'When you meet someone, your phones connect directly, encrypted, and each hands t'
+       7x settings-end  'When you meet someone, your phones connect directly, encrypted, and each hands t'
+  notMirrored: 1 (1 distinct)
+       1x garden        'Done'
+  audit: 870 issues; by type {'dynamicType': 407, 'contrast': 135, 'sufficientElementDescription': 288, 'textClipped': 40}
+   textClipped:
+       6x seed          'Zephessea paniculata'
+       4x seed          '17 Dec 2025 at 12:00'
+       3x seed          'FIRST BLOOM'
+       3x seed          'When 9 days old'
+       3x seed          'By day'
+       1x seed          'PREMIÈRE FLORAISON'
+       1x seed          'À 9 jours de vie'
+       1x seed          'Le jour'
+       1x seed          '17 déc. 2025 à 12:00'
+       1x firstlight    'UN SEME UNICO STA PRENDENDO FORMA PER TE.'
+   contrast:
+       6x settings-end  'Zephessea paniculata'
+       4x settings      'Zephessea paniculata'
+       4x settings-end  'Get a new seed'
+       4x settings-end  'Empty the garden'
+       4x settings-end  'Reset everything'
+       3x meet          'A meeting can log the coordinates of the spot it happened in. They stay on this '
+       3x meet          'NOT NOW'
+       3x meet          'CANCEL'
+       3x garden        '14 GROWN FROM MEETINGS'
+       3x plant         'with Ines'
+   sufficientElementDescription:
+     288x garden        ''
+
+=== SE: 20 configurations, 160 screens
+  offscreen: 44 (19 distinct)
+       4x seed          'FØRSTE BLOMST'
+       4x seed          'FIRST BLOOM'
+       4x seed          'When 9 days old'
+       2x seed          'Når den er 9 dage gammel'
+       2x seed          'PRIMERA FLORACIÓN'
+       2x seed          'Con 9 días de vida'
+       2x seed          'PREMIÈRE FLORAISON'
+       2x seed          'À 9 jours de vie'
+       2x seed          'PRIMA FIORITURA'
+       2x seed          'A 9 giorni di vita'
+       2x seed          'Når den er 9 dager gammel'
+       2x seed          'EERSTE BLOEI'
+  overlap: 189 (86 distinct)
+       4x settings-end  'Frø / Nulstil alt'
+       4x settings      'Zephessea paniculata / APPEARANCE'
+       4x settings      'Seed / The garden was black from the first screen, so a plant would'
+       4x settings      'Meet / The garden was black from the first screen, so a plant would'
+       4x settings      'Garden / The garden was black from the first screen, so a plant would'
+       4x settings      'Settings / The garden was black from the first screen, so a plant would'
+       4x settings-end  'Zephessea paniculata / Empty the garden, Empty the garden'
+       4x settings-end  'MATURE / Reset everything, Reset everything'
+       4x settings-end  'Seed / Reset everything, Reset everything'
+       4x settings-end  'Meet / Reset everything, Reset everything'
+       4x settings-end  'When you meet someone, your phones connect directly, encrypt / SETTINGS'
+       4x settings-end  'When you meet someone, your phones connect directly, encrypt / Close'
+  notLocalised: 4 (2 distinct)
+       2x plant         '12 July 2026 at 14:50'
+       2x seed          '17 Dec 2025 at 12:00'
+  untranslated: 28 (2 distinct)
+      14x settings      'When you meet someone, your phones connect directly, encrypted, and each hands t'
+      14x settings-end  'When you meet someone, your phones connect directly, encrypted, and each hands t'
+  notMirrored: 2 (1 distinct)
+       2x garden        'Done'
+  dynamicType: texts that grew 0, did not 900
+  audit: 1382 issues; by type {'contrast': 231, 'dynamicType': 629, 'sufficientElementDescription': 470, 'textClipped': 52}
+   textClipped:
+      10x seed          'Zephessea paniculata'
+       6x seed          '17 Dec 2025 at 12:00'
+       4x seed          'By day'
+       2x firstlight    'UNE GRAINE UNIQUE PREND FORME POUR TOI.'
+       2x firstlight    'Les empreintes qui tourbillonnent ensemble :'
+       2x seed          '17 déc. 2025 à 12:00'
+       2x seed          'Le jour'
+       2x seed          'Di giorno'
+       2x seed          '10 su 2'
+       2x seed          'SI APRE'
+   contrast:
+      10x plant         'THE LONG FIELD'
+      10x settings-end  'Zephessea paniculata'
+      10x seed          'f16258'
+       6x plant         '12 JULY 2026 AT 14:50'
+       5x seed          '16'
+       4x settings      'MENU BAR'
+       4x settings      'HOW THE PLANT IS DRAWN'
+       4x settings      'APPEARANCE'
+       4x garden        '14 GROWN FROM MEETINGS'
+       4x plant         'MATURE'
+   sufficientElementDescription:
+     470x garden        ''

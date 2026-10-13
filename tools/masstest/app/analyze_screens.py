@@ -126,6 +126,13 @@ def analyse(device, data):
                                                     "a": a["label"][:60], "b": b["label"][:60],
                                                     "share": round(ix * iy / smaller, 2)})
 
+            if d.get("audit"):
+                for issue in d["audit"]:
+                    findings["audit"].append({"config": config, "screen": screen, "type": issue.get("type"),
+                                              "description": issue.get("description", ""),
+                                              "label": (issue.get("label") or "")[:80],
+                                              "frame": issue.get("frame")})
+
             base = baseline(config, screen)
             if base is None or base == config:
                 continue
@@ -193,12 +200,6 @@ def analyse(device, data):
                     findings["dynamicType"].append({"config": config, "screen": screen, "against": small,
                                                     "textsThatGrew": grown, "textsThatDidNot": same})
 
-            if d.get("audit"):
-                for issue in d["audit"]:
-                    findings["audit"].append({"config": config, "screen": screen, "type": issue.get("type"),
-                                              "description": issue.get("description", ""),
-                                              "label": (issue.get("label") or "")[:80],
-                                              "frame": issue.get("frame")})
     return findings
 
 
