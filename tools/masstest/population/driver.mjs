@@ -24,6 +24,7 @@
 // state.json (what the driver believes stands where) and stats.json.
 
 import { writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { request, post, sql, serviceCommand, pool, summarise, readPlan, rng, addressOf, arrival,
          AREA_TABLES } from './lib.mjs';
@@ -45,6 +46,9 @@ const lastDay = Number(option('days', meetings.at(-1).day + 1 + 35));
 const dice = rng(20261013);
 const VENUE = '203.0.113.7';
 const festivals = new Map([[45, 3], [90, 7]]);   // day -> town on the venue's Wi-Fi
+// Days to stop between requests and check every invariant (check.php), so the
+// checks see the garden mid-life and not only at the end.
+const checkDays = new Set(option('check-days', '').split(',').filter(Boolean).map(Number));
 
 // MARK: - What happened
 
@@ -288,6 +292,20 @@ for (today = 0; today < lastDay; today++) {
     if (sweep.code !== 0) note('sweep failed', { out: sweep.out.slice(0, 200) });
     else if (sweep.out.trim()) stats.sweeps.push({ day: today, said: sweep.out.trim().replace(/^\S+ \S+\s+/, '') });
     curateSome();
+
+    if (checkDays.has(today)) {
+        const dir = path.join(outDir, `check-day-${today}`);
+        mkdirSync(dir, { recursive: true });
+        let said;
+        try {
+            said = execFileSync('php', [path.join(path.dirname(new URL(import.meta.url).pathname), 'check.php'), dir,
+                                        DB.replace(/^pgmt_/, '')]).toString();
+        } catch (failed) {
+            said = String(failed.stdout ?? failed.message);
+        }
+        (stats.checks ??= {})[today] = JSON.parse(said.trim().split('\n').at(-1) || '{}');
+        console.log(`check on day ${today}: ${said.trim().slice(0, 300)}`);
+    }
 
     if (today % 10 === 0 || today === lastDay - 1) {
         const states = {};

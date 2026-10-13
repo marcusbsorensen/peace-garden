@@ -58,8 +58,8 @@ for (const copies of [2, 3]) {
         const yes = { seed: m.seed, to: m.tokenB, yes: true };
         const answers = await Promise.all(Array.from({ length: copies }, () => send('/api/walk/answer', yes)));
         const planted = answers.filter((a) => a.json?.planting).length;
-        outcomes.push(`offer ${await offerState(m)}, planting ${standing(m)}, ${planted} answers said planted`
-                      + (answers.some((a) => a.status >= 500) ? ', a 500' : ''));
+        outcomes.push(`offer ${await offerState(m)}, planting ${standing(m)}, ${planted} answers said planted, `
+                      + `statuses ${answers.map((a) => a.status).sort().join('/')}`);
     }
     results[`R2_yes_${copies}_at_once`] = tally(outcomes);
 }
@@ -120,10 +120,11 @@ for (const copies of [2, 3]) {
         const m = nextMeeting();
         await send('/api/wild/release', { seed: m.seed, parents: m.parents, encounter: m.encounter, token: m.tokenA, theirs: m.tokenB });
         const shown = { name: null, place: 'Margate', month: '2026-10' };
-        await Promise.all([send('/api/wild/answer', { seed: m.seed, token: m.tokenA, shown: { ...shown, name: 'A' } }),
-                           send('/api/wild/answer', { seed: m.seed, token: m.tokenB, shown: { ...shown, name: 'B' } })]);
+        const both = await Promise.all([send('/api/wild/answer', { seed: m.seed, token: m.tokenA, shown: { ...shown, name: 'A' } }),
+                                        send('/api/wild/answer', { seed: m.seed, token: m.tokenB, shown: { ...shown, name: 'B' } })]);
         const row = sql(`SELECT IFNULL(place, '-'), IFNULL(month, '-') FROM wild_names WHERE seed = '${m.seed}'`, DB)[0];
-        outcomes.push(`place ${row[0] === 'Margate' ? 'shown' : 'not shown'}, month ${row[1] === '2026-10' ? 'shown' : 'not shown'}`);
+        outcomes.push(`place ${row[0] === 'Margate' ? 'shown' : 'not shown'}, month ${row[1] === '2026-10' ? 'shown' : 'not shown'}, `
+                      + `statuses ${both.map((a) => a.status).join('/')}`);
     }
     results.R6_both_choose_the_place_at_once = tally(outcomes);
 }
