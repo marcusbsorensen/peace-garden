@@ -14,10 +14,10 @@ runner.
 
 ## The findings in one line each
 
-1. **Big gardens freeze and then die.** Opening, turning or winding the garden re-photographs every plant in one main-thread block: 0.6 s at 14 plants, 3.2 s at 100, 18 s at 500; memory peaks at about 8 MB a plant while it does, so 200 plants reach 2.5 GB and 1,000 and 2,000 passed 5 GB within seconds of opening and had to be stopped.
+1. **Big gardens freeze and then die.** Opening, turning or winding the garden re-photographs every plant in one main-thread block: 0.6 s at 14 plants, 3.2 s at 100, 18 s at 500; memory peaks at about 8 MB a plant while it does, so 200 plants reach 2.5 GB, the app itself passed 5 to 6 GB on a two-finger gesture at 300, and 1,000 and 2,000 passed 5 GB within seconds of opening and had to be stopped.
 2. **Every frame of a pan, pinch or carried plant redraws every plant**: 19 ms at 14 plants, 110 ms at 100 (about 9 frames a second), 590 ms at 500.
 3. **The garden is invisible to VoiceOver**: no plant has a label or an action, and the tray's 7 figures and 8 grounds are unlabelled buttons.
-4. **Dynamic Type does nothing**: 0 of 293 texts grew from Large to the largest accessibility size; only the launch nameplate scales.
+4. **Dynamic Type does nothing**: 0 of 1,499 texts grew from Large to the larger sizes; only the launch nameplate scales.
 5. **Settings shows its privacy paragraph in English in all seven languages**: the source says "when that seed was *drawn*", the catalogue key (since 26 September) says "*made*", so the lookup misses.
 6. **Right to left, the tray's fade and » sit over the first item** instead of at the edge where the row overflows; the garden's foot is half mirrored.
 7. **First light truncates on the iPhone SE** in French (and pseudo-long): a line that should wrap is squeezed to one line with an ellipsis.
@@ -60,8 +60,13 @@ Locales: `da es fr it nb nl sv en` (the catalogue), `pseudo`
 exposes any string that never goes through the catalogue) and `rtl`
 (`-AppleTextDirection YES -NSForceRightToLeftWritingDirection YES`).
 `performAccessibilityAudit(for: .all)` ran on every screen for en, fr, it,
-pseudo and rtl. In all: SCREENS_TOTAL screens photographed and read back as
-element trees, AUDITS_TOTAL audited, and the launch moment in 30 configurations.
+pseudo and rtl. In all: 392 screens photographed and read back as element
+trees across 49 configurations, 232 of them audited (29 configurations, 4,045
+issues), and the launch moment in 30 configurations. `analyze_screens.py`
+then compared every screen with its English counterpart (untranslated text,
+strings that never reach the catalogue, mirroring, Dynamic Type growth) and
+checked every frame against the window (off-screen, overlapping);
+`evidence/screen-analysis.txt` is its output, `evidence/analysis/` the detail.
 
 Contact sheets (downscaled) are in [`sheets/`](sheets/); evidence crops in
 [`evidence/`](evidence/).
@@ -94,12 +99,18 @@ phone does.
 **Through real fingers** (XCUITest on the same Air, optimised build,
 `MassTestPerformanceUITests`):
 
-PERF_TABLE
+| Plants | Launch to responsive (`XCTApplicationLaunchMetric`) | Launch memory peak | Garden open, launched straight into it | Pan at 2.4× zoom: app CPU | Two-finger quarter-turn: until it answers | Turn: app CPU | Turn: memory peak (`XCTMemoryMetric`) |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 14 | 1.07 s | 54 MB | 5.0 s | 67% of a core | 0.9 s | 0.4 s | 0.18 GB |
+| 100 | 1.33 s | 60 MB | 10.7 s | (22%, see below) | 7.1 s | 5.3 s | 1.55 GB |
+| 300 | 1.30 s | 62 MB | 22.3 s | **killed**: passed 6.0 GB during the pinch and pan | **killed**: passed 5.2 GB during the turn | | |
 
-`XCTHitchMetric` was measured and reported nothing on the simulator, so the
-pan is judged by the app's CPU. The 100- and 300-plant pans were probably not
-panning at all (the pinch that zooms in first may have landed while the app
-was busy, and at the fitted size a drag does nothing by design), so read the
+Launch is flat (the stage shows only the person's own plant), and the garden
+file reads in milliseconds at any size: everything above is the garden
+screen. `XCTHitchMetric` was asked for and reported nothing on the
+simulator, so the pan is judged by the app's CPU. The 100-plant pan probably
+was not panning (the pinch that zooms in first can land while the app is
+busy, and at the fitted size a drag does nothing by design); read the
 in-process redraw column above for how moving scales.
 
 **Where it degrades**: already at 14 plants a redraw costs more than a 60 Hz
@@ -139,10 +150,11 @@ then turn the plot with two fingers or the turn buttons. For numbers:
 `MT_OPT=1 zsh tools/masstest/app/build.sh` and
 `MT_DD=build/DD-MassTestUnitO zsh tools/masstest/app/run_tests.sh stress <udid> build/mt/stress build/mt/stress.clock PG_MASSTEST_SIZES=14,100,500`.
 
-**Evidence.** The table above; `evidence/stress-*.json` (every phase, frame
-intervals and footprints); `evidence/watchdog-*.log` (the stops at 1,000 and
-2,000). At 100 plants `XCTMemoryMetric` puts a two-finger turn's physical peak
-at 1.55 GB against 0.18 GB at 14.
+**Evidence.** The tables above; `evidence/stress/stress-O*/stress-*.json`
+(every phase, frame intervals and footprints; `stress-Onone` unoptimised);
+`evidence/stress/watchdog-optimised-footprint.log` (the stops at 300 in the
+app, 1,000 and 2,000). At 100 plants `XCTMemoryMetric` puts a two-finger
+turn's physical peak at 1.55 GB against 0.18 GB at 14 (`evidence/perf/`).
 
 **Fixes.**
 
@@ -170,7 +182,7 @@ fingers at 14 plants a pan keeps two thirds of a core busy.
 
 **Repro.** Any garden of 50 or more, `-pgOpen garden`, pinch in and drag.
 
-**Evidence.** The redraw column; `evidence/stress-*.json` → `redraw`.
+**Evidence.** The redraw column; `evidence/stress/*/stress-*.json` → `redraw`.
 
 **Fixes.**
 
@@ -185,10 +197,10 @@ fingers at 14 plants a pan keeps two thirds of a core busy.
 
 ### 3. The garden cannot be used with VoiceOver
 
-**What happens.** On the garden screen the audit reports, on every run, about
-45 elements with no description: every plant sprite (unlabelled images), the
-7 figures in the tray and the 8 grounds (buttons with no label; a ground
-carries only *selected*), and the sky behind them. A plant has no action, so
+**What happens.** On every garden screen audited (29 of 29) the audit
+reports 47 or 48 elements with no description: every plant sprite
+(unlabelled images), the 7 figures in the tray and the grounds (buttons with
+no label; a ground carries only *selected*), and the sky behind them. A plant has no action, so
 VoiceOver cannot open a plant's screen from the garden at all. (The turn
 buttons, which say a system symbol's name, passed.) Synthesised taps on the
 plants never opened one in this run either, while the same taps opened the
@@ -197,8 +209,8 @@ grid's tiles and revealed a plant screen's details.
 **Repro.** VoiceOver on, `-pgOpen garden -pgTray YES`, swipe through.
 
 **Evidence.** `evidence/garden-foot-unlabelled.jpg` (the controls with no
-label); 709 *sufficientElementDescription* issues on the garden screen across
-the 49 configurations audited or not.
+label: every figure and ground in it); 1,369 *sufficientElementDescription*
+issues, every one of them on the garden screen.
 
 **Fixes.**
 
@@ -213,10 +225,13 @@ the 49 configurations audited or not.
 ### 4. Dynamic Type has no effect
 
 **What happens.** Nearly every text is `.font(.system(size:))`, which does not
-scale. Between Large and Accessibility XXXL, 0 of 293 texts compared on the
-SE changed height; the audit reports *Dynamic Type font sizes are
-unsupported* on every screen (1,000+ times). Only the launch nameplate scales
-(`@ScaledMetric`, capped), and one glyph in Settings.
+scale. Between Large and the larger sizes, 0 of 1,499 texts compared (SE at
+AX5, Air at XXXL and AX3) changed height; the audit reports *Dynamic Type
+font sizes are unsupported* on every screen, 1,912 times. Only the launch
+nameplate scales (`@ScaledMetric`, capped), and one glyph in Settings. The
+audit's 193 *text clipped* issues say "may be clipped at larger Dynamic Type
+sizes": predictions for when type does scale, not clipping today (the one
+real truncation is finding 7).
 
 **Repro.** `-UIPreferredContentSizeCategoryName UICTContentSizeCategoryAccessibilityXXXL -pgOpen settings`.
 
@@ -246,7 +261,8 @@ source. The lookup misses and the paragraph is English everywhere.
 **Repro.** `-AppleLanguages "(da)" -pgOpen settings`, scroll to the end.
 
 **Evidence.** `evidence/settings-privacy-english-in-danish.jpg`; found in all
-14 translated-language configurations, both Settings screenshots.
+30 translated-language configurations, on both Settings screenshots. It is
+the only untranslated text the sweep found on the screens it reached.
 
 **Fixes.**
 
@@ -293,8 +309,11 @@ also flags the Italian heading on the Air and the Pro Max.
 **Repro.** Fresh install (no `garden.json`), `-AppleLanguages "(fr)"`, on an
 iPhone SE (3rd generation); the lines arrive over about six seconds.
 
-**Evidence.** `evidence/firstlight-fr-se-truncated.jpg`; `sheets/SE-*.jpg`
-(first column).
+**Evidence.** `evidence/firstlight-fr-se-truncated.jpg`, and
+`evidence/firstlight-se-every-language.jpg` (the same column in all ten
+locales on the SE: only French and pseudo truncate). Danish, Spanish and
+Italian fit, but leave one word alone on the heading's third line (FORM.,
+TI., TE.), which is a typographic call rather than a fault.
 
 **Fixes.**
 
@@ -339,8 +358,8 @@ cannot see. (Read from the tree; VoiceOver itself was not driven.)
 
 **Repro.** VoiceOver on, `-pgOpen settings`, swipe right to the end.
 
-**Evidence.** `build`-time analysis: 84 to 132 "overlaps" per phone, almost
-all Settings over the stage.
+**Evidence.** `evidence/screen-analysis.txt`: 84 to 189 "overlaps" per phone,
+nearly all of them Settings' rows lying over the stage's marks.
 
 **Fixes.**
 
@@ -372,7 +391,8 @@ for either; malloc holding on to the multi-gigabyte peak of finding 1, and
 per-season ground or SceneKit caches, are the likely causes. Not confirmed
 without Instruments.
 
-**Evidence.** `evidence/stress-*.json`: `footprintAfterCloseMB`, `months[].footprintMB`.
+**Evidence.** `evidence/stress/*/stress-*.json`: `footprintAfterCloseMB`,
+`months[].footprintMB`.
 
 **Fixes.** **A (recommended).** Fix 1A first (it removes the peak malloc keeps),
 then one Instruments *Allocations* run over open, turn, a year of months,
