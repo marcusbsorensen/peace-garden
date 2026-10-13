@@ -103,7 +103,11 @@ web_up() {
         sleep 1
         /opt/homebrew/sbin/php-fpm --fpm-config "$SCRATCH/php-fpm.conf"
     else
+        # A new database connection per request, as the service makes, runs a
+        # container out of ephemeral ports past ~470 a second (TIME_WAIT); the
+        # wider range and reuse keep the measurement about the service.
         docker run -d --name "$PHP" --network "$NET" -e PGMT_CHILDREN="$CHILDREN" \
+            --sysctl net.ipv4.ip_local_port_range="1024 65535" --sysctl net.ipv4.tcp_tw_reuse=1 \
             -v "$SERVER:$SERVER:ro" -v "$SCRATCH/phplog:/var/log/pop" pg-mt-pop-php:8.3 >/dev/null
     fi
     docker run -d --name "$WEB" --network "$NET" -p 127.0.0.1:$WEB_PORT:80 \

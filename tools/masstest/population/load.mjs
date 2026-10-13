@@ -1,7 +1,7 @@
 // Load: closed-loop clients at 10, 50 and 200 at once, reading and then
 // writing, against the population's database.
 //
-//   node load.mjs POOL.jsonl OUT_DIR [--db main] [--from 2000] [--seconds 20] [--levels 10,50,200] [--tag tmpfs]
+//   node load.mjs POOL.jsonl OUT_DIR [--db main] [--from 2000] [--seconds 20] [--levels 10,50,200] [--tag tmpfs] [--kinds read,write]
 //
 // Reads are what a visitor's browser asks: a tile of the Wild Fields, the
 // field's counts, an area's plot count or one of its plots. Writes are what
@@ -118,9 +118,9 @@ async function phase(kind, level) {
     return result;
 }
 
+const KINDS = option('kinds', 'read,write').split(',');
 const results = [];
-for (const level of LEVELS) results.push(await phase('read', level));
-for (const level of LEVELS) results.push(await phase('write', level));
+for (const kind of KINDS) for (const level of LEVELS) results.push(await phase(kind, level));
 const size = sql(`SELECT ROUND(SUM(data_length + index_length) / 1048576, 1) FROM information_schema.tables WHERE table_schema = '${DB}'`, DB)[0][0];
 writeFileSync(path.join(outDir, `load-${TAG}.json`), JSON.stringify({ db: DB, tag: TAG, seconds: SECONDS, plots, databaseMB: Number(size), results }, null, 1));
 writeFileSync(path.join(outDir, `extra_genuine_load_${TAG}.json`), JSON.stringify(used));

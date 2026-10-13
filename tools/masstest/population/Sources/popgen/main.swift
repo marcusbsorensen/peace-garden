@@ -7,7 +7,7 @@
 //       and a pair of contact tokens. Writes one JSON line per gardener, then
 //       one per meeting, in day order.
 //
-//   popgen verify PLAN.jsonl DUMP.json
+//   popgen verify PLAN.jsonl DUMP.json [POOL.jsonl ...]
 //       Reads what the service's database holds (dumped by check.php) and
 //       checks every planting against SeedCore and the plan: that the seed is
 //       the cross of its parents at its meeting, that it was really grown at
@@ -161,15 +161,19 @@ func plan(gardeners count: Int, days: Int, perDay: Double, rngSeed: UInt64, out:
 
 struct Truth { let parents: Set<String>; let encounter: String; let a: Int; let b: Int }
 
-func verify(planPath: String, dumpPath: String) throws -> Int32 {
+func verify(planPath: String, dumpPath: String, morePlans: [String] = []) throws -> Int32 {
     var truth: [String: Truth] = [:]
-    let planText = try String(contentsOfFile: planPath, encoding: .utf8)
+    // The population's plan, and any pool plans the adversary and the load
+    // test grew their true crosses from: all of them are meetings that happened.
+    for path in [planPath] + morePlans {
+    let planText = try String(contentsOfFile: path, encoding: .utf8)
     for line in planText.split(separator: "\n") {
         guard let row = try JSONSerialization.jsonObject(with: Data(line.utf8)) as? [String: Any],
               row["kind"] as? String == "meeting",
               let seed = row["seed"] as? String, let parents = row["parents"] as? [String],
               let encounter = row["encounter"] as? String else { continue }
         truth[seed] = Truth(parents: Set(parents), encounter: encounter, a: row["a"] as! Int, b: row["b"] as! Int)
+    }
     }
     // Seeds the driver made up on purpose (forged, wrong meeting) or grew for
     // the load test outside the plan: the dump says which were extra and why.
@@ -196,8 +200,10 @@ func verify(planPath: String, dumpPath: String) throws -> Int32 {
             let encounter = row["encounter"] as! String
             if !checkCross(seed, pa, pb, encounter) { note("\(table): \(seed) is not the cross of its parents at its meeting"); continue }
             crossed += 1
-            if extra.contains(seed) { continue }
-            guard let t = truth[seed] else { note("\(table): \(seed) was never grown at any meeting"); continue }
+            guard let t = truth[seed] else {
+                if !extra.contains(seed) { note("\(table): \(seed) was never grown at any meeting") }
+                continue
+            }
             if t.parents != Set([pa, pb]) { note("\(table): \(seed) names parents that did not meet") }
             if t.encounter != encounter { note("\(table): \(seed) names the wrong meeting") }
         }
@@ -214,8 +220,12 @@ func verify(planPath: String, dumpPath: String) throws -> Int32 {
         }
         let spot = WildFields.spot(of: s)
         if !(0..<64).contains(spot.x) || !(0..<64).contains(spot.z) { note("wild: \(seed) stands outside the field") }
-        if extra.contains(seed) { crossed += 1; continue }
-        guard let t = truth[seed] else { note("wild: \(seed) was never grown at any meeting"); continue }
+        guard let t = truth[seed] else {
+            // An invented lineage the adversary released on purpose: a true
+            // cross of parents nobody holds, which the service takes by design.
+            if extra.contains(seed) { crossed += 1 } else { note("wild: \(seed) was never grown at any meeting") }
+            continue
+        }
         if t.parents != Set([pa, pb]) { note("wild: \(seed) names parents that did not meet") }
         // The wild keeps no meeting, so the cross is checked against the plan's.
         if !checkCross(seed, pa, pb, t.encounter) { note("wild: \(seed) is not the cross of its parents") } else { crossed += 1 }
@@ -233,9 +243,9 @@ switch args.count > 1 ? args[1] : "" {
 case "plan" where args.count == 7:
     try plan(gardeners: Int(args[2])!, days: Int(args[3])!, perDay: Double(args[4])!,
              rngSeed: UInt64(args[5])!, out: args[6])
-case "verify" where args.count == 4:
-    exit(try verify(planPath: args[2], dumpPath: args[3]))
+case "verify" where args.count >= 4:
+    exit(try verify(planPath: args[2], dumpPath: args[3], morePlans: Array(args.dropFirst(4))))
 default:
-    FileHandle.standardError.write(Data("usage: popgen plan GARDENERS DAYS PER_DAY RNG_SEED OUT | verify PLAN DUMP\n".utf8))
+    FileHandle.standardError.write(Data("usage: popgen plan GARDENERS DAYS PER_DAY RNG_SEED OUT | verify PLAN DUMP [POOL ...]\n".utf8))
     exit(2)
 }
