@@ -1,0 +1,51 @@
+# The mass-test project: the app's own project plus one UI-test target.
+#
+#   xcodegen generate --spec tools/masstest/app/masstest.yml --project build/masstest
+#
+# Included rather than copied, so the app, its unit tests and SeedCore are
+# exactly what `project.yml` says and nothing here can drift from it. The app's
+# own project stays without a UI-test target: these tests launch the app tens of
+# times per configuration and have no place in the everyday suite.
+include:
+  - path: ../../../project.yml
+    relativePaths: true
+
+name: PeaceGardenMassTest
+
+targets:
+  PeaceGardenMassTestUI:
+    type: bundle.ui-testing
+    platform: iOS
+    # XCTHitchMetric and the accessibility audit's newer types are iOS 26.
+    deploymentTarget: "26.0"
+    sources:
+      - path: UITests
+    dependencies:
+      - target: PeaceGarden
+    settings:
+      base:
+        SWIFT_VERSION: "6.0"
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: PeaceGarden
+        DEVELOPMENT_TEAM: R94VDZ56RY
+        CODE_SIGN_STYLE: Automatic
+
+schemes:
+  MassTestUI:
+    build:
+      targets:
+        PeaceGarden: all
+        PeaceGardenMassTestUI: [test]
+    test:
+      config: Debug
+      targets:
+        - PeaceGardenMassTestUI
+  MassTestUnit:
+    build:
+      targets:
+        PeaceGarden: all
+        PeaceGardenTests: [test]
+    test:
+      config: Debug
+      targets:
+        - PeaceGardenTests
