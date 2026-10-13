@@ -1,6 +1,6 @@
 # The mass-test project: the app's own project plus one UI-test target.
 #
-#   xcodegen generate --spec tools/masstest/app/masstest.yml --project build/masstest
+#   xcodegen generate --spec tools/masstest/app/masstest.yml --project .
 #
 # Included rather than copied, so the app, its unit tests and SeedCore are
 # exactly what `project.yml` says and nothing here can drift from it. The app's
