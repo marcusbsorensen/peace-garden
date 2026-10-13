@@ -60,12 +60,25 @@ function note(kind, detail) {
 /** Sends one request as gardener `g` and checks the status is one of `want`. */
 async function ask(g, route, body, want, context = {}) {
     const addr = context.addr ?? currentAddress(g);
-    const res = await post(route, body, { addr, db: DB });
-    stats.requests++;
-    const r = (stats.routes[route] ??= { n: 0, status: {} });
-    r.n++;
-    r.status[res.status] = (r.status[res.status] ?? 0) + 1;
-    (latencies[route] ??= []).push(res.ms);
+    const r = (stats.routes[route] ??= { n: 0, status: {}, retried: 0 });
+    const send = async () => {
+        const res = await post(route, body, { addr, db: DB });
+        stats.requests++;
+        r.n++;
+        r.status[res.status] = (r.status[res.status] ?? 0) + 1;
+        (latencies[route] ??= []).push(res.ms);
+        return res;
+    };
+    let res = await send();
+    // A 500 is what a phone shows as "could not answer", and a person taps
+    // again. So the driver does, once, after a moment — the first answer is
+    // already counted above, and the population carries on as it would.
+    if (res.status >= 500 || res.status === 0) {
+        r.retried++;
+        await new Promise((resolve) => setTimeout(resolve, 150 + Math.random() * 300));
+        res = await send();
+        if (want.includes(201) && res.status === 200) want = [...want, 200];
+    }
     if (addr === VENUE) {
         stats.festival.requests++;
         if (res.status === 429) stats.festival.limited++;
@@ -119,7 +132,7 @@ async function offer(m, g) {
     const t = side(m, g);
     const res = await ask(g, '/api/walk/offer', { to: t.theirs, from: t.ours, plant: arrival(m) }, [201]);
     const p = plants.get(m.seed);
-    if (res.status === 201) { p.state = 'offered'; p.offeredOn = today; }
+    if (res.status === 201 || (res.status === 200 && res.json?.offer?.state === 'offered')) { p.state = 'offered'; p.offeredOn = today; }
     else if (res.status === 429) p.state = 'held';
     return res;
 }
@@ -169,7 +182,8 @@ async function release(m, g, { withToken = true, second = false } = {}) {
     else if (['offered', 'accepted', 'declined', 'withdrawn', 'lapsed'].includes(p.state)) want = withToken ? [201] : [403];
     else want = [201];
     const res = await ask(g, '/api/wild/release', body, want, { detail: { state: p.state, second } });
-    if (res.status === 201) { p.state = 'released'; p.releasedOn = today; p.named = withToken; }
+    const took = res.status === 201 || (res.status === 200 && res.json?.planting && !['released', 'hidden'].includes(p.state));
+    if (took) { p.state = 'released'; p.releasedOn = today; p.named = withToken; }
     return res;
 }
 

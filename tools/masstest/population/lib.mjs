@@ -145,6 +145,29 @@ export function arrival(m) {
     return plant;
 }
 
+/**
+ * The cross, computed here rather than by SeedCore: what somebody inventing a
+ * lineage would compute. Only the adversary uses it, to make plants that pass
+ * the service's one check without any meeting having happened. Every plant the
+ * population grows comes from popgen.
+ */
+export async function inventedCross(parentA, parentB, encounter) {
+    const { createHash } = await import('node:crypto');
+    const a = Buffer.from(parentA, 'hex');
+    const b = Buffer.from(parentB, 'hex');
+    const [low, high] = Buffer.compare(a, b) < 0 ? [a, b] : [b, a];
+    const parts = [Buffer.from('peacegarden.cross.v1\0')];
+    for (const part of [low, high, Buffer.from(encounter, 'hex')]) {
+        const length = Buffer.alloc(4);
+        length.writeUInt32BE(part.length);
+        parts.push(length, part);
+    }
+    return createHash('sha256').update(Buffer.concat(parts)).digest('hex');
+}
+
+export const randomHex = (bytes) => [...crypto.getRandomValues(new Uint8Array(bytes))]
+    .map((b) => b.toString(16).padStart(2, '0')).join('');
+
 export const AREA_TABLES = {
     travel: 'long_walk', peace: 'quiet_garden', meeting: 'crossing', kinship: 'orchard', pattern: 'knot_garden',
     beginnings: 'seedbed', waiting: 'cold_frame', light: 'glasshouse', renewal: 'coppice', ground: 'home_ground',
