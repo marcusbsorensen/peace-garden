@@ -101,6 +101,10 @@ enum MovieWriter {
                 AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
                 AVVideoExpectedSourceFrameRateKey: framesPerSecond,
                 AVVideoMaxKeyFrameIntervalKey: Int(framesPerSecond),
+                // No frames held back to be encoded out of order: a turn is
+                // smooth motion, which B-frames buy little on, and without
+                // them the encoder takes each frame as it comes.
+                AVVideoAllowFrameReorderingKey: false,
             ],
             // sRGB pictures, said as such, so a player does not guess at them.
             AVVideoColorPropertiesKey: [
