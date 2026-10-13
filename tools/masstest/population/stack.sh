@@ -10,11 +10,11 @@
 # round trips cross a Docker network as they would cross a host's LAN.
 # PGMT_FPM=host runs PHP-FPM on this Mac instead (Homebrew PHP, 127.0.0.1:9811),
 # which is how the first runs were made; every round trip then goes through
-# Docker Desktop's port forwarding.
+# the Docker VM's port forwarding from macOS (OrbStack on this Mac).
 #
 # PGMT_STORAGE=tmpfs keeps the database in memory, where fsync costs nothing;
 # the default is a Docker volume on the VM's disk, where fsync goes through to
-# macOS and costs far more than on a Linux host. The two bracket a host.
+# macOS and costs far more than on a Linux server. The two bracket a host.
 #
 # It never talks to peacegarden.app. It writes Server/.api/config.php in this
 # checkout (git ignores it) pointing at the container, and removes it on `down`.
