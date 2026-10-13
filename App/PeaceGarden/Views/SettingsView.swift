@@ -109,44 +109,21 @@ struct SettingsView: View {
         ZStack {
             Chrome.ground.ignoresSafeArea()
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 30) {
-                    // Grouped by the question each answers rather than by the
-                    // order they were built in. Four headings, and the one
-                    // thing that moved between them is the username: it is not
-                    // a display choice, it is what the other phone is told you
-                    // are called, so it belongs with the rest of what crosses
-                    // between two people.
-                    section("Display") { display }
-                    Hairline()
-                    section("Seed planting location") { plantingLocation }
-                    Hairline()
-                    section("Joint seeds") { jointSeeds }
-                    Hairline()
-                    startingAgain
-                    // A Debug build or a TestFlight copy, and folded in the
-                    // second until it is asked for. Never in an App Store copy.
-                    if Developer.shared.showsSection {
-                        Hairline()
-                        DeveloperSection(close: close)
-                            .environment(model)
-                    }
-                }
-                .padding(.horizontal, 30)
-                .padding(.top, 18)
-                .padding(.bottom, 60)
-                .frame(maxWidth: Chrome.readableWidth)
-                .frame(maxWidth: .infinity)
+            ScrollViewReader { proxy in
+                ScrollView { settings }
+                    // The field is on the rule near the top of a scroll view, so
+                    // the keyboard has never covered it — but a name typed and
+                    // then scrolled away from should still be kept, which is
+                    // what losing focus does below.
+                    .scrollDismissesKeyboard(.interactively)
+                    // The title and the way out stay put and the settings pass
+                    // under them. Scrolled with the rest, the title went off the
+                    // top and the toggles slid over the close control.
+                    .safeAreaInset(edge: .top, spacing: 0) { header }
+#if DEBUG
+                    .task { await scrollForScreenshot(proxy) }
+#endif
             }
-            // The field is on the rule near the top of a scroll view, so the
-            // keyboard has never covered it — but a name typed and then
-            // scrolled away from should still be kept, which is what losing
-            // focus does below.
-            .scrollDismissesKeyboard(.interactively)
-            // The title and the way out stay put and the settings pass under
-            // them. Scrolled with the rest, the title went off the top and the
-            // toggles slid over the close control.
-            .safeAreaInset(edge: .top, spacing: 0) { header }
         }
         .onAppear { draftName = model.identity?.displayName ?? "" }
         // The alert is the assisted path only: `HoldToConfirm` asks for it when
@@ -182,6 +159,51 @@ struct SettingsView: View {
             Text("Nothing has changed. Plants of yours are still standing there, and this is the only phone that can take them down, so try again when you have a signal.")
         }
     }
+
+    /// Everything under the heading, in the order it is read.
+    private var settings: some View {
+        VStack(alignment: .leading, spacing: 30) {
+            // Grouped by the question each answers rather than by the
+            // order they were built in. Four headings, and the one
+            // thing that moved between them is the username: it is not
+            // a display choice, it is what the other phone is told you
+            // are called, so it belongs with the rest of what crosses
+            // between two people.
+            section("Display") { display }
+                .id("display")
+            Hairline()
+            section("Seed planting location") { plantingLocation }
+                .id("location")
+            Hairline()
+            section("Joint seeds") { jointSeeds }
+                .id("joint")
+            Hairline()
+            startingAgain
+                .id("again")
+            // A Debug build or a TestFlight copy, and folded in the
+            // second until it is asked for. Never in an App Store copy.
+            if Developer.shared.showsSection {
+                Hairline()
+                DeveloperSection(close: close)
+                    .environment(model)
+            }
+        }
+        .padding(.horizontal, 30)
+        .padding(.top, 18)
+        .padding(.bottom, 60)
+        .frame(maxWidth: Chrome.readableWidth)
+        .frame(maxWidth: .infinity)
+    }
+
+#if DEBUG
+    /// `-pgSettingsAt <heading>`: see `Developer.settingsAt`. After the panel
+    /// has risen, so the scroll is not lost under its arrival.
+    private func scrollForScreenshot(_ proxy: ScrollViewProxy) async {
+        guard let heading = Developer.shared.settingsAt else { return }
+        try? await Task.sleep(for: .milliseconds(700))
+        proxy.scrollTo(heading, anchor: .top)
+    }
+#endif
 
     // MARK: - The shape of a section
 
