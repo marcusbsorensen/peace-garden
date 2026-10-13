@@ -55,7 +55,19 @@ export function initScript() {
     }).observe({ type: 'largest-contentful-paint', buffered: true });
     new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
-        if (!entry.hadRecentInput) { pg.cls += entry.value; pg.shifts += 1; }
+        if (!entry.hadRecentInput) {
+          pg.cls += entry.value; pg.shifts += 1;
+          // What moved, for the larger shifts: the node, and where it was and went.
+          if (entry.value > 0.005 && (pg.shiftSources || (pg.shiftSources = [])).length < 12) {
+            pg.shiftSources.push({ value: Math.round(entry.value * 1000) / 1000, t: Math.round(entry.startTime),
+              nodes: (entry.sources || []).slice(0, 3).map((src) => {
+                const n = src.node;
+                const name = n && n.nodeType === 1 ? `${n.tagName.toLowerCase()}${n.id ? '#' + n.id : ''}${typeof n.className === 'string' && n.className ? '.' + n.className.trim().split(/\s+/).slice(0, 2).join('.') : ''}` : (n ? n.nodeName : '?');
+                const r = (b) => `${Math.round(b.x)},${Math.round(b.y)} ${Math.round(b.width)}x${Math.round(b.height)}`;
+                return `${name} ${r(src.previousRect)} -> ${r(src.currentRect)}`;
+              }) });
+          }
+        }
       }
     }).observe({ type: 'layout-shift', buffered: true });
     new PerformanceObserver((list) => {

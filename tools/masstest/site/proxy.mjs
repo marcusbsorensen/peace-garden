@@ -14,7 +14,7 @@
 //   /testers.json, /favicon.ico, /plant.wasm, /.well-known/…), a few known
 //   misses the deploy check reads (/README.md, /strings/en.json,
 //   /.api/curate.php), and the plot service's read routes — /api/garden, an
-//   area's count and its plots, the Wild Fields' count and tiles. Every write
+//   area's count and its plots, the Wild Fields' count, tiles and worn paths. Every write
 //   route is a POST, and refused above; anything else under /api/ is
 //   refused here as well (405), so nothing that writes can be reached even
 //   by a GET.
@@ -48,6 +48,9 @@ const READS = [
   new RegExp(`^/api/(${AREAS})/plot/(0|[1-9][0-9]{0,5})$`),
   /^\/api\/wild$/,
   /^\/api\/wild\/tile\/[0-9]{1,2}\/[0-9]{1,2}$/,
+  // The worn paths, read: the page asks for them where wear is on. Sending
+  // them is a POST to the same address, refused above.
+  /^\/api\/wild\/wear$/,
 ];
 const STATIC = [/^\/assets\/[A-Za-z0-9_./-]+$/, /^\/strings\/[a-z-]+\.json$/, /^\/passages\/[a-z-]+\.json$/,
   /^\/(languages|testers)\.json$/, /^\/favicon\.ico$/, /^\/plant\.wasm$/, /^\/\.well-known\/apple-app-site-association$/,

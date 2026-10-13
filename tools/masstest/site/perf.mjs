@@ -24,6 +24,7 @@ const args = Object.fromEntries(process.argv.slice(2).reduce((acc, a, i, all) =>
 const base = (args.base || 'http://127.0.0.1:8822').replace(/\/$/, '');
 const out = args.out || 'masstest-out';
 const langs = (args.langs || 'en').split(',');
+const only = args.pages ? args.pages.split(',') : null;
 const live = args.live === '1';
 const origin = new URL(base).origin;
 await mkdir(out, { recursive: true });
@@ -55,7 +56,7 @@ async function measure(page, cdp, url) {
   await page.waitForLoadState('networkidle', { timeout: 60000 }).catch(() => {});
   const idle = Date.now() - t0;
   await page.waitForTimeout(1500);
-  const pg = await page.evaluate(() => ({ langAt: window.__pg.langAt, lcp: window.__pg.lcp, lcpElement: window.__pg.lcpElement, cls: window.__pg.cls, shifts: window.__pg.shifts, fcp: window.__pg.fcp,
+  const pg = await page.evaluate(() => ({ shiftSources: window.__pg.shiftSources || [], langAt: window.__pg.langAt, lcp: window.__pg.lcp, lcpElement: window.__pg.lcpElement, cls: window.__pg.cls, shifts: window.__pg.shifts, fcp: window.__pg.fcp,
     wasm: window.__pg.wasm.map((w) => ({ ok: w.ok, ready: w.t + (w.ms || 0) })) }));
   const list = [...requests.values()];
   const biggest = list.filter((r) => r.bytes).sort((a, b) => b.bytes - a.bytes).slice(0, 4)
@@ -64,7 +65,7 @@ async function measure(page, cdp, url) {
 }
 
 for (const lang of langs) {
-  for (const p of PAGES) {
+  for (const p of PAGES.filter((x) => !only || only.includes(x.id))) {
     const ctx = await browser.newContext(contextOptions({ width: 375, scheme: 'dark' }));
     await ctx.addInitScript(initScript);
     // No request interception here even when live, because it would turn the
@@ -88,4 +89,4 @@ for (const lang of langs) {
   }
 }
 await browser.close();
-await writeFile(join(out, `perf${live ? '-live' : ''}.json`), JSON.stringify(rows, null, 1));
+await writeFile(join(out, `perf${live ? '-live' : ''}${only ? '-' + only.join('-') : ''}.json`), JSON.stringify(rows, null, 1));
