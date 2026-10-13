@@ -55,7 +55,7 @@ final class MassTestStressTests: XCTestCase {
         developer.backToNow()
 
         var log = "mass test, \(Date())\n"
-        log += String(format: "sprite render, cache miss: %.1f ms each (median of 24)\n", try spriteCost())
+        log += String(format: "sprite render, cache miss: %.1f ms of main-thread CPU each (median of 24)\n", try spriteCost())
         for size in sizes {
             let result = try await measure(size: size)
             let data = try JSONSerialization.data(withJSONObject: result, options: [.prettyPrinted, .sortedKeys])
@@ -95,11 +95,16 @@ final class MassTestStressTests: XCTestCase {
         result["plotSideM"] = model.garden.plotSide
 
         // The first frame: everything the body does before a single sprite.
+        // Wall time and the main thread's own CPU time both: on a shared
+        // machine the first is the machine's, the second much more nearly the
+        // app's.
         clock = Self.now()
+        let cpuBefore = Self.threadCPU()
         let window = try Self.window(showing: PlotView().environment(model))
         window.rootViewController?.view.layoutIfNeeded()
         CATransaction.flush()
         result["firstFrameMs"] = Self.ms(since: clock)
+        result["firstFrameCPUms"] = (Self.threadCPU() - cpuBefore) * 1000
 
         // Opening: until every plant has been photographed and the plot holds
         // still.
@@ -155,8 +160,9 @@ final class MassTestStressTests: XCTestCase {
                     + months.compactMap { $0["footprintMB"] as? Double }).max() ?? 0
         result["footprintPeakMB"] = peak
         result["summary"] = String(
-            format: "load %.0f ms, first frame %.0f ms, open %.1f s%@, redraw %.1f ms CPU/frame (p95 %.1f ms), turn %.1f s, peak %.0f MB, after close %.0f MB",
+            format: "load %.0f ms, first frame %.0f ms (%.0f ms CPU), open %.1f s%@, redraw %.1f ms CPU/frame (p95 %.1f ms), turn %.1f s, peak %.0f MB, after close %.0f MB",
             result["loadMs"] as? Double ?? -1, result["firstFrameMs"] as? Double ?? -1,
+            result["firstFrameCPUms"] as? Double ?? -1,
             openSeconds, (open["settled"] as? Bool ?? false) ? "" : " (did not settle)",
             redraw?["cpuMsPerFrame"] as? Double ?? -1, redraw?["p95Ms"] as? Double ?? -1,
             firstTurn, peak, result["footprintAfterCloseMB"] as? Double ?? -1)
@@ -227,10 +233,11 @@ final class MassTestStressTests: XCTestCase {
         for n in 0..<24 {
             let record = Self.record(n + 50_000, birth: birth)
             let growth = GrowthModel(genome: record.genome).state(birth: birth, now: Date())
-            let clock = Self.now()
+            // The main thread's CPU, not the wall: see `firstFrameCPUms`.
+            let cpu = Self.threadCPU()
             _ = GardenSprites.shared.sprite(genome: record.genome, growth: growth, step: 3, turn: 3,
                                             season: Season.here(at: Date()))
-            costs.append(Self.ms(since: clock))
+            costs.append((Self.threadCPU() - cpu) * 1000)
         }
         return costs.sorted()[costs.count / 2]
     }
