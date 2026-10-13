@@ -85,7 +85,8 @@ enum MassTest {
                     "label": node.label,
                     "id": node.identifier,
                     "value": (node.value as? String) ?? "",
-                    "x": frame.minX, "y": frame.minY, "w": frame.width, "h": frame.height,
+                    "x": Double(frame.minX), "y": Double(frame.minY),
+                    "w": Double(frame.width), "h": Double(frame.height),
                     "enabled": node.isEnabled,
                     "depth": depth,
                 ])

@@ -79,7 +79,13 @@ final class MassTestScreensUITests: XCTestCase {
         case "meet": arguments += ["-pgOpen", "meet"]
         case "settings": arguments += ["-pgOpen", "settings"]
         case "garden": arguments += ["-pgOpen", "garden", "-pgTray", "YES"]
-        case "plant": arguments += ["-pgOpen", "garden", "-pgTray", "NO"]
+        // A plant's screen is reached through the developer's tile grid: a
+        // plant on the plot answers a finger on its leaves through a tap
+        // gesture, and a synthesised tap never opened one in this sweep (the
+        // plot's plants have no accessibility element either — see the
+        // audit). The grid's tiles are buttons, and open the same
+        // `PlantDetailView`.
+        case "plant": arguments += ["-pgOpen", "garden", "-developer.showsTileGrid", "YES"]
         default: break
         }
         app.launchArguments = arguments
@@ -91,12 +97,13 @@ final class MassTestScreensUITests: XCTestCase {
         case "garden":
             MassTest.pause(7)
         case "plant":
-            MassTest.pause(7)
-            guard openAPlant(app) else {
+            MassTest.pause(4)
+            if !(openATile(app) || openAPlant(app)) {
+                // Photographed anyway, so the failure can be seen.
                 note["error"] = "no plant answered a tap"
-                return
             }
-            MassTest.pause(3)
+            // The words under the plant unfold after it, over seconds.
+            MassTest.pause(8)
         case "firstlight", "meet":
             MassTest.pause(6)
         default:
@@ -146,23 +153,47 @@ final class MassTestScreensUITests: XCTestCase {
         try MassTest.write(issues, to: folder.appendingPathComponent("\(name)-audit.json"))
     }
 
-    /// Taps across the middle of the plot, nearest the centre first, until a
-    /// plant's screen covers the garden (the tray's plus is gone with it).
-    /// The plants are drawn pictures with no accessibility element, so a
-    /// coordinate is the only way to one.
+    /// The first tile of the grid whose label reads as a plant's name, tapped.
+    /// True once the grid has gone under the plant's screen.
+    private func openATile(_ app: XCUIApplication) -> Bool {
+        let named = NSPredicate(format: "label MATCHES %@", "^[A-Z][a-z]+ [a-z]+.*")
+        let tiles = app.buttons.matching(named)
+        guard tiles.firstMatch.waitForExistence(timeout: 10) else { return false }
+        // The grid puts the newest first, and the newest in the fixture is a
+        // day old: the last tile on screen is a grown plant with a flower.
+        let tile = tiles.allElementsBoundByIndex.last { $0.isHittable } ?? tiles.firstMatch
+        tile.tap()
+        return true
+    }
+
+    /// Taps the plants' pictures, largest first, until a plant's screen covers
+    /// the garden (the tray's plus is gone with it).
+    ///
+    /// A plant is an unlabelled image in the accessibility tree — a square
+    /// one, since a sprite's frame is square — and it answers only where it
+    /// has leaves, so each is tried low in its frame, where the stem and the
+    /// leaves are, and then halfway up.
     private func openAPlant(_ app: XCUIApplication) -> Bool {
         let tray = app.buttons["garden.tray"]
-        var points: [CGVector] = []
-        for y in stride(from: 0.30, through: 0.62, by: 0.04) {
-            for x in stride(from: 0.22, through: 0.78, by: 0.08) {
-                points.append(CGVector(dx: x, dy: y))
+        let height = app.windows.firstMatch.frame.height
+        var seen = Set<String>()
+        let sprites = MassTest.elements(of: app).compactMap { e -> CGRect? in
+            guard e["type"] as? String == "image", (e["label"] as? String ?? "").isEmpty,
+                  let x = e["x"] as? Double, let y = e["y"] as? Double,
+                  let w = e["w"] as? Double, let h = e["h"] as? Double,
+                  w >= 18, w < 200, abs(w - h) < 1.5, y > height * 0.12, y + h < height * 0.8 else { return nil }
+            let key = "\(Int(x))-\(Int(y))-\(Int(w))"
+            guard seen.insert(key).inserted else { return nil }
+            return CGRect(x: x, y: y, width: w, height: h)
+        }.sorted { $0.width > $1.width }
+
+        let origin = app.coordinate(withNormalizedOffset: .zero)
+        for frame in sprites.prefix(12) {
+            for fraction in [0.8, 0.55] {
+                origin.withOffset(CGVector(dx: frame.midX, dy: frame.minY + frame.height * fraction)).tap()
+                MassTest.pause(1.4)
+                if !tray.exists { return true }
             }
-        }
-        points.sort { hypot($0.dx - 0.5, $0.dy - 0.46) < hypot($1.dx - 0.5, $1.dy - 0.46) }
-        for point in points.prefix(40) {
-            app.coordinate(withNormalizedOffset: point).tap()
-            MassTest.pause(1.1)
-            if !tray.exists { return true }
         }
         return false
     }
@@ -174,14 +205,12 @@ final class MassTestScreensUITests: XCTestCase {
             // No launch moment over the screen being photographed; it has a
             // photograph of its own (`launch.sh`).
             "-loading.style.v1", "off",
-            // The Testing section is a Debug build's, in English on purpose,
-            // and not what anybody installing the app sees.
-            "-developer.showsSection", "NO",
             "-developer.clockShift", "0",
             "-garden.turn.v1", "0",
-            // Still, so two photographs of one screen differ only in what is
-            // being tested.
-            "-stage.turntable.v1", "NO",
+            // The Testing section folded and the turntable stopped are set by
+            // `run_tests.sh` with `defaults write`: both are `Bool`s read off
+            // `object(forKey:)`, and `-key NO` here would arrive as the string
+            // "NO" and override the stored value with nothing.
         ]
         let language: String
         switch locale {

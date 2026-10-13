@@ -18,7 +18,7 @@ for scheme in MassTestUnit MassTestUI; do
     -project PeaceGardenMassTest.xcodeproj \
     -scheme "$scheme" \
     -destination 'generic/platform=iOS Simulator' \
-    -derivedDataPath build/DD \
+    -derivedDataPath "build/DD-$scheme" \
     CODE_SIGNING_ALLOWED=NO >> "$LOG" 2>&1
   rc=$?
   echo "$scheme rc=$rc" >> "$CLOCK"

@@ -14,11 +14,18 @@
 # whatever is there and writes the garden it is testing into it.
 set -u
 cd "${0:A:h}/../../.."
-KIND=$1; SIM=$2; OUT=$3; CLOCK=$4; shift 4
+KIND=$1; SIM=$2; OUT=${3:A}; CLOCK=${4:A}; shift 4
 mkdir -p "$OUT" build/results
 date > "$CLOCK"
 xcrun simctl boot "$SIM" 2>/dev/null
 xcrun simctl bootstatus "$SIM" > /dev/null 2>&1
+# Two switches a launch argument cannot reach: both are read as `Bool`s off
+# `object(forKey:)`, and `-key NO` on the command line arrives as the string
+# "NO". The Testing section (English on purpose, and only in Debug and
+# TestFlight copies) is folded, and the stage's plant held still so two
+# photographs of one screen differ only in what is being tested.
+xcrun simctl spawn "$SIM" defaults write app.peacegarden developer.showsSection -bool NO
+xcrun simctl spawn "$SIM" defaults write app.peacegarden stage.turntable.v1 -bool NO
 
 for kv in "$@"; do export "TEST_RUNNER_$kv"; done
 export TEST_RUNNER_PG_MASSTEST="$OUT" TEST_RUNNER_PG_MT_OUT="$OUT"
@@ -27,7 +34,7 @@ run() {
   local scheme=$1 only=$2 tag=$3
   xcodebuild test-without-building \
     -project PeaceGardenMassTest.xcodeproj -scheme "$scheme" \
-    -derivedDataPath build/DD -destination "id=$SIM" \
+    -derivedDataPath "build/DD-$scheme" -destination "id=$SIM" \
     -only-testing:"$only" \
     -resultBundlePath "build/results/$tag-$SIM-$(date +%H%M%S).xcresult" \
     > "$OUT/xcodebuild-$tag.log" 2>&1

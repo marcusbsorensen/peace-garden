@@ -30,8 +30,8 @@ final class MassTestPerformanceUITests: XCTestCase {
     }
 
     private func arguments(_ extra: [String] = []) -> [String] {
-        ["-loading.style.v1", "off", "-developer.showsSection", "NO", "-developer.clockShift", "0",
-         "-garden.turn.v1", "0", "-stage.turntable.v1", "NO", "-garden.daylight.v1", "always",
+        ["-loading.style.v1", "off", "-developer.clockShift", "0",
+         "-garden.turn.v1", "0", "-garden.daylight.v1", "always",
          "-AppleLanguages", "(en)", "-AppleLocale", "en_GB"] + extra
     }
 
