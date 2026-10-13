@@ -39,14 +39,16 @@ DB=pg-mt-pop-db
 PHP=pg-mt-pop-php
 WEB=pg-mt-pop-web
 VOLUME=pg-mt-pop-data
-CONFIG="$ROOT/Server/.api/config.php"
+# PGMT_SERVER_DIR serves another copy of the tree (experiment-once.sh's).
+SERVER=${PGMT_SERVER_DIR:-$ROOT/Server}
+CONFIG="$SERVER/.api/config.php"
 
 sql() { docker exec -i "$DB" mariadb -uroot -proot-local-only -N -e "$1"; }
 
 fill() {
     if [ "$FPM_MODE" = host ]; then fpm="host.docker.internal:$FPM_PORT"; fpmdb="127.0.0.1;port=$DB_PORT"
     else fpm="$PHP:9000"; fpmdb="$DB;port=3306"; fi
-    sed -e "s#__SERVER_ROOT__#$ROOT/Server#g" -e "s#__FPM__#$fpm#g" -e "s#__FPM_DB__#$fpmdb#g" \
+    sed -e "s#__SERVER_ROOT__#$SERVER#g" -e "s#__FPM__#$fpm#g" -e "s#__FPM_DB__#$fpmdb#g" \
         -e "s#__SCRATCH__#$SCRATCH#g" -e "s#__FPM_PORT__#$FPM_PORT#g" -e "s#__CHILDREN__#$CHILDREN#g" \
         -e "s#__DB_PORT__#$DB_PORT#g" "$1" > "$2"
 }
@@ -102,10 +104,10 @@ web_up() {
         /opt/homebrew/sbin/php-fpm --fpm-config "$SCRATCH/php-fpm.conf"
     else
         docker run -d --name "$PHP" --network "$NET" -e PGMT_CHILDREN="$CHILDREN" \
-            -v "$ROOT/Server:$ROOT/Server:ro" -v "$SCRATCH/phplog:/var/log/pop" pg-mt-pop-php:8.3 >/dev/null
+            -v "$SERVER:$SERVER:ro" -v "$SCRATCH/phplog:/var/log/pop" pg-mt-pop-php:8.3 >/dev/null
     fi
     docker run -d --name "$WEB" --network "$NET" -p 127.0.0.1:$WEB_PORT:80 \
-        -v "$ROOT/Server:$ROOT/Server:ro" -v "$SCRATCH/nginx.conf:/etc/nginx/nginx.conf:ro" \
+        -v "$SERVER:$SERVER:ro" -v "$SCRATCH/nginx.conf:/etc/nginx/nginx.conf:ro" \
         nginx:1.27-alpine >/dev/null
     sleep 1
     echo "up: http://127.0.0.1:$WEB_PORT  (PHP-FPM $FPM_MODE, $CHILDREN children, storage ${PGMT_STORAGE:-volume})"
