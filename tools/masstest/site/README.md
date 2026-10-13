@@ -19,6 +19,8 @@ Nothing here is part of the site and nothing here is uploaded.
 | `perf.mjs` | Weight, LCP and CLS per page at 375 px on Slow 4G with the CPU slowed 4×, cold and warm. |
 | `proxy.mjs` | The read-only window onto the live site: GET only, a read allowlist, one request every 500 ms, each address fetched once, a User-Agent naming the check. |
 | `analyse.mjs` | Groups every fault by cause, with routes, languages, widths, an example URL and crops. |
+| `compare.mjs` | Two `checks.mjs` runs side by side: rows, headers, files and catalogue keys that differ. |
+| `crop.mjs` | Evidence: opens a page, outlines one element and captures it with a margin. |
 | `sheet.mjs` | Lays crops out as captioned contact sheets. |
 
 ## Setting up
@@ -83,11 +85,16 @@ node tools/masstest/site/crawl.mjs --base $LIVE --out $SCRATCH/live --live \
   --langs en,da,ar,de,ja,pl,fi --variants plain --schemes dark --concurrency 2
 node tools/masstest/site/perf.mjs --base $LIVE --out $SCRATCH/live --langs en
 node tools/masstest/site/analyse.mjs --out $SCRATCH/live --name live
+node tools/masstest/site/compare.mjs $SCRATCH/local/checks-local.json $SCRATCH/live/checks-live.json
 ```
+
+The proxy fetches each address once and answers every later request from
+memory with a `200`, so `perf.mjs`'s warm figures through it are not the
+host's; test the host's revalidation with a single conditional GET instead.
 
 What the proxy allows is in its head comment: the pages, the static files,
 three known misses the deploy check reads, and the plot service's GET routes
-for counts, plots and tiles. Every other method is answered 405 locally, and
+for counts, plots, tiles and worn paths. Every other method is answered 405 locally, and
 so is any other `/api/` path. `--live` on the crawler also refuses, in the
 browser, every request that is not a GET to the proxy, and records it.
 `proxy.log` lists every request that reached the live host.
