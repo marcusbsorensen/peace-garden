@@ -2417,7 +2417,7 @@
       }
     },
     "Cancel" : {
-      "comment" : "Button in the top corner of the meeting screen, while it is still looking for somebody. Stops looking and closes.",
+      "comment" : "Read aloud by VoiceOver for the X in the top corner of the meeting screen, while it is still looking for somebody. Stops looking and closes.",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -6980,7 +6980,7 @@
       }
     },
     "Not this time" : {
-      "comment" : "Button in the top corner of the screen showing a plant that has just been made. Leaves without keeping it. Gentler than 'Discard' on purpose.",
+      "comment" : "Read aloud by VoiceOver for the X in the top corner of the screen showing a plant that has just been made. Leaves without keeping it. Gentler than 'Discard' on purpose.",
       "localizations" : {
         "da" : {
           "stringUnit" : {

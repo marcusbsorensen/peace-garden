@@ -1063,8 +1063,10 @@ struct PlotView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
+            // The Garden mark from the foot of the stage, which opened this.
             Text("Peace garden")
                 .chromeHeading(size: 18)
+                .titleGlyph(GardenGlyph(), size: 18)
                 .foregroundStyle(Chrome.ink)
             Text(model.hybrids.isEmpty
                  ? "Nothing has been crossed yet"

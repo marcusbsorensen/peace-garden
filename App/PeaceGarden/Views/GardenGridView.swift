@@ -59,8 +59,10 @@ struct GardenGridView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
+            // The Garden mark from the foot of the stage, as on `PlotView`.
             Text("Peace garden")
                 .chromeHeading(size: 18)
+                .titleGlyph(GardenGlyph(), size: 18)
                 .foregroundStyle(Chrome.ink)
             // The count carries a plural, so it is a catalogue entry with two
             // variations rather than one string with a number pushed into it.
