@@ -34,7 +34,7 @@ run() {
   local scheme=$1 only=$2 tag=$3
   xcodebuild test-without-building \
     -project PeaceGardenMassTest.xcodeproj -scheme "$scheme" \
-    -derivedDataPath "build/DD-$scheme" -destination "id=$SIM" \
+    -derivedDataPath "${MT_DD:-build/DD-$scheme}" -destination "id=$SIM" \
     -only-testing:"$only" \
     -resultBundlePath "build/results/$tag-$SIM-$(date +%H%M%S).xcresult" \
     > "$OUT/xcodebuild-$tag.log" 2>&1
