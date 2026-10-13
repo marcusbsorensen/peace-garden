@@ -32,9 +32,9 @@ enum SkyDrift: String, CaseIterable, Sendable {
 /// colours, from the same keyframes (`SkyPalette`), on the sun's same arc
 /// (`SunPath`) — and leaves out everything that would say it fast.
 ///
-/// **What it draws.** A gradient with no edge in it, from the zenith down to a
-/// pale band behind the plant and a little darker under it; a warm glow low
-/// down while the sun is near the horizon; and at night a scatter of fixed
+/// **What it draws.** A gradient with no edge in it, from the zenith at the top
+/// of the glass to the sky's palest at the foot; the sun's warmth rising from
+/// below the edge while it is near the horizon; and at night a scatter of fixed
 /// stars that come out as the sky darkens and fade as it lightens. They do not
 /// twinkle and they do not move.
 ///
@@ -69,7 +69,7 @@ enum TimeLapseSky {
 
     /// First light: the sun a few degrees under the horizon, the sky a deep
     /// blue with the rose of the horizon just showing.
-    static let firstLight = -5.0
+    static let firstLight = -4.0
     /// Below this the sky is as dark as it goes; a drift into a midnight sun
     /// would spend most of itself on a change nobody can see.
     static let deepestNight = -20.0
@@ -80,7 +80,6 @@ enum TimeLapseSky {
     struct Colours: Equatable {
         var top: SIMD3<Double>
         var horizon: SIMD3<Double>
-        var below: SIMD3<Double>
         /// The sun's warmth low in the sky, and how strong it is.
         var glow: SIMD3<Double>
         var glowAmount: Double
@@ -92,7 +91,9 @@ enum TimeLapseSky {
     /// near and far.
     static let nightTop = SIMD3<Double>(0.030, 0.036, 0.062)
     static let nightHorizon = SIMD3<Double>(0.048, 0.058, 0.085)
-    static let nightBelow = SIMD3<Double>(0.026, 0.031, 0.052)
+    /// First light's own colours, overhead and low down.
+    static let twilightTop = SIMD3<Double>(0.12, 0.11, 0.26)
+    static let twilightLow = SIMD3<Double>(0.52, 0.36, 0.50)
 
     /// The sky with the sun at `elevation` degrees.
     ///
@@ -104,14 +105,28 @@ enum TimeLapseSky {
     static func colours(elevation: Double) -> Colours {
         let day = SkyPalette.at(elevation: max(0, elevation))
         let d = smooth((elevation + 12) / 18)
+        // Halfway between night and day, a dimmed sunrise orange is brown. A
+        // little violet at the middle of twilight keeps it the rose and mauve
+        // of first light rather than the colour of a dusty road.
+        let twilight = 4 * d * (1 - d)
         return Colours(
-            top: SkyPalette.mix(nightTop, day.zenith, d),
-            horizon: SkyPalette.mix(nightHorizon, day.horizon, d),
-            below: SkyPalette.mix(nightBelow, day.under, d),
+            top: SkyPalette.mix(SkyPalette.mix(nightTop, day.zenith, d), twilightTop, 0.30 * twilight),
+            horizon: SkyPalette.mix(SkyPalette.mix(nightHorizon, day.horizon, d), twilightLow, 0.38 * twilight),
             glow: day.glow,
-            glowAmount: day.low * d * 0.30,
+            glowAmount: day.low * d * 0.24,
             stars: 1 - smooth((elevation + 16) / 12)
         )
+    }
+
+    /// How much the sky visibly changes between two heights of the sun: the
+    /// colours that fill most of the screen, the glow, and the stars.
+    static func visibleChange(from a: Double, to b: Double) -> Double {
+        let x = colours(elevation: a), y = colours(elevation: b)
+        func distance(_ p: SIMD3<Double>, _ q: SIMD3<Double>) -> Double {
+            abs(p.x - q.x) + abs(p.y - q.y) + abs(p.z - q.z)
+        }
+        return distance(x.top, y.top) + distance(x.horizon, y.horizon)
+            + abs(x.glowAmount - y.glowAmount) + abs(x.stars - y.stars) * 0.2
     }
 
     // MARK: How it sits on the stage
@@ -130,16 +145,20 @@ enum TimeLapseSky {
 
         /// Over black. Not quite opaque, so the pool of light the plant stands
         /// in still shows through.
-        static let dark = Look(ground: SIMD3(0, 0, 0), lift: 0, strength: 0.86, drawsStars: true)
+        static let dark = Look(ground: SIMD3(0, 0, 0), lift: 0, strength: 0.8, drawsStars: true)
         /// Over `Chrome.ground`'s warm near-white.
-        static let light = Look(ground: SIMD3(repeating: 0.965), lift: 0.62, strength: 0.9, drawsStars: false)
+        static let light = Look(ground: SIMD3(repeating: 0.965), lift: 0.7, strength: 0.9, drawsStars: false)
 
         static func `for`(_ scheme: ColorScheme) -> Look { scheme == .light ? .light : .dark }
     }
 
-    /// Where the pale band sits, as a fraction of the height: behind the
-    /// plant's lower half, which is where the eye puts a horizon.
-    static let horizonAt = 0.70
+    /// **No horizon on the plant's screen.** A pale band across the middle,
+    /// with darker air under it, was a ground line by another name: the plant
+    /// stood on it, which is the one idiom the stage does not use — a plant
+    /// here grows from a point, not from a drawn ground. So the sky grades one
+    /// way only, from the zenith at the top to its palest at the foot of the
+    /// glass, and the sun's warmth rises from below the edge.
+    static let middleAt = 0.55
 
     /// Draws the sky into `cg`, origin at the top left, over whatever is there.
     static func draw(_ moment: Moment, in cg: CGContext, size: CGSize, look: Look) {
@@ -155,11 +174,10 @@ enum TimeLapseSky {
         let space = CGColorSpace(name: CGColorSpace.sRGB)!
         let colours = [
             colour(sky.top, alpha),
-            colour(SkyPalette.mix(sky.top, sky.horizon, 0.45), alpha),
-            colour(sky.horizon, alpha),
-            colour(sky.below, alpha)
+            colour(SkyPalette.mix(sky.top, sky.horizon, 0.4), alpha),
+            colour(sky.horizon, alpha)
         ] as CFArray
-        let locations: [CGFloat] = [0, 0.42, CGFloat(horizonAt), 1]
+        let locations: [CGFloat] = [0, CGFloat(middleAt), 1]
         if let gradient = CGGradient(colorsSpace: space, colors: colours, locations: locations) {
             cg.saveGState()
             cg.drawLinearGradient(gradient, start: .zero, end: CGPoint(x: 0, y: size.height),
@@ -170,8 +188,8 @@ enum TimeLapseSky {
         // The sun's warmth, low down, while it is near the horizon.
         let glow = sky.glowAmount * alpha
         if glow > 0.002 {
-            let centre = CGPoint(x: size.width / 2, y: size.height * horizonAt)
-            let radius = max(size.width, size.height) * 0.62
+            let centre = CGPoint(x: size.width / 2, y: size.height * 1.08)
+            let radius = max(size.width, size.height) * 0.72
             let warm = [colour(sky.glow, glow), colour(sky.glow, 0)] as CFArray
             if let gradient = CGGradient(colorsSpace: space, colors: warm, locations: [0, 1]) {
                 cg.saveGState()

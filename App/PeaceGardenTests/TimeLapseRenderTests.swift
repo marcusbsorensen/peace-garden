@@ -50,14 +50,17 @@ final class TimeLapseRenderTests: XCTestCase {
     /// into the dark rather than brightening.
     func testDrawTheThreeSkies() async throws {
         let folder = try Self.folder()
-        let rows: [(String, SkyDrift, Int)] = [("A-15", .towardsNow, 15), ("A-22", .towardsNow, 22),
-                                                ("B-15", .nightIntoDay, 15), ("C-15", .still, 15)]
+        let rows: [(String, SkyDrift, Int, ColorScheme)] = [
+            ("A-15", .towardsNow, 15, .dark), ("A-22", .towardsNow, 22, .dark),
+            ("B-15", .nightIntoDay, 15, .dark), ("C-15", .still, 15, .dark), ("A-15-light", .towardsNow, 15, .light)
+        ]
         let wanted = [0.6, 2.4, 4.4, 6.4, 8.4, 10.4]
-        for (name, drift, hour) in rows {
+        for (name, drift, hour, scheme) in rows {
             var options = TimeLapseFilm.Options()
             options.size = CGSize(width: 280, height: 608)
             options.fps = 30
             options.drift = drift
+            options.scheme = scheme
             options.calendar = TimeLapseTests.utc
             try await TimeLapseFilm.render(Self.old, now: TimeLapseLuminanceTests.moment(hour: hour),
                                            options: options) { frame in

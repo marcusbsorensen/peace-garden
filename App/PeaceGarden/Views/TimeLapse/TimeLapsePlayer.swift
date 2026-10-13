@@ -57,6 +57,9 @@ final class TimeLapsePlayer {
     /// builders side by side keep it near the screen's rate on any phone with
     /// the cores to spare, and leave one for everything else.
     @ObservationIgnored private let builders = max(1, min(3, ProcessInfo.processInfo.activeProcessorCount - 1))
+    /// What a run cost, for measuring it: frames the screen drew, plants the
+    /// builders delivered, and the longest wait between two plants.
+    @ObservationIgnored private var stats = (ticks: 0, plants: 0, longestGap: 0.0, lastPlant: 0.0)
     @ObservationIgnored private let queue = DispatchQueue(label: "app.peacegarden.time-lapse", qos: .userInteractive,
                                                           attributes: .concurrent)
 
@@ -112,6 +115,7 @@ final class TimeLapsePlayer {
                 } else if let sprout = built.first {
                     self.show(sprout.node, at: 0)
                 }
+                self.stats = (0, 0, 0, 0)
                 self.startClock()
                 if !reduceMotion {
                     self.claimed = 0
@@ -164,6 +168,7 @@ final class TimeLapsePlayer {
         }
 
         let time = clock - started
+        stats.ticks += 1
         let frame = lapse.frame(at: time, reduceMotion: reduceMotion)
         sky = frame.sky
         stage.livePlantOpacity = CGFloat(frame.live)
@@ -240,6 +245,12 @@ final class TimeLapsePlayer {
     private func show(_ node: SCNNode, at time: TimeInterval) {
         guard let stage, time > shownTime else { return }
         shownTime = time
+        let clock = CACurrentMediaTime() - started
+        if time > TimeLapse.leadIn, time < TimeLapse.growthEnd {
+            stats.plants += 1
+            if stats.lastPlant > 0 { stats.longestGap = max(stats.longestGap, clock - stats.lastPlant) }
+            stats.lastPlant = clock
+        }
         for old in stage.replayRoot.childNodes { old.removeFromParentNode() }
         stage.replayRoot.addChildNode(node)
     }
@@ -247,6 +258,16 @@ final class TimeLapsePlayer {
     // MARK: Ending
 
     private func finish() {
+#if DEBUG
+        if stats.ticks > 0 {
+            let growing = TimeLapse.growthEnd - TimeLapse.leadIn
+            print(String(format: "TIME-LAPSE PLAYED: %d frames drawn, %d plants built while growing (%.1f a second), "
+                         + "longest wait between plants %.0f ms, %d builders, build %.1f ms",
+                         stats.ticks, stats.plants, Double(stats.plants) / growing, stats.longestGap * 1000,
+                         builders, buildTime * 1000))
+        }
+#endif
+        stats = (0, 0, 0, 0)
         link?.invalidate()
         link = nil
         run += 1

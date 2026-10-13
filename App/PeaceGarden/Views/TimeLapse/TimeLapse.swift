@@ -49,8 +49,9 @@ import SeedCore
 ///   (`calendar(readingTheHourOf:at:)`), so the flowers open once.
 /// - **The flowering cycle.** A mature plant's band of open flowers travels up
 ///   it over a week or a month (`flush`). Replayed, that wave would race up the
-///   stem again and again. It is held at today's phase and only its depth comes
-///   up, from none to today's, after the plant has finished growing.
+///   stem again and again. It is held at today's phase, and its depth comes up
+///   with the flowers as they open, so each flower opens once, straight to how
+///   open it is today.
 struct TimeLapse: Sendable {
     // MARK: The score
 
@@ -93,6 +94,10 @@ struct TimeLapse: Sendable {
     private let path: [GrowthModel.State]
     /// How far through the visible growing each sample is, `0...1`, rising.
     private let reach: [Double]
+    /// The sky's drift, sampled in the sun's height, and how far through its
+    /// visible change each sample is: the sky is re-timed the way the plant is.
+    private let skyPath: [Double]
+    private let skyReach: [Double]
 
     init(record: PlantRecord, now: Date, drift: SkyDrift = .chosen, calendar: Calendar = .current) {
         self.init(genome: record.genome, birth: record.birth, now: now, drift: drift, calendar: calendar)
@@ -105,6 +110,7 @@ struct TimeLapse: Sendable {
         let model = GrowthModel(genome: genome)
         let here = calendar.dateComponents([.hour, .minute], from: now)
         hourNow = Double(here.hour ?? 12) + Double(here.minute ?? 0) / 60
+        (skyPath, skyReach) = Self.skyTiming(TimeLapseSky.drift(drift, hourNow: hourNow))
 
         let age = max(0, now.timeIntervalSince(birth))
         let matureAt = model.start(of: .mature)
@@ -127,17 +133,25 @@ struct TimeLapse: Sendable {
         }
 
         let live = model.state(birth: birth, now: now, calendar: calendar)
-        // Past maturity: the flowering cycle comes up in place, at today's
-        // phase, rather than replaying its weeks.
-        if age > matureAt, live.flushDepth > 0 {
-            var mature = path[path.count - 1]
-            mature.flush = live.flush
-            let steps = max(2, growing / 6)
-            for index in 1...steps {
-                var next = mature
-                next.flushDepth = live.flushDepth * Double(index) / Double(steps)
-                path.append(next)
-            }
+        // **The flowering cycle comes up with the flowers, at today's phase.**
+        // Replayed on the calendar its wave would race up the stem again and
+        // again. Brought in after the flowers had opened, it shut half of them
+        // again at the end of the run: the plant bloomed and then wilted into
+        // its own present, which is a reversal on screen. So today's phase is
+        // held from the first frame, and its depth rises as the buds swell, as
+        // the square root of their swelling. The cycle pulls a bud's swell and
+        // a flower's opening back by up to `0.55 × depth`
+        // (`PlantBuilder.flushFactor`); `b × (1 − k√b)` only ever rises for
+        // any `k` under two thirds, so every bud swells and every flower opens
+        // once, straight to how it is today. The buds have finished swelling
+        // before a flower opens, so the depth is already today's by then.
+        let fullBud = path.map(\.budSwell).max() ?? 0
+        for index in path.indices {
+            let swollen = fullBud > 1e-9
+                ? min(1, path[index].budSwell / fullBud)
+                : Double(index) / Double(growing)
+            path[index].flush = live.flush
+            path[index].flushDepth = live.flushDepth * swollen.squareRoot()
         }
         // The last frame is the plant on the screen, field for field.
         path[path.count - 1] = live
@@ -277,13 +291,48 @@ struct TimeLapse: Sendable {
         let arriving = Self.smooth(t / Self.leadIn)
         let leaving = Self.smooth((Self.duration - t) / Self.leadOut)
         let presence = min(arriving, leaving)
-        let ends = TimeLapseSky.drift(reduceMotion ? .still : drift, hourNow: hourNow)
+        if reduceMotion {
+            let still = TimeLapseSky.drift(.still, hourNow: hourNow)
+            return TimeLapseSky.Moment(elevation: still.to, presence: presence)
+        }
         // **One drift, across the whole of the growing.** It starts as the
         // sky arrives and is over as the growing is, smoothstepped so it never
-        // starts or stops with a jolt.
+        // starts or stops with a jolt, and spaced by how much the sky visibly
+        // changes rather than by the sun's height — which would put the whole
+        // of twilight, and nearly all the change there is, into two seconds.
         let p = Self.smooth(t / Self.growthEnd)
-        return TimeLapseSky.Moment(elevation: ends.from + (ends.to - ends.from) * p,
+        return TimeLapseSky.Moment(elevation: Self.lookUp(p, reach: skyReach, values: skyPath),
                                    presence: presence)
+    }
+
+    /// The drift sampled finely in the sun's height, with how far through
+    /// its visible change each sample is.
+    static func skyTiming(_ ends: (from: Double, to: Double)) -> ([Double], [Double]) {
+        let steps = 240
+        let path = (0...steps).map { ends.from + (ends.to - ends.from) * Double($0) / Double(steps) }
+        var reach = [0.0]
+        for index in 1...steps {
+            reach.append(reach[index - 1] + TimeLapseSky.visibleChange(from: path[index - 1], to: path[index]))
+        }
+        let total = reach[steps]
+        guard total > 1e-9 else {
+            return (path, (0...steps).map { Double($0) / Double(steps) })
+        }
+        return (path, reach.map { $0 / total })
+    }
+
+    /// The value `target` of the way along a rising `reach`, between samples.
+    static func lookUp(_ target: Double, reach: [Double], values: [Double]) -> Double {
+        let goal = min(max(target, 0), 1)
+        var low = 0, high = reach.count - 1
+        while low < high {
+            let middle = (low + high) / 2
+            if reach[middle] < goal { low = middle + 1 } else { high = middle }
+        }
+        let upper = low, lower = max(0, low - 1)
+        let span = reach[upper] - reach[lower]
+        let t = span > 1e-12 ? (goal - reach[lower]) / span : 1
+        return values[lower] + (values[upper] - values[lower]) * t
     }
 
     /// The sky `since` seconds after a run was stopped with the sky at `sky`:
