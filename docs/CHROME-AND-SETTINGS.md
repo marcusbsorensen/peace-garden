@@ -92,6 +92,19 @@ points round, and VoiceOver reads it as *What the name means*. The mark is
 transcribed from the SVG path the website draws, not redrawn, so the two cannot
 drift apart; a change starts from the site's path and comes to the app second.
 
+**13 October: the marks reach the screens they open, and the seed screen says how
+the plant is drawn** (Marcus). A screen with a title wears the mark that opened it
+before the title (`TitleGlyph`, `titleGlyph(_:size:)`): the same drawing at the same
+weight, baseline to cap height, in the title's ink, silent to VoiceOver. The garden's
+*Peace garden* has `GardenGlyph`; Settings takes the cog; the seed screen and Meet
+have no title and so no mark. Meet's corner is the circled X every other screen
+closes with, where it was the word *Cancel*, and VoiceOver still reads *Cancel* or
+*Not this time*. Under the plant's name on the seed screen, three system marks —
+palette, drop, transparent cube — choose *How the plant is drawn* on the same
+`Chrome.plantStyleKey` as Settings, which keeps its row (`PlantDrawingToggle`, on
+`MarkChooser`, the Light row's control made generic). `design/title-glyphs-2026-10-13/`
+has the pictures and the choices.
+
 ## The name
 
 One layout, always. No swap between a display state and an edit state, because
