@@ -12,6 +12,10 @@
 //    plants…") or stay?
 // 4. Every page on a phone held sideways (812 × 375): overflow and clipping.
 // 5. The keyboard sheet (`?`) on every page that has one.
+// 6. The fragments area pages link to (/meanings#theme, /garden#theme).
+// 7. Stillness under reduced motion, once the page has finished growing.
+//
+// `--only chooser,negotiation,resize,landscape,anchors,stillness` runs a part.
 //
 // Results: <out>/interact.json. Read-only: nothing here submits or posts.
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -27,6 +31,8 @@ const args = Object.fromEntries(process.argv.slice(2).reduce((acc, a, i, all) =>
 const base = (args.base || 'http://127.0.0.1:8822').replace(/\/$/, '');
 const out = args.out || 'masstest-out';
 const live = args.live === '1';
+const only = args.only ? new Set(args.only.split(',')) : null;
+const run = (part) => !only || only.has(part);
 await mkdir(join(out, 'interact'), { recursive: true });
 const pin = await pinned();
 for (const p of PAGES) if (p.hash === 'PINNED') p.hashValue = pin;
@@ -63,7 +69,7 @@ const state = (page) => page.evaluate(() => {
 });
 
 // 1. The chooser.
-for (const p of PAGES) {
+for (const p of run('chooser') ? PAGES : []) {
   const { ctx, page, errors } = await newPage({ width: 375, scheme: 'dark' });
   try {
     await page.goto(urlFor(base, p, null), { waitUntil: 'load', timeout: 60000 });
@@ -92,7 +98,7 @@ for (const p of PAGES) {
 }
 
 // 2. Negotiation.
-for (const locale of ['da-DK', 'pt-BR', 'no-NO', 'nb-NO', 'zh-TW', 'sr-Latn-RS', 'sw-KE', 'he-IL', 'kl-GL', 'cy-GB']) {
+for (const locale of run('negotiation') ? ['da-DK', 'pt-BR', 'no-NO', 'nb-NO', 'zh-TW', 'sr-Latn-RS', 'sw-KE', 'he-IL', 'kl-GL', 'cy-GB'] : []) {
   for (const id of ['front', 'walk']) {
     const p = PAGES.find((x) => x.id === id);
     const { ctx, page, errors } = await newPage({ width: 375, scheme: 'dark', locale });
@@ -108,7 +114,7 @@ for (const locale of ['da-DK', 'pt-BR', 'no-NO', 'nb-NO', 'zh-TW', 'sr-Latn-RS',
 }
 
 // 3. The toolbar: 100 px of height lost and given back.
-for (const p of PAGES.filter((x) => x.night)) {
+for (const p of run('resize') ? PAGES.filter((x) => x.night) : []) {
   const { ctx, page, errors } = await newPage({ width: 375, scheme: 'dark' });
   try {
     await page.goto(urlFor(base, p, 'en'), { waitUntil: 'load', timeout: 60000 });
@@ -136,7 +142,7 @@ for (const p of PAGES.filter((x) => x.night)) {
 }
 
 // 4. A phone held sideways, and 5. the keyboard sheet.
-{
+if (run('landscape')) {
   const { ctx, page, errors } = await newPage({ width: 812, scheme: 'dark' });
   await page.setViewportSize({ width: 812, height: 375 });
   for (const p of PAGES) {
@@ -185,7 +191,7 @@ for (const p of PAGES.filter((x) => x.night)) {
 //    that theme's entry, which the page builds in script; /garden#<theme>
 //    must open the map on that area.
 results.anchors = [];
-{
+if (run('anchors')) {
   const { ctx, page } = await newPage({ width: 375, scheme: 'dark' });
   for (const theme of ['travel', 'peace', 'meeting', 'kinship', 'pattern', 'beginnings', 'waiting', 'light', 'renewal', 'ground']) {
     try {
@@ -206,6 +212,33 @@ results.anchors = [];
   await ctx.close();
 }
 
+// 7. Stillness: with reduced motion asked for, and the page given ten seconds
+//    to finish growing, does anything on screen still move? Two captures
+//    three seconds apart, compared pixel by pixel.
+results.stillness = [];
+if (run('stillness')) {
+  const { difference } = await import('./lib/png.mjs');
+  for (const motion of ['reduce', 'no-preference']) {
+    const { ctx, page } = await newPage({ width: 375, scheme: 'dark', motion });
+    for (const p of PAGES.filter((x) => x.night || x.id === 'front')) {
+      try {
+        await page.goto(urlFor(base, p, 'en'), { waitUntil: 'load', timeout: 60000 });
+        await settle(page, 10000);
+        const raf0 = await page.evaluate(() => window.__pg.raf);
+        const a = await page.screenshot({ type: 'png' });
+        await page.waitForTimeout(3000);
+        const b = await page.screenshot({ type: 'png' });
+        const raf1 = await page.evaluate(() => window.__pg.raf);
+        results.stillness.push({ page: p.id, motion, changed: Math.round(difference(a, b) * 100000) / 100000, rafPerSecond: Math.round((raf1 - raf0) / 3) });
+      } catch (e) {
+        results.stillness.push({ page: p.id, motion, crash: String(e.message).slice(0, 200) });
+      }
+    }
+    await ctx.close();
+  }
+}
+
 await browser.close();
-await writeFile(join(out, 'interact.json'), JSON.stringify(results, null, 1));
-console.log(`interact: ${results.chooser.length} choosers, ${results.negotiation.length} negotiations, ${results.resize.length} resizes, ${results.landscape.length} landscape, ${results.keys.length} keyboard sheets -> ${join(out, 'interact.json')}`);
+const file = join(out, only ? `interact-${[...only].join('-')}.json` : 'interact.json');
+await writeFile(file, JSON.stringify(results, null, 1));
+console.log(`interact: ${results.chooser.length} choosers, ${results.negotiation.length} negotiations, ${results.resize.length} resizes, ${results.landscape.length} landscape, ${results.keys.length} keyboard sheets, ${results.anchors.length} anchors, ${results.stillness.length} stillness -> ${file}`);

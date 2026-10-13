@@ -67,7 +67,9 @@ if (existsSync(resultsFile)) {
       // A 5xx from the plot service is the local database being away (it went
       // down for fourteen minutes during the run of 13 October), not the page.
       const serviceDown = (r.http || []).some((h) => h.status >= 500 && h.url.startsWith('/api/'));
-      if (serviceDown || (r.job.page !== 't' && (r.crash || (a && ((a.chooser && a.chooser.options === 0) || (r.job.lang !== 'en' && a.lang !== r.job.lang)))))) unsettled.add(r.job.key);
+      // And a page whose reading broke in the crawler's own init script.
+      const ours = (r.errors || []).some((e) => e.includes('initScript'));
+      if (serviceDown || ours || (r.job.page !== 't' && (r.crash || (a && ((a.chooser && a.chooser.options === 0) || (r.job.lang !== 'en' && a.lang !== r.job.lang)))))) unsettled.add(r.job.key);
       else unsettled.delete(r.job.key);
     } catch { /* a torn last line */ }
   }

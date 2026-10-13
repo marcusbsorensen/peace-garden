@@ -80,8 +80,11 @@ for (const line of latest.values()) {
   for (const g of a.pg.gl || []) if (!g.ok) note('webgl', `${g.type} context refused`, job);
   if (a.pg.glLost) note('webgl', 'context lost', job);
   for (const rej of a.pg.rejections || []) note('rejection', rej.split('\n')[0].slice(0, 160), job);
-  if (a.scrollableX > 0) note('h-overflow', `${job.page} scrolls sideways at ${job.width}`, job, { by: a.scrollableX, wide: a.wide.slice(0, 3), crop: r.crops && r.crops.wide });
-  for (const w of a.wide || []) if (!(a.scrollableX > 0)) note('beyond-edge', w.sel, job, { text: w.text, left: w.left, right: w.right, crop: r.crops && r.crops.wide });
+  // A mobile browser widens its layout viewport to the content rather than
+  // scrolling it, so `scrollWidth` is the test and `scrollX` only a witness.
+  const overflow = a.scrollableX > 0 || a.scrollWidth > a.clientWidth + 1;
+  if (overflow) note('h-overflow', `${job.page} is ${a.scrollWidth} px wide at ${job.width}`, job, { by: a.scrollWidth - a.clientWidth, wide: a.wide.slice(0, 3), crop: r.crops && r.crops.wide });
+  for (const w of a.wide || []) if (!overflow) note('beyond-edge', w.sel, job, { text: w.text, left: w.left, right: w.right, crop: r.crops && r.crops.wide });
   for (const c of a.clipped || []) note('text-clipped', `${c.sel}  by  ${c.by}`, job, { text: c.text, over: c.over, axis: c.axis, crop: r.crops && r.crops.clip });
   for (const s of a.spills || []) note('text-spills', s.sel, job, { text: s.text, over: s.over, box: s.box, crop: r.crops && r.crops.spill });
   for (const o of a.overlaps || []) note('text-overlap', `${o.a}  ×  ${o.b}`, job, { a: o.at, b: o.bt, crop: r.crops && r.crops.overlap });

@@ -23,8 +23,11 @@ export function initScript() {
     };
   }
   // When the document first takes the language it was asked for.
-  new MutationObserver(() => { if (pg.langAt === undefined) pg.langAt = Math.round(performance.now()); })
-    .observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+  // Watched from the document itself: an init script can run before there
+  // is a document element to watch.
+  new MutationObserver((list) => {
+    if (pg.langAt === undefined && list.some((m) => m.target === document.documentElement)) pg.langAt = Math.round(performance.now());
+  }).observe(document, { attributes: true, subtree: true, attributeFilter: ['lang'] });
   const getContext = HTMLCanvasElement.prototype.getContext;
   HTMLCanvasElement.prototype.getContext = function (type, ...rest) {
     const ctx = getContext.call(this, type, ...rest);
