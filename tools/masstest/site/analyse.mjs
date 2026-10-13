@@ -86,7 +86,10 @@ for (const line of latest.values()) {
   for (const s of a.spills || []) note('text-spills', s.sel, job, { text: s.text, over: s.over, box: s.box, crop: r.crops && r.crops.spill });
   for (const o of a.overlaps || []) note('text-overlap', `${o.a}  ×  ${o.b}`, job, { a: o.at, b: o.bt, crop: r.crops && r.crops.overlap });
   for (const o of a.offscreenText || []) note('text-offscreen', o.sel, job, { text: o.text, crop: r.crops && r.crops.offtext });
-  if (job.lang !== 'en') {
+  // /t, the test roster, is English by design (it says so, and stands a
+  // reader in a language by its own buttons rather than by `?l=`).
+  const roster = job.page === 't';
+  if (job.lang !== 'en' && !roster) {
     for (const f of a.fellBack || []) note('fallback-en', f.key || `(no key) ${f.sel}`, job, { text: f.text });
     if (a.lang !== job.lang) note('lang-attr', `html lang="${a.lang}" for ${job.lang}`, job);
   }
@@ -97,7 +100,7 @@ for (const line of latest.values()) {
   for (const i of a.imgBroken || []) note('img-broken', i, job);
   for (const c of a.controlsNoName || []) note('control-no-name', c, job);
   for (const h of a.badAnchors || []) note('bad-anchor', h, job);
-  if (['ar', 'he', 'fa', 'ur'].includes(job.lang)) {
+  if (['ar', 'he', 'fa', 'ur'].includes(job.lang) && !roster) {
     if (a.dir !== 'rtl') note('rtl', `document is ${a.dir}`, job);
     if (a.bar && a.bar.home < a.bar.ways) note('rtl', 'bar not mirrored: wordmark left of the ways', job);
     for (const x of (a.rtl && a.rtl.ltrWithRtl) || []) note('rtl', `left-to-right box holding ${job.lang} text: ${x.sel}`, job, { text: x.text });
@@ -124,6 +127,7 @@ for (const line of latest.values()) {
 // English left on a page in another language, that the catalogue does not
 // know it left: words written into the markup or a script, not a key.
 for (const [ctx, job, strings] of others) {
+  if (job.page === 't') continue;
   const en = english.get(ctx);
   if (!en) continue;
   for (const s of strings) {

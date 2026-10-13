@@ -181,6 +181,31 @@ for (const p of PAGES.filter((x) => x.night)) {
   await k.ctx.close();
 }
 
+// 6. The fragments every area page links to: /meanings#<theme> must land on
+//    that theme's entry, which the page builds in script; /garden#<theme>
+//    must open the map on that area.
+results.anchors = [];
+{
+  const { ctx, page } = await newPage({ width: 375, scheme: 'dark' });
+  for (const theme of ['travel', 'peace', 'meeting', 'kinship', 'pattern', 'beginnings', 'waiting', 'light', 'renewal', 'ground']) {
+    try {
+      await page.goto(`${base}/meanings?l=en#${theme}`, { waitUntil: 'load', timeout: 60000 });
+      await settle(page, 800);
+      const m = await page.evaluate((id) => {
+        const el = document.getElementById(id);
+        return el ? { found: true, top: Math.round(el.getBoundingClientRect().top), scrollY: Math.round(window.scrollY) } : { found: false };
+      }, theme);
+      await page.goto(`${base}/garden?l=en#${theme}`, { waitUntil: 'load', timeout: 60000 });
+      await settle(page, 800);
+      const g = await page.evaluate(() => ({ hash: location.hash, heading: (document.querySelector('h1, .heading, [data-s^="area"]') || {}).textContent || null }));
+      results.anchors.push({ theme, meanings: m, garden: g });
+    } catch (e) {
+      results.anchors.push({ theme, crash: String(e.message).slice(0, 200) });
+    }
+  }
+  await ctx.close();
+}
+
 await browser.close();
 await writeFile(join(out, 'interact.json'), JSON.stringify(results, null, 1));
 console.log(`interact: ${results.chooser.length} choosers, ${results.negotiation.length} negotiations, ${results.resize.length} resizes, ${results.landscape.length} landscape, ${results.keys.length} keyboard sheets -> ${join(out, 'interact.json')}`);
