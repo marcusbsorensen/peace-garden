@@ -103,6 +103,16 @@ struct PlantDetailView: View {
                 .allowsHitTesting(!releasing)
                 .animation(.easeOut(duration: 0.3), value: releasing)
         }
+        // Share, beside Close: the plant as it is now, as a picture, a turn or
+        // a wallpaper. Everything it does is in `Views/Share/`.
+        .overlay(alignment: .topTrailing) {
+            PlantShareButton(genome: live.genome, growth: live.growth(now: model.now))
+                .padding(.trailing, PlantShareButton.besideClose)
+                .padding(.top, 12)
+                .opacity(releasing ? 0 : 1)
+                .allowsHitTesting(!releasing)
+                .animation(.easeOut(duration: 0.3), value: releasing)
+        }
         // **Through the ones still waiting, without going back for each.**
         // Three invitations used to be three trips out to the garden and back
         // in again, and the garden is where you have just come from. They
