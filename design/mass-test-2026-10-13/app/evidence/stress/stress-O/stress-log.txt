@@ -1,0 +1,5 @@
+mass test, 2026-10-13 21:55:46 +0000
+sprite render, cache miss: 28.0 ms of main-thread CPU each (median of 24)
+14: load 1 ms, first frame 677 ms (575 ms CPU), open 1.0 s, redraw 19.4 ms CPU/frame (p95 36.8 ms), turn 0.8 s, peak 370 MB, after close 367 MB
+100: load 3 ms, first frame 3673 ms (3205 ms CPU), open 0.9 s, redraw 109.8 ms CPU/frame (p95 117.5 ms), turn 3.0 s, peak 668 MB, after close 611 MB
+500: load 14 ms, first frame 23130 ms (17691 ms CPU), open 22.6 s, redraw 591.6 ms CPU/frame (p95 658.9 ms), turn 31.2 s, peak 1898 MB, after close 1457 MB

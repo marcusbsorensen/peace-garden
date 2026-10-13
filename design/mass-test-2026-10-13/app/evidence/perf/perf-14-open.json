@@ -1,0 +1,19 @@
+{
+  "runs" : [
+    {
+      "responsiveSeconds" : 5.0498729944229126,
+      "settled" : true,
+      "slowestProbeSeconds" : 0.02237999439239502,
+      "trayExists" : true,
+      "traySeconds" : 5.0498729944229126
+    },
+    {
+      "responsiveSeconds" : 4.9092780351638794,
+      "settled" : true,
+      "slowestProbeSeconds" : 0.02326500415802002,
+      "trayExists" : true,
+      "traySeconds" : 4.909277081489563
+    }
+  ],
+  "size" : 14
+}

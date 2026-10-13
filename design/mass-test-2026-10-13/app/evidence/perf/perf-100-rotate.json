@@ -1,0 +1,25 @@
+{
+  "size" : 100,
+  "turns" : [
+    {
+      "seconds" : 10.225268959999084,
+      "settled" : true,
+      "slowestProbeSeconds" : 0.78413498401641846
+    },
+    {
+      "seconds" : 6.7751100063323975,
+      "settled" : true,
+      "slowestProbeSeconds" : 0.45154201984405518
+    },
+    {
+      "seconds" : 6.5736269950866699,
+      "settled" : true,
+      "slowestProbeSeconds" : 0.44636690616607666
+    },
+    {
+      "seconds" : 7.3792890310287476,
+      "settled" : true,
+      "slowestProbeSeconds" : 0.43788301944732666
+    }
+  ]
+}
