@@ -174,8 +174,9 @@ struct LivePhotoPair: Sendable {
 ///
 /// **Add-only.** The app asks to put things in Photos and never to see what is
 /// there (`NSPhotoLibraryAddUsageDescription`), so it cannot look back at what
-/// it saved either. Whether a saved moving wallpaper came out as a Live Photo
-/// is checked by `PlantShareTests` on a simulator given full access, not here.
+/// it saved either. That a saved moving wallpaper comes out as a Live Photo
+/// was checked on a simulator from outside the app
+/// (`design/share-plant-2026-10-13/README.md`).
 enum PhotosSaving {
 
     enum Outcome: Equatable {
@@ -204,24 +205,6 @@ enum PhotosSaving {
             request.addResource(with: .photo, fileURL: pair.still, options: moving())
             request.addResource(with: .pairedVideo, fileURL: pair.movie, options: moving())
         }
-    }
-
-    /// The identifier of what was made, for a check that has full access.
-    static func saveReturningIdentifier(_ pair: LivePhotoPair) async throws -> String? {
-        let made = Made()
-        try await PHPhotoLibrary.shared().performChanges {
-            let request = PHAssetCreationRequest.forAsset()
-            request.addResource(with: .photo, fileURL: pair.still, options: nil)
-            request.addResource(with: .pairedVideo, fileURL: pair.movie, options: nil)
-            made.identifier = request.placeholderForCreatedAsset?.localIdentifier
-        }
-        return made.identifier
-    }
-
-    /// Carried out of the change block, which Photos runs on a queue of its
-    /// own and has finished with before `performChanges` returns.
-    private final class Made: @unchecked Sendable {
-        var identifier: String?
     }
 
     private static func moving() -> PHAssetResourceCreationOptions {

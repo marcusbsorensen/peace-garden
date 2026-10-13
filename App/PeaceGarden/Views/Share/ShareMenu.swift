@@ -77,7 +77,6 @@ struct PlantShareButton: View {
     static let besideClose: CGFloat = 12 + 42 + 8
 
     @State private var work = PlantShareWork()
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 10) {
@@ -105,7 +104,9 @@ struct PlantShareButton: View {
                     .transition(.opacity)
             }
         }
-        .animation(reduceMotion ? nil : Chrome.fadeIn, value: work.hint)
+        // A crossfade under Reduce Motion too: nothing moves, and the line
+        // still has to arrive (the house rule, `PlantStageView`'s Settings).
+        .animation(Chrome.fadeIn, value: work.hint)
     }
 
     private var mark: some View {
@@ -159,7 +160,23 @@ struct PlantShareButton: View {
                     .strokeBorder(Chrome.hairline, lineWidth: 1))
         )
         .onTapGesture { work.hint = nil }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(spoken(hint))
         .accessibilityAddTraits(.isStaticText)
+    }
+
+    /// The line as VoiceOver reads it: the glyph drawn in it has no words of
+    /// its own, so it is read as the word the mark itself is read as. The same
+    /// key as the written line, with *Share* where the glyph is.
+    private func spoken(_ hint: PlantShareHint) -> Text {
+        switch hint {
+        case .saved:
+            Text("Saved to Photos. Open it there, tap \(Text("Share")), then Use as Wallpaper.")
+        case .notAllowed:
+            Text("Allow Peace Garden to add to Photos in Settings.")
+        case .failed:
+            Text("Try again")
+        }
     }
 }
 

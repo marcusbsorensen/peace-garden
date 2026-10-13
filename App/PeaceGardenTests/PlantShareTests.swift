@@ -1,6 +1,5 @@
 import AVFoundation
 import ImageIO
-import Photos
 import SeedCore
 import XCTest
 @testable import PeaceGarden
@@ -231,31 +230,11 @@ final class PlantShareTests: XCTestCase {
         try? FileManager.default.removeItem(at: pair.still.deletingLastPathComponent())
     }
 
-    // MARK: Photos
-
-    /// Saved to Photos, a moving wallpaper is a Live Photo.
-    ///
-    /// Only where `PG_PHOTOS` is set (`TEST_RUNNER_PG_PHOTOS`), because it adds
-    /// to the library of whatever it runs on, and only with full access, which
-    /// the app itself never asks for: `xcrun simctl privacy <device> grant
-    /// photos app.peacegarden` on a scratch simulator first.
-    func testAMovingWallpaperSavesAsALivePhoto() async throws {
-        guard ProcessInfo.processInfo.environment["PG_PHOTOS"] != nil else {
-            throw XCTSkip("PG_PHOTOS is not set")
-        }
-        try XCTSkipUnless(PHPhotoLibrary.authorizationStatus(for: .readWrite) == .authorized,
-                          "needs full Photos access on this simulator")
-        let portrait = Self.small(width: 360, height: 780)
-        let pair = try await PlantShareFiles.movingWallpaper(portrait, backdrop: try Self.backdrop(portrait))
-        let made = try await PhotosSaving.saveReturningIdentifier(pair)
-        let identifier = try XCTUnwrap(made)
-        let asset = try XCTUnwrap(PHAsset.fetchAssets(withLocalIdentifiers: [identifier], options: nil).firstObject)
-        XCTAssertEqual(asset.mediaType, .image)
-        XCTAssertTrue(asset.mediaSubtypes.contains(.photoLive), "subtypes \(asset.mediaSubtypes.rawValue)")
-        XCTAssertNil(asset.location)
-        let resources = PHAssetResource.assetResources(for: asset).map(\.type)
-        XCTAssertTrue(resources.contains(.pairedVideo), "\(resources.map(\.rawValue))")
-    }
+    // Whether a saved moving wallpaper comes out of Photos as a Live Photo
+    // cannot be asked from here: the tests run inside the app, and the app has
+    // add-only access and no reason to read the library. It was checked on a
+    // scratch simulator from a test runner with read access of its own
+    // (`design/share-plant-2026-10-13/README.md`).
 
     // MARK: Helpers
 
