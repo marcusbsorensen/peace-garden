@@ -95,9 +95,9 @@ def main():
     locks = [fit(Image.open(renders / f"lock-{l}.png").convert("RGB"), 380) for l in "ABC"]
     lettered(locks,
              ["A  Night sky", "B  Day sky", "C  The plant's own stage"],
-             ["recommended: the garden's night, the plant's light",
-              "the garden's mid-morning, no pool of light",
-              "black and the pool of light, as on a dark phone"]
+             ["recommended",
+              "the garden's mid-morning",
+              "black and the pool of light"]
              ).save(HERE / "backgrounds-ABC.png", optimize=True)
 
     # 2. The default on its own lock screen, larger.
@@ -138,6 +138,12 @@ def main():
             if all(p.exists() for p in pair):
                 panels = [fit(Image.open(p).convert("RGB"), 420) for p in pair]
                 lettered(panels, ["Light", "Dark"]).save(HERE / f"{name}-light-dark.png", optimize=True)
+        flow = [("progress-turning", "Drawing the turn"), ("sheet-picture", "The share sheet"),
+                ("photos-permission", "Photos asks, once"), ("hint-wallpaper", "After saving")]
+        found = [(shots / f"{n}.png", label) for n, label in flow if (shots / f"{n}.png").exists()]
+        if found:
+            panels = [fit(Image.open(p).convert("RGB"), 340) for p, _ in found]
+            lettered(panels, [label for _, label in found], gap=24).save(HERE / "flow-dark.png", optimize=True)
 
     for path in sorted(HERE.glob("*.png")) + sorted(HERE.glob("*.jpg")):
         print(f"{path.name:32} {path.stat().st_size / 1024:8.0f} KB")
