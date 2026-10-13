@@ -69,6 +69,17 @@ export function sql(query, db = 'pgmt_main') {
     return out.split('\n').filter((line) => line.length).map((line) => line.split('\t'));
 }
 
+/** The same, without blocking the event loop: for sampling while clients run. */
+export async function sqlAsync(query, db = 'pgmt_main') {
+    const { execFile } = await import('node:child_process');
+    return new Promise((resolve) => {
+        const child = execFile('docker', ['exec', '-i', 'pg-mt-pop-db', 'mariadb', '-uroot', '-proot-local-only', '-N', '-B', db],
+                               { maxBuffer: 1 << 24 }, (error, stdout) => resolve(error ? [] : String(stdout).split('\n')
+                                   .filter((line) => line.length).map((line) => line.split('\t'))));
+        child.stdin.end(query);
+    });
+}
+
 /** One of the service's own commands (curate.php, sweep.php), on a test database. */
 export function serviceCommand(script, args = [], db = 'pgmt_main') {
     try {

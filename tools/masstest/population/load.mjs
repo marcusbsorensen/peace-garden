@@ -13,7 +13,7 @@
 
 import { writeFileSync } from 'node:fs';
 import path from 'node:path';
-import { request, sql, summarise, readPlan, arrival, AREA_ROUTES } from './lib.mjs';
+import { request, sql, sqlAsync, summarise, readPlan, arrival, AREA_ROUTES } from './lib.mjs';
 
 const argv = process.argv.slice(2);
 const option = (name, fallback) => { const i = argv.indexOf(`--${name}`); return i >= 0 ? argv[i + 1] : fallback; };
@@ -81,8 +81,27 @@ async function phase(kind, level) {
             done++;
         }
     }
+    // What the database's threads are doing, sampled twice a second while the
+    // clients run: a state of "Waiting for table metadata lock" is one request
+    // queued behind another's DDL.
+    const states = {};
+    let sampling = true;
+    const sampler = (async () => {
+        while (sampling) {
+            const rows = await sqlAsync(`SELECT IFNULL(NULLIF(state, ''), command), LEFT(REPLACE(IFNULL(info, ''), '\n', ' '), 60)
+                                         FROM information_schema.processlist
+                                         WHERE db = '${DB}' AND command <> 'Sleep' AND id <> CONNECTION_ID()`, DB);
+            for (const [state, info] of rows) {
+                const key = state === 'Waiting for table metadata lock' ? `${state}: ${(info ?? '').replace(/\s+/g, ' ').slice(0, 48)}` : state;
+                states[key] = (states[key] ?? 0) + 1;
+            }
+            await new Promise((resolve) => setTimeout(resolve, 500));
+        }
+    })();
     const t0 = performance.now();
     await Promise.all(Array.from({ length: level }, client));
+    sampling = false;
+    await sampler;
     const seconds = (performance.now() - t0) / 1000;
     const ok = Object.entries(statuses).filter(([s]) => s >= 200 && s < 300).reduce((n, [, c]) => n + c, 0);
     const top = sql(`SELECT COUNT_STAR, ROUND(SUM_TIMER_WAIT/1e9), ROUND(AVG_TIMER_WAIT/1e6), LEFT(DIGEST_TEXT, 90)
@@ -92,7 +111,8 @@ async function phase(kind, level) {
     const result = { kind, level, seconds: Math.round(seconds * 10) / 10, requests: done,
                      perSecond: Math.round((done / seconds) * 10) / 10, ...summarise(latencies),
                      errorShare: Math.round(((done - ok) / Math.max(1, done)) * 1000) / 10, statuses,
-                     routes: Object.fromEntries(Object.entries(byRoute).map(([r, l]) => [r, summarise(l)])), top };
+                     routes: Object.fromEntries(Object.entries(byRoute).map(([r, l]) => [r, summarise(l)])), top,
+                     threadStates: states };
     console.log(JSON.stringify({ kind, level, perSecond: result.perSecond, p50: result.p50, p95: result.p95, p99: result.p99,
                                  errorShare: result.errorShare, statuses }));
     return result;
