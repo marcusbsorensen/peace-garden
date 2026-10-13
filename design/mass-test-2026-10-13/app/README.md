@@ -25,7 +25,7 @@ runner.
 9. **With Settings open, VoiceOver can still reach the stage underneath** (its four marks and the plant's name are in the same accessibility tree).
 10. **Some buttons are read twice**: "Reset everything, Reset everything", "Empty the garden, Empty the garden", "Release, Release".
 11. **Memory is not handed back**: closing a 500-plant garden leaves 1.4 GB behind, and the footprint climbs about 20 MB with each month the clock moves.
-12. Smaller: the seed sheet's last rows sit below the fold on the SE; two developer switches cannot be set by launch argument; seven or eight asking-flow strings per language still await translation (known).
+12. Smaller: the seed sheet's last rows sit below the fold on the SE; the Testing section cannot be folded by launch argument; seven or eight asking-flow strings per language still await translation (known).
 
 SeedCore came through clean: 100,000 random crosses, lineages up to 2,715
 crosses deep, no crash, no trait out of range, no NaN, deterministic across
@@ -40,7 +40,7 @@ crosses exactly.
 | Build | **Debug**, because every `-pg` launch argument and the developer clock are Debug-only. Timed twice: as built (`-Onone`), and with the optimiser on (`SWIFT_OPTIMIZATION_LEVEL=-O`, still Debug), which is the nearer guide to a shipped build: an unoptimised SeedCore makes each plant's mesh about ten times slower |
 | Simulators (scratch, deleted after) | `pg-mt-app-SE` iPhone SE (3rd generation), 375 × 667 pt, the smallest phone iOS 26 runs on · `pg-mt-app-Air` iPhone Air, 420 × 912 · `pg-mt-app-ProMax` iPhone 17 Pro Max, 440 × 956 · `pg-mt-app-Stress` iPhone Air, for the stress and performance runs. No iPhone 17 Pro simulator was touched |
 | The Mac | Shared with two other agents (Docker, a headless browser) and a fourth simulator not mine. Load average reached about 600 and swap 40 GB; at one point the disk filled (see *Conditions*). So the times that matter are given as **main-thread CPU time**, which a busy machine distorts far less than the wall clock |
-| Duration | About 2 h 15 min of running, 22:13 to 00:30 |
+| Duration | Runs from 22:13 to 23:45, up to four simulators at once (about 1 h 30 min of wall time; 100 minutes of screen sweeping alone) |
 
 **Screen matrix (sampled, not the full product).** Every language on every
 phone; every Dynamic Type size on at least one phone; both appearances on
@@ -85,8 +85,8 @@ Air. Optimised Debug build unless marked.
 | 200 | 19.7 m | 142 KB / 5 ms | 7.4 s | 6.3 s | 212 ms | ~5 | 5.8 s | 6.9 s | 2.5 GB | 0.81 GB | – |
 | 300 | 24.1 m | 212 KB / 9 ms | 7.3 s † | 3.7 s | 325 ms | ~3 | 10.0 s | 20 s | 3.7 GB | 1.08 GB | – |
 | 500 | 31.1 m | 352 KB / 14 ms | 17.7 s | 22.6 s | 592 ms | ~1.7 | 26.8 s | 31 s | 5.9 GB | 1.46 GB | 150 s / 2,259 ms / 61.8 s |
-| 1,000 | 44 m | 571 KB | **stopped**: passed 5 GB 8 s into opening | | | | | | > 5 GB | | |
-| 2,000 | 62 m | 1.1 MB | **stopped**: passed 5.5 GB 25 s into opening | | | | | | > 5.5 GB | | |
+| 1,000 | 44 m | 571 KB | **stopped**: passed 5 GB before its first frame had finished | | | | | | > 5 GB | | |
+| 2,000 | 62 m | 1.1 MB | **stopped**: passed 5.5 GB about 25 s into opening | | | | | | > 5.5 GB | | |
 
 † 300 ran in the same process straight after 200 and reused the first 200
 plants' work (they are the same seeds), so its opening is flattered.
@@ -405,13 +405,14 @@ memory warning.
   sit below the screen in every language; they are reached by dragging the
   sheet up. Fix: **A** start the sheet at `.large` on compact heights, or
   **B** leave it.
-- **Two developer switches cannot be set from the command line.**
-  `Developer` reads `developer.showsSection` (and `@AppStorage` reads
-  `stage.turntable.v1`) through `object(forKey:) as? Bool`, and
-  `-developer.showsSection NO` arrives as the string "NO", so the argument
-  silently does nothing and even overrides a stored value. The harness sets
-  them with `simctl spawn … defaults write`. Fix: **A** read with
-  `bool(forKey:)` when the object is a string, or **B** document it.
+- **The Testing section cannot be folded from the command line.**
+  `Developer` reads `developer.showsSection` through
+  `object(forKey:) as? Bool`, and `-developer.showsSection NO` arrives as the
+  string "NO", so the argument silently does nothing and, being in the
+  argument domain, hides a stored value too. The harness folds it with
+  `simctl spawn … defaults write`. Fix: **A** read it with `bool(forKey:)`
+  when the object is there, as `-pgTray` already is, or **B** leave it; it
+  only matters to screenshots.
 - **Known untranslated strings.** Seven keys in `da`, eight in the other six
   languages (the asking flow, and *Newer version in the App Store*) have no
   translation yet; none is on a screen this sweep reached. Already queued for
