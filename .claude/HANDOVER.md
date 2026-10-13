@@ -2,6 +2,8 @@
 
 Previous note: `git show a553669:.claude/HANDOVER.md`, about build 7 and the new logo. This session ran on Marcus's work account (hello@uncubed.app). Memory lives in the personal account's folder, `~/.claude/projects/-Users-marcus-Projects-peace-garden/memory/`.
 
+**Credit (13 October):** Marcus has said to go for broke again in the new credit window. Until he says otherwise, the Sonnet-only, two-local-agent and ask-before-long-tests rules are lifted, as on 11 and 12 October.
+
 ## Goal
 Ship build 8 to TestFlight with the requests Marcus made on 12 October, and deploy the privacy page that describes the new update check.
 
