@@ -228,3 +228,6 @@ Added by hand in Xcode's layout; `tools/strings/check.py` and `tools/strings/app
   back in any field the mesh is drawn from, flowers included; no second holding a fifth of the
   growing; every moment read at the hour it is now; Reduce Motion's still sky and five stills.
 - `TimeLapseLuminanceTests` (2): above.
+
+Run on a scratch iPhone Air simulator (iOS 26.5) with `GardenControlsTests` (9) and `PlotTests`
+(47): **63 tests, 0 failures**. The full suite was not run.
