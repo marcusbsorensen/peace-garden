@@ -1,0 +1,118 @@
+{
+ "db": "pgmt_main",
+ "perRoute": {
+  "/api/garden": {
+   "n": 20,
+   "p50": 0.8,
+   "p95": 1.3,
+   "p99": 1.7,
+   "max": 1.7
+  },
+  "/api/wild": {
+   "n": 20,
+   "p50": 52.8,
+   "p95": 91.3,
+   "p99": 203.4,
+   "max": 203.4
+  },
+  "/api/wild/tile/3/4": {
+   "n": 20,
+   "p50": 33.5,
+   "p95": 41.2,
+   "p99": 41.5,
+   "max": 41.5
+  },
+  "/api/walk": {
+   "n": 20,
+   "p50": 31.1,
+   "p95": 52.4,
+   "p99": 55.8,
+   "max": 55.8
+  },
+  "/api/glasshouse/plot/0": {
+   "n": 20,
+   "p50": 28.1,
+   "p95": 48.1,
+   "p99": 54.1,
+   "max": 54.1
+  },
+  "/api/coppice/plot/0": {
+   "n": 20,
+   "p50": 29.7,
+   "p95": 36.2,
+   "p99": 44.1,
+   "max": 44.1
+  },
+  "/api/ground": {
+   "n": 20,
+   "p50": 29.2,
+   "p95": 44.5,
+   "p99": 67.4,
+   "max": 67.4
+  }
+ },
+ "statementsPerRequest": 84,
+ "dbMsPerRequest": 27,
+ "top": [
+  {
+   "n": 120,
+   "totalMs": 1839.9,
+   "avgUs": 15333,
+   "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE"
+  },
+  {
+   "n": 20,
+   "totalMs": 674.9,
+   "avgUs": 33745,
+   "text": "SELECT `tile_x` , `tile_z` , COUNT ( * ) AS `plants` FROM `wild_fields"
+  },
+  {
+   "n": 20,
+   "totalMs": 75.1,
+   "avgUs": 3757,
+   "text": "SELECT `f` . `seed` , `f` . `parent_a` , `f` . `parent_b` , `n` . `nam"
+  },
+  {
+   "n": 120,
+   "totalMs": 40.7,
+   "avgUs": 339,
+   "text": "SELECT `arrival` FROM `long_walk` WHERE `hidden` = ? AND `seed` NOT LI"
+  },
+  {
+   "n": 120,
+   "totalMs": 20.9,
+   "avgUs": 174,
+   "text": "SELECT `arrival` FROM `seedbed` WHERE `hidden` = ? AND `seed` NOT LIKE"
+  },
+  {
+   "n": 120,
+   "totalMs": 20.8,
+   "avgUs": 174,
+   "text": "ALTER TABLE `long_walk` ADD COLUMN `hidden` INTEGER NOT NULL DEFAULT ?"
+  },
+  {
+   "n": 120,
+   "totalMs": 19.8,
+   "avgUs": 165,
+   "text": "SELECT `arrival` FROM `quiet_garden` WHERE `hidden` = ? AND `seed` NOT"
+  },
+  {
+   "n": 120,
+   "totalMs": 18.2,
+   "avgUs": 152,
+   "text": "SELECT `arrival` FROM `glasshouse` WHERE `hidden` = ? AND `seed` NOT L"
+  },
+  {
+   "n": 120,
+   "totalMs": 17.8,
+   "avgUs": 148,
+   "text": "SELECT `arrival` FROM `home_ground` WHERE `hidden` = ? AND `seed` NOT "
+  },
+  {
+   "n": 120,
+   "totalMs": 17.1,
+   "avgUs": 143,
+   "text": "SELECT `arrival` FROM `crossing` WHERE `hidden` = ? AND `seed` NOT LIK"
+  }
+ ]
+}

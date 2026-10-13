@@ -1,0 +1,64 @@
+# PHP error log, grouped (seeds and buckets as HEX, plot and tile numbers as n).
+
+## Host PHP-FPM runs: smoke test, first races, the population
+
+   565 plot service: SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction
+   329 plot service: 410 on /api/wild/release
+   276 plot service: 410 on /api/walk/offer
+   212 plot service: 500 on /api/walk/pending
+   159 plot service: 500 on /api/walk/offer
+   141 plot service: 429 on /api/walk/pending
+   113 plot service: 500 on /api/wild/release
+    64 plot service: 500 on /api/walk/answer
+    32 plot service: 400 on /api/wild/release
+    14 plot service: 500 on /api/walk/withdraw
+    12 plot service: 400 on /api/walk/offer
+     9 plot service: 500 on /api/wild/answer
+     6 plot service: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'HEX' for key 'PRIMARY'
+     4 plot service: 409 on /api/walk/offer
+     3 plot service: 404 on /api/walk/answer
+     3 plot service: 422 on /api/wild/release
+     3 plot service: 403 on /api/wild/release
+     3 plot service: 429 on /api/wild/release
+     2 plot service: 422 on /api/walk/offer
+     2 plot service: 400 on /api/walk/pending
+     2 plot service: 404 on /api/wild/tile/x/z
+     1 plot service: 404 on /api/walk/withdraw
+     1 plot service: 404 on /api/wild/answer
+     1 plot service: 404 on /api/wild/release
+
+## Docker PHP-FPM runs: races again, charset probe, scale, load tests, the no-migration experiment
+
+"Address not available" (2002) is the first no-migration load run exhausting the PHP container's ephemeral ports at ~1,000 new database connections a second; the 500s on read routes are the same run. It was run again with a wider port range (stack.sh now sets it) and those numbers are the ones reported.
+
+ 23712 plot service: SQLSTATE[HY000] [2002] Address not available
+  9628 plot service: 500 on /api/wild/release
+  9444 plot service: 500 on /api/walk/offer
+  2327 plot service: 500 on /api/wild/tile/x/z
+   479 plot service: 500 on /api/wild
+   156 plot service: 500 on /api/ground/plot/n
+   153 plot service: 500 on /api/quiet/plot/n
+   151 plot service: 500 on /api/knot/plot/n
+   146 plot service: 500 on /api/frame/plot/n
+   138 plot service: 500 on /api/cross/plot/n
+   138 plot service: 500 on /api/glasshouse/plot/n
+   137 plot service: 500 on /api/coppice/plot/n
+   136 plot service: 500 on /api/orchard/plot/n
+   134 plot service: 500 on /api/seedbed/plot/n
+   123 plot service: 500 on /api/walk/plot/n
+    55 plot service: 500 on /api/ground
+    53 plot service: 500 on /api/quiet
+    53 plot service: 500 on /api/orchard
+    50 plot service: 500 on /api/frame
+    47 plot service: 500 on /api/coppice
+    43 plot service: 500 on /api/glasshouse
+    42 plot service: 500 on /api/seedbed
+    40 plot service: 500 on /api/walk
+    39 plot service: 500 on /api/cross
+    39 plot service: 500 on /api/knot
+    36 plot service: SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction
+    26 plot service: 404 on /api/walk/answer
+    13 plot service: 410 on /api/walk/offer
+     4 plot service: SQLSTATE[22007]: Invalid datetime format: 1366 Incorrect string value: … for column `pgmt_cs_latin1`.`wild_names`.`name_a` at row 1
+     3 plot service: 500 on /api/walk/pending
+     2 plot service: SQLSTATE[22007]: Invalid datetime format: 1366 Incorrect string value: … for column `pgmt_cs_utf8mb3`.`wild_names`.`name_a` at row 1

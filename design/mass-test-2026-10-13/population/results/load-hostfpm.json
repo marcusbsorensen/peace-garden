@@ -1,0 +1,862 @@
+{
+ "db": "pgmt_main",
+ "tag": "tmpfs",
+ "seconds": 20,
+ "plots": {
+  "travel": 16,
+  "peace": 37,
+  "meeting": 24,
+  "kinship": 20,
+  "pattern": 13,
+  "beginnings": 25,
+  "waiting": 10,
+  "light": 18,
+  "renewal": 13,
+  "ground": 9
+ },
+ "databaseMB": 22.7,
+ "results": [
+  {
+   "kind": "read",
+   "level": 10,
+   "seconds": 20.1,
+   "requests": 1162,
+   "perSecond": 57.9,
+   "n": 1162,
+   "p50": 128.2,
+   "p95": 331.8,
+   "p99": 583.1,
+   "max": 1096.5,
+   "errorShare": 0,
+   "statuses": {
+    "200": 1162
+   },
+   "routes": {
+    "/api/wild/tile/n/n": {
+     "n": 586,
+     "p50": 129.3,
+     "p95": 321.3,
+     "p99": 422.1,
+     "max": 819
+    },
+    "/api/glasshouse/plot/n": {
+     "n": 37,
+     "p50": 135.3,
+     "p95": 397.9,
+     "p99": 530.4,
+     "max": 530.4
+    },
+    "/api/coppice/plot/n": {
+     "n": 38,
+     "p50": 167.5,
+     "p95": 384.7,
+     "p99": 401.8,
+     "max": 401.8
+    },
+    "/api/cross": {
+     "n": 14,
+     "p50": 122.7,
+     "p95": 985.8,
+     "p99": 985.8,
+     "max": 985.8
+    },
+    "/api/frame/plot/n": {
+     "n": 32,
+     "p50": 116.4,
+     "p95": 300.8,
+     "p99": 315.6,
+     "max": 315.6
+    },
+    "/api/orchard/plot/n": {
+     "n": 27,
+     "p50": 144.1,
+     "p95": 340.7,
+     "p99": 409,
+     "max": 409
+    },
+    "/api/ground/plot/n": {
+     "n": 32,
+     "p50": 120.9,
+     "p95": 306.9,
+     "p99": 372.4,
+     "max": 372.4
+    },
+    "/api/quiet": {
+     "n": 19,
+     "p50": 124.7,
+     "p95": 318.9,
+     "p99": 318.9,
+     "max": 318.9
+    },
+    "/api/frame": {
+     "n": 16,
+     "p50": 206.3,
+     "p95": 1096.5,
+     "p99": 1096.5,
+     "max": 1096.5
+    },
+    "/api/wild": {
+     "n": 116,
+     "p50": 122.2,
+     "p95": 350.1,
+     "p99": 407.7,
+     "max": 1078.7
+    },
+    "/api/knot/plot/n": {
+     "n": 35,
+     "p50": 150.5,
+     "p95": 388.5,
+     "p99": 424,
+     "max": 424
+    },
+    "/api/seedbed/plot/n": {
+     "n": 33,
+     "p50": 157,
+     "p95": 307.4,
+     "p99": 370.8,
+     "max": 370.8
+    },
+    "/api/cross/plot/n": {
+     "n": 36,
+     "p50": 123.8,
+     "p95": 368.9,
+     "p99": 374,
+     "max": 374
+    },
+    "/api/quiet/plot/n": {
+     "n": 31,
+     "p50": 121.2,
+     "p95": 335.7,
+     "p99": 339.3,
+     "max": 339.3
+    },
+    "/api/ground": {
+     "n": 6,
+     "p50": 157.4,
+     "p95": 332,
+     "p99": 332,
+     "max": 332
+    },
+    "/api/seedbed": {
+     "n": 11,
+     "p50": 121.2,
+     "p95": 305.2,
+     "p99": 305.2,
+     "max": 305.2
+    },
+    "/api/walk/plot/n": {
+     "n": 35,
+     "p50": 127.6,
+     "p95": 614.2,
+     "p99": 947.8,
+     "max": 947.8
+    },
+    "/api/walk": {
+     "n": 7,
+     "p50": 110.4,
+     "p95": 583.1,
+     "p99": 583.1,
+     "max": 583.1
+    },
+    "/api/glasshouse": {
+     "n": 7,
+     "p50": 153,
+     "p95": 331.8,
+     "p99": 331.8,
+     "max": 331.8
+    },
+    "/api/orchard": {
+     "n": 14,
+     "p50": 128.2,
+     "p95": 239,
+     "p99": 239,
+     "max": 239
+    },
+    "/api/coppice": {
+     "n": 17,
+     "p50": 114,
+     "p95": 868.9,
+     "p99": 868.9,
+     "max": 868.9
+    },
+    "/api/knot": {
+     "n": 13,
+     "p50": 117.8,
+     "p95": 418,
+     "p99": 418,
+     "max": 418
+    }
+   },
+   "top": [
+    {
+     "n": 1162,
+     "totalMs": 4394,
+     "avgUs": 3781,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 116,
+     "totalMs": 472,
+     "avgUs": 4071,
+     "text": "SELECT `tile_x` , `tile_z` , COUNT ( * ) AS `plants` FROM `wild_fields` WHERE `hidden` = ?"
+    },
+    {
+     "n": 1162,
+     "totalMs": 285,
+     "avgUs": 246,
+     "text": "SELECT `arrival` FROM `long_walk` WHERE `hidden` = ? AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 586,
+     "totalMs": 265,
+     "avgUs": 453,
+     "text": "SELECT `f` . `seed` , `f` . `parent_a` , `f` . `parent_b` , `n` . `name_a` , `n` . `name_b"
+    },
+    {
+     "n": 1162,
+     "totalMs": 246,
+     "avgUs": 212,
+     "text": "SELECT `arrival` FROM `coppice` WHERE `hidden` = ? AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 1161,
+     "totalMs": 242,
+     "avgUs": 209,
+     "text": "SELECT `arrival` FROM `home_ground` WHERE `hidden` = ? AND `seed` NOT LIKE ? "
+    }
+   ]
+  },
+  {
+   "kind": "read",
+   "level": 50,
+   "seconds": 20.7,
+   "requests": 1332,
+   "perSecond": 64.3,
+   "n": 1332,
+   "p50": 755.7,
+   "p95": 1196.2,
+   "p99": 1281.6,
+   "max": 1515,
+   "errorShare": 0,
+   "statuses": {
+    "200": 1332
+   },
+   "routes": {
+    "/api/cross/plot/n": {
+     "n": 26,
+     "p50": 738.6,
+     "p95": 1232.4,
+     "p99": 1274.7,
+     "max": 1274.7
+    },
+    "/api/quiet/plot/n": {
+     "n": 44,
+     "p50": 770.1,
+     "p95": 1241,
+     "p99": 1455.5,
+     "max": 1455.5
+    },
+    "/api/frame": {
+     "n": 13,
+     "p50": 712.1,
+     "p95": 1291.6,
+     "p99": 1291.6,
+     "max": 1291.6
+    },
+    "/api/quiet": {
+     "n": 14,
+     "p50": 870.9,
+     "p95": 1197.2,
+     "p99": 1197.2,
+     "max": 1197.2
+    },
+    "/api/wild/tile/n/n": {
+     "n": 663,
+     "p50": 758.3,
+     "p95": 1202.2,
+     "p99": 1281.6,
+     "max": 1502.1
+    },
+    "/api/wild": {
+     "n": 135,
+     "p50": 754.8,
+     "p95": 1187.5,
+     "p99": 1229.8,
+     "max": 1515
+    },
+    "/api/cross": {
+     "n": 16,
+     "p50": 708.9,
+     "p95": 1192,
+     "p99": 1192,
+     "max": 1192
+    },
+    "/api/frame/plot/n": {
+     "n": 48,
+     "p50": 742.9,
+     "p95": 1203,
+     "p99": 1314.9,
+     "max": 1314.9
+    },
+    "/api/knot": {
+     "n": 19,
+     "p50": 717,
+     "p95": 1193.3,
+     "p99": 1193.3,
+     "max": 1193.3
+    },
+    "/api/seedbed/plot/n": {
+     "n": 40,
+     "p50": 792.1,
+     "p95": 1054.5,
+     "p99": 1219.9,
+     "max": 1219.9
+    },
+    "/api/walk": {
+     "n": 12,
+     "p50": 665.7,
+     "p95": 1043.5,
+     "p99": 1043.5,
+     "max": 1043.5
+    },
+    "/api/knot/plot/n": {
+     "n": 38,
+     "p50": 700.6,
+     "p95": 1151,
+     "p99": 1178.1,
+     "max": 1178.1
+    },
+    "/api/ground/plot/n": {
+     "n": 51,
+     "p50": 814.5,
+     "p95": 1162,
+     "p99": 1234.4,
+     "max": 1234.4
+    },
+    "/api/orchard": {
+     "n": 17,
+     "p50": 626.3,
+     "p95": 1188.1,
+     "p99": 1188.1,
+     "max": 1188.1
+    },
+    "/api/ground": {
+     "n": 10,
+     "p50": 899.2,
+     "p95": 1474.6,
+     "p99": 1474.6,
+     "max": 1474.6
+    },
+    "/api/coppice": {
+     "n": 15,
+     "p50": 828.1,
+     "p95": 1166.9,
+     "p99": 1166.9,
+     "max": 1166.9
+    },
+    "/api/glasshouse/plot/n": {
+     "n": 38,
+     "p50": 864.2,
+     "p95": 1229.8,
+     "p99": 1443,
+     "max": 1443
+    },
+    "/api/walk/plot/n": {
+     "n": 28,
+     "p50": 645.9,
+     "p95": 920.3,
+     "p99": 1263.9,
+     "max": 1263.9
+    },
+    "/api/coppice/plot/n": {
+     "n": 38,
+     "p50": 743.5,
+     "p95": 1154.9,
+     "p99": 1157.7,
+     "max": 1157.7
+    },
+    "/api/glasshouse": {
+     "n": 10,
+     "p50": 664.4,
+     "p95": 1208.4,
+     "p99": 1208.4,
+     "max": 1208.4
+    },
+    "/api/orchard/plot/n": {
+     "n": 42,
+     "p50": 582.5,
+     "p95": 1034.1,
+     "p99": 1088.8,
+     "max": 1088.8
+    },
+    "/api/seedbed": {
+     "n": 15,
+     "p50": 826.2,
+     "p95": 1192.3,
+     "p99": 1192.3,
+     "max": 1192.3
+    }
+   },
+   "top": [
+    {
+     "n": 1332,
+     "totalMs": 5214,
+     "avgUs": 3915,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 135,
+     "totalMs": 614,
+     "avgUs": 4552,
+     "text": "SELECT `tile_x` , `tile_z` , COUNT ( * ) AS `plants` FROM `wild_fields` WHERE `hidden` = ?"
+    },
+    {
+     "n": 662,
+     "totalMs": 336,
+     "avgUs": 507,
+     "text": "SELECT `f` . `seed` , `f` . `parent_a` , `f` . `parent_b` , `n` . `name_a` , `n` . `name_b"
+    },
+    {
+     "n": 1331,
+     "totalMs": 325,
+     "avgUs": 245,
+     "text": "SELECT `arrival` FROM `long_walk` WHERE `hidden` = ? AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 1331,
+     "totalMs": 306,
+     "avgUs": 230,
+     "text": "SELECT `arrival` FROM `seedbed` WHERE `hidden` = ? AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 1330,
+     "totalMs": 283,
+     "avgUs": 213,
+     "text": "SELECT `arrival` FROM `knot_garden` WHERE `hidden` = ? AND `seed` NOT LIKE ? "
+    }
+   ]
+  },
+  {
+   "kind": "read",
+   "level": 200,
+   "seconds": 25,
+   "requests": 2039,
+   "perSecond": 81.7,
+   "n": 2039,
+   "p50": 1583.8,
+   "p95": 2668,
+   "p99": 22712.6,
+   "max": 22849.4,
+   "errorShare": 0,
+   "statuses": {
+    "200": 2039
+   },
+   "routes": {
+    "/api/frame": {
+     "n": 31,
+     "p50": 1748.7,
+     "p95": 2626.4,
+     "p99": 2672.7,
+     "max": 2672.7
+    },
+    "/api/wild/tile/n/n": {
+     "n": 1017,
+     "p50": 1593.6,
+     "p95": 2622.2,
+     "p99": 22649,
+     "max": 22847
+    },
+    "/api/coppice": {
+     "n": 15,
+     "p50": 1624.5,
+     "p95": 2497.3,
+     "p99": 2497.3,
+     "max": 2497.3
+    },
+    "/api/quiet/plot/n": {
+     "n": 66,
+     "p50": 1643.2,
+     "p95": 22654.6,
+     "p99": 22845.5,
+     "max": 22845.5
+    },
+    "/api/cross/plot/n": {
+     "n": 66,
+     "p50": 1377,
+     "p95": 2604,
+     "p99": 12544.5,
+     "max": 12544.5
+    },
+    "/api/glasshouse/plot/n": {
+     "n": 77,
+     "p50": 1521.3,
+     "p95": 2760.7,
+     "p99": 22635.4,
+     "max": 22635.4
+    },
+    "/api/wild": {
+     "n": 196,
+     "p50": 1564,
+     "p95": 2636.2,
+     "p99": 22697.4,
+     "max": 22800
+    },
+    "/api/orchard": {
+     "n": 16,
+     "p50": 1363.1,
+     "p95": 22567.6,
+     "p99": 22567.6,
+     "max": 22567.6
+    },
+    "/api/frame/plot/n": {
+     "n": 54,
+     "p50": 1443.4,
+     "p95": 21742.8,
+     "p99": 22650.6,
+     "max": 22650.6
+    },
+    "/api/seedbed/plot/n": {
+     "n": 71,
+     "p50": 1527,
+     "p95": 6818,
+     "p99": 22821.4,
+     "max": 22821.4
+    },
+    "/api/knot": {
+     "n": 14,
+     "p50": 1290.3,
+     "p95": 22682.5,
+     "p99": 22682.5,
+     "max": 22682.5
+    },
+    "/api/coppice/plot/n": {
+     "n": 71,
+     "p50": 1809.5,
+     "p95": 2710.5,
+     "p99": 22800.1,
+     "max": 22800.1
+    },
+    "/api/knot/plot/n": {
+     "n": 47,
+     "p50": 1612.6,
+     "p95": 2616.7,
+     "p99": 22849.4,
+     "max": 22849.4
+    },
+    "/api/cross": {
+     "n": 13,
+     "p50": 1526.2,
+     "p95": 2416.3,
+     "p99": 2416.3,
+     "max": 2416.3
+    },
+    "/api/orchard/plot/n": {
+     "n": 57,
+     "p50": 1567.1,
+     "p95": 2415.5,
+     "p99": 22819.1,
+     "max": 22819.1
+    },
+    "/api/ground/plot/n": {
+     "n": 67,
+     "p50": 1645.6,
+     "p95": 2702,
+     "p99": 22820.3,
+     "max": 22820.3
+    },
+    "/api/walk/plot/n": {
+     "n": 66,
+     "p50": 1353.1,
+     "p95": 2706.2,
+     "p99": 22767.5,
+     "max": 22767.5
+    },
+    "/api/ground": {
+     "n": 20,
+     "p50": 1231.5,
+     "p95": 2394.6,
+     "p99": 17224.9,
+     "max": 17224.9
+    },
+    "/api/quiet": {
+     "n": 24,
+     "p50": 1739.3,
+     "p95": 2185.6,
+     "p99": 22820,
+     "max": 22820
+    },
+    "/api/seedbed": {
+     "n": 14,
+     "p50": 1665.8,
+     "p95": 2362.1,
+     "p99": 2362.1,
+     "max": 2362.1
+    },
+    "/api/glasshouse": {
+     "n": 22,
+     "p50": 1851.7,
+     "p95": 2470.4,
+     "p99": 6096.3,
+     "max": 6096.3
+    },
+    "/api/walk": {
+     "n": 15,
+     "p50": 1748.5,
+     "p95": 22702,
+     "p99": 22702,
+     "max": 22702
+    }
+   },
+   "top": [
+    {
+     "n": 2039,
+     "totalMs": 7528,
+     "avgUs": 3692,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 196,
+     "totalMs": 812,
+     "avgUs": 4144,
+     "text": "SELECT `tile_x` , `tile_z` , COUNT ( * ) AS `plants` FROM `wild_fields` WHERE `hidden` = ?"
+    },
+    {
+     "n": 1017,
+     "totalMs": 431,
+     "avgUs": 424,
+     "text": "SELECT `f` . `seed` , `f` . `parent_a` , `f` . `parent_b` , `n` . `name_a` , `n` . `name_b"
+    },
+    {
+     "n": 2037,
+     "totalMs": 407,
+     "avgUs": 200,
+     "text": "SELECT `arrival` FROM `long_walk` WHERE `hidden` = ? AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 2037,
+     "totalMs": 355,
+     "avgUs": 174,
+     "text": "SELECT `arrival` FROM `seedbed` WHERE `hidden` = ? AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 2038,
+     "totalMs": 346,
+     "avgUs": 170,
+     "text": "SELECT `arrival` FROM `cold_frame` WHERE `hidden` = ? AND `seed` NOT LIKE ? "
+    }
+   ]
+  },
+  {
+   "kind": "write",
+   "level": 10,
+   "seconds": 20.2,
+   "requests": 565,
+   "perSecond": 27.9,
+   "n": 565,
+   "p50": 278.9,
+   "p95": 746.8,
+   "p99": 876.5,
+   "max": 973,
+   "errorShare": 0.2,
+   "statuses": {
+    "201": 564,
+    "500": 1
+   },
+   "routes": {
+    "/api/walk/offer": {
+     "n": 298,
+     "p50": 271.7,
+     "p95": 734.1,
+     "p99": 876.6,
+     "max": 921.3
+    },
+    "/api/wild/release": {
+     "n": 267,
+     "p50": 287.7,
+     "p95": 773.1,
+     "p99": 876.5,
+     "max": 973
+    }
+   },
+   "top": [
+    {
+     "n": 1129,
+     "totalMs": 4389,
+     "avgUs": 3887,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 1362,
+     "totalMs": 229,
+     "avgUs": 168,
+     "text": "SELECT `f` . * , `n` . `name_a` , `n` . `name_b` , `n` . `place` , `n` . `month` FROM `wil"
+    },
+    {
+     "n": 1129,
+     "totalMs": 186,
+     "avgUs": 165,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 1129,
+     "totalMs": 183,
+     "avgUs": 162,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `area` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 862,
+     "totalMs": 182,
+     "avgUs": 211,
+     "text": "SELECT * FROM `walk_offers` WHERE `seed` IN (...) "
+    },
+    {
+     "n": 1129,
+     "totalMs": 178,
+     "avgUs": 158,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `kind` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    }
+   ]
+  },
+  {
+   "kind": "write",
+   "level": 50,
+   "seconds": 20.6,
+   "requests": 1235,
+   "perSecond": 59.9,
+   "n": 1235,
+   "p50": 777.5,
+   "p95": 1362.7,
+   "p99": 1518.5,
+   "max": 1650,
+   "errorShare": 0,
+   "statuses": {
+    "201": 1235
+   },
+   "routes": {
+    "/api/walk/offer": {
+     "n": 595,
+     "p50": 765.6,
+     "p95": 1361.8,
+     "p99": 1514.3,
+     "max": 1650
+    },
+    "/api/wild/release": {
+     "n": 640,
+     "p50": 791.5,
+     "p95": 1366,
+     "p99": 1532.6,
+     "max": 1628.4
+    }
+   },
+   "top": [
+    {
+     "n": 2469,
+     "totalMs": 9371,
+     "avgUs": 3796,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 3155,
+     "totalMs": 419,
+     "avgUs": 133,
+     "text": "SELECT `f` . * , `n` . `name_a` , `n` . `name_b` , `n` . `place` , `n` . `month` FROM `wil"
+    },
+    {
+     "n": 2470,
+     "totalMs": 388,
+     "avgUs": 157,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `hue` FLOAT8 PRECISION NULL "
+    },
+    {
+     "n": 2470,
+     "totalMs": 374,
+     "avgUs": 151,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `area` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 2470,
+     "totalMs": 347,
+     "avgUs": 141,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `kind` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 2470,
+     "totalMs": 336,
+     "avgUs": 136,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    }
+   ]
+  },
+  {
+   "kind": "write",
+   "level": 200,
+   "seconds": 23.5,
+   "requests": 1651,
+   "perSecond": 70.3,
+   "n": 1651,
+   "p50": 1937.5,
+   "p95": 2392.8,
+   "p99": 22170.7,
+   "max": 22284.1,
+   "errorShare": 0.1,
+   "statuses": {
+    "201": 1650,
+    "500": 1
+   },
+   "routes": {
+    "/api/walk/offer": {
+     "n": 789,
+     "p50": 1926.5,
+     "p95": 2380.2,
+     "p99": 22219.9,
+     "max": 22284.1
+    },
+    "/api/wild/release": {
+     "n": 862,
+     "p50": 1942.4,
+     "p95": 2398,
+     "p99": 22170.7,
+     "max": 22264.5
+    }
+   },
+   "top": [
+    {
+     "n": 3301,
+     "totalMs": 13708,
+     "avgUs": 4153,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 4234,
+     "totalMs": 458,
+     "avgUs": 108,
+     "text": "SELECT `f` . * , `n` . `name_a` , `n` . `name_b` , `n` . `place` , `n` . `month` FROM `wil"
+    },
+    {
+     "n": 3301,
+     "totalMs": 429,
+     "avgUs": 130,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `area` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 3301,
+     "totalMs": 415,
+     "avgUs": 126,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `hue` FLOAT8 PRECISION NULL "
+    },
+    {
+     "n": 3301,
+     "totalMs": 410,
+     "avgUs": 124,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `kind` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 3301,
+     "totalMs": 396,
+     "avgUs": 120,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    }
+   ]
+  }
+ ]
+}
