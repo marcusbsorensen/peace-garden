@@ -82,7 +82,14 @@ final class TimeLapseRenderTests: XCTestCase {
 
     /// The plant's own screen, held on the simulator to be photographed from
     /// outside (`xcrun simctl io … screenshot`), and the time-lapse played on
-    /// it with a tap. Skipped unless `PG_HOLD_PLANT_SCREEN` is set: it waits.
+    /// it. Skipped unless `PG_HOLD_PLANT_SCREEN` is set: it waits.
+    ///
+    /// The real `PlantDetailView` for the still, and for the run the same
+    /// layers it draws the run in — its stage, the sky layer, the scene with
+    /// the player handed to it, and the two corner glyphs — with the player
+    /// held here so the run can be started without a finger. SwiftUI's
+    /// accessibility tree is not built for a hosted screen in this test run, so
+    /// the glyph cannot be pressed the way VoiceOver would press it.
     func testHoldThePlantScreen() async throws {
         guard ProcessInfo.processInfo.environment["PG_HOLD_PLANT_SCREEN"] != nil else {
             throw XCTSkip("PG_HOLD_PLANT_SCREEN is not set")
@@ -93,15 +100,59 @@ final class TimeLapseRenderTests: XCTestCase {
         try store.save(Garden(identity: nil, plants: [Self.old], beds: [Bed(name: "", world: 0)]))
         let model = GardenModel(store: store)
         let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)
-        let window = UIWindow(windowScene: scene)
-        window.windowLevel = .alert + 1
-        window.rootViewController = UIHostingController(
+
+        let screen = UIWindow(windowScene: scene)
+        screen.windowLevel = .alert + 1
+        screen.rootViewController = UIHostingController(
             rootView: PlantDetailView(record: Self.old).environment(model).preferredColorScheme(.dark)
         )
-        window.makeKeyAndVisible()
+        screen.makeKeyAndVisible()
         try "ready".write(to: folder.appendingPathComponent("holding"), atomically: true, encoding: .utf8)
-        try await Task.sleep(for: .seconds(150))
-        window.isHidden = true
+        try await Task.sleep(for: .seconds(8))
+        screen.isHidden = true
+
+        let player = TimeLapsePlayer()
+        let stage = UIWindow(windowScene: scene)
+        stage.windowLevel = .alert + 1
+        stage.rootViewController = UIHostingController(
+            rootView: Stage(record: Self.old, player: player).environment(model).preferredColorScheme(.dark)
+        )
+        stage.makeKeyAndVisible()
+        try await Task.sleep(for: .seconds(4))
+        player.play(Self.old, now: model.now, reduceMotion: false)
+        try String(Date().timeIntervalSince1970)
+            .write(to: folder.appendingPathComponent("playing"), atomically: true, encoding: .utf8)
+        try await Task.sleep(for: .seconds(16))
+        stage.isHidden = true
+    }
+
+    /// The layers `PlantDetailView` plays a time-lapse in, and nothing else.
+    private struct Stage: View {
+        let record: PlantRecord
+        let player: TimeLapsePlayer
+        @Environment(GardenModel.self) private var model
+
+        var body: some View {
+            ZStack {
+                StageBackdrop(palette: record.genome.palette, presence: record.growth(now: model.now).heightScale)
+                    .ignoresSafeArea()
+                if player.isShowing {
+                    TimeLapseSkyLayer(player: player).ignoresSafeArea()
+                }
+                PlantSceneView(genome: record.genome, growth: record.growth(now: model.now), timeLapse: player)
+                    .ignoresSafeArea()
+            }
+            .overlay(alignment: .topLeading) {
+                TimeLapseButton(isPlaying: player.isPlaying) {}
+                    .padding(.leading, 12)
+                    .padding(.top, 12)
+            }
+            .overlay(alignment: .topTrailing) {
+                CloseButton {}
+                    .padding(.trailing, 12)
+                    .padding(.top, 12)
+            }
+        }
     }
 
     static func folder() throws -> URL {

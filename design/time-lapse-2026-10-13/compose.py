@@ -185,6 +185,26 @@ def skies():
     canvas.save(HERE / "sky-ABC.png", optimize=True)
 
 
+def plant_screen():
+    """The real screen with the glyph, and the run playing on it."""
+    if not (SOURCE / "screen-still.png").exists():
+        return
+    width, height = 420, 912
+    canvas = Image.new("RGB", (2 * width + 3 * 30, height + 170), GROUND)
+    draw = ImageDraw.Draw(canvas)
+    draw.text((30, 24), "The play glyph on the plant's screen", font=font(28, True), fill=INK)
+    draw.text((30, 62), "iPhone Air simulator, Dark. Top left, opposite Close; Share joins Close at the top right.",
+              font=font(16), fill=MUTED)
+    for index, (name, label) in enumerate([("screen-still.png", "Before: the play glyph, top left"),
+                                           ("screen-playing.png", "2.6 s in: the glyph is a stop square")]):
+        shot = Image.open(SOURCE / name).convert("RGB").resize((width, height), Image.LANCZOS)
+        x = 30 + index * (width + 30)
+        canvas.paste(shot, (x, 100))
+        draw.text((x, 100 + height + 14), label, font=font(17, True), fill=INK)
+    canvas.save(HERE / "plant-screen.png", optimize=True)
+
+
+plant_screen()
 strip("strip-young.png", "A young plant, two days old",
       "Nine moments of its time-lapse, an eighth of its growing apart: the film the share export makes, "
       "Dark, sky A at 15:00.", [("As played", "young")])
