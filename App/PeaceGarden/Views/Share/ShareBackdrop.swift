@@ -94,10 +94,12 @@ enum ShareBackdrop {
 
     // MARK: The day
 
-    /// `DaySky`'s painting of the garden's day, with the sun high on the left.
+    /// `DaySky`'s painting of the garden's day, with the sun off to the left
+    /// below the height of a lock screen's clock, so its halo is not behind
+    /// the time.
     private static func day(in context: CGContext, size: CGSize, scale: CGFloat) {
         let palette = SkyPalette.at(hour: dayHour, season: .orbit)
-        let sun = CGPoint(x: size.width * 0.22, y: size.height * 0.16)
+        let sun = CGPoint(x: size.width * 0.14, y: size.height * 0.33)
         // Painted at half the picture's pixels: the softest thing in the sky is
         // still dozens of pixels across, as `DaySky.perPoint` says.
         guard let sky = DaySky.paint(palette, sun: sun, size: size, perPoint: max(1, scale / 2))
