@@ -473,6 +473,15 @@ holds a handful of same-named pairs.
     python3 tools/masstest/app/contact_sheet.py build/mt/screens/SE sheet.jpg --width 110
     zsh tools/masstest/app/watchdog.sh <udid> watchdog.log 5000 stop-file   # alongside any big garden
 
+Reading results back: `stress_table.py` and `perf_table.py` (the two tables
+above; `perf_table.py` wants `xcrun xcresulttool get test-results metrics`
+saved beside the hand timings as `metrics-<size>.json`), `sweep_counts.py`,
+`progress.py` (where running sweeps have got to), `wait_for.sh` (blocks on
+clock files), `launch_sheet.py`, `crop.py` and `side_by_side.py` (evidence),
+`collect_evidence.sh` (copies the small results into a report folder),
+`check_crosses.py` and `name_widths.swift` (the fuzz's second implementation
+and the name widths).
+
 `run_tests.sh` installs over whatever is on the simulator and writes a garden
 into it: point it at scratch simulators only. The UI-test target lives in a
 project of its own (`tools/masstest/app/masstest.yml`, which includes
