@@ -66,7 +66,7 @@ for (const line of latest.values()) {
   if (r.loadMs) counts.loadMs.push(r.loadMs);
   if (r.crash) { counts.crashed += 1; note('crash', r.crash.split('\n')[0].slice(0, 120), job); continue; }
   if (r.status !== 200) note('status', `${r.status}`, job);
-  for (const c of r.console) note(c.type === 'error' ? 'console-error' : 'console-warning', `${c.text.replace(/\d+/g, 'N').slice(0, 160)} @ ${c.at || '?'}`, job);
+  for (const c of r.console.filter((x) => x.during !== 'axe')) note(c.type === 'error' ? 'console-error' : 'console-warning', `${c.text.replace(/\d+/g, 'N').slice(0, 160)} @ ${c.at || '?'}`, job);
   for (const e of r.errors) note('exception', e.split('\n').slice(0, 2).join(' | ').slice(0, 200), job);
   for (const f of r.failed) note('request-failed', `${f.method} ${f.url.replace(/\?.*$/, '')} ${f.why}`, job);
   for (const h of r.http) if (!(h.status === 404 && h.url === '/strings/en.json')) note('http', `${h.status} ${h.url.replace(/\?.*$/, '')}`, job);

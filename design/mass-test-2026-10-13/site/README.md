@@ -441,3 +441,139 @@ a GET with 405 itself and allows only the pages, static files and the plot
 service's read routes, and the crawler's `--live` refuses non-GET requests in
 the browser as well. Neither refused anything during the crawl. The four
 refusals in the proxy's log are its own self-test before the run.
+
+## After the fixes, 14 October
+
+Marcus chose **17A** (fix every finding, crawl again, add a WebKit pass) and
+**18A** (paths that visitors wear stay on, and the docs say so). The fixes are
+on `claude/site-fixes-2026-10-14`. Nothing was deployed and the live site was
+not contacted: everything below is the local copy, served and sown as in *The
+set-up*, with the wear switch on as the live host has it.
+
+**In one line:** every finding is fixed, or made harmless where the host
+decides; 4,799 page loads in Chrome and 510 in WebKit found nothing the fixes
+left or brought in, and no page breaks its own Content-Security-Policy in
+either engine.
+
+### What changed
+
+| Finding | Fix | Where |
+| --- | --- | --- |
+| L1, module downloaded on every visit | `/plant.wasm?v=<this build>` is `private, max-age=31536000, immutable`, so a returning browser asks for nothing. A stale stamp and the bare address keep `no-cache`. `If-None-Match` is read as a list with weak tags and `*`, `If-Modified-Since` is the fallback, `Last-Modified` is sent, and a 304 carries its cache headers and no `Content-Type`. `private` because whether 20i's CDN keys on the query cannot be seen from here, and one that did not would serve an old module under a new stamp for a year. | `Server/index.php`: the `/plant.wasm` branch, `$fresh`, `$notModified`, `$moduleStamp` |
+| L3, headers | Everything PHP answers: `Strict-Transport-Security: max-age=31536000` (this name only), `Referrer-Policy: strict-origin-when-cross-origin`, `X-Content-Type-Options: nosniff`, no `X-Powered-By`. Pages: a `Content-Security-Policy` of the site's own files, the import map by its hash, `wasm-unsafe-eval` for the renderer, and style attributes allowed for WebKit's own `<select>` (below). The static files' headers, `Vary` among them, are nginx's and cannot be set from this repository. | the head of `Server/index.php`; `Server/README.md` §Headers |
+| 1, the front jumps on a phone | The stage is laid out from the first paint, its canvas and hint invisible until `data-grown`; a browser with no WebGL2 or WebAssembly loses the stage at once, a module that fails later. The words, empty until the language is settled, stay invisible until `body[data-ready]`. | `Server/.pages/index` (`#plant-stage`), `frontpage.js`, `site.css` §The front |
+| 3, contrast | The Cold Frame and Knot Garden cards on `#766d5e` (`LOOK.card`; the map keeps `#968b78`), every card meaning 92% white, light `--faint` 0.6 (`#6d6d6d`, 4.79:1). Dark mode unchanged. | `gates.js`, `frontpage.js`, `site.css` |
+| 4, the map off a tablet | `repeat(5, minmax(0, 1fr))`; names hyphenate, and break anywhere as a last resort; from 46rem up the map is `min(36rem, 100vw − 32px)` wide and centred over the page. It only ever fitted by spilling past the 440 px measure, and squeezed into it every name broke into syllables, English included. | `site.css` §The garden |
+| 5, fireflies at 60/s | Under reduced motion they are painted once and then only after the field is drawn (`whenDrawn` on the stage), in the same frame; with motion, 30/s as before. | `wildfields.js`: `flyOver`, the stage's `draw` |
+| 6, stale copy | `/download` says "iPhone and iPad · iOS 17 and later", marked as English, and names no version; `deploy.sh --check` reads it against `project.yml`. `/g`'s stand-in notice shows only while some area on the map has no page, which is none of them now. | `Server/.pages/download`, `walk.js` |
+| 7, axe | The key pad is a `div role="group"`, not a `nav` overridden as one. `/g`'s map section holds a visually hidden `h1` from the catalogue (`gardenTitle`) and is labelled by it; its English `aria-label` is gone. | the eleven area pages, `Server/.pages/g` |
+| 8, the deploy check | Rows for `/quiet /cross /orchard /knot /seedbed /frame /privacy` and `/api/walk quiet cross orchard knot seedbed frame wild` (asked with a GET, as the plot service answers nothing else); the headers above; the stamped module immutable and the bare one `no-cache`, with a revalidation reported; wear on; `/download`'s iOS. `PG_BASE=` points it at a local copy, where every row passes. | `tools/deploy.sh` |
+| L2, wear | On, as the host has it. `Server/README.md` and `docs/WEB-GARDENS.md` say so now, and the deploy check fails if `/api/wild` stops carrying `wear`. | the two docs, `tools/deploy.sh` |
+| 2 (B), the panel's "Close" | The app's X in a 42 px hairline ring. `plantClose` is its accessible name, and the `?` sheet's, marked English while it falls back. No visible word added. | `plantpanel.js`, `site.css` |
+
+**One allowance in the policy, for WebKit.** The WebKit pass found one
+`style-src-attr` refusal on every page with the language chooser, at its
+`<select>`. A page holding nothing but an empty `<select>` under the same
+policy gets it too, and Chrome does not, so it is WebKit drawing its own
+control. It changes nothing on screen (the bar is pixel-identical with and
+without it), but a console with a refusal on every page hides a real one, so
+the policy allows style attributes (`style-src-attr 'unsafe-inline'`).
+`<style>` blocks, other hosts' stylesheets and every script stay refused.
+
+### The re-crawl, before and after
+
+Before is the run of 13 October above, after is 14 October: the same set-up
+on the same machine, shared and loaded again (load average 150 to 360). Each
+count is of the last reading of each page.
+
+| Check | Before (13 Oct) | After (14 Oct) |
+| --- | ---: | ---: |
+| Page loads | 3,411 + 1,032 in the mid-width sweep | 3,411 + 1,032, and the two map pages again with the final map (356) |
+| JS exceptions, unhandled rejections | 0 | 0 |
+| Console errors / warnings | 1 / 1 (the local server) | 0 / 0 |
+| Failed requests / HTTP 4xx–5xx | 1 / 0 | 0 / 0 |
+| WebAssembly or WebGL failures | 0 (1,963 instantiated) | 0 (1,963 instantiated) |
+| Content-Security-Policy refusals | no policy | **0**, every route, language, width and scheme |
+| Horizontal overflow | 2 (+8 in the sweep) | **0** (+0) |
+| Text clipped / overlapping / past the edge | 0 / 0 / 2 | 0 / 0 / **0** |
+| axe serious (colour contrast) | 383 pages, 7 selectors | **0** |
+| axe moderate (`page-has-heading-one`, /g) | 362 | **0** |
+| axe minor (`aria-allowed-role`, `nav#keys`) | 1,342 | **0** |
+| Front CLS at 375, Slow 4G, CPU ×4 | en 0.578, de 0.845, fi 0.803, ja 0.802, ar 0.757 | **0.003** in 40 languages, 0 in en, 0.03 in ar and he (the bar turning right to left); none at 0.1 or over |
+| Front CLS at 375, the crawl, 43 languages | not tabulated | at most 0.003 |
+| `/wild` animation frames a second under reduced motion | 64 (en), 12 (ar) | **0**, fireflies drawn and redrawn when the field moves |
+| The module on a return visit (`/walk`, then `/quiet`, `/`, `/walk`) | a conditional request each time: 304 here, 200 and 3 MB live | **no request**: the browser's cache, 0 bytes |
+| Interactions: chooser, negotiation, toolbar, landscape, `?` sheet, fragments, stillness | all as wanted | all as wanted: 19 of 19 choosers to Hebrew (`/t` is English by design), 20 of 20 negotiations, 0 of 11 regrown, 0 of 60 landscape faults, 15 of 15 sheets, 10 of 10 fragments, nothing moving on any of 12 pages after 10 s under reduced motion |
+| English on a translated page | 2,535 pages, 96 causes | 2,177 pages, 95 causes: the `/g` notice is hidden, and nothing was translated |
+| Text spilling its box | 86 (front tagline descenders, not a fault) | 86, the same |
+
+Perf at 375, Slow 4G, CPU ×4, cold, the same five languages (en, de, fi, ja,
+ar) on both copies, measured the same morning; KB on the wire, locally, so
+brotli:
+
+| Page | Before KB | Before CLS | After KB | After CLS |
+| --- | ---: | ---: | ---: | ---: |
+| front | 2,306–2,311 | 0.578–0.845 | 2,309–2,314 | 0.003 (ar 0.03) |
+| g | 101–105 | 0.062–0.081 | 104–108 | 0.057–0.075 |
+| meanings | 101–106 | 0.161–0.213 | 103–108 | 0.161–0.213 |
+
+`/meanings` was not in this round. Its 0.16–0.21 is the dictionary being
+written in once the language is settled, the shift the front had, open to
+the same remedy.
+
+**Area pages opened on a plant** shift by 0.03–0.05 on average at 375, with
+about one reading in ten at 0.1 or over: the panel opens before its passage
+has arrived and grows upward when it does. The same 121 readings on the copy
+from before the fixes average 0.027, six of them over 0.1, and read side by
+side one context at a time the two copies are alike (0.083 before, 0.065
+after); the spread is timing. It predates this round and is worth a fix of its
+own (keep the passage's room, or open the panel once the bank has arrived).
+
+### WebKit
+
+Playwright's WebKit, build 2370, the engine of every browser on an iPhone or
+iPad, headless: every route in en, da, ar, de and ja at 375 and 1280, light and
+dark, and every area page opened on a plant. 510 page loads.
+
+| Check | WebKit |
+| --- | ---: |
+| JS exceptions, the pages' console errors, failed requests, 4xx/5xx | 0 |
+| Content-Security-Policy refusals by the pages | **0** (one on every page with a chooser, without the `<select>` allowance) |
+| WebAssembly instantiations, WebGL2 contexts | 350 and 350, all succeeded, a drawn canvas on every one |
+| Horizontal overflow; clipped, overlapping or off-screen text | 0 |
+| axe (contrast, headings, roles, names) | 0 |
+| Right to left (ar) | `dir="rtl"` on every page but `/t`, which is English by design |
+
+Two things about the pass rather than the site. axe's own run logs a style
+refusal in WebKit, because it adds a `<style>` of its own and the policy
+refuses it, as it should; the crawler marks those lines and leaves them out,
+and none appears with axe switched off. And WebKit's browser process quit three
+times on the loaded machine; the crawler now starts it again, and the pages it
+was reading were read again. WebKit reports no layout shifts or largest paints,
+so CLS and LCP are Chrome's alone.
+
+### Checking the headers after the deploy
+
+`tools/deploy.sh --check` reads every one of them back. By hand:
+`curl -sSI https://peacegarden.app/` shows `strict-transport-security`,
+`content-security-policy`, `referrer-policy` and no `x-powered-by`; the front
+page's `data-module` address answers `cache-control: private,
+max-age=31536000, immutable`; and in a browser, `/walk` then `/quiet` shows
+`plant.wasm?v=…` from the disk cache in DevTools' Network panel, with nothing
+sent.
+
+### For the translation round
+
+No catalogue string's English changed. `plantClose` ("Close") is now a
+button's accessible name rather than its face: it still wants translating, and
+is read aloud rather than shown. `gardenTitle` also names `/g`'s hidden `h1`.
+The two English lines outside the catalogue keep their words: `/g`'s notice,
+hidden while all ten areas are open, and `/download`'s "iPhone and iPad · iOS
+17 and later", now marked as English.
+
+### Evidence
+
+`05-after-front-layout.jpg` (the front at 4 s and 18 s, before and after),
+`06-after-contrast.jpg` (the cards, the seed page's source line, the
+dictionary's labels), `07-after-map-panel-download.jpg` (the map at 768 in
+Finnish, the panel's way out, `/download`).
