@@ -1738,8 +1738,12 @@ private struct GardenPlantSprite: View, Equatable {
                 // between them without the fade is what makes the sun jump.
                 ZStack(alignment: .topLeading) {
                     picture(before, size: size, opacity: 1)
-                    // Alone until the step before it arrives, then crossfaded.
-                    picture(after, size: size, opacity: before == nil ? 1 : between.blend)
+                    // Alone until the step before it arrives, then crossfaded;
+                    // not drawn at all while the crossfade has not begun,
+                    // since a layer at no opacity still has to be moved.
+                    if before == nil || between.blend > 0.002 {
+                        picture(after, size: size, opacity: before == nil ? 1 : between.blend)
+                    }
 
                     // Lit by the lights near it: the plant again, tinted by
                     // their colour and *added*, so it brightens in proportion to
@@ -1842,9 +1846,13 @@ private struct GardenPlantSprite: View, Equatable {
 /// applied to, mounted rather than rebuilt, so here a gesture changes this
 /// body and the transform, and not the plot.
 ///
-/// **And one layer, moved whole.** Without `compositingGroup` SwiftUI moved
-/// every plant's picture, every shadow and every pool on the plot by itself,
-/// a thousand-odd layers each frame of a pinch; grouped, it moves one.
+/// **Not grouped.** `compositingGroup` (or `geometryGroup`) would have SwiftUI
+/// move the plot as one layer rather than a thousand-odd, and costs a third
+/// less main thread in a pinch; but the group is then drawn on the main
+/// thread whenever anything in it moves, so a drift of fireflies in a big
+/// garden held every frame waiting on it — at 500 plants a pinch dropped one
+/// frame in three, at 2,000 the garden never held still. Ungrouped, a pinch
+/// at 500 plants is about 10 ms a frame and none is dropped.
 private struct PlotCamera<Looking: Gesture, Panning: Gesture, Above: View>: ViewModifier {
     let zoom: CGFloat
     let pan: CGSize
@@ -1871,7 +1879,6 @@ private struct PlotCamera<Looking: Gesture, Panning: Gesture, Above: View>: View
         let offset = CGSize(width: pan.width + dragging.width, height: pan.height + dragging.height)
         ZStack(alignment: .topLeading) {
             content
-                .compositingGroup()
                 .coordinateSpace(name: "plot")
                 .scaleEffect(scale)
                 .offset(offset)
