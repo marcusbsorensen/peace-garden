@@ -896,6 +896,10 @@ $oldArrival = arrivalOf($legacyDb, 'long_walk', $old['seed']);
 $heldBefore = arrival($legacyDb, 'long_walk', (int) $oldArrival);
 $old += ['mine' => $oldMine, 'theirs' => $oldTheirs];
 check('the legacy rows hold what the old code kept', count(stillHeld($legacyDb, $old)) >= 5);
+// The old code kept no schema version, so a database carried across that
+// deploy has none: the next open finds it older than the code and migrates
+// (`Schema.php`, 14 October 2026). That is what deleting the row makes this.
+$legacyDb->prepare('DELETE FROM schema_version')->execute();
 unset($legacy, $legacyDb);
 
 $reopened = WalkStore::open('sqlite:' . $legacyFile);
@@ -924,11 +928,112 @@ $snapshot = static fn (PDO $db) => [
     $db->query('SELECT * FROM walk_offers ORDER BY offer')->fetchAll(PDO::FETCH_ASSOC),
 ];
 $once = $snapshot($reDb);
+check('and leaves the database at the code\'s version', Schema::stored($reDb) === Schema::VERSION);
+// Forgotten again, as a restore forgets it (`backup.php`), so the whole
+// migration runs a second time over a database it has already put right.
+$reDb->prepare('DELETE FROM schema_version')->execute();
 unset($reopened, $reDb);
 $third = WalkStore::open('sqlite:' . $legacyFile);
 check('and running it again changes nothing', $snapshot($third->connection()) === $once);
 unset($third);
 @unlink($legacyFile);
+
+// MARK: The schema, once a version (14 October 2026)
+
+// **A request reads one row.** Until today every request ran the whole
+// migration, eighty-four statements, and under load the database's threads
+// queued on one another's no-op ALTERs (the population test, finding 3). Now
+// the migration runs when the database is older than the code, and otherwise
+// a request's schema costs one SELECT. Counted here statement by statement:
+// every statement the service sends goes through `prepare`.
+final class CountingPdo extends PDO
+{
+    public array $said = [];
+
+    public function prepare(string $query, array $options = []): PDOStatement|false
+    {
+        $this->said[] = $query;
+        return parent::prepare($query, $options);
+    }
+}
+$counting = static fn (string $path) => new CountingPdo('sqlite:' . $path, null, null, [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_STRINGIFY_FETCHES => false,
+]);
+$schemaFile = sys_get_temp_dir() . '/peacegarden-schema-' . getmypid() . '.sqlite';
+@unlink($schemaFile);
+$first = $counting($schemaFile);
+WalkStore::on($first);
+check('an empty database is migrated whole on first opening (' . count($first->said) . ' statements)',
+      count($first->said) > 50 && Schema::stored($first) === Schema::VERSION);
+check('and every table the code uses is there', (static function () use ($first): bool {
+    $have = $first->query("SELECT name FROM sqlite_master WHERE type = 'table'")->fetchAll(PDO::FETCH_COLUMN);
+    return array_diff(array_diff(Schema::tables(), ['replant_log']), $have) === [];
+})());
+unset($first);
+$later = $counting($schemaFile);
+$opened = WalkStore::on($later);
+$opened->offers();
+$opened->wild();
+$opened->wear();
+$opened->room();
+$opened->homeGround();
+new Limits($later);
+check('a database at the code\'s version costs a request one statement: ' . implode(' | ', $later->said),
+      $later->said === ['SELECT version FROM schema_version WHERE id = 1']);
+unset($opened, $later);
+@unlink($schemaFile);
+
+// **A database left by the code before the version** — tables as they were
+// first made, before any column was added to them, with plantings and offers
+// in them — is brought up to the code's shape by the first open, and what it
+// held is kept.
+$oldFile = sys_get_temp_dir() . '/peacegarden-schema-old-' . getmypid() . '.sqlite';
+@unlink($oldFile);
+$raw = new PDO('sqlite:' . $oldFile, null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+$raw->prepare('CREATE TABLE long_walk (arrival INTEGER PRIMARY KEY AUTOINCREMENT, seed CHAR(64) NOT NULL UNIQUE,
+    parent_a CHAR(64) NOT NULL, parent_b CHAR(64) NOT NULL, encounter CHAR(64) NOT NULL, plot INTEGER NOT NULL,
+    side INTEGER NOT NULL, tier INTEGER NOT NULL, slot_index INTEGER NOT NULL, height DOUBLE PRECISION NOT NULL,
+    family INTEGER NOT NULL, nudge_x DOUBLE PRECISION NOT NULL, nudge_z DOUBLE PRECISION NOT NULL)')->execute();
+$raw->prepare('CREATE TABLE walk_offers (offer INTEGER PRIMARY KEY AUTOINCREMENT, seed CHAR(64) NOT NULL UNIQUE,
+    token_to CHAR(32) NOT NULL, token_from CHAR(32) NOT NULL, parent_a CHAR(64) NULL, parent_b CHAR(64) NULL,
+    encounter CHAR(64) NULL, height DOUBLE PRECISION NULL, family INTEGER NULL, state VARCHAR(16) NOT NULL,
+    offered_at BIGINT NOT NULL, answered_at BIGINT NULL)')->execute();
+$raw->prepare("CREATE TABLE seedbed (arrival INTEGER PRIMARY KEY AUTOINCREMENT, seed CHAR(64) NOT NULL UNIQUE,
+    parent_a CHAR(64) NOT NULL, parent_b CHAR(64) NOT NULL, encounter CHAR(64) NOT NULL, plot INTEGER NOT NULL,
+    drill INTEGER NOT NULL, slot_index INTEGER NOT NULL, height DOUBLE PRECISION NOT NULL,
+    family INTEGER NOT NULL, kind VARCHAR(64) NOT NULL DEFAULT '', nudge_x DOUBLE PRECISION NOT NULL,
+    nudge_z DOUBLE PRECISION NOT NULL, hidden INTEGER NOT NULL DEFAULT 0)")->execute();
+$oldPlant = crossing(40);
+$oldOffer = crossing(41);
+$raw->prepare('INSERT INTO long_walk (seed, parent_a, parent_b, encounter, plot, side, tier, slot_index, height,
+    family, nudge_x, nudge_z) VALUES (?, ?, ?, ?, 0, 0, 0, 3, 1.25, 2, 0.1, -0.1)')
+    ->execute([$oldPlant['seed'], $oldPlant['a'], $oldPlant['b'], $oldPlant['encounter']]);
+$raw->prepare("INSERT INTO walk_offers (seed, token_to, token_from, parent_a, parent_b, encounter, height, family,
+    state, offered_at) VALUES (?, ?, ?, ?, ?, ?, 0.9, 1, 'offered', ?)")
+    ->execute([$oldOffer['seed'], token('old shape/to'), token('old shape/from'), $oldOffer['a'], $oldOffer['b'],
+               $oldOffer['encounter'], $now]);
+unset($raw);
+$upgraded = WalkStore::open('sqlite:' . $oldFile);
+$up = $upgraded->connection();
+check('the old walk gains its hidden column, and its planting stands',
+      Schema::hasColumn($up, 'long_walk', 'hidden')
+      && in_array($oldPlant['seed'], array_column($upgraded->plot(0), 'seed'), true));
+check('the old offers gain area, kind, hue and habit, defaulted as an offer made before them is read',
+      Schema::hasColumn($up, 'walk_offers', 'habit') && $up->query(
+          "SELECT area || '|' || kind || '|' || IFNULL(hue, 'null') || '|' || habit FROM walk_offers")
+          ->fetchColumn() === 'travel||null|');
+check('the old Seedbed gains its span and habit', Schema::hasColumn($up, 'seedbed', 'slot_span')
+      && Schema::hasColumn($up, 'seedbed', 'habit'));
+check('the planting is claimed for its one public place', Placed::holder($up, $oldPlant['seed']) === 'long_walk');
+check('and the database is at the code\'s version', Schema::stored($up) === Schema::VERSION);
+$answeredOld = $upgraded->offers()->answer($oldOffer['seed'], token('old shape/to'), true, $now + 60);
+check('an offer made under the old shape is answered under the new and plants in the walk',
+      ($answeredOld['offer']['state'] ?? null) === Offers::ACCEPTED && $answeredOld['planting'] !== null
+      && Placed::holder($up, $oldOffer['seed']) === 'long_walk');
+unset($upgraded, $up);
+@unlink($oldFile);
 
 @unlink($file);
 

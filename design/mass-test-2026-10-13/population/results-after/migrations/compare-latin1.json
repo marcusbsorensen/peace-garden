@@ -1,0 +1,17 @@
+{
+    "tables only after": [
+        "placed",
+        "schema_version"
+    ],
+    "tables lost": [],
+    "rows changed by the upgrade": [],
+    "placed rows after": 5,
+    "schema_version after": 1,
+    "upgraded schema differs from fresh": [],
+    "collations after": [
+        "utf8mb4_unicode_ci"
+    ],
+    "collations fresh": [
+        "utf8mb4_unicode_ci"
+    ]
+}

@@ -309,6 +309,86 @@ check('a hidden plant shows nobody beside it', (function () use ($db, $wild, $si
     return $gone;
 })());
 
+// MARK: One public place, held by the database (14 October 2026)
+
+// **The race the asking could not see.** An offer and a release of the same
+// plant at the same moment each checked the other before the other's row
+// existed, and a later yes planted a plant already standing in the field
+// (the population test, finding 5). `placed` is written with every planting
+// and every release, in the same transaction, so whichever comes second finds
+// the plant held. Driven here in the order the race leaves things.
+$held = static fn (string $seed) => Placed::holder($db, $seed);
+check('a released plant is held by the field', $held($three['seed']) === Placed::WILD
+      && $held($four['seed']) === Placed::WILD);
+check('and a hidden one still is, as it still holds its seed', $held($one['seed']) === Placed::WILD);
+
+// The offer is made while the release is on its way: neither has seen the
+// other. Then the release lands, and then the yes.
+$seven = crossing(7);
+$a7 = token('seven/a');
+$b7 = token('seven/b');
+[$offered7] = $offers->offer($seven['seed'], $b7, $a7, $seven['a'], $seven['b'], $seven['encounter'], 1.1, 3,
+                             $now, 'light');
+[$released7, $new7] = $wild->release($seven['seed'], $seven['a'], $seven['b']);
+check('the race: offered and released, both taken', ($offered7['state'] ?? null) === Offers::OFFERED
+      && $released7 !== null && $new7 === true);
+$yes7 = $offers->answer($seven['seed'], $b7, true, $now + 5);
+check('the yes plants nothing, because the field holds it', $yes7 !== null && $yes7['planting'] === null);
+check('and the offer is withdrawn, as the release would have withdrawn it a moment later',
+      ($yes7['offer']['state'] ?? null) === Offers::WITHDRAWN);
+check('so the plant stands in the field and in no area', $wild->find($seven['seed']) !== null
+      && $db->query("SELECT COUNT(*) FROM glasshouse WHERE seed = '{$seven['seed']}'")->fetchColumn() == 0
+      && $held($seven['seed']) === Placed::WILD);
+
+// The other way round: the yes lands first, and the release arrives having
+// cleared the way before the offer existed.
+$eight = crossing(8);
+$a8 = token('eight/a');
+$b8 = token('eight/b');
+$offers->offer($eight['seed'], $b8, $a8, $eight['a'], $eight['b'], $eight['encounter'], 1.1, 3, $now);
+$offers->answer($eight['seed'], $b8, true, $now);
+check('an accepted plant is held by its area', $held($eight['seed']) === 'long_walk');
+[$late8] = $wild->release($eight['seed'], $eight['a'], $eight['b']);
+check('a release that did not clear the way finds it held, and stands nothing',
+      $late8 === null && $wild->find($eight['seed']) === null);
+check('cleared again by one of its two, as the route does, it goes',
+      $offers->letGo($eight['seed'], $a8, $now) === true && $held($eight['seed']) === null
+      && ($wild->release($eight['seed'], $eight['a'], $eight['b'])[1] ?? false) === true
+      && $held($eight['seed']) === Placed::WILD);
+check('and is in the field and no longer in the walk', $wild->find($eight['seed']) !== null
+      && !in_array($eight['seed'], $standingIn(), true));
+
+// Taking back lets go, in the same transaction as the erasure.
+$nine = crossing(9);
+$a9 = token('nine/a');
+$b9 = token('nine/b');
+$offers->offer($nine['seed'], $b9, $a9, $nine['a'], $nine['b'], $nine['encounter'], 0.9, 1, $now, 'peace');
+$offers->answer($nine['seed'], $b9, true, $now);
+check('a planting in the Quiet Garden is held by it', $held($nine['seed']) === 'quiet_garden');
+$offers->withdraw($nine['seed'], $a9, $now);
+check('and taken back, it is held by nothing', $held($nine['seed']) === null);
+// A claim nothing stands behind — what a rollback to code that did not keep
+// `placed` leaves when it takes a planting back — is taken over, not obeyed:
+// it must never refuse a plant for good.
+$db->prepare("INSERT INTO placed (seed, place) VALUES (?, 'quiet_garden')")->execute([$nine['seed']]);
+check('a stale claim does not keep a plant out of the field',
+      $offers->letGo($nine['seed'], $a9, $now) === true
+      && ($wild->release($nine['seed'], $nine['a'], $nine['b'])[1] ?? false) === true
+      && $held($nine['seed']) === Placed::WILD);
+check('the same plant planted straight into a second area is refused there',
+      $walk->plantInto('meeting', $three['seed'], $three['a'], $three['b'], $three['encounter'], 1.0, 1)[0] === null);
+
+// **A migration puts `placed` right**, after a restore or on a database from
+// before it: every claim for something no longer standing goes, every plant
+// standing gets one.
+$db->prepare("INSERT INTO placed (seed, place) VALUES (?, 'orchard')")->execute([str_repeat('e', 64)]);
+$db->prepare('DELETE FROM placed WHERE seed = ?')->execute([$four['seed']]);
+$found = Placed::reconcile($db);
+check('reconciling lets go of a claim nothing stands behind, and claims what stands unclaimed',
+      $found['let go'] === 1 && $found['claimed'] === 1 && $found['in two places'] === 0
+      && $held(str_repeat('e', 64)) === null && $held($four['seed']) === Placed::WILD);
+check('and a second pass finds nothing', Placed::reconcile($db) === ['let go' => 0, 'claimed' => 0, 'in two places' => 0]);
+
 // MARK: The limit
 
 check('release is limited, and is the tightest write',

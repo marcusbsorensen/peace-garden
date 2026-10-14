@@ -42,6 +42,9 @@ struct PlantStageView: View {
     @State private var stageHeight: CGFloat = 0
     @Environment(\.dynamicTypeSize) private var typeSize
     @State private var showingSettings = false
+    /// Whether the Share mark is making something or saying what it made, so
+    /// it stays up after the row has gone. See `share(identity:growth:)`.
+    @State private var shareBusy = false
     /// Which mark has unrolled into its word, if any. See
     /// `mark(_:_:_:isProminent:open:)`.
     ///
@@ -111,6 +114,13 @@ struct PlantStageView: View {
                     // its last row led on to the stage's marks and the plant's
                     // name beneath it (mass test, 13 October, finding 9).
                     .accessibilityHidden(showingSettings)
+
+                let shareIsUp = rowIsUp || shareBusy
+                share(identity: identity, growth: growth)
+                    .opacity(shareIsUp ? 1 : 0)
+                    .allowsHitTesting(shareIsUp)
+                    .accessibilityHidden(!shareIsUp)
+                    .animation(Chrome.fadeIn, value: shareIsUp)
 
                 // The second thing the app explains, and it explains it
                 // once. There is no flag to keep: the hint is for someone
@@ -282,6 +292,32 @@ struct PlantStageView: View {
             )
             .padding(.bottom, 30)
         }
+    }
+
+    /// Share, top right (Marcus, 14 October 2026: 13A): the mark a plant's own
+    /// screen has beside Close, for your own plant, offering the same things.
+    ///
+    /// **Up and down with the row at the foot**, so the stage is still the
+    /// plant alone until somebody asks. The top right because the foot is
+    /// full: a fifth mark in the row does not fit Swedish on an SE. Once it is
+    /// making something, or saying what it made, it stays until it is done,
+    /// and the row's own timer waits for it.
+    private func share(identity: Identity, growth: GrowthModel.State) -> some View {
+        PlantShareButton(
+            // Your own plant as the garden would keep one: its seed, as minted,
+            // and its birthday, which is all the time-lapse needs.
+            record: PlantRecord(seed: identity.seed, lineage: .minted, birth: identity.birth),
+            growth: growth,
+            now: model.now,
+            trailingInset: 12,
+            onBusy: { busy in
+                shareBusy = busy
+                if busy { hideTask?.cancel() } else { scheduleHide() }
+            }
+        )
+        .padding(.trailing, 12)
+        .padding(.top, 12)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
     }
 
     /// One mark in the row along the foot.

@@ -17,7 +17,8 @@ import SeedCore
 /// would otherwise leave a question: what *Hidden* hides, what the light does
 /// by the clock, what the chosen way of describing a place does. The account
 /// of what leaves the phone when two people meet stood here too, until 13
-/// October 2026; it is an account of the meeting, not a setting. The three rows
+/// October 2026; it is an account of the meeting, not a setting, and it is on
+/// the About sheet now (`AboutView`), from the foot of the screen. The three rows
 /// under *Starting again* keep no line on the screen at all, and say their
 /// piece while one is being held, at the moment somebody is deciding rather
 /// than while they are reading.
@@ -39,6 +40,8 @@ struct SettingsView: View {
     @State private var somethingIsStillStanding = false
     /// A released plant whose choices are open, from *Let go into the Wild Fields*.
     @State private var besideWild: WildPlant?
+    /// The About sheet, and where it opens. See `AboutView`.
+    @State private var about: AboutView.Part?
     @AppStorage(Places.preferredKey) private var preferredPlace = ""
     @AppStorage(Sharing.invitationsKey) private var wantsInvitations = Sharing.invitationsDefault
     @AppStorage(Chrome.namesPlantKey) private var namesPlant = true
@@ -190,6 +193,11 @@ struct SettingsView: View {
         } message: {
             Text("Nothing has changed. Plants of yours are still standing there, and this is the only phone that can take them down, so try again when you have a signal.")
         }
+        .sheet(item: $about) { part in
+            AboutView(startsAt: part) { about = nil }
+                .presentationDetents([.medium, .large])
+                .presentationBackground(Chrome.ground)
+        }
     }
 
     /// Everything under the heading, in the order it is read.
@@ -212,6 +220,9 @@ struct SettingsView: View {
             Hairline()
             startingAgain
                 .id("again")
+            Hairline()
+            aboutRow
+                .id("about")
             // A Debug build or a TestFlight copy, and folded in the
             // second until it is asked for. Never in an App Store copy.
             if Developer.shared.showsSection {
@@ -294,17 +305,26 @@ struct SettingsView: View {
     }
 
     /// A label, and a menu of answers under it.
+    ///
+    /// `info` puts the ⓘ beside the label, for a choice whose reasons are on
+    /// the About sheet rather than on this screen.
     @ViewBuilder
     private func chooser(
         _ title: LocalizedStringKey,
         current: Text,
         note: LocalizedStringResource? = nil,
+        info: (() -> Void)? = nil,
         @ViewBuilder options: () -> some View
     ) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(title)
-                .chromeLabel()
-                .foregroundStyle(Chrome.sectionLabel)
+            HStack(spacing: 8) {
+                Text(title)
+                    .chromeLabel()
+                    .foregroundStyle(Chrome.sectionLabel)
+                if let info {
+                    infoMark(info)
+                }
+            }
 
             Menu {
                 options()
@@ -328,6 +348,28 @@ struct SettingsView: View {
             }
         }
     }
+
+    /// The ⓘ beside a label, which opens the About sheet at Privacy (Marcus,
+    /// 14 October 2026: 5A). The glyph rather than a word, beside a label
+    /// that already says what it is about. Drawn at the label's size and
+    /// touched in a forty-four-point square, which overhangs the row rather
+    /// than heightening it.
+    private func infoMark(_ open: @escaping () -> Void) -> some View {
+        Button(action: open) {
+            InfoGlyph()
+                .stroke(Chrome.sectionLabel, style: Chrome.monoline)
+                .frame(width: Self.infoSize, height: Self.infoSize)
+                .drawnHand()
+                .padding((44 - Self.infoSize) / 2)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .padding(-(44 - Self.infoSize) / 2)
+        .accessibilityLabel(Text("Privacy"))
+    }
+
+    /// The ⓘ beside an eleven-point label: a little over its capitals.
+    static let infoSize: CGFloat = 14
 
     // MARK: - Display
 
@@ -429,12 +471,13 @@ struct SettingsView: View {
     /// line under each answer's control, two sentences on coordinates, and
     /// under all three the ninety words on what two phones hand each other when
     /// they meet. That account is about the meeting rather than this setting;
-    /// it is still in the catalogue, word for word and in every language, for
-    /// wherever the app's privacy account comes to live, and `privacy2` says
-    /// the same on the website.
+    /// it is on the About sheet now, under Privacy, with the two sentences on
+    /// coordinates, and the ⓘ beside *Location description* opens it there
+    /// (Marcus, 14 October 2026). `privacy2` says the same on the website.
     private var plantingLocation: some View {
         VStack(alignment: .leading, spacing: 22) {
-            chooser("Location description", current: Text(placeMode.label), note: placeMode.note) {
+            chooser("Location description", current: Text(placeMode.label), note: placeMode.note,
+                    info: { about = .privacy }) {
                 ForEach(PlantingLocationMode.allCases, id: \.self) { mode in
                     Button { choose(mode) } label: { Text(mode.label) }
                 }
@@ -651,6 +694,34 @@ struct SettingsView: View {
 
     private func commitName() {
         model.rename(to: draftName)
+    }
+
+    // MARK: - About
+
+    /// The way to the About sheet, at the foot of the screen (Marcus, 14
+    /// October 2026: 4A): its mark and its word, as a quiet button, under the
+    /// last of the settings because it is not one.
+    private var aboutRow: some View {
+        Button { about = .top } label: {
+            HStack(spacing: 9) {
+                InfoGlyph()
+                    .stroke(Chrome.muted, style: Chrome.monoline)
+                    .frame(width: 15, height: 15)
+                    .drawnHand()
+                    // On the cap height rather than the line, as beside the
+                    // label voice in `ChromeIconLabel`.
+                    .offset(y: -1)
+                Text("About")
+                    .chromeLabel()
+                    .foregroundStyle(Chrome.muted)
+            }
+            .pressable()
+        }
+        .buttonStyle(.plain)
+        // The word as it is written, not in the label voice's capitals, which
+        // VoiceOver may spell out. A string, because a `Text` label takes the
+        // capitals set inside the button.
+        .accessibilityLabel(String(localized: "About"))
     }
 
     // MARK: - Starting again

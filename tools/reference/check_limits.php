@@ -79,6 +79,76 @@ check('and it is a whole allowance, not one more attempt', (function () use ($li
 
 check('a route with no limit passes', $limits->wait('/api/walk', '198.51.100.7', $now) === null);
 
+// MARK: A crowd behind one address, and one phone in it (14 October 2026)
+
+// **Two counts.** A gardener's allowance is counted by the meeting token the
+// request carries; the address's is `CROWD` times that, shared by everybody
+// behind it. So a venue's Wi-Fi gives each phone its own allowance, and one
+// machine minting tokens is still held at the address.
+$venue = '203.0.113.7';
+$byAddress = static fn (string $route, string $who, int $at) => $limits->wait($route, $who, $at, Limits::BY_ADDRESS);
+$release = '/api/wild/release';
+[$personal] = Limits::ROUTES[$release];
+[$ceiling] = Limits::CEILINGS[$release];
+check("an address holds CROWD gardeners' allowances ($ceiling releases, $personal each)",
+      $ceiling === Limits::CROWD * $personal);
+$crowdAt = $now + 50 * $window;
+$refusedAt = null;
+for ($i = 1; $i <= $ceiling + 2; $i++) {
+    // A different gardener each time, as a crowd is: each passes its own count…
+    $mine = $limits->wait($release, "token of gardener $i", $crowdAt);
+    // …and the address counts them all.
+    $theirs = $byAddress($release, $venue, $crowdAt);
+    if (($mine !== null || $theirs !== null) && $refusedAt === null) $refusedAt = $i;
+}
+check("a crowd of gardeners on one address is refused only past the address's $ceiling", $refusedAt === $ceiling + 1);
+$phone = null;
+for ($i = 1; $i <= $personal + 1; $i++) {
+    $wait = $limits->wait($release, 'one phone, one token', $crowdAt);
+    if ($wait !== null && $phone === null) $phone = $i;
+}
+check("and one phone in it still has one gardener's $personal", $phone === $personal + 1);
+check('the two counts are kept apart: a token and an address with the same spelling do not share',
+      $limits->wait($release, $venue, $crowdAt) === null);
+check('every limited route has both counts', array_keys(Limits::ROUTES) === array_keys(Limits::CEILINGS));
+check('and every ceiling is CROWD times the allowance, but wear, which carries no token',
+      array_filter(Limits::CEILINGS, fn (array $c, string $route) => $c[0] !== ($route === '/api/wild/wear'
+          ? Limits::ROUTES[$route][0] : Limits::CROWD * Limits::ROUTES[$route][0]) || $c[1] !== Limits::WINDOW,
+          ARRAY_FILTER_USE_BOTH) === []);
+
+// **The one statement that counts**, driven on its own, without the sweep in
+// front of it that would otherwise clear an ended window first: it opens a
+// window, counts, stops one past the allowance, and opens a fresh window once
+// the old one has run out.
+$count = Closure::bind(fn (string $bucket, int $allowed, int $window, int $at) => $this->count($bucket, $allowed,
+                       $window, $at), $limits, Limits::class);
+$seen = [];
+foreach ([0, 1, 2, 3, 4, 9, 10, 11] as $offset) {
+    $row = $count(substr(hash('sha256', 'the counting statement'), 0, 32), 2, 10, 1_900_000_000 + $offset);
+    $seen[] = (int) $row['hits'] . '@' . ((int) $row['started_at'] - 1_900_000_000);
+}
+check('one upsert opens, counts, caps and reopens a window: ' . implode(' ', $seen),
+      $seen === ['1@0', '2@0', '3@0', '3@0', '3@0', '3@0', '1@10', '2@10']);
+
+// MARK: Who an address is
+
+// **An IPv6 address is its /64**: a phone or a home line holds one, and can
+// use any address in it.
+$caller = static fn (string $address) => Limits::caller(['REMOTE_ADDR' => $address]);
+check('an IPv4 address is itself', $caller('198.51.100.7') === '198.51.100.7');
+check('two IPv6 addresses in one /64 are one caller',
+      $caller('2001:db8:1:2::1') === $caller('2001:db8:1:2:ffff:ffff:ffff:fffe')
+      && $caller('2001:db8:1:2::1') === '2001:db8:1:2::/64');
+check('the next /64 is another', $caller('2001:db8:1:3::1') !== $caller('2001:db8:1:2::1'));
+check('an IPv4 address written as IPv6 is the IPv4 address', $caller('::ffff:198.51.100.7') === '198.51.100.7');
+check('anything else is counted as it is', $caller('') === '' && $caller('not an address') === 'not an address');
+$v6Refused = null;
+for ($i = 1; $i <= $ceiling + 1; $i++) {
+    $wait = $byAddress($release, $caller('2001:db8:9:9::' . dechex($i)), $crowdAt);
+    if ($wait !== null && $v6Refused === null) $v6Refused = $i;
+}
+check("releases from every address in one /64 share one ceiling of $ceiling", $v6Refused === $ceiling + 1);
+
 // MARK: What is kept
 
 $rows = $db->query('SELECT bucket FROM rate_limits')->fetchAll();

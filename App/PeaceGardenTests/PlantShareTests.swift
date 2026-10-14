@@ -1,6 +1,7 @@
 import AVFoundation
 import ImageIO
 import SeedCore
+import SwiftUI
 import XCTest
 @testable import PeaceGarden
 
@@ -176,6 +177,126 @@ final class PlantShareTests: XCTestCase {
         let still = try Pixels(try XCTUnwrap(CGImageSourceCreateImageAtIndex(source, 0, nil)))
         let last = try XCTUnwrap(frames.last)
         XCTAssertLessThan(still.difference(from: last, in: CGRect(x: 0, y: 0, width: 360, height: 780)), 2.5)
+    }
+
+    // MARK: The menu
+
+    /// **Five things, the time-lapse among them** (Marcus, 14 October): the
+    /// three that go to the share sheet, then the two that go to Photos, each
+    /// with a mark of its own the system can draw.
+    func testTheMenuHasFiveThingsWithTheTimeLapse() throws {
+        XCTAssertEqual(PlantShareAction.allCases, [.picture, .turning, .timeLapse, .wallpaper, .movingWallpaper])
+        XCTAssertFalse(PlantShareAction.timeLapse.savesToPhotos, "the time-lapse goes to the share sheet")
+        XCTAssertEqual(Set(PlantShareAction.allCases.map(\.glyph)).count, PlantShareAction.allCases.count)
+        for action in PlantShareAction.allCases {
+            XCTAssertNotNil(UIImage(systemName: action.glyph), "\(action.glyph) is a system mark")
+        }
+        let title = Mirror(reflecting: PlantShareAction.timeLapse.title).children
+            .first { $0.label == "key" }?.value as? String
+        XCTAssertEqual(title, "Share time-lapse")
+    }
+
+    /// **The time-lapse film, as the menu makes it**: the plant's twelve
+    /// seconds as an H.264 movie called *Peace Garden*, the ring told how far
+    /// it has got, and nothing in the file but the picture — no seed, no
+    /// name, no metadata. Small and at four frames a second, because the size
+    /// is not what is being tested.
+    func testTheTimeLapseFilmCarriesNothingButThePicture() async throws {
+        let record = PlantRecord(seed: Self.genome.seed, lineage: .minted,
+                                 birth: Date().addingTimeInterval(-40 * 86_400))
+        var options = PlantShareFiles.timeLapseOptions()
+        XCTAssertEqual(options.drift, .towardsNow, "the sky ends on the phone's hour")
+        XCTAssertFalse(options.opensOnThePlant, "the film starts on the sprout")
+        options.size = CGSize(width: 120, height: 212)
+        options.fps = 4
+        var reported: [Double] = []
+        let url = try await PlantShareFiles.timeLapse(record, now: Date(), options: options) { reported.append($0) }
+
+        XCTAssertEqual(url.lastPathComponent, "\(PlantShareFiles.fileStem).mp4")
+        let bytes = try Data(contentsOf: url)
+        let name = record.genome.name
+        for word in [record.seed.hex, record.seed.hex.uppercased(), name.full, name.genus, name.epithet] {
+            XCTAssertNil(bytes.range(of: Data(word.utf8)), "the film carries \(word)")
+        }
+        let asset = AVURLAsset(url: url)
+        let items = try await asset.load(.metadata)
+        XCTAssertTrue(items.isEmpty, "the film carries no metadata: \(items)")
+        let duration = try await asset.load(.duration).seconds
+        XCTAssertEqual(duration, TimeLapse.duration, accuracy: 0.5)
+        XCTAssertEqual(reported.last ?? 0, 1, accuracy: 0.001, "the ring fills")
+        XCTAssertEqual(reported, reported.sorted(), "and only forwards")
+        try? FileManager.default.removeItem(at: url.deletingLastPathComponent())
+    }
+
+    // MARK: The sky of the phone's hour (Marcus, 14 October 2026)
+
+    /// Day in the morning, dusk at half past six, night at eleven, dawn at half
+    /// past five; and the night when there is no hour to be had.
+    func testTheSkyIsChosenByTheHour() {
+        XCTAssertEqual(ShareGround.recommended, .byTheHour)
+        XCTAssertEqual(ShareSky.at(hour: 9), .day(hour: 9))
+        XCTAssertEqual(ShareSky.at(hour: 12), .day(hour: 12))
+        XCTAssertEqual(ShareSky.at(hour: 17.9), .day(hour: 17.9))
+        XCTAssertEqual(ShareSky.at(hour: 18.5), .twilight(hour: 18.5))
+        XCTAssertEqual(ShareSky.at(hour: 5.5), .twilight(hour: 5.5))
+        XCTAssertEqual(ShareSky.at(hour: 23), .night(hour: 23))
+        XCTAssertEqual(ShareSky.at(hour: 2), .night(hour: 2))
+        XCTAssertEqual(ShareSky.at(hour: 33), .day(hour: 9), "a day and nine hours is nine o'clock")
+        XCTAssertEqual(ShareSky.at(hour: nil), .night(hour: nil))
+        XCTAssertEqual(ShareSky.at(hour: .nan), .night(hour: nil))
+    }
+
+    /// The hour is the phone's own clock, in its own time zone.
+    func testTheHourIsThePhonesOwnClock() throws {
+        // 17:30 at Greenwich on 14 October 2026.
+        let moment = Date(timeIntervalSince1970: 1_791_999_000)
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/London"))
+        XCTAssertEqual(try XCTUnwrap(ShareSky.phoneHour(at: moment, calendar: calendar)), 18.5, accuracy: 0.001)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Asia/Tokyo"))
+        XCTAssertEqual(try XCTUnwrap(ShareSky.phoneHour(at: moment, calendar: calendar)), 2.5, accuracy: 0.001)
+    }
+
+    /// **What is drawn is that sky.** The day is light and its sun on the side
+    /// the hour puts it; dusk is the night with the last light low on the side
+    /// the sun went down; and with no hour the ground is the night exactly as
+    /// it stood before.
+    func testTheGroundIsDrawnForTheHour() throws {
+        func ground(_ hour: Double?, _ ground: ShareGround = .byTheHour) throws -> CGImage {
+            var portrait = Self.small(ground)
+            portrait.hour = hour
+            return try XCTUnwrap(ShareBackdrop.image(for: portrait))
+        }
+        func light(_ image: CGImage, _ region: CGRect) throws -> Double {
+            let box = CGRect(x: region.minX * CGFloat(image.width), y: region.minY * CGFloat(image.height),
+                             width: region.width * CGFloat(image.width), height: region.height * CGFloat(image.height))
+            return TimeLapseLuminance.mean(of: try XCTUnwrap(image.cropping(to: box.integral)))
+        }
+        let whole = CGRect(x: 0, y: 0, width: 1, height: 1)
+        let left = CGRect(x: 0, y: 0.25, width: 0.3, height: 0.3)
+        let right = CGRect(x: 0.7, y: 0.25, width: 0.3, height: 0.3)
+
+        let morning = try ground(9), afternoon = try ground(15)
+        let dusk = try ground(18.5), night = try ground(23), none = try ground(nil)
+        XCTAssertGreaterThan(try light(morning, whole), 0.15, "the day is a day")
+        XCTAssertLessThan(try light(night, whole), 0.05, "the night is a night")
+        XCTAssertGreaterThan(try light(morning, left), try light(morning, right), "the morning sun is on the left")
+        XCTAssertGreaterThan(try light(afternoon, right), try light(afternoon, left), "and the afternoon's on the right")
+
+        let afterglow = CGRect(x: 0.7, y: 0.45, width: 0.3, height: 0.2)
+        let farFromIt = CGRect(x: 0, y: 0.05, width: 0.3, height: 0.2)
+        let dusky = try Pixels(dusk), dark = try Pixels(none)
+        let size = CGSize(width: dusky.width, height: dusky.height)
+        func scaled(_ r: CGRect) -> CGRect {
+            CGRect(x: r.minX * size.width, y: r.minY * size.height, width: r.width * size.width, height: r.height * size.height)
+        }
+        XCTAssertGreaterThan(dusky.difference(from: dark, in: scaled(afterglow)),
+                             dusky.difference(from: dark, in: scaled(farFromIt)) + 4,
+                             "dusk has the last light low on the side the sun went down")
+
+        let before = try Pixels(try ground(nil, .nightSky))
+        XCTAssertEqual(dark.difference(from: before, in: CGRect(origin: .zero, size: size)), 0,
+                       "with no hour, the night it always was")
     }
 
     // MARK: Nothing but the picture

@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/Schema.php';
+require_once __DIR__ . '/Placed.php';
+require_once __DIR__ . '/Transient.php';
 require_once __DIR__ . '/WildFields.php';
 require_once __DIR__ . '/Keyed.php';
 
@@ -75,27 +78,25 @@ final class WildStore
 {
     public function __construct(private PDO $db)
     {
-        $this->migrate();
+        Schema::ensure($db);
     }
 
-    private function run(string $sql): void
+    /**
+     * The tables, made or brought up to date. Run by `Schema` when the
+     * database is older than the code (14 October 2026), never per request.
+     */
+    public static function migrate(PDO $db): void
     {
-        $this->db->prepare($sql)->execute();
-    }
-
-    private function migrate(): void
-    {
-        $sqlite = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
-        $order = $sqlite ? ' WITHOUT ROWID' : '';
-        $this->run("CREATE TABLE IF NOT EXISTS wild_fields (
+        $run = static fn (string $sql): bool => $db->prepare($sql)->execute();
+        $run("CREATE TABLE IF NOT EXISTS wild_fields (
             seed CHAR(64) NOT NULL PRIMARY KEY,
             parent_a CHAR(64) NOT NULL,
             parent_b CHAR(64) NOT NULL,
             tile_x INTEGER NOT NULL,
             tile_z INTEGER NOT NULL,
             hidden INTEGER NOT NULL DEFAULT 0
-        )$order");
-        $this->run('CREATE INDEX IF NOT EXISTS wild_fields_tile ON wild_fields (tile_x, tile_z)');
+        )" . Schema::options($db, ' WITHOUT ROWID'));
+        $run('CREATE INDEX IF NOT EXISTS wild_fields_tile ON wild_fields (tile_x, tile_z)');
         // Since 1 October 2026: who stands beside a released plant, by their
         // own choice. `a` is the side of the gardener who released it and `b`
         // the other's. `print_*` are the fingerprints of the two tokens the
@@ -104,7 +105,7 @@ final class WildStore
         // they have not; `place` and `month` what is shown, once both chose the
         // same. A row is made only when a plant is released with both tokens,
         // and the field's own table is untouched by it.
-        $this->run("CREATE TABLE IF NOT EXISTS wild_names (
+        $run("CREATE TABLE IF NOT EXISTS wild_names (
             seed CHAR(64) NOT NULL PRIMARY KEY,
             print_a CHAR(33) NOT NULL,
             print_b CHAR(33) NOT NULL,
@@ -116,35 +117,50 @@ final class WildStore
             month_b CHAR(33) NULL,
             place VARCHAR(64) NULL,
             month CHAR(7) NULL
-        )$order");
-        $this->run('CREATE INDEX IF NOT EXISTS wild_names_a ON wild_names (print_a)');
-        $this->run('CREATE INDEX IF NOT EXISTS wild_names_b ON wild_names (print_b)');
+        )" . Schema::options($db, ' WITHOUT ROWID'));
+        $run('CREATE INDEX IF NOT EXISTS wild_names_a ON wild_names (print_a)');
+        $run('CREATE INDEX IF NOT EXISTS wild_names_b ON wild_names (print_b)');
     }
 
     /**
      * Stands one plant in the field. Returns [the planting, whether it is
-     * new]: a plant already released gets the place it already has.
+     * new]: a plant already released gets the place it already has. And
+     * [null, false] when an area holds it (14 October 2026): an offer of it
+     * was answered yes after the caller cleared the way, and the caller clears
+     * it again (`router.php`).
      *
      * The caller has checked that the seed is the cross of the two parents,
      * and has cleared the way with the asking (`Offers::letGo`). Neither is
      * done here, because this class knows nothing about either.
+     *
+     * **The plant's one public place is claimed with it**, in one transaction
+     * (`Placed.php`), so an arrival of the same plant in an area at the same
+     * moment and this release cannot both stand.
      */
     public function release(string $seed, string $parentA, string $parentB): array
     {
         if ($row = $this->row($seed)) return [self::planting($row), false];
         [$x, $z] = WildFields::tile($seed);
-        $insert = $this->db->prepare('INSERT INTO wild_fields (seed, parent_a, parent_b, tile_x, tile_z)
-            VALUES (?, ?, ?, ?, ?)');
-        try {
-            $insert->execute([$seed, $parentA, $parentB, $x, $z]);
-        } catch (PDOException $clash) {
-            // The same plant released twice at once. The key settles it and the
-            // loser is handed the winner, which is what it would have had a
-            // moment later.
-            if ($row = $this->row($seed)) return [self::planting($row), false];
-            throw $clash;
-        }
-        return [self::planting(['seed' => $seed, 'parent_a' => $parentA, 'parent_b' => $parentB]), true];
+        return Transient::retry(function () use ($seed, $parentA, $parentB, $x, $z): array {
+            $this->db->beginTransaction();
+            try {
+                if (!Placed::claim($this->db, $seed, Placed::WILD)) {
+                    $this->db->rollBack();
+                    return [null, false];
+                }
+                $this->db->prepare('INSERT INTO wild_fields (seed, parent_a, parent_b, tile_x, tile_z)
+                    VALUES (?, ?, ?, ?, ?)')->execute([$seed, $parentA, $parentB, $x, $z]);
+                $this->db->commit();
+            } catch (PDOException $clash) {
+                if ($this->db->inTransaction()) $this->db->rollBack();
+                // The same plant released twice at once. The key settles it and
+                // the loser is handed the winner, which is what it would have
+                // had a moment later.
+                if ($row = $this->row($seed)) return [self::planting($row), false];
+                throw $clash;
+            }
+            return [self::planting(['seed' => $seed, 'parent_a' => $parentA, 'parent_b' => $parentB]), true];
+        });
     }
 
     /** Whether this plant has been released, hidden or not. */

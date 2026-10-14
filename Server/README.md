@@ -294,6 +294,18 @@ That uploads this directory and then reads back the status and content type of
 every path, plus whether the Team ID in the association file still matches
 `project.yml`.
 
+**A deploy that raises `Schema::VERSION`** migrates the database on the first
+request after it (*The schema*, under the plot service). To run that migration
+where its output can be read instead, straight after the upload:
+
+```sh
+ssh peacegarden 'php ~/public_html/.api/migrate.php'
+```
+
+It says the version before and after, which tables it converted to utf8mb4,
+and what the data migrations found. Running it when nothing is due changes
+nothing.
+
 It uploads with `--delete`, because the failure that prevents is invisible: a
 file left at `/s` by an older upload wins at nginx's `try_files` and is served
 as a download, and `index.php` is never reached. `.well-known/` is the one
@@ -412,8 +424,14 @@ the service's own files unreachable, as it does `.pages/`.
     phones, which ask by token. The key is `offer_key`, which the nightly copy
     carries with `walk_offers`. **A declined offer is erased the same way**
     and keeps the word `declined`, which still refuses a second offer. Rows
-    withdrawn or declined before this are erased by a migration that runs on
-    every request and finds nothing once it has run.
+    withdrawn or declined before this are erased by the migration (*The
+    schema*, below), which finds nothing once it has run.
+  - **A "yes" sent twice is one yes** (14 October 2026). Two copies of the
+    same answer at once — a phone retrying after a slow answer, a double tap
+    — both find the planting; the one that loses settling the offer reads it
+    again, and takes the planting back only if the offer is no longer
+    accepted. Until then it took it back while the offer still said
+    accepted, leaving the plant nowhere (the population test's finding 1).
   - **An offer nobody answers lapses after thirty days**: it becomes a
     withdrawal, answered at the moment it lapsed, and is erased the same way.
     Checked whenever the offer is looked up, swept on every `offer` and
@@ -425,13 +443,40 @@ the service's own files unreachable, as it does `.pages/`.
     What it does prevent is anybody planting *somebody else's* plant or
     answering for them. Rate limiting belongs in front of the service.
   - Checked by `tools/reference/check_offers.php`, in CI.
-- **How often one caller may write**, `.api/Limits.php`: 18 offers, 55 answers,
-  28 withdrawals, 220 askings and 9 releases per address in a window of
-  fifty-five minutes — the hourly 20, 60, 30, 240 and 10 scaled to it — answered `429` with a
-  `Retry-After` when the allowance is gone. It is in PHP because the vhost is
+- **How often one caller may write**, `.api/Limits.php`, counted twice since
+  14 October 2026, and answered `429` with a `Retry-After` when either
+  allowance is gone:
+
+  | in fifty-five minutes | one gardener | one address |
+  | --- | --- | --- |
+  | `walk/offer` | 18 | 90 |
+  | `walk/answer` | 55 | 275 |
+  | `walk/withdraw` | 28 | 140 |
+  | `walk/pending` | 220 | 1,100 |
+  | `wild/release` | 9 | 45 |
+  | `wild/answer` | 55 | 275 |
+  | `wild/wear` | — | 110 |
+
+  **One gardener** is the meeting token the request carries (`from` for an
+  offer, `to` for an answer, `token` for a withdrawal, a release or a name,
+  the whole bag for `pending`, the seed for a release with no token), at the
+  hourly 20, 60, 30, 240 and 10 scaled to the window, as the address's
+  allowance was until then. **One address** is everybody behind it,
+  `Limits::CROWD` (five) times that; an IPv6 address counts as its /64, which
+  is what one phone or one home line holds. The address count is taken before
+  the body is read, so a malformed request spends it; the gardener's after.
+  Why both: a festival's Wi-Fi or a mobile carrier puts many phones behind one
+  address, and on one address the old allowance refused a quarter of a
+  hundred gardeners opening the app (the population test's finding 6) — while
+  a token is minted by the phone, so a script can mint one per request and
+  only the address holds it back: at most 45 invented plants an hour in the
+  Wild Fields from one IPv4 address or one /64, where IPv6 had no cap before.
+  The count is one upsert in a transaction at READ COMMITTED, retried on a
+  deadlock or a duplicate key, so two phones writing for the first time in the
+  same moment no longer meet a 500 (finding 2). It is in PHP because the vhost is
   not ours to configure, so it caps what is *written* rather than what arrives
   — which is the half that matters on an append-only walk. What is stored is a
-  salted digest of the address and a count. The salt is random per install and
+  salted digest of the address or the token and a count. The salt is random per install and
   lives in the same database, so anybody holding the database could try every
   IPv4 address against a digest; what protects an address is that its row is
   deleted once its window is over — at the first limited request after it, or
@@ -465,7 +510,18 @@ the service's own files unreachable, as it does `.pages/`.
     seed, both parents, and the spot, which is the seed's first four bytes on
     a 64-metre field whose edges meet (`WildFields`, in SeedCore).
   - A released plant is refused by every area afterwards: `walk/offer` answers
-    `410`.
+    `410`. **One public place is held by the database** (14 October 2026,
+    `.api/Placed.php`): `placed` has a row per plant standing in an area or
+    the field, written in the planting's or the release's own transaction,
+    so an offer answered yes and a release of the same plant at the same
+    moment cannot both stand (finding 5). The yes that comes second plants
+    nothing and the offer is withdrawn; the release that comes second clears
+    the way again, as it would have a moment later. Taking back lets go in
+    the same transaction. `placed` is not in the nightly copy: the migration
+    makes it again from the tables that are.
+  - A plant crossed with itself — both parents the same seed — is refused,
+    `422`, here and by `walk/offer` (since 14 October 2026; the app never
+    makes one).
   - **Who stands beside it** (Marcus, 1 October 2026; `wild_names`). The
     release also takes `theirs` (the token the other phone minted) and
     `shown` (`{name?, place?, month?}`, the releaser's choice, absent for
@@ -510,6 +566,24 @@ the service's own files unreachable, as it does `.pages/`.
   the cross of the parents it names.
 - Storage defaults to SQLite **beside** `public_html` (`../peacegarden-data/`),
   never inside it. The 20i database goes in `config.php` once it exists.
+- **The schema**, `.api/Schema.php`, since 14 October 2026. The database keeps
+  the version it was last migrated to, one row in `schema_version`; a request
+  reads that row — one statement — and runs the migration only when the
+  code's `Schema::VERSION` is higher, under `GET_LOCK` on MariaDB, so one
+  request migrates and the rest wait for it. Until then every request ran the
+  whole migration, eighty-four statements including ten ALTERs that always
+  failed, and under load most of the database's threads waited on one
+  another's metadata locks (finding 3). Every step is idempotent: tables
+  `IF NOT EXISTS`, a column added only where `information_schema` says it is
+  missing, the erasures that find nothing once done. **Every table is utf8mb4
+  in `utf8mb4_unicode_ci`**, named in its `CREATE TABLE`, and the migration
+  converts any table of ours that is not, after one read of
+  `information_schema` (finding 4: a database created latin1 refused a name
+  with an emoji after the plant was standing). **A change to any store's
+  migration raises `Schema::VERSION`** in the same commit, or a database
+  already at the old number never sees it. `php ~/public_html/.api/migrate.php`
+  runs the whole migration by hand, whatever the version, and says what it
+  did.
 
 Locally, with the browser pages beside it:
 `php -S localhost:8803 -t Server tools/wasm/dev-router.php` — which serves
@@ -611,7 +685,10 @@ on the server, and none older than thirty days but the newest.
 mysqldump refuses a list naming a table that is not there, and the service
 makes its tables on the first request after a deploy, so a deploy with no
 request before 03:17 used to lose that night's copy. `backup.php` now opens the
-store first, running the same migrations a request would. For `wild_names`,
+store first, which migrates the database if it is older than the code, as a
+request would (*The schema*, above). **Every MariaDB copy starts by dropping
+`schema_version`** (since 14 October 2026), so a restore is migrated again on
+the request after it. For `wild_names`,
 after the upload all the same: open `/wild` once, and check that
 `php ~/public_html/.api/backup.php --tables` lists `wild_names`.
 
@@ -661,7 +738,8 @@ whether it could reach the folder. The folder was in `~/Documents` until 24
 September 2026, where macOS's privacy controls refused the job with *Operation
 not permitted*; it is in Application Support now, which a background job may
 reach. Restoring an older copy brings erased rows back into the live tables,
-and the first request afterwards erases them again.
+and the first request afterwards erases them again — for a copy taken before 14
+October 2026, only once `migrate.php` has run (*Restoring*).
 
 From the Mac:
 
@@ -686,6 +764,19 @@ it came from.
 gunzip -c ~/Library/Application\ Support/Peace\ Garden\ backups/walk-….sql.gz \
   | ssh peacegarden 'mysql --defaults-file=… <database>'
 ```
+
+Then, for a copy taken before 14 October 2026:
+
+```
+ssh peacegarden 'php ~/public_html/.api/migrate.php'
+```
+
+A copy taken since starts by dropping `schema_version`, so the first request
+after the restore runs the whole migration by itself — erasing what the older
+copy brought back, converting what needs converting, and claiming every
+plant's one public place afresh. An older copy has no such line, and the live
+database's version would say it was already migrated; `migrate.php` runs it
+whatever the version says. Running it after a newer copy too does no harm.
 
 There is no one-line script for this on purpose. Restoring is the rare thing
 done once under pressure, and a script that did it would also be a script that

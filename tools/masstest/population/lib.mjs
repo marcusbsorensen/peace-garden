@@ -83,7 +83,10 @@ export async function sqlAsync(query, db = 'pgmt_main') {
 /** One of the service's own commands (curate.php, sweep.php), on a test database. */
 export function serviceCommand(script, args = [], db = 'pgmt_main') {
     try {
-        const out = execFileSync('php', [path.join(ROOT, 'Server/.api', script), ...args],
+        // PGMT_SERVER_DIR, as stack.sh takes it: the copy of Server/ being
+        // served, so a command runs the same code the requests do.
+        const server = process.env.PGMT_SERVER_DIR || path.join(ROOT, 'Server');
+        const out = execFileSync('php', [path.join(server, '.api', script), ...args],
                                  { env: { ...process.env, PGMT_DB: db }, stdio: ['ignore', 'pipe', 'pipe'] });
         return { code: 0, out: out.toString('utf8') };
     } catch (error) {

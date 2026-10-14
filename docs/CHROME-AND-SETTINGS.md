@@ -217,6 +217,17 @@ puts two places for it to Marcus — an About sheet from the foot of Settings, o
 a link to the website's privacy page, whose second paragraph (`privacy2`) says
 most of it.
 
+**14 October: the About sheet** (Marcus, 4A and 5A). A quiet button at the foot
+of Settings, under *Starting again* — an i in a ring and *About* — opens a sheet
+(`AboutView`) with the screen's own header: the same mark beside its title
+(`InfoGlyph` through `TitleGlyph`) and the circled X. Under *Privacy* stand the
+account of a meeting, from the catalogue's translated key (*made*, where the
+code had drifted to *drawn*), and the two sentences on coordinates, under the
+label *Where you actually are*, their translations taken back out of the stale
+keys. The same mark beside *Location description* opens the sheet at Privacy,
+and VoiceOver reads it as *Privacy*. Two new words: *About* and *Privacy*.
+`design/ui-followups-2026-10-14/about.png` has it.
+
 **13 October: the switches are sage when on.** `Chrome.sage`, the sage stop of
 the logo's ramp in the pair BRAND.md gives it: `#9CC29E` in Dark, `#397E3D` in
 Light. They were `Chrome.muted`, a grey that said *on* only by being lighter than

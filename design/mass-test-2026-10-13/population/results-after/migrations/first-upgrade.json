@@ -1,0 +1,16 @@
+{
+    "had schema_version before": false,
+    "first request": [
+        200,
+        28.2
+    ],
+    "second request": [
+        200,
+        4.8
+    ],
+    "GET \/api\/wild after": [
+        200,
+        3.7
+    ],
+    "version": 1
+}

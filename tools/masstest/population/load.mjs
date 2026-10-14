@@ -56,8 +56,13 @@ function writeRequest() {
     return ['/api/walk/offer', { to: m.tokenB, from: m.tokenA, plant: arrival(m) }];
 }
 
+// InnoDB's own count of deadlocks it broke, server-wide (14 October 2026), so
+// a phase can say how many it caused whether or not the service retried them.
+const deadlocks = () => Number(sql("SHOW GLOBAL STATUS LIKE 'Innodb_deadlocks'", DB)[0]?.[1] ?? 0);
+
 async function phase(kind, level) {
     sql('TRUNCATE performance_schema.events_statements_summary_by_digest', DB);
+    const deadlocksBefore = deadlocks();
     const latencies = [];
     const statuses = {};
     const byRoute = {};
@@ -103,6 +108,10 @@ async function phase(kind, level) {
     sampling = false;
     await sampler;
     const seconds = (performance.now() - t0) / 1000;
+    const deadlocked = deadlocks() - deadlocksBefore;
+    const samples = Object.values(states).reduce((n, c) => n + c, 0);
+    const metadataWaits = Object.entries(states).filter(([k]) => k.startsWith('Waiting for table metadata lock'))
+        .reduce((n, [, c]) => n + c, 0);
     const ok = Object.entries(statuses).filter(([s]) => s >= 200 && s < 300).reduce((n, [, c]) => n + c, 0);
     const top = sql(`SELECT COUNT_STAR, ROUND(SUM_TIMER_WAIT/1e9), ROUND(AVG_TIMER_WAIT/1e6), LEFT(DIGEST_TEXT, 90)
                      FROM performance_schema.events_statements_summary_by_digest WHERE SCHEMA_NAME = '${DB}'
@@ -112,9 +121,11 @@ async function phase(kind, level) {
                      perSecond: Math.round((done / seconds) * 10) / 10, ...summarise(latencies),
                      errorShare: Math.round(((done - ok) / Math.max(1, done)) * 1000) / 10, statuses,
                      routes: Object.fromEntries(Object.entries(byRoute).map(([r, l]) => [r, summarise(l)])), top,
-                     threadStates: states };
+                     threadStates: states, deadlocks: deadlocked,
+                     metadataLockShare: samples ? Math.round((metadataWaits / samples) * 1000) / 10 : 0 };
     console.log(JSON.stringify({ kind, level, perSecond: result.perSecond, p50: result.p50, p95: result.p95, p99: result.p99,
-                                 errorShare: result.errorShare, statuses }));
+                                 errorShare: result.errorShare, statuses, deadlocks: deadlocked,
+                                 metadataLockShare: result.metadataLockShare }));
     return result;
 }
 

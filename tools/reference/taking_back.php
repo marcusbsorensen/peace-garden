@@ -128,6 +128,10 @@ function takingBack(string $area, array $vectors, int $count = 200): void
         if ($n % 23 === 11 && !isset($taken[$n - 1])) {
             $old = new PDO('sqlite:' . $taken_file);
             $old->prepare("UPDATE $table SET hidden = 1 WHERE seed = ?")->execute([$arrivals[$n - 1]['seed']]);
+            // The code that hid it that way had no schema version, so the
+            // database it left has none either; the next store opened finds
+            // it older than the code and migrates (`Schema.php`).
+            $old->prepare('DELETE FROM schema_version')->execute();
             unset($old);
             $taken[$n - 1] = true;
             $lifted = takingBackStore($area, $taken_file);

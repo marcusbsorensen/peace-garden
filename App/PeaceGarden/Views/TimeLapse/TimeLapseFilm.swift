@@ -6,8 +6,9 @@ import SwiftUI
 /// The time-lapse as a film: its frames, or a twelve-second movie, for the
 /// share sheet to hand on.
 ///
-/// **For the share export** (`Views/Share/`, on its own branch): *Share
-/// time-lapse* calls `writeMovie(_:now:options:to:)` and shares the file, or
+/// **For the share export** (`Views/Share/`): *Share time-lapse* calls
+/// `writeMovie(_:now:options:to:progress:)` (`PlantShareFiles.timeLapse`) and
+/// shares the file, or
 /// `render(_:now:options:frame:)` if it wants the frames to put through a
 /// pipeline of its own. Nothing here knows about sharing, and nothing in the
 /// share code needs to know how a time-lapse is timed.
@@ -82,8 +83,10 @@ enum TimeLapseFilm {
     }
 
     /// The film as an H.264 movie at `url`, replacing anything there.
+    /// `progress` is told how far through the frames it is, `0...1`, after
+    /// each one is written.
     static func writeMovie(_ record: PlantRecord, now: Date, options: Options = Options(),
-                           to url: URL) async throws {
+                           to url: URL, progress: (Double) -> Void = { _ in }) async throws {
         try? FileManager.default.removeItem(at: url)
         let writer: AVAssetWriter
         do { writer = try AVAssetWriter(outputURL: url, fileType: .mp4) } catch { throw Failure.cannotWrite(error) }
@@ -108,6 +111,7 @@ enum TimeLapseFilm {
         writer.add(input)
         guard writer.startWriting() else { throw Failure.cannotWrite(writer.error) }
         writer.startSession(atSourceTime: .zero)
+        let last = Double(max(1, Int((TimeLapse.duration * Double(options.fps)).rounded())))
 
         try await render(record, now: now, options: options) { frame in
             while !input.isReadyForMoreMediaData { try await Task.sleep(for: .milliseconds(5)) }
@@ -126,6 +130,7 @@ enum TimeLapseFilm {
             context.draw(frame.image, in: CGRect(x: 0, y: 0, width: width, height: height))
             let at = CMTime(value: CMTimeValue(frame.index), timescale: CMTimeScale(options.fps))
             guard adaptor.append(buffer, withPresentationTime: at) else { throw Failure.cannotWrite(writer.error) }
+            progress(min(1, Double(frame.index) / last))
         }
 
         input.markAsFinished()

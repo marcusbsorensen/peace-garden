@@ -450,6 +450,7 @@ node scale.mjs out/plan.jsonl out/run
 node load.mjs out/pool.jsonl out/run --from 2000 --tag tmpfs
 php check.php out/run && .build/release/popgen verify out/plan.jsonl out/run/dump.json out/pool.jsonl
 ./experiment-once.sh && PGMT_STORAGE=tmpfs PGMT_SERVER_DIR=$PWD/out/server-once ./stack.sh web
+./migrations.sh out/migrations 97fd259                   # the schema version: fresh, upgraded, latin1, a rollback
 ./stack.sh down                                          # containers, network, volume, config.php
 ```
 
@@ -462,4 +463,168 @@ php check.php out/run && .build/release/popgen verify out/plan.jsonl out/run/dum
 | `adversary.mjs`, `races.mjs`, `charset.mjs` | the attacks, the races, the character sets |
 | `scale.mjs`, `load.mjs`, `probe.mjs` | growth, load, one request alone |
 | `experiment-once.sh` | the copy without migrations, for finding 3 |
+| `migrations.sh`, `migrations.php` | the schema version on MariaDB, fresh and upgraded (14 October) |
 | `results/` | the outputs quoted above |
+| `results-after/` | the outputs quoted below, after the fixes |
+
+## After the fixes, 14 October
+
+Marcus chose 7A: fix 1, 2, 3, 5, 6 and 8, take option B for 4, and leave 7.
+Branch `claude/server-fixes-2026-10-14`; the code before is 97fd259, the
+code this report measured. Then everything above ran again against the
+fixed server, on the same stack (PHP-FPM 8.3 in Docker, 16 workers,
+MariaDB 10.11 in memory), with the same plans and seeds.
+
+**Short version.** No request answered 500 — not in the population, the
+adversary, the races or the load, where the population had 478 before. A
+double yes never takes the planting back (0 of 60, from 25 of 60), and an
+offer and a release at once never leave a plant in two places (0 of 40, from
+9). A request reads one row of schema instead of running eighty-four
+statements; no database thread waited on a metadata lock; reads went from 160
+to 320 a second to 1,400 to 1,800, and writes from 210 to 310 to 1,400 to
+2,200, on the same database the same day.
+Every invariant held at every check, and every planting re-derived by SeedCore.
+
+### What changed
+
+| finding | the fix | where |
+| --- | --- | --- |
+| 1. a double yes takes the planting back | When `accept()` loses, the offer is read again; the planting is taken back only if it is no longer accepted. Lapsed, withdrawn and declined never return to accepted, so the second read cannot be overtaken | `Offers::answer` |
+| 2. deadlocks and duplicate keys on `rate_limits` | One upsert opens, resets or counts a window, inside a transaction at READ COMMITTED (no gap locks), read back in the same transaction; a deadlock or a duplicate key is tried again, four tries with jitter. Arrivals and releases retry deadlocks the same way | `Limits::wait`, `Limits::count`, `Transient.php` |
+| 3. the migration on every request | `schema_version`: a request reads one row and migrates only when `Schema::VERSION` is higher, under `GET_LOCK`. Columns are added only where `information_schema` says they are missing; the `walk_offers` erasure scan and the `TakenBack` sweeps run with the migration. `offers()` is cached, and the store caches are per instance. `migrate.php` runs it by hand; every MariaDB copy drops `schema_version` first, so a restore is migrated again | `Schema.php`, each store's static `migrate`, `WalkStore::on`, `backup.php`, `migrate.php` |
+| 4, option B | Every `CREATE TABLE` names `utf8mb4` and `utf8mb4_unicode_ci`; the migration converts any table of ours whose collation differs, after one read of `information_schema` | `Schema::options`, `Schema::utf8mb4` |
+| 5. one plant in two public places | `placed`, keyed by seed: every arrival and every release claims the plant in its own transaction. A yes that finds the field holds it plants nothing and the offer is withdrawn; a release that finds an area holds it clears the way again, once, as it would have a moment later. Taking back lets go in the same transaction. A claim nothing stands behind (left by a rollback) is taken over | `Placed.php`, each area's `plant`, `WildStore::release`, `TakenBack::lift`, the release route |
+| 6. the limit counts addresses | Two counts: per gardener (the meeting token; the whole bag for `pending`; the seed for a release without one) at the old allowances, and per address at `CROWD` = 5 times that. IPv6 counted by /64 | `Limits.php`, the routes |
+| 8. a plant crossed with itself | 422 | `refuseSelfCross` in `router.php` |
+
+**The limits, and what each still stops.** Per gardener, in fifty-five
+minutes: 18 offers, 55 answers, 28 withdrawals, 220 askings, 9 releases, 55
+name answers — what one address had. Per address: 90, 275, 140, 1,100, 45 and
+275; wear stays 110 by address, as a browser carries no token. A token is
+minted by the phone, so a script mints one per request and the gardener's
+count never slows it: the address is what caps a script, now 45 invented
+plants an hour in the Wild Fields from one IPv4 address or one /64 — five
+times the 9 before, where IPv6 had no cap at all. The gardener's count stops
+one phone gone wrong from spending its crowd's allowance. `CROWD` is the one
+number to turn.
+
+### The schema on MariaDB, fresh and upgraded
+
+`migrations.sh` (`results-after/migrations/`) had 97fd259 serve two
+databases, then the fixed code open them on its first request, as a deploy
+would:
+
+| database | built by | the fixed code's first request | the next | what was checked |
+| --- | --- | --- | --- | --- |
+| `pgmt_fresh` | nothing | 130 ms, every table made | 4.3 ms | the reference schema for the others |
+| `pgmt_upgrade` (utf8mb4, MariaDB's default collation) | 97fd259: 800 gardeners for 66 simulated days (4,043 requests), then a withdrawn and a declined offer in the clear and a planting hidden with its seed and its offer, as the code before 24 September left them | 28 ms: tables converted, the four legacy rows erased (three offers, one planting), 502 places claimed | 4.8 ms | schema identical to the fresh one, table for table; the only rows changed were those four; `check.php` clean; `popgen verify` 502 of 502 true crosses |
+| `pgmt_uplatin` (created latin1) | 97fd259: Anna and Zoë 201, Rose 🌹 and مريم **500** (finding 4) | 30 ms, every table converted | 3.4 ms | Anna and Zoë read back exactly; Rose 🌹 now 201; an offer waiting across the deploy answered yes and planted |
+| the same, rolled back | 97fd259 again withdraws an accepted planting, leaving its claim in `placed` | — | — | the fixed code releases it over the stale claim: 201 |
+
+The SQLite path is held in CI: `check_offers.php` upgrades a database built
+in the tables' first shapes, and counts the statements a request sends to a
+database at the code's version — one.
+
+### The population again
+
+The same plan (seed 20261013: 5,000 gardeners, 29,901 meetings, 155 days).
+The driver's dice made the same choices, so the outcomes are identical —
+8,995 offers; 4,459 accepted, 1,372 declined; 3,910 releases and 1,005 second
+releases answered 200; 268 hidden; 2,495 offers lapsed at exactly thirty days
+— and only the failures differ.
+
+| | 13 October | 14 October |
+| --- | --- | --- |
+| requests | 59,601, of which 478 a retry of a 500 | 59,123, none retried |
+| first attempts answered 500 | 478 (0.80 %), all deadlocks or the duplicate key | 0 |
+| festival requests refused 429 | 141 of 588 (24 %) | 0 of 588 |
+| invariants on days 30, 60, 90, 120, 154 | no violation | no violation |
+
+The run took 150 s against 17 minutes, but the first ran PHP on macOS, so the
+times are not comparable (see *Caveats*).
+
+**Adversary**: 102 cases (the rate-limit block rewritten for two counts), all
+as wanted: a plant crossed with itself 422; one address, 45 releases then
+429; one token from eleven addresses, 9 then 429; forty gardeners on one
+router, all 201; a hundred phones on one Wi-Fi asking `pending` three times,
+none refused; one /64, 45 then 429, and ten /64s are ten callers; 45
+malformed releases spend the address's allowance.
+
+**Character sets**: on databases created utf8mb4, utf8mb3 and latin1, every
+name — Anna, مريم, Rose 🌹, Zoë — answered 201, its retry 200, and was stored
+exactly; every table is `utf8mb4_unicode_ci` whatever the database's default.
+
+### The races again (PHP in Docker, both days)
+
+| race | 13 October | 14 October |
+| --- | --- | --- |
+| R1, one release twenty times at once | one row; in one trial 19 of 20 answered 500 | one row every time; none failed; 1 created, 8 told, 11 refused 429 by the gardener's count (one token) |
+| R2, two yeses at once | planting gone in 15 of 30 | 0 of 30 (both answers said planted in 19) |
+| R2, three yeses | 10 of 30 | 0 of 30 |
+| R3, a yes and a withdrawal at once | withdrawn and absent 27, accepted and standing 3 | 28 and 2: consistent either way, as before |
+| R4, an offer and a release at once, then yes | in both places in 9 of 40 | 0 of 40: 31 offers taken and then withdrawn by the yes, 9 refused 410 |
+| R5, fifty yeses into the Glasshouse | 307 ms, no clash | 89 ms, no clash |
+| R6, both choose the place at once | shown 30 of 30 | 30 of 30 |
+| R7, forty new callers at once | 0.5 % answered 500 | 0 % |
+
+### Load, before and after
+
+The populated database after the races (18.6 MB). 97fd259 first, then the
+fixed code, the same day; reads 20 s a row, writes 6 s a row (the write pool
+holds 58,420 true crosses, and the fixed code writes them fast). Errors 0 and
+InnoDB deadlocks 0 in every row; *waits* is the share of database threads
+sampled "Waiting for table metadata lock".
+
+| kind | clients | 13 Oct report: req/s, p50/p95/p99 ms | 97fd259 today: req/s, p50/p95/p99, waits | fixed: req/s, p50/p95/p99, waits |
+| --- | --- | --- | --- | --- |
+| read | 10 | 401, 21/48/80 | 241, 26/118/218, 24 % | **1,654**, 4.1/16/25, 0 % |
+| read | 50 | 318, 132/301/353 | 160, 234/757/1,269, 62 % | **1,422**, 25/88/223, 0 % |
+| read | 200 | 249, 601/2,575/3,111 | 322, 541/1,101/1,447, 55 % | **1,823**, 90/211/320, 0 % |
+| write | 10 | 259, 32/75/103 | 309, 29/60/89, 19 % | **1,396**, 5.4/15/32, 0 % |
+| write | 50 | 121, 414/714/847 | 211, 221/367/454, 67 % | **2,216**, 16/40/115, 0 % |
+| write | 200 | 126, 1,461/1,857/1,893 | 211, 909/1,333/1,425, 66 % | **2,054**, 55/237/382, 0 % |
+
+Throughput now rises with clients and levels off at the worker pool, where
+before it fell. The costliest statements before were the `walk_offers`
+erasure scan (11.8 ms a request at 50 readers) and the DDL; after, the schema
+costs one `SELECT version` (0.25 ms), and the costliest is `GET /api/wild`'s
+count over the field (21 ms at 25,000 released), which is finding 7, left as
+it is. A tile reached 143 KB at that size.
+
+### Invariants
+
+No violation at any check: days 30, 60, 90, 120 and 154; after the adversary,
+the races and the character sets; and after the load
+(`results-after/invariants-*.json`, `stats.json`). `popgen verify`: 8,528
+plantings after the adversary and 30,119 after the load, every one the true
+cross of its parents at a meeting that happened (`verify.txt`), and 428
+taken-back markers, as before. The old code's load wrote 2,354 releases with
+no claim in `placed`; `migrate.php` then claimed exactly those, and found no
+plant in two places.
+
+### At deploy
+
+- Nothing has to run by hand: the first request after the upload migrates,
+  in about 30 ms on a database the size of the test's upgrade. To see it
+  happen instead, `ssh peacegarden 'php ~/public_html/.api/migrate.php'`
+  prints the version, the tables converted and what was claimed and erased.
+- After restoring a copy taken before this deploy, run `migrate.php` once
+  (Server/README.md, *Restoring*); copies taken after it migrate by
+  themselves.
+- The live database's character set is still Marcus's to check (finding 4,
+  option A). The migration converts any table of ours not in
+  `utf8mb4_unicode_ci`, so a live database left latin1 is put right on the
+  first request, and `migrate.php` says which tables it converted.
+- Worth running read-only on the live database first: finding 1's query, and
+  for finding 5, any seed both in `wild_fields` and an area table. The
+  migration claims the first place it finds for such a plant and counts it
+  under *plants standing in two places*.
+
+### Noticed, not changed
+
+- R3 still lets a withdrawal lose to a yes arriving at the same moment: the
+  withdrawing phone is told "accepted" and the plant stands, consistently.
+  It can withdraw again.
+- R1's twenty identical releases meet the gardener's count after nine; a real
+  retry is one or two.
+- Finding 7 is now the first thing that grows: `GET /api/wild` and the tiles.

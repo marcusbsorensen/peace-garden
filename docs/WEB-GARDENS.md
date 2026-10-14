@@ -3323,12 +3323,20 @@ to `Server/.api/WildFields.php` and held to it by
   always make, and the other phone hears of it as a withdrawal. And a released
   plant is refused by every area afterwards: an offer of it is answered `410`,
   and the app says *This plant is in the Wild Fields, so it cannot be shown
-  anywhere else* without saying which of the two let it go.
+  anywhere else* without saying which of the two let it go. **Since 14
+  October 2026 the database holds it**, not only the order of the checks:
+  `placed` has one row per plant standing anywhere public, written in the
+  same transaction as the planting or the release, so an offer answered yes
+  and a release of the same plant at the same moment cannot both stand
+  (`Server/.api/Placed.php`; the population test's finding 5).
 - **Abuse.** Anybody can invent two parents and a meeting and release their
   child, as anybody can offer one; a token carries consent, not authenticity
-  (§*The asking*). What is in front of that is the rate limit — release is the
-  tightest write, nine a window, because it is the one nobody else agrees to
-  and nobody can undo — and a `hidden` column, so a plant that should not
+  (§*The asking*). A plant crossed with itself — both parents one seed, which
+  the app never makes — is refused (422, since 14 October 2026). What is in
+  front of the rest is the rate limit — release is the tightest write, nine a
+  window for one gardener and forty-five for everybody behind one address
+  (an IPv6 address counted as its /64), because it is the one nobody else
+  agrees to and nobody can undo — and a `hidden` column, so a plant that should not
   stand can be taken down by hand without a migration. **Since 2 October 2026
   the curator's tool exists**: `Server/.api/curate.php`, run over ssh (`hide`,
   `unhide`, `show` and `list`, by seed or a beginning only one plant has;
