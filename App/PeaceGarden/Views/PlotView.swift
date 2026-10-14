@@ -1263,13 +1263,16 @@ struct PlotView: View {
     /// it. They are how the plot is seen, so they stand beside the plus with
     /// the tray shut, and stay where they are when it opens.
     ///
-    /// **One way round in every language.** The row is pinned left to right,
-    /// as the web garden's pad and map are (`docs/WEBSITE.md`, *Nothing
-    /// mirrors under a right-to-left language*): a turn's direction is the
-    /// screen's, not the reading's, so anticlockwise stays on the left of
-    /// clockwise, and the pair stays where Marcus put it. Mirrored, the pair
-    /// would swap ends with the plus and swap round in itself, and a hand that
-    /// has learnt the corner would find the plus there.
+    /// **The foot mirrors as one row; the turns keep their own order.** Until
+    /// 14 October the row was pinned left to right, as the web garden's pad
+    /// is, while *Reset view* and the light in the tray just above it
+    /// mirrored — a foot half one way round and half the other (mass test,
+    /// 13 October, finding 6; Marcus, 14 October: 15A). Now the plus and the
+    /// turns trade corners under right to left with the rest of the chrome,
+    /// and the pair itself stays pinned: a turn's direction is the screen's,
+    /// not the reading's, so anticlockwise is still on the left of clockwise,
+    /// and each arrow still goes the way the plot does. The plot itself does
+    /// not mirror at all (see `body`).
     private var controls: some View {
         HStack(spacing: 0) {
             TrayToggle(isOpen: trayOpen) {
@@ -1279,8 +1282,8 @@ struct PlotView: View {
             .accessibilityIdentifier(PlotControls.tray)
             Spacer(minLength: 12)
             turns
+                .environment(\.layoutDirection, .leftToRight)
         }
-        .environment(\.layoutDirection, .leftToRight)
     }
 
     /// What the tray holds, in the order Marcus asked for on 1 October: **the

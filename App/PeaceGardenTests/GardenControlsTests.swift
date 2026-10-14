@@ -93,15 +93,18 @@ final class GardenControlsTests: XCTestCase {
         XCTAssertEqual(lastLabels[PlotControls.reset], "Reset view")
     }
 
-    /// **One way round in every language**, the web garden's rule for its pad:
-    /// under Arabic or Hebrew the plus is still bottom left and anticlockwise
-    /// is still left of clockwise. And with the largest Dynamic Type, which
-    /// the row's fixed sizes do not follow, nothing moves either.
-    func testTheRowDoesNotMirrorOrMoveUnderRightToLeftAndLargeType() async throws {
+    /// **The foot mirrors as one row, and the turns keep their order** (mass
+    /// test finding 6; Marcus, 14 October: 15A). Under Arabic or Hebrew the
+    /// plus is bottom right and the turns bottom left, as *Reset view* and the
+    /// light in the tray above them already were — but anticlockwise is still
+    /// left of clockwise, because a turn goes the plot's way, not the
+    /// reading's. With the largest Dynamic Type, which the row's marks do not
+    /// follow, nothing moves either.
+    func testTheRowMirrorsAsOneUnderRightToLeftAndTheTurnsKeepTheirOrder() async throws {
         let found = try await controls(of: PlotView()
             .environment(\.layoutDirection, .rightToLeft)
             .environment(\.dynamicTypeSize, .accessibility5))
-        try assertTheFootRow(found)
+        try assertTheFootRow(found, mirrored: true)
     }
 
     // MARK: Drawn as in Dark
@@ -203,8 +206,8 @@ final class GardenControlsTests: XCTestCase {
         return light
     }
 
-    private func assertTheFootRow(_ found: [String: CGRect], file: StaticString = #filePath,
-                                  line: UInt = #line) throws {
+    private func assertTheFootRow(_ found: [String: CGRect], mirrored: Bool = false,
+                                  file: StaticString = #filePath, line: UInt = #line) throws {
         let plus = try XCTUnwrap(found[PlotControls.tray], "the plus", file: file, line: line)
         let left = try XCTUnwrap(found[PlotControls.turnAnticlockwise], "the anticlockwise turn",
                                  file: file, line: line)
@@ -213,9 +216,15 @@ final class GardenControlsTests: XCTestCase {
         let screen = Self.screen
         let safeBottom = screen.height - lastSafeArea.bottom
 
-        XCTAssertLessThan(plus.midX, screen.width / 4, "the plus is at the left", file: file, line: line)
-        XCTAssertGreaterThan(left.midX, screen.width / 2, "the turns are at the right", file: file, line: line)
-        XCTAssertGreaterThan(right.maxX, screen.width - 60, "against the right edge", file: file, line: line)
+        if mirrored {
+            XCTAssertGreaterThan(plus.midX, screen.width * 3 / 4, "the plus is at the right", file: file, line: line)
+            XCTAssertLessThan(right.midX, screen.width / 2, "the turns are at the left", file: file, line: line)
+            XCTAssertLessThan(left.minX, 60, "against the left edge", file: file, line: line)
+        } else {
+            XCTAssertLessThan(plus.midX, screen.width / 4, "the plus is at the left", file: file, line: line)
+            XCTAssertGreaterThan(left.midX, screen.width / 2, "the turns are at the right", file: file, line: line)
+            XCTAssertGreaterThan(right.maxX, screen.width - 60, "against the right edge", file: file, line: line)
+        }
         XCTAssertLessThan(left.maxX, right.minX, "anticlockwise, then clockwise", file: file, line: line)
 
         for (name, frame) in [("plus", plus), ("anticlockwise", left), ("clockwise", right)] {
