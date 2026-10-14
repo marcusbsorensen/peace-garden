@@ -160,11 +160,13 @@ final class MassTestStressTests: XCTestCase {
                     + months.compactMap { $0["footprintMB"] as? Double }).max() ?? 0
         result["footprintPeakMB"] = peak
         result["summary"] = String(
-            format: "load %.0f ms, first frame %.0f ms (%.0f ms CPU), open %.1f s%@, redraw %.1f ms CPU/frame (p95 %.1f ms), turn %.1f s, peak %.0f MB, after close %.0f MB",
+            format: "load %.0f ms, first frame %.0f ms (%.0f ms CPU), open %.1f s%@ (longest frame %.0f ms), redraw %.1f ms CPU/frame (median %.1f, max %.1f; p95 interval %.1f ms), turn %.1f s, peak %.0f MB, after close %.0f MB",
             result["loadMs"] as? Double ?? -1, result["firstFrameMs"] as? Double ?? -1,
             result["firstFrameCPUms"] as? Double ?? -1,
             openSeconds, (open["settled"] as? Bool ?? false) ? "" : " (did not settle)",
-            redraw?["cpuMsPerFrame"] as? Double ?? -1, redraw?["p95Ms"] as? Double ?? -1,
+            open["worstMs"] as? Double ?? -1,
+            redraw?["cpuMsPerFrame"] as? Double ?? -1, redraw?["cpuMsP50"] as? Double ?? -1,
+            redraw?["cpuMsMax"] as? Double ?? -1, redraw?["p95Ms"] as? Double ?? -1,
             firstTurn, peak, result["footprintAfterCloseMB"] as? Double ?? -1)
         return result
     }
@@ -175,24 +177,35 @@ final class MassTestStressTests: XCTestCase {
     /// longer than 50 ms and the main thread was busy less than 60% of the
     /// time. The figures' lights flicker at thirty frames a second for ever, so
     /// "idle" is never zero.
+    ///
+    /// **And every plant has its pictures** (14 October 2026). They used to be
+    /// taken on the main thread, so a main thread at rest meant a garden
+    /// filled in; now they are taken off it, and the plot holds still while
+    /// they arrive.
     private func settle(limit: Double) async throws -> [String: Any] {
         let counter = FrameCounter()
         counter.start()
         let start = Self.now()
         var cpuMarks: [(time: Double, cpu: Double)] = [(0, Self.threadCPU())]
         var settledAt: Double?
+        var filledAt: Double?
         var peak = Self.footprintMB()
         while Self.now() - start < limit {
             try await Task.sleep(for: .milliseconds(250))
             let t = Self.now() - start
             cpuMarks.append((t, Self.threadCPU()))
             peak = max(peak, Self.footprintMB())
+            if GardenSprites.shared.outstanding == 0 {
+                filledAt = filledAt ?? t
+            } else {
+                filledAt = nil
+            }
             guard t > 2.5 else { continue }
             let windowStart = cpuMarks.last { $0.time <= t - 2 } ?? cpuMarks[0]
             let busy = (cpuMarks.last!.cpu - windowStart.cpu) / (t - windowStart.time)
             let longest = counter.longest(since: counter.elapsed - 2)
-            if busy < 0.6, longest < 50 {
-                settledAt = t - 2
+            if busy < 0.6, longest < 50, let filledAt {
+                settledAt = max(t - 2, filledAt)
                 break
             }
         }
@@ -200,6 +213,7 @@ final class MassTestStressTests: XCTestCase {
         let cpuTotal = (cpuMarks.last?.cpu ?? 0) - cpuMarks[0].cpu
         var step = Self.summary(intervals)
         step["seconds"] = settledAt ?? limit
+        step["filledSeconds"] = filledAt ?? limit
         step["settled"] = settledAt != nil
         step["mainThreadCPUSeconds"] = cpuTotal
         step["peakDuringMB"] = peak
@@ -213,14 +227,24 @@ final class MassTestStressTests: XCTestCase {
         counter.start()
         let before = Self.threadCPU()
         let started = Self.now()
+        // Each frame's own main-thread CPU as well as the mean (14 October):
+        // once a frame with nothing new in it costs almost nothing, the mean
+        // hides the frames where the light steps on and the plot is redrawn.
+        var each: [Double] = []
         for _ in 0..<frames {
+            let mark = Self.threadCPU()
             Developer.shared.advance(by: 1)
             model.refreshNow()
             try await Task.sleep(for: .milliseconds(16))
+            each.append((Self.threadCPU() - mark) * 1000)
         }
         let cpu = (Self.threadCPU() - before) * 1000 / Double(frames)
         var step = Self.summary(counter.stop())
         step["cpuMsPerFrame"] = cpu
+        let sorted = each.sorted()
+        step["cpuMsP50"] = sorted[sorted.count / 2]
+        step["cpuMsP95"] = sorted[min(sorted.count - 1, sorted.count * 95 / 100)]
+        step["cpuMsMax"] = sorted.last ?? 0
         step["wallMsPerFrame"] = Self.ms(since: started) / Double(frames)
         return step
     }

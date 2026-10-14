@@ -73,14 +73,32 @@ actor GardenTerrain {
         // the resolution, and the view holds the one it is showing; kept here
         // as well, two dozen of them would be hundreds of megabytes.
         guard region == nil else { return image }
-        if cache.count > 24 { cache.removeAll() }
+        // **And by weight** (14 October 2026). A plot's drawing is the whole
+        // screen at the phone's scale, fourteen megabytes on an iPhone Air, and
+        // two dozen of them — a turn of the plot each, a month of the clock
+        // each, since the season is in the light — was how the garden grew by
+        // about twenty megabytes a month while it was open (mass test, finding
+        // 11). Four plots' worth is a turn and back, or a step of the clock.
+        let bytes = image.cgImage.map { $0.bytesPerRow * $0.height } ?? 0
+        if cache.count > 24 || cacheBytes + bytes > Self.cacheLimit {
+            cache.removeAll()
+            cacheBytes = 0
+        }
         cache[key] = image
+        cacheBytes += bytes
         return image
     }
 
+    private var cacheBytes = 0
+    static let cacheLimit = 64 << 20
+
     /// Thrown away when the plot's size changes, which is the only thing that
-    /// invalidates a drawing while the light is held still.
-    func forget() { cache.removeAll() }
+    /// invalidates a drawing while the light is held still, and when the garden
+    /// closes.
+    func forget() {
+        cache.removeAll()
+        cacheBytes = 0
+    }
 
     // MARK: The drawing
 

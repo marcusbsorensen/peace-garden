@@ -42,10 +42,44 @@ final class GardenSprites {
     /// `PlotTests` holds it against the measured range.
     nonisolated static let tallestExpected: Double = 2.6
 
-    /// The resolution a sprite is rendered at, independent of what the plot is
-    /// zoomed to. Rendering at the screen's own scale would rebuild every plant
-    /// on every pinch; this renders once and the drawing scales the image.
+    /// The finest a sprite is ever rendered, in points to the metre: at the
+    /// screen's own scale, 300 pixels a metre on a 3x phone. Rendering at the
+    /// screen's own scale *on every pinch* would rebuild every plant on every
+    /// pinch; this is the ceiling, and `pixelsPerMetre(drawnAt:scale:)` picks
+    /// the step under it that the plot actually needs.
     nonisolated static let renderedPointsPerMetre: CGFloat = 100
+
+    /// The ceiling on a 3x screen, which is what a sprite was always rendered
+    /// at before 14 October, and what a picture asked for without a size is.
+    nonisolated static let fullPixelsPerMetre = 300
+
+    /// The coarsest step a sprite is rendered at.
+    nonisolated static let coarsestPixelsPerMetre = 32
+
+    /// **A sprite is rendered at twice the size it is drawn, rounded up to a
+    /// power of two** (14 October 2026), never above the ceiling.
+    ///
+    /// Every plant used to be photographed at 300 pixels a metre whatever the
+    /// plot was zoomed to: a 1.6 m frame was 480 pixels square, a megabyte,
+    /// for a plant that a garden of five hundred draws fifteen points tall.
+    /// Two of those a plant is what put a big garden past five gigabytes.
+    ///
+    /// **Twice, because the picture was always scaled down.** Drawn at the
+    /// size it is taken, a plant keeps every jagged edge SceneKit's own
+    /// smoothing leaves; taken at two to four times the size and scaled down,
+    /// as it always was, its edges and its finest veins come out as they did.
+    /// A garden small enough to be drawn at more than half the ceiling is
+    /// still taken at the ceiling, exactly as before; zooming in asks for the
+    /// next step, for the plants on screen.
+    nonisolated static let oversampling = 2.0
+
+    nonisolated static func pixelsPerMetre(drawnAt pointsPerMetre: Double, scale: Double) -> Int {
+        let ceiling = Double(renderedPointsPerMetre) * max(1, scale)
+        let wanted = pointsPerMetre * scale * oversampling
+        var step = Double(coarsestPixelsPerMetre)
+        while step < wanted, step < ceiling { step *= 2 }
+        return Int(min(step, ceiling).rounded())
+    }
 
     /// True isometric: the camera sits along `(1, 1, 1)`, which is the same
     /// direction `Isometric` projects from. A sprite rendered from anywhere else
@@ -58,19 +92,47 @@ final class GardenSprites {
     /// orthographic scale that puts the foot exactly on the bottom edge.
     nonisolated static let elevationCosine = 0.816_496_580_927_726
 
+    /// **Held by weight, not by count** (14 October 2026). It held 120
+    /// pictures, which was one side of sixty plants, so a garden of a hundred
+    /// photographed every plant again on every turn back. Every plant on the
+    /// plot holds its own two pictures while it is shown; this is what lets a
+    /// turn back, a garden opened again or a step of the clock come back
+    /// without being taken again, and it is emptied when the garden closes
+    /// (`opened()`, `closed()`) and when the phone is short of memory.
     private let cache = NSCache<NSString, Rendered>()
+    nonisolated static let cacheBytes = 96 << 20
 
     private init() {
-        cache.countLimit = 120
+        cache.totalCostLimit = Self.cacheBytes
+        workers = (0..<Self.workerCount).map { SpriteWorker(label: "app.peacegarden.sprites.\($0)") }
+        idle = workers
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.didReceiveMemoryWarningNotification, object: nil, queue: .main
+        ) { _ in
+            MainActor.assumeIsolated { GardenSprites.shared.forget() }
+        }
     }
 
     /// Bucketed the way a thumbnail is: a sprite does not need to follow growth
     /// any more closely than the eye can see at this size. The season is in it
-    /// because it colours the light the plant is photographed in.
+    /// because it colours the light the plant is photographed in, and the
+    /// resolution because two sizes of one picture are two pictures.
     nonisolated static func key(genome: Genome, growth: GrowthModel.State,
-                                step: Int, turn: Int = 0, season: Season = .orbit) -> String {
-        let bucket = Int(growth.overall * 24) * 10 + Int(growth.bloomOpen * 6)
-        return "\(genome.seed.hex)-\(bucket)-\(step)-\(((turn % 4) + 4) % 4)-\(season.key)"
+                                step: Int, turn: Int = 0, season: Season = .orbit,
+                                pixelsPerMetre: Int = fullPixelsPerMetre) -> String {
+        "\(genome.seed.hex)-\(bucket(of: growth))-\(step)-\(((turn % 4) + 4) % 4)-\(season.key)-\(pixelsPerMetre)"
+    }
+
+    nonisolated static func bucket(of growth: GrowthModel.State) -> Int {
+        Int(growth.overall * 24) * 10 + Int(growth.bloomOpen * 6)
+    }
+
+    /// Everything a picture's mesh and camera depend on, without the step of
+    /// the clock: the pictures of one plant at two steps are taken from one
+    /// mesh in one sitting.
+    nonisolated static func sitting(genome: Genome, growth: GrowthModel.State, quarter: Int,
+                                    season: Season, pixelsPerMetre: Int) -> String {
+        "\(genome.seed.hex)-\(bucket(of: growth))-\(quarter)-\(season.key)-\(pixelsPerMetre)"
     }
 
     /// How many ways round a plant is drawn.
@@ -126,14 +188,23 @@ final class GardenSprites {
 
     /// What the cache holds: the picture and where the plant is in it, measured
     /// once when it is rendered rather than every time it is drawn.
-    private final class Rendered {
+    final class Rendered: Sendable {
         let image: UIImage
+        let metres: Double
         let opaque: CGRect
         let leaves: Path
-        init(image: UIImage, opaque: CGRect, leaves: Path) {
+        init(image: UIImage, metres: Double, opaque: CGRect, leaves: Path) {
             self.image = image
+            self.metres = metres
             self.opaque = opaque
             self.leaves = leaves
+        }
+
+        var sprite: Sprite { Sprite(image: image, metres: metres, opaque: opaque, leaves: leaves) }
+
+        /// What it weighs in memory, for the cache.
+        var bytes: Int {
+            image.cgImage.map { $0.bytesPerRow * $0.height } ?? 4 << 10
         }
     }
 
@@ -147,8 +218,9 @@ final class GardenSprites {
     /// either side is a little tolerance at the fitted size, and at 3x the same
     /// cell is a third of that — which is what zooming in to be sure is for.
     /// Rows are merged into runs, so a plant is tens of rectangles, not
-    /// thousands.
-    static func leafPath(of image: UIImage) -> Path {
+    /// thousands. A small picture is read at every pixel rather than every
+    /// other one, so no cell is skipped where pixels are fewer than cells.
+    nonisolated static func leafPath(of image: UIImage) -> Path {
         guard let cg = image.cgImage else { return Path(CGRect(x: 0, y: 0, width: 1, height: 1)) }
         let width = cg.width, height = cg.height
         var pixels = [UInt8](repeating: 0, count: width * height * 4)
@@ -161,9 +233,10 @@ final class GardenSprites {
         context.draw(cg, in: CGRect(x: 0, y: 0, width: width, height: height))
 
         let n = leafCells
+        let every = min(width, height) >= 2 * n ? 2 : 1
         var solid = [Bool](repeating: false, count: n * n)
-        for y in stride(from: 0, to: height, by: 2) {
-            for x in stride(from: 0, to: width, by: 2) where pixels[(y * width + x) * 4 + 3] > 24 {
+        for y in stride(from: 0, to: height, by: every) {
+            for x in stride(from: 0, to: width, by: every) where pixels[(y * width + x) * 4 + 3] > 24 {
                 solid[(y * n / height) * n + x * n / width] = true
             }
         }
@@ -198,7 +271,7 @@ final class GardenSprites {
     /// The box round everything in a picture that is not transparent, as
     /// fractions of the picture. Padded a little, because a leaf a finger's
     /// width from where it was aimed is still the leaf that was meant.
-    private static func opaqueBounds(of image: UIImage) -> CGRect {
+    private nonisolated static func opaqueBounds(of image: UIImage) -> CGRect {
         guard let cg = image.cgImage else { return CGRect(x: 0, y: 0, width: 1, height: 1) }
         let width = cg.width, height = cg.height
         var pixels = [UInt8](repeating: 0, count: width * height * 4)
@@ -210,9 +283,10 @@ final class GardenSprites {
         ) else { return CGRect(x: 0, y: 0, width: 1, height: 1) }
         context.draw(cg, in: CGRect(x: 0, y: 0, width: width, height: height))
 
+        let every = min(width, height) >= 2 * leafCells ? 2 : 1
         var minX = width, minY = height, maxX = -1, maxY = -1
-        for y in stride(from: 0, to: height, by: 2) {
-            for x in stride(from: 0, to: width, by: 2) where pixels[(y * width + x) * 4 + 3] > 24 {
+        for y in stride(from: 0, to: height, by: every) {
+            for x in stride(from: 0, to: width, by: every) where pixels[(y * width + x) * 4 + 3] > 24 {
                 minX = min(minX, x); maxX = max(maxX, x)
                 minY = min(minY, y); maxY = max(maxY, y)
             }
@@ -229,8 +303,16 @@ final class GardenSprites {
 
     /// `matureBounds` builds a whole second mesh and gives the same answer for
     /// the whole life of a seed, so it is held — the same reason
-    /// `ThumbnailRenderer` holds it.
-    private var frameBySeed: [String: Double] = [:]
+    /// `ThumbnailRenderer` holds it. Behind a lock, because the pictures are
+    /// taken off the main thread and each one needs its frame.
+    private nonisolated static let frames = Frames()
+
+    private final class Frames: @unchecked Sendable {
+        private let lock = NSLock()
+        private var bySeed: [String: Double] = [:]
+        func get(_ seed: String) -> Double? { lock.withLock { bySeed[seed] } }
+        func set(_ seed: String, _ metres: Double) { lock.withLock { bySeed[seed] = metres } }
+    }
 
     /// How much garden this plant's frame has to cover: its mature height, or
     /// its mature spread if it is wider than it is tall, rounded up to a step.
@@ -238,13 +320,18 @@ final class GardenSprites {
     /// Measured against what it will grow into rather than what it is today, so
     /// a plant does not jump between frames as it grows — the same rule the
     /// stage and the tiles both follow, for the same reason.
-    func frameMetres(for genome: Genome) -> Double {
-        if let held = frameBySeed[genome.seed.hex] { return held }
+    nonisolated func frameMetres(for genome: Genome) -> Double {
+        Self.frameMetres(for: genome)
+    }
 
-        let steps = max(1, Int((Self.needed(of: genome) / Self.frameStep).rounded(.up)))
-        let framed = Double(steps) * Self.frameStep
+    nonisolated static func frameMetres(for genome: Genome) -> Double {
+        let seed = genome.seed.hex
+        if let held = frames.get(seed) { return held }
 
-        frameBySeed[genome.seed.hex] = framed
+        let steps = max(1, Int((needed(of: genome) / frameStep).rounded(.up)))
+        let framed = Double(steps) * frameStep
+
+        frames.set(seed, framed)
         return framed
     }
 
@@ -256,7 +343,7 @@ final class GardenSprites {
     /// nineteen twentieths. A plant as wide as its frame is tall would lose its
     /// outermost leaves, which is the sort of clipping that reads as a narrow
     /// plant rather than as a fault.
-    static func needed(of genome: Genome) -> Double {
+    nonisolated static func needed(of genome: Genome) -> Double {
         let bounds = PlantSceneBuilder.matureBounds(for: genome)
         let height = Double(bounds.max.y - bounds.min.y)
         let spread = Double(
@@ -278,31 +365,251 @@ final class GardenSprites {
     ///   its near side and its light stays where the sun is.
     /// - Parameter season: what colours the light, as it colours the ground's
     ///   and the sky's (`GardenGround.Light.at(hour:season:)`).
+    ///
+    /// **Taken where it is asked for, at the full size.** What the tests and
+    /// the mass test's own timing call. The plot asks for its pictures with
+    /// `sprite(…, pixelsPerMetre:) async`, which takes them off the main thread.
     func sprite(genome: Genome, growth: GrowthModel.State,
                 step: Int, turn: Int = 0, season: Season = .orbit) -> Sprite? {
         let quarter = ((turn % Self.turns) + Self.turns) % Self.turns
-        let metres = frameMetres(for: genome)
+        let pixels = Self.fullPixelsPerMetre
         let key = Self.key(genome: genome, growth: growth, step: step, turn: quarter,
-                           season: season) as NSString
-        if let held = cache.object(forKey: key) {
-            return Sprite(image: held.image, metres: metres, opaque: held.opaque, leaves: held.leaves)
+                           season: season, pixelsPerMetre: pixels) as NSString
+        if let held = cache.object(forKey: key) { return held.sprite }
+
+        if here == nil { here = SCNRenderer(device: MTLCreateSystemDefaultDevice(), options: nil) }
+        guard let renderer = here else { return nil }
+        let sitting = Sitting(genome: genome, growth: growth, quarter: quarter, season: season,
+                              pixelsPerMetre: pixels, steps: [step])
+        guard let made = autoreleasepool(invoking: { Self.take(sitting, with: renderer) }).first
+        else { return nil }
+        cache.setObject(made.rendered, forKey: key, cost: made.rendered.bytes)
+        return made.rendered.sprite
+    }
+
+    /// A picture already taken, without taking it: what a plant starts from
+    /// when it is drawn again, so a garden opened again, or a plant redrawn,
+    /// does not stand empty for a frame while the same picture is fetched.
+    func held(genome: Genome, growth: GrowthModel.State, step: Int, turn: Int = 0,
+              season: Season = .orbit, pixelsPerMetre: Int) -> Sprite? {
+        cache.object(forKey: Self.key(genome: genome, growth: growth, step: step, turn: turn,
+                                      season: season, pixelsPerMetre: pixelsPerMetre) as NSString)?.sprite
+    }
+
+    /// **The plot's way in: taken off the main thread, and waited for**
+    /// (14 October 2026).
+    ///
+    /// Every picture used to be taken inside its plant's `.task`, on the main
+    /// actor, with nothing to suspend on, so a garden opening photographed
+    /// every plant back to back before its first frame: 3.2 s of frozen phone
+    /// at a hundred plants, 18 s at five hundred, and every turn of the plot
+    /// and every step of the clock the same again. Now the plant asks and
+    /// waits; the picture is taken on one of two workers, each with its own
+    /// renderer; and the garden fills in plant by plant while it can still be
+    /// turned and pinched. The two steps either side of the hour are taken
+    /// from one mesh in one sitting, and a plant that stops waiting — the plot
+    /// turned again, the garden closed — is struck off before it is begun.
+    func sprite(genome: Genome, growth: GrowthModel.State, step: Int, turn: Int = 0,
+                season: Season = .orbit, pixelsPerMetre: Int) async -> Sprite? {
+        let quarter = ((turn % Self.turns) + Self.turns) % Self.turns
+        let key = Self.key(genome: genome, growth: growth, step: step, turn: quarter,
+                           season: season, pixelsPerMetre: pixelsPerMetre)
+        if let held = cache.object(forKey: key as NSString) { return held.sprite }
+        guard !Task.isCancelled else { return nil }
+
+        let sitting = Sitting(genome: genome, growth: growth, quarter: quarter, season: season,
+                              pixelsPerMetre: pixelsPerMetre, steps: [step])
+        tickets += 1
+        let ticket = tickets
+        let rendered: Rendered? = await withTaskCancellationHandler {
+            await withCheckedContinuation { (continuation: CheckedContinuation<Rendered?, Never>) in
+                waiting[key, default: []].append(Waiter(ticket: ticket, continuation: continuation))
+                want(step, of: sitting, key: key)
+            }
+        } onCancel: {
+            let id = sitting.id
+            Task { @MainActor in GardenSprites.shared.giveUp(ticket, on: key, step: step, of: id) }
+        }
+        return rendered?.sprite
+    }
+
+    /// The garden is on screen. Counted, so the pictures are let go of only
+    /// when the last one closes.
+    func opened() { gardensOpen += 1 }
+
+    /// The garden has gone, and its pictures go with it: every plant held its
+    /// own, and this lets go of what was kept besides — the figures' pictures,
+    /// the shadows and the ground's drawings too, which the garden alone uses.
+    /// 1.46 GB stayed behind after a garden of 500 had closed (mass test,
+    /// 13 October, finding 11).
+    func closed() {
+        gardensOpen = max(0, gardensOpen - 1)
+        guard gardensOpen == 0 else { return }
+        forget()
+        GardenCreatures.shared.forget()
+        GardenShadows.shared.forget()
+        Task { await GardenTerrain.shared.forget() }
+    }
+
+    /// Lets go of every picture kept.
+    func forget() {
+        cache.removeAllObjects()
+    }
+
+    /// How many pictures are being waited for: none once the garden on screen
+    /// has every plant it asked for. What the mass test waits on.
+    var outstanding: Int {
+        waiting.values.reduce(0) { $0 + $1.count }
+    }
+
+    // MARK: Taking them off the main thread
+
+    /// Everything one sitting needs, and the steps of the clock it is taken at.
+    struct Sitting: Sendable {
+        let genome: Genome
+        let growth: GrowthModel.State
+        let quarter: Int
+        let season: Season
+        let pixelsPerMetre: Int
+        var steps: [Int]
+        let id: String
+
+        init(genome: Genome, growth: GrowthModel.State, quarter: Int, season: Season,
+             pixelsPerMetre: Int, steps: [Int]) {
+            self.genome = genome
+            self.growth = growth
+            self.quarter = quarter
+            self.season = season
+            self.pixelsPerMetre = pixelsPerMetre
+            self.steps = steps
+            id = GardenSprites.sitting(genome: genome, growth: growth, quarter: quarter,
+                                       season: season, pixelsPerMetre: pixelsPerMetre)
         }
 
-        let side = CGFloat(metres) * Self.renderedPointsPerMetre
-        let view = SCNView(frame: CGRect(x: 0, y: 0, width: side, height: side))
-        view.scene = Self.makeScene(lit: GardenGround.Light.at(step: step, season: season)
-            .turned(quarters: quarter))
-        // Snapshotted with transparency so the ground shows through. If a plant
-        // ever comes back as a black square, this is the pair of lines that did
-        // it — the same trap `ThumbnailRenderer` records.
-        view.backgroundColor = .clear
-        view.isOpaque = false
-        view.antialiasingMode = .multisampling4X
+        func key(step: Int) -> String {
+            GardenSprites.key(genome: genome, growth: growth, step: step, turn: quarter,
+                              season: season, pixelsPerMetre: pixelsPerMetre)
+        }
+    }
 
-        let mesh = PlantBuilder(genome: genome).mesh(growth: growth)
+    /// One picture from a sitting.
+    struct Made: Sendable {
+        let step: Int
+        let rendered: Rendered
+    }
+
+    private struct Waiter {
+        let ticket: Int
+        let continuation: CheckedContinuation<Rendered?, Never>
+    }
+
+    /// How many pictures are taken at once. Two: a garden fills in at about
+    /// twice the pace of one, and no more than two scenes' worth of memory is
+    /// ever in hand.
+    nonisolated static let workerCount = 2
+
+    private var workers: [SpriteWorker] = []
+    private var idle: [SpriteWorker] = []
+    /// The renderer for pictures asked for on the main thread itself.
+    private var here: SCNRenderer?
+
+    /// Who is waiting for which picture.
+    private var waiting: [String: [Waiter]] = [:]
+    /// Sittings asked for and not yet begun, by `Sitting.id`, and the order
+    /// they were asked in. Taken first come, first served: the plot asks far
+    /// to near, so the garden fills in from the back.
+    private var pending: [String: Sitting] = [:]
+    private var order: [String] = []
+    private var next = 0
+    /// Pictures being taken now.
+    private var started: Set<String> = []
+    private var pumpQueued = false
+    private var tickets = 0
+    private var gardensOpen = 0
+
+    private func want(_ step: Int, of sitting: Sitting, key: String) {
+        guard !started.contains(key) else { return }
+        if var already = pending[sitting.id] {
+            if !already.steps.contains(step) {
+                already.steps.append(step)
+                pending[sitting.id] = already
+            }
+            return
+        }
+        pending[sitting.id] = sitting
+        order.append(sitting.id)
+        queuePump()
+    }
+
+    /// Begun a beat later rather than at once, so the second step a plant asks
+    /// for in the same pass joins the first one's sitting.
+    private func queuePump() {
+        guard !pumpQueued else { return }
+        pumpQueued = true
+        Task { @MainActor in GardenSprites.shared.pump() }
+    }
+
+    private func pump() {
+        pumpQueued = false
+        while !idle.isEmpty, let sitting = nextSitting() {
+            let worker = idle.removeLast()
+            for step in sitting.steps { started.insert(sitting.key(step: step)) }
+            worker.queue.async {
+                let made = worker.take(sitting)
+                Task { @MainActor in GardenSprites.shared.finished(sitting, made: made, by: worker) }
+            }
+        }
+    }
+
+    private func nextSitting() -> Sitting? {
+        while next < order.count {
+            let id = order[next]
+            next += 1
+            if let sitting = pending.removeValue(forKey: id) { return sitting }
+        }
+        order.removeAll(keepingCapacity: true)
+        next = 0
+        return nil
+    }
+
+    private func finished(_ sitting: Sitting, made: [Made], by worker: SpriteWorker) {
+        idle.append(worker)
+        for step in sitting.steps {
+            let key = sitting.key(step: step)
+            started.remove(key)
+            let rendered = made.first { $0.step == step }?.rendered
+            let waiters = waiting.removeValue(forKey: key) ?? []
+            // Kept only while a garden is open to want it again.
+            if let rendered, gardensOpen > 0 || !waiters.isEmpty {
+                cache.setObject(rendered, forKey: key as NSString, cost: rendered.bytes)
+            }
+            for waiter in waiters { waiter.continuation.resume(returning: rendered) }
+        }
+        pump()
+    }
+
+    private func giveUp(_ ticket: Int, on key: String, step: Int, of sitting: String) {
+        guard var waiters = waiting[key], let index = waiters.firstIndex(where: { $0.ticket == ticket })
+        else { return }
+        let waiter = waiters.remove(at: index)
+        waiting[key] = waiters.isEmpty ? nil : waiters
+        waiter.continuation.resume(returning: nil)
+        guard waiters.isEmpty, var still = pending[sitting] else { return }
+        still.steps.removeAll { $0 == step }
+        pending[sitting] = still.steps.isEmpty ? nil : still
+    }
+
+    /// One sitting: the plant's mesh built once and photographed at each step
+    /// asked for. Runs on whichever thread calls it, with a renderer that
+    /// thread owns, and touches nothing shared but the frames and the
+    /// shadows' store, which both hold their own locks.
+    nonisolated static func take(_ sitting: Sitting, with renderer: SCNRenderer) -> [Made] {
+        let genome = sitting.genome
+        let metres = frameMetres(for: genome)
+        let mesh = PlantBuilder(genome: genome).mesh(growth: sitting.growth)
         // The shadow is worked out from this same mesh, so it is handed over
         // while it is here rather than built again for it.
-        GardenShadows.shared.keep(mesh, as: .plant(genome.seed, growth: growth))
+        GardenShadows.shared.keep(mesh, as: .plant(genome.seed, growth: sitting.growth))
         let plant = PlantSceneBuilder.node(for: mesh, palette: genome.palette)
 
         // A plant's origin is its foot, so it stands at the middle of the frame
@@ -311,19 +618,40 @@ final class GardenSprites {
         // catalogue page, and the turn has to come from the seed rather than
         // from a position, or every plant in the garden spins when one is added.
         let pivot = SCNNode()
-        pivot.eulerAngles.y = Self.turn(for: genome.seed)
-            + Float(quarter) * .pi / 2
+        pivot.eulerAngles.y = turn(for: genome.seed) + Float(sitting.quarter) * .pi / 2
         pivot.addChildNode(plant)
-        view.scene?.rootNode.addChildNode(pivot)
+        let camera = makeCameraNode(frameMetres: metres)
+        let side = max(1, (metres * Double(sitting.pixelsPerMetre)).rounded())
 
-        view.pointOfView = Self.makeCameraNode(frameMetres: metres)
-
-        let snapshot = view.snapshot()
-        guard snapshot.size.width > 0 else { return nil }
-        let opaque = Self.opaqueBounds(of: snapshot)
-        let leaves = Self.leafPath(of: snapshot)
-        cache.setObject(Rendered(image: snapshot, opaque: opaque, leaves: leaves), forKey: key)
-        return Sprite(image: snapshot, metres: metres, opaque: opaque, leaves: leaves)
+        var made: [Made] = []
+        var shape: (opaque: CGRect, leaves: Path)?
+        for step in sitting.steps {
+            let scene = makeScene(lit: GardenGround.Light.at(step: step, season: sitting.season)
+                .turned(quarters: sitting.quarter))
+            // Taken with transparency so the ground shows through. If a plant
+            // ever comes back as a black square, this is the line that did it —
+            // the same trap `ThumbnailRenderer` records.
+            scene.background.contents = UIColor.clear
+            pivot.removeFromParentNode()
+            scene.rootNode.addChildNode(pivot)
+            renderer.scene = scene
+            renderer.pointOfView = camera
+            // Off the main thread there is no run loop to commit SceneKit's
+            // implicit transaction, so it is committed before the picture.
+            SCNTransaction.flush()
+            let image = renderer.snapshot(atTime: 0, with: CGSize(width: side, height: side),
+                                          antialiasingMode: .multisampling4X)
+            guard image.size.width > 0 else { continue }
+            // The light moves the colours and not the outline, so where the
+            // plant is in its frame is measured once a sitting.
+            let measured = shape ?? (opaqueBounds(of: image), leafPath(of: image))
+            shape = measured
+            made.append(Made(step: step, rendered: Rendered(image: image, metres: metres,
+                                                            opaque: measured.opaque,
+                                                            leaves: measured.leaves)))
+        }
+        renderer.scene = nil
+        return made
     }
 
     /// A plant standing outdoors, under the same light as the ground it stands on.
@@ -340,7 +668,7 @@ final class GardenSprites {
     /// The numbers are the same ones the ground is shaded with, read from the
     /// same function, so the plant and the ground can never be lit from
     /// different hours.
-    static func makeScene(lit light: GardenGround.Light) -> SCNScene {
+    nonisolated static func makeScene(lit light: GardenGround.Light) -> SCNScene {
         let scene = SCNScene()
 
         // A low gold sun keeps its brightness, so its red is a little over
@@ -415,7 +743,7 @@ final class GardenSprites {
     /// units; setting it to half the covered height *along the camera's own up
     /// axis* is what lands the plant's foot exactly on the bottom edge, which is
     /// the anchor the plot places against.
-    static func makeCameraNode(frameMetres: Double) -> SCNNode {
+    nonisolated static func makeCameraNode(frameMetres: Double) -> SCNNode {
         let camera = SCNCamera()
         camera.usesOrthographicProjection = true
         camera.orthographicScale = frameMetres * elevationCosine / 2
@@ -438,5 +766,30 @@ final class GardenSprites {
         // wrong about — the plot would simply be the wrong shape.
         node.look(at: target, up: SCNVector3(0, 1, 0), localFront: SCNVector3(0, 0, -1))
         return node
+    }
+}
+
+/// One renderer, kept on one queue. SceneKit's renderer belongs to the thread
+/// that uses it, so each worker has its own and only ever uses it there.
+final class SpriteWorker: @unchecked Sendable {
+    let queue: DispatchQueue
+    private var renderer: SCNRenderer?
+
+    init(label: String) {
+        queue = DispatchQueue(label: label, qos: .userInitiated)
+    }
+
+    /// On `queue` only: `work` with this worker's renderer, in a pool of its
+    /// own, so whatever SceneKit autoreleases goes with the picture.
+    func withRenderer<T>(_ work: (SCNRenderer) -> T?) -> T? {
+        dispatchPrecondition(condition: .onQueue(queue))
+        if renderer == nil { renderer = SCNRenderer(device: MTLCreateSystemDefaultDevice(), options: nil) }
+        guard let renderer else { return nil }
+        return autoreleasepool { work(renderer) }
+    }
+
+    /// On `queue` only.
+    func take(_ sitting: GardenSprites.Sitting) -> [GardenSprites.Made] {
+        withRenderer { GardenSprites.take(sitting, with: $0) } ?? []
     }
 }

@@ -24,7 +24,19 @@ enum GradientTexture {
     /// has been since it was introduced — it simply predates `Sendable` and has
     /// never been annotated. `nonisolated(unsafe)` says that out loud rather
     /// than putting an actor around a class that already does its own locking.
-    private nonisolated(unsafe) static let cache = NSCache<NSString, UIImage>()
+    ///
+    /// **Held by weight** (14 October 2026). Unbounded, it kept every bake of
+    /// every plant ever drawn — about 1.4 MB a plant, three channels per role —
+    /// so a garden of hundreds held hundreds of megabytes after it had closed,
+    /// and a simulator, which never feels memory pressure, never let any of it
+    /// go. A plant's
+    /// textures are wanted while its picture is being taken and seldom after,
+    /// so a few dozen plants' worth is plenty.
+    private nonisolated(unsafe) static let cache: NSCache<NSString, UIImage> = {
+        let cache = NSCache<NSString, UIImage>()
+        cache.totalCostLimit = 48 << 20
+        return cache
+    }()
 
     /// Sixty-four carried a gradient and nothing else. Venation, quilting and
     /// a picotee rim are patterns, and a pattern needs frequency the way a
@@ -79,7 +91,8 @@ enum GradientTexture {
         let key = "\(channel)#\(cacheKey(role: role, palette: palette))" as NSString
         if let cached = cache.object(forKey: key) { return cached }
         guard let image = build() else { return nil }
-        cache.setObject(image, forKey: key)
+        let bytes = image.cgImage.map { $0.bytesPerRow * $0.height } ?? 64 << 10
+        cache.setObject(image, forKey: key, cost: bytes)
         return image
     }
 

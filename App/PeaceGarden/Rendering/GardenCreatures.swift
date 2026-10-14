@@ -23,14 +23,42 @@ import UIKit
 ///
 /// The lantern and the paper lamp are taken here too, by the same camera and
 /// cache, with a flame where the figures have paint: see `GardenLamps.swift`.
-@MainActor
+///
+/// **On the main actor only where it keeps things** (14 October 2026): the
+/// models and the pictures are made off it, by a worker of its own, at the size
+/// the figure is drawn (`picture(…, pixelsPerMetre:) async`).
 final class GardenCreatures {
-    static let shared = GardenCreatures()
+    @MainActor static let shared = GardenCreatures()
 
-    private let cache = NSCache<NSString, UIImage>()
+    /// Held by weight. It held 160 pictures, each up to three megabytes at
+    /// 780 pixels a metre, and every turn of the plot and every month of the
+    /// clock added a set — part of how an open garden grew by tens of
+    /// megabytes a step (mass test, finding 11).
+    @MainActor private let cache = NSCache<NSString, UIImage>()
 
-    private init() {
-        cache.countLimit = 160
+    @MainActor private init() {
+        cache.totalCostLimit = 32 << 20
+    }
+
+    /// Where the pictures are taken: one worker with its own renderer. There
+    /// are a handful of figures, not hundreds, so one is enough.
+    @MainActor private let worker = SpriteWorker(label: "app.peacegarden.figures")
+    @MainActor private var waiting: [String: [CheckedContinuation<UIImage?, Never>]] = [:]
+    /// The renderer for pictures asked for on the main thread itself.
+    @MainActor private var here: SCNRenderer?
+
+    /// The ceiling on a 3x screen: what a figure was always rendered at.
+    nonisolated static let fullPixelsPerMetre = 780
+
+    /// **At twice the size it is drawn, rounded up to a power of two**, never
+    /// above the ceiling: `GardenSprites.pixelsPerMetre(drawnAt:scale:)`'s
+    /// rule, from a finer floor, because a figure is a fifth of a metre.
+    nonisolated static func pixelsPerMetre(drawnAt pointsPerMetre: Double, scale: Double) -> Int {
+        let ceiling = Double(renderedPointsPerMetre) * max(1, scale)
+        let wanted = pointsPerMetre * scale * GardenSprites.oversampling
+        var step = 64.0
+        while step < wanted, step < ceiling { step *= 2 }
+        return Int(min(step, ceiling).rounded())
     }
 
     /// Rendered finer than a plant. A figure is a fifth of a metre and is looked
@@ -118,9 +146,9 @@ final class GardenCreatures {
     /// The season is in it for a figure lit by the garden, because it colours
     /// that light; a glow is its own light and has none.
     nonisolated static func key(_ kind: LampKind, step: Int?, turn: Int, facing: Int,
-                                season: Season = .orbit) -> String {
+                                season: Season = .orbit, pixelsPerMetre: Int = fullPixelsPerMetre) -> String {
         let quarter = ((turn % 4) + 4) % 4
-        return "\(kind.rawValue)-\(step.map { "\($0)-\(season.key)" } ?? "glow")-\(quarter)-\(facing)"
+        return "\(kind.rawValue)-\(step.map { "\($0)-\(season.key)" } ?? "glow")-\(quarter)-\(facing)-\(pixelsPerMetre)"
     }
 
     // MARK: Rendering
@@ -128,41 +156,104 @@ final class GardenCreatures {
     /// A picture already taken, without taking it: what a figure starts from
     /// when it is drawn again, so a plot redrawn does not flash its figures
     /// empty for a frame while the same pictures are fetched.
-    func held(_ kind: LampKind, step: Int?, turn: Int, facing: Int, season: Season = .orbit) -> UIImage? {
-        cache.object(forKey: Self.key(kind, step: step, turn: turn, facing: facing, season: season) as NSString)
+    @MainActor
+    func held(_ kind: LampKind, step: Int?, turn: Int, facing: Int, season: Season = .orbit,
+              pixelsPerMetre: Int = fullPixelsPerMetre) -> UIImage? {
+        cache.object(forKey: Self.key(kind, step: step, turn: turn, facing: facing, season: season,
+                                      pixelsPerMetre: pixelsPerMetre) as NSString)
+    }
+
+    /// Lets go of every picture kept, when the garden closes.
+    @MainActor
+    func forget() {
+        cache.removeAllObjects()
     }
 
     /// The figure under the garden's light at one of the eight points round the
     /// clock, in the season's colour, or — with `step` nil — its glow alone.
+    /// Taken where it is asked for, at the full size: what the tests call.
+    @MainActor
     func picture(_ kind: LampKind, step: Int?, turn: Int, facing: Int, season: Season = .orbit) -> UIImage? {
-        guard let figure = Self.figure(of: kind) else { return nil }
         let quarter = ((turn % 4) + 4) % 4
         let key = Self.key(kind, step: step, turn: quarter, facing: facing, season: season) as NSString
         if let held = cache.object(forKey: key) { return held }
+        if here == nil { here = SCNRenderer(device: MTLCreateSystemDefaultDevice(), options: nil) }
+        guard let renderer = here,
+              let image = autoreleasepool(invoking: {
+                  Self.take(kind, step: step, quarter: quarter, facing: facing, season: season,
+                            pixelsPerMetre: Self.fullPixelsPerMetre, with: renderer)
+              })
+        else { return nil }
+        cache.setObject(image, forKey: key, cost: Self.bytes(of: image))
+        return image
+    }
 
+    /// The same picture at `pixelsPerMetre`, taken off the main thread and
+    /// waited for. A figure asked for twice while it is being taken is taken
+    /// once.
+    @MainActor
+    func picture(_ kind: LampKind, step: Int?, turn: Int, facing: Int, season: Season = .orbit,
+                 pixelsPerMetre: Int) async -> UIImage? {
+        let quarter = ((turn % 4) + 4) % 4
+        let key = Self.key(kind, step: step, turn: quarter, facing: facing, season: season,
+                           pixelsPerMetre: pixelsPerMetre)
+        if let held = cache.object(forKey: key as NSString) { return held }
+        return await withCheckedContinuation { (continuation: CheckedContinuation<UIImage?, Never>) in
+            if waiting[key] != nil {
+                waiting[key]?.append(continuation)
+                return
+            }
+            waiting[key] = [continuation]
+            let worker = self.worker
+            worker.queue.async {
+                let image = worker.withRenderer { renderer in
+                    Self.take(kind, step: step, quarter: quarter, facing: facing, season: season,
+                              pixelsPerMetre: pixelsPerMetre, with: renderer)
+                }
+                Task { @MainActor in GardenCreatures.shared.finished(key, image) }
+            }
+        }
+    }
+
+    @MainActor
+    private func finished(_ key: String, _ image: UIImage?) {
+        if let image { cache.setObject(image, forKey: key as NSString, cost: Self.bytes(of: image)) }
+        for continuation in waiting.removeValue(forKey: key) ?? [] {
+            continuation.resume(returning: image)
+        }
+    }
+
+    private nonisolated static func bytes(of image: UIImage) -> Int {
+        image.cgImage.map { $0.bytesPerRow * $0.height } ?? 4 << 10
+    }
+
+    /// One picture, on whichever thread calls it, with a renderer that thread
+    /// owns.
+    nonisolated static func take(_ kind: LampKind, step: Int?, quarter: Int, facing: Int, season: Season,
+                                 pixelsPerMetre: Int, with renderer: SCNRenderer) -> UIImage? {
+        guard let figure = figure(of: kind) else { return nil }
         let glowing = step == nil
-        let side = CGFloat(figure.metres) * Self.renderedPointsPerMetre
-        let view = SCNView(frame: CGRect(x: 0, y: 0, width: side, height: side))
-        view.scene = step.map {
+        let side = max(1, (figure.metres * Double(pixelsPerMetre)).rounded())
+        let scene = step.map {
             GardenSprites.makeScene(lit: GardenGround.Light.at(step: $0, season: season).turned(quarters: quarter))
-        } ?? (figure.flame ? SCNScene() : Self.glowScene())
-        view.backgroundColor = .clear
-        view.isOpaque = false
-        view.antialiasingMode = .multisampling4X
+        } ?? (figure.flame ? SCNScene() : glowScene())
+        // Taken with transparency, as a plant is.
+        scene.background.contents = UIColor.clear
 
-        guard let body = Self.model(of: kind, paint: Paint(glowing: glowing, glow: figure.glow))
+        guard let body = model(of: kind, paint: Paint(glowing: glowing, glow: figure.glow))
         else { return nil }
 
         let pivot = SCNNode()
-        pivot.eulerAngles.y = Self.turn(of: kind, facing: facing, quarter: quarter)
+        pivot.eulerAngles.y = turn(of: kind, facing: facing, quarter: quarter)
         pivot.addChildNode(body)
-        view.scene?.rootNode.addChildNode(pivot)
-        view.pointOfView = Self.camera(for: figure)
-
-        let snapshot = view.snapshot()
-        guard snapshot.size.width > 0 else { return nil }
-        cache.setObject(snapshot, forKey: key)
-        return snapshot
+        scene.rootNode.addChildNode(pivot)
+        renderer.scene = scene
+        renderer.pointOfView = camera(for: figure)
+        SCNTransaction.flush()
+        let image = renderer.snapshot(atTime: 0, with: CGSize(width: side, height: side),
+                                      antialiasingMode: .multisampling4X)
+        renderer.scene = nil
+        return image.size.width > 0 ? image : nil
     }
 
     /// A figure as it is modelled, foot at the origin, facing its own way —
@@ -628,13 +719,15 @@ struct ModelledFigure: View {
     let seed: Int
     /// What colours the garden's light on it.
     let season: Season
+    /// How finely its pictures are taken: `GardenCreatures.pixelsPerMetre`.
+    let pixelsPerMetre: Int
 
     @State private var before: UIImage?
     @State private var after: UIImage?
     @State private var shine: UIImage?
 
     init(kind: LampKind, glow: Double, pointsPerMetre: Double, hour: Double, turn: Int, seed: Int,
-         season: Season = .orbit) {
+         season: Season = .orbit, pixelsPerMetre: Int = GardenCreatures.fullPixelsPerMetre) {
         self.kind = kind
         self.glow = glow
         self.pointsPerMetre = pointsPerMetre
@@ -642,14 +735,16 @@ struct ModelledFigure: View {
         self.turn = turn
         self.seed = seed
         self.season = season
+        self.pixelsPerMetre = pixelsPerMetre
         let facing = GardenCreatures.facing(seed: seed)
         let between = GardenGround.Light.steps(at: hour)
         let held = GardenCreatures.shared
         _before = State(initialValue: held.held(kind, step: between.before, turn: turn, facing: facing,
-                                                season: season))
+                                                season: season, pixelsPerMetre: pixelsPerMetre))
         _after = State(initialValue: held.held(kind, step: between.after, turn: turn, facing: facing,
-                                               season: season))
-        _shine = State(initialValue: held.held(kind, step: nil, turn: turn, facing: facing))
+                                               season: season, pixelsPerMetre: pixelsPerMetre))
+        _shine = State(initialValue: held.held(kind, step: nil, turn: turn, facing: facing,
+                                               pixelsPerMetre: pixelsPerMetre))
     }
 
     private var between: (before: Int, after: Int, blend: Double) {
@@ -701,17 +796,24 @@ struct ModelledFigure: View {
                 }
             }
             .task(id: GardenCreatures.key(kind, step: between.before, turn: turn, facing: facing,
-                                          season: season)) {
-                before = GardenCreatures.shared.picture(kind, step: between.before, turn: turn, facing: facing,
-                                                        season: season)
+                                          season: season, pixelsPerMetre: pixelsPerMetre)) {
+                if let picture = await GardenCreatures.shared.picture(
+                    kind, step: between.before, turn: turn, facing: facing, season: season,
+                    pixelsPerMetre: pixelsPerMetre
+                ) { before = picture }
             }
             .task(id: GardenCreatures.key(kind, step: between.after, turn: turn, facing: facing,
-                                          season: season)) {
-                after = GardenCreatures.shared.picture(kind, step: between.after, turn: turn, facing: facing,
-                                                       season: season)
+                                          season: season, pixelsPerMetre: pixelsPerMetre)) {
+                if let picture = await GardenCreatures.shared.picture(
+                    kind, step: between.after, turn: turn, facing: facing, season: season,
+                    pixelsPerMetre: pixelsPerMetre
+                ) { after = picture }
             }
-            .task(id: GardenCreatures.key(kind, step: nil, turn: turn, facing: facing)) {
-                shine = GardenCreatures.shared.picture(kind, step: nil, turn: turn, facing: facing)
+            .task(id: GardenCreatures.key(kind, step: nil, turn: turn, facing: facing,
+                                          pixelsPerMetre: pixelsPerMetre)) {
+                if let picture = await GardenCreatures.shared.picture(
+                    kind, step: nil, turn: turn, facing: facing, pixelsPerMetre: pixelsPerMetre
+                ) { shine = picture }
             }
         }
     }
