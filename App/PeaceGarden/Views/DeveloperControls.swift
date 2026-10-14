@@ -347,8 +347,14 @@ final class Developer {
 #else
         keptOldDay = keptDay
 #endif
-        sectionOpen = UserDefaults.standard.object(forKey: Self.sectionKey) as? Bool
-            ?? Self.sectionOpenAtFirst
+        // `bool(forKey:)` once anything is stored, as `-pgTray` is read: a
+        // launch argument arrives as the string "NO", which `as? Bool` turned
+        // into nothing, so `-developer.showsSection NO` did nothing at all
+        // and hid the stored answer while it was there (mass test, 13
+        // October, finding 12).
+        sectionOpen = UserDefaults.standard.object(forKey: Self.sectionKey) != nil
+            ? UserDefaults.standard.bool(forKey: Self.sectionKey)
+            : Self.sectionOpenAtFirst
     }
 }
 
