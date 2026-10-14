@@ -622,20 +622,31 @@ extension View {
     /// they are drawn in, and the voice failed the contrast audit in Dark too,
     /// where its grey is 6.5 : 1 by arithmetic. One step of weight brings the
     /// strokes up to their colour; the voice stays small, spaced and quiet.
+    ///
+    /// **It grows as far as AX3** (14 October). Tracked capitals are the
+    /// widest type in the app, and a long word in them — Danish and Dutch
+    /// make long words — no longer fits an SE's column past AX3, where it
+    /// breaks in the middle.
     func chromeLabel(size: CGFloat = 11, weight: Font.Weight = .light) -> some View {
         scaledFont(size: size, weight: size < 12 && weight == .light ? .regular : weight)
             .modifier(ChromeTracking(2.4))
             .modifier(ChromeLetterCase())
+            .dynamicTypeSize(...DynamicTypeSize.accessibility3)
     }
 
     /// The heading voice: uppercase and wide-tracked, like the label voice but
     /// at size. It is what marks the three moments the app explains itself —
     /// the seed forming, the seed planted, two seeds meeting — as one sequence
     /// rather than three unrelated screens.
+    ///
+    /// **It grows as far as AX2** (14 October), for the label voice's reason
+    /// at a larger size: at AX5 *ONTMOETEN* and *PRENDENDO* broke mid-word on
+    /// an SE, and at AX2 the heading is already twice its size at Large.
     func chromeHeading(size: CGFloat = 20) -> some View {
         scaledFont(size: size)
             .modifier(ChromeTracking(2.8))
             .modifier(ChromeLetterCase())
+            .dynamicTypeSize(...DynamicTypeSize.accessibility2)
     }
 
     /// The serif voice, used only for plant names.
@@ -890,7 +901,7 @@ extension View {
         padding(.horizontal, horizontal)
             .padding(.vertical, vertical)
             .overlay(
-                Capsule().strokeBorder(
+                ControlEdge().strokeBorder(
                     // The prominent one is brighter, so the hierarchy survives
                     // now that both have an outline. Well under the text it
                     // surrounds either way: an edge that competes with its own
@@ -903,6 +914,31 @@ extension View {
             // are small targets and the corners are worth having; a tap just
             // outside the outline is a tap meant for the button.
             .contentShape(Rectangle())
+    }
+}
+
+/// The edge `pressable` draws: a capsule round one line, and round more than
+/// one a rounded rectangle whose corners stop at the capsule's.
+///
+/// **Why not a capsule always** (14 October). With the type following
+/// Dynamic Type, a label can take two or three lines, and a capsule round
+/// three lines is a lozenge whose ends cut through the first and last words.
+/// The corners never grow past 24 points — the radius of the 48-point marks
+/// at the foot of the stage, which stay circles — so every one-line control
+/// is exactly the capsule it was.
+struct ControlEdge: InsettableShape {
+    var inset: CGFloat = 0
+
+    func path(in rect: CGRect) -> Path {
+        let box = rect.insetBy(dx: inset, dy: inset)
+        let radius = max(0, min(24 - inset, box.height / 2, box.width / 2))
+        return Path(roundedRect: box, cornerRadius: radius)
+    }
+
+    func inset(by amount: CGFloat) -> ControlEdge {
+        var edge = self
+        edge.inset += amount
+        return edge
     }
 }
 
@@ -1647,6 +1683,9 @@ extension View {
     func titleGlyph(_ glyph: some Shape, size: CGFloat) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: (size * 0.5).rounded()) {
             TitleGlyph(glyph: AnyShape(glyph), size: size)
+                // Capped where the heading voice is, so it stays the height
+                // of the capitals beside it.
+                .dynamicTypeSize(...DynamicTypeSize.accessibility2)
             self
         }
     }
