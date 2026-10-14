@@ -76,6 +76,13 @@
 	     together. It is only read while the Meet screen is open. -->
 	<key>NSMotionUsageDescription</key>
 	<string>Peace Garden feels the moment you tap your phone against someone else's, so a meeting has to be deliberate. Motion is only read while the Meet screen is open.</string>
+
+	<!-- Add-only access to Photos, asked for the first time somebody saves
+	     their plant as a wallpaper from its Share mark. Add-only: the app puts
+	     a picture in and cannot see what is there. Here and not in project.yml,
+	     for the reason the export-compliance key below gives. -->
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Peace Garden adds a picture or a video of your plant to Photos when you ask it to, so you can keep it or use it as your wallpaper.</string>
 	<!-- Export compliance, and it has to be HERE rather than in project.yml.
 	     `INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO` was set there and was
 	     inert: those settings are merged only when GENERATE_INFOPLIST_FILE is

@@ -1387,6 +1387,53 @@
         }
       }
     },
+    "Allow Peace Garden to add to Photos in Settings." : {
+      "comment" : "Shown in place of that line when saving was refused because the person has not allowed the app to add to Photos. 'Settings' is the phone's Settings app and 'Photos' the system's Photos app. 'Peace Garden' is the app's name and stays as it is.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giv Peace Garden lov til at føje til Fotos under Indstillinger."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Permite a Peace Garden añadir a Fotos en Ajustes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Autorise Peace Garden à ajouter à Photos dans Réglages."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Consenti a Peace Garden di aggiungere a Foto in Impostazioni."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Gi Peace Garden lov til å legge til i Bilder under Innstillinger."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Geef Peace Garden in Instellingen toestemming om aan Foto's toe te voegen."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ge Peace Garden tillåtelse att lägga till i Bilder under Inställningar."
+          }
+        }
+      }
+    },
     "Always day" : {
       "localizations" : {
         "da" : {
@@ -8913,6 +8960,147 @@
         }
       }
     },
+    "Save as moving wallpaper" : {
+      "comment" : "In the same menu. Saves a Live Photo of the plant turning a little to the Photos app, which the lock screen can play when the phone wakes. Same word for wallpaper as the row above. A menu row.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gem som levende baggrund"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Guardar como fondo animado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Enregistrer comme fond d’écran animé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Salva come sfondo animato"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Arkiver som levende bakgrunn"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bewaar als bewegende achtergrond"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Spara som levande bakgrundsbild"
+          }
+        }
+      }
+    },
+    "Save as wallpaper" : {
+      "comment" : "In the same menu. Saves a picture of the plant the size of this phone's screen to the Photos app; the person then sets it as their wallpaper from there. Use the word iOS uses for wallpaper in your language. A menu row.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gem som baggrund"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Guardar como fondo de pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Enregistrer comme fond d’écran"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Salva come sfondo"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Arkiver som bakgrunn"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bewaar als achtergrond"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Spara som bakgrundsbild"
+          }
+        }
+      }
+    },
+    "Saved to Photos. Open it there, tap %@, then Use as Wallpaper." : {
+      "comment" : "Shown for a few seconds after a wallpaper is saved. %@ is the share glyph itself (a box with an arrow), drawn in the line, not a word. 'Photos' is the system's Photos app and 'Use as Wallpaper' the system's own action in its share sheet: use the names iOS uses in your language.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gemt i Fotos. Åbn det der, tryk på %@, og vælg Brug som baggrund."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Guardado en Fotos. Ábrelo allí, toca %@ y elige Usar como fondo de pantalla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Enregistré dans Photos. Ouvre-le, touche %@, puis Utiliser en fond d’écran."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Salvato in Foto. Aprilo lì, tocca %@, poi Usa come sfondo."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Arkivert i Bilder. Åpne det der, trykk på %@ og velg Bruk som bakgrunn."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bewaard in Foto's. Open het daar, tik op %@ en kies Gebruik als achtergrond."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sparad i Bilder. Öppna den där, tryck på %@ och välj Använd som bakgrundsbild."
+          }
+        }
+      }
+    },
     "See it in the Wild Fields" : {
       "comment" : "Opens the website's Wild Fields at this plant. The Wild Fields is the place a released plant goes; use the same name as 'Release to the Wild Fields'.",
       "localizations" : {
@@ -9379,6 +9567,147 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Inställningar"
+          }
+        }
+      }
+    },
+    "Share" : {
+      "comment" : "VoiceOver's name for the share mark (a box with an arrow coming out of it) at the top right of a plant's screen. Also said in place of that glyph when VoiceOver reads the line shown after a wallpaper is saved. One word: the verb on the system's own share button.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Del"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Compartir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Partager"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Condividi"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Del"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Deel"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dela"
+          }
+        }
+      }
+    },
+    "Share picture" : {
+      "comment" : "In the menu that opens from the share mark on a plant's screen. Sends a still picture of the plant as it is now through the phone's share sheet (Photos, Mail, Messages and so on). Keep it short: a menu row.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Del billede"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Compartir imagen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Partager l’image"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Condividi immagine"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Del bilde"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Deel afbeelding"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dela bild"
+          }
+        }
+      }
+    },
+    "Share turning video" : {
+      "comment" : "In the same menu. Sends a short video of the plant turning slowly once round on its stem. 'Turning' is the same verb as in the setting 'Let the plant turn'. A menu row.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Del video af planten, der drejer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Compartir vídeo de la planta girando"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Partager une vidéo de la plante qui tourne"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Condividi un video della pianta che gira"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Del video av planten som dreier"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Deel een video van de draaiende plant"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dela video där växten vrider sig"
           }
         }
       }

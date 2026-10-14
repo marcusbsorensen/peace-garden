@@ -162,6 +162,60 @@
           }
         }
       }
+    },
+    "NSPhotoLibraryAddUsageDescription": {
+      "comment": "The system's own prompt, raised the first time somebody saves their plant as a wallpaper from its share mark. The app can add to Photos and cannot see what is there. 'Peace Garden' is the app's name and stays as it is; 'Photos' is the system's Photos app.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden adds a picture or a video of your plant to Photos when you ask it to, so you can keep it or use it as your wallpaper."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Peace Garden voegt een afbeelding of video van je plant toe aan Foto's als je daarom vraagt, zodat je die kunt bewaren of als achtergrond kunt gebruiken."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peace Garden føjer et billede eller en video af din plante til Fotos, når du beder om det, så du kan gemme det eller bruge det som baggrund."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Peace Garden ajoute une image ou une vidéo de ta plante à Photos quand tu le demandes, pour que tu puisses la garder ou l’utiliser en fond d’écran."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Peace Garden añade una imagen o un vídeo de tu planta a Fotos cuando se lo pides, para que puedas guardarlo o usarlo como fondo de pantalla."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Peace Garden legger et bilde eller en video av planten din til i Bilder når du ber om det, slik at du kan ta vare på det eller bruke det som bakgrunn."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Peace Garden lägger till en bild eller en video av din växt i Bilder när du ber om det, så att du kan spara den eller använda den som bakgrundsbild."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Peace Garden aggiunge un’immagine o un video della tua pianta a Foto quando glielo chiedi, così puoi tenerlo o usarlo come sfondo."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
