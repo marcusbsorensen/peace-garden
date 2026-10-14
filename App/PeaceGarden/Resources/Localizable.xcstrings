@@ -49,10 +49,98 @@
       }
     },
     "%@ has asked to show a plant you grew together" : {
-
+      "comment" : "A notice in the garden: one person (%@ is their name) has asked for a plant you grew together to stand in the public website garden. One of three sentences with names; the others are '%@ has asked to show plants you grew together' and '%@ have asked to show plants you grew together'. Without a name it is 'The other gardener has asked to show a plant you grew together'. It carries no number on purpose.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ har bedt om at vise en plante, I groede frem sammen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ ha pedido mostrar una planta nacida de un encuentro contigo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ a demandé à montrer une plante que vous avez fait pousser ensemble"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ ha chiesto di mostrare una pianta che avete fatto crescere insieme"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ har bedt om å vise en plante dere dyrket fram sammen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ heeft gevraagd een plant te laten zien die jullie samen hebben laten groeien"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ har bett om att få visa en växt ni odlade tillsammans"
+          }
+        }
+      }
     },
     "%@ has asked to show plants you grew together" : {
-      "comment" : "A notice in the garden: one person (%@ is their name) has asked for more than one plant you grew together to stand in the public website garden. One of three sentences with names; the others are '%@ has asked to show a plant you grew together' and '%@ have asked to show plants you grew together' (more than one person, who always means more than one plant, since each plant has one other gardener). The verb follows the number of people asking and the object follows the number of plants. It carries no number on purpose."
+      "comment" : "A notice in the garden: one person (%@ is their name) has asked for more than one plant you grew together to stand in the public website garden. One of three sentences with names; the others are '%@ has asked to show a plant you grew together' and '%@ have asked to show plants you grew together' (more than one person, who always means more than one plant, since each plant has one other gardener). The verb follows the number of people asking and the object follows the number of plants. It carries no number on purpose.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ har bedt om at vise planter, I groede frem sammen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ ha pedido mostrar plantas nacidas de encuentros contigo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ a demandé à montrer des plantes que vous avez fait pousser ensemble"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ ha chiesto di mostrare delle piante che avete fatto crescere insieme"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ har bedt om å vise planter dere dyrket fram sammen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ heeft gevraagd planten te laten zien die jullie samen hebben laten groeien"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ har bett om att få visa växter ni odlade tillsammans"
+          }
+        }
+      }
     },
     "%@ has let the plant you grew together go into the Wild Fields. Yours stays here." : {
       "comment" : "Heading of the notice shown once when the other gardener (%@) releases a plant the two grew together. A moment of contact, not an alarm: gentle and plain.",
@@ -102,7 +190,51 @@
       }
     },
     "%@ have asked to show plants you grew together" : {
-
+      "comment" : "The same notice when more than one person has asked. %@ is their names, already joined by the phone's own list format in this language (Cai and Ines). More than one person always means more than one plant, since each plant has one other gardener. The verb follows the number of people; it carries no number on purpose.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ har bedt om at vise planter, I groede frem sammen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ han pedido mostrar plantas nacidas de encuentros contigo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ ont demandé à montrer des plantes que vous avez fait pousser ensemble"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ hanno chiesto di mostrare delle piante che avete fatto crescere insieme"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ har bedt om å vise planter dere dyrket fram sammen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ hebben gevraagd planten te laten zien die jullie samen hebben laten groeien"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ har bett om att få visa växter ni odlade tillsammans"
+          }
+        }
+      }
     },
     "%@ is here. A light tap, top to top." : {
       "comment" : "Under that title. %@ is the other person's name.",
@@ -222,7 +354,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "%@ non era più a portata prima che la pianta attecchisse."
+            "value" : "%@ non era più raggiungibile prima che la pianta attecchisse."
           }
         },
         "nb" : {
@@ -293,7 +425,51 @@
       }
     },
     "%@ would like this plant to stand in the public website garden." : {
-
+      "comment" : "The headline when the other person from the meeting (%@ is their name) has asked for this plant to stand in the public website garden. Without a name it is 'The other gardener would like this plant to stand in the public website garden.'",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ vil gerne have, at denne plante står i den offentlige have på nettet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "A %@ le gustaría que esta planta estuviera en el jardín público de la web."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ aimerait que cette plante pousse dans le jardin public en ligne."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ vorrebbe che questa pianta stesse nel giardino pubblico sul web."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ vil gjerne at denne planten skal stå i den offentlige hagen på nettet."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ wil graag dat deze plant in de openbare tuin op het web komt te staan."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ vill att den här växten ska stå i den offentliga trädgården på webben."
+          }
+        }
+      }
     },
     "%@ · in English" : {
       "localizations" : {
@@ -402,7 +578,7 @@
             "plural" : {
               "one" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
+                  "state" : "translated",
                   "value" : "Én groet frem af et møde"
                 }
               },
@@ -529,13 +705,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "needs_review",
-                  "value" : "En vuxen ur ett möte"
+                  "value" : "En framvuxen ur ett möte"
                 }
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld vuxna ur möten"
+                  "state" : "needs_review",
+                  "value" : "%lld framvuxna ur möten"
                 }
               }
             }
@@ -881,51 +1057,95 @@
       }
     },
     "A plant stands in the area its own name belongs to, and the areas are being planted one at a time." : {
-
+      "comment" : "On the screen that offers a plant to the public website garden, when the plant's area is not planted yet. An area is one of the website garden's ten areas: use the website's own word for area. No area is named here.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En plante står i det område, dens eget navn hører til, og områderne bliver tilplantet ét ad gangen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Una planta está en la zona a la que pertenece su propio nombre, y las zonas se van plantando una a una."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Une plante se trouve dans l’espace auquel appartient son propre nom, et les espaces sont plantés un à un."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Una pianta sta nell'area a cui appartiene il suo stesso nome, e le aree vengono piantate una alla volta."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "En plante står i området dens eget navn hører til, og områdene blir beplantet ett om gangen."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Een plant staat in het gebied waar zijn eigen naam bij hoort, en de gebieden worden een voor een beplant."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "En växt står i det område som dess eget namn hör till, och områdena planteras ett i taget."
+          }
+        }
+      }
     },
     "A plant you both share goes to the web garden without your username." : {
       "comment" : "Under the switch about joint seeds. The username goes to the other phone at a meeting; the web garden is never sent it.",
       "localizations" : {
         "da" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Dit brugernavn vises kun offentligt, hvis du godkender det."
+            "state" : "translated",
+            "value" : "En plante, I begge deler, kommer i haven på nettet uden dit brugernavn."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Tu nombre de usuario solo aparece públicamente si tú lo apruebas."
+            "value" : "Una planta que las dos personas comparten va al jardín de la web sin tu nombre de usuario."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Ton nom d’utilisateur n’apparaît publiquement que si tu l’acceptes."
+            "value" : "Une plante que vous partagez tous les deux va dans le jardin en ligne sans ton nom d’utilisateur."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Il tuo nome utente compare pubblicamente solo se lo approvi."
+            "value" : "Una pianta che condividete entrambi va nel giardino sul web senza il tuo nome utente."
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Brukernavnet ditt vises bare offentlig hvis du godkjenner det."
+            "value" : "En plante dere begge deler, havner i hagen på nettet uten brukernavnet ditt."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Je gebruikersnaam komt alleen publiek in beeld als jij dat goedkeurt."
+            "value" : "Een plant die jullie allebei delen, gaat zonder je gebruikersnaam naar de tuin op het web."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Ditt användarnamn visas offentligt bara om du godkänner det."
+            "value" : "En växt som ni båda delar hamnar i trädgården på webben utan ditt användarnamn."
           }
         }
       }
@@ -1177,7 +1397,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Acerca de"
+            "value" : "Información"
           }
         },
         "fr" : {
@@ -1448,7 +1668,51 @@
       }
     },
     "All right" : {
-
+      "comment" : "The one button on that alert, which closes it. An acknowledgement, not a choice.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I orden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "De acuerdo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "D’accord"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Va bene"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Greit"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Oké"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Okej"
+          }
+        }
+      }
     },
     "Allow Peace Garden to add to Photos in Settings." : {
       "comment" : "Shown in place of that line when saving was refused because the person has not allowed the app to add to Photos. 'Settings' is the phone's Settings app and 'Photos' the system's Photos app. 'Peace Garden' is the app's name and stays as it is.",
@@ -4180,7 +4444,7 @@
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terræn %lld"
+            "value" : "Landskab %lld"
           }
         },
         "es" : {
@@ -4204,7 +4468,7 @@
         "nb" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Terreng %lld"
+            "value" : "Landskap %lld"
           }
         },
         "nl" : {
@@ -4216,7 +4480,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Terräng %lld"
+            "value" : "Landskap %lld"
           }
         }
       }
@@ -4412,7 +4676,7 @@
       "localizations" : {
         "da" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Hold nede i 3 sekunder."
           }
         },
@@ -4425,7 +4689,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Maintiens pendant 3 secondes."
+            "value" : "Maintiens appuyé pendant 3 secondes."
           }
         },
         "it" : {
@@ -5158,7 +5422,51 @@
       }
     },
     "In the public website garden" : {
-
+      "comment" : "A small line on a plant's screen: it stands in the public website garden now. Beside 'In this garden only' and 'Waiting on %@'.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I den offentlige have på nettet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "En el jardín público de la web"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dans le jardin public en ligne"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nel giardino pubblico sul web"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "I den offentlige hagen på nettet"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "In de openbare tuin op het web"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "I den offentliga trädgården på webben"
+          }
+        }
+      }
     },
     "In the quiet before rain" : {
       "comment" : "One of forty figurative places a seed is imagined passing through on its way to the ground. Offered, already filled in, as the answer to 'Where' on the note about a meeting, and anybody can type over it. The register is the seed's journey rather than real geography, so it wants the same unhurried, slightly literary voice in every language.",
@@ -5394,10 +5702,98 @@
       }
     },
     "It goes on growing here meanwhile, and you can ask %@ the day its area opens." : {
-
+      "comment" : "When this plant's area of the public website garden is not planted yet. %@ is the other person from the meeting; without a name it is the same sentence with 'the other gardener'. 'Its' is the plant's.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den gror videre her i mellemtiden, og du kan spørge %@, den dag dens område åbner."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mientras tanto sigue creciendo aquí, y podrás preguntar a %@ el día que se abra la zona de esta planta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "En attendant, elle continue de pousser ici, et tu pourras demander à %@ le jour où son espace ouvrira."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nel frattempo continua a crescere qui, e potrai chiedere a %@ il giorno in cui si aprirà l'area di questa pianta."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den vokser videre her så lenge, og du kan spørre %@ den dagen området dens åpner."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Intussen groeit hij hier verder, en je kunt het %@ vragen op de dag dat het gebied van deze plant opengaat."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den fortsätter att växa här så länge, och du kan fråga %@ den dag dess område öppnar."
+          }
+        }
+      }
     },
     "It goes on growing here meanwhile, and you can ask the other gardener the day its area opens." : {
-      "comment" : "When this plant's area of the public website garden is not planted yet. Used when the app has no name for the other person from the meeting; with a name it is the same sentence with %@."
+      "comment" : "When this plant's area of the public website garden is not planted yet. Used when the app has no name for the other person from the meeting; with a name it is the same sentence with %@.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den gror videre her i mellemtiden, og du kan spørge den anden gartner, den dag dens område åbner."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mientras tanto sigue creciendo aquí, y podrás preguntar a la otra persona el día que se abra la zona de esta planta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "En attendant, elle continue de pousser ici, et tu pourras demander à l’autre jardinier le jour où son espace ouvrira."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nel frattempo continua a crescere qui, e potrai chiedere all'altra persona il giorno in cui si aprirà l'area di questa pianta."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den vokser videre her så lenge, og du kan spørre den andre gartneren den dagen området dens åpner."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Intussen groeit hij hier verder, en je kunt het de andere tuinier vragen op de dag dat het gebied van deze plant opengaat."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den fortsätter att växa här så länge, och du kan fråga den andra trädgårdsmästaren den dag dess område öppnar."
+          }
+        }
+      }
     },
     "It grew from your seed and %@'s together, so the garden carries both. That is why you are being asked." : {
       "localizations" : {
@@ -5590,7 +5986,7 @@
       "localizations" : {
         "da" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Den forlader din have og tager ud i Vildmarken. Den, du groede den sammen med, beholder sin, og alle andre planter bliver her, hvor de er."
           }
         },
@@ -5603,13 +5999,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Elle quitte ton jardin pour les Champs Sauvages. La personne avec qui elle a poussé garde la sienne, et toutes les autres plantes ici restent où elles sont."
+            "value" : "Elle quitte ton jardin pour les Champs Sauvages. La personne avec qui tu l’as fait pousser garde la sienne, et toutes les autres plantes ici restent où elles sont."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Lascia il tuo giardino per i Campi Selvatici. La persona con cui è cresciuta conserva la sua, e ogni altra pianta qui resta dov'è."
+            "value" : "Lascia il tuo giardino per i Campi Selvatici. La persona con cui l'hai fatta crescere conserva la sua, e ogni altra pianta qui resta dov'è."
           }
         },
         "nb" : {
@@ -5621,7 +6017,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Hij verlaat je tuin voor de Wilde Velden. De plant van de persoon met wie je hem hebt laten groeien blijft, en elke andere plant hier blijft waar hij is."
+            "value" : "Hij verlaat je tuin voor de Wilde Velden. Degene met wie je hem hebt laten groeien, houdt de zijne, en elke andere plant hier blijft waar hij is."
           }
         },
         "sv" : {
@@ -7381,6 +7777,42 @@
             "state" : "translated",
             "value" : "Nyere version i App Store"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Versión más reciente en el App Store"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Version plus récente sur l’App Store"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Versione più recente su App Store"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nyere versjon i App Store"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nieuwere versie in de App Store"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nyare version i App Store"
+          }
         }
       }
     },
@@ -7620,7 +8052,51 @@
       }
     },
     "Nothing has changed. Plants of yours are still standing there, and this is the only phone that can take them down, so try again when you have a signal." : {
-
+      "comment" : "The message of that alert. 'There' is the public website garden. Only this phone holds what takes those plants down, so nothing here goes until they have.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intet er ændret. Nogle af dine planter står der stadig, og kun denne telefon kan tage dem ned, så prøv igen, når du har forbindelse."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No ha cambiado nada. Algunas plantas tuyas siguen allí, y este es el único teléfono que puede retirarlas, así que vuelve a intentarlo cuando tengas cobertura."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Rien n’a changé. Des plantes à toi y sont toujours, et ce téléphone est le seul à pouvoir les retirer, alors réessaie quand tu auras du réseau."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Non è cambiato nulla. Alcune delle tue piante sono ancora lì, e questo è l'unico telefono che può toglierle, quindi riprova quando avrai campo."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ingenting er endret. Noen av plantene dine står der fortsatt, og dette er den eneste telefonen som kan ta dem ned, så prøv igjen når du har dekning."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Er is niets veranderd. Planten van jou staan er nog, en dit is de enige telefoon die ze kan weghalen, dus probeer het opnieuw als je bereik hebt."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ingenting har ändrats. Några av dina växter står kvar där, och det här är den enda telefonen som kan ta ner dem, så försök igen när du har täckning."
+          }
+        }
+      }
     },
     "Nothing took" : {
       "comment" : "Title when a meeting failed. 'Took' as a cutting takes — the plant did not root. The reason follows underneath.",
@@ -8281,11 +8757,12 @@
       }
     },
     "One character left" : {
+      "comment" : "Under the field for a line about a meeting, when exactly one character is left. Chosen in Swift rather than by the plural of '%lld left', so it is only ever one: the word, not the numeral, in the wording of '%lld left'.",
       "extractionState" : "manual",
       "localizations" : {
         "da" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Ét tegn tilbage"
           }
         },
@@ -9088,7 +9565,7 @@
       "localizations" : {
         "da" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Løssæt den"
           }
         },
@@ -9101,7 +9578,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Relâcher"
+            "value" : "La relâcher"
           }
         },
         "it" : {
@@ -9183,7 +9660,7 @@
       "localizations" : {
         "da" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Løssætte den i Vildmarken?"
           }
         },
@@ -9425,7 +9902,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Guardar como fondo animado"
+            "value" : "Guardar como fondo de pantalla animado"
           }
         },
         "fr" : {
@@ -9525,13 +10002,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Enregistré dans Photos. Ouvre-le, touche %@, puis Utiliser en fond d’écran."
+            "value" : "Enregistré dans Photos. Ouvre-le, touche %@, puis choisis Utiliser en fond d’écran."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Salvato in Foto. Aprilo lì, tocca %@, poi Usa come sfondo."
+            "value" : "Salvato in Foto. Aprilo lì, tocca %@, poi scegli Usa come sfondo."
           }
         },
         "nb" : {
@@ -9978,7 +10455,51 @@
       }
     },
     "Sending it to the Wild Fields…" : {
-
+      "comment" : "Said in place of the release sentence on a plant's screen while the plant is on its way to the Wild Fields, which is usually under a second. Same name for the Wild Fields as 'Release to the Wild Fields?'.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sender den ud i Vildmarken…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Enviándola a los Campos Silvestres…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "En route pour les Champs Sauvages…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "In viaggio verso i Campi Selvatici…"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sender den ut i Villmarka…"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Op weg naar de Wilde Velden…"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Skickar ut den på Vildmarken…"
+          }
+        }
+      }
     },
     "Settings" : {
       "comment" : "The mark that opens the settings, and the heading of that screen. Set uppercase and wide-tracked at 11 points, so a long word crowds the row.",
@@ -10401,7 +10922,51 @@
       }
     },
     "Show this plant in the public website garden." : {
-
+      "comment" : "The headline on the screen that offers a plant to the public website garden, for the person offering it. It says what the screen is for; the button under it puts the question to the other gardener.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vis denne plante i den offentlige have på nettet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mostrar esta planta en el jardín público de la web."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Montrer cette plante dans le jardin public en ligne."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mostra questa pianta nel giardino pubblico sul web."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vis denne planten i den offentlige hagen på nettet."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Deze plant in de openbare tuin op het web laten zien."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Visa den här växten i den offentliga trädgården på webben."
+          }
+        }
+      }
     },
     "Shown beside it only if you choose. Where and when also need %@ to choose them." : {
       "comment" : "Under the three switches when releasing a plant. %@ is the other gardener's name, as this phone knows it. Nothing is shown by default.",
@@ -11201,7 +11766,51 @@
       }
     },
     "The Wild Fields could not be reached just now, so this plant is still here. Try again in a little while." : {
-
+      "comment" : "Said in place of the release sentence when the plant did not arrive. One sentence for every failure; what matters is the second clause, that the plant is still here.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vildmarken kunne ikke nås lige nu, så denne plante er her stadig. Prøv igen om lidt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ahora mismo no se ha podido llegar a los Campos Silvestres, así que esta planta sigue aquí. Vuelve a intentarlo dentro de un rato."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Impossible d’atteindre les Champs Sauvages pour l’instant, donc cette plante est toujours ici. Réessaie dans un petit moment."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Al momento non è stato possibile raggiungere i Campi Selvatici, quindi questa pianta è ancora qui. Riprova tra un po'."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Villmarka kunne ikke nås akkurat nå, så denne planten er fortsatt her. Prøv igjen om litt."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "De Wilde Velden waren nu even niet bereikbaar, dus deze plant is er nog. Probeer het straks opnieuw."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vildmarken gick inte att nå just nu, så den här växten är kvar här. Försök igen om en liten stund."
+          }
+        }
+      }
     },
     "The Wild Fields could not be reached just now. Nothing has changed; try again in a little while." : {
       "comment" : "When a change to what stands beside a released plant could not be sent. One sentence for every failure.",
@@ -11344,7 +11953,51 @@
       }
     },
     "The garden is being planted an area at a time, and this plant's area comes later." : {
-
+      "comment" : "The headline of that screen when the plant's area of the public website garden is not planted yet. Said in place of the question, which is not asked.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haven bliver tilplantet ét område ad gangen, og denne plantes område kommer senere."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "El jardín se va plantando zona a zona, y la zona de esta planta llega más adelante."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Le jardin est planté espace par espace, et l’espace de cette plante viendra plus tard."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Il giardino viene piantato un'area alla volta, e l'area di questa pianta arriva più avanti."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hagen blir beplantet ett område om gangen, og området til denne planten kommer senere."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "De tuin wordt gebied voor gebied beplant, en het gebied van deze plant komt later."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Trädgården planteras ett område i taget, och den här växtens område kommer senare."
+          }
+        }
+      }
     },
     "The garden is open. Anyone walking it can come across this plant." : {
       "localizations" : {
@@ -11532,10 +12185,98 @@
       }
     },
     "The other gardener has asked to show a plant you grew together" : {
-      "comment" : "A notice in the garden: the other person from a meeting has asked for a plant you grew together to stand in the public website garden. Used when the app has no name for them; with a name it is '%@ has asked to show a plant you grew together'."
+      "comment" : "A notice in the garden: the other person from a meeting has asked for a plant you grew together to stand in the public website garden. Used when the app has no name for them; with a name it is '%@ has asked to show a plant you grew together'.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den anden gartner har bedt om at vise en plante, I groede frem sammen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "La otra persona ha pedido mostrar una planta nacida de un encuentro contigo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "L’autre jardinier a demandé à montrer une plante que vous avez fait pousser ensemble"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "L'altra persona ha chiesto di mostrare una pianta che avete fatto crescere insieme"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den andre gartneren har bedt om å vise en plante dere dyrket fram sammen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "De andere tuinier heeft gevraagd een plant te laten zien die jullie samen hebben laten groeien"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den andra trädgårdsmästaren har bett om att få visa en växt ni odlade tillsammans"
+          }
+        }
+      }
     },
     "The other gardener has asked to show plants you grew together" : {
-      "comment" : "The same notice when more than one plant is waiting on an answer. Used when the app has no name for anyone asking; with names it is '%@ have asked to show plants you grew together'. It carries no number on purpose."
+      "comment" : "The same notice when more than one plant is waiting on an answer. Used when the app has no name for anyone asking; with names it is '%@ have asked to show plants you grew together'. It carries no number on purpose.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den anden gartner har bedt om at vise planter, I groede frem sammen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "La otra persona ha pedido mostrar plantas nacidas de encuentros contigo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "L’autre jardinier a demandé à montrer des plantes que vous avez fait pousser ensemble"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "L'altra persona ha chiesto di mostrare delle piante che avete fatto crescere insieme"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den andre gartneren har bedt om å vise planter dere dyrket fram sammen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "De andere tuinier heeft gevraagd planten te laten zien die jullie samen hebben laten groeien"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den andra trädgårdsmästaren har bett om att få visa växter ni odlade tillsammans"
+          }
+        }
+      }
     },
     "The other gardener let it go into the Wild Fields" : {
       "comment" : "A small line on a plant's screen when the other person from the meeting released their copy into the Wild Fields; this person's copy stays. Used when the app has no name for them; with a name it is '%@ let it go into the Wild Fields'. Use the same name as 'Release to the Wild Fields'.",
@@ -11585,7 +12326,51 @@
       }
     },
     "The other gardener would like this plant to stand in the public website garden." : {
-      "comment" : "The headline when the other person from the meeting has asked for this plant to stand in the public website garden. Used when the app has no name for them; with a name it is '%@ would like this plant to stand in the public website garden.'"
+      "comment" : "The headline when the other person from the meeting has asked for this plant to stand in the public website garden. Used when the app has no name for them; with a name it is '%@ would like this plant to stand in the public website garden.'",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den anden gartner vil gerne have, at denne plante står i den offentlige have på nettet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "A la otra persona le gustaría que esta planta estuviera en el jardín público de la web."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "L’autre jardinier aimerait que cette plante pousse dans le jardin public en ligne."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "L'altra persona vorrebbe che questa pianta stesse nel giardino pubblico sul web."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den andre gartneren vil gjerne at denne planten skal stå i den offentlige hagen på nettet."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "De andere tuinier wil graag dat deze plant in de openbare tuin op het web komt te staan."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den andra trädgårdsmästaren vill att den här växten ska stå i den offentliga trädgården på webben."
+          }
+        }
+      }
     },
     "The other phone is running a different version of Peace Garden." : {
       "comment" : "A failure. 'Peace Garden' is the app's name and stays as it is.",
@@ -11917,7 +12702,51 @@
       }
     },
     "The public website garden could not be reached" : {
-
+      "comment" : "Title of an alert in Settings: emptying the garden or resetting everything first takes this person's plants down from the public website garden, and the garden could not be reached. Nothing was reset.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den offentlige have på nettet kunne ikke nås"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se ha podido llegar al jardín público de la web"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Impossible d’atteindre le jardin public en ligne"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Non è stato possibile raggiungere il giardino pubblico sul web"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den offentlige hagen på nettet kunne ikke nås"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "De openbare tuin op het web was niet bereikbaar"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den offentliga trädgården på webben gick inte att nå"
+          }
+        }
+      }
     },
     "The two phones grew different plants, so nothing was saved. Please try again." : {
       "comment" : "A failure: the two phones did not agree on what they had made, so neither kept it.",
@@ -12156,10 +12985,98 @@
       }
     },
     "This plant is in the Wild Fields, so it cannot be shown anywhere else." : {
-
+      "comment" : "On the same screen, when the plant has been released into the Wild Fields by either of the two who grew it; it does not say which. A plant stands in one public place. Use the same name for the Wild Fields as 'Release to the Wild Fields?'.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Denne plante er i Vildmarken, så den kan ikke vises andre steder."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esta planta está en los Campos Silvestres, así que no puede mostrarse en ningún otro sitio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cette plante est dans les Champs Sauvages, elle ne peut donc être montrée nulle part ailleurs."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Questa pianta è nei Campi Selvatici, quindi non può essere mostrata da nessun'altra parte."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Denne planten er i Villmarka, så den kan ikke vises noe annet sted."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Deze plant staat in de Wilde Velden, dus hij kan nergens anders getoond worden."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den här växten finns på Vildmarken, så den kan inte visas någon annanstans."
+          }
+        }
+      }
     },
     "This plant's area of the garden is still to be planted. It can stand there once that area opens." : {
-
+      "comment" : "On the same screen, when the website garden refuses a plant because its area is not planted yet; reached only by an app older than the website. 'The garden' is the public website garden.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Denne plantes område i haven er endnu ikke tilplantet. Den kan stå der, når området åbner."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "La zona del jardín de esta planta aún está por plantar. Podrá estar allí cuando esa zona se abra."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "L’espace du jardin de cette plante reste à planter. Elle pourra y pousser une fois cet espace ouvert."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "L'area del giardino di questa pianta deve ancora essere piantata. Potrà stare lì quando quell'area si aprirà."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Området i hagen der denne planten hører hjemme, er ikke beplantet ennå. Den kan stå der når området åpner."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Het gebied van de tuin waar deze plant hoort, moet nog beplant worden. Hij kan daar staan zodra dat gebied opengaat."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Den här växtens område i trädgården är inte planterat än. Den kan stå där när det området öppnar."
+          }
+        }
+      }
     },
     "This seed code is unique to this exchange. A unique plant will grow from every time seeds are exchanged, even with the same person." : {
       "comment" : "Between the QR code and the ways of sending it. The reason the screen also offers a fresh code.",
@@ -14420,7 +15337,51 @@
       }
     },
     "Your own seed and its plant stay. Plants of yours standing in the public website garden come down first. The people you grew those plants with keep theirs." : {
-
+      "comment" : "Appears under 'Empty the garden' while it is held, when some of this person's plants stand in the public website garden: they are taken down before anything here goes. Otherwise it is the same sentence without the middle one.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit eget frø og dets plante bliver. Dine planter, der står i den offentlige have på nettet, tages ned først. De folk, du groede de planter sammen med, beholder deres."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tu propia semilla y su planta se quedan. Las plantas tuyas que están en el jardín público de la web se retiran primero. Las personas con las que cultivaste esas plantas conservan las suyas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ta propre graine et sa plante restent. Tes plantes qui se trouvent dans le jardin public en ligne en sont d’abord retirées. Les personnes avec qui tu as fait pousser ces plantes gardent les leurs."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Il tuo seme e la sua pianta restano. Le tue piante che stanno nel giardino pubblico sul web vengono tolte per prime. Le persone con cui hai fatto crescere quelle piante conservano le loro."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ditt eget frø og planten fra det blir. Plantene dine som står i den offentlige hagen på nettet, tas ned først. Menneskene du dyrket fram de plantene sammen med, beholder sine."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Je eigen zaadje en de plant daarvan blijven. Planten van jou die in de openbare tuin op het web staan, worden eerst weggehaald. De mensen met wie je die planten hebt laten groeien, houden de hunne."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ditt eget frö och dess växt stannar. Dina växter som står i den offentliga trädgården på webben tas ner först. De du odlade de växterna tillsammans med behåller sina."
+          }
+        }
+      }
     },
     "Your own seed and its plant stay. The people you grew those plants with keep theirs." : {
       "comment" : "Appears under 'Empty the garden' while it is being held down.",
@@ -14705,7 +15666,51 @@
       }
     },
     "Your seed, your plant and your garden all go. Plants of yours standing in the public website garden come down first. The people you have met keep the plants you grew together." : {
-
+      "comment" : "Appears under 'Reset everything' while it is held, when some of this person's plants stand in the public website garden: they are taken down before anything here goes. Otherwise it is the same sentence without the middle one.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit frø, din plante og din have forsvinder alle sammen. Dine planter, der står i den offentlige have på nettet, tages ned først. De folk, du har mødt, beholder de planter, I groede frem sammen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tu semilla, tu planta y tu jardín se van. Las plantas tuyas que están en el jardín público de la web se retiran primero. Las personas que has conocido conservan las plantas nacidas de esos encuentros."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ta graine, ta plante et ton jardin s’en vont tous. Tes plantes qui se trouvent dans le jardin public en ligne en sont d’abord retirées. Les personnes que tu as rencontrées gardent les plantes que vous avez fait pousser ensemble."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Il tuo seme, la tua pianta e il tuo giardino se ne vanno tutti. Le tue piante che stanno nel giardino pubblico sul web vengono tolte per prime. Le persone che hai incontrato conservano le piante che avete fatto crescere insieme."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Frøet ditt, planten din og hagen din forsvinner alle sammen. Plantene dine som står i den offentlige hagen på nettet, tas ned først. Menneskene du har møtt, beholder plantene dere dyrket fram sammen."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Je zaadje, je plant en je tuin gaan allemaal weg. Planten van jou die in de openbare tuin op het web staan, worden eerst weggehaald. De mensen die je hebt ontmoet, houden de planten die jullie samen hebben laten groeien."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ditt frö, din växt och din trädgård försvinner allihop. Dina växter som står i den offentliga trädgården på webben tas ner först. De du har mött behåller växterna ni odlade tillsammans."
+          }
+        }
+      }
     },
     "Your seed, your plant and your garden all go. The people you have met keep the plants you grew together." : {
       "comment" : "Appears under 'Reset everything' while it is being held down.",
