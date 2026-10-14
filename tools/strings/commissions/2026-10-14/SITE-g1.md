@@ -129,3 +129,33 @@ eye are in `DANISH-site.md`. 44 keys added. `privacy10` checked and unchanged.
   iOS's Catalan name for Reduce Motion and wants checking against a phone;
   *la zona El verger* (a name in apposition) against *la zona del Verger*;
   *tanca vegetal* against *bardissa* for a clipped hedge.
+
+## cs — Czech
+
+45 keys: the 44 and `privacy10`. For review.
+
+- **Terms.** *Oblast* for area and *záhon* for plot, as `privacy6` has them;
+  *ty* throughout; *teď není dostupná/ý/é* as `wildAway`, agreeing with each
+  area's gender (*Sad teď není dostupný*, *Semeniště teď není dostupné*,
+  *Výmladky teď nejsou dostupné*).
+- **A seed drawn** is *Semínko vznikne jen jednou*: `privacy2` already avoids
+  the lottery sense with *kdy se objevilo*, so this does too.
+- **`{area}`** stands after *oblast*, in the nominative: *Velvyslankyně
+  oblasti {area}*, *roste v oblasti {area}*.
+- **Garden words.** *Dvojitý záhon*, *posečená travnatá cesta*, *živý plot*,
+  *kruhová dlážděná plocha*, *čtvrtiny*, *jako pětka na hrací kostce* for the
+  quincunx, *společenství* for the guild, *parter* for the Knot Garden's plot
+  (its area is *Barokní zahrada*), *výsevní rýhy* in *jemně drobtovitá půda*,
+  *bedny se sklem* for the frames (not *pařeniště*, which is the forcing
+  frame), *pěstební stoly*, *lesík* and *pařezy*, *klasy*, *okolíky*, *růžice*,
+  *parcela* for the kitchen garden's plot.
+- **Controls.** Infinitives, as Czech software writes buttons: *Zavřít*,
+  *Přiblížit*, *Oddálit*, *Posunout nahoru*. The turns are the full *Otočit
+  proti směru / po směru hodinových ručiček*; long for a tooltip, and there is
+  no shorter standard form that keeps *anticlockwise*.
+- **`privacy10`**: *obchod App Store* where a case would otherwise decline the
+  name; *„Omezit pohyb“* for Reduce Motion, which I believe is iOS's Czech and
+  a reader with a Czech iPhone should confirm.
+- **For a native reader:** *k dalšímu ohrazenému prostoru* for the Quiet
+  Garden's enclosure is plain rather than a garden word; *Velvyslankyně*
+  (feminine, with *rostlina*).
