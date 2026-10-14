@@ -80,6 +80,8 @@ for (const line of latest.values()) {
   for (const g of a.pg.gl || []) if (!g.ok) note('webgl', `${g.type} context refused`, job);
   if (a.pg.glLost) note('webgl', 'context lost', job);
   for (const rej of a.pg.rejections || []) note('rejection', rej.split('\n')[0].slice(0, 160), job);
+  for (const v of a.pg.csp || []) note('csp', `${v.directive} refused ${v.blocked || '(inline)'} @ ${v.source || '?'}:${v.line || '?'}`, job, { sample: v.sample });
+  if (job.width < 600 && a.pg.cls >= 0.1) note('cls', `${job.page} CLS >= 0.1 at ${job.width}`, job, { cls: a.pg.cls, sources: (a.pg.shiftSources || []).slice(0, 3) });
   // A mobile browser widens its layout viewport to the content rather than
   // scrolling it, so `scrollWidth` is the test and `scrollX` only a witness.
   const overflow = a.scrollableX > 0 || a.scrollWidth > a.clientWidth + 1;

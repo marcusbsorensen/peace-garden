@@ -199,7 +199,10 @@ async function visit(job) {
       rec.stills = { changed: Math.round(difference(a, b) * 10000) / 10000, rafPerSecond: Math.round((raf1 - raf0) / 1.5) };
     }
     if (axe) {
-      await page.addScriptTag({ content: axe });
+      // Evaluated rather than added as a `<script>`: since 14 October 2026 the
+      // pages' Content-Security-Policy refuses an inline script, which is the
+      // point of it, and the crawler must not be the one thing it lets in.
+      await page.evaluate(axe);
       rec.axe = await page.evaluate(async () => {
         const r = await window.axe.run(document, {
           runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'] },
