@@ -124,9 +124,10 @@ enum ShareGround: String, CaseIterable, Sendable {
     /// C: the plant's own stage as a dark phone shows it — black, and the pool
     /// of light.
     case stage
-    /// The garden's sky for the hour on this phone's clock — day, dusk or
-    /// night — over the fixed stars, and the night when there is no hour
-    /// (`ShareSky`). The portrait carries the hour.
+    /// The sky for the hour on this phone's clock — the garden's day, the
+    /// time-lapse's dusk and dawn (21C), the garden's night — over the fixed
+    /// stars, and the night when there is no hour (`ShareSky`). The portrait
+    /// carries the hour.
     case byTheHour
 
     /// What is drawn: Marcus's answer of 14 October.

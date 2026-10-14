@@ -107,8 +107,11 @@ enum PlantShareFiles {
     /// How the shared time-lapse is filmed. **The sky of the phone's hour**, as
     /// a shared picture's is (`ShareSky`): the time-lapse's own sky drifts
     /// from first light to the sky of the hour on this phone's clock, read by
-    /// the phone's calendar and nothing else (`SkyDrift.towardsNow`). Dark,
-    /// whatever the appearance, as the shared picture's ground is, and
+    /// the phone's calendar and nothing else (`SkyDrift.towardsNow`), and
+    /// ends under exactly the ground a shared picture has at that hour
+    /// (`TimeLapseFilm.Options.endsUnderTheHour`, Marcus's 21C): the garden's
+    /// day, the time-lapse's own dusk and dawn, or the garden's starry night.
+    /// Dark, whatever the appearance, as the shared picture's ground is, and
     /// starting on the sprout rather than on the plant as it is: a film is
     /// watched cold, and the sprout is its beginning.
     @MainActor
@@ -118,6 +121,7 @@ enum PlantShareFiles {
         options.scheme = .dark
         options.opensOnThePlant = false
         options.calendar = .current
+        options.endsUnderTheHour = true
         return options
     }
 

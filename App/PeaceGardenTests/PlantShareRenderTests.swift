@@ -60,14 +60,15 @@ final class PlantShareRenderTests: XCTestCase {
         try Self.copy(pair.movie, to: out.appendingPathComponent("moving.mov"))
     }
 
-    /// The same plant under the sky of four hours on the phone's clock — nine
-    /// in the morning, ten past six and half past six at dusk, eleven at night
-    /// — as wallpapers on the lock screen, its clock saying the hour, and as
-    /// the shared picture, for
-    /// `design/ui-followups-2026-10-14/backgrounds-hours.png`. Two at dusk,
-    /// because the garden's is short: amber just after the sun goes at six,
-    /// violet and faint by half past.
-    func testDrawTheSkyByTheHour() throws {
+    /// The same plant under the sky of six hours on the phone's clock, as
+    /// Marcus chose it (21C, 14 October 2026): six in the morning at dawn,
+    /// nine, ten past six and twenty to seven at dusk, half past seven going
+    /// into the night, and eleven at night. Each as a wallpaper on the lock
+    /// screen, its clock saying the hour; as the shared picture; and as the
+    /// last frame of the shared time-lapse of a grown plant at that hour. For
+    /// `design/ui-followups-2026-10-14/backgrounds-hours-C.png`
+    /// (`compose-hours.py`).
+    func testDrawTheSkyByTheHour() async throws {
         guard let folder = ProcessInfo.processInfo.environment["PG_RENDERS"], !folder.isEmpty else {
             throw XCTSkip("PG_RENDERS is not set")
         }
@@ -77,50 +78,38 @@ final class PlantShareRenderTests: XCTestCase {
         let words = ProcessInfo.processInfo.environment["PG_SHARE_SEED"] ?? "share-render-6"
         let genome = Genome(seed: SeedID(bytes: seedDigest(SeedDomain.seed, Data(words.utf8)))!)
         let growth = Maturity.bloomPreview(for: genome)
-        for (name, hour, clock) in [("0900", 9.0, "9:00"), ("1810", 18.0 + 10.0 / 60, "18:10"),
-                                    ("1830", 18.5, "18:30"), ("2300", 23.0, "23:00")] {
+        var utc = Calendar(identifier: .gregorian)
+        utc.timeZone = try XCTUnwrap(TimeZone(identifier: "UTC"))
+        // 13 October 2026, the lock screen's date.
+        let day = Date(timeIntervalSince1970: 1_791_849_600)
+        let record = PlantRecord(seed: genome.seed, lineage: .minted, birth: day.addingTimeInterval(-150 * 86_400))
+        for (hour, minute) in [(6, 0), (9, 0), (18, 10), (18, 40), (19, 30), (23, 0)] {
+            let name = String(format: "%02d%02d", hour, minute)
+            let clock = "\(hour):" + String(format: "%02d", minute)
+            let time = Double(hour) + Double(minute) / 60
             let wallpaper = PlantPortrait.wallpaper(genome: genome, growth: growth, nativePixels: Self.air,
-                                                    scale: 3, ground: .byTheHour, hour: hour)
+                                                    scale: 3, ground: .byTheHour, hour: time)
             let ground = try XCTUnwrap(ShareBackdrop.image(for: wallpaper))
             let still = try XCTUnwrap(PlantPictureRenderer(portrait: wallpaper, backdrop: ground)?.still())
             try Self.png(Self.lockScreen(over: still, time: clock),
                          to: out.appendingPathComponent("lock-hour-\(name).png"))
 
-            let picture = PlantPortrait.picture(genome: genome, growth: growth, hour: hour)
+            let picture = PlantPortrait.picture(genome: genome, growth: growth, hour: time)
             let pictureGround = try XCTUnwrap(ShareBackdrop.image(for: picture))
             let shared = try XCTUnwrap(PlantPictureRenderer(portrait: picture, backdrop: pictureGround)?.still())
             try Self.png(shared, to: out.appendingPathComponent("picture-hour-\(name).png"))
 
-            // For comparison only, not drawn by the app: the time-lapse's sky
-            // (`TimeLapseSky`) for the same hour over the stage, which has no
-            // horizon and whose twilight is rose and mauve over the whole glass.
-            let lapse = try Self.lapseGround(for: wallpaper, hour: hour)
-            let lapsed = try XCTUnwrap(PlantPictureRenderer(portrait: wallpaper, backdrop: lapse)?.still())
-            try Self.png(Self.lockScreen(over: lapsed, time: clock),
-                         to: out.appendingPathComponent("lock-hour-\(name)-lapse.png"))
+            // The shared film's last frame, at half its size: one frame a
+            // second is enough to reach it.
+            var options = PlantShareFiles.timeLapseOptions()
+            options.calendar = utc
+            options.size = CGSize(width: 540, height: 960)
+            options.fps = 1
+            let now = try XCTUnwrap(utc.date(bySettingHour: hour, minute: minute, second: 0, of: day))
+            var last: CGImage?
+            try await TimeLapseFilm.render(record, now: now, options: options) { last = $0.image }
+            try Self.png(try XCTUnwrap(last), to: out.appendingPathComponent("film-hour-\(name).png"))
         }
-    }
-
-    /// Black, the time-lapse's sky at full presence over it, as the film
-    /// draws it in Dark, and the stage's pool showing through.
-    private static func lapseGround(for portrait: PlantPortrait, hour: Double) throws -> CGImage {
-        var stage = portrait
-        stage.ground = .stage
-        let pool = try XCTUnwrap(ShareBackdrop.image(for: stage))
-        let format = UIGraphicsImageRendererFormat()
-        format.scale = portrait.pixelsPerPoint
-        format.opaque = true
-        let image = UIGraphicsImageRenderer(size: portrait.points, format: format).image { drawing in
-            let context = drawing.cgContext
-            context.saveGState()
-            context.translateBy(x: 0, y: portrait.points.height)
-            context.scaleBy(x: 1, y: -1)
-            context.draw(pool, in: CGRect(origin: .zero, size: portrait.points))
-            context.restoreGState()
-            let moment = TimeLapseSky.Moment(elevation: SunPath.elevation(atHour: hour), presence: 1)
-            TimeLapseSky.draw(moment, in: context, size: portrait.points, look: .dark)
-        }
-        return try XCTUnwrap(image.cgImage)
     }
 
     /// A few plants at a glance, to choose the one the pictures show.
