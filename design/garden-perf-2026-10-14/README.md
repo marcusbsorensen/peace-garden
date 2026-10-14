@@ -98,7 +98,7 @@ caches. No user-facing string, `project.yml` untouched.
 | `Rendering/GradientTexture.swift` | The textures held by weight (48 MB), emptied on close. |
 | `Arranging/Arrangement.swift` | `spots(…, genome:)`: the plot hands over the genomes it already has. |
 | `Views/GardenVisits.swift` | A `revision`, so the memo knows when what has been seen changes. |
-| `Views/PlotVoiceOver.swift` (from main) | Rides in the camera, built again only when where things stand changes (`PlotMemo.kept`, which keeps only the places, so nothing it holds holds the memo); laid out by `PlotStack`; a plant's name from the genome the plot has. Always there up to 100 plants, and beyond that while VoiceOver or Switch Control is running (see *Not resolved*). |
+| `Views/PlotVoiceOver.swift` (from main) | Rides in the camera, built again only when where things stand changes (`PlotMemo.kept`, which keeps only the places, so nothing it holds holds the memo); laid out by `PlotStack`; a plant's name from the genome the plot has. Always there; past 100 plants made twelve plants a frame once the garden has filled in, in an overlay of the plot (Marcus, 14 October: 28C — see *Not resolved*, 1). |
 | `App/PeaceGardenTests/GardenPerfTests.swift` (new) | The always-on regression test, and photographs to compare. |
 | `App/PeaceGardenTests/MassTestStressTests.swift` | Each redraw frame's own CPU (median, max), and a phase settles only when every plant has its pictures (`GardenSprites.outstanding`). |
 | `tools/perf/` (new) | `pixel_diff.py`, `compare_crop.py`, `perf_table.py`, `sample_tree.py`. |
@@ -273,6 +273,35 @@ unoptimised.
    opening; **C** build it a beat after the garden has filled in, a slice a
    frame, so nothing blocks — the most work, and the right answer if big
    gardens and Voice Control are both expected.
+
+   **Answered 14 October: C** (Marcus, 28C; `claude/app-polish-2026-10-14`).
+   The layer is always built. Up to a hundred plants it is made with the plot,
+   as before; past that it waits until no picture is outstanding (twice, a
+   quarter of a second apart), then makes twelve plants' elements a frame,
+   each twelve a view of its own that the next twelve leave alone — or at once
+   in slices, without waiting, while VoiceOver or Switch Control runs. Its
+   elements stand newest first, so a turn moves them rather than making them
+   again, and are read far to near (`accessibilitySortPriority`). Measured
+   with `testOpenABigGarden` on the Air simulator, every frame from the first
+   slice to the last (`evidence/voiceover-layer/`):
+
+   | Plants | Build | Frames | Main thread a frame: median / 90th / most | Frames over 16 ms | At rest after: 90th / most, over 16 ms |
+   |---:|---|---:|---:|---:|---:|
+   | 500 | optimised | 39 (0.7 s) | 2.7 / 5.4 / **6.2 ms** | 0 | 2.6 / 2.9 ms, 0 of 181 |
+   | 500 | unoptimised | 44 (0.7 s) | 4.2 / 6.7 / **7.7 ms** | 0 | 2.8 / 4.1 ms, 0 of 181 |
+   | 2,000 | optimised | 163 (3.9 s) | 5.8 / 47.6 / 57.3 ms | 29 | 55.0 / 65.5 ms, 20 of 124 |
+
+   At 500 no frame of it went past 16 ms. At 2,000 a slice's own frame is
+   3 ms at the start and 6 ms at the end (the medians of its four quarters);
+   the frames past 16 ms are the garden's own — at rest, with nothing being
+   made, it has as many (16% of frames against 18%) and longer (item 3).
+   **The first try was 35 ms a slice at 2,000**, a median, because the layer
+   stood beside the plot in `PlotCamera`'s stack: every slice laid the stack
+   out again, and with it the plot's thousands of views (`sample`:
+   `propagate_dirty` and `Subgraph::update` under the state change). In an
+   overlay of the plot it is laid out in the plot's frame and the plot is not
+   laid out again. A Voice Control user in a garden of 2,000 waits for it to
+   fill in, 51 s on the simulator, and 4 s more.
 2. **Some single frames still grow with the garden**: the frame a garden's
    plants first appear in (171 ms at 1,000, 317 ms at 2,000) and a
    quarter-turn, where every plant's view takes its new pictures' keys at

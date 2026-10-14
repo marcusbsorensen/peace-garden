@@ -1,0 +1,79 @@
+{
+  "atRestAfter" : {
+    "frames" : 124,
+    "framesOver16_7ms" : 32,
+    "longestFrameMs" : 70.605083339614794,
+    "mainCPUMaxMs" : 65.547207999998136,
+    "mainCPUMedianMs" : 0.90754200000020546,
+    "mainCPUOver16ms" : 20,
+    "mainCPUp90Ms" : 55.014083000003211
+  },
+  "filledSeconds" : 51.085981333337259,
+  "filledWaitingForTheLayer" : {
+    "frames" : 1,
+    "framesOver16_7ms" : 0,
+    "longestFrameMs" : -0.46945833310019225,
+    "mainCPUMaxMs" : 3.2612919999976953,
+    "mainCPUMedianMs" : 3.2612919999976953,
+    "mainCPUOver16ms" : 0,
+    "mainCPUp90Ms" : 3.2612919999976953
+  },
+  "firstFrameMs" : 186.63008333533071,
+  "footprintAfterCloseMB" : 75.424736022949219,
+  "footprintBeforeMB" : 44.002197265625,
+  "footprintOpenMB" : 725.42473602294922,
+  "footprintPeakMB" : 725.42473602294922,
+  "framesOver100ms" : 2,
+  "longestFrameMs" : 411.19704167067539,
+  "plants" : 2000,
+  "voiceOverBuilding" : {
+    "byQuarter" : [
+      {
+        "frames" : 40,
+        "framesOver16_7ms" : 7,
+        "longestFrameMs" : 63.941875007003546,
+        "mainCPUMaxMs" : 48.635042000000794,
+        "mainCPUMedianMs" : 3.0455409999987637,
+        "mainCPUOver16ms" : 6,
+        "mainCPUp90Ms" : 45.127708999999072
+      },
+      {
+        "frames" : 41,
+        "framesOver16_7ms" : 13,
+        "longestFrameMs" : 66.240333326277323,
+        "mainCPUMaxMs" : 54.104333000005056,
+        "mainCPUMedianMs" : 4.024833999999089,
+        "mainCPUOver16ms" : 6,
+        "mainCPUp90Ms" : 47.425208999996471
+      },
+      {
+        "frames" : 41,
+        "framesOver16_7ms" : 13,
+        "longestFrameMs" : 63.576791668310761,
+        "mainCPUMaxMs" : 53.401708999999187,
+        "mainCPUMedianMs" : 5.4699160000026836,
+        "mainCPUOver16ms" : 8,
+        "mainCPUp90Ms" : 47.834500000000446
+      },
+      {
+        "frames" : 41,
+        "framesOver16_7ms" : 12,
+        "longestFrameMs" : 71.445291658164933,
+        "mainCPUMaxMs" : 57.265540999999587,
+        "mainCPUMedianMs" : 6.2697919999976648,
+        "mainCPUOver16ms" : 9,
+        "mainCPUp90Ms" : 49.820541000002549
+      }
+    ],
+    "frames" : 163,
+    "framesOver16_7ms" : 45,
+    "longestFrameMs" : 71.445291658164933,
+    "mainCPUMaxMs" : 57.265540999999587,
+    "mainCPUMedianMs" : 5.8203749999989896,
+    "mainCPUOver16ms" : 29,
+    "mainCPUp90Ms" : 47.636249999996494
+  },
+  "voiceOverBuiltSeconds" : 54.975433875006274,
+  "voiceOverPerFrame" : 12,
+  "voiceOverStartedSeconds" : 51.092442208333523
+}

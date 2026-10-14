@@ -89,7 +89,8 @@ struct PlotVoiceOver: View, Equatable {
 
     /// Up to this many plants, every element is made at once, with the plot.
     static let atOnce = 100
-    /// Beyond that, this many plants' elements a frame: measured on 14
+    /// Beyond that, this many plants' elements a frame: 6.2 ms of main thread
+    /// a frame at most at 500 plants, and 3 to 6 ms at 2,000, measured on 14
     /// October with `GardenPerfTests.testOpenABigGarden`
     /// (`design/garden-perf-2026-10-14/README.md`, *Not resolved*, 1).
     static let perFrame = 12
