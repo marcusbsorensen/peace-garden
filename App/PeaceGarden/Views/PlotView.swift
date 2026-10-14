@@ -1682,8 +1682,13 @@ struct PlotView: View {
 /// reads as the sky's softness and not as a drop shadow:
 ///
 /// - `A`, subtle: one shadow.
-/// - `B`, medium: one shadow, darker and a little wider.
-/// - `C`, a tight shadow that holds the strokes and a wide haze round it.
+/// - `B`, medium: one wider shadow, drawn twice.
+/// - `C`, a tight shadow that holds the strokes and a haze round it.
+///
+/// **Why B is drawn twice.** The strokes are about a point wide, so one
+/// shadow blurred off them is thin: at 85% it held the letters in the sun's
+/// halo to 4.1 : 1 at best. Drawn a second time round the first, the same
+/// soft shadow is twice as dense without getting any harder.
 ///
 /// `shipping` is what a build draws. In a Debug build `-pgCountShadow A`
 /// (or `B`, `C`, `none`) draws that strength instead, for the renders, and
@@ -1702,9 +1707,9 @@ struct CountLineShadow: ViewModifier {
         var layers: [Layer] {
             switch self {
             case .none: []
-            case .A: [Layer(opacity: 0.35, radius: 2.5)]
-            case .B: [Layer(opacity: 0.55, radius: 3)]
-            case .C: [Layer(opacity: 0.5, radius: 1), Layer(opacity: 0.35, radius: 5)]
+            case .A: [Layer(opacity: 0.5, radius: 2)]
+            case .B: [Layer(opacity: 0.65, radius: 2.5), Layer(opacity: 0.65, radius: 2.5)]
+            case .C: [Layer(opacity: 1, radius: 1), Layer(opacity: 0.75, radius: 3.5)]
             }
         }
     }
