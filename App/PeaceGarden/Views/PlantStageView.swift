@@ -253,7 +253,7 @@ struct PlantStageView: View {
                         if showsStage {
                             Text(verbatim: growth.caption())
                                 .chromeLabel(size: 10)
-                                .foregroundStyle(Chrome.faint)
+                                .foregroundStyle(Chrome.faintOrTrial)
                         }
                     }
                     .multilineTextAlignment(.center)
