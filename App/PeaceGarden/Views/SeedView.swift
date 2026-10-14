@@ -156,24 +156,43 @@ struct PlantDrawingToggle: View {
 ///
 /// Out of `SeedView` so the name sheet can say where a plant stands in the same
 /// row the seed screen says everything else in.
+///
+/// **The value goes under its label once the two no longer fit side by side**
+/// (14 October): with the type following Dynamic Type, *FIRST BLOOM* and
+/// *When 9 days old* together are wider than an SE from about XXXL, and side
+/// by side each was cut to an ellipsis.
 @MainActor
 private func factRow(_ glyph: AnyShape, _ label: LocalizedStringKey, value: Text) -> some View {
-    HStack(alignment: .firstTextBaseline, spacing: 10) {
-        glyph
-            .stroke(Chrome.faint, style: Chrome.monoline)
-            .frame(width: 15, height: 15)
-            // Uppercase text carries descender room it never uses, so its box
-            // sits below the letters. A point up puts the mark on the cap
-            // height rather than on the line.
-            .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 1 }
-        Text(label)
-            .chromeLabel()
-            .foregroundStyle(Chrome.faint)
-        Spacer()
-        value
-            .font(.system(size: 15, weight: .light))
-            .foregroundStyle(Chrome.ink)
+    let mark = glyph
+        .stroke(Chrome.faint, style: Chrome.monoline)
+        .frame(width: 15, height: 15)
+        // Uppercase text carries descender room it never uses, so its box
+        // sits below the letters. A point up puts the mark on the cap
+        // height rather than on the line.
+        .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 1 }
+    let name = Text(label)
+        .chromeLabel()
+        .foregroundStyle(Chrome.faint)
+    let said = value
+        .scaledFont(size: 15, weight: .light)
+        .foregroundStyle(Chrome.ink)
+    return ViewThatFits(in: .horizontal) {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            mark
+            name.fixedSize()
+            Spacer()
+            said.fixedSize()
+        }
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            mark
+            VStack(alignment: .leading, spacing: 4) {
+                name
+                said
+            }
+            Spacer(minLength: 0)
+        }
     }
+    .accessibilityElement(children: .combine)
 }
 
 /// What a plant's name says about it.
@@ -269,7 +288,7 @@ struct NameMeaningView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
                     Text(theme.headword)
-                        .font(.system(size: 28, weight: .light))
+                        .scaledFont(size: 28, weight: .light)
                         .foregroundStyle(Chrome.ink)
                     Spacer(minLength: 0)
                     Text(verbatim: "\(head)-")
@@ -278,7 +297,7 @@ struct NameMeaningView: View {
                         .accessibilityHidden(true)
                 }
                 Text(theme.definition)
-                    .font(.system(size: 17, weight: .light))
+                    .scaledFont(size: 17, weight: .light)
                     .foregroundStyle(Chrome.ink.opacity(0.84))
                     .lineSpacing(5)
                     .fixedSize(horizontal: false, vertical: true)
@@ -302,7 +321,7 @@ struct NameMeaningView: View {
                 let isChosen = part == chosen
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
                     Text(part.label)
-                        .font(.system(size: 15, weight: .light))
+                        .scaledFont(size: 15, weight: .light)
                         .foregroundStyle(isChosen ? Chrome.ink : Chrome.faint)
                     Spacer(minLength: 0)
                     if isChosen {

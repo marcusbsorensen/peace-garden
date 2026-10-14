@@ -78,7 +78,7 @@ struct RootView: View {
                 // account of what went wrong, which is already in this phone's
                 // language. See `GardenModel`.
                 Text(verbatim: loadError)
-                    .font(.system(size: 12, weight: .light))
+                    .scaledFont(size: 12, weight: .light)
                     .foregroundStyle(Chrome.muted)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
@@ -99,7 +99,7 @@ struct RootView: View {
                 .padding(.bottom, 24)
         case .failed(let message):
             Text(verbatim: message)
-                .font(.system(size: 12, weight: .light))
+                .scaledFont(size: 12, weight: .light)
                 .foregroundStyle(Chrome.muted)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)

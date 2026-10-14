@@ -595,6 +595,15 @@ extension View {
         environment(\.layoutDirection, .leftToRight)
     }
 
+    /// Type at the size the design set, grown or shrunk with the size of text
+    /// the phone is set to. Every `.font(.system(size:))` a person reads goes
+    /// through here or through the three voices below. See `ScaledSystemFont`.
+    func scaledFont(size: CGFloat, weight: Font.Weight = .light, design: Font.Design = .default,
+                    monospacedDigits: Bool = false) -> some View {
+        modifier(ScaledSystemFont(size: size, weight: weight, design: design,
+                                  monospacedDigits: monospacedDigits))
+    }
+
     /// Small, wide-tracked, uppercase: the app's label voice.
     ///
     /// **Regular below twelve points, light from twelve up** (mass test, 13
@@ -604,8 +613,7 @@ extension View {
     /// where its grey is 6.5 : 1 by arithmetic. One step of weight brings the
     /// strokes up to their colour; the voice stays small, spaced and quiet.
     func chromeLabel(size: CGFloat = 11, weight: Font.Weight = .light) -> some View {
-        font(.system(size: size, weight: size < 12 && weight == .light ? .regular : weight,
-                     design: .default))
+        scaledFont(size: size, weight: size < 12 && weight == .light ? .regular : weight)
             .modifier(ChromeTracking(2.4))
             .modifier(ChromeLetterCase())
     }
@@ -615,7 +623,7 @@ extension View {
     /// the seed forming, the seed planted, two seeds meeting — as one sequence
     /// rather than three unrelated screens.
     func chromeHeading(size: CGFloat = 20) -> some View {
-        font(.system(size: size, weight: .light, design: .default))
+        scaledFont(size: size)
             .modifier(ChromeTracking(2.8))
             .modifier(ChromeLetterCase())
     }
@@ -629,8 +637,58 @@ extension View {
     /// and the ending, each set beside what it means. Grep before adding
     /// anything that is neither.
     func plantName(size: CGFloat = 26) -> some View {
-        font(.system(size: size, weight: .light, design: .serif))
+        scaledFont(size: size, design: .serif)
             .italic()
+    }
+}
+
+/// A system font at a designed size that follows Dynamic Type.
+///
+/// **Every size in the app was fixed** (mass test, 13 October, finding 4: of
+/// 1,499 texts compared from Large to the accessibility sizes, none grew).
+/// The design's sizes are its own — eleven-point tracked capitals, a fifteen-
+/// point light paragraph — and none of them is a text style's, so each is
+/// scaled by the text style nearest to it rather than replaced by one: at
+/// Large every screen is exactly what it was, and at any other size each
+/// line grows as the system's own type of that size grows.
+///
+/// Where a screen cannot hold the largest sizes, it says so with
+/// `dynamicTypeSize(...)` at the screen, and that caps this too.
+struct ScaledSystemFont: ViewModifier {
+    @ScaledMetric private var size: CGFloat
+    let weight: Font.Weight
+    let design: Font.Design
+    let monospacedDigits: Bool
+
+    init(size: CGFloat, weight: Font.Weight, design: Font.Design, monospacedDigits: Bool) {
+        _size = ScaledMetric(wrappedValue: size, relativeTo: Self.style(near: size))
+        self.weight = weight
+        self.design = design
+        self.monospacedDigits = monospacedDigits
+    }
+
+    func body(content: Content) -> some View {
+        let font = Font.system(size: size, weight: weight, design: design)
+        content.font(monospacedDigits ? font.monospacedDigit() : font)
+    }
+
+    /// The text style whose size at Large is nearest, so a size grows at that
+    /// style's rate. The small styles grow fastest — caption 2 goes from 11 to
+    /// 40 at the largest size, the large title from 34 to 60 — which is the
+    /// system's judgement about what needs the help, taken whole.
+    static func style(near size: CGFloat) -> Font.TextStyle {
+        switch size {
+        case ..<11.5: return .caption2
+        case ..<12.5: return .caption
+        case ..<14: return .footnote
+        case ..<15.5: return .subheadline
+        case ..<16.5: return .callout
+        case ..<18.5: return .body
+        case ..<21: return .title3
+        case ..<25: return .title2
+        case ..<31: return .title
+        default: return .largeTitle
+        }
     }
 }
 
@@ -685,9 +743,14 @@ struct QuietButton: View {
             Text(title)
                 .chromeLabel()
                 .foregroundStyle(isProminent ? Chrome.ink : Chrome.muted)
+                .multilineTextAlignment(.center)
                 .pressable(isProminent: isProminent)
         }
         .buttonStyle(.plain)
+        // **Grows as far as AX1**, where the longest of these (*They don't
+        // have the app*) takes two lines inside its capsule on an SE; past
+        // that the capsule's ends cut into the words (14 October).
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
     }
 }
 
@@ -736,6 +799,25 @@ extension View {
                     .padding(.trailing, 12)
                     .padding(.top, 8)
             }
+    }
+
+    /// For a column centred between two spacers: it stands exactly as it did
+    /// while it fits the screen, and scrolls once it does not.
+    ///
+    /// **Why at all.** A column of words between spacers on a 667-point SE was
+    /// already full at the type sizes the design set, and once the type follows
+    /// Dynamic Type (mass test, 13 October, findings 4 and 7) a column that
+    /// does not fit gives up height line by line and ends in an ellipsis. In a
+    /// scroll view whose content is at least the screen tall, the spacers
+    /// still centre the column whenever it fits, and the scroll view neither
+    /// bounces nor scrolls until it has to.
+    func scrollsWhenTooTall() -> some View {
+        GeometryReader { proxy in
+            ScrollView {
+                self.frame(maxWidth: .infinity, minHeight: proxy.size.height)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+        }
     }
 
     /// Lays a `SproutingRule` along the bottom edge of this view, so the rule's
@@ -1472,11 +1554,18 @@ struct ChromeIconLabel: View {
                 // is never wrapped or truncated. Stacked, it has a hundred
                 // points and the longest word in the catalogue is Swedish
                 // INSTÄLLNINGAR — so it is allowed to shrink a little rather
-                // than clip, which is the one place in the chrome where type
-                // is not a fixed size.
+                // than clip.
+                //
+                // **It grows with Dynamic Type only as far as XL**, and then
+                // shrinks back rather than clip (14 October). One word at a
+                // time leaves about 140 points for it beside the other three
+                // marks on an SE, and INSTÄLLNINGAR takes 119 at Large: the
+                // row has no more room to give, and VoiceOver reads every
+                // word at whatever size the phone asks for.
                 .lineLimit(1)
-                .minimumScaleFactor(axis == .horizontal ? 1 : 0.75)
-                .fixedSize(horizontal: axis == .horizontal, vertical: true)
+                .minimumScaleFactor(axis == .horizontal ? 0.8 : 0.75)
+                .fixedSize(horizontal: false, vertical: true)
+                .dynamicTypeSize(...DynamicTypeSize.xLarge)
                 .transition(.opacity)
         }
     }
@@ -1506,8 +1595,15 @@ struct ChromeIconLabel: View {
 /// stands before the title, which is then on its right.
 struct TitleGlyph: View {
     let glyph: AnyShape
-    /// The title's point size, in the light system face `chromeHeading` sets.
-    let size: CGFloat
+    /// The title's point size as it is drawn: the designed size, grown with
+    /// Dynamic Type at the rate `chromeHeading` grows it, so the mark keeps to
+    /// the capitals at every size.
+    @ScaledMetric private var size: CGFloat
+
+    init(glyph: AnyShape, size: CGFloat) {
+        self.glyph = glyph
+        _size = ScaledMetric(wrappedValue: size, relativeTo: ScaledSystemFont.style(near: size))
+    }
 
     /// The room a mark keeps inside its box for its own stroke.
     static let inset: CGFloat = 0.9
@@ -1832,7 +1928,7 @@ struct HoldToConfirm: View {
             // width of an unwrapped line and took the sentence off the glass.
             if holding, !isMark {
                 Text(consequence)
-                    .font(.system(size: 13, weight: .light))
+                    .scaledFont(size: 13, weight: .light)
                     .foregroundStyle(Chrome.muted)
                     .lineSpacing(4)
                     .multilineTextAlignment(isMark ? .center : .leading)
@@ -1891,6 +1987,11 @@ struct HoldToConfirm: View {
         .clipShape(Capsule())
         .overlay(Capsule().strokeBorder(Chrome.hairline, lineWidth: 1))
         .contentShape(Rectangle())
+        // **A pill grows as far as AX2.** The fill wipes across a capsule,
+        // and a capsule round three lines of words is a lozenge whose ends cut
+        // into the first and last letters; at AX2 the longest of the four
+        // labels is still one line on an SE (14 October).
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
     }
 
     @ViewBuilder
@@ -1914,7 +2015,7 @@ struct HoldToConfirm: View {
                     .stroke(glyphTint, style: Chrome.monoline)
                     .frame(width: 15, height: 15)
                 Text(title)
-                    .font(.system(size: 15, weight: .light))
+                    .scaledFont(size: 15, weight: .light)
                     .foregroundStyle(textTint)
             }
             .padding(.horizontal, 18)

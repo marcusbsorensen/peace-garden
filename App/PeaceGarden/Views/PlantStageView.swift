@@ -176,7 +176,7 @@ struct PlantStageView: View {
             Spacer()
             VStack(spacing: 16) {
                 Text("Your plant can meet others if you tap their device. A brand new and unique seed will be formed every time.")
-                    .font(.system(size: 17, weight: .light))
+                    .scaledFont(size: 17, weight: .light)
                     .foregroundStyle(Chrome.ink.opacity(0.84))
                     .multilineTextAlignment(.center)
                     .lineSpacing(6)
@@ -188,6 +188,9 @@ struct PlantStageView: View {
             .padding(.horizontal, 26)
             .padding(.top, 26)
             .padding(.bottom, 10)
+            // A panel over the plant, not a page: it grows as far as AX2,
+            // where it already covers most of an SE (14 October).
+            .dynamicTypeSize(...DynamicTypeSize.accessibility2)
             .frame(maxWidth: Chrome.readableWidth)
             .background(
                 RoundedRectangle(cornerRadius: 20, style: .continuous)

@@ -207,7 +207,7 @@ struct PlantDetailView: View {
                     if let note = encounter.note {
                         // Somebody's own sentence about their own meeting.
                         Text(verbatim: note)
-                            .font(.system(size: 16, weight: .light, design: .serif))
+                            .scaledFont(size: 16, weight: .light, design: .serif)
                             .italic()
                             .foregroundStyle(Chrome.ink)
                             .multilineTextAlignment(.center)
@@ -216,7 +216,7 @@ struct PlantDetailView: View {
 
                     VStack(spacing: 4) {
                         Text("with \(encounter.peerDisplayName)")
-                            .font(.system(size: 13, weight: .light))
+                            .scaledFont(size: 13, weight: .light)
                             .foregroundStyle(Chrome.muted)
                         if let place = encounter.place {
                             // Typed, or accepted from what `Places` offered —
@@ -274,7 +274,7 @@ struct PlantDetailView: View {
             // out, and the hold comes after it has been read.
             if expandedMark == "release" {
                 Text(sending ? Self.releaseSending : releaseTrouble ?? Self.releaseConsequence)
-                    .font(.system(size: 13, weight: .light))
+                    .scaledFont(size: 13, weight: .light)
                     .foregroundStyle(Chrome.muted)
                     .lineSpacing(4)
                     .multilineTextAlignment(.center)
@@ -295,7 +295,7 @@ struct PlantDetailView: View {
                                         hasName: !(model.identity?.displayName ?? "").isEmpty,
                                         hasPlace: encounter.place != nil)
                         Text("Shown beside it only if you choose. Where and when also need \(encounter.peerDisplayName) to choose them.")
-                            .font(.system(size: 11, weight: .light))
+                            .scaledFont(size: 11, weight: .light)
                             .foregroundStyle(Chrome.faint)
                             .multilineTextAlignment(.center)
                             .fixedSize(horizontal: false, vertical: true)
@@ -313,6 +313,11 @@ struct PlantDetailView: View {
                 .padding(.bottom, 30)
 
         }
+        // **The words on a plant's screen grow as far as AX2** (14 October).
+        // They stand above and below the plant, which cannot move out of
+        // their way (see the veil), and with the release sentence out the
+        // foot of an SE is full at AX2.
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
     }
 
     /// This plant as the garden holds it now.

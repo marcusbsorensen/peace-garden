@@ -47,7 +47,7 @@ struct EncounterNoteView: View {
                             .chromeHeading(size: 17)
                             .foregroundStyle(Chrome.ink)
                         Text(verbatim: outcome.happenedAt.formatted(date: .complete, time: .shortened))
-                            .font(.system(size: 13, weight: .light))
+                            .scaledFont(size: 13, weight: .light)
                             .foregroundStyle(Chrome.faint)
                     }
 
@@ -55,7 +55,7 @@ struct EncounterNoteView: View {
 
                     Toggle(isOn: $showsDateTime) {
                         Text("Remember the date and time")
-                            .font(.system(size: 15, weight: .light))
+                            .scaledFont(size: 15, weight: .light)
                             .foregroundStyle(Chrome.muted)
                     }
                     .tint(Chrome.muted)
@@ -68,7 +68,7 @@ struct EncounterNoteView: View {
                                 .chromeLabel()
                                 .foregroundStyle(Chrome.faint)
                             Text(verbatim: coordinate.written)
-                                .font(.system(size: 15, weight: .light).monospacedDigit())
+                                .scaledFont(size: 15, weight: .light, monospacedDigits: true)
                                 .foregroundStyle(Chrome.muted)
                         }
                     }
@@ -84,7 +84,7 @@ struct EncounterNoteView: View {
                             axis: .vertical
                         )
                         .labelsHidden()
-                        .font(.system(size: 16, weight: .light, design: .serif))
+                        .scaledFont(size: 16, weight: .light, design: .serif)
                         .foregroundStyle(Chrome.ink)
                         .lineLimit(3...6)
                         .focused($noteFocused)
@@ -145,7 +145,7 @@ struct EncounterNoteView: View {
                 .foregroundStyle(Chrome.faint)
             TextField(label, text: text, prompt: Text(prompt).foregroundStyle(Chrome.faint))
                 .labelsHidden()
-                .font(.system(size: 16, weight: .light, design: .serif))
+                .scaledFont(size: 16, weight: .light, design: .serif)
                 .foregroundStyle(Chrome.ink)
                 .autocorrectionDisabled()
             Hairline()

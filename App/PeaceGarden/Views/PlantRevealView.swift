@@ -51,7 +51,7 @@ struct PlantRevealView: View {
                             Text("Your plant and \(outcome.peerPlantName), together")
                         }
                     }
-                        .font(.system(size: 13, weight: .light))
+                        .scaledFont(size: 13, weight: .light)
                         .foregroundStyle(Chrome.muted)
                         .padding(.bottom, 4)
                 }
@@ -66,9 +66,12 @@ struct PlantRevealView: View {
                 // docs/LANGUAGES.md for why it had to be that way.
                 let passage = Quotes.passage(for: outcome.result)
                 Text(verbatim: passage.text)
-                    .font(.system(size: 17, weight: .light))
+                    .scaledFont(size: 17, weight: .light)
                     .foregroundStyle(Chrome.ink.opacity(0.84))
                     .lineSpacing(6)
+                    // Every line of it, whatever the size: the plant above
+                    // gives way rather than the passage.
+                    .fixedSize(horizontal: false, vertical: true)
                 Group {
                     if QuoteBank.isBorrowed {
                         // This screen is the one moment the app speaks at
@@ -117,6 +120,11 @@ struct PlantRevealView: View {
             .multilineTextAlignment(.center)
             .padding(.horizontal, 34)
             .padding(.bottom, 40)
+            // **The words under a new plant grow as far as AX1** (14
+            // October). The plant is the point of this moment and stands in
+            // the space the words leave; at AX1 a long passage already leaves
+            // it a band on an SE.
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .frame(maxWidth: Chrome.readableWidth)
             .frame(maxWidth: .infinity)
         }

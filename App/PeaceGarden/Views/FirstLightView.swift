@@ -44,15 +44,9 @@ struct FirstLightView: View {
     /// bounces nor scrolls while the column fits — lets it be read. The two
     /// spacers still centre it whenever it fits, which is nearly always.
     var body: some View {
-        GeometryReader { proxy in
-            ScrollView {
-                column
-                    .frame(maxWidth: .infinity, minHeight: proxy.size.height)
-            }
-            .scrollBounceBehavior(.basedOnSize)
-            .scrollIndicators(.hidden)
-        }
-        .background(UnfurlingBackdrop(.single))
+        column
+            .scrollsWhenTooTall()
+            .background(UnfurlingBackdrop(.single))
     }
 
     private var column: some View {
@@ -76,7 +70,7 @@ struct FirstLightView: View {
                     ForEach(Array(Self.lines.enumerated()), id: \.offset) { index, line in
                         Unfolding(after: Self.beats[index]) {
                             Text(verbatim: line)
-                                .font(.system(size: 16, weight: .light))
+                                .scaledFont(size: 16, weight: .light)
                                 .foregroundStyle(Chrome.muted)
                                 .multilineTextAlignment(.center)
                                 .fixedSize(horizontal: false, vertical: true)

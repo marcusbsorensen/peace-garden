@@ -312,6 +312,11 @@ struct PlotView: View {
                     }
             }
             .padding(.horizontal, 26)
+            // **The words here grow as far as AX1** (14 October). The plot is
+            // framed in the sky between the heading and the foot, so every
+            // line the heading or the asking gains is taken off the garden;
+            // past AX1 the heading alone came down over the plot.
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .frame(maxWidth: .infinity, alignment: .leading)
             .allowsHitTesting(true)
         }
@@ -1066,6 +1071,8 @@ struct PlotView: View {
             // The Garden mark from the foot of the stage, which opened this.
             Text("Peace garden")
                 .chromeHeading(size: 18)
+                .lineLimit(2)
+                .minimumScaleFactor(0.7)
                 .titleGlyph(GardenGlyph(), size: 18)
                 .foregroundStyle(Chrome.ink)
             Text(model.hybrids.isEmpty
@@ -1466,7 +1473,7 @@ struct PlotView: View {
 
     private var empty: some View {
         Text("Every plant here came from meeting someone. Open Meet with another person and touch the tops of your phones together.")
-            .font(.system(size: 14, weight: .light))
+            .scaledFont(size: 14, weight: .light)
             .foregroundStyle(Chrome.muted)
             .lineSpacing(5)
             .frame(maxWidth: Chrome.readableWidth, alignment: .leading)

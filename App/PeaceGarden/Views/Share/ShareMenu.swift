@@ -143,7 +143,7 @@ struct PlantShareButton: View {
                 Text("Try again")
             }
         }
-        .font(.system(size: 13, weight: .light))
+        .scaledFont(size: 13, weight: .light)
         .foregroundStyle(Chrome.ink)
         .multilineTextAlignment(.center)
         .lineSpacing(3)
