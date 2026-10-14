@@ -14,8 +14,26 @@ Markdown table per device and for all three together:
 - texts that grew from Large to XXXL, AX3 or AX5, of those compared;
 - overlaps and labels that stayed put under right to left.
 """
-import argparse, json, os
+import argparse, json, os, re
 from collections import Counter
+
+REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+_catalogue = json.load(open(os.path.join(REPO, "App/PeaceGarden/Resources/Localizable.xcstrings")))["strings"]
+# The plot's own elements (14 October): a plant's name, or a light's in any
+# language. They stand where the plants stand, so they overlap one another and
+# do not mirror, both by design, and are left out of those two counts.
+LIGHTS = set()
+for key in ["Lantern", "Paper lamp", "Fireflies", "Hare", "Fox", "Moth", "Snail"]:
+    LIGHTS.add(key)
+    LIGHTS.add(f"{key} {key}")
+    for unit in _catalogue.get(key, {}).get("localizations", {}).values():
+        LIGHTS.add(unit["stringUnit"]["value"])
+BINOMIAL = re.compile(r"^[A-Z][a-z]+ [a-z]+$")
+
+
+def on_the_plot(label):
+    label = (label or "").strip()
+    return label in LIGHTS or bool(BINOMIAL.match(label))
 
 p = argparse.ArgumentParser()
 p.add_argument("before")
@@ -45,8 +63,10 @@ def count(findings, keep):
     grew = [r for r in findings.get("dynamicType", []) if keep(r["screen"])]
     c["texts that grew"] = sum(r["textsThatGrew"] for r in grew)
     c["texts compared"] = sum(r["textsThatGrew"] + r["textsThatDidNot"] for r in grew)
-    c["overlaps"] = sum(1 for r in findings.get("overlap", []) if keep(r["screen"]))
-    c["not mirrored"] = sum(1 for r in findings.get("notMirrored", []) if keep(r["screen"]))
+    c["overlaps"] = sum(1 for r in findings.get("overlap", []) if keep(r["screen"])
+                        and not (r["screen"] == "garden" and on_the_plot(r["a"]) and on_the_plot(r["b"])))
+    c["not mirrored"] = sum(1 for r in findings.get("notMirrored", []) if keep(r["screen"])
+                            and not (r["screen"] == "garden" and on_the_plot(r["label"])))
     return c
 
 

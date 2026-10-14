@@ -36,7 +36,8 @@ struct PlantStageView: View {
     /// Where the seed sheet stands: half way, so the plant its drawing marks
     /// change is standing just above it — **or the whole way, where half way
     /// leaves its rows below the fold**: a phone the height of an SE, or type
-    /// at an accessibility size (mass test, 13 October, finding 12). Either
+    /// set larger than the phone's default (mass test, 13 October, finding
+    /// 12; on an Air at XXXL the last row was already under the fold). Either
     /// way it can be dragged to the other. See `openSeed()`.
     @State private var seedDetent: PresentationDetent = .medium
     @State private var stageHeight: CGFloat = 0
@@ -387,7 +388,7 @@ struct PlantStageView: View {
     /// between an SE (647 inside its status bar) and every other phone.
     private func openSeed() {
         let compact = stageHeight > 0 && stageHeight < 700
-        seedDetent = compact || typeSize.isAccessibilitySize ? .large : .medium
+        seedDetent = compact || typeSize > .large ? .large : .medium
         showingSeed = true
     }
 
