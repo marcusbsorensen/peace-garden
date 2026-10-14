@@ -26,14 +26,18 @@ Previous notes: `git show c83bc6e:.claude/HANDOVER.md` covers build 8 (12 Octobe
 
   The full suite was last run at the integration (280 tests); the performance branch ran 307 after its merge.
 
-## Running when this was written (14 October, evening)
-- `claude/app-polish-2026-10-14`, the only agent still running. It covers:
-  - 24A, the foot row left to right in every language;
-  - 27A, the seed sheet opening half way on the SE;
-  - 26A, renders of two fixes for the thin small capitals (`design/app-polish-2026-10-14/small-caps-AB.png`), for Marcus to choose; neither is the default yet;
-  - 28C, the VoiceOver garden layer built in slices.
+## State at the end of 14 October
+- **App polish is merged** (`1712e2c`):
+  - 24A, the foot row stays left to right;
+  - 27A, the seed sheet opens half way and scrolls;
+  - 28C, the VoiceOver layer is always built, 12 plants a frame after fill-in, 3–6 ms a slice.
 
-  When it reports, or once its branch is pushed and finished, merge it, show Marcus `small-caps-AB.png`, and apply his choice.
+  **Waiting on Marcus (26A):** `design/app-polish-2026-10-14/small-caps-AB.png`.
+  - A, medium weight: barely moves the contrast.
+  - B, `muted` for those lines: about 6.9:1 in Light against 4.9 now.
+  - Separately, the garden's count line by day is 3.5:1 under every option; it needs white text or a shade.
+
+  Neither change is in yet.
 - **The translation round (19A) is done, merged and deployed** (site, 14 October evening):
   - the app has all seven languages for every sentence in use (Danish final; "Landskab %lld");
   - the site has 146 of 146 keys in all 40 offered languages, privacy10 included;
@@ -46,7 +50,7 @@ Previous notes: `git show c83bc6e:.claude/HANDOVER.md` covers build 8 (12 Octobe
   - `downloadBody` says the plant "is nobody else's", while `growBody` says "you both have it". Marcus hasn't answered this yet.
 
 ## Next steps
-1. Merge app polish and show Marcus the small-capitals renders (26A).
+1. Apply Marcus's 26A choice and the count line's fix if he wants one, then build 9.
 2. **Build 9:** set `CURRENT_PROJECT_VERSION` to 9, `xcodegen generate`, run the full suite through the lock, then archive and export with the system PATH. Marcus uploads with `sh tools/upload-build.sh 9`, or from the Organizer if the Xcode sign-in has lapsed.
 3. ~~Site deploy for the translations~~ done 14 October evening, with every check ok.
 4. Marcus checks on a real phone:
