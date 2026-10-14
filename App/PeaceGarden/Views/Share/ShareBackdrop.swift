@@ -14,9 +14,11 @@ import UIKit
 /// its gardener's whereabouts, in its pixels either.
 ///
 /// **The hour is the phone's** (Marcus, 14 October 2026). The ground he chose,
-/// `ShareGround.byTheHour`, is the garden's day, dusk or night for the hour on
-/// this phone's clock (`ShareSky`): when in a day, which a plant in sunlight
-/// says anyway, and nothing about where.
+/// `ShareGround.byTheHour`, follows the hour on this phone's clock
+/// (`ShareSky`): when in a day, which a plant in sunlight says anyway, and
+/// nothing about where. **Its dusk is the time-lapse's** (21C, the same day):
+/// the garden's day by day, the time-lapse's rose and mauve at dusk and dawn,
+/// and the garden's starry night at night.
 ///
 /// On the main actor because the star catalogue is (`StarField`); one picture
 /// is a few thousand dots and a few gradients, and the frames drawn over it are
@@ -57,7 +59,9 @@ enum ShareBackdrop {
                 context.fill(CGRect(origin: .zero, size: size))
                 pool(in: context, portrait: portrait, strength: 1)
             case .byTheHour:
-                sky(ShareSky.at(hour: portrait.hour), in: context, portrait: portrait)
+                let sky = ShareSky.at(hour: portrait.hour)
+                draw(sky, in: context, size: size, scale: portrait.pixelsPerPoint)
+                pool(in: context, portrait: portrait, strength: sky.pool)
             }
         }
         return image.cgImage
@@ -65,30 +69,27 @@ enum ShareBackdrop {
 
     // MARK: By the hour
 
-    /// The garden's sky as it is at the hour: its day, its night with the last
-    /// of the light on the side the sun went down, or its night.
-    ///
-    /// The stars come out as the garden's do, as the sun nears the horizon
-    /// (`GardenSky.stars`), and the plant's pool of light behind it comes up
-    /// with the dark, as it is a light seen against the night.
-    private static func sky(_ sky: ShareSky, in context: CGContext, portrait: PlantPortrait) {
-        let size = portrait.points
-        switch sky {
-        case .day(let hour):
-            let up = GardenGround.Light.at(hour: hour).up
-            day(in: context, size: size, scale: portrait.pixelsPerPoint, hour: hour)
-            stars(in: context, size: size, showing: max(0, 1 - up * 5))
-            pool(in: context, portrait: portrait, strength: 0.8 * (1 - SkyPalette.smooth(up / 0.2)))
-        case .twilight(let hour):
-            night(in: context, size: size, up: GardenGround.Light.at(hour: hour).up)
-            afterglow(in: context, size: size, hour: hour)
-            stars(in: context, size: size)
-            pool(in: context, portrait: portrait, strength: 0.8)
-        case .night(let hour):
-            night(in: context, size: size, up: hour.map { GardenGround.Light.at(hour: $0).up } ?? 0)
-            stars(in: context, size: size)
-            pool(in: context, portrait: portrait, strength: 0.8)
+    /// The sky of the hour, as `ShareSky` weighs it: the garden's night
+    /// underneath; the time-lapse's sky for the sun's height over it
+    /// (`TimeLapseSky`), drawn as the time-lapse draws it over a dark stage;
+    /// the garden's day over that once the sun is up; then the fixed stars, out
+    /// as far as the time-lapse has its own. Each comes in over the one before
+    /// as the sun moves, so no minute of the clock is a jump.
+    private static func draw(_ sky: ShareSky, in context: CGContext, size: CGSize, scale: CGFloat) {
+        if sky.day < 0.999 {
+            night(in: context, size: size, up: sky.moon)
+            if sky.twilight > 0.001 {
+                TimeLapseSky.draw(TimeLapseSky.Moment(elevation: sky.elevation, presence: 1),
+                                  in: context, size: size, look: ShareSky.twilightLook(sky.twilight))
+            }
         }
+        if sky.day > 0.001, let hour = sky.hour {
+            context.saveGState()
+            context.setAlpha(CGFloat(min(1, sky.day)))
+            day(in: context, size: size, scale: scale, hour: hour)
+            context.restoreGState()
+        }
+        stars(in: context, size: size, showing: sky.stars)
     }
 
     /// Where the sun stands in the picture at an hour: on the left in the
@@ -103,28 +104,6 @@ enum ShareBackdrop {
             ? 0.5 - 0.17 * min(1, elevation / 45)
             : 0.5 - elevation / 180
         return CGPoint(x: size.width * across, y: size.height * down)
-    }
-
-    /// `DaySky.afterglow`, the garden's own, drawn where the sun went down
-    /// (or will come up), screened over the night as the garden screens it.
-    private static func afterglow(in context: CGContext, size: CGSize, hour: Double) {
-        let depth = -SunPath.elevation(atHour: hour)
-        let sun = sun(atHour: hour, in: size)
-        let glow = Canvas { canvas, canvasSize in
-            DaySky.afterglow(depth: depth, sun: sun, in: &canvas, size: canvasSize)
-        }
-        .frame(width: size.width, height: size.height)
-        let renderer = ImageRenderer(content: glow)
-        // It has no edge anywhere, so a pixel a point is plenty.
-        renderer.scale = 1
-        guard let image = renderer.cgImage else { return }
-        context.saveGState()
-        context.setBlendMode(.screen)
-        context.interpolationQuality = .high
-        context.translateBy(x: 0, y: size.height)
-        context.scaleBy(x: 1, y: -1)
-        context.draw(image, in: CGRect(origin: .zero, size: size))
-        context.restoreGState()
     }
 
     // MARK: The night
@@ -225,33 +204,83 @@ enum ShareBackdrop {
 /// (Marcus, 14 October 2026: *"can we follow the time of day/night on the
 /// user's phone? Otherwise night sky"*).
 ///
+/// **21C** (Marcus, 14 October 2026, from
+/// `design/ui-followups-2026-10-14/backgrounds-hours.png`): the garden's day by
+/// day, **the time-lapse's rose and mauve for dusk and dawn**
+/// (`TimeLapseSky`), and the garden's starry night at night. The garden's own
+/// dusk is short and faint; at ten past six it already read as night.
+///
+/// **Three skies, handed over rather than switched.** Each is a weight, and
+/// `ShareBackdrop` lays them one over another:
+/// - `twilight`, the time-lapse's sky over the garden's night: all of it from
+///   the height where the time-lapse's colours have become the night's own
+///   (`TimeLapseSky.twilightSpan`'s lower end) upwards, thinning to nothing by
+///   `afterglowDepth`, so the dusk deepens into the starry night;
+/// - `day`, the garden's day over both: coming in over the first degrees of
+///   the sun's climb, up to where the time-lapse's colours are the day's
+///   (`twilightSpan`'s upper end). Six o'clock, the sun on the horizon, is dawn;
+/// - `stars`, the fixed stars: out as far as the time-lapse has its own.
+///
 /// **Read off the hour as the garden reads it**: the orbit's sun, up from six
-/// until eighteen (`GardenGround.Light.at(hour:)`), and its last light lingering in the
-/// sky until it is twenty-four degrees under (`DaySky.afterglow`). Nothing
-/// about where the phone is: no latitude, no season, no time zone but the one
-/// the clock already shows.
-enum ShareSky: Equatable, Sendable {
-    /// The sun up: the garden's day sky.
-    case day(hour: Double)
-    /// Dusk or dawn: the sun under the horizon, its light still low on the
-    /// side it went down or will come up, over the night.
-    case twilight(hour: Double)
-    /// The night. With no hour, the night at no light at all — what a shared
-    /// plant stood on before 14 October, and what it stands on when the hour
-    /// cannot be had.
-    case night(hour: Double?)
+/// until eighteen (`SunPath`, `GardenGround.Light.at(hour:)`). Nothing about
+/// where the phone is: no latitude, no season, no time zone but the one the
+/// clock already shows.
+struct ShareSky: Equatable, Sendable {
+    /// The hour on the clock, `0..<24`; nil when it could not be had.
+    var hour: Double?
+    /// The sun's height at that hour in degrees, negative under the horizon.
+    var elevation: Double
+    /// How much of the garden's day is laid over the rest, `0...1`.
+    var day: Double
+    /// How much of the time-lapse's sky is laid over the garden's night.
+    var twilight: Double
+    /// How far out the fixed stars are.
+    var stars: Double
+    /// How strong the plant's pool of light is behind it: it comes up with the
+    /// dark, as it is a light seen against the night.
+    var pool: Double
+    /// How high the moon is, `0...1`, which lightens the garden's night a
+    /// little, as it does in the garden.
+    var moon: Double
 
-    /// How far under the horizon the sun's last light lasts, in degrees: where
-    /// the garden's afterglow ends.
+    /// How far under the horizon the time-lapse's sky lasts, in degrees: where
+    /// the garden's afterglow ends, and the night is the garden's alone.
     static let afterglowDepth = 24.0
 
+    /// The pool at night, as it was on the night ground.
+    static let poolAtNight = 0.8
+
+    /// The night at no light at all — what a shared plant stood on before
+    /// 14 October, and what it stands on when the hour cannot be had.
+    static let noHour = ShareSky(hour: nil, elevation: -90, day: 0, twilight: 0,
+                                 stars: 1, pool: poolAtNight, moon: 0)
+
     static func at(hour: Double?) -> ShareSky {
-        guard let hour, hour.isFinite else { return .night(hour: nil) }
+        guard let hour, hour.isFinite else { return .noHour }
         var clock = hour.truncatingRemainder(dividingBy: 24)
         if clock < 0 { clock += 24 }
-        if GardenGround.Light.at(hour: clock).isDay { return .day(hour: clock) }
-        if -SunPath.elevation(atHour: clock) < afterglowDepth { return .twilight(hour: clock) }
-        return .night(hour: clock)
+        let elevation = SunPath.elevation(atHour: clock)
+        let light = GardenGround.Light.at(hour: clock)
+        let span = TimeLapseSky.twilightSpan
+        return ShareSky(
+            hour: clock,
+            elevation: elevation,
+            day: SkyPalette.smooth(elevation / span.upperBound),
+            twilight: SkyPalette.smooth((elevation + afterglowDepth) / (span.lowerBound + afterglowDepth)),
+            stars: TimeLapseSky.colours(elevation: elevation).stars,
+            pool: poolAtNight * (light.isDay ? 1 - SkyPalette.smooth(light.up / 0.2) : 1),
+            moon: light.isDay ? 0 : light.up
+        )
+    }
+
+    /// How the time-lapse's sky is laid over the night: as the time-lapse lays
+    /// it over a dark stage (`TimeLapseSky.Look.dark`), `weight` of the way in,
+    /// and with the fixed stars in place of its own.
+    static func twilightLook(_ weight: Double) -> TimeLapseSky.Look {
+        var look = TimeLapseSky.Look.dark
+        look.strength *= min(1, max(0, weight))
+        look.drawsStars = false
+        return look
     }
 
     /// The hour on this phone's own clock, in its own time zone, with the

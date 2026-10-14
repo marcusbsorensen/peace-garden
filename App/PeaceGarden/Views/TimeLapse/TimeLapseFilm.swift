@@ -19,6 +19,8 @@ import SwiftUI
 /// as the plant's screen frames it, turning on the stage's turntable at the
 /// stage's rate. **No words**: no name, no seed, no date. The film is the plant
 /// and the light it grew in; anything said about it is the sharer's to say.
+/// A film to share ends under the sky a shared picture has at the same hour
+/// (`Options.endsUnderTheHour`).
 ///
 /// Rendered off screen by SceneKit (`SCNRenderer`), one frame after another,
 /// faster or slower than real time depending on the phone; it is the same
@@ -44,8 +46,34 @@ enum TimeLapseFilm {
         var turns = true
         /// Whose hour the sky ends on. The phone's own.
         var calendar: Calendar = .current
+        /// Ends under the sky a shared picture has at the same hour
+        /// (`ShareGround.byTheHour`, Marcus's 21C) rather than on the bare
+        /// stage: while the plant rests at the end, the time-lapse's sky
+        /// cross-fades into it instead of leaving (`handover(at:)`). Off for
+        /// the plant's screen, which goes back to its stage; on for a film to
+        /// share (`PlantShareFiles.timeLapseOptions`).
+        var endsUnderTheHour = false
 
         init() {}
+    }
+
+    /// How far a film that ends under the hour's sky has handed over to it:
+    /// none until the plant is as it is now, then all of it by the last frame,
+    /// over the lead-out in which the time-lapse's own sky would otherwise
+    /// leave (`TimeLapse.sky(at:)`) and on the same curve.
+    static func handover(at time: TimeInterval) -> Double {
+        1 - TimeLapse.smooth((TimeLapse.duration - time) / TimeLapse.leadOut)
+    }
+
+    /// The portrait whose ground a film ends on: a shared picture's for the
+    /// hour, composed as the turning video is and drawn at the film's size,
+    /// so a star in it is the size it is in a shared picture.
+    static func hourPortrait(genome: Genome, growth: GrowthModel.State, hour: Double,
+                             size: CGSize) -> PlantPortrait {
+        var portrait = PlantPortrait.turning(genome: genome, growth: growth, ground: .byTheHour, hour: hour)
+        portrait.pixelsPerPoint *= size.width / portrait.pixels.width
+        portrait.pixels = size
+        return portrait
     }
 
     /// One frame of the film.
@@ -151,6 +179,8 @@ enum TimeLapseFilm {
         let replay = SCNNode()
         let live: SCNNode?
         let ground: CGImage
+        /// The shared picture's ground for the hour, if the film ends under it.
+        let hourGround: CGImage?
         let look: TimeLapseSky.Look
         let pixels: CGSize
         private var kept: (growth: GrowthModel.State, node: SCNNode)?
@@ -207,6 +237,15 @@ enum TimeLapseFilm {
             drawer.scale = 1
             guard let ground = drawer.cgImage else { throw Failure.cannotDraw }
             self.ground = ground
+
+            if options.endsUnderTheHour {
+                let portrait = TimeLapseFilm.hourPortrait(genome: genome, growth: lapse.final,
+                                                          hour: lapse.hourNow, size: pixels)
+                guard let hourGround = ShareBackdrop.image(for: portrait) else { throw Failure.cannotDraw }
+                self.hourGround = hourGround
+            } else {
+                hourGround = nil
+            }
         }
 
         func draw(_ moment: TimeLapse.Frame) throws -> CGImage {
@@ -242,12 +281,24 @@ enum TimeLapseFilm {
             else { throw Failure.cannotDraw }
             let all = CGRect(x: 0, y: 0, width: width, height: height)
             context.draw(ground, in: all)
+            // Ending under the hour's sky, the time-lapse's stays while the
+            // hour's comes in over it: a straight cross-fade from the one to
+            // the other, so the stage under them never shows through between.
+            let handover = hourGround == nil ? 0 : TimeLapseFilm.handover(at: moment.time)
+            var sky = moment.sky
+            sky.presence = min(1, sky.presence + handover)
             // The sky is drawn top-down, as the screen's canvas is.
             context.saveGState()
             context.translateBy(x: 0, y: CGFloat(height))
             context.scaleBy(x: 1, y: -1)
-            TimeLapseSky.draw(moment.sky, in: context, size: pixels, look: look)
+            TimeLapseSky.draw(sky, in: context, size: pixels, look: look)
             context.restoreGState()
+            if let hourGround, handover > 0.0005 {
+                context.saveGState()
+                context.setAlpha(CGFloat(min(1, handover)))
+                context.draw(hourGround, in: all)
+                context.restoreGState()
+            }
             if let picture = plant.cgImage { context.draw(picture, in: all) }
             guard let image = context.makeImage() else { throw Failure.cannotDraw }
             return image

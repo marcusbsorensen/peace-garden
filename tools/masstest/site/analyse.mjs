@@ -66,7 +66,7 @@ for (const line of latest.values()) {
   if (r.loadMs) counts.loadMs.push(r.loadMs);
   if (r.crash) { counts.crashed += 1; note('crash', r.crash.split('\n')[0].slice(0, 120), job); continue; }
   if (r.status !== 200) note('status', `${r.status}`, job);
-  for (const c of r.console) note(c.type === 'error' ? 'console-error' : 'console-warning', `${c.text.replace(/\d+/g, 'N').slice(0, 160)} @ ${c.at || '?'}`, job);
+  for (const c of r.console.filter((x) => x.during !== 'axe')) note(c.type === 'error' ? 'console-error' : 'console-warning', `${c.text.replace(/\d+/g, 'N').slice(0, 160)} @ ${c.at || '?'}`, job);
   for (const e of r.errors) note('exception', e.split('\n').slice(0, 2).join(' | ').slice(0, 200), job);
   for (const f of r.failed) note('request-failed', `${f.method} ${f.url.replace(/\?.*$/, '')} ${f.why}`, job);
   for (const h of r.http) if (!(h.status === 404 && h.url === '/strings/en.json')) note('http', `${h.status} ${h.url.replace(/\?.*$/, '')}`, job);
@@ -80,6 +80,8 @@ for (const line of latest.values()) {
   for (const g of a.pg.gl || []) if (!g.ok) note('webgl', `${g.type} context refused`, job);
   if (a.pg.glLost) note('webgl', 'context lost', job);
   for (const rej of a.pg.rejections || []) note('rejection', rej.split('\n')[0].slice(0, 160), job);
+  for (const v of a.pg.csp || []) note('csp', `${v.directive} refused ${v.blocked || '(inline)'} @ ${v.source || '?'}:${v.line || '?'}`, job, { sample: v.sample });
+  if (job.width < 600 && a.pg.cls >= 0.1) note('cls', `${job.page} CLS >= 0.1 at ${job.width}`, job, { cls: a.pg.cls, sources: (a.pg.shiftSources || []).slice(0, 3) });
   // A mobile browser widens its layout viewport to the content rather than
   // scrolling it, so `scrollWidth` is the test and `scrollX` only a witness.
   const overflow = a.scrollableX > 0 || a.scrollWidth > a.clientWidth + 1;

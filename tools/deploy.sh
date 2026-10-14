@@ -7,6 +7,10 @@
 #   tools/deploy.sh --dry-run    say what would change, touch nothing
 #   tools/deploy.sh --check      check what is live, upload nothing
 #
+# `PG_BASE=http://127.0.0.1:8822 tools/deploy.sh --check` runs the same check
+# against a local copy (tools/masstest/site/README.md says how to serve one),
+# which is how a change to the rows is tried before it is trusted.
+#
 # Needs the `peacegarden` host in ~/.ssh/config and its key registered in
 # My20i -> peacegarden.app -> Security -> SSH Access. Until it is registered,
 # ssh answers "Permission denied (publickey)". A connection *reset* instead
@@ -21,7 +25,7 @@ set -eu
 
 HOST=peacegarden
 ROOT=public_html
-BASE=https://peacegarden.app
+BASE=${PG_BASE:-https://peacegarden.app}
 HERE=$(cd "$(dirname "$0")/.." && pwd)
 
 upload=yes
@@ -106,13 +110,28 @@ fi
 echo "Checking what is actually served"
 fail=0
 
+# The response headers for a path: a HEAD, except under `/api/`, which is
+# asked with a GET and its body thrown away. The plot service answers GET and
+# nothing else (`route` in Server/.api/router.php), so a HEAD that reaches PHP
+# as a HEAD is a 404 there, and whether one does depends on what stands in
+# front of the host (a CDN may fetch a HEAD from the origin as a GET; a local
+# copy does not). Asked as a browser asks, it means the same everywhere.
+headers_of() {
+    path=$1
+    shift
+    case "$path" in
+        /api/*) curl -sS -D - -o /dev/null --max-time 25 "$@" "$BASE$path" ;;
+        *)      curl -sSI --max-time 25 "$@" "$BASE$path" ;;
+    esac
+}
+
 # path, wanted status, wanted content-type prefix
 check_path() {
     path=$1
     want_status=$2
     want_type=$3
 
-    headers=$(curl -sSI --max-time 25 "$BASE$path")
+    headers=$(headers_of "$path")
     status=$(printf '%s' "$headers" | awk 'NR==1 {print $2}')
     type=$(printf '%s' "$headers" | awk 'tolower($1) == "content-type:" {print tolower($2)}')
 
@@ -137,12 +156,21 @@ check_path /wild                                   200 text/html
 check_path /walk                                   200 text/html
 check_path /t                                      200 text/html
 check_path /meanings                               200 text/html
-# The eighth, ninth and tenth areas, the newest pages, so the ones most likely
-# to be missing a route: a page absent from `Server/index.php`'s table answers
-# 404 here.
+# Every area page. A page absent from `Server/index.php`'s table answers 404
+# here. The list stopped at the eighth, ninth and tenth until 14 October 2026,
+# when the site's mass test found it read three of the ten
+# (design/mass-test-2026-10-13/site/README.md, finding 8).
+check_path /quiet                                  200 text/html
+check_path /cross                                  200 text/html
+check_path /orchard                                200 text/html
+check_path /knot                                   200 text/html
+check_path /seedbed                                200 text/html
+check_path /frame                                  200 text/html
 check_path /glasshouse                             200 text/html
 check_path /coppice                                200 text/html
 check_path /ground                                 200 text/html
+# A mandatory App Store listing field (Server/index.php's table says so).
+check_path /privacy                                200 text/html
 check_path /.well-known/apple-app-site-association 200 application/json
 
 # A sample of the static half, which nginx types from its own mime.types.
@@ -171,6 +199,16 @@ check_path /api/coppice                 200 application/json
 check_path /assets/js/ground.js         200 application/javascript
 check_path /assets/js/groundpage.js     200 application/javascript
 check_path /api/ground                  200 application/json
+# The other seven areas' plot services and the Wild Fields', read the same
+# way: JSON from the route is the sign the service knows the area.
+check_path /api/walk                    200 application/json
+check_path /api/quiet                   200 application/json
+check_path /api/cross                   200 application/json
+check_path /api/orchard                 200 application/json
+check_path /api/knot                    200 application/json
+check_path /api/seedbed                 200 application/json
+check_path /api/frame                   200 application/json
+check_path /api/wild                    200 application/json
 # A plant's panel, which all ten area pages import: a page that cannot load
 # it cannot load at all.
 check_path /assets/js/plantpanel.js     200 application/javascript
@@ -202,6 +240,90 @@ check_path /README.md           404 text/html
 # refuses the whole of `.api/`; a 404 here would be PHP answering instead,
 # which means the rule has gone and only the tool's own guard is left.
 check_path /.api/curate.php     403 text/html
+
+# path, header (lower case), what its value must contain ('-' for absent),
+# then any extra arguments for the request
+check_header() {
+    path=$1
+    name=$2
+    want=$3
+    shift 3
+    value=$(headers_of "$path" "$@" \
+        | awk -v n="$name:" 'tolower($1) == n { $1 = ""; sub(/^ /, ""); sub(/\r$/, ""); print; exit }')
+    if { [ "$want" = - ] && [ -z "$value" ]; } \
+        || { [ "$want" != - ] && case "$value" in *"$want"*) true ;; *) false ;; esac; }
+    then
+        printf '  ok    %-42s %s: %s\n' "$path" "$name" "${value:-(absent)}"
+    else
+        [ "$want" = - ] && wanted=absent || wanted=$want
+        printf '  BAD   %-42s %s: %s   (wanted %s)\n' "$path" "$name" "${value:-(absent)}" "$wanted"
+        fail=1
+    fi
+}
+
+# **The headers PHP sends, since 14 October 2026** (the head of
+# Server/index.php, and Server/README.md §Headers). The pages, the renderer
+# and the plot service carry them; the static files are nginx's and carry
+# none of these.
+echo
+echo "Headers"
+check_header /          strict-transport-security max-age=
+check_header /          content-security-policy   "default-src 'self'"
+check_header /          referrer-policy           strict-origin-when-cross-origin
+check_header /          x-content-type-options    nosniff
+check_header /          x-powered-by              -
+check_header /api/walk  x-powered-by              -
+
+# The renderer at the address the pages ask for it by is kept for a year
+# (finding L1 of the mass test: before this, every visit downloaded it again).
+# The stamp is read from the front page, as a browser reads it.
+module=$(curl -sS --max-time 25 "$BASE/" | sed -n 's/.*data-module="\([^"]*\)".*/\1/p' | head -n 1)
+if [ -n "$module" ]; then
+    check_header "$module"   cache-control immutable -H 'Accept-Encoding: gzip'
+    check_header /plant.wasm cache-control no-cache  -H 'Accept-Encoding: gzip'
+    # A revalidation of the bare address ought to be a 304. On 13 October it
+    # came back 200 because the If-None-Match was lost in front of the host;
+    # with the stamped address immutable that no longer costs a reader a
+    # download, so this is said rather than failed.
+    head=$(curl -sSI --max-time 25 -H 'Accept-Encoding: gzip' "$BASE/plant.wasm")
+    tag=$(printf '%s' "$head" | awk 'tolower($1) == "etag:" { print $2; exit }' | tr -d '\r')
+    since=$(printf '%s' "$head" | awk 'tolower($1) == "last-modified:" { $1 = ""; sub(/^ /, ""); print; exit }' | tr -d '\r')
+    by_tag=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 25 -H 'Accept-Encoding: gzip' \
+        -H "If-None-Match: $tag" "$BASE/plant.wasm")
+    by_date=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 25 -H 'Accept-Encoding: gzip' \
+        -H "If-Modified-Since: $since" "$BASE/plant.wasm")
+    printf '  note  %-42s revalidated by tag %s, by date %s (304 is the hope)\n' /plant.wasm "$by_tag" "$by_date"
+else
+    printf '  BAD   %-42s no data-module on the front page\n' /
+    fail=1
+fi
+
+# **Paths that visitors wear are on at the live site**, and the docs say so
+# (Marcus, 14 October 2026: 18A). The switch is `'wear' => true` in the
+# server's own `.api/config.php`, which this script never uploads, so only the
+# far end can say whether it is on; `/api/wild` carries `wear` exactly when it
+# is. If wear is ever turned off on purpose, change this row and the docs that
+# say it is on (Server/README.md, docs/WEB-GARDENS.md) in the same commit.
+echo
+echo "Paths that visitors wear, and the app's iOS"
+if curl -sS --max-time 25 "$BASE/api/wild" | grep -q '"wear":{'; then
+    printf '  ok    %-42s wear is on, as the docs say\n' /api/wild
+else
+    printf '  BAD   %-42s wear is off, and the docs say it is on\n' /api/wild
+    fail=1
+fi
+
+# The download page names the iOS the app needs, which is project.yml's
+# deploymentTarget. It named a build number until 14 October 2026, and that
+# went stale without anybody touching the page.
+ios=$(awk '/deploymentTarget:/ { getline; gsub(/[^0-9.]/, ""); print; exit }' "$HERE/project.yml")
+major=${ios%%.*}
+if curl -sS --max-time 25 "$BASE/download" | grep -q "iOS $major and later"; then
+    printf '  ok    %-42s says iOS %s and later\n' /download "$major"
+else
+    printf '  BAD   %-42s does not say iOS %s and later (project.yml: %s)\n' /download "$major" "$ios"
+    fail=1
+fi
 
 echo
 echo "The association file iOS will actually read"

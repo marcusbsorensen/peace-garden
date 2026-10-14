@@ -23,7 +23,7 @@ import XCTest
 /// Swept over every drift, both appearances, every second hour of the day,
 /// Reduce Motion, and a stop part way through; then the whole frame — stage,
 /// sky and a growing plant, as the screen plays it — for a young plant and an
-/// old one.
+/// old one, and as the share films it, ending under the shared picture's sky.
 @MainActor
 final class TimeLapseLuminanceTests: XCTestCase {
     static let largestStep = 0.01
@@ -84,26 +84,31 @@ final class TimeLapseLuminanceTests: XCTestCase {
 
     // MARK: The whole frame, as the screen plays it
 
+    /// The last three are the film the share makes, which ends under the
+    /// shared picture's sky for the hour (`TimeLapseFilm.Options.endsUnderTheHour`):
+    /// by day, at dusk going into the night, and at night.
     func testTheWholeFrameNeverFlashes() async throws {
-        let runs: [(name: String, days: Double, scheme: ColorScheme, hour: Int)] = [
-            ("young", 2, .dark, 10), ("old", 150, .dark, 10), ("old", 150, .dark, 22), ("old", 150, .light, 10)
+        let runs: [(name: String, days: Double, scheme: ColorScheme, hour: Int, shared: Bool)] = [
+            ("young", 2, .dark, 10, false), ("old", 150, .dark, 10, false), ("old", 150, .dark, 22, false),
+            ("old", 150, .light, 10, false),
+            ("old", 150, .dark, 10, true), ("old", 150, .dark, 19, true), ("old", 150, .dark, 22, true)
         ]
-        for (name, days, scheme, hour) in runs {
+        for (name, days, scheme, hour, shared) in runs {
             let record = TimeLapseTests.plant(name, days: days)
             do {
-                var options = TimeLapseFilm.Options()
+                var options = shared ? PlantShareFiles.timeLapseOptions() : TimeLapseFilm.Options()
                 options.calendar = TimeLapseTests.utc
                 options.size = CGSize(width: 64, height: 139)
                 options.fps = Self.fps
                 options.scheme = scheme
-                options.opensOnThePlant = true
+                options.opensOnThePlant = !shared
                 options.turns = true
                 var values: [Double] = []
                 try await TimeLapseFilm.render(record, now: Self.moment(hour: hour), options: options) { frame in
                     values.append(TimeLapseLuminance.mean(of: frame.image, side: 64))
                 }
                 let run = Run(values: values)
-                let label = "\(name) plant, \(scheme == .dark ? "dark" : "light"), \(hour)h"
+                let label = "\(name) plant, \(scheme == .dark ? "dark" : "light"), \(hour)h\(shared ? ", shared" : "")"
                 try Self.assertGentle(run, label)
                 print(String(format: "TIME-LAPSE FRAME %@: largest step %.4f, reversals %d, range %.3f to %.3f",
                              label, run.largestStep, run.reversals(Self.hysteresis),
@@ -111,7 +116,7 @@ final class TimeLapseLuminanceTests: XCTestCase {
                 if let folder = Self.output {
                     let rows = values.enumerated().map { String(format: "%.4f,%.6f", Double($0.offset) / Double(Self.fps), $0.element) }
                     try (["time,luminance"] + rows).joined(separator: "\n")
-                        .write(to: folder.appendingPathComponent("luminance-\(name)-\(scheme == .dark ? "dark" : "light")-\(hour)h.csv"),
+                        .write(to: folder.appendingPathComponent("luminance-\(name)-\(scheme == .dark ? "dark" : "light")-\(hour)h\(shared ? "-shared" : "").csv"),
                                atomically: true, encoding: .utf8)
                 }
             }

@@ -95,16 +95,23 @@ enum TimeLapseSky {
     static let twilightTop = SIMD3<Double>(0.12, 0.11, 0.26)
     static let twilightLow = SIMD3<Double>(0.52, 0.36, 0.50)
 
+    /// Where the sky changes from the night's colours to the day's, in degrees
+    /// of the sun's height: twelve under the horizon to six above.
+    ///
+    /// A shared plant's sky by the hour hands over at the same two heights
+    /// (`ShareSky`, Marcus's 21C): from its dusk to the garden's day at the
+    /// top, and from its dusk into the garden's night below the bottom.
+    static let twilightSpan: ClosedRange<Double> = -12...6
+
     /// The sky with the sun at `elevation` degrees.
     ///
     /// Day is `SkyPalette`'s, the keyframes Marcus chose on 2 October. Night is
     /// the garden's. Between them the change is spread across eighteen degrees
-    /// of the sun's height, from twelve under the horizon to six above — the
-    /// whole of twilight, and a little of the morning — so no drift can pass
-    /// through it quickly.
+    /// of the sun's height, `twilightSpan` — the whole of twilight, and a
+    /// little of the morning — so no drift can pass through it quickly.
     static func colours(elevation: Double) -> Colours {
         let day = SkyPalette.at(elevation: max(0, elevation))
-        let d = smooth((elevation + 12) / 18)
+        let d = smooth((elevation - twilightSpan.lowerBound) / (twilightSpan.upperBound - twilightSpan.lowerBound))
         // Halfway between night and day, a dimmed sunrise orange is brown. A
         // little violet at the middle of twilight keeps it the rose and mauve
         // of first light rather than the colour of a dusty road.

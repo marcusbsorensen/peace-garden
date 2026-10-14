@@ -110,13 +110,28 @@
         when that is settled, it belongs in the catalogue and these two
         attributes go.
       -->
+      <!--
+        Since 14 October 2026 `walk.js` shows it only while some area on the
+        map has no page of its own, so with all ten open it stays hidden.
+      -->
       <p class="notice body" id="invented" lang="en" dir="ltr" hidden>
         The plants drawn here stand in for the areas not open yet. Choosing an
         open area goes to its own page, which grows the real plants.
       </p>
 
-      <!-- 1. The map: ten areas, five across and two down. -->
-      <section class="garden-map" id="map" aria-label="The garden">
+      <!--
+        1. The map: ten areas, five across and two down.
+
+        Its heading is the page's `h1`, read but not shown: the map is the
+        picture of the garden and needs no title over it, but a page needs one
+        `h1` to be found by (axe `page-has-heading-one`, finding 7 of
+        design/mass-test-2026-10-13/site/README.md), and the area's `h1` below
+        is hidden while the map is shown. Named from the catalogue, so the map
+        is no longer labelled in English in every language, as its
+        `aria-label="The garden"` was.
+      -->
+      <section class="garden-map" id="map" aria-labelledby="map-title">
+        <h1 class="visually-hidden" id="map-title" data-s="gardenTitle"></h1>
         <div class="garden-grid" id="map-grid"></div>
       </section>
 

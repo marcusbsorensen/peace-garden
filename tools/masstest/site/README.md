@@ -13,7 +13,7 @@ Nothing here is part of the site and nothing here is uploaded.
 | `router.php` | Serves `Server/` with PHP's own server the way the live nginx vhost does: dot paths 403, files typed from nginx's `mime.types` and gzipped, `README.md` left out as the deploy leaves it out, everything else to `index.php`. |
 | `seed.mjs`, `seed-wild.php`, `engine.mjs` | Sow a **local** plot service: real crossings from the plant module, each sent to the area its genus names, and a Wild Fields of 200 with names beside a third. Refuse anything not on loopback. |
 | `crawl.mjs` | The crawl. One line of results per page in `<out>/results.jsonl`; resumable; `--redo` reads again any page read before it settled. |
-| `lib/inpage.mjs` | What is asked of each page: overflow, clipped/spilling/overlapping text, English fallbacks, raw keys, links, images, unnamed controls, right-to-left runs, wasm and WebGL outcomes, LCP and CLS. |
+| `lib/inpage.mjs` | What is asked of each page: overflow, clipped/spilling/overlapping text, English fallbacks, raw keys, links, images, unnamed controls, right-to-left runs, wasm and WebGL outcomes, LCP and CLS, and (since 14 October 2026) every Content-Security-Policy refusal. |
 | `checks.mjs` | `tools/deploy.sh --check`'s rows and the ones it lacks, the association file, every public file hashed (for comparing two copies), and the internal links a crawl found. |
 | `interact.mjs` | The chooser, negotiation from the browser's languages, a phone toolbar's resize, a phone held sideways, the keyboard sheet. |
 | `perf.mjs` | Weight, LCP and CLS per page at 375 px on Slow 4G with the CPU slowed 4×, cold and warm. |
@@ -39,6 +39,16 @@ whatever `PG_CHROME` names. On 13 October the cached `chromium-1217` was an
 empty shell (448 KB, no framework), so the run used Google Chrome 156,
 headless, with its own throwaway profile; `playwright-core@1.64.0` is the one
 that speaks to Chrome 156.
+
+**WebKit**, since 14 October 2026: `PG_BROWSER=webkit` in front of any of the
+scripts drives Playwright's own WebKit instead of Chrome. Install it once with
+`node "$PG_MASSTEST_MODULES/playwright-core/cli.js" install webkit` (about
+300 MB, into `~/Library/Caches/ms-playwright`). `perf.mjs` needs Chrome's
+DevTools protocol for its throttling and stays on Chrome. In WebKit there is
+no layout-shift or largest-paint entry, so CLS and LCP read 0 and null.
+
+axe is run by evaluation rather than as a `<script>` tag, because the pages'
+policy refuses inline scripts, as it should.
 
 ## Running it locally
 

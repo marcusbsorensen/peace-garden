@@ -8,7 +8,11 @@
 /// the largest contentful paint and layout shifts as the browser reports them.
 export function initScript() {
   const pg = (window.__pg = {
-    wasm: [], gl: [], glLost: 0, raf: 0, rejections: [], lcp: null, lcpElement: null, cls: 0, shifts: 0, fcp: null,
+    wasm: [], gl: [], glLost: 0, raf: 0, rejections: [], lcp: null, lcpElement: null, cls: 0, shifts: 0, fcp: null, csp: [],
+  });
+  // Every Content-Security-Policy refusal, since the site sent a policy (14 October 2026).
+  document.addEventListener('securitypolicyviolation', (e) => {
+    if (pg.csp.length < 20) pg.csp.push({ directive: e.effectiveDirective || e.violatedDirective, blocked: String(e.blockedURI || '').slice(0, 120), source: String(e.sourceFile || '').replace(location.origin, '').replace(/\?v=[^:]*/, '').slice(0, 120), line: e.lineNumber, sample: String(e.sample || '').slice(0, 80) });
   });
   for (const fn of ['instantiateStreaming', 'instantiate', 'compileStreaming', 'compile']) {
     const orig = WebAssembly[fn];
@@ -333,7 +337,7 @@ export function audit(opts) {
 
   // What the init script saw.
   const pg = window.__pg || {};
-  out.pg = { langAt: pg.langAt, wasm: pg.wasm, gl: pg.gl, glLost: pg.glLost, rejections: pg.rejections, lcp: pg.lcp, lcpElement: pg.lcpElement, cls: Math.round((pg.cls || 0) * 1000) / 1000, shifts: pg.shifts, fcp: pg.fcp, raf: pg.raf };
+  out.pg = { langAt: pg.langAt, wasm: pg.wasm, gl: pg.gl, glLost: pg.glLost, rejections: pg.rejections, lcp: pg.lcp, lcpElement: pg.lcpElement, cls: Math.round((pg.cls || 0) * 1000) / 1000, shifts: pg.shifts, shiftSources: pg.shiftSources, fcp: pg.fcp, raf: pg.raf, csp: pg.csp };
   out.canvases = [...document.querySelectorAll('canvas')].filter(shown).map((c) => `${c.width}x${c.height}`);
   out.animations = document.getAnimations ? document.getAnimations().filter((a) => a.playState === 'running').length : null;
   out.viewport = { w: vw, h: vh };

@@ -12,7 +12,7 @@ const here = fileURLToPath(new URL('..', import.meta.url));
 const modules = process.env.PG_MASSTEST_MODULES || join(here, 'node_modules');
 const require = createRequire(join(modules, 'noop.js'));
 
-export const { chromium } = require('playwright-core');
+export const { chromium, webkit } = require('playwright-core');
 export const axeSource = () => readFile(require.resolve('axe-core/axe.min.js'), 'utf8');
 
 /// The browser to drive. PG_CHROME names one; otherwise Playwright's own
@@ -27,7 +27,12 @@ export function executable() {
   return '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 }
 
+/// `PG_BROWSER=webkit` drives Playwright's own WebKit instead (since 14 October
+/// 2026), the engine of every browser on an iPhone or iPad. It is Playwright's
+/// build, installed with `node <modules>/playwright-core/cli.js install webkit`,
+/// not Safari, but it is the same engine: layout, fonts, wasm, WebGL and CSP.
 export async function launch() {
+  if (process.env.PG_BROWSER === 'webkit') return webkit.launch({ headless: true });
   return chromium.launch({ executablePath: executable(), headless: true });
 }
 

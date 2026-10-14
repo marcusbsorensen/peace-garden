@@ -206,6 +206,7 @@ final class PlantShareTests: XCTestCase {
                                  birth: Date().addingTimeInterval(-40 * 86_400))
         var options = PlantShareFiles.timeLapseOptions()
         XCTAssertEqual(options.drift, .towardsNow, "the sky ends on the phone's hour")
+        XCTAssertTrue(options.endsUnderTheHour, "under the shared picture's sky")
         XCTAssertFalse(options.opensOnThePlant, "the film starts on the sprout")
         options.size = CGSize(width: 120, height: 212)
         options.fps = 4
@@ -228,22 +229,75 @@ final class PlantShareTests: XCTestCase {
         try? FileManager.default.removeItem(at: url.deletingLastPathComponent())
     }
 
+    /// **The shared film ends under the picture's sky** (21C). At dusk, at
+    /// night and by day, the last frame of the film, away from the plant, is
+    /// the ground a shared picture has at the same hour on the same clock;
+    /// and before the plant comes to rest it is still the time-lapse's sky.
+    func testTheSharedFilmEndsUnderThePicturesSky() async throws {
+        let record = TimeLapseTests.plant("share-end", days: 60)
+        var options = PlantShareFiles.timeLapseOptions()
+        options.calendar = TimeLapseTests.utc
+        options.size = CGSize(width: 180, height: 320)
+        options.fps = 2
+        options.turns = false
+        let top = CGRect(x: 0, y: 0, width: 180, height: 26)
+        for (hour, minute) in [(18, 20), (23, 0), (10, 0)] {
+            let now = try XCTUnwrap(TimeLapseTests.utc.date(bySettingHour: hour, minute: minute, second: 0,
+                                                            of: TimeLapseTests.now))
+            var frames: [CGImage] = []
+            try await TimeLapseFilm.render(record, now: now, options: options) { frames.append($0.image) }
+            let lapse = TimeLapse(record: record, now: now, calendar: TimeLapseTests.utc)
+            XCTAssertEqual(lapse.hourNow, Double(hour) + Double(minute) / 60, accuracy: 1e-9)
+            let portrait = TimeLapseFilm.hourPortrait(genome: record.genome, growth: lapse.final,
+                                                      hour: lapse.hourNow, size: options.size)
+            let ground = try Pixels(try XCTUnwrap(ShareBackdrop.image(for: portrait)))
+            let last = try Pixels(try XCTUnwrap(frames.last))
+            let resting = try Pixels(frames[Int(TimeLapse.growthEnd * Double(options.fps)) - 1])
+            XCTAssertLessThan(last.difference(from: ground, in: top), 1,
+                              "\(hour):\(minute): the film ends on the picture's ground")
+            XCTAssertGreaterThan(resting.difference(from: ground, in: top), 1,
+                                 "\(hour):\(minute): and is the time-lapse's sky until then")
+        }
+    }
+
     // MARK: The sky of the phone's hour (Marcus, 14 October 2026)
 
-    /// Day in the morning, dusk at half past six, night at eleven, dawn at half
-    /// past five; and the night when there is no hour to be had.
+    /// **21C: the time-lapse's sky at dusk and dawn** (Marcus, 14 October).
+    /// The garden's day through the day, with no stars; from sunset to twenty
+    /// to seven, and from twenty past five to six in the morning, the
+    /// time-lapse's sky over the night and none of the day; the two thinning
+    /// into each other after that; the garden's starry night alone by nine;
+    /// and the night when there is no hour to be had.
     func testTheSkyIsChosenByTheHour() {
         XCTAssertEqual(ShareGround.recommended, .byTheHour)
-        XCTAssertEqual(ShareSky.at(hour: 9), .day(hour: 9))
-        XCTAssertEqual(ShareSky.at(hour: 12), .day(hour: 12))
-        XCTAssertEqual(ShareSky.at(hour: 17.9), .day(hour: 17.9))
-        XCTAssertEqual(ShareSky.at(hour: 18.5), .twilight(hour: 18.5))
-        XCTAssertEqual(ShareSky.at(hour: 5.5), .twilight(hour: 5.5))
-        XCTAssertEqual(ShareSky.at(hour: 23), .night(hour: 23))
-        XCTAssertEqual(ShareSky.at(hour: 2), .night(hour: 2))
-        XCTAssertEqual(ShareSky.at(hour: 33), .day(hour: 9), "a day and nine hours is nine o'clock")
-        XCTAssertEqual(ShareSky.at(hour: nil), .night(hour: nil))
-        XCTAssertEqual(ShareSky.at(hour: .nan), .night(hour: nil))
+        for hour in [7.0, 9, 12, 15, 17.5] {
+            let sky = ShareSky.at(hour: hour)
+            XCTAssertEqual(sky.day, 1, "\(hour): the garden's day")
+            XCTAssertEqual(sky.stars, 0, "\(hour): no stars by day")
+        }
+        for hour in [18.0, 18 + 10.0 / 60, 18.5, 18 + 40.0 / 60, 5 + 20.0 / 60, 5.5, 6] {
+            let sky = ShareSky.at(hour: hour)
+            XCTAssertEqual(sky.day, 0, accuracy: 1e-9, "\(hour): none of the day")
+            XCTAssertEqual(sky.twilight, 1, "\(hour): the time-lapse's sky, all of it")
+        }
+        XCTAssertEqual(ShareSky.at(hour: 18 + 10.0 / 60).stars, 0, "the stars not out yet at ten past six")
+        let deepening = ShareSky.at(hour: 19.25)
+        XCTAssertGreaterThan(deepening.twilight, 0, "the dusk thinning into the night")
+        XCTAssertLessThan(deepening.twilight, 1)
+        XCTAssertEqual(deepening.stars, 1, "and the stars out")
+        for hour in [21.0, 23, 2] {
+            let sky = ShareSky.at(hour: hour)
+            XCTAssertEqual(sky.day, 0, "\(hour)")
+            XCTAssertEqual(sky.twilight, 0, "\(hour): the garden's night alone")
+            XCTAssertEqual(sky.stars, 1, "\(hour): every star")
+            XCTAssertEqual(sky.pool, ShareSky.poolAtNight, "\(hour)")
+        }
+        let sunrise = ShareSky.at(hour: 6 + 10.0 / 60)
+        XCTAssertGreaterThan(sunrise.day, 0, "the day comes in as the sun climbs")
+        XCTAssertLessThan(sunrise.day, 1)
+        XCTAssertEqual(ShareSky.at(hour: 33), ShareSky.at(hour: 9), "a day and nine hours is nine o'clock")
+        XCTAssertEqual(ShareSky.at(hour: nil), .noHour)
+        XCTAssertEqual(ShareSky.at(hour: .nan), .noHour)
     }
 
     /// The hour is the phone's own clock, in its own time zone.
@@ -258,9 +312,9 @@ final class PlantShareTests: XCTestCase {
     }
 
     /// **What is drawn is that sky.** The day is light and its sun on the side
-    /// the hour puts it; dusk is the night with the last light low on the side
-    /// the sun went down; and with no hour the ground is the night exactly as
-    /// it stood before.
+    /// the hour puts it; dusk and dawn are the time-lapse's rose low down, not
+    /// the night; and with no hour the ground is the night exactly as it stood
+    /// before.
     func testTheGroundIsDrawnForTheHour() throws {
         func ground(_ hour: Double?, _ ground: ShareGround = .byTheHour) throws -> CGImage {
             var portrait = Self.small(ground)
@@ -277,26 +331,63 @@ final class PlantShareTests: XCTestCase {
         let right = CGRect(x: 0.7, y: 0.25, width: 0.3, height: 0.3)
 
         let morning = try ground(9), afternoon = try ground(15)
-        let dusk = try ground(18.5), night = try ground(23), none = try ground(nil)
+        let dusk = try ground(18 + 20.0 / 60), night = try ground(23), none = try ground(nil)
         XCTAssertGreaterThan(try light(morning, whole), 0.15, "the day is a day")
         XCTAssertLessThan(try light(night, whole), 0.05, "the night is a night")
         XCTAssertGreaterThan(try light(morning, left), try light(morning, right), "the morning sun is on the left")
         XCTAssertGreaterThan(try light(afternoon, right), try light(afternoon, left), "and the afternoon's on the right")
 
-        let afterglow = CGRect(x: 0.7, y: 0.45, width: 0.3, height: 0.2)
-        let farFromIt = CGRect(x: 0, y: 0.05, width: 0.3, height: 0.2)
-        let dusky = try Pixels(dusk), dark = try Pixels(none)
-        let size = CGSize(width: dusky.width, height: dusky.height)
-        func scaled(_ r: CGRect) -> CGRect {
-            CGRect(x: r.minX * size.width, y: r.minY * size.height, width: r.width * size.width, height: r.height * size.height)
+        // Low down, below the plant: rose and mauve at dusk and at dawn, where
+        // the garden's own dusk was already the night's dark blue.
+        let low = CGRect(x: 0, y: 0.9, width: 1, height: 0.1)
+        for (name, image) in [("twenty past six", dusk), ("quarter to six in the morning", try ground(5.75)), ("ten past six", try ground(18 + 10.0 / 60))] {
+            let colour = try Self.meanColour(image, in: low)
+            XCTAssertGreaterThan(colour.red, colour.blue + 0.03, "\(name) is rose low down: \(colour)")
+            XCTAssertGreaterThan(colour.red, colour.green + 0.03, "\(name) is rose low down: \(colour)")
         }
-        XCTAssertGreaterThan(dusky.difference(from: dark, in: scaled(afterglow)),
-                             dusky.difference(from: dark, in: scaled(farFromIt)) + 4,
-                             "dusk has the last light low on the side the sun went down")
+        let nightLow = try Self.meanColour(night, in: low)
+        XCTAssertGreaterThan(nightLow.blue, nightLow.red, "the night is the garden's blue: \(nightLow)")
 
+        let dark = try Pixels(none)
+        let size = CGSize(width: dark.width, height: dark.height)
         let before = try Pixels(try ground(nil, .nightSky))
         XCTAssertEqual(dark.difference(from: before, in: CGRect(origin: .zero, size: size)), 0,
                        "with no hour, the night it always was")
+    }
+
+    /// **No jump from day to dusk to night** (Marcus, 14 October 2026: 21C).
+    /// The ground drawn every five minutes from half past five to nine in the
+    /// evening, and from three to half past six in the morning: no step in its
+    /// mean luminance is more than `largestStep` of the full range, at sunset,
+    /// as the stars come out, or where the dusk hands over to the night.
+    ///
+    /// The garden's own day dims by up to 1.7% of the range in five minutes
+    /// in the late afternoon, which is the sun going down and no jump; the
+    /// first build's switch from day to dusk at six was 5.9% in one step.
+    func testTheSkyByTheHourHasNoJump() throws {
+        let largestStep = 0.025
+        func sweep(from start: Int, to end: Int) throws -> [(minute: Int, light: Double)] {
+            try stride(from: start, through: end, by: 5).map { minute in
+                var portrait = Self.small(.byTheHour)
+                portrait.hour = Double(minute) / 60
+                let ground = try XCTUnwrap(ShareBackdrop.image(for: portrait))
+                return (minute, TimeLapseLuminance.mean(of: ground, side: 64))
+            }
+        }
+        for (name, run) in [("dusk", try sweep(from: 17 * 60 + 30, to: 21 * 60)),
+                            ("dawn", try sweep(from: 3 * 60, to: 6 * 60 + 30))] {
+            var worst = (step: 0.0, at: 0)
+            for (a, b) in zip(run, run.dropFirst()) where abs(b.light - a.light) > worst.step {
+                worst = (abs(b.light - a.light), b.minute)
+            }
+            print(String(format: "SHARE SKY %@: worst step %.4f at %02d:%02d\n", name, worst.step,
+                         worst.at / 60, worst.at % 60)
+                  + run.map { String(format: "%02d:%02d %.4f", $0.minute / 60, $0.minute % 60, $0.light) }
+                .joined(separator: "\n"))
+            XCTAssertLessThan(worst.step, largestStep,
+                              String(format: "%@: a step of %.4f at %02d:%02d", name, worst.step,
+                                     worst.at / 60, worst.at % 60))
+        }
     }
 
     // MARK: Nothing but the picture
@@ -358,6 +449,31 @@ final class PlantShareTests: XCTestCase {
     // (`design/share-plant-2026-10-13/README.md`).
 
     // MARK: Helpers
+
+    /// The mean sRGB colour, `0...1` a channel, over a region given as
+    /// fractions of the picture, top-left origin.
+    static func meanColour(_ image: CGImage, in region: CGRect) throws -> (red: Double, green: Double, blue: Double) {
+        let box = CGRect(x: region.minX * CGFloat(image.width), y: region.minY * CGFloat(image.height),
+                         width: region.width * CGFloat(image.width), height: region.height * CGFloat(image.height)).integral
+        let crop = try XCTUnwrap(image.cropping(to: box))
+        let width = crop.width, height = crop.height
+        var data = [UInt8](repeating: 0, count: width * height * 4)
+        let drew: Bool = data.withUnsafeMutableBytes { raw in
+            guard let context = CGContext(data: raw.baseAddress, width: width, height: height, bitsPerComponent: 8,
+                                          bytesPerRow: width * 4, space: CGColorSpace(name: CGColorSpace.sRGB)!,
+                                          bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)
+            else { return false }
+            context.draw(crop, in: CGRect(x: 0, y: 0, width: width, height: height))
+            return true
+        }
+        guard drew else { throw CocoaError(.coderInvalidValue) }
+        var sums = (0.0, 0.0, 0.0)
+        for index in stride(from: 0, to: data.count, by: 4) {
+            sums.0 += Double(data[index]); sums.1 += Double(data[index + 1]); sums.2 += Double(data[index + 2])
+        }
+        let count = Double(width * height) * 255
+        return (sums.0 / count, sums.1 / count, sums.2 / count)
+    }
 
     /// Every frame of a movie, decoded.
     static func frames(of asset: AVAsset) async throws -> [Pixels] {

@@ -116,8 +116,21 @@ if (variants.has('motion')) {
 }
 
 console.log(`${jobs.length} pages to visit (${done.size} already done) on ${base}${live ? ' (live, read-only)' : ''}`);
-const browser = await launch();
+let browser = await launch();
 const contexts = new Map();
+// A browser that dies under load (WebKit did, once, 224 pages into its pass on
+// 14 October 2026) is started again rather than taking the run with it.
+// One relaunch at a time, however many workers find the browser gone.
+let relaunching = null;
+async function relaunch(dead) {
+  if (browser !== dead) return;
+  relaunching ||= (async () => {
+    contexts.clear();
+    await browser.close().catch(() => {});
+    browser = await launch();
+  })().finally(() => { relaunching = null; });
+  await relaunching;
+}
 async function contextFor(job) {
   const key = `${job.width}|${job.scheme}|${job.motion}|${job.variant === 'motion' ? 'm' : ''}`;
   if (!contexts.has(key)) {
@@ -148,15 +161,29 @@ async function crop(page, selector, file) {
 
 const origin = new URL(base).origin;
 async function visit(job) {
-  const ctx = await contextFor(job);
-  const page = await ctx.newPage();
+  let page;
+  for (let attempt = 0; ; attempt++) {
+    const dead = browser;
+    try {
+      const ctx = await contextFor(job);
+      page = await ctx.newPage();
+      break;
+    } catch (error) {
+      if (attempt > 1 || !/closed/.test(String(error.message))) throw error;
+      await relaunch(dead);
+    }
+  }
+  // What axe does to a page is axe's: in WebKit its run logs style refusals
+  // under the pages' policy that the page itself never causes. Console lines
+  // from then on are marked, and the analysis leaves them out.
+  let phase;
   const url = urlFor(base, job.page, job.lang, job.extra);
   const rec = { job: { key: job.key, variant: job.variant, page: job.page.id, lang: job.lang, width: job.width, scheme: job.scheme, motion: job.motion, url },
     console: [], errors: [], failed: [], http: [], external: [], blocked: [] };
   page.on('console', (m) => {
     if (['error', 'warning', 'assert'].includes(m.type())) {
       const loc = m.location();
-      rec.console.push({ type: m.type(), text: m.text().slice(0, 500), at: loc && loc.url ? `${loc.url.replace(origin, '').replace(/\?v=[^:]*/, '')}:${loc.lineNumber}` : null });
+      rec.console.push({ type: m.type(), text: m.text().slice(0, 500), at: loc && loc.url ? `${loc.url.replace(origin, '').replace(/\?v=[^:]*/, '')}:${loc.lineNumber}` : null, ...(phase ? { during: phase } : {}) });
     }
   });
   page.on('pageerror', (e) => rec.errors.push(String(e.stack || e.message).slice(0, 800)));
@@ -199,7 +226,11 @@ async function visit(job) {
       rec.stills = { changed: Math.round(difference(a, b) * 10000) / 10000, rafPerSecond: Math.round((raf1 - raf0) / 1.5) };
     }
     if (axe) {
-      await page.addScriptTag({ content: axe });
+      phase = 'axe';
+      // Evaluated rather than added as a `<script>`: since 14 October 2026 the
+      // pages' Content-Security-Policy refuses an inline script, which is the
+      // point of it, and the crawler must not be the one thing it lets in.
+      await page.evaluate(axe);
       rec.axe = await page.evaluate(async () => {
         const r = await window.axe.run(document, {
           runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'] },
