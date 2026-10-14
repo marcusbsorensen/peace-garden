@@ -46,8 +46,15 @@ struct ExchangeView: View {
                 phases
             }
         }
+        // The X in a ring, as the seed, the garden and Settings close (Marcus,
+        // 13 October: "consistency"). It was the word *Cancel*, or *Not this
+        // time* over a plant just made. Closing still stops the search
+        // (`onDisappear`) and still leaves a new plant unkept; VoiceOver still
+        // says which of the two it is, where the system symbol alone would say
+        // only *Close*.
         .overlay(alignment: .topTrailing) {
-            QuietButton(title: closeTitle) { dismiss() }
+            CloseButton { dismiss() }
+                .accessibilityLabel(Text(closeTitle))
                 .padding(.trailing, 12)
                 .padding(.top, 12)
         }
@@ -105,6 +112,7 @@ struct ExchangeView: View {
         }
     }
 
+    /// What the X in the corner is read aloud as.
     private var closeTitle: LocalizedStringKey {
         if case .grown = service.phase { return "Not this time" }
         return "Cancel"

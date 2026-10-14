@@ -430,6 +430,18 @@ enum StagePlantStyle: String, CaseIterable, Sendable {
     /// Whether the tint is the plant's whole colour, and therefore worth
     /// letting somebody choose.
     var isTinted: Bool { self != .full }
+
+    /// The system's mark for each answer, on the seed screen's control
+    /// (`PlantDrawingToggle`): a palette for the plant's own colours, a drop
+    /// for one ink, and the transparent cube that is the system's own word
+    /// for a wireframe. Known marks rather than three more words.
+    var symbol: String {
+        switch self {
+        case .full: return "paintpalette"
+        case .monochrome: return "drop"
+        case .wireframe: return "cube.transparent"
+        }
+    }
 }
 
 extension Chrome {
@@ -1452,6 +1464,121 @@ struct ChromeIconLabel: View {
                 .fixedSize(horizontal: axis == .horizontal, vertical: true)
                 .transition(.opacity)
         }
+    }
+}
+
+/// The mark that opened a screen, standing before that screen's title.
+///
+/// **The row at the foot of the stage names four screens by their marks**, and
+/// each screen it opens says its own name in capitals at the top (Marcus,
+/// 13 October: *"show the glyphs from the lower menu next to each title on the
+/// screens they open"*). The mark beside the title is the same drawing as the
+/// one that was touched, so the screen answers *which one did I open* in the
+/// language the row already speaks.
+///
+/// **The same drawing at the same weight, sized to the capitals.** The frame
+/// runs from the baseline to the cap height, plus the 0.9 pt every mark keeps
+/// clear inside its box for its own stroke, and the mark takes its usual share
+/// of it (`markBox`): the garden stands on the baseline and reaches the top of
+/// the capitals, and a rounder mark sits centred on them, as each sits in its
+/// circle at the foot. `Chrome.monoline` does not scale, as it does not in the
+/// row.
+///
+/// **Coloured as the title is**, because it strokes in the foreground style the
+/// title is set in, so one `foregroundStyle` after `titleGlyph(_:size:)` reaches
+/// both. Silent to VoiceOver, which already reads the title, and pinned to the
+/// hand it was drawn with (`drawnHand()`); under right-to-left the mark still
+/// stands before the title, which is then on its right.
+struct TitleGlyph: View {
+    let glyph: AnyShape
+    /// The title's point size, in the light system face `chromeHeading` sets.
+    let size: CGFloat
+
+    /// The room a mark keeps inside its box for its own stroke.
+    static let inset: CGFloat = 0.9
+
+    /// Baseline to cap height, plus the stroke's room above and below.
+    static func side(for size: CGFloat) -> CGFloat {
+        UIFont.systemFont(ofSize: size, weight: .light).capHeight + 2 * inset
+    }
+
+    var body: some View {
+        let side = Self.side(for: size)
+        glyph
+            .stroke(.foreground, style: Chrome.monoline)
+            .frame(width: side, height: side)
+            .drawnHand()
+            // The box's floor, less the stroke's room, on the title's baseline.
+            .alignmentGuide(.firstTextBaseline) { $0[.bottom] - Self.inset }
+            .alignmentGuide(.lastTextBaseline) { $0[.bottom] - Self.inset }
+            .accessibilityHidden(true)
+    }
+}
+
+extension View {
+    /// This title, with the mark that opened its screen before it. See
+    /// `TitleGlyph`. `size` is the title's own point size.
+    func titleGlyph(_ glyph: some Shape, size: CGFloat) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: (size * 0.5).rounded()) {
+            TitleGlyph(glyph: AnyShape(glyph), size: size)
+            self
+        }
+    }
+}
+
+/// A few answers to one question, as marks in one capsule.
+///
+/// **The same control as Settings' Light row** (`LightToggle`): the chosen mark
+/// has a capsule of its own, a faint wash inside the prominent edge, and lifts
+/// from `faint` to `ink`; the others stand faint. Lifted out generic so the
+/// seed screen's plant drawing is that control and not one that looks like it.
+/// `LightToggle` is drawn the same way and can move onto this once
+/// `SettingsView.swift` is free to change.
+///
+/// Each answer is read aloud by its own label and the whole by `label`, so a
+/// VoiceOver user hears the question and which answer is selected.
+struct MarkChooser<Option: Hashable, Mark: View>: View {
+    let options: [Option]
+    let selection: Option
+    let label: Text
+    let optionLabel: (Option) -> Text
+    @ViewBuilder let mark: (Option, Bool) -> Mark
+    let choose: (Option) -> Void
+
+    @Namespace private var wash
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(options, id: \.self) { option in
+                segment(option)
+            }
+        }
+        .padding(3)
+        .overlay(Capsule().strokeBorder(Chrome.hairline, lineWidth: 1))
+        .animation(.easeInOut(duration: 0.22), value: selection)
+        .sensoryFeedback(.selection, trigger: selection)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(label)
+    }
+
+    private func segment(_ option: Option) -> some View {
+        let chosen = option == selection
+        return Button { choose(option) } label: {
+            mark(option, chosen)
+                .frame(minWidth: 52, minHeight: 44)
+                .background {
+                    if chosen {
+                        Capsule()
+                            .fill(Chrome.ink.opacity(0.10))
+                            .overlay(Capsule().strokeBorder(Chrome.ink.opacity(0.32), lineWidth: 1))
+                            .matchedGeometryEffect(id: "wash", in: wash)
+                    }
+                }
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(optionLabel(option))
+        .accessibilityAddTraits(chosen ? .isSelected : [])
     }
 }
 

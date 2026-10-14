@@ -54,6 +54,12 @@ struct SeedView: View {
                 .chromeLabel()
                 .foregroundStyle(Chrome.faint)
 
+            // How the plant is drawn, here as well as in Settings (Marcus,
+            // 13 October: "the user may not think to look under Settings").
+            // The sheet opens half way, so the plant it changes is standing
+            // just above it.
+            PlantDrawingToggle()
+                .padding(.top, 6)
         }
     }
 
@@ -99,6 +105,41 @@ struct SeedView: View {
             factRow(AnyShape(BloomGlyph()), "First bloom",
                     value: Text("When \(Int(genome.tempo.daysToBloom.rounded())) days old"))
         }
+    }
+}
+
+/// How the plant is drawn — its own colours, one colour, or its wireframe — on
+/// the seed screen.
+///
+/// **One setting, two doors.** Settings' *How the plant is drawn* and this read
+/// and write the same `Chrome.plantStyleKey`, so changing it here is changing
+/// it there, and neither can show an answer the other does not. Settings keeps
+/// its control, and the colour a tinted plant is drawn in stays there alone.
+///
+/// **Marks, not words**: the system's palette, drop and transparent cube
+/// (`StagePlantStyle.symbol`), at the light weight the X in the corner is
+/// drawn at. VoiceOver reads the question and each answer in the words
+/// Settings already uses, so there is nothing new to translate.
+///
+/// **All three answers, though the ask was colour or wireframe.** The setting
+/// has three, and a two-mark switch would have nothing true to show when
+/// Settings is on *One colour*.
+struct PlantDrawingToggle: View {
+    @AppStorage(Chrome.plantStyleKey) private var styleRaw = StagePlantStyle.full.rawValue
+
+    var body: some View {
+        MarkChooser(
+            options: StagePlantStyle.allCases,
+            selection: StagePlantStyle(rawValue: styleRaw) ?? .full,
+            label: Text("How the plant is drawn"),
+            optionLabel: { Text($0.label) },
+            mark: { style, chosen in
+                Image(systemName: style.symbol)
+                    .font(.system(size: 17, weight: .light))
+                    .foregroundStyle(chosen ? Chrome.ink : Chrome.faint)
+            },
+            choose: { styleRaw = $0.rawValue }
+        )
     }
 }
 
