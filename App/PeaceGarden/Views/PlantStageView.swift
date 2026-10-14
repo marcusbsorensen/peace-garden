@@ -88,7 +88,6 @@ struct PlantStageView: View {
 
                 StageBackdrop(palette: identity.genome.palette, presence: growth.heightScale)
                     .ignoresSafeArea()
-                    .accessibilityHidden(showingSettings)
 
                 PlantSceneView(
                     genome: identity.genome,
@@ -100,7 +99,6 @@ struct PlantStageView: View {
                     onTap: { revealControls() }
                 )
                 .ignoresSafeArea()
-                .accessibilityHidden(showingSettings)
 
                 // Asked for once in Settings rather than every time on the
                 // stage: a row set to stay is a row that stays.
