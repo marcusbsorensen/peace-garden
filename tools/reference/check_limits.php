@@ -116,6 +116,20 @@ check('and every ceiling is CROWD times the allowance, but wear, which carries n
           ? Limits::ROUTES[$route][0] : Limits::CROWD * Limits::ROUTES[$route][0]) || $c[1] !== Limits::WINDOW,
           ARRAY_FILTER_USE_BOTH) === []);
 
+// **The one statement that counts**, driven on its own, without the sweep in
+// front of it that would otherwise clear an ended window first: it opens a
+// window, counts, stops one past the allowance, and opens a fresh window once
+// the old one has run out.
+$count = Closure::bind(fn (string $bucket, int $allowed, int $window, int $at) => $this->count($bucket, $allowed,
+                       $window, $at), $limits, Limits::class);
+$seen = [];
+foreach ([0, 1, 2, 3, 4, 9, 10, 11] as $offset) {
+    $row = $count(substr(hash('sha256', 'the counting statement'), 0, 32), 2, 10, 1_900_000_000 + $offset);
+    $seen[] = (int) $row['hits'] . '@' . ((int) $row['started_at'] - 1_900_000_000);
+}
+check('one upsert opens, counts, caps and reopens a window: ' . implode(' ', $seen),
+      $seen === ['1@0', '2@0', '3@0', '3@0', '3@0', '3@0', '1@10', '2@10']);
+
 // MARK: Who an address is
 
 // **An IPv6 address is its /64**: a phone or a home line holds one, and can

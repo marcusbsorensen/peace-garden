@@ -228,22 +228,26 @@ final class Limits
         if ($mysql) $this->db->prepare('SET TRANSACTION ISOLATION LEVEL READ COMMITTED')->execute();
         $this->db->beginTransaction();
         try {
-            if ($mysql) {
+            $upsert = $this->db->prepare($mysql
                 // `hits` first: MariaDB assigns left to right, and the window's
                 // test has to read the old start.
-                $upsert = $this->db->prepare('INSERT INTO rate_limits (bucket, started_at, hits) VALUES (?, ?, 1)
+                ? 'INSERT INTO rate_limits (bucket, started_at, hits) VALUES (?, ?, 1)
                     ON DUPLICATE KEY UPDATE
                         hits = IF(? - started_at >= ?, 1, LEAST(hits + 1, ?)),
-                        started_at = IF(? - started_at >= ?, ?, started_at)');
-                $upsert->execute([$bucket, $now, $now, $window, $allowed + 1, $now, $window, $now]);
-            } else {
+                        started_at = IF(? - started_at >= ?, ?, started_at)'
                 // SQLite reads every right-hand side from the row as it was.
-                $upsert = $this->db->prepare('INSERT INTO rate_limits (bucket, started_at, hits) VALUES (?, ?, 1)
+                : 'INSERT INTO rate_limits (bucket, started_at, hits) VALUES (?, ?, 1)
                     ON CONFLICT (bucket) DO UPDATE SET
                         hits = CASE WHEN ? - started_at >= ? THEN 1 ELSE MIN(hits + 1, ?) END,
                         started_at = CASE WHEN ? - started_at >= ? THEN ? ELSE started_at END');
-                $upsert->execute([$bucket, $now, $now, $window, $allowed + 1, $now, $window, $now]);
+            // Every number bound as a number: bound as text, SQLite compares
+            // `3300 >= '3300'` as false, and MariaDB may compare a LEAST of a
+            // number and a string as strings.
+            $upsert->bindValue(1, $bucket);
+            foreach ([$now, $now, $window, $allowed + 1, $now, $window, $now] as $i => $number) {
+                $upsert->bindValue($i + 2, $number, PDO::PARAM_INT);
             }
+            $upsert->execute();
             $query = $this->db->prepare('SELECT started_at, hits FROM rate_limits WHERE bucket = ?');
             $query->execute([$bucket]);
             $row = $query->fetch(PDO::FETCH_ASSOC);
