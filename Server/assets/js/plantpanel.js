@@ -432,7 +432,7 @@ export function plantPanel({ theme, engine, cover = null, place = null, beside =
     cross.setAttribute('aria-hidden', 'true');
     cross.setAttribute('focusable', 'false');
     const strokes = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    strokes.setAttribute('d', 'M5.5 5.5L14.5 14.5M14.5 5.5L5.5 14.5');
+    strokes.setAttribute('d', 'M5 5L15 15M15 5L5 15');
     cross.append(strokes);
     closer.append(cross);
     closer.addEventListener('click', () => close());

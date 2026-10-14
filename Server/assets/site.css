@@ -1958,8 +1958,8 @@ a.minimap__cell:focus-visible::before {
 }
 
 .plant-panel__cross {
-  inline-size: 18px;
-  block-size: 18px;
+  inline-size: 20px;
+  block-size: 20px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.25;
