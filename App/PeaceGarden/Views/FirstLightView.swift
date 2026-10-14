@@ -35,7 +35,27 @@ struct FirstLightView: View {
     /// The point at which the description has finished arriving.
     private static var settled: Double { (beats.last ?? 0) + readingBeat(lines.last ?? "") + 0.8 }
 
+    /// **Every line takes the lines it needs, and the column scrolls only when
+    /// it must** (mass test, 13 October, finding 7). On the SE's 667 points
+    /// the column did not fit, and SwiftUI gave up height rather than
+    /// overflowing: French's first line came out *…ense…*, and the pseudo-long
+    /// locale lost two. Set to their own height, the lines push the column
+    /// taller than the glass instead, and the scroll view — which neither
+    /// bounces nor scrolls while the column fits — lets it be read. The two
+    /// spacers still centre it whenever it fits, which is nearly always.
     var body: some View {
+        GeometryReader { proxy in
+            ScrollView {
+                column
+                    .frame(maxWidth: .infinity, minHeight: proxy.size.height)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            .scrollIndicators(.hidden)
+        }
+        .background(UnfurlingBackdrop(.single))
+    }
+
+    private var column: some View {
         VStack(spacing: 0) {
             Spacer()
 
@@ -49,6 +69,7 @@ struct FirstLightView: View {
                         .foregroundStyle(Chrome.ink)
                         .multilineTextAlignment(.center)
                         .lineSpacing(6)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
 
                 VStack(spacing: 7) {
@@ -58,6 +79,7 @@ struct FirstLightView: View {
                                 .font(.system(size: 16, weight: .light))
                                 .foregroundStyle(Chrome.muted)
                                 .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
                     }
                 }
@@ -90,7 +112,6 @@ struct FirstLightView: View {
 
             Spacer()
         }
-        .background(UnfurlingBackdrop(.single))
     }
 
     private func plant() {
