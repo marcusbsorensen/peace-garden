@@ -1,0 +1,376 @@
+[
+  {
+    "testIdentifier" : "MassTestPerformanceUITests/testLaunchToInteractive()",
+    "testIdentifierURL" : "test://com.apple.xcode/PeaceGardenMassTest/PeaceGardenMassTestUI/MassTestPerformanceUITests/testLaunchToInteractive",
+    "testRuns" : [
+      {
+        "device" : {
+          "deviceId" : "760933B1-DEE3-4CEE-8034-93394CF4C882",
+          "deviceName" : "pg-mt-app-Stress"
+        },
+        "metrics" : [
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "Duration (ApplicationFirstFramePresentationResponsive)",
+            "identifier" : "com.apple.dt.XCTMetric_ApplicationLaunch-ApplicationFirstFramePresentationResponsive.duration",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              1.3268677910000002,
+              1.164533958,
+              1.3747273750000002
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "s"
+          },
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "Absolute Memory Physical (peacegarden)",
+            "identifier" : "com.apple.dt.XCTMetric_Memory-app.peacegarden.physical_absolute",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              58444.056,
+              58706.176,
+              58689.792
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "kB"
+          },
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "Memory Peak Physical (peacegarden)",
+            "identifier" : "com.apple.dt.XCTMetric_Memory-app.peacegarden.physical_peak",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              61081.88,
+              61573.376,
+              58689.792
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "kB"
+          },
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "Memory Physical (peacegarden)",
+            "identifier" : "com.apple.dt.XCTMetric_Memory-app.peacegarden.physical",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              58444.056,
+              58706.176,
+              58689.792
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "kB"
+          }
+        ],
+        "testPlanConfiguration" : {
+          "configurationId" : "1",
+          "configurationName" : "Test Scheme Action"
+        }
+      }
+    ]
+  },
+  {
+    "testIdentifier" : "MassTestPerformanceUITests/testPan()",
+    "testIdentifierURL" : "test://com.apple.xcode/PeaceGardenMassTest/PeaceGardenMassTestUI/MassTestPerformanceUITests/testPan",
+    "testRuns" : [
+      {
+        "device" : {
+          "deviceId" : "760933B1-DEE3-4CEE-8034-93394CF4C882",
+          "deviceName" : "pg-mt-app-Stress"
+        },
+        "metrics" : [
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "CPU Cycles (peacegarden)",
+            "identifier" : "com.apple.dt.XCTMetric_CPU-app.peacegarden.cycles",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              3687067.402,
+              2570507.342,
+              2762396.338,
+              2565992.853,
+              2712729.79
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "kC"
+          },
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "CPU Instructions Retired (peacegarden)",
+            "identifier" : "com.apple.dt.XCTMetric_CPU-app.peacegarden.instructions_retired",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              11264174.017,
+              7501193.785,
+              7550195.195,
+              7504910.016,
+              7537473.91
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "kI"
+          },
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "Clock Monotonic Time",
+            "identifier" : "com.apple.dt.XCTMetric_Clock.time.monotonic",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              3.477516762,
+              3.4231592490000002,
+              3.592242101,
+              3.4233599850000003,
+              3.5768639440000003
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "s"
+          },
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "CPU Time (peacegarden)",
+            "identifier" : "com.apple.dt.XCTMetric_CPU-app.peacegarden.time",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              1.041978305,
+              0.729441537,
+              0.8182744740000001,
+              0.7087983240000001,
+              0.771911346
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "s"
+          },
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "Memory Physical (peacegarden)",
+            "identifier" : "com.apple.dt.XCTMetric_Memory-app.peacegarden.physical",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              16.384,
+              294.912,
+              1654.784,
+              0,
+              0
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "kB"
+          },
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "Absolute Memory Physical (peacegarden)",
+            "identifier" : "com.apple.dt.XCTMetric_Memory-app.peacegarden.physical_absolute",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              405294.488,
+              405589.4,
+              407309.72,
+              407309.72,
+              407309.72
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "kB"
+          },
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "Memory Peak Physical (peacegarden)",
+            "identifier" : "com.apple.dt.XCTMetric_Memory-app.peacegarden.physical_peak",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              406424.984,
+              405589.4,
+              407342.488,
+              407752.088,
+              407539.096
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "kB"
+          }
+        ],
+        "testPlanConfiguration" : {
+          "configurationId" : "1",
+          "configurationName" : "Test Scheme Action"
+        }
+      }
+    ]
+  },
+  {
+    "testIdentifier" : "MassTestPerformanceUITests/testRotate()",
+    "testIdentifierURL" : "test://com.apple.xcode/PeaceGardenMassTest/PeaceGardenMassTestUI/MassTestPerformanceUITests/testRotate",
+    "testRuns" : [
+      {
+        "device" : {
+          "deviceId" : "760933B1-DEE3-4CEE-8034-93394CF4C882",
+          "deviceName" : "pg-mt-app-Stress"
+        },
+        "metrics" : [
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "CPU Cycles (peacegarden)",
+            "identifier" : "com.apple.dt.XCTMetric_CPU-app.peacegarden.cycles",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              20361203.209,
+              19115501.869,
+              20181288.02
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "kC"
+          },
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "CPU Instructions Retired (peacegarden)",
+            "identifier" : "com.apple.dt.XCTMetric_CPU-app.peacegarden.instructions_retired",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              64834444.863,
+              61314004.46,
+              64751065.113
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "kI"
+          },
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "Clock Monotonic Time",
+            "identifier" : "com.apple.dt.XCTMetric_Clock.time.monotonic",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              8.685093181000001,
+              8.493917971,
+              9.277860480000001
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "s"
+          },
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "CPU Time (peacegarden)",
+            "identifier" : "com.apple.dt.XCTMetric_CPU-app.peacegarden.time",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              5.285123122,
+              4.95034451,
+              5.269371373
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "s"
+          },
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "Memory Physical (peacegarden)",
+            "identifier" : "com.apple.dt.XCTMetric_Memory-app.peacegarden.physical",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              2850.984,
+              -311.128,
+              6045.864
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "kB"
+          },
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "Absolute Memory Physical (peacegarden)",
+            "identifier" : "com.apple.dt.XCTMetric_Memory-app.peacegarden.physical_absolute",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              549753.344,
+              549212.84,
+              555258.704
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "kB"
+          },
+          {
+            "baselineAverage" : 0,
+            "baselineName" : "",
+            "displayName" : "Memory Peak Physical (peacegarden)",
+            "identifier" : "com.apple.dt.XCTMetric_Memory-app.peacegarden.physical_peak",
+            "maxPercentRegression" : 10,
+            "maxPercentRelativeStandardDeviation" : 10,
+            "maxRegression" : 0,
+            "maxStandardDeviation" : 10,
+            "measurements" : [
+              1799360.88,
+              1582223.872,
+              1585549.992
+            ],
+            "polarity" : "prefers smaller",
+            "unitOfMeasurement" : "kB"
+          }
+        ],
+        "testPlanConfiguration" : {
+          "configurationId" : "1",
+          "configurationName" : "Test Scheme Action"
+        }
+      }
+    ]
+  }
+]
