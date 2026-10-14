@@ -107,7 +107,7 @@ def analyse(device, data):
                     findings["offscreen"].append({"config": config, "screen": screen, "label": e["label"],
                                                   "frame": [round(e["x"]), round(e["y"]), round(e["w"]), round(e["h"])],
                                                   "edge": "left" if e["x"] < 0 else "right"})
-                elif e["y"] + e["h"] > H + 0.5 and screen not in ("settings", "settings-end") and not in_scroll(e):
+                elif e["y"] + e["h"] > H + 0.5 and screen not in ("settings", "settings-end", "about", "about-end") and not in_scroll(e):
                     findings["offscreen"].append({"config": config, "screen": screen, "label": e["label"],
                                                   "frame": [round(e["x"]), round(e["y"]), round(e["w"]), round(e["h"])],
                                                   "edge": "bottom"})

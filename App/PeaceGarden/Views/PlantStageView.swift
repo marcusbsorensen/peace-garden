@@ -119,7 +119,7 @@ struct PlantStageView: View {
                 share(identity: identity, growth: growth)
                     .opacity(shareIsUp ? 1 : 0)
                     .allowsHitTesting(shareIsUp)
-                    .accessibilityHidden(!shareIsUp)
+                    .accessibilityHidden(!shareIsUp || showingSettings)
                     .animation(Chrome.fadeIn, value: shareIsUp)
 
                 // The second thing the app explains, and it explains it

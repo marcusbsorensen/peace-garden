@@ -722,6 +722,8 @@ struct SettingsView: View {
         // VoiceOver may spell out. A string, because a `Text` label takes the
         // capitals set inside the button.
         .accessibilityLabel(String(localized: "About"))
+        // Found by the screen sweep (`tools/masstest/app`), never read aloud.
+        .accessibilityIdentifier("settings.about")
     }
 
     // MARK: - Starting again
