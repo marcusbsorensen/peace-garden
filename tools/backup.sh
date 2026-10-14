@@ -77,7 +77,7 @@ usage() {
 
 take() {
     echo "Taking a copy on $HOST"
-    ssh -o ConnectTimeout=20 "$HOST" "php ~/public_html/.api/backup.php"
+    ssh -o ConnectTimeout=20 "$HOST" "php83 ~/public_html/.api/backup.php"
 }
 
 pull() {
@@ -135,13 +135,13 @@ install_cron() {
     # 03:17, because every service on a shared box runs on the hour and the
     # database is quietest between them.
     install_line 'backup.php' \
-        '17 3 * * * /usr/bin/php $HOME/public_html/.api/backup.php >> $HOME/backups/backup.log 2>&1'
+        '17 3 * * * /usr/bin/php83 $HOME/public_html/.api/backup.php >> $HOME/backups/backup.log 2>&1'
     # And the clean-up every five minutes: ended rate-limit windows and
     # thirty-day offers, for the hours nobody asks the service anything. Five
     # because a window is fifty-five minutes and the privacy page says an hour.
     # See Server/.api/sweep.php.
     install_line 'sweep.php' \
-        '*/5 * * * * /usr/bin/php $HOME/public_html/.api/sweep.php >> $HOME/backups/sweep.log 2>&1'
+        '*/5 * * * * /usr/bin/php83 $HOME/public_html/.api/sweep.php >> $HOME/backups/sweep.log 2>&1'
 }
 
 # One line in the server's crontab, added once: a second run finds it there.
@@ -156,8 +156,13 @@ install_line() {
         # which installs an empty crontab and says it worked.
         # (No backticks in here. This whole script is inside double quotes on
         # the way to the far end, so a pair of them runs on the Mac instead.)
-        if crontab -l 2>/dev/null | grep -q '$name'; then
+        if crontab -l 2>/dev/null | grep -qF '$line'; then
             echo 'Already there:'
+        elif crontab -l 2>/dev/null | grep -q '$name'; then
+            # An older form of the line, such as /usr/bin/php (8.0 on 20i,
+            # while the site runs 8.3): swapped for this one in place.
+            { crontab -l | grep -v '$name'; echo '$line'; } | crontab -
+            echo 'Replaced:'
         else
             { crontab -l 2>/dev/null || true; echo '$line'; } | crontab -
             echo 'Installed:'

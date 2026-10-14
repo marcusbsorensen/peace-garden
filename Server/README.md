@@ -390,7 +390,7 @@ request after it (*The schema*, under the plot service). To run that migration
 where its output can be read instead, straight after the upload:
 
 ```sh
-ssh peacegarden 'php ~/public_html/.api/migrate.php'
+ssh peacegarden 'php83 ~/public_html/.api/migrate.php'
 ```
 
 It says the version before and after, which tables it converted to utf8mb4,
@@ -679,7 +679,7 @@ the service's own files unreachable, as it does `.pages/`.
   `information_schema` (finding 4: a database created latin1 refused a name
   with an emoji after the plant was standing). **A change to any store's
   migration raises `Schema::VERSION`** in the same commit, or a database
-  already at the old number never sees it. `php ~/public_html/.api/migrate.php`
+  already at the old number never sees it. `php83 ~/public_html/.api/migrate.php`
   runs the whole migration by hand, whatever the version, and says what it
   did.
 
@@ -734,10 +734,10 @@ ssh, with `.api/curate.php` (since 2 October 2026):
 
 ```
 ssh peacegarden
-php ~/public_html/.api/curate.php show 3fa9c1          # every plant beginning 3fa9c1; changes nothing
-php ~/public_html/.api/curate.php hide 3fa9c1          # takes it down, and prints what it took down
-php ~/public_html/.api/curate.php unhide 3fa9c1        # stands it again, exactly as it was
-php ~/public_html/.api/curate.php list                 # every plant taken down
+php83 ~/public_html/.api/curate.php show 3fa9c1          # every plant beginning 3fa9c1; changes nothing
+php83 ~/public_html/.api/curate.php hide 3fa9c1          # takes it down, and prints what it took down
+php83 ~/public_html/.api/curate.php unhide 3fa9c1        # stands it again, exactly as it was
+php83 ~/public_html/.api/curate.php list                 # every plant taken down
 ```
 
 A seed is read off the page; `hide` and `unhide` take the whole of it or any
@@ -770,8 +770,14 @@ because the thing that made it was two people meeting once.
 
 `.api/backup.php` takes the copy, from cron at 03:17 server time:
 
+**`php83`, never plain `php`, for anything run over ssh or from cron.** On 20i
+the site is served by PHP 8.3, but the command line's `php` is 8.0, and the
+service's code needs 8.1 or later: on 14 October `migrate.php` stopped under
+plain `php` with *Cannot unpack array with string keys*. `tools/backup.sh
+--install-cron` swaps an older line for the one below in place.
+
 ```
-17 3 * * * /usr/bin/php $HOME/public_html/.api/backup.php >> $HOME/backups/backup.log 2>&1
+17 3 * * * /usr/bin/php83 $HOME/public_html/.api/backup.php >> $HOME/backups/backup.log 2>&1
 ```
 
 It copies every area's table and its lock, `wild_fields`, `wild_names`, `wild_wear`, `wild_wear_day`, `walk_offers` and `offer_key`
@@ -791,7 +797,7 @@ request would (*The schema*, above). **Every MariaDB copy starts by dropping
 `schema_version`** (since 14 October 2026), so a restore is migrated again on
 the request after it. For `wild_names`,
 after the upload all the same: open `/wild` once, and check that
-`php ~/public_html/.api/backup.php --tables` lists `wild_names`.
+`php83 ~/public_html/.api/backup.php --tables` lists `wild_names`.
 
 `.api/sweep.php` is the clean-up, every five minutes. The line, as it goes in
 the server's crontab — in the 20i control panel, under *Scheduled Tasks* (cron
@@ -799,7 +805,7 @@ jobs), the schedule is every five minutes and the command is everything after
 the five time fields:
 
 ```
-*/5 * * * * /usr/bin/php $HOME/public_html/.api/sweep.php >> $HOME/backups/sweep.log 2>&1
+*/5 * * * * /usr/bin/php83 $HOME/public_html/.api/sweep.php >> $HOME/backups/sweep.log 2>&1
 ```
 
 `tools/backup.sh --install-cron` adds it over SSH beside the backup line, and
@@ -869,7 +875,7 @@ gunzip -c ~/Library/Application\ Support/Peace\ Garden\ backups/walk-….sql.gz 
 Then, for a copy taken before 14 October 2026:
 
 ```
-ssh peacegarden 'php ~/public_html/.api/migrate.php'
+ssh peacegarden 'php83 ~/public_html/.api/migrate.php'
 ```
 
 A copy taken since starts by dropping `schema_version`, so the first request

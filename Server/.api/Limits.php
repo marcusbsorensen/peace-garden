@@ -335,7 +335,7 @@ final class Limits
      */
     public function sweep(int $now): int
     {
-        $ended = $now - max(array_column([...self::ROUTES, ...self::CEILINGS], 1));
+        $ended = $now - max(max(array_column(self::ROUTES, 1)), max(array_column(self::CEILINGS, 1)));
         if (Schema::isMysql($this->db)) {
             $this->db->prepare('SET TRANSACTION ISOLATION LEVEL READ COMMITTED')->execute();
         }

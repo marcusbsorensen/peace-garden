@@ -5,10 +5,10 @@ declare(strict_types=1);
  * The curator's tool: taking a released plant down from the Wild Fields, by
  * hand, and standing it again.
  *
- *   php ~/public_html/.api/curate.php hide <seed, or a prefix only it has>
- *   php ~/public_html/.api/curate.php unhide <seed, or a prefix only it has>
- *   php ~/public_html/.api/curate.php show <seed, or any prefix>
- *   php ~/public_html/.api/curate.php list          the plants taken down
+ *   php83 ~/public_html/.api/curate.php hide <seed, or a prefix only it has>
+ *   php83 ~/public_html/.api/curate.php unhide <seed, or a prefix only it has>
+ *   php83 ~/public_html/.api/curate.php show <seed, or any prefix>
+ *   php83 ~/public_html/.api/curate.php list          the plants taken down
  *
  * **Why it exists.** Anybody can release a plant: a token carries consent, not
  * authenticity, and the rate limit is all that stands in front of the field
