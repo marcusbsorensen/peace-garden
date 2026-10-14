@@ -1,0 +1,799 @@
+{
+ "dark/plant/before": {
+  "elements": [
+   "the long field",
+   "6 June 2026 at 20:23"
+  ],
+  "peak": [
+   6.79,
+   6.79
+  ],
+  "strokes": [
+   6.59,
+   6.61
+  ],
+  "lowestPeak": 6.79,
+  "lowestStrokes": 6.59,
+  "auditContrast": []
+ },
+ "dark/plant/after": {
+  "elements": [
+   "the long field",
+   "6 June 2026 at 20:23"
+  ],
+  "peak": [
+   10.99,
+   10.99
+  ],
+  "strokes": [
+   10.73,
+   10.74
+  ],
+  "lowestPeak": 10.99,
+  "lowestStrokes": 10.73,
+  "auditContrast": []
+ },
+ "dark/stage/before": {
+  "elements": [
+   "Mature"
+  ],
+  "peak": [
+   6.81
+  ],
+  "strokes": [
+   6.62
+  ],
+  "lowestPeak": 6.81,
+  "lowestStrokes": 6.62,
+  "auditContrast": [
+   "Mature: Contrast failed"
+  ]
+ },
+ "dark/stage/after": {
+  "elements": [
+   "Mature"
+  ],
+  "peak": [
+   10.53
+  ],
+  "strokes": [
+   10.29
+  ],
+  "lowestPeak": 10.53,
+  "lowestStrokes": 10.29,
+  "auditContrast": [
+   "Mature: Contrast failed"
+  ]
+ },
+ "dark/seed/before": {
+  "elements": [
+   "Plume",
+   "Seed",
+   "Created",
+   "Petals",
+   "Leaves",
+   "Opens",
+   "First bloom"
+  ],
+  "peak": [
+   6.66,
+   6.84,
+   6.75,
+   6.66,
+   6.75,
+   6.75,
+   6.75
+  ],
+  "strokes": [
+   6.52,
+   6.59,
+   6.54,
+   6.53,
+   6.54,
+   6.56,
+   6.54
+  ],
+  "lowestPeak": 6.66,
+  "lowestStrokes": 6.52,
+  "auditContrast": [
+   "Created: Contrast nearly passed",
+   "Petals: Contrast failed"
+  ]
+ },
+ "dark/seed/after": {
+  "elements": [
+   "Plume",
+   "Seed",
+   "Created",
+   "Petals",
+   "Leaves",
+   "Opens",
+   "First bloom"
+  ],
+  "peak": [
+   10.82,
+   10.82,
+   10.94,
+   10.94,
+   10.82,
+   10.94,
+   10.94
+  ],
+  "strokes": [
+   10.63,
+   10.7,
+   10.65,
+   10.65,
+   10.64,
+   10.69,
+   10.61
+  ],
+  "lowestPeak": 10.82,
+  "lowestStrokes": 10.61,
+  "auditContrast": [
+   "Petals: Contrast failed"
+  ]
+ },
+ "dark/garden/before": {
+  "elements": [
+   "14 grown from meetings"
+  ],
+  "peak": [
+   10.09
+  ],
+  "strokes": [
+   9.84
+  ],
+  "lowestPeak": 10.09,
+  "lowestStrokes": 9.84,
+  "auditContrast": []
+ },
+ "dark/garden/after": {
+  "elements": [
+   "14 grown from meetings"
+  ],
+  "peak": [
+   10.09
+  ],
+  "strokes": [
+   9.84
+  ],
+  "lowestPeak": 10.09,
+  "lowestStrokes": 9.84,
+  "auditContrast": []
+ },
+ "light/plant/before": {
+  "elements": [
+   "the long field",
+   "6 June 2026 at 20:23"
+  ],
+  "peak": [
+   5.04,
+   5.04
+  ],
+  "strokes": [
+   4.88,
+   4.87
+  ],
+  "lowestPeak": 5.04,
+  "lowestStrokes": 4.87,
+  "auditContrast": []
+ },
+ "light/plant/after": {
+  "elements": [
+   "the long field",
+   "6 June 2026 at 20:23"
+  ],
+  "peak": [
+   7.17,
+   7.17
+  ],
+  "strokes": [
+   6.92,
+   6.93
+  ],
+  "lowestPeak": 7.17,
+  "lowestStrokes": 6.92,
+  "auditContrast": []
+ },
+ "light/stage/before": {
+  "elements": [
+   "Mature"
+  ],
+  "peak": [
+   4.84
+  ],
+  "strokes": [
+   4.67
+  ],
+  "lowestPeak": 4.84,
+  "lowestStrokes": 4.67,
+  "auditContrast": [
+   "Mature: Contrast failed"
+  ]
+ },
+ "light/stage/after": {
+  "elements": [
+   "Mature"
+  ],
+  "peak": [
+   6.7
+  ],
+  "strokes": [
+   6.49
+  ],
+  "lowestPeak": 6.7,
+  "lowestStrokes": 6.49,
+  "auditContrast": [
+   "Mature: Contrast failed"
+  ]
+ },
+ "light/seed/before": {
+  "elements": [
+   "Plume",
+   "Seed",
+   "Created",
+   "Petals",
+   "Leaves",
+   "Opens",
+   "First bloom"
+  ],
+  "peak": [
+   4.93,
+   5.0,
+   5.0,
+   5.0,
+   5.0,
+   5.0,
+   5.0
+  ],
+  "strokes": [
+   4.81,
+   4.88,
+   4.82,
+   4.83,
+   4.84,
+   4.84,
+   4.82
+  ],
+  "lowestPeak": 4.93,
+  "lowestStrokes": 4.81,
+  "auditContrast": [
+   "Created: Contrast failed",
+   "Petals: Contrast failed"
+  ]
+ },
+ "light/seed/after": {
+  "elements": [
+   "Plume",
+   "Seed",
+   "Created",
+   "Petals",
+   "Leaves",
+   "Opens",
+   "First bloom"
+  ],
+  "peak": [
+   7.01,
+   7.12,
+   7.12,
+   7.12,
+   7.12,
+   7.12,
+   7.01
+  ],
+  "strokes": [
+   6.83,
+   6.9,
+   6.87,
+   6.83,
+   6.89,
+   6.89,
+   6.83
+  ],
+  "lowestPeak": 7.01,
+  "lowestStrokes": 6.83,
+  "auditContrast": [
+   "Created: Contrast nearly passed",
+   "Petals: Contrast failed"
+  ]
+ },
+ "light/garden/before": {
+  "elements": [
+   "14 grown from meetings"
+  ],
+  "peak": [
+   3.62
+  ],
+  "strokes": [
+   3.54
+  ],
+  "lowestPeak": 3.62,
+  "lowestStrokes": 3.54,
+  "auditContrast": [
+   "14 grown from meetings: Contrast nearly passed"
+  ]
+ },
+ "light/garden/after": {
+  "elements": [
+   "14 grown from meetings"
+  ],
+  "peak": [
+   4.95
+  ],
+  "strokes": [
+   4.92
+  ],
+  "lowestPeak": 4.95,
+  "lowestStrokes": 4.92,
+  "auditContrast": []
+ },
+ "count/oct-0615": {
+  "title": "15 Oct, 06:15",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 6.44,
+  "strokes": 6.41,
+  "sky": [
+   112,
+   87,
+   97
+  ],
+  "whiteOverSky": 6.51,
+  "mutedOverSky": 4.29
+ },
+ "count/oct-0700": {
+  "title": "15 Oct, 07:00",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 3.95,
+  "strokes": 3.93,
+  "sky": [
+   140,
+   123,
+   130
+  ],
+  "whiteOverSky": 3.98,
+  "mutedOverSky": 2.88
+ },
+ "count/oct-0730": {
+  "title": "15 Oct, 07:30",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 3.8,
+  "strokes": 3.78,
+  "sky": [
+   134,
+   128,
+   144
+  ],
+  "whiteOverSky": 3.82,
+  "mutedOverSky": 2.79
+ },
+ "count/oct-0800": {
+  "title": "15 Oct, 08:00",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 4.62,
+  "strokes": 4.62,
+  "sky": [
+   111,
+   115,
+   142
+  ],
+  "whiteOverSky": 4.65,
+  "mutedOverSky": 3.26
+ },
+ "count/oct-0900": {
+  "title": "15 Oct, 09:00",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 4.77,
+  "strokes": 4.76,
+  "sky": [
+   96,
+   114,
+   156
+  ],
+  "whiteOverSky": 4.79,
+  "mutedOverSky": 3.34
+ },
+ "count/after": {
+  "title": "14 Oct, 12:00 (Always day)",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 4.95,
+  "strokes": 4.92,
+  "sky": [
+   84,
+   112,
+   164
+  ],
+  "whiteOverSky": 4.96,
+  "mutedOverSky": 3.43
+ },
+ "count/oct-1500": {
+  "title": "15 Oct, 15:00",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 5.69,
+  "strokes": 5.66,
+  "sky": [
+   80,
+   102,
+   149
+  ],
+  "whiteOverSky": 5.71,
+  "mutedOverSky": 3.85
+ },
+ "count/oct-1700": {
+  "title": "15 Oct, 17:00",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 8.16,
+  "strokes": 8.12,
+  "sky": [
+   76,
+   77,
+   106
+  ],
+  "whiteOverSky": 8.15,
+  "mutedOverSky": 5.16
+ },
+ "count/oct-1745": {
+  "title": "15 Oct, 17:45",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 9.84,
+  "strokes": 9.83,
+  "sky": [
+   72,
+   62,
+   85
+  ],
+  "whiteOverSky": 10.02,
+  "mutedOverSky": 6.12
+ },
+ "count/oct-1700-t2": {
+  "title": "15 Oct, 17:00, turned twice",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 6.46,
+  "strokes": 6.44,
+  "sky": [
+   96,
+   91,
+   112
+  ],
+  "whiteOverSky": 6.51,
+  "mutedOverSky": 4.3
+ },
+ "count/oct-1745-t2": {
+  "title": "15 Oct, 17:45, turned twice",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 6.84,
+  "strokes": 6.81,
+  "sky": [
+   106,
+   83,
+   95
+  ],
+  "whiteOverSky": 6.96,
+  "mutedOverSky": 4.54
+ },
+ "count/dec-1200": {
+  "title": "15 Dec, 12:00",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 5.12,
+  "strokes": 5.11,
+  "sky": [
+   103,
+   108,
+   136
+  ],
+  "whiteOverSky": 5.15,
+  "mutedOverSky": 3.55
+ },
+ "count/jun-0615": {
+  "title": "15 June, 06:15",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 5.74,
+  "strokes": 5.72,
+  "sky": [
+   113,
+   96,
+   109
+  ],
+  "whiteOverSky": 5.84,
+  "mutedOverSky": 3.93
+ },
+ "count/jun-0700": {
+  "title": "15 June, 07:00",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 3.75,
+  "strokes": 3.74,
+  "sky": [
+   128,
+   130,
+   153
+  ],
+  "whiteOverSky": 3.77,
+  "mutedOverSky": 2.76
+ },
+ "count/jun-0730": {
+  "title": "15 June, 07:30",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 4.04,
+  "strokes": 4.03,
+  "sky": [
+   109,
+   126,
+   164
+  ],
+  "whiteOverSky": 4.06,
+  "mutedOverSky": 2.92
+ },
+ "count/jun-0800": {
+  "title": "15 June, 08:00",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 4.12,
+  "strokes": 4.1,
+  "sky": [
+   99,
+   125,
+   174
+  ],
+  "whiteOverSky": 4.14,
+  "mutedOverSky": 2.96
+ },
+ "count/jun-0900": {
+  "title": "15 June, 09:00",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 4.14,
+  "strokes": 4.11,
+  "sky": [
+   93,
+   125,
+   179
+  ],
+  "whiteOverSky": 4.16,
+  "mutedOverSky": 2.97
+ },
+ "count/jun-1200": {
+  "title": "15 June, 12:00",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 4.01,
+  "strokes": 4.0,
+  "sky": [
+   93,
+   127,
+   184
+  ],
+  "whiteOverSky": 4.04,
+  "mutedOverSky": 2.9
+ },
+ "count/jun-1500": {
+  "title": "15 June, 15:00",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 4.66,
+  "strokes": 4.64,
+  "sky": [
+   81,
+   116,
+   175
+  ],
+  "whiteOverSky": 4.7,
+  "mutedOverSky": 3.28
+ },
+ "count/jun-1700": {
+  "title": "15 June, 17:00",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 6.14,
+  "strokes": 6.12,
+  "sky": [
+   83,
+   96,
+   135
+  ],
+  "whiteOverSky": 6.19,
+  "mutedOverSky": 4.12
+ },
+ "count/jun-1200-t1": {
+  "title": "15 June, 12:00, turned once",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 4.19,
+  "strokes": 4.17,
+  "sky": [
+   88,
+   124,
+   182
+  ],
+  "whiteOverSky": 4.22,
+  "mutedOverSky": 3.0
+ },
+ "count/jun-1200-t2": {
+  "title": "15 June, 12:00, turned twice",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 4.5,
+  "strokes": 4.48,
+  "sky": [
+   81,
+   119,
+   180
+  ],
+  "whiteOverSky": 4.52,
+  "mutedOverSky": 3.17
+ },
+ "count/jun-1200-t3": {
+  "title": "15 June, 12:00, turned 3 times",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 4.19,
+  "strokes": 4.17,
+  "sky": [
+   88,
+   124,
+   182
+  ],
+  "whiteOverSky": 4.22,
+  "mutedOverSky": 3.0
+ },
+ "count/jun-1200-ax": {
+  "title": "15 June, 12:00, AX3",
+  "frame": [
+   26,
+   153.33333333333331,
+   299,
+   22.333333333333343
+  ],
+  "peak": 4.05,
+  "strokes": 4.03,
+  "sky": [
+   92,
+   127,
+   184
+  ],
+  "whiteOverSky": 4.05,
+  "mutedOverSky": 2.91
+ },
+ "count/before-night": {
+  "title": "Midnight (Always night), before",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 10.09,
+  "strokes": 9.84,
+  "sky": [
+   20,
+   23,
+   35
+  ],
+  "whiteOverSky": 17.85,
+  "mutedOverSky": 9.61
+ },
+ "count/after-night": {
+  "title": "Midnight (Always night), after",
+  "frame": [
+   26,
+   141.66666666666666,
+   205.66666666666666,
+   13.333333333333343
+  ],
+  "peak": 10.09,
+  "strokes": 9.84,
+  "sky": [
+   20,
+   23,
+   35
+  ],
+  "whiteOverSky": 17.85,
+  "mutedOverSky": 9.61
+ }
+}

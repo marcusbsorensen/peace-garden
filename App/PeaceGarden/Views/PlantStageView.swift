@@ -253,7 +253,8 @@ struct PlantStageView: View {
                         if showsStage {
                             // `muted`, not `faint` (Marcus, 14 October: 29B):
                             // small capitals this thin never reach `faint`'s
-                            // grey, which measured 4.7 : 1 here in the light.
+                            // grey, which measured 4.7 : 1 here in the light;
+                            // `muted` measures 6.5.
                             Text(verbatim: growth.caption())
                                 .chromeLabel(size: 10)
                                 .foregroundStyle(Chrome.muted)

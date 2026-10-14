@@ -42,8 +42,9 @@ enum Chrome {
     // **A plant's place and date, the stage caption and the seed screen's
     // labels are `muted` since 14 October** (Marcus, 29B). Small capitals at
     // ten and eleven points never reach the grey they are drawn in, so off
-    // the screen `faint` measured under its arithmetic on them, 4.7 to 4.9 : 1
-    // in the light; `muted` measures about 6.9. `faint` stays everywhere else.
+    // the screen `faint` measured only 4.7 to 4.9 : 1 on them in the light,
+    // at the edge of the 4.5 small text needs; `muted` measures 6.5 to 6.9
+    // (`design/small-caps-2026-10-14/`). `faint` stays everywhere else.
     static let ink = adaptive(dark: .white, light: UIColor(white: 0.07, alpha: 1))
     static let muted = adaptive(dark: UIColor(white: 1, alpha: 0.72),
                                 light: UIColor(white: 0.07, alpha: 0.70))

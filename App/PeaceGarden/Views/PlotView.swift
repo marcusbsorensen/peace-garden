@@ -1249,6 +1249,10 @@ struct PlotView: View {
                 // blue takes `muted` to 3.5 : 1 as well, so while the sun is
                 // up the line is the heading's own ink, which in the garden's
                 // Dark is white. By night `muted` reads at 10 : 1 and stays.
+                // White is 4.9 : 1 at an October noon, but under 4.5 for the
+                // first hours of a morning, when the sun stands beside the
+                // heading, and through a June midday: 3.7 at its lowest
+                // (`design/small-caps-2026-10-14/`).
                 .foregroundStyle(byDay ? Chrome.ink : Chrome.muted)
         }
         .padding(.top, 44)
