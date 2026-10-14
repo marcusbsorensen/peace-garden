@@ -162,7 +162,7 @@ struct ExchangeView: View {
             // away, and this is the one control on either screen where a wrong
             // guess about what it does cannot be undone.
             Text("A meeting can log the coordinates of the spot it happened in. They stay on this phone, and a meeting logs them only when both of you have asked.")
-                .font(.system(size: 14, weight: .light))
+                .scaledFont(size: 14, weight: .light)
                 .foregroundStyle(Chrome.muted)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
@@ -185,6 +185,7 @@ struct ExchangeView: View {
         .padding(.horizontal, 40)
         .frame(maxWidth: Chrome.readableWidth)
         .frame(maxWidth: .infinity)
+        .scrollsWhenTooTall()
     }
 
     @ViewBuilder
@@ -212,7 +213,7 @@ struct ExchangeView: View {
                 .foregroundStyle(Chrome.ink)
 
             Text("Your name sits beside your plant on the other person's phone, and in the note they keep of the meeting.")
-                .font(.system(size: 14, weight: .light))
+                .scaledFont(size: 14, weight: .light)
                 .foregroundStyle(Chrome.muted)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
@@ -223,7 +224,7 @@ struct ExchangeView: View {
                 prompt: Text("Gardener").foregroundStyle(Chrome.faint)
             )
                 .labelsHidden()
-                .font(.system(size: 24, weight: .light))
+                .scaledFont(size: 24, weight: .light)
                 .foregroundStyle(Chrome.ink)
                 .multilineTextAlignment(.center)
                 .textInputAutocapitalization(.words)
@@ -248,6 +249,7 @@ struct ExchangeView: View {
         .padding(.horizontal, 46)
         .frame(maxWidth: Chrome.readableWidth)
         .frame(maxWidth: .infinity)
+        .scrollsWhenTooTall()
     }
 
     private var trimmedName: String {
@@ -334,11 +336,11 @@ struct ExchangeView: View {
             Spacer()
             BreathingDot(diameter: 9)
             title
-                .font(.system(size: 20, weight: .light, design: .serif))
+                .scaledFont(size: 20, weight: .light, design: .serif)
                 .foregroundStyle(Chrome.ink)
                 .multilineTextAlignment(.center)
             detail
-                .font(.system(size: 14, weight: .light))
+                .scaledFont(size: 14, weight: .light)
                 .foregroundStyle(Chrome.muted)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
@@ -347,6 +349,7 @@ struct ExchangeView: View {
         .padding(.horizontal, 46)
         .frame(maxWidth: Chrome.readableWidth)
         .frame(maxWidth: .infinity)
+        .scrollsWhenTooTall()
     }
 
     private func grown(_ outcome: ExchangeOutcome) -> some View {
@@ -359,13 +362,13 @@ struct ExchangeView: View {
         VStack(spacing: 20) {
             Spacer()
             Text("Nothing took")
-                .font(.system(size: 20, weight: .light, design: .serif))
+                .scaledFont(size: 20, weight: .light, design: .serif)
                 .foregroundStyle(Chrome.ink)
             // Already in this phone's language: `PollenExchangeService` looks
             // its failures up as it makes them, because half of them carry a
             // system error whose own text is localised too.
             Text(verbatim: message)
-                .font(.system(size: 14, weight: .light))
+                .scaledFont(size: 14, weight: .light)
                 .foregroundStyle(Chrome.muted)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
@@ -378,6 +381,7 @@ struct ExchangeView: View {
         .padding(.horizontal, 46)
         .frame(maxWidth: Chrome.readableWidth)
         .frame(maxWidth: .infinity)
+        .scrollsWhenTooTall()
     }
 
 }

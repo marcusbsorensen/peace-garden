@@ -3544,6 +3544,53 @@
         }
       }
     },
+    "Fireflies" : {
+      "comment" : "Spoken by VoiceOver, never drawn: one of the lights that can be put out in the garden. A drift of fireflies.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ildfluer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Luciérnagas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lucioles"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lucciole"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ildfluer"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vuurvliegjes"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Eldflugor"
+          }
+        }
+      }
+    },
     "First bloom" : {
       "comment" : "Row label on the seed screen, beside how old the plant will be when it first flowers.",
       "localizations" : {
@@ -3679,6 +3726,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Följer klockan"
+          }
+        }
+      }
+    },
+    "Fox" : {
+      "comment" : "Spoken by VoiceOver, never drawn: one of the figures that can be put out in the garden. A fox curled asleep, in glow-in-the-dark paint.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ræv"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Zorro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Renard"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Volpe"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Rev"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vos"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Räv"
           }
         }
       }
@@ -4063,6 +4157,53 @@
         }
       }
     },
+    "Ground %lld" : {
+      "comment" : "Spoken by VoiceOver, never drawn: one of the grounds the garden can stand on, in the garden's tray. They have no names; the number is its place in the row, counted from 1.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terræn %lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Terreno %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Terrain %lld"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Terreno %lld"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Terreng %lld"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Terrein %lld"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Terräng %lld"
+          }
+        }
+      }
+    },
     "Growing" : {
       "comment" : "What a plant is doing, in the caption under it. Past being a seedling, not yet in bud.",
       "localizations" : {
@@ -4106,6 +4247,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Växer"
+          }
+        }
+      }
+    },
+    "Hare" : {
+      "comment" : "Spoken by VoiceOver, never drawn: one of the figures that can be put out in the garden. A hare sitting up, in glow-in-the-dark paint.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hare"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Liebre"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lièvre"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lepre"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hare"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Haas"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hare"
           }
         }
       }
@@ -5940,6 +6128,53 @@
         }
       }
     },
+    "Lantern" : {
+      "comment" : "Spoken by VoiceOver, never drawn: one of the lights that can be put out in the garden. A small iron lantern on a short post.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lanterne"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Farol"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lanterne"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lanterna"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lykt"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lantaarn"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lykta"
+          }
+        }
+      }
+    },
     "Leave it" : {
       "comment" : "Button that cancels: leave things as they are. Used to dismiss an alert, and beside 'Keep it' on the edit screen.",
       "localizations" : {
@@ -7012,6 +7247,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mötte %@"
+          }
+        }
+      }
+    },
+    "Moth" : {
+      "comment" : "Spoken by VoiceOver, never drawn: one of the figures that can be put out in the garden. A moth at rest on a stake, wings open, in glow-in-the-dark paint.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Natsværmer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Polilla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Papillon de nuit"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Falena"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nattsvermer"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nachtvlinder"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nattfjäril"
           }
         }
       }
@@ -8204,6 +8486,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Orkidé"
+          }
+        }
+      }
+    },
+    "Paper lamp" : {
+      "comment" : "Spoken by VoiceOver, never drawn: one of the lights that can be put out in the garden. A paper lamp hung from a bamboo cane, glowing through its paper.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Papirlampe"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Farolillo de papel"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lampion"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lanterna di carta"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Papirlykt"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Papieren lampion"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Papperslykta"
           }
         }
       }
@@ -10127,6 +10456,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Visas när ett frö utbyts med ett annat, som platsen där fröet planteras."
+          }
+        }
+      }
+    },
+    "Snail" : {
+      "comment" : "Spoken by VoiceOver, never drawn: one of the figures that can be put out in the garden. A snail, in glow-in-the-dark paint.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Snegl"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Caracol"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Escargot"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lumaca"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Snegle"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Slak"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Snigel"
           }
         }
       }

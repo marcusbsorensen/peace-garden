@@ -38,7 +38,7 @@ struct SeedOfferView: View {
                     // if at all — and this one is the whole of what to do next.
                     // Said before the code, it is a sentence somebody acts on.
                     Text("If they scan this QR code, a plant will grow on both of your phones. It is a mix of the unique seeds on them.")
-                        .font(.system(size: 15, weight: .light))
+                        .scaledFont(size: 15, weight: .light)
                         .foregroundStyle(Chrome.ink.opacity(0.88))
                         .multilineTextAlignment(.center)
                         .lineSpacing(5)
@@ -58,7 +58,7 @@ struct SeedOfferView: View {
                     // foot it was a colophon nobody read, in a grey nobody
                     // could read it in.
                     Text("This seed code is unique to this exchange. A unique plant will grow from every time seeds are exchanged, even with the same person.")
-                        .font(.system(size: 13, weight: .light))
+                        .scaledFont(size: 13, weight: .light)
                         .foregroundStyle(Chrome.muted)
                         .multilineTextAlignment(.center)
                         .lineSpacing(4)
@@ -72,13 +72,14 @@ struct SeedOfferView: View {
                         .padding(.bottom, 30)
                 } else {
                     Text("This seed could not be prepared.")
-                        .font(.system(size: 14, weight: .light))
+                        .scaledFont(size: 14, weight: .light)
                         .foregroundStyle(Chrome.muted)
                     Spacer()
                 }
             }
             .frame(maxWidth: Chrome.readableWidth)
             .frame(maxWidth: .infinity)
+            .scrollsWhenTooTall()
         }
         .overlay(alignment: .topTrailing) {
             CloseButton { dismiss() }

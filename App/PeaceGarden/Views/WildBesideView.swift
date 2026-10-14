@@ -149,7 +149,7 @@ struct WildBesideView: View {
                     VStack(spacing: 12) {
                         WildChoiceChips(choice: $choice, hasName: !name.isEmpty, hasPlace: plant.place != nil)
                         Text("Your name is yours to show. Where and when you met are shown only once you both choose them.")
-                            .font(.system(size: 12, weight: .light))
+                            .scaledFont(size: 12, weight: .light)
                             .foregroundStyle(Chrome.faint)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 40)
@@ -211,7 +211,7 @@ struct WildBesideView: View {
         let words = previewWords
         if !words.isEmpty {
             Text("Beside it: \(words.joined(separator: " · "))")
-                .font(.system(size: 13, weight: .light, design: .serif))
+                .scaledFont(size: 13, weight: .light, design: .serif)
                 .italic()
                 .foregroundStyle(Chrome.muted)
                 .multilineTextAlignment(.center)
@@ -222,7 +222,7 @@ struct WildBesideView: View {
             // words, so neither's is shown: a place one of them never wrote
             // is not one either agreed to.
             Text("Your phones remember the place in different words, so it is not shown.")
-                .font(.system(size: 12, weight: .light))
+                .scaledFont(size: 12, weight: .light)
                 .foregroundStyle(Chrome.faint)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
@@ -240,7 +240,7 @@ struct WildBesideView: View {
 
     private func headline(_ key: LocalizedStringKey) -> some View {
         Text(key)
-            .font(.system(size: 19, weight: .light, design: .serif))
+            .scaledFont(size: 19, weight: .light, design: .serif)
             .foregroundStyle(Chrome.ink)
             .multilineTextAlignment(.center)
             .lineSpacing(4)
@@ -250,7 +250,7 @@ struct WildBesideView: View {
 
     private func fact(_ key: LocalizedStringKey) -> some View {
         Text(key)
-            .font(.system(size: 14, weight: .light))
+            .scaledFont(size: 14, weight: .light)
             .foregroundStyle(Chrome.muted)
             .multilineTextAlignment(.center)
             .lineSpacing(3)

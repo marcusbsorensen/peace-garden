@@ -107,6 +107,10 @@ struct SettingsView: View {
                 Text("Settings")
                     .chromeHeading()
                     .foregroundStyle(Chrome.ink)
+                    // One word, so it shrinks rather than breaks: at the
+                    // largest sizes INDSTILLINGER was cut letter by letter.
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
             }
             .contentShape(Rectangle())
             // Held two seconds, opens Testing at the foot, where the
@@ -121,6 +125,9 @@ struct SettingsView: View {
         .padding(.trailing, 14)
         .padding(.top, 10)
         .padding(.bottom, 12)
+        // The heading band is pinned over the scroll, so every point it grows
+        // is a point less of Settings: it grows as far as AX1 (14 October).
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         .frame(maxWidth: Chrome.readableWidth + 16)
         .frame(maxWidth: .infinity)
         .background(Chrome.ground)
@@ -281,7 +288,7 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 8) {
             Toggle(isOn: isOn) {
                 Text(title)
-                    .font(.system(size: 15, weight: .light))
+                    .scaledFont(size: 15, weight: .light)
                     .foregroundStyle(Chrome.ink)
             }
             // Sage when on (Marcus, 13 October 2026), where it was `muted`:
@@ -290,7 +297,7 @@ struct SettingsView: View {
 
             if let note {
                 Text(note)
-                    .font(.system(size: 13, weight: .light))
+                    .scaledFont(size: 13, weight: .light)
                     .foregroundStyle(Chrome.muted)
                     .lineSpacing(4)
             }
@@ -324,10 +331,10 @@ struct SettingsView: View {
             } label: {
                 HStack(spacing: 10) {
                     current
-                        .font(.system(size: 15, weight: .light))
+                        .scaledFont(size: 15, weight: .light)
                         .foregroundStyle(Chrome.ink)
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 11, weight: .light))
+                        .scaledFont(size: 11, weight: .light)
                         .foregroundStyle(Chrome.faint)
                 }
                 .pressable()
@@ -335,7 +342,7 @@ struct SettingsView: View {
 
             if let note {
                 Text(note)
-                    .font(.system(size: 13, weight: .light))
+                    .scaledFont(size: 13, weight: .light)
                     .foregroundStyle(Chrome.muted)
                     .lineSpacing(4)
             }
@@ -405,7 +412,7 @@ struct SettingsView: View {
             if plantStyle.isTinted {
                 ColorPicker(selection: tintBinding, supportsOpacity: false) {
                     Text("Its colour")
-                        .font(.system(size: 15, weight: .light))
+                        .scaledFont(size: 15, weight: .light)
                         .foregroundStyle(Chrome.ink)
                 }
             }
@@ -429,7 +436,7 @@ struct SettingsView: View {
                 LightToggle(selection: daylight) { daylightRaw = $0.rawValue }
 
                 Text("In the middle, the sun and moon go round on the real clock, so a garden visited at night is a night garden. Either side holds it at day or night whatever the hour.")
-                    .font(.system(size: 13, weight: .light))
+                    .scaledFont(size: 13, weight: .light)
                     .foregroundStyle(Chrome.muted)
                     .lineSpacing(4)
             }
@@ -522,7 +529,7 @@ struct SettingsView: View {
                     // it never has. The line under the menu says what happens;
                     // when a seed does carry it, that is the line to change.
                     TextField("Where you were", text: $customPlace)
-                        .font(.system(size: 17, weight: .light, design: .serif))
+                        .scaledFont(size: 17, weight: .light, design: .serif)
                         .foregroundStyle(Chrome.ink)
                         .multilineTextAlignment(.center)
                         .autocorrectionDisabled()
@@ -594,7 +601,7 @@ struct SettingsView: View {
         if !released.isEmpty {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Let go into the Wild Fields")
-                    .font(.system(size: 15, weight: .light))
+                    .scaledFont(size: 15, weight: .light)
                     .foregroundStyle(Chrome.ink)
                 ForEach(released) { plant in
                     Button { besideWild = plant } label: {
@@ -607,7 +614,7 @@ struct SettingsView: View {
                     .buttonStyle(.plain)
                 }
                 Text("What stands beside each is yours to change here.")
-                    .font(.system(size: 13, weight: .light))
+                    .scaledFont(size: 13, weight: .light)
                     .foregroundStyle(Chrome.muted)
                     .lineSpacing(4)
             }
@@ -633,7 +640,7 @@ struct SettingsView: View {
             // screen — but writing it into the field would let a stray commit
             // turn the fallback into an actual choice.
             TextField("Gardener", text: $draftName)
-                .font(.system(size: 17, weight: .light, design: .serif))
+                .scaledFont(size: 17, weight: .light, design: .serif)
                 .foregroundStyle(Chrome.ink)
                 // Centred on the rule rather than tucked against its leading
                 // end, where a short name looked like it had fallen off.
@@ -673,7 +680,7 @@ struct SettingsView: View {
             // wrong about. Naming the plants already in the garden keeps the
             // true half and leaves the web to the screen that owns it.
             Text("Plants you have already grown keep the name they were grown under.")
-                .font(.system(size: 13, weight: .light))
+                .scaledFont(size: 13, weight: .light)
                 .foregroundStyle(Chrome.muted)
                 .lineSpacing(4)
                 .padding(.top, 6)
@@ -715,6 +722,8 @@ struct SettingsView: View {
         // VoiceOver may spell out. A string, because a `Text` label takes the
         // capitals set inside the button.
         .accessibilityLabel(String(localized: "About"))
+        // Found by the screen sweep (`tools/masstest/app`), never read aloud.
+        .accessibilityIdentifier("settings.about")
     }
 
     // MARK: - Starting again

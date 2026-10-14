@@ -70,6 +70,8 @@ struct AboutView: View {
         HStack(alignment: .center) {
             Text("About")
                 .chromeHeading(size: Self.titleSize)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
                 // Read as the word is written, not in the heading's capitals,
                 // which VoiceOver may spell out (Danish *OM*). A string,
                 // because a `Text` label takes the capitals too.
@@ -84,6 +86,9 @@ struct AboutView: View {
         .padding(.trailing, 14)
         .padding(.top, 16)
         .padding(.bottom, 12)
+        // Pinned over the scroll, as Settings' header is, so it grows as far
+        // as AX1 and no further (14 October).
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         .frame(maxWidth: Chrome.readableWidth + 16)
         .frame(maxWidth: .infinity)
         .background(Chrome.ground)
@@ -124,7 +129,7 @@ struct AboutView: View {
 
     private func paragraph(_ key: LocalizedStringKey) -> some View {
         Text(key)
-            .font(.system(size: 13, weight: .light))
+            .scaledFont(size: 13, weight: .light)
             .foregroundStyle(Chrome.muted)
             .lineSpacing(4)
             .fixedSize(horizontal: false, vertical: true)

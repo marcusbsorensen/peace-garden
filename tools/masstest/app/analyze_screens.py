@@ -102,12 +102,19 @@ def analyse(device, data):
             def in_scroll(e):
                 return any(s["y"] - 1 <= e["y"] and e["y"] + e["h"] <= s["y"] + s["h"] + 1 for s in scrolls)
 
+            # Below the fold of a vertical scroll view is not off the screen:
+            # it scrolls into view (14 October; until then any word below a
+            # scroll view's foot was counted as past the bottom edge).
+            def below_fold(e):
+                return any(s["x"] - 1 <= e["x"] and e["x"] + e["w"] <= s["x"] + s["w"] + 1
+                           and e["y"] >= s["y"] - 1 for s in scrolls)
+
             for e in elements:
                 if (e["x"] < -0.5 or e["x"] + e["w"] > W + 0.5) and not in_scroll(e):
                     findings["offscreen"].append({"config": config, "screen": screen, "label": e["label"],
                                                   "frame": [round(e["x"]), round(e["y"]), round(e["w"]), round(e["h"])],
                                                   "edge": "left" if e["x"] < 0 else "right"})
-                elif e["y"] + e["h"] > H + 0.5 and screen not in ("settings", "settings-end") and not in_scroll(e):
+                elif e["y"] + e["h"] > H + 0.5 and screen not in ("settings", "settings-end", "about", "about-end") and not below_fold(e):
                     findings["offscreen"].append({"config": config, "screen": screen, "label": e["label"],
                                                   "frame": [round(e["x"]), round(e["y"]), round(e["w"]), round(e["h"])],
                                                   "edge": "bottom"})

@@ -22,7 +22,7 @@ optimise=()
 suffix=""
 if [[ -n "${MT_OPT:-}" ]]; then optimise=(SWIFT_OPTIMIZATION_LEVEL=-O); suffix=O; fi
 for scheme in MassTestUnit MassTestUI; do
-  xcodebuild build-for-testing \
+  ${=MT_LOCK:-} xcodebuild build-for-testing -jobs 4 \
     -project PeaceGardenMassTest.xcodeproj \
     -scheme "$scheme" \
     -destination 'generic/platform=iOS Simulator' \

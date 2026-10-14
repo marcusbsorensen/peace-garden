@@ -89,7 +89,7 @@ struct GardenGridView: View {
     private var empty: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Every plant here came from meeting someone. Open Meet with another person and touch the tops of your phones together.")
-                .font(.system(size: 14, weight: .light))
+                .scaledFont(size: 14, weight: .light)
                 .foregroundStyle(Chrome.muted)
                 .lineSpacing(5)
         }

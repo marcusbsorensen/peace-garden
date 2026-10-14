@@ -68,8 +68,16 @@ struct ContinuingRow<Content: View>: View {
     @State private var laid: CGRect = .zero
     @State private var width: CGFloat = 0
 
-    private var moreAfter: Bool { width > 0 && laid.maxX > width + 1 }
-    private var moreBefore: Bool { laid.minX < -1 }
+    /// **Which side of the glass the row runs on past, not which end of it.**
+    /// The frame above is measured left to right whatever the layout
+    /// direction, while the row itself starts at the right under right to
+    /// left. Read as *after* and *before*, the fade and the » landed on the
+    /// first figures, at the right, and the row ran off the left edge with no
+    /// fade at all (mass test, 13 October, finding 6). So the fades and the
+    /// marks are laid out by side, left to right, and each stands where the
+    /// row actually runs on.
+    private var moreRight: Bool { width > 0 && laid.maxX > width + 1 }
+    private var moreLeft: Bool { laid.minX < -1 }
 
     private static var fade: CGFloat { 30 }
 
@@ -94,16 +102,23 @@ struct ContinuingRow<Content: View>: View {
         .mask {
             HStack(spacing: 0) {
                 LinearGradient(colors: [.clear, .black], startPoint: .leading, endPoint: .trailing)
-                    .frame(width: moreBefore ? Self.fade : 0)
+                    .frame(width: moreLeft ? Self.fade : 0)
                 Color.black
                 LinearGradient(colors: [.black, .clear], startPoint: .leading, endPoint: .trailing)
-                    .frame(width: moreAfter ? Self.fade : 0)
+                    .frame(width: moreRight ? Self.fade : 0)
             }
+            .environment(\.layoutDirection, .leftToRight)
         }
-        .overlay(alignment: .trailing) { hint(towardsTrailing: true, shown: moreAfter) }
-        .overlay(alignment: .leading) { hint(towardsTrailing: false, shown: moreBefore) }
-        .animation(.easeOut(duration: 0.2), value: moreAfter)
-        .animation(.easeOut(duration: 0.2), value: moreBefore)
+        .overlay {
+            HStack(spacing: 0) {
+                hint(towardsTrailing: false, shown: moreLeft)
+                Spacer(minLength: 0)
+                hint(towardsTrailing: true, shown: moreRight)
+            }
+            .environment(\.layoutDirection, .leftToRight)
+        }
+        .animation(.easeOut(duration: 0.2), value: moreRight)
+        .animation(.easeOut(duration: 0.2), value: moreLeft)
         // Behind the fades, so the row fades into the panel and not the sky.
         .background(Chrome.ground.opacity(Self.shade), in: Self.panel)
         .background(.ultraThinMaterial, in: Self.panel)
