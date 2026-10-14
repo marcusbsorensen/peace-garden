@@ -76,9 +76,11 @@
         site/README.md, finding 6). A version belongs here once the App Store
         has one to name. The iOS it needs is `deploymentTarget` in
         project.yml, and `tools/deploy.sh --check` reads this line against it,
-        so the two cannot drift apart unnoticed.
+        so the two cannot drift apart unnoticed. Marked as English, as `/g`'s
+        notice is, so a right-to-left page does not reorder it at its
+        punctuation; it goes into the catalogue if it stays.
       -->
-      <p class="notice body">iPhone and iPad · iOS 17 and later</p>
+      <p class="notice body" lang="en" dir="ltr">iPhone and iPad · iOS 17 and later</p>
 
       <!--
         The foot: one hairline and the privacy notice. The language it used to
