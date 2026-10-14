@@ -134,7 +134,6 @@ struct PlantStageView: View {
                     .environment(place)
                     .transition(settingsTransition)
                     .zIndex(2)
-                    .accessibilityAddTraits(.isModal)
             }
         }
         // The model is passed in explicitly rather than left to propagate:
