@@ -159,3 +159,32 @@ eye are in `DANISH-site.md`. 44 keys added. `privacy10` checked and unchanged.
 - **For a native reader:** *k dalšímu ohrazenému prostoru* for the Quiet
   Garden's enclosure is plain rather than a garden word; *Velvyslankyně*
   (feminine, with *rostlina*).
+
+## el — Greek
+
+45 keys: the 44 and `privacy10`. For review.
+
+- **Terms.** *Περιοχή* for area and *παρτέρι* for plot, as `privacy6`;
+  *τραβιέται* for a seed drawn, as `privacy2`'s *πότε τραβήχτηκε*; *δεν είναι
+  προσβάσιμος/η/ο αυτή τη στιγμή* as `wildAway`, agreeing with each area's
+  gender and number (*Οι παραφυάδες δεν είναι προσβάσιμες*); *εσύ*
+  throughout. Greek keeps its written case on the site, so nothing here is
+  uppercased.
+- **`{area}`** arrives with its nominative article (*Ο οπωρώνας*), so it is
+  quoted as Greek quotes a title: *της περιοχής «{area}»*, *στην περιοχή
+  «{area}»*.
+- **Garden words.** *Μπορντούρες*, *μονοπάτι από κουρεμένο γρασίδι*,
+  *φυτοφράχτης*, *περίκλειστος κήπος*, *λιθόστρωτος κύκλος*, *τεταρτημόρια*,
+  *σαν το πέντε στο ζάρι* for the quincunx, *συντεχνία* for the guild,
+  *σχέδιο* for the Knot Garden's plot (its area is *Ο μαίανδρος*), *αυλάκια*,
+  *κασόνια με τζάμι* for the frames, *πάγκοι* for the staging, *δασύλλιο* and
+  *πρέμνα* for the stools, *στάχυα*, *σκιάδια*, *ροζέτες*. The kitchen
+  garden's raised beds are *υπερυψωμένα παρτέρια*, so its plot is *ο επόμενος
+  λαχανόκηπος* rather than another *παρτέρι*.
+- **Controls.** Verbal nouns, as Greek software writes buttons: *Κλείσιμο*,
+  *Μεγέθυνση*, *Σμίκρυνση*, *Μετακίνηση πάνω*, *Περιστροφή δεξιόστροφα*.
+  `plantKey` and `plantCopyThis` are informal imperatives, being sentences.
+- **`privacy10`**: *«Μείωση κίνησης»*, iOS's Greek name.
+- **For a native reader:** *Πρεσβευτής* (masculine generic) for the plant;
+  *Συνέχεια* for `goOn`; whether *πρέμνα* is too technical beside the
+  catalogue's *παραφυάδες*.
