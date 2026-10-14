@@ -136,7 +136,7 @@ struct PlantDetailView: View {
         // Share, beside Close: the plant as it is now, as a picture, a turn or
         // a wallpaper. Everything it does is in `Views/Share/`.
         .overlay(alignment: .topTrailing) {
-            PlantShareButton(genome: live.genome, growth: live.growth(now: model.now))
+            PlantShareButton(genome: live.genome, growth: live.growth(now: model.now), now: model.now)
                 .padding(.trailing, PlantShareButton.besideClose)
                 .padding(.top, 12)
                 .opacity(releasing ? 0 : 1)

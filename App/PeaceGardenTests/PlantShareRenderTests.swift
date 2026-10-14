@@ -60,6 +60,69 @@ final class PlantShareRenderTests: XCTestCase {
         try Self.copy(pair.movie, to: out.appendingPathComponent("moving.mov"))
     }
 
+    /// The same plant under the sky of four hours on the phone's clock — nine
+    /// in the morning, ten past six and half past six at dusk, eleven at night
+    /// — as wallpapers on the lock screen, its clock saying the hour, and as
+    /// the shared picture, for
+    /// `design/ui-followups-2026-10-14/backgrounds-hours.png`. Two at dusk,
+    /// because the garden's is short: amber just after the sun goes at six,
+    /// violet and faint by half past.
+    func testDrawTheSkyByTheHour() throws {
+        guard let folder = ProcessInfo.processInfo.environment["PG_RENDERS"], !folder.isEmpty else {
+            throw XCTSkip("PG_RENDERS is not set")
+        }
+        let out = URL(fileURLWithPath: folder, isDirectory: true)
+        try FileManager.default.createDirectory(at: out, withIntermediateDirectories: true)
+
+        let words = ProcessInfo.processInfo.environment["PG_SHARE_SEED"] ?? "share-render-6"
+        let genome = Genome(seed: SeedID(bytes: seedDigest(SeedDomain.seed, Data(words.utf8)))!)
+        let growth = Maturity.bloomPreview(for: genome)
+        for (name, hour, clock) in [("0900", 9.0, "9:00"), ("1810", 18.0 + 10.0 / 60, "18:10"),
+                                    ("1830", 18.5, "18:30"), ("2300", 23.0, "23:00")] {
+            let wallpaper = PlantPortrait.wallpaper(genome: genome, growth: growth, nativePixels: Self.air,
+                                                    scale: 3, ground: .byTheHour, hour: hour)
+            let ground = try XCTUnwrap(ShareBackdrop.image(for: wallpaper))
+            let still = try XCTUnwrap(PlantPictureRenderer(portrait: wallpaper, backdrop: ground)?.still())
+            try Self.png(Self.lockScreen(over: still, time: clock),
+                         to: out.appendingPathComponent("lock-hour-\(name).png"))
+
+            let picture = PlantPortrait.picture(genome: genome, growth: growth, hour: hour)
+            let pictureGround = try XCTUnwrap(ShareBackdrop.image(for: picture))
+            let shared = try XCTUnwrap(PlantPictureRenderer(portrait: picture, backdrop: pictureGround)?.still())
+            try Self.png(shared, to: out.appendingPathComponent("picture-hour-\(name).png"))
+
+            // For comparison only, not drawn by the app: the time-lapse's sky
+            // (`TimeLapseSky`) for the same hour over the stage, which has no
+            // horizon and whose twilight is rose and mauve over the whole glass.
+            let lapse = try Self.lapseGround(for: wallpaper, hour: hour)
+            let lapsed = try XCTUnwrap(PlantPictureRenderer(portrait: wallpaper, backdrop: lapse)?.still())
+            try Self.png(Self.lockScreen(over: lapsed, time: clock),
+                         to: out.appendingPathComponent("lock-hour-\(name)-lapse.png"))
+        }
+    }
+
+    /// Black, the time-lapse's sky at full presence over it, as the film
+    /// draws it in Dark, and the stage's pool showing through.
+    private static func lapseGround(for portrait: PlantPortrait, hour: Double) throws -> CGImage {
+        var stage = portrait
+        stage.ground = .stage
+        let pool = try XCTUnwrap(ShareBackdrop.image(for: stage))
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = portrait.pixelsPerPoint
+        format.opaque = true
+        let image = UIGraphicsImageRenderer(size: portrait.points, format: format).image { drawing in
+            let context = drawing.cgContext
+            context.saveGState()
+            context.translateBy(x: 0, y: portrait.points.height)
+            context.scaleBy(x: 1, y: -1)
+            context.draw(pool, in: CGRect(origin: .zero, size: portrait.points))
+            context.restoreGState()
+            let moment = TimeLapseSky.Moment(elevation: SunPath.elevation(atHour: hour), presence: 1)
+            TimeLapseSky.draw(moment, in: context, size: portrait.points, look: .dark)
+        }
+        return try XCTUnwrap(image.cgImage)
+    }
+
     /// A few plants at a glance, to choose the one the pictures show.
     func testDrawCandidatePlants() throws {
         guard let folder = ProcessInfo.processInfo.environment["PG_RENDERS"], !folder.isEmpty,
@@ -86,7 +149,7 @@ final class PlantShareRenderTests: XCTestCase {
     /// the camera at the foot, and the home indicator. Not the system's own
     /// drawing — the clock's face and weight vary with the phone's settings —
     /// but its places and its sizes.
-    static func lockScreen(over wallpaper: CGImage) -> CGImage {
+    static func lockScreen(over wallpaper: CGImage, time: String = "9:41") -> CGImage {
         let points = CGSize(width: CGFloat(wallpaper.width) / 3, height: CGFloat(wallpaper.height) / 3)
         let format = UIGraphicsImageRendererFormat()
         format.scale = 3
@@ -109,8 +172,8 @@ final class PlantShareRenderTests: XCTestCase {
             let date = UIFont.systemFont(ofSize: 21, weight: .semibold)
             centred("Tuesday 13 October", font: date, top: 66)
             let rounded = UIFont.systemFont(ofSize: 104, weight: .semibold)
-            let time = rounded.fontDescriptor.withDesign(.rounded).map { UIFont(descriptor: $0, size: 104) } ?? rounded
-            centred("9:41", font: time, top: 84)
+            let clockFace = rounded.fontDescriptor.withDesign(.rounded).map { UIFont(descriptor: $0, size: 104) } ?? rounded
+            centred(time, font: clockFace, top: 84)
 
             // The torch and the camera.
             for x in [48.0, points.width - 48] {

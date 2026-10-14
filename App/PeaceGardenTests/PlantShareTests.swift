@@ -178,6 +178,77 @@ final class PlantShareTests: XCTestCase {
         XCTAssertLessThan(still.difference(from: last, in: CGRect(x: 0, y: 0, width: 360, height: 780)), 2.5)
     }
 
+    // MARK: The sky of the phone's hour (Marcus, 14 October 2026)
+
+    /// Day in the morning, dusk at half past six, night at eleven, dawn at half
+    /// past five; and the night when there is no hour to be had.
+    func testTheSkyIsChosenByTheHour() {
+        XCTAssertEqual(ShareGround.recommended, .byTheHour)
+        XCTAssertEqual(ShareSky.at(hour: 9), .day(hour: 9))
+        XCTAssertEqual(ShareSky.at(hour: 12), .day(hour: 12))
+        XCTAssertEqual(ShareSky.at(hour: 17.9), .day(hour: 17.9))
+        XCTAssertEqual(ShareSky.at(hour: 18.5), .twilight(hour: 18.5))
+        XCTAssertEqual(ShareSky.at(hour: 5.5), .twilight(hour: 5.5))
+        XCTAssertEqual(ShareSky.at(hour: 23), .night(hour: 23))
+        XCTAssertEqual(ShareSky.at(hour: 2), .night(hour: 2))
+        XCTAssertEqual(ShareSky.at(hour: 33), .day(hour: 9), "a day and nine hours is nine o'clock")
+        XCTAssertEqual(ShareSky.at(hour: nil), .night(hour: nil))
+        XCTAssertEqual(ShareSky.at(hour: .nan), .night(hour: nil))
+    }
+
+    /// The hour is the phone's own clock, in its own time zone.
+    func testTheHourIsThePhonesOwnClock() throws {
+        // 17:30 at Greenwich on 14 October 2026.
+        let moment = Date(timeIntervalSince1970: 1_791_999_000)
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/London"))
+        XCTAssertEqual(try XCTUnwrap(ShareSky.phoneHour(at: moment, calendar: calendar)), 18.5, accuracy: 0.001)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Asia/Tokyo"))
+        XCTAssertEqual(try XCTUnwrap(ShareSky.phoneHour(at: moment, calendar: calendar)), 2.5, accuracy: 0.001)
+    }
+
+    /// **What is drawn is that sky.** The day is light and its sun on the side
+    /// the hour puts it; dusk is the night with the last light low on the side
+    /// the sun went down; and with no hour the ground is the night exactly as
+    /// it stood before.
+    func testTheGroundIsDrawnForTheHour() throws {
+        func ground(_ hour: Double?, _ ground: ShareGround = .byTheHour) throws -> CGImage {
+            var portrait = Self.small(ground)
+            portrait.hour = hour
+            return try XCTUnwrap(ShareBackdrop.image(for: portrait))
+        }
+        func light(_ image: CGImage, _ region: CGRect) throws -> Double {
+            let box = CGRect(x: region.minX * CGFloat(image.width), y: region.minY * CGFloat(image.height),
+                             width: region.width * CGFloat(image.width), height: region.height * CGFloat(image.height))
+            return TimeLapseLuminance.mean(of: try XCTUnwrap(image.cropping(to: box.integral)))
+        }
+        let whole = CGRect(x: 0, y: 0, width: 1, height: 1)
+        let left = CGRect(x: 0, y: 0.25, width: 0.3, height: 0.3)
+        let right = CGRect(x: 0.7, y: 0.25, width: 0.3, height: 0.3)
+
+        let morning = try ground(9), afternoon = try ground(15)
+        let dusk = try ground(18.5), night = try ground(23), none = try ground(nil)
+        XCTAssertGreaterThan(try light(morning, whole), 0.15, "the day is a day")
+        XCTAssertLessThan(try light(night, whole), 0.05, "the night is a night")
+        XCTAssertGreaterThan(try light(morning, left), try light(morning, right), "the morning sun is on the left")
+        XCTAssertGreaterThan(try light(afternoon, right), try light(afternoon, left), "and the afternoon's on the right")
+
+        let afterglow = CGRect(x: 0.7, y: 0.45, width: 0.3, height: 0.2)
+        let farFromIt = CGRect(x: 0, y: 0.05, width: 0.3, height: 0.2)
+        let dusky = try Pixels(dusk), dark = try Pixels(none)
+        let size = CGSize(width: dusky.width, height: dusky.height)
+        func scaled(_ r: CGRect) -> CGRect {
+            CGRect(x: r.minX * size.width, y: r.minY * size.height, width: r.width * size.width, height: r.height * size.height)
+        }
+        XCTAssertGreaterThan(dusky.difference(from: dark, in: scaled(afterglow)),
+                             dusky.difference(from: dark, in: scaled(farFromIt)) + 4,
+                             "dusk has the last light low on the side the sun went down")
+
+        let before = try Pixels(try ground(nil, .nightSky))
+        XCTAssertEqual(dark.difference(from: before, in: CGRect(origin: .zero, size: size)), 0,
+                       "with no hour, the night it always was")
+    }
+
     // MARK: Nothing but the picture
 
     /// No seed, no name, no meeting in any of the four files: not as text in

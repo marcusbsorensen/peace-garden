@@ -71,6 +71,9 @@ enum PlantShareHint: Equatable {
 struct PlantShareButton: View {
     let genome: Genome
     let growth: GrowthModel.State
+    /// The moment it is: the hour on this phone's clock is the sky the plant
+    /// is shared under (`ShareSky`).
+    let now: Date
 
     /// How far in from the trailing edge, to stand beside Close: Close's own
     /// inset, its width, and a gap.
@@ -83,7 +86,7 @@ struct PlantShareButton: View {
             Menu {
                 ForEach(PlantShareAction.allCases) { action in
                     Button {
-                        work.start(action, genome: genome, growth: growth)
+                        work.start(action, genome: genome, growth: growth, now: now)
                     } label: {
                         Label(action.title, systemImage: action.glyph)
                     }
@@ -198,22 +201,25 @@ final class PlantShareWork {
 
     @ObservationIgnored private var hintTask: Task<Void, Never>?
 
-    func start(_ action: PlantShareAction, genome: Genome, growth: GrowthModel.State) {
+    func start(_ action: PlantShareAction, genome: Genome, growth: GrowthModel.State, now: Date) {
         guard doing == nil else { return }
         doing = action
         progress = 0
         hint = nil
 
+        // The sky of the hour on this phone's clock, and the night if it
+        // cannot be had (Marcus, 14 October 2026).
+        let hour = ShareSky.phoneHour(at: now)
         let portrait: PlantPortrait
         switch action {
         case .picture:
-            portrait = .picture(genome: genome, growth: growth)
+            portrait = .picture(genome: genome, growth: growth, hour: hour)
         case .turning:
-            portrait = .turning(genome: genome, growth: growth)
+            portrait = .turning(genome: genome, growth: growth, hour: hour)
         case .wallpaper, .movingWallpaper:
             let screen = Self.screen()
             portrait = .wallpaper(genome: genome, growth: growth,
-                                  nativePixels: screen.pixels, scale: screen.scale)
+                                  nativePixels: screen.pixels, scale: screen.scale, hour: hour)
         }
         guard let ground = ShareBackdrop.image(for: portrait) else {
             finish(.failed)
