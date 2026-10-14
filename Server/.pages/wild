@@ -95,7 +95,7 @@
         </section>
         <div class="area-panel area-panel--ways walk-ways">
           <!-- The pad, the same as every area's (`movepad.js`), roaming. -->
-          <nav class="walk-keys" id="keys" role="group" hidden></nav>
+          <div class="walk-keys" id="keys" role="group" hidden></div>
         </div>
       </div>
 

@@ -142,7 +142,7 @@
           described there and in site.css §The pad rather than nine times
           here. Hidden until there is a plot to move about.
         -->
-        <nav class="walk-keys" id="keys" role="group" hidden></nav>
+        <div class="walk-keys" id="keys" role="group" hidden></div>
 
         <!--
           The garden's map, small: ten cells five by two, this area filled, the
