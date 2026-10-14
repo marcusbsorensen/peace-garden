@@ -1,76 +1,73 @@
-# Peace Garden: build 8 assembled — handover 12 October 2026
+# Peace Garden: build 9 being assembled, site and server deployed — handover 14 October 2026
 
-Previous note: `git show a553669:.claude/HANDOVER.md`, about build 7 and the new logo. This session ran on Marcus's work account (hello@uncubed.app). Memory lives in the personal account's folder, `~/.claude/projects/-Users-marcus-Projects-peace-garden/memory/`.
+Previous notes: `git show c83bc6e:.claude/HANDOVER.md` covers build 8 (12 October), and `a553669` covers build 7 and the logo. This session ran on Marcus's work account (hello@uncubed.app). Memory lives in the personal account's folder, `~/.claude/projects/-Users-marcus-Projects-peace-garden/memory/`.
 
-**Credit (13 October):** Marcus has said to go for broke again in the new credit window. Until he says otherwise, the Sonnet-only, two-local-agent and ask-before-long-tests rules are lifted, as on 11 and 12 October.
-
-## Goal
-Ship build 8 to TestFlight with the requests Marcus made on 12 October, and deploy the privacy page that describes the new update check.
-
-## What's in build 8 (all on local `main`, 23 commits ahead of origin)
-- **Launch moment.** It shows "Peace Garden" and the version, and checks for an update once per launch.
-  - The check asks the App Store in the person's own storefront only. There is no US fallback (memory `no-us-default`), and Kosovo's `XKS` maps to `xk`.
-  - Limits: a 2 s timeout, silent on failure, no cookies, Low Data Mode respected.
-  - When an update exists, the version label gains `arrow.up.circle`.
-- **Recycling glyph** redrawn to match the new logo (`CycleGlyph`, Frond A).
-- **Garden screen.**
-  - The (+) sits bottom left and the turns bottom right, at all times. The arrowheads are now square to the circle.
-  - The tray has **one panel per row**, darkened 20% over a thin blur. There are no plates per item (memory `one-panel-not-many`).
-  - Plot types: the seven not chosen are at 0.85, and the chosen one sits in a soft pool of light.
-  - The control is called **"Reset view"** (Danish "Nulstil visning"). The six other drafts are `needs_review`.
-  - The garden screen draws its controls and status bar as in Dark, whichever appearance is chosen (3A, then 1A). The plant's screen, opened from the garden, still follows the chosen appearance (`inTheAppearance()` in `Chrome.swift`).
-  - Pictures: `design/tray-panels-2026-10-12/` (`panels-ABC`, `grounds`, `panels-light-AB`, `answers-final`, `status-bar`).
-- **Developer controls in TestFlight.** Open Settings with the cog, then hold the "Settings" heading for 2 s. A Testing section opens with:
-  - the imaginary meeting;
-  - the clock wind (+6h/+1d/+1w/+1m);
-  - tile grid or plot;
-  - old sky.
-
-  How the gate works: `Developer.isAvailable` is true in Debug, and true in Release only when `AppTransaction` reports `.sandbox` (TestFlight). App Store copies never show it. In TestFlight, the clock moves only what's shown and never a saved date.
-- **Imaginary plants go public when released** (Marcus's choice, 1C; memory `imaginary-plants-public`). Don't add a guard. Removing one takes `curate.php hide` over ssh.
+**Credit (13–14 October):** Marcus has said to go for broke in this credit window. **The machine is the limit, not credit:** only one Xcode build or test may run at a time (memory `one-xcode-build`). Use the shared `mkdir` lock at `/private/tmp/claude-501/xcode.lock`, pass `-jobs 4`, and keep one simulator booted. On 13 October parallel builds stalled the 48 GB Mac.
 
 ## State
-- `project.yml` is at **8**.
-- Tests:
-  - the full suite passed on `f8424f0` and on `977990c`;
-  - the final run on `d54c662` (status bar merged) passed 240 tests, with 0 failures and 11 skipped. xcodebuild still exited 133: its simulator-diagnostics collection timed out after the tests had finished, which is harmless but stops a chained `&&`;
-  - SeedCore passed, and `Packages/` hasn't changed since.
-- The archive goes to `build/PeaceGarden-1.0-8.xcarchive`, and the ipa to `build/export-8/`.
-- **Site:** deployed 12 October with the update-check paragraph, `privacy10`.
+- **Build 8** is on TestFlight, uploaded 12 October from the Organizer, after the upload script failed with "Failed to Use Accounts" (see Traps). Marcus hasn't reported trying it on his phone yet.
+- **Server and website were deployed on 14 October** from `b8ffe1f`+:
+  - plot-service fixes: one yes, retried deadlocks, a schema version, one place per plant, crowd-aware limits, no self-cross, utf8mb4;
+  - site fixes: the module cached a year at its stamped address, security headers (HSTS, CSP, Referrer-Policy, nosniff), no front-page jump, contrast, the map at tablet width, still fireflies under Reduce Motion, fresh copy, and a fuller `deploy.sh --check`.
 
-## Next steps (Marcus runs these; the classifier blocks Claude from all three)
-1. ~~`git push origin main`~~ done, `6b88f54`.
-2. ~~Upload build 8~~ done 12 October, through the Organizer's Distribute App (the script failed first, see Traps). The usual visionOS/accelerometer warning appeared.
-3. ~~Deploy~~ done 12 October: 3 files (the privacy page, `strings.js`, `da.json`), and every check in `deploy.sh --check` was ok.
-4. On the phone, from TestFlight, check:
-   - the version label on the launch moment;
-   - holding the Settings heading opens Testing (this is the first real check of the StoreKit gate);
-   - an imaginary meeting;
-   - the tray panels in both appearances.
+  `migrate.php` reports version 1, all tables utf8mb4, and nothing in two places. A backup was taken first. The live console is clean on `/` and `/wild`.
+- **Host PHP:** the site runs PHP 8.3, but the command line's `php` is 8.0. Cron now runs `/usr/bin/php83` for backup.php and sweep.php (`tools/backup.sh --install-cron` replaced the old lines on 14 October). Always run `php83` over ssh.
+- **Main is on GitHub at `84194c8`.** Merged on 13–14 October:
+  - the three mass tests' harnesses and reports (`design/mass-test-2026-10-13/{population,app,site}/`);
+  - Settings clarity (sage switches, a coloured sun and moon, a cog by the heading, plain location labels with one line per choice);
+  - title glyphs and Meet's circled X ("Not this time" kept in words over a plant just made);
+  - the plant-drawing toggle on the Seed screen (three marks, one setting);
+  - the time-lapse (play glyph top left, 12 s, flash-tested);
+  - Share (picture, turning video, wallpaper, moving wallpaper, time-lapse; on the plant's screen and the stage; the sky follows the phone's hour, rose at dusk);
+  - the About sheet with Privacy;
+  - the server and site fixes;
+  - accessibility (VoiceOver in the garden and tray, Dynamic Type, Settings hiding the stage, contrast, right to left);
+  - garden performance (500 plants open in 89 ms of main-thread time, 0.43 GB; 2,000 plants open).
+
+  The full suite was last run at the integration (280 tests); the performance branch ran 307 after its merge.
+
+## Running when this was written
+- `claude/app-polish-2026-10-14`:
+  - 24A, the foot row stays left to right in every language;
+  - 27A, the seed sheet opens half way on the SE;
+  - 26A, renders of two fixes for the thin small capitals, for Marcus to choose;
+  - 28C, the VoiceOver garden layer built in slices.
+- The translation round (19A), five agents:
+  - `claude/translate-app-2026-10-14`: catalogue sync; app languages; Danish final; 25B "Landskab %lld"; 20A Greenlandic hidden from the chooser;
+  - `claude/translate-site-g1…g4-2026-10-14`: the site's 44 missing keys and privacy10 in 40 languages.
+
+  Records go in `tools/strings/commissions/2026-10-14/`, with Danish tables `DANISH-app.md` and `DANISH-site.md` for Marcus to read.
+
+## Next steps
+1. Merge the polish and translation branches. Show Marcus the small-capitals renders (26A) and the Danish tables.
+2. **Build 9:** set `CURRENT_PROJECT_VERSION` to 9, `xcodegen generate`, run the full suite through the lock, then archive and export with the system PATH. Marcus uploads with `sh tools/upload-build.sh 9`, or from the Organizer if the Xcode sign-in has lapsed.
+3. **Site deploy for the translations:** Marcus runs `tools/backup.sh`, `tools/deploy.sh --dry-run; echo "exit=$?"`, then `tools/deploy.sh`.
+4. Marcus checks on a real phone:
+   - the moving wallpaper: does iOS let a Live Photo made by the app move?
+   - time-lapse and Share speed;
+   - the garden with many plants;
+   - the TestFlight Testing section (the StoreKit gate).
 
 ## Open, not urgent
-- **Right to left:** `ContinuingRow`'s edge fade may hide the start of the tray rows (seen before the tray rewrite; recheck).
-- **String catalogue is behind main.** `tools/strings/sync.sh` would bring in about 20 keys from the web garden and Wild Fields work. "Reset view" was added by hand.
-- **Dead answer sheet, for build 9.** The garden's own answer sheet has had nothing to open it since 20 September (`d2a2930`), when the notice was changed to open the plant first. Its removal is on `claude/remove-dead-answer-sheet-2026-10-12` (`146d8d3`). It compiles, and GardenControlsTests and PlotTests pass (56 of 56). Merged into main after build 8 was uploaded (Marcus: 1A 2A 3A). `ShowInGardenView` itself is live: a plant's screen opens it from its Answer mark.
-- The two wasm prototype pages still use `icon.svg`.
-- FreqShift's icon isn't in its repo.
-- **Done for build 9, besides the dead sheet:**
-  - the restore rehearsal's test heights, rounded through a 32-bit float (`check_restore.php`);
-  - "the other gardener" as whole sentences when there's no name (`OtherGardener.swift`). This fixes Italian elision and Swedish "trädgårdsmästaren:s". Danish and Italian are final; es, fr, nb, nl and sv are `needs_review`.
-- **For the next translation round** (Marcus, 2A: leave until then):
-  - four "the other gardener …" sentences and two "%@ has/have asked …" sentences are English only, as are their named siblings, which aren't in the catalogue yet;
-  - Basque `wildTitle` and Dutch site "ze/haar" against the app's "hij" each need a native reader.
-- **Branches:** every `claude/*` branch on this repo's origin is deleted (12 October). The leftover `claude/suite-brand-*` branches in uncubed can still go.
+- **Server finding 7:** responses grow with the garden (`/api/wild` count, tiles). Fine at today's size.
+- **When a yes and a withdrawal arrive at the same moment, the withdrawal can lose** (2 of 30). The state stays consistent.
+- **`/meanings` CLS** is 0.16–0.21, the same cause as the front page had. Area pages opened on a plant shift 0.03–0.05; that's older than this work.
+- **2,000 plants with fireflies** don't hold 60 fps. Some single frames still grow with garden size.
+- **A dusk longer than the time-lapse's** in shared pictures would be a new choice for Marcus. He was offered it and hasn't asked.
+- The wasm prototype pages still use `icon.svg`. FreqShift's icon isn't in its repo. The leftover `claude/suite-brand-*` branches in uncubed can go.
+- **Remote `claude/*` branches from 13–14 October** are all merged and can be deleted. Marcus runs the delete.
 
 ## Traps
 - **Token guard:**
-  - It blocks any shell command containing c-u-r-l (file and branch names included), bare `cat`, and unbounded `git show`/`git diff` (put `| head -n N` straight after).
-  - It blocks `grep` without `| head`. **It also misreads `\|` or a quoted `|` in a grep pattern as a pipe, so use separate `-e` flags.**
-  - Images over about 100 KB must be downscaled with `sips`.
-- **Upload "Failed to Use Accounts"** (`IDEDistributionUploadAccountStep`: no account with App Store Connect access for R94VDZ56RY): Xcode's Apple sign-in has lapsed. Marcus signs in again in Xcode → Settings → Accounts, or distributes from the Organizer (`open build/PeaceGarden-1.0-N.xcarchive`), which asks on the way.
-- **Xcode export "Copy failed":** Homebrew rsync 3.5 is on PATH. Export with `env PATH=/usr/bin:/bin:/usr/sbin:/sbin:/Applications/Xcode.app/Contents/Developer/usr/bin` (memory `xcode-export-rsync`).
-- **The Xcode project is gitignored.** Run `xcodegen generate` after every merge that adds Swift files.
-- **Cloud routines on this account** use `env_01XEuhfALG2Bm8UZiSSGr96Q`. Strip the connectors, and watch with `git ls-remote` (memory `work-account-routines-github`).
-- **Questions to Marcus:** numbered, with A/B/C options and the recommendation first. Visual choices go on screen with matching letters.
-- **Simulators:** never the iPhone 17 Pro. Use scratch iPhone Airs, and delete them afterwards.
-- **Disk:** about 38 GB free after cleanup. Delete derived data and scratch clones when done.
+  - It blocks c-u-r-l anywhere in a command, bare `cat` (including heredocs into files, so use Write), and `grep` without `| head`.
+  - It reads `\|` or a quoted `|` in a grep pattern as a pipe; use separate `-e` flags.
+  - It blocks `git show`/`git diff` without `| head -n N`. To save a file, use `git show X:f | head -n 3000 > out`.
+  - Images over about 100 KB need a `sips` downscale first.
+- **Upload "Failed to Use Accounts":** Xcode's Apple sign-in has lapsed. Sign in again under Xcode → Settings → Accounts, or use the Organizer (`open build/PeaceGarden-1.0-N.xcarchive`).
+- **Xcode export "Copy failed":** Homebrew rsync is on PATH. Export with `env PATH=/usr/bin:/bin:/usr/sbin:/sbin:/Applications/Xcode.app/Contents/Developer/usr/bin`.
+- **xcodebuild exit 133** after "** TEST SUCCEEDED **" means a simulator-diagnostics timeout; read the log. Don't chain archives on `&&` after a test run.
+- **The Xcode project is gitignored.** Run `xcodegen generate` after every merge.
+- **Docker is OrbStack.** It stops if the disk fills; restart with `open -a OrbStack`.
+- **Marcus's choices that look like bugs:** imaginary plants release publicly (`imaginary-plants-public`); wear is on at the live site (18A).
+- **Questions to Marcus:** numbered, with A/B/C options, the recommendation first, and pictures for anything visual.
+- **Simulators:** never the iPhone 17 Pro. Use scratch simulators and delete them.
