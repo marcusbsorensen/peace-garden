@@ -67,7 +67,12 @@
     --ground: #f6f6f6;
     --ink: #121212;
     --muted: rgba(18, 18, 18, 0.7);
-    --faint: rgba(18, 18, 18, 0.52);
+    /* 0.6 rather than 0.52 since 14 October 2026: 0.52 came to #7f7f7f on
+       this ground, 3.71:1, under AA for the small print it sets (a passage's
+       source, the dictionary's labels, the foot's link); 0.6 is #6d6d6d,
+       4.79:1, and still the faintest of the four. On black the dark set's
+       0.56 is 6.5:1 and stays. */
+    --faint: rgba(18, 18, 18, 0.6);
     --section: rgba(18, 18, 18, 0.78);
     --hairline: rgba(18, 18, 18, 0.2);
     --passage-ink: rgba(18, 18, 18, 0.84);
@@ -2880,7 +2885,11 @@ a.front-card:focus-visible {
   margin: 0;
   font-size: 13px;
   line-height: 1.45;
-  color: rgba(255, 255, 255, 0.86);
+  /* 92% rather than the 86% it was until 14 October 2026: at 86% the
+     Orchard's meaning came to 4.40:1 on its olive, and at 92% every card's
+     comes to 4.6:1 or more (the two pale taupes on their `card` ground, see
+     `LOOK` in gates.js). The step down from the name is still there. */
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .front-card__name {

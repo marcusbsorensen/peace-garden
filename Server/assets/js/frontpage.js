@@ -86,7 +86,9 @@ whenSettled((strings) => {
     const card = document.createElement(href ? 'a' : 'div');
     card.className = href ? 'front-card' : 'front-card front-card--closed';
     if (href) card.href = href;
-    card.style.setProperty('--area-ground', LOOK[area.theme].ground);
+    // The map's colour, or the darker one an area has for white words on it
+    // (`LOOK` in gates.js says which, and why).
+    card.style.setProperty('--area-ground', LOOK[area.theme].card ?? LOOK[area.theme].ground);
 
     const meaningKey = themeRow(area.theme).meaning;
     // The same entry the area page sets, headword and definition.
