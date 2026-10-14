@@ -539,11 +539,21 @@ private struct ChromeTracking: ViewModifier {
 }
 
 /// Uppercases, unless the language would rather it did not.
+///
+/// **Capitals for the eye, words for the ear** (14 October). `textCase`
+/// changes the string itself, so VoiceOver was handed *LOCATION DESCRIPTION*
+/// and read it as capitals — letter by letter, for some words — and an
+/// explicit label beside it was uppercased too, because the label is
+/// resolved in the same environment. So what VoiceOver reads is the same
+/// content with the case left as written: one representation, here, for
+/// every label and heading in the two voices.
 private struct ChromeLetterCase: ViewModifier {
     @Environment(\.locale) private var locale
 
     func body(content: Content) -> some View {
-        content.textCase(Chrome.letterCase(in: locale))
+        content
+            .textCase(Chrome.letterCase(in: locale))
+            .accessibilityRepresentation { content.textCase(nil) }
     }
 }
 
@@ -673,12 +683,17 @@ struct ScaledSystemFont: ViewModifier {
     }
 
     /// The text style whose size at Large is nearest, so a size grows at that
-    /// style's rate. The small styles grow fastest — caption 2 goes from 11 to
-    /// 40 at the largest size, the large title from 34 to 60 — which is the
+    /// style's rate. The small styles grow fastest — caption 1 goes from 12 to
+    /// 43 at the largest size, the large title from 34 to 60 — which is the
     /// system's judgement about what needs the help, taken whole.
+    ///
+    /// **Nothing follows caption 2**, though the ten- and eleven-point label
+    /// voice is nearest it: caption 2 is eleven points at every size from the
+    /// smallest to Large, so a label that followed it did not move when the
+    /// size was turned down, and the audit called it *partially unsupported*.
+    /// Caption 1 moves at every step.
     static func style(near size: CGFloat) -> Font.TextStyle {
         switch size {
-        case ..<11.5: return .caption2
         case ..<12.5: return .caption
         case ..<14: return .footnote
         case ..<15.5: return .subheadline
