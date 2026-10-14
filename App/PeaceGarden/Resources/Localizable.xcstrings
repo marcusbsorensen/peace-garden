@@ -1059,7 +1059,7 @@
       }
     },
     "A seed planted while this is on carries the coordinates the phone measured, to five decimal places. Nothing is looked up and no place is named — the numbers are the honest record, and a map can say the rest." : {
-      "extractionState" : "stale",
+      "comment" : "On the About sheet under Privacy, beneath the label 'Where you actually are', the answer to 'Location description' that logs coordinates; 'this' is that answer. Until 13 October 2026 it stood under that answer in Settings.",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -1148,6 +1148,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ett unikt frö åt dig håller på att ta form."
+          }
+        }
+      }
+    },
+    "About" : {
+      "comment" : "The heading of the About sheet, and the button at the foot of Settings that opens it, beside an i in a ring. The sheet says what the app hands on and keeps; for now it has one section, Privacy. Set in capitals. One word where the language allows.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Om"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Acerca de"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "À propos"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Informazioni"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Om"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Over"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Om"
           }
         }
       }
@@ -8537,6 +8584,53 @@
         }
       }
     },
+    "Privacy" : {
+      "comment" : "The section of the About sheet that says what leaves the phone at a meeting and what a logged place is. Also VoiceOver's name for the i in a ring beside 'Location description' in Settings, which opens the sheet at this section. The same word as the heading of the website's privacy page.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privatliv"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Privacidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Confidentialité"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Riservatezza"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Personvern"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Privacy"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Integritet"
+          }
+        }
+      }
+    },
     "Reed" : {
       "comment" : "A plant form: a clump of long narrow leaves at the foot of a bare stem, with small flowers packed at its top, as a reed or a rush has. It grows in shallow water.",
       "localizations" : {
@@ -12679,7 +12773,7 @@
       }
     },
     "When you meet someone, your phones connect directly, encrypted, and each hands the other its seed, when that seed was made, its plant's name, the name you chose to show, whether a place may be kept with the meeting, and two random numbers: one that makes the new plant, and one the other phone can use later to offer that plant to the web garden. Each phone keeps both second numbers with the plant, and a number for the meeting made from the first two." : {
-      "comment" : "The plainest account the app gives of what leaves the phone at a meeting, under the place settings. A list of facts: each item is something the phone really sends, and the last sentence is what it keeps afterwards.",
+      "comment" : "The plainest account the app gives of what leaves the phone at a meeting, on the About sheet under Privacy (until 13 October 2026 it stood under the place settings). A list of facts: each item is something the phone really sends, and the last sentence is what it keeps afterwards.",
       "localizations" : {
         "da" : {
           "stringUnit" : {
