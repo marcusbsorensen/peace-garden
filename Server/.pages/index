@@ -94,11 +94,21 @@
           </p>
         </div>
         <!--
-          Hidden until a plant is on it, so a browser with no WebGL2, or one
-          that cannot fetch the module, is shown the words alone rather than an
-          empty glow and a hint to drag nothing.
+          **Laid out from the first paint, and the plant drawn into it when it
+          comes.** Until 14 October 2026 the stage was `hidden` until the
+          module had downloaded and grown the plant, which on a phone's slow
+          connection is twelve seconds or more; the stage then took its place
+          above the words, and the heading, the lead and the two buttons
+          dropped 450 px under the reader (CLS 0.58 in English, 0.85 in German:
+          design/mass-test-2026-10-13/site/README.md, finding 1). Now the box
+          and its soft pool are there at once, the canvas and the hint stay
+          invisible until `frontpage.js` marks the stage `data-grown`, and a
+          browser that cannot draw the plant — no WebGL2, no WebAssembly, or a
+          module that does not arrive — has the stage taken away, so it is
+          shown the words alone rather than an empty glow and a hint to drag
+          nothing.
         -->
-        <div class="front-plant" id="plant-stage" hidden>
+        <div class="front-plant" id="plant-stage">
           <canvas id="plant" role="img"></canvas>
           <span class="front-plant__hint" aria-hidden="true" data-s="frontTurn"></span>
         </div>

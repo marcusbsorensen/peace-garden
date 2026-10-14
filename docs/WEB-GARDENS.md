@@ -17,10 +17,13 @@ hollows holding water near a lotus, with the night sky in them;
 `wildwater.js`), the paths visitors wear with their paragraph on the privacy
 page in 41 languages (`wear.js`, `WildWear.php`, `privacy9`), and the ground
 close to (`wildground.js`). **Marcus chose the pasture on 2 October 2026**, so
-it is the only sward and the meadow is gone from the code. **Wear is still off
-unless `config.php` says `'wear' => true`**, which only a copy's own
-`config.php` can say (the server's is written on the server and left alone by
-the deploy), and `privacy9` shows only where it is on.
+it is the only sward and the meadow is gone from the code. **Wear is on at
+peacegarden.app**: the server's `config.php` says `'wear' => true` (found on by
+the site's mass test, 13 October 2026, and kept on by Marcus, 14 October). It
+is off on any copy whose own `config.php` does not say so (the server's is
+written on the server and left alone by the deploy), and `privacy9` shows only
+where it is on. `tools/deploy.sh --check` fails if the live site's `/api/wild`
+stops carrying `wear`.
 
 **How they meet** — the two plans in §*The Wild Fields' ground, close to*,
 carried out:
@@ -3145,10 +3148,14 @@ per cell and nothing else, and the privacy page says so before it runs.
 
 #### Built on /dev, 2 October 2026
 
-**Built, and off on the live site.** Marcus approved it on 1 October. It runs
+**Built, and on at the live site.** Marcus approved it on 1 October. It runs
 only where `Server/.api/config.php` says `'wear' => true`. That file is
-git-ignored and written on the server, and the server's does not say so.
-Where wear is off, both routes answer 404 before the rate limit or the
+git-ignored and written on the server, and the server's says so: this
+section said it did not until 14 October 2026, when the site's mass test
+(`design/mass-test-2026-10-13/site/README.md`, finding L2) found `/api/wild`
+carrying `wear` and `/privacy` carrying `privacy9` at the live site, and
+Marcus chose to keep it on. `tools/deploy.sh --check` now reads `/api/wild`
+and fails if `wear` is missing. Where wear is off, both routes answer 404 before the rate limit or the
 database is touched, `GET /api/wild` carries no `wear`, `/wild` never loads
 `wear.js`, so it counts, sends and draws nothing, and `/privacy` leaves out
 `privacy9`. The sweep fades the field only where wear is on.
@@ -3236,7 +3243,9 @@ printed by `commission.py --privacy <code>` after the eight, so the 41
 catalogues that already have the privacy page and the Wild Fields' strings
 are awaiting it rather than half-commissioned. `check.py` counts it.
 
-**Before it goes live:**
+**Before it goes live** (both done by 13 October 2026, when the mass test
+found it live; the date `'wear' => true` went into the server's `config.php`
+is not recorded here):
 
 1. `privacy9` is translated into every language the site speaks.
 2. The branch is merged and deployed, and `'wear' => true` is written into

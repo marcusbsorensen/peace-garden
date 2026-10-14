@@ -397,7 +397,13 @@ async function onLeave() {
 
 async function main() {
   state.plots = await source();
-  el("invented").hidden = !state.plots.invented;
+  // Said only while the map draws a stand-in somewhere: an open area is never
+  // drawn here (`goTo` sends it to its own page), so with all ten open, as
+  // they have been since 24 September 2026, there is nothing invented on the
+  // screen to warn about, and the notice saying there was had become the one
+  // untrue thing on the page (design/mass-test-2026-10-13/site/README.md,
+  // finding 6). It comes back by itself if an area on the map has no page.
+  el("invented").hidden = !state.plots.invented || AREAS.every((area) => area.theme in BUILT);
   state.languages = await manifest();
   await settle();
   // Draws nothing at all when nobody is signed in, which is why it is

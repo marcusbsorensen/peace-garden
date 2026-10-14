@@ -1022,6 +1022,10 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
     skyStale = false;
   }
 
+  // Who wants to know the field has been drawn: the fireflies, which under
+  // reduced motion are painted only then (`flyOver`).
+  const drawnListeners = [];
+
   function draw() {
     const began0 = performance.now();
     lastFrame = began0;
@@ -1126,6 +1130,7 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
     gl.bindVertexArray(null);
     cost.frames.push(performance.now() - began0);
     if (cost.frames.length > 600) cost.frames.shift();
+    for (const run of drawnListeners) run();
   }
 
   // Where a point of the field was last drawn, in CSS pixels from the
@@ -1196,7 +1201,7 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
   walked();
 
   return {
-    draw, turnBy, turn: () => turn, view, held, lookAt, carried, seams, onScreen, toScreen,
+    draw, whenDrawn: (run) => { drawnListeners.push(run); }, turnBy, turn: () => turn, view, held, lookAt, carried, seams, onScreen, toScreen,
     drifts: () => drifts, pixelsPerMetre, standing, settled: () => fetching, pick, named, toward,
     // The water, for the fireflies' reflections in it.
     waterAt: (x, z) => water.levelAt(x, z), surfaceAt: (x, z) => water.surfaceAt(x, z), facing: eye,
@@ -1218,7 +1223,13 @@ export function makeWildStage(canvas, e, { source, from = [SIDE / 2, SIDE / 2], 
 /// stage, because they move and the field does not: the field is drawn when
 /// the window moves, and this thirty times a second.
 ///
-/// Still, and steadily lit, for a reader who has asked for less motion.
+/// Still, and steadily lit, for a reader who has asked for less motion — and
+/// then painted only when the view moves, because nothing else can change
+/// them. Until 14 October 2026 the frame gate was the wrong way round and let
+/// every frame through under reduced motion: the same still picture sixty
+/// times a second, twice as often as for a reader who asked for motion
+/// (design/mass-test-2026-10-13/site/README.md, finding 5). Now the stage
+/// says when it has drawn (`whenDrawn`), and a still firefly follows it.
 export function flyOver(canvas, stage) {
   const context = canvas.getContext('2d');
   const still = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -1240,10 +1251,23 @@ export function flyOver(canvas, stage) {
   };
   let last = 0;
   let frame = 0;
-  const paint = (now) => {
-    frame = requestAnimationFrame(paint);
-    if (now - last < 33 && !still.matches) return;
+  // Moving: thirty times a second, on the animation frame.
+  const tick = (now) => {
+    frame = requestAnimationFrame(tick);
+    if (now - last < 33) return;
     last = now;
+    paint(now);
+  };
+  // Still: once now, then whenever the stage has drawn the field afresh — a
+  // drag, a turn, a zoom, a resize, plants arriving — in the same frame as
+  // the field, so the lights never lag the ground they stand over.
+  const begin = () => {
+    cancelAnimationFrame(frame);
+    frame = 0;
+    if (still.matches) paint(performance.now());
+    else frame = requestAnimationFrame(tick);
+  };
+  const paint = (now) => {
     const ratio = window.devicePixelRatio || 1;
     const width = canvas.clientWidth, height = canvas.clientHeight;
     if (canvas.width !== Math.round(width * ratio)) canvas.width = Math.round(width * ratio);
@@ -1303,8 +1327,10 @@ export function flyOver(canvas, stage) {
       }
     }
   };
-  frame = requestAnimationFrame(paint);
-  return { stop: () => cancelAnimationFrame(frame) };
+  stage.whenDrawn?.(() => { if (still.matches) paint(performance.now()); });
+  still.addEventListener?.('change', begin);
+  begin();
+  return { stop: () => { cancelAnimationFrame(frame); frame = 0; still.removeEventListener?.('change', begin); } };
 }
 
 // MARK: Arithmetic

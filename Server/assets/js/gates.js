@@ -57,6 +57,16 @@ export const BUILT = Object.freeze({
 /// right-to-left language — a cold frame is higher at its back whichever way a
 /// page is read.
 ///
+/// **`card` is a front-page card's ground where the map's is too light for
+/// white words.** The cards on `/` set an area's meaning and name in white on
+/// its ground, and on the two pale taupes, the Cold Frame's and the Knot
+/// Garden's `#968b78`, white came to 3.35:1 and the meaning, at 92% white, to
+/// 3.1:1, under the 4.5:1 that words of that size need
+/// (design/mass-test-2026-10-13/site/README.md, finding 3). So those two cards
+/// stand on the same taupe taken down until both pass, `#766d5e` (5.1:1 and
+/// 4.6:1), and every other card on the map's own colour. The map, the minimap
+/// and the area pages carry no words on these grounds and keep `ground`.
+///
 /// **The glyphs stay on the map, and the view draws what is there.** For a
 /// day, 10 October 2026, the same glyph lay on each area's gateway out past a
 /// neighbouring plot; Marcus found a symbol on lit ground mixed two kinds of
@@ -81,7 +91,7 @@ const bed = (x) =>
 export const LOOK = Object.freeze({
   // A frame seen from its end: the ground, a low front, a high back, and the
   // light resting on the back and propped at the front, with a seedling under it.
-  waiting: { ground: "#968b78",
+  waiting: { ground: "#968b78", card: "#766d5e",
     glyph: "M2.5 16H17.5M4.5 16V12.5M15.5 16V8.2M15.8 7.4L4 9.8M10 16V13.4M10 14.2c1.3-.2 2-.9 2.2-2" },
   // Three beds from above, swaying together in a lazy S, a crop to each:
   // spires as short upright strokes, umbels as flat heads, succulents as
@@ -112,7 +122,7 @@ export const LOOK = Object.freeze({
   // middle ring rides over a small ring at their first crossing and dives
   // under at the second, and each gap is a band going under. A square and a
   // diamond until 2 October 2026.
-  pattern: { ground: "#968b78",
+  pattern: { ground: "#968b78", card: "#766d5e",
     glyph: "M9.45 14.9A4.93 4.93 0 0 1 5.45 11.9M5.1 9.45A4.93 4.93 0 0 1 8.1 5.45M10.55 5.1A4.93 4.93 0 0 1 14.55 8.1M14.9 10.55A4.93 4.93 0 0 1 11.9 14.55M15.86 11.46A3.12 3.12 0 1 1 13.68 10.37M8.54 15.86A3.12 3.12 0 1 1 9.63 13.68M4.14 8.54A3.12 3.12 0 1 1 6.32 9.63M11.46 4.14A3.12 3.12 0 1 1 10.37 6.32" },
   // A round glasshouse side-on: the wall, the dome on its eaves, the ribs
   // curving up it, and the door. A pitched roof until 2 October 2026.

@@ -3,10 +3,9 @@
   The app.
 
   **It cannot be a download page yet, and it says so rather than implying it.**
-  No build has been uploaded to App Store Connect, so there is no App Store URL
-  to link and no released version to name. `notYet` is the whole of the honest
-  answer today, and the version below is the archive that exists rather than an
-  app anybody can install.
+  Builds go to TestFlight's testers and none is on the App Store, so there is
+  no App Store URL to link and no released version to name. `notYet` is the
+  whole of the honest answer today.
 
   The Android question is answered here because it is the second thing somebody
   asks and the answer is short. It is deliberately not a promise.
@@ -71,12 +70,17 @@
       </section>
 
       <!--
-        Not a string, and so not a commission: a version is a number in every
-        language. It names the build that exists, which is not the same claim as
-        a version somebody can install, and the paragraph above has already made
-        that difference.
+        What it runs on, and no version. Until 14 October 2026 this named
+        "1.0 (1)", the first archive, which had gone stale by seven TestFlight
+        builds without anybody touching the page (design/mass-test-2026-10-13/
+        site/README.md, finding 6). A version belongs here once the App Store
+        has one to name. The iOS it needs is `deploymentTarget` in
+        project.yml, and `tools/deploy.sh --check` reads this line against it,
+        so the two cannot drift apart unnoticed. Marked as English, as `/g`'s
+        notice is, so a right-to-left page does not reorder it at its
+        punctuation; it goes into the catalogue if it stays.
       -->
-      <p class="notice body">1.0 (1) · iPhone and iPad · iOS 17 and later</p>
+      <p class="notice body" lang="en" dir="ltr">iPhone and iPad · iOS 17 and later</p>
 
       <!--
         The foot: one hairline and the privacy notice. The language it used to

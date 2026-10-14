@@ -28,7 +28,17 @@ const SVG = 'http://www.w3.org/2000/svg';
 // reads at the size of a stage and turns well.
 const MEETING = 3;
 
+// **The stage is laid out before the plant arrives** (the note on
+// `#plant-stage` in the page says why), so a browser that will never draw one
+// is told so as early as can be: one that lacks WebGL2 or WebAssembly loses
+// the stage before its words are written, which is before anything below it
+// is visible. Only a module that fails on the way takes the stage away later.
+const stage = el('plant-stage');
+const able = typeof WebAssembly === 'object' && 'WebGL2RenderingContext' in window;
+if (!able) stage.hidden = true;
+
 async function grow() {
+  if (!able) throw new Error('no WebGL2 or WebAssembly here');
   const e = await loadModule(document.documentElement.dataset.module || '/plant.wasm');
   const words = new TextDecoder().decode(takeResult(e, e.pg_front_meeting(MEETING)));
   const bytes = new TextEncoder().encode(words);
@@ -38,14 +48,17 @@ async function grow() {
   e.pg_free(at);
   if (!length) throw new Error('the front meeting grew nothing');
   const grown = decode(takeResult(e, length));
-  // Shown before drawing, so the canvas has a size to draw at.
-  el('plant-stage').hidden = false;
+  // The canvas has had its size since the first paint; it is only invisible.
   makeStage(el('plant')).show(grown);
+  stage.dataset.grown = '';
 }
 
 // A browser with no WebGL2, or no module, has the words and the cards, which
 // are the page. Nothing is said about the plant it could not draw.
-grow().catch((trouble) => console.warn('no front plant:', trouble));
+grow().catch((trouble) => {
+  stage.hidden = true;
+  console.warn('no front plant:', trouble);
+});
 
 function glyph(path) {
   const svg = document.createElementNS(SVG, 'svg');
@@ -73,7 +86,9 @@ whenSettled((strings) => {
     const card = document.createElement(href ? 'a' : 'div');
     card.className = href ? 'front-card' : 'front-card front-card--closed';
     if (href) card.href = href;
-    card.style.setProperty('--area-ground', LOOK[area.theme].ground);
+    // The map's colour, or the darker one an area has for white words on it
+    // (`LOOK` in gates.js says which, and why).
+    card.style.setProperty('--area-ground', LOOK[area.theme].card ?? LOOK[area.theme].ground);
 
     const meaningKey = themeRow(area.theme).meaning;
     // The same entry the area page sets, headword and definition.

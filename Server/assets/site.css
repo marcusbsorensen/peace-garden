@@ -67,7 +67,12 @@
     --ground: #f6f6f6;
     --ink: #121212;
     --muted: rgba(18, 18, 18, 0.7);
-    --faint: rgba(18, 18, 18, 0.52);
+    /* 0.6 rather than 0.52 since 14 October 2026: 0.52 came to #7f7f7f on
+       this ground, 3.71:1, under AA for the small print it sets (a passage's
+       source, the dictionary's labels, the foot's link); 0.6 is #6d6d6d,
+       4.79:1, and still the faintest of the four. On black the dark set's
+       0.56 is 6.5:1 and stays. */
+    --faint: rgba(18, 18, 18, 0.6);
     --section: rgba(18, 18, 18, 0.78);
     --hairline: rgba(18, 18, 18, 0.2);
     --passage-ink: rgba(18, 18, 18, 0.84);
@@ -633,10 +638,17 @@ body[data-loading]:not([data-ready]) .page {
    of a place, as the pad's arrows are arrows (`screenWay` in garden.js), so
    the grid is pinned and each card's name is put back in the reader's own
    direction. */
+/* `minmax(0, 1fr)` rather than `1fr`, since 14 October 2026: a `1fr` column
+   will not shrink below its longest word, so at a tablet's 768–820 px one long
+   area name — Finnish *Puukujanne*, and the same in Swedish, Icelandic,
+   Norwegian and Macedonian — widened its column and the map ran off the
+   screen (design/mass-test-2026-10-13/site/README.md, finding 4). Now the five
+   columns share the width whatever is in them, and a long name breaks inside
+   its cell (`.garden-cell__name`). */
 .garden-grid {
   display: grid;
   direction: ltr;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 10px;
   --map-rise-px: 6.7px;
   padding-block-start: calc(var(--map-fall, 4.8) * var(--map-rise-px));
@@ -644,6 +656,26 @@ body[data-loading]:not([data-ready]) .page {
 
 [dir="rtl"] .garden-cell {
   direction: rtl;
+}
+
+/* **Wider than the words, as the map always looked.** The map sits in the
+   page's 440 px measure, so its five columns used to fit only by spilling out
+   of it: each `1fr` column took its longest word, and the grid ran on past the
+   column's right edge — about 90 px in English, 250 in Finnish, which at a
+   tablet's width was off the screen. Shared out evenly inside the measure the
+   columns are 61 px and every name breaks into syllables. So from the width
+   where the map stops being a scrolling strip, it is given the width its five
+   columns need, centred over the page rather than hanging off one side: about
+   what the English map took, now for every language. */
+@media (min-width: 46.01rem) {
+  .garden-map {
+    --map-width: min(36rem, 100vw - 32px);
+    inline-size: var(--map-width);
+    max-inline-size: none;
+    /* Auto margins would go to nothing on a box wider than its column and
+       leave it hanging off the right; these are the overhang, halved. */
+    margin-inline: calc((100% - var(--map-width)) / 2);
+  }
 }
 
 /* On a narrow screen the map scrolls sideways rather than wrapping.
@@ -705,6 +737,10 @@ body[data-loading]:not([data-ready]) .page {
 .garden-cell__name {
   font-size: 0.86rem;
   line-height: 1.3;
+  /* Hyphenated where the browser knows the language, and broken anywhere as a
+     last resort, so a name longer than its cell stays in it. */
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 /* How full an area is, as a bar rather than a number — a number would be a
@@ -1907,8 +1943,33 @@ a.minimap__cell:focus-visible::before {
   color: var(--faint);
 }
 
+/* The way out: an X in a ring, as the app's `CloseButton` draws it — the
+   X light and at three quarters of the ink, the ring a hairline, forty-two
+   across with the X in the middle. Its word is its name, not its face. */
 .plant-panel__close {
   flex: none;
+  display: grid;
+  place-items: center;
+  inline-size: 42px;
+  block-size: 42px;
+  padding: 0;
+  border-radius: 50%;
+  color: var(--ink);
+}
+
+.plant-panel__cross {
+  inline-size: 20px;
+  block-size: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  opacity: 0.75;
+}
+
+.plant-panel__close:hover .plant-panel__cross,
+.plant-panel__close:focus-visible .plant-panel__cross {
+  opacity: 1;
 }
 
 /* A sentence rather than a label: two lines of tracked capitals under the
@@ -2731,6 +2792,27 @@ a.entry__area-name:focus-visible {
   cursor: grabbing;
 }
 
+/* The stage keeps its place from the first paint, and its pool shows; the
+   plant and the hint to turn it wait until there is a plant (`frontpage.js`
+   marks the stage `data-grown`). Invisible rather than hidden, so the canvas
+   has its size to draw at. */
+.front-plant:not([data-grown]) canvas,
+.front-plant:not([data-grown]) .front-plant__hint {
+  visibility: hidden;
+}
+
+/* **The words wait for their language**, and arrive in their places. Every
+   word on this page is written in by `plain.js` once the language is settled,
+   which on a phone's slow connection is a second or more after the first
+   paint; until then the heading and the lead are empty boxes, and filling them
+   pushed the buttons and the three steps 180 px down the screen. Nothing here
+   is visible before then but empty outlines, so it is kept invisible instead,
+   and a box that is not visible does not count as moving. A script that never
+   arrives leaves these empty either way. */
+body:not([data-ready]) .page.front :is(.front-hero__words, .front-steps, .front-garden, .bar-foot) {
+  visibility: hidden;
+}
+
 .front-plant__hint {
   position: absolute;
   inset-inline: 0;
@@ -2859,7 +2941,11 @@ a.front-card:focus-visible {
   margin: 0;
   font-size: 13px;
   line-height: 1.45;
-  color: rgba(255, 255, 255, 0.86);
+  /* 92% rather than the 86% it was until 14 October 2026: at 86% the
+     Orchard's meaning came to 4.40:1 on its olive, and at 92% every card's
+     comes to 4.6:1 or more (the two pale taupes on their `card` ground, see
+     `LOOK` in gates.js). The step down from the name is still there. */
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .front-card__name {
