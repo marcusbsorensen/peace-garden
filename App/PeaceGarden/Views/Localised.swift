@@ -78,6 +78,36 @@ extension Archetype {
     }
 }
 
+// MARK: - What a light is, said aloud
+
+/// What VoiceOver calls each light, in the garden's tray and on the plot.
+///
+/// **Said, never drawn.** A light is still chosen by looking, as `LampKind`
+/// says, and no name appears on the screen. But a light nobody can see has to
+/// be called something, and the tray's seven were unlabelled buttons (mass
+/// test, 13 October, finding 3); no system symbol names a paper lamp, a fox or
+/// a snail, which is the tray's rule for its other marks.
+extension LampKind {
+    var label: LocalizedStringResource {
+        switch self {
+        case .lantern:
+            return LocalizedStringResource("Lantern", comment: "Spoken by VoiceOver, never drawn: one of the lights that can be put out in the garden. A small iron lantern on a short post.")
+        case .paperLamp:
+            return LocalizedStringResource("Paper lamp", comment: "Spoken by VoiceOver, never drawn: one of the lights that can be put out in the garden. A paper lamp hung from a bamboo cane, glowing through its paper.")
+        case .fireflies:
+            return LocalizedStringResource("Fireflies", comment: "Spoken by VoiceOver, never drawn: one of the lights that can be put out in the garden. A drift of fireflies.")
+        case .hare:
+            return LocalizedStringResource("Hare", comment: "Spoken by VoiceOver, never drawn: one of the figures that can be put out in the garden. A hare sitting up, in glow-in-the-dark paint.")
+        case .fox:
+            return LocalizedStringResource("Fox", comment: "Spoken by VoiceOver, never drawn: one of the figures that can be put out in the garden. A fox curled asleep, in glow-in-the-dark paint.")
+        case .moth:
+            return LocalizedStringResource("Moth", comment: "Spoken by VoiceOver, never drawn: one of the figures that can be put out in the garden. A moth at rest on a stake, wings open, in glow-in-the-dark paint.")
+        case .snail:
+            return LocalizedStringResource("Snail", comment: "Spoken by VoiceOver, never drawn: one of the figures that can be put out in the garden. A snail, in glow-in-the-dark paint.")
+        }
+    }
+}
+
 // MARK: - What a name says
 
 /// The words `NameMeaningView` sets, which are the website's words.

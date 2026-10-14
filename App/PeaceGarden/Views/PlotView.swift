@@ -219,6 +219,7 @@ struct PlotView: View {
                 ZStack(alignment: .topLeading) {
                     GardenSky(light: light, date: model.now, view: view,
                               keepClear: [headingFrame, closeFrame, askingFrame, model.hybrids.isEmpty ? helpFrame : .null])
+                        .accessibilityHidden(true)
 
                     ZStack(alignment: .topLeading) {
                         plot(world: world, side: side, in: view, shift: shift,
@@ -269,6 +270,16 @@ struct PlotView: View {
                     .scaleEffect(zoom * pinching)
                     .offset(x: pan.width + panning.width, y: pan.height + panning.height)
                     .rotationEffect(turning)
+                    // Pictures, to VoiceOver; it finds the layer below instead.
+                    .accessibilityHidden(true)
+
+                    // What VoiceOver finds on the plot (`PlotVoiceOver`),
+                    // moved exactly as the plot is moved.
+                    voiceOver(standings, lamps: lamps, world: world, side: side, in: view)
+                        .equatable()
+                        .scaleEffect(zoom * pinching)
+                        .offset(x: pan.width + panning.width, y: pan.height + panning.height)
+                        .rotationEffect(turning)
 
                     // Over the plot and under the words, because a thread joins
                     // one to the other and has to be in both their spaces.
@@ -1348,6 +1359,8 @@ struct PlotView: View {
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    // Said, never drawn: see `LampKind.label`.
+                    .accessibilityLabel(Text(kind.label))
                 }
             }
             // Room above for that halo inside the scrolling row, which clips
@@ -1380,7 +1393,12 @@ struct PlotView: View {
                         }
                         .buttonStyle(.plain)
                         // Which one is chosen is drawn, and said: VoiceOver
-                        // reads *selected* on it.
+                        // reads *selected* on it. A ground is still unnamed
+                        // on the screen; VoiceOver counts it, *Ground 3*,
+                        // which is one string however many worlds there are
+                        // (mass test finding 3: these were unlabelled).
+                        .accessibilityLabel(Text("Ground \(world + 1)",
+                                                 comment: "Spoken by VoiceOver, never drawn: one of the grounds the garden can stand on, in the garden's tray. They have no names; the number is its place in the row, counted from 1."))
                         .accessibilityAddTraits(world == chosen ? .isSelected : [])
                     }
                 }
@@ -1463,6 +1481,10 @@ struct PlotView: View {
                     withAnimation(.spring(duration: 0.3)) { model.changeLamp(lamp.id, edit) }
                 }
                 .fixedSize()
+                // VoiceOver's way out, where a finger touches anywhere else.
+                .accessibilityAction(.escape) {
+                    withAnimation(.easeOut(duration: 0.2)) { tending = nil }
+                }
                 .position(x: min(max(top.x, 130), size.width - 130),
                           y: above > roomAbove ? above : bottom.y + 34)
                 .transition(.opacity)
@@ -1802,5 +1824,54 @@ private struct GroundMark: View {
             image = await GardenTerrain.shared.image(world: world, plotSide: plotSide,
                                                      view: view, size: Self.size, detail: 26)
         }
+    }
+}
+
+// MARK: - What VoiceOver finds
+
+extension PlotView {
+    /// The plants and lights on the plot, where they stand, for
+    /// `PlotVoiceOver`: read off the standings and lights the plot is drawn
+    /// from, in the plot's own coordinates, and nothing taken from the
+    /// drawing. Something in hand is where it is held.
+    ///
+    /// A plant's box is its stem's height at this stage, near enough: the
+    /// picture's own size is the sprite's, which this layer does not wait for.
+    private func voiceOver(_ standings: [Standing], lamps: [Lamp], world: Int, side: Double,
+                           in view: Isometric) -> PlotVoiceOver {
+        let metre = view.pointsPerMetre
+        let plants = standings.map { standing in
+            let resting = view.point(standing.spot, y: standsAt(standing.spot, world: world, side: side))
+            return PlotVoiceOver.Plant(
+                record: standing.record,
+                stage: standing.growth.stage,
+                isAsked: standing.record.standingOrHere.state == .invited,
+                foot: held?.id == standing.id ? (held?.foot ?? resting) : resting,
+                height: max(24, (0.25 + 1.2 * standing.growth.heightScale) * metre),
+                width: max(24, 0.45 * metre)
+            )
+        }
+        let lights = lamps.compactMap { lamp -> PlotVoiceOver.Light? in
+            guard let kind = lamp.known else { return nil }
+            let resting = view.point(lamp.spot, y: standsAt(lamp.spot, world: world, side: side))
+            let grip = GardenLamps.grip(of: kind)
+            let scale = metre * lamp.drawnScale
+            return PlotVoiceOver.Light(
+                id: lamp.id, kind: kind,
+                foot: heldLamp?.id == lamp.id ? (heldLamp?.foot ?? resting) : resting,
+                height: max(24, grip.height * scale), width: max(24, grip.width * scale)
+            )
+        }
+        return PlotVoiceOver(
+            plants: plants,
+            lights: lights,
+            open: { record in
+                visits.seen(record, growth: record.growth(now: model.now))
+                selected = record
+            },
+            tend: { id in
+                withAnimation(.spring(duration: 0.25)) { tending = id }
+            }
+        )
     }
 }
