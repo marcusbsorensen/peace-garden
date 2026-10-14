@@ -8,9 +8,9 @@ import SwiftUI
 /// placed by its own `position` or transform, so the stack's alignment did
 /// nothing but ask each of them, all the way down through their modifiers, for
 /// the alignment guides it then ignored — and it asked on every layout pass of
-/// the screen, which the sky's moving clock causes every frame. Measured with
-/// `sample` on a garden of five hundred, that was most of what a frame cost
-/// once nothing on the plot was being drawn again. This takes the size it is
+/// the screen, which came every frame while the clock or anything else on the
+/// screen moved. Measured with `sample` on a garden of five hundred, that was
+/// most of what a frame cost once nothing on the plot was being drawn again. This takes the size it is
 /// offered and puts each child at its top-left corner, offered the same size,
 /// which is what the `ZStack` did with them too.
 struct PlotStack: Layout {
