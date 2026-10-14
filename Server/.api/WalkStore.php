@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/Schema.php';
+require_once __DIR__ . '/Placed.php';
+require_once __DIR__ . '/Transient.php';
 require_once __DIR__ . '/Ambassadors.php';
 require_once __DIR__ . '/Areas.php';
 require_once __DIR__ . '/LongWalk.php';
@@ -57,6 +60,22 @@ final class WalkStore
      */
     private const TAKEN_BACK = [];
 
+    // One of each per store, rather than a static in each method: a static is
+    // shared by every store in the process, and a script holding two
+    // databases would have been handed the first one's area for the second.
+    private ?RoomStore $room = null;
+    private ?CrossStore $cross = null;
+    private ?OrchardStore $orchard = null;
+    private ?KnotStore $knot = null;
+    private ?SeedbedStore $seedbed = null;
+    private ?ColdFrameStore $coldFrame = null;
+    private ?GlasshouseStore $glasshouse = null;
+    private ?CoppiceStore $coppice = null;
+    private ?HomeGroundStore $homeGround = null;
+    private ?WildStore $wild = null;
+    private ?WildWear $wear = null;
+    private ?Offers $offers = null;
+
     private function __construct(private PDO $db) {}
 
     public static function open(string $dsn, ?string $user = null, ?string $password = null): self
@@ -66,35 +85,27 @@ final class WalkStore
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_STRINGIFY_FETCHES => false,
         ]);
-        $store = new self($db);
-        $store->migrate();
-        // The other areas' tables too, rather than when somebody first asks
-        // for them. They cost one `CREATE TABLE IF NOT EXISTS` a request, and a
-        // table that does not exist until the first visitor is a table the
-        // nightly copy does not know to keep.
-        $store->room();
-        $store->cross();
-        $store->orchard();
-        $store->knot();
-        $store->seedbed();
-        $store->coldFrame();
-        $store->glasshouse();
-        $store->coppice();
-        $store->homeGround();
-        // And the Wild Fields', which is not an area and has no rule to run,
-        // for the same reason: it is in the nightly copy's list.
-        $store->wild();
-        // And the wear on it (2 October 2026), made whether or not wear is on
-        // here, for the same reason again. Off, it is an empty table.
-        $store->wear();
-        // And the asking's, for the same reason and one more: `offer_key` is
-        // in the nightly copy's list, and mysqldump refuses a list naming a
-        // table that is not there. Its migration is also the one that erases
-        // what an offer withdrawn or declined before 24 September still held,
-        // and this is what makes that happen on the first request after a
-        // deploy, whatever that request is for.
-        $store->offers();
-        return $store;
+        return self::on($db);
+    }
+
+    /**
+     * The store over a connection already open, with the database brought up
+     * to the code's schema first.
+     *
+     * **Every table, whichever route is asking**, and not only the walk's: a
+     * table that does not exist until somebody first asks for its area is a
+     * table the nightly copy does not know to keep, and mysqldump refuses a
+     * list naming a table that is not there. Since 14 October 2026 that is
+     * one statement a request — the schema's version, read — and the
+     * migration itself runs only when the database is older than the code
+     * (`Schema.php`). It is also what erases what an offer withdrawn or
+     * declined before 24 September still held, on the first request after a
+     * deploy, whatever that request is for.
+     */
+    public static function on(PDO $db): self
+    {
+        Schema::ensure($db);
+        return new self($db);
     }
 
     private function run(string $sql): void
@@ -102,13 +113,18 @@ final class WalkStore
         $this->db->prepare($sql)->execute();
     }
 
-    private function migrate(): void
+    /**
+     * The tables, made or brought up to date. Run by `Schema` when the
+     * database is older than the code (14 October 2026), never per request.
+     */
+    public static function migrate(PDO $db): void
     {
-        $sqlite = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
+        $run = static fn (string $sql): bool => $db->prepare($sql)->execute();
+        $sqlite = $db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
         $id = $sqlite ? 'INTEGER PRIMARY KEY AUTOINCREMENT' : 'BIGINT PRIMARY KEY AUTO_INCREMENT';
         // DOUBLE, because the rule compares heights and a stored height must
         // come back the same double it went in as.
-        $this->run("CREATE TABLE IF NOT EXISTS long_walk (
+        $run("CREATE TABLE IF NOT EXISTS long_walk (
             arrival $id,
             seed CHAR(64) NOT NULL UNIQUE,
             parent_a CHAR(64) NOT NULL,
@@ -122,28 +138,24 @@ final class WalkStore
             family INTEGER NOT NULL,
             nudge_x DOUBLE PRECISION NOT NULL,
             nudge_z DOUBLE PRECISION NOT NULL
-        )");
-        $this->run('CREATE INDEX IF NOT EXISTS long_walk_plot ON long_walk (plot)');
-        // Added after the table was live, so it is an ALTER that may already
-        // have run. A planting taken back is hidden rather than deleted: the
+        )" . Schema::options($db));
+        $run('CREATE INDEX IF NOT EXISTS long_walk_plot ON long_walk (plot)');
+        // Added after the table was live, so it is a column added where it is
+        // missing. A planting taken back is hidden rather than deleted: the
         // walk is append-only and nothing in it moves, so the row stays, keeps
         // its slot, and simply is not drawn. The border is left with a gap,
         // which is what lifting a plant out of one leaves.
-        try {
-            $this->run('ALTER TABLE long_walk ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0');
-        } catch (Throwable) {
-            // Already there.
-        }
+        Schema::addColumn($db, 'long_walk', 'hidden INTEGER NOT NULL DEFAULT 0');
         // Added on 24 September, when taking back began to delete: the rows
         // hidden before then still hold the seed, the parents and the meeting,
-        // and this erases them. It runs every request and finds nothing once
-        // it has run once; the index is what keeps that finding cheap.
-        $this->run('CREATE INDEX IF NOT EXISTS long_walk_hidden ON long_walk (hidden)');
-        TakenBack::sweep($this->db, 'long_walk', self::TAKEN_BACK);
+        // and this erases them. It runs with every migration and finds nothing
+        // once it has run once; the index is what keeps that finding cheap.
+        $run('CREATE INDEX IF NOT EXISTS long_walk_hidden ON long_walk (hidden)');
+        TakenBack::sweep($db, 'long_walk', self::TAKEN_BACK);
         // One row, written first in every arrival's transaction: the write lock
         // that keeps two arrivals from being placed against the same walk.
-        $this->run('CREATE TABLE IF NOT EXISTS long_walk_lock (id INTEGER PRIMARY KEY, arrivals INTEGER NOT NULL)');
-        $this->run('INSERT INTO long_walk_lock (id, arrivals) SELECT 1, 0 WHERE NOT EXISTS (SELECT 1 FROM long_walk_lock)');
+        $run('CREATE TABLE IF NOT EXISTS long_walk_lock (id INTEGER PRIMARY KEY, arrivals INTEGER NOT NULL)' . Schema::options($db));
+        $run('INSERT INTO long_walk_lock (id, arrivals) SELECT 1, 0 WHERE NOT EXISTS (SELECT 1 FROM long_walk_lock)');
     }
 
     /**
@@ -189,6 +201,15 @@ final class WalkStore
                 array_map([self::class, 'forRule'], $all->fetchAll())
             );
             $p = LongWalk::plant($walk, $seed, $height, $family);
+            // **One public place.** The plant is claimed in this transaction, so
+            // a release of it at the same moment and this arrival cannot both
+            // stand: whichever is written first holds it, and an arrival that
+            // finds it held elsewhere plants nothing (`Placed.php`, 14 October
+            // 2026). Every area does the same, in the same place.
+            if (!Placed::claim($this->db, $seed, 'long_walk')) {
+                $this->db->rollBack();
+                return [null, false];
+            }
             $insert = $this->db->prepare('INSERT INTO long_walk
                 (seed, parent_a, parent_b, encounter, plot, side, tier, slot_index, height, family, nudge_x, nudge_z)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
@@ -244,10 +265,14 @@ final class WalkStore
         TakenBack::lift($this->db, 'long_walk', self::TAKEN_BACK, $seed);
     }
 
-    /** The asking that decides what ever reaches the walk. */
+    /**
+     * The asking that decides what ever reaches the walk. One per store, as
+     * every other area is: until 14 October 2026 each call made a new one,
+     * and a write ran the asking's migration twice.
+     */
     public function offers(): Offers
     {
-        return new Offers($this->db, $this);
+        return $this->offers ??= new Offers($this->db, $this);
     }
 
     /// The same connection, for the parts of the service that keep their own
@@ -267,64 +292,55 @@ final class WalkStore
      */
     public function room(): RoomStore
     {
-        static $room = null;
-        return $room ??= new RoomStore($this->db);
+        return $this->room ??= new RoomStore($this->db);
     }
 
     /** The Crossing, on the same connection. */
     public function cross(): CrossStore
     {
-        static $cross = null;
-        return $cross ??= new CrossStore($this->db);
+        return $this->cross ??= new CrossStore($this->db);
     }
 
     /** The Orchard, on the same connection. */
     public function orchard(): OrchardStore
     {
-        static $orchard = null;
-        return $orchard ??= new OrchardStore($this->db);
+        return $this->orchard ??= new OrchardStore($this->db);
     }
 
     /** The Knot Garden, on the same connection. */
     public function knot(): KnotStore
     {
-        static $knot = null;
-        return $knot ??= new KnotStore($this->db);
+        return $this->knot ??= new KnotStore($this->db);
     }
 
     /** The Seedbed, on the same connection. */
     public function seedbed(): SeedbedStore
     {
-        static $seedbed = null;
-        return $seedbed ??= new SeedbedStore($this->db);
+        return $this->seedbed ??= new SeedbedStore($this->db);
     }
 
     /** The Cold Frame, on the same connection. */
     public function coldFrame(): ColdFrameStore
     {
-        static $coldFrame = null;
-        return $coldFrame ??= new ColdFrameStore($this->db);
+        return $this->coldFrame ??= new ColdFrameStore($this->db);
     }
 
     /** The Glasshouse, on the same connection. */
     public function glasshouse(): GlasshouseStore
     {
-        static $glasshouse = null;
-        return $glasshouse ??= new GlasshouseStore($this->db);
+        return $this->glasshouse ??= new GlasshouseStore($this->db);
     }
 
     /** The Coppice, on the same connection. */
     public function coppice(): CoppiceStore
     {
-        static $coppice = null;
-        return $coppice ??= new CoppiceStore($this->db);
+        return $this->coppice ??= new CoppiceStore($this->db);
     }
 
     /** The Home Ground, on the same connection. */
     public function homeGround(): HomeGroundStore
     {
-        static $homeGround = null;
-        return $homeGround ??= new HomeGroundStore($this->db);
+        return $this->homeGround ??= new HomeGroundStore($this->db);
     }
 
     /**
@@ -334,8 +350,7 @@ final class WalkStore
      */
     public function wild(): WildStore
     {
-        static $wild = null;
-        return $wild ??= new WildStore($this->db);
+        return $this->wild ??= new WildStore($this->db);
     }
 
     /**
@@ -345,8 +360,7 @@ final class WalkStore
      */
     public function wear(): WildWear
     {
-        static $wear = null;
-        return $wear ??= new WildWear($this->db);
+        return $this->wear ??= new WildWear($this->db);
     }
 
     /**
@@ -381,12 +395,17 @@ final class WalkStore
      * Walk and says nothing.** So each area that opens is a case here the day it
      * opens, and `check_offers.php` has a block for it that would catch the
      * plant turning up in the walk instead.
+     *
+     * **[null, false] when the plant stands in another public place**: the
+     * Wild Fields, released at the same moment (`Placed.php`, 14 October
+     * 2026). And a deadlock in an arrival's transaction, which rolls the
+     * arrival back whole, is tried again (`Transient`).
      */
     public function plantInto(string $area, string $seed, string $parentA, string $parentB,
                               string $encounter, float $height, int $family, string $kind = '',
                               ?float $hue = null, string $habit = ''): array
     {
-        return match ($area) {
+        return Transient::retry(fn (): array => match ($area) {
             'peace' => $this->room()->plant($seed, $parentA, $parentB, $encounter, $height, $family,
                                             $kind, $hue, $habit),
             'meeting' => $this->cross()->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
@@ -403,7 +422,7 @@ final class WalkStore
             'ground' => $this->homeGround()->plant($seed, $parentA, $parentB, $encounter, $height, $family,
                                                    $kind, $hue, $habit),
             default => $this->plant($seed, $parentA, $parentB, $encounter, $height, $family, $kind),
-        };
+        });
     }
 
     /** Takes a planting back, in whichever area holds it. */

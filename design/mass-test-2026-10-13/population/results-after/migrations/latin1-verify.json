@@ -1,0 +1,12 @@
+{
+    "kept: Anna": "exactly",
+    "kept: Zoë": "exactly",
+    "a new name with an emoji": "201 [\"Rose 🌹\"]",
+    "the offer waiting across the deploy, answered yes": "200 accepted, planted",
+    "collations": [
+        "utf8mb4_unicode_ci"
+    ],
+    "column collations": [
+        "utf8mb4_unicode_ci"
+    ]
+}

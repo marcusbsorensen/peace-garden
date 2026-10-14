@@ -71,7 +71,8 @@ const offerBody = (m, g = 'a') => ({ to: tokens(m, g).theirs, from: tokens(m, g)
     await expect('release: an invented lineage (accepted by design)', send('/api/wild/release', { seed: invented, parents: [pa, pb], encounter: enc }), [201]);
     genuine.push(invented);
     // **A plant crossed with itself**: both parents the same seed. The app's
-    // exchange aborts this ("same seed"); the service takes it.
+    // exchange aborts this ("same seed"); the service took it until 14 October
+    // 2026 and refuses it with 422 since.
     const self = await inventedCross(pa, pa, enc);
     const selfRes = await send('/api/wild/release', { seed: self, parents: [pa, pa], encounter: enc });
     cases.push({ name: 'release: a plant crossed with itself (the app never makes one)', want: [422, 400], got: selfRes.status,
@@ -232,35 +233,83 @@ const offerBody = (m, g = 'a') => ({ to: tokens(m, g).theirs, from: tokens(m, g)
 
 // MARK: - The rate limit
 
+// Two counts since 14 October 2026 (Limits.php): one per gardener, by the
+// meeting token the request carries (or the plant, for a release without a
+// token), at the old allowances; and one per address, CROWD (5) times that,
+// shared by everybody behind it. IPv6 is counted by /64.
 {
+    const PERSONAL = 9;
+    const CEILING = 45;
+    const releaseFrom = async (addr, extra = {}) => {
+        const m = nextMeeting();
+        const res = await send('/api/wild/release', releaseBody(m, extra), addr);
+        if (res.status === 201) genuine.push(m.seed);
+        return res.status;
+    };
+    const firstRefusal = (statuses) => statuses.indexOf(429);
+
+    // One machine on one address, a different plant each time and no token:
+    // every plant passes its own count, and the address's ceiling refuses.
     const one = '192.0.2.10';
     const statuses = [];
-    for (let i = 0; i < 11; i++) {
+    for (let i = 0; i < CEILING + 2; i++) statuses.push(await releaseFrom(one));
+    cases.push({ name: `rate limit: one address, ${CEILING + 2} releases`, want: [`${CEILING} then 429`],
+                 got: `${statuses.filter((s) => s === 201).length} accepted, first 429 at ${firstRefusal(statuses) + 1}`,
+                 ok: statuses.filter((s) => s === 201).length === CEILING && firstRefusal(statuses) === CEILING });
+
+    // One gardener — one token — from a fresh address each time: the
+    // per-gardener count refuses, wherever the requests come from.
+    const token = randomHex(16);
+    const mine = [];
+    for (let i = 0; i < PERSONAL + 2; i++) mine.push(await releaseFrom(fresh(), { token }));
+    cases.push({ name: `rate limit: one token from ${PERSONAL + 2} addresses`, want: [`${PERSONAL} then 429`],
+                 got: `${mine.filter((s) => s === 201).length} accepted, first 429 at ${firstRefusal(mine) + 1}`,
+                 ok: mine.filter((s) => s === 201).length === PERSONAL && firstRefusal(mine) === PERSONAL });
+
+    // A workshop: forty gardeners on one router, each releasing their own
+    // plant with their own token. Before, the tenth was refused.
+    const venue = '203.0.113.50';
+    const crowd = [];
+    for (let i = 0; i < 40; i++) {
         const m = nextMeeting();
-        const res = await send('/api/wild/release', releaseBody(m), one);
-        statuses.push(res.status);
+        const res = await send('/api/wild/release', releaseBody(m, { token: m.tokenA, theirs: m.tokenB }), venue);
         if (res.status === 201) genuine.push(m.seed);
+        crowd.push(res.status);
     }
-    const accepted = statuses.filter((s) => s === 201).length;
-    cases.push({ name: 'rate limit: one address, eleven releases', want: ['9 then 429'], got: statuses.join(','),
-                 ok: accepted === 9 && statuses[9] === 429 });
-    // One phone on IPv6 holds a /64: 2^64 addresses that the limit counts apart.
+    cases.push({ name: 'rate limit: forty gardeners on one address each release a plant', want: ['40 accepted'],
+                 got: `${crowd.filter((s) => s === 201).length} accepted`, ok: crowd.every((s) => s === 201) });
+
+    // A festival: a hundred phones on the venue's Wi-Fi each open the app
+    // three times. Before, a quarter were refused (finding 6).
+    const festival = '203.0.113.51';
+    const phones = Array.from({ length: 100 }, () => [randomHex(16), randomHex(16), randomHex(16)]);
+    const polls = [];
+    for (let round = 0; round < 3; round++) {
+        polls.push(...(await Promise.all(phones.map((bag) => send('/api/walk/pending', { tokens: bag }, festival))))
+            .map((r) => r.status));
+    }
+    cases.push({ name: 'rate limit: a hundred phones on one Wi-Fi ask pending three times each', want: ['none refused'],
+                 got: `${polls.filter((s) => s === 429).length} of ${polls.length} refused`, ok: polls.every((s) => s === 200) });
+
+    // One phone on IPv6 holds a /64: every address in it is one caller now.
     const v6 = [];
-    for (let i = 0; i < 20; i++) {
-        const m = nextMeeting();
-        const res = await send('/api/wild/release', releaseBody(m), `2001:db8:1:2::${(i + 1).toString(16)}`);
-        v6.push(res.status);
-        if (res.status === 201) genuine.push(m.seed);
-    }
+    for (let i = 0; i < CEILING + 2; i++) v6.push(await releaseFrom(`2001:db8:1:2::${(i + 1).toString(16)}`));
     const v6accepted = v6.filter((s) => s === 201).length;
-    cases.push({ name: 'rate limit: twenty releases from one IPv6 /64', want: ['9 then 429'], got: `${v6accepted} accepted`,
-                 ok: v6accepted <= 9, finding: v6accepted > 9 });
-    // Malformed requests spend the allowance too: counted before the body is read.
+    cases.push({ name: `rate limit: ${CEILING + 2} releases from one IPv6 /64`, want: [`${CEILING} then 429`],
+                 got: `${v6accepted} accepted`, ok: v6accepted === CEILING && firstRefusal(v6) === CEILING });
+    const apart = [];
+    for (let i = 0; i < 10; i++) apart.push(await releaseFrom(`2001:db8:2:${(i + 1).toString(16)}::1`));
+    cases.push({ name: 'rate limit: ten /64s are ten callers', want: ['10 accepted'],
+                 got: `${apart.filter((s) => s === 201).length} accepted`, ok: apart.every((s) => s === 201) });
+
+    // Malformed requests spend the address's allowance: counted before the
+    // body is read, where no token is known yet.
     const two = '192.0.2.11';
-    for (let i = 0; i < 9; i++) await raw('/api/wild/release', 'not json', two);
+    for (let i = 0; i < CEILING; i++) await raw('/api/wild/release', 'not json', two);
     const m = nextMeeting();
     const after = await send('/api/wild/release', releaseBody(m), two);
-    cases.push({ name: 'rate limit: nine malformed releases spend the allowance', want: [429], got: after.status, ok: after.status === 429 });
+    cases.push({ name: `rate limit: ${CEILING} malformed releases spend the address's allowance`, want: [429], got: after.status,
+                 ok: after.status === 429 });
     const retry = after.headers['retry-after'];
     cases.push({ name: 'rate limit: Retry-After present', want: ['a number'], got: retry ?? 'none', ok: /^\d+$/.test(retry ?? '') });
 }

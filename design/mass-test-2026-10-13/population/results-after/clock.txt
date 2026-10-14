@@ -1,0 +1,21 @@
+tidy rc=0 1s
+web-new rc=0 2s
+db-main rc=0 0s
+db-race rc=0 0s
+plan rc=0 93s
+driver rc=0 151s
+adversary rc=0 5s
+races rc=0 25s
+charset rc=0 5s
+check-adversary rc=0 2s
+verify-adversary rc=0 1s
+web-old rc=0 3s
+load-before-read rc=0 64s
+load-before-write rc=0 21s
+web-new2 rc=0 4s
+load-after-read rc=0 63s
+load-after-write rc=0 22s
+migrate rc=0 1s
+check-load rc=0 1s
+verify-load rc=0 7s
+DONE

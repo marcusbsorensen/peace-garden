@@ -1,0 +1,28 @@
+== the old code (97fd259) builds two databases
+database pgmt_upgrade (utf8mb4)
+database pgmt_uplatin (latin1)
+up: http://127.0.0.1:8811  (PHP-FPM docker, 16 children, storage volume)
+day 0: 71 meetings, 0s
+day 10: 645 meetings, 2s
+day 20: 1240 meetings, 4s
+1828 meetings, 6 skipped as same-seed, 800 gardeners
+{"requests":4046,"unexpected":0,"seconds":95,"states":{"withdrawn":30,"accepted":275,"released":164,"offered":145,"hidden":64,"declined":104,"lapsed":19},"festival":{"requests":253,"limited":32}}
+{"Anna":201,"Zoë":201,"Rose 🌹":500,"مريم":500,"offer waiting":201,"offer accepted":201,"yes":200}
+{"legacy offers":2,"hidden with its seed":"f3df4f6d5d508818f861d91895eca94c8fb3302a62e8142145d4ee8a8222060a"}
+== the new code opens them
+up: http://127.0.0.1:8811  (PHP-FPM docker, 16 children, storage volume)
+database pgmt_fresh (utf8mb4)
+{"had schema_version before":false,"first request":[200,129.7],"second request":[200,4.3],"GET \/api\/wild after":[200,4.8],"version":1}
+{"had schema_version before":false,"first request":[200,28.2],"second request":[200,4.8],"GET \/api\/wild after":[200,3.7],"version":1}
+{"had schema_version before":false,"first request":[200,29.9],"second request":[200,3.4],"GET \/api\/wild after":[200,10.9],"version":1}
+== compared
+{"tables only after":["placed","schema_version"],"tables lost":[],"tables with changed rows":["crossing","walk_offers"],"schema differs":[],"placed":502,"version":1,"collations":["utf8mb4_unicode_ci"]}
+{"tables only after":["placed","schema_version"],"tables lost":[],"tables with changed rows":[],"schema differs":[],"placed":5,"version":1,"collations":["utf8mb4_unicode_ci"]}
+{"kept: Anna":"exactly","kept: Zoë":"exactly","a new name with an emoji":"201 [\"Rose 🌹\"]","the offer waiting across the deploy, answered yes":"200 accepted, planted","collations":["utf8mb4_unicode_ci"],"column collations":["utf8mb4_unicode_ci"]}
+{"violations":[],"wild":{"standing":164,"hidden":64,"tiles_with_plants":59,"tile_bytes_max":3402,"tile_bytes_median":773,"tile_ms_median":2.3,"tile_ms_max":5,"plantings_with_shown":93,"wild_json_bytes":519},"offers":{"accepted":274,"declined":107,"withdrawn":208,"lapsed_at_exactly_30_days":166}}
+{"plan_meetings":1828,"planted_checked":502,"taken_back_markers":29,"true_crosses":502,"violations":[]}
+== a rollback to the old code and back
+up: http://127.0.0.1:8811  (PHP-FPM docker, 16 children, storage volume)
+{"withdrawn by the old code":"200 withdrawn","claim left behind":"long_walk"}
+up: http://127.0.0.1:8811  (PHP-FPM docker, 16 children, storage volume)
+{"released over the stale claim":201,"claim now":"wild_fields"}

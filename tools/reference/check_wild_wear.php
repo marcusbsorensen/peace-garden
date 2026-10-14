@@ -60,6 +60,11 @@ if (isset($argv[1])) {
 }
 $sqlite = $db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
 $wear = new WildWear($db);
+// The tables before anybody walks. Since 14 October 2026 opening any store
+// makes the whole schema at once (`Schema.php`), so what walking must not do
+// is add to it.
+$tablesBefore = $sqlite ? $db->query("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name")
+                             ->fetchAll(PDO::FETCH_COLUMN) : [];
 if ((int) $db->query('SELECT COUNT(*) FROM wild_wear')->fetchColumn() > 0
     || (int) $db->query('SELECT COUNT(*) FROM wild_wear_day')->fetchColumn() > 0) {
     fwrite(STDERR, "That database already holds wear. This check wants an empty one.\n");
@@ -223,13 +228,16 @@ if ($sqlite) {
     check('and SQLite keeps no hidden row number that would count arrivals', $rowid === false);
     $tables = $db->query("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name")
                  ->fetchAll(PDO::FETCH_COLUMN);
-    check('walking made no table but the two: ' . implode(', ', $tables),
-          $tables === ['wild_wear', 'wild_wear_day']);
+    check('walking made no table of its own beyond the two the schema makes for it: '
+          . implode(', ', array_diff($tables, $tablesBefore)),
+          $tables === $tablesBefore && in_array('wild_wear', $tables, true)
+          && in_array('wild_wear_day', $tables, true));
 }
 
 // MARK: The route
 
-check('the batch route is limited as every write is', isset(Limits::ROUTES['/api/wild/wear']));
+check('the batch route is limited as every write is', isset(Limits::ROUTES['/api/wild/wear'])
+      && isset(Limits::CEILINGS['/api/wild/wear']));
 
 // **Off unless turned on.** A copy with no `config.php` saying `'wear' =>
 // true` — CI, and the live site, whose `config.php` is written on the server

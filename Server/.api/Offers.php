@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/Schema.php';
 require_once __DIR__ . '/Keyed.php';
 require_once __DIR__ . '/WalkStore.php';
 
@@ -91,17 +92,17 @@ final class Offers
 
     public function __construct(private PDO $db, private WalkStore $walk)
     {
-        $this->migrate();
+        Schema::ensure($db);
     }
 
-    private function run(string $sql): void
+    /**
+     * The tables, made or brought up to date. Run by `Schema` when the
+     * database is older than the code (14 October 2026), never per request.
+     */
+    public static function migrate(PDO $db): void
     {
-        $this->db->prepare($sql)->execute();
-    }
-
-    private function migrate(): void
-    {
-        $sqlite = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
+        $run = static fn (string $sql): bool => $db->prepare($sql)->execute();
+        $sqlite = $db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
         $id = $sqlite ? 'INTEGER PRIMARY KEY AUTOINCREMENT' : 'BIGINT PRIMARY KEY AUTO_INCREMENT';
         // The plant's own fields are kept only while the offer is open. Once it
         // is answered they go: an accepted plant is in the walk and does not
@@ -110,7 +111,7 @@ final class Offers
         // can learn what happened without the service keeping the refusal's
         // subject matter — and once it is withdrawn, not even the seed and the
         // tokens, only their fingerprints (`erase`).
-        $this->run("CREATE TABLE IF NOT EXISTS walk_offers (
+        $run("CREATE TABLE IF NOT EXISTS walk_offers (
             offer $id,
             seed CHAR(64) NOT NULL UNIQUE,
             token_to CHAR(32) NOT NULL,
@@ -123,24 +124,20 @@ final class Offers
             state VARCHAR(16) NOT NULL,
             offered_at BIGINT NOT NULL,
             answered_at BIGINT NULL
-        )");
-        $this->run('CREATE INDEX IF NOT EXISTS walk_offers_to ON walk_offers (token_to)');
-        $this->run('CREATE INDEX IF NOT EXISTS walk_offers_from ON walk_offers (token_from)');
+        )" . Schema::options($db));
+        $run('CREATE INDEX IF NOT EXISTS walk_offers_to ON walk_offers (token_to)');
+        $run('CREATE INDEX IF NOT EXISTS walk_offers_from ON walk_offers (token_from)');
         // Added on 21 September, when the garden had a second area to be
-        // offered a plant for, so it is an ALTER that may already have run.
+        // offered a plant for, so it is a column added where it is missing.
         // Every offer made before it was for the Long Walk, which is what the
         // default says, and an offer answered after it is planted where its own
         // area's rule says. The column stays after the answer, unlike the
         // plant's own fields: it is where to look for the planting, not
         // anything about the plant. It goes when the offer is withdrawn, when
         // there is no longer a planting to look for.
-        try {
-            $this->run("ALTER TABLE walk_offers ADD COLUMN area VARCHAR(16) NOT NULL DEFAULT 'travel'");
-        } catch (Throwable) {
-            // Already there.
-        }
+        Schema::addColumn($db, 'walk_offers', "area VARCHAR(16) NOT NULL DEFAULT 'travel'");
         // Added on 23 September, when the Seedbed opened and a placement needed
-        // a third fact about the plant. Another ALTER that may already have run,
+        // a third fact about the plant. Another column added where missing,
         // and the reason it defaults to the empty string rather than being NULL:
         // an offer made before this migration is answered after it, and the
         // empty kind is the one the rule already understands. So an offer in
@@ -151,14 +148,10 @@ final class Offers
         // fact about the plant rather than about where to find the planting, so
         // it belongs with the parents, the height and the family in `accept`
         // and `erase`.
-        try {
-            $this->run("ALTER TABLE walk_offers ADD COLUMN kind VARCHAR(64) NOT NULL DEFAULT ''");
-        } catch (Throwable) {
-            // Already there.
-        }
+        Schema::addColumn($db, 'walk_offers', "kind VARCHAR(64) NOT NULL DEFAULT ''");
         // Added on 24 September, when the Glasshouse opened and a placement
-        // needed a fourth fact: the flower's hue. Another ALTER that may already
-        // have run, and **nullable where `kind` is not**, because there is no
+        // needed a fourth fact: the flower's hue. Another column added where
+        // missing, and **nullable where `kind` is not**, because there is no
         // hue that means *none* the way the empty string is the empty kind. An
         // offer made before the migration and answered after it plants with a
         // null hue, which the Glasshouse reads as it reads a pale flower: any
@@ -166,38 +159,45 @@ final class Offers
         //
         // Dropped when the offer is answered, as `kind` is: a fact about the
         // plant, not about where to find the planting.
-        try {
-            $this->run('ALTER TABLE walk_offers ADD COLUMN hue DOUBLE PRECISION NULL');
-        } catch (Throwable) {
-            // Already there.
-        }
+        Schema::addColumn($db, 'walk_offers', 'hue DOUBLE PRECISION NULL');
         // Added on 24 September too, when the Coppice opened and a placement
         // needed a fifth fact: the plant's habit, its archetype's name. NOT
         // NULL with the empty string for *never sent*, as `kind` is, and read
         // by the Coppice as a star's. Dropped when the offer is answered.
-        try {
-            $this->run("ALTER TABLE walk_offers ADD COLUMN habit VARCHAR(16) NOT NULL DEFAULT ''");
-        } catch (Throwable) {
-            // Already there.
-        }
+        Schema::addColumn($db, 'walk_offers', "habit VARCHAR(16) NOT NULL DEFAULT ''");
         // Added on 24 September, with taking back that deletes. The key the
         // fingerprints are made under, one row, minted on first use; and the
         // index the thirty-day sweep reads, so a sweep that finds nothing costs
         // a lookup rather than a pass over every offer ever made.
-        $this->run('CREATE TABLE IF NOT EXISTS offer_key (id INTEGER PRIMARY KEY, hmac_key CHAR(64) NOT NULL)');
-        $this->run('CREATE INDEX IF NOT EXISTS walk_offers_waiting ON walk_offers (state, offered_at)');
-        // **The migration.** An offer withdrawn or declined before today still
-        // holds its seed and both tokens in the clear, and this puts them
-        // through the same erasure a withdrawal or a decline does now. It runs
-        // on every request and finds nothing once it has run: an erased row's
-        // seed starts with the fingerprint's letter. It leaves the times and
-        // the word alone, so both phones hear the same thing about the offer
-        // as before.
+        $run('CREATE TABLE IF NOT EXISTS offer_key (id INTEGER PRIMARY KEY, hmac_key CHAR(64) NOT NULL)' . Schema::options($db));
+        $run('CREATE INDEX IF NOT EXISTS walk_offers_waiting ON walk_offers (state, offered_at)');
+    }
+
+    /**
+     * **The migration's data half.** An offer withdrawn or declined before 24
+     * September still holds its seed and both tokens in the clear, and this
+     * puts them through the same erasure a withdrawal or a decline does now.
+     * It leaves the times and the word alone, so both phones hear the same
+     * thing about the offer as before. Returns how many it erased.
+     *
+     * **Run by `Schema`, when the version rises or after a restore**, and no
+     * longer on every request (14 October 2026): it is a full pass over every
+     * offer ever made — no index helps `seed NOT LIKE` — and it cost 3.8 ms a
+     * request at ten thousand offers and 15 ms at forty thousand, growing for
+     * ever, to find nothing. An erased row's seed starts with the
+     * fingerprint's letter, so a second run finds nothing to do.
+     */
+    public function eraseLegacy(): int
+    {
         $plain = $this->db->prepare('SELECT * FROM walk_offers WHERE state IN (?, ?) AND seed NOT LIKE ?');
         $plain->execute([self::WITHDRAWN, self::DECLINED, self::PRINT . '%']);
-        foreach ($plain->fetchAll() as $row) {
-            $this->erase($row, (string) $row['state'], (int) ($row['answered_at'] ?? $row['offered_at']));
+        $erased = 0;
+        foreach ($plain->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            if ($this->erase($row, (string) $row['state'], (int) ($row['answered_at'] ?? $row['offered_at']))) {
+                $erased++;
+            }
         }
+        return $erased;
     }
 
     /**
@@ -318,13 +318,35 @@ final class Offers
             isset($row['hue']) ? (float) $row['hue'] : null,
             (string) ($row['habit'] ?? '')
         );
+        if ($planting === null) {
+            // **Released to the Wild Fields at the same moment** (14 October
+            // 2026): the other gardener let it go while this offer was
+            // waiting, before the release could see the offer to withdraw it,
+            // and the field holds it now (`Placed.php`). A plant stands in one
+            // public place, so this offer goes as the release would have
+            // taken it had it come a moment later: withdrawn, and erased.
+            $this->erase($row, self::WITHDRAWN, $now);
+            return ['offer' => $this->seen($this->find($seed, $now) ?? [], $sent), 'planting' => null];
+        }
         if (!$this->accept($seed, $now)) {
-            // The offer changed under this answer — it lapsed in the hourly
-            // sweep, or was withdrawn, in the moment between reading it and
-            // planting it. It is not the garden's to keep, so the planting
-            // just made is taken back at once.
-            $this->walk->takeBackIn((string) ($row['area'] ?? 'travel'), $seed);
-            $planting = null;
+            // The offer changed under this answer, in the moment between
+            // reading it and planting it. **Read it again before taking
+            // anything back** (14 October 2026). Accepted now means the same
+            // "yes" arrived twice at once — a phone retrying after a slow
+            // answer, or a double tap — and the other copy settled it: the
+            // planting both copies found is the garden's, and this answer is
+            // that one, again. Until today this took the planting back while
+            // the offer still said accepted, leaving the plant nowhere and its
+            // slot held for ever (design/mass-test-2026-10-13/population,
+            // finding 1). Anything else — lapsed in the sweep, withdrawn,
+            // declined — means it is not the garden's to keep, so the planting
+            // just made is taken back at once. Those states never return to
+            // accepted, so the second read cannot be overtaken.
+            $again = $this->find($seed, $now);
+            if (($again['state'] ?? null) !== self::ACCEPTED) {
+                $this->walk->takeBackIn((string) ($row['area'] ?? 'travel'), $seed);
+                $planting = null;
+            }
         }
         return ['offer' => $this->seen($this->find($seed, $now) ?? [], $sent), 'planting' => $planting];
     }

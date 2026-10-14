@@ -1,0 +1,4 @@
+2026-10-14 09:16:15  schema version 1, now 1 (the code's is 1)
+  converted to utf8mb4: nothing
+  offers erased that were withdrawn or declined in the clear: 0
+  places claimed: 2354; claims let go: 0; plants standing in two places: 0

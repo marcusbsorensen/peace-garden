@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/Placed.php';
+
 /**
  * What is left of a planting once it has been taken back: its place, and
  * nothing that says whose it was.
@@ -43,12 +45,13 @@ declare(strict_types=1);
  * else. The parents and the meeting are the empty string for the same reason
  * (`NOT NULL`).
  *
- * **The migration is the same code, run on every request.** A row hidden before
- * this existed still holds its seed, so each store's schema setup erases every
- * hidden row whose seed is not yet a marker. On a table where that is already
- * done it finds nothing, through an index on `hidden`, which is what makes it
- * safe to leave running — and it also puts right a row hidden by anything that
- * forgot to erase it, including an older copy restored from a backup.
+ * **The migration is the same code, run by every migration.** A row hidden
+ * before this existed still holds its seed, so each store's schema setup erases
+ * every hidden row whose seed is not yet a marker. On a table where that is
+ * already done it finds nothing, through an index on `hidden`. Until 14 October
+ * 2026 it ran on every request; now it runs when the schema's version rises
+ * and after a restore (`Schema.php`), which is when a row like that can appear:
+ * an older copy brought back, or a deploy of code that forgot to erase one.
  */
 final class TakenBack
 {
@@ -78,11 +81,22 @@ final class TakenBack
      */
     public static function lift(PDO $db, string $table, array $blank, string $seed): void
     {
-        $find = $db->prepare("SELECT arrival FROM $table WHERE seed = ?");
-        $find->execute([$seed]);
-        $arrival = $find->fetchColumn();
-        if ($arrival === false) return;
-        self::erase($db, $table, $blank, (int) $arrival);
+        // **And its claim on a public place goes with it** (`Placed.php`, 14
+        // October 2026), in the same transaction, so the plant can be released
+        // the moment it is out of its area and never before.
+        $own = !$db->inTransaction();
+        if ($own) $db->beginTransaction();
+        try {
+            $find = $db->prepare("SELECT arrival FROM $table WHERE seed = ?");
+            $find->execute([$seed]);
+            $arrival = $find->fetchColumn();
+            if ($arrival !== false) self::erase($db, $table, $blank, (int) $arrival);
+            Placed::letGo($db, $seed, $table);
+            if ($own) $db->commit();
+        } catch (Throwable $error) {
+            if ($own && $db->inTransaction()) $db->rollBack();
+            throw $error;
+        }
     }
 
     /**
