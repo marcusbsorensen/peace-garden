@@ -1254,6 +1254,10 @@ struct PlotView: View {
                 // heading, and through a June midday: 3.7 at its lowest
                 // (`design/small-caps-2026-10-14/`).
                 .foregroundStyle(byDay ? Chrome.ink : Chrome.muted)
+                // A soft dark shadow by day, to hold those mornings at 4.5 : 1
+                // without a plate behind the words: question 31, rendered and
+                // not yet chosen. See `CountLineShadow`.
+                .modifier(CountLineShadow(layers: byDay ? CountLineShadow.byDay : []))
         }
         .padding(.top, 44)
         .allowsHitTesting(false)
@@ -1661,6 +1665,86 @@ struct PlotView: View {
             .frame(maxWidth: Chrome.readableWidth, alignment: .leading)
             .padding(.top, 20)
             .allowsHitTesting(false)
+    }
+}
+
+/// A soft dark shadow under the garden's count line, by day only.
+///
+/// **Why** (Marcus, 14 October: 31A). The line is white by day (30A), which
+/// is 4.9 : 1 at an October noon but 3.7 to 4.1 on the mornings when the
+/// sun's halo stands behind the heading, and through a June morning to noon.
+/// A shadow cast by the letters themselves darkens the sky just where the
+/// letters are, so the line keeps its place on the sky: no plate behind it,
+/// no edge, nothing straight. By night `muted` reads at 10 : 1 and has none.
+///
+/// **Three strengths, rendered and not yet chosen**
+/// (`design/count-line-shadow-2026-10-14/`), black and never offset, so it
+/// reads as the sky's softness and not as a drop shadow:
+///
+/// - `A`, subtle: one shadow.
+/// - `B`, medium: one shadow, darker and a little wider.
+/// - `C`, a tight shadow that holds the strokes and a wide haze round it.
+///
+/// `shipping` is what a build draws. In a Debug build `-pgCountShadow A`
+/// (or `B`, `C`, `none`) draws that strength instead, for the renders, and
+/// `-pgCountShadow 0.5@3+0.3@6` any stack of opacity@radius, for tuning.
+struct CountLineShadow: ViewModifier {
+    /// One soft shadow: black at this opacity, blurred by this radius in
+    /// points.
+    struct Layer: Sendable {
+        let opacity: Double
+        let radius: CGFloat
+    }
+
+    enum Strength: String, Sendable {
+        case none, A, B, C
+
+        var layers: [Layer] {
+            switch self {
+            case .none: []
+            case .A: [Layer(opacity: 0.35, radius: 2.5)]
+            case .B: [Layer(opacity: 0.55, radius: 3)]
+            case .C: [Layer(opacity: 0.5, radius: 1), Layer(opacity: 0.35, radius: 5)]
+            }
+        }
+    }
+
+    /// The strength a build draws by day: none until Marcus picks one.
+    static let shipping: Strength = .none
+
+    /// What is drawn by day: `shipping`, or in a Debug build what
+    /// `-pgCountShadow` asks for. Read once.
+    static let byDay: [Layer] = {
+        #if DEBUG
+        if let asked = UserDefaults.standard.string(forKey: "pgCountShadow") {
+            if let strength = Strength(rawValue: asked) { return strength.layers }
+            let stack = asked.split(separator: "+").compactMap { part -> Layer? in
+                let numbers = part.split(separator: "@").compactMap { Double($0) }
+                guard numbers.count == 2 else { return nil }
+                return Layer(opacity: numbers[0], radius: CGFloat(numbers[1]))
+            }
+            if !stack.isEmpty { return stack }
+        }
+        #endif
+        return shipping.layers
+    }()
+
+    let layers: [Layer]
+
+    /// At most two shadows, the second cast round the first. A layer that is
+    /// not there is drawn as no shadow at all rather than a clear one.
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        switch layers.count {
+        case 0:
+            content
+        case 1:
+            content.shadow(color: .black.opacity(layers[0].opacity), radius: layers[0].radius)
+        default:
+            content
+                .shadow(color: .black.opacity(layers[0].opacity), radius: layers[0].radius)
+                .shadow(color: .black.opacity(layers[1].opacity), radius: layers[1].radius)
+        }
     }
 }
 
