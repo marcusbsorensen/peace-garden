@@ -1714,8 +1714,9 @@ struct CountLineShadow: ViewModifier {
         }
     }
 
-    /// The strength a build draws by day: none until Marcus picks one.
-    static let shipping: Strength = .none
+    /// The strength a build draws by day: the medium haze (Marcus,
+    /// 14 October: 32B), 4.6 : 1 or more at every hour measured.
+    static let shipping: Strength = .B
 
     /// What is drawn by day: `shipping`, or in a Debug build what
     /// `-pgCountShadow` asks for. Read once.
