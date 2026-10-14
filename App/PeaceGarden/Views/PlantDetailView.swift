@@ -218,18 +218,23 @@ struct PlantDetailView: View {
                         Text("with \(encounter.peerDisplayName)")
                             .scaledFont(size: 13, weight: .light)
                             .foregroundStyle(Chrome.muted)
+                        // **The place, the date and the numbers are `muted`,
+                        // not `faint`** (Marcus, 14 October: 29B). Small
+                        // capitals this thin never reach the grey they are
+                        // drawn in: `faint` measured 4.9 : 1 off the screen in
+                        // the light, and `muted` measures 6.9.
                         if let place = encounter.place {
                             // Typed, or accepted from what `Places` offered —
                             // either way it was already in this person's
                             // language when it was written down.
                             Text(verbatim: place)
                                 .chromeLabel(size: 10)
-                                .foregroundStyle(Chrome.faint)
+                                .foregroundStyle(Chrome.muted)
                         }
                         if encounter.showsDateTime {
                             Text(encounter.happenedAt.formatted(date: .long, time: .shortened))
                                 .chromeLabel(size: 10)
-                                .foregroundStyle(Chrome.faint)
+                                .foregroundStyle(Chrome.muted)
                         }
                         // Numbers rather than a place name, and a tap to let a
                         // map say the name if anybody wants it. See
@@ -246,7 +251,7 @@ struct PlantDetailView: View {
                             } else {
                                 Text(verbatim: coordinate.written)
                                     .chromeLabel(size: 10)
-                                    .foregroundStyle(Chrome.faint)
+                                    .foregroundStyle(Chrome.muted)
                             }
                         }
                     }

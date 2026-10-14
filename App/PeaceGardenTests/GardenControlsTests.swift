@@ -136,6 +136,33 @@ final class GardenControlsTests: XCTestCase {
         }
     }
 
+    // MARK: The count line
+
+    /// **The count under the heading is white by day and `muted` by night**
+    /// (Marcus, 14 October: 30A). It stands on the sky, and the day sky's blue
+    /// took `muted` to 3.5 : 1. Photographed at noon and at midnight: by day
+    /// the line has a run of white pixels; by night it has none, since
+    /// `muted` over the night sky is about 190 of 255.
+    ///
+    /// Measured 14 October at 2×, every channel over 235: 818 pixels by day,
+    /// none by night.
+    func testTheCountLineIsWhiteByDayAndMutedByNight() async throws {
+        let defaults = UserDefaults.standard
+        let daylightBefore = defaults.string(forKey: Chrome.daylightKey)
+        defer { defaults.set(daylightBefore, forKey: Chrome.daylightKey) }
+
+        var white: [GardenDaylight: Int] = [:]
+        for daylight in [GardenDaylight.always, .alwaysNight] {
+            defaults.set(daylight.rawValue, forKey: Chrome.daylightKey)
+            _ = try await controls(of: PlotView(), photographed: true)
+            let line = try XCTUnwrap(lastTexts.first { $0.key.localizedCaseInsensitiveContains("grown from") },
+                                     "the count line, among \(lastTexts.keys.sorted())")
+            white[daylight] = Self.lightPixels(in: try XCTUnwrap(lastPicture), within: line.value, over: 235)
+        }
+        XCTAssertGreaterThan(white[.always] ?? 0, 400, "the count line is white by day")
+        XCTAssertLessThan(white[.alwaysNight] ?? .max, 5, "and muted by night")
+    }
+
     // MARK: The status bar
 
     /// **The garden's whole presentation is Dark, so the status bar over it is
@@ -179,10 +206,10 @@ final class GardenControlsTests: XCTestCase {
         presented.dismiss(animated: false)
     }
 
-    /// How many pixels inside `frame` are light: every channel over 140 of 255.
-    /// The ink is white at 0.75 to 0.8 over the night sky, about 195; dark ink
-    /// over it, and the sky itself, stay well under.
-    private static func lightPixels(in picture: UIImage, within frame: CGRect) -> Int {
+    /// How many pixels inside `frame` are light: every channel over `over`, 140
+    /// of 255 unless asked. The ink is white at 0.75 to 0.8 over the night sky,
+    /// about 195; dark ink over it, and the sky itself, stay well under.
+    private static func lightPixels(in picture: UIImage, within frame: CGRect, over: UInt8 = 140) -> Int {
         guard let image = picture.cgImage else { return 0 }
         let scale = picture.scale
         let area = CGRect(x: frame.minX * scale, y: frame.minY * scale,
@@ -199,7 +226,7 @@ final class GardenControlsTests: XCTestCase {
         }
         var light = 0
         for index in stride(from: 0, to: pixels.count, by: 4)
-        where min(pixels[index], pixels[index + 1], pixels[index + 2]) > 140 {
+        where min(pixels[index], pixels[index + 1], pixels[index + 2]) > over {
             light += 1
         }
         return light
@@ -237,6 +264,9 @@ final class GardenControlsTests: XCTestCase {
     private var lastSafeArea = UIEdgeInsets.zero
     /// What VoiceOver says for each control, read alongside its frame.
     private var lastLabels: [String: String] = [:]
+    /// Every element with something to say and no identifier, by what it
+    /// says: the words on the sky, which are not controls.
+    private var lastTexts: [String: CGRect] = [:]
     /// The window as drawn, when it was asked to be photographed.
     private var lastPicture: UIImage?
 
@@ -298,6 +328,7 @@ final class GardenControlsTests: XCTestCase {
         }
 
         var found: [String: CGRect] = [:]
+        lastTexts = [:]
         var stack: [NSObject] = [window]
         var visited = 0
         while let node = stack.popLast(), visited < 20_000 {
@@ -311,6 +342,9 @@ final class GardenControlsTests: XCTestCase {
                !id.isEmpty, found[id] == nil {
                 found[id] = node.accessibilityFrame
                 lastLabels[id] = node.accessibilityLabel
+            } else if node.isAccessibilityElement, let label = node.accessibilityLabel,
+                      !label.isEmpty, lastTexts[label] == nil {
+                lastTexts[label] = node.accessibilityFrame
             }
             if let elements = node.accessibilityElements as? [NSObject] {
                 stack.append(contentsOf: elements)

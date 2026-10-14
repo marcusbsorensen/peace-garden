@@ -142,6 +142,14 @@ struct PlotView: View {
         return (GardenDaylight(rawValue: daylightRaw) ?? .byTheClock).hour(when: actual)
     }
 
+    /// Whether the sun is up in the garden: the light's own answer, so the
+    /// words on the sky change with the sky behind them, at six and at six.
+    /// The season moves the light's colour and not which body is up, so it is
+    /// not asked.
+    private var byDay: Bool {
+        GardenGround.Light.at(hour: hour).isDay
+    }
+
     /// The season the garden is being looked at in, which colours its light.
     ///
     /// **Asked once and handed to everything lit**: the ground's light, and
@@ -1236,7 +1244,16 @@ struct PlotView: View {
                 .chromeLabel()
                 // `muted`, not `faint`: this line stands on the sky, and the
                 // day sky's blue takes `faint` under 4 : 1 (finding 8).
-                .foregroundStyle(Chrome.muted)
+                //
+                // **White by day** (Marcus, 14 October: 30A): the day sky's
+                // blue takes `muted` to 3.5 : 1 as well, so while the sun is
+                // up the line is the heading's own ink, which in the garden's
+                // Dark is white. By night `muted` reads at 10 : 1 and stays.
+                // White is 4.9 : 1 at an October noon, but under 4.5 for the
+                // first hours of a morning, when the sun stands beside the
+                // heading, and through a June midday: 3.7 at its lowest
+                // (`design/small-caps-2026-10-14/`).
+                .foregroundStyle(byDay ? Chrome.ink : Chrome.muted)
         }
         .padding(.top, 44)
         .allowsHitTesting(false)
