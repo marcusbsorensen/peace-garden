@@ -50,8 +50,8 @@ Previous notes: `git show c83bc6e:.claude/HANDOVER.md` covers build 8 (12 Octobe
   - `downloadBody` says the plant "is nobody else's", while `growBody` says "you both have it". Marcus hasn't answered this yet.
 
 ## Next steps
-1. Build 29B and 30A: re-render the four places and the count line by day and night, measure contrast, and run AccessibilityTests, GardenControlsTests and PlotTests through the lock. Then build 9.
-2. **Build 9:** set `CURRENT_PROJECT_VERSION` to 9, `xcodegen generate`, run the full suite through the lock, then archive and export with the system PATH. Marcus uploads with `sh tools/upload-build.sh 9`, or from the Organizer if the Xcode sign-in has lapsed.
+1. ~~Build 29B and 30A~~ merged 14 October (`design/small-caps-2026-10-14/`). The small capitals are 6.5–6.9:1 in Light. The count line in white by day is 4.9:1 at an October noon but 3.7–4.1 in the first morning hours and through a June midday. **Question 31 is waiting on Marcus:** A, ship as it is and render a soft text shadow (no panel) for build 10; B, hold build 9 for it; C, leave it.
+2. **Build 9 is assembled** (`8681ea4`): 309 tests with 0 failures, archive at `build/PeaceGarden-1.0-9.xcarchive`, .ipa at `build/export-9/` with CFBundleVersion 9. Marcus uploads with `sh tools/upload-build.sh 9`, or from the Organizer if the Xcode sign-in has lapsed, then pushes main.
 3. ~~Site deploy for the translations~~ done 14 October evening, with every check ok.
 4. Marcus checks on a real phone:
    - the moving wallpaper: does iOS let a Live Photo made by the app move?
