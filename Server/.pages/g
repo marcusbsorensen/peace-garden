@@ -110,6 +110,10 @@
         when that is settled, it belongs in the catalogue and these two
         attributes go.
       -->
+      <!--
+        Since 14 October 2026 `walk.js` shows it only while some area on the
+        map has no page of its own, so with all ten open it stays hidden.
+      -->
       <p class="notice body" id="invented" lang="en" dir="ltr" hidden>
         The plants drawn here stand in for the areas not open yet. Choosing an
         open area goes to its own page, which grows the real plants.
