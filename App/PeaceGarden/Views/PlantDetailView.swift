@@ -39,6 +39,8 @@ struct PlantDetailView: View {
     /// The screen saying what stands beside this plant in the Wild Fields,
     /// for a plant the other gardener let go.
     @State private var besideWild: WildPlant?
+    /// The plant's life again, in place (`TimeLapsePlayer`).
+    @State private var timeLapse = TimeLapsePlayer()
 
     var body: some View {
         ZStack {
@@ -48,9 +50,15 @@ struct PlantDetailView: View {
             )
                 .ignoresSafeArea()
 
+            if timeLapse.isShowing {
+                TimeLapseSkyLayer(player: timeLapse)
+                    .ignoresSafeArea()
+            }
+
             PlantSceneView(
                 genome: live.genome,
                 growth: live.growth(now: model.now),
+                timeLapse: timeLapse,
                 onTap: { withAnimation(Chrome.fadeIn) { detailsVisible.toggle() } }
             )
             .ignoresSafeArea()
@@ -89,7 +97,29 @@ struct PlantDetailView: View {
                 .allowsHitTesting(detailsVisible && !releasing)
                 .animation(Chrome.fadeIn, value: detailsVisible)
                 .animation(.easeOut(duration: 0.3), value: releasing)
+
+            if timeLapse.isPlaying {
+                TimeLapseStopCatcher { timeLapse.stop() }
+                    .ignoresSafeArea()
+            }
         }
+        .overlay(alignment: .topLeading) {
+            TimeLapseButton(isPlaying: timeLapse.isPlaying) {
+                if timeLapse.isPlaying {
+                    timeLapse.stop()
+                } else {
+                    withAnimation(Chrome.fadeIn) { detailsVisible = false }
+                    timeLapse.play(live, now: model.now, reduceMotion: reduceMotion)
+                }
+            }
+            .padding(.leading, 12)
+            .padding(.top, 12)
+            .opacity(releasing ? 0 : 1)
+            .allowsHitTesting(!releasing)
+            .animation(.easeOut(duration: 0.3), value: releasing)
+        }
+        .onChange(of: live.id) { timeLapse.cancel() }
+        .onDisappear { timeLapse.cancel() }
         .overlay {
             if releasing {
                 ReleaseFlight(progress: flight, tint: lightColour)
