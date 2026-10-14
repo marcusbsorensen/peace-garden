@@ -1072,7 +1072,9 @@ struct PlotView: View {
                  ? "Nothing has been crossed yet"
                  : "\(model.hybrids.count) grown from meetings")
                 .chromeLabel()
-                .foregroundStyle(Chrome.faint)
+                // `muted`, not `faint`: this line stands on the sky, and the
+                // day sky's blue takes `faint` under 4 : 1 (finding 8).
+                .foregroundStyle(Chrome.muted)
         }
         .padding(.top, 44)
         .allowsHitTesting(false)

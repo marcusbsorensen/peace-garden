@@ -31,11 +31,18 @@ enum Chrome {
     // set of colours somebody has to keep in step. The alphas are not mirrored:
     // dark type on a light ground reads heavier at the same opacity, so the
     // light values are pulled back a little to keep the three levels apart.
+    //
+    // **Except `faint` in the light, which was pulled back too far** (mass
+    // test, 13 October, finding 8): 0.52 on the light ground is 3.7 : 1, under
+    // the 4.5 : 1 small text needs, and it is the small text — the label
+    // voice, a plant's place and date, the seed screen's row labels. At 0.60
+    // it is 4.8 : 1, still the faintest of the three and still apart from
+    // `muted` (6.8 : 1).
     static let ink = adaptive(dark: .white, light: UIColor(white: 0.07, alpha: 1))
     static let muted = adaptive(dark: UIColor(white: 1, alpha: 0.72),
                                 light: UIColor(white: 0.07, alpha: 0.70))
     static let faint = adaptive(dark: UIColor(white: 1, alpha: 0.56),
-                                light: UIColor(white: 0.07, alpha: 0.52))
+                                light: UIColor(white: 0.07, alpha: 0.60))
     /// Rules and borders, never text. Lifted only enough that a capsule's edge
     /// is visible outdoors.
     static let hairline = adaptive(dark: UIColor(white: 1, alpha: 0.24),
@@ -589,8 +596,16 @@ extension View {
     }
 
     /// Small, wide-tracked, uppercase: the app's label voice.
+    ///
+    /// **Regular below twelve points, light from twelve up** (mass test, 13
+    /// October, finding 8). At ten and eleven points the light weight's
+    /// strokes are thinner than a pixel, so the capitals never reach the grey
+    /// they are drawn in, and the voice failed the contrast audit in Dark too,
+    /// where its grey is 6.5 : 1 by arithmetic. One step of weight brings the
+    /// strokes up to their colour; the voice stays small, spaced and quiet.
     func chromeLabel(size: CGFloat = 11, weight: Font.Weight = .light) -> some View {
-        font(.system(size: size, weight: weight, design: .default))
+        font(.system(size: size, weight: size < 12 && weight == .light ? .regular : weight,
+                     design: .default))
             .modifier(ChromeTracking(2.4))
             .modifier(ChromeLetterCase())
     }
