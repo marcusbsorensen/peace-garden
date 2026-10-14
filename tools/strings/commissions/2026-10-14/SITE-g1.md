@@ -218,3 +218,31 @@ eye are in `DANISH-site.md`. 44 keys added. `privacy10` checked and unchanged.
   know that iOS is written in Bulgarian at all; if it is not, a Bulgarian
   reader's phone shows the setting in another language, and this is a
   description of it rather than its name. Wants a reader with an iPhone.
+
+## be — Belarusian
+
+45 keys: the 44 and `privacy10`. For review.
+
+- **Terms.** *Куток* for area, as `meaningsAbout` and `privacy6`; *градка* for
+  plot, as `privacy6`; *з’яўляецца* for a seed drawn, as `privacy2`'s *калі
+  яна з’явілася* (with the catalogue's ’); *ты* throughout.
+- **Each `…Away` keeps the area's name in the nominative**, *Ціхі сад зараз
+  недаступны*, agreeing in gender and number (*Параслі зараз недаступныя*).
+  `wildAway` declines its name after *да* (*Да Дзікіх лугоў зараз не
+  дабрацца*); doing the same here would have meant ten declined names, and the
+  plural *Параслі* is one I could not decline with confidence.
+- **`{area}`** is quoted after *куток*, as East Slavic quotes a name in
+  apposition: *Пасол кутка «{area}»*, *расце ў кутку «{area}»*.
+- **Garden words.** *Рабаткі* for the borders, *скошаная травяная сцежка*,
+  *жывая агароджа*, *брукаваная пляцоўка*, *чвэрці*, *як пяцёрка на ігральнай
+  косці* for the quincunx, *гільдыя* for the guild, *партэр* for the Knot
+  Garden's plot (its area is *Рэгулярны сад*), *баразёнкі*, *скрыні са шклом*
+  for the frames (not *парнік*, the forcing frame), *стэлажы*, *клумба* for the
+  glasshouse's round bed (so *градка* keeps one meaning), *гаёк* and *пні*,
+  *коласы*, *парасоны*, *разеткі*, *участак* for the kitchen garden's plot.
+- **Controls.** Infinitives: *Закрыць*, *Наблізіць*, *Аддаліць*, *Перамясціць
+  уверх*, *Павярнуць па гадзіннікавай стрэлцы*.
+- **`privacy10`**: iOS has no Belarusian, so a Belarusian reader's phone most
+  likely names Reduce Motion in Russian (*Уменьшение движения*) or English.
+  *«Памяншэнне руху»* is the Belarusian of the Russian name; whether to give
+  the Russian or English name beside it is a question for a reader.
