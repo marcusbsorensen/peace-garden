@@ -136,8 +136,14 @@ enum MassTest {
     /// A screenshot as a JPEG: an SE's is 750 points of PNG at 2x, a Pro Max's
     /// four times that, and a few hundred of them would be gigabytes.
     static func shoot(to url: URL) throws {
-        let image = XCUIScreen.main.screenshot().image
-        guard let data = image.jpegData(compressionQuality: 0.72) else { return }
+        let screenshot = XCUIScreen.main.screenshot()
+        // `PG_MT_PNG=1`: a lossless copy beside the JPEG, for measuring the
+        // pixels right next to a letter, where the JPEG's ringing lands (the
+        // count line's shadow, 14 October).
+        if environment["PG_MT_PNG"] == "1" {
+            try screenshot.pngRepresentation.write(to: url.deletingPathExtension().appendingPathExtension("png"))
+        }
+        guard let data = screenshot.image.jpegData(compressionQuality: 0.72) else { return }
         try data.write(to: url)
     }
 

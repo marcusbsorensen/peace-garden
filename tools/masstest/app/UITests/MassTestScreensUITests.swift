@@ -22,6 +22,7 @@ import XCTest
 /// - `PG_MT_ARGS`: more launch arguments for every screen, separated by
 ///   spaces — a trial of something not yet chosen, rendered beside the
 ///   current look (14 October, 26A).
+/// - `PG_MT_PNG`: `1` writes a lossless `<screen>.png` beside each JPEG.
 @MainActor
 final class MassTestScreensUITests: XCTestCase {
 
