@@ -43,10 +43,12 @@ struct AboutView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 30) {
                         privacy
+                            // Inside the part, so a part scrolled to the top
+                            // still stands clear of the header's fade.
+                            .padding(.top, 18)
                             .id(Part.privacy)
                     }
                     .padding(.horizontal, 30)
-                    .padding(.top, 18)
                     .padding(.bottom, 60)
                     .frame(maxWidth: Chrome.readableWidth)
                     .frame(maxWidth: .infinity)
