@@ -2731,6 +2731,27 @@ a.entry__area-name:focus-visible {
   cursor: grabbing;
 }
 
+/* The stage keeps its place from the first paint, and its pool shows; the
+   plant and the hint to turn it wait until there is a plant (`frontpage.js`
+   marks the stage `data-grown`). Invisible rather than hidden, so the canvas
+   has its size to draw at. */
+.front-plant:not([data-grown]) canvas,
+.front-plant:not([data-grown]) .front-plant__hint {
+  visibility: hidden;
+}
+
+/* **The words wait for their language**, and arrive in their places. Every
+   word on this page is written in by `plain.js` once the language is settled,
+   which on a phone's slow connection is a second or more after the first
+   paint; until then the heading and the lead are empty boxes, and filling them
+   pushed the buttons and the three steps 180 px down the screen. Nothing here
+   is visible before then but empty outlines, so it is kept invisible instead,
+   and a box that is not visible does not count as moving. A script that never
+   arrives leaves these empty either way. */
+body:not([data-ready]) .page.front :is(.front-hero__words, .front-steps, .front-garden, .bar-foot) {
+  visibility: hidden;
+}
+
 .front-plant__hint {
   position: absolute;
   inset-inline: 0;
