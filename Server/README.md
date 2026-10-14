@@ -253,10 +253,93 @@ Two of the rows are 404s on purpose, and a 200 on either is the failure:
 `loadStrings` reads the status; and `/README.md`, because this file belongs to
 whoever deploys.
 
+Since 14 October 2026 it also reads the headers below (§Headers), whether
+paths that visitors wear are on, and whether `/download` names the iOS that
+`project.yml` targets. `PG_BASE=http://127.0.0.1:8822 tools/deploy.sh --check`
+runs it against a local copy.
+
 The fragment is the payload and never reaches the server, so a seed can only be
 tested in a browser. Any link the app mints will do; `assets/js/link.js` also
 carries `PINNED`, the same fragment `PollenLinkTests` and `tools/reference/`
 both agree on, which is a valid offer from *Marcus* of *Aurelia nocturna*.
+
+## Headers
+
+What a response says about itself is set in one place, the head of
+`index.php`, and it can only be set there: nginx serves every file that exists
+before `index.php` is reached, and on this host no `.htaccess` is read (above).
+So the headers below are on everything PHP answers — the pages, `/plant.wasm`,
+the plot service and the misses — and on nothing else. Since 14 October 2026,
+after the site's mass test (`design/mass-test-2026-10-13/site/README.md`,
+findings L1 and L3):
+
+| Header | On | Value |
+| --- | --- | --- |
+| `Strict-Transport-Security` | everything PHP answers | `max-age=31536000`, this name only (no `includeSubDomains`, no preload) |
+| `Referrer-Policy` | the same | `strict-origin-when-cross-origin` |
+| `X-Content-Type-Options` | the same | `nosniff` |
+| `X-Powered-By` | — | taken off (`header_remove`); the host's PHP named itself and its version |
+| `Content-Security-Policy` | the pages | `default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-<the import map>'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'` |
+| `Cache-Control` | `/plant.wasm?v=<this build>` | `public, max-age=31536000, immutable` |
+| | `/plant.wasm`, or an old stamp | `public, no-cache` |
+| `ETag`, `Last-Modified`, `Vary: Accept-Encoding` | `/plant.wasm` | on the 200 and the 304 alike |
+
+**The policy is the pages as they are**: their own scripts, styles, images and
+requests, the import map `index.php` writes into each head (named by its hash,
+which `index.php` works out as it writes it), and `wasm-unsafe-eval`, without
+which a browser will not compile the plant renderer — it allows WebAssembly and
+nothing else. No page has an inline script of its own, a `style` attribute or
+a `<style>` block, and the site crawler found no refusal on any page in any of
+the 43 languages in Chrome, or in five of them in WebKit (14 October 2026). Anything new of that kind is
+refused by the browser and named in its console, which is the point: change
+the policy in `index.php` first. A browser keeps the policy it stored with a
+page until the page's bytes change, which every page's did with this deploy,
+since the stylesheet's stamp changed.
+
+**HSTS is a year from the first visit.** A browser that has seen it will not
+open `http://peacegarden.app` again for that long, and will not let anybody
+click past a certificate error either, so the certificate's renewal at 20i is
+now something the site depends on rather than something it would merely look
+bad without.
+
+**The renderer is kept for a year at the address that names its build.** Every
+page asks for `/plant.wasm?v=<mtime-size>`, the stamp of the module on the
+server, so when `v` is this build's the answer promises never to change and a
+returning reader asks for nothing. On 13 October it was `no-cache`, and a
+conditional request carrying the right tag came back `200` with the whole
+three megabytes, cache status MISS at the origin and at the CDN, so the tag is
+lost in front of this host and every visit to a page that grows a plant
+downloaded the module again. A stale stamp — a page kept from before a deploy —
+is given the current build with `no-cache`, so new bytes are never kept a year
+under an old name. `If-None-Match` is read as a list, with weak tags and `*`,
+and `If-Modified-Since` is asked when it is absent; a 304 carries no
+`Content-Type`.
+
+**Scripts, the stylesheet and the other static files are nginx's**, and the
+vhost sends them with an `ETag` and a `Last-Modified` and no `Cache-Control`.
+They revalidate properly (a `304` on 13 October for `/assets/site.css`), and
+each is stamped in the pages, so a new one is a new address. Two things here
+cannot be changed from this repository: they are not marked immutable, and
+20i's CDN drops `Vary: Accept-Encoding` from the gzipped ones. Routing them
+through `index.php` would let it set both, at the cost of thirty-odd PHP
+requests on a first visit to an area page and of nginx's own compression, and
+the relative imports between modules would need a different stamping scheme;
+it was judged not worth it for files this small that already revalidate. If it
+ever is, the place is a support request to 20i for a `location ^~ /assets/`
+block with `add_header Cache-Control "public, max-age=31536000, immutable"` on
+requests with a `v`.
+
+**After a deploy**, `tools/deploy.sh --check` reads all of this back. By hand:
+
+```sh
+curl -sSI https://peacegarden.app/ | grep -i -e strict-transport -e content-security -e referrer -e powered
+m=$(curl -sS https://peacegarden.app/ | sed -n 's/.*data-module="\([^"]*\)".*/\1/p')
+curl -sSI -H 'Accept-Encoding: gzip' "https://peacegarden.app$m" | grep -i cache-control   # immutable
+```
+
+and in a browser, open `/walk`, then `/quiet`: the second page's
+`plant.wasm?v=…` request is answered from the browser's own cache (DevTools,
+Network, *Size* says *disk cache* or *memory cache*), with nothing sent.
 
 ## Already filled in
 
@@ -487,12 +570,19 @@ the service's own files unreachable, as it does `.pages/`.
   - **Taking a plant down** is by hand, with `.api/curate.php` (below):
     hidden, it is in no count and no tile, so neither are the names beside
     it, and a second release of it answers `410`.
-  - **Paths that visitors wear** (2 October 2026, `.api/WildWear.php`), **off
-    unless `.api/config.php` says `'wear' => true`**, which the server's does
-    not. Off, both routes answer 404 before the rate limit, `GET /api/wild`
-    carries no `wear`, `/wild` does not load `wear.js`, and `/privacy` leaves
-    out `privacy9`, the paragraph that describes it (`index.php`, reading the
-    switch through `.api/settings.php` as the routes do). On:
+  - **Paths that visitors wear** (2 October 2026, `.api/WildWear.php`), **on
+    at peacegarden.app**: the server's `.api/config.php` says `'wear' =>
+    true`. The site's mass test found it on on 13 October 2026, when this file
+    still said the server's did not, and Marcus chose to keep it on
+    (14 October). `tools/deploy.sh --check` now reads `/api/wild` and fails
+    if `wear` is missing, so this line and the host cannot part again; if it
+    is ever turned off on purpose, change that row and this line together.
+    The switch defaults to off, and a copy whose `config.php` does not say
+    `'wear' => true` has it off: both routes answer 404 before the rate
+    limit, `GET /api/wild` carries no `wear`, `/wild` does not load
+    `wear.js`, and `/privacy` leaves out `privacy9`, the paragraph that
+    describes it (`index.php`, reading the switch through
+    `.api/settings.php` as the routes do). On:
     `GET /api/wild/wear` answers `[[x, z, wear], …]` for the field's
     half-metre cells, faded to today. `POST /api/wild/wear` takes
     `{cells: [[x, z], …]}`, at most 256, each counted once and at most six
@@ -529,16 +619,19 @@ The rate limit holds a local copy to nine releases a window too, so a field
 for looking at is sown from the command line through `WildStore` rather than
 over HTTP.
 
-**`/plant.wasm` is revalidated, not cached for a day.** It used to be
-`max-age=86400, must-revalidate`, on the reasoning that a module changes
-rarely. The flaw is that a new build is not a new URL — the path never changes
-— so a browser that fetched it yesterday ran yesterday's Swift today. The day
-the Quiet Garden opened, a browser that had visited `/walk` the day before was
-told `/quiet` could not be reached. It is `no-cache` now, which with the ETag
-is one small conditional request rather than eight megabytes. A development
-copy says `no-store`, because there it is rebuilt every few minutes, and the
-two workbench pages ask for a fresh address each load as well, for copies a
-browser stored before any of this.
+**`/plant.wasm` is kept for a year at its stamped address, and revalidated at
+its bare one.** It used to be `max-age=86400, must-revalidate`, on the
+reasoning that a module changes rarely. The flaw was that a new build was not
+a new URL, so a browser that fetched it yesterday ran yesterday's Swift today:
+the day the Quiet Garden opened, a browser that had visited `/walk` the day
+before was told `/quiet` could not be reached. Then it was `no-cache`, which
+with the ETag was meant to be one small conditional request rather than eight
+megabytes — and at the live host was not, because the tag is lost in front of
+it (§Headers). Since 14 October 2026 the pages ask for `/plant.wasm?v=<stamp>`
+and that address is `immutable` for a year while the stamp is this build's; a
+new build is a new address. A development copy says `no-store`, because there
+it is rebuilt every few minutes, and the two workbench pages ask for a fresh
+address each load as well, for copies a browser stored before any of this.
 
 **Against the app**, which is the only way to watch the asking end to end:
 launch the simulator with `-pgPlots http://localhost:8803` and the app talks to

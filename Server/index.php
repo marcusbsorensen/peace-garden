@@ -444,8 +444,8 @@ if (str_contains($body, 'type="module"')) {
 // - no plug-ins, no `<base>`, a form only to this site (the tester door on
 //   `/t`), and no page of this site inside somebody else's frame.
 //
-// Checked with the site crawler in Chrome and WebKit, every page in every
-// language: no violation (the report of 14 October). A new inline script, a
+// Checked with the site crawler on 14 October 2026: no refusal on any page in
+// any of the 43 languages in Chrome, or in five of them in WebKit. A new inline script, a
 // style attribute, or a file from another host will be refused by the browser
 // and named in its console — which is the point — so add it here first.
 $policy = implode('; ', [
