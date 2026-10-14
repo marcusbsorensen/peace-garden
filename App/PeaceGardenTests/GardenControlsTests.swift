@@ -144,7 +144,8 @@ final class GardenControlsTests: XCTestCase {
     /// the line has a run of white pixels; by night it has none, since
     /// `muted` over the night sky is about 190 of 255.
     ///
-    /// Measured 14 October at 2×: COUNT_DAY white pixels by day, COUNT_NIGHT by night.
+    /// Measured 14 October at 2×, every channel over 235: 818 pixels by day,
+    /// none by night.
     func testTheCountLineIsWhiteByDayAndMutedByNight() async throws {
         let defaults = UserDefaults.standard
         let daylightBefore = defaults.string(forKey: Chrome.daylightKey)
@@ -158,8 +159,7 @@ final class GardenControlsTests: XCTestCase {
                                      "the count line, among \(lastTexts.keys.sorted())")
             white[daylight] = Self.lightPixels(in: try XCTUnwrap(lastPicture), within: line.value, over: 235)
         }
-        print("count line white pixels: by day \(white[.always] ?? -1), by night \(white[.alwaysNight] ?? -1)")
-        XCTAssertGreaterThan(white[.always] ?? 0, 60, "the count line is white by day")
+        XCTAssertGreaterThan(white[.always] ?? 0, 400, "the count line is white by day")
         XCTAssertLessThan(white[.alwaysNight] ?? .max, 5, "and muted by night")
     }
 

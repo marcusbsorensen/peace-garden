@@ -189,6 +189,8 @@ final class AccessibilityTests: XCTestCase {
     /// `faint`'s grey, which measured 4.7 to 4.9 : 1 off the screen in the
     /// light. The seed screen in Light, photographed: the darkest of its
     /// form's label is darker than `faint` can be, and as dark as `muted`.
+    /// Measured 14 October at 3×: 6.80 : 1, against `muted`'s 6.76 and
+    /// `faint`'s 4.78 by arithmetic.
     func testTheThinSmallCapitalsAreMuted() async throws {
         let model = Self.garden(plants: 0, lamps: []).0
         model.mintIdentity()
@@ -202,7 +204,6 @@ final class AccessibilityTests: XCTestCase {
         let faint = Self.contrast(UIColor(Chrome.faint).resolvedColor(with: traits), on: ground)
         let muted = Self.contrast(UIColor(Chrome.muted).resolvedColor(with: traits), on: ground)
         let drawn = Self.contrast(Self.darkest(in: Self.photograph(window), within: form.frame), on: ground)
-        print("the form's label: \(drawn) : 1, faint \(faint), muted \(muted)")
         XCTAssertGreaterThan(drawn, (faint + muted) / 2,
                              "nearer muted (\(muted) : 1) than faint (\(faint) : 1): \(drawn) : 1")
     }
