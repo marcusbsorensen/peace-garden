@@ -1,0 +1,700 @@
+{
+ "db": "pgmt_main",
+ "tag": "after-read",
+ "seconds": 20,
+ "plots": {
+  "travel": 16,
+  "peace": 37,
+  "meeting": 24,
+  "kinship": 20,
+  "pattern": 13,
+  "beginnings": 25,
+  "waiting": 10,
+  "light": 18,
+  "renewal": 13,
+  "ground": 9
+ },
+ "databaseMB": 26.5,
+ "results": [
+  {
+   "kind": "read",
+   "level": 10,
+   "seconds": 20.3,
+   "requests": 33608,
+   "perSecond": 1654.1,
+   "n": 33608,
+   "p50": 4.1,
+   "p95": 15.9,
+   "p99": 25.3,
+   "max": 163.3,
+   "errorShare": 0,
+   "statuses": {
+    "200": 33608
+   },
+   "routes": {
+    "/api/orchard": {
+     "n": 357,
+     "p50": 2.7,
+     "p95": 10.2,
+     "p99": 17.2,
+     "max": 45.2
+    },
+    "/api/wild/tile/n/n": {
+     "n": 16709,
+     "p50": 4.1,
+     "p95": 11.4,
+     "p99": 20.7,
+     "max": 144
+    },
+    "/api/ground/plot/n": {
+     "n": 1010,
+     "p50": 3.7,
+     "p95": 10.4,
+     "p99": 18.6,
+     "max": 24.6
+    },
+    "/api/walk/plot/n": {
+     "n": 1052,
+     "p50": 3.6,
+     "p95": 9.8,
+     "p99": 16.8,
+     "max": 34.8
+    },
+    "/api/coppice/plot/n": {
+     "n": 1015,
+     "p50": 3.6,
+     "p95": 10.7,
+     "p99": 15.4,
+     "max": 36.5
+    },
+    "/api/walk": {
+     "n": 340,
+     "p50": 2.9,
+     "p95": 9.3,
+     "p99": 20.6,
+     "max": 42.2
+    },
+    "/api/ground": {
+     "n": 342,
+     "p50": 2.9,
+     "p95": 10,
+     "p99": 15.4,
+     "max": 24
+    },
+    "/api/quiet/plot/n": {
+     "n": 980,
+     "p50": 3.4,
+     "p95": 11,
+     "p99": 19.6,
+     "max": 50.2
+    },
+    "/api/frame/plot/n": {
+     "n": 1073,
+     "p50": 3.8,
+     "p95": 11.3,
+     "p99": 29.2,
+     "max": 143.5
+    },
+    "/api/glasshouse/plot/n": {
+     "n": 1013,
+     "p50": 3.4,
+     "p95": 10.4,
+     "p99": 19,
+     "max": 129.3
+    },
+    "/api/wild": {
+     "n": 3329,
+     "p50": 14.3,
+     "p95": 25.4,
+     "p99": 43,
+     "max": 163.3
+    },
+    "/api/seedbed/plot/n": {
+     "n": 1051,
+     "p50": 3.6,
+     "p95": 10.1,
+     "p99": 20.1,
+     "max": 55.6
+    },
+    "/api/cross/plot/n": {
+     "n": 1027,
+     "p50": 3.3,
+     "p95": 10.3,
+     "p99": 16,
+     "max": 128.7
+    },
+    "/api/frame": {
+     "n": 327,
+     "p50": 2.9,
+     "p95": 10,
+     "p99": 24,
+     "max": 44.3
+    },
+    "/api/knot/plot/n": {
+     "n": 945,
+     "p50": 3.4,
+     "p95": 11.1,
+     "p99": 19.8,
+     "max": 42.8
+    },
+    "/api/quiet": {
+     "n": 332,
+     "p50": 3,
+     "p95": 9.1,
+     "p99": 20.1,
+     "max": 94.2
+    },
+    "/api/knot": {
+     "n": 362,
+     "p50": 2.9,
+     "p95": 8.5,
+     "p99": 16.3,
+     "max": 25
+    },
+    "/api/orchard/plot/n": {
+     "n": 975,
+     "p50": 3.3,
+     "p95": 11.1,
+     "p99": 19.7,
+     "max": 86.9
+    },
+    "/api/seedbed": {
+     "n": 334,
+     "p50": 3,
+     "p95": 8.9,
+     "p99": 14.6,
+     "max": 62.6
+    },
+    "/api/cross": {
+     "n": 349,
+     "p50": 2.9,
+     "p95": 8.8,
+     "p99": 28.4,
+     "max": 55.2
+    },
+    "/api/coppice": {
+     "n": 336,
+     "p50": 2.9,
+     "p95": 8.9,
+     "p99": 15.9,
+     "max": 21
+    },
+    "/api/glasshouse": {
+     "n": 350,
+     "p50": 2.9,
+     "p95": 8.6,
+     "p99": 16.1,
+     "max": 21.2
+    }
+   },
+   "top": [
+    {
+     "n": 3328,
+     "totalMs": 39844,
+     "avgUs": 11972,
+     "text": "SELECT `tile_x` , `tile_z` , COUNT ( * ) AS `plants` FROM `wild_fields` WHERE `hidden` = ?"
+    },
+    {
+     "n": 16708,
+     "totalMs": 18485,
+     "avgUs": 1106,
+     "text": "SELECT `f` . `seed` , `f` . `parent_a` , `f` . `parent_b` , `n` . `name_a` , `n` . `name_b"
+    },
+    {
+     "n": 33541,
+     "totalMs": 4731,
+     "avgUs": 141,
+     "text": "SELECT `version` FROM `schema_version` WHERE ID = ? "
+    },
+    {
+     "n": 1073,
+     "totalMs": 828,
+     "avgUs": 772,
+     "text": "SELECT * FROM `cold_frame` WHERE `plot` = ? AND `hidden` = ? ORDER BY `arrival` "
+    },
+    {
+     "n": 1010,
+     "totalMs": 747,
+     "avgUs": 739,
+     "text": "SELECT * FROM `home_ground` WHERE `plot` = ? AND `hidden` = ? ORDER BY `arrival` "
+    },
+    {
+     "n": 1052,
+     "totalMs": 745,
+     "avgUs": 709,
+     "text": "SELECT * FROM `long_walk` WHERE `plot` = ? AND `hidden` = ? ORDER BY `arrival` "
+    }
+   ],
+   "threadStates": {
+    "Sending data": 59,
+    "Writing to net": 34,
+    "Query end": 1,
+    "Creating sort index": 4,
+    "Statistics": 1,
+    "starting": 2,
+    "Rollback": 1,
+    "Freeing items": 1,
+    "Reset for next command": 1,
+    "Killed": 1
+   },
+   "deadlocks": 0,
+   "metadataLockShare": 0
+  },
+  {
+   "kind": "read",
+   "level": 50,
+   "seconds": 20.4,
+   "requests": 28970,
+   "perSecond": 1422.1,
+   "n": 28970,
+   "p50": 25.4,
+   "p95": 88.1,
+   "p99": 223,
+   "max": 325,
+   "errorShare": 0,
+   "statuses": {
+    "200": 28970
+   },
+   "routes": {
+    "/api/orchard/plot/n": {
+     "n": 806,
+     "p50": 23.3,
+     "p95": 82.7,
+     "p99": 231.7,
+     "max": 296.1
+    },
+    "/api/knot/plot/n": {
+     "n": 847,
+     "p50": 23,
+     "p95": 79.8,
+     "p99": 215.2,
+     "max": 284.3
+    },
+    "/api/wild/tile/n/n": {
+     "n": 14594,
+     "p50": 24.3,
+     "p95": 82.2,
+     "p99": 218.3,
+     "max": 325
+    },
+    "/api/cross/plot/n": {
+     "n": 860,
+     "p50": 22.4,
+     "p95": 81.7,
+     "p99": 219.9,
+     "max": 285
+    },
+    "/api/walk": {
+     "n": 275,
+     "p50": 23.5,
+     "p95": 66.5,
+     "p99": 235.9,
+     "max": 286.9
+    },
+    "/api/frame/plot/n": {
+     "n": 914,
+     "p50": 22.9,
+     "p95": 82.2,
+     "p99": 230.2,
+     "max": 298.4
+    },
+    "/api/seedbed": {
+     "n": 303,
+     "p50": 21.4,
+     "p95": 86.9,
+     "p99": 230.8,
+     "max": 281.5
+    },
+    "/api/quiet/plot/n": {
+     "n": 905,
+     "p50": 23.9,
+     "p95": 75.4,
+     "p99": 216.8,
+     "max": 287.3
+    },
+    "/api/glasshouse/plot/n": {
+     "n": 831,
+     "p50": 22.6,
+     "p95": 90,
+     "p99": 228.1,
+     "max": 251.7
+    },
+    "/api/orchard": {
+     "n": 277,
+     "p50": 21.4,
+     "p95": 74.9,
+     "p99": 145.1,
+     "max": 240.9
+    },
+    "/api/seedbed/plot/n": {
+     "n": 848,
+     "p50": 22.8,
+     "p95": 88.5,
+     "p99": 230.9,
+     "max": 282.9
+    },
+    "/api/coppice": {
+     "n": 280,
+     "p50": 21.5,
+     "p95": 63.7,
+     "p99": 214.9,
+     "max": 218.5
+    },
+    "/api/ground": {
+     "n": 294,
+     "p50": 22,
+     "p95": 78.4,
+     "p99": 212.3,
+     "max": 276.1
+    },
+    "/api/ground/plot/n": {
+     "n": 896,
+     "p50": 24.5,
+     "p95": 80.8,
+     "p99": 235.8,
+     "max": 275.2
+    },
+    "/api/coppice/plot/n": {
+     "n": 902,
+     "p50": 23.4,
+     "p95": 88.5,
+     "p99": 214.7,
+     "max": 278.6
+    },
+    "/api/wild": {
+     "n": 2871,
+     "p50": 40.5,
+     "p95": 115.7,
+     "p99": 243.1,
+     "max": 299.5
+    },
+    "/api/quiet": {
+     "n": 309,
+     "p50": 22.4,
+     "p95": 82.9,
+     "p99": 219.4,
+     "max": 275.6
+    },
+    "/api/walk/plot/n": {
+     "n": 812,
+     "p50": 24.4,
+     "p95": 93.1,
+     "p99": 230.6,
+     "max": 291.4
+    },
+    "/api/knot": {
+     "n": 277,
+     "p50": 21.2,
+     "p95": 90.2,
+     "p99": 215.8,
+     "max": 286.7
+    },
+    "/api/glasshouse": {
+     "n": 281,
+     "p50": 22.8,
+     "p95": 77.7,
+     "p99": 135.1,
+     "max": 234.2
+    },
+    "/api/frame": {
+     "n": 285,
+     "p50": 24.5,
+     "p95": 92.7,
+     "p99": 227.7,
+     "max": 285.7
+    },
+    "/api/cross": {
+     "n": 303,
+     "p50": 23.1,
+     "p95": 77.5,
+     "p99": 133.5,
+     "max": 263.2
+    }
+   },
+   "top": [
+    {
+     "n": 2871,
+     "totalMs": 59870,
+     "avgUs": 20853,
+     "text": "SELECT `tile_x` , `tile_z` , COUNT ( * ) AS `plants` FROM `wild_fields` WHERE `hidden` = ?"
+    },
+    {
+     "n": 14588,
+     "totalMs": 25708,
+     "avgUs": 1762,
+     "text": "SELECT `f` . `seed` , `f` . `parent_a` , `f` . `parent_b` , `n` . `name_a` , `n` . `name_b"
+    },
+    {
+     "n": 28942,
+     "totalMs": 7344,
+     "avgUs": 254,
+     "text": "SELECT `version` FROM `schema_version` WHERE ID = ? "
+    },
+    {
+     "n": 896,
+     "totalMs": 1058,
+     "avgUs": 1181,
+     "text": "SELECT * FROM `home_ground` WHERE `plot` = ? AND `hidden` = ? ORDER BY `arrival` "
+    },
+    {
+     "n": 914,
+     "totalMs": 1057,
+     "avgUs": 1156,
+     "text": "SELECT * FROM `cold_frame` WHERE `plot` = ? AND `hidden` = ? ORDER BY `arrival` "
+    },
+    {
+     "n": 902,
+     "totalMs": 961,
+     "avgUs": 1066,
+     "text": "SELECT * FROM `coppice` WHERE `plot` = ? AND `hidden` = ? ORDER BY `arrival` "
+    }
+   ],
+   "threadStates": {
+    "Sending data": 79,
+    "Writing to net": 29,
+    "Updating status": 2,
+    "Reset for next command": 3,
+    "init": 1,
+    "starting": 2,
+    "Optimizing": 1,
+    "Query end": 1,
+    "Statistics": 2,
+    "Creating sort index": 4,
+    "Opening tables": 1,
+    "Unlocking tables": 1,
+    "Freeing items": 1,
+    "Query": 3,
+    "Killed": 1
+   },
+   "deadlocks": 0,
+   "metadataLockShare": 0
+  },
+  {
+   "kind": "read",
+   "level": 200,
+   "seconds": 20.6,
+   "requests": 37579,
+   "perSecond": 1822.5,
+   "n": 37579,
+   "p50": 89.8,
+   "p95": 210.7,
+   "p99": 320.1,
+   "max": 4192.6,
+   "errorShare": 0,
+   "statuses": {
+    "200": 37579
+   },
+   "routes": {
+    "/api/quiet/plot/n": {
+     "n": 1140,
+     "p50": 84.4,
+     "p95": 206.8,
+     "p99": 302.5,
+     "max": 3260.1
+    },
+    "/api/orchard/plot/n": {
+     "n": 1104,
+     "p50": 85.4,
+     "p95": 195,
+     "p99": 338.1,
+     "max": 673.3
+    },
+    "/api/glasshouse/plot/n": {
+     "n": 1109,
+     "p50": 88.1,
+     "p95": 207.4,
+     "p99": 339.7,
+     "max": 994.7
+    },
+    "/api/coppice/plot/n": {
+     "n": 1138,
+     "p50": 87.8,
+     "p95": 212.6,
+     "p99": 321.9,
+     "max": 672.7
+    },
+    "/api/knot/plot/n": {
+     "n": 1133,
+     "p50": 87.8,
+     "p95": 205.1,
+     "p99": 314.3,
+     "max": 1099.2
+    },
+    "/api/wild": {
+     "n": 3875,
+     "p50": 107.1,
+     "p95": 229.4,
+     "p99": 340,
+     "max": 1137.4
+    },
+    "/api/wild/tile/n/n": {
+     "n": 18777,
+     "p50": 88.8,
+     "p95": 209.9,
+     "p99": 316.3,
+     "max": 4192.6
+    },
+    "/api/orchard": {
+     "n": 360,
+     "p50": 85.7,
+     "p95": 210.4,
+     "p99": 309.8,
+     "max": 373.6
+    },
+    "/api/coppice": {
+     "n": 369,
+     "p50": 81.5,
+     "p95": 192.4,
+     "p99": 316.8,
+     "max": 1101.4
+    },
+    "/api/walk/plot/n": {
+     "n": 1043,
+     "p50": 87.6,
+     "p95": 207.2,
+     "p99": 328.2,
+     "max": 3585.4
+    },
+    "/api/frame/plot/n": {
+     "n": 1144,
+     "p50": 85.9,
+     "p95": 213.8,
+     "p99": 334.1,
+     "max": 1101.4
+    },
+    "/api/ground/plot/n": {
+     "n": 1151,
+     "p50": 86.1,
+     "p95": 191.9,
+     "p99": 322.6,
+     "max": 3572.9
+    },
+    "/api/cross/plot/n": {
+     "n": 1091,
+     "p50": 88.5,
+     "p95": 213.6,
+     "p99": 339.2,
+     "max": 1110.4
+    },
+    "/api/seedbed/plot/n": {
+     "n": 1133,
+     "p50": 87,
+     "p95": 211.5,
+     "p99": 329.4,
+     "max": 3238.5
+    },
+    "/api/seedbed": {
+     "n": 398,
+     "p50": 84.5,
+     "p95": 205.5,
+     "p99": 301.5,
+     "max": 353.8
+    },
+    "/api/walk": {
+     "n": 364,
+     "p50": 84.5,
+     "p95": 180.1,
+     "p99": 272.1,
+     "max": 307.1
+    },
+    "/api/quiet": {
+     "n": 406,
+     "p50": 84.1,
+     "p95": 201.6,
+     "p99": 294.5,
+     "max": 373.8
+    },
+    "/api/cross": {
+     "n": 375,
+     "p50": 87.6,
+     "p95": 205.6,
+     "p99": 309.7,
+     "max": 1051.2
+    },
+    "/api/glasshouse": {
+     "n": 386,
+     "p50": 89.8,
+     "p95": 203.3,
+     "p99": 316.6,
+     "max": 1099.8
+    },
+    "/api/frame": {
+     "n": 342,
+     "p50": 84.8,
+     "p95": 242.9,
+     "p99": 346.3,
+     "max": 549.2
+    },
+    "/api/knot": {
+     "n": 354,
+     "p50": 88.2,
+     "p95": 226.5,
+     "p99": 315.9,
+     "max": 1095.6
+    },
+    "/api/ground": {
+     "n": 387,
+     "p50": 90.6,
+     "p95": 211.6,
+     "p99": 316.3,
+     "max": 3024.1
+    }
+   },
+   "top": [
+    {
+     "n": 3875,
+     "totalMs": 80011,
+     "avgUs": 20648,
+     "text": "SELECT `tile_x` , `tile_z` , COUNT ( * ) AS `plants` FROM `wild_fields` WHERE `hidden` = ?"
+    },
+    {
+     "n": 18773,
+     "totalMs": 30470,
+     "avgUs": 1623,
+     "text": "SELECT `f` . `seed` , `f` . `parent_a` , `f` . `parent_b` , `n` . `name_a` , `n` . `name_b"
+    },
+    {
+     "n": 37525,
+     "totalMs": 7297,
+     "avgUs": 194,
+     "text": "SELECT `version` FROM `schema_version` WHERE ID = ? "
+    },
+    {
+     "n": 1144,
+     "totalMs": 1293,
+     "avgUs": 1130,
+     "text": "SELECT * FROM `cold_frame` WHERE `plot` = ? AND `hidden` = ? ORDER BY `arrival` "
+    },
+    {
+     "n": 1043,
+     "totalMs": 1217,
+     "avgUs": 1167,
+     "text": "SELECT * FROM `long_walk` WHERE `plot` = ? AND `hidden` = ? ORDER BY `arrival` "
+    },
+    {
+     "n": 1151,
+     "totalMs": 1182,
+     "avgUs": 1027,
+     "text": "SELECT * FROM `home_ground` WHERE `plot` = ? AND `hidden` = ? ORDER BY `arrival` "
+    }
+   ],
+   "threadStates": {
+    "Writing to net": 49,
+    "Sending data": 136,
+    "Creating sort index": 5,
+    "Preparing": 2,
+    "init": 2,
+    "Opening tables": 1,
+    "Statistics": 2,
+    "Rollback": 1,
+    "Optimizing": 1,
+    "starting": 4,
+    "Reset for next command": 2,
+    "closing tables": 1,
+    "Killed": 1
+   },
+   "deadlocks": 0,
+   "metadataLockShare": 0
+  }
+ ]
+}

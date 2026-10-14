@@ -1,0 +1,290 @@
+{
+ "db": "pgmt_main",
+ "tag": "before-write",
+ "seconds": 6,
+ "plots": {
+  "travel": 16,
+  "peace": 37,
+  "meeting": 24,
+  "kinship": 20,
+  "pattern": 13,
+  "beginnings": 25,
+  "waiting": 10,
+  "light": 18,
+  "renewal": 13,
+  "ground": 9
+ },
+ "databaseMB": 24.5,
+ "results": [
+  {
+   "kind": "write",
+   "level": 10,
+   "seconds": 6.1,
+   "requests": 1890,
+   "perSecond": 309,
+   "n": 1890,
+   "p50": 29,
+   "p95": 59.6,
+   "p99": 89.1,
+   "max": 133.8,
+   "errorShare": 0,
+   "statuses": {
+    "201": 1890
+   },
+   "routes": {
+    "/api/walk/offer": {
+     "n": 990,
+     "p50": 28.7,
+     "p95": 57.6,
+     "p99": 81.8,
+     "max": 111.1
+    },
+    "/api/wild/release": {
+     "n": 900,
+     "p50": 29.4,
+     "p95": 61.8,
+     "p99": 96.4,
+     "max": 133.8
+    }
+   },
+   "top": [
+    {
+     "n": 3779,
+     "totalMs": 19171,
+     "avgUs": 5073,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 3780,
+     "totalMs": 1990,
+     "avgUs": 526,
+     "text": "CREATE TABLE IF NOT EXISTS `walk_offers` ( `offer` INT8 PRIMARY KEY AUTO_INCREMENT , `seed"
+    },
+    {
+     "n": 3780,
+     "totalMs": 1770,
+     "avgUs": 468,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 3779,
+     "totalMs": 1698,
+     "avgUs": 449,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `kind` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 3780,
+     "totalMs": 1639,
+     "avgUs": 434,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `area` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 3780,
+     "totalMs": 1609,
+     "avgUs": 426,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_waiting` ON `walk_offers` ( `state` , `offered_at`"
+    }
+   ],
+   "threadStates": {
+    "Sending data": 31,
+    "Writing to net": 20,
+    "Query end": 3,
+    "setup": 1,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN kind VARCHAR(": 2,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_waiting O": 4,
+    "Opening tables": 1,
+    "Waiting for table metadata lock: CREATE TABLE IF NOT EXISTS walk_offers ( offer B": 1,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN hue DOUBLE PR": 2,
+    "Reset for next command": 2,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN area VARCHAR(": 1,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_from ON w": 2,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN habit VARCHAR": 2
+   },
+   "deadlocks": 0,
+   "metadataLockShare": 19.4
+  },
+  {
+   "kind": "write",
+   "level": 50,
+   "seconds": 6.4,
+   "requests": 1344,
+   "perSecond": 211.4,
+   "n": 1344,
+   "p50": 221.3,
+   "p95": 366.7,
+   "p99": 454.1,
+   "max": 479.9,
+   "errorShare": 0,
+   "statuses": {
+    "201": 1344
+   },
+   "routes": {
+    "/api/walk/offer": {
+     "n": 673,
+     "p50": 220.6,
+     "p95": 368.8,
+     "p99": 456.6,
+     "max": 479.9
+    },
+    "/api/wild/release": {
+     "n": 671,
+     "p50": 222.5,
+     "p95": 365.4,
+     "p99": 453.2,
+     "max": 474
+    }
+   },
+   "top": [
+    {
+     "n": 2687,
+     "totalMs": 14719,
+     "avgUs": 5478,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 2688,
+     "totalMs": 9554,
+     "avgUs": 3554,
+     "text": "CREATE TABLE IF NOT EXISTS `walk_offers` ( `offer` INT8 PRIMARY KEY AUTO_INCREMENT , `seed"
+    },
+    {
+     "n": 2688,
+     "totalMs": 8259,
+     "avgUs": 3073,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_waiting` ON `walk_offers` ( `state` , `offered_at`"
+    },
+    {
+     "n": 2688,
+     "totalMs": 8238,
+     "avgUs": 3065,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_to` ON `walk_offers` ( `token_to` ) "
+    },
+    {
+     "n": 2688,
+     "totalMs": 8048,
+     "avgUs": 2994,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 2688,
+     "totalMs": 8029,
+     "avgUs": 2987,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `hue` FLOAT8 PRECISION NULL "
+    }
+   ],
+   "threadStates": {
+    "Sending data": 29,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN area VARCHAR(": 12,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN hue DOUBLE PR": 15,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN kind VARCHAR(": 23,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN habit VARCHAR": 8,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_from ON w": 10,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_to ON wal": 14,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_waiting O": 13,
+    "Query end": 2,
+    "Writing to net": 14,
+    "Waiting for table metadata lock: CREATE TABLE IF NOT EXISTS walk_offers ( offer B": 9,
+    "Opening tables": 2,
+    "Query": 1,
+    "Statistics": 1,
+    "Reset for next command": 1,
+    "creating table": 1,
+    "starting": 1
+   },
+   "deadlocks": 0,
+   "metadataLockShare": 66.7
+  },
+  {
+   "kind": "write",
+   "level": 200,
+   "seconds": 7.2,
+   "requests": 1521,
+   "perSecond": 210.8,
+   "n": 1521,
+   "p50": 909.1,
+   "p95": 1333.1,
+   "p99": 1425.4,
+   "max": 1446.7,
+   "errorShare": 0,
+   "statuses": {
+    "201": 1521
+   },
+   "routes": {
+    "/api/walk/offer": {
+     "n": 738,
+     "p50": 906.3,
+     "p95": 1331.9,
+     "p99": 1425.4,
+     "max": 1446.7
+    },
+    "/api/wild/release": {
+     "n": 783,
+     "p50": 911.8,
+     "p95": 1333.1,
+     "p99": 1425.4,
+     "max": 1442.5
+    }
+   },
+   "top": [
+    {
+     "n": 3042,
+     "totalMs": 17504,
+     "avgUs": 5754,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 3040,
+     "totalMs": 10690,
+     "avgUs": 3516,
+     "text": "CREATE TABLE IF NOT EXISTS `walk_offers` ( `offer` INT8 PRIMARY KEY AUTO_INCREMENT , `seed"
+    },
+    {
+     "n": 3042,
+     "totalMs": 9097,
+     "avgUs": 2990,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_waiting` ON `walk_offers` ( `state` , `offered_at`"
+    },
+    {
+     "n": 3042,
+     "totalMs": 8975,
+     "avgUs": 2950,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `hue` FLOAT8 PRECISION NULL "
+    },
+    {
+     "n": 3042,
+     "totalMs": 8870,
+     "avgUs": 2916,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 3042,
+     "totalMs": 8865,
+     "avgUs": 2914,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_from` ON `walk_offers` ( `token_from` ) "
+    }
+   ],
+   "threadStates": {
+    "starting": 2,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_from ON w": 16,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN kind VARCHAR(": 17,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN area VARCHAR(": 16,
+    "Sending data": 37,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN habit VARCHAR": 13,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_waiting O": 16,
+    "Query end": 3,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN hue DOUBLE PR": 12,
+    "Reset for next command": 1,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_to ON wal": 10,
+    "Waiting for table metadata lock: CREATE TABLE IF NOT EXISTS walk_offers ( offer B": 14,
+    "Writing to net": 12,
+    "Query": 1,
+    "init for update": 1,
+    "Optimizing": 1,
+    "creating table": 1,
+    "init": 1
+   },
+   "deadlocks": 0,
+   "metadataLockShare": 65.5
+  }
+ ]
+}

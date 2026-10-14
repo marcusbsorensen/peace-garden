@@ -1,0 +1,281 @@
+{
+ "db": "pgmt_main",
+ "tag": "after-write",
+ "seconds": 6,
+ "plots": {
+  "travel": 16,
+  "peace": 37,
+  "meeting": 24,
+  "kinship": 20,
+  "pattern": 13,
+  "beginnings": 25,
+  "waiting": 10,
+  "light": 18,
+  "renewal": 13,
+  "ground": 9
+ },
+ "databaseMB": 60.5,
+ "results": [
+  {
+   "kind": "write",
+   "level": 10,
+   "seconds": 6.2,
+   "requests": 8661,
+   "perSecond": 1395.9,
+   "n": 8661,
+   "p50": 5.4,
+   "p95": 15.1,
+   "p99": 31.5,
+   "max": 160,
+   "errorShare": 0,
+   "statuses": {
+    "201": 8661
+   },
+   "routes": {
+    "/api/walk/offer": {
+     "n": 4322,
+     "p50": 5.1,
+     "p95": 14.2,
+     "p99": 27.4,
+     "max": 131
+    },
+    "/api/wild/release": {
+     "n": 4339,
+     "p50": 5.8,
+     "p95": 16,
+     "p99": 33.7,
+     "max": 160
+    }
+   },
+   "top": [
+    {
+     "n": 21672,
+     "totalMs": 2295,
+     "avgUs": 106,
+     "text": "SELECT `f` . * , `n` . `name_a` , `n` . `name_b` , `n` . `place` , `n` . `month` FROM `wil"
+    },
+    {
+     "n": 17314,
+     "totalMs": 1725,
+     "avgUs": 100,
+     "text": "INSERT INTO `rate_limits` ( `bucket` , `started_at` , `hits` ) VALUES (...) ON DUPLICATE K"
+    },
+    {
+     "n": 12979,
+     "totalMs": 1638,
+     "avgUs": 126,
+     "text": "SELECT * FROM `walk_offers` WHERE `seed` IN (...) "
+    },
+    {
+     "n": 17315,
+     "totalMs": 1633,
+     "avgUs": 94,
+     "text": "DELETE FROM `rate_limits` WHERE `started_at` <= ? "
+    },
+    {
+     "n": 21654,
+     "totalMs": 1424,
+     "avgUs": 66,
+     "text": "COMMIT "
+    },
+    {
+     "n": 17318,
+     "totalMs": 1188,
+     "avgUs": 69,
+     "text": "SELECT `started_at` , `hits` FROM `rate_limits` WHERE `bucket` = ? "
+    }
+   ],
+   "threadStates": {
+    "Writing to net": 18,
+    "starting": 3,
+    "Update": 2,
+    "Sending data": 2,
+    "Reset for next command": 1,
+    "init": 2,
+    "Statistics": 2
+   },
+   "deadlocks": 0,
+   "metadataLockShare": 0
+  },
+  {
+   "kind": "write",
+   "level": 50,
+   "seconds": 6.5,
+   "requests": 14478,
+   "perSecond": 2216,
+   "n": 14478,
+   "p50": 16.2,
+   "p95": 39.9,
+   "p99": 114.7,
+   "max": 346.7,
+   "errorShare": 0,
+   "statuses": {
+    "201": 14478
+   },
+   "routes": {
+    "/api/wild/release": {
+     "n": 7121,
+     "p50": 16.8,
+     "p95": 40.3,
+     "p99": 114.1,
+     "max": 346.7
+    },
+    "/api/walk/offer": {
+     "n": 7357,
+     "p50": 15.7,
+     "p95": 39.7,
+     "p99": 114.7,
+     "max": 260.5
+    }
+   },
+   "top": [
+    {
+     "n": 28946,
+     "totalMs": 6123,
+     "avgUs": 212,
+     "text": "DELETE FROM `rate_limits` WHERE `started_at` <= ? "
+    },
+    {
+     "n": 35828,
+     "totalMs": 4959,
+     "avgUs": 138,
+     "text": "SELECT `f` . * , `n` . `name_a` , `n` . `name_b` , `n` . `place` , `n` . `month` FROM `wil"
+    },
+    {
+     "n": 28949,
+     "totalMs": 3847,
+     "avgUs": 133,
+     "text": "INSERT INTO `rate_limits` ( `bucket` , `started_at` , `hits` ) VALUES (...) ON DUPLICATE K"
+    },
+    {
+     "n": 21829,
+     "totalMs": 3680,
+     "avgUs": 169,
+     "text": "SELECT * FROM `walk_offers` WHERE `seed` IN (...) "
+    },
+    {
+     "n": 36065,
+     "totalMs": 3372,
+     "avgUs": 93,
+     "text": "COMMIT "
+    },
+    {
+     "n": 28949,
+     "totalMs": 3128,
+     "avgUs": 108,
+     "text": "SELECT `started_at` , `hits` FROM `rate_limits` WHERE `bucket` = ? "
+    }
+   ],
+   "threadStates": {
+    "Reset for next command": 3,
+    "Sending data": 1,
+    "Statistics": 2,
+    "Writing to net": 40,
+    "Optimizing": 1,
+    "starting": 5,
+    "Freeing items": 1,
+    "Query end": 3,
+    "Update": 4,
+    "Updating": 7,
+    "Commit": 4,
+    "Query": 2,
+    "login": 1,
+    "init": 1,
+    "init for update": 1,
+    "Opening tables": 6
+   },
+   "deadlocks": 0,
+   "metadataLockShare": 0
+  },
+  {
+   "kind": "write",
+   "level": 200,
+   "seconds": 7.6,
+   "requests": 15517,
+   "perSecond": 2054.1,
+   "n": 15517,
+   "p50": 55,
+   "p95": 236.9,
+   "p99": 381.9,
+   "max": 702,
+   "errorShare": 0,
+   "statuses": {
+    "201": 15517
+   },
+   "routes": {
+    "/api/walk/offer": {
+     "n": 7740,
+     "p50": 54.6,
+     "p95": 236.9,
+     "p99": 374,
+     "max": 702
+    },
+    "/api/wild/release": {
+     "n": 7777,
+     "p50": 55.4,
+     "p95": 236.8,
+     "p99": 388.9,
+     "max": 673.4
+    }
+   },
+   "top": [
+    {
+     "n": 31026,
+     "totalMs": 5800,
+     "avgUs": 187,
+     "text": "DELETE FROM `rate_limits` WHERE `started_at` <= ? "
+    },
+    {
+     "n": 38834,
+     "totalMs": 5115,
+     "avgUs": 132,
+     "text": "SELECT `f` . * , `n` . `name_a` , `n` . `name_b` , `n` . `place` , `n` . `month` FROM `wil"
+    },
+    {
+     "n": 31017,
+     "totalMs": 3933,
+     "avgUs": 127,
+     "text": "INSERT INTO `rate_limits` ( `bucket` , `started_at` , `hits` ) VALUES (...) ON DUPLICATE K"
+    },
+    {
+     "n": 23249,
+     "totalMs": 3695,
+     "avgUs": 159,
+     "text": "SELECT * FROM `walk_offers` WHERE `seed` IN (...) "
+    },
+    {
+     "n": 38785,
+     "totalMs": 3409,
+     "avgUs": 88,
+     "text": "COMMIT "
+    },
+    {
+     "n": 31016,
+     "totalMs": 2728,
+     "avgUs": 88,
+     "text": "SELECT `started_at` , `hits` FROM `rate_limits` WHERE `bucket` = ? "
+    }
+   ],
+   "threadStates": {
+    "closing tables": 1,
+    "Writing to net": 31,
+    "Updating": 21,
+    "Commit": 1,
+    "starting": 6,
+    "Update": 3,
+    "Killed": 2,
+    "Sending data": 1,
+    "Opening tables": 1,
+    "Statistics": 4,
+    "Freeing items": 2,
+    "init": 2,
+    "Optimizing": 1,
+    "Reset for next command": 1,
+    "Preparing": 1,
+    "System lock": 1
+   },
+   "deadlocks": 0,
+   "metadataLockShare": 0
+  }
+ ]
+}
