@@ -114,6 +114,85 @@ const ROUTES = [
     ],
 ];
 
+// **What every answer from here says about itself**, since 14 October 2026.
+//
+// Only what PHP answers: the pages, the plant renderer, the plot service and
+// the misses. `/assets/`, `/strings/`, `/passages/` and the other static files
+// are served by nginx before this file is reached, and nothing in this
+// repository sets a header on those (Server/README.md §Headers).
+//
+// - HSTS without `includeSubDomains`: this is the one name the site has, and a
+//   rule over every subdomain is a promise about hosts this file never sees.
+//   A year, so a browser that has been here once never asks over `http://`
+//   again, including after nginx's own directory redirect, which answers with
+//   `http://` (`.htaccess` says where).
+// - `strict-origin-when-cross-origin`: a link out from a seed page carries the
+//   origin and no path, so where somebody was is not handed on, and nothing
+//   that only ever links to itself loses anything.
+// - `nosniff` everywhere rather than on two responses: every type here is
+//   declared.
+// - PHP names itself and its version on every response (`X-Powered-By:
+//   PHP/8.3.35` on 13 October). That is the host's `expose_php`, which is not
+//   ours to set, so it is taken off here instead.
+header_remove('X-Powered-By');
+header('Strict-Transport-Security: max-age=31536000');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+header('X-Content-Type-Options: nosniff');
+
+/**
+ * Whether a conditional request already holds these bytes.
+ *
+ * `If-None-Match` is a list, may say `*`, and may carry a tag made weak on the
+ * way (`W/"…"`, which nginx does to a tag on a response it compresses); a
+ * comparison of the whole header with one tag missed all three. Where there is
+ * no `If-None-Match`, `If-Modified-Since` is asked instead, so a cache in front
+ * of this host that passes on only the date still gets its 304 (RFC 9110
+ * §13.1.3: the tag wins when both are sent).
+ */
+$fresh = static function (string $etag, ?int $mtime = null): bool {
+    $tags = $_SERVER['HTTP_IF_NONE_MATCH'] ?? null;
+    if (is_string($tags) && trim($tags) !== '') {
+        foreach (explode(',', $tags) as $tag) {
+            $tag = trim($tag);
+            if ($tag === '*' || preg_replace('#^W/#', '', $tag) === $etag) {
+                return true;
+            }
+        }
+        return false;
+    }
+    $since = $_SERVER['HTTP_IF_MODIFIED_SINCE'] ?? null;
+    if ($mtime === null || !is_string($since)) {
+        return false;
+    }
+    $at = strtotime($since);
+    return $at !== false && $at >= $mtime;
+};
+
+/**
+ * A 304, with no `Content-Type`. PHP otherwise adds its default, `text/html`,
+ * to an answer that has no body to describe — and on the renderer's address a
+ * cache that believed it would be holding a WebAssembly module labelled as a
+ * page, which `instantiateStreaming` refuses.
+ */
+$notModified = static function (): never {
+    ini_set('default_mimetype', '');
+    header_remove('Content-Type');
+    http_response_code(304);
+    exit;
+};
+
+/**
+ * Which build of the plant renderer is on this server: its mtime and size, the
+ * mark the pages ask for it by (`PG_MODULE` below) and the one `/plant.wasm`
+ * checks before it promises a reader the bytes will never change.
+ */
+$moduleStamp = static function (): string {
+    $module = __DIR__ . '/.pages/PlantWasm.wasm';
+    return is_file($module)
+        ? dechex((int) filemtime($module)) . '-' . dechex((int) filesize($module))
+        : 'x';
+};
+
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 $path = is_string($path) ? rawurldecode($path) : '/';
 
@@ -180,12 +259,51 @@ if ($path === '/plant.wasm') {
     // Of the bytes on disk, by way of size and mtime rather than a hash: this
     // is megabytes, and hashing it on every request to save sending it is the
     // wrong way round.
-    $etag = '"' . dechex((int) filemtime($file)) . '-' . dechex((int) filesize($file)) . '"';
+    $mtime = (int) filemtime($file);
+    $etag = '"' . dechex($mtime) . '-' . dechex((int) filesize($file)) . '"';
+
+    // **Kept for ever at the address that names this build, and asked about
+    // every time at the one that does not.**
+    //
+    // This was `max-age=86400, must-revalidate` on the reasoning that a module
+    // changes rarely. The flaw was that a new build was *not* a new URL — the
+    // day the Quiet Garden opened, a browser that had visited `/walk` the day
+    // before was told `/quiet` could not be reached, because the module it had
+    // did not have the room in it. Then it was `no-cache` everywhere, on the
+    // reasoning that the ETag makes a return visit one small conditional
+    // request. On the live host it does not: on 13 October a conditional
+    // request with the right tag came back `200` and the whole three
+    // megabytes, cache status MISS at the origin and the CDN, so every visit
+    // to every page that grows a plant downloaded the module again
+    // (design/mass-test-2026-10-13/site/README.md, finding L1). The tag is
+    // lost somewhere in front of this host, which is not ours to fix.
+    //
+    // Every page now asks for the module as `/plant.wasm?v=<stamp>`, and the
+    // stamp changes when the bytes do. So when the stamp asked for is this
+    // build's, the answer can promise never to change: a year, `immutable`, no
+    // revalidation, whatever the CDN does with conditional requests. A new
+    // build is a new address, and the old promise is about bytes nobody will
+    // ask for again. A stamp that is not this build's — a page cached from
+    // before a deploy — is answered with this build and `no-cache`, so the
+    // newer bytes are never filed under an older name for a year. The bare
+    // `/plant.wasm` keeps `no-cache` too: nothing promises it.
+    //
+    // A development copy says `no-store` instead, because there the module is
+    // rebuilt every few minutes. `tools/wasm/dev-router.php` sets that.
+    $asked = $_GET['v'] ?? null;
+    $cache = match (true) {
+        (bool) ($GLOBALS['pg_no_cache'] ?? false) => 'no-store, max-age=0',
+        is_string($asked) && $asked === $moduleStamp() => 'public, max-age=31536000, immutable',
+        default => 'public, no-cache',
+    };
+    // Said on a 304 as well as a 200: a cache updates what it holds from the
+    // headers of the 304 it is given.
     header('ETag: ' . $etag);
+    header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $mtime) . ' GMT');
     header('Vary: Accept-Encoding');
-    if (trim($_SERVER['HTTP_IF_NONE_MATCH'] ?? '') === $etag) {
-        http_response_code(304);
-        exit;
+    header('Cache-Control: ' . $cache);
+    if ($fresh($etag, $mtime)) {
+        $notModified();
     }
 
     header('Content-Type: application/wasm');
@@ -193,25 +311,6 @@ if ($path === '/plant.wasm') {
         header('Content-Encoding: ' . $encoding);
     }
     header('Content-Length: ' . filesize($file));
-    // **Kept, and asked about every time.** This was `max-age=86400,
-    // must-revalidate` on the reasoning that a module changes rarely. The flaw
-    // is that a new build is *not* a new URL here — the path never changes — so
-    // a browser that fetched the module yesterday goes on running yesterday's
-    // Swift for a day, whatever has been deployed. That is not theoretical: the
-    // day the Quiet Garden opened, a browser that had visited `/walk` the day
-    // before was told `/quiet` could not be reached, because the module it had
-    // did not have the room in it.
-    //
-    // `no-cache` keeps the copy and revalidates it, which the ETag above makes
-    // one small conditional request rather than eight megabytes. A visitor who
-    // comes back to an unchanged module pays a 304; one who comes back to a new
-    // one gets it the same day it shipped.
-    //
-    // A development copy says `no-store` instead, because there the module is
-    // rebuilt every few minutes. `tools/wasm/dev-router.php` sets that.
-    header('Cache-Control: ' . (($GLOBALS['pg_no_cache'] ?? false)
-        ? 'no-store, max-age=0' : 'public, no-cache'));
-    header('X-Content-Type-Options: nosniff');
     readfile($file);
     exit;
 }
@@ -270,12 +369,11 @@ if (str_contains($body, '<!--wear-->')) {
 // stamp is put in the page and read from there rather than written into
 // `walkpage.js`. `PG_MODULE` in a page is this, and a page without it is
 // untouched.
+//
+// Since 14 October 2026 the stamp is also what lets `/plant.wasm` above be
+// kept for a year: an address that names its build can promise its bytes.
 if (str_contains($body, 'PG_MODULE')) {
-    $module = __DIR__ . '/.pages/PlantWasm.wasm';
-    $stamp = is_file($module)
-        ? dechex((int) filemtime($module)) . '-' . dechex((int) filesize($module))
-        : 'x';
-    $body = str_replace('PG_MODULE', '/plant.wasm?v=' . $stamp, $body);
+    $body = str_replace('PG_MODULE', '/plant.wasm?v=' . $moduleStamp(), $body);
 }
 
 // **So does every script and the stylesheet, since 24 September 2026.**
@@ -313,6 +411,9 @@ $body = preg_replace_callback(
     },
     $body
 );
+// The import map is the one script written into a page rather than fetched,
+// so it is the one the page's Content-Security-Policy names by its hash.
+$inline = [];
 if (str_contains($body, 'type="module"')) {
     $imports = [];
     foreach (glob($assets . '/js/*.js') ?: [] as $file) {
@@ -320,10 +421,41 @@ if (str_contains($body, 'type="module"')) {
         $imports["/assets/js/{$name}"] = "/assets/js/{$name}?v=" . $stampOf("js/{$name}");
     }
     $map = json_encode(['imports' => $imports], JSON_UNESCAPED_SLASHES);
+    $inline[] = "'sha256-" . base64_encode(hash('sha256', $map, true)) . "'";
     // Before any module script, which the head is: an import map that arrives
     // after the first module has started loading is ignored.
     $body = preg_replace('#</head>#', "  <script type=\"importmap\">{$map}</script>\n  </head>", $body, 1);
 }
+
+// **What a page may load, since 14 October 2026: its own files and nothing
+// else.** Every page is already that — no analytics, no font CDN, no
+// third-party anything, each page's head says so — and the policy makes it a
+// rule the browser keeps rather than a habit. Each part is what the pages
+// need and no more:
+//
+// - scripts from this site, the import map by its hash (above), and
+//   `wasm-unsafe-eval`, without which a browser refuses to compile the plant
+//   renderer. It allows WebAssembly and nothing else: `eval` stays refused.
+// - styles, images, fonts, and every `fetch` (the plot service, the
+//   catalogues, the passage banks, the renderer, the sky's stars) from this
+//   site, under `default-src`. A style set from a script (`--area-ground` on a
+//   front card) is not an inline style in the policy's sense; none of the
+//   pages has a `style` attribute or a `<style>` block.
+// - no plug-ins, no `<base>`, a form only to this site (the tester door on
+//   `/t`), and no page of this site inside somebody else's frame.
+//
+// Checked with the site crawler in Chrome and WebKit, every page in every
+// language: no violation (the report of 14 October). A new inline script, a
+// style attribute, or a file from another host will be refused by the browser
+// and named in its console — which is the point — so add it here first.
+$policy = implode('; ', [
+    "default-src 'self'",
+    "script-src 'self' 'wasm-unsafe-eval'" . ($inline ? ' ' . implode(' ', $inline) : ''),
+    "object-src 'none'",
+    "base-uri 'none'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+]);
 
 // A seed link is opened once and then often re-opened from the same message, so
 // a conditional request is worth answering. The tag is of the bytes, so it
@@ -331,14 +463,18 @@ if (str_contains($body, 'type="module"')) {
 // module's stamp is in them, when a new module is deployed.
 $etag = '"' . md5($body) . '"';
 header('ETag: ' . $etag);
-if (trim($_SERVER['HTTP_IF_NONE_MATCH'] ?? '') === $etag) {
-    http_response_code(304);
-    exit;
+// On a 304 as well, for a cache that refreshes what it holds from one.
+// (Browsers keep the `Content-` headers they stored with the page, so a page
+// kept from before the policy gets it when its bytes next change — which the
+// deploy that brought the policy did to every page, by changing the
+// stylesheet's stamp.)
+if (str_starts_with($type, 'text/html')) {
+    header('Content-Security-Policy: ' . $policy);
+}
+if ($fresh($etag)) {
+    $notModified();
 }
 
 header('Content-Type: ' . $type);
 header('Content-Length: ' . strlen($body));
-// The type is declared, so there is nothing to be gained by letting a browser
-// guess a different one.
-header('X-Content-Type-Options: nosniff');
 echo $body;
