@@ -9666,7 +9666,7 @@
       }
     },
     "Share" : {
-      "comment" : "VoiceOver's name for the share mark (a box with an arrow coming out of it) at the top right of a plant's screen. Also said in place of that glyph when VoiceOver reads the line shown after a wallpaper is saved. One word: the verb on the system's own share button.",
+      "comment" : "VoiceOver's name for the share mark (a box with an arrow coming out of it) at the top right of a plant's screen and of the stage, where your own plant stands. Also said in place of that glyph when VoiceOver reads the line shown after a wallpaper is saved. One word: the verb on the system's own share button.",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -9755,6 +9755,53 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Dela bild"
+          }
+        }
+      }
+    },
+    "Share time-lapse" : {
+      "comment" : "In the menu that opens from the share mark, on a plant's screen and on the stage. Sends the plant's time-lapse, its life from the first sprouting to now in twelve seconds, as a video through the phone's share sheet. 'Time-lapse' as in 'Play time-lapse'. A menu row.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Del time-lapse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Compartir time-lapse"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Partager l’accéléré"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Condividi time-lapse"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Del time-lapse"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Deel time-lapse"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dela time-lapse"
           }
         }
       }

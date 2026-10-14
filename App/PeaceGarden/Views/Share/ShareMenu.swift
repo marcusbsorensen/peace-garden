@@ -5,18 +5,22 @@ import UIKit
 
 /// What the Share mark offers.
 ///
-/// **A menu, because it is four things and the system already has the shape
-/// for four things.** It opens from the mark, says each in a word or three
+/// **A menu, because it is a handful of things and the system already has the
+/// shape for them.** It opens from the mark, says each in a word or three
 /// beside a glyph, reads itself to VoiceOver and goes away on its own. A sheet
 /// of our own would have been a second screen for a choice that takes one tap.
 ///
-/// The order is the order of the menu. A fifth — the time-lapse — is a case
-/// here and a branch in `PlantShareWork.start`.
+/// The order is the order of the menu: the three that go to the share sheet,
+/// then the two that go to Photos.
 enum PlantShareAction: String, CaseIterable, Identifiable, Sendable {
     /// A still, handed to the share sheet: Photos, Mail, Messages, anything.
     case picture
     /// Once round, slowly, as a video, handed to the share sheet.
     case turning
+    /// The plant's life from its first sprouting to now, the time-lapse its
+    /// screen plays, as a film handed to the share sheet (Marcus, 13 October:
+    /// 1A; built 14 October).
+    case timeLapse
     /// A still the size of this phone's screen, saved to Photos.
     case wallpaper
     /// A Live Photo of a short turn, saved to Photos.
@@ -28,6 +32,7 @@ enum PlantShareAction: String, CaseIterable, Identifiable, Sendable {
         switch self {
         case .picture: "Share picture"
         case .turning: "Share turning video"
+        case .timeLapse: "Share time-lapse"
         case .wallpaper: "Save as wallpaper"
         case .movingWallpaper: "Save as moving wallpaper"
         }
@@ -39,6 +44,7 @@ enum PlantShareAction: String, CaseIterable, Identifiable, Sendable {
         switch self {
         case .picture: "photo"
         case .turning: "rotate.3d"
+        case .timeLapse: "timelapse"
         case .wallpaper: "iphone"
         case .movingWallpaper: "livephoto"
         }
@@ -58,7 +64,8 @@ enum PlantShareHint: Equatable {
 }
 
 /// The Share mark: the system's share glyph in the chrome's ring, top right on
-/// a plant's screen, beside Close.
+/// a plant's screen, beside Close, and top right on the stage, for the
+/// person's own plant (Marcus, 14 October 2026: 13A).
 ///
 /// **Glyph, not word**, as Close is: the box with the arrow out of it is the
 /// one mark for this on every iPhone, and VoiceOver reads it as *Share*.
@@ -69,11 +76,20 @@ enum PlantShareHint: Equatable {
 /// It is information rather than motion (how much longer), so Reduce Motion
 /// keeps it, and it is not animated between steps.
 struct PlantShareButton: View {
-    let genome: Genome
+    /// The plant: its genome for a picture or a turn, and its birthday for the
+    /// time-lapse, which replays its life from the first sprouting.
+    let record: PlantRecord
     let growth: GrowthModel.State
     /// The moment it is: the hour on this phone's clock is the sky the plant
     /// is shared under (`ShareSky`).
     let now: Date
+    /// How far in from the trailing edge the mark stands, for the share
+    /// sheet's popover to point at on an iPad.
+    var trailingInset: CGFloat = PlantShareButton.besideClose
+    /// Told when the mark starts and stops being busy — making something, or
+    /// showing the line after it — so a screen whose chrome comes and goes can
+    /// keep it up until it is done.
+    var onBusy: (Bool) -> Void = { _ in }
 
     /// How far in from the trailing edge, to stand beside Close: Close's own
     /// inset, its width, and a gap.
@@ -86,7 +102,8 @@ struct PlantShareButton: View {
             Menu {
                 ForEach(PlantShareAction.allCases) { action in
                     Button {
-                        work.start(action, genome: genome, growth: growth, now: now)
+                        work.start(action, record: record, growth: growth, now: now,
+                                   trailingInset: trailingInset)
                     } label: {
                         Label(action.title, systemImage: action.glyph)
                     }
@@ -110,6 +127,7 @@ struct PlantShareButton: View {
         // A crossfade under Reduce Motion too: nothing moves, and the line
         // still has to arrive (the house rule, `PlantStageView`'s Settings).
         .animation(Chrome.fadeIn, value: work.hint)
+        .onChange(of: work.isBusy) { _, busy in onBusy(busy) }
     }
 
     private var mark: some View {
@@ -198,14 +216,39 @@ final class PlantShareWork {
     var hint: PlantShareHint? {
         didSet { scheduleHintAway() }
     }
+    /// Making something, or saying what came of it.
+    var isBusy: Bool { doing != nil || hint != nil }
+    /// Where the mark stands in from the trailing edge, for the popover.
+    @ObservationIgnored private var trailingInset = PlantShareButton.besideClose
 
     @ObservationIgnored private var hintTask: Task<Void, Never>?
 
-    func start(_ action: PlantShareAction, genome: Genome, growth: GrowthModel.State, now: Date) {
+    func start(_ action: PlantShareAction, record: PlantRecord, growth: GrowthModel.State, now: Date,
+               trailingInset: CGFloat = PlantShareButton.besideClose) {
         guard doing == nil else { return }
+        self.trailingInset = trailingInset
         doing = action
         progress = 0
         hint = nil
+
+        // The film draws its own frames, sky and all, on the main actor as the
+        // screen's time-lapse does, a frame at a time with a breath between,
+        // and reports each one to the ring as the turning video does.
+        if action == .timeLapse {
+            Task {
+                do {
+                    let url = try await PlantShareFiles.timeLapse(record, now: now) { value in
+                        self.progress = value
+                    }
+                    present(url)
+                } catch {
+                    finish(.failed)
+                }
+            }
+            return
+        }
+
+        let genome = record.genome
 
         // The sky of the hour on this phone's clock, and the night if it
         // cannot be had (Marcus, 14 October 2026).
@@ -220,6 +263,8 @@ final class PlantShareWork {
             let screen = Self.screen()
             portrait = .wallpaper(genome: genome, growth: growth,
                                   nativePixels: screen.pixels, scale: screen.scale, hour: hour)
+        case .timeLapse:
+            return
         }
         guard let ground = ShareBackdrop.image(for: portrait) else {
             finish(.failed)
@@ -255,6 +300,8 @@ final class PlantShareWork {
                         try await PlantShareFiles.movingWallpaper(portrait, backdrop: backdrop, progress: report)
                     }.value
                     finish(Self.hint(for: await PhotosSaving.save(pair)))
+                case .timeLapse:
+                    break
                 }
             } catch {
                 finish(.failed)
@@ -318,7 +365,7 @@ final class PlantShareWork {
         if let popover = sheet.popoverPresentationController {
             // On an iPad the sheet is a popover, and it points at the mark.
             popover.sourceView = top.view
-            popover.sourceRect = CGRect(x: top.view.bounds.maxX - PlantShareButton.besideClose - 21,
+            popover.sourceRect = CGRect(x: top.view.bounds.maxX - trailingInset - 21,
                                         y: top.view.safeAreaInsets.top + 12 + 42, width: 1, height: 1)
             popover.permittedArrowDirections = .up
         }

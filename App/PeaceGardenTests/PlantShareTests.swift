@@ -1,6 +1,7 @@
 import AVFoundation
 import ImageIO
 import SeedCore
+import SwiftUI
 import XCTest
 @testable import PeaceGarden
 
@@ -176,6 +177,55 @@ final class PlantShareTests: XCTestCase {
         let still = try Pixels(try XCTUnwrap(CGImageSourceCreateImageAtIndex(source, 0, nil)))
         let last = try XCTUnwrap(frames.last)
         XCTAssertLessThan(still.difference(from: last, in: CGRect(x: 0, y: 0, width: 360, height: 780)), 2.5)
+    }
+
+    // MARK: The menu
+
+    /// **Five things, the time-lapse among them** (Marcus, 14 October): the
+    /// three that go to the share sheet, then the two that go to Photos, each
+    /// with a mark of its own the system can draw.
+    func testTheMenuHasFiveThingsWithTheTimeLapse() throws {
+        XCTAssertEqual(PlantShareAction.allCases, [.picture, .turning, .timeLapse, .wallpaper, .movingWallpaper])
+        XCTAssertFalse(PlantShareAction.timeLapse.savesToPhotos, "the time-lapse goes to the share sheet")
+        XCTAssertEqual(Set(PlantShareAction.allCases.map(\.glyph)).count, PlantShareAction.allCases.count)
+        for action in PlantShareAction.allCases {
+            XCTAssertNotNil(UIImage(systemName: action.glyph), "\(action.glyph) is a system mark")
+        }
+        let title = Mirror(reflecting: PlantShareAction.timeLapse.title).children
+            .first { $0.label == "key" }?.value as? String
+        XCTAssertEqual(title, "Share time-lapse")
+    }
+
+    /// **The time-lapse film, as the menu makes it**: the plant's twelve
+    /// seconds as an H.264 movie called *Peace Garden*, the ring told how far
+    /// it has got, and nothing in the file but the picture — no seed, no
+    /// name, no metadata. Small and at four frames a second, because the size
+    /// is not what is being tested.
+    func testTheTimeLapseFilmCarriesNothingButThePicture() async throws {
+        let record = PlantRecord(seed: Self.genome.seed, lineage: .minted,
+                                 birth: Date().addingTimeInterval(-40 * 86_400))
+        var options = PlantShareFiles.timeLapseOptions()
+        XCTAssertEqual(options.drift, .towardsNow, "the sky ends on the phone's hour")
+        XCTAssertFalse(options.opensOnThePlant, "the film starts on the sprout")
+        options.size = CGSize(width: 120, height: 212)
+        options.fps = 4
+        var reported: [Double] = []
+        let url = try await PlantShareFiles.timeLapse(record, now: Date(), options: options) { reported.append($0) }
+
+        XCTAssertEqual(url.lastPathComponent, "\(PlantShareFiles.fileStem).mp4")
+        let bytes = try Data(contentsOf: url)
+        let name = record.genome.name
+        for word in [record.seed.hex, record.seed.hex.uppercased(), name.full, name.genus, name.epithet] {
+            XCTAssertNil(bytes.range(of: Data(word.utf8)), "the film carries \(word)")
+        }
+        let asset = AVURLAsset(url: url)
+        let items = try await asset.load(.metadata)
+        XCTAssertTrue(items.isEmpty, "the film carries no metadata: \(items)")
+        let duration = try await asset.load(.duration).seconds
+        XCTAssertEqual(duration, TimeLapse.duration, accuracy: 0.5)
+        XCTAssertEqual(reported.last ?? 0, 1, accuracy: 0.001, "the ring fills")
+        XCTAssertEqual(reported, reported.sorted(), "and only forwards")
+        try? FileManager.default.removeItem(at: url.deletingLastPathComponent())
     }
 
     // MARK: The sky of the phone's hour (Marcus, 14 October 2026)
