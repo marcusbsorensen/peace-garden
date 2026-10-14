@@ -72,3 +72,32 @@ eye are in `DANISH-site.md`. 44 keys added. `privacy10` checked and unchanged.
   Pflanze*) against the generic *Botschafter*; *oder dreh dich* for the turn,
   which may read as turning on the spot rather than going round the plot;
   *dessen, der liest* in `gardenBody`.
+
+## es — Spanish
+
+45 keys: the 44 and `privacy10`. For review.
+
+- **Terms.** *Zona* for area, as `meaningsAbout` and `privacy6`; *parcela* for
+  plot (no earlier string names one); *se saca* for a seed drawn, as
+  `privacy2`'s *cuándo se sacó*; *tú* throughout, and the plural address
+  avoided as `docs/LANGUAGES.md` asks.
+- **Area names first in each `…Away`**, *El vergel está fuera de alcance ahora
+  mismo*, because the catalogue's names carry a capitalised article and *a El
+  vergel* cannot contract. `wildAway`'s *Ahora mismo no se puede llegar a…*
+  could not take them.
+- **`{area}`**: *Embajadora de {area}* and *que crece en {area}*, which give
+  *de El vergel*, *en Las cepas*: uncontracted, as the RAE writes a name that
+  carries its article (*de El Salvador*), but worth a native look.
+- **Garden words.** *Doble arriate*, *camino de césped segado*, *recinto*,
+  *glorieta enlosada*, *cuadros* and *cuarteles*, *al tresbolillo* for the
+  quincunx, *gremio* for the guild, *parterre* for the Knot Garden's plot (its
+  area is *El jardín de arrayanes*), *surcos* in a *bancal*, *cajoneras* for the
+  frames, *mesas de cultivo* for the staging, *macizo*, *bosquete* and *cepas*
+  (matching *Las cepas*), *huerto* of *bancales elevados*, and *espigas* and
+  *umbelas*, as the app names those plant forms.
+- **Controls.** Infinitives: *Cerrar* (the app's word), *Acercar*, *Alejar*,
+  *Girar en sentido horario*, *Mover arriba*.
+- **`privacy10`**: *«Reducir movimiento»*, iOS's Spanish name.
+- **For a native reader:** *arriate*, *bancal* and *glorieta* are Peninsular;
+  a Latin American reader may want *cantero*. *Embajadora* is feminine to agree
+  with *planta*.
