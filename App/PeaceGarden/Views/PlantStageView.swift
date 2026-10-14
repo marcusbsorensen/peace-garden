@@ -77,6 +77,7 @@ struct PlantStageView: View {
 
                 StageBackdrop(palette: identity.genome.palette, presence: growth.heightScale)
                     .ignoresSafeArea()
+                    .accessibilityHidden(showingSettings)
 
                 PlantSceneView(
                     genome: identity.genome,
@@ -88,6 +89,7 @@ struct PlantStageView: View {
                     onTap: { revealControls() }
                 )
                 .ignoresSafeArea()
+                .accessibilityHidden(showingSettings)
 
                 // Asked for once in Settings rather than every time on the
                 // stage: a row set to stay is a row that stays.
@@ -96,6 +98,11 @@ struct PlantStageView: View {
                     .opacity(rowIsUp ? 1 : 0)
                     .allowsHitTesting(rowIsUp)
                     .animation(Chrome.fadeIn, value: rowIsUp)
+                    // Behind Settings, out of VoiceOver's reach as well as out
+                    // of sight: Settings is a layer, not a presentation, and
+                    // its last row led on to the stage's marks and the plant's
+                    // name beneath it (mass test, 13 October, finding 9).
+                    .accessibilityHidden(showingSettings)
 
                 // The second thing the app explains, and it explains it
                 // once. There is no flag to keep: the hint is for someone
@@ -105,6 +112,7 @@ struct PlantStageView: View {
                         .opacity(controlsVisible ? 0 : 1)
                         .animation(Chrome.fadeIn, value: controlsVisible)
                         .transition(.opacity)
+                        .accessibilityHidden(showingSettings)
                 }
             }
 
@@ -118,6 +126,7 @@ struct PlantStageView: View {
                     .environment(place)
                     .transition(settingsTransition)
                     .zIndex(2)
+                    .accessibilityAddTraits(.isModal)
             }
         }
         // The model is passed in explicitly rather than left to propagate:
