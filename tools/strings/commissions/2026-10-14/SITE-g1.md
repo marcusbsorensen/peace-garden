@@ -188,3 +188,33 @@ eye are in `DANISH-site.md`. 44 keys added. `privacy10` checked and unchanged.
 - **For a native reader:** *Πρεσβευτής* (masculine generic) for the plant;
   *Συνέχεια* for `goOn`; whether *πρέμνα* is too technical beside the
   catalogue's *παραφυάδες*.
+
+## bg — Bulgarian
+
+45 keys: the 44 and `privacy10`. For review.
+
+- **Terms.** *Кът* for area, as `meaningsAbout` and `privacy6`; *леха* for
+  plot, as `privacy6`; *възниква* for a seed drawn, as `privacy2`'s *когато е
+  възникнало* (it avoids the lottery sense); *в момента не е достъпен/на/но*
+  as `wildAway`; *ти* throughout.
+- **Bulgarian does not decline**, so `{area}` goes straight in: *Посланик на
+  {area}*, *расте в {area}*.
+- **Six of the ten names have no article** (*Разсадник*, *Оранжерия*,
+  *Кръстопът*, *Зимовище*, *Издънки*, *Родна земя*), so their `…Away` reads
+  *Разсадник в момента не е достъпен*, the name standing as a name. A native
+  reader may prefer the definite form there (*Разсадникът*), which would no
+  longer be the map's word.
+- **Garden words.** *Цветни ивици* for the borders, *окосена тревна пътека*,
+  *жив плет*, *морава*, *заграден кът*, *кръгла каменна настилка*,
+  *четвъртини*, *като петицата на зар* for the quincunx, *гилдия* for the
+  guild, *партер* for the Knot Garden's plot (its area is *Бароковата
+  градина*), *бразди*, *сандъци със стъклени капаци* for the frames (not
+  *парник*, the forcing frame), *стелажи*, *горичка* and *пънове*, *класове*,
+  *сенници*, *розетки*, *парцел* for the kitchen garden's plot.
+- **Controls.** Informal imperatives, as Bulgarian software commonly writes
+  commands and as `frontTurn` already does: *Затвори*, *Увеличи*, *Намали*,
+  *Премести нагоре*, *Завърти по часовниковата стрелка*.
+- **`privacy10`**: *„Намаляване на движението“* for Reduce Motion. I do not
+  know that iOS is written in Bulgarian at all; if it is not, a Bulgarian
+  reader's phone shows the setting in another language, and this is a
+  description of it rather than its name. Wants a reader with an iPhone.
