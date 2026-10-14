@@ -18,6 +18,9 @@ import XCTest
 ///   appearance `light` (with the garden by day) or `dark` (by night).
 /// - `PG_MT_SCREENS`: any of `stage,seed,meet,settings,garden,plant,firstlight,about`.
 /// - `PG_MT_AUDIT`: locales to run `performAccessibilityAudit` on, or `all`.
+/// - `PG_MT_ARGS`: more launch arguments for every screen, separated by
+///   spaces — a trial of something not yet chosen, rendered beside the
+///   current look (14 October, 26A).
 @MainActor
 final class MassTestScreensUITests: XCTestCase {
 
@@ -253,6 +256,7 @@ final class MassTestScreensUITests: XCTestCase {
         arguments += appearance == "light"
             ? ["-stage.appearance.v1", "light", "-garden.daylight.v1", "always"]
             : ["-stage.appearance.v1", "dark", "-garden.daylight.v1", "alwaysNight"]
+        arguments += (MassTest.environment["PG_MT_ARGS"] ?? "").split(separator: " ").map(String.init)
         return arguments
     }
 
