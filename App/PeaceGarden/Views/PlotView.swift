@@ -1708,8 +1708,8 @@ struct CountLineShadow: ViewModifier {
             switch self {
             case .none: []
             case .A: [Layer(opacity: 0.5, radius: 2)]
-            case .B: [Layer(opacity: 0.65, radius: 2.5), Layer(opacity: 0.65, radius: 2.5)]
-            case .C: [Layer(opacity: 1, radius: 1), Layer(opacity: 0.75, radius: 3.5)]
+            case .B: [Layer(opacity: 0.75, radius: 2.5), Layer(opacity: 0.75, radius: 2.5)]
+            case .C: [Layer(opacity: 1, radius: 1), Layer(opacity: 0.85, radius: 3.5)]
             }
         }
     }
