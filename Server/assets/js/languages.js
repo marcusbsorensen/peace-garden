@@ -120,8 +120,24 @@ export function manifest() {
 /// normal state rather than the exception — an interface is a fortnight and a
 /// bank is a commission — and it is reachable by negotiation without being
 /// something to choose, because what a chooser offers is a reading.
+///
+/// A language the manifest marks `offered: false` is left out as well: it is
+/// held back until it is finished (`UNFINISHED` in `tools/site/export.py`;
+/// Greenlandic, from 14 October 2026). See `open` below for how it is reached.
 export function readable(languages) {
-  return languages.filter((language) => language.bank);
+  return open(languages).filter((language) => language.bank);
+}
+
+/// The languages negotiation may land on by itself.
+///
+/// **One that is held back is reached only by being asked for by name**: `?l=`,
+/// or a tester standing in it, which arrives as the same override. A browser's
+/// own list and a remembered choice pass over it to their next language, as
+/// they pass over any language the site has never had — so a Greenlandic
+/// browser that also lists Danish reads Danish, and one that lists nothing else
+/// reads English and is told under the passage that it was borrowed.
+function open(languages) {
+  return languages.filter((language) => language.offered !== false);
 }
 
 function normalise(tag) {
@@ -176,20 +192,27 @@ export function negotiate(languages, options = {}) {
   const stored = options.remembered !== undefined ? options.remembered : remembered();
   const offered = options.navigator || navigator.languages || [navigator.language || "en"];
   const banks = readable(languages);
+  const reachable = open(languages);
 
+  // `?l=` is matched against every language, held back or not; a remembered
+  // choice and the browser's list only against those on offer. See `open`.
   const codes = new Set(languages.map((entry) => entry.code));
+  const reachableCodes = new Set(reachable.map((entry) => entry.code));
   const wanted =
     (asked && match(asked, codes)) ||
-    (stored && match(stored, codes)) ||
-    firstMatch(offered, languages) ||
+    (stored && match(stored, reachableCodes)) ||
+    firstMatch(offered, reachable) ||
     null;
 
   // The bank is settled against the same wish, over the languages that have
   // one. A reader whose language has an interface and no bank keeps their own
   // labels and borrows the passage, which is the case this is built for.
+  const everyBank = new Set(
+    languages.filter((entry) => entry.bank).map((entry) => entry.code),
+  );
   const bankCodes = new Set(banks.map((entry) => entry.code));
   const bank =
-    (asked && match(asked, bankCodes)) ||
+    (asked && match(asked, everyBank)) ||
     (stored && match(stored, bankCodes)) ||
     firstMatch(offered, banks) ||
     "en";
