@@ -1853,10 +1853,15 @@ struct HoldToConfirm: View {
             // reach for by accident because it caught their eye.
             row(glyphTint: tint, textTint: isMark ? Chrome.muted : Chrome.ink)
 
+            // The second copy is ink, not words: VoiceOver reads the first one
+            // only. Left in, every row was read twice — *Reset everything,
+            // Reset everything*, *Release, Release* (mass test, 13 October,
+            // finding 10).
             row(glyphTint: filledForeground, textTint: filledForeground)
                 .mask(alignment: .leading) {
                     Rectangle().scaleEffect(x: progress, anchor: .leading)
                 }
+                .accessibilityHidden(true)
         }
         // Behind the label rather than beside it in the stack, so the face is
         // exactly as wide as what it says and never as wide as what it is
