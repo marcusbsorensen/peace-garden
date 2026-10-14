@@ -63,8 +63,10 @@ def count(findings, keep):
     grew = [r for r in findings.get("dynamicType", []) if keep(r["screen"])]
     c["texts that grew"] = sum(r["textsThatGrew"] for r in grew)
     c["texts compared"] = sum(r["textsThatGrew"] + r["textsThatDidNot"] for r in grew)
-    c["overlaps"] = sum(1 for r in findings.get("overlap", []) if keep(r["screen"])
-                        and not (r["screen"] == "garden" and on_the_plot(r["a"]) and on_the_plot(r["b"])))
+    overlaps = [r for r in findings.get("overlap", []) if keep(r["screen"])
+                and not (r["screen"] == "garden" and on_the_plot(r["a"]) and on_the_plot(r["b"]))]
+    c["overlaps: settings"] = sum(1 for r in overlaps if r["screen"] in ("settings", "settings-end"))
+    c["overlaps"] = len(overlaps) - c["overlaps: settings"]
     c["not mirrored"] = sum(1 for r in findings.get("notMirrored", []) if keep(r["screen"])
                             and not (r["screen"] == "garden" and on_the_plot(r["label"])))
     return c
@@ -80,7 +82,8 @@ ROWS = [("sufficientElementDescription", "Audit: element with no description"),
         ("elementDetection", "Audit: element detection"),
         ("auditError", "Audit could not run"),
         ("clipped: past an edge", "Words past an edge of the window"),
-        ("overlaps", "Overlapping words (see note)"),
+        ("overlaps: settings", "Overlapping words on Settings (the stage beneath it; see note)"),
+        ("overlaps", "Overlapping words anywhere else"),
         ("not mirrored", "Labels unmoved under right to left"),
         ("texts that grew", "Texts that grew, L to XXXL/AX3/AX5")]
 
