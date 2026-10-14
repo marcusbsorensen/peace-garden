@@ -288,12 +288,20 @@ if ($path === '/plant.wasm') {
     // newer bytes are never filed under an older name for a year. The bare
     // `/plant.wasm` keeps `no-cache` too: nothing promises it.
     //
+    // **`private`: the year is the reader's browser's, not the CDN's.** A
+    // browser keys what it keeps on the whole address, query and all, so a
+    // new stamp is always a new entry there. Whether 20i's CDN keys on the
+    // query is not something this repository can see or test, and a CDN that
+    // did not would answer a new build's address with the old module for a
+    // year, with no way to purge it. The CDN was not keeping the module before
+    // either (MISS on 13 October), so nothing is given up.
+    //
     // A development copy says `no-store` instead, because there the module is
     // rebuilt every few minutes. `tools/wasm/dev-router.php` sets that.
     $asked = $_GET['v'] ?? null;
     $cache = match (true) {
         (bool) ($GLOBALS['pg_no_cache'] ?? false) => 'no-store, max-age=0',
-        is_string($asked) && $asked === $moduleStamp() => 'public, max-age=31536000, immutable',
+        is_string($asked) && $asked === $moduleStamp() => 'private, max-age=31536000, immutable',
         default => 'public, no-cache',
     };
     // Said on a 304 as well as a 200: a cache updates what it holds from the

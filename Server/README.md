@@ -280,7 +280,7 @@ findings L1 and L3):
 | `X-Content-Type-Options` | the same | `nosniff` |
 | `X-Powered-By` | — | taken off (`header_remove`); the host's PHP named itself and its version |
 | `Content-Security-Policy` | the pages | `default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-<the import map>'; style-src-attr 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'` |
-| `Cache-Control` | `/plant.wasm?v=<this build>` | `public, max-age=31536000, immutable` |
+| `Cache-Control` | `/plant.wasm?v=<this build>` | `private, max-age=31536000, immutable` |
 | | `/plant.wasm`, or an old stamp | `public, no-cache` |
 | `ETag`, `Last-Modified`, `Vary: Accept-Encoding` | `/plant.wasm` | on the 200 and the 304 alike |
 
@@ -314,7 +314,12 @@ three megabytes, cache status MISS at the origin and at the CDN, so the tag is
 lost in front of this host and every visit to a page that grows a plant
 downloaded the module again. A stale stamp — a page kept from before a deploy —
 is given the current build with `no-cache`, so new bytes are never kept a year
-under an old name. `If-None-Match` is read as a list, with weak tags and `*`,
+under an old name. The year is `private`, the browser's alone: a browser keys
+what it keeps on the whole address, query included, while whether 20i's CDN
+does is not something this repository can see, and a CDN that ignored the
+query would hand out the old module under every new stamp for a year with no
+way to purge it. The CDN was not keeping the module before either.
+`If-None-Match` is read as a list, with weak tags and `*`,
 and `If-Modified-Since` is asked when it is absent; a 304 carries no
 `Content-Type`.
 
