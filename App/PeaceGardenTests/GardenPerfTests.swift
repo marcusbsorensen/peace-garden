@@ -184,8 +184,9 @@ final class GardenPerfTests: XCTestCase {
 
         // VoiceOver's layer, made a slice a frame once the garden has filled
         // in (Marcus, 14 October: 28C): every frame from the first slice to
-        // the last, its interval and the main thread's own time in it; then
-        // two seconds at rest after, to compare.
+        // the last, its interval and the main thread's own time in it, beside
+        // the frames between filling in and the first slice, and three
+        // seconds at rest after.
         let layer = FrameCounter()
         layer.start()
         var layerStarted: Double?
@@ -194,7 +195,11 @@ final class GardenPerfTests: XCTestCase {
             try await Task.sleep(for: .milliseconds(5))
             let progress = PlotVoiceOver.progress
             guard progress.of == size else { continue }
-            if layerStarted == nil, progress.said > 0 { layerStarted = CACurrentMediaTime() - opened }
+            if layerStarted == nil, progress.said > 0 {
+                layerStarted = CACurrentMediaTime() - opened
+                // For a profiler watching from outside.
+                try? Data().write(to: URL(fileURLWithPath: folder).appendingPathComponent("layer-\(size)-started"))
+            }
             if progress.said == size {
                 layerBuilt = CACurrentMediaTime() - opened
                 break
@@ -202,10 +207,13 @@ final class GardenPerfTests: XCTestCase {
         }
         // The last slice's own frame.
         try await Task.sleep(for: .milliseconds(50))
-        let building = layer.stopWithCPU()
+        let frames = layer.stopWithCPU()
+        let started = opened + (layerStarted ?? 0)
+        let waiting = frames.filter { $0.at < started }
+        let building = frames.filter { $0.at >= started }
         let rest = FrameCounter()
         rest.start()
-        try await Task.sleep(for: .seconds(2))
+        try await Task.sleep(for: .seconds(3))
         let resting = rest.stopWithCPU()
 
         try await Task.sleep(for: .seconds(1))
@@ -224,16 +232,34 @@ final class GardenPerfTests: XCTestCase {
             "footprintOpenMB": open, "footprintAfterCloseMB": Self.footprintMB(),
             "voiceOverPerFrame": PlotVoiceOver.perFrame,
             "voiceOverStartedSeconds": layerStarted ?? -1, "voiceOverBuiltSeconds": layerBuilt ?? -1,
-            "voiceOverFrames": building.count,
-            "voiceOverLongestFrameMs": building.map(\.interval).max() ?? -1,
-            "voiceOverLongestMainCPUMs": building.map(\.cpu).max() ?? -1,
-            "voiceOverFramesOver16ms": building.filter { $0.interval > 16.7 + 2 }.count,
-            "voiceOverMainCPUOver16ms": building.filter { $0.cpu > 16 }.count,
-            "restLongestFrameMs": resting.map(\.interval).max() ?? -1,
-            "restLongestMainCPUMs": resting.map(\.cpu).max() ?? -1,
+            "voiceOverBuilding": Self.summary(building, quarters: true),
+            "filledWaitingForTheLayer": Self.summary(waiting),
+            "atRestAfter": Self.summary(resting),
         ]
         let data = try JSONSerialization.data(withJSONObject: result, options: [.prettyPrinted, .sortedKeys])
         try data.write(to: URL(fileURLWithPath: folder).appendingPathComponent("big-\(size).json"))
+    }
+
+    /// A stretch of frames: how many, the longest and the main thread's own
+    /// time in them (most, median, 90th percentile), and how many went past a
+    /// sixtieth of a second; by quarters of the stretch if asked.
+    private static func summary(_ frames: [(at: Double, interval: Double, cpu: Double)],
+                                quarters: Bool = false) -> [String: Any] {
+        func stats(_ part: ArraySlice<(at: Double, interval: Double, cpu: Double)>) -> [String: Any] {
+            let cpu = part.map(\.cpu).sorted()
+            func at(_ q: Double) -> Double { cpu.isEmpty ? -1 : cpu[min(cpu.count - 1, Int(q * Double(cpu.count)))] }
+            return ["frames": part.count,
+                    "longestFrameMs": part.map(\.interval).max() ?? -1,
+                    "framesOver16_7ms": part.filter { $0.interval > 16.7 + 2 }.count,
+                    "mainCPUMaxMs": cpu.last ?? -1, "mainCPUMedianMs": at(0.5), "mainCPUp90Ms": at(0.9),
+                    "mainCPUOver16ms": cpu.filter { $0 > 16 }.count]
+        }
+        var out = stats(frames[...])
+        if quarters, frames.count >= 4 {
+            let n = frames.count
+            out["byQuarter"] = (0..<4).map { q in stats(frames[(q * n / 4)..<((q + 1) * n / 4)]) }
+        }
+        return out
     }
 
     /// Until the plot holds still: two seconds in which no frame took longer
@@ -348,12 +374,12 @@ final class GardenPerfTests: XCTestCase {
             stopWithCPU().map(\.interval)
         }
 
-        /// Each frame's interval and the main thread's own time in it, both
-        /// in milliseconds.
-        func stopWithCPU() -> [(interval: Double, cpu: Double)] {
+        /// When each frame came, and its interval and the main thread's own
+        /// time in it, both in milliseconds.
+        func stopWithCPU() -> [(at: Double, interval: Double, cpu: Double)] {
             link?.invalidate()
             link = nil
-            return stamps.map { ($0.interval, $0.cpu) }
+            return stamps
         }
 
         /// The longest frame in the last `seconds`, counting the one still

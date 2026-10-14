@@ -1879,16 +1879,18 @@ private struct PlotCamera<Looking: Gesture, Panning: Gesture, Above: View>: View
         ZStack(alignment: .topLeading) {
             content
                 .coordinateSpace(name: "plot")
+                // An overlay rather than a sibling in the stack: what is in an
+                // overlay is laid out in the plot's frame and never lays the
+                // plot out again, so a slice of VoiceOver's layer arriving
+                // (`PlotVoiceOver`) leaves the plot's thousand-odd views alone.
+                .overlay(alignment: .topLeading) {
+                    if let moved {
+                        moved.equatable()
+                    }
+                }
                 .scaleEffect(scale)
                 .offset(offset)
                 .rotationEffect(turning)
-            if let moved {
-                moved
-                    .equatable()
-                    .scaleEffect(scale)
-                    .offset(offset)
-                    .rotationEffect(turning)
-            }
             above(scale, offset)
         }
         .frame(width: size.width, height: size.height)

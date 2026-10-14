@@ -193,9 +193,10 @@ struct PlotVoiceOver: View, Equatable {
     /// point a quarter of the way up, among the stem and leaves. Stood on the
     /// thing's foot by its caller, after everything it says, so the element
     /// is the box and not the whole plot that `position` takes up.
+    /// `Color.clear`, which draws nothing, rather than a shape filled with
+    /// nothing.
     fileprivate static func box(width: CGFloat, height: CGFloat) -> some View {
-        Rectangle()
-            .fill(.clear)
+        Color.clear
             .frame(width: width, height: height)
             .accessibilityElement()
             .accessibilityAddTraits(.isButton)
