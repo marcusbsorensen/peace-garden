@@ -246,3 +246,33 @@ eye are in `DANISH-site.md`. 44 keys added. `privacy10` checked and unchanged.
   likely names Reduce Motion in Russian (*Уменьшение движения*) or English.
   *«Памяншэнне руху»* is the Belarusian of the Russian name; whether to give
   the Russian or English name beside it is a question for a reader.
+
+## ar — Arabic
+
+45 keys: the 44 and `privacy10`. For review.
+
+- **Terms.** *قسم* for area, as `meaningsAbout` and `privacy6`; *قطعة* for
+  plot (no earlier string names one); *تُسحَب* for a seed drawn, as
+  `privacy2`'s *ومتى سُحبت*; *يتعذّر الوصول إلى … الآن* for every `…Away`, as
+  `wildAway`; masculine singular address, as `privacy8`; *قائمة* for a plant
+  standing, as `privacy6`.
+- **`{area}`** works as Arabic needs: every area name is definite, so *سفيرة
+  {area}* is a plain construct (*سفيرة البستان*), and the postcard opens in
+  Arabic, *تنمو {name} في {area}، في Peace Garden.*, as `wildPostcardText` was
+  corrected to on 2 October, so a shared line runs right to left.
+- **No direction marks added.** The catalogue's one (before *-ynth* in
+  `meaningsSecond`) guards a leading hyphen; nothing here starts a run with a
+  neutral character.
+- **Counts stay words**, as the English writes them (*عشرة أقسام*, *خمس
+  أشجار*): they describe a scene rather than report a quantity.
+- **Garden words.** *حوضا زهور* for the double border, *ممرّ من العشب
+  المجزوز*, *سياج نباتي*, *مرجة*, *الحديقة المسوّرة*, *دائرة مرصوفة*,
+  *كالنقاط الخمس على وجه النرد* for the quincunx, *جماعة نباتية* for the
+  guild, *النقش* for the plot of *الحديقة الرباعية*, *أخاديد*, *صناديق زجاجية*
+  for the frames, *أيكة* and *الأرومات* for the stools (matching *الخِلْفة*),
+  *سنابل*, *خيمات*, *وريدات*.
+- **Controls.** Verbal nouns, as Arabic software writes buttons: *إغلاق*,
+  *تكبير*, *تصغير*, *تحريك لأعلى*, *تدوير مع عقارب الساعة*.
+- **`privacy10`**: *«تقليل الحركة»*, iOS's Arabic name.
+- **For a native reader:** *قطعة* for a plot; *حديقة خضروات* for the kitchen
+  garden; *سفيرة* (feminine, with *نبتة*).
