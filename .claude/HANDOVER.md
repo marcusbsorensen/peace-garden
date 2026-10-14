@@ -37,7 +37,7 @@ Previous notes: `git show c83bc6e:.claude/HANDOVER.md` covers build 8 (12 Octobe
   - B, `muted` for those lines: about 6.9:1 in Light against 4.9 now.
   - Separately, the garden's count line by day is 3.5:1 under every option; it needs white text or a shade.
 
-  Neither change is in yet.
+  **Marcus answered on 14 October: 29B, `muted` for those small-capital lines; 30A, the count line in white by day.** Neither is built yet. The A/B switch commit `bae237a` on the old polish branch shows where each line is drawn.
 - **The translation round (19A) is done, merged and deployed** (site, 14 October evening):
   - the app has all seven languages for every sentence in use (Danish final; "Landskab %lld");
   - the site has 146 of 146 keys in all 40 offered languages, privacy10 included;
@@ -50,7 +50,7 @@ Previous notes: `git show c83bc6e:.claude/HANDOVER.md` covers build 8 (12 Octobe
   - `downloadBody` says the plant "is nobody else's", while `growBody` says "you both have it". Marcus hasn't answered this yet.
 
 ## Next steps
-1. Apply Marcus's 26A choice and the count line's fix if he wants one, then build 9.
+1. Build 29B and 30A: re-render the four places and the count line by day and night, measure contrast, and run AccessibilityTests, GardenControlsTests and PlotTests through the lock. Then build 9.
 2. **Build 9:** set `CURRENT_PROJECT_VERSION` to 9, `xcodegen generate`, run the full suite through the lock, then archive and export with the system PATH. Marcus uploads with `sh tools/upload-build.sh 9`, or from the Organizer if the Xcode sign-in has lapsed.
 3. ~~Site deploy for the translations~~ done 14 October evening, with every check ok.
 4. Marcus checks on a real phone:
