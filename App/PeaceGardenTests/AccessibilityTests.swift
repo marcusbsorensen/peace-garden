@@ -183,6 +183,30 @@ final class AccessibilityTests: XCTestCase {
         }
     }
 
+    /// **The thin small capitals that say what a plant is are `muted`**
+    /// (Marcus, 14 October: 29B): a plant's place and date, the stage caption
+    /// and the seed screen's labels. Small capitals this thin never reach
+    /// `faint`'s grey, which measured 4.7 to 4.9 : 1 off the screen in the
+    /// light. The seed screen in Light, photographed: the darkest of its
+    /// form's label is darker than `faint` can be, and as dark as `muted`.
+    func testTheThinSmallCapitalsAreMuted() async throws {
+        let model = Self.garden(plants: 0, lamps: []).0
+        model.mintIdentity()
+        let identity = try XCTUnwrap(model.identity)
+        let (window, _) = try await hosted(SeedView().environment(model), style: .light)
+        let label = String(localized: identity.genome.form.archetype.label)
+        let form = try XCTUnwrap(Self.walk(window).first { $0.label == label }, "the form's label, \(label)")
+
+        let traits = UITraitCollection(userInterfaceStyle: .light)
+        let ground = UIColor(Chrome.ground).resolvedColor(with: traits)
+        let faint = Self.contrast(UIColor(Chrome.faint).resolvedColor(with: traits), on: ground)
+        let muted = Self.contrast(UIColor(Chrome.muted).resolvedColor(with: traits), on: ground)
+        let drawn = Self.contrast(Self.darkest(in: Self.photograph(window), within: form.frame), on: ground)
+        print("the form's label: \(drawn) : 1, faint \(faint), muted \(muted)")
+        XCTAssertGreaterThan(drawn, (faint + muted) / 2,
+                             "nearer muted (\(muted) : 1) than faint (\(faint) : 1): \(drawn) : 1")
+    }
+
     // MARK: Helpers
 
     /// WCAG contrast of a colour laid over an opaque ground.
@@ -201,6 +225,42 @@ final class AccessibilityTests: XCTestCase {
         let over = luminance(r * a + gr * (1 - a), g * a + gg * (1 - a), b * a + gb * (1 - a))
         let under = luminance(gr, gg, gb)
         return (max(over, under) + 0.05) / (min(over, under) + 0.05)
+    }
+
+    /// The window as drawn, at the Air's own three pixels a point.
+    private static func photograph(_ window: UIWindow) -> UIImage {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 3
+        format.opaque = true
+        return UIGraphicsImageRenderer(size: window.bounds.size, format: format).image { _ in
+            window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+        }
+    }
+
+    /// The darkest pixel inside `frame`, by its sum of channels: where the
+    /// type's strokes come nearest to the grey they are drawn in.
+    private static func darkest(in picture: UIImage, within frame: CGRect) -> UIColor {
+        guard let image = picture.cgImage else { return .white }
+        let scale = picture.scale
+        let area = CGRect(x: frame.minX * scale, y: frame.minY * scale,
+                          width: frame.width * scale, height: frame.height * scale).integral
+        guard let crop = image.cropping(to: area) else { return .white }
+        let width = crop.width, height = crop.height
+        var pixels = [UInt8](repeating: 0, count: width * height * 4)
+        pixels.withUnsafeMutableBytes { buffer in
+            let context = CGContext(data: buffer.baseAddress, width: width, height: height,
+                                    bitsPerComponent: 8, bytesPerRow: width * 4,
+                                    space: CGColorSpaceCreateDeviceRGB(),
+                                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+            context?.draw(crop, in: CGRect(x: 0, y: 0, width: width, height: height))
+        }
+        var best = (sum: Int.max, index: 0)
+        for index in stride(from: 0, to: pixels.count, by: 4) {
+            let sum = Int(pixels[index]) + Int(pixels[index + 1]) + Int(pixels[index + 2])
+            if sum < best.sum { best = (sum, index) }
+        }
+        return UIColor(red: CGFloat(pixels[best.index]) / 255, green: CGFloat(pixels[best.index + 1]) / 255,
+                       blue: CGFloat(pixels[best.index + 2]) / 255, alpha: 1)
     }
 
     /// A garden of `plants` crossed plants, all met with Ash, and the lights
@@ -266,13 +326,16 @@ final class AccessibilityTests: XCTestCase {
         let node: NSObject
     }
 
-    private func hosted(_ view: some View, settle: Double = 0.8) async throws
-        -> (window: UIWindow, controller: UIViewController) {
+    /// `style` is the appearance the window is in, as Settings' choice puts
+    /// the app's window in it.
+    private func hosted(_ view: some View, settle: Double = 0.8, style: UIUserInterfaceStyle = .unspecified)
+        async throws -> (window: UIWindow, controller: UIViewController) {
         let scene = try XCTUnwrap(UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }.first)
         let window = UIWindow(windowScene: scene)
         window.frame = CGRect(origin: .zero, size: Self.screen)
         window.windowLevel = .alert + 1
+        window.overrideUserInterfaceStyle = style
         let controller = UIHostingController(rootView: view)
         window.rootViewController = controller
         window.makeKeyAndVisible()

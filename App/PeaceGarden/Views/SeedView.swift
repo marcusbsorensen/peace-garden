@@ -50,9 +50,10 @@ struct SeedView: View {
                 meaningButton
             }
 
+            // `muted`, as the rows' labels are (Marcus, 14 October: 29B).
             Text(identity.genome.form.archetype.label)
                 .chromeLabel()
-                .foregroundStyle(Chrome.faint)
+                .foregroundStyle(Chrome.muted)
 
             // How the plant is drawn, here as well as in Settings (Marcus,
             // 13 October: "the user may not think to look under Settings").
@@ -170,9 +171,13 @@ private func factRow(_ glyph: AnyShape, _ label: LocalizedStringKey, value: Text
         // sits below the letters. A point up puts the mark on the cap
         // height rather than on the line.
         .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 1 }
+    // **The label is `muted`, not `faint`** (Marcus, 14 October: 29B). Small
+    // capitals this thin never reach the grey they are drawn in: `faint`
+    // measured 4.8 : 1 off the screen in the light, `muted` 6.8. The mark
+    // beside it is a stroke, not text, and stays `faint`.
     let name = Text(label)
         .chromeLabel()
-        .foregroundStyle(Chrome.faint)
+        .foregroundStyle(Chrome.muted)
     let said = value
         .scaledFont(size: 15, weight: .light)
         .foregroundStyle(Chrome.ink)

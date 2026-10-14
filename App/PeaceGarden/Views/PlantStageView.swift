@@ -251,9 +251,12 @@ struct PlantStageView: View {
                                 .foregroundStyle(Chrome.ink)
                         }
                         if showsStage {
+                            // `muted`, not `faint` (Marcus, 14 October: 29B):
+                            // small capitals this thin never reach `faint`'s
+                            // grey, which measured 4.7 : 1 here in the light.
                             Text(verbatim: growth.caption())
                                 .chromeLabel(size: 10)
-                                .foregroundStyle(Chrome.faint)
+                                .foregroundStyle(Chrome.muted)
                         }
                     }
                     .multilineTextAlignment(.center)

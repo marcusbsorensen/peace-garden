@@ -38,6 +38,12 @@ enum Chrome {
     // voice, a plant's place and date, the seed screen's row labels. At 0.60
     // it is 4.8 : 1, still the faintest of the three and still apart from
     // `muted` (6.8 : 1).
+    //
+    // **A plant's place and date, the stage caption and the seed screen's
+    // labels are `muted` since 14 October** (Marcus, 29B). Small capitals at
+    // ten and eleven points never reach the grey they are drawn in, so off
+    // the screen `faint` measured under its arithmetic on them, 4.7 to 4.9 : 1
+    // in the light; `muted` measures about 6.9. `faint` stays everywhere else.
     static let ink = adaptive(dark: .white, light: UIColor(white: 0.07, alpha: 1))
     static let muted = adaptive(dark: UIColor(white: 1, alpha: 0.72),
                                 light: UIColor(white: 0.07, alpha: 0.70))
