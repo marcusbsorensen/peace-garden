@@ -48,6 +48,9 @@
         }
       }
     },
+    "%@ has asked to show a plant you grew together" : {
+
+    },
     "%@ has asked to show plants you grew together" : {
       "comment" : "A notice in the garden: one person (%@ is their name) has asked for more than one plant you grew together to stand in the public website garden. One of three sentences with names; the others are '%@ has asked to show a plant you grew together' and '%@ have asked to show plants you grew together' (more than one person, who always means more than one plant, since each plant has one other gardener). The verb follows the number of people asking and the object follows the number of plants. It carries no number on purpose."
     },
@@ -97,6 +100,9 @@
           }
         }
       }
+    },
+    "%@ have asked to show plants you grew together" : {
+
     },
     "%@ is here. A light tap, top to top." : {
       "comment" : "Under that title. %@ is the other person's name.",
@@ -240,6 +246,7 @@
       }
     },
     "%@ would like this plant to stand in the peace garden." : {
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -284,6 +291,9 @@
           }
         }
       }
+    },
+    "%@ would like this plant to stand in the public website garden." : {
+
     },
     "%@ · in English" : {
       "localizations" : {
@@ -870,6 +880,9 @@
         }
       }
     },
+    "A plant stands in the area its own name belongs to, and the areas are being planted one at a time." : {
+
+    },
     "A plant you both share goes to the web garden without your username." : {
       "comment" : "Under the switch about joint seeds. The username goes to the other phone at a meeting; the web garden is never sent it.",
       "localizations" : {
@@ -1433,6 +1446,9 @@
           }
         }
       }
+    },
+    "All right" : {
+
     },
     "Allow Peace Garden to add to Photos in Settings." : {
       "comment" : "Shown in place of that line when saving was refused because the person has not allowed the app to add to Photos. 'Settings' is the phone's Settings app and 'Photos' the system's Photos app. 'Peace Garden' is the app's name and stays as it is.",
@@ -2654,6 +2670,7 @@
     },
     "Close" : {
       "comment" : "Button in the top corner of a screen. Closes it and goes back. A verb.",
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -4438,6 +4455,7 @@
       }
     },
     "Hold for three seconds." : {
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -5093,6 +5111,7 @@
       }
     },
     "In the peace garden" : {
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -5137,6 +5156,9 @@
           }
         }
       }
+    },
+    "In the public website garden" : {
+
     },
     "In the quiet before rain" : {
       "comment" : "One of forty figurative places a seed is imagined passing through on its way to the ground. Offered, already filled in, as the answer to 'Where' on the note about a meeting, and anybody can type over it. The register is the seed's journey rather than real geography, so it wants the same unhurried, slightly literary voice in every language.",
@@ -5370,6 +5392,9 @@
           }
         }
       }
+    },
+    "It goes on growing here meanwhile, and you can ask %@ the day its area opens." : {
+
     },
     "It goes on growing here meanwhile, and you can ask the other gardener the day its area opens." : {
       "comment" : "When this plant's area of the public website garden is not planted yet. Used when the app has no name for the other person from the meeting; with a name it is the same sentence with %@."
@@ -6318,6 +6343,7 @@
     },
     "Let it go" : {
       "comment" : "Button that deletes one plant from the garden. Deliberately gentle — the app does not say 'delete' anywhere.",
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -6457,6 +6483,7 @@
     },
     "Let this plant go?" : {
       "comment" : "Title of the alert asking to confirm deleting one plant.",
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -7591,6 +7618,9 @@
           }
         }
       }
+    },
+    "Nothing has changed. Plants of yours are still standing there, and this is the only phone that can take them down, so try again when you have a signal." : {
+
     },
     "Nothing took" : {
       "comment" : "Title when a meeting failed. 'Took' as a cutting takes — the plant did not root. The reason follows underneath.",
@@ -9947,6 +9977,9 @@
         }
       }
     },
+    "Sending it to the Wild Fields…" : {
+
+    },
     "Settings" : {
       "comment" : "The mark that opens the settings, and the heading of that screen. Set uppercase and wide-tracked at 11 points, so a long word crowds the row.",
       "localizations" : {
@@ -10321,6 +10354,7 @@
       }
     },
     "Show this plant in the peace garden." : {
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -10365,6 +10399,9 @@
           }
         }
       }
+    },
+    "Show this plant in the public website garden." : {
+
     },
     "Shown beside it only if you choose. Where and when also need %@ to choose them." : {
       "comment" : "Under the three switches when releasing a plant. %@ is the other gardener's name, as this phone knows it. Nothing is shown by default.",
@@ -10508,6 +10545,7 @@
       }
     },
     "Somebody has asked about a plant here" : {
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -11162,6 +11200,9 @@
         }
       }
     },
+    "The Wild Fields could not be reached just now, so this plant is still here. Try again in a little while." : {
+
+    },
     "The Wild Fields could not be reached just now. Nothing has changed; try again in a little while." : {
       "comment" : "When a change to what stands beside a released plant could not be sent. One sentence for every failure.",
       "localizations" : {
@@ -11301,6 +11342,9 @@
           }
         }
       }
+    },
+    "The garden is being planted an area at a time, and this plant's area comes later." : {
+
     },
     "The garden is open. Anyone walking it can come across this plant." : {
       "localizations" : {
@@ -11872,6 +11916,9 @@
         }
       }
     },
+    "The public website garden could not be reached" : {
+
+    },
     "The two phones grew different plants, so nothing was saved. Please try again." : {
       "comment" : "A failure: the two phones did not agree on what they had made, so neither kept it.",
       "localizations" : {
@@ -12015,6 +12062,7 @@
     },
     "This cannot be undone. The plant cannot be grown again." : {
       "comment" : "The message in the alert confirming that one plant is being let go.",
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -12106,6 +12154,12 @@
           }
         }
       }
+    },
+    "This plant is in the Wild Fields, so it cannot be shown anywhere else." : {
+
+    },
+    "This plant's area of the garden is still to be planted. It can stand there once that area opens." : {
+
     },
     "This seed code is unique to this exchange. A unique plant will grow from every time seeds are exchanged, even with the same person." : {
       "comment" : "Between the QR code and the ways of sending it. The reason the screen also offers a fresh code.",
@@ -13043,9 +13097,6 @@
         }
       }
     },
-    "Whatever you write goes to the other phone as it stands. It is the one place in this app where a seed carries a sentence somebody chose rather than one the app offered." : {
-      "extractionState" : "stale"
-    },
     "When %lld days old" : {
       "comment" : "The value beside 'First bloom' on the seed screen: how old the plant will be the first time it flowers.",
       "localizations" : {
@@ -13289,9 +13340,6 @@
           }
         }
       }
-    },
-    "When you meet someone, your phones exchange your seed, your name, and two random numbers for that meeting: one that makes the new seed, and one this phone will answer to if the other person later shares the plant with you. That is everything that crosses between you, and it goes directly from phone to phone. None of it can be turned back into anything about you or your phone, and neither number is kept after the meeting." : {
-      "extractionState" : "stale"
     },
     "When you met" : {
       "comment" : "One of three small switches beside 'Your name': show the month and year of the meeting beside the plant in the Wild Fields. Shown only once both gardeners choose it.",
@@ -14371,6 +14419,9 @@
         }
       }
     },
+    "Your own seed and its plant stay. Plants of yours standing in the public website garden come down first. The people you grew those plants with keep theirs." : {
+
+    },
     "Your own seed and its plant stay. The people you grew those plants with keep theirs." : {
       "comment" : "Appears under 'Empty the garden' while it is being held down.",
       "localizations" : {
@@ -14653,6 +14704,9 @@
         }
       }
     },
+    "Your seed, your plant and your garden all go. Plants of yours standing in the public website garden come down first. The people you have met keep the plants you grew together." : {
+
+    },
     "Your seed, your plant and your garden all go. The people you have met keep the plants you grew together." : {
       "comment" : "Appears under 'Reset everything' while it is being held down.",
       "localizations" : {
@@ -14799,16 +14853,16 @@
       "comment" : "A place in the shared garden, where plants of the theme Beginnings stand. A name, not a description: use the website's name for it (key areaBeginnings; the brief is tools/strings/NAMING.md).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "The Seedbed"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Såbedet"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Seedbed"
           }
         },
         "es" : {
@@ -14853,16 +14907,16 @@
       "comment" : "A place in the shared garden, where plants of the theme Ground stand. A name, not a description: use the website's name for it (key areaGround; the brief is tools/strings/NAMING.md).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "The Home Ground"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hjemstavnen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Home Ground"
           }
         },
         "es" : {
@@ -14907,16 +14961,16 @@
       "comment" : "A place in the shared garden, where plants of the theme Kinship stand. A name, not a description: use the website's name for it (key areaKinship; the brief is tools/strings/NAMING.md).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "The Orchard"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Frugthaven"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Orchard"
           }
         },
         "es" : {
@@ -14961,16 +15015,16 @@
       "comment" : "A place in the shared garden, where plants of the theme Light stand. A name, not a description: use the website's name for it (key areaLight; the brief is tools/strings/NAMING.md).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "The Glasshouse"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Drivhuset"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Glasshouse"
           }
         },
         "es" : {
@@ -15015,16 +15069,16 @@
       "comment" : "A place in the shared garden, where plants of the theme Meeting stand. A name, not a description: use the website's name for it (key areaMeeting; the brief is tools/strings/NAMING.md).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "The Crossing"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Krydsningen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Crossing"
           }
         },
         "es" : {
@@ -15069,16 +15123,16 @@
       "comment" : "A place in the shared garden, where plants of the theme Pattern stand. A name, not a description: use the website's name for it (key areaPattern; the brief is tools/strings/NAMING.md).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "The Knot Garden"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Barokhaven"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Knot Garden"
           }
         },
         "es" : {
@@ -15123,16 +15177,16 @@
       "comment" : "A place in the shared garden, where plants of the theme Peace stand. A name, not a description: use the website's name for it (key areaPeace; the brief is tools/strings/NAMING.md).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "The Quiet Garden"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Den Stille Have"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Quiet Garden"
           }
         },
         "es" : {
@@ -15177,16 +15231,16 @@
       "comment" : "A place in the shared garden, where plants of the theme Renewal stand. A name, not a description: use the website's name for it (key areaRenewal; the brief is tools/strings/NAMING.md).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "The Coppice"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stubhaven"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Coppice"
           }
         },
         "es" : {
@@ -15231,16 +15285,16 @@
       "comment" : "A place in the shared garden, where plants of the theme Travel stand. A name, not a description: use the website's name for it (key areaTravel; the brief is tools/strings/NAMING.md).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "The Long Walk"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Den Lange Allé"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Long Walk"
           }
         },
         "es" : {
@@ -15285,16 +15339,16 @@
       "comment" : "A place in the shared garden, where plants of the theme Waiting stand. A name, not a description: use the website's name for it (key areaWaiting; the brief is tools/strings/NAMING.md).",
       "extractionState" : "extracted_with_value",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "The Cold Frame"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dvalebedet"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Cold Frame"
           }
         },
         "es" : {
