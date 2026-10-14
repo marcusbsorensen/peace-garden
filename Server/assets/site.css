@@ -658,6 +658,26 @@ body[data-loading]:not([data-ready]) .page {
   direction: rtl;
 }
 
+/* **Wider than the words, as the map always looked.** The map sits in the
+   page's 440 px measure, so its five columns used to fit only by spilling out
+   of it: each `1fr` column took its longest word, and the grid ran on past the
+   column's right edge — about 90 px in English, 250 in Finnish, which at a
+   tablet's width was off the screen. Shared out evenly inside the measure the
+   columns are 61 px and every name breaks into syllables. So from the width
+   where the map stops being a scrolling strip, it is given the width its five
+   columns need, centred over the page rather than hanging off one side: about
+   what the English map took, now for every language. */
+@media (min-width: 46.01rem) {
+  .garden-map {
+    --map-width: min(36rem, 100vw - 32px);
+    inline-size: var(--map-width);
+    max-inline-size: none;
+    /* Auto margins would go to nothing on a box wider than its column and
+       leave it hanging off the right; these are the overhang, halved. */
+    margin-inline: calc((100% - var(--map-width)) / 2);
+  }
+}
+
 /* On a narrow screen the map scrolls sideways rather than wrapping.
 
    Wrapping to two columns was tried and it is wrong: the ten areas reflow in
