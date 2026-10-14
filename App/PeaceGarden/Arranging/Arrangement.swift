@@ -91,20 +91,26 @@ enum Arrangement {
     // MARK: - The templates
 
     /// Every plant's spot under one template, in metres from the plot's middle.
+    ///
+    /// `genome` is where a plant's genome comes from. Building one is a few
+    /// hundred hashes, and the plot asked for every plant's on every frame it
+    /// drew — most of what a frame of a big garden cost (14 October 2026) — so
+    /// the plot hands over the ones it has already worked out.
     static func spots(
         for plants: [PlantRecord],
         template: Template,
         plotSide: Double,
-        mine: SeedID?
+        mine: SeedID?,
+        genome: (PlantRecord) -> Genome = { $0.genome }
     ) -> [UUID: Spot] {
         // The plants are laid out inside a margin, so nothing the template
         // places ever sits on the cut edge.
         let usable = plotSide * 0.88
         let laidOut: [UUID: Spot]
         switch template {
-        case .thematic:   laidOut = thematic(plants, usable)
-        case .nightAndDay: laidOut = nightAndDay(plants, usable)
-        case .colours:    laidOut = colours(plants, usable)
+        case .thematic:   laidOut = thematic(plants, usable, genome)
+        case .nightAndDay: laidOut = nightAndDay(plants, usable, genome)
+        case .colours:    laidOut = colours(plants, usable, genome)
         case .meetings:   laidOut = meetings(plants, usable)
         case .kinship:    laidOut = kinship(plants, usable, mine: mine)
         }
@@ -144,13 +150,14 @@ enum Arrangement {
     /// What it does cost: a new plant joining an area re-spaces that area. About
     /// three plants in fourteen move, by at most 0.43 m, and nothing outside that
     /// one area moves at all — which is what `ArrangementTests` now holds it to.
-    private static func thematic(_ plants: [PlantRecord], _ side: Double) -> [UUID: Spot] {
+    private static func thematic(_ plants: [PlantRecord], _ side: Double,
+                                 _ genome: (PlantRecord) -> Genome) -> [UUID: Spot] {
         let cellWidth = side / Double(columns)
         let cellDepth = side / Double(rows)
 
         var byArea: [Int: [PlantRecord]] = [:]
         for plant in plants {
-            let cell = areas[theme(of: plant)] ?? (column: 2, row: 0)
+            let cell = areas[Quotes.Theme(area: Area(genome: genome(plant)))] ?? (column: 2, row: 0)
             byArea[cell.row * columns + cell.column, default: []].append(plant)
         }
 
@@ -184,10 +191,11 @@ enum Arrangement {
     /// rather than a behaviour, and a *Nyxia* may open at noon. Sorting by the
     /// name would put that plant at the midnight end and look almost right,
     /// which is the worst way to be wrong.
-    private static func nightAndDay(_ plants: [PlantRecord], _ side: Double) -> [UUID: Spot] {
+    private static func nightAndDay(_ plants: [PlantRecord], _ side: Double,
+                                    _ genome: (PlantRecord) -> Genome) -> [UUID: Spot] {
         var out: [UUID: Spot] = [:]
         for plant in plants {
-            let byDay = plant.genome.tempo.opensByDay
+            let byDay = genome(plant).tempo.opensByDay
             let (jx, jz) = scatter(plant, salt: 2)
             // Two bands with room between them, each spread by the plant's own
             // wobble rather than by its place in a list.
@@ -209,10 +217,11 @@ enum Arrangement {
     ///
     /// It will look more like Kinship than it sounds: palette is inherited, so
     /// plants grown with one person already share a hue.
-    private static func colours(_ plants: [PlantRecord], _ side: Double) -> [UUID: Spot] {
+    private static func colours(_ plants: [PlantRecord], _ side: Double,
+                                _ genome: (PlantRecord) -> Genome) -> [UUID: Spot] {
         var out: [UUID: Spot] = [:]
         for plant in plants {
-            let hue = plant.genome.palette.petalBase.hue
+            let hue = genome(plant).palette.petalBase.hue
             let (_, jz) = scatter(plant, salt: 3)
             let (jitterX, _) = scatter(plant, salt: 4)
             out[plant.id] = Spot(

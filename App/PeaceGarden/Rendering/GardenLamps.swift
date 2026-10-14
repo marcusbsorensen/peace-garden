@@ -180,6 +180,11 @@ struct LampFigure: View {
     var turn: Int = 0
     /// The season, which colours the garden's light on what is modelled.
     var season: Season = .orbit
+    /// How far the plot it stands on is zoomed in, so its pictures are taken
+    /// at the size it is seen at.
+    var zoom: Double = 1
+
+    @Environment(\.displayScale) private var displayScale
 
     var body: some View {
         let colour = GardenLamps.swiftUIColour(GardenLamps.colour(of: kind))
@@ -204,7 +209,9 @@ struct LampFigure: View {
             case .fireflies: Fireflies(colour: colour, glow: glow, metre: metre, seed: seed)
             case .lantern, .paperLamp, .hare, .fox, .moth, .snail:
                 ModelledFigure(kind: kind, glow: glow, pointsPerMetre: metre,
-                               hour: hour, turn: turn, seed: seed, season: season)
+                               hour: hour, turn: turn, seed: seed, season: season,
+                               pixelsPerMetre: GardenCreatures.pixelsPerMetre(drawnAt: metre * zoom,
+                                                                              scale: displayScale))
             }
         }
         .frame(width: 1.0 * metre, height: 1.2 * metre, alignment: .bottom)

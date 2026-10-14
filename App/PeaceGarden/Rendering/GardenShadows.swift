@@ -47,6 +47,16 @@ final class GardenShadows: @unchecked Sendable {
     /// steps each, with a turn's worth besides, fits in these.
     private var casters = Store<CasterKey, ShadowCaster>(limit: 12 << 20)
     private var sheets = Store<SheetKey, ShadowSheet?>(limit: 16 << 20)
+
+    /// Makes room for `count` sheets at once (14 October 2026). Sixteen
+    /// megabytes held a plot of forty things at two steps; a garden of five
+    /// hundred wants a thousand sheets on screen together, and a store smaller
+    /// than that let go of shadows still being drawn and made them again.
+    /// Never below sixteen, never above a hundred and sixty.
+    func expect(sheets count: Int) {
+        let wanted = min(160 << 20, max(16 << 20, count * (48 << 10)))
+        lock.withLock { sheets.limit = max(sheets.limit, wanted) }
+    }
     private var building: [CasterKey: Task<ShadowCaster, Never>] = [:]
     /// The figures' casters, never let go: there are six, a few hundred
     /// kilobytes between them, and they are modelled on the main actor, where
@@ -181,6 +191,17 @@ final class GardenShadows: @unchecked Sendable {
         lock.withLock { sheets.set(key, sheet, cost: weight) }
     }
 
+    /// Lets go of every caster and sheet kept, when the garden closes, and the
+    /// room made for them. The figures' six casters stay: they are small and
+    /// slow to make.
+    func forget() {
+        lock.withLock {
+            casters.removeAll()
+            sheets.removeAll()
+            sheets.limit = 16 << 20
+        }
+    }
+
     // MARK: Keys
 
     /// Which caster: a plant's by its seed and how grown it is, bucketed as
@@ -219,7 +240,7 @@ final class GardenShadows: @unchecked Sendable {
 /// ago when it is over its limit. Not thread-safe; `GardenShadows` holds its
 /// lock round it.
 private struct Store<Key: Hashable, Value> {
-    let limit: Int
+    var limit: Int
     private var items: [Key: (value: Value, cost: Int, used: UInt64)] = [:]
     private var total = 0
     private var clock: UInt64 = 0
@@ -232,6 +253,11 @@ private struct Store<Key: Hashable, Value> {
         item.used = clock
         items[key] = item
         return item.value
+    }
+
+    mutating func removeAll() {
+        items.removeAll()
+        total = 0
     }
 
     mutating func set(_ key: Key, _ value: Value, cost: Int) {
@@ -1006,6 +1032,10 @@ struct GroundShadows: View {
     var season: Season = .orbit
     let date: Date
     let size: CGSize
+    /// The plant or light in hand, whose shadow follows the hand rather than
+    /// standing where its cast says: drawn by `Moving`, which alone reads the
+    /// hand, so a drag moves one shadow and not every one (14 October 2026).
+    var moving: (id: UUID, hand: PlotHand, isLamp: Bool)?
 
     /// Bumped when worked-out shadows arrive, so they are drawn.
     @State private var arrived = 0
@@ -1026,20 +1056,19 @@ struct GroundShadows: View {
         // and a garden lit from one side with nothing casting would be wrong in
         // a way nobody could name.
         let moon = 0.2 + 0.8 * MoonPhase.lit(on: date)
-        let laid = casts.flatMap { cast in
+        let laid = casts.filter { $0.id != moving?.id }.flatMap { cast in
             [lay(cast, step: between.before, weight: 1 - between.blend, moon: moon),
              lay(cast, step: between.after, weight: between.blend, moon: moon)].compactMap { $0 }
         }
 
-        ZStack(alignment: .topLeading) {
+        // Each sheet is placed by its own transform: see `PlotStack`.
+        PlotStack {
             ForEach(laid) { sheet in
-                Image(decorative: sheet.image, scale: 1)
-                    .resizable()
-                    .interpolation(.high)
-                    .frame(width: CGFloat(sheet.image.width), height: CGFloat(sheet.image.height))
-                    .colorMultiply(sheet.tint)
-                    .opacity(sheet.opacity)
-                    .transformEffect(sheet.transform)
+                Self.draw(sheet)
+            }
+            if let moving, let cast = casts.first(where: { $0.id == moving.id }) {
+                Moving(shadows: self, cast: cast, hand: moving.hand, isLamp: moving.isLamp,
+                       between: between, moon: moon)
             }
         }
         .frame(width: size.width, height: size.height, alignment: .topLeading)
@@ -1051,6 +1080,40 @@ struct GroundShadows: View {
         // shadow arriving does not cancel the work on the next.
         .task(id: wanted(between)) {
             await workOut(missing(between))
+        }
+    }
+
+    private static func draw(_ sheet: Laid) -> some View {
+        Image(decorative: sheet.image, scale: 1)
+            .resizable()
+            .interpolation(.high)
+            .frame(width: CGFloat(sheet.image.width), height: CGFloat(sheet.image.height))
+            .colorMultiply(sheet.tint)
+            .opacity(sheet.opacity)
+            .transformEffect(sheet.transform)
+    }
+
+    /// The shadow of what is in hand, laid where the hand is.
+    private struct Moving: View {
+        let shadows: GroundShadows
+        let cast: ShadowCast
+        let hand: PlotHand
+        let isLamp: Bool
+        let between: (before: Int, after: Int, blend: Double)
+        let moon: Double
+
+        var body: some View {
+            let held = ShadowCast(id: cast.id, thing: cast.thing, spot: cast.spot,
+                                  foot: isLamp ? hand.lampFoot : hand.plantFoot,
+                                  turn: cast.turn, scale: cast.scale)
+            let laid = [shadows.lay(held, step: between.before, weight: 1 - between.blend, moon: moon),
+                        shadows.lay(held, step: between.after, weight: between.blend, moon: moon)]
+                .compactMap { $0 }
+            PlotStack {
+                ForEach(laid) { sheet in
+                    GroundShadows.draw(sheet)
+                }
+            }
         }
     }
 
@@ -1170,6 +1233,13 @@ struct GroundShadows: View {
 
     private func workOut(_ wanted: [Wanted]) async {
         let shadows = GardenShadows.shared
+        // Room for every sheet the plot is showing, and the next step's.
+        shadows.expect(sheets: casts.count * 2)
+        // **Shown a few times a second, not one by one** (14 October 2026):
+        // every arrival drew every shadow again, and a garden of five hundred
+        // has a thousand of them to arrive.
+        var shown = CACurrentMediaTime()
+        defer { arrived += 1 }
         for item in wanted {
             if Task.isCancelled { return }
             guard shadows.sheet(item.key) == nil else { continue }
@@ -1204,7 +1274,10 @@ struct GroundShadows: View {
                 return caster.cast(toward: light, turn: turn, scale: scale, look: softer, salt: salt)
             }.value
             shadows.keep(sheet, as: item.key)
-            arrived += 1
+            if CACurrentMediaTime() - shown > 0.15 {
+                shown = CACurrentMediaTime()
+                arrived += 1
+            }
         }
     }
 }

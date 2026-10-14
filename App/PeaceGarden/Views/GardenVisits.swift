@@ -29,7 +29,14 @@ final class GardenVisits {
     private static let storageKey = "garden.seen.v1"
 
     /// Plant id to the growth bucket it was last seen at.
-    private var seenAt: [String: Int]
+    private var seenAt: [String: Int] {
+        didSet { revision += 1 }
+    }
+
+    /// Counts every change to what has been seen, so the plot can keep what it
+    /// has worked out from it until it changes rather than ask every plant
+    /// again on every frame.
+    private(set) var revision = 0
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults

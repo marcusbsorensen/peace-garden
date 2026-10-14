@@ -58,24 +58,23 @@ struct PlotView: View {
     /// Kept between visits, so a favourite side is the side the garden opens
     /// on: `Chrome.plotTurnKey` says why on the phone and not on the bed.
     @AppStorage(Chrome.plotTurnKey) private var turn = 0
-    /// How far the plot is turned while two fingers are still on it. Shown as a
-    /// slight lean so the gesture is felt, then snapped to a quarter on release.
-    @State private var turning: Angle = .zero
-
+    /// How far the plot is turned while two fingers are still on it, how far it
+    /// is pinched and how far it is dragged are the camera's own: see
+    /// `PlotCamera`, which holds them so a gesture redraws nothing but itself.
     @State private var zoom: CGFloat = 1
-    @GestureState private var pinching: CGFloat = 1
     @State private var pan: CGSize = .zero
-    @GestureState private var panning: CGSize = .zero
 
     // MARK: Moving a plant
 
-    /// A plant in hand: which one, and where its foot is being held, in the
-    /// plot's own unzoomed coordinates.
+    /// A plant in hand: which one, and where its foot was when it was lifted,
+    /// in the plot's own unzoomed coordinates. Where it is now is `hand`'s.
     private struct Held: Equatable {
         let id: UUID
         var foot: CGPoint
     }
     @State private var held: Held?
+    /// Where what is in hand is, frame by frame: see `PlotHand`.
+    @State private var hand = PlotHand()
 
     /// A light in hand, the same way.
     @State private var heldLamp: Held?
@@ -116,14 +115,26 @@ struct PlotView: View {
     private var visits: GardenVisits { .shared }
 
     /// A plant, where it stands, and whether it has anything to say.
-    private struct Standing: Identifiable {
-        let record: PlantRecord
-        let spot: Spot
-        let growth: GrowthModel.State
-        let announces: Bool
+    private typealias Standing = PlotStanding
 
-        var id: UUID { record.id }
+    /// What is worked out from the garden, kept between frames: see `PlotMemo`.
+    @State private var memo = PlotMemo()
+    /// Whether VoiceOver or Switch Control is running, and so whether a big
+    /// garden has a layer of elements for it (`PlotVoiceOver`). A garden of
+    /// five hundred is five hundred elements, built when its plants arrive: a
+    /// third of a second of main thread, for nobody, when neither is on.
+    @State private var assistive = PlotView.assistiveTechnologyRunning
+
+    /// Up to this many plants, the layer is there whatever is running — for
+    /// Voice Control and Full Keyboard Access, which read the same elements
+    /// and which iOS gives no way to ask about. A hundred elements cost about
+    /// 70 ms of main thread, once, as the plants arrive.
+    private static let alwaysSaid = 100
+
+    private static var assistiveTechnologyRunning: Bool {
+        UIAccessibility.isVoiceOverRunning || UIAccessibility.isSwitchControlRunning
     }
+    @Environment(\.displayScale) private var displayScale
 
     /// The hour the garden is being looked at, as a fraction.
     ///
@@ -212,6 +223,12 @@ struct PlotView: View {
 
                 let lamps = model.garden.arrangements.first?.allLamps ?? []
                 let glow = GardenLamps.glow(in: light)
+                // Read here, once, and handed to everything drawn on the plot:
+                // read inside the kept layers, the clock would have them drawn
+                // again on its every tick, whatever they were compared on.
+                let seen = Seen(hour: hour, season: season, turn: turn, now: model.now)
+                // Which shadow follows the hand, if any.
+                let inHand = held.map { (id: $0.id, isLamp: false) } ?? heldLamp.map { (id: $0.id, isLamp: true) }
                 // Worked out once a frame and read by both the shadows and
                 // what stands on them.
                 let standings = standing(plotSide: side, in: view)
@@ -238,9 +255,15 @@ struct PlotView: View {
                         // Every shadow, multiplied into the ground and cut to
                         // it, before anything stands on it.
                         if showsShadows {
-                            GroundShadows(casts: casts(standings, plotSide: side, world: world, lamps: lamps, in: view),
-                                          view: view, world: world, plotSide: side, hour: hour,
-                                          season: light.season, date: model.now, size: proxy.size)
+                            Unchanged(while: shadowsKey(world: world, side: side, lamps: lamps, view: view,
+                                                        size: proxy.size)) {
+                                GroundShadows(casts: casts(standings, plotSide: side, world: world, lamps: lamps,
+                                                           turn: seen.turn, in: view),
+                                              view: view, world: world, plotSide: side, hour: seen.hour,
+                                              season: light.season, date: seen.now, size: proxy.size,
+                                              moving: inHand.map { (id: $0.id, hand: hand, isLamp: $0.isLamp) })
+                            }
+                            .equatable()
                         }
 
                         // The lights' pools, under everything that stands, so
@@ -252,48 +275,60 @@ struct PlotView: View {
                         // Far to near, and nothing else decides what covers
                         // what — except something in hand, which is above
                         // everything until it is put down.
-                        ForEach(things(standings, plotSide: side, world: world, lamps: lamps, in: view)) { thing in
-                            switch thing {
-                            case .plant(let standing):
-                                pool(for: standing, world: world, side: side, in: view)
-                                waiting(for: standing, world: world, side: side, in: view)
-                                plant(standing, world: world, side: side, in: view,
-                                      lamps: lamps, glow: glow)
-                            case .lamp(let lamp):
-                                self.lamp(lamp, world: world, side: side, in: view, glow: glow)
-                            case .hedge(let piece):
-                                hedge(piece, world: world, side: side, in: view)
+                        Unchanged(while: thingsKey(world: world, side: side, lamps: lamps, view: view,
+                                                   light: light)) {
+                            PlotStack {
+                                ForEach(things(standings, plotSide: side, world: world, lamps: lamps, in: view)) { thing in
+                                    switch thing {
+                                    case .plant(let standing):
+                                        pool(for: standing, world: world, side: side, in: view)
+                                        waiting(for: standing, world: world, side: side, in: view)
+                                        plant(standing, world: world, side: side, in: view,
+                                              lamps: lamps, glow: glow, seen: seen)
+                                    case .lamp(let lamp):
+                                        self.lamp(lamp, world: world, side: side, in: view, glow: glow, seen: seen)
+                                    case .hedge(let piece):
+                                        hedge(piece, world: world, side: side, in: view, seen: seen)
+                                    }
+                                }
                             }
                         }
+                        .equatable()
                     }
-                    .coordinateSpace(name: "plot")
-                    .scaleEffect(zoom * pinching)
-                    .offset(x: pan.width + panning.width, y: pan.height + panning.height)
-                    .rotationEffect(turning)
                     // Pictures, to VoiceOver; it finds the layer below instead.
                     .accessibilityHidden(true)
+                    .modifier(PlotCamera(
+                        zoom: zoom, pan: pan, size: proxy.size,
+                        // What VoiceOver finds on the plot (`PlotVoiceOver`),
+                        // moved exactly as the plot is moved, and worked out
+                        // again only when where things stand changes: always in
+                        // a garden of up to a hundred, and in a bigger one while
+                        // VoiceOver or Switch Control is running.
+                        moved: assistive || standings.count <= Self.alwaysSaid ? voiceOver(memo.kept(VoiceOverKey(
+                            standings: memo.revision, lamps: lamps, held: held, heldLamp: heldLamp,
+                            world: world, side: side, view: view
+                        )) {
+                            voiceOverPlaces(standings, lamps: lamps, world: world, side: side, in: view)
+                        }) : nil,
+                        looking: { pinching, turning in
+                            looking(in: proxy.size, pinching: pinching, turning: turning)
+                        },
+                        panning: { panning in panGesture(in: proxy.size, panning: panning) },
+                        above: { scale, offset in
+                            // Over the plot and under the words, because a thread
+                            // joins one to the other and has to be in both their
+                            // spaces.
+                            threads(world: world, side: side, in: view,
+                                    screen: proxy.size, glass: glass, scale: scale, offset: offset)
 
-                    // What VoiceOver finds on the plot (`PlotVoiceOver`),
-                    // moved exactly as the plot is moved.
-                    voiceOver(standings, lamps: lamps, world: world, side: side, in: view)
-                        .equatable()
-                        .scaleEffect(zoom * pinching)
-                        .offset(x: pan.width + panning.width, y: pan.height + panning.height)
-                        .rotationEffect(turning)
-
-                    // Over the plot and under the words, because a thread joins
-                    // one to the other and has to be in both their spaces.
-                    threads(world: world, side: side, in: view,
-                            screen: proxy.size, glass: glass)
-
-                    panel(lamps: lamps, world: world, side: side, in: view, screen: proxy.size)
+                            panel(lamps: lamps, world: world, side: side, in: view, screen: proxy.size,
+                                  scale: scale, offset: offset)
+                        }
+                    ))
                 }
                 .frame(width: proxy.size.width, height: proxy.size.height)
                 .onAppear { screen = proxy.size }
                 .onChange(of: proxy.size) { _, size in screen = size }
-                .contentShape(Rectangle())
-                .gesture(looking(in: proxy.size))
-                .simultaneousGesture(panGesture(in: proxy.size))
             }
             // **The garden is a map, and a map reads one way round** — the web
             // garden's rule (`docs/WEBSITE.md`). Under a right-to-left layout
@@ -354,7 +389,12 @@ struct PlotView: View {
                 .environment(model)
                 .inTheAppearance()
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIAccessibility.voiceOverStatusDidChangeNotification)
+            .merge(with: NotificationCenter.default.publisher(for: UIAccessibility.switchControlStatusDidChangeNotification))) { _ in
+            assistive = Self.assistiveTechnologyRunning
+        }
         .onAppear {
+            memo.open()
             visits.forget(absentFrom: model.hybrids)
             visits.firstSight(of: model.hybrids, now: model.now)
         }
@@ -364,9 +404,10 @@ struct PlotView: View {
 
     /// Pinch and turn, together, because two fingers do both at once and people
     /// expect them to.
-    private func looking(in size: CGSize) -> some Gesture {
+    private func looking(in size: CGSize, pinching: GestureState<CGFloat>,
+                         turning: Binding<Angle>) -> some Gesture {
         let pinch = MagnifyGesture()
-            .updating($pinching) { value, state, _ in
+            .updating(pinching) { value, state, _ in
                 state = min(max(value.magnification, 1 / zoom), 3 / zoom)
             }
             .onEnded { value in
@@ -384,11 +425,11 @@ struct PlotView: View {
         let rotate = RotateGesture()
             .onChanged { value in
                 let degrees = min(max(value.rotation.degrees, -24), 24)
-                turning = .degrees(degrees)
+                turning.wrappedValue = .degrees(degrees)
             }
             .onEnded { value in
                 let degrees = value.rotation.degrees
-                withAnimation(.easeOut(duration: 0.2)) { turning = .zero }
+                withAnimation(.easeOut(duration: 0.2)) { turning.wrappedValue = .zero }
                 if degrees > 28 { turnPlot(by: -1) } else if degrees < -28 { turnPlot(by: 1) }
             }
 
@@ -398,9 +439,9 @@ struct PlotView: View {
     /// One finger on the ground moves the view, once there is somewhere to move
     /// it to. At the fitted size the whole plot is already on screen, so there
     /// is nothing to pan and a stray swipe does nothing.
-    private func panGesture(in size: CGSize) -> some Gesture {
+    private func panGesture(in size: CGSize, panning: GestureState<CGSize>) -> some Gesture {
         DragGesture(minimumDistance: 12)
-            .updating($panning) { value, state, _ in
+            .updating(panning) { value, state, _ in
                 guard zoom > 1.001, held == nil else { return }
                 state = value.translation
             }
@@ -528,10 +569,14 @@ struct PlotView: View {
                 let shift = CGSize(width: -(pan.width - before.width) / zoom,
                                    height: -(pan.height - before.height) / zoom)
                 if shift == .zero { continue }
-                held?.foot.x += shift.width
-                held?.foot.y += shift.height
-                heldLamp?.foot.x += shift.width
-                heldLamp?.foot.y += shift.height
+                if held != nil {
+                    hand.plantFoot.x += shift.width
+                    hand.plantFoot.y += shift.height
+                }
+                if heldLamp != nil {
+                    hand.lampFoot.x += shift.width
+                    hand.lampFoot.y += shift.height
+                }
             }
         }
     }
@@ -544,35 +589,111 @@ struct PlotView: View {
     /// way to the screen and stored nowhere. Only the hand placements are kept,
     /// and they are sparse: a plant grown tomorrow appears where the template
     /// says without anybody having placed it.
+    ///
+    /// Worked out in `PlotMemo` and kept there until the garden, the clock or
+    /// the view changes, rather than again on every frame (14 October 2026).
     private func standing(plotSide: Double, in view: Isometric) -> [Standing] {
-        let plants = model.hybrids
-        let bed = model.garden.arrangements.first
-        let laidOut = Arrangement.spots(
-            for: plants,
-            template: bed?.template ?? .thematic,
-            plotSide: plotSide,
-            mine: model.identity?.seed
-        )
+        memo.standings(garden: model.garden, plotSide: plotSide, now: model.now, view: view,
+                       held: held?.id, visits: visits)
+    }
 
-        // A hand placement made before the rim wandered may be past it; it is
-        // shown on the ground, and kept as it was until it is moved again.
-        let outline = PlotOutline.of(plotSide: plotSide)
-        return plants.compactMap { record -> Standing? in
-            guard let spot = bed?.spot(for: record).map({ outline.keepOn($0) }) ?? laidOut[record.id]
-            else { return nil }
-            let growth = record.growth(now: model.now)
-            return Standing(
-                record: record,
-                spot: spot,
-                growth: growth,
-                announces: visits.announces(record, growth: growth)
-            )
+    // MARK: Drawn again only when it changes
+
+    /// The hour, season, turn and moment the plot is drawn at, read once a
+    /// frame.
+    private struct Seen {
+        let hour: Double
+        let season: Season
+        let turn: Int
+        let now: Date
+    }
+
+    // **Everything on the plot was drawn again whenever this view was**
+    // (14 October 2026): on every frame of a pinch, a pan or a carried plant,
+    // and every tick of the clock, every plant and every shadow — 19 ms a frame
+    // at 14 plants and 590 at 500 (mass test, finding 2). The layers on the plot
+    // are now kept (`Unchanged`) until one of the things below changes; the
+    // fingers are the camera's (`PlotCamera`) and the hand's (`PlotHand`); and
+    // the light counts only in steps an eight-bit screen can show, so a clock
+    // that moves a second redraws nothing.
+
+    /// The light's two steps either side of the hour, and how far between, to
+    /// the 255th.
+    private struct Shade: Equatable {
+        let before: Int
+        let after: Int
+        let blend: Int
+
+        init(_ between: (before: Int, after: Int, blend: Double)) {
+            before = between.before
+            after = between.after
+            blend = Int((between.blend * 255).rounded())
         }
-        .sorted { a, b in
-            if a.id == held?.id { return false }
-            if b.id == held?.id { return true }
-            return view.depth(a.spot) < view.depth(b.spot)
-        }
+    }
+
+    /// What the plants and the lights are drawn from.
+    private struct ThingsKey: Equatable {
+        let standings: Int
+        let lamps: [Lamp]
+        let held: Held?
+        let heldLamp: Held?
+        let tending: UUID?
+        let shade: Shade
+        let glow: Int
+        let turn: Int
+        let season: Season
+        let world: Int
+        let side: Double
+        let view: Isometric
+        let zoom: CGFloat
+        let pan: CGSize
+        let screen: CGSize
+        let scale: CGFloat
+        let longWalk: Bool
+    }
+
+    private func thingsKey(world: Int, side: Double, lamps: [Lamp], view: Isometric,
+                           light: GardenGround.Light) -> ThingsKey {
+        ThingsKey(standings: memo.revision, lamps: lamps, held: held, heldLamp: heldLamp, tending: tending,
+                  shade: Shade(GardenGround.Light.steps(at: hour)),
+                  glow: Int((GardenLamps.glow(in: light) * 255).rounded()),
+                  turn: turn, season: season, world: world, side: side, view: view,
+                  zoom: zoom, pan: pan, screen: screen, scale: displayScale, longWalk: isLongWalk)
+    }
+
+    /// What VoiceOver's layer is built from: where everything stands.
+    private struct VoiceOverKey: Equatable {
+        let standings: Int
+        let lamps: [Lamp]
+        let held: Held?
+        let heldLamp: Held?
+        let world: Int
+        let side: Double
+        let view: Isometric
+    }
+
+    /// What the shadows are drawn from.
+    private struct ShadowsKey: Equatable {
+        let standings: Int
+        let lamps: [Lamp]
+        let held: Held?
+        let heldLamp: Held?
+        let shade: Shade
+        let moon: Int
+        let turn: Int
+        let season: Season
+        let world: Int
+        let side: Double
+        let view: Isometric
+        let size: CGSize
+    }
+
+    private func shadowsKey(world: Int, side: Double, lamps: [Lamp], view: Isometric,
+                            size: CGSize) -> ShadowsKey {
+        ShadowsKey(standings: memo.revision, lamps: lamps, held: held, heldLamp: heldLamp,
+                   shade: Shade(GardenShadows.steps(at: hour)),
+                   moon: Int((MoonPhase.lit(on: model.now) * 255).rounded()),
+                   turn: turn, season: season, world: world, side: side, view: view, size: size)
     }
 
     /// Anything standing on the plot, so plants and lights can be drawn in one
@@ -635,11 +756,12 @@ struct PlotView: View {
         }
     }
 
-    private func hedge(_ piece: Hedge, world: Int, side: Double, in view: Isometric) -> some View {
+    private func hedge(_ piece: Hedge, world: Int, side: Double, in view: Isometric,
+                       seen: Seen) -> some View {
         let foot = view.point(piece.spot, y: piece.line.pieces[piece.index].ground)
         let size = GardenStructures.figure(height: piece.line.height).metres * view.pointsPerMetre
         return HedgePiece(line: piece.line, index: piece.index, pointsPerMetre: view.pointsPerMetre,
-                          hour: hour, turn: turn, season: season)
+                          hour: seen.hour, turn: seen.turn, season: seen.season)
             .allowsHitTesting(false)
             .position(x: foot.x, y: foot.y - size / 2)
     }
@@ -662,7 +784,7 @@ struct PlotView: View {
     /// the figures and lights that are modelled. Something in hand throws its
     /// shadow where it is held, on the ground under it.
     private func casts(_ standings: [Standing], plotSide: Double, world: Int, lamps: [Lamp],
-                       in view: Isometric) -> [ShadowCast] {
+                       turn: Int, in view: Isometric) -> [ShadowCast] {
         let quarter = Double(((turn % 4) + 4) % 4)
         let plants = standings.map { standing -> ShadowCast in
             let resting = view.point(standing.spot, y: standsAt(standing.spot, world: world, side: plotSide))
@@ -670,7 +792,7 @@ struct PlotView: View {
                 id: standing.id,
                 thing: .plant(standing.record, standing.growth),
                 spot: standing.spot,
-                foot: held?.id == standing.id ? (held?.foot ?? resting) : resting,
+                foot: resting,
                 turn: Double(GardenSprites.turn(for: standing.record.seed)),
                 scale: 1
             )
@@ -686,7 +808,7 @@ struct PlotView: View {
                 id: lamp.id,
                 thing: .figure(kind),
                 spot: lamp.spot,
-                foot: heldLamp?.id == lamp.id ? (heldLamp?.foot ?? resting) : resting,
+                foot: resting,
                 turn: pivot - quarter * .pi / 2,
                 scale: lamp.drawnScale
             )
@@ -718,22 +840,25 @@ struct PlotView: View {
     // MARK: The plants
 
     private func plant(_ standing: Standing, world: Int, side: Double,
-                       in view: Isometric, lamps: [Lamp], glow: Double) -> some View {
+                       in view: Isometric, lamps: [Lamp], glow: Double, seen: Seen) -> some View {
         let resting = view.point(standing.spot,
                                  y: standsAt(standing.spot, world: world, side: side))
         let inHand = held?.id == standing.id
 
         return GardenPlantSprite(
-            genome: standing.record.genome,
+            genome: standing.genome,
             growth: standing.growth,
-            foot: inHand ? (held?.foot ?? resting) : resting,
+            foot: resting,
             pointsPerMetre: view.pointsPerMetre,
-            hour: hour,
-            season: season,
-            turn: turn,
+            hour: seen.hour,
+            season: seen.season,
+            turn: seen.turn,
+            pixelsPerMetre: pixelsPerMetre(at: resting, in: view),
+            world: world,
+            side: side,
             isHeld: inHand,
-            isLeaving: inHand && Isometric.isOff(view.ground(at: held?.foot ?? resting),
-                                                 plotSide: side),
+            hand: inHand ? hand : nil,
+            view: view,
             lamplight: GardenLamps.lift(at: standing.spot, from: lamps),
             glow: glow,
             onTap: {
@@ -741,6 +866,7 @@ struct PlotView: View {
                 selected = standing.record
             },
             onLift: {
+                hand.plantFoot = resting
                 held = Held(id: standing.id, foot: resting)
                 lifts += 1
             },
@@ -748,18 +874,42 @@ struct PlotView: View {
                 comeIn(on: CGPoint(x: resting.x, y: resting.y - 0.45 * view.pointsPerMetre))
             },
             onMove: { travel, finger in
-                held?.foot = CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
+                hand.plantFoot = CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
                 if let finger { nudge(finger: finger) }
             },
             onDrop: { travel in
                 edgePush = .zero
                 // Where it is held, not where the last drag said: the plot may
                 // have panned under a finger that has not moved since.
-                let foot = held?.foot
-                    ?? CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
+                let foot = held != nil ? hand.plantFoot
+                    : CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
                 put(standing.record, at: foot, world: world, side: side, in: view)
             }
         )
+        // Drawn again only when something it shows has changed, and never for a
+        // pan or a pinch, which move the whole plot and nothing in it.
+        .equatable()
+    }
+
+    /// How finely a plant's pictures are taken: at the plot's own scale at the
+    /// zoom it is seen at, for a plant on the glass, and at the fitted scale for
+    /// one panned off it. Read from the settled zoom and pan, so a gesture
+    /// asks for nothing until it ends.
+    private func pixelsPerMetre(at foot: CGPoint, in view: Isometric) -> Int {
+        GardenSprites.pixelsPerMetre(drawnAt: view.pointsPerMetre * zoomSeen(at: foot, in: view),
+                                     scale: displayScale)
+    }
+
+    /// The settled zoom, for something standing on the glass, and none for
+    /// something panned off it.
+    private func zoomSeen(at foot: CGPoint, in view: Isometric) -> Double {
+        guard zoom > 1.001, screen.width > 0 else { return 1 }
+        let middle = CGPoint(x: screen.width / 2, y: screen.height / 2)
+        let at = CGPoint(x: middle.x + (foot.x - middle.x) * zoom + pan.width,
+                         y: middle.y + (foot.y - middle.y) * zoom + pan.height)
+        let reach = GardenSprites.tallestExpected * view.pointsPerMetre * zoom
+        let seen = CGRect(origin: .zero, size: screen).insetBy(dx: -reach, dy: -reach)
+        return seen.contains(at) ? zoom : 1
     }
 
     /// Where a dropped plant lands, and keeping it on the plot.
@@ -803,7 +953,7 @@ struct PlotView: View {
         if let kind = lamp.known {
             let colour = GardenLamps.swiftUIColour(GardenLamps.colour(of: kind))
             let resting = view.point(lamp.spot, y: standsAt(lamp.spot, world: world, side: side))
-            let centre = heldLamp?.id == lamp.id ? (heldLamp?.foot ?? resting) : resting
+            let centre = heldLamp?.id == lamp.id ? hand.lampFoot : resting
             // A larger light throws a larger pool: the pool is the light, as
             // far as the ground can tell.
             let axes = view.ellipse(radius: GardenLamps.reach(of: kind) * 0.72 * lamp.drawnScale)
@@ -829,7 +979,7 @@ struct PlotView: View {
     /// carried off the edge of the plot, it is gone.
     @ViewBuilder
     private func lamp(_ lamp: Lamp, world: Int, side: Double, in view: Isometric,
-                      glow: Double) -> some View {
+                      glow: Double, seen: Seen) -> some View {
         if let kind = lamp.known {
             // Its size is a size in the garden, so it is drawn at more or fewer
             // points to the metre and everything about it — the frame, the part
@@ -838,10 +988,10 @@ struct PlotView: View {
             let resting = view.point(lamp.spot, y: standsAt(lamp.spot, world: world, side: side))
             let inHand = heldLamp?.id == lamp.id
             let lifted = inHand || tending == lamp.id
-            let foot = inHand ? (heldLamp?.foot ?? resting) : resting
 
             LampFigure(kind: kind, glow: glow, pointsPerMetre: metre, seed: Self.seed(of: lamp),
-                       hour: hour, turn: turn, season: season)
+                       hour: seen.hour, turn: seen.turn, season: seen.season,
+                       zoom: zoomSeen(at: resting, in: view))
                 .allowsHitTesting(false)
                 // Only the light itself answers a finger, not the whole metre of
                 // air its frame takes up, or a lantern would steal every touch
@@ -855,8 +1005,8 @@ struct PlotView: View {
                 }
                 .scaleEffect(lifted ? 1.06 : 1, anchor: .bottom)
                 .offset(y: lifted ? -8 : 0)
-                .opacity(inHand && Isometric.isOff(view.ground(at: foot), plotSide: side) ? 0.4 : 1)
-                .position(x: foot.x, y: foot.y - 0.6 * metre)
+                .modifier(Placed(resting: resting, above: 0.6 * metre, hand: inHand ? hand : nil,
+                                 view: view, side: side))
         }
     }
 
@@ -886,8 +1036,9 @@ struct PlotView: View {
                 }
                 // Further than a finger wanders while it is held still.
                 if hypot(travel.width, travel.height) > 6 { lampTravelled = true }
-                heldLamp = Held(id: lamp.id, foot: CGPoint(x: resting.x + travel.width,
-                                                           y: resting.y + travel.height))
+                // Lifted once; after that only the hand moves.
+                hand.lampFoot = CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
+                if heldLamp?.id != lamp.id { heldLamp = Held(id: lamp.id, foot: resting) }
                 if let finger = drag?.location { nudge(finger: finger) }
             }
             .onEnded { value in
@@ -905,8 +1056,8 @@ struct PlotView: View {
                     return
                 }
                 let travel = drag?.translation ?? .zero
-                let foot = heldLamp?.foot
-                    ?? CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
+                let foot = heldLamp != nil ? hand.lampFoot
+                    : CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
                 let found = view.ground(at: foot)
 
                 withAnimation(.spring(duration: 0.3)) {
@@ -994,7 +1145,7 @@ struct PlotView: View {
     /// `nudge(finger:)` uses rather than read back from SwiftUI.
     @ViewBuilder
     private func threads(world: Int, side: Double, in view: Isometric,
-                         screen size: CGSize, glass: CGRect) -> some View {
+                         screen size: CGSize, glass: CGRect, scale: CGFloat, offset: CGSize) -> some View {
         let waiting = model.invited
         if !waiting.isEmpty, !askingFrame.isNull, size.width > 0 {
             let top = askingFrame.minY - glass.minY - 6
@@ -1003,7 +1154,7 @@ struct PlotView: View {
                 guard let spot = standings.first(where: { $0.record.id == record.id })?.spot
                 else { return nil }
                 let at = view.point(spot, y: standsAt(spot, world: world, side: side))
-                return onTheGlass(at, in: size)
+                return onTheGlass(at, in: size, scale: scale, offset: offset)
             }
 
             Canvas { context, _ in
@@ -1030,13 +1181,13 @@ struct PlotView: View {
     }
 
     /// A point in the plot's own coordinates, where it actually lands on the
-    /// glass once the plot has been zoomed and panned.
-    private func onTheGlass(_ point: CGPoint, in size: CGSize) -> CGPoint {
-        let scale = zoom * pinching
+    /// glass once the plot has been zoomed and panned: `scale` and `offset`
+    /// are the camera's, fingers and all.
+    private func onTheGlass(_ point: CGPoint, in size: CGSize, scale: CGFloat, offset: CGSize) -> CGPoint {
         let middle = CGPoint(x: size.width / 2, y: size.height / 2)
         return CGPoint(
-            x: middle.x + (point.x - middle.x) * scale + pan.width + panning.width,
-            y: middle.y + (point.y - middle.y) * scale + pan.height + panning.height
+            x: middle.x + (point.x - middle.x) * scale + offset.width,
+            y: middle.y + (point.y - middle.y) * scale + offset.height
         )
     }
 
@@ -1459,14 +1610,14 @@ struct PlotView: View {
     /// would be under the heading.
     @ViewBuilder
     private func panel(lamps: [Lamp], world: Int, side: Double, in view: Isometric,
-                       screen size: CGSize) -> some View {
+                       screen size: CGSize, scale: CGFloat, offset: CGSize) -> some View {
         if let id = tending, let lamp = lamps.first(where: { $0.id == id }), let kind = lamp.known {
             let metre = view.pointsPerMetre * lamp.drawnScale
             let footAt = view.point(lamp.spot, y: standsAt(lamp.spot, world: world, side: side))
             let top = onTheGlass(CGPoint(x: footAt.x,
                                          y: footAt.y - GardenLamps.grip(of: kind).height * metre - 8),
-                                 in: size)
-            let bottom = onTheGlass(footAt, in: size)
+                                 in: size, scale: scale, offset: offset)
+            let bottom = onTheGlass(footAt, in: size, scale: scale, offset: offset)
             let above = top.y - 30
             let roomAbove = headingFrame.isNull ? 120 : headingFrame.maxY + 30
 
@@ -1508,8 +1659,16 @@ struct PlotView: View {
 ///
 /// Its own view rather than a call in `PlotView` so that each plant renders in
 /// its own task: fourteen snapshots taken in one pass would be fourteen scenes
-/// built before anything appeared.
-private struct GardenPlantSprite: View {
+/// built before anything appeared. The pictures are taken off the main thread
+/// and waited for (`GardenSprites.sprite(…, pixelsPerMetre:)`), so a plant
+/// stands empty until its own arrive, and keeps the ones it has until new ones
+/// replace them.
+///
+/// **Equatable, on what it shows** (14 October 2026). Its actions are closures,
+/// which SwiftUI cannot compare, so every plant was drawn again on every frame
+/// of every gesture. Compared on what changes the picture or where it is
+/// dropped, a plant is drawn again only when one of those has.
+private struct GardenPlantSprite: View, Equatable {
     let genome: Genome
     let growth: GrowthModel.State
     let foot: CGPoint
@@ -1518,10 +1677,19 @@ private struct GardenPlantSprite: View {
     /// The season the light is coloured by, which is in each picture's key.
     let season: Season
     let turn: Int
+    /// How finely its pictures are taken: `PlotView.pixelsPerMetre(at:in:)`.
+    let pixelsPerMetre: Int
+    /// Where a drop lands depends on the ground and the plot, so two plants
+    /// standing in the same place on different grounds are different plants.
+    let world: Int
+    let side: Double
     let isHeld: Bool
-    /// Held off the edge of the plot, where letting go sends it home. Faded, so
-    /// the plant says what letting go will do before it is done.
-    let isLeaving: Bool
+    /// Where it is while it is in hand, read here and nowhere else in the plot,
+    /// so a drag moves this plant and nothing else. Nil when it is not in hand.
+    let hand: PlotHand?
+    /// What the hand's place is measured against: off the edge of the plot,
+    /// letting go sends it home.
+    let view: Isometric
     /// How much the lights nearby lift this plant, and in what colour.
     let lamplight: (amount: Double, colour: SIMD3<Double>)
     let glow: Double
@@ -1541,7 +1709,31 @@ private struct GardenPlantSprite: View {
         GardenGround.Light.steps(at: hour)
     }
 
+    /// The crossfade, and the lamps' lift, to the nearest step an eight-bit
+    /// screen can show: a clock that moves a second redraws nothing.
+    private static func shade(_ value: Double) -> Int { Int((value * 255).rounded()) }
+
+    nonisolated static func == (a: Self, b: Self) -> Bool {
+        MainActor.assumeIsolated {
+            let one = a.between, other = b.between
+            return a.genome.seed == b.genome.seed
+                && GardenSprites.bucket(of: a.growth) == GardenSprites.bucket(of: b.growth)
+                && a.foot == b.foot && a.pointsPerMetre == b.pointsPerMetre
+                && one.before == other.before && one.after == other.after
+                && shade(one.blend) == shade(other.blend)
+                && a.season == b.season && a.turn == b.turn && a.pixelsPerMetre == b.pixelsPerMetre
+                && a.world == b.world && a.side == b.side
+                && a.isHeld == b.isHeld
+                && shade(a.lamplight.amount * a.glow) == shade(b.lamplight.amount * b.glow)
+                && a.lamplight.colour == b.lamplight.colour
+        }
+    }
+
     var body: some View {
+        let foot = hand?.plantFoot ?? self.foot
+        // Held off the edge of the plot, where letting go sends it home. Faded,
+        // so the plant says what letting go will do before it is done.
+        let isLeaving = hand.map { Isometric.isOff(view.ground(at: $0.plantFoot), plotSide: side) } ?? false
         ZStack(alignment: .topLeading) {
             if let sprite = before ?? after {
                 let size = GardenSprites.drawnSize(metres: sprite.metres,
@@ -1553,7 +1745,12 @@ private struct GardenPlantSprite: View {
                 // between them without the fade is what makes the sun jump.
                 ZStack(alignment: .topLeading) {
                     picture(before, size: size, opacity: 1)
-                    picture(after, size: size, opacity: between.blend)
+                    // Alone until the step before it arrives, then crossfaded;
+                    // not drawn at all while the crossfade has not begun,
+                    // since a layer at no opacity still has to be moved.
+                    if before == nil || between.blend > 0.002 {
+                        picture(after, size: size, opacity: before == nil ? 1 : between.blend)
+                    }
 
                     // Lit by the lights near it: the plant again, tinted by
                     // their colour and *added*, so it brightens in proportion to
@@ -1589,16 +1786,23 @@ private struct GardenPlantSprite: View {
                 .position(x: foot.x, y: foot.y - size.height / 2)
             }
         }
-        .task(id: GardenSprites.key(genome: genome, growth: growth,
-                                    step: between.before, turn: turn, season: season)) {
-            before = GardenSprites.shared.sprite(genome: genome, growth: growth,
-                                                 step: between.before, turn: turn, season: season)
+        .task(id: key(step: between.before)) {
+            if let sprite = await GardenSprites.shared.sprite(
+                genome: genome, growth: growth, step: between.before, turn: turn, season: season,
+                pixelsPerMetre: pixelsPerMetre
+            ) { before = sprite }
         }
-        .task(id: GardenSprites.key(genome: genome, growth: growth,
-                                    step: between.after, turn: turn, season: season)) {
-            after = GardenSprites.shared.sprite(genome: genome, growth: growth,
-                                                step: between.after, turn: turn, season: season)
+        .task(id: key(step: between.after)) {
+            if let sprite = await GardenSprites.shared.sprite(
+                genome: genome, growth: growth, step: between.after, turn: turn, season: season,
+                pixelsPerMetre: pixelsPerMetre
+            ) { after = sprite }
         }
+    }
+
+    private func key(step: Int) -> String {
+        GardenSprites.key(genome: genome, growth: growth, step: step, turn: turn, season: season,
+                          pixelsPerMetre: pixelsPerMetre)
     }
 
     /// Long press to lift, then drag.
@@ -1635,6 +1839,113 @@ private struct GardenPlantSprite: View {
                 .frame(width: size.width, height: size.height)
                 .opacity(opacity)
         }
+    }
+}
+
+/// The plot as it is being looked at: pinched, dragged and leant by fingers
+/// still on the glass, and the gestures that do it (14 October 2026).
+///
+/// **A modifier, so a gesture redraws only itself.** The fingers' state lived
+/// in `PlotView`, so every frame of a pinch or a pan worked out the whole
+/// screen again — the sky, the keys of every layer — and SwiftUI then walked
+/// every plant to find nothing had changed: 20 ms a frame at five hundred
+/// plants with everything else kept. A modifier's content is the view it is
+/// applied to, mounted rather than rebuilt, so here a gesture changes this
+/// body and the transform, and not the plot.
+///
+/// **Not grouped.** `compositingGroup` (or `geometryGroup`) would have SwiftUI
+/// move the plot as one layer rather than a thousand-odd, and costs a third
+/// less main thread in a pinch; but the group is then drawn on the main
+/// thread whenever anything in it moves, so a drift of fireflies in a big
+/// garden held every frame waiting on it — at 500 plants a pinch dropped one
+/// frame in three, at 2,000 the garden never held still. Ungrouped, a pinch
+/// at 500 plants is about 10 ms a frame and none is dropped.
+private struct PlotCamera<Looking: Gesture, Panning: Gesture, Above: View>: ViewModifier {
+    let zoom: CGFloat
+    let pan: CGSize
+    let size: CGSize
+    /// What VoiceOver finds on the plot, moved with it: built by `PlotView`
+    /// and handed over whole, so a gesture moves it and does not rebuild it.
+    let moved: PlotVoiceOver?
+    let looking: (GestureState<CGFloat>, Binding<Angle>) -> Looking
+    let panning: (GestureState<CGSize>) -> Panning
+    /// What stands over the plot in the screen's own space — the threads and
+    /// a light's panel — given the scale and offset the plot is drawn at.
+    @ViewBuilder let above: (CGFloat, CGSize) -> Above
+
+    /// How far the plot is pinched while two fingers are on it.
+    @GestureState private var pinching: CGFloat = 1
+    /// How far it is dragged while one finger is on it.
+    @GestureState private var dragging: CGSize = .zero
+    /// How far it is turned while two fingers are still on it. Shown as a
+    /// slight lean so the gesture is felt, then snapped to a quarter on release.
+    @State private var turning: Angle = .zero
+
+    func body(content: Content) -> some View {
+        let scale = zoom * pinching
+        let offset = CGSize(width: pan.width + dragging.width, height: pan.height + dragging.height)
+        ZStack(alignment: .topLeading) {
+            content
+                .coordinateSpace(name: "plot")
+                .scaleEffect(scale)
+                .offset(offset)
+                .rotationEffect(turning)
+            if let moved {
+                moved
+                    .equatable()
+                    .scaleEffect(scale)
+                    .offset(offset)
+                    .rotationEffect(turning)
+            }
+            above(scale, offset)
+        }
+        .frame(width: size.width, height: size.height)
+        .contentShape(Rectangle())
+        .gesture(looking($pinching, $turning))
+        .simultaneousGesture(panning($dragging))
+    }
+}
+
+/// A light placed at its foot, or — in hand — where the hand is: read here, in
+/// a body of its own, so a drag moves this light and nothing else. The same
+/// modifier in hand and out of it, so the gesture carrying it is not lost when
+/// it is picked up.
+private struct Placed: ViewModifier {
+    let resting: CGPoint
+    /// How far above the foot the middle of what is placed stands.
+    let above: CGFloat
+    let hand: PlotHand?
+    let view: Isometric
+    let side: Double
+
+    func body(content: Content) -> some View {
+        let foot = hand?.lampFoot ?? resting
+        content
+            .opacity(hand != nil && Isometric.isOff(view.ground(at: foot), plotSide: side) ? 0.4 : 1)
+            .position(x: foot.x, y: foot.y - above)
+    }
+}
+
+/// What it holds, drawn again only when `key` changes.
+///
+/// For the layers on the plot (14 October 2026): their content is a closure,
+/// which SwiftUI cannot compare, so without this every one was worked out
+/// again whenever `PlotView` was — on every frame of a pinch or a pan.
+private struct Unchanged<Key: Equatable, Content: View>: View, Equatable {
+    let key: Key
+    let content: () -> Content
+
+    init(while key: Key, @ViewBuilder content: @escaping () -> Content) {
+        self.key = key
+        self.content = content
+    }
+
+    var body: some View {
+        content()
+    }
+
+    nonisolated static func == (a: Self, b: Self) -> Bool {
+        MainActor.assumeIsolated { a.key == b.key }
     }
 }
 
@@ -1837,13 +2148,14 @@ extension PlotView {
     ///
     /// A plant's box is its stem's height at this stage, near enough: the
     /// picture's own size is the sprite's, which this layer does not wait for.
-    private func voiceOver(_ standings: [Standing], lamps: [Lamp], world: Int, side: Double,
-                           in view: Isometric) -> PlotVoiceOver {
+    private func voiceOverPlaces(_ standings: [Standing], lamps: [Lamp], world: Int, side: Double,
+                                 in view: Isometric) -> VoiceOverPlaces {
         let metre = view.pointsPerMetre
         let plants = standings.map { standing in
             let resting = view.point(standing.spot, y: standsAt(standing.spot, world: world, side: side))
             return PlotVoiceOver.Plant(
                 record: standing.record,
+                name: standing.genome.name.full,
                 stage: standing.growth.stage,
                 isAsked: standing.record.standingOrHere.state == .invited,
                 foot: held?.id == standing.id ? (held?.foot ?? resting) : resting,
@@ -1862,9 +2174,21 @@ extension PlotView {
                 height: max(24, grip.height * scale), width: max(24, grip.width * scale)
             )
         }
-        return PlotVoiceOver(
-            plants: plants,
-            lights: lights,
+        return VoiceOverPlaces(plants: plants, lights: lights)
+    }
+
+    /// Where everything stands, for VoiceOver: kept in `PlotMemo` between
+    /// frames. The layer itself is made fresh, because its actions hold this
+    /// view, and this view holds the memo.
+    private struct VoiceOverPlaces {
+        let plants: [PlotVoiceOver.Plant]
+        let lights: [PlotVoiceOver.Light]
+    }
+
+    private func voiceOver(_ places: VoiceOverPlaces) -> PlotVoiceOver {
+        PlotVoiceOver(
+            plants: places.plants,
+            lights: places.lights,
             open: { record in
                 visits.seen(record, growth: record.growth(now: model.now))
                 selected = record

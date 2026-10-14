@@ -1,0 +1,1 @@
+frames 352, cpu/frame 107.65174703977272 ms

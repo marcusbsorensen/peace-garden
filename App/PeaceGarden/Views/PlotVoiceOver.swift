@@ -34,6 +34,9 @@ import SwiftUI
 struct PlotVoiceOver: View, Equatable {
     struct Plant: Equatable {
         let record: PlantRecord
+        /// Its name, read off the genome the plot already has, rather than
+        /// built from the seed again for every element.
+        let name: String
         let stage: GrowthModel.Stage
         let isAsked: Bool
         /// Where its foot is, in the plot's own coordinates.
@@ -67,10 +70,11 @@ struct PlotVoiceOver: View, Equatable {
     }
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
+        // Each element placed by its own `position`: see `PlotStack`.
+        PlotStack {
             ForEach(plants, id: \.record.id) { plant in
                 box(width: plant.width, height: plant.height)
-                    .accessibilityLabel(Text(verbatim: plant.record.genome.name.full))
+                    .accessibilityLabel(Text(verbatim: plant.name))
                     .accessibilityValue(value(of: plant))
                     .accessibilityHint(plant.isAsked ? Text(OtherGardener(plant.record).wouldLikeItShown) : Text(verbatim: ""))
                     .accessibilityAction { open(plant.record) }

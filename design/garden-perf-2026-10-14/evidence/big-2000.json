@@ -1,0 +1,11 @@
+{
+  "filledSeconds" : 43.856578708335292,
+  "firstFrameMs" : 146.88629166630562,
+  "footprintAfterCloseMB" : 47.158905029296875,
+  "footprintBeforeMB" : 36.470809936523438,
+  "footprintOpenMB" : 446.12765502929688,
+  "footprintPeakMB" : 446.12765502929688,
+  "framesOver100ms" : 2,
+  "longestFrameMs" : 316.60587500664406,
+  "plants" : 2000
+}

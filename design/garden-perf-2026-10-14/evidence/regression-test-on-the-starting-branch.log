@@ -1,0 +1,261 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -jobs 4 -project PeaceGardenMassTest.xcodeproj -scheme MassTestUnit -derivedDataPath build/DD-BeforeO -destination id=3AE1CF36-2959-4CE0-A304-95AA4333C925 "-only-testing:PeaceGardenTests/GardenPerfTests/testAHundredPlantGardenOpensWithoutFreezingAndLetsGoWhenClosed" -resultBundlePath build/results/BeforeO-152823.xcresult
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  SeedCore: /Users/marcus/Projects/peace-garden/.claude/worktrees/agent-a62aa4185de4dd3ee/Packages/SeedCore
+  swift-asn1: https://github.com/apple/swift-asn1.git @ 1.7.3
+  swift-crypto: https://github.com/apple/swift-crypto.git @ 3.15.1
+
+Writing result bundle at path:
+	/Users/marcus/Projects/peace-garden/.claude/worktrees/agent-a62aa4185de4dd3ee/build/results/BeforeO-152823.xcresult
+
+IOSurfaceClientSetSurfaceNotify failed e00002c7
+Test Suite 'Selected tests' started at 2026-10-14 15:28:41.356.
+Test Suite 'PeaceGardenTests.xctest' started at 2026-10-14 15:28:41.356.
+Test Suite 'GardenPerfTests' started at 2026-10-14 15:28:41.356.
+Test Case '-[PeaceGardenTests.GardenPerfTests testAHundredPlantGardenOpensWithoutFreezingAndLetsGoWhenClosed]' started.
+2026-10-14 15:28:42.072355+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.130413+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.139947+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.175934+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.187702+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.221191+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.228184+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.263842+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.271609+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.295755+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.302079+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.325763+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.334925+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.364874+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.377960+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.408146+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.415617+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.448954+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.458133+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.486688+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.497499+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.532673+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.543309+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.573863+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.587531+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.615539+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.627987+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.664391+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.674361+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.690784+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.696659+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.734201+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.744436+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.780278+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.791777+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.832167+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.846690+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.882561+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.895076+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.932456+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.943503+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.972646+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:42.980751+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.002969+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.011314+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.041369+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.055771+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.094091+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.105577+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.132044+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.142713+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.170045+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.181948+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.211763+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.222709+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.259490+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.271266+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.309216+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.322337+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.359689+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.372281+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.396146+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.407434+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.446666+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.460787+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.493336+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.507332+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.547016+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.558905+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.595379+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.606961+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.643675+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.655827+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.691705+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.701135+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.736204+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.745975+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.779956+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.791689+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.827376+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.838397+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.876544+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.890656+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.919723+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.934262+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.962751+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.974128+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.983264+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.990027+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:43.999224+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.037069+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.049716+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.078160+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.092216+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.122086+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.133737+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.140282+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.146948+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.157515+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.176714+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.186664+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.224162+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.237644+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.266191+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.275041+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.291441+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.299686+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.330805+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.346184+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.377186+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.390772+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.429903+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.444936+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.478201+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.489161+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.494022+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.499087+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.507138+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.541778+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.556350+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.587018+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.597675+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.623465+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.629154+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.636172+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.641450+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.649687+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.678577+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.688072+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.724354+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.736052+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.771300+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.786343+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.803634+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.810117+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.847356+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.858940+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.888831+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.902325+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.939970+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.949357+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.973892+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.980924+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.985146+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.989014+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:44.993220+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.019917+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.033271+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.070212+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.083387+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.090362+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.095370+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.103606+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.132679+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.145076+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.182027+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.191189+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.222997+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.229401+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.248613+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.255509+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.289868+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.297398+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.313968+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.319581+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.346502+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.356796+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.374741+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.381353+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.408528+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.419147+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.455439+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.466307+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.490826+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.500309+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.534534+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.542586+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.575943+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.583352+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.608011+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.613678+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.638616+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.644781+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.677545+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.685186+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.719274+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.728140+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.760921+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.771382+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.798147+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.810652+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.850085+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.863310+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.889559+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.900115+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.924799+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.934265+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.970060+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:45.981742+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.017348+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.027527+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.049869+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.057982+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.076813+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.087569+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.120861+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.134267+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.169752+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.177734+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.205139+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.212326+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.247823+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.259635+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.299485+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.312797+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.347589+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.356048+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-10-14 15:28:46.373686+0100 PeaceGarden[56199:5250236] [UIFocus] SCNView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+GardenPerfTests: first frame 4705 ms, longest frame 4715 ms; footprint 36 MB before, 315 MB open, 260 MB after closing
+/Users/marcus/Projects/peace-garden/.claude/worktrees/agent-a62aa4185de4dd3ee/App/PeaceGardenTests/GardenPerfTests.swift:75: error: -[PeaceGardenTests.GardenPerfTests testAHundredPlantGardenOpensWithoutFreezingAndLetsGoWhenClosed] : XCTAssertLessThan failed: ("4714.501374997781") is not less than ("500.0") - the garden held the main thread too long: first frame 4705 ms, longest frame 4715 ms; footprint 36 MB before, 315 MB open, 260 MB after closing
+/Users/marcus/Projects/peace-garden/.claude/worktrees/agent-a62aa4185de4dd3ee/App/PeaceGardenTests/GardenPerfTests.swift:76: error: -[PeaceGardenTests.GardenPerfTests testAHundredPlantGardenOpensWithoutFreezingAndLetsGoWhenClosed] : XCTAssertLessThan failed: ("224.20440673828125") is not less than ("150.0") - the garden kept its memory after closing: first frame 4705 ms, longest frame 4715 ms; footprint 36 MB before, 315 MB open, 260 MB after closing
+Test Case '-[PeaceGardenTests.GardenPerfTests testAHundredPlantGardenOpensWithoutFreezingAndLetsGoWhenClosed]' failed (16.321 seconds).
+Test Suite 'GardenPerfTests' failed at 2026-10-14 15:28:57.678.
+	 Executed 1 test, with 2 failures (0 unexpected) in 16.321 (16.322) seconds
+Test Suite 'PeaceGardenTests.xctest' failed at 2026-10-14 15:28:57.679.
+	 Executed 1 test, with 2 failures (0 unexpected) in 16.321 (16.322) seconds
+Test Suite 'Selected tests' failed at 2026-10-14 15:28:57.679.
+	 Executed 1 test, with 2 failures (0 unexpected) in 16.321 (16.323) seconds
+2026-10-14 15:29:18.037 xcodebuild[55554:5246957] [MT] IDETestOperationsObserverDebug: 52.591 elapsed -- Testing started completed.
+2026-10-14 15:29:18.039 xcodebuild[55554:5246957] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-14 15:29:18.039 xcodebuild[55554:5246957] [MT] IDETestOperationsObserverDebug: 52.591 sec, +52.591 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/marcus/Projects/peace-garden/.claude/worktrees/agent-a62aa4185de4dd3ee/build/results/BeforeO-152823.xcresult
+
+Failing tests:
+	GardenPerfTests.testAHundredPlantGardenOpensWithoutFreezingAndLetsGoWhenClosed()
+	GardenPerfTests.testAHundredPlantGardenOpensWithoutFreezingAndLetsGoWhenClosed()
+
+** TEST EXECUTE FAILED **
+
+Testing started
