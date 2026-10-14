@@ -10,6 +10,9 @@
 # handed over as PG_MASSTEST (stress) or PG_MT_OUT (the UI tests). The clock
 # file ends `rc=<code>` and `DONE`.
 #
+# `MT_LOCK`, if set, is a command every xcodebuild runs under — on a shared
+# Mac, the one-build-at-a-time lock (14 October): `MT_LOCK="sh <lock>.sh"`.
+#
 # Never point this at a simulator somebody uses: it installs the app over
 # whatever is there and writes the garden it is testing into it.
 set -u
@@ -34,7 +37,7 @@ export TEST_RUNNER_PG_MASSTEST="$OUT" TEST_RUNNER_PG_MT_OUT="$OUT"
 
 run() {
   local scheme=$1 only=$2 tag=$3
-  xcodebuild test-without-building \
+  ${=MT_LOCK:-} xcodebuild test-without-building -jobs 4 \
     -project PeaceGardenMassTest.xcodeproj -scheme "$scheme" \
     -derivedDataPath "${MT_DD:-build/DD-$scheme}" -destination "id=$SIM" \
     -only-testing:"$only" \
