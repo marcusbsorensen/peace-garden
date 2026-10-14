@@ -7170,7 +7170,7 @@
       }
     },
     "Not this time" : {
-      "comment" : "Read aloud by VoiceOver for the X in the top corner of the screen showing a plant that has just been made. Leaves without keeping it. Gentler than 'Discard' on purpose.",
+      "comment" : "A button in a capsule, in the top corner of the screen showing a plant that has just been made: leaves without keeping it. Everywhere else that corner is an X; this is the one moment it is words. Gentler than 'Discard' on purpose.",
       "localizations" : {
         "da" : {
           "stringUnit" : {
