@@ -101,3 +101,31 @@ eye are in `DANISH-site.md`. 44 keys added. `privacy10` checked and unchanged.
 - **For a native reader:** *arriate*, *bancal* and *glorieta* are Peninsular;
   a Latin American reader may want *cantero*. *Embajadora* is feminine to agree
   with *planta*.
+
+## ca — Catalan
+
+45 keys: the 44 and `privacy10`. For review.
+
+- **Terms.** *Zona* for area; *parterre* for plot, as `privacy6` has it (*el
+  lloc buit del parterre*), so a round flower bed is a *massís* and the
+  kitchen garden's plot a *parcel·la*; *es treu* for a seed drawn, as
+  `privacy2`'s *quan es va treure*; *tu* throughout.
+- **Area names first in each `…Away`**, *El verger és fora d'abast ara mateix*:
+  normative Catalan contracts an article that is part of a name (*al Verger*),
+  and the catalogue's names arrive with a capital article, so *a El verger*
+  would be wrong.
+- **`{area}`** stands after *la zona* for the same reason: *Ambaixadora de la
+  zona {area}*, *que creix a la zona {area}*.
+- **Garden words.** *Doble bordura*, *camí de gespa segada*, *tanca vegetal*
+  for the hedge, *rotonda enllosada*, *quarters*, *a portell* for the quincunx,
+  *gremi* for the guild, *dibuix* for the Knot Garden's plot (its area is *El
+  trencadís*), *solcs* in a *bancal*, *caixes de cultiu … amb el vidre
+  entreobert* for the frames, *taules de cultiu*, *bosquet* and *soques*
+  (matching *Les soques*), *hort*, *espigues*, *umbel·les*.
+- **Controls.** The imperative, as Catalan software writes buttons and as
+  `frontTurn` already does: *Tanca*, *Mou amunt*, *Amplia*, *Redueix*, *Gira
+  en sentit horari*. *Venen* without the accent, as the 2017 norm has it.
+- **For a native reader:** *«Reduir el moviment»* is my best recollection of
+  iOS's Catalan name for Reduce Motion and wants checking against a phone;
+  *la zona El verger* (a name in apposition) against *la zona del Verger*;
+  *tanca vegetal* against *bardissa* for a clipped hedge.
