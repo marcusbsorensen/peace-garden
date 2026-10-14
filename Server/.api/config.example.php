@@ -11,8 +11,8 @@ return [
     // both gardeners' consent exist.
     // 'open_for_planting' => true,
 
-    // Local only, since 2 October 2026: paths that visitors wear in the Wild
-    // Fields (`WildWear.php`). It stays off on the live site until the privacy
-    // page says what it sends and keeps, in every language.
+    // Paths that visitors wear in the Wild Fields (`WildWear.php`). On at the
+    // live site, where the privacy page says what it sends and keeps (privacy9,
+    // in 41 languages); a local copy turns it on here (Marcus, 14 October: 18A).
     // 'wear' => true,
 ];
